@@ -172,12 +172,7 @@ private:
   * or may not themselves match the condition. */
 struct FO_COMMON_API Number : public ConditionBase {
     Number(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high,
-           ConditionBase* condition) :
-        m_low(low),
-        m_high(high),
-        m_condition(condition)
-    {}
-
+           ConditionBase* condition);
     virtual ~Number();
 
     bool operator==(const ConditionBase& rhs) const override;
@@ -202,8 +197,8 @@ struct FO_COMMON_API Number : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>* m_low;
-    ValueRef::ValueRefBase<int>* m_high;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_low;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_high;
     ConditionBase* m_condition;
 
     friend class boost::serialization::access;
@@ -213,10 +208,7 @@ private:
 
 /** Matches all objects if the current game turn is >= \a low and < \a high. */
 struct FO_COMMON_API Turn : public ConditionBase {
-    explicit Turn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high = nullptr) :
-        m_low(low),
-        m_high(high)
-    {}
+    explicit Turn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high = nullptr);
 
     virtual ~Turn();
 
@@ -242,8 +234,8 @@ struct FO_COMMON_API Turn : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>* m_low;
-    ValueRef::ValueRefBase<int>* m_high;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_low;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -261,24 +253,14 @@ private:
 struct FO_COMMON_API SortedNumberOf : public ConditionBase {
     /** Sorts randomly, without considering a sort key. */
     SortedNumberOf(ValueRef::ValueRefBase<int>* number,
-                   ConditionBase* condition) :
-        m_number(number),
-        m_sort_key(nullptr),
-        m_sorting_method(SORT_RANDOM),
-        m_condition(condition)
-    {}
+                   ConditionBase* condition);
 
     /** Sorts according to the specified method, based on the key values
       * evaluated for each object. */
     SortedNumberOf(ValueRef::ValueRefBase<int>* number,
                    ValueRef::ValueRefBase<double>* sort_key_ref,
                    SortingMethod sorting_method,
-                   ConditionBase* condition) :
-        m_number(number),
-        m_sort_key(sort_key_ref),
-        m_sorting_method(sorting_method),
-        m_condition(condition)
-    {}
+                   ConditionBase* condition);
 
     virtual ~SortedNumberOf();
 
@@ -305,8 +287,8 @@ struct FO_COMMON_API SortedNumberOf : public ConditionBase {
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<int>* m_number;
-    ValueRef::ValueRefBase<double>* m_sort_key;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_number;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_sort_key;
     SortingMethod m_sorting_method;
     ConditionBase* m_condition;
 
@@ -390,18 +372,11 @@ private:
   * (if \a exclusive == true) by an empire that has affilitation type
   * \a affilitation with Empire \a empire_id. */
 struct FO_COMMON_API EmpireAffiliation : public ConditionBase {
-    EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id,
-                      EmpireAffiliationType affiliation) :
-        m_empire_id(empire_id),
-        m_affiliation(affiliation)
-    {}
+    EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation);
 
     explicit EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id);
 
-    explicit EmpireAffiliation(EmpireAffiliationType affiliation) :
-       m_empire_id(nullptr),
-       m_affiliation(affiliation)
-    {}
+    explicit EmpireAffiliation(EmpireAffiliationType affiliation);
 
     virtual ~EmpireAffiliation();
 
@@ -427,7 +402,7 @@ struct FO_COMMON_API EmpireAffiliation : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>* m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
     EmpireAffiliationType m_affiliation;
 
     friend class boost::serialization::access;
@@ -692,10 +667,7 @@ private:
 
 /** Matches all objects that are of UniverseObjectType \a type. */
 struct FO_COMMON_API Type : public ConditionBase {
-    explicit Type(ValueRef::ValueRefBase<UniverseObjectType>* type) :
-        ConditionBase(),
-        m_type(type)
-    {}
+    explicit Type(ValueRef::ValueRefBase<UniverseObjectType>* type);
 
     virtual ~Type();
 
@@ -724,7 +696,7 @@ struct FO_COMMON_API Type : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<UniverseObjectType>* m_type;
+    std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>> m_type;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -777,37 +749,15 @@ private:
 struct FO_COMMON_API HasSpecial : public ConditionBase {
     explicit HasSpecial(const std::string& name);
 
-    explicit HasSpecial(ValueRef::ValueRefBase<std::string>* name = nullptr) :
-        ConditionBase(),
-        m_name(name),
-        m_capacity_low(nullptr),
-        m_capacity_high(nullptr),
-        m_since_turn_low(nullptr),
-        m_since_turn_high(nullptr)
-    {}
+    explicit HasSpecial(ValueRef::ValueRefBase<std::string>* name = nullptr);
 
     HasSpecial(ValueRef::ValueRefBase<std::string>* name,
                ValueRef::ValueRefBase<int>* since_turn_low,
-               ValueRef::ValueRefBase<int>* since_turn_high = nullptr) :
-        ConditionBase(),
-        m_name(name),
-        m_capacity_low(nullptr),
-        m_capacity_high(nullptr),
-        m_since_turn_low(since_turn_low),
-        m_since_turn_high(since_turn_high)
-    {}
+               ValueRef::ValueRefBase<int>* since_turn_high = nullptr);
 
     HasSpecial(ValueRef::ValueRefBase<std::string>* name,
                ValueRef::ValueRefBase<double>* capacity_low,
-               ValueRef::ValueRefBase<double>* capacity_high = nullptr) :
-        ConditionBase(),
-        m_name(name),
-        m_capacity_low(capacity_low),
-        m_capacity_high(capacity_high),
-        m_since_turn_low(nullptr),
-        m_since_turn_high(nullptr)
-    {}
-
+               ValueRef::ValueRefBase<double>* capacity_high = nullptr);
     virtual ~HasSpecial();
 
     bool operator==(const ConditionBase& rhs) const override;
@@ -832,11 +782,11 @@ struct FO_COMMON_API HasSpecial : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<std::string>* m_name;
-    ValueRef::ValueRefBase<double>* m_capacity_low;
-    ValueRef::ValueRefBase<double>* m_capacity_high;
-    ValueRef::ValueRefBase<int>* m_since_turn_low;
-    ValueRef::ValueRefBase<int>* m_since_turn_high;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_capacity_low;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_capacity_high;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_since_turn_low;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_since_turn_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -847,10 +797,7 @@ private:
 struct FO_COMMON_API HasTag : public ConditionBase {
     explicit HasTag(const std::string& name);
 
-    explicit HasTag(ValueRef::ValueRefBase<std::string>* name = nullptr) :
-        ConditionBase(),
-        m_name(name)
-    {}
+    explicit HasTag(ValueRef::ValueRefBase<std::string>* name = nullptr);
 
     virtual ~HasTag();
 
@@ -876,7 +823,7 @@ struct FO_COMMON_API HasTag : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<std::string>* m_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -885,11 +832,7 @@ private:
 
 /** Matches all objects that were created on turns within the specified range. */
 struct FO_COMMON_API CreatedOnTurn : public ConditionBase {
-    CreatedOnTurn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high) :
-        ConditionBase(),
-        m_low(low),
-        m_high(high)
-    {}
+    CreatedOnTurn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high);
 
     virtual ~CreatedOnTurn();
 
@@ -915,8 +858,8 @@ struct FO_COMMON_API CreatedOnTurn : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>* m_low;
-    ValueRef::ValueRefBase<int>* m_high;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_low;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1011,10 +954,7 @@ private:
 
 /** Matches all objects that are in the system with the indicated \a system_id */
 struct FO_COMMON_API InSystem : public ConditionBase {
-    InSystem(ValueRef::ValueRefBase<int>* system_id) :
-        ConditionBase(),
-        m_system_id(system_id)
-    {}
+    InSystem(ValueRef::ValueRefBase<int>* system_id);
 
     virtual ~InSystem();
 
@@ -1043,7 +983,7 @@ struct FO_COMMON_API InSystem : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>* m_system_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_system_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1052,10 +992,7 @@ private:
 
 /** Matches the object with the id \a object_id */
 struct FO_COMMON_API ObjectID : public ConditionBase {
-    ObjectID(ValueRef::ValueRefBase<int>* object_id) :
-        ConditionBase(),
-        m_object_id(object_id)
-    {}
+    ObjectID(ValueRef::ValueRefBase<int>* object_id);
 
     virtual ~ObjectID();
 
@@ -1084,7 +1021,7 @@ struct FO_COMMON_API ObjectID : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>* m_object_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_object_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1182,12 +1119,7 @@ private:
   * planets are also matched. */
 struct FO_COMMON_API PlanetEnvironment : public ConditionBase {
     PlanetEnvironment(const std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments,
-                      ValueRef::ValueRefBase<std::string>* species_name_ref = nullptr) :
-        ConditionBase(),
-        m_environments(environments),
-        m_species_name(species_name_ref)
-    {}
-
+                      ValueRef::ValueRefBase<std::string>* species_name_ref = nullptr);
     virtual ~PlanetEnvironment();
 
     bool operator==(const ConditionBase& rhs) const override;
@@ -1216,7 +1148,7 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<ValueRef::ValueRefBase<::PlanetEnvironment>*> m_environments;
-    ValueRef::ValueRefBase<std::string>* m_species_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_species_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1278,15 +1210,7 @@ struct FO_COMMON_API Enqueued : public ConditionBase {
              ValueRef::ValueRefBase<std::string>* name,
              ValueRef::ValueRefBase<int>* empire_id = nullptr,
              ValueRef::ValueRefBase<int>* low = nullptr,
-             ValueRef::ValueRefBase<int>* high = nullptr) :
-        ConditionBase(),
-        m_build_type(build_type),
-        m_name(name),
-        m_design_id(nullptr),
-        m_empire_id(empire_id),
-        m_low(low),
-        m_high(high)
-    {}
+             ValueRef::ValueRefBase<int>* high = nullptr);
 
     explicit Enqueued(ValueRef::ValueRefBase<int>* design_id,
              ValueRef::ValueRefBase<int>* empire_id = nullptr,
@@ -1323,11 +1247,11 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     BuildType m_build_type;
-    ValueRef::ValueRefBase<std::string>* m_name;
-    ValueRef::ValueRefBase<int>* m_design_id;
-    ValueRef::ValueRefBase<int>* m_empire_id;
-    ValueRef::ValueRefBase<int>* m_low;
-    ValueRef::ValueRefBase<int>* m_high;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_design_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_low;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1416,10 +1340,7 @@ private:
 
 /** Matches all ships whose ShipDesign has the hull specified by \a name. */
 struct FO_COMMON_API DesignHasHull : public ConditionBase {
-    explicit DesignHasHull(ValueRef::ValueRefBase<std::string>* name) :
-        ConditionBase(),
-        m_name(name)
-    {}
+    explicit DesignHasHull(ValueRef::ValueRefBase<std::string>* name);
 
     virtual ~DesignHasHull();
 
@@ -1448,7 +1369,7 @@ struct FO_COMMON_API DesignHasHull : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<std::string>* m_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1459,12 +1380,7 @@ private:
   * part specified by \a name. */
 struct FO_COMMON_API DesignHasPart : public ConditionBase {
     DesignHasPart(ValueRef::ValueRefBase<std::string>* name, ValueRef::ValueRefBase<int>* low = nullptr,
-                  ValueRef::ValueRefBase<int>* high = nullptr) :
-        ConditionBase(),
-        m_low(low),
-        m_high(high),
-        m_name(name)
-    {}
+                  ValueRef::ValueRefBase<int>* high = nullptr);
 
     virtual ~DesignHasPart();
 
@@ -1493,9 +1409,9 @@ struct FO_COMMON_API DesignHasPart : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>* m_low;
-    ValueRef::ValueRefBase<int>* m_high;
-    ValueRef::ValueRefBase<std::string>* m_name;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_low;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_high;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1506,12 +1422,7 @@ private:
   * the specified \a part_class */
 struct FO_COMMON_API DesignHasPartClass : public ConditionBase {
     DesignHasPartClass(ShipPartClass part_class, ValueRef::ValueRefBase<int>* low,
-                       ValueRef::ValueRefBase<int>* high) :
-        ConditionBase(),
-        m_low(low),
-        m_high(high),
-        m_class(part_class)
-    {}
+                       ValueRef::ValueRefBase<int>* high);
 
     virtual ~DesignHasPartClass();
 
@@ -1540,8 +1451,8 @@ struct FO_COMMON_API DesignHasPartClass : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>* m_low;
-    ValueRef::ValueRefBase<int>* m_high;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_low;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_high;
     ShipPartClass m_class;
 
     friend class boost::serialization::access;
@@ -1552,10 +1463,7 @@ private:
 /** Matches ships who ShipDesign is a predefined shipdesign with the name
   * \a name */
 struct FO_COMMON_API PredefinedShipDesign : public ConditionBase {
-    explicit PredefinedShipDesign(ValueRef::ValueRefBase<std::string>* name) :
-        ConditionBase(),
-        m_name(name)
-    {}
+    explicit PredefinedShipDesign(ValueRef::ValueRefBase<std::string>* name);
 
     virtual ~PredefinedShipDesign();
 
@@ -1581,7 +1489,7 @@ struct FO_COMMON_API PredefinedShipDesign : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<std::string>* m_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1590,10 +1498,7 @@ private:
 
 /** Matches ships whose design id \a id. */
 struct FO_COMMON_API NumberedShipDesign : public ConditionBase {
-    NumberedShipDesign(ValueRef::ValueRefBase<int>* design_id) :
-        ConditionBase(),
-        m_design_id(design_id)
-    {}
+    NumberedShipDesign(ValueRef::ValueRefBase<int>* design_id);
 
     virtual ~NumberedShipDesign();
 
@@ -1619,7 +1524,7 @@ struct FO_COMMON_API NumberedShipDesign : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>* m_design_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_design_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1628,10 +1533,7 @@ private:
 
 /** Matches ships or buildings produced by the empire with id \a empire_id.*/
 struct FO_COMMON_API ProducedByEmpire : public ConditionBase {
-    ProducedByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
-        ConditionBase(),
-        m_empire_id(empire_id)
-    {}
+    ProducedByEmpire(ValueRef::ValueRefBase<int>* empire_id);
 
     virtual ~ProducedByEmpire();
 
@@ -1657,7 +1559,7 @@ struct FO_COMMON_API ProducedByEmpire : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>* m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1666,10 +1568,7 @@ private:
 
 /** Matches a given object with a linearly distributed probability of \a chance. */
 struct FO_COMMON_API Chance : public ConditionBase {
-    Chance(ValueRef::ValueRefBase<double>* chance) :
-        ConditionBase(),
-        m_chance(chance)
-    {}
+    Chance(ValueRef::ValueRefBase<double>* chance);
 
     virtual ~Chance();
 
@@ -1695,7 +1594,7 @@ struct FO_COMMON_API Chance : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<double>* m_chance;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_chance;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1706,12 +1605,7 @@ private:
   * value is >= \a low and <= \a high. */
 struct FO_COMMON_API MeterValue : public ConditionBase {
     MeterValue(MeterType meter, ValueRef::ValueRefBase<double>* low,
-               ValueRef::ValueRefBase<double>* high) :
-        ConditionBase(),
-        m_meter(meter),
-        m_low(low),
-        m_high(high)
-    {}
+               ValueRef::ValueRefBase<double>* high);
 
     virtual ~MeterValue();
 
@@ -1738,8 +1632,8 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     MeterType m_meter;
-    ValueRef::ValueRefBase<double>* m_low;
-    ValueRef::ValueRefBase<double>* m_high;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_low;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1752,13 +1646,7 @@ struct FO_COMMON_API ShipPartMeterValue : public ConditionBase {
     ShipPartMeterValue(ValueRef::ValueRefBase<std::string>* ship_part_name,
                        MeterType meter,
                        ValueRef::ValueRefBase<double>* low,
-                       ValueRef::ValueRefBase<double>* high) :
-        ConditionBase(),
-        m_part_name(ship_part_name),
-        m_meter(meter),
-        m_low(low),
-        m_high(high)
-    {}
+                       ValueRef::ValueRefBase<double>* high);
 
     virtual ~ShipPartMeterValue();
 
@@ -1784,10 +1672,10 @@ struct FO_COMMON_API ShipPartMeterValue : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<std::string>* m_part_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_part_name;
     MeterType m_meter;
-    ValueRef::ValueRefBase<double>* m_low;
-    ValueRef::ValueRefBase<double>* m_high;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_low;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_high;
 };
 
 /** Matches all objects if the empire with id \a empire_id has an empire meter
@@ -1795,24 +1683,13 @@ private:
 struct FO_COMMON_API EmpireMeterValue : public ConditionBase {
     EmpireMeterValue(const std::string& meter,
                      ValueRef::ValueRefBase<double>* low,
-                     ValueRef::ValueRefBase<double>* high) :
-        ConditionBase(),
-        m_empire_id(nullptr),
-        m_meter(meter),
-        m_low(low),
-        m_high(high)
-    {}
+                     ValueRef::ValueRefBase<double>* high);
 
     EmpireMeterValue(ValueRef::ValueRefBase<int>* empire_id,
                      const std::string& meter,
                      ValueRef::ValueRefBase<double>* low,
-                     ValueRef::ValueRefBase<double>* high) :
-        ConditionBase(),
-        m_empire_id(empire_id),
-        m_meter(meter),
-        m_low(low),
-        m_high(high)
-    {}
+                     ValueRef::ValueRefBase<double>* high);
+
 
     virtual ~EmpireMeterValue();
 
@@ -1838,22 +1715,17 @@ struct FO_COMMON_API EmpireMeterValue : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>* m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
     const std::string m_meter;
-    ValueRef::ValueRefBase<double>* m_low;
-    ValueRef::ValueRefBase<double>* m_high;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_low;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_high;
 };
 
 /** Matches all objects whose owner's stockpile of \a stockpile is between
   * \a low and \a high, inclusive. */
 struct FO_COMMON_API EmpireStockpileValue : public ConditionBase {
     EmpireStockpileValue(ResourceType stockpile, ValueRef::ValueRefBase<double>* low,
-                         ValueRef::ValueRefBase<double>* high) :
-        ConditionBase(),
-        m_stockpile(stockpile),
-        m_low(low),
-        m_high(high)
-    {}
+                         ValueRef::ValueRefBase<double>* high);
 
     virtual ~EmpireStockpileValue();
 
@@ -1880,8 +1752,8 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     ResourceType m_stockpile;
-    ValueRef::ValueRefBase<double>* m_low;
-    ValueRef::ValueRefBase<double>* m_high;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_low;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1890,10 +1762,7 @@ private:
 
 /** Matches all objects whose owner who has tech \a name. */
 struct FO_COMMON_API OwnerHasTech : public ConditionBase {
-    explicit OwnerHasTech(ValueRef::ValueRefBase<std::string>* name) :
-        ConditionBase(),
-        m_name(name)
-    {}
+    explicit OwnerHasTech(ValueRef::ValueRefBase<std::string>* name);
 
     virtual ~OwnerHasTech();
 
@@ -1919,7 +1788,7 @@ struct FO_COMMON_API OwnerHasTech : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<std::string>* m_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1930,10 +1799,7 @@ private:
 struct FO_COMMON_API OwnerHasBuildingTypeAvailable : public ConditionBase {
     explicit OwnerHasBuildingTypeAvailable(const std::string& name);
 
-    explicit OwnerHasBuildingTypeAvailable(ValueRef::ValueRefBase<std::string>* name) :
-        ConditionBase(),
-        m_name(name)
-    {}
+    explicit OwnerHasBuildingTypeAvailable(ValueRef::ValueRefBase<std::string>* name);
 
     virtual ~OwnerHasBuildingTypeAvailable();
 
@@ -1959,7 +1825,7 @@ struct FO_COMMON_API OwnerHasBuildingTypeAvailable : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<std::string>* m_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1970,10 +1836,7 @@ private:
 struct FO_COMMON_API OwnerHasShipDesignAvailable : public ConditionBase {
     explicit OwnerHasShipDesignAvailable(int id);
 
-    explicit OwnerHasShipDesignAvailable(ValueRef::ValueRefBase<int>* id) :
-        ConditionBase(),
-        m_id(id)
-    {}
+    explicit OwnerHasShipDesignAvailable(ValueRef::ValueRefBase<int>* id);
 
     virtual ~OwnerHasShipDesignAvailable();
 
@@ -1999,7 +1862,7 @@ struct FO_COMMON_API OwnerHasShipDesignAvailable : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>* m_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2010,10 +1873,7 @@ private:
 struct FO_COMMON_API OwnerHasShipPartAvailable : public ConditionBase {
     explicit OwnerHasShipPartAvailable(const std::string& name);
 
-    explicit OwnerHasShipPartAvailable(ValueRef::ValueRefBase<std::string>* name) :
-        ConditionBase(),
-        m_name(name)
-    {}
+    explicit OwnerHasShipPartAvailable(ValueRef::ValueRefBase<std::string>* name);
 
     virtual ~OwnerHasShipPartAvailable();
 
@@ -2039,7 +1899,7 @@ struct FO_COMMON_API OwnerHasShipPartAvailable : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<std::string>* m_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2048,10 +1908,7 @@ private:
 
 /** Matches all objects that are visible to at least one Empire in \a empire_ids. */
 struct FO_COMMON_API VisibleToEmpire : public ConditionBase {
-    explicit VisibleToEmpire(ValueRef::ValueRefBase<int>* empire_id) :
-        ConditionBase(),
-        m_empire_id(empire_id)
-    {}
+    explicit VisibleToEmpire(ValueRef::ValueRefBase<int>* empire_id);
 
     virtual ~VisibleToEmpire();
 
@@ -2077,7 +1934,7 @@ struct FO_COMMON_API VisibleToEmpire : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>* m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2089,11 +1946,7 @@ private:
   * down considerably if overused.  It is best to use Conditions that yield
   * relatively few matches. */
 struct FO_COMMON_API WithinDistance : public ConditionBase {
-    WithinDistance(ValueRef::ValueRefBase<double>* distance, ConditionBase* condition) :
-        ConditionBase(),
-        m_distance(distance),
-        m_condition(condition)
-    {}
+    WithinDistance(ValueRef::ValueRefBase<double>* distance, ConditionBase* condition);
 
     virtual ~WithinDistance();
 
@@ -2119,7 +1972,7 @@ struct FO_COMMON_API WithinDistance : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<double>* m_distance;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_distance;
     ConditionBase* m_condition;
 
     friend class boost::serialization::access;
@@ -2132,11 +1985,7 @@ private:
   * down considerably if overused.  It is best to use Conditions that yield
   * relatively few matches. */
 struct FO_COMMON_API WithinStarlaneJumps : public ConditionBase {
-    WithinStarlaneJumps(ValueRef::ValueRefBase<int>* jumps, ConditionBase* condition) :
-        ConditionBase(),
-        m_jumps(jumps),
-        m_condition(condition)
-    {}
+    WithinStarlaneJumps(ValueRef::ValueRefBase<int>* jumps, ConditionBase* condition);
 
     virtual ~WithinStarlaneJumps();
 
@@ -2162,7 +2011,7 @@ struct FO_COMMON_API WithinStarlaneJumps : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>* m_jumps;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_jumps;
     ConditionBase* m_condition;
 
     friend class boost::serialization::access;
@@ -2216,10 +2065,7 @@ private:
 /** Matches systems that have been explored by at least one Empire
   * in \a empire_ids. */
 struct FO_COMMON_API ExploredByEmpire : public ConditionBase {
-    explicit ExploredByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
-        ConditionBase(),
-        m_empire_id(empire_id)
-    {}
+    explicit ExploredByEmpire(ValueRef::ValueRefBase<int>* empire_id);
 
     virtual ~ExploredByEmpire();
 
@@ -2245,7 +2091,7 @@ struct FO_COMMON_API ExploredByEmpire : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>* m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2333,10 +2179,7 @@ private:
 /** Matches objects that are in systems that can be fleet supplied by the
   * empire with id \a empire_id */
 struct FO_COMMON_API FleetSupplyableByEmpire : public ConditionBase {
-    explicit FleetSupplyableByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
-        ConditionBase(),
-        m_empire_id(empire_id)
-    {}
+    explicit FleetSupplyableByEmpire(ValueRef::ValueRefBase<int>* empire_id);
 
     virtual ~FleetSupplyableByEmpire();
 
@@ -2362,7 +2205,7 @@ struct FO_COMMON_API FleetSupplyableByEmpire : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>* m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2373,11 +2216,7 @@ private:
   * to at least one object that meets \a condition using the resource-sharing
   * network of the empire with id \a empire_id */
 struct FO_COMMON_API ResourceSupplyConnectedByEmpire : public ConditionBase {
-    ResourceSupplyConnectedByEmpire(ValueRef::ValueRefBase<int>* empire_id, ConditionBase* condition) :
-        ConditionBase(),
-        m_empire_id(empire_id),
-        m_condition(condition)
-    {}
+    ResourceSupplyConnectedByEmpire(ValueRef::ValueRefBase<int>* empire_id, ConditionBase* condition);
 
     virtual ~ResourceSupplyConnectedByEmpire();
 
@@ -2403,7 +2242,7 @@ struct FO_COMMON_API ResourceSupplyConnectedByEmpire : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>* m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
     ConditionBase* m_condition;
 
     friend class boost::serialization::access;
@@ -2559,15 +2398,15 @@ struct FO_COMMON_API ValueTest : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<double>* m_value_ref1 = nullptr;
-    ValueRef::ValueRefBase<double>* m_value_ref2 = nullptr;
-    ValueRef::ValueRefBase<double>* m_value_ref3 = nullptr;
-    ValueRef::ValueRefBase<std::string>* m_string_value_ref1 = nullptr;
-    ValueRef::ValueRefBase<std::string>* m_string_value_ref2 = nullptr;
-    ValueRef::ValueRefBase<std::string>* m_string_value_ref3 = nullptr;
-    ValueRef::ValueRefBase<int>* m_int_value_ref1 = nullptr;
-    ValueRef::ValueRefBase<int>* m_int_value_ref2 = nullptr;
-    ValueRef::ValueRefBase<int>* m_int_value_ref3 = nullptr;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_value_ref1;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_value_ref2;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_value_ref3;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_string_value_ref1;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_string_value_ref2;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_string_value_ref3;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_int_value_ref1;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_int_value_ref2;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_int_value_ref3;
 
     ComparisonType m_compare_type1 = INVALID_COMPARISON;
     ComparisonType m_compare_type2 = INVALID_COMPARISON;
@@ -2582,12 +2421,7 @@ private:
 struct FO_COMMON_API Location : public ConditionBase {
 public:
     Location(ContentType content_type, ValueRef::ValueRefBase<std::string>* name1,
-             ValueRef::ValueRefBase<std::string>* name2 = nullptr) :
-        ConditionBase(),
-        m_name1(name1),
-        m_name2(name2),
-        m_content_type(content_type)
-    {}
+             ValueRef::ValueRefBase<std::string>* name2 = nullptr);
 
     virtual ~Location();
 
@@ -2613,8 +2447,8 @@ public:
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<std::string>* m_name1;
-    ValueRef::ValueRefBase<std::string>* m_name2;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name1;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name2;
     ContentType m_content_type;
 
     friend class boost::serialization::access;

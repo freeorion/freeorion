@@ -312,11 +312,15 @@ bool ConditionBase::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // Number                                                //
 ///////////////////////////////////////////////////////////
-Number::~Number() {
-    delete m_low;
-    delete m_high;
-    delete m_condition;
-}
+Number::Number(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high,
+               ConditionBase* condition) :
+    m_low(low),
+    m_high(high),
+    m_condition(condition)
+{}
+
+Number::~Number()
+{ delete m_condition; }
 
 bool Number::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -484,10 +488,12 @@ unsigned int Number::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Turn                                                  //
 ///////////////////////////////////////////////////////////
-Turn::~Turn() {
-    delete m_low;
-    delete m_high;
-}
+Turn::Turn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high) :
+    m_low(low),
+    m_high(high)
+{}
+
+Turn::~Turn() {}
 
 bool Turn::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -633,9 +639,25 @@ unsigned int Turn::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SortedNumberOf                                        //
 ///////////////////////////////////////////////////////////
+SortedNumberOf::SortedNumberOf(ValueRef::ValueRefBase<int>* number,
+                               ConditionBase* condition) :
+    m_number(number),
+    m_sort_key(nullptr),
+    m_sorting_method(SORT_RANDOM),
+    m_condition(condition)
+{}
+
+SortedNumberOf::SortedNumberOf(ValueRef::ValueRefBase<int>* number,
+                               ValueRef::ValueRefBase<double>* sort_key_ref,
+                               SortingMethod sorting_method,
+                               ConditionBase* condition) :
+    m_number(number),
+    m_sort_key(sort_key_ref),
+    m_sorting_method(sorting_method),
+    m_condition(condition)
+{}
+
 SortedNumberOf::~SortedNumberOf() {
-    delete m_number;
-    delete m_sort_key;
     delete m_condition;
 }
 
@@ -862,7 +884,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
     // matches, or those left in matches while the rest are moved into non_matches
     ObjectSet matched_objects;
     matched_objects.reserve(number);
-    TransferSortedObjects(number, m_sort_key, local_context, m_sorting_method, all_subcondition_matches, matched_objects);
+    TransferSortedObjects(number, m_sort_key.get(), local_context, m_sorting_method, all_subcondition_matches, matched_objects);
 
     // put objects back into matches and non_target sets as output...
 
@@ -1108,15 +1130,23 @@ unsigned int None::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // EmpireAffiliation                                     //
 ///////////////////////////////////////////////////////////
+EmpireAffiliation::EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation) :
+    m_empire_id(empire_id),
+    m_affiliation(affiliation)
+{}
+
 EmpireAffiliation::EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id) :
     m_empire_id(empire_id),
     m_affiliation(AFFIL_SELF)
 {}
 
-EmpireAffiliation::~EmpireAffiliation() {
-    if (m_empire_id)
-        delete m_empire_id;
-}
+EmpireAffiliation::EmpireAffiliation(EmpireAffiliationType affiliation) :
+    m_empire_id(nullptr),
+    m_affiliation(affiliation)
+{}
+
+EmpireAffiliation::~EmpireAffiliation()
+{}
 
 bool EmpireAffiliation::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -1787,8 +1817,13 @@ unsigned int Armed::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Type                                                  //
 ///////////////////////////////////////////////////////////
+Type::Type(ValueRef::ValueRefBase<UniverseObjectType>* type) :
+    ConditionBase(),
+    m_type(type)
+{}
+
 Type::~Type()
-{ delete m_type; }
+{}
 
 bool Type::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -1875,7 +1910,7 @@ std::string Type::Description(bool negated/* = false*/) const {
 
 std::string Type::Dump() const {
     std::string retval = DumpIndent();
-    if (dynamic_cast<ValueRef::Constant<UniverseObjectType>*>(m_type)) {
+    if (dynamic_cast<ValueRef::Constant<UniverseObjectType>*>(m_type.get())) {
         switch (m_type->Eval()) {
         case OBJ_BUILDING:    retval += "Building\n"; break;
         case OBJ_SHIP:        retval += "Ship\n"; break;
@@ -2154,8 +2189,40 @@ unsigned int Building::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // HasSpecial                                            //
 ///////////////////////////////////////////////////////////
+HasSpecial::HasSpecial(ValueRef::ValueRefBase<std::string>* name) :
+    ConditionBase(),
+    m_name(name),
+    m_capacity_low(nullptr),
+    m_capacity_high(nullptr),
+    m_since_turn_low(),
+    m_since_turn_high()
+{}
+
+HasSpecial::HasSpecial(ValueRef::ValueRefBase<std::string>* name,
+                       ValueRef::ValueRefBase<int>* since_turn_low,
+                       ValueRef::ValueRefBase<int>* since_turn_high) :
+    ConditionBase(),
+    m_name(name),
+    m_capacity_low(nullptr),
+    m_capacity_high(nullptr),
+    m_since_turn_low(since_turn_low),
+    m_since_turn_high(since_turn_high)
+{}
+
+HasSpecial::HasSpecial(ValueRef::ValueRefBase<std::string>* name,
+                       ValueRef::ValueRefBase<double>* capacity_low,
+                       ValueRef::ValueRefBase<double>* capacity_high) :
+    ConditionBase(),
+    m_name(name),
+    m_capacity_low(capacity_low),
+    m_capacity_high(capacity_high),
+    m_since_turn_low(nullptr),
+    m_since_turn_high(nullptr)
+{}
+
 HasSpecial::HasSpecial(const std::string& name) :
     ConditionBase(),
+    // TODO: Use std::make_unique when adopting C++14
     m_name(new ValueRef::Constant<std::string>(name)),
     m_capacity_low(nullptr),
     m_capacity_high(nullptr),
@@ -2163,13 +2230,7 @@ HasSpecial::HasSpecial(const std::string& name) :
     m_since_turn_high(nullptr)
 {}
 
-HasSpecial::~HasSpecial() {
-    delete m_name;
-    delete m_capacity_low;
-    delete m_capacity_high;
-    delete m_since_turn_low;
-    delete m_since_turn_high;
-}
+HasSpecial::~HasSpecial() {}
 
 bool HasSpecial::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -2387,11 +2448,17 @@ unsigned int HasSpecial::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 HasTag::HasTag(const std::string& name) :
     ConditionBase(),
+    // TODO: Use std::make_unique when adopting C++14
     m_name(new ValueRef::Constant<std::string>(name))
 {}
 
+HasTag::HasTag(ValueRef::ValueRefBase<std::string>* name) :
+    ConditionBase(),
+    m_name(name)
+{}
+
 HasTag::~HasTag()
-{ delete m_name; }
+{}
 
 bool HasTag::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -2517,10 +2584,13 @@ unsigned int HasTag::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // CreatedOnTurn                                         //
 ///////////////////////////////////////////////////////////
-CreatedOnTurn::~CreatedOnTurn() {
-    delete m_low;
-    delete m_high;
-}
+CreatedOnTurn::CreatedOnTurn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high) :
+    ConditionBase(),
+    m_low(low),
+    m_high(high)
+{}
+
+CreatedOnTurn::~CreatedOnTurn() {}
 
 bool CreatedOnTurn::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -3070,8 +3140,13 @@ unsigned int ContainedBy::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // InSystem                                              //
 ///////////////////////////////////////////////////////////
+InSystem::InSystem(ValueRef::ValueRefBase<int>* system_id) :
+    ConditionBase(),
+    m_system_id(system_id)
+{}
+
 InSystem::~InSystem()
-{ delete m_system_id; }
+{}
 
 bool InSystem::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -3227,8 +3302,13 @@ unsigned int InSystem::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ObjectID                                              //
 ///////////////////////////////////////////////////////////
+ObjectID::ObjectID(ValueRef::ValueRefBase<int>* object_id) :
+    ConditionBase(),
+    m_object_id(object_id)
+{}
+
 ObjectID::~ObjectID()
-{ delete m_object_id; }
+{}
 
 bool ObjectID::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -3734,11 +3814,17 @@ unsigned int PlanetSize::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // PlanetEnvironment                                     //
 ///////////////////////////////////////////////////////////
+PlanetEnvironment::PlanetEnvironment(const std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments,
+                                     ValueRef::ValueRefBase<std::string>* species_name_ref) :
+    ConditionBase(),
+    m_environments(environments),
+    m_species_name(species_name_ref)
+{}
+
 PlanetEnvironment::~PlanetEnvironment() {
     for (auto environment : m_environments) {
         delete environment;
     }
-    delete m_species_name;
 }
 
 bool PlanetEnvironment::operator==(const ConditionBase& rhs) const {
@@ -4192,18 +4278,27 @@ Enqueued::Enqueued() :
     ConditionBase(),
     m_build_type(BT_NOT_BUILDING),
     m_name(),
-    m_design_id(0),
-    m_empire_id(0),
-    m_low(0),
-    m_high(0)
+    m_design_id(nullptr),
+    m_empire_id(nullptr),
+    m_low(nullptr),
+    m_high(nullptr)
 {}
 
-Enqueued::~Enqueued() {
-    delete m_name;
-    delete m_design_id;
-    delete m_low;
-    delete m_high;
-}
+Enqueued::Enqueued(BuildType build_type,
+                   ValueRef::ValueRefBase<std::string>* name,
+                   ValueRef::ValueRefBase<int>* empire_id,
+                   ValueRef::ValueRefBase<int>* low,
+                   ValueRef::ValueRefBase<int>* high) :
+    ConditionBase(),
+    m_build_type(build_type),
+    m_name(name),
+    m_design_id(nullptr),
+    m_empire_id(empire_id),
+    m_low(low),
+    m_high(high)
+{}
+
+Enqueued::~Enqueued() {}
 
 bool Enqueued::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -4852,8 +4947,13 @@ unsigned int StarType::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // DesignHasHull                                         //
 ///////////////////////////////////////////////////////////
+DesignHasHull::DesignHasHull(ValueRef::ValueRefBase<std::string>* name) :
+    ConditionBase(),
+    m_name(name)
+{}
+
 DesignHasHull::~DesignHasHull()
-{ delete m_name; }
+{}
 
 bool DesignHasHull::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -4978,11 +5078,15 @@ unsigned int DesignHasHull::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // DesignHasPart                                         //
 ///////////////////////////////////////////////////////////
-DesignHasPart::~DesignHasPart() {
-    delete m_name;
-    delete m_low;
-    delete m_high;
-}
+DesignHasPart::DesignHasPart(ValueRef::ValueRefBase<std::string>* name, ValueRef::ValueRefBase<int>* low,
+                             ValueRef::ValueRefBase<int>* high) :
+    ConditionBase(),
+    m_low(low),
+    m_high(high),
+    m_name(name)
+{}
+
+DesignHasPart::~DesignHasPart() {}
 
 bool DesignHasPart::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -5156,10 +5260,15 @@ unsigned int DesignHasPart::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // DesignHasPartClass                                    //
 ///////////////////////////////////////////////////////////
-DesignHasPartClass::~DesignHasPartClass() {
-    delete m_low;
-    delete m_high;
-}
+DesignHasPartClass::DesignHasPartClass(ShipPartClass part_class, ValueRef::ValueRefBase<int>* low,
+                                       ValueRef::ValueRefBase<int>* high) :
+    ConditionBase(),
+    m_low(low),
+    m_high(high),
+    m_class(part_class)
+{}
+
+DesignHasPartClass::~DesignHasPartClass() {}
 
 bool DesignHasPartClass::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -5318,8 +5427,13 @@ unsigned int DesignHasPartClass::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // PredefinedShipDesign                                  //
 ///////////////////////////////////////////////////////////
+PredefinedShipDesign::PredefinedShipDesign(ValueRef::ValueRefBase<std::string>* name) :
+    ConditionBase(),
+    m_name(name)
+{}
+
 PredefinedShipDesign::~PredefinedShipDesign()
-{ delete m_name; }
+{}
 
 bool PredefinedShipDesign::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -5455,8 +5569,13 @@ unsigned int PredefinedShipDesign::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // NumberedShipDesign                                    //
 ///////////////////////////////////////////////////////////
+NumberedShipDesign::NumberedShipDesign(ValueRef::ValueRefBase<int>* design_id) :
+    ConditionBase(),
+    m_design_id(design_id)
+{}
+
 NumberedShipDesign::~NumberedShipDesign()
-{ delete m_design_id; }
+{}
 
 bool NumberedShipDesign::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -5560,8 +5679,13 @@ unsigned int NumberedShipDesign::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ProducedByEmpire                                      //
 ///////////////////////////////////////////////////////////
+ProducedByEmpire::ProducedByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
+    ConditionBase(),
+    m_empire_id(empire_id)
+{}
+
 ProducedByEmpire::~ProducedByEmpire()
-{ delete m_empire_id; }
+{}
 
 bool ProducedByEmpire::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -5673,8 +5797,13 @@ unsigned int ProducedByEmpire::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Chance                                                //
 ///////////////////////////////////////////////////////////
+Chance::Chance(ValueRef::ValueRefBase<double>* chance) :
+    ConditionBase(),
+    m_chance(chance)
+{}
+
 Chance::~Chance()
-{ delete m_chance; }
+{}
 
 bool Chance::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -5770,10 +5899,15 @@ unsigned int Chance::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // MeterValue                                            //
 ///////////////////////////////////////////////////////////
-MeterValue::~MeterValue() {
-    delete m_low;
-    delete m_high;
-}
+MeterValue::MeterValue(MeterType meter, ValueRef::ValueRefBase<double>* low,
+                       ValueRef::ValueRefBase<double>* high) :
+    ConditionBase(),
+    m_meter(meter),
+    m_low(low),
+    m_high(high)
+{}
+
+MeterValue::~MeterValue() {}
 
 bool MeterValue::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -5953,11 +6087,18 @@ unsigned int MeterValue::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ShipPartMeterValue                                    //
 ///////////////////////////////////////////////////////////
-ShipPartMeterValue::~ShipPartMeterValue() {
-    delete m_part_name;
-    delete m_low;
-    delete m_high;
-}
+ShipPartMeterValue::ShipPartMeterValue(ValueRef::ValueRefBase<std::string>* ship_part_name,
+                                       MeterType meter,
+                                       ValueRef::ValueRefBase<double>* low,
+                                       ValueRef::ValueRefBase<double>* high) :
+    ConditionBase(),
+    m_part_name(ship_part_name),
+    m_meter(meter),
+    m_low(low),
+    m_high(high)
+{}
+
+ShipPartMeterValue::~ShipPartMeterValue() {}
 
 bool ShipPartMeterValue::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -6126,11 +6267,28 @@ unsigned int ShipPartMeterValue::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // EmpireMeterValue                                      //
 ///////////////////////////////////////////////////////////
-EmpireMeterValue::~EmpireMeterValue() {
-    delete m_empire_id;
-    delete m_low;
-    delete m_high;
-}
+EmpireMeterValue::EmpireMeterValue(const std::string& meter,
+                                   ValueRef::ValueRefBase<double>* low,
+                                   ValueRef::ValueRefBase<double>* high) :
+    ConditionBase(),
+    m_empire_id(nullptr),
+    m_meter(meter),
+    m_low(low),
+    m_high(high)
+{}
+
+EmpireMeterValue::EmpireMeterValue(ValueRef::ValueRefBase<int>* empire_id,
+                                   const std::string& meter,
+                                   ValueRef::ValueRefBase<double>* low,
+                                   ValueRef::ValueRefBase<double>* high) :
+    ConditionBase(),
+    m_empire_id(empire_id),
+    m_meter(meter),
+    m_low(low),
+    m_high(high)
+{}
+
+EmpireMeterValue::~EmpireMeterValue() {}
 
 bool EmpireMeterValue::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -6301,10 +6459,15 @@ unsigned int EmpireMeterValue::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // EmpireStockpileValue                                  //
 ///////////////////////////////////////////////////////////
-EmpireStockpileValue::~EmpireStockpileValue() {
-    delete m_low;
-    delete m_high;
-}
+EmpireStockpileValue::EmpireStockpileValue(ResourceType stockpile, ValueRef::ValueRefBase<double>* low,
+                                           ValueRef::ValueRefBase<double>* high) :
+    ConditionBase(),
+    m_stockpile(stockpile),
+    m_low(low),
+    m_high(high)
+{}
+
+EmpireStockpileValue::~EmpireStockpileValue() {}
 
 bool EmpireStockpileValue::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -6445,8 +6608,13 @@ unsigned int EmpireStockpileValue::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // OwnerHasTech                                          //
 ///////////////////////////////////////////////////////////
+OwnerHasTech::OwnerHasTech(ValueRef::ValueRefBase<std::string>* name) :
+    ConditionBase(),
+    m_name(name)
+{}
+
 OwnerHasTech::~OwnerHasTech()
-{ delete m_name; }
+{}
 
 bool OwnerHasTech::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -6563,11 +6731,17 @@ unsigned int OwnerHasTech::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(const std::string& name) :
     ConditionBase(),
+    // TODO: Use std::make_unique when adopting C++14
     m_name(new ValueRef::Constant<std::string>(name))
 {}
 
+OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(ValueRef::ValueRefBase<std::string>* name) :
+    ConditionBase(),
+    m_name(name)
+{}
+
 OwnerHasBuildingTypeAvailable::~OwnerHasBuildingTypeAvailable()
-{ delete m_name; }
+{}
 
 bool OwnerHasBuildingTypeAvailable::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -6679,11 +6853,17 @@ unsigned int OwnerHasBuildingTypeAvailable::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(int id) :
     ConditionBase(),
+    // TODO: Use std::make_unique when adopting C++14
     m_id(new ValueRef::Constant<int>(id))
 {}
 
+OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(ValueRef::ValueRefBase<int>* id) :
+    ConditionBase(),
+    m_id(id)
+{}
+
 OwnerHasShipDesignAvailable::~OwnerHasShipDesignAvailable()
-{ delete m_id; }
+{}
 
 bool OwnerHasShipDesignAvailable::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -6795,11 +6975,17 @@ unsigned int OwnerHasShipDesignAvailable::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(const std::string& name) :
     ConditionBase(),
+    // TODO: Use std::make_unique when adopting C++14
     m_name(new ValueRef::Constant<std::string>(name))
 {}
 
+OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(ValueRef::ValueRefBase<std::string>* name) :
+    ConditionBase(),
+    m_name(name)
+{}
+
 OwnerHasShipPartAvailable::~OwnerHasShipPartAvailable()
-{ delete m_name; }
+{}
 
 bool OwnerHasShipPartAvailable::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -6910,8 +7096,13 @@ unsigned int OwnerHasShipPartAvailable::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // VisibleToEmpire                                       //
 ///////////////////////////////////////////////////////////
+VisibleToEmpire::VisibleToEmpire(ValueRef::ValueRefBase<int>* empire_id) :
+    ConditionBase(),
+    m_empire_id(empire_id)
+{}
+
 VisibleToEmpire::~VisibleToEmpire()
-{ delete m_empire_id; }
+{}
 
 bool VisibleToEmpire::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -7018,8 +7209,13 @@ unsigned int VisibleToEmpire::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // WithinDistance                                        //
 ///////////////////////////////////////////////////////////
+WithinDistance::WithinDistance(ValueRef::ValueRefBase<double>* distance, ConditionBase* condition) :
+    ConditionBase(),
+    m_distance(distance),
+    m_condition(condition)
+{}
+
 WithinDistance::~WithinDistance() {
-    delete m_distance;
     delete m_condition;
 }
 
@@ -7154,8 +7350,13 @@ unsigned int WithinDistance::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // WithinStarlaneJumps                                   //
 ///////////////////////////////////////////////////////////
+WithinStarlaneJumps::WithinStarlaneJumps(ValueRef::ValueRefBase<int>* jumps, ConditionBase* condition) :
+    ConditionBase(),
+    m_jumps(jumps),
+    m_condition(condition)
+{}
+
 WithinStarlaneJumps::~WithinStarlaneJumps() {
-    delete m_jumps;
     delete m_condition;
 }
 
@@ -7718,8 +7919,13 @@ unsigned int CanAddStarlaneConnection::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ExploredByEmpire                                      //
 ///////////////////////////////////////////////////////////
+ExploredByEmpire::ExploredByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
+    ConditionBase(),
+    m_empire_id(empire_id)
+{}
+
 ExploredByEmpire::~ExploredByEmpire()
-{ delete m_empire_id; }
+{}
 
 bool ExploredByEmpire::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -7934,8 +8140,13 @@ unsigned int Aggressive::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // FleetSupplyableByEmpire                               //
 ///////////////////////////////////////////////////////////
+FleetSupplyableByEmpire::FleetSupplyableByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
+    ConditionBase(),
+    m_empire_id(empire_id)
+{}
+
 FleetSupplyableByEmpire::~FleetSupplyableByEmpire()
-{ delete m_empire_id; }
+{}
 
 bool FleetSupplyableByEmpire::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -8054,8 +8265,14 @@ unsigned int FleetSupplyableByEmpire::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ResourceSupplyConnectedByEmpire                       //
 ///////////////////////////////////////////////////////////
+ResourceSupplyConnectedByEmpire::ResourceSupplyConnectedByEmpire(
+    ValueRef::ValueRefBase<int>* empire_id, ConditionBase* condition) :
+    ConditionBase(),
+    m_empire_id(empire_id),
+    m_condition(condition)
+{}
+
 ResourceSupplyConnectedByEmpire::~ResourceSupplyConnectedByEmpire() {
-    delete m_empire_id;
     delete m_condition;
 }
 
@@ -8567,17 +8784,8 @@ ValueTest::ValueTest(ValueRef::ValueRefBase<int>* value_ref1,
     //DebugLogger() << "ValueTest(double)";
 }
 
-ValueTest::~ValueTest() {
-    delete m_value_ref1;
-    delete m_value_ref2;
-    delete m_value_ref3;
-    delete m_string_value_ref1;
-    delete m_string_value_ref2;
-    delete m_string_value_ref3;
-    delete m_int_value_ref1;
-    delete m_int_value_ref2;
-    delete m_int_value_ref3;
-}
+ValueTest::~ValueTest()
+{}
 
 bool ValueTest::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -8628,7 +8836,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
 
         if (m_value_ref1) {
             float val1, val2, val3;
-            passed = /*m_value_ref1 &&*/ m_value_ref2;
+            passed = /*m_value_ref1 &&*/ m_value_ref2.get();
             if (passed) {
                 val1 = m_value_ref1->Eval(local_context);
                 val2 = m_value_ref2->Eval(local_context);
@@ -8641,7 +8849,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
 
         } else if (m_string_value_ref1) {
             std::string val1, val2, val3;
-            passed = /*m_string_value_ref1 &&*/ m_string_value_ref2;
+            passed = /*m_string_value_ref1 &&*/ m_string_value_ref2.get();
             if (passed) {
                 val1 = m_string_value_ref1->Eval(local_context);
                 val2 = m_string_value_ref2->Eval(local_context);
@@ -8654,7 +8862,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
 
         } else if (m_int_value_ref1) {
             int val1, val2, val3;
-            passed = /*m_int_value_ref1 &&*/ m_int_value_ref2;
+            passed = /*m_int_value_ref1 &&*/ m_int_value_ref2.get();
             if (passed) {
                 val1 = m_int_value_ref1->Eval(local_context);
                 val2 = m_int_value_ref2->Eval(local_context);
@@ -8945,10 +9153,15 @@ namespace {
     }
 }
 
-Location::~Location() {
-    delete m_name1;
-    delete m_name2;
-}
+Location::Location(ContentType content_type, ValueRef::ValueRefBase<std::string>* name1,
+                   ValueRef::ValueRefBase<std::string>* name2) :
+    ConditionBase(),
+    m_name1(name1),
+    m_name2(name2),
+    m_content_type(content_type)
+{}
+
+Location::~Location() {}
 
 bool Location::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
