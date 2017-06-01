@@ -176,31 +176,37 @@ EffectsGroup::EffectsGroup(Condition::ConditionBase* scope, Condition::Condition
     m_scope(scope),
     m_activation(activation),
     m_stacking_group(stacking_group),
-    m_effects(effects),
+    m_effects(),
     m_accounting_label(accounting_label),
     m_priority(priority),
     m_description(description)
-{}
-
-EffectsGroup::~EffectsGroup() {
-    for (EffectBase* effect : m_effects) {
-        delete effect;
-    }
+{
+    for (auto& effect : effects)
+        m_effects.emplace_back(effect);
 }
 
-void EffectsGroup::Execute(const TargetsCauses& targets_causes,
-                           AccountingMap* accounting_map,
+EffectsGroup::~EffectsGroup()
+{}
+
+void EffectsGroup::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
                            bool only_meter_effects, bool only_appearance_effects,
                            bool include_empire_meter_effects,
                            bool only_generate_sitrep_effects) const
 {
     // execute each effect of the group one by one, unless filtered by flags
-    for (EffectBase* effect : m_effects) {
+    for (auto& effect : m_effects) {
         effect->Execute(targets_causes, accounting_map,
                         only_meter_effects, only_appearance_effects,
                         include_empire_meter_effects,
                         only_generate_sitrep_effects);
     }
+}
+
+const std::vector<EffectBase*>  EffectsGroup::EffectsList() const {
+    std::vector<EffectBase*> retval(m_effects.size());
+    std::transform(m_effects.begin(), m_effects.end(), retval.begin(),
+                   [](const std::unique_ptr<EffectBase>& xx) {return xx.get();});
+    return retval;
 }
 
 const std::string& EffectsGroup::GetDescription() const
@@ -229,7 +235,7 @@ std::string EffectsGroup::Dump() const {
     } else {
         retval += DumpIndent() + "effects = [\n";
         ++g_indent;
-        for (EffectBase* effect : m_effects) {
+        for (auto& effect : m_effects) {
             retval += effect->Dump();
         }
         --g_indent;
@@ -240,7 +246,7 @@ std::string EffectsGroup::Dump() const {
 }
 
 bool EffectsGroup::HasMeterEffects() const {
-    for (EffectBase* effect : m_effects) {
+    for (auto& effect : m_effects) {
         if (effect->IsMeterEffect())
             return true;
     }
@@ -248,7 +254,7 @@ bool EffectsGroup::HasMeterEffects() const {
 }
 
 bool EffectsGroup::HasAppearanceEffects() const {
-    for (EffectBase* effect : m_effects) {
+    for (auto& effect : m_effects) {
         if (effect->IsAppearanceEffect())
             return true;
     }
@@ -256,7 +262,7 @@ bool EffectsGroup::HasAppearanceEffects() const {
 }
 
 bool EffectsGroup::HasSitrepEffects() const {
-    for (EffectBase* effect : m_effects) {
+    for (auto& effect : m_effects) {
         if (effect->IsSitrepEffect())
             return true;
     }
@@ -268,7 +274,7 @@ void EffectsGroup::SetTopLevelContent(const std::string& content_name) {
         m_scope->SetTopLevelContent(content_name);
     if (m_activation)
         m_activation->SetTopLevelContent(content_name);
-    for (EffectBase* effect : m_effects) {
+    for (auto& effect : m_effects) {
         effect->SetTopLevelContent(content_name);
     }
 }
@@ -1349,15 +1355,14 @@ CreatePlanet::CreatePlanet(ValueRef::ValueRefBase<PlanetType>* type,
     m_type(type),
     m_size(size),
     m_name(name),
-    m_effects_to_apply_after(effects_to_apply_after)
-{}
-
-CreatePlanet::~CreatePlanet() {
-    for (EffectBase* effect : m_effects_to_apply_after) {
-        delete effect;
-    }
-    m_effects_to_apply_after.clear();
+    m_effects_to_apply_after()
+{
+    for (auto& effect : effects_to_apply_after)
+        m_effects_to_apply_after.emplace_back(effect);
 }
+
+CreatePlanet::~CreatePlanet()
+{}
 
 void CreatePlanet::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
@@ -1412,7 +1417,7 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
     // apply after-creation effects
     ScriptingContext local_context = context;
     local_context.effect_target = planet;
-    for (EffectBase* effect : m_effects_to_apply_after) {
+    for (auto& effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->Execute(local_context);
@@ -1437,7 +1442,7 @@ void CreatePlanet::SetTopLevelContent(const std::string& content_name) {
         m_size->SetTopLevelContent(content_name);
     if (m_name)
         m_name->SetTopLevelContent(content_name);
-    for (EffectBase* effect : m_effects_to_apply_after) {
+    for (auto& effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->SetTopLevelContent(content_name);
@@ -1466,15 +1471,14 @@ CreateBuilding::CreateBuilding(ValueRef::ValueRefBase<std::string>* building_typ
                                const std::vector<EffectBase*>& effects_to_apply_after) :
     m_building_type_name(building_type_name),
     m_name(name),
-    m_effects_to_apply_after(effects_to_apply_after)
-{}
-
-CreateBuilding::~CreateBuilding() {
-    for (EffectBase* effect : m_effects_to_apply_after) {
-        delete effect;
-    }
-    m_effects_to_apply_after.clear();
+    m_effects_to_apply_after()
+{
+    for (auto& effect : effects_to_apply_after)
+        m_effects_to_apply_after.emplace_back(effect);
 }
+
+CreateBuilding::~CreateBuilding()
+{}
 
 void CreateBuilding::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
@@ -1527,7 +1531,7 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
     // apply after-creation effects
     ScriptingContext local_context = context;
     local_context.effect_target = building;
-    for (EffectBase* effect : m_effects_to_apply_after) {
+    for (auto& effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->Execute(local_context);
@@ -1548,7 +1552,7 @@ void CreateBuilding::SetTopLevelContent(const std::string& content_name) {
         m_building_type_name->SetTopLevelContent(content_name);
     if (m_name)
         m_name->SetTopLevelContent(content_name);
-    for (EffectBase* effect : m_effects_to_apply_after) {
+    for (auto& effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->SetTopLevelContent(content_name);
@@ -1581,8 +1585,11 @@ CreateShip::CreateShip(ValueRef::ValueRefBase<std::string>* predefined_ship_desi
     m_empire_id(empire_id),
     m_species_name(species_name),
     m_name(ship_name),
-    m_effects_to_apply_after(effects_to_apply_after)
-{}
+    m_effects_to_apply_after()
+{
+    for (auto& effect : effects_to_apply_after)
+        m_effects_to_apply_after.emplace_back(effect);
+}
 
 CreateShip::CreateShip(ValueRef::ValueRefBase<int>* ship_design_id,
                        ValueRef::ValueRefBase<int>* empire_id,
@@ -1594,15 +1601,14 @@ CreateShip::CreateShip(ValueRef::ValueRefBase<int>* ship_design_id,
     m_empire_id(empire_id),
     m_species_name(species_name),
     m_name(ship_name),
-    m_effects_to_apply_after(effects_to_apply_after)
-{}
-
-CreateShip::~CreateShip() {
-    for (EffectBase* effect : m_effects_to_apply_after) {
-        delete effect;
-    }
-    m_effects_to_apply_after.clear();
+    m_effects_to_apply_after()
+{
+    for (auto& effect : effects_to_apply_after)
+        m_effects_to_apply_after.emplace_back(effect);
 }
+
+CreateShip::~CreateShip()
+{}
 
 void CreateShip::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
@@ -1697,7 +1703,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     // apply after-creation effects
     ScriptingContext local_context = context;
     local_context.effect_target = ship;
-    for (EffectBase* effect : m_effects_to_apply_after) {
+    for (auto& effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->Execute(local_context);
@@ -1732,7 +1738,7 @@ void CreateShip::SetTopLevelContent(const std::string& content_name) {
         m_species_name->SetTopLevelContent(content_name);
     if (m_name)
         m_name->SetTopLevelContent(content_name);
-    for (EffectBase* effect : m_effects_to_apply_after) {
+    for (auto& effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->SetTopLevelContent(content_name);
@@ -1767,8 +1773,11 @@ CreateField::CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
     m_y(nullptr),
     m_size(size),
     m_name(name),
-    m_effects_to_apply_after(effects_to_apply_after)
-{}
+    m_effects_to_apply_after()
+{
+    for (auto& effect : effects_to_apply_after)
+        m_effects_to_apply_after.emplace_back(effect);
+}
 
 CreateField::CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
                          ValueRef::ValueRefBase<double>* x,
@@ -1781,15 +1790,14 @@ CreateField::CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
     m_y(y),
     m_size(size),
     m_name(name),
-    m_effects_to_apply_after(effects_to_apply_after)
-{}
-
-CreateField::~CreateField() {
-    for (EffectBase* effect : m_effects_to_apply_after) {
-        delete effect;
-    }
-    m_effects_to_apply_after.clear();
+    m_effects_to_apply_after()
+{
+    for (auto& effect : effects_to_apply_after)
+        m_effects_to_apply_after.emplace_back(effect);
 }
+
+CreateField::~CreateField()
+{}
 
 void CreateField::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
@@ -1855,7 +1863,7 @@ void CreateField::Execute(const ScriptingContext& context) const {
     // apply after-creation effects
     ScriptingContext local_context = context;
     local_context.effect_target = field;
-    for (EffectBase* effect : m_effects_to_apply_after) {
+    for (auto& effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->Execute(local_context);
@@ -1889,7 +1897,7 @@ void CreateField::SetTopLevelContent(const std::string& content_name) {
         m_size->SetTopLevelContent(content_name);
     if (m_name)
         m_name->SetTopLevelContent(content_name);
-    for (EffectBase* effect : m_effects_to_apply_after) {
+    for (auto& effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->SetTopLevelContent(content_name);
@@ -1924,8 +1932,11 @@ CreateSystem::CreateSystem(ValueRef::ValueRefBase< ::StarType>* type,
     m_x(x),
     m_y(y),
     m_name(name),
-    m_effects_to_apply_after(effects_to_apply_after)
-{}
+    m_effects_to_apply_after()
+{
+    for (auto& effect : effects_to_apply_after)
+        m_effects_to_apply_after.emplace_back(effect);
+}
 
 CreateSystem::CreateSystem(ValueRef::ValueRefBase<double>* x,
                            ValueRef::ValueRefBase<double>* y,
@@ -1935,15 +1946,14 @@ CreateSystem::CreateSystem(ValueRef::ValueRefBase<double>* x,
     m_x(x),
     m_y(y),
     m_name(name),
-    m_effects_to_apply_after(effects_to_apply_after)
-{}
-
-CreateSystem::~CreateSystem() {
-    for (EffectBase* effect : m_effects_to_apply_after) {
-        delete effect;
-    }
-    m_effects_to_apply_after.clear();
+    m_effects_to_apply_after()
+{
+    for (auto& effect : effects_to_apply_after)
+        m_effects_to_apply_after.emplace_back(effect);
 }
+
+CreateSystem::~CreateSystem()
+{}
 
 void CreateSystem::Execute(const ScriptingContext& context) const {
     // pick a star type
@@ -1982,7 +1992,7 @@ void CreateSystem::Execute(const ScriptingContext& context) const {
     // apply after-creation effects
     ScriptingContext local_context = context;
     local_context.effect_target = system;
-    for (EffectBase* effect : m_effects_to_apply_after) {
+    for (auto& effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->Execute(local_context);
@@ -2012,7 +2022,7 @@ void CreateSystem::SetTopLevelContent(const std::string& content_name) {
         m_type->SetTopLevelContent(content_name);
     if (m_name)
         m_name->SetTopLevelContent(content_name);
-    for (EffectBase* effect : m_effects_to_apply_after) {
+    for (auto& effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->SetTopLevelContent(content_name);
@@ -3259,13 +3269,18 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              bool stringtable_lookup) :
     m_message_string(message_string),
     m_icon(icon),
-    m_message_parameters(message_parameters),
+    m_message_parameters(),
     m_recipient_empire_id(recipient_empire_id),
     m_condition(nullptr),
     m_affiliation(affiliation),
     m_label(label),
     m_stringtable_lookup(stringtable_lookup)
-{}
+{
+    for (auto& message_parameter : message_parameters)
+        m_message_parameters.emplace_back(
+            message_parameter.first,
+            std::unique_ptr<ValueRef::ValueRefBase<std::string>>(message_parameter.second));
+}
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
@@ -3276,13 +3291,18 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              bool stringtable_lookup) :
     m_message_string(message_string),
     m_icon(icon),
-    m_message_parameters(message_parameters),
+    m_message_parameters(),
     m_recipient_empire_id(nullptr),
     m_condition(condition),
     m_affiliation(affiliation),
     m_label(label),
     m_stringtable_lookup(stringtable_lookup)
-{}
+{
+    for (auto& message_parameter : message_parameters)
+        m_message_parameters.emplace_back(
+            message_parameter.first,
+            std::unique_ptr<ValueRef::ValueRefBase<std::string>>(message_parameter.second));
+}
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
                                              const MessageParams& message_parameters,
@@ -3291,19 +3311,21 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, 
                                              bool stringtable_lookup):
     m_message_string(message_string),
     m_icon(icon),
-    m_message_parameters(message_parameters),
+    m_message_parameters(),
     m_recipient_empire_id(nullptr),
     m_condition(),
     m_affiliation(affiliation),
     m_label(label),
     m_stringtable_lookup(stringtable_lookup)
-{}
-
-GenerateSitRepMessage::~GenerateSitRepMessage() {
-    for (auto& entry : m_message_parameters) {
-        delete entry.second;
-    }
+{
+    for (auto& message_parameter : message_parameters)
+        m_message_parameters.emplace_back(
+            message_parameter.first,
+            std::unique_ptr<ValueRef::ValueRefBase<std::string>>(message_parameter.second));
 }
+
+GenerateSitRepMessage::~GenerateSitRepMessage()
+{}
 
 void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
     int recipient_id = ALL_EMPIRES;
@@ -3319,7 +3341,7 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
 
     // evaluate all parameter valuerefs so they can be substituted into sitrep template
     std::vector<std::pair<std::string, std::string>> parameter_tag_values;
-    for (auto& entry : m_message_parameters) {
+    for (const auto& entry : m_message_parameters) {
         parameter_tag_values.push_back(std::make_pair(entry.first, entry.second->Eval(context)));
 
         // special case for ship designs: make sure sitrep recipient knows about the design
@@ -3485,6 +3507,14 @@ unsigned int GenerateSitRepMessage::GetCheckSum() const {
     return retval;
 }
 
+Effect::GenerateSitRepMessage::MessageParams GenerateSitRepMessage::MessageParameters() const {
+    std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>> retval(m_message_parameters.size());
+    std::transform(m_message_parameters.begin(), m_message_parameters.end(), retval.begin(),
+                   [](const std::pair<std::string, std::unique_ptr<ValueRef::ValueRefBase<std::string>>>& xx) {
+                       return std::make_pair(xx.first, xx.second.get());
+                   });
+    return retval;
+}
 
 ///////////////////////////////////////////////////////////
 // SetOverlayTexture                                     //
@@ -3728,21 +3758,26 @@ Conditional::Conditional(Condition::ConditionBase* target_condition,
                          const std::vector<EffectBase*>& true_effects,
                          const std::vector<EffectBase*>& false_effects) :
     m_target_condition(target_condition),
-    m_true_effects(true_effects),
-    m_false_effects(false_effects)
-{}
+    m_true_effects(),
+    m_false_effects()
+{
+    for (auto& effect : true_effects)
+        m_true_effects.emplace_back(effect);
+    for (auto& effect : false_effects)
+        m_false_effects.emplace_back(effect);
+}
 
 void Conditional::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
         return;
 
     if (!m_target_condition || m_target_condition->Eval(context, context.effect_target)) {
-        for (EffectBase* effect : m_true_effects) {
+        for (auto& effect : m_true_effects) {
             if (effect)
                 effect->Execute(context);
         }
     } else {
-        for (EffectBase* effect : m_false_effects) {
+        for (auto& effect : m_false_effects) {
             if (effect)
                 effect->Execute(context);
         }
@@ -3763,17 +3798,15 @@ void Conditional::Execute(const ScriptingContext& context, const TargetSet& targ
         m_target_condition->Eval(context, matches, non_matches, Condition::MATCHES);
 
     if (!matches.empty() && !m_true_effects.empty()) {
-        Effect::TargetSet& match_targets =
-            *reinterpret_cast<Effect::TargetSet*>(&matches);
-        for (EffectBase* effect : m_true_effects) {
+        Effect::TargetSet& match_targets = *reinterpret_cast<Effect::TargetSet*>(&matches);
+        for (auto& effect : m_true_effects) {
             if (effect)
                 effect->Execute(context, match_targets);
         }
     }
     if (!non_matches.empty() && !m_false_effects.empty()) {
-        Effect::TargetSet& non_match_targets =
-            *reinterpret_cast<Effect::TargetSet*>(&non_matches);
-        for (EffectBase* effect : m_false_effects) {
+        Effect::TargetSet& non_match_targets = *reinterpret_cast<Effect::TargetSet*>(&non_matches);
+        for (auto& effect : m_false_effects) {
             if (effect)
                 effect->Execute(context, non_match_targets);
         }
@@ -3802,7 +3835,7 @@ void Conditional::Execute(const ScriptingContext& context,
     if (!matches.empty() && !m_true_effects.empty()) {
         Effect::TargetSet& match_targets =
             *reinterpret_cast<Effect::TargetSet*>(&matches);
-        for (EffectBase* effect : m_true_effects) {
+        for (const auto& effect : m_true_effects) {
             effect->Execute(context, match_targets, accounting_map,
                             effect_cause,
                             only_meter_effects, only_appearance_effects,
@@ -3813,7 +3846,7 @@ void Conditional::Execute(const ScriptingContext& context,
     if (!non_matches.empty() && !m_false_effects.empty()) {
         Effect::TargetSet& non_match_targets =
             *reinterpret_cast<Effect::TargetSet*>(&non_matches);
-        for (EffectBase* effect : m_false_effects) {
+        for (const auto& effect : m_false_effects) {
             effect->Execute(context, non_match_targets, accounting_map,
                             effect_cause,
                             only_meter_effects, only_appearance_effects,
@@ -3841,7 +3874,7 @@ std::string Conditional::Dump() const {
     } else {
         retval += DumpIndent() + "effects = [\n";
         ++g_indent;
-        for (EffectBase* effect : m_true_effects) {
+        for (auto& effect : m_true_effects) {
             retval += effect->Dump();
         }
         --g_indent;
@@ -3857,7 +3890,7 @@ std::string Conditional::Dump() const {
     } else {
         retval += DumpIndent() + "else = [\n";
         ++g_indent;
-        for (EffectBase* effect : m_false_effects) {
+        for (auto& effect : m_false_effects) {
             retval += effect->Dump();
         }
         --g_indent;
@@ -3869,11 +3902,11 @@ std::string Conditional::Dump() const {
 }
 
 bool Conditional::IsMeterEffect() const {
-    for (EffectBase* effect : m_true_effects) {
+    for (auto& effect : m_true_effects) {
         if (effect->IsMeterEffect())
             return true;
     }
-    for (EffectBase* effect : m_false_effects) {
+    for (auto& effect : m_false_effects) {
         if (effect->IsMeterEffect())
             return true;
     }
@@ -3881,11 +3914,11 @@ bool Conditional::IsMeterEffect() const {
 }
 
 bool Conditional::IsAppearanceEffect() const {
-    for (EffectBase* effect : m_true_effects) {
+    for (auto& effect : m_true_effects) {
         if (effect->IsAppearanceEffect())
             return true;
     }
-    for (EffectBase* effect : m_false_effects) {
+    for (auto& effect : m_false_effects) {
         if (effect->IsAppearanceEffect())
             return true;
     }
@@ -3893,11 +3926,11 @@ bool Conditional::IsAppearanceEffect() const {
 }
 
 bool Conditional::IsSitrepEffect() const {
-    for (EffectBase* effect : m_true_effects) {
+    for (auto& effect : m_true_effects) {
         if (effect->IsSitrepEffect())
             return true;
     }
-    for (EffectBase* effect : m_false_effects) {
+    for (auto& effect : m_false_effects) {
         if (effect->IsSitrepEffect())
             return true;
     }
@@ -3907,10 +3940,10 @@ bool Conditional::IsSitrepEffect() const {
 void Conditional::SetTopLevelContent(const std::string& content_name) {
     if (m_target_condition)
         m_target_condition->SetTopLevelContent(content_name);
-    for (EffectBase* effect : m_true_effects)
+    for (auto& effect : m_true_effects)
         if (effect)
             (effect)->SetTopLevelContent(content_name);
-    for (EffectBase* effect : m_false_effects)
+    for (auto& effect : m_false_effects)
         if (effect)
             (effect)->SetTopLevelContent(content_name);
 }

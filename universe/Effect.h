@@ -56,7 +56,7 @@ public:
     const std::string&              StackingGroup() const       { return m_stacking_group; }
     Condition::ConditionBase*       Scope() const               { return m_scope.get(); }
     Condition::ConditionBase*       Activation() const          { return m_activation.get(); }
-    const std::vector<EffectBase*>& EffectsList() const         { return m_effects; }
+    const std::vector<EffectBase*>  EffectsList() const;
     const std::string&              GetDescription() const;
     const std::string&              AccountingLabel() const     { return m_accounting_label; }
     int                             Priority() const            { return m_priority; }
@@ -73,7 +73,7 @@ protected:
     std::unique_ptr<Condition::ConditionBase>   m_scope;
     std::unique_ptr<Condition::ConditionBase>   m_activation;
     std::string                 m_stacking_group;
-    std::vector<EffectBase*>    m_effects;
+    std::vector<std::unique_ptr<EffectBase>>    m_effects;
     std::string                 m_accounting_label;
     int                         m_priority;
     std::string                 m_description;
@@ -553,7 +553,7 @@ private:
     std::unique_ptr<ValueRef::ValueRefBase<PlanetType>> m_type;
     std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>> m_size;
     std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
-    std::vector<EffectBase*> m_effects_to_apply_after;
+    std::vector<std::unique_ptr<EffectBase>> m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -580,7 +580,7 @@ public:
 private:
     std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_building_type_name;
     std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
-    std::vector<EffectBase*> m_effects_to_apply_after;
+    std::vector<std::unique_ptr<EffectBase>> m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -620,7 +620,7 @@ private:
     std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
     std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_species_name;
     std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
-    std::vector<EffectBase*> m_effects_to_apply_after;
+    std::vector<std::unique_ptr<EffectBase>> m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -659,7 +659,7 @@ private:
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_y;
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_size;
     std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
-    std::vector<EffectBase*> m_effects_to_apply_after;
+    std::vector<std::unique_ptr<EffectBase>> m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -696,7 +696,7 @@ private:
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_x;
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_y;
     std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
-    std::vector<EffectBase*> m_effects_to_apply_after;
+    std::vector<std::unique_ptr<EffectBase>> m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1119,8 +1119,7 @@ public:
     const std::string& Icon() const
     { return m_icon; }
 
-    MessageParams MessageParameters()
-    { return m_message_parameters; }
+    MessageParams MessageParameters() const;
 
     ValueRef::ValueRefBase<int>* RecipientID() const
     { return m_recipient_empire_id.get(); }
@@ -1136,7 +1135,7 @@ public:
 private:
     std::string m_message_string;
     std::string m_icon;
-    MessageParams m_message_parameters;
+    std::vector<std::pair<std::string, std::unique_ptr<ValueRef::ValueRefBase<std::string>>>> m_message_parameters;
     std::unique_ptr<ValueRef::ValueRefBase<int>> m_recipient_empire_id;
     std::unique_ptr<Condition::ConditionBase> m_condition;
     EmpireAffiliationType m_affiliation;
@@ -1281,9 +1280,9 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<Condition::ConditionBase> m_target_condition;   // condition to apply to each target object to determine which effects to execute on it
-    std::vector<EffectBase*> m_true_effects;        // effects to execute if m_target_condition matches target object
-    std::vector<EffectBase*> m_false_effects;       // effects to execute if m_target_condition does not match target object
+    std::unique_ptr<Condition::ConditionBase> m_target_condition; // condition to apply to each target object to determine which effects to execute
+    std::vector<std::unique_ptr<EffectBase>> m_true_effects;      // effects to execute if m_target_condition matches target object
+    std::vector<std::unique_ptr<EffectBase>> m_false_effects;     // effects to execute if m_target_condition does not match target object
 
     friend class boost::serialization::access;
     template <class Archive>
