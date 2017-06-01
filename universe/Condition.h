@@ -1862,6 +1862,7 @@ private:
 struct FO_COMMON_API OwnerHasBuildingTypeAvailable : public ConditionBase {
     explicit OwnerHasBuildingTypeAvailable(const std::string& name);
 
+    explicit OwnerHasBuildingTypeAvailable(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
     explicit OwnerHasBuildingTypeAvailable(ValueRef::ValueRefBase<std::string>* name);
 
     virtual ~OwnerHasBuildingTypeAvailable();
@@ -1899,6 +1900,7 @@ private:
 struct FO_COMMON_API OwnerHasShipDesignAvailable : public ConditionBase {
     explicit OwnerHasShipDesignAvailable(int id);
 
+    explicit OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRefBase<int>>&& id);
     explicit OwnerHasShipDesignAvailable(ValueRef::ValueRefBase<int>* id);
 
     virtual ~OwnerHasShipDesignAvailable();
@@ -1936,6 +1938,7 @@ private:
 struct FO_COMMON_API OwnerHasShipPartAvailable : public ConditionBase {
     explicit OwnerHasShipPartAvailable(const std::string& name);
 
+    explicit OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
     explicit OwnerHasShipPartAvailable(ValueRef::ValueRefBase<std::string>* name);
 
     virtual ~OwnerHasShipPartAvailable();
@@ -1971,6 +1974,7 @@ private:
 
 /** Matches all objects that are visible to at least one Empire in \a empire_ids. */
 struct FO_COMMON_API VisibleToEmpire : public ConditionBase {
+    explicit VisibleToEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
     explicit VisibleToEmpire(ValueRef::ValueRefBase<int>* empire_id);
 
     virtual ~VisibleToEmpire();
@@ -2009,6 +2013,8 @@ private:
   * down considerably if overused.  It is best to use Conditions that yield
   * relatively few matches. */
 struct FO_COMMON_API WithinDistance : public ConditionBase {
+    WithinDistance(std::unique_ptr<ValueRef::ValueRefBase<double>>&& distance,
+                   std::unique_ptr<ConditionBase>&& condition);
     WithinDistance(ValueRef::ValueRefBase<double>* distance, ConditionBase* condition);
 
     virtual ~WithinDistance();
@@ -2048,6 +2054,8 @@ private:
   * down considerably if overused.  It is best to use Conditions that yield
   * relatively few matches. */
 struct FO_COMMON_API WithinStarlaneJumps : public ConditionBase {
+    WithinStarlaneJumps(std::unique_ptr<ValueRef::ValueRefBase<int>>&& jumps,
+                        std::unique_ptr<ConditionBase>&& condition);
     WithinStarlaneJumps(ValueRef::ValueRefBase<int>* jumps, ConditionBase* condition);
 
     virtual ~WithinStarlaneJumps();
@@ -2089,6 +2097,11 @@ private:
   * any other lanes, pass too close to another system, or be too close in angle
   * to an existing lane. */
 struct FO_COMMON_API CanAddStarlaneConnection :  ConditionBase {
+    explicit CanAddStarlaneConnection(std::unique_ptr<ConditionBase>&& condition) :
+        ConditionBase(),
+        m_condition(std::move(condition))
+    {}
+
     explicit CanAddStarlaneConnection(ConditionBase* condition) :
         ConditionBase(),
         m_condition(condition)
@@ -2128,6 +2141,7 @@ private:
 /** Matches systems that have been explored by at least one Empire
   * in \a empire_ids. */
 struct FO_COMMON_API ExploredByEmpire : public ConditionBase {
+    explicit ExploredByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
     explicit ExploredByEmpire(ValueRef::ValueRefBase<int>* empire_id);
 
     virtual ~ExploredByEmpire();
@@ -2242,6 +2256,7 @@ private:
 /** Matches objects that are in systems that can be fleet supplied by the
   * empire with id \a empire_id */
 struct FO_COMMON_API FleetSupplyableByEmpire : public ConditionBase {
+    explicit FleetSupplyableByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
     explicit FleetSupplyableByEmpire(ValueRef::ValueRefBase<int>* empire_id);
 
     virtual ~FleetSupplyableByEmpire();
@@ -2279,6 +2294,8 @@ private:
   * to at least one object that meets \a condition using the resource-sharing
   * network of the empire with id \a empire_id */
 struct FO_COMMON_API ResourceSupplyConnectedByEmpire : public ConditionBase {
+    ResourceSupplyConnectedByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
+                                    std::unique_ptr<ConditionBase>&& condition);
     ResourceSupplyConnectedByEmpire(ValueRef::ValueRefBase<int>* empire_id, ConditionBase* condition);
 
     virtual ~ResourceSupplyConnectedByEmpire();
@@ -2380,6 +2397,7 @@ private:
 /** Matches the objects that have been targeted for bombardment by at least one
   * object that matches \a m_by_object_condition. */
 struct FO_COMMON_API OrderedBombarded : public ConditionBase {
+    OrderedBombarded(std::unique_ptr<ConditionBase>&& by_object_condition);
     OrderedBombarded(ConditionBase* by_object_condition);
 
     virtual ~OrderedBombarded();
@@ -2416,6 +2434,12 @@ private:
 /** Matches all objects if the comparisons between values of ValueRefs meet the
   * specified comparison types. */
 struct FO_COMMON_API ValueTest : public ConditionBase {
+    ValueTest(std::unique_ptr<ValueRef::ValueRefBase<double>>&& value_ref1,
+              ComparisonType comp1,
+              std::unique_ptr<ValueRef::ValueRefBase<double>>&& value_ref2,
+              ComparisonType comp2 = INVALID_COMPARISON,
+              std::unique_ptr<ValueRef::ValueRefBase<double>>&& value_ref3 = nullptr);
+
     ValueTest(ValueRef::ValueRefBase<double>* value_ref1,
               ComparisonType comp1,
               ValueRef::ValueRefBase<double>* value_ref2,
@@ -2480,6 +2504,9 @@ private:
   * content.  */
 struct FO_COMMON_API Location : public ConditionBase {
 public:
+    Location(ContentType content_type,
+             std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name1,
+             std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name2 = nullptr);
     Location(ContentType content_type, ValueRef::ValueRefBase<std::string>* name1,
              ValueRef::ValueRefBase<std::string>* name2 = nullptr);
 
@@ -2518,6 +2545,7 @@ private:
 
 /** Matches all objects that match every Condition in \a operands. */
 struct FO_COMMON_API And : public ConditionBase {
+    And(std::vector<std::unique_ptr<ConditionBase>>&& operands);
     And(const std::vector<ConditionBase*>& operands);
 
     virtual ~And();
@@ -2556,6 +2584,7 @@ private:
 
 /** Matches all objects that match at least one Condition in \a operands. */
 struct FO_COMMON_API Or : public ConditionBase {
+    Or(std::vector<std::unique_ptr<ConditionBase>>&& operands);
     Or(const std::vector<ConditionBase*>& operands);
 
     virtual ~Or();
@@ -2589,6 +2618,7 @@ private:
 
 /** Matches all objects that do not match the Condition \a operand. */
 struct FO_COMMON_API Not : public ConditionBase {
+    Not(std::unique_ptr<ConditionBase>&& operand);
     Not(ConditionBase* operand);
 
     virtual ~Not();
@@ -2623,6 +2653,12 @@ private:
 /** Matches whatever its subcondition matches, but has a customized description
   * string that is returned by Description() by looking up in the stringtable. */
 struct FO_COMMON_API Described : public ConditionBase {
+    Described(std::unique_ptr<ConditionBase>&& condition, const std::string& desc_stringtable_key) :
+        ConditionBase(),
+            m_condition(std::move(condition)),
+        m_desc_stringtable_key(desc_stringtable_key)
+    {}
+
     Described(ConditionBase* condition, const std::string& desc_stringtable_key) :
         ConditionBase(),
         m_condition(condition),

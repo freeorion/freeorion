@@ -7056,6 +7056,11 @@ OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(const std::string& 
     m_name(new ValueRef::Constant<std::string>(name))
 {}
 
+OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
+    ConditionBase(),
+    m_name(std::move(name))
+{}
+
 OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(ValueRef::ValueRefBase<std::string>* name) :
     ConditionBase(),
     m_name(name)
@@ -7176,6 +7181,11 @@ OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(int id) :
     ConditionBase(),
     // TODO: Use std::make_unique when adopting C++14
     m_id(new ValueRef::Constant<int>(id))
+{}
+
+OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRefBase<int>>&& id) :
+    ConditionBase(),
+    m_id(std::move(id))
 {}
 
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(ValueRef::ValueRefBase<int>* id) :
@@ -7300,6 +7310,11 @@ OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(const std::string& name) :
     m_name(new ValueRef::Constant<std::string>(name))
 {}
 
+OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
+    ConditionBase(),
+    m_name(std::move(name))
+{}
+
 OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(ValueRef::ValueRefBase<std::string>* name) :
     ConditionBase(),
     m_name(name)
@@ -7417,6 +7432,11 @@ unsigned int OwnerHasShipPartAvailable::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // VisibleToEmpire                                       //
 ///////////////////////////////////////////////////////////
+VisibleToEmpire::VisibleToEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id) :
+    ConditionBase(),
+    m_empire_id(std::move(empire_id))
+{}
+
 VisibleToEmpire::VisibleToEmpire(ValueRef::ValueRefBase<int>* empire_id) :
     ConditionBase(),
     m_empire_id(empire_id)
@@ -7530,6 +7550,13 @@ unsigned int VisibleToEmpire::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // WithinDistance                                        //
 ///////////////////////////////////////////////////////////
+WithinDistance::WithinDistance(std::unique_ptr<ValueRef::ValueRefBase<double>>&& distance,
+                               std::unique_ptr<ConditionBase>&& condition) :
+    ConditionBase(),
+    m_distance(std::move(distance)),
+    m_condition(std::move(condition))
+{}
+
 WithinDistance::WithinDistance(ValueRef::ValueRefBase<double>* distance, ConditionBase* condition) :
     ConditionBase(),
     m_distance(distance),
@@ -7669,6 +7696,13 @@ unsigned int WithinDistance::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // WithinStarlaneJumps                                   //
 ///////////////////////////////////////////////////////////
+WithinStarlaneJumps::WithinStarlaneJumps(std::unique_ptr<ValueRef::ValueRefBase<int>>&& jumps,
+                                         std::unique_ptr<ConditionBase>&& condition) :
+    ConditionBase(),
+    m_jumps(std::move(jumps)),
+    m_condition(std::move(condition))
+{}
+
 WithinStarlaneJumps::WithinStarlaneJumps(ValueRef::ValueRefBase<int>* jumps, ConditionBase* condition) :
     ConditionBase(),
     m_jumps(jumps),
@@ -8236,6 +8270,11 @@ unsigned int CanAddStarlaneConnection::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ExploredByEmpire                                      //
 ///////////////////////////////////////////////////////////
+ExploredByEmpire::ExploredByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id) :
+    ConditionBase(),
+    m_empire_id(std::move(empire_id))
+{}
+
 ExploredByEmpire::ExploredByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
     ConditionBase(),
     m_empire_id(empire_id)
@@ -8457,6 +8496,11 @@ unsigned int Aggressive::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // FleetSupplyableByEmpire                               //
 ///////////////////////////////////////////////////////////
+FleetSupplyableByEmpire::FleetSupplyableByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id) :
+    ConditionBase(),
+    m_empire_id(std::move(empire_id))
+{}
+
 FleetSupplyableByEmpire::FleetSupplyableByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
     ConditionBase(),
     m_empire_id(empire_id)
@@ -8582,6 +8626,14 @@ unsigned int FleetSupplyableByEmpire::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ResourceSupplyConnectedByEmpire                       //
 ///////////////////////////////////////////////////////////
+ResourceSupplyConnectedByEmpire::ResourceSupplyConnectedByEmpire(
+    std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
+    std::unique_ptr<ConditionBase>&& condition) :
+    ConditionBase(),
+    m_empire_id(std::move(empire_id)),
+    m_condition(std::move(condition))
+{}
+
 ResourceSupplyConnectedByEmpire::ResourceSupplyConnectedByEmpire(
     ValueRef::ValueRefBase<int>* empire_id, ConditionBase* condition) :
     ConditionBase(),
@@ -8889,6 +8941,11 @@ unsigned int CanProduceShips::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // OrderedBombarded                                      //
 ///////////////////////////////////////////////////////////
+OrderedBombarded::OrderedBombarded(std::unique_ptr<ConditionBase>&& by_object_condition) :
+    ConditionBase(),
+    m_by_object_condition(std::move(by_object_condition))
+{}
+
 OrderedBombarded::OrderedBombarded(ConditionBase* by_object_condition) :
     ConditionBase(),
     m_by_object_condition(by_object_condition)
@@ -9056,6 +9113,19 @@ namespace {
         }
     }
 }
+
+ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRefBase<double>>&& value_ref1,
+                     ComparisonType comp1,
+                     std::unique_ptr<ValueRef::ValueRefBase<double>>&& value_ref2,
+                     ComparisonType comp2,
+                     std::unique_ptr<ValueRef::ValueRefBase<double>>&& value_ref3) :
+    ConditionBase(),
+    m_value_ref1(std::move(value_ref1)),
+    m_value_ref2(std::move(value_ref2)),
+    m_value_ref3(std::move(value_ref3)),
+    m_compare_type1(comp1),
+    m_compare_type2(comp2)
+{}
 
 ValueTest::ValueTest(ValueRef::ValueRefBase<double>* value_ref1,
                      ComparisonType comp1,
@@ -9473,6 +9543,15 @@ namespace {
     }
 }
 
+Location::Location(ContentType content_type,
+                   std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name1,
+                   std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name2) :
+    ConditionBase(),
+    m_name1(std::move(name1)),
+    m_name2(std::move(name2)),
+    m_content_type(content_type)
+{}
+
 Location::Location(ContentType content_type, ValueRef::ValueRefBase<std::string>* name1,
                    ValueRef::ValueRefBase<std::string>* name2) :
     ConditionBase(),
@@ -9632,6 +9711,11 @@ unsigned int Location::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // And                                                   //
 ///////////////////////////////////////////////////////////
+And::And(std::vector<std::unique_ptr<ConditionBase>>&& operands) :
+    ConditionBase(),
+    m_operands(std::move(operands))
+{}
+
 And::And(const std::vector<ConditionBase*>& operands) :
     ConditionBase(),
     m_operands()
@@ -9813,6 +9897,11 @@ const std::vector<ConditionBase*> And::Operands() const {
 ///////////////////////////////////////////////////////////
 // Or                                                    //
 ///////////////////////////////////////////////////////////
+Or::Or(std::vector<std::unique_ptr<ConditionBase>>&& operands) :
+    ConditionBase(),
+    m_operands(std::move(operands))
+{}
+
 Or::Or(const std::vector<ConditionBase*>& operands) :
     ConditionBase(),
     m_operands()
@@ -9981,6 +10070,11 @@ unsigned int Or::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Not                                                   //
 ///////////////////////////////////////////////////////////
+Not::Not(std::unique_ptr<ConditionBase>&& operand) :
+    ConditionBase(),
+    m_operand(std::move(operand))
+{}
+
 Not::Not(ConditionBase* operand) :
     ConditionBase(),
     m_operand(operand)
