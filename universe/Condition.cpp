@@ -312,6 +312,14 @@ bool ConditionBase::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // Number                                                //
 ///////////////////////////////////////////////////////////
+Number::Number(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
+               std::unique_ptr<ValueRef::ValueRefBase<int>>&& high,
+               std::unique_ptr<ConditionBase>&& condition) :
+    m_low(std::move(low)),
+    m_high(std::move(high)),
+    m_condition(std::move(condition))
+{}
+
 Number::Number(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high,
                ConditionBase* condition) :
     m_low(low),
@@ -488,6 +496,12 @@ unsigned int Number::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Turn                                                  //
 ///////////////////////////////////////////////////////////
+Turn::Turn(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
+           std::unique_ptr<ValueRef::ValueRefBase<int>>&& high) :
+    m_low(std::move(low)),
+    m_high(std::move(high))
+{}
+
 Turn::Turn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high) :
     m_low(low),
     m_high(high)
@@ -639,6 +653,24 @@ unsigned int Turn::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SortedNumberOf                                        //
 ///////////////////////////////////////////////////////////
+SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRefBase<int>>&& number,
+                               std::unique_ptr<ConditionBase>&& condition) :
+    m_number(std::move(number)),
+    m_sort_key(nullptr),
+    m_sorting_method(SORT_RANDOM),
+    m_condition(std::move(condition))
+{}
+
+SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRefBase<int>>&& number,
+                               std::unique_ptr<ValueRef::ValueRefBase<double>>&& sort_key_ref,
+                               SortingMethod sorting_method,
+                               std::unique_ptr<ConditionBase>&& condition) :
+    m_number(std::move(number)),
+    m_sort_key(std::move(sort_key_ref)),
+    m_sorting_method(sorting_method),
+    m_condition(std::move(condition))
+{}
+
 SortedNumberOf::SortedNumberOf(ValueRef::ValueRefBase<int>* number,
                                ConditionBase* condition) :
     m_number(number),
@@ -1129,6 +1161,17 @@ unsigned int None::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // EmpireAffiliation                                     //
 ///////////////////////////////////////////////////////////
+EmpireAffiliation::EmpireAffiliation(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
+                                     EmpireAffiliationType affiliation) :
+    m_empire_id(std::move(empire_id)),
+    m_affiliation(affiliation)
+{}
+
+EmpireAffiliation::EmpireAffiliation(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id) :
+    m_empire_id(std::move(empire_id)),
+    m_affiliation(AFFIL_SELF)
+{}
+
 EmpireAffiliation::EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation) :
     m_empire_id(empire_id),
     m_affiliation(affiliation)
@@ -1469,6 +1512,11 @@ unsigned int Target::GetCheckSum() const {
 Homeworld::Homeworld() :
     ConditionBase(),
     m_names()
+{}
+
+Homeworld::Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names) :
+    ConditionBase(),
+    m_names(std::move(names))
 {}
 
 Homeworld::Homeworld(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
@@ -1826,6 +1874,11 @@ unsigned int Armed::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Type                                                  //
 ///////////////////////////////////////////////////////////
+Type::Type(std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>&& type) :
+    ConditionBase(),
+    m_type(std::move(type))
+{}
+
 Type::Type(ValueRef::ValueRefBase<UniverseObjectType>* type) :
     ConditionBase(),
     m_type(type)
@@ -2014,6 +2067,11 @@ unsigned int Type::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Building                                              //
 ///////////////////////////////////////////////////////////
+Building::Building(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names) :
+    ConditionBase(),
+    m_names(std::move(names))
+{}
+
 Building::Building(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
     ConditionBase(),
     m_names()
@@ -2202,6 +2260,46 @@ unsigned int Building::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // HasSpecial                                            //
 ///////////////////////////////////////////////////////////
+HasSpecial::HasSpecial() :
+    ConditionBase(),
+    m_name(nullptr),
+    m_capacity_low(nullptr),
+    m_capacity_high(nullptr),
+    m_since_turn_low(),
+    m_since_turn_high()
+{}
+
+HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
+    ConditionBase(),
+    m_name(std::move(name)),
+    m_capacity_low(nullptr),
+    m_capacity_high(nullptr),
+    m_since_turn_low(),
+    m_since_turn_high()
+{}
+
+HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+                       std::unique_ptr<ValueRef::ValueRefBase<int>>&& since_turn_low,
+                       std::unique_ptr<ValueRef::ValueRefBase<int>>&& since_turn_high) :
+    ConditionBase(),
+    m_name(std::move(name)),
+    m_capacity_low(nullptr),
+    m_capacity_high(nullptr),
+    m_since_turn_low(std::move(since_turn_low)),
+    m_since_turn_high(std::move(since_turn_high))
+{}
+
+HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+                       std::unique_ptr<ValueRef::ValueRefBase<double>>&& capacity_low,
+                       std::unique_ptr<ValueRef::ValueRefBase<double>>&& capacity_high) :
+    ConditionBase(),
+    m_name(std::move(name)),
+    m_capacity_low(std::move(capacity_low)),
+    m_capacity_high(std::move(capacity_high)),
+    m_since_turn_low(nullptr),
+    m_since_turn_high(nullptr)
+{}
+
 HasSpecial::HasSpecial(ValueRef::ValueRefBase<std::string>* name) :
     ConditionBase(),
     m_name(name),
@@ -2243,7 +2341,8 @@ HasSpecial::HasSpecial(const std::string& name) :
     m_since_turn_high(nullptr)
 {}
 
-HasSpecial::~HasSpecial() {}
+HasSpecial::~HasSpecial()
+{}
 
 bool HasSpecial::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -2459,10 +2558,20 @@ unsigned int HasSpecial::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // HasTag                                                //
 ///////////////////////////////////////////////////////////
+HasTag::HasTag() :
+    ConditionBase(),
+    m_name()
+{}
+
 HasTag::HasTag(const std::string& name) :
     ConditionBase(),
     // TODO: Use std::make_unique when adopting C++14
     m_name(new ValueRef::Constant<std::string>(name))
+{}
+
+HasTag::HasTag(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
+    ConditionBase(),
+    m_name(std::move(name))
 {}
 
 HasTag::HasTag(ValueRef::ValueRefBase<std::string>* name) :
@@ -2597,6 +2706,13 @@ unsigned int HasTag::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // CreatedOnTurn                                         //
 ///////////////////////////////////////////////////////////
+CreatedOnTurn::CreatedOnTurn(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
+                             std::unique_ptr<ValueRef::ValueRefBase<int>>&& high) :
+    ConditionBase(),
+    m_low(std::move(low)),
+    m_high(std::move(high))
+{}
+
 CreatedOnTurn::CreatedOnTurn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high) :
     ConditionBase(),
     m_low(low),

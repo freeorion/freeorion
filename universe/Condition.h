@@ -171,6 +171,9 @@ private:
   * \a condition is is >= \a low and < \a high.  Matched objects may
   * or may not themselves match the condition. */
 struct FO_COMMON_API Number : public ConditionBase {
+    Number(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
+           std::unique_ptr<ValueRef::ValueRefBase<int>>&& high,
+           std::unique_ptr<ConditionBase>&& condition);
     Number(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high,
            ConditionBase* condition);
     virtual ~Number();
@@ -208,6 +211,8 @@ private:
 
 /** Matches all objects if the current game turn is >= \a low and < \a high. */
 struct FO_COMMON_API Turn : public ConditionBase {
+    explicit Turn(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
+                  std::unique_ptr<ValueRef::ValueRefBase<int>>&& high = nullptr);
     explicit Turn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high = nullptr);
 
     virtual ~Turn();
@@ -252,11 +257,17 @@ private:
   * selected preferentially. */
 struct FO_COMMON_API SortedNumberOf : public ConditionBase {
     /** Sorts randomly, without considering a sort key. */
+    SortedNumberOf(std::unique_ptr<ValueRef::ValueRefBase<int>>&& number,
+                   std::unique_ptr<ConditionBase>&& condition);
     SortedNumberOf(ValueRef::ValueRefBase<int>* number,
                    ConditionBase* condition);
 
     /** Sorts according to the specified method, based on the key values
       * evaluated for each object. */
+    SortedNumberOf(std::unique_ptr<ValueRef::ValueRefBase<int>>&& number,
+                   std::unique_ptr<ValueRef::ValueRefBase<double>>&& sort_key_ref,
+                   SortingMethod sorting_method,
+                   std::unique_ptr<ConditionBase>&& condition);
     SortedNumberOf(ValueRef::ValueRefBase<int>* number,
                    ValueRef::ValueRefBase<double>* sort_key_ref,
                    SortingMethod sorting_method,
@@ -372,8 +383,10 @@ private:
   * (if \a exclusive == true) by an empire that has affilitation type
   * \a affilitation with Empire \a empire_id. */
 struct FO_COMMON_API EmpireAffiliation : public ConditionBase {
+    EmpireAffiliation(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id, EmpireAffiliationType affiliation);
     EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation);
 
+    explicit EmpireAffiliation(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
     explicit EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id);
 
     explicit EmpireAffiliation(EmpireAffiliationType affiliation);
@@ -521,6 +534,7 @@ private:
 struct FO_COMMON_API Homeworld : public ConditionBase {
     Homeworld();
 
+    explicit Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names);
     explicit Homeworld(const std::vector<ValueRef::ValueRefBase<std::string>*>& names);
 
     virtual ~Homeworld();
@@ -661,6 +675,7 @@ private:
 
 /** Matches all objects that are of UniverseObjectType \a type. */
 struct FO_COMMON_API Type : public ConditionBase {
+    explicit Type(std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>&& type);
     explicit Type(ValueRef::ValueRefBase<UniverseObjectType>* type);
 
     virtual ~Type();
@@ -700,6 +715,7 @@ private:
 /** Matches all Building objects that are one of the building types specified
   * in \a names. */
 struct FO_COMMON_API Building : public ConditionBase {
+    explicit Building(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names);
     explicit Building(const std::vector<ValueRef::ValueRefBase<std::string>*>& names);
 
     virtual ~Building();
@@ -738,9 +754,19 @@ private:
 
 /** Matches all objects that have an attached Special named \a name. */
 struct FO_COMMON_API HasSpecial : public ConditionBase {
+    explicit HasSpecial();
     explicit HasSpecial(const std::string& name);
 
-    explicit HasSpecial(ValueRef::ValueRefBase<std::string>* name = nullptr);
+    explicit HasSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
+    explicit HasSpecial(ValueRef::ValueRefBase<std::string>* name);
+
+    HasSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+               std::unique_ptr<ValueRef::ValueRefBase<int>>&& since_turn_low,
+               std::unique_ptr<ValueRef::ValueRefBase<int>>&& since_turn_high = nullptr);
+
+    HasSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+               std::unique_ptr<ValueRef::ValueRefBase<double>>&& capacity_low,
+               std::unique_ptr<ValueRef::ValueRefBase<double>>&& capacity_high = nullptr);
 
     HasSpecial(ValueRef::ValueRefBase<std::string>* name,
                ValueRef::ValueRefBase<int>* since_turn_low,
@@ -786,9 +812,11 @@ private:
 
 /** Matches all objects that have the tag \a tag. */
 struct FO_COMMON_API HasTag : public ConditionBase {
+    HasTag();
     explicit HasTag(const std::string& name);
 
-    explicit HasTag(ValueRef::ValueRefBase<std::string>* name = nullptr);
+    explicit HasTag(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
+    explicit HasTag(ValueRef::ValueRefBase<std::string>* name);
 
     virtual ~HasTag();
 
@@ -823,6 +851,8 @@ private:
 
 /** Matches all objects that were created on turns within the specified range. */
 struct FO_COMMON_API CreatedOnTurn : public ConditionBase {
+    CreatedOnTurn(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
+                  std::unique_ptr<ValueRef::ValueRefBase<int>>&& high);
     CreatedOnTurn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high);
 
     virtual ~CreatedOnTurn();
@@ -861,6 +891,11 @@ private:
   * \a condition.  Container objects are Systems, Planets (which contain
   * Buildings), and Fleets (which contain Ships). */
 struct FO_COMMON_API Contains : public ConditionBase {
+    Contains(std::unique_ptr<ConditionBase>&& condition) :
+        ConditionBase(),
+        m_condition(std::move(condition))
+    {}
+
     Contains(ConditionBase* condition) :
         ConditionBase(),
         m_condition(condition)
