@@ -519,15 +519,9 @@ private:
   * \a names.  If \a names is empty, matches any planet that is a homeworld for
   * any species in the current game Universe. */
 struct FO_COMMON_API Homeworld : public ConditionBase {
-    Homeworld() :
-        ConditionBase(),
-        m_names()
-    {}
+    Homeworld();
 
-    explicit Homeworld(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
-        ConditionBase(),
-        m_names(names)
-    {}
+    explicit Homeworld(const std::vector<ValueRef::ValueRefBase<std::string>*>& names);
 
     virtual ~Homeworld();
 
@@ -556,7 +550,7 @@ struct FO_COMMON_API Homeworld : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<ValueRef::ValueRefBase<std::string>*> m_names;
+    std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>> m_names;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -706,10 +700,7 @@ private:
 /** Matches all Building objects that are one of the building types specified
   * in \a names. */
 struct FO_COMMON_API Building : public ConditionBase {
-    explicit Building(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
-        ConditionBase(),
-        m_names(names)
-    {}
+    explicit Building(const std::vector<ValueRef::ValueRefBase<std::string>*>& names);
 
     virtual ~Building();
 
@@ -738,7 +729,7 @@ struct FO_COMMON_API Building : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<ValueRef::ValueRefBase<std::string>*> m_names;
+    std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>> m_names;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1032,10 +1023,7 @@ private:
   * Note that all Building objects which are on matching planets are also
   * matched. */
 struct FO_COMMON_API PlanetType : public ConditionBase {
-    PlanetType(const std::vector<ValueRef::ValueRefBase< ::PlanetType>*>& types) :
-        ConditionBase(),
-        m_types(types)
-    {}
+    PlanetType(const std::vector<ValueRef::ValueRefBase< ::PlanetType>*>& types);
 
     virtual ~PlanetType();
 
@@ -1064,7 +1052,7 @@ struct FO_COMMON_API PlanetType : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<ValueRef::ValueRefBase<::PlanetType>*> m_types;
+    std::vector<std::unique_ptr<ValueRef::ValueRefBase<::PlanetType>>> m_types;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1075,10 +1063,7 @@ private:
   * Note that all Building objects which are on matching planets are also
   * matched. */
 struct FO_COMMON_API PlanetSize : public ConditionBase {
-    PlanetSize(const std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>& sizes) :
-        ConditionBase(),
-        m_sizes(sizes)
-    {}
+    PlanetSize(const std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>& sizes);
 
     virtual ~PlanetSize();
 
@@ -1107,7 +1092,7 @@ struct FO_COMMON_API PlanetSize : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<ValueRef::ValueRefBase<::PlanetSize>*> m_sizes;
+    std::vector<std::unique_ptr<ValueRef::ValueRefBase<::PlanetSize>>> m_sizes;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1147,7 +1132,7 @@ struct FO_COMMON_API PlanetEnvironment : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<ValueRef::ValueRefBase<::PlanetEnvironment>*> m_environments;
+    std::vector<std::unique_ptr<ValueRef::ValueRefBase<::PlanetEnvironment>>> m_environments;
     std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_species_name;
 
     friend class boost::serialization::access;
@@ -1159,15 +1144,9 @@ private:
   * Note that all Building object which are on matching planets are also
   * matched. */
 struct FO_COMMON_API Species : public ConditionBase {
-    Species(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
-        ConditionBase(),
-        m_names(names)
-    {}
+    Species(const std::vector<ValueRef::ValueRefBase<std::string>*>& names);
 
-    Species() :
-        ConditionBase(),
-        m_names()
-    {}
+    Species();
 
     virtual ~Species();
 
@@ -1196,7 +1175,7 @@ struct FO_COMMON_API Species : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<ValueRef::ValueRefBase<std::string>*> m_names;
+    std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>> m_names;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1260,11 +1239,7 @@ private:
 
 /** Matches all ProdCenter objects that have one of the FocusTypes in \a foci. */
 struct FO_COMMON_API FocusType : public ConditionBase {
-    FocusType(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
-        ConditionBase(),
-        m_names(names)
-    {}
-
+    FocusType(const std::vector<ValueRef::ValueRefBase<std::string>*>& names);
     virtual ~FocusType();
 
     bool operator==(const ConditionBase& rhs) const override;
@@ -1292,7 +1267,7 @@ struct FO_COMMON_API FocusType : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<ValueRef::ValueRefBase<std::string>*> m_names;
+    std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>> m_names;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1302,10 +1277,7 @@ private:
 /** Matches all System objects that have one of the StarTypes in \a types.  Note that all objects
     in matching Systems are also matched (Ships, Fleets, Buildings, Planets, etc.). */
 struct FO_COMMON_API StarType : public ConditionBase {
-    StarType(const std::vector<ValueRef::ValueRefBase< ::StarType>*>& types) :
-        ConditionBase(),
-        m_types(types)
-    {}
+    StarType(const std::vector<ValueRef::ValueRefBase< ::StarType>*>& types);
 
     virtual ~StarType();
 
@@ -1331,7 +1303,7 @@ struct FO_COMMON_API StarType : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<ValueRef::ValueRefBase<::StarType>*> m_types;
+    std::vector<std::unique_ptr<ValueRef::ValueRefBase<::StarType>>> m_types;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2455,10 +2427,7 @@ private:
 
 /** Matches all objects that match every Condition in \a operands. */
 struct FO_COMMON_API And : public ConditionBase {
-    And(const std::vector<ConditionBase*>& operands) :
-        ConditionBase(),
-        m_operands(operands)
-    {}
+    And(const std::vector<ConditionBase*>& operands);
 
     virtual ~And();
 
@@ -2482,13 +2451,12 @@ struct FO_COMMON_API And : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const std::vector<ConditionBase*>& Operands() const
-    { return m_operands; }
+    const std::vector<ConditionBase*> Operands() const;
 
     unsigned int GetCheckSum() const override;
 
 private:
-    std::vector<ConditionBase*> m_operands;
+    std::vector<std::unique_ptr<ConditionBase>> m_operands;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2497,10 +2465,7 @@ private:
 
 /** Matches all objects that match at least one Condition in \a operands. */
 struct FO_COMMON_API Or : public ConditionBase {
-    Or(const std::vector<ConditionBase*>& operands) :
-        ConditionBase(),
-        m_operands(operands)
-    {}
+    Or(const std::vector<ConditionBase*>& operands);
 
     virtual ~Or();
 
@@ -2524,7 +2489,7 @@ struct FO_COMMON_API Or : public ConditionBase {
     unsigned int GetCheckSum() const override;
 
 private:
-    std::vector<ConditionBase*> m_operands;
+    std::vector<std::unique_ptr<ConditionBase>> m_operands;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2533,10 +2498,7 @@ private:
 
 /** Matches all objects that do not match the Condition \a operand. */
 struct FO_COMMON_API Not : public ConditionBase {
-    Not(ConditionBase* operand) :
-        ConditionBase(),
-        m_operand(operand)
-    {}
+    Not(ConditionBase* operand);
 
     virtual ~Not();
 
@@ -2560,7 +2522,7 @@ struct FO_COMMON_API Not : public ConditionBase {
     unsigned int GetCheckSum() const override;
 
 private:
-    ConditionBase* m_operand;
+    std::unique_ptr<ConditionBase> m_operand;
 
     friend class boost::serialization::access;
     template <class Archive>

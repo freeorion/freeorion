@@ -1466,10 +1466,20 @@ unsigned int Target::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Homeworld                                             //
 ///////////////////////////////////////////////////////////
-Homeworld::~Homeworld() {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names)
-        delete name;
+Homeworld::Homeworld() :
+    ConditionBase(),
+    m_names()
+{}
+
+Homeworld::Homeworld(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
+    ConditionBase(),
+    m_names()
+{
+    for (auto& name : names)
+        m_names.emplace_back(name);
 }
+
+Homeworld::~Homeworld() {}
 
 bool Homeworld::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -1545,7 +1555,7 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             if (!name->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -1556,7 +1566,7 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
         // get all names from valuerefs
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             names.push_back(name->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, HomeworldSimpleMatch(names));
@@ -1567,7 +1577,7 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
 }
 
 bool Homeworld::RootCandidateInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->RootCandidateInvariant())
             return false;
     }
@@ -1575,7 +1585,7 @@ bool Homeworld::RootCandidateInvariant() const {
 }
 
 bool Homeworld::TargetInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->TargetInvariant())
             return false;
     }
@@ -1583,7 +1593,7 @@ bool Homeworld::TargetInvariant() const {
 }
 
 bool Homeworld::SourceInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->SourceInvariant())
             return false;
     }
@@ -1616,7 +1626,7 @@ std::string Homeworld::Dump() const {
         retval += " name = " + m_names[0]->Dump();
     } else if (!m_names.empty()) {
         retval += " name = [ ";
-        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        for (auto& name : m_names) {
             retval += name->Dump() + " ";
         }
         retval += "]";
@@ -1655,7 +1665,7 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
 
     } else {
         // match any of the species specified
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             const auto& species_name = name->Eval(local_context);
             if (const auto species = manager.GetSpecies(species_name)) {
                 const auto& homeworld_ids = species->Homeworlds();
@@ -1673,7 +1683,7 @@ void Homeworld::GetDefaultInitialCandidateObjects(const ScriptingContext& parent
 { AddPlanetSet(condition_non_targets); }
 
 void Homeworld::SetTopLevelContent(const std::string& content_name) {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (name)
             name->SetTopLevelContent(content_name);
     }
@@ -2004,11 +2014,15 @@ unsigned int Type::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Building                                              //
 ///////////////////////////////////////////////////////////
-Building::~Building() {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
-        delete name;
-    }
+Building::Building(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
+    ConditionBase(),
+    m_names()
+{
+    for (auto& name : names)
+        m_names.emplace_back(name);
 }
+
+Building::~Building() {}
 
 bool Building::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -2061,7 +2075,7 @@ void Building::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        for (auto& name : m_names) {
             if (!name->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -2072,7 +2086,7 @@ void Building::Eval(const ScriptingContext& parent_context,
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
         // get all names from valuerefs
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             names.push_back(name->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, BuildingSimpleMatch(names));
@@ -2083,7 +2097,7 @@ void Building::Eval(const ScriptingContext& parent_context,
 }
 
 bool Building::RootCandidateInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->RootCandidateInvariant())
             return false;
     }
@@ -2091,7 +2105,7 @@ bool Building::RootCandidateInvariant() const {
 }
 
 bool Building::TargetInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->TargetInvariant())
             return false;
     }
@@ -2099,7 +2113,7 @@ bool Building::TargetInvariant() const {
 }
 
 bool Building::SourceInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->SourceInvariant())
             return false;
     }
@@ -2132,7 +2146,7 @@ std::string Building::Dump() const {
         retval += m_names[0]->Dump() + "\n";
     } else {
         retval += "[ ";
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             retval += name->Dump() + " ";
         }
         retval += "]\n";
@@ -2159,7 +2173,7 @@ bool Building::Match(const ScriptingContext& local_context) const {
             return true;
 
         // match one of the specified building types
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             if (name->Eval(local_context) == building->BuildingTypeName())
                 return true;
         }
@@ -2169,7 +2183,7 @@ bool Building::Match(const ScriptingContext& local_context) const {
 }
 
 void Building::SetTopLevelContent(const std::string& content_name) {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (name)
             name->SetTopLevelContent(content_name);
     }
@@ -3440,11 +3454,15 @@ unsigned int ObjectID::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // PlanetType                                            //
 ///////////////////////////////////////////////////////////
-PlanetType::~PlanetType() {
-    for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
-        delete type;
-    }
+PlanetType::PlanetType(const std::vector<ValueRef::ValueRefBase< ::PlanetType>*>& types) :
+    ConditionBase(),
+    m_types()
+{
+    for (auto& type : types)
+        m_types.emplace_back(type);
 }
+
+PlanetType::~PlanetType() {}
 
 bool PlanetType::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -3498,7 +3516,7 @@ void PlanetType::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (auto type : m_types) {
+        for (auto& type : m_types) {
             if (!type->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -3509,7 +3527,7 @@ void PlanetType::Eval(const ScriptingContext& parent_context,
         // evaluate types once, and use to check all candidate objects
         std::vector< ::PlanetType> types;
         // get all types from valuerefs
-        for (auto type : m_types) {
+        for (auto& type : m_types) {
             types.push_back(type->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, PlanetTypeSimpleMatch(types));
@@ -3520,7 +3538,7 @@ void PlanetType::Eval(const ScriptingContext& parent_context,
 }
 
 bool PlanetType::RootCandidateInvariant() const {
-    for (auto type : m_types) {
+    for (auto& type : m_types) {
         if (!type->RootCandidateInvariant())
             return false;
     }
@@ -3528,7 +3546,7 @@ bool PlanetType::RootCandidateInvariant() const {
 }
 
 bool PlanetType::TargetInvariant() const {
-    for (auto type : m_types) {
+    for (auto& type : m_types) {
         if (!type->TargetInvariant())
             return false;
     }
@@ -3536,7 +3554,7 @@ bool PlanetType::TargetInvariant() const {
 }
 
 bool PlanetType::SourceInvariant() const {
-    for (auto type : m_types) {
+    for (auto& type : m_types) {
         if (!type->SourceInvariant())
             return false;
     }
@@ -3569,7 +3587,7 @@ std::string PlanetType::Dump() const {
         retval += m_types[0]->Dump() + "\n";
     } else {
         retval += "[ ";
-        for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
+        for (auto& type : m_types) {
             retval += type->Dump() + " ";
         }
         retval += "]\n";
@@ -3597,7 +3615,7 @@ bool PlanetType::Match(const ScriptingContext& local_context) const {
         planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
-        for (auto type : m_types) {
+        for (auto& type : m_types) {
             if (type->Eval(ScriptingContext(local_context)) == planet->Type())
                 return true;
         }
@@ -3606,7 +3624,7 @@ bool PlanetType::Match(const ScriptingContext& local_context) const {
 }
 
 void PlanetType::SetTopLevelContent(const std::string& content_name) {
-    for (auto type : m_types) {
+    for (auto& type : m_types) {
         if (type)
             type->SetTopLevelContent(content_name);
     }
@@ -3625,11 +3643,15 @@ unsigned int PlanetType::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // PlanetSize                                            //
 ///////////////////////////////////////////////////////////
-PlanetSize::~PlanetSize() {
-    for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
-        delete size;
-    }
+PlanetSize::PlanetSize(const std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>& sizes) :
+    ConditionBase(),
+    m_sizes()
+{
+    for (auto& size : sizes)
+        m_sizes.emplace_back(size);
 }
+
+PlanetSize::~PlanetSize() {}
 
 bool PlanetSize::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -3686,7 +3708,7 @@ void PlanetSize::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (auto size : m_sizes) {
+        for (auto& size : m_sizes) {
             if (!size->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -3697,7 +3719,7 @@ void PlanetSize::Eval(const ScriptingContext& parent_context,
         // evaluate types once, and use to check all candidate objects
         std::vector< ::PlanetSize> sizes;
         // get all types from valuerefs
-        for (auto size : m_sizes) {
+        for (auto& size : m_sizes) {
             sizes.push_back(size->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, PlanetSizeSimpleMatch(sizes));
@@ -3708,7 +3730,7 @@ void PlanetSize::Eval(const ScriptingContext& parent_context,
 }
 
 bool PlanetSize::RootCandidateInvariant() const {
-    for (auto size : m_sizes) {
+    for (auto& size : m_sizes) {
         if (!size->RootCandidateInvariant())
             return false;
     }
@@ -3716,7 +3738,7 @@ bool PlanetSize::RootCandidateInvariant() const {
 }
 
 bool PlanetSize::TargetInvariant() const {
-    for (auto size : m_sizes) {
+    for (auto& size : m_sizes) {
         if (!size->TargetInvariant())
             return false;
     }
@@ -3724,7 +3746,7 @@ bool PlanetSize::TargetInvariant() const {
 }
 
 bool PlanetSize::SourceInvariant() const {
-    for (auto size : m_sizes) {
+    for (auto& size : m_sizes) {
         if (!size->SourceInvariant())
             return false;
     }
@@ -3757,7 +3779,7 @@ std::string PlanetSize::Dump() const {
         retval += m_sizes[0]->Dump() + "\n";
     } else {
         retval += "[ ";
-        for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
+        for (auto& size : m_sizes) {
             retval += size->Dump() + " ";
         }
         retval += "]\n";
@@ -3785,7 +3807,7 @@ bool PlanetSize::Match(const ScriptingContext& local_context) const {
         planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
-        for (auto size : m_sizes) {
+        for (auto& size : m_sizes) {
             if (size->Eval(local_context) == planet->Size())
                 return true;
         }
@@ -3794,7 +3816,7 @@ bool PlanetSize::Match(const ScriptingContext& local_context) const {
 }
 
 void PlanetSize::SetTopLevelContent(const std::string& content_name) {
-    for (auto size : m_sizes) {
+    for (auto& size : m_sizes) {
         if (size)
             size->SetTopLevelContent(content_name);
     }
@@ -3816,15 +3838,14 @@ unsigned int PlanetSize::GetCheckSum() const {
 PlanetEnvironment::PlanetEnvironment(const std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments,
                                      ValueRef::ValueRefBase<std::string>* species_name_ref) :
     ConditionBase(),
-    m_environments(environments),
+    m_environments(),
     m_species_name(species_name_ref)
-{}
-
-PlanetEnvironment::~PlanetEnvironment() {
-    for (auto environment : m_environments) {
-        delete environment;
-    }
+{
+    for (auto& environment : environments)
+        m_environments.emplace_back(environment);
 }
+
+PlanetEnvironment::~PlanetEnvironment() {}
 
 bool PlanetEnvironment::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -3887,7 +3908,7 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (auto environment : m_environments) {
+        for (auto& environment : m_environments) {
             if (!environment->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -3898,7 +3919,7 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
         // evaluate types once, and use to check all candidate objects
         std::vector< ::PlanetEnvironment> environments;
         // get all types from valuerefs
-        for (auto environment : m_environments) {
+        for (auto& environment : m_environments) {
             environments.push_back(environment->Eval(parent_context));
         }
         std::string species_name;
@@ -3914,7 +3935,7 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
 bool PlanetEnvironment::RootCandidateInvariant() const {
     if (m_species_name && !m_species_name->RootCandidateInvariant())
         return false;
-    for (auto environment : m_environments) {
+    for (auto& environment : m_environments) {
         if (!environment->RootCandidateInvariant())
             return false;
     }
@@ -3924,7 +3945,7 @@ bool PlanetEnvironment::RootCandidateInvariant() const {
 bool PlanetEnvironment::TargetInvariant() const {
     if (m_species_name && !m_species_name->TargetInvariant())
         return false;
-    for (auto environment : m_environments) {
+    for (auto& environment : m_environments) {
         if (!environment->TargetInvariant())
             return false;
     }
@@ -3934,7 +3955,7 @@ bool PlanetEnvironment::TargetInvariant() const {
 bool PlanetEnvironment::SourceInvariant() const {
     if (m_species_name && !m_species_name->SourceInvariant())
         return false;
-    for (auto environment : m_environments) {
+    for (auto& environment : m_environments) {
         if (!environment->SourceInvariant())
             return false;
     }
@@ -3976,7 +3997,7 @@ std::string PlanetEnvironment::Dump() const {
         retval += m_environments[0]->Dump();
     } else {
         retval += "[ ";
-        for (auto environment : m_environments) {
+        for (auto& environment : m_environments) {
             retval += environment->Dump() + " ";
         }
         retval += "]";
@@ -4015,7 +4036,7 @@ bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
         species_name = m_species_name->Eval(local_context);
 
     auto env_for_planets_species = planet->EnvironmentForSpecies(species_name);
-    for (auto environment : m_environments) {
+    for (auto& environment : m_environments) {
         if (environment->Eval(local_context) == env_for_planets_species)
             return true;
     }
@@ -4025,7 +4046,7 @@ bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
 void PlanetEnvironment::SetTopLevelContent(const std::string& content_name) {
     if (m_species_name)
         m_species_name->SetTopLevelContent(content_name);
-    for (auto environment : m_environments) {
+    for (auto& environment : m_environments) {
         if (environment)
             environment->SetTopLevelContent(content_name);
     }
@@ -4045,10 +4066,20 @@ unsigned int PlanetEnvironment::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Species                                              //
 ///////////////////////////////////////////////////////////
-Species::~Species() {
-    for (auto name : m_names)
-        delete name;
+Species::Species(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
+    ConditionBase(),
+    m_names()
+{
+    for (auto& name : names)
+        m_names.emplace_back(name);
 }
+
+Species::Species() :
+    ConditionBase(),
+    m_names()
+{}
+
+Species::~Species() {}
 
 bool Species::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -4111,7 +4142,7 @@ void Species::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             if (!name->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -4122,7 +4153,7 @@ void Species::Eval(const ScriptingContext& parent_context,
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
         // get all names from valuerefs
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             names.push_back(name->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, SpeciesSimpleMatch(names));
@@ -4133,7 +4164,7 @@ void Species::Eval(const ScriptingContext& parent_context,
 }
 
 bool Species::RootCandidateInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->RootCandidateInvariant())
             return false;
     }
@@ -4141,7 +4172,7 @@ bool Species::RootCandidateInvariant() const {
 }
 
 bool Species::TargetInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->TargetInvariant())
             return false;
     }
@@ -4149,7 +4180,7 @@ bool Species::TargetInvariant() const {
 }
 
 bool Species::SourceInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->SourceInvariant())
             return false;
     }
@@ -4186,7 +4217,7 @@ std::string Species::Dump() const {
         retval += " name = " + m_names[0]->Dump() + "\n";
     } else {
         retval += " name = [ ";
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             retval += name->Dump() + " ";
         }
         retval += "]\n";
@@ -4220,7 +4251,7 @@ bool Species::Match(const ScriptingContext& local_context) const {
             return !planet->SpeciesName().empty();  // match any species name
         } else {
             // match only specified species names
-            for (auto name : m_names) {
+            for (auto& name : m_names) {
                 if (name->Eval(local_context) == planet->SpeciesName())
                     return true;
             }
@@ -4233,7 +4264,7 @@ bool Species::Match(const ScriptingContext& local_context) const {
             return !ship->SpeciesName().empty();    // match any species name
         } else {
             // match only specified species names
-            for (auto name : m_names) {
+            for (auto& name : m_names) {
                 if (name->Eval(local_context) == ship->SpeciesName())
                     return true;
             }
@@ -4243,7 +4274,7 @@ bool Species::Match(const ScriptingContext& local_context) const {
 }
 
 void Species::SetTopLevelContent(const std::string& content_name) {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (name)
             name->SetTopLevelContent(content_name);
     }
@@ -4591,11 +4622,15 @@ unsigned int Enqueued::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // FocusType                                             //
 ///////////////////////////////////////////////////////////
-FocusType::~FocusType() {
-    for (auto name : m_names) {
-        delete name;
-    }
+FocusType::FocusType(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
+    ConditionBase(),
+    m_names()
+{
+    for (auto& name : names)
+        m_names.emplace_back(name);
 }
+
+FocusType::~FocusType() {}
 
 bool FocusType::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -4650,7 +4685,7 @@ void FocusType::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             if (!name->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -4661,7 +4696,7 @@ void FocusType::Eval(const ScriptingContext& parent_context,
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
         // get all names from valuerefs
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             names.push_back(name->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, FocusTypeSimpleMatch(names));
@@ -4672,7 +4707,7 @@ void FocusType::Eval(const ScriptingContext& parent_context,
 }
 
 bool FocusType::RootCandidateInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->RootCandidateInvariant())
             return false;
     }
@@ -4680,7 +4715,7 @@ bool FocusType::RootCandidateInvariant() const {
 }
 
 bool FocusType::TargetInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->TargetInvariant())
             return false;
     }
@@ -4688,7 +4723,7 @@ bool FocusType::TargetInvariant() const {
 }
 
 bool FocusType::SourceInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->SourceInvariant())
             return false;
     }
@@ -4721,7 +4756,7 @@ std::string FocusType::Dump() const {
         retval += m_names[0]->Dump() + "\n";
     } else {
         retval += "[ ";
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             retval += name->Dump() + " ";
         }
         retval += "]\n";
@@ -4744,7 +4779,7 @@ bool FocusType::Match(const ScriptingContext& local_context) const {
             res_center = std::dynamic_pointer_cast<const ResourceCenter>(planet);
     }
     if (res_center) {
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             if (name->Eval(local_context) == res_center->Focus())
                 return true;
         }
@@ -4760,7 +4795,7 @@ void FocusType::GetDefaultInitialCandidateObjects(const ScriptingContext& parent
 }
 
 void FocusType::SetTopLevelContent(const std::string& content_name) {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (name)
             name->SetTopLevelContent(content_name);
     }
@@ -4779,11 +4814,15 @@ unsigned int FocusType::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // StarType                                              //
 ///////////////////////////////////////////////////////////
-StarType::~StarType() {
-    for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
-        delete type;
-    }
+StarType::StarType(const std::vector<ValueRef::ValueRefBase< ::StarType>*>& types) :
+    ConditionBase(),
+    m_types()
+{
+    for (auto& type : types)
+        m_types.emplace_back(type);
 }
+
+StarType::~StarType() {}
 
 bool StarType::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -4830,7 +4869,7 @@ void StarType::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (auto type : m_types) {
+        for (auto& type : m_types) {
             if (!type->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -4841,7 +4880,7 @@ void StarType::Eval(const ScriptingContext& parent_context,
         // evaluate types once, and use to check all candidate objects
         std::vector< ::StarType> types;
         // get all types from valuerefs
-        for (auto type : m_types) {
+        for (auto& type : m_types) {
             types.push_back(type->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, StarTypeSimpleMatch(types));
@@ -4852,7 +4891,7 @@ void StarType::Eval(const ScriptingContext& parent_context,
 }
 
 bool StarType::RootCandidateInvariant() const {
-    for (auto type : m_types) {
+    for (auto& type : m_types) {
         if (!type->RootCandidateInvariant())
             return false;
     }
@@ -4860,7 +4899,7 @@ bool StarType::RootCandidateInvariant() const {
 }
 
 bool StarType::TargetInvariant() const {
-    for (auto type : m_types) {
+    for (auto& type : m_types) {
         if (!type->TargetInvariant())
             return false;
     }
@@ -4868,7 +4907,7 @@ bool StarType::TargetInvariant() const {
 }
 
 bool StarType::SourceInvariant() const {
-    for (auto type : m_types) {
+    for (auto& type : m_types) {
         if (!type->SourceInvariant())
             return false;
     }
@@ -4901,7 +4940,7 @@ std::string StarType::Dump() const {
         retval += m_types[0]->Dump() + "\n";
     } else {
         retval += "[ ";
-        for (auto type : m_types) {
+        for (auto& type : m_types) {
             retval += type->Dump() + " ";
         }
         retval += "]\n";
@@ -4918,7 +4957,7 @@ bool StarType::Match(const ScriptingContext& local_context) const {
 
     std::shared_ptr<const System> system = GetSystem(candidate->SystemID());
     if (system || (system = std::dynamic_pointer_cast<const System>(candidate))) {
-        for (auto type : m_types) {
+        for (auto& type : m_types) {
             if (type->Eval(local_context) == system->GetStarType())
                 return true;
         }
@@ -4927,7 +4966,7 @@ bool StarType::Match(const ScriptingContext& local_context) const {
 }
 
 void StarType::SetTopLevelContent(const std::string& content_name) {
-    for (auto type : m_types) {
+    for (auto& type : m_types) {
         if (type)
             (type)->SetTopLevelContent(content_name);
     }
@@ -9310,10 +9349,15 @@ unsigned int Location::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // And                                                   //
 ///////////////////////////////////////////////////////////
-And::~And() {
-    for (auto operand : m_operands)
-        delete operand;
+And::And(const std::vector<ConditionBase*>& operands) :
+    ConditionBase(),
+    m_operands()
+{
+    for (auto& operand : operands)
+        m_operands.emplace_back(operand);
 }
+
+And::~And() {}
 
 bool And::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -9342,7 +9386,7 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         ErrorLogger() << "And::Eval given no operands!";
         return;
     }
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (!operand) {
             ErrorLogger() << "And::Eval given null operand!";
             return;
@@ -9373,7 +9417,7 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         // check all operand conditions on all objects in the matches set, moving those
         // that don't pass a condition to the non-matches set
 
-        for (auto operand : m_operands) {
+        for (auto& operand : m_operands) {
             if (matches.empty()) break;
             operand->Eval(local_context, matches, non_matches, MATCHES);
         }
@@ -9387,7 +9431,7 @@ bool And::RootCandidateInvariant() const {
     if (m_root_candidate_invariant != UNKNOWN_INVARIANCE)
         return m_root_candidate_invariant == INVARIANT;
 
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (!operand->RootCandidateInvariant()) {
             m_root_candidate_invariant = VARIANT;
             return false;
@@ -9401,7 +9445,7 @@ bool And::TargetInvariant() const {
     if (m_target_invariant != UNKNOWN_INVARIANCE)
         return m_target_invariant == INVARIANT;
 
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (!operand->TargetInvariant()) {
             m_target_invariant = VARIANT;
             return false;
@@ -9415,7 +9459,7 @@ bool And::SourceInvariant() const {
     if (m_source_invariant != UNKNOWN_INVARIANCE)
         return m_source_invariant == INVARIANT;
 
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (!operand->SourceInvariant()) {
             m_source_invariant = VARIANT;
             return false;
@@ -9444,7 +9488,7 @@ std::string And::Description(bool negated/* = false*/) const {
 std::string And::Dump() const {
     std::string retval = DumpIndent() + "And [\n";
     ++g_indent;
-    for (ConditionBase* operand : m_operands) {
+    for (auto& operand : m_operands) {
         retval += operand->Dump();
     }
     --g_indent;
@@ -9461,7 +9505,7 @@ void And::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_conte
 }
 
 void And::SetTopLevelContent(const std::string& content_name) {
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         operand->SetTopLevelContent(content_name);
     }
 }
@@ -9476,13 +9520,25 @@ unsigned int And::GetCheckSum() const {
     return retval;
 }
 
+const std::vector<ConditionBase*> And::Operands() const {
+    std::vector<ConditionBase*> retval(m_operands.size());
+    std::transform(m_operands.begin(), m_operands.end(), retval.begin(),
+                   [](const std::unique_ptr<ConditionBase>& xx) {return xx.get();});
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // Or                                                    //
 ///////////////////////////////////////////////////////////
-Or::~Or() {
-    for (auto operand : m_operands)
-        delete operand;
+Or::Or(const std::vector<ConditionBase*>& operands) :
+    ConditionBase(),
+    m_operands()
+{
+    for (auto& operand : operands)
+        m_operands.emplace_back(operand);
 }
+
+Or::~Or() {}
 
 bool Or::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -9511,7 +9567,7 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         ErrorLogger() << "Or::Eval given no operands!";
         return;
     }
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (!operand) {
             ErrorLogger() << "Or::Eval given null operand!";
             return;
@@ -9523,7 +9579,7 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         // if a non-candidate item matches an operand condition, move the item to the
         // matches set.
 
-        for (auto operand : m_operands) {
+        for (auto& operand : m_operands) {
             if (non_matches.empty()) break;
             operand->Eval(local_context, matches, non_matches, NON_MATCHES);
         }
@@ -9540,7 +9596,7 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         m_operands[0]->Eval(local_context, matches, partly_checked_matches, MATCHES);
 
         // move items that pass any of the other conditions back into matches
-        for (auto operand : m_operands) {
+        for (auto& operand : m_operands) {
             if (partly_checked_matches.empty()) break;
             operand->Eval(local_context, matches, partly_checked_matches, NON_MATCHES);
         }
@@ -9558,7 +9614,7 @@ bool Or::RootCandidateInvariant() const {
     if (m_root_candidate_invariant != UNKNOWN_INVARIANCE)
         return m_root_candidate_invariant == INVARIANT;
 
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (!operand->RootCandidateInvariant()) {
             m_root_candidate_invariant = VARIANT;
             return false;
@@ -9572,7 +9628,7 @@ bool Or::TargetInvariant() const {
     if (m_target_invariant != UNKNOWN_INVARIANCE)
         return m_target_invariant == INVARIANT;
 
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (!operand->TargetInvariant()) {
             m_target_invariant = VARIANT;
             return false;
@@ -9586,7 +9642,7 @@ bool Or::SourceInvariant() const {
     if (m_source_invariant != UNKNOWN_INVARIANCE)
         return m_source_invariant == INVARIANT;
 
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (!operand->SourceInvariant()) {
             m_source_invariant = VARIANT;
             return false;
@@ -9615,7 +9671,7 @@ std::string Or::Description(bool negated/* = false*/) const {
 std::string Or::Dump() const {
     std::string retval = DumpIndent() + "Or [\n";
     ++g_indent;
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         retval += operand->Dump();
     }
     --g_indent;
@@ -9624,7 +9680,7 @@ std::string Or::Dump() const {
 }
 
 void Or::SetTopLevelContent(const std::string& content_name) {
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         operand->SetTopLevelContent(content_name);
     }
 }
@@ -9642,8 +9698,13 @@ unsigned int Or::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Not                                                   //
 ///////////////////////////////////////////////////////////
+Not::Not(ConditionBase* operand) :
+    ConditionBase(),
+    m_operand(operand)
+{}
+
 Not::~Not()
-{ delete m_operand; }
+{}
 
 bool Not::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
