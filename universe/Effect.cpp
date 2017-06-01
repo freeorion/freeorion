@@ -169,9 +169,20 @@ namespace Effect {
 ///////////////////////////////////////////////////////////
 // EffectsGroup                                          //
 ///////////////////////////////////////////////////////////
+EffectsGroup::EffectsGroup(Condition::ConditionBase* scope, Condition::ConditionBase* activation,
+                           const std::vector<EffectBase*>& effects, const std::string& accounting_label,
+                           const std::string& stacking_group, int priority,
+                           std::string description) :
+    m_scope(scope),
+    m_activation(activation),
+    m_stacking_group(stacking_group),
+    m_effects(effects),
+    m_accounting_label(accounting_label),
+    m_priority(priority),
+    m_description(description)
+{}
+
 EffectsGroup::~EffectsGroup() {
-    delete m_scope;
-    delete m_activation;
     for (EffectBase* effect : m_effects) {
         delete effect;
     }
@@ -2194,7 +2205,7 @@ AddStarlanes::AddStarlanes(Condition::ConditionBase* other_lane_endpoint_conditi
 {}
 
 AddStarlanes::~AddStarlanes()
-{ delete m_other_lane_endpoint_condition; }
+{}
 
 void AddStarlanes::Execute(const ScriptingContext& context) const {
     // get target system
@@ -2263,7 +2274,7 @@ RemoveStarlanes::RemoveStarlanes(Condition::ConditionBase* other_lane_endpoint_c
 {}
 
 RemoveStarlanes::~RemoveStarlanes()
-{ delete m_other_lane_endpoint_condition; }
+{}
 
 void RemoveStarlanes::Execute(const ScriptingContext& context) const {
     // get target system
@@ -2374,7 +2385,7 @@ MoveTo::MoveTo(Condition::ConditionBase* location_condition) :
 {}
 
 MoveTo::~MoveTo()
-{ delete m_location_condition; }
+{}
 
 void MoveTo::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
@@ -2682,7 +2693,6 @@ MoveInOrbit::MoveInOrbit(ValueRef::ValueRefBase<double>* speed,
 
 MoveInOrbit::~MoveInOrbit() {
     delete m_speed;
-    delete m_focal_point_condition;
     delete m_focus_x;
     delete m_focus_y;
 }
@@ -2836,7 +2846,6 @@ MoveTowards::MoveTowards(ValueRef::ValueRefBase<double>* speed,
 
 MoveTowards::~MoveTowards() {
     delete m_speed;
-    delete m_dest_condition;
     delete m_dest_x;
     delete m_dest_y;
 }
@@ -2986,7 +2995,7 @@ SetDestination::SetDestination(Condition::ConditionBase* location_condition) :
 {}
 
 SetDestination::~SetDestination()
-{ delete m_location_condition; }
+{}
 
 void SetDestination::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
@@ -3613,7 +3622,6 @@ SetVisibility::SetVisibility(ValueRef::ValueRefBase<Visibility>* vis,
 SetVisibility::~SetVisibility() {
     delete m_vis;
     delete m_empire_id;
-    delete m_condition;
 }
 
 void SetVisibility::Execute(const ScriptingContext& context) const {

@@ -42,15 +42,7 @@ public:
     EffectsGroup(Condition::ConditionBase* scope, Condition::ConditionBase* activation,
                  const std::vector<EffectBase*>& effects, const std::string& accounting_label = "",
                  const std::string& stacking_group = "", int priority = 0,
-                 std::string description = "") :
-        m_scope(scope),
-        m_activation(activation),
-        m_stacking_group(stacking_group),
-        m_effects(effects),
-        m_accounting_label(accounting_label),
-        m_priority(priority),
-        m_description(description)
-    {}
+                 std::string description = "");
     virtual ~EffectsGroup();
 
     /** execute all effects in group */
@@ -62,8 +54,8 @@ public:
                     bool only_generate_sitrep_effects = false) const;
 
     const std::string&              StackingGroup() const       { return m_stacking_group; }
-    Condition::ConditionBase*       Scope() const               { return m_scope; }
-    Condition::ConditionBase*       Activation() const          { return m_activation; }
+    Condition::ConditionBase*       Scope() const               { return m_scope.get(); }
+    Condition::ConditionBase*       Activation() const          { return m_activation.get(); }
     const std::vector<EffectBase*>& EffectsList() const         { return m_effects; }
     const std::string&              GetDescription() const;
     const std::string&              AccountingLabel() const     { return m_accounting_label; }
@@ -78,8 +70,8 @@ public:
     virtual unsigned int            GetCheckSum() const;
 
 protected:
-    Condition::ConditionBase*   m_scope;
-    Condition::ConditionBase*   m_activation;
+    std::unique_ptr<Condition::ConditionBase>   m_scope;
+    std::unique_ptr<Condition::ConditionBase>   m_activation;
     std::string                 m_stacking_group;
     std::vector<EffectBase*>    m_effects;
     std::string                 m_accounting_label;
@@ -808,7 +800,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    Condition::ConditionBase* m_other_lane_endpoint_condition;
+    std::unique_ptr<Condition::ConditionBase> m_other_lane_endpoint_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -832,7 +824,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    Condition::ConditionBase* m_other_lane_endpoint_condition;
+    std::unique_ptr<Condition::ConditionBase> m_other_lane_endpoint_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -882,7 +874,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    Condition::ConditionBase* m_location_condition;
+    std::unique_ptr<Condition::ConditionBase> m_location_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -913,7 +905,7 @@ public:
 
 private:
     ValueRef::ValueRefBase<double>* m_speed;
-    Condition::ConditionBase* m_focal_point_condition;
+    std::unique_ptr<Condition::ConditionBase> m_focal_point_condition;
     ValueRef::ValueRefBase<double>* m_focus_x;
     ValueRef::ValueRefBase<double>* m_focus_y;
 
@@ -945,7 +937,7 @@ public:
 
 private:
     ValueRef::ValueRefBase<double>* m_speed;
-    Condition::ConditionBase* m_dest_condition;
+    std::unique_ptr<Condition::ConditionBase> m_dest_condition;
     ValueRef::ValueRefBase<double>* m_dest_x;
     ValueRef::ValueRefBase<double>* m_dest_y;
 
@@ -973,7 +965,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    Condition::ConditionBase* m_location_condition;
+    std::unique_ptr<Condition::ConditionBase> m_location_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1134,7 +1126,7 @@ public:
     { return m_recipient_empire_id; }
 
     Condition::ConditionBase* GetCondition() const
-    { return m_condition; }
+    { return m_condition.get(); }
 
     EmpireAffiliationType Affiliation() const
     { return m_affiliation; }
@@ -1146,7 +1138,7 @@ private:
     std::string m_icon;
     MessageParams m_message_parameters;
     ValueRef::ValueRefBase<int>* m_recipient_empire_id;
-    Condition::ConditionBase* m_condition;
+    std::unique_ptr<Condition::ConditionBase> m_condition;
     EmpireAffiliationType m_affiliation;
     std::string m_label;
     bool m_stringtable_lookup;
@@ -1235,7 +1227,7 @@ public:
     { return m_affiliation; }
 
     Condition::ConditionBase* OfObjectsCondition() const
-    { return m_condition; }
+    { return m_condition.get(); }
 
     unsigned int GetCheckSum() const override;
 
@@ -1243,7 +1235,7 @@ private:
     ValueRef::ValueRefBase<Visibility>* m_vis;
     ValueRef::ValueRefBase<int>* m_empire_id;
     EmpireAffiliationType m_affiliation;
-    Condition::ConditionBase* m_condition;
+    std::unique_ptr<Condition::ConditionBase> m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1289,7 +1281,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    Condition::ConditionBase* m_target_condition;   // condition to apply to each target object to determine which effects to execute on it
+    std::unique_ptr<Condition::ConditionBase> m_target_condition;   // condition to apply to each target object to determine which effects to execute on it
     std::vector<EffectBase*> m_true_effects;        // effects to execute if m_target_condition matches target object
     std::vector<EffectBase*> m_false_effects;       // effects to execute if m_target_condition does not match target object
 
