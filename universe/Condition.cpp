@@ -3269,6 +3269,11 @@ unsigned int ContainedBy::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // InSystem                                              //
 ///////////////////////////////////////////////////////////
+InSystem::InSystem(std::unique_ptr<ValueRef::ValueRefBase<int>>&& system_id) :
+    ConditionBase(),
+    m_system_id(std::move(system_id))
+{}
+
 InSystem::InSystem(ValueRef::ValueRefBase<int>* system_id) :
     ConditionBase(),
     m_system_id(system_id)
@@ -3431,6 +3436,11 @@ unsigned int InSystem::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ObjectID                                              //
 ///////////////////////////////////////////////////////////
+ObjectID::ObjectID(std::unique_ptr<ValueRef::ValueRefBase<int>>&& object_id) :
+    ConditionBase(),
+    m_object_id(std::move(object_id))
+{}
+
 ObjectID::ObjectID(ValueRef::ValueRefBase<int>* object_id) :
     ConditionBase(),
     m_object_id(object_id)
@@ -3570,6 +3580,11 @@ unsigned int ObjectID::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // PlanetType                                            //
 ///////////////////////////////////////////////////////////
+PlanetType::PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetType>>>&& types) :
+    ConditionBase(),
+    m_types(std::move(types))
+{}
+
 PlanetType::PlanetType(const std::vector<ValueRef::ValueRefBase< ::PlanetType>*>& types) :
     ConditionBase(),
     m_types()
@@ -3759,6 +3774,11 @@ unsigned int PlanetType::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // PlanetSize                                            //
 ///////////////////////////////////////////////////////////
+PlanetSize::PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetSize>>>&& sizes) :
+    ConditionBase(),
+    m_sizes(std::move(sizes))
+{}
+
 PlanetSize::PlanetSize(const std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>& sizes) :
     ConditionBase(),
     m_sizes()
@@ -3951,6 +3971,13 @@ unsigned int PlanetSize::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // PlanetEnvironment                                     //
 ///////////////////////////////////////////////////////////
+PlanetEnvironment::PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetEnvironment>>>&& environments,
+                                     std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name_ref) :
+    ConditionBase(),
+    m_environments(std::move(environments)),
+    m_species_name(std::move(species_name_ref))
+{}
+
 PlanetEnvironment::PlanetEnvironment(const std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments,
                                      ValueRef::ValueRefBase<std::string>* species_name_ref) :
     ConditionBase(),
@@ -4182,6 +4209,11 @@ unsigned int PlanetEnvironment::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Species                                              //
 ///////////////////////////////////////////////////////////
+Species::Species(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names) :
+    ConditionBase(),
+    m_names(std::move(names))
+{}
+
 Species::Species(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
     ConditionBase(),
     m_names()
@@ -4409,6 +4441,19 @@ unsigned int Species::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Enqueued                                              //
 ///////////////////////////////////////////////////////////
+Enqueued::Enqueued(std::unique_ptr<ValueRef::ValueRefBase<int>>&& design_id,
+                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
+                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
+                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& high) :
+    ConditionBase(),
+    m_build_type(BT_SHIP),
+    m_name(),
+    m_design_id(std::move(design_id)),
+    m_empire_id(std::move(empire_id)),
+    m_low(std::move(low)),
+    m_high(std::move(high))
+{}
+
 Enqueued::Enqueued(ValueRef::ValueRefBase<int>* design_id, ValueRef::ValueRefBase<int>* empire_id,
                    ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high) :
     ConditionBase(),
@@ -4428,6 +4473,20 @@ Enqueued::Enqueued() :
     m_empire_id(nullptr),
     m_low(nullptr),
     m_high(nullptr)
+{}
+
+Enqueued::Enqueued(BuildType build_type,
+                   std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
+                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
+                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& high) :
+    ConditionBase(),
+    m_build_type(build_type),
+    m_name(std::move(name)),
+    m_design_id(nullptr),
+    m_empire_id(std::move(empire_id)),
+    m_low(std::move(low)),
+    m_high(std::move(high))
 {}
 
 Enqueued::Enqueued(BuildType build_type,
@@ -4738,6 +4797,11 @@ unsigned int Enqueued::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // FocusType                                             //
 ///////////////////////////////////////////////////////////
+FocusType::FocusType(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names) :
+    ConditionBase(),
+    m_names(std::move(names))
+{}
+
 FocusType::FocusType(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
     ConditionBase(),
     m_names()
@@ -4930,6 +4994,11 @@ unsigned int FocusType::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // StarType                                              //
 ///////////////////////////////////////////////////////////
+StarType::StarType(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::StarType>>>&& types) :
+    ConditionBase(),
+    m_types(std::move(types))
+{}
+
 StarType::StarType(const std::vector<ValueRef::ValueRefBase< ::StarType>*>& types) :
     ConditionBase(),
     m_types()
@@ -5101,6 +5170,11 @@ unsigned int StarType::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // DesignHasHull                                         //
 ///////////////////////////////////////////////////////////
+DesignHasHull::DesignHasHull(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
+    ConditionBase(),
+    m_name(std::move(name))
+{}
+
 DesignHasHull::DesignHasHull(ValueRef::ValueRefBase<std::string>* name) :
     ConditionBase(),
     m_name(name)
@@ -5232,6 +5306,15 @@ unsigned int DesignHasHull::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // DesignHasPart                                         //
 ///////////////////////////////////////////////////////////
+DesignHasPart::DesignHasPart(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+                             std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
+                             std::unique_ptr<ValueRef::ValueRefBase<int>>&& high) :
+    ConditionBase(),
+    m_low(std::move(low)),
+    m_high(std::move(high)),
+    m_name(std::move(name))
+{}
+
 DesignHasPart::DesignHasPart(ValueRef::ValueRefBase<std::string>* name, ValueRef::ValueRefBase<int>* low,
                              ValueRef::ValueRefBase<int>* high) :
     ConditionBase(),
@@ -5414,6 +5497,15 @@ unsigned int DesignHasPart::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // DesignHasPartClass                                    //
 ///////////////////////////////////////////////////////////
+DesignHasPartClass::DesignHasPartClass(ShipPartClass part_class,
+                                       std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
+                                       std::unique_ptr<ValueRef::ValueRefBase<int>>&& high) :
+    ConditionBase(),
+    m_low(std::move(low)),
+    m_high(std::move(high)),
+    m_class(std::move(part_class))
+{}
+
 DesignHasPartClass::DesignHasPartClass(ShipPartClass part_class, ValueRef::ValueRefBase<int>* low,
                                        ValueRef::ValueRefBase<int>* high) :
     ConditionBase(),
@@ -5581,6 +5673,11 @@ unsigned int DesignHasPartClass::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // PredefinedShipDesign                                  //
 ///////////////////////////////////////////////////////////
+PredefinedShipDesign::PredefinedShipDesign(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
+    ConditionBase(),
+    m_name(std::move(name))
+{}
+
 PredefinedShipDesign::PredefinedShipDesign(ValueRef::ValueRefBase<std::string>* name) :
     ConditionBase(),
     m_name(name)
@@ -5723,6 +5820,11 @@ unsigned int PredefinedShipDesign::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // NumberedShipDesign                                    //
 ///////////////////////////////////////////////////////////
+NumberedShipDesign::NumberedShipDesign(std::unique_ptr<ValueRef::ValueRefBase<int>>&& design_id) :
+    ConditionBase(),
+    m_design_id(std::move(design_id))
+{}
+
 NumberedShipDesign::NumberedShipDesign(ValueRef::ValueRefBase<int>* design_id) :
     ConditionBase(),
     m_design_id(design_id)
@@ -5833,6 +5935,11 @@ unsigned int NumberedShipDesign::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ProducedByEmpire                                      //
 ///////////////////////////////////////////////////////////
+ProducedByEmpire::ProducedByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id) :
+    ConditionBase(),
+    m_empire_id(std::move(empire_id))
+{}
+
 ProducedByEmpire::ProducedByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
     ConditionBase(),
     m_empire_id(empire_id)
@@ -5951,6 +6058,11 @@ unsigned int ProducedByEmpire::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Chance                                                //
 ///////////////////////////////////////////////////////////
+Chance::Chance(std::unique_ptr<ValueRef::ValueRefBase<double>>&& chance) :
+    ConditionBase(),
+    m_chance(std::move(chance))
+{}
+
 Chance::Chance(ValueRef::ValueRefBase<double>* chance) :
     ConditionBase(),
     m_chance(chance)
@@ -6053,6 +6165,15 @@ unsigned int Chance::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // MeterValue                                            //
 ///////////////////////////////////////////////////////////
+MeterValue::MeterValue(MeterType meter,
+                       std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
+                       std::unique_ptr<ValueRef::ValueRefBase<double>>&& high) :
+    ConditionBase(),
+    m_meter(meter),
+    m_low(std::move(low)),
+    m_high(std::move(high))
+{}
+
 MeterValue::MeterValue(MeterType meter, ValueRef::ValueRefBase<double>* low,
                        ValueRef::ValueRefBase<double>* high) :
     ConditionBase(),
@@ -6241,6 +6362,17 @@ unsigned int MeterValue::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ShipPartMeterValue                                    //
 ///////////////////////////////////////////////////////////
+ShipPartMeterValue::ShipPartMeterValue(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_part_name,
+                                       MeterType meter,
+                                       std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
+                                       std::unique_ptr<ValueRef::ValueRefBase<double>>&& high) :
+    ConditionBase(),
+    m_part_name(std::move(ship_part_name)),
+    m_meter(meter),
+    m_low(std::move(low)),
+    m_high(std::move(high))
+{}
+
 ShipPartMeterValue::ShipPartMeterValue(ValueRef::ValueRefBase<std::string>* ship_part_name,
                                        MeterType meter,
                                        ValueRef::ValueRefBase<double>* low,
@@ -6421,6 +6553,27 @@ unsigned int ShipPartMeterValue::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // EmpireMeterValue                                      //
 ///////////////////////////////////////////////////////////
+EmpireMeterValue::EmpireMeterValue(const std::string& meter,
+                                   std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
+                                   std::unique_ptr<ValueRef::ValueRefBase<double>>&& high) :
+    ConditionBase(),
+    m_empire_id(nullptr),
+    m_meter(meter),
+    m_low(std::move(low)),
+    m_high(std::move(high))
+{}
+
+EmpireMeterValue::EmpireMeterValue(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
+                                   const std::string& meter,
+                                   std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
+                                   std::unique_ptr<ValueRef::ValueRefBase<double>>&& high) :
+    ConditionBase(),
+    m_empire_id(std::move(empire_id)),
+    m_meter(meter),
+    m_low(std::move(low)),
+    m_high(std::move(high))
+{}
+
 EmpireMeterValue::EmpireMeterValue(const std::string& meter,
                                    ValueRef::ValueRefBase<double>* low,
                                    ValueRef::ValueRefBase<double>* high) :
@@ -6613,6 +6766,15 @@ unsigned int EmpireMeterValue::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // EmpireStockpileValue                                  //
 ///////////////////////////////////////////////////////////
+EmpireStockpileValue::EmpireStockpileValue(ResourceType stockpile,
+                                           std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
+                                           std::unique_ptr<ValueRef::ValueRefBase<double>>&& high) :
+    ConditionBase(),
+    m_stockpile(stockpile),
+    m_low(std::move(low)),
+    m_high(std::move(high))
+{}
+
 EmpireStockpileValue::EmpireStockpileValue(ResourceType stockpile, ValueRef::ValueRefBase<double>* low,
                                            ValueRef::ValueRefBase<double>* high) :
     ConditionBase(),
@@ -6762,6 +6924,11 @@ unsigned int EmpireStockpileValue::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // OwnerHasTech                                          //
 ///////////////////////////////////////////////////////////
+OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
+    ConditionBase(),
+    m_name(std::move(name))
+{}
+
 OwnerHasTech::OwnerHasTech(ValueRef::ValueRefBase<std::string>* name) :
     ConditionBase(),
     m_name(name)
