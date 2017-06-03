@@ -1153,11 +1153,11 @@ void BuildDesignatorWnd::Clear() {
 }
 
 void BuildDesignatorWnd::ShowType(BuildType type, bool refresh_list) {
-    ErrorLogger() << "BuildDesignatorWnd::ShowType(" << boost::lexical_cast<std::string>(type) << ")";
     if (type == BT_BUILDING || type == BT_SHIP) {
         m_build_selector->ShowType(type, refresh_list);
         m_build_selector->m_build_type_buttons[type]->SetCheck();
     } else {
+        ErrorLogger() << "BuildDesignatorWnd::ShowType(" << boost::lexical_cast<std::string>(type) << ")";
         throw std::invalid_argument("BuildDesignatorWnd::ShowType was passed an invalid BuildType");
     }
 }
