@@ -194,8 +194,8 @@ namespace {
 
         bool IsKnown(const int id) const;
 
-        /** Return true is \p id is obsolete or throw std::out_of_range if \p is not in the manager. */
-        bool IsObsolete(const int id) const;
+        /** Return true is \p id is obsolete or boost::none if \p is not in the manager. */
+        boost::optional<bool> IsObsolete(const int id) const;
         /** If \id is in manager, set \p id's obsolescence to \p obsolete. */
         void SetObsolete(const int id, const bool obsolete);
 
@@ -352,7 +352,8 @@ namespace {
         auto& manager = GetCurrentDesignsManager();
 
         const auto empire_id = HumanClientApp::GetApp()->EmpireID();
-        if (manager.IsKnown(design_id) && !manager.IsObsolete(design_id))
+        const auto maybe_obsolete = manager.IsObsolete(design_id);
+        if (maybe_obsolete && !*maybe_obsolete)
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
         manager.Remove(design_id);
@@ -587,8 +588,12 @@ namespace {
     bool CurrentShipDesignManager::IsKnown(const int id) const
     { return m_id_to_obsolete_and_loc.count(id); }
     
-    bool CurrentShipDesignManager::IsObsolete(const int id) const
-    { return m_id_to_obsolete_and_loc.at(id).first; }
+    boost::optional<bool> CurrentShipDesignManager::IsObsolete(const int id) const {
+        auto it = m_id_to_obsolete_and_loc.find(id);
+        if (it == m_id_to_obsolete_and_loc.end())
+            return boost::none;
+        return it->second.first;
+    }
 
     void CurrentShipDesignManager::SetObsolete(const int id, const bool obsolete) {
         auto it = m_id_to_obsolete_and_loc.find(id);
@@ -2127,13 +2132,15 @@ void CompletedDesignsListBox::PopulateCore() {
 
     if (const auto empire = GetEmpire(EmpireID())) {
         // add rows for designs this empire is keeping
-        for (int design_id : GetCurrentDesignsManager().AllOrderedIDs()) {
+        const auto& manager = GetCurrentDesignsManager();
+        for (int design_id : manager.AllOrderedIDs()) {
             try {
                 const ShipDesign* design = GetShipDesign(design_id);
                 if (!design || !design->Producible())
                     continue;
                 bool available = empire->ShipDesignAvailable(design_id);
-                bool obsolete = GetCurrentDesignsManager().IsObsolete(design_id);
+                const auto maybe_obsolete = manager.IsObsolete(design_id);
+                bool obsolete = maybe_obsolete && *maybe_obsolete;
                 if ((obsolete && showing_obsolete)
                     || (available && !obsolete && showing_available)
                     || (!available && showing_unavailable))
@@ -2252,9 +2259,10 @@ BasesListBox::Row* CompletedDesignsListBox::ChildrenDraggedAwayCore(const GG::Wn
     const auto row_size = ListRowSize();
     auto row = new CompletedDesignListBoxRow(row_size.x, row_size.y, *design);
     if (const Empire* empire = GetEmpire(EmpireID())) {
+        const auto maybe_obsolete = GetCurrentDesignsManager().IsObsolete(design_id);
         if (!empire->ShipDesignAvailable(design_id))
             row->SetAvailability(Availability::Future);
-        else if(GetCurrentDesignsManager().IsKnown(design_id) && GetCurrentDesignsManager().IsObsolete(design_id))
+        else if (maybe_obsolete && *maybe_obsolete)
             row->SetAvailability(Availability::Obsolete);
     }
     return row;
@@ -2376,8 +2384,10 @@ void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG
     const ShipDesign* design = GetShipDesign(id);
     if (!design)
         return;
-    if (modkeys & GG::MOD_KEY_CTRL && GetCurrentDesignsManager().IsKnown(id)) {
-        bool is_obsolete = GetCurrentDesignsManager().IsObsolete(id);
+    const auto& manager = GetCurrentDesignsManager();
+    if (modkeys & GG::MOD_KEY_CTRL && manager.IsKnown(id)) {
+        const auto maybe_obsolete = manager.IsObsolete(id);
+        bool is_obsolete = maybe_obsolete && *maybe_obsolete;
         SetObsoleteInCurrentDesigns(id, !is_obsolete);
         Populate();
     }
@@ -2424,7 +2434,9 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
         ErrorLogger() << "Already nil";
 
     // Context menu actions
-    bool is_obsolete = GetCurrentDesignsManager().IsKnown(design_id) && GetCurrentDesignsManager().IsObsolete(design_id);;
+    const auto& manager = GetCurrentDesignsManager();
+    const auto maybe_obsolete = manager.IsObsolete(design_id);
+    bool is_obsolete = maybe_obsolete && *maybe_obsolete;
     auto toggle_obsolete_design_action = [&design_id, is_obsolete, this]() {
         SetObsoleteInCurrentDesigns(design_id, !is_obsolete);
         Populate();
@@ -4281,7 +4293,9 @@ void DesignWnd::ReplaceDesign() {
         if (new_design_id == INVALID_DESIGN_ID) return;
 
         // Remove the old id from the Empire.
-        if (!manager.IsObsolete(replaced_id))
+        const auto maybe_obsolete = manager.IsObsolete(replaced_id);
+        bool is_obsolete = maybe_obsolete && *maybe_obsolete;
+        if (!is_obsolete)
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<ShipDesignOrder>(empire_id, replaced_id, true));
 
