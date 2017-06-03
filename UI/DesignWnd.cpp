@@ -2038,7 +2038,7 @@ class SavedDesignsListBox : public BasesListBox {
     public:
     SavedDesignsListBox(const BasesListBox::AvailabilityManager& availabilities_state,
                         const boost::optional<std::string>& drop_type = boost::none) :
-        BasesListBox::BasesListBox(availabilities_state, drop_type)
+        BasesListBox::BasesListBox(availabilities_state, drop_type, UserString("ADD_FIRST_SAVED_DESIGN_QUEUE_PROMPT"))
     {};
 
     class SavedDesignListBoxRow : public BasesListBoxRow {
