@@ -3779,7 +3779,7 @@ SHIP_DESIGN_FILES
 Design Files
 
 DESIGN_SAVE
-Save Design File
+Save Design
 
 DESIGN_ADD
 Add Design to Empire Designs
@@ -3927,6 +3927,9 @@ Select a hull, add parts and then click "[[DESIGN_WND_ADD]]" to create an availa
 
 ADD_FIRST_DESIGN_HULL_QUEUE_PROMPT
 Toggle the Obsolete, Available and Unavailable filters to show more hulls
+
+ADD_FIRST_SAVED_DESIGN_QUEUE_PROMPT
+Select an existing Finished design, right click and select "[[DESIGN_SAVE]]" to create a saved design.
 
 # %1% File path of unwritable file
 ERROR_UNABLE_TO_WRITE_FILE
