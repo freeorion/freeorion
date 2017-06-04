@@ -70,7 +70,9 @@ namespace parse {
 
     FO_PARSE_API bool read_file(const boost::filesystem::path& path, std::string& file_contents);
 
-    FO_PARSE_API std::vector< boost::filesystem::path > ListScripts(const boost::filesystem::path& path);
+    /** Find all FOCS scripts (files with .focs.txt suffix) in \p path.  If \p allow_permissive =
+        true then if \p path is not empty and there are no .focs.txt files allow all files to qualify.*/
+    FO_PARSE_API std::vector< boost::filesystem::path > ListScripts(const boost::filesystem::path& path, bool permissive = false);
 
     FO_PARSE_API void file_substitution(std::string& text, const boost::filesystem::path& file_search_path);
 
