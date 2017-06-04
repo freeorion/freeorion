@@ -22,6 +22,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/asio/high_resolution_timer.hpp>
+#include <boost/functional/hash.hpp>
 
 #include <iterator>
 

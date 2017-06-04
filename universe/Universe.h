@@ -7,7 +7,6 @@
 #include "UniverseObject.h"
 
 #include <boost/signals2/signal.hpp>
-#include <boost/unordered_map.hpp>
 // Fix for issue #1513 (boost ticket #12978)
 // Starting with v1.64, boost::numeric::ublas was not updated for changes to
 // boost::serialization, which moved array_wrapper to separate header
