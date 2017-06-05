@@ -1,3 +1,18 @@
+// The ShipDesignManifest.focs.txt file is used in
+// default/scripting/ship_designs/, default/scripting/monster_designs/ and
+// <data_dir>/shipdesigns.  The format is a single line,
+
+// `ShipDesignManifest`
+
+// followed by any number of lines like,
+
+// `uuid = "01234567-89ab-cdef-0123-456789abcdef"\n`
+
+// The list of ship design UUIDs provides the order that default ship designs,
+// monsters and saved designs are used in game.  Designs are added to the
+// universe in this order.  The human client uses this order to display
+// designs/monsters to the player.
+
 ShipDesignManifest
     uuid = "08a58b08-0929-496d-84fc-faa91424ca20"
     uuid = "08a58b08-0929-496d-84fc-faa91424ca24"
