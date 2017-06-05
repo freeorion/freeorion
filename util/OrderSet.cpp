@@ -20,6 +20,8 @@ int OrderSet::IssueOrder(const OrderPtr& order, bool suppress_immediate_executio
 
 int OrderSet::IssueOrder(OrderPtr&& order, bool suppress_immediate_execution /*= false*/) {
     int retval = ((m_orders.rbegin() != m_orders.rend()) ? m_orders.rbegin()->first + 1 : 0);
+
+    // Insert the order into the m_orders map.  forward the rvalue to use the move constructor.
     auto inserted = m_orders.insert(std::make_pair(retval, std::forward<OrderPtr>(order)));
 
     if (!suppress_immediate_execution)

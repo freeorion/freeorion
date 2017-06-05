@@ -52,9 +52,9 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    /** executes \p order unless \p suppress_immediate_execution is true, then
-        stores it in the OrderSet. Returns an index that can be used to
-        reference the order. */
+    /** If \p suppress_immediate_execution is false, then execute the \p order immediately on the client.
+        Always store the \p order in the OrderSet to be executed later on the server.
+        Return an index that can be used to reference the order. */
     int            IssueOrder(const OrderPtr& order, bool suppress_immediate_execution = false);
     int            IssueOrder(OrderPtr&& order, bool suppress_immediate_execution = false);
 
