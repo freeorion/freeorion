@@ -1469,14 +1469,16 @@ namespace {
         if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions")) {
             if (!building_type->ProductionCostTimeLocationInvariant()) {
                 if (building_type->Cost() && !building_type->Cost()->ConstantExpr())
-                    detailed_description += "\n" + building_type->Cost()->Dump();
+                    detailed_description += "\n\nProduction Cost:\n" + building_type->Cost()->Dump();
                 if (building_type->Time() && !building_type->Time()->ConstantExpr())
-                    detailed_description += "\n" + building_type->Time()->Dump();
+                    detailed_description += "\n\n Production Time:\n" + building_type->Time()->Dump();
             }
+            if (building_type->EnqueueLocation())
+                detailed_description += "\n\nEnqueue Requirement:\n" + building_type->EnqueueLocation()->Dump();
             if (building_type->Location())
-                detailed_description += "\n" + building_type->Location()->Dump();
+                detailed_description += "\n\nLocation Requirement:\n" + building_type->Location()->Dump();
             if (!building_type->Effects().empty())
-                detailed_description += "\n" + Dump(building_type->Effects());
+                detailed_description += "\n\nEffects:\n" + Dump(building_type->Effects());
         }
 
         std::vector<std::string> unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_BUILDING, item_name));
