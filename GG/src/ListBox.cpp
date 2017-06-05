@@ -1487,6 +1487,9 @@ unsigned int ListBox::CellMargin() const
 
 ListBox::iterator ListBox::RowUnderPt(const Pt& pt) const
 {
+    if (!InClient(pt))
+        return m_rows.end();
+
     iterator retval = m_first_row_shown;
     Y acc = ClientUpperLeft().y;
     for ( ; retval != m_rows.end(); ++retval) {
@@ -1734,9 +1737,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
     switch (event.Type()) {
     case WndEvent::LButtonDown: {
         m_old_sel_row = RowUnderPt(pt);
-        if (!InClient(pt)) {
-            m_old_sel_row = m_rows.end();
-        } else if (m_old_sel_row != m_rows.end()) {
+        if (m_old_sel_row != m_rows.end()) {
             m_old_sel_row_selected = m_selections.find(m_old_sel_row) != m_selections.end();
             if (!(m_style & LIST_NOSEL) && !m_old_sel_row_selected)
                 ClickAtRow(m_old_sel_row, mod_keys);
@@ -1750,7 +1751,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
     }
 
     case WndEvent::LClick: {
-        if (m_old_sel_row != m_rows.end() && InClient(pt)) {
+        if (m_old_sel_row != m_rows.end()) {
             iterator sel_row = RowUnderPt(pt);
             if (sel_row == m_old_sel_row) {
                 if (m_style & LIST_NOSEL)
@@ -1766,7 +1767,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
 
     case WndEvent::LDoubleClick: {
         iterator row = RowUnderPt(pt);
-        if (row != m_rows.end() && row == m_lclick_row && InClient(pt)) {
+        if (row != m_rows.end() && row == m_lclick_row) {
             DoubleClickedRowSignal(row, pt, mod_keys);
             m_old_sel_row = m_rows.end();
         } else {
@@ -1777,7 +1778,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
 
     case WndEvent::RButtonDown: {
         iterator row = RowUnderPt(pt);
-        if (row != m_rows.end() && InClient(pt))
+        if (row != m_rows.end())
             m_old_rdown_row = row;
         else
             m_old_rdown_row = m_rows.end();
@@ -1786,7 +1787,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
 
     case WndEvent::RClick: {
         iterator row = RowUnderPt(pt);
-        if (row != m_rows.end() && row == m_old_rdown_row && InClient(pt)) {
+        if (row != m_rows.end() && row == m_old_rdown_row) {
             m_rclick_row = row;
             RightClickedRowSignal(row, pt, mod_keys);
         }
@@ -1797,7 +1798,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
     case WndEvent::MouseEnter: {
         if (m_style & LIST_BROWSEUPDATES) {
             iterator sel_row = RowUnderPt(pt);
-            if (m_last_row_browsed != sel_row)
+            if (sel_row != m_rows.end() && m_last_row_browsed != sel_row)
                 BrowsedRowSignal(m_last_row_browsed = sel_row);
         }
         break;

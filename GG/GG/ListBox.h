@@ -591,7 +591,8 @@ private:
     std::pair<bool, bool> AddOrRemoveScrolls(const std::pair<boost::optional<X>, boost::optional<Y>>& required_total_extents,
                                              const boost::optional<Pt>& maybe_client_size = boost::none);
 
-    std::list<Row*> m_rows;             ///< line item data
+    /// m_rows is mutable to enable returning end() from const functions in constant time.
+    mutable std::list<Row*> m_rows;             ///< line item data
 
     Scroll*         m_vscroll;          ///< vertical scroll bar on right
     Scroll*         m_hscroll;          ///< horizontal scroll bar at bottom
