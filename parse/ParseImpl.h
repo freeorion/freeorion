@@ -126,7 +126,7 @@ namespace parse { namespace detail {
 
         TraceLogger() << "Parse: Elapsed time to parse " << path.string() << " = " << (timer.elapsed() * 1000.0);
 
-        // s_end is global and static.  In is wrong when multiple files are concurrently or
+        // s_end is global and static.  It is wrong when multiple files are concurrently or
         // recursively parsed.  This check is meaningless and was removed May 2017.
         /* std::ptrdiff_t length_of_unparsed_file = std::distance(first, parse::detail::s_end); */
         /* bool parse_length_good = ((length_of_unparsed_file == 0) */
