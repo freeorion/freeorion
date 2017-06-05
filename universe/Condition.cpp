@@ -469,6 +469,8 @@ void Number::SetTopLevelContent(const std::string& content_name) {
         m_low->SetTopLevelContent(content_name);
     if (m_high)
         m_high->SetTopLevelContent(content_name);
+    if (m_condition)
+        m_condition->SetTopLevelContent(content_name);
 }
 
 ///////////////////////////////////////////////////////////
