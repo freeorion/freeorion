@@ -356,6 +356,16 @@ void OverrideAllLoggersThresholds(const boost::optional<LogLevel>& threshold) {
 
 LoggerCreatedSignalType LoggerCreatedSignal;
 
+namespace {
+    // Initialize LoggerCreatedSignal.  During static initialization another
+    // compilation unit might call ConfigureLogger() before Logger.cpp has been
+    // initialized.
+    bool InitializeLoggerCreatedSignal() {
+        LoggerCreatedSignal = LoggerCreatedSignalType();
+        return true;
+    };
+}
+
 void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
     // Note: Do not log in this function.  If a logger is used during
     // static initialization it will cause boost::log to recursively call
@@ -366,6 +376,9 @@ void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
         return;
 
     CreateFileSinkFrontEnd(name);
+
+    // Store as static to initialize once.
+    static bool dummy = InitializeLoggerCreatedSignal();
 
     LoggerCreatedSignal(name);
 }
