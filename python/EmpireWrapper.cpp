@@ -279,7 +279,7 @@ namespace FreeOrionPython {
 
             .def("buildingTypeAvailable",           &Empire::BuildingTypeAvailable)
             .add_property("availableBuildingTypes", make_function(&Empire::AvailableBuildingTypes,  return_internal_reference<>()))
-            .def("shipDesignAvailable",             &Empire::ShipDesignAvailable)
+            .def("shipDesignAvailable",             (bool (Empire::*)(int) const)&Empire::ShipDesignAvailable)
             .add_property("allShipDesigns",         make_function(&Empire::ShipDesigns,             return_value_policy<return_by_value>()))
             .add_property("availableShipDesigns",   make_function(&Empire::AvailableShipDesigns,    return_value_policy<return_by_value>()))
             .add_property("availableShipParts",     make_function(&Empire::AvailableShipParts,      return_value_policy<copy_const_reference>()))

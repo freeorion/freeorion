@@ -1672,22 +1672,22 @@ const std::vector<int>& Empire::OrderedShipDesigns() const
 { return m_ship_designs_ordered; }
 
 bool Empire::ShipDesignAvailable(int ship_design_id) const {
-    //// if design isn't kept by this empire, it can't be built.
-    //if (!ShipDesignKept(ship_design_id))
-    //    return false;   //   The empire needs to issue a ShipDesignOrder to add this design id to its kept designs
-
     const ShipDesign* design = GetShipDesign(ship_design_id);
-    if (!design || !design->Producible()) return false;
+    return design ? ShipDesignAvailable(*design) : false;
+}
+
+bool Empire::ShipDesignAvailable(const ShipDesign& design) const {
+    if (!design.Producible()) return false;
 
     // design is kept, but still need to verify that it is buildable at this time.  Part or hull tech
     // requirements might prevent it from being built.
-    for (const std::string& name : design->Parts()) {
+    for (const std::string& name : design.Parts()) {
         if (name == "")
             continue;   // empty slot can't be unavailable
         if (!ShipPartAvailable(name))
             return false;
     }
-    if (!ShipHullAvailable(design->Hull()))
+    if (!ShipHullAvailable(design.Hull()))
         return false;
 
     // if there are no reasons the design isn't available, then by default it is available
