@@ -466,42 +466,6 @@ namespace {
     bool ClientPlayerIsModerator()
     { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
 
-    bool PlanetBlockaded(int planet_id) {
-        std::shared_ptr<const Planet> planet = GetPlanet(planet_id);
-        std::shared_ptr<const System> system = GetSystem(planet->SystemID());
-        const std::set<int> fleet_ids_at_system = system->FleetIDs();
-
-        for (int fleet_id : fleet_ids_at_system) {
-            std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
-            if (!fleet){
-                ErrorLogger() << "PlanetBlockaded(): Couldn't load fleet with id " << fleet_id;
-                break;
-            }
-
-            if ((fleet->Owner() == planet->Owner()) || planet->OwnedBy(ALL_EMPIRES))
-                continue;  // skip fleets that belong to the same empire as the planet, and empty planets
-
-            if (Empires().GetDiplomaticStatus(planet->Owner(), fleet->Owner()) != DIPLO_WAR)
-                continue;  // skip fleets that are not at war with the planet's owner
-
-            // look if fleet is armed
-            bool armed_enemy_fleet_present = ((fleet->HasArmedShips() || fleet->HasFighterShips()) && fleet->Aggressive());
-
-            // look if the planet is visible to the enemy
-            bool planet_visible_to_enemy = false;
-
-            Empire* enemy_empire = GetEmpire(fleet->Owner());
-            if (enemy_empire)
-                planet_visible_to_enemy = (planet->CurrentMeterValue(METER_STEALTH) < enemy_empire->GetMeter("METER_DETECTION_STRENGTH")->Current());
-            else // monsters don't own empires
-                planet_visible_to_enemy = true; //  (planet->CurrentMeterValue(METER_STEALTH) < ...) how to retrieve monster's detection?
-
-            if (armed_enemy_fleet_present && planet_visible_to_enemy)
-                return true;
-        }
-
-        return false;
-    }
 }
 
 
@@ -1178,8 +1142,9 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
         AttachChild(m_rotating_planet_graphic);
     }
 
-    if (PlanetBlockaded(m_planet_id)) {
-        const std::shared_ptr<GG::Texture>& blockaded_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "combat.png", true);
+    // add blockade graphic
+    if (!GetSupplyManager().PlanetHasSupply(m_planet_id) && (!planet->Unowned())) {
+        const std::shared_ptr<GG::Texture>& blockaded_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "blockade.png", true);
         int texture_size = GetOptionsDB().Get<int>("UI.sidepanel-planet-blockaded-icon-size");
 
         m_planet_blockaded_graphic = new GG::StaticGraphic(blockaded_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
@@ -1894,7 +1859,7 @@ void SidePanel::PlanetPanel::Refresh() {
     ClearBrowseInfoWnd();
 
     // set planetpanel blockade browse text
-    if (PlanetBlockaded(m_planet_id))
+    if (!GetSupplyManager().PlanetHasSupply(m_planet_id) && (!planet->Unowned()))
         SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("PL_BLOCKADED"),
                                                          boost::io::str(FlexibleFormat(UserString("PL_BLOCKADED_TOOLTIP")) % planet->Name())));
 

@@ -3378,10 +3378,10 @@ PL_TYPE_SIZE_ENV
 %1% %2% (%3%)
 
 PL_BLOCKADED
-Under blockade
+Blockaded
 
 PL_BLOCKADED_TOOLTIP
-%1% is currently being blockaded. Its industry is disconnected from the empire and ground troops cannot be regenerated.
+%1% is currently being blockaded. Industry generated on this planet can only be used here.
 
 PL_NO_VISIBILITY
 Planet is not currently visible.
