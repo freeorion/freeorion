@@ -390,8 +390,26 @@ namespace {
 
         // Write any corrected ordering back to disk.
         if (inconsistent) {
-            DebugLogger() << "Writing corrected ship designs back to saved designs.";
+            WarnLogger() << "Writing corrected ship designs back to saved designs.";
             SaveManifest();
+
+            // Correct file name extension
+            // Nothing fancy, just convert '.txt' to '.txt.focs.txt' which the scripting system is
+            // happy with and there is minimal risk of botching the file name;
+            for (auto& uuid_and_design_and_path: m_saved_designs) {
+                auto& path = uuid_and_design_and_path.second.second;
+                auto extension = path.extension();
+                bool extension_wrong = extension.empty() || extension != ".txt";
+
+                auto stem_extension = path.stem().extension();
+                bool stem_wrong = extension_wrong || stem_extension.empty() || stem_extension != ".focs";
+
+                if (extension_wrong || stem_wrong)
+                    path += DESIGN_FILENAME_EXTENSION;
+
+            }
+
+
             for (auto& uuid: m_ordered_uuids)
                 SaveDesign(uuid);
         }
