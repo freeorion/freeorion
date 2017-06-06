@@ -2404,14 +2404,13 @@ struct FO_COMMON_API ValueTest : public ConditionBase {
               ComparisonType comp1,
               ValueRef::ValueRefBase<double>* value_ref2,
               ComparisonType comp2 = INVALID_COMPARISON,
-              ValueRef::ValueRefBase<double>* value_ref3 = nullptr) :
-        ConditionBase(),
-        m_value_ref1(value_ref1),
-        m_value_ref2(value_ref2),
-        m_value_ref3(value_ref3),
-        m_compare_type1(comp1),
-        m_compare_type2(comp2)
-    {}
+              ValueRef::ValueRefBase<double>* value_ref3 = nullptr);
+
+    ValueTest(ValueRef::ValueRefBase<std::string>* value_ref1,
+              ComparisonType comp1,
+              ValueRef::ValueRefBase<std::string>* value_ref2,
+              ComparisonType comp2 = INVALID_COMPARISON,
+              ValueRef::ValueRefBase<std::string>* value_ref3 = nullptr);
 
     virtual ~ValueTest();
 
@@ -2435,11 +2434,14 @@ struct FO_COMMON_API ValueTest : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<double>* m_value_ref1;
-    ValueRef::ValueRefBase<double>* m_value_ref2;
-    ValueRef::ValueRefBase<double>* m_value_ref3;
-    ComparisonType m_compare_type1;
-    ComparisonType m_compare_type2;
+    ValueRef::ValueRefBase<double>* m_value_ref1 = nullptr;
+    ValueRef::ValueRefBase<double>* m_value_ref2 = nullptr;
+    ValueRef::ValueRefBase<double>* m_value_ref3 = nullptr;
+    ValueRef::ValueRefBase<std::string>* m_string_value_ref1 = nullptr;
+    ValueRef::ValueRefBase<std::string>* m_string_value_ref2 = nullptr;
+    ValueRef::ValueRefBase<std::string>* m_string_value_ref3 = nullptr;
+    ComparisonType m_compare_type1 = INVALID_COMPARISON;
+    ComparisonType m_compare_type2 = INVALID_COMPARISON;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -3027,6 +3029,9 @@ void ValueTest::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_value_ref1)
         & BOOST_SERIALIZATION_NVP(m_value_ref2)
         & BOOST_SERIALIZATION_NVP(m_value_ref3)
+        & BOOST_SERIALIZATION_NVP(m_string_value_ref1)
+        & BOOST_SERIALIZATION_NVP(m_string_value_ref2)
+        & BOOST_SERIALIZATION_NVP(m_string_value_ref3)
         & BOOST_SERIALIZATION_NVP(m_compare_type1)
         & BOOST_SERIALIZATION_NVP(m_compare_type2);
 }

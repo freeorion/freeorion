@@ -7911,10 +7911,84 @@ void OrderedBombarded::SetTopLevelContent(const std::string& content_name) {
 ///////////////////////////////////////////////////////////
 // ValueTest                                             //
 ///////////////////////////////////////////////////////////
+namespace {
+    bool Comparison(float val1, ComparisonType comp, float val2) {
+        switch(comp) {
+            case EQUAL:                 return val1 == val2;
+            case GREATER_THAN:          return val1 > val2;
+            case GREATER_THAN_OR_EQUAL: return val1 >= val2;
+            case LESS_THAN:             return val1 < val2;
+            case LESS_THAN_OR_EQUAL:    return val1 <= val2;
+            case NOT_EQUAL:             return val1 != val2;
+            case INVALID_COMPARISON:
+            default:                    return false;
+        }
+    }
+    bool Comparison(const std::string& val1, ComparisonType comp,
+                    const std::string& val2)
+    {
+        switch(comp) {
+            case EQUAL:                 return val1 == val2;
+            case NOT_EQUAL:             return val1 != val2;
+            case INVALID_COMPARISON:
+            default:                    return false;
+        }
+    }
+
+    std::string CompareTypeString(ComparisonType comp) {
+        switch(comp) {
+        case EQUAL:                 return "=";
+        case GREATER_THAN:          return ">";
+        case GREATER_THAN_OR_EQUAL: return ">=";
+        case LESS_THAN:             return "<";
+        case LESS_THAN_OR_EQUAL:    return "<=";
+        case NOT_EQUAL:             return "!=";
+        case INVALID_COMPARISON:
+        default:                    return "";
+        }
+    }
+}
+
+
+ValueTest::ValueTest(ValueRef::ValueRefBase<double>* value_ref1,
+                     ComparisonType comp1,
+                     ValueRef::ValueRefBase<double>* value_ref2,
+                     ComparisonType comp2,
+                     ValueRef::ValueRefBase<double>* value_ref3) :
+    ConditionBase(),
+    m_value_ref1(value_ref1),
+    m_value_ref2(value_ref2),
+    m_value_ref3(value_ref3),
+    m_compare_type1(comp1),
+    m_compare_type2(comp2)
+{
+    //DebugLogger() << "ValueTest(double)";
+}
+
+ValueTest::ValueTest(ValueRef::ValueRefBase<std::string>* value_ref1,
+                     ComparisonType comp1,
+                     ValueRef::ValueRefBase<std::string>* value_ref2,
+                     ComparisonType comp2,
+                     ValueRef::ValueRefBase<std::string>* value_ref3) :
+    ConditionBase(),
+    m_string_value_ref1(value_ref1),
+    m_string_value_ref2(value_ref2),
+    m_string_value_ref3(value_ref3),
+    m_compare_type1(comp1),
+    m_compare_type2(comp2)
+{
+    DebugLogger() << "String ValueTest(" << value_ref1->Dump() << " "
+                                         << CompareTypeString(comp1) << " "
+                                         << value_ref2->Dump() << ")";
+}
+
 ValueTest::~ValueTest() {
     delete m_value_ref1;
     delete m_value_ref2;
     delete m_value_ref3;
+    delete m_string_value_ref1;
+    delete m_string_value_ref2;
+    delete m_string_value_ref3;
 }
 
 bool ValueTest::operator==(const ConditionBase& rhs) const {
@@ -7928,6 +8002,9 @@ bool ValueTest::operator==(const ConditionBase& rhs) const {
     CHECK_COND_VREF_MEMBER(m_value_ref1)
     CHECK_COND_VREF_MEMBER(m_value_ref2)
     CHECK_COND_VREF_MEMBER(m_value_ref3)
+    CHECK_COND_VREF_MEMBER(m_string_value_ref1)
+    CHECK_COND_VREF_MEMBER(m_string_value_ref2)
+    CHECK_COND_VREF_MEMBER(m_string_value_ref3)
 
     if (m_compare_type1 != rhs_.m_compare_type1)
         return false;
@@ -7937,58 +8014,52 @@ bool ValueTest::operator==(const ConditionBase& rhs) const {
     return true;
 }
 
-namespace {
-    bool Comparison(float val1, ComparisonType comp, float val2) {
-        switch(comp) {
-            case EQUAL:                  return val1 == val2;
-            case GREATER_THAN:           return val1 > val2;
-            case GREATER_THAN_OR_EQUAL:  return val1 >= val2;
-            case LESS_THAN:              return val1 < val2;
-            case LESS_THAN_OR_EQUAL:     return val1 <= val2;
-            case NOT_EQUAL:              return val1 != val2;
-            case INVALID_COMPARISON:
-            default:                                return false;
-        }
-    }
-
-    std::string CompareTypeString(ComparisonType comp) {
-        switch(comp) {
-        case EQUAL:                  return "=";
-        case GREATER_THAN:           return ">";
-        case GREATER_THAN_OR_EQUAL:  return ">=";
-        case LESS_THAN:              return "<";
-        case LESS_THAN_OR_EQUAL:     return "<=";
-        case NOT_EQUAL:              return "!=";
-        case INVALID_COMPARISON:
-        default:                                return "";
-        }
-    }
-}
-
 void ValueTest::Eval(const ScriptingContext& parent_context,
                      ObjectSet& matches, ObjectSet& non_matches,
                      SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = ((!m_value_ref1 || m_value_ref1->LocalCandidateInvariant()) &&
-                             (!m_value_ref2 || m_value_ref2->LocalCandidateInvariant()) &&
-                             (!m_value_ref3 || m_value_ref3->LocalCandidateInvariant()) &&
+    bool simple_eval_safe = ((!m_value_ref1         || m_value_ref1->LocalCandidateInvariant()) &&
+                             (!m_value_ref2         || m_value_ref2->LocalCandidateInvariant()) &&
+                             (!m_value_ref3         || m_value_ref3->LocalCandidateInvariant()) &&
+                             (!m_string_value_ref1  || m_string_value_ref1->LocalCandidateInvariant()) &&
+                             (!m_string_value_ref2  || m_string_value_ref2->LocalCandidateInvariant()) &&
+                             (!m_string_value_ref3  || m_string_value_ref3->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
 
     if (simple_eval_safe) {
         // evaluate value and range limits once, use to match all candidates
         std::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
+        bool passed = false;
 
-        float val1, val2, val3;
-        bool passed = m_value_ref1 && m_value_ref2;
-        if (passed) {
-            val1 = m_value_ref1->Eval(local_context);
-            val2 = m_value_ref2->Eval(local_context);
-            passed = Comparison(val1, m_compare_type1, val2);
-        }
-        if (passed && m_value_ref3) {
-            val3 = m_value_ref3->Eval(local_context);
-            passed = Comparison(val2, m_compare_type2, val3);
+        if (m_value_ref1) {
+            float val1, val2, val3;
+            passed = /*m_value_ref1 &&*/ m_value_ref2;
+            if (passed) {
+                val1 = m_value_ref1->Eval(local_context);
+                val2 = m_value_ref2->Eval(local_context);
+                passed = Comparison(val1, m_compare_type1, val2);
+            }
+            if (passed && m_value_ref3) {
+                val3 = m_value_ref3->Eval(local_context);
+                passed = Comparison(val2, m_compare_type2, val3);
+            }
+
+        } else if (m_string_value_ref1) {
+            std::string val1, val2, val3;
+            passed = /*m_string_value_ref1 &&*/ m_string_value_ref2;
+            if (passed) {
+                val1 = m_string_value_ref1->Eval(local_context);
+                val2 = m_string_value_ref2->Eval(local_context);
+                passed = Comparison(val1, m_compare_type1, val2);
+            }
+            if (passed && m_string_value_ref3) {
+                val3 = m_string_value_ref3->Eval(local_context);
+                passed = Comparison(val2, m_compare_type2, val3);
+            }
+
+        } else {
+            // passed remains false
         }
 
         // transfer objects to or from candidate set, according to whether the value comparisons were true
@@ -8001,6 +8072,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
             non_matches.clear();
         }
 
+
     } else {
         // re-evaluate value and ranges for each candidate object
         ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
@@ -8008,31 +8080,48 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
 }
 
 bool ValueTest::RootCandidateInvariant() const {
-    return (!m_value_ref1   || m_value_ref1->RootCandidateInvariant()) &&
-           (!m_value_ref2   || m_value_ref2->RootCandidateInvariant()) &&
-           (!m_value_ref3   || m_value_ref3->RootCandidateInvariant());
+    return (!m_value_ref1           || m_value_ref1->RootCandidateInvariant()) &&
+           (!m_value_ref2           || m_value_ref2->RootCandidateInvariant()) &&
+           (!m_value_ref3           || m_value_ref3->RootCandidateInvariant()) &&
+           (!m_string_value_ref1    || m_string_value_ref1->RootCandidateInvariant()) &&
+           (!m_string_value_ref2    || m_string_value_ref2->RootCandidateInvariant()) &&
+           (!m_string_value_ref3    || m_string_value_ref3->RootCandidateInvariant());
 }
 
 bool ValueTest::TargetInvariant() const {
-    return (!m_value_ref1   || m_value_ref1->TargetInvariant()) &&
-           (!m_value_ref2   || m_value_ref2->TargetInvariant()) &&
-           (!m_value_ref3   || m_value_ref3->TargetInvariant());
+    return (!m_value_ref1           || m_value_ref1->TargetInvariant()) &&
+           (!m_value_ref2           || m_value_ref2->TargetInvariant()) &&
+           (!m_value_ref3           || m_value_ref3->TargetInvariant()) &&
+           (!m_string_value_ref1    || m_string_value_ref1->TargetInvariant()) &&
+           (!m_string_value_ref2    || m_string_value_ref2->TargetInvariant()) &&
+           (!m_string_value_ref3    || m_string_value_ref3->TargetInvariant());
 }
 
 bool ValueTest::SourceInvariant() const {
-    return (!m_value_ref1   || m_value_ref1->SourceInvariant()) &&
-           (!m_value_ref2   || m_value_ref2->SourceInvariant()) &&
-           (!m_value_ref3   || m_value_ref3->SourceInvariant());
+    return (!m_value_ref1           || m_value_ref1->SourceInvariant()) &&
+           (!m_value_ref2           || m_value_ref2->SourceInvariant()) &&
+           (!m_value_ref3           || m_value_ref3->SourceInvariant()) &&
+           (!m_string_value_ref1    || m_string_value_ref1->SourceInvariant()) &&
+           (!m_string_value_ref2    || m_string_value_ref2->SourceInvariant()) &&
+           (!m_string_value_ref3    || m_string_value_ref3->SourceInvariant());
 }
 
 std::string ValueTest::Description(bool negated/* = false*/) const {
     std::string value_str1, value_str2, value_str3;
     if (m_value_ref1)
         value_str1 = m_value_ref1->Description();
+    else if (m_string_value_ref1)
+        value_str1 = m_string_value_ref1->Description();
+
     if (m_value_ref2)
         value_str2 = m_value_ref2->Description();
+    else if (m_string_value_ref2)
+        value_str2 = m_string_value_ref2->Description();
+
     if (m_value_ref3)
         value_str3 = m_value_ref3->Description();
+    else if (m_string_value_ref3)
+        value_str3 = m_string_value_ref3->Description();
 
     std::string comp_str1 = CompareTypeString(m_compare_type1);
     std::string comp_str2 = CompareTypeString(m_compare_type2);
@@ -8053,18 +8142,24 @@ std::string ValueTest::Dump() const {
     std::string retval = DumpIndent() + "(";
     if (m_value_ref1)
         retval += m_value_ref1->Dump();
+    else if (m_string_value_ref1)
+        retval += m_string_value_ref1->Dump();
 
     if (m_compare_type1 != INVALID_COMPARISON)
         retval += " " + CompareTypeString(m_compare_type1);
 
     if (m_value_ref2)
         retval += " " + m_value_ref2->Dump();
+    else if (m_string_value_ref2)
+        retval += m_string_value_ref2->Dump();
 
     if (m_compare_type2 != INVALID_COMPARISON)
         retval += " " + CompareTypeString(m_compare_type2);
 
     if (m_value_ref3)
         retval += " " + m_value_ref3->Dump();
+    else if (m_string_value_ref3)
+        retval += m_string_value_ref3->Dump();
 
     retval += ")\n";
     return retval;
@@ -8076,19 +8171,40 @@ bool ValueTest::Match(const ScriptingContext& local_context) const {
         ErrorLogger() << "ValueTest::Match passed no candidate object";
         return false;
     }
-    if (!m_value_ref1 || !m_value_ref2 || m_compare_type1 == INVALID_COMPARISON)
+    if (m_compare_type1 == INVALID_COMPARISON)
         return false;
 
-    float val1 = m_value_ref1->Eval(local_context);
-    float val2 = m_value_ref2->Eval(local_context);
-    if (!Comparison(val1, m_compare_type1, val2))
-        return false;
+    if (m_value_ref1) {
+        if (!m_value_ref2)
+            return false;
 
-    if (m_compare_type2 == INVALID_COMPARISON || !m_value_ref3)
-        return true;
+        float val1 = m_value_ref1->Eval(local_context);
+        float val2 = m_value_ref2->Eval(local_context);
+        if (!Comparison(val1, m_compare_type1, val2))
+            return false;
 
-    float val3 = m_value_ref3->Eval(local_context);
-    return Comparison(val2, m_compare_type1, val3);
+        if (m_compare_type2 == INVALID_COMPARISON || !m_value_ref3)
+            return true;
+
+        float val3 = m_value_ref3->Eval(local_context);
+        return Comparison(val2, m_compare_type1, val3);
+
+    } else if (m_string_value_ref1) {
+        if (!m_string_value_ref2)
+            return false;
+
+        std::string val1 = m_string_value_ref1->Eval(local_context);
+        std::string val2 = m_string_value_ref2->Eval(local_context);
+        if (!Comparison(val1, m_compare_type1, val2))
+            return false;
+
+        if (m_compare_type2 == INVALID_COMPARISON || !m_value_ref3)
+            return true;
+
+        std::string val3 = m_string_value_ref3->Eval(local_context);
+        return Comparison(val2, m_compare_type1, val3);
+    }
+    return false;
 }
 
 void ValueTest::SetTopLevelContent(const std::string& content_name) {
@@ -8098,7 +8214,12 @@ void ValueTest::SetTopLevelContent(const std::string& content_name) {
         m_value_ref2->SetTopLevelContent(content_name);
     if (m_value_ref3)
         m_value_ref3->SetTopLevelContent(content_name);
-}
+    if (m_string_value_ref1)
+        m_string_value_ref1->SetTopLevelContent(content_name);
+    if (m_string_value_ref2)
+        m_string_value_ref2->SetTopLevelContent(content_name);
+    if (m_string_value_ref3)
+        m_string_value_ref3->SetTopLevelContent(content_name);}
 
 ///////////////////////////////////////////////////////////
 // Location                                              //

@@ -22,6 +22,7 @@ namespace {
             qi::_c_type _c;
             qi::_d_type _d;
             qi::_e_type _e;
+            qi::_f_type _f;
             qi::_val_type _val;
             qi::lit_type lit;
             using phoenix::new_;
@@ -60,7 +61,8 @@ namespace {
             value_test_1
                 = '('
                 >> parse::double_value_ref() [ _a = _1 ]
-                >> (    lit('=')    [ _d = Condition::EQUAL ]
+                >> (    lit("==")   [ _d = Condition::EQUAL ]
+                      | lit('=')    [ _d = Condition::EQUAL ]
                       | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
                       | lit('>')    [ _d = Condition::GREATER_THAN ]
                       | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
@@ -74,14 +76,16 @@ namespace {
             value_test_2
                 = '('
                 >> parse::double_value_ref() [ _a = _1 ]
-                >> (    lit('=')    [ _d = Condition::EQUAL ]
+                >> (    lit("==")   [ _d = Condition::EQUAL ]
+                      | lit('=')    [ _d = Condition::EQUAL ]
                       | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
                       | lit('>')    [ _d = Condition::GREATER_THAN ]
                       | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _d = Condition::LESS_THAN ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
                 >> parse::double_value_ref() [ _b = _1 ]
-                >> (    lit('=')    [ _e = Condition::EQUAL ]
+                >> (    lit("==")   [ _d = Condition::EQUAL ]
+                      | lit('=')    [ _d = Condition::EQUAL ]
                       | lit(">=")   [ _e = Condition::GREATER_THAN_OR_EQUAL ]
                       | lit('>')    [ _e = Condition::GREATER_THAN ]
                       | lit("<=")   [ _e = Condition::LESS_THAN_OR_EQUAL ]
@@ -89,6 +93,32 @@ namespace {
                       | lit("!=")   [ _e = Condition::NOT_EQUAL ])
                 >  parse::double_value_ref()
                 [ _val = new_<Condition::ValueTest>(_a, _d, _b, _e, _1) ]
+                >  ')'
+                ;
+
+            value_test_3
+                = '('
+                >> parse::string_value_ref() [ _c = _1 ]
+                >> (    lit("==")   [ _d = Condition::EQUAL ]
+                      | lit('=')    [ _d = Condition::EQUAL ]
+                      | lit("!=")   [ _d = Condition::NOT_EQUAL ])
+                >> parse::string_value_ref()
+                [ _val = new_<Condition::ValueTest>(_c, _d, _1) ]
+                >> ')'
+                ;
+
+            value_test_4
+                = '('
+                >> parse::string_value_ref() [ _c = _1 ]
+                >> (    lit("==")   [ _d = Condition::EQUAL ]
+                      | lit('=')    [ _d = Condition::EQUAL ]
+                      | lit("!=")   [ _d = Condition::NOT_EQUAL ])
+                >> parse::string_value_ref() [ _f = _1 ]
+                >> (    lit("==")   [ _d = Condition::EQUAL ]
+                      | lit('=')    [ _d = Condition::EQUAL ]
+                      | lit("!=")   [ _e = Condition::NOT_EQUAL ])
+                >  parse::string_value_ref()
+                [ _val = new_<Condition::ValueTest>(_c, _d, _f, _e, _1) ]
                 >  ')'
                 ;
 
@@ -160,8 +190,10 @@ namespace {
                 |   within_distance
                 |   within_starlane_jumps
                 |   number
-                |   value_test_2
+                |   value_test_2    // more complicated format that is strict extension of value_test_1 format, so needs to be tested before it
                 |   value_test_1
+                |   value_test_4    // more complicated format that is strict extension of value_test_3 format, so needs to be tested before it
+                |   value_test_3
                 |   turn
                 |   created_on_turn
                 |   number_of
@@ -209,7 +241,8 @@ namespace {
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<std::string>*,
                 Condition::ComparisonType,
-                Condition::ComparisonType
+                Condition::ComparisonType,
+                ValueRef::ValueRefBase<std::string>*
             >
         > double_ref_double_ref_rule;
 
@@ -244,6 +277,8 @@ namespace {
         int_ref_int_ref_rule                    number;
         double_ref_double_ref_rule              value_test_1;
         double_ref_double_ref_rule              value_test_2;
+        double_ref_double_ref_rule              value_test_3;
+        double_ref_double_ref_rule              value_test_4;
         int_ref_int_ref_rule                    turn;
         int_ref_int_ref_rule                    created_on_turn;
         int_ref_sorting_method_double_ref_rule  number_of;
