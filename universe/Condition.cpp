@@ -8523,7 +8523,6 @@ namespace {
     }
 }
 
-
 ValueTest::ValueTest(ValueRef::ValueRefBase<double>* value_ref1,
                      ComparisonType comp1,
                      ValueRef::ValueRefBase<double>* value_ref2,

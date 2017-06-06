@@ -556,6 +556,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
         m_networking->SendMessage(HostSPGameMessage(setup_data));
         m_fsm->process_event(HostSPGameRequested());
+
     } else {
         ErrorLogger() << "HumanClientApp::NewSinglePlayerGame failed to start new game, killing server.";
         ResetToIntro();
@@ -863,7 +864,7 @@ void HumanClientApp::HandleMessage(Message& msg) {
     case Message::LOBBY_UPDATE:             m_fsm->process_event(LobbyUpdate(msg));             break;
     case Message::SAVE_GAME_DATA_REQUEST:   m_fsm->process_event(SaveGameDataRequest(msg));     break;
     case Message::SAVE_GAME_COMPLETE:       m_fsm->process_event(SaveGameComplete(msg));        break;
-
+    case Message::CHECKSUM:                 m_fsm->process_event(CheckSum(msg));                break;
     case Message::GAME_START:               m_fsm->process_event(GameStart(msg));               break;
     case Message::TURN_UPDATE:              m_fsm->process_event(TurnUpdate(msg));              break;
     case Message::TURN_PARTIAL_UPDATE:      m_fsm->process_event(TurnPartialUpdate(msg));       break;

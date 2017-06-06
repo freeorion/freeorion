@@ -277,6 +277,8 @@ sc::result Idle::react(const HostMPGame& msg) {
     player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::CLIENT_TYPE_HUMAN_PLAYER, client_version_string);
     server.m_networking.SetHostPlayerID(host_player_id);
 
+    player_connection->SendMessage(ContentCheckSumMessage());
+
     DebugLogger(FSM) << "Idle::react(HostMPGame) about to send acknowledgement to host";
     player_connection->SendMessage(HostMPAckMessage(host_player_id));
 
@@ -317,6 +319,7 @@ sc::result Idle::react(const HostSPGame& msg) {
     int host_player_id = server.m_networking.NewPlayerID();
     player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::CLIENT_TYPE_HUMAN_PLAYER, client_version_string);
     server.m_networking.SetHostPlayerID(host_player_id);
+    player_connection->SendMessage(ContentCheckSumMessage());
     player_connection->SendMessage(HostSPAckMessage(host_player_id));
 
     server.m_single_player_game = true;
@@ -338,6 +341,7 @@ sc::result Idle::react(const Error& msg) {
         return transit<ShuttingDownServer>();
     return discard_event();
 }
+
 
 ////////////////////////////////////////////////////////////
 // MPLobby
@@ -523,6 +527,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
 
     // establish player with requested client type and acknowldge via connection
     player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
+    player_connection->SendMessage(ContentCheckSumMessage());
     player_connection->SendMessage(JoinAckMessage(player_id));
 
     // inform player of host
@@ -535,11 +540,11 @@ sc::result MPLobby::react(const JoinGame& msg) {
 
     // assign player info from defaults or from connection to lobby data players list
     PlayerSetupData player_setup_data;
-    player_setup_data.m_player_name =           player_name;
-    player_setup_data.m_client_type =           client_type;
-    player_setup_data.m_empire_name =           (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_name : GenerateEmpireName(player_name, m_lobby_data->m_players);
-    player_setup_data.m_empire_color =          GetUnusedEmpireColour(m_lobby_data->m_players);
-    if (m_lobby_data->m_seed!="")
+    player_setup_data.m_player_name =   player_name;
+    player_setup_data.m_client_type =   client_type;
+    player_setup_data.m_empire_name =   (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_name : GenerateEmpireName(player_name, m_lobby_data->m_players);
+    player_setup_data.m_empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
+    if (m_lobby_data->m_seed != "")
         player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
     else
         player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
@@ -1056,6 +1061,7 @@ sc::result MPLobby::react(const Error& msg) {
     return discard_event();
 }
 
+
 ////////////////////////////////////////////////////////////
 // WaitingForSPGameJoiners
 ////////////////////////////////////////////////////////////
@@ -1191,6 +1197,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
             // expected player
             // let the networking system know what socket this player is on
             player_connection->EstablishPlayer(expected_it->second, player_name, client_type, client_version_string);
+            player_connection->SendMessage(ContentCheckSumMessage());
             player_connection->SendMessage(JoinAckMessage(expected_it->second));
 
             // Inform AI of logging configuration.
@@ -1209,10 +1216,12 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
             ErrorLogger(FSM) << "WaitingForSPGameJoiners::react(const JoinGame& msg): A human player attempted to join the game but there was not enough room.  Terminating connection.";
             // TODO: send message to attempted joiner saying game is full
             server.m_networking.Disconnect(player_connection);
+
         } else {
             // unexpected but welcome human player
             int host_id = server.Networking().HostPlayerID();
             player_connection->EstablishPlayer(host_id, player_name, client_type, client_version_string);
+            player_connection->SendMessage(ContentCheckSumMessage());
             player_connection->SendMessage(JoinAckMessage(host_id));
 
             DebugLogger(FSM) << "Initializing new SP game...";
