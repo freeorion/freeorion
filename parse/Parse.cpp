@@ -458,8 +458,8 @@ namespace parse {
             }
 
             // If in permissive mode and no scripts are found allow all files to be scripts.
-            if (scripts.empty() && !files.empty()) {
-                WarnLogger() << path << " does not contain scripts with the expected suffix .focs.txt. "
+            if (allow_permissive && scripts.empty() && !files.empty()) {
+                WarnLogger() << PathString(path) << " does not contain scripts with the expected suffix .focs.txt. "
                              << " Trying a more permissive mode and ignoring file suffix.";
                 scripts = files;
             }
