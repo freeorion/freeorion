@@ -233,9 +233,12 @@ namespace {
     void CreateFileSinkFrontEnd(const std::string& channel_name) {
         auto& file_sink_backend = GetSinkBackend();
 
-        // Return if the file sink backed has not been configured
-        if (!file_sink_backend)
+        // If the file sink backend has not been configured store the name so
+        // that a frontend can be added later.
+        if (!file_sink_backend) {
+            GetLoggersToSinkFrontEnds().AddOrReplaceLoggerName(channel_name, nullptr);
             return;
+        }
 
         // Create a sink frontend for formatting.
         boost::shared_ptr<TextFileSinkFrontend> sink_frontend
