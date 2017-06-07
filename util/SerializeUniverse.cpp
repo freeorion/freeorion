@@ -283,14 +283,7 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_3D_model)
         & BOOST_SERIALIZATION_NVP(m_name_desc_in_stringtable);
     if (Archive::is_loading::value) {
-        if (!ValidDesign(m_hull, m_parts)) {
-            const auto first_hull_it = GetHullTypeManager().begin();
-            m_hull = first_hull_it != GetHullTypeManager().end() ? first_hull_it->first : "";
-            m_parts.clear();
-            ErrorLogger() << "Deserialized ship design " << m_name << " has invalid hull and/or parts. "
-                          << " Defaulting to empty hull of type \"" << m_hull << "\"";
-        }
-
+        MakeValid();
         BuildStatCaches();
     }
 }

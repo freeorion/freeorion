@@ -557,17 +557,7 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
     m_3D_model(model),
     m_name_desc_in_stringtable(name_desc_in_stringtable)
 {
-    // expand parts list to have empty values if fewer parts are given than hull has slots
-    if (const HullType* hull_type = GetHullType(m_hull)) {
-        if (m_parts.size() < hull_type->NumSlots())
-            m_parts.resize(hull_type->NumSlots(), "");
-    }
-
-    if (!ValidDesign(m_hull, m_parts)) {
-        ErrorLogger() << "constructing an invalid ShipDesign!";
-        ErrorLogger() << Dump();
-        throw std::runtime_error("invalid ShipDesign");
-    }
+    MakeValid();
     BuildStatCaches();
 }
 
