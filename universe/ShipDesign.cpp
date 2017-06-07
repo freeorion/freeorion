@@ -492,6 +492,9 @@ HullTypeManager::HullTypeManager() {
         TraceLogger() << " ... " << h->Name();
     }
 
+    if (m_hulls.empty())
+        ErrorLogger() << "HullTypeManager expects at least one hull type.  All ship design construction will fail.";
+
     // Only update the global pointer on sucessful construction.
     s_instance = this;
 }
