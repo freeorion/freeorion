@@ -233,9 +233,12 @@ namespace {
     void CreateFileSinkFrontEnd(const std::string& channel_name) {
         auto& file_sink_backend = GetSinkBackend();
 
-        // Return if the file sink backed has not been configured
-        if (!file_sink_backend)
+        // If the file sink backend has not been configured store the name so
+        // that a frontend can be added later.
+        if (!file_sink_backend) {
+            GetLoggersToSinkFrontEnds().AddOrReplaceLoggerName(channel_name, nullptr);
             return;
+        }
 
         // Create a sink frontend for formatting.
         boost::shared_ptr<TextFileSinkFrontend> sink_frontend
@@ -266,17 +269,37 @@ std::vector<std::string> CreatedLoggersNames()
 { return GetLoggersToSinkFrontEnds().LoggersNames(); }
 
 namespace {
-    // Create a minimum severity table filter
-    auto f_min_channel_severity = expr::channel_severity_filter(log_channel, log_severity);
+
+    /** LoggerThresholdSetter sets the threshold of a logger */
+    class LoggerThresholdSetter {
+        /// m_mutex serializes access from different threads
+        std::mutex m_mutex = {};
+
+        // Create a minimum severity table filter
+        expr::channel_severity_filter_actor<std::string, LogLevel>
+        m_min_channel_severity = expr::channel_severity_filter(log_channel, log_severity);
+
+        public:
+        // Set the logger threshold and return the logger name and threshold used.
+        std::pair<std::string, LogLevel> SetThreshold(const std::string& source, LogLevel threshold) {
+            std::lock_guard<std::mutex> lock(m_mutex);
+
+            auto used_threshold = ForcedThreshold() ? *ForcedThreshold() : threshold;
+            logging::core::get()->reset_filter();
+            m_min_channel_severity[source] = used_threshold;
+            logging::core::get()->set_filter(m_min_channel_severity);
+
+            return {DisplayName(source), used_threshold};
+        }
+
+    };
 
     // Set the logger threshold and return the logger name and threshold used.
     std::pair<std::string, LogLevel> SetLoggerThresholdCore(const std::string& source, LogLevel threshold) {
-        auto used_threshold = ForcedThreshold() ? *ForcedThreshold() : threshold;
-        logging::core::get()->reset_filter();
-        f_min_channel_severity[source] = used_threshold;
-        logging::core::get()->set_filter(f_min_channel_severity);
+        // Create logger_threshold_setter as a static variable to avoid the static initialization fiasco.
+        static LoggerThresholdSetter logger_threshold_setter{};
 
-        return {DisplayName(source), used_threshold};
+        return logger_threshold_setter.SetThreshold(source, threshold);
     }
 }
 
@@ -356,6 +379,16 @@ void OverrideAllLoggersThresholds(const boost::optional<LogLevel>& threshold) {
 
 LoggerCreatedSignalType LoggerCreatedSignal;
 
+namespace {
+    // Initialize LoggerCreatedSignal.  During static initialization another
+    // compilation unit might call ConfigureLogger() before Logger.cpp has been
+    // initialized.
+    bool InitializeLoggerCreatedSignal() {
+        LoggerCreatedSignal = LoggerCreatedSignalType();
+        return true;
+    };
+}
+
 void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
     // Note: Do not log in this function.  If a logger is used during
     // static initialization it will cause boost::log to recursively call
@@ -367,5 +400,9 @@ void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
 
     CreateFileSinkFrontEnd(name);
 
+    // Store as static to initialize once.
+    static bool dummy = InitializeLoggerCreatedSignal();
+
     LoggerCreatedSignal(name);
 }
+
