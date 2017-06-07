@@ -49,7 +49,7 @@ namespace parse {
     FO_PARSE_API bool ship_hulls(std::map<std::string, HullType*>& hulls);
 
     /** Parse all ship designs in directory \p path, store them in \p designs. If a file exists
-        called ShipDesignManifest.focs.txt, parse it and store the order in \p ordering. */
+        called ShipDesignOrdering.focs.txt, parse it and store the order in \p ordering. */
     FO_PARSE_API bool ship_designs(const boost::filesystem::path& path,
                                    std::vector<std::unique_ptr<ShipDesign>>& designs,
                                    std::vector<boost::uuids::uuid>& ordering);

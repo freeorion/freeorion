@@ -398,7 +398,7 @@
     (SetVisibility)                             \
     (Shield)                                    \
     (ShipDesign)                                \
-    (ShipDesignManifest)                        \
+    (ShipDesignOrdering)                        \
     (ShipDesignsDestroyed)                      \
     (ShipDesignsLost)                           \
     (ShipDesignsOwned)                          \

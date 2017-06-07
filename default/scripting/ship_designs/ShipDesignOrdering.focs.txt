@@ -1,8 +1,8 @@
-// The ShipDesignManifest.focs.txt file is used in
+// The ShipDesignOrdering.focs.txt file is used in
 // default/scripting/ship_designs/, default/scripting/monster_designs/ and
 // <data_dir>/shipdesigns.  The format is a single line,
 
-// `ShipDesignManifest`
+// `ShipDesignOrdering`
 
 // followed by any number of lines like,
 
@@ -13,7 +13,7 @@
 // universe in this order.  The human client uses this order to display
 // designs/monsters to the player.
 
-ShipDesignManifest
+ShipDesignOrdering
     uuid = "08a58b08-0929-496d-84fc-faa91424ca20"
     uuid = "08a58b08-0929-496d-84fc-faa91424ca24"
     uuid = "08a58b08-0929-496d-84fc-faa91424ca10"

@@ -178,7 +178,7 @@ namespace {
             const parse::lexer& tok = parse::lexer::instance();
 
             design_manifest
-                =    tok.ShipDesignManifest_
+                =    tok.ShipDesignOrdering_
                 >    *(parse::detail::label(UUID_token)       > tok.string [ push_back(_r1, parse_uuid_(_1)) ])
                 ;
 
@@ -186,7 +186,7 @@ namespace {
                 =   +design_manifest(_r1)
                 ;
 
-            design_manifest.name("ShipDesignManifest");
+            design_manifest.name("ShipDesignOrdering");
 
 #if DEBUG_PARSERS
             debug(design_manifest);
@@ -217,7 +217,7 @@ namespace parse {
         bool result = true;
 
         for(const boost::filesystem::path& file : scripts) {
-            if (file.filename() == "ShipDesignManifest.focs.txt" ) {
+            if (file.filename() == "ShipDesignOrdering.focs.txt" ) {
                 manifest_file = file;
                 continue;
             }
