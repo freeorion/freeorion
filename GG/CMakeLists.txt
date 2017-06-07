@@ -186,6 +186,8 @@ target_include_directories(GiGiSDL SYSTEM
         ${OPENGL_INCLUDE_DIR}
         ${GLEW_INCLUDE_DIRS}
         ${SDL_INCLUDE_DIRS}
+        ${OPENGL_INCLUDE_DIR}
+        ${GLEW_INCLUDE_DIR}
 )
 
 target_link_libraries(GiGiSDL
@@ -193,6 +195,8 @@ target_link_libraries(GiGiSDL
     ${OPENGL_LIBRARIES}
     ${GLEW_LIBRARIES}
     ${SDL_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    ${GLEW_LIBRARIES}
 )
 
 
