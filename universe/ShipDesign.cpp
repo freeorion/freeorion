@@ -1354,7 +1354,7 @@ namespace {
 }
 
 void PredefinedShipDesignManager::AddShipDesignsToUniverse() const {
-    m_design_generic_ids.clear();   // std::map<std::string, int>
+    m_design_generic_ids.clear();
 
     for (const auto& uuid : m_ship_ordering)
         AddDesignToUniverse(m_design_generic_ids, m_designs.at(uuid), false);
