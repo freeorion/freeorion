@@ -8,7 +8,7 @@ ShipDesign
         "SR_WEAPON_0_1"
         "AR_PRECURSOR_PLATE"
         "AR_PRECURSOR_PLATE"
-
+        ""
     ]
     icon = "icons/monsters/sentinel.png"
     model = "seed"
