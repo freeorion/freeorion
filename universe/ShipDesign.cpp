@@ -17,6 +17,7 @@
 #include "Enums.h"
 
 #include <cfloat>
+#include <unordered_set>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/lexical_cast.hpp>
@@ -829,66 +830,148 @@ void ShipDesign::SetID(int id)
 { m_id = id; }
 
 bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::string>& parts) {
-    // ensure hull type exists and has at least enough slots for passed parts
-    const HullType* hull_type = GetHullTypeManager().GetHullType(hull);
-    if (!hull_type) {
-        DebugLogger() << "ShipDesign::ValidDesign: hull not found: " << hull;
-        return false;
+    return !MaybeInvalidDesign(hull, parts);
+}
+
+boost::optional<std::pair<std::string, std::vector<std::string>>>
+ShipDesign::MaybeInvalidDesign(const std::string& hull_in, const std::vector<std::string>& parts_in) {
+    bool is_valid = true;
+
+    auto hull = hull_in;
+    auto parts = parts_in;
+
+    // ensure hull type exists
+    const HullType* input_hull_type = GetHullTypeManager().GetHullType(hull);
+    HullType* fallback_hull_type;
+    if (!input_hull_type) {
+        is_valid = false;
+        WarnLogger() << "Invalid ShipDesign hull not found: " << hull;
+
+        const auto hull_it = GetHullTypeManager().begin();
+        if (hull_it != GetHullTypeManager().end()) {
+            std::tie(hull, fallback_hull_type) = *hull_it;
+            WarnLogger() << "Invalid ShipDesign hull falling back to: " << hull;
+        } else {
+            ErrorLogger() << "Invalid ShipDesign no available hulls ";
+            hull = "";
+            parts.clear();
+            return std::make_pair(hull, parts);
+        }
     }
 
-    unsigned int size = parts.size();
-    if (size > hull_type->NumSlots()) {
-        DebugLogger() << "ShipDesign::ValidDesign: given " << size << " parts for hull with " << hull_type->NumSlots() << " slots";
-        return false;
+    const auto hull_type = input_hull_type ? input_hull_type : fallback_hull_type;
+
+
+    // ensure hull type has at least enough slots for passed parts
+    if (parts.size() > hull_type->NumSlots()) {
+        is_valid = false;
+        WarnLogger() << "Invalid ShipDesign given " << parts.size() << " parts for hull with "
+                     << hull_type->NumSlots() << " slots.  Truncating last "
+                     << (parts.size() - hull_type->NumSlots()) << " parts.";
     }
 
-    const std::vector<HullType::Slot>& slots = hull_type->Slots();
+    // If parts is smaller than the full hull size pad it.
+    if (parts.size() != hull_type->NumSlots()) {
+        is_valid = false;
+        WarnLogger() << "Invalid ShipDesign given " << parts.size() << " parts for hull with "
+                     << hull_type->NumSlots() << " slots.  Adding "
+                     << (hull_type->NumSlots() - parts.size()) << " empty parts.";
+    }
+
+    // Truncate or pad with "" parts.
+    parts.resize(hull_type->NumSlots(), "");
+
+    const auto& slots = hull_type->Slots();
 
     // check hull exclusions against all parts...
-    const std::set<std::string>& hull_exclusions = hull_type->Exclusions();
-    for (const std::string& part_name : parts) {
+    const auto& hull_exclusions = hull_type->Exclusions();
+    for (auto& part_name : parts) {
         if (part_name.empty())
             continue;
-        if (hull_exclusions.find(part_name) != hull_exclusions.end())
-            return false;
+        if (hull_exclusions.count(part_name)) {
+            is_valid = false;
+            WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" is excluded by \""
+                         << hull_type->Name() << "\". Removing \"" << part_name <<"\"";
+            part_name.clear();
+        }
     }
 
     // check part exclusions against other parts and hull
-    std::set<std::string> already_seen_component_names;
+    std::unordered_set<std::string> already_seen_component_names;
     already_seen_component_names.insert(hull);
-    for (const std::string& part_name : parts) {
-        const PartType* part_type = GetPartType(part_name);
-        if (!part_type)
-            continue;
-        for (const std::string& excluded : part_type->Exclusions()) {
-            if (already_seen_component_names.find(excluded) != already_seen_component_names.end())
-                return false;
-        }
-        already_seen_component_names.insert(part_name);
-    }
 
+    for (std::size_t ii = 0; ii < parts.size(); ++ii) {
+        auto& part_name =  parts[ii];
 
-    // ensure all passed parts can be mounted in slots of type they were passed for
-    for (unsigned int i = 0; i < size; ++i) {
-        const std::string& part_name = parts[i];
+        // Ignore empty slots which are valid.
         if (part_name.empty())
-            continue;   // if part slot is empty, ignore - doesn't invalidate design
+            continue;
 
-        const PartType* part = GetPartType(part_name);
-        if (!part) {
-            DebugLogger() << "ShipDesign::ValidDesign: part not found: " << part_name;
-            return false;
+        // Remove parts that don't exist
+        const auto part_type = GetPartType(part_name);
+        if (!part_type) {
+            WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" not found"
+                         << ". Removing \"" << part_name <<"\"";
+            is_valid = false;
+            part_name.clear();
+            continue;
+        }
+
+        for (const auto& excluded : part_type->Exclusions()) {
+            if (already_seen_component_names.count(excluded)) {
+                is_valid = false;
+                WarnLogger() << "Invalid ShipDesign part " << part_name << " conflicts with \""
+                             << excluded << "\". Removing \"" << part_name <<"\"";
+                part_name.clear();
+                continue;
+            }
         }
 
         // verify part can mount in indicated slot
-        ShipSlotType slot_type = slots[i].type;
-        if (!(part->CanMountInSlotType(slot_type))) {
-            DebugLogger() << "ShipDesign::ValidDesign: part " << part_name << " can't be mounted in " << boost::lexical_cast<std::string>(slot_type) << " slot";
-            return false;
+        const ShipSlotType& slot_type = slots[ii].type;
+
+        if (!part_type->CanMountInSlotType(slot_type)) {
+            DebugLogger() << "Invalid ShipDesign part \"" << part_name << "\" can't be mounted in "
+                          << boost::lexical_cast<std::string>(slot_type) << " slot"
+                          << ". Removing \"" << part_name <<"\"";
+            is_valid = false;
+            part_name.clear();
+            continue;
         }
+
+        if (!part_name.empty())
+            already_seen_component_names.insert(part_name);
     }
 
-    return true;
+    if (is_valid)
+        return boost::none;
+    else
+        return std::make_pair(hull, parts);
+}
+
+void ShipDesign::MakeValid() {
+    auto force_valid = MaybeInvalidDesign(m_hull, m_parts);
+    if (!force_valid)
+        return;
+
+    std::stringstream ss;
+
+    bool no_hull_available = force_valid->first.empty();
+    if (no_hull_available)
+        ss << "ShipDesign has no valid hull and there are no other hulls available." << std::endl;
+
+    ss << "Invalid ShipDesign:" << std::endl;
+    ss << Dump() << std::endl;
+
+    std::tie(m_hull, m_parts) = *force_valid;
+
+    ss << "ShipDesign was made valid as:" << std::endl;
+    ss << Dump() << std::endl;
+
+    if (no_hull_available)
+        ErrorLogger() << ss.str();
+    else
+        WarnLogger() << ss.str();
 }
 
 void ShipDesign::BuildStatCaches() {

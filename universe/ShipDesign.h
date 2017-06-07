@@ -11,6 +11,9 @@
 #include <vector>
 
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/functional/hash.hpp>
+#include <boost/optional/optional.hpp>
 #include <boost/variant.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -530,10 +533,18 @@ public:
     void                            Rename(const std::string& name) { m_name = name; }  ///< renames this design to \a name
     //@}
 
-    ///< returns true if the \a hull and parts vectors passed make a valid ShipDesign
-    static bool                     ValidDesign(const std::string& hull, const std::vector<std::string>& parts);
-
+    /** Return true if \p hull and \p parts would make a valid design. */
+    static bool ValidDesign(const std::string& hull, const std::vector<std::string>& parts);
 private:
+    /** Return a valid hull and parts  pair iff the \p hull and \p parts vectors would not make  a
+        valid ShipDesign. Otherwise return none. */
+    static boost::optional<std::pair<std::string, std::vector<std::string>>>
+        MaybeInvalidDesign(const std::string& hull, const std::vector<std::string>& parts);
+
+    /** Force design invariants to be true. If design invariants are not begin met provide an
+        explicit log message about how it was corrected. */
+    void MakeValid();
+
     void BuildStatCaches();
 
     int                         m_id = INVALID_OBJECT_ID;
