@@ -286,9 +286,11 @@ namespace {
         }
 
         // Is it the same as an existing design
-        const auto& empire_designs = empire->ShipDesigns();
-        const auto is_same_design = [&design](const int id) { return *GetShipDesign(id) == *design; };
-        bool already_got = std::any_of(empire_designs.begin(), empire_designs.end(), is_same_design);
+        const auto& current_ids = GetCurrentDesignsManager().AllOrderedIDs();
+        const auto is_same_design = [&design](const int id) {
+            auto current_design = GetShipDesign(id);
+            return current_design && *current_design == *design; };
+        bool already_got = std::any_of(current_ids.begin(), current_ids.end(), is_same_design);
         if (already_got) {
             ErrorLogger() << "SavedDesignsToCurrentDesigns saved design already present: "
                           << design->Name();
