@@ -587,27 +587,13 @@ FO_COMMON_API const ShipDesign* GetShipDesign(int ship_design_id);
 
 class FO_COMMON_API PredefinedShipDesignManager {
 public:
-    typedef std::map<std::string, std::unique_ptr<ShipDesign>>::const_iterator iterator;
     typedef std::map<std::string, int>::const_iterator generic_iterator;
 
-    /** \name Accessors */ //@{
-    /** Returns iterator pointing to first ship design. */
-    iterator            begin() const;
+    /** Return pointers the ShipDesigns in order.*/
+    std::vector<const ShipDesign*> GetOrderedShipDesigns() const;
 
-    /** Returns iterator pointing one past last ship design. */
-    iterator            end() const;
-
-    /** Returns iterator pointing to first monster design. */
-    iterator            begin_monsters() const;
-
-    /** Returns iterator pointing one past last monster design. */
-    iterator            end_monsters() const;
-
-    /** Returns iterator pointing to first generic design name and id. */
-    generic_iterator    begin_generic() const;
-
-    /** Returns iterator pointing one past the last generic design name and id. */
-    generic_iterator    end_generic() const;
+    /** Return pointers the ShipDesigns in order.*/
+    std::vector<const ShipDesign*> GetOrderedMonsterDesigns() const;
 
     /** Returns the ID for the design in the Universe for the predefined design
       * with the specified \a name.  If there is generic design available for

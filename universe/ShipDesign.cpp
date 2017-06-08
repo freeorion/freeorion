@@ -1039,8 +1039,26 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
 
     DebugLogger() << "Initializing PredefinedShipDesignManager";
 
-    parse::ship_designs(m_ship_designs);
-    parse::monster_designs(m_monster_designs);
+    std::vector<std::unique_ptr<ShipDesign>> designs;
+    std::vector<boost::uuids::uuid> ordering;
+    parse::ship_designs(designs, ordering);
+
+    for (auto& design : designs)
+        if (m_ship_designs.count(design->Name()))
+            ErrorLogger() << design->Name() << " ship design does not have a unique name.";
+        else
+            m_ship_designs[design->Name()] = std::move(design);
+
+    designs.clear();
+    ordering.clear();
+    parse::monster_designs(designs, ordering);
+
+    for (auto& design : designs)
+        if (m_monster_designs.count(design->Name()))
+            ErrorLogger() << design->Name() << " ship design does not have a unique name.";
+        else
+            m_monster_designs[design->Name()] = std::move(design);
+
 
     TraceLogger() << "Predefined Ship Designs:";
     for (const auto& entry : m_ship_designs)
@@ -1127,23 +1145,20 @@ PredefinedShipDesignManager& PredefinedShipDesignManager::GetPredefinedShipDesig
     return manager;
 }
 
-PredefinedShipDesignManager::iterator PredefinedShipDesignManager::begin() const
-{ return m_ship_designs.begin(); }
 
-PredefinedShipDesignManager::iterator PredefinedShipDesignManager::end() const
-{ return m_ship_designs.end(); }
+std::vector<const ShipDesign*> PredefinedShipDesignManager::GetOrderedShipDesigns() const {
+    std::vector<const ShipDesign*> retval;
+    for (const auto& name_and_ptr : m_ship_designs)
+        retval.push_back(name_and_ptr.second.get());
+    return retval;
+}
 
-PredefinedShipDesignManager::iterator PredefinedShipDesignManager::begin_monsters() const
-{ return m_monster_designs.begin(); }
-
-PredefinedShipDesignManager::iterator PredefinedShipDesignManager::end_monsters() const
-{ return m_monster_designs.end(); }
-
-PredefinedShipDesignManager::generic_iterator PredefinedShipDesignManager::begin_generic() const
-{ return m_design_generic_ids.begin(); }
-
-PredefinedShipDesignManager::generic_iterator PredefinedShipDesignManager::end_generic() const
-{ return m_design_generic_ids.end(); }
+std::vector<const ShipDesign*> PredefinedShipDesignManager::GetOrderedMonsterDesigns() const {
+    std::vector<const ShipDesign*> retval;
+    for (const auto& name_and_ptr : m_monster_designs)
+        retval.push_back(name_and_ptr.second.get());
+    return retval;
+}
 
 int PredefinedShipDesignManager::GetDesignID(const std::string& name) const {
     std::map<std::string, int>::const_iterator it = m_design_generic_ids.find(name);

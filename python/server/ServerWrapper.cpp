@@ -412,8 +412,8 @@ namespace {
 
     list ShipDesignGetPremadeList() {
         list py_ship_designs;
-        for (const auto& entry : GetPredefinedShipDesignManager()) {
-            py_ship_designs.append(object(entry.first));
+        for (const auto& design : GetPredefinedShipDesignManager().GetOrderedShipDesigns()) {
+            py_ship_designs.append(object(design->Name(false)));
         }
         return list(py_ship_designs);
     }
@@ -421,8 +421,8 @@ namespace {
     list ShipDesignGetMonsterList() {
         list py_monster_designs;
         const PredefinedShipDesignManager& manager = GetPredefinedShipDesignManager();
-        for (PredefinedShipDesignManager::iterator it = manager.begin_monsters(); it != manager.end_monsters(); ++it) {
-            py_monster_designs.append(object(it->first));
+        for (const auto& monster : manager.GetOrderedMonsterDesigns()) {
+            py_monster_designs.append(object(monster->Name(false)));
         }
         return list(py_monster_designs);
     }

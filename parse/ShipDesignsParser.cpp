@@ -22,9 +22,7 @@ namespace std {
 #endif
 
 namespace {
-    const boost::phoenix::function<parse::detail::is_unique> is_unique_;
-
-    void insert_ship_design(std::map<std::string, std::unique_ptr<ShipDesign>>& designs,
+    void insert_ship_design(std::vector<std::unique_ptr<ShipDesign>>& designs,
                             const std::string& name, const std::string& description,
                             const std::string& hull, const std::vector<std::string>& parts,
                             const std::string& icon, const std::string& model,
@@ -32,9 +30,10 @@ namespace {
     {
         // TODO use make_unique when converting to C++14
         auto design = std::unique_ptr<ShipDesign>(
-            new ShipDesign(name, description, 0, ALL_EMPIRES, hull, parts, icon, model, name_desc_in_stringtable, false, uuid));
+            new ShipDesign(name, description, 0, ALL_EMPIRES, hull, parts, icon, model,
+                           name_desc_in_stringtable, false, uuid));
 
-        auto inserted_design = designs.insert(std::make_pair(design->Name(false), std::move(design)));
+        designs.push_back(std::move(design));
     };
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_ship_design_, insert_ship_design, 9)
 
@@ -90,15 +89,13 @@ namespace {
             qi::_r3_type _r3;
             qi::_r4_type _r4;
             qi::_r5_type _r5;
-            qi::_r6_type _r6;
             qi::eps_type eps;
 
             const parse::lexer& tok = parse::lexer::instance();
 
             design_prefix
                 =    tok.ShipDesign_
-                >    parse::detail::label(Name_token)
-                >    tok.string        [ _pass = is_unique_(_r6, ShipDesign_token, _1), _r1 = _1 ]
+                >    parse::detail::label(Name_token) > tok.string [ _r1 = _1 ]
                 >    ((parse::detail::label(UUID_token)
                        > tok.string [_pass = is_valid_uuid_(_1),  _r5 = parse_uuid_(_1) ])
                       | eps [ _r5 = boost::uuids::nil_generator()() ]
@@ -112,7 +109,7 @@ namespace {
                 ;
 
             design
-                =    design_prefix(_a, _b, _c, _f, _g, _r1)
+                =    design_prefix(_a, _b, _c, _f, _g)
                 >    parse::detail::label(Parts_token)
                 >    (
                             ('[' > +tok.string [ push_back(_d, _1) ] > ']')
@@ -141,12 +138,10 @@ namespace {
         }
 
         using design_prefix_rule = parse::detail::rule<
-            void (std::string&, std::string&, std::string&, bool&, boost::uuids::uuid&,
-                  const std::map<std::string, std::unique_ptr<ShipDesign>>&)
-        >;
+            void (std::string&, std::string&, std::string&, bool&, boost::uuids::uuid&)>;
 
         typedef parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<ShipDesign>>&),
+            void (std::vector<std::unique_ptr<ShipDesign>>&),
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
@@ -159,36 +154,97 @@ namespace {
         > design_rule;
 
         typedef parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<ShipDesign>>&)
+            void (std::vector<std::unique_ptr<ShipDesign>>&)
         > start_rule;
 
         design_prefix_rule design_prefix;
         design_rule design;
         start_rule start;
     };
+
+    struct manifest_rules {
+        manifest_rules() {
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::push_back;
+
+            qi::_1_type _1;
+            qi::_2_type _2;
+            qi::_3_type _3;
+            qi::_4_type _4;
+            qi::_r1_type _r1;
+
+            const parse::lexer& tok = parse::lexer::instance();
+
+            design_manifest
+                =    tok.ShipDesignOrdering_
+                >    *(parse::detail::label(UUID_token)       > tok.string [ push_back(_r1, parse_uuid_(_1)) ])
+                ;
+
+            start
+                =   +design_manifest(_r1)
+                ;
+
+            design_manifest.name("ShipDesignOrdering");
+
+#if DEBUG_PARSERS
+            debug(design_manifest);
+#endif
+
+            qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
+        }
+
+        using manifest_rule = parse::detail::rule<void (std::vector<boost::uuids::uuid>&)>;
+        using start_rule = parse::detail::rule<void (std::vector<boost::uuids::uuid>&)>;
+
+        manifest_rule design_manifest;
+        start_rule start;
+    };
+
 }
 
 namespace parse {
-    bool ship_designs(const boost::filesystem::path& path, std::map<std::string, std::unique_ptr<ShipDesign>>& designs) {
+    bool ship_designs(const boost::filesystem::path& path,
+                      std::vector<std::unique_ptr<ShipDesign>>& designs,
+                      std::vector<boost::uuids::uuid>& ordering)
+    {
+        boost::filesystem::path manifest_file;
+
         // Allow files with any suffix in order to convert legacy ShipDesign files.
         bool permissive_mode = true;
         const auto& scripts = ListScripts(path, permissive_mode);
-
         bool result = true;
+
         for(const boost::filesystem::path& file : scripts) {
+            if (file.filename() == "ShipDesignOrdering.focs.txt" ) {
+                manifest_file = file;
+                continue;
+            }
+
             try {
-                result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<ShipDesign>>>(file, designs);
+                result &= detail::parse_file<rules, std::vector<std::unique_ptr<ShipDesign>>>(file, designs);
             } catch (const std::runtime_error& e) {
                 result = false;
                 ErrorLogger() << "Failed to parse ship design in " << file << " from " << path << " because " << e.what();;
             }
         }
+
+        if (!manifest_file.empty()) {
+            try {
+                result &= detail::parse_file<manifest_rules, std::vector<boost::uuids::uuid>>(manifest_file, ordering);
+            } catch (const std::runtime_error& e) {
+                ErrorLogger() << "Failed to parse ship design manifest in " << manifest_file << " from " << path
+                              << " because " << e.what();;
+            }
+        }
+
         return result;
     }
 
-    bool ship_designs(std::map<std::string, std::unique_ptr<ShipDesign>>& designs)
-    { return ship_designs("scripting/ship_designs", designs); }
+    bool ship_designs(std::vector<std::unique_ptr<ShipDesign>>& designs, std::vector<boost::uuids::uuid>& ordering)
+    { return ship_designs("scripting/ship_designs", designs, ordering); }
 
-    bool monster_designs(std::map<std::string, std::unique_ptr<ShipDesign>>& designs)
-    { return ship_designs("scripting/monster_designs", designs); }
+    bool monster_designs(std::vector<std::unique_ptr<ShipDesign>>& designs, std::vector<boost::uuids::uuid>& ordering)
+    { return ship_designs("scripting/monster_designs", designs, ordering); }
 }

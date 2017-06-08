@@ -1,0 +1,51 @@
+// The ShipDesignOrdering.focs.txt file is used in
+// default/scripting/ship_designs/, default/scripting/monster_designs/ and
+// <data_dir>/shipdesigns.  The format is a single line,
+
+// `ShipDesignOrdering`
+
+// followed by any number of lines like,
+
+// `uuid = "01234567-89ab-cdef-0123-456789abcdef"\n`
+
+// The list of ship design UUIDs provides the order that default ship designs,
+// monsters and saved designs are used in game.  Designs are added to the
+// universe in this order.  The human client uses this order to display
+// designs/monsters to the player.
+
+ShipDesignOrdering
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca29"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca15"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca30"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca07"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca16"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca21"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca04"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca17"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca22"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca00"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca33"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca32"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca10"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca31"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca08"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca02"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca14"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca03"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca01"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca27"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca05"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca18"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca28"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca19"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca09"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca34"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca23"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca12"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca26"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca24"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca25"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca20"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca11"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca06"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca13"

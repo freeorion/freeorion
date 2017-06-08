@@ -144,14 +144,13 @@ namespace {
             if (!exists(saved_designs_dir))
                 return;
 
-            std::map<std::string, std::unique_ptr<ShipDesign>> file_designs;
-            parse::ship_designs(saved_designs_dir, file_designs);
+            std::vector<std::unique_ptr<ShipDesign>> file_designs;
+            std::vector<boost::uuids::uuid> ordering;
+            parse::ship_designs(saved_designs_dir, file_designs, ordering);
 
-            for (auto& design_entry : file_designs) {
-                if (m_saved_designs.find(design_entry.first) == m_saved_designs.end()) {
-                    m_saved_designs[design_entry.first] = std::move(design_entry.second);
-                }
-            }
+            for (auto& design_entry : file_designs)
+                if (!m_saved_designs.count(design_entry->Name()))
+                    m_saved_designs[design_entry->Name()] = std::move(design_entry);
         }
 
         const ShipDesign* GetDesign(const std::string& design_name) {
