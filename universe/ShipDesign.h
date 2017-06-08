@@ -9,6 +9,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <stdexcept>
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -425,21 +426,38 @@ private:
         serialization. */
     ShipDesign();
 public:
-    /** The public ShipDesign constructor will only construct valid ship designs.  If the passed
-        in parameters (\p hull and \p parts) would result in an invalid design it throws
-        std::runtime_error. */
-    ShipDesign(const std::string& name, const std::string& description,
+    /** The public ShipDesign constructor will only construct valid ship
+        designs, as long as the HullTypeManager has at least one hull.
+
+        If \p should_throw is not boost::none and the passed in parameters (\p
+        hull and \p parts) would result in an invalid design it generates an
+        explicit log message showing the FOCS corresponding to the passed in
+        parameters and the FOCS corresponding to a corrected valid design and
+        then throws std::invalid_argument.  This can be used to test design
+        validity and provide an explcit log message.
+
+        should_throw is not used but it is a literal reminder that
+        std::invalid_argument should be caught.
+
+        If \p should_throw is boost::none it will correct the errors in
+        parameters, print a log message and return a valid ship design.  The
+        only exception is if there are no ship hull in the HullManager.  Then
+        the constructor will not throw, but will return an invalid ship design
+        with a empty "" hull.
+    */
+    ShipDesign(const boost::optional<std::invalid_argument>& should_throw,
+               const std::string& name, const std::string& description,
                int designed_on_turn, int designed_by_empire, const std::string& hull,
                const std::vector<std::string>& parts,
                const std::string& icon, const std::string& model,
                bool name_desc_in_stringtable = false, bool monster = false,
                const boost::uuids::uuid& uuid = boost::uuids::nil_uuid()
               );
-    /** The public ShipDesign constructor will only construct valid ship designs.  If the passed
-        in parameters (\p hull and \p parts) would result in an invalid design it throws
-        std::runtime_error. */
+
+    /**  The public ShipDesign constructor will only construct valid ship
+         designs, as long as the HullTypeManager has at least one hull. */
     ShipDesign(const std::string& name, const std::string& description,
-               const std::string& hull,
+               int designed_on_turn, int designed_by_empire, const std::string& hull,
                const std::vector<std::string>& parts,
                const std::string& icon, const std::string& model,
                bool name_desc_in_stringtable = false, bool monster = false,
@@ -542,8 +560,13 @@ private:
         MaybeInvalidDesign(const std::string& hull, const std::vector<std::string>& parts);
 
     /** Force design invariants to be true. If design invariants are not begin met provide an
-        explicit log message about how it was corrected. */
-    void MakeValid();
+        explicit log message about how it was corrected and throw
+        std::invalid_argument if \p should_throw is not none.
+
+        should_throw is not used but it is a literal reminder that
+        std::invalid_argument should be caught.
+    */
+    void ForceValidDesignOrThrow(const boost::optional<std::invalid_argument>& should_throw);
 
     void BuildStatCaches();
 

@@ -539,7 +539,8 @@ ShipDesign::ShipDesign() :
     m_name_desc_in_stringtable(false)
 {}
 
-ShipDesign::ShipDesign(const std::string& name, const std::string& description,
+ShipDesign::ShipDesign(const boost::optional<std::invalid_argument>& should_throw,
+                       const std::string& name, const std::string& description,
                        int designed_on_turn, int designed_by_empire, const std::string& hull,
                        const std::vector<std::string>& parts,
                        const std::string& icon, const std::string& model,
@@ -557,17 +558,18 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
     m_3D_model(model),
     m_name_desc_in_stringtable(name_desc_in_stringtable)
 {
-    MakeValid();
+    ForceValidDesignOrThrow(should_throw);
     BuildStatCaches();
 }
 
 ShipDesign::ShipDesign(const std::string& name, const std::string& description,
-                       const std::string& hull,
+                       int designed_on_turn, int designed_by_empire, const std::string& hull,
                        const std::vector<std::string>& parts,
                        const std::string& icon, const std::string& model,
                        bool name_desc_in_stringtable, bool monster,
                        const boost::uuids::uuid& uuid /*= boost::uuids::nil_uuid()*/) :
-    ShipDesign(name, description, 0, ALL_EMPIRES, hull, parts, icon, model, name_desc_in_stringtable, monster, uuid)
+    ShipDesign(boost::none, name, description, designed_on_turn, designed_by_empire, hull, parts,
+               icon, model, name_desc_in_stringtable, monster, uuid)
 {}
 
 const std::string& ShipDesign::Name(bool stringtable_lookup /* = true */) const {
@@ -942,7 +944,7 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in, const std::vector<std
         return std::make_pair(hull, parts);
 }
 
-void ShipDesign::MakeValid() {
+void ShipDesign::ForceValidDesignOrThrow(const boost::optional<std::invalid_argument>& should_throw) {
     auto force_valid = MaybeInvalidDesign(m_hull, m_parts);
     if (!force_valid)
         return;
@@ -965,6 +967,9 @@ void ShipDesign::MakeValid() {
         ErrorLogger() << ss.str();
     else
         WarnLogger() << ss.str();
+
+    if (should_throw)
+        throw std::invalid_argument("ShipDesign: Bad hull or parts");
 }
 
 void ShipDesign::BuildStatCaches() {

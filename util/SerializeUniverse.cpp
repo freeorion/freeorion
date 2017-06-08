@@ -283,7 +283,7 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_3D_model)
         & BOOST_SERIALIZATION_NVP(m_name_desc_in_stringtable);
     if (Archive::is_loading::value) {
-        MakeValid();
+        ForceValidDesignOrThrow(boost::none);
         BuildStatCaches();
     }
 }
