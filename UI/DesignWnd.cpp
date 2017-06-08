@@ -3316,15 +3316,12 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
     const auto uuid = boost::uuids::random_generator()();
 
     // update stored design
+    m_incomplete_design.reset();
     try {
         m_incomplete_design.reset(new ShipDesign(name, description, CurrentTurn(), ClientApp::GetApp()->EmpireID(),
                                                  hull, parts, icon, "", false, false, uuid));
-    } catch (const std::exception& e) {
-        // had a weird crash in the above call a few times, but I can't seem to
-        // replicate it now.  hopefully catching any exception here will
-        // prevent crashes and instead just cause the incomplete design details
-        // to not update when expected.
-        ErrorLogger() << "DesignWnd::MainPanel::RefreshIncompleteDesign caught exception: " << e.what();
+    } catch (const std::runtime_error& e) {
+        ErrorLogger() << "DesignWnd::MainPanel::RefreshIncompleteDesign " << e.what();
     }
 }
 
@@ -3524,41 +3521,46 @@ void DesignWnd::ShowShipDesignInEncyclopedia(int design_id)
 { m_detail_panel->SetDesign(design_id); }
 
 int DesignWnd::AddDesign() {
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = GetEmpire(empire_id);
-    if (!empire) return INVALID_DESIGN_ID;
+    try {
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        const Empire* empire = GetEmpire(empire_id);
+        if (!empire) return INVALID_DESIGN_ID;
 
-    std::vector<std::string> parts = m_main_panel->Parts();
-    const std::string& hull_name = m_main_panel->Hull();
+        std::vector<std::string> parts = m_main_panel->Parts();
+        const std::string& hull_name = m_main_panel->Hull();
 
-    if (!ShipDesign::ValidDesign(hull_name, parts)) {
+        if (!ShipDesign::ValidDesign(hull_name, parts)) {
+            ErrorLogger() << "DesignWnd::AddDesign tried to add an invalid ShipDesign";
+            return INVALID_DESIGN_ID;
+        }
+
+        std::string name = m_main_panel->ValidatedDesignName();
+
+        const std::string& description = m_main_panel->DesignDescription();
+
+        std::string icon = "ship_hulls/generic_hull.png";
+        if (const HullType* hull = GetHullType(hull_name))
+            icon = hull->Icon();
+
+        const auto uuid = boost::uuids::random_generator()();
+
+        // create design from stuff chosen in UI
+        ShipDesign design(name, description, CurrentTurn(), ClientApp::GetApp()->EmpireID(),
+                          hull_name, parts, icon, "some model", false, false, uuid);
+
+        int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ShipDesignOrder>(empire_id, new_design_id, design));
+        m_main_panel->ReregisterDesigns();
+        m_main_panel->DesignChangedSignal();
+
+        DebugLogger() << "Added new design: " << design.Name();
+
+        return new_design_id;
+    } catch (std::runtime_error&) {
         ErrorLogger() << "DesignWnd::AddDesign tried to add an invalid ShipDesign";
         return INVALID_DESIGN_ID;
     }
-
-    std::string name = m_main_panel->ValidatedDesignName();
-
-    const std::string& description = m_main_panel->DesignDescription();
-
-    std::string icon = "ship_hulls/generic_hull.png";
-    if (const HullType* hull = GetHullType(hull_name))
-        icon = hull->Icon();
-
-    const auto uuid = boost::uuids::random_generator()();
-
-    // create design from stuff chosen in UI
-    ShipDesign design(name, description, CurrentTurn(), ClientApp::GetApp()->EmpireID(),
-                      hull_name, parts, icon, "some model", false, false, uuid);
-
-    int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
-    HumanClientApp::GetApp()->Orders().IssueOrder(
-        std::make_shared<ShipDesignOrder>(empire_id, new_design_id, design));
-    m_main_panel->ReregisterDesigns();
-    m_main_panel->DesignChangedSignal();
-
-    DebugLogger() << "Added new design: " << design.Name();
-
-    return new_design_id;
 }
 
 void DesignWnd::ReplaceDesign() {
