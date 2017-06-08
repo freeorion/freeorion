@@ -11,6 +11,7 @@
 #include "../parse/Parse.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
+#include "IDAllocator.h"
 #include "Building.h"
 #include "Fleet.h"
 #include "Planet.h"
@@ -103,6 +104,7 @@ namespace EmpireStatistics {
     }
 }
 
+
 /////////////////////////////////////////////
 // class Universe
 /////////////////////////////////////////////
@@ -113,7 +115,8 @@ Universe::Universe() :
     m_universe_width(1000.0),
     m_inhibit_universe_object_signals(false),
     m_encoding_empire(ALL_EMPIRES),
-    m_all_objects_visible(false)
+    m_all_objects_visible(false),
+    m_object_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_OBJECT_ID, TEMPORARY_OBJECT_ID))
 {}
 
 Universe::~Universe() {
@@ -152,6 +155,10 @@ void Universe::Clear() {
 
     m_marked_destroyed.clear();
 }
+
+
+void Universe::ResetObjectIDAllocation(const std::vector<int>& empire_ids)
+{ *m_object_id_allocator = IDAllocator(ALL_EMPIRES, empire_ids, INVALID_OBJECT_ID, TEMPORARY_OBJECT_ID); }
 
 const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const {
     if (empire_id == ALL_EMPIRES)
@@ -322,11 +329,8 @@ std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(int object_id, 
 }
 
 int Universe::GenerateObjectID() {
-    if (m_last_allocated_object_id + 1 < MAX_ID)
-        return ++m_last_allocated_object_id;
-    // the object id number space is exhausted, which means we're screwed
-    ErrorLogger() << "Universe::GenerateObjectID: object id number space exhausted!";
-    return INVALID_OBJECT_ID;
+    auto new_id = m_object_id_allocator->NewID();
+    return new_id;
 }
 
 template <class T>
@@ -335,7 +339,9 @@ std::shared_ptr<T> Universe::Insert(T* obj) {
         return nullptr;
 
     int id = GenerateObjectID();
-    if (id != INVALID_OBJECT_ID) {
+
+    auto valid = m_object_id_allocator->UpdateIDAndCheckIfOwned(id);
+    if (valid) {
         obj->SetID(id);
         return m_objects.Insert(obj);
     }
@@ -349,15 +355,13 @@ std::shared_ptr<T> Universe::Insert(T* obj) {
 
 template <class T>
 std::shared_ptr<T> Universe::InsertID(T* obj, int id) {
-    if (id == INVALID_OBJECT_ID)
+    auto valid = m_object_id_allocator->UpdateIDAndCheckIfOwned(id);
+
+    if (!valid)
         return Insert(obj);
-    if (!obj || id >= MAX_ID)
-        return nullptr;
 
     obj->SetID(id);
     std::shared_ptr<T> result = m_objects.Insert(obj);
-    if (id > m_last_allocated_object_id )
-        m_last_allocated_object_id = id;
     DebugLogger() << "Inserting object with id " << id;
     return result;
 }
@@ -2978,12 +2982,6 @@ void Universe::GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_k
     ObjectKnowledgeMap::const_iterator it = m_empire_stale_knowledge_object_ids.find(encoding_empire);
     if (it != m_empire_stale_knowledge_object_ids.end())
         empire_stale_knowledge_object_ids[encoding_empire] = it->second;
-}
-
-template <class T>
-std::shared_ptr<T> Universe::InsertNewObject(T* object) {
-    m_objects.Insert(object);
-    return m_objects.Object<T>(object->ID());
 }
 
 std::shared_ptr<Ship> Universe::CreateShip(int id/* = INVALID_OBJECT_ID*/)

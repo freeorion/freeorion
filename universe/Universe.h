@@ -33,6 +33,8 @@ class XMLElement;
 class ShipDesign;
 class System;
 class Pathfinder;
+class IDAllocator;
+
 namespace Condition {
     struct ConditionBase;
     typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
@@ -187,6 +189,9 @@ public:
     
     // Resets the universe object to prepare for generation of a new universe
     void            ResetUniverse();
+
+   /** Reset object id allocation for a new game. */
+    void ResetObjectIDAllocation(const std::vector<int>& empire_ids);
 
     /** Clears main ObjectMap, empires' latest known objects map, and
       * ShipDesign map. */
@@ -498,8 +503,8 @@ private:
     /***/
     void    GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_knowledge_object_ids, int encoding_empire) const;
 
-    template <class T>
-    std::shared_ptr<T> InsertNewObject(T* object);
+    /** Manages allocating and verifying new object ids.*/
+    std::unique_ptr<IDAllocator> const m_object_id_allocator;
 
     friend class boost::serialization::access;
     template <class Archive>
