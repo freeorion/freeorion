@@ -68,7 +68,6 @@ struct MessageEventBase {
     (TurnOrders)                            \
     (CombatTurnOrders)                      \
     (ClientSaveData)                        \
-    (RequestObjectID)                       \
     (RequestDesignID)                       \
     (RequestCombatLogs)                     \
     (PlayerChat)                            \
@@ -279,7 +278,6 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
 struct WaitingForTurnEnd : sc::state<WaitingForTurnEnd, PlayingGame, WaitingForTurnEndIdle> {
     typedef boost::mpl::list<
         sc::custom_reaction<TurnOrders>,
-        sc::custom_reaction<RequestObjectID>,
         sc::custom_reaction<RequestDesignID>,
         sc::custom_reaction<CheckTurnEndConditions>
     > reactions;
@@ -288,7 +286,6 @@ struct WaitingForTurnEnd : sc::state<WaitingForTurnEnd, PlayingGame, WaitingForT
     ~WaitingForTurnEnd();
 
     sc::result react(const TurnOrders& msg);
-    sc::result react(const RequestObjectID& msg);
     sc::result react(const RequestDesignID& msg);
     sc::result react(const CheckTurnEndConditions& c);
 

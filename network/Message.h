@@ -262,14 +262,6 @@ FO_COMMON_API Message ClientSaveDataMessage(const OrderSet& orders, const std::s
 /** creates a CLIENT_SAVE_DATA message, without UI data and without a state string. */
 FO_COMMON_API Message ClientSaveDataMessage(const OrderSet& orders);
 
-/** creates an REQUEST_NEW_OBJECT_ID message. This message is a synchronous
-    message, when sent it will wait for a reply from the server */
-FO_COMMON_API Message RequestNewObjectIDMessage();
-
-/** creates an DISPATCH_NEW_OBJECT_ID  message.  This message is sent to a
-  * client who is waiting for a new object ID */
-FO_COMMON_API Message DispatchObjectIDMessage(int new_id);
-
 /** creates an REQUEST_NEW_DESIGN_ID message. This message is a synchronous
     message, when sent it will wait for a reply from the server */
 FO_COMMON_API Message RequestNewDesignIDMessage();
