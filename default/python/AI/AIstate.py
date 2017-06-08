@@ -14,10 +14,10 @@ from EnumsAI import MissionType, ShipRoleType
 import CombatRatingsAI
 import MilitaryAI
 import PlanetUtilsAI
-from freeorion_tools import dict_from_map
+from freeorion_tools import dict_from_map, print_error
 from universe_object import System
 from AIDependencies import INVALID_ID
-from character.character_module import create_character
+from character.character_module import create_character, Aggression
 
 
 # moving ALL or NEARLY ALL 'global' variables into AIState object rather than module
@@ -43,15 +43,79 @@ outpostIDs = []
 outpostSystemIDs = []
 
 
-# AIstate class
+class ConversionError(Exception):
+    """Exception to be raised if the conversion of a savegame state fails.
+
+    Automatically logs and chats to the host if raised.
+    """
+    def __init__(self, msg=""):
+        print_error(msg)
+
+
+def convert_to_version(state, version):
+    """Convert a savegame AIstate to the next version.
+
+    :param state: savegame state, modified in function
+    :type state: dict
+    :param version: Version to convert to
+    :type version: int
+    """
+    print "Trying to convert savegame state to version %d..." % version
+    current_version = state.get("version", -1)
+    print "  Current version: %d" % current_version
+    if current_version == version:
+        raise ConversionError("Can't convert AI savegame to the same compatibility version.")
+
+    if current_version > version:
+        raise ConversionError("Can't convert AI savegame to an older compatibility version.")
+
+    if version != current_version + 1:
+        raise ConversionError("Can't skip a compatibility version when converting AI savegame.")
+
+    if version == 0:
+        pass  # only version number added
+    elif version == 1:
+        try:
+            state['_aggression'] = state['character'].get_trait(Aggression).key
+        except Exception as e:
+            raise ConversionError("Error when converting to compatibility version 1: "
+                                   "Can't find aggression in character module. Exception thrown was: " + e.message)
+    #   state["some_new_member"] = some_default_value
+    #   del state["some_removed_member"]
+    #   state["list_changed_to_set"] = set(state["list_changed_to_set"])
+
+    print "  All updates set. Setting new version number."
+    state["version"] = version
+
+
 class AIstate(object):
-    """Stores AI game state."""
+    """Stores AI game state.
+
+    IMPORTANT:
+    If class members are redefined, added or deleted, then the
+    version number must be increased by 1 and the convert_to_version()
+    function must be updated so a saved state from the previous version
+    is playable with this AIstate version, i.e. new members must be added
+    and outdated members must be modified and / or deleted.
+    """
+    version = 1
+
     def __init__(self, aggression):
+        # Do not allow to create AIstate instances with an invalid version number.
+        if not hasattr(AIstate, 'version'):
+            raise ConversionError("AIstate must have an integer version attribute for savegame compatibility")
+        if not isinstance(AIstate.version, int):
+            raise ConversionError("Version attribute of AIstate must be an integer!")
+        if AIstate.version < 0:
+            raise ConversionError("AIstate savegame compatibility version must be a positive integer!")
+
         # Debug info
         # unique id for game
         self.uid = self.generate_uid(first=True)
         # unique ids for turns.  {turn: uid}
         self.turn_uids = {}
+
+        self._aggression = aggression
 
         # 'global' (?) variables
         self.colonisablePlanetIDs = odict()
@@ -94,6 +158,23 @@ class AIstate(object):
         self.__empire_standard_enemy = CombatRatingsAI.default_ship_stats().get_stats(hashable=True)  # TODO: track on a per-empire basis
         self.empire_standard_enemy_rating = 0  # TODO: track on a per-empire basis
         self.character = create_character(aggression, self.empireID)
+
+    def __setstate__(self, state):
+        try:
+            for v in range(state.get("version", -1), AIstate.version):
+                convert_to_version(state, v+1)
+            self.__dict__ = state
+        except ConversionError:
+            if '_aggression' in state:
+                aggression = state['_aggression']
+            else:
+                try:
+                    aggression = state['character'].get_trait(Aggression).key
+                except Exception as e:
+                    print >> sys.stderr, "Could not find the aggression level of the AI, defaulting to typical."
+                    print >> sys.stderr, e
+                    aggression = fo.aggression.typical
+            self.__init__(aggression)
 
     def generate_uid(self, first=False):
         """
