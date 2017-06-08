@@ -1027,11 +1027,11 @@ void ShipDesignOrder::ExecuteImpl() const {
 
         ShipDesign* new_ship_design;
         try {
-            new_ship_design = new ShipDesign(m_name, m_description,
+            new_ship_design = new ShipDesign(std::invalid_argument(""), m_name, m_description,
                                              m_designed_on_turn, EmpireID(), m_hull, m_parts,
                                              m_icon, m_3D_model, m_name_desc_in_stringtable,
                                              m_is_monster, m_uuid);
-        } catch (const std::runtime_error&) {
+        } catch (const std::invalid_argument&) {
             ErrorLogger() << "Couldn't create ship design.";
             return;
         }

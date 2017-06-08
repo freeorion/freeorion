@@ -392,8 +392,9 @@ namespace {
         // Create the design and add it to the universe
         ShipDesign* design;
         try {
-            design = new ShipDesign(name, description, BEFORE_FIRST_TURN, ALL_EMPIRES, hull, parts, icon, model, true, monster);
-        } catch (const std::runtime_error&) {
+            design = new ShipDesign(std::invalid_argument(""), name, description, BEFORE_FIRST_TURN, ALL_EMPIRES,
+                                    hull, parts, icon, model, true, monster);
+        } catch (const std::invalid_argument&) {
             ErrorLogger() << "CreateShipDesign: invalid ship design";
             return false;
         }

@@ -3318,9 +3318,10 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
     // update stored design
     m_incomplete_design.reset();
     try {
-        m_incomplete_design.reset(new ShipDesign(name, description, CurrentTurn(), ClientApp::GetApp()->EmpireID(),
+        m_incomplete_design.reset(new ShipDesign(std::invalid_argument(""),
+                                                 name, description, CurrentTurn(), ClientApp::GetApp()->EmpireID(),
                                                  hull, parts, icon, "", false, false, uuid));
-    } catch (const std::runtime_error& e) {
+    } catch (const std::invalid_argument& e) {
         ErrorLogger() << "DesignWnd::MainPanel::RefreshIncompleteDesign " << e.what();
     }
 }
@@ -3545,7 +3546,7 @@ int DesignWnd::AddDesign() {
         const auto uuid = boost::uuids::random_generator()();
 
         // create design from stuff chosen in UI
-        ShipDesign design(name, description, CurrentTurn(), ClientApp::GetApp()->EmpireID(),
+        ShipDesign design(std::invalid_argument(""), name, description, CurrentTurn(), ClientApp::GetApp()->EmpireID(),
                           hull_name, parts, icon, "some model", false, false, uuid);
 
         int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
@@ -3557,7 +3558,7 @@ int DesignWnd::AddDesign() {
         DebugLogger() << "Added new design: " << design.Name();
 
         return new_design_id;
-    } catch (std::runtime_error&) {
+    } catch (std::invalid_argument&) {
         ErrorLogger() << "DesignWnd::AddDesign tried to add an invalid ShipDesign";
         return INVALID_DESIGN_ID;
     }
