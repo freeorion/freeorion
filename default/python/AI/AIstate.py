@@ -79,7 +79,12 @@ def convert_to_version(state, version):
             state['_aggression'] = state['character'].get_trait(Aggression).key
         except Exception as e:
             raise ConversionError("Error when converting to compatibility version 1: "
-                                   "Can't find aggression in character module. Exception thrown was: " + e.message)
+                                  "Can't find aggression in character module. Exception thrown was: " + e.message)
+    elif version == 2:
+        # some dicts which used only the keys were changed to sets
+        for var_name in ['visInteriorSystemIDs', 'exploredSystemIDs', 'visBorderSystemIDs', 'unexploredSystemIDs']:
+            state[var_name] = set(state.get(var_name, {}).keys())
+
     #   state["some_new_member"] = some_default_value
     #   del state["some_removed_member"]
     #   state["list_changed_to_set"] = set(state["list_changed_to_set"])
@@ -98,7 +103,7 @@ class AIstate(object):
     is playable with this AIstate version, i.e. new members must be added
     and outdated members must be modified and / or deleted.
     """
-    version = 1
+    version = 2
 
     def __init__(self, aggression):
         # Do not allow to create AIstate instances with an invalid version number.
