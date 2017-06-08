@@ -170,8 +170,12 @@ namespace {
 
 namespace parse {
     bool ship_designs(const boost::filesystem::path& path, std::map<std::string, std::unique_ptr<ShipDesign>>& designs) {
+        // Allow files with any suffix in order to convert legacy ShipDesign files.
+        bool permissive_mode = true;
+        const auto& scripts = ListScripts(path, permissive_mode);
+
         bool result = true;
-        for(const boost::filesystem::path& file : ListScripts(path)) {
+        for(const boost::filesystem::path& file : scripts) {
             try {
                 result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<ShipDesign>>>(file, designs);
             } catch (const std::runtime_error& e) {
