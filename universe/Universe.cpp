@@ -81,8 +81,6 @@ namespace boost {
 
 
 extern FO_COMMON_API const int ALL_EMPIRES            = -1;
-// TODO: implement a robust, thread-safe solution for creating multiple client-local temporary objects with unique IDs that will never conflict with each other or the server.
-extern const int MAX_ID                 = 2000000000;
 
 namespace EmpireStatistics {
     const std::map<std::string, ValueRef::ValueRefBase<double>*>& GetEmpireStats() {
@@ -110,8 +108,6 @@ namespace EmpireStatistics {
 /////////////////////////////////////////////
 Universe::Universe() :
     m_pathfinder(new Pathfinder),
-    m_last_allocated_object_id(-1), // this is conicidentally equal to INVALID_OBJECT_ID as of this writing, but the reason for this to be -1 is so that the first object has id 0, and all object ids are non-negative
-    m_last_allocated_design_id(-1), // same, but for INVALID_DESIGN_ID
     m_universe_width(1000.0),
     m_inhibit_universe_object_signals(false),
     m_encoding_empire(ALL_EMPIRES),
@@ -3040,12 +3036,6 @@ void Universe::ResetUniverse() {
     m_stat_records.clear();
     m_universe_width = 1000.0;
 
-    // these happen to be equal to INVALID_OBJECT_ID and INVALID_DESIGN_ID,
-    // but the point here is that the latest used ID is incremented before
-    // being assigned, so using -1 here means the first assigned ID will be 0,
-    // which is a valid ID
-    m_last_allocated_object_id = -1;
-    m_last_allocated_design_id = -1;
     ResetAllIDAllocation();
 
     GetSpeciesManager().ClearSpeciesHomeworlds();
