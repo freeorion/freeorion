@@ -3274,8 +3274,12 @@ public:
     bool            CanPartBeAdded(const PartType* part);
 
     void            ClearParts();                                               //!< removes all parts from design.  hull is not altered
-    void            SetHull(const std::string& hull_name);                      //!< sets the design hull to the specified hull, displaying appropriate background image and creating appropriate SlotControls
-    void            SetHull(const HullType* hull);
+
+    /** Set the design hull \p hull_name, displaying appropriate background image and creating
+        appropriate SlotControls.  If \p signal is false do not emit the the
+        DesignChangedSignal(). */
+    void            SetHull(const std::string& hull_name, bool signal = true);
+    void            SetHull(const HullType* hull, bool signal = true);
     void            SetDesign(const ShipDesign* ship_design);                   //!< sets the displayed design by setting the appropriate hull and parts
     void            SetDesign(int design_id);                                   //!< sets the displayed design by setting the appropriate hull and parts
     /** SetDesign to the design with \p uuid from the SavedDesignManager. */
@@ -3692,10 +3696,10 @@ void DesignWnd::MainPanel::ClearParts() {
     DesignChangedSignal();
 }
 
-void DesignWnd::MainPanel::SetHull(const std::string& hull_name)
-{ SetHull(GetHullType(hull_name)); }
+void DesignWnd::MainPanel::SetHull(const std::string& hull_name, bool signal)
+{ SetHull(GetHullType(hull_name), signal); }
 
-void DesignWnd::MainPanel::SetHull(const HullType* hull) {
+void DesignWnd::MainPanel::SetHull(const HullType* hull, bool signal) {
     m_hull = hull;
     DeleteChild(m_background_image);
     m_background_image = nullptr;
@@ -3707,7 +3711,7 @@ void DesignWnd::MainPanel::SetHull(const HullType* hull) {
     }
     Populate();
     DoLayout();
-    if (hull)
+    if (signal)
         DesignChangedSignal();
 }
 
@@ -3732,7 +3736,8 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
     m_design_name->SetText(ship_design->Name());
     m_design_description->SetText(ship_design->Description());
 
-    SetHull(ship_design->GetHull());
+    bool suppress_design_changed_signal = true;
+    SetHull(ship_design->GetHull(), !suppress_design_changed_signal);
 
     SetParts(ship_design->Parts());
     DesignChangedSignal();
@@ -3749,7 +3754,7 @@ void DesignWnd::MainPanel::SetDesignComponents(const std::string& hull,
 {
     m_replaced_design_id = boost::none;
     m_replaced_design_uuid = boost::none;
-    SetHull(hull);
+    SetHull(hull, false);
     SetParts(parts);
 }
 
