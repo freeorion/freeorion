@@ -1330,7 +1330,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     std::vector<int> empire_ids(player_setup_data.size());
     std::transform(player_setup_data.begin(), player_setup_data.end(), empire_ids.begin(),
                    [](const std::pair<int,PlayerSetupData> ii) { return ii.first; });
-    universe.ResetObjectIDAllocation(empire_ids);
+    universe.ResetAllIDAllocation(empire_ids);
 
     // Add predefined ship designs to universe
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse();

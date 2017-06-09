@@ -116,7 +116,8 @@ Universe::Universe() :
     m_inhibit_universe_object_signals(false),
     m_encoding_empire(ALL_EMPIRES),
     m_all_objects_visible(false),
-    m_object_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_OBJECT_ID, TEMPORARY_OBJECT_ID))
+    m_object_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_OBJECT_ID, TEMPORARY_OBJECT_ID)),
+    m_design_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_DESIGN_ID, TEMPORARY_OBJECT_ID))
 {}
 
 Universe::~Universe() {
@@ -145,8 +146,7 @@ void Universe::Clear() {
     m_effect_accounting_map.clear();
     m_effect_discrepancy_map.clear();
 
-    m_last_allocated_object_id = -1;
-    m_last_allocated_design_id = -1;
+    ResetAllIDAllocation();
 
     m_empire_known_destroyed_object_ids.clear();
     m_empire_stale_knowledge_object_ids.clear();
@@ -157,8 +157,10 @@ void Universe::Clear() {
 }
 
 
-void Universe::ResetObjectIDAllocation(const std::vector<int>& empire_ids)
-{ *m_object_id_allocator = IDAllocator(ALL_EMPIRES, empire_ids, INVALID_OBJECT_ID, TEMPORARY_OBJECT_ID); }
+void Universe::ResetAllIDAllocation(const std::vector<int>& empire_ids) {
+    *m_object_id_allocator = IDAllocator(ALL_EMPIRES, empire_ids, INVALID_OBJECT_ID, TEMPORARY_OBJECT_ID);
+    *m_design_id_allocator = IDAllocator(ALL_EMPIRES, empire_ids, INVALID_OBJECT_ID, TEMPORARY_OBJECT_ID);
+}
 
 const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const {
     if (empire_id == ALL_EMPIRES)
@@ -333,6 +335,11 @@ int Universe::GenerateObjectID() {
     return new_id;
 }
 
+int Universe::GenerateDesignID() {
+    auto new_id = m_design_id_allocator->NewID();
+    return new_id;
+}
+
 template <class T>
 std::shared_ptr<T> Universe::Insert(T* obj) {
     if (!obj)
@@ -367,37 +374,26 @@ std::shared_ptr<T> Universe::InsertID(T* obj, int id) {
 }
 
 int Universe::InsertShipDesign(ShipDesign* ship_design) {
-    int retval = INVALID_DESIGN_ID;
-    if (ship_design) {
-        if (m_last_allocated_design_id + 1 < MAX_ID) {
-            m_ship_designs[++m_last_allocated_design_id] = ship_design;
-            ship_design->SetID(m_last_allocated_design_id);
-            retval = m_last_allocated_design_id;
-        } else { // we'll probably never execute this branch, considering how many IDs are available
-            // find a hole in the assigned IDs in which to place the object
-            int last_id_seen = INVALID_DESIGN_ID;
-            for (ShipDesignMap::value_type& entry : m_ship_designs) {
-                if (1 < entry.first - last_id_seen) {
-                    m_ship_designs[last_id_seen + 1] = ship_design;
-                    ship_design->SetID(last_id_seen + 1);
-                    retval = last_id_seen + 1;
-                    break;
-                }
-            }
-        }
-    }
-    return retval;
+    if (!ship_design)
+        return INVALID_DESIGN_ID;
+
+    int id = GenerateDesignID();
+
+    InsertShipDesignID(ship_design, id);
+
+    return id;
 }
 
 bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id) {
-    bool retval = false;
+    if (!ship_design)
+        return false;
 
-    if (ship_design  &&  id != INVALID_DESIGN_ID  &&  id < MAX_ID) {
+    auto valid = m_design_id_allocator->UpdateIDAndCheckIfOwned(id);
+    if (valid) {
         ship_design->SetID(id);
         m_ship_designs[id] = ship_design;
-        retval = true;
     }
-    return retval;
+    return valid;
 }
 
 bool Universe::DeleteShipDesign(int design_id) {
@@ -3050,6 +3046,7 @@ void Universe::ResetUniverse() {
     // which is a valid ID
     m_last_allocated_object_id = -1;
     m_last_allocated_design_id = -1;
+    ResetAllIDAllocation();
 
     GetSpeciesManager().ClearSpeciesHomeworlds();
 }

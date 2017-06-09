@@ -119,7 +119,9 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_last_allocated_object_id);
     ar  & BOOST_SERIALIZATION_NVP(m_last_allocated_design_id);
 
+    DebugLogger() << "Universe::serialize : " << serializing_label << " id allocator";
     m_object_id_allocator->SerializeForEmpire(ar, 0 ,m_encoding_empire);
+    m_design_id_allocator->SerializeForEmpire(ar, 0 ,m_encoding_empire);
 
     ar  & BOOST_SERIALIZATION_NVP(m_stat_records);
     DebugLogger() << "Universe::serialize : " << serializing_label << " " << m_stat_records.size() << " types of statistic";

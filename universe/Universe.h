@@ -190,8 +190,8 @@ public:
     // Resets the universe object to prepare for generation of a new universe
     void            ResetUniverse();
 
-   /** Reset object id allocation for a new game. */
-    void ResetObjectIDAllocation(const std::vector<int>& empire_ids);
+   /** Reset object and ship design id allocation for a new game. */
+    void ResetAllIDAllocation(const std::vector<int>& empire_ids = std::vector<int>());
 
     /** Clears main ObjectMap, empires' latest known objects map, and
       * ShipDesign map. */
@@ -351,7 +351,7 @@ public:
 
     /** Generates design ID for a new (ship) design. Usually used by the
       * server to service new ID requests. */
-    int             GenerateDesignID() { return ++m_last_allocated_design_id; } // TODO: See GenerateObjectID()
+    int             GenerateDesignID();
 
     /** Returns true if UniverseOjbectSignals are inhibited, false otherwise. */
     const bool&     UniverseObjectSignalsInhibited();
@@ -505,6 +505,9 @@ private:
 
     /** Manages allocating and verifying new object ids.*/
     std::unique_ptr<IDAllocator> const m_object_id_allocator;
+
+    /** Manages allocating and verifying new ship design ids.*/
+    std::unique_ptr<IDAllocator> const m_design_id_allocator;
 
     friend class boost::serialization::access;
     template <class Archive>

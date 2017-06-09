@@ -146,10 +146,8 @@ int ClientApp::GetNewObjectID() {
 }
 
 int ClientApp::GetNewDesignID() {
-    const auto msg = m_networking->SendSynchronousMessage(RequestNewDesignIDMessage());
-    if (!msg || msg->Text().empty())
-        throw std::runtime_error("ClientApp::GetNewDesignID() didn't get a new design ID");
-    return boost::lexical_cast<int>(msg->Text());
+    auto new_id = GetUniverse().GenerateDesignID();
+    return new_id;
 }
 
 ClientApp* ClientApp::GetApp()
