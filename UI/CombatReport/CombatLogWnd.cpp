@@ -19,9 +19,7 @@
 #include "../AccordionPanel.h"
 #include "../../Empire/Empire.h"
 
-namespace {
-    DeclareThreadSafeLogger(combat_log);
-}
+DeclareThreadSafeLogger(combat_log);
 
 class CombatLogWnd::Impl {
 public:

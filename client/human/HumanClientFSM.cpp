@@ -68,9 +68,7 @@
 class CombatLogManager;
 CombatLogManager&   GetCombatLogManager();
 
-namespace {
-    DeclareThreadSafeLogger(FSM);
-}
+DeclareThreadSafeLogger(FSM);
 
 ////////////////////////////////////////////////////////////
 // HumanClientFSM
