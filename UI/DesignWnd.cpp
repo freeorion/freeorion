@@ -218,6 +218,7 @@ namespace {
             if (!ofs)
                 throw std::runtime_error(UNABLE_TO_OPEN_FILE);
             ofs << design.Dump();
+            TraceLogger() << "Wrote ship design to " << PathString(file);
 
         } catch (const std::exception& e) {
             ErrorLogger() << "Error writing design file.  Exception: " << ": " << e.what();
