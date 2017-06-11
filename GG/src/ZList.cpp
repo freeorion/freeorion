@@ -123,8 +123,8 @@ Wnd* ZList::PickWithinWindow(const Pt& pt, Wnd* wnd, const std::set<Wnd*>* ignor
         wnd : nullptr;
     // look through all the children of wnd, and determine whether pt lies in
     // any of them (or their children)
-    std::list<Wnd*>::reverse_iterator end_it = wnd->m_children.rend();
-    for (std::list<Wnd*>::reverse_iterator it = wnd->m_children.rbegin(); it != end_it; ++it) {
+    const auto end_it = wnd->Children().rend();
+    for (auto it = wnd->Children().rbegin(); it != end_it; ++it) {
         if (!(*it)->Visible())
             continue;
         Wnd* temp = nullptr;

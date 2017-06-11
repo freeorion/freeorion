@@ -989,7 +989,6 @@ private:
     friend class GUI;   ///< GUI needs access to \a m_children, etc.
     friend struct GUIImpl;
     friend class Timer; ///< Timer needs to be able to call HandleEvent
-    friend class ZList; ///< ZList needs access to \a m_children in order to order windows
 };
 
 } // namespace GG
