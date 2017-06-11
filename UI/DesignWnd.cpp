@@ -34,6 +34,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/uuid/random_generator.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 #include <algorithm>
 #include <iterator>
@@ -119,7 +120,8 @@ namespace {
     typedef std::map<std::pair<ShipPartClass, ShipSlotType>,
                      std::vector<const PartType*>>              PartGroupsType;
 
-    const std::string DESIGN_FILENAME_EXTENSION = ".txt";
+    const std::string DESIGN_FILENAME_PREFIX = "ShipDesign-";
+    const std::string DESIGN_FILENAME_EXTENSION = ".focs.txt";
     const std::string UNABLE_TO_OPEN_FILE = "Unable to open file";
     boost::filesystem::path SavedDesignsDir() { return GetUserDataDir() / "shipdesigns/"; }
 
@@ -210,16 +212,13 @@ namespace {
     SavedDesignsManager& GetSavedDesignsManager()
     { return SavedDesignsManager::GetSavedDesignsManager(); }
 
-    void WriteDesignToFile(int design_id, boost::filesystem::path& file) {
-        const ShipDesign* design = GetShipDesign(design_id);
-        if (!design)
-            return;
-
+    void WriteDesignToFile(const ShipDesign& design, boost::filesystem::path& file) {
         try {
             boost::filesystem::ofstream ofs(file);
             if (!ofs)
                 throw std::runtime_error(UNABLE_TO_OPEN_FILE);
-            ofs << design->Dump();
+            ofs << design.Dump();
+            TraceLogger() << "Wrote ship design to " << PathString(file);
 
         } catch (const std::exception& e) {
             ErrorLogger() << "Error writing design file.  Exception: " << ": " << e.what();
@@ -227,7 +226,7 @@ namespace {
         }
     }
 
-    void ShowSaveDesignDialog(int design_id) {
+    void SaveDesign(int design_id) {
         const ShipDesign* design = GetShipDesign(design_id);
         if (!design)
             return;
@@ -237,36 +236,16 @@ namespace {
         if (!exists(designs_dir_path))
             boost::filesystem::create_directories(designs_dir_path);
 
-        // default file name: take design name, process a bit to make nicer / safe
-        std::string default_file_name = design->Name();
-        boost::trim(default_file_name);
-        boost::replace_all(default_file_name, " ", "_");
-        std::string bad_chars = "/?<>\\:*|\".";
-        for (unsigned int i = 0; i < bad_chars.length(); ++i)
-            boost::replace_all(default_file_name, bad_chars.substr(i,1), "");
+        // Since there is no easy way to guarantee that an arbitrary design name with possibly
+        // embedded decorator code is a safe file name, use the UUID. The users will never interact
+        // with this filename.
+        std::string file_name =
+            DESIGN_FILENAME_PREFIX + boost::uuids::to_string(design->UUID()) + DESIGN_FILENAME_EXTENSION;
 
-        if (default_file_name.length() > 200)
-            default_file_name = default_file_name.substr(0, 200);
+        boost::filesystem::path save_path =
+            boost::filesystem::absolute(PathString(designs_dir_path / file_name));
 
-        default_file_name += DESIGN_FILENAME_EXTENSION;
-
-        std::vector<std::pair<std::string, std::string>> filters;
-        filters.push_back({UserString("SHIP_DESIGN_FILES"), "*" + DESIGN_FILENAME_EXTENSION});
-
-        try {
-            FileDlg dlg(PathString(designs_dir_path),
-                        PathString(designs_dir_path / default_file_name),
-                        true, false, filters);
-            dlg.Run();
-            if (!dlg.Result().empty()) {
-                boost::filesystem::path save_path =
-                boost::filesystem::absolute(*dlg.Result().begin());
-                WriteDesignToFile(design_id, save_path);
-            }
-        } catch (const std::exception& e) {
-            ClientUI::MessageBox(e.what(), true);
-            return;
-        }
+        WriteDesignToFile(*design, save_path);
     }
 }
 
@@ -1842,7 +1821,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
             }
         };
 
-        auto save_design_action = [&design_id](){ShowSaveDesignDialog(design_id);};
+        auto save_design_action = [&design_id](){ SaveDesign(design_id); };
 
         // create popup menu with a commands in it
         CUIPopupMenu popup(pt.x, pt.y);
