@@ -906,12 +906,33 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index, bool pause, fl
     m_pause(pause ? PAUSE : RESUME)
 {}
 
+ProductionQueueOrder::ProductionQueueOrder(int empire, int index, float dummy1) :
+    Order(empire),
+    m_index(index),
+    m_split_incomplete(index)
+{}
+
+ProductionQueueOrder::ProductionQueueOrder(int empire, int index, float dummy1, float dummy2) :
+    Order(empire),
+    m_index(index),
+    m_dupe(index)
+{}
+
 void ProductionQueueOrder::ExecuteImpl() const {
     auto empire = GetValidatedEmpire();
 
     try {
         if (m_item.build_type == BT_BUILDING || m_item.build_type == BT_SHIP) {
+            DebugLogger() << "ProductionQueueOrder place " << m_item.Dump();
             empire->PlaceProductionOnQueue(m_item, m_number, m_location, m_new_index);
+
+        } else if (m_split_incomplete != INVALID_SPLIT_INCOMPLETE) {
+            DebugLogger() << "ProductionQueueOrder splitting incomplete from item";
+            empire->SplitIncompleteProductionItem(m_index);
+
+        } else if (m_dupe != INVALID_SPLIT_INCOMPLETE) {
+            DebugLogger() << "ProductionQueueOrder duplicating item";
+            empire->DuplicateProductionItem(m_index);
 
         } else if (m_new_blocksize != INVALID_QUANTITY) {
             DebugLogger() << "ProductionQueueOrder quantity " << m_new_quantity << " Blocksize " << m_new_blocksize;

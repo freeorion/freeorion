@@ -3742,6 +3742,12 @@ Move to Queue Top
 MOVE_DOWN_QUEUE_ITEM
 Move to Queue Bottom
 
+SPLIT_INCOMPLETE
+Separate Current Repetition
+
+DUPLICATE
+Duplicate
+
 PRODUCTION_WND_TOOLTIP_PROD_COST
 Production cost
 

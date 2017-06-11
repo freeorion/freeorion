@@ -136,7 +136,9 @@ void ProductionQueueOrder::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_new_blocksize)
         & BOOST_SERIALIZATION_NVP(m_new_index)
         & BOOST_SERIALIZATION_NVP(m_rally_point_id)
-        & BOOST_SERIALIZATION_NVP(m_pause);
+        & BOOST_SERIALIZATION_NVP(m_pause)
+        & BOOST_SERIALIZATION_NVP(m_split_incomplete)
+        & BOOST_SERIALIZATION_NVP(m_dupe);
 }
 
 template <class Archive>

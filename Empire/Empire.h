@@ -145,6 +145,8 @@ struct FO_COMMON_API ProductionQueue {
 
         bool operator<(const ProductionItem& rhs) const;
 
+        bool EnqueueConditionPassedAt(int location_id) const;
+
         std::map<std::string, std::map<int, float>> CompletionSpecialConsumption(int location_id) const;// for each special name, what object ids have those special capacities reduced by what amount
         std::map<MeterType, std::map<int, float>>   CompletionMeterConsumption(int location_id) const;  // for each meter type, what object ids have those meters reduced by what amount
 
@@ -172,8 +174,8 @@ struct FO_COMMON_API ProductionQueue {
         Element(BuildType build_type, int design_id, int empire_id_, int ordered_, int remaining_, int location_, bool paused_ = false);
 
         ProductionItem  item;
-        int             empire_id;
-        int             ordered;                    ///< how many of item (blocks) to produce
+        int             empire_id = ALL_EMPIRES;
+        int             ordered = 1;                ///< how many of item (blocks) to produce
         int             blocksize = 1;              ///< size of block to produce (default=1)
         int             remaining;                  ///< how many left to produce
         int             location;                   ///< the ID of the UniverseObject at which this item is being produced
@@ -184,7 +186,7 @@ struct FO_COMMON_API ProductionQueue {
         int             turns_left_to_next_item = -1;
         int             turns_left_to_completion = -1;
         int             rally_point_id = INVALID_OBJECT_ID;
-        bool            paused;
+        bool            paused = false;
 
         std::string Dump() const;
 
@@ -447,11 +449,13 @@ public:
       * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
       * placed at the end of the queue. */
     void        PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos = -1);
-    void        SetProductionQuantity(int index, int quantity);      ///< Changes the remaining number to build for queue item \a index to \a quantity
-    void        SetProductionQuantityAndBlocksize(int index, int quantity, int blocksize);   ///< Changes the remaining number and blocksize to build for queue item \a index to \a quantity and \a blocksize 
-    void        SetProductionRallyPoint(int index, int rally_point_id = INVALID_OBJECT_ID);  ///< Sets the rally point for ships produced by this build, to which they are automatically ordered to move after they are produced.
-    void        MoveProductionWithinQueue(int index, int new_index); ///< Moves \a tech from the production queue, if it is in the production queue already.
-    void        RemoveProductionFromQueue(int index);                ///< Removes the build at position \a index in the production queue, if such an index exists.
+    void        SetProductionQuantity(int index, int quantity);     ///< Changes the remaining number to produce for queue item \a index to \a quantity
+    void        SetProductionQuantityAndBlocksize(int index, int quantity, int blocksize);   ///< Changes the remaining number and blocksize to produce for queue item \a index to \a quantity and \a blocksize 
+    void        SplitIncompleteProductionItem(int index);           ///< Adds a copy of the production item at position \a index below it in the queue, with one less quantity. Sets the quantity of the production item at position \a index to 1, retaining its incomplete progress.
+    void        DuplicateProductionItem(int index);                 ///< Adds a copy of the production item at position \a index below it in the queue, with no progress.
+    void        SetProductionRallyPoint(int index, int rally_point_id = INVALID_OBJECT_ID);  ///< Sets the rally point for ships produced by this produce, to which they are automatically ordered to move after they are produced.
+    void        MoveProductionWithinQueue(int index, int new_index);///< Moves \a tech from the production queue, if it is in the production queue already.
+    void        RemoveProductionFromQueue(int index);               ///< Removes the produce at position \a index in the production queue, if such an index exists.
     void        PauseProduction(int index);
     void        ResumeProduction(int index);
 

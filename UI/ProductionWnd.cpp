@@ -632,6 +632,8 @@ namespace {
         boost::signals2::signal<void (GG::ListBox::iterator, int)>  QueueItemRalliedToSignal;
         boost::signals2::signal<void ()>                            ShowPediaSignal;
         boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemPausedSignal;
+        boost::signals2::signal<void (GG::ListBox::iterator)>       QueueItemDupedSignal;
+        boost::signals2::signal<void (GG::ListBox::iterator)>       QueueItemSplitSignal;
 
     protected:
         void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override {
@@ -645,6 +647,9 @@ namespace {
             auto resume_action = [&it, this]() { this->QueueItemPausedSignal(it, false); };
             auto pause_action = [&it, this]() { this->QueueItemPausedSignal(it, true); };
 
+            auto dupe_action = [&it, this]() { this->QueueItemDupedSignal(it); };
+            auto split_action = [&it, this]() { this->QueueItemSplitSignal(it); };
+
             CUIPopupMenu popup(pt.x, pt.y);
 
             popup.AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   false, false, MoveToTopAction(it)));
@@ -654,6 +659,20 @@ namespace {
             // inspect clicked item: was it a ship?
             GG::ListBox::Row* row = *it;
             QueueRow* queue_row = row ? dynamic_cast<QueueRow*>(row) : nullptr;
+
+            int remaining = 0;
+            bool location_passes = true;
+            if (queue_row) {
+                ProductionQueue::Element elem = queue_row->elem;
+                remaining = elem.remaining;
+                location_passes = elem.item.EnqueueConditionPassedAt(elem.location);
+            }
+
+            popup.AddMenuItem(GG::MenuItem(UserString("DUPLICATE"), !location_passes, false, dupe_action));
+            if (remaining > 1) {
+                popup.AddMenuItem(GG::MenuItem(UserString("SPLIT_INCOMPLETE"), false, false, split_action));
+            }
+
             BuildType build_type = queue_row ? queue_row->elem.item.build_type : INVALID_BUILD_TYPE;
             if (build_type == BT_SHIP) {
                 // for ships, add a set rally point command
@@ -780,6 +799,10 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
         boost::bind(&ProductionWnd::QueueItemDoubleClickedSlot, this, _1, _2, _3));
     m_queue_wnd->GetQueueListBox()->QueueItemRalliedToSignal.connect(
         boost::bind(&ProductionWnd::QueueItemRallied, this, _1, _2));
+    m_queue_wnd->GetQueueListBox()->QueueItemDupedSignal.connect(
+        boost::bind(&ProductionWnd::QueueItemDuped, this, _1));
+    m_queue_wnd->GetQueueListBox()->QueueItemSplitSignal.connect(
+        boost::bind(&ProductionWnd::QueueItemSplit, this, _1));
     m_queue_wnd->GetQueueListBox()->ShowPediaSignal.connect(
         boost::bind(&ProductionWnd::ShowPedia, this));
     m_queue_wnd->GetQueueListBox()->QueueItemPausedSignal.connect(
@@ -1148,7 +1171,37 @@ void ProductionWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
 
     HumanClientApp::GetApp()->Orders().IssueOrder(
         std::make_shared<ProductionQueueOrder>(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
-                                          pause, -1.0f));
+                                               pause, -1.0f));
+
+    empire->UpdateProductionQueue();
+}
+
+void ProductionWnd::QueueItemDuped(GG::ListBox::iterator it) {
+    if (!m_order_issuing_enabled)
+        return;
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    Empire* empire = GetEmpire(client_empire_id);
+    if (!empire)
+        return;
+
+    HumanClientApp::GetApp()->Orders().IssueOrder(
+        std::make_shared<ProductionQueueOrder>(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
+                                               -1.0f, -1.0f));
+
+    empire->UpdateProductionQueue();
+}
+
+void ProductionWnd::QueueItemSplit(GG::ListBox::iterator it) {
+    if (!m_order_issuing_enabled)
+        return;
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    Empire* empire = GetEmpire(client_empire_id);
+    if (!empire)
+        return;
+
+    HumanClientApp::GetApp()->Orders().IssueOrder(
+        std::make_shared<ProductionQueueOrder>(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
+                                               -1.0f));
 
     empire->UpdateProductionQueue();
 }

@@ -534,6 +534,10 @@ public:
     ProductionQueueOrder(int empire, int index);
 
     ProductionQueueOrder(int empire, int index, bool pause, float dummy);
+
+    ProductionQueueOrder(int empire, int index, float dummy1);
+
+    ProductionQueueOrder(int empire, int index, float dummy1, float dummy2);
     //@}
 
 private:
@@ -548,12 +552,15 @@ private:
     int m_new_index = INVALID_INDEX;
     int m_rally_point_id = INVALID_OBJECT_ID;
     int m_pause = INVALID_PAUSE_RESUME;
+    int m_split_incomplete = INVALID_SPLIT_INCOMPLETE;
+    int m_dupe = INVALID_SPLIT_INCOMPLETE;
 
     static const int INVALID_INDEX = -500;
     static const int INVALID_QUANTITY = -1000;
     static const int PAUSE = 1;
     static const int RESUME = 2;
     static const int INVALID_PAUSE_RESUME = -1;
+    static const int INVALID_SPLIT_INCOMPLETE = -1;
 
     friend class boost::serialization::access;
     template <class Archive>

@@ -627,6 +627,25 @@ bool ProductionQueue::ProductionItem::CostIsProductionLocationInvariant() const 
     return false;
 }
 
+bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id) const {
+    switch (build_type) {
+    case BT_BUILDING: {
+        if (const BuildingType* bt = GetBuildingType(name)) {
+            std::shared_ptr<UniverseObject> location_obj = GetUniverseObject(location_id);
+            const Condition::ConditionBase* c = bt->EnqueueLocation();
+            if (!c)
+                return true;
+            return c->Eval(location_obj);
+        }
+        return true;
+        break;
+    }
+    case BT_SHIP:   // ships don't have enqueue location conditions
+    default:
+        return true;
+    }
+}
+
 bool ProductionQueue::ProductionItem::operator<(const ProductionItem& rhs) const {
     if (build_type < rhs.build_type)
         return true;
@@ -2391,6 +2410,36 @@ void Empire::SetProductionQuantityAndBlocksize(int index, int quantity, int bloc
     } else {
         m_production_queue[index].progress = m_production_queue[index].progress_memory * m_production_queue[index].blocksize_memory / blocksize;
     }
+}
+
+void Empire::SplitIncompleteProductionItem(int index) {
+    DebugLogger() << "Empire::SplitIncompleteProductionItem() called for index " << index;
+    if (index < 0 || static_cast<int>(m_production_queue.size()) <= index)
+        throw std::runtime_error("Empire::SplitIncompleteProductionItem() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
+    if (m_production_queue[index].item.build_type == BT_BUILDING)
+        throw std::runtime_error("Empire::SplitIncompleteProductionItem() : Attempted to split a production item that is not a ship.");
+
+    ProductionQueue::Element& elem = m_production_queue[index];
+
+    // if "splitting" an item with just 1 remaining, do nothing
+    if (elem.remaining <= 1)
+        return;
+
+    // add duplicate
+    int new_item_quantity = elem.remaining - 1;
+    elem.remaining = 1; // reduce remaining on specified to 1
+    PlaceProductionOnQueue(elem.item, new_item_quantity, elem.location, index + 1);
+}
+
+void Empire::DuplicateProductionItem(int index) {
+    DebugLogger() << "Empire::DuplicateProductionItem() called for index " << index;
+    if (index < 0 || static_cast<int>(m_production_queue.size()) <= index)
+        throw std::runtime_error("Empire::DuplicateProductionItem() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
+
+    ProductionQueue::Element& elem = m_production_queue[index];
+
+    // add duplicate
+    PlaceProductionOnQueue(elem.item, elem.remaining, elem.location, index + 1);
 }
 
 void Empire::SetProductionRallyPoint(int index, int rally_point_id) {
