@@ -37,6 +37,10 @@ Species
             effects = SetDetection value = Value + 10000
 
         EffectsGroup
+            scope = Source
+            effects = SetStealth value = Value + 500
+
+        EffectsGroup
             scope = And [
                 Source
                 Capital
