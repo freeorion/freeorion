@@ -555,9 +555,11 @@ public:
     static bool ValidDesign(const std::string& hull, const std::vector<std::string>& parts);
 private:
     /** Return a valid hull and parts  pair iff the \p hull and \p parts vectors would not make  a
-        valid ShipDesign. Otherwise return none. */
+        valid ShipDesign. Otherwise return none.
+        Also pad parts with "" if it is shorter than the \p hull number of slots.
+    */
     static boost::optional<std::pair<std::string, std::vector<std::string>>>
-        MaybeInvalidDesign(const std::string& hull, const std::vector<std::string>& parts);
+        MaybeInvalidDesign(const std::string& hull, std::vector<std::string>& parts);
 
     /** Force design invariants to be true. If design invariants are not begin met provide an
         explicit log message about how it was corrected and throw

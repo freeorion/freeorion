@@ -824,12 +824,13 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
 void ShipDesign::SetID(int id)
 { m_id = id; }
 
-bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::string>& parts) {
+bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::string>& parts_in) {
+    auto parts = parts_in;
     return !MaybeInvalidDesign(hull, parts);
 }
 
 boost::optional<std::pair<std::string, std::vector<std::string>>>
-ShipDesign::MaybeInvalidDesign(const std::string& hull_in, const std::vector<std::string>& parts_in) {
+ShipDesign::MaybeInvalidDesign(const std::string& hull_in, std::vector<std::string>& parts_in) {
     bool is_valid = true;
 
     auto hull = hull_in;
@@ -865,12 +866,9 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in, const std::vector<std
                      << (parts.size() - hull_type->NumSlots()) << " parts.";
     }
 
-    // If parts is smaller than the full hull size pad it.
-    if (parts.size() != hull_type->NumSlots()) {
-        is_valid = false;
-        WarnLogger() << "Invalid ShipDesign given " << parts.size() << " parts for hull with "
-                     << hull_type->NumSlots() << " slots.  Adding "
-                     << (hull_type->NumSlots() - parts.size()) << " empty parts.";
+    // If parts is smaller than the full hull size pad it and the incoming parts
+    if (parts.size() < hull_type->NumSlots()) {
+        parts_in.resize(hull_type->NumSlots(), "");
     }
 
     // Truncate or pad with "" parts.
