@@ -30,6 +30,7 @@
 #include <GG/Scroll.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
+#include "../util/Logger.h"
 
 #include <boost/optional/optional.hpp>
 
@@ -105,6 +106,9 @@ protected:
         have parents.*/
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
 
+    /** Force the m_lb_wnd mouse wheel events to be forwarded. */
+    bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
+
 private:
     void LBSelChangedSlot(const ListBox::SelectionSet& rows);
 
@@ -175,6 +179,7 @@ ModalListPicker::ModalListPicker(Clr color, const DropDownList* relative_to_wnd,
     GUI::GetGUI()->WindowResizedSignal.connect(
         boost::bind(&ModalListPicker::WindowResizedSlot, this, _1, _2));
     AttachChild(m_lb_wnd);
+    m_lb_wnd->InstallEventFilter(this);
 
     if (INSTRUMENT_ALL_SIGNALS)
         SelChangedSignal.connect(ModalListPickerSelChangedEcho(*this));
@@ -481,6 +486,20 @@ boost::optional<DropDownList::iterator> ModalListPicker::MouseWheelCommon(
         return cur_it;
     }
     return boost::none;
+}
+
+bool ModalListPicker::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
+    if (w != m_lb_wnd)
+        return false;
+
+    switch (event.Type()) {
+    case WndEvent::MouseWheel:
+        MouseWheel(event.Point(), -event.WheelMove(), event.ModKeys());
+        return true;
+    default:
+        break;
+    };
+    return false;
 }
 
 void ModalListPicker::LClick(const Pt& pt, Flags<ModKey> mod_keys)
