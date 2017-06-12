@@ -558,7 +558,8 @@ ShipDesign::ShipDesign(const boost::optional<std::invalid_argument>& should_thro
     m_3D_model(model),
     m_name_desc_in_stringtable(name_desc_in_stringtable)
 {
-    ForceValidDesignOrThrow(should_throw);
+    // Either force a valid design and log about it or just throw std::invalid_argument
+    ForceValidDesignOrThrow(should_throw, !should_throw);
     BuildStatCaches();
 }
 
@@ -826,11 +827,14 @@ void ShipDesign::SetID(int id)
 
 bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::string>& parts_in) {
     auto parts = parts_in;
-    return !MaybeInvalidDesign(hull, parts);
+    return !MaybeInvalidDesign(hull, parts, true);
 }
 
 boost::optional<std::pair<std::string, std::vector<std::string>>>
-ShipDesign::MaybeInvalidDesign(const std::string& hull_in, std::vector<std::string>& parts_in) {
+ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
+                               std::vector<std::string>& parts_in,
+                               bool produce_log)
+{
     bool is_valid = true;
 
     auto hull = hull_in;
@@ -841,14 +845,17 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in, std::vector<std::stri
     HullType* fallback_hull_type;
     if (!input_hull_type) {
         is_valid = false;
-        WarnLogger() << "Invalid ShipDesign hull not found: " << hull;
+        if (produce_log)
+            WarnLogger() << "Invalid ShipDesign hull not found: " << hull;
 
         const auto hull_it = GetHullTypeManager().begin();
         if (hull_it != GetHullTypeManager().end()) {
             std::tie(hull, fallback_hull_type) = *hull_it;
-            WarnLogger() << "Invalid ShipDesign hull falling back to: " << hull;
+            if (produce_log)
+                WarnLogger() << "Invalid ShipDesign hull falling back to: " << hull;
         } else {
-            ErrorLogger() << "Invalid ShipDesign no available hulls ";
+            if (produce_log)
+                ErrorLogger() << "Invalid ShipDesign no available hulls ";
             hull = "";
             parts.clear();
             return std::make_pair(hull, parts);
@@ -861,15 +868,15 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in, std::vector<std::stri
     // ensure hull type has at least enough slots for passed parts
     if (parts.size() > hull_type->NumSlots()) {
         is_valid = false;
-        WarnLogger() << "Invalid ShipDesign given " << parts.size() << " parts for hull with "
-                     << hull_type->NumSlots() << " slots.  Truncating last "
-                     << (parts.size() - hull_type->NumSlots()) << " parts.";
+        if (produce_log)
+            WarnLogger() << "Invalid ShipDesign given " << parts.size() << " parts for hull with "
+                         << hull_type->NumSlots() << " slots.  Truncating last "
+                         << (parts.size() - hull_type->NumSlots()) << " parts.";
     }
 
     // If parts is smaller than the full hull size pad it and the incoming parts
-    if (parts.size() < hull_type->NumSlots()) {
+    if (parts.size() < hull_type->NumSlots())
         parts_in.resize(hull_type->NumSlots(), "");
-    }
 
     // Truncate or pad with "" parts.
     parts.resize(hull_type->NumSlots(), "");
@@ -883,8 +890,9 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in, std::vector<std::stri
             continue;
         if (hull_exclusions.count(part_name)) {
             is_valid = false;
-            WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" is excluded by \""
-                         << hull_type->Name() << "\". Removing \"" << part_name <<"\"";
+            if (produce_log)
+                WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" is excluded by \""
+                             << hull_type->Name() << "\". Removing \"" << part_name <<"\"";
             part_name.clear();
         }
     }
@@ -903,8 +911,9 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in, std::vector<std::stri
         // Remove parts that don't exist
         const auto part_type = GetPartType(part_name);
         if (!part_type) {
-            WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" not found"
-                         << ". Removing \"" << part_name <<"\"";
+            if (produce_log)
+                WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" not found"
+                             << ". Removing \"" << part_name <<"\"";
             is_valid = false;
             part_name.clear();
             continue;
@@ -913,8 +922,9 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in, std::vector<std::stri
         for (const auto& excluded : part_type->Exclusions()) {
             if (already_seen_component_names.count(excluded)) {
                 is_valid = false;
-                WarnLogger() << "Invalid ShipDesign part " << part_name << " conflicts with \""
-                             << excluded << "\". Removing \"" << part_name <<"\"";
+                if (produce_log)
+                    WarnLogger() << "Invalid ShipDesign part " << part_name << " conflicts with \""
+                                 << excluded << "\". Removing \"" << part_name <<"\"";
                 part_name.clear();
                 continue;
             }
@@ -924,9 +934,10 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in, std::vector<std::stri
         const ShipSlotType& slot_type = slots[ii].type;
 
         if (!part_type->CanMountInSlotType(slot_type)) {
-            DebugLogger() << "Invalid ShipDesign part \"" << part_name << "\" can't be mounted in "
-                          << boost::lexical_cast<std::string>(slot_type) << " slot"
-                          << ". Removing \"" << part_name <<"\"";
+            if (produce_log)
+                DebugLogger() << "Invalid ShipDesign part \"" << part_name << "\" can't be mounted in "
+                              << boost::lexical_cast<std::string>(slot_type) << " slot"
+                              << ". Removing \"" << part_name <<"\"";
             is_valid = false;
             part_name.clear();
             continue;
@@ -942,10 +953,15 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in, std::vector<std::stri
         return std::make_pair(hull, parts);
 }
 
-void ShipDesign::ForceValidDesignOrThrow(const boost::optional<std::invalid_argument>& should_throw) {
-    auto force_valid = MaybeInvalidDesign(m_hull, m_parts);
+void ShipDesign::ForceValidDesignOrThrow(const boost::optional<std::invalid_argument>& should_throw,
+                                         bool  produce_log)
+{
+    auto force_valid = MaybeInvalidDesign(m_hull, m_parts, produce_log);
     if (!force_valid)
         return;
+
+    if (!produce_log && should_throw)
+        throw std::invalid_argument("ShipDesign: Bad hull or parts");
 
     std::stringstream ss;
 

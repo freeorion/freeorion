@@ -554,21 +554,22 @@ public:
     /** Return true if \p hull and \p parts would make a valid design. */
     static bool ValidDesign(const std::string& hull, const std::vector<std::string>& parts);
 private:
-    /** Return a valid hull and parts  pair iff the \p hull and \p parts vectors would not make  a
-        valid ShipDesign. Otherwise return none.
+    /** Return a valid hull and parts pair iff the \p hull and \p parts vectors
+        would not make a valid ShipDesign.
         Also pad parts with "" if it is shorter than the \p hull number of slots.
-    */
+        Otherwise return none. If \p produce_log is true then produce log messages. */
     static boost::optional<std::pair<std::string, std::vector<std::string>>>
-        MaybeInvalidDesign(const std::string& hull, std::vector<std::string>& parts);
+        MaybeInvalidDesign(const std::string& hull, std::vector<std::string>& parts, bool produce_log);
 
-    /** Force design invariants to be true. If design invariants are not begin met provide an
-        explicit log message about how it was corrected and throw
-        std::invalid_argument if \p should_throw is not none.
+    /** Force design invariants to be true. If design invariants are not begin
+        met and \p produce_log is true provide an explicit log message about how it
+        was corrected and throw std::invalid_argument if \p should_throw is not
+        none.
 
-        should_throw is not used but it is a literal reminder that
+        \p should_throw is not used but it is a literal reminder that
         std::invalid_argument should be caught.
     */
-    void ForceValidDesignOrThrow(const boost::optional<std::invalid_argument>& should_throw);
+    void ForceValidDesignOrThrow(const boost::optional<std::invalid_argument>& should_throw, bool produce_log);
 
     void BuildStatCaches();
 
