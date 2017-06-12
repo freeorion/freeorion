@@ -292,7 +292,7 @@ namespace {
             return current_design && *current_design == *design; };
         bool already_got = std::any_of(current_ids.begin(), current_ids.end(), is_same_design);
         if (already_got) {
-            ErrorLogger() << "SavedDesignsToCurrentDesigns saved design already present: "
+            DebugLogger() << "SavedDesignsToCurrentDesigns saved design already present: "
                           << design->Name();
             return;
         }
