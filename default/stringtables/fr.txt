@@ -659,7 +659,7 @@ SM_KRAKEN_2  # translated
 Kraken
 
 SM_KRAKEN_2_DESC
-'''Un redoutable monstre de l'espace de taille intermédiaire. Ses proies naturelles sont les essaims de Krill. Un Kraken bien nourri peut se transformer en un spécimen encore plus massif et dangereux.
+'''Un redoutable monstre spatial de taille intermédiaire. Ses proies naturelles sont les essaims de Krill. Un Kraken bien nourri peut se transformer en un spécimen encore plus massif et dangereux.
 
 [[SM_KRAKEN_ENVIRONMENT]]'''
 
@@ -667,7 +667,7 @@ SM_KRAKEN_3
 Kraken Massif
 
 SM_KRAKEN_3_DESC
-'''Un redoutable monstre de l'espace de grande taille.
+'''Un redoutable monstre spatial de grande taille.
 
 [[SM_KRAKEN_ENVIRONMENT]]'''
 
@@ -675,7 +675,7 @@ SM_WHITE_KRAKEN
 Kraken Blanc
 
 SM_WHITE_KRAKEN_DESC
-Le Kraken Blanc, logiquement reconnaissable à la blancheur de son corps, est un ancêtre préhistorique du monstre de l'espace Kraken.
+Le Kraken Blanc, logiquement reconnaissable à la blancheur de son corps, est un ancêtre préhistorique du monstre spatial Kraken.
 
 SM_BLACK_KRAKEN
 Kraken Noir
@@ -689,7 +689,7 @@ SM_SNOWFLAKE_1
 Flocon de Neige Juvénile
 
 SM_SNOWFLAKE_1_DESC
-'''Un petit monstre de l'espace inoffensif, doté une exceptionnelle vision.
+'''Un petit monstre spatial inoffensif, doté une exceptionnelle vision.
 
 [[SM_SNOWFLAKE_ENVIRONMENT]]'''
 
@@ -697,7 +697,7 @@ SM_SNOWFLAKE_2
 Flocon de Neige
 
 SM_SNOWFLAKE_2_DESC
-'''Un monstre de l'espace de petite masse, doté une exceptionnelle vision.
+'''Un monstre spatial de petite masse, doté une exceptionnelle vision.
 
 [[SM_SNOWFLAKE_ENVIRONMENT]]'''
 
@@ -705,7 +705,7 @@ SM_SNOWFLAKE_3
 Flocon de Neige Massif
 
 SM_SNOWFLAKE_3_DESC
-'''Un redoutable monstre de l'espace de petite masse.
+'''Un redoutable monstre spatial de petite masse.
 
 [[SM_SNOWFLAKE_ENVIRONMENT]]'''
 
@@ -721,7 +721,7 @@ SM_JUGGERNAUT_1
 Mastodonte Juvénile
 
 SM_JUGGERNAUT_1_DESC
-'''Un redoutable monstre de l'espace de masse importante, muni d'un bouclier de protection.
+'''Un redoutable monstre spatial de masse importante, muni d'un bouclier de protection.
 
 [[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
@@ -729,7 +729,7 @@ SM_JUGGERNAUT_2
 Mastodonte
 
 SM_JUGGERNAUT_2_DESC
-'''Un redoutable monstre de l'espace de masse importante, muni d'un bouclier de protection assez résistant.
+'''Un redoutable monstre spatial de masse importante, muni d'un bouclier de protection assez résistant.
 
 [[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
@@ -737,7 +737,7 @@ SM_JUGGERNAUT_3
 Mastodonte Massif
 
 SM_JUGGERNAUT_3_DESC
-'''Un redoutable monstre de l'espace de masse importante, muni d'un bouclier de protection très résistant.
+'''Un redoutable monstre spatial de masse importante, muni d'un bouclier de protection très résistant.
 
 [[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
@@ -745,7 +745,7 @@ SM_BLOATED_JUGGERNAUT
 Mastodonte Déformé
 
 SM_BLOATED_JUGGERNAUT_DESC
-'''Un monstre de l'espace massif à l'allure repoussante.
+'''Un monstre spatial massif à l'allure repoussante.
 
 Les Mastodontes Déformés sont des monstres spatiaux issus de la bio-ingénierie, incroyablement résistants, d'une grande [[metertype METER_STEALTH]], et munis d'armes dangereuses. Une flotte puissante et une bonne [[encyclopedia DETECTION_TITLE]] seront nécessaires pour en découdre avec ces organismes, ces derniers attaquant les populations des planètes où les structures et bâtiments sont facilement détectables.'''
 
@@ -803,7 +803,7 @@ SM_COSMIC_DRAGON
 Dragon Cosmique
 
 SM_COSMIC_DRAGON_DESC
-'''Un terrifiant montre de l'espace capable de détruire des systèmes stellaires entiers.
+'''Un terrifiant monstre spatial capable de détruire des systèmes stellaires entiers.
 
 Les Dragons Cosmiques sont des monstres spatiaux issus de la bio-ingénierie, incroyablement résistants, d'une grande [[metertype METER_STEALTH]], et munis d'armes dangereuses. Une flotte très puissante et une [[encyclopedia DETECTION_TITLE]] très performante seront nécessaires pour en découdre avec ces organismes. Ils recherchent et attaquent les planètes habitées, et sont capables de réduire à néant des systèmes stellaires entiers s'ils ne sont pas combattus.'''
 
@@ -4628,6 +4628,16 @@ Attributs d'Espèce
 SPECIES_TRAITS_TEXT
 Liste non-exhaustive des Attributs d'Espèce :
 
+SYSTEM_BLOCKADE_TITLE
+Blocus Système
+
+SYSTEM_BLOCKADE_TEXT
+'''Une flotte armée et en mode Agression arrivant dans un système, établira un blocus de ce système contre tous les empires ennemis (si ce système n'est pas déjà soumis à un blocus). Une fois le blocus établi, la propagation de l'[[metertype METER_SUPPLY]] est interrompue pour l'empire soumis au blocus. De plus, si cet empire possède des colonies au sein de ce système, la production générée par ces colonies peut être utilisée seulement sur la planète dont elle est originaire. Si un combat a lieu simultanément au blocus, les effets fonctionnant seulement si aucun combat n'est en cours, tels que la [[encyclopedia ORBITAL_DRYDOCK_REPAIR_TITLE]] et l'augmentation de l'indicateur [[metertype METER_TROOPS]], sont suspendus pour le tour en cours.
+Lors d'un blocus, tous les accès par Voies spatiales au système bloqué seront gardés par la force appliquant le blocus. Par conséquent, toutes forces hostiles entrant dans le système ne pourra en sortir que par la Voie spatiale empruntée pour y entrer. Toutefois, si des flottes supplémentaires de l'empire bloqué entrent dans le système par d'autres Voies spatiales, ces entrées deviendront alors également disponibles comme sorties. Si toutes les flottes armées appartenant à l'empire bloqué sont détruites ou quittent le système avant l'arrivée de nouvelles flottes de l'empire, les points de sortie précédemment ouverts seront à nouveau bloqués.
+Les flottes alliées n'ont pas d'impact direct sur l'interruption de l'Approvisionnement et la disponibilité des Voies spatiales, si ce n'est aider à l'élimination des forces de l'empire exerçant le blocus.
+Si des flottes de deux empires hostiles ou plus arrivent simultanément dans un système non soumis à un blocus, aucun des deux empires ou plus n'établira un blocus à l'encontre de l'autre, mais ces derniers bloqueront le système contre tout autre empire hostile voulant éventuellement accéder au système par la suite.
+Les Monstres spatiaux peuvent également établir des blocus. Cependant, si une flotte de l'empire est bloquée par un monstre spatial, celle-ci sera en mesure se soustraire au blocus après être restée dans le système un tour entier, en quittant le système par n'importe quelle Voie spatiale. De plus, si la flotte bloquée est armée et en mode Agression, la propagation de l'Approvisionnement sera rétablie. Si un Monstre spatial et une flotte de l'empire entrent dans le système simultanément, la flotte de l'empire pourra agir en premier et établir un blocus contre le Monstre.'''
+
 
 ##
 ## Encyclopedia articles
@@ -7364,7 +7374,7 @@ Kraken Congelé
 KRAKEN_IN_THE_ICE_SPECIAL_DESC
 '''En maîtrisant les technologies de [[tech SHP_DOMESTIC_MONSTER]] et de [[tech LRN_XENOARCH]], un [[predefinedshipdesign SM_WHITE_KRAKEN]] peut être ressuscité et domestiqué en construisant sur cette planète une [[buildingtype BLD_XENORESURRECTION_LAB]].
 
-Profondément enfoui sous la croûte glacée de cette planète, gît un ancêtre préhistorique à la peau blanche du monstre de l'espace Kraken.'''
+Profondément enfoui sous la croûte glacée de cette planète, gît un ancêtre préhistorique à la peau blanche du monstre spatial Kraken.'''
 
 HEAD_ON_A_SPIKE_SPECIAL
 Tête Empalée
@@ -8704,10 +8714,10 @@ DESC_CAPITAL_NOT
 ''' n'étant pas une Planète Capitale d'empire'''
 
 DESC_MONSTER
-''' étant un monstre de l'espace'''
+''' étant un monstre spatial'''
 
 DESC_MONSTER_NOT
-''' n'étant pas un monstre de l'espace'''
+''' n'étant pas un monstre spatial'''
 
 DESC_ARMED
 ''' étant un astronef armé'''
@@ -9812,7 +9822,7 @@ Infrastructure Galactique
 CON_GAL_INFRA_DESC
 '''Augmente de 1 la portée de l'[[metertype METER_SUPPLY]] de tous les avant-postes et colonies de l'empire.
 
-Le transport efficace et fiable des ressources sur des distances interstellaires requiert une planification fastidieuse, complexifiée par de nombreux facteurs tels que la présence de monstres de l'espace, d'empires ennemis et de dangereux phénomènes astrophysiques. L'utilisation d'une infrastructure galactique intégrée permet un déploiement fluide des ressources entre les colonies avancées et émergentes, tandis que des solutions peuvent être appliquées aux problèmes de logistique particulièrement contraignants.
+Le transport efficace et fiable des ressources sur des distances interstellaires requiert une planification fastidieuse, complexifiée par de nombreux facteurs tels que la présence de monstres spatiaux, d'empires ennemis et de dangereux phénomènes astrophysiques. L'utilisation d'une infrastructure galactique intégrée permet un déploiement fluide des ressources entre les colonies avancées et émergentes, tandis que des solutions peuvent être appliquées aux problèmes de logistique particulièrement contraignants.
 
 Le développement et l'intégration des infrastructures des mondes à forte production au sein d'un réseau galactique d'envergure et unifié est un des plus grands progrès imaginables en matière de logistique. Une fois accompli, un tel système unit d'une manière optimale et fonctionnelle tous les mondes qui le composent. Les outils de transport intégré, de stockage, de maintenance, et de construction peuvent être déployés rapidement et efficacement vers le lieu où ils sont requis, afin de gérer avec efficience la disponibilité des ressources ou de s'adapter rapidement à tout changement.'''
 
@@ -9946,7 +9956,7 @@ SHP_DOMESTIC_MONSTER
 Domestication Méga-Faune
 
 SHP_DOMESTIC_MONSTER_DESC
-La pratique ancestrale de la domestication des autres espèces peut également s'appliquer aux monstres de l'espace peuplant les voies spatiales. Construire des Colonies et des Avant-Postes à proximité de leurs lieux de nidification rendrait possible la domestication de tels monstres.
+La pratique ancestrale de la domestication des autres espèces peut également s'appliquer aux monstres spatiaux peuplant les voies spatiales. Construire des Colonies et des Avant-Postes à proximité de leurs lieux de nidification rendrait possible la domestication de tels monstres.
 
 SHP_ENDOCRINE_SYSTEMS
 Endocrinologie Méga-Faune
@@ -10093,7 +10103,7 @@ GAME_MAKE_WORK_SHORT_DESC
 Permet le fonctionnement du jeu
 
 TAME_MONSTER_SHORT_DESC
-Apprivoise les Monstres de l'espace
+Apprivoise les Monstres spatiaux
 
 EXOBOT_SHORT_DESC
 Crée des citoyens exobots
@@ -11853,13 +11863,13 @@ SR_JAWS
 Mâchoires
 
 SR_JAWS_DESC
-Mâchoires provenant d'un monstre de l'espace et en mesure d'endommager les astronefs. Les monstres spatiaux de très grande taille sont même capables de dévorer des flottes entières.
+Mâchoires provenant d'un monstre spatial et en mesure d'endommager les astronefs. Les monstres spatiaux de très grande taille sont même capables de dévorer des flottes entières.
 
 SR_SPINES
 Épines
 
 SR_SPINES_DESC
-Épines provenant d'un monstre de l'espace, à l'aide desquelles une frappe puissante peut sérieusement endommager un astronef.
+Épines provenant d'un monstre spatial, à l'aide desquelles une frappe puissante peut sérieusement endommager un astronef.
 
 SR_TENTACLE
 Tentacule
@@ -11871,13 +11881,13 @@ SR_PLASMA_DISCHARGE
 Décharge Plasma
 
 SR_PLASMA_DISCHARGE_DESC
-Décharge Plasma produite par un monstre de l'espace, en mesure de faire fondre la plupart des blindages.
+Décharge Plasma produite par un monstre spatial, en mesure de faire fondre la plupart des blindages.
 
 SR_ICE_BEAM
 Laser Démultiplié
 
 SR_ICE_BEAM_DESC
-Lasers de grande puissance, intégrés au corps d'un monstre de l'espace.
+Lasers de grande puissance, intégrés au corps d'un monstre spatial.
 
 SR_ION_CANNON
 Canon Ionique
@@ -12840,25 +12850,25 @@ SH_KRAKEN_1_BODY
 Corps Kraken Larvaire
 
 SH_KRAKEN_1_BODY_DESC
-Un formidable monstre de l'espace de petite taille.
+Un formidable monstre spatial de petite taille.
 
 SH_KRAKEN_2_BODY
 Corps Kraken
 
 SH_KRAKEN_2_BODY_DESC
-Un formidable monstre de l'espace de taille intermédiaire.
+Un formidable monstre spatial de taille intermédiaire.
 
 SH_KRAKEN_3_BODY
 Corps Kraken Massif
 
 SH_KRAKEN_3_BODY_DESC
-Un formidable monstre de l'espace de grande taille.
+Un formidable monstre spatial de grande taille.
 
 SH_WHITE_KRAKEN_BODY
 Corps Kraken Blanc
 
 SH_WHITE_KRAKEN_BODY_DESC
-Un ancêtre préhistorique à la peau blanche du monstre de l'espace Kraken.
+Un ancêtre préhistorique à la peau blanche du monstre spatial Kraken.
 
 SH_BLACK_KRAKEN_BODY
 Corps Kraken Noir
@@ -12870,49 +12880,49 @@ SH_SNOWFLAKE_1_BODY
 Corps Flocon Juvénile
 
 SH_SNOWFLAKE_1_BODY_DESC
-Un redoutable monstre de l'espace de petite masse.
+Un redoutable monstre spatial de petite masse.
 
 SH_SNOWFLAKE_2_BODY
 Corps Flocon
 
 SH_SNOWFLAKE_2_BODY_DESC
-Un redoutable monstre de l'espace de petite masse.
+Un redoutable monstre spatial de petite masse.
 
 SH_SNOWFLAKE_3_BODY
 Corps Flocon Massif
 
 SH_SNOWFLAKE_3_BODY_DESC
-Un redoutable monstre de l'espace de petite masse.
+Un redoutable monstre spatial de petite masse.
 
 SH_PSIONIC_SNOWFLAKE_BODY
 Corps Flocon Psionique
 
 SH_PSIONIC_SNOWFLAKE_BODY_DESC
-Un monstre de l'espace doté de puissantes capacités mentales.
+Un monstre spatial doté de puissantes capacités mentales.
 
 SH_JUGGERNAUT_1_BODY
 Corps Mastodonte Juvénile
 
 SH_JUGGERNAUT_1_BODY_DESC
-Un redoutable monstre de l'espace de masse importante.
+Un redoutable monstre spatial de masse importante.
 
 SH_JUGGERNAUT_2_BODY
 Corps Mastodonte
 
 SH_JUGGERNAUT_2_BODY_DESC
-Un redoutable monstre de l'espace de masse importante.
+Un redoutable monstre spatial de masse importante.
 
 SH_JUGGERNAUT_3_BODY
 Corps Mastodonte Massif
 
 SH_JUGGERNAUT_3_BODY_DESC
-Un redoutable monstre de l'espace de masse importante.
+Un redoutable monstre spatial de masse importante.
 
 SH_BLOATED_JUGGERNAUT_BODY
 Corps Mastodonte Déformé
 
 SH_BLOATED_JUGGERNAUT_BODY_DESC
-Un monstre de l'espace exceptionnellment grand et massif.
+Un monstre spatial exceptionnellement grand et massif.
 
 SH_NEBULOUS_BODY
 Corps Nébuleux
@@ -12927,7 +12937,7 @@ SH_COSMIC_DRAGON_BODY
 Corps Dragon Cosmique
 
 SH_COSMIC_DRAGON_BODY_DESC
-Un terrifiant dragon de l'espace de la taille d'une petite planète.
+Un terrifiant dragon spatial de la taille d'une petite planète.
 
 SH_DAMPENING_CLOUD_BODY
 Corps Nuage Siphonnant
