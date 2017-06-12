@@ -1177,7 +1177,11 @@ void ProductionQueue::Update() {
             std::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
             float total_item_cost = item_cost * element.blocksize;
 
-            float additional_pp_to_complete_element = total_item_cost * (1.0f - element.progress); // additional PP, beyond already-accumulated PP to finish this element once
+            // calculate additional PP, beyond already-accumulated PP to finish all repeats of this element; 
+            // that is the total_item_cost times the number of repeats, less the current progress percentage times
+            // the total_item_cost, below reorganized as total_item_cost times the difference between the number
+            // of repeats and the percentage element.progress.
+            float additional_pp_to_complete_element = total_item_cost * (element.remaining - element.progress);
             //DebugLogger()  << " element total cost: " << element_total_cost << "; progress: " << element.progress;
             if (additional_pp_to_complete_element < EPSILON) {
                 //DebugLogger()  << "     will complete next turn";
