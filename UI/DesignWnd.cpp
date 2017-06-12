@@ -3293,6 +3293,11 @@ public:
                                         const std::string& name,
                                         const std::string& desc);
 
+    /** Add a design. */
+    std::pair<int, boost::uuids::uuid>  AddDesign();
+    /** Replace an existing design.*/
+    void    ReplaceDesign();
+
     void            HighlightSlotType(std::vector<ShipSlotType>& slot_types);   //!< renders slots of the indicated types differently, perhaps to indicate that that those slots can be drop targets for a particular part?
     //@}
 
@@ -3417,8 +3422,12 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
         DesignReplacedSignal);
     m_confirm_button->LeftClickedSignal.connect(
         DesignConfirmedSignal);
-    this->DesignChangedSignal.connect(
+    DesignChangedSignal.connect(
         boost::bind(&DesignWnd::MainPanel::DesignChanged, this));
+    DesignReplacedSignal.connect(
+        boost::bind(&DesignWnd::MainPanel::ReplaceDesign, this));
+    DesignConfirmedSignal.connect(
+        boost::bind(&DesignWnd::MainPanel::AddDesign, this));
 
     DesignChanged(); // Initialize components that rely on the current state of the design.
 
@@ -4124,6 +4133,105 @@ void DesignWnd::MainPanel::AcceptDrops(const GG::Pt& pt, const std::vector<GG::W
 }
 
 
+std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
+    try {
+        std::vector<std::string> parts = Parts();
+        const std::string& hull_name = Hull();
+
+        const auto name = ValidatedDesignName();
+
+        const auto description = DesignDescription();
+
+        std::string icon = "ship_hulls/generic_hull.png";
+        if (const HullType* hull = GetHullType(hull_name))
+            icon = hull->Icon();
+
+        auto new_uuid = boost::uuids::random_generator()();
+
+        // create design from stuff chosen in UI
+        ShipDesign design(std::invalid_argument(""),
+                          name.StoredString(), description.StoredString(),
+                          CurrentTurn(), ClientApp::GetApp()->EmpireID(),
+                          hull_name, parts, icon, "some model", name.IsInStringtable(),
+                          false, new_uuid);
+
+        int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
+
+        // If editing a saved design insert into saved designs
+        if (EditingSavedDesign()) {
+            auto& manager = GetSavedDesignsManager();
+            manager.InsertBefore(design, manager.OrderedDesignUUIDs().begin());
+            new_uuid = *manager.OrderedDesignUUIDs().begin();
+
+            // Otherwise insert into current empire designs
+        } else {
+            int empire_id = HumanClientApp::GetApp()->EmpireID();
+            const Empire* empire = GetEmpire(empire_id);
+            if (!empire) return {INVALID_DESIGN_ID, boost::uuids::uuid{0}};
+
+            auto& manager = GetCurrentDesignsManager();
+            const auto& all_ids = manager.AllOrderedIDs();
+            manager.InsertBefore(new_design_id, all_ids.empty() ? INVALID_OBJECT_ID : *all_ids.begin());
+
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<ShipDesignOrder>(empire_id, new_design_id, design));
+        }
+
+        DesignChangedSignal();
+
+        DebugLogger() << "Added new design: " << design.Name();
+
+        return std::make_pair(new_design_id, new_uuid);
+
+    } catch (std::invalid_argument&) {
+        ErrorLogger() << "DesignWnd::AddDesign tried to add an invalid ShipDesign";
+        return {INVALID_DESIGN_ID, boost::uuids::uuid{0}};
+    }
+}
+
+void DesignWnd::MainPanel::ReplaceDesign() {
+    const auto new_id_and_uuid = AddDesign();
+    const auto& new_uuid = new_id_and_uuid.second;
+    const auto new_design_id = new_id_and_uuid.first;
+
+    // If replacing a saved design
+    if (const auto replaced_design = EditingSavedDesign()) {
+        auto& manager = GetSavedDesignsManager();
+
+        manager.MoveBefore(new_uuid, (*replaced_design)->UUID());
+        manager.Erase((*replaced_design)->UUID());
+
+        // Update the replaced design on the bench
+        SetDesign(manager.GetDesign(new_uuid));
+
+    } else if (const auto replaced_design = EditingCurrentDesign()) {
+        auto& manager = GetCurrentDesignsManager();
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        int replaced_id = (*replaced_design)->ID();
+
+        if (new_design_id == INVALID_DESIGN_ID) return;
+
+        // Remove the old id from the Empire.
+        const auto maybe_obsolete = manager.IsObsolete(replaced_id);
+        bool is_obsolete = maybe_obsolete && *maybe_obsolete;
+        if (!is_obsolete)
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<ShipDesignOrder>(empire_id, replaced_id, true));
+
+        // Replace the old id in the manager.
+        manager.MoveBefore(new_design_id, replaced_id);
+        manager.Remove(replaced_id);
+
+        // Update the replaced design on the bench
+        SetDesign(new_design_id);
+
+        DebugLogger() << "Replaced design #" << replaced_id << " with #" << new_design_id ;
+    }
+
+    DesignChangedSignal();
+}
+
+
 //////////////////////////////////////////////////
 // DesignWnd                                    //
 //////////////////////////////////////////////////
@@ -4152,10 +4260,6 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
     m_main_panel->HullTypeClickedSignal.connect(
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
-    m_main_panel->DesignReplacedSignal.connect(
-        boost::bind(&DesignWnd::ReplaceDesign, this));
-    m_main_panel->DesignConfirmedSignal.connect(
-        boost::bind(&DesignWnd::AddDesign, this));
     m_main_panel->DesignChangedSignal.connect(
         boost::bind(&DesignWnd::DesignChanged, this));
     m_main_panel->DesignNameChangedSignal.connect(
@@ -4239,103 +4343,6 @@ void DesignWnd::ShowHullTypeInEncyclopedia(const std::string& hull_type)
 
 void DesignWnd::ShowShipDesignInEncyclopedia(int design_id)
 { m_detail_panel->SetDesign(design_id); }
-
-std::pair<int, boost::uuids::uuid> DesignWnd::AddDesign() {
-    try {
-        std::vector<std::string> parts = m_main_panel->Parts();
-        const std::string& hull_name = m_main_panel->Hull();
-
-        const auto name = m_main_panel->ValidatedDesignName();
-
-        const auto description = m_main_panel->DesignDescription();
-
-        std::string icon = "ship_hulls/generic_hull.png";
-        if (const HullType* hull = GetHullType(hull_name))
-            icon = hull->Icon();
-
-        auto new_uuid = boost::uuids::random_generator()();
-
-        // create design from stuff chosen in UI
-        ShipDesign design(std::invalid_argument(""), name.StoredString(), description.StoredString(),
-                          CurrentTurn(), ClientApp::GetApp()->EmpireID(),
-                          hull_name, parts, icon, "some model", name.IsInStringtable(),
-                          false, new_uuid);
-
-        int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
-
-        // If editing a saved design insert into saved designs
-        if (m_main_panel->EditingSavedDesign()) {
-            auto& manager = GetSavedDesignsManager();
-            manager.InsertBefore(design, manager.OrderedDesignUUIDs().begin());
-            new_uuid = *manager.OrderedDesignUUIDs().begin();
-
-            // Otherwise insert into current empire designs
-        } else {
-            int empire_id = HumanClientApp::GetApp()->EmpireID();
-            const Empire* empire = GetEmpire(empire_id);
-            if (!empire) return {INVALID_DESIGN_ID, boost::uuids::uuid{0}};
-
-            auto& manager = GetCurrentDesignsManager();
-            const auto& all_ids = manager.AllOrderedIDs();
-            manager.InsertBefore(new_design_id, all_ids.empty() ? INVALID_OBJECT_ID : *all_ids.begin());
-
-            HumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, new_design_id, design));
-        }
-
-        m_main_panel->DesignChangedSignal();
-
-        DebugLogger() << "Added new design: " << design.Name();
-
-        return std::make_pair(new_design_id, new_uuid);
-
-    } catch (std::invalid_argument&) {
-        ErrorLogger() << "DesignWnd::AddDesign tried to add an invalid ShipDesign";
-        return {INVALID_DESIGN_ID, boost::uuids::uuid{0}};
-    }
-}
-
-void DesignWnd::ReplaceDesign() {
-    const auto new_id_and_uuid = AddDesign();
-    const auto& new_uuid = new_id_and_uuid.second;
-    const auto new_design_id = new_id_and_uuid.first;
-    
-    // If replacing a saved design
-    if (const auto replaced_design = m_main_panel->EditingSavedDesign()) {
-        auto& manager = GetSavedDesignsManager();
-
-        manager.MoveBefore(new_uuid, (*replaced_design)->UUID());
-        manager.Erase((*replaced_design)->UUID());
-
-        // Update the replaced design on the bench
-        m_main_panel->SetDesign(manager.GetDesign(new_uuid));
-
-    } else if (const auto replaced_design = m_main_panel->EditingCurrentDesign()) {
-        auto& manager = GetCurrentDesignsManager();
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
-        int replaced_id = (*replaced_design)->ID();
-
-        if (new_design_id == INVALID_DESIGN_ID) return;
-
-        // Remove the old id from the Empire.
-        const auto maybe_obsolete = manager.IsObsolete(replaced_id);
-        bool is_obsolete = maybe_obsolete && *maybe_obsolete;
-        if (!is_obsolete)
-            HumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, replaced_id, true));
-
-        // Replace the old id in the manager.
-        manager.MoveBefore(new_design_id, replaced_id);
-        manager.Remove(replaced_id);
-
-        // Update the replaced design on the bench
-        m_main_panel->SetDesign(new_design_id);
-
-        DebugLogger() << "Replaced design #" << replaced_id << " with #" << new_design_id ;
-    }
-    
-    m_main_panel->DesignChangedSignal();
-}
 
 void DesignWnd::DesignChanged() {
     m_detail_panel->SetIncompleteDesign(m_main_panel->GetIncompleteDesign());

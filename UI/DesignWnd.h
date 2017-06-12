@@ -76,8 +76,6 @@ private:
     class PartPalette;      // shows parts that can be clicked for detailed or dragged on slots in design
     class MainPanel;        // shows image of hull, slots and parts, design name and description entry boxes, confirm button
 
-    std::pair<int, boost::uuids::uuid>  AddDesign();    ///< adds current design to those stored by this empire, allowing ships of this design to be produced
-    void    ReplaceDesign();///< replace selected completed design with the current design in the stored designs of this empire
     void    DesignChanged();
     void    DesignNameChanged();
 
