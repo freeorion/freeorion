@@ -2696,6 +2696,9 @@ public:
     mutable boost::signals2::signal<void (const ShipDesign*)>   DesignClickedSignal;
     mutable boost::signals2::signal<void (const HullType*)>     HullClickedSignal;
 
+    enum class BaseSelectorTab : std::size_t {Hull, Current, Saved, Monster};
+    mutable boost::signals2::signal<void (const BaseSelectorTab)> TabChangedSignal;
+
 private:
     void            DoLayout();
 
@@ -2795,9 +2798,20 @@ void DesignWnd::BaseSelector::Reset() {
     const int empire_id = HumanClientApp::GetApp()->EmpireID();
     SetEmpireShown(empire_id, false);
 
-    if (GG::Wnd* wnd = m_tabs->CurrentWnd()) {
-        if (BasesListBox* base_box = dynamic_cast<BasesListBox*>(wnd))
-            base_box->Populate();
+    if (BasesListBox* base_box = dynamic_cast<BasesListBox*>(m_tabs->CurrentWnd()))
+        base_box->Populate();
+
+    // Signal the type of tab selected
+    auto tab_type = BaseSelectorTab(m_tabs->CurrentWndIndex());
+    switch (tab_type) {
+    case BaseSelectorTab::Hull:
+    case BaseSelectorTab::Current:
+    case BaseSelectorTab::Saved:
+    case BaseSelectorTab::Monster:
+        TabChangedSignal(tab_type);
+        break;
+    default:
+        break;
     }
 }
 
