@@ -3874,25 +3874,22 @@ Conflicting Design
 DESIGN_COMPONENT_CONFLICT_DETAIL
 A shipdesign cannot contain both %1% and %2%.
 
-DESIGN_WND_ADD
-Add New Design
+DESIGN_WND_ADD_FINISHED
+Add Finished Design
 
 # %1% name of the new ship design.
-DESIGN_WND_ADD_DETAIL
+DESIGN_WND_ADD_DETAIL_FINISHED
 '''Add new design called
 "%1%"
 to finished designs.'''
 
-DESIGN_WND_UPDATE
-Update Design
+DESIGN_WND_UPDATE_FINISHED
+Update Finished Design
 
-DESIGN_WND_UPDATE_OLD
-Update Old Design
-
-# %1% old name of the existing design.
+# %1% previous name of the existing design.
 # %2% new name of the existing design.
-DESIGN_WND_UPDATE_OLD_DETAIL
-'''Replace old design
+DESIGN_WND_UPDATE_DETAIL_FINISHED
+'''Replace Finished design
 "%1%"
 with new design
 "%2%"
@@ -3923,7 +3920,7 @@ DESIGN_UPDATE_INVALID_NO_CANDIDATE
 Choose an existing design to update.
 
 ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT
-Select a hull, add parts and then click "[[DESIGN_WND_ADD]]" to create an available design.
+Select a hull, add parts and then click "[[DESIGN_WND_ADD_FINISHED]]" to create an available design.
 
 ADD_FIRST_DESIGN_HULL_QUEUE_PROMPT
 Toggle the Obsolete, Available and Unavailable filters to show more hulls
@@ -5173,9 +5170,9 @@ The current design may have internal, external and/or core [[encyclopedia SLOT_T
 
 Add a name and optionally a description to the design.
 
-Click "[[DESIGN_WND_ADD]]" or "[[DESIGN_WND_ADD_SAVED]]" to add the design to the beginning of the list of designs.
+Click "[[DESIGN_WND_ADD_FINISHED]]" or "[[DESIGN_WND_ADD_SAVED]]" to add the design to the beginning of the list of designs.
 
-Click "[[DESIGN_WND_UPDATE]]" or "[[DESIGN_WND_UPDATE_SAVED]]" to replace the most recently selected [[DESIGN_WND_FINISHED_DESIGNS]] or [[DESIGN_WND_SAVED_DESIGNS]] design with a new design.  "[[DESIGN_WND_UPDATE]]" or "[[DESIGN_WND_UPDATE_SAVED]]" is only active if this design was started from a design in the [[DESIGN_WND_FINISHED_DESIGNS]] or [[DESIGN_WND_SAVED_DESIGNS]] list respectively.  "[[DESIGN_WND_UPDATE]]" only changes the design, any ships already queued for production or already produced will continue to use the old design.
+Click "[[DESIGN_WND_UPDATE_FINISHED]]" or "[[DESIGN_WND_UPDATE_SAVED]]" to replace the most recently selected [[DESIGN_WND_FINISHED_DESIGNS]] or [[DESIGN_WND_SAVED_DESIGNS]] design with a new design.  "[[DESIGN_WND_UPDATE_FINISHED]]" or "[[DESIGN_WND_UPDATE_SAVED]]" is only active if this design was started from a design in the [[DESIGN_WND_FINISHED_DESIGNS]] or [[DESIGN_WND_SAVED_DESIGNS]] list respectively.  "[[DESIGN_WND_UPDATE_FINISHED]]" only changes the design, any ships already queued for production or already produced will continue to use the old design.
 '''
 
 FLEET_MOVEMENT_ARTICLE_TITLE

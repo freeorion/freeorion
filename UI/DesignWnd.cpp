@@ -3422,7 +3422,7 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     m_design_description_label = new CUILabel(UserString("DESIGN_WND_DESIGN_DESCRIPTION"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_design_description = new CUIEdit(UserString("DESIGN_DESCRIPTION_DEFAULT"));
     m_replace_button = new CUIButton(UserString("DESIGN_WND_UPDATE"));
-    m_confirm_button = new CUIButton(UserString("DESIGN_WND_ADD"));
+    m_confirm_button = new CUIButton(UserString("DESIGN_WND_ADD_FINISHED"));
     m_clear_button = new CUIButton(UserString("DESIGN_WND_CLEAR"));
 
     m_replace_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -3916,8 +3916,8 @@ void DesignWnd::MainPanel::DesignChanged() {
     m_replace_button->Disable(true);
     m_confirm_button->Disable(true);
 
-    m_replace_button->SetText(UserString("DESIGN_WND_UPDATE"));
-    m_confirm_button->SetText(UserString("DESIGN_WND_ADD"));
+    m_replace_button->SetText(UserString("DESIGN_WND_UPDATE_FINISHED"));
+    m_confirm_button->SetText(UserString("DESIGN_WND_ADD_FINISHED"));
 
     if (!m_hull) {
         m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
@@ -4038,8 +4038,8 @@ void DesignWnd::MainPanel::DesignChanged() {
         if (!existing_design_name) {
             // A current design can be replaced if it doesn't duplicate an existing design
             m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
-                UserString("DESIGN_WND_UPDATE_OLD"),
-                boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_OLD_DETAIL"))
+                UserString("DESIGN_WND_UPDATE_FINISHED"),
+                boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_DETAIL_FINISHED"))
                                % (*replaced_current_design)->Name()
                                % new_design_name)));
             m_replace_button->Disable(false);
@@ -4068,8 +4068,8 @@ void DesignWnd::MainPanel::DesignChanged() {
         if (!existing_design_name) {
             // A new current can be added if it does not duplicate an existing design.
             m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
-                UserString("DESIGN_WND_ADD"),
-                boost::io::str(FlexibleFormat(UserString("DESIGN_WND_ADD_DETAIL"))
+                UserString("DESIGN_WND_ADD_FINISHED"),
+                boost::io::str(FlexibleFormat(UserString("DESIGN_WND_ADD_DETAIL_FINISHED"))
                                % new_design_name)));
             m_confirm_button->Disable(false);
 
