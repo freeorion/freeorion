@@ -3313,6 +3313,9 @@ public:
     void    ReplaceDesign();
 
     void            HighlightSlotType(std::vector<ShipSlotType>& slot_types);   //!< renders slots of the indicated types differently, perhaps to indicate that that those slots can be drop targets for a particular part?
+
+    /** Track changes in base type. */
+    void            HandleBaseTypeChange(const DesignWnd::BaseSelector::BaseSelectorTab base_type);
     //@}
 
     /** emitted when the design is changed (by adding or removing parts, not
@@ -3369,6 +3372,10 @@ private:
     boost::optional<int>                    m_replaced_design_id;
     // The design uuid if this design is replacable
     boost::optional<boost::uuids::uuid>     m_replaced_design_uuid;
+
+    /// Whether to add new designs to current or saved designs
+    /// This tracks the last relevant selected tab in the base selector
+    DesignWnd::BaseSelector::BaseSelectorTab m_type_to_create = DesignWnd::BaseSelector::BaseSelectorTab::Current;
 
     mutable std::shared_ptr<ShipDesign> m_incomplete_design;
 
@@ -3432,16 +3439,11 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
         boost::bind(&DesignWnd::MainPanel::ClearParts, this));
     m_design_name->EditedSignal.connect(
         boost::bind(&DesignWnd::MainPanel::DesignNameEditedSlot, this, _1));
-    m_replace_button->LeftClickedSignal.connect(
-        DesignReplacedSignal);
-    m_confirm_button->LeftClickedSignal.connect(
-        DesignConfirmedSignal);
-    DesignChangedSignal.connect(
-        boost::bind(&DesignWnd::MainPanel::DesignChanged, this));
-    DesignReplacedSignal.connect(
-        boost::bind(&DesignWnd::MainPanel::ReplaceDesign, this));
-    DesignConfirmedSignal.connect(
-        boost::bind(&DesignWnd::MainPanel::AddDesign, this));
+    m_replace_button->LeftClickedSignal.connect(DesignReplacedSignal);
+    m_confirm_button->LeftClickedSignal.connect(DesignConfirmedSignal);
+    DesignChangedSignal.connect(boost::bind(&DesignWnd::MainPanel::DesignChanged, this));
+    DesignReplacedSignal.connect(boost::bind(&DesignWnd::MainPanel::ReplaceDesign, this));
+    DesignConfirmedSignal.connect(boost::bind(&DesignWnd::MainPanel::AddDesign, this));
 
     DesignChanged(); // Initialize components that rely on the current state of the design.
 
@@ -3801,6 +3803,20 @@ void DesignWnd::MainPanel::HighlightSlotType(std::vector<ShipSlotType>& slot_typ
     }
 }
 
+void DesignWnd::MainPanel::HandleBaseTypeChange(DesignWnd::BaseSelector::BaseSelectorTab base_type) {
+    if (m_type_to_create == base_type)
+        return;
+    switch(base_type) {
+    case DesignWnd::BaseSelector::BaseSelectorTab::Current:
+    case DesignWnd::BaseSelector::BaseSelectorTab::Saved:
+        m_type_to_create = base_type;
+        break;
+    default:
+        break;
+    }
+    DesignChanged();
+}
+
 void DesignWnd::MainPanel::Populate(){
     for (SlotControl* control : m_slots)
         delete control;
@@ -3990,19 +4006,55 @@ void DesignWnd::MainPanel::DesignChanged() {
 
     const auto new_design_name = ValidatedDesignName().DisplayText();
 
-    if (const auto& saved_design = EditingSavedDesign()) {
-        // A changed saved design can be replaced
-        if (cur_design && !(*cur_design == **saved_design)) {
+    // producible only matters for empire designs.
+    // Monster designs can be edited as saved designs.
+    bool producible = cur_design->Producible();
+
+    // Current designs can not duplicate other designs, be already registered.
+    const auto existing_design_name = CurrentDesignIsRegistered();
+
+    const auto& replaced_saved_design = EditingSavedDesign();
+
+    const auto& replaced_current_design = EditingCurrentDesign();
+
+    // Choose text for the replace button: replace saved design, replace current design or already known.
+
+    // A changed saved design can be replaced with an updated design
+    if (replaced_saved_design) {
+        if (cur_design && !(*cur_design == **replaced_saved_design)) {
             m_replace_button->SetText(UserString("DESIGN_WND_UPDATE_SAVED"));
             m_replace_button->SetBrowseInfoWnd(
                 std::make_shared<TextBrowseWnd>(
                     UserString("DESIGN_WND_UPDATE_SAVED"),
                     boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_DETAIL_SAVED"))
-                                   % (*saved_design)->Name()
+                                   % (*replaced_saved_design)->Name()
                                    % new_design_name)));
             m_replace_button->Disable(false);
         }
+    }
 
+    if (producible && replaced_current_design) {
+        if (!existing_design_name) {
+            // A current design can be replaced if it doesn't duplicate an existing design
+            m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+                UserString("DESIGN_WND_UPDATE_OLD"),
+                boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_OLD_DETAIL"))
+                               % (*replaced_current_design)->Name()
+                               % new_design_name)));
+            m_replace_button->Disable(false);
+        } else {
+            // Otherwise mark it as known.
+            m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+                UserString("DESIGN_KNOWN"),
+                boost::io::str(FlexibleFormat(UserString("DESIGN_KNOWN_DETAIL"))
+                               % *existing_design_name)));
+        }
+    }
+
+    // Choose text for the add new design button: add saved design, add current design or already known.
+
+    // Add a saved design if the saved base selector was visited more recently than the current tab.
+    if (m_type_to_create == DesignWnd::BaseSelector::BaseSelectorTab::Saved) {
         // A new saved design can always be created
         m_confirm_button->SetText(UserString("DESIGN_WND_ADD_SAVED"));
         m_confirm_button->SetBrowseInfoWnd(
@@ -4011,39 +4063,23 @@ void DesignWnd::MainPanel::DesignChanged() {
                 boost::io::str(FlexibleFormat(UserString("DESIGN_WND_ADD_DETAIL_SAVED"))
                                % new_design_name)));
         m_confirm_button->Disable(false);
-        return;
+    } else if (producible) {
+        if (!existing_design_name) {
+            // A new current can be added if it does not duplicate an existing design.
+            m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+                UserString("DESIGN_WND_ADD"),
+                boost::io::str(FlexibleFormat(UserString("DESIGN_WND_ADD_DETAIL"))
+                               % new_design_name)));
+            m_confirm_button->Disable(false);
+
+        } else {
+            // Otherwise the design is already known.
+            m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+                UserString("DESIGN_KNOWN"),
+                boost::io::str(FlexibleFormat(UserString("DESIGN_KNOWN_DETAIL"))
+                               % *existing_design_name)));
+        }
     }
-
-    // Monster ships can only be edited as saved designs.
-    if(!cur_design->Producible())
-        return;
-
-    if (const auto existing_design_name = CurrentDesignIsRegistered()) {
-        m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
-            UserString("DESIGN_KNOWN"),
-            boost::io::str(FlexibleFormat(UserString("DESIGN_KNOWN_DETAIL"))
-                           % *existing_design_name)));
-        m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
-            UserString("DESIGN_KNOWN"),
-            boost::io::str(FlexibleFormat(UserString("DESIGN_KNOWN_DETAIL"))
-                           % *existing_design_name)));
-        return;
-    }
-
-    if (const auto& replaced_ship_design = EditingCurrentDesign()) {
-        m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
-            UserString("DESIGN_WND_UPDATE_OLD"),
-            boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_OLD_DETAIL"))
-                           % (*replaced_ship_design)->Name()
-                           % new_design_name)));
-        m_replace_button->Disable(false);
-    }
-
-    m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
-        UserString("DESIGN_WND_ADD"),
-        boost::io::str(FlexibleFormat(UserString("DESIGN_WND_ADD_DETAIL"))
-                       % new_design_name)));
-    m_confirm_button->Disable(false);
 }
 
 void DesignWnd::MainPanel::DesignNameChanged() {
@@ -4172,12 +4208,12 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
         int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
 
         // If editing a saved design insert into saved designs
-        if (EditingSavedDesign()) {
+        if (m_type_to_create == DesignWnd::BaseSelector::BaseSelectorTab::Saved) {
             auto& manager = GetSavedDesignsManager();
             manager.InsertBefore(design, manager.OrderedDesignUUIDs().begin());
             new_uuid = *manager.OrderedDesignUUIDs().begin();
 
-            // Otherwise insert into current empire designs
+        // Otherwise insert into current empire designs
         } else {
             int empire_id = HumanClientApp::GetApp()->EmpireID();
             const Empire* empire = GetEmpire(empire_id);
@@ -4204,9 +4240,16 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
 }
 
 void DesignWnd::MainPanel::ReplaceDesign() {
+    auto old_m_type_to_create = m_type_to_create;
+    m_type_to_create = EditingSavedDesign()
+        ? DesignWnd::BaseSelector::BaseSelectorTab::Saved
+        : DesignWnd::BaseSelector::BaseSelectorTab::Current;
+
     const auto new_id_and_uuid = AddDesign();
     const auto& new_uuid = new_id_and_uuid.second;
     const auto new_design_id = new_id_and_uuid.first;
+
+    m_type_to_create = old_m_type_to_create;
 
     // If replacing a saved design
     if (const auto replaced_design = EditingSavedDesign()) {
@@ -4301,6 +4344,7 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
     m_base_selector->HullClickedSignal.connect(
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
+    m_base_selector->TabChangedSignal.connect(boost::bind(&MainPanel::HandleBaseTypeChange, m_main_panel, _1));
 }
 
 void DesignWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
