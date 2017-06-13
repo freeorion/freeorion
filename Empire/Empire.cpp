@@ -2472,10 +2472,10 @@ void Empire::SetProductionQuantityAndBlocksize(int index, int quantity, int bloc
     //std::cout << "original block size: " << original_blocksize << "  new blocksize: " << blocksize << "  memory blocksize: " << m_production_queue[index].blocksize_memory << std::endl;
     if (blocksize <= m_production_queue[index].blocksize_memory) {
         // if reducing block size, progress on retained portion is unchanged.
-        // if increasing block size, progress is reset to 0, unless this is undoing a recent reduction in block size
+        // if increasing block size, progress is proportionally reduced, unless undoing a recent reduction in block size
         m_production_queue[index].progress = m_production_queue[index].progress_memory;
     } else {
-        m_production_queue[index].progress = 0.0f;
+        m_production_queue[index].progress = m_production_queue[index].progress_memory * m_production_queue[index].blocksize_memory / blocksize;
     }
 }
 
