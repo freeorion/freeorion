@@ -3738,6 +3738,14 @@ Wasted Points
 PRODUCTION_INFO_LOCAL_PS_LABEL
 Points Available Here
 
+STOCKPILE_LABEL
+Stockpile
+
+STOCKPILE_USE_LABEL
+Stockpile Use
+
+STOCKPILE_CHANGE_LABEL
+Next Turn Stockpile
 
 ##
 ## Research window

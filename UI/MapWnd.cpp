@@ -55,6 +55,8 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/optional/optional.hpp>
+#include <boost/range/numeric.hpp>
+#include <boost/range/adaptor/map.hpp>
 #include <boost/locale.hpp>
 
 #include <GG/DrawUtil.h>
@@ -6455,10 +6457,14 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     double total_PP_output = empire->GetResourcePool(RE_INDUSTRY)->TotalOutput();
     double total_PP_wasted = total_PP_output - total_PP_spent;
     double total_PP_target_output = empire->GetResourcePool(RE_INDUSTRY)->TargetOutput();
+    float stockpile = empire->GetResourcePool(RE_INDUSTRY)->Stockpile();
+    float stockpile_used = boost::accumulate(empire->GetProductionQueue().AllocatedStockpilePP() | boost::adaptors::map_values, 0.0f);
+    float expected_stockpile = empire->GetProductionQueue().ExpectedNewStockpileAmount();
 
     m_industry->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
         UserString("MAP_PRODUCTION_TITLE"), UserString("PRODUCTION_INFO_PP"),
-        total_PP_spent, total_PP_output, total_PP_target_output));
+        total_PP_spent, total_PP_output, total_PP_target_output,
+        true, stockpile, stockpile_used, expected_stockpile));
 
     if (total_PP_wasted > 0.05) {
         DebugLogger()  << "MapWnd::RefreshIndustryResourceIndicator: Showing Industry Wasted Icon with Industry spent: "

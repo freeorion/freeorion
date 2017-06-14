@@ -8,7 +8,8 @@
 /** A popup tooltop for display when mousing over in-game icons.  A title and some detail text.*/
 class ResourceBrowseWnd : public GG::BrowseInfoWnd {
 public:
-    ResourceBrowseWnd(const std::string& title_text, const std::string& unit_label, float used, float output, float target_output);
+    ResourceBrowseWnd(const std::string& title_text, const std::string& unit_label, float used, float output, float target_output,
+                      bool show_stockpile = false, float stockpile = 0.0f, float stockpile_use = 0.0f, float stockpile_change = 0.0f);
     void CompleteConstruction() override;
     bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
     void Render() override;
@@ -28,7 +29,17 @@ private:
     std::shared_ptr<GG::Label>  m_target_points_label;
     std::shared_ptr<GG::Label>  m_target_points;
     std::shared_ptr<GG::Label>  m_target_points_P_label;
-
+    bool        m_show_stockpile;
+    GG::Label*  m_stockpile_points_label;
+    GG::Label*  m_stockpile_points;
+    GG::Label*  m_stockpile_points_P_label;
+    GG::Label*  m_stockpile_used_points_label;
+    GG::Label*  m_stockpile_used_points;
+    GG::Label*  m_stockpile_used_points_P_label;
+    GG::Label*  m_stockpile_change_points_label;
+    GG::Label*  m_stockpile_change_points;
+    GG::Label*  m_stockpile_change_points_P_label;
+    
     GG::Pt      m_offset;
 };
 
