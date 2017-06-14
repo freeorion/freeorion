@@ -383,7 +383,7 @@ public:
     SitRepItr               SitRepBegin() const;                ///< starting iterator for sitrep entries for this empire
     SitRepItr               SitRepEnd() const;                  ///< end iterator for sitreps
 
-    float                   ProductionPoints() const;           ///< Returns the number of production points available to the empire (this is available industry)
+    float                   ProductionPoints() const;           ///< Returns the empire's current production point output (this is available industry not including stockpile)
 
     /** Returns ResourcePool for \a resource_type or 0 if no such ResourcePool
         exists. */
