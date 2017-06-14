@@ -874,6 +874,9 @@ float ProductionQueue::TotalPPsSpent() const {
     return retval;
 }
 
+/** TODO: Is there any reason to keep this method in addition to the more specific 
+ * information directly available from the empire?  This should probably at least be renamed
+ * to clarify it is non-stockpile output */
 std::map<std::set<int>, float> ProductionQueue::AvailablePP(
     const std::shared_ptr<ResourcePool>& industry_pool) const
 {
@@ -884,8 +887,7 @@ std::map<std::set<int>, float> ProductionQueue::AvailablePP(
     }
 
     // determine available PP (ie. industry) in each resource sharing group of systems
-    for (const auto& ind : industry_pool->Available()) {
-        // get group of systems in industry pool
+    for (const auto& ind : industry_pool->Output()) {        // get group of systems in industry pool
         const std::set<int>& group = ind.first;
         retval[group] = ind.second;
     }
@@ -913,7 +915,7 @@ std::set<std::set<int>> ProductionQueue::ObjectsWithWastedPP(
         const std::set<int>& group = avail_pp.first;
         // find this group's allocated PP
         auto alloc_it = m_object_group_allocated_pp.find(group);
-        // is less allocated than is available?  if so, some is wasted
+        // is less allocated than is available?  if so, some is wasted (assumes stockpile contribuutions can never be lossless)
         if (alloc_it == m_object_group_allocated_pp.end() || alloc_it->second < avail_pp.second)
             retval.insert(avail_pp.first);
     }
@@ -1207,9 +1209,9 @@ int Empire::CapitalID() const
 int Empire::StockpileID(ResourceType res) const {
     switch (res) {
     case RE_TRADE:
+    case RE_INDUSTRY:
         return m_capital_id;
         break;
-    case RE_INDUSTRY:
     case RE_RESEARCH:
     default:
         return INVALID_OBJECT_ID;
@@ -2026,7 +2028,7 @@ Empire::SitRepItr Empire::SitRepEnd() const
 { return m_sitrep_entries.end(); }
 
 float Empire::ProductionPoints() const
-{ return GetResourcePool(RE_INDUSTRY)->TotalAvailable(); }
+{ return GetResourcePool(RE_INDUSTRY)->TotalOutput(); }
 
 const std::shared_ptr<ResourcePool> Empire::GetResourcePool(ResourceType resource_type) const {
     auto it = m_resource_pools.find(resource_type);
@@ -2046,7 +2048,7 @@ float Empire::ResourceOutput(ResourceType type) const {
     auto it = m_resource_pools.find(type);
     if (it == m_resource_pools.end())
         throw std::invalid_argument("Empire::ResourceOutput passed invalid ResourceType");
-    return it->second->Output();
+    return it->second->TotalOutput();
 }
 
 float Empire::ResourceAvailable(ResourceType type) const {
