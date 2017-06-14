@@ -743,16 +743,20 @@ bool ServerApp::NewGameInitVerifyJoiners(
     // PlayerSetupData entries that is for an AI player.
 
     std::map<int, PlayerSetupData> player_id_setup_data;
+    bool host_in_player_id_setup_data = false;
+    int num_observers = 0;
+    int num_moderators = 0;
 
     for (const auto& psd : player_setup_data) {
-        if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-            player_id_setup_data[psd.m_player_id] = psd;
-        } else if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
-            player_id_setup_data[psd.m_player_id] = psd;
-        } else {
-            // do nothing for any other player type, until another player type is implemented
-            ErrorLogger() << "ServerApp::NewSPGameInit skipping unsupported client type in player setup data";
+        if (psd.m_client_type == Networking::INVALID_CLIENT_TYPE) {
+            ErrorLogger() << "Player with id " << psd.m_player_id << " has invalid client type";
+            continue;
         }
+
+        player_id_setup_data[psd.m_player_id] = psd;
+
+        if (m_networking.HostPlayerID() == psd.m_player_id)
+            host_in_player_id_setup_data = true;
     }
 
     // ensure some reasonable inputs
@@ -762,24 +766,16 @@ bool ServerApp::NewGameInitVerifyJoiners(
         return false;
     }
 
-    if (player_id_setup_data.find(m_networking.HostPlayerID()) == player_id_setup_data.end()) {
+    if (!host_in_player_id_setup_data) {
         ErrorLogger() << "NewGameInitVerifyJoiners : Host id " << m_networking.HostPlayerID()
                       << " is not a valid player id.";
-        return false;
-    }
-
-    if (player_id_setup_data[m_networking.HostPlayerID()].m_client_type
-        != Networking::CLIENT_TYPE_HUMAN_PLAYER)
-    {
-        ErrorLogger() << "NewGameInitVerifyJoiners : Host player with id "
-                      << m_networking.HostPlayerID() << " is not human.";
         return false;
     }
 
     // ensure number of players connected and for which data are provided are consistent
     if (m_networking.NumEstablishedPlayers() != player_id_setup_data.size()) {
         ErrorLogger() << "ServerApp::NewGameInitVerifyJoiners has " << m_networking.NumEstablishedPlayers()
-                      << " established players but " << player_id_setup_data.size() << " entries in player setup data.";
+                      << " established players but " << player_id_setup_data.size() << " players in setup data.";
         return false;
     }
 
