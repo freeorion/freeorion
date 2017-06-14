@@ -744,8 +744,6 @@ bool ServerApp::NewGameInitVerifyJoiners(
 
     std::map<int, PlayerSetupData> player_id_setup_data;
     bool host_in_player_id_setup_data = false;
-    int num_observers = 0;
-    int num_moderators = 0;
 
     for (const auto& psd : player_setup_data) {
         if (psd.m_client_type == Networking::INVALID_CLIENT_TYPE) {
