@@ -23,6 +23,8 @@
 #include "Supply.h"
 
 #include <boost/lexical_cast.hpp>
+#include <boost/range/numeric.hpp>
+#include <boost/range/adaptor/map.hpp>
 #include <boost/timer.hpp>
 #include "boost/date_time/posix_time/posix_time.hpp"
 
@@ -65,6 +67,9 @@ namespace {
         return topping_up_factor;
     }
 
+// Calculates per-turn limit on PP contribution, taking into account unit item cost, min build turns, blocksize,
+// remaining repeat count, current progress, and other potential factors discussed below.
+
 // FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR and FUNCTIONAL_PRODUCTION_QUEUE_TOPPING_UP_FACTOR specify global_settings.txt values that affect how the ProductionQueue will limit
 // allocation towards building a given item on a given turn.  The base amount of maximum allocation per turn (if the player has enough PP available) is the item's total
 // cost, divided over its minimum build time.  Sometimes complications arise, though, which unexpectedly delay the completion even if the item had been fully-funded 
@@ -106,6 +111,38 @@ namespace {
 
         return retval;
     }
+
+    float CalculateNewStockpile(int empire_id, int stockpile_location_id, float starting_stockpile,
+                                         const std::map<std::set<int>, float>& available_pp,
+                                         const std::map<std::set<int>, float>& allocated_pp,
+                                         const std::map<std::set<int>, float>& allocated_stockpile_pp)
+    {
+        const Empire* empire = GetEmpire(empire_id);
+        if (!empire) {
+            ErrorLogger() << "CalculateStockpileContribution() passed null empire.  doing nothing.";
+            return 0.0f;
+        }
+        float stockpile_transfer_efficiency = empire->GetMeter("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")->Current();
+        // locally, within same resource group as the stockpile location (empire capital) we currently allow stockpile contribution at no penalty
+        float local_stockpile_transfer_rate = 1.0;
+        float remote_stockpile_transfer_rate = stockpile_transfer_efficiency;
+        
+        float stockpile_used = boost::accumulate(allocated_stockpile_pp | boost::adaptors::map_values, 0.0f);
+        float new_contributions = 0.0f;
+        for (auto const& available_group: available_pp) {
+            auto alloc_it = allocated_pp.find(available_group.first);
+            float allocated_here = (alloc_it == allocated_pp.end()) ? 0.0f : alloc_it->second;
+            float excess_here = available_group.second - allocated_here;
+            if (excess_here < EPSILON)
+                continue;
+            bool local_to_stockpile = available_group.first.find(stockpile_location_id) != available_group.first.end();
+            float this_transfer_rate = local_to_stockpile ? 
+                        local_stockpile_transfer_rate : remote_stockpile_transfer_rate;
+            new_contributions += excess_here * this_transfer_rate;
+        }
+        return starting_stockpile + new_contributions - stockpile_used;
+    }
+                                         
 
 
     /** sets the .allocated_rp, value for each Tech in the queue.  Only sets
@@ -179,12 +216,14 @@ namespace {
       * Elements will not receive funding if they cannot be produced by the
       * empire with the indicated \a empire_id this turn at their build location. 
       * Also checks if elements will be completed this turn. */
-    void SetProdQueueElementSpending(std::map<std::set<int>, float> available_pp,
+    void SetProdQueueElementSpending(std::map<std::set<int>, float> available_pp, float available_stockpile, int stockpile_location_id,
+                                     float local_stockpile_use_rate, float remote_stockpile_use_rate,
                                      const std::vector<std::set<int>>& queue_element_resource_sharing_object_groups,
-                                     const std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<float, int>>& queue_item_costs_and_times,
+                                     const std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<float, int> >& queue_item_costs_and_times,
                                      const std::vector<bool>& is_producible,
                                      ProductionQueue::QueueType& queue,
                                      std::map<std::set<int>, float>& allocated_pp,
+                                     std::map<std::set<int>, float>& allocated_stockpile_pp,
                                      int& projects_in_progress, bool simulating)
     {
         //DebugLogger() << "========SetProdQueueElementSpending========";
@@ -207,9 +246,11 @@ namespace {
 
         projects_in_progress = 0;
         allocated_pp.clear();
-
+        allocated_stockpile_pp.clear();
+        float dummy_pp_source = 0;
+        
         //DebugLogger() << "queue size: " << queue.size();
-
+      
         int i = 0;
         for (ProductionQueue::Element& queue_element : queue) {
             if (queue_element.paused) {
@@ -220,32 +261,20 @@ namespace {
 
             // get resource sharing group and amount of resource available to build this item
             const std::set<int>& group = queue_element_resource_sharing_object_groups[i];
-            if (group.empty()) {
-                //DebugLogger() << "resource sharing group for queue element is empty.  not allocating any resources to element";
-                queue_element.allocated_pp = 0.0f;
-                ++i;
-                continue;
-            }
-
             std::map<std::set<int>, float>::iterator available_pp_it = available_pp.find(group);
-            if (available_pp_it == available_pp.end()) {
-                // item is not being built at an object that has access to resources, so it can't be produced.
-                //DebugLogger() << "no resource sharing group for production queue element";
+            float& group_pp_available = (available_pp_it != available_pp.end()) ? 
+                        available_pp_it->second : dummy_pp_source;
+            
+            if ((group_pp_available <= 0) && 
+                (available_stockpile <= 0 || !queue_element.allowed_imperial_stockpile_use)) {
+                //DebugLogger() << "resource sharing group for queue element has no resources.  and either"
+                //              << "no stockpile PP is available or element is not enabled for stockpile.  "
+                //              << "Not allocating any resources to element";
                 queue_element.allocated_pp = 0.0f;
                 ++i;
                 continue;
             }
 
-            float& group_pp_available = available_pp_it->second;
-
-
-            // if group has no pp available, can't produce anything this turn
-            if (group_pp_available <= 0.0f) {
-                //DebugLogger() << "no pp available in group";
-                queue_element.allocated_pp = 0.0f;
-                ++i;
-                continue;
-            }
             //DebugLogger() << "group has " << group_pp_available << " PP available";
 
             // see if item is producible this turn...
@@ -257,9 +286,9 @@ namespace {
                 continue;
             }
 
-
             // get max contribution per turn and turns to build at max contribution rate
-            int location_id = (queue_element.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : queue_element.location);
+            int location_id = (queue_element.item.CostIsProductionLocationInvariant() ?
+                        INVALID_OBJECT_ID : queue_element.location);
             std::pair<ProductionQueue::ProductionItem, int> key(queue_element.item, location_id);
             float item_cost = 1e6;  // dummy/default value, shouldn't ever really be needed
             int build_turns = 1;    // dummy/default value, shouldn't ever really be needed
@@ -275,12 +304,18 @@ namespace {
 
             float element_this_turn_limit = CalculateProductionPerTurnLimit(queue_element, item_cost, build_turns);
 
-            // determine how many pp to allocate to this queue element this turn.  allocation is limited by the
+            // determine how many pp to allocate to this queue element block this turn.  allocation is limited by the
             // item cost, which is the max number of PP per turn that can be put towards this item, and by the
             // total cost remaining to complete the last item in the queue element (eg. the element has all but
             // the last item complete already) and by the total pp available in this element's production location's
-            // resource sharing group
-            float allocation = std::max(0.0f, std::min(element_this_turn_limit, group_pp_available));
+            // resource sharing group (including any stockpile availability)
+            float stockpile_conversion_rate = (group.find(stockpile_location_id) != group.end()) ? 
+                        local_stockpile_use_rate : remote_stockpile_use_rate;
+            float stockpile_available_for_this = (queue_element.allowed_imperial_stockpile_use) ?
+                        available_stockpile * stockpile_conversion_rate : 0;
+            
+            float allocation = std::max(0.0f, std::min(element_this_turn_limit, 
+                                                       group_pp_available + stockpile_available_for_this));
 
             //DebugLogger() << "element accumulated " << element_accumulated_PP << " of total cost "
             //                       << element_total_cost << " and needs " << additional_pp_to_complete_element
@@ -290,11 +325,22 @@ namespace {
             // allocate pp
             queue_element.allocated_pp = std::max(allocation, EPSILON);
 
-            // record alloation in group, if group is not empty
-            allocated_pp[group] += allocation;  // assuming the float indexed by group will be default initialized to 0.0f if that entry doesn't already exist in the map
-            group_pp_available -= allocation;
-            group_pp_available = std::max(group_pp_available, 0.0f);    // safety clamp
+            // record allocation from group
+            float group_drawdown = std::min(allocation, group_pp_available);
+            allocated_pp[group] += group_drawdown;  // relies on default initial mapped value of 0.0f
+            group_pp_available -= group_drawdown;
+            float stockpile_drawdown = allocation == group_drawdown ? 
+                        0.0f : (allocation - group_drawdown) / stockpile_conversion_rate;
 
+            // record allocation from stockpile
+            // protect against any slight mismatch that might possible happen from multiplying
+            // and dividing by a very very small stockpile_conversion_rate
+            stockpile_drawdown = std::min(stockpile_drawdown, available_stockpile);
+            if (stockpile_drawdown) {
+                allocated_stockpile_pp[group] += stockpile_drawdown;
+                available_stockpile -= stockpile_drawdown;
+            }
+            
             //DebugLogger() << "... leaving " << group_pp_available << " PP available to group";
 
 
@@ -859,6 +905,7 @@ std::string ProductionQueue::Element::Dump() const {
 /////////////////////
 ProductionQueue::ProductionQueue(int empire_id) :
     m_projects_in_progress(0),
+    m_expected_new_stockpile_amount(0),
     m_empire_id(empire_id)
 {}
 
@@ -897,6 +944,9 @@ std::map<std::set<int>, float> ProductionQueue::AvailablePP(
 
 const std::map<std::set<int>, float>& ProductionQueue::AllocatedPP() const
 { return m_object_group_allocated_pp; }
+
+const std::map<std::set<int>, float>& ProductionQueue::AllocatedStockpilePP() const
+{ return m_object_group_allocated_stockpile_pp; }
 
 std::set<std::set<int>> ProductionQueue::ObjectsWithWastedPP(
     const std::shared_ptr<ResourcePool>& industry_pool) const
@@ -951,18 +1001,16 @@ void ProductionQueue::Update() {
         return;
     }
 
-    if (m_queue.empty()) {
-        //DebugLogger() << "ProductionQueue::Update aborting early due to an empty queue";
-        m_projects_in_progress = 0;
-        m_object_group_allocated_pp.clear();
-
-        ProductionQueueChangedSignal(); // need this so BuildingsPanel updates properly after removing last building
-        return;                         // nothing to do for an empty queue
-    }
-
     ScopedTimer update_timer("ProductionQueue::Update");
 
-    std::map<std::set<int>, float> available_pp = AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
+    auto industry_resource_pool = empire->GetResourcePool(RE_INDUSTRY);
+    std::map<std::set<int>, float> available_pp = AvailablePP(industry_resource_pool);
+    int stockpile_location_id = industry_resource_pool->StockpileObjectID();
+    float available_stockpile = industry_resource_pool->Stockpile();
+    float stockpile_transfer_efficiency = empire->GetMeter("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")->Current();
+    // locally, within same resource group as the stockpile location (empire capital) we currently allow stockpile use at no penalty
+    float local_stockpile_use_rate = 1.0;
+    float remote_stockpile_use_rate = stockpile_transfer_efficiency;
 
     // determine which resource sharing group each queue item is located in
     std::vector<std::set<int>> queue_element_groups;
@@ -1016,10 +1064,19 @@ void ProductionQueue::Update() {
     
     // allocate pp to queue elements, returning updated available pp and updated
     // allocated pp for each group of resource sharing objects
-    SetProdQueueElementSpending(available_pp, queue_element_groups,
+    SetProdQueueElementSpending(available_pp, available_stockpile, stockpile_location_id,
+                                local_stockpile_use_rate, remote_stockpile_use_rate,
+                                queue_element_groups,
                                 queue_item_costs_and_times, is_producible, m_queue,
-                                m_object_group_allocated_pp, m_projects_in_progress, false);
+                                m_object_group_allocated_pp, m_object_group_allocated_stockpile_pp,
+                                m_projects_in_progress, false);
 
+    //update expected new stockpile amount
+    float new_stockpile_amount = CalculateNewStockpile(m_empire_id, stockpile_location_id, available_stockpile, available_pp, 
+                                                       m_object_group_allocated_pp, m_object_group_allocated_stockpile_pp);
+    float stockpile_limit = empire->GetMeter("METER_IMPERIAL_PP_STOCKPILE_LIMIT")->Current();
+    m_expected_new_stockpile_amount = std::max(0.0f, std::min(new_stockpile_amount, stockpile_limit));
+    
     // if at least one resource-sharing system group have available PP, simulate
     // future turns to predict when build items will be finished
     bool simulate_future = false;
@@ -1067,6 +1124,8 @@ void ProductionQueue::Update() {
     long sim_time;
     sim_time_start = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
     std::map<std::set<int>, float>  allocated_pp;
+    float sim_available_stockpile = available_stockpile;
+    std::map<std::set<int>, float>  allocated_stockpile_pp;
     int dummy_int = 0;
     
     for (int sim_turn = 1; sim_turn <= TOO_MANY_TURNS; sim_turn ++) {
@@ -1075,9 +1134,13 @@ void ProductionQueue::Update() {
             break;
         
         allocated_pp.clear();
-        SetProdQueueElementSpending(available_pp, queue_element_groups,
+        allocated_stockpile_pp.clear();
+
+        SetProdQueueElementSpending(available_pp, sim_available_stockpile, stockpile_location_id,
+                                    local_stockpile_use_rate, remote_stockpile_use_rate,
+                                    queue_element_groups,
                                     queue_item_costs_and_times, is_producible, sim_queue,
-                                    allocated_pp, dummy_int, true);
+                                    allocated_pp, allocated_stockpile_pp, dummy_int, true);
 
         // check completion status and update m_queue and sim_queue as appropriate
         for (unsigned int i = 0; i < sim_queue.size(); i++) {
@@ -1099,6 +1162,8 @@ void ProductionQueue::Update() {
                 sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
             }
         }
+        sim_available_stockpile = CalculateNewStockpile(m_empire_id, stockpile_location_id, sim_available_stockpile,
+                                                        available_pp, allocated_pp, allocated_stockpile_pp);
     }    
 
     sim_time_end = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
@@ -3132,6 +3197,9 @@ void Empire::CheckProductionProgress() {
     // removed completed items from queue
     for (std::vector<int>::reverse_iterator it = to_erase.rbegin(); it != to_erase.rend(); ++it)
         m_production_queue.erase(*it);
+    
+    // update stockpile
+    SetResourceStockpile(RE_INDUSTRY, m_production_queue.ExpectedNewStockpileAmount());
 }
 
 void Empire::CheckTradeSocialProgress()

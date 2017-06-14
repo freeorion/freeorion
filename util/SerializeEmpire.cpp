@@ -84,6 +84,8 @@ void ProductionQueue::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_queue)
         & BOOST_SERIALIZATION_NVP(m_projects_in_progress)
         & BOOST_SERIALIZATION_NVP(m_object_group_allocated_pp)
+        & BOOST_SERIALIZATION_NVP(m_object_group_allocated_stockpile_pp)
+        & BOOST_SERIALIZATION_NVP(m_expected_new_stockpile_amount)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 

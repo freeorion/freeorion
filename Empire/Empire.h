@@ -205,7 +205,7 @@ struct FO_COMMON_API ProductionQueue {
     int                             EmpireID() const { return m_empire_id; }
 
     /** Returns map from sets of object ids that can share resources to amount
-      * of PP available in those groups of objects */
+      * of PP available in those groups of objects ; does not include stockpile */
     std::map<std::set<int>, float> AvailablePP(const std::shared_ptr<ResourcePool>& industry_pool) const;
 
     /** Returns map from sets of object ids that can share resources to amount
@@ -213,6 +213,16 @@ struct FO_COMMON_API ProductionQueue {
       * in systems in the group. */
     const std::map<std::set<int>, float>&  AllocatedPP() const;
 
+    
+    /** Returns map from sets of object ids that can share resources to amount
+     * of stockpile PP allocated to production queue elements that have build locations
+     * in systems in the group. */
+    const std::map<std::set<int>, float>&  AllocatedStockpilePP() const;
+    
+    /** Returns the value expected for the Imperial Stockpile for the next turn, based on the current
+     * ProductionQueue allocations. */
+    float                           ExpectedNewStockpileAmount() const {return m_expected_new_stockpile_amount; }
+    
     /** Returns sets of object ids that have more available than allocated PP */
     std::set<std::set<int>> ObjectsWithWastedPP(const std::shared_ptr<ResourcePool>& industry_pool) const;
 
@@ -253,6 +263,8 @@ private:
     QueueType                       m_queue;
     int                             m_projects_in_progress;
     std::map<std::set<int>, float>  m_object_group_allocated_pp;
+    std::map<std::set<int>, float>  m_object_group_allocated_stockpile_pp;
+    float                           m_expected_new_stockpile_amount;
     int                             m_empire_id;
 
     friend class boost::serialization::access;
