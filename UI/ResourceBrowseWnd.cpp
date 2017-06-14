@@ -13,7 +13,9 @@ namespace {
 
 
 ResourceBrowseWnd::ResourceBrowseWnd(const std::string& title_text, const std::string& unit_label,
-                                     float used, float output, float target_output) :
+                                     float used, float output, float target_output, bool show_stockpile /*=false*/,
+                                     float stockpile /*=0.0f*/, float stockpile_use /*=0.0f*/,
+                                     float stockpile_change /*=0.0f*/):
     GG::BrowseInfoWnd(GG::X0, GG::Y0, BrowseTextWidth(), GG::Y1),
     m_title_text(GG::Wnd::Create<CUILabel>(title_text, GG::FORMAT_CENTER)),
     m_used_points_label(GG::Wnd::Create<CUILabel>(UserString("RESOURCE_TT_USED"), GG::FORMAT_RIGHT)),
@@ -25,6 +27,16 @@ ResourceBrowseWnd::ResourceBrowseWnd(const std::string& title_text, const std::s
     m_target_points_label(GG::Wnd::Create<CUILabel>(UserString("RESOURCE_TT_TARGET_OUTPUT"), GG::FORMAT_RIGHT)),
     m_target_points(GG::Wnd::Create<CUILabel>(DoubleToString(target_output, 3, false), GG::FORMAT_LEFT)),
     m_target_points_P_label(GG::Wnd::Create<CUILabel>(unit_label, GG::FORMAT_LEFT)),
+    m_show_stockpile(show_stockpile),
+    m_stockpile_points_label(GG::Wnd::Create<CUILabel>(UserString("STOCKPILE_LABEL"), GG::FORMAT_RIGHT)),
+    m_stockpile_points(GG::Wnd::Create<CUILabel>(DoubleToString(stockpile, 3, false), GG::FORMAT_LEFT)),
+    m_stockpile_points_P_label(GG::Wnd::Create<CUILabel>(unit_label, GG::FORMAT_LEFT)),
+    m_stockpile_used_points_label(GG::Wnd::Create<CUILabel>(UserString("STOCKPILE_USE_LABEL"), GG::FORMAT_RIGHT)),
+    m_stockpile_used_points(GG::Wnd::Create<CUILabel>(DoubleToString(stockpile_use, 3, false), GG::FORMAT_LEFT)),
+    m_stockpile_used_points_P_label(GG::Wnd::Create<CUILabel>(unit_label, GG::FORMAT_LEFT)),
+    m_stockpile_change_points_label(GG::Wnd::Create<CUILabel>(UserString("STOCKPILE_CHANGE_LABEL"), GG::FORMAT_RIGHT)),
+    m_stockpile_change_points(GG::Wnd::Create<CUILabel>(DoubleToString(stockpile_change, 3, false), GG::FORMAT_LEFT)),
+    m_stockpile_change_points_P_label(GG::Wnd::Create<CUILabel>(unit_label, GG::FORMAT_LEFT)),
     m_offset(GG::X0, ICON_BROWSE_ICON_HEIGHT/2)
 {}
 
@@ -93,6 +105,52 @@ void ResourceBrowseWnd::CompleteConstruction() {
     m_target_points_P_label->MoveTo(GG::Pt(top_left.x + P_LABEL_X, top_left.y));
     m_target_points_P_label->Resize(P_LABEL_SIZE);
     top_left.y += m_target_points_label->Height();
+
+    AttachChild(m_stockpile_points_label);
+    AttachChild(m_stockpile_points);
+    AttachChild(m_stockpile_points_P_label);
+    AttachChild(m_stockpile_used_points_label);
+    AttachChild(m_stockpile_used_points);
+    AttachChild(m_stockpile_used_points_P_label);
+    AttachChild(m_stockpile_change_points_label);
+    AttachChild(m_stockpile_change_points);
+    AttachChild(m_stockpile_change_points_P_label);
+    
+    if (m_show_stockpile) {
+        m_stockpile_points_label->MoveTo(GG::Pt(top_left.x + LEFT_TEXT_X, top_left.y));
+        m_stockpile_points_label->Resize(LABEL_TEXT_SIZE);
+        m_stockpile_points->MoveTo(GG::Pt(top_left.x + RIGHT_TEXT_X, top_left.y));
+        m_stockpile_points->Resize(VALUE_TEXT_SIZE);
+        m_stockpile_points_P_label->MoveTo(GG::Pt(top_left.x + P_LABEL_X, top_left.y));
+        m_stockpile_points_P_label->Resize(P_LABEL_SIZE);
+        top_left.y += m_stockpile_points_label->Height();
+        
+        m_stockpile_used_points_label->MoveTo(GG::Pt(top_left.x + LEFT_TEXT_X, top_left.y));
+        m_stockpile_used_points_label->Resize(LABEL_TEXT_SIZE);
+        m_stockpile_used_points->MoveTo(GG::Pt(top_left.x + RIGHT_TEXT_X, top_left.y));
+        m_stockpile_used_points->Resize(VALUE_TEXT_SIZE);
+        m_stockpile_used_points_P_label->MoveTo(GG::Pt(top_left.x + P_LABEL_X, top_left.y));
+        m_stockpile_used_points_P_label->Resize(P_LABEL_SIZE);
+        top_left.y += m_stockpile_used_points_label->Height();
+        
+        m_stockpile_change_points_label->MoveTo(GG::Pt(top_left.x + LEFT_TEXT_X, top_left.y));
+        m_stockpile_change_points_label->Resize(LABEL_TEXT_SIZE);
+        m_stockpile_change_points->MoveTo(GG::Pt(top_left.x + RIGHT_TEXT_X, top_left.y));
+        m_stockpile_change_points->Resize(VALUE_TEXT_SIZE);
+        m_stockpile_change_points_P_label->MoveTo(GG::Pt(top_left.x + P_LABEL_X, top_left.y));
+        m_stockpile_change_points_P_label->Resize(P_LABEL_SIZE);
+        top_left.y += m_stockpile_change_points_label->Height();
+    } else {
+        m_stockpile_points_label->Hide();
+        m_stockpile_points->Hide();
+        m_stockpile_points_P_label->Hide();
+        m_stockpile_used_points_label->Hide();
+        m_stockpile_used_points->Hide();
+        m_stockpile_used_points_P_label->Hide();
+        m_stockpile_change_points_label->Hide();
+        m_stockpile_change_points->Hide();
+        m_stockpile_change_points_P_label->Hide();
+    }
 
     // background / border rendering prep
     Resize(GG::Pt(BrowseTextWidth(), top_left.y + EDGE_PAD - m_offset.y));
