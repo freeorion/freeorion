@@ -309,6 +309,9 @@ namespace {
                         % DoubleToString(total_cost, 3, false)
                         % DoubleToString(allocation, 3, false)
                         % DoubleToString(max_allocation, 3, false)) + "\n";
+                        
+        if (elem.allowed_imperial_stockpile_use)
+            main_text += UserString("PRODUCTION_QUEUE_ITEM_STOCKPILE_ENABLED") + "\n";
 
         int ETA = elem.turns_left_to_completion;
         if (ETA != -1)
@@ -661,6 +664,7 @@ namespace {
         boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemPausedSignal;
         boost::signals2::signal<void (GG::ListBox::iterator)>       QueueItemDupedSignal;
         boost::signals2::signal<void (GG::ListBox::iterator)>       QueueItemSplitSignal;
+        boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemUseImperialPPSignal;
 
     protected:
         void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override {
@@ -673,6 +677,8 @@ namespace {
             };
             auto resume_action = [&it, this]() { this->QueueItemPausedSignal(it, false); };
             auto pause_action = [&it, this]() { this->QueueItemPausedSignal(it, true); };
+            auto disallow_stockpile_action = [&it, this]() { this->QueueItemUseImperialPPSignal(it, false); };
+            auto allow_stockpile_action = [&it, this]() { this->QueueItemUseImperialPPSignal(it, true); };
 
             auto dupe_action = [&it, this]() { this->QueueItemDupedSignal(it); };
             auto split_action = [&it, this]() { this->QueueItemSplitSignal(it); };
@@ -716,6 +722,11 @@ namespace {
                 popup->AddMenuItem(GG::MenuItem(UserString("PAUSE"),            false, false, pause_action));
             }
 
+            if (queue_row && queue_row->elem.allowed_imperial_stockpile_use) {
+                popup->AddMenuItem(GG::MenuItem(UserString("DISALLOW_IMPERIAL_PP_STOCKPILE_USE"), false, false, disallow_stockpile_action));
+            } else {
+                popup->AddMenuItem(GG::MenuItem(UserString("ALLOW_IMPERIAL_PP_STOCKPILE_USE"), false, false, allow_stockpile_action));
+            }
             // pedia lookup
             std::string item_name = "";
             if (build_type == BT_BUILDING) {
@@ -845,6 +856,8 @@ void ProductionWnd::CompleteConstruction() {
         boost::bind(&ProductionWnd::ShowPedia, this));
     m_queue_wnd->GetQueueListBox()->QueueItemPausedSignal.connect(
         boost::bind(&ProductionWnd::QueueItemPaused, this, _1, _2));
+    m_queue_wnd->GetQueueListBox()->QueueItemUseImperialPPSignal.connect(
+        boost::bind(&ProductionWnd::QueueItemUseImperialPP, this, _1, _2));
 
     AttachChild(m_production_info_panel);
     AttachChild(m_queue_wnd);
@@ -1239,6 +1252,21 @@ void ProductionWnd::QueueItemSplit(GG::ListBox::iterator it) {
     HumanClientApp::GetApp()->Orders().IssueOrder(
         std::make_shared<ProductionQueueOrder>(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
                                                -1.0f));
+
+    empire->UpdateProductionQueue();
+}
+
+void ProductionWnd::QueueItemUseImperialPP(GG::ListBox::iterator it, bool allow) {
+    if (!m_order_issuing_enabled)
+        return;
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    Empire* empire = GetEmpire(client_empire_id);
+    if (!empire)
+        return;
+
+    HumanClientApp::GetApp()->Orders().IssueOrder(
+        OrderPtr(new ProductionQueueOrder(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
+                                          allow, -1.0f, -1.0f)));
 
     empire->UpdateProductionQueue();
 }
