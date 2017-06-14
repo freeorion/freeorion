@@ -12,10 +12,8 @@ from AIDependencies import INVALID_ID
 TARGET_POP = 'targetPop'
 TROOPS = 'troops'
 
-graphFlags = {}
-interiorExploredSystemIDs = {}  # explored systems whose neighbors are also all
-borderExploredSystemIDs = {}
-borderUnexploredSystemIDs = {}
+graph_flags = set()
+border_unexplored_system_ids = set()
 
 
 def get_current_exploration_info():
@@ -42,10 +40,9 @@ def assign_scouts_to_explore_systems():
     universe = fo.getUniverse()
     capital_sys_id = PlanetUtilsAI.get_capital_sys_id()
     # order fleets to explore
-    explorable_system_ids = list(borderUnexploredSystemIDs)
-    if not explorable_system_ids or (capital_sys_id == INVALID_ID):
+    if not border_unexplored_system_ids or (capital_sys_id == INVALID_ID):
         return
-    exp_systems_by_dist = sorted((universe.linearDistance(capital_sys_id, x), x) for x in explorable_system_ids)
+    exp_systems_by_dist = sorted((universe.linearDistance(capital_sys_id, x), x) for x in border_unexplored_system_ids)
     print "Exploration system considering following system-distance pairs:\n  %s" % ("\n  ".join("%3d: %5.1f" % info for info in exp_systems_by_dist))
     explore_list = [sys_id for dist, sys_id in exp_systems_by_dist]
 
@@ -136,9 +133,9 @@ def follow_vis_system_connections(start_system_id, home_system_id):
     exploration_list = [start_system_id]
     while exploration_list:
         cur_system_id = exploration_list.pop()
-        if cur_system_id in graphFlags:
+        if cur_system_id in graph_flags:
             continue
-        graphFlags[cur_system_id] = 1
+        graph_flags.add(cur_system_id)
         system = universe.getSystem(cur_system_id)
         if cur_system_id in foAI.foAIstate.visBorderSystemIDs:
             pre_vis = "a border system"
@@ -162,41 +159,17 @@ def follow_vis_system_connections(start_system_id, home_system_id):
         status_info.append("    -- is%s visibly connected to homesystem" % ([" not", ""][is_connected]))
         if has_been_visible:
             sys_status = foAI.foAIstate.systemStatus.setdefault(cur_system_id, {})
-            foAI.foAIstate.visInteriorSystemIDs[cur_system_id] = 1
-            if cur_system_id in foAI.foAIstate.visBorderSystemIDs:
-                del foAI.foAIstate.visBorderSystemIDs[cur_system_id]
+            foAI.foAIstate.visInteriorSystemIDs.add(cur_system_id)
+            foAI.foAIstate.visBorderSystemIDs.discard(cur_system_id)
             neighbors = set(dict_from_map(universe.getSystemNeighborsMap(cur_system_id, empire_id)).keys())
             sys_status.setdefault('neighbors', set()).update(neighbors)
-            sys_planets = sys_status.setdefault('planets', {})
-            if fo.currentTurn() < 50:
-                print "    previously known planets: %s" % sys_planets.keys()
-            if system:
-                for planet_id in system.planetIDs:
-                    sys_planets.setdefault(planet_id, {}).setdefault(TARGET_POP, 0)
-                    sys_planets[planet_id].setdefault(TROOPS, 0)
-                    planet = universe.getPlanet(planet_id)
-
-                    if planet:
-                        new_pop = planet.currentMeterValue(fo.meterType.targetPopulation)
-                        if new_pop != sys_planets[planet_id][TARGET_POP]:
-                            if fo.currentTurn() < 50:
-                                print "  * updating targetPop of planet %s to %.2f from %.2f" % (planet, new_pop, sys_planets[planet_id][TARGET_POP])
-                        troops = planet.currentMeterValue(fo.meterType.troops)
-                        if troops != sys_planets[planet_id].get(TROOPS, 0):
-                            if fo.currentTurn() < 50:
-                                print "  * updating troops of planet %s to %.2f from %.2f" % (planet, troops, sys_planets[planet_id][
-                                    TROOPS])
-                        sys_planets[planet_id][TARGET_POP] = new_pop
-                        sys_planets[planet_id][TROOPS] = troops
-            if fo.currentTurn() < 50:
-                print "    known planets %s" % sys_planets.keys()
             if neighbors:
                 status_info.append(" -- has neighbors %s" % sorted(neighbors))
                 for sys_id in neighbors:
                     if sys_id not in foAI.foAIstate.exploredSystemIDs:
-                        foAI.foAIstate.unexploredSystemIDs[sys_id] = 1
-                    if (sys_id not in graphFlags) and (sys_id not in foAI.foAIstate.visInteriorSystemIDs):
-                        foAI.foAIstate.visBorderSystemIDs[sys_id] = 1
+                        foAI.foAIstate.unexploredSystemIDs.add(sys_id)
+                    if (sys_id not in graph_flags) and (sys_id not in foAI.foAIstate.visInteriorSystemIDs):
+                        foAI.foAIstate.visBorderSystemIDs.add(sys_id)
                         exploration_list.append(sys_id)
         if fo.currentTurn() < 50:
             print '\n'.join(status_info)
@@ -217,12 +190,11 @@ def update_explored_systems():
     still_unexplored = []
     for sys_id in list(foAI.foAIstate.unexploredSystemIDs):
         if empire.hasExploredSystem(sys_id):  # consider making determination according to visibility rather than actual visit, which I think is what empire.hasExploredSystem covers
-            del foAI.foAIstate.unexploredSystemIDs[sys_id]
-            foAI.foAIstate.exploredSystemIDs[sys_id] = 1
+            foAI.foAIstate.unexploredSystemIDs.discard(sys_id)
+            foAI.foAIstate.exploredSystemIDs.add(sys_id)
             system = universe.getSystem(sys_id)
             print "Moved system %s from unexplored list to explored list" % system
-            if sys_id in borderUnexploredSystemIDs:
-                del borderUnexploredSystemIDs[sys_id]
+            border_unexplored_system_ids.discard(sys_id)
             newly_explored.append(sys_id)
         else:
             still_unexplored.append(sys_id)
@@ -232,25 +204,12 @@ def update_explored_systems():
     for id_list, next_list in [(newly_explored, neighbor_list), (neighbor_list, dummy)]:
         for sys_id in id_list:
             neighbors = list(universe.getImmediateNeighbors(sys_id, empire_id))
-            all_explored = True
             for neighbor_id in neighbors:
-                if neighbor_id in foAI.foAIstate.unexploredSystemIDs:  # when it matters, unexplored will be smaller than explored
-                    all_explored = False
-                else:
+                if neighbor_id not in foAI.foAIstate.unexploredSystemIDs:  # when it matters, unexplored will be smaller than explored
                     next_list.append(neighbor_id)
-            if all_explored:
-                interiorExploredSystemIDs[sys_id] = 1
-                if sys_id in borderExploredSystemIDs:
-                    del borderExploredSystemIDs[sys_id]
-            else:
-                borderExploredSystemIDs[sys_id] = 1
 
     for sys_id in still_unexplored:
         neighbors = list(universe.getImmediateNeighbors(sys_id, empire_id))
-        any_explored = False
-        for neighbor_id in neighbors:
-            if neighbor_id in foAI.foAIstate.exploredSystemIDs:  # consider changing to unexplored test -- when it matters, unexplored will be smaller than explored, but need to not get previously untreated neighbors
-                any_explored = True
-        if any_explored:
-            borderUnexploredSystemIDs[sys_id] = 1
+        if any(nid in foAI.foAIstate.exploredSystemIDs for nid in neighbors):
+            border_unexplored_system_ids.add(sys_id)
     return newly_explored

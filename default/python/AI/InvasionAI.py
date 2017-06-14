@@ -36,7 +36,7 @@ def get_invasion_fleets():
     AIstate.invasionFleetIDs = FleetUtilsAI.extract_fleet_ids_without_mission_types(all_invasion_fleet_ids)
 
     home_system_id = PlanetUtilsAI.get_capital_sys_id()
-    visible_system_ids = foAI.foAIstate.visInteriorSystemIDs.keys() + foAI.foAIstate. visBorderSystemIDs.keys()
+    visible_system_ids = list(foAI.foAIstate.visInteriorSystemIDs) + list(foAI.foAIstate.visBorderSystemIDs)
 
     if home_system_id != INVALID_ID:
         accessible_system_ids = [sys_id for sys_id in visible_system_ids

@@ -79,7 +79,12 @@ def convert_to_version(state, version):
             state['_aggression'] = state['character'].get_trait(Aggression).key
         except Exception as e:
             raise ConversionError("Error when converting to compatibility version 1: "
-                                   "Can't find aggression in character module. Exception thrown was: " + e.message)
+                                  "Can't find aggression in character module. Exception thrown was: " + e.message)
+    elif version == 2:
+        # some dicts which used only the keys were changed to sets
+        for var_name in ['visInteriorSystemIDs', 'exploredSystemIDs', 'visBorderSystemIDs', 'unexploredSystemIDs']:
+            state[var_name] = set(state.get(var_name, {}).keys())
+
     #   state["some_new_member"] = some_default_value
     #   del state["some_removed_member"]
     #   state["list_changed_to_set"] = set(state["list_changed_to_set"])
@@ -98,7 +103,7 @@ class AIstate(object):
     is playable with this AIstate version, i.e. new members must be added
     and outdated members must be modified and / or deleted.
     """
-    version = 1
+    version = 2
 
     def __init__(self, aggression):
         # Do not allow to create AIstate instances with an invalid version number.
@@ -131,14 +136,11 @@ class AIstate(object):
         empire = fo.getEmpire()
         self.empireID = empire.empireID
         homeworld = universe.getPlanet(empire.capitalID)
-        if homeworld:
-            self.__origin_home_system_id = homeworld.systemID
-        else:
-            self.__origin_home_system_id = INVALID_ID
-        self.visBorderSystemIDs = {self.__origin_home_system_id: 1}
-        self.visInteriorSystemIDs = {}
-        self.exploredSystemIDs = {}
-        self.unexploredSystemIDs = {self.__origin_home_system_id: 1}
+        self.__origin_home_system_id = homeworld.systemID if homeworld else INVALID_ID
+        self.visBorderSystemIDs = {self.__origin_home_system_id}
+        self.visInteriorSystemIDs = set()
+        self.exploredSystemIDs = set()
+        self.unexploredSystemIDs = {self.__origin_home_system_id}
         self.fleetStatus = {}  # keys: 'sysID', 'nships', 'rating'
         # systemStatus keys: 'name', 'neighbors' (sysIDs), '2jump_ring' (sysIDs), '3jump_ring', '4jump_ring', 'enemy_ship_count'
         # 'fleetThreat', 'planetThreat', 'monsterThreat' (specifically, immobile nonplanet threat), 'totalThreat', 'localEnemyFleetIDs',
@@ -223,27 +225,17 @@ class AIstate(object):
         if exploration_center == INVALID_ID:  # a bad state probably from an old savegame, or else empire has lost (or almost has)
             exploration_center = self.__origin_home_system_id
 
-        # check if planets in cache is still present. Remove destroyed.
         for system_id, info in sorted(self.systemStatus.items()):
             self.systemStatus[system_id]['enemy_ship_count'] = 0  # clear now in prep for update_system_status()
-            planet_dict = info.get('planets', {})
-            cache_planet_set = set(planet_dict)
-            system_planet_set = set(*(sys.planetIDs for sys in [universe.getSystem(system_id)] if sys))
-            diff = cache_planet_set - system_planet_set
-            if diff:
-                print "Removing destroyed planets from systemStatus for system %s: planets to be removed: %s" % (system_id, sorted(diff))
-                for key in diff:
-                    del planet_dict[key]
-
-        ExplorationAI.graphFlags.clear()
+        ExplorationAI.graph_flags.clear()
         if fo.currentTurn() < 50:
             print "-------------------------------------------------"
             print "Border Exploration Update (relative to %s)" % (PlanetUtilsAI.sys_name_ids([exploration_center, INVALID_ID])[0])
             print "-------------------------------------------------"
-        if self.visBorderSystemIDs.keys() == [INVALID_ID]:
+        if self.visBorderSystemIDs == {INVALID_ID}:
             self.visBorderSystemIDs.clear()
-            self.visBorderSystemIDs[exploration_center] = 1
-        for sys_id in self.visBorderSystemIDs.keys():  # This dict modified during iteration.
+            self.visBorderSystemIDs.add(exploration_center)
+        for sys_id in list(self.visBorderSystemIDs):  # This set is modified during iteration.
             if fo.currentTurn() < 50:
                 print "Considering border system %s" % (PlanetUtilsAI.sys_name_ids([sys_id, INVALID_ID])[0])
             ExplorationAI.follow_vis_system_connections(sys_id, exploration_center)
