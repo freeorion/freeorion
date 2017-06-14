@@ -3408,8 +3408,7 @@ namespace {
 
         const ProductionQueue& queue = empire->GetProductionQueue();
         const auto& allocated_pp(queue.AllocatedPP());
-        const auto available_pp(empire->GetResourcePool(RE_INDUSTRY)->Available());
-
+        const auto available_pp(empire->GetResourcePool(RE_INDUSTRY)->Output());
         // For each industry set,
         // add all planet's systems to res_pool_systems[industry set]
         for (const auto& available_pp_group : available_pp) {
@@ -6405,7 +6404,7 @@ void MapWnd::RefreshResearchResourceIndicator() {
     m_research->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
     double total_RP_spent = empire->GetResearchQueue().TotalRPsSpent();
-    double total_RP_output = empire->GetResourcePool(RE_RESEARCH)->Output();
+    double total_RP_output = empire->GetResourcePool(RE_RESEARCH)->TotalOutput();
     double total_RP_wasted = total_RP_output - total_RP_spent;
     double total_RP_target_output = empire->GetResourcePool(RE_RESEARCH)->TargetOutput();
 
@@ -6453,7 +6452,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     m_industry->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
     double total_PP_spent = empire->GetProductionQueue().TotalPPsSpent();
-    double total_PP_output = empire->GetResourcePool(RE_INDUSTRY)->Output();
+    double total_PP_output = empire->GetResourcePool(RE_INDUSTRY)->TotalOutput();
     double total_PP_wasted = total_PP_output - total_PP_spent;
     double total_PP_target_output = empire->GetResourcePool(RE_INDUSTRY)->TargetOutput();
 
