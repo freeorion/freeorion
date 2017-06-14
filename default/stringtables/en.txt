@@ -3970,6 +3970,18 @@ Can be produced here
 PRODUCTION_LOCATION_INVALID
 CANNOT be produced here
 
+IMPERIAL_STOCKPILE
+Imperial Stockpile
+
+PRODUCTION_QUEUE_ITEM_STOCKPILE_ENABLED
+(Use of [[IMPERIAL_STOCKPILE]] is Enabled for this Item)
+
+ALLOW_IMPERIAL_PP_STOCKPILE_USE
+Enable drawing from [[IMPERIAL_STOCKPILE]] for this item
+
+DISALLOW_IMPERIAL_PP_STOCKPILE_USE
+Disable drawing from [[IMPERIAL_STOCKPILE]] for this item
+
 # %1% name of the system this item production should be relocated to.
 PRODUCTION_QUEUE_RALLIED_TO
 Rallied to %1%

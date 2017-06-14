@@ -129,6 +129,7 @@ private:
     void    QueueItemPaused(GG::ListBox::iterator it, bool pause);
     void    QueueItemDuped(GG::ListBox::iterator it);
     void    QueueItemSplit(GG::ListBox::iterator it);
+    void    QueueItemUseImperialPP(GG::ListBox::iterator it, bool allow);
 
     std::shared_ptr<ProductionInfoPanel>    m_production_info_panel;
     std::shared_ptr<ProductionQueueWnd>     m_queue_wnd;

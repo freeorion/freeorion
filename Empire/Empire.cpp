@@ -801,11 +801,13 @@ ProductionQueue::Element::Element() :
     ordered(0),
     remaining(0),
     location(INVALID_OBJECT_ID),
-    paused(false)
+    paused(false),
+    allowed_imperial_stockpile_use(false)
 {}
 
 ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int ordered_,
-                                  int remaining_, int blocksize_, int location_, bool paused_) :
+                                  int remaining_, int blocksize_, int location_, bool paused_,
+                                  bool allowed_imperial_stockpile_use_) :
     item(item_),
     empire_id(empire_id_),
     ordered(ordered_),
@@ -813,11 +815,13 @@ ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int orde
     remaining(remaining_),
     location(location_),
     blocksize_memory(blocksize_),
-    paused(paused_)
+    paused(paused_),
+    allowed_imperial_stockpile_use(allowed_imperial_stockpile_use_)
 {}
 
 ProductionQueue::Element::Element(BuildType build_type, std::string name, int empire_id_, int ordered_,
-                                  int remaining_, int blocksize_, int location_, bool paused_) :
+                                  int remaining_, int blocksize_, int location_, bool paused_,
+                                  bool allowed_imperial_stockpile_use_) :
     item(build_type, name),
     empire_id(empire_id_),
     ordered(ordered_),
@@ -825,11 +829,13 @@ ProductionQueue::Element::Element(BuildType build_type, std::string name, int em
     remaining(remaining_),
     location(location_),
     blocksize_memory(blocksize_),
-    paused(paused_)
+    paused(paused_),
+    allowed_imperial_stockpile_use(allowed_imperial_stockpile_use_)
 {}
 
 ProductionQueue::Element::Element(BuildType build_type, int design_id, int empire_id_, int ordered_,
-                                  int remaining_, int blocksize_, int location_, bool paused_) :
+                                  int remaining_, int blocksize_, int location_, bool paused_,
+                                  bool allowed_imperial_stockpile_use_) :
     item(build_type, design_id),
     empire_id(empire_id_),
     ordered(ordered_),
@@ -837,7 +843,8 @@ ProductionQueue::Element::Element(BuildType build_type, int design_id, int empir
     remaining(remaining_),
     location(location_),
     blocksize_memory(blocksize_),
-    paused(paused_)
+    paused(paused_),
+    allowed_imperial_stockpile_use(allowed_imperial_stockpile_use_)
 {}
 
 std::string ProductionQueue::Element::Dump() const {
@@ -2306,6 +2313,16 @@ void Empire::ResumeProduction(int index) {
         return;
     }
     m_production_queue[index].paused = false;
+}
+
+void Empire::AllowUseImperialPP(int index, bool allow /*=true*/) {
+    if (index < 0 || static_cast<int>(m_production_queue.size()) <= index) {
+        DebugLogger() << "Empire::AllowUseImperialPP index: " << index << "  queue size: " << m_production_queue.size();
+        ErrorLogger() << "Attempted allow/disallow use of the imperial PP stockpile for a production queue item with an invalid index.";
+        return;
+    }
+    DebugLogger() << "Empire::AllowUseImperialPP allow: " << allow << "  index: " << index << "  queue size: " << m_production_queue.size();
+    m_production_queue[index].allowed_imperial_stockpile_use = allow;
 }
 
 void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_id) {
