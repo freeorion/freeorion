@@ -9917,6 +9917,18 @@ Neutronium Extraction
 PRO_NEUTRONIUM_EXTRACTION_DESC
 The core of a [[STAR_NEUTRON]] star consists of degenerate neutron matter, compressed by gravity to a density far greater than the heaviest normal matter. This exotic material has numerous applications once extracted from the star, allowing production of otherwise impossible structures and ship parts.
 
+CON_IMPERIAL_SUPPLY_1
+Imperial Supply Stockpiling
+
+IMPERIAL_SUPPLY_SHORT_DESC
+Allows for a small Imperial Production Stockpile
+
+IMPERIAL_SUPPLY_1_DESC
+'''Unused PP, which would otherwise be wasted, can have a portion instead be retained and transferred to the Imperial Production Stockpile.  An item on the production queue which does not have its full turn allotment of PP available to it via the normal supply mechanism, can draw on the Imperial Stockpile if the item has been explicitly enabled for doing so (via right-click menu on the Production Queue).
+
+The retention/transfer efficiency rate, and the maximum amount that may be stored in the Imperial Stockpile, are governed by the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and [[metertype METER_IMPERIAL_PP_STOCKPILE_LIMIT]] empire meters.
+'''
+
 CON_ARCH_PSYCH
 Architectural Psychology
 

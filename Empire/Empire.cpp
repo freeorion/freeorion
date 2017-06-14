@@ -1170,6 +1170,8 @@ void Empire::Init() {
     m_eliminated = false;
 
     m_meters[UserStringNop("METER_DETECTION_STRENGTH")];
+    m_meters[UserStringNop("METER_IMPERIAL_PP_STOCKPILE_LIMIT")];
+    m_meters[UserStringNop("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")];
     m_meters[UserStringNop("METER_BUILDING_COST_FACTOR")];
     m_meters[UserStringNop("METER_SHIP_COST_FACTOR")];
     m_meters[UserStringNop("METER_TECH_COST_FACTOR")];
