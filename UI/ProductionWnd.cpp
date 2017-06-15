@@ -953,10 +953,10 @@ void ProductionWnd::QueueItemMoved(const GG::ListBox::iterator& row_it, const GG
         return;
 
     // This precorrects the position for a factor in Empire::MoveProductionWithinQueue
-    auto position = std::distance(m_queue_wnd->GetQueueListBox()->begin(), row_it);
-    auto original_position = std::distance(m_queue_wnd->GetQueueListBox()->begin(), original_position_it);
+    int position = std::distance(m_queue_wnd->GetQueueListBox()->begin(), row_it);
+    int original_position = std::distance(m_queue_wnd->GetQueueListBox()->begin(), original_position_it);
     auto direction = original_position < position;
-    auto corrected_position = position + (direction ? 1 : 0);
+    int corrected_position = position + (direction ? 1 : 0);
 
     HumanClientApp::GetApp()->Orders().IssueOrder(
         std::make_shared<ProductionQueueOrder>(client_empire_id,
