@@ -137,8 +137,7 @@ OptionsDB::OptionsDB() {
     s_options_db = this;
 }
 
-void OptionsDB::Commit()
-{
+void OptionsDB::Commit() {
     if (!m_dirty)
         return;
     boost::filesystem::ofstream ofs(GetConfigPath());
@@ -301,14 +300,14 @@ void OptionsDB::GetXML(XMLDoc& doc) const {
 }
 
 OptionsDB::OptionChangedSignalType& OptionsDB::OptionChangedSignal(const std::string& option) {
-    std::map<std::string, Option>::const_iterator it = m_options.find(option);
+    auto it = m_options.find(option);
     if (it == m_options.end())
         throw std::runtime_error("OptionsDB::OptionChangedSignal() : Attempted to get signal for nonexistent option \"" + option + "\".");
     return *it->second.option_changed_sig_ptr;
 }
 
 void OptionsDB::Remove(const std::string& name) {
-    std::map<std::string, Option>::iterator it = m_options.find(name);
+    auto it = m_options.find(name);
     if (it != m_options.end()) {
         Option::short_names.erase(it->second.short_name);
         m_options.erase(it);
@@ -318,7 +317,7 @@ void OptionsDB::Remove(const std::string& name) {
 }
 
 void OptionsDB::RemoveUnrecognized(const std::string& prefix) {
-    std::map<std::string, Option>::iterator it = m_options.begin();
+    auto it = m_options.begin();
     while (it != m_options.end()) {
         if (!it->second.recognized && it->first.find(prefix) == 0)
             Remove((it++)->first); // note postfix operator++
@@ -329,7 +328,7 @@ void OptionsDB::RemoveUnrecognized(const std::string& prefix) {
 
 void OptionsDB::FindOptions(std::set<std::string>& ret, const std::string& prefix, bool allow_unrecognized) const {
     ret.clear();
-    for (const std::map<std::string, Option>::value_type& option : m_options)
+    for (auto& option : m_options)
         if ((option.second.recognized || allow_unrecognized) && option.first.find(prefix) == 0)
             ret.insert(option.first);
 }
@@ -353,11 +352,14 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                 }
 
                 if (value_str.at(0) == '-') { // this is either the last parameter or the next parameter is another option, assume this one is a flag
-                    m_options[option_name] = Option(static_cast<char>(0), option_name, true, boost::lexical_cast<std::string>(false),
+                    m_options[option_name] = Option(static_cast<char>(0), option_name, true,
+                                                    boost::lexical_cast<std::string>(false),
                                                     "", 0, false, true, false);
                 } else { // the next parameter is the value, store it as a string to be parsed later
-                    m_options[option_name] = Option(static_cast<char>(0), option_name, value_str, value_str,
-                                                    "", new Validator<std::string>(), false, false, false); // don't attempt to store options that have only been specified on the command line
+                    m_options[option_name] = Option(static_cast<char>(0), option_name,
+                                                    value_str, value_str, "",
+                                                    new Validator<std::string>(),
+                                                    false, false, false); // don't attempt to store options that have only been specified on the command line
                 }
 
                 WarnLogger() << "Option \"" << option_name << "\", was specified on the command line but was not recognized.  It may not be registered yet or could be a typo.";
@@ -463,16 +465,19 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
             SetFromXMLRecursive(child, option_name);
 
     } else {
-        std::map<std::string, Option>::iterator it = m_options.find(option_name);
+        auto it = m_options.find(option_name);
 
         if (it == m_options.end() || !it->second.recognized) {
             // Store unrecognized option to be parsed later if this options is added.
             if (elem.Text().length() == 0) { // empty string: may be a flag
-                m_options[option_name] = Option(static_cast<char>(0), option_name, true, boost::lexical_cast<std::string>(false),
+                m_options[option_name] = Option(static_cast<char>(0), option_name, true,
+                                                boost::lexical_cast<std::string>(false),
                                                 "", 0, true, true, false);
             } else { // otherwise just store the string to be parsed later
-                m_options[option_name] = Option(static_cast<char>(0), option_name, elem.Text(), elem.Text(),
-                                                "", new Validator<std::string>(), true, false, false);
+                m_options[option_name] = Option(static_cast<char>(0), option_name,
+                                                elem.Text(), elem.Text(), "",
+                                                new Validator<std::string>(),
+                                                true, false, false);
             }
 
             TraceLogger() << "Option \"" << option_name << "\", was in config.xml but was not recognized.  It may not be registered yet or you may need to delete your config.xml if it is out of date.";
@@ -501,7 +506,7 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
 std::string ListToString(const std::vector<std::string>& input_list) {
     // list input strings in comma-separated-value format
     std::string retval;
-    for (std::vector<std::string>::const_iterator it = input_list.begin(); it != input_list.end(); ++it) {
+    for (auto it = input_list.begin(); it != input_list.end(); ++it) {
         if (it != input_list.begin())
             retval += ",";
         std::string str(*it);
@@ -516,9 +521,8 @@ std::vector<std::string> StringToList(const std::string& input_string) {
     typedef boost::tokenizer<boost::char_separator<char>> Tokenizer;
     boost::char_separator<char> separator(",");
     Tokenizer tokens(input_string, separator);
-    for (const Tokenizer::value_type& token : tokens) {
+    for (const auto& token : tokens)
         retval.push_back(token);
-    }
     return retval;
 }
 
