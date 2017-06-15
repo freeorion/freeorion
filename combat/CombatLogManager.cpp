@@ -208,6 +208,7 @@ void CombatLogManager::Impl::CompleteLog(int id, const CombatLog& log) {
     std::set<int>::iterator incomplete_it = m_incomplete_logs.find(id);
     if (incomplete_it == m_incomplete_logs.end()) {
         ErrorLogger() << "CombatLogManager::Impl::CompleteLog id = " << id << " is not an incomplete log, so log is being discarded.";
+        return;
     }
     m_incomplete_logs.erase(incomplete_it);
     m_logs[id] = log;
