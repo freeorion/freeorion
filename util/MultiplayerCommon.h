@@ -3,6 +3,7 @@
 
 #include "../universe/EnumsFwd.h"
 #include "../network/Networking.h"
+#include "OptionsDB.h"
 #include "Export.h"
 #include "Serialize.h"
 
@@ -19,6 +20,93 @@ FO_COMMON_API extern const std::string MP_SAVE_FILE_EXTENSION;
 FO_COMMON_API extern const std::string SP_SAVE_FILE_EXTENSION;
 
 FO_COMMON_API extern const int ALL_EMPIRES;
+
+class GameRules;
+
+/////////////////////////////////////////////
+// Free Functions
+/////////////////////////////////////////////
+typedef void (*GameRulesFn)(GameRules&); ///< the function signature for functions that add Rules to the GameRules (void (GameRules&))
+
+/** adds \a function to a vector of pointers to functions that add Rules to
+  * the GameRules.  This function returns a boolean so that it can be used to
+  * declare a dummy static variable that causes \a function to be registered as
+  * a side effect (e.g. at file scope:
+  * "bool unused_bool = RegisterGameRules(&foo)"). */
+FO_COMMON_API bool RegisterGameRules(GameRulesFn function);
+
+/** returns the single instance of the GameRules class */
+FO_COMMON_API GameRules& GetGameRules();
+
+
+
+/** Database of values that control how the game mechanics function. */
+class FO_COMMON_API GameRules {
+public:
+    typedef OptionsDB::Option Rule;
+
+    /** \name Structors */ //@{
+    GameRules();
+    //@}
+
+    /** \name Accessors */ //@{
+    bool    RuleExists(const std::string& name) const
+    { return m_game_rules.find(name) != m_game_rules.end(); }
+
+    template <typename T>
+    T       Get(const std::string& name) const
+    {
+        auto it = m_game_rules.find(name);
+        if (it == m_game_rules.end())
+            throw std::runtime_error("GameRules::Get<>() : Attempted to get nonexistent rule \"" + name + "\".");
+        return boost::any_cast<T>(it->second.value);
+    }
+    //@}
+
+    /** \name Mutators */ //@{
+    /** adds a rule, optionally with a custom validator */
+    template <class T>
+    void    Add(const std::string& name, const std::string& description, T default_value,
+                bool engine_interal, const ValidatorBase& validator = Validator<T>())
+    {
+        auto it = m_game_rules.find(name);
+        if (it != m_game_rules.end())
+            throw std::runtime_error("GameRules::Add<>() : Rule " + name + " was added twice.");
+        boost::any value = default_value;
+        m_game_rules[name] = Rule(static_cast<char>(0), name, value, default_value,
+                                  description, validator.Clone(), engine_interal, false, true);
+    }
+
+    template <typename T>
+    void    Set(const std::string& name, const T& value)
+    {
+        auto it = m_game_rules.find(name);
+        if (it == m_game_rules.end())
+            throw std::runtime_error("GameRules::Set<>() : Attempted to set nonexistent rule \"" + name + "\".");
+        it->second.SetFromValue(value);
+    }
+
+    /** Removes game rules that were added without being specified as
+        engine internal. */
+    void    ClearExternalRules();
+
+    /** Resets all rules to default values. */
+    void    ResetToDefaults();
+    //@}
+
+private:
+    std::map<std::string, Rule> m_game_rules;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+extern template FO_COMMON_API void GameRules::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+extern template FO_COMMON_API void GameRules::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+extern template FO_COMMON_API void GameRules::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+extern template FO_COMMON_API void GameRules::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+
 
 /** The data that represent the galaxy setup for a new game. */
 struct FO_COMMON_API GalaxySetupData {

@@ -13,12 +13,19 @@
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
+#include "../util/MultiplayerCommon.h"
 #include "../util/CheckSums.h"
 
 #include <boost/filesystem/fstream.hpp>
 
 namespace {
-    const bool CHEAP_AND_FAST_BUILDING_PRODUCTION = false;    // makes all buildings cost 1 PP and take 1 turn to build
+    void AddRules(GameRules& rules) {
+        // makes all buildings cost 1 PP and take 1 turn to produce
+        rules.Add<bool>("CHEAP_AND_FAST_BUILDING_PRODUCTION",
+                        "CHEAP_AND_FAST_BUILDING_PRODUCTION_DESC",
+                        false, true);
+    }
+    bool temp_bool = RegisterGameRules(&AddRules);
 }
 
 /////////////////////////////////////////////////
@@ -220,7 +227,7 @@ std::string BuildingType::Dump() const {
 }
 
 bool BuildingType::ProductionCostTimeLocationInvariant() const {
-    if (CHEAP_AND_FAST_BUILDING_PRODUCTION)
+    if (GetGameRules().Get<bool>("CHEAP_AND_FAST_BUILDING_PRODUCTION"))
         return true;
     if (m_production_cost && !(m_production_cost->TargetInvariant() && m_production_cost->SourceInvariant()))
         return false;
@@ -230,7 +237,7 @@ bool BuildingType::ProductionCostTimeLocationInvariant() const {
 }
 
 float BuildingType::ProductionCost(int empire_id, int location_id) const {
-    if (CHEAP_AND_FAST_BUILDING_PRODUCTION || !m_production_cost) {
+    if (GetGameRules().Get<bool>("CHEAP_AND_FAST_BUILDING_PRODUCTION") || !m_production_cost) {
         return 1.0f;
     } else {
         if (m_production_cost && m_production_cost->ConstantExpr())
@@ -256,7 +263,7 @@ float BuildingType::PerTurnCost(int empire_id, int location_id) const
 { return ProductionCost(empire_id, location_id) / std::max(1, ProductionTime(empire_id, location_id)); }
 
 int BuildingType::ProductionTime(int empire_id, int location_id) const {
-    if (CHEAP_AND_FAST_BUILDING_PRODUCTION || !m_production_time) {
+    if (GetGameRules().Get<bool>("CHEAP_AND_FAST_BUILDING_PRODUCTION") || !m_production_time) {
         return 1;
     } else {
         if (m_production_time && m_production_time->ConstantExpr())

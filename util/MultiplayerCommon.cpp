@@ -36,6 +36,52 @@ namespace {
         db.Add<std::string>("ai-config",            UserStringNop("OPTIONS_DB_AI_CONFIG"),             "",       Validator<std::string>(), false);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
+    std::vector<GameRulesFn>& GameRulesRegistry() {
+        static std::vector<GameRulesFn> game_rules_registry;
+        return game_rules_registry;
+    }
+}
+
+/////////////////////////////////////////////
+// Free Functions
+/////////////////////////////////////////////
+bool RegisterGameRules(GameRulesFn function) {
+    GameRulesRegistry().push_back(function);
+    return true;
+}
+
+GameRules& GetGameRules() {
+    static GameRules game_rules;
+    if (!GameRulesRegistry().empty()) {
+        for (GameRulesFn fn : GameRulesRegistry())
+            fn(game_rules);
+        GameRulesRegistry().clear();
+    }
+    return game_rules;
+}
+
+
+/////////////////////////////////////////////////////
+// GameRules
+/////////////////////////////////////////////////////
+GameRules::GameRules()
+{}
+
+void GameRules::ClearExternalRules() {
+    auto it = m_game_rules.begin();
+    while (it != m_game_rules.end()) {
+        bool engine_internal = it->second.storable; // OptionsDB::Option member used to store if this option is engine-internal
+        if (!engine_internal)
+            m_game_rules.erase((it++)->first);      // note postfix operator++
+        else
+            ++it;
+    }
+}
+
+void GameRules::ResetToDefaults() {
+    for (auto& it : m_game_rules)
+        it.second.SetFromValue(it.second.default_value);
 }
 
 

@@ -323,7 +323,6 @@ public:
       * XMLDoc \a doc */
     void        SetFromXML(const XMLDoc& doc);
 
-private:
     struct FO_COMMON_API Option {
         Option();
         Option(char short_name_, const std::string& name_, const boost::any& value_,
@@ -357,6 +356,7 @@ private:
         static std::map<char, std::string> short_names;   ///< the master list of abbreviated option names, and their corresponding long-form names
     };
 
+private:
     /** indicates whether the option referenced by \a it has been added to this
         OptionsDB.  Overloaded for convenient use within other OptionsDB
         functions */
