@@ -1560,7 +1560,7 @@ void GUI::PreRenderWindow(Wnd* wnd)
     if (!wnd || !wnd->Visible())
         return;
 
-    for (Wnd* child_wnd : wnd->m_children) {
+    for (auto& child_wnd : wnd->m_children) {
         PreRenderWindow(child_wnd);
     }
 
@@ -1582,7 +1582,7 @@ void GUI::RenderWindow(Wnd* wnd)
             bool clip = clip_mode != Wnd::DontClip;
             if (clip)
                 wnd->BeginClipping();
-            for (Wnd* child_wnd : wnd->m_children) {
+            for (auto& child_wnd : wnd->m_children) {
                 if (child_wnd && child_wnd->Visible())
                     RenderWindow(child_wnd);
             }
@@ -1681,7 +1681,7 @@ void GUI::Render()
 {
     // update timers
     int ticks = Ticks();
-    for (Timer* timer : s_impl->m_timers) {
+    for (auto& timer : s_impl->m_timers) {
         timer->Update(ticks);
     }
 
@@ -1844,7 +1844,7 @@ void GUI::SetDeltaT(unsigned int delta_t)
 bool GG::MatchesOrContains(const Wnd* lwnd, const Wnd* rwnd)
 {
     if (rwnd) {
-        for (const Wnd* w = rwnd; w; w = w->Parent()) {
+        for (auto w = rwnd; w; w = w->Parent()) {
             if (w == lwnd)
                 return true;
         }

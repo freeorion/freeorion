@@ -760,7 +760,7 @@ DropDownList::iterator DropDownList::Insert(Row* row, bool signal/* = true*/)
 
 void DropDownList::Insert(const std::vector<Row*>& rows, iterator it, bool signal/* = true*/)
 {
-    for (Row* row : rows)
+    for (auto& row : rows)
     { row->SetDragDropDataType(""); }
     LB()->Insert(rows, it, signal);
     Resize(Size());
@@ -769,7 +769,7 @@ void DropDownList::Insert(const std::vector<Row*>& rows, iterator it, bool signa
 
 void DropDownList::Insert(const std::vector<Row*>& rows, bool signal/* = true*/)
 {
-    for (Row* row : rows)
+    for (auto& row : rows)
     { row->SetDragDropDataType(""); }
     LB()->Insert(rows, signal);
     Resize(Size());

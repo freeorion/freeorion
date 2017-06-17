@@ -41,7 +41,7 @@ Wnd* ZList::Pick(const Pt& pt, Wnd* modal, const std::set<Wnd*>* ignore/* = 0*/)
             modal->InWindow(pt) ?
             PickWithinWindow(pt, modal, ignore) : nullptr;
     } else { // otherwise, look in the z-list
-        for (Wnd* wnd : *this) {
+        for (auto& wnd : *this) {
             Wnd* temp = nullptr;
             if (wnd->Visible() &&
                 wnd->InWindow(pt) &&

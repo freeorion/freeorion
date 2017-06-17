@@ -192,14 +192,14 @@ Wnd::Wnd(X x, Y y, X w, Y h, Flags<WndFlag> flags/* = INTERACTIVE | DRAGABLE*/) 
 Wnd::~Wnd()
 {
     // remove this-references from Wnds that this Wnd filters
-    for (Wnd* filtering_wnd : m_filtering) {
+    for (auto& filtering_wnd : m_filtering) {
         std::vector<Wnd*>::iterator it2 = std::find(filtering_wnd->m_filters.begin(), filtering_wnd->m_filters.end(), this);
         if (it2 != filtering_wnd->m_filters.end())
             filtering_wnd->m_filters.erase(it2);
     }
 
     // remove this-references from Wnds that filter this Wnd
-    for (Wnd* filter_wnd : m_filters) {
+    for (auto& filter_wnd : m_filters) {
         filter_wnd->m_filtering.erase(this);
     }
 
@@ -438,7 +438,7 @@ void Wnd::AcceptDrops(const Pt& pt, const std::vector<Wnd*>& wnds, Flags<ModKey>
     if (!Interactive() && Parent())
         ForwardEventToParent();
     // if dropped Wnds were accepted, but no handler or parent exists to handle them, delete them
-    for (Wnd* wnd : wnds)
+    for (auto& wnd : wnds)
         delete wnd;
 }
 
@@ -447,7 +447,7 @@ void Wnd::CancellingChildDragDrop(const std::vector<const Wnd*>& wnds)
 
 void Wnd::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination)
 {
-    for (Wnd* wnd : wnds) {
+    for (auto& wnd : wnds) {
         DetachChild(wnd);
     }
 }
@@ -459,7 +459,7 @@ void Wnd::Hide(bool children/* = true*/)
 {
     m_visible = false;
     if (children) {
-        for (Wnd* child : m_children)
+        for (auto& child : m_children)
             child->Hide(children);
     }
 }
@@ -468,7 +468,7 @@ void Wnd::Show(bool children/* = true*/)
 {
     m_visible = true;
     if (children) {
-        for (Wnd* child : m_children)
+        for (auto& child : m_children)
             child->Show(children);
     }
 }
@@ -638,7 +638,7 @@ void Wnd::HorizontalLayout()
 
     std::multiset<Wnd*, WndHorizontalLess> wnds;
     Pt client_sz = ClientSize();
-    for (Wnd* child : m_children) {
+    for (auto& child : m_children) {
         Pt wnd_ul = child->RelativeUpperLeft(), wnd_lr = child->RelativeLowerRight();
         if (wnd_ul.x < 0 || wnd_ul.y < 0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
             continue;
@@ -662,7 +662,7 @@ void Wnd::VerticalLayout()
 
     std::multiset<Wnd*, WndVerticalLess> wnds;
     Pt client_sz = ClientSize();
-    for (Wnd* child : m_children) {
+    for (auto& child : m_children) {
         Pt wnd_ul = child->RelativeUpperLeft(), wnd_lr = child->RelativeLowerRight();
         if (wnd_ul.x < 0 || wnd_ul.y < 0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
             continue;
@@ -808,7 +808,7 @@ void Wnd::SetLayout(Layout* layout)
     std::list<Wnd*> children = m_children;
     DetachChildren();
     Pt client_sz = ClientSize();
-    for (Wnd* wnd : children) {
+    for (auto& wnd : children) {
         Pt wnd_ul = wnd->RelativeUpperLeft(), wnd_lr = wnd->RelativeLowerRight();
         if (wnd_ul.x < 0 || wnd_ul.y < 0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
             AttachChild(wnd);
@@ -825,7 +825,7 @@ void Wnd::RemoveLayout()
     if (m_layout) {
         std::list<Wnd*> layout_children = m_layout->Children();
         m_layout->DetachAndResetChildren();
-        for (Wnd* wnd : layout_children) {
+        for (auto& wnd : layout_children) {
             AttachChild(wnd);
         }
         // prevent DeleteChild from recursively calling RemoveLayout

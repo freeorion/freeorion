@@ -583,7 +583,7 @@ void Layout::ResizeLayout(std::size_t rows, std::size_t columns)
     assert(0 < columns);
     if (static_cast<std::size_t>(rows) < m_cells.size()) {
         for (std::size_t i = static_cast<std::size_t>(rows); i < m_cells.size(); ++i) {
-            for (Wnd* cell : m_cells[i]) {
+            for (auto& cell : m_cells[i]) {
                 DeleteChild(cell);
                 m_wnd_positions.erase(cell);
             }

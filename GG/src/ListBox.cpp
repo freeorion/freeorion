@@ -299,7 +299,7 @@ void ListBox::Row::resize(std::size_t n)
         return;
 
     Layout* layout = GetLayout();
-    for (Control* cell : m_cells) {
+    for (auto& cell : m_cells) {
         layout->Remove(cell);
     }
 
@@ -323,7 +323,7 @@ void ListBox::Row::resize(std::size_t n)
     SetLayout(layout);
 
     bool nonempty_cell_found = false;
-    for (Control* control : m_cells) {
+    for (auto& control : m_cells) {
         if (control) {
             nonempty_cell_found = true;
             break;
@@ -443,7 +443,7 @@ void ListBox::Row::ClearColAlignments()
 
     m_col_alignments.clear();
     Layout* layout = GetLayout();
-    for (Control* control : m_cells) {
+    for (auto& control : m_cells) {
         if (control)
             layout->SetChildAlignment(control, m_row_alignment);
     }
@@ -706,7 +706,7 @@ std::size_t ListBox::LastVisibleCol() const
     // Find the last column that is entirely left of the rightmost pixel.
     X rightmost_pixel = ClientLowerRight().x;
     std::size_t ii_last_visible(0);
-    for (Wnd* cell : (*m_first_row_shown)->GetLayout()->Children()) {
+    for (auto& cell : (*m_first_row_shown)->GetLayout()->Children()) {
         if (cell->UpperLeft().x >= rightmost_pixel)
             break;
         if ((cell->UpperLeft().x < rightmost_pixel) && (cell->LowerRight().x >= rightmost_pixel))
@@ -806,7 +806,7 @@ void ListBox::AcceptDrops(const Pt& pt, const std::vector<Wnd*>& wnds, Flags<Mod
 {
     iterator insertion_it = RowUnderPt(pt);
     bool inserting_at_first_row = insertion_it == m_first_row_shown;
-    for (Wnd* wnd : wnds) {
+    for (auto& wnd : wnds) {
         Row* row = boost::polymorphic_downcast<Row*>(wnd);
         Insert(row, insertion_it, true, true);
     }
@@ -830,7 +830,7 @@ void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* dest
     }
 
     // remove dragged-away row from this ListBox
-    for (Wnd* wnd : wnds) {
+    for (auto& wnd : wnds) {
         Row* row = boost::polymorphic_downcast<Row*>(wnd);
         iterator row_it = std::find(m_rows.begin(), m_rows.end(), row);
 
@@ -843,7 +843,7 @@ void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* dest
     if (!(m_style & LIST_NOSEL) && !initially_selected_rows.empty()) {
         // reselect any remaining from old selections
         SelectionSet new_selections;
-        for (Row* row : initially_selected_rows) {
+        for (auto& row : initially_selected_rows) {
             iterator sel_it = std::find(m_rows.begin(), m_rows.end(), row);
             if (sel_it != m_rows.end())
                 new_selections.insert(sel_it);
@@ -872,7 +872,7 @@ void ListBox::PreRender()
     if (m_normalize_rows_on_insert) {
         if (!m_header_row->empty() && !m_header_row->IsNormalized())
             NormalizeRow(m_header_row);
-        for (Row* row : m_rows)
+        for (auto& row : m_rows)
             if (!row->IsNormalized())
                 NormalizeRow(row);
     }
@@ -914,7 +914,7 @@ void ListBox::PreRender()
 
     // Position rows
     Pt pt(m_first_row_offset);
-    for (Row* row : m_rows) {
+    for (auto& row : m_rows) {
         row->MoveTo(pt);
         pt.y += row->Height();
     }
@@ -1030,7 +1030,7 @@ void ListBox::Show(bool show_children /* = true*/)
         return;
 
     // Deal with the header row and non row children normally
-    for (Wnd* wnd : Children()) {
+    for (auto& wnd : Children()) {
         const Row* row(dynamic_cast<Row*>(wnd));
         bool is_regular_row(row && row != m_header_row);
         if (!is_regular_row)
@@ -1382,7 +1382,7 @@ void ListBox::SetColWidth(std::size_t n, X w)
         m_col_widths.resize(n + 1);
 
     m_col_widths[n] = w;
-    for (Row* row : m_rows) {
+    for (auto& row : m_rows) {
         row->SetColWidth(n, w);
     }
     AdjustScrolls(false);
@@ -1429,7 +1429,7 @@ void ListBox::SetColAlignment(std::size_t n, Alignment align)
         m_col_alignments.resize(n + 1);
 
     m_col_alignments[n] = align;
-    for (Row* row : m_rows) {
+    for (auto& row : m_rows) {
         row->SetColAlignment(n, align);
     }
 }
@@ -1442,7 +1442,7 @@ void ListBox::SetColStretch(std::size_t n, double x)
         m_col_stretches.resize(n + 1);
 
     m_col_stretches[n] = x;
-    for (Row* row : m_rows) {
+    for (auto& row : m_rows) {
         GG::Layout* layout = row->GetLayout();
         if (!layout)
             return;
@@ -1965,7 +1965,7 @@ void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool dropped, b
 
     if (signal || dropped) {
         // need to signal or handle dropping for each row, so add individually
-        for (Row* row : rows)
+        for (auto& row : rows)
         { Insert(row, it, dropped, signal); }
         return;
     }
@@ -1974,7 +1974,7 @@ void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool dropped, b
     // without externally handling after each
 
     // housekeeping of rows...
-    for (Row* row : rows) {
+    for (auto& row : rows) {
         row->InstallEventFilter(this);
         row->Hide();
         row->Resize(Pt(std::max(ClientWidth(), X(1)), row->Height()));
@@ -1987,7 +1987,7 @@ void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool dropped, b
         Resort();
 
     // more housekeeping of rows...
-    for (Row* row : rows) {
+    for (auto& row : rows) {
         AttachChild(row);
     }
 
@@ -2181,7 +2181,7 @@ std::pair<boost::optional<X>, boost::optional<Y>> ListBox::CheckIfScrollsRequire
 
     X total_x_extent = std::accumulate(m_col_widths.begin(), m_col_widths.end(), X0);
     Y total_y_extent(0);
-    for (Row* row : m_rows)
+    for (auto& row : m_rows)
         total_y_extent += row->Height();
 
     bool vertical_needed =
@@ -2354,7 +2354,7 @@ void ListBox::AdjustScrolls(bool adjust_for_resize, const std::pair<bool, bool>&
     if (vscroll_added_or_removed || adjust_for_resize) {
         RequirePreRender();
         X row_width(std::max(ClientWidth(), X(1)));
-        for (Row* row : m_rows) {
+        for (auto& row : m_rows) {
             row->Resize(Pt(row_width, row->Height()));
         }
     }
