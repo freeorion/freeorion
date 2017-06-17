@@ -1455,7 +1455,7 @@ void DesignWnd::PartPalette::DoLayout() {
     // place class buttons
     int col = NUM_CLASS_BUTTONS_PER_ROW;
     int row = -1;
-    for (std::map<ShipPartClass, CUIStateButton*>::value_type& entry : m_class_buttons) {
+    for (auto& entry : m_class_buttons) {
         if (col >= NUM_CLASS_BUTTONS_PER_ROW) {
             col = 0;
             ++row;
@@ -1536,7 +1536,7 @@ void DesignWnd::PartPalette::ShowClass(ShipPartClass part_class, bool refresh_li
 
 void DesignWnd::PartPalette::ShowAllClasses(bool refresh_list) {
     m_parts_list->ShowAllClasses(refresh_list);
-    for (std::map<ShipPartClass, CUIStateButton*>::value_type& entry : m_class_buttons)
+    for (auto& entry : m_class_buttons)
         entry.second->SetCheck();
 }
 
@@ -1551,7 +1551,7 @@ void DesignWnd::PartPalette::HideClass(ShipPartClass part_class, bool refresh_li
 
 void DesignWnd::PartPalette::HideAllClasses(bool refresh_list) {
     m_parts_list->HideAllClasses(refresh_list);
-    for (std::map<ShipPartClass, CUIStateButton*>::value_type& entry : m_class_buttons)
+    for (auto& entry : m_class_buttons)
         entry.second->SetCheck(false);
 }
 

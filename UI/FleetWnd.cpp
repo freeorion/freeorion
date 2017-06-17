@@ -837,7 +837,7 @@ void ShipDataPanel::Refresh() {
             delete m_design_name_text;
             m_design_name_text = nullptr;
         }
-        for (std::pair<MeterType, StatisticIcon*>& entry : m_stat_icons)
+        for (auto& entry : m_stat_icons)
             delete entry.second;
         m_stat_icons.clear();
         return;
@@ -876,7 +876,7 @@ void ShipDataPanel::Refresh() {
     }
 
     // update stat icon values and browse wnds
-    for (std::pair<MeterType, StatisticIcon*>& entry : m_stat_icons) {
+    for (auto& entry : m_stat_icons) {
         entry.second->SetValue(StatValue(entry.first));
 
         entry.second->ClearBrowseInfoWnd();
@@ -959,7 +959,7 @@ void ShipDataPanel::DoLayout() {
 
     // position ship statistic icons one after another horizontally and centered vertically
     GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
-    for (std::pair<MeterType, StatisticIcon*>& entry : m_stat_icons) {
+    for (auto& entry : m_stat_icons) {
         entry.second->SizeMove(icon_ul, icon_ul + StatIconSize());
         icon_ul.x += StatIconSize().x;
     }
@@ -1518,7 +1518,7 @@ void FleetDataPanel::SetStatIconValues() {
     if (!speeds.empty())
         min_speed = *std::min_element(speeds.begin(), speeds.end());
 
-    for (std::pair<MeterType, StatisticIcon*> entry : m_stat_icons) {
+    for (const auto& entry : m_stat_icons) {
         MeterType stat_name = entry.first;
         const auto& icon = entry.second;
         DetachChild(icon);
@@ -1656,7 +1656,7 @@ void FleetDataPanel::DoLayout() {
 
     // position stat icons, centering them vertically if there's more space than required
     GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
-    for (std::pair<MeterType, StatisticIcon*>& entry : m_stat_icons) {
+    for (auto& entry : m_stat_icons) {
         if (entry.second->Parent() != this)
             continue;
         entry.second->SizeMove(icon_ul, icon_ul + StatIconSize());
@@ -2804,7 +2804,7 @@ void FleetWnd::SetStatIconValues() {
         }
     }
 
-    for (std::pair<MeterType, StatisticIcon*>& entry : m_stat_icons) {
+    for (auto& entry : m_stat_icons) {
         MeterType stat_name = entry.first;
         if (stat_name == METER_SHIELD)
             entry.second->SetValue(shield_tally/ship_count);
@@ -3002,7 +3002,7 @@ void FleetWnd::DoLayout() {
 
     // position fleet aggregate stat icons
     GG::Pt icon_ul = GG::Pt(GG::X0 + DATA_PANEL_TEXT_PAD, top);
-    for (std::pair<MeterType, StatisticIcon*>& stat_icon : m_stat_icons) {
+    for (auto& stat_icon : m_stat_icons) {
         stat_icon.second->SizeMove(icon_ul, icon_ul + StatIconSize());
         icon_ul.x += StatIconSize().x;
     }

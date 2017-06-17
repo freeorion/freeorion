@@ -91,7 +91,7 @@ void QueueListBox::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags
 void QueueListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
     if (wnds.size() > 1) {
         // delete any extra wnds that won't be processed below
-        for (std::vector<GG::Wnd*>::const_iterator it = ++wnds.begin(); it != wnds.end(); ++it)
+        for (auto it = ++wnds.begin(); it != wnds.end(); ++it)
             delete *it;
         ErrorLogger() << "QueueListBox::AcceptDrops given multiple wnds unexpectedly...";
     }
