@@ -933,9 +933,9 @@ void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
 
 void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
     if (ClientUI* ui = ClientUI::GetClientUI()) {
-        if (MapWnd* map_wnd = ui->GetMapWnd())
+        if (auto&& map_wnd = ui->GetMapWnd())
             map_wnd->DoLayout();
-        if (IntroScreen* intro_screen = ui->GetIntroScreen()) {
+        if (auto&& intro_screen = ui->GetIntroScreen()) {
             intro_screen->Resize(GG::Pt(w, h));
             intro_screen->DoLayout();
         }
@@ -1019,7 +1019,7 @@ bool HumanClientApp::ToggleFullscreen() {
 void HumanClientApp::StartGame() {
     m_game_started = true;
 
-    if (MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd())
+    if (auto&& map_wnd = ClientUI::GetClientUI()->GetMapWnd())
         map_wnd->ResetEmpireShown();
 
     ClientUI::GetClientUI()->GetShipDesignManager()->StartGame(EmpireID());
