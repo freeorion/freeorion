@@ -226,7 +226,7 @@ void Layout::DoLayout(Pt ul, Pt lr)
     }
 
     // adjust effective minimums based on cell contents
-    for (const std::map<Wnd*, WndPosition>::value_type& wnd_position : m_wnd_positions) {
+    for (const auto& wnd_position : m_wnd_positions) {
         Pt margin;
         if (0 < wnd_position.second.first_row && wnd_position.second.last_row < m_row_params.size())
             margin.y = Y(m_cell_margin);
@@ -432,7 +432,7 @@ void Layout::DoLayout(Pt ul, Pt lr)
 
     // resize cells and their contents
     m_ignore_child_resize = true;
-    for (std::map<Wnd*, WndPosition>::value_type& wnd_position : m_wnd_positions) {
+    for (auto& wnd_position : m_wnd_positions) {
         Pt ul(X(m_column_params[wnd_position.second.first_column].current_origin),
               Y(m_row_params[wnd_position.second.first_row].current_origin));
         Pt lr(X(m_column_params[wnd_position.second.last_column - 1].current_origin + m_column_params[wnd_position.second.last_column - 1].current_width),
@@ -571,7 +571,7 @@ void Layout::DetachAndResetChildren()
 {
     std::map<Wnd*, WndPosition> wnd_positions = m_wnd_positions;
     DetachChildren();
-    for (std::map<Wnd*, WndPosition>::value_type& wnd_position : wnd_positions) {
+    for (auto& wnd_position : wnd_positions) {
         wnd_position.first->SizeMove(wnd_position.second.original_ul, wnd_position.second.original_ul + wnd_position.second.original_size);
     }
     m_wnd_positions.clear();
@@ -590,7 +590,7 @@ void Layout::ResizeLayout(std::size_t rows, std::size_t columns)
         }
     }
     m_cells.resize(rows);
-    for (std::vector<Wnd*>& row : m_cells) {
+    for (auto& row : m_cells) {
         if (static_cast<std::size_t>(columns) < row.size()) {
             for (std::size_t j = static_cast<std::size_t>(columns); j < row.size(); ++j) {
                 DeleteChild(row[j]);

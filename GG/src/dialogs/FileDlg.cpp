@@ -610,7 +610,7 @@ void FileDlg::UpdateList()
 
         std::vector<ListBox::Row*> rows;
         rows.reserve(sorted_rows.size());
-        for (std::multimap<std::string, ListBox::Row*>::value_type& row : sorted_rows)
+        for (auto& row : sorted_rows)
         { rows.push_back(row.second); }
         m_files_list->Insert(rows, false);
 
@@ -633,7 +633,7 @@ void FileDlg::UpdateList()
                 } catch (const fs::filesystem_error&) {
                 }
             }
-            for (const std::multimap<std::string, ListBox::Row*>::value_type& row : sorted_rows) {
+            for (const auto& row : sorted_rows) {
                 m_files_list->Insert(row.second);
             }
         }

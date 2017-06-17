@@ -784,14 +784,14 @@ void ListBox::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
     }
 
     Y vertical_offset = offset.y;
-    for (const std::map<GG::Y, SelectionSet::iterator>::value_type& sorted_sel : selections_Y_sorted) {
+    for (const auto& sorted_sel : selections_Y_sorted) {
         Wnd* row_wnd = **(sorted_sel.second);
         if (row_wnd == wnd)
             break;
         vertical_offset += row_wnd->Height();
     }
 
-    for (const std::map<GG::Y, SelectionSet::iterator>::value_type& sorted_sel : selections_Y_sorted) {
+    for (const auto& sorted_sel : selections_Y_sorted) {
         Wnd* row_wnd = **(sorted_sel.second);
         if (row_wnd != wnd) {
             GUI::GetGUI()->RegisterDragDropWnd(row_wnd, Pt(offset.x, vertical_offset), this);
@@ -1659,7 +1659,7 @@ void ListBox::DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_a
     m_auto_scrolling_right = client_no_scroll_hole.lr.x < pt.x;
     if (m_auto_scrolling_up || m_auto_scrolling_down || m_auto_scrolling_left || m_auto_scrolling_right) {
         bool acceptable_drop = false;
-        for (std::map<const Wnd*, bool>::value_type& acceptable_wnd : drop_wnds_acceptable) {
+        for (auto& acceptable_wnd : drop_wnds_acceptable) {
             if (AllowedDropType(acceptable_wnd.first->DragDropDataType())) {
                 acceptable_drop = true;
                 break;

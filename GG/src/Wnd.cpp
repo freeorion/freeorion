@@ -254,7 +254,7 @@ void Wnd::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                           const Pt& pt, Flags<ModKey> mod_keys) const
 {
     // default reject all drops. derived classes can override to accept drops
-    for (std::map<const Wnd*, bool>::iterator it = first; it != last; ++it)
+    for (auto& it = first; it != last; ++it)
         it->second = false;
 }
 
@@ -582,7 +582,7 @@ void Wnd::DetachChild(Wnd* wnd)
 
 void Wnd::DetachChildren()
 {
-    for (std::list<Wnd*>::iterator it = m_children.begin(); it != m_children.end();) {
+    for (auto it = m_children.begin(); it != m_children.end();) {
         std::list<Wnd*>::iterator temp = it;
         ++it;
         DetachChild(*temp);
@@ -606,7 +606,7 @@ void Wnd::DeleteChild(Wnd* wnd)
 void Wnd::DeleteChildren()
 {
     m_layout = nullptr;
-    for (std::list<Wnd*>::iterator it = m_children.begin(); it != m_children.end();) {
+    for (auto it = m_children.begin(); it != m_children.end();) {
         Wnd* wnd = *it++;
         delete wnd;
     }
@@ -651,7 +651,7 @@ void Wnd::HorizontalLayout()
     AttachChild(m_layout);
 
     int i = 0;
-    for (const std::multiset<Wnd*, WndHorizontalLess>::value_type& wnd : wnds) {
+    for (const auto& wnd : wnds) {
         m_layout->Add(wnd, 0, i++);
     }
 }
@@ -675,7 +675,7 @@ void Wnd::VerticalLayout()
     AttachChild(m_layout);
 
     int i = 0;
-    for (const std::multiset<Wnd*, WndVerticalLess>::value_type& wnd : wnds) {
+    for (const auto& wnd : wnds) {
         m_layout->Add(wnd, i++, 0);
     }
 }
@@ -689,7 +689,7 @@ void Wnd::GridLayout()
     GridLayoutWndContainer grid_layout;
 
     // validate existing children and place them in a grid with one cell per pixel
-    for (std::list<Wnd*>::const_iterator it = m_children.begin(); it != m_children.end(); ++it) {
+    for (auto it = m_children.begin(); it != m_children.end(); ++it) {
         Wnd* wnd = *it;
         Pt wnd_ul = wnd->RelativeUpperLeft(), wnd_lr = wnd->RelativeLowerRight();
         if (wnd_ul.x < 0 || wnd_ul.y < 0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
@@ -1051,7 +1051,7 @@ bool Wnd::EventFilter(Wnd* w, const WndEvent& event)
 
 void Wnd::HandleEvent(const WndEvent& event)
 {
-    for (std::vector<Wnd*>::reverse_iterator it = m_filters.rbegin(); it != m_filters.rend(); ++it) {
+    for (auto it = m_filters.rbegin(); it != m_filters.rend(); ++it) {
         if ((*it)->EventFilter(this, event))
             return;
     }
