@@ -1350,11 +1350,11 @@ public:
                                                std::vector<GG::Flags<GG::GraphicStyle>>(textures.size(), style));
         AttachChild(m_icon);
 
-        for (GG::Control* control : m_controls)
+        for (auto& control : m_controls)
         { DeleteChild(control); }
         m_controls.clear();
 
-        for (GG::Control* control : GetControls()) {
+        for (auto& control : GetControls()) {
             m_controls.push_back(control);
             AttachChild(control);
         }
@@ -1570,7 +1570,7 @@ public:
     {}
 
     void            Refresh() {
-        for (GG::Button* button : m_controls)
+        for (auto& button : m_controls)
         { DeleteChild(button); }
         m_controls.clear();
 
@@ -1801,7 +1801,7 @@ public:
         Wnd::SizeMove(ul, lr);
         if (old_size != Size()) {
             const GG::Pt row_size = ListRowSize();
-            for (GG::ListBox::Row* row : *this)
+            for (auto& row : *this)
                 row->Resize(row_size);
             m_header_row->Resize(row_size);
             ListBox::AdjustScrolls(true);
@@ -1822,7 +1822,7 @@ public:
 
     void            CollapseObject(int object_id = INVALID_OBJECT_ID) {
         if (object_id == INVALID_OBJECT_ID) {
-            for (GG::ListBox::Row* row : *this)
+            for (auto& row : *this)
                 if (const ObjectRow* object_row = dynamic_cast<const ObjectRow*>(row))
                     m_collapsed_objects.insert(object_row->ObjectID());
         } else {
@@ -2080,7 +2080,7 @@ public:
     void            UpdateObjectPanel(int object_id = INVALID_OBJECT_ID) {
         if (object_id == INVALID_OBJECT_ID)
             return;
-        for (GG::ListBox::Row* row : *this) {
+        for (auto& row : *this) {
             if (ObjectRow* orow = dynamic_cast<ObjectRow*>(row)) {
                 orow->Update();
                 return;
@@ -2162,7 +2162,7 @@ private:
             return;
 
         // remove this row from parent row's contents
-        for (GG::ListBox::Row* row : *this) {
+        for (auto& row : *this) {
             if (ObjectRow* object_row = dynamic_cast<ObjectRow*>(row)) {
                 if (object_row->ObjectID() == container_object_id) {
                     std::set<int> new_contents;

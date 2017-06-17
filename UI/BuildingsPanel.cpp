@@ -78,7 +78,7 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
 
 BuildingsPanel::~BuildingsPanel() {
     // delete building indicators
-    for (BuildingIndicator* indicator : m_building_indicators)
+    for (auto& indicator : m_building_indicators)
         delete indicator;
     m_building_indicators.clear();
 }
@@ -94,7 +94,7 @@ void BuildingsPanel::Update() {
     //std::cout << "BuildingsPanel::Update" << std::endl;
 
     // remove old indicators
-    for (BuildingIndicator* indicator : m_building_indicators) {
+    for (auto& indicator : m_building_indicators) {
         DetachChild(indicator);
         delete (indicator);
     }
@@ -177,7 +177,7 @@ void BuildingsPanel::RefreshImpl() {
 }
 
 void BuildingsPanel::EnableOrderIssuing(bool enable/* = true*/) {
-    for (BuildingIndicator* indicator : m_building_indicators)
+    for (auto& indicator : m_building_indicators)
     { indicator->EnableOrderIssuing(enable); }
 }
 
@@ -198,7 +198,7 @@ void BuildingsPanel::DoLayout() {
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_planet_id]) {
         int n = 0;
-        for (BuildingIndicator* ind : m_building_indicators) {
+        for (auto& ind : m_building_indicators) {
             const GG::Pt ul = GG::Pt(MeterIconSize().x * n, GG::Y0);
             const GG::Pt lr = ul + MeterIconSize();
 
@@ -213,7 +213,7 @@ void BuildingsPanel::DoLayout() {
 
         height = m_expand_button->Height();
     } else {
-        for (BuildingIndicator* ind : m_building_indicators) {
+        for (auto& ind : m_building_indicators) {
             const GG::Pt ul = GG::Pt(GG::X(padding * (column + 1) + indicator_size * column), GG::Y(padding * (row + 1) + indicator_size * row));
             const GG::Pt lr = ul + GG::Pt(GG::X(indicator_size), GG::Y(indicator_size));
 

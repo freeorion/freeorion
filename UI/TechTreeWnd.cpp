@@ -709,7 +709,7 @@ TechTreeWnd::LayoutPanel::TechPanel::~TechPanel() {
     delete m_name_label;
     delete m_cost_and_duration_label;
     delete m_eta_label;
-    for (GG::StaticGraphic* icon : m_unlock_icons)
+    for (auto& icon : m_unlock_icons)
     { delete icon; }
 }
 
@@ -885,7 +885,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     glEnable(GL_TEXTURE_2D);
     m_icon->Render();
 
-    for (GG::StaticGraphic* icon : m_unlock_icons)
+    for (auto& icon : m_unlock_icons)
     { icon->Render(); }
 
     m_layout_panel->UndoZoom();

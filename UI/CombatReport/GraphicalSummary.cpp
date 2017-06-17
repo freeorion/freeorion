@@ -390,7 +390,7 @@ public:
         alive_ll.y += ClientHeight();
         GG::Pt dead_lr = ClientSize();
 
-        for (ParticipantBar* bar : m_participant_bars) {
+        for (auto& bar : m_participant_bars) {
             bar->DoLayout(m_y_axis_label->MinUsableSize().x);
             if (bar->Alive()) {
                 bar->MoveBottomTo(alive_ll);
@@ -693,7 +693,7 @@ void GraphicalSummaryWnd::DoLayout() {
     m_sizer->SetAvailableSize(space_for_bars);
     m_options_bar->DoLayout();
 
-    for (SideBar* box : m_side_boxes) {
+    for (auto& box : m_side_boxes) {
         box->MoveTo(ul);
         box->DoLayout();
         ul.y += box->Height() + SIDE_BOX_MARGIN;
@@ -751,7 +751,7 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
 }
 
 void GraphicalSummaryWnd::DeleteSideBars() {
-    for (SideBar* box : m_side_boxes)
+    for (auto& box : m_side_boxes)
     { DeleteChild(box); }
     m_side_boxes.clear();
 }

@@ -318,7 +318,7 @@ InvisibleWindowCondition::InvisibleWindowCondition(std::initializer_list<const G
 {}
 
 bool InvisibleWindowCondition::operator()() const {
-    for (const GG::Wnd* wnd : m_blacklist) {
+    for (const auto& wnd : m_blacklist) {
         if (wnd->Visible())
             return false;
     }

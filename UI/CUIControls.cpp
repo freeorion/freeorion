@@ -1333,7 +1333,7 @@ CUIToolBar::CUIToolBar() :
 {}
 
 bool CUIToolBar::InWindow(const GG::Pt& pt) const {
-    for (GG::Wnd* wnd : Children())
+    for (auto& wnd : Children())
         if (wnd->InWindow(pt))
             return true;
     return GG::Wnd::InWindow(pt);
@@ -1429,7 +1429,7 @@ const std::string& SpeciesSelector::CurrentSpeciesName() const {
 
 std::vector<std::string> SpeciesSelector::AvailableSpeciesNames() const {
     std::vector<std::string> retval;
-    for (CUIDropDownList::Row* row : *this)
+    for (auto& row : *this)
         if (const SpeciesRow* species_row = dynamic_cast<const SpeciesRow*>(row))
             retval.push_back(species_row->Name());
     return retval;

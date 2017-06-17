@@ -1906,7 +1906,7 @@ void BasesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     CUIListBox::SizeMove(ul, lr);
     if (old_size != Size()) {
         const GG::Pt row_size = ListRowSize();
-        for (GG::ListBox::Row* row : *this)
+        for (auto& row : *this)
             row->Resize(row_size);
     }
 }
@@ -3079,7 +3079,7 @@ void SlotControl::CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnd
     if (!m_part_control)
         return;
 
-    for (const GG::Wnd* wnd : wnds) {
+    for (const auto& wnd : wnds) {
         const PartControl* control = dynamic_cast<const PartControl*>(wnd);
         if (!control)
             continue;
@@ -3478,7 +3478,7 @@ boost::optional<const ShipDesign*> DesignWnd::MainPanel::EditingCurrentDesign() 
 
 const std::vector<std::string> DesignWnd::MainPanel::Parts() const {
     std::vector<std::string> retval;
-    for (const SlotControl* slot : m_slots) {
+    for (const auto& slot : m_slots) {
         const PartType* part_type = slot->GetPart();
         if (part_type)
             retval.push_back(part_type->Name());
@@ -3644,7 +3644,7 @@ int DesignWnd::MainPanel::FindEmptySlotForPart(const PartType* part) {
     if (part->Class() == PC_FIGHTER_HANGAR) {
         // give up if part is a hangar and there is already a hangar of another type
         std::string already_seen_hangar_name;
-        for (const SlotControl* slot : m_slots) {
+        for (const auto& slot : m_slots) {
             const PartType* part_type = slot->GetPart();
             if (!part_type || part_type->Class() != PC_FIGHTER_HANGAR)
                 continue;
@@ -3678,7 +3678,7 @@ std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const Part
 
     // check if adding the part would cause the design to have multiple different types of hangar (which is not allowed)
     if (part->Class() == PC_FIGHTER_HANGAR) {
-        for (const SlotControl* slot : m_slots) {
+        for (const auto& slot : m_slots) {
             const PartType* existing_part = slot->GetPart();
             if (!existing_part || existing_part->Class() != PC_FIGHTER_HANGAR)
                 continue;
@@ -3688,7 +3688,7 @@ std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const Part
     }
 
     // first search for an empty compatible slot for the new part
-    for (const SlotControl* slot : m_slots) {
+    for (const auto& slot : m_slots) {
         if (!part->CanMountInSlotType(slot->SlotType()))
             continue;   // skip incompatible slots
 
@@ -3720,7 +3720,7 @@ std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const Part
 }
 
 void DesignWnd::MainPanel::ClearParts() {
-    for (SlotControl* slot : m_slots)
+    for (auto& slot : m_slots)
         slot->SetPart(nullptr);
     DesignChangedSignal();
 }
@@ -3798,7 +3798,7 @@ void DesignWnd::MainPanel::SetDesignComponents(const std::string& hull,
 }
 
 void DesignWnd::MainPanel::HighlightSlotType(std::vector<ShipSlotType>& slot_types) {
-    for (SlotControl* control : m_slots) {
+    for (auto& control : m_slots) {
         ShipSlotType slot_type = control->SlotType();
         if (std::find(slot_types.begin(), slot_types.end(), slot_type) != slot_types.end())
             control->Highlight(true);
@@ -3822,7 +3822,7 @@ void DesignWnd::MainPanel::HandleBaseTypeChange(DesignWnd::BaseSelector::BaseSel
 }
 
 void DesignWnd::MainPanel::Populate(){
-    for (SlotControl* control : m_slots)
+    for (auto& control : m_slots)
         delete control;
     m_slots.clear();
 
@@ -3901,7 +3901,7 @@ void DesignWnd::MainPanel::DoLayout() {
     }
 
     // place slot controls over image of hull
-    for (SlotControl* slot : m_slots) {
+    for (auto& slot : m_slots) {
         GG::X x(background_rect.Left() - slot->Width()/2 - ClientUpperLeft().x + slot->XPositionFraction() * background_rect.Width());
         GG::Y y(background_rect.Top() - slot->Height()/2 - ClientUpperLeft().y + slot->YPositionFraction() * background_rect.Height());
         slot->MoveTo(GG::Pt(x, y));

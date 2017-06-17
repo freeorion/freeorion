@@ -2476,7 +2476,7 @@ bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const {
         return false;
 
     // allow point to be within any planet panel that is below top of container
-    for (PlanetPanel* panel : m_planet_panels) {
+    for (auto& panel : m_planet_panels) {
         if (panel->InWindow(pt))
             return true;
     }
@@ -2594,7 +2594,7 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
     // Determine if scroll bar is required for height or expected because it is already present.
     GG::Y available_height = Height();
     GG::Y initially_used_height = GG::Y0;
-    for (PlanetPanel* panel : m_planet_panels) {
+    for (auto& panel : m_planet_panels) {
         initially_used_height += panel->Height() + EDGE_PAD;
     }
 
@@ -2626,7 +2626,7 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
         y = GG::Y(-m_vscroll->PosnRange().first);
 
     // place panels in sequence from the top, each below the previous
-    for (PlanetPanel* panel : m_planet_panels) {
+    for (auto& panel : m_planet_panels) {
         panel->MoveTo(GG::Pt(GG::X0, y));
         y += panel->Height() + EDGE_PAD;
     }
@@ -2651,7 +2651,7 @@ GG::Y SidePanel::PlanetPanelContainer::ResizePanelsForVScroll(bool use_vscroll) 
     // Size panels accounting for the expected vscroll
     GG::X expected_width(Width() - (use_vscroll ? m_vscroll->Width() : GG::X0));
     GG::Y used_height(GG::Y0);
-    for (PlanetPanel* panel : m_planet_panels) {
+    for (auto& panel : m_planet_panels) {
         panel->Resize(GG::Pt(expected_width, panel->Height()));
 
         // Force planet panel container to render.  Since planet panel rendering
@@ -2683,7 +2683,7 @@ void SidePanel::PlanetPanelContainer::SelectPlanet(int planet_id) {
 
         // scan through panels in container, marking the selected one and
         // unmarking the rest, and remembering if any are marked
-        for (PlanetPanel* panel : m_planet_panels) {
+        for (auto& panel : m_planet_panels) {
             if (panel->PlanetID() == m_selected_planet_id) {
                 panel->Select(true);
                 planet_id_match_found = true;
@@ -2714,7 +2714,7 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
         // can be selected, refresh the candidiates and disable the non-selectables
 
         // find selectables
-        for (PlanetPanel* panel : m_planet_panels) {
+        for (auto& panel : m_planet_panels) {
             int             planet_id = panel->PlanetID();
             std::shared_ptr<const Planet> planet = GetPlanet(planet_id);
 
@@ -2728,7 +2728,7 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
     }
 
     // disable and enabled appropriate panels
-    for (PlanetPanel* panel : m_planet_panels) {
+    for (auto& panel : m_planet_panels) {
         if (disabled_panels.find(panel) != disabled_panels.end()) {
             panel->Disable(true);
             //std::cout << " ... DISABLING PlanetPanel for planet " << panel->PlanetID() << std::endl;
@@ -2751,7 +2751,7 @@ void SidePanel::PlanetPanelContainer::VScroll(int pos_top, int pos_bottom, int r
 void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels(
     int excluded_planet_id, bool require_prerender)
 {
-    for (PlanetPanel* panel : m_planet_panels) {
+    for (auto& panel : m_planet_panels) {
         if (excluded_planet_id > 0 && panel->PlanetID() == INVALID_OBJECT_ID)
             continue;
         panel->Refresh();
@@ -2776,7 +2776,7 @@ void SidePanel::PlanetPanelContainer::SizeMove(const GG::Pt& ul, const GG::Pt& l
 }
 
 void SidePanel::PlanetPanelContainer::EnableOrderIssuing(bool enable/* = true*/) {
-    for (PlanetPanel* panel : m_planet_panels) {
+    for (auto& panel : m_planet_panels) {
         panel->EnableOrderIssuing(enable);
     }
 }
@@ -2982,7 +2982,7 @@ void SidePanel::PreRender() {
 
     // Update updates the data for each planet tab in all SidePanels
     if (s_needs_update) {
-        for (SidePanel* panel : s_side_panels)
+        for (auto& panel : s_side_panels)
             panel->UpdateImpl();
     }
 
@@ -3002,7 +3002,7 @@ void SidePanel::PreRender() {
 
 void SidePanel::Update() {
     s_needs_update = true;
-    for (SidePanel* panel : s_side_panels)
+    for (auto& panel : s_side_panels)
         panel->RequirePreRender();
 }
 
@@ -3016,7 +3016,7 @@ void SidePanel::UpdateImpl() {
 
 void SidePanel::Refresh() {
     s_needs_refresh = true;
-    for (SidePanel* panel : s_side_panels)
+    for (auto& panel : s_side_panels)
         panel->RequirePreRender();
 }
 
@@ -3036,7 +3036,7 @@ void SidePanel::RefreshInPreRender() {
 
 
     // refresh individual panels' contents
-    for (SidePanel* panel : s_side_panels)
+    for (auto& panel : s_side_panels)
         panel->RefreshImpl();
 
 
@@ -3393,7 +3393,7 @@ void SidePanel::SelectPlanet(int planet_id) {
 
     // Use the first sidepanel with selection enabled to determine if planet is selectable.
     bool planet_selectable(false);
-    for (SidePanel* panel : s_side_panels) {
+    for (auto& panel : s_side_panels) {
         if (panel->m_selection_enabled) {
             planet_selectable = panel->PlanetSelectable(planet_id);
             break;
@@ -3407,7 +3407,7 @@ void SidePanel::SelectPlanet(int planet_id) {
 
     s_planet_id = planet_id;
 
-    for (SidePanel* panel : s_side_panels)
+    for (auto& panel : s_side_panels)
         panel->RequirePreRender();
 
     PlanetSelectedSignal(s_planet_id);

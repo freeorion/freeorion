@@ -1564,7 +1564,7 @@ void MapWnd::DoLayout() {
             plr_wnd->ValidatePosition();
     }
 
-    for (FleetWnd* fwnd : FleetUIManager::GetFleetUIManager()) {
+    for (auto& fwnd : FleetUIManager::GetFleetUIManager()) {
         if (fwnd) {
             fwnd->ValidatePosition();
         } else {
@@ -4426,7 +4426,7 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
         // not emit any signals about the active fleet wnd's fleets changing
         FleetWnd* active_fleet_wnd = manager.ActiveFleetWnd();
 
-        for (FleetWnd* wnd : manager) {
+        for (auto& wnd : manager) {
             if (wnd != active_fleet_wnd)
                 wnd->SelectFleet(0);
         }
@@ -4652,7 +4652,7 @@ void MapWnd::DoFleetButtonsLayout() {
 
         // place all buttons
         int n = 1;
-        for (FleetButton* button : departing_fleet_button.second) {
+        for (auto& button : departing_fleet_button.second) {
             GG::Pt ul = system_icon->NthFleetButtonUpperLeft(n, true);
             ++n;
             button->MoveTo(ul + icon_ul);
@@ -4681,7 +4681,7 @@ void MapWnd::DoFleetButtonsLayout() {
 
         // place all buttons
         int n = 1;
-        for (FleetButton* button : stationary_fleet_button.second) {
+        for (auto& button : stationary_fleet_button.second) {
             GG::Pt ul = system_icon->NthFleetButtonUpperLeft(n, false);
             ++n;
             button->MoveTo(ul + icon_ul);
@@ -4690,7 +4690,7 @@ void MapWnd::DoFleetButtonsLayout() {
 
     // position moving fleet buttons
     for (auto& moving_fleet_button : m_moving_fleet_buttons) {
-        for (FleetButton* fb : moving_fleet_button.second) {
+        for (auto& fb : moving_fleet_button.second) {
             const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
             std::shared_ptr<const Fleet> fleet;
 
@@ -4905,19 +4905,19 @@ void MapWnd::DeleteFleetButtons() {
     m_fleet_buttons.clear();            // duplicates pointers in following containers
 
     for (auto& stationary_fleet_button : m_stationary_fleet_buttons) {
-        for (FleetButton* button : stationary_fleet_button.second)
+        for (auto& button : stationary_fleet_button.second)
             delete button;
     }
     m_stationary_fleet_buttons.clear();
 
     for (auto& departing_fleet_button : m_departing_fleet_buttons) {
-        for (FleetButton* button : departing_fleet_button.second)
+        for (auto& button : departing_fleet_button.second)
             delete button;
     }
     m_departing_fleet_buttons.clear();
 
     for (auto& moving_fleet_button : m_moving_fleet_buttons) {
-        for (FleetButton* button : moving_fleet_button.second)
+        for (auto& button : moving_fleet_button.second)
             delete button;
     }
     m_moving_fleet_buttons.clear();
@@ -5581,17 +5581,17 @@ void MapWnd::RefreshFleetButtonSelectionIndicators() {
 
     // clear old selection indicators
     for (auto& stationary_fleet_button : m_stationary_fleet_buttons) {
-        for (FleetButton* button : stationary_fleet_button.second)
+        for (auto& button : stationary_fleet_button.second)
             button->SetSelected(false);
     }
 
     for (auto& departing_fleet_button : m_departing_fleet_buttons) {
-        for (FleetButton* button : departing_fleet_button.second)
+        for (auto& button : departing_fleet_button.second)
             button->SetSelected(false);
     }
 
     for (auto& moving_fleet_button : m_moving_fleet_buttons) {
-        for (FleetButton* button : moving_fleet_button.second)
+        for (auto& button : moving_fleet_button.second)
             button->SetSelected(false);
     }
 
@@ -6823,7 +6823,7 @@ void MapWnd::CloseAllPopups() {
 }
 
 void MapWnd::HideAllPopups() {
-    for (MapWndPopup* popup : m_popups) {
+    for (auto& popup : m_popups) {
         popup->Hide();
     }
 }
@@ -7046,7 +7046,7 @@ void MapWnd::DispatchFleetsExploring() {
 }
 
 void MapWnd::ShowAllPopups() {
-    for (MapWndPopup* popup : m_popups) {
+    for (auto& popup : m_popups) {
         popup->Show();
     }
 }

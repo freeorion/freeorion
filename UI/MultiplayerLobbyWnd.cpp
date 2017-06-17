@@ -605,7 +605,7 @@ MultiPlayerLobbyWnd::PlayerLabelRow::PlayerLabelRow(GG::X width /* = GG::X(580)*
     at(6)->SetMaxSize(GG::Pt(GG::X(400), PlayerFontHeight()));
     std::vector<GG::X> col_widths = PlayerRowColWidths(width);
     unsigned int i = 0;
-    for (GG::Control* control : m_cells) {
+    for (auto& control : m_cells) {
         control->SetChildClippingMode(ClipToWindow);
         if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>(control))
             tc->SetFont(ClientUI::GetBoldFont());
@@ -634,7 +634,7 @@ void MultiPlayerLobbyWnd::PlayerLabelRow::Render() {
     GG::Pt lr(LowerRight().x - CONTROL_MARGIN, LowerRight().y - CONTROL_MARGIN);
 
     // background fill and border for each cell
-    for (GG::Control* cell : m_cells)
+    for (auto& cell : m_cells)
         GG::FlatRectangle(GG::Pt(cell->UpperLeft().x, ul.y), GG::Pt(cell->LowerRight().x, lr.y), BG_CLR, BORDER_CLR, 1);
 }
 
@@ -852,7 +852,7 @@ void MultiPlayerLobbyWnd::PreviewImageChanged(std::shared_ptr<GG::Texture> new_i
 
 void MultiPlayerLobbyWnd::PlayerDataChangedLocally() {
     m_lobby_data.m_players.clear();
-    for (GG::ListBox::Row* row : *m_players_lb) {
+    for (auto& row : *m_players_lb) {
         const PlayerRow* player_row = dynamic_cast<const PlayerRow*>(row);
         if (const EmptyPlayerRow* empty_row = dynamic_cast<const EmptyPlayerRow*>(player_row)) {
             // empty rows that have been changed to Add AI need to be sent so the server knows to add an AI player.
@@ -977,7 +977,7 @@ bool MultiPlayerLobbyWnd::PlayerDataAcceptable() const {
     std::set<unsigned int> empire_colors;
     int num_players_excluding_observers(0);
 
-    for (GG::ListBox::Row* row : *m_players_lb) {
+    for (auto& row : *m_players_lb) {
         const PlayerRow& prow = dynamic_cast<const PlayerRow&>(*row);
         if (prow.m_player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
             prow.m_player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)

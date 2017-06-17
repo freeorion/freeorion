@@ -134,7 +134,7 @@ namespace {
         if (!list)
             return false;
 
-        for (const GG::DropDownList::Row* row : *list) {
+        for (const auto& row : *list) {
             for (unsigned j = 0; j < row->size(); ++j) {
                 const GG::Control* control = row->at(j);
                 const GG::Label* text = dynamic_cast<const GG::Label*>(control);
@@ -565,7 +565,7 @@ public:
     }
 
     bool HasFile(const std::string& filename) {
-        for (GG::ListBox::Row* row : *this) {
+        for (auto& row : *this) {
             SaveFileRow* srow = dynamic_cast<SaveFileRow*>(row);
             if (srow && srow->Filename() == filename)
                 return true;

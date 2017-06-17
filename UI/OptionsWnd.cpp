@@ -360,7 +360,7 @@ namespace {
             CUIListBox::SizeMove(ul, lr);
             if (old_size != Size()) {
                 const GG::X row_width = ListRowWidth();
-                for (GG::ListBox::Row* row : *this)
+                for (auto& row : *this)
                     row->Resize(GG::Pt(row_width, row->Height()));
             }
         }

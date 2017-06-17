@@ -275,7 +275,7 @@ void FleetButton::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void FleetButton::LayoutIcons() {
     GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
-    for (RotatingGraphic* graphic : m_icons) {
+    for (auto& graphic : m_icons) {
         GG::SubTexture subtexture = graphic->GetTexture();
         GG::Pt subtexture_sz = GG::Pt(subtexture.Width(), subtexture.Height());
         //std::cout << "FleetButton::LayoutIcons repositioning icon: sz: " << subtexture_sz << "  tex: " << subtexture.GetTexture()->Filename() << std::endl;
