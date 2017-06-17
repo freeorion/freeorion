@@ -85,7 +85,7 @@ std::string StyleFactory::Translate(const std::string& key) const
 
 Button* StyleFactory::NewButton(const std::string& str, const std::shared_ptr<Font>& font,
                                 Clr color, Clr text_color/* = CLR_BLACK*/, Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return new Button(str, font, color, text_color, flags); }
+{ return Wnd::Create<Button>(str, font, color, text_color, flags); }
 
 RadioButtonGroup* StyleFactory::NewRadioButtonGroup(Orientation orientation) const
 { return Wnd::Create<RadioButtonGroup>(orientation); }

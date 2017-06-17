@@ -547,8 +547,8 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     }
     m_players_lb->SetColHeaders(m_players_lb_headers);
 
-    m_ready_bn = new CUIButton(UserString("READY_BN"));
-    m_cancel_bn = new CUIButton(UserString("CANCEL"));
+    m_ready_bn = Wnd::Create<CUIButton>(UserString("READY_BN"));
+    m_cancel_bn = Wnd::Create<CUIButton>(UserString("CANCEL"));
 
     m_start_conditions_text = GG::Wnd::Create<CUILabel>(UserString("MULTIPLAYER_GAME_START_CONDITIONS"), GG::FORMAT_LEFT);
 

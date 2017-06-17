@@ -570,17 +570,17 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
-    m_index_button = new CUIButton(
+    m_index_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "uparrownormal.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "uparrowclicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "uparrowmouseover.png")));
 
-    m_back_button = new CUIButton(
+    m_back_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "leftarrownormal.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "leftarrowclicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "leftarrowmouseover.png")));
 
-    m_next_button = new CUIButton(
+    m_next_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrownormal.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrowclicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrowmouseover.png")));

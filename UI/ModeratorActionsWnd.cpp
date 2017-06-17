@@ -49,7 +49,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
     // button for no action
-    m_no_action_button = new CUIButton(
+    m_no_action_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "nomoderatoraction.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "nomoderatoraction_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "nomoderatoraction_mouseover.png")));
@@ -62,7 +62,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         boost::bind(&ModeratorActionsWnd::NoActionClicked, this));
 
     // button for create system and droplist to select system type to create
-    m_create_system_button = new CUIButton(
+    m_create_system_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addstar.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addstar_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addstar_mouseover.png")));
@@ -90,7 +90,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         boost::bind(&ModeratorActionsWnd::StarTypeSelected, this, _1));
 
     // button for create planet and droplists to select planet type and size
-    m_create_planet_button = new CUIButton(
+    m_create_planet_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addplanet.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addplanet_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addplanet_mouseover.png")));
@@ -133,7 +133,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         boost::bind(&ModeratorActionsWnd::PlanetSizeSelected, this, _1));
 
     // button for destroying object
-    m_delete_object_button = new CUIButton(
+    m_delete_object_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "delete.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "delete_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "delete_mouseover.png")));
@@ -146,7 +146,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         boost::bind(&ModeratorActionsWnd::DeleteObjectClicked, this));
 
     // button for setting owner
-    m_set_owner_button = new CUIButton(
+    m_set_owner_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "setowner.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "setowner_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "setowner_mouseover.png")));
@@ -165,7 +165,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         boost::bind(&ModeratorActionsWnd::EmpireSelected, this, _1));
 
     // button for creating starlane
-    m_add_starlane_button = new CUIButton(
+    m_add_starlane_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addstarlane.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addstarlane_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addstarlane_mouseover.png")));
@@ -178,7 +178,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         boost::bind(&ModeratorActionsWnd::AddStarlane, this));
 
     // button for removing starlane
-    m_remove_starlane_button = new CUIButton(
+    m_remove_starlane_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "removestarlane.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "removestarlane_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "removestarlane_mouseover.png")));

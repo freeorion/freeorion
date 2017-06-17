@@ -1084,9 +1084,9 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     m_vscroll = new CUIScroll(GG::VERTICAL);
     m_hscroll = new CUIScroll(GG::HORIZONTAL);
 
-    m_zoom_in_button = new CUIButton("+");
+    m_zoom_in_button = Wnd::Create<CUIButton>("+");
     m_zoom_in_button->SetColor(ClientUI::WndColor());
-    m_zoom_out_button = new CUIButton("-");
+    m_zoom_out_button = Wnd::Create<CUIButton>("-");
     m_zoom_out_button->SetColor(ClientUI::WndColor());
 
     DoLayout();
@@ -1731,31 +1731,31 @@ TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
     graphic_col->SetChildClippingMode(ClipToWindow);
     m_header_row->push_back(graphic_col);
 
-    auto name_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_NAME"));
+    auto name_col = Wnd::Create<CUIButton>(UserString("TECH_WND_LIST_COLUMN_NAME"));
     name_col->Resize(GG::Pt(col_widths[1], HEIGHT));
     name_col->SetChildClippingMode(ClipToWindow);
     name_col->LeftClickedSignal.connect([this]() { ToggleSortCol(1); });
     m_header_row->push_back(name_col);
 
-    auto cost_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_COST"));
+    auto cost_col = Wnd::Create<CUIButton>(UserString("TECH_WND_LIST_COLUMN_COST"));
     cost_col->Resize(GG::Pt(col_widths[2], HEIGHT));
     cost_col->SetChildClippingMode(ClipToWindow);
     cost_col->LeftClickedSignal.connect([this]() { ToggleSortCol(2); });
     m_header_row->push_back(cost_col);
 
-    auto time_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_TIME"));
+    auto time_col = Wnd::Create<CUIButton>(UserString("TECH_WND_LIST_COLUMN_TIME"));
     time_col->Resize(GG::Pt(col_widths[3], HEIGHT));
     time_col->SetChildClippingMode(ClipToWindow);
     time_col->LeftClickedSignal.connect([this]() { ToggleSortCol(3); });
     m_header_row->push_back(time_col);
 
-    auto category_col = new CUIButton( UserString("TECH_WND_LIST_COLUMN_CATEGORY"));
+    auto category_col = Wnd::Create<CUIButton>( UserString("TECH_WND_LIST_COLUMN_CATEGORY"));
     category_col->Resize(GG::Pt(col_widths[4], HEIGHT));
     category_col->SetChildClippingMode(ClipToWindow);
     category_col->LeftClickedSignal.connect([this]() { ToggleSortCol(4); });
     m_header_row->push_back(category_col);
 
-    auto descr_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_DESCRIPTION"));
+    auto descr_col = Wnd::Create<CUIButton>(UserString("TECH_WND_LIST_COLUMN_DESCRIPTION"));
     descr_col->Resize(GG::Pt(col_widths[5], HEIGHT));
     descr_col->SetChildClippingMode(ClipToWindow);
     descr_col->LeftClickedSignal.connect([this]() { ToggleSortCol(5); });

@@ -1666,7 +1666,7 @@ void FleetDataPanel::Init() {
     AttachChild(m_fleet_destination_text);
 
     if (m_fleet_id == INVALID_OBJECT_ID) {
-        m_aggression_toggle = new CUIButton(
+        m_aggression_toggle = Wnd::Create<CUIButton>(
             GG::SubTexture(FleetAggressiveIcon()),
             GG::SubTexture(FleetPassiveIcon()),
             GG::SubTexture(FleetAggressiveMouseoverIcon()));
@@ -1706,7 +1706,7 @@ void FleetDataPanel::Init() {
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         if (fleet->OwnedBy(client_empire_id) || fleet->GetVisibility(client_empire_id) >= VIS_FULL_VISIBILITY) {
-            m_aggression_toggle = new CUIButton(
+            m_aggression_toggle = Wnd::Create<CUIButton>(
                 GG::SubTexture(FleetAggressiveIcon()),
                 GG::SubTexture(FleetPassiveIcon()),
                 GG::SubTexture(FleetAggressiveMouseoverIcon()));

@@ -26,6 +26,7 @@ public:
     /** \name Structors */ //@{
     FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type = FLEET_BUTTON_LARGE);
     FleetButton(int fleet_id, SizeType size_type = FLEET_BUTTON_LARGE);
+    void CompleteConstruction() override;
     virtual ~FleetButton();
     //@}
 

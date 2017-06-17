@@ -84,7 +84,6 @@ public:
     /** \name Structors */ //@{
     SettableInWindowCUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover, boost::function<bool(const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function);
     //@}
-
     /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
     //@}

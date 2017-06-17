@@ -543,7 +543,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
     // random seed button
-    m_random = new CUIButton(
+    m_random = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "randomize.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "randomize_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "randomize_mouseover.png")));
@@ -1004,8 +1004,8 @@ GalaxySetupWnd::GalaxySetupWnd() :
     static auto temp_tex = std::make_shared<GG::Texture>();
     m_preview_image =  GG::Wnd::Create<GG::StaticGraphic>(temp_tex, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE); // create a blank graphic
 
-    m_ok = new CUIButton(UserString("OK"));
-    m_cancel = new CUIButton(UserString("CANCEL"));
+    m_ok = Wnd::Create<CUIButton>(UserString("OK"));
+    m_cancel = Wnd::Create<CUIButton>(UserString("CANCEL"));
 
     AttachChild(m_galaxy_setup_panel);
     AttachChild(m_game_rules_panel);

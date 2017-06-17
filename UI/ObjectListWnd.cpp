@@ -1028,7 +1028,7 @@ FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPL
         const auto visibility = std::get<0>(entry);
         const auto label_key = std::get<1>(entry);
 
-        label = new CUIButton(UserString(label_key));
+        label = Wnd::Create<CUIButton>(UserString(label_key));
         label->Resize(GG::Pt(button_width, label->MinUsableSize().y));
         m_filters_layout->Add(label, row, 0, GG::ALIGN_CENTER);
         label->LeftClickedSignal.connect(
@@ -1050,7 +1050,7 @@ FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPL
 
         m_filters_layout->SetColumnStretch(col, 1.0);
 
-        label = new CUIButton(" " + UserString(boost::lexical_cast<std::string>(uot)) + " ");
+        label = Wnd::Create<CUIButton>(" " + UserString(boost::lexical_cast<std::string>(uot)) + " ");
         m_filters_layout->Add(label, 0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
         label->LeftClickedSignal.connect(
             boost::bind(&FilterDialog::UpdateVisFiltersFromObjectTypeButton, this, uot));
@@ -1074,8 +1074,8 @@ FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPL
 
     // TODO: Add multiple condition widgets initialized for input condition
     m_condition_widget = new ConditionWidget(GG::X(3), m_filters_layout->Height() + GG::Y(3), condition_filter);
-    m_cancel_button = new CUIButton(UserString("CANCEL"));
-    m_apply_button = new CUIButton(UserString("APPLY"));
+    m_cancel_button = Wnd::Create<CUIButton>(UserString("CANCEL"));
+    m_apply_button = Wnd::Create<CUIButton>(UserString("APPLY"));
 
     AttachChild(m_condition_widget);
     AttachChild(m_cancel_button);
@@ -1326,12 +1326,12 @@ public:
             boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
             if (m_expanded) {
-                m_expand_button = new CUIButton(
+                m_expand_button = Wnd::Create<CUIButton>(
                     GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "minusnormal.png"     , true)),
                     GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "minusclicked.png"    , true)),
                     GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "minusmouseover.png"  , true)));
             } else {
-                m_expand_button = new CUIButton(
+                m_expand_button = Wnd::Create<CUIButton>(
                     GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "plusnormal.png"   , true)),
                     GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "plusclicked.png"  , true)),
                     GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "plusmouseover.png", true)));
@@ -1674,7 +1674,7 @@ private:
     std::vector<GG::Button*>    GetControls() {
         std::vector<GG::Button*> retval;
 
-        auto control = new CUIButton("-");
+        auto control = Wnd::Create<CUIButton>("-");
         retval.push_back(control);
 
         for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
@@ -1682,7 +1682,7 @@ private:
             const std::string& header_name = GetColumnName(static_cast<int>(i));
             if (!header_name.empty())
                 text = UserString(header_name);
-            control = new CUIButton(text);
+            control = Wnd::Create<CUIButton>(text);
             retval.push_back(control);
         }
 
@@ -2272,12 +2272,12 @@ ObjectListWnd::ObjectListWnd(const std::string& config_name) :
         boost::bind(&ObjectListWnd::DoLayout, this));
     AttachChild(m_list_box);
 
-    m_filter_button = new CUIButton(UserString("FILTERS"));
+    m_filter_button = Wnd::Create<CUIButton>(UserString("FILTERS"));
     m_filter_button->LeftClickedSignal.connect(
         boost::bind(&ObjectListWnd::FilterClicked, this));
     AttachChild(m_filter_button);
 
-    m_collapse_button = new CUIButton(UserString("COLLAPSE_ALL"));
+    m_collapse_button = Wnd::Create<CUIButton>(UserString("COLLAPSE_ALL"));
     m_collapse_button->LeftClickedSignal.connect(
         boost::bind(&ObjectListWnd::CollapseExpandClicked, this));
     AttachChild(m_collapse_button);

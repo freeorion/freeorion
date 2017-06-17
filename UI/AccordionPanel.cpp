@@ -13,7 +13,7 @@ AccordionPanel::AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left /*= fals
 {
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
-    m_expand_button = new CUIButton(
+    m_expand_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrownormal.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrowclicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrowmouseover.png")));

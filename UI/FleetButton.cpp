@@ -169,7 +169,6 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
         }
     }
 
-
     // select icon(s) for fleet(s)
     int num_ships = 0;
     m_fleet_blockaded = false;
@@ -194,7 +193,6 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
     }
 
     std::shared_ptr<GG::Texture> size_texture = FleetSizeIcon(num_ships, size_type);
-
     if (size_texture) {
         auto icon = GG::Wnd::Create<RotatingGraphic>(size_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         icon->SetPhaseOffset(pointing_angle);
@@ -202,7 +200,6 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
         icon->SetColor(this->Color());
         m_icons.push_back(icon);
         Resize(GG::Pt(size_texture->DefaultWidth(), size_texture->DefaultHeight()));
-        AttachChild(icon);
     }
 
     for (std::shared_ptr<GG::Texture> texture : FleetHeadIcons(fleets, size_type)) {
@@ -213,7 +210,6 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
         m_icons.push_back(icon);
         if (Width() < texture->DefaultWidth())
             Resize(GG::Pt(texture->DefaultWidth(), texture->DefaultHeight()));
-        AttachChild(icon);
     }
 
     // set up selection indicator
@@ -221,6 +217,25 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
     m_selection_indicator->SetRPM(ClientUI::SystemSelectionIndicatorRPM());
 
     LayoutIcons();
+
+    // Scanlines for not currently-visible objects?
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+        return;
+
+    // Create scanline renderer control, use opposite color of fleet btn
+    GG::Clr opposite_clr(255 - Color().r, 255 - Color().g, 255 - Color().b, 64);
+    m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, Width(), Height(), false, opposite_clr);
+
+}
+
+void FleetButton::CompleteConstruction()
+{
+    Button::CompleteConstruction();
+
+    for (auto& icon: m_icons) {
+        AttachChild(icon);
+    }
 
     // Scanlines for not currently-visible objects?
     int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -235,15 +250,12 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
         }
     }
 
-    // Create scanline renderer control, use opposite color of fleet btn
-    GG::Clr opposite_clr(255 - Color().r, 255 - Color().g, 255 - Color().b, 64);
-    m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, Width(), Height(), false, opposite_clr);
-
     if (!at_least_one_fleet_visible)
         AttachChild(m_scanline_control);
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 }
+
 
 FleetButton::~FleetButton() {
     for (auto& icon : m_icons) {

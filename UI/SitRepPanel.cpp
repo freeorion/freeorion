@@ -386,13 +386,13 @@ SitRepPanel::SitRepPanel(const std::string& config_name) :
     m_sitreps_lb->NormalizeRowsOnInsert(false);
     AttachChild(m_sitreps_lb);
 
-    m_prev_turn_button = new CUIButton(UserString("BACK"));
+    m_prev_turn_button = Wnd::Create<CUIButton>(UserString("BACK"));
     AttachChild(m_prev_turn_button);
-    m_next_turn_button = new CUIButton(UserString("NEXT"));
+    m_next_turn_button = Wnd::Create<CUIButton>(UserString("NEXT"));
     AttachChild(m_next_turn_button);
-    m_last_turn_button = new CUIButton(UserString("LAST"));
+    m_last_turn_button = Wnd::Create<CUIButton>(UserString("LAST"));
     AttachChild(m_last_turn_button);
-    m_filter_button = new CUIButton(UserString("FILTERS"));
+    m_filter_button = Wnd::Create<CUIButton>(UserString("FILTERS"));
     AttachChild(m_filter_button);
 
     m_prev_turn_button->LeftClickedSignal.connect(

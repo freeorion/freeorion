@@ -381,7 +381,6 @@ void ValuePicker::SetValueFromPt(Pt pt)
 // ColorDlg
 ////////////////////////////////////////////////
 
-// ColorDlg::ColorButton
 ColorDlg::ColorButton::ColorButton(const Clr& color) :
     Button("", nullptr, color),
     m_represented_color(CLR_BLACK)
@@ -567,7 +566,7 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
                                                  COLOR_BUTTON_ROWS, COLOR_BUTTON_COLS, 0, 4);
     for (int i = 0; i < COLOR_BUTTON_ROWS; ++i) {
         for (int j = 0; j < COLOR_BUTTON_COLS; ++j) {
-            m_color_buttons.push_back(new ColorButton(m_color));
+            m_color_buttons.push_back(Wnd::Create<ColorButton>(m_color));
             m_color_buttons.back()->SetRepresentedColor(s_custom_colors[i * COLOR_BUTTON_COLS + j]);
             m_color_buttons_layout->Add(m_color_buttons.back(), i, j);
         }

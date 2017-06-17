@@ -258,16 +258,16 @@ IntroScreen::IntroScreen() :
     m_splash->AttachChild(m_version);
 
     //create buttons
-    m_single_player = new CUIButton(UserString("INTRO_BTN_SINGLE_PLAYER"));
-    m_quick_start =   new CUIButton(UserString("INTRO_BTN_QUICK_START"));
-    m_multi_player =  new CUIButton(UserString("INTRO_BTN_MULTI_PLAYER"));
-    m_load_game =     new CUIButton(UserString("INTRO_BTN_LOAD_GAME"));
-    m_options =       new CUIButton(UserString("INTRO_BTN_OPTIONS"));
-    m_pedia =         new CUIButton(UserString("INTRO_BTN_PEDIA"));
-    m_about =         new CUIButton(UserString("INTRO_BTN_ABOUT"));
-    m_website =       new CUIButton(UserString("INTRO_BTN_WEBSITE"));
-    m_credits =       new CUIButton(UserString("INTRO_BTN_CREDITS"));
-    m_exit_game =     new CUIButton(UserString("INTRO_BTN_EXIT"));
+    m_single_player = Wnd::Create<CUIButton>(UserString("INTRO_BTN_SINGLE_PLAYER"));
+    m_quick_start =   Wnd::Create<CUIButton>(UserString("INTRO_BTN_QUICK_START"));
+    m_multi_player =  Wnd::Create<CUIButton>(UserString("INTRO_BTN_MULTI_PLAYER"));
+    m_load_game =     Wnd::Create<CUIButton>(UserString("INTRO_BTN_LOAD_GAME"));
+    m_options =       Wnd::Create<CUIButton>(UserString("INTRO_BTN_OPTIONS"));
+    m_pedia =         Wnd::Create<CUIButton>(UserString("INTRO_BTN_PEDIA"));
+    m_about =         Wnd::Create<CUIButton>(UserString("INTRO_BTN_ABOUT"));
+    m_website =       Wnd::Create<CUIButton>(UserString("INTRO_BTN_WEBSITE"));
+    m_credits =       Wnd::Create<CUIButton>(UserString("INTRO_BTN_CREDITS"));
+    m_exit_game =     Wnd::Create<CUIButton>(UserString("INTRO_BTN_EXIT"));
 
     //attach buttons
     m_menu->AttachChild(m_single_player);

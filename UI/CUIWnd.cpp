@@ -426,7 +426,7 @@ void CUIWnd::InitButtons() {
 
     // create the close button
     if (m_closable) {
-        m_close_button = new CUIButton(
+        m_close_button = Wnd::Create<CUIButton>(
             GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "close.png")),
             GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "close_clicked.png")),
             GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "close_mouseover.png")));
@@ -442,7 +442,7 @@ void CUIWnd::InitButtons() {
 
     // create the minimize button
     if (m_minimizable) {
-        m_minimize_button = new CUI_MinRestoreButton();
+        m_minimize_button = Wnd::Create<CUI_MinRestoreButton>();
         m_minimize_button->Resize(GG::Pt(GG::X(ClientUI::TitlePts()), GG::Y(ClientUI::TitlePts())));
         m_minimize_button->LeftClickedSignal.connect(
             boost::bind(&CUIWnd::MinimizeClicked, this));
@@ -452,7 +452,7 @@ void CUIWnd::InitButtons() {
 
     // create the pin button
     if (m_pinable) {
-        m_pin_button = new CUI_PinButton();
+        m_pin_button = Wnd::Create<CUI_PinButton>();
         m_pin_button->Resize(GG::Pt(GG::X(ClientUI::TitlePts()), GG::Y(ClientUI::TitlePts())));
         m_pin_button->LeftClickedSignal.connect(
             boost::bind(&CUIWnd::PinClicked, this));

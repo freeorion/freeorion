@@ -56,12 +56,14 @@ Button::Button(const std::string& str, const std::shared_ptr<Font>& font, Clr co
     m_state(BN_UNPRESSED)
 {
     m_color = color;
-    AttachChild(m_label);
     m_label->Hide();
 
     if (INSTRUMENT_ALL_SIGNALS)
         LeftClickedSignal.connect(&ClickedEcho);
 }
+
+void Button::CompleteConstruction()
+{ AttachChild(m_label); }
 
 Pt Button::MinUsableSize() const
 { return m_label->MinUsableSize(); }

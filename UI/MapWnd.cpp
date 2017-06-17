@@ -985,7 +985,7 @@ MapWnd::MapWnd() :
     // turn button
     // determine size from the text that will go into the button, using a test year string
     std::string turn_button_longest_reasonable_text =  boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) % "99999"); // it is unlikely a game will go over 100000 turns
-    m_btn_turn = new CUIButton(turn_button_longest_reasonable_text);
+    m_btn_turn = Wnd::Create<CUIButton>(turn_button_longest_reasonable_text);
     m_btn_turn->Resize(m_btn_turn->MinUsableSize());
     m_btn_turn->LeftClickedSignal.connect(
         boost::bind(&MapWnd::EndTurn, this));
@@ -995,7 +995,7 @@ MapWnd::MapWnd() :
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
     // auto turn button
-    m_btn_auto_turn = new CUIButton(
+    m_btn_auto_turn = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "manual_turn.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "auto_turn.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "manual_turn_mouseover.png")));
@@ -1019,7 +1019,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
                     _2);
     // Menu button
-    m_btn_menu = new SettableInWindowCUIButton(
+    m_btn_menu = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu_mouseover.png")),
@@ -1036,7 +1036,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Encyclo"pedia" button
-    m_btn_pedia = new SettableInWindowCUIButton(
+    m_btn_pedia = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia_mouseover.png")),
@@ -1053,7 +1053,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Graphs button
-    m_btn_graphs = new SettableInWindowCUIButton(
+    m_btn_graphs = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_mouseover.png")),
@@ -1070,7 +1070,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Design button
-    m_btn_design = new SettableInWindowCUIButton(
+    m_btn_design = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design_mouseover.png")),
@@ -1087,7 +1087,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Production button
-    m_btn_production = new SettableInWindowCUIButton(
+    m_btn_production = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production_mouseover.png")),
@@ -1104,7 +1104,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Research button
-    m_btn_research = new SettableInWindowCUIButton(
+    m_btn_research = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research_mouseover.png")),
@@ -1121,7 +1121,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Objects button
-    m_btn_objects = new SettableInWindowCUIButton(
+    m_btn_objects = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects_mouseover.png")),
@@ -1138,7 +1138,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Empires button
-    m_btn_empires = new SettableInWindowCUIButton(
+    m_btn_empires = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires_mouseover.png")),
@@ -1155,7 +1155,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
                     _2);
     // SitRep button
-    m_btn_siterep = new SettableInWindowCUIButton(
+    m_btn_siterep = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep_mouseover.png")),
@@ -1172,7 +1172,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
                     _2);
     // Messages button
-    m_btn_messages = new SettableInWindowCUIButton(
+    m_btn_messages = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages_mouseover.png")),
@@ -1189,7 +1189,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
                     _2);
     // Moderator button
-    m_btn_moderator = new SettableInWindowCUIButton(
+    m_btn_moderator = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator_mouseover.png")),
@@ -1241,12 +1241,12 @@ MapWnd::MapWnd() :
     GG::SubTexture wasted_ressource_clicked_subtexture = GG::SubTexture(ClientUI::GetTexture(button_texture_dir /
                                                                 "wasted_resource_clicked.png", false));
 
-    m_industry_wasted = new CUIButton(
+    m_industry_wasted = Wnd::Create<CUIButton>(
         wasted_ressource_subtexture,
         wasted_ressource_clicked_subtexture,
         wasted_ressource_mouseover_subtexture);
 
-    m_research_wasted = new CUIButton(
+    m_research_wasted = Wnd::Create<CUIButton>(
         wasted_ressource_subtexture,
         wasted_ressource_clicked_subtexture,
         wasted_ressource_mouseover_subtexture);
@@ -4907,7 +4907,7 @@ void MapWnd::CreateFleetButtonsOfType (
             continue;
 
         // create new fleetbutton for this cluster of fleets
-        auto fb = new FleetButton(fleet_IDs, fleet_button_size);
+        auto fb = GG::Wnd::Create<FleetButton>(fleet_IDs, fleet_button_size);
 
         // store per type of fleet button.
         type_fleet_buttons[key].insert(fb);

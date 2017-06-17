@@ -996,15 +996,15 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     AttachChild(m_env_size);
 
 
-    m_colonize_button = new CUIButton(UserString("PL_COLONIZE"));
+    m_colonize_button = Wnd::Create<CUIButton>(UserString("PL_COLONIZE"));
     m_colonize_button->LeftClickedSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::ClickColonize, this));
 
-    m_invade_button   = new CUIButton(UserString("PL_INVADE"));
+    m_invade_button   = Wnd::Create<CUIButton>(UserString("PL_INVADE"));
     m_invade_button->LeftClickedSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::ClickInvade, this));
 
-    m_bombard_button  = new CUIButton(UserString("PL_BOMBARD"));
+    m_bombard_button  = Wnd::Create<CUIButton>(UserString("PL_BOMBARD"));
     m_bombard_button->LeftClickedSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::ClickBombard, this));
 
@@ -2824,12 +2824,12 @@ SidePanel::SidePanel(const std::string& config_name) :
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
-    m_button_prev = new CUIButton(
+    m_button_prev = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "leftarrownormal.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "leftarrowclicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "leftarrowmouseover.png")));
 
-    m_button_next = new CUIButton(
+    m_button_next = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrownormal.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrowclicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrowmouseover.png")));

@@ -434,7 +434,7 @@ OptionsWnd::OptionsWnd():
     m_tabs(nullptr),
     m_done_button(nullptr)
 {
-    m_done_button = new CUIButton(UserString("DONE"));
+    m_done_button = Wnd::Create<CUIButton>(UserString("DONE"));
     // FIXME: PAGE_WIDTH is needed to prevent triggering an assert within the TabBar class.
     // The placement of the tab register buttons assumes that the whole TabWnd is at least
     // wider than the first tab button.
@@ -989,7 +989,7 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const 
     auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     auto edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>(option_name));
     edit->Resize(GG::Pt(50*SPIN_WIDTH, edit->Height())); // won't resize within layout bigger than its initial size, so giving a big initial size here
-    auto button = new CUIButton("...");
+    auto button = Wnd::Create<CUIButton>("...");
 
     auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, ROW_WIDTH, button->MinUsableSize().y,
                                               1, 3, 0, 5);

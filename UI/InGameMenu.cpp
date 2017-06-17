@@ -28,11 +28,11 @@ InGameMenu::InGameMenu():
     CUIWnd(UserString("GAME_MENU_WINDOW_TITLE"),
            GG::INTERACTIVE | GG::MODAL)
 {
-    m_save_btn = new CUIButton(UserString("GAME_MENU_SAVE"));
-    m_load_btn = new CUIButton(UserString("GAME_MENU_LOAD"));
-    m_options_btn = new CUIButton(UserString("INTRO_BTN_OPTIONS"));
-    m_exit_btn = new CUIButton(UserString("GAME_MENU_RESIGN"));
-    m_done_btn = new CUIButton(UserString("DONE"));
+    m_save_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_SAVE"));
+    m_load_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_LOAD"));
+    m_options_btn = Wnd::Create<CUIButton>(UserString("INTRO_BTN_OPTIONS"));
+    m_exit_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_RESIGN"));
+    m_done_btn = Wnd::Create<CUIButton>(UserString("DONE"));
 
     AttachChild(m_save_btn);
     AttachChild(m_load_btn);
