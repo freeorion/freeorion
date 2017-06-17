@@ -146,6 +146,23 @@ extern GG_API const WndFlag NO_WND_FLAGS;
     <br>Note that OnTop() and Modal() flags only apply to top-level
     (Parent()-less) Wnds.
 
+    <h3>Resource Management</h3>
+    Wnd uses std::shared_ptr and std::weak_ptr to manage its resources.
+
+    Parent windows point to their children with shared_ptr and own the children.
+    All other pointers should be non-owning weak_ptr to prevent leaks and/or
+    referencing windows already removed from the hierarchy.
+
+    Each window uses shared_from_this() to refer to itself.  The internal
+    weak_ptr from shared_from_this is not constructed until after the Wnd is
+    assigned to at least one shared_ptr.  Consequently, AttachChild() can
+    not be called from within a constructor.
+
+    A default factory function Create<T> is provided that creates the shared_ptr
+    and then calls CompleteConstruction() in order to assemble the children.  A
+    dervied class can override CompleteConstruction() to correctly assemble its
+    children.
+
     <h3>Signal Considerations</h3>
 
     <br>Wnd inherits from boost::signals2::trackable.  This means that any
@@ -308,6 +325,21 @@ public:
     /** \name Structors */ ///@{
     virtual ~Wnd();
     //@}
+
+    /** Create is the default factory which allocates and configures a T type
+        derived from Wnd.  It requires that the T constructor followed by
+        T->CompleteConstruction() produce a correct T. */
+    template <typename T, typename... Args>
+    static T* Create(Args&&... args)
+    {
+        auto wnd(new T(std::forward<Args>(args)...));
+        wnd->CompleteConstruction();
+        return wnd;
+    }
+
+    /** CompleteConstruction() should be overriden to complete construction of derived classes that
+        need a fully formed weak_from_this() (i.e. to call AttachChild()) to be correctly constructed. */
+    virtual void CompleteConstruction(){};
 
     /** \name Accessors */ ///@{
     /** Returns true iff a click over this window does not pass through.  Note
