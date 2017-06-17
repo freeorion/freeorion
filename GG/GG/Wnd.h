@@ -38,6 +38,7 @@
 #include <list>
 #include <set>
 #include <vector>
+#include <memory>
 
 
 namespace GG {
@@ -258,7 +259,8 @@ extern GG_API const WndFlag NO_WND_FLAGS;
     complete customization, each Wnd may have one installed as well.  The
     GetStyleFactory() method returns the one installed in the Wnd, if one
     exists, or the GUI-wide one otherwise. */
-class GG_API Wnd : public boost::signals2::trackable
+class GG_API Wnd : public boost::signals2::trackable,
+                   public std::enable_shared_from_this<Wnd>
 {
 public:
     /** \brief The data necessary to represent a browse info mode.
