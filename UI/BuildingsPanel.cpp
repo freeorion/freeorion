@@ -130,7 +130,7 @@ void BuildingsPanel::Update() {
         if (building->SystemID() != system_id || building->PlanetID() != m_planet_id)
             continue;
 
-        BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), object_id);
+        auto ind = new BuildingIndicator(GG::X(indicator_size), object_id);
         m_building_indicators.push_back(ind);
 
         ind->RightClickedSignal.connect(BuildingRightClickedSignal);
@@ -155,7 +155,7 @@ void BuildingsPanel::Update() {
 
         double progress = std::max(0.0f, empire->ProductionStatus(queue_index));
         double turns_completed = progress / std::max(total_cost, 1.0);
-        BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), elem.item.name,
+        auto ind = new BuildingIndicator(GG::X(indicator_size), elem.item.name,
                                                        turns_completed, total_turns, total_cost, turn_spending);
 
         m_building_indicators.push_back(ind);

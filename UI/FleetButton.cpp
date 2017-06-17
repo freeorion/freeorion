@@ -180,7 +180,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
 
     // add RotatingGraphics for all icons needed
     if (size_texture) {
-        RotatingGraphic* icon = new RotatingGraphic(size_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        auto icon = new RotatingGraphic(size_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         icon->SetPhaseOffset(pointing_angle);
         icon->SetRPM(0.0f);
         icon->SetColor(this->Color());
@@ -190,7 +190,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
     }
 
     for (std::shared_ptr<GG::Texture> texture : FleetHeadIcons(fleets, size_type)) {
-        RotatingGraphic* icon = new RotatingGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        auto icon = new RotatingGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         icon->SetPhaseOffset(pointing_angle);
         icon->SetRPM(0.0f);
         icon->SetColor(this->Color());

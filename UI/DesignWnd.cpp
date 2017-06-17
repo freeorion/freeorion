@@ -1205,7 +1205,7 @@ void PartsListBox::Populate() {
             ++cur_col;
 
             // make new part control and add to row
-            PartControl* control = new PartControl(part);
+            auto control = new PartControl(part);
             control->ClickedSignal.connect(
                 PartsListBox::PartTypeClickedSignal);
             control->DoubleClickedSignal.connect(
@@ -2168,7 +2168,7 @@ void CompletedDesignsListBox::PopulateCore() {
                     || (available && !obsolete && showing_available)
                     || (!available && showing_unavailable))
                 {
-                    CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, *design);
+                    auto row = new CompletedDesignListBoxRow(row_size.x, row_size.y, *design);
                     if (obsolete)
                         row->SetAvailability(Availability::Obsolete);
                     else if (!available)
@@ -2188,7 +2188,7 @@ void CompletedDesignsListBox::PopulateCore() {
             const ShipDesign* design = it->second;
             if (!design->Producible())
                 continue;
-            CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, *design);
+            auto row = new CompletedDesignListBoxRow(row_size.x, row_size.y, *design);
             Insert(row);
             row->Resize(row_size);
         }
@@ -2214,7 +2214,7 @@ void SavedDesignsListBox::PopulateCore() {
         if (!((available && showing_available) || (!available && showing_unavailable)))
             continue;
 
-        SavedDesignListBoxRow* row = new SavedDesignListBoxRow(row_size.x, row_size.y, *design);
+        auto row = new SavedDesignListBoxRow(row_size.x, row_size.y, *design);
         Insert(row);
         row->Resize(row_size);
 
@@ -2238,7 +2238,7 @@ void MonstersListBox::PopulateCore() {
         const ShipDesign* design = it->second;
         if (!design->IsMonster())
             continue;
-        CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, *design);
+        auto row = new CompletedDesignListBoxRow(row_size.x, row_size.y, *design);
         Insert(row);
         row->Resize(row_size);
     }
@@ -3833,7 +3833,7 @@ void DesignWnd::MainPanel::Populate(){
 
     for (std::vector<HullType::Slot>::size_type i = 0; i != hull_slots.size(); ++i) {
         const HullType::Slot& slot = hull_slots[i];
-        SlotControl* slot_control = new SlotControl(slot.x, slot.y, slot.type);
+        auto slot_control = new SlotControl(slot.x, slot.y, slot.type);
         m_slots.push_back(slot_control);
         AttachChild(slot_control);
         slot_control->SlotContentsAlteredSignal.connect(

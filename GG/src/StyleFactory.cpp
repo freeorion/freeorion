@@ -174,7 +174,7 @@ StateButton* StyleFactory::NewTabBarTab(const std::string& str,
                                         const std::shared_ptr<Font>& font, Flags<TextFormat> format, Clr color,
                                         Clr text_color/* = CLR_BLACK*/) const
 {
-    StateButton* retval = new StateButton(str, font, format, color, std::make_shared<BeveledTabRepresenter>(), text_color);
+    auto retval = new StateButton(str, font, format, color, std::make_shared<BeveledTabRepresenter>(), text_color);
     retval->Resize(retval->MinUsableSize() + Pt(X(12), Y0));
     return retval;
 }

@@ -306,7 +306,7 @@ namespace {
 }
 
 LinkText * CombatLogWnd::Impl::DecorateLinkText(std::string const & text) {
-    LazyScrollerLinkText * links = new LazyScrollerLinkText(m_wnd, GG::X0, GG::Y0, text, m_font, GG::CLR_WHITE);
+    auto links = new LazyScrollerLinkText(m_wnd, GG::X0, GG::Y0, text, m_font, GG::CLR_WHITE);
 
     links->SetTextFormat(m_text_format_flags);
 
@@ -390,7 +390,7 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
     }
 
     m_wnd.DeleteChildren();
-    GG::Layout* layout = new GG::DeferredLayout(m_wnd.RelativeUpperLeft().x, m_wnd.RelativeUpperLeft().y,
+    auto layout = new GG::DeferredLayout(m_wnd.RelativeUpperLeft().x, m_wnd.RelativeUpperLeft().y,
                                                 m_wnd.Width(), m_wnd.Height(),
                                                 1, 1, ///< numrows, numcols
                                                 0, 0 ///< wnd margin, cell margin

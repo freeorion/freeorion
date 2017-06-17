@@ -764,7 +764,7 @@ void GraphicalSummaryWnd::GenerateGraph() {
     for (std::map<int, CombatSummary>::value_type& summary : m_summaries) {
         if (summary.second.total_max_health > EPSILON) {
             summary.second.Sort();
-            SideBar* box = new SideBar(summary.second, *m_sizer);
+            auto box = new SideBar(summary.second, *m_sizer);
             m_side_boxes.push_back(box);
             AttachChild(box);
         }

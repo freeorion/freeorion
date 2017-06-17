@@ -162,7 +162,7 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<s
     for (std::multimap<float, std::string>::const_reverse_iterator it = counts_species.rbegin();
          it != counts_species.rend(); ++it)
     {
-        GG::ListBox::Row* row = new GG::ListBox::Row(m_list->Width(), ROW_HEIGHT, "Census Species Row");
+        auto row = new GG::ListBox::Row(m_list->Width(), ROW_HEIGHT, "Census Species Row");
         row->push_back(new CensusRowPanel(m_list->Width(), ROW_HEIGHT, it->second, it->first, true));
         m_list->Insert(row);
         row->Resize(GG::Pt(m_list->Width(), ROW_HEIGHT));
@@ -206,7 +206,7 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<s
         //DebugLogger() << "Census checking for tag '"<< tag_ord <<"'";
         std::map<std::string, float>::const_iterator it2 = tag_counts.find(tag_ord);
         if (it2 != tag_counts.end()) {
-            GG::ListBox::Row* row = new GG::ListBox::Row(m_list->Width(), ROW_HEIGHT, "Census Characteristics Row");
+            auto row = new GG::ListBox::Row(m_list->Width(), ROW_HEIGHT, "Census Characteristics Row");
             row->push_back(new CensusRowPanel(m_tags_list->Width(), ROW_HEIGHT, it2->first, it2->second, false));
             m_tags_list->Insert(row);
             row->Resize(GG::Pt(m_list->Width(), ROW_HEIGHT));

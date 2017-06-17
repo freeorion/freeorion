@@ -557,7 +557,7 @@ void ResearchWnd::UpdateQueue() {
         return;
 
     for (const ResearchQueue::Element& elem : empire->GetResearchQueue()) {
-        QueueRow* row = new QueueRow(queue_lb->RowWidth(), elem);
+        auto row = new QueueRow(queue_lb->RowWidth(), elem);
         queue_lb->Insert(row);
     }
 

@@ -483,7 +483,7 @@ FleetWnd* FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
         // Only write to OptionsDB if in single fleet window mode.
         config_name = FLEET_WND_NAME;
     }
-    FleetWnd* retval = new FleetWnd(fleet_ids, m_order_issuing_enabled, selected_fleet_id, flags, config_name);
+    auto retval = new FleetWnd(fleet_ids, m_order_issuing_enabled, selected_fleet_id, flags, config_name);
 
     m_fleet_wnds.insert(retval);
     retval->ClosingSignal.connect(
@@ -1020,7 +1020,7 @@ void ShipDataPanel::Init() {
     meters_icons.push_back({METER_SPEED,      ClientUI::MeterIcon(METER_SPEED)});
 
     for (std::pair<MeterType, std::shared_ptr<GG::Texture>>& entry : meters_icons) {
-        StatisticIcon* icon = new StatisticIcon(entry.second, 0, 0, false, StatIconSize().x, StatIconSize().y);
+        auto icon = new StatisticIcon(entry.second, 0, 0, false, StatIconSize().x, StatIconSize().y);
         m_stat_icons.push_back({entry.first, icon});
         AttachChild(icon);
         icon->SetBrowseModeTime(tooltip_delay);
@@ -1706,7 +1706,7 @@ void FleetDataPanel::Init() {
         meters_icons_browsetext.emplace_back(METER_SPEED, ClientUI::MeterIcon(METER_SPEED), "FW_FLEET_SPEED_SUMMARY");
 
         for (const std::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>& entry : meters_icons_browsetext) {
-            StatisticIcon* icon = new StatisticIcon(std::get<1>(entry), 0, 0, false, StatIconSize().x, StatIconSize().y);
+            auto icon = new StatisticIcon(std::get<1>(entry), 0, 0, false, StatIconSize().x, StatIconSize().y);
             m_stat_icons.push_back({std::get<0>(entry), icon});
             icon->SetBrowseModeTime(tooltip_delay);
             icon->SetBrowseText(UserString(std::get<2>(entry)));
@@ -2224,7 +2224,7 @@ public:
             if (this_client_stale_object_info.find(ship_id) != this_client_stale_object_info.end())
                 continue;
 
-            ShipRow* row = new ShipRow(GG::X1, row_size.y, ship_id);
+            auto row = new ShipRow(GG::X1, row_size.y, ship_id);
             rows.push_back(row);
         }
         Insert(rows, false);
@@ -2692,7 +2692,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
             std::make_tuple(METER_POPULATION, ColonyIcon(), UserStringNop("FW_FLEET_COLONY_SUMMARY")),
         })
     {
-        StatisticIcon* icon = new StatisticIcon(std::get<1>(entry), 0, 0, false, StatIconSize().x, StatIconSize().y);
+        auto icon = new StatisticIcon(std::get<1>(entry), 0, 0, false, StatIconSize().x, StatIconSize().y);
         m_stat_icons.push_back({std::get<0>(entry), icon});
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString(std::get<2>(entry)));
@@ -3074,7 +3074,7 @@ void FleetWnd::AddFleet(int fleet_id) {
 
     // verify that fleet is consistent
     const GG::Pt row_size = m_fleets_lb->ListRowSize();
-    FleetRow* row = new FleetRow(fleet_id, GG::X1, row_size.y);
+    auto row = new FleetRow(fleet_id, GG::X1, row_size.y);
     m_fleets_lb->Insert(row);
     row->Resize(row_size);
 }

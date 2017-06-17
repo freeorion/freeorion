@@ -608,7 +608,7 @@ void PlayerListWnd::Refresh() {
 
     for (const std::map<int, PlayerInfo>::value_type& player : players) {
         int player_id = player.first;
-        PlayerRow* player_row = new PlayerRow(row_size.x, row_size.y, player_id);
+        auto player_row = new PlayerRow(row_size.x, row_size.y, player_id);
         m_player_list->Insert(player_row);
         player_row->Resize(row_size);
     }

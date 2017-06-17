@@ -59,7 +59,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     // small meter indicators - for use when panel is collapsed
     for (MeterType meter : {METER_INDUSTRY, METER_RESEARCH, METER_TRADE, METER_SUPPLY})
     {
-        StatisticIcon* stat = new StatisticIcon(ClientUI::MeterIcon(meter), obj->InitialMeterValue(meter), 3, false, MeterIconSize().x, MeterIconSize().y);
+        auto stat = new StatisticIcon(ClientUI::MeterIcon(meter), obj->InitialMeterValue(meter), 3, false, MeterIconSize().x, MeterIconSize().y);
         stat->InstallEventFilter(this);
         AttachChild(stat);
         m_meter_stats.push_back({meter, stat});

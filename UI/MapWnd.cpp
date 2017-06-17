@@ -951,7 +951,7 @@ MapWnd::MapWnd() :
     GG::GUI::GetGUI()->Register(m_toolbar);
     m_toolbar->Hide();
 
-    GG::Layout* layout = new GG::Layout(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
+    auto layout = new GG::Layout(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
                                         m_toolbar->ClientWidth(),       m_toolbar->ClientHeight(),
                                         1, 21);
     layout->SetName("Toolbar Layout");
@@ -2860,7 +2860,7 @@ void MapWnd::InitTurnRendering() {
             continue;
 
         // create new system icon
-        SystemIcon* icon = new SystemIcon(GG::X0, GG::Y0, GG::X(10), sys_id);
+        auto icon = new SystemIcon(GG::X0, GG::Y0, GG::X(10), sys_id);
         m_system_icons[sys_id] = icon;
         icon->InstallEventFilter(this);
         if (SidePanel::SystemID() == sys_id)
@@ -2912,7 +2912,7 @@ void MapWnd::InitTurnRendering() {
         //    continue;
 
         // create new system icon
-        FieldIcon* icon = new FieldIcon(fld_id);
+        auto icon = new FieldIcon(fld_id);
         m_field_icons[fld_id] = icon;
         icon->InstallEventFilter(this);
 
@@ -4884,7 +4884,7 @@ void MapWnd::CreateFleetButtonsOfType (
             continue;
 
         // create new fleetbutton for this cluster of fleets
-        FleetButton* fb = new FleetButton(fleet_IDs, fleet_button_size);
+        auto fb = new FleetButton(fleet_IDs, fleet_button_size);
 
         // store per type of fleet button.
         type_fleet_buttons[key].insert(fb);

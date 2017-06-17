@@ -1374,10 +1374,10 @@ namespace {
                   GG::X width, GG::Y height, std::shared_ptr<GG::Texture> species_icon)
         {
             GG::Wnd::SetName(species_name);
-            GG::StaticGraphic* icon = new GG::StaticGraphic(species_icon, GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
+            auto icon = new GG::StaticGraphic(species_icon, GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
             icon->Resize(GG::Pt(GG::X(Value(height - 5)), height - 5));
             push_back(icon);
-            GG::Label* species_label = new CUILabel(localized_name, GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            auto species_label = new CUILabel(localized_name, GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             push_back(species_label);
             GG::X first_col_width(Value(height));
             SetColWidth(0, first_col_width);

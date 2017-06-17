@@ -1829,9 +1829,9 @@ void SidePanel::PlanetPanel::Refresh() {
         for (const std::string& focus_name : available_foci) {
             std::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(
                 ClientUI::ArtDir() / planet->FocusIcon(focus_name), true);
-            GG::StaticGraphic* graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            auto graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             graphic->Resize(GG::Pt(MeterIconSize().x*3/2, MeterIconSize().y*3/2));
-            GG::DropDownList::Row* row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "FOCUS");
+            auto row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "FOCUS");
 
             row->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
             row->SetBrowseText(
@@ -2554,7 +2554,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
 
     // create new panels and connect their signals
     for (std::multimap<int, int>::value_type& orbit_planet : orbits_planets) {
-        PlanetPanel* planet_panel = new PlanetPanel(Width() - m_vscroll->Width(), orbit_planet.second, star_type);
+        auto planet_panel = new PlanetPanel(Width() - m_vscroll->Width(), orbit_planet.second, star_type);
         AttachChild(planet_panel);
         m_planet_panels.push_back(planet_panel);
         m_planet_panels.back()->LeftClickedSignal.connect(
