@@ -18,6 +18,7 @@ public:
     //! \name Structors
     //!@{
     OptionsWnd();
+    void CompleteConstruction() override;
 
     ~OptionsWnd();
     //!@}

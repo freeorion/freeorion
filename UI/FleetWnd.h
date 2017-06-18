@@ -97,6 +97,7 @@ public:
 
     ~FleetWnd();
     //@}
+    void CompleteConstruction() override;
 
     //! \name Accessors //@{
     int                     SystemID() const;                   ///< returns ID of system whose fleets are shown in this FleetWnd, which may be INVALID_OBJECT_ID if this FleetWnd isn't set to show fleets of a system

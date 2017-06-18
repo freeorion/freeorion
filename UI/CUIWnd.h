@@ -97,6 +97,7 @@ public:
            const std::string& config_name = "",
            bool visible = true);
 
+    void CompleteConstruction() override;
     /** Virtual destructor. */
     virtual ~CUIWnd();
     //@}
@@ -185,7 +186,7 @@ protected:
 
     virtual void    InitBuffers();
     void            LoadOptions();                  //!< loads options for this window from the OptionsDB
-    void            Init(const std::string& t);     //!< performs initialization common to all CUIWnd constructors
+    void            Init();                         //!< performs initialization common to all CUIWnd constructors
     void            ResetDefaultPosition();         //!< called via signal from the ClientUI, passes the value from CalculatePosition() to InitSizeMove()
 
     void SetParent(GG::Wnd* wnd) override;
@@ -232,6 +233,7 @@ protected:
 class CUIEditWnd : public CUIWnd {
 public:
     CUIEditWnd(GG::X w, const std::string& prompt_text, const std::string& edit_text, GG::Flags<GG::WndFlag> flags = GG::MODAL);
+    void CompleteConstruction() override;
 
     void ModalInit() override;
 

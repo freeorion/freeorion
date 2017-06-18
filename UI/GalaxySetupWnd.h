@@ -138,6 +138,7 @@ class GalaxySetupWnd : public CUIWnd {
 public:
     /** \name Structors*/ //!@{
     GalaxySetupWnd();
+    void CompleteConstruction() override;
     //!@}
 
     /** \name Accessors*/ //!@{

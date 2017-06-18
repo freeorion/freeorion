@@ -11,6 +11,7 @@ class PlayerListWnd : public CUIWnd {
 public:
     //! \name Structors //@{
     PlayerListWnd(const std::string& config_name);
+    void CompleteConstruction() override;
     //@}
 
     //! \name Accessors //@{

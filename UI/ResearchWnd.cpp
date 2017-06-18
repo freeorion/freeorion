@@ -354,6 +354,9 @@ public:
         CUIWnd("", x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
                "research.ResearchQueueWnd"),
         m_queue_lb(nullptr)
+    {}
+
+    void CompleteConstruction() override
     {
         m_queue_lb = GG::Wnd::Create<ResearchQueueListBox>(std::string("RESEARCH_QUEUE_ROW"), UserString("RESEARCH_QUEUE_PROMPT"));
         m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
@@ -362,6 +365,9 @@ public:
         SetEmpire(HumanClientApp::GetApp()->EmpireID());
 
         AttachChild(m_queue_lb);
+
+        CUIWnd::CompleteConstruction();
+
         DoLayout();
     }
     //@}

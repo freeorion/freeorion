@@ -51,7 +51,12 @@ ServerConnectWnd::ServerConnectWnd() :
     m_player_name_edit(nullptr),
     m_ok_bn(nullptr),
     m_cancel_bn(nullptr)
+{}
+
+void ServerConnectWnd::CompleteConstruction()
 {
+    CUIWnd::CompleteConstruction();
+
     Sound::TempUISoundDisabler sound_disabler;
 
     auto player_name_label = GG::Wnd::Create<CUILabel>(UserString("PLAYER_NAME_LABEL"), GG::FORMAT_LEFT);

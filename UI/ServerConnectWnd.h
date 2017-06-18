@@ -14,6 +14,7 @@ class ServerConnectWnd : public CUIWnd
 public:
     /** \name Structors */ //@{
     ServerConnectWnd();
+    void CompleteConstruction() override;
     //@}
 
     //! \name Mutators

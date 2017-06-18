@@ -724,6 +724,9 @@ public:
         CUIWnd("", x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
                "production.ProductionQueueWnd"),
         m_queue_lb(nullptr)
+    {}
+
+    void CompleteConstruction() override
     {
         m_queue_lb = GG::Wnd::Create<ProdQueueListBox>();
         m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
@@ -732,6 +735,9 @@ public:
         SetEmpire(HumanClientApp::GetApp()->EmpireID());
 
         AttachChild(m_queue_lb);
+
+        CUIWnd::CompleteConstruction();
+
         DoLayout();
     }
     //@}
@@ -780,7 +786,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
     GG::Y info_height(ClientUI::Pts()*8);
 
-    m_production_info_panel = new ProductionInfoPanel(UserString("PRODUCTION_WND_TITLE"), UserString("PRODUCTION_INFO_PP"),
+    m_production_info_panel = GG::Wnd::Create<ProductionInfoPanel>(UserString("PRODUCTION_WND_TITLE"), UserString("PRODUCTION_INFO_PP"),
                                                       GG::X0, GG::Y0, queue_width, info_height,
                                                       "production.InfoPanel");
     m_queue_wnd = GG::Wnd::Create<ProductionQueueWnd>(GG::X0, info_height, queue_width, ClientSize().y - info_height);

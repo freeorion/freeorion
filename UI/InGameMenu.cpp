@@ -27,7 +27,12 @@ namespace {
 InGameMenu::InGameMenu():
     CUIWnd(UserString("GAME_MENU_WINDOW_TITLE"),
            GG::INTERACTIVE | GG::MODAL)
+{}
+
+void InGameMenu::CompleteConstruction()
 {
+    CUIWnd::CompleteConstruction();
+
     m_save_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_SAVE"));
     m_load_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_LOAD"));
     m_options_btn = Wnd::Create<CUIButton>(UserString("INTRO_BTN_OPTIONS"));
@@ -160,9 +165,9 @@ void InGameMenu::Save() {
         // When saving in multiplayer, you cannot see the old saves or
         // browse directories, only give a save file name.
         DebugLogger() << "... running save file dialog";
-        SaveFileDialog dlg(app->SinglePlayerGame() ? SAVE_GAME_EXTENSION : MP_SAVE_FILE_EXTENSION);
-        dlg.Run();
-        filename = dlg.Result();
+        auto dlg = GG::Wnd::Create<SaveFileDialog>(app->SinglePlayerGame() ? SAVE_GAME_EXTENSION : MP_SAVE_FILE_EXTENSION);
+        dlg->Run();
+        filename = dlg->Result();
 
         if (!filename.empty()) {
             if (!app->CanSaveNow()) {
@@ -188,8 +193,8 @@ void InGameMenu::Load() {
 }
 
 void InGameMenu::Options() {
-    OptionsWnd options_wnd;
-    options_wnd.Run();
+    auto options_wnd = GG::Wnd::Create<OptionsWnd>();
+    options_wnd->Run();
 }
 
 void InGameMenu::Exit() {

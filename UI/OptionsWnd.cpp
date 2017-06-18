@@ -224,7 +224,12 @@ namespace {
             m_font_graphic(nullptr),
             m_title_font_graphic(nullptr),
             m_hscroll(nullptr)
+        {}
+
+        void CompleteConstruction() override
         {
+            CUIWnd::CompleteConstruction();
+
             GG::Y top = GG::Y1;
 
             std::shared_ptr<GG::Font> font = ClientUI::GetFont();
@@ -259,6 +264,7 @@ namespace {
             DoLayout();
         }
 
+    public:
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             GG::Pt old_size = GG::Wnd::Size();
 
@@ -293,7 +299,7 @@ namespace {
     };
 
     void ShowFontTextureWnd() {
-        auto font_wnd = new FontTextureWnd();
+        auto font_wnd =  GG::Wnd::Create<FontTextureWnd>();
         font_wnd->Run();
         delete font_wnd;
     }
@@ -433,6 +439,9 @@ OptionsWnd::OptionsWnd():
            OPTIONS_WND_NAME),
     m_tabs(nullptr),
     m_done_button(nullptr)
+{}
+
+void OptionsWnd::CompleteConstruction()
 {
     m_done_button = Wnd::Create<CUIButton>(UserString("DONE"));
     // FIXME: PAGE_WIDTH is needed to prevent triggering an assert within the TabBar class.
@@ -440,6 +449,8 @@ OptionsWnd::OptionsWnd():
     // wider than the first tab button.
     m_tabs = new GG::TabWnd(GG::X0, GG::Y0, PAGE_WIDTH, GG::Y1, ClientUI::GetFont(),
                             ClientUI::WndColor(), ClientUI::TextColor());
+
+    CUIWnd::CompleteConstruction();
 
     ResetDefaultPosition();
     SetMinSize(GG::Pt(PAGE_WIDTH + 20, PAGE_HEIGHT + 70));

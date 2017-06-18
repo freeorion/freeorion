@@ -1300,6 +1300,7 @@ class DesignWnd::PartPalette : public CUIWnd {
 public:
     /** \name Structors */ //@{
     PartPalette(const std::string& config_name);
+    void CompleteConstruction() override;
     //@}
 
     /** \name Mutators */ //@{
@@ -1342,6 +1343,9 @@ DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
            config_name),
     m_parts_list(nullptr),
     m_superfluous_parts_button(nullptr)
+{}
+
+void DesignWnd::PartPalette::CompleteConstruction()
 {
     //TempUISoundDisabler sound_disabler;     // should be redundant with disabler in DesignWnd::DesignWnd.  uncomment if this is not the case
     SetChildClippingMode(ClipToClient);
@@ -1396,6 +1400,8 @@ DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
     ShowAllClasses(false);
     ShowAvailability(true, false);
     ShowSuperfluous(false);
+
+    CUIWnd::CompleteConstruction();
 
     DoLayout();
 }
@@ -2673,6 +2679,7 @@ class DesignWnd::BaseSelector : public CUIWnd {
 public:
     /** \name Structors */ //@{
     BaseSelector(const std::string& config_name);
+    void CompleteConstruction() override;
     //@}
 
     /** \name Mutators */ //@{
@@ -2722,6 +2729,9 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_saved_designs_list(nullptr),
     m_monsters_list(nullptr),
     m_availabilities_state{false, true, false}
+{}
+
+void DesignWnd::BaseSelector::CompleteConstruction()
 {
     auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
     m_obsolete_button = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
@@ -2780,6 +2790,8 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
         DesignWnd::BaseSelector::DesignSelectedSignal);
     m_monsters_list->DesignClickedSignal.connect(
         DesignWnd::BaseSelector::DesignClickedSignal);
+
+    CUIWnd::CompleteConstruction();
 
     DoLayout();
 }
@@ -3238,6 +3250,7 @@ public:
 
     /** \name Structors */ //@{
     MainPanel(const std::string& config_name);
+    void CompleteConstruction() override;
     //@}
 
     /** \name Accessors */ //@{
@@ -3412,6 +3425,9 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     m_clear_button(nullptr),
     m_disabled_by_name(false),
     m_disabled_by_part_conflict(false)
+{}
+
+void DesignWnd::MainPanel::CompleteConstruction()
 {
     SetChildClippingMode(ClipToClient);
 
@@ -3445,6 +3461,8 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     DesignConfirmedSignal.connect(boost::bind(&DesignWnd::MainPanel::AddDesign, this));
 
     DesignChanged(); // Initialize components that rely on the current state of the design.
+
+    CUIWnd::CompleteConstruction();
 
     DoLayout();
 }
@@ -4303,10 +4321,10 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     Sound::TempUISoundDisabler sound_disabler;
     SetChildClippingMode(ClipToClient);
 
-    m_detail_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE, DES_PEDIA_WND_NAME);
-    m_main_panel = new MainPanel(DES_MAIN_WND_NAME);
-    m_part_palette = new PartPalette(DES_PART_PALETTE_WND_NAME);
-    m_base_selector = new BaseSelector(DES_BASE_SELECTOR_WND_NAME);
+    m_detail_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE, DES_PEDIA_WND_NAME);
+    m_main_panel = GG::Wnd::Create<MainPanel>(DES_MAIN_WND_NAME);
+    m_part_palette = GG::Wnd::Create<PartPalette>(DES_PART_PALETTE_WND_NAME);
+    m_base_selector = GG::Wnd::Create<BaseSelector>(DES_BASE_SELECTOR_WND_NAME);
     InitializeWindows();
     HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
         boost::bind(&DesignWnd::InitializeWindows, this));

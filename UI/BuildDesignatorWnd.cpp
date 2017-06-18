@@ -426,6 +426,7 @@ class BuildDesignatorWnd::BuildSelector : public CUIWnd {
 public:
     /** \name Structors */ //@{
     BuildSelector(const std::string& config_name = "");
+    void CompleteConstruction() override;
     //@}
 
     /** \name Accessors */ //@{
@@ -519,6 +520,9 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(const std::string& config_name)
     m_buildable_items(GG::Wnd::Create<BuildableItemsListBox>()),
     m_production_location(INVALID_OBJECT_ID),
     m_empire_id(ALL_EMPIRES)
+{}
+
+void BuildDesignatorWnd::BuildSelector::CompleteConstruction()
 {
     // create build type toggle buttons (ship, building, all)
     m_build_type_buttons[BT_BUILDING] = new CUIStateButton(UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
@@ -559,6 +563,8 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(const std::string& config_name)
     //    m_buildable_items->SetColWidth(i, col_widths[i]);
     //    m_buildable_items->SetColAlignment(i, GG::ALIGN_LEFT);
     //}
+
+    CUIWnd::CompleteConstruction();
 
     DoLayout();
 }
@@ -947,13 +953,14 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     m_build_selector(nullptr),
     m_side_panel(nullptr)
 {
-    m_enc_detail_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, PROD_PEDIA_WND_NAME);
+    m_enc_detail_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(
+        GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, PROD_PEDIA_WND_NAME);
     // Wnd is manually closed by user
     m_enc_detail_panel->ClosingSignal.connect(
         boost::bind(&BuildDesignatorWnd::HidePedia, this));
 
-    m_side_panel = new SidePanel(PROD_SIDEPANEL_WND_NAME);
-    m_build_selector = new BuildSelector(PROD_SELECTOR_WND_NAME);
+    m_side_panel = GG::Wnd::Create<SidePanel>(PROD_SIDEPANEL_WND_NAME);
+    m_build_selector = GG::Wnd::Create<BuildSelector>(PROD_SELECTOR_WND_NAME);
     InitializeWindows();
     HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
         boost::bind(&BuildDesignatorWnd::InitializeWindows, this));

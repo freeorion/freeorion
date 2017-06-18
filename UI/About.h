@@ -10,8 +10,9 @@ public:
 //! \name Structors
 //!@{
     About();
-    ~About();
+    void CompleteConstruction() override;
 //!@}
+    ~About();
 
 //! \name Mutators
 //!@{

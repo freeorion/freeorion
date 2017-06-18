@@ -30,6 +30,7 @@ public:
     /// Contruct for getting the previews from the server
     SaveFileDialog(bool load = false);
 
+    void CompleteConstruction() override;
     ~SaveFileDialog();
     //@}
 

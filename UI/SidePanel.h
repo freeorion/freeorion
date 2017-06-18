@@ -22,6 +22,7 @@ public:
 
     /** \name Structors */ //@{
     SidePanel(const std::string& config_name);
+    void CompleteConstruction() override;
     ~SidePanel();
     //@}
 

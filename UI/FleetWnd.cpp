@@ -2547,10 +2547,10 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     if (ship->OwnedBy(client_empire_id) || ClientPlayerIsModerator()) {
         auto rename_action = [ship, client_empire_id]() {
             std::string ship_name = ship->Name();
-            CUIEditWnd edit_wnd(GG::X(350), UserString("ENTER_NEW_NAME"), ship_name);
-            edit_wnd.Run();
+            std::shared_ptr<CUIEditWnd> edit_wnd(GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("ENTER_NEW_NAME"), ship_name));
+            edit_wnd->Run();
 
-            std::string new_name = edit_wnd.Result();
+            std::string new_name = edit_wnd->Result();
 
             if (!ClientPlayerIsModerator()) {
                 if (new_name != "" && new_name != ship_name) {
@@ -2666,6 +2666,19 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
     for (int fleet_id : fleet_ids)
         m_fleet_ids.insert(fleet_id);
 
+    // verify that the selected fleet id is valid.
+    // TODO this appears to do nothing with selected_fleet_id after the verification.
+    if (selected_fleet_id != INVALID_OBJECT_ID &&
+        m_fleet_ids.find(selected_fleet_id) == m_fleet_ids.end())
+    {
+        ErrorLogger() << "FleetWnd::FleetWnd couldn't find requested selected fleet with id " << selected_fleet_id;
+        selected_fleet_id = INVALID_OBJECT_ID;
+    }
+
+}
+
+void FleetWnd::CompleteConstruction()
+{
     Sound::TempUISoundDisabler sound_disabler;
 
     // add fleet aggregate stat icons
@@ -2726,15 +2739,9 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
 
     RefreshStateChangedSignals();
 
-    // verify that the selected fleet id is valid.
-    if (selected_fleet_id != INVALID_OBJECT_ID &&
-        m_fleet_ids.find(selected_fleet_id) == m_fleet_ids.end())
-    {
-        ErrorLogger() << "FleetWnd::FleetWnd couldn't find requested selected fleet with id " << selected_fleet_id;
-        selected_fleet_id = INVALID_OBJECT_ID;
-    }
-
     ResetDefaultPosition();
+    MapWndPopup::CompleteConstruction();
+
     SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, TopBorder() + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM +
                                                  ListRowHeight() + 2*GG::Y(PAD)));
     DoLayout();
@@ -3392,10 +3399,10 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     {
         auto rename_action = [fleet, client_empire_id]() {
             std::string fleet_name = fleet->Name();
-            CUIEditWnd edit_wnd(GG::X(350), UserString("ENTER_NEW_NAME"), fleet_name);
-            edit_wnd.Run();
+            std::shared_ptr<CUIEditWnd> edit_wnd(GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("ENTER_NEW_NAME"), fleet_name));
+            edit_wnd->Run();
 
-            std::string new_name = edit_wnd.Result();
+            std::string new_name = edit_wnd->Result();
 
             if (ClientPlayerIsModerator())
                 return; // todo: handle moderator actions for this...

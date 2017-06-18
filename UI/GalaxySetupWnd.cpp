@@ -937,6 +937,9 @@ void GalaxySetupPanel::ShapeChanged(GG::DropDownList::iterator it)
 ////////////////////////////////////////////////
 GalaxySetupWnd::GalaxySetupWnd() :
     CUIWnd(UserString("GSETUP_WINDOW_TITLE"), GG::INTERACTIVE | GG::MODAL)
+{}
+
+void GalaxySetupWnd::CompleteConstruction()
 {
     Sound::TempUISoundDisabler sound_disabler;
 
@@ -1038,6 +1041,8 @@ GalaxySetupWnd::GalaxySetupWnd() :
         boost::bind(&GalaxySetupWnd::CancelClicked, this));
 
     PreviewImageChanged(m_galaxy_setup_panel->PreviewImage());
+
+    CUIWnd::CompleteConstruction();
 }
 
 const std::string& GalaxySetupWnd::EmpireName() const

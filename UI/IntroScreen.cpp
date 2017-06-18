@@ -242,8 +242,8 @@ IntroScreen::IntroScreen() :
     m_logo(nullptr),
     m_version(nullptr)
 {
-    m_menu = new CUIWnd(UserString("INTRO_WINDOW_TITLE"), GG::X1, GG::Y1,
-                        MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::ONTOP | GG::INTERACTIVE);
+    m_menu = GG::Wnd::Create<CUIWnd>(UserString("INTRO_WINDOW_TITLE"), GG::X1, GG::Y1,
+                                  MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::ONTOP | GG::INTERACTIVE);
 
     m_splash = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(ClientUI::ArtDir() / "splash.png"), GG::GRAPHIC_FITGRAPHIC, GG::INTERACTIVE);
 
@@ -328,28 +328,31 @@ void IntroScreen::OnLoadGame() {
 }
 
 void IntroScreen::OnOptions() {
-    OptionsWnd options_wnd;
-    options_wnd.Run();
+    auto  options_wnd = GG::Wnd::Create<OptionsWnd>();
+    options_wnd->Run();
 }
 
 void IntroScreen::OnPedia() {
     static const std::string INTRO_PEDIA_WND_NAME = "introscreen.pedia";
-    EncyclopediaDetailPanel enc_panel(GG::MODAL | GG::INTERACTIVE | GG::DRAGABLE |
-                                      GG::RESIZABLE | CLOSABLE | PINABLE, INTRO_PEDIA_WND_NAME);
-    enc_panel.SizeMove(GG::Pt(GG::X(100), GG::Y(100)), Size() - GG::Pt(GG::X(100), GG::Y(100)));
-    enc_panel.ClearItems();
-    enc_panel.SetIndex();
-    enc_panel.ValidatePosition();
+    auto enc_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(
+        GG::MODAL | GG::INTERACTIVE | GG::DRAGABLE |
+        GG::RESIZABLE | CLOSABLE | PINABLE, INTRO_PEDIA_WND_NAME);
+    enc_panel->SizeMove(GG::Pt(GG::X(100), GG::Y(100)), Size() - GG::Pt(GG::X(100), GG::Y(100)));
+    enc_panel->ClearItems();
+    enc_panel->SetIndex();
+    enc_panel->ValidatePosition();
 
-    enc_panel.ClosingSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::EndRun, &enc_panel));
+    enc_panel->ClosingSignal.connect(
+        boost::bind(&EncyclopediaDetailPanel::EndRun, enc_panel));
 
-    enc_panel.Run();
+    enc_panel->Run();
+
+    delete enc_panel;
 }
 
 void IntroScreen::OnAbout() {
-    About about_wnd;
-    about_wnd.Run();
+    auto about_wnd = GG::Wnd::Create<About>();
+    about_wnd->Run();
 }
 
 void IntroScreen::OnWebsite()

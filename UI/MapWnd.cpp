@@ -1410,7 +1410,7 @@ MapWnd::MapWnd() :
     ///////////////////
 
     // system-view side panel
-    m_side_panel = new SidePanel(MAP_SIDEPANEL_WND_NAME);
+    m_side_panel = GG::Wnd::Create<SidePanel>(MAP_SIDEPANEL_WND_NAME);
     GG::GUI::GetGUI()->Register(m_side_panel);
 
     SidePanel::SystemSelectedSignal.connect(
@@ -1435,7 +1435,7 @@ MapWnd::MapWnd() :
         boost::bind(&MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this));
 
     // situation report window
-    m_sitrep_panel = new SitRepPanel(SITREP_WND_NAME);
+    m_sitrep_panel = GG::Wnd::Create<SitRepPanel>(SITREP_WND_NAME);
     // Wnd is manually closed by user
     m_sitrep_panel->ClosingSignal.connect(
         boost::bind(&MapWnd::HideSitRep, this));
@@ -1445,7 +1445,7 @@ MapWnd::MapWnd() :
     }
 
     // encyclopedia panel
-    m_pedia_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, MAP_PEDIA_WND_NAME);
+    m_pedia_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, MAP_PEDIA_WND_NAME);
     // Wnd is manually closed by user
     m_pedia_panel->ClosingSignal.connect(
         boost::bind(&MapWnd::HidePedia, this));
@@ -1455,7 +1455,7 @@ MapWnd::MapWnd() :
     }
 
     // objects list
-    m_object_list_wnd = new ObjectListWnd(OBJECT_WND_NAME);
+    m_object_list_wnd = GG::Wnd::Create<ObjectListWnd>(OBJECT_WND_NAME);
     // Wnd is manually closed by user
     m_object_list_wnd->ClosingSignal.connect(
         boost::bind(&MapWnd::HideObjects, this));
@@ -1467,7 +1467,7 @@ MapWnd::MapWnd() :
     }
 
     // moderator actions
-    m_moderator_wnd = new ModeratorActionsWnd(MODERATOR_WND_NAME);
+    m_moderator_wnd = GG::Wnd::Create<ModeratorActionsWnd>(MODERATOR_WND_NAME);
     m_moderator_wnd->ClosingSignal.connect(
         boost::bind(&MapWnd::HideModeratorActions, this));
     if (m_moderator_wnd->Visible()) {
@@ -1476,7 +1476,7 @@ MapWnd::MapWnd() :
     }
 
     // Combat report
-    m_combat_report_wnd = new CombatReportWnd(COMBAT_REPORT_WND_NAME);
+    m_combat_report_wnd = GG::Wnd::Create<CombatReportWnd>(COMBAT_REPORT_WND_NAME);
 
     // position CUIWnds owned by the MapWnd
     InitializeWindows();
@@ -6249,8 +6249,8 @@ bool MapWnd::ShowMenu() {
     m_btn_menu->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_mouseover.png")));
     m_btn_menu->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));
 
-    InGameMenu menu;
-    menu.Run();
+    std::shared_ptr<InGameMenu> menu(GG::Wnd::Create<InGameMenu>());
+    menu->Run();
     m_menu_showing = false;
 
     m_btn_menu->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));

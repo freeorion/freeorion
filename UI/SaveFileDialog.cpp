@@ -628,7 +628,6 @@ SaveFileDialog::SaveFileDialog (const std::string& extension, bool load) :
     m_extension = extension;
     m_load_only = load;
     m_server_previews = false;
-    Init();
 }
 
 SaveFileDialog::SaveFileDialog (bool load) :
@@ -639,6 +638,11 @@ SaveFileDialog::SaveFileDialog (bool load) :
     m_load_only = load;
     m_server_previews = true;
     m_extension = MP_SAVE_FILE_EXTENSION;
+}
+
+void SaveFileDialog::CompleteConstruction()
+{
+    CUIWnd::CompleteConstruction();
     Init();
 }
 

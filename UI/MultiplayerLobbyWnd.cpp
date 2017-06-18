@@ -512,6 +512,9 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     m_ready_bn(nullptr),
     m_cancel_bn(nullptr),
     m_start_conditions_text(nullptr)
+{}
+
+void MultiPlayerLobbyWnd::CompleteConstruction()
 {
     Sound::TempUISoundDisabler sound_disabler;
 
@@ -586,6 +589,8 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
         boost::bind(&MultiPlayerLobbyWnd::PreviewImageChanged, this, _1));
     m_cancel_bn->LeftClickedSignal.connect(
         boost::bind(&MultiPlayerLobbyWnd::CancelClicked, this));
+
+    CUIWnd::CompleteConstruction();
 
     Refresh();
 }

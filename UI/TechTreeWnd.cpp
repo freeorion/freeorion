@@ -225,7 +225,8 @@ class TechTreeWnd::TechTreeControls : public CUIWnd {
 public:
     //! \name Structors //@{
     TechTreeControls(const std::string& config_name = "");
-    //@}
+    void CompleteConstruction() override;
+     //@}
 
     //! \name Mutators //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -270,8 +271,11 @@ const int TechTreeWnd::TechTreeControls::UPPER_LEFT_PAD = 2;
 
 TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) :
     CUIWnd(UserString("TECH_DISPLAY"), GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP, config_name)
+{}
+
+void TechTreeWnd::TechTreeControls::CompleteConstruction()
 {
-    const int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+   const int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
     const boost::filesystem::path icon_dir = ClientUI::ArtDir() / "icons" / "tech" / "controls";
 
     // create a button for each tech category...
@@ -337,6 +341,9 @@ TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) 
     AttachChild(m_view_type_button);
 
     SetChildClippingMode(ClipToClient);
+
+    CUIWnd::CompleteConstruction();
+
     DoButtonLayout();
 }
 
@@ -1991,8 +1998,8 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     m_tech_list->TechPediaDisplaySignal.connect(
         boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
 
-    m_enc_detail_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, RES_PEDIA_WND_NAME);
-    m_tech_tree_controls = new TechTreeControls(RES_CONTROLS_WND_NAME);
+    m_enc_detail_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, RES_PEDIA_WND_NAME);
+    m_tech_tree_controls =  GG::Wnd::Create<TechTreeControls>(RES_CONTROLS_WND_NAME);
 
     m_enc_detail_panel->ClosingSignal.connect(
         boost::bind(&TechTreeWnd::HidePedia, this));

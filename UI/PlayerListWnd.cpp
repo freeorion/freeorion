@@ -538,7 +538,12 @@ PlayerListWnd::PlayerListWnd(const std::string& config_name) :
            GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | GG::RESIZABLE | CLOSABLE | PINABLE,
            config_name),
     m_player_list(nullptr)
+{}
+
+void PlayerListWnd::CompleteConstruction()
 {
+    CUIWnd::CompleteConstruction();
+
     m_player_list = GG::Wnd::Create<PlayerListBox>();
     m_player_list->SetHiliteColor(GG::CLR_ZERO);
     m_player_list->SetStyle(GG::LIST_NOSORT);
@@ -658,7 +663,10 @@ void PlayerListWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void PlayerListWnd::DoLayout()
-{ m_player_list->SizeMove(GG::Pt(), GG::Pt(ClientWidth(), ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET))); }
+{
+    if (m_player_list)
+        m_player_list->SizeMove(GG::Pt(), GG::Pt(ClientWidth(), ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET)));
+}
 
 void PlayerListWnd::CloseClicked()
 { ClosingSignal(); }

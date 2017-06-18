@@ -960,6 +960,7 @@ class FilterDialog : public CUIWnd {
 public:
     FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPLAY>>& vis_filters,
                  const Condition::ConditionBase* const condition_filter);
+    void CompleteConstruction() override;
 
     bool ChangesAccepted();
 
@@ -1008,6 +1009,13 @@ FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPL
     m_cancel_button(nullptr),
     m_apply_button(nullptr)
 {
+    m_condition_widget = new ConditionWidget(GG::X(3), GG::Y(3), condition_filter);
+}
+
+void FilterDialog::CompleteConstruction()
+{
+    CUIWnd::CompleteConstruction();
+
     m_filters_layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X(390), GG::Y(90), 4, 7);
     AttachChild(m_filters_layout);
 
@@ -1073,7 +1081,7 @@ FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPL
 
 
     // TODO: Add multiple condition widgets initialized for input condition
-    m_condition_widget = new ConditionWidget(GG::X(3), m_filters_layout->Height() + GG::Y(3), condition_filter);
+    m_condition_widget->MoveTo(GG::Pt(GG::X(3), m_filters_layout->Height() + GG::Y(3)));
     m_cancel_button = Wnd::Create<CUIButton>(UserString("CANCEL"));
     m_apply_button = Wnd::Create<CUIButton>(UserString("APPLY"));
 
@@ -2257,6 +2265,9 @@ ObjectListWnd::ObjectListWnd(const std::string& config_name) :
     m_list_box(nullptr),
     m_filter_button(nullptr),
     m_collapse_button(nullptr)
+{}
+
+void ObjectListWnd::CompleteConstruction()
 {
     m_list_box = GG::Wnd::Create<ObjectListBox>();
     m_list_box->SetHiliteColor(GG::CLR_ZERO);
@@ -2281,6 +2292,8 @@ ObjectListWnd::ObjectListWnd(const std::string& config_name) :
     m_collapse_button->LeftClickedSignal.connect(
         boost::bind(&ObjectListWnd::CollapseExpandClicked, this));
     AttachChild(m_collapse_button);
+
+    CUIWnd::CompleteConstruction();
 
     DoLayout();
 }
@@ -2582,12 +2595,12 @@ int ObjectListWnd::ObjectInRow(GG::ListBox::iterator it) const {
 }
 
 void ObjectListWnd::FilterClicked() {
-    FilterDialog dlg(m_list_box->Visibilities(), m_list_box->FilterCondition());
-    dlg.Run();
+    auto dlg = GG::Wnd::Create<FilterDialog>(m_list_box->Visibilities(), m_list_box->FilterCondition());
+    dlg->Run();
 
-    if (dlg.ChangesAccepted()) {
-        m_list_box->SetVisibilityFilters(dlg.GetVisibilityFilters());
-        m_list_box->SetFilterCondition(dlg.GetConditionFilter());
+    if (dlg->ChangesAccepted()) {
+        m_list_box->SetVisibilityFilters(dlg->GetVisibilityFilters());
+        m_list_box->SetFilterCondition(dlg->GetConditionFilter());
     }
 }
 

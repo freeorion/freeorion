@@ -43,6 +43,10 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
     m_add_starlane_button(nullptr),
     m_remove_starlane_button(nullptr)
 {
+}
+
+void ModeratorActionsWnd::CompleteConstruction()
+{
     ClientUI* ui = ClientUI::GetClientUI();
     GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
 
@@ -189,6 +193,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
     AttachChild(m_remove_starlane_button);
     m_remove_starlane_button->LeftClickedSignal.connect(
         boost::bind(&ModeratorActionsWnd::RemoveStarlane, this));
+
+    CUIWnd::CompleteConstruction();
 
     DoLayout();
 }

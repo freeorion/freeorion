@@ -375,6 +375,9 @@ SitRepPanel::SitRepPanel(const std::string& config_name) :
     m_filter_button(nullptr),
     m_showing_turn(INVALID_GAME_TURN),
     m_hidden_sitrep_templates(HiddenSitRepTemplateStringsFromOptions())
+{}
+
+void SitRepPanel::CompleteConstruction()
 {
     Sound::TempUISoundDisabler sound_disabler;
     SetChildClippingMode(DontClip);
@@ -407,6 +410,8 @@ SitRepPanel::SitRepPanel(const std::string& config_name) :
         boost::bind(&SitRepPanel::IgnoreSitRep, this, _1, _2, _3));
     m_sitreps_lb->RightClickedRowSignal.connect(
         boost::bind(&SitRepPanel::DismissalMenu, this, _1, _2, _3));
+
+    CUIWnd::CompleteConstruction();
 
     DoLayout();
 }

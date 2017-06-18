@@ -809,9 +809,9 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
 
         auto rename_action = [this, system]() {
             const std::string& old_name(system->Name());
-            CUIEditWnd edit_wnd(GG::X(350), UserString("SP_ENTER_NEW_SYSTEM_NAME"), old_name);
-            edit_wnd.Run();
-            const std::string& new_name(edit_wnd.Result());
+            std::shared_ptr<CUIEditWnd> edit_wnd(GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("SP_ENTER_NEW_SYSTEM_NAME"), old_name));
+            edit_wnd->Run();
+            const std::string& new_name(edit_wnd->Result());
             if (m_order_issuing_enabled && !new_name.empty() && new_name != old_name) {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
                     std::make_shared<RenameOrder>(HumanClientApp::GetApp()->EmpireID(), system->ID(), new_name));
@@ -2057,14 +2057,14 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         && m_planet_name->InClient(pt))
     {
         auto rename_action = [this, planet]() { // rename planet
-            CUIEditWnd edit_wnd(GG::X(350), UserString("SP_ENTER_NEW_PLANET_NAME"), planet->Name());
-            edit_wnd.Run();
-            if (edit_wnd.Result() != ""
-                && edit_wnd.Result() != planet->Name()
+            std::shared_ptr<CUIEditWnd> edit_wnd(GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("SP_ENTER_NEW_PLANET_NAME"), planet->Name()));
+            edit_wnd->Run();
+            if (edit_wnd->Result() != ""
+                && edit_wnd->Result() != planet->Name()
                 && m_order_issuing_enabled)
             {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
-                    std::make_shared<RenameOrder>(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd.Result()));
+                    std::make_shared<RenameOrder>(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd->Result()));
                 Refresh();
             }
 
@@ -2807,7 +2807,6 @@ boost::signals2::signal<void (int)>        SidePanel::PlanetDoubleClickedSignal;
 boost::signals2::signal<void (int)>        SidePanel::BuildingRightClickedSignal;
 boost::signals2::signal<void (int)>        SidePanel::SystemSelectedSignal;
 
-
 SidePanel::SidePanel(const std::string& config_name) :
     CUIWnd("", GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP, config_name),
     m_system_name(nullptr),
@@ -2818,7 +2817,12 @@ SidePanel::SidePanel(const std::string& config_name) :
     m_planet_panel_container(nullptr),
     m_system_resource_summary(nullptr),
     m_selection_enabled(false)
+{}
+
+void SidePanel::CompleteConstruction()
 {
+    CUIWnd::CompleteConstruction();
+
     m_planet_panel_container = GG::Wnd::Create<PlanetPanelContainer>();
     AttachChild(m_planet_panel_container);
 

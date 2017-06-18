@@ -14,8 +14,8 @@ class MessageWndEdit;
 
 class MessageWnd : public CUIWnd {
 public:
-    //! \name Structors //@{
     MessageWnd(const std::string& config_name = "");
+    void CompleteConstruction() override;
     //@}
 
     //! \name Mutators //@{

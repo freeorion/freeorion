@@ -17,6 +17,7 @@ class MultiPlayerLobbyWnd : public CUIWnd {
 public:
     /** \name Structors */ //@{
     MultiPlayerLobbyWnd();
+    void CompleteConstruction() override;
     //@}
 
     /** \name Accessors */ //@{
