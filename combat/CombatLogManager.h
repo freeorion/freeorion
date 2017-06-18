@@ -43,7 +43,7 @@ struct FO_COMMON_API CombatLog {
     void serialize(Archive& ar, const unsigned int version);
 };
 
-BOOST_CLASS_VERSION ( CombatLog, 1 );
+BOOST_CLASS_VERSION(CombatLog, 1);
 
 /** Stores and retreives combat logs. */
 class FO_COMMON_API CombatLogManager {
@@ -96,7 +96,7 @@ FO_COMMON_API void CombatLogManager::serialize<freeorion_xml_oarchive>(freeorion
 
 
 /** returns the singleton combat log manager */
-FO_COMMON_API CombatLogManager&   GetCombatLogManager();
+FO_COMMON_API CombatLogManager& GetCombatLogManager();
 
 /** Returns the CombatLog with the indicated id, or an empty log if there
   * is no avaiable log with that id. */
