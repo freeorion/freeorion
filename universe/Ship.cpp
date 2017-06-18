@@ -4,6 +4,7 @@
 #include "../util/Logger.h"
 #include "../util/Random.h"
 #include "../util/AppInterface.h"
+#include "../util/MultiplayerCommon.h"
 #include "Fleet.h"
 #include "Predicates.h"
 #include "ShipDesign.h"
@@ -535,7 +536,7 @@ namespace {
         int fighter_shots = std::min(available_fighters, fighter_launch_capacity);  // how many fighters launched in bout 1
         available_fighters -= fighter_shots;
         int launched_fighters = fighter_shots;
-        int num_bouts = GetUniverse().GetNumCombatRounds();
+        int num_bouts = GetGameRules().Get<int>("NUM_COMBAT_ROUNDS");
         int remaining_bouts = num_bouts - 2;  // no attack for first round, second round already added
         while (remaining_bouts > 0) {
             int fighters_launched_this_bout = std::min(available_fighters, fighter_launch_capacity);

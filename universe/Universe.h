@@ -161,20 +161,15 @@ public:
     std::set<std::string>   GetObjectVisibleSpecialsByEmpire(int object_id, int empire_id) const;
 
     /** Return the Pathfinder */
-    std::shared_ptr<const Pathfinder> GetPathfinder() const {return m_pathfinder;}
+    std::shared_ptr<const Pathfinder>   GetPathfinder() const {return m_pathfinder;}
 
     /** Returns map, indexed by object id, to map, indexed by MeterType,
       * to vector of EffectAccountInfo for the meter, in order effects
       * were applied to the meter. */
-    const Effect::AccountingMap&            GetEffectAccountingMap() const {return m_effect_accounting_map;}
+    const Effect::AccountingMap&        GetEffectAccountingMap() const {return m_effect_accounting_map;}
 
     const std::map<std::string, std::map<int, std::map<int, double>>>&
-                                            GetStatRecords() const { return m_stat_records; }
-
-    /** Number of combat rounds
-     * TODO make into a configurable game rule
-     */
-    const int                               GetNumCombatRounds() const;
+                                        GetStatRecords() const { return m_stat_records; }
 
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}
