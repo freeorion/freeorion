@@ -113,7 +113,11 @@ class AIstate(object):
             raise ConversionError("Version attribute of AIstate must be an integer!")
         if AIstate.version < 0:
             raise ConversionError("AIstate savegame compatibility version must be a positive integer!")
-
+            
+        # need to store the version explicitly as the class variable "version" is only stored in the 
+        # self.__class__.__dict__ while we only pickle the object (i.e. self.__dict__ )
+        self.version = AIstate.version
+        
         # Debug info
         # unique id for game
         self.uid = self.generate_uid(first=True)
