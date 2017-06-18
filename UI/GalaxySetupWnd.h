@@ -57,7 +57,7 @@ private:
     void StringRuleChanged(const GG::DropDownList* drop, const std::string& rule_name);
 
     std::map<std::string, std::string>  m_rules;
-    GG::TabWnd*                         m_tabs;
+    std::shared_ptr<GG::TabWnd>         m_tabs;
 };
 
 /** Encapsulates the galaxy setup options so that they may be reused in the
@@ -108,27 +108,27 @@ private:
     void SettingChanged();
     void ShapeChanged(GG::ListBox::iterator it);
 
-    GG::Label*          m_seed_label = nullptr;
-    GG::Edit*           m_seed_edit = nullptr;            //!< The seed used in the generation of the galaxy
-    GG::Button*         m_random = nullptr;               //!< Random seed button
-    GG::Label*          m_stars_label = nullptr;
-    GG::Spin<int>*      m_stars_spin = nullptr;           //!< The number of stars to include in the galaxy
-    GG::Label*          m_galaxy_shapes_label = nullptr;
-    GG::DropDownList*   m_galaxy_shapes_list = nullptr;   //!< The possible shapes for the galaxy
-    GG::Label*          m_galaxy_ages_label = nullptr;
-    GG::DropDownList*   m_galaxy_ages_list = nullptr;     //!< The possible ages for the galaxy
-    GG::Label*          m_starlane_freq_label = nullptr;
-    GG::DropDownList*   m_starlane_freq_list = nullptr;   //!< The frequency of starlanes in the galaxy
-    GG::Label*          m_planet_density_label = nullptr;
-    GG::DropDownList*   m_planet_density_list = nullptr;  //!< The density of planets in each system
-    GG::Label*          m_specials_freq_label = nullptr;
-    GG::DropDownList*   m_specials_freq_list = nullptr;   //!< The frequency of specials in systems and on planets
-    GG::Label*          m_monster_freq_label = nullptr;
-    GG::DropDownList*   m_monster_freq_list = nullptr;    //!< The frequency of monsters
-    GG::Label*          m_native_freq_label = nullptr;
-    GG::DropDownList*   m_native_freq_list = nullptr;     //!< The frequency of natives
-    GG::Label*          m_ai_aggression_label = nullptr;
-    GG::DropDownList*   m_ai_aggression_list = nullptr;   //!< The max aggression choices for AI opponents
+    std::shared_ptr<GG::Label>          m_seed_label;
+    std::shared_ptr<GG::Edit>           m_seed_edit;            //!< The seed used in the generation of the galaxy;
+    std::shared_ptr<GG::Button>         m_random;               //!< Random seed button;
+    std::shared_ptr<GG::Label>          m_stars_label;
+    std::shared_ptr<GG::Spin<int>>      m_stars_spin;           //!< The number of stars to include in the galaxy;
+    std::shared_ptr<GG::Label>          m_galaxy_shapes_label;
+    std::shared_ptr<GG::DropDownList>   m_galaxy_shapes_list;   //!< The possible shapes for the galaxy;
+    std::shared_ptr<GG::Label>          m_galaxy_ages_label;
+    std::shared_ptr<GG::DropDownList>   m_galaxy_ages_list;     //!< The possible ages for the galaxy;
+    std::shared_ptr<GG::Label>          m_starlane_freq_label;
+    std::shared_ptr<GG::DropDownList>   m_starlane_freq_list;   //!< The frequency of starlanes in the galaxy;
+    std::shared_ptr<GG::Label>          m_planet_density_label;
+    std::shared_ptr<GG::DropDownList>   m_planet_density_list;  //!< The density of planets in each system;
+    std::shared_ptr<GG::Label>          m_specials_freq_label;
+    std::shared_ptr<GG::DropDownList>   m_specials_freq_list;   //!< The frequency of specials in systems and on planets;
+    std::shared_ptr<GG::Label>          m_monster_freq_label;
+    std::shared_ptr<GG::DropDownList>   m_monster_freq_list;    //!< The frequency of monsters;
+    std::shared_ptr<GG::Label>          m_native_freq_label;
+    std::shared_ptr<GG::DropDownList>   m_native_freq_list;     //!< The frequency of natives;
+    std::shared_ptr<GG::Label>          m_ai_aggression_label;
+    std::shared_ptr<GG::DropDownList>   m_ai_aggression_list;   //!< The max aggression choices for AI opponents;
 
     /** Textures for galaxy previews. */
     std::vector<std::shared_ptr<GG::Texture>> m_textures;
@@ -173,23 +173,23 @@ private:
     void OkClicked();
     void CancelClicked();
 
-    bool m_ended_with_ok = false;   //!< indicates whether or not we ended the dialog with OK or not
+    bool m_ended_with_ok = false;    //!< indicates whether or not we ended the dialog with OK or not
 
-    GalaxySetupPanel*       m_galaxy_setup_panel = nullptr;    //!< The GalaxySetupPanel that does most of the work of the dialog
-    GameRulesPanel*         m_game_rules_panel = nullptr;
-    GG::Label*              m_player_name_label = nullptr;
-    GG::Edit*               m_player_name_edit = nullptr;
-    GG::Label*              m_empire_name_label = nullptr;
-    GG::Edit*               m_empire_name_edit = nullptr;
-    GG::Label*              m_empire_color_label = nullptr;
-    EmpireColorSelector*    m_empire_color_selector = nullptr;
-    SpeciesSelector*        m_starting_secies_selector = nullptr;
-    GG::Label*              m_starting_species_label = nullptr;
-    GG::Label*              m_number_ais_label = nullptr;
-    GG::Spin<int>*          m_number_ais_spin = nullptr;
-    GG::StaticGraphic*      m_preview_image = nullptr;         //!< The galaxy shape preview image
-    GG::Button*             m_ok = nullptr;                    //!< OK button
-    GG::Button*             m_cancel = nullptr;                //!< Cancel button
+    std::shared_ptr<GalaxySetupPanel>       m_galaxy_setup_panel;    //!< The GalaxySetupPanel that does most of the work of the dialog
+    std::shared_ptr<GameRulesPanel>         m_game_rules_panel;
+    std::shared_ptr<GG::Label>              m_player_name_label;
+    std::shared_ptr<GG::Edit>               m_player_name_edit;
+    std::shared_ptr<GG::Label>              m_empire_name_label;
+    std::shared_ptr<GG::Edit>               m_empire_name_edit;
+    std::shared_ptr<GG::Label>              m_empire_color_label;
+    std::shared_ptr<EmpireColorSelector>    m_empire_color_selector;
+    std::shared_ptr<SpeciesSelector>        m_starting_secies_selector;
+    std::shared_ptr<GG::Label>              m_starting_species_label;
+    std::shared_ptr<GG::Label>              m_number_ais_label;
+    std::shared_ptr<GG::Spin<int>>          m_number_ais_spin;
+    std::shared_ptr<GG::StaticGraphic>      m_preview_image;         //!< The galaxy shape preview image;
+    std::shared_ptr<GG::Button>             m_ok;                    //!< OK button;
+    std::shared_ptr<GG::Button>             m_cancel;                //!< Cancel button;
 
     GG::Pt                  m_preview_ul;
 };

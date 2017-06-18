@@ -33,6 +33,7 @@
 #include <GG/WndEvent.h>
 
 
+
 using namespace GG;
 
 const std::size_t ThreeButtonDlg::NO_BUTTON = std::numeric_limits<std::size_t>::max();
@@ -65,8 +66,8 @@ ThreeButtonDlg::ThreeButtonDlg(X w, Y h, const std::string& msg, const std::shar
 
     const auto& style = GetStyleFactory();
 
-    TextControl* message_text = style->NewTextControl(msg, font, m_text_color,
-                                                      FORMAT_CENTER | FORMAT_VCENTER | FORMAT_WORDBREAK);
+    auto message_text = std::shared_ptr<TextControl>(
+        style->NewTextControl(msg, font, m_text_color, FORMAT_CENTER | FORMAT_VCENTER | FORMAT_WORDBREAK));
     message_text->Resize(Pt(ClientWidth() - 2 * SPACING, Height()));
     message_text->SetResetMinSize(true);
     m_button_layout->Add(message_text, 0, 0);
@@ -74,11 +75,11 @@ ThreeButtonDlg::ThreeButtonDlg(X w, Y h, const std::string& msg, const std::shar
     m_button_layout->SetMinimumRowHeight(1, BUTTON_HEIGHT);
 
     m_button_0 = style->NewButton((zero == "" ? (buttons < 3 ? "Ok" : "Yes") : zero),
-                                  font, m_button_color, m_text_color);
+                                      font, m_button_color, m_text_color);
     button_layout->Add(m_button_0, 0, 0);
 
     if (2 <= buttons) {
-        m_button_1 = style->NewButton((one == "" ? (buttons < 3 ? "Cancel" : "No") : one),
+        m_button_1 =style->NewButton((one == "" ? (buttons < 3 ? "Cancel" : "No") : one),
                                       font, m_button_color, m_text_color);
         button_layout->Add(m_button_1, 0, 1);
     }

@@ -31,11 +31,11 @@ private:
     GG::X ButtonWidth() const;      //!< Helper function
     GG::Y ButtonCellHeight() const; //!< Helper function
 
-    GG::Button* m_save_btn;         //!< Save game button
-    GG::Button* m_load_btn;         //!< Load game button
-    GG::Button* m_options_btn;      //!< Options button
-    GG::Button* m_done_btn;         //!< Done button
-    GG::Button* m_exit_btn;         //!< Quit game button
+    std::shared_ptr<GG::Button> m_save_btn;         //!< Save game button;
+    std::shared_ptr<GG::Button> m_load_btn;         //!< Load game button;
+    std::shared_ptr<GG::Button> m_options_btn;      //!< Options button;
+    std::shared_ptr<GG::Button> m_done_btn;         //!< Done button;
+    std::shared_ptr<GG::Button> m_exit_btn;         //!< Quit game button;
 };
 
 #endif // _InGameMenu_h_

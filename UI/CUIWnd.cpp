@@ -232,7 +232,7 @@ void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     if (m_config_save) {    // can write position/size to OptionsDB
 
         GG::Pt available_size;
-        if (const GG::Wnd* parent = Parent()) {
+        if (const auto& parent = Parent()) {
             // Keep this CUIWnd entirely inside its parent.
             available_size = parent->ClientSize();
         } else if (const HumanClientApp* app = HumanClientApp::GetApp()) {
@@ -350,7 +350,7 @@ void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> m
         GG::Pt requested_lr = pt - m_drag_offset;
 
         GG::Pt max_lr;
-        if (const GG::Wnd* parent = Parent()) {
+        if (const auto& parent = Parent()) {
             max_lr = parent->ClientLowerRight();
         } else {
             max_lr.x = GG::GUI::GetGUI()->AppWidth();
@@ -489,7 +489,7 @@ void CUIWnd::CloseClicked() {
     if (Parent())
         Parent()->DetachChild(this);
     else
-        GG::GUI::GetGUI()->Remove(this);
+        GG::GUI::GetGUI()->Remove(shared_from_this());
 
     //m_minimized_buffer.clear();
     //m_outer_border_buffer.clear();
@@ -838,7 +838,7 @@ void CUIWnd::InvalidateUnusedOptions() {
     db.Commit();
 }
 
-void CUIWnd::SetParent(GG::Wnd* wnd) {
+void CUIWnd::SetParent(const std::shared_ptr<GG::Wnd>& wnd) {
     GG::Wnd::SetParent(wnd);
     m_vertex_buffer.clear();    // force buffer re-init on next Render call, so background is properly positioned for new parent-relative position
 }

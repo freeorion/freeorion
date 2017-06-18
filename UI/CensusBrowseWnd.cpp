@@ -116,9 +116,9 @@ private:
     }
 
     GG::GL2DVertexBuffer    m_buffer;
-    GG::StaticGraphic*      m_icon;
-    GG::Label*              m_name;
-    GG::Label*              m_census_val;
+    std::shared_ptr<GG::StaticGraphic>      m_icon;
+    std::shared_ptr<GG::Label>              m_name;
+    std::shared_ptr<GG::Label>              m_census_val;
     bool                    m_show_icon;
 };
 

@@ -121,7 +121,7 @@ namespace {
 
             Networking::ClientType type;
         private:
-            CUILabel* m_label;
+            std::shared_ptr<CUILabel> m_label;
         };
 
     public:
@@ -201,13 +201,14 @@ namespace {
 
         void SelectionChanged(GG::DropDownList::iterator it)
         {
-            const GG::ListBox::Row* row = nullptr;
-            if (it != this->end())
-                row = *it;
+            if (it == this->end())
+                return;
+
+            const auto& row = *it;
             if (!row)
                 return;
 
-            const TypeRow* type_row = boost::polymorphic_downcast<const TypeRow*>(row);
+            const TypeRow* type_row = boost::polymorphic_downcast<const TypeRow*>(row.get());
             if (!type_row)
                 return;
 
@@ -459,8 +460,8 @@ namespace {
             DataChangedSignal();
         }
 
-        EmpireColorSelector*                     m_color_selector;
-        GG::DropDownList*                        m_empire_list;
+        std::shared_ptr<EmpireColorSelector>                     m_color_selector;
+        std::shared_ptr<GG::DropDownList>                        m_empire_list;
         const std::map<int, SaveGameEmpireData>& m_save_game_empire_data;
         bool                                     m_initial_disabled;
     };
@@ -639,7 +640,7 @@ void MultiPlayerLobbyWnd::PlayerLabelRow::CompleteConstruction() {
     unsigned int i = 0;
     for (auto& control : m_cells) {
         control->SetChildClippingMode(ClipToWindow);
-        if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>(control))
+        if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>(control.get()))
             tc->SetFont(ClientUI::GetBoldFont());
         control->Resize(GG::Pt(col_widths[i], PlayerRowHeight() + PlayerFontHeight()));
         ++i;
@@ -653,7 +654,7 @@ void MultiPlayerLobbyWnd::PlayerLabelRow::SetText(size_t column, const std::stri
         ErrorLogger() << "Invalid column " << column << " for row with " << m_cells.size() << " columns";
         return;
     }
-    if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>(m_cells.at(column)))
+    if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>(m_cells.at(column).get()))
         tc->SetText(str);
     else
         ErrorLogger() << "Unable to set text " << str << " for column " << column;
@@ -885,7 +886,7 @@ void MultiPlayerLobbyWnd::PreviewImageChanged(std::shared_ptr<GG::Texture> new_i
 void MultiPlayerLobbyWnd::PlayerDataChangedLocally() {
     m_lobby_data.m_players.clear();
     for (auto& row : *m_players_lb) {
-        const PlayerRow* player_row = dynamic_cast<const PlayerRow*>(row);
+        const PlayerRow* player_row = dynamic_cast<const PlayerRow*>(row.get());
         if (const EmptyPlayerRow* empty_row = dynamic_cast<const EmptyPlayerRow*>(player_row)) {
             // empty rows that have been changed to Add AI need to be sent so the server knows to add an AI player.
             if (empty_row->m_player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
@@ -1034,7 +1035,7 @@ bool MultiPlayerLobbyWnd::PlayerDataAcceptable() const {
         {
             // do nothing special for this player
         } else {
-            if (dynamic_cast<const EmptyPlayerRow*>(row)) {
+            if (dynamic_cast<const EmptyPlayerRow*>(row.get())) {
                 // ignore empty player row
             } else {
                 ErrorLogger() << "MultiPlayerLobbyWnd::PlayerDataAcceptable found not empty player row with unrecognized client type?!";

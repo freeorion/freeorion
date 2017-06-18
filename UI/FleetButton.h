@@ -62,9 +62,9 @@ private:
     void                    LayoutIcons();
 
     std::vector<int>                m_fleets;   ///< the fleets represented by this button
-    std::vector<GG::StaticGraphic*> m_icons;
-    RotatingGraphic*                m_selection_indicator;
-    ScanlineControl*                m_scanline_control;
+    std::vector<std::shared_ptr<GG::StaticGraphic>> m_icons;
+    std::shared_ptr<RotatingGraphic>                m_selection_indicator;
+    std::shared_ptr<ScanlineControl>                m_scanline_control;
     bool                            m_selected; ///< should this button render itself specially to show that it is selected?
     bool                            m_fleet_blockaded;
 };

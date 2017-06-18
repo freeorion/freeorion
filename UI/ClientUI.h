@@ -35,12 +35,12 @@ public:
     //!@}
 
     //! \name Accessors //!@{
-    MapWnd*                 GetMapWnd();                                //!< Returns the main map window.
+    std::shared_ptr<MapWnd>                 GetMapWnd();                                //!< Returns the main map window.
     MapWnd const*           GetMapWndConst() const;                     //!< Returns the main map window.
-    MessageWnd*             GetMessageWnd();                            //!< Returns the chat / message window.
-    PlayerListWnd*          GetPlayerListWnd();                         //!< Returns the players list window.
-    IntroScreen*            GetIntroScreen();                           //!< Returns the intro screen / splash window.
-    MultiPlayerLobbyWnd*    GetMultiPlayerLobbyWnd();                   //!< Returns the multiplayer lobby window.
+    std::shared_ptr<MessageWnd>             GetMessageWnd();                            //!< Returns the chat / message window.
+    std::shared_ptr<PlayerListWnd>          GetPlayerListWnd();                         //!< Returns the players list window.
+    std::shared_ptr<IntroScreen>            GetIntroScreen();                           //!< Returns the intro screen / splash window.
+    std::shared_ptr<MultiPlayerLobbyWnd>    GetMultiPlayerLobbyWnd();                   //!< Returns the multiplayer lobby window.
 
     ShipDesignManager* GetShipDesignManager() { return m_ship_designs.get(); };
 
@@ -223,11 +223,11 @@ private:
     void                HandleSizeChange(bool fullscreen) const;
     void                HandleFullscreenSwitch() const;
 
-    mutable MapWnd*         m_map_wnd;              //!< the galaxy map
-    MessageWnd*             m_message_wnd;          //!< the messages / chat display
-    PlayerListWnd*          m_player_list_wnd;      //!< the players list
-    IntroScreen*            m_intro_screen;         //!< splash screen / main menu when starting program
-    MultiPlayerLobbyWnd*    m_multiplayer_lobby_wnd;//!< the multiplayer lobby
+    mutable std::shared_ptr<MapWnd>         m_map_wnd;              //!< the galaxy map
+    std::shared_ptr<MessageWnd>             m_message_wnd;          //!< the messages / chat display
+    std::shared_ptr<PlayerListWnd>          m_player_list_wnd;      //!< the players list
+    std::shared_ptr<IntroScreen>            m_intro_screen;         //!< splash screen / main menu when starting program
+    std::shared_ptr<MultiPlayerLobbyWnd>    m_multiplayer_lobby_wnd;//!< the multiplayer lobby
 
     PrefixedTextures    m_prefixed_textures;
 

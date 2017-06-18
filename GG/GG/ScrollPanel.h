@@ -62,14 +62,14 @@ public:
 
     //! Returns the scroll bar.
     const Scroll* GetScroll() const
-    { return m_vscroll;}
+    { return m_vscroll.get();}
 
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 
 private:
-    Scroll* m_vscroll; //!< The vertical scroll bar.
-    Wnd* m_content; //!< The content window of the panel.
+    std::shared_ptr<Scroll> m_vscroll; //!< The vertical scroll bar.
+    std::shared_ptr<Wnd> m_content; //!< The content window of the panel.
     Pt m_content_pos; //!< The position of the content when scrolled properly.
     Clr m_background_color; //!< The color to paint the background with.
 

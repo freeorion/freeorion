@@ -156,22 +156,22 @@ public:
         list before \a it; returns index of insertion point.  This Row becomes
         the property of the DropDownList and should not be deleted or inserted
         into any other DropDownLists */
-    iterator        Insert(Row* row, iterator it, bool signal = true);
+    iterator        Insert(std::shared_ptr<Row> row, iterator it, bool signal = true);
 
     /** Insertion sorts \a row into a sorted list, or inserts into an unsorted
         list at the end of the list; returns index of insertion point.  This
         Row becomes the property of the DropDownList and should not be deleted
         or inserted into any other DropDownLists */
-    iterator        Insert(Row* row, bool signal = true);
+    iterator        Insert(std::shared_ptr<Row> row, bool signal = true);
 
     /** Insertion sorts \a rows into a sorted list, or inserts into an unsorted
         list before \a it. The Rows become the property of this DropDownList. */
-    void            Insert(const std::vector<Row*>& rows, iterator it, bool signal = true);
+    void            Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it, bool signal = true);
 
     /** Insertion sorts \a rows into sorted list, or inserts into an unsorted
         list at the end of the list. The Rows become the property of thiis
         DropDownList. */
-    void            Insert(const std::vector<Row*>& rows, bool signal = true);
+    void            Insert(const std::vector<std::shared_ptr<Row>>& rows, bool signal = true);
 
     Row*            Erase(iterator it, bool signal = false); ///< removes and returns \a it from the list, or 0 if no such row exists
     void            Clear();                        ///< empties the list

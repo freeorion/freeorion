@@ -93,7 +93,7 @@ void Scroll::CompleteConstruction()
         m_incr->LeftClickedSignal.connect(boost::bind(&Scroll::ScrollLineIncrDecrImpl, this, true, 1));
     }
     AttachChild(m_tab);
-    m_tab->InstallEventFilter(this);
+    m_tab->InstallEventFilter(shared_from_this());
 
     if (INSTRUMENT_ALL_SIGNALS) {
         ScrolledSignal.connect(ScrolledEcho("Scroll::ScrolledSignal"));
@@ -312,13 +312,13 @@ Scroll::ScrollRegion Scroll::RegionUnder(const Pt& pt)
 }
 
 Button* Scroll::TabButton() const
-{ return m_tab; }
+{ return m_tab.get(); }
 
 Button* Scroll::IncrButton() const
-{ return m_incr; }
+{ return m_incr.get(); }
 
 Button* Scroll::DecrButton() const
-{ return m_decr; }
+{ return m_decr.get(); }
 
 void Scroll::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
 {
@@ -375,7 +375,7 @@ void Scroll::MouseHere(const Pt& pt, Flags<ModKey> mod_keys)
 
 bool Scroll::EventFilter(Wnd* w, const WndEvent& event)
 {
-    if (w == m_tab) {
+    if (w == m_tab.get()) {
         switch (event.Type()) {
         case WndEvent::LDrag: {
             if (!Disabled()) {

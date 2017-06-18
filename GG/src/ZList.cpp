@@ -27,120 +27,176 @@
 
 using namespace GG;
 
+namespace {
+    std::shared_ptr<Wnd> PickWithinWindow(const Pt& pt, const std::shared_ptr<Wnd>& wnd,
+                                          const std::set<Wnd*>* ignore)
+    {
+        // look through all the children of wnd, and determine whether pt lies in
+        // any of them (or their children)
+        const auto& end_it = wnd->Children().rend();
+        for (auto it = wnd->Children().rbegin(); it != end_it; ++it) {
+            if (!(*it)->Visible())
+                continue;
+            if (!(*it)->InWindow(pt))
+                continue;
+            if (auto temp = PickWithinWindow(pt, *it, ignore))
+                return temp;
+        }
+
+        // if wnd is visible and clickable, return it if no child windows also catch pt
+        auto& retval = (wnd->Visible()
+                        && wnd->Interactive()
+                        && (!ignore || !ignore->count(wnd.get())))
+            ? wnd : std::shared_ptr<Wnd>();
+        return retval;
+    }
+}
+
 ///////////////////////////////////////
 // class GG::ZList
 ///////////////////////////////////////
-Wnd* ZList::Pick(const Pt& pt, Wnd* modal, const std::set<Wnd*>* ignore/* = 0*/) const
+
+
+ZList::~ZList()
+{}
+
+ZList::RenderOrderIterable ZList::RenderOrder() const
+{ return RenderOrderIterable(m_list); }
+
+std::shared_ptr<Wnd> ZList::Pick(const Pt& pt, Wnd* modal, const std::set<Wnd*>* ignore/* = 0*/) const
 {
-    Wnd* retval = nullptr;
+    auto modal_shared = modal ? modal->shared_from_this() : std::shared_ptr<Wnd>();
+    return Pick(pt, modal_shared, ignore);
+}
+
+std::shared_ptr<Wnd> ZList::Pick(const Pt& pt, const std::shared_ptr<Wnd>& modal, const std::set<Wnd*>* ignore/* = 0*/) const
+{
     if (modal) { // if a modal window is active, only look there
         // NOTE: We have to check Visible() separately, because in the
         // rendering code an invisble parent's children are never rendered.
-        retval =
-            modal->Visible() &&
-            modal->InWindow(pt) ?
-            PickWithinWindow(pt, modal, ignore) : nullptr;
-    } else { // otherwise, look in the z-list
-        for (auto& wnd : *this) {
-            Wnd* temp = nullptr;
-            if (wnd->Visible() &&
-                wnd->InWindow(pt) &&
-                (temp = PickWithinWindow(pt, wnd, ignore))) {
-                retval = temp;
-                break;
-            }
-        }
+        return
+            modal->Visible()
+            && modal->InWindow(pt) ? PickWithinWindow(pt, modal, ignore) : nullptr;
+    } else {
+        // otherwise, look in the z-list for the first visible Wnd containg pt.
+        std::function<boost::optional<std::shared_ptr<Wnd>> (const std::shared_ptr<Wnd>&)> contains_pt =
+            [&pt, &ignore, this](const std::shared_ptr<Wnd>& locked) {
+            if (!locked->Visible() || !locked->InWindow(pt))
+                return boost::optional<std::shared_ptr<Wnd>>(boost::none);
+
+            if (auto temp = PickWithinWindow(pt, locked, ignore))
+                return boost::optional<std::shared_ptr<Wnd>>(temp);
+            return boost::optional<std::shared_ptr<Wnd>>(boost::none);
+        };
+
+        if (auto found = Find(contains_pt))
+            return found->second;
     }
-    return retval;
+    return std::shared_ptr<Wnd>();
 }
 
-void ZList::Add(Wnd* wnd)
+void ZList::Add(const std::shared_ptr<Wnd>& wnd)
 {
-    if (end() == std::find(begin(), end(), wnd)) {
+    if (!wnd)
+        return;
+
+    std::function<boost::optional<bool> (const std::shared_ptr<Wnd>&)> equals_wnd =
+        [&wnd](const std::shared_ptr<Wnd>& locked) {
+        return wnd == locked ? boost::optional<bool>(true) : boost::optional<bool>(boost::none); };
+    auto found = Find(equals_wnd);
+
+    if (!found) {
         // add wnd to the end of the list...
-        insert(end(), wnd);
+        m_list.insert(m_list.end(), wnd);
         // then move it up to its proper place
         MoveUp(wnd);
     }
 }
 
-bool ZList::Remove(Wnd* wnd)
+bool ZList::Remove(const std::shared_ptr<Wnd>& wnd_locked)
 {
-    bool retval = false;
-    iterator it = std::find(begin(), end(), wnd);
-    if (it != end()) {
-        erase(it);
-        retval = true;
-    }
-    return retval;
+    if (!wnd_locked)
+        return false;
+
+    std::function<boost::optional<bool> (const std::shared_ptr<Wnd>&)> equals_wnd =
+        [&wnd_locked](const std::shared_ptr<Wnd>& locked) {
+        return wnd_locked == locked ? boost::optional<bool>(true) : boost::optional<bool>(boost::none); };
+    auto found = Find(equals_wnd);
+
+    if (found)
+        m_list.erase(found->first);
+    return bool(found);
 }
 
-bool ZList::MoveUp(Wnd* wnd)
+bool ZList::MoveUp(const std::shared_ptr<Wnd>& wnd_locked)
 {
-    bool retval = false;
-    iterator it = std::find(begin(), end(), wnd);
-    if (it != end()) { // note that this also implies !empty()..
-        if (!front()->OnTop() || wnd->OnTop()) {
+   if (!wnd_locked)
+        return false;
+
+    std::function<boost::optional<bool> (const std::shared_ptr<Wnd>&)> equals_wnd =
+        [&wnd_locked](const std::shared_ptr<Wnd>& locked) {
+        return wnd_locked == locked ? boost::optional<bool>(true) : boost::optional<bool>(boost::none); };
+    auto found = Find(equals_wnd);
+
+    if (found) { // note that this also implies !empty()..
+
+        auto front = m_list.front();
+        if (!front || !front->OnTop() || (wnd_locked && wnd_locked->OnTop())) {
             // if there are no on-top windows, or wnd is an on-top window just
             // slap wnd on top of the topmost element
-            splice(begin(), *this, it);
+            m_list.splice(m_list.begin(), m_list, found->first);
         } else {
             // front()->OnTop() && !wnd->OnTop(), so only move wnd up to just
             // below the bottom of the on-top range
-            splice(FirstNonOnTop(), *this, it);
+            m_list.splice(FirstNonOnTop(), m_list, found->first);
         }
-        retval = true;
     }
-    return retval;
+    return bool(found);
 }
 
-bool ZList::MoveDown(Wnd* wnd)
+bool ZList::MoveDown(const std::shared_ptr<Wnd>& wnd_locked)
 {
-    bool retval = false;
-    iterator it = std::find(begin(), end(), wnd);
-    if (it != end()) {
-        if (back()->OnTop() || !wnd->OnTop()) {
+    if (!wnd_locked)
+        return false;
+
+    std::function<boost::optional<bool> (const std::shared_ptr<Wnd>&)> equals_wnd =
+        [&wnd_locked](const std::shared_ptr<Wnd>& locked) {
+        return wnd_locked == locked ? boost::optional<bool>(true) : boost::optional<bool>(boost::none); };
+    auto found = Find(equals_wnd);
+
+    if (found) {
+        auto back = m_list.back();
+        if ((back && back->OnTop()) || !wnd_locked || !wnd_locked->OnTop()) {
             // if there are only on-top windows, or wnd is not an on-top
             // window just put wnd below the bottom element
-            splice(end(), *this, it);
+            m_list.splice(m_list.end(), m_list, found->first);
         } else {
             // !back()->OnTop() && wnd->OnTop(), so only move wnd up to just
             // below the bottom of the on-top range
-            splice(FirstNonOnTop(), *this, it);
-        }
-        retval = true;
-    }
-    return retval;
-}
-
-Wnd* ZList::PickWithinWindow(const Pt& pt, Wnd* wnd, const std::set<Wnd*>* ignore) const
-{
-    // if wnd is visible and clickable, return it if no child windows also catch pt
-    Wnd* retval =
-        (wnd->Visible() &&
-         wnd->Interactive() &&
-         (!ignore || ignore->find(wnd) == ignore->end())) ?
-        wnd : nullptr;
-    // look through all the children of wnd, and determine whether pt lies in
-    // any of them (or their children)
-    const auto end_it = wnd->Children().rend();
-    for (auto it = wnd->Children().rbegin(); it != end_it; ++it) {
-        if (!(*it)->Visible())
-            continue;
-        Wnd* temp = nullptr;
-        if ((*it)->InWindow(pt) && (temp = PickWithinWindow(pt, *it, ignore))) {
-            retval = temp;
-            break;
+            m_list.splice(FirstNonOnTop(), m_list, found->first);
         }
     }
-    return retval;
+    return bool(found);
 }
 
 ZList::iterator ZList::FirstNonOnTop()
 {
-    iterator retval = begin();
-    for (; retval != end(); ++retval)
-        if (!(*retval)->OnTop())
-            break;
-    return retval;
+    std::function<boost::optional<bool> (const std::shared_ptr<Wnd>&)> on_top =
+        [](const std::shared_ptr<Wnd>& wnd){ return !wnd->OnTop() ? boost::optional<bool>(true) : boost::optional<bool>(boost::none); };
+
+    auto retval = Find(on_top);
+    return retval ? retval->first : m_list.end();
+}
+
+template <typename T> boost::optional<std::pair<ZList::iterator, T>> ZList::Find(
+    const std::function<boost::optional<T> (const std::shared_ptr<Wnd>&)>& predicate) const
+{
+    auto retval = m_list.begin();
+    while (retval != m_list.end()) {
+        if (auto result = predicate(*retval))
+            return std::make_pair(retval, *result);
+
+        ++retval;
+    }
+    return boost::none;
 }

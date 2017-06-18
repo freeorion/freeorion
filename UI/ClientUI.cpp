@@ -651,15 +651,10 @@ ClientUI::ClientUI() :
 }
 
 ClientUI::~ClientUI() {
-    delete m_map_wnd;
-    delete m_message_wnd;
-    delete m_player_list_wnd;
-    delete m_intro_screen;
-    delete m_multiplayer_lobby_wnd;
     s_the_UI = nullptr;
 }
 
-MapWnd* ClientUI::GetMapWnd()
+std::shared_ptr<MapWnd> ClientUI::GetMapWnd()
 {
     static bool initialized = m_map_wnd ? true : (m_map_wnd = GG::Wnd::Create<MapWnd>()) != nullptr;
     (void)initialized; // Hide unused variable warning
@@ -670,16 +665,16 @@ MapWnd const* ClientUI::GetMapWndConst() const
 {
     static bool initialized = m_map_wnd ? true : (m_map_wnd = GG::Wnd::Create<MapWnd>()) != nullptr;
     (void)initialized; // Hide unused variable warning
-    return m_map_wnd;
+    return m_map_wnd.get();
 }
 
-MessageWnd* ClientUI::GetMessageWnd()
+std::shared_ptr<MessageWnd> ClientUI::GetMessageWnd()
 { return m_message_wnd; }
 
-PlayerListWnd* ClientUI::GetPlayerListWnd()
+std::shared_ptr<PlayerListWnd> ClientUI::GetPlayerListWnd()
 { return m_player_list_wnd; }
 
-IntroScreen* ClientUI::GetIntroScreen()
+std::shared_ptr<IntroScreen> ClientUI::GetIntroScreen()
 { return m_intro_screen; }
 
 void ClientUI::ShowIntroScreen()
@@ -696,7 +691,7 @@ void ClientUI::ShowIntroScreen()
     HumanClientApp::GetApp()->Remove(m_multiplayer_lobby_wnd);
 }
 
-MultiPlayerLobbyWnd* ClientUI::GetMultiPlayerLobbyWnd()
+std::shared_ptr<MultiPlayerLobbyWnd> ClientUI::GetMultiPlayerLobbyWnd()
 { return m_multiplayer_lobby_wnd; }
 
 void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const {
@@ -791,7 +786,7 @@ void ClientUI::ZoomToFleet(std::shared_ptr<const Fleet> fleet) {
 
     GetMapWnd()->CenterOnObject(fleet->ID());
     GetMapWnd()->SelectFleet(fleet->ID());
-    if (FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().WndForFleet(fleet))
+    if (const auto& fleet_wnd = FleetUIManager::GetFleetUIManager().WndForFleet(fleet))
         fleet_wnd->SelectFleet(fleet->ID());
 }
 

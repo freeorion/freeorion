@@ -122,10 +122,7 @@ MultiEdit::MultiEdit(const std::string& str, const std::shared_ptr<Font>& font, 
 }
 
 MultiEdit::~MultiEdit()
-{
-    delete m_vscroll;
-    delete m_hscroll;
-}
+{}
 
 Pt MultiEdit::MinUsableSize() const
 {
@@ -227,7 +224,7 @@ void MultiEdit::Render()
 
         // if there's no selected text, but this row contains the caret (and
         // MULTI_READ_ONLY is not in effect)
-        if (GUI::GetGUI()->FocusWnd() == this &&
+        if (GUI::GetGUI()->FocusWnd().get() == this &&
             !MultiSelected() &&
             m_cursor_begin.first == row &&
             !(m_style & MULTI_READ_ONLY))
@@ -1055,9 +1052,8 @@ void MultiEdit::TextInput(const std::string* text) {
 
 void MultiEdit::RecreateScrolls()
 {
-    delete m_vscroll;
-    delete m_hscroll;
-    m_vscroll = m_hscroll = nullptr;
+    m_vscroll.reset();
+    m_hscroll.reset();
     AdjustScrolls();
 }
 
@@ -1254,7 +1250,7 @@ void MultiEdit::AdjustScrolls()
     const int INT_GAP = static_cast<int>(GAP);
     if (m_vscroll) { // if scroll already exists...
         if (!need_vert) { // remove scroll
-            DeleteChild(m_vscroll);
+            DeleteChild(m_vscroll.get());
             m_vscroll = nullptr;
         } else { // ensure vertical scroll has the right logical and physical dimensions
             unsigned int line_size = (m_vscroll_wheel_scroll_increment != 0
@@ -1291,7 +1287,7 @@ void MultiEdit::AdjustScrolls()
 
     if (m_hscroll) { // if scroll already exists...
         if (!need_horz) { // remove scroll
-            DeleteChild(m_hscroll);
+            DeleteChild(m_hscroll.get());
             m_hscroll = nullptr;
         } else { // ensure horizontal scroll has the right logical and physical dimensions
             unsigned int line_size = (m_hscroll_wheel_scroll_increment != 0

@@ -189,8 +189,8 @@ void FileDlg::CompleteConstruction()
     m_filter_list = style->NewDropDownList(3, m_border_color);
     m_filter_list->SetStyle(LIST_NOSORT);
 
-    m_curr_dir_text = style->NewTextControl("", m_font, m_text_color, FORMAT_NOWRAP);
-    m_files_label = style->NewTextControl(style->Translate("File(s):"), m_font, m_text_color, FORMAT_RIGHT | FORMAT_VCENTER);
+    m_curr_dir_text =  style->NewTextControl("", m_font, m_text_color, FORMAT_NOWRAP);
+    m_files_label =  style->NewTextControl(style->Translate("File(s):"), m_font, m_text_color, FORMAT_RIGHT | FORMAT_VCENTER);
     m_file_types_label = style->NewTextControl(style->Translate("Type(s):"), m_font, m_text_color, FORMAT_RIGHT | FORMAT_VCENTER);
 
     m_ok_button = style->NewButton(m_save ? m_save_str : m_open_str, m_font, m_color, m_text_color);
@@ -517,7 +517,7 @@ void FileDlg::PopulateFilters()
     } else {
         for (std::pair<std::string, std::string>& file_filter : m_file_filters) {
             auto row = Wnd::Create<ListBox::Row>();
-            row->push_back(GetStyleFactory()->NewTextControl(file_filter.first, m_font, m_text_color, FORMAT_NOWRAP));
+            row->push_back(std::shared_ptr<Control>(GetStyleFactory()->NewTextControl(file_filter.first, m_font, m_text_color, FORMAT_NOWRAP)));
             m_filter_list->Insert(row);
         }
         m_filter_list->Select(m_filter_list->begin());
@@ -573,13 +573,13 @@ void FileDlg::UpdateList()
             Win32Paths())
         {
             auto row = Wnd::Create<ListBox::Row>();
-            row->push_back(GetStyleFactory()->NewTextControl("[..]", m_font, m_text_color, FORMAT_NOWRAP));
+            row->push_back(std::shared_ptr<Control>(GetStyleFactory()->NewTextControl("[..]", m_font, m_text_color, FORMAT_NOWRAP)));
             m_files_list->Insert(row);
         }
         // current directory selector
         {
             auto row = Wnd::Create<ListBox::Row>();
-            row->push_back(GetStyleFactory()->NewTextControl("[.]", m_font, m_text_color, FORMAT_NOWRAP));
+            row->push_back(std::shared_ptr<Control>(GetStyleFactory()->NewTextControl("[.]", m_font, m_text_color, FORMAT_NOWRAP)));
             m_files_list->Insert(row);
         }
         try {
@@ -593,7 +593,7 @@ void FileDlg::UpdateList()
             return;
         }
         // contained directories
-        std::multimap<std::string, ListBox::Row*> sorted_rows;
+        std::multimap<std::string, std::shared_ptr<ListBox::Row>> sorted_rows;
         for (fs::directory_iterator it(s_working_dir); it != end_it; ++it) {
             try {
                 if (fs::exists(*it) && fs::is_directory(*it) && it->path().filename().native()[0] != '.') {
@@ -608,14 +608,14 @@ void FileDlg::UpdateList()
 #else
                     std::string row_text = "[" + it->path().filename().string() + "]";
 #endif
-                    row->push_back(GetStyleFactory()->NewTextControl(row_text, m_font, m_text_color, FORMAT_NOWRAP));
+                    row->push_back(std::shared_ptr<Control>(GetStyleFactory()->NewTextControl(row_text, m_font, m_text_color, FORMAT_NOWRAP)));
                     sorted_rows.insert({row_text, row});
                 }
             } catch (const fs::filesystem_error&) {
             }
         }
 
-        std::vector<ListBox::Row*> rows;
+        std::vector<std::shared_ptr<ListBox::Row>> rows;
         rows.reserve(sorted_rows.size());
         for (auto& row : sorted_rows)
         { rows.push_back(row.second); }
@@ -633,7 +633,7 @@ void FileDlg::UpdateList()
                         }
                         if (meets_filters) {
                             auto row = Wnd::Create<ListBox::Row>();
-                            row->push_back(GetStyleFactory()->NewTextControl(it->path().filename().string(), m_font, m_text_color, FORMAT_NOWRAP));
+                            row->push_back(std::shared_ptr<Control>(GetStyleFactory()->NewTextControl(it->path().filename().string(), m_font, m_text_color, FORMAT_NOWRAP)));
                             sorted_rows.insert({it->path().filename().string(), row});
                         }
                     }
@@ -650,7 +650,7 @@ void FileDlg::UpdateList()
                 fs::path path(c + std::string(":"));
                 if (fs::exists(path)) {
                     auto row = Wnd::Create<ListBox::Row>();
-                    row->push_back(GetStyleFactory()->NewTextControl("[" + path.root_name().string() + "]", m_font, m_text_color, FORMAT_NOWRAP));
+                    row->push_back(std::shared_ptr<Control>(GetStyleFactory()->NewTextControl("[" + path.root_name().string() + "]", m_font, m_text_color, FORMAT_NOWRAP)));
                     m_files_list->Insert(row);
                 }
             } catch (const fs::filesystem_error&) {

@@ -395,7 +395,7 @@ struct CUISimpleDropDownListRow : public GG::ListBox::Row {
     void CompleteConstruction() override;
     static const GG::Y DEFAULT_ROW_HEIGHT;
 private:
-    CUILabel* m_row_label;
+    std::shared_ptr<CUILabel> m_row_label;
 };
 
 /** Encapsulates an icon and text that goes with it in a single control.  For
@@ -465,8 +465,8 @@ private:
     std::vector<int>    m_digits;
     std::vector<bool>   m_show_signs;
 
-    GG::StaticGraphic*  m_icon;
-    GG::Label*          m_text;
+    std::shared_ptr<GG::StaticGraphic>  m_icon;
+    std::shared_ptr<GG::Label>          m_text;
 };
 
 class CUIToolBar : public GG::Control {
@@ -596,19 +596,19 @@ private:
     std::string m_title_str;
     int         m_empire_id;
 
-    GG::Label*  m_total_points_label;
-    GG::Label*  m_total_points;
-    GG::Label*  m_total_points_P_label;
-    GG::Label*  m_wasted_points_label;
-    GG::Label*  m_wasted_points;
-    GG::Label*  m_wasted_points_P_label;
+    std::shared_ptr<GG::Label>  m_total_points_label;
+    std::shared_ptr<GG::Label>  m_total_points;
+    std::shared_ptr<GG::Label>  m_total_points_P_label;
+    std::shared_ptr<GG::Label>  m_wasted_points_label;
+    std::shared_ptr<GG::Label>  m_wasted_points;
+    std::shared_ptr<GG::Label>  m_wasted_points_P_label;
 
-    GG::Label*  m_local_points_label;
-    GG::Label*  m_local_points;
-    GG::Label*  m_local_points_P_label;
-    GG::Label*  m_local_wasted_points_label;
-    GG::Label*  m_local_wasted_points;
-    GG::Label*  m_local_wasted_points_P_label;
+    std::shared_ptr<GG::Label>  m_local_points_label;
+    std::shared_ptr<GG::Label>  m_local_points;
+    std::shared_ptr<GG::Label>  m_local_points_P_label;
+    std::shared_ptr<GG::Label>  m_local_wasted_points_label;
+    std::shared_ptr<GG::Label>  m_local_wasted_points;
+    std::shared_ptr<GG::Label>  m_local_wasted_points_P_label;
 };
 
 /** Displays progress that is divided over mulitple turns, as in the Research and Production screens. */

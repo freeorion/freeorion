@@ -61,7 +61,7 @@ void MultiIconValueIndicator::CompleteConstruction() {
         GG::Pt icon_ul(x, GG::Y(EDGE_PAD));
         GG::Pt icon_lr = icon_ul + GG::Pt(IconWidth(), IconHeight() + ClientUI::Pts()*3/2);
         m_icons.back()->SizeMove(icon_ul, icon_lr);
-        m_icons.back()->InstallEventFilter(this);
+        m_icons.back()->InstallEventFilter(shared_from_this());
         AttachChild(m_icons.back());
         x += IconWidth() + IconSpacing();
     }
@@ -127,7 +127,7 @@ bool MultiIconValueIndicator::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
     MeterType meter_type = INVALID_METER_TYPE;
     for (unsigned int i = 0; i < m_icons.size(); ++i) {
         try {
-            if (m_icons.at(i) == w) {
+            if (m_icons.at(i).get() == w) {
                 meter_type = m_meter_types.at(i).first;
                 break;
             }

@@ -65,10 +65,10 @@ public:
     void ModalInit() override;
 
     ListBox* LB()
-    { return m_lb_wnd; }
+    { return m_lb_wnd.get(); }
 
     const ListBox* LB() const
-    { return m_lb_wnd; }
+    { return m_lb_wnd.get(); }
 
     /** The selection change signal while not running the modal drop down box.*/
     mutable SelChangedSignalType SelChangedSignal;
@@ -121,7 +121,7 @@ private:
     /** Used by CorrectListSize() to determine the list height from the current first shown row. */
     Pt DetermineListHeight(const Pt& drop_down_size);
 
-    ListBox*            m_lb_wnd;
+    std::shared_ptr<ListBox>            m_lb_wnd;
     const size_t        m_num_shown_rows;
     const DropDownList* m_relative_to_wnd;
     bool                m_dropped; ///< Is the drop down list open.
@@ -181,7 +181,7 @@ void ModalListPicker::CompleteConstruction()
     GUI::GetGUI()->WindowResizedSignal.connect(
         boost::bind(&ModalListPicker::WindowResizedSlot, this, _1, _2));
     AttachChild(m_lb_wnd);
-    m_lb_wnd->InstallEventFilter(this);
+    m_lb_wnd->InstallEventFilter(shared_from_this());
 
     if (INSTRUMENT_ALL_SIGNALS)
         SelChangedSignal.connect(ModalListPickerSelChangedEcho(*this));
@@ -493,7 +493,7 @@ boost::optional<DropDownList::iterator> ModalListPicker::MouseWheelCommon(
 }
 
 bool ModalListPicker::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
-    if (w != m_lb_wnd)
+    if (w != m_lb_wnd.get())
         return false;
 
     switch (event.Type()) {
@@ -732,7 +732,7 @@ void DropDownList::RenderDisplayedRow()
 
     /** The following code possibly renders the selected row twice.  Once in the selected area and
         also in the drop down list if it is visible.*/
-    Row* current_item = *CurrentItem();
+    auto current_item = *CurrentItem();
     bool sel_visible = current_item->Visible();
     bool lb_visible = LB()->Visible();
 
@@ -752,10 +752,10 @@ void DropDownList::RenderDisplayedRow()
                        Top() + Height() / 2 - (current_item->Top() + current_item->Height() / 2));
     current_item->OffsetMove(offset);
 
-    GUI::GetGUI()->PreRenderWindow(current_item);
+    GUI::GetGUI()->PreRenderWindow(current_item.get());
 
     BeginClipping();
-    GUI::GetGUI()->RenderWindow(current_item);
+    GUI::GetGUI()->RenderWindow(current_item.get());
     EndClipping();
 
     current_item->OffsetMove(-offset);
@@ -779,25 +779,25 @@ void DropDownList::SizeMove(const Pt& ul, const Pt& lr)
 void DropDownList::SetColor(Clr c)
 { LB()->SetColor(c); }
 
-DropDownList::iterator DropDownList::Insert(Row* row, iterator it, bool signal/* = true*/)
+DropDownList::iterator DropDownList::Insert(std::shared_ptr<Row> row, iterator it, bool signal/* = true*/)
 {
     row->SetDragDropDataType("");
-    DropDownList::iterator ret = LB()->Insert(row, it, signal);
+    DropDownList::iterator ret = LB()->Insert(std::forward<std::shared_ptr<Row>>(row), it, signal);
     Resize(Size());
     RequirePreRender();
     return ret;
 }
 
-DropDownList::iterator DropDownList::Insert(Row* row, bool signal/* = true*/)
+DropDownList::iterator DropDownList::Insert(std::shared_ptr<Row> row, bool signal/* = true*/)
 {
     row->SetDragDropDataType("");
-    DropDownList::iterator ret = LB()->Insert(row, signal);
+    DropDownList::iterator ret = LB()->Insert(std::forward<std::shared_ptr<Row>>(row), signal);
     Resize(Size());
     RequirePreRender();
     return ret;
 }
 
-void DropDownList::Insert(const std::vector<Row*>& rows, iterator it, bool signal/* = true*/)
+void DropDownList::Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it, bool signal/* = true*/)
 {
     for (auto& row : rows)
     { row->SetDragDropDataType(""); }
@@ -806,7 +806,7 @@ void DropDownList::Insert(const std::vector<Row*>& rows, iterator it, bool signa
     RequirePreRender();
 }
 
-void DropDownList::Insert(const std::vector<Row*>& rows, bool signal/* = true*/)
+void DropDownList::Insert(const std::vector<std::shared_ptr<Row>>& rows, bool signal/* = true*/)
 {
     for (auto& row : rows)
     { row->SetDragDropDataType(""); }

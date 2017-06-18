@@ -146,7 +146,7 @@ public:
     /** Inserts \a w into the layout in the indicated cell, expanding the
         layout grid as necessary.  \throw GG::Layout::AttemptedOverwrite
         Throws if there is already a Wnd in the given cell. */
-    void Add(Wnd* wnd, std::size_t row, std::size_t column, Flags<Alignment> alignment = ALIGN_NONE);
+    void Add(const std::shared_ptr<Wnd>& wnd, std::size_t row, std::size_t column, Flags<Alignment> alignment = ALIGN_NONE);
 
     /** Inserts \a w into the layout, covering the indicated cell(s),
         expanding the layout grid as necessary.  The num_rows and num_columns
@@ -155,7 +155,7 @@ public:
         Note that \a num_rows and \a num_columns must be positive, though this
         is not checked. \throw GG::Layout::AttemptedOverwrite Throws if there
         is already a Wnd in one of the given cells. */
-    void Add(Wnd* wnd, std::size_t row, std::size_t column, std::size_t num_rows, std::size_t num_columns, Flags<Alignment> alignment = ALIGN_NONE);
+    void Add(const std::shared_ptr<Wnd>& wnd, std::size_t row, std::size_t column, std::size_t num_rows, std::size_t num_columns, Flags<Alignment> alignment = ALIGN_NONE);
 
     /** Removes \a w from the layout, recalculating the layout as needed.
         Note that this causes the layout to relinquish responsibility for \a
@@ -286,7 +286,7 @@ private:
     void   ValidateAlignment(Flags<Alignment>& alignment);
     void   ChildSizeOrMinSizeChanged();
 
-    std::vector<std::vector<Wnd*>>  m_cells;
+    std::vector<std::vector<std::weak_ptr<Wnd>>>  m_cells;
     unsigned int                    m_border_margin;
     unsigned int                    m_cell_margin;
     std::vector<RowColParams>       m_row_params;

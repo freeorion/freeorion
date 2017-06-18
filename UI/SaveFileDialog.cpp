@@ -92,7 +92,7 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
     /// Creates a text control that support resizing and word wrap.
-    GG::Label* CreateResizingText(const std::string& string, GG::X width)
+    std::shared_ptr<GG::Label> CreateResizingText(const std::string& string, GG::X width)
     {
         // Calculate the extent manually to ensure the control stretches to full
         // width when possible.  Otherwise it would always word break.
@@ -160,14 +160,14 @@ public:
         return columns;
     }
 
-    static GG::Control* TitleForColumn(const SaveFileColumn& column)
+    static std::shared_ptr<GG::Control> TitleForColumn(const SaveFileColumn& column)
     {
         auto retval = GG::Wnd::Create<CUILabel>(column.Title(), GG::FORMAT_LEFT);
         retval->Resize(GG::Pt(GG::X1, ClientUI::GetFont()->Height()));
         return retval;
     }
 
-    static GG::Control* CellForColumn(const SaveFileColumn& column, const FullPreview& full, GG::X max_width)
+    static std::shared_ptr<GG::Control> CellForColumn(const SaveFileColumn& column, const FullPreview& full, GG::X max_width)
     {
         GG::Clr color = ClientUI::TextColor();
         std::string value = ColumnInPreview(full, column.m_name);
@@ -178,7 +178,7 @@ public:
         if (column.m_name == "turn")
             format_flags = GG::FORMAT_CENTER;
 
-        GG::Label* retval = nullptr;
+        std::shared_ptr<GG::Label> retval;
 
         if (column.m_fixed) {
             retval = GG::Wnd::Create<CUILabel>(value, format_flags, GG::NO_WND_FLAGS,
@@ -388,7 +388,7 @@ public:
 
         SetMargin(ROW_MARGIN);
 
-        for (const SaveFileColumn& column : *m_columns)
+        for (const auto& column : *m_columns)
         { push_back(SaveFileColumn::TitleForColumn(column)); }
         AdjustColumns();
     }
@@ -438,7 +438,7 @@ public:
 
         // Give the directory label at least all the room that the other columns demand anyway
         GG::X sum(0);
-        for (const SaveFileColumn& column : *m_columns) {
+        for (const auto& column : *m_columns) {
             sum += column.FixedWidth();
         }
         return sum;
@@ -469,11 +469,10 @@ public:
         SaveFileRow::Init();
         VarText browse_text(UserStringNop("SAVE_DIALOG_ROW_BROWSE_TEMPLATE"));
 
-        for (const SaveFileColumn& column : *m_columns) {
-            GG::Control* cfc = SaveFileColumn::CellForColumn(column, m_full_preview, ClientWidth());
-            push_back(cfc);
+        for (const auto& column : *m_columns) {
+            push_back(SaveFileColumn::CellForColumn(column, m_full_preview, ClientWidth()));
         }
-        for (const SaveFileColumn& column : *m_all_columns) {
+        for (const auto& column : *m_all_columns) {
             browse_text.AddVariable(column.Name(), ColumnInPreview(m_full_preview, column.Name(), false));
         }
         AdjustColumns();
@@ -544,7 +543,7 @@ public:
     void LoadSaveGamePreviews(const std::vector<FullPreview>& previews) {
         int tooltip_delay = GetOptionsDB().Get<int>("UI.save-file-dialog.tooltip-delay");
 
-        std::vector<Row*> rows;
+        std::vector<std::shared_ptr<Row>> rows;
         for (const FullPreview& preview : previews) {
             rows.push_back(GG::Wnd::Create<SaveFileFileRow>(preview, m_visible_columns, m_columns, tooltip_delay));
         }
@@ -579,7 +578,7 @@ public:
 
     bool HasFile(const std::string& filename) {
         for (auto& row : *this) {
-            SaveFileRow* srow = dynamic_cast<SaveFileRow*>(row);
+            SaveFileRow* srow = dynamic_cast<SaveFileRow*>(row.get());
             if (srow && srow->Filename() == filename)
                 return true;
         }
@@ -597,7 +596,7 @@ private:
         auto columns = std::make_shared<std::vector<SaveFileColumn>>();
         for (const std::string& column_name : names) {
             bool found_col = false;
-            for (const SaveFileColumn& column : *all_cols) {
+            for (const auto& column : *all_cols) {
                 if (column.Name() == column_name) {
                     columns->push_back(column);
                     found_col = true;
@@ -923,8 +922,8 @@ void SaveFileDialog::Cancel() {
 
 void SaveFileDialog::SelectionChanged(const GG::ListBox::SelectionSet& selections) {
     if ( selections.size() == 1 ) {
-        GG::ListBox::Row* row = **selections.begin();
-        SaveFileRow* save_row = boost::polymorphic_downcast<SaveFileRow*> ( row );
+        auto& row = **selections.begin();
+        SaveFileRow* save_row = boost::polymorphic_downcast<SaveFileRow*> (row.get());
         m_name_edit -> SetText ( save_row->Filename() );
     } else {
         DebugLogger() << "SaveFileDialog::SelectionChanged: Unexpected selection size: " << selections.size();
@@ -1003,7 +1002,7 @@ bool SaveFileDialog::CheckChoiceValidity() {
             m_current_dir_edit->SetColor(GG::CLR_RED);
         }
     } else {
-        if (HasRow(m_remote_dir_dropdown, m_current_dir_edit->Text())) {
+        if (HasRow(m_remote_dir_dropdown.get(), m_current_dir_edit->Text())) {
             m_current_dir_edit->SetColor(ClientUI::TextColor());
         } else {
             m_current_dir_edit->SetColor(GG::CLR_RED);

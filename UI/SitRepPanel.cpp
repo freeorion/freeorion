@@ -310,8 +310,8 @@ namespace {
         }
 
         const SitRepEntry&  m_sitrep_entry;
-        GG::StaticGraphic*  m_icon;
-        SitRepLinkText*     m_link_text;
+        std::shared_ptr<GG::StaticGraphic>  m_icon;
+        std::shared_ptr<SitRepLinkText>     m_link_text;
     };
 
     ////////////////////////////////////////////////
@@ -368,7 +368,7 @@ namespace {
         const SitRepEntry&  GetSitRepEntry() const { return m_panel->GetSitRepEntry(); }
 
     private:
-        SitRepDataPanel*    m_panel;
+        std::shared_ptr<SitRepDataPanel>    m_panel;
         const SitRepEntry   m_sitrep;
     };
 }
@@ -619,7 +619,7 @@ void SitRepPanel::FilterClicked() {
 }
 
 void SitRepPanel::IgnoreSitRep(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& mod) {
-    SitRepRow* sitrep_row = dynamic_cast<SitRepRow*>(*it);
+    SitRepRow* sitrep_row = dynamic_cast<SitRepRow*>(it->get());
     if (!sitrep_row) {
         return;
     }
@@ -640,7 +640,7 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
     int start_turn = 0;
     SitRepRow* sitrep_row = nullptr;
     if (it != m_sitreps_lb->end()) 
-        sitrep_row = dynamic_cast<SitRepRow*>(*it);
+        sitrep_row = dynamic_cast<SitRepRow*>(it->get());
     submenu_ignore.label = entry_margin + UserString("SITREP_IGNORE_MENU");
     if (sitrep_row) {
         const SitRepEntry& sitrep_entry = sitrep_row->GetSitRepEntry();

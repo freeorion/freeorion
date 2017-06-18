@@ -420,13 +420,13 @@ namespace {
         }
 
         int                     m_player_id;
-        //GG::Label*            m_player_name_text;
-        GG::Label*              m_empire_name_text;
-        GG::Label*              m_empire_ship_text;
-        GG::Label*              m_empire_planet_text;
-        GG::Label*              m_empire_production_text;
-        GG::Label*              m_empire_research_text;
-        GG::Label*              m_empire_detection_text;
+        //std::shared_ptr<GG::Label>            m_player_name_text;
+        std::shared_ptr<GG::Label>              m_empire_name_text;
+        std::shared_ptr<GG::Label>              m_empire_ship_text;
+        std::shared_ptr<GG::Label>              m_empire_planet_text;
+        std::shared_ptr<GG::Label>              m_empire_production_text;
+        std::shared_ptr<GG::Label>              m_empire_research_text;
+        std::shared_ptr<GG::Label>              m_empire_detection_text;
 
         GG::Pt                  m_diplo_status_icon_ul;
         GG::Pt                  m_ship_icon_ul;
@@ -500,7 +500,7 @@ namespace {
 
     private:
         int                 m_player_id;
-        PlayerDataPanel*    m_panel;
+        std::shared_ptr<PlayerDataPanel>    m_panel;
     };
 }
 
@@ -574,7 +574,7 @@ void PlayerListWnd::CompleteConstruction() {
 
 std::set<int> PlayerListWnd::SelectedPlayerIDs() const {
     std::set<int> retval;
-    for (GG::ListBox::iterator it = m_player_list->begin(); it != m_player_list->end(); ++it) {
+    for (auto it = m_player_list->begin(); it != m_player_list->end(); ++it) {
         if (!m_player_list->Selected(it))
             continue;
 
@@ -587,7 +587,7 @@ std::set<int> PlayerListWnd::SelectedPlayerIDs() const {
 
 void PlayerListWnd::HandlePlayerStatusUpdate(Message::PlayerStatus player_status, int about_player_id) {
     for (auto& row : *m_player_list) {
-        if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(row)) {
+        if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(row.get())) {
             if (about_player_id == Networking::INVALID_PLAYER_ID) {
                 player_row->SetStatus(player_status);
             } else if (player_row->PlayerID() == about_player_id) {
@@ -600,7 +600,7 @@ void PlayerListWnd::HandlePlayerStatusUpdate(Message::PlayerStatus player_status
 
 void PlayerListWnd::Update() {
     for (auto& row : *m_player_list) {
-        if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(row))
+        if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(row.get()))
             player_row->Update();
     }
 }
@@ -641,8 +641,8 @@ void PlayerListWnd::SetSelectedPlayers(const std::set<int>& player_ids) {
     }
 
     // loop through players, selecting any indicated
-    for (GG::ListBox::iterator it = m_player_list->begin(); it != m_player_list->end(); ++it) {
-        PlayerRow* row = dynamic_cast<PlayerRow*>(*it);
+    for (auto it = m_player_list->begin(); it != m_player_list->end(); ++it) {
+        PlayerRow* row = dynamic_cast<PlayerRow*>(it->get());
         if (!row) {
             ErrorLogger() << "PlayerRow::SetSelectedPlayers couldn't cast a listbow row to PlayerRow?";
             continue;
@@ -682,10 +682,10 @@ void PlayerListWnd::CloseClicked()
 void PlayerListWnd::PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     // mark as selected all PlayerDataPanel that are in \a rows and mark as not
     // selected all PlayerDataPanel that aren't in \a rows
-    for (GG::ListBox::iterator it = m_player_list->begin(); it != m_player_list->end(); ++it) {
+    for (auto it = m_player_list->begin(); it != m_player_list->end(); ++it) {
         bool select_this_row = (rows.find(it) != rows.end());
 
-        GG::ListBox::Row* row = *it;
+        auto& row = *it;
         if (!row) {
             ErrorLogger() << "PlayerListWnd::PlayerSelectionChanged couldn't get row";
             continue;
@@ -865,7 +865,7 @@ int PlayerListWnd::PlayerInRow(GG::ListBox::iterator it) const {
     if (it == m_player_list->end())
         return Networking::INVALID_PLAYER_ID;
 
-    if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(*it))
+    if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(it->get()))
         return player_row->PlayerID();
 
     return Networking::INVALID_PLAYER_ID;

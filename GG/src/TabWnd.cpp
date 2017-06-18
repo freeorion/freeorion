@@ -60,11 +60,7 @@ void OverlayWnd::CompleteConstruction()
 { SetLayout(Wnd::Create<Layout>(X0, Y0, Width(), Height(), 1, 1)); }
 
 OverlayWnd::~OverlayWnd()
-{
-    for (auto& wnd : m_wnds) {
-        delete wnd;
-    }
-}
+{}
 
 Pt OverlayWnd::MinUsableSize() const
 {
@@ -83,23 +79,20 @@ bool OverlayWnd::Empty() const
 std::size_t OverlayWnd::NumWnds() const
 { return m_wnds.size(); }
 
-Wnd* OverlayWnd::CurrentWnd() const
+std::shared_ptr<Wnd> OverlayWnd::CurrentWnd() const
 { return m_current_wnd_index == NO_WND ? nullptr : m_wnds[m_current_wnd_index]; }
 
 std::size_t OverlayWnd::CurrentWndIndex() const
 { return m_current_wnd_index; }
 
-const std::vector<Wnd*>& OverlayWnd::Wnds() const
-{ return m_wnds; }
-
-std::size_t OverlayWnd::AddWnd(Wnd* wnd)
+std::size_t OverlayWnd::AddWnd(const std::shared_ptr<Wnd>& wnd)
 {
     std::size_t retval = m_wnds.size();
     InsertWnd(m_wnds.size(), wnd);
     return retval;
 }
 
-void OverlayWnd::InsertWnd(std::size_t index, Wnd* wnd)
+void OverlayWnd::InsertWnd(std::size_t index, const std::shared_ptr<Wnd>& wnd)
 {
     m_wnds.insert(m_wnds.begin() + index, wnd);
     if (m_current_wnd_index == NO_WND)
@@ -110,8 +103,8 @@ Wnd* OverlayWnd::RemoveWnd(std::size_t index)
 {
     Wnd* retval = nullptr;
     if (index < m_wnds.size()) {
-        std::vector<Wnd*>::iterator it = m_wnds.begin() + index;
-        retval = *it;
+        auto it = m_wnds.begin() + index;
+        retval = it->get();
         m_wnds.erase(it);
         if (index == m_current_wnd_index)
             m_current_wnd_index = NO_WND;
@@ -122,11 +115,12 @@ Wnd* OverlayWnd::RemoveWnd(std::size_t index)
 Wnd* OverlayWnd::RemoveWnd(Wnd* wnd)
 {
     Wnd* retval = nullptr;
-    std::vector<Wnd*>::iterator it = std::find(m_wnds.begin(), m_wnds.end(), wnd);
+    auto it = std::find_if(m_wnds.begin(), m_wnds.end(),
+                           [&wnd](const std::shared_ptr<Wnd>& x){ return (x.get() == wnd); });
     if (it != m_wnds.end()) {
         if (it - m_wnds.begin() == static_cast<std::ptrdiff_t>(m_current_wnd_index))
             m_current_wnd_index = NO_WND;
-        retval = *it;
+        retval = it->get();
         m_wnds.erase(it);
     }
     return retval;
@@ -135,9 +129,9 @@ Wnd* OverlayWnd::RemoveWnd(Wnd* wnd)
 void OverlayWnd::SetCurrentWnd(std::size_t index)
 {
     assert(index < m_wnds.size());
-    Wnd* old_current_wnd = CurrentWnd();
+    const auto& old_current_wnd = CurrentWnd();
     m_current_wnd_index = index;
-    Wnd* current_wnd = CurrentWnd();
+    const auto& current_wnd = CurrentWnd();
     assert(current_wnd);
     if (current_wnd != old_current_wnd) {
         GG::Pt ul = old_current_wnd ? old_current_wnd->UpperLeft() : current_wnd->UpperLeft();
@@ -145,7 +139,7 @@ void OverlayWnd::SetCurrentWnd(std::size_t index)
         current_wnd->SizeMove(ul, lr);
 
         auto&& layout = GetLayout();
-        layout->Remove(old_current_wnd);
+        layout->Remove(old_current_wnd.get());
         layout->Add(current_wnd, 0, 0);
 
         if (old_current_wnd)
@@ -202,22 +196,22 @@ std::size_t TabWnd::NumWnds() const
 { return m_tab_bar->NumTabs(); }
 
 Wnd* TabWnd::CurrentWnd() const
-{ return m_overlay->CurrentWnd(); }
+{ return m_overlay->CurrentWnd().get(); }
 
 std::size_t TabWnd::CurrentWndIndex() const
 { return m_tab_bar->CurrentTabIndex(); }
 
-std::size_t TabWnd::AddWnd(Wnd* wnd, const std::string& name)
+std::size_t TabWnd::AddWnd(const std::shared_ptr<Wnd>& wnd, const std::string& name)
 {
     std::size_t retval = m_named_wnds.size();
     InsertWnd(m_named_wnds.size(), wnd, name);
     return retval;
 }
 
-void TabWnd::InsertWnd(std::size_t index, Wnd* wnd, const std::string& name)
+void TabWnd::InsertWnd(std::size_t index, const std::shared_ptr<Wnd>& wnd, const std::string& name)
 {
     std::size_t old_tab = m_tab_bar->CurrentTabIndex();
-    m_named_wnds[name] = wnd;
+    m_named_wnds[name] = wnd.get();
     m_overlay->InsertWnd(index, wnd);
     m_tab_bar->InsertTab(index, name);
     GetLayout()->SetMinimumRowHeight(0, m_tab_bar->MinUsableSize().y + 2 * 5);
@@ -245,12 +239,6 @@ void TabWnd::SetCurrentWnd(std::size_t index)
     m_tab_bar->SetCurrentTab(index);
     TabChanged(index, false);
 }
-
-const TabBar* TabWnd::GetTabBar() const
-{ return m_tab_bar; }
-
-const OverlayWnd* TabWnd::GetOverlayWnd() const
-{ return m_overlay; }
 
 const std::map<std::string, Wnd*>& TabWnd::WndNames() const
 { return m_named_wnds; }
@@ -388,10 +376,9 @@ void TabBar::InsertTab(std::size_t index, const std::string& name)
 {
     assert(index <= m_tab_buttons.size());
     const auto& style_factory = GetStyleFactory();
-    StateButton* button = style_factory->NewTabBarTab(name,
-                                                      m_font, FORMAT_CENTER, Color(),
-                                                      m_text_color);
-    button->InstallEventFilter(this);
+    std::shared_ptr<StateButton> button{style_factory->NewTabBarTab(
+            name, m_font, FORMAT_CENTER, Color(), m_text_color)};
+    button->InstallEventFilter(shared_from_this());
     m_tab_buttons.insert(m_tab_buttons.begin() + index, button);
     m_tabs->InsertButton(index, m_tab_buttons[index]);
     if (Width() < m_tabs->Width()) {
@@ -417,9 +404,8 @@ void TabBar::RemoveTab(const std::string& name)
     }
     assert(index < m_tab_buttons.size());
 
-    m_tab_buttons[index]->RemoveEventFilter(this);
-    m_tabs->RemoveButton(m_tab_buttons[index]);
-    delete m_tab_buttons[index];
+    m_tab_buttons[index]->RemoveEventFilter(shared_from_this());
+    m_tabs->RemoveButton(m_tab_buttons[index].get());
     m_tab_buttons.erase(m_tab_buttons.begin() + index);
     if (m_tabs->Width() <= Width())
         m_left_right_button_layout->Hide();
@@ -434,10 +420,10 @@ void TabBar::SetCurrentTab(std::size_t index)
 }
 
 const Button* TabBar::LeftButton() const
-{ return m_left_button; }
+{ return m_left_button.get(); }
 
 const Button* TabBar::RightButton() const
-{ return m_right_button; }
+{ return m_right_button.get(); }
 
 void TabBar::DistinguishCurrentTab(const std::vector<StateButton*>& tab_buttons)
 { RaiseCurrentTabButton(); }
@@ -446,7 +432,10 @@ void TabBar::TabChanged(std::size_t index, bool signal)
 {
     if (index != RadioButtonGroup::NO_BUTTON) {
         BringTabIntoView(index);
-        DistinguishCurrentTab(m_tab_buttons);
+        std::vector<StateButton*> tab_buttons(m_tab_buttons.size());
+        std::transform(m_tab_buttons.begin(), m_tab_buttons.end(), tab_buttons.begin(),
+                      [](const std::shared_ptr<StateButton>& x){ return x.get(); });
+        DistinguishCurrentTab(tab_buttons);
         if (signal)
             TabChangedSignal(index);
     }
@@ -500,7 +489,7 @@ bool TabBar::EventFilter(Wnd* w, const WndEvent& event)
 {
     if (event.Type() == WndEvent::LButtonDown ||
         event.Type() == WndEvent::RButtonDown)
-    { MoveChildUp(m_left_right_button_layout); }
+    { MoveChildUp(m_left_right_button_layout.get()); }
     return false;
 }
 

@@ -326,7 +326,7 @@ namespace {
             DoLayout();
         }
 
-        typedef std::pair<CUILabel*, CUILabel*>         LabelValueType;
+        typedef std::pair<std::shared_ptr<CUILabel>, std::shared_ptr<CUILabel>>         LabelValueType;
 
         bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override {
             assert(mode <= wnd->BrowseModes().size());
@@ -532,7 +532,7 @@ public:
     }
 
     virtual ~MapScaleLine()
-    { delete m_label; }
+    {}
 
     void Render() override {
         if (!m_enabled)
@@ -694,7 +694,7 @@ private:
 
     double              m_scale_factor;
     GG::X               m_line_length;
-    GG::TextControl*    m_label;
+    std::shared_ptr<GG::TextControl>    m_label;
     bool                m_enabled;
 };
 
@@ -717,7 +717,7 @@ void MapWndPopup::CompleteConstruction() {
     // Consequently, when the GUI shutsdown either could be destroyed before this Wnd
     if (auto client = ClientUI::GetClientUI())
         if (auto mapwnd = client->GetMapWnd())
-            mapwnd->RegisterPopup(this);
+            mapwnd->RegisterPopup(std::static_pointer_cast<MapWndPopup>(shared_from_this()));
 }
 
 MapWndPopup::~MapWndPopup()
@@ -741,10 +741,8 @@ MapWndPopup::~MapWndPopup()
             mapwnd->RemovePopup(this);
 }
 
-void MapWndPopup::CloseClicked() {
-    CUIWnd::CloseClicked();
-    delete this;
-}
+void MapWndPopup::CloseClicked()
+{ CUIWnd::CloseClicked(); }
 
 void MapWndPopup::Close()
 { CloseClicked(); }
@@ -1024,7 +1022,7 @@ void MapWnd::CompleteConstruction() {
     // create custom InWindow function for Menu button that extends its
     // clickable area to the adjacent edges of the toolbar containing it
     boost::function<bool(const SettableInWindowCUIButton*, const GG::Pt&)> in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1), boost::bind(&WndTop, m_toolbar),
+        boost::bind(&InRect, boost::bind(&WndLeft, _1), boost::bind(&WndTop, m_toolbar.get()),
                              boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
                     _2);
     // Menu button
@@ -1041,7 +1039,7 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_MENU"), UserString("MAP_BTN_MENU_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar.get()),
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Encyclo"pedia" button
@@ -1058,7 +1056,7 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_PEDIA"), UserString("MAP_BTN_PEDIA_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar.get()),
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Graphs button
@@ -1075,7 +1073,7 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_GRAPH"), UserString("MAP_BTN_GRAPH_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar.get()),
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Design button
@@ -1092,7 +1090,7 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_DESIGN"), UserString("MAP_BTN_DESIGN_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar.get()),
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Production button
@@ -1109,7 +1107,7 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_PRODUCTION"), UserString("MAP_BTN_PRODUCTION_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar.get()),
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Research button
@@ -1126,7 +1124,7 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_RESEARCH"), UserString("MAP_BTN_RESEARCH_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar.get()),
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Objects button
@@ -1143,7 +1141,7 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_OBJECTS"), UserString("MAP_BTN_OBJECTS_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar.get()),
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Empires button
@@ -1160,7 +1158,7 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_EMPIRES"), UserString("MAP_BTN_EMPIRES_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),  boost::bind(&WndTop, m_toolbar),
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),  boost::bind(&WndTop, m_toolbar.get()),
                              boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
                     _2);
     // SitRep button
@@ -1177,7 +1175,7 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_SITREP"), UserString("MAP_BTN_SITREP_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),  boost::bind(&WndTop, m_toolbar),
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),  boost::bind(&WndTop, m_toolbar.get()),
                              boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
                     _2);
     // Messages button
@@ -1194,7 +1192,7 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_MESSAGES"), UserString("MAP_BTN_MESSAGES_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),  boost::bind(&WndTop, m_toolbar),
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),  boost::bind(&WndTop, m_toolbar.get()),
                              boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
                     _2);
     // Moderator button
@@ -1492,7 +1490,7 @@ void MapWnd::CompleteConstruction() {
 
     // messages and empires windows
     if (ClientUI* cui = ClientUI::GetClientUI()) {
-        if (MessageWnd* msg_wnd = cui->GetMessageWnd()) {
+        if (const auto& msg_wnd = cui->GetMessageWnd()) {
             // Wnd is manually closed by user
             msg_wnd->ClosingSignal.connect(
                 boost::bind(&MapWnd::HideMessages, this));
@@ -1501,7 +1499,7 @@ void MapWnd::CompleteConstruction() {
                     m_btn_messages->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
             }
         }
-        if (PlayerListWnd* plr_wnd = cui->GetPlayerListWnd()) {
+        if (const auto& plr_wnd = cui->GetPlayerListWnd()) {
             // Wnd is manually closed by user
             plr_wnd->ClosingSignal.connect(
                 boost::bind(&MapWnd::HideEmpires, this));
@@ -1560,20 +1558,8 @@ void MapWnd::CompleteConstruction() {
     ConnectKeyboardAcceleratorSignals();
 }
 
-MapWnd::~MapWnd() {
-    delete m_toolbar;
-    delete m_scale_line;
-    delete m_zoom_slider;
-    delete m_sitrep_panel;
-    delete m_object_list_wnd;
-    delete m_moderator_wnd;
-    delete m_pedia_panel;
-    delete m_research_wnd;
-    delete m_production_wnd;
-    delete m_design_wnd;
-    delete m_side_panel;
-    delete m_combat_report_wnd;
-}
+MapWnd::~MapWnd()
+{}
 
 void MapWnd::DoLayout() {
     m_toolbar->Resize(GG::Pt(AppWidth(), TOOLBAR_HEIGHT));
@@ -1588,9 +1574,9 @@ void MapWnd::DoLayout() {
     m_moderator_wnd->ValidatePosition();
 
     if (ClientUI* cui = ClientUI::GetClientUI()) {
-        if (MessageWnd* msg_wnd = cui->GetMessageWnd())
+        if (const auto& msg_wnd = cui->GetMessageWnd())
             msg_wnd->ValidatePosition();
-        if (PlayerListWnd* plr_wnd = cui->GetPlayerListWnd())
+        if (const auto& plr_wnd = cui->GetPlayerListWnd())
             plr_wnd->ValidatePosition();
     }
 
@@ -2001,7 +1987,7 @@ void MapWnd::RenderSystems() {
         const double max_inner_circle_width = GetOptionsDB().Get<double>("UI.system-inner-circle-max-width"); // width of inner circle line when map is zoomed out
 
         for (const auto& system_icon : m_system_icons) {
-            const SystemIcon* icon = system_icon.second;
+            const auto& icon = system_icon.second;
 
             GG::Pt icon_size = icon->LowerRight() - icon->UpperLeft();
             GG::Pt icon_middle = icon->UpperLeft() + (icon_size / 2);
@@ -2892,7 +2878,7 @@ void MapWnd::InitTurnRendering() {
         // create new system icon
         auto icon = GG::Wnd::Create<SystemIcon>(GG::X0, GG::Y0, GG::X(10), sys_id);
         m_system_icons[sys_id] = icon;
-        icon->InstallEventFilter(this);
+        icon->InstallEventFilter(shared_from_this());
         if (SidePanel::SystemID() == sys_id)
             icon->SetSelected(true);
         AttachChild(icon);
@@ -2944,7 +2930,7 @@ void MapWnd::InitTurnRendering() {
         // create new system icon
         auto icon = GG::Wnd::Create<FieldIcon>(fld_id);
         m_field_icons[fld_id] = icon;
-        icon->InstallEventFilter(this);
+        icon->InstallEventFilter(shared_from_this());
 
         AttachChild(icon);
 
@@ -2988,7 +2974,7 @@ void MapWnd::InitSystemRenderingBuffers() {
 
 
     for (const auto& system_icon : m_system_icons) {
-        const SystemIcon* icon = system_icon.second;
+        const auto& icon = system_icon.second;
         int system_id = system_icon.first;
         std::shared_ptr<const System> system = GetSystem(system_id);
         if (!system) {
@@ -3512,7 +3498,7 @@ namespace {
     }
 
 
-    void PrepFullLanesToRender(const boost::unordered_map<int, SystemIcon*>& sys_icons,
+    void PrepFullLanesToRender(const boost::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons,
                                GG::GL2DVertexBuffer& starlane_vertices,
                                GG::GLRGBAColorBuffer& starlane_colors)
     {
@@ -3596,7 +3582,7 @@ namespace {
         }
     }
 
-    void PrepResourceConnectionLanesToRender(const boost::unordered_map<int, SystemIcon*>& sys_icons,
+    void PrepResourceConnectionLanesToRender(const boost::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons,
                                              int empire_id,
                                              std::set<std::pair<int, int>>& rendered_half_starlanes,
                                              GG::GL2DVertexBuffer& rc_starlane_vertices,
@@ -3695,7 +3681,7 @@ namespace {
         }
     }
 
-    void PrepObstructedLaneTraversalsToRender(const boost::unordered_map<int, SystemIcon*>& sys_icons,
+    void PrepObstructedLaneTraversalsToRender(const boost::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons,
                                               int empire_id,
                                               std::set<std::pair<int, int>>& rendered_half_starlanes,
                                               GG::GL2DVertexBuffer& starlane_vertices,
@@ -3779,7 +3765,7 @@ namespace {
     }
 
     std::map<std::pair<int, int>, LaneEndpoints> CalculateStarlaneEndpoints(
-        const boost::unordered_map<int, SystemIcon*>& sys_icons)
+        const boost::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons)
     {
 
         std::map<std::pair<int, int>, LaneEndpoints> retval;
@@ -4368,7 +4354,7 @@ void MapWnd::SelectSystem(int system_id) {
     if (SidePanel::SystemID() != system_id) {
         // remove map selection indicator from previously selected system
         if (SidePanel::SystemID() != INVALID_OBJECT_ID) {
-            boost::unordered_map<int, SystemIcon*>::iterator it = m_system_icons.find(SidePanel::SystemID());
+            const auto& it = m_system_icons.find(SidePanel::SystemID());
             if (it != m_system_icons.end())
                 it->second->SetSelected(false);
         }
@@ -4381,7 +4367,7 @@ void MapWnd::SelectSystem(int system_id) {
 
         // place map selection indicator on newly selected system
         if (SidePanel::SystemID() != INVALID_OBJECT_ID) {
-            boost::unordered_map<int, SystemIcon*>::iterator it = m_system_icons.find(SidePanel::SystemID());
+            const auto& it = m_system_icons.find(SidePanel::SystemID());
             if (it != m_system_icons.end())
                 it->second->SetSelected(true);
         }
@@ -4453,10 +4439,10 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
 
         // first deselect any selected fleets in non-active fleet wnd.  this should
         // not emit any signals about the active fleet wnd's fleets changing
-        FleetWnd* active_fleet_wnd = manager.ActiveFleetWnd();
+        const auto& active_fleet_wnd = manager.ActiveFleetWnd();
 
-        for (auto& wnd : manager) {
-            if (wnd != active_fleet_wnd)
+        for (const auto& wnd : manager) {
+            if (wnd.get() != active_fleet_wnd)
                 wnd->SelectFleet(0);
         }
 
@@ -4477,12 +4463,12 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
 
 
     // find if there is a FleetWnd for this fleet already open.
-    FleetWnd* fleet_wnd = manager.WndForFleet(fleet);
+    std::shared_ptr<FleetWnd> fleet_wnd = manager.WndForFleet(fleet);
 
     // if there isn't a FleetWnd for this fleet open, need to open one
     if (!fleet_wnd) {
         // get all (moving) fleets represented by fleet button for this fleet
-        boost::unordered_map<int, FleetButton*>::iterator it = m_fleet_buttons.find(fleet->ID());
+        const auto& it = m_fleet_buttons.find(fleet->ID());
         if (it == m_fleet_buttons.end()) {
             ErrorLogger() << "Couldn't find a FleetButton for fleet in MapWnd::SelectFleet";
             return;
@@ -4672,12 +4658,12 @@ void MapWnd::DoFleetButtonsLayout() {
                        GG::Y(static_cast<int>(system->Y()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)));
 
         // get system icon itself.  can't use the system icon's UpperLeft to position fleet button due to weirdness that results that I don't want to figure out
-        boost::unordered_map<int, SystemIcon*>::const_iterator sys_it = m_system_icons.find(system->ID());
+        const auto& sys_it = m_system_icons.find(system->ID());
         if (sys_it == m_system_icons.end()) {
             ErrorLogger() << "couldn't find system icon for fleet button in DoFleetButtonsLayout";
             continue;
         }
-        const SystemIcon* system_icon = sys_it->second;
+        const auto& system_icon = sys_it->second;
 
         // place all buttons
         int n = 1;
@@ -4701,12 +4687,12 @@ void MapWnd::DoFleetButtonsLayout() {
                        GG::Y(static_cast<int>(system->Y()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)));
 
         // get system icon itself.  can't use the system icon's UpperLeft to position fleet button due to weirdness that results that I don't want to figure out
-        boost::unordered_map<int, SystemIcon*>::const_iterator sys_it = m_system_icons.find(system->ID());
+        const auto& sys_it = m_system_icons.find(system->ID());
         if (sys_it == m_system_icons.end()) {
             ErrorLogger() << "couldn't find system icon for fleet button in DoFleetButtonsLayout";
             continue;
         }
-        const SystemIcon* system_icon = sys_it->second;
+        const auto& system_icon = sys_it->second;
 
         // place all buttons
         int n = 1;
@@ -4900,11 +4886,11 @@ void MapWnd::DeferredRefreshFleetButtons() {
 
 template <typename K>
 void MapWnd::CreateFleetButtonsOfType (
-    boost::unordered_map<K, std::unordered_set<FleetButton*>>& type_fleet_buttons,
+    boost::unordered_map<K, std::unordered_set<std::shared_ptr<FleetButton>>>& type_fleet_buttons,
     const boost::unordered_map<std::pair<K, int>, std::vector<int>> &fleets_map,
     const FleetButton::SizeType & fleet_button_size)
 {
-    for (const typename boost::unordered_map<std::pair<K, int>, std::vector<int>>::value_type& fleets : fleets_map) {
+    for (const auto& fleets : fleets_map) {
         const K& key = fleets.first.first;
 
         // buttons need fleet IDs
@@ -4922,33 +4908,18 @@ void MapWnd::CreateFleetButtonsOfType (
         for (int fleet_id : fleet_IDs)
             m_fleet_buttons[fleet_id] = fb;
 
-        AttachChild(fb);
         fb->LeftClickedSignal.connect(
-            boost::bind(&MapWnd::FleetButtonLeftClicked, this, fb));
+            boost::bind(&MapWnd::FleetButtonLeftClicked, this, fb.get()));
         fb->RightClickedSignal.connect(
-            boost::bind(&MapWnd::FleetButtonRightClicked, this, fb));
+            boost::bind(&MapWnd::FleetButtonRightClicked, this, fb.get()));
+        AttachChild(std::move(fb));
     }
 }
 
 void MapWnd::DeleteFleetButtons() {
     m_fleet_buttons.clear();            // duplicates pointers in following containers
-
-    for (auto& stationary_fleet_button : m_stationary_fleet_buttons) {
-        for (auto& button : stationary_fleet_button.second)
-            delete button;
-    }
     m_stationary_fleet_buttons.clear();
-
-    for (auto& departing_fleet_button : m_departing_fleet_buttons) {
-        for (auto& button : departing_fleet_button.second)
-            delete button;
-    }
     m_departing_fleet_buttons.clear();
-
-    for (auto& moving_fleet_button : m_moving_fleet_buttons) {
-        for (auto& button : moving_fleet_button.second)
-            delete button;
-    }
     m_moving_fleet_buttons.clear();
 }
 
@@ -5427,7 +5398,7 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
 
     // find if a FleetWnd for this FleetButton's fleet(s) is already open, and if so, if there
     // is a single selected fleet in the window, and if so, what fleet that is
-    FleetWnd* wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleet(first_fleet);
+    const auto& wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleet(first_fleet);
     int already_selected_fleet_id = INVALID_OBJECT_ID;
     if (wnd_for_button) {
         //std::cout << "FleetButtonLeftClicked found open fleetwnd for fleet" << std::endl;
@@ -5626,7 +5597,7 @@ void MapWnd::RefreshFleetButtonSelectionIndicators() {
 
     // add new selection indicators
     for (int fleet_id : m_selected_fleet_ids) {
-        boost::unordered_map<int, FleetButton*>::iterator button_it = m_fleet_buttons.find(fleet_id);
+        const auto& button_it = m_fleet_buttons.find(fleet_id);
         if (button_it != m_fleet_buttons.end())
             button_it->second->SetSelected(true);
     }
@@ -5641,14 +5612,15 @@ void MapWnd::UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj) {
         RemoveFleet(fleet->ID());
 }
 
-void MapWnd::RegisterPopup(MapWndPopup* popup) {
+void MapWnd::RegisterPopup(std::shared_ptr<MapWndPopup> popup) {
     if (popup)
-        m_popups.push_back(popup);
+        m_popups.push_back(std::forward<std::shared_ptr<MapWndPopup>>(popup));
 }
 
 void MapWnd::RemovePopup(MapWndPopup* popup) {
     if (popup) {
-        std::list<MapWndPopup*>::iterator it = std::find(m_popups.begin(), m_popups.end(), popup);
+        const auto& it = std::find_if(m_popups.begin(), m_popups.end(),
+                                      [&popup](const std::shared_ptr<Wnd>& xx){ return xx.get() == popup;});
         if (it != m_popups.end())
             m_popups.erase(it);
     }
@@ -5699,7 +5671,7 @@ void MapWnd::Sanitize() {
         // after doing so until enough messages are added
         //if (MessageWnd* msg_wnd = cui->GetMessageWnd())
         //    msg_wnd->Clear();
-        if (PlayerListWnd* plr_wnd = cui->GetPlayerListWnd())
+        if (const auto& plr_wnd = cui->GetPlayerListWnd())
             plr_wnd->Clear();
     }
 
@@ -5732,8 +5704,6 @@ void MapWnd::Sanitize() {
 
     m_projected_fleet_lines.clear();
 
-    for (auto& system_icon : m_system_icons)
-        delete system_icon.second;
     m_system_icons.clear();
 
     m_fleets_exploring.clear();
@@ -5950,7 +5920,7 @@ void MapWnd::ShowMessages() {
     ClientUI* cui = ClientUI::GetClientUI();
     if (!cui)
         return;
-    MessageWnd* msg_wnd = cui->GetMessageWnd();
+    const auto& msg_wnd = cui->GetMessageWnd();
     if (!msg_wnd)
         return;
     GG::GUI* gui = GG::GUI::GetGUI();
@@ -5981,7 +5951,7 @@ bool MapWnd::ToggleMessages() {
     ClientUI* cui = ClientUI::GetClientUI();
     if (!cui)
         return false;
-    MessageWnd* msg_wnd = cui->GetMessageWnd();
+    const auto& msg_wnd = cui->GetMessageWnd();
     if (!msg_wnd)
         return false;
     if (!msg_wnd->Visible() || m_production_wnd->Visible() || m_research_wnd->Visible() || m_design_wnd->Visible()) {
@@ -6001,7 +5971,7 @@ void MapWnd::ShowEmpires() {
     ClientUI* cui = ClientUI::GetClientUI();
     if (!cui)
         return;
-    PlayerListWnd* plr_wnd = cui->GetPlayerListWnd();
+    const auto& plr_wnd = cui->GetPlayerListWnd();
     if (!plr_wnd)
         return;
     GG::GUI* gui = GG::GUI::GetGUI();
@@ -6026,7 +5996,7 @@ bool MapWnd::ToggleEmpires() {
     ClientUI* cui = ClientUI::GetClientUI();
     if (!cui)
         return false;
-    PlayerListWnd* plr_wnd = cui->GetPlayerListWnd();
+    const auto& plr_wnd = cui->GetPlayerListWnd();
     if (!plr_wnd)
         return false;
     if (!plr_wnd->Visible() || m_production_wnd->Visible() || m_research_wnd->Visible() || m_design_wnd->Visible()) {
@@ -6788,7 +6758,7 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
 
     // the list of windows for which the fleet shortcuts are blacklisted.
-    std::initializer_list<const GG::Wnd*> bl = {m_research_wnd, m_production_wnd, m_design_wnd};
+    std::initializer_list<const GG::Wnd*> bl = {m_research_wnd.get(), m_production_wnd.get(), m_design_wnd.get()};
 
     hkm->Connect(boost::bind(&MapWnd::ZoomToPrevFleet, this), "map.zoom_prev_fleet",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
@@ -6833,7 +6803,7 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
 void MapWnd::CloseAllPopups() {
     for (auto it = m_popups.begin(); it != m_popups.end(); ) {
         // get popup and increment iterator first since closing the popup will change this list by removing the popup
-        MapWndPopup* popup = *it++;
+        auto popup = *it++;
         popup->Close();
     }
     // clear list

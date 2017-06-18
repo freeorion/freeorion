@@ -166,11 +166,11 @@ namespace {
         int                                     m_empire_id;
         int                                     m_location_id;
 
-        GG::StaticGraphic*  m_icon;
-        GG::Label*          m_name;
-        GG::Label*          m_cost;
-        GG::Label*          m_time;
-        GG::Label*          m_desc;
+        std::shared_ptr<GG::StaticGraphic>  m_icon;
+        std::shared_ptr<GG::Label>          m_name;
+        std::shared_ptr<GG::Label>          m_cost;
+        std::shared_ptr<GG::Label>          m_time;
+        std::shared_ptr<GG::Label>          m_desc;
     };
 
     std::shared_ptr<const UniverseObject> GetSourceObjectForEmpire(int empire_id) {
@@ -387,7 +387,7 @@ namespace {
 
     private:
         ProductionQueue::ProductionItem m_item;
-        ProductionItemPanel*            m_panel;
+        std::shared_ptr<ProductionItemPanel>            m_panel;
     };
 
     //////////////////////////////////
@@ -503,13 +503,13 @@ private:
     /** respond to the user right-clicking a producible item in the build selector */
     void    BuildItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
-    std::map<BuildType, CUIStateButton*>    m_build_type_buttons;
-    std::vector<CUIStateButton*>            m_availability_buttons;
+    std::map<BuildType, std::shared_ptr<CUIStateButton>>    m_build_type_buttons;
+    std::vector<std::shared_ptr<CUIStateButton>>            m_availability_buttons;
 
     std::set<BuildType>                     m_build_types_shown;
     std::pair<bool, bool>                   m_availabilities_shown; //!< .first -> available items; .second -> unavailable items
 
-    BuildableItemsListBox*                  m_buildable_items;
+    std::shared_ptr<BuildableItemsListBox>                  m_buildable_items;
     GG::Pt                                  m_original_ul;
 
     int                                     m_production_location;
@@ -791,7 +791,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     if (m_build_types_shown.find(BT_BUILDING) != m_build_types_shown.end()) {
         BuildingTypeManager& manager = GetBuildingTypeManager();
         // craete and insert rows...
-        std::vector<GG::ListBox::Row*> rows;
+        std::vector<std::shared_ptr<GG::ListBox::Row>> rows;
         rows.reserve(std::distance(manager.begin(), manager.end()));
         for (const auto& entry : manager) {
             const std::string name = entry.first;
@@ -822,7 +822,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
                 design_ids.push_back(it->first);
 
         // create and insert rows...
-        std::vector<GG::ListBox::Row*> rows;
+        std::vector<std::shared_ptr<GG::ListBox::Row>> rows;
         rows.reserve(design_ids.size());
         for (int ship_design_id : design_ids) {
             if (!BuildableItemVisible(BT_SHIP, ship_design_id))
@@ -864,7 +864,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
 void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterator it,
                                                              const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 {
-    ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>(*it);
+    ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>((*it).get());
     if (!item_row)
         return;
     const ProductionQueue::ProductionItem& item = item_row->Item();
@@ -892,7 +892,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterat
 void BuildDesignatorWnd::BuildSelector::AddBuildItemToQueue(GG::ListBox::iterator it, bool top) {
     if ((*it)->Disabled())
         return;
-    ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>(*it);
+    ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>(it->get());
     if (!item_row)
         return;
     const ProductionQueue::ProductionItem& item = item_row->Item();
@@ -910,7 +910,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iter
 void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::iterator it,
                                                               const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 {
-    ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>(*it);
+    ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>(it->get());
     if (!item_row)
         return;
     const ProductionQueue::ProductionItem& item = item_row->Item();
@@ -1007,8 +1007,8 @@ void BuildDesignatorWnd::CompleteConstruction() {
     AttachChild(m_build_selector);
     AttachChild(m_side_panel);
 
-    MoveChildUp(m_enc_detail_panel);
-    MoveChildUp(m_build_selector);
+    MoveChildUp(m_enc_detail_panel.get());
+    MoveChildUp(m_build_selector.get());
 
     Clear();
 }
@@ -1056,7 +1056,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
         if (std::shared_ptr<const UniverseObject> build_location = objects.Object(location_id)) {
             // centre map on system of build location
             int system_id = build_location->SystemID();
-            MapWnd* map = ClientUI::GetClientUI()->GetMapWnd();
+            auto&& map = ClientUI::GetClientUI()->GetMapWnd();
             map->CenterOnObject(system_id);
             if (open) {
                 HumanClientApp::GetApp()->GetClientUI().GetMapWnd()->SelectSystem(system_id);

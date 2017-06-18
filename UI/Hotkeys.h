@@ -158,8 +158,8 @@ public:
     {}
 
     bool operator()() const {
-        const GG::Wnd* foc = GG::GUI::GetGUI()->FocusWnd();
-        return target && target == foc;
+        const auto& foc = GG::GUI::GetGUI()->FocusWnd();
+        return target && target == foc.get();
     };
 
 private:
@@ -170,8 +170,8 @@ template<class W>
 class FocusWindowIsA {
 public:
     bool operator()() const {
-        const GG::Wnd* foc = GG::GUI::GetGUI()->FocusWnd();
-        return (nullptr != dynamic_cast<const W*>(foc));
+        const auto foc = GG::GUI::GetGUI()->FocusWnd();
+        return (nullptr != dynamic_cast<const W*>(foc.get()));
     };
 };
 

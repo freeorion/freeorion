@@ -161,11 +161,11 @@ public:
         /** \name Mutators */ ///@{
         void Render() override;
 
-        void         push_back(Control* c); ///< adds a given Control to the end of the Row; this Control becomes property of the Row
+        void         push_back(const std::shared_ptr<Control>& c); ///< adds a given Control to the end of the Row; this Control becomes property of the Row
         void         clear(); ///< removes and deletes all cells in this Row
         void         resize(std::size_t n); ///< resizes the Row to have \a n cells
 
-        void         SetCell(std::size_t n, Control* c); ///< sets the Control in the \a nth cell of this Row, deleting any preexisting Control; not range checked
+        void         SetCell(std::size_t n, const std::shared_ptr<Control>& c); ///< sets the Control in the \a nth cell of this Row, deleting any preexisting Control; not range checked
         Control*     RemoveCell(std::size_t n); ///< returns a pointer to the Control in the \a nth cell of this Row, and sets the contents of the cell to 0; not range checked
         void         SetRowAlignment(Alignment align); ///< sets the vertical alignment of this Row
         void         SetColAlignment(std::size_t n, Alignment align); ///< sets the horizontal alignment of the Control in the \a nth cell of this Row; not range checked
@@ -187,7 +187,7 @@ public:
         void GrowWidthsStretchesAlignmentsTo(std::size_t nn);
         void RClick(const Pt& pt, GG::Flags<GG::ModKey> mod) override;
 
-        std::vector<Control*>  m_cells;          ///< the Controls in this Row (each may be null)
+        std::vector<std::shared_ptr<Control>>  m_cells;          ///< the Controls in this Row (each may be null)
         Alignment              m_row_alignment;  ///< row alignment; one of ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM
         std::vector<Alignment> m_col_alignments; ///< column alignments; each is one of ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM
         std::vector<X>         m_col_widths;     ///< column widths
@@ -198,8 +198,8 @@ public:
         bool                   m_is_normalized;
     };
 
-    typedef std::list<Row*>::iterator iterator;
-    typedef std::list<Row*>::const_iterator const_iterator;
+    typedef std::list<std::shared_ptr<Row>>::iterator iterator;
+    typedef std::list<std::shared_ptr<Row>>::const_iterator const_iterator;
 
     /** \brief Sorts iterators to ListBox::Row*s from a container of
         ListBox::Row*s.
@@ -216,7 +216,7 @@ public:
 
     struct IteratorHash : std::unary_function<iterator, std::size_t> {
         std::size_t operator()(const iterator& it) const
-        { return boost::hash<const Row*>()(*it); }
+        { return boost::hash<const std::shared_ptr<Row>>()(*it); }
     };
 
     typedef std::unordered_set<iterator, IteratorHash> SelectionSet;
@@ -343,7 +343,7 @@ public:
 
     /** \name Mutators */ ///@{
     void StartingChildDragDrop(const Wnd* wnd, const GG::Pt& offset) override;
-    void AcceptDrops(const Pt& pt, const std::vector<Wnd*>& wnds, Flags<ModKey> mod_keys) override;
+    void AcceptDrops(const Pt& pt, std::vector<std::shared_ptr<Wnd>> wnds, Flags<ModKey> mod_keys) override;
     void ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination) override;
     void PreRender() override;
     void Render() override;
@@ -361,22 +361,22 @@ public:
     /** Insertion sorts \a row into the ListBox if sorted, or inserts into an
         unsorted ListBox before \a it; returns insertion point.  This Row
         becomes the property of this ListBox. */
-    iterator        Insert(Row* row, iterator it, bool signal = true);
+    iterator        Insert(std::shared_ptr<Row> row, iterator it, bool signal = true);
 
     /** Insertion sorts \a row into the ListBox if sorted, or inserts into an
         unsorted ListBox at the end of the list; returns insertion point.
         This Row becomes the property of this ListBox. */
-    iterator        Insert(Row* row, bool signal = true);
+    iterator        Insert(std::shared_ptr<Row> row, bool signal = true);
 
     /** Insertion sorts \a rows into the ListBox if sorted, or inserts into an
         unsorted ListBox before \a it. The Rows become the property of this
         ListBox. */
-    void            Insert(const std::vector<Row*>& rows, iterator it, bool signal = true);
+    void            Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it, bool signal = true);
 
     /** Insertion sorts \a rows into the ListBox if sorted, or inserts into an
         unsorted ListBox at the end of the list. The Rows become the property
         of this ListBox. */
-    void            Insert(const std::vector<Row*>& rows, bool signal = true);
+    void            Insert(const std::vector<std::shared_ptr<Row>>& rows, bool signal = true);
 
     Row*            Erase(iterator it, bool signal = false);        ///< removes and returns the row that \a it points to from the ListBox, or 0 if no such row exists
     void            Clear();                                        ///< empties the ListBox
@@ -406,7 +406,7 @@ public:
     /** sets the style flags for the ListBox to \a s. \see GG::ListBoxStyle */
     void            SetStyle(Flags<ListBoxStyle> s);
 
-    void            SetColHeaders(Row* r);                  ///< sets the row used as headings for the columns; this Row becomes property of the ListBox.
+    void            SetColHeaders(const std::shared_ptr<Row>& r);                  ///< sets the row used as headings for the columns; this Row becomes property of the ListBox.
     void            RemoveColHeaders();                     ///< removes any columns headings set
 
     void            SetColWidth(std::size_t n, X w);        ///< sets the width of column \n to \a w; not range-checked
@@ -523,8 +523,8 @@ protected:
     /** \name Mutators */ ///@{
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
-    void DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys) override;
-    void DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys) override;
+    void DragDropEnter(const Pt& pt, std::map<const std::shared_ptr<Wnd>, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys) override;
+    void DragDropHere(const Pt& pt, std::map<const std::shared_ptr<Wnd>, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys) override;
     void DragDropLeave() override;
     void CancellingChildDragDrop(const std::vector<const Wnd*>& wnds) override;
     void TimerFiring(unsigned int ticks, Timer* timer) override;
@@ -532,8 +532,8 @@ protected:
     bool EventFilter(Wnd* w, const WndEvent& event) override;
 
     /** Define the number of columns, the column widths and alignment from \p row.*/
-    iterator        Insert(Row* row, iterator it, bool dropped, bool signal);                       ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
-    void            Insert(const std::vector<Row*>& rows, iterator it, bool dropped, bool signal);  ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
+    iterator        Insert(std::shared_ptr<Row> row, iterator it, bool dropped, bool signal);                       ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
+    void            Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it, bool dropped, bool signal);  ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
     Row*            Erase(iterator it, bool removing_duplicate, bool signal); ///< erases the row at index \a idx, handling it as a duplicate removal (such as for drag-and-drops within a single ListBox) if indicated
     void            BringCaretIntoView();           ///< makes sure caret is visible when scrolling occurs due to keystrokes etc.
     void            ResetAutoScrollVars();          ///< resets all variables related to auto-scroll to their initial values
@@ -594,10 +594,10 @@ private:
                                              const boost::optional<Pt>& maybe_client_size = boost::none);
 
     /// m_rows is mutable to enable returning end() from const functions in constant time.
-    mutable std::list<Row*> m_rows;             ///< line item data
+    mutable std::list<std::shared_ptr<Row>> m_rows;             ///< line item data
 
-    Scroll*         m_vscroll;          ///< vertical scroll bar on right
-    Scroll*         m_hscroll;          ///< horizontal scroll bar at bottom
+    std::shared_ptr<Scroll>         m_vscroll;          ///< vertical scroll bar on right
+    std::shared_ptr<Scroll>         m_hscroll;          ///< horizontal scroll bar at bottom
     unsigned int    m_vscroll_wheel_scroll_increment;
     unsigned int    m_hscroll_wheel_scroll_increment;
 
@@ -626,7 +626,7 @@ private:
     Flags<ListBoxStyle>
                     m_style;            ///< composed of ListBoxStyles enums (see GUIBase.h)
 
-    Row*            m_header_row;       ///< row of header text/graphics
+    std::shared_ptr<Row>            m_header_row;       ///< row of header text/graphics
     bool            m_keep_col_widths;  ///< should we keep the column widths, once set?
     bool            m_clip_cells;       ///< if true, the contents of each cell will be clipped to the visible area of that cell (TODO: currently unused)
     std::size_t     m_sort_col;         ///< the index of the column data used to sort the list

@@ -139,16 +139,16 @@ private:
     static void FleetsRemoved(const std::vector<std::shared_ptr<Fleet>>& fleets);
 
     class SystemNameDropDownList;
-    SystemNameDropDownList*     m_system_name;
-    GG::TextControl*            m_star_type_text;
-    GG::Button*                 m_button_prev;
-    GG::Button*                 m_button_next;
-    GG::DynamicGraphic*         m_star_graphic;
+    std::shared_ptr<SystemNameDropDownList>     m_system_name;
+    std::shared_ptr<GG::TextControl>            m_star_type_text;
+    std::shared_ptr<GG::Button>                 m_button_prev;
+    std::shared_ptr<GG::Button>                 m_button_next;
+    std::shared_ptr<GG::DynamicGraphic>         m_star_graphic;
 
     std::vector<GG::SubTexture> m_fleet_icons;
 
-    PlanetPanelContainer*       m_planet_panel_container;
-    MultiIconValueIndicator*    m_system_resource_summary;
+    std::shared_ptr<PlanetPanelContainer>       m_planet_panel_container;
+    std::shared_ptr<MultiIconValueIndicator>    m_system_resource_summary;
 
     bool                        m_selection_enabled;
 
@@ -160,7 +160,7 @@ private:
     /** The id of the currently-selected planet, or INVALID_OBJECT_ID if no planet is selected. */
     static int                  s_planet_id;
 
-    static std::set<SidePanel*> s_side_panels;
+    static std::set<std::shared_ptr<SidePanel>> s_side_panels;
 
     static std::set<boost::signals2::connection>      s_system_connections;
     static std::map<int, boost::signals2::connection> s_fleet_state_change_signals;

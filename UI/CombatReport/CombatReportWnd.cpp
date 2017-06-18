@@ -26,7 +26,7 @@ public:
         m_log(GG::Wnd::Create<CombatLogWnd>(m_wnd.ClientWidth(), m_wnd.ClientHeight())),
         m_log_scroller(
             GG::Wnd::Create<GG::ScrollPanel>(
-                GG::X0, GG::Y0, m_tabs->ClientWidth(), m_tabs->ClientHeight(), m_log)),
+                GG::X0, GG::Y0, m_tabs->ClientWidth(), m_tabs->ClientHeight(), m_log.get())),
         m_min_size(GG::X0, GG::Y0)
     {
         m_log->SetFont(ClientUI::GetFont());
@@ -142,10 +142,10 @@ public:
 
 private:
     CombatReportWnd&        m_wnd;
-    GG::TabWnd*             m_tabs;
-    GraphicalSummaryWnd*    m_graphical;//< Graphical summary
-    CombatLogWnd*           m_log;      //< Detailed log
-    GG::ScrollPanel*        m_log_scroller;
+    std::shared_ptr<GG::TabWnd>             m_tabs;
+    std::shared_ptr<GraphicalSummaryWnd>    m_graphical;//< Graphical summary
+    std::shared_ptr<CombatLogWnd>           m_log;      //< Detailed log
+    std::shared_ptr<GG::ScrollPanel>        m_log_scroller;
     GG::Pt                  m_min_size; //< Minimum size according to the contents, is not constrained by the app window size
 
     void UpdateMinSize() {
@@ -168,8 +168,7 @@ private:
             m_min_size += GG::Pt(ClientUI::GetFont()->SpaceWidth()*20, ClientUI::GetFont()->Height());
         }
 
-        std::list<GG::Wnd*>::const_iterator layout_begin =
-            m_tabs->GetLayout()->Children().begin();
+        auto layout_begin = m_tabs->GetLayout()->Children().begin();
         // First object in the layout should be the tab bar.
         if (layout_begin != m_tabs->GetLayout()->Children().end()) {
             GG::Pt tab_min_size = (*layout_begin)->MinUsableSize();

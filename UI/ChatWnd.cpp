@@ -531,7 +531,7 @@ void MessageWnd::MessageEntered() {
     } else {
         // otherwise, treat message as chat and send to recipients
         std::set<int> recipients;
-        if (PlayerListWnd* player_list_wnd = ClientUI::GetClientUI()->GetPlayerListWnd())
+        if (PlayerListWnd* player_list_wnd = ClientUI::GetClientUI()->GetPlayerListWnd().get())
             recipients = player_list_wnd->SelectedPlayerIDs();
         SendChatMessage(trimmed_text, recipients);
     }

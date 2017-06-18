@@ -595,12 +595,14 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
         auto color_max   = std::get<2>(entry);
         auto color_label = std::get<3>(entry);
 
-        m_slider_labels.push_back(style->NewTextControl(style->Translate(color_label), font, m_text_color, FORMAT_RIGHT));
+        m_slider_labels.push_back(
+            std::shared_ptr<TextControl>(style->NewTextControl(style->Translate(color_label), font, m_text_color, FORMAT_RIGHT)));
         m_sliders_ok_cancel_layout->Add(m_slider_labels.back(), row, 0);
-        m_slider_values.push_back(style->NewTextControl(std::to_string(color_value),
-                                                        font, m_text_color, FORMAT_LEFT));
+        m_slider_values.push_back(std::shared_ptr<TextControl>(style->NewTextControl(std::to_string(color_value),
+                                                        font, m_text_color, FORMAT_LEFT)));
         m_sliders_ok_cancel_layout->Add(m_slider_values.back(), row, 1);
-        m_sliders.push_back(style->NewIntSlider(color_min, color_max, HORIZONTAL, m_color, 10));
+        m_sliders.push_back(
+            std::shared_ptr<Slider<int>>(style->NewIntSlider(color_min, color_max, HORIZONTAL, m_color, 10)));
         m_sliders.back()->SlideTo(color_value);
         m_sliders_ok_cancel_layout->Add(m_sliders.back(), row, 2);
 

@@ -660,9 +660,9 @@ namespace {
         }
 
     private:
-        CUILabel* m_label_control;
-        CUILabel* m_qty_control;
-        CUILabel* m_value_control;
+        std::shared_ptr<CUILabel> m_label_control;
+        std::shared_ptr<CUILabel> m_qty_control;
+        std::shared_ptr<CUILabel> m_value_control;
     };
 }
 

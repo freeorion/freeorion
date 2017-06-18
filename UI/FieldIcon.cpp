@@ -26,11 +26,8 @@ FieldIcon::FieldIcon(int field_id) :
     Refresh();
 }
 
-FieldIcon::~FieldIcon() {
-    delete m_selection_indicator;
-    delete m_mouseover_indicator;
-    delete m_name;
-}
+FieldIcon::~FieldIcon()
+{}
 
 int FieldIcon::FieldID() const
 { return m_field_id; }

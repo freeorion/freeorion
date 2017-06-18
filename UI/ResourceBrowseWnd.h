@@ -21,17 +21,17 @@ private:
     virtual void  InitBuffer();
 
     GG::GL2DVertexBuffer    m_buffer;
-    GG::Label*              m_title_text;
+    std::shared_ptr<GG::Label>              m_title_text;
 
-    GG::Label*  m_used_points_label;
-    GG::Label*  m_used_points;
-    GG::Label*  m_used_points_P_label;
-    GG::Label*  m_output_points_label;
-    GG::Label*  m_output_points;
-    GG::Label*  m_output_points_P_label;
-    GG::Label*  m_target_points_label;
-    GG::Label*  m_target_points;
-    GG::Label*  m_target_points_P_label;
+    std::shared_ptr<GG::Label>  m_used_points_label;
+    std::shared_ptr<GG::Label>  m_used_points;
+    std::shared_ptr<GG::Label>  m_used_points_P_label;
+    std::shared_ptr<GG::Label>  m_output_points_label;
+    std::shared_ptr<GG::Label>  m_output_points;
+    std::shared_ptr<GG::Label>  m_output_points_P_label;
+    std::shared_ptr<GG::Label>  m_target_points_label;
+    std::shared_ptr<GG::Label>  m_target_points;
+    std::shared_ptr<GG::Label>  m_target_points_P_label;
 
     GG::Pt      m_offset;
 };

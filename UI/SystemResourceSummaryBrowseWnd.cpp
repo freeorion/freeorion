@@ -214,7 +214,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         value->Resize(GG::Pt(ValueWidth(), row_height));
         AttachChild(value);
 
-        m_production_labels_and_amounts.push_back(std::pair<GG::Label*, GG::Label*>(label, value));
+        m_production_labels_and_amounts.push_back(std::make_pair(label, value));
 
         top += row_height;
     }
@@ -232,7 +232,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         value->Resize(GG::Pt(ValueWidth(), row_height));
         AttachChild(value);
 
-        m_production_labels_and_amounts.push_back(std::pair<GG::Label*, GG::Label*>(label, value));
+        m_production_labels_and_amounts.push_back(std::make_pair(label, value));
 
         top += row_height;
     }
@@ -312,7 +312,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         value->Resize(GG::Pt(ValueWidth(), row_height));
         AttachChild(value);
 
-        m_allocation_labels_and_amounts.push_back(std::pair<GG::Label*, GG::Label*>(label, value));
+        m_allocation_labels_and_amounts.push_back(std::make_pair(label, value));
 
         top += row_height;
     }
@@ -330,7 +330,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         value->Resize(GG::Pt(ValueWidth(), row_height));
         AttachChild(value);
 
-        m_allocation_labels_and_amounts.push_back(std::pair<GG::Label*, GG::Label*>(label, value));
+        m_allocation_labels_and_amounts.push_back(std::make_pair(label, value));
 
         top += row_height;
     }
@@ -430,7 +430,7 @@ void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
     value->Resize(GG::Pt(ValueWidth(), row_height));
     AttachChild(value);
 
-    m_import_export_labels_and_amounts.push_back(std::pair<GG::Label*, GG::Label*>(label, value));
+    m_import_export_labels_and_amounts.push_back(std::make_pair(label, value));
 
     top += row_height;
 }

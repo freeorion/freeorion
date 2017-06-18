@@ -114,9 +114,9 @@ public:
     WndEvent(EventType type, const Pt& pt, Flags<ModKey> mod_keys);
     WndEvent(EventType type, const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
     WndEvent(EventType type, const Pt& pt, int move, Flags<ModKey> mod_keys);
-    WndEvent(EventType type, const Pt& pt, const std::vector<Wnd*>& drag_drop_wnds, Flags<ModKey> mod_keys);
-    WndEvent(EventType type, const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys);
-    WndEvent(EventType type, const Pt& pt, Wnd* drag_wnd, Flags<ModKey> mod_keys);
+    WndEvent(EventType type, const Pt& pt, const std::vector<std::shared_ptr<Wnd>>& drag_drop_wnds, Flags<ModKey> mod_keys);
+    WndEvent(EventType type, const Pt& pt, const std::map<std::shared_ptr<Wnd>, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys);
+    WndEvent(EventType type, const Pt& pt, const std::shared_ptr<Wnd>& drag_wnd, Flags<ModKey> mod_keys);
     WndEvent(EventType type, Key key, std::uint32_t code_point, Flags<ModKey> mod_keys);
     WndEvent(EventType type, unsigned int ticks, Timer* timer);
     WndEvent(EventType type, const std::string* text);
@@ -141,9 +141,9 @@ public:
     unsigned int                Ticks() const;          ///< returns the number of ticks represented by the WndEvent. if any
     Timer*                      GetTimer() const;       ///< returns the Timer represented by the WndEvent. if any
     const std::string*          GetText() const;        ///< returns the utf8 text represented by the WndEvent, if any
-    const std::map<Wnd*, Pt>&   DragDropWnds() const;   ///< returns the drag-and-drop wnds represented by the WndEvent, if any
-    std::vector<Wnd*>&          GetDragDropWnds() const;
-    std::map<const Wnd*, bool>& GetAcceptableDropWnds() const;
+    const std::map<std::shared_ptr<Wnd>, Pt>&   DragDropWnds() const;   ///< returns the drag-and-drop wnds represented by the WndEvent, if any
+    std::vector<std::shared_ptr<Wnd>>&          GetDragDropWnds() const;
+    std::map<const std::shared_ptr<Wnd>, bool>& GetAcceptableDropWnds() const;
     //@}
 
 private:
@@ -157,14 +157,14 @@ private:
     Pt                          m_drag_move;
     int                         m_wheel_move;
 
-    std::map<Wnd*, Pt>          m_drag_drop_wnds;
+    std::map<std::shared_ptr<Wnd>, Pt>          m_drag_drop_wnds;
 
     unsigned int                m_ticks;
     Timer*                      m_timer;
     const std::string*          m_text;
 
-    mutable std::vector<Wnd*>           m_dropped_wnds;
-    mutable std::map<const Wnd*, bool>  m_acceptable_drop_wnds;
+    mutable std::vector<std::shared_ptr<Wnd>>           m_dropped_wnds;
+    mutable std::map<const std::shared_ptr<Wnd>, bool>  m_acceptable_drop_wnds;
 };
 
 GG_API std::string EventTypeName(const GG::WndEvent& event);

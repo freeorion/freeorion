@@ -21,11 +21,11 @@ private:
 
     GG::GL2DVertexBuffer    m_buffer;
 
-    GG::Label*      m_title_text;
-    GG::Label*      m_species_text;
-    GG::ListBox*    m_list;
-    GG::Label*      m_tags_text;
-    GG::ListBox*    m_tags_list;
+    std::shared_ptr<GG::Label>      m_title_text;
+    std::shared_ptr<GG::Label>      m_species_text;
+    std::shared_ptr<GG::ListBox>    m_list;
+    std::shared_ptr<GG::Label>      m_tags_text;
+    std::shared_ptr<GG::ListBox>    m_tags_list;
     GG::Pt          m_offset;
     std::map<std::string, float>    m_population_counts;
     std::map<std::string, float>    m_tag_counts;

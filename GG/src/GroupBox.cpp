@@ -164,8 +164,6 @@ void GroupBox::SetClientCornersEqualToBoxCorners(bool b)
 
 void GroupBox::SetText(const std::string& str)
 {
-    delete m_label;
-
     if (!str.empty()) {
         m_label = GUI::GetGUI()->GetStyleFactory()->NewTextControl(str, m_font, m_text_color);
         m_label->MoveTo(Pt(X(FRAME_THICK + PIXEL_MARGIN), Y0));

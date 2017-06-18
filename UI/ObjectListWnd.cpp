@@ -400,18 +400,14 @@ public:
         // TODO: set newly created parameter controls' values based on init condition
     }
 
-    ~ConditionWidget() {
-        delete m_class_drop;
-        delete m_string_drop;
-        delete m_param_spin1;
-        delete m_param_spin2;
-    }
+    ~ConditionWidget()
+    {}
 
     Condition::ConditionBase*       GetCondition() {
         GG::ListBox::iterator row_it = m_class_drop->CurrentItem();
         if (row_it == m_class_drop->end())
             return new Condition::All();
-        ConditionRow* condition_row = dynamic_cast<ConditionRow*>(*row_it);
+        ConditionRow* condition_row = dynamic_cast<ConditionRow*>(row_it->get());
         if (!condition_row)
             return new Condition::All();
         const std::string& condition_key = condition_row->GetKey();
@@ -566,7 +562,7 @@ private:
         const std::string&  GetKey() const { return m_condition_key; }
     private:
         std::string m_condition_key;
-        CUILabel* m_label;
+        std::shared_ptr<CUILabel> m_label;
     };
 
     class StringRow : public GG::ListBox::Row  {
@@ -590,7 +586,7 @@ private:
         const std::string&  Text() const { return m_string; }
     private:
         std::string m_string;
-        CUILabel* m_label;
+        std::shared_ptr<CUILabel> m_label;
     };
 
     const std::string&              GetString() {
@@ -599,7 +595,7 @@ private:
         GG::ListBox::iterator row_it = m_string_drop->CurrentItem();
         if (row_it == m_string_drop->end())
             return EMPTY_STRING;
-        StringRow* string_row = dynamic_cast<StringRow*>(*row_it);
+        StringRow* string_row = dynamic_cast<StringRow*>(row_it->get());
         if (!string_row)
             return EMPTY_STRING;
         return string_row->Text();
@@ -734,18 +730,15 @@ private:
         if (!m_class_drop)
             return;
         // remove old parameter controls
-        delete m_string_drop;
-        m_string_drop = nullptr;
-        delete m_param_spin1;
-        m_param_spin1 = nullptr;
-        delete m_param_spin2;
-        m_param_spin2 = nullptr;
+        m_string_drop.reset();
+        m_param_spin1.reset();
+        m_param_spin2.reset();
 
         // determine which condition is selected
         GG::ListBox::iterator row_it = m_class_drop->CurrentItem();
         if (row_it == m_class_drop->end())
             return;
-        ConditionRow* condition_row = dynamic_cast<ConditionRow*>(*row_it);
+        ConditionRow* condition_row = dynamic_cast<ConditionRow*>(row_it->get());
         if (!condition_row)
             return;
         const std::string& condition_key = condition_row->GetKey();
@@ -967,10 +960,10 @@ private:
         Resize(GG::Pt(Width(), param_widget_top));
     }
 
-    GG::DropDownList*   m_class_drop;
-    GG::DropDownList*   m_string_drop;
-    GG::Spin<int>*      m_param_spin1;
-    GG::Spin<int>*      m_param_spin2;
+    std::shared_ptr<GG::DropDownList>   m_class_drop;
+    std::shared_ptr<GG::DropDownList>   m_string_drop;
+    std::shared_ptr<GG::Spin<int>>      m_param_spin1;
+    std::shared_ptr<GG::Spin<int>>      m_param_spin2;
 };
 
 ////////////////////////////////////////////////
@@ -1007,13 +1000,13 @@ private:
 
     std::map<UniverseObjectType, std::set<VIS_DISPLAY>>     m_vis_filters;
     std::map<UniverseObjectType,
-             std::map<VIS_DISPLAY, GG::StateButton*>>       m_filter_buttons;
+             std::map<VIS_DISPLAY, std::shared_ptr<GG::StateButton>>>       m_filter_buttons;
     bool                                                    m_accept_changes;
 
-    ConditionWidget*    m_condition_widget;
-    GG::Layout*         m_filters_layout;
-    GG::Button*         m_cancel_button;
-    GG::Button*         m_apply_button;
+    std::shared_ptr<ConditionWidget>    m_condition_widget;
+    std::shared_ptr<GG::Layout>         m_filters_layout;
+    std::shared_ptr<GG::Button>         m_cancel_button;
+    std::shared_ptr<GG::Button>         m_apply_button;
 };
 
 
@@ -1042,7 +1035,7 @@ void FilterDialog::CompleteConstruction() {
     m_filters_layout->SetColumnStretch(0, 0.0);
 
     GG::X button_width = GG::X(ClientUI::Pts()*8);
-    GG::Button* label = nullptr;
+    std::shared_ptr<GG::Button> label = nullptr;
 
     int row = 1;
 
@@ -1342,12 +1335,9 @@ public:
         GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER |
                                             GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
 
-        delete m_dot;
-        m_dot = nullptr;
-        delete m_expand_button;
-        m_expand_button = nullptr;
-        delete m_icon;
-        m_icon = nullptr;
+        m_dot.reset();
+        m_expand_button.reset();
+        m_icon.reset();
 
         if (m_has_contents) {
             boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
@@ -1424,7 +1414,7 @@ private:
         // first column position dependent on indent (ie. left at start of loop)
         // second column position fixed equal to first column width value.
         // ie. reset left, not dependent on current left.
-        GG::Control* ctrl = m_controls[0];
+        auto& ctrl = m_controls[0];
         GG::X width(GetColumnWidth(static_cast<int>(-1)) + GetColumnWidth(static_cast<int>(0)));
         GG::X right = width;
         ctrl->SizeMove(GG::Pt(left, top), GG::Pt(right, bottom));
@@ -1466,8 +1456,8 @@ private:
         }
     }
 
-    std::vector<GG::Control*>   GetControls() {
-        std::vector<GG::Control*> retval;
+    std::vector<std::shared_ptr<GG::Control>>   GetControls() {
+        std::vector<std::shared_ptr<GG::Control>> retval;
 
         RefreshCache();
 
@@ -1487,10 +1477,10 @@ private:
     bool    m_expanded;
     bool    m_has_contents;
 
-    GG::Button*                     m_expand_button;
-    GG::StaticGraphic*              m_dot;
-    MultiTextureStaticGraphic*      m_icon;
-    std::vector<GG::Control*>       m_controls;
+    std::shared_ptr<GG::Button>                     m_expand_button;
+    std::shared_ptr<GG::StaticGraphic>              m_dot;
+    std::shared_ptr<MultiTextureStaticGraphic>      m_icon;
+    std::vector<std::shared_ptr<GG::Control>>       m_controls;
 
     mutable std::vector<std::string>m_column_val_cache;
 
@@ -1569,7 +1559,7 @@ public:
 
     mutable boost::signals2::signal<void (int)>   ExpandCollapseSignal;
 private:
-    ObjectPanel*        m_panel;
+    std::shared_ptr<ObjectPanel>        m_panel;
     int                 m_container_object_panel;
     std::set<int>       m_contained_object_panels;
     std::shared_ptr<const UniverseObject> m_obj_init;
@@ -1604,7 +1594,7 @@ public:
         { DeleteChild(button); }
         m_controls.clear();
 
-        std::vector<GG::Button*> controls = GetControls();
+        auto&& controls = GetControls();
         for (int i = 0; i < static_cast<int>(controls.size()); ++i) {
             m_controls.push_back(controls[i]);
             AttachChild(controls[i]);
@@ -1629,7 +1619,7 @@ private:
 
         // loop through m_controls, positioning according to column widths.
         for (std::size_t i = 0; i < m_controls.size(); ++i) {
-            GG::Button* ctrl = m_controls[i];
+            auto& ctrl = m_controls[i];
             GG::X width(GetColumnWidth(static_cast<int>(i)-1));
 
             GG::X right = left + width;
@@ -1644,7 +1634,7 @@ private:
     void                        ButtonRightClicked(int column_id) {
         if (column_id < 0 || column_id >= static_cast<int>(m_controls.size()))
             return;
-        GG::Button* clicked_button = m_controls[column_id+1];
+        auto& clicked_button = m_controls[column_id+1];
         if (!clicked_button)
             return;
 
@@ -1696,8 +1686,8 @@ private:
         popup->Run();
     }
 
-    std::vector<GG::Button*>    GetControls() {
-        std::vector<GG::Button*> retval;
+    std::vector<std::shared_ptr<GG::Button>>    GetControls() {
+        std::vector<std::shared_ptr<GG::Button>> retval;
 
         auto control = Wnd::Create<CUIButton>("-");
         retval.push_back(control);
@@ -1714,7 +1704,7 @@ private:
         return retval;
     }
 
-    std::vector<GG::Button*>    m_controls;
+    std::vector<std::shared_ptr<GG::Button>>    m_controls;
 };
 
 ////////////////////////////////////////////////
@@ -1754,7 +1744,7 @@ public:
     mutable boost::signals2::signal<void ()>    ColumnsChangedSignal;       // column contents or widths changed, requiring refresh of list
 
 private:
-     ObjectHeaderPanel* m_panel;
+     std::shared_ptr<ObjectHeaderPanel> m_panel;
 };
 
 namespace {
@@ -1862,7 +1852,7 @@ public:
     void            CollapseObject(int object_id = INVALID_OBJECT_ID) {
         if (object_id == INVALID_OBJECT_ID) {
             for (auto& row : *this)
-                if (const ObjectRow* object_row = dynamic_cast<const ObjectRow*>(row))
+                if (const ObjectRow* object_row = dynamic_cast<const ObjectRow*>(row.get()))
                     m_collapsed_objects.insert(object_row->ObjectID());
         } else {
             m_collapsed_objects.insert(object_id);
@@ -2120,7 +2110,7 @@ public:
         if (object_id == INVALID_OBJECT_ID)
             return;
         for (auto& row : *this) {
-            if (ObjectRow* orow = dynamic_cast<ObjectRow*>(row)) {
+            if (ObjectRow* orow = dynamic_cast<ObjectRow*>(row.get())) {
                 orow->Update();
                 return;
             }
@@ -2188,7 +2178,7 @@ private:
             return;
         int container_object_id = INVALID_OBJECT_ID;
         for (GG::ListBox::iterator it = this->begin(); it != this->end(); ++it) {
-            if (ObjectRow* object_row = dynamic_cast<ObjectRow*>(*it)) {
+            if (ObjectRow* object_row = dynamic_cast<ObjectRow*>(it->get())) {
                 if (object_row->ObjectID() == object_id) {
                     container_object_id = object_row->ContainedByPanel();
                     RemoveObjectRow(it);
@@ -2202,7 +2192,7 @@ private:
 
         // remove this row from parent row's contents
         for (auto& row : *this) {
-            if (ObjectRow* object_row = dynamic_cast<ObjectRow*>(row)) {
+            if (ObjectRow* object_row = dynamic_cast<ObjectRow*>(row.get())) {
                 if (object_row->ObjectID() == container_object_id) {
                     std::set<int> new_contents;
                     for (int content_id : object_row->ContainedPanels()) {
@@ -2222,7 +2212,7 @@ private:
     void            RemoveObjectRow(GG::ListBox::iterator it) {
         if (it == this->end())
             return;
-        ObjectRow* object_row = dynamic_cast<ObjectRow*>(*it);
+        ObjectRow* object_row = dynamic_cast<ObjectRow*>(it->get());
 
         // recursively remove contained rows first
         const std::set<int>& contents = object_row->ContainedPanels();
@@ -2230,7 +2220,7 @@ private:
             GG::ListBox::iterator next_it = it; ++next_it;
             if (next_it == this->end())
                 break;
-            ObjectRow* contained_row = dynamic_cast<ObjectRow*>(*next_it);
+            ObjectRow* contained_row = dynamic_cast<ObjectRow*>(next_it->get());
             if (!contained_row)
                 continue;
             // remove only rows that are contained by this row
@@ -2277,7 +2267,7 @@ private:
     std::set<int>                                       m_collapsed_objects;
     Condition::ConditionBase*                           m_filter_condition;
     std::map<UniverseObjectType, std::set<VIS_DISPLAY>> m_visibilities;
-    ObjectHeaderRow*                                    m_header_row;
+    std::shared_ptr<ObjectHeaderRow>                                    m_header_row;
     boost::signals2::connection m_obj_deleted_connection;
 };
 
@@ -2363,7 +2353,7 @@ void ObjectListWnd::ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows
     for (GG::ListBox::iterator it = m_list_box->begin(); it != m_list_box->end(); ++it) {
         bool select_this_row = (rows.find(it) != rows.end());
 
-        GG::ListBox::Row* row = *it;
+        auto& row = *it;
         if (!row) {
             ErrorLogger() << "ObjectListWnd::ObjectSelectionChanged couldn't get row";
             continue;
@@ -2399,7 +2389,7 @@ std::set<int> ObjectListWnd::SelectedObjectIDs() const {
     std::set<int> sel_ids;
     const GG::ListBox::SelectionSet sel = m_list_box->Selections();
     for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
-        ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
+        ObjectRow *row = dynamic_cast<ObjectRow *>(entry->get());
         if (row) {
             int selected_object_id = row->ObjectID();
             if (selected_object_id != INVALID_OBJECT_ID)
@@ -2411,7 +2401,7 @@ std::set<int> ObjectListWnd::SelectedObjectIDs() const {
 
 void ObjectListWnd::SetSelectedObjects(std::set<int> sel_ids) {
     for (GG::ListBox::iterator it = m_list_box->begin(); it != m_list_box->end(); ++it) {
-        ObjectRow *row = dynamic_cast<ObjectRow *>(*it);
+        ObjectRow *row = dynamic_cast<ObjectRow *>(it->get());
         if (row) {
             int selected_object_id = row->ObjectID();
             if (selected_object_id != INVALID_OBJECT_ID) {
@@ -2471,7 +2461,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         popup->AddMenuItem(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, suitability_action));
 
         for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
-            ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
+            ObjectRow *row = dynamic_cast<ObjectRow *>(entry->get());
             if (row) {
                 std::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());
                 if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
@@ -2499,7 +2489,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             auto focus_action = [this, entry, app, &focus_ship_building_common_action]() {
                 std::string focus = entry.first;
                 for (const auto& selection : m_list_box->Selections()) {
-                    ObjectRow* row = dynamic_cast<ObjectRow*>(*selection);
+                    ObjectRow* row = dynamic_cast<ObjectRow*>(selection->get());
                     if (!row)
                         continue;
 
@@ -2530,8 +2520,8 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             auto produce_ship_action = [this, it, app, cur_empire, &focus_ship_building_common_action]() {
                 int ship_design = it->first;
                 bool needs_queue_update(false);
-                for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
-                    ObjectRow* row = dynamic_cast<ObjectRow*>(*entry);
+                for (const auto& entry : m_list_box->Selections()) {
+                    ObjectRow* row = dynamic_cast<ObjectRow*>(entry->get());
                     if (!row)
                         continue;
                     std::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());
@@ -2562,8 +2552,8 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             auto produce_building_action = [this, entry, app, cur_empire, &focus_ship_building_common_action]() {
                 std::string bld = entry.first;
                 bool needs_queue_update(false);
-                for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
-                    ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
+                for (const auto& entry : m_list_box->Selections()) {
+                    ObjectRow *row = dynamic_cast<ObjectRow *>(entry->get());
                     if (!row)
                         continue;
                     std::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());
@@ -2610,7 +2600,7 @@ int ObjectListWnd::ObjectInRow(GG::ListBox::iterator it) const {
     if (it == m_list_box->end())
         return INVALID_OBJECT_ID;
 
-    if (ObjectRow* obj_row = dynamic_cast<ObjectRow*>(*it))
+    if (ObjectRow* obj_row = dynamic_cast<ObjectRow*>(it->get()))
         return obj_row->ObjectID();
 
     return INVALID_OBJECT_ID;

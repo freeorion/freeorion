@@ -38,9 +38,9 @@ namespace {
 
     class RowContentsWnd : public GG::Control {
     public:
-        RowContentsWnd(GG::X w, GG::Y h, GG::Wnd* contents, int indentation_level) :
+        RowContentsWnd(GG::X w, GG::Y h, std::shared_ptr<GG::Wnd> contents, int indentation_level) :
             Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-            m_contents(contents)
+            m_contents(std::forward<std::shared_ptr<GG::Wnd>>(contents))
         {
             if (!m_contents)
                 return;
@@ -73,22 +73,22 @@ namespace {
         void Render() override
         { /*GG::FlatRectangle(UpperLeft(), LowerRight(), GG::CLR_DARK_RED, GG::CLR_PINK, 1);*/ }
     private:
-        Wnd* m_contents;
+        std::shared_ptr<Wnd> m_contents;
     };
 
     class RuleListRow : public GG::ListBox::Row {
     public:
-        RuleListRow(GG::X w, GG::Y h, RowContentsWnd* contents) :
+        RuleListRow(GG::X w, GG::Y h, std::shared_ptr<RowContentsWnd> contents) :
             GG::ListBox::Row(w, h, ""),
-            m_contents(contents)
+            m_contents(std::forward<std::shared_ptr<RowContentsWnd>>(contents))
         {}
 
-        RuleListRow(GG::X w, GG::Y h, Wnd* contents, int indentation = 0) :
+        RuleListRow(GG::X w, GG::Y h, std::shared_ptr<Wnd> contents, int indentation = 0) :
             GG::ListBox::Row(w, h, ""),
             m_contents(nullptr)
         {
             if (contents)
-                m_contents = GG::Wnd::Create<RowContentsWnd>(w, h, contents, indentation);
+                m_contents = GG::Wnd::Create<RowContentsWnd>(w, h, std::forward<std::shared_ptr<GG::Wnd>>(contents), indentation);
         }
 
         void CompleteConstruction() override {
@@ -109,7 +109,7 @@ namespace {
         void Render() override
         { /*GG::FlatRectangle(UpperLeft(), LowerRight(), GG::CLR_DARK_BLUE, GG::CLR_YELLOW, 1);*/ }
     private:
-        RowContentsWnd* m_contents;
+        std::shared_ptr<RowContentsWnd> m_contents;
     };
 
     class GameRulesList : public CUIListBox {
@@ -192,7 +192,6 @@ void GameRulesPanel::CompleteConstruction() {
     // for all rules, add to page
     for (auto rule : GetGameRules()) {
         // get or create page for rule
-        GG::ListBox* current_page = nullptr;
         auto itr = indexed_pages.find(rule.second.category);
         if (itr == indexed_pages.end()) {
             indexed_pages[rule.second.category] = CreatePage(UserString(rule.second.category));
@@ -202,7 +201,7 @@ void GameRulesPanel::CompleteConstruction() {
             ErrorLogger() << "Unable to create and insert and then find new rule page";
             continue;
         }
-        current_page = itr->second;
+        auto current_page = itr->second;
 
         // add rule to page
         switch(rule.second.rule_type) {
@@ -241,7 +240,7 @@ void GameRulesPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void GameRulesPanel::Disable(bool b) {
     for (auto& child : Children())
-        static_cast<GG::Control*>(child)->Disable(b);
+        std::static_pointer_cast<GG::Control>(child)->Disable(b);
 }
 
 void GameRulesPanel::DoLayout() {
@@ -261,7 +260,7 @@ GG::ListBox* GameRulesPanel::CreatePage(const std::string& name) {
     auto page = GG::Wnd::Create<GameRulesList>();
     m_tabs->AddWnd(page, name);
     m_tabs->SetCurrentWnd(m_tabs->NumWnds() - 1);
-    return page;
+    return page.get();
 }
 
 void GameRulesPanel::CreateSectionHeader(GG::ListBox* page, int indentation_level,
@@ -293,11 +292,11 @@ GG::StateButton* GameRulesPanel::BoolRuleWidget(GG::ListBox* page, int indentati
     button->SetCheck(GetGameRules().Get<bool>(rule_name));
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     button->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
-    button->CheckedSignal.connect(boost::bind(&GameRulesPanel::BoolRuleChanged, this, button,
+    button->CheckedSignal.connect(boost::bind(&GameRulesPanel::BoolRuleChanged, this, button.get(),
                                               rule_name));
 
     page->Insert(row);
-    return button;
+    return button.get();
 }
 
 GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_level,
@@ -308,7 +307,7 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
     std::shared_ptr<const ValidatorBase> validator = GetGameRules().GetValidator(rule_name);
     int value = GetGameRules().Get<int>(rule_name);
 
-    GG::Spin<int>* spin = nullptr;
+    std::shared_ptr<GG::Spin<int>> spin;
     if (std::shared_ptr<const RangedValidator<int>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<int>>(validator))
         spin = GG::Wnd::Create<CUISpin<int>>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
 
@@ -344,8 +343,8 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
     text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
 
     spin->ValueChangedSignal.connect(boost::bind(&GameRulesPanel::IntRuleChanged,
-                                                 this, spin, rule_name));
-    return spin;
+                                                 this, spin.get(), rule_name));
+    return spin.get();
 }
 
 GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indentation_level,
@@ -356,7 +355,7 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
     std::shared_ptr<const ValidatorBase> validator = GetGameRules().GetValidator(rule_name);
     double value = GetGameRules().Get<double>(rule_name);
 
-    GG::Spin<double>* spin = nullptr;
+    std::shared_ptr<GG::Spin<double>> spin;
     if (std::shared_ptr<const RangedValidator<double>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<double>>(validator))
         spin = GG::Wnd::Create<CUISpin<double>>(value, 0.1, ranged_validator->m_min, ranged_validator->m_max, true);
 
@@ -392,9 +391,9 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
     text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
 
     spin->ValueChangedSignal.connect(boost::bind(&GameRulesPanel::DoubleRuleChanged,
-                                                 this, spin, rule_name));
+                                                 this, spin.get(), rule_name));
 
-    return spin;
+    return spin.get();
 }
 
 namespace {
@@ -461,9 +460,9 @@ GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indent
     text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
 
     drop->SelChangedSignal.connect(boost::bind(&GameRulesPanel::StringRuleChanged,
-                                               this, drop, rule_name));
+                                               this, drop.get(), rule_name));
 
-    return drop;
+    return drop.get();
 }
 
 void GameRulesPanel::BoolRuleChanged(const GG::StateButton* button,
@@ -519,7 +518,7 @@ void GameRulesPanel::StringRuleChanged(const GG::DropDownList* drop,
         return;
 
     GG::DropDownList::iterator it = drop->CurrentItem();
-    const GG::DropDownList::Row* row = *it;
+    const auto row = *it;
     if (!row) {
         ErrorLogger() << "GameRulesPanel::StringRuleChanged couldn't get current item due to invalid Row pointer";
         return;
@@ -908,7 +907,7 @@ void GalaxySetupPanel::DoLayout() {
 
 void GalaxySetupPanel::Disable(bool b/* = true*/) {
     for (auto& child : Children())
-        static_cast<GG::Control*>(child)->Disable(b);
+        static_cast<GG::Control*>(child.get())->Disable(b);
 }
 
 void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data) {

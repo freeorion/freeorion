@@ -112,7 +112,7 @@ WndEvent::WndEvent(EventType type, const Pt& pt, int move, Flags<ModKey> mod_key
     m_text(nullptr)
 {}
 
-WndEvent::WndEvent(EventType type, const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys) :
+WndEvent::WndEvent(EventType type, const Pt& pt, const std::map<std::shared_ptr<Wnd>, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys) :
     m_type(type),
     m_point(pt),
     m_key(GGK_UNKNOWN),
@@ -129,7 +129,7 @@ WndEvent::WndEvent(EventType type, const Pt& pt, const std::map<Wnd*, Pt>& drag_
     { m_acceptable_drop_wnds[drag_drop_wnd.first] = false; }
 }
 
-WndEvent::WndEvent(EventType type, const Pt& pt, const std::vector<Wnd*>& drag_drop_wnds, Flags<ModKey> mod_keys) :
+WndEvent::WndEvent(EventType type, const Pt& pt, const std::vector<std::shared_ptr<Wnd>>& drag_drop_wnds, Flags<ModKey> mod_keys) :
     m_type(type),
     m_point(pt),
     m_key(GGK_UNKNOWN),
@@ -142,7 +142,7 @@ WndEvent::WndEvent(EventType type, const Pt& pt, const std::vector<Wnd*>& drag_d
     m_dropped_wnds(drag_drop_wnds)
 {}
 
-WndEvent::WndEvent(EventType type, const Pt& pt, Wnd* drag_wnd, Flags<ModKey> mod_keys) :
+WndEvent::WndEvent(EventType type, const Pt& pt, const std::shared_ptr<Wnd>& drag_wnd, Flags<ModKey> mod_keys) :
     m_type(type),
     m_point(pt),
     m_key(GGK_UNKNOWN),
@@ -224,13 +224,13 @@ const Pt& WndEvent::DragMove() const
 int WndEvent::WheelMove() const
 { return m_wheel_move; }
 
-const std::map<Wnd*, Pt>& WndEvent::DragDropWnds() const
+const std::map<std::shared_ptr<Wnd>, Pt>& WndEvent::DragDropWnds() const
 { return m_drag_drop_wnds; }
 
-std::vector<Wnd*>& WndEvent::GetDragDropWnds() const
+std::vector<std::shared_ptr<Wnd>>& WndEvent::GetDragDropWnds() const
 { return m_dropped_wnds; }
 
-std::map<const Wnd*, bool>& WndEvent::GetAcceptableDropWnds() const
+std::map<const std::shared_ptr<Wnd>, bool>& WndEvent::GetAcceptableDropWnds() const
 { return m_acceptable_drop_wnds; }
 
 unsigned int WndEvent::Ticks() const

@@ -35,7 +35,7 @@ private:
     void                    SpecialRightClicked(const std::string& name);
 
     int                                     m_object_id;        ///< id for the Object whose specials this panel displays
-    std::map<std::string, StatisticIcon*>   m_icons;
+    std::map<std::string, std::shared_ptr<StatisticIcon>>   m_icons;
 };
 
 #endif

@@ -168,7 +168,7 @@ void Edit::Render()
     } else { // no selected text
         glColor(text_color_to_use);
         GetFont()->RenderText(Pt(client_ul.x, text_y_pos), Text().substr(Value(INDEX_0), Value(INDEX_END - INDEX_0)));
-        if (GUI::GetGUI()->FocusWnd() == this) { // if we have focus, draw the caret as a simple vertical line
+        if (GUI::GetGUI()->FocusWnd().get() == this) { // if we have focus, draw the caret as a simple vertical line
             X caret_x = ScreenPosOfChar(m_cursor_pos.second);
             Line(caret_x, client_ul.y, caret_x, client_lr.y);
         }

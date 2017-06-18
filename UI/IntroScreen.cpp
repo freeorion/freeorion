@@ -311,7 +311,6 @@ void IntroScreen::CompleteConstruction() {
 }
 
 IntroScreen::~IntroScreen() {
-    delete m_splash;
     // m_menu, m_version, m_logo were childs of m_splash, so don't need to be deleted here
 }
 

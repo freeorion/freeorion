@@ -40,18 +40,18 @@ protected:
     MeterType               m_secondary_meter_type;
     int                     m_object_id;
 
-    GG::Label*              m_summary_title;
+    std::shared_ptr<GG::Label>              m_summary_title;
 
-    GG::Label*              m_current_label;
-    GG::Label*              m_current_value;
-    GG::Label*              m_next_turn_label;
-    GG::Label*              m_next_turn_value;
-    GG::Label*              m_change_label;
-    GG::Label*              m_change_value;
+    std::shared_ptr<GG::Label>              m_current_label;
+    std::shared_ptr<GG::Label>              m_current_value;
+    std::shared_ptr<GG::Label>              m_next_turn_label;
+    std::shared_ptr<GG::Label>              m_next_turn_value;
+    std::shared_ptr<GG::Label>              m_change_label;
+    std::shared_ptr<GG::Label>              m_change_value;
 
-    GG::Label*              m_meter_title;
+    std::shared_ptr<GG::Label>              m_meter_title;
 
-    std::vector<std::pair<GG::Label*, GG::Label*>>
+    std::vector<std::pair<std::shared_ptr<GG::Label>, std::shared_ptr<GG::Label>>>
                             m_effect_labels_and_values;
 
     GG::Y                   m_row_height;
@@ -86,8 +86,8 @@ private:
     void            UpdateSummary();
     void            UpdateEffectLabelsAndValues(GG::Y& top);
 
-    GG::ListBox*    m_bay_list;
-    GG::ListBox*    m_hangar_list;
+    std::shared_ptr<GG::ListBox>    m_bay_list;
+    std::shared_ptr<GG::ListBox>    m_hangar_list;
     bool            m_show_all_bouts;
 
 };

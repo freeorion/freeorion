@@ -158,7 +158,7 @@ protected:
     virtual void SetEditTextFromValue();
     //@}
 
-    Edit*      m_edit;
+    std::shared_ptr<Edit>      m_edit;
 
 private:
     void ConnectSignals();
@@ -174,8 +174,8 @@ private:
 
     bool       m_editable;
 
-    Button*    m_up_button;
-    Button*    m_down_button;
+    std::shared_ptr<Button>    m_up_button;
+    std::shared_ptr<Button>    m_down_button;
 
     X          m_button_width;
 
@@ -213,9 +213,9 @@ template<class T>
 void Spin<T>::CompleteConstruction()
 {
     const auto& style = GetStyleFactory();
-    m_edit->InstallEventFilter(this);
-    m_up_button->InstallEventFilter(this);
-    m_down_button->InstallEventFilter(this);
+    m_edit->InstallEventFilter(shared_from_this());
+    m_up_button->InstallEventFilter(shared_from_this());
+    m_down_button->InstallEventFilter(shared_from_this());
     AttachChild(m_edit);
     AttachChild(m_up_button);
     AttachChild(m_down_button);
@@ -389,7 +389,7 @@ Button* Spin<T>::DownButton() const
 
 template<class T>
 Edit* Spin<T>::GetEdit() const
-{ return m_edit; }
+{ return m_edit.get(); }
 
 template<class T>
 void Spin<T>::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
@@ -432,9 +432,9 @@ void Spin<T>::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 template<class T>
 bool Spin<T>::EventFilter(Wnd* w, const WndEvent& event)
 {
-    if (w == m_edit) {
+    if (w == m_edit.get()) {
         if (!m_editable && event.Type() == WndEvent::GainingFocus) {
-            GUI::GetGUI()->SetFocusWnd(this);
+            GUI::GetGUI()->SetFocusWnd(shared_from_this());
             return true;
         } else {
             return !m_editable;

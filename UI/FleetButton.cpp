@@ -159,7 +159,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
             // position can be used to get a direction vector to orient the icon
             float dest_x = obj->X(), dest_y = obj->Y();
             float cur_x = first_fleet->X(), cur_y = first_fleet->Y();
-            const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+            const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
             GG::Pt dest = map_wnd->ScreenCoordsFromUniversePosition(dest_x, dest_y);
             GG::Pt cur = map_wnd->ScreenCoordsFromUniversePosition(cur_x, cur_y);
             GG::Pt direction_vector = dest - cur;
@@ -184,7 +184,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
     if (m_fleet_blockaded) {
         std::shared_ptr<GG::Texture> blockaded_texture = FleetBlockadedIcon(size_type);
         if (blockaded_texture) {
-            GG::StaticGraphic* icon = new GG::StaticGraphic(blockaded_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            auto icon = GG::Wnd::Create<GG::StaticGraphic>(blockaded_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             GG::Clr opposite_clr(255 - this->Color().r, 255 - this->Color().g, 255 - this->Color().b, this->Color().a);
             icon->SetColor(opposite_clr);
             m_icons.push_back(icon);
@@ -254,20 +254,8 @@ void FleetButton::CompleteConstruction() {
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 }
 
-FleetButton::~FleetButton() {
-    for (auto& icon : m_icons) {
-        DetachChild(icon);
-        delete icon;
-    }
-
-    DetachChild(m_selection_indicator);
-    delete m_selection_indicator;
-
-    if (m_scanline_control) {
-        DetachChild(m_scanline_control);
-        delete m_scanline_control;
-    }
-}
+FleetButton::~FleetButton()
+{}
 
 bool FleetButton::InWindow(const GG::Pt& pt) const {
     // find if cursor is within required distance of centre of icon
@@ -286,7 +274,7 @@ bool FleetButton::InWindow(const GG::Pt& pt) const {
 }
 
 void FleetButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+    const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
     if (!Disabled() && (!map_wnd || !map_wnd->InProductionViewMode())) {
         if (State() != BN_ROLLOVER)
             PlayFleetButtonRolloverSound();

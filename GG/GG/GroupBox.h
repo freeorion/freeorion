@@ -93,7 +93,7 @@ private:
     Clr                     m_text_color; ///< Color of label text
     Clr                     m_int_color;  ///< Color of background inside box
     std::shared_ptr<Font> m_font;
-    TextControl*            m_label;
+    std::shared_ptr<TextControl>            m_label;
     bool                    m_set_client_corners_equal_to_box_corners;
 };
 
