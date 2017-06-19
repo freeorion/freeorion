@@ -49,6 +49,7 @@ public:
     ScrollPanel();
     //! Create a ScrollPanel with content.
     ScrollPanel(X x, Y y, X w, Y h, Wnd* content);
+    void CompleteConstruction() override;
 
     void SizeMove(const Pt& ul, const Pt& lr) override;
     void Render() override;

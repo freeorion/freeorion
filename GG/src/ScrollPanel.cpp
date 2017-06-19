@@ -73,6 +73,9 @@ namespace GG {
         m_vscroll(nullptr),
         m_content(content),
         m_background_color(CLR_ZERO)
+    {}
+
+    void ScrollPanel::CompleteConstruction()
     {
         // Very important to clip the content of this panel,
         // to actually only show the currently viewed part.
@@ -88,7 +91,7 @@ namespace GG {
         }
 
         AttachChild(m_vscroll);
-        AttachChild(content);
+        AttachChild(m_content);
 
         m_vscroll->ScrolledSignal.connect(boost::bind(&ScrollPanel::OnScrolled, this, _1, _2, _3, _4));
 
