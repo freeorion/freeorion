@@ -2465,7 +2465,7 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer() :
     Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
     m_planet_panels(),
     m_selected_planet_id(INVALID_OBJECT_ID),
-    m_vscroll(new CUIScroll(GG::VERTICAL)),
+    m_vscroll(GG::Wnd::Create<CUIScroll>(GG::VERTICAL)),
     m_ignore_recursive_resize(false)
 {
     SetName("PlanetPanelContainer");

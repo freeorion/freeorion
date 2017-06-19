@@ -60,7 +60,7 @@ GG::ListBox* CUIStyle::NewListBox(GG::Clr color, GG::Clr interior/* = GG::CLR_ZE
 { return GG::Wnd::Create<CUIListBox>(); }
 
 GG::Scroll* CUIStyle::NewScroll(GG::Orientation orientation, GG::Clr color, GG::Clr interior) const
-{ return new CUIScroll(orientation); }
+{ return GG::Wnd::Create<CUIScroll>(orientation); }
 
 GG::Slider<int>* CUIStyle::NewIntSlider(int min, int max, GG::Orientation orientation,
                                         GG::Clr color, int tab_width, int line_width/* = 5*/) const

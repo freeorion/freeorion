@@ -256,7 +256,7 @@ namespace {
             }
 
 
-            m_hscroll = new CUIScroll(GG::HORIZONTAL);
+            m_hscroll =  GG::Wnd::Create<CUIScroll>(GG::HORIZONTAL);
             AttachChild(m_hscroll);
 
             m_hscroll->ScrolledSignal.connect(

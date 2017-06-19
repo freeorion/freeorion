@@ -101,7 +101,7 @@ ListBox* StyleFactory::NewListBox(Clr color, Clr interior/* = CLR_ZERO*/) const
 { return Wnd::Create<ListBox>(color, interior); }
 
 Scroll* StyleFactory::NewScroll(Orientation orientation, Clr color, Clr interior) const
-{ return new Scroll(orientation, color, interior); }
+{ return Wnd::Create<Scroll>(orientation, color, interior); }
 
 Slider<int>* StyleFactory::NewIntSlider(int min, int max, Orientation orientation,
                                         Clr color, int tab_width, int line_width/* = 5*/) const

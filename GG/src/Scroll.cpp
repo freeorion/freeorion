@@ -80,6 +80,10 @@ Scroll::Scroll(Orientation orientation, Clr color, Clr interior) :
         m_incr = style->NewScrollRightButton(color);
         m_tab = style->NewHScrollTabButton(color);
     }
+}
+
+void Scroll::CompleteConstruction()
+{
     if (m_decr) {
         AttachChild(m_decr);
         m_decr->LeftClickedSignal.connect(boost::bind(&Scroll::ScrollLineIncrDecrImpl, this, true, -1));
