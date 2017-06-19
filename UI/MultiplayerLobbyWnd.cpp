@@ -526,9 +526,9 @@ void MultiPlayerLobbyWnd::CompleteConstruction()
 
     m_new_load_game_buttons = GG::Wnd::Create<GG::RadioButtonGroup>(GG::VERTICAL);
     m_new_load_game_buttons->AddButton(
-        new CUIStateButton(UserString("NEW_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
+        GG::Wnd::Create<CUIStateButton>(UserString("NEW_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
     m_new_load_game_buttons->AddButton(
-        new CUIStateButton(UserString("LOAD_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
+        GG::Wnd::Create<CUIStateButton>(UserString("LOAD_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
 
     m_browse_saves_btn = Wnd::Create<CUIButton>("...");
     m_save_file_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_NOWRAP);

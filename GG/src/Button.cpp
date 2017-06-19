@@ -275,6 +275,10 @@ StateButton::StateButton(const std::string& str, const std::shared_ptr<Font>& fo
     m_checked(false)
 {
     m_color = color;
+}
+
+void StateButton::CompleteConstruction()
+{
     AttachChild(m_label);
     m_label->Hide();
 

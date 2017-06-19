@@ -525,15 +525,15 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(const std::string& config_name)
 void BuildDesignatorWnd::BuildSelector::CompleteConstruction()
 {
     // create build type toggle buttons (ship, building, all)
-    m_build_type_buttons[BT_BUILDING] = new CUIStateButton(UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    m_build_type_buttons[BT_BUILDING] = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_build_type_buttons[BT_BUILDING]);
-    m_build_type_buttons[BT_SHIP] = new CUIStateButton(UserString("PRODUCTION_WND_CATEGORY_BT_SHIP"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    m_build_type_buttons[BT_SHIP] = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_CATEGORY_BT_SHIP"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_build_type_buttons[BT_SHIP]);
 
     // create availability toggle buttons (available, not available)
-    m_availability_buttons.push_back(new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>()));
+    m_availability_buttons.push_back(GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>()));
     AttachChild(m_availability_buttons.back());
-    m_availability_buttons.push_back(new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>()));
+    m_availability_buttons.push_back(GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>()));
     AttachChild(m_availability_buttons.back());
 
     // selectable list of buildable items

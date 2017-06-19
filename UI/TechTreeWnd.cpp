@@ -282,7 +282,7 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction()
     for (const std::string& category : GetTechManager().CategoryNames()) {
         GG::Clr icon_clr = ClientUI::CategoryColor(category);
         std::shared_ptr<GG::SubTexture> icon = std::make_shared<GG::SubTexture>(ClientUI::CategoryIcon(category));
-        m_cat_buttons[category] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+        m_cat_buttons[category] = GG::Wnd::Create<GG::StateButton>("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
                                                      std::make_shared<CUIIconButtonRepresenter>(icon, icon_clr));
         m_cat_buttons[category]->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString(category), ""));
         m_cat_buttons[category]->SetBrowseModeTime(tooltip_delay);
@@ -291,7 +291,7 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction()
 
     GG::Clr icon_color = GG::Clr(113, 150, 182, 255);
     // and one for "ALL"
-    m_all_cat_button = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+    m_all_cat_button = GG::Wnd::Create<GG::StateButton>("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
                                            std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "00_all_cats.png", true)), icon_color));
     m_all_cat_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("ALL"), ""));
     m_all_cat_button->SetBrowseModeTime(tooltip_delay);
@@ -299,7 +299,7 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction()
     AttachChild(m_all_cat_button);
 
     // create a button for each tech status
-    m_status_buttons[TS_UNRESEARCHABLE] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+    m_status_buttons[TS_UNRESEARCHABLE] = GG::Wnd::Create<GG::StateButton>("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
                                                               std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "01_locked.png", true)), icon_color));
     m_status_buttons[TS_UNRESEARCHABLE]->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_LOCKED"), ""));
     m_status_buttons[TS_UNRESEARCHABLE]->SetBrowseModeTime(tooltip_delay);
@@ -307,7 +307,7 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction()
         GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.unresearchable"));
     AttachChild(m_status_buttons[TS_UNRESEARCHABLE]);
 
-    m_status_buttons[TS_HAS_RESEARCHED_PREREQ] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+    m_status_buttons[TS_HAS_RESEARCHED_PREREQ] = GG::Wnd::Create<GG::StateButton>("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
                                                                      std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "02_partial.png", true)), icon_color));
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_PARTIAL_UNLOCK"), ""));
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetBrowseModeTime(tooltip_delay);
@@ -315,7 +315,7 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction()
         GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.has_researched_prereq"));
     AttachChild(m_status_buttons[TS_HAS_RESEARCHED_PREREQ]);
 
-    m_status_buttons[TS_RESEARCHABLE] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+    m_status_buttons[TS_RESEARCHABLE] = GG::Wnd::Create<GG::StateButton>("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
                                                             std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "03_unlocked.png", true)), icon_color));
     m_status_buttons[TS_RESEARCHABLE]->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_RESEARCHABLE"), ""));
     m_status_buttons[TS_RESEARCHABLE]->SetBrowseModeTime(tooltip_delay);
@@ -323,7 +323,7 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction()
         GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.researchable"));
     AttachChild(m_status_buttons[TS_RESEARCHABLE]);
 
-    m_status_buttons[TS_COMPLETE] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+    m_status_buttons[TS_COMPLETE] = GG::Wnd::Create<GG::StateButton>("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
                                                         std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "04_completed.png", true)), icon_color));
     m_status_buttons[TS_COMPLETE]->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_COMPLETED"), ""));
     m_status_buttons[TS_COMPLETE]->SetBrowseModeTime(tooltip_delay);
@@ -332,8 +332,9 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction()
     AttachChild(m_status_buttons[TS_COMPLETE]);
 
     // create button to switch between tree and list views
-    m_view_type_button = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                             std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "06_view_tree.png", true)), icon_color,
+    m_view_type_button = GG::Wnd::Create<GG::StateButton>(
+        "", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+        std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "06_view_tree.png", true)), icon_color,
                                                                                       std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "05_view_list.png", true)), GG::Clr(110, 172, 150, 255)));
     m_view_type_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("TECH_WND_VIEW_TYPE"), ""));
     m_view_type_button->SetBrowseModeTime(tooltip_delay);

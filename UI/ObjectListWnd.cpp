@@ -1066,7 +1066,7 @@ void FilterDialog::CompleteConstruction()
         int row = 1;
 
         for (auto visibility : {SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED}) {
-            auto button = new CUIStateButton(" ", GG::FORMAT_CENTER, std::make_shared<CUICheckBoxRepresenter>());
+            auto button = GG::Wnd::Create<CUIStateButton>(" ", GG::FORMAT_CENTER, std::make_shared<CUICheckBoxRepresenter>());
             button->SetCheck(vis_display.count(visibility));
             m_filters_layout->Add(button, row, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             button->CheckedSignal.connect(

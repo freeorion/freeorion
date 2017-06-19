@@ -202,6 +202,7 @@ public:
     /** \name Structors */ //@{
     CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format, std::shared_ptr<GG::StateButtonRepresenter> representer);
     //@}
+
 };
 
 /** Tab bar with buttons for selecting tabbed windows. */
