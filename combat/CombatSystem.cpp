@@ -1537,7 +1537,7 @@ namespace {
         // now launch fighters (which can attack in any subsequent combat bouts)
         // no point is launching fighters during the last bout, as they will not
         // get any chance to attack during this combat
-        if (bout <= GetGameRules().Get<int>("NUM_COMBAT_ROUNDS") - 1) {
+        if (bout <= GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS") - 1) {
             FighterLaunchesEventPtr launches_event = std::make_shared<FighterLaunchesEvent>();
             for (int attacker_id : shuffled_attackers) {
                 std::shared_ptr<UniverseObject> attacker = combat_info.objects.Object(attacker_id);
@@ -1639,7 +1639,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     // run multiple combat "bouts" during which each combat object can take
     // action(s) such as shooting at target(s) or launching fighters
     int last_bout = 1;
-    for (int bout = 1; bout <= GetGameRules().Get<int>("NUM_COMBAT_ROUNDS"); ++bout) {
+    for (int bout = 1; bout <= GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS"); ++bout) {
         if (GetOptionsDB().Get<bool>("reseed-prng-server"))
             Seed(base_seed + bout);    // ensure each combat bout produces different results
 

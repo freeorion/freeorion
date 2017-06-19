@@ -34,8 +34,8 @@ using boost::io::str;
 namespace {
     void AddRules(GameRules& rules) {
         // makes all ships cost 1 PP and take 1 turn to produce
-        rules.Add<bool>("CHEAP_AND_FAST_SHIP_PRODUCTION",
-                        "CHEAP_AND_FAST_SHIP_PRODUCTION_DESC",
+        rules.Add<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION",
+                        "RULE_CHEAP_AND_FAST_SHIP_PRODUCTION_DESC",
                         false, true);
     }
     bool temp_bool = RegisterGameRules(&AddRules);
@@ -350,7 +350,7 @@ bool PartType::CanMountInSlotType(ShipSlotType slot_type) const {
 }
 
 bool PartType::ProductionCostTimeLocationInvariant() const {
-    if (GetGameRules().Get<bool>("CHEAP_AND_FAST_SHIP_PRODUCTION"))
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"))
         return true;
     if (m_production_cost && !m_production_cost->TargetInvariant())
         return false;
@@ -360,7 +360,7 @@ bool PartType::ProductionCostTimeLocationInvariant() const {
 }
 
 float PartType::ProductionCost(int empire_id, int location_id) const {
-    if (GetGameRules().Get<bool>("CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost) {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost) {
         return 1.0f;
     } else {
         if (m_production_cost->ConstantExpr())
@@ -385,7 +385,7 @@ float PartType::ProductionCost(int empire_id, int location_id) const {
 int PartType::ProductionTime(int empire_id, int location_id) const {
     const auto arbitrary_large_number = 9999;
 
-    if (GetGameRules().Get<bool>("CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time) {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time) {
         return 1;
     } else {
         if (m_production_time->ConstantExpr())
@@ -469,7 +469,7 @@ unsigned int HullType::NumSlots(ShipSlotType slot_type) const {
 // Chances are, the same is true of buildings and techs as well.
 // TODO: Eliminate duplication
 bool HullType::ProductionCostTimeLocationInvariant() const {
-    if (GetGameRules().Get<bool>("CHEAP_AND_FAST_SHIP_PRODUCTION"))
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"))
         return true;
     if (m_production_cost && !m_production_cost->LocalCandidateInvariant())
         return false;
@@ -479,7 +479,7 @@ bool HullType::ProductionCostTimeLocationInvariant() const {
 }
 
 float HullType::ProductionCost(int empire_id, int location_id) const {
-    if (GetGameRules().Get<bool>("CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost) {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost) {
         return 1.0f;
     } else {
         if (m_production_cost->ConstantExpr())
@@ -502,7 +502,7 @@ float HullType::ProductionCost(int empire_id, int location_id) const {
 }
 
 int HullType::ProductionTime(int empire_id, int location_id) const {
-    if (GetGameRules().Get<bool>("CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time) {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time) {
         return 1;
     } else {
         if (m_production_time->ConstantExpr())
@@ -703,7 +703,7 @@ void ShipDesign::SetDescription(const std::string& description) {
 }
 
 bool ShipDesign::ProductionCostTimeLocationInvariant() const {
-    if (GetGameRules().Get<bool>("CHEAP_AND_FAST_SHIP_PRODUCTION"))
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"))
         return true;
     // as seen in ShipDesign::ProductionCost, the location is passed as the
     // local candidate in the ScriptingContext
@@ -722,7 +722,7 @@ bool ShipDesign::ProductionCostTimeLocationInvariant() const {
 }
 
 float ShipDesign::ProductionCost(int empire_id, int location_id) const {
-    if (GetGameRules().Get<bool>("CHEAP_AND_FAST_SHIP_PRODUCTION")) {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION")) {
         return 1.0f;
     } else {
         float cost_accumulator = 0.0f;
@@ -739,7 +739,7 @@ float ShipDesign::PerTurnCost(int empire_id, int location_id) const
 { return ProductionCost(empire_id, location_id) / std::max(1, ProductionTime(empire_id, location_id)); }
 
 int ShipDesign::ProductionTime(int empire_id, int location_id) const {
-    if (GetGameRules().Get<bool>("CHEAP_AND_FAST_SHIP_PRODUCTION")) {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION")) {
         return 1;
     } else {
         int time_accumulator = 1;
@@ -810,7 +810,7 @@ float ShipDesign::AdjustedAttack(float shield) const {
     int fighter_shots = std::min(available_fighters, fighter_launch_capacity);  // how many fighters launched in bout 1
     available_fighters -= fighter_shots;
     int launched_fighters = fighter_shots;
-    int num_bouts = GetGameRules().Get<int>("NUM_COMBAT_ROUNDS");
+    int num_bouts = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
     int remaining_bouts = num_bouts - 2;  // no attack for first round, second round already added
     while (remaining_bouts > 0) {
         int fighters_launched_this_bout = std::min(available_fighters, fighter_launch_capacity);

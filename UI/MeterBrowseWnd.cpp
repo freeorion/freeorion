@@ -763,7 +763,7 @@ namespace {
                                                        float fighter_damage, int limit_to_bout = -1)
     {
         std::map<int, FighterBoutInfo> retval;
-        const int NUM_BOUTS = GetGameRules().Get<int>("NUM_COMBAT_ROUNDS");
+        const int NUM_BOUTS = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
         int target_bout = limit_to_bout < 1 ? NUM_BOUTS : limit_to_bout;
         for (int bout = 1; bout <= target_bout; ++bout) {
             // init current fighters

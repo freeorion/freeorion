@@ -19,8 +19,8 @@
 namespace {
     void AddRules(GameRules& rules) {
         // makes all techs cost 1 RP and take 1 turn to research
-        rules.Add<bool>("CHEAP_AND_FAST_TECH_RESEARCH",
-                        "CHEAP_AND_FAST_TECH_RESEARCH_DESC",
+        rules.Add<bool>("RULE_CHEAP_AND_FAST_TECH_RESEARCH",
+                        "RULE_CHEAP_AND_FAST_TECH_RESEARCH_DESC",
                         false, true);
     }
     bool temp_bool = RegisterGameRules(&AddRules);
@@ -169,7 +169,7 @@ std::string Tech::Dump() const {
 float Tech::ResearchCost(int empire_id) const {
     const auto arbitrary_large_number = 999999.9f;
 
-    if (GetGameRules().Get<bool>("CHEAP_AND_FAST_TECH_RESEARCH") || !m_research_cost) {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_TECH_RESEARCH") || !m_research_cost) {
         return 1.0;
 
     } else if (m_research_cost->ConstantExpr()) {
@@ -194,7 +194,7 @@ float Tech::PerTurnCost(int empire_id) const
 int Tech::ResearchTime(int empire_id) const {
     const auto arbitrary_large_number = 9999;
 
-    if (GetGameRules().Get<bool>("CHEAP_AND_FAST_TECH_RESEARCH") || !m_research_turns) {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_TECH_RESEARCH") || !m_research_turns) {
         return 1;
 
     } else if (m_research_turns->ConstantExpr()) {
