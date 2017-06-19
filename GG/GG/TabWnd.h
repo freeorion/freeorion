@@ -206,7 +206,9 @@ public:
     /** \name Structors */ ///@{
     TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
            Flags<WndFlag> flags = INTERACTIVE);
+    void CompleteConstruction() override;
     //@}
+public:
 
     /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;

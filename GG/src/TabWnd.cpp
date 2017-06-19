@@ -264,7 +264,6 @@ void TabWnd::TabChanged(std::size_t index, bool signal)
 // static(s)
 const std::size_t TabBar::NO_TAB = TabWnd::NO_WND;
 const X TabBar::BUTTON_WIDTH(10);
-
 TabBar::TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                Flags<WndFlag> flags/* = INTERACTIVE*/) :
     Control(X0, Y0, X1, TabHeightFromFont(font), flags),
@@ -277,6 +276,10 @@ TabBar::TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = 
     m_first_tab_shown(0)
 {
     SetColor(color);
+}
+
+void TabBar::CompleteConstruction()
+{
 
     SetChildClippingMode(ClipToClient);
 

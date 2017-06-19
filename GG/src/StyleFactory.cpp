@@ -112,7 +112,7 @@ TextControl* StyleFactory::NewTextControl(const std::string& str, const std::sha
 { return Wnd::Create<TextControl>(X0, Y0, X1, Y1, str, font, color, format, NO_WND_FLAGS); }
 
 TabBar* StyleFactory::NewTabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
-{ return new TabBar(font, color, text_color, INTERACTIVE); }
+{ return Wnd::Create<TabBar>(font, color, text_color, INTERACTIVE); }
 
 ListBox* StyleFactory::NewDropDownListListBox(Clr color, Clr interior/* = CLR_ZERO*/) const
 {

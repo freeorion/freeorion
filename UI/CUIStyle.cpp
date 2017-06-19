@@ -68,7 +68,7 @@ GG::Slider<int>* CUIStyle::NewIntSlider(int min, int max, GG::Orientation orient
 
 
 GG::TabBar* CUIStyle::NewTabBar(const std::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
-{ return new CUITabBar(font, color, text_color); }
+{ return GG::Wnd::Create<CUITabBar>(font, color, text_color); }
 
 GG::Button* CUIStyle::NewScrollUpButton(GG::Clr color) const
 { return nullptr; }
