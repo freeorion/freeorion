@@ -3742,6 +3742,12 @@ Déplacer en haut de la file
 MOVE_DOWN_QUEUE_ITEM
 Déplacer en bas de la file
 
+SPLIT_INCOMPLETE
+Dissocier Répétition actuelle
+
+DUPLICATE
+Dupliquer
+
 PRODUCTION_WND_TOOLTIP_PROD_COST
 Coût production
 
