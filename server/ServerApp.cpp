@@ -636,6 +636,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     DebugLogger() << "ServerApp::NewGameInitConcurrentWithJoiners";
 
     m_galaxy_setup_data = galaxy_setup_data;
+    GetGameRules().SetFromStrings(m_galaxy_setup_data.GetGameRules());
 
     // validate some connection info / determine which players need empires created
     std::map<int, PlayerSetupData> active_players_id_setup_data;

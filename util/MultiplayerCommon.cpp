@@ -81,7 +81,26 @@ void GameRules::ClearExternalRules() {
 
 void GameRules::ResetToDefaults() {
     for (auto& it : m_game_rules)
-        it.second.SetFromValue(it.second.default_value);
+        it.second.SetToDefault();
+}
+
+std::vector<std::pair<std::string, std::string>> GameRules::GetRulesAsStrings() const {
+    std::vector<std::pair<std::string, std::string>> retval;
+    for (const auto& rule : m_game_rules)
+        retval.push_back(std::make_pair(rule.first, rule.second.ValueToString()));
+    return retval;
+}
+
+void GameRules::SetFromStrings(const std::vector<std::pair<std::string, std::string>>& names_values) {
+    ResetToDefaults();
+    for (auto& entry : names_values) {
+        auto rule_it = m_game_rules.find(entry.first);
+        if (rule_it == m_game_rules.end()) {
+            InfoLogger() << "GameRules::serialize received unrecognized rule: " << entry.first;
+            continue;
+        }
+        rule_it->second.SetFromString(entry.second);
+    }
 }
 
 
@@ -174,6 +193,8 @@ GalaxySetupOption GalaxySetupData::GetNativeFreq() const {
 Aggression GalaxySetupData::GetAggression() const
 { return m_ai_aggr; }
 
+const std::vector<std::pair<std::string, std::string>>& GalaxySetupData::GetGameRules() const
+{ return m_game_rules; }
 
 /////////////////////////////////////////////////////
 // PlayerSetupData

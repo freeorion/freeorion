@@ -499,13 +499,14 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         setup_data.m_monster_freq =     GetOptionsDB().Get<GalaxySetupOption>("GameSetup.monster-frequency");
         setup_data.m_native_freq =      GetOptionsDB().Get<GalaxySetupOption>("GameSetup.native-frequency");
         setup_data.m_ai_aggr =          GetOptionsDB().Get<Aggression>("GameSetup.ai-aggression");
+        setup_data.m_game_rules =       GetGameRules().GetRulesAsStrings();
+
 
         // SinglePlayerSetupData contains a map of PlayerSetupData, for
         // the human and AI players.  Need to compile this information
         // from the specified human options and number of requested AIs
 
-        // Human player setup data first
-
+        // Human player setup data
         PlayerSetupData human_player_setup_data;
         human_player_setup_data.m_player_name = GetOptionsDB().Get<std::string>("GameSetup.player-name");
         human_player_setup_data.m_empire_name = GetOptionsDB().Get<std::string>("GameSetup.empire-name");
@@ -539,8 +540,8 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         // add to setup data players
         setup_data.m_players.push_back(human_player_setup_data);
 
-        // AI player setup data.  One entry for each requested AI
 
+        // AI player setup data.  One entry for each requested AI
         int num_AIs = GetOptionsDB().Get<int>("GameSetup.ai-players");
         for (int ai_i = 1; ai_i <= num_AIs; ++ai_i) {
             PlayerSetupData ai_setup_data;

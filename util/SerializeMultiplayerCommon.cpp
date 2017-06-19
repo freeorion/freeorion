@@ -6,36 +6,6 @@
 #include "Serialize.ipp"
 
 template <class Archive>
-void GameRules::serialize(Archive& ar, const unsigned int version)
-{
-    std::vector<std::pair<std::string, std::string>> name_val_pairs;
-    if (Archive::is_saving::value) {
-        // fill name_val_pars for values in this GameRules
-        for (auto& entry : m_game_rules)
-            name_val_pairs.push_back(std::make_pair(entry.first, entry.second.ValueToString()));
-    }
-
-    ar  & BOOST_SERIALIZATION_NVP(name_val_pairs);
-
-    if (Archive::is_loading::value) {
-        // set values in this Gamerules
-        for (auto& entry : name_val_pairs) {
-            auto rule_it = m_game_rules.find(entry.first);
-            if (rule_it == m_game_rules.end()) {
-                InfoLogger() << "GameRules::serialize received unrecognized rule: " << entry.first;
-                continue;
-            }
-            rule_it->second.SetFromString(entry.second);
-        }
-    }
-}
-
-template void GameRules::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void GameRules::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void GameRules::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void GameRules::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
-
-template <class Archive>
 void GalaxySetupData::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_seed)
@@ -48,6 +18,10 @@ void GalaxySetupData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_monster_freq)
         & BOOST_SERIALIZATION_NVP(m_native_freq)
         & BOOST_SERIALIZATION_NVP(m_ai_aggr);
+
+    if (version >= 1) {
+        ar & BOOST_SERIALIZATION_NVP(m_game_rules);
+    }
 }
 
 template void GalaxySetupData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);

@@ -38,8 +38,6 @@ FO_COMMON_API bool RegisterGameRules(GameRulesFn function);
 /** returns the single instance of the GameRules class */
 FO_COMMON_API GameRules& GetGameRules();
 
-
-
 /** Database of values that control how the game mechanics function. */
 class FO_COMMON_API GameRules {
 public:
@@ -52,6 +50,8 @@ public:
     /** \name Accessors */ //@{
     bool    RuleExists(const std::string& name) const
     { return m_game_rules.find(name) != m_game_rules.end(); }
+
+    std::vector<std::pair<std::string, std::string>> GetRulesAsStrings() const;
 
     template <typename T>
     T       Get(const std::string& name) const
@@ -72,9 +72,9 @@ public:
         auto it = m_game_rules.find(name);
         if (it != m_game_rules.end())
             throw std::runtime_error("GameRules::Add<>() : Rule " + name + " was added twice.");
-        boost::any value = default_value;
-        m_game_rules[name] = Rule(static_cast<char>(0), name, value, default_value,
+        m_game_rules[name] = Rule(static_cast<char>(0), name, default_value, default_value,
                                   description, validator.Clone(), engine_interal, false, true);
+        DebugLogger() << "Added game rule named " << name << " with default value " << default_value;
     }
 
     template <typename T>
@@ -85,6 +85,8 @@ public:
             throw std::runtime_error("GameRules::Set<>() : Attempted to set nonexistent rule \"" + name + "\".");
         it->second.SetFromValue(value);
     }
+
+    void    SetFromStrings(const std::vector<std::pair<std::string, std::string>>& names_values);
 
     /** Removes game rules that were added without being specified as
         engine internal. */
@@ -97,16 +99,17 @@ public:
 private:
     std::map<std::string, Rule> m_game_rules;
 
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    //friend class boost::serialization::access;
+    //template <class Archive>
+    //void serialize(Archive& ar, const unsigned int version);
 };
+//bool FO_COMMON_API operator==(const GameRules& lhs, const GameRules& rhs);
+//bool FO_COMMON_API operator!=(const GameRules& lhs, const GameRules& rhs);
 
-extern template FO_COMMON_API void GameRules::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-extern template FO_COMMON_API void GameRules::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-extern template FO_COMMON_API void GameRules::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-extern template FO_COMMON_API void GameRules::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
-
+//extern template FO_COMMON_API void GameRules::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+//extern template FO_COMMON_API void GameRules::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+//extern template FO_COMMON_API void GameRules::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+//extern template FO_COMMON_API void GameRules::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 /** The data that represent the galaxy setup for a new game. */
 struct FO_COMMON_API GalaxySetupData {
@@ -125,6 +128,8 @@ struct FO_COMMON_API GalaxySetupData {
     GalaxySetupOption   GetMonsterFreq() const;
     GalaxySetupOption   GetNativeFreq() const;
     Aggression          GetAggression() const;
+    const std::vector<std::pair<std::string, std::string>>&
+                        GetGameRules() const;
     //@}
 
     std::string         m_seed;
@@ -137,12 +142,16 @@ struct FO_COMMON_API GalaxySetupData {
     GalaxySetupOption   m_monster_freq;
     GalaxySetupOption   m_native_freq;
     Aggression          m_ai_aggr;
+    std::vector<std::pair<std::string, std::string>>
+                        m_game_rules;
 
 private:
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+BOOST_CLASS_VERSION(GalaxySetupData, 1);
 
 extern template FO_COMMON_API void GalaxySetupData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 extern template FO_COMMON_API void GalaxySetupData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
@@ -239,7 +248,6 @@ private:
 };
 bool FO_COMMON_API operator==(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
 bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
-
 
 /** The data needed to establish a new single player game.  If \a m_new_game
   * is true, a new game is to be started, using the remaining members besides
