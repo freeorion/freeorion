@@ -334,6 +334,8 @@ public:
         bool            SetFromValue(const T& value_);
         // SetFromString returns true if this->value is successfully changed
         bool            SetFromString(const std::string& str);
+        // SetToDefault returns true if this->value is successfully changed
+        bool            SetToDefault();
         std::string     ValueToString() const;
         std::string     DefaultValueToString() const;
 

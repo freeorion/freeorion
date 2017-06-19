@@ -97,13 +97,28 @@ bool OptionsDB::Option::SetFromString(const std::string& str) {
         value_ = validator->Validate(str);
         changed = validator->String(value) != validator->String(value_);
     } else {
-        value_ = boost::lexical_cast<bool>(str);
+        value_ = boost::lexical_cast<bool>(str);    // if a flag, then the str parameter should just indicate true or false with "1" or "0"
         changed = (boost::lexical_cast<std::string>(boost::any_cast<bool>(value))
                    != boost::lexical_cast<std::string>(boost::any_cast<bool>(value_)));
     }
 
     if (changed) {
         value = value_;
+        (*option_changed_sig_ptr)();
+    }
+    return changed;
+}
+
+bool OptionsDB::Option::SetToDefault() {
+    bool changed = false;
+    if (!flag) {
+        changed = validator->String(value) != validator->String(default_value);
+    } else {
+        changed = (boost::lexical_cast<std::string>(boost::any_cast<bool>(value))
+                   != boost::lexical_cast<std::string>(boost::any_cast<bool>(default_value)));
+    }
+    if (changed) {
+        value = default_value;
         (*option_changed_sig_ptr)();
     }
     return changed;
