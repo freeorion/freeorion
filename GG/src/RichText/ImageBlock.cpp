@@ -48,10 +48,15 @@ namespace GG {
         try {
             std::shared_ptr<Texture> texture = GetTextureManager().GetTexture(path);
             m_graphic = Wnd::Create<StaticGraphic>(texture, GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER);
-            AttachChild(m_graphic);
         } catch (GG::Texture::BadFile&) {
             // No can do inside GiGi.
         }
+    }
+
+    void ImageBlock::CompleteConstruction()
+    {
+        if (m_graphic)
+            AttachChild(m_graphic);
     }
 
     Pt ImageBlock::SetMaxWidth(X width)
@@ -120,7 +125,7 @@ namespace GG {
                 return nullptr;
 
             // Create a new image block, basing the path on the root path.
-            return new ImageBlock(combined_path, X0, Y0, X1, Flags<WndFlag>());
+            return Wnd::Create<ImageBlock>(combined_path, X0, Y0, X1, Flags<WndFlag>());
         }
 
         // Sets the root of image search path.
