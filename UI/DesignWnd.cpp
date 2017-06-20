@@ -2754,7 +2754,7 @@ void DesignWnd::BaseSelector::CompleteConstruction()
         boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Future));
     m_unavailable_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Future));
 
-    m_tabs = new GG::TabWnd(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
+    m_tabs = GG::Wnd::Create<GG::TabWnd>(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
     m_tabs->TabChangedSignal.connect(
         boost::bind(&DesignWnd::BaseSelector::Reset, this));
     AttachChild(m_tabs);

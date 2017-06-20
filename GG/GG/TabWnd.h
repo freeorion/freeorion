@@ -44,9 +44,9 @@ class GG_API OverlayWnd : public Wnd
 public:
     /** \name Structors */ ///@{
     OverlayWnd(X x, Y y, X w, Y h, Flags<WndFlag> flags = NO_WND_FLAGS);
-
     ~OverlayWnd();
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
@@ -119,6 +119,7 @@ public:
     /** \name Structors */ ///@{
     TabWnd(X x, Y y, X w, Y h, const std::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK);
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
