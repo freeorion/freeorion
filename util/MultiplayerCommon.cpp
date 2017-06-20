@@ -68,6 +68,20 @@ GameRules& GetGameRules() {
 GameRules::GameRules()
 {}
 
+const std::string& GameRules::GetDescription(const std::string& rule_name) const {
+    auto it = m_game_rules.find(rule_name);
+    if (it == m_game_rules.end())
+        throw std::runtime_error(("GameRules::GetDescription(): No option called \"" + rule_name + "\" could be found.").c_str());
+    return it->second.description;
+}
+
+std::shared_ptr<const ValidatorBase> GameRules::GetValidator(const std::string& rule_name) const {
+    auto it = m_game_rules.find(rule_name);
+    if (it == m_game_rules.end())
+        throw std::runtime_error(("GameRules::GetValidator(): No option called \"" + rule_name + "\" could be found.").c_str());
+    return it->second.validator;
+}
+
 void GameRules::ClearExternalRules() {
     auto it = m_game_rules.begin();
     while (it != m_game_rules.end()) {

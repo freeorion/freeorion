@@ -43,14 +43,19 @@ class FO_COMMON_API GameRules {
 public:
     typedef OptionsDB::Option Rule;
 
-    /** \name Structors */ //@{
-    GameRules();
-    //@}
-
     /** \name Accessors */ //@{
     bool    RuleExists(const std::string& name) const
     { return m_game_rules.find(name) != m_game_rules.end(); }
 
+    /** returns the description string for rule \a rule_name, or throws
+      * std::runtime_error if no such rule exists. */
+    const std::string&  GetDescription(const std::string& rule_name) const;
+
+    /** returns the validator for rule \a rule_name, or throws
+      * std::runtime_error if no such rule exists. */
+    std::shared_ptr<const ValidatorBase> GetValidator(const std::string& rule_name) const;
+
+    /** returns all contained rules as name and value string pairs. */
     std::vector<std::pair<std::string, std::string>> GetRulesAsStrings() const;
 
     template <typename T>
@@ -97,19 +102,12 @@ public:
     //@}
 
 private:
+    GameRules();
+
     std::map<std::string, Rule> m_game_rules;
 
-    //friend class boost::serialization::access;
-    //template <class Archive>
-    //void serialize(Archive& ar, const unsigned int version);
+    friend FO_COMMON_API GameRules& GetGameRules();
 };
-//bool FO_COMMON_API operator==(const GameRules& lhs, const GameRules& rhs);
-//bool FO_COMMON_API operator!=(const GameRules& lhs, const GameRules& rhs);
-
-//extern template FO_COMMON_API void GameRules::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-//extern template FO_COMMON_API void GameRules::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-//extern template FO_COMMON_API void GameRules::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-//extern template FO_COMMON_API void GameRules::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 /** The data that represent the galaxy setup for a new game. */
 struct FO_COMMON_API GalaxySetupData {
