@@ -798,32 +798,38 @@ ProductionQueue::Element::Element() :
 {}
 
 ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int ordered_,
-                                  int remaining_, int location_, bool paused_) :
+                                  int remaining_, int blocksize_, int location_, bool paused_) :
     item(item_),
     empire_id(empire_id_),
     ordered(ordered_),
+    blocksize(blocksize_),
     remaining(remaining_),
     location(location_),
+    blocksize_memory(blocksize_),
     paused(paused_)
 {}
 
 ProductionQueue::Element::Element(BuildType build_type, std::string name, int empire_id_, int ordered_,
-                                  int remaining_, int location_, bool paused_) :
+                                  int remaining_, int blocksize_, int location_, bool paused_) :
     item(build_type, name),
     empire_id(empire_id_),
     ordered(ordered_),
+    blocksize(blocksize_),
     remaining(remaining_),
     location(location_),
+    blocksize_memory(blocksize_),
     paused(paused_)
 {}
 
 ProductionQueue::Element::Element(BuildType build_type, int design_id, int empire_id_, int ordered_,
-                                  int remaining_, int location_, bool paused_) :
+                                  int remaining_, int blocksize_, int location_, bool paused_) :
     item(build_type, design_id),
     empire_id(empire_id_),
     ordered(ordered_),
+    blocksize(blocksize_),
     remaining(remaining_),
     location(location_),
+    blocksize_memory(blocksize_),
     paused(paused_)
 {}
 
@@ -2333,7 +2339,9 @@ void Empire::SetTechResearchProgress(const std::string& name, float progress) {
 
 const unsigned int MAX_PROD_QUEUE_SIZE = 500;
 
-void Empire::PlaceProductionOnQueue(BuildType build_type, const std::string& name, int number, int location, int pos/* = -1*/) {
+void Empire::PlaceProductionOnQueue(BuildType build_type, const std::string& name, int number,
+                                    int blocksize, int location, int pos/* = -1*/)
+{
     if (!EnqueuableItem(build_type, name, location)) {
         ErrorLogger() << "Empire::PlaceProductionOnQueue() : Attempted to place non-enqueuable item in queue: build_type: "
                       << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
@@ -2351,14 +2359,16 @@ void Empire::PlaceProductionOnQueue(BuildType build_type, const std::string& nam
         return;
     }
 
-    ProductionQueue::Element build(build_type, name, m_id, number, number, location);
+    ProductionQueue::Element build(build_type, name, m_id, number, number, blocksize, location);
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
         m_production_queue.push_back(build);
     else
         m_production_queue.insert(m_production_queue.begin() + pos, build);
 }
 
-void Empire::PlaceProductionOnQueue(BuildType build_type, int design_id, int number, int location, int pos/* = -1*/) {
+void Empire::PlaceProductionOnQueue(BuildType build_type, int design_id, int number,
+                                    int blocksize, int location, int pos/* = -1*/)
+{
     // ship designs don't have a distinction between enqueuable and producible...
 
     if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE) {
@@ -2372,18 +2382,20 @@ void Empire::PlaceProductionOnQueue(BuildType build_type, int design_id, int num
         return;
     }
 
-    ProductionQueue::Element build(build_type, design_id, m_id, number, number, location);
+    ProductionQueue::Element elem(build_type, design_id, m_id, number, number, blocksize, location);
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
-        m_production_queue.push_back(build);
+        m_production_queue.push_back(elem);
     else
-        m_production_queue.insert(m_production_queue.begin() + pos, build);
+        m_production_queue.insert(m_production_queue.begin() + pos, elem);
 }
 
-void Empire::PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos/* = -1*/) {
+void Empire::PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item, int number,
+                                    int blocksize, int location, int pos/* = -1*/)
+{
     if (item.build_type == BT_BUILDING)
-        PlaceProductionOnQueue(item.build_type, item.name, number, location, pos);
+        PlaceProductionOnQueue(item.build_type, item.name, number, blocksize, location, pos);
     else if (item.build_type == BT_SHIP)
-        PlaceProductionOnQueue(item.build_type, item.design_id, number, location, pos);
+        PlaceProductionOnQueue(item.build_type, item.design_id, number, blocksize, location, pos);
     else
         throw std::invalid_argument("Empire::PlaceProductionOnQueue was passed a ProductionQueue::ProductionItem with an invalid BuildType");
 }
@@ -2428,7 +2440,7 @@ void Empire::SplitIncompleteProductionItem(int index) {
     // add duplicate
     int new_item_quantity = elem.remaining - 1;
     elem.remaining = 1; // reduce remaining on specified to 1
-    PlaceProductionOnQueue(elem.item, new_item_quantity, elem.location, index + 1);
+    PlaceProductionOnQueue(elem.item, new_item_quantity, elem.blocksize, elem.location, index + 1);
 }
 
 void Empire::DuplicateProductionItem(int index) {
@@ -2437,9 +2449,7 @@ void Empire::DuplicateProductionItem(int index) {
         throw std::runtime_error("Empire::DuplicateProductionItem() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
 
     ProductionQueue::Element& elem = m_production_queue[index];
-
-    // add duplicate
-    PlaceProductionOnQueue(elem.item, elem.remaining, elem.location, index + 1);
+    PlaceProductionOnQueue(elem.item, elem.remaining, elem.blocksize, elem.location, index + 1);
 }
 
 void Empire::SetProductionRallyPoint(int index, int rally_point_id) {
@@ -2552,7 +2562,8 @@ void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_i
                 } else if (result == CR_CAPTURE) {
                     if (to_empire) {
                         // item removed from current queue, added to conquerer's queue
-                        ProductionQueue::Element new_elem(item, empire_id, elem.ordered, elem.remaining, location_id);
+                        ProductionQueue::Element new_elem(item, empire_id, elem.ordered, elem.remaining,
+                                                          1, location_id);
                         new_elem.progress = elem.progress;
                         to_empire->m_production_queue.push_back(new_elem);
 

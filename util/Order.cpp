@@ -924,7 +924,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
     try {
         if (m_item.build_type == BT_BUILDING || m_item.build_type == BT_SHIP) {
             DebugLogger() << "ProductionQueueOrder place " << m_item.Dump();
-            empire->PlaceProductionOnQueue(m_item, m_number, m_location, m_new_index);
+            empire->PlaceProductionOnQueue(m_item, m_number, 1, m_location, m_new_index);
 
         } else if (m_split_incomplete != INVALID_SPLIT_INCOMPLETE) {
             DebugLogger() << "ProductionQueueOrder splitting incomplete from item";

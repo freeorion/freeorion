@@ -167,11 +167,17 @@ struct FO_COMMON_API ProductionQueue {
     struct FO_COMMON_API Element {
         Element();
 
-        Element(ProductionItem item_, int empire_id_, int ordered_, int remaining_, int location_, bool paused_ = false);
+        Element(ProductionItem item_, int empire_id_,
+                int ordered_, int remaining_, int blocksize_,
+                int location_, bool paused_ = false);
 
-        Element(BuildType build_type, std::string name, int empire_id_, int ordered_, int remaining_, int location_, bool paused_ = false);
+        Element(BuildType build_type, std::string name, int empire_id_,
+                int ordered_, int remaining_, int blocksize_,
+                int location_, bool paused_ = false);
 
-        Element(BuildType build_type, int design_id, int empire_id_, int ordered_, int remaining_, int location_, bool paused_ = false);
+        Element(BuildType build_type, int design_id, int empire_id_,
+                int ordered_, int remaining_, int blocksize_,
+                int location_, bool paused_ = false);
 
         ProductionItem  item;
         int             empire_id = ALL_EMPIRES;
@@ -440,15 +446,18 @@ public:
     /** Adds the indicated build to the production queue, placing it before
       * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
       * placed at the end of the queue. */
-    void        PlaceProductionOnQueue(BuildType build_type, const std::string& name, int number, int location, int pos = -1);
+    void        PlaceProductionOnQueue(BuildType build_type, const std::string& name,
+                                       int number, int blocksize, int location, int pos = -1);
     /** Adds the indicated build to the production queue, placing it before
       * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
       * placed at the end of the queue. */
-    void        PlaceProductionOnQueue(BuildType build_type, int design_id, int number, int location, int pos = -1);
+    void        PlaceProductionOnQueue(BuildType build_type, int design_id, int number,
+                                       int blocksize, int location, int pos = -1);
     /** Adds the indicated build to the production queue, placing it before
       * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
       * placed at the end of the queue. */
-    void        PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos = -1);
+    void        PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item, int number,
+                                       int blocksize, int location, int pos = -1);
     void        SetProductionQuantity(int index, int quantity);     ///< Changes the remaining number to produce for queue item \a index to \a quantity
     void        SetProductionQuantityAndBlocksize(int index, int quantity, int blocksize);   ///< Changes the remaining number and blocksize to produce for queue item \a index to \a quantity and \a blocksize 
     void        SplitIncompleteProductionItem(int index);           ///< Adds a copy of the production item at position \a index below it in the queue, with one less quantity. Sets the quantity of the production item at position \a index to 1, retaining its incomplete progress.
