@@ -1367,7 +1367,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         if (!tech) continue;
         const std::string& tech_name = tech->Name();
         if (!TechVisible(tech_name, m_categories_shown, m_tech_statuses_shown)) continue;
-        m_techs[tech_name] = new TechPanel(tech_name, this);
+        m_techs[tech_name] = GG::Wnd::Create<TechPanel>(tech_name, this);
         m_graph.AddNode(tech_name, m_techs[tech_name]->Width(), m_techs[tech_name]->Height());
     }
 
@@ -1636,33 +1636,33 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
     graphic->SetColor(ClientUI::CategoryColor(this_row_tech->Category()));
     push_back(graphic);
 
-    auto text = new CUILabel(just_pad + UserString(m_tech), GG::FORMAT_LEFT);
+    auto text = GG::Wnd::Create<CUILabel>(just_pad + UserString(m_tech), GG::FORMAT_LEFT);
     text->SetResetMinSize(false);
     text->ClipText(true);
     text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 
     std::string cost_str = std::to_string(std::lround(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID())));
-    text = new CUILabel(cost_str + just_pad + just_pad, GG::FORMAT_RIGHT);
+    text = GG::Wnd::Create<CUILabel>(cost_str + just_pad + just_pad, GG::FORMAT_RIGHT);
     text->SetResetMinSize(false);
     text->ClipText(true);
     text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 
     std::string time_str = std::to_string(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
-    text = new CUILabel(time_str + just_pad + just_pad, GG::FORMAT_RIGHT);
+    text = GG::Wnd::Create<CUILabel>(time_str + just_pad + just_pad, GG::FORMAT_RIGHT);
     text->SetResetMinSize(false);
     text->ClipText(true);
     text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 
-    text = new CUILabel(just_pad + UserString(this_row_tech->Category()), GG::FORMAT_LEFT);
+    text = GG::Wnd::Create<CUILabel>(just_pad + UserString(this_row_tech->Category()), GG::FORMAT_LEFT);
     text->SetResetMinSize(false);
     text->ClipText(true);
     text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 
-    text = new CUILabel(just_pad + UserString(this_row_tech->ShortDescription()), GG::FORMAT_LEFT);
+    text = GG::Wnd::Create<CUILabel>(just_pad + UserString(this_row_tech->ShortDescription()), GG::FORMAT_LEFT);
     text->ClipText(true);
     text->SetChildClippingMode(ClipToWindow);
     push_back(text);
@@ -1722,7 +1722,7 @@ TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
     const GG::Y HEIGHT(Value(col_widths[0]));
     m_header_row = GG::Wnd::Create<GG::ListBox::Row>(row_width, HEIGHT, "");
 
-    auto graphic_col = new CUILabel("");  // graphic
+    auto graphic_col = GG::Wnd::Create<CUILabel>("");  // graphic
     graphic_col->Resize(GG::Pt(col_widths[0], HEIGHT));
     graphic_col->ClipText(true);
     graphic_col->SetChildClippingMode(ClipToWindow);
@@ -1822,7 +1822,7 @@ void TechTreeWnd::TechListBox::Populate() {
             const std::string& tech_name = UserString(tech->Name());
             creation_timer.restart();
             m_all_tech_rows.insert(std::make_pair(tech_name,
-                new TechRow(row_width, tech->Name())));
+                GG::Wnd::Create<TechRow>(row_width, tech->Name())));
             creation_elapsed += creation_timer.elapsed();
         }
     }
@@ -1968,7 +1968,7 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
 {
     Sound::TempUISoundDisabler sound_disabler;
 
-    m_layout_panel = new LayoutPanel(w, h);
+    m_layout_panel = GG::Wnd::Create<LayoutPanel>(w, h);
     m_layout_panel->TechLeftClickedSignal.connect(
         boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_layout_panel->TechDoubleClickedSignal.connect(
@@ -1977,7 +1977,7 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
         boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
     AttachChild(m_layout_panel);
 
-    m_tech_list = new TechListBox(w, h);
+    m_tech_list = GG::Wnd::Create<TechListBox>(w, h);
     m_tech_list->TechLeftClickedSignal.connect(
         boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_tech_list->TechDoubleClickedSignal.connect(

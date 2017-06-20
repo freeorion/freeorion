@@ -306,7 +306,7 @@ namespace {
 }
 
 LinkText * CombatLogWnd::Impl::DecorateLinkText(std::string const & text) {
-    auto links = new LazyScrollerLinkText(m_wnd, GG::X0, GG::Y0, text, m_font, GG::CLR_WHITE);
+    auto links = GG::Wnd::Create<LazyScrollerLinkText>(m_wnd, GG::X0, GG::Y0, text, m_font, GG::CLR_WHITE);
 
     links->SetTextFormat(m_text_format_flags);
 
@@ -354,12 +354,12 @@ std::vector<GG::Wnd*> CombatLogWnd::Impl::MakeCombatLogPanel(GG::X w, int viewin
     // details and sub events.
 
     if (!event->FlattenSubEvents() && !event->AreSubEventsEmpty(viewing_empire_id) ) {
-        new_logs.push_back(new CombatLogAccordionPanel(w, *this, viewing_empire_id, event));
+        new_logs.push_back(GG::Wnd::Create<CombatLogAccordionPanel>(w, *this, viewing_empire_id, event));
         return new_logs;
     }
 
     if (!event->FlattenSubEvents() && !event->AreDetailsEmpty(viewing_empire_id)) {
-        new_logs.push_back(new CombatLogAccordionPanel(w, *this, viewing_empire_id, event));
+        new_logs.push_back(GG::Wnd::Create<CombatLogAccordionPanel>(w, *this, viewing_empire_id, event));
         return new_logs;
     }
 

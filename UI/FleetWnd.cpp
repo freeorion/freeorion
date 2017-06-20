@@ -483,7 +483,7 @@ FleetWnd* FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
         // Only write to OptionsDB if in single fleet window mode.
         config_name = FLEET_WND_NAME;
     }
-    auto retval = new FleetWnd(fleet_ids, m_order_issuing_enabled, selected_fleet_id, flags, config_name);
+    auto retval = GG::Wnd::Create<FleetWnd>(fleet_ids, m_order_issuing_enabled, selected_fleet_id, flags, config_name);
 
     m_fleet_wnds.insert(retval);
     retval->ClosingSignal.connect(
@@ -655,7 +655,7 @@ namespace {
                 SetDragDropDataType(SHIP_DROP_TYPE_STRING);
             {
                 //ScopedTimer timer("ShipRow Panel creation / pushing");
-                m_panel = new ShipDataPanel(w, h, m_ship_id);
+                m_panel = GG::Wnd::Create<ShipDataPanel>(w, h, m_ship_id);
                 push_back(m_panel);
             }
         }
@@ -820,7 +820,7 @@ void ShipDataPanel::SetShipIcon() {
     if ((ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
         && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
     {
-        m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, m_ship_icon->Width(), m_ship_icon->Height(), true,
+        m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, m_ship_icon->Width(), m_ship_icon->Height(), true,
                                                  GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
         AttachChild(m_scanline_control);
     }
@@ -980,7 +980,7 @@ void ShipDataPanel::Init() {
         ship_name = ship_name + " (" + std::to_string(m_ship_id) + ")";
     }
 
-    m_ship_name_text = new CUILabel(ship_name, GG::FORMAT_LEFT);
+    m_ship_name_text = GG::Wnd::Create<CUILabel>(ship_name, GG::FORMAT_LEFT);
     AttachChild(m_ship_name_text);
 
 
@@ -989,7 +989,7 @@ void ShipDataPanel::Init() {
         return;
 
     if (const ShipDesign* design = ship->Design()) {
-        m_design_name_text = new CUILabel(design->Name(), GG::FORMAT_RIGHT);
+        m_design_name_text = GG::Wnd::Create<CUILabel>(design->Name(), GG::FORMAT_RIGHT);
         AttachChild(m_design_name_text);
     }
 
@@ -1020,7 +1020,7 @@ void ShipDataPanel::Init() {
     meters_icons.push_back({METER_SPEED,      ClientUI::MeterIcon(METER_SPEED)});
 
     for (std::pair<MeterType, std::shared_ptr<GG::Texture>>& entry : meters_icons) {
-        auto icon = new StatisticIcon(entry.second, 0, 0, false, StatIconSize().x, StatIconSize().y);
+        auto icon = GG::Wnd::Create<StatisticIcon>(entry.second, 0, 0, false, StatIconSize().x, StatIconSize().y);
         m_stat_icons.push_back({entry.first, icon});
         AttachChild(icon);
         icon->SetBrowseModeTime(tooltip_delay);
@@ -1444,7 +1444,7 @@ void FleetDataPanel::Refresh() {
         for (size_t i = 0; i < head_icons.size(); ++i)
             styles.push_back(DataPanelIconStyle());
 
-        m_fleet_icon = new MultiTextureStaticGraphic(icons, styles);
+        m_fleet_icon = GG::Wnd::Create<MultiTextureStaticGraphic>(icons, styles);
         AttachChild(m_fleet_icon);
 
         if (Empire* empire = GetEmpire(fleet->Owner()))
@@ -1461,7 +1461,7 @@ void FleetDataPanel::Refresh() {
         if ((fleet->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
             && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
         {
-            m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, DataPanelIconSpace().x, ClientHeight(), true,
+            m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, DataPanelIconSpace().x, ClientHeight(), true,
                                                      GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
             AttachChild(m_scanline_control);
         }
@@ -1674,9 +1674,9 @@ void FleetDataPanel::DoLayout() {
 void FleetDataPanel::Init() {
     m_initialized = true;
 
-    m_fleet_name_text = new CUILabel("", GG::FORMAT_LEFT);
+    m_fleet_name_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
     AttachChild(m_fleet_name_text);
-    m_fleet_destination_text = new CUILabel("", GG::FORMAT_RIGHT);
+    m_fleet_destination_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_RIGHT);
     AttachChild(m_fleet_destination_text);
 
     if (m_fleet_id == INVALID_OBJECT_ID) {
@@ -1706,7 +1706,7 @@ void FleetDataPanel::Init() {
         meters_icons_browsetext.emplace_back(METER_SPEED, ClientUI::MeterIcon(METER_SPEED), "FW_FLEET_SPEED_SUMMARY");
 
         for (const std::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>& entry : meters_icons_browsetext) {
-            auto icon = new StatisticIcon(std::get<1>(entry), 0, 0, false, StatIconSize().x, StatIconSize().y);
+            auto icon = GG::Wnd::Create<StatisticIcon>(std::get<1>(entry), 0, 0, false, StatIconSize().x, StatIconSize().y);
             m_stat_icons.push_back({std::get<0>(entry), icon});
             icon->SetBrowseModeTime(tooltip_delay);
             icon->SetBrowseText(UserString(std::get<2>(entry)));
@@ -1761,7 +1761,7 @@ namespace {
         {
             SetName("FleetRow");
             SetChildClippingMode(ClipToClient);
-            m_panel = new FleetDataPanel(w, h, m_fleet_id);
+            m_panel = GG::Wnd::Create<FleetDataPanel>(w, h, m_fleet_id);
             push_back(m_panel);
         }
 
@@ -2224,7 +2224,7 @@ public:
             if (this_client_stale_object_info.find(ship_id) != this_client_stale_object_info.end())
                 continue;
 
-            auto row = new ShipRow(GG::X1, row_size.y, ship_id);
+            auto row = GG::Wnd::Create<ShipRow>(GG::X1, row_size.y, ship_id);
             rows.push_back(row);
         }
         Insert(rows, false);
@@ -2375,7 +2375,7 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
     SetName("FleetDetailPanel");
     SetChildClippingMode(ClipToClient);
 
-    m_ships_lb = new ShipsListBox(INVALID_OBJECT_ID, order_issuing_enabled);
+    m_ships_lb = GG::Wnd::Create<ShipsListBox>(INVALID_OBJECT_ID, order_issuing_enabled);
     AttachChild(m_ships_lb);
     m_ships_lb->SetHiliteColor(GG::CLR_ZERO);
 
@@ -2692,7 +2692,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
             std::make_tuple(METER_POPULATION, ColonyIcon(), UserStringNop("FW_FLEET_COLONY_SUMMARY")),
         })
     {
-        auto icon = new StatisticIcon(std::get<1>(entry), 0, 0, false, StatIconSize().x, StatIconSize().y);
+        auto icon = GG::Wnd::Create<StatisticIcon>(std::get<1>(entry), 0, 0, false, StatIconSize().x, StatIconSize().y);
         m_stat_icons.push_back({std::get<0>(entry), icon});
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString(std::get<2>(entry)));
@@ -2700,7 +2700,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
     }
 
     // create fleet list box
-    m_fleets_lb = new FleetsListBox(m_order_issuing_enabled);
+    m_fleets_lb = GG::Wnd::Create<FleetsListBox>(m_order_issuing_enabled);
     m_fleets_lb->SetHiliteColor(GG::CLR_ZERO);
     m_fleets_lb->SelRowsChangedSignal.connect(
         boost::bind(&FleetWnd::FleetSelectionChanged, this, _1));
@@ -2716,7 +2716,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
     m_fleets_lb->AllowDropType(FLEET_DROP_TYPE_STRING);
 
     // create fleet detail panel
-    m_fleet_detail_panel = new FleetDetailPanel(GG::X1, GG::Y1, INVALID_OBJECT_ID, m_order_issuing_enabled);
+    m_fleet_detail_panel = GG::Wnd::Create<FleetDetailPanel>(GG::X1, GG::Y1, INVALID_OBJECT_ID, m_order_issuing_enabled);
     m_fleet_detail_panel->SelectedShipsChangedSignal.connect(
         boost::bind(&FleetWnd::ShipSelectionChanged, this, _1));
     m_fleet_detail_panel->ShipRightClickedSignal.connect(
@@ -2727,7 +2727,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
     Refresh();
 
     // create drop target
-    m_new_fleet_drop_target = new FleetDataPanel(GG::X1, ListRowHeight(), m_system_id, true);
+    m_new_fleet_drop_target = GG::Wnd::Create<FleetDataPanel>(GG::X1, ListRowHeight(), m_system_id, true);
     AttachChild(m_new_fleet_drop_target);
     m_new_fleet_drop_target->NewFleetFromShipsSignal.connect(
         boost::bind(&FleetWnd::CreateNewFleetFromDrops, this, _1));
@@ -3074,7 +3074,7 @@ void FleetWnd::AddFleet(int fleet_id) {
 
     // verify that fleet is consistent
     const GG::Pt row_size = m_fleets_lb->ListRowSize();
-    auto row = new FleetRow(fleet_id, GG::X1, row_size.y);
+    auto row = GG::Wnd::Create<FleetRow>(fleet_id, GG::X1, row_size.y);
     m_fleets_lb->Insert(row);
     row->Resize(row_size);
 }

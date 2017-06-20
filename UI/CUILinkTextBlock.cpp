@@ -7,7 +7,7 @@ CUILinkTextBlock::CUILinkTextBlock(const std::string& str, const std::shared_ptr
                                    GG::Flags<GG::TextFormat> format, const GG::Clr& color,
                                    GG::Flags<GG::WndFlag> flags) :
     GG::BlockControl(GG::X0, GG::Y0, GG::X1, flags | GG::INTERACTIVE),
-    m_link_text(new CUILinkTextMultiEdit(str, GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY | GG::MULTI_LEFT |
+    m_link_text(GG::Wnd::Create<CUILinkTextMultiEdit>(str, GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY | GG::MULTI_LEFT |
                                               GG::MULTI_LINEWRAP | GG::MULTI_TOP | GG::MULTI_NO_HSCROLL |
                                               GG::MULTI_NO_VSCROLL))
 {
@@ -42,7 +42,7 @@ GG::BlockControl* CUILinkTextBlock::Factory::CreateFromTag(const std::string& ta
                                                            const GG::Clr& color,
                                                            GG::Flags<GG::TextFormat> format)
 {
-    auto block = new CUILinkTextBlock(content, font, format, color, GG::NO_WND_FLAGS);
+    auto block = GG::Wnd::Create<CUILinkTextBlock>(content, font, format, color, GG::NO_WND_FLAGS);
 
     // Wire the block's signals to come through us.
     block->m_link_text->LinkClickedSignal.connect(

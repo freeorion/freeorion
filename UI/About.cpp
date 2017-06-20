@@ -19,10 +19,10 @@ About::About():
     CUIWnd(UserString("ABOUT_WINDOW_TITLE"), GG::X(80), GG::Y(130), GG::X(600), GG::Y(500),
            GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL)
 {
-    m_done_btn = new CUIButton(UserString("DONE"));
-    m_license = new CUIButton(UserString("LICENSE"));
-    m_vision = new CUIButton(UserString("VISION"));
-    m_info = new CUIMultiEdit(UserString("FREEORION_VISION"), GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
+    m_done_btn = Wnd::Create<CUIButton>(UserString("DONE"));
+    m_license = Wnd::Create<CUIButton>(UserString("LICENSE"));
+    m_vision = Wnd::Create<CUIButton>(UserString("VISION"));
+    m_info = GG::Wnd::Create<CUIMultiEdit>(UserString("FREEORION_VISION"), GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
     AttachChild(m_info);
     AttachChild(m_vision);
     AttachChild(m_license);

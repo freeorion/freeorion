@@ -20,12 +20,12 @@ TextBrowseWnd::TextBrowseWnd(const std::string& title_text, const std::string& m
 
     m_offset = GG::Pt(GG::X0, ICON_BROWSE_ICON_HEIGHT/2); //lower the window
 
-    m_title_text = new CUILabel(title_text, GG::FORMAT_LEFT);
+    m_title_text = GG::Wnd::Create<CUILabel>(title_text, GG::FORMAT_LEFT);
     m_title_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, GG::Y0 + m_offset.y));
     m_title_text->Resize(GG::Pt(w, ROW_HEIGHT));
     m_title_text->SetFont(ClientUI::GetBoldFont());
 
-    m_main_text = new CUILabel(main_text, GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
+    m_main_text = GG::Wnd::Create<CUILabel>(main_text, GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
     m_main_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, ROW_HEIGHT + m_offset.y));
     m_main_text->Resize(GG::Pt(w, ICON_BROWSE_ICON_HEIGHT));
     m_main_text->SetResetMinSize(true);

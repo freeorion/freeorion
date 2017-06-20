@@ -59,7 +59,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     // small meter indicators - for use when panel is collapsed
     for (MeterType meter : {METER_INDUSTRY, METER_RESEARCH, METER_TRADE, METER_SUPPLY})
     {
-        auto stat = new StatisticIcon(ClientUI::MeterIcon(meter), obj->InitialMeterValue(meter), 3, false, MeterIconSize().x, MeterIconSize().y);
+        auto stat = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(meter), obj->InitialMeterValue(meter), 3, false, MeterIconSize().x, MeterIconSize().y);
         stat->InstallEventFilter(this);
         AttachChild(stat);
         m_meter_stats.push_back({meter, stat});
@@ -67,8 +67,8 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     }
 
     // attach and show meter bars and large resource indicators
-    m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       m_rescenter_id, meters);
-    m_multi_icon_value_indicator =  new MultiIconValueIndicator(Width() - 2*EDGE_PAD,   m_rescenter_id, meters);
+    m_multi_meter_status_bar =      GG::Wnd::Create<MultiMeterStatusBar>(Width() - 2*EDGE_PAD,       m_rescenter_id, meters);
+    m_multi_icon_value_indicator =  GG::Wnd::Create<MultiIconValueIndicator>(Width() - 2*EDGE_PAD,   m_rescenter_id, meters);
 
     // determine if this panel has been created yet.
     std::map<int, bool>::iterator it = s_expanded_map.find(m_rescenter_id);

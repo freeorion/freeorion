@@ -240,7 +240,7 @@ namespace {
             GG::X icon_left(spacer.x);
             GG::X text_left(icon_left + GG::X(icon_dim) + sitrep_spacing);
             GG::X text_width(ClientWidth() - text_left - spacer.x);
-            m_link_text = new SitRepLinkText(GG::X0, GG::Y0, text_width, m_sitrep_entry.GetText() + " ",
+            m_link_text = GG::Wnd::Create<SitRepLinkText>(GG::X0, GG::Y0, text_width, m_sitrep_entry.GetText() + " ",
                                              ClientUI::GetFont(),
                                              GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
@@ -348,7 +348,7 @@ namespace {
         }
 
         void            Init() {
-            m_panel = new SitRepDataPanel(GG::X(GetLayout()->BorderMargin()), GG::Y(GetLayout()->BorderMargin()),
+            m_panel = GG::Wnd::Create<SitRepDataPanel>(GG::X(GetLayout()->BorderMargin()), GG::Y(GetLayout()->BorderMargin()),
                                           ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
                                           ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()), m_sitrep);
             push_back(m_panel);
@@ -379,7 +379,7 @@ SitRepPanel::SitRepPanel(const std::string& config_name) :
     Sound::TempUISoundDisabler sound_disabler;
     SetChildClippingMode(DontClip);
 
-    m_sitreps_lb = new CUIListBox();
+    m_sitreps_lb = GG::Wnd::Create<CUIListBox>();
     m_sitreps_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
     m_sitreps_lb->SetVScrollWheelIncrement(ClientUI::Pts()*4.5);
     m_sitreps_lb->ManuallyManageColProps();
@@ -763,7 +763,7 @@ void SitRepPanel::Update() {
     // create UI rows for all sitrps
     GG::X width = m_sitreps_lb->ClientWidth();
     for (const SitRepEntry& sitrep : orderedSitreps)
-    { m_sitreps_lb->Insert(new SitRepRow(width, GG::Y(ClientUI::Pts()*2), sitrep)); }
+    { m_sitreps_lb->Insert(GG::Wnd::Create<SitRepRow>(width, GG::Y(ClientUI::Pts()*2), sitrep)); }
 
     if (m_sitreps_lb->NumRows() > first_visible_row) {
         m_sitreps_lb->SetFirstRowShown(std::next(m_sitreps_lb->begin(), first_visible_row));

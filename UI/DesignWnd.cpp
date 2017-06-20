@@ -914,7 +914,7 @@ void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wn
     RemoveCell(i);  // Wnd that accepts drop takes ownership of dragged-away control
 
     if (part_type) {
-        part_control = new PartControl(part_type);
+        part_control = GG::Wnd::Create<PartControl>(part_type);
         const PartsListBox* parent = dynamic_cast<const PartsListBox*>(Parent());
         if (parent) {
             part_control->ClickedSignal.connect(
@@ -1192,12 +1192,12 @@ void PartsListBox::Populate() {
                 if (cur_row)
                     Insert(cur_row);
                 cur_col = 0;
-                cur_row = new PartsListBoxRow(TOTAL_WIDTH, SLOT_CONTROL_HEIGHT + GG::Y(PAD));
+                cur_row = GG::Wnd::Create<PartsListBoxRow>(TOTAL_WIDTH, SLOT_CONTROL_HEIGHT + GG::Y(PAD));
             }
             ++cur_col;
 
             // make new part control and add to row
-            auto control = new PartControl(part);
+            auto control = GG::Wnd::Create<PartControl>(part);
             control->ClickedSignal.connect(
                 PartsListBox::PartTypeClickedSignal);
             control->DoubleClickedSignal.connect(
@@ -1347,7 +1347,7 @@ DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
     //TempUISoundDisabler sound_disabler;     // should be redundant with disabler in DesignWnd::DesignWnd.  uncomment if this is not the case
     SetChildClippingMode(ClipToClient);
 
-    m_parts_list = new PartsListBox();
+    m_parts_list = GG::Wnd::Create<PartsListBox>();
     AttachChild(m_parts_list);
     m_parts_list->PartTypeClickedSignal.connect(
         PartTypeClickedSignal);
@@ -1777,7 +1777,7 @@ BasesListBox::HullAndNamePanel::HullAndNamePanel(GG::X w, GG::Y h, const std::st
                                       GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
     m_graphic->Resize(GG::Pt(w, h));
     AttachChild(m_graphic);
-    m_name = new CUILabel(name, GG::FORMAT_WORDBREAK | GG::FORMAT_CENTER | GG::FORMAT_TOP);
+    m_name = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_WORDBREAK | GG::FORMAT_CENTER | GG::FORMAT_TOP);
     AttachChild(m_name);
 }
 
@@ -1807,7 +1807,7 @@ BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h, const std::stri
         return;
     }
 
-    m_hull_panel = new HullAndNamePanel(w, h, hull, name);
+    m_hull_panel = GG::Wnd::Create<HullAndNamePanel>(w, h, hull, name);
     push_back(m_hull_panel);
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -2120,7 +2120,7 @@ void EmptyHullsListBox::PopulateCore() {
         if ((showing_available && hull_available)
             || (showing_unavailable && !hull_available))
         {
-            auto row = new HullAndPartsListBoxRow(row_size.x, row_size.y, hull_name, empty_parts_vec);
+            auto row = GG::Wnd::Create<HullAndPartsListBoxRow>(row_size.x, row_size.y, hull_name, empty_parts_vec);
             if (!hull_available)
                 row->SetAvailability(Availability::Future);
             Insert(row);
@@ -2159,7 +2159,7 @@ void CompletedDesignsListBox::PopulateCore() {
                     || (available && !obsolete && showing_available)
                     || (!available && showing_unavailable))
                 {
-                    auto row = new CompletedDesignListBoxRow(row_size.x, row_size.y, *design);
+                    auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, *design);
                     if (obsolete)
                         row->SetAvailability(Availability::Obsolete);
                     else if (!available)
@@ -2179,7 +2179,7 @@ void CompletedDesignsListBox::PopulateCore() {
             const ShipDesign* design = it->second;
             if (!design->Producible())
                 continue;
-            auto row = new CompletedDesignListBoxRow(row_size.x, row_size.y, *design);
+            auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, *design);
             Insert(row);
             row->Resize(row_size);
         }
@@ -2205,7 +2205,7 @@ void SavedDesignsListBox::PopulateCore() {
         if (!((available && showing_available) || (!available && showing_unavailable)))
             continue;
 
-        auto row = new SavedDesignListBoxRow(row_size.x, row_size.y, *design);
+        auto row = GG::Wnd::Create<SavedDesignListBoxRow>(row_size.x, row_size.y, *design);
         Insert(row);
         row->Resize(row_size);
 
@@ -2229,7 +2229,7 @@ void MonstersListBox::PopulateCore() {
         const ShipDesign* design = it->second;
         if (!design->IsMonster())
             continue;
-        auto row = new CompletedDesignListBoxRow(row_size.x, row_size.y, *design);
+        auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, *design);
         Insert(row);
         row->Resize(row_size);
     }
@@ -2245,7 +2245,7 @@ BasesListBox::Row* EmptyHullsListBox::ChildrenDraggedAwayCore(const GG::Wnd* con
     const std::string& hull_name = design_row->Hull();
     const auto row_size = ListRowSize();
     std::vector<std::string> empty_parts_vec;
-    auto row =  new HullAndPartsListBoxRow(row_size.x, row_size.y, hull_name, empty_parts_vec);
+    auto row =  GG::Wnd::Create<HullAndPartsListBoxRow>(row_size.x, row_size.y, hull_name, empty_parts_vec);
 
     if (const Empire* empire = GetEmpire(EmpireID())) {
         auto hull_available = empire->ShipHullAvailable(hull_name);
@@ -2271,7 +2271,7 @@ BasesListBox::Row* CompletedDesignsListBox::ChildrenDraggedAwayCore(const GG::Wn
     }
 
     const auto row_size = ListRowSize();
-    auto row = new CompletedDesignListBoxRow(row_size.x, row_size.y, *design);
+    auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, *design);
     if (const Empire* empire = GetEmpire(EmpireID())) {
         const auto maybe_obsolete = GetCurrentDesignsManager().IsObsolete(design_id);
         if (!empire->ShipDesignAvailable(design_id))
@@ -2296,7 +2296,7 @@ BasesListBox::Row* SavedDesignsListBox::ChildrenDraggedAwayCore(const GG::Wnd* c
     }
 
     const auto row_size = ListRowSize();
-    auto row = new SavedDesignListBoxRow(row_size.x, row_size.y, *design);
+    auto row = GG::Wnd::Create<SavedDesignListBoxRow>(row_size.x, row_size.y, *design);
 
     const auto empire = GetEmpire(EmpireID());
 
@@ -2323,7 +2323,7 @@ BasesListBox::Row* MonstersListBox::ChildrenDraggedAwayCore(const GG::Wnd* const
     }
 
     const auto row_size = ListRowSize();
-    auto row = new CompletedDesignListBoxRow(row_size.x, row_size.y, *design);
+    auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, *design);
     return row;
 }
 
@@ -2744,7 +2744,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
         boost::bind(&DesignWnd::BaseSelector::Reset, this));
     AttachChild(m_tabs);
 
-    m_hulls_list = new EmptyHullsListBox(m_availabilities_state);
+    m_hulls_list = GG::Wnd::Create<EmptyHullsListBox>(m_availabilities_state);
     m_hulls_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_hulls_list, UserString("DESIGN_WND_HULLS"));
     m_hulls_list->DesignComponentsSelectedSignal.connect(
@@ -2752,7 +2752,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_hulls_list->HullClickedSignal.connect(
         DesignWnd::BaseSelector::HullClickedSignal);
 
-    m_designs_list = new CompletedDesignsListBox(m_availabilities_state, COMPLETE_DESIGN_ROW_DROP_STRING);
+    m_designs_list = GG::Wnd::Create<CompletedDesignsListBox>(m_availabilities_state, COMPLETE_DESIGN_ROW_DROP_STRING);
     m_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_designs_list, UserString("DESIGN_WND_FINISHED_DESIGNS"));
     m_designs_list->DesignSelectedSignal.connect(
@@ -2760,7 +2760,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_designs_list->DesignClickedSignal.connect(
         DesignWnd::BaseSelector::DesignClickedSignal);
 
-    m_saved_designs_list = new SavedDesignsListBox(m_availabilities_state, SAVED_DESIGN_ROW_DROP_STRING);
+    m_saved_designs_list = GG::Wnd::Create<SavedDesignsListBox>(m_availabilities_state, SAVED_DESIGN_ROW_DROP_STRING);
     m_saved_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_saved_designs_list, UserString("DESIGN_WND_SAVED_DESIGNS"));
     m_saved_designs_list->SavedDesignSelectedSignal.connect(
@@ -2768,7 +2768,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_saved_designs_list->DesignClickedSignal.connect(
         DesignWnd::BaseSelector::DesignClickedSignal);
 
-    m_monsters_list = new MonstersListBox(m_availabilities_state);
+    m_monsters_list = GG::Wnd::Create<MonstersListBox>(m_availabilities_state);
     m_monsters_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_monsters_list, UserString("DESIGN_WND_MONSTERS"));
     m_monsters_list->DesignSelectedSignal.connect(
@@ -3149,7 +3149,7 @@ void SlotControl::SetPart(const PartType* part_type) {
 
     // create new part control for passed in part_type
     if (part_type) {
-        m_part_control = new PartControl(part_type);
+        m_part_control = GG::Wnd::Create<PartControl>(part_type);
         AttachChild(m_part_control);
         m_part_control->InstallEventFilter(this);
 
@@ -3410,13 +3410,13 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
 {
     SetChildClippingMode(ClipToClient);
 
-    m_design_name_label = new CUILabel(UserString("DESIGN_WND_DESIGN_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_design_name = new CUIEdit(UserString("DESIGN_NAME_DEFAULT"));
-    m_design_description_label = new CUILabel(UserString("DESIGN_WND_DESIGN_DESCRIPTION"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_design_description = new CUIEdit(UserString("DESIGN_DESCRIPTION_DEFAULT"));
-    m_replace_button = new CUIButton(UserString("DESIGN_WND_UPDATE"));
-    m_confirm_button = new CUIButton(UserString("DESIGN_WND_ADD_FINISHED"));
-    m_clear_button = new CUIButton(UserString("DESIGN_WND_CLEAR"));
+    m_design_name_label = GG::Wnd::Create<CUILabel>(UserString("DESIGN_WND_DESIGN_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_design_name = GG::Wnd::Create<CUIEdit>(UserString("DESIGN_NAME_DEFAULT"));
+    m_design_description_label = GG::Wnd::Create<CUILabel>(UserString("DESIGN_WND_DESIGN_DESCRIPTION"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_design_description = GG::Wnd::Create<CUIEdit>(UserString("DESIGN_DESCRIPTION_DEFAULT"));
+    m_replace_button = Wnd::Create<CUIButton>(UserString("DESIGN_WND_UPDATE"));
+    m_confirm_button = Wnd::Create<CUIButton>(UserString("DESIGN_WND_ADD_FINISHED"));
+    m_clear_button = Wnd::Create<CUIButton>(UserString("DESIGN_WND_CLEAR"));
 
     m_replace_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_confirm_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -3823,7 +3823,7 @@ void DesignWnd::MainPanel::Populate(){
 
     for (std::vector<HullType::Slot>::size_type i = 0; i != hull_slots.size(); ++i) {
         const HullType::Slot& slot = hull_slots[i];
-        auto slot_control = new SlotControl(slot.x, slot.y, slot.type);
+        auto slot_control = GG::Wnd::Create<SlotControl>(slot.x, slot.y, slot.type);
         m_slots.push_back(slot_control);
         AttachChild(slot_control);
         slot_control->SlotContentsAlteredSignal.connect(

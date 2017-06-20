@@ -249,7 +249,7 @@ IntroScreen::IntroScreen() :
 
     m_logo = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(ClientUI::ArtDir() / "logo.png"), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
-    m_version = new CUILabel(FreeOrionVersionString(), GG::FORMAT_NOWRAP, GG::INTERACTIVE);
+    m_version = GG::Wnd::Create<CUILabel>(FreeOrionVersionString(), GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     m_version->MoveTo(GG::Pt(Width() - m_version->Width(), Height() - m_version->Height()));
 
     AttachChild(m_splash);

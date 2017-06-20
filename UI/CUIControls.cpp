@@ -1129,7 +1129,7 @@ const GG::Y CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT(22);
 CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, GG::Y row_height/* = DEFAULT_ROW_HEIGHT*/) :
     GG::ListBox::Row(GG::X1, row_height, "")
 {
-    push_back(new CUILabel(row_text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP));
+    push_back(GG::Wnd::Create<CUILabel>(row_text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP));
 }
 
 
@@ -1300,7 +1300,7 @@ void StatisticIcon::DoLayout() {
 
     if (!m_text) {
         // Create new label in correct place.
-        m_text = new CUILabel(text_elements.Text(), text_elements.Elements(),
+        m_text = GG::Wnd::Create<CUILabel>(text_elements.Text(), text_elements.Elements(),
                               format, GG::NO_WND_FLAGS,
                               text_ul.x, text_ul.y, text_lr.x - text_ul.x, text_lr.y - text_ul.y);
         AttachChild(m_text);
@@ -1392,7 +1392,7 @@ namespace {
             auto icon = GG::Wnd::Create<GG::StaticGraphic>(species_icon, GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
             icon->Resize(GG::Pt(GG::X(Value(height - 5)), height - 5));
             push_back(icon);
-            auto species_label = new CUILabel(localized_name, GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            auto species_label = GG::Wnd::Create<CUILabel>(localized_name, GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             push_back(species_label);
             GG::X first_col_width(Value(height));
             SetColWidth(0, first_col_width);
@@ -1419,10 +1419,10 @@ SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h) :
     Resize(GG::Pt(w, h - 8));
     const SpeciesManager& sm = GetSpeciesManager();
     for (SpeciesManager::playable_iterator it = sm.playable_begin(); it != sm.playable_end(); ++it)
-        Insert(new SpeciesRow(it->second, w, h - 4));
+        Insert(GG::Wnd::Create<SpeciesRow>(it->second, w, h - 4));
     if (!this->Empty()) {
         // Add an option for random selection
-        Insert(new SpeciesRow("RANDOM", UserString("GSETUP_RANDOM"), UserString("GSETUP_SPECIES_RANDOM_DESC"), w, h - 4,
+        Insert(GG::Wnd::Create<SpeciesRow>("RANDOM", UserString("GSETUP_RANDOM"), UserString("GSETUP_SPECIES_RANDOM_DESC"), w, h - 4,
                               ClientUI::GetTexture(ClientUI::ArtDir() / "icons/unknown.png")));
         Select(this->begin());
     }
@@ -1498,7 +1498,7 @@ namespace {
         ColorRow(const GG::Clr& color, GG::Y h) :
             GG::ListBox::Row(GG::X(Value(h)), h, "")
         {
-            push_back(new ColorSquare(color, h));
+            push_back(GG::Wnd::Create<ColorSquare>(color, h));
         }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
@@ -1514,7 +1514,7 @@ EmpireColorSelector::EmpireColorSelector(GG::Y h) :
 {
     Resize(GG::Pt(COLOR_SELECTOR_WIDTH, h - 8));
     for (const GG::Clr& color : EmpireColors()) {
-        Insert(new ColorRow(color, h - 4));
+        Insert(GG::Wnd::Create<ColorRow>(color, h - 4));
     }
     SelChangedSignal.connect(
         boost::bind(&EmpireColorSelector::SelectionChanged, this, _1));
@@ -1677,13 +1677,13 @@ void ProductionInfoPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void ProductionInfoPanel::SetTotalPointsCost(float total_points, float total_cost) {
     if (!m_total_points_label) {
-        m_total_points_label = new CUILabel(UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), GG::FORMAT_RIGHT);
-        m_total_points = new CUILabel("", GG::FORMAT_LEFT);
-        m_total_points_P_label = new CUILabel(m_units_str, GG::FORMAT_LEFT);
+        m_total_points_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), GG::FORMAT_RIGHT);
+        m_total_points = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+        m_total_points_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
 
-        m_wasted_points_label = new CUILabel(UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::FORMAT_RIGHT);
-        m_wasted_points = new CUILabel("", GG::FORMAT_LEFT);
-        m_wasted_points_P_label = new CUILabel(m_units_str, GG::FORMAT_LEFT);
+        m_wasted_points_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::FORMAT_RIGHT);
+        m_wasted_points = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+        m_wasted_points_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
 
         AttachChild(m_total_points_label);
         AttachChild(m_total_points);
@@ -1714,13 +1714,13 @@ void ProductionInfoPanel::SetTotalPointsCost(float total_points, float total_cos
 
 void ProductionInfoPanel::SetLocalPointsCost(float local_points, float local_cost, const std::string& location_name) {
     if (!m_local_points_label) {
-        m_local_points_label = new CUILabel(UserString("PRODUCTION_INFO_LOCAL_PS_LABEL"), GG::FORMAT_RIGHT);
-        m_local_points = new CUILabel("", GG::FORMAT_LEFT);
-        m_local_points_P_label = new CUILabel(m_units_str, GG::FORMAT_LEFT);
+        m_local_points_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_LOCAL_PS_LABEL"), GG::FORMAT_RIGHT);
+        m_local_points = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+        m_local_points_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
 
-        m_local_wasted_points_label = new CUILabel(UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::FORMAT_RIGHT);
-        m_local_wasted_points = new CUILabel("", GG::FORMAT_LEFT);
-        m_local_wasted_points_P_label = new CUILabel(m_units_str, GG::FORMAT_LEFT);
+        m_local_wasted_points_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::FORMAT_RIGHT);
+        m_local_wasted_points = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+        m_local_wasted_points_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
 
         AttachChild(m_local_points_label);
         AttachChild(m_local_points);

@@ -21,6 +21,7 @@ public:
     /** \name Structors*/ //!@{
     GameRulesPanel(GG::X w = GG::X(FontBasedUpscale(305)), GG::Y h = GG::Y(330));
     //!@}
+    void CompleteConstruction() override;
 
     /** \name Accessors*/ //!@{
     std::vector<std::pair<std::string, std::string>> GetRulesAsStrings() const;

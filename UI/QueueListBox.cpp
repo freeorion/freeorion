@@ -18,7 +18,7 @@ struct PromptRow : GG::ListBox::Row {
     {
         //std::cout << "PromptRow(" << w << ", ...)" << std::endl;
 
-        m_prompt = new CUILabel(prompt_str, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK);
+        m_prompt = GG::Wnd::Create<CUILabel>(prompt_str, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK);
         m_prompt->MoveTo(GG::Pt(GG::X(2), GG::Y(2)));
         m_prompt->Resize(GG::Pt(Width() - 10, Height()));
         m_prompt->SetTextColor(GG::LightColor(ClientUI::TextColor()));
@@ -207,7 +207,7 @@ void QueueListBox::EnsurePromptHiddenSlot(iterator it) {
 }
 
 void QueueListBox::ShowPromptSlot() {
-    Insert(new PromptRow(Width() - 4, m_prompt_str), begin(), false, false);
+    Insert(GG::Wnd::Create<PromptRow>(Width() - 4, m_prompt_str), begin(), false, false);
     m_showing_prompt = true;
 }
 

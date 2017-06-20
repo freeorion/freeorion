@@ -54,7 +54,7 @@ namespace {
             else
                 nameText = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_REPETITIONS")) % quantity);
             //nameText += GetShipDesign(designID)->Name();
-            auto text = new CUILabel(nameText, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
+            auto text = GG::Wnd::Create<CUILabel>(nameText, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
             text->SetTextColor(txtClr);
             text->OffsetMove(GG::Pt(GG::X0, GG::Y(-3)));
             AttachChild(text);
@@ -75,7 +75,7 @@ namespace {
             GG::ListBox::Row(),
             m_quant(quantity)
         {
-            auto newLabel = new QuantLabel(m_quant, designID, nwidth, h, inProgress, amBlockType);
+            auto newLabel = GG::Wnd::Create<QuantLabel>(m_quant, designID, nwidth, h, inProgress, amBlockType);
             push_back(newLabel);
             Resize(GG::Pt(nwidth, newLabel->Height()-GG::Y0));//might subtract more; assessing aesthetics
         }
@@ -125,7 +125,7 @@ namespace {
                 myQuantSet.insert(quantity);
 
             for (int quantity : myQuantSet) {
-                QuantRow* row =  new QuantRow(quantity, build.item.design_id, nwidth, h, inProgress, amBlockType);
+                QuantRow* row =  GG::Wnd::Create<QuantRow>(quantity, build.item.design_id, nwidth, h, inProgress, amBlockType);
                 GG::DropDownList::iterator latest_it = Insert(row);
 
                 if (amBlockType) {
@@ -337,7 +337,7 @@ namespace {
             if (pp_accumulated == -1.0f)
                 pp_accumulated = 0.0f;
 
-            panel = new QueueProductionItemPanel(GG::X0, GG::Y0, ClientWidth() - MARGIN - MARGIN,
+            panel = GG::Wnd::Create<QueueProductionItemPanel>(GG::X0, GG::Y0, ClientWidth() - MARGIN - MARGIN,
                                                  elem, elem.allocated_pp, total_cost, minimum_turns, elem.remaining,
                                                  pp_accumulated);
             push_back(panel);
@@ -443,15 +443,15 @@ namespace {
             m_icon = GG::Wnd::Create<GG::StaticGraphic>(graphic, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
         if (elem.item.build_type == BT_SHIP) {
-            m_quantity_selector = new QuantitySelector(elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
+            m_quantity_selector = GG::Wnd::Create<QuantitySelector>(elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
                                                        m_in_progress, GG::X(FONT_PTS*2.5), false);
-            m_block_size_selector = new QuantitySelector(elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
+            m_block_size_selector = GG::Wnd::Create<QuantitySelector>(elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
                                                          m_in_progress, GG::X(FONT_PTS*2.5), true);
             m_quantity_selector->SetOnlyMouseScrollWhenDropped(true);
             m_block_size_selector->SetOnlyMouseScrollWhenDropped(true);
         }
 
-        m_name_text = new CUILabel(name_text, GG::FORMAT_TOP | GG::FORMAT_LEFT);
+        m_name_text = GG::Wnd::Create<CUILabel>(name_text, GG::FORMAT_TOP | GG::FORMAT_LEFT);
         m_name_text->SetTextColor(clr);
         m_name_text->ClipText(true);
 
@@ -462,7 +462,7 @@ namespace {
             m_location_text = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + location_text + "</s>",
                                                   ClientUI::GetBoldFont(), this_client_empire->Color(), GG::FORMAT_TOP | GG::FORMAT_RIGHT);
         } else {
-            m_location_text = new CUILabel(location_text, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
+            m_location_text = GG::Wnd::Create<CUILabel>(location_text, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
             m_location_text->SetTextColor(location_clr);
         }
 
@@ -477,7 +477,7 @@ namespace {
         if (m_in_progress)
             outline_color = GG::LightColor(outline_color);
 
-        m_progress_bar = new MultiTurnProgressBar(m_total_turns,
+        m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(m_total_turns,
                                                   perc_complete,
                                                   next_progress,
                                                   GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
@@ -488,7 +488,7 @@ namespace {
         std::string turn_spending_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR"))
             % DoubleToString(m_turn_spending, 3, false)
             % DoubleToString(max_spending_per_turn, 3, false));
-        m_PPs_and_turns_text = new CUILabel(turn_spending_text, GG::FORMAT_LEFT);
+        m_PPs_and_turns_text = GG::Wnd::Create<CUILabel>(turn_spending_text, GG::FORMAT_LEFT);
         m_PPs_and_turns_text->SetTextColor(clr);
 
 
@@ -496,7 +496,7 @@ namespace {
         std::string turns_left_text = turns_left < 0
             ? UserString("PRODUCTION_TURNS_LEFT_NEVER")
             : str(FlexibleFormat(UserString("PRODUCTION_TURNS_LEFT_STR")) % turns_left);
-        m_turns_remaining_until_next_complete_text = new CUILabel(turns_left_text, GG::FORMAT_RIGHT);
+        m_turns_remaining_until_next_complete_text = GG::Wnd::Create<CUILabel>(turns_left_text, GG::FORMAT_RIGHT);
         m_turns_remaining_until_next_complete_text->SetTextColor(clr);
         m_turns_remaining_until_next_complete_text->ClipText(true);
 
@@ -722,7 +722,7 @@ public:
                "production.ProductionQueueWnd"),
         m_queue_lb(nullptr)
     {
-        m_queue_lb = new ProdQueueListBox();
+        m_queue_lb = GG::Wnd::Create<ProdQueueListBox>();
         m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
         m_queue_lb->SetName("ProductionQueue ListBox");
 
@@ -780,8 +780,8 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     m_production_info_panel = new ProductionInfoPanel(UserString("PRODUCTION_WND_TITLE"), UserString("PRODUCTION_INFO_PP"),
                                                       GG::X0, GG::Y0, queue_width, info_height,
                                                       "production.InfoPanel");
-    m_queue_wnd = new ProductionQueueWnd(GG::X0, info_height, queue_width, ClientSize().y - info_height);
-    m_build_designator_wnd = new BuildDesignatorWnd(ClientSize().x, ClientSize().y);
+    m_queue_wnd = GG::Wnd::Create<ProductionQueueWnd>(GG::X0, info_height, queue_width, ClientSize().y - info_height);
+    m_build_designator_wnd = GG::Wnd::Create<BuildDesignatorWnd>(ClientSize().x, ClientSize().y);
 
     SetChildClippingMode(ClipToClient);
 
@@ -997,7 +997,7 @@ void ProductionWnd::UpdateQueue() {
 
     int i = 0;
     for (const ProductionQueue::Element& elem : empire->GetProductionQueue()) {
-        auto row = new QueueRow(queue_lb->RowWidth(), elem, i);
+        auto row = GG::Wnd::Create<QueueRow>(queue_lb->RowWidth(), elem, i);
         row->RowQuantChangedSignal.connect(
             boost::bind(&ProductionWnd::ChangeBuildQuantityBlockSlot, this, _1, _2, _3));
         queue_lb->Insert(row);

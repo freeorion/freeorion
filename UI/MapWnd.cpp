@@ -402,15 +402,15 @@ namespace {
             GG::Y height{ClientUI::Pts()};
             // center format for title label
             m_labels.emplace(descr, std::make_pair(
-                new CUILabel{UserString(descr),
+                GG::Wnd::Create<CUILabel>(UserString(descr),
                     title ? GG::FORMAT_CENTER : GG::FORMAT_RIGHT,
                     GG::NO_WND_FLAGS, GG::X0, GG::Y0,
                     m_col_widths.at(0) - (m_margin * 2), height
-                },
-                new CUILabel{"0", GG::FORMAT_RIGHT,
+                ),
+                GG::Wnd::Create<CUILabel>("0", GG::FORMAT_RIGHT,
                     GG::NO_WND_FLAGS, GG::X0, GG::Y0,
                     m_col_widths.at(1) - (m_margin * 2), height
-                }
+                )
             ));
 
             if (title) {  // utilize bold font for title label and value
@@ -946,7 +946,7 @@ MapWnd::MapWnd() :
         boost::bind(&MapWnd::UniverseObjectDeleted, this, _1));
 
     // toolbar
-    m_toolbar = new CUIToolBar();
+    m_toolbar = GG::Wnd::Create<CUIToolBar>();
     m_toolbar->SetName("MapWnd Toolbar");
     GG::GUI::GetGUI()->Register(m_toolbar);
     m_toolbar->Hide();
@@ -988,7 +988,7 @@ MapWnd::MapWnd() :
 
 
     // FPS indicator
-    m_FPS = new FPSIndicator();
+    m_FPS = GG::Wnd::Create<FPSIndicator>();
     m_FPS->Hide();
 
     // create custom InWindow function for Menu button that extends its
@@ -1184,32 +1184,32 @@ MapWnd::MapWnd() :
     // resources
     const GG::X ICON_DUAL_WIDTH(100);
     const GG::X ICON_WIDTH(24);
-    m_population = new StatisticIcon(ClientUI::MeterIcon(METER_POPULATION), 0, 3, false,
+    m_population = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_POPULATION), 0, 3, false,
                                      ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_population->SetName("Population StatisticIcon");
 
-    m_industry = new StatisticIcon(ClientUI::MeterIcon(METER_INDUSTRY), 0, 3, false,
+    m_industry = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_INDUSTRY), 0, 3, false,
                                    ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_industry->SetName("Industry StatisticIcon");
     m_industry->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleProduction, this));
 
-    m_research = new StatisticIcon(ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false,
+    m_research = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false,
                                    ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_research->SetName("Research StatisticIcon");
     m_research->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleResearch, this));
 
-    m_trade = new StatisticIcon(ClientUI::MeterIcon(METER_TRADE), 0, 3, false,
+    m_trade = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_TRADE), 0, 3, false,
                                 ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_trade->SetName("Trade StatisticIcon");
 
-    m_fleet = new StatisticIcon(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"),
+    m_fleet = GG::Wnd::Create<StatisticIcon>(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"),
                                 0, 3, false,
                                 ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_fleet->SetName("Fleet StatisticIcon");
 
-    m_detection = new StatisticIcon(ClientUI::MeterIcon(METER_DETECTION), 0, 3, false,
+    m_detection = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_DETECTION), 0, 3, false,
                                     ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_detection->SetName("Detection StatisticIcon");
 
@@ -1363,7 +1363,7 @@ MapWnd::MapWnd() :
     ///////////////////
 
     // scale line
-    m_scale_line = new MapScaleLine(GG::X(LAYOUT_MARGIN),   GG::Y(LAYOUT_MARGIN) + m_toolbar->Height(),
+    m_scale_line = GG::Wnd::Create<MapScaleLine>(GG::X(LAYOUT_MARGIN),   GG::Y(LAYOUT_MARGIN) + m_toolbar->Height(),
                                     SCALE_LINE_MAX_WIDTH,   SCALE_LINE_HEIGHT);
     GG::GUI::GetGUI()->Register(m_scale_line);
     int sel_system_id = SidePanel::SystemID();
@@ -1373,7 +1373,7 @@ MapWnd::MapWnd() :
     // Zoom slider
     const int ZOOM_SLIDER_MIN = static_cast<int>(ZOOM_IN_MIN_STEPS),
               ZOOM_SLIDER_MAX = static_cast<int>(ZOOM_IN_MAX_STEPS);
-    m_zoom_slider = new CUISlider<double>(ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL, GG::INTERACTIVE | GG::ONTOP);
+    m_zoom_slider = GG::Wnd::Create<CUISlider<double>>(ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL, GG::INTERACTIVE | GG::ONTOP);
     m_zoom_slider->MoveTo(GG::Pt(m_btn_turn->Left(), m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN)));
     m_zoom_slider->Resize(GG::Pt(GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT));
     m_zoom_slider->SlideTo(m_zoom_steps_in);
@@ -1486,13 +1486,13 @@ MapWnd::MapWnd() :
         boost::bind(&MapWnd::InitializeWindows, this));
 
     // research window
-    m_research_wnd = new ResearchWnd(AppWidth(), AppHeight() - m_toolbar->Height());
+    m_research_wnd = GG::Wnd::Create<ResearchWnd>(AppWidth(), AppHeight() - m_toolbar->Height());
     m_research_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_research_wnd);
     m_research_wnd->Hide();
 
     // production window
-    m_production_wnd = new ProductionWnd(AppWidth(), AppHeight() - m_toolbar->Height());
+    m_production_wnd = GG::Wnd::Create<ProductionWnd>(AppWidth(), AppHeight() - m_toolbar->Height());
     m_production_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_production_wnd);
     m_production_wnd->Hide();
@@ -1502,7 +1502,7 @@ MapWnd::MapWnd() :
         boost::bind(&MapWnd::SelectPlanet, this, _1));
 
     // design window
-    m_design_wnd = new DesignWnd(AppWidth(), AppHeight() - m_toolbar->Height());
+    m_design_wnd = GG::Wnd::Create<DesignWnd>(AppWidth(), AppHeight() - m_toolbar->Height());
     m_design_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_design_wnd);
     m_design_wnd->Hide();
@@ -2860,7 +2860,7 @@ void MapWnd::InitTurnRendering() {
             continue;
 
         // create new system icon
-        auto icon = new SystemIcon(GG::X0, GG::Y0, GG::X(10), sys_id);
+        auto icon = GG::Wnd::Create<SystemIcon>(GG::X0, GG::Y0, GG::X(10), sys_id);
         m_system_icons[sys_id] = icon;
         icon->InstallEventFilter(this);
         if (SidePanel::SystemID() == sys_id)
@@ -2912,7 +2912,7 @@ void MapWnd::InitTurnRendering() {
         //    continue;
 
         // create new system icon
-        auto icon = new FieldIcon(fld_id);
+        auto icon = GG::Wnd::Create<FieldIcon>(fld_id);
         m_field_icons[fld_id] = icon;
         icon->InstallEventFilter(this);
 

@@ -50,15 +50,15 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
 
     // small meter indicators - for use when panel is collapsed
     m_meter_stats.push_back(
-        std::make_pair(METER_POPULATION, new StatisticIcon(ClientUI::SpeciesIcon(pop->SpeciesName()),
+        std::make_pair(METER_POPULATION, GG::Wnd::Create<StatisticIcon>(ClientUI::SpeciesIcon(pop->SpeciesName()),
                                                            obj->InitialMeterValue(METER_POPULATION), 3, false,
                                                            MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
-        std::make_pair(METER_HAPPINESS, new StatisticIcon(ClientUI::MeterIcon(METER_HAPPINESS),
+        std::make_pair(METER_HAPPINESS, GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_HAPPINESS),
                                                           obj->InitialMeterValue(METER_HAPPINESS), 3, false,
                                                           MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
-        std::make_pair(METER_CONSTRUCTION, new StatisticIcon(ClientUI::MeterIcon(METER_CONSTRUCTION),
+        std::make_pair(METER_CONSTRUCTION, GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_CONSTRUCTION),
                                                              obj->InitialMeterValue(METER_CONSTRUCTION), 3, false,
                                                              MeterIconSize().x, MeterIconSize().y)));
 
@@ -72,8 +72,8 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     }
 
     // attach and show meter bars and large resource indicators
-    m_multi_icon_value_indicator =  new MultiIconValueIndicator(Width() - 2*EDGE_PAD,   m_popcenter_id, meters);
-    m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       m_popcenter_id, meters);
+    m_multi_icon_value_indicator =  GG::Wnd::Create<MultiIconValueIndicator>(Width() - 2*EDGE_PAD,   m_popcenter_id, meters);
+    m_multi_meter_status_bar =      GG::Wnd::Create<MultiMeterStatusBar>(Width() - 2*EDGE_PAD,       m_popcenter_id, meters);
 
     // determine if this panel has been created yet.
     std::map<int, bool>::iterator it = s_expanded_map.find(m_popcenter_id);

@@ -122,13 +122,13 @@ namespace {
         {
             SetChildClippingMode(ClipToClient);
 
-            //m_player_name_text = new CUILabel("", GG::FORMAT_LEFT);
-            m_empire_name_text = new CUILabel("", GG::FORMAT_LEFT);
-            m_empire_ship_text = new CUILabel("", GG::FORMAT_LEFT);
-            m_empire_planet_text = new CUILabel("", GG::FORMAT_LEFT);
-            m_empire_production_text = new CUILabel("", GG::FORMAT_LEFT);
-            m_empire_research_text = new CUILabel("", GG::FORMAT_LEFT);
-            m_empire_detection_text = new CUILabel("", GG::FORMAT_LEFT);
+            //m_player_name_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+            m_empire_name_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+            m_empire_ship_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+            m_empire_planet_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+            m_empire_production_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+            m_empire_research_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+            m_empire_detection_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
 
             //AttachChild(m_player_name_text);
             AttachChild(m_empire_name_text);
@@ -461,7 +461,7 @@ namespace {
         {
             SetName("PlayerRow");
             SetChildClippingMode(ClipToClient);
-            m_panel = new PlayerDataPanel(w, h, m_player_id);
+            m_panel = GG::Wnd::Create<PlayerDataPanel>(w, h, m_player_id);
             push_back(m_panel);
         }
 
@@ -539,7 +539,7 @@ PlayerListWnd::PlayerListWnd(const std::string& config_name) :
            config_name),
     m_player_list(nullptr)
 {
-    m_player_list = new PlayerListBox();
+    m_player_list = GG::Wnd::Create<PlayerListBox>();
     m_player_list->SetHiliteColor(GG::CLR_ZERO);
     m_player_list->SetStyle(GG::LIST_NOSORT);
     m_player_list->SelRowsChangedSignal.connect(
@@ -608,7 +608,7 @@ void PlayerListWnd::Refresh() {
 
     for (const std::map<int, PlayerInfo>::value_type& player : players) {
         int player_id = player.first;
-        auto player_row = new PlayerRow(row_size.x, row_size.y, player_id);
+        auto player_row = GG::Wnd::Create<PlayerRow>(row_size.x, row_size.y, player_id);
         m_player_list->Insert(player_row);
         player_row->Resize(row_size);
     }

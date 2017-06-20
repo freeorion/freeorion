@@ -273,7 +273,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
 
     GG::X texture_width = texture->DefaultWidth();
     GG::Y texture_height = texture->DefaultHeight();
-    m_selection_indicator = new RotatingGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_selection_indicator = GG::Wnd::Create<RotatingGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_selection_indicator->SetRPM(ClientUI::SystemSelectionIndicatorRPM());
     AttachChild(m_selection_indicator);
     m_selection_indicator->Resize(GG::Pt(texture_width, texture_height));
@@ -282,7 +282,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     const std::shared_ptr<GG::Texture>& tiny_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection_tiny" / "system_selection_tiny2.png", true);
     texture_width = tiny_texture->DefaultWidth();
     texture_height = tiny_texture->DefaultHeight();
-    m_tiny_selection_indicator = new RotatingGraphic(tiny_texture, GG::GRAPHIC_NONE);
+    m_tiny_selection_indicator = GG::Wnd::Create<RotatingGraphic>(tiny_texture, GG::GRAPHIC_NONE);
     m_tiny_selection_indicator->SetRPM(ClientUI::SystemSelectionIndicatorRPM());
     AttachChild(m_tiny_selection_indicator);
     m_tiny_selection_indicator->Resize(GG::Pt(texture_width, texture_height));
@@ -662,7 +662,7 @@ void SystemIcon::Refresh() {
         }
 
         // create and position
-        m_colored_name = new OwnerColoredSystemName(m_system_id, name_pts, true);
+        m_colored_name = GG::Wnd::Create<OwnerColoredSystemName>(m_system_id, name_pts, true);
         PositionSystemName();
 
         // attach if appropriate, to display

@@ -90,6 +90,10 @@ class FleetWnd : public MapWndPopup {
 public:
     /** \name Structors */ //@{
     FleetWnd();
+    FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
+             int selected_fleet_id = INVALID_OBJECT_ID,
+             GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE,
+             const std::string& config_name = "");
 
     ~FleetWnd();
     //@}
@@ -135,13 +139,6 @@ protected:
     //@}
 
 private:
-    /** \name Structors */ //@{
-    FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
-             int selected_fleet_id = INVALID_OBJECT_ID,
-             GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE,
-             const std::string& config_name = "");
-    //@}
-
     void            Refresh();                          ///< regenerates contents
     void            RefreshStateChangedSignals();
 
