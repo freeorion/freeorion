@@ -142,6 +142,8 @@ public:
     GG::Clr                 EmpireColor() const;
     const std::string&      StartingSpeciesName() const;
     int                     NumberAIs() const;
+    std::vector<std::pair<std::string, std::string>>
+                            GetRulesAsStrings() const;
     //!@}
 
     /** \name Mutators*/ //!@{

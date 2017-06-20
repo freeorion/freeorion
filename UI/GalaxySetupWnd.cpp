@@ -194,6 +194,11 @@ void GameRulesPanel::BoolRuleChanged(const GG::StateButton* button,
     if (!val)
         return;
     m_rules[rule_name] = val->String(button->Checked());
+
+    DebugLogger() << "Set Rules:";
+    for (const auto& entry : m_rules)
+        DebugLogger() << "  " << entry.first << " : " << entry.second;
+
     SettingChanged();
 }
 
@@ -204,6 +209,11 @@ void GameRulesPanel::IntRuleChanged(const GG::Spin<int>* spin,
     if (!val)
         return;
     m_rules[rule_name] = val->String(spin->Value());
+
+    DebugLogger() << "Set Rules:";
+    for (const auto& entry : m_rules)
+        DebugLogger() << "  " << entry.first << " : " << entry.second;
+
     SettingChanged();
 }
 
@@ -736,6 +746,9 @@ const std::string& GalaxySetupWnd::StartingSpeciesName() const
 
 int GalaxySetupWnd::NumberAIs() const
 { return m_number_ais_spin->Value(); }
+
+std::vector<std::pair<std::string, std::string>> GalaxySetupWnd::GetRulesAsStrings() const
+{ return m_game_rules_panel->GetRulesAsStrings(); }
 
 void GalaxySetupWnd::Render() {
     CUIWnd::Render();

@@ -466,10 +466,13 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     }
 
     bool ended_with_ok = false;
+    std::vector<std::pair<std::string, std::string>> game_rules = GetGameRules().GetRulesAsStrings();
     if (!quickstart) {
         GalaxySetupWnd galaxy_wnd;
         galaxy_wnd.Run();
         ended_with_ok = galaxy_wnd.EndedWithOk();
+        if (ended_with_ok)
+            game_rules = galaxy_wnd.GetRulesAsStrings();
     }
 
     m_connected = m_networking->ConnectToLocalHostServer();
@@ -499,7 +502,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         setup_data.m_monster_freq =     GetOptionsDB().Get<GalaxySetupOption>("GameSetup.monster-frequency");
         setup_data.m_native_freq =      GetOptionsDB().Get<GalaxySetupOption>("GameSetup.native-frequency");
         setup_data.m_ai_aggr =          GetOptionsDB().Get<Aggression>("GameSetup.ai-aggression");
-        setup_data.m_game_rules =       GetGameRules().GetRulesAsStrings();
+        setup_data.m_game_rules =       game_rules;
 
 
         // SinglePlayerSetupData contains a map of PlayerSetupData, for
