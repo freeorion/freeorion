@@ -1386,13 +1386,17 @@ int PredefinedShipDesignManager::GetDesignID(const std::string& name) const {
 unsigned int PredefinedShipDesignManager::GetCheckSum() const {
     unsigned int retval{0};
 
-    for (auto const& name_design_pair : m_ship_designs)
-        CheckSums::CheckSumCombine(retval, name_design_pair);
-    CheckSums::CheckSumCombine(retval, m_ship_designs.size());
+    auto build_checksum = [&retval, this](const std::vector<boost::uuids::uuid>& ordering){
+        for (auto const& uuid : ordering) {
+            auto it = m_designs.find(uuid);
+            if (it != m_designs.end())
+                CheckSums::CheckSumCombine(retval, std::make_pair(it->second->Name(), *it->second));
+        }
+        CheckSums::CheckSumCombine(retval, ordering.size());
+    };
 
-    for (auto const& name_design_pair : m_monster_designs)
-        CheckSums::CheckSumCombine(retval, name_design_pair);
-    CheckSums::CheckSumCombine(retval, m_monster_designs.size());
+    build_checksum(m_ship_ordering);
+    build_checksum(m_monster_ordering);
 
     return retval;
 }
