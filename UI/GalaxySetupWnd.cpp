@@ -25,12 +25,10 @@ namespace {
     const GG::Y CONTROL_HEIGHT(30);
     const GG::Y PANEL_CONTROL_SPACING(33);
     const GG::Y GAL_SETUP_PANEL_HT(PANEL_CONTROL_SPACING * 10);
-    const GG::X GalSetupWndWidth() {
-        return GG::X(345 + FontBasedUpscale(300));
-    }
-    const GG::Y GalSetupWndHeight() {
-        return GG::Y(FontBasedUpscale(29) + (PANEL_CONTROL_SPACING * 6) + GAL_SETUP_PANEL_HT);
-    }
+    const GG::X GalSetupWndWidth()
+    { return GG::X(345 + FontBasedUpscale(300)); }
+    const GG::Y GalSetupWndHeight()
+    { return GG::Y(FontBasedUpscale(29) + (PANEL_CONTROL_SPACING * 6) + GAL_SETUP_PANEL_HT); }
     const GG::Pt PREVIEW_SZ(GG::X(248), GG::Y(186));
     const bool ALLOW_NO_STARLANES = false;
 
@@ -56,6 +54,120 @@ namespace {
 }
 
 ////////////////////////////////////////////////
+// GameRulesPanel
+////////////////////////////////////////////////
+const GG::X GameRulesPanel::DefaultWidth() {
+    return GG::X(FontBasedUpscale(305));
+}
+
+GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
+    GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS)
+{
+    const int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+
+    m_cheap_build_toggle = new CUIStateButton(UserString("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION"),
+                                              GG::FORMAT_LEFT,
+                                              std::make_shared<CUICheckBoxRepresenter>());
+    m_cheap_build_toggle->SetCheck(GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION"));
+    m_cheap_build_toggle->SetBrowseModeTime(tooltip_delay);
+    m_cheap_build_toggle->SetBrowseText(UserString(GetGameRules().GetDescription("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION")));
+
+
+    m_cheap_ships_toggle = new CUIStateButton(UserString("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"),
+                                              GG::FORMAT_LEFT,
+                                              std::make_shared<CUICheckBoxRepresenter>());
+    m_cheap_ships_toggle->SetCheck(GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"));
+    m_cheap_ships_toggle->SetBrowseModeTime(tooltip_delay);
+    m_cheap_ships_toggle->SetBrowseText(UserString(GetGameRules().GetDescription("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION")));
+
+
+    m_cheap_techs_toggle = new CUIStateButton(UserString("RULE_CHEAP_AND_FAST_TECH_RESEARCH"),
+                                              GG::FORMAT_LEFT,
+                                              std::make_shared<CUICheckBoxRepresenter>());
+    m_cheap_techs_toggle->SetCheck(GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_TECH_RESEARCH"));
+    m_cheap_techs_toggle->SetBrowseModeTime(tooltip_delay);
+    m_cheap_techs_toggle->SetBrowseText(UserString(GetGameRules().GetDescription("RULE_CHEAP_AND_FAST_TECH_RESEARCH")));
+
+
+    m_combat_rounds_label = new CUILabel(UserString("RULE_NUM_COMBAT_ROUNDS"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_combat_rounds_label->SetBrowseModeTime(tooltip_delay);
+    m_combat_rounds_label->SetBrowseText(UserString(GetGameRules().GetDescription("RULE_NUM_COMBAT_ROUNDS")));
+    std::shared_ptr<const ValidatorBase> validator = GetGameRules().GetValidator("RULE_NUM_COMBAT_ROUNDS");
+
+    int value = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
+    if (std::shared_ptr<const RangedValidator<int>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<int>>(validator))
+        m_combat_rounds_spin = new CUISpin<int>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
+
+
+    AttachChild(m_cheap_build_toggle);
+    AttachChild(m_cheap_ships_toggle);
+    AttachChild(m_cheap_techs_toggle);
+
+    AttachChild(m_combat_rounds_label);
+    AttachChild(m_combat_rounds_spin);
+
+    DoLayout();
+}
+
+std::vector<std::pair<std::string, std::string>> GameRulesPanel::GetRulesAsStrings() const {
+    std::vector<std::pair<std::string, std::string>> retval;
+    return retval;
+}
+
+void GameRulesPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    GG::Control::SizeMove(ul, lr);
+    DoLayout();
+}
+
+void GameRulesPanel::Disable(bool b) {
+}
+
+void GameRulesPanel::DoLayout() {
+    const GG::X LABELS_WIDTH = (Width() - CONTROL_MARGIN) / 2;
+    const GG::X DROPLIST_WIDTH = LABELS_WIDTH;
+    const GG::Y DROPLIST_HEIGHT(ClientUI::Pts() + 12);
+
+    GG::Pt row_advance(GG::X0, PANEL_CONTROL_SPACING);
+
+    GG::Pt label_ul(CONTROL_MARGIN, CONTROL_VMARGIN);
+    GG::Pt label_lr = label_ul + GG::Pt(LABELS_WIDTH, CONTROL_HEIGHT);
+
+    GG::Pt control_ul(GG::Pt(label_lr.x + CONTROL_MARGIN, CONTROL_VMARGIN));
+    GG::Pt control_lr(Width() - CONTROL_MARGIN, CONTROL_VMARGIN + CONTROL_HEIGHT);
+
+
+    m_cheap_build_toggle->SizeMove(label_ul, label_lr);
+    label_ul += row_advance;
+    label_lr += row_advance;
+    control_ul += row_advance;
+    control_lr += row_advance;
+
+
+    m_cheap_ships_toggle->SizeMove(label_ul, label_lr);
+    label_ul += row_advance;
+    label_lr += row_advance;
+    control_ul += row_advance;
+    control_lr += row_advance;
+
+
+    m_cheap_techs_toggle->SizeMove(label_ul, label_lr);
+    label_ul += row_advance;
+    label_lr += row_advance;
+    control_ul += row_advance;
+    control_lr += row_advance;
+
+
+    m_combat_rounds_label->SizeMove(label_ul, label_lr);
+    m_combat_rounds_spin->SizeMove(control_ul, control_lr);
+}
+
+void GameRulesPanel::SettingChanged() {
+    Sound::TempUISoundDisabler sound_disabler;
+    SettingsChangedSignal();
+}
+
+
+////////////////////////////////////////////////
 // GalaxySetupPanel
 ////////////////////////////////////////////////
 const GG::X GalaxySetupPanel::DefaultWidth() {
@@ -63,28 +175,7 @@ const GG::X GalaxySetupPanel::DefaultWidth() {
 }
 
 GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
-    GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
-    m_seed_label(nullptr),
-    m_seed_edit(nullptr),
-    m_random(nullptr),
-    m_stars_label(nullptr),
-    m_stars_spin(nullptr),
-    m_galaxy_shapes_label(nullptr),
-    m_galaxy_shapes_list(nullptr),
-    m_galaxy_ages_label(nullptr),
-    m_galaxy_ages_list(nullptr),
-    m_starlane_freq_label(nullptr),
-    m_starlane_freq_list(nullptr),
-    m_planet_density_label(nullptr),
-    m_planet_density_list(nullptr),
-    m_specials_freq_label(nullptr),
-    m_specials_freq_list(nullptr),
-    m_monster_freq_label(nullptr),
-    m_monster_freq_list(nullptr),
-    m_native_freq_label(nullptr),
-    m_native_freq_list(nullptr),
-    m_ai_aggression_label(nullptr),
-    m_ai_aggression_list(nullptr)
+    GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS)
 {
     Sound::TempUISoundDisabler sound_disabler;
 
@@ -490,27 +581,12 @@ void GalaxySetupPanel::ShapeChanged(GG::DropDownList::iterator it)
 // GalaxySetupWnd
 ////////////////////////////////////////////////
 GalaxySetupWnd::GalaxySetupWnd() :
-    CUIWnd(UserString("GSETUP_WINDOW_TITLE"),
-           GG::INTERACTIVE | GG::MODAL),
-    m_ended_with_ok(false),
-    m_galaxy_setup_panel(nullptr),
-    m_player_name_label(nullptr),
-    m_player_name_edit(nullptr),
-    m_empire_name_label(nullptr),
-    m_empire_name_edit(nullptr),
-    m_empire_color_label(nullptr),
-    m_empire_color_selector(nullptr),
-    m_starting_secies_selector(nullptr),
-    m_starting_species_label(nullptr),
-    m_number_ais_label(nullptr),
-    m_number_ais_spin(nullptr),
-    m_preview_image(nullptr),
-    m_ok(nullptr),
-    m_cancel(nullptr)
+    CUIWnd(UserString("GSETUP_WINDOW_TITLE"), GG::INTERACTIVE | GG::MODAL)
 {
     Sound::TempUISoundDisabler sound_disabler;
 
     m_galaxy_setup_panel = new GalaxySetupPanel();
+    m_game_rules_panel = new GameRulesPanel();
 
     const GG::X LABELS_WIDTH = (GalaxySetupPanel::DefaultWidth() - 5) / 2;
 
@@ -577,6 +653,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_cancel = new CUIButton(UserString("CANCEL"));
 
     AttachChild(m_galaxy_setup_panel);
+    AttachChild(m_game_rules_panel);
     AttachChild(m_player_name_label);
     AttachChild(m_player_name_edit);
     AttachChild(m_empire_name_label);
@@ -696,6 +773,11 @@ void GalaxySetupWnd::DoLayout() {
 
     m_preview_ul = GG::Pt(ClientWidth() - PREVIEW_SZ.x - 7, GG::Y(7));
     m_preview_image->SizeMove(m_preview_ul, m_preview_ul + PREVIEW_SZ);
+
+
+    GG::Pt rules_ul = m_preview_ul + GG::Pt(GG::X0, PREVIEW_SZ.y);
+    GG::Pt rules_lr = GG::Pt(rules_ul.x + PREVIEW_SZ.x, m_number_ais_label->Bottom());
+    m_game_rules_panel->SizeMove(rules_ul, rules_lr);
 
     GG::Pt button_ul(CONTROL_MARGIN * 2, ScreenToClient(ClientLowerRight()).y - CONTROL_VMARGIN * 2 - m_ok->MinUsableSize().y);
     GG::Pt button_lr(m_ok->MinUsableSize());
