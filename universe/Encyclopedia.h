@@ -33,6 +33,7 @@ struct FO_COMMON_API EncyclopediaArticle {
 
 struct FO_COMMON_API Encyclopedia {
     Encyclopedia();
+    unsigned int GetCheckSum() const;
     std::map<std::string, std::vector<EncyclopediaArticle>> articles;
     const EncyclopediaArticle                               empty_article;
 };

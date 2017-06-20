@@ -95,15 +95,23 @@ public:
     { return m_effects; }
 
     const std::string&              Graphic() const         { return m_graphic; }       ///< returns the name of the grapic file for this field type
+
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int                    GetCheckSum() const;
     //@}
 
 private:
-    std::string                                             m_name;
-    std::string                                             m_description;
-    float                                                   m_stealth;
-    std::set<std::string>                                   m_tags;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
-    std::string                                             m_graphic;
+    std::string                                         m_name;
+    std::string                                         m_description;
+    float                                               m_stealth;
+    std::set<std::string>                               m_tags;
+    std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
+    std::string                                         m_graphic;
 };
 
 
@@ -125,6 +133,14 @@ public:
     /** returns the instance of this singleton class; you should use the free
       * function GetFieldTypeManager() instead */
     static FieldTypeManager&    GetFieldTypeManager();
+
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int                GetCheckSum() const;
     //@}
 private:
     FieldTypeManager();

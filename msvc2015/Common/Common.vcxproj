@@ -189,6 +189,7 @@
     <ClInclude Include="..\..\universe\ValueRef.h" />
     <ClInclude Include="..\..\universe\ValueRefFwd.h" />
     <ClInclude Include="..\..\util\AppInterface.h" />
+    <ClInclude Include="..\..\util\CheckSums.h" />
     <ClInclude Include="..\..\util\Directories.h" />
     <ClInclude Include="..\..\util\ModeratorAction.h" />
     <ClInclude Include="..\..\util\MultiplayerCommon.h" />
@@ -222,6 +223,7 @@
     <ClCompile Include="..\..\network\MessageQueue.cpp" />
     <ClCompile Include="..\..\network\Networking.cpp" />
     <ClCompile Include="..\..\universe\Fighter.cpp" />
+    <ClCompile Include="..\..\util\CheckSums.cpp" />
     <ClCompile Include="..\..\util\EnumText.cpp" />
     <ClCompile Include="..\..\util\SaveGamePreviewUtils.cpp" />
     <ClCompile Include="..\..\util\ScopedTimer.cpp" />

@@ -66,6 +66,14 @@ public:
     float                                   InitialCapacity(int object_id) const;           ///< evaluates initial apacity ValueRef using the object with specified \a object_id as the object on which the special will be placed
     const Condition::ConditionBase*         Location() const    { return m_location; }      ///< returns the condition that determines whether an UniverseObject can have this special applied during universe creation
     const std::string&                      Graphic() const     { return m_graphic; };      ///< returns the name of the grapic file for this special
+
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int                            GetCheckSum() const;
     //@}
 
 private:

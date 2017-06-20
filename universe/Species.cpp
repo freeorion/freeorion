@@ -12,6 +12,7 @@
 #include "../util/Logger.h"
 #include "../util/Random.h"
 #include "../util/AppInterface.h"
+#include "../util/CheckSums.h"
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -40,6 +41,17 @@ std::string FocusType::Dump() const {
     --g_indent;
     retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
     --g_indent;
+    return retval;
+}
+
+unsigned int FocusType::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, m_name);
+    CheckSums::CheckSumCombine(retval, m_description);
+    CheckSums::CheckSumCombine(retval, m_location);
+    CheckSums::CheckSumCombine(retval, m_graphic);
+
     return retval;
 }
 
@@ -303,6 +315,27 @@ void Species::SetOtherSpeciesOpinions(const std::map<std::string, double>& opini
 void Species::SetOtherSpeciesOpinion(const std::string& species_name, double opinion)
 {}
 
+unsigned int Species::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, m_name);
+    CheckSums::CheckSumCombine(retval, m_description);
+    CheckSums::CheckSumCombine(retval, m_gameplay_description);
+    // opinions and homeworlds are per-game specific, so not included in checksum
+    CheckSums::CheckSumCombine(retval, m_foci);
+    CheckSums::CheckSumCombine(retval, m_preferred_focus);
+    CheckSums::CheckSumCombine(retval, m_planet_environments);
+    CheckSums::CheckSumCombine(retval, m_effects);
+    CheckSums::CheckSumCombine(retval, m_location);
+    CheckSums::CheckSumCombine(retval, m_playable);
+    CheckSums::CheckSumCombine(retval, m_native);
+    CheckSums::CheckSumCombine(retval, m_can_colonize);
+    CheckSums::CheckSumCombine(retval, m_can_produce_ships);
+    CheckSums::CheckSumCombine(retval, m_tags);
+    CheckSums::CheckSumCombine(retval, m_graphic);
+
+    return retval;
+}
 
 /////////////////////////////////////////////////
 // SpeciesManager                              //
@@ -341,6 +374,8 @@ SpeciesManager::SpeciesManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
+
+    DebugLogger() << "SpeciesManager checksum: " << GetCheckSum();
 }
 
 SpeciesManager::~SpeciesManager() {
@@ -543,6 +578,14 @@ std::map<std::string, std::map<int, float>>& SpeciesManager::SpeciesObjectPopula
 std::map<std::string, std::map<std::string, int>>& SpeciesManager::SpeciesShipsDestroyed(int encoding_empire)
 { return m_species_species_ships_destroyed; }
 
+unsigned int SpeciesManager::GetCheckSum() const {
+    unsigned int retval{0};
+    for (auto const& name_type_pair : m_species)
+        CheckSums::CheckSumCombine(retval, name_type_pair);
+    CheckSums::CheckSumCombine(retval, m_species.size());
+
+    return retval;
+}
 
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //

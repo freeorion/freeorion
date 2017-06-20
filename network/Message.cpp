@@ -12,6 +12,10 @@
 #include "../universe/System.h"
 #include "../universe/Universe.h"
 #include "../universe/Species.h"
+#include "../universe/Building.h"
+#include "../universe/Field.h"
+#include "../universe/Encyclopedia.h"
+#include "../universe/Tech.h"
 #include "../util/OptionsDB.h"
 #include "../util/Serialize.h"
 #include "../util/ScopedTimer.h"
@@ -582,7 +586,7 @@ Message DispatchCombatLogsMessage(const std::vector<std::pair<int, const CombatL
     return Message(Message::DISPATCH_COMBAT_LOGS, os.str(), true);
 }
 
- Message LoggerConfigMessage(int sender, const std::set<std::tuple<std::string, std::string, LogLevel>>& options) {
+Message LoggerConfigMessage(int sender, const std::set<std::tuple<std::string, std::string, LogLevel>>& options) {
     std::ostringstream os;
     freeorion_xml_oarchive oa(os);
     std::size_t size = options.size();
@@ -597,7 +601,6 @@ Message DispatchCombatLogsMessage(const std::vector<std::pair<int, const CombatL
     }
     return Message(Message::LOGGER_CONFIG, os.str(), true);
 }
-
 
 ////////////////////////////////////////////////
 // Multiplayer Lobby Message named ctors
@@ -643,6 +646,26 @@ Message ServerPlayerChatMessage(int sender, const std::string& data) {
 Message StartMPGameMessage()
 { return Message(Message::START_MP_GAME, DUMMY_EMPTY_MESSAGE); }
 
+Message ContentCheckSumMessage() {
+    std::map<std::string, unsigned int> checksums;
+
+    // add entries for various content managers...
+    checksums["BuildingTypeManager"] = GetBuildingTypeManager().GetCheckSum();
+    checksums["Encyclopedia"] = GetEncyclopedia().GetCheckSum();
+    checksums["FieldTypeManager"] = GetFieldTypeManager().GetCheckSum();
+    checksums["HullTypeManager"] = GetHullTypeManager().GetCheckSum();
+    checksums["PartTypeManager"] = GetPartTypeManager().GetCheckSum();
+    checksums["PredefinedShipDesignManager"] = GetPredefinedShipDesignManager().GetCheckSum();
+    checksums["SpeciesManager"] = GetSpeciesManager().GetCheckSum();
+    checksums["TechManager"] = GetTechManager().GetCheckSum();
+
+    std::ostringstream os;
+    {
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(checksums);
+    }
+    return Message(Message::CHECKSUM, os.str());
+}
 
 ////////////////////////////////////////////////
 // Message data extractors
@@ -815,8 +838,9 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
     }
 }
 
-void ExtractJoinGameMessageData(const Message& msg, std::string& player_name, Networking::ClientType& client_type,
-                        std::string& version_string)
+void ExtractJoinGameMessageData(const Message& msg, std::string& player_name,
+                                Networking::ClientType& client_type,
+                                std::string& version_string)
 {
     DebugLogger() << "ExtractJoinGameMessageData() from " << player_name << " client type " << client_type;
     try {
@@ -1135,4 +1159,21 @@ FO_COMMON_API void ExtractLoggerConfigMessageData(
         throw err;
     }
 
+}
+
+void ExtractContentCheckSumMessageData(
+    const Message& msg, std::map<std::string, unsigned int>& checksums)
+{
+    checksums.clear();
+    try {
+        std::istringstream is(msg.Text());
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(checksums);
+
+    } catch(const std::exception& err) {
+        ErrorLogger() << "ExtractContentCheckSumMessageData(const Message& msg, std::string& save_filename, std::map<std::string, unsigned int>) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
+        throw err;
+    }
 }

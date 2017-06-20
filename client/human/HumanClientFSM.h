@@ -130,7 +130,8 @@ struct WaitingForSPHostAck : boost::statechart::simple_state<WaitingForSPHostAck
         boost::statechart::custom_reaction<HostSPGame>,
         boost::statechart::custom_reaction<Disconnection>,
         boost::statechart::custom_reaction<StartQuittingGame>,
-        boost::statechart::custom_reaction<Error>
+        boost::statechart::custom_reaction<Error>,
+        boost::statechart::custom_reaction<CheckSum>
     > reactions;
 
     WaitingForSPHostAck();
@@ -140,6 +141,7 @@ struct WaitingForSPHostAck : boost::statechart::simple_state<WaitingForSPHostAck
     boost::statechart::result react(const Disconnection& d);
     boost::statechart::result react(const StartQuittingGame& msg);
     boost::statechart::result react(const Error& msg);
+    boost::statechart::result react(const CheckSum& msg);
 
     CLIENT_ACCESSOR
 };
@@ -154,7 +156,8 @@ struct WaitingForMPHostAck : boost::statechart::simple_state<WaitingForMPHostAck
         boost::statechart::custom_reaction<HostMPGame>,
         boost::statechart::custom_reaction<Disconnection>,
         boost::statechart::custom_reaction<StartQuittingGame>,
-        boost::statechart::custom_reaction<Error>
+        boost::statechart::custom_reaction<Error>,
+        boost::statechart::custom_reaction<CheckSum>
     > reactions;
 
     WaitingForMPHostAck();
@@ -164,6 +167,7 @@ struct WaitingForMPHostAck : boost::statechart::simple_state<WaitingForMPHostAck
     boost::statechart::result react(const Disconnection& d);
     boost::statechart::result react(const StartQuittingGame& msg);
     boost::statechart::result react(const Error& msg);
+    boost::statechart::result react(const CheckSum& msg);
 
     CLIENT_ACCESSOR
 };
@@ -207,7 +211,8 @@ struct MPLobby : boost::statechart::state<MPLobby, HumanClientFSM> {
         boost::statechart::custom_reaction<StartMPGameClicked>,
         boost::statechart::custom_reaction<GameStart>,
         boost::statechart::custom_reaction<StartQuittingGame>,
-        boost::statechart::custom_reaction<Error>
+        boost::statechart::custom_reaction<Error>,
+        boost::statechart::custom_reaction<CheckSum>
     > reactions;
 
     MPLobby(my_context ctx);
@@ -222,13 +227,13 @@ struct MPLobby : boost::statechart::state<MPLobby, HumanClientFSM> {
     boost::statechart::result react(const GameStart& msg);
     boost::statechart::result react(const StartQuittingGame& msg);
     boost::statechart::result react(const Error& msg);
+    boost::statechart::result react(const CheckSum& msg);
 
     CLIENT_ACCESSOR
 };
 
 
-/** The human client state in which a game has been started, and a turn is being
-  * played. */
+/** The human client state in which a game has been started. */
 struct PlayingGame : boost::statechart::state<PlayingGame, HumanClientFSM, WaitingForGameStart> {
     typedef boost::statechart::state<PlayingGame, HumanClientFSM, WaitingForGameStart> Base;
 

@@ -2480,6 +2480,16 @@ void NameLookup::SetTopLevelContent(const std::string& content_name) {
         m_value_ref->SetTopLevelContent(content_name);
 }
 
+unsigned int NameLookup::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "ValueRef::NameLookup");
+    CheckSums::CheckSumCombine(retval, m_value_ref);
+    CheckSums::CheckSumCombine(retval, m_lookup_type);
+    std::cout << "GetCheckSum(NameLookup): " << typeid(*this).name() << " retval: " << retval << std::endl << std::endl;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // Operation                                             //
 ///////////////////////////////////////////////////////////

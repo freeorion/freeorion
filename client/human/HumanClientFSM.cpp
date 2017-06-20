@@ -79,8 +79,7 @@ HumanClientFSM::HumanClientFSM(HumanClientApp &human_client) :
     m_client(human_client)
 {}
 
-void HumanClientFSM::unconsumed_event(const boost::statechart::event_base &event)
-{
+void HumanClientFSM::unconsumed_event(const boost::statechart::event_base &event) {
     std::string most_derived_message_type_str = "[ERROR: Unknown Event]";
     const boost::statechart::event_base* event_ptr = &event;
     if (dynamic_cast<const Disconnection*>(event_ptr))
@@ -133,6 +132,7 @@ boost::statechart::result IntroMenu::react(const StartQuittingGame& e) {
     post_event(e);
     return transit<QuittingGame>();
 }
+
 
 ////////////////////////////////////////////////////////////
 // WaitingForSPHostAck
@@ -206,6 +206,17 @@ boost::statechart::result WaitingForSPHostAck::react(const StartQuittingGame& e)
     return transit<QuittingGame>();
 }
 
+boost::statechart::result WaitingForSPHostAck::react(const CheckSum& e) {
+    TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
+
+    std::map<std::string, unsigned int> checksums;
+    ExtractContentCheckSumMessageData(e.m_message, checksums);
+    InfoLogger() << "Got checksum message from server:";
+    for (const auto& c : checksums)
+        InfoLogger() << c.first << " : " << c.second;
+    return discard_event();
+}
+
 
 ////////////////////////////////////////////////////////////
 // WaitingForMPHostAck
@@ -275,6 +286,17 @@ boost::statechart::result WaitingForMPHostAck::react(const StartQuittingGame& e)
 
     post_event(e);
     return transit<QuittingGame>();
+}
+
+boost::statechart::result WaitingForMPHostAck::react(const CheckSum& e) {
+    TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
+
+    std::map<std::string, unsigned int> checksums;
+    ExtractContentCheckSumMessageData(e.m_message, checksums);
+    InfoLogger() << "Got checksum message from server:";
+    for (const auto& c : checksums)
+        InfoLogger() << c.first << " : " << c.second;
+    return discard_event();
 }
 
 
@@ -468,6 +490,17 @@ boost::statechart::result MPLobby::react(const StartQuittingGame& e) {
 
     post_event(e);
     return transit<QuittingGame>();
+}
+
+boost::statechart::result MPLobby::react(const CheckSum& e) {
+    TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
+
+    std::map<std::string, unsigned int> checksums;
+    ExtractContentCheckSumMessageData(e.m_message, checksums);
+    InfoLogger() << "Got checksum message from server:";
+    for (const auto& c : checksums)
+        InfoLogger() << c.first << " : " << c.second;
+    return discard_event();
 }
 
 

@@ -5,6 +5,7 @@
 #include "../util/Export.h"
 #include "../util/i18n.h"
 #include "../util/Random.h"
+#include "../util/CheckSums.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/lexical_cast.hpp>
@@ -15,6 +16,15 @@
 #include <map>
 #include <set>
 
+namespace CheckSums {
+    template <typename T>
+    void CheckSumCombine(unsigned int& sum, const typename ValueRef::ValueRefBase<T>& c)
+    {
+        TraceLogger() << "CheckSumCombine(ValueRef::ValueRefBase<T>): " << typeid(c).name();
+        sum += c.GetCheckSum();
+        sum %= CHECKSUM_MODULUS;
+    }
+}
 
 class UniverseObject;
 
@@ -90,7 +100,7 @@ namespace ValueRef {
 /** The base class for all ValueRef classes.  This class provides the public
   * interface for a ValueRef expression tree. */
 template <class T>
-struct ValueRefBase
+struct FO_COMMON_API ValueRefBase
 {
     virtual ~ValueRefBase()
     {}
@@ -137,6 +147,9 @@ struct ValueRefBase
     virtual void SetTopLevelContent(const std::string& content_name)
     {}
 
+    virtual unsigned int GetCheckSum() const
+    { return 0; }
+
 private:
     friend class boost::serialization::access;
     template <class Archive>
@@ -145,7 +158,7 @@ private:
 
 /** the constant value leaf ValueRef class. */
 template <class T>
-struct Constant : public ValueRefBase<T>
+struct FO_COMMON_API Constant : public ValueRefBase<T>
 {
     explicit Constant(T value);
 
@@ -176,6 +189,8 @@ struct Constant : public ValueRefBase<T>
 
     T Value() const;
 
+    unsigned int GetCheckSum() const override;
+
 private:
     T           m_value;
     std::string m_top_level_content;    // in the special case that T is std::string and m_value is "CurrentContent", return this instead
@@ -188,7 +203,7 @@ private:
 /** The variable value ValueRef class.  The value returned by this node is
   * taken from the gamestate, most often from the Source or Target objects. */
 template <class T>
-struct Variable : public ValueRefBase<T>
+struct FO_COMMON_API Variable : public ValueRefBase<T>
 {
     explicit Variable(ReferenceType ref_type, const std::string& property_name = "");
     Variable(ReferenceType ref_type, const std::vector<std::string>& property_name);
@@ -213,6 +228,8 @@ struct Variable : public ValueRefBase<T>
 
     const std::vector<std::string>& PropertyName() const;
 
+    unsigned int GetCheckSum() const override;
+
 protected:
     mutable ReferenceType       m_ref_type;
     std::vector<std::string>    m_property_name;
@@ -229,7 +246,7 @@ private:
   * \a sampling_condition and the statistic indicated by \a stat_type is
   * calculated from them and returned. */
 template <class T>
-struct Statistic : public Variable<T>
+struct FO_COMMON_API Statistic : public Variable<T>
 {
     Statistic(ValueRefBase<T>* value_ref,
               StatisticType stat_type,
@@ -264,6 +281,8 @@ struct Statistic : public Variable<T>
     const ValueRefBase<T>* GetValueRef() const
     { return m_value_ref; }
 
+    unsigned int GetCheckSum() const override;
+
 protected:
     /** Gets the set of objects in the Universe that match the sampling condition. */
     void    GetConditionMatches(const ScriptingContext& context,
@@ -279,9 +298,9 @@ protected:
     T ReduceData(const std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const;
 
 private:
-    StatisticType m_stat_type;
-    Condition::ConditionBase* m_sampling_condition;
-    ValueRefBase<T>* m_value_ref;
+    StatisticType               m_stat_type;
+    Condition::ConditionBase*   m_sampling_condition;
+    ValueRefBase<T>*            m_value_ref;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -291,7 +310,7 @@ private:
 /** The complex variable ValueRef class. The value returned by this node
   * is taken from the gamestate. */
 template <class T>
-struct ComplexVariable : public Variable<T>
+struct FO_COMMON_API ComplexVariable : public Variable<T>
 {
     explicit ComplexVariable(const std::string& variable_name,
                              ValueRefBase<int>* int_ref1 = nullptr,
@@ -330,6 +349,8 @@ struct ComplexVariable : public Variable<T>
 
     const ValueRefBase<std::string>* StringRef2() const;
 
+    unsigned int GetCheckSum() const override;
+
 protected:
     ValueRefBase<int>* m_int_ref1;
     ValueRefBase<int>* m_int_ref2;
@@ -347,7 +368,7 @@ private:
   * from the ctor \a value_ref parameter's FromType value, static_cast to
   * ToType. */
 template <class FromType, class ToType>
-struct StaticCast : public Variable<ToType>
+struct FO_COMMON_API StaticCast : public Variable<ToType>
 {
     StaticCast(Variable<FromType>* value_ref);
 
@@ -376,6 +397,8 @@ struct StaticCast : public Variable<ToType>
     const ValueRefBase<FromType>* GetValueRef() const
     { return m_value_ref; }
 
+    unsigned int GetCheckSum() const override;
+
 private:
     ValueRefBase<FromType>* m_value_ref;
 
@@ -388,7 +411,7 @@ private:
   * is taken from the ctor \a value_ref parameter's FromType value,
   * lexical_cast to std::string */
 template <class FromType>
-struct StringCast : public Variable<std::string>
+struct FO_COMMON_API StringCast : public Variable<std::string>
 {
     StringCast(Variable<FromType>* value_ref);
     StringCast(ValueRefBase<FromType>* value_ref);
@@ -415,6 +438,8 @@ struct StringCast : public Variable<std::string>
     const ValueRefBase<FromType>* GetValueRef() const
     { return m_value_ref; }
 
+    unsigned int GetCheckSum() const override;
+
 private:
     ValueRefBase<FromType>* m_value_ref;
 
@@ -426,7 +451,7 @@ private:
 /** Looks up a string ValueRef or vector of string ValueRefs, and returns
   * and returns the UserString equivalent(s). */
 template <class FromType>
-struct UserStringLookup : public Variable<std::string> {
+struct FO_COMMON_API UserStringLookup : public Variable<std::string> {
     explicit UserStringLookup(Variable<FromType>* value_ref);
     explicit UserStringLookup(ValueRefBase<FromType>* value_ref);
     ~UserStringLookup();
@@ -451,6 +476,8 @@ struct UserStringLookup : public Variable<std::string> {
 
     const ValueRefBase<FromType>* GetValueRef() const
     { return m_value_ref; }
+
+    unsigned int GetCheckSum() const override;
 
 private:
     ValueRefBase<FromType>* m_value_ref;
@@ -496,6 +523,8 @@ struct FO_COMMON_API NameLookup : public Variable<std::string> {
     LookupType GetLookupType() const
     { return m_lookup_type; }
 
+    unsigned int GetCheckSum() const override;
+
 private:
     ValueRefBase<int>* m_value_ref;
     LookupType m_lookup_type;
@@ -509,7 +538,7 @@ private:
   * mutiplication, division, or unary negation is performed on the child(ren)
   * of this node, and the result is returned. */
 template <class T>
-struct Operation : public ValueRefBase<T>
+struct FO_COMMON_API Operation : public ValueRefBase<T>
 {
     /** Binary operation ctor. */
     Operation(OpType op_type, ValueRefBase<T>* operand1,
@@ -556,6 +585,8 @@ struct Operation : public ValueRefBase<T>
 
     /** all operands */
     const std::vector<ValueRefBase<T>*>& Operands() const;
+
+    unsigned int GetCheckSum() const override;
 
 private:
     void    DetermineIfConstantExpr();
@@ -632,6 +663,17 @@ template <class T>
 void Constant<T>::SetTopLevelContent(const std::string& content_name)
 { m_top_level_content = content_name; }
 
+template <class T>
+unsigned int Constant<T>::GetCheckSum() const
+{
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "ValueRef::Constant");
+    CheckSums::CheckSumCombine(retval, m_value);
+    TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name() << " value: " << m_value << " retval: " << retval;
+    return retval;
+}
+
 template <>
 FO_COMMON_API std::string Constant<int>::Description() const;
 
@@ -676,6 +718,7 @@ void Constant<T>::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_value)
         & BOOST_SERIALIZATION_NVP(m_top_level_content);
 }
+
 
 ///////////////////////////////////////////////////////////
 // Variable                                              //
@@ -739,6 +782,18 @@ std::string Variable<T>::Description() const
 template <class T>
 std::string Variable<T>::Dump() const
 { return ReconstructName(m_property_name, m_ref_type); }
+
+template <class T>
+unsigned int Variable<T>::GetCheckSum() const
+{
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "ValueRef::Variable");
+    CheckSums::CheckSumCombine(retval, m_property_name);
+    CheckSums::CheckSumCombine(retval, m_ref_type);
+    TraceLogger() << "GetCheckSum(Variable<T>): " << typeid(*this).name() << " retval: " << retval;
+    return retval;
+}
 
 template <>
 FO_COMMON_API PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const;
@@ -966,6 +1021,19 @@ T Statistic<T>::Eval(const ScriptingContext& context) const
     return most_common_property_value_it->first;
 }
 
+template <class T>
+unsigned int Statistic<T>::GetCheckSum() const
+{
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "ValueRef::Statistic");
+    CheckSums::CheckSumCombine(retval, m_stat_type);
+    CheckSums::CheckSumCombine(retval, m_sampling_condition);
+    CheckSums::CheckSumCombine(retval, m_value_ref);
+    TraceLogger() << "GetCheckSum(Statisic<T>): " << typeid(*this).name() << " retval: " << retval;
+    return retval;
+}
+
 template <>
 FO_COMMON_API double Statistic<double>::Eval(const ScriptingContext& context) const;
 
@@ -1171,11 +1239,7 @@ ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
     m_int_ref3(int_ref3),
     m_string_ref1(string_ref1),
     m_string_ref2(string_ref2)
-{
-    //std::cout << "ComplexVariable: " << variable_name << ", "
-    //          << int_ref1 << ", " << int_ref2 << ", "
-    //          << string_ref1 << ", " << string_ref2 << std::endl;
-}
+{}
 
 template <class T>
 ComplexVariable<T>::~ComplexVariable()
@@ -1356,6 +1420,21 @@ void ComplexVariable<T>::SetTopLevelContent(const std::string& content_name)
         m_string_ref2->SetTopLevelContent(content_name);
 }
 
+template <class T>
+unsigned int ComplexVariable<T>::GetCheckSum() const
+{
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "ValueRef::ComplexVariable");
+    CheckSums::CheckSumCombine(retval, m_int_ref1);
+    CheckSums::CheckSumCombine(retval, m_int_ref2);
+    CheckSums::CheckSumCombine(retval, m_int_ref3);
+    CheckSums::CheckSumCombine(retval, m_string_ref1);
+    CheckSums::CheckSumCombine(retval, m_string_ref2);
+    TraceLogger() << "GetCheckSum(ComplexVariable<T>): " << typeid(*this).name() << " retval: " << retval;
+    return retval;
+}
+
 template <>
 FO_COMMON_API PlanetSize ComplexVariable<PlanetSize>::Eval(const ScriptingContext& context) const;
 
@@ -1469,6 +1548,17 @@ void StaticCast<FromType, ToType>::SetTopLevelContent(const std::string& content
 }
 
 template <class FromType, class ToType>
+unsigned int StaticCast<FromType, ToType>::GetCheckSum() const
+{
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "ValueRef::StaticCast");
+    CheckSums::CheckSumCombine(retval, m_value_ref);
+    TraceLogger() << "GetCheckSum(StaticCast<FromType, ToType>): " << typeid(*this).name() << " retval: " << retval;
+    return retval;
+}
+
+template <class FromType, class ToType>
 template <class Archive>
 void StaticCast<FromType, ToType>::serialize(Archive& ar, const unsigned int version)
 {
@@ -1527,6 +1617,17 @@ std::string StringCast<FromType>::Eval(const ScriptingContext& context) const
         retval = boost::lexical_cast<std::string>(m_value_ref->Eval(context));
     } catch (...) {
     }
+    return retval;
+}
+
+template <class FromType>
+unsigned int StringCast<FromType>::GetCheckSum() const
+{
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "ValueRef::StringCast");
+    CheckSums::CheckSumCombine(retval, m_value_ref);
+    TraceLogger() << "GetCheckSum(StringCast<FromType>): " << typeid(*this).name() << " retval: " << retval;
     return retval;
 }
 
@@ -1680,6 +1781,17 @@ void UserStringLookup<FromType>::SetTopLevelContent(const std::string& content_n
 }
 
 template <class FromType>
+unsigned int UserStringLookup<FromType>::GetCheckSum() const
+{
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "ValueRef::UserStringLookup");
+    CheckSums::CheckSumCombine(retval, m_value_ref);
+    TraceLogger() << "GetCheckSum(UserStringLookup<FromType>): " << typeid(*this).name() << " retval: " << retval;
+    return retval;
+}
+
+template <class FromType>
 template <class Archive>
 void UserStringLookup<FromType>::serialize(Archive& ar, const unsigned int version)
 {
@@ -1704,7 +1816,8 @@ void NameLookup::serialize(Archive& ar, const unsigned int version)
 template <class T>
 Operation<T>::Operation(OpType op_type, ValueRefBase<T>* operand1, ValueRefBase<T>* operand2) :
     m_op_type(op_type),
-    m_operands()
+    m_operands(),
+    m_cached_const_value(T())  // overritten below if operation is constant, not used if operation is not constant
 {
     if (operand1)
         m_operands.push_back(operand1);
@@ -1717,7 +1830,8 @@ Operation<T>::Operation(OpType op_type, ValueRefBase<T>* operand1, ValueRefBase<
 template <class T>
 Operation<T>::Operation(OpType op_type, ValueRefBase<T>* operand) :
     m_op_type(op_type),
-    m_operands()
+    m_operands(),
+    m_cached_const_value(T())  // overritten below if operation is constant, not used if operation is not constant
 {
     if (operand)
         m_operands.push_back(operand);
@@ -1728,7 +1842,8 @@ Operation<T>::Operation(OpType op_type, ValueRefBase<T>* operand) :
 template <class T>
 Operation<T>::Operation(OpType op_type, const std::vector<ValueRefBase<T>*>& operands) :
     m_op_type(op_type),
-    m_operands(operands)
+    m_operands(operands),
+    m_cached_const_value(T())  // overritten below if operation is constant, not used if operation is not constant
 {
     DetermineIfConstantExpr();
     CacheConstValue();
@@ -1871,6 +1986,20 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
 
 
     throw std::runtime_error("ValueRef::Operation<T>::EvalImpl evaluated with an unknown or invalid OpType.");
+}
+
+template <class T>
+unsigned int Operation<T>::GetCheckSum() const
+{
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "ValueRef::Operation");
+    CheckSums::CheckSumCombine(retval, m_op_type);
+    CheckSums::CheckSumCombine(retval, m_operands);
+    CheckSums::CheckSumCombine(retval, m_constant_expr);
+    CheckSums::CheckSumCombine(retval, m_cached_const_value);
+    TraceLogger() << "GetCheckSum(Operation<T>): " << typeid(*this).name() << " retval: " << retval;
+    return retval;
 }
 
 template <>

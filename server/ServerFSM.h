@@ -119,10 +119,10 @@ struct ServerFSM : sc::state_machine<ServerFSM, Idle> {
     ServerApp& Server();
     void HandleNonLobbyDisconnection(const Disconnection& d);
 
-    std::shared_ptr<MultiplayerLobbyData> m_lobby_data;
-    std::shared_ptr<SinglePlayerSetupData> m_single_player_setup_data;
-    std::vector<PlayerSaveGameData>             m_player_save_game_data;
-    std::shared_ptr<ServerSaveGameData> m_server_save_game_data;
+    std::shared_ptr<MultiplayerLobbyData>   m_lobby_data;
+    std::shared_ptr<SinglePlayerSetupData>  m_single_player_setup_data;
+    std::vector<PlayerSaveGameData>         m_player_save_game_data;
+    std::shared_ptr<ServerSaveGameData>     m_server_save_game_data;
 
 private:
     ServerApp& m_server;
@@ -177,9 +177,9 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
     sc::result react(const ShutdownServer& u);
     sc::result react(const Error& msg);
 
-    std::shared_ptr<MultiplayerLobbyData> m_lobby_data;
+    std::shared_ptr<MultiplayerLobbyData>   m_lobby_data;
     std::vector<PlayerSaveGameData>         m_player_save_game_data;
-    std::shared_ptr<ServerSaveGameData> m_server_save_game_data;
+    std::shared_ptr<ServerSaveGameData>     m_server_save_game_data;
 
     SERVER_ACCESSOR
 };
@@ -236,9 +236,9 @@ struct WaitingForMPGameJoiners : sc::state<WaitingForMPGameJoiners, ServerFSM> {
     // as such, no file load error handling reaction is needed in this state.
     sc::result react(const Error& msg);
 
-    std::shared_ptr<MultiplayerLobbyData> m_lobby_data;
+    std::shared_ptr<MultiplayerLobbyData>   m_lobby_data;
     std::vector<PlayerSaveGameData>         m_player_save_game_data;
-    std::shared_ptr<ServerSaveGameData> m_server_save_game_data;
+    std::shared_ptr<ServerSaveGameData>     m_server_save_game_data;
     std::set<std::string>                   m_expected_ai_player_names;
     int                                     m_num_expected_players;
 

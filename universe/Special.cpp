@@ -8,6 +8,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
+#include "../util/CheckSums.h"
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -15,7 +16,6 @@ namespace {
     class SpecialManager {
     public:
         SpecialManager() {
-
             try {
                 parse::specials(m_specials);
             } catch (const std::exception& e) {
@@ -26,6 +26,8 @@ namespace {
             TraceLogger() << "Specials:";
             for (const auto& entry : m_specials)
                 TraceLogger() << " ... " << entry.first;
+
+            DebugLogger() << "SpecialManager checksum: " << GetCheckSum();
         }
         ~SpecialManager() {
             for (std::map<std::string, Special*>::value_type& entry : m_specials) {
@@ -42,6 +44,13 @@ namespace {
         const Special* GetSpecial(const std::string& name) const {
             std::map<std::string, Special*>::const_iterator it = m_specials.find(name);
             return it != m_specials.end() ? it->second : nullptr;
+        }
+        unsigned int GetCheckSum() const {
+            unsigned int retval{0};
+            for (auto const& name_type_pair : m_specials)
+                CheckSums::CheckSumCombine(retval, name_type_pair);
+            CheckSums::CheckSumCombine(retval, m_specials.size());
+            return retval;
         }
     private:
         std::map<std::string, Special*> m_specials;
@@ -145,6 +154,22 @@ float Special::InitialCapacity(int object_id) const {
     ScriptingContext context(obj);
 
     return m_initial_capacity->Eval(context);
+}
+
+unsigned int Special::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, m_name);
+    CheckSums::CheckSumCombine(retval, m_description);
+    CheckSums::CheckSumCombine(retval, m_stealth);
+    CheckSums::CheckSumCombine(retval, m_effects);
+    CheckSums::CheckSumCombine(retval, m_spawn_rate);
+    CheckSums::CheckSumCombine(retval, m_spawn_limit);
+    CheckSums::CheckSumCombine(retval, m_initial_capacity);
+    CheckSums::CheckSumCombine(retval, m_location);
+    CheckSums::CheckSumCombine(retval, m_graphic);
+
+    return retval;
 }
 
 const Special* GetSpecial(const std::string& name)

@@ -163,6 +163,14 @@ public:
     CaptureResult                   GetCaptureResult(int from_empire_id, int to_empire_id,
                                                      int location_id, bool as_production_item) const
     { return m_capture_result; }
+
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int                    GetCheckSum() const;
     //@}
 
 private:
@@ -204,6 +212,14 @@ public:
     /** returns the instance of this singleton class; you should use the free
       * function GetBuildingTypeManager() instead */
     static BuildingTypeManager& GetBuildingTypeManager();
+
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int                GetCheckSum() const;
     //@}
 
 private:

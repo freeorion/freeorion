@@ -54,7 +54,7 @@ public:
     typedef std::array<int, Parts::Parts_Count> HeaderBuffer;
 
     constexpr static size_t HeaderBufferSize =
-        std::tuple_size<HeaderBuffer>::value * sizeof(HeaderBuffer::value_type);
+        std::tuple_size<HeaderBuffer>::value* sizeof(HeaderBuffer::value_type);
 
     /** Represents the type of the message */
     GG_CLASS_ENUM(MessageType,
@@ -94,7 +94,8 @@ public:
         DISPATCH_SAVE_PREVIEWS, ///< sent by host to client to provide the savegame previews
         REQUEST_COMBAT_LOGS,    ///< sent by client to request combat logs
         DISPATCH_COMBAT_LOGS,   ///< sent by host to client to provide combat logs
-        LOGGER_CONFIG           ///< sent by host to server and server to ais to configure logging
+        LOGGER_CONFIG,          ///< sent by host to server and server to ais to configure logging
+        CHECKSUM                ///< sent by host to clients to specify what the parsed content checksum values should be
     )
 
     GG_CLASS_ENUM(TurnProgressPhase,
@@ -350,6 +351,8 @@ FO_COMMON_API Message ServerPlayerChatMessage(int sender, const std::string& tex
 /** creates a START_MP_GAME used to finalize the multiplayer lobby setup.*/
 FO_COMMON_API Message StartMPGameMessage();
 
+/** creates a CHECKSUM message containing checksums of parsed content. */
+FO_COMMON_API Message ContentCheckSumMessage();
 
 ////////////////////////////////////////////////
 // Message data extractors
@@ -417,5 +420,7 @@ FO_COMMON_API void ExtractRequestCombatLogsMessageData(const Message& msg, std::
 FO_COMMON_API void ExtractDispatchCombatLogsMessageData(const Message& msg, std::vector<std::pair<int, CombatLog>>& logs);
 
 FO_COMMON_API void ExtractLoggerConfigMessageData(const Message& msg, std::set<std::tuple<std::string, std::string, LogLevel>>& options);
+
+FO_COMMON_API void ExtractContentCheckSumMessageData(const Message& msg, std::map<std::string, unsigned int>& checksums);
 
 #endif // _Message_h_

@@ -141,30 +141,38 @@ public:
     { return m_effects; }
 
     const std::string&      Icon() const            { return m_icon; }              ///< returns icon graphic that represents part in UI
+
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int GetCheckSum() const;
     //@}
 
 private:
     void Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects);
 
-    std::string                                             m_name;
-    std::string                                             m_description;
-    ShipPartClass                                           m_class;
-    float                                                   m_capacity;
-    float                                                   m_secondary_stat;   // damage for a hangar bay, shots per turn for a weapon, etc.
-    ValueRef::ValueRefBase<double>*                         m_production_cost;
-    ValueRef::ValueRefBase<int>*                            m_production_time;
-    bool                                                    m_producible;
-    std::vector<ShipSlotType>                               m_mountable_slot_types;
-    std::set<std::string>                                   m_tags;
+    std::string                     m_name;
+    std::string                     m_description;
+    ShipPartClass                   m_class;
+    float                           m_capacity;
+    float                           m_secondary_stat;   // damage for a hangar bay, shots per turn for a weapon, etc.
+    ValueRef::ValueRefBase<double>* m_production_cost;
+    ValueRef::ValueRefBase<int>*    m_production_time;
+    bool                            m_producible;
+    std::vector<ShipSlotType>       m_mountable_slot_types;
+    std::set<std::string>           m_tags;
     std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
-                                                            m_production_meter_consumption;
+                                    m_production_meter_consumption;
     std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
-                                                            m_production_special_consumption;
-    Condition::ConditionBase*                               m_location;
-    std::set<std::string>                                   m_exclusions;
+                                    m_production_special_consumption;
+    Condition::ConditionBase*       m_location;
+    std::set<std::string>           m_exclusions;
     std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
-    std::string                                             m_icon;
-    bool                                                    m_add_standard_capacity_effect;
+    std::string                     m_icon;
+    bool                            m_add_standard_capacity_effect;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -188,6 +196,14 @@ public:
 
     /** returns the instance of this singleton class; you should use the free function GetPartTypeManager() instead */
     static const PartTypeManager& GetPartTypeManager();
+
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int GetCheckSum() const;
     //@}
 
 private:
@@ -298,7 +314,7 @@ public:
         m_graphic(graphic),
         m_icon(icon)
     {
-        //std::cout << "hull type: " << m_name << " producible: " << m_producible << std::endl;
+        //TraceLogger() << "hull type: " << m_name << " producible: " << m_producible << std::endl;
         Init(common_params.effects);
         for (const std::string& tag : common_params.tags)
             m_tags.insert(boost::to_upper_copy<std::string>(tag));
@@ -326,20 +342,19 @@ public:
     bool                Producible() const      { return m_producible; }        ///< returns whether this hull type is producible by players and appears on the design screen
 
     const std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>&
-                            ProductionMeterConsumption() const  { return m_production_meter_consumption; }
+                        ProductionMeterConsumption() const  { return m_production_meter_consumption; }
     const std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>&
-                            ProductionSpecialConsumption() const{ return m_production_special_consumption; }
+                        ProductionSpecialConsumption() const{ return m_production_special_consumption; }
 
     unsigned int        NumSlots() const        { return m_slots.size(); }      ///< returns total number of of slots in hull
     unsigned int        NumSlots(ShipSlotType slot_type) const;                 ///< returns number of of slots of indicated type in hull
-    const std::vector<Slot>&    Slots() const   { return m_slots; }             ///< returns vector of slots in hull
+    const std::vector<Slot>& Slots() const      { return m_slots; }             ///< returns vector of slots in hull
 
     const std::set<std::string>& Tags() const   { return m_tags; }
 
     bool HasTag(const std::string& tag) const   { return m_tags.count(tag) != 0; }
 
-    const Condition::ConditionBase* Location() const
-    { return m_location; }                                                      ///< returns the condition that determines the locations where ShipDesign containing hull can be produced
+    const Condition::ConditionBase* Location() const{ return m_location; }      ///< returns the condition that determines the locations where ShipDesign containing hull can be produced
     const std::set<std::string>& Exclusions() const { return m_exclusions; }    ///< returns the names of other content that cannot be used in the same ship design as this part
 
     /** Returns the EffectsGroups that encapsulate the effects this part hull
@@ -349,6 +364,14 @@ public:
 
     const std::string&  Graphic() const         { return m_graphic; }           ///< returns the image that represents the hull on the design screen
     const std::string&  Icon() const            { return m_icon; }              ///< returns the small icon to represent hull
+
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int GetCheckSum() const;
     //@}
 
 private:
@@ -371,7 +394,7 @@ private:
                                                             m_production_special_consumption;
     Condition::ConditionBase*                               m_location;
     std::set<std::string>                                   m_exclusions;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
+    std::vector<std::shared_ptr<Effect::EffectsGroup>>      m_effects;
     std::string                                             m_graphic;
     std::string                                             m_icon;
 
@@ -379,6 +402,10 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+namespace CheckSums {
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const HullType::Slot& slot);
+}
 
 /** Holds FreeOrion hull types */
 class FO_COMMON_API HullTypeManager {
@@ -397,6 +424,14 @@ public:
 
     /** returns the instance of this singleton class; you should use the free function GetHullTypeManager() instead */
     static const HullTypeManager& GetHullTypeManager();
+
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int GetCheckSum() const;
     //@}
 
 private:
@@ -508,6 +543,14 @@ public:
 
     std::string                     Dump() const;                                   ///< returns a data file format representation of this object
 
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int                    GetCheckSum() const;
+
     friend FO_COMMON_API bool operator ==(const ShipDesign& first, const ShipDesign& second);
     //@}
 
@@ -568,7 +611,6 @@ private:
     bool    m_is_production_location = false;
     std::map<std::string, int>      m_num_part_types;
     std::map<ShipPartClass, int>    m_num_part_classes;
-
     bool    m_producible = false;
 
     friend class boost::serialization::access;
@@ -599,6 +641,14 @@ public:
       * with the specified \a name.  If there is generic design available for
       * the specified \a name, then INVALID_DESIGN_ID is returned. */
     int                 GetDesignID(const std::string& name) const;
+
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int        GetCheckSum() const;
     //@}
 
     /** Adds designs in this manager to the universe with the design creator

@@ -13,6 +13,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
+#include "../util/CheckSums.h"
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -307,6 +308,26 @@ bool BuildingType::EnqueueLocation(int empire_id, int location_id) const {
     return m_enqueue_location->Eval(ScriptingContext(source), location);
 }
 
+unsigned int BuildingType::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, m_name);
+    CheckSums::CheckSumCombine(retval, m_description);
+    CheckSums::CheckSumCombine(retval, m_production_cost);
+    CheckSums::CheckSumCombine(retval, m_production_time);
+    CheckSums::CheckSumCombine(retval, m_producible);
+    CheckSums::CheckSumCombine(retval, m_capture_result);
+    CheckSums::CheckSumCombine(retval, m_tags);
+    CheckSums::CheckSumCombine(retval, m_production_meter_consumption);
+    CheckSums::CheckSumCombine(retval, m_production_special_consumption);
+    CheckSums::CheckSumCombine(retval, m_location);
+    CheckSums::CheckSumCombine(retval, m_enqueue_location);
+    CheckSums::CheckSumCombine(retval, m_effects);
+    CheckSums::CheckSumCombine(retval, m_icon);
+
+    return retval;
+}
+
 /////////////////////////////////////////////////
 // BuildingTypeManager                         //
 /////////////////////////////////////////////////
@@ -333,6 +354,8 @@ BuildingTypeManager::BuildingTypeManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
+
+    DebugLogger() << "BuildingTypeManager checksum: " << GetCheckSum();
 }
 
 const BuildingType* BuildingTypeManager::GetBuildingType(const std::string& name) const {
@@ -343,6 +366,15 @@ const BuildingType* BuildingTypeManager::GetBuildingType(const std::string& name
 BuildingTypeManager& BuildingTypeManager::GetBuildingTypeManager() {
     static BuildingTypeManager manager;
     return manager;
+}
+
+unsigned int BuildingTypeManager::GetCheckSum() const {
+    unsigned int retval{0};
+    for (auto const& name_type_pair : m_building_types)
+        CheckSums::CheckSumCombine(retval, name_type_pair);
+    CheckSums::CheckSumCombine(retval, m_building_types.size());
+
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////

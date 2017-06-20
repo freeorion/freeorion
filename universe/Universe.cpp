@@ -6,6 +6,7 @@
 #include "../util/Random.h"
 #include "../util/RunQueue.h"
 #include "../util/ScopedTimer.h"
+#include "../util/CheckSums.h"
 #include "../parse/Parse.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
@@ -80,6 +81,11 @@ namespace EmpireStatistics {
         if (s_stats.empty()) {
             try {
                 parse::statistics(s_stats);
+
+                unsigned int checksum{0};
+                CheckSums::CheckSumCombine(checksum, s_stats);
+                DebugLogger() << "Empire Statistics checksum: " << checksum;
+
             } catch (const std::exception& e) {
                 ErrorLogger() << "Failed parsing empire statistics: error: " << e.what();
                 throw e;

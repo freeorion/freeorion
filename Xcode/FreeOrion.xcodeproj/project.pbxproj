@@ -327,6 +327,7 @@
 		CE2C454D1C65036F0085A4DC /* ResourceBrowseWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE2C454B1C65036F0085A4DC /* ResourceBrowseWnd.cpp */; };
 		CE2C454E1C6503990085A4DC /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 822E325B19BEED6C00A7B707 /* libz.a */; };
 		CE3102B61DBFD0730085A4DC /* DeferredLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE3102B51DBFD0730085A4DC /* DeferredLayout.cpp */; };
+		CE43BB2B1EC456A20085A4DC /* CheckSums.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE43BB291EC456A20085A4DC /* CheckSums.cpp */; };
 		CE5C92C91B81FE9C002346C0 /* main.xib in Sources */ = {isa = PBXBuildFile; fileRef = 34ACA40C0FFFABE600500F40 /* main.xib */; };
 		CE6183A61BB80D2E00952BEA /* BlockControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE61839D1BB80D2E00952BEA /* BlockControl.cpp */; };
 		CE6183A71BB80D2E00952BEA /* ImageBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE61839E1BB80D2E00952BEA /* ImageBlock.cpp */; };
@@ -1084,6 +1085,8 @@
 		CE2C454C1C65036F0085A4DC /* ResourceBrowseWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceBrowseWnd.h; sourceTree = "<group>"; };
 		CE3102B41DBFD05B0085A4DC /* DeferredLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeferredLayout.h; sourceTree = "<group>"; };
 		CE3102B51DBFD0730085A4DC /* DeferredLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeferredLayout.cpp; sourceTree = "<group>"; };
+		CE43BB291EC456A20085A4DC /* CheckSums.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CheckSums.cpp; sourceTree = "<group>"; };
+		CE43BB2A1EC456A20085A4DC /* CheckSums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckSums.h; sourceTree = "<group>"; };
 		CE594BAD1CB2D1360085A4DC /* color_convert.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = color_convert.hpp; sourceTree = "<group>"; };
 		CE594BC21CB2D1360085A4DC /* png_dynamic_io.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = png_dynamic_io.hpp; sourceTree = "<group>"; };
 		CE594BC31CB2D1360085A4DC /* png_io.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = png_io.hpp; sourceTree = "<group>"; };
@@ -1822,6 +1825,8 @@
 				471D5D1A0A98A3F900DA9C21 /* binreloc.c */,
 				471D5D1B0A98A3F900DA9C21 /* binreloc.h */,
 				471D5CF60A98A3F900DA9C21 /* blocking_combiner.h */,
+				CE43BB291EC456A20085A4DC /* CheckSums.cpp */,
+				CE43BB2A1EC456A20085A4DC /* CheckSums.h */,
 				CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */,
 				471D5D1E0A98A3F900DA9C21 /* Directories.cpp */,
 				471D5D1F0A98A3F900DA9C21 /* Directories.h */,
@@ -1832,8 +1837,8 @@
 				3A5105521748D68B00DC258B /* i18n.cpp */,
 				3A5105531748D68B00DC258B /* i18n.h */,
 				3A5105551748D6A600DC258B /* Logger.cpp */,
-				3A5105551748D6A600DC258C /* LoggerWithOptionsDB.cpp */,
 				3A5105561748D6A700DC258B /* Logger.h */,
+				3A5105551748D6A600DC258C /* LoggerWithOptionsDB.cpp */,
 				3A5105561748D6A700DC258C /* LoggerWithOptionsDB.h */,
 				825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */,
 				825EA75F16DB9DB10002A797 /* ModeratorAction.h */,
@@ -2501,6 +2506,7 @@
 				82592EF0147E381B00B840A5 /* EffectAccounting.cpp in Sources */,
 				82592EF6147E387100B840A5 /* ObjectMap.cpp in Sources */,
 				82BEB659159853B300B024CB /* Diplomacy.cpp in Sources */,
+				CE43BB2B1EC456A20085A4DC /* CheckSums.cpp in Sources */,
 				8250FDE515FCEFDE00523C1C /* Field.cpp in Sources */,
 				825EA76016DB9DB10002A797 /* ModeratorAction.cpp in Sources */,
 				82C96D0B16E4C1F900579E56 /* SerializeModeratorAction.cpp in Sources */,

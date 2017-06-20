@@ -3,6 +3,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
+#include "../util/CheckSums.h"
 #include "../parse/Parse.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
@@ -90,6 +91,15 @@ namespace {
     }
 }
 
+namespace CheckSums {
+    void CheckSumCombine(unsigned int& sum, const HullType::Slot& slot) {
+        TraceLogger() << "CheckSumCombine(Slot): " << typeid(slot).name();
+        CheckSumCombine(sum, slot.x);
+        CheckSumCombine(sum, slot.y);
+        CheckSumCombine(sum, slot.type);
+    }
+}
+
 ////////////////////////////////////////////////
 // Free Functions                             //
 ////////////////////////////////////////////////
@@ -134,6 +144,8 @@ PartTypeManager::PartTypeManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
+
+    DebugLogger() << "PartTypeManager checksum: " << GetCheckSum();
 }
 
 PartTypeManager::~PartTypeManager() {
@@ -157,6 +169,15 @@ PartTypeManager::iterator PartTypeManager::begin() const
 
 PartTypeManager::iterator PartTypeManager::end() const
 { return m_parts.end(); }
+
+unsigned int PartTypeManager::GetCheckSum() const {
+    unsigned int retval{0};
+    for (auto const& name_part_pair : m_parts)
+        CheckSums::CheckSumCombine(retval, name_part_pair);
+    CheckSums::CheckSumCombine(retval, m_parts.size());
+
+    return retval;
+}
 
 
 ////////////////////////////////////////////////
@@ -205,7 +226,7 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
     m_icon(icon),
     m_add_standard_capacity_effect(add_standard_capacity_effect)
 {
-    //std::cout << "part type: " << m_name << " producible: " << m_producible << std::endl;
+    //TraceLogger() << "part type: " << m_name << " producible: " << m_producible << std::endl;
     Init(common_params.effects);
     for (const std::string& tag : common_params.tags)
         m_tags.insert(boost::to_upper_copy<std::string>(tag));
@@ -372,6 +393,30 @@ int PartType::ProductionTime(int empire_id, int location_id) const {
     }
 }
 
+unsigned int PartType::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, m_name);
+    CheckSums::CheckSumCombine(retval, m_description);
+    CheckSums::CheckSumCombine(retval, m_class);
+    CheckSums::CheckSumCombine(retval, m_capacity);
+    CheckSums::CheckSumCombine(retval, m_secondary_stat);
+    CheckSums::CheckSumCombine(retval, m_production_cost);
+    CheckSums::CheckSumCombine(retval, m_production_time);
+    CheckSums::CheckSumCombine(retval, m_producible);
+    CheckSums::CheckSumCombine(retval, m_mountable_slot_types);
+    CheckSums::CheckSumCombine(retval, m_tags);
+    CheckSums::CheckSumCombine(retval, m_production_meter_consumption);
+    CheckSums::CheckSumCombine(retval, m_production_special_consumption);
+    CheckSums::CheckSumCombine(retval, m_location);
+    CheckSums::CheckSumCombine(retval, m_exclusions);
+    CheckSums::CheckSumCombine(retval, m_effects);
+    CheckSums::CheckSumCombine(retval, m_icon);
+    CheckSums::CheckSumCombine(retval, m_add_standard_capacity_effect);
+
+    return retval;
+}
+
 
 ////////////////////////////////////////////////
 // HullType
@@ -467,6 +512,40 @@ int HullType::ProductionTime(int empire_id, int location_id) const {
     }
 }
 
+unsigned int HullType::GetCheckSum() const {
+    unsigned int retval{0};
+
+    //// test
+    //std::map<unsigned long int, std::shared_ptr<Blah>> int_pBlah_map{
+    //    {103U, std::make_shared<Blah>()}, {0, nullptr}};
+    //CheckSumCombine(retval, int_pBlah_map);
+    //std::map<MeterType, std::string> metertype_string_map{{METER_INDUSTRY, "STRING!"}};
+    //CheckSumCombine(retval, metertype_string_map);
+    //return retval;
+    //// end test
+
+    CheckSums::CheckSumCombine(retval, m_name);
+    CheckSums::CheckSumCombine(retval, m_description);
+    CheckSums::CheckSumCombine(retval, m_speed);
+    CheckSums::CheckSumCombine(retval, m_fuel);
+    CheckSums::CheckSumCombine(retval, m_stealth);
+    CheckSums::CheckSumCombine(retval, m_structure);
+    CheckSums::CheckSumCombine(retval, m_production_cost);
+    CheckSums::CheckSumCombine(retval, m_production_time);
+    CheckSums::CheckSumCombine(retval, m_producible);
+    CheckSums::CheckSumCombine(retval, m_slots);
+    CheckSums::CheckSumCombine(retval, m_tags);
+    CheckSums::CheckSumCombine(retval, m_production_meter_consumption);
+    CheckSums::CheckSumCombine(retval, m_production_special_consumption);
+    CheckSums::CheckSumCombine(retval, m_location);
+    CheckSums::CheckSumCombine(retval, m_exclusions);
+    CheckSums::CheckSumCombine(retval, m_effects);
+    CheckSums::CheckSumCombine(retval, m_graphic);
+    CheckSums::CheckSumCombine(retval, m_icon);
+
+    return retval;
+}
+
 
 /////////////////////////////////////
 // HullTypeManager                 //
@@ -493,6 +572,8 @@ HullTypeManager::HullTypeManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
+
+    DebugLogger() << "HullTypeManager checksum: " << GetCheckSum();
 }
 
 HullTypeManager::~HullTypeManager() {
@@ -517,6 +598,14 @@ HullTypeManager::iterator HullTypeManager::begin() const
 HullTypeManager::iterator HullTypeManager::end() const
 { return m_hulls.end(); }
 
+unsigned int HullTypeManager::GetCheckSum() const {
+    unsigned int retval{0};
+    for (auto const& name_hull_pair : m_hulls)
+        CheckSums::CheckSumCombine(retval, name_hull_pair);
+    CheckSums::CheckSumCombine(retval, m_hulls.size());
+
+    return retval;
+}
 
 ////////////////////////////////////////////////
 // ShipDesign
@@ -1010,6 +1099,23 @@ std::string ShipDesign::Dump() const {
     return retval; 
 }
 
+unsigned int ShipDesign::GetCheckSum() const {
+    unsigned int retval{0};
+    CheckSums::CheckSumCombine(retval, m_id);
+    CheckSums::CheckSumCombine(retval, m_name);
+    CheckSums::CheckSumCombine(retval, m_description);
+    CheckSums::CheckSumCombine(retval, m_designed_on_turn);
+    CheckSums::CheckSumCombine(retval, m_designed_by_empire);
+    CheckSums::CheckSumCombine(retval, m_hull);
+    CheckSums::CheckSumCombine(retval, m_parts);
+    CheckSums::CheckSumCombine(retval, m_is_monster);
+    CheckSums::CheckSumCombine(retval, m_icon);
+    CheckSums::CheckSumCombine(retval, m_3D_model);
+    CheckSums::CheckSumCombine(retval, m_name_desc_in_stringtable);
+
+    return retval;
+}
+
 bool operator ==(const ShipDesign& first, const ShipDesign& second) {
     if (first.Hull() != second.Hull())
         return false;
@@ -1070,6 +1176,8 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
+
+    DebugLogger() << "PredefinedShipDesignManager checksum: " << GetCheckSum();
 }
 
 namespace {
@@ -1165,6 +1273,20 @@ int PredefinedShipDesignManager::GetDesignID(const std::string& name) const {
     if (it == m_design_generic_ids.end())
         return INVALID_DESIGN_ID;
     return it->second;
+}
+
+unsigned int PredefinedShipDesignManager::GetCheckSum() const {
+    unsigned int retval{0};
+
+    for (auto const& name_design_pair : m_ship_designs)
+        CheckSums::CheckSumCombine(retval, name_design_pair);
+    CheckSums::CheckSumCombine(retval, m_ship_designs.size());
+
+    for (auto const& name_design_pair : m_monster_designs)
+        CheckSums::CheckSumCombine(retval, name_design_pair);
+    CheckSums::CheckSumCombine(retval, m_monster_designs.size());
+
+    return retval;
 }
 
 

@@ -454,7 +454,7 @@ private:
     ObjectKnowledgeMap              m_empire_stale_knowledge_object_ids;///< map from empire id to (set of object ids that the empire has previously observed but has subsequently been unable to detect at its last known location despite expecting to be able to detect it based on stealth of the object and having detectors in range)
 
     ShipDesignMap                   m_ship_designs;                     ///< ship designs in the universe
-    std::map<int, std::set<int>>   m_empire_known_ship_design_ids;     ///< ship designs known to each empire
+    std::map<int, std::set<int>>    m_empire_known_ship_design_ids;     ///< ship designs known to each empire
 
     Effect::AccountingMap           m_effect_accounting_map;            ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
     Effect::DiscrepancyMap          m_effect_discrepancy_map;           ///< map from target object id, to map from target meter, to discrepancy between meter's actual initial value, and the initial value that this meter should have as far as the client can tell: the unknown factor affecting the meter
