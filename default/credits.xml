@@ -4,7 +4,7 @@
     <GROUP name="LEAD">
       <PERSON name="Geoff Topping"            nick="Geoff the Medio"  task="Programming, Design"/>
       <PERSON name=""                         nick="Dilvish"          task="Programming, Design"/>
-      <PERSON name=""                         nick="Vezzra"           task="Programming, Release Management"/>
+      <PERSON name=""                         nick="Vezzra"           task="Release Management, Design"/>
     </GROUP>
     <GROUP name="LEAD EMERITUS">
       <PERSON name="Mark Saward"              nick="Tyreth"           task="Programming, Game Design, Graphics"/>
