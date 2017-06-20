@@ -96,14 +96,14 @@ namespace {
 
         void operator()() {
             try {
-                FileDlg dlg(m_path.string(), m_edit->Text(), false, false, m_filters);
+                auto dlg = GG::Wnd::Create<FileDlg>(m_path.string(), m_edit->Text(), false, false, m_filters);
                 if (m_directory)
-                    dlg.SelectDirectories(true);
-                dlg.Run();
-                if (!dlg.Result().empty()) {
+                    dlg->SelectDirectories(true);
+                dlg->Run();
+                if (!dlg->Result().empty()) {
                     fs::path path = m_return_relative_path ?
-                        RelativePath(m_path, fs::path(*dlg.Result().begin())) :
-                    fs::absolute(*dlg.Result().begin());
+                        RelativePath(m_path, fs::path(*(dlg->Result().begin()))) :
+                        fs::absolute(*(dlg->Result().begin()));
                     *m_edit << path.string();
                     m_edit->EditedSignal(m_edit->Text());
                 }

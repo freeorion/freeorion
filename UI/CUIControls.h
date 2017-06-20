@@ -555,8 +555,11 @@ class FileDlg : public GG::FileDlg {
 public:
     /** \name Structors */ //@{
     FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
-            const std::vector<std::pair<std::string, std::string>>& types);
+            std::vector<std::pair<std::string, std::string>> types);
     //@}
+    void CompleteConstruction() override;
+private:
+    const std::vector<std::pair<std::string, std::string>> m_init_file_filters;
 };
 
 /** Despite the name, this is actually used to display info in both the Research and Production screens. */

@@ -1639,11 +1639,17 @@ void ColorSelector::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 // class FileDlg
 ///////////////////////////////////////
 FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
-                 const std::vector<std::pair<std::string, std::string>>& types) :
+                 std::vector<std::pair<std::string, std::string>> types) :
     GG::FileDlg(directory, filename, save, multi, ClientUI::GetFont(),
-                ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor())
+                ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor()),
+    m_init_file_filters(std::forward<std::vector<std::pair<std::string, std::string>>>(types))
+{}
+
+void FileDlg::CompleteConstruction()
 {
-    SetFileFilters(types);
+    GG::FileDlg::CompleteConstruction();
+
+    SetFileFilters(m_init_file_filters);
     AppendMissingSaveExtension(true);
 }
 
