@@ -58,8 +58,11 @@ GroupBox::GroupBox(X x, Y y, X w, Y h, const std::string& label, const std::shar
     m_font(font),
     m_label(label.empty() ? nullptr : GUI::GetGUI()->GetStyleFactory()->NewTextControl(label, m_font, m_text_color, FORMAT_LEFT | FORMAT_TOP)),
     m_set_client_corners_equal_to_box_corners(false)
+{}
+
+void GroupBox::CompleteConstruction()
 {
-    if (m_label) {
+   if (m_label) {
         m_label->MoveTo(Pt(X0, -m_font->Lineskip()));
         m_label->MoveTo(Pt(X1, m_font->Lineskip()));
         AttachChild(m_label);
