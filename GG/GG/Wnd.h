@@ -156,8 +156,8 @@ extern GG_API const WndFlag NO_WND_FLAGS;
 
     Each window uses shared_from_this() to refer to itself.  The internal
     weak_ptr from shared_from_this is not constructed until after the Wnd is
-    assigned to at least one shared_ptr.  Consequently, AttachChild() can
-    not be called from within a constructor.
+    assigned to at least one shared_ptr.  Consequently, neither AttachChild()
+    nor SetLayout() can be called from within a constructor.
 
     A default factory function Create<T> is provided that creates the shared_ptr
     and then calls CompleteConstruction() in order to assemble the children.  A
