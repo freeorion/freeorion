@@ -638,7 +638,7 @@ void Wnd::HorizontalLayout()
         wnds.insert(child);
     }
 
-    m_layout = new Layout(X0, Y0, ClientSize().x, ClientSize().y,
+    m_layout = Wnd::Create<Layout>(X0, Y0, ClientSize().x, ClientSize().y,
                           1, wnds.size(),
                           DEFAULT_LAYOUT_BORDER_MARGIN, DEFAULT_LAYOUT_CELL_MARGIN);
     AttachChild(m_layout);
@@ -662,7 +662,7 @@ void Wnd::VerticalLayout()
         wnds.insert(child);
     }
 
-    m_layout = new Layout(X0, Y0, ClientSize().x, ClientSize().y,
+    m_layout = Wnd::Create<Layout>(X0, Y0, ClientSize().x, ClientSize().y,
                           wnds.size(), 1,
                           DEFAULT_LAYOUT_BORDER_MARGIN, DEFAULT_LAYOUT_CELL_MARGIN);
     AttachChild(m_layout);
@@ -775,7 +775,7 @@ void Wnd::GridLayout()
     if (unique_lefts.empty() || unique_tops.empty())
         return;
 
-    m_layout = new Layout(X0, Y0, ClientSize().x, ClientSize().y,
+    m_layout = Wnd::Create<Layout>(X0, Y0, ClientSize().x, ClientSize().y,
                           unique_tops.size(), unique_lefts.size(),
                           DEFAULT_LAYOUT_BORDER_MARGIN, DEFAULT_LAYOUT_CELL_MARGIN);
     AttachChild(m_layout);

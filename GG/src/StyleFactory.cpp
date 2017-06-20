@@ -88,17 +88,17 @@ Button* StyleFactory::NewButton(const std::string& str, const std::shared_ptr<Fo
 { return new Button(str, font, color, text_color, flags); }
 
 RadioButtonGroup* StyleFactory::NewRadioButtonGroup(Orientation orientation) const
-{ return new RadioButtonGroup(orientation); }
+{ return Wnd::Create<RadioButtonGroup>(orientation); }
 
 DropDownList* StyleFactory::NewDropDownList(size_t num_shown_elements, Clr color) const
-{ return new DropDownList(num_shown_elements, color); }
+{ return Wnd::Create<DropDownList>(num_shown_elements, color); }
 
 Edit* StyleFactory::NewEdit(const std::string& str, const std::shared_ptr<Font>& font,
                             Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) const
-{ return new Edit(str, font, color, text_color, interior); }
+{ return Wnd::Create<Edit>(str, font, color, text_color, interior); }
 
 ListBox* StyleFactory::NewListBox(Clr color, Clr interior/* = CLR_ZERO*/) const
-{ return new ListBox(color, interior); }
+{ return Wnd::Create<ListBox>(color, interior); }
 
 Scroll* StyleFactory::NewScroll(Orientation orientation, Clr color, Clr interior) const
 { return new Scroll(orientation, color, interior); }
@@ -109,7 +109,7 @@ Slider<int>* StyleFactory::NewIntSlider(int min, int max, Orientation orientatio
 
 TextControl* StyleFactory::NewTextControl(const std::string& str, const std::shared_ptr<Font>& font,
                                           Clr color/* = CLR_BLACK*/, Flags<TextFormat> format/* = FORMAT_NONE*/) const
-{ return new TextControl(X0, Y0, X1, Y1, str, font, color, format, NO_WND_FLAGS); }
+{ return Wnd::Create<TextControl>(X0, Y0, X1, Y1, str, font, color, format, NO_WND_FLAGS); }
 
 TabBar* StyleFactory::NewTabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
 { return new TabBar(font, color, text_color, INTERACTIVE); }
@@ -190,7 +190,7 @@ ThreeButtonDlg* StyleFactory::NewThreeButtonDlg(X w, Y h, const std::string& msg
                                                 int buttons, const std::string& zero/* = ""*/,
                                                 const std::string& one/* = ""*/, const std::string& two/* = ""*/) const
 {
-    return new ThreeButtonDlg(w, h, msg, font, color, border_color, button_color, text_color,
+    return Wnd::Create<ThreeButtonDlg>(w, h, msg, font, color, border_color, button_color, text_color,
                               buttons, zero, one, two);
 }
 

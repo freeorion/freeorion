@@ -37,7 +37,7 @@ namespace GG {
     {
         // Construct the text control. Activatee full text wrapping features, and make it stick to the top.
         // With these setting the height is largely ignored, so we set it to one.
-        m_text = new TextControl(GG::X0, GG::Y0, w, Y1, str, font, color,
+        m_text = Wnd::Create<TextControl>(GG::X0, GG::Y0, w, Y1, str, font, color,
                                  format | FORMAT_WORDBREAK | FORMAT_LINEWRAP | FORMAT_TOP, flags);
         AttachChild(m_text);
     }
@@ -64,7 +64,7 @@ namespace GG {
                                     const Clr& color,
                                     Flags<TextFormat> format) override
         {
-            return new TextBlock(X0, Y0, X1, content, font, color, format, NO_WND_FLAGS);
+            return Wnd::Create<TextBlock>(X0, Y0, X1, content, font, color, format, NO_WND_FLAGS);
         }
     };
 

@@ -533,29 +533,29 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
         }
     }
 
-    m_hue_saturation_picker = new HueSaturationPicker(X(10), Y(10), X(300), Y(300));
+    m_hue_saturation_picker = Wnd::Create<HueSaturationPicker>(X(10), Y(10), X(300), Y(300));
     m_hue_saturation_picker->SetHueSaturation(m_current_color.h, m_current_color.s);
-    m_value_picker = new ValuePicker(X(320), Y(10), X(25), Y(300), m_text_color);
+    m_value_picker = Wnd::Create<ValuePicker>(X(320), Y(10), X(25), Y(300), m_text_color);
     m_value_picker->SetHueSaturation(m_current_color.h, m_current_color.s);
     m_value_picker->SetValue(m_current_color.v);
     const int HUE_SATURATION_PICKER_SIZE = 200;
-    m_pickers_layout = new Layout(X0, Y0, X(HUE_SATURATION_PICKER_SIZE + 30), Y(HUE_SATURATION_PICKER_SIZE),
+    m_pickers_layout = Wnd::Create<Layout>(X0, Y0, X(HUE_SATURATION_PICKER_SIZE + 30), Y(HUE_SATURATION_PICKER_SIZE),
                                   1, 2, 0, 5);
     m_pickers_layout->SetColumnStretch(0, 1);
     m_pickers_layout->SetMinimumColumnWidth(1, X(24));
     m_pickers_layout->Add(m_hue_saturation_picker, 0, 0);
     m_pickers_layout->Add(m_value_picker, 0, 1);
 
-    m_color_squares_layout = new Layout(X0, m_pickers_layout->Bottom() + 5, m_pickers_layout->Width(), Y(40),
+    m_color_squares_layout = Wnd::Create<Layout>(X0, m_pickers_layout->Bottom() + 5, m_pickers_layout->Width(), Y(40),
                                         1, 1, 0, 4);
-    m_new_color_square = new ColorDisplay(color);
+    m_new_color_square = Wnd::Create<ColorDisplay>(color);
     if (m_original_color_specified) {
         m_new_color_square_text = style->NewTextControl(style->Translate("New"), font, m_text_color, FORMAT_RIGHT);
         m_color_squares_layout->Add(m_new_color_square_text, 0, 0);
         m_color_squares_layout->Add(m_new_color_square, 0, 1);
         m_old_color_square_text = style->NewTextControl(style->Translate("Old"), font, m_text_color, FORMAT_RIGHT);
         m_color_squares_layout->Add(m_old_color_square_text, 1, 0);
-        m_old_color_square = new ColorDisplay(m_original_color);
+        m_old_color_square = Wnd::Create<ColorDisplay>(m_original_color);
         m_color_squares_layout->Add(m_old_color_square, 1, 1);
         m_color_squares_layout->SetMinimumColumnWidth(0, X(30));
         m_color_squares_layout->SetColumnStretch(1, 1);
@@ -563,7 +563,7 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
         m_color_squares_layout->Add(m_new_color_square, 0, 0);
     }
 
-    m_color_buttons_layout = new Layout(X0, m_color_squares_layout->Bottom() + 5, m_pickers_layout->Width(), Y(80),
+    m_color_buttons_layout = Wnd::Create<Layout>(X0, m_color_squares_layout->Bottom() + 5, m_pickers_layout->Width(), Y(80),
                                         COLOR_BUTTON_ROWS, COLOR_BUTTON_COLS, 0, 4);
     for (int i = 0; i < COLOR_BUTTON_ROWS; ++i) {
         for (int j = 0; j < COLOR_BUTTON_COLS; ++j) {
@@ -573,7 +573,7 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
         }
     }
 
-    m_sliders_ok_cancel_layout = new Layout(m_pickers_layout->Right() + 5, Y0, X(150), Y((25 + 5) * 8 - 5),
+    m_sliders_ok_cancel_layout = Wnd::Create<Layout>(m_pickers_layout->Right() + 5, Y0, X(150), Y((25 + 5) * 8 - 5),
                                             9, 3, 0, 5);
     m_sliders_ok_cancel_layout->SetMinimumColumnWidth(0, X(15));
     m_sliders_ok_cancel_layout->SetMinimumColumnWidth(1, X(30));
@@ -613,7 +613,7 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
     m_cancel = style->NewButton(style->Translate("Cancel"), font, m_color, m_text_color);
     m_sliders_ok_cancel_layout->Add(m_cancel, 8, 0, 1, 3);
 
-    auto master_layout = new Layout(X0, Y0, ClientWidth(), ClientHeight(), 3, 2, 5, 5);
+    auto master_layout = Wnd::Create<Layout>(X0, Y0, ClientWidth(), ClientHeight(), 3, 2, 5, 5);
     master_layout->SetColumnStretch(0, 1.25);
     master_layout->SetColumnStretch(1, 1);
     master_layout->SetRowStretch(0, 1.25);
