@@ -3758,7 +3758,6 @@ def userStringList(string):
 def validShipDesign(string, string_list):
     """
     Returns true (boolean) if the passed hull (string) and parts (StringVec) make up a valid ship design, and false (boolean) otherwise. Valid ship designs don't have any parts in slots that can't accept that type of part, and contain only hulls and parts that exist (and may also need to contain the correct number of parts - this needs to be verified).
-    Returns true (boolean) if the passed ship design (ShipDesign) is valid, and false otherwise.
 
     :param string:
     :type string: str

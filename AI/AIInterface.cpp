@@ -847,10 +847,6 @@ namespace AIInterface {
             ErrorLogger() << "IssueCreateShipDesignOrderOrder : passed an empty name, description, or hull.";
             return 0;
         }
-        if (!ShipDesign::ValidDesign(hull, parts)) {
-            ErrorLogger() << "IssueCreateShipDesignOrderOrder : pass a hull and parts that do not make a valid ShipDesign";
-            return 0;
-        }
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
         int current_turn = CurrentTurn();
@@ -858,10 +854,12 @@ namespace AIInterface {
         const auto uuid = boost::uuids::random_generator()();
 
         // create design from stuff chosen in UI
-        ShipDesign* design = new ShipDesign(name, description, current_turn, ClientApp::GetApp()->EmpireID(),
-                                            hull, parts, icon, model, name_desc_in_stringtable, false, uuid);
+        ShipDesign* design;
+        try {
+            design = new ShipDesign(std::invalid_argument(""), name, description, current_turn, ClientApp::GetApp()->EmpireID(),
+                                    hull, parts, icon, model, name_desc_in_stringtable, false, uuid);
 
-        if (!design) {
+        } catch (const std::invalid_argument&) {
             ErrorLogger() << "IssueCreateShipDesignOrderOrder failed to create a new ShipDesign object";
             return 0;
         }

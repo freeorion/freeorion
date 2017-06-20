@@ -186,7 +186,6 @@ namespace {
 
     bool                    (*ValidDesignHullAndParts)(const std::string& hull,
                                                        const std::vector<std::string>& parts) = &ShipDesign::ValidDesign;
-    bool                    (*ValidDesignDesign)(const ShipDesign&) =                           &ShipDesign::ValidDesign;
 
     const std::vector<std::string>& (ShipDesign::*PartsVoid)(void) const =                      &ShipDesign::Parts;
     // The following (PartsSlotType) is not currently used, but left as an example for this kind of wrapper
@@ -526,7 +525,6 @@ namespace FreeOrionPython {
             .add_property("dump",               &ShipDesign::Dump)
         ;
         def("validShipDesign",                  ValidDesignHullAndParts, "Returns true (boolean) if the passed hull (string) and parts (StringVec) make up a valid ship design, and false (boolean) otherwise. Valid ship designs don't have any parts in slots that can't accept that type of part, and contain only hulls and parts that exist (and may also need to contain the correct number of parts - this needs to be verified).");
-        def("validShipDesign",                  ValidDesignDesign, "Returns true (boolean) if the passed ship design (ShipDesign) is valid, and false otherwise.");
         def("getShipDesign",                    &GetShipDesign,                             return_value_policy<reference_existing_object>(), "Returns the ship design (ShipDesign) with the indicated id number (int).");
 
         class_<PartType, noncopyable>("partType", no_init)

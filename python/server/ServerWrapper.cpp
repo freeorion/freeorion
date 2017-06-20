@@ -389,18 +389,16 @@ namespace {
             parts.push_back(extract<std::string>(py_parts[i]));
         }
 
-        // Check if design is valid
-        if (!ShipDesign::ValidDesign(hull, parts)) {
+        // Create the design and add it to the universe
+        ShipDesign* design;
+        try {
+            design = new ShipDesign(std::invalid_argument(""), name, description, BEFORE_FIRST_TURN, ALL_EMPIRES,
+                                    hull, parts, icon, model, true, monster);
+        } catch (const std::invalid_argument&) {
             ErrorLogger() << "CreateShipDesign: invalid ship design";
             return false;
         }
 
-        // Create the design and add it to the universe
-        ShipDesign* design = new ShipDesign(name, description, BEFORE_FIRST_TURN, ALL_EMPIRES, hull, parts, icon, model, true, monster);
-        if (!design) {
-            ErrorLogger() << "CreateShipDesign: couldn't create ship design";
-            return false;
-        }
         if (universe.InsertShipDesign(design) == INVALID_DESIGN_ID) {
             ErrorLogger() << "CreateShipDesign: couldn't insert ship design into universe";
             delete design;

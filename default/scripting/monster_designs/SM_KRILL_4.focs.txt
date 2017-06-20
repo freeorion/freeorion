@@ -8,6 +8,7 @@ ShipDesign
         "FT_BAY_KRILL"
         "FT_BAY_KRILL"
         "FT_BAY_KRILL"
+        ""
     ]
     icon = "icons/monsters/krill-4.png"
     model = "seed"

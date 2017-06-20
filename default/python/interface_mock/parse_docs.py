@@ -228,4 +228,4 @@ if __name__ == '__main__':
     # double standarts
     # canBuild ['empire', 'buildType', 'str', 'int'], ['empire', 'buildType', 'int', 'int']
     # inField ['field', 'universeObject'], ['field', 'float', 'float']
-    # validShipDesign ['str', 'StringVec'], ['shipDesign']
+    # validShipDesign ['str', 'StringVec']

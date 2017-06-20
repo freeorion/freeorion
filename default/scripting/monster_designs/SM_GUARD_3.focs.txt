@@ -11,6 +11,7 @@ ShipDesign
         "AR_PRECURSOR_PLATE"
         "AR_PRECURSOR_PLATE"
         "SH_BLACK"
+        ""
     ]
     icon = "icons/monsters/warden.png"
     model = "seed"
