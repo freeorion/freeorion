@@ -30,7 +30,7 @@ namespace {
     { return !GetPathfinder()->SystemHasVisibleStarlanes(system_id, empire_id); }
 
     template<typename IT>
-    double PathLength (const IT& begin, const IT& end) {
+    double PathLength(const IT& begin, const IT& end) {
         if (begin == end) {
             return 0;
         } else {
@@ -1250,19 +1250,18 @@ float Fleet::Speed() const {
     if (m_ships.empty())
         return 0.0f;
 
-    bool isFleetScrapped = true;
+    bool fleet_is_scrapped = true;
     float retval = MAX_SHIP_SPEED;  // max speed no ship can go faster than
     for (int ship_id : m_ships) {
-        if (std::shared_ptr<const Ship> ship = GetShip(ship_id)) {
-            if (!ship->OrderedScrapped()) {
-                if (ship->Speed() < retval)
-                    retval = ship->Speed();
-                isFleetScrapped = false;
-            }
-        }
+        std::shared_ptr<const Ship> ship = GetShip(ship_id);
+        if (!ship || ship->OrderedScrapped())
+            continue;
+        if (ship->Speed() < retval)
+            retval = ship->Speed();
+        fleet_is_scrapped = false;
     }
 
-    if (isFleetScrapped)
+    if (fleet_is_scrapped)
         retval = 0.0f;
 
     return retval;
@@ -1272,7 +1271,7 @@ float Fleet::Damage() const {
     if (m_ships.empty())
         return 0.0f;
 
-    bool isFleetScrapped = true;
+    bool fleet_is_scrapped = true;
     float retval = 0.0f;
     for (int ship_id : m_ships) {
         if (std::shared_ptr<const Ship> ship = GetShip(ship_id)) {
@@ -1280,12 +1279,12 @@ float Fleet::Damage() const {
                 if (const ShipDesign* design = ship->Design()){
                     retval += design->Attack();
                 }
-                isFleetScrapped = false;
+                fleet_is_scrapped = false;
             }
         }
     }
 
-    if (isFleetScrapped)
+    if (fleet_is_scrapped)
         retval = 0.0f;
 
     return retval;
@@ -1295,18 +1294,18 @@ float Fleet::Structure() const {
     if (m_ships.empty())
         return 0.0f;
 
-    bool isFleetScrapped = true;
+    bool fleet_is_scrapped = true;
     float retval = 0.0f;
     for (int ship_id : m_ships) {
         if (std::shared_ptr<const Ship> ship = GetShip(ship_id)) {
             if (!ship->OrderedScrapped()) {
                 retval += ship->CurrentMeterValue(METER_STRUCTURE);
-                isFleetScrapped = false;
+                fleet_is_scrapped = false;
             }
         }
     }
 
-    if (isFleetScrapped)
+    if (fleet_is_scrapped)
         retval = 0.0f;
 
     return retval;
@@ -1316,18 +1315,18 @@ float Fleet::Shields() const {
     if (m_ships.empty())
         return 0.0f;
 
-    bool isFleetScrapped = true;
+    bool fleet_is_scrapped = true;
     float retval = 0.0f;
     for (int ship_id : m_ships) {
         if (std::shared_ptr<const Ship> ship = GetShip(ship_id)) {
             if (!ship->OrderedScrapped()) {
                 retval += ship->CurrentMeterValue(METER_SHIELD);
-                isFleetScrapped = false;
+                fleet_is_scrapped = false;
             }
         }
     }
 
-    if (isFleetScrapped)
+    if (fleet_is_scrapped)
         retval = 0.0f;
 
     return retval;
