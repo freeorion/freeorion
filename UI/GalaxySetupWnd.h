@@ -38,6 +38,13 @@ private:
     void DoLayout();
     void SettingChanged();
 
+    void BoolRuleChanged(const GG::StateButton* button,
+                         const std::string& rule_name);
+    void IntRuleChanged(const GG::Spin<int>* spin,
+                        const std::string& rule_name);
+
+    std::map<std::string, std::string>  m_rules;
+
     GG::StateButton*    m_cheap_build_toggle = nullptr;
     GG::StateButton*    m_cheap_ships_toggle = nullptr;
     GG::StateButton*    m_cheap_techs_toggle = nullptr;

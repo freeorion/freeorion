@@ -71,7 +71,10 @@ GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
     m_cheap_build_toggle->SetCheck(GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION"));
     m_cheap_build_toggle->SetBrowseModeTime(tooltip_delay);
     m_cheap_build_toggle->SetBrowseText(UserString(GetGameRules().GetDescription("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION")));
-    m_cheap_build_toggle->CheckedSignal.connect(boost::bind(&GameRulesPanel::SettingChanged, this));
+    m_cheap_build_toggle->CheckedSignal.connect(boost::bind(&GameRulesPanel::BoolRuleChanged,
+                                                            this,
+                                                            m_cheap_build_toggle,
+                                                            "RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION"));
 
 
     m_cheap_ships_toggle = new CUIStateButton(UserString("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"),
@@ -80,7 +83,10 @@ GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
     m_cheap_ships_toggle->SetCheck(GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"));
     m_cheap_ships_toggle->SetBrowseModeTime(tooltip_delay);
     m_cheap_ships_toggle->SetBrowseText(UserString(GetGameRules().GetDescription("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION")));
-    m_cheap_ships_toggle->CheckedSignal.connect(boost::bind(&GameRulesPanel::SettingChanged, this));
+    m_cheap_ships_toggle->CheckedSignal.connect(boost::bind(&GameRulesPanel::BoolRuleChanged,
+                                                            this,
+                                                            m_cheap_ships_toggle,
+                                                            "RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"));
 
 
     m_cheap_techs_toggle = new CUIStateButton(UserString("RULE_CHEAP_AND_FAST_TECH_RESEARCH"),
@@ -89,7 +95,10 @@ GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
     m_cheap_techs_toggle->SetCheck(GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_TECH_RESEARCH"));
     m_cheap_techs_toggle->SetBrowseModeTime(tooltip_delay);
     m_cheap_techs_toggle->SetBrowseText(UserString(GetGameRules().GetDescription("RULE_CHEAP_AND_FAST_TECH_RESEARCH")));
-    m_cheap_techs_toggle->CheckedSignal.connect(boost::bind(&GameRulesPanel::SettingChanged, this));
+    m_cheap_techs_toggle->CheckedSignal.connect(boost::bind(&GameRulesPanel::BoolRuleChanged,
+                                                            this,
+                                                            m_cheap_techs_toggle,
+                                                            "RULE_CHEAP_AND_FAST_TECH_RESEARCH"));
 
 
     m_combat_rounds_label = new CUILabel(UserString("RULE_NUM_COMBAT_ROUNDS"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
@@ -100,7 +109,10 @@ GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
     int value = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
     if (std::shared_ptr<const RangedValidator<int>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<int>>(validator)) {
         m_combat_rounds_spin = new CUISpin<int>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
-        m_combat_rounds_spin->ValueChangedSignal.connect(boost::bind(&GameRulesPanel::SettingChanged, this));
+        m_combat_rounds_spin->ValueChangedSignal.connect(boost::bind(&GameRulesPanel::IntRuleChanged,
+                                                                     this,
+                                                                     m_combat_rounds_spin,
+                                                                     "RULE_NUM_COMBAT_ROUNDS"));
     }
 
 
@@ -116,6 +128,8 @@ GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
 
 std::vector<std::pair<std::string, std::string>> GameRulesPanel::GetRulesAsStrings() const {
     std::vector<std::pair<std::string, std::string>> retval;
+    for (const auto& entry : m_rules)
+        retval.push_back(entry);
     return retval;
 }
 
@@ -173,6 +187,25 @@ void GameRulesPanel::SettingChanged() {
     SettingsChangedSignal();
 }
 
+void GameRulesPanel::BoolRuleChanged(const GG::StateButton* button,
+                                     const std::string& rule_name)
+{
+    std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
+    if (!val)
+        return;
+    m_rules[rule_name] = val->String(button->Checked());
+    SettingChanged();
+}
+
+void GameRulesPanel::IntRuleChanged(const GG::Spin<int>* spin,
+                                     const std::string& rule_name)
+{
+    std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
+    if (!val)
+        return;
+    m_rules[rule_name] = val->String(spin->Value());
+    SettingChanged();
+}
 
 ////////////////////////////////////////////////
 // GalaxySetupPanel
