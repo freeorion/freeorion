@@ -71,6 +71,7 @@ GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
     m_cheap_build_toggle->SetCheck(GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION"));
     m_cheap_build_toggle->SetBrowseModeTime(tooltip_delay);
     m_cheap_build_toggle->SetBrowseText(UserString(GetGameRules().GetDescription("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION")));
+    m_cheap_build_toggle->CheckedSignal.connect(boost::bind(&GameRulesPanel::SettingChanged, this));
 
 
     m_cheap_ships_toggle = new CUIStateButton(UserString("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"),
@@ -79,6 +80,7 @@ GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
     m_cheap_ships_toggle->SetCheck(GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"));
     m_cheap_ships_toggle->SetBrowseModeTime(tooltip_delay);
     m_cheap_ships_toggle->SetBrowseText(UserString(GetGameRules().GetDescription("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION")));
+    m_cheap_ships_toggle->CheckedSignal.connect(boost::bind(&GameRulesPanel::SettingChanged, this));
 
 
     m_cheap_techs_toggle = new CUIStateButton(UserString("RULE_CHEAP_AND_FAST_TECH_RESEARCH"),
@@ -87,6 +89,7 @@ GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
     m_cheap_techs_toggle->SetCheck(GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_TECH_RESEARCH"));
     m_cheap_techs_toggle->SetBrowseModeTime(tooltip_delay);
     m_cheap_techs_toggle->SetBrowseText(UserString(GetGameRules().GetDescription("RULE_CHEAP_AND_FAST_TECH_RESEARCH")));
+    m_cheap_techs_toggle->CheckedSignal.connect(boost::bind(&GameRulesPanel::SettingChanged, this));
 
 
     m_combat_rounds_label = new CUILabel(UserString("RULE_NUM_COMBAT_ROUNDS"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
@@ -95,8 +98,10 @@ GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
     std::shared_ptr<const ValidatorBase> validator = GetGameRules().GetValidator("RULE_NUM_COMBAT_ROUNDS");
 
     int value = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
-    if (std::shared_ptr<const RangedValidator<int>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<int>>(validator))
+    if (std::shared_ptr<const RangedValidator<int>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<int>>(validator)) {
         m_combat_rounds_spin = new CUISpin<int>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
+        m_combat_rounds_spin->ValueChangedSignal.connect(boost::bind(&GameRulesPanel::SettingChanged, this));
+    }
 
 
     AttachChild(m_cheap_build_toggle);
@@ -120,6 +125,8 @@ void GameRulesPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void GameRulesPanel::Disable(bool b) {
+    for (GG::Wnd* child : Children())
+        static_cast<GG::Control*>(child)->Disable(b);
 }
 
 void GameRulesPanel::DoLayout() {
