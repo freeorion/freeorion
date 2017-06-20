@@ -105,7 +105,7 @@ Scroll* StyleFactory::NewScroll(Orientation orientation, Clr color, Clr interior
 
 Slider<int>* StyleFactory::NewIntSlider(int min, int max, Orientation orientation,
                                         Clr color, int tab_width, int line_width/* = 5*/) const
-{ return new Slider<int>(min, max, orientation, color, tab_width, line_width, INTERACTIVE); }
+{ return Wnd::Create<Slider<int>>(min, max, orientation, color, tab_width, line_width, INTERACTIVE); }
 
 TextControl* StyleFactory::NewTextControl(const std::string& str, const std::shared_ptr<Font>& font,
                                           Clr color/* = CLR_BLACK*/, Flags<TextFormat> format/* = FORMAT_NONE*/) const

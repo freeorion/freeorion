@@ -72,6 +72,7 @@ public:
     Slider(T min, T max, Orientation orientation, Clr color,
            unsigned int tab_width, unsigned int line_width = 5, Flags<WndFlag> flags = INTERACTIVE);
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
@@ -172,6 +173,11 @@ Slider<T>::Slider(T min, T max, Orientation orientation,
     m_dragging_tab(false)
 {
     Control::SetColor(color);
+}
+
+template <class T>
+void Slider<T>::CompleteConstruction()
+{
     AttachChild(m_tab);
     m_tab->InstallEventFilter(this);
     SizeMove(UpperLeft(), LowerRight());
