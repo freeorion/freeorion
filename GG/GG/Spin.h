@@ -83,6 +83,7 @@ public:
         and point size used.*/
     Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<Font>& font,
          Clr color, Clr text_color = CLR_BLACK);
+    void CompleteConstruction() override;
 
     ~Spin();
     //@}
@@ -161,7 +162,6 @@ protected:
 
 private:
     void ConnectSignals();
-    void Init(const std::shared_ptr<Font>& font, Clr color, Clr text_color);
     void ValueUpdated(const std::string& val_text);
     void IncrImpl(bool signal);
     void DecrImpl(bool signal);
@@ -198,10 +198,30 @@ Spin<T>::Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<F
     m_down_button(nullptr),
     m_button_width(15)
 {
-    Init(font, color, text_color);
+    std::shared_ptr<StyleFactory> style = GetStyleFactory();
+    Control::SetColor(color);
+    m_edit = style->NewSpinEdit("", font, CLR_ZERO, text_color, CLR_ZERO);
+    std::shared_ptr<Font> small_font = GUI::GetGUI()->GetFont(font, static_cast<int>(font->PointSize() * 0.75));
+    m_up_button = style->NewSpinIncrButton(small_font, color);
+    m_down_button = style->NewSpinDecrButton(small_font, color);
 
     if (INSTRUMENT_ALL_SIGNALS)
         ValueChangedSignal.connect(&ValueChangedEcho);
+}
+
+template<class T>
+void Spin<T>::CompleteConstruction()
+{
+    std::shared_ptr<StyleFactory> style = GetStyleFactory();
+    m_edit->InstallEventFilter(this);
+    m_up_button->InstallEventFilter(this);
+    m_down_button->InstallEventFilter(this);
+    AttachChild(m_edit);
+    AttachChild(m_up_button);
+    AttachChild(m_down_button);
+    ConnectSignals();
+    SizeMove(UpperLeft(), LowerRight());
+    Spin<T>::SetEditTextFromValue();    // should call any derived-class overloads in derived-class constructor. can't do a virtual method call in base class constructor.
 }
 
 template<class T>
@@ -439,26 +459,6 @@ void Spin<T>::ConnectSignals()
         boost::bind(&Spin::IncrImpl, this, true));
     m_down_button->LeftClickedSignal.connect(
         boost::bind(&Spin::DecrImpl, this, true));
-}
-
-template<class T>
-void Spin<T>::Init(const std::shared_ptr<Font>& font, Clr color, Clr text_color)
-{
-    std::shared_ptr<StyleFactory> style = GetStyleFactory();
-    Control::SetColor(color);
-    m_edit = style->NewSpinEdit("", font, CLR_ZERO, text_color, CLR_ZERO);
-    std::shared_ptr<Font> small_font = GUI::GetGUI()->GetFont(font, static_cast<int>(font->PointSize() * 0.75));
-    m_up_button = style->NewSpinIncrButton(small_font, color);
-    m_down_button = style->NewSpinDecrButton(small_font, color);
-    m_edit->InstallEventFilter(this);
-    m_up_button->InstallEventFilter(this);
-    m_down_button->InstallEventFilter(this);
-    AttachChild(m_edit);
-    AttachChild(m_up_button);
-    AttachChild(m_down_button);
-    ConnectSignals();
-    SizeMove(UpperLeft(), LowerRight());
-    Spin<T>::SetEditTextFromValue();    // should call any derived-class overloads in derived-class constructor. can't do a virtual method call in base class constructor.
 }
 
 template<class T>
