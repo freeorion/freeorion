@@ -1150,7 +1150,7 @@ StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
     m_icon(nullptr),
     m_text(nullptr)
 {
-    m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC);
+    m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC);
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
@@ -1170,7 +1170,7 @@ StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
     m_icon(nullptr),
     m_text(nullptr)
 {
-    m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC);
+    m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC);
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
@@ -1192,7 +1192,7 @@ StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
     m_text(nullptr)
 {
     SetName("StatisticIcon");
-    m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC);
+    m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC);
 
     m_values[0] = value0;
     m_values[1] = value1;
@@ -1389,7 +1389,7 @@ namespace {
                   GG::X width, GG::Y height, std::shared_ptr<GG::Texture> species_icon)
         {
             GG::Wnd::SetName(species_name);
-            auto icon = new GG::StaticGraphic(species_icon, GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
+            auto icon = GG::Wnd::Create<GG::StaticGraphic>(species_icon, GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
             icon->Resize(GG::Pt(GG::X(Value(height - 5)), height - 5));
             push_back(icon);
             auto species_label = new CUILabel(localized_name, GG::FORMAT_LEFT | GG::FORMAT_VCENTER);

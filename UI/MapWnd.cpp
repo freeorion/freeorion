@@ -518,7 +518,7 @@ public:
         m_label(nullptr),
         m_enabled(false)
     {
-        m_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
+        m_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
         AttachChild(m_label);
         std::set<int> dummy = std::set<int>();
         Update(1.0, dummy, INVALID_OBJECT_ID);
@@ -951,7 +951,7 @@ MapWnd::MapWnd() :
     GG::GUI::GetGUI()->Register(m_toolbar);
     m_toolbar->Hide();
 
-    auto layout = new GG::Layout(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
+    auto layout = GG::Wnd::Create<GG::Layout>(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
                                         m_toolbar->ClientWidth(),       m_toolbar->ClientHeight(),
                                         1, 21);
     layout->SetName("Toolbar Layout");

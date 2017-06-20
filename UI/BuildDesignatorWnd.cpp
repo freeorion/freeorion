@@ -146,7 +146,7 @@ namespace {
                 time_text = std::to_string(cost_time.second);
             }
 
-            m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             m_name = new CUILabel(name_text, GG::FORMAT_LEFT);
             m_cost = new CUILabel(cost_text);
             m_time = new CUILabel(time_text);
@@ -548,7 +548,7 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(const std::string& config_name)
     m_buildable_items->RightClickedRowSignal.connect(
         boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this, _1, _2, _3));
 
-    //auto header = new GG::ListBox::Row();
+    //auto header = GG::Wnd::Create<GG::ListBox::Row>();
     //std::shared_ptr<GG::Font> font = ClientUI::GetFont();
     //GG::Clr clr = ClientUI::TextColor();
     //header->push_back("item", font, clr);

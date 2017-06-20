@@ -39,7 +39,7 @@ bool IconTextBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const
 void IconTextBrowseWnd::PreRender() {
     GG::Wnd::PreRender();
 
-    m_icon = new GG::StaticGraphic(m_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE);
+    m_icon = GG::Wnd::Create<GG::StaticGraphic>(m_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE);
     m_icon->Resize(GG::Pt(ICON_BROWSE_ICON_WIDTH, ICON_BROWSE_ICON_HEIGHT));
     AttachChild(m_icon);
 

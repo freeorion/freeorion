@@ -56,9 +56,9 @@ ServerConnectWnd::ServerConnectWnd() :
 
     auto player_name_label = new CUILabel(UserString("PLAYER_NAME_LABEL"), GG::FORMAT_LEFT);
     m_player_name_edit = new CUIEdit(GetOptionsDB().Get<std::string>("multiplayersetup.player-name"));
-    m_host_or_join_radio_group = new GG::RadioButtonGroup(GG::VERTICAL);
-    m_host_or_join_radio_group->AddButton(new CUIStateButton(UserString("HOST_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
-    m_host_or_join_radio_group->AddButton(new CUIStateButton(UserString("JOIN_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
+    m_host_or_join_radio_group = GG::Wnd::Create<GG::RadioButtonGroup>(GG::VERTICAL);
+    m_host_or_join_radio_group->AddButton(GG::Wnd::Create<CUIStateButton>(UserString("HOST_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
+    m_host_or_join_radio_group->AddButton(GG::Wnd::Create<CUIStateButton>(UserString("JOIN_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
     m_LAN_game_label = new CUILabel(UserString("LAN_GAME_LABEL"), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
     m_servers_lb = new CUIListBox();
     m_servers_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
@@ -71,7 +71,7 @@ ServerConnectWnd::ServerConnectWnd() :
     const GG::X OK_CANCEL_BUTTON_WIDTH(100);
     const int CONTROL_MARGIN = 5;
 
-    auto layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 8, 4, CONTROL_MARGIN);
+    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1, 8, 4, CONTROL_MARGIN);
     layout->SetMinimumColumnWidth(0, player_name_label->MinUsableSize().x + CONTROL_MARGIN);
     layout->SetColumnStretch(1, 1.0);
     layout->SetMinimumColumnWidth(2, OK_CANCEL_BUTTON_WIDTH + CONTROL_MARGIN);
@@ -151,7 +151,7 @@ void ServerConnectWnd::PopulateServerList()
     m_servers_lb->Clear();
     const auto server_names = HumanClientApp::GetApp()->Networking().DiscoverLANServerNames();
     for (const auto& server : server_names) {
-        auto row = new GG::ListBox::Row;
+        auto row = GG::Wnd::Create<GG::ListBox::Row>();
         row->push_back(new CUILabel(server));
         m_servers_lb->Insert(row);
     }

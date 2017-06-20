@@ -235,7 +235,7 @@ namespace {
                 push_back(new CUILabel(""));
                 push_back(new CUILabel(""));
                 push_back(new CUILabel(""));
-                push_back(new GG::StaticGraphic(GetReadyTexture(m_player_data.m_player_ready),
+                push_back(GG::Wnd::Create<GG::StaticGraphic>(GetReadyTexture(m_player_data.m_player_ready),
                     GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
                 at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -243,7 +243,7 @@ namespace {
                     m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
                     "", PlayerReadyBrowseWidth()));
                 if (HumanClientApp::GetApp()->Networking().PlayerIsHost(player_id)) {
-                    push_back(new GG::StaticGraphic(GetHostTexture(),
+                    push_back(GG::Wnd::Create<GG::StaticGraphic>(GetHostTexture(),
                         GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 } else {
                     push_back(new CUILabel(""));
@@ -290,7 +290,7 @@ namespace {
                 push_back(new CUILabel(""));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
             } else {
-                push_back(new GG::StaticGraphic(GetReadyTexture(m_player_data.m_player_ready),
+                push_back(GG::Wnd::Create<GG::StaticGraphic>(GetReadyTexture(m_player_data.m_player_ready),
                     GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
                 at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -301,7 +301,7 @@ namespace {
 
             // host
             if (HumanClientApp::GetApp()->Networking().PlayerIsHost(player_id)) {
-                push_back(new GG::StaticGraphic(GetHostTexture(),
+                push_back(GG::Wnd::Create<GG::StaticGraphic>(GetHostTexture(),
                     GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
             } else {
                 push_back(new CUILabel(""));
@@ -398,7 +398,7 @@ namespace {
                 push_back(new CUILabel(""));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
             } else {
-                push_back(new GG::StaticGraphic(GetReadyTexture(m_player_data.m_player_ready),
+                push_back(GG::Wnd::Create<GG::StaticGraphic>(GetReadyTexture(m_player_data.m_player_ready),
                     GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
                 at(5)->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
@@ -409,7 +409,7 @@ namespace {
 
             // host
             if (HumanClientApp::GetApp()->Networking().PlayerIsHost(player_id)) {
-                push_back(new GG::StaticGraphic(GetHostTexture(),
+                push_back(GG::Wnd::Create<GG::StaticGraphic>(GetHostTexture(),
                     GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
             } else {
                 push_back(new CUILabel(""));
@@ -521,7 +521,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
 
     m_galaxy_setup_panel = new GalaxySetupPanel(GALAXY_SETUP_PANEL_WIDTH, GALAXY_SETUP_PANEL_HEIGHT);
 
-    m_new_load_game_buttons = new GG::RadioButtonGroup(GG::VERTICAL);
+    m_new_load_game_buttons = GG::Wnd::Create<GG::RadioButtonGroup>(GG::VERTICAL);
     m_new_load_game_buttons->AddButton(
         new CUIStateButton(UserString("NEW_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
     m_new_load_game_buttons->AddButton(
@@ -530,7 +530,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     m_browse_saves_btn = new CUIButton("...");
     m_save_file_text = new CUILabel("", GG::FORMAT_NOWRAP);
 
-    m_preview_image = new GG::StaticGraphic(std::make_shared<GG::Texture>(), GG::GRAPHIC_FITGRAPHIC);
+    m_preview_image = GG::Wnd::Create<GG::StaticGraphic>(std::make_shared<GG::Texture>(), GG::GRAPHIC_FITGRAPHIC);
 
     m_players_lb_headers = new PlayerLabelRow();
     m_players_lb_headers->SetMinSize(GG::Pt(GG::X(0), PlayerRowHeight() + PlayerFontHeight()));
@@ -598,8 +598,8 @@ MultiPlayerLobbyWnd::PlayerLabelRow::PlayerLabelRow(GG::X width /* = GG::X(580)*
     push_back(new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_EMPIRES"), GG::FORMAT_BOTTOM));
     push_back(new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_COLOURS"), GG::FORMAT_BOTTOM | GG::FORMAT_WORDBREAK));
     push_back(new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"), GG::FORMAT_BOTTOM | GG::FORMAT_WORDBREAK));
-    push_back(new GG::StaticGraphic(GetReadyTexture(true), GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE));
-    push_back(new GG::StaticGraphic(GetHostTexture(), GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE));
+    push_back(GG::Wnd::Create<GG::StaticGraphic>(GetReadyTexture(true), GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE));
+    push_back(GG::Wnd::Create<GG::StaticGraphic>(GetHostTexture(), GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE));
     // restrict height of ready state icon
     at(5)->SetMaxSize(GG::Pt(GG::X(400), PlayerFontHeight()));
     at(6)->SetMaxSize(GG::Pt(GG::X(400), PlayerFontHeight()));
@@ -844,7 +844,7 @@ void MultiPlayerLobbyWnd::PreviewImageChanged(std::shared_ptr<GG::Texture> new_i
         DeleteChild(m_preview_image);
         m_preview_image = nullptr;
     }
-    m_preview_image = new GG::StaticGraphic(new_image, GG::GRAPHIC_FITGRAPHIC);
+    m_preview_image = GG::Wnd::Create<GG::StaticGraphic>(new_image, GG::GRAPHIC_FITGRAPHIC);
     AttachChild(m_preview_image);
 
     DoLayout();

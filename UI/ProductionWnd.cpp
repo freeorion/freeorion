@@ -440,7 +440,7 @@ namespace {
 
         m_icon = nullptr;
         if (graphic)
-            m_icon = new GG::StaticGraphic(graphic, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            m_icon = GG::Wnd::Create<GG::StaticGraphic>(graphic, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
         if (elem.item.build_type == BT_SHIP) {
             m_quantity_selector = new QuantitySelector(elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
@@ -459,7 +459,7 @@ namespace {
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         const Empire* this_client_empire = GetEmpire(client_empire_id);
         if (this_client_empire && system_selected) {
-            m_location_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + location_text + "</s>",
+            m_location_text = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + location_text + "</s>",
                                                   ClientUI::GetBoldFont(), this_client_empire->Color(), GG::FORMAT_TOP | GG::FORMAT_RIGHT);
         } else {
             m_location_text = new CUILabel(location_text, GG::FORMAT_TOP | GG::FORMAT_RIGHT);

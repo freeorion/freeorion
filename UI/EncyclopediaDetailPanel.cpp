@@ -595,7 +595,7 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
     m_next_button->LeftClickedSignal.connect(
         boost::bind(&EncyclopediaDetailPanel::OnNext, this));
 
-    m_description_rich_text = new GG::RichText(GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), "",
+    m_description_rich_text = GG::Wnd::Create<GG::RichText>(GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), "",
                                                ClientUI::GetFont(), ClientUI::TextColor(),
                                                GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK,
                                                GG::INTERACTIVE);
@@ -2724,7 +2724,7 @@ void EncyclopediaDetailPanel::RefreshImpl() {
 
     // Create Icons
     if (texture) {
-        m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         if (color != GG::CLR_ZERO)
             m_icon->SetColor(color);
     }

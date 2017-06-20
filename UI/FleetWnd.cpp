@@ -788,31 +788,31 @@ void ShipDataPanel::SetShipIcon() {
     else
         icon = ClientUI::ShipDesignIcon(INVALID_OBJECT_ID);  // default icon
 
-    m_ship_icon = new GG::StaticGraphic(icon, DataPanelIconStyle());
+    m_ship_icon = GG::Wnd::Create<GG::StaticGraphic>(icon, DataPanelIconStyle());
     m_ship_icon->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
     AttachChild(m_ship_icon);
 
     if (ship->OrderedScrapped()) {
         std::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
-        m_scrap_indicator = new GG::StaticGraphic(scrap_texture, DataPanelIconStyle());
+        m_scrap_indicator = GG::Wnd::Create<GG::StaticGraphic>(scrap_texture, DataPanelIconStyle());
         m_scrap_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
         AttachChild(m_scrap_indicator);
     }
     if (ship->OrderedColonizePlanet() != INVALID_OBJECT_ID) {
         std::shared_ptr<GG::Texture> colonize_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "colonizing.png", true);
-        m_colonize_indicator = new GG::StaticGraphic(colonize_texture, DataPanelIconStyle());
+        m_colonize_indicator = GG::Wnd::Create<GG::StaticGraphic>(colonize_texture, DataPanelIconStyle());
         m_colonize_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
         AttachChild(m_colonize_indicator);
     }
     if (ship->OrderedInvadePlanet() != INVALID_OBJECT_ID) {
         std::shared_ptr<GG::Texture> invade_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "invading.png", true);
-        m_invade_indicator = new GG::StaticGraphic(invade_texture, DataPanelIconStyle());
+        m_invade_indicator = GG::Wnd::Create<GG::StaticGraphic>(invade_texture, DataPanelIconStyle());
         m_invade_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
         AttachChild(m_invade_indicator);
     }
     if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID) {
         std::shared_ptr<GG::Texture> bombard_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "bombarding.png", true);
-        m_bombard_indicator = new GG::StaticGraphic(bombard_texture, DataPanelIconStyle());
+        m_bombard_indicator = GG::Wnd::Create<GG::StaticGraphic>(bombard_texture, DataPanelIconStyle());
         m_bombard_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
         AttachChild(m_bombard_indicator);
     }
@@ -1408,7 +1408,7 @@ void FleetDataPanel::Refresh() {
         m_fleet_destination_text->Clear();
 
         std::shared_ptr<GG::Texture> new_fleet_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "new_fleet.png", true);
-        m_fleet_icon = new GG::StaticGraphic(new_fleet_texture, DataPanelIconStyle());
+        m_fleet_icon = GG::Wnd::Create<GG::StaticGraphic>(new_fleet_texture, DataPanelIconStyle());
         AttachChild(m_fleet_icon);
 
     } else if (std::shared_ptr<const Fleet> fleet = GetFleet(m_fleet_id)) {
@@ -1454,7 +1454,7 @@ void FleetDataPanel::Refresh() {
 
         if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES) {
             std::shared_ptr<GG::Texture> gift_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "gifting.png", true);
-            m_gift_indicator = new GG::StaticGraphic(gift_texture, DataPanelIconStyle());
+            m_gift_indicator = GG::Wnd::Create<GG::StaticGraphic>(gift_texture, DataPanelIconStyle());
             AttachChild(m_gift_indicator);
         }
 

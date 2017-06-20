@@ -936,7 +936,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     GG::X panel_width = w - MaxPlanetDiameter() - 2*EDGE_PAD;
 
     // create planet name control
-    m_planet_name = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", font, ClientUI::TextColor());
+    m_planet_name = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", font, ClientUI::TextColor());
     m_planet_name->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + EDGE_PAD), GG::Y0));
     m_planet_name->Resize(m_planet_name->MinUsableSize());
     AttachChild(m_planet_name);
@@ -1127,7 +1127,7 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
         GG::Y texture_height = textures[0]->DefaultHeight();
         GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - texture_width / 2 + 3), GG::Y0);
 
-        m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x, planet_image_pos.y,
+        m_planet_graphic = GG::Wnd::Create<GG::DynamicGraphic>(planet_image_pos.x, planet_image_pos.y,
                                                     texture_width, texture_height, true,
                                                     texture_width, texture_height, 0, textures,
                                                     GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
@@ -1830,9 +1830,9 @@ void SidePanel::PlanetPanel::Refresh() {
         for (const std::string& focus_name : available_foci) {
             std::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(
                 ClientUI::ArtDir() / planet->FocusIcon(focus_name), true);
-            auto graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            auto graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             graphic->Resize(GG::Pt(MeterIconSize().x*3/2, MeterIconSize().y*3/2));
-            auto row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "FOCUS");
+            auto row = GG::Wnd::Create<GG::DropDownList::Row>(graphic->Width(), graphic->Height(), "FOCUS");
 
             row->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
             row->SetBrowseText(
@@ -2838,7 +2838,7 @@ SidePanel::SidePanel(const std::string& config_name) :
     m_system_name->SetNumCols(1);
     AttachChild(m_system_name);
 
-    m_star_type_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
+    m_star_type_text = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
     AttachChild(m_star_type_text);
     AttachChild(m_button_prev);
     AttachChild(m_button_next);
@@ -3154,7 +3154,7 @@ void SidePanel::RefreshImpl() {
     textures.push_back(graphic);
 
     int graphic_width = Value(Width()) - MaxPlanetDiameter();
-    m_star_graphic = new GG::DynamicGraphic(GG::X(MaxPlanetDiameter()), GG::Y0,
+    m_star_graphic = GG::Wnd::Create<GG::DynamicGraphic>(GG::X(MaxPlanetDiameter()), GG::Y0,
                                             GG::X(graphic_width), GG::Y(graphic_width), true,
                                             textures[0]->DefaultWidth(), textures[0]->DefaultHeight(),
                                             0, textures, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);

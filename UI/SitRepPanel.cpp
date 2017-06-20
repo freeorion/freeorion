@@ -232,7 +232,7 @@ namespace {
                 "/icons/sitrep/generic.png" : m_sitrep_entry.GetIcon());
             std::shared_ptr<GG::Texture> icon = ClientUI::GetTexture(
                 ClientUI::ArtDir() / icon_texture, true);
-            m_icon = new GG::StaticGraphic(icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            m_icon = GG::Wnd::Create<GG::StaticGraphic>(icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             AttachChild(m_icon);
             m_icon->Resize(GG::Pt(GG::X(icon_dim), GG::Y(icon_dim)));
 

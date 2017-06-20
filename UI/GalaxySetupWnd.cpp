@@ -1003,7 +1003,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
 
     // create a temporary texture and static graphic
     static auto temp_tex = std::make_shared<GG::Texture>();
-    m_preview_image =  new GG::StaticGraphic(temp_tex, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE); // create a blank graphic
+    m_preview_image =  GG::Wnd::Create<GG::StaticGraphic>(temp_tex, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE); // create a blank graphic
 
     m_ok = new CUIButton(UserString("OK"));
     m_cancel = new CUIButton(UserString("CANCEL"));

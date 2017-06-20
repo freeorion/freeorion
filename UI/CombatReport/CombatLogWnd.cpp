@@ -149,7 +149,7 @@ namespace {
 
         SetBorderMargin(BORDER_MARGIN);
 
-        SetLayout(new GG::DeferredLayout(UpperLeft().x, UpperLeft().y, Width(), Height(), 1, 1));
+        SetLayout(GG::Wnd::Create<GG::DeferredLayout>(UpperLeft().x, UpperLeft().y, Width(), Height(), 1, 1));
         GetLayout()->Add(title, 0, 0, 1, 1);
         SetCollapsed(true);
         RequirePreRender();
@@ -390,7 +390,7 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
     }
 
     m_wnd.DeleteChildren();
-    auto layout = new GG::DeferredLayout(m_wnd.RelativeUpperLeft().x, m_wnd.RelativeUpperLeft().y,
+    auto layout = GG::Wnd::Create<GG::DeferredLayout>(m_wnd.RelativeUpperLeft().x, m_wnd.RelativeUpperLeft().y,
                                                 m_wnd.Width(), m_wnd.Height(),
                                                 1, 1, ///< numrows, numcols
                                                 0, 0 ///< wnd margin, cell margin

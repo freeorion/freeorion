@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
     GG::GUI::GetGUI()->GetStyleFactory()->DefaultFont(12, &charsets[0], &charsets[0] + charsets.size());
 
     GG::Wnd* quit_dlg =
-    new GG::ThreeButtonDlg(GG::X(10), GG::Y(10), message, font, GG::CLR_SHADOW,
+    GG::Wnd::Create<GG::ThreeButtonDlg>(GG::X(10), GG::Y(10), message, font, GG::CLR_SHADOW,
                            GG::CLR_SHADOW, GG::CLR_SHADOW, GG::CLR_WHITE, 1);
 
     app.Run(quit_dlg);

@@ -646,7 +646,7 @@ void SaveFileDialog::Init() {
     ResetDefaultPosition();
     SetMinSize(GG::Pt(2*SAVE_FILE_DIALOG_MIN_WIDTH, 2*SAVE_FILE_DIALOG_MIN_HEIGHT));
 
-    m_layout = new GG::Layout(GG::X0, GG::Y0,
+    m_layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0,
                               SAVE_FILE_DIALOG_WIDTH - LeftBorder() - RightBorder(),
                               SAVE_FILE_DIALOG_HEIGHT - TopBorder() - BottomBorder(), 4, 4);
     m_layout->SetCellMargin(SAVE_FILE_CELL_MARGIN);
@@ -950,12 +950,12 @@ void SaveFileDialog::UpdatePreviewList() {
         m_remote_dir_dropdown->Clear();
         SetDirPath(preview_information.folder);
 
-        auto row = new GG::DropDownList::Row();
+        auto row = GG::Wnd::Create<GG::DropDownList::Row>();
         row->push_back(new CUILabel(SERVER_LABEL));
         m_remote_dir_dropdown->Insert(row);
 
         for (const std::string& subdir : preview_information.subdirectories) {
-            auto row = new GG::DropDownList::Row();
+            auto row = GG::Wnd::Create<GG::DropDownList::Row>();
             if (subdir.find("/") == 0) {
                 row->push_back(new CUILabel(SERVER_LABEL + subdir));
             } else if(subdir.find("./") == 0) {
