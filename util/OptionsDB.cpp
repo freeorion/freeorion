@@ -170,7 +170,7 @@ void OptionsDB::Commit() {
 }
 
 void OptionsDB::Validate(const std::string& name, const std::string& value) const {
-    std::map<std::string, Option>::const_iterator it = m_options.find(name);
+    auto it = m_options.find(name);
     if (!OptionExists(it))
         throw std::runtime_error("Attempted to validate unknown option \"" + name + "\".");
 
@@ -181,28 +181,28 @@ void OptionsDB::Validate(const std::string& name, const std::string& value) cons
 }
 
 std::string OptionsDB::GetValueString(const std::string& option_name) const {
-    std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
+    auto it = m_options.find(option_name);
     if (!OptionExists(it))
         throw std::runtime_error(("OptionsDB::GetValueString(): No option called \"" + option_name + "\" could be found.").c_str());
     return it->second.ValueToString();
 }
 
 std::string OptionsDB::GetDefaultValueString(const std::string& option_name) const {
-    std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
+    auto it = m_options.find(option_name);
     if (!OptionExists(it))
         throw std::runtime_error(("OptionsDB::GetDefaultValueString(): No option called \"" + option_name + "\" could be found.").c_str());
     return it->second.DefaultValueToString();
 }
 
 const std::string& OptionsDB::GetDescription(const std::string& option_name) const {
-    std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
+    auto it = m_options.find(option_name);
     if (!OptionExists(it))
         throw std::runtime_error(("OptionsDB::GetDescription(): No option called \"" + option_name + "\" could be found.").c_str());
     return it->second.description;
 }
 
 std::shared_ptr<const ValidatorBase> OptionsDB::GetValidator(const std::string& option_name) const {
-    std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
+    auto it = m_options.find(option_name);
     if (!OptionExists(it))
         throw std::runtime_error(("OptionsDB::GetValidator(): No option called \"" + option_name + "\" could be found.").c_str());
     return it->second.validator;
@@ -212,7 +212,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
     os << UserString("COMMAND_LINE_USAGE") << command_line << "\n";
 
     int longest_param_name = 0;
-    for (const std::map<std::string, Option>::value_type& option : m_options) {
+    for (auto& option : m_options) {
         if (longest_param_name < static_cast<int>(option.first.size()))
             longest_param_name = option.first.size();
     }
@@ -271,7 +271,7 @@ void OptionsDB::GetXML(XMLDoc& doc) const {
     std::vector<XMLElement*> elem_stack;
     elem_stack.push_back(&doc.root_node);
 
-    for (const std::map<std::string, Option>::value_type& option : m_options) {
+    for (const auto& option : m_options) {
         if (!option.second.storable)
             continue;
         std::string::size_type last_dot = option.first.find_last_of('.');
