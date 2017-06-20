@@ -2929,7 +2929,7 @@ void ServerApp::PostCombatProcessTurns() {
     TraceLogger() << objects.Dump();
 
     // execute all effects and update meters prior to production, research, etc.
-    if (GetOptionsDB().Get<bool>("reseed-prng-server")) {
+    if (GetGameRules().Get<bool>("RULE_RESEED_PRNG_SERVER")) {
         static boost::hash<std::string> pcpt_string_hash;
         Seed(static_cast<unsigned int>(CurrentTurn()) + pcpt_string_hash(m_galaxy_setup_data.m_seed));
     }

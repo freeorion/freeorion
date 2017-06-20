@@ -7,6 +7,7 @@
 #include "../util/RunQueue.h"
 #include "../util/ScopedTimer.h"
 #include "../util/CheckSums.h"
+#include "../util/MultiplayerCommon.h"
 #include "../parse/Parse.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
@@ -51,9 +52,16 @@ namespace {
         db.Add("effects-threads-ai",        UserStringNop("OPTIONS_DB_EFFECTS_THREADS_AI_DESC"),        2,      RangedValidator<int>(1, 32));
         db.Add("effects-threads-server",    UserStringNop("OPTIONS_DB_EFFECTS_THREADS_SERVER_DESC"),    8,      RangedValidator<int>(1, 32));
         db.Add("effect-accounting",         UserStringNop("OPTIONS_DB_EFFECT_ACCOUNTING"),              true,   Validator<bool>());
-        db.Add("reseed-prng-server",        UserStringNop("OPTIONS_DB_PRNG_RESEEDING"),                 true, Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
+    void AddRules(GameRules& rules) {
+        // makes all PRNG be reseeded frequently
+        rules.Add<bool>("RULE_RESEED_PRNG_SERVER", "RULE_RESEED_PRNG_SERVER_DESC",
+                        true, true);
+    }
+    bool temp_bool2 = RegisterGameRules(&AddRules);
+
 
     const double    WORMHOLE_TRAVEL_DISTANCE = 0.1;         // the effective distance for ships travelling along a wormhole, for determining how much of their speed is consumed by the jump
 

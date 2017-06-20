@@ -1623,7 +1623,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
     // reasonably unpredictable but reproducible random seeding
     int base_seed = 0;
-    if (GetOptionsDB().Get<bool>("reseed-prng-server")) {
+    if (GetGameRules().Get<bool>("RULE_RESEED_PRNG_SERVER")) {
         //static boost::hash<std::string> cs_string_hash;
         // todo: salt further with galaxy setup seed
         base_seed = combat_info.objects.begin()->ID() + CurrentTurn();
@@ -1640,7 +1640,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     // action(s) such as shooting at target(s) or launching fighters
     int last_bout = 1;
     for (int bout = 1; bout <= GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS"); ++bout) {
-        if (GetOptionsDB().Get<bool>("reseed-prng-server"))
+        if (GetGameRules().Get<bool>("RULE_RESEED_PRNG_SERVER"))
             Seed(base_seed + bout);    // ensure each combat bout produces different results
 
         // empires may have valid targets, but nothing to attack with.  If all

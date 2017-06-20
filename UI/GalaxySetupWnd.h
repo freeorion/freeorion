@@ -50,6 +50,7 @@ private:
     GG::StateButton*    m_cheap_techs_toggle = nullptr;
     GG::Label*          m_combat_rounds_label = nullptr;
     GG::Spin<int>*      m_combat_rounds_spin = nullptr;
+    GG::StateButton*    m_random_seed_toggle = nullptr;
 };
 
 /** Encapsulates the galaxy setup options so that they may be reused in the

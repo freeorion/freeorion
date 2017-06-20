@@ -116,12 +116,27 @@ GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
     }
 
 
+
+    m_random_seed_toggle = new CUIStateButton(UserString("RULE_RESEED_PRNG_SERVER"),
+                                              GG::FORMAT_LEFT,
+                                              std::make_shared<CUICheckBoxRepresenter>());
+    m_random_seed_toggle->SetCheck(GetGameRules().Get<bool>("RULE_RESEED_PRNG_SERVER"));
+    m_random_seed_toggle->SetBrowseModeTime(tooltip_delay);
+    m_random_seed_toggle->SetBrowseText(UserString(GetGameRules().GetDescription("RULE_RESEED_PRNG_SERVER")));
+    m_random_seed_toggle->CheckedSignal.connect(boost::bind(&GameRulesPanel::BoolRuleChanged,
+                                                            this,
+                                                            m_random_seed_toggle,
+                                                            "RULE_RESEED_PRNG_SERVER"));
+
+
     AttachChild(m_cheap_build_toggle);
     AttachChild(m_cheap_ships_toggle);
     AttachChild(m_cheap_techs_toggle);
 
     AttachChild(m_combat_rounds_label);
     AttachChild(m_combat_rounds_spin);
+
+    AttachChild(m_random_seed_toggle);
 
     DoLayout();
 }
@@ -180,6 +195,13 @@ void GameRulesPanel::DoLayout() {
 
     m_combat_rounds_label->SizeMove(label_ul, label_lr);
     m_combat_rounds_spin->SizeMove(control_ul, control_lr);
+    label_ul += row_advance;
+    label_lr += row_advance;
+    control_ul += row_advance;
+    control_lr += row_advance;
+
+
+    m_random_seed_toggle->SizeMove(label_ul, label_lr);
 }
 
 void GameRulesPanel::SettingChanged() {

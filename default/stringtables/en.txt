@@ -981,6 +981,13 @@ Combat Rounds
 RULE_NUM_COMBAT_ROUNDS_DESC
 How many rounds of combat occur each turn.
 
+RULE_RESEED_PRNG_SERVER
+Random Reseeding
+
+RULE_RESEED_PRNG_SERVER_DESC
+Random number generation is re-seeded frequently to give more predictable and reproducible values.
+
+
 
 ##
 ## Command-line and options database entries
@@ -1593,9 +1600,6 @@ Toggles inclusion of situation report messages with errors.
 
 OPTIONS_DB_EFFECT_ACCOUNTING
 Toggles effect accounting tabulation when updating after gamestate changes.
-
-OPTIONS_DB_PRNG_RESEEDING
-Toggles re-seeding the random number generation each turn with predictable and reproducible seed values.
 
 OPTIONS_DB_UI_SITREP_ICONSIZE
 Sets the sitrep icon width and height; default 16 (min 12, max 64).
