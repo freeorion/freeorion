@@ -187,9 +187,6 @@ void CUIWnd::Init() {
     else
         HumanClientApp::GetApp()->WindowResizedSignal.connect(
             boost::bind(&CUIWnd::ResetDefaultPosition, this));
-
-    // call to CUIWnd::MinimizedWidth() because MinimizedWidth is virtual
-    SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, TopBorder() + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 50));
 }
 
 void CUIWnd::InitSizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -248,8 +245,9 @@ void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         }
 
         // Limit window size to be no larger than the containing window.
-        GG::Pt new_size(std::min(lr.x - ul.x, available_size.x),
-                        std::min(lr.y - ul.y, available_size.y));
+        GG::Pt new_size(std::max(std::min(lr.x - ul.x, available_size.x), MinimizedSize().x),
+                        std::max(std::min(lr.y - ul.y, available_size.y),
+                                 TopBorder() + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 50));
 
         // Clamp position of this window to keep its entire area visible in the
         // containing window.
