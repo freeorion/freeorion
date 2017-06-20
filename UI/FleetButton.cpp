@@ -225,7 +225,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
 
     // Create scanline renderer control, use opposite color of fleet btn
     GG::Clr opposite_clr(255 - Color().r, 255 - Color().g, 255 - Color().b, 64);
-    m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, Width(), Height(), false, opposite_clr);
+    m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, Width(), Height(), false, opposite_clr);
 
 }
 
