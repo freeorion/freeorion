@@ -322,6 +322,12 @@ namespace {
             m_sitrep(sitrep)
         {
             SetName("SitRepRow");
+        }
+
+        void CompleteConstruction() override
+        {
+            GG::ListBox::Row::CompleteConstruction();
+
             SetMargin(sitrep_row_margin);
             SetChildClippingMode(ClipToClient);
             SetMinSize(GG::Pt(GG::X(2 * GetIconSize() + 2 * sitrep_edge_to_content_spacing),

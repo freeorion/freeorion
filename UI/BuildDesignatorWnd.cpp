@@ -350,7 +350,6 @@ namespace {
             }
 
             m_panel = GG::Wnd::Create<ProductionItemPanel>(w, h, m_item, empire_id, location_id);
-            push_back(m_panel);
 
             if (const Empire* empire = GetEmpire(empire_id)) {
                 if (!empire->ProducibleItem(m_item, location_id)) {
@@ -363,6 +362,13 @@ namespace {
             SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, location_id, empire_id));
 
             //std::cout << "ProductionItemRow(building) height: " << Value(Height()) << std::endl;
+        };
+
+        void CompleteConstruction() override
+        {
+            GG::ListBox::Row::CompleteConstruction();
+
+            push_back(m_panel);
         }
 
         const ProductionQueue::ProductionItem& Item() const

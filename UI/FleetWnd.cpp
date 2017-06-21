@@ -639,11 +639,14 @@ namespace {
             SetChildClippingMode(ClipToClient);
             if (GetShip(m_ship_id))
                 SetDragDropDataType(SHIP_DROP_TYPE_STRING);
-            {
-                //ScopedTimer timer("ShipRow Panel creation / pushing");
-                m_panel = GG::Wnd::Create<ShipDataPanel>(w, h, m_ship_id);
-                push_back(m_panel);
-            }
+        }
+
+        void CompleteConstruction() override
+        {
+            GG::ListBox::Row::CompleteConstruction();
+
+            m_panel = GG::Wnd::Create<ShipDataPanel>(Width(), Height(), m_ship_id);
+            push_back(m_panel);
         }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
@@ -1747,7 +1750,13 @@ namespace {
         {
             SetName("FleetRow");
             SetChildClippingMode(ClipToClient);
-            m_panel = GG::Wnd::Create<FleetDataPanel>(w, h, m_fleet_id);
+        }
+
+        void CompleteConstruction() override
+        {
+            GG::ListBox::Row::CompleteConstruction();
+
+            m_panel = GG::Wnd::Create<FleetDataPanel>(Width(), Height(), m_fleet_id);
             push_back(m_panel);
         }
 

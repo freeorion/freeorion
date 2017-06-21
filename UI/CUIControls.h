@@ -392,7 +392,10 @@ private:
   * lists, such as the ones used in the game setup dialogs. */
 struct CUISimpleDropDownListRow : public GG::ListBox::Row {
     CUISimpleDropDownListRow(const std::string& row_text, GG::Y row_height = DEFAULT_ROW_HEIGHT);
+    void CompleteConstruction() override;
     static const GG::Y DEFAULT_ROW_HEIGHT;
+private:
+    CUILabel* m_row_label;
 };
 
 /** Encapsulates an icon and text that goes with it in a single control.  For

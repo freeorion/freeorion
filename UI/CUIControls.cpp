@@ -1139,9 +1139,15 @@ void CUILinkTextMultiEdit::SetLinkedText(const std::string& str) {
 const GG::Y CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT(22);
 
 CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, GG::Y row_height/* = DEFAULT_ROW_HEIGHT*/) :
-    GG::ListBox::Row(GG::X1, row_height, "")
+    GG::ListBox::Row(GG::X1, row_height, ""),
+    m_row_label(GG::Wnd::Create<CUILabel>(row_text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP))
+{}
+
+void CUISimpleDropDownListRow::CompleteConstruction()
 {
-    push_back(GG::Wnd::Create<CUILabel>(row_text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP));
+    GG::ListBox::Row::CompleteConstruction();
+
+    push_back(m_row_label);
 }
 
 
@@ -1387,6 +1393,7 @@ namespace {
             if (!species)
                 return;
             const std::string& species_name = species->Name();
+            GG::Wnd::SetName(species_name);
             Init(species_name, UserString(species_name), species->GameplayDescription(), w, h,
                  ClientUI::SpeciesIcon(species_name));
         };
@@ -1394,29 +1401,41 @@ namespace {
         SpeciesRow(const std::string& species_name, const std::string& localized_name, const std::string& species_desc,
                    GG::X w, GG::Y h, std::shared_ptr<GG::Texture> species_icon) :
             GG::ListBox::Row(w, h, "", GG::ALIGN_VCENTER, 0)
-        { Init(species_name, localized_name, species_desc, w, h, species_icon); };
+        {
+            GG::Wnd::SetName(species_name);
+            Init(species_name, localized_name, species_desc, w, h, species_icon);
+        };
 
+        void CompleteConstruction() override
+        {
+            GG::ListBox::Row::CompleteConstruction();
+
+            push_back(m_icon);
+            push_back(m_species_label);
+            GG::X first_col_width(Value(Height()));
+            SetColWidth(0, first_col_width);
+            SetColWidth(1, Width() - first_col_width);
+            GetLayout()->SetColumnStretch(0, 0.0);
+            GetLayout()->SetColumnStretch(1, 1.0);
+        }
     private:
         void Init(const std::string& species_name, const std::string& localized_name, const std::string& species_desc,
                   GG::X width, GG::Y height, std::shared_ptr<GG::Texture> species_icon)
         {
             GG::Wnd::SetName(species_name);
-            auto icon = GG::Wnd::Create<GG::StaticGraphic>(species_icon, GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
-            icon->Resize(GG::Pt(GG::X(Value(height - 5)), height - 5));
-            push_back(icon);
-            auto species_label = GG::Wnd::Create<CUILabel>(localized_name, GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-            push_back(species_label);
-            GG::X first_col_width(Value(height));
-            SetColWidth(0, first_col_width);
-            SetColWidth(1, width - first_col_width);
-            GetLayout()->SetColumnStretch(0, 0.0);
-            GetLayout()->SetColumnStretch(1, 1.0);
+            m_icon = GG::Wnd::Create<GG::StaticGraphic>(species_icon, GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
+            m_icon->Resize(GG::Pt(GG::X(Value(height - 5)), height - 5));
+            m_species_label = GG::Wnd::Create<CUILabel>(localized_name, GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             if (!species_desc.empty()) {
                 SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
                 SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(species_icon, localized_name,
                                                                      species_desc));
             }
         }
+
+        GG::StaticGraphic* m_icon;
+        CUILabel* m_species_label;
+
     };
 }
 
@@ -1509,15 +1528,22 @@ namespace {
         };
 
         ColorRow(const GG::Clr& color, GG::Y h) :
-            GG::ListBox::Row(GG::X(Value(h)), h, "")
+            GG::ListBox::Row(GG::X(Value(h)), h, ""),
+            m_color_square(GG::Wnd::Create<ColorSquare>(color, h))
+        {}
+
+        void CompleteConstruction() override
         {
-            push_back(GG::Wnd::Create<ColorSquare>(color, h));
+            GG::ListBox::Row::CompleteConstruction();
+            push_back(m_color_square);
         }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             // Prevent the width from changing
             GG::Control::SizeMove(ul, GG::Pt(ul.x + Width(), lr.y));
         }
+    private:
+    ColorSquare* m_color_square;
 
     };
 }

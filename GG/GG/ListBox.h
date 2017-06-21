@@ -134,11 +134,11 @@ public:
 
         /** \name Structors */ ///@{
         Row();
-
         Row(X w, Y h, const std::string& drag_drop_data_type, Alignment align = ALIGN_VCENTER, unsigned int margin = 2);
-
         virtual ~Row();
         //@}
+
+        void CompleteConstruction() override;
 
         /** \name Accessors */ ///@{
         /** Returns the string by which this row may be sorted. */

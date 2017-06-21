@@ -1557,6 +1557,8 @@ private:
     public:
         TechRow(GG::X w, const std::string& tech_name);
 
+        void CompleteConstruction() override;
+
         void Render() override;
 
         const std::string&          GetTech() { return m_tech; }
@@ -1630,12 +1632,18 @@ bool TechTreeWnd::TechListBox::TechRowCmp(const GG::ListBox::Row& lhs, const GG:
 TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name) :
     CUIListBox::Row(w, GG::Y(ClientUI::Pts() * 2 + 5), "TechListBox::TechRow"),
     m_tech(tech_name)
+{}
+
+void TechTreeWnd::TechListBox::TechRow::CompleteConstruction()
 {
+
+    CUIListBox::Row::CompleteConstruction();
+
     const Tech* this_row_tech = ::GetTech(m_tech);
     if (!this_row_tech)
         return;
 
-    std::vector<GG::X> col_widths = ColWidths(w);
+    std::vector<GG::X> col_widths = ColWidths(Width());
     const GG::X GRAPHIC_WIDTH =   col_widths[0];
     const GG::Y ICON_HEIGHT(std::max(ClientUI::Pts(), Value(GRAPHIC_WIDTH) - 6));
     // TODO replace string padding with new TextFormat flag

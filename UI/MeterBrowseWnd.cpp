@@ -623,19 +623,14 @@ namespace {
         ShipFightersBrowseRow(const std::string& label, int qty, double value, double base_value = 0.0f) :
             GG::ListBox::Row(FighterBrowseListWidth(), MeterBrowseRowHeight(), "")
         {
-            SetMargin(EDGE_PAD);
             const GG::Clr QTY_COLOR = GG::CLR_GRAY;
 
-            auto label_control = GG::Wnd::Create<CUILabel>(label, GG::FORMAT_RIGHT);
-            push_back(label_control);
-            label_control->Resize(GG::Pt(FighterBrowseLabelWidth(), MeterBrowseRowHeight()));
+            m_label_control = GG::Wnd::Create<CUILabel>(label, GG::FORMAT_RIGHT);
 
             std::string qty_text;
             if (qty > 1)
                 qty_text = ColourWrappedtext("* " + IntToString(qty), QTY_COLOR);
-            auto qty_control = GG::Wnd::Create<CUILabel>(qty_text);
-            push_back(qty_control);
-            qty_control->Resize(GG::Pt(MeterBrowseQtyWidth(), MeterBrowseRowHeight()));
+            m_qty_control = GG::Wnd::Create<CUILabel>(qty_text);
 
             std::string value_text;
             if (base_value > 0.0f) {
@@ -644,12 +639,31 @@ namespace {
             } else {
                 value_text = IntToString(value);
             }
-            auto value_control = GG::Wnd::Create<CUILabel>(value_text, GG::FORMAT_RIGHT);
-            push_back(value_control);
-            value_control->Resize(GG::Pt(MeterBrowseValueWidth(), MeterBrowseRowHeight()));
+            m_value_control = GG::Wnd::Create<CUILabel>(value_text, GG::FORMAT_RIGHT);
+        }
+
+        void CompleteConstruction() override
+        {
+            GG::ListBox::Row::CompleteConstruction();
+
+            SetMargin(EDGE_PAD);
+
+            push_back(m_label_control);
+            m_label_control->Resize(GG::Pt(FighterBrowseLabelWidth(), MeterBrowseRowHeight()));
+
+            push_back(m_qty_control);
+            m_qty_control->Resize(GG::Pt(MeterBrowseQtyWidth(), MeterBrowseRowHeight()));
+
+            push_back(m_value_control);
+            m_value_control->Resize(GG::Pt(MeterBrowseValueWidth(), MeterBrowseRowHeight()));
 
             // Resize(GG::Pt(FighterBrowseListWidth(), MeterBrowseRowHeight()));
         }
+
+    private:
+        CUILabel* m_label_control;
+        CUILabel* m_qty_control;
+        CUILabel* m_value_control;
     };
 }
 

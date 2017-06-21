@@ -311,8 +311,6 @@ namespace {
             m_contents(contents)
         {
             SetChildClippingMode(ClipToClient);
-            if (m_contents)
-                push_back(m_contents);
         }
 
         OptionsListRow(GG::X w, GG::Y h, Wnd* contents, int indentation = 0) :
@@ -320,10 +318,15 @@ namespace {
             m_contents(nullptr)
         {
             SetChildClippingMode(ClipToClient);
-            if (contents) {
+            if (contents)
                 m_contents = GG::Wnd::Create<RowContentsWnd>(w, h, contents, indentation);
+        }
+
+        void CompleteConstruction() override
+        {
+            GG::ListBox::Row::CompleteConstruction();
+            if (m_contents)
                 push_back(m_contents);
-            }
         }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {

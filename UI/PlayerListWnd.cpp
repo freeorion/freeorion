@@ -461,7 +461,13 @@ namespace {
         {
             SetName("PlayerRow");
             SetChildClippingMode(ClipToClient);
-            m_panel = GG::Wnd::Create<PlayerDataPanel>(w, h, m_player_id);
+        }
+
+        void CompleteConstruction() override
+        {
+
+            GG::ListBox::Row::CompleteConstruction();
+            m_panel = GG::Wnd::Create<PlayerDataPanel>(Width(), Height(), m_player_id);
             push_back(m_panel);
         }
 

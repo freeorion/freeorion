@@ -1689,6 +1689,7 @@ public:
     public:
         HullAndNamePanel(GG::X w, GG::Y h, const std::string& hull, const std::string& name);
 
+        void CompleteConstruction() override;
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
         void Render() override
@@ -1706,6 +1707,7 @@ public:
         public:
         BasesListBoxRow(GG::X w, GG::Y h, const std::string& hull, const std::string& name);
 
+        void CompleteConstruction() override;
         void Render() override;
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -1721,6 +1723,7 @@ public:
     public:
         HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull,
                                const std::vector<std::string>& parts);
+        void CompleteConstruction() override;
         const std::string&              Hull() const    { return m_hull_name; }
         const std::vector<std::string>& Parts() const   { return m_parts; }
     protected:
@@ -1731,6 +1734,7 @@ public:
     class CompletedDesignListBoxRow : public BasesListBoxRow {
     public:
         CompletedDesignListBoxRow(GG::X w, GG::Y h, const ShipDesign& design);
+        void CompleteConstruction() override;
         int                             DesignID() const { return m_design_id; }
     private:
         int                             m_design_id;
@@ -1781,8 +1785,13 @@ BasesListBox::HullAndNamePanel::HullAndNamePanel(GG::X w, GG::Y h, const std::st
     m_graphic = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::HullIcon(hull),
                                                    GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
     m_graphic->Resize(GG::Pt(w, h));
-    AttachChild(m_graphic);
     m_name = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_WORDBREAK | GG::FORMAT_CENTER | GG::FORMAT_TOP);
+
+}
+
+void BasesListBox::HullAndNamePanel::CompleteConstruction()
+{
+    AttachChild(m_graphic);
     AttachChild(m_name);
 }
 
@@ -1813,9 +1822,14 @@ BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h, const std::stri
     }
 
     m_hull_panel = GG::Wnd::Create<HullAndNamePanel>(w, h, hull, name);
-    push_back(m_hull_panel);
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+}
+
+void BasesListBox::BasesListBoxRow::CompleteConstruction()
+{
+    CUIListBox::Row::CompleteConstruction();
+    push_back(m_hull_panel);
 }
 
 void BasesListBox::BasesListBoxRow::Render() {
@@ -1863,7 +1877,11 @@ BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h, c
     BasesListBoxRow(w, h, hull, UserString(hull)),
     m_hull_name(hull),
     m_parts(parts)
+{}
+
+void BasesListBox::HullAndPartsListBoxRow::CompleteConstruction()
 {
+    BasesListBoxRow::CompleteConstruction();
     SetDragDropDataType(HULL_PARTS_ROW_DROP_TYPE_STRING);
 }
 
@@ -1871,7 +1889,11 @@ BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(
     GG::X w, GG::Y h, const ShipDesign &design) :
     BasesListBoxRow(w, h, design.Hull(), design.Name()),
     m_design_id(design.ID())
+{}
+
+void BasesListBox::CompletedDesignListBoxRow::CompleteConstruction()
 {
+    BasesListBoxRow::CompleteConstruction();
     SetDragDropDataType(COMPLETE_DESIGN_ROW_DROP_STRING);
 }
 
@@ -2064,6 +2086,7 @@ class SavedDesignsListBox : public BasesListBox {
     class SavedDesignListBoxRow : public BasesListBoxRow {
         public:
         SavedDesignListBoxRow(GG::X w, GG::Y h, const ShipDesign& design);
+        void CompleteConstruction() override;
         const boost::uuids::uuid        DesignUUID() const;
         const std::string&              DesignName() const;
         const std::string&              Description() const;
@@ -2632,7 +2655,11 @@ SavedDesignsListBox::SavedDesignListBoxRow::SavedDesignListBoxRow(
     GG::X w, GG::Y h, const ShipDesign& design) :
     BasesListBoxRow(w, h, design.Hull(), design.Name()),
     m_design_uuid(design.UUID())
+{}
+
+void SavedDesignsListBox::SavedDesignListBoxRow::CompleteConstruction()
 {
+    BasesListBoxRow::CompleteConstruction();
     SetDragDropDataType(SAVED_DESIGN_ROW_DROP_STRING);
 }
 

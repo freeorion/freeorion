@@ -542,14 +542,22 @@ private:
     public:
         ConditionRow(const std::string& key, GG::Y row_height) :
             GG::ListBox::Row(GG::X1, row_height, ""),
-            m_condition_key(key)
+            m_condition_key(key),
+            m_label(GG::Wnd::Create<CUILabel>(UserString(m_condition_key), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP))
+        {}
+
+        void CompleteConstruction() override
         {
+            GG::ListBox::Row::CompleteConstruction();
+
             SetChildClippingMode(ClipToClient);
-            push_back(GG::Wnd::Create<CUILabel>(UserString(m_condition_key), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP));
+            push_back(m_label);
         }
+
         const std::string&  GetKey() const { return m_condition_key; }
     private:
         std::string m_condition_key;
+        CUILabel* m_label;
     };
 
     class StringRow : public GG::ListBox::Row  {
@@ -558,14 +566,23 @@ private:
             GG::ListBox::Row(GG::X1, row_height, ""),
             m_string(text)
         {
-            SetChildClippingMode(ClipToClient);
             const std::string& label = (text.empty() ? EMPTY_STRING :
                 (stringtable_lookup ? UserString(text) : text));
-            push_back(GG::Wnd::Create<CUILabel>(label, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP));
+            m_label = GG::Wnd::Create<CUILabel>(label, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
         }
+
+        void CompleteConstruction() override
+        {
+            GG::ListBox::Row::CompleteConstruction();
+
+            SetChildClippingMode(ClipToClient);
+            push_back(m_label);
+        }
+
         const std::string&  Text() const { return m_string; }
     private:
         std::string m_string;
+        CUILabel* m_label;
     };
 
     const std::string&              GetString() {
@@ -1493,13 +1510,15 @@ public:
         m_obj_init(obj),
         m_expanded_init(expanded),
         m_indent_init(indent)
+    {}
+
+    void CompleteConstruction() override
     {
+        GG::ListBox::Row::CompleteConstruction();
+
         SetName("ObjectRow");
         SetChildClippingMode(ClipToClient);
-        Init();
-    }
 
-    void Init() {
         m_panel = GG::Wnd::Create<ObjectPanel>(ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
                                                ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()),
                                                m_obj_init, m_expanded_init, !m_contained_object_panels.empty(), m_indent_init);
@@ -1710,6 +1729,12 @@ public:
         m_panel(nullptr)
     {
         m_panel = GG::Wnd::Create<ObjectHeaderPanel>(w, h);
+    }
+
+    void CompleteConstruction() override
+    {
+        GG::ListBox::Row::CompleteConstruction();
+
         push_back(m_panel);
         m_panel->ColumnButtonLeftClickSignal.connect(
             ColumnHeaderLeftClickSignal);

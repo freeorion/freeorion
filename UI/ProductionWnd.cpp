@@ -73,17 +73,23 @@ namespace {
         QuantRow(int quantity, int designID, GG::X nwidth, GG::Y h,
                  bool inProgress, bool amBlockType) :
             GG::ListBox::Row(),
-            m_quant(quantity)
+            m_quant(quantity),
+            m_label(GG::Wnd::Create<QuantLabel>(m_quant, designID, nwidth, h, inProgress, amBlockType))
+        {}
+
+        void CompleteConstruction() override
         {
-            auto newLabel = GG::Wnd::Create<QuantLabel>(m_quant, designID, nwidth, h, inProgress, amBlockType);
-            push_back(newLabel);
-            Resize(GG::Pt(nwidth, newLabel->Height()-GG::Y0));//might subtract more; assessing aesthetics
+            GG::ListBox::Row::CompleteConstruction();
+
+            push_back(m_label);
+            Resize(GG::Pt(m_label->Width(), m_label->Height()-GG::Y0));//might subtract more; assessing aesthetics
         }
 
         int Quant() const { return m_quant; }
 
     private:
         int m_quant;
+        QuantLabel* m_label;
     };
 
     //////////////////////
@@ -337,11 +343,10 @@ namespace {
             if (pp_accumulated == -1.0f)
                 pp_accumulated = 0.0f;
 
-            panel = GG::Wnd::Create<QueueProductionItemPanel>(GG::X0, GG::Y0, ClientWidth() - MARGIN - MARGIN,
-                                                              elem, elem.allocated_pp, total_cost, minimum_turns, elem.remaining,
-                                                              pp_accumulated);
-            push_back(panel);
-
+            panel = GG::Wnd::Create<QueueProductionItemPanel>(
+                GG::X0, GG::Y0, ClientWidth() - MARGIN - MARGIN,
+                elem, elem.allocated_pp, total_cost, minimum_turns, elem.remaining,
+                pp_accumulated);
             SetDragDropDataType(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE);
 
             SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -351,6 +356,13 @@ namespace {
                 boost::bind(&QueueRow::RowQuantChanged, this, _1, _2));
 
             RequirePreRender();
+        }
+
+        void CompleteConstruction() override
+        {
+            GG::ListBox::Row::CompleteConstruction();
+
+            push_back(panel);
         }
 
         void PreRender() override {
@@ -379,6 +391,7 @@ namespace {
         const int                                           queue_index;
         const ProductionQueue::Element                      elem;
         mutable boost::signals2::signal<void (int,int,int)> RowQuantChangedSignal;
+
     };
 
     //////////////////////////////////////////////////
