@@ -45,11 +45,12 @@ private:
                                        const std::string& rule_name);
     GG::Spin<int>*      IntRuleWidget(GG::ListBox* page, int indentation_level,
                                       const std::string& rule_name);
-    //GG::Spin<double>*   DoubleRuleWidget(GG::ListBox* page, int indentation_level,
-    //                                     const std::string& rule_name);
+    GG::Spin<double>*   DoubleRuleWidget(GG::ListBox* page, int indentation_level,
+                                         const std::string& rule_name);
 
     void BoolRuleChanged(const GG::StateButton* button, const std::string& rule_name);
     void IntRuleChanged(const GG::Spin<int>* spin, const std::string& rule_name);
+    void DoubleRuleChanged(const GG::Spin<double>* spin, const std::string& rule_name);
 
     std::map<std::string, std::string>  m_rules;
     GG::TabWnd*                         m_tabs;
