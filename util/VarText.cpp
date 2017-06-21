@@ -198,7 +198,8 @@ namespace {
     /** Converts (first, last) to a string, looks up its value in the Universe,
       * then appends this to the end of a std::string. */
     struct SubstituteAndAppend {
-        SubstituteAndAppend(const std::map<std::string, std::string>& variables, std::string& str, bool& valid) :
+        SubstituteAndAppend(const std::map<std::string, std::string>& variables,
+                            std::string& str, bool& valid) :
             m_variables(variables),
             m_str(str),
             m_valid(valid)
@@ -218,12 +219,12 @@ namespace {
             boost::split(pieces, token, boost::is_any_of(LABEL_SEPARATOR));
 
             std::string tag; //< The tag of the token (the type)
-            std::string label; //< The label of the token (the kay to fetch data by)
+            std::string label; //< The label of the token (the key to fetch data by)
             if (pieces.size() == 1) {
                 // No separator. There is only a tag. The tag is the default label
                 tag = token;
                 label = token;
-            } else if(pieces.size() == 2) {
+            } else if (pieces.size() == 2) {
                 // Had a separator
                 tag = pieces[0];
                 label = pieces[1];

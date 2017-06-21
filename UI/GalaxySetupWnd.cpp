@@ -183,7 +183,7 @@ GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
     BoolRuleWidget(current_page, 0, "RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION");
     BoolRuleWidget(current_page, 0, "RULE_CHEAP_AND_FAST_SHIP_PRODUCTION");
     BoolRuleWidget(current_page, 0, "RULE_CHEAP_AND_FAST_TECH_RESEARCH");
-    IntRuleWidget(current_page, 0, "RULE_NUM_COMBAT_ROUNDS");
+    IntRuleWidget( current_page, 0, "RULE_NUM_COMBAT_ROUNDS");
     BoolRuleWidget(current_page, 0, "RULE_RESEED_PRNG_SERVER");
 
     CreatePage("TEST");
