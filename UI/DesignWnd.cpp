@@ -124,7 +124,7 @@ namespace {
 
     const std::string DESIGN_FILENAME_PREFIX = "ShipDesign-";
     const std::string DESIGN_FILENAME_EXTENSION = ".focs.txt";
-    const std::string DESIGN_MANIFEST_PREFIX = "ShipDesignManifest";
+    const std::string DESIGN_MANIFEST_PREFIX = "ShipDesignOrdering";
     const std::string UNABLE_TO_OPEN_FILE = "Unable to open file";
     boost::filesystem::path SavedDesignsDir() { return GetUserDataDir() / "shipdesigns/"; }
 
@@ -433,7 +433,7 @@ namespace {
             boost::filesystem::absolute(PathString(designs_dir_path / file_name));
 
         std::stringstream ss;
-        ss << "ShipDesignManifest\n";
+        ss << DESIGN_MANIFEST_PREFIX << "\n";
         for (const auto uuid: m_ordered_uuids)
             ss << "    uuid = \"" << uuid << "\"\n";
         WriteToFile(file, ss.str());
