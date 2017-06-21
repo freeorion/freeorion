@@ -1616,7 +1616,30 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
     }
 
     // non-empire properties
-    if (variable_name == "PartsInShipDesign") {
+    if (variable_name == "GameRule") {
+        if (!m_string_ref1)
+            return 0;
+        std::string rule_name = m_string_ref1->Eval();
+        if (rule_name.empty())
+            return 0;
+        if (!GetGameRules().RuleExists(rule_name))
+            return 0;
+        try {
+            // may throw if no such int-valued rule exists
+            return GetGameRules().Get<int>(rule_name);
+        } catch (...) {
+            // may throw if no such bool (or int) -valued rule exists
+            if (GetGameRules().Get<bool>(rule_name))
+                return 1;
+            else
+                return 0;
+            try {
+            } catch (...) {
+            }
+        }
+        return 0;
+
+    } else if (variable_name == "PartsInShipDesign") {
         int design_id = INVALID_DESIGN_ID;
         if (m_int_ref1) {
             design_id = m_int_ref1->Eval(context);
@@ -1781,8 +1804,23 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         return GetFloatEmpirePropertySumAllIntKeys(empire_id, variable_name);
     }
 
+    // non-empire properties
+    if (variable_name == "GameRule") {
+        if (!m_string_ref1)
+            return 0.0;
+        std::string rule_name = m_string_ref1->Eval();
+        if (rule_name.empty())
+            return 0.0;
+        if (!GetGameRules().RuleExists(rule_name))
+            return 0.0;
+        try {
+            // may throw if no such int-valued rule exists
+            return GetGameRules().Get<double>(rule_name);
+        } catch (...) {
+        }
+        return 0.0;
 
-    if (variable_name == "HullFuel") {
+    } else if (variable_name == "HullFuel") {
         std::string hull_type_name;
         if (m_string_ref1)
             hull_type_name = m_string_ref1->Eval(context);
@@ -2296,8 +2334,25 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         const Empire* empire = GetEmpire(empire_id);
         if (!empire)
             return "";
-
     }
+
+    // non-empire properties
+    if (variable_name == "GameRule") {
+        if (!m_string_ref1)
+            return "";
+        std::string rule_name = m_string_ref1->Eval();
+        if (rule_name.empty())
+            return "";
+        if (!GetGameRules().RuleExists(rule_name))
+            return "";
+        try {
+            // may throw if no such int-valued rule exists
+            return GetGameRules().Get<std::string>(rule_name);
+        } catch (...) {
+        }
+        return "";
+    }
+
     return "";
 }
 
