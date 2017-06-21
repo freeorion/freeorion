@@ -3,7 +3,8 @@ Tech
     description = "SPY_STEALTH_3_DESC"
     short_description = "PLANET_PROTECT_SHORT_DESC"
     category = "SPY_CATEGORY"
-    researchcost = 500 * [[TECH_COST_MULTIPLIER]] - (250 * [[TECH_COST_MULTIPLIER]] * Statistic If condition = And [ Source OwnerHasTech name = "SPY_STEALTH_PART_3" ])
+    researchcost = (500 - (250 * Statistic If condition = And [ Source OwnerHasTech name = "SPY_STEALTH_PART_3" ])
+        ) * [[TECH_COST_MULTIPLIER]] / (1 + Statistic If condition = And [ OwnedBy empire = Source.Owner HasTag name = "SNEAKY" ])
     researchturns = 7
     tags = [ "PEDIA_SPY_CATEGORY" ]
     prerequisites = "SPY_STEALTH_2"
