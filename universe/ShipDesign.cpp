@@ -1201,6 +1201,7 @@ std::string ShipDesign::Dump() const {
 unsigned int ShipDesign::GetCheckSum() const {
     unsigned int retval{0};
     CheckSums::CheckSumCombine(retval, m_id);
+    CheckSums::CheckSumCombine(retval, m_uuid);
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_description);
     CheckSums::CheckSumCombine(retval, m_designed_on_turn);
