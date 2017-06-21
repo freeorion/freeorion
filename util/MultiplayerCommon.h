@@ -44,6 +44,9 @@ public:
     typedef OptionsDB::Option Rule;
 
     /** \name Accessors */ //@{
+    bool    Empty() const
+    { return m_game_rules.empty(); }
+
     bool    RuleExists(const std::string& name) const
     { return m_game_rules.find(name) != m_game_rules.end(); }
 
@@ -104,7 +107,7 @@ public:
 private:
     GameRules();
 
-    std::map<std::string, Rule> m_game_rules;
+    std::unordered_map<std::string, Rule> m_game_rules;
 
     friend FO_COMMON_API GameRules& GetGameRules();
 };
