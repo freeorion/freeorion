@@ -23,6 +23,12 @@ namespace parse {
             const parse::value_ref_rule<int>& simple_int = int_simple();
 
 
+            game_rule
+                =   tok.GameRule_ [ _a = construct<std::string>(_1) ]
+                >   detail::label(Name_token) >     parse::string_value_ref() [ _d = _1 ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
+                ;
+
             lowest_cost_enqueued_tech
                 =   tok.LowestCostEnqueuedTech_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
@@ -131,31 +137,33 @@ namespace parse {
                 ;
 
             most_happy_species
-                = tok.MostHappySpecies_ [ _a = construct<std::string>(_1) ]
+                =   tok.MostHappySpecies_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
                     [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             least_happy_species
-                = tok.LeastHappySpecies_ [ _a = construct<std::string>(_1) ]
+                =   tok.LeastHappySpecies_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
                     [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             ramdom_colonizable_species
-                = tok.RandomColonizableSpecies_ [ _a = construct<std::string>(_1) ]
+                =   tok.RandomColonizableSpecies_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
                     [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             random_controlled_species
-                = tok.RandomControlledSpecies_ [ _a = construct<std::string>(_1) ]
+                =   tok.RandomControlledSpecies_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
                     [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             start
-                =   lowest_cost_enqueued_tech
+                =   game_rule
+
+                |   lowest_cost_enqueued_tech
                 |   highest_cost_enqueued_tech
                 |   top_priority_enqueued_tech
                 |   most_spent_enqueued_tech
@@ -181,6 +189,8 @@ namespace parse {
                 |   ramdom_colonizable_species
                 |   random_controlled_species
                 ;
+
+            game_rule.name("GameRule");
 
             lowest_cost_enqueued_tech.name("LowestCostEnqueuedTech");
             highest_cost_enqueued_tech.name("HighestCostEnqueuedTech");
@@ -209,6 +219,8 @@ namespace parse {
             random_controlled_species.name("RandomControlledSpecies");
 
 #if DEBUG_DOUBLE_COMPLEX_PARSERS
+            debug(game_rule);
+
             debug(lowest_cost_enqueued_tech);
             debug(highest_cost_enqueued_tech);
             debug(top_priority_enqueued_tech);
@@ -236,6 +248,8 @@ namespace parse {
             debug(random_controlled_species);
 #endif
         }
+
+        complex_variable_rule<std::string> game_rule;
 
         complex_variable_rule<std::string> lowest_cost_enqueued_tech;
         complex_variable_rule<std::string> highest_cost_enqueued_tech;
