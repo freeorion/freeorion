@@ -297,7 +297,7 @@ namespace {
             return;
         }
 
-        DebugLogger() << "Add saved design " << design->Name() << " to current designs.";
+        TraceLogger() << "Add saved design " << design->Name() << " to current designs.";
 
         // Give it a new UUID so that the empire design is distinct.
         auto new_current_design = *design;
