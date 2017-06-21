@@ -562,6 +562,10 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     m_add_padding_at_end(true)
 {
     Control::SetColor(color);
+}
+
+void ListBox::CompleteConstruction()
+{
     ValidateStyle();
     SetChildClippingMode(ClipToClient);
     m_auto_scroll_timer.Stop();

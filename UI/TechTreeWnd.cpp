@@ -1530,6 +1530,8 @@ public:
     virtual ~TechListBox();
     //@}
 
+    void CompleteConstruction() override;
+
     /** \name Accessors */ //@{
     std::set<std::string>   GetCategoriesShown() const;
     std::set<TechStatus>    GetTechStatusesShown() const;
@@ -1716,6 +1718,11 @@ TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
     CUIListBox()
 {
     Resize(GG::Pt(w, h));
+}
+
+void TechTreeWnd::TechListBox::CompleteConstruction() {
+    CUIListBox::CompleteConstruction();
+
     DoubleClickedRowSignal.connect(
         boost::bind(&TechListBox::TechDoubleClicked, this, _1, _2, _3));
     LeftClickedRowSignal.connect(
@@ -1736,7 +1743,7 @@ TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
     m_tech_statuses_shown.insert(TS_RESEARCHABLE);
     m_tech_statuses_shown.insert(TS_COMPLETE);
 
-    GG::X row_width = w - ClientUI::ScrollWidth() - ClientUI::Pts();
+    GG::X row_width = Width() - ClientUI::ScrollWidth() - ClientUI::Pts();
     std::vector<GG::X> col_widths = TechRow::ColWidths(row_width);
     const GG::Y HEIGHT(Value(col_widths[0]));
     m_header_row = GG::Wnd::Create<GG::ListBox::Row>(row_width, HEIGHT, "");

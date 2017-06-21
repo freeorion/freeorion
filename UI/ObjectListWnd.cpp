@@ -1797,7 +1797,11 @@ public:
         m_filter_condition(nullptr),
         m_visibilities(),
         m_header_row(nullptr)
-    {
+    {}
+
+    void CompleteConstruction() override {
+        CUIListBox::CompleteConstruction();
+
         // preinitialize listbox/row column widths, because what
         // ListBox::Insert does on default is not suitable for this case
         ManuallyManageColProps();

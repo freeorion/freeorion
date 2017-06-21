@@ -260,6 +260,8 @@ public:
     virtual ~ListBox();
     //@}
 
+    void CompleteConstruction() override;
+
     /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
     Pt ClientUpperLeft() const override;
