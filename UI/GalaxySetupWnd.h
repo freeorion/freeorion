@@ -30,7 +30,7 @@ public:
 
     /** \name Mutators*/ //!@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-    void Render() override {}
+    void Render() override;
     void Disable(bool b = true) override;
     //!@}
 
@@ -38,19 +38,21 @@ private:
     void DoLayout();
     void SettingChanged();
 
-    void BoolRuleChanged(const GG::StateButton* button,
-                         const std::string& rule_name);
-    void IntRuleChanged(const GG::Spin<int>* spin,
-                        const std::string& rule_name);
+    GG::ListBox*        CreatePage(const std::string& name);
+    void                CreateSectionHeader(GG::ListBox* page, int indentation_level,
+                                            const std::string& name, const std::string& tooltip = "");
+    GG::StateButton*    BoolRuleWidget(GG::ListBox* page, int indentation_level,
+                                       const std::string& rule_name);
+    GG::Spin<int>*      IntRuleWidget(GG::ListBox* page, int indentation_level,
+                                      const std::string& rule_name);
+    //GG::Spin<double>*   DoubleRuleWidget(GG::ListBox* page, int indentation_level,
+    //                                     const std::string& rule_name);
+
+    void BoolRuleChanged(const GG::StateButton* button, const std::string& rule_name);
+    void IntRuleChanged(const GG::Spin<int>* spin, const std::string& rule_name);
 
     std::map<std::string, std::string>  m_rules;
-
-    GG::StateButton*    m_cheap_build_toggle = nullptr;
-    GG::StateButton*    m_cheap_ships_toggle = nullptr;
-    GG::StateButton*    m_cheap_techs_toggle = nullptr;
-    GG::Label*          m_combat_rounds_label = nullptr;
-    GG::Spin<int>*      m_combat_rounds_spin = nullptr;
-    GG::StateButton*    m_random_seed_toggle = nullptr;
+    GG::TabWnd*                         m_tabs;
 };
 
 /** Encapsulates the galaxy setup options so that they may be reused in the
