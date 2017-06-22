@@ -11,6 +11,8 @@ class TextBrowseWnd : public GG::BrowseInfoWnd {
 public:
     TextBrowseWnd(const std::string& title_text, const std::string& main_text, GG::X w = GG::X(200));
 
+    void CompleteConstruction() override;
+
     bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
 
     void Render() override;

@@ -30,11 +30,16 @@ TextBrowseWnd::TextBrowseWnd(const std::string& title_text, const std::string& m
     m_main_text->Resize(GG::Pt(w, ICON_BROWSE_ICON_HEIGHT));
     m_main_text->SetResetMinSize(true);
     m_main_text->Resize(m_main_text->MinSize());
+}
+
+void TextBrowseWnd::CompleteConstruction()
+{
+    GG::BrowseInfoWnd::CompleteConstruction();
 
     AttachChild(m_main_text);
     AttachChild(m_title_text);
 
-    Resize(GG::Pt(w, ROW_HEIGHT + m_main_text->Height()));
+    Resize(GG::Pt(Width(), IconTextBrowseWndRowHeight() + m_main_text->Height()));
 }
 
 bool TextBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
