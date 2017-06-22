@@ -224,7 +224,12 @@ namespace {
             m_sitrep_entry(sitrep),
             m_icon(nullptr),
             m_link_text(nullptr)
+        {}
+
+        void CompleteConstruction() override
         {
+            GG::Control::CompleteConstruction();
+
             SetChildClippingMode(ClipToClient);
 
             int icon_dim = GetIconSize();
@@ -255,7 +260,7 @@ namespace {
             m_link_text->RightClickedSignal.connect(
                 boost::bind(&SitRepDataPanel::RClick, this, _1, _2));
 
-            DoLayout(GG::Pt(left, top), w);
+            DoLayout(UpperLeft(), Width());
         }
 
         void Render() override {

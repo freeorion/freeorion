@@ -531,7 +531,12 @@ const GG::X GalaxySetupPanel::DefaultWidth() {
 
 GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS)
+{}
+
+void GalaxySetupPanel::CompleteConstruction()
 {
+    GG::Control::CompleteConstruction();
+
     Sound::TempUISoundDisabler sound_disabler;
 
     // seed

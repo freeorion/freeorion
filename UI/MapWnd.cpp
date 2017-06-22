@@ -522,6 +522,7 @@ public:
     }
 
     void CompleteConstruction() override {
+        GG::Control::CompleteConstruction();
         AttachChild(m_label);
         std::set<int> dummy = std::set<int>();
         Update(1.0, dummy, INVALID_OBJECT_ID);

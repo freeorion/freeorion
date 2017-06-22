@@ -15,6 +15,7 @@ public:
     BuildingsPanel(GG::X w, int columns, int planet_id);
     ~BuildingsPanel();
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     int PlanetID() const { return m_planet_id; }

@@ -54,15 +54,21 @@ namespace {
             else
                 nameText = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_REPETITIONS")) % quantity);
             //nameText += GetShipDesign(designID)->Name();
-            auto text = GG::Wnd::Create<CUILabel>(nameText, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
-            text->SetTextColor(txtClr);
-            text->OffsetMove(GG::Pt(GG::X0, GG::Y(-3)));
-            AttachChild(text);
-            Resize(GG::Pt(nwidth, text->Height()));
+            m_text = GG::Wnd::Create<CUILabel>(nameText, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
+            m_text->SetTextColor(txtClr);
+            m_text->OffsetMove(GG::Pt(GG::X0, GG::Y(-3)));
+        }
+
+        void CompleteConstruction() override {
+            GG::Control::CompleteConstruction();
+            AttachChild(m_text);
+            Resize(GG::Pt(Width(), m_text->Height()));
         }
 
         void Render() override
         {}
+
+        CUILabel* m_text;
     };
 
     //////////////
@@ -202,6 +208,7 @@ namespace {
                                  const ProductionQueue::Element& build, double turn_cost, double total_cost,
                                  int turns, int number, double completed_progress);
 
+        void CompleteConstruction() override;
         void PreRender() override;
         void Render() override;
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -415,7 +422,10 @@ namespace {
         m_turn_spending(turn_spending),
         m_total_cost(total_cost),
         m_completed_progress(completed_progress)
-    {
+    {}
+
+    void QueueProductionItemPanel::CompleteConstruction() {
+    GG::Control::CompleteConstruction();
         SetChildClippingMode(ClipToClient);
 
         GG::Clr clr = m_in_progress

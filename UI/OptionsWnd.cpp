@@ -54,12 +54,17 @@ namespace {
     public:
         RowContentsWnd(GG::X w, GG::Y h, Wnd* contents, int indentation_level) :
             Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-            m_contents(contents)
-        {
+            m_contents(contents),
+            m_indentation_level(indentation_level)
+        {}
+
+        void CompleteConstruction() override {
+            GG::Control::CompleteConstruction();
+
             if (!m_contents)
                 return;
             AttachChild(m_contents);
-            m_contents->MoveTo(GG::Pt(GG::X(indentation_level * INDENTATION), GG::Y0));
+            m_contents->MoveTo(GG::Pt(GG::X(m_indentation_level * INDENTATION), GG::Y0));
             DoLayout();
         }
 
@@ -82,6 +87,7 @@ namespace {
         }
     private:
         Wnd* m_contents;
+        int m_indentation_level;
     };
 
     struct BrowseForPathButtonFunctor {

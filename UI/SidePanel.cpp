@@ -472,6 +472,7 @@ public:
 
     ~PlanetPanel();
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
@@ -900,7 +901,12 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_buildings_panel(nullptr),
     m_specials_panel(nullptr),
     m_star_type(star_type)
+{}
+
+void SidePanel::PlanetPanel::CompleteConstruction()
 {
+    GG::Control::CompleteConstruction();
+
     SetName(UserString("PLANET_PANEL"));
 
     std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
@@ -937,7 +943,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     else
         font = ClientUI::GetFont(ClientUI::Pts()*4/3);
 
-    GG::X panel_width = w - MaxPlanetDiameter() - 2*EDGE_PAD;
+    GG::X panel_width = Width() - MaxPlanetDiameter() - 2*EDGE_PAD;
 
     // create planet name control
     m_planet_name = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", font, ClientUI::TextColor());

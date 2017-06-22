@@ -115,6 +115,7 @@ namespace {
         CombatLogAccordionPanel(GG::X w, CombatLogWnd::Impl &log_,
                                 int viewing_empire_id_, ConstCombatEventPtr event_);
         ~CombatLogAccordionPanel();
+        void CompleteConstruction() override;
 
         private:
         /** toggles panel expanded or collapsed */
@@ -139,7 +140,10 @@ namespace {
         event(event_),
         title(log.DecorateLinkText(event->CombatLogDescription(viewing_empire_id))),
         details()
-    {
+    {}
+
+    void CombatLogAccordionPanel::CompleteConstruction() {
+        AccordionPanel::CompleteConstruction();
         AccordionPanel::SetInteriorColor(ClientUI::CtrlColor());
 
         m_expand_button->LeftClickedSignal.connect(

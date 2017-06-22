@@ -748,6 +748,7 @@ public:
     /** \name Structors */ //@{
     PartControl(const PartType* part);
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     const PartType*     Part() const { return m_part; }
@@ -776,7 +777,11 @@ PartControl::PartControl(const PartType* part) :
     m_icon(nullptr),
     m_background(nullptr),
     m_part(part)
+{}
+
+void PartControl::CompleteConstruction()
 {
+    GG::Control::CompleteConstruction();
     if (!m_part)
         return;
 
@@ -1786,11 +1791,11 @@ BasesListBox::HullAndNamePanel::HullAndNamePanel(GG::X w, GG::Y h, const std::st
                                                    GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
     m_graphic->Resize(GG::Pt(w, h));
     m_name = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_WORDBREAK | GG::FORMAT_CENTER | GG::FORMAT_TOP);
-
 }
 
 void BasesListBox::HullAndNamePanel::CompleteConstruction()
 {
+    GG::Control::CompleteConstruction();
     AttachChild(m_graphic);
     AttachChild(m_name);
 }
@@ -2934,6 +2939,7 @@ public:
     SlotControl();
     SlotControl(double x, double y, ShipSlotType slot_type);
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     ShipSlotType    SlotType() const;
@@ -3003,7 +3009,12 @@ SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
     m_y_position_fraction(y),
     m_part_control(nullptr),
     m_background(nullptr)
+{}
+
+void SlotControl::CompleteConstruction()
 {
+    GG::Control::CompleteConstruction();
+
     m_background = GG::Wnd::Create<GG::StaticGraphic>(SlotBackgroundTexture(m_slot_type), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_background->Resize(GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT));
     m_background->Show();
@@ -3013,11 +3024,11 @@ SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
 
     // set up empty slot tool tip
     std::string title_text;
-    if (slot_type == SL_EXTERNAL)
+    if (m_slot_type == SL_EXTERNAL)
         title_text = UserString("SL_EXTERNAL");
-    else if (slot_type == SL_INTERNAL)
+    else if (m_slot_type == SL_INTERNAL)
         title_text = UserString("SL_INTERNAL");
-    else if (slot_type == SL_CORE)
+    else if (m_slot_type == SL_CORE)
         title_text = UserString("SL_CORE");
 
     SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(

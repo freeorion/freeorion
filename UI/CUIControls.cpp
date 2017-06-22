@@ -1169,12 +1169,6 @@ StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
     m_text(nullptr)
 {
     m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC);
-
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-
-    AttachChild(m_icon);
-
-    RequirePreRender();
 }
 
 StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
@@ -1189,12 +1183,6 @@ StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
     m_text(nullptr)
 {
     m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC);
-
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-
-    AttachChild(m_icon);
-
-    RequirePreRender();
 }
 
 StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
@@ -1209,7 +1197,6 @@ StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
     m_icon(nullptr),
     m_text(nullptr)
 {
-    SetName("StatisticIcon");
     m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC);
 
     m_values[0] = value0;
@@ -1218,6 +1205,13 @@ StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
     m_digits[1] = digits1;
     m_show_signs[0] = showsign0;
     m_show_signs[1] = showsign1;
+}
+
+void StatisticIcon::CompleteConstruction()
+{
+    GG::Control::CompleteConstruction();
+
+    SetName("StatisticIcon");
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 

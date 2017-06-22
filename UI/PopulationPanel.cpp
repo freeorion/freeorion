@@ -32,7 +32,11 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     m_meter_stats(),
     m_multi_icon_value_indicator(nullptr),
     m_multi_meter_status_bar(nullptr)
+{}
+
+void PopulationPanel::CompleteConstruction()
 {
+    AccordionPanel::CompleteConstruction();
     SetName("PopulationPanel");
 
     std::shared_ptr<const PopCenter> pop = GetPopCenter();

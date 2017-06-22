@@ -34,15 +34,11 @@ public:
         GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
         m_icon(nullptr),
         m_name(nullptr),
-        m_census_val(nullptr)
+        m_census_val(nullptr),
+        m_show_icon(show_icon)
     {
-        m_show_icon = show_icon;
-        SetChildClippingMode(ClipToClient);
-
-        if (m_show_icon) {
+        if (m_show_icon)
             m_icon = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::SpeciesIcon(name), GG::GRAPHIC_FITGRAPHIC);
-            AttachChild(m_icon);
-        }
 
         m_name = GG::Wnd::Create<CUILabel>(UserString(name), GG::FORMAT_RIGHT);
 
@@ -50,6 +46,16 @@ public:
         num_digits =    census_val < 100 ? num_digits : 3; // this allows the decimal point to line up when there number above and below 100.
         num_digits =   census_val < 1000 ? num_digits : 4; // this allows the decimal point to line up when there number above and below 1000.
         m_census_val = GG::Wnd::Create<CUILabel>(DoubleToString(census_val, num_digits, false), GG::FORMAT_RIGHT);
+    }
+
+    void CompleteConstruction() override
+    {
+        GG::Control::CompleteConstruction();
+
+        SetChildClippingMode(ClipToClient);
+
+        if (m_show_icon)
+            AttachChild(m_icon);
 
         AttachChild(m_name);
         AttachChild(m_census_val);

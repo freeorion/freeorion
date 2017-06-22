@@ -390,6 +390,16 @@ public:
         }
     }
 
+    void CompleteConstruction() override {
+        GG::Control::CompleteConstruction();
+        AttachChild(m_class_drop);
+        SetMinSize(m_class_drop->Size());
+
+        UpdateParameterControls();
+
+        // TODO: set newly created parameter controls' values based on init condition
+    }
+
     ~ConditionWidget() {
         delete m_class_drop;
         delete m_string_drop;
@@ -690,7 +700,6 @@ private:
         m_class_drop = GG::Wnd::Create<CUIDropDownList>(DropListDropHeight());
         m_class_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
         m_class_drop->SetStyle(GG::LIST_NOSORT);
-        AttachChild(m_class_drop);
 
         std::vector<std::string> row_keys ={ALL_CONDITION,              PLANETTYPE_CONDITION,       PLANETSIZE_CONDITION,
                                             HASGROWTHSPECIAL_CONDITION, GGWITHPTYPE_CONDITION,      ASTWITHPTYPE_CONDITION,
@@ -700,7 +709,6 @@ private:
                                             CANCOLONIZE_CONDITION,      HOMEWORLD_CONDITION,        METERVALUE_CONDITION,
                                             CAPITAL_CONDITION };
 
-        SetMinSize(m_class_drop->Size());
         GG::ListBox::iterator select_row_it = m_class_drop->end();
         const std::string& init_condition_key = ConditionClassName(init_condition);
 
@@ -719,9 +727,6 @@ private:
         else if (!m_class_drop->Empty())
             m_class_drop->Select(0);
 
-        UpdateParameterControls();
-
-        // TODO: set newly created parameter controls' values based on init condition
     }
 
     void    ConditionClassSelected(GG::ListBox::iterator iterator)
@@ -1026,7 +1031,7 @@ FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPL
     m_cancel_button(nullptr),
     m_apply_button(nullptr)
 {
-    m_condition_widget = new ConditionWidget(GG::X(3), GG::Y(3), condition_filter);
+    m_condition_widget = GG::Wnd::Create<ConditionWidget>(GG::X(3), GG::Y(3), condition_filter);
 }
 
 void FilterDialog::CompleteConstruction()

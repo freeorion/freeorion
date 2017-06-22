@@ -119,7 +119,12 @@ namespace {
             m_host(false),
             m_win_status(NEITHER),
             m_selected(false)
+        {}
+
+        void CompleteConstruction() override
         {
+            GG::Control::CompleteConstruction();
+
             SetChildClippingMode(ClipToClient);
 
             //m_player_name_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);

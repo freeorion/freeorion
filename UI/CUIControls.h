@@ -424,6 +424,8 @@ public:
                   GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initializes with two values
     //@}
 
+    void CompleteConstruction() override;
+
     /** \name Accessors */ //@{
     double          GetValue(int index = 0) const;
     GG::Pt          MinUsableSize() const override;

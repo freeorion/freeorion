@@ -52,7 +52,11 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
     m_planet_id(planet_id),
     m_columns(columns),
     m_building_indicators()
-{
+{}
+
+void BuildingsPanel::CompleteConstruction() {
+    AccordionPanel::CompleteConstruction();
+
     SetName("BuildingsPanel");
 
     if (m_columns < 1) {

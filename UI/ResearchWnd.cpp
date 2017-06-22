@@ -41,6 +41,7 @@ namespace {
         QueueTechPanel(GG::X x, GG::Y y, GG::X w, const std::string& tech_name, double allocated_rp,
                        int turns_left, double turns_completed, int empire_id, bool paused = false);
 
+        void CompleteConstruction() override;
         void Render() override;
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -219,7 +220,11 @@ namespace {
         m_turns_remaining_text->SetTextColor(clr);
         m_turns_remaining_text->ClipText(true);
         m_turns_remaining_text->SetChildClippingMode(ClipToClient);
+    }
 
+    void QueueTechPanel::CompleteConstruction()
+    {
+        GG::Control::CompleteConstruction();
         AttachChild(m_name_text);
         AttachChild(m_RPs_and_turns_text);
         AttachChild(m_turns_remaining_text);

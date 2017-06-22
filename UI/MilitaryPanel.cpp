@@ -32,7 +32,12 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     m_meter_stats(),
     m_multi_icon_value_indicator(nullptr),
     m_multi_meter_status_bar(nullptr)
+{}
+
+void MilitaryPanel::CompleteConstruction()
 {
+    AccordionPanel::CompleteConstruction();
+
     SetName("MilitaryPanel");
 
     std::shared_ptr<const Planet> planet = GetPlanet();
