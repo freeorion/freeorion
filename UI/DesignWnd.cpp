@@ -4128,6 +4128,8 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
 
     // update stored design
     m_incomplete_design.reset();
+    if (hull.empty())
+        return;
     try {
         m_incomplete_design.reset(new ShipDesign(std::invalid_argument(""),
                                                  name.StoredString(), description.StoredString(),
