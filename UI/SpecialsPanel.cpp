@@ -24,6 +24,11 @@ SpecialsPanel::SpecialsPanel(GG::X w, int object_id) :
     m_icons()
 {
     SetName("SpecialsPanel");
+}
+
+void SpecialsPanel::CompleteConstruction()
+{
+    GG::Wnd::CompleteConstruction();
     Update();
 }
 

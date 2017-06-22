@@ -57,6 +57,7 @@ public:
     /** \name Structors */ //@{
     DesignWnd(GG::X w, GG::Y h);
     //@}
+    void CompleteConstruction() override;
 
     /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;

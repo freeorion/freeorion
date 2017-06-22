@@ -19,6 +19,7 @@ public:
 
     virtual ~ProductionWnd();
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     int             SelectedPlanetID() const;

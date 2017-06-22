@@ -504,6 +504,8 @@ public:
     LayoutPanel(GG::X w, GG::Y h);
     //@}
 
+    void CompleteConstruction() override;
+
     /** \name Accessors */ //@{
     GG::Pt ClientLowerRight() const override;
 
@@ -615,6 +617,7 @@ class TechTreeWnd::LayoutPanel::TechPanel : public GG::Wnd {
 public:
     TechPanel(const std::string& tech_name, const TechTreeWnd::LayoutPanel* panel);
     virtual         ~TechPanel();
+    void CompleteConstruction() override;
 
     bool InWindow(const GG::Pt& pt) const override;
 
@@ -708,7 +711,11 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     // intentionally not attaching as child; TechPanel::Render the child Render() function instead.
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+}
 
+void TechTreeWnd::LayoutPanel::TechPanel::CompleteConstruction()
+{
+    GG::Wnd::CompleteConstruction();
     Update();
 }
 
@@ -1082,7 +1089,12 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     m_hscroll(nullptr),
     m_zoom_in_button(nullptr),
     m_zoom_out_button(nullptr)
+{}
+
+void TechTreeWnd::LayoutPanel::CompleteConstruction()
 {
+    GG::Wnd::CompleteConstruction();
+
     SetChildClippingMode(ClipToClient);
 
     m_scale = std::pow(ZOOM_STEP_SIZE, GetOptionsDB().Get<double>("UI.tech-layout-zoom-scale")); //(LATHANDA) Initialise Fullzoom and do real zooming using GL. TODO: Check best size
@@ -1995,9 +2007,14 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     m_tech_list(nullptr),
     m_init_flag(initially_hidden)
 {
+}
+
+void TechTreeWnd::CompleteConstruction() {
+    GG::Wnd::CompleteConstruction();
+
     Sound::TempUISoundDisabler sound_disabler;
 
-    m_layout_panel = GG::Wnd::Create<LayoutPanel>(w, h);
+    m_layout_panel = GG::Wnd::Create<LayoutPanel>(Width(), Height());
     m_layout_panel->TechLeftClickedSignal.connect(
         boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_layout_panel->TechDoubleClickedSignal.connect(
@@ -2006,7 +2023,7 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
         boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
     AttachChild(m_layout_panel);
 
-    m_tech_list = GG::Wnd::Create<TechListBox>(w, h);
+    m_tech_list = GG::Wnd::Create<TechListBox>(Width(), Height());
     m_tech_list->TechLeftClickedSignal.connect(
         boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_tech_list->TechDoubleClickedSignal.connect(

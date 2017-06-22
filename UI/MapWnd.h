@@ -61,6 +61,8 @@ public:
     ~MapWnd();
     //!@}
 
+    void CompleteConstruction() override;
+
     //! \name Accessors //!@{
     GG::Pt ClientUpperLeft() const override;
 

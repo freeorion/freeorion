@@ -71,6 +71,8 @@ public:
     BuildingIndicator(GG::X w, const std::string& building_type,
                       double turns_completed, double total_turns, double total_cost, double turn_spending);
 
+    void CompleteConstruction() override;
+
     /** \name Mutators */ //@{
     void PreRender() override;
 

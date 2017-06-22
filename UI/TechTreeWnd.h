@@ -31,6 +31,7 @@ public:
     TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden = true);
     ~TechTreeWnd();
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     double                  Scale() const;

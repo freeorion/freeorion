@@ -17,6 +17,7 @@ public:
     /** \name Structors */ //@{
     BuildDesignatorWnd(GG::X w, GG::Y h);
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;

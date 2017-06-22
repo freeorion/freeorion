@@ -2330,6 +2330,7 @@ class FleetDetailPanel : public GG::Wnd {
 public:
     FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_issuing_enabled, GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
 
+    void CompleteConstruction() override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     int             FleetID() const;
@@ -2367,11 +2368,12 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
     m_order_issuing_enabled(order_issuing_enabled),
     m_ships_lb(nullptr)
 {
+    GG::Wnd::CompleteConstruction();
+
     SetName("FleetDetailPanel");
     SetChildClippingMode(ClipToClient);
 
     m_ships_lb = GG::Wnd::Create<ShipsListBox>(INVALID_OBJECT_ID, order_issuing_enabled);
-    AttachChild(m_ships_lb);
     m_ships_lb->SetHiliteColor(GG::CLR_ZERO);
 
     SetFleet(fleet_id);
@@ -2389,7 +2391,11 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
         boost::bind(&FleetDetailPanel::ShipRightClicked, this, _1, _2, _3));
     GetUniverse().UniverseObjectDeleteSignal.connect(
         boost::bind(&FleetDetailPanel::UniverseObjectDeleted, this, _1));
+}
 
+void FleetDetailPanel::CompleteConstruction()
+{
+    AttachChild(m_ships_lb);
     DoLayout();
 }
 

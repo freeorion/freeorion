@@ -434,6 +434,11 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
         boost::bind(&ResearchWnd::QueueItemPaused, this, _1, _2));
     m_tech_tree_wnd->AddTechsToQueueSignal.connect(
         boost::bind(&ResearchWnd::AddTechsToQueueSlot, this, _1, _2));
+}
+
+void ResearchWnd::CompleteConstruction()
+{
+    GG::Wnd::CompleteConstruction();
 
     AttachChild(m_research_info_panel);
     AttachChild(m_queue_wnd);

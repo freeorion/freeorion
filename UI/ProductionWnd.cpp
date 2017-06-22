@@ -792,8 +792,12 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     m_build_designator_wnd(nullptr),
     m_order_issuing_enabled(false),
     m_empire_shown_id(ALL_EMPIRES)
+{}
+
+void ProductionWnd::CompleteConstruction()
 {
-    //DebugLogger() << "ProductionWindow:  app-width: "<< GetOptionsDB().Get<int>("app-width")
+     GG::Wnd::CompleteConstruction();
+   //DebugLogger() << "ProductionWindow:  app-width: "<< GetOptionsDB().Get<int>("app-width")
     //              << " ; windowed width: " << GetOptionsDB().Get<int>("app-width-windowed");
 
     GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));

@@ -958,7 +958,12 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     m_enc_detail_panel(nullptr),
     m_build_selector(nullptr),
     m_side_panel(nullptr)
+{}
+
+void BuildDesignatorWnd::CompleteConstruction()
 {
+    GG::Wnd::CompleteConstruction();
+
     m_enc_detail_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(
         GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, PROD_PEDIA_WND_NAME);
     // Wnd is manually closed by user

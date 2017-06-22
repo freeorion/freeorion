@@ -163,6 +163,7 @@ CUIWnd::CUIWnd(const std::string& wnd_name, GG::Flags<GG::WndFlag> flags, const 
 
 void CUIWnd::CompleteConstruction()
 {
+    GG::Wnd::CompleteConstruction();
     Init();
     ValidatePosition();
 }

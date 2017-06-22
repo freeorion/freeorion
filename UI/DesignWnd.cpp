@@ -4344,7 +4344,12 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     m_base_selector(nullptr),
     m_part_palette(nullptr),
     m_main_panel(nullptr)
+{}
+
+void DesignWnd::CompleteConstruction()
 {
+    GG::Wnd::CompleteConstruction();
+
     Sound::TempUISoundDisabler sound_disabler;
     SetChildClippingMode(ClipToClient);
 

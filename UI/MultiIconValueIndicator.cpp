@@ -37,7 +37,12 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<int>
     m_icons(),
     m_meter_types(meter_types),
     m_object_ids(object_ids)
+{}
+
+void MultiIconValueIndicator::CompleteConstruction()
 {
+    GG::Wnd::CompleteConstruction();
+
     SetName("MultiIconValueIndicator");
 
     GG::X x(EDGE_PAD);

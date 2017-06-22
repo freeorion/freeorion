@@ -241,7 +241,12 @@ IntroScreen::IntroScreen() :
     m_splash(nullptr),
     m_logo(nullptr),
     m_version(nullptr)
+{}
+
+void IntroScreen::CompleteConstruction()
 {
+    GG::Wnd::CompleteConstruction();
+
     m_menu = GG::Wnd::Create<CUIWnd>(UserString("INTRO_WINDOW_TITLE"), GG::X1, GG::Y1,
                                   MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::ONTOP | GG::INTERACTIVE);
 

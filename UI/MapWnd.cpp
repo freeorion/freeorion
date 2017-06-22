@@ -519,6 +519,9 @@ public:
         m_enabled(false)
     {
         m_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
+    }
+
+    void CompleteConstruction() override {
         AttachChild(m_label);
         std::set<int> dummy = std::set<int>();
         Update(1.0, dummy, INVALID_OBJECT_ID);
@@ -960,7 +963,12 @@ MapWnd::MapWnd() :
     m_FPS(nullptr),
     m_scale_line(nullptr),
     m_zoom_slider(nullptr)
+{}
+
+void MapWnd::CompleteConstruction()
 {
+    GG::Wnd::CompleteConstruction();
+
     SetName("MapWnd");
 
     GetUniverse().UniverseObjectDeleteSignal.connect(
