@@ -78,6 +78,7 @@
 #define TOKEN_SEQ_3                             \
     (Damage)                                    \
     (Data)                                      \
+    (Default)                                   \
     (Defense)                                   \
     (Described)                                 \
     (Description)                               \
@@ -174,6 +175,7 @@
     (Inferno)                                   \
     (InSystem)                                  \
     (Interceptor)                               \
+    (Integer)                                   \
     (Internal)                                  \
     (Invisible)                                 \
     (Item)                                      \
@@ -322,6 +324,7 @@
     (RandomTransferrableTech)                   \
     (RandomNumber)                              \
     (Range)                                     \
+    (Real)                                      \
     (Reason)                                    \
     (RebelTroops)                               \
     (Red)                                       \
@@ -452,6 +455,8 @@
     (Statistic)                                 \
     (StDev)                                     \
     (Stealth)                                   \
+    (String)                                    \
+    (StringList)                                \
     (Structure)                                 \
     (Sum)                                       \
     (Supply)                                    \
@@ -488,8 +493,11 @@
     (TopPriorityTransferrableTech)              \
     (Toxic)                                     \
     (Trade)                                     \
-    (TradeStockpile)                            \
+    (TradeStockpile)
+
+#define TOKEN_SEQ_15                            \
     (Troops)                                    \
+    (TrueFalse)                                 \
     (Tundra)                                    \
     (Turn)                                      \
     (TurnsSinceFocusChange)                     \
@@ -531,6 +539,7 @@ BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_11)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_12)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_13)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_14)
+BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_15)
 
 #undef DECLARE_TOKEN
 

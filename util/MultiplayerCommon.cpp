@@ -5,6 +5,7 @@
 #include "LoggerWithOptionsDB.h"
 #include "OptionsDB.h"
 #include "Random.h"
+#include "../parse/Parse.h"
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
@@ -53,10 +54,25 @@ bool RegisterGameRules(GameRulesFn function) {
 
 GameRules& GetGameRules() {
     static GameRules game_rules;
+    bool do_parse = game_rules.Empty();
+
     if (!GameRulesRegistry().empty()) {
         for (GameRulesFn fn : GameRulesRegistry())
             fn(game_rules);
         GameRulesRegistry().clear();
+    }
+
+    if (do_parse) {
+        try {
+            parse::game_rules(game_rules);
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Failed parsing game rules: error: " << e.what();
+            throw e;
+        }
+
+        DebugLogger() << "Registered and Parsed Game Rules:";
+        for (const auto& entry : game_rules.GetRulesAsStrings())
+            DebugLogger() << " ... " << entry.first << " : " << entry.second;
     }
     return game_rules;
 }
