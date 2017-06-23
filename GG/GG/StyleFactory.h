@@ -195,10 +195,6 @@ public:
                                               const std::string& two = "") const;
     //@}
 
-    /** Deletes \a wnd.  It is only necessary to use this method to destroy
-        Wnds when the factory that created them exists in a plugin. */
-    virtual void DeleteWnd(Wnd* wnd) const;
-
     /** The "filename" of the default font. */
     static const std::string& DefaultFontName();
 };

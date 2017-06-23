@@ -51,8 +51,6 @@ public:
     std::shared_ptr<GG::Button> NewTabBarLeftButton(const std::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
 
     std::shared_ptr<GG::Button> NewTabBarRightButton(const std::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
-
-    void DeleteWnd(GG::Wnd* wnd) const override;
 };
 
 #endif // _CUIStyle_h_

@@ -195,9 +195,6 @@ std::shared_ptr<ThreeButtonDlg> StyleFactory::NewThreeButtonDlg(X w, Y h, const 
                                        buttons, zero, one, two);
 }
 
-void StyleFactory::DeleteWnd(Wnd* wnd) const
-{ delete wnd; }
-
 const std::string& StyleFactory::DefaultFontName()
 {
     static std::string retval = DEFAULT_FONT_NAME;

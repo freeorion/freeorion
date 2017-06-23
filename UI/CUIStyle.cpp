@@ -116,6 +116,3 @@ std::shared_ptr<GG::Button> CUIStyle::NewTabBarLeftButton(const std::shared_ptr<
 
 std::shared_ptr<GG::Button> CUIStyle::NewTabBarRightButton(const std::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
 { return GG::Wnd::Create<CUIArrowButton>(SHAPE_RIGHT, true, GG::INTERACTIVE); }
-
-void CUIStyle::DeleteWnd(GG::Wnd* wnd) const
-{ delete wnd; }
