@@ -68,7 +68,7 @@ namespace GG {
         m_background_color(CLR_ZERO)
     {}
 
-    ScrollPanel::ScrollPanel(X x, Y y, X w, Y h, Wnd* content):
+    ScrollPanel::ScrollPanel(X x, Y y, X w, Y h, std::shared_ptr<Wnd> content):
         Wnd(x, y, w, h, INTERACTIVE),
         m_vscroll(nullptr),
         m_content(content),
@@ -97,6 +97,9 @@ namespace GG {
 
         DoLayout();
     }
+
+    ScrollPanel::~ScrollPanel()
+    {}
 
     void ScrollPanel::ScrollTo(Y pos)
     {
