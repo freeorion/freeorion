@@ -291,7 +291,7 @@ namespace GG {
         m_self->SetText(str);
     }
 
-    RichText::~RichText() { delete m_self; }
+    RichText::~RichText() {}
 
     void RichText::SetText(const std::string& str) { m_self->SetText(str); }
 

@@ -36,6 +36,7 @@
 
 namespace GG
 {
+class RichTextPrivate;
 
 /** \brief A control for showing text and images.
  */
@@ -99,7 +100,7 @@ public:
 
 private:
     friend class RichTextPrivate;
-    class RichTextPrivate* const m_self;
+    std::unique_ptr<RichTextPrivate> const m_self;
 };
 
 }
