@@ -86,7 +86,7 @@ TextControl::TextControl(const TextControl& that) :
     m_text_elements(that.m_text_elements),
     m_code_points(that.m_code_points),
     m_font(that.m_font),
-    m_render_cache(that.m_render_cache),
+    m_render_cache(nullptr),
     m_cached_minusable_size_width(that.m_cached_minusable_size_width),
     m_cached_minusable_size(that.m_cached_minusable_size)
 {
@@ -96,10 +96,7 @@ TextControl::TextControl(const TextControl& that) :
 }
 
 TextControl::~TextControl()
-{
-    delete m_render_cache;
-    m_render_cache = nullptr;
-}
+{}
 
 TextControl& TextControl::operator=(const TextControl& that)
 {
@@ -111,7 +108,7 @@ TextControl& TextControl::operator=(const TextControl& that)
     m_text_elements = that.m_text_elements;
     m_code_points = that.m_code_points;
     m_font = that.m_font;
-    m_render_cache = that.m_render_cache;
+    m_render_cache.reset();
     m_cached_minusable_size_width = that.m_cached_minusable_size_width;
     m_cached_minusable_size = that.m_cached_minusable_size;
 
@@ -226,18 +223,13 @@ void TextControl::Render()
 
 void TextControl::RefreshCache() {
     PurgeCache();
-    m_render_cache = new Font::RenderCache();
+    m_render_cache.reset(new Font::RenderCache());
     if (m_font)
         m_font->PreRenderText(Pt(X0, Y0), Size(), m_text, m_format, *m_render_cache, m_line_data);
 }
 
 void TextControl::PurgeCache()
-{
-    if (m_render_cache)
-        delete m_render_cache;
-
-    m_render_cache = nullptr;
-}
+{ m_render_cache.reset(); }
 
 void TextControl::SetText(const std::string& str)
 {
