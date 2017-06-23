@@ -815,7 +815,7 @@ void DropDownList::Insert(const std::vector<std::shared_ptr<Row>>& rows, bool si
     RequirePreRender();
 }
 
-DropDownList::Row* DropDownList::Erase(iterator it, bool signal/* = false*/)
+std::shared_ptr<DropDownList::Row> DropDownList::Erase(iterator it, bool signal/* = false*/)
 { return LB()->Erase(it, signal); }
 
 void DropDownList::Clear()

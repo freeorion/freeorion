@@ -173,7 +173,7 @@ public:
         DropDownList. */
     void            Insert(const std::vector<std::shared_ptr<Row>>& rows, bool signal = true);
 
-    Row*            Erase(iterator it, bool signal = false); ///< removes and returns \a it from the list, or 0 if no such row exists
+    std::shared_ptr<Row> Erase(iterator it, bool signal = false); ///< removes and returns \a it from the list, or 0 if no such row exists
     void            Clear();                        ///< empties the list
 
     iterator        begin();                    ///< returns an iterator to the first list row

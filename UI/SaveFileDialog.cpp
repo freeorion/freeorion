@@ -903,7 +903,7 @@ void SaveFileDialog::AskDelete() {
                     --prev;
                     m_file_list->SelectRow(next, true);
                 }
-                delete m_file_list->Erase(row_it);
+                m_file_list->Erase(row_it);
             }
         }
     }

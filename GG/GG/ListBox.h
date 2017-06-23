@@ -378,7 +378,7 @@ public:
         of this ListBox. */
     void            Insert(const std::vector<std::shared_ptr<Row>>& rows, bool signal = true);
 
-    Row*            Erase(iterator it, bool signal = false);        ///< removes and returns the row that \a it points to from the ListBox, or 0 if no such row exists
+    std::shared_ptr<Row> Erase(iterator it, bool signal = false);        ///< removes and returns the row that \a it points to from the ListBox, or 0 if no such row exists
     void            Clear();                                        ///< empties the ListBox
     void            SelectRow(iterator it, bool signal = false);    ///< selects row \a it
     void            DeselectRow(iterator it, bool signal = false);  ///< deselects row \a it
@@ -534,7 +534,7 @@ protected:
     /** Define the number of columns, the column widths and alignment from \p row.*/
     iterator        Insert(std::shared_ptr<Row> row, iterator it, bool dropped, bool signal);                       ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
     void            Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it, bool dropped, bool signal);  ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
-    Row*            Erase(iterator it, bool removing_duplicate, bool signal); ///< erases the row at index \a idx, handling it as a duplicate removal (such as for drag-and-drops within a single ListBox) if indicated
+    std::shared_ptr<Row> Erase(iterator it, bool removing_duplicate, bool signal); ///< erases the row at index \a idx, handling it as a duplicate removal (such as for drag-and-drops within a single ListBox) if indicated
     void            BringCaretIntoView();           ///< makes sure caret is visible when scrolling occurs due to keystrokes etc.
     void            ResetAutoScrollVars();          ///< resets all variables related to auto-scroll to their initial values
     void            Resort();                       ///< performs a full resort of all rows, using the current sort functor.

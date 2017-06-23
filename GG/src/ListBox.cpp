@@ -1079,7 +1079,7 @@ void ListBox::Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it,
 void ListBox::Insert(const std::vector<std::shared_ptr<Row>>& rows, bool signal/* = true*/)
 { Insert(rows, m_rows.end(), false, signal); }
 
-ListBox::Row* ListBox::Erase(iterator it, bool signal/* = false*/)
+std::shared_ptr<ListBox::Row> ListBox::Erase(iterator it, bool signal/* = false*/)
 { return Erase(it, false, signal); }
 
 void ListBox::Clear()
@@ -1547,13 +1547,13 @@ void ListBox::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_
             if (m_style & LIST_USERDELETE) {
                 if (m_style & LIST_NOSEL) {
                     if (m_caret != m_rows.end())
-                        delete Erase(m_caret, false, true);
+                        Erase(m_caret, false, true);
                 } else {
                     std::vector<iterator> prev_selections(m_selections.size());
                     std::copy(m_selections.begin(), m_selections.end(), prev_selections.begin());
                     m_selections.clear();
                     for (iterator it : prev_selections) {
-                        delete Erase(it, false, true);
+                        Erase(it, false, true);
                     }
                 }
             } else {
@@ -2005,7 +2005,7 @@ void ListBox::Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it,
         m_first_row_shown = m_rows.begin();
 }
 
-ListBox::Row* ListBox::Erase(iterator it, bool removing_duplicate, bool signal)
+std::shared_ptr<ListBox::Row> ListBox::Erase(iterator it, bool removing_duplicate, bool signal)
 {
     if (it == m_rows.end())
         return nullptr;
@@ -2043,7 +2043,7 @@ ListBox::Row* ListBox::Erase(iterator it, bool removing_duplicate, bool signal)
     if (check_first_row_and_caret_for_end && m_caret == m_rows.end() && !m_rows.empty())
         --m_caret;
 
-    return row.get();
+    return row;
 }
 
 void ListBox::BringCaretIntoView()

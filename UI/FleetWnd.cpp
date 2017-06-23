@@ -3615,7 +3615,7 @@ void FleetWnd::UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj) 
     for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
         int row_fleet_id = FleetInRow(it);
         if (objects.Object<Fleet>(row_fleet_id) == deleted_fleet) {
-            delete m_fleets_lb->Erase(it);
+            m_fleets_lb->Erase(it);
             break;
         }
     }
