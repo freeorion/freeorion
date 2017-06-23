@@ -5982,6 +5982,12 @@ EFFECT_TERRAFORM
 EFFECT_TERRAFORM_LABEL
 Terraform
 
+EFFECT_NEST_REMOVAL
+On %planet%: a monster nest has been eradicated.
+
+EFFECT_NEST_REMOVAL_LABEL
+Nest Eradication
+
 EFFECT_STARLANE_BORE
 At %system%: a new starlane has opened linking to a nearby system.
 
@@ -11356,6 +11362,12 @@ Remote Terraforming
 
 BLD_REMOTE_TERRAFORM_DESC
 Terraforms a world one step closer to the [[encyclopedia ENVIRONMENT_TITLE]] preference of the inhabiting species. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
+
+BLD_NEST_ERADICATOR
+Nest Eradicator
+
+BLD_NEST_ERADICATOR_DESC
+Eradicates a [[encyclopedia KRAKEN_NEST_SPECIAL]], [[encyclopedia SNOWFLAKE_NEST_SPECIAL]], or [[encyclopedia JUGGERNAUT_NEST_SPECIAL]] from the planet it is built on. It may be built at an [[encyclopedia OUTPOSTS_TITLE]].
 
 BLD_NEUTRONIUM_EXTRACTOR
 Neutronium Extractor
