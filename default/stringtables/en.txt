@@ -10231,6 +10231,15 @@ Theoretically, it is possible to completely predict the ecology of a single plan
 GRO_GAIA_TRANS_SHORT_DESC
 Allows Gaia Transformation
 
+GRO_MEGA_ECO
+Mega-Fauna Ecology
+
+GRO_MEGA_ECO_DESC
+Study of the lifecycles of space-faring organisms suggests common patterns in widely varied species. It may be possible to exploit this knowledge to more effectively control these organisms by disrupting their metabolic and reproductive processes.
+
+GRO_MEGA_ECO_SHORT_DESC
+Monster Nest Control
+
 LRN_OBSERVATORY_I
 Observatory
 
