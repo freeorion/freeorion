@@ -298,6 +298,9 @@ public:
         QueueListBox(drop_type_str, prompt_str)
     {}
 
+    void CompleteConstruction() override
+    { QueueListBox::CompleteConstruction(); }
+
     boost::signals2::signal<void ()>                            ShowPediaSignal;
     boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemPausedSignal;
 

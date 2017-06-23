@@ -1663,6 +1663,7 @@ public:
                  const boost::optional<std::string>& drop_type = boost::none,
                  const boost::optional<std::string>& empty_prompt = boost::none);
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     //@}
@@ -1911,7 +1912,12 @@ BasesListBox::BasesListBox(const BasesListBox::AvailabilityManager& availabiliti
                  empty_prompt ? *empty_prompt : UserString("ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT")),
     m_empire_id_shown(ALL_EMPIRES),
     m_availabilities_state(availabilities_state)
+{}
+
+void BasesListBox::CompleteConstruction()
 {
+    QueueListBox::CompleteConstruction();
+
     InitRowSizes();
     SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
 
