@@ -190,6 +190,7 @@ public:
     ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& font,
              Clr dialog_color, Clr border_color, Clr text_color = CLR_BLACK);
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{
     /** Returns true iff the user selected a color and then clicked the "Ok"

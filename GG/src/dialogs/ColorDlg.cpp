@@ -611,6 +611,11 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
     m_sliders_ok_cancel_layout->Add(m_ok, 7, 0, 1, 3);
     m_cancel = style->NewButton(style->Translate("Cancel"), font, m_color, m_text_color);
     m_sliders_ok_cancel_layout->Add(m_cancel, 8, 0, 1, 3);
+}
+
+void ColorDlg::CompleteConstruction()
+{
+    Wnd::CompleteConstruction();
 
     auto master_layout = Wnd::Create<Layout>(X0, Y0, ClientWidth(), ClientHeight(), 3, 2, 5, 5);
     master_layout->SetColumnStretch(0, 1.25);

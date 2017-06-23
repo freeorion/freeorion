@@ -63,6 +63,7 @@ public:
                    Clr border_color, Clr button_color, Clr text_color, std::size_t buttons, const std::string& zero = "", 
                    const std::string& one = "", const std::string& two = "");
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{
     Clr         ButtonColor() const;   ///< returns the color of the buttons in the dialog
@@ -99,6 +100,7 @@ private:
     Button*     m_button_0;
     Button*     m_button_1;
     Button*     m_button_2;
+    Layout*     m_button_layout;
 };
 
 } // namespace GG

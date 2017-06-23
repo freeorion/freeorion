@@ -50,7 +50,8 @@ ThreeButtonDlg::ThreeButtonDlg(X w, Y h, const std::string& msg, const std::shar
     m_result(0),
     m_button_0(nullptr),
     m_button_1(nullptr),
-    m_button_2(nullptr)
+    m_button_2(nullptr),
+    m_button_layout(Wnd::Create<Layout>(X0, Y0, X1, Y1, 2, 1, 10))
 {
     if (buttons < 1)
         buttons = 1;
@@ -60,7 +61,6 @@ ThreeButtonDlg::ThreeButtonDlg(X w, Y h, const std::string& msg, const std::shar
     const int SPACING = 10;
     const Y BUTTON_HEIGHT = font->Height() + 10;
 
-    auto layout = Wnd::Create<Layout>(X0, Y0, X1, Y1, 2, 1, 10);
     auto button_layout = Wnd::Create<Layout>(X0, Y0, X1, Y1, 1, buttons, 0, 10);
 
     std::shared_ptr<StyleFactory> style = GetStyleFactory();
@@ -69,9 +69,9 @@ ThreeButtonDlg::ThreeButtonDlg(X w, Y h, const std::string& msg, const std::shar
                                                       FORMAT_CENTER | FORMAT_VCENTER | FORMAT_WORDBREAK);
     message_text->Resize(Pt(ClientWidth() - 2 * SPACING, Height()));
     message_text->SetResetMinSize(true);
-    layout->Add(message_text, 0, 0);
-    layout->SetRowStretch(0, 1);
-    layout->SetMinimumRowHeight(1, BUTTON_HEIGHT);
+    m_button_layout->Add(message_text, 0, 0);
+    m_button_layout->SetRowStretch(0, 1);
+    m_button_layout->SetMinimumRowHeight(1, BUTTON_HEIGHT);
 
     m_button_0 = style->NewButton((zero == "" ? (buttons < 3 ? "Ok" : "Yes") : zero),
                                   font, m_button_color, m_text_color);
@@ -87,9 +87,14 @@ ThreeButtonDlg::ThreeButtonDlg(X w, Y h, const std::string& msg, const std::shar
                                       font, m_button_color, m_text_color);
         button_layout->Add(m_button_2, 0, 2);
     }
-    layout->Add(button_layout, 1, 0);
+    m_button_layout->Add(button_layout, 1, 0);
+}
 
-    SetLayout(layout);
+void ThreeButtonDlg::CompleteConstruction()
+{
+    Wnd::CompleteConstruction();
+
+    SetLayout(m_button_layout);
 
     m_button_0->LeftClickedSignal.connect(
         boost::bind(&ThreeButtonDlg::Button0Clicked, this));
