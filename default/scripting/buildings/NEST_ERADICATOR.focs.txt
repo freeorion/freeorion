@@ -1,0 +1,41 @@
+BuildingType
+    name = "BLD_NEST_ERADICATOR"
+    description = "BLD_NEST_ERADICATOR_DESC"
+    buildcost = 240
+    buildtime = 8
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Not Contains Building name = "BLD_NEST_ERADICATOR"
+	Or [
+            HasSpecial name = "JUGGERNAUT_NEST_SPECIAL"
+            HasSpecial name = "KRAKEN_NEST_SPECIAL"
+            HasSpecial name = "SNOWFLAKE_NEST_SPECIAL"
+	]
+    ]
+    EnqueueLocation = Not Enqueued type = Building name = "BLD_NEST_ERADICATOR"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            effects = [
+                RemoveSpecial name = "JUGGERNAUT_NEST_SPECIAL"
+                RemoveSpecial name = "KRAKEN_NEST_SPECIAL"
+                RemoveSpecial name = "SNOWFLAKE_NEST_SPECIAL"
+                GenerateSitRepMessage
+                    message = "EFFECT_NEST_REMOVAL"
+                    label = "EFFECT_NEST_REMOVAL_LABEL"
+                    icon = "icons/building/nest_eradicator.png"
+                    parameters = tag = "planet" data = Target.ID
+                    empire = Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            effects = Destroy
+    ]
+    icon = "icons/building/nest_eradicator.png"
+
+#include "/scripting/common/base_prod.macros"
