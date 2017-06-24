@@ -159,6 +159,7 @@ private:
     unsigned int            m_border_width;
     X                       m_preferred_width;
     TextControl*            m_text_control;
+    unsigned int            m_text_margin;
 };
 
 } // namespace GG

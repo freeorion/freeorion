@@ -86,16 +86,16 @@ TextBoxBrowseInfoWnd::TextBoxBrowseInfoWnd(X w, const std::shared_ptr<Font>& fon
     m_border_color(border_color),
     m_border_width(border_width),
     m_preferred_width(w),
-    m_text_control(GetStyleFactory()->NewTextControl("", m_font, text_color, format))
-{
-    SetLayoutBorderMargin(text_margin);
-}
+    m_text_control(GetStyleFactory()->NewTextControl("", m_font, text_color, format)),
+    m_text_margin(text_margin)
+{}
 
 void TextBoxBrowseInfoWnd::CompleteConstruction()
 {
     m_text_control->Resize(Pt(Width(), m_text_control->Height()));
     AttachChild(m_text_control);
     GridLayout();
+    SetLayoutBorderMargin(m_text_margin);
     InitBuffer();
 }
 

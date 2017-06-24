@@ -11,6 +11,7 @@ public:
     CensusBrowseWnd(const std::string& title_text, const std::map<std::string, float>& population_counts,
                     const std::map<std::string, float>& tag_counts);
 
+    void CompleteConstruction() override;
     bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
 
     void Render() override;
@@ -26,6 +27,8 @@ private:
     GG::Label*      m_tags_text;
     GG::ListBox*    m_tags_list;
     GG::Pt          m_offset;
+    std::map<std::string, float>    m_population_counts;
+    std::map<std::string, float>    m_tag_counts;
 
     void InitRowSizes();
 };
