@@ -1006,7 +1006,8 @@ private:
     virtual void BeginNonclientClippingImpl();
     virtual void EndNonclientClippingImpl();
 
-    std::weak_ptr<Wnd> m_parent;        ///< Ptr to this window's parent; may be nullptr
+    /// m_parent may be expired or null if there is no parent.  m_parent will reset itself if expired.
+    mutable std::weak_ptr<Wnd> m_parent;
     std::string       m_name;          ///< A user-significant name for this Wnd
     std::list<std::shared_ptr<Wnd>>   m_children;      ///< List of ptrs to child windows kept in order of decreasing area
     bool              m_visible;
@@ -1024,8 +1025,8 @@ private:
     std::vector<std::weak_ptr<Wnd>> m_filters;
 
     std::set<std::weak_ptr<Wnd>, std::owner_less<std::weak_ptr<Wnd>>>    m_filtering;         ///< The Wnds in whose filter chains this Wnd lies
-    std::weak_ptr<Layout>           m_layout;            ///< The layout for this Wnd, if any
-    std::weak_ptr<Layout>           m_containing_layout; ///< The layout that contains this Wnd, if any
+    mutable std::weak_ptr<Layout>           m_layout;            ///< The layout for this Wnd, if any
+    mutable std::weak_ptr<Layout>           m_containing_layout; ///< The layout that contains this Wnd, if any
     std::vector<BrowseInfoMode>
                       m_browse_modes;      ///< The browse info modes for this window
 

@@ -244,10 +244,10 @@ bool Wnd::Resizable() const
 { return m_flags & RESIZABLE; }
 
 bool Wnd::OnTop() const
-{ return !m_parent.lock() && m_flags & ONTOP; }
+{ return !Parent() && m_flags & ONTOP; }
 
 bool Wnd::Modal() const
-{ return !m_parent.lock() && m_flags & MODAL; }
+{ return !Parent() && m_flags & MODAL; }
 
 Wnd::ChildClippingMode Wnd::GetChildClippingMode() const
 { return m_child_clipping_mode; }
@@ -263,7 +263,7 @@ bool Wnd::PreRenderRequired() const
     if (m_needs_prerender)
         return true;
 
-    auto layout = m_layout.lock();
+    auto layout = GetLayout();
 
     return (layout && layout->m_needs_prerender);
 }
@@ -285,7 +285,7 @@ void Wnd::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
 Pt Wnd::UpperLeft() const
 {
     Pt retval = m_upperleft;
-    auto parent = m_parent.lock();
+    auto parent = Parent();
     if (parent)
         retval += parent->ClientUpperLeft();
     return retval;
@@ -300,7 +300,7 @@ Y Wnd::Top() const
 Pt Wnd::LowerRight() const
 {
     Pt retval = m_lowerright;
-    auto parent = m_parent.lock();
+    auto parent = Parent();
     if (parent)
         retval += parent->ClientUpperLeft();
     return retval;
@@ -335,7 +335,7 @@ Pt Wnd::MaxSize() const
 
 Pt Wnd::MinUsableSize() const
 {
-    auto layout = m_layout.lock();
+    auto layout = GetLayout();
     return layout ? layout->MinUsableSize() : Size();
 }
 
@@ -369,8 +369,18 @@ bool Wnd::InClient(const Pt& pt) const
 const std::list<std::shared_ptr<Wnd>>& Wnd::Children() const
 { return m_children; }
 
+namespace {
+    template <typename T>
+    std::shared_ptr<T> LockAndResetIfExpired(std::weak_ptr<T>& ptr) {
+        auto locked = ptr.lock();
+        if (!locked)
+            ptr.reset();
+        return locked;
+    }
+}
+
 std::shared_ptr<Wnd> Wnd::Parent() const
-{ return m_parent.lock(); }
+{ return LockAndResetIfExpired(m_parent); }
 
 std::shared_ptr<Wnd> Wnd::RootParent() const
 {
@@ -382,10 +392,10 @@ std::shared_ptr<Wnd> Wnd::RootParent() const
 }
 
 std::shared_ptr<Layout> Wnd::GetLayout() const
-{ return m_layout.lock(); }
+{ return LockAndResetIfExpired(m_layout); }
 
 Layout* Wnd::ContainingLayout() const
-{ return m_containing_layout.lock().get(); }
+{ return LockAndResetIfExpired(m_containing_layout).get(); }
 
 const std::vector<Wnd::BrowseInfoMode>& Wnd::BrowseModes() const
 { return m_browse_modes; }
@@ -427,7 +437,7 @@ void Wnd::ClampRectWithMinAndMaxSize(Pt& ul, Pt& lr) const
 {
     Pt min_sz = MinSize();
     Pt max_sz = MaxSize();
-    auto layout = m_layout.lock();
+    auto layout = GetLayout();
     if (layout) {
         Pt layout_min_sz = layout->MinSize() + (Size() - ClientSize());
         min_sz.x = std::max(min_sz.x, layout_min_sz.x);
@@ -524,10 +534,10 @@ void Wnd::SizeMove(const Pt& ul_, const Pt& lr_)
     m_lowerright = lr;
     if (resized) {
         bool size_changed = Size() != original_sz;
-        auto layout = m_layout.lock();
+        auto layout = GetLayout();
         if (layout && size_changed)
             layout->Resize(ClientSize());
-        auto containing_layout = m_containing_layout.lock();
+        auto containing_layout = LockAndResetIfExpired(m_containing_layout);
         if (containing_layout && size_changed && !dynamic_cast<Layout*>(this))
             containing_layout->ChildSizeOrMinSizeChanged();
     }
@@ -544,7 +554,7 @@ void Wnd::SetMinSize(const Pt& sz)
         Resize(Pt(std::max(Width(), m_min_size.x), std::max(Height(), m_min_size.y)));
     // The previous Resize() will call ChildSizeOrMinSizeChanged() itself if needed
     else {
-        auto containing_layout = m_containing_layout.lock();
+        auto containing_layout = LockAndResetIfExpired(m_containing_layout);
         if (containing_layout && min_size_changed && !dynamic_cast<Layout*>(this))
             containing_layout->ChildSizeOrMinSizeChanged();
     }
@@ -627,7 +637,7 @@ void Wnd::DetachChild(Wnd* wnd)
 
     wnd->m_parent.reset();
 
-    auto layout = m_layout.lock();
+    auto layout = GetLayout();
     if (layout && wnd == layout.get())
         m_layout.reset();
     if (auto this_as_layout = dynamic_cast<Layout*>(this)) {
@@ -659,7 +669,7 @@ void Wnd::DeleteChild(Wnd* wnd)
     if (!wnd)
         return;
 
-    if (wnd == m_layout.lock().get())
+    if (wnd == GetLayout().get())
         RemoveLayout();
     const auto& found = std::find_if(m_children.begin(), m_children.end(),
                                      [&wnd](const std::shared_ptr<Wnd>& x){ return x.get() == wnd; });
@@ -866,8 +876,8 @@ void Wnd::GridLayout()
 
 void Wnd::SetLayout(const std::shared_ptr<Layout>& layout)
 {
-    auto mm_layout = m_layout.lock();
-    if (layout == mm_layout && layout == m_containing_layout.lock())
+    auto mm_layout = GetLayout();
+    if (layout == mm_layout || layout == LockAndResetIfExpired(m_containing_layout))
         throw BadLayout("Wnd::SetLayout() : Attempted to set a Wnd's layout to be its current layout or the layout that contains the Wnd");
     RemoveLayout();
     auto children = m_children;
@@ -885,7 +895,7 @@ void Wnd::SetLayout(const std::shared_ptr<Layout>& layout)
 
 void Wnd::RemoveLayout()
 {
-    auto layout = m_layout.lock();
+    auto layout = GetLayout();
     m_layout.reset();
     if (!layout)
         return;
@@ -901,27 +911,27 @@ void Wnd::RemoveLayout()
 
 std::shared_ptr<Layout> Wnd::DetachLayout()
 {
-    auto layout = m_layout.lock();
+    auto layout = GetLayout();
     DetachChild(layout.get());
     return layout;
 }
 
 void Wnd::SetLayoutBorderMargin(unsigned int margin)
 {
-    if (auto layout = m_layout.lock())
+    if (auto layout = GetLayout())
         layout->SetBorderMargin(margin);
 }
 
 void Wnd::SetLayoutCellMargin(unsigned int margin)
 {
-    if (auto layout = m_layout.lock())
+    if (auto layout = GetLayout())
         layout->SetCellMargin(margin);
 }
 
 void Wnd::PreRender()
 {
     m_needs_prerender = false;
-    auto layout = m_layout.lock();
+    auto layout = GetLayout();
     if (!layout)
         return;
     if (layout->m_needs_prerender)
@@ -936,7 +946,7 @@ void Wnd::Render() {}
 bool Wnd::Run()
 {
     bool retval = false;
-    auto parent = m_parent.lock();
+    auto parent = Parent();
     if (!parent && m_flags & MODAL) {
         GUI* gui = GUI::GetGUI();
         gui->RegisterModal(shared_from_this());
