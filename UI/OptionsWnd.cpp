@@ -92,10 +92,10 @@ namespace {
 
     struct BrowseForPathButtonFunctor {
         BrowseForPathButtonFunctor(const fs::path& path, const std::vector<std::pair<std::string, std::string>>& filters,
-                                   GG::Edit* edit, bool directory, bool return_relative_path) :
+                                   std::shared_ptr<GG::Edit> edit, bool directory, bool return_relative_path) :
             m_path(path),
             m_filters(filters),
-            m_edit(edit),
+            m_edit(std::forward<std::shared_ptr<GG::Edit>>(edit)),
             m_directory(directory),
             m_return_relative_path(return_relative_path)
         {}
@@ -1042,7 +1042,7 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const 
         }
     );
     button->LeftClickedSignal.connect(
-        BrowseForPathButtonFunctor(path, filters, edit.get(), directory, relative_path));
+        BrowseForPathButtonFunctor(path, filters, edit, directory, relative_path));
     if (string_validator && !string_validator(edit->Text()))
         edit->SetTextColor(GG::CLR_RED);
 }
