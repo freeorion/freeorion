@@ -202,7 +202,7 @@ struct GG::GUIImpl
     Pt           m_wnd_drag_offset;       // the offset from the upper left corner of the dragged window to the cursor for the current drag
     bool         m_curr_drag_wnd_dragged; // true iff the currently-pressed window (m_drag_wnds[N]) has actually been dragged some distance (in which case releasing the mouse button is not a click). note that a dragged wnd is one being continuously repositioned by the dragging, and not a wnd being drag-dropped.
     std::shared_ptr<Wnd>         m_curr_drag_wnd;         // nonzero iff m_curr_drag_wnd_dragged is true (that is, we have actually started dragging the Wnd, not just pressed the mouse button); will always be one of m_drag_wnds.
-    Wnd*         m_curr_drag_drop_here_wnd;// the Wnd that most recently received a DragDropEnter or DragDropHere message (0 if DragDropLeave was sent as well, or if none)
+    std::shared_ptr<Wnd>         m_curr_drag_drop_here_wnd;// the Wnd that most recently received a DragDropEnter or DragDropHere message (0 if DragDropLeave was sent as well, or if none)
     Pt           m_wnd_resize_offset;     // offset from the cursor of either the upper-left or lower-right corner of the GUI window currently being resized
     WndRegion    m_wnd_region;            // window region currently being dragged or clicked; for non-frame windows, this will always be WR_NONE
 
@@ -414,7 +414,7 @@ void GUIImpl::HandleMouseDrag(unsigned int mouse_button, const Pt& pos, int curr
 
             if (m_curr_wnd_under_cursor && m_prev_wnd_under_cursor == m_curr_wnd_under_cursor) {
                 // Wnd under cursor has remained the same for the last two updates
-                if (m_curr_drag_drop_here_wnd && m_curr_drag_drop_here_wnd == m_curr_wnd_under_cursor.get()) {
+                if (m_curr_drag_drop_here_wnd && m_curr_drag_drop_here_wnd == m_curr_wnd_under_cursor) {
                     // Wnd being dragged over is still being dragged over...
                     WndEvent event(WndEvent::DragDropHere, pos, m_drag_drop_wnds, m_mod_keys);
                     m_curr_wnd_under_cursor->HandleEvent(event);
@@ -429,7 +429,7 @@ void GUIImpl::HandleMouseDrag(unsigned int mouse_button, const Pt& pos, int curr
                     // Wnd being dragged over is new; give it an Enter message
                     WndEvent enter_event(WndEvent::DragDropEnter, pos, m_drag_drop_wnds, m_mod_keys);
                     m_curr_wnd_under_cursor->HandleEvent(enter_event);
-                    m_curr_drag_drop_here_wnd = m_curr_wnd_under_cursor.get();
+                    m_curr_drag_drop_here_wnd = m_curr_wnd_under_cursor;
                 }
             }
         }
@@ -1839,7 +1839,7 @@ std::shared_ptr<Wnd> GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_
         // Wnd being dragged over is new; give it an Enter message
         WndEvent enter_event(WndEvent::DragDropEnter, pt, dragged_wnd, mod_keys);
         w->HandleEvent(enter_event);
-        m_impl->m_curr_drag_drop_here_wnd = w.get();
+        m_impl->m_curr_drag_drop_here_wnd = w;
 
     } else if (registered_drag_drop) {
         // pass drag-drop event to check if the various dragged Wnds are acceptable to drop
@@ -1850,7 +1850,7 @@ std::shared_ptr<Wnd> GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_
         // Wnd being dragged over is new; give it an Enter message
         WndEvent enter_event(WndEvent::DragDropEnter, pt, m_impl->m_drag_drop_wnds, mod_keys);
         w->HandleEvent(enter_event);
-        m_impl->m_curr_drag_drop_here_wnd = w.get();
+        m_impl->m_curr_drag_drop_here_wnd = w;
 
     } else {
         m_impl->HandleMouseEnter(mod_keys, pt, w);
