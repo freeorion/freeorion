@@ -160,7 +160,7 @@ private:
     /** The id of the currently-selected planet, or INVALID_OBJECT_ID if no planet is selected. */
     static int                  s_planet_id;
 
-    static std::set<std::shared_ptr<SidePanel>> s_side_panels;
+    static std::set<std::weak_ptr<SidePanel>, std::owner_less<std::weak_ptr<SidePanel>>> s_side_panels;
 
     static std::set<boost::signals2::connection>      s_system_connections;
     static std::map<int, boost::signals2::connection> s_fleet_state_change_signals;

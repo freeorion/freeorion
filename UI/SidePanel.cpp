@@ -2769,7 +2769,7 @@ int                                        SidePanel::s_system_id = INVALID_OBJE
 int                                        SidePanel::s_planet_id = INVALID_OBJECT_ID;
 bool                                       SidePanel::s_needs_update = false;
 bool                                       SidePanel::s_needs_refresh = false;
-std::set<std::shared_ptr<SidePanel>>                       SidePanel::s_side_panels;
+std::set<std::weak_ptr<SidePanel>, std::owner_less<std::weak_ptr<SidePanel>>> SidePanel::s_side_panels;
 std::set<boost::signals2::connection>      SidePanel::s_system_connections;
 std::map<int, boost::signals2::connection> SidePanel::s_fleet_state_change_signals;
 boost::signals2::signal<void ()>           SidePanel::ResourceCenterChangedSignal;
@@ -2855,7 +2855,7 @@ void SidePanel::CompleteConstruction() {
     RequirePreRender();
     Hide();
 
-    s_side_panels.insert(std::static_pointer_cast<SidePanel>(shared_from_this()));
+    s_side_panels.insert(std::weak_ptr<SidePanel>(std::dynamic_pointer_cast<SidePanel>(shared_from_this())));
 }
 
 SidePanel::~SidePanel() {
@@ -2961,8 +2961,9 @@ void SidePanel::PreRender() {
 
     // Update updates the data for each planet tab in all SidePanels
     if (s_needs_update) {
-        for (auto& panel : s_side_panels)
-            panel->UpdateImpl();
+        for (auto& weak_panel : s_side_panels)
+            if (auto panel = weak_panel.lock())
+                panel->UpdateImpl();
     }
 
     // On a resize only DoLayout should be called.
@@ -2981,8 +2982,9 @@ void SidePanel::PreRender() {
 
 void SidePanel::Update() {
     s_needs_update = true;
-    for (auto& panel : s_side_panels)
-        panel->RequirePreRender();
+    for (auto& weak_panel : s_side_panels)
+        if (auto panel = weak_panel.lock())
+            panel->RequirePreRender();
 }
 
 void SidePanel::UpdateImpl() {
@@ -2995,8 +2997,9 @@ void SidePanel::UpdateImpl() {
 
 void SidePanel::Refresh() {
     s_needs_refresh = true;
-    for (auto& panel : s_side_panels)
-        panel->RequirePreRender();
+    for (auto& weak_panel : s_side_panels)
+        if (auto panel = weak_panel.lock())
+            panel->RequirePreRender();
 }
 
 void SidePanel::RefreshInPreRender() {
@@ -3015,8 +3018,9 @@ void SidePanel::RefreshInPreRender() {
 
 
     // refresh individual panels' contents
-    for (auto& panel : s_side_panels)
-        panel->RefreshImpl();
+    for (auto& weak_panel : s_side_panels)
+        if (auto panel = weak_panel.lock())
+            panel->RefreshImpl();
 
 
     // early exit if no valid system object to get or connect signals to
@@ -3370,11 +3374,12 @@ void SidePanel::SelectPlanet(int planet_id) {
 
     // Use the first sidepanel with selection enabled to determine if planet is selectable.
     bool planet_selectable(false);
-    for (auto& panel : s_side_panels) {
-        if (panel->m_selection_enabled) {
-            planet_selectable = panel->PlanetSelectable(planet_id);
-            break;
-        }
+    for (auto& weak_panel : s_side_panels) {
+        if (auto panel = weak_panel.lock())
+            if (panel->m_selection_enabled) {
+                planet_selectable = panel->PlanetSelectable(planet_id);
+                break;
+            }
     }
 
     s_planet_id = INVALID_OBJECT_ID;
@@ -3384,8 +3389,9 @@ void SidePanel::SelectPlanet(int planet_id) {
 
     s_planet_id = planet_id;
 
-    for (auto& panel : s_side_panels)
-        panel->RequirePreRender();
+    for (auto& weak_panel : s_side_panels)
+        if (auto panel = weak_panel.lock())
+            panel->RequirePreRender();
 
     PlanetSelectedSignal(s_planet_id);
 }
