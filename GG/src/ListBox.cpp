@@ -803,7 +803,7 @@ void ListBox::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
     for (const auto& sorted_sel : selections_Y_sorted) {
         auto row_wnd = **(sorted_sel.second);
         if (row_wnd.get() != wnd) {
-            GUI::GetGUI()->RegisterDragDropWnd(row_wnd, Pt(offset.x, vertical_offset), this);
+            GUI::GetGUI()->RegisterDragDropWnd(row_wnd, Pt(offset.x, vertical_offset), shared_from_this());
             vertical_offset -= row_wnd->Height();
         } else {
             vertical_offset -= wnd->Height();

@@ -212,7 +212,7 @@ struct GG::GUIImpl
     int          m_browse_info_mode;      // the current browse info mode (only valid if browse_info_wnd is non-null)
     Wnd*         m_browse_target;         // the current browse info target
 
-    Wnd*         m_drag_drop_originating_wnd; // the window that originally owned the Wnds in drag_drop_wnds
+    std::shared_ptr<Wnd>         m_drag_drop_originating_wnd; // the window that originally owned the Wnds in drag_drop_wnds
     std::map< std::shared_ptr<Wnd>, Pt>
                  m_drag_drop_wnds;        // the Wnds (and their offsets) that are being dragged and dropped between Wnds
     std::map<const std::shared_ptr<Wnd>, bool>
@@ -374,7 +374,7 @@ void GUIImpl::HandleMouseDrag(unsigned int mouse_button, const Pt& pos, int curr
                 auto parent = dragged_wnd->Parent();
                 Pt offset = m_prev_mouse_button_press_pos - dragged_wnd->UpperLeft();
                 // start drag
-                GUI::s_gui->RegisterDragDropWnd(dragged_wnd, offset, parent.get());
+                GUI::s_gui->RegisterDragDropWnd(dragged_wnd, offset, parent);
                 // inform parent
                 if (parent)
                     parent->StartingChildDragDrop(dragged_wnd.get(), offset);
@@ -546,7 +546,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
                     m_drag_drop_wnds_acceptable = event.GetAcceptableDropWnds();
 
                     // prep / handle end of drag-drop
-                    m_drag_drop_originating_wnd = click_wnd->Parent().get();
+                    m_drag_drop_originating_wnd = click_wnd->Parent();
                     m_curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::DragDropLeave));
                     m_curr_drag_drop_here_wnd = nullptr;
 
@@ -580,7 +580,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
                 m_drag_drop_wnds_acceptable = event.GetAcceptableDropWnds();
 
                 // prep / handle end of drag-drop
-                m_drag_drop_originating_wnd = click_wnd->Parent().get();
+                m_drag_drop_originating_wnd = click_wnd->Parent();
                 m_curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::DragDropLeave));
                 m_curr_drag_drop_here_wnd = nullptr;
 
@@ -1312,7 +1312,7 @@ void GUI::MoveDown(const std::shared_ptr<Wnd>& wnd)
 std::shared_ptr<ModalEventPump> GUI::CreateModalEventPump(bool& done)
 { return std::make_shared<ModalEventPump>(done); }
 
-void GUI::RegisterDragDropWnd(const std::shared_ptr<Wnd>& wnd, const Pt& offset, Wnd* originating_wnd)
+void GUI::RegisterDragDropWnd(std::shared_ptr<Wnd> wnd, const Pt& offset, std::shared_ptr<Wnd> originating_wnd)
 {
     assert(wnd);
     if (!m_impl->m_drag_drop_wnds.empty() && originating_wnd != m_impl->m_drag_drop_originating_wnd) {
