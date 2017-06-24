@@ -776,7 +776,6 @@ void GUIImpl::ClearState()
     m_wnd_region = WR_NONE;
     m_browse_target = nullptr;
     m_drag_drop_originating_wnd = nullptr;
-    m_curr_wnd_under_cursor = nullptr;
 
     m_delta_t = 0;
 
