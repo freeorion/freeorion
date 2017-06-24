@@ -42,6 +42,7 @@ public:
     TextBlock(X x, Y y, X w, const std::string& str, const std::shared_ptr<Font>& font, Clr color,
               Flags<TextFormat> format, Flags<WndFlag> flags);
 
+    void CompleteConstruction() override;
     void Render() override
     {};
 
