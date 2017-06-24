@@ -380,7 +380,12 @@ class SaveFileHeaderRow: public SaveFileRow {
 public:
     SaveFileHeaderRow(const std::shared_ptr<std::vector<SaveFileColumn>>& columns) :
         SaveFileRow(columns, "")
+    {}
+
+    void CompleteConstruction() override
     {
+        SaveFileRow::CompleteConstruction();
+
         SetMargin(ROW_MARGIN);
 
         for (const SaveFileColumn& column : *m_columns)
@@ -395,7 +400,11 @@ public:
 class SaveFileDirectoryRow: public SaveFileRow {
 public:
     SaveFileDirectoryRow(const std::shared_ptr<std::vector<SaveFileColumn>>& columns, const std::string& directory) :
-        SaveFileRow(columns, directory) {
+        SaveFileRow(columns, directory) {}
+
+    void CompleteConstruction() override
+    {
+        SaveFileRow::CompleteConstruction();
         SetMargin(ROW_MARGIN);
     }
 
@@ -448,8 +457,14 @@ public:
         m_all_columns(columns),
         m_full_preview(full)
     {
-        SetMargin (ROW_MARGIN);
         SetBrowseModeTime(tooltip_delay);
+    }
+
+    void CompleteConstruction() override
+    {
+        SaveFileRow::CompleteConstruction();
+
+        SetMargin (ROW_MARGIN);
     }
 
     void Init() override {
