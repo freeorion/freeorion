@@ -542,7 +542,7 @@ void ModalListPicker::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 ////////////////////////////////////////////////
 DropDownList::DropDownList(size_t num_shown_elements, Clr color) :
     Control(X0, Y0, X(1 + 2 * ListBox::BORDER_THICK), Y(1 + 2 * ListBox::BORDER_THICK), INTERACTIVE),
-    m_modal_picker(std::shared_ptr<ModalListPicker>(Wnd::Create<ModalListPicker>(color, this, num_shown_elements)))
+    m_modal_picker(Wnd::Create<ModalListPicker>(color, this, num_shown_elements))
 {
     SetStyle(LIST_SINGLESEL);
 

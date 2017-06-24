@@ -3191,8 +3191,8 @@ void SidePanel::RefreshImpl() {
         for (const std::pair<MeterType, MeterType>& entry : meter_types) {
             MeterType type = entry.first;
             // add tooltip for each meter type
-            std::shared_ptr<GG::BrowseInfoWnd> browse_wnd = std::shared_ptr<GG::BrowseInfoWnd>(
-                GG::Wnd::Create<SystemResourceSummaryBrowseWnd>(MeterToResource(type), s_system_id, HumanClientApp::GetApp()->EmpireID()));
+            auto browse_wnd = GG::Wnd::Create<SystemResourceSummaryBrowseWnd>(
+                MeterToResource(type), s_system_id, HumanClientApp::GetApp()->EmpireID());
             m_system_resource_summary->SetToolTip(type, browse_wnd);
         }
 

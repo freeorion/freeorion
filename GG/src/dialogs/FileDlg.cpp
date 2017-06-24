@@ -393,9 +393,9 @@ void FileDlg::OkHandler(bool double_click)
             // check to see if file already exists; if so, ask if it's ok to overwrite
             if (fs::exists(p)) {
                 std::string msg_str = boost::str(boost::format(style->Translate("%1% exists.\nOk to overwrite it?")) % save_file);
-                std::shared_ptr<ThreeButtonDlg> dlg(
+                auto dlg =
                     style->NewThreeButtonDlg(X(300), Y(125), msg_str, m_font, m_color, m_border_color, m_color, m_text_color,
-                                             2, style->Translate("Ok"), style->Translate("Cancel")));
+                                             2, style->Translate("Ok"), style->Translate("Cancel"));
                 dlg->Run();
                 results_valid = (dlg->Result() == 0);
             }
@@ -417,9 +417,9 @@ void FileDlg::OkHandler(bool double_click)
                     bool p_is_directory = fs::is_directory(p);
                     if (!m_select_directories && p_is_directory) {
                         std::string msg_str = boost::str(boost::format(style->Translate("\"%1%\"\nis a directory.")) % file_name);
-                        std::shared_ptr<ThreeButtonDlg> dlg(
+                        auto dlg =
                             style->NewThreeButtonDlg(X(300), Y(125), msg_str, m_font, m_color, m_border_color, m_color,
-                                                     m_text_color, 1, style->Translate("Ok")));
+                                                     m_text_color, 1, style->Translate("Ok"));
                         dlg->Run();
                         results_valid = false;
                         break;
@@ -436,9 +436,9 @@ void FileDlg::OkHandler(bool double_click)
                     results_valid = true; // indicate validity only if at least one good file was found
                 } else {
                     std::string msg_str = boost::str(boost::format(style->Translate("File \"%1%\"\ndoes not exist.")) % file_name);
-                    std::shared_ptr<ThreeButtonDlg> dlg(
+                    auto dlg =
                         style->NewThreeButtonDlg(X(300), Y(125), msg_str, m_font, m_color, m_border_color, m_color,
-                                                 m_text_color, 1, style->Translate("Ok")));
+                                                 m_text_color, 1, style->Translate("Ok"));
                     dlg->Run();
                     results_valid = false;
                     break;
@@ -517,7 +517,7 @@ void FileDlg::PopulateFilters()
     } else {
         for (std::pair<std::string, std::string>& file_filter : m_file_filters) {
             auto row = Wnd::Create<ListBox::Row>();
-            row->push_back(std::shared_ptr<Control>(GetStyleFactory()->NewTextControl(file_filter.first, m_font, m_text_color, FORMAT_NOWRAP)));
+            row->push_back(GetStyleFactory()->NewTextControl(file_filter.first, m_font, m_text_color, FORMAT_NOWRAP));
             m_filter_list->Insert(row);
         }
         m_filter_list->Select(m_filter_list->begin());
@@ -573,13 +573,13 @@ void FileDlg::UpdateList()
             Win32Paths())
         {
             auto row = Wnd::Create<ListBox::Row>();
-            row->push_back(std::shared_ptr<Control>(GetStyleFactory()->NewTextControl("[..]", m_font, m_text_color, FORMAT_NOWRAP)));
+            row->push_back(GetStyleFactory()->NewTextControl("[..]", m_font, m_text_color, FORMAT_NOWRAP));
             m_files_list->Insert(row);
         }
         // current directory selector
         {
             auto row = Wnd::Create<ListBox::Row>();
-            row->push_back(std::shared_ptr<Control>(GetStyleFactory()->NewTextControl("[.]", m_font, m_text_color, FORMAT_NOWRAP)));
+            row->push_back(GetStyleFactory()->NewTextControl("[.]", m_font, m_text_color, FORMAT_NOWRAP));
             m_files_list->Insert(row);
         }
         try {
@@ -608,7 +608,7 @@ void FileDlg::UpdateList()
 #else
                     std::string row_text = "[" + it->path().filename().string() + "]";
 #endif
-                    row->push_back(std::shared_ptr<Control>(GetStyleFactory()->NewTextControl(row_text, m_font, m_text_color, FORMAT_NOWRAP)));
+                    row->push_back(GetStyleFactory()->NewTextControl(row_text, m_font, m_text_color, FORMAT_NOWRAP));
                     sorted_rows.insert({row_text, row});
                 }
             } catch (const fs::filesystem_error&) {
@@ -633,7 +633,7 @@ void FileDlg::UpdateList()
                         }
                         if (meets_filters) {
                             auto row = Wnd::Create<ListBox::Row>();
-                            row->push_back(std::shared_ptr<Control>(GetStyleFactory()->NewTextControl(it->path().filename().string(), m_font, m_text_color, FORMAT_NOWRAP)));
+                            row->push_back(GetStyleFactory()->NewTextControl(it->path().filename().string(), m_font, m_text_color, FORMAT_NOWRAP));
                             sorted_rows.insert({it->path().filename().string(), row});
                         }
                     }
@@ -650,7 +650,7 @@ void FileDlg::UpdateList()
                 fs::path path(c + std::string(":"));
                 if (fs::exists(path)) {
                     auto row = Wnd::Create<ListBox::Row>();
-                    row->push_back(std::shared_ptr<Control>(GetStyleFactory()->NewTextControl("[" + path.root_name().string() + "]", m_font, m_text_color, FORMAT_NOWRAP)));
+                    row->push_back(GetStyleFactory()->NewTextControl("[" + path.root_name().string() + "]", m_font, m_text_color, FORMAT_NOWRAP));
                     m_files_list->Insert(row);
                 }
             } catch (const fs::filesystem_error&) {
@@ -751,12 +751,12 @@ void FileDlg::OpenDirectory()
                     m_curr_dir_text->SetText("");
                     DoLayout();
                     UpdateList();
-                    std::shared_ptr<ThreeButtonDlg> dlg(
+                    auto dlg =
                         GetStyleFactory()->NewThreeButtonDlg(X(175), Y(75),
                                                              style->Translate("Device is not ready."),
                                                              m_font, m_color,
                                                              m_border_color, m_color,
-                                                             m_text_color, 1));
+                                                             m_text_color, 1);
                     dlg->Run();
                 } else {
                     throw;
