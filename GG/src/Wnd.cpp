@@ -220,12 +220,8 @@ Wnd::~Wnd()
         }
     }
 
-    if (const auto& parent = Parent())
-        parent->DetachChild(this);
-
-    GUI::GetGUI()->WndDying(this);
-
-    DeleteChildren();
+    if (auto gui = GUI::GetGUI())
+        gui->WndDying(this);
 }
 
 bool Wnd::Interactive() const
