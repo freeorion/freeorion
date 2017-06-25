@@ -3,6 +3,7 @@
 
 
 #include <GG/Button.h>
+#include <GG/StaticGraphic.h>
 
 #include <memory>
 
@@ -60,10 +61,11 @@ private:
     void                    LayoutIcons();
 
     std::vector<int>                m_fleets;   ///< the fleets represented by this button
-    std::vector<RotatingGraphic*>   m_icons;
+    std::vector<GG::StaticGraphic*> m_icons;
     RotatingGraphic*                m_selection_indicator;
     ScanlineControl*                m_scanline_control;
     bool                            m_selected; ///< should this button render itself specially to show that it is selected?
+    bool                            m_fleet_blockaded;
 };
 
 /* returns head icon for passed fleet at passed icon size */
@@ -77,6 +79,9 @@ std::shared_ptr<GG::Texture> FleetSizeIcon(std::shared_ptr<const Fleet> fleet, F
 
 /* returns head icon for passed fleet size at passed icon size */
 std::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButton::SizeType size_type);
+
+/* returns blockade icon if a fleet is being blockaded */
+std::shared_ptr<GG::Texture> FleetBlockadedIcon(FleetButton::SizeType size_type);
 
 /* returns icon for indication fleet icon selection */
 std::shared_ptr<GG::Texture> FleetSelectionIndicatorIcon();

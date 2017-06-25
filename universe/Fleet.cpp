@@ -1156,6 +1156,24 @@ void Fleet::CalculateRouteTo(int target_system_id) {
     }
 }
 
+bool Fleet::Blockaded() const {
+    /** returns true if fleet is in a system and is prevented from using at least
+        one starlane entry to leave its current system */
+    std::shared_ptr<System> system = GetSystem(this->SystemID());
+
+    if (!system)
+        return false;
+
+    const std::map<int, bool> adjacent_system_IDs = system->StarlanesWormholes();
+
+    for (const auto& target_system : adjacent_system_IDs) {
+        if (BlockadedAtSystem(this->SystemID(), target_system.first))
+            return true;
+    }
+
+    return false;
+}
+
 bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     /** If a newly arrived fleet joins a non-blockaded fleet of the same empire
       * (perhaps should include allies?) already at the system, the newly
