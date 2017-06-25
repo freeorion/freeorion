@@ -131,22 +131,6 @@ SELF_SUSTAINING_BONUS
             accountinglabel = "SELF_SUSTAINING_LABEL"
             priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 3 * Target.SizeAsDouble  // Gets the same bonus as three growth specials
-
-/* Redundant as we now have effects priorities, remove after testing these properly
-EffectsGroup
-            scope = AND [
-                Source
-                Homeworld name = Source.Species
-            ]
-            activation = And [
-                Planet
-                HasTag name = "SELF_SUSTAINING"
-                //TargetPopulation low = 0
-            ]
-            accountinglabel = "SELF_SUSTAINING_LABEL"
-            priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetPopulation value = Value * 2 - (2 * Target.SizeAsDouble)    // prevents doubled homeworld bonus
-*/
 '''
 
 PHOTOTROPHIC_BONUS
