@@ -82,12 +82,6 @@ def calc_max_pop(planet, species, detail):
     # first, account for the environment
     environment_mod = POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES["environment_bonus"][planet_env]
     detail.append("Base environment: %d" % environment_mod)
-    if "SELF_SUSTAINING" in tag_list:
-        # self-sustaining species get twice the environment bonus/penalty
-        environment_mod *= 2
-        detail.append("SelfSustaining: Twice the environment effect")
-
-    detail.append("Final environment PSM_early: %d" % environment_mod)
     pop_size_mod_modified_by_species += environment_mod
 
     # find all applicable modifiers
@@ -122,6 +116,10 @@ def calc_max_pop(planet, species, detail):
     if "GAIA_SPECIAL" in planet.specials and species.name != "SP_EXOBOT":
         pop_size_mod_not_modified_by_species += 3
         detail.append("Gaia_PSM_late(3)")
+
+    if "SELF_SUSTAINING" in tag_list:
+        pop_size_mod_not_modified_by_species += 3
+        detail.append("SelfSustaining_PSM_late(3)")
 
     applicable_boosts = set()
     for this_tag in [tag for tag in tag_list if tag in AIDependencies.metabolismBoostMap]:
