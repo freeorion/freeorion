@@ -14,7 +14,8 @@ import MilitaryAI
 from turn_state import state
 from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
 from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, cache_by_turn, AITimer, print_error
-from AIDependencies import INVALID_ID, POP_CONST_MOD_MAP, POP_SIZE_MOD_MAP
+from AIDependencies import (INVALID_ID, POP_CONST_MOD_MAP, POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES,
+                            POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES)
 
 colonization_timer = AITimer('getColonyFleets()')
 
@@ -49,49 +50,115 @@ PHOTO_MAP = {fo.starType.blue: 3, fo.starType.white: 1.5, fo.starType.red: -1, f
              fo.starType.blackHole: -10, fo.starType.noStar: -10}
 
 
-def get_pop_mods(planet, tag_list, species, planet_env, planet_specials, star_pop_mod):
-    detail = []
-    # if someone introduces a new environment without this being updated, AI simply won't try
-    # to colonize it.
-    pop_size_mod = POP_SIZE_MOD_MAP["environment_bonus"][planet_env]
+def _get_planet_size(planet):
+    """Get the colonisation-relevant planet size.
+
+    :param planet: Planet whose size should be find
+    :type planet: fo.Planet
+    :return: size of the planet
+    :rtype: int
+    """
+
+    if planet.size == fo.planetSize.asteroids:
+        planet_size = 3
+    elif planet.size == fo.planetSize.gasGiant:
+        planet_size = 6
+    else:
+        planet_size = planet.size
+
+    return planet_size
+
+
+def calc_max_pop(planet, species, detail):
+    planet_size = _get_planet_size(planet)
+    planet_env = ENVIRONS[str(species.getPlanetEnvironment(planet.type))]
+    tag_list = list(species.tags) if species else []
+    pop_tag_mod = AIDependencies.SPECIES_POPULATION_MODIFIER.get(get_ai_tag_grade(tag_list, "POPULATION"), 1.0)
+
+    pop_size_mod_modified_by_species = 0
+    pop_size_mod_not_modified_by_species = 0
     pop_const_mod = 0
-    detail.append("EnvironPopSizeMod(%d)" % pop_size_mod)
+
+    # first, account for the environment
+    environment_mod = POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES["environment_bonus"][planet_env]
+    detail.append("Base environment: %d" % environment_mod)
     if "SELF_SUSTAINING" in tag_list:
-        pop_size_mod *= 2
-        detail.append("SelfSustaining_PSM(2)")
-    if "PHOTOTROPHIC" in tag_list:
-        pop_size_mod += star_pop_mod
-        detail.append("Phototropic Star Bonus_PSM(%0.1f)" % star_pop_mod)
-    for tech in POP_SIZE_MOD_MAP:
+        # self-sustaining species get twice the environment bonus/penalty
+        environment_mod *= 2
+        detail.append("SelfSustaining: Twice the environment effect")
+
+    detail.append("Final environment PSM_early: %d" % environment_mod)
+    pop_size_mod_modified_by_species += environment_mod
+
+    # find all applicable modifiers
+    for tech in POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES:
         if tech != "environment_bonus" and tech_is_complete(tech):
-            pop_size_mod += POP_SIZE_MOD_MAP[tech][planet_env]
-            detail.append("%s_PSM(%d)" % (tech, POP_SIZE_MOD_MAP[tech][planet_env]))
+            pop_size_mod_modified_by_species += POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES[tech][planet_env]
+            detail.append("%s_PSM_early(%d)" % (tech, POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES[tech][planet_env]))
+
+    for tech in POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES:
+        if tech_is_complete(tech):
+            pop_size_mod_not_modified_by_species += POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES[tech][planet_env]
+            detail.append("%s_PSM_late(%d)" % (tech, POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES[tech][planet_env]))
+
     for tech in POP_CONST_MOD_MAP:
         if tech_is_complete(tech):
             pop_const_mod += POP_CONST_MOD_MAP[tech][planet_env]
             detail.append("%s_PCM(%d)" % (tech, POP_CONST_MOD_MAP[tech][planet_env]))
+
+    for _special in set(planet.specials).intersection(AIDependencies.POP_FIXED_MOD_SPECIALS):
+        this_mod = sum(AIDependencies.POP_FIXED_MOD_SPECIALS[_special].get(int(psize), 0)
+                       for psize in [-1, planet.size])
+        detail.append("%s_PCM(%d)" % (_special, this_mod))
+        pop_const_mod += this_mod
+
+    for _special in set(planet.specials).intersection(AIDependencies.POP_PROPORTIONAL_MOD_SPECIALS):
+        this_mod = sum(AIDependencies.POP_PROPORTIONAL_MOD_SPECIALS[_special].get(int(psize), 0)
+                       for psize in [-1, planet.size])
+        detail.append("%s (maxPop%+.1f)" % (_special, this_mod))
+        pop_size_mod_not_modified_by_species += this_mod
+
     #  exobots can't ever get to good environ so no gaia bonus, for others we'll assume they'll get there
     if "GAIA_SPECIAL" in planet.specials and species.name != "SP_EXOBOT":
-        pop_size_mod += 3
-        detail.append("Gaia_PSM(3)")
+        pop_size_mod_not_modified_by_species += 3
+        detail.append("Gaia_PSM_late(3)")
 
     applicable_boosts = set()
-    for thisTag in [tag for tag in tag_list if tag in AIDependencies.metabolismBoostMap]:
-        metab_boosts = AIDependencies.metabolismBoostMap.get(thisTag, [])
+    for this_tag in [tag for tag in tag_list if tag in AIDependencies.metabolismBoostMap]:
+        metab_boosts = AIDependencies.metabolismBoostMap.get(this_tag, [])
         for key in active_growth_specials.keys():
             if len(active_growth_specials[key]) > 0 and key in metab_boosts:
                 applicable_boosts.add(key)
                 detail.append("%s boost active" % key)
         for boost in metab_boosts:
-            if boost in planet_specials:
+            if boost in planet.specials:
                 applicable_boosts.add(boost)
                 detail.append("%s boost present" % boost)
 
     n_boosts = len(applicable_boosts)
     if n_boosts:
-        pop_size_mod += n_boosts
+        pop_size_mod_not_modified_by_species += n_boosts
         detail.append("boosts_PSM(%d from %s)" % (n_boosts, applicable_boosts))
-    return pop_size_mod, pop_const_mod, detail
+
+    if planet.id in species.homeworlds:
+        pop_size_mod_not_modified_by_species += 2
+
+    def max_pop_size():
+        return pop_const_mod + planet_size * (pop_size_mod_modified_by_species * pop_tag_mod
+                                              + pop_size_mod_not_modified_by_species)
+
+    if "PHOTOTROPHIC" in tag_list and max_pop_size() > 0:
+        star_type = fo.getUniverse().getSystem(planet.systemID).starType
+        star_pop_mod = PHOTO_MAP.get(star_type, 0)
+        pop_size_mod_not_modified_by_species += star_pop_mod
+        detail.append("Phototropic Star Bonus_PSM_late(%0.1f)" % star_pop_mod)
+
+    detail.append("baseMaxPop+ size*(psm_early*species_mod+psm_late) = %d + %d * (%d * %.2f + %d) = %.2f" % (
+        pop_const_mod, planet_size, pop_size_mod_modified_by_species,
+        pop_tag_mod, pop_size_mod_not_modified_by_species, max_pop_size()))
+    detail.append("maxPop %.1f" % max_pop_size())
+
+    return max_pop_size()
 
 
 NEST_VAL_MAP = {
@@ -750,7 +817,6 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
 
     ind_tag_mod = AIDependencies.SPECIES_INDUSTRY_MODIFIER.get(get_ai_tag_grade(tag_list, "INDUSTRY"), 1.0)
     res_tag_mod = AIDependencies.SPECIES_RESEARCH_MODIFIER.get(get_ai_tag_grade(tag_list, "RESEARCH"), 1.0)
-    pop_tag_mod = AIDependencies.SPECIES_POPULATION_MODIFIER.get(get_ai_tag_grade(tag_list, "POPULATION"), 1.0)
     supply_tag_mod = AIDependencies.SPECIES_SUPPLY_MODIFIER.get(get_ai_tag_grade(tag_list, "SUPPLY"), 1)
 
     # determine the potential supply provided by owning this planet, and if the planet is currently populated by
@@ -803,13 +869,10 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     growth_val = 0
     fixed_ind = 0
     fixed_res = 0
-    star_pop_mod = 0
     if system:
         already_got_this_one = this_sysid in (AIstate.popCtrSystemIDs + AIstate.outpostSystemIDs)
-        if "PHOTOTROPHIC" in tag_list:
-            star_pop_mod = PHOTO_MAP.get(system.starType, 0)
-            detail.append("PHOTOTROPHIC popMod %.1f" % star_pop_mod)
-        elif pilot_rating >= state.best_pilot_rating:
+        # TODO: Should probably consider pilot rating also for Phototropic species
+        if "PHOTOTROPHIC" not in tag_list and pilot_rating >= state.best_pilot_rating:
             if system.starType == fo.starType.red and tech_is_complete("LRN_STELLAR_TOMOGRAPHY"):
                 star_bonus += 40 * discount_multiplier  # can be used for artif'l black hole and solar hull
                 detail.append("Red Star for Art Black Hole for solar hull %.1f" % (40 * discount_multiplier))
@@ -910,7 +973,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                 detail.append("%s %.1f" % (special, fort_val))
             elif special == "HONEYCOMB_SPECIAL":
                 honey_val = 0.3 * (AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
-                                 empire_status['industrialists'] * discount_multiplier)
+                                   empire_status['industrialists'] * discount_multiplier)
                 retval += honey_val
                 detail.append("%s %.1f" % (special, honey_val))
         if planet.size == fo.planetSize.asteroids:
@@ -1030,7 +1093,6 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
         flat_industry = 0
         mining_bonus = 0
         per_ggg = 10
-        planet_size = planet.size
 
         got_asteroids = False
         got_owned_asteroids = False
@@ -1072,56 +1134,18 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                 else:
                     gas_giant_bonus = 0.5 * per_ggg * discount_multiplier
                     detail.append("GGG %.1f" % (0.5 * per_ggg * discount_multiplier))
-        if planet.size == fo.planetSize.gasGiant:
-            if not (species and species.name == "SP_SUPER_TEST"):
-                detail.append("Can't Settle GG")
-                return 0
-            else:
-                planet_env = fo.planetEnvironment.adequate  # I think
-                planet_size = 6  # I think
-        elif planet.size == fo.planetSize.asteroids:
-            planet_size = 3  # I think
-            if not species or species.name not in ["SP_EXOBOT", "SP_SUPER_TEST"]:
-                detail.append("Can't settle Asteroids")
-                return 0
-            elif species.name == "SP_EXOBOT":
-                planet_env = fo.planetEnvironment.poor
-            elif species.name == "SP_SUPER_TEST":
-                planet_env = fo.planetEnvironment.adequate  # I think
-            else:
-                return 0
-        else:
-            planet_env = ENVIRONS[str(species.getPlanetEnvironment(planet.type))]
-        if not planet_env:
-            return -9999
 
-        pop_size_mod, pop_const_mod, _detail = get_pop_mods(planet, tag_list, species, planet_env, planet_specials, star_pop_mod)
-        detail.extend(_detail)
-
-        if planet_id in species.homeworlds:  # TODO: check for homeworld growth focus
-            pop_size_mod += 2
-
+        # calculate the maximum population of the species on that planet.
         if planet.speciesName not in AIDependencies.SPECIES_FIXED_POPULATION:
-            max_pop_size = pop_const_mod + planet_size * pop_size_mod * pop_tag_mod
-            detail.append("baseMaxPop %d + size*psm %d * %d * %.2f = %d" % (
-                           pop_const_mod, planet_size, pop_size_mod, pop_tag_mod, max_pop_size))
-
-            for _special in set(planet.specials).intersection(AIDependencies.POP_FIXED_MOD_SPECIALS):
-                this_mod = sum(AIDependencies.POP_FIXED_MOD_SPECIALS[_special].get(int(psize), 0)
-                               for psize in [-1, planet.size])
-                detail.append("%s (maxPop%+.1f)" % (_special, this_mod))
-                max_pop_size += this_mod
-
-            for _special in set(planet.specials).intersection(AIDependencies.POP_PROPORTIONAL_MOD_SPECIALS):
-                this_mod = planet.size * sum(AIDependencies.POP_PROPORTIONAL_MOD_SPECIALS[_special].get(int(psize), 0)
-                                             for psize in [-1, planet.size])
-                detail.append("%s (maxPop%+.1f)" % (_special, this_mod))
-                max_pop_size += this_mod
-
-            detail.append("maxPop %.1f" % max_pop_size)
+            max_pop_size = calc_max_pop(planet, species, detail)
         else:
             max_pop_size = AIDependencies.SPECIES_FIXED_POPULATION[planet.speciesName]
             detail.append("Fixed max population of %.2f" % max_pop_size)
+
+        if max_pop_size <= 0:
+            detail.append("Non-positive population projection for species '%s', so no colonization value" % (
+                species and species.name))
+            return 0
 
         for special in ["MINERALS_SPECIAL", "CRYSTALS_SPECIAL", "ELERIUM_SPECIAL"]:
             if special in planet_specials:
@@ -1185,11 +1209,6 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                     comp_bonus *= backup_factor
                 research_bonus += comp_bonus
                 detail.append("COMPUTRONIUM_SPECIAL")
-
-        if max_pop_size <= 0:
-            detail.append("Non-positive population projection for species '%s', so no colonization value" % (
-                species and species.name))
-            return 0
 
         retval += max(ind_val + asteroid_bonus + gas_giant_bonus, research_bonus,
                       growth_val) + fixed_ind + fixed_res + supply_val
