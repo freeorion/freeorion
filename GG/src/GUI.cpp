@@ -798,7 +798,10 @@ GUI::GUI(const std::string& app_name) :
 }
 
 GUI::~GUI()
-{ Wnd::s_default_browse_info_wnd.reset(); }
+{
+    s_gui = nullptr;
+    Wnd::s_default_browse_info_wnd.reset();
+}
 
 const std::string& GUI::AppName() const
 { return m_impl->m_app_name; }
