@@ -660,6 +660,9 @@ ShipDesignManager::ShipDesignManager() :
     m_saved_designs(new SavedDesignsManager(INVALID_OBJECT_ID))
 {}
 
+ShipDesignManager::~ShipDesignManager()
+{}
+
 void ShipDesignManager::StartGame(int empire_id) {
     auto empire = GetEmpire(empire_id);
     if (!empire) {

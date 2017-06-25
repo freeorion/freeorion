@@ -30,10 +30,11 @@ public:
     };
 
     ShipDesignManager();
+    ~ShipDesignManager();
 
     void StartGame(int empire_id);
-    void Save(SaveGameUIData& data) const;
     void Load(const SaveGameUIData& data);
+    void Save(SaveGameUIData& data) const;
 
     Designs* CurrentDesigns();
     Designs* SavedDesigns();
