@@ -210,3 +210,4 @@ PHOTOTROPHIC_BONUS
             priority = [[LATEST_GROWTH_PRIORITY]]
             effects = SetTargetPopulation value = Value - 10 * Source.SizeAsDouble
 '''
+
