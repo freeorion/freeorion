@@ -62,7 +62,10 @@ Timer::Timer(unsigned int interval, unsigned int start_time/* = 0*/) :
 }
 
 Timer::~Timer()
-{ GUI::GetGUI()->RemoveTimer(*this); }
+{
+    if (auto gui = GUI::GetGUI())
+        gui->RemoveTimer(*this);
+}
 
 unsigned int Timer::Interval() const
 { return m_interval; }
