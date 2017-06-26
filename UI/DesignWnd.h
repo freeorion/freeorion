@@ -23,7 +23,11 @@ struct Availability {
 class ShipDesignManager {
 public:
 
-    /** Designs provides ordered lists of designs for display in the UI. */
+    /** Designs provides ordered lists of designs for display in the UI.
+
+     Derived classes provide an implementation for the pure virtual
+     OrderedIDs(), which provides ship design ids in display order. They may
+     also provide additional functionality used by the DesignWnd. */
     class Designs {
     public:
         virtual std::vector<int> OrderedIDs() const = 0;
@@ -36,7 +40,10 @@ public:
     void Load(const SaveGameUIData& data);
     void Save(SaveGameUIData& data) const;
 
+    /** CurrentDesigns are design currently producible by the empire, in the ProductionWnd.*/
     Designs* CurrentDesigns();
+    /** SavedDesigns are designs that the player has saved on their own machine
+        for future use.  They may/may not also be in use in the current game. */
     Designs* SavedDesigns();
 
 private:
