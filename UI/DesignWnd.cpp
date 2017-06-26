@@ -207,8 +207,7 @@ namespace {
         std::list<int> m_ordered_ids;
 
         // An index from the id to the obsolescence state and the location in the m_ordered_ids list.
-        std::unordered_map<int, std::pair<bool,  std::list<int>::const_iterator>> m_id_to_obsolete_and_loc;
-
+        std::unordered_map<int, std::pair<bool, std::list<int>::const_iterator>> m_id_to_obsolete_and_loc;
     };
 
     class SavedDesignsManager : public ShipDesignManager::Designs {
