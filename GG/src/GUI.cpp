@@ -163,10 +163,13 @@ struct GG::GUIImpl
 
     void ClearState();
 
+    std::shared_ptr<Wnd> FocusWnd() const;
+    void SetFocusWnd(const std::shared_ptr<Wnd>& wnd);
+
     std::string  m_app_name;              // the user-defined name of the apllication
 
     ZList        m_zlist;                 // object that keeps the GUI windows in the correct depth ordering
-    std::shared_ptr<Wnd>         m_focus_wnd;             // GUI window that currently has the input focus (this is the base level focus window, used when no modal windows are active)
+    std::weak_ptr<Wnd>         m_focus_wnd;             // GUI window that currently has the input focus (this is the base level focus window, used when no modal windows are active)
     std::list<std::pair<std::shared_ptr<Wnd>, std::shared_ptr<Wnd>>>
                  m_modal_wnds;            // modal GUI windows, and the window with focus for that modality (only the one in back is active, simulating a stack but allowing traversal of the list)
     bool         m_allow_modal_accelerator_signals; // iff true: keyboard accelerator signals will be output while modal window(s) is open
@@ -252,7 +255,7 @@ struct GG::GUIImpl
 };
 
 GUIImpl::GUIImpl() :
-    m_focus_wnd(nullptr),
+    m_focus_wnd(),
     m_allow_modal_accelerator_signals(false),
     m_mouse_pos(X(-1000), Y(-1000)),
     m_mouse_rel(X(0), Y(0)),
@@ -330,14 +333,14 @@ void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, const Pt& pos, i
     if (control && !control->Disabled())
         GUI::s_gui->SetFocusWnd(m_drag_wnds[mouse_button]);
 
-    if (m_curr_wnd_under_cursor) {
-        m_wnd_region = m_curr_wnd_under_cursor->WindowRegion(pos); // and determine whether a resize-region of it is being dragged
+    if (auto curr_wnd_under_cursor = m_curr_wnd_under_cursor.lock()) {
+        m_wnd_region = curr_wnd_under_cursor->WindowRegion(pos); // and determine whether a resize-region of it is being dragged
         if (m_wnd_region % 3 == 0) // left regions
-            m_wnd_resize_offset.x = m_curr_wnd_under_cursor->Left() - pos.x;
+            m_wnd_resize_offset.x = curr_wnd_under_cursor->Left() - pos.x;
         else
-            m_wnd_resize_offset.x = m_curr_wnd_under_cursor->Right() - pos.x;
+            m_wnd_resize_offset.x = curr_wnd_under_cursor->Right() - pos.x;
         if (m_wnd_region < 3) // top regions
-            m_wnd_resize_offset.y = m_curr_wnd_under_cursor->Top() - pos.y;
+            m_wnd_resize_offset.y = curr_wnd_under_cursor->Top() - pos.y;
         else
             m_wnd_resize_offset.y = m_drag_wnds[mouse_button]->Bottom() - pos.y;
         auto drag_wnds_root_parent = m_drag_wnds[mouse_button]->RootParent();
@@ -641,11 +644,14 @@ void GUIImpl::HandleIdle(Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_tic
             }
         }
 
-    } else if (
-        m_key_press_repeat_delay != 0 &&
+        return;
+    }
+
+    auto&& focus_wnd = FocusWnd();
+    if (m_key_press_repeat_delay != 0 &&
         m_last_pressed_key_code_point.first != GGK_UNKNOWN &&
-        GUI::s_gui->FocusWnd() &&
-        GUI::s_gui->FocusWnd()->RepeatKeyPress())
+        focus_wnd &&
+        focus_wnd->RepeatKeyPress())
     {
         // convert to a key press message after ensuring that timing requirements are met
         if (curr_ticks - m_prev_key_press_time > m_key_press_repeat_delay) {
@@ -653,15 +659,17 @@ void GUIImpl::HandleIdle(Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_tic
                 curr_ticks - m_last_key_press_repeat_time > m_key_press_repeat_interval)
             {
                 m_last_key_press_repeat_time = curr_ticks;
-                GUI::s_gui->FocusWnd()->HandleEvent(WndEvent(
-                    WndEvent::KeyPress, m_last_pressed_key_code_point.first,
-                    m_last_pressed_key_code_point.second, mod_keys));
+                focus_wnd->HandleEvent(WndEvent(
+                                           WndEvent::KeyPress, m_last_pressed_key_code_point.first,
+                                           m_last_pressed_key_code_point.second, mod_keys));
             }
         }
-
-    } else if (curr_wnd_under_cursor) {
-        GUI::s_gui->ProcessBrowseInfo();
+        return;
     }
+
+    if (curr_wnd_under_cursor)
+        GUI::s_gui->ProcessBrowseInfo();
+
 }
 
 void GUIImpl::HandleKeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks)
@@ -688,8 +696,9 @@ void GUIImpl::HandleKeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey
             processed = GUI::s_gui->AcceleratorSignal(key, massaged_mods)();
         }
     }
-    if (!processed && GUI::s_gui->FocusWnd())
-        GUI::s_gui->FocusWnd()->HandleEvent(WndEvent(
+    auto&& focus_wnd = FocusWnd();
+    if (!processed && focus_wnd)
+        focus_wnd->HandleEvent(WndEvent(
             WndEvent::KeyPress, key, key_code_point, mod_keys));
 }
 
@@ -701,8 +710,9 @@ void GUIImpl::HandleKeyRelease(Key key, std::uint32_t key_code_point, Flags<ModK
     m_browse_info_wnd.reset();
     m_browse_info_mode = -1;
     m_browse_target = nullptr;
-    if (GUI::s_gui->FocusWnd())
-        GUI::s_gui->FocusWnd()->HandleEvent(WndEvent(
+    auto&& focus_wnd = FocusWnd();
+    if (focus_wnd)
+        focus_wnd->HandleEvent(WndEvent(
             WndEvent::KeyRelease, key, key_code_point, mod_keys));
 }
 
@@ -710,8 +720,9 @@ void GUIImpl::HandleTextInput(const std::string* text) {
     m_browse_info_wnd.reset();
     m_browse_info_mode = -1;
     m_browse_target = nullptr;
-    if (GUI::s_gui->FocusWnd())
-        GUI::s_gui->FocusWnd()->HandleEvent(WndEvent(WndEvent::TextInput, text));
+    auto&& focus_wnd = FocusWnd();
+    if (focus_wnd)
+        focus_wnd->HandleEvent(WndEvent(WndEvent::TextInput, text));
 }
 
 void GUIImpl::HandleMouseMove(Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks)
@@ -766,9 +777,32 @@ void GUIImpl::HandleMouseEnter(Flags< ModKey > mod_keys, const GG::Pt& pos, cons
     m_curr_wnd_under_cursor = w;
 }
 
+std::shared_ptr<Wnd> GUIImpl::FocusWnd() const
+{ return m_modal_wnds.empty() ? m_focus_wnd.lock() : m_modal_wnds.back().second; }
+
+void GUIImpl::SetFocusWnd(const std::shared_ptr<Wnd>& wnd)
+{
+    auto&& focus_wnd = FocusWnd();
+    if (focus_wnd == wnd)
+        return;
+
+    // inform old focus wnd that it is losing focus
+    if (focus_wnd)
+        focus_wnd->HandleEvent(WndEvent(WndEvent::LosingFocus));
+
+    (m_modal_wnds.empty() ? m_focus_wnd : m_modal_wnds.back().second) = wnd;
+
+    // inform new focus wnd that it is gaining focus
+    auto&& new_focus_wnd = FocusWnd();
+    if (new_focus_wnd)
+        new_focus_wnd->HandleEvent(WndEvent(WndEvent::GainingFocus));
+}
+
+
+
 void GUIImpl::ClearState()
 {
-    m_focus_wnd = nullptr;
+    m_focus_wnd.reset();
     m_mouse_pos = GG::Pt(X(-1000), Y(-1000));
     m_mouse_rel = GG::Pt(X(0), Y(0));
     m_mod_keys = Flags<ModKey>();
@@ -825,7 +859,7 @@ const std::string& GUI::AppName() const
 { return m_impl->m_app_name; }
 
 std::shared_ptr<Wnd> GUI::FocusWnd() const
-{ return m_impl->m_modal_wnds.empty() ? m_impl->m_focus_wnd : m_impl->m_modal_wnds.back().second; }
+{ return m_impl->FocusWnd(); }
 
 bool GUI::FocusWndAcceptsTypingInput() const
 {
@@ -1186,18 +1220,20 @@ void GUI::ClearEventState()
 
 void GUI::SetFocusWnd(const std::shared_ptr<Wnd>& wnd)
 {
-    if (FocusWnd() == wnd)
+    auto&& focus_wnd = FocusWnd();
+    if (focus_wnd == wnd)
         return;
 
     // inform old focus wnd that it is losing focus
-    if (FocusWnd())
-        FocusWnd()->HandleEvent(WndEvent(WndEvent::LosingFocus));
+    if (focus_wnd)
+        focus_wnd->HandleEvent(WndEvent(WndEvent::LosingFocus));
 
     (m_impl->m_modal_wnds.empty() ? m_impl->m_focus_wnd : m_impl->m_modal_wnds.back().second) = wnd;
 
     // inform new focus wnd that it is gaining focus
-    if (FocusWnd())
-        FocusWnd()->HandleEvent(WndEvent(WndEvent::GainingFocus));
+    auto&& new_focus_wnd = FocusWnd();
+    if (new_focus_wnd)
+        new_focus_wnd->HandleEvent(WndEvent(WndEvent::GainingFocus));
 }
 
 bool GUI::SetPrevFocusWndInCycle()
@@ -1259,12 +1295,6 @@ void GUI::WndDying(const Wnd* const wnd)
     if (!wnd)
         return;
 
-    if (MatchesOrContains(wnd, m_impl->m_focus_wnd))
-        m_impl->m_focus_wnd = nullptr;
-    for (auto& modal_wnd : m_impl->m_modal_wnds) {
-        if (MatchesOrContains(wnd, modal_wnd.first))
-            modal_wnd.first = nullptr;
-    }
     if (MatchesOrContains(wnd, m_impl->m_drag_wnds[0])) {
         m_impl->m_drag_wnds[0] = nullptr;
         m_impl->m_wnd_region = WR_NONE;
