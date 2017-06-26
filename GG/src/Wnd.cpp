@@ -369,16 +369,6 @@ bool Wnd::InClient(const Pt& pt) const
 const std::list<std::shared_ptr<Wnd>>& Wnd::Children() const
 { return m_children; }
 
-namespace {
-    template <typename T>
-    std::shared_ptr<T> LockAndResetIfExpired(std::weak_ptr<T>& ptr) {
-        auto locked = ptr.lock();
-        if (!locked)
-            ptr.reset();
-        return locked;
-    }
-}
-
 std::shared_ptr<Wnd> Wnd::Parent() const
 { return LockAndResetIfExpired(m_parent); }
 

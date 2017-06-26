@@ -53,6 +53,14 @@ class Texture;
 class Timer;
 struct GUIImpl;
 
+template <typename T>
+std::shared_ptr<T> LockAndResetIfExpired(std::weak_ptr<T>& ptr) {
+    auto locked = ptr.lock();
+    if (!locked)
+        ptr.reset();
+    return locked;
+}
+
 /** \brief An abstract base for an GUI framework class to drive the GG GUI.
 
     This class has all the essential services that GG requires: 
