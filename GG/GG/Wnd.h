@@ -118,13 +118,14 @@ extern GG_API const WndFlag NO_WND_FLAGS;
     undesirable, and control is needed over the order in which children are
     layered, MoveChildUp() and MoveChildDown() provide such control.
 
-    <br>Windows are owned by the GUI, as top level or modal windows, or owned by
-    their parent windows as children.  Changes of ownership are indicated by
-    passing a shared_ptr.  Other objects should use weak_ptr to refer to windows
-    that they do not wish to preserve beyond it natural demise.  This avoids
-    "leaking" a window by storing a shared_ptr to a window that is no longer
-    part of the hierarchy.  This would prevent a window from being removed from
-    memory, event processing, etc.
+    <br>Windows are owned by the GUI, as top level or modal windows, owned by
+    their parent windows as children, or during a drag drop operation jointly
+    owned by the GUI and the originating/accepting window.  Changes of ownership
+    are indicated by passing a shared_ptr.  Other objects should use weak_ptr to
+    refer to windows that they do not wish to preserve beyond its natural demise.
+    This avoids "leaking" a window by storing a shared_ptr to a window that is
+    no longer part of the hierarchy.  This would prevent a window from being
+    removed from memory, event processing, etc.
 
     <h3>Effects of Window-Creation Flags</h3>
 
