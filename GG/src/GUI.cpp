@@ -327,13 +327,13 @@ void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, const Pt& pos, i
     }
 
     // if this window is not a disabled Control window, it becomes the focus window
-    auto control = (m_drag_wnds[mouse_button]
-                    ? dynamic_cast<Control*>(m_drag_wnds[mouse_button].get())
+    auto control = (curr_wnd_under_cursor
+                    ? dynamic_cast<Control*>(curr_wnd_under_cursor.get())
                     : nullptr);
     if (control && !control->Disabled())
-        GUI::s_gui->SetFocusWnd(m_drag_wnds[mouse_button]);
+        GUI::s_gui->SetFocusWnd(curr_wnd_under_cursor);
 
-    if (auto curr_wnd_under_cursor = m_curr_wnd_under_cursor.lock()) {
+    if (curr_wnd_under_cursor) {
         m_wnd_region = curr_wnd_under_cursor->WindowRegion(pos); // and determine whether a resize-region of it is being dragged
         if (m_wnd_region % 3 == 0) // left regions
             m_wnd_resize_offset.x = curr_wnd_under_cursor->Left() - pos.x;
@@ -342,10 +342,10 @@ void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, const Pt& pos, i
         if (m_wnd_region < 3) // top regions
             m_wnd_resize_offset.y = curr_wnd_under_cursor->Top() - pos.y;
         else
-            m_wnd_resize_offset.y = m_drag_wnds[mouse_button]->Bottom() - pos.y;
-        auto drag_wnds_root_parent = m_drag_wnds[mouse_button]->RootParent();
-        GUI::s_gui->MoveUp(drag_wnds_root_parent ? drag_wnds_root_parent : m_drag_wnds[mouse_button]);
-        m_drag_wnds[mouse_button]->HandleEvent(WndEvent(ButtonEvent(WndEvent::LButtonDown, mouse_button), pos, m_mod_keys));
+            m_wnd_resize_offset.y = curr_wnd_under_cursor->Bottom() - pos.y;
+        auto drag_wnds_root_parent = curr_wnd_under_cursor->RootParent();
+        GUI::s_gui->MoveUp(drag_wnds_root_parent ? drag_wnds_root_parent : curr_wnd_under_cursor);
+        curr_wnd_under_cursor->HandleEvent(WndEvent(ButtonEvent(WndEvent::LButtonDown, mouse_button), pos, m_mod_keys));
     }
 
     m_prev_wnd_under_cursor = m_curr_wnd_under_cursor; // update this for the next time around
