@@ -123,24 +123,24 @@ bool PopulationPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     std::string species_name;
     bool retval = false;
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     std::shared_ptr<const PopCenter> pc = GetPopCenter();
     if (meter_type == METER_POPULATION && pc) {
         species_name = pc->SpeciesName();
         if (!species_name.empty()) {
             auto zoom_species_action = [&retval, &species_name]() { retval = ClientUI::GetClientUI()->ZoomToSpecies(species_name); };
             std::string species_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
-            popup.AddMenuItem(GG::MenuItem(species_label, false, false, zoom_species_action));
+            popup->AddMenuItem(GG::MenuItem(species_label, false, false, zoom_species_action));
         }
     }
 
     if (!meter_title.empty()) {
         auto pedia_meter_type_action = [&retval, &meter_string]() { retval = ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string); };
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % meter_title);
-        popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_meter_type_action));
+        popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_meter_type_action));
     }
 
-    popup.Run();
+    popup->Run();
     return retval;
 }
 

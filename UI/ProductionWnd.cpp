@@ -652,11 +652,11 @@ namespace {
             auto dupe_action = [&it, this]() { this->QueueItemDupedSignal(it); };
             auto split_action = [&it, this]() { this->QueueItemSplitSignal(it); };
 
-            CUIPopupMenu popup(pt.x, pt.y);
+            auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-            popup.AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   false, false, MoveToTopAction(it)));
-            popup.AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), false, false, MoveToBottomAction(it)));
-            popup.AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    false, false, DeleteAction(it)));
+            popup->AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   false, false, MoveToTopAction(it)));
+            popup->AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), false, false, MoveToBottomAction(it)));
+            popup->AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    false, false, DeleteAction(it)));
 
             // inspect clicked item: was it a ship?
             GG::ListBox::Row* row = *it;
@@ -670,9 +670,9 @@ namespace {
                 location_passes = elem.item.EnqueueConditionPassedAt(elem.location);
             }
 
-            popup.AddMenuItem(GG::MenuItem(UserString("DUPLICATE"), !location_passes, false, dupe_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("DUPLICATE"), !location_passes, false, dupe_action));
             if (remaining > 1) {
-                popup.AddMenuItem(GG::MenuItem(UserString("SPLIT_INCOMPLETE"), false, false, split_action));
+                popup->AddMenuItem(GG::MenuItem(UserString("SPLIT_INCOMPLETE"), false, false, split_action));
             }
 
             BuildType build_type = queue_row ? queue_row->elem.item.build_type : INVALID_BUILD_TYPE;
@@ -680,15 +680,15 @@ namespace {
                 // for ships, add a set rally point command
                 if (std::shared_ptr<const System> system = GetSystem(SidePanel::SystemID())) {
                     std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM")) % system->PublicName(HumanClientApp::GetApp()->EmpireID()));
-                    popup.AddMenuItem(GG::MenuItem(rally_prompt,               false, false, rally_to_action));
+                    popup->AddMenuItem(GG::MenuItem(rally_prompt,               false, false, rally_to_action));
                 }
             }
 
             // pause / resume commands
             if (queue_row && queue_row->elem.paused) {
-                popup.AddMenuItem(GG::MenuItem(UserString("RESUME"),           false, false, resume_action));
+                popup->AddMenuItem(GG::MenuItem(UserString("RESUME"),           false, false, resume_action));
             } else {
-                popup.AddMenuItem(GG::MenuItem(UserString("PAUSE"),            false, false, pause_action));
+                popup->AddMenuItem(GG::MenuItem(UserString("PAUSE"),            false, false, pause_action));
             }
 
             // pedia lookup
@@ -704,9 +704,9 @@ namespace {
             if (UserStringExists(item_name))
                 item_name = UserString(item_name);
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % item_name);
-            popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_action));
+            popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_action));
 
-            popup.Run();
+            popup->Run();
         }
     };
 }

@@ -83,14 +83,14 @@ void LinkText::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     auto copy_action = [this]() { GG::GUI::GetGUI()->CopyWndText(this); };
 
     // create popup menu
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     if (GetLinkUnderPt(pt) != -1) {
-        popup.AddMenuItem(GG::MenuItem(UserString("OPEN"),     false, false, rclick_action));
-        popup.AddMenuItem(GG::MenuItem(true)); // separator
+        popup->AddMenuItem(GG::MenuItem(UserString("OPEN"),     false, false, rclick_action));
+        popup->AddMenuItem(GG::MenuItem(true)); // separator
     }
-    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),  false, false, copy_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),  false, false, copy_action));
 
-    popup.Run();
+    popup->Run();
 }
 
 void LinkText::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)

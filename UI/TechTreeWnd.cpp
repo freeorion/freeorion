@@ -902,13 +902,13 @@ void TechTreeWnd::LayoutPanel::TechPanel::RClick(const GG::Pt& pt,
     auto dclick_action = [this, pt, mod_keys]() { LDoubleClick(pt, mod_keys); };
     auto pedia_display_action = [this]() { TechPediaDisplaySignal(m_tech_name); };
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     if (!(m_enqueued) && !(m_status == TS_COMPLETE))
-        popup.AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, dclick_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, dclick_action));
 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(m_tech_name));
-    popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
-    popup.Run();
+    popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
+    popup->Run();
 }
 
 void TechTreeWnd::LayoutPanel::TechPanel::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -1934,13 +1934,13 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
     auto tech_dclick_action = [this, it, pt]() { TechDoubleClicked(it, pt, GG::Flags<GG::ModKey>()); };
     auto pedia_display_action = [this, &tech_name]() { TechPediaDisplay(tech_name); };
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     if (!empire->TechResearched(tech_name))
-        popup.AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, tech_dclick_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, tech_dclick_action));
 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(tech_name));
-    popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
-    popup.Run();
+    popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
+    popup->Run();
 }
 
 void TechTreeWnd::TechListBox::TechPediaDisplay(const std::string& tech_name) {

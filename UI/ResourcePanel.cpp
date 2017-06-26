@@ -122,10 +122,10 @@ bool ResourcePanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     auto pedia_zoom_to_article_action = [&meter_string, &retval]() {
         retval = ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string); };
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % meter_title);
-    popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_zoom_to_article_action));
-    popup.Run();
+    popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_zoom_to_article_action));
+    popup->Run();
 
     return retval;
 }

@@ -116,9 +116,9 @@ bool MilitaryPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     bool retval = false;
     auto zoom_action = [&retval, &meter_string]() { retval = ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string); };
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % meter_title);
-    popup.AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_action));
+    popup->AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_action));
 
     return retval;
 }

@@ -2485,11 +2485,11 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     };
 
     // create popup menu with a commands in it
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
     // obsolete design
     if (empire_id != ALL_EMPIRES)
-        popup.AddMenuItem(GG::MenuItem(
+        popup->AddMenuItem(GG::MenuItem(
                               (is_obsolete
                                ? UserString("DESIGN_WND_UNOBSOLETE_DESIGN")
                                : UserString("DESIGN_WND_OBSOLETE_DESIGN")),
@@ -2497,20 +2497,20 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
 
     // delete design
     if (empire_id != ALL_EMPIRES)
-        popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_DELETE_DESIGN"), false, false, delete_design_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_DELETE_DESIGN"), false, false, delete_design_action));
 
     // rename design
     if (design->DesignedByEmpire() == empire_id)
-        popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_RENAME"), false, false, rename_design_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_RENAME"), false, false, rename_design_action));
 
     // save design
-    popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_SAVE"), false, false, save_design_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_SAVE"), false, false, save_design_action));
 
-    popup.AddMenuItem(GG::MenuItem(true)); // separator
-    popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_DEFAULT_START"), false, add_defaults,
+    popup->AddMenuItem(GG::MenuItem(true)); // separator
+    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_DEFAULT_START"), false, add_defaults,
                                    toggle_add_default_designs_at_game_start_action));
 
-    popup.Run();
+    popup->Run();
 }
 
 void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
@@ -2558,16 +2558,16 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
 
     
     // create popup menu with a commands in it
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     if (design->Producible())
-        popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD"),       false, false, add_design_action));
-    popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_DELETE_SAVED"), false, false, delete_saved_design_action));
-    popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_NOW"),   false, false, add_all_saved_designs_action));
-    popup.AddMenuItem(GG::MenuItem(true)); // separator
-    popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_START"), false, add_all,
+        popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD"),       false, false, add_design_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_DELETE_SAVED"), false, false, delete_saved_design_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_NOW"),   false, false, add_all_saved_designs_action));
+    popup->AddMenuItem(GG::MenuItem(true)); // separator
+    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_START"), false, add_all,
                                    toggle_add_all_saved_game_start_action));
 
-    popup.Run();
+    popup->Run();
 
 }
 

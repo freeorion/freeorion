@@ -2548,13 +2548,13 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     const ShipDesign* design = GetShipDesign(ship->DesignID()); // may be null
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
     // Zoom to design
     if (design) {
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % design->Name(true));
         auto zoom_to_design_action = [design]() { ClientUI::GetClientUI()->ZoomToShipDesign(design->ID()); };
-        popup.AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_to_design_action));
+        popup->AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_to_design_action));
     }
 
     // Rename ship context item
@@ -2575,7 +2575,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
                 // TODO: Moderator action for renaming ships
             }
         };
-        popup.AddMenuItem(GG::MenuItem(UserString("RENAME"), false, false, rename_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("RENAME"), false, false, rename_action));
     }
 
     // Scrap or unscrap ships
@@ -2588,7 +2588,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<ScrapOrder>(client_empire_id, ship->ID()));
         };
-        popup.AddMenuItem(GG::MenuItem(UserString("ORDER_SHIP_SCRAP"), false, false, scrap_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("ORDER_SHIP_SCRAP"), false, false, scrap_action));
     } else if (!ClientPlayerIsModerator()
                && ship->OwnedBy(client_empire_id))
     {
@@ -2600,7 +2600,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
                 HumanClientApp::GetApp()->Orders().RescindOrder(it->second);
         };
         // create popup menu with "Cancel Scrap" option
-        popup.AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_SHIP_SCRAP"), false, false, unscrap_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_SHIP_SCRAP"), false, false, unscrap_action));
     }
 
     // Split fleets
@@ -2635,11 +2635,11 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
         };
 
         if (design)
-            popup.AddMenuItem( GG::MenuItem(UserString("FW_SPLIT_SHIPS_THIS_DESIGN"), false, false, split_one_design_action));
-        popup.AddMenuItem(     GG::MenuItem(UserString("FW_SPLIT_SHIPS_ALL_DESIGNS"), false, false, split_all_designs_action));
+            popup->AddMenuItem( GG::MenuItem(UserString("FW_SPLIT_SHIPS_THIS_DESIGN"), false, false, split_one_design_action));
+        popup->AddMenuItem(     GG::MenuItem(UserString("FW_SPLIT_SHIPS_ALL_DESIGNS"), false, false, split_all_designs_action));
     }
 
-    popup.Run();
+    popup->Run();
 }
 
 int FleetDetailPanel::ShipInRow(GG::ListBox::iterator it) const {
@@ -3273,7 +3273,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     }
 
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     
     // add a fleet popup command to send the fleet exploring, and stop it from exploring
     if (system
@@ -3283,16 +3283,16 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     {
         auto explore_action = [fleet]() { ClientUI::GetClientUI()->GetMapWnd()->SetFleetExploring(fleet->ID()); };
 
-        popup.AddMenuItem(GG::MenuItem(UserString("ORDER_FLEET_EXPLORE"),       false, false, explore_action));
-        popup.AddMenuItem(GG::MenuItem(true));
+        popup->AddMenuItem(GG::MenuItem(UserString("ORDER_FLEET_EXPLORE"),       false, false, explore_action));
+        popup->AddMenuItem(GG::MenuItem(true));
     }
     else if (system
              && !ClientPlayerIsModerator()
              && fleet->OwnedBy(client_empire_id))
     {
         auto stop_explore_action = [fleet]() { ClientUI::GetClientUI()->GetMapWnd()->StopFleetExploring(fleet->ID()); };
-        popup.AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_EXPLORE"), false, false, stop_explore_action));
-        popup.AddMenuItem(GG::MenuItem(true));
+        popup->AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_EXPLORE"), false, false, stop_explore_action));
+        popup->AddMenuItem(GG::MenuItem(true));
     }
 
     // Merge fleets
@@ -3302,8 +3302,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
        )
     {
         auto merge_action = [fleet]() { MergeFleetsIntoFleet(fleet->ID()); };
-        popup.AddMenuItem(GG::MenuItem(UserString("FW_MERGE_SYSTEM_FLEETS"),   false, false, merge_action));
-        popup.AddMenuItem(GG::MenuItem(true));
+        popup->AddMenuItem(GG::MenuItem(UserString("FW_MERGE_SYSTEM_FLEETS"),   false, false, merge_action));
+        popup->AddMenuItem(GG::MenuItem(true));
     }
 
     // Split damaged ships - need some, but not all, ships damaged, and need to be in a system
@@ -3316,7 +3316,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
        )
     {
         auto split_damage_action = [&damaged_ship_ids]() { CreateNewFleetFromShips(damaged_ship_ids, FLEET_PASSIVE); };
-        popup.AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_DAMAGED_FLEET"),     false, false, split_damage_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_DAMAGED_FLEET"),     false, false, split_damage_action));
     }
 
     // Split unfueled ships - need some, but not all, ships unfueled, and need to be in a system
@@ -3333,7 +3333,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             CreateNewFleetFromShips(unfueled_ship_ids, nfa);
         };
 
-        popup.AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_UNFUELED_FLEET"),    false, false, split_unfueled_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_UNFUELED_FLEET"),    false, false, split_unfueled_action));
     }
 
     // Split ships with not as many fighters as they could contain
@@ -3349,7 +3349,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             NewFleetAggression nfa = fleet->Aggressive() ? FLEET_AGGRESSIVE : FLEET_PASSIVE;
             CreateNewFleetFromShips(not_full_fighters_ship_ids, nfa);
         };
-        popup.AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_NOT_FULL_FIGHTERS_FLEET"), false, false, split_not_full_fighters_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_NOT_FULL_FIGHTERS_FLEET"), false, false, split_not_full_fighters_action));
     }
 
     // Split fleet - can't split fleets without more than one ship, or which are not in a system
@@ -3388,9 +3388,9 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             CreateNewFleetsFromShipsForEachDesign(fleet->ShipIDs(), new_aggression_setting);
         };
 
-        popup.AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_FLEET"),             false, false, split_action));
-        popup.AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_SHIPS_ALL_DESIGNS"), false, false, split_per_design_action));
-        popup.AddMenuItem(GG::MenuItem(true));
+        popup->AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_FLEET"),             false, false, split_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_SHIPS_ALL_DESIGNS"), false, false, split_per_design_action));
+        popup->AddMenuItem(GG::MenuItem(true));
     }
 
     // Rename fleet
@@ -3412,8 +3412,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
                     std::make_shared<RenameOrder>(client_empire_id, fleet->ID(), new_name));
             }
         };
-        popup.AddMenuItem(GG::MenuItem(UserString("RENAME"),                       false, false, rename_action));
-        popup.AddMenuItem(GG::MenuItem(true));
+        popup->AddMenuItem(GG::MenuItem(UserString("RENAME"),                       false, false, rename_action));
+        popup->AddMenuItem(GG::MenuItem(true));
     }
 
     bool post_scrap_bar = false;
@@ -3432,7 +3432,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             }
         };
 
-        popup.AddMenuItem(GG::MenuItem(UserString("ORDER_FLEET_SCRAP"),          false, false, scrap_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("ORDER_FLEET_SCRAP"),          false, false, scrap_action));
         post_scrap_bar = true;
     }
 
@@ -3455,7 +3455,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             }
         };
 
-        popup.AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_SCRAP"),   false, false, unscrap_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_SCRAP"),   false, false, unscrap_action));
         post_scrap_bar = true;
     }
 
@@ -3464,7 +3464,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         && !ClientPlayerIsModerator())
     {
         if (post_scrap_bar)
-            popup.AddMenuItem(GG::MenuItem(true));
+            popup->AddMenuItem(GG::MenuItem(true));
 
         // submenus for each available recipient empire
         GG::MenuItem give_away_menu(UserString("ORDER_GIVE_FLEET_TO_EMPIRE"), false, false);
@@ -3478,7 +3478,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             };
             give_away_menu.next_level.push_back(GG::MenuItem(entry.second->Name(), false, false, gift_action));
         }
-        popup.AddMenuItem(std::move(give_away_menu));
+        popup->AddMenuItem(std::move(give_away_menu));
 
         if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES) {
             auto ungift_action = [fleet]() {
@@ -3494,7 +3494,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
                 }
             };
             GG::MenuItem cancel_give_away_menu(UserString("ORDER_CANCEL_GIVE_FLEET"), false, false, ungift_action);
-            popup.AddMenuItem(std::move(cancel_give_away_menu));
+            popup->AddMenuItem(std::move(cancel_give_away_menu));
         }
     }
 
@@ -3525,11 +3525,11 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         if (last_turn_visible_it != visibility_turn_map.end()
             && last_turn_visible_it->second < CurrentTurn())
         {
-            popup.AddMenuItem(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"),   false, false, forget_fleet_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"),   false, false, forget_fleet_action));
         }
    }
 
-    popup.Run();
+    popup->Run();
 }
 
 void FleetWnd::FleetLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
