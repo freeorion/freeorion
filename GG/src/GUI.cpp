@@ -412,11 +412,10 @@ void GUIImpl::HandleMouseDrag(unsigned int mouse_button, const Pt& pos, int curr
             !m_drag_drop_wnds.empty())
         {
             std::set<Wnd*> ignores;
-            m_curr_wnd_under_cursor = m_zlist.Pick(pos, GUI::s_gui->ModalWindow(), &ignores);
+            auto curr_wnd_under_cursor = m_zlist.Pick(pos, GUI::s_gui->ModalWindow(), &ignores);
+            m_curr_wnd_under_cursor = curr_wnd_under_cursor;
             std::map<std::shared_ptr<Wnd>, Pt> drag_drop_wnds;
             drag_drop_wnds[dragged_wnd] = m_wnd_drag_offset;
-
-            auto curr_wnd_under_cursor = m_curr_wnd_under_cursor.lock();
             auto prev_wnd_under_cursor = m_prev_wnd_under_cursor.lock();
             if (curr_wnd_under_cursor && prev_wnd_under_cursor == curr_wnd_under_cursor) {
                 // Wnd under cursor has remained the same for the last two updates
