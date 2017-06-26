@@ -2689,7 +2689,6 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
         ErrorLogger() << "FleetWnd::FleetWnd couldn't find requested selected fleet with id " << selected_fleet_id;
         selected_fleet_id = INVALID_OBJECT_ID;
     }
-
 }
 
 void FleetWnd::CompleteConstruction()

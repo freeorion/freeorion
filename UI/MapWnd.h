@@ -559,6 +559,8 @@ public:
 
     MapWndPopup(const std::string& t, GG::Flags<GG::WndFlag> flags, const std::string& config_name = "");
 
+    void CompleteConstruction() override;
+
     virtual ~MapWndPopup();
 
     void CloseClicked() override;

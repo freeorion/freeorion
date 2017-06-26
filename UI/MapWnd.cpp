@@ -704,14 +704,15 @@ private:
 MapWndPopup::MapWndPopup(const std::string& t, GG::X default_x, GG::Y default_y, GG::X default_w, GG::Y default_h,
                          GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
     CUIWnd(t, default_x, default_y, default_w, default_h, flags, config_name)
-{
-    if (MapWnd *mwnd = ClientUI::GetClientUI()->GetMapWnd())
-        mwnd->RegisterPopup(this);
-}
+{}
 
 MapWndPopup::MapWndPopup(const std::string& t, GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
     CUIWnd(t, flags, config_name)
-{
+{}
+
+void MapWndPopup::CompleteConstruction() {
+    CUIWnd::CompleteConstruction();
+
     // MapWndPopupWnd is registered as a top level window, the same as ClientUI and MapWnd.
     // Consequently, when the GUI shutsdown either could be destroyed before this Wnd
     if (auto client = ClientUI::GetClientUI())
