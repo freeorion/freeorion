@@ -1797,7 +1797,7 @@ std::shared_ptr<Wnd> GUI::ModalWindow() const
 
 std::shared_ptr<Wnd> GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_keys)
 {
-    const auto&& w = GetWindowUnder(pt);
+    const auto&& wnd_under_pt = GetWindowUnder(pt);
     const auto& dragged_wnd = m_impl->m_curr_drag_wnd; // wnd being continuously repositioned / dragged around, not a drag-drop
 
     //std::cout << "GUI::CheckedGetWindowUnder w: " << w << "  dragged_wnd: " << dragged_wnd << std::endl << std::flush;
@@ -1810,8 +1810,8 @@ std::shared_ptr<Wnd> GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_
         m_impl->m_curr_drag_drop_here_wnd = nullptr;
     }
 
-    if (w == m_impl->m_curr_wnd_under_cursor)
-        return w;   // same Wnd is under cursor as before; nothing to do
+    if (wnd_under_pt == m_impl->m_curr_wnd_under_cursor)
+        return wnd_under_pt;   // same Wnd is under cursor as before; nothing to do
 
     if (m_impl->m_curr_wnd_under_cursor) {
         // inform previous Wnd under the cursor that the cursor has been dragged away
@@ -1831,9 +1831,9 @@ std::shared_ptr<Wnd> GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_
         }
     }
 
-    if (!w) {
+    if (!wnd_under_pt) {
         //std::cout << "CheckedGetWindowUnder returning " << w << std::endl << std::flush;
-        return w;
+        return wnd_under_pt;
     }
 
 
@@ -1841,32 +1841,32 @@ std::shared_ptr<Wnd> GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_
     if (unregistered_drag_drop) {
         // pass drag-drop event to check if the single dragged Wnd is acceptable to drop
         WndEvent event(WndEvent::CheckDrops, pt, dragged_wnd, mod_keys);
-        w->HandleEvent(event);
+        wnd_under_pt->HandleEvent(event);
         m_impl->m_drag_drop_wnds_acceptable[dragged_wnd] = false;
         m_impl->m_drag_drop_wnds_acceptable = event.GetAcceptableDropWnds();
 
         // Wnd being dragged over is new; give it an Enter message
         WndEvent enter_event(WndEvent::DragDropEnter, pt, dragged_wnd, mod_keys);
-        w->HandleEvent(enter_event);
-        m_impl->m_curr_drag_drop_here_wnd = w;
+        wnd_under_pt->HandleEvent(enter_event);
+        m_impl->m_curr_drag_drop_here_wnd = wnd_under_pt;
 
     } else if (registered_drag_drop) {
         // pass drag-drop event to check if the various dragged Wnds are acceptable to drop
         WndEvent event(WndEvent::CheckDrops, pt, m_impl->m_drag_drop_wnds, mod_keys);
-        w->HandleEvent(event);
+        wnd_under_pt->HandleEvent(event);
         m_impl->m_drag_drop_wnds_acceptable = event.GetAcceptableDropWnds();
 
         // Wnd being dragged over is new; give it an Enter message
         WndEvent enter_event(WndEvent::DragDropEnter, pt, m_impl->m_drag_drop_wnds, mod_keys);
-        w->HandleEvent(enter_event);
-        m_impl->m_curr_drag_drop_here_wnd = w;
+        wnd_under_pt->HandleEvent(enter_event);
+        m_impl->m_curr_drag_drop_here_wnd = wnd_under_pt;
 
     } else {
-        m_impl->HandleMouseEnter(mod_keys, pt, w);
+        m_impl->HandleMouseEnter(mod_keys, pt, wnd_under_pt);
     }
 
     //std::cout << "CheckedGetWindowUnder returning " << w << std::endl << std::flush;
-    return w;
+    return wnd_under_pt;
 }
 
 void GUI::SetFPS(double FPS)
