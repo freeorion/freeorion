@@ -79,22 +79,25 @@ public:
     /** Returns pointer to the window under the point pt; constrains pick to
         modal if nonzero, and ignores \a ignore if nonzero. */
     std::shared_ptr<Wnd> Pick(const Pt& pt, const std::shared_ptr<Wnd>& modal, const std::set<Wnd*>* ignore = nullptr) const;
-    std::shared_ptr<Wnd> Pick(const Pt& pt, Wnd* modal, const std::set<Wnd*>* ignore = nullptr) const;
     //@}
 
     /** \name Mutators */ ///@{
     /** Add() places \a wnd in front of the list. */
-    void Add(const std::shared_ptr<Wnd>& wnd);
+    void Add(std::shared_ptr<Wnd> wnd);
 
-    bool Remove(const std::shared_ptr<Wnd>& wnd);   ///< Removes \a wnd from z-order.
+    /** Remove \p wnd from the z-ordered list. */
+    bool Remove(const std::shared_ptr<Wnd>& wnd);
+    bool Remove(const Wnd* const wnd);
 
     /** Moves \a wnd from its current position to the beginning of list;
         updates wnd's z-value. */
     bool MoveUp(const std::shared_ptr<Wnd>& wnd);
+    bool MoveUp(const Wnd* const wnd);
 
     /** Moves \a wnd from its current position to the end of list; updates
         wnd's z-value. */
     bool MoveDown(const std::shared_ptr<Wnd>& wnd);
+    bool MoveDown(const Wnd* const wnd);
     //@}
 
 private:

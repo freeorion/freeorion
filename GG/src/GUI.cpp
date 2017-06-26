@@ -1213,12 +1213,22 @@ void GUI::Wait(unsigned int ms)
 void GUI::Wait(std::chrono::microseconds us)
 { std::this_thread::sleep_for(us); }
 
-void GUI::Register(const std::shared_ptr<Wnd>& wnd)
-{ if (wnd) m_impl->m_zlist.Add(wnd); }
+void GUI::Register(std::shared_ptr<Wnd> wnd)
+{
+    if (!wnd)
+        return;
 
-void GUI::RegisterModal(const std::shared_ptr<Wnd>& wnd)
+    // Make top level by removing from parent
+    if (auto parent = wnd->Parent())
+        parent->DetachChild(wnd);
+
+    m_impl->m_zlist.Add(std::forward<std::shared_ptr<Wnd>>(wnd));
+}
+
+void GUI::RegisterModal(std::shared_ptr<Wnd> wnd)
 {
     if (wnd && wnd->Modal()) {
+        m_impl->m_zlist.Remove(wnd.get());
         m_impl->m_modal_wnds.push_back({wnd, wnd});
         wnd->HandleEvent(WndEvent(WndEvent::GainingFocus));
     }
@@ -1778,12 +1788,11 @@ bool GUI::ProcessBrowseInfoImpl(Wnd* wnd)
     return retval;
 }
 
-Wnd* GUI::ModalWindow() const
+std::shared_ptr<Wnd> GUI::ModalWindow() const
 {
-    Wnd* retval = nullptr;
     if (!m_impl->m_modal_wnds.empty())
-            retval = m_impl->m_modal_wnds.back().first.get();
-    return retval;
+        return m_impl->m_modal_wnds.back().first;
+    return nullptr;
 }
 
 std::shared_ptr<Wnd> GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_keys)

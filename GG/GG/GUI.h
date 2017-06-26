@@ -262,8 +262,13 @@ public:
         nothing here, or may pause for \p us microseconds. */
     virtual void    Wait(std::chrono::microseconds us);
     virtual void    Wait(unsigned int ms);          ///< suspends the GUI thread for \a ms milliseconds.  Singlethreaded GUI subclasses may do nothing here, or may pause for \a ms milliseconds.
-    void            Register(const std::shared_ptr<Wnd>& wnd);             ///< adds \a wnd into the z-list.  Registering a null pointer or registering the same window multiple times is a no-op.
-    void            RegisterModal(const std::shared_ptr<Wnd>& wnd);        ///< adds \a wnd onto the modal windows "stack"
+
+    /** Adds \p wnd into the z-list.  A registered window is owned by the GUI as a top level
+        window. Registering a null pointer or registering the same window multiple times is a no-op. */
+    void            Register(std::shared_ptr<Wnd> wnd);
+    /** Adds \p wnd onto the modal windows "stack".  Modal windows are owned by the GUI as a
+        top-level window. */
+    void            RegisterModal(std::shared_ptr<Wnd> wnd);
     void            Remove(const std::shared_ptr<Wnd>& wnd);               ///< removes \a wnd from the z-list.  Removing a null pointer or removing the same window multiple times is a no-op.
     void            WndDying(const Wnd* const wnd);             ///< removes \a wnd from all GUI state variables, so that none of them point to a deleted object
     void            MoveUp(const std::shared_ptr<Wnd>& wnd);               ///< moves \a wnd to the top of the z-list
@@ -470,7 +475,7 @@ protected:
 
 private:
     bool           ProcessBrowseInfoImpl(Wnd* wnd);
-    Wnd*           ModalWindow() const;    // returns the current modal window, if any
+    std::shared_ptr<Wnd>           ModalWindow() const;    // returns the current modal window, if any
 
     // Returns the window under \a pt, sending Mouse{Enter|Leave} or
     // DragDrop{Enter|Leave} as appropriate
