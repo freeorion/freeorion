@@ -34,17 +34,17 @@ public:
     };
 
     ShipDesignManager();
-    ~ShipDesignManager();
+    virtual ~ShipDesignManager();
 
-    void StartGame(int empire_id);
-    void Load(const SaveGameUIData& data);
-    void Save(SaveGameUIData& data) const;
+    virtual void StartGame(int empire_id);
+    virtual void Load(const SaveGameUIData& data);
+    virtual void Save(SaveGameUIData& data) const;
 
     /** CurrentDesigns are design currently producible by the empire, in the ProductionWnd.*/
-    Designs* CurrentDesigns();
+    virtual Designs* CurrentDesigns();
     /** SavedDesigns are designs that the player has saved on their own machine
         for future use.  They may/may not also be in use in the current game. */
-    Designs* SavedDesigns();
+    virtual Designs* SavedDesigns();
 
 private:
     std::unique_ptr<Designs>    m_current_designs;
