@@ -219,9 +219,6 @@ Wnd::~Wnd()
                 ++it;
         }
     }
-
-    if (auto gui = GUI::GetGUI())
-        gui->WndDying(this);
 }
 
 bool Wnd::Interactive() const

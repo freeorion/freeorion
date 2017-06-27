@@ -1298,20 +1298,6 @@ void GUI::Remove(const std::shared_ptr<Wnd>& wnd)
         m_impl->m_zlist.Remove(wnd);
 }
 
-void GUI::WndDying(const Wnd* const wnd)
-{
-    if (!wnd)
-        return;
-
-    auto maybe_drag_drop_acceptable_wnd = std::find_if(
-        m_impl->m_drag_drop_wnds_acceptable.begin(),
-        m_impl->m_drag_drop_wnds_acceptable.end(),
-        [&wnd](const std::pair<const Wnd* const, bool>& xx)
-        { return xx.first == wnd; });
-    if (maybe_drag_drop_acceptable_wnd != m_impl->m_drag_drop_wnds_acceptable.end())
-        m_impl->m_drag_drop_wnds_acceptable.erase(maybe_drag_drop_acceptable_wnd);
-}
-
 void GUI::EnableFPS(bool b/* = true*/)
 {
     m_impl->m_calc_FPS = b;

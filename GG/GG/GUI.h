@@ -270,7 +270,6 @@ public:
         top-level window. */
     void            RegisterModal(std::shared_ptr<Wnd> wnd);
     void            Remove(const std::shared_ptr<Wnd>& wnd);               ///< removes \a wnd from the z-list.  Removing a null pointer or removing the same window multiple times is a no-op.
-    void            WndDying(const Wnd* const wnd);             ///< removes \a wnd from all GUI state variables, so that none of them point to a deleted object
     void            MoveUp(const std::shared_ptr<Wnd>& wnd);               ///< moves \a wnd to the top of the z-list
     void            MoveDown(const std::shared_ptr<Wnd>& wnd);             ///< moves \a wnd to the bottom of the z-list
 
@@ -487,7 +486,6 @@ private:
     friend class EventPumpBase; ///< allows EventPumpBase types to drive GUI
     friend struct GUIImpl;
 };
-
 
 /** Returns true if lwnd == rwnd or if lwnd contains rwnd */
 GG_API bool MatchesOrContains(const Wnd* lwnd, const Wnd* rwnd);
