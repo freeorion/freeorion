@@ -649,6 +649,7 @@ void SystemIcon::Refresh() {
 
 
     // remove existing system name control
+    DetachChild(m_colored_name);
     delete m_colored_name;
     m_colored_name = nullptr;
 
