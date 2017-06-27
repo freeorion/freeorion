@@ -1050,17 +1050,17 @@ void Wnd::MouseLeave()
 void Wnd::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 { if (!Interactive()) ForwardEventToParent(); }
 
-void Wnd::DragDropEnter(const Pt& pt, std::map<const std::shared_ptr<Wnd>, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys)
+void Wnd::DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys)
 { if (!Interactive()) ForwardEventToParent(); }
 
-void Wnd::DragDropHere(const Pt& pt, std::map<const std::shared_ptr<Wnd>, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys)
+void Wnd::DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys)
 {
     if (!Interactive())
         ForwardEventToParent();
     this->DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
 }
 
-void Wnd::CheckDrops(const Pt& pt, std::map<const std::shared_ptr<Wnd>, bool>& drop_wnds_acceptable,
+void Wnd::CheckDrops(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                      Flags<ModKey> mod_keys)
 {
     if (!Interactive())

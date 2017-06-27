@@ -20,7 +20,7 @@ public:
 
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
 
-    void DragDropHere(const GG::Pt& pt, std::map<const std::shared_ptr<GG::Wnd>, bool>& drop_wnds_acceptable,
+    void DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                       GG::Flags<GG::ModKey> mod_keys) override;
 
     void DragDropLeave() override;

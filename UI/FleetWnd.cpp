@@ -1028,10 +1028,10 @@ public:
 
     void Render() override;
 
-    void DragDropHere(const GG::Pt& pt, std::map<const std::shared_ptr<GG::Wnd>, bool>& drop_wnds_acceptable,
+    void DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                       GG::Flags<GG::ModKey> mod_keys) override;
 
-    void CheckDrops(const GG::Pt& pt, std::map<const std::shared_ptr<GG::Wnd>, bool>& drop_wnds_acceptable,
+    void CheckDrops(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                     GG::Flags<GG::ModKey> mod_keys) override;
 
     void DragDropLeave() override;
@@ -1147,7 +1147,7 @@ void FleetDataPanel::Render() {
     GG::FlatRectangle(text_ul,  text_lr,    border_colour,      GG::CLR_ZERO,  0);                  // title background box
 }
 
-void FleetDataPanel::DragDropHere(const GG::Pt& pt, std::map<const std::shared_ptr<GG::Wnd>, bool>& drop_wnds_acceptable,
+void FleetDataPanel::DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                                   GG::Flags<GG::ModKey> mod_keys)
 {
     if (!m_is_new_fleet_drop_target) {
@@ -1182,7 +1182,7 @@ void FleetDataPanel::DragDropHere(const GG::Pt& pt, std::map<const std::shared_p
     }
 }
 
-void FleetDataPanel::CheckDrops(const GG::Pt& pt, std::map<const std::shared_ptr<GG::Wnd>, bool>& drop_wnds_acceptable,
+void FleetDataPanel::CheckDrops(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                                 GG::Flags<GG::ModKey> mod_keys)
 {
     if (!m_is_new_fleet_drop_target) {
@@ -1229,7 +1229,7 @@ void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableI
             continue;
 
         // reject drops if a ship being dropped doesn't exist
-        const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(it->first.get());
+        const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(it->first);
         if (!ship_row)
             continue;
         std::shared_ptr<const Ship> ship = GetShip(ship_row->ShipID());
@@ -1883,7 +1883,7 @@ public:
         //DebugLogger() << "FleetsListBox::AcceptDrops finished";
     }
 
-    void DragDropHere(const GG::Pt& pt, std::map<const std::shared_ptr<GG::Wnd>, bool>& drop_wnds_acceptable,
+    void DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                       GG::Flags<GG::ModKey> mod_keys) override
     {
         //std::cout << "FleetsListBox::DragDropHere" << std::endl << std::flush;
@@ -1946,7 +1946,7 @@ public:
                 if (ships_seen)
                     return; // can't drop both at once
 
-                const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(dropped_wnd.get());
+                const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(dropped_wnd);
                 assert(fleet_row);
                 std::shared_ptr<Fleet> fleet = GetFleet(fleet_row->FleetID());
 
@@ -1958,7 +1958,7 @@ public:
                 if (fleets_seen)
                     return; // can't drop both at once
 
-                const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(dropped_wnd.get());
+                const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(dropped_wnd);
                 assert(ship_row);
                 std::shared_ptr<Ship> ship = GetShip(ship_row->ShipID());
 
@@ -2032,18 +2032,18 @@ protected:
         // independently.  actual drops will probably only accept one or the other, not a mixture
         // of fleets and ships being dropped simultaneously.
         for (DropsAcceptableIter it = first; it != last; ++it) {
-            if (it->first.get() == fleet_row)
+            if (it->first == fleet_row)
                 continue;   // can't drop onto self
 
             // for either of fleet or ship being dropped, check if merge or transfer is valid.
             // if any of the nested if's fail, the default rejection of the drop will remain set
             if (it->first->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
-                if (const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(it->first.get()))
+                if (const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(it->first))
                     if (std::shared_ptr<const Fleet> fleet = GetFleet(fleet_row->FleetID()))
                         it->second = ValidFleetMerge(fleet, target_fleet);
 
             } else if (it->first->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
-                if (const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(it->first.get()))
+                if (const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(it->first))
                     if (std::shared_ptr<const Ship> ship = GetShip(ship_row->ShipID()))
                         it->second = ValidShipTransfer(ship, target_fleet);
             } else {
@@ -2218,7 +2218,7 @@ public:
             if (!m_order_issuing_enabled)
                 continue;
 
-            const auto& ship_row = dynamic_cast<const ShipRow*>(it->first.get());
+            const auto& ship_row = dynamic_cast<const ShipRow*>(it->first);
             if (!ship_row)
                 continue;
 

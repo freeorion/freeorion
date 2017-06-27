@@ -523,8 +523,8 @@ protected:
     /** \name Mutators */ ///@{
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
-    void DragDropEnter(const Pt& pt, std::map<const std::shared_ptr<Wnd>, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys) override;
-    void DragDropHere(const Pt& pt, std::map<const std::shared_ptr<Wnd>, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys) override;
+    void DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys) override;
+    void DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys) override;
     void DragDropLeave() override;
     void CancellingChildDragDrop(const std::vector<const Wnd*>& wnds) override;
     void TimerFiring(unsigned int ticks, Timer* timer) override;

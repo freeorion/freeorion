@@ -2938,7 +2938,7 @@ public:
 
     void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
 
-    void DragDropEnter(const GG::Pt& pt, std::map<const std::shared_ptr<GG::Wnd>, bool>& drop_wnds_acceptable,
+    void DragDropEnter(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                        GG::Flags<GG::ModKey> mod_keys) override;
 
     void DragDropLeave() override;
@@ -3055,7 +3055,7 @@ void SlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter
     bool acceptable_part_found = false;
     for (DropsAcceptableIter it = first; it != last; ++it) {
         if (!acceptable_part_found && it->first->DragDropDataType() == PART_CONTROL_DROP_TYPE_STRING) {
-            const PartControl* part_control = boost::polymorphic_downcast<const PartControl*>(it->first.get());
+            const auto part_control = boost::polymorphic_downcast<const PartControl* const>(it->first);
             const PartType* part_type = part_control->Part();
             if (part_type &&
                 part_type->CanMountInSlotType(m_slot_type) &&
@@ -3141,7 +3141,7 @@ void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const G
     SlotContentsAlteredSignal(nullptr);
 }
 
-void SlotControl::DragDropEnter(const GG::Pt& pt, std::map<const std::shared_ptr<GG::Wnd>, bool>& drop_wnds_acceptable,
+void SlotControl::DragDropEnter(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                                 GG::Flags<GG::ModKey> mod_keys) {
 
     if (drop_wnds_acceptable.empty())
@@ -4171,7 +4171,7 @@ void DesignWnd::MainPanel::DropsAcceptable(DropsAcceptableIter first, DropsAccep
     if (std::distance(first, last) != 1)
         return;
 
-    if (dynamic_cast<const BasesListBox::BasesListBoxRow*>(first->first.get()))
+    if (dynamic_cast<const BasesListBox::BasesListBoxRow*>(first->first))
         first->second = true;
 }
 

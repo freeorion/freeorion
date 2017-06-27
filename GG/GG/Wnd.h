@@ -309,7 +309,7 @@ public:
     };
 
     /** The type of the iterator parameters passed to DropsAcceptable(). */
-    typedef std::map<const std::shared_ptr<Wnd>, bool>::iterator DropsAcceptableIter;
+    typedef std::map<const Wnd*, bool>::iterator DropsAcceptableIter;
 
     /** The modes of child clipping. */
     enum ChildClippingMode {
@@ -903,7 +903,7 @@ protected:
         drag-and-drop Wnds.  \a drop_wnds_acceptable will have the bools
         set to true or valse to indicate whether this Wnd can accept the
         dragged wnds as a drop. */
-    virtual void DragDropEnter(const Pt& pt, std::map<const std::shared_ptr<Wnd>, bool>& drop_wnds_acceptable,
+    virtual void DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                                Flags<ModKey> mod_keys);
 
     /** Respond to cursor moving about within the Wnd, or to cursor lingering
@@ -913,12 +913,12 @@ protected:
         message is generated.  \a drop_wnds_acceptable will have the bools
         set to true or valse to indicate whether this Wnd can accept the
         dragged wnds as a drop. */
-    virtual void DragDropHere(const Pt& pt, std::map<const std::shared_ptr<Wnd>, bool>& drop_wnds_acceptable,
+    virtual void DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                               Flags<ModKey> mod_keys);
 
     /** Polls this Wnd about whether the Wnds in \a drop_wnds_acceptable will
         be accpeted by this Wnd by calling DropsAcceptable(...) */
-    virtual void CheckDrops(const Pt& pt, std::map<const std::shared_ptr<Wnd>, bool>& drop_wnds_acceptable,
+    virtual void CheckDrops(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                             Flags<ModKey> mod_keys);
 
     /** Respond to cursor leaving the Wnd's bounds while dragging

@@ -137,7 +137,7 @@ void QueueListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     }
 }
 
-void QueueListBox::DragDropHere(const GG::Pt& pt, std::map<const std::shared_ptr<GG::Wnd>, bool>& drop_wnds_acceptable,
+void QueueListBox::DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                                  GG::Flags<GG::ModKey> mod_keys)
 {
     CUIListBox::DragDropHere(pt, drop_wnds_acceptable, mod_keys);

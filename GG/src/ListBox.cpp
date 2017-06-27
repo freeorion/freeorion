@@ -615,7 +615,7 @@ void ListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter las
                               const Pt& pt, Flags<ModKey> mod_keys) const
 {
     for (auto& it = first; it != last; ++it) {
-        const auto& row = std::dynamic_pointer_cast<Row>(it->first);
+        const auto& row = dynamic_cast<const Row* const>(it->first);
 
         bool allowed = (m_allow_drops
                         && row
@@ -1646,13 +1646,13 @@ void ListBox::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
     SignalScroll(*m_vscroll, true);
 }
 
-void ListBox::DragDropEnter(const Pt& pt, std::map<const std::shared_ptr<Wnd>, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys)
+void ListBox::DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys)
 {
     ResetAutoScrollVars();
     DragDropHere(pt, drop_wnds_acceptable, mod_keys);
 }
 
-void ListBox::DragDropHere(const Pt& pt, std::map<const std::shared_ptr<Wnd>, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys)
+void ListBox::DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys)
 {
     this->DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
 
