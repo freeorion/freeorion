@@ -585,7 +585,8 @@ void Layout::ResizeLayout(std::size_t rows, std::size_t columns)
         for (std::size_t i = static_cast<std::size_t>(rows); i < m_cells.size(); ++i) {
             for (auto& cell : m_cells[i]) {
                 auto locked = cell.lock();
-                DeleteChild(locked.get());
+                cell.reset();
+                DetachChild(locked.get());
                 m_wnd_positions.erase(locked.get());
             }
         }
@@ -595,7 +596,8 @@ void Layout::ResizeLayout(std::size_t rows, std::size_t columns)
         if (static_cast<std::size_t>(columns) < row.size()) {
             for (std::size_t j = static_cast<std::size_t>(columns); j < row.size(); ++j) {
                 auto locked = row[j].lock();
-                DeleteChild(locked.get());
+                row[j].reset();
+                DetachChild(locked.get());
                 m_wnd_positions.erase(locked.get());
             }
         }

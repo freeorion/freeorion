@@ -2655,7 +2655,7 @@ void EncyclopediaDetailPanel::PreRender() {
 
 void EncyclopediaDetailPanel::RefreshImpl() {
     if (m_icon) {
-        DeleteChild(m_icon);
+        DetachChild(m_icon);
         m_icon = nullptr;
     }
     m_name_text->Clear();

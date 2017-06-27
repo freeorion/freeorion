@@ -175,7 +175,7 @@ namespace GG {
         void SetText(const std::string& content)
         {
             m_blocks.clear();
-            m_owner->DeleteChildren();
+            m_owner->DetachChildren();
 
             // Get a set of tags registered for rich text usage.
             std::set<std::string> known_tags = MapKeys(*m_block_factory_map);

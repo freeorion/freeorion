@@ -1250,7 +1250,7 @@ void MultiEdit::AdjustScrolls()
     const int INT_GAP = static_cast<int>(GAP);
     if (m_vscroll) { // if scroll already exists...
         if (!need_vert) { // remove scroll
-            DeleteChild(m_vscroll.get());
+            DetachChild(m_vscroll.get());
             m_vscroll = nullptr;
         } else { // ensure vertical scroll has the right logical and physical dimensions
             unsigned int line_size = (m_vscroll_wheel_scroll_increment != 0
@@ -1287,7 +1287,7 @@ void MultiEdit::AdjustScrolls()
 
     if (m_hscroll) { // if scroll already exists...
         if (!need_horz) { // remove scroll
-            DeleteChild(m_hscroll.get());
+            DetachChild(m_hscroll.get());
             m_hscroll = nullptr;
         } else { // ensure horizontal scroll has the right logical and physical dimensions
             unsigned int line_size = (m_hscroll_wheel_scroll_increment != 0

@@ -1370,7 +1370,7 @@ public:
         AttachChild(m_icon);
 
         for (auto& control : m_controls)
-        { DeleteChild(control); }
+        { DetachChild(control); }
         m_controls.clear();
 
         for (auto& control : GetControls()) {
@@ -1591,7 +1591,7 @@ public:
 
     void            Refresh() {
         for (auto& button : m_controls)
-        { DeleteChild(button); }
+        { DetachChild(button); }
         m_controls.clear();
 
         auto&& controls = GetControls();

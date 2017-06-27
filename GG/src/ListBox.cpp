@@ -294,7 +294,7 @@ void ListBox::Row::clear()
 {
     m_cells.clear();
     RemoveLayout();
-    DeleteChildren();
+    DetachChildren();
     SetLayout(Wnd::Create<DeferredLayout>(X0, Y0, Width(), Height(), 1, 1, m_margin, m_margin));
 }
 
@@ -1087,7 +1087,7 @@ void ListBox::Clear()
     m_rows.clear();
     m_caret = m_rows.end();
     DetachChild(m_header_row.get());
-    DeleteChildren();
+    DetachChildren();
     AttachChild(m_header_row);
     m_first_row_offset = Pt(X(BORDER_THICK), Y(BORDER_THICK));
     m_first_row_shown = m_rows.end();
@@ -1108,9 +1108,9 @@ void ListBox::Clear()
             m_num_cols = 1;
     }
 
-    DeleteChild(m_vscroll.get());
+    DetachChild(m_vscroll.get());
     m_vscroll.reset();
-    DeleteChild(m_hscroll.get());
+    DetachChild(m_hscroll.get());
     m_hscroll.reset();
 
     RequirePreRender();
@@ -2247,7 +2247,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_vscroll->ScrollTo(0);
         SignalScroll(*m_vscroll, true);
 
-        DeleteChild(m_vscroll.get());
+        DetachChild(m_vscroll.get());
         m_vscroll.reset();
     }
 
@@ -2295,7 +2295,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_hscroll->ScrollTo(0);
         SignalScroll(*m_hscroll, true);
 
-        DeleteChild(m_hscroll.get());
+        DetachChild(m_hscroll.get());
         m_hscroll = nullptr;
     }
 

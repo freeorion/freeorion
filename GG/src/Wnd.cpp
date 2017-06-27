@@ -647,28 +647,6 @@ void Wnd::DetachChildren()
     }
 }
 
-void Wnd::DeleteChild(const std::shared_ptr<Wnd>& wnd)
-{ DeleteChild(wnd.get()); }
-
-void Wnd::DeleteChild(Wnd* wnd)
-{
-    if (!wnd)
-        return;
-
-    if (wnd == GetLayout().get())
-        RemoveLayout();
-    const auto& found = std::find_if(m_children.begin(), m_children.end(),
-                                     [&wnd](const std::shared_ptr<Wnd>& x){ return x.get() == wnd; });
-    if (found != m_children.end())
-        m_children.erase(found);
-}
-
-void Wnd::DeleteChildren()
-{
-    m_layout.reset();
-    m_children.clear();
-}
-
 void Wnd::InstallEventFilter(const std::shared_ptr<Wnd>& wnd)
 {
     if (!wnd)
@@ -891,8 +869,6 @@ void Wnd::RemoveLayout()
     for (auto& wnd : layout_children) {
         AttachChild(wnd);
     }
-    // prevent DeleteChild from recursively calling RemoveLayout
-    DeleteChild(layout.get());
 }
 
 std::shared_ptr<Layout> Wnd::DetachLayout()

@@ -387,7 +387,7 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
         return;
     }
 
-    m_wnd.DeleteChildren();
+    m_wnd.DetachChildren();
     auto layout = GG::Wnd::Create<GG::DeferredLayout>(m_wnd.RelativeUpperLeft().x, m_wnd.RelativeUpperLeft().y,
                                                       m_wnd.Width(), m_wnd.Height(),
                                                       1, 1, ///< numrows, numcols

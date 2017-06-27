@@ -60,7 +60,7 @@ void SpecialsPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void SpecialsPanel::Update() {
     //std::cout << "SpecialsPanel::Update" << std::endl;
     for (auto& entry : m_icons)
-        DeleteChild(entry.second);
+        DetachChild(entry.second);
     m_icons.clear();
 
 

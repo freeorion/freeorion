@@ -756,7 +756,7 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
 
 void GraphicalSummaryWnd::DeleteSideBars() {
     for (auto& box : m_side_boxes)
-    { DeleteChild(box.get()); }
+    { DetachChild(box.get()); }
     m_side_boxes.clear();
 }
 
@@ -776,9 +776,9 @@ void GraphicalSummaryWnd::GenerateGraph() {
 
     if (m_options_bar) {
         DebugLogger() << "GraphicalSummaryWnd::GenerateGraph(): m_options_bar "
-                         "already exists, calling DeleteChild(m_options_bar) "
+                         "already exists, calling DetachChild(m_options_bar) "
                          "before creating a new one.";
-        DeleteChild(m_options_bar.get());
+        DetachChild(m_options_bar.get());
     }
     m_options_bar = GG::Wnd::Create<OptionsBar>(m_sizer);
     AttachChild(m_options_bar);

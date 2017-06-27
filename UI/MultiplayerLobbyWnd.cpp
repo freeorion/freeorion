@@ -874,7 +874,7 @@ void MultiPlayerLobbyWnd::SaveGameBrowse() {
 
 void MultiPlayerLobbyWnd::PreviewImageChanged(std::shared_ptr<GG::Texture> new_image) {
     if (m_preview_image) {
-        DeleteChild(m_preview_image);
+        DetachChild(m_preview_image);
         m_preview_image = nullptr;
     }
     m_preview_image = GG::Wnd::Create<GG::StaticGraphic>(new_image, GG::GRAPHIC_FITGRAPHIC);

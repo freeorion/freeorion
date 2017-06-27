@@ -2864,7 +2864,7 @@ void MapWnd::InitTurnRendering() {
 
     // remove old system icons
     for (const auto& system_icon : m_system_icons)
-        DeleteChild(system_icon.second);
+        DetachChild(system_icon.second);
     m_system_icons.clear();
 
     // create system icons
@@ -2911,7 +2911,7 @@ void MapWnd::InitTurnRendering() {
 
     // remove old field icons
     for (const auto& field_icon : m_field_icons)
-        DeleteChild(field_icon.second);
+        DetachChild(field_icon.second);
     m_field_icons.clear();
 
     // create field icons

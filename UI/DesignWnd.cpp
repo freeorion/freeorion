@@ -3749,7 +3749,7 @@ void DesignWnd::MainPanel::SetHull(const std::string& hull_name, bool signal)
 
 void DesignWnd::MainPanel::SetHull(const HullType* hull, bool signal) {
     m_hull = hull;
-    DeleteChild(m_background_image);
+    DetachChild(m_background_image);
     m_background_image = nullptr;
     if (m_hull) {
         std::shared_ptr<GG::Texture> texture = ClientUI::HullTexture(hull->Name());

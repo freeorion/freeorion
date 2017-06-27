@@ -617,14 +617,6 @@ public:
     /** Removes all Wnds from child ptr list and resets all childrens' m_parents. */
     void DetachChildren();
 
-    /** Removes, detaches, and deletes \a wnd; does nothing if wnd is not in
-        the child list. */
-    void DeleteChild(Wnd* wnd);
-    void DeleteChild(const std::shared_ptr<Wnd>& wnd);
-
-    /** Removes, detaches, and deletes all Wnds in the child list. */
-    void DeleteChildren();
-
     /** Adds \a wnd to the front of the event filtering chain. */
     void InstallEventFilter(const std::shared_ptr<Wnd>& wnd);
 

@@ -364,8 +364,8 @@ void MeterBrowseWnd::UpdateSummary() {
 void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     // clear existing labels
     for (const auto& effect_label : m_effect_labels_and_values) {
-        DeleteChild(effect_label.first);
-        DeleteChild(effect_label.second);
+        DetachChild(effect_label.first);
+        DetachChild(effect_label.second);
     }
     m_effect_labels_and_values.clear();
 
@@ -562,8 +562,8 @@ void ShipDamageBrowseWnd::UpdateSummary() {
 void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     // clear existing labels
     for (const auto& effect_label : m_effect_labels_and_values) {
-        DeleteChild(effect_label.first);
-        DeleteChild(effect_label.second);
+        DetachChild(effect_label.first);
+        DetachChild(effect_label.second);
     }
     m_effect_labels_and_values.clear();
 
@@ -802,12 +802,12 @@ namespace {
 void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     // clear existing labels
     for (unsigned int i = 0; i < m_effect_labels_and_values.size(); ++i) {
-        DeleteChild(m_effect_labels_and_values[i].first);
-        DeleteChild(m_effect_labels_and_values[i].second);
+        DetachChild(m_effect_labels_and_values[i].first);
+        DetachChild(m_effect_labels_and_values[i].second);
     }
     m_effect_labels_and_values.clear();
-    m_bay_list->DeleteChildren();
-    m_hangar_list->DeleteChildren();
+    m_bay_list->DetachChildren();
+    m_hangar_list->DetachChildren();
 
     // early return if no valid ship, ship design, or no parts in the design
     std::shared_ptr<const Ship> ship = GetShip(m_object_id);
