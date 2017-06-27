@@ -316,28 +316,28 @@ void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, const Pt& pos, i
     m_mouse_button_state[mouse_button] = true;
     m_drag_wnds[mouse_button] = m_curr_wnd_under_cursor; // track this window as the one being dragged by this mouse button
     if (m_curr_wnd_under_cursor) {
-        m_prev_wnd_drag_position = m_drag_wnds[mouse_button]->UpperLeft();
+        m_prev_wnd_drag_position = m_curr_wnd_under_cursor->UpperLeft();
         m_wnd_drag_offset = pos - m_prev_wnd_drag_position;
     }
 
     // if this window is not a disabled Control window, it becomes the focus window
     Control* control = nullptr;
-    if (m_drag_wnds[mouse_button] && (!(control = dynamic_cast<Control*>(m_drag_wnds[mouse_button])) || !control->Disabled()))
-        GUI::s_gui->SetFocusWnd(m_drag_wnds[mouse_button]);
+    if (m_curr_wnd_under_cursor && (!(control = dynamic_cast<Control*>(m_curr_wnd_under_cursor)) || !control->Disabled()))
+        GUI::s_gui->SetFocusWnd(m_curr_wnd_under_cursor);
 
-    if (m_drag_wnds[mouse_button]) {
-        m_wnd_region = m_drag_wnds[mouse_button]->WindowRegion(pos); // and determine whether a resize-region of it is being dragged
+    if (m_curr_wnd_under_cursor) {
+        m_wnd_region = m_curr_wnd_under_cursor->WindowRegion(pos); // and determine whether a resize-region of it is being dragged
         if (m_wnd_region % 3 == 0) // left regions
-            m_wnd_resize_offset.x = m_drag_wnds[mouse_button]->Left() - pos.x;
+            m_wnd_resize_offset.x = m_curr_wnd_under_cursor->Left() - pos.x;
         else
-            m_wnd_resize_offset.x = m_drag_wnds[mouse_button]->Right() - pos.x;
+            m_wnd_resize_offset.x = m_curr_wnd_under_cursor->Right() - pos.x;
         if (m_wnd_region < 3) // top regions
-            m_wnd_resize_offset.y = m_drag_wnds[mouse_button]->Top() - pos.y;
+            m_wnd_resize_offset.y = m_curr_wnd_under_cursor->Top() - pos.y;
         else
-            m_wnd_resize_offset.y = m_drag_wnds[mouse_button]->Bottom() - pos.y;
-        Wnd* drag_wnds_root_parent = m_drag_wnds[mouse_button]->RootParent();
-        GUI::s_gui->MoveUp(drag_wnds_root_parent ? drag_wnds_root_parent : m_drag_wnds[mouse_button]);
-        m_drag_wnds[mouse_button]->HandleEvent(WndEvent(ButtonEvent(WndEvent::LButtonDown, mouse_button), pos, m_mod_keys));
+            m_wnd_resize_offset.y = m_curr_wnd_under_cursor->Bottom() - pos.y;
+        Wnd* drag_wnds_root_parent = m_curr_wnd_under_cursor->RootParent();
+        GUI::s_gui->MoveUp(drag_wnds_root_parent ? drag_wnds_root_parent : m_curr_wnd_under_cursor);
+        m_curr_wnd_under_cursor->HandleEvent(WndEvent(ButtonEvent(WndEvent::LButtonDown, mouse_button), pos, m_mod_keys));
     }
 
     m_prev_wnd_under_cursor = m_curr_wnd_under_cursor; // update this for the next time around
