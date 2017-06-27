@@ -200,7 +200,7 @@ struct GG::GUIImpl
     std::weak_ptr<Wnd>         m_prev_wnd_under_cursor; // GUI window most recently under the input cursor; may be 0
     int          m_prev_wnd_under_cursor_time; // the time at which prev_wnd_under_cursor was initially set to its current value
     std::weak_ptr<Wnd>         m_curr_wnd_under_cursor; // GUI window currently under the input cursor; may be 0
-    std::shared_ptr<Wnd>         m_drag_wnds[3];          // GUI window currently being clicked or dragged by each mouse button
+    std::weak_ptr<Wnd>         m_drag_wnds[3];          // GUI window currently being clicked or dragged by each mouse button
     Pt           m_prev_wnd_drag_position;// the upper-left corner of the dragged window when the last *Drag message was generated
     Pt           m_wnd_drag_offset;       // the offset from the upper left corner of the dragged window to the cursor for the current drag
     bool         m_curr_drag_wnd_dragged; // true iff the currently-pressed window (m_drag_wnds[N]) has actually been dragged some distance (in which case releasing the mouse button is not a click). note that a dragged wnd is one being continuously repositioned by the dragging, and not a wnd being drag-dropped.
@@ -355,7 +355,7 @@ void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, const Pt& pos, i
 
 void GUIImpl::HandleMouseDrag(unsigned int mouse_button, const Pt& pos, int curr_ticks)
 {
-    auto& dragged_wnd = m_drag_wnds[mouse_button];
+    auto dragged_wnd = m_drag_wnds[mouse_button].lock();
     if (!dragged_wnd)
         return;
 
@@ -493,7 +493,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
     m_browse_target = nullptr;
     m_prev_wnd_under_cursor_time = curr_ticks;
 
-    auto click_wnd = std::move(m_drag_wnds[mouse_button]);
+    auto click_wnd = m_drag_wnds[mouse_button].lock();
     std::set<Wnd*> ignores;
     if (m_curr_drag_wnd_dragged)
         ignores.insert(click_wnd.get());
@@ -505,7 +505,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
         (m_curr_drag_wnd_dragged && click_wnd && (click_wnd->DragDropDataType() != "") && (mouse_button == 0));
 
     m_mouse_button_state[mouse_button] = false;
-    m_drag_wnds[mouse_button] = nullptr; // if the mouse button is released, stop the tracking the drag window
+    m_drag_wnds[mouse_button].reset(); // if the mouse button is released, stop tracking the drag window
     m_wnd_region = WR_NONE;        // and clear this, just in case
 
     if (!in_drag_drop && click_wnd && curr_wnd_under_cursor == click_wnd) {
@@ -635,7 +635,7 @@ void GUIImpl::HandleIdle(Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_tic
         curr_wnd_under_cursor &&
         curr_wnd_under_cursor == GUI::s_gui->CheckedGetWindowUnder(pos, mod_keys) &&
         curr_wnd_under_cursor->RepeatButtonDown() &&
-        m_drag_wnds[0] == curr_wnd_under_cursor)
+        m_drag_wnds[0].lock() == curr_wnd_under_cursor)
     {
         // convert to a key press message after ensuring that timing requirements are met
         if (curr_ticks - m_prev_mouse_button_press_time > m_mouse_button_down_repeat_delay) {
@@ -737,12 +737,15 @@ void GUIImpl::HandleMouseMove(Flags<ModKey> mod_keys, const GG::Pt& pos, const P
     m_mouse_pos = pos; // record mouse position
     m_mouse_rel = rel; // record mouse movement
 
-    if (m_drag_wnds[0] || m_drag_wnds[1] || m_drag_wnds[2]) {
-        if (m_drag_wnds[0])
+    auto m_drag_wnds_0 = m_drag_wnds[0].lock();
+    auto m_drag_wnds_1 = m_drag_wnds[1].lock();
+    auto m_drag_wnds_2 = m_drag_wnds[2].lock();
+    if (m_drag_wnds_0 || m_drag_wnds_1 || m_drag_wnds_2) {
+        if (m_drag_wnds_0)
             HandleMouseDrag(0, pos, curr_ticks);
-        if (m_drag_wnds[1])
+        if (m_drag_wnds_1)
             HandleMouseDrag(1, pos, curr_ticks);
-        if (m_drag_wnds[2])
+        if (m_drag_wnds_2)
             HandleMouseDrag(2, pos, curr_ticks);
     } else if (curr_wnd_under_cursor &&
                prev_wnd_under_cursor == curr_wnd_under_cursor)
@@ -823,7 +826,9 @@ void GUIImpl::ClearState()
     m_curr_wnd_under_cursor.reset();
 
     m_mouse_button_state[0] = m_mouse_button_state[1] = m_mouse_button_state[2] = false;
-    m_drag_wnds[0] = m_drag_wnds[1] = m_drag_wnds[2] = nullptr;
+    m_drag_wnds[0].reset();
+    m_drag_wnds[1].reset();
+    m_drag_wnds[2].reset();
 
     m_curr_drag_wnd_dragged = false;
     m_curr_drag_wnd = nullptr;
@@ -1006,10 +1011,10 @@ unsigned int GUI::MinDragDistance() const
 { return m_impl->m_min_drag_distance; }
 
 bool GUI::DragWnd(const Wnd* wnd, unsigned int mouse_button) const
-{ return wnd == m_impl->m_drag_wnds[mouse_button < 3 ? mouse_button : 0].get(); }
+{ return wnd && wnd == m_impl->m_drag_wnds[mouse_button < 3 ? mouse_button : 0].lock().get(); }
 
 bool GUI::DragDropWnd(const std::shared_ptr<const Wnd>& wnd) const
-{ return m_impl->m_drag_drop_wnds.find(std::const_pointer_cast<Wnd>(wnd)) != m_impl->m_drag_drop_wnds.end(); }
+{ return wnd && m_impl->m_drag_drop_wnds.find(std::const_pointer_cast<Wnd>(wnd)) != m_impl->m_drag_drop_wnds.end(); }
 
 bool GUI::AcceptedDragDropWnd(const Wnd* wnd) const
 {
@@ -1297,19 +1302,6 @@ void GUI::WndDying(const Wnd* const wnd)
 {
     if (!wnd)
         return;
-
-    if (MatchesOrContains(wnd, m_impl->m_drag_wnds[0])) {
-        m_impl->m_drag_wnds[0] = nullptr;
-        m_impl->m_wnd_region = WR_NONE;
-    }
-    if (MatchesOrContains(wnd, m_impl->m_drag_wnds[1])) {
-        m_impl->m_drag_wnds[1] = nullptr;
-        m_impl->m_wnd_region = WR_NONE;
-    }
-    if (MatchesOrContains(wnd, m_impl->m_drag_wnds[2])) {
-        m_impl->m_drag_wnds[2] = nullptr;
-        m_impl->m_wnd_region = WR_NONE;
-    }
 
     auto maybe_drag_drop_acceptable_wnd = std::find_if(
         m_impl->m_drag_drop_wnds_acceptable.begin(),
