@@ -161,7 +161,7 @@ public:
         /** \name Mutators */ ///@{
         void Render() override;
 
-        void         push_back(const std::shared_ptr<Control>& c); ///< adds a given Control to the end of the Row; this Control becomes property of the Row
+        void         push_back(std::shared_ptr<Control> c); ///< adds a given Control to the end of the Row; this Control becomes property of the Row
         void         clear(); ///< removes and deletes all cells in this Row
         void         resize(std::size_t n); ///< resizes the Row to have \a n cells
 

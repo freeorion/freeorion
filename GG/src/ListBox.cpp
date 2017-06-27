@@ -277,14 +277,14 @@ void ListBox::Row::GrowWidthsStretchesAlignmentsTo(std::size_t nn) {
     }
 }
 
-void ListBox::Row::push_back(const std::shared_ptr<Control>& c)
+void ListBox::Row::push_back(std::shared_ptr<Control> c)
 {
     m_cells.push_back(c);
     GrowWidthsStretchesAlignmentsTo(m_cells.size());
     auto ii = m_cells.size() - 1;
     auto&& layout = GetLayout();
     if (c) {
-        layout->Add(c, 0, ii, m_row_alignment | m_col_alignments[ii]);
+        layout->Add(std::forward<std::shared_ptr<Control>>(c), 0, ii, m_row_alignment | m_col_alignments[ii]);
         layout->SetMinimumColumnWidth(ii, m_col_widths.back());
         layout->SetColumnStretch(ii, m_col_stretches.back());
     }
