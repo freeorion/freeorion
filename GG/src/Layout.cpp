@@ -519,10 +519,10 @@ void Layout::Render()
     }
 }
 
-void Layout::Add(const std::shared_ptr<Wnd>& wnd, std::size_t row, std::size_t column, Flags<Alignment> alignment/* = ALIGN_NONE*/)
-{ Add(wnd, row, column, 1, 1, alignment); }
+void Layout::Add(std::shared_ptr<Wnd> wnd, std::size_t row, std::size_t column, Flags<Alignment> alignment/* = ALIGN_NONE*/)
+{ Add(std::forward<std::shared_ptr<Wnd>>(wnd), row, column, 1, 1, alignment); }
 
-void Layout::Add(const std::shared_ptr<Wnd>& wnd, std::size_t row, std::size_t column, std::size_t num_rows, std::size_t num_columns,
+void Layout::Add(std::shared_ptr<Wnd> wnd, std::size_t row, std::size_t column, std::size_t num_rows, std::size_t num_columns,
                  Flags<Alignment> alignment/* = ALIGN_NONE*/)
 {
     std::size_t last_row = row + num_rows;
@@ -542,7 +542,7 @@ void Layout::Add(const std::shared_ptr<Wnd>& wnd, std::size_t row, std::size_t c
     }
     if (wnd) {
         m_wnd_positions[wnd.get()] = WndPosition(row, column, last_row, last_column, alignment, wnd->RelativeUpperLeft(), wnd->Size());
-        AttachChild(wnd);
+        AttachChild(std::forward<std::shared_ptr<Wnd>>(wnd));
     }
     RedoLayout();
 }
