@@ -205,7 +205,7 @@ struct GG::GUIImpl
     Pt           m_wnd_drag_offset;       // the offset from the upper left corner of the dragged window to the cursor for the current drag
     bool         m_curr_drag_wnd_dragged; // true iff the currently-pressed window (m_drag_wnds[N]) has actually been dragged some distance (in which case releasing the mouse button is not a click). note that a dragged wnd is one being continuously repositioned by the dragging, and not a wnd being drag-dropped.
     std::shared_ptr<Wnd>         m_curr_drag_wnd;         // nonzero iff m_curr_drag_wnd_dragged is true (that is, we have actually started dragging the Wnd, not just pressed the mouse button); will always be one of m_drag_wnds.
-    std::shared_ptr<Wnd>         m_curr_drag_drop_here_wnd;// the Wnd that most recently received a DragDropEnter or DragDropHere message (0 if DragDropLeave was sent as well, or if none)
+    std::weak_ptr<Wnd>         m_curr_drag_drop_here_wnd;// the Wnd that most recently received a DragDropEnter or DragDropHere message (0 if DragDropLeave was sent as well, or if none)
     Pt           m_wnd_resize_offset;     // offset from the cursor of either the upper-left or lower-right corner of the GUI window currently being resized
     WndRegion    m_wnd_region;            // window region currently being dragged or clicked; for non-frame windows, this will always be WR_NONE
 
@@ -280,7 +280,7 @@ GUIImpl::GUIImpl() :
     m_drag_wnds(),
     m_curr_drag_wnd_dragged(false),
     m_curr_drag_wnd(nullptr),
-    m_curr_drag_drop_here_wnd(nullptr),
+    m_curr_drag_drop_here_wnd(),
     m_wnd_region(WR_NONE),
     m_browse_info_mode(0),
     m_browse_target(nullptr),
@@ -421,7 +421,8 @@ void GUIImpl::HandleMouseDrag(unsigned int mouse_button, const Pt& pos, int curr
             auto prev_wnd_under_cursor = m_prev_wnd_under_cursor.lock();
             if (curr_wnd_under_cursor && prev_wnd_under_cursor == curr_wnd_under_cursor) {
                 // Wnd under cursor has remained the same for the last two updates
-                if (m_curr_drag_drop_here_wnd && m_curr_drag_drop_here_wnd == curr_wnd_under_cursor) {
+                auto curr_drag_drop_here_wnd = m_curr_drag_drop_here_wnd.lock();
+                if (curr_drag_drop_here_wnd == curr_wnd_under_cursor) {
                     // Wnd being dragged over is still being dragged over...
                     WndEvent event(WndEvent::DragDropHere, pos, m_drag_drop_wnds, m_mod_keys);
                     curr_wnd_under_cursor->HandleEvent(event);
@@ -558,7 +559,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
                     auto drag_drop_originating_wnd = click_wnd->Parent();
                     m_drag_drop_originating_wnd = drag_drop_originating_wnd;
                     curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::DragDropLeave));
-                    m_curr_drag_drop_here_wnd = nullptr;
+                    m_curr_drag_drop_here_wnd.reset();
 
                     // put dragged Wnd into container depending on whether it is accepted by the drop target
                     std::vector<std::shared_ptr<Wnd>> accepted_wnds;
@@ -593,7 +594,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
                 auto drag_drop_originating_wnd = click_wnd->Parent();
                 m_drag_drop_originating_wnd = drag_drop_originating_wnd;
                 curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::DragDropLeave));
-                m_curr_drag_drop_here_wnd = nullptr;
+                m_curr_drag_drop_here_wnd.reset();
 
                 // put dragged Wnds into containers depending on whether they were accepted by the drop target
                 std::vector<std::shared_ptr<Wnd>> accepted_wnds;
@@ -826,7 +827,7 @@ void GUIImpl::ClearState()
 
     m_curr_drag_wnd_dragged = false;
     m_curr_drag_wnd = nullptr;
-    m_curr_drag_drop_here_wnd = nullptr;
+    m_curr_drag_drop_here_wnd.reset();
     m_wnd_region = WR_NONE;
     m_browse_target = nullptr;
     m_drag_drop_originating_wnd.reset();
@@ -1309,8 +1310,6 @@ void GUI::WndDying(const Wnd* const wnd)
         m_impl->m_drag_wnds[2] = nullptr;
         m_impl->m_wnd_region = WR_NONE;
     }
-    if (MatchesOrContains(wnd, m_impl->m_curr_drag_drop_here_wnd))
-        m_impl->m_curr_drag_drop_here_wnd = nullptr;
 
     auto maybe_drag_drop_acceptable_wnd = std::find_if(
         m_impl->m_drag_drop_wnds_acceptable.begin(),
@@ -1319,12 +1318,6 @@ void GUI::WndDying(const Wnd* const wnd)
         { return xx.first == wnd; });
     if (maybe_drag_drop_acceptable_wnd != m_impl->m_drag_drop_wnds_acceptable.end())
         m_impl->m_drag_drop_wnds_acceptable.erase(maybe_drag_drop_acceptable_wnd);
-
-    if (MatchesOrContains(wnd, m_impl->m_double_click_wnd)) {
-        m_impl->m_double_click_wnd = nullptr;
-        m_impl->m_double_click_start_time = -1;
-        m_impl->m_double_click_time = -1;
-    }
 }
 
 void GUI::EnableFPS(bool b/* = true*/)
@@ -1841,9 +1834,10 @@ std::shared_ptr<Wnd> GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_
     bool unregistered_drag_drop = dragged_wnd && !dragged_wnd->DragDropDataType().empty();
     bool registered_drag_drop = !m_impl->m_drag_drop_wnds.empty();
 
-    if (m_impl->m_curr_drag_drop_here_wnd && !unregistered_drag_drop && !registered_drag_drop) {
-        m_impl->m_curr_drag_drop_here_wnd->HandleEvent(WndEvent(WndEvent::DragDropLeave));
-        m_impl->m_curr_drag_drop_here_wnd = nullptr;
+    auto curr_drag_drop_here_wnd = m_impl->m_curr_drag_drop_here_wnd.lock();
+    if (curr_drag_drop_here_wnd && !unregistered_drag_drop && !registered_drag_drop) {
+        curr_drag_drop_here_wnd->HandleEvent(WndEvent(WndEvent::DragDropLeave));
+        m_impl->m_curr_drag_drop_here_wnd.reset();
     }
 
     auto curr_wnd_under_cursor = m_impl->m_curr_wnd_under_cursor.lock();
@@ -1855,13 +1849,13 @@ std::shared_ptr<Wnd> GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_
         if (unregistered_drag_drop) {
             curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::DragDropLeave));
             m_impl->m_drag_drop_wnds_acceptable[dragged_wnd.get()] = false;
-            m_impl->m_curr_drag_drop_here_wnd = nullptr;
+            m_impl->m_curr_drag_drop_here_wnd.reset();
 
         } else if (registered_drag_drop) {
             curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::DragDropLeave));
             for (auto& acceptable_wnd : m_impl->m_drag_drop_wnds_acceptable)
             { acceptable_wnd.second = false; }
-            m_impl->m_curr_drag_drop_here_wnd = nullptr;
+            m_impl->m_curr_drag_drop_here_wnd.reset();
 
         } else {
             curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::MouseLeave));
