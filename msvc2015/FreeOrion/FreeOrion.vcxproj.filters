@@ -204,9 +204,6 @@
     <ClInclude Include="..\..\UI\ShaderProgram.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\UI\ShipDesignPanel.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\UI\SidePanel.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
@@ -533,9 +530,6 @@
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\ServerConnectWnd.cpp">
-      <Filter>Source Files\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI\ShipDesignPanel.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\SpecialsPanel.cpp">

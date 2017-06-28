@@ -2,8 +2,54 @@
 #define _DesignWnd_h_
 
 #include <GG/Wnd.h>
+#include <boost/uuid/uuid.hpp>
 
 class EncyclopediaDetailPanel;
+class SaveGameUIData;
+
+struct Availability {
+    // Declaring an enum inside a struct makes the syntax when using the enum with tuples simpler,
+    // without polluting the global namespace with 3 generic names.
+
+    enum Enum {Obsolete,  // A design/part is researched/known by the player has marked it obsolete
+               Available, // A design/part is researched/known and currently available
+               Future     // A design/part is unresearched and hence not available
+    };
+};
+
+/** ShipDesignManager tracks information known to the client about ShipDesigns.  This includes
+    the order of designs in the UI. The information is currently used in the DesignWnd and the
+    BuildDesignator. */
+class ShipDesignManager {
+public:
+
+    /** Designs provides ordered lists of designs for display in the UI.
+
+     Derived classes provide an implementation for the pure virtual
+     OrderedIDs(), which provides ship design ids in display order. They may
+     also provide additional functionality used by the DesignWnd. */
+    class Designs {
+    public:
+        virtual std::vector<int> OrderedIDs() const = 0;
+    };
+
+    ShipDesignManager();
+    virtual ~ShipDesignManager();
+
+    virtual void StartGame(int empire_id);
+    virtual void Load(const SaveGameUIData& data);
+    virtual void Save(SaveGameUIData& data) const;
+
+    /** CurrentDesigns are design currently producible by the empire, in the ProductionWnd.*/
+    virtual Designs* CurrentDesigns();
+    /** SavedDesigns are designs that the player has saved on their own machine
+        for future use.  They may/may not also be in use in the current game. */
+    virtual Designs* SavedDesigns();
+
+private:
+    std::unique_ptr<Designs>    m_current_designs;
+    std::unique_ptr<Designs>    m_saved_designs;
+};
 
 /** Lets the player design ships */
 class DesignWnd : public GG::Wnd {
@@ -38,8 +84,6 @@ private:
     class PartPalette;      // shows parts that can be clicked for detailed or dragged on slots in design
     class MainPanel;        // shows image of hull, slots and parts, design name and description entry boxes, confirm button
 
-    int     AddDesign();    ///< adds current design to those stored by this empire, allowing ships of this design to be produced
-    void    ReplaceDesign();///< replace selected completed design with the current design in the stored designs of this empire
     void    DesignChanged();
     void    DesignNameChanged();
 

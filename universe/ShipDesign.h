@@ -7,6 +7,7 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <unordered_map>
 #include <string>
 #include <vector>
 #include <stdexcept>
@@ -592,6 +593,7 @@ public:
     /** Set the UUID. */
     void                            SetUUID(const boost::uuids::uuid& uuid);
     void                            Rename(const std::string& name) { m_name = name; }  ///< renames this design to \a name
+    void                            SetMonster(const bool is_monster) {m_is_monster = is_monster; }
     //@}
 
     /** Return true if \p hull and \p parts would make a valid design. */
@@ -671,8 +673,6 @@ FO_COMMON_API const ShipDesign* GetShipDesign(int ship_design_id);
 
 class FO_COMMON_API PredefinedShipDesignManager {
 public:
-    typedef std::map<std::string, int>::const_iterator generic_iterator;
-
     /** Return pointers the ShipDesigns in order.*/
     std::vector<const ShipDesign*> GetOrderedShipDesigns() const;
 
@@ -694,9 +694,8 @@ public:
     //@}
 
     /** Adds designs in this manager to the universe with the design creator
-      * left as no empire.  Returns a map from ship design name to design id in
-      * the universe. */
-    const std::map<std::string, int>&   AddShipDesignsToUniverse() const;
+      * left as no empire. */
+    void AddShipDesignsToUniverse() const;
 
     /** Returns the predefined ShipDesign with the name \a name.  If no such
       * ship design exists, 0 is returned instead. */
@@ -705,9 +704,14 @@ public:
 private:
     PredefinedShipDesignManager();
 
-    std::map<std::string, std::unique_ptr<ShipDesign>>  m_ship_designs;
-    std::map<std::string, std::unique_ptr<ShipDesign>>  m_monster_designs;
-    mutable std::map<std::string, int>  m_design_generic_ids;   // ids of designs from this manager that have been added to the universe with no empire as the creator
+    std::unordered_map<boost::uuids::uuid, std::unique_ptr<ShipDesign>, boost::hash<boost::uuids::uuid>>  m_designs;
+
+    std::unordered_map<std::string, boost::uuids::uuid>  m_name_to_ship_design;
+    std::unordered_map<std::string, boost::uuids::uuid>  m_name_to_monster_design;
+    mutable std::unordered_map<std::string, int>  m_design_generic_ids;   // ids of designs from this manager that have been added to the universe with no empire as the creator
+
+    std::vector<boost::uuids::uuid> m_ship_ordering;
+    std::vector<boost::uuids::uuid> m_monster_ordering;
 
     static PredefinedShipDesignManager* s_instance;
 };
@@ -765,5 +769,15 @@ void HullType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_graphic)
         & BOOST_SERIALIZATION_NVP(m_icon);
 }
+
+/** Load all ship designs in \p dir and return a tuple is_error, the map from uuid to ship design and path and the
+    ship ordering from the manifest. */
+FO_COMMON_API std::tuple<
+    bool,
+    std::unordered_map<boost::uuids::uuid,
+        std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>,
+        boost::hash<boost::uuids::uuid>>,
+    std::vector<boost::uuids::uuid>>
+LoadShipDesignsAndManifestOrderFromFileSystem(const boost::filesystem::path& dir);
 
 #endif // _ShipDesign_h_

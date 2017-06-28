@@ -321,10 +321,6 @@ public:
     /** Returns the set of ShipDesign IDs available for this empire to build. */
     std::set<int> AvailableShipDesigns() const;
 
-    /** Returns an ordered vector of ShipDesign IDs available for this empire to
-        build. */
-    const std::vector<int>& OrderedShipDesigns() const;
-
     const std::set<int>&            ShipDesigns() const;                ///< Returns the set of all ship design ids of this empire
     const std::set<std::string>&    AvailableShipParts() const;         ///< Returns the set of ship part names this empire that the empire can currently build
     const std::set<std::string>&    AvailableShipHulls() const;         ///< Returns the set of ship hull names that that the empire can currently build
@@ -651,9 +647,6 @@ private:
     std::set<std::string>           m_available_hull_types;     ///< list of acquired ship HullType.  These are string names referencing HullType objects
     std::set<int>                   m_explored_systems;         ///< systems you've explored
     std::set<int>                   m_ship_designs;             ///< The Empire's ship designs sorted by id
-
-    /** The Empire's ship designs in preferred order. */
-    std::vector<int> m_ship_designs_ordered;
 
     std::vector<SitRepEntry>        m_sitrep_entries;           ///< The Empire's sitrep entries
 

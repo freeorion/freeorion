@@ -21,7 +21,7 @@ class PlayerListWnd;
 class MultiPlayerLobbyWnd;
 struct SaveGameUIData;
 class System;
-
+class ShipDesignManager;
 
 //! \brief ClientUI Main Module
 //!This is the main class of the ClientUI module.
@@ -41,6 +41,8 @@ public:
     PlayerListWnd*          GetPlayerListWnd();                         //!< Returns the players list window.
     IntroScreen*            GetIntroScreen();                           //!< Returns the intro screen / splash window.
     MultiPlayerLobbyWnd*    GetMultiPlayerLobbyWnd();                   //!< Returns the multiplayer lobby window.
+
+    ShipDesignManager* GetShipDesignManager() { return m_ship_designs.get(); };
 
     void    GetSaveGameUIData(SaveGameUIData& data) const;              //!< populates the relevant UI state that should be restored after a save-and-load cycle
     //!@}
@@ -228,6 +230,9 @@ private:
     MultiPlayerLobbyWnd*    m_multiplayer_lobby_wnd;//!< the multiplayer lobby
 
     PrefixedTextures    m_prefixed_textures;
+
+    /// \p m_ship_designs stores information the client knows about ship designs and their ordering.
+    std::unique_ptr<ShipDesignManager> m_ship_designs;
 
     static ClientUI*    s_the_UI;           //!< pointer to the one and only ClientUI object
 };

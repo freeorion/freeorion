@@ -19,7 +19,10 @@
 
 #include <cfloat>
 #include <unordered_set>
+#include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/uuid/nil_generator.hpp>
+#include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -1198,6 +1201,7 @@ std::string ShipDesign::Dump() const {
 unsigned int ShipDesign::GetCheckSum() const {
     unsigned int retval{0};
     CheckSums::CheckSumCombine(retval, m_id);
+    CheckSums::CheckSumCombine(retval, m_uuid);
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_description);
     CheckSums::CheckSumCombine(retval, m_designed_on_turn);
@@ -1235,39 +1239,61 @@ bool operator ==(const ShipDesign& first, const ShipDesign& second) {
 // static(s)
 PredefinedShipDesignManager* PredefinedShipDesignManager::s_instance = nullptr;
 
+namespace {
+    template <typename Map1, typename Map2, typename Ordering>
+    void FillDesignsOrderingAndNameTables(const boost::filesystem::path& path,
+                                          Map1& designs, Ordering& ordering, Map2& name_to_uuid)
+    {
+        name_to_uuid.clear();
+
+        auto inconsistent_and_map_and_order_ships =
+            LoadShipDesignsAndManifestOrderFromFileSystem(path);
+
+        ordering = std::get<2>(inconsistent_and_map_and_order_ships);
+
+        auto& disk_designs = std::get<1>(inconsistent_and_map_and_order_ships);
+
+        for (auto& uuid_and_design : disk_designs) {
+            auto& design = uuid_and_design.second.first;
+
+            if (designs.count(design->UUID())) {
+                ErrorLogger() << design->Name() << " ship design does not have a unique UUID for "
+                              << "its type monster or pre-defined. "
+                              << designs[design->UUID()]->Name() << " has the same UUID.";
+                continue;
+            }
+
+            if (name_to_uuid.count(design->Name())) {
+                ErrorLogger() << design->Name() << " ship design does not have a unique name for "
+                              << "its type monster or pre-defined.";
+                continue;
+            }
+
+            name_to_uuid.insert(std::make_pair(design->Name(), design->UUID()));
+            designs[design->UUID()] = std::move(design);
+        }
+    }
+}
+
 PredefinedShipDesignManager::PredefinedShipDesignManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one PredefinedShipDesignManager.");
 
     DebugLogger() << "Initializing PredefinedShipDesignManager";
 
-    std::vector<std::unique_ptr<ShipDesign>> designs;
-    std::vector<boost::uuids::uuid> ordering;
-    parse::ship_designs(designs, ordering);
+    m_designs.clear();
 
-    for (auto& design : designs)
-        if (m_ship_designs.count(design->Name()))
-            ErrorLogger() << design->Name() << " ship design does not have a unique name.";
-        else
-            m_ship_designs[design->Name()] = std::move(design);
+    FillDesignsOrderingAndNameTables(
+        "scripting/ship_designs", m_designs, m_ship_ordering, m_name_to_ship_design);
+    FillDesignsOrderingAndNameTables(
+        "scripting/monster_designs", m_designs, m_monster_ordering, m_name_to_monster_design);
 
-    designs.clear();
-    ordering.clear();
-    parse::monster_designs(designs, ordering);
-
-    for (auto& design : designs)
-        if (m_monster_designs.count(design->Name()))
-            ErrorLogger() << design->Name() << " ship design does not have a unique name.";
-        else
-            m_monster_designs[design->Name()] = std::move(design);
-
+    // Make the monsters monstrous
+    for (const auto& uuid : m_monster_ordering)
+        m_designs[uuid]->SetMonster(true);
 
     TraceLogger() << "Predefined Ship Designs:";
-    for (const auto& entry : m_ship_designs)
-        TraceLogger() << " ... " << entry.second->Name();
-
-    TraceLogger() << "Monster Ship Designs:";
-    for (const auto& entry : m_monster_designs)
+    for (const auto& entry : m_designs)
         TraceLogger() << " ... " << entry.second->Name();
 
     // Only update the global pointer on sucessful construction.
@@ -1277,7 +1303,7 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
 }
 
 namespace {
-    void AddDesignToUniverse(std::map<std::string, int>& design_generic_ids,
+    void AddDesignToUniverse(std::unordered_map<std::string, int>& design_generic_ids,
                              const std::unique_ptr<ShipDesign>& design, bool monster)
     {
         if (!design)
@@ -1295,7 +1321,8 @@ namespace {
             }
 
             if (DesignsTheSame(*existing_design, *design)) {
-                DebugLogger() << "PredefinedShipDesignManager::AddShipDesignsToUniverse found there already is an exact duplicate of a design to be added, so is not re-adding it";
+                WarnLogger() << "AddShipDesignsToUniverse found an exact duplicate of ship design "
+                             << design->Name() << "to be added, so is not re-adding it";
                 design_generic_ids[design->Name(false)] = existing_design->ID();
                 return; // design already added; don't need to do so again
             }
@@ -1321,19 +1348,19 @@ namespace {
         }
 
         design_generic_ids[design->Name(false)] = new_design_id;
+        TraceLogger() << "AddShipDesignsToUniverse added ship design "
+                      << design->Name() << " to universe.";
     };
 }
 
-const std::map<std::string, int>& PredefinedShipDesignManager::AddShipDesignsToUniverse() const {
-    m_design_generic_ids.clear();   // std::map<std::string, int>
+void PredefinedShipDesignManager::AddShipDesignsToUniverse() const {
+    m_design_generic_ids.clear();
 
-    for (const auto& entry : m_ship_designs)
-        AddDesignToUniverse(m_design_generic_ids, entry.second, false);
+    for (const auto& uuid : m_ship_ordering)
+        AddDesignToUniverse(m_design_generic_ids, m_designs.at(uuid), false);
 
-    for (const auto& entry : m_monster_designs)
-        AddDesignToUniverse(m_design_generic_ids, entry.second, true);
-
-    return m_design_generic_ids;
+    for (const auto& uuid : m_monster_ordering)
+        AddDesignToUniverse(m_design_generic_ids, m_designs.at(uuid), true);
 }
 
 PredefinedShipDesignManager& PredefinedShipDesignManager::GetPredefinedShipDesignManager() {
@@ -1344,20 +1371,20 @@ PredefinedShipDesignManager& PredefinedShipDesignManager::GetPredefinedShipDesig
 
 std::vector<const ShipDesign*> PredefinedShipDesignManager::GetOrderedShipDesigns() const {
     std::vector<const ShipDesign*> retval;
-    for (const auto& name_and_ptr : m_ship_designs)
-        retval.push_back(name_and_ptr.second.get());
+    for (const auto& uuid : m_ship_ordering)
+        retval.push_back(m_designs.at(uuid).get());
     return retval;
 }
 
 std::vector<const ShipDesign*> PredefinedShipDesignManager::GetOrderedMonsterDesigns() const {
     std::vector<const ShipDesign*> retval;
-    for (const auto& name_and_ptr : m_monster_designs)
-        retval.push_back(name_and_ptr.second.get());
+    for (const auto& uuid : m_monster_ordering)
+        retval.push_back(m_designs.at(uuid).get());
     return retval;
 }
 
 int PredefinedShipDesignManager::GetDesignID(const std::string& name) const {
-    std::map<std::string, int>::const_iterator it = m_design_generic_ids.find(name);
+    const auto& it = m_design_generic_ids.find(name);
     if (it == m_design_generic_ids.end())
         return INVALID_DESIGN_ID;
     return it->second;
@@ -1366,13 +1393,17 @@ int PredefinedShipDesignManager::GetDesignID(const std::string& name) const {
 unsigned int PredefinedShipDesignManager::GetCheckSum() const {
     unsigned int retval{0};
 
-    for (auto const& name_design_pair : m_ship_designs)
-        CheckSums::CheckSumCombine(retval, name_design_pair);
-    CheckSums::CheckSumCombine(retval, m_ship_designs.size());
+    auto build_checksum = [&retval, this](const std::vector<boost::uuids::uuid>& ordering){
+        for (auto const& uuid : ordering) {
+            auto it = m_designs.find(uuid);
+            if (it != m_designs.end())
+                CheckSums::CheckSumCombine(retval, std::make_pair(it->second->Name(), *it->second));
+        }
+        CheckSums::CheckSumCombine(retval, ordering.size());
+    };
 
-    for (auto const& name_design_pair : m_monster_designs)
-        CheckSums::CheckSumCombine(retval, name_design_pair);
-    CheckSums::CheckSumCombine(retval, m_monster_designs.size());
+    build_checksum(m_ship_ordering);
+    build_checksum(m_monster_ordering);
 
     return retval;
 }
@@ -1386,3 +1417,92 @@ const PredefinedShipDesignManager& GetPredefinedShipDesignManager()
 
 const ShipDesign* GetPredefinedShipDesign(const std::string& name)
 { return GetUniverse().GetGenericShipDesign(name); }
+
+std::tuple<
+    bool,
+    std::unordered_map<boost::uuids::uuid,
+                       std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>,
+                       boost::hash<boost::uuids::uuid>>,
+    std::vector<boost::uuids::uuid>>
+LoadShipDesignsAndManifestOrderFromFileSystem(const boost::filesystem::path& dir) {
+    std::unordered_map<boost::uuids::uuid,
+                       std::pair<std::unique_ptr<ShipDesign>,
+                                 boost::filesystem::path>,
+                       boost::hash<boost::uuids::uuid>>  saved_designs;
+    std::vector<boost::uuids::uuid> disk_ordering;
+
+    std::vector<std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>> designs_and_paths;
+    parse::ship_designs(dir, designs_and_paths, disk_ordering);
+
+    for (auto&& design_and_path : designs_and_paths) {
+        auto& design = design_and_path.first;
+
+        // If the UUID is nil this is a legacy design that needs a new UUID
+        if(design->UUID() == boost::uuids::uuid{{0}}) {
+            design->SetUUID(boost::uuids::random_generator()());
+            DebugLogger() << "Converted legacy ship design file by adding  UUID " << design->UUID()
+                          << " for name " << design->Name();
+        }
+
+        // Make sure the design is an out of universe object
+        // This should not be needed.
+        if(design->ID() != INVALID_OBJECT_ID) {
+            design->SetID(INVALID_OBJECT_ID);
+            ErrorLogger() << "Loaded ship design has an id implying it is in an ObjectMap for UUID "
+                          << design->UUID() << " for name " << design->Name();
+        }
+
+        if (!saved_designs.count(design->UUID())) {
+            TraceLogger() << "Added saved design UUID " << design->UUID()
+                          << " with name " << design->Name();
+            saved_designs[design->UUID()] = std::move(design_and_path);
+        } else {
+            WarnLogger() << "Duplicate ship design UUID " << design->UUID()
+                         << " found for ship design " << design->Name()
+                         << " and " << saved_designs[design->UUID()].first->Name()
+                         << " in " << dir;
+        }
+    }
+
+    // Verify that all UUIDs in ordering exist
+    std::vector<boost::uuids::uuid> ordering;
+    bool ship_manifest_inconsistent = false;
+    for (auto& uuid: disk_ordering) {
+        // Skip the nil UUID.
+        if(uuid == boost::uuids::uuid{{0}})
+            continue;
+
+        if (!saved_designs.count(uuid)) {
+            WarnLogger() << "UUID " << uuid << " is in ship design manifest for "
+                         << "a ship design that does not exist.";
+            ship_manifest_inconsistent = true;
+            continue;
+        }
+        ordering.push_back(uuid);
+    }
+
+    // Verify that every design in saved_designs is in ordering.
+    if (ordering.size() != saved_designs.size()) {
+        // Add any missing designs in alphabetical order to the end of the list
+        std::unordered_set<boost::uuids::uuid, boost::hash<boost::uuids::uuid>>
+            uuids_in_ordering{ordering.begin(), ordering.end()};
+        std::map<std::string, boost::uuids::uuid> missing_uuids_sorted_by_name;
+        for (auto& uuid_to_design_and_filename: saved_designs) {
+            if (uuids_in_ordering.count(uuid_to_design_and_filename.first))
+                continue;
+            ship_manifest_inconsistent = true;
+            missing_uuids_sorted_by_name.insert(
+                std::make_pair(uuid_to_design_and_filename.second.first->Name(),
+                               uuid_to_design_and_filename.first));
+        }
+
+        for (auto& name_and_uuid: missing_uuids_sorted_by_name) {
+            WarnLogger() << "Missing ship design " << name_and_uuid.second
+                         << " called " << name_and_uuid.first
+                         << " added to the manifest.";
+            ordering.push_back(name_and_uuid.second);
+        }
+    }
+
+    return std::make_tuple(ship_manifest_inconsistent, std::move(saved_designs), ordering);
+}

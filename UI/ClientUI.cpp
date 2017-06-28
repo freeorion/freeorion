@@ -4,6 +4,7 @@
 #include "FleetWnd.h"
 #include "IntroScreen.h"
 #include "MapWnd.h"
+#include "DesignWnd.h"
 #include "ChatWnd.h"
 #include "PlayerListWnd.h"
 #include "MultiplayerLobbyWnd.h"
@@ -561,6 +562,7 @@ namespace {
 
         // Other
         db.Add("auto-add-saved-designs",        UserStringNop("OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS"),        true);
+        db.Add("auto-add-default-designs",      UserStringNop("OPTIONS_DB_ADD_DEFAULT_DESIGNS"),           true);
 
     }
     bool temp_bool = RegisterOptions(&AddOptions);
@@ -603,7 +605,8 @@ ClientUI::ClientUI() :
     m_message_wnd(nullptr),
     m_player_list_wnd(nullptr),
     m_intro_screen(nullptr),
-    m_multiplayer_lobby_wnd(nullptr)
+    m_multiplayer_lobby_wnd(nullptr),
+    m_ship_designs(new ShipDesignManager())
 {
     s_the_UI = this;
     Hotkey::ReadFromOptions(GetOptionsDB());
@@ -694,8 +697,10 @@ void ClientUI::ShowIntroScreen()
 MultiPlayerLobbyWnd* ClientUI::GetMultiPlayerLobbyWnd()
 { return m_multiplayer_lobby_wnd; }
 
-void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const
-{ GetMapWndConst()->GetSaveGameUIData(data); }
+void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const {
+    GetMapWndConst()->GetSaveGameUIData(data);
+    m_ship_designs->Save(data);
+}
 
 bool ClientUI::ZoomToObject(const std::string& name) {
     for (std::shared_ptr<const UniverseObject> obj : GetUniverse().Objects().FindObjects<UniverseObject>())
@@ -978,8 +983,10 @@ std::vector<std::shared_ptr<GG::Texture>> ClientUI::GetPrefixedTextures(const bo
     return prefixed_textures_and_dist.first;
 }
 
-void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data)
-{ GetMapWnd()->RestoreFromSaveData(ui_data); }
+void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data) {
+    GetMapWnd()->RestoreFromSaveData(ui_data);
+    m_ship_designs->Load(ui_data);
+}
 
 ClientUI* ClientUI::GetClientUI()
 { return s_the_UI; }

@@ -8,6 +8,7 @@
 #include "MapWnd.h"
 #include "EncyclopediaDetailPanel.h"
 #include "IconTextBrowseWnd.h"
+#include "DesignWnd.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
@@ -809,8 +810,9 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     if (m_build_types_shown.find(BT_SHIP) != m_build_types_shown.end()) {
         // get ids of designs to show... for specific empire, or for all empires
         std::vector<int> design_ids;
-        if (empire)
-            design_ids = empire->OrderedShipDesigns();
+        if (empire) {
+            design_ids = ClientUI::GetClientUI()->GetShipDesignManager()->CurrentDesigns()->OrderedIDs();
+        }
         else
             for (Universe::ship_design_iterator it = GetUniverse().beginShipDesigns(); it != GetUniverse().endShipDesigns(); ++it)
                 design_ids.push_back(it->first);

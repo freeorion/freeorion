@@ -7,6 +7,7 @@
 #include "../../UI/CUIControls.h"
 #include "../../UI/CUIStyle.h"
 #include "../../UI/MapWnd.h"
+#include "../../UI/DesignWnd.h"
 #include "../../UI/Hotkeys.h"
 #include "../../UI/IntroScreen.h"
 #include "../../UI/GalaxySetupWnd.h"
@@ -1017,10 +1018,11 @@ bool HumanClientApp::ToggleFullscreen() {
 
 void HumanClientApp::StartGame() {
     m_game_started = true;
-    Orders().Reset();
 
     if (MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd())
         map_wnd->ResetEmpireShown();
+
+    ClientUI::GetClientUI()->GetShipDesignManager()->StartGame(EmpireID());
 
     UpdateCombatLogManager();
 }

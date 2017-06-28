@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -200,7 +200,6 @@
     <ClInclude Include="..\..\UI\ResourcePanel.h" />
     <ClInclude Include="..\..\UI\ServerConnectWnd.h" />
     <ClInclude Include="..\..\UI\ShaderProgram.h" />
-    <ClInclude Include="..\..\UI\ShipDesignPanel.h" />
     <ClInclude Include="..\..\UI\SidePanel.h" />
     <ClInclude Include="..\..\UI\SitRepPanel.h" />
     <ClInclude Include="..\..\UI\Sound.h" />
@@ -311,7 +310,6 @@
     <ClCompile Include="..\..\UI\SaveFileDialog.cpp" />
     <ClCompile Include="..\..\UI\ServerConnectWnd.cpp" />
     <ClCompile Include="..\..\UI\ShaderProgram.cpp" />
-    <ClCompile Include="..\..\UI\ShipDesignPanel.cpp" />
     <ClCompile Include="..\..\UI\SidePanel.cpp" />
     <ClCompile Include="..\..\UI\SitRepPanel.cpp" />
     <ClCompile Include="..\..\UI\Sound.cpp" />

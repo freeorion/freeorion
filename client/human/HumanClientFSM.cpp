@@ -701,11 +701,12 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     int empire_id = ALL_EMPIRES;
     int current_turn = INVALID_GAME_TURN;
     Client().PlayerStatus().clear();
+    Client().Orders().Reset();
 
     ExtractGameStartMessageData(msg.m_message,       single_player_game,             empire_id,
                                 current_turn,        Empires(),                      GetUniverse(),
                                 GetSpeciesManager(), GetCombatLogManager(),          GetSupplyManager(),
-                                Client().Players(),  orders,                         loaded_game_data,
+                                Client().Players(),  Client().Orders(),              loaded_game_data,
                                 ui_data_available,   ui_data,                        save_state_string_available,
                                 save_state_string,   Client().GetGalaxySetupData());
 
@@ -716,7 +717,7 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     Client().SetCurrentTurn(current_turn);
 
     Client().StartGame();
-    std::swap(Client().Orders(), orders); // bring back orders planned in the current turn, they will be applied later, after some basic turn initialization
+
     if (loaded_game_data && ui_data_available)
         Client().GetClientUI().RestoreFromSaveData(ui_data);
 

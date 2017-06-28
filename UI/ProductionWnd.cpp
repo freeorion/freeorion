@@ -962,7 +962,6 @@ void ProductionWnd::QueueItemMoved(const GG::ListBox::iterator& row_it, const GG
         std::make_shared<ProductionQueueOrder>(client_empire_id,
                                                original_position,
                                                corrected_position));
-
     empire->UpdateProductionQueue();
 }
 
