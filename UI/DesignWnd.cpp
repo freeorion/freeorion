@@ -3169,6 +3169,7 @@ void SlotControl::SetPart(const std::string& part_name)
 
 void SlotControl::SetPart(const PartType* part_type) {
     // remove existing part control, if any
+    DetachChild(m_part_control);
     m_part_control.reset();
 
     // create new part control for passed in part_type
@@ -3619,6 +3620,7 @@ void DesignWnd::MainPanel::SetParts(const std::vector<std::string>& parts) {
     unsigned int num_parts = std::min(parts.size(), m_slots.size());
     for (unsigned int i = 0; i < num_parts; ++i)
         m_slots[i]->SetPart(parts[i]);
+
     DesignChangedSignal();
 }
 
@@ -3841,6 +3843,8 @@ void DesignWnd::MainPanel::HandleBaseTypeChange(DesignWnd::BaseSelector::BaseSel
 }
 
 void DesignWnd::MainPanel::Populate(){
+    for (const auto& slot: m_slots)
+        DetachChild(slot);
     m_slots.clear();
 
     if (!m_hull)
