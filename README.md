@@ -59,6 +59,30 @@ packages via the command line.
   * [Fedora package] stable release: `# dnf install freeorion`
   * [ArchLinux package] stable release
 
+## Directories
+* install directory  
+The location of this README.md file, called `<install_dir>` below.  
+* config - game settings  
+    * linux  
+`$XDG_CONFIG_HOME/freeorion` which defaults to `~/.config/freeorion`  
+    * OSX  
+`Username/Library/Application Support/FreeOrion/`  
+    * Windows  
+`C:\Users\Username\AppData\Roaming\FreeOrion`  
+* data - local user data, saved games, log files  
+    * linux  
+`$XDG_DATA_HOME/freeorion` which defaults to `~/.config/freeorion`  
+    * OSX  
+`Username/Library/Application Support/FreeOrion/`  
+    * Windows  
+`C:\Users\Username\AppData\Roaming\FreeOrion`  
+* stringtables - translation indices for various languages  
+    `<install_dir>/default/stringtables/`  
+* scripting - FreeOrion Content Scripts (FOCS) describing game content (tech, species etc.)  
+    `<install_dir>/default/scripting/`  
+* AI - AI for computer controlled empires  
+    `<install_dir>/default/python/AI`  
+
 
 ## Contact and Getting Help
 
