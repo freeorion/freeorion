@@ -713,7 +713,13 @@ MapWndPopup::MapWndPopup(const std::string& t, GG::Flags<GG::WndFlag> flags, con
 }
 
 MapWndPopup::~MapWndPopup()
-{ ClientUI::GetClientUI()->GetMapWnd()->RemovePopup(this); }
+{
+    // MapWndPopupWnd is registered as a top level window, the same as ClientUI and MapWnd.
+    // Consequently, when the GUI shutsdown either could be destroyed before this Wnd
+    if (auto client = ClientUI::GetClientUI())
+        if (auto mapwnd = client->GetMapWnd())
+            mapwnd->RemovePopup(this);
+}
 
 void MapWndPopup::CloseClicked() {
     CUIWnd::CloseClicked();

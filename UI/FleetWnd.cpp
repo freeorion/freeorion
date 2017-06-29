@@ -2741,7 +2741,11 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
 }
 
 FleetWnd::~FleetWnd() {
-    ClientUI::GetClientUI()->GetMapWnd()->ClearProjectedFleetMovementLines();
+    // FleetWnd is registered as a top level window, the same as ClientUI and MapWnd.
+    // Consequently, when the GUI shutsdown either could be destroyed before this Wnd
+    if (auto client = ClientUI::GetClientUI())
+        if (auto mapwnd = client->GetMapWnd())
+            mapwnd->ClearProjectedFleetMovementLines();
     ClosingSignal(this);
 }
 
