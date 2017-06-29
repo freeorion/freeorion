@@ -1,4 +1,4 @@
-# Required design names
+## Required design names
 The game currently requires all of the following design names:
 
 All entries contained within the default/scripting/ship_designs/required directory
@@ -6,15 +6,15 @@ All entries contained within the default/scripting/ship_designs/required directo
 Any entries mentioned within default/scripting/starting_unlocks/fleets.inf
 
 
-# Instructions for editing ship or monster designs in game in the Design window.
-1. Move or backup the `shipdesigns` directory in your freeorion data directory.
-2. Copy the `default/scripting/ship_designs` or `default/scripting/monsters` directory into your
-data directory and replace your `shipdesigns` directory.
+## Instructions for editing ship or monster designs in game in the Design window.
+1. Move or backup the `shipdesigns` directory in the freeorion data directory.  See the installation directory README.md##Directories for the data directory location.
+2. Replace the `shipdesigns` directory with the `default/scripting/ship_designs` or `default/scripting/monsters` directory.
 3. Start a new game.
-4. In the Design windo, your saved ship designs will be the default ship designs or monsters.  Edit the ships.
-    i. Add new saved designs.
-    ii. Drag and drop to change ordering.
-    iii. If you use a stringtable index for **both** the ship name **and** description then it will save the stringtable index and use the translated text for display.  You can check this in the pedia window.  When you add/remove parts the name and description in the pedia window will be pulled from the stringtable. 
-    iv. Note: You can not start a ship with a monster hull, but you can add/remove components to monster designs in the saved design directory.
+4. In the Design window, the saved ship designs will be the default ship designs or monsters.  Edit the ships.
+    * Add new saved designs.
+    * Drag and drop to change ordering.
+    * Use a stringtable index for **both** the ship name **and** description to save the stringtable index in the file and use the translated text for display.  To use a stringtable index, type its tag name in the ship name or description field.  Add/remove a part to cause the name and description in the pedia window to update from the stringtable. 
+    * Note: monster hulls are not in the empty hulls list, so a saved design can not be started from a monster hull.  However, monster hull based designs can be edited once copied into the saved design directory.
 5. Exit the game.
-6. Copy the `shipdesigns` directory from your data directory back into the `default/scripting/ship_designs` or `default/scripting/monsters` directory.
+6. Replace the `default/scripting/ship_designs` or `default/scripting/monsters` directory with the `shipdesigns` directory from the data directory.
+7. Start a new game to verify that the default ship designs or monsters have updated.
