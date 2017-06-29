@@ -25,6 +25,7 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/Enum.h>
+#include <GG/GUI.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 
@@ -415,7 +416,7 @@ namespace {
 ////////////////////////////////////////////////
 FleetUIManager::FleetUIManager() :
     m_order_issuing_enabled(true),
-    m_active_fleet_wnd(nullptr)
+    m_active_fleet_wnd()
 {}
 
 FleetUIManager::iterator FleetUIManager::begin() const
@@ -428,25 +429,27 @@ FleetUIManager::iterator FleetUIManager::end() const
 { return m_fleet_wnds.end(); }
 
 FleetWnd* FleetUIManager::ActiveFleetWnd() const
-{ return m_active_fleet_wnd.get(); }
+{ return GG::LockAndResetIfExpired(m_active_fleet_wnd).get(); }
 
 std::shared_ptr<FleetWnd> FleetUIManager::WndForFleet(std::shared_ptr<const Fleet> fleet) const {
     assert(fleet);
-    std::shared_ptr<FleetWnd> retval;
-    for (auto& wnd : m_fleet_wnds) {
-        if (wnd->ContainsFleet(fleet->ID())) {
-            retval = wnd;
-            break;
-        }
-    }
+
+    std::shared_ptr<FleetWnd> retval = nullptr;
+    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
+                                 [&retval, &fleet](std::shared_ptr<FleetWnd>& wnd)
+                                 {
+                                     if (!retval && wnd->ContainsFleet(fleet->ID()))
+                                         retval = wnd;
+                                 });
     return retval;
 }
 
 int FleetUIManager::SelectedShipID() const {
-    if (!m_active_fleet_wnd)
+    auto active_wnd = GG::LockAndResetIfExpired(m_active_fleet_wnd);
+    if (!active_wnd)
         return INVALID_OBJECT_ID;
 
-    std::set<int> selected_ship_ids = m_active_fleet_wnd->SelectedShipIDs();
+    std::set<int> selected_ship_ids = active_wnd->SelectedShipIDs();
     if (selected_ship_ids.size() != 1)
         return INVALID_OBJECT_ID;
 
@@ -454,9 +457,10 @@ int FleetUIManager::SelectedShipID() const {
 }
 
 std::set<int> FleetUIManager::SelectedShipIDs() const {
-    if (!m_active_fleet_wnd)
+    auto active_wnd = GG::LockAndResetIfExpired(m_active_fleet_wnd);
+    if (!active_wnd)
         return std::set<int>();
-    return m_active_fleet_wnd->SelectedShipIDs();
+    return active_wnd->SelectedShipIDs();
 }
 
 std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
@@ -471,7 +475,7 @@ std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(const std::vector<int>& fl
     }
     auto retval = GG::Wnd::Create<FleetWnd>(fleet_ids, m_order_issuing_enabled, selected_fleet_id, flags, config_name);
 
-    m_fleet_wnds.insert(retval);
+    m_fleet_wnds.insert(std::weak_ptr<FleetWnd>(retval));
     retval->ClosingSignal.connect(
         boost::bind(&FleetUIManager::FleetWndClosing, this, _1));
     retval->ClickedSignal.connect(
@@ -487,23 +491,22 @@ std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(const std::vector<int>& fl
 }
 
 void FleetUIManager::CullEmptyWnds() {
-    std::vector<std::shared_ptr<FleetWnd>> to_be_closed;
     // scan through FleetWnds, deleting those that have no fleets
-    for (auto& cur_wnd : m_fleet_wnds) {
-        if (cur_wnd->FleetIDs().empty())
-            to_be_closed.push_back(cur_wnd);
-    }
-
-    for (auto &close : to_be_closed)
-        close->CloseClicked();
+    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
+                                 [](std::shared_ptr<FleetWnd>& wnd)
+                                 {
+                                     if (wnd->FleetIDs().empty())
+                                         wnd->CloseClicked();
+                                 });
 }
 
 void FleetUIManager::SetActiveFleetWnd(std::shared_ptr<FleetWnd> fleet_wnd) {
-    if (fleet_wnd == m_active_fleet_wnd)
+    auto active_wnd = GG::LockAndResetIfExpired(m_active_fleet_wnd);
+    if (fleet_wnd == active_wnd)
         return;
 
     // disconnect old active FleetWnd signals
-    if (m_active_fleet_wnd) {
+    if (active_wnd) {
         for (boost::signals2::connection& con : m_active_fleet_wnd_signals)
             con.disconnect();
         m_active_fleet_wnd_signals.clear();
@@ -513,36 +516,34 @@ void FleetUIManager::SetActiveFleetWnd(std::shared_ptr<FleetWnd> fleet_wnd) {
     m_active_fleet_wnd = fleet_wnd;
 
     // connect new active FleetWnd selection changed signal
-    m_active_fleet_wnd_signals.push_back(m_active_fleet_wnd->SelectedFleetsChangedSignal.connect(
+    m_active_fleet_wnd_signals.push_back(fleet_wnd->SelectedFleetsChangedSignal.connect(
         ActiveFleetWndSelectedFleetsChangedSignal));
-    m_active_fleet_wnd_signals.push_back(m_active_fleet_wnd->SelectedShipsChangedSignal.connect(
+    m_active_fleet_wnd_signals.push_back(fleet_wnd->SelectedShipsChangedSignal.connect(
         ActiveFleetWndSelectedShipsChangedSignal));
 
     ActiveFleetWndChangedSignal();
 }
 
 bool FleetUIManager::CloseAll() {
-    bool retval = !m_fleet_wnds.empty();
+    bool retval = false;
 
     // closing a fleet window removes it from m_fleet_wnds
-    std::vector<std::shared_ptr<FleetWnd>> vec(m_fleet_wnds.begin(), m_fleet_wnds.end());
+    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
+                                 [&retval](std::shared_ptr<FleetWnd>& wnd) {
+                                     retval = true;
+                                     wnd->CloseClicked();
+                                 });
 
-    for (auto& wnd : vec)
-        wnd->CloseClicked();
-
-    m_active_fleet_wnd = nullptr;
-
+    m_active_fleet_wnd.reset();
     ActiveFleetWndChangedSignal();
 
     return retval;
 }
 
 void FleetUIManager::RefreshAll() {
-    if (m_fleet_wnds.empty())
-        return;
-
-    for (auto& wnd : m_fleet_wnds)
-        wnd->Refresh();
+    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
+                                 [](std::shared_ptr<FleetWnd>& wnd)
+                                 { wnd->Refresh(); });
 }
 
 FleetUIManager& FleetUIManager::GetFleetUIManager() {
@@ -551,26 +552,21 @@ FleetUIManager& FleetUIManager::GetFleetUIManager() {
 }
 
 void FleetUIManager::FleetWndClosing(FleetWnd* fleet_wnd) {
-    bool active_wnd_affected = false;
-    if (fleet_wnd == m_active_fleet_wnd.get()) {
-        m_active_fleet_wnd = nullptr;
-        active_wnd_affected = true;
-    }
-    m_fleet_wnds.erase(std::dynamic_pointer_cast<FleetWnd>(fleet_wnd->shared_from_this()));
-    if (active_wnd_affected)
-        ActiveFleetWndChangedSignal();  // let anything that cares know the active fleetwnd just closed
+    if (GG::LockAndResetIfExpired(m_active_fleet_wnd).get())
+        ActiveFleetWndChangedSignal();
 }
 
 void FleetUIManager::FleetWndClicked(std::shared_ptr<FleetWnd> fleet_wnd) {
-    if (fleet_wnd == m_active_fleet_wnd)
+    if (fleet_wnd == GG::LockAndResetIfExpired(m_active_fleet_wnd))
         return;
     SetActiveFleetWnd(std::forward<std::shared_ptr<FleetWnd>>(fleet_wnd));
 }
 
 void FleetUIManager::EnableOrderIssuing(bool enable/* = true*/) {
     m_order_issuing_enabled = enable;
-    for (auto& wnd : m_fleet_wnds)
-        wnd->EnableOrderIssuing(m_order_issuing_enabled);
+    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
+                                 [&enable](std::shared_ptr<FleetWnd>& wnd)
+                                 { wnd->EnableOrderIssuing(enable); });
 }
 
 namespace {

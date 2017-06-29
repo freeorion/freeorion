@@ -1581,8 +1581,9 @@ void MapWnd::DoLayout() {
     }
 
     for (auto& fwnd : FleetUIManager::GetFleetUIManager()) {
-        if (fwnd) {
-            fwnd->ValidatePosition();
+        auto wnd = fwnd.lock();
+        if (wnd) {
+            wnd->ValidatePosition();
         } else {
             ErrorLogger() << "MapWnd::DoLayout(): null FleetWnd* found in the FleetUIManager::iterator.";
         }
@@ -4441,7 +4442,8 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
         // not emit any signals about the active fleet wnd's fleets changing
         const auto& active_fleet_wnd = manager.ActiveFleetWnd();
 
-        for (const auto& wnd : manager) {
+        for (const auto& fwnd : manager) {
+            auto wnd = fwnd.lock();
             if (wnd.get() != active_fleet_wnd)
                 wnd->SelectFleet(0);
         }

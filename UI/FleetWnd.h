@@ -28,7 +28,7 @@ GG_ENUM(NewFleetAggression,
 /** Manages the lifetimes of FleetWnds. */
 class FleetUIManager {
 public:
-    typedef std::set<std::shared_ptr<FleetWnd>>::const_iterator iterator;
+    typedef std::set<std::weak_ptr<FleetWnd>>::const_iterator iterator;
 
     //! \name Accessors //@{
     bool            empty() const;
@@ -78,8 +78,12 @@ private:
     void            FleetWndClicked(std::shared_ptr<FleetWnd> fleet_wnd);                          //!< sets active FleetWnd
 
     bool                                    m_order_issuing_enabled;
-    std::set<std::shared_ptr<FleetWnd>>                     m_fleet_wnds;
-    std::shared_ptr<FleetWnd>                               m_active_fleet_wnd;
+
+    /** All fleet windows.  mutable so expired ptrs can be reset(). */
+    mutable std::set<std::weak_ptr<FleetWnd>, std::owner_less<std::weak_ptr<FleetWnd>>> m_fleet_wnds;
+    /** Active fleet window.  mutable so expired ptr can be reset(). */
+    mutable std::weak_ptr<FleetWnd>                               m_active_fleet_wnd;
+
     std::vector<boost::signals2::connection> m_active_fleet_wnd_signals;
 };
 
