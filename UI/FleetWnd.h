@@ -84,7 +84,7 @@ private:
 };
 
 /** This is the top level Fleet UI element.  It shows a list of fleets, a
-    new-fleet drop target, and a detail view of the currently selectd fleet
+    new-fleet drop target, and a detail view of the currently selected fleet
     (a FleetDetailPanel). */
 class FleetWnd : public MapWndPopup {
 public:
