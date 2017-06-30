@@ -1099,7 +1099,7 @@ void TechTreeWnd::LayoutPanel::CompleteConstruction()
 
     m_scale = std::pow(ZOOM_STEP_SIZE, GetOptionsDB().Get<double>("UI.tech-layout-zoom-scale")); //(LATHANDA) Initialise Fullzoom and do real zooming using GL. TODO: Check best size
 
-    m_layout_surface = new LayoutSurface();
+    m_layout_surface = GG::Wnd::Create<LayoutSurface>();
 
     m_vscroll = GG::Wnd::Create<CUIScroll>(GG::VERTICAL);
     m_hscroll = GG::Wnd::Create<CUIScroll>(GG::HORIZONTAL);
@@ -1380,6 +1380,8 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     const std::string selected_tech = m_selected_tech_name;
 
     // cleanup old data for new layout
+    for (const auto& tech_panel: m_techs)
+        m_layout_surface->DetachChild(tech_panel.second);
     Clear();
 
     DebugLogger() << "Tech Tree Layout Preparing Tech Data";
