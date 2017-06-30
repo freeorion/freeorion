@@ -552,8 +552,10 @@ FleetUIManager& FleetUIManager::GetFleetUIManager() {
 }
 
 void FleetUIManager::FleetWndClosing(FleetWnd* fleet_wnd) {
-    if (GG::LockAndResetIfExpired(m_active_fleet_wnd).get())
+    if (m_active_fleet_wnd.expired()) {
+        m_active_fleet_wnd.reset();
         ActiveFleetWndChangedSignal();
+    }
 }
 
 void FleetUIManager::FleetWndClicked(std::shared_ptr<FleetWnd> fleet_wnd) {
