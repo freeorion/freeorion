@@ -717,6 +717,18 @@ MapWndPopup::MapWndPopup(const std::string& t, GG::Flags<GG::WndFlag> flags, con
 
 MapWndPopup::~MapWndPopup()
 {
+    if (!Visible()) {
+        // Make sure it doesn't save visible = 0 to the config (doesn't
+        // make sense for windows that are created/destroyed repeatedly),
+        // try/catch because this is called from a dtor and OptionsDB
+        // functions can throw.
+        try {
+            Show();
+        } catch (const std::exception& e) {
+            ErrorLogger() << "~MapWndPopup() : caught exception cleaning up a popup: " << e.what();
+        }
+    }
+
     // MapWndPopupWnd is registered as a top level window, the same as ClientUI and MapWnd.
     // Consequently, when the GUI shutsdown either could be destroyed before this Wnd
     if (auto client = ClientUI::GetClientUI())
@@ -5630,17 +5642,6 @@ void MapWnd::RegisterPopup(MapWndPopup* popup) {
 
 void MapWnd::RemovePopup(MapWndPopup* popup) {
     if (popup) {
-        if (!popup->Visible()) {
-            // Make sure it doesn't save visible = 0 to the config (doesn't
-            // make sense for windows that are created/destroyed repeatedly),
-            // try/catch because this is called from a dtor and OptionsDB
-            // functions can throw.
-            try {
-                popup->Show();
-            } catch (const std::exception& e) {
-                ErrorLogger() << "MapWnd::RemovePopup() : caught exception cleaning up a popup: " << e.what();
-            }
-        }
         std::list<MapWndPopup*>::iterator it = std::find(m_popups.begin(), m_popups.end(), popup);
         if (it != m_popups.end())
             m_popups.erase(it);
