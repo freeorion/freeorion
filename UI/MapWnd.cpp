@@ -1580,9 +1580,9 @@ void MapWnd::DoLayout() {
             plr_wnd->ValidatePosition();
     }
 
+    FleetUIManager::GetFleetUIManager().CullEmptyWnds();
     for (auto& fwnd : FleetUIManager::GetFleetUIManager()) {
-        auto wnd = fwnd.lock();
-        if (wnd) {
+        if (auto wnd = fwnd.lock()) {
             wnd->ValidatePosition();
         } else {
             ErrorLogger() << "MapWnd::DoLayout(): null FleetWnd* found in the FleetUIManager::iterator.";
@@ -4444,7 +4444,7 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
 
         for (const auto& fwnd : manager) {
             auto wnd = fwnd.lock();
-            if (wnd.get() != active_fleet_wnd)
+            if (wnd && wnd.get() != active_fleet_wnd)
                 wnd->SelectFleet(0);
         }
 
@@ -4486,6 +4486,7 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
 
     // make sure selected fleet's FleetWnd is active
     manager.SetActiveFleetWnd(fleet_wnd);
+    GG::GUI::GetGUI()->MoveUp(fleet_wnd);
 
 
     // select fleet in FleetWnd.  this deselects all other fleets in the FleetWnd.
@@ -5614,18 +5615,19 @@ void MapWnd::UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj) {
         RemoveFleet(fleet->ID());
 }
 
-void MapWnd::RegisterPopup(std::shared_ptr<MapWndPopup> popup) {
+void MapWnd::RegisterPopup(const std::shared_ptr<MapWndPopup>& popup) {
     if (popup)
-        m_popups.push_back(std::forward<std::shared_ptr<MapWndPopup>>(popup));
+        m_popups.push_back(std::weak_ptr<MapWndPopup>(popup));
 }
 
 void MapWnd::RemovePopup(MapWndPopup* popup) {
-    if (popup) {
-        const auto& it = std::find_if(m_popups.begin(), m_popups.end(),
-                                      [&popup](const std::shared_ptr<Wnd>& xx){ return xx.get() == popup;});
-        if (it != m_popups.end())
-            m_popups.erase(it);
-    }
+    if (!popup)
+        return;
+
+    const auto& it = std::find_if(m_popups.begin(), m_popups.end(),
+                                  [&popup](const std::weak_ptr<Wnd>& xx){ return xx.lock().get() == popup;});
+    if (it != m_popups.end())
+        m_popups.erase(it);
 }
 
 void MapWnd::ResetEmpireShown() {
@@ -6803,19 +6805,15 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
 }
 
 void MapWnd::CloseAllPopups() {
-    for (auto it = m_popups.begin(); it != m_popups.end(); ) {
-        // get popup and increment iterator first since closing the popup will change this list by removing the popup
-        auto popup = *it++;
-        popup->Close();
-    }
-    // clear list
-    m_popups.clear();
+    GG::ProcessThenRemoveExpiredPtrs(m_popups,
+                                 [](std::shared_ptr<MapWndPopup>& wnd)
+                                 { wnd->Close(); });
 }
 
 void MapWnd::HideAllPopups() {
-    for (auto& popup : m_popups) {
-        popup->Hide();
-    }
+    GG::ProcessThenRemoveExpiredPtrs(m_popups,
+                                 [](std::shared_ptr<MapWndPopup>& wnd)
+                                 { wnd->Hide(); });
 }
 
 void MapWnd::SetFleetExploring(const int fleet_id) {
@@ -7036,8 +7034,7 @@ void MapWnd::DispatchFleetsExploring() {
 }
 
 void MapWnd::ShowAllPopups() {
-    for (auto& popup : m_popups) {
-        popup->Show();
-    }
+    GG::ProcessThenRemoveExpiredPtrs(m_popups,
+                                 [](std::shared_ptr<MapWndPopup>& wnd)
+                                 { wnd->Show(); });
 }
-

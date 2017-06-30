@@ -201,7 +201,7 @@ public:
 
     void            ResetEmpireShown();                             //!< auto-resets the shown empire in any contained Wnds, to the current client's empire (if any)
 
-    void            RegisterPopup(std::shared_ptr<MapWndPopup> popup);              //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
+    void            RegisterPopup(const std::shared_ptr<MapWndPopup>& popup);              //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
     void            RemovePopup(MapWndPopup* popup);                //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
     void            Sanitize();                                     //!< sanitizes the MapWnd after a game
     //!@}
@@ -519,7 +519,7 @@ private:
     std::shared_ptr<GG::Button>                 m_btn_turn;         //!< button that updates player's turn;
     std::shared_ptr<GG::Button>                 m_btn_auto_turn;    //!< button that toggles whether to automatically end turns;
     bool                        m_auto_end_turn;    //!< should turns be ended automatically by this client?
-    std::list<std::shared_ptr<MapWndPopup>>     m_popups;           //!< list of currently active popup windows
+    std::list<std::weak_ptr<MapWndPopup>>       m_popups;           //!< list of currently active popup windows
     bool                        m_menu_showing;     //!< set during ShowMenu() to prevent reentrency
     int                         m_current_owned_system;
     int                         m_current_fleet_id;
