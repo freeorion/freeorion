@@ -1217,12 +1217,13 @@ void GUI::RegisterModal(Wnd* wnd)
 
 void GUI::Remove(Wnd* wnd)
 {
-    if (wnd) {
-        if (!m_impl->m_modal_wnds.empty() && m_impl->m_modal_wnds.back().first == wnd) // if it's the current modal window, remove it from the modal list
-            m_impl->m_modal_wnds.pop_back();
-        else // if it's not a modal window, remove it from the z-order
-            m_impl->m_zlist.Remove(wnd);
-    }
+    if (!wnd)
+        return;
+
+    if (!m_impl->m_modal_wnds.empty() && m_impl->m_modal_wnds.back().first == wnd) // if it's the current modal window, remove it from the modal list
+        m_impl->m_modal_wnds.pop_back();
+    else // if it's not a modal window, remove it from the z-order
+        m_impl->m_zlist.Remove(wnd);
 }
 
 void GUI::WndDying(Wnd* wnd)
