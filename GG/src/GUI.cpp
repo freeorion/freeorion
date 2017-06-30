@@ -333,7 +333,7 @@ void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, const Pt& pos, i
                     ? dynamic_cast<Control*>(curr_wnd_under_cursor.get())
                     : nullptr);
     if (control && !control->Disabled())
-        GUI::s_gui->SetFocusWnd(curr_wnd_under_cursor);
+        SetFocusWnd(curr_wnd_under_cursor);
 
     if (curr_wnd_under_cursor) {
         m_wnd_region = curr_wnd_under_cursor->WindowRegion(pos); // and determine whether a resize-region of it is being dragged
@@ -796,7 +796,10 @@ void GUIImpl::SetFocusWnd(const std::shared_ptr<Wnd>& wnd)
     if (focus_wnd)
         focus_wnd->HandleEvent(WndEvent(WndEvent::LosingFocus));
 
-    (m_modal_wnds.empty() ? m_focus_wnd : m_modal_wnds.back().second) = wnd;
+    if (m_modal_wnds.empty())
+        m_focus_wnd = wnd;
+    else
+        m_modal_wnds.back().second = wnd;
 
     // inform new focus wnd that it is gaining focus
     auto&& new_focus_wnd = FocusWnd();
@@ -1227,22 +1230,7 @@ void GUI::ClearEventState()
 { m_impl->ClearState(); }
 
 void GUI::SetFocusWnd(const std::shared_ptr<Wnd>& wnd)
-{
-    auto&& focus_wnd = FocusWnd();
-    if (focus_wnd == wnd)
-        return;
-
-    // inform old focus wnd that it is losing focus
-    if (focus_wnd)
-        focus_wnd->HandleEvent(WndEvent(WndEvent::LosingFocus));
-
-    (m_impl->m_modal_wnds.empty() ? m_impl->m_focus_wnd : m_impl->m_modal_wnds.back().second) = wnd;
-
-    // inform new focus wnd that it is gaining focus
-    auto&& new_focus_wnd = FocusWnd();
-    if (new_focus_wnd)
-        new_focus_wnd->HandleEvent(WndEvent(WndEvent::GainingFocus));
-}
+{ m_impl->SetFocusWnd(wnd); }
 
 bool GUI::SetPrevFocusWndInCycle()
 {
