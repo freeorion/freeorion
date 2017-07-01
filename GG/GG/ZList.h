@@ -59,17 +59,17 @@ public:
     /** RenderOrderIterable can be iterated in back to front render order. */
     struct RenderOrderIterable {
         RenderOrderIterable(const std::list<std::shared_ptr<Wnd>>& list) :
-            m_list(list)
+            m_list(list.crbegin(), list.crend())
         {}
 
-        std::list<std::shared_ptr<Wnd>>::const_reverse_iterator begin()
-        { return m_list.crbegin(); }
+        std::vector<std::shared_ptr<Wnd>>::const_iterator begin()
+        { return m_list.cbegin(); }
 
-        std::list<std::shared_ptr<Wnd>>::const_reverse_iterator end()
-        { return m_list.crend(); }
+        std::vector<std::shared_ptr<Wnd>>::const_iterator end()
+        { return m_list.cend(); }
 
         private:
-        const std::list<std::shared_ptr<Wnd>>& m_list;
+        const std::vector<std::shared_ptr<Wnd>> m_list;
     };
 
     /** \name Accessors */ ///@{
