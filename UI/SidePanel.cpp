@@ -3133,6 +3133,7 @@ void SidePanel::RefreshImpl() {
     textures.push_back(graphic);
 
     int graphic_width = Value(Width()) - MaxPlanetDiameter();
+    DetachChild(m_star_graphic);
     m_star_graphic = GG::Wnd::Create<GG::DynamicGraphic>(GG::X(MaxPlanetDiameter()), GG::Y0,
                                                          GG::X(graphic_width), GG::Y(graphic_width), true,
                                                          textures[0]->DefaultWidth(), textures[0]->DefaultHeight(),
