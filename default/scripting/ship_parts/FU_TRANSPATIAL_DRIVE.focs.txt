@@ -1,8 +1,14 @@
 Part
     name = "FU_TRANSPATIAL_DRIVE"
     description = "FU_TRANSPATIAL_DRIVE_DESC"
+    exclusions = [
+        "FU_IMPROVED_ENGINE_COUPLINGS"
+        "FU_N_DIMENSIONAL_ENGINE_MATRIX"
+        "FU_SINGULARITY_ENGINE_CORE"
+        "FU_TRANSPATIAL_DRIVE"
+    ]
     class = Speed
-    capacity = 40
+    capacity = 60
     mountableSlotTypes = Core
     buildcost = 80 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 8

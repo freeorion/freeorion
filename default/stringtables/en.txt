@@ -12065,33 +12065,46 @@ Sensors
 DT_DETECTOR_4_DESC
 Very long-range detection.
 
+FU_ENGINE_PART_LIMIT
+Only one engine part may be equipped on a ship.
+
 FU_IMPROVED_ENGINE_COUPLINGS
 Improved Engine Couplings
 
 FU_IMPROVED_ENGINE_COUPLINGS_DESC
-'''Increases [[metertype METER_SPEED]] by 10.
+'''Better engine parts equate to better engines.
 
-Better engine parts equate to better engines.'''
+- Increases [[metertype METER_SPEED]] by 20.
+- [[FU_ENGINE_PART_LIMIT]]'''
 
 FU_N_DIMENSIONAL_ENGINE_MATRIX
 N-Dimensional Engine Matrix
 
 FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-'''Increases [[metertype METER_SPEED]] by 20.
+'''N-Dimensional subspace research resulted in a more efficient engine matrix.
 
-N-Dimensional subspace research resulted in a more efficient engine matrix.'''
+- Increases [[metertype METER_SPEED]] by 40.
+- [[FU_ENGINE_PART_LIMIT]]'''
 
 FU_SINGULARITY_ENGINE_CORE
 Singularity Engine Core
 
 FU_SINGULARITY_ENGINE_CORE_DESC
-A smaller cousin of the [[buildingtype BLD_HYPER_DAM]] outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases [[metertype METER_SPEED]] by 30.
+'''A smaller cousin of the [[buildingtype BLD_HYPER_DAM]] outfitted for ships, the Singularity Engine Core drastically boosts power generation.
+
+- Increases [[metertype METER_SPEED]] by 80.
+- [[FU_ENGINE_PART_LIMIT]]'''
 
 FU_TRANSPATIAL_DRIVE
 Trans-spatial Drive
 
 FU_TRANSPATIAL_DRIVE_DESC
-An incredibly powerful drive that bends spacetime itself, increasing both [[metertype METER_SPEED]] and [[metertype METER_STEALTH]] by 40. Can only be mounted in a Core [[encyclopedia SLOT_TITLE]]. Stealth boost does not stack with other part bonuses.
+'''An incredibly powerful drive that bends spacetime itself.
+
+- Increases [[metertype METER_SPEED]] by 60
+- Increases [[metertype METER_STEALTH]] by 40
+- Stealth boost does not stack with other part bonuses.
+- [[FU_ENGINE_PART_LIMIT]]'''
 
 FU_BASIC_TANK
 Extra Fuel Tank

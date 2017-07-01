@@ -850,7 +850,7 @@ class ShipDesigner(object):
         self.production_time = local_time_cache.get(self.hull.name, self.hull.productionTime(fo.empireID(), self.pid))
 
         # read out part stats
-        shield_counter = cloak_counter = detection_counter = colonization_counter = 0  # to deal with Non-stacking parts
+        shield_counter = cloak_counter = detection_counter = colonization_counter = engine_counter = 0  # to deal with Non-stacking parts
         hangar_parts = set()
         for part in self.parts:
             self.production_cost += local_cost_cache.get(part.name, part.productionCost(fo.empireID(), self.pid))
@@ -861,7 +861,11 @@ class ShipDesigner(object):
             if partclass in FUEL:
                 self.design_stats.fuel += capacity
             elif partclass in ENGINES:
-                self.design_stats.speed += capacity
+                engine_counter += 1
+                if engine_counter == 1:
+                    self.design_stats.speed += capacity
+                else:
+                    self.design_stats.speed = 0
             elif partclass in COLONISATION:
                 colonization_counter += 1
                 if colonization_counter == 1:
