@@ -380,12 +380,13 @@ void IntroScreen::OnCredits() {
 
     int credit_side_pad(30);
 
-    CreditsWnd credits_wnd(GG::X0, nUpperLine, GG::GUI::GetGUI()->AppWidth(), nLowerLine-nUpperLine,
-                           credits,
-                           credit_side_pad, 0, Value(m_menu->Left()) - credit_side_pad,
-                           Value(nLowerLine-nUpperLine), Value((nLowerLine-nUpperLine))/2);
+    auto credits_wnd = GG::Wnd::Create<CreditsWnd>(
+        GG::X0, nUpperLine, GG::GUI::GetGUI()->AppWidth(), nLowerLine-nUpperLine,
+        credits,
+        credit_side_pad, 0, Value(m_menu->Left()) - credit_side_pad,
+        Value(nLowerLine-nUpperLine), Value((nLowerLine-nUpperLine))/2);
 
-    credits_wnd.Run();
+    credits_wnd->Run();
 }
 
 void IntroScreen::OnExitGame() {

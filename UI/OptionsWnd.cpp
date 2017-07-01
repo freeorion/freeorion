@@ -213,9 +213,9 @@ namespace {
         };
 
         static std::pair<GG::Key, GG::Flags<GG::ModKey>> GetKeypress() {
-            KeyPressCatcher ct;
-            ct.Run();
-            return std::make_pair(ct.m_key, ct.m_mods);
+            auto ct = GG::Wnd::Create<KeyPressCatcher>();
+            ct->Run();
+            return std::make_pair(ct->m_key, ct->m_mods);
         };
     };
 

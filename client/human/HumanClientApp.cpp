@@ -1224,8 +1224,8 @@ void HumanClientApp::ResetOrExitApp(bool reset) {
 
     if (m_save_game_in_progress) {
         DebugLogger() << "save game in progress. Checking with player.";
-        auto dlg = SaveGamePendingDialog(reset, this->SaveGameCompletedSignal);
-        dlg.Run();
+        auto dlg = GG::Wnd::Create<SaveGamePendingDialog>(reset, this->SaveGameCompletedSignal);
+        dlg->Run();
     }
 
     m_fsm->process_event(StartQuittingGame(reset, m_server_process));
