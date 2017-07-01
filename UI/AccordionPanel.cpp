@@ -25,6 +25,7 @@ void AccordionPanel::CompleteConstruction() {
 
     AttachChild(m_expand_button);
 
+    // Don't call the virtual function, derived classes may not be completed
     AccordionPanel::DoLayout();
     InitBuffer();
 }
