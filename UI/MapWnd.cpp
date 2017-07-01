@@ -4920,6 +4920,8 @@ void MapWnd::CreateFleetButtonsOfType (
 }
 
 void MapWnd::DeleteFleetButtons() {
+    for (auto& id_and_fb: m_fleet_buttons)
+        DetachChild(id_and_fb.second);
     m_fleet_buttons.clear();            // duplicates pointers in following containers
     m_stationary_fleet_buttons.clear();
     m_departing_fleet_buttons.clear();
