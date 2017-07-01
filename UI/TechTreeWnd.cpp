@@ -1223,6 +1223,8 @@ void TechTreeWnd::LayoutPanel::Clear() {
     GG::SignalScroll(*m_hscroll, true);
 
     // delete all panels
+    for (const auto& tech_panel: m_techs)
+        m_layout_surface->DetachChild(tech_panel.second);
     m_techs.clear();
     m_graph.Clear();
 
@@ -1368,8 +1370,6 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     const std::string selected_tech = m_selected_tech_name;
 
     // cleanup old data for new layout
-    for (const auto& tech_panel: m_techs)
-        m_layout_surface->DetachChild(tech_panel.second);
     Clear();
 
     DebugLogger() << "Tech Tree Layout Preparing Tech Data";
