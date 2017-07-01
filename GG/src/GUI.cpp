@@ -1651,7 +1651,7 @@ void GUI::RenderDragDropWnds()
 {
     // render drag-and-drop windows in arbitrary order (sorted by pointer value)
     m_impl->m_rendering_drag_drop_wnds = true;
-    for (const auto& drop_wnd : m_impl->m_drag_drop_wnds) {
+    for (const auto drop_wnd : m_impl->m_drag_drop_wnds) {
         bool old_visible = drop_wnd.first->Visible();
         if (!old_visible)
             drop_wnd.first->Show();
@@ -1685,12 +1685,12 @@ void GUI::ProcessBrowseInfo()
 void GUI::PreRender()
 {
     // pre-render normal windows back-to-front
-    for (auto& wnd : m_impl->m_zlist.RenderOrder()) {
+    for (auto wnd : m_impl->m_zlist.RenderOrder()) {
         PreRenderWindow(wnd.get());
     }
 
     // pre-render modal windows back-to-front (on top of non-modal Wnds rendered above)
-    for (const auto& modal_wnd : m_impl->m_modal_wnds) {
+    for (const auto modal_wnd : m_impl->m_modal_wnds) {
         PreRenderWindow(modal_wnd.first.get());
     }
 
@@ -1716,13 +1716,13 @@ void GUI::Render()
 
     Enter2DMode();
     // render normal windows back-to-front
-    for (auto& wnd : m_impl->m_zlist.RenderOrder()) {
+    for (auto wnd : m_impl->m_zlist.RenderOrder()) {
         if (wnd)
             RenderWindow(wnd.get());
     }
 
     // render modal windows back-to-front (on top of non-modal Wnds rendered above)
-    for (const auto& modal_wnd : m_impl->m_modal_wnds) {
+    for (const auto modal_wnd : m_impl->m_modal_wnds) {
         if (modal_wnd.first)
             RenderWindow(modal_wnd.first.get());
     }
