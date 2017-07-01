@@ -61,8 +61,9 @@ packages via the command line.
 
 ## Directories
 * install directory  
-The location of this README.md file, called `<install_dir>` below.  
+The location of this README.md file, called `<install_dir>` below.
 * config - game settings  
+Called `<config_dir>` below.  
     * linux  
 `$XDG_CONFIG_HOME/freeorion` which defaults to `~/.config/freeorion`  
     * OSX  
@@ -70,18 +71,23 @@ The location of this README.md file, called `<install_dir>` below.
     * Windows  
 `$APPDATA\FreeOrion`  
 * data - local user data, saved games, log files  
+Called `<data_dir>` below.  
     * linux  
 `$XDG_DATA_HOME/freeorion` which defaults to `~/.config/freeorion`  
     * OSX  
 `$HOME/Library/Application Support/FreeOrion/` which defaults to `~/Library/Application Support/FreeOrion/`  
     * Windows  
 `$APPDATA\FreeOrion`  
+* resource directory - audio, visual and textual UI content, python scripts  
+Called `<resource_dir>` below.  
+`<install_dir>/default/`  
+`<resource_dir>` can be redirected in `<config_dir>/config.xml` or `<config_dir>/persistent_config.xml`  
 * stringtables - translation indices for various languages  
-    `<install_dir>/default/stringtables/`  
+    `<resource_dir>/stringtables/`  
 * scripting - FreeOrion Content Scripts (FOCS) describing game content (tech, species etc.)  
-    `<install_dir>/default/scripting/`  
+    `<resource_dir>/scripting/`  
 * AI - AI for computer controlled empires  
-    `<install_dir>/default/python/AI`  
+    `<resource_dir>/python/AI`  
 
 
 ## Contact and Getting Help
