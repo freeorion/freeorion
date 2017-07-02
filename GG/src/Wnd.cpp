@@ -1091,16 +1091,18 @@ bool Wnd::EventFilter(Wnd* w, const WndEvent& event)
 
 void Wnd::HandleEvent(const WndEvent& event)
 {
-    for (auto& filter : m_filters) {
-        auto locked = filter.lock();
-        if (!locked) {
-            filter.reset();
-            // TODO: this should never happen.
-            continue;
-        }
-        if(locked && locked->EventFilter(this, event))
-            return;
-    }
+    // Check if any of the filters block this event
+    bool filtered = false;
+    ProcessThenRemoveExpiredPtrs(
+        m_filters,
+        [&filtered, this, &event](std::shared_ptr<Wnd>& wnd)
+        {
+            if (!filtered)
+                filtered = wnd->EventFilter(this, event);
+        });
+
+    if (filtered)
+        return;
 
     try {
         switch (event.Type()) {
