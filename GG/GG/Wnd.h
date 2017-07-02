@@ -614,6 +614,13 @@ public:
     void DetachChild(Wnd* wnd);
     void DetachChild(const std::shared_ptr<Wnd>& wnd);
 
+    /** Remove \p wnd from the child ptr list and reset \p wnd. */
+    template <typename T>
+    void DetachChildAndReset(T& wnd) {
+        DetachChild(wnd);
+        wnd.reset();
+    }
+
     /** Removes all Wnds from child ptr list and resets all childrens' m_parents. */
     void DetachChildren();
 
