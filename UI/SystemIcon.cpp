@@ -652,8 +652,7 @@ void SystemIcon::Refresh() {
 
 
     // remove existing system name control
-    DetachChild(m_colored_name);
-    m_colored_name.reset();
+    DetachChildAndReset(m_colored_name);
 
     // create new system name control
     if (!name.empty()) {

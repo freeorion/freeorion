@@ -1783,12 +1783,12 @@ void ProductionInfoPanel::SetEmpireID(int empire_id) {
 }
 
 void ProductionInfoPanel::ClearLocalInfo() {
-    DetachAndReset(m_local_points_label);
-    DetachAndReset(m_local_points);
-    DetachAndReset(m_local_points_P_label);
-    DetachAndReset(m_local_wasted_points_label);
-    DetachAndReset(m_local_wasted_points);
-    DetachAndReset(m_local_wasted_points_P_label);
+    DetachChildAndReset(m_local_points_label);
+    DetachChildAndReset(m_local_points);
+    DetachChildAndReset(m_local_points_P_label);
+    DetachChildAndReset(m_local_wasted_points_label);
+    DetachChildAndReset(m_local_wasted_points);
+    DetachChildAndReset(m_local_wasted_points_P_label);
 
     const Empire* empire = GetEmpire(m_empire_id);
     std::string empire_name;
@@ -1799,12 +1799,12 @@ void ProductionInfoPanel::ClearLocalInfo() {
 }
 
 void ProductionInfoPanel::Clear() {
-    DetachAndReset(m_total_points_label);
-    DetachAndReset(m_total_points);
-    DetachAndReset(m_total_points_P_label);
-    DetachAndReset(m_wasted_points_label);
-    DetachAndReset(m_wasted_points);
-    DetachAndReset(m_wasted_points_P_label);
+    DetachChildAndReset(m_total_points_label);
+    DetachChildAndReset(m_total_points);
+    DetachChildAndReset(m_total_points_P_label);
+    DetachChildAndReset(m_wasted_points_label);
+    DetachChildAndReset(m_wasted_points);
+    DetachChildAndReset(m_wasted_points_P_label);
     m_empire_id = ALL_EMPIRES;
 
     ClearLocalInfo();

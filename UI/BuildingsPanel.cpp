@@ -358,8 +358,8 @@ void BuildingIndicator::Refresh() {
 
     ClearBrowseInfoWnd();
 
-    m_graphic.reset();
-    m_scrap_indicator.reset();
+    DetachChildAndReset(m_graphic);
+    DetachChildAndReset(m_scrap_indicator);
 
     if (const BuildingType* type = GetBuildingType(building->BuildingTypeName())) {
         std::shared_ptr<GG::Texture> texture = ClientUI::BuildingIcon(type->Name());

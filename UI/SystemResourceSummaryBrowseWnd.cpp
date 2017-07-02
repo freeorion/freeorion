@@ -436,12 +436,9 @@ void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
 }
 
 void SystemResourceSummaryBrowseWnd::Clear() {
-    DetachChild(m_production_label);
-    DetachChild(m_allocation_label);
-    DetachChild(m_import_export_label);
-    m_production_label.reset();
-    m_allocation_label.reset();
-    m_import_export_label.reset();
+    DetachChildAndReset(m_production_label);
+    DetachChildAndReset(m_allocation_label);
+    DetachChildAndReset(m_import_export_label);
 
     for (const auto& label_pair : m_production_labels_and_amounts) {
         DetachChild(label_pair.first);

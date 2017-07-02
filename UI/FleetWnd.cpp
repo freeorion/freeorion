@@ -743,12 +743,12 @@ void ShipDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void ShipDataPanel::SetShipIcon() {
-    m_ship_icon.reset();
-    m_scrap_indicator.reset();
-    m_colonize_indicator.reset();
-    m_invade_indicator.reset();
-    m_bombard_indicator.reset();
-    m_scanline_control.reset();
+    DetachChildAndReset(m_ship_icon);
+    DetachChildAndReset(m_scrap_indicator);
+    DetachChildAndReset(m_colonize_indicator);
+    DetachChildAndReset(m_invade_indicator);
+    DetachChildAndReset(m_bombard_indicator);
+    DetachChildAndReset(m_scanline_control);
 
     std::shared_ptr<const Ship> ship = GetShip(m_ship_id);
     if (!ship)
@@ -806,7 +806,9 @@ void ShipDataPanel::Refresh() {
     if (!ship) {
         // blank text and delete icons
         m_ship_name_text->SetText("");
-        m_design_name_text.reset();
+        DetachChildAndReset(m_design_name_text);
+        for (auto& type_and_icon: m_stat_icons)
+            DetachChild(type_and_icon.second);
         m_stat_icons.clear();
         return;
     }
@@ -1355,9 +1357,9 @@ void FleetDataPanel::ToggleAggression() {
 }
 
 void FleetDataPanel::Refresh() {
-    m_fleet_icon.reset();
-    m_scanline_control.reset();
-    m_gift_indicator.reset();
+    DetachChildAndReset(m_fleet_icon);
+    DetachChildAndReset(m_scanline_control);
+    DetachChildAndReset(m_gift_indicator);
 
     if (m_is_new_fleet_drop_target) {
         m_fleet_name_text->SetText(UserString("FW_NEW_FLEET_LABEL"));

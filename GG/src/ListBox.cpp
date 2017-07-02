@@ -1108,10 +1108,8 @@ void ListBox::Clear()
             m_num_cols = 1;
     }
 
-    DetachChild(m_vscroll.get());
-    m_vscroll.reset();
-    DetachChild(m_hscroll.get());
-    m_hscroll.reset();
+    DetachChildAndReset(m_vscroll);
+    DetachChildAndReset(m_hscroll);
 
     RequirePreRender();
     ClearedRowsSignal();
@@ -1326,7 +1324,7 @@ void ListBox::SetStyle(Flags<ListBoxStyle> s)
 void ListBox::SetColHeaders(const std::shared_ptr<Row>& r)
 {
     Y client_height = ClientHeight();
-    m_header_row.reset();
+    DetachChildAndReset(m_header_row);
     if (r) {
         m_header_row = r;
         // if this column header is being added to an empty listbox, the listbox takes on some of the
@@ -2247,8 +2245,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_vscroll->ScrollTo(0);
         SignalScroll(*m_vscroll, true);
 
-        DetachChild(m_vscroll.get());
-        m_vscroll.reset();
+        DetachChildAndReset(m_vscroll);
     }
 
     // Add necessary vscroll

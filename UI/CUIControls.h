@@ -591,12 +591,6 @@ public:
 
 private:
     void DoLayout();
-    template <typename T>
-    void DetachAndReset(T& wnd) {
-        DetachChild(wnd);
-        wnd.reset();
-    }
-
     std::string m_units_str;
     std::string m_title_str;
     int         m_empire_id;

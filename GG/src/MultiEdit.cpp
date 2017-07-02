@@ -1052,8 +1052,8 @@ void MultiEdit::TextInput(const std::string* text) {
 
 void MultiEdit::RecreateScrolls()
 {
-    m_vscroll.reset();
-    m_hscroll.reset();
+    DetachChildAndReset(m_vscroll);
+    DetachChildAndReset(m_hscroll);
     AdjustScrolls();
 }
 

@@ -1106,8 +1106,8 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
     if (!planet || !GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown"))
         return;
 
-    m_planet_graphic.reset();
-    m_rotating_planet_graphic.reset();
+    DetachChildAndReset(m_planet_graphic);
+    DetachChildAndReset(m_rotating_planet_graphic);
 
     if (planet->Type() == PT_ASTEROIDS) {
         const std::vector<std::shared_ptr<GG::Texture>>& textures = GetAsteroidTextures();
@@ -1484,38 +1484,17 @@ void SidePanel::PlanetPanel::Refresh() {
     if (!planet) {
         DebugLogger() << "PlanetPanel::Refresh couldn't get planet!";
         // clear / hide everything...
-        DetachChild(m_planet_name);
-        m_planet_name.reset();
-
-        DetachChild(m_env_size);
-        m_env_size.reset();
-
-        DetachChild(m_focus_drop);
-        m_focus_drop.reset();
-
-        DetachChild(m_population_panel);
-        m_population_panel.reset();
-
-        DetachChild(m_resource_panel);
-        m_resource_panel.reset();
-
-        DetachChild(m_military_panel);
-        m_military_panel.reset();
-
-        DetachChild(m_buildings_panel);
-        m_buildings_panel.reset();
-
-        DetachChild(m_colonize_button);
-        m_colonize_button.reset();
-
-        DetachChild(m_invade_button);
-        m_invade_button.reset();
-
-        DetachChild(m_bombard_button);
-        m_bombard_button.reset();
-
-        DetachChild(m_specials_panel);
-        m_specials_panel.reset();
+        DetachChildAndReset(m_planet_name);
+        DetachChildAndReset(m_env_size);
+        DetachChildAndReset(m_focus_drop);
+        DetachChildAndReset(m_population_panel);
+        DetachChildAndReset(m_resource_panel);
+        DetachChildAndReset(m_military_panel);
+        DetachChildAndReset(m_buildings_panel);
+        DetachChildAndReset(m_colonize_button);
+        DetachChildAndReset(m_invade_button);
+        DetachChildAndReset(m_bombard_button);
+        DetachChildAndReset(m_specials_panel);
 
         RequirePreRender();
         return;
@@ -3113,8 +3092,8 @@ void SidePanel::RefreshImpl() {
     // clear out current contents
     m_planet_panel_container->Clear();
     m_star_type_text->SetText("");
-    m_star_graphic.reset();
-    m_system_resource_summary.reset();
+    DetachChildAndReset(m_star_graphic);
+    DetachChildAndReset(m_system_resource_summary);
 
 
     RefreshSystemNames();

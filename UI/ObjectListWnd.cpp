@@ -730,9 +730,9 @@ private:
         if (!m_class_drop)
             return;
         // remove old parameter controls
-        m_string_drop.reset();
-        m_param_spin1.reset();
-        m_param_spin2.reset();
+        DetachChildAndReset(m_string_drop);
+        DetachChildAndReset(m_param_spin1);
+        DetachChildAndReset(m_param_spin2);
 
         // determine which condition is selected
         GG::ListBox::iterator row_it = m_class_drop->CurrentItem();
@@ -1335,9 +1335,9 @@ public:
         GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER |
                                             GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
 
-        m_dot.reset();
-        m_expand_button.reset();
-        m_icon.reset();
+        DetachChildAndReset(m_dot);
+        DetachChildAndReset(m_expand_button);
+        DetachChildAndReset(m_icon);
 
         if (m_has_contents) {
             boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";

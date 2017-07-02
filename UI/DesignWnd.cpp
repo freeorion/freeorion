@@ -3169,8 +3169,7 @@ void SlotControl::SetPart(const std::string& part_name)
 
 void SlotControl::SetPart(const PartType* part_type) {
     // remove existing part control, if any
-    DetachChild(m_part_control);
-    m_part_control.reset();
+    DetachChildAndReset(m_part_control);
 
     // create new part control for passed in part_type
     if (part_type) {
