@@ -621,7 +621,8 @@ void CUIWnd::SaveOptions() const {
 
     // The default empty string means 'do not save/load properties'
     // Also do not save while the window is being dragged.
-    if (m_config_name.empty() || !m_config_save || GG::GUI::GetGUI()->DragWnd(this, 0)) {
+    auto gui = GG::GUI::GetGUI();
+    if (m_config_name.empty() || !m_config_save || !gui || gui->DragWnd(this, 0)) {
         return;
     } else if (!db.OptionExists("UI.windows."+m_config_name+".initialized")) {
         ErrorLogger() << "CUIWnd::SaveOptions() : attempted to save window options using name \"" << m_config_name << "\" but the options do not appear to be registered in the OptionsDB.";
