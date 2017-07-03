@@ -1380,7 +1380,10 @@ OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS
 Active/Désactive le repositionnement automatique des fenêtres lorsque la taille d'affichage de l'application est modifiée.
 
 OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS
-Ajoute automatiquement tous les modèles d'astronef conçus et sauvegardés par le joueur à la liste des modèles connus de l'Empire du joueur, si et seulement si la fenêtre Conception est consultée au Tour 1.
+Ajoute automatiquement tous les modèles d'astronef conçus et sauvegardés par le joueur à la liste des modèles connus de l'Empire du joueur.
+
+OPTIONS_DB_ADD_DEFAULT_DESIGNS
+Ajoute automatiquement tous les modèles d'astronef par défaut à la liste des modèles connus de l'Empire du joueur.
 
 OPTIONS_DB_DESIGN_PEDIA_DYNAMIC
 Dans la Fenêtre Conception, met à jour dynamiquement l'article de l'Encyclopédie lorsque le nom du modèle est modifié.
@@ -2615,6 +2618,9 @@ Threads de rendu d'effets (serveur)
 OPTIONS_ADD_SAVED_DESIGNS
 Ajouter tous les modèles d'astronef sauvegardés au démarrage d'une partie
 
+OPTIONS_ADD_DEFAULT_DESIGNS
+Ajouter tous les modèles d'astronef par défaut au démarrage d'une partie
+
 OPTIONS_USE_BINARY_SERIALIZATION
 Utiliser des fichiers de sauvegarde binaire
 
@@ -3534,6 +3540,9 @@ Structures
 PRODUCTION_WND_CATEGORY_BT_SHIP
 Astronefs
 
+PRODUCTION_WND_AVAILABILITY_OBSOLETE
+Obsolètes
+
 PRODUCTION_WND_AVAILABILITY_AVAILABLE
 Disponibles
 
@@ -3770,13 +3779,31 @@ SHIP_DESIGN_FILES
 Fichiers Modèle
 
 DESIGN_SAVE
-Sauvegarder Fichier Modèle
+Sauvegarder Modèle
 
 DESIGN_ADD
 Ajouter Modèle aux Modèles de l'Empire
 
-DESIGN_ADD_ALL
-Ajouter tous les Modèles sauvegardés à l'Empire
+DESIGN_WND_DELETE_SAVED
+Supprimer Modèle Sauvegardé
+
+DESIGN_WND_ADD_ALL_SAVED_NOW
+Ajouter tous les Modèles sauvegardés à l'Empire maintenant
+
+DESIGN_WND_ADD_ALL_SAVED_START
+Ajouter tous les Modèles sauvegardés au démarrage d'une partie
+
+DESIGN_WND_ADD_ALL_DEFAULT_START
+Ajouter tous les Modèles par défaut au démarrage d'une partie
+
+DESIGN_WND_OBSOLETE_DESIGN
+Modèle obsolète
+
+DESIGN_WND_UNOBSOLETE_DESIGN
+Modèle non-obsolète
+
+DESIGN_WND_DELETE_DESIGN
+Supprimer Modèle
 
 DESIGN_NAME_DEFAULT
 Modèle d'astronef personnalisé
@@ -3815,7 +3842,7 @@ DESIGN_WND_CLEAR
 Effacer Équipements
 
 DESIGN_RENAME
-Renommer le Modèle
+Renommer Modèle
 
 DESIGN_ENTER_NEW_DESIGN_NAME
 Entrer le nouveau nom du modèle:
@@ -3847,36 +3874,63 @@ Modèle incompatible
 DESIGN_COMPONENT_CONFLICT_DETAIL
 Un modèle d'astronef ne peut contenir à la fois les équipements %1% et %2%.
 
-DESIGN_OBSOLETE
-Modèle obsolète
-
-DESIGN_WND_ADD
-Ajouter nouv. Modèle
+DESIGN_WND_ADD_FINISHED
+Ajouter Modèle Finalisé
 
 # %1% name of the new ship design.
-DESIGN_WND_ADD_DETAIL
+DESIGN_WND_ADD_DETAIL_FINISHED
 '''Ajouter nouveau modèle nommé
 "%1%"
 aux modèles finalisés.'''
 
-DESIGN_WND_UPDATE
-Actualiser anc. Modèle
+DESIGN_WND_UPDATE_FINISHED
+Actualiser Modèle Finalisé
 
-# %1% old name of the existing design.
+# %1% previous name of the existing design.
 # %2% new name of the existing design.
-DESIGN_WND_UPDATE_DETAIL
-'''Remplacer ancien modèle
+DESIGN_WND_UPDATE_DETAIL_FINISHED
+'''Remplacer modèle finalisé
 "%1%"
 avec nouveau modèle
 "%2%"
 dans modèles finalisés.'''
 
+DESIGN_WND_ADD_SAVED
+Ajouter Modèle Sauvegardé
+
+# %1% name of the new ship design.
+DESIGN_WND_ADD_DETAIL_SAVED
+'''Ajouter un modèle nommé
+"%1%"
+aux modèles sauvegardés.'''
+
+DESIGN_WND_UPDATE_SAVED
+Actualiser Modèle Sauvegardé
+
+# %1% old name of the saved design.
+# %2% new name of the saved design.
+DESIGN_WND_UPDATE_DETAIL_SAVED
+'''Remplacer modèle sauvegardé
+"%1%"
+avec nouveau modèle
+"%2%"
+dans modèles sauvegardés.'''
+
 DESIGN_UPDATE_INVALID_NO_CANDIDATE
 Choisir un modèle existant à actualiser.
 
 ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT
-Choisissez une coque, ajoutez des équipements, puis cliquez sur "[[DESIGN_WND_ADD]]" pour créer un modèle utilisable.
+Choisissez une coque, ajoutez des équipements, puis cliquez sur "[[DESIGN_WND_ADD_FINISHED]]" pour créer un modèle utilisable.
 
+ADD_FIRST_DESIGN_HULL_QUEUE_PROMPT
+Activez/Désactivez les filtres Obsolètes, Disponibles et Indisponibles pour afficher plus de coques.
+
+ADD_FIRST_SAVED_DESIGN_QUEUE_PROMPT
+Sélectionnez un Modèle Finalisé existant, clic-droit puis cliquez sur "[[DESIGN_SAVE]]" pour créer un modèle sauvegardé.
+
+# %1% File path of unwritable file
+ERROR_UNABLE_TO_WRITE_FILE
+Impossible de créer le fichier:\n"%1%"
 
 ##
 ## Statistics
@@ -5091,19 +5145,21 @@ Fenêtre Conception
 DESIGN_WINDOW_ARTICLE_TEXT
 '''La [[DESIGN_WINDOW_ARTICLE_TITLE]] permet de visualiser ou de modifier les modèles de monstres ou d'astronefs.
 
-Cette dernière est composée de quatre panneaux: [[DESIGN_WND_STARTS]], [[DESIGN_WND_PART_PALETTE_TITLE]], [[DESIGN_WND_MAIN_PANEL_TITLE]], [[MAP_BTN_PEDIA]].
+Les modèles et équipements d'astronef peuvent être [[PRODUCTION_WND_AVAILABILITY_AVAILABLE]], [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] ou [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]]. Les modèles et équipements [[PRODUCTION_WND_AVAILABILITY_AVAILABLE]] sont libres d'utilisation pour l'empire. L'accès aux modèles et équipements [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] est soumis à certaines conditions. Certains modèles et équipements indisponibles peuvent être débloqués via la [[METER_RESEARCH]] des [[encyclopedia ENC_TECH]] associées. Les modèles [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] sont déclarés obsolètes/non-obsolètes selon les besoins de l'empire. Les modèles [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] n'apparaîtront pas dans la [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]] mais seulement dans la [[DESIGN_WINDOW_ARTICLE_TITLE]] lorsque le filtre "[[PRODUCTION_WND_AVAILABILITY_OBSOLETE]]" est activé. Les équipements d'astronef ne peuvent pas être déclarés obsolètes.
+
+La [[DESIGN_WINDOW_ARTICLE_TITLE]] est composée de quatre panneaux: [[DESIGN_WND_STARTS]], [[DESIGN_WND_PART_PALETTE_TITLE]], [[DESIGN_WND_MAIN_PANEL_TITLE]], [[MAP_BTN_PEDIA]].
 
 
-Le panneau [[DESIGN_WND_STARTS]] propose quatre onglets différents: les [[DESIGN_WND_HULLS]] de départ, les modèles [[DESIGN_WND_FINISHED_DESIGNS]], les modèles [[DESIGN_WND_SAVED_DESIGNS]] lors de précédentes parties, et enfin les modèles de [[DESIGN_WND_MONSTERS]] pour consultation. Glissez-déposez ou double-cliquez sur une coque, un modèle ou un monstre pour les examiner plus en détails ou les modifier sur le plan de travail.
+Le panneau [[DESIGN_WND_STARTS]] propose quatre onglets différents: les [[DESIGN_WND_HULLS]] de départ, les modèles [[DESIGN_WND_FINISHED_DESIGNS]], les modèles [[DESIGN_WND_SAVED_DESIGNS]] lors de précédentes parties, et enfin les modèles de [[DESIGN_WND_MONSTERS]] pour consultation. Glissez-déposez ou double-cliquez sur une coque, un modèle ou un monstre pour les examiner plus en détails ou les modifier sur le plan de travail. L'ordre des modèles dans la liste peut être également modifié par un glisser/déposer.
 
-Les modèles [[DESIGN_WND_FINISHED_DESIGNS]] sont affichés dans un ordre identique à celui de la Fenêtre Production. L'ordre des différents modèles peut être modifié par un glisser-déposer. Un modèle peut être supprimé de la liste par un clic-droit en sélectionnant "[[DESIGN_OBSOLETE]]" dans le menu contextuel. Les astronefs déjà placés en file d'attente de production seront cependant toujours construits sur la base de l'ancien modèle. Un nouveau modèle d'astronef peut être sauvegardé sur le disque dur via la commande "[[DESIGN_SAVE]]" du menu contextuel, afin de pouvoir le réutiliser sans passer à nouveau par l'étape de conception lors de futures parties.
+Les modèles [[DESIGN_WND_FINISHED_DESIGNS]] sont affichés dans un ordre identique à celui de la Fenêtre Production. Le menu contextuel suite à un clic-droit propose plusieurs options. Déclarer un modèle obsolète/non-obsolète avec l'entrée "[[DESIGN_WND_OBSOLETE_DESIGN]]" (ctrl+clic sur un modèle permettra de basculer directement entre les deux états). Supprimer un modèle avec l'entrée "[[DESIGN_WND_DELETE_DESIGN]]" ; les modèles supprimés ne peuvent pas être récupérés (les astronefs déjà placés en file d'attente de production seront cependant toujours construits sur la base du modèle obsolète ou supprimé). Renommer un modèle avec l'entrée "[[DESIGN_RENAME]]". Sauvegarder un modèle sur le disque dur avec l'entrée "[[DESIGN_SAVE]]", afin de pouvoir le réutiliser sans passer à nouveau par l'étape de conception lors de futures parties. Activez/désactivez l'option "[[DESIGN_WND_ADD_ALL_DEFAULT_START]]" pour utiliser/ne pas utiliser les modèles par défaut lors d'une nouvelle partie.
 
-Au lancement d'une nouvelle partie, un clic-droit sur les modèles [[DESIGN_WND_SAVED_DESIGNS]] les ajoute à l'unité ou en totalité aux modèles d'astronefs de l'empire. Si "[[OPTIONS_ADD_SAVED_DESIGNS]]" est activée dans les options de jeu, tous les modèles [[DESIGN_WND_SAVED_DESIGNS]] seront automatiquement importés à chaque lancement d'une toute nouvelle partie.
+Un clic-droit sur les modèles [[DESIGN_WND_SAVED_DESIGNS]] ouvre un menu contextuel permettant de les ajouter à l'unité ou en totalité aux modèles [[DESIGN_WND_FINISHED_DESIGNS]] de l'empire (ctrl+clic sur un modèle permettra de l'ajouter directement aux modèles [[DESIGN_WND_FINISHED_DESIGNS]]). Un modèle sauvegardé peut être supprimé définitivement avec l'entrée "[[DESIGN_WND_DELETE_SAVED]]". Si l'option "[[OPTIONS_ADD_SAVED_DESIGNS]]" est activée dans les options de jeu, tous les modèles [[DESIGN_WND_SAVED_DESIGNS]] seront automatiquement importés à chaque lancement d'une toute nouvelle partie.
 
 
 Le panneau [[DESIGN_WND_PART_PALETTE_TITLE]] affiche comme son nom l'indique les équipements. Ceux dont la technologie associée a été recherchée et assimilée sont disponibles et peuvent être intégrés dans un modèle d'astronef. D'autres équipements sont indisponibles si aucune [[metertype METER_RESEARCH]] n'a encore été effectuée concernant la technologie associée ou si cet équipement est seulement utilisable par les monstres.
 
-Les filtres "[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]" et "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" des panneaux [[DESIGN_WND_STARTS]] et [[DESIGN_WND_PART_PALETTE_TITLE]] affichent respectivement les items que l'empire peut utiliser ou non dans la conception d'astronef. Certains items indisponibles peuvent être débloqués via la [[METER_RESEARCH]] des [[encyclopedia ENC_TECH]] associées.
+Les filtres "[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]", "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" et "[[PRODUCTION_WND_AVAILABILITY_OBSOLETE]]" des panneaux [[DESIGN_WND_STARTS]] et [[DESIGN_WND_PART_PALETTE_TITLE]] affichent respectivement les items que l'empire peut utiliser ou non dans la conception d'astronef, ou ceux que l'empire a choisi de ne plus prendre en compte.
 
 Le panneau [[DESIGN_WND_PART_PALETTE_TITLE]] propose également des filtres pour afficher/cacher les équipements par catégorie.
 
@@ -5114,9 +5170,9 @@ Un modèle peut accueillir plusieurs types de [[encyclopedia SLOT_TITLE]]: inter
 
 Un nom pour le modèle conçu est requis tandis que sa description reste optionnelle.
 
-Le bouton "[[DESIGN_WND_ADD]]" ajoute le modèle conçu à la fin de la liste des modèles [[DESIGN_WND_FINISHED_DESIGNS]].
+Un clic sur "[[DESIGN_WND_ADD_FINISHED]]" ou "[[DESIGN_WND_ADD_SAVED]]" ajoute le modèle conçu au début de la liste des modèles.
 
-Le bouton "[[DESIGN_WND_UPDATE]]" remplace par un nouveau modèle le dernier modèle sélectionné et affiché depuis le panneau [[DESIGN_WND_FINISHED_DESIGNS]]. Le bouton "[[DESIGN_WND_UPDATE]]" est actif seulement si la conception d'un nouveau modèle a débuté à partir d'un modèle déjà existant dans le panneau [[DESIGN_WND_FINISHED_DESIGNS]]. "[[DESIGN_WND_UPDATE]]" modifie seulement la conception du modèle, donc tout astronef précédemment ajouté à la file d'attente de production ou déjà construit, sera toujours basé sur l'ancienne conception du modèle.
+Un clic sur "[[DESIGN_WND_UPDATE_FINISHED]]" ou "[[DESIGN_WND_UPDATE_SAVED]]" remplace par un nouveau modèle le dernier modèle sélectionné et affiché depuis le panneau "[[DESIGN_WND_FINISHED_DESIGNS]]" ou "[[DESIGN_WND_SAVED_DESIGNS]]". Les boutons "[[DESIGN_WND_UPDATE_FINISHED]]" ou "[[DESIGN_WND_UPDATE_SAVED]]" sont actifs seulement si la conception d'un nouveau modèle a débuté à partir d'un modèle déjà existant dans le panneau "[[DESIGN_WND_FINISHED_DESIGNS]]" ou "[[DESIGN_WND_SAVED_DESIGNS]]". "[[DESIGN_WND_UPDATE_FINISHED]]" modifie seulement la conception du modèle, donc tout astronef précédemment ajouté à la file d'attente de production ou déjà construit, sera toujours basé sur l'ancienne conception du modèle.
 '''
 
 FLEET_MOVEMENT_ARTICLE_TITLE
@@ -12009,33 +12065,46 @@ Capteurs
 DT_DETECTOR_4_DESC
 Détection à très longue portée.
 
+FU_ENGINE_PART_LIMIT
+Un seul équipement de motorisation peut être intégré à un astronef.
+
 FU_IMPROVED_ENGINE_COUPLINGS
 Couplage de Motorisation Améliorée
 
 FU_IMPROVED_ENGINE_COUPLINGS_DESC
-'''Augmente de 10 la [[metertype METER_SPEED]].
+'''De meilleurs éléments de motorisation, résultent de meilleurs moteurs.
 
-De meilleurs éléments de motorisation fournissent de meilleurs moteurs.'''
+- Augmente de 20 la [[metertype METER_SPEED]].
+- [[FU_ENGINE_PART_LIMIT]]'''
 
 FU_N_DIMENSIONAL_ENGINE_MATRIX
 Matrice de Motorisation Multidimensionnelle
 
 FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-'''Augmente de 20 la [[metertype METER_SPEED]].
+'''La recherche concernant les espaces multidimensionnels a rendu possible le développement de meilleures matrices de motorisation.
 
-La recherche concernant les espaces multidimensionnels a rendu possible le développement de meilleures matrices de motorisation.'''
+- Augmente de 40 la [[metertype METER_SPEED]].
+- [[FU_ENGINE_PART_LIMIT]]'''
 
 FU_SINGULARITY_ENGINE_CORE
 Noyau de Motorisation à Singularité
 
 FU_SINGULARITY_ENGINE_CORE_DESC
-Augmente de 30 la [[metertype METER_SPEED]]. Dispositif dérivé de la structure [[buildingtype BLD_HYPER_DAM]] et adapté en taille pour les astronefs, le Noyau de Motorisation à Singularité accroît considérablement la génération d'énergie.
+'''Dispositif derivé et miniaturisé de la structure [[buildingtype BLD_HYPER_DAM]] adapté pour les astronefs, le Noyau de Motorisation à Singularité accroît considérablement la génération d'énergie.
+
+- Augmente de 80 la [[metertype METER_SPEED]].
+- [[FU_ENGINE_PART_LIMIT]]'''
 
 FU_TRANSPATIAL_DRIVE
 Propulsion Trans-Spatiale
 
 FU_TRANSPATIAL_DRIVE_DESC
-Un dispositif de motorisation incroyablement puissant capable de courber l'espace-temps lui-même, augmentant à la fois la [[metertype METER_SPEED]] et la [[metertype METER_STEALTH]] d'un astronef de 40. Ne peut être monté que dans la [[encyclopedia SLOT_TITLE]] Centrale d'un astronef. Les bonus de Furtivité des équipements d'astronef ne s'additionnent pas.
+'''Un dispositif de motorisation incroyablement puissant capable de courber l'espace-temps lui-même.
+
+- Augmente de 60 la [[metertype METER_SPEED]].
+- Augmente de 40 la [[metertype METER_STEALTH]].
+- Les bonus de Furtivité des équipements d'astronef ne s'additionnent pas.
+- [[FU_ENGINE_PART_LIMIT]]'''
 
 FU_BASIC_TANK
 Réservoir Additionnel de Carburant
