@@ -169,6 +169,7 @@ namespace {
         Hotkey::AddHotkey("map.empires",              UserStringNop("HOTKEY_MAP_EMPIRES"),              GG::GGK_e,          GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("map.pedia",                UserStringNop("HOTKEY_MAP_PEDIA"),                GG::GGK_F1);
         Hotkey::AddHotkey("map.graphs",               UserStringNop("HOTKEY_MAP_GRAPHS"),               GG::GGK_NONE);
+        Hotkey::AddHotkey("map.empire.universe-data", UserStringNop("HOTKEY_MAP_EMPIRE_UNIVERSE_DATA"), GG::GGK_F1,         GG::MOD_KEY_SHIFT);
         Hotkey::AddHotkey("map.menu",                 UserStringNop("HOTKEY_MAP_MENU"),                 GG::GGK_F10);
         Hotkey::AddHotkey("map.zoom_in",              UserStringNop("HOTKEY_MAP_ZOOM_IN"),              GG::GGK_z,          GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("map.zoom_in_alt",          UserStringNop("HOTKEY_MAP_ZOOM_IN_ALT"),          GG::GGK_KP_PLUS,    GG::MOD_KEY_CTRL);
@@ -6802,6 +6803,8 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     hkm->Connect(boost::bind(&MapWnd::TogglePedia, this), "map.pedia",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ShowGraphs, this), "map.graphs",
+                 AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
+    hkm->Connect(boost::bind(&MapWnd::ShowEmpireUniverseData, this), "map.empire.universe-data",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ShowMenu, this), "map.menu",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));

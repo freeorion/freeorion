@@ -14322,6 +14322,9 @@ Toggle pedia window
 HOTKEY_MAP_GRAPHS
 Show graphs list
 
+HOTKEY_MAP_EMPIRE_UNIVERSE_DATA
+Show [[MAP_BTN_EMPIRE_UNIVERSE_DATA]] article
+
 HOTKEY_MAP_PRODUCTION
 Toggle production panel
 
