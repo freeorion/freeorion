@@ -30,7 +30,6 @@
 #include <GG/Scroll.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
-#include "../util/Logger.h"
 
 #include <boost/optional/optional.hpp>
 
