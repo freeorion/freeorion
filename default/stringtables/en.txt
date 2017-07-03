@@ -4197,7 +4197,7 @@ Not all objects or types are listed here, only those known to the viewing empire
 
 # types of things that can be shown in encyclopedia
 ENC_GRAPH
-[Game - Graphs]
+Game - Graphs
 
 ENC_GALAXY_SETUP
 [Game - Galaxy]
@@ -4265,7 +4265,7 @@ ENC_FIELD_TYPE
 Field Type
 
 ENC_SHIP_DESIGN
-[Game - Ship Designs]
+Game - Ship Designs
 
 SHIPS_OF_DESIGN
 '''Ships of this Design: '''
@@ -4277,7 +4277,7 @@ ENC_INCOMPETE_SHIP_DESIGN
 Incomplete Ship Design
 
 ENC_EMPIRE
-[Game - Empires]
+Game - Empires
 
 EMPIRE_CAPITAL
 '''Capital: '''
@@ -4369,7 +4369,7 @@ ENC_MONSTER
 [Game - Monsters]
 
 ENC_MONSTER_TYPE
-[Game - Monster Types]
+Game - Monster Types
 
 ENC_FLEET
 [Game - Fleets]
@@ -4387,7 +4387,7 @@ ENC_FIELD
 [Game - Fields]
 
 ENC_HOMEWORLDS
-[Game - Homeworlds]
+Game - Homeworlds
 
 ENC_TEXTURES
 [Test - Textures]
