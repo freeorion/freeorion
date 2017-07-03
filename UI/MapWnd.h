@@ -541,7 +541,7 @@ private:
     std::shared_ptr<GG::Button>     m_industry_wasted, m_research_wasted;
     std::shared_ptr<GG::Button>     m_btn_moderator, m_btn_messages, m_btn_empires,
                                     m_btn_siterep, m_btn_research, m_btn_production,
-                                    m_btn_design, m_btn_pedia, m_btn_graphs,
+                                    m_btn_design, m_btn_pedia, m_btn_empire_data,
                                     m_btn_objects, m_btn_menu;
     std::shared_ptr<GG::Label>      m_FPS;
 

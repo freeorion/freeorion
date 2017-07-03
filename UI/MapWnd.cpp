@@ -959,7 +959,7 @@ MapWnd::MapWnd() :
     m_btn_production(nullptr),
     m_btn_design(nullptr),
     m_btn_pedia(nullptr),
-    m_btn_graphs(nullptr),
+    m_btn_empire_data(nullptr),
     m_btn_objects(nullptr),
     m_btn_menu(nullptr),
     m_FPS(nullptr),
@@ -1062,16 +1062,16 @@ void MapWnd::CompleteConstruction() {
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Graphs button
-    m_btn_graphs = Wnd::Create<SettableInWindowCUIButton>(
+    m_btn_empire_data = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_mouseover.png")),
         in_window_func);
-    m_btn_graphs->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    m_btn_graphs->LeftClickedSignal.connect(
+    m_btn_empire_data->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_empire_data->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ShowGraphs, this));
-    m_btn_graphs->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_graphs->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
+    m_btn_empire_data->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_btn_empire_data->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_GRAPH"), UserString("MAP_BTN_GRAPH_DESC")));
 
     in_window_func =
@@ -1369,9 +1369,9 @@ void MapWnd::CompleteConstruction() {
     layout->Add(m_btn_design,       0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     ++layout_column;
 
-    layout->SetMinimumColumnWidth(layout_column, m_btn_graphs->Width());
+    layout->SetMinimumColumnWidth(layout_column, m_btn_empire_data->Width());
     layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_btn_graphs,       0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_btn_empire_data,  0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetMinimumColumnWidth(layout_column, m_btn_pedia->Width());
