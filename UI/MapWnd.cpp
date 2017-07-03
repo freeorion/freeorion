@@ -1069,10 +1069,10 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_empire_data->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_empire_data->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ShowGraphs, this));
+        boost::bind(&MapWnd::ShowEmpireUniverseData, this));
     m_btn_empire_data->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_empire_data->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
-        UserString("MAP_BTN_GRAPH"), UserString("MAP_BTN_GRAPH_DESC")));
+        UserString("MAP_BTN_EMPIRE_UNIVERSE_DATA"), UserString("MAP_BTN_EMPIRE_UNIVERSE_DATA_DESC")));
 
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar.get()),
@@ -6120,6 +6120,12 @@ bool MapWnd::TogglePedia() {
 bool MapWnd::ShowGraphs() {
     ShowPedia();
     m_pedia_panel->AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_GRAPH");
+    return true;
+}
+
+bool MapWnd::ShowEmpireUniverseData() {
+    ShowPedia();
+    m_pedia_panel->AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_EMPIRE_UNIVERSE_DATA");
     return true;
 }
 

@@ -397,6 +397,7 @@ private:
     void HidePedia();
 
     bool ShowGraphs();
+    bool ShowEmpireUniverseData();
 
     void HideSidePanel();
     void RestoreSidePanel();

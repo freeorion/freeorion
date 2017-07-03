@@ -1904,9 +1904,6 @@ Produktion
 MAP_BTN_DESIGN
 Schiffsdesign
 
-MAP_BTN_GRAPH
-Graphen
-
 #MAP_BTN_PEDIA
 #Pedia
 
