@@ -92,8 +92,10 @@ struct RangedValidator : public Validator<T>
     const T m_max;
 };
 
-/** a Validator that constrains valid values to certain step-values (eg: 0, 25, 50, ...).  The steps are assumed to
-    begin at the validated type's default-constructed value, unless another origin is specified. */
+/** a Validator that constrains valid values to certain step-values
+    (eg: 0, 25, 50, ...).  The steps are assumed to begin at the
+    validated type's default-constructed value, unless another origin
+    is specified. */
 template <class T>
 struct StepValidator : public Validator<T>
 {
