@@ -482,6 +482,7 @@ boost::optional<DropDownList::iterator> ModalListPicker::MouseWheelCommon(
     }
     if (move != 0) {
         std::advance(cur_it, move);
+        LB()->BringRowIntoView(cur_it);
         return cur_it;
     }
     return boost::none;
