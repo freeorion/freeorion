@@ -17,6 +17,7 @@
     (Age)                                       \
     (Aggressive)                                \
     (All)                                       \
+    (Allowed)                                   \
     (AllyOf)                                    \
     (And)                                       \
     (AnyEmpire)                                 \
@@ -93,6 +94,7 @@
     (Destroy)                                   \
     (Detection)                                 \
     (DirectDistanceBetween)                     \
+    (Disabled)                                  \
     (Distance)                                  \
     (DistanceFromOriginalType)                  \
     (Effects)                                   \
@@ -103,6 +105,7 @@
     (EmpireMeter)                               \
     (EmpireMeterValue)                          \
     (EmpireShipsDestroyed)                      \
+    (Enabled)                                   \
     (Endpoint)                                  \
     (EnemyOf)                                   \
     (Enqueued)                                  \
@@ -488,6 +491,7 @@
     (ThisSpecies)                               \
     (ThisSpecial)                               \
     (Tiny)                                      \
+    (Toggle)                                    \
     (TopPriorityEnqueuedTech)                   \
     (TopPriorityResearchableTech)               \
     (TopPriorityTransferrableTech)              \
@@ -497,7 +501,6 @@
 
 #define TOKEN_SEQ_15                            \
     (Troops)                                    \
-    (TrueFalse)                                 \
     (Tundra)                                    \
     (Turn)                                      \
     (TurnsSinceFocusChange)                     \
