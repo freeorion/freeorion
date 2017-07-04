@@ -525,9 +525,12 @@ void ModalListPicker::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModK
 
 void ModalListPicker::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 {
-    if (!LB()->InWindow(pt))
+    bool in_anchor_or_dropped_list = (LB()->InWindow(pt) || (m_relative_to_wnd && m_relative_to_wnd->InWindow(pt)));
+    if (!in_anchor_or_dropped_list)
         return;
-    SignalChanged(Select(MouseWheelCommon(pt, move, mod_keys)));
+
+    auto corrected_move = (LB()->InWindow(pt)? move : -move);
+    SignalChanged(Select(MouseWheelCommon(pt, corrected_move, mod_keys)));
 }
 
 ////////////////////////////////////////////////
@@ -909,7 +912,9 @@ void DropDownList::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey>
 void DropDownList::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
-        m_modal_picker->SignalChanged(m_modal_picker->Select(m_modal_picker->MouseWheelCommon(pt, -move, mod_keys)));
+        auto corrected_move = (LB()->InWindow(pt)? move : -move);
+        m_modal_picker->SignalChanged(
+            m_modal_picker->Select(m_modal_picker->MouseWheelCommon(pt, corrected_move, mod_keys)));
     } else {
         Control::MouseWheel(pt, move, mod_keys);
     }
