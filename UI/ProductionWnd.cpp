@@ -320,8 +320,7 @@ namespace {
             title_text = std::to_string(elem.blocksize) + "x ";
         title_text += item_name;
 
-        // TODO remove extra wrapping of shared_ptr after conversion to GG shared_ptr
-        return std::shared_ptr<GG::BrowseInfoWnd>(GG::Wnd::Create<IconTextBrowseWnd>(icon, title_text, main_text));
+        return GG::Wnd::Create<IconTextBrowseWnd>(icon, title_text, main_text);
     }
 
     //////////////////////////////////////////////////
