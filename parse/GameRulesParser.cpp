@@ -24,25 +24,45 @@ namespace {
         void operator()(GameRules& game_rules, const std::string& name, const std::string& desc,
                         bool default_value) const
         {
+            DebugLogger() << "Adding Boolean game rule with name: " << name
+                          << ", desc: " << desc << ", default: " << default_value;
             game_rules.Add<bool>(name, desc, default_value, false);
         }
 
         void operator()(GameRules& game_rules, const std::string& name, const std::string& desc,
                         int default_value, int min, int max) const
         {
+            DebugLogger() << "Adding Integer game rule with name: " << name
+                          << ", desc: " << desc << ", default: " << default_value
+                          << ", min: " << min << ", max: " << max;
             game_rules.Add<int>(name, desc, default_value, false, RangedValidator<int>(min, max));
         }
 
         void operator()(GameRules& game_rules, const std::string& name, const std::string& desc,
                         double default_value, double min, double max) const
         {
+            DebugLogger() << "Adding Double game rule with name: " << name
+                          << ", desc: " << desc << ", default: " << default_value
+                          << ", min: " << min << ", max: " << max;
             game_rules.Add<double>(name, desc, default_value, false, RangedValidator<double>(min, max));
         }
 
         void operator()(GameRules& game_rules, const std::string& name, const std::string& desc,
-                        const std::string& default_value) const // TBD: allowed values
+                        const std::string& default_value,
+                        const std::set<std::string>& allowed = {}) const
         {
-            game_rules.Add<std::string>(name, desc, default_value, false);
+            std::string allowed_values_string;
+            for (const auto& e : allowed)
+                allowed_values_string += e + " ";
+            DebugLogger() << "Adding String game rule with name: " << name
+                          << ", desc: " << desc << ", default: " << default_value
+                          << ", allowed: " << allowed_values_string;
+
+            if (allowed.empty()) {
+                game_rules.Add<std::string>(name, desc, default_value, false);
+            } else {
+                game_rules.Add<std::string>(name, desc, default_value, false, DiscreteValidator<std::string>(allowed));
+            }
         }
 
         //void operator()(GameRules& game_rules, const std::string& name, const std::string& desc,
@@ -58,7 +78,8 @@ namespace {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
-            using phoenix::construct;
+            using phoenix::insert;
+            using phoenix::clear;
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -74,6 +95,7 @@ namespace {
             qi::_h_type _h;
             qi::_i_type _i;
             qi::_r1_type _r1;
+            qi::eps_type eps;
 
             const parse::lexer& tok = parse::lexer::instance();
 
@@ -81,9 +103,13 @@ namespace {
                 =   tok.GameRule_
                 >>  parse::detail::label(Name_token) >>         tok.string [ _a = _1 ]
                 >>  parse::detail::label(Description_token) >>  tok.string [ _b = _1 ]
-                >>  parse::detail::label(Type_token) >>         tok.TrueFalse_
-                >   parse::detail::label(Default_token) >       tok.int_
-                    [ add_rule(_r1, _a, _b, _1 )]
+                >>  parse::detail::label(Type_token) >>         tok.Toggle_
+                >   parse::detail::label(Default_token)
+                >   (
+                        tok.Enabled_ [ _i = true ]
+                    |   tok.Disabled_ [ _i = false ]
+                    )
+                    [ add_rule(_r1, _a, _b, _i) ]
                 ;
 
             game_rule_int
@@ -91,10 +117,10 @@ namespace {
                 >>  parse::detail::label(Name_token) >>         tok.string [ _a = _1 ]
                 >>  parse::detail::label(Description_token) >>  tok.string [ _b = _1 ]
                 >>  parse::detail::label(Type_token) >>         tok.Integer_
-                >   parse::detail::label(Default_token) >       tok.int_ [ _f = _1 ]
-                >   parse::detail::label(Min_token) >           tok.int_ [ _g = _1 ]
-                >   parse::detail::label(Max_token) >           tok.int_
-                    [ add_rule(_r1, _a, _b, _f, _g, _1 )]
+                >   parse::detail::label(Default_token) >       parse::detail::int_ [ _f = _1 ]
+                >   parse::detail::label(Min_token) >           parse::detail::int_ [ _g = _1 ]
+                >   parse::detail::label(Max_token) >           parse::detail::int_
+                    [ add_rule(_r1, _a, _b, _f, _g, _1 ) ]
                 ;
 
             game_rule_double
@@ -102,10 +128,10 @@ namespace {
                 >>  parse::detail::label(Name_token) >>         tok.string [ _a = _1 ]
                 >>  parse::detail::label(Description_token) >>  tok.string [ _b = _1 ]
                 >>  parse::detail::label(Type_token) >>         tok.Real_
-                >   parse::detail::label(Default_token) >       tok.double_ [ _c = _1 ]
-                >   parse::detail::label(Min_token) >           tok.double_ [ _d = _1 ]
-                >   parse::detail::label(Max_token) >           tok.double_
-                    [ add_rule(_r1, _a, _b, _c, _d, _1 )]
+                >   parse::detail::label(Default_token) >       parse::detail::double_ [ _c = _1 ]
+                >   parse::detail::label(Min_token) >           parse::detail::double_ [ _d = _1 ]
+                >   parse::detail::label(Max_token) >           parse::detail::double_
+                    [ add_rule(_r1, _a, _b, _c, _d, _1 ) ]
                 ;
 
             game_rule_string
@@ -114,11 +140,22 @@ namespace {
                 >>  parse::detail::label(Description_token) >>  tok.string [ _b = _1 ]
                 >>  parse::detail::label(Type_token) >>         tok.String_
                 >   parse::detail::label(Default_token) >       tok.string [ _e = _1 ]
-                    [ add_rule(_r1, _a, _b, _e)]
+                >  -( parse::detail::label(Allowed_token) >
+                        '[' > +tok.string [ insert(_h, _1) ] > ']'
+                    |    tok.string [ insert(_h, _1) ]
+                    )
+                  [ add_rule(_r1, (_a), (_b), (_e), (_h)) ]
+                ;
+
+            all_game_rules
+                %=  game_rule_bool(_r1)
+                |   game_rule_int(_r1)
+                |   game_rule_double(_r1)
+                |   game_rule_string(_r1)
                 ;
 
             start
-                =  *game_rule_int(_r1)
+                =  *(all_game_rules(_r1))
                 ;
 
             game_rule_bool.name("Boolean GameRule");
@@ -126,6 +163,7 @@ namespace {
             game_rule_double.name("Double GameRule");
             game_rule_string.name("String GameRule");
             game_rule_string_list.name("String List GameRule");
+            all_game_rules.name("GameRule");
             start.name("GameRules");
 
 #if DEBUG_PARSERS
@@ -142,15 +180,15 @@ namespace {
         typedef parse::detail::rule<
             void (GameRules&),
             boost::spirit::qi::locals<
-                std::string,                // _a : name
-                std::string,                // _b : description
-                double,                     // _c : default double
-                double,                     // _d : min int (max passed as immediate)
-                std::string,                // _e : default string
-                int,                        // _f : default int
-                int,                        // _g : min int (max passed as immediate)
-                std::vector<std::string>,   // _h : default string list
-                std::vector<std::string>    // _i : allowed string (list) entries
+                std::string,            // _a : name
+                std::string,            // _b : description
+                double,                 // _c : default double
+                double,                 // _d : min int (max passed as immediate)
+                std::string,            // _e : default string
+                int,                    // _f : default int
+                int,                    // _g : min int (max passed as immediate)
+                std::set<std::string>,  // _h : default string list
+                bool                    // _i : allowed string (list) entries
             >
         > game_rule_rule;
 
@@ -163,6 +201,7 @@ namespace {
         game_rule_rule  game_rule_double;
         game_rule_rule  game_rule_string;
         game_rule_rule  game_rule_string_list;
+        game_rule_rule  all_game_rules;
         start_rule      start;
     };
 }

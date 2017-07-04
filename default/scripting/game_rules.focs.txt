@@ -1,13 +1,12 @@
-
-GameRule
-    name = "RULE_TEST_INT"
-    description = "RULE_TEST_INT_DESC"
-    type = Integer
-    default = 1
-    min = 0
-    max = 15
-
 /*
+GameRule
+    name = "RULE_TEST_STRING"
+    description = "RULE_TEST_STRING_DESC"
+    type = String
+    default = "Potato"
+    allowedValues = ["Potato", "Squash", "Apple", "Flower Pot"]
+*/
+
 GameRule
     name = "RULE_SHIP_HULL_COST_FACTOR"
     description = "RULE_SHIP_HULL_COST_FACTOR_DESC"
@@ -17,18 +16,33 @@ GameRule
     max = 10.0
 
 GameRule
-    name = "RULE_ENABLE_EXPERIMENTORS"
-    description = "RULE_ENABLE_EXPERIMENTORS_DESC"
-    type = TrueFalse
-    default = true
+    name = "RULE_TEST_INT2"
+    description = "RULE_TEST_INT_DESC"
+    type = Integer
+    default = 12
+    min = 2
+    max = 152
 
 GameRule
-    name = "RULE_TEST_STRING"
-    description = "RULE_TEST_STRING_DESC"
-    type = String
-    default = "Potato"
-    allowedValues = ["Potato", "Squash", "Apple", "Flower Pot"]
-*/
+    name = "RULE_ENABLE_EXPERIMENTORS1"
+    description = "RULE_ENABLE_EXPERIMENTORS_DESC"
+    type = Toggle
+    default = Disabled
+
+GameRule
+    name = "RULE_ENABLE_EXPERIMENTORS2"
+    description = "RULE_ENABLE_EXPERIMENTORS_DESC"
+    type = Toggle
+    default = Enabled
+
+GameRule
+    name = "RULE_TEST_INT"
+    description = "RULE_TEST_INT_DESC"
+    type = Integer
+    default = 1
+    min = 0
+    max = 15
+
 /*
 GameRule
     name = "RULE_TEST_MULTI_STRING"
