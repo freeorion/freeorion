@@ -5715,6 +5715,8 @@ void MapWnd::Sanitize() {
     m_fleets_exploring.clear();
 
     m_line_between_systems = {INVALID_OBJECT_ID, INVALID_OBJECT_ID};
+
+    DetachChildren();
 }
 
 bool MapWnd::ReturnToMap() {
