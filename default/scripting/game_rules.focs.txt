@@ -1,11 +1,3 @@
-/*
-GameRule
-    name = "RULE_TEST_STRING"
-    description = "RULE_TEST_STRING_DESC"
-    type = String
-    default = "Potato"
-    allowedValues = ["Potato", "Squash", "Apple", "Flower Pot"]
-*/
 
 GameRule
     name = "RULE_SHIP_HULL_COST_FACTOR"
@@ -27,13 +19,13 @@ GameRule
     name = "RULE_ENABLE_EXPERIMENTORS1"
     description = "RULE_ENABLE_EXPERIMENTORS_DESC"
     type = Toggle
-    default = Disabled
+    
 
 GameRule
     name = "RULE_ENABLE_EXPERIMENTORS2"
     description = "RULE_ENABLE_EXPERIMENTORS_DESC"
     type = Toggle
-    default = Enabled
+    default = On
 
 GameRule
     name = "RULE_TEST_INT"
@@ -43,11 +35,18 @@ GameRule
     min = 0
     max = 15
 
+GameRule
+    name = "RULE_TEST_STRING"
+    description = "RULE_TEST_STRING_DESC"
+    type = String
+    default = "Potato"
+    allowed = ["Potato" "Squash" "Apple" "Flower Pot"]
+
 /*
 GameRule
     name = "RULE_TEST_MULTI_STRING"
     description = "RULE_TEST_MULTI_STRING_DESC"
     type = StringList
     default = ["Apple", "Potato"]
-    allowedValues = ["Potato", "Squash", "Apple", "Flower Pot", "Existentialism"]
+    allowedValues = ["Potato" "Squash" "Apple" "Flower Pot" "Existentialism"]
 */

@@ -260,6 +260,8 @@
     (Object)                                    \
     (ObjectType)                                \
     (Ocean)                                     \
+    (Off)                                       \
+    (On)                                        \
     (OneOf)                                     \
     (Opinion)                                   \
     (Or)                                        \

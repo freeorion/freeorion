@@ -53,10 +53,10 @@ namespace {
         {
             std::string allowed_values_string;
             for (const auto& e : allowed)
-                allowed_values_string += e + " ";
+                allowed_values_string += "\"" + e + "\", ";
             DebugLogger() << "Adding String game rule with name: " << name
-                          << ", desc: " << desc << ", default: " << default_value
-                          << ", allowed: " << allowed_values_string;
+                          << ", desc: " << desc << ", default: \"" << default_value
+                          << "\", allowed: " << allowed_values_string;
 
             if (allowed.empty()) {
                 game_rules.Add<std::string>(name, desc, default_value, false);
@@ -104,12 +104,14 @@ namespace {
                 >>  parse::detail::label(Name_token) >>         tok.string [ _a = _1 ]
                 >>  parse::detail::label(Description_token) >>  tok.string [ _b = _1 ]
                 >>  parse::detail::label(Type_token) >>         tok.Toggle_
-                >   parse::detail::label(Default_token)
-                >   (
-                        tok.Enabled_ [ _i = true ]
-                    |   tok.Disabled_ [ _i = false ]
-                    )
-                    [ add_rule(_r1, _a, _b, _i) ]
+                > ((parse::detail::label(Default_token)
+                    >   (
+                            tok.On_ [ _i = true ]
+                        |   tok.Off_ [ _i = false ]
+                        )
+                   ) | eps [ _i = false ]
+                  )
+                   [ add_rule(_r1, _a, _b, _i) ]
                 ;
 
             game_rule_int
