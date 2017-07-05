@@ -6,7 +6,7 @@ Hull
     stealth = 45
     structure = 10
     slots = Slot type = External position = (0.65, 0.40)
-    buildCost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 2
     tags = [ "ENERGY_HULL" "PEDIA_HULL_LINE_ENERGY" ]
     location = And [

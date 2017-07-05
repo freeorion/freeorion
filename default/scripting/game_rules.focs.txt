@@ -8,6 +8,14 @@ GameRule
     max = 10.0
 
 GameRule
+    name = "RULE_SHIP_PART_COST_FACTOR"
+    description = "RULE_SHIP_PART_COST_FACTOR_DESC"
+    type = Real
+    default = 1.0
+    min = 0.1
+    max = 10.0
+
+GameRule
     name = "RULE_TEST_INT2"
     description = "RULE_TEST_INT_DESC"
     type = Integer

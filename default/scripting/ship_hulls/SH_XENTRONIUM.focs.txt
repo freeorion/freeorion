@@ -12,7 +12,7 @@ Hull
         Slot type = External position = (0.60, 0.40)
         Slot type = Core     position = (0.30, 0.65)
     ]
-    buildCost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 5
     tags = [ "SHINY" "EXOTIC" ]
     location = Contains And [
