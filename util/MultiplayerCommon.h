@@ -41,7 +41,31 @@ FO_COMMON_API GameRules& GetGameRules();
 /** Database of values that control how the game mechanics function. */
 class FO_COMMON_API GameRules {
 public:
-    typedef OptionsDB::Option Rule;
+    enum RuleType : int {
+        INVALID_RULE_TYPE = -1,
+        TOGGLE,
+        INT,
+        DOUBLE,
+        STRING,
+        STRING_LIST
+    };
+
+    RuleType RuleTypeForType(bool dummy)
+    { return TOGGLE; }
+    RuleType RuleTypeForType(int dummy)
+    { return INT; }
+    RuleType RuleTypeForType(double dummy)
+    { return DOUBLE; }
+    RuleType RuleTypeForType(std::string dummy)
+    { return STRING; }
+
+    struct FO_COMMON_API Rule : public OptionsDB::Option {
+        Rule();
+        Rule(RuleType rule_type_, const std::string& name_, const boost::any& value_,
+             const boost::any& default_value_, const std::string& description_,
+             const ValidatorBase *validator_, bool engine_internal_);
+        RuleType rule_type = INVALID_RULE_TYPE;
+    };
 
     /** \name Accessors */ //@{
     bool    Empty() const
@@ -80,8 +104,8 @@ public:
         auto it = m_game_rules.find(name);
         if (it != m_game_rules.end())
             throw std::runtime_error("GameRules::Add<>() : Rule " + name + " was added twice.");
-        m_game_rules[name] = Rule(static_cast<char>(0), name, default_value, default_value,
-                                  description, validator.Clone(), engine_interal, false, true);
+        m_game_rules[name] = Rule(RuleTypeForType(T()), name, default_value, default_value,
+                                  description, validator.Clone(), engine_interal);
         DebugLogger() << "Added game rule named " << name << " with default value " << default_value;
     }
 

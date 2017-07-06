@@ -81,6 +81,18 @@ GameRules& GetGameRules() {
 /////////////////////////////////////////////////////
 // GameRules
 /////////////////////////////////////////////////////
+GameRules::Rule::Rule() :
+    OptionsDB::Option()
+{}
+
+GameRules::Rule::Rule(RuleType rule_type_, const std::string& name_, const boost::any& value_,
+                      const boost::any& default_value_, const std::string& description_,
+                      const ValidatorBase *validator_, bool engine_internal_) :
+    OptionsDB::Option(static_cast<char>(0), name_, value_, default_value_,
+                      description_, validator_, engine_internal_, false, true),
+    rule_type(rule_type_)
+{}
+
 GameRules::GameRules()
 {}
 
