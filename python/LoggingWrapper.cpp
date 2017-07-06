@@ -45,7 +45,7 @@ namespace {
 
     // info logger
     void PythonLoggerCoreInfo(const std::string &s) {
-        BOOST_LOG_TRIVIAL(info) << s;
+        InfoLogger() << s;
     }
     void PythonLoggerInfo(const std::string & text) {
         static std::stringstream log_stream("");
@@ -54,7 +54,7 @@ namespace {
 
     // warn logger
     void PythonLoggerCoreWarn(const std::string &s) {
-        BOOST_LOG_TRIVIAL(warning) << s;
+        WarnLogger() << s;
     }
     void PythonLoggerWarn(const std::string & text) {
         static std::stringstream log_stream("");
@@ -63,7 +63,7 @@ namespace {
 
     // error logger
     void PythonLoggerCoreError(const std::string &s) {
-        BOOST_LOG_TRIVIAL(error) << s;
+        ErrorLogger() << s;
     }
     void PythonLoggerError(const std::string & text) {
         static std::stringstream log_stream("");
@@ -72,7 +72,7 @@ namespace {
 
     // critical logger
     void PythonLoggerCoreFatal(const std::string &s) {
-        BOOST_LOG_TRIVIAL(fatal) << s;
+        ErrorLogger() << s;
     }
     void PythonLoggerFatal(const std::string & text) {
         static std::stringstream log_stream("");
