@@ -64,10 +64,6 @@ public:
     bool        SystemHasFleetSupply(int system_id, int empire_id) const;
     bool        SystemHasFleetSupply(int system_id, int empire_id, bool include_allies) const;
 
-    /** Returns true if planet with id \a planet_id is in one of the resource
-      * supply groups of the empire it belongs to*/
-    bool        PlanetHasSupply(int planet_id) const;
-
     std::string Dump(int empire_id = ALL_EMPIRES) const;
     //@}
 

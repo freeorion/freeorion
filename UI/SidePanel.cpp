@@ -465,7 +465,6 @@ namespace {
 
     bool ClientPlayerIsModerator()
     { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
-
 }
 
 
@@ -1143,7 +1142,7 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
     }
 
     // add blockade graphic
-    if (!GetSupplyManager().PlanetHasSupply(m_planet_id) && (!planet->Unowned())) {
+    if (!GetSupplyManager().SystemHasFleetSupply(planet->SystemID(), planet->Owner()) && (!planet->Unowned())) {
         const std::shared_ptr<GG::Texture>& blockaded_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "blockade.png", true);
         int texture_size = GetOptionsDB().Get<int>("UI.sidepanel-planet-blockaded-icon-size");
 
@@ -1153,7 +1152,6 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
                                            GG::Y(planet_graphic_height / 2 - texture_size / 2)));
         AttachChild(m_planet_blockaded_graphic);
     }
-
 }
 
 namespace {
@@ -1859,7 +1857,7 @@ void SidePanel::PlanetPanel::Refresh() {
     ClearBrowseInfoWnd();
 
     // set planetpanel blockade browse text
-    if (!GetSupplyManager().PlanetHasSupply(m_planet_id) && (!planet->Unowned()))
+    if (!GetSupplyManager().SystemHasFleetSupply(planet->SystemID(), planet->Owner()) && (!planet->Unowned()))
         SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("PL_BLOCKADED"),
                                                          boost::io::str(FlexibleFormat(UserString("PL_BLOCKADED_TOOLTIP")) % planet->Name())));
 

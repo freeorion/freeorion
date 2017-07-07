@@ -163,13 +163,6 @@ bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id, bool incl
     return false;
 }
 
-bool SupplyManager::PlanetHasSupply(int planet_id) const {
-    std::shared_ptr<const Planet> planet = GetPlanet(planet_id);
-    if (!planet)
-        return false;
-    return (planet->Owner() == EmpireThatCanSupplyAt(planet->SystemID()));
-}
-
 std::string SupplyManager::Dump(int empire_id) const {
     std::string retval;
 
