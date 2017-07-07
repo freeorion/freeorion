@@ -9,8 +9,7 @@ from common.configure_logging import redirect_logging_to_freeorion_logger, conve
 
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 
-log_level = logging.DEBUG if fo.getOptionsDBOptionBool("verbose-logging") else logging.INFO
-redirect_logging_to_freeorion_logger(log_level)
+redirect_logging_to_freeorion_logger()
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger()
 
 from common.option_tools import parse_config
