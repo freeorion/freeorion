@@ -114,15 +114,6 @@ std::unordered_map<std::string, LogLevel> ValidNameToLogLevel() {
     return retval;
 }
 
-// Provide a LogLevel stream out formatter for streaming logs
-template<typename CharT, typename TraitsT>
-std::basic_ostream<CharT, TraitsT>& operator<<(
-    std::basic_ostream<CharT, TraitsT>& os, const LogLevel& level)
-{
-    os << log_level_names[static_cast<std::size_t>(level)];
-    return os;
-}
-
 // Provide a LogLevel input formatter for filtering
 template<typename CharT, typename TraitsT>
 inline std::basic_istream<CharT, TraitsT >& operator>>(
