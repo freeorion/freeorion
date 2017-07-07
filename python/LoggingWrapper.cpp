@@ -1,9 +1,12 @@
 #include <string>
 
 #include "../util/Logger.h"
-#include <boost/log/trivial.hpp>
 
+#include <boost/log/expressions.hpp>
+#include <boost/log/support/date_time.hpp>
 #include <boost/python.hpp>
+
+namespace expr = boost::log::expressions;
 
 namespace {
     // Expose interface for redirecting standard output and error to FreeOrion
@@ -33,10 +36,53 @@ namespace {
         }
     }
 
+    void ConfigurePythonFileSinkFrontEnd(LoggerTextFileSinkFrontend& sink_frontend, const std::string& channel_name) {
+        // Create the format
+        sink_frontend.set_formatter(
+            expr::stream
+            << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
+            << " [" << log_severity << "] "
+            << channel_name
+            << " : "
+            << expr::message
+        );
+
+        // Set a filter to only format this channel
+        sink_frontend.set_filter(log_channel == channel_name);
+    }
+
+    // Setup file sink, formatting, and \p name channel filter for \p logger.
+    void ConfigurePythonLogger(NamedThreadedLogger& logger, const std::string& name) {
+        if (name.empty())
+            return;
+
+        SetLoggerThreshold(name, default_log_level_threshold);
+
+        ApplyConfigurationToFileSinkFrontEnd(
+            name,
+            std::bind(ConfigurePythonFileSinkFrontEnd, std::placeholders::_1, name));
+
+        LoggerCreatedSignal(name);
+    }
+
+    // Place in source file to create the previously defined global logger \p name
+#define DeclareThreadSafePythonLogger(name)                       \
+    BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(                          \
+        FO_GLOBAL_LOGGER_NAME(name), NamedThreadedLogger)         \
+    {                                                             \
+        auto lg = NamedThreadedLogger(                            \
+            (boost::log::keywords::severity = LogLevel::debug),   \
+            (boost::log::keywords::channel = #name));             \
+        ConfigurePythonLogger(lg, #name);                         \
+        return lg;                                                \
+    }
+
+DeclareThreadSafePythonLogger(python);
+
 
     // debug/stdout logger
     void PythonLoggerCoreDebug(const std::string &s) {
-        DebugLogger() << s;
+        DebugLogger(python) << s;
     }
     void PythonLoggerDebug(const std::string & text) {
         static std::stringstream log_stream("");
@@ -46,7 +92,7 @@ namespace {
     // info logger
     void PythonLoggerCoreInfo(const std::string &s) {
         // The extra space aligns info messages with debug messages.
-            InfoLogger() << " " << s;
+        InfoLogger(python) << " " << s;
     }
     void PythonLoggerInfo(const std::string & text) {
         static std::stringstream log_stream("");
@@ -55,7 +101,7 @@ namespace {
 
     // warn logger
     void PythonLoggerCoreWarn(const std::string &s) {
-        WarnLogger() << s;
+        WarnLogger(python) << s;
     }
     void PythonLoggerWarn(const std::string & text) {
         static std::stringstream log_stream("");
@@ -64,7 +110,7 @@ namespace {
 
     // error logger
     void PythonLoggerCoreError(const std::string &s) {
-        ErrorLogger() << s;
+        ErrorLogger(python) << s;
     }
     void PythonLoggerError(const std::string & text) {
         static std::stringstream log_stream("");
@@ -73,7 +119,7 @@ namespace {
 
     // critical logger
     void PythonLoggerCoreFatal(const std::string &s) {
-        ErrorLogger() << s;
+        ErrorLogger(python) << s;
     }
     void PythonLoggerFatal(const std::string & text) {
         static std::stringstream log_stream("");
