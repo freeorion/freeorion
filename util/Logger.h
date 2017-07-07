@@ -4,6 +4,8 @@
 #include <boost/log/sources/severity_channel_logger.hpp>
 #include <boost/log/expressions/keyword.hpp>
 #include <boost/log/utility/manipulators/add_value.hpp>
+#include <boost/log/sinks/sync_frontend.hpp>
+#include <boost/log/sinks/text_file_backend.hpp>
 #include <boost/log/sources/global_logger_storage.hpp>
 #include <boost/signals2/signal.hpp>
 
@@ -304,6 +306,15 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_linenum, "SrcLinenum", int);
 
 /** Sets the \p threshold of \p source.  \p source == "" is the default logger.*/
 FO_COMMON_API void SetLoggerThreshold(const std::string& source, LogLevel threshold);
+
+/** Apply \p configure_front_end to a new FileSinkFrontEnd for \p channel_name.  During static
+    initialization if the backend does not yet exist, then \p configure_front_end will be
+    stored until the backend is created.*/
+using LoggerTextFileSinkFrontend = boost::log::sinks::synchronous_sink<boost::log::sinks::text_file_backend>;
+using LoggerFileSinkFrontEndConfigurer = std::function<void(LoggerTextFileSinkFrontend& sink_frontend)>;
+FO_COMMON_API void ApplyConfigurationToFileSinkFrontEnd(
+    const std::string& channel_name,
+    const LoggerFileSinkFrontEndConfigurer& configure_front_end);
 
 extern int g_indent;
 

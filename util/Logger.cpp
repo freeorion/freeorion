@@ -158,12 +158,18 @@ namespace {
     using TextFileSinkBackend  = sinks::text_file_backend;
     using TextFileSinkFrontend = sinks::synchronous_sink<TextFileSinkBackend>;
 
-    boost::shared_ptr<TextFileSinkBackend>& GetSinkBackend() {
+    boost::shared_ptr<TextFileSinkBackend>& FileSinkBackend() {
         // Create the sink backend as a function local static variable to avoid the static
         // initilization fiasco.
         static boost::shared_ptr<TextFileSinkBackend> m_sink_backend;
         return m_sink_backend;
     }
+
+    /** Create a new file sink front end for \p file_sink_backend for \p channel_name and
+        configure it with \p configure_front_end. */
+    void ConfigureToFileSinkFrontEndCore(const boost::shared_ptr<TextFileSinkBackend>& file_sink_backend,
+                                         const std::string& channel_name,
+                                         const LoggerFileSinkFrontEndConfigurer& configure_front_end);
 
     /** LoggersToSinkFrontEnds is used to track all of the global named loggers.  It maps the
         names to the sink front ends.
@@ -176,7 +182,7 @@ namespace {
         /// m_mutex serializes access from different threads
         std::mutex m_mutex = {};
         std::unordered_map<std::string, boost::shared_ptr<TextFileSinkFrontend>> m_names_to_front_ends = {};
-
+        std::unordered_map<std::string, LoggerFileSinkFrontEndConfigurer> m_names_to_front_end_configurers = {};
         public:
 
         void AddOrReplaceLoggerName(const std::string& channel_name,
@@ -206,6 +212,23 @@ namespace {
             InfoLogger(log) << "Added logger named \"" << DisplayName(channel_name) << "\"";
         }
 
+        /** Store a configuration function \p configure_front_end to be applied later. */
+        void StoreConfigurerWithLoggerName(const std::string& channel_name,
+                                           const LoggerFileSinkFrontEndConfigurer& configure_front_end)
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+
+            // Remove the old front end if it is different.
+            m_names_to_front_end_configurers.erase(channel_name);
+            m_names_to_front_end_configurers.insert({channel_name, configure_front_end});
+        }
+
+        /** Configure front ends for any logger with stored configuration functions. */
+        void ConfigureFrontEnds(const boost::shared_ptr<TextFileSinkBackend>& file_sink_backend) {
+            for (const auto& name_and_conf: m_names_to_front_end_configurers)
+                ConfigureToFileSinkFrontEndCore(file_sink_backend, name_and_conf.first, name_and_conf.second);
+        }
+
         std::vector<std::string> LoggersNames() {
             std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -230,22 +253,9 @@ namespace {
         return loggers_names_to_front_ends;
     }
 
-    void CreateFileSinkFrontEnd(const std::string& channel_name) {
-        auto& file_sink_backend = GetSinkBackend();
-
-        // If the file sink backend has not been configured store the name so
-        // that a frontend can be added later.
-        if (!file_sink_backend) {
-            GetLoggersToSinkFrontEnds().AddOrReplaceLoggerName(channel_name, nullptr);
-            return;
-        }
-
-        // Create a sink frontend for formatting.
-        boost::shared_ptr<TextFileSinkFrontend> sink_frontend
-            = boost::make_shared<TextFileSinkFrontend>(file_sink_backend);
-
+    void ConfigureFileSinkFrontEnd(TextFileSinkFrontend& sink_frontend, const std::string& channel_name) {
         // Create the format
-        sink_frontend->set_formatter(
+        sink_frontend.set_formatter(
             expr::stream
             << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
             << " [" << log_severity << "] "
@@ -255,11 +265,36 @@ namespace {
         );
 
         // Set a filter to only format this channel
-        sink_frontend->set_filter(log_channel == channel_name);
+        sink_frontend.set_filter(log_channel == channel_name);
+    }
+
+    void ConfigureToFileSinkFrontEndCore(const boost::shared_ptr<TextFileSinkBackend>& file_sink_backend,
+                                         const std::string& channel_name,
+                                         const LoggerFileSinkFrontEndConfigurer& configure_front_end)
+    {
+        // Create a sink frontend for formatting.
+        auto sink_frontend = boost::make_shared<TextFileSinkFrontend>(file_sink_backend);
+
+        configure_front_end(*sink_frontend);
 
         // Replace any previous frontend for this channel
         GetLoggersToSinkFrontEnds().AddOrReplaceLoggerName(channel_name, sink_frontend);
     }
+}
+
+void ApplyConfigurationToFileSinkFrontEnd(const std::string& channel_name,
+                                          const LoggerFileSinkFrontEndConfigurer& configure_front_end)
+{
+    auto& file_sink_backend = FileSinkBackend();
+
+    // If the file sink backend has not been configured store the name so
+    // that a frontend can be added later.
+    if (!file_sink_backend) {
+        GetLoggersToSinkFrontEnds().StoreConfigurerWithLoggerName(channel_name, configure_front_end);
+        return;
+    }
+
+    ConfigureToFileSinkFrontEndCore(file_sink_backend, channel_name, configure_front_end);
 }
 
 const std::string& DefaultExecLoggerName()
@@ -321,14 +356,14 @@ void InitLoggingSystem(const std::string& log_file, const std::string& _unnamed_
     logging::register_simple_filter_factory<LogLevel>("Severity");
 
     // Create a sink backend that logs to a file
-    auto& file_sink_backend = GetSinkBackend();
+    auto& file_sink_backend = FileSinkBackend();
     file_sink_backend = boost::make_shared<TextFileSinkBackend>(
         keywords::file_name = log_file.c_str(),
         keywords::auto_flush = true
     );
 
     // Create the frontend for formatting default records.
-    CreateFileSinkFrontEnd("");
+    ApplyConfigurationToFileSinkFrontEnd("", std::bind(ConfigureFileSinkFrontEnd, std::placeholders::_1, ""));
 
     // Add global attributes to all records
     logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock());
@@ -339,8 +374,7 @@ void InitLoggingSystem(const std::string& log_file, const std::string& _unnamed_
     ConfigureLogger(FO_GLOBAL_LOGGER_NAME(log)::get(), "log");
 
     // Create sink front ends for all previously created loggers.
-    for(const auto& name : CreatedLoggersNames())
-        CreateFileSinkFrontEnd(name);
+    GetLoggersToSinkFrontEnds().ConfigureFrontEnds(file_sink_backend);
 
     // Print setup message.
     auto date_time = std::time(nullptr);
@@ -398,7 +432,7 @@ void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
     if (name.empty())
         return;
 
-    CreateFileSinkFrontEnd(name);
+    ApplyConfigurationToFileSinkFrontEnd(name, std::bind(ConfigureFileSinkFrontEnd, std::placeholders::_1, name));
 
     // Store as static to initialize once.
     static bool dummy = InitializeLoggerCreatedSignal();
