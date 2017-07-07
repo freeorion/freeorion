@@ -42,8 +42,6 @@ namespace {
             expr::stream
             << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
             << " [" << log_severity << "] "
-            << channel_name
-            << " : "
             << expr::message
         );
 

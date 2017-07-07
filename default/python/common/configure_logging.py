@@ -161,9 +161,9 @@ class _Formatter(logging.Formatter):
     def format(self, record):
         """Select the correct log format and call logging.Formatter.format()"""
         if record.name == 'root':
-            self._fmt = '%(filename)s:%(funcName)s():%(lineno)d  - %(message)s'
+            self._fmt = 'python : %(filename)s:%(funcName)s():%(lineno)d  - %(message)s'
         else:
-            self._fmt = '%(name)s %(filename)s:%(funcName)s():%(lineno)d  - %(message)s'
+            self._fmt = '%(name)s : %(filename)s:%(funcName)s():%(lineno)d  - %(message)s'
 
         return super(_Formatter, self).format(record)
 
