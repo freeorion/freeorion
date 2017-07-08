@@ -1,11 +1,3 @@
-## Required design names
-The game currently requires all of the following design names:
-
-All entries contained within the default/scripting/ship_designs/required directory
-
-Any entries mentioned within default/scripting/starting_unlocks/fleets.inf
-
-
 ## Instructions for editing ship or monster designs in game in the Design window.
 1. Move or backup the `shipdesigns` directory in the freeorion data directory.  See the installation directory README.md##Directories for the data directory location.
 2. Replace the `shipdesigns` directory with the `default/scripting/ship_designs` or `default/scripting/monsters` directory.
