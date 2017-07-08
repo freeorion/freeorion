@@ -17,7 +17,7 @@ namespace {
     // Python sends text as several null-terminated array of char which need to be
     // concatenated before they are output to the logger.  There's probably a better
     // way to do this, but I don't know what it is, and this seems reasonably safe...
-    void send_to_log(std::stringstream & ss, const std::string & input, void  (*logger) (const std::string &)) {
+    void send_to_log(std::stringstream & ss, const std::string & input, const std::function<void(const std::string&)>& logger) {
         if (input.empty()) return;
         ss <<  ((input.size() < MAX_SINGLE_CHUNK_TEXT_SIZE) ? input : input.substr(0, MAX_SINGLE_CHUNK_TEXT_SIZE));
         std::string line;
@@ -75,53 +75,75 @@ namespace {
         return lg;                                                \
     }
 
-DeclareThreadSafePythonLogger(python);
+    DeclareThreadSafePythonLogger(python);
+
+    // Assemble a python message that is the same as the C++ message format.
+    void PythonLogger(const std::string& msg,
+                      const LogLevel log_level,
+                      const std::string& python_logger,
+                      const std::string& filename,
+                      // const std::string& function_name,
+                      const std::string& lineno)
+    {
+        // Keeping the string assemble in of this switch statement means that it is gated by
+        // log_level and not done unnecessarily when that level of logger is turned off.
+        switch (log_level) {
+        case LogLevel::trace:
+            TraceLogger(python) << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " - " << msg;
+            break;
+        case LogLevel::debug:
+            DebugLogger(python) << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " - " << msg;
+            break;
+        case LogLevel::info:
+            InfoLogger(python)  << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " - " << msg;
+            break;
+        case LogLevel::warn:
+            WarnLogger(python)  << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " - " << msg;
+            break;
+        case LogLevel::error:
+            ErrorLogger(python) << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " - " << msg;
+            break;
+        }
+    }
+
+    void PythonLoggerWrapper(const LogLevel log_level, const std::string& msg,
+                             const std::string& logger_name, const std::string& filename,
+                             /*const std::string& function_name,*/ const std::string& lineno)
+    {
+        static std::stringstream log_stream("");
+        send_to_log(log_stream, msg,
+                    std::bind(&PythonLogger, std::placeholders::_1,
+                              log_level, logger_name, filename, /*function_name,*/ lineno));
+    }
 
 
     // debug/stdout logger
-    void PythonLoggerCoreDebug(const std::string &s) {
-        DebugLogger(python) << s;
-    }
-    void PythonLoggerDebug(const std::string & text) {
-        static std::stringstream log_stream("");
-        send_to_log(log_stream, text, &PythonLoggerCoreDebug);
+    void PythonLoggerDebug(const std::string& msg, const std::string& logger_name,
+                           const std::string& filename, const std::string& function_name, const std::string& lineno)
+    {
+        PythonLoggerWrapper(LogLevel::debug, msg, logger_name, filename, /*function_name,*/ lineno);
     }
 
+
     // info logger
-    void PythonLoggerCoreInfo(const std::string &s) {
-        // The extra space aligns info messages with debug messages.
-        InfoLogger(python) << " " << s;
-    }
-    void PythonLoggerInfo(const std::string & text) {
-        static std::stringstream log_stream("");
-        send_to_log(log_stream, text, &PythonLoggerCoreInfo);
+    void PythonLoggerInfo(const std::string& msg, const std::string& logger_name,
+                          const std::string& filename, const std::string& function_name, const std::string& lineno)
+    {
+        PythonLoggerWrapper(LogLevel::info, msg, logger_name, filename, /*function_name,*/ lineno);
     }
 
     // warn logger
-    void PythonLoggerCoreWarn(const std::string &s) {
-        WarnLogger(python) << s;
-    }
-    void PythonLoggerWarn(const std::string & text) {
-        static std::stringstream log_stream("");
-        send_to_log(log_stream, text, &PythonLoggerCoreWarn);
+    void PythonLoggerWarn(const std::string& msg, const std::string& logger_name,
+                          const std::string& filename, const std::string& function_name, const std::string& lineno)
+    {
+        PythonLoggerWrapper(LogLevel::warn, msg, logger_name, filename, /*function_name,*/ lineno);
     }
 
     // error logger
-    void PythonLoggerCoreError(const std::string &s) {
-        ErrorLogger(python) << s;
-    }
-    void PythonLoggerError(const std::string & text) {
-        static std::stringstream log_stream("");
-        send_to_log(log_stream, text, &PythonLoggerCoreError);
-    }
-
-    // critical logger
-    void PythonLoggerCoreFatal(const std::string &s) {
-        ErrorLogger(python) << s;
-    }
-    void PythonLoggerFatal(const std::string & text) {
-        static std::stringstream log_stream("");
-        send_to_log(log_stream, text, &PythonLoggerCoreFatal);
+    void PythonLoggerError(const std::string& msg, const std::string& logger_name,
+                           const std::string& filename, const std::string& function_name, const std::string& lineno)
+    {
+        PythonLoggerWrapper(LogLevel::error, msg, logger_name, filename, /*function_name,*/ lineno);
     }
 }
 
@@ -132,6 +154,6 @@ namespace FreeOrionPython {
         def("info", PythonLoggerInfo);
         def("warn", PythonLoggerWarn);
         def("error", PythonLoggerError);
-        def("fatal", PythonLoggerFatal);
+        def("fatal", PythonLoggerError);
     }
 }

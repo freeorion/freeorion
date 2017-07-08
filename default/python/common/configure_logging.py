@@ -81,6 +81,8 @@ log.
 """
 import sys
 import logging
+import inspect
+import os
 
 try:
     import freeorion_logger  # FreeOrion logger interface pylint: disable=import-error
@@ -112,22 +114,8 @@ except ImportError as e:
     freeorion_logger = _FreeOrionLoggerForTest()
 
 
-class _stdoutLikeStream(object):
-    """A stream-like object to redirect stdout to C++ process."""
-    @staticmethod
-    def write(msg):
-        freeorion_logger.debug(msg)
-
-
-class _stderrLikeStream(object):
-    """A stream-like object to redirect stdout to C++ process."""
-    @staticmethod
-    def write(msg):
-        freeorion_logger.error(msg)
-
-
-class _streamlikeLogger(object):
-    """A stream-like object to redirect stdout to C++ process for logger."""
+class _stdXLikeStream(object):
+    """A stream-like object to redirect stdout or stderr to the C++ process."""
     def __init__(self, level):
         self.logger = {
             logging.DEBUG: freeorion_logger.debug,
@@ -139,7 +127,34 @@ class _streamlikeLogger(object):
         }[level]
 
     def write(self, msg):
-        self.logger(msg)
+        # Grab the caller's call frame info
+        (_, filename, line_number, function_name, _, _) = inspect.stack()[1]
+        try:
+            self.logger(msg, "python", str(os.path.split(filename)[1]), str(function_name), str(line_number))
+
+        finally:
+            # Explicitly del references to the callers frame to avoid persistent reference cycles
+            del filename
+            del line_number
+            del function_name
+
+
+class _LoggerHandler(logging.Handler):
+    """A handler to send logs to the C++ process."""
+    def __init__(self, level):
+        super(_LoggerHandler, self).__init__(level)
+        self.logger = {
+            logging.DEBUG: freeorion_logger.debug,
+            logging.INFO: freeorion_logger.info,
+            logging.WARNING: freeorion_logger.warn,
+            logging.ERROR: freeorion_logger.error,
+            logging.FATAL: freeorion_logger.fatal,
+            logging.NOTSET: freeorion_logger.debug
+        }[level]
+
+    def emit(self, record):
+        self.logger(record.msg + "\n", str(record.name), str(record.filename),
+                    str(record.funcName), str(record.lineno))
 
 
 class _SingleLevelFilter(logging.Filter):
@@ -152,29 +167,12 @@ class _SingleLevelFilter(logging.Filter):
         return record.levelno == self.level
 
 
-class _Formatter(logging.Formatter):
-    """Use a format string similar to the backend log formatting, but include the logger name if it is not root."""
-    def __init__(self, fmt=None, datefmt=None):
-        self._fmt = '%(name)s %(filename)s:%(funcName)s():%(lineno)d  - %(message)s'
-        super(_Formatter, self).__init__(fmt, datefmt)
-
-    def format(self, record):
-        """Select the correct log format and call logging.Formatter.format()"""
-        if record.name == 'root':
-            self._fmt = 'python : %(filename)s:%(funcName)s():%(lineno)d  - %(message)s'
-        else:
-            self._fmt = '%(name)s : %(filename)s:%(funcName)s():%(lineno)d  - %(message)s'
-
-        return super(_Formatter, self).format(record)
-
-
 def _create_narrow_handler(level):
     """Create a handler for logger that forwards a single level of log
     to the appropriate stream in the C++ app."""
-    h = logging.StreamHandler(_streamlikeLogger(level))
+    h = _LoggerHandler(level)
     h.addFilter(_SingleLevelFilter(level))
     h.setLevel(level)
-    h.setFormatter(_Formatter())
     return h
 
 
@@ -182,8 +180,8 @@ def redirect_logging_to_freeorion_logger(initial_log_level=logging.DEBUG):
     """Redirect stdout, stderr and the logging.logger to hosting process' freeorion_logger."""
 
     if not hasattr(redirect_logging_to_freeorion_logger, "only_redirect_once"):
-        sys.stdout = _stdoutLikeStream()
-        sys.stderr = _stderrLikeStream()
+        sys.stdout = _stdXLikeStream(logging.DEBUG)
+        sys.stderr = _stdXLikeStream(logging.ERROR)
         print 'Python stdout and stderr are redirected to ai process.'
 
         logger = logging.getLogger()
