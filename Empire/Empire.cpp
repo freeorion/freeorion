@@ -1280,67 +1280,6 @@ const std::string& Alignment::Description() const
 const std::string& Alignment::Graphic() const
 { return m_graphic; }
 
-
-namespace {
-    class AlignmentManager {
-    public:
-        /** \name Accessors */ //@{
-        const std::vector<Alignment>&           Alignments() const { return m_alignments; }
-
-        const std::vector<std::shared_ptr<Effect::EffectsGroup>> EffectsGroups() const
-        { return m_effects_groups; }
-        //@}
-
-        /** returns the instance of this singleton class; you should use the
-          * free function GetAlignmentManager() instead */
-        static const AlignmentManager& GetAlignmentManager();
-
-    private:
-        AlignmentManager();
-
-        std::vector<Alignment>                                  m_alignments;
-        std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects_groups;
-
-        static AlignmentManager*    s_instance;
-    };
-    // static(s)
-    AlignmentManager* AlignmentManager::s_instance = nullptr;
-
-    const AlignmentManager& AlignmentManager::GetAlignmentManager() {
-        static AlignmentManager manager;
-        return manager;
-    }
-
-    AlignmentManager::AlignmentManager() {
-        if (s_instance)
-            throw std::runtime_error("Attempted to create more than one AlignmentManager.");
-
-        s_instance = this;
-
-        DebugLogger() << "Initializing AlignmentManager";
-
-        try {
-            parse::alignments(m_alignments, m_effects_groups);
-        } catch (const std::exception& e) {
-            ErrorLogger() << "Failed parsing alignments: error: " << e.what();
-            throw e;
-        }
-
-        TraceLogger() << "Alignments:";
-        for (const auto& p : m_alignments)
-            TraceLogger() << " ... " << p.Name();
-        TraceLogger() << "Alignment Effects:";
-        for (const auto& p : m_effects_groups)
-            TraceLogger() << " ... " /*<< p.Dump()*/;
-    }
-
-    /** returns the singleton alignment manager */
-    const AlignmentManager& GetAlignmentManager() {
-        return AlignmentManager::GetAlignmentManager();
-    }
-};
-
-
 ////////////
 // Empire //
 ////////////
