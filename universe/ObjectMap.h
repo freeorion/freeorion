@@ -29,11 +29,6 @@ class Field;
 FO_COMMON_API extern const int ALL_EMPIRES;
 
 
-template<typename T>
-inline void UniverseObjectDeleter(T* o)
-{ delete o; }
-
-
 /** Contains a set of objects that make up a (known or complete) Universe. */
 class FO_COMMON_API ObjectMap {
 public:
@@ -337,12 +332,7 @@ public:
 
     /** Adds object \a obj to the map under its ID, if it is a valid object.
       * If there already was an object in the map with the id \a id then
-      * that object will be removed.  A std::shared_ptr to the new object is
-      * returned. */
-    template <class T>
-    std::shared_ptr<T> Insert(T* obj, int empire_id = ALL_EMPIRES);
-
-    /** Adds object \a obj to the map under its ID, if it is a valid object. */
+      * that object will be removed. */
     template <class T>
     void Insert(std::shared_ptr<T> obj, int empire_id = ALL_EMPIRES);
 
@@ -372,7 +362,7 @@ public:
     //@}
 
 private:
-    void Insert(std::shared_ptr<UniverseObject> item, int empire_id = ALL_EMPIRES);
+    void InsertCore(std::shared_ptr<UniverseObject> item, int empire_id = ALL_EMPIRES);
 
     void                CopyObjectsToSpecializedMaps();
 
@@ -550,20 +540,10 @@ int ObjectMap::NumObjects() const
 { return Map<typename boost::remove_const<T>::type>().size(); }
 
 template <class T>
-std::shared_ptr<T> ObjectMap::Insert(T* item, int empire_id /* = ALL_EMPIRES */) {
-    if (!item)
-        return nullptr;
-
-    std::shared_ptr<T> shared_item(item, UniverseObjectDeleter<T>);
-    Insert(shared_item, empire_id);
-    return std::shared_ptr<T>(shared_item);
-}
-
-template <class T>
 void ObjectMap::Insert(std::shared_ptr<T> item, int empire_id /* = ALL_EMPIRES */) {
     if (!item)
         return;
-    Insert(std::dynamic_pointer_cast<UniverseObject>(item), empire_id);
+    InsertCore(std::dynamic_pointer_cast<UniverseObject>(item), empire_id);
 }
 
 // template specializations

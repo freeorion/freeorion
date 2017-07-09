@@ -337,36 +337,31 @@ int Universe::GenerateDesignID() {
 }
 
 template <class T>
-std::shared_ptr<T> Universe::Insert(T* obj) {
+std::shared_ptr<T> Universe::Insert(std::shared_ptr<T> obj) {
     if (!obj)
-        return nullptr;
+        return obj;
 
     int id = GenerateObjectID();
 
     auto valid = m_object_id_allocator->UpdateIDAndCheckIfOwned(id);
     if (valid) {
         obj->SetID(id);
-        return m_objects.Insert(obj);
+        m_objects.Insert(obj);
     }
-
-    // Avoid leaking memory if there are more than 2^31 objects in the Universe.
-    // Realistically, we should probably do something a little more drastic in this case,
-    // like terminate the program and call 911 or something.
-    delete obj;
-    return nullptr;
+    return obj;
 }
 
 template <class T>
-std::shared_ptr<T> Universe::InsertID(T* obj, int id) {
+std::shared_ptr<T> Universe::InsertID(std::shared_ptr<T> obj, int id) {
     auto valid = m_object_id_allocator->UpdateIDAndCheckIfOwned(id);
 
     if (!valid)
-        return Insert(obj);
+        return Insert(std::forward<std::shared_ptr<T>>(obj));
 
     obj->SetID(id);
-    std::shared_ptr<T> result = m_objects.Insert(obj);
+    m_objects.Insert(obj);
     DebugLogger() << "Inserting object with id " << id;
-    return result;
+    return obj;
 }
 
 int Universe::InsertShipDesign(ShipDesign* ship_design) {
@@ -2391,7 +2386,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
             if (std::shared_ptr<UniverseObject> known_obj = known_object_map.Object(object_id)) {
                 known_obj->Copy(full_object, empire_id);                    // already a stored version of this object for this empire.  update it, limited by visibility this empire has for this object this turn
             } else {
-                if (UniverseObject* new_obj = full_object->Clone(empire_id))    // no previously-recorded version of this object for this empire.  create a new one, copying only the information limtied by visibility, leaving the rest as default values
+                if (auto new_obj = std::shared_ptr<UniverseObject>(full_object->Clone(empire_id)))    // no previously-recorded version of this object for this empire.  create a new one, copying only the information limtied by visibility, leaving the rest as default values
                     known_object_map.Insert(new_obj);
             }
 
@@ -2977,46 +2972,46 @@ void Universe::GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_k
 }
 
 std::shared_ptr<Ship> Universe::CreateShip(int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Ship(), id); }
+{ return InsertID(std::shared_ptr<Ship>(new Ship()), id); }
 
 std::shared_ptr<Ship> Universe::CreateShip(int empire_id, int design_id, const std::string& species_name,
                                            int produced_by_empire_id/*= ALL_EMPIRES*/, int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Ship(empire_id, design_id, species_name, produced_by_empire_id), id); }
+{ return InsertID(std::shared_ptr<Ship>(new Ship(empire_id, design_id, species_name, produced_by_empire_id)), id); }
 
 std::shared_ptr<Fleet> Universe::CreateFleet(int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Fleet(), id); }
+{ return InsertID(std::shared_ptr<Fleet>(new Fleet()), id); }
 
 std::shared_ptr<Fleet> Universe::CreateFleet(const std::string& name, double x, double y, int owner, int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Fleet(name, x, y, owner), id); }
+{ return InsertID(std::shared_ptr<Fleet>(new Fleet(name, x, y, owner)), id); }
 
 std::shared_ptr<Planet> Universe::CreatePlanet(int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Planet(), id); }
+{ return InsertID(std::shared_ptr<Planet>(new Planet()), id); }
 
 std::shared_ptr<Planet> Universe::CreatePlanet(PlanetType type, PlanetSize size, int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Planet(type, size), id); }
+{ return InsertID(std::shared_ptr<Planet>(new Planet(type, size)), id); }
 
 std::shared_ptr<System> Universe::CreateSystem(int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new System(), id); }
+{ return InsertID(std::shared_ptr<System>(new System()), id); }
 
 std::shared_ptr<System> Universe::CreateSystem(StarType star, const std::string& name, double x, double y, int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new System(star, name, x, y), id); }
+{ return InsertID(std::shared_ptr<System>(new System(star, name, x, y)), id); }
 
 std::shared_ptr<System> Universe::CreateSystem(StarType star, const std::map<int, bool>& lanes_and_holes,
                                                const std::string& name, double x, double y, int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new System(star, lanes_and_holes, name, x, y), id); }
+{ return InsertID(std::shared_ptr<System>(new System(star, lanes_and_holes, name, x, y)), id); }
 
 std::shared_ptr<Building> Universe::CreateBuilding(int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Building(), id); }
+{ return InsertID(std::shared_ptr<Building>(new Building()), id); }
 
 std::shared_ptr<Building> Universe::CreateBuilding(int empire_id, const std::string& building_type,
                                                    int produced_by_empire_id/* = ALL_EMPIRES*/, int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Building(empire_id, building_type, produced_by_empire_id), id); }
+{ return InsertID(std::shared_ptr<Building>(new Building(empire_id, building_type, produced_by_empire_id)), id); }
 
 std::shared_ptr<Field> Universe::CreateField(int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Field(), id); }
+{ return InsertID(std::shared_ptr<Field>(new Field()), id); }
 
 std::shared_ptr<Field> Universe::CreateField(const std::string& field_type, double x, double y, double radius, int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Field(field_type, x, y, radius), id); }
+{ return InsertID(std::shared_ptr<Field>(new Field(field_type, x, y, radius)), id); }
 
 void Universe::ResetUniverse() {
     m_objects.Clear();  // wipe out anything present in the object map

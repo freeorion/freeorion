@@ -399,14 +399,14 @@ private:
     /** Inserts object \a obj into the universe; returns a std::shared_ptr
       * to the inserted object. */
     template <class T>
-    std::shared_ptr<T> Insert(T* obj);
+    std::shared_ptr<T> Insert(std::shared_ptr<T> obj);
 
     /** Inserts object \a obj of given ID into the universe; returns a
       * std::shared_ptr to the inserted object on proper insert, or a null
       * std::shared_ptr on failure.  Useful mostly for times when ID needs
       * to be consistent on client and server */
     template <class T>
-    std::shared_ptr<T> InsertID(T* obj, int id);
+    std::shared_ptr<T> InsertID(std::shared_ptr<T> obj, int id);
 
     /** Clears \a targets_causes, and then populates with all
       * EffectsGroups and their targets in the known universe. */

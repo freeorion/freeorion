@@ -67,7 +67,7 @@ void ObjectMap::CopyObject(std::shared_ptr<const UniverseObject> source, int emp
     if (std::shared_ptr<UniverseObject> destination = this->Object(source_id)) {
         destination->Copy(source, empire_id); // there already is a version of this object present in this ObjectMap, so just update it
     } else {
-        Insert(source->Clone(), empire_id); // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
+        InsertCore(std::shared_ptr<UniverseObject>(source->Clone()), empire_id); // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
     }
 }
 
@@ -172,7 +172,7 @@ ObjectMap::const_iterator<> ObjectMap::const_begin() const
 ObjectMap::const_iterator<> ObjectMap::const_end() const
 { return const_end<UniverseObject>(); }
 
-void ObjectMap::Insert(std::shared_ptr<UniverseObject> item, int empire_id/* = ALL_EMPIRES*/) {
+void ObjectMap::InsertCore(std::shared_ptr<UniverseObject> item, int empire_id/* = ALL_EMPIRES*/) {
     FOR_EACH_MAP(TryInsertIntoMap, item);
     if (item &&
         GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).find(item->ID()) ==
