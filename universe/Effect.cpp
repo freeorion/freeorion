@@ -1939,7 +1939,7 @@ void CreateSystem::Execute(const ScriptingContext& context) const {
         name_str = GenerateSystemName();
     }
 
-    std::shared_ptr<System> system = GetUniverse().CreateSystem(star_type, name_str, x, y);
+    auto system = GetUniverse().InsertNew<System>(star_type, name_str, x, y);
     if (!system) {
         ErrorLogger() << "CreateSystem::Execute couldn't create system!";
         return;

@@ -667,7 +667,7 @@ namespace {
         }
 
         // Create system and insert it into the object map
-        std::shared_ptr<System> system = GetUniverse().CreateSystem(star_type, star_name, x, y);
+        auto system = GetUniverse().InsertNew<System>(star_type, star_name, x, y);
         if (!system) {
             ErrorLogger() << "CreateSystem : Attempt to insert system into the object map failed";
             return INVALID_OBJECT_ID;
