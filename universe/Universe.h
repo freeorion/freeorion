@@ -386,6 +386,17 @@ public:
 
     std::shared_ptr<Fleet> CreateFleet(int id = INVALID_OBJECT_ID);
     std::shared_ptr<Fleet> CreateFleet(const std::string& name, double x, double y, int owner, int id = INVALID_OBJECT_ID);
+    /** \p empire_id inserts object \p obj into the universe with the given \p id.
+        This is provided for use with Orders which are run once on the client
+        and receive a new id and then are run a second time on the server using
+        the id assigned on the client. */
+    template <typename T, typename... Args>
+    std::shared_ptr<T> InsertByEmpireWithID(int empire_id, int id, Args&&... args) {
+        if (!VerifyUnusedObjectID(empire_id, id))
+            return nullptr;
+
+        return InsertID<T>(id, std::forward<Args>(args)...);
+    }
 
     std::shared_ptr<Planet> CreatePlanet(int id = INVALID_OBJECT_ID);
     std::shared_ptr<Planet> CreatePlanet(PlanetType type, PlanetSize size, int id = INVALID_OBJECT_ID);
@@ -422,6 +433,9 @@ private:
         InsertIDCore(uobj, id);
         return obj;
     }
+
+    /** Inserts object \p obj into the universe with the given \p id. */
+    void InsertIDCore(std::shared_ptr<UniverseObject> obj, int id);
 
     /** Inserts object \a obj into the universe; returns a std::shared_ptr
       * to the inserted object. */
