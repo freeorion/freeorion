@@ -384,8 +384,6 @@ public:
         return InsertID<T>(id, std::forward<Args>(args)...);
     }
 
-    std::shared_ptr<Fleet> CreateFleet(int id = INVALID_OBJECT_ID);
-    std::shared_ptr<Fleet> CreateFleet(const std::string& name, double x, double y, int owner, int id = INVALID_OBJECT_ID);
     /** \p empire_id inserts object \p obj into the universe with the given \p id.
         This is provided for use with Orders which are run once on the client
         and receive a new id and then are run a second time on the server using

@@ -205,7 +205,6 @@ namespace {
 
         // compile data about new fleets to pass to order
         std::vector<std::string>        order_fleet_names;
-        std::vector<int>                order_fleet_ids;
         std::vector<std::vector<int>>   order_ship_id_groups;
         std::vector<bool>               order_ship_aggressives;
 
@@ -239,24 +238,11 @@ namespace {
                 original_fleet_ids.insert(ship->FleetID());
             }
 
-
-            // get new fleet id
-            int new_fleet_id = INVALID_OBJECT_ID;
-            {
-                ScopedTimer get_id_timer("GetNewObjectID");
-                new_fleet_id = GetNewObjectID();
-                if (new_fleet_id == INVALID_OBJECT_ID) {
-                    ClientUI::MessageBox(UserString("SERVER_TIMEOUT"), true);
-                    return;
-                }
-            }
-
             // Request a generated fleet name
             std::string fleet_name = "";
 
             // add entry to order data
             order_fleet_names.push_back(fleet_name);
-            order_fleet_ids.push_back(new_fleet_id);
             order_ship_id_groups.push_back(ship_ids);
         }
 
@@ -275,7 +261,7 @@ namespace {
 
         // create new fleet with ships
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<NewFleetOrder>(client_empire_id, order_fleet_names, order_fleet_ids,
+            std::make_shared<NewFleetOrder>(client_empire_id, order_fleet_names,
                                        *systems_containing_new_fleets.begin(),
                                        order_ship_id_groups, order_ship_aggressives));
     }

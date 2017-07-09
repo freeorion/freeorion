@@ -114,23 +114,22 @@ NewFleetOrder::NewFleetOrder() :
     m_system_id(INVALID_OBJECT_ID)
 {}
 
-NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, int fleet_id,
+NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name,
                              int system_id, const std::vector<int>& ship_ids,
                              bool aggressive) :
     NewFleetOrder(empire, std::vector<std::string>(1, fleet_name),
-                  std::vector<int>(1, fleet_id),
                   system_id, std::vector<std::vector<int>>(1, ship_ids),
                   std::vector<bool>(1, aggressive) )
 {}
 
 NewFleetOrder::NewFleetOrder(int empire, const std::vector<std::string>& fleet_names,
-                             const std::vector<int>& fleet_ids, int system_id,
+                             int system_id,
                              const std::vector<std::vector<int>>& ship_id_groups,
                              const std::vector<bool>& aggressives) :
     Order(empire),
     m_fleet_names(fleet_names),
     m_system_id(system_id),
-    m_fleet_ids(fleet_ids),
+    m_fleet_ids(std::vector<int>(m_fleet_names.size(), INVALID_OBJECT_ID)),
     m_ship_id_groups(ship_id_groups),
     m_aggressives(aggressives)
 {}
@@ -198,9 +197,21 @@ void NewFleetOrder::ExecuteImpl() const {
         if (validated_ships.empty())
             continue;
 
-        // create fleet
-        std::shared_ptr<Fleet> fleet = GetUniverse().CreateFleet(fleet_name, system->X(), system->Y(),
-                                                                 EmpireID(), fleet_id);
+        std::shared_ptr<Fleet> fleet;
+        if (fleet_id == INVALID_OBJECT_ID) {
+            // create fleet
+            fleet = GetUniverse().InsertNew<Fleet>(fleet_name, system->X(), system->Y(), EmpireID());
+            m_fleet_ids[i] = fleet->ID();
+        } else {
+            fleet = GetUniverse().InsertByEmpireWithID<Fleet>(
+                EmpireID(), fleet_id, fleet_name, system->X(), system->Y(), EmpireID());
+        }
+
+        if (!fleet) {
+            ErrorLogger() << "Unable to create fleet.";
+            return;
+        }
+
         fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
         fleet->SetAggressive(aggressive);
 

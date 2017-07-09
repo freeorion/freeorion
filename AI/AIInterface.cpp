@@ -377,11 +377,10 @@ namespace AIInterface {
             }
         }
 
-        int new_fleet_id = ClientApp::GetApp()->GetNewObjectID();
+        auto order = std::make_shared<NewFleetOrder>(empire_id, fleet_name, system_id, ship_ids);
+        AIClientApp::GetApp()->Orders().IssueOrder(order);
 
-        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<NewFleetOrder>(empire_id, fleet_name, new_fleet_id, system_id, ship_ids));
-
-        return new_fleet_id;
+        return *order->FleetIDs().begin();
     }
 
     int IssueNewFleetOrder(const std::string& fleet_name, int ship_id) {

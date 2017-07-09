@@ -3198,7 +3198,7 @@ void Empire::CheckProductionProgress() {
                 std::shared_ptr<Fleet> fleet;
 
                 if (!individual_fleets) {
-                    fleet = universe.CreateFleet("", system->X(), system->Y(), m_id);
+                    fleet = universe.InsertNew<Fleet>("", system->X(), system->Y(), m_id);
 
                     system->Insert(fleet);
                     fleet->SetNextAndPreviousSystems(system->ID(), system->ID());
@@ -3208,7 +3208,7 @@ void Empire::CheckProductionProgress() {
 
                 for (std::shared_ptr<Ship> ship : ships) {
                     if (individual_fleets) {
-                        fleet = universe.CreateFleet("", system->X(), system->Y(), m_id);
+                        fleet = universe.InsertNew<Fleet>("", system->X(), system->Y(), m_id);
 
                         system->Insert(fleet);
                         fleet->SetNextAndPreviousSystems(system->ID(), system->ID());

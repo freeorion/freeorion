@@ -145,12 +145,11 @@ public:
     /** \name Structors */ //@{
     NewFleetOrder();
 
-    NewFleetOrder(int empire, const std::string& fleet_name, int fleet_id,
+    NewFleetOrder(int empire, const std::string& fleet_name,
                   int system_id, const std::vector<int>& ship_ids,
                   bool aggressive = false);
 
     NewFleetOrder(int empire, const std::vector<std::string>& fleet_names,
-                  const std::vector<int>& fleet_ids,
                   int system_id, const std::vector<std::vector<int>>& ship_id_groups,
                   const std::vector<bool>& aggressives);
     //@}
@@ -185,7 +184,8 @@ private:
 
     std::vector<std::string> m_fleet_names;
     int m_system_id;
-    std::vector<int> m_fleet_ids;
+    /** m_fleet_ids is mutable because ExecuteImpl generates the fleet ids. */
+    mutable std::vector<int> m_fleet_ids;
     std::vector<std::vector<int>> m_ship_id_groups;
     std::vector<bool> m_aggressives;
 

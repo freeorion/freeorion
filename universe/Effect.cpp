@@ -47,7 +47,7 @@ namespace {
         if (!ship)
             return nullptr;
 
-        std::shared_ptr<Fleet> fleet = universe.CreateFleet("", x, y, ship->Owner());
+        auto fleet = universe.InsertNew<Fleet>("", x, y, ship->Owner());
 
         std::vector<int> ship_ids;
         ship_ids.push_back(ship->ID());

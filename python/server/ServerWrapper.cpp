@@ -774,7 +774,7 @@ namespace {
         }
 
         // Create new fleet at the position of the specified system
-        std::shared_ptr<Fleet> fleet = GetUniverse().CreateFleet(name, system->X(), system->Y(), empire_id);
+        auto fleet = GetUniverse().InsertNew<Fleet>(name, system->X(), system->Y(), empire_id);
         if (!fleet) {
             ErrorLogger() << "CreateFleet: couldn't create new fleet";
             return INVALID_OBJECT_ID;
