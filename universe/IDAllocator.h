@@ -34,6 +34,9 @@ public:
     /// Return a valid new id.  This is used by both clients and servers.
     ID_t NewID();
 
+    /** Return true if \p id is unused and in the id space of \p empire_id. */
+    bool IsIDValidAndUnused(const ID_t id, const int empire_id);
+
     /** UpdateIDAndCheckIfOwned behaves differently on the server and clients.
 
         On the server, it determines which client allocated \p id and updates
@@ -64,6 +67,9 @@ private:
 
     // A map from empire id to next used object id;
     std::unordered_map<int, ID_t> m_empire_id_to_next_assigned_object_id;
+
+    // An index from id % m_stride to empire ids
+    std::vector<int> m_offset_to_empire_id;
 
     /// if less than m_next_assigned_id warn about id exhaustion.
     ID_t m_warn_threshold;

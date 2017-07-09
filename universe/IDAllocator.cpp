@@ -21,22 +21,28 @@ IDAllocator::IDAllocator(const int server_id,
     m_stride(client_ids.size() + 1),
     m_server_id(server_id),
     m_empire_id(server_id),
+    m_offset_to_empire_id(client_ids.size() + 1, server_id),
     m_warn_threshold(std::numeric_limits<int>::max() - 1000 * m_stride),
     m_exhausted_threshold(std::numeric_limits<int>::max() - 10 * m_stride)
 {
     TraceLogger(IDallocator) << "IDAllocator() server id = " << server_id << " invalid id = " << invalid_id
                              << " warn threshold =  " << m_warn_threshold << " num clients = " << client_ids.size();
-    int ii = std::max(m_invalid_id + 1, m_temp_id + 1);
+
+    auto ii = std::max(m_invalid_id + 1, m_temp_id + 1);
+
     // Assign the server and each client a unique initial offset modulo m_stride.
 
     // Assign the server to the first offset
+    m_offset_to_empire_id[ii % m_stride] = m_server_id;
     m_empire_id_to_next_assigned_object_id.insert(
         std::make_pair(m_server_id, ii++ /*intentional post increment*/ ));
 
     for (const auto empire_id : client_ids) {
         if (empire_id == m_server_id)
             continue;
-        m_empire_id_to_next_assigned_object_id.insert(std::make_pair(empire_id, ii++));
+        m_offset_to_empire_id[ii % m_stride] = empire_id;
+        m_empire_id_to_next_assigned_object_id.insert(
+            std::make_pair(empire_id, ii++ /*intentional post increment*/));
     }
 }
 
@@ -64,11 +70,11 @@ int IDAllocator::NewID() {
     if (retval >= m_warn_threshold)
         WarnLogger() << "Object IDs are almost exhausted. Currently assiging id, " << retval;
 
-    DebugLogger(IDallocator) << "Allocating id = " << retval << " for empire = " << it->first;
+    TraceLogger(IDallocator) << "Allocating id = " << retval << " for empire = " << it->first;
     return retval;
 }
 
-bool IDAllocator::UpdateIDAndCheckIfOwned(const ID_t id) {
+bool IDAllocator::IsIDValidAndUnused(const ID_t id, const int empire_id) {
     if (id == m_invalid_id)
         return false;
 
@@ -76,9 +82,9 @@ bool IDAllocator::UpdateIDAndCheckIfOwned(const ID_t id) {
         return true;
 
     // Make sure this empire exists.
-    auto&& it = m_empire_id_to_next_assigned_object_id.find(m_empire_id);
+    auto&& it = m_empire_id_to_next_assigned_object_id.find(empire_id);
     if (it == m_empire_id_to_next_assigned_object_id.end()) {
-        ErrorLogger() << "m_empire_id " << m_empire_id << " not in id manager table.";
+        ErrorLogger() << "empire_id " << empire_id << " not in id manager table.";
         return false;
     }
 
@@ -89,23 +95,47 @@ bool IDAllocator::UpdateIDAndCheckIfOwned(const ID_t id) {
     // If not on the server then check that id is modulo the same as m_empire_id's output.
     if (m_empire_id != m_server_id) {
         auto valid =   (id % m_stride == it->second % m_stride);
-        DebugLogger(IDallocator) << "Valid = " << valid << " client id = " << id << " for empire = " << m_empire_id;
+        TraceLogger(IDallocator) << "Client determined object id = " << id << " is " << (valid ? "" : "not")
+                                 << " valid for empire = " << empire_id;
         return valid;
     }
 
-    // On the server figure out which empire assigned this id and update their next assigned id
-    for (auto& empire_and_next_id : m_empire_id_to_next_assigned_object_id) {
-        if (id % m_stride == empire_and_next_id.second % m_stride) {
-            const auto next_id = id + m_stride;
-            if (next_id > empire_and_next_id.second)
-                empire_and_next_id.second = next_id;
-            DebugLogger(IDallocator) << "Valid server id = " << id << " for empire = " << empire_and_next_id.first;
-            return true;;
-        }
+    // On the server figure out which empire assigned this id
+    auto assigning_empire = m_offset_to_empire_id[id % m_stride];
+    auto&& empire_and_next_id = m_empire_id_to_next_assigned_object_id.find(assigning_empire);
+    if (empire_and_next_id == m_empire_id_to_next_assigned_object_id.end()) {
+        ErrorLogger() << "empire_id " << empire_id << " not in id manager table.";
+        return false;
     }
 
-    ErrorLogger() << "id = " << id << " is invalid and was allocated by none of the empires known to the id allocator.";
-    return false;
+    auto valid = (empire_and_next_id->second >= id);
+
+    TraceLogger(IDallocator) << "Server determined object id = " << id << " is " << (valid ? "" : "not")
+                             << " valid for empire = " << empire_id;
+
+    return valid;
+}
+
+bool IDAllocator::UpdateIDAndCheckIfOwned(const ID_t id) {
+    auto valid = IsIDValidAndUnused(id, m_empire_id);
+
+    if (!valid)
+        return valid;
+
+    // If not on the server then just return the check value;
+    if (m_empire_id != m_server_id)
+        return valid;
+
+    // On the server figure out which empire assigned this id and update their next assigned id
+    auto assigning_empire = m_offset_to_empire_id[id % m_stride];
+    auto&& empire_and_next_id = m_empire_id_to_next_assigned_object_id.find(assigning_empire);
+    if (empire_and_next_id == m_empire_id_to_next_assigned_object_id.end())
+        return false;
+
+    const auto next_id = id + m_stride;
+    if (next_id > empire_and_next_id->second)
+        empire_and_next_id->second = next_id;
+    return true;;
 }
 
 template <class Archive>
@@ -124,7 +154,8 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, co
     if (Archive::is_loading::value) {
         // Always load whatever is there.
         ar & BOOST_SERIALIZATION_NVP(m_empire_id)
-           & BOOST_SERIALIZATION_NVP(m_empire_id_to_next_assigned_object_id);
+            & BOOST_SERIALIZATION_NVP(m_empire_id_to_next_assigned_object_id)
+            & BOOST_SERIALIZATION_NVP(m_offset_to_empire_id);
 
     } else {
 
@@ -134,7 +165,8 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, co
                 ErrorLogger() << "An empire with id = " << m_empire_id << " which is not the server "
                               << "is attempting to serialize the IDAllocator for the server.";
             ar & BOOST_SERIALIZATION_NVP(m_empire_id)
-               & BOOST_SERIALIZATION_NVP(m_empire_id_to_next_assigned_object_id);
+                & BOOST_SERIALIZATION_NVP(m_empire_id_to_next_assigned_object_id)
+                & BOOST_SERIALIZATION_NVP(m_offset_to_empire_id);
         } else {
             auto temp_empire_id = empire_id;
             ar  & BOOST_SERIALIZATION_NVP(temp_empire_id);
@@ -142,16 +174,19 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, co
             // Filter the map for empires so they only have their own actual next id and no
             // information about other clients.
             std::unordered_map<int, int> temp_empire_id_to_object_id{};
-            for (const auto& empire_and_next_id : m_empire_id_to_next_assigned_object_id) {
-                if (empire_and_next_id.first == empire_id)
-                    temp_empire_id_to_object_id.insert(empire_and_next_id);
-                else
-                    temp_empire_id_to_object_id.insert(
-                        std::make_pair(empire_and_next_id.first, empire_and_next_id.second % m_stride));
-                DebugLogger(IDallocator) << "output allocator[" <<empire_and_next_id.first << "] = "
-                                         << temp_empire_id_to_object_id[empire_and_next_id.first]<<"";
+            auto temp_offset_to_empire_id = std::vector<int>(m_offset_to_empire_id.size(), m_server_id);
+
+            auto&& it = m_empire_id_to_next_assigned_object_id.find(empire_id);
+            if (it == m_empire_id_to_next_assigned_object_id.end()) {
+                ErrorLogger() << "Attempt to serialize allocator for an empire_id "
+                              << empire_id << " not in id manager table.";
+            } else {
+                temp_empire_id_to_object_id.insert(*it);
+                temp_offset_to_empire_id[it->second % m_stride] = empire_id;
             }
+
             ar & BOOST_SERIALIZATION_NVP(temp_empire_id_to_object_id);
+            ar & BOOST_SERIALIZATION_NVP(temp_offset_to_empire_id);
         }
     }
 }
