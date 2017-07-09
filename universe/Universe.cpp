@@ -336,6 +336,9 @@ int Universe::GenerateDesignID() {
     return new_id;
 }
 
+bool Universe::VerifyUnusedObjectID(const int empire_id, const int id)
+{ return m_object_id_allocator->IsIDValidAndUnused(id, empire_id); }
+
 template <class T>
 std::shared_ptr<T> Universe::Insert(std::shared_ptr<T> obj) {
     if (!obj)
