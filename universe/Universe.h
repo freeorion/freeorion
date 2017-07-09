@@ -396,10 +396,6 @@ public:
         return InsertID<T>(id, std::forward<Args>(args)...);
     }
 
-    std::shared_ptr<Building> CreateBuilding(int id = INVALID_OBJECT_ID);
-    std::shared_ptr<Building> CreateBuilding(int empire_id, const std::string& building_type,
-                                             int produced_by_empire_id = ALL_EMPIRES, int id = INVALID_OBJECT_ID);
-
     std::shared_ptr<Field> CreateField(int id = INVALID_OBJECT_ID);
     std::shared_ptr<Field> CreateField(const std::string& field_type, double x, double y, double radius, int id = INVALID_OBJECT_ID);
     //@}

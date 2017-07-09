@@ -1454,7 +1454,7 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    std::shared_ptr<Building> building = GetUniverse().CreateBuilding(ALL_EMPIRES, building_type_name, ALL_EMPIRES);
+    auto building = GetUniverse().InsertNew<Building>(ALL_EMPIRES, building_type_name, ALL_EMPIRES);
     if (!building) {
         ErrorLogger() << "CreateBuilding::Execute couldn't create building!";
         return;

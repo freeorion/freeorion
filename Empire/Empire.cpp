@@ -3044,7 +3044,7 @@ void Empire::CheckProductionProgress() {
             std::shared_ptr<Planet> planet = GetPlanet(elem.location);
 
             // create new building
-            std::shared_ptr<Building> building = universe.CreateBuilding(m_id, elem.item.name, m_id);
+            auto building = universe.InsertNew<Building>(m_id, elem.item.name, m_id);
             planet->AddBuilding(building->ID());
             building->SetPlanetID(planet->ID());
             system->Insert(building);

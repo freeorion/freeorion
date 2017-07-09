@@ -753,7 +753,7 @@ namespace {
             return INVALID_OBJECT_ID;
         }
 
-        std::shared_ptr<Building> building = GetUniverse().CreateBuilding(empire_id, building_type, empire_id);
+        auto building = GetUniverse().InsertNew<Building>(empire_id, building_type, empire_id);
         if (!building) {
             ErrorLogger() << "CreateBuilding: couldn't create building";
             return INVALID_OBJECT_ID;
