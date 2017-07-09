@@ -368,9 +368,24 @@ public:
     bool            AllObjectsVisible() const { return m_all_objects_visible; }
 
     /** \name Generators */ //@{
+    /** InsertNew constructs and inserts a UniverseObject into the object map with a new
+        id. It returns the new object. */
+    template <typename T, typename... Args>
+    std::shared_ptr<T> InsertNew(Args&&... args) {
+        int id = GenerateObjectID();
+        return InsertID<T>(id, std::forward<Args>(args)...);
+    }
+
     std::shared_ptr<Ship> CreateShip(int id = INVALID_OBJECT_ID);
     std::shared_ptr<Ship> CreateShip(int empire_id, int design_id, const std::string& species_name,
                                      int produced_by_empire_id = ALL_EMPIRES, int id = INVALID_OBJECT_ID);
+    /** InsertTemp constructs and inserts a temporary UniverseObject into the object map with a
+        temporary id. It returns the new object. */
+    template <typename T, typename... Args>
+    std::shared_ptr<T> InsertTemp(Args&&... args) {
+        auto id = TEMPORARY_OBJECT_ID;
+        return InsertID<T>(id, std::forward<Args>(args)...);
+    }
 
     std::shared_ptr<Fleet> CreateFleet(int id = INVALID_OBJECT_ID);
     std::shared_ptr<Fleet> CreateFleet(const std::string& name, double x, double y, int owner, int id = INVALID_OBJECT_ID);
@@ -395,6 +410,21 @@ private:
     /* Pathfinder setup for the viewing empire
      */
     std::shared_ptr<Pathfinder> const m_pathfinder;
+
+    /** Inserts object \p obj into the universe with the given \p id. */
+    void InsertIDCore(std::shared_ptr<UniverseObject> obj, int id);
+
+    /** Inserts object \p obj into the universe with the given \p id. */
+    template <typename T, typename... Args>
+    std::shared_ptr<T> InsertID(int id, Args&&... args) {
+        auto obj = std::shared_ptr<T>(new T(std::forward<Args>(args)...));
+        auto uobj = std::dynamic_pointer_cast<UniverseObject>(obj);
+        if (!uobj)
+            return std::shared_ptr<T>();
+
+        InsertIDCore(uobj, id);
+        return obj;
+    }
 
     /** Inserts object \a obj into the universe; returns a std::shared_ptr
       * to the inserted object. */

@@ -364,6 +364,18 @@ std::shared_ptr<T> Universe::InsertID(std::shared_ptr<T> obj, int id) {
     return obj;
 }
 
+void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, int id) {
+    if (!obj)
+        return;
+
+    auto valid = m_object_id_allocator->UpdateIDAndCheckIfOwned(id);
+    if (!valid)
+        return;
+
+    obj->SetID(id);
+    m_objects.Insert(std::forward<std::shared_ptr<UniverseObject>>(obj));
+}
+
 int Universe::InsertShipDesign(ShipDesign* ship_design) {
     if (!ship_design)
         return INVALID_DESIGN_ID;
