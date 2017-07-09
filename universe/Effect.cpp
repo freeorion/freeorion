@@ -1625,7 +1625,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     //        fleet = ship->FleetID();
     //// etc.
 
-    std::shared_ptr<Ship> ship = GetUniverse().CreateShip(empire_id, design_id, species_name, ALL_EMPIRES);
+    auto ship = GetUniverse().InsertNew<Ship>(empire_id, design_id, species_name, ALL_EMPIRES);
     system->Insert(ship);
 
     if (m_name) {

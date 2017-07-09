@@ -376,9 +376,6 @@ public:
         return InsertID<T>(id, std::forward<Args>(args)...);
     }
 
-    std::shared_ptr<Ship> CreateShip(int id = INVALID_OBJECT_ID);
-    std::shared_ptr<Ship> CreateShip(int empire_id, int design_id, const std::string& species_name,
-                                     int produced_by_empire_id = ALL_EMPIRES, int id = INVALID_OBJECT_ID);
     /** InsertTemp constructs and inserts a temporary UniverseObject into the object map with a
         temporary id. It returns the new object. */
     template <typename T, typename... Args>

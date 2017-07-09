@@ -835,7 +835,7 @@ namespace {
         }
 
         // create new ship
-        std::shared_ptr<Ship> ship = universe.CreateShip(empire_id, ship_design->ID(), species, empire_id);
+        auto ship = universe.InsertNew<Ship>(empire_id, ship_design->ID(), species, empire_id);
         if (!ship) {
             ErrorLogger() << "CreateShip: couldn't create new ship";
             return INVALID_OBJECT_ID;

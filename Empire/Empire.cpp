@@ -3094,7 +3094,7 @@ void Empire::CheckProductionProgress() {
 
             for (int count = 0; count < elem.blocksize; count++) {
                 // create ship
-                ship = universe.CreateShip(m_id, elem.item.design_id, species_name, m_id);
+                ship = universe.InsertNew<Ship>(m_id, elem.item.design_id, species_name, m_id);
                 system->Insert(ship);
 
                 // record ship production in empire stats
