@@ -901,7 +901,7 @@ namespace {
         }
 
         // create the new field
-        std::shared_ptr<Field> field = GetUniverse().CreateField(field_type->Name(), x, y, size);
+        auto field = GetUniverse().InsertNew<Field>(field_type->Name(), x, y, size);
         if (!field) {
             ErrorLogger() << "CreateFieldImpl: couldn't create field";
             return nullptr;

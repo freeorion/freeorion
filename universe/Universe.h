@@ -395,9 +395,6 @@ public:
 
         return InsertID<T>(id, std::forward<Args>(args)...);
     }
-
-    std::shared_ptr<Field> CreateField(int id = INVALID_OBJECT_ID);
-    std::shared_ptr<Field> CreateField(const std::string& field_type, double x, double y, double radius, int id = INVALID_OBJECT_ID);
     //@}
 
 private:

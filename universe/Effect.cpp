@@ -1792,7 +1792,7 @@ void CreateField::Execute(const ScriptingContext& context) const {
     else
         y = target->Y();
 
-    std::shared_ptr<Field> field = GetUniverse().CreateField(field_type->Name(), x, y, size);
+    auto field = GetUniverse().InsertNew<Field>(field_type->Name(), x, y, size);
     if (!field) {
         ErrorLogger() << "CreateField::Execute couldn't create field!";
         return;

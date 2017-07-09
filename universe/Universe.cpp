@@ -2986,12 +2986,6 @@ void Universe::GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_k
         empire_stale_knowledge_object_ids[encoding_empire] = it->second;
 }
 
-std::shared_ptr<Field> Universe::CreateField(int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(std::shared_ptr<Field>(new Field()), id); }
-
-std::shared_ptr<Field> Universe::CreateField(const std::string& field_type, double x, double y, double radius, int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(std::shared_ptr<Field>(new Field(field_type, x, y, radius)), id); }
-
 void Universe::ResetUniverse() {
     m_objects.Clear();  // wipe out anything present in the object map
 
