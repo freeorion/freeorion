@@ -224,7 +224,7 @@ void Moderator::CreatePlanet::Execute() const {
         return;
     }
 
-    std::shared_ptr<Planet> planet = GetUniverse().CreatePlanet(m_planet_type, m_planet_size);
+    auto planet = GetUniverse().InsertNew<Planet>(m_planet_type, m_planet_size);
     if (!planet) {
         ErrorLogger() << "CreatePlanet::Execute unable to create new Planet object";
         return;

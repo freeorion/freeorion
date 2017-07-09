@@ -396,9 +396,6 @@ public:
         return InsertID<T>(id, std::forward<Args>(args)...);
     }
 
-    std::shared_ptr<Planet> CreatePlanet(int id = INVALID_OBJECT_ID);
-    std::shared_ptr<Planet> CreatePlanet(PlanetType type, PlanetSize size, int id = INVALID_OBJECT_ID);
-
     std::shared_ptr<System> CreateSystem(int id = INVALID_OBJECT_ID);
     std::shared_ptr<System> CreateSystem(StarType star, const std::string& name, double x, double y, int id = INVALID_OBJECT_ID);
     std::shared_ptr<System> CreateSystem(StarType star, const std::map<int, bool>& lanes_and_holes,

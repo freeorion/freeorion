@@ -718,7 +718,7 @@ namespace {
         }
 
         // Create planet and insert it into the object map
-        std::shared_ptr<Planet> planet = GetUniverse().CreatePlanet(planet_type, size);
+        auto planet = GetUniverse().InsertNew<Planet>(planet_type, size);
         if (!planet) {
             ErrorLogger() << "CreateSystem : Attempt to insert planet into the object map failed";
             return INVALID_OBJECT_ID;

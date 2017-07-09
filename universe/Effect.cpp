@@ -1341,7 +1341,7 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    std::shared_ptr<Planet> planet = GetUniverse().CreatePlanet(type, size);
+    auto planet = GetUniverse().InsertNew<Planet>(type, size);
     if (!planet) {
         ErrorLogger() << "CreatePlanet::Execute unable to create new Planet object";
         return;

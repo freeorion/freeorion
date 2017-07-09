@@ -2986,12 +2986,6 @@ void Universe::GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_k
         empire_stale_knowledge_object_ids[encoding_empire] = it->second;
 }
 
-std::shared_ptr<Planet> Universe::CreatePlanet(int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(std::shared_ptr<Planet>(new Planet()), id); }
-
-std::shared_ptr<Planet> Universe::CreatePlanet(PlanetType type, PlanetSize size, int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(std::shared_ptr<Planet>(new Planet(type, size)), id); }
-
 std::shared_ptr<System> Universe::CreateSystem(int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(std::shared_ptr<System>(new System()), id); }
 
