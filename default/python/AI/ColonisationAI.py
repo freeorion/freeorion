@@ -75,24 +75,24 @@ def calc_max_pop(planet, species, detail):
     tag_list = list(species.tags) if species else []
     pop_tag_mod = AIDependencies.SPECIES_POPULATION_MODIFIER.get(get_ai_tag_grade(tag_list, "POPULATION"), 1.0)
 
-    pop_size_mod_modified_by_species = 0
-    pop_size_mod_not_modified_by_species = 0
+    base_pop_modified_by_species = 0
+    base_pop_not_modified_by_species = 0
     pop_const_mod = 0
 
     # first, account for the environment
     environment_mod = POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES["environment_bonus"][planet_env]
     detail.append("Base environment: %d" % environment_mod)
-    pop_size_mod_modified_by_species += environment_mod
+    base_pop_modified_by_species += environment_mod
 
     # find all applicable modifiers
     for tech in POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES:
         if tech != "environment_bonus" and tech_is_complete(tech):
-            pop_size_mod_modified_by_species += POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES[tech][planet_env]
+            base_pop_modified_by_species += POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES[tech][planet_env]
             detail.append("%s_PSM_early(%d)" % (tech, POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES[tech][planet_env]))
 
     for tech in POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES:
         if tech_is_complete(tech):
-            pop_size_mod_not_modified_by_species += POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES[tech][planet_env]
+            base_pop_not_modified_by_species += POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES[tech][planet_env]
             detail.append("%s_PSM_late(%d)" % (tech, POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES[tech][planet_env]))
 
     for tech in POP_CONST_MOD_MAP:
@@ -110,15 +110,15 @@ def calc_max_pop(planet, species, detail):
         this_mod = sum(AIDependencies.POP_PROPORTIONAL_MOD_SPECIALS[_special].get(int(psize), 0)
                        for psize in [-1, planet.size])
         detail.append("%s (maxPop%+.1f)" % (_special, this_mod))
-        pop_size_mod_not_modified_by_species += this_mod
+        base_pop_not_modified_by_species += this_mod
 
     #  exobots can't ever get to good environ so no gaia bonus, for others we'll assume they'll get there
     if "GAIA_SPECIAL" in planet.specials and species.name != "SP_EXOBOT":
-        pop_size_mod_not_modified_by_species += 3
+        base_pop_not_modified_by_species += 3
         detail.append("Gaia_PSM_late(3)")
 
     if "SELF_SUSTAINING" in tag_list:
-        pop_size_mod_not_modified_by_species += 3
+        base_pop_not_modified_by_species += 3
         detail.append("SelfSustaining_PSM_late(3)")
 
     applicable_boosts = set()
@@ -135,27 +135,28 @@ def calc_max_pop(planet, species, detail):
 
     n_boosts = len(applicable_boosts)
     if n_boosts:
-        pop_size_mod_not_modified_by_species += n_boosts
+        base_pop_not_modified_by_species += n_boosts
         detail.append("boosts_PSM(%d from %s)" % (n_boosts, applicable_boosts))
 
     if planet.id in species.homeworlds:
-        pop_size_mod_not_modified_by_species += 2
+        base_pop_not_modified_by_species += 2
 
     def max_pop_size():
-        return pop_const_mod + planet_size * (pop_size_mod_modified_by_species * pop_tag_mod
-                                              + pop_size_mod_not_modified_by_species)
+        species_effect = (pop_tag_mod - 1) * abs(base_pop_modified_by_species)
+        base_pop = base_pop_not_modified_by_species + base_pop_modified_by_species + species_effect
+        return planet_size * base_pop + pop_const_mod
 
     if "PHOTOTROPHIC" in tag_list and max_pop_size() > 0:
         star_type = fo.getUniverse().getSystem(planet.systemID).starType
         star_pop_mod = PHOTO_MAP.get(star_type, 0)
-        pop_size_mod_not_modified_by_species += star_pop_mod
+        base_pop_not_modified_by_species += star_pop_mod
         detail.append("Phototropic Star Bonus_PSM_late(%0.1f)" % star_pop_mod)
 
     detail.append("baseMaxPop+ size*(psm_early*species_mod+psm_late) = %d + %d * (%d * %.2f + %d) = %.2f" % (
-        pop_const_mod, planet_size, pop_size_mod_modified_by_species,
-        pop_tag_mod, pop_size_mod_not_modified_by_species, max_pop_size()))
+        pop_const_mod, planet_size, base_pop_modified_by_species,
+        pop_tag_mod, base_pop_not_modified_by_species, max_pop_size()))
     detail.append("maxPop %.1f" % max_pop_size())
-
+    print detail
     return max_pop_size()
 
 
