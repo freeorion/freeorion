@@ -152,9 +152,10 @@ def calc_max_pop(planet, species, detail):
         base_pop_not_modified_by_species += star_pop_mod
         detail.append("Phototropic Star Bonus_PSM_late(%0.1f)" % star_pop_mod)
 
-    detail.append("baseMaxPop+ size*(psm_early*species_mod+psm_late) = %d + %d * (%d * %.2f + %d) = %.2f" % (
-        pop_const_mod, planet_size, base_pop_modified_by_species,
-        pop_tag_mod, base_pop_not_modified_by_species, max_pop_size()))
+    detail.append("MaxPop = baseMaxPop + size*(psm_early + (species_mod - 1)*abs(psm_early) + psm_late)"
+                  " = %d + %d * (%d + (%.2f-1)*abs(%d) + %d) = %.2f" % (
+                    pop_const_mod, planet_size, base_pop_modified_by_species,
+                    pop_tag_mod, base_pop_modified_by_species, base_pop_not_modified_by_species, max_pop_size()))
     detail.append("maxPop %.1f" % max_pop_size())
     print detail
     return max_pop_size()
