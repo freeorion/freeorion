@@ -223,6 +223,19 @@ namespace {
     bool EnqueueLocationTest(const BuildingType& building_type, int empire_id, int loc_id)
     { return building_type.EnqueueLocation(empire_id, loc_id);}
 
+    bool                    GetToggleRule(const GameRules& rules, const std::string& name)
+    { return false; }
+    int                     GetIntRule(const GameRules& rules, const std::string& name)
+    { return -1; }
+    double                  GetDoubleRule(const GameRules& rules, const std::string& name)
+    { return 0.0; }
+    std::string             GetStringRule(const GameRules& rules, const std::string& name)
+    { return ""; }
+
+    bool                    RuleExistsAnyType(const GameRules& rules, const std::string& name)
+    { return rules.RuleExists(name); }
+    bool                    RuleExistsWithType(const GameRules& rules, const std::string& name, GameRules::RuleType rule_type)
+    { return rules.RuleExists(name, rule_type); }
 }
 
 namespace FreeOrionPython {
@@ -236,6 +249,7 @@ namespace FreeOrionPython {
     using boost::python::reference_existing_object;
     using boost::python::return_by_value;
     using boost::python::return_internal_reference;
+    using boost::python::enum_;
 
     /**
      * CallPolicies:
@@ -711,5 +725,33 @@ namespace FreeOrionPython {
             .add_property("monsterFrequency",   make_function(&GalaxySetupData::GetMonsterFreq,     return_value_policy<return_by_value>()))
             .add_property("nativeFrequency",    make_function(&GalaxySetupData::GetNativeFreq,      return_value_policy<return_by_value>()))
             .add_property("maxAIAggression",    make_function(&GalaxySetupData::GetAggression,      return_value_policy<return_by_value>()));
+
+        enum_<GameRules::RuleType>("RuleType")
+            .value("toggle",        GameRules::TOGGLE)
+            .value("int",           GameRules::INT)
+            .value("double",        GameRules::DOUBLE)
+            .value("string",        GameRules::STRING)
+            .value("stringList",    GameRules::STRING_LIST)
+            .value("int",           GameRules::INVALID_RULE_TYPE);
+
+        //std::vector<std::pair<std::string, std::string>>
+        class_<std::pair<std::string, std::string>>("RuleValueStringStringPair")
+            .add_property("name",   &std::pair<std::string, std::string>::first)
+            .add_property("value",  &std::pair<std::string, std::string>::second)
+        ;
+        class_<std::vector<std::pair<std::string, std::string>>>("RuleValueStringsVec")
+            .def(boost::python::vector_indexing_suite<std::vector<std::pair<std::string, std::string>>, true>())
+        ;
+
+        class_<GameRules, noncopyable>("GameRules", no_init)
+            .add_property("empty",              make_function(&GameRules::Empty,                return_value_policy<return_by_value>()))
+            .add_property("getRulesAsStrings",  make_function(&GameRules::GetRulesAsStrings,    return_value_policy<return_by_value>()))
+            .def("ruleExists",                  RuleExistsAnyType)
+            .def("ruleExistsWithType",          RuleExistsWithType)
+            .def("getDescription",              make_function(&GameRules::GetDescription,       return_value_policy<copy_const_reference>()))
+            .def("getToggle",                   GetToggleRule)
+            .def("getInt",                      &GameRules::Get<int>)
+            .def("getDouble",                   &GameRules::Get<double>)
+            .def("getString",                   make_function(&GameRules::Get<std::string>,     return_value_policy<return_by_value>()));
     }
 }
