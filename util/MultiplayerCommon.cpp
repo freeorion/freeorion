@@ -96,6 +96,22 @@ GameRules::Rule::Rule(RuleType rule_type_, const std::string& name_, const boost
 GameRules::GameRules()
 {}
 
+bool GameRules::RuleExists(const std::string& name, RuleType rule_type) const {
+    if (rule_type == INVALID_RULE_TYPE)
+        return false;
+    auto rule_it = m_game_rules.find(name);
+    if (rule_it == m_game_rules.end())
+        return false;
+    return rule_it->second.rule_type == rule_type;
+}
+
+GameRules::RuleType GameRules::GetRuleType(const std::string& name) const {
+    auto rule_it = m_game_rules.find(name);
+    if (rule_it == m_game_rules.end())
+        return INVALID_RULE_TYPE;
+    return rule_it->second.rule_type;
+}
+
 const std::string& GameRules::GetDescription(const std::string& rule_name) const {
     auto it = m_game_rules.find(rule_name);
     if (it == m_game_rules.end())

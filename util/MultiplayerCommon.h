@@ -68,15 +68,17 @@ public:
     };
 
     /** \name Accessors */ //@{
-    bool    Empty() const
+    bool Empty() const
     { return m_game_rules.empty(); }
 
-    bool    RuleExists(const std::string& name) const
+    bool RuleExists(const std::string& name) const
     { return m_game_rules.find(name) != m_game_rules.end(); }
+    bool RuleExists(const std::string& name, RuleType rule_type) const;
+    RuleType GetRuleType(const std::string& name) const;
 
     /** returns the description string for rule \a rule_name, or throws
       * std::runtime_error if no such rule exists. */
-    const std::string&  GetDescription(const std::string& rule_name) const;
+    const std::string& GetDescription(const std::string& rule_name) const;
 
     /** returns the validator for rule \a rule_name, or throws
       * std::runtime_error if no such rule exists. */
