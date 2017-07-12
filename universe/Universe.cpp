@@ -339,34 +339,6 @@ int Universe::GenerateDesignID() {
 bool Universe::VerifyUnusedObjectID(const int empire_id, const int id)
 { return m_object_id_allocator->IsIDValidAndUnused(id, empire_id); }
 
-template <class T>
-std::shared_ptr<T> Universe::Insert(std::shared_ptr<T> obj) {
-    if (!obj)
-        return obj;
-
-    int id = GenerateObjectID();
-
-    auto valid = m_object_id_allocator->UpdateIDAndCheckIfOwned(id);
-    if (valid) {
-        obj->SetID(id);
-        m_objects.Insert(obj);
-    }
-    return obj;
-}
-
-template <class T>
-std::shared_ptr<T> Universe::InsertID(std::shared_ptr<T> obj, int id) {
-    auto valid = m_object_id_allocator->UpdateIDAndCheckIfOwned(id);
-
-    if (!valid)
-        return Insert(std::forward<std::shared_ptr<T>>(obj));
-
-    obj->SetID(id);
-    m_objects.Insert(obj);
-    DebugLogger() << "Inserting object with id " << id;
-    return obj;
-}
-
 void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, int id) {
     if (!obj)
         return;
