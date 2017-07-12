@@ -399,7 +399,7 @@ namespace {
             return false;
         }
 
-        if (universe.InsertShipDesign(design) == INVALID_DESIGN_ID) {
+        if (!universe.InsertShipDesign(design)) {
             ErrorLogger() << "CreateShipDesign: couldn't insert ship design into universe";
             delete design;
             return false;

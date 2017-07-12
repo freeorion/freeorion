@@ -351,15 +351,14 @@ void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, int id) {
     m_objects.Insert(std::forward<std::shared_ptr<UniverseObject>>(obj));
 }
 
-int Universe::InsertShipDesign(ShipDesign* ship_design) {
-    if (!ship_design)
-        return INVALID_DESIGN_ID;
+bool Universe::InsertShipDesign(ShipDesign* ship_design) {
+    if (!ship_design
+        || (ship_design->ID() != INVALID_DESIGN_ID && m_ship_designs.count(ship_design->ID())))
+        return false;
 
     int id = GenerateDesignID();
 
-    InsertShipDesignID(ship_design, id);
-
-    return id;
+    return InsertShipDesignID(ship_design, id);
 }
 
 bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id) {

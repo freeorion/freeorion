@@ -177,10 +177,10 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    /** Inserts \a ship_design into the universe; returns the ship design ID
-      * assigned to it, or -1 on failure.
-      * \note Universe gains ownership of \a ship_design once inserted. */
-    int             InsertShipDesign(ShipDesign* ship_design);
+    /** Inserts \a ship_design into the universe. Return true on success. The
+        ship design's id will be the newly assigned id.
+        \note Universe gains ownership of \a ship_design once inserted. */
+    bool            InsertShipDesign(ShipDesign* ship_design);
 
     /** Inserts \a ship_design into the universe with given \a id;  returns
       * true on success, or false on failure.
