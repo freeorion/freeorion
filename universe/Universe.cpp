@@ -112,8 +112,10 @@ Universe::Universe() :
     m_inhibit_universe_object_signals(false),
     m_encoding_empire(ALL_EMPIRES),
     m_all_objects_visible(false),
-    m_object_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_OBJECT_ID, TEMPORARY_OBJECT_ID)),
-    m_design_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_DESIGN_ID, TEMPORARY_OBJECT_ID))
+    m_object_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_OBJECT_ID,
+                                          TEMPORARY_OBJECT_ID, INVALID_OBJECT_ID)),
+    m_design_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_DESIGN_ID,
+                                          TEMPORARY_OBJECT_ID, INVALID_DESIGN_ID))
 {}
 
 Universe::~Universe() {
@@ -154,8 +156,25 @@ void Universe::Clear() {
 
 
 void Universe::ResetAllIDAllocation(const std::vector<int>& empire_ids) {
-    *m_object_id_allocator = IDAllocator(ALL_EMPIRES, empire_ids, INVALID_OBJECT_ID, TEMPORARY_OBJECT_ID);
-    *m_design_id_allocator = IDAllocator(ALL_EMPIRES, empire_ids, INVALID_OBJECT_ID, TEMPORARY_OBJECT_ID);
+
+    // Find the highest already allocated id for saved games that did not partition ids by client
+    int highest_allocated_id = INVALID_OBJECT_ID;
+    for (const auto& obj: m_objects)
+        highest_allocated_id = std::max(highest_allocated_id, obj->ID());
+
+    *m_object_id_allocator = IDAllocator(ALL_EMPIRES, empire_ids, INVALID_OBJECT_ID,
+                                         TEMPORARY_OBJECT_ID, highest_allocated_id);
+
+    // Find the highest already allocated id for saved games that did not partition ids by client
+    int highest_allocated_design_id = INVALID_DESIGN_ID;
+    for (const auto& id_and_obj: m_ship_designs)
+        highest_allocated_design_id = std::max(highest_allocated_design_id, id_and_obj.first);
+
+    *m_design_id_allocator = IDAllocator(ALL_EMPIRES, empire_ids, INVALID_DESIGN_ID,
+                                         TEMPORARY_OBJECT_ID, highest_allocated_design_id);
+
+    DebugLogger() << "Reset id allocators with highest object id = " << highest_allocated_id
+                  << " and highest design id = " << highest_allocated_design_id;
 }
 
 const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const {
@@ -336,16 +355,28 @@ int Universe::GenerateDesignID() {
     return new_id;
 }
 
-bool Universe::VerifyUnusedObjectID(const int empire_id, const int id)
-{ return m_object_id_allocator->IsIDValidAndUnused(id, empire_id); }
+bool Universe::VerifyUnusedObjectID(const int empire_id, const int id) {
+    auto good_id_and_possible_legacy = m_object_id_allocator->IsIDValidAndUnused(id, empire_id);
+    if (!good_id_and_possible_legacy.second) {
+        WarnLogger() << "object id = " << id << " should not have been assigned by empire = "
+                     << empire_id << ". It is probably from loading an old saved game. "
+                     << "In future this will be promoted to an error.";
+        //TODO before version change to v0.4.8 make this a hard failure;
+    }
+
+    return good_id_and_possible_legacy.first;
+}
 
 void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, int id) {
     if (!obj)
         return;
 
     auto valid = m_object_id_allocator->UpdateIDAndCheckIfOwned(id);
-    if (!valid)
+    if (!valid) {
+        ErrorLogger() << "An object has not been inserted into the universe because it's id = " << id << " is invalid.";
+        obj->SetID(INVALID_OBJECT_ID);
         return;
+    }
 
     obj->SetID(id);
     m_objects.Insert(std::forward<std::shared_ptr<UniverseObject>>(obj));
@@ -366,10 +397,13 @@ bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id) {
         return false;
 
     auto valid = m_design_id_allocator->UpdateIDAndCheckIfOwned(id);
-    if (valid) {
-        ship_design->SetID(id);
-        m_ship_designs[id] = ship_design;
+    if (!valid) {
+        ErrorLogger() << "Ship design id = " << id << " is invalid.";
+        return false;
     }
+
+    ship_design->SetID(id);
+    m_ship_designs[id] = ship_design;
     return valid;
 }
 

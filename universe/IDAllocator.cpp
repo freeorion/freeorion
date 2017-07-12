@@ -15,10 +15,12 @@ namespace {
 IDAllocator::IDAllocator(const int server_id,
                          const std::vector<int>& client_ids,
                          const ID_t invalid_id,
-                         const ID_t temp_id) :
+                         const ID_t temp_id,
+                         const ID_t highest_pre_allocated_id) :
     m_invalid_id(invalid_id),
     m_temp_id(temp_id),
     m_stride(client_ids.size() + 1),
+    m_zero(std::max({m_invalid_id + 1, m_temp_id + 1, highest_pre_allocated_id + 1})),
     m_server_id(server_id),
     m_empire_id(server_id),
     m_offset_to_empire_id(client_ids.size() + 1, server_id),
@@ -26,9 +28,10 @@ IDAllocator::IDAllocator(const int server_id,
     m_exhausted_threshold(std::numeric_limits<int>::max() - 10 * m_stride)
 {
     TraceLogger(IDallocator) << "IDAllocator() server id = " << server_id << " invalid id = " << invalid_id
+                             << " zero = " << m_zero
                              << " warn threshold =  " << m_warn_threshold << " num clients = " << client_ids.size();
 
-    auto ii = std::max(m_invalid_id + 1, m_temp_id + 1);
+    auto ii = m_zero;
 
     // Assign the server and each client a unique initial offset modulo m_stride.
 
@@ -74,67 +77,96 @@ int IDAllocator::NewID() {
     return retval;
 }
 
-bool IDAllocator::IsIDValidAndUnused(const ID_t id, const int empire_id) {
-    if (id == m_invalid_id)
-        return false;
+std::pair<bool, bool> IDAllocator::IsIDValidAndUnused(const ID_t checked_id, const int checked_empire_id) {
+    const std::pair<bool, bool> hard_fail = {false, false};
+    const std::pair<bool, bool> complete_success = {true, true};
+    // allow legacy loading and order processing
+    const std::pair<bool, bool> legacy_success = {true, false};
 
-    if (id == m_temp_id)
-        return true;
+    if (checked_id == m_invalid_id)
+        return hard_fail;
+
+    if (checked_id == m_temp_id)
+        return complete_success;
+
+    if (checked_id >= m_exhausted_threshold || checked_id < m_zero)
+        return hard_fail;
+
+    // On the server all ids are valid. On the client only the client id is valid.
+    bool is_valid_id = (m_empire_id == m_server_id) || (m_empire_id == checked_empire_id);
+    if (!is_valid_id)
+        return hard_fail;
 
     // Make sure this empire exists.
-    auto&& it = m_empire_id_to_next_assigned_object_id.find(empire_id);
-    if (it == m_empire_id_to_next_assigned_object_id.end()) {
-        ErrorLogger() << "empire_id " << empire_id << " not in id manager table.";
-        return false;
+    const auto& check_it = m_empire_id_to_next_assigned_object_id.find(checked_empire_id);
+    if (check_it == m_empire_id_to_next_assigned_object_id.end()) {
+        ErrorLogger() << "empire_id " << checked_empire_id << " not in id manager table.";
+        return hard_fail;
     }
 
-    // If ids are exhausted return false.
-    if (it->second == m_invalid_id)
-        return false;
+    // If ids are exhausted then fail.
+    if (check_it->second == m_invalid_id)
+        return hard_fail;
 
-    // If not on the server then check that id is modulo the same as m_empire_id's output.
-    if (m_empire_id != m_server_id) {
-        auto valid =   (id % m_stride == it->second % m_stride);
-        TraceLogger(IDallocator) << "Client determined object id = " << id << " is " << (valid ? "" : "not")
-                                 << " valid for empire = " << empire_id;
-        return valid;
-    }
+    // Check that the checked_id has the correct modulus again allowing for legacy games with
+    // incorrect id.
+    bool is_correct_modulus = (m_offset_to_empire_id[(checked_id - m_zero) % m_stride] == checked_empire_id);
+    if (!is_correct_modulus)
+        return legacy_success;
 
-    // On the server figure out which empire assigned this id
-    auto assigning_empire = m_offset_to_empire_id[id % m_stride];
-    auto&& empire_and_next_id = m_empire_id_to_next_assigned_object_id.find(assigning_empire);
-    if (empire_and_next_id == m_empire_id_to_next_assigned_object_id.end()) {
-        ErrorLogger() << "empire_id " << empire_id << " not in id manager table.";
-        return false;
-    }
-
-    auto valid = (empire_and_next_id->second >= id);
-
-    TraceLogger(IDallocator) << "Server determined object id = " << id << " is " << (valid ? "" : "not")
-                             << " valid for empire = " << empire_id;
-
-    return valid;
+    if (checked_empire_id != m_server_id)
+        TraceLogger(IDallocator) << "Allocated object id = " << checked_id << " is "
+                                 << " valid for empire = " << checked_empire_id;
+    return complete_success;
 }
 
-bool IDAllocator::UpdateIDAndCheckIfOwned(const ID_t id) {
-    auto valid = IsIDValidAndUnused(id, m_empire_id);
+bool IDAllocator::UpdateIDAndCheckIfOwned(const ID_t checked_id) {
+    auto valid = IsIDValidAndUnused(checked_id, m_empire_id);
 
-    if (!valid)
-        return valid;
-
-    // If not on the server then just return the check value;
-    if (m_empire_id != m_server_id)
-        return valid;
-
-    // On the server figure out which empire assigned this id and update their next assigned id
-    auto assigning_empire = m_offset_to_empire_id[id % m_stride];
-    auto&& empire_and_next_id = m_empire_id_to_next_assigned_object_id.find(assigning_empire);
-    if (empire_and_next_id == m_empire_id_to_next_assigned_object_id.end())
+    // Hard failure
+    if (!valid.first)
         return false;
 
-    const auto next_id = id + m_stride;
-    if (next_id > empire_and_next_id->second)
-        empire_and_next_id->second = next_id;
+    // If not on the server then ignore any legacy failures and return the check.
+    if (m_empire_id != m_server_id)
+        return valid.first;
+
+    // a function to increment the next assigned id for an empire until it is past checked_id
+    auto increment_next_assigned_id = [this, &checked_id](const int assigning_empire) {
+        auto&& empire_and_next_id = m_empire_id_to_next_assigned_object_id.find(assigning_empire);
+        if (empire_and_next_id == m_empire_id_to_next_assigned_object_id.end())
+            return;
+
+        auto& next_id = empire_and_next_id->second;
+        auto init_next_id = next_id;
+
+        while (next_id <= checked_id) {
+            // Don't increment to the next_id if ids are exhausted.
+            if (next_id == m_invalid_id || next_id >= m_exhausted_threshold) {
+                next_id = m_invalid_id;
+                return;
+            }
+
+            next_id += m_stride;
+        }
+
+        TraceLogger(IDallocator) << "next id for empire " << assigning_empire << " updated from "
+                                 << init_next_id << " to " << next_id;
+    };
+
+    // On the server
+    if (valid.second) {
+        // Update the assigning empire's next assigned id.
+        auto assigning_empire = m_offset_to_empire_id[checked_id % m_stride];
+        increment_next_assigned_id(assigning_empire);
+
+    } else {
+        // For legacy saved games update all empire's next assigned ids.
+        // This should stop happening after all of a saved games unprocessed orders are processed.
+        for (const auto assigning_empire : m_offset_to_empire_id)
+            increment_next_assigned_id(assigning_empire);
+    }
+
     return true;;
 }
 
@@ -156,6 +188,14 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, co
         ar & BOOST_SERIALIZATION_NVP(m_empire_id)
             & BOOST_SERIALIZATION_NVP(m_empire_id_to_next_assigned_object_id)
             & BOOST_SERIALIZATION_NVP(m_offset_to_empire_id);
+
+        DebugLogger(IDallocator) << "Deserialized [" << [this](){
+            std::stringstream ss;
+            for (auto& empire_and_next_id : m_empire_id_to_next_assigned_object_id) {
+                ss << "empire = " << empire_and_next_id.first << " next id = " << empire_and_next_id.second << ", ";
+            }
+            return ss.str();
+        }() << "]";
 
     } else {
 
@@ -187,6 +227,14 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, co
 
             ar & BOOST_SERIALIZATION_NVP(temp_empire_id_to_object_id);
             ar & BOOST_SERIALIZATION_NVP(temp_offset_to_empire_id);
+
+            DebugLogger(IDallocator) << "Serialized [" << [this, &temp_empire_id_to_object_id](){
+                std::stringstream ss;
+                for (auto& empire_and_next_id : temp_empire_id_to_object_id) {
+                    ss << "empire = " << empire_and_next_id.first << " next id = " << empire_and_next_id.second << ", ";
+                }
+                return ss.str();
+            }() << "]";
         }
     }
 }

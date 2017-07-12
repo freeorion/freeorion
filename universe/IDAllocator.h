@@ -25,17 +25,26 @@ class IDAllocator {
 public:
     using ID_t = int;
 
-    /// \p client_ids are all the player ids in the game.
+    /** \p client_ids are all the player ids in the game. \p highest_pre_allocated_id is the used for
+        legacy loads to offset the newly allocated id to after the ones from the save game.
+        TODO: Remove the extra code legacy loading before v0.4.8, which will be a save game
+        compatibility break.
+    */
     IDAllocator(const int server_id,
                 const std::vector<int>& client_ids,
                 const ID_t invalid_id,
-                const ID_t temp_id);
+                const ID_t temp_id,
+                const ID_t highest_pre_allocated_id);
 
     /// Return a valid new id.  This is used by both clients and servers.
     ID_t NewID();
 
-    /** Return true if \p id is unused and in the id space of \p empire_id. */
-    bool IsIDValidAndUnused(const ID_t id, const int empire_id);
+    /** Return {hard_success, soft_success} where \p hard_success determines if
+        \p id is unused and valid and \p soft_success determines if \p id is in
+        the id space of \p empire_id.  This allows errors that are probably due
+        to legacy loading and order processing to be ignored for now.
+     */
+    std::pair<bool, bool> IsIDValidAndUnused(const ID_t id, const int empire_id);
 
     /** UpdateIDAndCheckIfOwned behaves differently on the server and clients.
 
@@ -58,6 +67,8 @@ private:
 
     /// m_stride is used to partition the id space into modulo m_stride sections.
     ID_t m_stride;
+    /// The zero point or first allocated id.
+    ID_t m_zero;
 
     // The server id and the empire id are equal on construction.  Serialization
     // and deserialization may downgrade empire id to one of the lesser (not
