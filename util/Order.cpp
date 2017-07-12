@@ -34,12 +34,19 @@ Empire* Order::GetValidatedEmpire() const {
 }
 
 void Order::Execute() const {
+    if (m_executed)
+        return;
+
     ExecuteImpl();
     m_executed = true;
 }
 
-bool Order::Undo() const
-{ return UndoImpl(); }
+bool Order::Undo() const {
+    auto undone =  UndoImpl();
+    if (undone)
+        m_executed = false;
+    return undone;
+}
 
 bool Order::Executed() const
 { return m_executed; }

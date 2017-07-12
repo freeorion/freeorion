@@ -52,11 +52,11 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    /** If \p suppress_immediate_execution is false, then execute the \p order immediately on the client.
-        Always store the \p order in the OrderSet to be executed later on the server.
+    /** Execute the \p order immediately on the client.
+        Store the \p order in the OrderSet to be executed later on the server.
         Return an index that can be used to reference the order. */
-    int            IssueOrder(const OrderPtr& order, bool suppress_immediate_execution = false);
-    int            IssueOrder(OrderPtr&& order, bool suppress_immediate_execution = false);
+    int            IssueOrder(const OrderPtr& order);
+    int            IssueOrder(OrderPtr&& order);
 
     /** Applies all Orders in the OrderSet.  As of this writing, this is needed only after deserializing an OrderSet
         client-side during game loading. */
