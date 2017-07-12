@@ -1024,7 +1024,8 @@ void ShipDesignOrder::ExecuteImpl() const {
     if (m_delete_design_from_empire) {
         // player is ordering empire to forget about a particular design
         if (!empire->ShipDesignKept(m_design_id)) {
-            ErrorLogger() << "Tried to remove a ShipDesign that the empire wasn't remembering";
+            ErrorLogger() << "Tried to remove a ShipDesign id = " << m_design_id
+                          << "that the empire wasn't remembering";
             return;
         }
         empire->RemoveShipDesign(m_design_id);
