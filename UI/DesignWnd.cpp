@@ -547,7 +547,7 @@ namespace {
 
     void CurrentShipDesignManager::InsertBefore(const int id, const int next_id) {
         if (id == INVALID_DESIGN_ID) {
-            ErrorLogger() << "Ship design is is invalid";
+            ErrorLogger() << "Ship design is invalid";
             return ;
         }
 
