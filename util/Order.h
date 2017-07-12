@@ -594,10 +594,13 @@ public:
 
     ShipDesignOrder(int empire, int design_id_to_erase, bool dummy);
 
-    ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design);
+    ShipDesignOrder(int empire, const ShipDesign& ship_design);
 
     ShipDesignOrder(int empire, int existing_design_id, const std::string& new_name, const std::string& new_description = "");
     //@}
+
+    int DesignID() const
+    { return m_design_id; }
 
 private:
     /**
@@ -620,7 +623,8 @@ private:
      */
     void ExecuteImpl() const override;
 
-    int m_design_id = INVALID_OBJECT_ID;
+    /// m_design_id is mutable to save the id for the server when the client calls ExecuteImpl.
+    mutable int m_design_id = INVALID_DESIGN_ID;
     boost::uuids::uuid m_uuid;
     bool m_update_name_or_description = false;
     bool m_delete_design_from_empire = false;

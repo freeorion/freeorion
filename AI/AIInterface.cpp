@@ -863,9 +863,8 @@ namespace AIInterface {
             return 0;
         }
 
-        int new_design_id = AIClientApp::GetApp()->GetNewDesignID();
-        AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ShipDesignOrder>(empire_id, new_design_id, *design));
+        auto order = std::make_shared<ShipDesignOrder>(empire_id, *design);
+        AIClientApp::GetApp()->Orders().IssueOrder(order);
         delete design;
 
         return 1;

@@ -297,16 +297,15 @@ namespace {
         auto new_current_design = *design;
         new_current_design.SetUUID(boost::uuids::random_generator()());
 
+        auto order = std::make_shared<ShipDesignOrder>(empire_id, new_current_design);
+        HumanClientApp::GetApp()->Orders().IssueOrder(order);
+
         auto& current_manager = GetCurrentDesignsManager();
         const auto& all_ids = current_manager.AllOrderedIDs();
-        int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
         const int before_id = (all_ids.empty() ? INVALID_OBJECT_ID :
                                (is_front ? *all_ids.begin() : *(--all_ids.end())));
-        current_manager.InsertBefore(new_design_id, before_id);
-
-        HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ShipDesignOrder>(empire_id, new_design_id, new_current_design));
-    }
+        current_manager.InsertBefore(order->DesignID(), before_id);
+}
 
     /** Set whether a currently known design is obsolete or not. Not obsolete means that it is
         known to the empire (on the server) and will appear in the production list.  Obsolete
@@ -4193,6 +4192,7 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
             icon = hull->Icon();
 
         auto new_uuid = boost::uuids::random_generator()();
+        auto new_design_id = INVALID_DESIGN_ID;
 
         // create design from stuff chosen in UI
         ShipDesign design(std::invalid_argument(""),
@@ -4200,8 +4200,6 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
                           CurrentTurn(), ClientApp::GetApp()->EmpireID(),
                           hull_name, parts, icon, "some model", name.IsInStringtable(),
                           false, new_uuid);
-
-        int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
 
         // If editing a saved design insert into saved designs
         if (m_type_to_create == DesignWnd::BaseSelector::BaseSelectorTab::Saved) {
@@ -4215,12 +4213,13 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
             const Empire* empire = GetEmpire(empire_id);
             if (!empire) return {INVALID_DESIGN_ID, boost::uuids::uuid{{0}}};
 
+            auto order = std::make_shared<ShipDesignOrder>(empire_id, design);
+            HumanClientApp::GetApp()->Orders().IssueOrder(order);
+            new_design_id = order->DesignID();
+
             auto& manager = GetCurrentDesignsManager();
             const auto& all_ids = manager.AllOrderedIDs();
-            manager.InsertBefore(new_design_id, all_ids.empty() ? INVALID_OBJECT_ID : *all_ids.begin());
-
-            HumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, new_design_id, design));
+            manager.InsertBefore(new_design_id, all_ids.empty() ? INVALID_DESIGN_ID : *all_ids.begin());
         }
 
         DesignChangedSignal();

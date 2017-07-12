@@ -1009,9 +1009,9 @@ ShipDesignOrder::ShipDesignOrder(int empire, int design_id_to_erase, bool dummy)
     m_delete_design_from_empire(true)
 {}
 
-ShipDesignOrder::ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design) :
+ShipDesignOrder::ShipDesignOrder(int empire, const ShipDesign& ship_design) :
     Order(empire),
-    m_design_id(new_design_id),
+    m_design_id(INVALID_DESIGN_ID),
     m_uuid(ship_design.UUID()),
     m_create_new_design(true),
     m_name(ship_design.Name(false)),
@@ -1068,7 +1068,15 @@ void ShipDesignOrder::ExecuteImpl() const {
             return;
         }
 
-        universe.InsertShipDesignID(new_ship_design, m_design_id);
+        if (m_design_id == INVALID_DESIGN_ID) {
+            // On the client create a new design id
+            universe.InsertShipDesign(new_ship_design);
+            m_design_id = new_ship_design->ID();
+        } else {
+            // On the server use the design id passed from the client
+            universe.InsertShipDesignID(new_ship_design, m_design_id);
+        }
+
         universe.SetEmpireKnowledgeOfShipDesign(m_design_id, EmpireID());
         empire->AddShipDesign(m_design_id);
 
