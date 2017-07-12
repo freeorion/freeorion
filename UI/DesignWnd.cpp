@@ -674,11 +674,19 @@ void ShipDesignManager::StartGame(int empire_id) {
     m_current_designs.reset(new CurrentShipDesignManager(empire_id));
     auto current_designs = dynamic_cast<CurrentShipDesignManager*>(m_current_designs.get());
 
+    m_saved_designs.reset(new SavedDesignsManager(empire_id));
+    auto saved_designs = dynamic_cast<SavedDesignsManager*>(m_saved_designs.get());
+    saved_designs->LoadDesignsFromFileSystem();
+
     // Prevent orders issued here from being executed twice, once here and again in MapWnd::InitTurn()
     bool suppress_immediate_execution = true;
 
-    // If expected initialize the current designs to all designs known by the empire
-    if( GetOptionsDB().Get<bool>("auto-add-default-designs")) {
+    // Skip the remainder for loaded games
+    if (HumanClientApp::GetApp()->CurrentTurn() != 1)
+        return;
+
+    // If requested initialize the current designs to all designs known by the empire
+    if(GetOptionsDB().Get<bool>("auto-add-default-designs")) {
 
         // Assume that on new game start the server assigns the ids in an order
         // that makes sense for the UI.
@@ -699,15 +707,8 @@ void ShipDesignManager::StartGame(int empire_id) {
         }
     }
 
-    m_saved_designs.reset(new SavedDesignsManager(empire_id));
-    auto saved_designs = dynamic_cast<SavedDesignsManager*>(m_saved_designs.get());
-
-    saved_designs->LoadDesignsFromFileSystem();
-
-    // If expected on the first turn copy all of the saved designs to the client empire.
-    if (HumanClientApp::GetApp()->CurrentTurn() == 1
-       && GetOptionsDB().Get<bool>("auto-add-saved-designs"))
-    {
+    // If requested on the first turn copy all of the saved designs to the client empire.
+    if (GetOptionsDB().Get<bool>("auto-add-saved-designs")) {
         DebugLogger() << "Adding saved designs to empire.";
         for (const auto& uuid : saved_designs->OrderedDesignUUIDs())
             AddSavedDesignToCurrentDesigns(uuid, empire_id, false, suppress_immediate_execution);
