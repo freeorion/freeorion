@@ -227,26 +227,6 @@ public:
      */
     void SetPlayerStatus(int player_id, Message::PlayerStatus status);
 
-    /** @brief Return a new universe object identifier
-     *
-     * The returned universe object identifier can be used for new objects
-     * created by this client.
-     *
-     * @return A new, unique universe object identifier.  If no new idenfifier
-     *      can be create INVALID_OBJECT_ID is returned.
-     */
-    int GetNewObjectID() override;
-
-    /** @brief Return a new ship design identifier
-     *
-     * The returned ship design identifier can be used for new ship designs
-     * created by this client.
-     *
-     * @return A new, unique ship design identifier.  If no new idenfifier
-     *      can be create INVALID_OBJECT_ID is returned.
-     */
-    int GetNewDesignID() override;
-
     /** @brief Return the singleton instance of this Application
      *
      * @return A pointer to the single ClientApp instance of this client.

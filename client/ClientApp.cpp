@@ -140,16 +140,6 @@ std::string ClientApp::GetVisibleObjectName(std::shared_ptr<const UniverseObject
     return name_text;
 }
 
-int ClientApp::GetNewObjectID() {
-    auto new_id = GetUniverse().GenerateObjectID();
-    return new_id;
-}
-
-int ClientApp::GetNewDesignID() {
-    auto new_id = GetUniverse().GenerateDesignID();
-    return new_id;
-}
-
 ClientApp* ClientApp::GetApp()
 { return static_cast<ClientApp*>(s_app); }
 

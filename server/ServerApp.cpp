@@ -314,12 +314,6 @@ std::string ServerApp::GetVisibleObjectName(std::shared_ptr<const UniverseObject
     return object->Name();
 }
 
-int ServerApp::GetNewObjectID()
-{ return m_universe.GenerateObjectID(); }
-
-int ServerApp::GetNewDesignID()
-{ return m_universe.GenerateDesignID(); }
-
 void ServerApp::Run() {
     DebugLogger() << "FreeOrion server waiting for network events";
     try {
