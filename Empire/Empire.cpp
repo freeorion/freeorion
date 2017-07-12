@@ -2645,21 +2645,14 @@ int Empire::AddShipDesign(ShipDesign* ship_design) {
         }
     }
 
-    // design is apparently new, so add it to the universe and put its new id in the empire's set of designs
-    int new_design_id = GetNewDesignID();   // on the sever, this just generates a new design id.  on clients, it polls the sever for a new id
-
-    if (new_design_id == INVALID_DESIGN_ID) {
-        ErrorLogger() << "Empire::AddShipDesign Unable to get new design id";
-        return new_design_id;
-    }
-
-    bool success = universe.InsertShipDesignID(ship_design, new_design_id);
+    bool success = universe.InsertShipDesign(ship_design);
 
     if (!success) {
         ErrorLogger() << "Empire::AddShipDesign Unable to add new design to universe";
         return INVALID_OBJECT_ID;
     }
 
+    auto new_design_id = ship_design->ID();
     AddShipDesign(new_design_id);
 
     return new_design_id;
