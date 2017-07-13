@@ -753,5 +753,6 @@ namespace FreeOrionPython {
             .def("getInt",                      &GameRules::Get<int>)
             .def("getDouble",                   &GameRules::Get<double>)
             .def("getString",                   make_function(&GameRules::Get<std::string>,     return_value_policy<return_by_value>()));
+        def("getGameRules",                     &GetGameRules,                                  return_value_policy<reference_existing_object>(), "Returns the game rules manager, which can be used to look up the names (string) of rules are defined with what type (boolean / toggle, int, double, string), and what values the rules have in the current game.");
     }
 }
