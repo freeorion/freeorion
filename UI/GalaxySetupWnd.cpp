@@ -186,7 +186,27 @@ GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
     IntRuleWidget( current_page, 0, "RULE_NUM_COMBAT_ROUNDS");
     BoolRuleWidget(current_page, 0, "RULE_RESEED_PRNG_SERVER");
 
-    CreatePage("TEST");
+    current_page = CreatePage("SCRIPTED");
+    for (auto& rule : GetGameRules().GetRulesAsStrings()) {
+        if (GetGameRules().RuleIsInternal(rule.first))
+            continue;
+        GameRules::RuleType rule_type = GetGameRules().GetRuleType(rule.first);
+        switch (rule_type) {
+        case GameRules::TOGGLE:
+            BoolRuleWidget(current_page, 0, rule.first);
+            break;
+        case GameRules::INT:
+            IntRuleWidget(current_page, 0, rule.first);
+            break;
+        case GameRules::DOUBLE:
+            DoubleRuleWidget(current_page, 0, rule.first);
+            break;
+        case GameRules::STRING:
+        case GameRules::STRING_LIST:
+        default:
+            break;
+        }
+    }
 
     DoLayout();
     m_tabs->SetCurrentWnd(0);
