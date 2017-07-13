@@ -65,6 +65,7 @@ public:
              const boost::any& default_value_, const std::string& description_,
              const ValidatorBase *validator_, bool engine_internal_);
         RuleType rule_type = INVALID_RULE_TYPE;
+        bool IsInternal() const { return this->storable; }
     };
 
     /** \name Accessors */ //@{
@@ -75,6 +76,7 @@ public:
     { return m_game_rules.find(name) != m_game_rules.end(); }
     bool RuleExists(const std::string& name, RuleType rule_type) const;
     RuleType GetRuleType(const std::string& name) const;
+    bool RuleIsInternal(const std::string& name) const;
 
     /** returns the description string for rule \a rule_name, or throws
       * std::runtime_error if no such rule exists. */

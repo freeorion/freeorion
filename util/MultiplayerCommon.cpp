@@ -112,6 +112,13 @@ GameRules::RuleType GameRules::GetRuleType(const std::string& name) const {
     return rule_it->second.rule_type;
 }
 
+bool GameRules::RuleIsInternal(const std::string& name) const {
+    auto rule_it = m_game_rules.find(name);
+    if (rule_it == m_game_rules.end())
+        return false;
+    return rule_it->second.IsInternal();
+}
+
 const std::string& GameRules::GetDescription(const std::string& rule_name) const {
     auto it = m_game_rules.find(rule_name);
     if (it == m_game_rules.end())
