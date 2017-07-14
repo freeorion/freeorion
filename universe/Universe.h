@@ -388,6 +388,10 @@ public:
     }
     //@}
 
+    /** ObfuscateIDGenerator applies randomization to the IDAllocator to prevent clients from
+        inferring too much information about other client's id generation activities. */
+    void ObfuscateIDGenerator();
+
 private:
     /* Pathfinder setup for the viewing empire
      */

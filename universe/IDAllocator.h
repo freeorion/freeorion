@@ -4,6 +4,7 @@
 #include "../util/Logger.h"
 #include <unordered_map>
 #include <vector>
+#include <random>
 
 #include <boost/serialization/access.hpp>
 
@@ -19,6 +20,10 @@
     creates the server association. Once serialized for another empire_id then
     it is associated with that new (lesser) empire id, and will no longer have
     the complete table.
+
+    TODO:  Replace IDAllocator with using UUID as the id type ID_t instead of int.  This does not
+    require coordination between clients and servers and does not leak any information to clients
+    about other client's allocations.
 */
 
 class IDAllocator {
@@ -56,12 +61,18 @@ public:
         On the client it returns true iff this client allocated \p id and does
         nothing else. That means that id modulo m_stride == client's offset.*/
     bool UpdateIDAndCheckIfOwned(const ID_t id);
+    /** ObfuscateBeforeSerialization randomizes which client is using which modulus each turn
+        before IDAllocator is serialized and sent to the clients. */
+    void ObfuscateBeforeSerialization();
 
     /** Serialize while stripping out information not known to \p empire_id. */
     template <class Archive>
         void SerializeForEmpire(Archive& ar, const unsigned int version, const int empire_id);
 
 private:
+    /// Return a string representing the state.
+    std::string StateString() const;
+
     ID_t m_invalid_id;
     ID_t m_temp_id;
 
@@ -87,6 +98,8 @@ private:
     /// Stop assigning ids and start generating errors.
     ID_t m_exhausted_threshold;
 
+    /// Random number generator
+    std::mt19937 m_random_generator;
 };
 
 #endif // _IDAllocator_h_

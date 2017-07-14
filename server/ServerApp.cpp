@@ -3091,6 +3091,8 @@ void ServerApp::PostCombatProcessTurns() {
                                         m_networking.PlayerIsHost(player_id));
     }
 
+    m_universe.ObfuscateIDGenerator();
+
     DebugLogger() << "ServerApp::PostCombatProcessTurns Sending turn updates to players";
     // send new-turn updates to all players
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();

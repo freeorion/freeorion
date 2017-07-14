@@ -355,6 +355,11 @@ int Universe::GenerateDesignID() {
     return new_id;
 }
 
+void Universe::ObfuscateIDGenerator() {
+    m_object_id_allocator->ObfuscateBeforeSerialization();
+    m_design_id_allocator->ObfuscateBeforeSerialization();
+}
+
 bool Universe::VerifyUnusedObjectID(const int empire_id, const int id) {
     auto good_id_and_possible_legacy = m_object_id_allocator->IsIDValidAndUnused(id, empire_id);
     if (!good_id_and_possible_legacy.second) {

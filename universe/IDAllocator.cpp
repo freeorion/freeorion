@@ -2,6 +2,7 @@
 
 #include "../util/Logger.h"
 #include "../util/LoggerWithOptionsDB.h"
+#include "../util/Random.h"
 #include "../util/Serialize.h"
 #include "../util/Serialize.ipp"
 
@@ -25,27 +26,29 @@ IDAllocator::IDAllocator(const int server_id,
     m_empire_id(server_id),
     m_offset_to_empire_id(client_ids.size() + 1, server_id),
     m_warn_threshold(std::numeric_limits<int>::max() - 1000 * m_stride),
-    m_exhausted_threshold(std::numeric_limits<int>::max() - 10 * m_stride)
+    m_exhausted_threshold(std::numeric_limits<int>::max() - 10 * m_stride),
+    m_random_generator()
 {
     TraceLogger(IDallocator) << "IDAllocator() server id = " << server_id << " invalid id = " << invalid_id
                              << " zero = " << m_zero
                              << " warn threshold =  " << m_warn_threshold << " num clients = " << client_ids.size();
 
+    // Assign the server and each client a unique initial offset modulo m_stride.
     auto ii = m_zero;
 
-    // Assign the server and each client a unique initial offset modulo m_stride.
-
     // Assign the server to the first offset
-    m_offset_to_empire_id[ii % m_stride] = m_server_id;
+    m_offset_to_empire_id[(ii - m_zero) % m_stride] = m_server_id;
     m_empire_id_to_next_assigned_object_id.insert(
-        std::make_pair(m_server_id, ii++ /*intentional post increment*/ ));
+        std::make_pair(m_server_id, ii));
+    ++ii;
 
     for (const auto empire_id : client_ids) {
         if (empire_id == m_server_id)
             continue;
-        m_offset_to_empire_id[ii % m_stride] = empire_id;
+        m_offset_to_empire_id[(ii - m_zero) % m_stride] = empire_id;
         m_empire_id_to_next_assigned_object_id.insert(
-            std::make_pair(empire_id, ii++ /*intentional post increment*/));
+            std::make_pair(empire_id, ii));
+        ++ii;
     }
 }
 
@@ -59,6 +62,11 @@ int IDAllocator::NewID() {
 
     // Copy the id and then update the id for the next time NewID() is called.
     const auto retval = it->second;
+
+    auto apparent_assigning_empire = m_offset_to_empire_id[(retval - m_zero)% m_stride];
+    if (apparent_assigning_empire != m_empire_id)
+        ErrorLogger() << "m_empire_id " << m_empire_id << " does not match apparent assiging id "
+                      << apparent_assigning_empire << " for id = " << retval << " m_zero = " << m_zero;
 
     // Increment the next id if not exhausted
     if (it->second >= m_exhausted_threshold) {
@@ -168,6 +176,83 @@ bool IDAllocator::UpdateIDAndCheckIfOwned(const ID_t checked_id) {
     }
 
     return true;;
+}
+
+void IDAllocator::ObfuscateBeforeSerialization() {
+    /** Do three things to obfuscate the number of ids allocated by each client:
+           1. Randomize the association of modulus and client id.
+           2. Advance all clients to the same offset plus their new modulus.
+           3. Add a random amount to all clients to conceal the largest number of ids allocated by
+           a client. */
+
+    // Ignore on clients.
+    if (m_empire_id != m_server_id)
+        return;;
+
+    TraceLogger(IDallocator) << "Before obfuscation " << StateString();
+
+    // Randomize the moduli
+    std::shuffle(m_offset_to_empire_id.begin(), m_offset_to_empire_id.end(), m_random_generator);
+
+    // Move the zero offset to the highest next assigned id.
+    auto max_next_assigned = m_empire_id_to_next_assigned_object_id.begin()->second;
+    for (const auto& empire_and_id : m_empire_id_to_next_assigned_object_id) {
+        max_next_assigned = std::max(max_next_assigned, empire_and_id.second);
+    }
+
+    // The /2 factor makes the random offset decrease over time to near the typical amount of ids
+    // assigned per turn, instead of growing without bound.
+    auto max_random_offset = std::max(1, (max_next_assigned - m_zero) / 2);
+    m_zero = max_next_assigned;
+
+    // Check that this does not exhaust the ids
+    auto new_max_next_id = max_next_assigned + max_random_offset + m_stride;
+    if (new_max_next_id > m_warn_threshold)
+        WarnLogger() << "Object IDs are almost exhausted. Currently assiging id, " << new_max_next_id;
+
+    if (new_max_next_id > m_exhausted_threshold) {
+        ErrorLogger() << "Object IDs are exhausted.  No objects can be added to the Universe.";
+        for (auto& empire_and_id : m_empire_id_to_next_assigned_object_id)
+            empire_and_id.second = m_invalid_id;
+        return;
+    }
+
+    // Advance each client to its own random offset.
+    ID_t assigning_empire_offset_modulus = 0;
+    for (const auto assigning_empire : m_offset_to_empire_id) {
+        auto empire_random_offset =  SmallIntDist(0, max_random_offset)();
+        auto new_next_id = empire_random_offset + m_zero;
+
+        // Increment until it is at the correct offset
+        while ((new_next_id - m_zero) % m_stride != assigning_empire_offset_modulus)
+            ++new_next_id;
+
+        m_empire_id_to_next_assigned_object_id[assigning_empire] = new_next_id;
+
+        ++assigning_empire_offset_modulus;
+    }
+
+    TraceLogger(IDallocator) << "After obfuscation " << StateString();
+}
+
+std::string IDAllocator::StateString() const {
+    std::stringstream ss;
+    ss << "IDAllocator m_zero = " << m_zero << " (Empire, offset, next_id) = [" ;
+
+    ID_t offset = 0;
+    for (const auto empire_id : m_offset_to_empire_id) {
+        auto next_id_it = m_empire_id_to_next_assigned_object_id.find(empire_id);
+        if (next_id_it == m_empire_id_to_next_assigned_object_id.end()) {
+            ErrorLogger(IDallocator) << "missing empire_id = " << empire_id;
+            continue;
+        }
+
+        ss << "(" << empire_id << ", " << offset << ", " << next_id_it->second << ") ";
+        ++offset;
+    }
+
+    ss << "]";
+    return ss.str();
 }
 
 template <class Archive>
