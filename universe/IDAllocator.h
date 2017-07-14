@@ -61,6 +61,11 @@ public:
         On the client it returns true iff this client allocated \p id and does
         nothing else. That means that id modulo m_stride == client's offset.*/
     bool UpdateIDAndCheckIfOwned(const ID_t id);
+
+    /** On the server advance all client's next_ids so they won't conflict with
+        \p id.  On the client do nothing. */
+    void FixLegacyOrderIDs(const ID_t id);
+
     /** ObfuscateBeforeSerialization randomizes which client is using which modulus each turn
         before IDAllocator is serialized and sent to the clients. */
     void ObfuscateBeforeSerialization();
@@ -70,6 +75,9 @@ public:
         void SerializeForEmpire(Archive& ar, const unsigned int version, const int empire_id);
 
 private:
+    /// Increment the next assigned id for an empire until it is past checked_id.
+    void IncrementNextAssignedId(const int assigning_empire, const int checked_id);
+
     /// Return a string representing the state.
     std::string StateString() const;
 

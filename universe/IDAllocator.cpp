@@ -123,8 +123,8 @@ std::pair<bool, bool> IDAllocator::IsIDValidAndUnused(const ID_t checked_id, con
         return legacy_success;
 
     if (checked_empire_id != m_server_id)
-        TraceLogger(IDallocator) << "Allocated object id = " << checked_id << " is "
-                                 << " valid for empire = " << checked_empire_id;
+        TraceLogger(IDallocator) << "Allocated object id = " << checked_id
+                                 << " is valid for empire = " << checked_empire_id;
     return complete_success;
 }
 
@@ -139,44 +139,42 @@ bool IDAllocator::UpdateIDAndCheckIfOwned(const ID_t checked_id) {
     if (m_empire_id != m_server_id)
         return valid.first;
 
-    // a function to increment the next assigned id for an empire until it is past checked_id
-    auto increment_next_assigned_id = [this, &checked_id](const int assigning_empire) {
-        auto&& empire_and_next_id = m_empire_id_to_next_assigned_object_id.find(assigning_empire);
-        if (empire_and_next_id == m_empire_id_to_next_assigned_object_id.end())
-            return;
-
-        auto& next_id = empire_and_next_id->second;
-        auto init_next_id = next_id;
-
-        while (next_id <= checked_id) {
-            // Don't increment to the next_id if ids are exhausted.
-            if (next_id == m_invalid_id || next_id >= m_exhausted_threshold) {
-                next_id = m_invalid_id;
-                return;
-            }
-
-            next_id += m_stride;
-        }
-
-        TraceLogger(IDallocator) << "next id for empire " << assigning_empire << " updated from "
-                                 << init_next_id << " to " << next_id;
-    };
-
     // On the server
-    if (valid.second) {
-        // Update the assigning empire's next assigned id.
-        auto assigning_empire = m_offset_to_empire_id[checked_id % m_stride];
-        increment_next_assigned_id(assigning_empire);
-
-    } else {
-        // For legacy saved games update all empire's next assigned ids.
-        // This should stop happening after all of a saved games unprocessed orders are processed.
-        for (const auto assigning_empire : m_offset_to_empire_id)
-            increment_next_assigned_id(assigning_empire);
-    }
+    // Update the assigning empire's next assigned id.
+    auto assigning_empire = m_offset_to_empire_id[(checked_id - m_zero) % m_stride];
+    IncrementNextAssignedId(assigning_empire, checked_id);
 
     return true;;
 }
+
+void IDAllocator::FixLegacyOrderIDs(const ID_t id) {
+    // For legacy saved games orders will contain ids not in the appropriate partition.
+    // Advance all paritions past id so there will be no conflicts.
+    // This should stop happening after all of a saved games unprocessed orders are processed.
+    for (const auto assigning_empire : m_offset_to_empire_id)
+        IncrementNextAssignedId(assigning_empire, id);
+}
+
+void IDAllocator::IncrementNextAssignedId(const int assigning_empire, const int checked_id) {
+    auto&& empire_and_next_id = m_empire_id_to_next_assigned_object_id.find(assigning_empire);
+    if (empire_and_next_id == m_empire_id_to_next_assigned_object_id.end())
+        return;
+
+    auto& next_id = empire_and_next_id->second;
+    auto init_next_id = next_id;
+
+    while (next_id <= checked_id && next_id != m_invalid_id) {
+        next_id += m_stride;
+
+        // Don't increment to the next_id if ids are exhausted.
+        if (next_id >= m_exhausted_threshold)
+            next_id = m_invalid_id;
+    }
+
+    if (init_next_id != next_id)
+        TraceLogger(IDallocator) << "next id for empire " << assigning_empire << " updated from "
+                                 << init_next_id << " to " << next_id;
+};
 
 void IDAllocator::ObfuscateBeforeSerialization() {
     /** Do three things to obfuscate the number of ids allocated by each client:
