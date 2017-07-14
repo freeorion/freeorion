@@ -1020,13 +1020,13 @@ bool HumanClientApp::ToggleFullscreen() {
     return true;
 }
 
-void HumanClientApp::StartGame() {
+void HumanClientApp::StartGame(bool is_new_game) {
     m_game_started = true;
 
     if (auto&& map_wnd = ClientUI::GetClientUI()->GetMapWnd())
         map_wnd->ResetEmpireShown();
 
-    ClientUI::GetClientUI()->GetShipDesignManager()->StartGame(EmpireID());
+    ClientUI::GetClientUI()->GetShipDesignManager()->StartGame(EmpireID(), is_new_game);
 
     UpdateCombatLogManager();
 }

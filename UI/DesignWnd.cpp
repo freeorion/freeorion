@@ -656,7 +656,7 @@ ShipDesignManager::ShipDesignManager() :
 ShipDesignManager::~ShipDesignManager()
 {}
 
-void ShipDesignManager::StartGame(int empire_id) {
+void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
     auto empire = GetEmpire(empire_id);
     if (!empire) {
         ErrorLogger() << "Unable to initialize ShipDesignManager because empire id, " << empire_id << ", is invalid";
@@ -672,8 +672,8 @@ void ShipDesignManager::StartGame(int empire_id) {
     auto saved_designs = dynamic_cast<SavedDesignsManager*>(m_saved_designs.get());
     saved_designs->LoadDesignsFromFileSystem();
 
-    // Skip the remainder for loaded games
-    if (HumanClientApp::GetApp()->CurrentTurn() != 1)
+    // Only setup saved and current designs for new games
+    if (!is_new_game)
         return;
 
     // If requested initialize the current designs to all designs known by the empire
@@ -681,6 +681,7 @@ void ShipDesignManager::StartGame(int empire_id) {
 
         // Assume that on new game start the server assigns the ids in an order
         // that makes sense for the UI.
+        DebugLogger() << "Add default designs to empire.";
         const auto& ids = empire->ShipDesigns();
         std::set<int> ordered_ids(ids.begin(), ids.end());
 
@@ -699,6 +700,7 @@ void ShipDesignManager::StartGame(int empire_id) {
 
     // If requested on the first turn copy all of the saved designs to the client empire.
     if (GetOptionsDB().Get<bool>("auto-add-saved-designs")) {
+
         DebugLogger() << "Adding saved designs to empire.";
         for (const auto& uuid : saved_designs->OrderedDesignUUIDs())
             AddSavedDesignToCurrentDesigns(uuid, empire_id, false);
