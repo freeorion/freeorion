@@ -53,6 +53,8 @@ public:
      *  For all order subclasses, the empire ID for the order
      *  must be that of an existing empire.
      *
+     *  The order has not already been executed.
+     *
      *  Subclasses add additional preconditions.  An std::runtime_error
      *   should be thrown if any precondition fails.
      */
@@ -60,7 +62,8 @@ public:
 
     /** If this function returns true, it reverts the game state to what it was
      *  before this order was executed, otherwise it returns false and has no
-     *  effect. */
+     *  effect. If an order is undone on the client and then still sent to the server it will be
+     *  executed on the server, which is probably not desired. */
     bool Undo() const;
 
 protected:

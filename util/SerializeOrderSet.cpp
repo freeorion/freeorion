@@ -37,8 +37,8 @@ template <class Archive>
 void Order::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_empire);
-    /* m_executed is intentionally not serialized so that an order is run once
-      on the client and then deserialized and run once on the server.
+    /** m_executed is intentionally not serialized so that orders always deserialize with m_execute
+      = false.  See class comment for OrderSet.
       ar    & BOOST_SERIALIZATION_NVP(m_executed); */
     if (Archive::is_loading::value && version < 1) {
         bool dummy_executed;
