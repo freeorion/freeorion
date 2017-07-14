@@ -442,7 +442,7 @@ namespace {
         const ShipDesign& design,
         std::list<boost::uuids::uuid>::const_iterator next)
     {
-        if(design.UUID() == boost::uuids::uuid{{0}}) {
+        if (design.UUID() == boost::uuids::uuid{{0}}) {
             ErrorLogger() << "Ship design has a nil UUID for " << design.Name() << ". Not saving.";
             return next;
         }
