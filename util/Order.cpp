@@ -1074,7 +1074,7 @@ void ShipDesignOrder::ExecuteImpl() const {
             m_design_id = new_ship_design->ID();
         } else {
             // On the server use the design id passed from the client
-            universe.InsertShipDesignID(new_ship_design, m_design_id);
+            universe.InsertShipDesignID(new_ship_design, EmpireID(), m_design_id);
         }
 
         universe.SetEmpireKnowledgeOfShipDesign(m_design_id, EmpireID());

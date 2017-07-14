@@ -182,10 +182,12 @@ public:
         \note Universe gains ownership of \a ship_design once inserted. */
     bool            InsertShipDesign(ShipDesign* ship_design);
 
-    /** Inserts \a ship_design into the universe with given \a id;  returns
-      * true on success, or false on failure.
-      * \note Universe gains ownership of \a ship_design once inserted. */
-    bool            InsertShipDesignID(ShipDesign* ship_design, int id);
+    /** Inserts \a ship_design into the universe with given \a id; returns true
+      * on success, or false on failure.  An empire id of none indicates that
+      * the server is allocating an id on behalf of itself.  This can be removed
+      * when no longer supporting legacy id allocation in pending Orders. \note
+      * Universe gains ownership of \a ship_design once inserted. */
+    bool            InsertShipDesignID(ShipDesign* ship_design, boost::optional<int> empire_id, int id);
     
     // Resets the universe object to prepare for generation of a new universe
     void            ResetUniverse();

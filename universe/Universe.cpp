@@ -395,22 +395,48 @@ bool Universe::InsertShipDesign(ShipDesign* ship_design) {
 
     int id = GenerateDesignID();
 
-    return InsertShipDesignID(ship_design, id);
+    // TODO move this check int InsertShipDesignID(design, id) before the version change to v0.4.8
+    // **************************************** Non Legacy Check Below ********************
+    m_design_id_allocator->UpdateIDAndCheckIfOwned(id);
+    // **************************************** Non Legacy Check Above ********************
+
+    return InsertShipDesignID(ship_design, boost::none, id);
 }
 
-bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id) {
+bool Universe::InsertShipDesignID(ShipDesign* ship_design, boost::optional<int> empire_id, int id) {
     if (!ship_design)
         return false;
 
-    auto valid = m_design_id_allocator->UpdateIDAndCheckIfOwned(id);
-    if (!valid) {
-        ErrorLogger() << "Ship design id = " << id << " is invalid.";
-        return false;
+    // TODO remove this check before the version change to v0.4.8
+    if (empire_id) {
+        auto good_id_and_possible_legacy = m_design_id_allocator->IsIDValidAndUnused(id, *empire_id);
+        if (!good_id_and_possible_legacy.first) {
+            ErrorLogger() << "Ship design id = " << id << " is invalid.";
+            return false;
+        }
+
+        if (!good_id_and_possible_legacy.second) {
+            WarnLogger() << "design id = " << id << " should not have been assigned by empire = "
+                         << *empire_id << ". It is probably from loading an old saved game. "
+                         << "In future this will be promoted to an error.";
+        }
+        m_design_id_allocator->FixLegacyOrderIDs(id);
     }
+
+    // TODO replace the above code with this check before the version change to v0.4.8
+    // **************************************** Non Legacy Check Below ********************
+    else {
+        auto valid = m_design_id_allocator->UpdateIDAndCheckIfOwned(id);
+        if (!valid) {
+            ErrorLogger() << "Ship design id = " << id << " is invalid.";
+            return false;
+        }
+    }
+    // **************************************** Non Legacy Check Above ********************
 
     ship_design->SetID(id);
     m_ship_designs[id] = ship_design;
-    return valid;
+    return true;
 }
 
 bool Universe::DeleteShipDesign(int design_id) {

@@ -2261,7 +2261,7 @@ namespace {
         cost = incomplete_design->ProductionCost(client_empire_id, default_location_id);
         cost_units = UserString("ENC_PP");
 
-        GetUniverse().InsertShipDesignID(new ShipDesign(*incomplete_design), TEMPORARY_OBJECT_ID);
+        GetUniverse().InsertShipDesignID(new ShipDesign(*incomplete_design), client_empire_id, TEMPORARY_OBJECT_ID);
 
         float tech_level = boost::algorithm::clamp(CurrentTurn() / 400.0f, 0.0f, 1.0f);
         float typical_shot = 3 + 27 * tech_level;
