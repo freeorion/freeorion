@@ -91,14 +91,24 @@ std::pair<bool, bool> IDAllocator::IsIDValidAndUnused(const ID_t checked_id, con
     // allow legacy loading and order processing
     const std::pair<bool, bool> legacy_success = {true, false};
 
-    if (checked_id == m_invalid_id)
+    if (checked_id == m_invalid_id) {
+        ErrorLogger() << m_invalid_id << " is an invalid id.";
         return hard_fail;
+    }
 
     if (checked_id == m_temp_id)
         return complete_success;
 
-    if (checked_id >= m_exhausted_threshold || checked_id < m_zero)
+    if (checked_id >= m_exhausted_threshold) {
+        ErrorLogger() << " invalid id = " << checked_id << " is greater then the maximum id " << m_exhausted_threshold;
         return hard_fail;
+    }
+
+    if (checked_id < m_zero) {
+        ErrorLogger() << " invalid id = " << checked_id
+                      << " is lower than the expected minimum new id this turn " << m_zero;
+        return hard_fail;
+    }
 
     // On the server all ids are valid. On the client only the client id is valid.
     bool is_valid_id = (m_empire_id == m_server_id) || (m_empire_id == checked_empire_id);
