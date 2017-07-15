@@ -1,5 +1,6 @@
 #include "CUIControls.h"
 
+#include "CUISpin.h"
 #include "ClientUI.h"
 #include "CUIDrawUtil.h"
 #include "IconTextBrowseWnd.h"
@@ -569,6 +570,20 @@ CUIStateButton::CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat>
     StateButton(str, ClientUI::GetFont(), format,
                 ClientUI::StateButtonColor(), representer, ClientUI::TextColor())
 {}
+
+
+///////////////////////////////////////
+// class CUISpin
+///////////////////////////////////////
+template<>
+void CUISpin<double>::SetEditTextFromValue()
+{
+    if (!this->m_edit)
+        return;
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(1) << this->Value();
+    this->m_edit->SetText(ss.str());
+}
 
 
 ///////////////////////////////////////
