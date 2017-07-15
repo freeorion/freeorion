@@ -1042,7 +1042,7 @@ void ShipDesignOrder::ExecuteImpl() const {
     if (m_delete_design_from_empire) {
         // player is ordering empire to forget about a particular design
         if (!empire->ShipDesignKept(m_design_id)) {
-            ErrorLogger() << "Tried to remove a ShipDesign id = " << m_design_id
+            ErrorLogger() << "Empire, " << EmpireID() << ", tried to remove a ShipDesign id = " << m_design_id
                           << " that the empire wasn't remembering";
             return;
         }
@@ -1051,7 +1051,7 @@ void ShipDesignOrder::ExecuteImpl() const {
     } else if (m_create_new_design) {
         // check if a design with this ID already exists
         if (const auto existing = universe.GetShipDesign(m_design_id)) {
-            ErrorLogger() << "Tried to create a new ShipDesign with an id, " << m_design_id
+            ErrorLogger() << "Empire, " << EmpireID() << ", tried to create a new ShipDesign with an id, " << m_design_id
                           << " of an already-existing ShipDesign " << existing->Name();
 
             return;
@@ -1085,18 +1085,18 @@ void ShipDesignOrder::ExecuteImpl() const {
         const std::set<int>& empire_known_design_ids = universe.EmpireKnownShipDesignIDs(EmpireID());
         std::set<int>::iterator design_it = empire_known_design_ids.find(m_design_id);
         if (design_it == empire_known_design_ids.end()) {
-            ErrorLogger() << "Tried to rename/redescribe a ShipDesign id = " << m_design_id
+            ErrorLogger() << "Empire, " << EmpireID() << ", tried to rename/redescribe a ShipDesign id = " << m_design_id
                           << " that this empire hasn't seen";
             return;
         }
         const ShipDesign* design = GetShipDesign(*design_it);
         if (!design) {
-            ErrorLogger() << "Tried to rename/redescribe a ShipDesign id = " << m_design_id
+            ErrorLogger() << "Empire, " << EmpireID() << ", tried to rename/redescribe a ShipDesign id = " << m_design_id
                           << " that doesn't exist (but this empire has seen it)!";
             return;
         }
         if (design->DesignedByEmpire() != EmpireID()) {
-            ErrorLogger() << "Tried to rename/redescribe a ShipDesign id = " << m_design_id
+            ErrorLogger() << "Empire, " << EmpireID() << ", tried to rename/redescribe a ShipDesign id = " << m_design_id
                           << " that isn't owned by this empire!";
             return;
         }
@@ -1112,7 +1112,7 @@ void ShipDesignOrder::ExecuteImpl() const {
 
         // check if empire is already remembering the design
         if (empire->ShipDesignKept(m_design_id)) {
-            ErrorLogger() << "Tried to remember a ShipDesign id = " << m_design_id
+            ErrorLogger() << "Empire, " << EmpireID() << ", tried to remember a ShipDesign id = " << m_design_id
                           << " that was already being remembered";
             return;
         }
@@ -1122,7 +1122,7 @@ void ShipDesignOrder::ExecuteImpl() const {
         if (empire_known_design_ids.find(m_design_id) != empire_known_design_ids.end()) {
             empire->AddShipDesign(m_design_id);
         } else {
-            ErrorLogger() << "Tried to remember a ShipDesign id = " << m_design_id
+            ErrorLogger() << "Empire, " << EmpireID() << ", tried to remember a ShipDesign id = " << m_design_id
                           << " that this empire hasn't seen";
             return;
         }
