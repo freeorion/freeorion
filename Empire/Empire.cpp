@@ -3078,7 +3078,9 @@ void Empire::CheckProductionProgress() {
         // next repetition of the item.
         elem.progress -= 1.0f;
         if (elem.progress < 0.0f) {
-            ErrorLogger() << "Somehow got negative progress after deducting progress for completed item...";
+            if (elem.progress < -1e-3)
+                ErrorLogger() << "Somehow got negative progress (" << elem.progress
+                              << ") after deducting progress for completed item...";
             elem.progress = 0.0f;
         }
 
