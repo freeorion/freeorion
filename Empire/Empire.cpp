@@ -3220,7 +3220,7 @@ void Empire::CheckProductionProgress() {
 
         if (!--m_production_queue[i].remaining) {   // decrement number of remaining items to be produced in current queue element
             to_erase.push_back(i);                  // remember completed element so that it can be removed from queue
-            DebugLogger() << "Marking completed production queue item to be removed form queue";
+            DebugLogger() << "Marking completed production queue item to be removed from queue";
         }
     }
 
