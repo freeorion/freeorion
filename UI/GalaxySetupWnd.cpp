@@ -250,7 +250,7 @@ GG::ListBox* GameRulesPanel::CreatePage(const std::string& name) {
 }
 
 void GameRulesPanel::CreateSectionHeader(GG::ListBox* page, int indentation_level,
-                                     const std::string& name, const std::string& tooltip)
+                                         const std::string& name, const std::string& tooltip)
 {
     assert(0 <= indentation_level);
     GG::Label* heading_text = new CUILabel(name, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
@@ -341,7 +341,7 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
 
     GG::Spin<double>* spin = nullptr;
     if (std::shared_ptr<const RangedValidator<double>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<double>>(validator))
-        spin = new CUISpin<double>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
+        spin = new CUISpin<double>(value, 0.1, ranged_validator->m_min, ranged_validator->m_max, true);
 
     else if (std::shared_ptr<const StepValidator<double>> step_validator = std::dynamic_pointer_cast<const StepValidator<double>>(validator))
         spin = new CUISpin<double>(value, step_validator->m_step_size, -1000000, 1000000, true);
@@ -350,7 +350,7 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
         spin = new CUISpin<double>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
 
     else if (std::shared_ptr<const Validator<double>> int_validator = std::dynamic_pointer_cast<const Validator<double>>(validator))
-        spin = new CUISpin<double>(value, 1, -1000000, 1000000, true);
+        spin = new CUISpin<double>(value, 0.1, -1000000, 1000000, true);
 
     if (!spin) {
         ErrorLogger() << "Unable to create DoubleRuleWidget spin";
@@ -374,6 +374,7 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
 
     spin->ValueChangedSignal.connect(boost::bind(&GameRulesPanel::DoubleRuleChanged,
                                                  this, spin, rule_name));
+
     return spin;
 }
 
