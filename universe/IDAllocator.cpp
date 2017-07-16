@@ -45,9 +45,9 @@ IDAllocator::IDAllocator(const int server_id,
     for (const auto empire_id : client_ids) {
         if (empire_id == m_server_id)
             continue;
-        m_offset_to_empire_id[(ii - m_zero) % m_stride] = empire_id;
-        m_empire_id_to_next_assigned_object_id.insert(
-            std::make_pair(empire_id, ii));
+         AssigningEmpireForID(ii) = empire_id;
+         m_empire_id_to_next_assigned_object_id.insert(
+             std::make_pair(empire_id, ii));
         ++ii;
     }
 }
@@ -63,7 +63,7 @@ int IDAllocator::NewID() {
     // Copy the id and then update the id for the next time NewID() is called.
     const auto retval = it->second;
 
-    auto apparent_assigning_empire = m_offset_to_empire_id[(retval - m_zero)% m_stride];
+    auto apparent_assigning_empire = AssigningEmpireForID(retval);
     if (apparent_assigning_empire != m_empire_id)
         ErrorLogger() << "m_empire_id " << m_empire_id << " does not match apparent assiging id "
                       << apparent_assigning_empire << " for id = " << retval << " m_zero = " << m_zero;
@@ -128,7 +128,7 @@ std::pair<bool, bool> IDAllocator::IsIDValidAndUnused(const ID_t checked_id, con
 
     // Check that the checked_id has the correct modulus again allowing for legacy games with
     // incorrect id.
-    bool is_correct_modulus = (m_offset_to_empire_id[(checked_id - m_zero) % m_stride] == checked_empire_id);
+    bool is_correct_modulus = (AssigningEmpireForID(checked_id) == checked_empire_id);
     if (!is_correct_modulus)
         return legacy_success;
 
@@ -151,7 +151,7 @@ bool IDAllocator::UpdateIDAndCheckIfOwned(const ID_t checked_id) {
 
     // On the server
     // Update the assigning empire's next assigned id.
-    auto assigning_empire = m_offset_to_empire_id[(checked_id - m_zero) % m_stride];
+    auto assigning_empire = AssigningEmpireForID(checked_id);
     IncrementNextAssignedId(assigning_empire, checked_id);
 
     return true;;
@@ -164,6 +164,9 @@ void IDAllocator::FixLegacyOrderIDs(const ID_t id) {
     for (const auto assigning_empire : m_offset_to_empire_id)
         IncrementNextAssignedId(assigning_empire, id);
 }
+
+IDAllocator::ID_t& IDAllocator::AssigningEmpireForID(ID_t id)
+{ return m_offset_to_empire_id[(id - m_zero) % m_stride]; }
 
 void IDAllocator::IncrementNextAssignedId(const int assigning_empire, const int checked_id) {
     auto&& empire_and_next_id = m_empire_id_to_next_assigned_object_id.find(assigning_empire);

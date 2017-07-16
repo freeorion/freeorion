@@ -75,6 +75,9 @@ public:
         void SerializeForEmpire(Archive& ar, const unsigned int version, const int empire_id);
 
 private:
+    /** Return the empire that should have assigned \p id. */
+    ID_t& AssigningEmpireForID(ID_t id);
+
     /// Increment the next assigned id for an empire until it is past checked_id.
     void IncrementNextAssignedId(const int assigning_empire, const int checked_id);
 
