@@ -541,27 +541,33 @@ public:
     OptionsBar(std::unique_ptr<BarSizer>& sizer) :
         GG::Wnd(),
         m_sizer(sizer)
-    {
+    {}
+
+    void CompleteConstruction() override {
         m_toggles.push_back(std::make_shared<ToggleData>(UserString("COMBAT_SUMMARY_PARTICIPANT_RELATIVE"),
                                                          UserString("COMBAT_SUMMARY_PARTICIPANT_EQUAL"),
                                                          UserString("COMBAT_SUMMARY_PARTICIPANT_RELATIVE_TIP"),
                                                          UserString("COMBAT_SUMMARY_PARTICIPANT_EQUAL_TIP"),
-                                                         TOGGLE_BAR_WIDTH_PROPORTIONAL, &m_sizer, this));
+                                                         TOGGLE_BAR_WIDTH_PROPORTIONAL, &m_sizer,
+                                                         std::dynamic_pointer_cast<OptionsBar>(shared_from_this())));
         m_toggles.push_back(std::make_shared<ToggleData>(UserString("COMBAT_SUMMARY_HEALTH_SMOOTH"),
                                                          UserString("COMBAT_SUMMARY_HEALTH_BAR"),
                                                          UserString("COMBAT_SUMMARY_HEALTH_SMOOTH_TIP"),
                                                          UserString("COMBAT_SUMMARY_HEALTH_BAR_TIP"),
-                                                         TOGGLE_BAR_HEALTH_SMOOTH, &m_sizer, this));
+                                                         TOGGLE_BAR_HEALTH_SMOOTH, &m_sizer,
+                                                         std::dynamic_pointer_cast<OptionsBar>(shared_from_this())));
         m_toggles.push_back(std::make_shared<ToggleData>(UserString("COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL"),
                                                          UserString("COMBAT_SUMMARY_BAR_HEIGHT_EQUAL"),
                                                          UserString("COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL_TIP"),
                                                          UserString("COMBAT_SUMMARY_BAR_HEIGHT_EQUAL_TIP"),
-                                                         TOGGLE_BAR_HEIGHT_PROPORTIONAL, &m_sizer, this));
+                                                         TOGGLE_BAR_HEIGHT_PROPORTIONAL, &m_sizer,
+                                                         std::dynamic_pointer_cast<OptionsBar>(shared_from_this())));
         m_toggles.push_back(std::make_shared<ToggleData>(UserString("COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL"),
                                                          UserString("COMBAT_SUMMARY_GRAPH_HEIGHT_EQUAL"),
                                                          UserString("COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL_TIP"),
                                                          UserString("COMBAT_SUMMARY_GRAPH_HEIGHT_EQUAL_TIP"),
-                                                         TOGGLE_GRAPH_HEIGHT_PROPORTIONAL, &m_sizer, this));
+                                                         TOGGLE_GRAPH_HEIGHT_PROPORTIONAL, &m_sizer,
+                                                         std::dynamic_pointer_cast<OptionsBar>(shared_from_this())));
         DoLayout();
     }
 
@@ -612,7 +618,7 @@ private:
         std::string tip_false;
         std::string option_key;
         std::unique_ptr<BarSizer>* sizer;
-        std::shared_ptr<OptionsBar> parent;
+        std::weak_ptr<OptionsBar> parent;
         std::shared_ptr<GG::Button> button;
 
         void Toggle()
@@ -622,8 +628,10 @@ private:
             (**sizer).Set(option_key, value);
             button->SetText(value?label_true:label_false);
             button->SetBrowseText(value?tip_true:tip_false);
-            parent->DoLayout();
-            parent->ChangedSignal();
+            if (auto locked_parent = parent.lock()) {
+                locked_parent->DoLayout();
+                locked_parent->ChangedSignal();
+            }
         }
 
         bool GetValue() const
@@ -632,14 +640,14 @@ private:
         ToggleData(const std::string& label_true, const std::string& label_false,
                    const std::string& tip_true, const std::string& tip_false,
                    std::string option_key,
-                   std::unique_ptr<BarSizer>* sizer, OptionsBar* parent) :
+                   std::unique_ptr<BarSizer>* sizer, std::shared_ptr<OptionsBar> parent) :
             label_true(label_true),
             label_false(label_false),
             tip_true(tip_true),
             tip_false(tip_false),
             option_key(option_key),
             sizer(sizer),
-            parent(parent),
+            parent(std::forward<std::shared_ptr<OptionsBar>>(parent)),
             button(nullptr)
         {
             button = Wnd::Create<CUIButton>("-");
