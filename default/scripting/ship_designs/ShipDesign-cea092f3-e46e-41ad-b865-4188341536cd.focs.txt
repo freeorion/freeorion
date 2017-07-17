@@ -1,12 +1,13 @@
 ShipDesign
     name = "SD_LARGE_MARK_1"
-    uuid = "08a58b08-0929-496d-84fc-faa91424ca00"
+    uuid = "cea092f3-e46e-41ad-b865-4188341536cd"
     description = "SD_LARGE_MARK1_DESC"
     hull = "SH_STANDARD"
     parts = [
-        "SR_WEAPON_0_1"
+        "SR_WEAPON_1_1"
         "SR_WEAPON_1_1"
         "AR_STD_PLATE"
         "FU_BASIC_TANK"
     ]
-    model = "mark1"
+    icon = "icons/ship_hulls/basic-large-hull_small.png"
+    model = "some model"
