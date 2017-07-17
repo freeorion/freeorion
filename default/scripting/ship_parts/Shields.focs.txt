@@ -70,8 +70,7 @@ Part
     ]
     icon = "icons/ship_parts/multi-spectral.png"
 
-
-// Helper macro containing the name of all shields
+// Helper macro containing the name of all basic shields
 ALL_SHIELDS
 '''
 [
@@ -82,5 +81,56 @@ ALL_SHIELDS
     "SH_DEFENSE_GRID"
 ]
 '''
+
+Part
+    name = "SH_ROBOTIC_INTERFACE_SHIELDS"
+    description = "SH_ROBOTIC_INTERFACE_SHIELDS_DESC"
+    class = Shield
+    capacity = 0
+    mountableSlotTypes = [Internal]
+    buildcost = 70 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 4
+    tags = [ "PEDIA_PC_SHIELD" ]
+    location = And [
+        OwnedBy empire = Source.Owner
+        HasTag name = "ROBOTIC"
+    ]
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Source
+                HasTag name = "ROBOTIC"
+                HasTag name = "ROBOTIC_HULL"
+            ]
+            activation = ([[ROBOTIC_SHIELD_EFFECT]] >= [[BEST_SHIELD_EFFECT]])
+            stackinggroup = "ROBOTIC_SHIELD_PART_STACK"
+            accountinglabel = "ROBOTIC_INTERFACE_EFFECT"
+            effects = SetMaxShield value = Value - [[BEST_SHIELD_EFFECT]] + [[ROBOTIC_SHIELD_EFFECT]]
+    icon = "icons/ship_parts/robotic-interface-shields.png"
+
+
+COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS
+'''
+Statistic Count condition = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                VisibleToEmpire empire = Source.Owner
+                HasTag name = "ROBOTIC"
+                HasTag name = "ROBOTIC_HULL"
+                Not Source
+                DesignHasPart low = 1 high = 999 name = "SH_ROBOTIC_INTERFACE_SHIELDS"
+                WithinStarlaneJumps jumps = 0 condition = Source
+            ]
+'''
+
+ROBOTIC_SHIELD_EFFECT
+'''
+min(min(
+        [[COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS]],            
+        (([[COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS]] * 7 ) ^ 0.5 )),
+        20)
+'''
+
+#include "stacking.macros"
 
 #include "/scripting/common/upkeep.macros"
