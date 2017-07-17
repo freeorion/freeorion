@@ -23,26 +23,6 @@ max(max(max(
 '''
 
 
-SUM_CLOAK_CAPACITY
-'''
-((PartCapacity name = "ST_CLOAK_1")* (PartsInShipDesign Name = "ST_CLOAK_1" design = Source.DesignID)
-+(PartCapacity name = "ST_CLOAK_2")* (PartsInShipDesign Name = "ST_CLOAK_2" design = Source.DesignID)
-+(PartCapacity name = "ST_CLOAK_3")* (PartsInShipDesign Name = "ST_CLOAK_3" design = Source.DesignID)
-+(PartCapacity name = "ST_CLOAK_4")* (PartsInShipDesign Name = "ST_CLOAK_4" design = Source.DesignID))
-'''
-
-
-CLOAK_STACKING
-'''
-EffectsGroup    // Make sure to add new cloak parts to the macros SUM_CLOAK_CAPACITY and BEST_CLOAK_EFFECT
-    scope = Source
-    activation = DesignHasPartClass Low=2 High=999 Class=Stealth
-    stackinggroup = "STEALTH_PART_STACK"
-    accountinglabel = "CLOAK_INTERFERENCE"
-    effects = SetStealth value = Value - [[SUM_CLOAK_CAPACITY]] + [[BEST_CLOAK_EFFECT]]
-'''
-
-
 BEST_SHIELD_EFFECT
 '''
 max(max(max(max(
