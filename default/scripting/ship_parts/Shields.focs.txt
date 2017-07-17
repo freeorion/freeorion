@@ -1,6 +1,7 @@
 Part
     name = "SH_DEFENSE_GRID"
     description = "SH_DEFENSE_GRID_DESC"
+    exclusions = [[ALL_SHIELDS]]
     class = Shield
     capacity = 3
     mountableSlotTypes = Internal
@@ -8,12 +9,12 @@ Part
     buildtime = 2
     tags = [ "PEDIA_PC_SHIELD" ]
     location = OwnedBy empire = Source.Owner
-    effectsgroups = [[SHIELD_STACKING]]    //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
     icon = "icons/ship_parts/defense_grid.png"
 
 Part
     name = "SH_DEFLECTOR"
     description = "SH_DEFLECTOR_DESC"
+    exclusions = [[ALL_SHIELDS]]
     class = Shield
     capacity = 5
     mountableSlotTypes = Internal
@@ -21,12 +22,12 @@ Part
     buildtime = 4
     tags = [ "PEDIA_PC_SHIELD" ]
     location = OwnedBy empire = Source.Owner
-    effectsgroups = [[SHIELD_STACKING]]    //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
     icon = "icons/ship_parts/deflector_shield.png"
 
 Part
     name = "SH_PLASMA"
     description = "SH_PLASMA_DESC"
+    exclusions = [[ALL_SHIELDS]]
     class = Shield
     capacity = 9
     mountableSlotTypes = Internal
@@ -34,12 +35,12 @@ Part
     buildtime = 5
     tags = [ "PEDIA_PC_SHIELD" ]
     location = OwnedBy empire = Source.Owner
-    effectsgroups = [[SHIELD_STACKING]]    //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
     icon = "icons/ship_parts/plasma_shield.png"
 
 Part
     name = "SH_BLACK"
     description = "SH_BLACK_DESC"
+    exclusions = [[ALL_SHIELDS]]
     class = Shield
     capacity = 15
     mountableSlotTypes = Internal
@@ -47,12 +48,12 @@ Part
     buildtime = 6
     tags = [ "PEDIA_PC_SHIELD" ]
     location = OwnedBy empire = Source.Owner
-    effectsgroups = [[SHIELD_STACKING]]    //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
     icon = "icons/ship_parts/blackshield.png"
 
 Part
     name = "SH_MULTISPEC"
     description = "SH_MULTISPEC_DESC"
+    exclusions = [[ALL_SHIELDS]]
     class = Shield
     capacity = 10
     mountableSlotTypes = Internal
@@ -61,7 +62,6 @@ Part
     tags = [ "PEDIA_PC_SHIELD" ]
     location = OwnedBy empire = Source.Owner
     effectsgroups = [
-        [[SHIELD_STACKING]]     //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
         EffectsGroup
             scope = Source
             activation = Star type = [Red Orange Yellow White Blue]
@@ -70,6 +70,17 @@ Part
     ]
     icon = "icons/ship_parts/multi-spectral.png"
 
-#include "stacking.macros"
+
+// Helper macro containing the name of all shields
+ALL_SHIELDS
+'''
+[
+    "SH_MULTISPEC"
+    "SH_BLACK"
+    "SH_PLASMA"
+    "SH_DEFLECTOR"
+    "SH_DEFENSE_GRID"
+]
+'''
 
 #include "/scripting/common/upkeep.macros"

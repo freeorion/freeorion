@@ -38,24 +38,3 @@ max(max(max(max(
     * PartCapacity name = "SH_MULTISPEC" 
     )
 '''
-
-
-SUM_SHIELD_CAPACITY
-'''
-((PartCapacity name = "SH_DEFENSE_GRID")* (PartsInShipDesign Name = "SH_DEFENSE_GRID" design = Source.DesignID)
-+(PartCapacity name = "SH_DEFLECTOR")* (PartsInShipDesign Name = "SH_DEFLECTOR" design = Source.DesignID)
-+(PartCapacity name = "SH_PLASMA")* (PartsInShipDesign Name = "SH_PLASMA" design = Source.DesignID)
-+(PartCapacity name = "SH_BLACK")* (PartsInShipDesign Name = "SH_BLACK" design = Source.DesignID)
-+(PartCapacity name = "SH_MULTISPEC")* (PartsInShipDesign Name = "SH_MULTISPEC" design = Source.DesignID))
-'''
-
-
-SHIELD_STACKING
-'''
-EffectsGroup    // Make sure to add new shield parts to the macros SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
-    scope = Source
-    activation = DesignHasPartClass Low=2 High=999 Class=Shield
-    stackinggroup = "SHIELD_PART_STACK"
-    accountinglabel = "SHIELD_INTERFERENCE"
-    effects = SetMaxShield value = Value - [[SUM_SHIELD_CAPACITY]] + [[BEST_SHIELD_EFFECT]]
-'''
