@@ -320,7 +320,7 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
     layout->SetChildClippingMode(ClipToClient);
 
     GG::ListBox::Row* row = new RuleListRow(Width(), spin->MinUsableSize().y + CONTROL_VMARGIN + 6,
-                                            spin, indentation_level);
+                                            layout, indentation_level);
     page->Insert(row);
 
     spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -366,7 +366,7 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
     layout->SetChildClippingMode(ClipToClient);
 
     GG::ListBox::Row* row = new RuleListRow(Width(), spin->MinUsableSize().y + CONTROL_VMARGIN + 6,
-                                            spin, indentation_level);
+                                            layout, indentation_level);
     page->Insert(row);
 
     spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
