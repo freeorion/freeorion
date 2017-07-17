@@ -1,0 +1,83 @@
+Part
+    name = "FU_IMPROVED_ENGINE_COUPLINGS"
+    description = "FU_IMPROVED_ENGINE_COUPLINGS_DESC"
+    exclusions = [[ALL_ENGINES]]
+    class = Speed
+    capacity = 20
+    mountableSlotTypes = Internal
+    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 3
+    tags = [ "PEDIA_PC_SPEED" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/engine-1.png"
+
+Part
+    name = "FU_N_DIMENSIONAL_ENGINE_MATRIX"
+    description = "FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC"
+    exclusions = [[ALL_ENGINES]]
+    class = Speed
+    capacity = 40
+    mountableSlotTypes = [ Internal Core ]
+    buildcost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 5
+    tags = [ "PEDIA_PC_SPEED" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/engine-2.png"
+
+Part
+    name = "FU_SINGULARITY_ENGINE_CORE"
+    description = "FU_SINGULARITY_ENGINE_CORE_DESC"
+    exclusions = [[ALL_ENGINES]]
+    class = Speed
+    capacity = 80
+    mountableSlotTypes = Core
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 6
+    tags = [ "PEDIA_PC_SPEED" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/engine-3.png"
+
+Part
+    name = "FU_TRANSPATIAL_DRIVE"
+    description = "FU_TRANSPATIAL_DRIVE_DESC"
+    exclusions = [[ALL_ENGINES]]
+    class = Speed
+    capacity = 60
+    mountableSlotTypes = Core
+    buildcost = 80 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 8
+    tags = [ "PEDIA_PC_SPEED" ]
+    location = And [
+        OwnedBy empire = Source.Owner
+        Contains Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
+        ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = (1 <= [[BEST_CLOAK_EFFECT]] <= 40)
+            stackinggroup = "ENGINE_STEALTH_PART_STACK1"
+            accountinglabel = "TRANSPATIAL_CLOAK_INTERACTION"
+            effects = SetStealth value = Value - [[BEST_CLOAK_EFFECT]]
+        EffectsGroup
+            scope = Source
+            activation = (40 >= [[BEST_CLOAK_EFFECT]])
+            stackinggroup = "ENGINE_STEALTH_PART_STACK2"
+            effects = SetStealth value = Value + 40
+    ]
+    icon = "icons/ship_parts/engine-4.png"
+
+
+// Helper macro containing the names of all engine parts
+ALL_ENGINES
+'''
+[
+    "FU_IMPROVED_ENGINE_COUPLINGS"
+    "FU_N_DIMENSIONAL_ENGINE_MATRIX"
+    "FU_SINGULARITY_ENGINE_CORE"
+    "FU_TRANSPATIAL_DRIVE"
+]
+'''
+
+#include "stacking.macros"
+
+#include "/scripting/common/upkeep.macros"
