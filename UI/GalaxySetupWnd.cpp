@@ -202,6 +202,8 @@ GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
             DoubleRuleWidget(current_page, 0, rule.first);
             break;
         case GameRules::STRING:
+            StringRuleWidget(current_page, 0, rule.first);
+            break;
         case GameRules::STRING_LIST:
         default:
             break;
@@ -378,11 +380,51 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
     return spin;
 }
 
+GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indentation_level,
+                                                   const std::string& rule_name)
+{
+    GG::Label* text_control = new CUILabel(UserString(rule_name), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
+
+    std::shared_ptr<const ValidatorBase> validator = GetGameRules().GetValidator(rule_name);
+    std::string value = GetGameRules().Get<std::string>(rule_name);
+
+    CUIDropDownList* drop = new CUIDropDownList(5);
+    drop->Resize(GG::Pt(SPIN_WIDTH, drop->MinUsableSize().y));
+
+    if (auto desc_val =
+        std::dynamic_pointer_cast<const DiscreteValidator<std::string>>(validator))
+    {
+        for (auto& poss : desc_val->m_values)
+            drop->Insert(new CUISimpleDropDownListRow(UserString(poss)));
+        if (!drop->Empty())
+            drop->Select(drop->begin());
+    }
+
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, Width(), drop->MinUsableSize().y, 1, 2, 0, 5);
+    layout->Add(drop, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
+    layout->SetColumnStretch(1, 1.0);
+    layout->SetChildClippingMode(ClipToClient);
+
+    GG::ListBox::Row* row = new RuleListRow(Width(), drop->MinUsableSize().y + CONTROL_VMARGIN + 6,
+                                            layout, indentation_level);
+    page->Insert(row);
+
+    drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    drop->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
+
+    drop->SelChangedSignal.connect(boost::bind(&GameRulesPanel::StringRuleChanged,
+                                               this, drop, rule_name));
+
+    return drop;
+}
+
 void GameRulesPanel::BoolRuleChanged(const GG::StateButton* button,
                                      const std::string& rule_name)
 {
     std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
-    if (!val)
+    if (!val || !button)
         return;
     m_rules[rule_name] = val->String(button->Checked());
 
@@ -397,7 +439,7 @@ void GameRulesPanel::IntRuleChanged(const GG::Spin<int>* spin,
                                      const std::string& rule_name)
 {
     std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
-    if (!val)
+    if (!val || !spin)
         return;
     m_rules[rule_name] = val->String(spin->Value());
 
@@ -412,7 +454,7 @@ void GameRulesPanel::DoubleRuleChanged(const GG::Spin<double>* spin,
                                        const std::string& rule_name)
 {
     std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
-    if (!val)
+    if (!val || !spin)
         return;
     m_rules[rule_name] = val->String(spin->Value());
 
@@ -423,6 +465,27 @@ void GameRulesPanel::DoubleRuleChanged(const GG::Spin<double>* spin,
     SettingChanged();
 }
 
+void GameRulesPanel::StringRuleChanged(const GG::DropDownList* drop,
+                                       const std::string& rule_name)
+{
+    std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
+    if (!val || !drop)
+        return;
+
+    GG::DropDownList::iterator it = drop->CurrentItem();
+    const GG::DropDownList::Row* row = *it;
+    if (!row) {
+        ErrorLogger() << "GameRulesPanel::StringRuleChanged couldn't get current item due to invalid Row pointer";
+        return;
+    }
+    m_rules[rule_name] = row->Name();
+
+    DebugLogger() << "Set Rules:";
+    for (const auto& entry : m_rules)
+        DebugLogger() << "  " << entry.first << " : " << entry.second;
+
+    SettingChanged();
+}
 
 ////////////////////////////////////////////////
 // GalaxySetupPanel
