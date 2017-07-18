@@ -157,6 +157,10 @@ std::vector<std::pair<std::string, std::string>> GameRules::GetRulesAsStrings() 
 }
 
 void GameRules::SetFromStrings(const std::vector<std::pair<std::string, std::string>>& names_values) {
+    DebugLogger() << "Setting Rules from Strings:";
+    for (const auto& entry : names_values)
+        DebugLogger() << "  " << entry.first << " : " << entry.second;
+
     ResetToDefaults();
     for (auto& entry : names_values) {
         auto rule_it = m_game_rules.find(entry.first);
@@ -172,6 +176,11 @@ void GameRules::SetFromStrings(const std::vector<std::pair<std::string, std::str
             ErrorLogger() << "Unable to set rule: " << entry.first << " to value: " << entry.second;
         }
     }
+
+    DebugLogger() << "After Setting Rules:";
+    for (const auto& entry : m_game_rules)
+        DebugLogger() << "  " << entry.first << " : " << entry.second.ValueToString();
+
 }
 
 
