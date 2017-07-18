@@ -164,7 +164,13 @@ void GameRules::SetFromStrings(const std::vector<std::pair<std::string, std::str
             InfoLogger() << "GameRules::serialize received unrecognized rule: " << entry.first;
             continue;
         }
-        rule_it->second.SetFromString(entry.second);
+        try {
+            rule_it->second.SetFromString(entry.second);
+        } catch (const boost::bad_lexical_cast& e) {
+            ErrorLogger() << "Unable to set rule: " << entry.first << " to value: " << entry.second << " - couldn't cast string to allowed value for this option";
+        } catch (...) {
+            ErrorLogger() << "Unable to set rule: " << entry.first << " to value: " << entry.second;
+        }
     }
 }
 
