@@ -380,6 +380,19 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
     return spin;
 }
 
+namespace {
+    // row type used in the SpeciesSelector
+    struct UserStringRow : public GG::ListBox::Row {
+        UserStringRow(const std::string& key, GG::X w, GG::Y h) :
+            GG::ListBox::Row(w, h, "", GG::ALIGN_VCENTER, 0)
+        {
+            GG::Wnd::SetName(key);
+            GG::Label* species_label = new CUILabel(UserString(key), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            push_back(species_label);
+        }
+    };
+}
+
 GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indentation_level,
                                                    const std::string& rule_name)
 {
@@ -394,11 +407,21 @@ GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indent
     if (auto desc_val =
         std::dynamic_pointer_cast<const DiscreteValidator<std::string>>(validator))
     {
+        // add rows for all allowed options
         for (auto& poss : desc_val->m_values)
-            drop->Insert(new CUISimpleDropDownListRow(UserString(poss)));
-        if (!drop->Empty())
-            drop->Select(drop->begin());
+            drop->Insert(new UserStringRow(poss, drop->Width(), drop->Height() - 4));
     }
+    // select a row by default, preferably based on set rule value
+    if (!drop->Empty()) {
+        drop->Select(drop->begin()); // default, hopefully fixed below
+        for (auto row_it = drop->begin(); row_it != drop->end(); ++row_it) {
+            if ((*row_it)->Name() == value) {
+                drop->Select(row_it);
+                break;
+            }
+        }
+    }
+
 
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, Width(), drop->MinUsableSize().y, 1, 2, 0, 5);
     layout->Add(drop, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
