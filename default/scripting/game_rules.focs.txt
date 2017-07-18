@@ -47,8 +47,8 @@ GameRule
     name = "RULE_TEST_STRING"
     description = "RULE_TEST_STRING_DESC"
     type = String
-    default = "Potato"
-    allowed = ["Potato" "Squash" "Apple" "Flower Pot"]
+    default = "HUMAN_PLAYER"
+    allowed = ["MODERATOR" "OBSERVER" "HUMAN_PLAYER" "AI_PLAYER"]
 
 /*
 GameRule
