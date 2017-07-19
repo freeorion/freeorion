@@ -4,7 +4,7 @@ Part
     class = Bombard
     capacity = 2.0
     mountableSlotTypes = External
-    buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 5
     tags = [ "CTRL_ALWAYS_BOMBARD" "PEDIA_PC_BOMBARD" ]
     location = All

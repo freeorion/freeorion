@@ -3,7 +3,7 @@ Part
     description = "SP_PLANET_BEACON_DESC"
     class = General
     mountableSlotTypes = Core
-    buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 4
     tags = [ "PEDIA_PC_GENERAL" ]
     location = OwnedBy empire = Source.Owner

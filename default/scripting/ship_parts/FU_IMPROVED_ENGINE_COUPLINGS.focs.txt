@@ -10,7 +10,7 @@ Part
     class = Speed
     capacity = 20
     mountableSlotTypes = Internal
-    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 3
     tags = [ "PEDIA_PC_SPEED" ]
     location = OwnedBy empire = Source.Owner

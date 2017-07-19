@@ -4,7 +4,7 @@ Part
     class = Shield
     capacity = 3
     mountableSlotTypes = Internal
-    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 2
     tags = [ "PEDIA_PC_SHIELD" ]
     location = OwnedBy empire = Source.Owner
@@ -17,7 +17,7 @@ Part
     class = Shield
     capacity = 5
     mountableSlotTypes = Internal
-    buildcost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 4
     tags = [ "PEDIA_PC_SHIELD" ]
     location = OwnedBy empire = Source.Owner
@@ -30,7 +30,7 @@ Part
     class = Shield
     capacity = 9
     mountableSlotTypes = Internal
-    buildcost = 90 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 90 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 5
     tags = [ "PEDIA_PC_SHIELD" ]
     location = OwnedBy empire = Source.Owner
@@ -43,7 +43,7 @@ Part
     class = Shield
     capacity = 15
     mountableSlotTypes = Internal
-    buildcost = 150 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 150 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 6
     tags = [ "PEDIA_PC_SHIELD" ]
     location = OwnedBy empire = Source.Owner
@@ -56,7 +56,7 @@ Part
     class = Shield
     capacity = 10
     mountableSlotTypes = Internal
-    buildcost = 100 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 100 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 8
     tags = [ "PEDIA_PC_SHIELD" ]
     location = OwnedBy empire = Source.Owner

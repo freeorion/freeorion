@@ -4,7 +4,7 @@ Part
     class = Fuel
     capacity = 0
     mountableSlotTypes = External
-    buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 6
     tags = [ "PEDIA_PC_FUEL" ]
     location = OwnedBy empire = Source.Owner

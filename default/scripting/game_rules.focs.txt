@@ -18,22 +18,7 @@ GameRule
     max = 10.0
 
 GameRule
-    name = "RULE_TEST_INT2"
-    description = "RULE_TEST_INT_DESC"
-    category = "TEST"
-    type = Integer
-    default = 12
-    min = 2
-    max = 152
-
-GameRule
-    name = "RULE_ENABLE_EXPERIMENTORS1"
-    description = "RULE_ENABLE_EXPERIMENTORS_DESC"
-    category = "TEST"
-    type = Toggle
-
-GameRule
-    name = "RULE_ENABLE_EXPERIMENTORS2"
+    name = "RULE_ENABLE_EXPERIMENTORS"
     description = "RULE_ENABLE_EXPERIMENTORS_DESC"
     category = "TEST"
     type = Toggle

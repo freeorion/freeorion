@@ -997,31 +997,25 @@ RULE_RESEED_PRNG_SERVER_DESC
 Random number generation is re-seeded frequently to give more predictable and reproducible values.
 
 RULE_SHIP_HULL_COST_FACTOR
-Ship Hull Cost Scaling
+Hull Cost Scaling
 
 RULE_SHIP_HULL_COST_FACTOR_DESC
 Adjusts costs of ship hulls
 
 RULE_SHIP_PART_COST_FACTOR
-Ship Part Cost Scaling
+Part Cost Scaling
 
 RULE_SHIP_PART_COST_FACTOR_DESC
 Adjusts costs of ship parts
 
-RULE_TEST_INT2
-Test Integer 2
+RULE_TEST_INT
+Test Integer
 
-RULE_TEST_INT2_DESC
-Test Integer 2
-
-RULE_ENABLE_EXPERIMENTORS1
-Enable Experimentors 1
+RULE_ENABLE_EXPERIMENTORS
+Enable Experimentors (TEST)
 
 RULE_ENABLE_EXPERIMENTORS_DESC
 Test
-
-RULE_ENABLE_EXPERIMENTORS2
-Enable Experimentors 2
 
 RULE_TEST_INT
 Test Integer
