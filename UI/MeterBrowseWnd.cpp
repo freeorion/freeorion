@@ -391,10 +391,6 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     for (const Effect::AccountingInfo& info : *maybe_info_vec) {
         std::shared_ptr<const UniverseObject> source = GetUniverseObject(info.source_id);
 
-        const Empire*   empire = nullptr;
-        std::shared_ptr<const Building> building;
-        std::shared_ptr<const Planet> planet;
-        //std::shared_ptr<const Ship> ship;
         std::string     text;
         std::string     name;
         if (source)
@@ -403,7 +399,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         switch (info.cause_type) {
         case ECT_TECH: {
             name.clear();
-            if ((empire = GetEmpire(source->Owner())))
+            if (const auto empire = GetEmpire(source->Owner()))
                 name = empire->Name();
             const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_TECH")
@@ -415,8 +411,8 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         }
         case ECT_BUILDING: {
             name.clear();
-            if (building = std::dynamic_pointer_cast<const Building>(source))
-                if (planet = GetPlanet(building->PlanetID()))
+            if (const auto& building = std::dynamic_pointer_cast<const Building>(source))
+                if (const auto& planet = GetPlanet(building->PlanetID()))
                     name = planet->Name();
             const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_BUILDING")

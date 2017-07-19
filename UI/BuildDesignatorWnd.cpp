@@ -176,26 +176,23 @@ namespace {
     std::shared_ptr<const UniverseObject> GetSourceObjectForEmpire(int empire_id) {
         // get a source object, which is owned by the empire,
         // preferably the capital
-        std::shared_ptr<const UniverseObject> source;
         if (empire_id == ALL_EMPIRES)
-            return source;
+            return nullptr;
         const Empire* empire = GetEmpire(empire_id);
         if (!empire)
-            return source;
+            return nullptr;
 
-        if (source = GetUniverseObject(empire->CapitalID()))
+        if (auto source = GetUniverseObject(empire->CapitalID()))
             return source;
 
         // not a valid source?!  scan through all objects to find one owned by this empire
-        for (std::shared_ptr<const UniverseObject> obj : GetUniverse().Objects()) {
-            if (obj->OwnedBy(empire_id)) {
-                source = obj;
-                break;
-            }
+        for (const auto& obj : GetUniverse().Objects()) {
+            if (obj->OwnedBy(empire_id))
+                return obj;
         }
 
         // if this empire doesn't own ANYTHING, default to a null source
-        return source;
+        return nullptr;
     }
 
     std::string EnqueueAndLocationConditionDescription(const std::string& building_name, int candidate_object_id,
