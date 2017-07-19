@@ -574,12 +574,12 @@ class Pathfinder::PathfinderImpl {
         multimap for Neighbors.*/
      void NeighborsCacheHit(
          boost::unordered_multimap<int, int>& result, size_t _n_outer, size_t _n_inner,
-         size_t ii, const distance_matrix_storage<short>::row_ref row) const;
+         size_t ii, distance_matrix_storage<short>::row_ref row) const;
 
     std::unordered_set<int> WithinJumps(size_t jumps, const std::vector<int>& candidates) const;
     void WithinJumpsCacheHit(
         std::unordered_set<int>* result, size_t jump_limit,
-        size_t ii, const distance_matrix_storage<short>::row_ref row) const;
+        size_t ii, distance_matrix_storage<short>::row_ref row) const;
 
     std::pair<std::vector<std::shared_ptr<const UniverseObject>>, std::vector<std::shared_ptr<const UniverseObject>>>
     WithinJumpsOfOthers(
@@ -600,7 +600,7 @@ class Pathfinder::PathfinderImpl {
     void WithinJumpsOfOthersCacheHit(
         bool& answer, int jumps,
         const std::vector<std::shared_ptr<const UniverseObject>>& others,
-        size_t ii, const distance_matrix_storage<short>::row_ref row) const;
+        size_t ii, distance_matrix_storage<short>::row_ref row) const;
 
     int NearestSystemTo(double x, double y) const;
     void InitializeSystemGraph(const std::vector<int> system_ids, int for_empire_id = ALL_EMPIRES);
@@ -1017,7 +1017,7 @@ std::multimap<double, int> Pathfinder::PathfinderImpl::ImmediateNeighbors(int sy
 
 void Pathfinder::PathfinderImpl::WithinJumpsCacheHit(
     std::unordered_set<int>* result, size_t jump_limit,
-    size_t ii, const distance_matrix_storage<short>::row_ref row) const {
+    size_t ii, distance_matrix_storage<short>::row_ref row) const {
 
     // Scan the LUT of system ids and add any result from the row within
     // the neighborhood range to the results.
@@ -1088,7 +1088,7 @@ struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
 struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
     WithinJumpsOfOthersOtherVisitor(const Pathfinder::PathfinderImpl& _pf,
                                     int _jumps,
-                                    const distance_matrix_storage<short>::row_ref _row) :
+                                    distance_matrix_storage<short>::row_ref _row) :
         pf(_pf), jumps(_jumps), row(_row)
     {}
 
@@ -1114,14 +1114,14 @@ struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
     }
     const Pathfinder::PathfinderImpl& pf;
     int jumps;
-    const distance_matrix_storage<short>::row_ref row;
+    distance_matrix_storage<short>::row_ref row;
 };
 
 
 void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
     bool& answer, int jumps,
     const std::vector<std::shared_ptr<const UniverseObject>>& others,
-    size_t ii, const distance_matrix_storage<short>::row_ref row) const
+    size_t ii, distance_matrix_storage<short>::row_ref row) const
 {
     // Check if any of the others are within jumps of candidate, by looping
     // through all of the others and applying the WithinJumpsOfOthersOtherVisitor.
