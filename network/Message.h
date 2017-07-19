@@ -22,7 +22,7 @@ enum class LogLevel;
 class EmpireManager;
 class SupplyManager;
 class SpeciesManager;
-class CombatLog;
+struct CombatLog;
 class CombatLogManager;
 class Message;
 struct MultiplayerLobbyData;

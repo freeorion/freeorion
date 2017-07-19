@@ -132,7 +132,7 @@ public:
     void StopUsing();
 
 private:
-    struct Impl;
+    class Impl;
 
     std::unique_ptr<Impl> const m_impl;
 };

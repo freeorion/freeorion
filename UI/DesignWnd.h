@@ -5,7 +5,7 @@
 #include <boost/uuid/uuid.hpp>
 
 class EncyclopediaDetailPanel;
-class SaveGameUIData;
+struct SaveGameUIData;
 
 struct Availability {
     // Declaring an enum inside a struct makes the syntax when using the enum with tuples simpler,
