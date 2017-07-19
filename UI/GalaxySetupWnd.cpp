@@ -204,7 +204,6 @@ GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
         case GameRules::STRING:
             StringRuleWidget(current_page, 0, rule.first);
             break;
-        case GameRules::STRING_LIST:
         default:
             break;
         }

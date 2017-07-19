@@ -1,5 +1,6 @@
 #include "../universe/Enums.h"
 #include "../Empire/Diplomacy.h"
+#include "../util/MultiplayerCommon.h"
 
 #include <boost/python.hpp>
 
@@ -196,6 +197,13 @@ namespace FreeOrionPython {
             .value("irregular",     IRREGULAR)
             .value("ring",          RING)
             .value("random",        RANDOM)
+        ;
+        enum_<GameRules::RuleType>("ruleType")
+            .value("toggle",        GameRules::TOGGLE)
+            .value("int",           GameRules::INT)
+            .value("double",        GameRules::DOUBLE)
+            .value("string",        GameRules::STRING)
+            .value("int",           GameRules::INVALID_RULE_TYPE);
         ;
     }
 }

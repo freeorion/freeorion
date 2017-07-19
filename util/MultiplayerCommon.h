@@ -46,8 +46,7 @@ public:
         TOGGLE,
         INT,
         DOUBLE,
-        STRING,
-        STRING_LIST
+        STRING
     };
 
     RuleType RuleTypeForType(bool dummy)
