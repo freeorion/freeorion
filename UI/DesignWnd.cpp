@@ -174,8 +174,7 @@ namespace {
         ids that are used to order the display of ShipDesigns in the DesignWnd and the ProductionWnd. */
     class CurrentShipDesignManager : public ShipDesignManager::Designs {
         public:
-        CurrentShipDesignManager(int empire_id) :
-            m_empire_id(empire_id),
+        CurrentShipDesignManager() :
             m_ordered_ids()
         {}
 
@@ -203,7 +202,6 @@ namespace {
         std::vector<std::pair<int, bool>> Save() const;
 
         private:
-        int m_empire_id;
         std::list<int> m_ordered_ids;
 
         // An index from the id to the obsolescence state and the location in the m_ordered_ids list.
@@ -212,8 +210,7 @@ namespace {
 
     class SavedDesignsManager : public ShipDesignManager::Designs {
     public:
-        SavedDesignsManager(const int empire_id) :
-            m_empire_id(empire_id)
+        SavedDesignsManager()
         {}
 
         const std::list<boost::uuids::uuid>& OrderedDesignUUIDs() const
@@ -240,7 +237,6 @@ namespace {
 
         void SaveDesign(int design_id);
 
-        int m_empire_id;
         std::list<boost::uuids::uuid> m_ordered_uuids;
         /// Saved designs with filename
         std::unordered_map<boost::uuids::uuid,
@@ -655,8 +651,8 @@ namespace {
 //////////////////////////////////////////////////
 
 ShipDesignManager::ShipDesignManager() :
-    m_current_designs(new CurrentShipDesignManager(INVALID_OBJECT_ID)),
-    m_saved_designs(new SavedDesignsManager(INVALID_OBJECT_ID))
+    m_current_designs(new CurrentShipDesignManager()),
+    m_saved_designs(new SavedDesignsManager())
 {}
 
 ShipDesignManager::~ShipDesignManager()
@@ -671,10 +667,10 @@ void ShipDesignManager::StartGame(int empire_id) {
 
     DebugLogger() << "ShipDesignManager initializing.";
 
-    m_current_designs.reset(new CurrentShipDesignManager(empire_id));
+    m_current_designs.reset(new CurrentShipDesignManager());
     auto current_designs = dynamic_cast<CurrentShipDesignManager*>(m_current_designs.get());
 
-    m_saved_designs.reset(new SavedDesignsManager(empire_id));
+    m_saved_designs.reset(new SavedDesignsManager());
     auto saved_designs = dynamic_cast<SavedDesignsManager*>(m_saved_designs.get());
     saved_designs->LoadDesignsFromFileSystem();
 
@@ -729,7 +725,7 @@ ShipDesignManager::Designs* ShipDesignManager::CurrentDesigns() {
     if (retval == nullptr) {
         ErrorLogger() << "ShipDesignManager m_current_designs was not correctly initialized "
                       << "with ShipDesignManager::GameStart().";
-        m_current_designs.reset(new CurrentShipDesignManager(INVALID_OBJECT_ID));
+        m_current_designs.reset(new CurrentShipDesignManager());
         return m_current_designs.get();
     }
     return retval;
@@ -740,8 +736,8 @@ ShipDesignManager::Designs* ShipDesignManager::SavedDesigns() {
     if (retval == nullptr) {
         ErrorLogger() << "ShipDesignManager m_saved_designs was not correctly initialized "
                       << "with ShipDesignManager::GameStart().";
-        m_current_designs.reset(new CurrentShipDesignManager(INVALID_OBJECT_ID));
-        return m_current_designs.get();
+        m_saved_designs.reset(new SavedDesignsManager());
+        return m_saved_designs.get();
     }
     return retval;
 }
@@ -2074,7 +2070,6 @@ class SavedDesignsListBox : public BasesListBox {
 
         private:
         boost::uuids::uuid              m_design_uuid;
-        HullAndNamePanel*               m_panel;
     };
 
     protected:
@@ -2629,8 +2624,7 @@ void SavedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
 SavedDesignsListBox::SavedDesignListBoxRow::SavedDesignListBoxRow(
     GG::X w, GG::Y h, const ShipDesign& design) :
     BasesListBoxRow(w, h, design.Hull(), design.Name()),
-    m_design_uuid(design.UUID()),
-    m_panel(nullptr)
+    m_design_uuid(design.UUID())
 {
     SetDragDropDataType(SAVED_DESIGN_ROW_DROP_STRING);
 }
