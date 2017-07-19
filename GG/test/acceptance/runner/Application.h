@@ -18,7 +18,7 @@ public:
     /// The given window will be made visible.
     /// Then the event pump is started.
     /// This method only returns once the application quits
-    void Run(GG::Wnd* wnd);
+    void Run(std::shared_ptr<GG::Wnd> wnd);
 
 private:
     class Impl;

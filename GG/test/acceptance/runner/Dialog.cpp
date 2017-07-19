@@ -6,9 +6,9 @@
 #include <GG/Font.h>
 
 
-Dialog::Dialog(GG::Wnd* child, const std::shared_ptr<GG::Font>& font):
+Dialog::Dialog(std::shared_ptr<GG::Wnd> child, const std::shared_ptr<GG::Font>& font):
     GG::Wnd(GG::X0, GG::Y0, GG::X(300), GG::Y(300), GG::DRAGABLE | GG::RESIZABLE | GG::MODAL | GG::INTERACTIVE),
-    m_child(std::forward<GG::Wnd*>(child))
+    m_child(std::forward<std::shared_ptr<GG::Wnd>>(child))
 {}
 
 void Dialog::CompleteConstruction()
