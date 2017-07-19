@@ -104,7 +104,8 @@ BOOST_AUTO_TEST_SUITE(TestButton)
 BOOST_AUTO_TEST_CASE( constructor )
 {
     std::shared_ptr<GG::Font> font(new MockFont());
-    InspectButton button("Test", font, GG::CLR_WHITE, GG::CLR_GREEN);
+    auto buttonp = GG::Wnd::Create<InspectButton>("Test", font, GG::CLR_WHITE, GG::CLR_GREEN);
+    auto& button = *buttonp;
 
     BOOST_CHECK(button.Text() == "Test");
     BOOST_CHECK(button.State() == GG::Button::BN_UNPRESSED);

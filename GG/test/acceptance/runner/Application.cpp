@@ -204,7 +204,7 @@ Application::Application(int argc, char** argv, unsigned width, unsigned height)
 }
 
 void Application::Run(GG::Wnd* wnd) {
-    self->Run(wnd);
+    self->Run(std::forward<GG::Wnd*>(wnd));
 }
 
 
@@ -240,7 +240,7 @@ Application::Impl::~Impl()
 void Application::Impl::Run(GG::Wnd* window) {
     try {
 
-        m_app->Register(window);
+        m_app->Register(std::forward<GG::Wnd*>(window));
         (*m_app)();
 
     } catch (const std::invalid_argument& e) {
