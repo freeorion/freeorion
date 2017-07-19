@@ -84,9 +84,9 @@ namespace {
                 ;
 
             add_special_2
-                =  (tok.AddSpecial_ | tok.SetSpecialCapacity_)
+                =  ((tok.AddSpecial_ | tok.SetSpecialCapacity_)
                 >>  parse::detail::label(Name_token) >> parse::string_value_ref() [ _c = _1 ]
-                >> (parse::detail::label(Capacity_token) | parse::detail::label(Value_token))
+                >> (parse::detail::label(Capacity_token) | parse::detail::label(Value_token)))
                 >   parse::double_value_ref() [ _val = new_<Effect::AddSpecial>(_c, _1) ]
                 ;
 

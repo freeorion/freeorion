@@ -154,9 +154,9 @@ namespace {
                 ;
 
             start
-                =    '(' >> channel [ _a = _1 ]
-                >    ',' >> channel [ _b = _1 ]
-                >    ',' >> channel [ _c = _1 ]
+                =    ('(' >> channel [ _a = _1 ])
+                >    (',' >> channel [ _b = _1 ])
+                >    (',' >> channel [ _c = _1 ])
                 >    (
                         (
                             ',' > channel [ _val = construct<GG::Clr>(_a, _b, _c, _1) ]

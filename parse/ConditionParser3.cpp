@@ -74,7 +74,7 @@ namespace {
                 ;
 
             value_test_2
-                = '('
+                = ('('
                 >> parse::double_value_ref() [ _a = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
@@ -91,7 +91,7 @@ namespace {
                       | lit("<=")   [ _e = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _e = Condition::LESS_THAN ]
                       | lit("!=")   [ _e = Condition::NOT_EQUAL ])
-                >  parse::double_value_ref()
+                  ) >  parse::double_value_ref()
                 [ _val = new_<Condition::ValueTest>(_a, _d, _b, _e, _1) ]
                 >  ')'
                 ;
@@ -108,7 +108,7 @@ namespace {
                 ;
 
             value_test_4
-                = '('
+                = ( '('
                 >> parse::string_value_ref() [ _c = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
@@ -117,7 +117,7 @@ namespace {
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit("!=")   [ _e = Condition::NOT_EQUAL ])
-                >  parse::string_value_ref()
+                ) >  parse::string_value_ref()
                 [ _val = new_<Condition::ValueTest>(_c, _d, _f, _e, _1) ]
                 >  ')'
                 ;

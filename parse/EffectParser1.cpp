@@ -32,15 +32,15 @@ namespace {
             const parse::lexer& tok = parse::lexer::instance();
 
             set_empire_meter_1
-                =    tok.SetEmpireMeter_
-                >>   parse::detail::label(Empire_token) >  parse::int_value_ref() [ _b = _1 ]
+                =    (tok.SetEmpireMeter_
+                >>   parse::detail::label(Empire_token)) >  parse::int_value_ref() [ _b = _1 ]
                 >    parse::detail::label(Meter_token)  >  tok.string [ _a = _1 ]
                 >    parse::detail::label(Value_token)  >  parse::double_value_ref() [ _val = new_<Effect::SetEmpireMeter>(_b, _a, _1) ]
                 ;
 
             set_empire_meter_2
-                =    tok.SetEmpireMeter_
-                >>   parse::detail::label(Meter_token) >  tok.string [ _a = _1 ]
+                =    (tok.SetEmpireMeter_
+                >>   parse::detail::label(Meter_token)) >  tok.string [ _a = _1 ]
                 >    parse::detail::label(Value_token) >  parse::double_value_ref() [ _val = new_<Effect::SetEmpireMeter>(_a, _1) ]
                 ;
 
@@ -76,21 +76,21 @@ namespace {
                         (   // empire id specified, optionally with an affiliation type:
                             // useful to specify a single recipient empire, or the allies
                             // or enemies of a single empire
-                            (   (parse::detail::label(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
+                            ((   (parse::detail::label(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
                             |    eps [ _d = AFFIL_SELF ]
                             )
-                        >>  parse::detail::label(Empire_token) > parse::int_value_ref()
+                             >>  parse::detail::label(Empire_token)) > parse::int_value_ref()
                             [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _1, _d, _e, _f) ]
                         )
                     |   (   // condition specified, with an affiliation type of CanSee:
                             // used to specify CanSee affiliation
-                            parse::detail::label(Affiliation_token) >>  tok.CanSee_
+                        (parse::detail::label(Affiliation_token) >>  tok.CanSee_)
                         >   parse::detail::label(Condition_token)   >   parse::detail::condition_parser
                             [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_CAN_SEE, _1, _e, _f) ]
                         )
                     |   (   // condition specified, with an affiliation type of CanSee:
                             // used to specify CanSee affiliation
-                            parse::detail::label(Affiliation_token) >>  tok.Human_
+                        (parse::detail::label(Affiliation_token) >>  tok.Human_)
                         >   parse::detail::label(Condition_token)   >   parse::detail::condition_parser
                             [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_HUMAN, _1, _e, _f) ]
                         )

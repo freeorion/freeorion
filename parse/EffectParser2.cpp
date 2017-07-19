@@ -29,8 +29,8 @@ namespace {
             const parse::lexer& tok =                                                       parse::lexer::instance();
 
             set_meter
-                =   parse::set_non_ship_part_meter_type_enum() [ _a = _1 ] /* has some overlap with parse::set_ship_part_meter_type_enum() so can't use '>' */
-                >>  parse::detail::label(Value_token)               > parse::double_value_ref() [ _c = _1 ]
+                =   (parse::set_non_ship_part_meter_type_enum() [ _a = _1 ] /* has some overlap with parse::set_ship_part_meter_type_enum() so can't use '>' */
+                >>  parse::detail::label(Value_token))               > parse::double_value_ref() [ _c = _1 ]
                 >   (
                         (parse::detail::label(AccountingLabel_token) > tok.string [ _val = new_<Effect::SetMeter>(_a, _c, _1) ] )
                     |    eps [ _val = new_<Effect::SetMeter>(_a, _c) ]
@@ -38,8 +38,8 @@ namespace {
                 ;
 
             set_ship_part_meter
-                =    parse::set_ship_part_meter_type_enum() [ _a = _1 ]
-                >>   parse::detail::label(PartName_token)   > parse::string_value_ref() [ _b = _1 ]
+                =    (parse::set_ship_part_meter_type_enum() [ _a = _1 ]
+                >>   parse::detail::label(PartName_token))   > parse::string_value_ref() [ _b = _1 ]
                 >    parse::detail::label(Value_token)      > parse::double_value_ref() [ _val = new_<Effect::SetShipPartMeter>(_a, _b, _1) ]
                 ;
 
@@ -108,10 +108,10 @@ namespace {
                         (   // empire id specified, optionally with an affiliation type:
                             // useful to specify a single recipient empire, or the allies
                             // or enemies of a single empire
-                            (   (parse::detail::label(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
+                            ((   (parse::detail::label(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
                             |    eps [ _d = AFFIL_SELF ]
                             )
-                        >>  parse::detail::label(Empire_token) > parse::int_value_ref() [ _b = _1 ]
+                            >>  parse::detail::label(Empire_token)) > parse::int_value_ref() [ _b = _1 ]
                         )
                      |  (   // no empire id or condition specified, with or without an
                             // affiliation type: useful to specify no or all empires

@@ -55,8 +55,8 @@ namespace {
 
             empire_meter_value1
                 =   (
-                        tok.EmpireMeter_
-                    >>  parse::detail::label(Empire_token)   >   parse::int_value_ref() [ _b = _1 ]
+                    (tok.EmpireMeter_
+                     >>  parse::detail::label(Empire_token))   >   parse::int_value_ref() [ _b = _1 ]
                     >   parse::detail::label(Meter_token)    >   tok.string [ _a = _1 ]
                     >  -(parse::detail::label(Low_token)     >   parse::double_value_ref() [ _c = _1 ])
                     >  -(parse::detail::label(High_token)    >   parse::double_value_ref() [ _d = _1 ])
@@ -65,8 +65,8 @@ namespace {
 
             empire_meter_value2
                 =   (
-                        tok.EmpireMeter_
-                    >>  parse::detail::label(Meter_token)    >   tok.string [ _a = _1 ]
+                    (tok.EmpireMeter_
+                     >>  parse::detail::label(Meter_token))    >   tok.string [ _a = _1 ]
                     >  -(parse::detail::label(Low_token)     >   parse::double_value_ref() [ _c = _1 ])
                     >  -(parse::detail::label(High_token)    >   parse::double_value_ref() [ _d = _1 ])
                     ) [ _val = new_<Condition::EmpireMeterValue>(_a, _c, _d) ]

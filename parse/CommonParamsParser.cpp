@@ -96,11 +96,11 @@ namespace parse { namespace detail {
                 > (
                         consumable_meter(_r1, _r2)
                     |   consumable_special(_r1, _r2)
-                    |(  '['
+                    |( ('['
                         >> *(
                                 consumable_meter(_r1, _r2)
                             |   consumable_special(_r1, _r2)
-                            )
+                            ))
                         >   ']'
                      )
                   )
