@@ -160,6 +160,8 @@ Wnd::Wnd() :
     m_needs_prerender(false),
     m_child_clipping_mode(DontClip),
     m_non_client_child(false),
+    m_upperleft(X0, Y0),
+    m_lowerright(X1, Y1),
     m_max_size(X(1 << 30), Y(1 << 30)),
     m_layout(nullptr),
     m_containing_layout(nullptr),
@@ -171,22 +173,13 @@ Wnd::Wnd() :
 }
 
 Wnd::Wnd(X x, Y y, X w, Y h, Flags<WndFlag> flags/* = INTERACTIVE | DRAGABLE*/) :
-    m_done(false),
-    m_parent(nullptr),
-    m_visible(true),
-    m_child_clipping_mode(DontClip),
-    m_non_client_child(false),
-    m_upperleft(x, y),
-    m_lowerright(x + w, y + h),
-    m_max_size(X(1 << 30), Y(1 << 30)),
-    m_layout(nullptr),
-    m_containing_layout(nullptr),
-    m_flags(flags)
+    Wnd()
 {
+    m_upperleft = Pt(x, y);
+    m_lowerright = Pt(x + w, y + h);
+
+    m_flags = flags;
     ValidateFlags();
-    m_browse_modes.resize(1);
-    m_browse_modes[0].time = s_default_browse_time;
-    m_browse_modes[0].wnd = s_default_browse_info_wnd;
 }
 
 Wnd::~Wnd()
