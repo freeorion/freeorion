@@ -4223,7 +4223,7 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
         } else {
             int empire_id = HumanClientApp::GetApp()->EmpireID();
             const Empire* empire = GetEmpire(empire_id);
-            if (!empire) return {INVALID_DESIGN_ID, boost::uuids::uuid{0}};
+            if (!empire) return {INVALID_DESIGN_ID, boost::uuids::uuid{{0}}};
 
             auto& manager = GetCurrentDesignsManager();
             const auto& all_ids = manager.AllOrderedIDs();
@@ -4241,7 +4241,7 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
 
     } catch (std::invalid_argument&) {
         ErrorLogger() << "DesignWnd::AddDesign tried to add an invalid ShipDesign";
-        return {INVALID_DESIGN_ID, boost::uuids::uuid{0}};
+        return {INVALID_DESIGN_ID, boost::uuids::uuid{{0}}};
     }
 }
 
