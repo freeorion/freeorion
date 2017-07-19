@@ -36,7 +36,7 @@ namespace {
         // makes all ships cost 1 PP and take 1 turn to produce
         rules.Add<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION",
                         "RULE_CHEAP_AND_FAST_SHIP_PRODUCTION_DESC",
-                        false, true);
+                        "", false, true);
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 

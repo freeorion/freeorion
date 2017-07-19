@@ -62,14 +62,19 @@ public:
         Rule();
         Rule(RuleType rule_type_, const std::string& name_, const boost::any& value_,
              const boost::any& default_value_, const std::string& description_,
-             const ValidatorBase *validator_, bool engine_internal_);
-        RuleType rule_type = INVALID_RULE_TYPE;
+             const ValidatorBase *validator_, bool engine_internal_,
+             const std::string& category_ = "");
         bool IsInternal() const { return this->storable; }
+
+        RuleType rule_type = INVALID_RULE_TYPE;
+        std::string category = "";
     };
 
     /** \name Accessors */ //@{
     bool Empty() const
     { return m_game_rules.empty(); }
+    auto begin() const { return m_game_rules.begin(); }
+    auto end() const { return m_game_rules.end(); }
 
     bool RuleExists(const std::string& name) const
     { return m_game_rules.find(name) != m_game_rules.end(); }
@@ -101,14 +106,15 @@ public:
     /** \name Mutators */ //@{
     /** adds a rule, optionally with a custom validator */
     template <class T>
-    void    Add(const std::string& name, const std::string& description, T default_value,
+    void    Add(const std::string& name, const std::string& description,
+                const std::string& category, T default_value,
                 bool engine_interal, const ValidatorBase& validator = Validator<T>())
     {
         auto it = m_game_rules.find(name);
         if (it != m_game_rules.end())
             throw std::runtime_error("GameRules::Add<>() : Rule " + name + " was added twice.");
         m_game_rules[name] = Rule(RuleTypeForType(T()), name, default_value, default_value,
-                                  description, validator.Clone(), engine_interal);
+                                  description, validator.Clone(), engine_interal, category);
         DebugLogger() << "Added game rule named " << name << " with default value " << default_value;
     }
 

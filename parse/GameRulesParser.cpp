@@ -21,33 +21,39 @@ namespace {
     struct insert_rule_ {
         typedef void result_type;
 
-        void operator()(GameRules& game_rules, const std::string& name, const std::string& desc,
+        void operator()(GameRules& game_rules, const std::string& name,
+                        const std::string& desc, const std::string& category,
                         bool default_value) const
         {
             DebugLogger() << "Adding Boolean game rule with name: " << name
                           << ", desc: " << desc << ", default: " << default_value;
-            game_rules.Add<bool>(name, desc, default_value, false);
+            game_rules.Add<bool>(name, desc, category, default_value, false);
         }
 
-        void operator()(GameRules& game_rules, const std::string& name, const std::string& desc,
+        void operator()(GameRules& game_rules, const std::string& name,
+                        const std::string& desc, const std::string& category,
                         int default_value, int min, int max) const
         {
             DebugLogger() << "Adding Integer game rule with name: " << name
                           << ", desc: " << desc << ", default: " << default_value
                           << ", min: " << min << ", max: " << max;
-            game_rules.Add<int>(name, desc, default_value, false, RangedValidator<int>(min, max));
+            game_rules.Add<int>(name, desc, category, default_value, false,
+                                RangedValidator<int>(min, max));
         }
 
-        void operator()(GameRules& game_rules, const std::string& name, const std::string& desc,
+        void operator()(GameRules& game_rules, const std::string& name,
+                        const std::string& desc, const std::string& category,
                         double default_value, double min, double max) const
         {
             DebugLogger() << "Adding Double game rule with name: " << name
                           << ", desc: " << desc << ", default: " << default_value
                           << ", min: " << min << ", max: " << max;
-            game_rules.Add<double>(name, desc, default_value, false, RangedValidator<double>(min, max));
+            game_rules.Add<double>(name, desc, category, default_value,
+                                   false, RangedValidator<double>(min, max));
         }
 
-        void operator()(GameRules& game_rules, const std::string& name, const std::string& desc,
+        void operator()(GameRules& game_rules, const std::string& name,
+                        const std::string& desc, const std::string& category,
                         const std::string& default_value,
                         const std::set<std::string>& allowed = {}) const
         {
@@ -59,17 +65,12 @@ namespace {
                           << "\", allowed: " << allowed_values_string;
 
             if (allowed.empty()) {
-                game_rules.Add<std::string>(name, desc, default_value, false);
+                game_rules.Add<std::string>(name, desc, category, default_value, false);
             } else {
-                game_rules.Add<std::string>(name, desc, default_value, false, DiscreteValidator<std::string>(allowed));
+                game_rules.Add<std::string>(name, desc, category, default_value, false,
+                                            DiscreteValidator<std::string>(allowed));
             }
         }
-
-        //void operator()(GameRules& game_rules, const std::string& name, const std::string& desc,
-        //                const std::vector<std::string>& default_value) const // TBD: allowed values
-        //{
-        //    game_rules.Add<std::vector<std::string>>(name, desc, default_value, false);
-        //}
     };
     const boost::phoenix::function<insert_rule_> add_rule;
 
@@ -94,6 +95,7 @@ namespace {
             qi::_g_type _g;
             qi::_h_type _h;
             qi::_i_type _i;
+            qi::_j_type _j;
             qi::_r1_type _r1;
             qi::eps_type eps;
 
@@ -101,8 +103,9 @@ namespace {
 
             game_rule_bool
                 =   tok.GameRule_
-                >>  parse::detail::label(Name_token) >>         tok.string [ _a = _1 ]
-                >>  parse::detail::label(Description_token) >>  tok.string [ _b = _1 ]
+                >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
+                >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
+                >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
                 >>  parse::detail::label(Type_token) >>         tok.Toggle_
                 > ((parse::detail::label(Default_token)
                     >   (
@@ -111,42 +114,45 @@ namespace {
                         )
                    ) | eps [ _i = false ]
                   )
-                   [ add_rule(_r1, _a, _b, _i) ]
+                   [ add_rule(_r1, _a, _b, _j, _i) ]
                 ;
 
             game_rule_int
                 =   tok.GameRule_
-                >>  parse::detail::label(Name_token) >>         tok.string [ _a = _1 ]
-                >>  parse::detail::label(Description_token) >>  tok.string [ _b = _1 ]
+                >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
+                >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
+                >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
                 >>  parse::detail::label(Type_token) >>         tok.Integer_
                 >   parse::detail::label(Default_token) >       parse::detail::int_ [ _f = _1 ]
                 >   parse::detail::label(Min_token) >           parse::detail::int_ [ _g = _1 ]
                 >   parse::detail::label(Max_token) >           parse::detail::int_
-                    [ add_rule(_r1, _a, _b, _f, _g, _1 ) ]
+                    [ add_rule(_r1, _a, _b, _j, _f, _g, _1 ) ]
                 ;
 
             game_rule_double
                 =   tok.GameRule_
-                >>  parse::detail::label(Name_token) >>         tok.string [ _a = _1 ]
-                >>  parse::detail::label(Description_token) >>  tok.string [ _b = _1 ]
+                >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
+                >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
+                >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
                 >>  parse::detail::label(Type_token) >>         tok.Real_
                 >   parse::detail::label(Default_token) >       parse::detail::double_ [ _c = _1 ]
                 >   parse::detail::label(Min_token) >           parse::detail::double_ [ _d = _1 ]
                 >   parse::detail::label(Max_token) >           parse::detail::double_
-                    [ add_rule(_r1, _a, _b, _c, _d, _1 ) ]
+                    [ add_rule(_r1, _a, _b, _j, _c, _d, _1 ) ]
                 ;
 
             game_rule_string
                 =   tok.GameRule_
-                >>  parse::detail::label(Name_token) >>         tok.string [ _a = _1 ]
-                >>  parse::detail::label(Description_token) >>  tok.string [ _b = _1 ]
+                >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
+                >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
+                >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
                 >>  parse::detail::label(Type_token) >>         tok.String_
                 >   parse::detail::label(Default_token) >       tok.string [ _e = _1 ]
                 >  -( parse::detail::label(Allowed_token) >
                         '[' > +tok.string [ insert(_h, _1) ] > ']'
                     |    tok.string [ insert(_h, _1) ]
                     )
-                  [ add_rule(_r1, (_a), (_b), (_e), (_h)) ]
+                  [ add_rule(_r1, _a, _b, _j, _e, _h) ]
                 ;
 
             all_game_rules
@@ -190,7 +196,8 @@ namespace {
                 int,                    // _f : default int
                 int,                    // _g : min int (max passed as immediate)
                 std::set<std::string>,  // _h : default string list
-                bool                    // _i : allowed string (list) entries
+                bool,                   // _i : allowed string (list) entries
+                std::string             // _j : category
             >
         > game_rule_rule;
 

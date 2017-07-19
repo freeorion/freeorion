@@ -255,6 +255,15 @@ Cannot be produced
 POPUP_MENU_PEDIA_PREFIX
 '''Help: '''
 
+GENERAL
+General
+
+TEST
+Test
+
+BALANCE
+Balance
+
 
 ##
 ## Major errors

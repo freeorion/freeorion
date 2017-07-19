@@ -21,7 +21,7 @@ namespace {
         // makes all techs cost 1 RP and take 1 turn to research
         rules.Add<bool>("RULE_CHEAP_AND_FAST_TECH_RESEARCH",
                         "RULE_CHEAP_AND_FAST_TECH_RESEARCH_DESC",
-                        false, true);
+                        "", false, true);
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 }

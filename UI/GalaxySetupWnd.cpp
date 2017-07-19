@@ -179,19 +179,27 @@ GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
                             ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
     AttachChild(m_tabs);
 
-    current_page = CreatePage("GENERAL");
-    BoolRuleWidget(current_page, 0, "RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION");
-    BoolRuleWidget(current_page, 0, "RULE_CHEAP_AND_FAST_SHIP_PRODUCTION");
-    BoolRuleWidget(current_page, 0, "RULE_CHEAP_AND_FAST_TECH_RESEARCH");
-    IntRuleWidget( current_page, 0, "RULE_NUM_COMBAT_ROUNDS");
-    BoolRuleWidget(current_page, 0, "RULE_RESEED_PRNG_SERVER");
+    // create storage and default general rule page
+    std::map<std::string, GG::ListBox*> indexed_pages;
+    indexed_pages[""] = CreatePage(UserString("GENERAL"));
 
-    current_page = CreatePage("SCRIPTED");
-    for (auto& rule : GetGameRules().GetRulesAsStrings()) {
-        if (GetGameRules().RuleIsInternal(rule.first))
+    // for all rules, add to page
+    for (auto rule : GetGameRules()) {
+        // get or create page for rule
+        GG::ListBox* current_page = nullptr;
+        auto itr = indexed_pages.find(rule.second.category);
+        if (itr == indexed_pages.end()) {
+            indexed_pages[rule.second.category] = CreatePage(UserString(rule.second.category));
+            itr = indexed_pages.find(rule.second.category);
+        }
+        if (itr == indexed_pages.end()) {
+            ErrorLogger() << "Unable to create and insert and then find new rule page";
             continue;
-        GameRules::RuleType rule_type = GetGameRules().GetRuleType(rule.first);
-        switch (rule_type) {
+        }
+        current_page = itr->second;
+
+        // add rule to page
+        switch(rule.second.rule_type) {
         case GameRules::TOGGLE:
             BoolRuleWidget(current_page, 0, rule.first);
             break;

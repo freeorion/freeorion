@@ -58,7 +58,7 @@ namespace {
     void AddRules(GameRules& rules) {
         // makes all PRNG be reseeded frequently
         rules.Add<bool>("RULE_RESEED_PRNG_SERVER", "RULE_RESEED_PRNG_SERVER_DESC",
-                        true, true);
+                        "", true, true);
     }
     bool temp_bool2 = RegisterGameRules(&AddRules);
 

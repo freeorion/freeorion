@@ -23,7 +23,7 @@ namespace {
     void AddRules(GameRules& rules) {
         // makes all buildings cost 1 PP and take 1 turn to produce
         rules.Add<int>("RULE_NUM_COMBAT_ROUNDS", "RULE_NUM_COMBAT_ROUNDS_DESC",
-                       3, true, RangedValidator<int>(1, 20));
+                       "", 3, true, RangedValidator<int>(1, 20));
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 
