@@ -334,6 +334,8 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
 
     spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     spin->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
 
     spin->ValueChangedSignal.connect(boost::bind(&GameRulesPanel::IntRuleChanged,
                                                  this, spin, rule_name));
@@ -380,6 +382,8 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
 
     spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     spin->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
 
     spin->ValueChangedSignal.connect(boost::bind(&GameRulesPanel::DoubleRuleChanged,
                                                  this, spin, rule_name));
@@ -443,6 +447,8 @@ GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indent
 
     drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     drop->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
 
     drop->SelChangedSignal.connect(boost::bind(&GameRulesPanel::StringRuleChanged,
                                                this, drop, rule_name));
