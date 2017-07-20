@@ -1008,9 +1008,6 @@ Part Cost Scaling
 RULE_SHIP_PART_COST_FACTOR_DESC
 Adjusts costs of ship parts
 
-RULE_TEST_INT
-Test Integer
-
 RULE_ENABLE_EXPERIMENTORS
 Enable Experimentors (TEST)
 
