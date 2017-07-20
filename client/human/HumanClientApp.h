@@ -58,6 +58,7 @@ public:
     void                SaveGame(const std::string& filename);          ///< saves the current game; blocks until all save-related network traffic is resolved.
     /** Accepts acknowledgement that server has completed the save.*/
     void                SaveGameCompleted();
+    /** \p is_new_game should be true for a new game and false for a loaded game. */
     void                StartGame(bool is_new_game);
 
     /** Check if the CombatLogManager has incomplete logs that need fetching and start fetching
