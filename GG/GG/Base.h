@@ -74,8 +74,7 @@ template <typename Container>
 void ProcessThenRemoveExpiredPtrs(
     Container& container,
     const std::function<void(std::shared_ptr<typename Container::value_type::element_type>&)>& process,
-    typename std::add_pointer<decltype(std::declval<Container>().at(std::declval<typename Container::size_type>()))>::type = nullptr
-)
+    typename std::add_pointer<decltype(std::declval<Container>().at(std::declval<typename Container::size_type>()))>::type = nullptr)
 {
     // Process
     for (const auto& weak : container)
@@ -100,12 +99,10 @@ void ProcessThenRemoveExpiredPtrs(
     Container& container,
     const std::function<void(std::shared_ptr<typename Container::value_type::element_type>&)>& process,
     decltype(std::declval<Container>().erase(std::declval<typename Container::iterator>()))* = nullptr,
-    decltype(std::declval<Container>().equal_range(
-                 std::declval<
-                 typename std::add_const<
-                 typename std::add_lvalue_reference<
-                 typename Container::key_type>::type>::type>()))* = nullptr
-)
+    decltype(std::declval<Container>().equal_range(std::declval<
+                                                   typename std::add_const<
+                                                   typename std::add_lvalue_reference<
+                                                   typename Container::key_type>::type>::type>()))* = nullptr)
 {
     auto it = container.begin();
     while (it != container.end()) {
