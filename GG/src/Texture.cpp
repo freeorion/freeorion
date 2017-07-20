@@ -24,9 +24,7 @@
 
 #include <GG/Texture.h>
 
-#include <GG/GUI.h>
 #include <GG/Config.h>
-#include <GG/DrawUtil.h>
 #include <GG/utf8/checked.h>
 
 #include <boost/filesystem/operations.hpp>
