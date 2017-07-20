@@ -16,8 +16,6 @@
     (Affiliation)                               \
     (Age)                                       \
     (Aggressive)                                \
-    (Alignment)                                 \
-    (AlignmentEffects)                          \
     (All)                                       \
     (AllyOf)                                    \
     (And)                                       \

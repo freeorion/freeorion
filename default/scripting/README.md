@@ -37,7 +37,6 @@ one associated definition (except for common and starting_unlocks).
 Additional entries may be required from other content, such as the AI or other
 definitions.**
 
-* alignments/  -  TBD - Alignment definitions
 * buildings/  -  All in-game building definitions.
 * common/  -  A directory to group files commonly included, no files are
 loaded from here unless included elsewhere.

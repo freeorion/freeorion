@@ -19,24 +19,6 @@ FO_COMMON_API extern const int INVALID_GAME_TURN;
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
 FO_COMMON_API extern const int ALL_EMPIRES;
 
-class Alignment {
-public:
-    Alignment(const std::string& name, const std::string& description, const std::string& graphic) :
-        m_name(name),
-        m_description(description),
-        m_graphic(graphic)
-    {}
-    Alignment()
-    {}
-    const std::string&  Name() const;
-    const std::string&  Description() const;
-    const std::string&  Graphic() const;
-private:
-    std::string m_name;
-    std::string m_description;
-    std::string m_graphic;
-};
-
 struct FO_COMMON_API ResearchQueue {
     /** The type of a single element in the research queue. */
     struct Element {
@@ -419,8 +401,7 @@ public:
       * planet to be this empire's capital, and otherwise does nothing. */
     void        SetCapitalID(int id);
 
-    /** Returns the alignment meter with the indicated \a name, if any, or 0 if
-      * no such alignment meter exists. */
+    /** Returns the meter with the indicated \a name if it exists, or nullptr. */
     Meter*      GetMeter(const std::string& name);
     void        BackPropagateMeters();
 

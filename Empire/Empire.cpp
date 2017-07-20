@@ -1268,18 +1268,6 @@ void ProductionQueue::clear() {
     ProductionQueueChangedSignal();
 }
 
-////////////////
-// Alignments //
-////////////////
-const std::string& Alignment::Name() const
-{ return m_name; }
-
-const std::string& Alignment::Description() const
-{ return m_description; }
-
-const std::string& Alignment::Graphic() const
-{ return m_graphic; }
-
 ////////////
 // Empire //
 ////////////
@@ -1308,12 +1296,6 @@ void Empire::Init() {
     m_resource_pools[RE_TRADE] = std::make_shared<ResourcePool>(RE_TRADE);
 
     m_eliminated = false;
-
-    //// Add alignment meters to empire
-    //const AlignmentManager& alignment_manager = GetAlignmentManager();
-    //for (const Alignment& alignment : alignment_manager.Alignments()) {
-    //    m_meters[alignment.Name()];
-    //}
 
     m_meters[UserStringNop("METER_DETECTION_STRENGTH")];
     m_meters[UserStringNop("METER_BUILDING_COST_FACTOR")];
