@@ -73,8 +73,10 @@ public:
     /** \name Accessors */ //@{
     bool Empty() const
     { return m_game_rules.empty(); }
-    auto begin() const { return m_game_rules.begin(); }
-    auto end() const { return m_game_rules.end(); }
+    std::unordered_map<std::string, Rule>::const_iterator begin() const
+    { return m_game_rules.begin(); }
+    std::unordered_map<std::string, Rule>::const_iterator end() const
+    { return m_game_rules.end(); }
 
     bool RuleExists(const std::string& name) const
     { return m_game_rules.find(name) != m_game_rules.end(); }
