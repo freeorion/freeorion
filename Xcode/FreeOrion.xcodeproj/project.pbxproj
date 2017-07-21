@@ -106,7 +106,6 @@
 		3A7604B21749A15500363653 /* ConditionParser3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936DD147E3B1B00B840A5 /* ConditionParser3.cpp */; };
 		3A7604B31749A15500363653 /* ConditionParser4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8250FDE115FCEFC400523C1C /* ConditionParser4.cpp */; };
 		3A7604B41749A16200363653 /* BuildingsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936D7147E3B1B00B840A5 /* BuildingsParser.cpp */; };
-		3A7604B51749A17300363653 /* AlignmentsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936D6147E3B1B00B840A5 /* AlignmentsParser.cpp */; };
 		3ABEAB3B1749BFED00E34912 /* freeorioncommon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 47103BE20CF04D8800A7DF2B /* freeorioncommon.dylib */; };
 		3ABEAB3C1749C21B00E34912 /* libboost_serialization.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7613ACB91A0085B1A0 /* libboost_serialization.a */; };
 		3ABEAB3F1749C27700E34912 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7313ACB91A0085B1A0 /* libboost_filesystem.a */; };
@@ -858,7 +857,6 @@
 		82592EF3147E387100B840A5 /* ObjectMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectMap.cpp; sourceTree = "<group>"; };
 		82592EF4147E387100B840A5 /* ObjectMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectMap.h; sourceTree = "<group>"; };
 		82592EF7147E38ED00B840A5 /* ValueRefFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueRefFwd.h; sourceTree = "<group>"; };
-		825936D6147E3B1B00B840A5 /* AlignmentsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlignmentsParser.cpp; sourceTree = "<group>"; };
 		825936D7147E3B1B00B840A5 /* BuildingsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuildingsParser.cpp; sourceTree = "<group>"; };
 		825936D9147E3B1B00B840A5 /* ConditionParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser.cpp; sourceTree = "<group>"; };
 		825936DA147E3B1B00B840A5 /* ConditionParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConditionParser.h; sourceTree = "<group>"; };
@@ -893,7 +891,6 @@
 		825936FF147E3B1B00B840A5 /* StarTypeValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StarTypeValueRefParser.cpp; sourceTree = "<group>"; };
 		82593700147E3B1B00B840A5 /* StringValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringValueRefParser.cpp; sourceTree = "<group>"; };
 		82593701147E3B1B00B840A5 /* TechsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TechsParser.cpp; sourceTree = "<group>"; };
-		82593703147E3B1C00B840A5 /* alignments */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = alignments; sourceTree = "<group>"; };
 		82593704147E3B1C00B840A5 /* buildings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = buildings; sourceTree = "<group>"; };
 		82593705147E3B1C00B840A5 /* buildings_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = buildings_errors; sourceTree = "<group>"; };
 		82593706147E3B1C00B840A5 /* buildings_permutations */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = buildings_permutations; sourceTree = "<group>"; };
@@ -1943,7 +1940,6 @@
 		825936D5147E3B1B00B840A5 /* parse */ = {
 			isa = PBXGroup;
 			children = (
-				825936D6147E3B1B00B840A5 /* AlignmentsParser.cpp */,
 				825936D7147E3B1B00B840A5 /* BuildingsParser.cpp */,
 				CE13B48D1C8CB0CF0085A4DC /* CommonParams.h */,
 				CE13B48E1C8CB0CF0085A4DC /* CommonParamsParser.cpp */,
@@ -2011,7 +2007,6 @@
 		82593702147E3B1B00B840A5 /* test */ = {
 			isa = PBXGroup;
 			children = (
-				82593703147E3B1C00B840A5 /* alignments */,
 				82593704147E3B1C00B840A5 /* buildings */,
 				82593705147E3B1C00B840A5 /* buildings_errors */,
 				82593706147E3B1C00B840A5 /* buildings_permutations */,
@@ -2624,7 +2619,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A7604B51749A17300363653 /* AlignmentsParser.cpp in Sources */,
 				3A7604B41749A16200363653 /* BuildingsParser.cpp in Sources */,
 				3A7604AF1749A15500363653 /* ConditionParser.cpp in Sources */,
 				3A7604B01749A15500363653 /* ConditionParser1.cpp in Sources */,
