@@ -141,7 +141,7 @@ namespace {
             "ENC_METER_TYPE",   "ENC_EMPIRE",       "ENC_SHIP_DESIGN",  "ENC_SHIP",
             "ENC_MONSTER",      "ENC_MONSTER_TYPE", "ENC_FLEET",        "ENC_PLANET",
             "ENC_BUILDING",     "ENC_SYSTEM",       "ENC_FIELD",        "ENC_GRAPH",
-            "ENC_GALAXY_SETUP"};
+            "ENC_GALAXY_SETUP", "ENC_GAME_RULES"};
         //  "ENC_HOMEWORLDS" omitted due to weird formatting of article titles
         return dir_names;
     }
@@ -176,8 +176,7 @@ namespace {
         if (dir_name == "ENC_INDEX") {
             // add entries consisting of links to pedia page lists of
             // articles of various types
-            for (const std::string& str : GetSearchTextDirNames())
-            {
+            for (const std::string& str : GetSearchTextDirNames()) {
                 if (str == "ENC_INDEX")
                     continue;
                 sorted_entries_list.insert({UserString(str),
@@ -185,15 +184,13 @@ namespace {
                                              str}});
             }
 
-            for (const std::string& str : {"ENC_TEXTURES", "ENC_HOMEWORLDS"})
-            {
+            for (const std::string& str : {"ENC_TEXTURES", "ENC_HOMEWORLDS"}) {
                 sorted_entries_list.insert({UserString(str),
                                             {LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, str) + "\n",
                                              str}});
             }
 
-
-            for (const std::map<std::string, std::vector<EncyclopediaArticle>>::value_type& entry : encyclopedia.articles) {
+            for (const auto& entry : encyclopedia.articles) {
                 // Do not add sub-categories
                 const EncyclopediaArticle& article = GetPediaArticle(entry.first);
                 // No article found or specifically a top-level category
@@ -1183,6 +1180,13 @@ namespace {
                 % TextForGalaxySetupSetting(gsd.m_native_freq)
                 % TextForAIAggression(gsd.m_ai_aggr));
 
+            return;
+        } else if (item_name == "ENC_GAME_RULES") {
+            const GameRules& rules = GetGameRules();
+
+            for (auto& rule : rules)
+                detailed_description += UserString(rule.first) + " : "
+                                     + rule.second.ValueToString() + "\n";
             return;
         }
 

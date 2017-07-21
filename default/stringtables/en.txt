@@ -4129,6 +4129,9 @@ Natives: %9%
 AI Max Aggression: %10%
 '''
 
+ENC_GAME_RULES
+[Game - Rules]
+
 ENC_SHIP_PART
 Ship Part
 
