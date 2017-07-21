@@ -144,7 +144,6 @@ public:
     bool                    EndedWithOk() const {return m_done && m_ended_with_ok;}
 
     /** returns the panel containing all the user-chosen options. */
-    //const GalaxySetupPanel& Panel()      const  {return *m_galaxy_setup_panel;}
     const std::string&      EmpireName() const;
     GG::Clr                 EmpireColor() const;
     const std::string&      StartingSpeciesName() const;
