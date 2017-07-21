@@ -1564,7 +1564,7 @@ void MapWnd::DoLayout() {
             plr_wnd->ValidatePosition();
     }
 
-    for (FleetWnd* fwnd : FleetUIManager::GetFleetUIManager()) {
+    for (auto& fwnd : FleetUIManager::GetFleetUIManager()) {
         if (fwnd) {
             fwnd->ValidatePosition();
         } else {
@@ -1903,7 +1903,7 @@ void MapWnd::RenderSystemOverlays() {
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glPushMatrix();
     glLoadIdentity();
-    for (boost::unordered_map<int, SystemIcon*>::value_type& system_icon : m_system_icons)
+    for (auto& system_icon : m_system_icons)
     { system_icon.second->RenderOverlay(ZoomFactor()); }
     glPopMatrix();
 }
@@ -1970,7 +1970,7 @@ void MapWnd::RenderSystems() {
         const double inner_circle_width = GetOptionsDB().Get<double>("UI.system-inner-circle-width");         // ... and inner circle line at close zoom
         const double max_inner_circle_width = GetOptionsDB().Get<double>("UI.system-inner-circle-max-width"); // width of inner circle line when map is zoomed out
 
-        for (const boost::unordered_map<int, SystemIcon*>::value_type& system_icon : m_system_icons) {
+        for (const auto& system_icon : m_system_icons) {
             const SystemIcon* icon = system_icon.second;
 
             GG::Pt icon_size = icon->LowerRight() - icon->UpperLeft();
@@ -2847,7 +2847,7 @@ void MapWnd::InitTurnRendering() {
     const ObjectMap& objects = Objects();
 
     // remove old system icons
-    for (const boost::unordered_map<int, SystemIcon*>::value_type& system_icon : m_system_icons)
+    for (const auto& system_icon : m_system_icons)
         DeleteChild(system_icon.second);
     m_system_icons.clear();
 
@@ -2894,7 +2894,7 @@ void MapWnd::InitTurnRendering() {
 
 
     // remove old field icons
-    for (const std::map<int, FieldIcon*>::value_type& field_icon : m_field_icons)
+    for (const auto& field_icon : m_field_icons)
         DeleteChild(field_icon.second);
     m_field_icons.clear();
 
@@ -2933,7 +2933,7 @@ void MapWnd::InitTurnRendering() {
 
 
     // move field icons to bottom of child stack so that other icons can be moused over with a field
-    for (const std::map<int, FieldIcon*>::value_type& field_icon : m_field_icons)
+    for (const auto& field_icon : m_field_icons)
         MoveChildDown(field_icon.second);
 }
 
@@ -2957,7 +2957,7 @@ void MapWnd::InitSystemRenderingBuffers() {
     }
 
 
-    for (const boost::unordered_map<int, SystemIcon*>::value_type& system_icon : m_system_icons) {
+    for (const auto& system_icon : m_system_icons) {
         const SystemIcon* icon = system_icon.second;
         int system_id = system_icon.first;
         std::shared_ptr<const System> system = GetSystem(system_id);
@@ -3843,7 +3843,7 @@ void MapWnd::InitFieldRenderingBuffers() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
 
 
-    for (std::map<int, FieldIcon*>::value_type& field_icon : m_field_icons) {
+    for (auto& field_icon : m_field_icons) {
         bool current_field_visible = universe.GetObjectVisibilityByEmpire(field_icon.first, empire_id) > VIS_BASIC_VISIBILITY;
         std::shared_ptr<const Field> field = GetField(field_icon.first);
         if (!field)
@@ -4149,13 +4149,13 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data) {
 }
 
 void MapWnd::ShowSystemNames() {
-    for (boost::unordered_map<int, SystemIcon*>::value_type& system_icon : m_system_icons) {
+    for (auto& system_icon : m_system_icons) {
         system_icon.second->ShowName();
     }
 }
 
 void MapWnd::HideSystemNames() {
-    for (boost::unordered_map<int, SystemIcon*>::value_type& system_icon : m_system_icons) {
+    for (auto& system_icon : m_system_icons) {
         system_icon.second->HideName();
     }
 }
@@ -4426,7 +4426,7 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
         // not emit any signals about the active fleet wnd's fleets changing
         FleetWnd* active_fleet_wnd = manager.ActiveFleetWnd();
 
-        for (FleetWnd* wnd : manager) {
+        for (auto& wnd : manager) {
             if (wnd != active_fleet_wnd)
                 wnd->SelectFleet(0);
         }
@@ -4596,7 +4596,7 @@ void MapWnd::ClearProjectedFleetMovementLines()
 void MapWnd::DoSystemIconsLayout() {
     // position and resize system icons and gaseous substance
     const int SYSTEM_ICON_SIZE = SystemIconSize();
-    for (boost::unordered_map<int, SystemIcon*>::value_type& system_icon : m_system_icons) {
+    for (auto& system_icon : m_system_icons) {
         std::shared_ptr<const System> system = GetSystem(system_icon.first);
         if (!system) {
             ErrorLogger() << "MapWnd::DoSystemIconsLayout couldn't get system with id " << system_icon.first;
@@ -4611,7 +4611,7 @@ void MapWnd::DoSystemIconsLayout() {
 
 void MapWnd::DoFieldIconsLayout() {
     // position and resize field icons
-    for (std::map<int, FieldIcon*>::value_type& field_icon : m_field_icons) {
+    for (auto& field_icon : m_field_icons) {
         std::shared_ptr<const Field> field = GetField(field_icon.first);
         if (!field) {
             ErrorLogger() << "MapWnd::DoFieldIconsLayout couldn't get field with id " << field_icon.first;
@@ -4631,7 +4631,7 @@ void MapWnd::DoFleetButtonsLayout() {
     const int SYSTEM_ICON_SIZE = SystemIconSize();
 
     // position departing fleet buttons
-    for (boost::unordered_map<int, std::unordered_set<FleetButton*>>::value_type& departing_fleet_button : m_departing_fleet_buttons) {
+    for (auto& departing_fleet_button : m_departing_fleet_buttons) {
         // calculate system icon position
         std::shared_ptr<const System> system = GetSystem(departing_fleet_button.first);
         if (!system) {
@@ -4652,7 +4652,7 @@ void MapWnd::DoFleetButtonsLayout() {
 
         // place all buttons
         int n = 1;
-        for (FleetButton* button : departing_fleet_button.second) {
+        for (auto& button : departing_fleet_button.second) {
             GG::Pt ul = system_icon->NthFleetButtonUpperLeft(n, true);
             ++n;
             button->MoveTo(ul + icon_ul);
@@ -4660,7 +4660,7 @@ void MapWnd::DoFleetButtonsLayout() {
     }
 
     // position stationary fleet buttons
-    for (boost::unordered_map<int, std::unordered_set<FleetButton*>>::value_type& stationary_fleet_button : m_stationary_fleet_buttons) {
+    for (auto& stationary_fleet_button : m_stationary_fleet_buttons) {
         // calculate system icon position
         std::shared_ptr<const System> system = GetSystem(stationary_fleet_button.first);
         if (!system) {
@@ -4681,7 +4681,7 @@ void MapWnd::DoFleetButtonsLayout() {
 
         // place all buttons
         int n = 1;
-        for (FleetButton* button : stationary_fleet_button.second) {
+        for (auto& button : stationary_fleet_button.second) {
             GG::Pt ul = system_icon->NthFleetButtonUpperLeft(n, false);
             ++n;
             button->MoveTo(ul + icon_ul);
@@ -4689,8 +4689,8 @@ void MapWnd::DoFleetButtonsLayout() {
     }
 
     // position moving fleet buttons
-    for (boost::unordered_map<std::pair<double, double>, std::unordered_set<FleetButton*>>::value_type& moving_fleet_button : m_moving_fleet_buttons) {
-        for (FleetButton* fb : moving_fleet_button.second) {
+    for (auto& moving_fleet_button : m_moving_fleet_buttons) {
+        for (auto& fb : moving_fleet_button.second) {
             const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
             std::shared_ptr<const Fleet> fleet;
 
@@ -4865,7 +4865,7 @@ void MapWnd::DeferredRefreshFleetButtons() {
     RefreshFleetButtonSelectionIndicators();
 
     // create movement lines (after positioning buttons, so lines will originate from button location)
-    for (const boost::unordered_map<int, FleetButton*>::value_type& fleet_button : m_fleet_buttons)
+    for (const auto& fleet_button : m_fleet_buttons)
         SetFleetMovementLine(fleet_button.first);
 }
 
@@ -4904,20 +4904,20 @@ void MapWnd::CreateFleetButtonsOfType (
 void MapWnd::DeleteFleetButtons() {
     m_fleet_buttons.clear();            // duplicates pointers in following containers
 
-    for (boost::unordered_map<int, std::unordered_set<FleetButton*>>::value_type& stationary_fleet_button : m_stationary_fleet_buttons) {
-        for (FleetButton* button : stationary_fleet_button.second)
+    for (auto& stationary_fleet_button : m_stationary_fleet_buttons) {
+        for (auto& button : stationary_fleet_button.second)
             delete button;
     }
     m_stationary_fleet_buttons.clear();
 
-    for (boost::unordered_map<int, std::unordered_set<FleetButton*>>::value_type& departing_fleet_button : m_departing_fleet_buttons) {
-        for (FleetButton* button : departing_fleet_button.second)
+    for (auto& departing_fleet_button : m_departing_fleet_buttons) {
+        for (auto& button : departing_fleet_button.second)
             delete button;
     }
     m_departing_fleet_buttons.clear();
 
-    for (boost::unordered_map<std::pair<double, double>, std::unordered_set<FleetButton*>>::value_type& moving_fleet_button : m_moving_fleet_buttons) {
-        for (FleetButton* button : moving_fleet_button.second)
+    for (auto& moving_fleet_button : m_moving_fleet_buttons) {
+        for (auto& button : moving_fleet_button.second)
             delete button;
     }
     m_moving_fleet_buttons.clear();
@@ -5086,7 +5086,7 @@ void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt& position)
 
 
     // move field icons to bottom of child stack so that other icons can be moused over with a field
-    for (const std::map<int, FieldIcon*>::value_type& field_icon : m_field_icons)
+    for (const auto& field_icon : m_field_icons)
         MoveChildDown(field_icon.second);
 
 
@@ -5580,18 +5580,18 @@ void MapWnd::RefreshFleetButtonSelectionIndicators() {
     //std::cout << "MapWnd::RefreshFleetButtonSelectionIndicators()" << std::endl;
 
     // clear old selection indicators
-    for (boost::unordered_map<int, std::unordered_set<FleetButton*>>::value_type& stationary_fleet_button : m_stationary_fleet_buttons) {
-        for (FleetButton* button : stationary_fleet_button.second)
+    for (auto& stationary_fleet_button : m_stationary_fleet_buttons) {
+        for (auto& button : stationary_fleet_button.second)
             button->SetSelected(false);
     }
 
-    for (boost::unordered_map<int, std::unordered_set<FleetButton*>>::value_type& departing_fleet_button : m_departing_fleet_buttons) {
-        for (FleetButton* button : departing_fleet_button.second)
+    for (auto& departing_fleet_button : m_departing_fleet_buttons) {
+        for (auto& button : departing_fleet_button.second)
             button->SetSelected(false);
     }
 
-    for (boost::unordered_map<std::pair<double, double>, std::unordered_set<FleetButton*>>::value_type& moving_fleet_button : m_moving_fleet_buttons) {
-        for (FleetButton* button : moving_fleet_button.second)
+    for (auto& moving_fleet_button : m_moving_fleet_buttons) {
+        for (auto& button : moving_fleet_button.second)
             button->SetSelected(false);
     }
 
@@ -5714,7 +5714,7 @@ void MapWnd::Sanitize() {
 
     m_projected_fleet_lines.clear();
 
-    for (boost::unordered_map<int, SystemIcon*>::value_type& system_icon : m_system_icons)
+    for (auto& system_icon : m_system_icons)
         delete system_icon.second;
     m_system_icons.clear();
 
@@ -6813,7 +6813,7 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
 }
 
 void MapWnd::CloseAllPopups() {
-    for (std::list<MapWndPopup*>::iterator it = m_popups.begin(); it != m_popups.end(); ) {
+    for (auto it = m_popups.begin(); it != m_popups.end(); ) {
         // get popup and increment iterator first since closing the popup will change this list by removing the popup
         MapWndPopup* popup = *it++;
         popup->Close();
@@ -6823,7 +6823,7 @@ void MapWnd::CloseAllPopups() {
 }
 
 void MapWnd::HideAllPopups() {
-    for (MapWndPopup* popup : m_popups) {
+    for (auto& popup : m_popups) {
         popup->Hide();
     }
 }
@@ -7046,7 +7046,7 @@ void MapWnd::DispatchFleetsExploring() {
 }
 
 void MapWnd::ShowAllPopups() {
-    for (MapWndPopup* popup : m_popups) {
+    for (auto& popup : m_popups) {
         popup->Show();
     }
 }

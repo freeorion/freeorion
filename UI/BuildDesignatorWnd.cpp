@@ -416,7 +416,7 @@ namespace {
             if (old_size != Size()) {
                 const GG::Pt row_size = ListRowSize();
                 //std::cout << "BuildableItemsListBox::SizeMove list row size: (" << Value(row_size.x) << ", " << Value(row_size.y) << ")" << std::endl;
-                for (GG::ListBox::Row* row : *this)
+                for (auto& row : *this)
                     row->Resize(row_size);
             }
         }
@@ -800,7 +800,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         }
         m_buildable_items->Insert(rows, false);
         // resize inserted rows and record first row to show
-        for (GG::ListBox::Row* row : *m_buildable_items) {
+        for (auto& row : *m_buildable_items) {
             row->Resize(row_size);
         }
     }
@@ -833,7 +833,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         }
         m_buildable_items->Insert(rows, false);
         // resize inserted rows and record first row to show
-        for (GG::ListBox::Row* row : *m_buildable_items) {
+        for (auto& row : *m_buildable_items) {
             row->Resize(row_size);
         }
     }

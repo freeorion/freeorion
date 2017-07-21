@@ -267,7 +267,7 @@ namespace GG {
 
             // The contract between RichText and block controls is this:
             // RichText tells them their width, and they determine their height.
-            for (BlockControl* block : m_blocks) {
+            for (auto& block : m_blocks) {
                 Pt size = block->SetMaxWidth(width);
                 block->MoveTo(pos);
                 pos.y += size.y;

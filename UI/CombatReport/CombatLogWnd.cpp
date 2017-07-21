@@ -157,7 +157,7 @@ namespace {
 
     CombatLogAccordionPanel::~CombatLogAccordionPanel() {
         if (!IsCollapsed() && !details.empty()) {
-            for (GG::Wnd* wnd : details) {
+            for (auto& wnd : details) {
                 delete wnd;
             }
         }
@@ -166,7 +166,7 @@ namespace {
     void CombatLogAccordionPanel::ToggleExpansion() {
         bool new_collapsed = !IsCollapsed();
         if (new_collapsed) {
-            for (GG::Wnd* wnd : details) {
+            for (auto& wnd : details) {
                 GetLayout()->Remove(wnd);
             }
         } else {
@@ -175,7 +175,7 @@ namespace {
                 log.PopulateWithFlatLogs(Width(), viewing_empire_id, details, event, detail_text);
             }
 
-            for (GG::Wnd* wnd : details) {
+            for (auto& wnd : details) {
                 GetLayout()->Add(wnd, GetLayout()->Rows(), 0);
             }
         }
@@ -421,7 +421,7 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
     for (CombatEventPtr event : log->combat_events) {
         DebugLogger(combat_log) << "event debug info: " << event->DebugString();
 
-        for (GG::Wnd* wnd : MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, event)) {
+        for (auto& wnd : MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, event)) {
             AddRow(wnd);
         }
     }

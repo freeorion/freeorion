@@ -205,7 +205,7 @@ public:
         GG::FlagSpec::UnknownString if an unknown string is provided. */
     FlagType FromString(const std::string& str) const
     {
-        for (const typename std::map<FlagType, std::string>::value_type& string : m_strings) {
+        for (const auto& string : m_strings) {
             if (string.second == str)
                 return string.first;
         }

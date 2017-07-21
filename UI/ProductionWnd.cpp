@@ -363,7 +363,7 @@ namespace {
         void Disable(bool b) override {
             GG::ListBox::Row::Disable(b);
 
-            for (GG::Control* ctrl : m_cells) {
+            for (auto& ctrl : m_cells) {
                 if (ctrl)
                     ctrl->Disable(this->Disabled());
             }

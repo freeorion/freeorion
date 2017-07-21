@@ -363,7 +363,7 @@ void MeterBrowseWnd::UpdateSummary() {
 
 void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     // clear existing labels
-    for (const std::pair<GG::Label*, GG::Label*>& effect_label : m_effect_labels_and_values) {
+    for (const auto& effect_label : m_effect_labels_and_values) {
         DeleteChild(effect_label.first);
         DeleteChild(effect_label.second);
     }
@@ -565,7 +565,7 @@ void ShipDamageBrowseWnd::UpdateSummary() {
 
 void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     // clear existing labels
-    for (const std::pair<GG::Label*, GG::Label*>& effect_label : m_effect_labels_and_values) {
+    for (const auto& effect_label : m_effect_labels_and_values) {
         DeleteChild(effect_label.first);
         DeleteChild(effect_label.second);
     }

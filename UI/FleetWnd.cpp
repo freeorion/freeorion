@@ -447,7 +447,7 @@ FleetWnd* FleetUIManager::ActiveFleetWnd() const
 FleetWnd* FleetUIManager::WndForFleet(std::shared_ptr<const Fleet> fleet) const {
     assert(fleet);
     FleetWnd* retval = nullptr;
-    for (FleetWnd* wnd : m_fleet_wnds) {
+    for (auto& wnd : m_fleet_wnds) {
         if (wnd->ContainsFleet(fleet->ID())) {
             retval = wnd;
             break;
@@ -503,7 +503,7 @@ FleetWnd* FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
 void FleetUIManager::CullEmptyWnds() {
     std::vector<FleetWnd*> to_be_closed;
     // scan through FleetWnds, deleting those that have no fleets
-    for (FleetWnd* cur_wnd : m_fleet_wnds) {
+    for (auto& cur_wnd : m_fleet_wnds) {
         if (cur_wnd->FleetIDs().empty())
             to_be_closed.push_back(cur_wnd);
     }
@@ -541,7 +541,7 @@ bool FleetUIManager::CloseAll() {
     // closing a fleet window removes it from m_fleet_wnds
     std::vector<FleetWnd*> vec(m_fleet_wnds.begin(), m_fleet_wnds.end());
 
-    for (FleetWnd* wnd : vec)
+    for (auto& wnd : vec)
         wnd->CloseClicked();
 
     m_active_fleet_wnd = nullptr;
@@ -555,7 +555,7 @@ void FleetUIManager::RefreshAll() {
     if (m_fleet_wnds.empty())
         return;
 
-    for (FleetWnd* wnd : m_fleet_wnds)
+    for (auto& wnd : m_fleet_wnds)
         wnd->Refresh();
 }
 
@@ -583,7 +583,7 @@ void FleetUIManager::FleetWndClicked(FleetWnd* fleet_wnd) {
 
 void FleetUIManager::EnableOrderIssuing(bool enable/* = true*/) {
     m_order_issuing_enabled = enable;
-    for (FleetWnd* wnd : m_fleet_wnds)
+    for (auto& wnd : m_fleet_wnds)
         wnd->EnableOrderIssuing(m_order_issuing_enabled);
 }
 
@@ -837,7 +837,7 @@ void ShipDataPanel::Refresh() {
             delete m_design_name_text;
             m_design_name_text = nullptr;
         }
-        for (std::pair<MeterType, StatisticIcon*>& entry : m_stat_icons)
+        for (auto& entry : m_stat_icons)
             delete entry.second;
         m_stat_icons.clear();
         return;
@@ -876,7 +876,7 @@ void ShipDataPanel::Refresh() {
     }
 
     // update stat icon values and browse wnds
-    for (std::pair<MeterType, StatisticIcon*>& entry : m_stat_icons) {
+    for (auto& entry : m_stat_icons) {
         entry.second->SetValue(StatValue(entry.first));
 
         entry.second->ClearBrowseInfoWnd();
@@ -959,7 +959,7 @@ void ShipDataPanel::DoLayout() {
 
     // position ship statistic icons one after another horizontally and centered vertically
     GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
-    for (std::pair<MeterType, StatisticIcon*>& entry : m_stat_icons) {
+    for (auto& entry : m_stat_icons) {
         entry.second->SizeMove(icon_ul, icon_ul + StatIconSize());
         icon_ul.x += StatIconSize().x;
     }
@@ -1210,7 +1210,7 @@ void FleetDataPanel::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, boo
     DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
 
     // scan through wnds, looking for one that isn't dropable
-    for (const std::map<const Wnd*, bool>::value_type& drop_wnd_acceptable : drop_wnds_acceptable) {
+    for (const auto& drop_wnd_acceptable : drop_wnds_acceptable) {
         if (!drop_wnd_acceptable.second) {
             // wnd can't be dropped
             Select(false);
@@ -1307,7 +1307,7 @@ void FleetDataPanel::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& 
     DebugLogger() << "FleetWnd::AcceptDrops with " << wnds.size() << " wnds at pt: " << pt;
     std::vector<int> ship_ids;
     ship_ids.reserve(wnds.size());
-    for (Wnd* wnd : wnds)
+    for (auto& wnd : wnds)
         if (const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(wnd))
             ship_ids.push_back(ship_row->ShipID());
     std::string id_list;
@@ -1518,7 +1518,7 @@ void FleetDataPanel::SetStatIconValues() {
     if (!speeds.empty())
         min_speed = *std::min_element(speeds.begin(), speeds.end());
 
-    for (std::pair<MeterType, StatisticIcon*> entry : m_stat_icons) {
+    for (const auto& entry : m_stat_icons) {
         MeterType stat_name = entry.first;
         const auto& icon = entry.second;
         DetachChild(icon);
@@ -1656,7 +1656,7 @@ void FleetDataPanel::DoLayout() {
 
     // position stat icons, centering them vertically if there's more space than required
     GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
-    for (std::pair<MeterType, StatisticIcon*>& entry : m_stat_icons) {
+    for (auto& entry : m_stat_icons) {
         if (entry.second->Parent() != this)
             continue;
         entry.second->SizeMove(icon_ul, icon_ul + StatIconSize());
@@ -1836,7 +1836,7 @@ public:
         std::vector<std::shared_ptr<Ship>> dropped_ships;
 
         //DebugLogger() << "... getting/sorting dropped fleets or ships...";
-        for (const GG::Wnd* wnd : wnds) {
+        for (const auto& wnd : wnds) {
             if (drop_target_fleet_row == wnd) {
                 ErrorLogger() << "FleetsListBox::AcceptDrops  dropped wnd is same as drop target?! skipping";
                 continue;
@@ -1973,7 +1973,7 @@ public:
         bool fleets_seen = false;
         bool ships_seen = false;
 
-        for (std::map<const Wnd*, bool>::value_type& drop_wnd_acceptable : drop_wnds_acceptable) {
+        for (auto& drop_wnd_acceptable : drop_wnds_acceptable) {
             if (!drop_wnd_acceptable.second)
                 return; // a row was an invalid drop. abort without highlighting drop target.
 
@@ -2022,7 +2022,7 @@ public:
         if (old_size != Size()) {
             const GG::Pt row_size = ListRowSize();
             //std::cout << "FleetListBox::SizeMove list row size: (" << Value(row_size.x) << ", " << Value(row_size.y) << ")" << std::endl;
-            for (GG::ListBox::Row* row : *this)
+            for (auto& row : *this)
                 row->Resize(row_size);
         }
     }
@@ -2228,7 +2228,7 @@ public:
             rows.push_back(row);
         }
         Insert(rows, false);
-        for (GG::ListBox::Row* row : rows)
+        for (auto& row : rows)
         { row->Resize(row_size); }
 
         SelRowsChangedSignal(this->Selections());
@@ -2285,7 +2285,7 @@ public:
 
         std::shared_ptr<Ship> ship_from_dropped_wnd;
         std::vector<int> ship_ids;
-        for (const GG::Wnd* wnd : wnds) {
+        for (const auto& wnd : wnds) {
             if (wnd->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
                 const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(wnd);
                 assert(ship_row);
@@ -2313,7 +2313,7 @@ public:
         if (old_size != Size()) {
             const GG::Pt row_size = ListRowSize();
             //std::cout << "ShipsListBox::SizeMove list row size: (" << Value(row_size.x) << ", " << Value(row_size.y) << ")" << std::endl;
-            for (GG::ListBox::Row* row : *this)
+            for (auto& row : *this)
                 row->Resize(row_size);
         }
     }
@@ -2462,7 +2462,7 @@ std::set<int> FleetDetailPanel::SelectedShipIDs() const {
 
     for (const GG::ListBox::SelectionSet::value_type& selection : m_ships_lb->Selections()) {
         bool hasRow = false;
-        for (GG::ListBox::Row* lb_row : *m_ships_lb) {
+        for (auto& lb_row : *m_ships_lb) {
             if (lb_row == *selection) {
                 hasRow=true;
                 break;
@@ -2804,7 +2804,7 @@ void FleetWnd::SetStatIconValues() {
         }
     }
 
-    for (std::pair<MeterType, StatisticIcon*>& entry : m_stat_icons) {
+    for (auto& entry : m_stat_icons) {
         MeterType stat_name = entry.first;
         if (stat_name == METER_SHIELD)
             entry.second->SetValue(shield_tally/ship_count);
@@ -3002,7 +3002,7 @@ void FleetWnd::DoLayout() {
 
     // position fleet aggregate stat icons
     GG::Pt icon_ul = GG::Pt(GG::X0 + DATA_PANEL_TEXT_PAD, top);
-    for (std::pair<MeterType, StatisticIcon*>& stat_icon : m_stat_icons) {
+    for (auto& stat_icon : m_stat_icons) {
         stat_icon.second->SizeMove(icon_ul, icon_ul + StatIconSize());
         icon_ul.x += StatIconSize().x;
     }

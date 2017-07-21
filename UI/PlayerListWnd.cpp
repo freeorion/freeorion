@@ -517,7 +517,7 @@ public:
         if (old_size != Size()) {
             const GG::Pt row_size = ListRowSize();
             //std::cout << "PlayerListBox::SizeMove list row size: (" << Value(row_size.x) << ", " << Value(row_size.y) << ")" << std::endl;
-            for (GG::ListBox::Row* row : *this)
+            for (auto& row : *this)
                 row->Resize(row_size);
         }
     }
@@ -573,7 +573,7 @@ std::set<int> PlayerListWnd::SelectedPlayerIDs() const {
 }
 
 void PlayerListWnd::HandlePlayerStatusUpdate(Message::PlayerStatus player_status, int about_player_id) {
-    for (CUIListBox::Row* row : *m_player_list) {
+    for (auto& row : *m_player_list) {
         if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(row)) {
             if (about_player_id == Networking::INVALID_PLAYER_ID) {
                 player_row->SetStatus(player_status);
@@ -586,7 +586,7 @@ void PlayerListWnd::HandlePlayerStatusUpdate(Message::PlayerStatus player_status
 }
 
 void PlayerListWnd::Update() {
-    for (CUIListBox::Row* row : *m_player_list) {
+    for (auto& row : *m_player_list) {
         if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(row))
             player_row->Update();
     }

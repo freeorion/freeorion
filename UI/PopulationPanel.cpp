@@ -65,7 +65,7 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType>> meters;
 
-    for (std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
+    for (auto& meter_stat : m_meter_stats) {
         meter_stat.second->InstallEventFilter(this);
         AttachChild(meter_stat.second);
         meters.push_back(std::make_pair(meter_stat.first, AssociatedMeterType(meter_stat.first)));
@@ -88,7 +88,7 @@ PopulationPanel::~PopulationPanel() {
     delete m_multi_icon_value_indicator;
     delete m_multi_meter_status_bar;
 
-    for (std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
+    for (auto& meter_stat : m_meter_stats) {
         delete meter_stat.second;
     }
 }
@@ -106,7 +106,7 @@ bool PopulationPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     const GG::Pt& pt = event.Point();
 
     MeterType meter_type = INVALID_METER_TYPE;
-    for (const std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
+    for (const auto& meter_stat : m_meter_stats) {
         if (meter_stat.second == w) {
             meter_type = meter_stat.first;
             break;
@@ -146,7 +146,7 @@ bool PopulationPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 
 void PopulationPanel::Update() {
     // remove any old browse wnds
-    for (std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
+    for (auto& meter_stat : m_meter_stats) {
         meter_stat.second->ClearBrowseInfoWnd();
         m_multi_icon_value_indicator->ClearToolTip(meter_stat.first);
     }
@@ -164,7 +164,7 @@ void PopulationPanel::Update() {
     // tooltips
     std::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
 
-    for (std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
+    for (auto& meter_stat : m_meter_stats) {
         meter_stat.second->SetValue(pop->InitialMeterValue(meter_stat.first));
 
         browse_wnd = std::make_shared<MeterBrowseWnd>(m_popcenter_id, meter_stat.first, AssociatedMeterType(meter_stat.first));
@@ -192,7 +192,7 @@ void PopulationPanel::ExpandCollapseButtonPressed()
 void PopulationPanel::DoLayout() {
     AccordionPanel::DoLayout();
 
-    for (const std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
+    for (const auto& meter_stat : m_meter_stats) {
         DetachChild(meter_stat.second);
     }
 
@@ -205,7 +205,7 @@ void PopulationPanel::DoLayout() {
         // position and reattach icons to be shown
         int n = 0;
         GG::X stride = MeterIconSize().x * 7/2;
-        for (const std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
+        for (const auto& meter_stat : m_meter_stats) {
             GG::X x = n * stride;
 
             StatisticIcon* icon = meter_stat.second;

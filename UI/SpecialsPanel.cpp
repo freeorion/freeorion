@@ -29,7 +29,7 @@ SpecialsPanel::SpecialsPanel(GG::X w, int object_id) :
 
 bool SpecialsPanel::InWindow(const GG::Pt& pt) const {
     bool retval = false;
-    for (const std::map<std::string, StatisticIcon*>::value_type& entry : m_icons) {
+    for (const auto& entry : m_icons) {
         if (entry.second->InWindow(pt)) {
             retval = true;
             break;
@@ -55,7 +55,7 @@ void SpecialsPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void SpecialsPanel::Update() {
     //std::cout << "SpecialsPanel::Update" << std::endl;
-    for (std::map<std::string, StatisticIcon*>::value_type& entry : m_icons)
+    for (auto& entry : m_icons)
         DeleteChild(entry.second);
     m_icons.clear();
 
@@ -106,7 +106,7 @@ void SpecialsPanel::Update() {
     GG::X x(EDGE_PAD);
     GG::Y y(EDGE_PAD);
 
-    for (std::map<std::string, StatisticIcon*>::value_type& entry : m_icons) {
+    for (auto& entry : m_icons) {
         StatisticIcon* icon = entry.second;
         icon->SizeMove(GG::Pt(x, y), GG::Pt(x,y) + GG::Pt(SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT));
         AttachChild(icon);
@@ -131,7 +131,7 @@ bool SpecialsPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
         return false;
     const GG::Pt& pt = event.Point();
 
-    for (const std::map<std::string, StatisticIcon*>::value_type& entry : m_icons)
+    for (const auto& entry : m_icons)
     {
         if (entry.second != w)
             continue;

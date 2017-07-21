@@ -747,7 +747,7 @@ void RadioButtonGroup::ExpandButtons(bool expand)
             RemoveButton(button);
         }
         m_expand_buttons = expand;
-        for (StateButton* button : buttons) {
+        for (auto& button : buttons) {
             AddButton(button);
         }
         SetCheck(old_checked_button);
@@ -765,7 +765,7 @@ void RadioButtonGroup::ExpandButtonsProportionally(bool proportional)
             RemoveButton(button);
         }
         m_expand_buttons_proportionally = proportional;
-        for (StateButton* button : buttons) {
+        for (auto& button : buttons) {
             AddButton(button);
         }
         SetCheck(old_checked_button);

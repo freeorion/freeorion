@@ -355,7 +355,7 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout() {
 
     // place category buttons: fill each row completely before starting next row
     int row = 0, col = -1;
-    for (std::map<std::string, GG::StateButton*>::value_type& cat_button : m_cat_buttons) {
+    for (auto& cat_button : m_cat_buttons) {
          ++col;
         if (col >= m_buttons_per_row) {
             ++row;
@@ -383,7 +383,7 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout() {
     }
 
     // place status buttons: fill each row completely before starting next row
-    for (std::map<TechStatus, GG::StateButton*>::value_type& status_button : m_status_buttons) {
+    for (auto& status_button : m_status_buttons) {
         ++col;
         if (col >= m_buttons_per_row) {
             ++row;
@@ -709,7 +709,7 @@ TechTreeWnd::LayoutPanel::TechPanel::~TechPanel() {
     delete m_name_label;
     delete m_cost_and_duration_label;
     delete m_eta_label;
-    for (GG::StaticGraphic* icon : m_unlock_icons)
+    for (auto& icon : m_unlock_icons)
     { delete icon; }
 }
 
@@ -885,7 +885,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     glEnable(GL_TEXTURE_2D);
     m_icon->Render();
 
-    for (GG::StaticGraphic* icon : m_unlock_icons)
+    for (auto& icon : m_unlock_icons)
     { icon->Render(); }
 
     m_layout_panel->UndoZoom();
@@ -1210,7 +1210,7 @@ void TechTreeWnd::LayoutPanel::Clear() {
     GG::SignalScroll(*m_hscroll, true);
 
     // delete all panels
-    for (std::map<std::string, TechPanel*>::value_type& entry : m_techs)
+    for (auto& entry : m_techs)
         delete entry.second;
     m_techs.clear();
     m_graph.Clear();
@@ -1233,7 +1233,7 @@ void TechTreeWnd::LayoutPanel::SetScale(double scale) {
     m_scale = scale;
     GetOptionsDB().Set<double>("UI.tech-layout-zoom-scale", std::floor(0.1 + (std::log(m_scale) / std::log(ZOOM_STEP_SIZE))));
 
-    for (std::map<std::string, TechPanel*>::value_type& entry : m_techs)
+    for (auto& entry : m_techs)
         entry.second->RequirePreRender();
 }
 
@@ -1779,7 +1779,7 @@ TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
 }
 
 TechTreeWnd::TechListBox::~TechListBox() {
-    for (std::multimap<std::string, TechRow*>::value_type& tech_row : m_all_tech_rows)
+    for (auto& tech_row : m_all_tech_rows)
     { delete tech_row.second; }
     m_all_tech_rows.clear();
 }
@@ -1794,7 +1794,7 @@ void TechTreeWnd::TechListBox::Reset()
 { Populate(); }
 
 void TechTreeWnd::TechListBox::Update() {
-    for (std::multimap<std::string, TechRow*>::value_type& row : m_all_tech_rows) {
+    for (auto& row : m_all_tech_rows) {
         TechRow* tech_row = row.second;
         if (TechVisible(tech_row->GetTech(), m_categories_shown, m_tech_statuses_shown))
             tech_row->Update();
@@ -1834,7 +1834,7 @@ void TechTreeWnd::TechListBox::Populate() {
     }
     Clear();
 
-    for (std::multimap<std::string, TechRow*>::value_type& row : m_all_tech_rows) {
+    for (auto& row : m_all_tech_rows) {
         TechRow* tech_row = row.second;
         if (TechVisible(tech_row->GetTech(), m_categories_shown, m_tech_statuses_shown)) {
             tech_row->Update();
@@ -2005,7 +2005,7 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     AttachChild(m_tech_tree_controls);
 
     // connect category button clicks to update display
-    for (std::map<std::string, GG::StateButton*>::value_type& cat_button : m_tech_tree_controls->m_cat_buttons)
+    for (auto& cat_button : m_tech_tree_controls->m_cat_buttons)
     {
         const std::string& category_name = cat_button.first;
         cat_button.second->CheckedSignal.connect(
@@ -2029,7 +2029,7 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     );
 
     // connect status and type button clicks to update display
-    for (std::map<TechStatus, GG::StateButton*>::value_type& status_button : m_tech_tree_controls->m_status_buttons)
+    for (auto& status_button : m_tech_tree_controls->m_status_buttons)
     {
         TechStatus tech_status = status_button.first;
         status_button.second->CheckedSignal.connect(
@@ -2137,7 +2137,7 @@ void TechTreeWnd::ShowAllCategories() {
     m_layout_panel->ShowAllCategories();
     m_tech_list->ShowAllCategories();
 
-    for (std::map<std::string, GG::StateButton*>::value_type& cat_button : m_tech_tree_controls->m_cat_buttons)
+    for (auto& cat_button : m_tech_tree_controls->m_cat_buttons)
     { cat_button.second->SetCheck(true); }
 }
 
@@ -2155,7 +2155,7 @@ void TechTreeWnd::HideAllCategories() {
     m_layout_panel->HideAllCategories();
     m_tech_list->HideAllCategories();
 
-    for (std::map<std::string, GG::StateButton*>::value_type& cat_button : m_tech_tree_controls->m_cat_buttons)
+    for (auto& cat_button : m_tech_tree_controls->m_cat_buttons)
     { cat_button.second->SetCheck(false); }
 }
 

@@ -2011,7 +2011,7 @@ void Font::Init(FT_Face& face)
                     (unsigned char*)buffer.Buffer(), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 2);
 
     // create Glyph objects from temp glyph data
-    for (const std::map<std::uint32_t, TempGlyphData>::value_type& glyph_data : temp_glyph_data)
+    for (const auto& glyph_data : temp_glyph_data)
         m_glyphs[glyph_data.first] = Glyph(m_texture, glyph_data.second.ul, glyph_data.second.lr, glyph_data.second.y_offset, glyph_data.second.left_b, glyph_data.second.adv);
 
     // record the width of the space character

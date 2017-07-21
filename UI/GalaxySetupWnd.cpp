@@ -446,7 +446,7 @@ void GalaxySetupPanel::DoLayout() {
 }
 
 void GalaxySetupPanel::Disable(bool b/* = true*/) {
-    for (GG::Wnd* child : Children())
+    for (auto& child : Children())
         static_cast<GG::Control*>(child)->Disable(b);
 }
 
