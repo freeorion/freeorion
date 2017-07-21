@@ -81,8 +81,8 @@ public:
     /** \name Structors */ ///@{
     /** Ctor that does not required height. Height is determined from the font
         and point size used.*/
-    Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<Font>& font, Clr color,
-         Clr text_color = CLR_BLACK);
+    Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<Font>& font,
+         Clr color, Clr text_color = CLR_BLACK);
 
     ~Spin();
     //@}
@@ -153,7 +153,11 @@ protected:
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
 
     bool EventFilter(Wnd* w, const WndEvent& event) override;
+
+    virtual void SetEditTextFromValue();
     //@}
+
+    Edit*      m_edit;
 
 private:
     void ConnectSignals();
@@ -170,7 +174,6 @@ private:
 
     bool       m_editable;
 
-    Edit*      m_edit;
     Button*    m_up_button;
     Button*    m_down_button;
 
@@ -421,6 +424,13 @@ bool Spin<T>::EventFilter(Wnd* w, const WndEvent& event)
 }
 
 template<class T>
+void Spin<T>::SetEditTextFromValue()
+{
+    if (m_edit)
+        m_edit->SetText(std::to_string(m_value));
+}
+
+template<class T>
 void Spin<T>::ConnectSignals()
 {
     m_edit->FocusUpdateSignal.connect(
@@ -436,7 +446,7 @@ void Spin<T>::Init(const std::shared_ptr<Font>& font, Clr color, Clr text_color)
 {
     std::shared_ptr<StyleFactory> style = GetStyleFactory();
     Control::SetColor(color);
-    m_edit = style->NewSpinEdit(boost::lexical_cast<std::string>(m_value), font, CLR_ZERO, text_color, CLR_ZERO);
+    m_edit = style->NewSpinEdit("", font, CLR_ZERO, text_color, CLR_ZERO);
     std::shared_ptr<Font> small_font = GUI::GetGUI()->GetFont(font, static_cast<int>(font->PointSize() * 0.75));
     m_up_button = style->NewSpinIncrButton(small_font, color);
     m_down_button = style->NewSpinDecrButton(small_font, color);
@@ -448,6 +458,7 @@ void Spin<T>::Init(const std::shared_ptr<Font>& font, Clr color, Clr text_color)
     AttachChild(m_down_button);
     ConnectSignals();
     SizeMove(UpperLeft(), LowerRight());
+    Spin<T>::SetEditTextFromValue();    // should call any derived-class overloads in derived-class constructor. can't do a virtual method call in base class constructor.
 }
 
 template<class T>
@@ -474,6 +485,7 @@ void Spin<T>::DecrImpl(bool signal)
 template<class T>
 void Spin<T>::SetValueImpl(T value, bool signal)
 {
+    //std::cout << "Spin<T>::SetValueImpl(" << value << ", " << signal << ")" << std::endl;
     T old_value = m_value;
     if (value < m_min_value) {
         m_value = m_min_value;
@@ -482,14 +494,17 @@ void Spin<T>::SetValueImpl(T value, bool signal)
     } else {
         // if the value supplied does not equal a valid value
         if (std::abs(spin_details::mod(static_cast<T>(value - m_min_value), m_step_size)) >
-            std::numeric_limits<T>::epsilon()) {
+            std::numeric_limits<T>::epsilon())
+        {
             // find nearest valid value to the one supplied
             T closest_below =
                 static_cast<T>(
-                    spin_details::div(static_cast<T>(value - m_min_value), m_step_size) *
-                    static_cast<T>(m_step_size + m_min_value));
+                    spin_details::div(static_cast<T>(value - m_min_value), m_step_size)
+                        * m_step_size
+                    + m_min_value);
             T closest_above =
                 static_cast<T>(closest_below + m_step_size);
+            //std::cout << " ... closest below: " << closest_below << "  above: " << closest_above << std::endl;
             m_value =
                 ((value - closest_below) < (closest_above - value) ?
                  closest_below : closest_above);
@@ -497,7 +512,7 @@ void Spin<T>::SetValueImpl(T value, bool signal)
             m_value = value;
         }
     }
-    *m_edit << m_value;
+    SetEditTextFromValue();
     if (signal && m_value != old_value)
         ValueChangedSignal(m_value);
 }

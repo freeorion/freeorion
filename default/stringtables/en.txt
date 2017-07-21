@@ -255,6 +255,15 @@ Cannot be produced
 POPUP_MENU_PEDIA_PREFIX
 '''Help: '''
 
+GENERAL
+General
+
+TEST
+Test
+
+BALANCE
+Balance
+
 
 ##
 ## Major errors
@@ -953,6 +962,70 @@ Python AI for %1% crashed.
 ERROR_PLAYER_NAME_ALREADY_USED
 Player name %1% already in use.
 
+##
+## Game Rules
+##
+
+RULE_CHEAP_AND_FAST_TECH_RESEARCH
+Cheap and Fast Techs
+
+RULE_CHEAP_AND_FAST_TECH_RESEARCH_DESC
+Techs cost 1 RP and take 1 turn to research.
+
+RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION
+Cheap and Fast Buildings
+
+RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION_DESC
+Buildings cost 1 PP and take 1 turn to produce.
+
+RULE_CHEAP_AND_FAST_SHIP_PRODUCTION
+Cheap and Fast Ships
+
+RULE_CHEAP_AND_FAST_SHIP_PRODUCTION_DESC
+Ships cost 1 PP and take 1 turn to produce.
+
+RULE_NUM_COMBAT_ROUNDS
+Combat Rounds
+
+RULE_NUM_COMBAT_ROUNDS_DESC
+How many rounds of combat occur each turn.
+
+RULE_RESEED_PRNG_SERVER
+Random Reseeding
+
+RULE_RESEED_PRNG_SERVER_DESC
+Random number generation is re-seeded frequently to give more predictable and reproducible values.
+
+RULE_SHIP_HULL_COST_FACTOR
+Hull Cost Scaling
+
+RULE_SHIP_HULL_COST_FACTOR_DESC
+Adjusts costs of ship hulls
+
+RULE_SHIP_PART_COST_FACTOR
+Part Cost Scaling
+
+RULE_SHIP_PART_COST_FACTOR_DESC
+Adjusts costs of ship parts
+
+RULE_ENABLE_EXPERIMENTORS
+Enable Experimentors (TEST)
+
+RULE_ENABLE_EXPERIMENTORS_DESC
+Test
+
+RULE_TEST_INT
+Test Integer
+
+RULE_TEST_INT_DESC
+Test
+
+RULE_TEST_STRING
+Test String
+
+RULE_TEST_STRING_DESC
+Test
+
 
 ##
 ## Command-line and options database entries
@@ -1565,9 +1638,6 @@ Toggles inclusion of situation report messages with errors.
 
 OPTIONS_DB_EFFECT_ACCOUNTING
 Toggles effect accounting tabulation when updating after gamestate changes.
-
-OPTIONS_DB_PRNG_RESEEDING
-Toggles re-seeding the random number generation each turn with predictable and reproducible seed values.
 
 OPTIONS_DB_UI_SITREP_ICONSIZE
 Sets the sitrep icon width and height; default 16 (min 12, max 64).

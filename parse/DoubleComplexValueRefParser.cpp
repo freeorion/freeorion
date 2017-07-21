@@ -26,6 +26,12 @@ namespace parse {
 
             const parse::value_ref_rule<int>& simple_int = int_simple();
 
+            game_rule
+                =   tok.GameRule_ [ _a = construct<std::string>(_1) ]
+                >   detail::label(Name_token) >     parse::string_value_ref() [ _d = _1 ]
+                    [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
+                ;
+
             part_capacity
                 = (
                     (   tok.PartCapacity_
@@ -41,7 +47,7 @@ namespace parse {
                   )     [_val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e)]
                 ;
 
-             direct_distance
+            direct_distance
                 = (     tok.DirectDistanceBetween_ [ _a = construct<std::string>(_1) ]
                      >  parse::detail::label(Object_token) > simple_int [ _b = _1 ]
                      >  parse::detail::label(Object_token) > simple_int [ _c = _1 ]
@@ -80,7 +86,8 @@ namespace parse {
                 ;
 
             start
-                %=  part_capacity
+                %=  game_rule
+                |   part_capacity
                 |   empire_meter_value
                 |   direct_distance
                 |   shortest_path
@@ -88,6 +95,7 @@ namespace parse {
                 |   species_species_opinion
                 ;
 
+            game_rule.name("GameRule");
             part_capacity.name("PartCapacity");
             empire_meter_value.name("EmpireMeterValue");
             direct_distance.name("DirectDistanceBetween");
@@ -100,6 +108,7 @@ namespace parse {
 #endif
         }
 
+        complex_variable_rule<double> game_rule;
         complex_variable_rule<double> part_capacity;
         complex_variable_rule<double> empire_meter_value;
         complex_variable_rule<double> direct_distance;

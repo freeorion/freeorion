@@ -12,7 +12,7 @@ Hull
         Slot type = External position = (0.70, 0.25)
         Slot type = Internal position = (0.50, 0.55)
     ]
-    buildCost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 2
     tags = [ "ROBOTIC_HULL" "PEDIA_HULL_LINE_ROBOTIC" ]
     location = And [

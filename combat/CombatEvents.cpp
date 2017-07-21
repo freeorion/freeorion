@@ -11,13 +11,23 @@
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
 #include "../util/VarText.h"
+#include "../util/MultiplayerCommon.h"
 #include "../UI/LinkText.h"
 #include "../Empire/Empire.h"
 
 #include <sstream>
 
-
 namespace {
+    // would be better in CombatSystem, but that is server-only, and rules need
+    // to exist on client and server.
+    void AddRules(GameRules& rules) {
+        // makes all buildings cost 1 PP and take 1 turn to produce
+        rules.Add<int>("RULE_NUM_COMBAT_ROUNDS", "RULE_NUM_COMBAT_ROUNDS_DESC",
+                       "", 3, true, RangedValidator<int>(1, 20));
+    }
+    bool temp_bool = RegisterGameRules(&AddRules);
+
+
     //TODO: Move this code into a common non UI linked location, so that
     //there is no duplicated code between server and clientUI.
     const std::string EMPTY_STRING("");
@@ -502,9 +512,9 @@ std::string StealthChangeEvent::CombatLogDescription(int viewing_empire_id) cons
                 desc += "\n";
             std::vector<std::string> target_empire_link(1, EmpireLink(target.first));
 
-            desc += FlexibleFormatList(target_empire_link, uncloaked_attackers
-                                       , UserString("ENC_COMBAT_STEALTH_DECLOAK_ATTACK_MANY_EVENTS")
-                                       , UserString("ENC_COMBAT_STEALTH_DECLOAK_ATTACK_1_EVENTS")).str();
+            desc += FlexibleFormatList(target_empire_link, uncloaked_attackers,
+                                       UserString("ENC_COMBAT_STEALTH_DECLOAK_ATTACK_MANY_EVENTS"),
+                                       UserString("ENC_COMBAT_STEALTH_DECLOAK_ATTACK_1_EVENTS")).str();
         }
     }
 

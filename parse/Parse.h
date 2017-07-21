@@ -22,6 +22,7 @@ class ShipDesign;
 class Special;
 class Species;
 struct Encyclopedia;
+class GameRules;
 
 namespace parse {
     FO_PARSE_API void init();
@@ -70,6 +71,8 @@ namespace parse {
     FO_PARSE_API bool encyclopedia_articles(Encyclopedia& enc);
 
     FO_PARSE_API bool keymaps(std::map<std::string, std::map<int, int>>& nkm);
+
+    FO_PARSE_API bool game_rules(GameRules& rules);
 
     FO_PARSE_API bool read_file(const boost::filesystem::path& path, std::string& file_contents);
 

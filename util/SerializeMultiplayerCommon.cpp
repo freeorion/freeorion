@@ -5,7 +5,6 @@
 
 #include "Serialize.ipp"
 
-
 template <class Archive>
 void GalaxySetupData::serialize(Archive& ar, const unsigned int version)
 {
@@ -19,6 +18,10 @@ void GalaxySetupData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_monster_freq)
         & BOOST_SERIALIZATION_NVP(m_native_freq)
         & BOOST_SERIALIZATION_NVP(m_ai_aggr);
+
+    if (version >= 1) {
+        ar & BOOST_SERIALIZATION_NVP(m_game_rules);
+    }
 }
 
 template void GalaxySetupData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);

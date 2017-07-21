@@ -716,6 +716,8 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     Client().SetEmpireID(empire_id);
     Client().SetCurrentTurn(current_turn);
 
+    GetGameRules().SetFromStrings(Client().GetGalaxySetupData().GetGameRules());
+
     Client().StartGame();
 
     if (loaded_game_data && ui_data_available)

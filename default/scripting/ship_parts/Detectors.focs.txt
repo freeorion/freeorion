@@ -4,7 +4,7 @@ Part
     class = Detection
     capacity = 200
     mountableSlotTypes = External
-    buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 5
     tags = [ "PEDIA_PC_DETECTION" ]
     location = OwnedBy empire = Source.Owner
@@ -17,7 +17,7 @@ Part
     class = Detection
     capacity = 150
     mountableSlotTypes = External
-    buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 5
     tags = [ "PEDIA_PC_DETECTION" ]
     location = OwnedBy empire = Source.Owner
@@ -30,7 +30,7 @@ Part
     class = Detection
     capacity = 75
     mountableSlotTypes = External
-    buildcost = 3 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 3 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 4
     tags = [ "PEDIA_PC_DETECTION" ]
     location = OwnedBy empire = Source.Owner
@@ -43,7 +43,7 @@ Part
     class = Detection
     capacity = 25
     mountableSlotTypes = External
-    buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 2
     tags = [ "PEDIA_PC_DETECTION" ]
     location = OwnedBy empire = Source.Owner

@@ -21,6 +21,12 @@ namespace parse {
 
             const parse::lexer& tok = parse::lexer::instance();
 
+            game_rule
+                =   tok.GameRule_ [ _a = construct<std::string>(_1) ]
+                >   detail::label(Name_token) >     parse::string_value_ref() [ _d = _1 ]
+                    [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
+                ;
+
             building_types_owned
                 =   (
                             tok.BuildingTypesOwned_ [ _a = construct<std::string>(_1) ]
@@ -244,7 +250,8 @@ namespace parse {
                 ;
 
             start
-                %=  building_types_owned
+                %=  game_rule
+                |   building_types_owned
                 |   building_types_produced
                 |   building_types_scrapped
                 |   empire_ships_destroyed
@@ -272,6 +279,7 @@ namespace parse {
                 |   species_ships_scrapped
                 ;
 
+            game_rule.name("GameRule");
             building_types_owned.name("BuildingTypesOwned");
             building_types_produced.name("BuildingTypesProduced");
             building_types_scrapped.name("BuildingTypesScrapped");
@@ -300,6 +308,7 @@ namespace parse {
             species_ships_scrapped.name("SpeciesShipsScrapped");
 
 #if DEBUG_INT_COMPLEX_PARSERS
+            debug(game_rule);
             debug(building_types_owned);
             debug(building_types_produced);
             debug(building_types_scrapped);
@@ -330,6 +339,7 @@ namespace parse {
 #endif
         }
 
+        complex_variable_rule<int> game_rule;
         complex_variable_rule<int> building_types_owned;
         complex_variable_rule<int> building_types_produced;
         complex_variable_rule<int> building_types_scrapped;

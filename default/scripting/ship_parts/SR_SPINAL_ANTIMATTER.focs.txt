@@ -4,7 +4,7 @@ Part
     class = ShortRange
     damage = 100
     mountableSlotTypes = Core
-    buildcost = 250 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 250 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 4
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner

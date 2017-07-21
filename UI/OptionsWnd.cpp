@@ -50,14 +50,6 @@ namespace {
     const std::string SOUND_FILE_SUFFIX = ".ogg";
     const std::string FONT_FILE_SUFFIX = ".ttf";
 
-    class PlaceholderWnd : public GG::Wnd {
-    public:
-        PlaceholderWnd(GG::X w, GG::Y h) : Wnd(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS) {}
-
-        void Render() override
-        {}
-    };
-
     class RowContentsWnd : public GG::Control {
     public:
         RowContentsWnd(GG::X w, GG::Y h, Wnd* contents, int indentation_level) :
@@ -378,7 +370,6 @@ namespace {
         }
     };
 
-
     /**Create UI controls for a logger level option.*/
     void LoggerLevelOption(GG::ListBox& page, bool is_sink,
                            const std::string& label, const std::string& option_name)
@@ -433,7 +424,6 @@ namespace {
                 HumanClientApp::GetApp()->ChangeLoggerThreshold(option_name, to_LogLevel(option_value));
             });
     }
-
 }
 
 OptionsWnd::OptionsWnd():
@@ -447,7 +437,8 @@ OptionsWnd::OptionsWnd():
     // FIXME: PAGE_WIDTH is needed to prevent triggering an assert within the TabBar class.
     // The placement of the tab register buttons assumes that the whole TabWnd is at least
     // wider than the first tab button.
-    m_tabs = new GG::TabWnd(GG::X0, GG::Y0, PAGE_WIDTH, GG::Y1, ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
+    m_tabs = new GG::TabWnd(GG::X0, GG::Y0, PAGE_WIDTH, GG::Y1, ClientUI::GetFont(),
+                            ClientUI::WndColor(), ClientUI::TextColor());
 
     ResetDefaultPosition();
     SetMinSize(GG::Pt(PAGE_WIDTH + 20, PAGE_HEIGHT + 70));
@@ -1228,8 +1219,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     );
 }
 
-void OptionsWnd::HotkeysPage()
-{
+void OptionsWnd::HotkeysPage() {
     GG::ListBox* page = CreatePage(UserString("OPTIONS_PAGE_HOTKEYS"));
     for (const std::map<std::string, std::set<std::string>>::value_type& class_hotkeys : Hotkey::ClassifyHotkeys()) {
         CreateSectionHeader(page, 0, UserString(class_hotkeys.first));
@@ -1242,14 +1232,14 @@ void OptionsWnd::HotkeysPage()
 OptionsWnd::~OptionsWnd()
 {}
 
-void OptionsWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
+void OptionsWnd::KeyPress(GG::Key key, std::uint32_t key_code_point,
+                          GG::Flags<GG::ModKey> mod_keys)
 {
     if (key == GG::GGK_ESCAPE || key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) // Same behaviour as if "done" was pressed
         DoneClicked();
 }
 
-void OptionsWnd::DoneClicked()
-{
+void OptionsWnd::DoneClicked() {
     GetOptionsDB().Commit();
     m_done = true;
 }

@@ -5,7 +5,7 @@ Part
     damage = 3
     NoDefaultCapacityEffect
     mountableSlotTypes = External
-    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
@@ -21,7 +21,7 @@ Part
     shots = 3
     NoDefaultCapacityEffect
     mountableSlotTypes = External
-    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
@@ -36,7 +36,7 @@ Part
     damage = 5
     NoDefaultCapacityEffect
     mountableSlotTypes = External
-    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 2
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
@@ -51,7 +51,7 @@ Part
     damage = 9
     NoDefaultCapacityEffect
     mountableSlotTypes = External
-    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 3
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
@@ -66,7 +66,7 @@ Part
     damage = 15
     NoDefaultCapacityEffect
     mountableSlotTypes = External
-    buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 4
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
@@ -80,7 +80,7 @@ Part
     class = ShortRange
     damage = 5
     mountableSlotTypes = External
-    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
@@ -92,7 +92,7 @@ Part
     class = ShortRange
     damage = 20
     mountableSlotTypes = External
-    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 3
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
@@ -104,7 +104,7 @@ Part
     class = ShortRange
     damage = 5
     mountableSlotTypes = External
-    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 2
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
@@ -116,7 +116,7 @@ Part
     class = ShortRange
     damage = 20
     mountableSlotTypes = External
-    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 3
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
@@ -128,7 +128,7 @@ Part
     class = ShortRange
     damage = 9
     mountableSlotTypes = External
-    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 2
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner

@@ -11,7 +11,7 @@ Hull
         Slot type = Internal position = (0.55, 0.45)
         Slot type = Internal position = (0.70, 0.45)
     ]
-    buildCost = 16.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 16.0 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 2
     tags = [ "ASTEROID_HULL" "PEDIA_HULL_LINE_ASTEROIDS" ]
     location = And [

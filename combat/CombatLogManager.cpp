@@ -127,7 +127,7 @@ void CombatLog::serialize(Archive& ar, const unsigned int version)
 
     // Store state of fleet at this battle.
     // Used to show summaries of past battles.
-    if(version >= 1) {
+    if (version >= 1) {
         ar & BOOST_SERIALIZATION_NVP(participant_states);
     }
 }

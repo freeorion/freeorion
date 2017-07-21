@@ -1,0 +1,42 @@
+
+GameRule
+    name = "RULE_SHIP_HULL_COST_FACTOR"
+    description = "RULE_SHIP_HULL_COST_FACTOR_DESC"
+    category = "BALANCE"
+    type = Real
+    default = 1.0
+    min = 0.1
+    max = 10.0
+
+GameRule
+    name = "RULE_SHIP_PART_COST_FACTOR"
+    description = "RULE_SHIP_PART_COST_FACTOR_DESC"
+    category = "BALANCE"
+    type = Real
+    default = 1.0
+    min = 0.1
+    max = 10.0
+
+GameRule
+    name = "RULE_ENABLE_EXPERIMENTORS"
+    description = "RULE_ENABLE_EXPERIMENTORS_DESC"
+    category = "TEST"
+    type = Toggle
+    default = On
+
+GameRule
+    name = "RULE_TEST_INT"
+    description = "RULE_TEST_INT_DESC"
+    category = "TEST"
+    type = Integer
+    default = 1
+    min = 0
+    max = 15
+
+GameRule
+    name = "RULE_TEST_STRING"
+    description = "RULE_TEST_STRING_DESC"
+    category = "TEST"
+    type = String
+    default = "HUMAN_PLAYER"
+    allowed = ["MODERATOR" "OBSERVER" "HUMAN_PLAYER" "AI_PLAYER"]

@@ -3,7 +3,7 @@ Part
     description = "SP_SOLAR_CONCENTRATOR_DESC"
     class = General
     mountableSlotTypes = Internal
-    buildcost = 70 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 70 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 4
     tags = [ "PEDIA_PC_GENERAL" ]
     location = OwnedBy empire = Source.Owner

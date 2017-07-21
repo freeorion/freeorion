@@ -98,8 +98,7 @@ FO_COMMON_API OptionsDB& GetOptionsDB();
   * including string-to-type, type-to-string or type-to-type as in the case of
   * Get() calls with the wrong tempate parameter.
   * \see RegisterOptions (for static-time options specification) */
-class FO_COMMON_API OptionsDB
-{
+class FO_COMMON_API OptionsDB {
 public:
     /** \name Signal Types */ //@{
     /** emitted when an option has changed */
@@ -130,7 +129,7 @@ public:
     template <class T>
     T           Get(const std::string& name) const
     {
-        std::map<std::string, Option>::const_iterator it = m_options.find(name);
+        auto it = m_options.find(name);
         if (!OptionExists(it))
             throw std::runtime_error("OptionsDB::Get<>() : Attempted to get nonexistent option \"" + name + "\".");
         return boost::any_cast<T>(it->second.value);
@@ -142,14 +141,14 @@ public:
     template <class T>
     T           GetDefault(const std::string& name) const
     {
-        std::map<std::string, Option>::const_iterator it = m_options.find(name);
+        auto it = m_options.find(name);
         if (!OptionExists(it))
             throw std::runtime_error("OptionsDB::GetDefault<>() : Attempted to get nonexistent option \"" + name + "\".");
         return boost::any_cast<T>(it->second.default_value);
     }
 
     bool        IsDefaultValue(const std::string& name) const {
-        std::map<std::string, Option>::const_iterator it = m_options.find(name);
+        auto it = m_options.find(name);
         if (!OptionExists(it))
             throw std::runtime_error("OptionsDB::IsDefaultValue<>() : Attempted to get nonexistent option \"" + name + "\".");
         return IsDefaultValue(it);
@@ -178,14 +177,14 @@ public:
      * @param[in,out] doc  The document this OptionsDB should be written to.
      *      This resets the given @p doc.
      */
-    void GetXML(XMLDoc& doc) const;
+    void        GetXML(XMLDoc& doc) const;
 
     /** find all registered Options that begin with \a prefix and store them in
       * \a ret. If \p allow_unrecognized then include unrecognized options. */
     void        FindOptions(std::set<std::string>& ret, const std::string& prefix, bool allow_unrecognized = false) const;
 
     /** the option changed signal object for the given option */
-    OptionChangedSignalType&    OptionChangedSignal(const std::string& option);
+    OptionChangedSignalType&        OptionChangedSignal(const std::string& option);
 
     mutable OptionAddedSignalType   OptionAddedSignal;   ///< the option added signal object for this DB
     mutable OptionRemovedSignalType OptionRemovedSignal; ///< the change removed signal object for this DB
@@ -195,7 +194,7 @@ public:
     void        Add(const std::string& name, const std::string& description, T default_value,
                     const ValidatorBase& validator = Validator<T>(), bool storable = true)
     {
-        std::map<std::string, Option>::iterator it = m_options.find(name);
+        auto it = m_options.find(name);
         boost::any value = default_value;
         // Check that this option hasn't already been registered and apply any value that was specified on the command line or from a config file.
         if (it != m_options.end()) {
@@ -212,7 +211,8 @@ public:
                 }
             }
         }
-        m_options[name] = Option(static_cast<char>(0), name, value, default_value, description, validator.Clone(), storable, false, true);
+        m_options[name] = Option(static_cast<char>(0), name, value, default_value,
+                                 description, validator.Clone(), storable, false, true);
         m_dirty = true;
         OptionAddedSignal(name);
     }
@@ -223,7 +223,7 @@ public:
     void        Add(char short_name, const std::string& name, const std::string& description, T default_value,
                     const ValidatorBase& validator = Validator<T>(), bool storable = true)
     {
-        std::map<std::string, Option>::iterator it = m_options.find(name);
+        auto it = m_options.find(name);
         boost::any value = default_value;
         // Check that this option hasn't already been registered and apply any value that was specified on the command line or from a config file.
         if (it != m_options.end()) {
@@ -240,7 +240,8 @@ public:
                 }
             }
         }
-        m_options[name] = Option(short_name, name, value, default_value, description, validator.Clone(), storable, false, true);
+        m_options[name] = Option(short_name, name, value, default_value, description,
+                                 validator.Clone(), storable, false, true);
         m_dirty = true;
         OptionAddedSignal(name);
     }
@@ -251,7 +252,7 @@ public:
     void        AddFlag(const std::string& name, const std::string& description,
                         bool storable = true)
     {
-        std::map<std::string, Option>::iterator it = m_options.find(name);
+        auto it = m_options.find(name);
         bool value = false;
         // Check that this option hasn't already been registered and apply any value that was specified on the command line or from a config file.
         if (it != m_options.end()) {
@@ -261,7 +262,8 @@ public:
                 ErrorLogger() << "OptionsDB::AddFlag<>() : Option " << name << " was specified with the value \"" << it->second.ValueToString() << "\", but flags should not have values assigned to them.";
             value = true; // if the flag is present at all its value is true
         }
-        m_options[name] = Option(static_cast<char>(0), name, value, boost::lexical_cast<std::string>(false),
+        m_options[name] = Option(static_cast<char>(0), name, value,
+                                 boost::lexical_cast<std::string>(false),
                                  description, nullptr, storable, true, true);
         m_dirty = true;
         OptionAddedSignal(name);
@@ -273,7 +275,7 @@ public:
     void        AddFlag(char short_name, const std::string& name,
                         const std::string& description, bool storable = true)
     {
-        std::map<std::string, Option>::iterator it = m_options.find(name);
+        auto it = m_options.find(name);
         bool value = false;
         // Check that this option hasn't already been registered and apply any value that was specified on the command line or from a config file.
         if (it != m_options.end()) {
@@ -283,7 +285,8 @@ public:
                 ErrorLogger() << "OptionsDB::AddFlag<>() : Option " << name << " was specified with the value \"" << it->second.ValueToString() << "\", but flags should not have values assigned to them.";
             value = true; // if the flag is present at all its value is true
         }
-        m_options[name] = Option(short_name, name, value, boost::lexical_cast<std::string>(false),
+        m_options[name] = Option(short_name, name, value,
+                                 boost::lexical_cast<std::string>(false),
                                  description, nullptr, storable, true, true);
         m_dirty = true;
         OptionAddedSignal(name);
@@ -300,7 +303,7 @@ public:
     template <class T>
     void        Set(const std::string& name, const T& value)
     {
-        std::map<std::string, Option>::iterator it = m_options.find(name);
+        auto it = m_options.find(name);
         if (!OptionExists(it))
             throw std::runtime_error("OptionsDB::Set<>() : Attempted to set nonexistent option \"" + name + "\".");
         m_dirty |= it->second.SetFromValue(value);
@@ -311,7 +314,7 @@ public:
       * if the \a version string is empty, bypass that check */
     void        SetFromFile(const boost::filesystem::path& file_path,
                             const std::string& version = "");
-    
+
     /** fills some or all of the options of the DB from values passed in from
       * the command line */
     void        SetFromCommandLine(const std::vector<std::string>& args);
@@ -320,7 +323,6 @@ public:
       * XMLDoc \a doc */
     void        SetFromXML(const XMLDoc& doc);
 
-private:
     struct FO_COMMON_API Option {
         Option();
         Option(char short_name_, const std::string& name_, const boost::any& value_,
@@ -332,6 +334,8 @@ private:
         bool            SetFromValue(const T& value_);
         // SetFromString returns true if this->value is successfully changed
         bool            SetFromString(const std::string& str);
+        // SetToDefault returns true if this->value is successfully changed
+        bool            SetToDefault();
         std::string     ValueToString() const;
         std::string     DefaultValueToString() const;
 
@@ -354,6 +358,7 @@ private:
         static std::map<char, std::string> short_names;   ///< the master list of abbreviated option names, and their corresponding long-form names
     };
 
+private:
     /** indicates whether the option referenced by \a it has been added to this
         OptionsDB.  Overloaded for convenient use within other OptionsDB
         functions */
@@ -384,7 +389,7 @@ bool OptionsDB::Option::SetFromValue(const T& value_) {
     bool changed = false;
 
     if (!flag) {
-        changed =  validator->String(value) != validator->String(value_);
+        changed = validator->String(value) != validator->String(value_);
     } else {
         changed = (boost::lexical_cast<std::string>(boost::any_cast<bool>(value))
                    != boost::lexical_cast<std::string>(boost::any_cast<bool>(value_)));

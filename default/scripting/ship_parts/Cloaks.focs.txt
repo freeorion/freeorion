@@ -4,7 +4,7 @@ Part
     class = Stealth
     capacity = 80
     mountableSlotTypes = Internal
-    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 10
     tags = [ "PEDIA_PC_STEALTH" ]
     location = OwnedBy empire = Source.Owner
@@ -17,7 +17,7 @@ Part
     class = Stealth
     capacity = 60
     mountableSlotTypes = Internal
-    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 7
     tags = [ "PEDIA_PC_STEALTH" ]
     location = OwnedBy empire = Source.Owner
@@ -30,7 +30,7 @@ Part
     class = Stealth
     capacity = 40
     mountableSlotTypes = Internal
-    buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 5
     tags = [ "PEDIA_PC_STEALTH" ]
     location = OwnedBy empire = Source.Owner
@@ -43,7 +43,7 @@ Part
     class = Stealth
     capacity = 20
     mountableSlotTypes = Internal
-    buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 3
     tags = [ "PEDIA_PC_STEALTH" ]
     location = OwnedBy empire = Source.Owner

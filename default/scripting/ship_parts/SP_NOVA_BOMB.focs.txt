@@ -3,7 +3,7 @@ Part
     description = "SP_NOVA_BOMB_DESC"
     class = General
     mountableSlotTypes = External
-    buildcost = 5000 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 5000 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 12
     tags = [ "PEDIA_PC_GENERAL" ]
     location = All

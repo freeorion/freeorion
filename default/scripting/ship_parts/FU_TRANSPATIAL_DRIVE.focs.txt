@@ -10,7 +10,7 @@ Part
     class = Speed
     capacity = 60
     mountableSlotTypes = Core
-    buildcost = 80 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 80 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 8
     tags = [ "PEDIA_PC_SPEED" ]
     location = And [

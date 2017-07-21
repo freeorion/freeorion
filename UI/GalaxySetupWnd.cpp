@@ -17,6 +17,8 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
+#include <GG/Layout.h>
+#include <GG/TabWnd.h>
 
 
 namespace {
@@ -24,15 +26,120 @@ namespace {
     const GG::Y CONTROL_VMARGIN(5);
     const GG::Y CONTROL_HEIGHT(30);
     const GG::Y PANEL_CONTROL_SPACING(33);
+    const GG::X INDENTATION(20);
+    const GG::X SPIN_WIDTH(92);
     const GG::Y GAL_SETUP_PANEL_HT(PANEL_CONTROL_SPACING * 10);
-    const GG::X GalSetupWndWidth() {
-        return GG::X(345 + FontBasedUpscale(300));
-    }
-    const GG::Y GalSetupWndHeight() {
-        return GG::Y(FontBasedUpscale(29) + (PANEL_CONTROL_SPACING * 6) + GAL_SETUP_PANEL_HT);
-    }
+    const GG::X GalSetupWndWidth()
+    { return GG::X(345 + FontBasedUpscale(300)); }
+    const GG::Y GalSetupWndHeight()
+    { return GG::Y(FontBasedUpscale(29) + (PANEL_CONTROL_SPACING * 6) + GAL_SETUP_PANEL_HT); }
     const GG::Pt PREVIEW_SZ(GG::X(248), GG::Y(186));
     const bool ALLOW_NO_STARLANES = false;
+
+    class RowContentsWnd : public GG::Control {
+    public:
+        RowContentsWnd(GG::X w, GG::Y h, GG::Wnd* contents, int indentation_level) :
+            Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
+            m_contents(contents)
+        {
+            if (!m_contents)
+                return;
+            AttachChild(m_contents);
+            m_contents->MoveTo(GG::Pt(GG::X(indentation_level * INDENTATION), GG::Y0));
+            DoLayout();
+        }
+
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+            const GG::Pt old_size = Size();
+            GG::Control::SizeMove(ul, lr);
+            if (old_size != Size())
+                DoLayout();
+        }
+
+        void DoLayout() {
+            if (m_contents) {
+                //std::cout << "RowContentsWnd::DoLayout()" << std::endl;
+                m_contents->SizeMove(GG::Pt(), Size());
+            }
+        }
+
+        void Render() override
+        { /*GG::FlatRectangle(UpperLeft(), LowerRight(), GG::CLR_DARK_RED, GG::CLR_PINK, 1);*/ }
+    private:
+        Wnd* m_contents;
+    };
+
+    class RuleListRow : public GG::ListBox::Row {
+    public:
+        RuleListRow(GG::X w, GG::Y h, RowContentsWnd* contents) :
+            GG::ListBox::Row(w, h, ""),
+            m_contents(contents)
+        {
+            SetChildClippingMode(ClipToClient);
+            if (m_contents)
+                push_back(m_contents);
+        }
+
+        RuleListRow(GG::X w, GG::Y h, Wnd* contents, int indentation = 0) :
+            GG::ListBox::Row(w, h, ""),
+            m_contents(nullptr)
+        {
+            SetChildClippingMode(ClipToClient);
+            if (contents) {
+                m_contents = new RowContentsWnd(w, h, contents, indentation);
+                push_back(m_contents);
+            }
+        }
+
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+            //std::cout << "RuleListRow::SizeMove(" << ul << ", " << lr << ")" << std::endl;
+            const GG::Pt old_size = Size();
+            GG::ListBox::Row::SizeMove(ul, lr);
+            if (!empty() && old_size != Size() && m_contents)
+                m_contents->Resize(Size());
+        }
+
+        void Render() override
+        { /*GG::FlatRectangle(UpperLeft(), LowerRight(), GG::CLR_DARK_BLUE, GG::CLR_YELLOW, 1);*/ }
+    private:
+        RowContentsWnd* m_contents;
+    };
+
+    class GameRulesList : public CUIListBox {
+    public:
+        GameRulesList() :
+            CUIListBox()
+        {
+            InitRowSizes();
+
+            SetColor(GG::CLR_ZERO);
+            SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
+            SetVScrollWheelIncrement(ClientUI::Pts() * 10);
+        }
+
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+            const GG::Pt old_size = Size();
+            CUIListBox::SizeMove(ul, lr);
+            if (old_size != Size()) {
+                const GG::X row_width = ListRowWidth();
+                for (GG::ListBox::Row* row : *this)
+                    row->Resize(GG::Pt(row_width, row->Height()));
+            }
+        }
+
+    private:
+        GG::X ListRowWidth() const
+        { return Width() - RightMargin() - 5; }
+
+        void InitRowSizes() {
+            // preinitialize listbox/row column widths, because what
+            // ListBox::Insert does on default is not suitable for this case
+            SetNumCols(1);
+            SetColWidth(0, GG::X0);
+            LockColWidths();
+        }
+    };
+
 
     // persistant between-executions galaxy setup settings, mainly so I don't have to redo these settings to what I want every time I run FO to test something
     void AddOptions(OptionsDB& db) {
@@ -56,6 +163,367 @@ namespace {
 }
 
 ////////////////////////////////////////////////
+// GameRulesPanel
+////////////////////////////////////////////////
+const GG::X GameRulesPanel::DefaultWidth() {
+    return GG::X(FontBasedUpscale(305));
+}
+
+GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
+    GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS)
+{
+    const int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+    GG::ListBox* current_page = nullptr;
+
+    m_tabs = new GG::TabWnd(GG::X0, GG::Y0, SPIN_WIDTH, GG::Y1,
+                            ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
+    AttachChild(m_tabs);
+
+    // create storage and default general rule page
+    std::map<std::string, GG::ListBox*> indexed_pages;
+    indexed_pages[""] = CreatePage(UserString("GENERAL"));
+
+    // for all rules, add to page
+    for (auto rule : GetGameRules()) {
+        // get or create page for rule
+        GG::ListBox* current_page = nullptr;
+        auto itr = indexed_pages.find(rule.second.category);
+        if (itr == indexed_pages.end()) {
+            indexed_pages[rule.second.category] = CreatePage(UserString(rule.second.category));
+            itr = indexed_pages.find(rule.second.category);
+        }
+        if (itr == indexed_pages.end()) {
+            ErrorLogger() << "Unable to create and insert and then find new rule page";
+            continue;
+        }
+        current_page = itr->second;
+
+        // add rule to page
+        switch(rule.second.rule_type) {
+        case GameRules::TOGGLE:
+            BoolRuleWidget(current_page, 0, rule.first);
+            break;
+        case GameRules::INT:
+            IntRuleWidget(current_page, 0, rule.first);
+            break;
+        case GameRules::DOUBLE:
+            DoubleRuleWidget(current_page, 0, rule.first);
+            break;
+        case GameRules::STRING:
+            StringRuleWidget(current_page, 0, rule.first);
+            break;
+        default:
+            break;
+        }
+    }
+
+    DoLayout();
+    m_tabs->SetCurrentWnd(0);
+}
+
+std::vector<std::pair<std::string, std::string>> GameRulesPanel::GetRulesAsStrings() const {
+    std::vector<std::pair<std::string, std::string>> retval;
+    for (const auto& entry : m_rules)
+        retval.push_back(entry);
+    return retval;
+}
+
+void GameRulesPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    GG::Control::SizeMove(ul, lr);
+    DoLayout();
+}
+
+void GameRulesPanel::Disable(bool b) {
+    for (GG::Wnd* child : Children())
+        static_cast<GG::Control*>(child)->Disable(b);
+}
+
+void GameRulesPanel::DoLayout() {
+    GG::Pt MARGINS(CONTROL_MARGIN, CONTROL_VMARGIN);
+    m_tabs->SizeMove(MARGINS, ClientSize() - MARGINS);
+}
+
+void GameRulesPanel::Render()
+{ /*GG::FlatRectangle(UpperLeft(), LowerRight(), GG::CLR_CYAN, GG::CLR_GREEN, 1);*/ }
+
+void GameRulesPanel::SettingChanged() {
+    Sound::TempUISoundDisabler sound_disabler;
+    SettingsChangedSignal();
+}
+
+GG::ListBox* GameRulesPanel::CreatePage(const std::string& name) {
+    GG::ListBox* page = new GameRulesList();
+    m_tabs->AddWnd(page, name);
+    m_tabs->SetCurrentWnd(m_tabs->NumWnds() - 1);
+    return page;
+}
+
+void GameRulesPanel::CreateSectionHeader(GG::ListBox* page, int indentation_level,
+                                         const std::string& name, const std::string& tooltip)
+{
+    assert(0 <= indentation_level);
+    GG::Label* heading_text = new CUILabel(name, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
+    heading_text->SetFont(ClientUI::GetFont(ClientUI::Pts() * 4 / 3));
+
+    GG::ListBox::Row* row = new RuleListRow(Width(), heading_text->MinUsableSize().y + CONTROL_VMARGIN + 6,
+                                            heading_text, indentation_level);
+
+    if (!tooltip.empty()) {
+        row->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        row->SetBrowseText(tooltip);
+    }
+
+    page->Insert(row);
+}
+
+GG::StateButton* GameRulesPanel::BoolRuleWidget(GG::ListBox* page, int indentation_level,
+                                                const std::string& rule_name)
+{
+    GG::StateButton* button = new CUIStateButton(UserString(rule_name), GG::FORMAT_LEFT,
+                                                 std::make_shared<CUICheckBoxRepresenter>());
+    GG::ListBox::Row* row = new RuleListRow(Width(), button->MinUsableSize().y + CONTROL_VMARGIN + 6,
+                                            button, indentation_level);
+
+    button->SetCheck(GetGameRules().Get<bool>(rule_name));
+    button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    button->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
+    button->CheckedSignal.connect(boost::bind(&GameRulesPanel::BoolRuleChanged, this, button,
+                                              rule_name));
+
+    page->Insert(row);
+    return button;
+}
+
+GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_level,
+                                             const std::string& rule_name)
+{
+    GG::Label* text_control = new CUILabel(UserString(rule_name), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
+
+    std::shared_ptr<const ValidatorBase> validator = GetGameRules().GetValidator(rule_name);
+    int value = GetGameRules().Get<int>(rule_name);
+
+    GG::Spin<int>* spin = nullptr;
+    if (std::shared_ptr<const RangedValidator<int>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<int>>(validator))
+        spin = new CUISpin<int>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
+
+    else if (std::shared_ptr<const StepValidator<int>> step_validator = std::dynamic_pointer_cast<const StepValidator<int>>(validator))
+        spin = new CUISpin<int>(value, step_validator->m_step_size, -1000000, 1000000, true);
+
+    else if (std::shared_ptr<const RangedStepValidator<int>> ranged_step_validator = std::dynamic_pointer_cast<const RangedStepValidator<int>>(validator))
+        spin = new CUISpin<int>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
+
+    else if (std::shared_ptr<const Validator<int>> int_validator = std::dynamic_pointer_cast<const Validator<int>>(validator))
+        spin = new CUISpin<int>(value, 1, -1000000, 1000000, true);
+
+    if (!spin) {
+        ErrorLogger() << "Unable to create IntRuleWidget spin";
+        return nullptr;
+    }
+
+    spin->Resize(GG::Pt(SPIN_WIDTH, spin->MinUsableSize().y));
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, Width(), spin->MinUsableSize().y, 1, 2, 0, 5);
+    layout->Add(spin, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
+    layout->SetColumnStretch(1, 1.0);
+    layout->SetChildClippingMode(ClipToClient);
+
+    GG::ListBox::Row* row = new RuleListRow(Width(), spin->MinUsableSize().y + CONTROL_VMARGIN + 6,
+                                            layout, indentation_level);
+    page->Insert(row);
+
+    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    spin->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
+
+    spin->ValueChangedSignal.connect(boost::bind(&GameRulesPanel::IntRuleChanged,
+                                                 this, spin, rule_name));
+    return spin;
+}
+
+GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indentation_level,
+                                                   const std::string& rule_name)
+{
+    GG::Label* text_control = new CUILabel(UserString(rule_name), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
+
+    std::shared_ptr<const ValidatorBase> validator = GetGameRules().GetValidator(rule_name);
+    double value = GetGameRules().Get<double>(rule_name);
+
+    GG::Spin<double>* spin = nullptr;
+    if (std::shared_ptr<const RangedValidator<double>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<double>>(validator))
+        spin = new CUISpin<double>(value, 0.1, ranged_validator->m_min, ranged_validator->m_max, true);
+
+    else if (std::shared_ptr<const StepValidator<double>> step_validator = std::dynamic_pointer_cast<const StepValidator<double>>(validator))
+        spin = new CUISpin<double>(value, step_validator->m_step_size, -1000000, 1000000, true);
+
+    else if (std::shared_ptr<const RangedStepValidator<double>> ranged_step_validator = std::dynamic_pointer_cast<const RangedStepValidator<double>>(validator))
+        spin = new CUISpin<double>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
+
+    else if (std::shared_ptr<const Validator<double>> int_validator = std::dynamic_pointer_cast<const Validator<double>>(validator))
+        spin = new CUISpin<double>(value, 0.1, -1000000, 1000000, true);
+
+    if (!spin) {
+        ErrorLogger() << "Unable to create DoubleRuleWidget spin";
+        return nullptr;
+    }
+
+    spin->Resize(GG::Pt(SPIN_WIDTH, spin->MinUsableSize().y));
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, Width(), spin->MinUsableSize().y, 1, 2, 0, 5);
+    layout->Add(spin, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
+    layout->SetColumnStretch(1, 1.0);
+    layout->SetChildClippingMode(ClipToClient);
+
+    GG::ListBox::Row* row = new RuleListRow(Width(), spin->MinUsableSize().y + CONTROL_VMARGIN + 6,
+                                            layout, indentation_level);
+    page->Insert(row);
+
+    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    spin->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
+
+    spin->ValueChangedSignal.connect(boost::bind(&GameRulesPanel::DoubleRuleChanged,
+                                                 this, spin, rule_name));
+
+    return spin;
+}
+
+namespace {
+    // row type used in the SpeciesSelector
+    struct UserStringRow : public GG::ListBox::Row {
+        UserStringRow(const std::string& key, GG::X w, GG::Y h) :
+            GG::ListBox::Row(w, h, "", GG::ALIGN_VCENTER, 0)
+        {
+            GG::Wnd::SetName(key);
+            GG::Label* species_label = new CUILabel(UserString(key), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            push_back(species_label);
+        }
+    };
+}
+
+GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indentation_level,
+                                                   const std::string& rule_name)
+{
+    GG::Label* text_control = new CUILabel(UserString(rule_name), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
+
+    std::shared_ptr<const ValidatorBase> validator = GetGameRules().GetValidator(rule_name);
+    std::string value = GetGameRules().Get<std::string>(rule_name);
+
+    CUIDropDownList* drop = new CUIDropDownList(5);
+    drop->Resize(GG::Pt(SPIN_WIDTH, drop->MinUsableSize().y));
+
+    if (auto desc_val =
+        std::dynamic_pointer_cast<const DiscreteValidator<std::string>>(validator))
+    {
+        // add rows for all allowed options
+        for (auto& poss : desc_val->m_values)
+            drop->Insert(new UserStringRow(poss, drop->Width(), drop->Height() - 4));
+    }
+    // select a row by default, preferably based on set rule value
+    if (!drop->Empty()) {
+        drop->Select(drop->begin()); // default, hopefully fixed below
+        for (auto row_it = drop->begin(); row_it != drop->end(); ++row_it) {
+            if ((*row_it)->Name() == value) {
+                drop->Select(row_it);
+                break;
+            }
+        }
+    }
+
+
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, Width(), drop->MinUsableSize().y, 1, 2, 0, 5);
+    layout->Add(drop, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
+    layout->SetColumnStretch(1, 1.0);
+    layout->SetChildClippingMode(ClipToClient);
+
+    GG::ListBox::Row* row = new RuleListRow(Width(), drop->MinUsableSize().y + CONTROL_VMARGIN + 6,
+                                            layout, indentation_level);
+    page->Insert(row);
+
+    drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    drop->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
+
+    drop->SelChangedSignal.connect(boost::bind(&GameRulesPanel::StringRuleChanged,
+                                               this, drop, rule_name));
+
+    return drop;
+}
+
+void GameRulesPanel::BoolRuleChanged(const GG::StateButton* button,
+                                     const std::string& rule_name)
+{
+    std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
+    if (!val || !button)
+        return;
+    m_rules[rule_name] = val->String(button->Checked());
+
+    DebugLogger() << "Set Rules:";
+    for (const auto& entry : m_rules)
+        DebugLogger() << "  " << entry.first << " : " << entry.second;
+
+    SettingChanged();
+}
+
+void GameRulesPanel::IntRuleChanged(const GG::Spin<int>* spin,
+                                     const std::string& rule_name)
+{
+    std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
+    if (!val || !spin)
+        return;
+    m_rules[rule_name] = val->String(spin->Value());
+
+    DebugLogger() << "Set Rules:";
+    for (const auto& entry : m_rules)
+        DebugLogger() << "  " << entry.first << " : " << entry.second;
+
+    SettingChanged();
+}
+
+void GameRulesPanel::DoubleRuleChanged(const GG::Spin<double>* spin,
+                                       const std::string& rule_name)
+{
+    std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
+    if (!val || !spin)
+        return;
+    m_rules[rule_name] = val->String(spin->Value());
+
+    DebugLogger() << "Set Rules:";
+    for (const auto& entry : m_rules)
+        DebugLogger() << "  " << entry.first << " : " << entry.second;
+
+    SettingChanged();
+}
+
+void GameRulesPanel::StringRuleChanged(const GG::DropDownList* drop,
+                                       const std::string& rule_name)
+{
+    std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
+    if (!val || !drop)
+        return;
+
+    GG::DropDownList::iterator it = drop->CurrentItem();
+    const GG::DropDownList::Row* row = *it;
+    if (!row) {
+        ErrorLogger() << "GameRulesPanel::StringRuleChanged couldn't get current item due to invalid Row pointer";
+        return;
+    }
+    m_rules[rule_name] = row->Name();
+
+    DebugLogger() << "Set Rules:";
+    for (const auto& entry : m_rules)
+        DebugLogger() << "  " << entry.first << " : " << entry.second;
+
+    SettingChanged();
+}
+
+////////////////////////////////////////////////
 // GalaxySetupPanel
 ////////////////////////////////////////////////
 const GG::X GalaxySetupPanel::DefaultWidth() {
@@ -63,28 +531,7 @@ const GG::X GalaxySetupPanel::DefaultWidth() {
 }
 
 GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
-    GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
-    m_seed_label(nullptr),
-    m_seed_edit(nullptr),
-    m_random(nullptr),
-    m_stars_label(nullptr),
-    m_stars_spin(nullptr),
-    m_galaxy_shapes_label(nullptr),
-    m_galaxy_shapes_list(nullptr),
-    m_galaxy_ages_label(nullptr),
-    m_galaxy_ages_list(nullptr),
-    m_starlane_freq_label(nullptr),
-    m_starlane_freq_list(nullptr),
-    m_planet_density_label(nullptr),
-    m_planet_density_list(nullptr),
-    m_specials_freq_label(nullptr),
-    m_specials_freq_list(nullptr),
-    m_monster_freq_label(nullptr),
-    m_monster_freq_list(nullptr),
-    m_native_freq_label(nullptr),
-    m_native_freq_list(nullptr),
-    m_ai_aggression_label(nullptr),
-    m_ai_aggression_list(nullptr)
+    GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS)
 {
     Sound::TempUISoundDisabler sound_disabler;
 
@@ -490,27 +937,12 @@ void GalaxySetupPanel::ShapeChanged(GG::DropDownList::iterator it)
 // GalaxySetupWnd
 ////////////////////////////////////////////////
 GalaxySetupWnd::GalaxySetupWnd() :
-    CUIWnd(UserString("GSETUP_WINDOW_TITLE"),
-           GG::INTERACTIVE | GG::MODAL),
-    m_ended_with_ok(false),
-    m_galaxy_setup_panel(nullptr),
-    m_player_name_label(nullptr),
-    m_player_name_edit(nullptr),
-    m_empire_name_label(nullptr),
-    m_empire_name_edit(nullptr),
-    m_empire_color_label(nullptr),
-    m_empire_color_selector(nullptr),
-    m_starting_secies_selector(nullptr),
-    m_starting_species_label(nullptr),
-    m_number_ais_label(nullptr),
-    m_number_ais_spin(nullptr),
-    m_preview_image(nullptr),
-    m_ok(nullptr),
-    m_cancel(nullptr)
+    CUIWnd(UserString("GSETUP_WINDOW_TITLE"), GG::INTERACTIVE | GG::MODAL)
 {
     Sound::TempUISoundDisabler sound_disabler;
 
     m_galaxy_setup_panel = new GalaxySetupPanel();
+    m_game_rules_panel = new GameRulesPanel();
 
     const GG::X LABELS_WIDTH = (GalaxySetupPanel::DefaultWidth() - 5) / 2;
 
@@ -577,6 +1009,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_cancel = new CUIButton(UserString("CANCEL"));
 
     AttachChild(m_galaxy_setup_panel);
+    AttachChild(m_game_rules_panel);
     AttachChild(m_player_name_label);
     AttachChild(m_player_name_edit);
     AttachChild(m_empire_name_label);
@@ -619,6 +1052,9 @@ const std::string& GalaxySetupWnd::StartingSpeciesName() const
 
 int GalaxySetupWnd::NumberAIs() const
 { return m_number_ais_spin->Value(); }
+
+std::vector<std::pair<std::string, std::string>> GalaxySetupWnd::GetRulesAsStrings() const
+{ return m_game_rules_panel->GetRulesAsStrings(); }
 
 void GalaxySetupWnd::Render() {
     CUIWnd::Render();
@@ -696,6 +1132,11 @@ void GalaxySetupWnd::DoLayout() {
 
     m_preview_ul = GG::Pt(ClientWidth() - PREVIEW_SZ.x - 7, GG::Y(7));
     m_preview_image->SizeMove(m_preview_ul, m_preview_ul + PREVIEW_SZ);
+
+
+    GG::Pt rules_ul = m_preview_ul + GG::Pt(GG::X0, PREVIEW_SZ.y);
+    GG::Pt rules_lr = ClientSize() - GG::Pt(CONTROL_MARGIN, CONTROL_VMARGIN);
+    m_game_rules_panel->SizeMove(rules_ul, rules_lr);
 
     GG::Pt button_ul(CONTROL_MARGIN * 2, ScreenToClient(ClientLowerRight()).y - CONTROL_VMARGIN * 2 - m_ok->MinUsableSize().y);
     GG::Pt button_lr(m_ok->MinUsableSize());

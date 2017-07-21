@@ -49,6 +49,21 @@ EffectsGroup
 //                tag = "system" data = Target.SystemID
 //            ]
 //            empire = Source.Owner
+//
+//EffectsGroup
+//    scope = Source
+//    activation = Turn low = 0 high = 0
+//    effects =
+//        GenerateSitRepMessage
+//            message = "A number: %rawtext:number%  A boolean value: %rawtext:boolean%"
+//            label = "Custom_1"
+//            NoStringtableLookup
+//            icon = "icons/tech/categories/spy.png"
+//            parameters = [
+//                tag = "number" data = GameRule name = "RULE_NUM_COMBAT_ROUNDS"
+//                tag = "boolean" data = GameRule name = "RULE_CHEAP_AND_FAST_TECH_RESEARCH"
+//            ]
+//            empire = Source.Owner
 
 
 

@@ -164,6 +164,7 @@
     <ClCompile Include="..\..\parse\EnumParser.cpp" />
     <ClCompile Include="..\..\parse\FieldsParser.cpp" />
     <ClCompile Include="..\..\parse\FleetPlansParser.cpp" />
+    <ClCompile Include="..\..\parse\GameRulesParser.cpp" />
     <ClCompile Include="..\..\parse\IntComplexValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\IntValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\ItemsParser.cpp" />

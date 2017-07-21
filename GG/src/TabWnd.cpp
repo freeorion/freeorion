@@ -152,7 +152,6 @@ void OverlayWnd::SetCurrentWnd(std::size_t index)
         // has not changed.
         SizeMove(UpperLeft(), LowerRight() - GG::Pt(GG::X(1), GG::Y(1)));
         SizeMove(UpperLeft(), LowerRight() + GG::Pt(GG::X(1), GG::Y(1)));
-
     }
 }
 

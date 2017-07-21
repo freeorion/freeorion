@@ -4,7 +4,7 @@ Part
     class = Research
     capacity = 80
     mountableSlotTypes = Internal
-    buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
     tags = [ "PEDIA_PC_RESEARCH" ]
     Unproducible
@@ -17,7 +17,7 @@ Part
     class = Industry
     capacity = 80
     mountableSlotTypes = Internal
-    buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
     tags = [ "PEDIA_PC_INDUSTRY" ]
     Unproducible
@@ -30,7 +30,7 @@ Part
     class = Trade
     capacity = 80
     mountableSlotTypes = Internal
-    buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
     tags = [ "PEDIA_PC_TRADE" ]
     Unproducible

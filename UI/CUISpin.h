@@ -32,6 +32,7 @@ public:
         GG::Spin<T>::ValueChangedSignal.connect(detail::PlayValueChangedSound());
         if (GG::Spin<T>::GetEdit())
             GG::Spin<T>::GetEdit()->SetHiliteColor(ClientUI::EditHiliteColor());
+        this->SetEditTextFromValue();
     }
 
     /** \name Mutators */ //@{
@@ -41,8 +42,17 @@ public:
         GG::Pt ul = this->UpperLeft(), lr = this->LowerRight();
         FlatRectangle(ul, lr, int_color_to_use, color_to_use, 1);
     }
+
+    virtual void SetEditTextFromValue();
     //@}
 };
+
+template <class T>
+void CUISpin<T>::SetEditTextFromValue()
+{ GG::Spin<T>::SetEditTextFromValue(); }
+
+template<>
+void CUISpin<double>::SetEditTextFromValue();
 
 namespace detail {
     inline void PlayValueChangedSound::operator()(double) const
