@@ -1,0 +1,72 @@
+Part
+    name = "FU_BASIC_TANK"
+    description = "FU_BASIC_TANK_DESC"
+    class = Fuel
+    capacity = 1
+    mountableSlotTypes = Internal
+    buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    tags = [ "PEDIA_PC_FUEL" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/basic-tank.png"
+
+Part
+    name = "FU_DEUTERIUM_TANK"
+    description = "FU_DEUTERIUM_TANK_DESC"
+    class = Fuel
+    capacity = 2
+    mountableSlotTypes = Internal
+    buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    tags = [ "PEDIA_PC_FUEL" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/deuterium_tank.png"
+
+Part
+    name = "FU_ANTIMATTER_TANK"
+    description = "FU_ANTIMATTER_TANK_DESC"
+    class = Fuel
+    capacity = 5
+    mountableSlotTypes = Internal
+    buildcost = 3 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 6
+    tags = [ "PEDIA_PC_FUEL" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/antimatter_tank.png"
+
+Part
+    name = "FU_RAMSCOOP"
+    description = "FU_RAMSCOOP_DESC"
+    class = Fuel
+    capacity = 0
+    mountableSlotTypes = External
+    buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 6
+    tags = [ "PEDIA_PC_FUEL" ]
+    location = OwnedBy empire = Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Stationary
+            stackinggroup = "RAMSCOOP_STACK"
+            effects = SetFuel value = Value + 0.1
+    icon = "icons/ship_parts/antimatter_tank.png"
+
+Part
+    name = "FU_ZERO_FUEL"
+    description = "FU_ZERO_FUEL_DESC"
+    class = Fuel
+    capacity = 0
+    mountableSlotTypes = Core
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 5
+    tags = [ "PEDIA_PC_FUEL" ]
+    location = OwnedBy empire = Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetFuel value = Target.MaxFuel
+    icon = "icons/ship_parts/zero-point-generator.png"
+
+#include "/scripting/common/upkeep.macros"
