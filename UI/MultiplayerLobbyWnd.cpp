@@ -218,7 +218,7 @@ namespace {
             PlayerRow(player_data, player_id)
         {
             // human / AI / observer indicator / selector
-            TypeSelector* type_drop = new TypeSelector(GG::X(90), PlayerRowHeight(), player_data.m_client_type, disabled);
+            auto type_drop = new TypeSelector(GG::X(90), PlayerRowHeight(), player_data.m_client_type, disabled);
             push_back(type_drop);
             if (disabled)
                 type_drop->Disable();
@@ -254,7 +254,7 @@ namespace {
             }
 
             // empire name editable text
-            GG::Edit* edit = new CUIEdit(m_player_data.m_empire_name);
+            auto edit = new CUIEdit(m_player_data.m_empire_name);
             edit->SetColor(GG::CLR_ZERO);
             edit->SetInteriorColor(GG::CLR_ZERO);
             edit->Resize(GG::Pt(EMPIRE_NAME_WIDTH, edit->MinUsableSize().y));
@@ -266,7 +266,7 @@ namespace {
                     boost::bind(&NewGamePlayerRow::EmpireNameChanged, this, _1));
 
             // empire colour selector
-            EmpireColorSelector* color_selector = new EmpireColorSelector(PlayerFontHeight() + PlayerRowMargin());
+            auto color_selector = new EmpireColorSelector(PlayerFontHeight() + PlayerRowMargin());
             color_selector->SelectColor(m_player_data.m_empire_color);
             push_back(color_selector);
             if (disabled)
@@ -276,7 +276,7 @@ namespace {
                     boost::bind(&NewGamePlayerRow::ColorChanged, this, _1));
 
             // species selector
-            SpeciesSelector* species_selector = new SpeciesSelector(EMPIRE_NAME_WIDTH, PlayerRowHeight());
+            auto species_selector = new SpeciesSelector(EMPIRE_NAME_WIDTH, PlayerRowHeight());
             species_selector->SelectSpecies(m_player_data.m_starting_species_name);
             push_back(species_selector);
             if (disabled)
@@ -337,7 +337,7 @@ namespace {
             m_save_game_empire_data(save_game_empire_data)
         {
             // human / AI / observer indicator / selector
-            TypeSelector* type_drop = new TypeSelector(GG::X(90), PlayerRowHeight(), player_data.m_client_type, disabled);
+            auto type_drop = new TypeSelector(GG::X(90), PlayerRowHeight(), player_data.m_client_type, disabled);
             push_back(type_drop);
             if (disabled)
                 type_drop->Disable();
@@ -451,7 +451,7 @@ namespace {
         EmptyPlayerRow() :
             PlayerRow()
         {
-            TypeSelector* type_drop = new TypeSelector(GG::X(90), PlayerRowHeight(), Networking::INVALID_CLIENT_TYPE, false);
+            auto type_drop = new TypeSelector(GG::X(90), PlayerRowHeight(), Networking::INVALID_CLIENT_TYPE, false);
             push_back(type_drop);
             type_drop->TypeChangedSignal.connect(
                 boost::bind(&EmptyPlayerRow::PlayerTypeChanged, this, _1));
@@ -892,14 +892,14 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
 
         if (m_lobby_data.m_new_game) {
             bool immutable_row = !ThisClientIsHost() && (data_player_id != HumanClientApp::GetApp()->PlayerID());   // host can modify any player's row.  non-hosts can only modify their own row.  As of SVN 4026 this is not enforced on the server, but should be.
-            NewGamePlayerRow* row = new NewGamePlayerRow(psd, data_player_id, immutable_row);
+            auto row = new NewGamePlayerRow(psd, data_player_id, immutable_row);
             m_players_lb->Insert(row);
             row->DataChangedSignal.connect(
                 boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
 
         } else {
             bool immutable_row = (!ThisClientIsHost() && (data_player_id != HumanClientApp::GetApp()->PlayerID())) || m_lobby_data.m_save_game_empire_data.empty();
-            LoadGamePlayerRow* row = new LoadGamePlayerRow(psd, data_player_id, m_lobby_data.m_save_game_empire_data, immutable_row);
+            auto row = new LoadGamePlayerRow(psd, data_player_id, m_lobby_data.m_save_game_empire_data, immutable_row);
             m_players_lb->Insert(row);
             row->DataChangedSignal.connect(
                 boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
@@ -928,7 +928,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
     // "Add AI" to add an AI to the game.  This row's details are treated
     // specially when sending a lobby update to the server.
     if (ThisClientIsHost()) {
-        EmptyPlayerRow* row = new EmptyPlayerRow();
+        auto row = new EmptyPlayerRow();
         m_players_lb->Insert(row);
         row->DataChangedSignal.connect(
             boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));

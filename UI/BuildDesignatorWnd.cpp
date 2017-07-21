@@ -551,7 +551,7 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(const std::string& config_name)
     m_buildable_items->RightClickedRowSignal.connect(
         boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this, _1, _2, _3));
 
-    //GG::ListBox::Row* header = new GG::ListBox::Row();
+    //auto header = new GG::ListBox::Row();
     //std::shared_ptr<GG::Font> font = ClientUI::GetFont();
     //GG::Clr clr = ClientUI::TextColor();
     //header->push_back("item", font, clr);
@@ -793,7 +793,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
             const std::string name = entry.first;
             if (!BuildableItemVisible(BT_BUILDING, name))
                 continue;
-            ProductionItemRow* item_row = new ProductionItemRow(row_size.x, row_size.y,
+            auto item_row = new ProductionItemRow(row_size.x, row_size.y,
                                                                 ProductionQueue::ProductionItem(BT_BUILDING, name),
                                                                 m_empire_id, m_production_location);
             rows.push_back(item_row);
@@ -826,7 +826,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
             const ShipDesign* ship_design = GetShipDesign(ship_design_id);
             if (!ship_design)
                 continue;
-            ProductionItemRow* item_row = new ProductionItemRow(row_size.x, row_size.y,
+            auto item_row = new ProductionItemRow(row_size.x, row_size.y,
                                                                 ProductionQueue::ProductionItem(BT_SHIP, ship_design_id),
                                                                 m_empire_id, m_production_location);
             rows.push_back(item_row);

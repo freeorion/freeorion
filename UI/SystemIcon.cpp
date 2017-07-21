@@ -207,7 +207,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
         wrapped_system_name = wrapped_system_name + " (" + std::to_string(system_id) + ")";
     }
 
-    GG::TextControl* text = new GG::TextControl(
+    auto text = new GG::TextControl(
         GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + wrapped_system_name + "</s>", font, text_color);
     AttachChild(text);
     GG::Pt text_size(text->TextLowerRight() - text->TextUpperLeft());

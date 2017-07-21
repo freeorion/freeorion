@@ -380,7 +380,7 @@ public:
         m_param_spin2(nullptr)
     {
         if (!initial_condition) {
-            Condition::ConditionBase* init_condition = new Condition::All();
+            auto init_condition = new Condition::All();
             Init(init_condition);
             delete init_condition;
         } else {
@@ -1056,7 +1056,7 @@ FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPL
         int row = 1;
 
         for (auto visibility : {SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED}) {
-            GG::StateButton* button = new CUIStateButton(" ", GG::FORMAT_CENTER, std::make_shared<CUICheckBoxRepresenter>());
+            auto button = new CUIStateButton(" ", GG::FORMAT_CENTER, std::make_shared<CUICheckBoxRepresenter>());
             button->SetCheck(vis_display.count(visibility));
             m_filters_layout->Add(button, row, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             button->CheckedSignal.connect(
@@ -1444,7 +1444,7 @@ private:
 
         for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
             std::string col_val = m_column_val_cache[i];
-            GG::Label* control = new CUILabel(col_val, GG::FORMAT_LEFT);
+            auto control = new CUILabel(col_val, GG::FORMAT_LEFT);
             control->Resize(GG::Pt(GG::X(GetColumnWidth(i)), ClientHeight()));
             retval.push_back(control);
         }
@@ -1669,7 +1669,7 @@ private:
     std::vector<GG::Button*>    GetControls() {
         std::vector<GG::Button*> retval;
 
-        GG::Button* control = new CUIButton("-");
+        auto control = new CUIButton("-");
         retval.push_back(control);
 
         for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
@@ -2131,7 +2131,7 @@ private:
         if (!obj)
             return;
         const GG::Pt row_size = ListRowSize();
-        ObjectRow* object_row = new ObjectRow(row_size.x, row_size.y, obj, !ObjectCollapsed(object_id),
+        auto object_row = new ObjectRow(row_size.x, row_size.y, obj, !ObjectCollapsed(object_id),
                                               container, contents, indent);
         this->Insert(object_row, it);
         object_row->Resize(row_size);

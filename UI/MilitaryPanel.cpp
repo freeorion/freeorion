@@ -54,7 +54,7 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     // small meter indicators - for use when panel is collapsed
     for (MeterType meter : {METER_SHIELD, METER_DEFENSE, METER_TROOPS, METER_DETECTION, METER_STEALTH})
     {
-        StatisticIcon* stat = new StatisticIcon(ClientUI::MeterIcon(meter), obj->InitialMeterValue(meter), 3, false, MeterIconSize().x, MeterIconSize().y);
+        auto stat = new StatisticIcon(ClientUI::MeterIcon(meter), obj->InitialMeterValue(meter), 3, false, MeterIconSize().x, MeterIconSize().y);
         stat->InstallEventFilter(this);
         AttachChild(stat);
         m_meter_stats.push_back({meter, stat});

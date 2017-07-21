@@ -606,7 +606,7 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
 
     // Copy default block factory.
     std::shared_ptr<GG::RichText::BLOCK_FACTORY_MAP> factory_map(new GG::RichText::BLOCK_FACTORY_MAP(*GG::RichText::DefaultBlockFactoryMap()));
-    CUILinkTextBlock::Factory* factory = new CUILinkTextBlock::Factory();
+    auto factory = new CUILinkTextBlock::Factory();
     // Wire this factory to produce links that talk to us.
     factory->LinkClickedSignal.connect(
         boost::bind(&EncyclopediaDetailPanel::HandleLinkClick, this, _1, _2));
@@ -624,7 +624,7 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
     m_graph = new GraphControl();
     m_graph->ShowPoints(false);
 
-    SearchEdit* search_edit = new SearchEdit();
+    auto search_edit = new SearchEdit();
     m_search_edit = search_edit;
     search_edit->TextEnteredSignal.connect(
         boost::bind(&EncyclopediaDetailPanel::HandleSearchTextEntered, this));

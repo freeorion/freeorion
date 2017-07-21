@@ -42,7 +42,7 @@ GG::BlockControl* CUILinkTextBlock::Factory::CreateFromTag(const std::string& ta
                                                            const GG::Clr& color,
                                                            GG::Flags<GG::TextFormat> format)
 {
-    CUILinkTextBlock* block = new CUILinkTextBlock(content, font, format, color, GG::NO_WND_FLAGS);
+    auto block = new CUILinkTextBlock(content, font, format, color, GG::NO_WND_FLAGS);
 
     // Wire the block's signals to come through us.
     block->m_link_text->LinkClickedSignal.connect(

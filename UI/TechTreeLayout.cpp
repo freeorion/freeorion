@@ -309,7 +309,7 @@ const TechTreeLayout::Node* TechTreeLayout::GetNode(const std::string & name) co
 
 void TechTreeLayout::AddNode(const std::string& tech, GG::X width, GG::Y height) {
     assert(width > 0 && height > 0 && GetTech(tech));
-    TechTreeLayout::Node* node = new TechTreeLayout::Node(tech, width, height);
+    auto node = new TechTreeLayout::Node(tech, width, height);
     //DebugLogger() << "Adding Node: " << node << " for tech " << tech;
     m_nodes.push_back(node);
     m_node_map[tech] = node;
@@ -628,7 +628,7 @@ void TechTreeLayout::Node::CreatePlaceHolder(std::vector<Node*>& nodes) {
             //                       << "  child_depth: " << child->m_depth;
             //DebugLogger() << "current_parent_node: " << current_parent_node
             //                       << " child: " << child;
-            Node* dummy_node = new Node(current_parent_node, child, nodes);
+            auto dummy_node = new Node(current_parent_node, child, nodes);
             //DebugLogger() << "new dummy node depth: " << dummy_node->m_depth;
             current_parent_node = dummy_node;
             //++dummy_nodes_added;
@@ -693,7 +693,7 @@ void TechTreeLayout::Node::CreateEdges(double x_margin, double column_width, dou
         const std::string& to = next->m_tech;
         //create drawing path
         next = m_children[i];
-        Edge* edge = new Edge(m_tech, to);
+        auto edge = new Edge(m_tech, to);
         //from, line start
         edge->AddPoint(m_x, m_y + m_height / 2); // start on the left side of the node
         edge->AddPoint(m_x + m_width + x_margin, m_y + m_height / 2);

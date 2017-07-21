@@ -104,7 +104,7 @@ GG::StateButton* CUIStyle::NewTabBarTab(const std::string& str,
                                         const std::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
                                         GG::Clr text_color/* = GG::CLR_BLACK*/) const
 {
-    GG::StateButton* retval = new CUIStateButton(str, format, std::make_shared<CUITabRepresenter>());
+    auto retval = new CUIStateButton(str, format, std::make_shared<CUITabRepresenter>());
     retval->SetColor(ClientUI::WndColor());
     retval->GetLabel()->SetTextColor(DarkColor(ClientUI::TextColor()));
     retval->Resize(retval->MinUsableSize() + GG::Pt(GG::X(12), GG::Y0));

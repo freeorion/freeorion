@@ -79,8 +79,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
     for (StarType star_type = STAR_BLUE; star_type != NUM_STAR_TYPES; star_type = StarType(star_type + 1)) {
         std::shared_ptr<GG::Texture> disc_texture = ui->GetModuloTexture(
             ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[star_type], 0);
-        GG::DropDownList::Row* row = new GG::DropDownList::Row();
-        GG::StaticGraphic* icon = new GG::StaticGraphic(disc_texture, style);
+        auto row = new GG::DropDownList::Row();
+        auto icon = new GG::StaticGraphic(disc_texture, style);
         icon->Resize(GG::Pt(CONTROL_WIDTH, CONTROL_HEIGHT));
         row->push_back(icon);
         m_star_type_drop->Insert(row);
@@ -106,8 +106,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
     m_planet_type_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
     for (PlanetType planet_type = PT_SWAMP; planet_type != NUM_PLANET_TYPES; planet_type = PlanetType(planet_type + 1)) {
         std::shared_ptr<GG::Texture> texture = ClientUI::PlanetIcon(planet_type);
-        GG::DropDownList::Row* row = new GG::DropDownList::Row();
-        GG::StaticGraphic* icon = new GG::StaticGraphic(texture, style);
+        auto row = new GG::DropDownList::Row();
+        auto icon = new GG::StaticGraphic(texture, style);
         icon->Resize(GG::Pt(CONTROL_WIDTH, CONTROL_HEIGHT));
         row->push_back(icon);
         m_planet_type_drop->Insert(row);
@@ -120,8 +120,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
     m_planet_size_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
     for (PlanetSize planet_size = SZ_TINY; planet_size != NUM_PLANET_SIZES; planet_size = PlanetSize(planet_size + 1)) {
         std::shared_ptr<GG::Texture> texture = ClientUI::PlanetSizeIcon(planet_size);
-        GG::DropDownList::Row* row = new GG::DropDownList::Row();
-        GG::StaticGraphic* icon = new GG::StaticGraphic(texture, style);
+        auto row = new GG::DropDownList::Row();
+        auto icon = new GG::StaticGraphic(texture, style);
         icon->Resize(GG::Pt(CONTROL_WIDTH, CONTROL_HEIGHT));
         row->push_back(icon);
         m_planet_size_drop->Insert(row);
@@ -342,16 +342,16 @@ void ModeratorActionsWnd::Refresh() {
     m_empire_drop->Clear();
     for (const std::map<int, Empire*>::value_type& entry : Empires()) {
         const Empire* empire = entry.second;
-        GG::DropDownList::Row* row = new GG::DropDownList::Row();
-        GG::Label* label = new CUILabel(empire->Name(), GG::FORMAT_NOWRAP);
+        auto row = new GG::DropDownList::Row();
+        auto label = new CUILabel(empire->Name(), GG::FORMAT_NOWRAP);
         label->SetTextColor(empire->Color());
         row->push_back(label);
         m_empire_drop->Insert(row);
     }
 
     // no empire / monsters
-    GG::DropDownList::Row* row = new GG::DropDownList::Row();
-    GG::Label* label = new CUILabel(UserString("UNOWNED"), GG::FORMAT_NOWRAP);
+    auto row = new GG::DropDownList::Row();
+    auto label = new CUILabel(UserString("UNOWNED"), GG::FORMAT_NOWRAP);
     label->SetTextColor(GG::CLR_RED);
     row->push_back(label);
     m_empire_drop->Insert(row);

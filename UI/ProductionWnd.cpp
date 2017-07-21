@@ -54,7 +54,7 @@ namespace {
             else
                 nameText = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_REPETITIONS")) % quantity);
             //nameText += GetShipDesign(designID)->Name();
-            GG::Label* text = new CUILabel(nameText, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
+            auto text = new CUILabel(nameText, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
             text->SetTextColor(txtClr);
             text->OffsetMove(GG::Pt(GG::X0, GG::Y(-3)));
             AttachChild(text);
@@ -75,7 +75,7 @@ namespace {
             GG::ListBox::Row(),
             m_quant(quantity)
         {
-            QuantLabel* newLabel = new QuantLabel(m_quant, designID, nwidth, h, inProgress, amBlockType);
+            auto newLabel = new QuantLabel(m_quant, designID, nwidth, h, inProgress, amBlockType);
             push_back(newLabel);
             Resize(GG::Pt(nwidth, newLabel->Height()-GG::Y0));//might subtract more; assessing aesthetics
         }
@@ -995,7 +995,7 @@ void ProductionWnd::UpdateQueue() {
 
     int i = 0;
     for (const ProductionQueue::Element& elem : empire->GetProductionQueue()) {
-        QueueRow* row = new QueueRow(queue_lb->RowWidth(), elem, i);
+        auto row = new QueueRow(queue_lb->RowWidth(), elem, i);
         row->RowQuantChangedSignal.connect(
             boost::bind(&ProductionWnd::ChangeBuildQuantityBlockSlot, this, _1, _2, _3));
         queue_lb->Insert(row);

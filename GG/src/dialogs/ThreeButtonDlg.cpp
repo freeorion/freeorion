@@ -60,8 +60,8 @@ ThreeButtonDlg::ThreeButtonDlg(X w, Y h, const std::string& msg, const std::shar
     const int SPACING = 10;
     const Y BUTTON_HEIGHT = font->Height() + 10;
 
-    Layout* layout = new Layout(X0, Y0, X1, Y1, 2, 1, 10);
-    Layout* button_layout = new Layout(X0, Y0, X1, Y1, 1, buttons, 0, 10);
+    auto layout = new Layout(X0, Y0, X1, Y1, 2, 1, 10);
+    auto button_layout = new Layout(X0, Y0, X1, Y1, 1, buttons, 0, 10);
 
     std::shared_ptr<StyleFactory> style = GetStyleFactory();
 

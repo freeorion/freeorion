@@ -977,7 +977,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
                 }
 
                 if (texture) {
-                    GG::StaticGraphic* graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                    auto graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                     m_unlock_icons.push_back(graphic);
                     graphic->SizeMove(GG::Pt(icon_left, icon_top), GG::Pt(icon_left + icon_width, icon_top + icon_height));
                     icon_left += icon_width + PAD;
@@ -1008,7 +1008,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             for (const std::string& part_name : parts_whose_meters_are_affected) {
                 std::shared_ptr<GG::Texture> texture = ClientUI::PartIcon(part_name);
                 if (texture) {
-                    GG::StaticGraphic* graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                    auto graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                     m_unlock_icons.push_back(graphic);
                     graphic->SizeMove(GG::Pt(icon_left, icon_top), GG::Pt(icon_left + icon_width, icon_top + icon_height));
                     icon_left += icon_width + PAD;
@@ -1017,7 +1017,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             for (MeterType meter_type : meters_affected) {
                 std::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(meter_type);
                 if (texture) {
-                    GG::StaticGraphic* graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                    auto graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                     m_unlock_icons.push_back(graphic);
                     graphic->SizeMove(GG::Pt(icon_left, icon_top), GG::Pt(icon_left + icon_width, icon_top + icon_height));
                     icon_left += icon_width + PAD;
@@ -1027,7 +1027,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             for (const std::string& special_name : specials_affected) {
                 std::shared_ptr<GG::Texture> texture = ClientUI::SpecialIcon(special_name);
                 if (texture) {
-                    GG::StaticGraphic* graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                    auto graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                     m_unlock_icons.push_back(graphic);
                     graphic->SizeMove(GG::Pt(icon_left, icon_top), GG::Pt(icon_left + icon_width, icon_top + icon_height));
                     icon_left += icon_width + PAD;
@@ -1630,13 +1630,13 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
     // TODO replace string padding with new TextFormat flag
     std::string just_pad = "    ";
 
-    GG::StaticGraphic* graphic = new GG::StaticGraphic(ClientUI::TechIcon(m_tech),
+    auto graphic = new GG::StaticGraphic(ClientUI::TechIcon(m_tech),
                                                        GG::GRAPHIC_VCENTER | GG::GRAPHIC_CENTER | GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
     graphic->Resize(GG::Pt(GRAPHIC_WIDTH, ICON_HEIGHT));
     graphic->SetColor(ClientUI::CategoryColor(this_row_tech->Category()));
     push_back(graphic);
 
-    GG::Label* text = new CUILabel(just_pad + UserString(m_tech), GG::FORMAT_LEFT);
+    auto text = new CUILabel(just_pad + UserString(m_tech), GG::FORMAT_LEFT);
     text->SetResetMinSize(false);
     text->ClipText(true);
     text->SetChildClippingMode(ClipToWindow);
@@ -1722,37 +1722,37 @@ TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
     const GG::Y HEIGHT(Value(col_widths[0]));
     m_header_row = new GG::ListBox::Row(row_width, HEIGHT, "");
 
-    CUILabel* graphic_col = new CUILabel("");  // graphic
+    auto graphic_col = new CUILabel("");  // graphic
     graphic_col->Resize(GG::Pt(col_widths[0], HEIGHT));
     graphic_col->ClipText(true);
     graphic_col->SetChildClippingMode(ClipToWindow);
     m_header_row->push_back(graphic_col);
 
-    CUIButton* name_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_NAME"));
+    auto name_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_NAME"));
     name_col->Resize(GG::Pt(col_widths[1], HEIGHT));
     name_col->SetChildClippingMode(ClipToWindow);
     name_col->LeftClickedSignal.connect([this]() { ToggleSortCol(1); });
     m_header_row->push_back(name_col);
 
-    CUIButton* cost_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_COST"));
+    auto cost_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_COST"));
     cost_col->Resize(GG::Pt(col_widths[2], HEIGHT));
     cost_col->SetChildClippingMode(ClipToWindow);
     cost_col->LeftClickedSignal.connect([this]() { ToggleSortCol(2); });
     m_header_row->push_back(cost_col);
 
-    CUIButton* time_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_TIME"));
+    auto time_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_TIME"));
     time_col->Resize(GG::Pt(col_widths[3], HEIGHT));
     time_col->SetChildClippingMode(ClipToWindow);
     time_col->LeftClickedSignal.connect([this]() { ToggleSortCol(3); });
     m_header_row->push_back(time_col);
 
-    CUIButton* category_col = new CUIButton( UserString("TECH_WND_LIST_COLUMN_CATEGORY"));
+    auto category_col = new CUIButton( UserString("TECH_WND_LIST_COLUMN_CATEGORY"));
     category_col->Resize(GG::Pt(col_widths[4], HEIGHT));
     category_col->SetChildClippingMode(ClipToWindow);
     category_col->LeftClickedSignal.connect([this]() { ToggleSortCol(4); });
     m_header_row->push_back(category_col);
 
-    CUIButton* descr_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_DESCRIPTION"));
+    auto descr_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_DESCRIPTION"));
     descr_col->Resize(GG::Pt(col_widths[5], HEIGHT));
     descr_col->SetChildClippingMode(ClipToWindow);
     descr_col->LeftClickedSignal.connect([this]() { ToggleSortCol(5); });

@@ -484,12 +484,12 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             text += label_template;
         }
 
-        GG::Label* label = new CUILabel(text, GG::FORMAT_RIGHT);
+        auto label = new CUILabel(text, GG::FORMAT_RIGHT);
         label->MoveTo(GG::Pt(GG::X0, top));
         label->Resize(GG::Pt(MeterBrowseLabelWidth(), m_row_height));
         AttachChild(label);
 
-        GG::Label* value = new CUILabel(ColouredNumber(info.meter_change));
+        auto value = new CUILabel(ColouredNumber(info.meter_change));
         value->MoveTo(GG::Pt(MeterBrowseLabelWidth(), top));
         value->Resize(GG::Pt(MeterBrowseValueWidth(), m_row_height));
         AttachChild(value);
@@ -599,12 +599,12 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
                             ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name);
         std::string text = boost::io::str(FlexibleFormat(label_template) % name % UserString(part_name));
 
-        GG::Label* label = new CUILabel(text, GG::FORMAT_RIGHT);
+        auto label = new CUILabel(text, GG::FORMAT_RIGHT);
         label->MoveTo(GG::Pt(GG::X0, top));
         label->Resize(GG::Pt(MeterBrowseLabelWidth(), m_row_height));
         AttachChild(label);
 
-        GG::Label* value = new CUILabel(ColouredNumber(part_attack));
+        auto value = new CUILabel(ColouredNumber(part_attack));
         value->MoveTo(GG::Pt(MeterBrowseLabelWidth(), top));
         value->Resize(GG::Pt(MeterBrowseValueWidth(), m_row_height));
         AttachChild(value);
@@ -630,14 +630,14 @@ namespace {
             SetMargin(EDGE_PAD);
             const GG::Clr QTY_COLOR = GG::CLR_GRAY;
 
-            CUILabel* label_control = new CUILabel(label, GG::FORMAT_RIGHT);
+            auto label_control = new CUILabel(label, GG::FORMAT_RIGHT);
             push_back(label_control);
             label_control->Resize(GG::Pt(FighterBrowseLabelWidth(), MeterBrowseRowHeight()));
 
             std::string qty_text;
             if (qty > 1)
                 qty_text = ColourWrappedtext("* " + IntToString(qty), QTY_COLOR);
-            CUILabel* qty_control = new CUILabel(qty_text);
+            auto qty_control = new CUILabel(qty_text);
             push_back(qty_control);
             qty_control->Resize(GG::Pt(MeterBrowseQtyWidth(), MeterBrowseRowHeight()));
 
@@ -648,7 +648,7 @@ namespace {
             } else {
                 value_text = IntToString(value);
             }
-            CUILabel* value_control = new CUILabel(value_text, GG::FORMAT_RIGHT);
+            auto value_control = new CUILabel(value_text, GG::FORMAT_RIGHT);
             push_back(value_control);
             value_control->Resize(GG::Pt(MeterBrowseValueWidth(), MeterBrowseRowHeight()));
 
@@ -869,7 +869,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     std::string bay_text = boost::io::str(FlexibleFormat(UserString("TT_BREAKDOWN_SUMMARY"))
                                           % UserString("SHIP_FIGHTER_BAY_SUMMARY")
                                           % ColouredInt(bay_total_capacity, false, BAY_COLOR));
-    GG::Label* bay_summary = new CUILabel(bay_text, GG::FORMAT_RIGHT);
+    auto bay_summary = new CUILabel(bay_text, GG::FORMAT_RIGHT);
     bay_summary->SetFont(ClientUI::GetBoldFont());
     bay_summary->MoveTo(GG::Pt(GG::X(EDGE_PAD), top));
     bay_summary->Resize(GG::Pt(ROW_WIDTH, m_row_height));
@@ -881,7 +881,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
                                              % ColouredInt(hangar_total_capacity, false, HANGAR_COLOR));
     hangar_text = boost::io::str(FlexibleFormat(UserString("TT_BREAKDOWN_SUMMARY"))
                                  % UserString("SHIP_FIGHTER_HANGAR_SUMMARY") % hangar_text);
-    GG::Label* hangar_summary = new CUILabel(hangar_text, GG::FORMAT_RIGHT);
+    auto hangar_summary = new CUILabel(hangar_text, GG::FORMAT_RIGHT);
     hangar_summary->SetFont(ClientUI::GetBoldFont());
     hangar_summary->MoveTo(GG::Pt(ROW_WIDTH + EDGE_PAD, top));
     hangar_summary->Resize(GG::Pt(ROW_WIDTH, m_row_height));
@@ -903,14 +903,14 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         std::string damage_label_text = boost::io::str(FlexibleFormat(UserString("TT_FIGHTER_DAMAGE"))
                                                        % launch_text % fighter_damage_text);
         // damage formula label
-        GG::Label* damage_label = new CUILabel(damage_label_text, GG::FORMAT_RIGHT);
+        auto damage_label = new CUILabel(damage_label_text, GG::FORMAT_RIGHT);
         damage_label->MoveTo(GG::Pt(GG::X(EDGE_PAD), top));
         damage_label->Resize(GG::Pt(LABEL_WIDTH + (QTY_WIDTH * 2) + (LABEL_WIDTH / 2) + (EDGE_PAD * 3), m_row_height));
         AttachChild(damage_label);
 
         std::string damage_value_text = DoubleToString(first_wave.damage, 3, false);
         // sum of damage formula label
-        GG::Label* damage_value = new CUILabel(ColourWrappedtext(damage_value_text, DAMAGE_COLOR), GG::FORMAT_RIGHT);
+        auto damage_value = new CUILabel(ColourWrappedtext(damage_value_text, DAMAGE_COLOR), GG::FORMAT_RIGHT);
         damage_value->MoveTo(GG::Pt(LABEL_WIDTH + (QTY_WIDTH * 2) + (LABEL_WIDTH / 2) + (EDGE_PAD * 4), top));
         damage_value->Resize(GG::Pt(VALUE_WIDTH, m_row_height));
         damage_value->SetFont(ClientUI::GetBoldFont());
@@ -960,14 +960,14 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         std::string detail_value_text = ColourWrappedtext(DoubleToString(last_bout.total_damage, 3, false), DAMAGE_COLOR);
         detail_label_text = boost::io::str(FlexibleFormat(UserString("TT_BREAKDOWN_SUMMARY"))
                                            % detail_label_text % detail_value_text);
-        GG::Label* detail_summary_damage = new CUILabel(detail_label_text, GG::FORMAT_RIGHT);
+        auto detail_summary_damage = new CUILabel(detail_label_text, GG::FORMAT_RIGHT);
         detail_summary_damage->MoveTo(GG::Pt(GG::X(EDGE_PAD), top));
         detail_summary_damage->Resize(GG::Pt(ROW_WIDTH + QTY_WIDTH + (LABEL_WIDTH / 2) + EDGE_PAD, m_row_height));
         detail_summary_damage->SetFont(ClientUI::GetBoldFont());
         AttachChild(detail_summary_damage);
 
         // empty space
-        GG::Label* detail_summary_launch = new CUILabel("", GG::FORMAT_RIGHT);
+        auto detail_summary_launch = new CUILabel("", GG::FORMAT_RIGHT);
         detail_summary_launch->MoveTo(GG::Pt(ROW_WIDTH + QTY_WIDTH + (LABEL_WIDTH / 2) + (EDGE_PAD * 2), top));
         detail_summary_launch->Resize(GG::Pt(VALUE_WIDTH + EDGE_PAD + (LABEL_WIDTH / 2), m_row_height));
         detail_summary_launch->SetFont(ClientUI::GetBoldFont());
@@ -984,7 +984,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             // combat round label
             std::string bout_text = boost::io::str(FlexibleFormat(UserString("TT_COMBAT_ROUND"))
                                                    % IntToString(current_bout.first));
-            GG::Label* bout_label = new CUILabel(bout_text, GG::FORMAT_RIGHT);
+            auto bout_label = new CUILabel(bout_text, GG::FORMAT_RIGHT);
             bout_label->MoveTo(GG::Pt(left, top));
             bout_label->Resize(GG::Pt((QTY_WIDTH * 2) + (EDGE_PAD * 3), m_row_height));
             AttachChild(bout_label);
@@ -994,7 +994,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             std::string formula_label_text = boost::io::str(FlexibleFormat(UserString("TT_FIGHTER_DAMAGE"))
                                                             % IntToString(bout.qty.attacking)
                                                             % fighter_damage_text);
-            GG::Label* formula_label = new CUILabel(formula_label_text, GG::FORMAT_RIGHT);
+            auto formula_label = new CUILabel(formula_label_text, GG::FORMAT_RIGHT);
             formula_label->MoveTo(GG::Pt(left, top));
             formula_label->Resize(GG::Pt(LABEL_WIDTH + (LABEL_WIDTH / 2), m_row_height));
             AttachChild(formula_label);
@@ -1002,7 +1002,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
             // sum of damage formula label
             std::string formula_value_text = DoubleToString(bout.damage, 3, false);
-            GG::Label* formula_value = new CUILabel(ColourWrappedtext(formula_value_text, DAMAGE_COLOR), GG::FORMAT_RIGHT);
+            auto formula_value = new CUILabel(ColourWrappedtext(formula_value_text, DAMAGE_COLOR), GG::FORMAT_RIGHT);
             formula_value->MoveTo(GG::Pt(left, top));
             formula_value->Resize(GG::Pt(VALUE_WIDTH, m_row_height));
             AttachChild(formula_value);
@@ -1010,7 +1010,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             left += VALUE_WIDTH + EDGE_PAD;
 
             // launched fighters label
-            GG::Label* launch_label = new CUILabel(UserString("TT_FIGHTER_LAUNCH"), GG::FORMAT_RIGHT);
+            auto launch_label = new CUILabel(UserString("TT_FIGHTER_LAUNCH"), GG::FORMAT_RIGHT);
             launch_label->MoveTo(GG::Pt(left, top));
             launch_label->Resize(GG::Pt((LABEL_WIDTH / 2) + EDGE_PAD, m_row_height));
             AttachChild(launch_label);
@@ -1020,7 +1020,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             std::string launch_text = boost::io::str(FlexibleFormat(UserString("TT_N_OF_N"))
                                                      % ColouredInt(bout.qty.launched, false, launch_clr)
                                                      % ColouredInt(previous_docked, false, HANGAR_COLOR));
-            GG::Label* launch_value = new CUILabel(launch_text, GG::FORMAT_RIGHT);
+            auto launch_value = new CUILabel(launch_text, GG::FORMAT_RIGHT);
             launch_value->MoveTo(GG::Pt(left, top));
             launch_value->Resize(GG::Pt(VALUE_WIDTH, m_row_height));
             AttachChild(launch_value);

@@ -169,7 +169,7 @@ TabWnd::TabWnd(X x, Y y, X w, Y h, const std::shared_ptr<Font>& font, Clr color,
     m_tab_bar(GetStyleFactory()->NewTabBar(font, color, text_color)),
     m_overlay(new OverlayWnd(X0, Y0, X1, Y1))
 {
-    Layout* layout = new Layout(X0, Y0, w, h, 2, 1);
+    auto layout = new Layout(X0, Y0, w, h, 2, 1);
     layout->SetRowStretch(1, 1.0);
     layout->Add(m_tab_bar, 0, 0);
     layout->Add(m_overlay, 1, 0);
