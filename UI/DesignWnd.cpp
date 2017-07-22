@@ -889,44 +889,43 @@ PartsListBox::PartsListBoxRow::PartsListBoxRow(GG::X w, GG::Y h) :
 void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) {
     if (wnds.empty())
         return;
-    const GG::Wnd* wnd = wnds.front();  // should only be one wnd in list because PartControls doesn't allow selection, so dragging is only one-at-a-time
-    const GG::Control* control = dynamic_cast<const GG::Control*>(wnd);
+    // should only be one wnd in list because PartControls doesn't allow selection, so dragging is
+    // only one-at-a-time
+    auto control = dynamic_cast<GG::Control*>(wnds.front());
     if (!control)
         return;
 
-    GG::Control* dragged_control = nullptr;
-
     // find control in row
-    unsigned int i = -1;
-    for (i = 0; i < size(); ++i) {
-        dragged_control = !empty() ? at(i) : nullptr;
-        if (dragged_control == control)
-            break;
-        else
-            dragged_control = nullptr;
+    unsigned int ii = 0;
+    for (; ii <= size(); ++ii) {
+        if (ii == size())
+            return;
+        if (empty())
+            continue;
+
+        if (at(ii) != control)
+            continue;
     }
 
-    if (!dragged_control)
+    RemoveCell(ii);  // Wnd that accepts drop takes ownership of dragged-away control
+
+    auto part_control = dynamic_cast<PartControl*>(control);
+    if (!part_control)
         return;
 
-    PartControl* part_control = dynamic_cast<PartControl*>(dragged_control);
-    const PartType* part_type = nullptr;
-    if (part_control)
-        part_type = part_control->Part();
+    const auto part_type = part_control->Part();
+    if (!part_type)
+        return;
 
-    RemoveCell(i);  // Wnd that accepts drop takes ownership of dragged-away control
-
-    if (part_type) {
-        auto new_part_control = GG::Wnd::Create<PartControl>(part_type);
-        const PartsListBox* parent = dynamic_cast<const PartsListBox*>(Parent().get());
-        if (parent) {
-            new_part_control->ClickedSignal.connect(
-                parent->PartTypeClickedSignal);
-            new_part_control->DoubleClickedSignal.connect(
-                parent->PartTypeDoubleClickedSignal);
-        }
-        SetCell(i, new_part_control);
+    auto new_part_control = GG::Wnd::Create<PartControl>(part_type);
+    const auto parent = dynamic_cast<const PartsListBox*>(Parent().get());
+    if (parent) {
+        new_part_control->ClickedSignal.connect(
+            parent->PartTypeClickedSignal);
+        new_part_control->DoubleClickedSignal.connect(
+            parent->PartTypeDoubleClickedSignal);
     }
+    SetCell(ii, new_part_control);
 }
 
 PartsListBox::PartsListBox(void) :
