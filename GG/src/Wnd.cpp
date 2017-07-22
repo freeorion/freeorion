@@ -39,7 +39,7 @@
 using namespace GG;
 
 namespace {
-    using namespace boost::multi_index;
+    namespace mi = boost::multi_index;
     struct GridLayoutWnd
     {
         GridLayoutWnd() :
@@ -80,14 +80,14 @@ namespace {
     struct LayoutTop {};
     struct LayoutRight {};
     struct LayoutBottom {};
-    typedef multi_index_container<
+    typedef mi::multi_index_container<
         GridLayoutWnd,
-        indexed_by<
-            ordered_unique<tag<Pointer>,            member<GridLayoutWnd, Wnd*, &GridLayoutWnd::wnd>>,
-            ordered_non_unique<tag<LayoutLeft>,     member<GridLayoutWnd, Pt,   &GridLayoutWnd::ul>, IsLeft>,
-            ordered_non_unique<tag<LayoutTop>,      member<GridLayoutWnd, Pt,   &GridLayoutWnd::ul>, IsTop>,
-            ordered_non_unique<tag<LayoutRight>,    member<GridLayoutWnd, Pt,   &GridLayoutWnd::lr>, IsRight>,
-            ordered_non_unique<tag<LayoutBottom>,   member<GridLayoutWnd, Pt,   &GridLayoutWnd::lr>, IsBottom>
+        mi::indexed_by<
+            mi::ordered_unique<mi::tag<Pointer>,            mi::member<GridLayoutWnd, Wnd*, &GridLayoutWnd::wnd>>,
+            mi::ordered_non_unique<mi::tag<LayoutLeft>,     mi::member<GridLayoutWnd, Pt,   &GridLayoutWnd::ul>, IsLeft>,
+            mi::ordered_non_unique<mi::tag<LayoutTop>,      mi::member<GridLayoutWnd, Pt,   &GridLayoutWnd::ul>, IsTop>,
+            mi::ordered_non_unique<mi::tag<LayoutRight>,    mi::member<GridLayoutWnd, Pt,   &GridLayoutWnd::lr>, IsRight>,
+            mi::ordered_non_unique<mi::tag<LayoutBottom>,   mi::member<GridLayoutWnd, Pt,   &GridLayoutWnd::lr>, IsBottom>
         >
     > GridLayoutWndContainer;
     typedef GridLayoutWndContainer::index<Pointer>::type::iterator      PointerIter;
