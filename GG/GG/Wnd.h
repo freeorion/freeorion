@@ -338,8 +338,8 @@ public:
     }
 
     /** CompleteConstruction() should be overriden to complete construction of derived classes that
-        need a fully formed weak_from_this() (i.e. to call AttachChild()) to be correctly constructed. */
-    virtual void CompleteConstruction(){};
+        need a fully formed weak_from_this() (e.g. to call AttachChild()) to be correctly constructed. */
+    virtual void CompleteConstruction() {};
 
     /** \name Accessors */ ///@{
     /** Returns true iff a click over this window does not pass through.  Note
