@@ -6317,7 +6317,7 @@ void MapWnd::RefreshFleetResourceIndicator() {
     m_fleet->SetValue(total_fleet_count);
     m_fleet->ClearBrowseInfoWnd();
     m_fleet->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_fleet->SetBrowseInfoWnd(std::make_shared<FleetDetailBrowseWnd>(
+    m_fleet->SetBrowseInfoWnd(GG::Wnd::Create<FleetDetailBrowseWnd>(
         empire_id, GG::X(FontBasedUpscale(200))));
 }
 
@@ -6337,7 +6337,7 @@ void MapWnd::RefreshResearchResourceIndicator() {
     double total_RP_wasted = total_RP_output - total_RP_spent;
     double total_RP_target_output = empire->GetResourcePool(RE_RESEARCH)->TargetOutput();
 
-    m_research->SetBrowseInfoWnd(std::make_shared<ResourceBrowseWnd>(
+    m_research->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
         UserString("MAP_RESEARCH_TITLE"), UserString("RESEARCH_INFO_RP"),
         total_RP_spent, total_RP_output, total_RP_target_output
     ));
@@ -6385,7 +6385,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     double total_PP_wasted = total_PP_output - total_PP_spent;
     double total_PP_target_output = empire->GetResourcePool(RE_INDUSTRY)->TargetOutput();
 
-    m_industry->SetBrowseInfoWnd(std::make_shared<ResourceBrowseWnd>(
+    m_industry->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
         UserString("MAP_PRODUCTION_TITLE"), UserString("PRODUCTION_INFO_PP"),
         total_PP_spent, total_PP_output, total_PP_target_output));
 
@@ -6439,7 +6439,7 @@ void MapWnd::RefreshPopulationIndicator() {
     }
 
     m_population->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_population->SetBrowseInfoWnd(std::make_shared<CensusBrowseWnd>(
+    m_population->SetBrowseInfoWnd(GG::Wnd::Create<CensusBrowseWnd>(
         UserString("MAP_POPULATION_DISTRIBUTION"), population_counts, tag_counts));
 }
 

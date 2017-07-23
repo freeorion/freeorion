@@ -807,7 +807,7 @@ void PartControl::CompleteConstruction()
 
     //DebugLogger() << "PartControl::PartControl part name: " << m_part->Name();
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
+    SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
         ClientUI::PartIcon(m_part->Name()),
         UserString(m_part->Name()),
         UserString(m_part->Description()) + "\n" + m_part->CapacityDescription()
@@ -3037,7 +3037,7 @@ void SlotControl::CompleteConstruction()
     else if (m_slot_type == SL_CORE)
         title_text = UserString("SL_CORE");
 
-    SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
+    SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
         SlotBackgroundTexture(m_slot_type),
         title_text,
         UserString("SL_TOOLTIP_DESC")
@@ -3232,7 +3232,7 @@ void SlotControl::SetPart(const PartType* part_type) {
         else if (m_slot_type == SL_CORE)
             title_text = UserString("SL_CORE");
 
-        m_part_control->SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
+        m_part_control->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
             ClientUI::PartIcon(part_type->Name()),
             UserString(part_type->Name()) + " (" + title_text + ")",
             UserString(part_type->Description())

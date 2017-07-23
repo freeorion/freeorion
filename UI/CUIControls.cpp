@@ -1422,7 +1422,7 @@ namespace {
             m_species_label = GG::Wnd::Create<CUILabel>(localized_name, GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             if (!species_desc.empty()) {
                 SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-                SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(species_icon, localized_name,
+                SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(species_icon, localized_name,
                                                                      species_desc));
             }
         }

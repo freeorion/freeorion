@@ -100,7 +100,7 @@ void SpecialsPanel::Update() {
             desc += "\n" + Dump(special->Effects());
         }
 
-        graphic->SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
+        graphic->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
             ClientUI::SpecialIcon(special->Name()), UserString(special->Name()), desc));
         m_icons[entry.first] = graphic;
 

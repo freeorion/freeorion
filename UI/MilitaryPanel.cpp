@@ -140,12 +140,11 @@ void MilitaryPanel::Update() {
     m_multi_icon_value_indicator->Update();
 
     // tooltips
-    std::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
-
     for (auto& meter_stat : m_meter_stats) {
         meter_stat.second->SetValue(obj->InitialMeterValue(meter_stat.first));
 
-        browse_wnd = std::make_shared<MeterBrowseWnd>(m_planet_id, meter_stat.first, AssociatedMeterType(meter_stat.first));
+        // TODO remove extra wrapping of shared_ptr after conversion to GG shared_ptr
+        auto browse_wnd = std::shared_ptr<GG::BrowseInfoWnd>(GG::Wnd::Create<MeterBrowseWnd>(m_planet_id, meter_stat.first, AssociatedMeterType(meter_stat.first)));
         meter_stat.second->SetBrowseInfoWnd(browse_wnd);
         m_multi_icon_value_indicator->SetToolTip(meter_stat.first, browse_wnd);
     }

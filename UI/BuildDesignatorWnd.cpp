@@ -268,8 +268,10 @@ namespace {
             }
 
             // create tooltip
-            return std::make_shared<IconTextBrowseWnd>(
-                ClientUI::BuildingIcon(item.name), title, main_text);
+            // TODO remove extra wrapping of shared_ptr after conversion to GG shared_ptr
+            return std::shared_ptr<IconTextBrowseWnd>(
+                GG::Wnd::Create<IconTextBrowseWnd>(
+                    ClientUI::BuildingIcon(item.name), title, main_text));
         }
 
         // production item is a ship
@@ -319,8 +321,10 @@ namespace {
                 }
 
             // create tooltip
-            return std::make_shared<IconTextBrowseWnd>(
-                ClientUI::ShipDesignIcon(item.design_id), title, main_text);
+            // TODO remove extra wrapping of shared_ptr after conversion to GG shared_ptr
+            return std::shared_ptr<GG::BrowseInfoWnd>(
+                GG::Wnd::Create<IconTextBrowseWnd>(
+                    ClientUI::ShipDesignIcon(item.design_id), title, main_text));
         }
 
         // other production item (?)
