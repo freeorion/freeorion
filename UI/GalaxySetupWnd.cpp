@@ -252,7 +252,7 @@ void GameRulesPanel::SettingChanged() {
 }
 
 GG::ListBox* GameRulesPanel::CreatePage(const std::string& name) {
-    GG::ListBox* page = new GameRulesList();
+    auto page = new GameRulesList();
     m_tabs->AddWnd(page, name);
     m_tabs->SetCurrentWnd(m_tabs->NumWnds() - 1);
     return page;
@@ -262,10 +262,10 @@ void GameRulesPanel::CreateSectionHeader(GG::ListBox* page, int indentation_leve
                                          const std::string& name, const std::string& tooltip)
 {
     assert(0 <= indentation_level);
-    GG::Label* heading_text = new CUILabel(name, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
+    auto heading_text = new CUILabel(name, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
     heading_text->SetFont(ClientUI::GetFont(ClientUI::Pts() * 4 / 3));
 
-    GG::ListBox::Row* row = new RuleListRow(Width(), heading_text->MinUsableSize().y + CONTROL_VMARGIN + 6,
+    auto row = new RuleListRow(Width(), heading_text->MinUsableSize().y + CONTROL_VMARGIN + 6,
                                             heading_text, indentation_level);
 
     if (!tooltip.empty()) {
@@ -279,9 +279,9 @@ void GameRulesPanel::CreateSectionHeader(GG::ListBox* page, int indentation_leve
 GG::StateButton* GameRulesPanel::BoolRuleWidget(GG::ListBox* page, int indentation_level,
                                                 const std::string& rule_name)
 {
-    GG::StateButton* button = new CUIStateButton(UserString(rule_name), GG::FORMAT_LEFT,
+    auto button = new CUIStateButton(UserString(rule_name), GG::FORMAT_LEFT,
                                                  std::make_shared<CUICheckBoxRepresenter>());
-    GG::ListBox::Row* row = new RuleListRow(Width(), button->MinUsableSize().y + CONTROL_VMARGIN + 6,
+    auto row = new RuleListRow(Width(), button->MinUsableSize().y + CONTROL_VMARGIN + 6,
                                             button, indentation_level);
 
     button->SetCheck(GetGameRules().Get<bool>(rule_name));
@@ -297,7 +297,7 @@ GG::StateButton* GameRulesPanel::BoolRuleWidget(GG::ListBox* page, int indentati
 GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_level,
                                              const std::string& rule_name)
 {
-    GG::Label* text_control = new CUILabel(UserString(rule_name), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
+    auto text_control = new CUILabel(UserString(rule_name), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
 
     std::shared_ptr<const ValidatorBase> validator = GetGameRules().GetValidator(rule_name);
     int value = GetGameRules().Get<int>(rule_name);
@@ -321,14 +321,14 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
     }
 
     spin->Resize(GG::Pt(SPIN_WIDTH, spin->MinUsableSize().y));
-    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, Width(), spin->MinUsableSize().y, 1, 2, 0, 5);
+    auto layout = new GG::Layout(GG::X0, GG::Y0, Width(), spin->MinUsableSize().y, 1, 2, 0, 5);
     layout->Add(spin, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
     layout->SetColumnStretch(1, 1.0);
     layout->SetChildClippingMode(ClipToClient);
 
-    GG::ListBox::Row* row = new RuleListRow(Width(), spin->MinUsableSize().y + CONTROL_VMARGIN + 6,
+    auto row = new RuleListRow(Width(), spin->MinUsableSize().y + CONTROL_VMARGIN + 6,
                                             layout, indentation_level);
     page->Insert(row);
 
@@ -345,7 +345,7 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
 GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indentation_level,
                                                    const std::string& rule_name)
 {
-    GG::Label* text_control = new CUILabel(UserString(rule_name), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
+    auto text_control = new CUILabel(UserString(rule_name), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
 
     std::shared_ptr<const ValidatorBase> validator = GetGameRules().GetValidator(rule_name);
     double value = GetGameRules().Get<double>(rule_name);
@@ -369,14 +369,14 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
     }
 
     spin->Resize(GG::Pt(SPIN_WIDTH, spin->MinUsableSize().y));
-    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, Width(), spin->MinUsableSize().y, 1, 2, 0, 5);
+    auto layout = new GG::Layout(GG::X0, GG::Y0, Width(), spin->MinUsableSize().y, 1, 2, 0, 5);
     layout->Add(spin, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
     layout->SetColumnStretch(1, 1.0);
     layout->SetChildClippingMode(ClipToClient);
 
-    GG::ListBox::Row* row = new RuleListRow(Width(), spin->MinUsableSize().y + CONTROL_VMARGIN + 6,
+    auto row = new RuleListRow(Width(), spin->MinUsableSize().y + CONTROL_VMARGIN + 6,
                                             layout, indentation_level);
     page->Insert(row);
 
@@ -398,7 +398,7 @@ namespace {
             GG::ListBox::Row(w, h, "", GG::ALIGN_VCENTER, 0)
         {
             GG::Wnd::SetName(key);
-            GG::Label* species_label = new CUILabel(UserString(key), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            auto species_label = new CUILabel(UserString(key), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             push_back(species_label);
         }
     };
@@ -407,12 +407,12 @@ namespace {
 GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indentation_level,
                                                    const std::string& rule_name)
 {
-    GG::Label* text_control = new CUILabel(UserString(rule_name), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
+    auto text_control = new CUILabel(UserString(rule_name), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
 
     std::shared_ptr<const ValidatorBase> validator = GetGameRules().GetValidator(rule_name);
     std::string value = GetGameRules().Get<std::string>(rule_name);
 
-    CUIDropDownList* drop = new CUIDropDownList(5);
+    auto drop = new CUIDropDownList(5);
     drop->Resize(GG::Pt(SPIN_WIDTH, drop->MinUsableSize().y));
 
     if (auto desc_val =
@@ -434,14 +434,14 @@ GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indent
     }
 
 
-    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, Width(), drop->MinUsableSize().y, 1, 2, 0, 5);
+    auto layout = new GG::Layout(GG::X0, GG::Y0, Width(), drop->MinUsableSize().y, 1, 2, 0, 5);
     layout->Add(drop, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
     layout->SetColumnStretch(1, 1.0);
     layout->SetChildClippingMode(ClipToClient);
 
-    GG::ListBox::Row* row = new RuleListRow(Width(), drop->MinUsableSize().y + CONTROL_VMARGIN + 6,
+    auto row = new RuleListRow(Width(), drop->MinUsableSize().y + CONTROL_VMARGIN + 6,
                                             layout, indentation_level);
     page->Insert(row);
 
