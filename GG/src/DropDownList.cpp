@@ -39,7 +39,7 @@
 
 using namespace GG;
 
-class ModalListPicker : public std::enable_shared_from_this<ModalListPicker>, public Control
+class ModalListPicker : public Control
 {
 public:
     typedef ListBox::iterator iterator;
@@ -154,7 +154,6 @@ namespace {
 // ModalListPicker
 ////////////////////////////////////////////////
 ModalListPicker::ModalListPicker(Clr color, const DropDownList* relative_to_wnd, size_t num_rows) :
-    std::enable_shared_from_this<ModalListPicker>(),
     Control(X0, Y0, GUI::GetGUI()->AppWidth(), GUI::GetGUI()->AppHeight(), INTERACTIVE | MODAL),
     m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(color, color)),
     m_num_shown_rows(std::max<std::size_t>(1, num_rows)),
@@ -187,7 +186,7 @@ ModalListPicker::~ModalListPicker()
 bool ModalListPicker::RunAndCheckSelfDestruction() {
 
     //    const std::shared_ptr<ModalListPicker> leash_holder_prevents_destruction = leash;
-    const std::shared_ptr<ModalListPicker> keep_alive = shared_from_this();
+    const auto keep_alive = shared_from_this();
 
     DropDownList::iterator old_current_item = CurrentItem();
     Wnd::Run();
@@ -270,7 +269,8 @@ void ModalListPicker::SignalChanged(boost::optional<DropDownList::iterator> it)
     if (!it)
         return;
 
-    const std::weak_ptr<const ModalListPicker> weak_this(shared_from_this());
+    // TODO: convert to weak_from_this() on upgrade to C++17
+    const std::weak_ptr<Wnd> weak_this(shared_from_this());
 
     if (Dropped()) {
         // There will be at least 2 shared_ptr, one held by parent and one by Run(), if the parent
