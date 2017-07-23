@@ -1923,7 +1923,7 @@ void SidePanel::PlanetPanel::Refresh() {
             }
 
             std::string info = visibility_info + "\n\n" + detection_info;
-            SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("METER_STEALTH"), info));
+            SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("METER_STEALTH"), info));
         }
         else if (visibility == VIS_BASIC_VISIBILITY) {
             visibility_info = UserString("PL_BASIC_VISIBILITY");
@@ -1948,7 +1948,7 @@ void SidePanel::PlanetPanel::Refresh() {
             }
 
             std::string info = visibility_info + "\n\n" + detection_info;
-            SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("METER_STEALTH"), info));
+            SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("METER_STEALTH"), info));
         }
     }
 

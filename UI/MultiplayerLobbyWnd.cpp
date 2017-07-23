@@ -252,7 +252,7 @@ namespace {
                                                              GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
                 at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-                at(5)->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+                at(5)->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                     m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
                     "", PlayerReadyBrowseWidth()));
                 if (HumanClientApp::GetApp()->Networking().PlayerIsHost(m_player_id)) {
@@ -307,7 +307,7 @@ namespace {
                                                              GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
                 at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-                at(5)->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+                at(5)->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                     m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
                     "", PlayerReadyBrowseWidth()));
             }
@@ -422,7 +422,7 @@ namespace {
                 push_back(GG::Wnd::Create<GG::StaticGraphic>(GetReadyTexture(m_player_data.m_player_ready),
                                                              GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-                at(5)->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+                at(5)->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                     m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
                     "", PlayerReadyBrowseWidth()));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));

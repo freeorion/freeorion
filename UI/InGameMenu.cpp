@@ -64,7 +64,7 @@ void InGameMenu::CompleteConstruction()
     if (!HumanClientApp::GetApp()->CanSaveNow()) {
         m_save_btn->Disable();
         m_save_btn->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_save_btn->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        m_save_btn->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("BUTTON_DISABLED"),
             UserString("SAVE_DISABLED_BROWSE_TEXT"),
             GG::X(400)

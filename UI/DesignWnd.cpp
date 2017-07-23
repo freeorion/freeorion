@@ -3980,17 +3980,17 @@ void DesignWnd::MainPanel::DesignChanged() {
     m_confirm_button->SetText(UserString("DESIGN_WND_ADD_FINISHED"));
 
     if (!m_hull) {
-        m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        m_replace_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("DESIGN_INVALID"), UserString("DESIGN_UPDATE_INVALID_NO_CANDIDATE")));
-        m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        m_confirm_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_HULL")));
         return;
     }
 
     if (client_empire_id == ALL_EMPIRES) {
-        m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        m_replace_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("DESIGN_INVALID"), UserString("DESIGN_INV_MODERATOR")));
-        m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        m_confirm_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("DESIGN_INVALID"), UserString("DESIGN_INV_MODERATOR")));
         return;
     }
@@ -3998,9 +3998,9 @@ void DesignWnd::MainPanel::DesignChanged() {
     if (!IsDesignNameValid()) {
         m_disabled_by_name = true;
 
-        m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        m_replace_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_NAME")));
-        m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        m_confirm_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_NAME")));
         return;
     }
@@ -4044,12 +4044,12 @@ void DesignWnd::MainPanel::DesignChanged() {
 
 
         if (m_disabled_by_part_conflict) {
-            m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+            m_replace_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                 UserString("DESIGN_COMPONENT_CONFLICT"),
                 boost::io::str(FlexibleFormat(UserString("DESIGN_COMPONENT_CONFLICT_DETAIL"))
                                % UserString(problematic_components.first)
                                % UserString(problematic_components.second))));
-            m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+            m_confirm_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                 UserString("DESIGN_COMPONENT_CONFLICT"),
                 boost::io::str(FlexibleFormat(UserString("DESIGN_COMPONENT_CONFLICT_DETAIL"))
                                % UserString(problematic_components.first)
@@ -4085,7 +4085,7 @@ void DesignWnd::MainPanel::DesignChanged() {
         if (cur_design && !(*cur_design == **replaced_saved_design)) {
             m_replace_button->SetText(UserString("DESIGN_WND_UPDATE_SAVED"));
             m_replace_button->SetBrowseInfoWnd(
-                std::make_shared<TextBrowseWnd>(
+                GG::Wnd::Create<TextBrowseWnd>(
                     UserString("DESIGN_WND_UPDATE_SAVED"),
                     boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_DETAIL_SAVED"))
                                    % (*replaced_saved_design)->Name()
@@ -4097,7 +4097,7 @@ void DesignWnd::MainPanel::DesignChanged() {
     if (producible && replaced_current_design) {
         if (!existing_design_name) {
             // A current design can be replaced if it doesn't duplicate an existing design
-            m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+            m_replace_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                 UserString("DESIGN_WND_UPDATE_FINISHED"),
                 boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_DETAIL_FINISHED"))
                                % (*replaced_current_design)->Name()
@@ -4105,7 +4105,7 @@ void DesignWnd::MainPanel::DesignChanged() {
             m_replace_button->Disable(false);
         } else {
             // Otherwise mark it as known.
-            m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+            m_replace_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                 UserString("DESIGN_KNOWN"),
                 boost::io::str(FlexibleFormat(UserString("DESIGN_KNOWN_DETAIL"))
                                % *existing_design_name)));
@@ -4119,7 +4119,7 @@ void DesignWnd::MainPanel::DesignChanged() {
         // A new saved design can always be created
         m_confirm_button->SetText(UserString("DESIGN_WND_ADD_SAVED"));
         m_confirm_button->SetBrowseInfoWnd(
-            std::make_shared<TextBrowseWnd>(
+            GG::Wnd::Create<TextBrowseWnd>(
                 UserString("DESIGN_WND_ADD_SAVED"),
                 boost::io::str(FlexibleFormat(UserString("DESIGN_WND_ADD_DETAIL_SAVED"))
                                % new_design_name)));
@@ -4127,7 +4127,7 @@ void DesignWnd::MainPanel::DesignChanged() {
     } else if (producible) {
         if (!existing_design_name) {
             // A new current can be added if it does not duplicate an existing design.
-            m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+            m_confirm_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                 UserString("DESIGN_WND_ADD_FINISHED"),
                 boost::io::str(FlexibleFormat(UserString("DESIGN_WND_ADD_DETAIL_FINISHED"))
                                % new_design_name)));
@@ -4135,7 +4135,7 @@ void DesignWnd::MainPanel::DesignChanged() {
 
         } else {
             // Otherwise the design is already known.
-            m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+            m_confirm_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                 UserString("DESIGN_KNOWN"),
                 boost::io::str(FlexibleFormat(UserString("DESIGN_KNOWN_DETAIL"))
                                % *existing_design_name)));
