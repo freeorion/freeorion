@@ -198,7 +198,7 @@ namespace Delauney {
                         // vector from point n to current point
                         vx = points[num].x - points[n].x;
                         vy = points[num].y - points[n].y;
-                        mag = sqrt(vx*vx + vy*vy);
+                        mag = std::sqrt(vx*vx + vy*vy);
                         // normalize
                         vx /= mag;
                         vy /= mag;
