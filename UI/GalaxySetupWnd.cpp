@@ -81,21 +81,21 @@ namespace {
         RuleListRow(GG::X w, GG::Y h, RowContentsWnd* contents) :
             GG::ListBox::Row(w, h, ""),
             m_contents(contents)
-        {
-            SetChildClippingMode(ClipToClient);
-            if (m_contents)
-                push_back(m_contents);
-        }
+        {}
 
         RuleListRow(GG::X w, GG::Y h, Wnd* contents, int indentation = 0) :
             GG::ListBox::Row(w, h, ""),
             m_contents(nullptr)
         {
-            SetChildClippingMode(ClipToClient);
-            if (contents) {
+            if (contents)
                 m_contents = GG::Wnd::Create<RowContentsWnd>(w, h, contents, indentation);
+        }
+
+        void CompleteConstruction() override {
+            GG::ListBox::Row::CompleteConstruction();
+            SetChildClippingMode(ClipToClient);
+            if (m_contents)
                 push_back(m_contents);
-            }
         }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
@@ -404,7 +404,11 @@ namespace {
             GG::ListBox::Row(w, h, "", GG::ALIGN_VCENTER, 0)
         {
             GG::Wnd::SetName(key);
-            auto species_label = GG::Wnd::Create<CUILabel>(UserString(key), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+        }
+
+        void CompleteConstruction() override {
+            GG::ListBox::Row::CompleteConstruction();
+            auto species_label = GG::Wnd::Create<CUILabel>(UserString(Name()), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             push_back(species_label);
         }
     };
