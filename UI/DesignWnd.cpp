@@ -265,8 +265,7 @@ namespace {
     /** Add \p design to the \p is_front of \p empire_id's list of current designs. */
     void AddSavedDesignToCurrentDesigns(
         const boost::uuids::uuid& uuid, const int empire_id,
-        const bool is_front = true,
-        const bool suppress_immediate_execution = false)
+        const bool is_front = true)
     {
         const auto empire = GetEmpire(empire_id);
         if (!empire) {
@@ -306,8 +305,7 @@ namespace {
         current_manager.InsertBefore(new_design_id, before_id);
 
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ShipDesignOrder>(empire_id, new_design_id, new_current_design),
-            suppress_immediate_execution);
+            std::make_shared<ShipDesignOrder>(empire_id, new_design_id, new_current_design));
     }
 
     /** Set whether a currently known design is obsolete or not. Not obsolete means that it is
@@ -658,7 +656,7 @@ ShipDesignManager::ShipDesignManager() :
 ShipDesignManager::~ShipDesignManager()
 {}
 
-void ShipDesignManager::StartGame(int empire_id) {
+void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
     auto empire = GetEmpire(empire_id);
     if (!empire) {
         ErrorLogger() << "Unable to initialize ShipDesignManager because empire id, " << empire_id << ", is invalid";
@@ -674,11 +672,8 @@ void ShipDesignManager::StartGame(int empire_id) {
     auto saved_designs = dynamic_cast<SavedDesignsManager*>(m_saved_designs.get());
     saved_designs->LoadDesignsFromFileSystem();
 
-    // Prevent orders issued here from being executed twice, once here and again in MapWnd::InitTurn()
-    bool suppress_immediate_execution = true;
-
-    // Skip the remainder for loaded games
-    if (HumanClientApp::GetApp()->CurrentTurn() != 1)
+    // Only setup saved and current designs for new games
+    if (!is_new_game)
         return;
 
     // If requested initialize the current designs to all designs known by the empire
@@ -686,6 +681,7 @@ void ShipDesignManager::StartGame(int empire_id) {
 
         // Assume that on new game start the server assigns the ids in an order
         // that makes sense for the UI.
+        DebugLogger() << "Add default designs to empire.";
         const auto& ids = empire->ShipDesigns();
         std::set<int> ordered_ids(ids.begin(), ids.end());
 
@@ -698,16 +694,16 @@ void ShipDesignManager::StartGame(int empire_id) {
         const auto ids = empire->ShipDesigns();
         for (const auto design_id : ids) {
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, design_id, true),
-            suppress_immediate_execution);
+                std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
         }
     }
 
     // If requested on the first turn copy all of the saved designs to the client empire.
     if (GetOptionsDB().Get<bool>("auto-add-saved-designs")) {
+
         DebugLogger() << "Adding saved designs to empire.";
         for (const auto& uuid : saved_designs->OrderedDesignUUIDs())
-            AddSavedDesignToCurrentDesigns(uuid, empire_id, false, suppress_immediate_execution);
+            AddSavedDesignToCurrentDesigns(uuid, empire_id, false);
     }
 
 }

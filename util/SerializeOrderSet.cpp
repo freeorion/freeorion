@@ -14,6 +14,8 @@
 ////////////////////////////////////////////////////////////
 
 // exports for boost serialization of polymorphic Order hierarchy
+BOOST_CLASS_EXPORT(Order)
+BOOST_CLASS_VERSION(Order, 1)
 BOOST_CLASS_EXPORT(RenameOrder)
 BOOST_CLASS_EXPORT(NewFleetOrder)
 BOOST_CLASS_EXPORT(FleetMoveOrder)
@@ -34,8 +36,15 @@ BOOST_CLASS_EXPORT(ForgetOrder)
 template <class Archive>
 void Order::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_empire)
-        & BOOST_SERIALIZATION_NVP(m_executed);
+    ar  & BOOST_SERIALIZATION_NVP(m_empire);
+    /** m_executed is intentionally not serialized so that orders always deserialize with m_execute
+      = false.  See class comment for OrderSet.
+      ar    & BOOST_SERIALIZATION_NVP(m_executed); */
+    if (Archive::is_loading::value && version < 1) {
+        bool dummy_executed;
+        ar  & boost::serialization::make_nvp("m_executed", dummy_executed);
+    }
+
 }
 
 template <class Archive>

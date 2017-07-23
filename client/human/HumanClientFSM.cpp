@@ -718,9 +718,10 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
 
     GetGameRules().SetFromStrings(Client().GetGalaxySetupData().GetGameRules());
 
-    Client().StartGame();
+    bool is_new_game = !(loaded_game_data && ui_data_available);
+    Client().StartGame(is_new_game);
 
-    if (loaded_game_data && ui_data_available)
+    if (!is_new_game)
         Client().GetClientUI().RestoreFromSaveData(ui_data);
 
     // if I am the host on the first turn, do an autosave. on later turns, will
