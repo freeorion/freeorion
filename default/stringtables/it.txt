@@ -4,6 +4,7 @@ Italiano
 #
 # Translators:
 # * Claudio Giordano <claudio.giordano(at)autistici.org>
+# * Stefano Peris <lordstephen77@gmail.com>, <https://github.com/LordStephen77>
 #
 # Notes: to avoid potential conflict with functional keys in other files, do not
 # make any stringtable keys beginning with "FUNCTIONAL_".
@@ -157,7 +158,7 @@ SD_MARK_1
 Mark I
 
 SD_MARK1_DESC
-Fregata da pattugliamento di base armata di cannone a rotaia.
+Fregata da pattugliamento base armata di cannone a rotaia.
 
 SD_MARK_2
 Mark II
@@ -169,7 +170,7 @@ SD_MARK_3
 Mark III
 
 SD_MARK3_DESC
-Fregata da pattugliamento di base armata di laser.
+Fregata da pattugliamento base armata di laser.
 
 SD_MARK_4
 Mark IV
@@ -202,7 +203,7 @@ SD_OUTPOST_BASE
 Base Avamposto
 
 SD_OUTPOST_BASE_DESC
-Unarmed vessel capable of creating an outpost in the system where it is produced.
+Nave disarmata capace di creare un avamposto nel sistema in cui viene prodotta.
 
 SD_TROOP_SHIP
 Nave Truppa
@@ -276,16 +277,16 @@ NON_HOST_SAVE_REQUEST_IGNORED
 Il server ha ricevuto una richiesta di salvataggio gioco non valida dal vostro client. Non sei il sistema ospite, quindi non è possibile salvare il gioco.
 
 UNABLE_TO_WRITE_CONFIG_XML
-Errore scrivendo il file config.xml. Imposssibile salvare le opzioni.
+Errore di scrittura per il file config.xml. Impossibile salvare le opzioni.
 
 UNABLE_TO_READ_CONFIG_XML
-Errore leggendo il file config.xml. Vengono usate le opzioni predefinite.
+Errore di lettura per il file config.xml. Verranno usate le opzioni predefinite.
 
 UNABLE_TO_WRITE_SAVE_FILE
-Errore scrivendo il file del salvataggio.
+Errore di scrittura per il file di salvataggio.
 
 UNABLE_TO_READ_SAVE_FILE
-Errore leggendo il file del salvataggio.
+Errore di lettura per il file di salvataggio.
 
 EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS
 Non controlli un impero e quindi non puoi dare ordini.
@@ -329,7 +330,7 @@ OPTIONS_DB_BG_MUSIC
 Imposta la traccia da riprodurre per il sottofondo musicale.
 
 OPTIONS_DB_FULLSCREEN
-Avvia il gioco in modalità schermo intero. Potrebbe essere necessario riavviare il gioco perchè abbia effetto.
+Avvia il gioco in modalità schermo intero. Potrebbe essere necessario riavviare il gioco affinchè le modifiche abbiano effetto.
 
 OPTIONS_DB_GALAXY_MAP_GAS
 Rendering della sostanza gassosa per determinare la forma della galassia. Può rallentare il rendering su vecchi sistemi.
@@ -347,7 +348,7 @@ OPTIONS_DB_STARLANE_CORE
 Moltiplicatore di larghezza delle linee stellari per il cuore dell'impero.
 
 OPTIONS_DB_RESOURCE_STARLANE_COLOURING
-Assegna alle rotte i colori dell'Impero che può utilizzarle per il commercio.
+Assegna alle rotte i colori dell'Impero che può utilizzare per il commercio.
 
 OPTIONS_DB_UNOWNED_STARLANE_COLOUR
 Imposta i colori predefiniti delle rotte.
@@ -356,7 +357,7 @@ OPTIONS_DB_FLEET_SUPPLY_LINES
 Assegna alle rotte di rifornimento gli indicatori colorati dell'Impero
 
 OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH
-Imposta la larghezza in pixels da visulaizzare per le rotte di rifornimento.
+Imposta la larghezza in pixels da visualizzare per le rotte di rifornimento.
 
 OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING
 Imposta la distanza dei punti da visualizzare sulle linee di rifornimento.
@@ -392,7 +393,7 @@ OPTIONS_DB_LIMIT_FPS
 Attiva il limite dei FPS (1 o 0). Il limite è impostato con l'opzione Max FPS.
 
 OPTIONS_DB_MAX_FPS
-Iposta il limite dei FPS, se abilitato. è attivato con Limit FPS.
+Imposta il limite dei FPS, se abilitato. è attivato con Limit FPS.
 
 OPTIONS_DB_UI_SOUND_VOLUME
 Il volume (0 - 255) con il quale vengono riprodotti gli effetti sonori.
@@ -407,7 +408,7 @@ OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK
 Il file audio riprodotto quando viene cliccato il pulsante di fine turno.
 
 OPTIONS_DB_UI_SOUND_LIST_SELECT
-Il file audio riprodotto quando viene selezionata un lista od un menu a discesa.
+Il file audio riprodotto quando viene selezionata una lista oppure un menu a discesa.
 
 OPTIONS_DB_UI_SOUND_ITEM_DROP
 Il file audio riprodotto quando un elemento viene rilasciato in una lista.
@@ -449,7 +450,7 @@ OPTIONS_DB_UI_FONT
 Imposta il file del font.
 
 OPTIONS_DB_UI_FONT_BOLD
-Imposta il file del font grassetto.
+Imposta il file del font in grassetto.
 
 OPTIONS_DB_UI_FONT_SIZE
 Imposta la dimensione del font per l'interfaccia.
@@ -482,7 +483,7 @@ OPTIONS_DB_UI_STATE_BUTTON_COLOR
 Imposta il colore dei pulsanti selezionati.
 
 OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR
-Imposta il colore delle freccie per i menu a discesa.
+Imposta il colore delle frecce per i menu a discesa.
 
 OPTIONS_DB_UI_EDIT_HILITE
 Imposta il colore di selezione nei controlli di modifica del testo.
@@ -569,7 +570,7 @@ OPTIONS_DB_UI_TOOLTIP_DELAY
 Imposta il ritardo del tooltip, in ms.
 
 OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
-Se Attivato, un click sul pulsante di flotta multipla aprirà multiple finestre contemporaneamente. Altrimenti l'apertura di una causerà la chiusura di qualunque altra correntemente aperta.
+Se attivato, un click sul pulsante di flotta multipla aprirà più finestre contemporaneamente. Altrimenti l'apertura di una causerà la chiusura di qualunque altra correntemente aperta.
 
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
 Chiude le finestre aperte quando viene cliccato il pulsante destro del mouse sulla mappa.
@@ -619,7 +620,7 @@ OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
 La spaziatura orizzontale fra tecnologie nell'albero tecnologico, in multipli della larghezza di ogni singola tecnologia.
 
 OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING
-La spaziatura verticale fra tecnologie nell'albero tecnologico, in multipli dell altezza di ogni singola tecnologia.
+La spaziatura verticale fra tecnologie nell'albero tecnologico, in multipli dell'altezza di ogni singola tecnologia.
 
 OPTIONS_DB_SAVE_DIR
 Imposta la cartella dove risiedono i salvataggi. I nomi delle cartelle sono considerati relativi alla posizione dell'applicazione.
@@ -637,10 +638,10 @@ OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
 Salvataggi automatici per la modalità giocatore singolo.
 
 OPTIONS_DB_AUTOSAVE_MULTIPLAYER
-Salvataggi automatici per la modalità Multigiocatore.
+Salvataggi automatici per la modalità multigiocatore.
 
 OPTIONS_DB_AUTOSAVE_TURNS
-Imposta il numero di turnida attendere fra due salvataggi automatici.
+Imposta il numero di turni da attendere fra due salvataggi automatici.
 
 OPTIONS_DB_MUSIC_VOLUME
 Il volume (da 0 a 255) per la musica durante la partita.
@@ -729,10 +730,10 @@ SCONNECT_WINDOW_TITLE
 Connessione al server
 
 LAN_GAME_LABEL
-Partita in rete su:
+Partita in rete locale (LAN):
 
 INTERNET_GAME_LABEL
-Partita su internet su:
+Partita su internet:
 
 PLAYER_NAME_LABEL
 Nome Giocatore
@@ -929,7 +930,7 @@ VISION
 Visione
 
 FREEORION_VISION
-'''FreeOrion, un gioco open-source basato su Master of Orion, è un gioco epico spaziale di strategia a turni che si basa sul classico modello '4X' che prevede la costruzione degli elementi di gioco come Europa Universalis 2 ed un versatile motore della battaglia. Mentre la sua struttura open-source modulare permette un notevole grado di personalizzazione del motore di gioco e degli elementi della storia da parte della comunità, la squadra di FreeOrion si è dedicata alla costruzione di un modello di 'grande campagna' in un universo vivibile e di grande respiro. '''
+'''FreeOrion, è un gioco open-source ispirato a Master of Orion, è un gioco epico spaziale di strategia a turni che si basa sul classico modello '4X' che prevede la costruzione degli elementi di gioco come Stellaris e contiene un versatile motore di battaglia. Mentre la sua struttura open-source e modulare permette un notevole grado di personalizzazione del motore di gioco e degli elementi della storia da parte della comunità, la squadra di FreeOrion si è dedicata alla costruzione di un modello di 'grande campagna' in un universo vivibile e di grande respiro. '''
 
 
 ##
@@ -1022,7 +1023,7 @@ OPTIONS_VIDEO_MODE_WINDOWED
 Modalità video in finestra (richiede riavvio)
 
 OPTIONS_VIDEO_MODE_WINDOWED_SPINNERS_DESCRIPTION
-Imposta larghezza ed altezza della modalità a finetra. Questa modalità utilizza i bit per pixel della modalità schermo intero.
+Imposta larghezza ed altezza della modalità a finetra. Questo sistema utilizza i bit per pixel della modalità schermo intero.
 
 OPTIONS_APP_WIDTH_WINDOWED
 Larghezza finestra
@@ -1148,7 +1149,7 @@ OPTIONS_UI_SOUNDS
 Suoni Interfaccia
 
 OPTIONS_BACKGROUND_MUSIC
-Musica
+Musica di sottofondo
 
 OPTIONS_SOUNDS
 Suoni
@@ -1770,7 +1771,7 @@ TECH_WND_ENQUEUED
 Accodato
 
 TECH_WND_UNRESEARCHED_PREREQUISITES
-'''Prerequisiti Non Ricercati: '''
+'''Prerequisiti non Ricercati: '''
 
 TECH_WND_VIEW_TYPE
 Ad Albero / Come Lista
@@ -1810,7 +1811,7 @@ RESEARCH_INFO_RP
 PR
 
 RESEARCH_QUEUE_PROMPT
-Doppio click o Maiuscolo-click su un elemento disponibile per aggiungerlo alla coda di ricerca.
+Doppio click oppure Shift-click su un elemento disponibile per aggiungerlo alla coda di ricerca.
 
 
 ##
@@ -1917,7 +1918,7 @@ ENC_SUITABILITY_REPORT_POSITIVE_HEADER
 
 # %1% name of the planet.
 ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
-'''%1% non è adatto per la colonizzazione da parte di queste specie. I tentativi di colonizzazione falliranno o alla fine si estinguerà la colonia. 
+'''%1% non è adatto per la colonizzazione da parte di queste specie. I tentativi di colonizzazione falliranno oppure alla fine si estinguerà la colonia.
 
 '''
 
@@ -2092,18 +2093,18 @@ Industria
 METER_INDUSTRY_VALUE_DESC
 '''L'industria rappresenta la produzione e la modifica di beni fisici. È necessaria per la produzione di edifici, navi spaziali e altri progetti.
 
-L'industria di un pianeta può essere utilizzato per qualsiasi progetto di produzione di [[enciclopedia SUPPLY_TITLE]] linea pianeti collegati. La produzione di qualunque industria non in funzione viene sprecata ad ogni turno.
+L'industria di un pianeta può essere utilizzata per qualsiasi progetto di produzione di [[enciclopedia SUPPLY_TITLE]] linea pianeti collegati. La produzione di qualunque industria non in funzione viene sprecata ad ogni turno.
 
 Ogni progetto ha un numero minimo di turni necessari per essere costruito. Per esempio, se un progetto che è costato 15 PP, e ha avuto un tempo minimo di 3 giri, 5 PPS è il massimo che potrebbe essere messo verso il suo completamento per turno.
-Il progetto nella parte superiore della coda è dato PP prima. Qualunque PP rimanenti vengono poi dato al progetto successivo in coda, e se vi è ancora più attuale dalla prossima - e così via. È possibile modificare la priorità gli elementi della coda trascinando gli elementi più importanti più vicino alla cima.
+Il progetto nella parte superiore della coda è dato PP prima. Qualunque PP rimanenti vengono poi dati al progetto successivo in coda, e se vi è ancora più attuale dalla prossima - e così via. È possibile modificare la priorità degli elementi della coda trascinando gli elementi più importanti più vicini alla cima.
 '''
 
 METER_RESEARCH_VALUE_LABEL
 Ricerca
 
 METER_RESEARCH_VALUE_DESC
-'''La ricerca (o PR "Punti Ricerca") di tutti i pianeti dell'impero è combinata per la scoperta di nuove tecnologie. Qualsiasi punto ricerca che non possa essere speso per ricercare una tecnologia è perso ad ogni turno. Ogni tecnologia ha un numero minimo di turni richiesto per essere ricercato. Per esempio, se una tecnologia che costa 15 PR e riechiede un tempo minimo di 3 turni, 5 PR è il massimo per turno che può essere assegnato il suo completamento.
-Alla tecnologia in cima alla coda è assegnata la priorità di ricerca con il massimo numero di PR consentito.  Ogni PR restante è poi fornito alla prossima tecnologia in coda, stessa cosa dicasi per la tecnologia successiva - e così via. È possibile modificare la priorità degli elementi della coda trascinando gli elementi più importanti più vicino alla cima.
+'''La ricerca (o PR "Punti Ricerca") di tutti i pianeti dell'impero è combinata per la scoperta di nuove tecnologie. Qualsiasi punto ricerca che non possa essere speso per ricercare una tecnologia è perso ad ogni turno. Ogni tecnologia ha un numero minimo di turni richiesto per essere ricercato. Per esempio, se una tecnologia che costa 15 PR e riechiede un tempo minimo di 3 turni, 5 PR è il massimo per turno che può essere assegnato al suo completamento.
+Alla tecnologia in cima alla coda è assegnata la priorità di ricerca con il massimo numero di PR consentito.  Ogni PR restante è poi fornito alla prossima tecnologia in coda, stessa cosa dicasi per la tecnologia successiva - e così via. È possibile modificare la priorità degli elementi della coda trascinando gli elementi più importanti più vicini alla cima.
 
 La ricerca non richiede la connessione di linee[[metertype METER_SUPPLY]] per essere utilizzata.'''
 
@@ -2131,7 +2132,7 @@ Scudi
 METER_SHIELD_VALUE_DESC
 '''Il termine scudi combina tutti i tipi di campi di forza protettivi. Vengono rigenerati ad ogni turno e solitamente sono le prime protezioni che gli attacchi in arrivo devono superare. Ci sono due tipi distinti di scudi che funzionano in modo molto diverso: scudi nave e scudi barriera planetari.
 
- Scudi nave: Riducono il danno sostenuto da ciascun colpo tramite la resistenza agli attacchi della parte di scudo. Un'arma può penetrare uno scudo solo se il valore del suo danno è superiore alla resistenza dello scudo.
+ Scudi nave: Riducono il danno sostenuto da ciascun colpo tramite la resistenza agli attacchi della parte di scudo. Un'arma può penetrare uno scudo solo se il valore del suo danno è superiore alla resistenza dello scudo stesso.
 
 Scudi barriera planetari: Funzionano come una sorta di armatura planetaria. La loro forza è ridotta ad ogni colpo fino a quando non si esauriscono del tutto, ulteriori colpi potranno finalmente riuscire a superare le difese e danneggiare le strutture planetarie. Gli scudi barriera planetari rigenerano la loro forza ogni turno di un certo valore.
 
@@ -2141,7 +2142,7 @@ METER_DEFENSE_VALUE_LABEL
 Difesa
 
 METER_DEFENSE_VALUE_DESC
-Il misuratore difesa di un pianeta rappresenta il potere delle armi installate dalla terra rivolte verso lo spazio. E' paragonabile al valore di danno di una nave spaziale.
+Il misuratore difesa di un pianeta rappresenta il potere delle armi installate sulla terra rivolte verso lo spazio. E' paragonabile al valore di danno di una nave spaziale.
 
 METER_SUPPLY_VALUE_LABEL
 Rifornimenti
@@ -2158,7 +2159,7 @@ METER_DETECTION_VALUE_LABEL
 Raggio di Rilevamento
 
 METER_DETECTION_VALUE_DESC
-'''Il Raggio di Rilevamento rappresenta il numero di uu che isensori possono raggiungere. Un impero può vedere solo gli oggetti che hanno un valore di [[metertype METER_STEALTH]] inferiore o uguale alla sua [[encyclopedia DETECTION_TITLE]] e si trova nel Raggio di Rilevamento controllato da una nave spaziale o pianeta.
+'''Il Raggio di Rilevamento rappresenta il numero di uu che i sensori possono raggiungere. Un impero può vedere solo gli oggetti che hanno un valore di [[metertype METER_STEALTH]] inferiore o uguale alla sua [[encyclopedia DETECTION_TITLE]] e si trova nel Raggio di Rilevamento controllato da una nave spaziale o pianeta.
 
 Navi spaziali e pianeti hanno un misuratore di Raggio di Rilevamento. C'è l'opzione per visualizzare i cerchi del Raggio di Rilevamento nella sezione Mappa Galassia del menu Opzioni.'''
 
@@ -2171,12 +2172,12 @@ METER_STEALTH_VALUE_DESC
 Navi spaziali, strutture, speciali, sistemi e pianeti hanno un misuratore di Occultamento.'''
 
 METER_DETECTION_STRENGTH_VALUE_LABEL
-Forza di Rlevamento
+Forza di Rilevamento
 
 METER_DETECTION_STRENGTH_VALUE_DESC
 '''Il termine Forza di Rilevamento rappresenta il livello tecnologico dei sensori di un impero. Un impero può vedere solo gli oggetti che hanno un valore di [[metertype METER_STEALTH]] inferiore o uguale alla sua Forza di Rlevamento e sono all'interno di un [[metertype METER_DETECTION]] controllato da una nave spaziale o un pianeta.
 
-Gli imperi hanno un misuratore di Forza di Rlevamento.'''
+Gli imperi hanno un misuratore di Forza di Rilevamento.'''
 
 
 PEACE_TITLE
@@ -2189,13 +2190,13 @@ OUTPOSTS_TITLE
 Avamposti
 
 OUTPOSTS_TEXT
-Gli avamposti sono stazioni non presidiate che possono essere fondati in luoghi troppo ostili per la sopravvivenza di una colonia. Non hanno popolazione e di norma non producono risorse. Ma creano [[metertype METER_SUPPLY]] (con la giusta tecnologia) e forniscono la visione. Le colonie possono essere fondate su pianeti che hanno già un avamposto. Per costruire un avamposto, è necessario mettere un [[shippart CO_OUTPOST_POD]] su una nave. Gli avamposti si possono creare anche quando la popolazione di una colonia scende a zero per qualsiasi motivo.
+Gli avamposti sono stazioni non presidiate che possono essere fondate in luoghi troppo ostili per la sopravvivenza di una colonia. Non hanno popolazione e di norma non producono risorse. Ma creano [[metertype METER_SUPPLY]] (con la giusta tecnologia) e forniscono la visione. Le colonie possono essere fondate su pianeti che hanno già un avamposto. Per costruire un avamposto, è necessario mettere un [[shippart CO_OUTPOST_POD]] su una nave. Gli avamposti si possono creare anche quando la popolazione di una colonia scende a zero per qualsiasi motivo.
 
 GROWTH_FOCUS_TITLE
 Focus sulla Crescita
 
 GROWTH_FOCUS_TEXT
-Il focus sulla crescita rappresenta l'esportazione di materiali rari e sostanze che aiutano la crescita della popolazione di una determinata specie. È disponibile solo in determinate situazioni: su alcuni mondi e su pianeti con speciali caratteristiche di crescita. Un pianeta incentrato sulla crescita aumenta la popolazione massima solo su altri pianeti ad esso collegati da linee di [[enciclopedia SUPPLY_TITLE]]. Un pianeta natale focalizzato sulla crescita aiuta solo altri pianeti della stessa specie. Pianeti con caratteristiche speciali di crescita concentrandosi sulla crescita, fà progredire lo sviluppo di una singola specie, per esempio, alcuni aiutano lo sviluppo delle specie organiche.
+Il focus sulla crescita rappresenta l'esportazione di materiali rari e sostanze che aiutano la crescita della popolazione di una determinata specie. È disponibile solo in determinate situazioni: su alcuni mondi e su pianeti con speciali caratteristiche di crescita. Un pianeta incentrato sulla crescita aumenta la popolazione massima solo su altri pianeti ad esso collegati da linee di [[enciclopedia SUPPLY_TITLE]]. Un pianeta natale focalizzato sulla crescita aiuta solo altri pianeti della stessa specie. Pianeti con caratteristiche speciali di crescita, fanno progredire lo sviluppo di una singola specie, per esempio, alcuni aiutano lo sviluppo delle specie organiche.
 
 TRADE_FOCUS_TITLE
 Focus sul Commercio
@@ -2207,13 +2208,13 @@ PROTECTION_FOCUS_TITLE
 Focus sulla Protezione
 
 PROTECTION_FOCUS_TEXT
-Il focus sulla protezione rappresenta un pianeta interamente dedicato sulla sua difesa.  [[metertype METER_TROOPS]], [[metertype METER_DEFENSE]] planetaria e [[metertype METER_SHIELD]] planetari sono raddoppiati.
+Il focus sulla protezione rappresenta un pianeta interamente dedicato alla sua difesa.  [[metertype METER_TROOPS]], [[metertype METER_DEFENSE]] planetaria e [[metertype METER_SHIELD]] planetari sono raddoppiati.
 
 ORGANIC_SPECIES_TITLE
 Metabolismo Organico
 
 ORGANIC_SPECIES_TEXT
-Le specie organiche sono, 'la vita come noi la conosciamo', più o meno.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Organic Growth Special is colonized, and focused on Growth.  Organic Growth specials are marked with a little green 'O' in the corner.
+Le specie organiche sono, 'la vita come noi la conosciamo', più o meno. Queste popolazioni possono essere aumentate al massimo quando il loro mondo connesso è impostato a [[encyclopedia GROWTH_FOCUS_TITLE]], oppure quando è colonizzata una crescita organica speciale, e si è concentrati sulla crescita. Le specialità di crescita biologica sono contrassegnate con un po 'di verde 'O' all'angolo.
 
 LITHIC_SPECIES_TITLE
 Metabolismo Litico
@@ -2259,7 +2260,7 @@ TURN_PROGRESS_PHASE_WAITING
 Attesa mosse avversarie ...
 
 TURN_PROGRESS_PHASE_ORDERS
-Esecuzione Ordini
+Esecuzione ordini
 
 TURN_PROGRESS_COLONIZE_AND_SCRAP
 Colonizzazione, Invasione e Rottamazione
@@ -2363,10 +2364,10 @@ CONDITION_HOMEWORLD
 Pianeta Natale
 
 CONDITION_HASSPECIAL
-Ha Speciali
+Condizioni Speciali
 
 CONDITION_HASTAG
-Ha Contrassegno
+Condizione Contrassegno
 
 CONDITION_SPECIES
 Name Specie
@@ -2433,64 +2434,64 @@ COMBAT
 Combattimento
 
 SITREP_OBJECT_DESTROYED_AT_SYSTEM
-Un oggetto è stato distrutto a %system%.
+Un oggetto è stato distrutto da %system%.
 
 SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL
 Oggetto Distrutto
 
 SITREP_SHIP_DESTROYED_AT_SYSTEM
-The %empire% %shipdesign% '%ship%' è stata distrutta a %system%.
+The %empire% %shipdesign% '%ship%' è stata distrutta da %system%.
 
 SITREP_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Nave dell'Impero Distrutta
 
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM
-Un %shipdesign% è stato distrutto a %system%.
+Un %shipdesign% è stato distrutto da %system%.
 
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Nave Sconosciuta Distrutta
 
 SITREP_FLEET_DESTROYED_AT_SYSTEM
-The %empire% flotta %fleet% è stata distrutta a %system%.
+The %empire% flotta %fleet% è stata distrutta da %system%.
 
 SITREP_FLEET_DESTROYED_AT_SYSTEM_LABEL
 Flotta dell'Impero Distrutta
 
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM
-La flotta %fleet% è stata distrutta a %system%.
+La flotta %fleet% è stata distrutta da %system%.
 
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM_LABEL
 Flotta Sconosciuta Distrutta
 
 SITREP_PLANET_DESTROYED_AT_SYSTEM
-The %empire% pianeta %planet% è stato distrutto a %system%.
+The %empire% pianeta %planet% è stato distrutto da %system%.
 
 SITREP_PLANET_DESTROYED_AT_SYSTEM_LABEL
 Pianeta dell'Impero Distrutto
 
 SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM
-Il pianeta %planet% è stato distrutto a %system%.
+Il pianeta %planet% è stato distrutto da %system%.
 
 SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM_LABEL
 Pianeta Sconosciuto Distrutto
 
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
-The %empire% building %building% on planet %planet% was destroyed at %system%.
+%empire% struttura %building% sul pianeta %planet% è stata distrutta da %system%.
 
 SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
-The building %building% on planet %planet% was destroyed at %system%.
+La struttura %building% sul pianeta %planet% è stata distrutta da %system%.
 
 SITREP_OBJECT_DAMAGED_AT_SYSTEM
-An object was damaged at %system%.
+Un oggetto è stato danneggiato da %system%.
 
 SITREP_SHIP_DAMAGED_AT_SYSTEM
-The %empire% %shipdesign% '%ship%' was damaged at %system%.
+%empire% %shipdesign% '%ship%' è stato danneggiato da %system%.
 
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM
-A %shipdesign% was damaged at %system%.
+La %shipdesign% è stata danneggiata da %system%.
 
 SITREP_PLANET_BOMBARDED_AT_SYSTEM
-The %empire% planet %planet% was bombarded at %system%.
+%empire% pianeta %planet% è stato bombardato da %system%.
 
 SITREP_GROUND_BATTLE
 Una battaglia si è verificata sul pianeta %planet%.
@@ -2644,7 +2645,7 @@ Antiche rovine
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
 '''Questo pianeta possiede le rovine di un antica razza avanzata che sono stati dimenticati nei libri di storia, che forniscono un bonus alla ricerca.
 
-This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech [[tech LRN_XENOARCH]] to possess this planet receives one free advanced tech or uncovers a powerful building or ship.'''
+Questo pianeta conserva le rovine di una razza antica ignota, e avanzata. Il primo impero con la tecnologia [[tech LRN_XENOARCH]] Possedere questo pianeta permette di ricevere una tecnologia avanzata oppure scoprire un potente edificio o una nave.'''
 
 ECCENTRIC_ORBIT_SPECIAL
 Orbita eccentrica
@@ -2692,7 +2693,7 @@ Campo
 
 # Star types
 INVALID_STAR_TYPE
-tipo stella sconosciuto
+tipo stella sconosciuta
 
 # Star types
 STAR_BLUE
@@ -2816,15 +2817,15 @@ buono
 
 # Focus types
 FOCUS_INDUSTRY
-industry
+industria
 
 # Focus types
 FOCUS_RESEARCH
-research
+ricerca
 
 # Focus types
 FOCUS_TRADE
-trade
+commercio
 
 # Empire affiliation types
 AFFIL_SELF
@@ -2960,7 +2961,7 @@ DESC_VAR_STARTYPE
 tipo di stella
 
 DESC_VAR_VALUE
-previous value for this meter
+Valore precedente per questo metro
 
 DESC_VAR_OWNER
 proprietario
@@ -2969,7 +2970,7 @@ DESC_VAR_PRODUCEDBYEMPIREID
 producer
 
 DESC_VAR_CREATIONTURN
-turn of creation
+turno della creazione
 
 
 ##
@@ -3011,10 +3012,10 @@ DESC_HOMEWORLD_NOT
 ''' che non è il sistema di provenienza'''
 
 DESC_CAPITAL
-''' that is an empirès capital planet'''
+''' Che è un pianeta della capitale dell'impero'''
 
 DESC_CAPITAL_NOT
-''' that is not an empirès capital planet'''
+''' Che non è un pianeta della capitale dell'impero'''
 
 # %1% name of an object type.
 DESC_TYPE
@@ -3139,27 +3140,27 @@ LRN_FORCE_FIELD
 Campi di forza Armonici
 
 LRN_FORCE_FIELD_DESC
-'''Increases max [[metertype METER_SHIELD]] on all planets by 10 and unlocks basic ship shielding technology. [[metertype METER_SHIELD]] are generally much more expensive than armor, due to the technology needed to produce shielding fields, but shields provide a far stronger defense than armor. However, there can only be one active shield generator on a ship, so shield parts do not stack.
+'''Aumenta il massimo [[metertype METER_SHIELD]] Su tutti i pianeti entro il 10 e sblocca la tecnologia di base della schermatura delle navi. [[metertype METER_SHIELD]] Sono generalmente molto più costosi dell'armatura, grazie alla tecnologia necessaria per produrre campi di schermatura, ma gli scudi forniscono una difesa molto più forte dell'armatura. Tuttavia, su una nave può esistere un solo generatore di scudo attivo, in modo che le parti dello schermo non si impilano.
 
-Come nell'analisi di Fourier del suono, l'elettromagnetisco e le forze nucleari forti e deboli, possono essere espresse come armoniche quantiche di onde che si sovrapposizionano alle particelle portatrici di forze. Selettivamente amplificando queste armoniche, le forze possono essere controllate arbitrariamente per proteggere, attaccare, contenere o sostenere qualsiasi struttura.'''
+Come nell'analisi di Fourier del suono, l'elettromagnetismo e le forze nucleari forti e deboli, possono essere espresse come armoniche quantiche di onde che si sovrapposizionano alle particelle portatrici di forze. Selettivamente amplificando queste armoniche, le forze possono essere controllate arbitrariamente per proteggere, attaccare, contenere o sostenere qualsiasi struttura.'''
 
 LRN_MIND_VOID
 Percezione del Vuoto
 
 LRN_MIND_VOID_DESC
-Non siamo soli nell'universo ... ma perché la ricerca dovrebbe essere così limitata? Molte culture hanno miti, leggende o credenze in una più alta coscienza. Che sia un dio amoroso o ostile, od un osservatore distaccato, è chiaro che qualcosa, forse l'universo stesso ad un certo livello, è vivo, attento e guarda.
+Non siamo soli nell'universo ... perché allora la ricerca dovrebbe essere così limitata? Molte culture hanno miti, leggende o credenze in una più alta coscienza. Che sia un dio amoroso o ostile, oppure un osservatore distaccato, è chiaro che qualcosa, forse l'universo stesso ad un certo livello, è vivo, attento e osserva.
 
 LRN_TIME_MECH
 Meccanica del Tempo
 
 LRN_TIME_MECH_DESC
-Che cosa sono "presente", "futuro" e "passato"? Il paradosso dei gemelli nella relatività speciale, o la teoria dei "wormhole" suggeriscono primitive forme di "viaggi nel tempo". La diretta manipolazione dello spazio-tempo e del flusso temporale permette di sfruttarne e potenziarne gli effetti. Le incursioni temporali non possono alterare la percezione del passato dell'universo che conosciamo. Possono, tuttavia, comprimere i tempi o estendere i momenti fino a durate arbitrarie, con un limitato uso dei materiali presenti e della nostra pazienza.
+Che cosa sono "presente", "futuro" e "passato"? Il paradosso dei gemelli nella relatività speciale, oppure la teoria dei "wormhole" suggeriscono primitive forme di "viaggi nel tempo". La diretta manipolazione dello spazio-tempo e del flusso temporale permette di sfruttarne e potenziarne gli effetti. Le incursioni temporali non possono alterare la percezione del passato dell'universo che conosciamo. Possono, tuttavia, comprimere i tempi oppure estendere quei momenti fino a durate arbitrarie, con un limitato uso dei materiali presenti e della nostra pazienza.
 
 LRN_NDIM_SUBSPACE
 Subspazio N-Dimensionale
 
 LRN_NDIM_SUBSPACE_DESC
-I primi teorici delle superstringhe parlavano di 10, 11 o 26 universi dimensionali, ma non delle 4 macrodimensioni "arricciate" così sottili da essere invisibili. Queste ed altre dimensioni possono essere ora distese ed aperte e, la sua superficie di spazio, allungato spostando la materia fra livelli di esistenza precedentemente nascosti sotto la superficie della nostra limitata percezione, o generando nuovi strati o bolle dove niente esisteva prima.
+I primi teorici delle superstringhe parlavano di 10, 11 o 26 universi dimensionali, ma non delle 4 macrodimensioni "arricciate" così sottili da essere invisibili. Queste ed altre dimensioni possono essere ora distese ed aperte e, la sua superficie di spazio, allungata spostando la materia fra livelli di esistenza precedentemente nascosti sotto la superficie della nostra limitata percezione, o generando nuovi strati o bolle dove niente esisteva prima.
 
 LRN_UNIF_CONC
 Coscienza Unificata
@@ -3192,12 +3193,12 @@ GRO_LIFECYCLE_MAN
 Controllo del Ciclo Vitale
 
 GRO_LIFECYCLE_MAN_DESC
-'''Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently. Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space. With this technique, the capacity of colony ships can be greatly increased.
+'''Attraverso manipolazioni chimiche e criogeniche, i processi di vita possono essere interrotti senza terminarli definitivamente. Gli esseri in questo stato sono conservati a tempo indeterminato, non consumano risorse e richiedono un po di stoccaggio - non vivono - nello spazio. Con questa tecnica, la capacità delle navi colonie può essere notevolmente aumentata.
 
-Most complex organisms progress through various physiological stages during a lifetime, whether distinctly separated by metamorphoses, or blurred by continuous slow aging. In many cases, one or more of these stages are, at least at a given time, more useful and desirable than others. By delicate control of hormonal or mental mechanisms, it becomes possible to drastically speed or slow each stage, permitting fully developed and functional individuals to be produced in a fraction of the natural timeframe, and for those individuals to remain functional indefinitely, becoming effectively immortal.'''
+Gli organismi più complessi si sviluppano attraverso varie fasi fisiologiche durante una vita, se distintamente separati da metamorfosi oppure sfocate dal lento invecchiamento. In molti casi, una o più di queste fasi sono, almeno in un dato momento, più utili e desiderabili di altre. Con delicato controllo dei meccanismi ormonali o mentali, diventa possibile velocizzare o rallentare drasticamente ogni fase, permettendo agli individui completamente sviluppati e funzionali di essere prodotti in una frazione del tempo naturale e per quegli individui rimanere funzionale a tempo indeterminato diventando effettivamente immortali.'''
 
 GRO_ADV_ECOMAN
-Advanced Ecomanipulation
+Ecomanipolazione Avanzata
 
 GRO_XENO_GENETICS
 Genetica Xenologica
@@ -3223,15 +3224,15 @@ Produzione Robotica
 PRO_ROBOTIC_PROD_DESC
 '''Incrementa l'obiettivo [[metertype METER_INDUSTRY]] su tutti i pianeti con focus industriale di 0.1 per popolazione.
 
-Gli Exobots, come diventano comunemente conosciuti, sono una meraviglia della forma unita alla funzione. Sono robot progettati per soddisfare quasi qualsiasi lavoro produttivo, in campi di ampia portata come l'elettronica per la costruzione su larga scala. Prodotti facilmente in massa, se ne trae maggior beneficio sulle colonie che danno la priorità  all'industria. Ogni pieneta che si concentra principalmente sul quel settore riceve una squadra di Exobots, aumentando notevolmente la sua produzione industriale.
+Gli Exobots, come diventano comunemente conosciuti, sono una meraviglia della forma unita alla funzione. Sono robot progettati per soddisfare quasi qualsiasi lavoro produttivo, in campi di ampia portata come l'elettronica per la costruzione su larga scala. Prodotti facilmente in massa, se ne trae maggior beneficio sulle colonie che danno la priorità all'industria. Ogni pieneta che si concentra principalmente sul quel settore riceve una squadra di Exobots, aumentando notevolmente la sua produzione industriale.
 
-Sebbene la progettazione iniziale di alto livello e la configurazione iniziale dell'impianto richiedono ancora un'attiva supervisione, l'eliminazione degli operatori dal processo di produzione reale elimina molti colli di bottiglia. I robot lavorano continuamente, senza richieste perpetue per una maggiore compensazione economica. I robot hanno una tolleranza molto superiore ai fattori di rischio ambientali in fabbrica e non necessitano di ulteriore spazio abitabile al di fuori del sito. I robot eseguono i loro compiti senza problemi o almeno bene in base a come vengono istruiti.'''
+Sebbene la progettazione iniziale di alto livello e la configurazione iniziale dell'impianto richiedono ancora un'attiva supervisione, l'eliminazione degli operatori dal processo di produzione reale elimina molti colli di bottiglia. I robot lavorano continuamente, senza richieste perpetue per una maggiore compensazione economica. I robot hanno una tolleranza molto superiore ai fattori di rischio ambientali in fabbrica e non necessitano di ulteriore spazio abitabile al di fuori del sito. I robot eseguono i loro compiti senza problemi in base a come vengono programmati.'''
 
 PRO_EXOBOTS
 Exobot
 
 PRO_EXOBOTS_DESC
-Permette la costruzione di Exobots ottimizzati per l'industria su pianeti ostili.
+Permette la costruzione Exobots ottimizzati per l'industria su pianeti ostili.
 
 PRO_FUSION_GEN
 Generatore di Fusione
@@ -3239,9 +3240,9 @@ Generatore di Fusione
 PRO_FUSION_GEN_DESC
 '''Incrementa l'obiettivo [[metertype METER_INDUSTRY]] su tutti i pianeti con focus industriale di 0.2 per popolazione.
 
-Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
+Le centrali di fusione, pur essendo costose da produrre e mantenere, si ammortizzano facilmente sui mondi industrializzati con maggiori potenzialità. La dipendenza da centri nucleari a base di fissione a poco a poco diventerà una cosa del passato.
 
-Explosive or uncontrolled thermonuclear reactions are comparatively simple to cause at scales ranging from small tactical warheads to supergiant stellar furnaces. Controllable, stable and practical power generation from the reaction is somewhat more difficult. The process remains attractive, however, due to the near-limitless supply of fuel and potential for emissions-free operation.'''
+Le reazioni termonucleari esplosive oppure incontrollate sono relativamente semplici da causare a scale che vanno da piccole testate tattiche a forni stellari supergiganti. La generazione di energia elettrica controllabile, e stabile dalla reazione è un po 'più difficile. Il processo resta attraente, tuttavia, a causa della quasi illimitata offerta di carburante e del potenziale per il funzionamento senza emissioni.'''
 
 PRO_NANOTECH_PROD
 Produzione Nanotecnologica
@@ -3253,11 +3254,11 @@ PRO_SENTIENT_AUTOMATION
 Automazione Intelligente
 
 PRO_SENTIENT_AUTOMATION_DESC
-'''Increases target [[metertype METER_INDUSTRY]] su tutti i pianeti di 5.
+'''Aumenta l'obiettivo [[metertype METER_INDUSTRY]] su tutti i pianeti di 5.
 
-By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility. These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.
+Produrre fabbriche automatizzate che operano senza supervisione diretta, è possibile aumentare la produzione industriale in un impianto completamente automatizzato. Queste fabbriche possono essere costruite e mantenute su qualsiasi pianeta, indipendentemente dalla messa a fuoco, offrendo un bonus all'industria in tutti i mondi.
 
-As equipment becomes increasingly automated, it becomes capable of fully replicating and maintaining itself without outside support, other than its required raw materials and a requested, or suggested, final product to produce. When controlled by an artificial mind, the entire system can learn, plan, react, and adapt autonomously, and can do so without the cumbersome inefficiencies traditionally required to house and employ workers.'''
+Dato che l'apparecchiatura diventa sempre più automatizzata, diventa capace di replicare e mantenere senza supporto esterno, a parte le materie prime necessarie e un prodotto finale richiesto o suggerito per produrre. Quando controllato da una mente artificiale, l'intero sistema può imparare, pianificare, reagire e adattarsi autonomamente e può farlo senza le inefficienze ingombranti tradizionalmente necessarie per ospitare e impiegare i lavoratori.'''
 
 PRO_NDIM_ASSMB
 Assemblaggio N-Dimensionale
@@ -3278,7 +3279,7 @@ CON_ASYMP_MATS
 Materiali Asintotici
 
 CON_ASYMP_MATS_DESC
-Una volta che determinate le soglie di prestazioni vengono superate, la misurazione delle proprietà fisiche dei materiali, per il confronto relativo, diventa impraticabile in qualsiasi termine  diverso da ordini di grandezza o scale logaritmiche. Molto simile alla superconduttività in elettronica, la resistenza alla trazione, tenacità, densità, elasticità, indice refrattario ed altre proprietà meccaniche dei materiali possono essere controllate efficacemente senza limiti. Con tutte le limitazioni significative precedentemente rimosse, le progettazioni sono ulteriormente facilitate, e si possono ampliare o modificare di svariati ordini di grandezza.
+Una volta che determinate soglie di prestazioni vengono superate, la misurazione delle proprietà fisiche dei materiali, per il confronto relativo, diventa impraticabile in qualsiasi termine diverso da ordini di grandezza o scale logaritmiche. Molto simile alla superconduttività in elettronica, la resistenza alla trazione, tenacità, densità, elasticità, indice refrattario ed altre proprietà meccaniche dei materiali possono essere controllate efficacemente senza limiti. Con tutte le limitazioni significative precedentemente rimosse, le progettazioni sono ulteriormente facilitate, e si possono ampliare o modificare con svariati ordini di grandezza.
 
 
 ##
@@ -3363,16 +3364,16 @@ Costruzione Orbitale
 CON_ORBITAL_CON_DESC
 '''Accresce il raggio delle [[metertype METER_SUPPLY]] di tutte le colonie ed avamposti di 1.
 
-On a planet, there is always a fixed reference direction: "up". Microgravity is effectively isotropic. This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment. As well, the interior configuration of spaces in orbit must be rethought. However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfaces, the practical use of these spaces will be initial primarily by those who are used to, and adapted for, those planet surfaces. Rather than a complete break from older styles, a gradual transition may be more effective.'''
+Su un pianeta, c'è sempre una direzione di riferimento fissa: "in su". La microgravità isotropica è efficace. Questa singola differenza ha una moltitudine di conseguenze per i tipi di strutture che possono essere costruite, e quali di queste forme fa un utilizzo ottimale dello spazio, dei materiali e dell'energia in ogni ambiente. Inoltre, la configurazione interna degli spazi in orbita deve essere ripensata. Tuttavia, mentre è concentrato a tentare di rivoluzionare completamente il design degli interni in un paradigma completamente indipendente dagli stili utilizzati sulle superfici del pianeta, l'uso pratico di questi spazi sarà iniziale principalmente da coloro che sono abituati e adattati per quelle superfici del pianeta. Piuttosto che una rottura completa dagli stili più anziani, una transizione graduale può essere più efficace.'''
 
 GRO_BIOTERROR
 Servizi di Bioterrorismo
 
 GRO_BIOTERROR_DESC
-Un centro di ricerca creato per sviluppare, in sicurezza, le più pericolose armi biologiche, lontano da sguardi indiscreti. Le armi biologiche hanno effetto troppo lentamente per essere di grande utilità in un conflitto militare diretto, ma sono insuperabili come armi di terrore, contaminando in maniera lenta ma crescente in modo che arrivi prima il panico di esso, le immagini di persone disperate in quarantena diffondono preoccupazione nel proprio governo e disperazione oltre l'area interessata, tuttavia occorre fare attenzione quando si sviluppano tali organismi in modo da mettersi al riparo da rilasci accidentali che potrebbero danneggiare le relazioni con altri imperi o il nostro stesso popolo.
+Un centro di ricerca creato per sviluppare, in sicurezza, le più pericolose armi biologiche, lontano da sguardi indiscreti. Le armi biologiche hanno effetto troppo lentamente per essere di grande utilità in un conflitto militare diretto, ma sono insuperabili come armi di terrore, contaminando in maniera lenta ma crescente in modo che arrivi prima il panico ad esso, le immagini di persone disperate in quarantena diffondono preoccupazione nel proprio governo e disperazione oltre l'area interessata, tuttavia occorre fare attenzione quando si sviluppano tali organismi in modo da mettersi al riparo da rilasci accidentali che potrebbero danneggiare le relazioni con altri imperi o il nostro stesso popolo.
 
 GRO_REMOTE_TERRAFORM_SHORT_DESC
-Consente il terraforming a distanza
+Consente la terraformazione a distanza
 
 GRO_GAIA_TRANS
 Trasformazione di Gaia
@@ -3381,7 +3382,7 @@ GRO_GAIA_TRANS_SHORT_DESC
 Consente la Trasformazione di Gaia
 
 LRN_OBSERVATORY_I
-Osservatiorio
+Osservatorio
 
 LRN_SOLAR_MAN
 Manipolazione Solare
@@ -3453,9 +3454,9 @@ DEF_SYST_DEF_MINE_1
 Mine di Difesa del Sistema 1
 
 DEF_SYST_DEF_MINE_1_DESC
-'''Quando le navi amiche non sono presenti in un sistema, le navi nemiche sono libere di stazionarvi, fermando il trasferimento di risorse senza impegnare direttamente le difese planetarie, quindi senza alcun rischio di danni a se stessi. Una rete di mine di difesa del sistema può dissuadere queste tattiche danneggiando le navi nemiche ogni turno in cui restano nel sistema.
+'''Quando le navi amiche non sono presenti in un sistema, le navi nemiche sono libere di stazionarvi, fermando il trasferimento di risorse senza impegnare direttamente le difese planetarie, quindi senza alcun rischio di danni a se stessi. Una rete di mine di difesa del sistema può dissuadere queste tattiche danneggiando le navi nemiche ad ogni turno in cui restano nel sistema.
 
-La struttura di tutte le navi appartenenti ad un impero nemico che sono presenti in un sistema contenente un pianeta di proprietà dell'impero che possiede questa tecnologia sarà ridotto a di 2 unità per turno.
+La struttura di tutte le navi appartenenti ad un impero nemico che sono presenti in un sistema contenente un pianeta di proprietà dell'impero che possiede questa tecnologia sarà ridotto a 2 unità per turno.
 
 Le mine si rigenerano ad ogni turno, quindi non si esauriscono con l'uso.'''
 
@@ -3504,13 +3505,13 @@ DEF_GARRISON_4_DESC
 Incrementa il numero massimo delle [[metertype METER_TROOPS]] su tutti i pianeti di 20.
 
 SHP_FLEET_REPAIR_DESC
-Allows ships within [[metertype METER_SUPPLY]] line range to repair damage at a rate of 1 per turn. Does not function immediately after battles.
+Permette le navi all'interno [[metertype METER_SUPPLY]] Linee per riparare i danni ad una velocità di 1 per turno. Non funziona immediatamente dopo le battaglie.
 
 SHP_ADV_DAM_CONT
 Controllo Avanzato dei Danni
 
 SHP_ADV_DAM_CONT_DESC
-Riparazione del 25% per turno della struttura delle navi danneggiate-- non durante le battaglie.
+Riparazione del 25% per turno della struttura delle navi danneggiate -- non durante le battaglie.
 
 SHP_ROOT_AGGRESSION
 Aggressione
@@ -3551,7 +3552,7 @@ Radar Attivo
 SPY_DETECT_2_DESC
 '''Sblocca il componente per nave Radar Attivo e la struttura impianto di scansione, incrementa il [[metertype METER_DETECTION]] di tutti i pianeti a 75, ed incrementa la [[encyclopedia DETECTION_TITLE]] a 30.
 
-Passively relying on incoming electromagnetic radiation for information about objects in the vicinity is crude and impractical, as this radiation can be masked or dampened. By emitting electromagnetic radiation and detecting returning radiation, it is possible to determine the location and velocity of many objects.'''
+Il passivo affidamento alla radiazione elettromagnetica in arrivo per informazioni sugli oggetti nelle vicinanze è grezzo e impraticabile, in quanto questa radiazione può essere mascherata o inumidita. Emettendo le radiazioni elettromagnetiche e rilevando la radiazione di ritorno, è possibile determinare la posizione e la velocità di molti oggetti.'''
 
 SPY_DETECT_3
 Scanner Neutronico
@@ -3566,7 +3567,7 @@ SPY_STEALTH_1
 Smorzatore Elettromagnetico
 
 SPY_STEALTH_1_DESC
-Unlocks the Electromagnetic Damper ship part and increases the [[metertype METER_STEALTH]] of all planets and buildings by 20. This bonus is not cumulative with that of other stealth techs.
+Sblocca la parte della nave elettromagnetica e aumenta la velocità [[metertype METER_STEALTH]] Di tutti i pianeti e gli edifici di 20. Questo bonus non è cumulativo con quello di altre tecniche stealth.
 
 SPY_STEALTH_2
 Campo di Assorbimento
@@ -3623,7 +3624,7 @@ Impianto di Scansione
 BLD_SCANNING_FACILITY_DESC
 '''Incrementa la [[metertype METER_DETECTION]] del pianeta di 75.
 
-A combination of long-range scanning devices and great computing power to analyze the data allows a larger area of space to be scanned for any objects.'''
+Una combinazione di dispositivi di scansione a lunga percorrenza e una grande potenza di calcolo per analizzare i dati consente di scansionare un'area di spazio maggiore per qualsiasi oggetto.'''
 
 BLD_INDUSTRY_CENTER
 Centro Industriale
@@ -3664,7 +3665,7 @@ Trasformatore
 BLD_TRANSFORMER_DESC
 '''Un edificio versatile ed estremamente costoso in grado di avere gli effetti di molti altri edifici, attualmente attivato utilizzando le impostazioni di focus del pianeta su cui è costruito, a condizione che il proprietario abbia sbloccato l'edificio che il Transformer sta replicando.
 
-A questo edificio possono essere dati gli effetti di un Replicatore, un Dispositivo di Occultamento Planetario, di un Proiettore di Bioterrororismo, un Portale Spaziale, una QUALCOSA INDEFINITA, o un Generatore di Distorsione Spaziale, a condizione che il proprietario ha la tecnologia appropriata.'''
+A questo edificio possono essere dati gli effetti di un Replicatore, un Dispositivo di Occultamento Planetario, di un Proiettore di Bioterrorismo, un Portale Spaziale, un QUALCOSA DI INDEFINITO, oppure un Generatore di Distorsione Spaziale, a condizione che il proprietario possiede la tecnologia appropriata.'''
 
 BLD_PLANET_CLOAK
 Dispositivo di Occultamento Planetario
@@ -3721,7 +3722,7 @@ FI_BIOBOMBER
 Bio-Bombardiere
 
 FI_BIOBOMBER_DESC
-Eighteen living bombers designed to target ships and planets. Far more effective than regular bombers.  This part can only be built if there is a Bioneural Modification Unit somewhere in the empire or an ally's empire.
+Diciotto bombardieri progettati per combattere navi e pianeti. Molto più efficace dei bombardieri regolari. Questa parte può essere costruita solo se c'è un'unità di modifica Bioneurale da qualche parte nell'impero o nell'impero di un alleato.
 
 LR_NUCLEAR_MISSILE
 Missile Nucleare
@@ -3742,9 +3743,9 @@ DT_DETECTOR_4
 Sensori
 
 FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-'''Increases Starlane speed by 15. 
+'''Aumenta la velocità di Starlane entro 15. 
 
-N-Dimensional subspace research resulted in a more efficient engine matrix.'''
+La ricerca su N-Dimensionale nel subspazio ha determinato una matrice di motore più efficiente.'''
 
 
 ##
@@ -3752,7 +3753,7 @@ N-Dimensional subspace research resulted in a more efficient engine matrix.'''
 ##
 
 FU_SINGULARITY_ENGINE_CORE_DESC
-'''A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 20. '''
+'''Un cugino più piccolo della diga Hyperspace attrezzata per le navi, il motore singolo aumenta drasticamente la generazione di energia. Aumenta la velocità di Starlane entro 20. '''
 
 FU_DEUTERIUM_TANK
 Serbatoio Deuterio
@@ -3764,7 +3765,7 @@ FU_ANTIMATTER_TANK
 Serbatoio Antimateria
 
 FU_ANTIMATTER_TANK_DESC
-Medio aumento del raggio d'azione incrementando la capacità del serbatoio. Compatto e leggiero.
+Medio aumento del raggio d'azione incrementando la capacità del serbatoio. Compatto e leggero.
 
 ST_CLOAK_1
 Smorzatore Elettromagnetico
@@ -3790,7 +3791,7 @@ Capsula Coloni Criogenica
 CO_SUSPEND_ANIM_POD_DESC
 '''I coloni vengono ibernati durante il viaggio verso nuovi mondi, eliminando il bisogno di sostenerli, e aumentando notevolmente il numero di coloni che possono essere portati su una singola nave.
 
-All Colony class ship parts require the planet at which they are built to have a population of at least three.'''
+Tutte le parti della nave di classe colonia richiedono il pianeta su cui sono costruite per avere una popolazione di almeno tre.'''
 
 
 ##
@@ -3887,3 +3888,4 @@ Orbitale
 #include "../global_settings.txt"
 #include "../content_specific_parameters.txt"
 #include "../customizations/common_user_customizations.txt"
+
