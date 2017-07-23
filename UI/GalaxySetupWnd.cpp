@@ -44,8 +44,15 @@ namespace {
         {
             if (!m_contents)
                 return;
-            AttachChild(m_contents);
             m_contents->MoveTo(GG::Pt(GG::X(indentation_level * INDENTATION), GG::Y0));
+        }
+
+        void CompleteConstruction() override {
+            GG::Control::CompleteConstruction();
+
+            if (!m_contents)
+                return;
+            AttachChild(m_contents);
             DoLayout();
         }
 
