@@ -133,6 +133,8 @@
       <PERSON name=""                         nick="Nilstilar"        task="French Translation"/>
       <PERSON name="Jean-Charles Schmidt"     nick="Ouaz"             task="French Translation"/>
       <PERSON name=""                         nick="evzorge"          task="Russian Translation"/>
+      <PERSON name=""                         nick="Shining"          task="Italian Translation"/>
+      <PERSON name="Stefano Peris"            nick="LordStephen77"    task="Italian Translation"/>
     </GROUP>
     <GROUP name="EXTERNAL RESOURCES">
       <RESOURCE author="Adam Evans"  license="CC-BY 2.0"  title="Andromeda Galaxy (with h-alpha).jpg"
