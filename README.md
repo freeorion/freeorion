@@ -25,7 +25,7 @@ to be working by users, but are not actively supported by the FreeOrion project.
 
 ## Download
 
-[FreeOrion Stable Releases] are the recommend way to play FreeOrion.  Stable
+[FreeOrion Stable Releases] are the recommended way to play FreeOrion.  Stable
 Releases can be obtained as native installer binaries for Windows and Mac OSX
 or as source releases for Linux and other UNIX-ish platforms from GitHub.
 
