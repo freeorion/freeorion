@@ -712,14 +712,6 @@ public:
         std::out_of_range if \a mode is not a valid browse mode. */
     void SetBrowseInfoWnd(const std::shared_ptr<BrowseInfoWnd>& wnd, std::size_t mode = 0);
 
-    /** Sets the Wnd that is used to show browse info about this Wnd in the
-        browse info mode \a mode.  \throw std::out_of_range May throw
-        std::out_of_range if \a mode is not a valid browse mode.
-
-        Temporary overload which inserts \p wnd into a shared_ptr.
-        TODO remove once conversion to shared_ptr children is complete. */
-    void SetBrowseInfoWnd(BrowseInfoWnd* wnd, std::size_t mode = 0);
-
     /** Removes the Wnd that is used to show browse info about this Wnd in the
         browse info mode \a mode (but does nothing to the mode itself).
         \throw std::out_of_range May throw std::out_of_range if \a mode is not
