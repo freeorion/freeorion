@@ -255,6 +255,15 @@ Ne peut pas être produit
 POPUP_MENU_PEDIA_PREFIX
 '''Aide: '''
 
+GENERAL
+Général
+
+TEST  # translated
+Test
+
+BALANCE
+Équilibrage
+
 
 ##
 ## Major errors
@@ -953,6 +962,70 @@ L'IA Python pour %1% a rencontré une erreur fatale.
 ERROR_PLAYER_NAME_ALREADY_USED
 %1% : nom de joueur déjà utilisé.
 
+##
+## Game Rules
+##
+
+RULE_CHEAP_AND_FAST_TECH_RESEARCH
+Technologies gratuites et immédiates
+
+RULE_CHEAP_AND_FAST_TECH_RESEARCH_DESC
+Les technologies coûtent seulement 1 PR et 1 tour de recherche.
+
+RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION
+Structures gratuites et immédiates
+
+RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION_DESC
+Les structures coûtent seulement 1 PP et 1 tour de production.
+
+RULE_CHEAP_AND_FAST_SHIP_PRODUCTION
+Astronefs gratuits et immédiats
+
+RULE_CHEAP_AND_FAST_SHIP_PRODUCTION_DESC
+Les astronefs coûtent seulement 1 PP et 1 tour de production.
+
+RULE_NUM_COMBAT_ROUNDS
+Passes de Combat
+
+RULE_NUM_COMBAT_ROUNDS_DESC
+Nombre de passes de combat se déroulant à chaque tour.
+
+RULE_RESEED_PRNG_SERVER
+Regénération aléatoire
+
+RULE_RESEED_PRNG_SERVER_DESC
+La génération du nombre aléatoire d'une graine est effectuée plus fréquemment pour favoriser des caractéristiques plus prévisibles et reproductibles.
+
+RULE_SHIP_HULL_COST_FACTOR
+Ajustement Coût des Coques
+
+RULE_SHIP_HULL_COST_FACTOR_DESC
+Définit les coûts des coques d'astronef
+
+RULE_SHIP_PART_COST_FACTOR
+Ajustement Coût des Équipements
+
+RULE_SHIP_PART_COST_FACTOR_DESC
+Définit les coûts des équipements d'astronef
+
+RULE_ENABLE_EXPERIMENTORS
+Activer Expérimentateurs (TEST)
+
+RULE_ENABLE_EXPERIMENTORS_DESC  # translated
+Test
+
+RULE_TEST_INT
+Test des Entiers (Integer)
+
+RULE_TEST_INT_DESC  # translated
+Test
+
+RULE_TEST_STRING
+Test des Chaînes (String)
+
+RULE_TEST_STRING_DESC  # translated
+Test
+
 
 ##
 ## Command-line and options database entries
@@ -1565,9 +1638,6 @@ Active/Désactive l'affichage des rapports d'erreurs (pour développeurs).
 
 OPTIONS_DB_EFFECT_ACCOUNTING
 Active/Désactive la tabulation de la comptabilité des effets lors de l'actualisation des statistiques de jeu.
-
-OPTIONS_DB_PRNG_RESEEDING
-Active/Désactive la re-génération d'un nombre de graine aléatoire lors de chaque tour, avec des caractéristiques prévisibles et reproductibles.
 
 OPTIONS_DB_UI_SITREP_ICONSIZE
 Définit la largeur et la hauteur des icônes du Rapport de Situation; par défaut 16 (min 12, max 64).
@@ -4058,6 +4128,9 @@ Monstres: %8%
 Indigènes: %9%
 Agressivité max de l'IA: %10%
 '''
+
+ENC_GAME_RULES
+[Partie - Règles]
 
 ENC_SHIP_PART
 -[Équipement Astronef]
@@ -10842,7 +10915,7 @@ Couplage de Motorisation Améliorée
 SHP_IMPROVED_ENGINE_COUPLINGS_DESC
 '''[[COLONY_BUILDING_TIME_DECREASE]]
 
-De meilleurs éléments de motorisation fournissent de meilleurs moteurs. Augmente de 10 la [[metertype METER_SPEED]]. Plusieurs exemplaires peuvent être intégrés dans une même coque d'astronef.'''
+De meilleurs éléments de motorisation, résultent de meilleurs moteurs. Augmente de 20 la [[metertype METER_SPEED]].'''
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX
 Matrice de Motorisation Multidimensionnelle
@@ -10850,7 +10923,7 @@ Matrice de Motorisation Multidimensionnelle
 SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC
 '''[[COLONY_BUILDING_TIME_DECREASE]]
 
-La recherche concernant les espaces multidimensionnels a rendu possible le développement de meilleures matrices de motorisation. Augmente de 20 la [[metertype METER_SPEED]]. Plusieurs exemplaires peuvent être intégrés dans une même coque d'astronef.'''
+La recherche concernant les espaces multidimensionnels a rendu possible le développement de meilleures matrices de motorisation. Augmente de 40 la [[metertype METER_SPEED]].'''
 
 SHP_SINGULARITY_ENGINE_CORE
 Noyau de Motorisation à Singularité
@@ -10858,7 +10931,7 @@ Noyau de Motorisation à Singularité
 SHP_SINGULARITY_ENGINE_CORE_DESC
 '''[[COLONY_BUILDING_TIME_DECREASE]]
 
-Dispositif dérivé de la structure [[buildingtype BLD_HYPER_DAM]] et adapté en taille pour les astronefs, le Noyau de Motorisation à Singularité accroît considérablement la génération d'énergie. Augmente de 30 la [[metertype METER_SPEED]]. Plusieurs exemplaires peuvent être intégrés dans une même coque d'astronef.'''
+Dispositif dérivé de la structure [[buildingtype BLD_HYPER_DAM]] et miniaturisé pour les astronefs, le Noyau de Motorisation à Singularité accroît considérablement la génération d'énergie. Augmente de 80 la [[metertype METER_SPEED]].'''
 
 SHP_DEUTERIUM_TANK
 Réservoir de Deutérium
@@ -12090,7 +12163,7 @@ FU_SINGULARITY_ENGINE_CORE
 Noyau de Motorisation à Singularité
 
 FU_SINGULARITY_ENGINE_CORE_DESC
-'''Dispositif derivé et miniaturisé de la structure [[buildingtype BLD_HYPER_DAM]] adapté pour les astronefs, le Noyau de Motorisation à Singularité accroît considérablement la génération d'énergie.
+'''Dispositif derivé de la structure [[buildingtype BLD_HYPER_DAM]] et miniaturisé pour les astronefs, le Noyau de Motorisation à Singularité accroît considérablement la génération d'énergie.
 
 - Augmente de 80 la [[metertype METER_SPEED]].
 - [[FU_ENGINE_PART_LIMIT]]'''
