@@ -2640,6 +2640,9 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     }
 
     popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 int FleetDetailPanel::ShipInRow(GG::ListBox::iterator it) const {
@@ -3530,6 +3533,9 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
    }
 
     popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 void FleetWnd::FleetLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)

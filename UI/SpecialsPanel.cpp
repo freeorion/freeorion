@@ -148,6 +148,9 @@ bool SpecialsPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
         popup->AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_action));
 
         popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
         return retval;
     }
     return false;

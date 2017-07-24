@@ -938,6 +938,9 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % item_name);
     popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_lookup_action));
     popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 //////////////////////////////////////////////////

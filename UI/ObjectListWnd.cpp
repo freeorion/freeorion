@@ -1664,6 +1664,9 @@ private:
         popup->AddMenuItem(std::move(fleets_submenu));
 
         popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
     }
 
     std::vector<GG::Button*>    GetControls() {
@@ -2561,6 +2564,9 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     }
 
     popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 int ObjectListWnd::ObjectInRow(GG::ListBox::iterator it) const {

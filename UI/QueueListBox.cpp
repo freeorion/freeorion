@@ -197,6 +197,9 @@ void QueueListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& 
     popup->AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), false, false, MoveToBottomAction(it)));
     popup->AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    false, false, DeleteAction(it)));
     popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 void QueueListBox::EnsurePromptHiddenSlot(iterator it) {

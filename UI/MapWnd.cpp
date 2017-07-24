@@ -2585,6 +2585,9 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         // display popup menu
         popup->Run();
 
+    // TODO remove when converting to shared_ptr
+    delete popup;
+
     }
 }
 

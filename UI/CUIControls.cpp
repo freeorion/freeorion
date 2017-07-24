@@ -74,6 +74,9 @@ void CUILabel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"), false, false, copy_wnd_action));
     popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 
@@ -898,6 +901,9 @@ void CUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
     popup->Run();
 
+    // TODO remove when converting to shared_ptr
+    delete popup;
+
     // todo: italicize, underline, or colour selected text
 }
 
@@ -992,6 +998,9 @@ void CUIMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
     popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
     popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
     // todo: italicize, underline, or colour selected text
 }
 
@@ -1057,6 +1066,9 @@ void CUILinkTextMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_ke
     popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
     popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
     popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 
     // todo: italicize, underline, or colour selected text
 }
@@ -1616,6 +1628,9 @@ void ColorSelector::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     popup->AddMenuItem(GG::MenuItem(UserString("RESET"), false, false, reset_color_action));
     popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 
