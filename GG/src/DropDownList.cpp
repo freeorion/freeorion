@@ -93,6 +93,9 @@ public:
     boost::optional<DropDownList::iterator> MouseWheelCommon(
         const Pt& pt, int move, Flags<ModKey> mod_keys);
 
+    /** Set the drop down list to only mouse scroll if it is dropped. */
+    void SetOnlyMouseScrollWhenDropped(bool enable);
+
 protected:
     /** ModalListPicker needs to process its own key press events because modal
         windows in GG can't have parents. */
@@ -101,6 +104,9 @@ protected:
     /** ModalListPicker needs to process its own mouse events because modal windows in GG can't
         have parents.*/
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
+
+    /** Force the m_lb_wnd mouse wheel events to be forwarded. */
+    bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
 
 private:
     void LBSelChangedSlot(const ListBox::SelectionSet& rows);
@@ -118,6 +124,9 @@ private:
     const size_t        m_num_shown_rows;
     const DropDownList* m_relative_to_wnd;
     bool                m_dropped; ///< Is the drop down list open.
+
+    /** Should the list wnd scroll only when dropped? */
+    bool                m_only_mouse_scroll_when_dropped;
 };
 
 namespace {
@@ -158,7 +167,8 @@ ModalListPicker::ModalListPicker(Clr color, const DropDownList* relative_to_wnd,
     m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(color, color)),
     m_num_shown_rows(std::max<std::size_t>(1, num_rows)),
     m_relative_to_wnd(relative_to_wnd),
-    m_dropped(false)
+    m_dropped(false),
+    m_only_mouse_scroll_when_dropped(false)
 {
     m_lb_wnd->SelRowsChangedSignal.connect(
         boost::bind(&ModalListPicker::LBSelChangedSlot, this, _1));
@@ -167,6 +177,7 @@ ModalListPicker::ModalListPicker(Clr color, const DropDownList* relative_to_wnd,
     GUI::GetGUI()->WindowResizedSignal.connect(
         boost::bind(&ModalListPicker::WindowResizedSlot, this, _1, _2));
     AttachChild(m_lb_wnd);
+    m_lb_wnd->InstallEventFilter(this);
 
     if (INSTRUMENT_ALL_SIGNALS)
         SelChangedSignal.connect(ModalListPickerSelChangedEcho(*this));
@@ -445,9 +456,15 @@ boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
     return boost::none;
 }
 
+void ModalListPicker::SetOnlyMouseScrollWhenDropped(bool enable)
+{ m_only_mouse_scroll_when_dropped = enable; }
+
 boost::optional<DropDownList::iterator> ModalListPicker::MouseWheelCommon(
     const Pt& pt, int move, Flags<ModKey> mod_keys)
 {
+    if (m_only_mouse_scroll_when_dropped && !Dropped())
+        return boost::none;
+
     DropDownList::iterator cur_it = CurrentItem();
     if (cur_it == LB()->end())
         return boost::none;
@@ -465,9 +482,24 @@ boost::optional<DropDownList::iterator> ModalListPicker::MouseWheelCommon(
     }
     if (move != 0) {
         std::advance(cur_it, move);
+        LB()->BringRowIntoView(cur_it);
         return cur_it;
     }
     return boost::none;
+}
+
+bool ModalListPicker::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
+    if (w != m_lb_wnd)
+        return false;
+
+    switch (event.Type()) {
+    case WndEvent::MouseWheel:
+        MouseWheel(event.Point(), -event.WheelMove(), event.ModKeys());
+        return true;
+    default:
+        break;
+    };
+    return false;
 }
 
 void ModalListPicker::LClick(const Pt& pt, Flags<ModKey> mod_keys)
@@ -493,9 +525,12 @@ void ModalListPicker::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModK
 
 void ModalListPicker::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 {
-    if (!LB()->InWindow(pt))
+    bool in_anchor_or_dropped_list = (LB()->InWindow(pt) || (m_relative_to_wnd && m_relative_to_wnd->InWindow(pt)));
+    if (!in_anchor_or_dropped_list)
         return;
-    SignalChanged(Select(MouseWheelCommon(pt, move, mod_keys)));
+
+    auto corrected_move = (LB()->InWindow(pt)? move : -move);
+    SignalChanged(Select(MouseWheelCommon(pt, corrected_move, mod_keys)));
 }
 
 ////////////////////////////////////////////////
@@ -877,11 +912,16 @@ void DropDownList::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey>
 void DropDownList::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
-        m_modal_picker->SignalChanged(m_modal_picker->Select(m_modal_picker->MouseWheelCommon(pt, -move, mod_keys)));
+        auto corrected_move = (LB()->InWindow(pt)? move : -move);
+        m_modal_picker->SignalChanged(
+            m_modal_picker->Select(m_modal_picker->MouseWheelCommon(pt, corrected_move, mod_keys)));
     } else {
         Control::MouseWheel(pt, move, mod_keys);
     }
 }
+
+void DropDownList::SetOnlyMouseScrollWhenDropped(bool enable)
+{ m_modal_picker->SetOnlyMouseScrollWhenDropped(enable); }
 
 ListBox* DropDownList::LB()
 { return m_modal_picker->LB(); }

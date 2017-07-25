@@ -958,6 +958,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_focus_drop->SetColWidth(0, m_focus_drop->DisplayedRowWidth());
     m_focus_drop->SetColStretch(0, 0.0);
     m_focus_drop->SetColStretch(1, 1.0);
+    m_focus_drop->SetOnlyMouseScrollWhenDropped(true);
 
 
     // meter panels

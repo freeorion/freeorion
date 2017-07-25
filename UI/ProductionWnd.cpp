@@ -447,6 +447,8 @@ namespace {
                                                        m_in_progress, GG::X(FONT_PTS*2.5), false);
             m_block_size_selector = new QuantitySelector(elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
                                                          m_in_progress, GG::X(FONT_PTS*2.5), true);
+            m_quantity_selector->SetOnlyMouseScrollWhenDropped(true);
+            m_block_size_selector->SetOnlyMouseScrollWhenDropped(true);
         }
 
         m_name_text = new CUILabel(name_text, GG::FORMAT_TOP | GG::FORMAT_LEFT);

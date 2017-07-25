@@ -383,6 +383,7 @@ namespace {
         drop_list->Resize(GG::Pt(drop_list->MinUsableSize().x, GG::Y(ClientUI::Pts() + 4)));
         drop_list->SetMaxSize(GG::Pt(drop_list->MaxSize().x, drop_list->Size().y));
         drop_list->SetStyle(GG::LIST_NOSORT);
+        drop_list->SetOnlyMouseScrollWhenDropped(true);
 
         // Insert the levels into the list
         for (auto ii = static_cast<std::size_t>(LogLevel::min); ii <= static_cast<std::size_t>(LogLevel::max); ++ii) {
@@ -1130,6 +1131,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     drop_list->SetStyle(GG::LIST_NOSORT);
     drop_list->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     drop_list->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_LIST_DESCRIPTION"));
+    drop_list->SetOnlyMouseScrollWhenDropped(true);
 
     auto layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 2, 1, 0, LAYOUT_MARGIN);
     layout->Add(drop_list_label, 0, 0);
