@@ -77,9 +77,10 @@ namespace {
                             // useful to specify a single recipient empire, or the allies
                             // or enemies of a single empire
                             ((   (parse::detail::label(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
-                            |    eps [ _d = AFFIL_SELF ]
-                            )
-                             >>  parse::detail::label(Empire_token)) > parse::int_value_ref()
+                             |    eps [ _d = AFFIL_SELF ]
+                             )
+                            >>  parse::detail::label(Empire_token)
+                            ) > parse::int_value_ref()
                             [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _1, _d, _e, _f) ]
                         )
                     |   (   // condition specified, with an affiliation type of CanSee:
