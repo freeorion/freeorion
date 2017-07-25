@@ -157,7 +157,7 @@ PHOTOTROPHIC_BONUS
                 TargetPopulation low = 0
             ]
             accountinglabel = "VERY_BRIGHT_STAR"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[LATEST_GROWTH_PRIORITY]]
             effects = SetTargetPopulation value = Value + 3 * Source.SizeAsDouble
 
         EffectsGroup
@@ -169,7 +169,7 @@ PHOTOTROPHIC_BONUS
                 TargetPopulation low = 0
             ]
             accountinglabel = "BRIGHT_STAR"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[LATEST_GROWTH_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1.5 * Source.SizeAsDouble
 
         EffectsGroup
@@ -180,7 +180,7 @@ PHOTOTROPHIC_BONUS
                 Star type = [Red Neutron]
             ]
             accountinglabel = "DIM_STAR"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[LATEST_GROWTH_PRIORITY]]
             effects = SetTargetPopulation value = Value - 1 * Source.SizeAsDouble
 
         EffectsGroup
@@ -191,6 +191,7 @@ PHOTOTROPHIC_BONUS
                 Star type = [BlackHole NoStar]
             ]
             accountinglabel = "NO_STAR"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[LATEST_GROWTH_PRIORITY]]
             effects = SetTargetPopulation value = Value - 10 * Source.SizeAsDouble
 '''
+
