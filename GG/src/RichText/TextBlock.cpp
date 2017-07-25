@@ -38,7 +38,7 @@ namespace GG {
         // Construct the text control. Activatee full text wrapping features, and make it stick to the top.
         // With these setting the height is largely ignored, so we set it to one.
         m_text = Wnd::Create<TextControl>(GG::X0, GG::Y0, w, Y1, str, font, color,
-                                 format | FORMAT_WORDBREAK | FORMAT_LINEWRAP | FORMAT_TOP, flags);
+                                          format | FORMAT_WORDBREAK | FORMAT_LINEWRAP | FORMAT_TOP, flags);
         AttachChild(m_text);
     }
 

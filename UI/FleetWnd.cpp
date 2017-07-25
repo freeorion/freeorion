@@ -821,7 +821,7 @@ void ShipDataPanel::SetShipIcon() {
         && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
     {
         m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, m_ship_icon->Width(), m_ship_icon->Height(), true,
-                                                 GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
+                                                              GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
         AttachChild(m_scanline_control);
     }
 }
@@ -1462,7 +1462,7 @@ void FleetDataPanel::Refresh() {
             && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
         {
             m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, DataPanelIconSpace().x, ClientHeight(), true,
-                                                     GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
+                                                                  GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
             AttachChild(m_scanline_control);
         }
 

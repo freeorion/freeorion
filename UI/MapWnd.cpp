@@ -403,13 +403,13 @@ namespace {
             // center format for title label
             m_labels.emplace(descr, std::make_pair(
                 GG::Wnd::Create<CUILabel>(UserString(descr),
-                    title ? GG::FORMAT_CENTER : GG::FORMAT_RIGHT,
-                    GG::NO_WND_FLAGS, GG::X0, GG::Y0,
-                    m_col_widths.at(0) - (m_margin * 2), height
+                                          title ? GG::FORMAT_CENTER : GG::FORMAT_RIGHT,
+                                          GG::NO_WND_FLAGS, GG::X0, GG::Y0,
+                                          m_col_widths.at(0) - (m_margin * 2), height
                 ),
                 GG::Wnd::Create<CUILabel>("0", GG::FORMAT_RIGHT,
-                    GG::NO_WND_FLAGS, GG::X0, GG::Y0,
-                    m_col_widths.at(1) - (m_margin * 2), height
+                                          GG::NO_WND_FLAGS, GG::X0, GG::Y0,
+                                          m_col_widths.at(1) - (m_margin * 2), height
                 )
             ));
 
@@ -952,8 +952,8 @@ MapWnd::MapWnd() :
     m_toolbar->Hide();
 
     auto layout = GG::Wnd::Create<GG::Layout>(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
-                                        m_toolbar->ClientWidth(),       m_toolbar->ClientHeight(),
-                                        1, 21);
+                                              m_toolbar->ClientWidth(),       m_toolbar->ClientHeight(),
+                                              1, 21);
     layout->SetName("Toolbar Layout");
     m_toolbar->SetLayout(layout);
 
@@ -1185,32 +1185,32 @@ MapWnd::MapWnd() :
     const GG::X ICON_DUAL_WIDTH(100);
     const GG::X ICON_WIDTH(24);
     m_population = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_POPULATION), 0, 3, false,
-                                     ICON_DUAL_WIDTH, m_btn_turn->Height());
+                                                  ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_population->SetName("Population StatisticIcon");
 
     m_industry = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_INDUSTRY), 0, 3, false,
-                                   ICON_DUAL_WIDTH, m_btn_turn->Height());
+                                                ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_industry->SetName("Industry StatisticIcon");
     m_industry->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleProduction, this));
 
     m_research = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false,
-                                   ICON_DUAL_WIDTH, m_btn_turn->Height());
+                                                ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_research->SetName("Research StatisticIcon");
     m_research->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleResearch, this));
 
     m_trade = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_TRADE), 0, 3, false,
-                                ICON_DUAL_WIDTH, m_btn_turn->Height());
+                                             ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_trade->SetName("Trade StatisticIcon");
 
     m_fleet = GG::Wnd::Create<StatisticIcon>(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"),
-                                0, 3, false,
-                                ICON_DUAL_WIDTH, m_btn_turn->Height());
+                                             0, 3, false,
+                                             ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_fleet->SetName("Fleet StatisticIcon");
 
     m_detection = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_DETECTION), 0, 3, false,
-                                    ICON_DUAL_WIDTH, m_btn_turn->Height());
+                                                 ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_detection->SetName("Detection StatisticIcon");
 
     GG::SubTexture wasted_ressource_subtexture = GG::SubTexture(ClientUI::GetTexture(button_texture_dir /
@@ -1364,7 +1364,7 @@ MapWnd::MapWnd() :
 
     // scale line
     m_scale_line = GG::Wnd::Create<MapScaleLine>(GG::X(LAYOUT_MARGIN),   GG::Y(LAYOUT_MARGIN) + m_toolbar->Height(),
-                                    SCALE_LINE_MAX_WIDTH,   SCALE_LINE_HEIGHT);
+                                                 SCALE_LINE_MAX_WIDTH,   SCALE_LINE_HEIGHT);
     GG::GUI::GetGUI()->Register(m_scale_line);
     int sel_system_id = SidePanel::SystemID();
     m_scale_line->Update(ZoomFactor(), m_selected_fleet_ids, sel_system_id);

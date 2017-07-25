@@ -102,8 +102,8 @@ namespace {
         std::vector<GG::Font::LineData> lines = ClientUI::GetFont()->DetermineLines(string, fmt, width, text_elements);
         GG::Pt extent = ClientUI::GetFont()->TextExtent(lines);
         auto text = GG::Wnd::Create<CUILabel>(string, text_elements,
-                                       GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT, GG::NO_WND_FLAGS,
-                                       GG::X0, GG::Y0, extent.x, extent.y);
+                                              GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT, GG::NO_WND_FLAGS,
+                                              GG::X0, GG::Y0, extent.x, extent.y);
         text->ClipText(true);
         text->SetChildClippingMode(GG::Wnd::ClipToClient);
         return text;
@@ -181,8 +181,8 @@ public:
 
         if (column.m_fixed) {
             retval = GG::Wnd::Create<CUILabel>(value, format_flags, GG::NO_WND_FLAGS,
-                                  GG::X0, GG::Y0,
-                                  column.FixedWidth(), ClientUI::GetFont()->Height());
+                                               GG::X0, GG::Y0,
+                                               column.FixedWidth(), ClientUI::GetFont()->Height());
         } else {
             retval = CreateResizingText(value, max_width);
         }
@@ -404,7 +404,7 @@ public:
         for (unsigned int i = 0; i < m_columns->size(); ++i) {
             if (i==0) {
                 auto label = GG::Wnd::Create<CUILabel>(PATH_DELIM_BEGIN + m_filename + PATH_DELIM_END,
-                                               GG::FORMAT_NOWRAP | GG::FORMAT_LEFT);
+                                                       GG::FORMAT_NOWRAP | GG::FORMAT_LEFT);
                 label->Resize(GG::Pt(DirectoryNameSize(), ClientUI::GetFont()->Height()));
                 push_back(label);
             } else {
@@ -647,8 +647,8 @@ void SaveFileDialog::Init() {
     SetMinSize(GG::Pt(2*SAVE_FILE_DIALOG_MIN_WIDTH, 2*SAVE_FILE_DIALOG_MIN_HEIGHT));
 
     m_layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0,
-                              SAVE_FILE_DIALOG_WIDTH - LeftBorder() - RightBorder(),
-                              SAVE_FILE_DIALOG_HEIGHT - TopBorder() - BottomBorder(), 4, 4);
+                                           SAVE_FILE_DIALOG_WIDTH - LeftBorder() - RightBorder(),
+                                           SAVE_FILE_DIALOG_HEIGHT - TopBorder() - BottomBorder(), 4, 4);
     m_layout->SetCellMargin(SAVE_FILE_CELL_MARGIN);
     m_layout->SetBorderMargin(SAVE_FILE_CELL_MARGIN*2);
 

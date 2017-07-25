@@ -236,15 +236,15 @@ namespace {
                 push_back(GG::Wnd::Create<CUILabel>(""));
                 push_back(GG::Wnd::Create<CUILabel>(""));
                 push_back(GG::Wnd::Create<GG::StaticGraphic>(GetReadyTexture(m_player_data.m_player_ready),
-                    GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
+                                                             GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
                 at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
                 at(5)->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
                     m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
                     "", PlayerReadyBrowseWidth()));
                 if (HumanClientApp::GetApp()->Networking().PlayerIsHost(player_id)) {
-                    push_back(GG::Wnd::Create<GG::StaticGraphic>(GetHostTexture(),
-                        GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
+                    push_back(GG::Wnd::Create<GG::StaticGraphic>(
+                                  GetHostTexture(), GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 } else {
                     push_back(GG::Wnd::Create<CUILabel>(""));
                 }
@@ -290,8 +290,8 @@ namespace {
                 push_back(GG::Wnd::Create<CUILabel>(""));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
             } else {
-                push_back(GG::Wnd::Create<GG::StaticGraphic>(GetReadyTexture(m_player_data.m_player_ready),
-                    GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
+                push_back(GG::Wnd::Create<GG::StaticGraphic>(
+                              GetReadyTexture(m_player_data.m_player_ready), GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
                 at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
                 at(5)->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
@@ -301,8 +301,8 @@ namespace {
 
             // host
             if (HumanClientApp::GetApp()->Networking().PlayerIsHost(player_id)) {
-                push_back(GG::Wnd::Create<GG::StaticGraphic>(GetHostTexture(),
-                    GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
+                push_back(GG::Wnd::Create<GG::StaticGraphic>(
+                              GetHostTexture(), GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
             } else {
                 push_back(GG::Wnd::Create<CUILabel>(""));
             }
@@ -399,7 +399,7 @@ namespace {
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
             } else {
                 push_back(GG::Wnd::Create<GG::StaticGraphic>(GetReadyTexture(m_player_data.m_player_ready),
-                    GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
+                                                             GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
                 at(5)->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
                     m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
@@ -409,8 +409,8 @@ namespace {
 
             // host
             if (HumanClientApp::GetApp()->Networking().PlayerIsHost(player_id)) {
-                push_back(GG::Wnd::Create<GG::StaticGraphic>(GetHostTexture(),
-                    GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
+                push_back(GG::Wnd::Create<GG::StaticGraphic>(
+                              GetHostTexture(), GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
             } else {
                 push_back(GG::Wnd::Create<CUILabel>(""));
             }

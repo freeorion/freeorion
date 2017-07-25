@@ -391,10 +391,10 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
 
     m_wnd.DeleteChildren();
     auto layout = GG::Wnd::Create<GG::DeferredLayout>(m_wnd.RelativeUpperLeft().x, m_wnd.RelativeUpperLeft().y,
-                                                m_wnd.Width(), m_wnd.Height(),
-                                                1, 1, ///< numrows, numcols
-                                                0, 0 ///< wnd margin, cell margin
-                                               );
+                                                      m_wnd.Width(), m_wnd.Height(),
+                                                      1, 1, ///< numrows, numcols
+                                                      0, 0 ///< wnd margin, cell margin
+                                                     );
     m_wnd.SetLayout(layout);
 
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();

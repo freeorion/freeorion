@@ -156,7 +156,7 @@ void BuildingsPanel::Update() {
         double progress = std::max(0.0f, empire->ProductionStatus(queue_index));
         double turns_completed = progress / std::max(total_cost, 1.0);
         auto ind = GG::Wnd::Create<BuildingIndicator>(GG::X(indicator_size), elem.item.name,
-                                                       turns_completed, total_turns, total_cost, turn_spending);
+                                                      turns_completed, total_turns, total_cost, turn_spending);
 
         m_building_indicators.push_back(ind);
     }
@@ -288,11 +288,11 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
     float next_progress = turn_spending / std::max(1.0, total_cost);
 
     m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(total_turns,
-                                              turns_completed,
-                                              next_progress,
-                                              GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
-                                              ClientUI::TechWndProgressBarColor(),
-                                              GG::LightColor(ClientUI::ResearchableTechFillColor()));
+                                                           turns_completed,
+                                                           next_progress,
+                                                           GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
+                                                           ClientUI::TechWndProgressBarColor(),
+                                                           GG::LightColor(ClientUI::ResearchableTechFillColor()));
 
     AttachChild(m_progress_bar);
 

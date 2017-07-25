@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 
     GG::Wnd* quit_dlg =
     GG::Wnd::Create<GG::ThreeButtonDlg>(GG::X(10), GG::Y(10), message, font, GG::CLR_SHADOW,
-                           GG::CLR_SHADOW, GG::CLR_SHADOW, GG::CLR_WHITE, 1);
+                                        GG::CLR_SHADOW, GG::CLR_SHADOW, GG::CLR_WHITE, 1);
 
     app.Run(quit_dlg);
 

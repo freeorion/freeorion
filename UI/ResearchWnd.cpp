@@ -87,9 +87,9 @@ namespace {
                 progress = empire->ResearchProgress(elem.name);
 
             panel = GG::Wnd::Create<QueueTechPanel>(GG::X(GetLayout()->BorderMargin()), GG::Y(GetLayout()->BorderMargin()),
-                                       ClientWidth(), elem.name, elem.allocated_rp,
-                                       elem.turns_left, progress / per_turn_cost,
-                                       elem.empire_id);
+                                                    ClientWidth(), elem.name, elem.allocated_rp,
+                                                    elem.turns_left, progress / per_turn_cost,
+                                                    elem.empire_id);
             push_back(panel);
 
             SetDragDropDataType("RESEARCH_QUEUE_ROW");
@@ -186,11 +186,11 @@ namespace {
             outline_color = GG::LightColor(outline_color);
 
         m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(total_time,
-                                                  perc_complete,
-                                                  next_progress,
-                                                  GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
-                                                  ClientUI::TechWndProgressBarColor(),
-                                                  outline_color);
+                                                               perc_complete,
+                                                               next_progress,
+                                                               GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
+                                                               ClientUI::TechWndProgressBarColor(),
+                                                               outline_color);
 
         m_progress_bar->MoveTo(GG::Pt(left, top));
         m_progress_bar->Resize(GG::Pt(METER_WIDTH, METER_HEIGHT));

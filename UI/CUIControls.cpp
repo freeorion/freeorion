@@ -1313,8 +1313,8 @@ void StatisticIcon::DoLayout() {
     if (!m_text) {
         // Create new label in correct place.
         m_text = GG::Wnd::Create<CUILabel>(text_elements.Text(), text_elements.Elements(),
-                              format, GG::NO_WND_FLAGS,
-                              text_ul.x, text_ul.y, text_lr.x - text_ul.x, text_lr.y - text_ul.y);
+                                           format, GG::NO_WND_FLAGS,
+                                           text_ul.x, text_ul.y, text_lr.x - text_ul.x, text_lr.y - text_ul.y);
         AttachChild(m_text);
     } else {
         // Adjust text and place label.

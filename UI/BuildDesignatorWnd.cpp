@@ -791,8 +791,8 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
             if (!BuildableItemVisible(BT_BUILDING, name))
                 continue;
             auto item_row = GG::Wnd::Create<ProductionItemRow>(row_size.x, row_size.y,
-                                                                ProductionQueue::ProductionItem(BT_BUILDING, name),
-                                                                m_empire_id, m_production_location);
+                                                               ProductionQueue::ProductionItem(BT_BUILDING, name),
+                                                               m_empire_id, m_production_location);
             rows.push_back(item_row);
         }
         m_buildable_items->Insert(rows, false);
@@ -824,8 +824,8 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
             if (!ship_design)
                 continue;
             auto item_row = GG::Wnd::Create<ProductionItemRow>(row_size.x, row_size.y,
-                                                                ProductionQueue::ProductionItem(BT_SHIP, ship_design_id),
-                                                                m_empire_id, m_production_location);
+                                                               ProductionQueue::ProductionItem(BT_SHIP, ship_design_id),
+                                                               m_empire_id, m_production_location);
             rows.push_back(item_row);
         }
         m_buildable_items->Insert(rows, false);

@@ -540,14 +540,14 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
     m_value_picker->SetValue(m_current_color.v);
     const int HUE_SATURATION_PICKER_SIZE = 200;
     m_pickers_layout = Wnd::Create<Layout>(X0, Y0, X(HUE_SATURATION_PICKER_SIZE + 30), Y(HUE_SATURATION_PICKER_SIZE),
-                                  1, 2, 0, 5);
+                                           1, 2, 0, 5);
     m_pickers_layout->SetColumnStretch(0, 1);
     m_pickers_layout->SetMinimumColumnWidth(1, X(24));
     m_pickers_layout->Add(m_hue_saturation_picker, 0, 0);
     m_pickers_layout->Add(m_value_picker, 0, 1);
 
     m_color_squares_layout = Wnd::Create<Layout>(X0, m_pickers_layout->Bottom() + 5, m_pickers_layout->Width(), Y(40),
-                                        1, 1, 0, 4);
+                                                 1, 1, 0, 4);
     m_new_color_square = Wnd::Create<ColorDisplay>(color);
     if (m_original_color_specified) {
         m_new_color_square_text = style->NewTextControl(style->Translate("New"), font, m_text_color, FORMAT_RIGHT);
@@ -564,7 +564,7 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
     }
 
     m_color_buttons_layout = Wnd::Create<Layout>(X0, m_color_squares_layout->Bottom() + 5, m_pickers_layout->Width(), Y(80),
-                                        COLOR_BUTTON_ROWS, COLOR_BUTTON_COLS, 0, 4);
+                                                 COLOR_BUTTON_ROWS, COLOR_BUTTON_COLS, 0, 4);
     for (int i = 0; i < COLOR_BUTTON_ROWS; ++i) {
         for (int j = 0; j < COLOR_BUTTON_COLS; ++j) {
             m_color_buttons.push_back(new ColorButton(m_color));
@@ -574,7 +574,7 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
     }
 
     m_sliders_ok_cancel_layout = Wnd::Create<Layout>(m_pickers_layout->Right() + 5, Y0, X(150), Y((25 + 5) * 8 - 5),
-                                            9, 3, 0, 5);
+                                                     9, 3, 0, 5);
     m_sliders_ok_cancel_layout->SetMinimumColumnWidth(0, X(15));
     m_sliders_ok_cancel_layout->SetMinimumColumnWidth(1, X(30));
     m_sliders_ok_cancel_layout->SetColumnStretch(2, 1);

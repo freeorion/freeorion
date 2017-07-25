@@ -338,8 +338,8 @@ namespace {
                 pp_accumulated = 0.0f;
 
             panel = GG::Wnd::Create<QueueProductionItemPanel>(GG::X0, GG::Y0, ClientWidth() - MARGIN - MARGIN,
-                                                 elem, elem.allocated_pp, total_cost, minimum_turns, elem.remaining,
-                                                 pp_accumulated);
+                                                              elem, elem.allocated_pp, total_cost, minimum_turns, elem.remaining,
+                                                              pp_accumulated);
             push_back(panel);
 
             SetDragDropDataType(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE);
@@ -444,9 +444,9 @@ namespace {
 
         if (elem.item.build_type == BT_SHIP) {
             m_quantity_selector = GG::Wnd::Create<QuantitySelector>(elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
-                                                       m_in_progress, GG::X(FONT_PTS*2.5), false);
+                                                                    m_in_progress, GG::X(FONT_PTS*2.5), false);
             m_block_size_selector = GG::Wnd::Create<QuantitySelector>(elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
-                                                         m_in_progress, GG::X(FONT_PTS*2.5), true);
+                                                                      m_in_progress, GG::X(FONT_PTS*2.5), true);
             m_quantity_selector->SetOnlyMouseScrollWhenDropped(true);
             m_block_size_selector->SetOnlyMouseScrollWhenDropped(true);
         }
@@ -478,11 +478,11 @@ namespace {
             outline_color = GG::LightColor(outline_color);
 
         m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(m_total_turns,
-                                                  perc_complete,
-                                                  next_progress,
-                                                  GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
-                                                  ClientUI::TechWndProgressBarColor(),
-                                                  outline_color);
+                                                               perc_complete,
+                                                               next_progress,
+                                                               GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
+                                                               ClientUI::TechWndProgressBarColor(),
+                                                               outline_color);
 
         double max_spending_per_turn = m_total_cost / m_total_turns;
         std::string turn_spending_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR"))

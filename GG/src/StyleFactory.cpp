@@ -191,7 +191,7 @@ ThreeButtonDlg* StyleFactory::NewThreeButtonDlg(X w, Y h, const std::string& msg
                                                 const std::string& one/* = ""*/, const std::string& two/* = ""*/) const
 {
     return Wnd::Create<ThreeButtonDlg>(w, h, msg, font, color, border_color, button_color, text_color,
-                              buttons, zero, one, two);
+                                       buttons, zero, one, two);
 }
 
 void StyleFactory::DeleteWnd(Wnd* wnd) const

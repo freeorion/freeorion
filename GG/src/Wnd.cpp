@@ -639,8 +639,8 @@ void Wnd::HorizontalLayout()
     }
 
     m_layout = Wnd::Create<Layout>(X0, Y0, ClientSize().x, ClientSize().y,
-                          1, wnds.size(),
-                          DEFAULT_LAYOUT_BORDER_MARGIN, DEFAULT_LAYOUT_CELL_MARGIN);
+                                   1, wnds.size(),
+                                   DEFAULT_LAYOUT_BORDER_MARGIN, DEFAULT_LAYOUT_CELL_MARGIN);
     AttachChild(m_layout);
 
     int i = 0;
@@ -663,8 +663,8 @@ void Wnd::VerticalLayout()
     }
 
     m_layout = Wnd::Create<Layout>(X0, Y0, ClientSize().x, ClientSize().y,
-                          wnds.size(), 1,
-                          DEFAULT_LAYOUT_BORDER_MARGIN, DEFAULT_LAYOUT_CELL_MARGIN);
+                                   wnds.size(), 1,
+                                   DEFAULT_LAYOUT_BORDER_MARGIN, DEFAULT_LAYOUT_CELL_MARGIN);
     AttachChild(m_layout);
 
     int i = 0;
@@ -776,8 +776,8 @@ void Wnd::GridLayout()
         return;
 
     m_layout = Wnd::Create<Layout>(X0, Y0, ClientSize().x, ClientSize().y,
-                          unique_tops.size(), unique_lefts.size(),
-                          DEFAULT_LAYOUT_BORDER_MARGIN, DEFAULT_LAYOUT_CELL_MARGIN);
+                                   unique_tops.size(), unique_lefts.size(),
+                                   DEFAULT_LAYOUT_BORDER_MARGIN, DEFAULT_LAYOUT_CELL_MARGIN);
     AttachChild(m_layout);
 
     // populate this new layout with the child windows, based on their placements in the pixel-grid layout

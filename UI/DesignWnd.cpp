@@ -1774,7 +1774,7 @@ BasesListBox::HullAndNamePanel::HullAndNamePanel(GG::X w, GG::Y h, const std::st
     SetChildClippingMode(ClipToClient);
 
     m_graphic = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::HullIcon(hull),
-                                      GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+                                                   GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
     m_graphic->Resize(GG::Pt(w, h));
     AttachChild(m_graphic);
     m_name = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_WORDBREAK | GG::FORMAT_CENTER | GG::FORMAT_TOP);

@@ -1347,7 +1347,7 @@ public:
         std::vector<std::shared_ptr<GG::Texture>> textures = ObjectTextures(obj);
 
         m_icon = GG::Wnd::Create<MultiTextureStaticGraphic>(textures,
-                                               std::vector<GG::Flags<GG::GraphicStyle>>(textures.size(), style));
+                                                            std::vector<GG::Flags<GG::GraphicStyle>>(textures.size(), style));
         AttachChild(m_icon);
 
         for (auto& control : m_controls)
@@ -1491,8 +1491,8 @@ public:
 
     void Init() {
         m_panel = GG::Wnd::Create<ObjectPanel>(ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
-                                  ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()),
-                                  m_obj_init, m_expanded_init, !m_contained_object_panels.empty(), m_indent_init);
+                                               ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()),
+                                               m_obj_init, m_expanded_init, !m_contained_object_panels.empty(), m_indent_init);
         push_back(m_panel);
         m_panel->ExpandCollapseSignal.connect(
             boost::bind(&ObjectRow::ExpandCollapseClicked, this));

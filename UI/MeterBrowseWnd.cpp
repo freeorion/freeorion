@@ -928,7 +928,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
         // add label for hangar part
         m_hangar_list->Insert(GG::Wnd::Create<ShipFightersBrowseRow>(UserString(hangar_part.first), hangar_part.second,
-                                                        hangar_current_fighters, hangar_total_capacity));
+                                                                     hangar_current_fighters, hangar_total_capacity));
         // TODO Append other potential effects for hangar capacities
 
         // calculate the required height to align both listboxes

@@ -838,7 +838,7 @@ void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, const st
     auto button = Wnd::Create<CUIButton>(hk.PrettyPrint());
 
     auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, ROW_WIDTH, std::max(button->MinUsableSize().y, text_control->MinUsableSize().y),
-                                        1, 2, 0, 5);
+                                              1, 2, 0, 5);
     layout->Add(text_control,   0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->Add(button,         0, 1, GG::ALIGN_VCENTER | GG::ALIGN_RIGHT);
 
@@ -992,7 +992,7 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const 
     auto button = new CUIButton("...");
 
     auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, ROW_WIDTH, button->MinUsableSize().y,
-                                        1, 3, 0, 5);
+                                              1, 3, 0, 5);
 
     layout->Add(text_control,   0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->Add(edit,           0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
@@ -1057,7 +1057,7 @@ void OptionsWnd::ColorOption(GG::ListBox* page, int indentation_level, const std
     auto row = GG::Wnd::Create<GG::ListBox::Row>();
     auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     auto color_selector = GG::Wnd::Create<ColorSelector>(GetOptionsDB().Get<GG::Clr>(option_name),
-                                                      GetOptionsDB().GetDefault<GG::Clr>(option_name));
+                                                         GetOptionsDB().GetDefault<GG::Clr>(option_name));
     color_selector->Resize(GG::Pt(color_selector->Width(), GG::Y(ClientUI::Pts() + 4)));
     color_selector->SetMaxSize(GG::Pt(color_selector->MaxSize().x, color_selector->Size().y));
     auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2);
@@ -1199,7 +1199,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     // apply button, sized to fit text
     auto apply_button = Wnd::Create<CUIButton>(UserString("OPTIONS_APPLY"));
     row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, apply_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
-                             apply_button, indentation_level);
+                                          apply_button, indentation_level);
     page->Insert(row);
     apply_button->LeftClickedSignal.connect(
         boost::bind(&HumanClientApp::Reinitialize, HumanClientApp::GetApp()));

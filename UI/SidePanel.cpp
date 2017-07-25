@@ -1132,9 +1132,9 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
         GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - texture_width / 2 + 3), GG::Y0);
 
         m_planet_graphic = GG::Wnd::Create<GG::DynamicGraphic>(planet_image_pos.x, planet_image_pos.y,
-                                                    texture_width, texture_height, true,
-                                                    texture_width, texture_height, 0, textures,
-                                                    GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                                                               texture_width, texture_height, true,
+                                                               texture_width, texture_height, 0, textures,
+                                                               GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         m_planet_graphic->SetFPS(GetAsteroidsFPS());
         m_planet_graphic->SetFrameIndex(RandSmallInt(0, textures.size() - 1));
         AttachChild(m_planet_graphic);
@@ -1144,7 +1144,7 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
         GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - planet_image_sz / 2 + 3),
                                 GG::Y(MaxPlanetDiameter() / 2 - planet_image_sz / 2));
         m_rotating_planet_graphic = GG::Wnd::Create<RotatingPlanetControl>(planet_image_pos.x, planet_image_pos.y,
-                                                              m_planet_id, m_star_type);
+                                                                           m_planet_id, m_star_type);
         AttachChild(m_rotating_planet_graphic);
     }
 }
@@ -3162,9 +3162,9 @@ void SidePanel::RefreshImpl() {
 
     int graphic_width = Value(Width()) - MaxPlanetDiameter();
     m_star_graphic = GG::Wnd::Create<GG::DynamicGraphic>(GG::X(MaxPlanetDiameter()), GG::Y0,
-                                            GG::X(graphic_width), GG::Y(graphic_width), true,
-                                            textures[0]->DefaultWidth(), textures[0]->DefaultHeight(),
-                                            0, textures, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                                                         GG::X(graphic_width), GG::Y(graphic_width), true,
+                                                         textures[0]->DefaultWidth(), textures[0]->DefaultHeight(),
+                                                         0, textures, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
     AttachChild(m_star_graphic);
     MoveChildDown(m_star_graphic);
@@ -3208,7 +3208,7 @@ void SidePanel::RefreshImpl() {
 
     // refresh the system resource summary.
     m_system_resource_summary = GG::Wnd::Create<MultiIconValueIndicator>(Width() - MaxPlanetDiameter() - 8,
-                                                            owned_planets, meter_types);
+                                                                         owned_planets, meter_types);
     m_system_resource_summary->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + 4),
                                              140 - m_system_resource_summary->Height()));
     AttachChild(m_system_resource_summary);

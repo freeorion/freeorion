@@ -51,16 +51,16 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     // small meter indicators - for use when panel is collapsed
     m_meter_stats.push_back(
         std::make_pair(METER_POPULATION, GG::Wnd::Create<StatisticIcon>(ClientUI::SpeciesIcon(pop->SpeciesName()),
-                                                           obj->InitialMeterValue(METER_POPULATION), 3, false,
-                                                           MeterIconSize().x, MeterIconSize().y)));
+                                                                        obj->InitialMeterValue(METER_POPULATION), 3, false,
+                                                                        MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
         std::make_pair(METER_HAPPINESS, GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_HAPPINESS),
-                                                          obj->InitialMeterValue(METER_HAPPINESS), 3, false,
-                                                          MeterIconSize().x, MeterIconSize().y)));
+                                                                       obj->InitialMeterValue(METER_HAPPINESS), 3, false,
+                                                                       MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
         std::make_pair(METER_CONSTRUCTION, GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_CONSTRUCTION),
-                                                             obj->InitialMeterValue(METER_CONSTRUCTION), 3, false,
-                                                             MeterIconSize().x, MeterIconSize().y)));
+                                                                          obj->InitialMeterValue(METER_CONSTRUCTION), 3, false,
+                                                                          MeterIconSize().x, MeterIconSize().y)));
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType>> meters;

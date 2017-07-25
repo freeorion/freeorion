@@ -349,8 +349,8 @@ namespace {
 
         void            Init() {
             m_panel = GG::Wnd::Create<SitRepDataPanel>(GG::X(GetLayout()->BorderMargin()), GG::Y(GetLayout()->BorderMargin()),
-                                          ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
-                                          ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()), m_sitrep);
+                                                       ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
+                                                       ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()), m_sitrep);
             push_back(m_panel);
             m_panel->RightClickedSignal.connect(
                 boost::bind(&SitRepRow::RClick, this, _1, _2));
