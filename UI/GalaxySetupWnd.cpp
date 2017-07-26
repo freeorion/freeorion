@@ -174,9 +174,6 @@ GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
 {}
 
 void GameRulesPanel::CompleteConstruction() {
-    const int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
-    GG::ListBox* current_page = nullptr;
-
     m_tabs = GG::Wnd::Create<GG::TabWnd>(GG::X0, GG::Y0, SPIN_WIDTH, GG::Y1,
                                          ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
     AttachChild(m_tabs);

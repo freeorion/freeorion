@@ -3677,7 +3677,6 @@ namespace {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire)
             return;
-        GG::Clr lane_colour = empire->Color();
 
         const std::set<int>& this_client_known_destroyed_objects =
             GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());

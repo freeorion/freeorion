@@ -225,12 +225,6 @@ namespace {
 
     bool                    GetToggleRule(const GameRules& rules, const std::string& name)
     { return false; }
-    int                     GetIntRule(const GameRules& rules, const std::string& name)
-    { return 0; }
-    double                  GetDoubleRule(const GameRules& rules, const std::string& name)
-    { return 0.0; }
-    std::string             GetStringRule(const GameRules& rules, const std::string& name)
-    { return ""; }
 
     bool                    RuleExistsAnyType(const GameRules& rules, const std::string& name)
     { return rules.RuleExists(name); }
