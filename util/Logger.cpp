@@ -402,6 +402,7 @@ void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
 
     // Store as static to initialize once.
     static bool dummy = InitializeLoggerCreatedSignal();
+    (void)dummy; // Hide unused variable warning
 
     LoggerCreatedSignal(name);
 }

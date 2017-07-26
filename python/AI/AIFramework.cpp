@@ -97,6 +97,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 bool PythonAI::Initialize() {
     if (PythonBase::Initialize()) {
         BuildingTypeManager& temp = GetBuildingTypeManager();  // Ensure buildings are initialized
+        (void)temp; // Hide unused variable warning
         return true;
     }
     else

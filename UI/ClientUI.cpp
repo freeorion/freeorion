@@ -662,12 +662,14 @@ ClientUI::~ClientUI() {
 MapWnd* ClientUI::GetMapWnd()
 {
     static bool initialized = m_map_wnd ? true : (m_map_wnd = GG::Wnd::Create<MapWnd>()) != nullptr;
+    (void)initialized; // Hide unused variable warning
     return m_map_wnd;
 }
 
 MapWnd const* ClientUI::GetMapWndConst() const
 {
     static bool initialized = m_map_wnd ? true : (m_map_wnd = GG::Wnd::Create<MapWnd>()) != nullptr;
+    (void)initialized; // Hide unused variable warning
     return m_map_wnd;
 }
 
