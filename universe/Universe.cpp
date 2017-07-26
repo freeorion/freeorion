@@ -2309,7 +2309,7 @@ namespace {
             int empire_id = empire_entry.first;
             // output maps for this empire
             Universe::ObjectVisibilityMap& obj_vis_map = empire_object_visibility[empire_id];
-            Universe::ObjectSpecialsMap& obj_specials_map = empire_object_visible_specials[empire_id];
+            // unused variable Universe::ObjectSpecialsMap& obj_specials_map = empire_object_visible_specials[empire_id];
 
             for (auto allied_empire_id : Empires().GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_id, DIPLO_ALLIED)) {
                 if (empire_id == allied_empire_id) {
@@ -2317,9 +2317,9 @@ namespace {
                     continue;
                 }
 
-                // inpu maps for this ally empire
+                // input maps for this ally empire
                 Universe::ObjectVisibilityMap& allied_obj_vis_map = input_eov_copy[allied_empire_id];
-                Universe::ObjectSpecialsMap& allied_obj_specials_map = input_eovs_copy[allied_empire_id];
+                // unused variable Universe::ObjectSpecialsMap& allied_obj_specials_map = input_eovs_copy[allied_empire_id];
 
                 // add allied visibilities to outer-loop empire visibilities
                 // whenever the ally has better visibility of an object

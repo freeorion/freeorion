@@ -114,7 +114,7 @@ namespace GG {
 
     void ScrollPanel::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
     {
-        bool shift_down = mod_keys & (MOD_KEY_LSHIFT | MOD_KEY_RSHIFT);
+        // unused variable bool shift_down = mod_keys & (MOD_KEY_LSHIFT | MOD_KEY_RSHIFT);
         bool ctrl_down = mod_keys & (MOD_KEY_CTRL | MOD_KEY_RCTRL);
         bool numlock_on = mod_keys & MOD_KEY_NUM;
 

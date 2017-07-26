@@ -219,6 +219,7 @@ namespace {
         return ClientUI::Pts()*10;
     }
 
+    /** unused function.  Kept because it will be useful if some make persistent column widths
     void SetColumnWidth(int column, int width) {
         if (column < 0)
             return;
@@ -226,6 +227,7 @@ namespace {
         if (GetOptionsDB().OptionExists(option_name))
             GetOptionsDB().Set(option_name, width);
     }
+    */
 
     std::string GetColumnName(int column) {
         if (column < 0)
