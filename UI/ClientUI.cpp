@@ -619,7 +619,7 @@ ClientUI::ClientUI() :
     m_player_list_wnd = new PlayerListWnd(PLAYER_LIST_WND_NAME);
     InitializeWindows();
 
-    m_intro_screen =            GG::Wnd::Create<IntroScreen>();
+    m_intro_screen = GG::Wnd::Create<IntroScreen>();
     m_multiplayer_lobby_wnd = GG::Wnd::Create<MultiPlayerLobbyWnd>();
 
     GetOptionsDB().OptionChangedSignal("app-width").connect(

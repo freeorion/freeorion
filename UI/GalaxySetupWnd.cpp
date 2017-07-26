@@ -173,8 +173,7 @@ GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS)
 {}
 
-void GameRulesPanel::CompleteConstruction()
-{
+void GameRulesPanel::CompleteConstruction() {
     const int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
     GG::ListBox* current_page = nullptr;
 

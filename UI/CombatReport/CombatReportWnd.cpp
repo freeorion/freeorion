@@ -26,7 +26,7 @@ public:
         m_log(GG::Wnd::Create<CombatLogWnd>(m_wnd.ClientWidth(), m_wnd.ClientHeight())),
         m_log_scroller(
             GG::Wnd::Create<GG::ScrollPanel>(
-                GG::X(0), GG::Y(0), m_tabs->ClientWidth(), m_tabs->ClientHeight(), m_log)),
+                GG::X0, GG::Y0, m_tabs->ClientWidth(), m_tabs->ClientHeight(), m_log)),
         m_min_size(GG::X0, GG::Y0)
     {
         m_log->SetFont(ClientUI::GetFont());

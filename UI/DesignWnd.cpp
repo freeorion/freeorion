@@ -2563,9 +2563,9 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
     // create popup menu with a commands in it
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     if (design->Producible())
-        popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD"),       false, false, add_design_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD"), false, false, add_design_action));
     popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_DELETE_SAVED"), false, false, delete_saved_design_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_NOW"),   false, false, add_all_saved_designs_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_NOW"), false, false, add_all_saved_designs_action));
     popup->AddMenuItem(GG::MenuItem(true)); // separator
     popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_START"), false, add_all,
                                    toggle_add_all_saved_game_start_action));

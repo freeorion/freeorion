@@ -352,10 +352,12 @@ public:
 
         GG::Clr axis_label_color = combat_summary.SideColor();
 
-        m_x_axis_label = GG::Wnd::Create<CUILabel>( (boost::format( UserString("COMBAT_FLEET_HEALTH_AXIS_LABEL") )
-                                      % combat_summary.SideName()
-                                      % static_cast<int>(combat_summary.total_current_health)
-                                      % static_cast<int>(combat_summary.total_max_health)).str(), GG::FORMAT_LEFT);
+        m_x_axis_label = GG::Wnd::Create<CUILabel>(
+            (boost::format( UserString("COMBAT_FLEET_HEALTH_AXIS_LABEL") )
+             % combat_summary.SideName()
+             % static_cast<int>(combat_summary.total_current_health)
+             % static_cast<int>(combat_summary.total_max_health)).str(),
+            GG::FORMAT_LEFT);
         m_x_axis_label->SetColor(axis_label_color);
         AttachChild(m_x_axis_label);
 

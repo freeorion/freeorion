@@ -8,8 +8,8 @@ CUILinkTextBlock::CUILinkTextBlock(const std::string& str, const std::shared_ptr
                                    GG::Flags<GG::WndFlag> flags) :
     GG::BlockControl(GG::X0, GG::Y0, GG::X1, flags | GG::INTERACTIVE),
     m_link_text(GG::Wnd::Create<CUILinkTextMultiEdit>(str, GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY | GG::MULTI_LEFT |
-                                              GG::MULTI_LINEWRAP | GG::MULTI_TOP | GG::MULTI_NO_HSCROLL |
-                                              GG::MULTI_NO_VSCROLL))
+                                                      GG::MULTI_LINEWRAP | GG::MULTI_TOP | GG::MULTI_NO_HSCROLL |
+                                                      GG::MULTI_NO_VSCROLL))
 {
     AttachChild(m_link_text);
 

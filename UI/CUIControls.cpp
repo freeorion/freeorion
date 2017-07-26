@@ -1434,8 +1434,9 @@ SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h) :
         Insert(GG::Wnd::Create<SpeciesRow>(it->second, w, h - 4));
     if (!this->Empty()) {
         // Add an option for random selection
-        Insert(GG::Wnd::Create<SpeciesRow>("RANDOM", UserString("GSETUP_RANDOM"), UserString("GSETUP_SPECIES_RANDOM_DESC"), w, h - 4,
-                              ClientUI::GetTexture(ClientUI::ArtDir() / "icons/unknown.png")));
+        Insert(GG::Wnd::Create<SpeciesRow>("RANDOM", UserString("GSETUP_RANDOM"),
+                                           UserString("GSETUP_SPECIES_RANDOM_DESC"), w, h - 4,
+                                           ClientUI::GetTexture(ClientUI::ArtDir() / "icons/unknown.png")));
         Select(this->begin());
     }
     SelChangedSignal.connect(
