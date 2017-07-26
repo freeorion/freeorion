@@ -43,7 +43,7 @@ public:
         FlatRectangle(ul, lr, int_color_to_use, color_to_use, 1);
     }
 
-    virtual void SetEditTextFromValue();
+    void SetEditTextFromValue() override;
     //@}
 };
 
