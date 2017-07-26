@@ -64,7 +64,9 @@ namespace {
     bool temp_bool2 = RegisterGameRules(&AddRules);
 
 
-    const double    WORMHOLE_TRAVEL_DISTANCE = 0.1;         // the effective distance for ships travelling along a wormhole, for determining how much of their speed is consumed by the jump
+    // the effective distance for ships travelling along a wormhole, for
+    // determining how much of their speed is consumed by the jump
+    // unused variable const double    WORMHOLE_TRAVEL_DISTANCE = 0.1;
 
     template <class Key, class Value> struct constant_property
     { Value m_value; };
