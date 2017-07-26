@@ -213,7 +213,7 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
     //3. put nodes into containers for each depth column
     std::vector<std::vector<Node*>> nodes_at_each_depth(max_node_depth + 1);
     for (Node* node : m_nodes) {
-        assert((node->GetDepth() >= 0) && (node->GetDepth() < nodes_at_each_depth.size()));
+        assert((node->GetDepth() >= 0) && (node->GetDepth() < static_cast<int>(nodes_at_each_depth.size())));
         nodes_at_each_depth[node->GetDepth()].push_back(node);
     }
     // sort within each depth column
