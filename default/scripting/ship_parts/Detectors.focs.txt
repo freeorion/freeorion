@@ -1,6 +1,7 @@
 Part
     name = "DT_DETECTOR_4"
     description = "DT_DETECTOR_4_DESC"
+    exclusions = [[ALL_DETECTORS]]
     class = Detection
     capacity = 200
     mountableSlotTypes = External
@@ -8,12 +9,12 @@ Part
     buildtime = 5
     tags = [ "PEDIA_PC_DETECTION" ]
     location = OwnedBy empire = Source.Owner
-    effectsgroups = [[DETECTOR_STACKING]]   //Make sure to add new detectors to SUM_DETECTOR_CAPACITY and BEST_DETECTOR_EFFECT
     icon = "icons/ship_parts/detector-4.png"
 
 Part
     name = "DT_DETECTOR_3"
     description = "DT_DETECTOR_3_DESC"
+    exclusions = [[ALL_DETECTORS]]
     class = Detection
     capacity = 150
     mountableSlotTypes = External
@@ -21,12 +22,12 @@ Part
     buildtime = 5
     tags = [ "PEDIA_PC_DETECTION" ]
     location = OwnedBy empire = Source.Owner
-    effectsgroups = [[DETECTOR_STACKING]]   //Make sure to add new detectors to SUM_DETECTOR_CAPACITY and BEST_DETECTOR_EFFECT
     icon = "icons/ship_parts/detector-3.png"
 
 Part
     name = "DT_DETECTOR_2"
     description = "DT_DETECTOR_2_DESC"
+    exclusions = [[ALL_DETECTORS]]
     class = Detection
     capacity = 75
     mountableSlotTypes = External
@@ -34,12 +35,12 @@ Part
     buildtime = 4
     tags = [ "PEDIA_PC_DETECTION" ]
     location = OwnedBy empire = Source.Owner
-    effectsgroups = [[DETECTOR_STACKING]]   //Make sure to add new detectors to SUM_DETECTOR_CAPACITY and BEST_DETECTOR_EFFECT
     icon = "icons/ship_parts/detector-2.png"
 
 Part
     name = "DT_DETECTOR_1"
     description = "DT_DETECTOR_1_DESC"
+    exclusions = [[ALL_DETECTORS]]
     class = Detection
     capacity = 25
     mountableSlotTypes = External
@@ -47,9 +48,18 @@ Part
     buildtime = 2
     tags = [ "PEDIA_PC_DETECTION" ]
     location = OwnedBy empire = Source.Owner
-    effectsgroups = [[DETECTOR_STACKING]]   //Make sure to add new detectors to SUM_DETECTOR_CAPACITY and BEST_DETECTOR_EFFECT
     icon = "icons/ship_parts/detector-1.png"
 
-#include "stacking.macros"
+
+// Helper macro that contains all detector parts
+ALL_DETECTORS
+'''
+[
+    "DT_DETECTOR_1"
+    "DT_DETECTOR_2"
+    "DT_DETECTOR_3"
+    "DT_DETECTOR_4"
+]
+'''
 
 #include "/scripting/common/upkeep.macros"

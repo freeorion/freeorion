@@ -9,39 +9,6 @@ If new parts in these categories are introduced, make sure to add the X_STACKING
 SUM_X_CAPACITY and BEST_X_EFFECT macros.
 */
 
-BEST_DETECTOR_EFFECT
-'''
-max(max(max(
-    min(1, PartsInShipDesign Name = "DT_DETECTOR_1" design = Source.DesignID) // 0 if no "DT_DETECTOR_1" in the design else 1
-    * PartCapacity name = "DT_DETECTOR_1",
-    min(1, PartsInShipDesign Name = "DT_DETECTOR_2" design = Source.DesignID)
-    * PartCapacity name = "DT_DETECTOR_2"),
-    min(1, PartsInShipDesign Name = "DT_DETECTOR_3" design = Source.DesignID)
-    * PartCapacity name = "DT_DETECTOR_3"),
-    min(1, PartsInShipDesign Name = "DT_DETECTOR_4" design = Source.DesignID)
-    * PartCapacity name = "DT_DETECTOR_4")
-'''
-
-
-SUM_DETECTOR_CAPACITY
-'''
-((PartCapacity name = "DT_DETECTOR_1")* (PartsInShipDesign Name = "DT_DETECTOR_1" design = Source.DesignID)
-+(PartCapacity name = "DT_DETECTOR_2")* (PartsInShipDesign Name = "DT_DETECTOR_2" design = Source.DesignID)
-+(PartCapacity name = "DT_DETECTOR_3")* (PartsInShipDesign Name = "DT_DETECTOR_3" design = Source.DesignID)
-+(PartCapacity name = "DT_DETECTOR_4")* (PartsInShipDesign Name = "DT_DETECTOR_4" design = Source.DesignID))
-'''
-
-
-DETECTOR_STACKING
-'''
-EffectsGroup    // Make sure to add new detector parts to the macros SUM_DETECTOR_CAPACITY and BEST_DETECTOR_EFFECT
-    scope = Source
-    activation = DesignHasPartClass Low=2 High=999 Class=Detection
-    stackinggroup = "DETECTOR_PART_STACK"
-    accountinglabel = "DETECTOR_INTERFERENCE"
-    effects = SetDetection value = Value - [[SUM_DETECTOR_CAPACITY]] + [[BEST_DETECTOR_EFFECT]]
-'''
-
 BEST_CLOAK_EFFECT
 '''
 max(max(max(
@@ -53,26 +20,6 @@ max(max(max(
     * PartCapacity name = "ST_CLOAK_3"),
     min(1, PartsInShipDesign Name = "ST_CLOAK_4" design = Source.DesignID)
     * PartCapacity name = "ST_CLOAK_4")
-'''
-
-
-SUM_CLOAK_CAPACITY
-'''
-((PartCapacity name = "ST_CLOAK_1")* (PartsInShipDesign Name = "ST_CLOAK_1" design = Source.DesignID)
-+(PartCapacity name = "ST_CLOAK_2")* (PartsInShipDesign Name = "ST_CLOAK_2" design = Source.DesignID)
-+(PartCapacity name = "ST_CLOAK_3")* (PartsInShipDesign Name = "ST_CLOAK_3" design = Source.DesignID)
-+(PartCapacity name = "ST_CLOAK_4")* (PartsInShipDesign Name = "ST_CLOAK_4" design = Source.DesignID))
-'''
-
-
-CLOAK_STACKING
-'''
-EffectsGroup    // Make sure to add new cloak parts to the macros SUM_CLOAK_CAPACITY and BEST_CLOAK_EFFECT
-    scope = Source
-    activation = DesignHasPartClass Low=2 High=999 Class=Stealth
-    stackinggroup = "STEALTH_PART_STACK"
-    accountinglabel = "CLOAK_INTERFERENCE"
-    effects = SetStealth value = Value - [[SUM_CLOAK_CAPACITY]] + [[BEST_CLOAK_EFFECT]]
 '''
 
 
@@ -90,25 +37,4 @@ max(max(max(max(
     min(1, PartsInShipDesign Name = "SH_MULTISPEC" design = Source.DesignID)
     * PartCapacity name = "SH_MULTISPEC" 
     )
-'''
-
-
-SUM_SHIELD_CAPACITY
-'''
-((PartCapacity name = "SH_DEFENSE_GRID")* (PartsInShipDesign Name = "SH_DEFENSE_GRID" design = Source.DesignID)
-+(PartCapacity name = "SH_DEFLECTOR")* (PartsInShipDesign Name = "SH_DEFLECTOR" design = Source.DesignID)
-+(PartCapacity name = "SH_PLASMA")* (PartsInShipDesign Name = "SH_PLASMA" design = Source.DesignID)
-+(PartCapacity name = "SH_BLACK")* (PartsInShipDesign Name = "SH_BLACK" design = Source.DesignID)
-+(PartCapacity name = "SH_MULTISPEC")* (PartsInShipDesign Name = "SH_MULTISPEC" design = Source.DesignID))
-'''
-
-
-SHIELD_STACKING
-'''
-EffectsGroup    // Make sure to add new shield parts to the macros SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
-    scope = Source
-    activation = DesignHasPartClass Low=2 High=999 Class=Shield
-    stackinggroup = "SHIELD_PART_STACK"
-    accountinglabel = "SHIELD_INTERFERENCE"
-    effects = SetMaxShield value = Value - [[SUM_SHIELD_CAPACITY]] + [[BEST_SHIELD_EFFECT]]
 '''
