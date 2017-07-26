@@ -825,8 +825,8 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
 
         popup->Run();
 
-    // TODO remove when converting to shared_ptr
-    delete popup;
+        // TODO remove when converting to shared_ptr
+        delete popup;
     }
 
     bool m_order_issuing_enabled;

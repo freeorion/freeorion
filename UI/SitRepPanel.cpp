@@ -707,8 +707,7 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
                                    UserString("SITREP_IGNORE_BLOCK_TITLE"),
                                    false, false, help_action));
 
-    if (!popup->Run())
-    {
+    if (!popup->Run()) {
         delete popup;
         return;
     }
