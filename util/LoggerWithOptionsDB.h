@@ -21,6 +21,7 @@
 
     The logging section in the configuration file looks like:
 
+    \code{.xml}
     <logging>
       <execs>
         <client>info</client>
@@ -34,11 +35,12 @@
         <ai>debug</ai>
       </sources>
     </logging>
+    \endcode
 
-    The <execs> section controls the default log threshold of each client (freeorion.log), server
+    The \<execs\> section controls the default log threshold of each client (freeorion.log), server
     (freeoriond.log) and AI (AI_x.log) files.
 
-    The <sources> section controls the log threshold of the named loggers.
+    The \<sources\> section controls the log threshold of the named loggers.
 
 */
 
