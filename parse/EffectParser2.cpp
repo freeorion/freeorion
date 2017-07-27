@@ -28,10 +28,13 @@ namespace {
 
             const parse::lexer& tok =                                                       parse::lexer::instance();
 
-            set_meter
-                =   (parse::set_non_ship_part_meter_type_enum() [ _a = _1 ] /* has some overlap with parse::set_ship_part_meter_type_enum() so can't use '>' */
+            set_meter =
+                (
+                    /* has some overlap with parse::set_ship_part_meter_type_enum() so can't use '>' */
+                    parse::set_non_ship_part_meter_type_enum() [ _a = _1 ]
                     >>  parse::detail::label(Value_token)
-                    )               > parse::double_value_ref() [ _c = _1 ]
+                )
+                >   parse::double_value_ref() [ _c = _1 ]
                 >   (
                         (parse::detail::label(AccountingLabel_token) > tok.string [ _val = new_<Effect::SetMeter>(_a, _c, _1) ] )
                     |    eps [ _val = new_<Effect::SetMeter>(_a, _c) ]
@@ -39,9 +42,7 @@ namespace {
                 ;
 
             set_ship_part_meter
-                =    (parse::set_ship_part_meter_type_enum() [ _a = _1 ]
-                     >>   parse::detail::label(PartName_token)
-                     )   > parse::string_value_ref() [ _b = _1 ]
+                =    (parse::set_ship_part_meter_type_enum() [ _a = _1 ] >>   parse::detail::label(PartName_token))   > parse::string_value_ref() [ _b = _1 ]
                 >    parse::detail::label(Value_token)      > parse::double_value_ref() [ _val = new_<Effect::SetShipPartMeter>(_a, _b, _1) ]
                 ;
 

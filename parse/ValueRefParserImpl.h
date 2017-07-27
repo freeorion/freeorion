@@ -102,9 +102,7 @@ void initialize_nonnumeric_statistic_parser(
     const parse::lexer& tok = parse::lexer::instance();
 
     statistic
-        =   ((tok.Statistic_
-            >>  tok.Mode_ [ _b = ValueRef::MODE ])
-            )
+        =   (tok.Statistic_ >>  tok.Mode_ [ _b = ValueRef::MODE ])
             >   parse::detail::label(Value_token)     >     value_ref [ _a = _1 ]
             >   parse::detail::label(Condition_token) >     parse::detail::condition_parser
                 [ _val = new_<ValueRef::Statistic<T>>(_a, _b, _1) ]
@@ -387,19 +385,17 @@ struct arithmetic_rules
             ;
 
         statistic_collection_expr
-            =   ((tok.Statistic_
+            =   (tok.Statistic_
                  >> (   tok.Count_  [ _b = ValueRef::COUNT ]
-                    |   tok.If_     [ _b = ValueRef::IF ]
+                        |   tok.If_     [ _b = ValueRef::IF ]
                     )
-                 )
                 )
                 >   parse::detail::label(Condition_token) >    parse::detail::condition_parser
                     [ _val = new_<ValueRef::Statistic<T>>(_a, _b, _1) ]
             ;
 
         statistic_value_expr
-            =   ((tok.Statistic_
-                  >>  parse::statistic_type_enum() [ _b = _1 ]))
+            =   (tok.Statistic_ >>  parse::statistic_type_enum() [ _b = _1 ])
                 >   parse::detail::label(Value_token)     >     statistic_value_ref_expr [ _a = _1 ]
                 >   parse::detail::label(Condition_token) >     parse::detail::condition_parser
                     [ _val = new_<ValueRef::Statistic<T>>(_a, _b, _1) ]

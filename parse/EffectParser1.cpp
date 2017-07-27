@@ -32,15 +32,15 @@ namespace {
             const parse::lexer& tok = parse::lexer::instance();
 
             set_empire_meter_1
-                =    (tok.SetEmpireMeter_
-                >>   parse::detail::label(Empire_token)) >  parse::int_value_ref() [ _b = _1 ]
+                =    (tok.SetEmpireMeter_ >>   parse::detail::label(Empire_token))
+                >    parse::int_value_ref() [ _b = _1 ]
                 >    parse::detail::label(Meter_token)  >  tok.string [ _a = _1 ]
                 >    parse::detail::label(Value_token)  >  parse::double_value_ref() [ _val = new_<Effect::SetEmpireMeter>(_b, _a, _1) ]
                 ;
 
             set_empire_meter_2
-                =    (tok.SetEmpireMeter_
-                >>   parse::detail::label(Meter_token)) >  tok.string [ _a = _1 ]
+                =    (tok.SetEmpireMeter_ >>   parse::detail::label(Meter_token))
+                >    tok.string [ _a = _1 ]
                 >    parse::detail::label(Value_token) >  parse::double_value_ref() [ _val = new_<Effect::SetEmpireMeter>(_a, _1) ]
                 ;
 
