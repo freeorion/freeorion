@@ -50,21 +50,21 @@ std::string CUIStyle::Translate(const std::string& text) const
 }
 
 GG::DropDownList* CUIStyle::NewDropDownList(size_t num_shown_elements, GG::Clr color) const
-{ return new CUIDropDownList(num_shown_elements); }
+{ return GG::Wnd::Create<CUIDropDownList>(num_shown_elements); }
 
 GG::Edit* CUIStyle::NewEdit(const std::string& str, const std::shared_ptr<GG::Font>& font,
                             GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/) const
-{ return new CUIEdit(str); }
+{ return GG::Wnd::Create<CUIEdit>(str); }
 
 GG::ListBox* CUIStyle::NewListBox(GG::Clr color, GG::Clr interior/* = GG::CLR_ZERO*/) const
-{ return new CUIListBox(); }
+{ return GG::Wnd::Create<CUIListBox>(); }
 
 GG::Scroll* CUIStyle::NewScroll(GG::Orientation orientation, GG::Clr color, GG::Clr interior) const
 { return new CUIScroll(orientation); }
 
 GG::Slider<int>* CUIStyle::NewIntSlider(int min, int max, GG::Orientation orientation,
                                         GG::Clr color, int tab_width, int line_width/* = 5*/) const
-{ return new CUISlider<int>(min, max, orientation); }
+{ return GG::Wnd::Create<CUISlider<int>>(min, max, orientation); }
 
 
 GG::TabBar* CUIStyle::NewTabBar(const std::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const

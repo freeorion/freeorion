@@ -73,11 +73,11 @@ void SpecialsPanel::Update() {
         const Special* special = GetSpecial(entry.first);
         StatisticIcon* graphic = nullptr;
         if (entry.second.second > 0.0f)
-            graphic = new StatisticIcon(ClientUI::SpecialIcon(special->Name()), entry.second.second, 2, false,
-                                        SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT);
+            graphic = GG::Wnd::Create<StatisticIcon>(ClientUI::SpecialIcon(special->Name()), entry.second.second, 2, false,
+                                                     SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT);
         else
-            graphic = new StatisticIcon(ClientUI::SpecialIcon(special->Name()),
-                                        SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT);
+            graphic = GG::Wnd::Create<StatisticIcon>(ClientUI::SpecialIcon(special->Name()),
+                                                     SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT);
 
         graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
@@ -142,12 +142,15 @@ bool SpecialsPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
             ClientUI::GetClientUI()->ZoomToSpecial(entry.first);
         };
 
-        CUIPopupMenu popup(pt.x, pt.y);
+        auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(entry.first));
 
-        popup.AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_action));
+        popup->AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_action));
 
-        popup.Run();
+        popup->Run();
+
+        // TODO remove when converting to shared_ptr
+        delete popup;
         return retval;
     }
     return false;

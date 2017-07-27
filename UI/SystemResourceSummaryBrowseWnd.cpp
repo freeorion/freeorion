@@ -136,7 +136,7 @@ void SystemResourceSummaryBrowseWnd::Initialize() {
 
 
     production_label_top = top;
-    m_production_label = new CUILabel("", GG::FORMAT_RIGHT);
+    m_production_label = GG::Wnd::Create<CUILabel>("", GG::FORMAT_RIGHT);
     m_production_label->MoveTo(GG::Pt(GG::X0, production_label_top));
     m_production_label->Resize(GG::Pt(TOTAL_WIDTH - EDGE_PAD, row_height));
     m_production_label->SetFont(ClientUI::GetBoldFont());
@@ -146,7 +146,7 @@ void SystemResourceSummaryBrowseWnd::Initialize() {
 
 
     allocation_label_top = top;
-    m_allocation_label = new CUILabel("", GG::FORMAT_RIGHT);
+    m_allocation_label = GG::Wnd::Create<CUILabel>("", GG::FORMAT_RIGHT);
     m_allocation_label->MoveTo(GG::Pt(GG::X0, allocation_label_top));
     m_allocation_label->Resize(GG::Pt(TOTAL_WIDTH - EDGE_PAD, row_height));
     m_allocation_label->SetFont(ClientUI::GetBoldFont());
@@ -156,7 +156,7 @@ void SystemResourceSummaryBrowseWnd::Initialize() {
 
 
     import_export_label_top = top;
-    m_import_export_label = new CUILabel("", GG::FORMAT_RIGHT);
+    m_import_export_label = GG::Wnd::Create<CUILabel>("", GG::FORMAT_RIGHT);
     m_import_export_label->MoveTo(GG::Pt(GG::X0, import_export_label_top));
     m_import_export_label->Resize(GG::Pt(TOTAL_WIDTH - EDGE_PAD, row_height));
     m_import_export_label->SetFont(ClientUI::GetBoldFont());
@@ -204,12 +204,12 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         std::string amount_text = DoubleToString(production, 3, false);
 
 
-        auto label = new CUILabel(name, GG::FORMAT_RIGHT);
+        auto label = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_RIGHT);
         label->MoveTo(GG::Pt(GG::X0, top));
         label->Resize(GG::Pt(LabelWidth(), row_height));
         AttachChild(label);
 
-        auto value = new CUILabel(amount_text);
+        auto value = GG::Wnd::Create<CUILabel>(amount_text);
         value->MoveTo(GG::Pt(LabelWidth(), top));
         value->Resize(GG::Pt(ValueWidth(), row_height));
         AttachChild(value);
@@ -222,12 +222,12 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
 
     if (m_production_labels_and_amounts.empty()) {
         // add "blank" line to indicate no production
-        auto label = new CUILabel(UserString("NOT_APPLICABLE"));
+        auto label = GG::Wnd::Create<CUILabel>(UserString("NOT_APPLICABLE"));
         label->MoveTo(GG::Pt(GG::X0, top));
         label->Resize(GG::Pt(LabelWidth(), row_height));
         AttachChild(label);
 
-        auto value = new CUILabel("");
+        auto value = GG::Wnd::Create<CUILabel>("");
         value->MoveTo(GG::Pt(LabelWidth(), top));
         value->Resize(GG::Pt(ValueWidth(), row_height));
         AttachChild(value);
@@ -301,13 +301,13 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         std::string amount_text = DoubleToString(allocation, 3, false);
 
 
-        auto label = new CUILabel(name, GG::FORMAT_RIGHT);
+        auto label = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_RIGHT);
         label->MoveTo(GG::Pt(GG::X0, top));
         label->Resize(GG::Pt(LabelWidth(), row_height));
         AttachChild(label);
 
 
-        auto value = new CUILabel(amount_text);
+        auto value = GG::Wnd::Create<CUILabel>(amount_text);
         value->MoveTo(GG::Pt(LabelWidth(), top));
         value->Resize(GG::Pt(ValueWidth(), row_height));
         AttachChild(value);
@@ -320,12 +320,12 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
 
     if (m_allocation_labels_and_amounts.empty()) {
         // add "blank" line to indicate no allocation
-        auto label = new CUILabel(UserString("NOT_APPLICABLE"), GG::FORMAT_RIGHT);
+        auto label = GG::Wnd::Create<CUILabel>(UserString("NOT_APPLICABLE"), GG::FORMAT_RIGHT);
         label->MoveTo(GG::Pt(GG::X0, top));
         label->Resize(GG::Pt(LabelWidth(), row_height));
         AttachChild(label);
 
-        auto value = new CUILabel("");
+        auto value = GG::Wnd::Create<CUILabel>("");
         value->MoveTo(GG::Pt(LabelWidth(), top));
         value->Resize(GG::Pt(ValueWidth(), row_height));
         AttachChild(value);
@@ -420,12 +420,12 @@ void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
 
 
     // add label and amount.  may be "NOT APPLIABLE" and nothing if aborted above
-    auto label = new CUILabel(label_text, GG::FORMAT_RIGHT);
+    auto label = GG::Wnd::Create<CUILabel>(label_text, GG::FORMAT_RIGHT);
     label->MoveTo(GG::Pt(GG::X0, top));
     label->Resize(GG::Pt(LabelWidth(), row_height));
     AttachChild(label);
 
-    auto value = new CUILabel(amount_text);
+    auto value = GG::Wnd::Create<CUILabel>(amount_text);
     value->MoveTo(GG::Pt(LabelWidth(), top));
     value->Resize(GG::Pt(ValueWidth(), row_height));
     AttachChild(value);

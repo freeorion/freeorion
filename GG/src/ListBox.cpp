@@ -205,7 +205,7 @@ ListBox::Row::Row() :
     m_margin(ListBox::DEFAULT_MARGIN),
     m_ignore_adjust_layout(false),
     m_is_normalized(false)
-{ SetLayout(new DeferredLayout(X0, Y0, Width(), Height(), 1, 1, m_margin, m_margin)); }
+{ SetLayout(Wnd::Create<DeferredLayout>(X0, Y0, Width(), Height(), 1, 1, m_margin, m_margin)); }
 
 ListBox::Row::Row(X w, Y h, const std::string& drag_drop_data_type,
                   Alignment align/* = ALIGN_VCENTER*/, unsigned int margin/* = 2*/) : 
@@ -219,7 +219,7 @@ ListBox::Row::Row(X w, Y h, const std::string& drag_drop_data_type,
     m_ignore_adjust_layout(false),
     m_is_normalized(false)
 {
-    SetLayout(new DeferredLayout(X0, Y0, w, h, 1, 1, m_margin, m_margin));
+    SetLayout(Wnd::Create<DeferredLayout>(X0, Y0, w, h, 1, 1, m_margin, m_margin));
     SetDragDropDataType(drag_drop_data_type);
 }
 
@@ -290,7 +290,7 @@ void ListBox::Row::clear()
     m_cells.clear();
     RemoveLayout();
     DeleteChildren();
-    SetLayout(new DeferredLayout(X0, Y0, Width(), Height(), 1, 1, m_margin, m_margin));
+    SetLayout(Wnd::Create<DeferredLayout>(X0, Y0, Width(), Height(), 1, 1, m_margin, m_margin));
 }
 
 void ListBox::Row::resize(std::size_t n)
@@ -543,7 +543,7 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     m_int_color(interior),
     m_hilite_color(CLR_SHADOW),
     m_style(LIST_NONE),
-    m_header_row(new Row()),
+    m_header_row(Wnd::Create<Row>()),
     m_keep_col_widths(false),
     m_clip_cells(false),
     m_sort_col(0),
@@ -1335,7 +1335,7 @@ void ListBox::SetColHeaders(Row* r)
         m_header_row->MoveTo(Pt(X0, -m_header_row->Height()));
         AttachChild(m_header_row);
     } else {
-        m_header_row = new Row();
+        m_header_row = Wnd::Create<Row>();
     }
     if (client_height != ClientHeight())
         AdjustScrolls(true);

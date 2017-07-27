@@ -543,7 +543,7 @@ private:
             m_condition_key(key)
         {
             SetChildClippingMode(ClipToClient);
-            push_back(new CUILabel(UserString(m_condition_key), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP));
+            push_back(GG::Wnd::Create<CUILabel>(UserString(m_condition_key), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP));
         }
         const std::string&  GetKey() const { return m_condition_key; }
     private:
@@ -559,7 +559,7 @@ private:
             SetChildClippingMode(ClipToClient);
             const std::string& label = (text.empty() ? EMPTY_STRING :
                 (stringtable_lookup ? UserString(text) : text));
-            push_back(new CUILabel(label, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP));
+            push_back(GG::Wnd::Create<CUILabel>(label, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP));
         }
         const std::string&  Text() const { return m_string; }
     private:
@@ -668,7 +668,7 @@ private:
 
     void    Init(const Condition::ConditionBase* init_condition) {
         // fill droplist with basic types of conditions and select appropriate row
-        m_class_drop = new CUIDropDownList(DropListDropHeight());
+        m_class_drop = GG::Wnd::Create<CUIDropDownList>(DropListDropHeight());
         m_class_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
         m_class_drop->SetStyle(GG::LIST_NOSORT);
         AttachChild(m_class_drop);
@@ -687,7 +687,7 @@ private:
 
         // fill droplist with rows for the available condition classes to be selected
         for (const std::string& key : row_keys) {
-            GG::ListBox::iterator row_it = m_class_drop->Insert(new ConditionRow(key,  GG::Y(ClientUI::Pts())));
+            GG::ListBox::iterator row_it = m_class_drop->Insert(GG::Wnd::Create<ConditionRow>(key,  GG::Y(ClientUI::Pts())));
             if (init_condition_key == key)
                 select_row_it = row_it;
         }
@@ -749,7 +749,7 @@ private:
                    condition_key == SPECIES_CONDITION)
         {
             // droplist of valid species
-            m_string_drop = new CUIDropDownList(DropListDropHeight());
+            m_string_drop = GG::Wnd::Create<CUIDropDownList>(DropListDropHeight());
             m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
             m_string_drop->Resize(GG::Pt(ParamsDropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
@@ -757,17 +757,17 @@ private:
             param_widget_top += m_string_drop->Height();
 
             // add empty row, allowing for matching any species
-            GG::ListBox::iterator row_it = m_string_drop->Insert(new StringRow("", GG::Y(ClientUI::Pts())));
+            GG::ListBox::iterator row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>("", GG::Y(ClientUI::Pts())));
             m_string_drop->Select(row_it);
 
             for (const std::map<std::string, Species*>::value_type& entry : GetSpeciesManager()) {
                 const std::string& species_name = entry.first;
-                row_it = m_string_drop->Insert(new StringRow(species_name, GG::Y(ClientUI::Pts())));
+                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(species_name, GG::Y(ClientUI::Pts())));
             }
 
         } else if (condition_key == HASSPECIAL_CONDITION) {
             // droplist of valid specials
-            m_string_drop = new CUIDropDownList(DropListDropHeight());
+            m_string_drop = GG::Wnd::Create<CUIDropDownList>(DropListDropHeight());
             m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
             m_string_drop->Resize(GG::Pt(ParamsDropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
@@ -775,16 +775,16 @@ private:
             param_widget_top += m_string_drop->Height();
 
             // add empty row, allowing for matching any special
-            GG::ListBox::iterator row_it = m_string_drop->Insert(new StringRow("", GG::Y(ClientUI::Pts())));
+            GG::ListBox::iterator row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>("", GG::Y(ClientUI::Pts())));
             m_string_drop->Select(row_it);
 
             for (const std::string& special_name : SpecialNames()) {
-                row_it = m_string_drop->Insert(new StringRow(special_name, GG::Y(ClientUI::Pts())));
+                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(special_name, GG::Y(ClientUI::Pts())));
             }
 
         } else if (condition_key == HASTAG_CONDITION) {
             // droplist of valid tags
-            m_string_drop = new CUIDropDownList(DropListDropHeight());
+            m_string_drop = GG::Wnd::Create<CUIDropDownList>(DropListDropHeight());
             m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
             m_string_drop->Resize(GG::Pt(ParamsDropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
@@ -801,14 +801,14 @@ private:
 
             GG::ListBox::iterator row_it = m_string_drop->end();
             for (const std::string& tag : all_tags) {
-                row_it = m_string_drop->Insert(new StringRow(tag, GG::Y(ClientUI::Pts())));
+                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(tag, GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
 
         } else if (condition_key == PLANETSIZE_CONDITION) {
             // droplist of valid sizes
-            m_string_drop = new CUIDropDownList(DropListDropHeight());
+            m_string_drop = GG::Wnd::Create<CUIDropDownList>(DropListDropHeight());
             m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
             m_string_drop->Resize(GG::Pt(ParamsDropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
@@ -821,7 +821,7 @@ private:
 
             GG::ListBox::iterator row_it = m_string_drop->end();
             for (const std::string& text : StringsFromEnums(planet_sizes)) {
-                row_it = m_string_drop->Insert(new StringRow(text, GG::Y(ClientUI::Pts())));
+                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(text, GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
@@ -830,7 +830,7 @@ private:
                    condition_key == GGWITHPTYPE_CONDITION ||
                    condition_key == ASTWITHPTYPE_CONDITION ) {
             // droplist of valid types
-            m_string_drop = new CUIDropDownList(DropListDropHeight());
+            m_string_drop = GG::Wnd::Create<CUIDropDownList>(DropListDropHeight());
             m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
             m_string_drop->Resize(GG::Pt(ParamsDropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
@@ -841,16 +841,16 @@ private:
 
             GG::ListBox::iterator row_it = m_string_drop->end();
             if (condition_key == GGWITHPTYPE_CONDITION || condition_key == ASTWITHPTYPE_CONDITION )
-                row_it = m_string_drop->Insert(new StringRow(UserString("CONDITION_ANY"), GG::Y(ClientUI::Pts()), false));
+                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(UserString("CONDITION_ANY"), GG::Y(ClientUI::Pts()), false));
             for (const std::string& text : StringsFromEnums(planet_types)) {
-                row_it = m_string_drop->Insert(new StringRow(text, GG::Y(ClientUI::Pts())));
+                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(text, GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
 
         } else if (condition_key == STARTYPE_CONDITION) {
             // droplist of valid types
-            m_string_drop = new CUIDropDownList(DropListDropHeight());
+            m_string_drop = GG::Wnd::Create<CUIDropDownList>(DropListDropHeight());
             m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
             m_string_drop->Resize(GG::Pt(ParamsDropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
@@ -863,14 +863,14 @@ private:
 
             GG::ListBox::iterator row_it = m_string_drop->end();
             for (const std::string& text : StringsFromEnums(star_types)) {
-                row_it = m_string_drop->Insert(new StringRow(text, GG::Y(ClientUI::Pts())));
+                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(text, GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
 
         } else if (condition_key == FOCUSTYPE_CONDITION) {
             // droplist of valid foci
-            m_string_drop = new CUIDropDownList(DropListDropHeight());
+            m_string_drop = GG::Wnd::Create<CUIDropDownList>(DropListDropHeight());
             m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
             m_string_drop->Resize(GG::Pt(ParamsDropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
@@ -886,14 +886,14 @@ private:
 
             GG::ListBox::iterator row_it = m_string_drop->end();
             for (const std::string& focus : all_foci) {
-                row_it = m_string_drop->Insert(new StringRow(focus, GG::Y(ClientUI::Pts())));
+                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(focus, GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
 
         } else if (condition_key == METERVALUE_CONDITION) {
             // droplist of meter types
-            m_string_drop = new CUIDropDownList(DropListDropHeight());
+            m_string_drop = GG::Wnd::Create<CUIDropDownList>(DropListDropHeight());
             m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
             m_string_drop->Resize(GG::Pt(ParamsDropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
@@ -906,18 +906,18 @@ private:
 
             GG::ListBox::iterator row_it = m_string_drop->end();
             for (const std::string& text : StringsFromEnums(meter_types)) {
-                row_it = m_string_drop->Insert(new StringRow(text, GG::Y(ClientUI::Pts())));
+                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(text, GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
 
-            m_param_spin1 = new CUISpin<int>(0, 1, 0, 1000, true);
+            m_param_spin1 = GG::Wnd::Create<CUISpin<int>>(0, 1, 0, 1000, true);
             m_param_spin1->MoveTo(GG::Pt(param_widget_left, param_widget_top));
             m_param_spin1->Resize(GG::Pt(SpinDropListWidth(), m_param_spin1->Height()));
             AttachChild(m_param_spin1);
             param_widget_left = SpinDropListWidth() + PAD;
 
-            m_param_spin2 = new CUISpin<int>(0, 1, 0, 1000, true);
+            m_param_spin2 = GG::Wnd::Create<CUISpin<int>>(0, 1, 0, 1000, true);
             m_param_spin2->MoveTo(GG::Pt(param_widget_left, param_widget_top));
             m_param_spin2->Resize(GG::Pt(SpinDropListWidth(), m_param_spin2->Height()));
             AttachChild(m_param_spin2);
@@ -925,7 +925,7 @@ private:
             param_widget_top += m_param_spin1->Height();
         } else if (condition_key == EMPIREAFFILIATION_CONDITION) {
             // droplist of empires
-            m_string_drop = new CUIDropDownList(DropListDropHeight());
+            m_string_drop = GG::Wnd::Create<CUIDropDownList>(DropListDropHeight());
             m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
             m_string_drop->Resize(GG::Pt(SpinDropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
@@ -936,7 +936,7 @@ private:
             GG::ListBox::iterator row_it = m_string_drop->end();
             for (const std::map<int, Empire*>::value_type& entry : Empires()) {
                 const std::string& empire_name = entry.second->Name();
-                row_it = m_string_drop->Insert(new StringRow(empire_name, GG::Y(ClientUI::Pts()), false));
+                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(empire_name, GG::Y(ClientUI::Pts()), false));
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
@@ -1006,7 +1006,7 @@ FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPL
     m_cancel_button(nullptr),
     m_apply_button(nullptr)
 {
-    m_filters_layout = new GG::Layout(GG::X0, GG::Y0, GG::X(390), GG::Y(90), 4, 7);
+    m_filters_layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X(390), GG::Y(90), 4, 7);
     AttachChild(m_filters_layout);
 
     m_filters_layout->SetMinimumColumnWidth(0, GG::X(ClientUI::Pts()*8));
@@ -1339,15 +1339,15 @@ public:
             m_expand_button->LeftClickedSignal.connect(
                 boost::bind(&ObjectPanel::ExpandCollapseButtonPressed, this));
         } else {
-            m_dot = new GG::StaticGraphic(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "dot.png", true), style);
+            m_dot = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "dot.png", true), style);
             AttachChild(m_dot);
         }
 
         std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_object_id);
         std::vector<std::shared_ptr<GG::Texture>> textures = ObjectTextures(obj);
 
-        m_icon = new MultiTextureStaticGraphic(textures,
-                                               std::vector<GG::Flags<GG::GraphicStyle>>(textures.size(), style));
+        m_icon = GG::Wnd::Create<MultiTextureStaticGraphic>(textures,
+                                                            std::vector<GG::Flags<GG::GraphicStyle>>(textures.size(), style));
         AttachChild(m_icon);
 
         for (auto& control : m_controls)
@@ -1444,7 +1444,7 @@ private:
 
         for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
             std::string col_val = m_column_val_cache[i];
-            auto control = new CUILabel(col_val, GG::FORMAT_LEFT);
+            auto control = GG::Wnd::Create<CUILabel>(col_val, GG::FORMAT_LEFT);
             control->Resize(GG::Pt(GG::X(GetColumnWidth(i)), ClientHeight()));
             retval.push_back(control);
         }
@@ -1490,9 +1490,9 @@ public:
     }
 
     void Init() {
-        m_panel = new ObjectPanel(ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
-                                  ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()),
-                                  m_obj_init, m_expanded_init, !m_contained_object_panels.empty(), m_indent_init);
+        m_panel = GG::Wnd::Create<ObjectPanel>(ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
+                                               ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()),
+                                               m_obj_init, m_expanded_init, !m_contained_object_panels.empty(), m_indent_init);
         push_back(m_panel);
         m_panel->ExpandCollapseSignal.connect(
             boost::bind(&ObjectRow::ExpandCollapseClicked, this));
@@ -1625,13 +1625,13 @@ private:
 
         int index = 1;
 
-        CUIPopupMenu popup(clicked_button->Left(), clicked_button->Bottom());
+        auto popup = GG::Wnd::Create<CUIPopupMenu>(clicked_button->Left(), clicked_button->Bottom());
 
         auto empty_col_action = [this, column_id]() {
             SetColumnName(column_id, "");
             ColumnsChangedSignal();
         };
-        popup.AddMenuItem(GG::MenuItem("", false, current_column_type.empty(), empty_col_action));
+        popup->AddMenuItem(GG::MenuItem("", false, current_column_type.empty(), empty_col_action));
 
         GG::MenuItem meters_submenu(UserString("METERS_SUBMENU"),   false, false);
         GG::MenuItem planets_submenu(UserString("PLANETS_SUBMENU"), false, false);
@@ -1650,7 +1650,7 @@ private:
 
             // put meters into root or submenus...
             if (entry.first.second.empty())
-                popup.AddMenuItem(GG::MenuItem(menu_label, false, check, col_action));
+                popup->AddMenuItem(GG::MenuItem(menu_label, false, check, col_action));
             else if (entry.first.second == "METERS_SUBMENU")
                 meters_submenu.next_level.push_back(GG::MenuItem(menu_label,  false, check, col_action));
             else if (entry.first.second == "PLANETS_SUBMENU")
@@ -1659,11 +1659,14 @@ private:
                 fleets_submenu.next_level.push_back(GG::MenuItem(menu_label,  false, check, col_action));
             ++index;
         }
-        popup.AddMenuItem(std::move(meters_submenu));
-        popup.AddMenuItem(std::move(planets_submenu));
-        popup.AddMenuItem(std::move(fleets_submenu));
+        popup->AddMenuItem(std::move(meters_submenu));
+        popup->AddMenuItem(std::move(planets_submenu));
+        popup->AddMenuItem(std::move(fleets_submenu));
 
-        popup.Run();
+        popup->Run();
+
+        // TODO remove when converting to shared_ptr
+        delete popup;
     }
 
     std::vector<GG::Button*>    GetControls() {
@@ -1696,7 +1699,7 @@ public:
         GG::ListBox::Row(w, h, "", GG::ALIGN_CENTER, 1),
         m_panel(nullptr)
     {
-        m_panel = new ObjectHeaderPanel(w, h);
+        m_panel = GG::Wnd::Create<ObjectHeaderPanel>(w, h);
         push_back(m_panel);
         m_panel->ColumnButtonLeftClickSignal.connect(
             ColumnHeaderLeftClickSignal);
@@ -1781,7 +1784,7 @@ public:
         //m_visibilities[OBJ_SYSTEM].insert(SHOW_PREVIOUSLY_VISIBLE);
         //m_visibilities[OBJ_FIELD].insert(SHOW_VISIBLE);
 
-        m_header_row = new ObjectHeaderRow(GG::X1, ListRowHeight());
+        m_header_row = GG::Wnd::Create<ObjectHeaderRow>(GG::X1, ListRowHeight());
         SetColHeaders(m_header_row); // Gives ownership
 
         m_header_row->ColumnsChangedSignal.connect(
@@ -2131,7 +2134,7 @@ private:
         if (!obj)
             return;
         const GG::Pt row_size = ListRowSize();
-        auto object_row = new ObjectRow(row_size.x, row_size.y, obj, !ObjectCollapsed(object_id),
+        auto object_row = GG::Wnd::Create<ObjectRow>(row_size.x, row_size.y, obj, !ObjectCollapsed(object_id),
                                               container, contents, indent);
         this->Insert(object_row, it);
         object_row->Resize(row_size);
@@ -2253,7 +2256,7 @@ ObjectListWnd::ObjectListWnd(const std::string& config_name) :
     m_filter_button(nullptr),
     m_collapse_button(nullptr)
 {
-    m_list_box = new ObjectListBox();
+    m_list_box = GG::Wnd::Create<ObjectListBox>();
     m_list_box->SetHiliteColor(GG::CLR_ZERO);
     m_list_box->SetStyle(GG::LIST_NOSORT);
 
@@ -2404,10 +2407,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         ObjectSelectionChanged(m_list_box->Selections());
     };
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
     // create popup menu with object commands in it
-    popup.AddMenuItem(GG::MenuItem(UserString("DUMP"), false, false, dump_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("DUMP"), false, false, dump_action));
 
     std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
     //DebugLogger() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
@@ -2425,7 +2428,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     UniverseObjectType type = obj->ObjectType();
     Empire* cur_empire = GetEmpire(app->EmpireID());
     if (type == OBJ_PLANET) {
-        popup.AddMenuItem(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, suitability_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, suitability_action));
 
         for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
             ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
@@ -2476,7 +2479,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             focusMenuItem.next_level.push_back(GG::MenuItem(out.str(), false, false, focus_action));
         }
         if (menuitem_id > MENUITEM_SET_FOCUS_BASE)
-            popup.AddMenuItem(std::move(focusMenuItem));
+            popup->AddMenuItem(std::move(focusMenuItem));
 
         GG::MenuItem ship_menu_item(UserString("MENUITEM_ENQUEUE_SHIPDESIGN"), false, false);
         for (std::map<int, int>::iterator it = avail_designs.begin();
@@ -2510,7 +2513,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         }
 
         if (ship_menuitem_id > MENUITEM_SET_SHIP_BASE)
-            popup.AddMenuItem(std::move(ship_menu_item));
+            popup->AddMenuItem(std::move(ship_menu_item));
 
         GG::MenuItem building_menu_item(UserString("MENUITEM_ENQUEUE_BUILDING"), false, false);
         for (std::map<std::string, int>::value_type& entry : avail_blds) {
@@ -2546,7 +2549,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         }
 
         if (bld_menuitem_id > MENUITEM_SET_BUILDING_BASE)
-            popup.AddMenuItem(std::move(building_menu_item));
+            popup->AddMenuItem(std::move(building_menu_item));
     }
     // moderator actions...
     if (moderator) {
@@ -2556,11 +2559,14 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         auto set_owner_action = [object_id, app, &net]() {
             net.SendMessage(ModeratorActionMessage(Moderator::SetOwner(object_id, ALL_EMPIRES)));
         };
-        popup.AddMenuItem(GG::MenuItem(UserString("MOD_DESTROY"),      false, false, destroy_object_action));
-        popup.AddMenuItem(GG::MenuItem(UserString("MOD_SET_OWNER"),    false, false, set_owner_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("MOD_DESTROY"),      false, false, destroy_object_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("MOD_SET_OWNER"),    false, false, set_owner_action));
     }
 
-    popup.Run();
+    popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 int ObjectListWnd::ObjectInRow(GG::ListBox::iterator it) const {

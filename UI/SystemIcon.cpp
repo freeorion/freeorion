@@ -207,7 +207,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
         wrapped_system_name = wrapped_system_name + " (" + std::to_string(system_id) + ")";
     }
 
-    auto text = new GG::TextControl(
+    auto text = GG::Wnd::Create<GG::TextControl>(
         GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + wrapped_system_name + "</s>", font, text_color);
     AttachChild(text);
     GG::Pt text_size(text->TextLowerRight() - text->TextUpperLeft());
@@ -263,7 +263,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
         m_tiny_texture = m_disc_texture;
     }
 
-    m_tiny_graphic = new GG::StaticGraphic(m_tiny_texture);
+    m_tiny_graphic = GG::Wnd::Create<GG::StaticGraphic>(m_tiny_texture);
     m_tiny_graphic->Resize(GG::Pt(m_tiny_texture->Width(), m_tiny_texture->Height()));
     AttachChild(m_tiny_graphic);
     m_tiny_graphic->Hide();
@@ -273,7 +273,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
 
     GG::X texture_width = texture->DefaultWidth();
     GG::Y texture_height = texture->DefaultHeight();
-    m_selection_indicator = new RotatingGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_selection_indicator = GG::Wnd::Create<RotatingGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_selection_indicator->SetRPM(ClientUI::SystemSelectionIndicatorRPM());
     AttachChild(m_selection_indicator);
     m_selection_indicator->Resize(GG::Pt(texture_width, texture_height));
@@ -282,7 +282,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     const std::shared_ptr<GG::Texture>& tiny_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection_tiny" / "system_selection_tiny2.png", true);
     texture_width = tiny_texture->DefaultWidth();
     texture_height = tiny_texture->DefaultHeight();
-    m_tiny_selection_indicator = new RotatingGraphic(tiny_texture, GG::GRAPHIC_NONE);
+    m_tiny_selection_indicator = GG::Wnd::Create<RotatingGraphic>(tiny_texture, GG::GRAPHIC_NONE);
     m_tiny_selection_indicator->SetRPM(ClientUI::SystemSelectionIndicatorRPM());
     AttachChild(m_tiny_selection_indicator);
     m_tiny_selection_indicator->Resize(GG::Pt(texture_width, texture_height));
@@ -291,21 +291,21 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     const std::shared_ptr<GG::Texture> mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover.png");
     texture_width = mouseover_texture->DefaultWidth();
     texture_height = mouseover_texture->DefaultHeight();
-    m_mouseover_indicator = new GG::StaticGraphic(mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_mouseover_indicator = GG::Wnd::Create<GG::StaticGraphic>(mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_mouseover_indicator->Resize(GG::Pt(texture_width, texture_height));
 
     // unexplored mouseover indicator graphic
     std::shared_ptr<GG::Texture> unexplored_mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover_unexplored.png");
     texture_width = unexplored_mouseover_texture->DefaultWidth();
     texture_height = unexplored_mouseover_texture->DefaultHeight();
-    m_mouseover_unexplored_indicator = new GG::StaticGraphic(unexplored_mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_mouseover_unexplored_indicator = GG::Wnd::Create<GG::StaticGraphic>(unexplored_mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_mouseover_unexplored_indicator->Resize(GG::Pt(texture_width, texture_height));
 
     // tiny mouseover indicator graphic
     std::shared_ptr<GG::Texture> tiny_mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover_tiny.png");
     texture_width = tiny_mouseover_texture->DefaultWidth();
     texture_height = tiny_mouseover_texture->DefaultHeight();
-    m_tiny_mouseover_indicator = new GG::StaticGraphic(tiny_mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_tiny_mouseover_indicator = GG::Wnd::Create<GG::StaticGraphic>(tiny_mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_tiny_mouseover_indicator->Resize(GG::Pt(texture_width, texture_height));
 
     Refresh();
@@ -662,7 +662,7 @@ void SystemIcon::Refresh() {
         }
 
         // create and position
-        m_colored_name = new OwnerColoredSystemName(m_system_id, name_pts, true);
+        m_colored_name = GG::Wnd::Create<OwnerColoredSystemName>(m_system_id, name_pts, true);
         PositionSystemName();
 
         // attach if appropriate, to display

@@ -130,7 +130,7 @@ void BuildingsPanel::Update() {
         if (building->SystemID() != system_id || building->PlanetID() != m_planet_id)
             continue;
 
-        auto ind = new BuildingIndicator(GG::X(indicator_size), object_id);
+        auto ind = GG::Wnd::Create<BuildingIndicator>(GG::X(indicator_size), object_id);
         m_building_indicators.push_back(ind);
 
         ind->RightClickedSignal.connect(BuildingRightClickedSignal);
@@ -155,8 +155,8 @@ void BuildingsPanel::Update() {
 
         double progress = std::max(0.0f, empire->ProductionStatus(queue_index));
         double turns_completed = progress / std::max(total_cost, 1.0);
-        auto ind = new BuildingIndicator(GG::X(indicator_size), elem.item.name,
-                                                       turns_completed, total_turns, total_cost, turn_spending);
+        auto ind = GG::Wnd::Create<BuildingIndicator>(GG::X(indicator_size), elem.item.name,
+                                                      turns_completed, total_turns, total_cost, turn_spending);
 
         m_building_indicators.push_back(ind);
     }
@@ -282,17 +282,17 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
     SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
         texture, UserString(building_type), UserString(desc)));
 
-    m_graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     AttachChild(m_graphic);
 
     float next_progress = turn_spending / std::max(1.0, total_cost);
 
-    m_progress_bar = new MultiTurnProgressBar(total_turns,
-                                              turns_completed,
-                                              next_progress,
-                                              GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
-                                              ClientUI::TechWndProgressBarColor(),
-                                              GG::LightColor(ClientUI::ResearchableTechFillColor()));
+    m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(total_turns,
+                                                           turns_completed,
+                                                           next_progress,
+                                                           GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
+                                                           ClientUI::TechWndProgressBarColor(),
+                                                           GG::LightColor(ClientUI::ResearchableTechFillColor()));
 
     AttachChild(m_progress_bar);
 
@@ -364,7 +364,7 @@ void BuildingIndicator::Refresh() {
 
     if (const BuildingType* type = GetBuildingType(building->BuildingTypeName())) {
         std::shared_ptr<GG::Texture> texture = ClientUI::BuildingIcon(type->Name());
-        m_graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         AttachChild(m_graphic);
 
         std::string desc = UserString(type->Description());
@@ -379,7 +379,7 @@ void BuildingIndicator::Refresh() {
 
     if (building && building->OrderedScrapped()) {
         std::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
-        m_scrap_indicator = new GG::StaticGraphic(scrap_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_scrap_indicator = GG::Wnd::Create<GG::StaticGraphic>(scrap_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         AttachChild(m_scrap_indicator);
     }
 
@@ -423,15 +423,15 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
             HumanClientApp::GetApp()->Orders().RescindOrder(it->second);
     };
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
     if (m_order_issuing_enabled) {
         if (!building->OrderedScrapped()) {
             // create popup menu with "Scrap" option
-            popup.AddMenuItem(GG::MenuItem(UserString("ORDER_BUIDLING_SCRAP"), false, false, scrap_building_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("ORDER_BUIDLING_SCRAP"), false, false, scrap_building_action));
         } else {
             // create popup menu with "Cancel Scrap" option
-            popup.AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_BUIDLING_SCRAP"), false, false, un_scrap_building_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_BUIDLING_SCRAP"), false, false, un_scrap_building_action));
         }
     }
 
@@ -442,10 +442,13 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
             ClientUI::GetClientUI()->ZoomToBuildingType(building_type);
         };
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(building_type));
-        popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_lookup_building_type_action));
+        popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_lookup_building_type_action));
     }
 
-    popup.Run();
+    popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 void BuildingIndicator::EnableOrderIssuing(bool enable/* = true*/)

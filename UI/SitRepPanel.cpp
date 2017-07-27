@@ -232,7 +232,7 @@ namespace {
                 "/icons/sitrep/generic.png" : m_sitrep_entry.GetIcon());
             std::shared_ptr<GG::Texture> icon = ClientUI::GetTexture(
                 ClientUI::ArtDir() / icon_texture, true);
-            m_icon = new GG::StaticGraphic(icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            m_icon = GG::Wnd::Create<GG::StaticGraphic>(icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             AttachChild(m_icon);
             m_icon->Resize(GG::Pt(GG::X(icon_dim), GG::Y(icon_dim)));
 
@@ -240,7 +240,7 @@ namespace {
             GG::X icon_left(spacer.x);
             GG::X text_left(icon_left + GG::X(icon_dim) + sitrep_spacing);
             GG::X text_width(ClientWidth() - text_left - spacer.x);
-            m_link_text = new SitRepLinkText(GG::X0, GG::Y0, text_width, m_sitrep_entry.GetText() + " ",
+            m_link_text = GG::Wnd::Create<SitRepLinkText>(GG::X0, GG::Y0, text_width, m_sitrep_entry.GetText() + " ",
                                              ClientUI::GetFont(),
                                              GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
@@ -348,9 +348,9 @@ namespace {
         }
 
         void            Init() {
-            m_panel = new SitRepDataPanel(GG::X(GetLayout()->BorderMargin()), GG::Y(GetLayout()->BorderMargin()),
-                                          ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
-                                          ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()), m_sitrep);
+            m_panel = GG::Wnd::Create<SitRepDataPanel>(GG::X(GetLayout()->BorderMargin()), GG::Y(GetLayout()->BorderMargin()),
+                                                       ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
+                                                       ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()), m_sitrep);
             push_back(m_panel);
             m_panel->RightClickedSignal.connect(
                 boost::bind(&SitRepRow::RClick, this, _1, _2));
@@ -379,7 +379,7 @@ SitRepPanel::SitRepPanel(const std::string& config_name) :
     Sound::TempUISoundDisabler sound_disabler;
     SetChildClippingMode(DontClip);
 
-    m_sitreps_lb = new CUIListBox();
+    m_sitreps_lb = GG::Wnd::Create<CUIListBox>();
     m_sitreps_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
     m_sitreps_lb->SetVScrollWheelIncrement(ClientUI::Pts()*4.5);
     m_sitreps_lb->ManuallyManageColProps();
@@ -554,7 +554,7 @@ void SitRepPanel::FilterClicked() {
 
     std::vector<std::string> all_templates = AllSitRepTemplateStrings();
 
-    CUIPopupMenu popup(m_filter_button->Left(), m_filter_button->Bottom());
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(m_filter_button->Left(), m_filter_button->Bottom());
 
     for (const std::string& templ : all_templates) {
         menu_index_templates[index] = templ;
@@ -578,7 +578,7 @@ void SitRepPanel::FilterClicked() {
             }
         };
 
-        popup.AddMenuItem(GG::MenuItem(menu_label, false, check, select_template_action));
+        popup->AddMenuItem(GG::MenuItem(menu_label, false, check, select_template_action));
         ++index;
     }
 
@@ -594,12 +594,16 @@ void SitRepPanel::FilterClicked() {
             m_hidden_sitrep_templates.clear();
         }
     };
-    popup.AddMenuItem(GG::MenuItem((all_checked ? UserString("NONE") : UserString("ALL")),
+    popup->AddMenuItem(GG::MenuItem((all_checked ? UserString("NONE") : UserString("ALL")),
                                    false, false, all_templates_action));
 
-    if (!popup.Run())
+    if (!popup->Run()) {
+        delete popup;
         return;
+    }
 
+    // TODO remove when converting to shared_ptr
+    delete popup;
     SetHiddenSitRepTemplateStringsInOptions(m_hidden_sitrep_templates);
 
     Update();
@@ -658,8 +662,8 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
                                                      false, false, snooze_clear_action));
     submenu_ignore.next_level.push_back(GG::MenuItem(entry_margin + UserString("SITREP_SNOOZE_CLEAR_INDEFINITE"),
                                                      false, false, snooze_clear_indefinite_action));
-    CUIPopupMenu popup(pt.x, pt.y);
-    popup.AddMenuItem(std::move(submenu_ignore));
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
+    popup->AddMenuItem(std::move(submenu_ignore));
 
     submenu_block.label = entry_margin + UserString("SITREP_BLOCK_MENU");
     if (sitrep_row) {
@@ -689,7 +693,7 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
         submenu_block.next_level.push_back(GG::MenuItem(entry_margin + UserString("SITREP_SHOWALL_TEMPLATES"),
                                                         false, false, showall_action));
     }
-    popup.AddMenuItem(std::move(submenu_block));
+    popup->AddMenuItem(std::move(submenu_block));
 
     auto copy_action = [&sitrep_text]() {
         if (sitrep_text.empty())
@@ -698,13 +702,18 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
     };
     auto help_action = []() { ClientUI::GetClientUI()->ZoomToEncyclopediaEntry("SITREP_IGNORE_BLOCK_TITLE"); };
 
-    popup.AddMenuItem(GG::MenuItem(entry_margin + UserString("HOTKEY_COPY"), false, false, copy_action));
-    popup.AddMenuItem(GG::MenuItem(entry_margin + UserString("POPUP_MENU_PEDIA_PREFIX") +
+    popup->AddMenuItem(GG::MenuItem(entry_margin + UserString("HOTKEY_COPY"), false, false, copy_action));
+    popup->AddMenuItem(GG::MenuItem(entry_margin + UserString("POPUP_MENU_PEDIA_PREFIX") +
                                    UserString("SITREP_IGNORE_BLOCK_TITLE"),
                                    false, false, help_action));
 
-    if (!popup.Run())
+    if (!popup->Run()) {
+        delete popup;
         return;
+    }
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
     Update();
 }
 
@@ -763,7 +772,7 @@ void SitRepPanel::Update() {
     // create UI rows for all sitrps
     GG::X width = m_sitreps_lb->ClientWidth();
     for (const SitRepEntry& sitrep : orderedSitreps)
-    { m_sitreps_lb->Insert(new SitRepRow(width, GG::Y(ClientUI::Pts()*2), sitrep)); }
+    { m_sitreps_lb->Insert(GG::Wnd::Create<SitRepRow>(width, GG::Y(ClientUI::Pts()*2), sitrep)); }
 
     if (m_sitreps_lb->NumRows() > first_visible_row) {
         m_sitreps_lb->SetFirstRowShown(std::next(m_sitreps_lb->begin(), first_visible_row));

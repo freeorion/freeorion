@@ -483,7 +483,7 @@ FleetWnd* FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
         // Only write to OptionsDB if in single fleet window mode.
         config_name = FLEET_WND_NAME;
     }
-    auto retval = new FleetWnd(fleet_ids, m_order_issuing_enabled, selected_fleet_id, flags, config_name);
+    auto retval = GG::Wnd::Create<FleetWnd>(fleet_ids, m_order_issuing_enabled, selected_fleet_id, flags, config_name);
 
     m_fleet_wnds.insert(retval);
     retval->ClosingSignal.connect(
@@ -655,7 +655,7 @@ namespace {
                 SetDragDropDataType(SHIP_DROP_TYPE_STRING);
             {
                 //ScopedTimer timer("ShipRow Panel creation / pushing");
-                m_panel = new ShipDataPanel(w, h, m_ship_id);
+                m_panel = GG::Wnd::Create<ShipDataPanel>(w, h, m_ship_id);
                 push_back(m_panel);
             }
         }
@@ -788,31 +788,31 @@ void ShipDataPanel::SetShipIcon() {
     else
         icon = ClientUI::ShipDesignIcon(INVALID_OBJECT_ID);  // default icon
 
-    m_ship_icon = new GG::StaticGraphic(icon, DataPanelIconStyle());
+    m_ship_icon = GG::Wnd::Create<GG::StaticGraphic>(icon, DataPanelIconStyle());
     m_ship_icon->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
     AttachChild(m_ship_icon);
 
     if (ship->OrderedScrapped()) {
         std::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
-        m_scrap_indicator = new GG::StaticGraphic(scrap_texture, DataPanelIconStyle());
+        m_scrap_indicator = GG::Wnd::Create<GG::StaticGraphic>(scrap_texture, DataPanelIconStyle());
         m_scrap_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
         AttachChild(m_scrap_indicator);
     }
     if (ship->OrderedColonizePlanet() != INVALID_OBJECT_ID) {
         std::shared_ptr<GG::Texture> colonize_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "colonizing.png", true);
-        m_colonize_indicator = new GG::StaticGraphic(colonize_texture, DataPanelIconStyle());
+        m_colonize_indicator = GG::Wnd::Create<GG::StaticGraphic>(colonize_texture, DataPanelIconStyle());
         m_colonize_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
         AttachChild(m_colonize_indicator);
     }
     if (ship->OrderedInvadePlanet() != INVALID_OBJECT_ID) {
         std::shared_ptr<GG::Texture> invade_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "invading.png", true);
-        m_invade_indicator = new GG::StaticGraphic(invade_texture, DataPanelIconStyle());
+        m_invade_indicator = GG::Wnd::Create<GG::StaticGraphic>(invade_texture, DataPanelIconStyle());
         m_invade_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
         AttachChild(m_invade_indicator);
     }
     if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID) {
         std::shared_ptr<GG::Texture> bombard_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "bombarding.png", true);
-        m_bombard_indicator = new GG::StaticGraphic(bombard_texture, DataPanelIconStyle());
+        m_bombard_indicator = GG::Wnd::Create<GG::StaticGraphic>(bombard_texture, DataPanelIconStyle());
         m_bombard_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
         AttachChild(m_bombard_indicator);
     }
@@ -820,8 +820,8 @@ void ShipDataPanel::SetShipIcon() {
     if ((ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
         && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
     {
-        m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, m_ship_icon->Width(), m_ship_icon->Height(), true,
-                                                 GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
+        m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, m_ship_icon->Width(), m_ship_icon->Height(), true,
+                                                              GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
         AttachChild(m_scanline_control);
     }
 }
@@ -980,7 +980,7 @@ void ShipDataPanel::Init() {
         ship_name = ship_name + " (" + std::to_string(m_ship_id) + ")";
     }
 
-    m_ship_name_text = new CUILabel(ship_name, GG::FORMAT_LEFT);
+    m_ship_name_text = GG::Wnd::Create<CUILabel>(ship_name, GG::FORMAT_LEFT);
     AttachChild(m_ship_name_text);
 
 
@@ -989,7 +989,7 @@ void ShipDataPanel::Init() {
         return;
 
     if (const ShipDesign* design = ship->Design()) {
-        m_design_name_text = new CUILabel(design->Name(), GG::FORMAT_RIGHT);
+        m_design_name_text = GG::Wnd::Create<CUILabel>(design->Name(), GG::FORMAT_RIGHT);
         AttachChild(m_design_name_text);
     }
 
@@ -1020,7 +1020,7 @@ void ShipDataPanel::Init() {
     meters_icons.push_back({METER_SPEED,      ClientUI::MeterIcon(METER_SPEED)});
 
     for (std::pair<MeterType, std::shared_ptr<GG::Texture>>& entry : meters_icons) {
-        auto icon = new StatisticIcon(entry.second, 0, 0, false, StatIconSize().x, StatIconSize().y);
+        auto icon = GG::Wnd::Create<StatisticIcon>(entry.second, 0, 0, false, StatIconSize().x, StatIconSize().y);
         m_stat_icons.push_back({entry.first, icon});
         AttachChild(icon);
         icon->SetBrowseModeTime(tooltip_delay);
@@ -1408,7 +1408,7 @@ void FleetDataPanel::Refresh() {
         m_fleet_destination_text->Clear();
 
         std::shared_ptr<GG::Texture> new_fleet_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "new_fleet.png", true);
-        m_fleet_icon = new GG::StaticGraphic(new_fleet_texture, DataPanelIconStyle());
+        m_fleet_icon = GG::Wnd::Create<GG::StaticGraphic>(new_fleet_texture, DataPanelIconStyle());
         AttachChild(m_fleet_icon);
 
     } else if (std::shared_ptr<const Fleet> fleet = GetFleet(m_fleet_id)) {
@@ -1444,7 +1444,7 @@ void FleetDataPanel::Refresh() {
         for (size_t i = 0; i < head_icons.size(); ++i)
             styles.push_back(DataPanelIconStyle());
 
-        m_fleet_icon = new MultiTextureStaticGraphic(icons, styles);
+        m_fleet_icon = GG::Wnd::Create<MultiTextureStaticGraphic>(icons, styles);
         AttachChild(m_fleet_icon);
 
         if (Empire* empire = GetEmpire(fleet->Owner()))
@@ -1454,15 +1454,15 @@ void FleetDataPanel::Refresh() {
 
         if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES) {
             std::shared_ptr<GG::Texture> gift_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "gifting.png", true);
-            m_gift_indicator = new GG::StaticGraphic(gift_texture, DataPanelIconStyle());
+            m_gift_indicator = GG::Wnd::Create<GG::StaticGraphic>(gift_texture, DataPanelIconStyle());
             AttachChild(m_gift_indicator);
         }
 
         if ((fleet->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
             && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
         {
-            m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, DataPanelIconSpace().x, ClientHeight(), true,
-                                                     GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
+            m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, DataPanelIconSpace().x, ClientHeight(), true,
+                                                                  GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
             AttachChild(m_scanline_control);
         }
 
@@ -1674,9 +1674,9 @@ void FleetDataPanel::DoLayout() {
 void FleetDataPanel::Init() {
     m_initialized = true;
 
-    m_fleet_name_text = new CUILabel("", GG::FORMAT_LEFT);
+    m_fleet_name_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
     AttachChild(m_fleet_name_text);
-    m_fleet_destination_text = new CUILabel("", GG::FORMAT_RIGHT);
+    m_fleet_destination_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_RIGHT);
     AttachChild(m_fleet_destination_text);
 
     if (m_fleet_id == INVALID_OBJECT_ID) {
@@ -1706,7 +1706,7 @@ void FleetDataPanel::Init() {
         meters_icons_browsetext.emplace_back(METER_SPEED, ClientUI::MeterIcon(METER_SPEED), "FW_FLEET_SPEED_SUMMARY");
 
         for (const std::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>& entry : meters_icons_browsetext) {
-            auto icon = new StatisticIcon(std::get<1>(entry), 0, 0, false, StatIconSize().x, StatIconSize().y);
+            auto icon = GG::Wnd::Create<StatisticIcon>(std::get<1>(entry), 0, 0, false, StatIconSize().x, StatIconSize().y);
             m_stat_icons.push_back({std::get<0>(entry), icon});
             icon->SetBrowseModeTime(tooltip_delay);
             icon->SetBrowseText(UserString(std::get<2>(entry)));
@@ -1761,7 +1761,7 @@ namespace {
         {
             SetName("FleetRow");
             SetChildClippingMode(ClipToClient);
-            m_panel = new FleetDataPanel(w, h, m_fleet_id);
+            m_panel = GG::Wnd::Create<FleetDataPanel>(w, h, m_fleet_id);
             push_back(m_panel);
         }
 
@@ -2224,7 +2224,7 @@ public:
             if (this_client_stale_object_info.find(ship_id) != this_client_stale_object_info.end())
                 continue;
 
-            auto row = new ShipRow(GG::X1, row_size.y, ship_id);
+            auto row = GG::Wnd::Create<ShipRow>(GG::X1, row_size.y, ship_id);
             rows.push_back(row);
         }
         Insert(rows, false);
@@ -2375,7 +2375,7 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
     SetName("FleetDetailPanel");
     SetChildClippingMode(ClipToClient);
 
-    m_ships_lb = new ShipsListBox(INVALID_OBJECT_ID, order_issuing_enabled);
+    m_ships_lb = GG::Wnd::Create<ShipsListBox>(INVALID_OBJECT_ID, order_issuing_enabled);
     AttachChild(m_ships_lb);
     m_ships_lb->SetHiliteColor(GG::CLR_ZERO);
 
@@ -2548,13 +2548,13 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     const ShipDesign* design = GetShipDesign(ship->DesignID()); // may be null
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
     // Zoom to design
     if (design) {
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % design->Name(true));
         auto zoom_to_design_action = [design]() { ClientUI::GetClientUI()->ZoomToShipDesign(design->ID()); };
-        popup.AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_to_design_action));
+        popup->AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_to_design_action));
     }
 
     // Rename ship context item
@@ -2575,7 +2575,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
                 // TODO: Moderator action for renaming ships
             }
         };
-        popup.AddMenuItem(GG::MenuItem(UserString("RENAME"), false, false, rename_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("RENAME"), false, false, rename_action));
     }
 
     // Scrap or unscrap ships
@@ -2588,7 +2588,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<ScrapOrder>(client_empire_id, ship->ID()));
         };
-        popup.AddMenuItem(GG::MenuItem(UserString("ORDER_SHIP_SCRAP"), false, false, scrap_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("ORDER_SHIP_SCRAP"), false, false, scrap_action));
     } else if (!ClientPlayerIsModerator()
                && ship->OwnedBy(client_empire_id))
     {
@@ -2600,7 +2600,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
                 HumanClientApp::GetApp()->Orders().RescindOrder(it->second);
         };
         // create popup menu with "Cancel Scrap" option
-        popup.AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_SHIP_SCRAP"), false, false, unscrap_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_SHIP_SCRAP"), false, false, unscrap_action));
     }
 
     // Split fleets
@@ -2635,11 +2635,14 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
         };
 
         if (design)
-            popup.AddMenuItem( GG::MenuItem(UserString("FW_SPLIT_SHIPS_THIS_DESIGN"), false, false, split_one_design_action));
-        popup.AddMenuItem(     GG::MenuItem(UserString("FW_SPLIT_SHIPS_ALL_DESIGNS"), false, false, split_all_designs_action));
+            popup->AddMenuItem( GG::MenuItem(UserString("FW_SPLIT_SHIPS_THIS_DESIGN"), false, false, split_one_design_action));
+        popup->AddMenuItem(     GG::MenuItem(UserString("FW_SPLIT_SHIPS_ALL_DESIGNS"), false, false, split_all_designs_action));
     }
 
-    popup.Run();
+    popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 int FleetDetailPanel::ShipInRow(GG::ListBox::iterator it) const {
@@ -2692,7 +2695,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
             std::make_tuple(METER_POPULATION, ColonyIcon(), UserStringNop("FW_FLEET_COLONY_SUMMARY")),
         })
     {
-        auto icon = new StatisticIcon(std::get<1>(entry), 0, 0, false, StatIconSize().x, StatIconSize().y);
+        auto icon = GG::Wnd::Create<StatisticIcon>(std::get<1>(entry), 0, 0, false, StatIconSize().x, StatIconSize().y);
         m_stat_icons.push_back({std::get<0>(entry), icon});
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString(std::get<2>(entry)));
@@ -2700,7 +2703,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
     }
 
     // create fleet list box
-    m_fleets_lb = new FleetsListBox(m_order_issuing_enabled);
+    m_fleets_lb = GG::Wnd::Create<FleetsListBox>(m_order_issuing_enabled);
     m_fleets_lb->SetHiliteColor(GG::CLR_ZERO);
     m_fleets_lb->SelRowsChangedSignal.connect(
         boost::bind(&FleetWnd::FleetSelectionChanged, this, _1));
@@ -2716,7 +2719,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
     m_fleets_lb->AllowDropType(FLEET_DROP_TYPE_STRING);
 
     // create fleet detail panel
-    m_fleet_detail_panel = new FleetDetailPanel(GG::X1, GG::Y1, INVALID_OBJECT_ID, m_order_issuing_enabled);
+    m_fleet_detail_panel = GG::Wnd::Create<FleetDetailPanel>(GG::X1, GG::Y1, INVALID_OBJECT_ID, m_order_issuing_enabled);
     m_fleet_detail_panel->SelectedShipsChangedSignal.connect(
         boost::bind(&FleetWnd::ShipSelectionChanged, this, _1));
     m_fleet_detail_panel->ShipRightClickedSignal.connect(
@@ -2727,7 +2730,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
     Refresh();
 
     // create drop target
-    m_new_fleet_drop_target = new FleetDataPanel(GG::X1, ListRowHeight(), m_system_id, true);
+    m_new_fleet_drop_target = GG::Wnd::Create<FleetDataPanel>(GG::X1, ListRowHeight(), m_system_id, true);
     AttachChild(m_new_fleet_drop_target);
     m_new_fleet_drop_target->NewFleetFromShipsSignal.connect(
         boost::bind(&FleetWnd::CreateNewFleetFromDrops, this, _1));
@@ -3074,7 +3077,7 @@ void FleetWnd::AddFleet(int fleet_id) {
 
     // verify that fleet is consistent
     const GG::Pt row_size = m_fleets_lb->ListRowSize();
-    auto row = new FleetRow(fleet_id, GG::X1, row_size.y);
+    auto row = GG::Wnd::Create<FleetRow>(fleet_id, GG::X1, row_size.y);
     m_fleets_lb->Insert(row);
     row->Resize(row_size);
 }
@@ -3273,7 +3276,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     }
 
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     
     // add a fleet popup command to send the fleet exploring, and stop it from exploring
     if (system
@@ -3283,16 +3286,16 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     {
         auto explore_action = [fleet]() { ClientUI::GetClientUI()->GetMapWnd()->SetFleetExploring(fleet->ID()); };
 
-        popup.AddMenuItem(GG::MenuItem(UserString("ORDER_FLEET_EXPLORE"),       false, false, explore_action));
-        popup.AddMenuItem(GG::MenuItem(true));
+        popup->AddMenuItem(GG::MenuItem(UserString("ORDER_FLEET_EXPLORE"),       false, false, explore_action));
+        popup->AddMenuItem(GG::MenuItem(true));
     }
     else if (system
              && !ClientPlayerIsModerator()
              && fleet->OwnedBy(client_empire_id))
     {
         auto stop_explore_action = [fleet]() { ClientUI::GetClientUI()->GetMapWnd()->StopFleetExploring(fleet->ID()); };
-        popup.AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_EXPLORE"), false, false, stop_explore_action));
-        popup.AddMenuItem(GG::MenuItem(true));
+        popup->AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_EXPLORE"), false, false, stop_explore_action));
+        popup->AddMenuItem(GG::MenuItem(true));
     }
 
     // Merge fleets
@@ -3302,8 +3305,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
        )
     {
         auto merge_action = [fleet]() { MergeFleetsIntoFleet(fleet->ID()); };
-        popup.AddMenuItem(GG::MenuItem(UserString("FW_MERGE_SYSTEM_FLEETS"),   false, false, merge_action));
-        popup.AddMenuItem(GG::MenuItem(true));
+        popup->AddMenuItem(GG::MenuItem(UserString("FW_MERGE_SYSTEM_FLEETS"),   false, false, merge_action));
+        popup->AddMenuItem(GG::MenuItem(true));
     }
 
     // Split damaged ships - need some, but not all, ships damaged, and need to be in a system
@@ -3316,7 +3319,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
        )
     {
         auto split_damage_action = [&damaged_ship_ids]() { CreateNewFleetFromShips(damaged_ship_ids, FLEET_PASSIVE); };
-        popup.AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_DAMAGED_FLEET"),     false, false, split_damage_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_DAMAGED_FLEET"),     false, false, split_damage_action));
     }
 
     // Split unfueled ships - need some, but not all, ships unfueled, and need to be in a system
@@ -3333,7 +3336,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             CreateNewFleetFromShips(unfueled_ship_ids, nfa);
         };
 
-        popup.AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_UNFUELED_FLEET"),    false, false, split_unfueled_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_UNFUELED_FLEET"),    false, false, split_unfueled_action));
     }
 
     // Split ships with not as many fighters as they could contain
@@ -3349,7 +3352,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             NewFleetAggression nfa = fleet->Aggressive() ? FLEET_AGGRESSIVE : FLEET_PASSIVE;
             CreateNewFleetFromShips(not_full_fighters_ship_ids, nfa);
         };
-        popup.AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_NOT_FULL_FIGHTERS_FLEET"), false, false, split_not_full_fighters_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_NOT_FULL_FIGHTERS_FLEET"), false, false, split_not_full_fighters_action));
     }
 
     // Split fleet - can't split fleets without more than one ship, or which are not in a system
@@ -3388,9 +3391,9 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             CreateNewFleetsFromShipsForEachDesign(fleet->ShipIDs(), new_aggression_setting);
         };
 
-        popup.AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_FLEET"),             false, false, split_action));
-        popup.AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_SHIPS_ALL_DESIGNS"), false, false, split_per_design_action));
-        popup.AddMenuItem(GG::MenuItem(true));
+        popup->AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_FLEET"),             false, false, split_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_SHIPS_ALL_DESIGNS"), false, false, split_per_design_action));
+        popup->AddMenuItem(GG::MenuItem(true));
     }
 
     // Rename fleet
@@ -3412,8 +3415,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
                     std::make_shared<RenameOrder>(client_empire_id, fleet->ID(), new_name));
             }
         };
-        popup.AddMenuItem(GG::MenuItem(UserString("RENAME"),                       false, false, rename_action));
-        popup.AddMenuItem(GG::MenuItem(true));
+        popup->AddMenuItem(GG::MenuItem(UserString("RENAME"),                       false, false, rename_action));
+        popup->AddMenuItem(GG::MenuItem(true));
     }
 
     bool post_scrap_bar = false;
@@ -3432,7 +3435,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             }
         };
 
-        popup.AddMenuItem(GG::MenuItem(UserString("ORDER_FLEET_SCRAP"),          false, false, scrap_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("ORDER_FLEET_SCRAP"),          false, false, scrap_action));
         post_scrap_bar = true;
     }
 
@@ -3455,7 +3458,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             }
         };
 
-        popup.AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_SCRAP"),   false, false, unscrap_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_SCRAP"),   false, false, unscrap_action));
         post_scrap_bar = true;
     }
 
@@ -3464,7 +3467,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         && !ClientPlayerIsModerator())
     {
         if (post_scrap_bar)
-            popup.AddMenuItem(GG::MenuItem(true));
+            popup->AddMenuItem(GG::MenuItem(true));
 
         // submenus for each available recipient empire
         GG::MenuItem give_away_menu(UserString("ORDER_GIVE_FLEET_TO_EMPIRE"), false, false);
@@ -3478,7 +3481,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             };
             give_away_menu.next_level.push_back(GG::MenuItem(entry.second->Name(), false, false, gift_action));
         }
-        popup.AddMenuItem(std::move(give_away_menu));
+        popup->AddMenuItem(std::move(give_away_menu));
 
         if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES) {
             auto ungift_action = [fleet]() {
@@ -3494,7 +3497,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
                 }
             };
             GG::MenuItem cancel_give_away_menu(UserString("ORDER_CANCEL_GIVE_FLEET"), false, false, ungift_action);
-            popup.AddMenuItem(std::move(cancel_give_away_menu));
+            popup->AddMenuItem(std::move(cancel_give_away_menu));
         }
     }
 
@@ -3525,11 +3528,14 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         if (last_turn_visible_it != visibility_turn_map.end()
             && last_turn_visible_it->second < CurrentTurn())
         {
-            popup.AddMenuItem(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"),   false, false, forget_fleet_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"),   false, false, forget_fleet_action));
         }
    }
 
-    popup.Run();
+    popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 void FleetWnd::FleetLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)

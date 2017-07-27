@@ -122,13 +122,13 @@ namespace {
         {
             SetChildClippingMode(ClipToClient);
 
-            //m_player_name_text = new CUILabel("", GG::FORMAT_LEFT);
-            m_empire_name_text = new CUILabel("", GG::FORMAT_LEFT);
-            m_empire_ship_text = new CUILabel("", GG::FORMAT_LEFT);
-            m_empire_planet_text = new CUILabel("", GG::FORMAT_LEFT);
-            m_empire_production_text = new CUILabel("", GG::FORMAT_LEFT);
-            m_empire_research_text = new CUILabel("", GG::FORMAT_LEFT);
-            m_empire_detection_text = new CUILabel("", GG::FORMAT_LEFT);
+            //m_player_name_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+            m_empire_name_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+            m_empire_ship_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+            m_empire_planet_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+            m_empire_production_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+            m_empire_research_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+            m_empire_detection_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
 
             //AttachChild(m_player_name_text);
             AttachChild(m_empire_name_text);
@@ -461,7 +461,7 @@ namespace {
         {
             SetName("PlayerRow");
             SetChildClippingMode(ClipToClient);
-            m_panel = new PlayerDataPanel(w, h, m_player_id);
+            m_panel = GG::Wnd::Create<PlayerDataPanel>(w, h, m_player_id);
             push_back(m_panel);
         }
 
@@ -539,7 +539,7 @@ PlayerListWnd::PlayerListWnd(const std::string& config_name) :
            config_name),
     m_player_list(nullptr)
 {
-    m_player_list = new PlayerListBox();
+    m_player_list = GG::Wnd::Create<PlayerListBox>();
     m_player_list->SetHiliteColor(GG::CLR_ZERO);
     m_player_list->SetStyle(GG::LIST_NOSORT);
     m_player_list->SelRowsChangedSignal.connect(
@@ -608,7 +608,7 @@ void PlayerListWnd::Refresh() {
 
     for (const std::map<int, PlayerInfo>::value_type& player : players) {
         int player_id = player.first;
-        auto player_row = new PlayerRow(row_size.x, row_size.y, player_id);
+        auto player_row = GG::Wnd::Create<PlayerRow>(row_size.x, row_size.y, player_id);
         m_player_list->Insert(player_row);
         player_row->Resize(row_size);
     }
@@ -763,7 +763,7 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         client_empire_id, clicked_empire_id, RejectProposalDiplomaticMessage);
     auto pedia_lookup_action = [clicked_empire_id]() { ClientUI::GetClientUI()->ZoomToEmpire(clicked_empire_id); };
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
         client_empire_id != ALL_EMPIRES &&
         clicked_empire_id != ALL_EMPIRES)
@@ -819,30 +819,33 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
 
 
         if (show_peace_propose)
-            popup.AddMenuItem(GG::MenuItem(UserString("PEACE_PROPOSAL"),           false, false, peace_proposal_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("PEACE_PROPOSAL"),           false, false, peace_proposal_action));
         if (show_peace_cancel)
-            popup.AddMenuItem(GG::MenuItem(UserString("PEACE_PROPOSAL_CANCEL"),    false, false, proposal_cancel_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("PEACE_PROPOSAL_CANCEL"),    false, false, proposal_cancel_action));
         if (show_peace_accept)
-            popup.AddMenuItem(GG::MenuItem(UserString("PEACE_ACCEPT"),             false, false, peace_accept_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("PEACE_ACCEPT"),             false, false, peace_accept_action));
         if (show_peace_reject)
-            popup.AddMenuItem(GG::MenuItem(UserString("PEACE_REJECT"),             false, false, proposal_reject_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("PEACE_REJECT"),             false, false, proposal_reject_action));
         if (show_allies_end)
-            popup.AddMenuItem(GG::MenuItem(UserString("END_ALLIANCE_DECLARATION"), false, false, end_alliance_declaration_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("END_ALLIANCE_DECLARATION"), false, false, end_alliance_declaration_action));
         if (show_allies_propose)
-            popup.AddMenuItem(GG::MenuItem(UserString("ALLIES_PROPOSAL"),          false, false, allies_proposal_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("ALLIES_PROPOSAL"),          false, false, allies_proposal_action));
         if (show_allies_accept)
-            popup.AddMenuItem(GG::MenuItem(UserString("ALLIES_ACCEPT"),            false, false, allies_accept_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("ALLIES_ACCEPT"),            false, false, allies_accept_action));
         if (show_allies_cancel)
-            popup.AddMenuItem(GG::MenuItem(UserString("ALLIES_PROPOSAL_CANCEL"),   false, false, proposal_cancel_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("ALLIES_PROPOSAL_CANCEL"),   false, false, proposal_cancel_action));
         if (show_allies_reject)
-            popup.AddMenuItem(GG::MenuItem(UserString("ALLIES_REJECT"),            false, false, proposal_reject_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("ALLIES_REJECT"),            false, false, proposal_reject_action));
         if (show_declare_war)
-            popup.AddMenuItem(GG::MenuItem(UserString("WAR_DECLARATION"),          false, false, war_declaration_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("WAR_DECLARATION"),          false, false, war_declaration_action));
     }
 
-    popup.AddMenuItem(GG::MenuItem(str(FlexibleFormat(UserString("ENC_LOOKUP")) % GetEmpire(clicked_empire_id)->Name()), false, false, pedia_lookup_action));
+    popup->AddMenuItem(GG::MenuItem(str(FlexibleFormat(UserString("ENC_LOOKUP")) % GetEmpire(clicked_empire_id)->Name()), false, false, pedia_lookup_action));
 
-    popup.Run();
+    popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 int PlayerListWnd::PlayerInRow(GG::ListBox::iterator it) const {

@@ -52,7 +52,7 @@ namespace {
 Button::Button(const std::string& str, const std::shared_ptr<Font>& font, Clr color,
                Clr text_color/* = CLR_BLACK*/, Flags<WndFlag> flags/* = INTERACTIVE*/) :
     Control(X0, Y0, X1, Y1, flags),
-    m_label(new TextControl(X0, Y0, X1, Y1, str, font, text_color, FORMAT_NONE, NO_WND_FLAGS)),
+    m_label(Wnd::Create<TextControl>(X0, Y0, X1, Y1, str, font, text_color, FORMAT_NONE, NO_WND_FLAGS)),
     m_state(BN_UNPRESSED)
 {
     m_color = color;
@@ -265,7 +265,7 @@ StateButton::StateButton(const std::string& str, const std::shared_ptr<Font>& fo
                          Clr color, std::shared_ptr<StateButtonRepresenter> representer, Clr text_color/* = CLR_BLACK*/) :
     Control(X0, Y0, X1, Y1, INTERACTIVE),
     m_representer(representer),
-    m_label(new TextControl(X0, Y0, X1, Y1, str, font, text_color, format, NO_WND_FLAGS)),
+    m_label(Wnd::Create<TextControl>(X0, Y0, X1, Y1, str, font, text_color, format, NO_WND_FLAGS)),
     m_state(BN_UNPRESSED),
     m_checked(false)
 {
@@ -647,7 +647,7 @@ void RadioButtonGroup::InsertButton(std::size_t index, StateButton* bn)
     Pt bn_sz = bn->Size();
     Layout* layout = GetLayout();
     if (!layout) {
-        layout = new Layout(X0, Y0, ClientWidth(), ClientHeight(), 1, 1);
+        layout = Wnd::Create<Layout>(X0, Y0, ClientWidth(), ClientHeight(), 1, 1);
         SetLayout(layout);
     }
     const int CELLS_PER_BUTTON = m_expand_buttons ? 1 : 2;

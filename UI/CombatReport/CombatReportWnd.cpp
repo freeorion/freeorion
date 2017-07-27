@@ -20,11 +20,13 @@ class CombatReportWnd::Impl {
 public:
     Impl(CombatReportWnd& wnd):
         m_wnd(wnd),
-        m_tabs(new GG::TabWnd(GG::X0, GG::Y0, GG::X1, GG::Y1, ClientUI::GetFont(),
-                              ClientUI::CtrlColor(), ClientUI::TextColor())),
-        m_graphical(new GraphicalSummaryWnd()),
-        m_log(new CombatLogWnd(m_wnd.ClientWidth(), m_wnd.ClientHeight())),
-        m_log_scroller(new GG::ScrollPanel(GG::X(0), GG::Y(0), m_tabs->ClientWidth(), m_tabs->ClientHeight(), m_log)),
+        m_tabs(GG::Wnd::Create<GG::TabWnd>(GG::X0, GG::Y0, GG::X1, GG::Y1, ClientUI::GetFont(),
+                                           ClientUI::CtrlColor(), ClientUI::TextColor())),
+        m_graphical(GG::Wnd::Create<GraphicalSummaryWnd>()),
+        m_log(GG::Wnd::Create<CombatLogWnd>(m_wnd.ClientWidth(), m_wnd.ClientHeight())),
+        m_log_scroller(
+            GG::Wnd::Create<GG::ScrollPanel>(
+                GG::X0, GG::Y0, m_tabs->ClientWidth(), m_tabs->ClientHeight(), m_log)),
         m_min_size(GG::X0, GG::Y0)
     {
         m_log->SetFont(ClientUI::GetFont());

@@ -101,9 +101,9 @@ namespace {
             ClientUI::GetFont()->ExpensiveParseFromTextToTextElements(string, fmt);
         std::vector<GG::Font::LineData> lines = ClientUI::GetFont()->DetermineLines(string, fmt, width, text_elements);
         GG::Pt extent = ClientUI::GetFont()->TextExtent(lines);
-        auto text = new CUILabel(string, text_elements,
-                                       GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT, GG::NO_WND_FLAGS,
-                                       GG::X0, GG::Y0, extent.x, extent.y);
+        auto text = GG::Wnd::Create<CUILabel>(string, text_elements,
+                                              GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT, GG::NO_WND_FLAGS,
+                                              GG::X0, GG::Y0, extent.x, extent.y);
         text->ClipText(true);
         text->SetChildClippingMode(GG::Wnd::ClipToClient);
         return text;
@@ -161,7 +161,7 @@ public:
 
     static GG::Control* TitleForColumn(const SaveFileColumn& column)
     {
-        auto retval = new CUILabel(column.Title(), GG::FORMAT_LEFT);
+        auto retval = GG::Wnd::Create<CUILabel>(column.Title(), GG::FORMAT_LEFT);
         retval->Resize(GG::Pt(GG::X1, ClientUI::GetFont()->Height()));
         return retval;
     }
@@ -180,9 +180,9 @@ public:
         GG::Label* retval = nullptr;
 
         if (column.m_fixed) {
-            retval = new CUILabel(value, format_flags, GG::NO_WND_FLAGS,
-                                  GG::X0, GG::Y0,
-                                  column.FixedWidth(), ClientUI::GetFont()->Height());
+            retval = GG::Wnd::Create<CUILabel>(value, format_flags, GG::NO_WND_FLAGS,
+                                               GG::X0, GG::Y0,
+                                               column.FixedWidth(), ClientUI::GetFont()->Height());
         } else {
             retval = CreateResizingText(value, max_width);
         }
@@ -403,13 +403,13 @@ public:
         SaveFileRow::Init();
         for (unsigned int i = 0; i < m_columns->size(); ++i) {
             if (i==0) {
-                auto label = new CUILabel(PATH_DELIM_BEGIN + m_filename + PATH_DELIM_END,
-                                               GG::FORMAT_NOWRAP | GG::FORMAT_LEFT);
+                auto label = GG::Wnd::Create<CUILabel>(PATH_DELIM_BEGIN + m_filename + PATH_DELIM_END,
+                                                       GG::FORMAT_NOWRAP | GG::FORMAT_LEFT);
                 label->Resize(GG::Pt(DirectoryNameSize(), ClientUI::GetFont()->Height()));
                 push_back(label);
             } else {
                 // Dummy columns so that all rows have the same number of cols
-                auto label = new CUILabel("", GG::FORMAT_NOWRAP);
+                auto label = GG::Wnd::Create<CUILabel>("", GG::FORMAT_NOWRAP);
                 label->Resize(GG::Pt(GG::X0, ClientUI::GetFont()->Height()));
                 push_back(label);
             }
@@ -492,7 +492,7 @@ public:
         NormalizeRowsOnInsert(false);
         SetNumCols(m_visible_columns->size());
 
-        auto header_row = new SaveFileHeaderRow(m_visible_columns);
+        auto header_row = GG::Wnd::Create<SaveFileHeaderRow>(m_visible_columns);
         SetColHeaders(header_row);
         for (unsigned int i = 0; i < m_visible_columns->size(); ++i) {
             const SaveFileColumn& column = (*m_visible_columns)[i];
@@ -506,7 +506,7 @@ public:
 
     void ResetColHeaders() {
         RemoveColHeaders();
-        SetColHeaders(new SaveFileHeaderRow(m_visible_columns));
+        SetColHeaders(GG::Wnd::Create<SaveFileHeaderRow>(m_visible_columns));
     }
 
     GG::Pt ListRowSize() const
@@ -533,7 +533,7 @@ public:
 
         std::vector<Row*> rows;
         for (const FullPreview& preview : previews) {
-            rows.push_back(new SaveFileFileRow(preview, m_visible_columns, m_columns, tooltip_delay));
+            rows.push_back(GG::Wnd::Create<SaveFileFileRow>(preview, m_visible_columns, m_columns, tooltip_delay));
         }
 
         // Insert rows enmasse to avoid per insertion vector sort costs.
@@ -543,7 +543,7 @@ public:
     void LoadDirectories(const fs::path& path) {
         fs::directory_iterator end_it;
         if (path.has_parent_path() && path.parent_path() != path) {
-            auto row = new SaveFileDirectoryRow(m_visible_columns, "..");
+            auto row = GG::Wnd::Create<SaveFileDirectoryRow>(m_visible_columns, "..");
             Insert(row);
         }
 
@@ -552,14 +552,14 @@ public:
                 fs::path last_bit_of_path = it->path().filename();
                 std::string utf8_dir_name = PathString(last_bit_of_path);
                 DebugLogger() << "SaveFileDialog::LoadDirectories name: " << utf8_dir_name << " valid UTF-8: " << IsValidUTF8(utf8_dir_name);
-                auto row = new SaveFileDirectoryRow(m_visible_columns, utf8_dir_name);
+                auto row = GG::Wnd::Create<SaveFileDirectoryRow>(m_visible_columns, utf8_dir_name);
                 Insert(row);
 
                 //boost::filesystem::path::string_type path_native = last_bit_of_path.native();
                 //std::string path_string;
                 //utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(path_string));
                 //DebugLogger() << "SaveFileDialog::LoadDirectories name: " << path_string << " valid UTF-8: " << IsValidUTF8(path_string);
-                //Insert(new SaveFileDirectoryRow(path_string));
+                //Insert(GG::Wnd::Create<SaveFileDirectoryRow>(path_string));
             }
         }
     }
@@ -646,30 +646,30 @@ void SaveFileDialog::Init() {
     ResetDefaultPosition();
     SetMinSize(GG::Pt(2*SAVE_FILE_DIALOG_MIN_WIDTH, 2*SAVE_FILE_DIALOG_MIN_HEIGHT));
 
-    m_layout = new GG::Layout(GG::X0, GG::Y0,
-                              SAVE_FILE_DIALOG_WIDTH - LeftBorder() - RightBorder(),
-                              SAVE_FILE_DIALOG_HEIGHT - TopBorder() - BottomBorder(), 4, 4);
+    m_layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0,
+                                           SAVE_FILE_DIALOG_WIDTH - LeftBorder() - RightBorder(),
+                                           SAVE_FILE_DIALOG_HEIGHT - TopBorder() - BottomBorder(), 4, 4);
     m_layout->SetCellMargin(SAVE_FILE_CELL_MARGIN);
     m_layout->SetBorderMargin(SAVE_FILE_CELL_MARGIN*2);
 
-    m_file_list = new SaveFileListBox();
+    m_file_list = GG::Wnd::Create<SaveFileListBox>();
     m_file_list->SetStyle(GG::LIST_SINGLESEL | GG::LIST_SORTDESCENDING);
 
     m_confirm_btn = new CUIButton(UserString("OK"));
     auto cancel_btn = new CUIButton(UserString("CANCEL"));
 
-    m_name_edit = new CUIEdit("");
+    m_name_edit = GG::Wnd::Create<CUIEdit>("");
     if (m_extension != MP_SAVE_FILE_EXTENSION && m_extension != SP_SAVE_FILE_EXTENSION) {
         std::string savefile_ext = HumanClientApp::GetApp()->SinglePlayerGame() ? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION;
         DebugLogger() << "SaveFileDialog passed invalid extension " << m_extension << ", changing to " << savefile_ext;
         m_extension = savefile_ext;
     }
 
-    auto filename_label = new CUILabel(UserString("SAVE_FILENAME"), GG::FORMAT_NOWRAP);
-    auto directory_label = new CUILabel(UserString("SAVE_DIRECTORY"), GG::FORMAT_NOWRAP);
+    auto filename_label = GG::Wnd::Create<CUILabel>(UserString("SAVE_FILENAME"), GG::FORMAT_NOWRAP);
+    auto directory_label = GG::Wnd::Create<CUILabel>(UserString("SAVE_DIRECTORY"), GG::FORMAT_NOWRAP);
     //std::cout << "pathstrnig: " << PathString(GetSaveDir()) << std::endl;
     DebugLogger() << "pathstring: " << PathString(GetSaveDir());
-    m_current_dir_edit = new CUIEdit(PathString(GetSaveDir()));
+    m_current_dir_edit = GG::Wnd::Create<CUIEdit>(PathString(GetSaveDir()));
 
     m_layout->Add(directory_label, 0, 0);
 
@@ -687,7 +687,7 @@ void SaveFileDialog::Init() {
         m_layout->SetMinimumColumnWidth(3, std::max( cancel_btn->MinUsableSize().x,
                                         delete_btn->MinUsableSize().x) + SAVE_FILE_BUTTON_MARGIN);
     } else {
-        m_remote_dir_dropdown = new CUIDropDownList(6);
+        m_remote_dir_dropdown = GG::Wnd::Create<CUIDropDownList>(6);
         m_layout->Add(m_current_dir_edit, 0, 1, 1, 1);
         m_layout->Add(m_remote_dir_dropdown, 0, 2 , 1, 2);
         GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
@@ -950,18 +950,18 @@ void SaveFileDialog::UpdatePreviewList() {
         m_remote_dir_dropdown->Clear();
         SetDirPath(preview_information.folder);
 
-        auto row = new GG::DropDownList::Row();
-        row->push_back(new CUILabel(SERVER_LABEL));
+        auto row = GG::Wnd::Create<GG::DropDownList::Row>();
+        row->push_back(GG::Wnd::Create<CUILabel>(SERVER_LABEL));
         m_remote_dir_dropdown->Insert(row);
 
         for (const std::string& subdir : preview_information.subdirectories) {
-            auto row = new GG::DropDownList::Row();
+            auto row = GG::Wnd::Create<GG::DropDownList::Row>();
             if (subdir.find("/") == 0) {
-                row->push_back(new CUILabel(SERVER_LABEL + subdir));
+                row->push_back(GG::Wnd::Create<CUILabel>(SERVER_LABEL + subdir));
             } else if(subdir.find("./") == 0) {
-                row->push_back(new CUILabel(SERVER_LABEL + subdir.substr(1)));
+                row->push_back(GG::Wnd::Create<CUILabel>(SERVER_LABEL + subdir.substr(1)));
             } else {
-                row->push_back(new CUILabel(SERVER_LABEL + "/" + subdir));
+                row->push_back(GG::Wnd::Create<CUILabel>(SERVER_LABEL + "/" + subdir));
             }
 
             m_remote_dir_dropdown->Insert(row);

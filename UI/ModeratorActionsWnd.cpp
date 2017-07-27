@@ -74,13 +74,13 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
 
     m_create_system_button->LeftClickedSignal.connect(
         boost::bind(&ModeratorActionsWnd::CreateSystemClicked, this));
-    m_star_type_drop = new CUIDropDownList(6);
+    m_star_type_drop = GG::Wnd::Create<CUIDropDownList>(6);
     m_star_type_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
     for (StarType star_type = STAR_BLUE; star_type != NUM_STAR_TYPES; star_type = StarType(star_type + 1)) {
         std::shared_ptr<GG::Texture> disc_texture = ui->GetModuloTexture(
             ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[star_type], 0);
-        auto row = new GG::DropDownList::Row();
-        auto icon = new GG::StaticGraphic(disc_texture, style);
+        auto row = GG::Wnd::Create<GG::DropDownList::Row>();
+        auto icon = GG::Wnd::Create<GG::StaticGraphic>(disc_texture, style);
         icon->Resize(GG::Pt(CONTROL_WIDTH, CONTROL_HEIGHT));
         row->push_back(icon);
         m_star_type_drop->Insert(row);
@@ -102,12 +102,12 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
     m_create_planet_button->LeftClickedSignal.connect(
         boost::bind(&ModeratorActionsWnd::CreatePlanetClicked, this));
 
-    m_planet_type_drop = new CUIDropDownList(6);
+    m_planet_type_drop = GG::Wnd::Create<CUIDropDownList>(6);
     m_planet_type_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
     for (PlanetType planet_type = PT_SWAMP; planet_type != NUM_PLANET_TYPES; planet_type = PlanetType(planet_type + 1)) {
         std::shared_ptr<GG::Texture> texture = ClientUI::PlanetIcon(planet_type);
-        auto row = new GG::DropDownList::Row();
-        auto icon = new GG::StaticGraphic(texture, style);
+        auto row = GG::Wnd::Create<GG::DropDownList::Row>();
+        auto icon = GG::Wnd::Create<GG::StaticGraphic>(texture, style);
         icon->Resize(GG::Pt(CONTROL_WIDTH, CONTROL_HEIGHT));
         row->push_back(icon);
         m_planet_type_drop->Insert(row);
@@ -116,12 +116,12 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
     m_planet_type_drop->SelChangedSignal.connect(
         boost::bind(&ModeratorActionsWnd::PlanetTypeSelected, this, _1));
 
-    m_planet_size_drop = new CUIDropDownList(6);
+    m_planet_size_drop = GG::Wnd::Create<CUIDropDownList>(6);
     m_planet_size_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
     for (PlanetSize planet_size = SZ_TINY; planet_size != NUM_PLANET_SIZES; planet_size = PlanetSize(planet_size + 1)) {
         std::shared_ptr<GG::Texture> texture = ClientUI::PlanetSizeIcon(planet_size);
-        auto row = new GG::DropDownList::Row();
-        auto icon = new GG::StaticGraphic(texture, style);
+        auto row = GG::Wnd::Create<GG::DropDownList::Row>();
+        auto icon = GG::Wnd::Create<GG::StaticGraphic>(texture, style);
         icon->Resize(GG::Pt(CONTROL_WIDTH, CONTROL_HEIGHT));
         row->push_back(icon);
         m_planet_size_drop->Insert(row);
@@ -158,7 +158,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
 
     m_set_owner_button->LeftClickedSignal.connect(
         boost::bind(&ModeratorActionsWnd::SetOwnerClicked, this));
-    m_empire_drop = new CUIDropDownList(6);
+    m_empire_drop = GG::Wnd::Create<CUIDropDownList>(6);
     m_empire_drop->SetStyle(GG::LIST_NOSORT);
     // empires added later when gamestate info available
     m_empire_drop->SelChangedSignal.connect(
@@ -342,16 +342,16 @@ void ModeratorActionsWnd::Refresh() {
     m_empire_drop->Clear();
     for (const std::map<int, Empire*>::value_type& entry : Empires()) {
         const Empire* empire = entry.second;
-        auto row = new GG::DropDownList::Row();
-        auto label = new CUILabel(empire->Name(), GG::FORMAT_NOWRAP);
+        auto row = GG::Wnd::Create<GG::DropDownList::Row>();
+        auto label = GG::Wnd::Create<CUILabel>(empire->Name(), GG::FORMAT_NOWRAP);
         label->SetTextColor(empire->Color());
         row->push_back(label);
         m_empire_drop->Insert(row);
     }
 
     // no empire / monsters
-    auto row = new GG::DropDownList::Row();
-    auto label = new CUILabel(UserString("UNOWNED"), GG::FORMAT_NOWRAP);
+    auto row = GG::Wnd::Create<GG::DropDownList::Row>();
+    auto label = GG::Wnd::Create<CUILabel>(UserString("UNOWNED"), GG::FORMAT_NOWRAP);
     label->SetTextColor(GG::CLR_RED);
     row->push_back(label);
     m_empire_drop->Insert(row);

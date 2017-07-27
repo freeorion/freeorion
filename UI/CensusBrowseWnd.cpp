@@ -40,16 +40,16 @@ public:
         SetChildClippingMode(ClipToClient);
 
         if (m_show_icon) {
-            m_icon = new GG::StaticGraphic(ClientUI::SpeciesIcon(name), GG::GRAPHIC_FITGRAPHIC);
+            m_icon = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::SpeciesIcon(name), GG::GRAPHIC_FITGRAPHIC);
             AttachChild(m_icon);
         }
 
-        m_name = new CUILabel(UserString(name), GG::FORMAT_RIGHT);
+        m_name = GG::Wnd::Create<CUILabel>(UserString(name), GG::FORMAT_RIGHT);
 
         int num_digits = census_val < 10 ? 1 : 2; // this allows the decimal point to line up when there number above and below 10.
         num_digits =    census_val < 100 ? num_digits : 3; // this allows the decimal point to line up when there number above and below 100.
         num_digits =   census_val < 1000 ? num_digits : 4; // this allows the decimal point to line up when there number above and below 1000.
-        m_census_val = new CUILabel(DoubleToString(census_val, num_digits, false), GG::FORMAT_RIGHT);
+        m_census_val = GG::Wnd::Create<CUILabel>(DoubleToString(census_val, num_digits, false), GG::FORMAT_RIGHT);
 
         AttachChild(m_name);
         AttachChild(m_census_val);
@@ -132,18 +132,18 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<s
 
     GG::Y top = GG::Y0;
 
-    m_title_text = new CUILabel(title_text, GG::FORMAT_LEFT);
+    m_title_text = GG::Wnd::Create<CUILabel>(title_text, GG::FORMAT_LEFT);
     m_title_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top + m_offset.y));
     m_title_text->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT));
     m_title_text->SetFont(ClientUI::GetBoldFont());
 
     top += ROW_HEIGHT;
-    m_species_text = new CUILabel(UserString("CENSUS_SPECIES_HEADER"), GG::FORMAT_BOTTOM);
+    m_species_text = GG::Wnd::Create<CUILabel>(UserString("CENSUS_SPECIES_HEADER"), GG::FORMAT_BOTTOM);
     m_species_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top + m_offset.y));
     m_species_text->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT + HALF_HEIGHT));
 
     top += ROW_HEIGHT + HALF_HEIGHT;
-    m_list = new CUIListBox();
+    m_list = GG::Wnd::Create<CUIListBox>();
     m_list->MoveTo(GG::Pt(m_offset.x, top + m_offset.y));
     m_list->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT));
     m_list->SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
@@ -162,8 +162,8 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<s
     for (std::multimap<float, std::string>::const_reverse_iterator it = counts_species.rbegin();
          it != counts_species.rend(); ++it)
     {
-        auto row = new GG::ListBox::Row(m_list->Width(), ROW_HEIGHT, "Census Species Row");
-        row->push_back(new CensusRowPanel(m_list->Width(), ROW_HEIGHT, it->second, it->first, true));
+        auto row = GG::Wnd::Create<GG::ListBox::Row>(m_list->Width(), ROW_HEIGHT, "Census Species Row");
+        row->push_back(GG::Wnd::Create<CensusRowPanel>(m_list->Width(), ROW_HEIGHT, it->second, it->first, true));
         m_list->Insert(row);
         row->Resize(GG::Pt(m_list->Width(), ROW_HEIGHT));
         top += ROW_HEIGHT;
@@ -172,12 +172,12 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<s
     m_list->Resize(GG::Pt(BrowseTextWidth(), top - 2* ROW_HEIGHT - HALF_HEIGHT));
 
     GG::Y top2 = top;
-    m_tags_text = new CUILabel(UserString("CENSUS_TAG_HEADER"), GG::FORMAT_BOTTOM);
+    m_tags_text = GG::Wnd::Create<CUILabel>(UserString("CENSUS_TAG_HEADER"), GG::FORMAT_BOTTOM);
     m_tags_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y));
     m_tags_text->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT + HALF_HEIGHT));
 
     top2 += ROW_HEIGHT + HALF_HEIGHT;
-    m_tags_list = new CUIListBox();
+    m_tags_list = GG::Wnd::Create<CUIListBox>();
     m_tags_list->MoveTo(GG::Pt(m_offset.x, top2 + m_offset.y));
     m_tags_list->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT));
     m_tags_list->SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
@@ -206,8 +206,8 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<s
         //DebugLogger() << "Census checking for tag '"<< tag_ord <<"'";
         std::map<std::string, float>::const_iterator it2 = tag_counts.find(tag_ord);
         if (it2 != tag_counts.end()) {
-            auto row = new GG::ListBox::Row(m_list->Width(), ROW_HEIGHT, "Census Characteristics Row");
-            row->push_back(new CensusRowPanel(m_tags_list->Width(), ROW_HEIGHT, it2->first, it2->second, false));
+            auto row = GG::Wnd::Create<GG::ListBox::Row>(m_list->Width(), ROW_HEIGHT, "Census Characteristics Row");
+            row->push_back(GG::Wnd::Create<CensusRowPanel>(m_tags_list->Width(), ROW_HEIGHT, it2->first, it2->second, false));
             m_tags_list->Insert(row);
             row->Resize(GG::Pt(m_list->Width(), ROW_HEIGHT));
             top2 += ROW_HEIGHT;

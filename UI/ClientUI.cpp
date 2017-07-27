@@ -619,8 +619,8 @@ ClientUI::ClientUI() :
     m_player_list_wnd = new PlayerListWnd(PLAYER_LIST_WND_NAME);
     InitializeWindows();
 
-    m_intro_screen =            new IntroScreen();
-    m_multiplayer_lobby_wnd =   new MultiPlayerLobbyWnd();
+    m_intro_screen = GG::Wnd::Create<IntroScreen>();
+    m_multiplayer_lobby_wnd = GG::Wnd::Create<MultiPlayerLobbyWnd>();
 
     GetOptionsDB().OptionChangedSignal("app-width").connect(
         boost::bind(&ClientUI::HandleSizeChange, this, true));
@@ -661,13 +661,13 @@ ClientUI::~ClientUI() {
 
 MapWnd* ClientUI::GetMapWnd()
 {
-    static bool initialized = m_map_wnd ? true : (m_map_wnd = new MapWnd()) != nullptr;
+    static bool initialized = m_map_wnd ? true : (m_map_wnd = GG::Wnd::Create<MapWnd>()) != nullptr;
     return m_map_wnd;
 }
 
 MapWnd const* ClientUI::GetMapWndConst() const
 {
-    static bool initialized = m_map_wnd ? true : (m_map_wnd = new MapWnd()) != nullptr;
+    static bool initialized = m_map_wnd ? true : (m_map_wnd = GG::Wnd::Create<MapWnd>()) != nullptr;
     return m_map_wnd;
 }
 

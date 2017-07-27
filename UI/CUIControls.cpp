@@ -71,9 +71,12 @@ CUILabel::CUILabel(const std::string& str,
 void CUILabel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     auto copy_wnd_action = [this]() { GG::GUI::GetGUI()->CopyWndText(this); };
     // create popup menu
-    CUIPopupMenu popup(pt.x, pt.y);
-    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"), false, false, copy_wnd_action));
-    popup.Run();
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"), false, false, copy_wnd_action));
+    popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 
@@ -888,15 +891,18 @@ void CUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     auto hotkey_select_all_action = [this]() { GG::GUI::GetGUI()->WndSelectAll(this); };
     auto hotkey_deselect_action   = [this]() { GG::GUI::GetGUI()->WndDeselect(this); };
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),           false, false, hotkey_cut_action));
-    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),          false, false, hotkey_copy_action));
-    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),         false, false, hotkey_paste_action));
-    popup.AddMenuItem(GG::MenuItem(true)); // separator
-    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
-    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
-    popup.Run();
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),           false, false, hotkey_cut_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),          false, false, hotkey_copy_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),         false, false, hotkey_paste_action));
+    popup->AddMenuItem(GG::MenuItem(true)); // separator
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
+    popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 
     // todo: italicize, underline, or colour selected text
 }
@@ -982,16 +988,19 @@ void CUIMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     auto hotkey_deselect_action   = [this]() { GG::GUI::GetGUI()->WndDeselect(this); };
 
     // create popup menu
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     if (!(this->Style() & GG::MULTI_READ_ONLY))
-        popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),       false, false, hotkey_cut_action));
-    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),          false, false, hotkey_copy_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),       false, false, hotkey_cut_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),          false, false, hotkey_copy_action));
     if (!(this->Style() & GG::MULTI_READ_ONLY))
-        popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),     false, false, hotkey_paste_action));
-    popup.AddMenuItem(GG::MenuItem(true)); // separator
-    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
-    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
-    popup.Run();
+        popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),     false, false, hotkey_paste_action));
+    popup->AddMenuItem(GG::MenuItem(true)); // separator
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
+    popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
     // todo: italicize, underline, or colour selected text
 }
 
@@ -1043,20 +1052,23 @@ void CUILinkTextMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_ke
     auto hotkey_deselect_action   = [this]() { GG::GUI::GetGUI()->WndDeselect(this); };
 
     // create popup menu
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     if (GetLinkUnderPt(pt) != -1) {
-        popup.AddMenuItem(GG::MenuItem(UserString("OPEN"),             false, false, rclick_action));
-        popup.AddMenuItem(GG::MenuItem(true)); // separator
+        popup->AddMenuItem(GG::MenuItem(UserString("OPEN"),             false, false, rclick_action));
+        popup->AddMenuItem(GG::MenuItem(true)); // separator
     }
     if (!(this->Style() & GG::MULTI_READ_ONLY))
-        popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),       false, false, hotkey_cut_action));
-    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),          false, false, hotkey_copy_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),       false, false, hotkey_cut_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),          false, false, hotkey_copy_action));
     if (!(this->Style() & GG::MULTI_READ_ONLY))
-        popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),     false, false, hotkey_paste_action));
-    popup.AddMenuItem(GG::MenuItem(true)); // separator
-    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
-    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
-    popup.Run();
+        popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),     false, false, hotkey_paste_action));
+    popup->AddMenuItem(GG::MenuItem(true)); // separator
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
+    popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 
     // todo: italicize, underline, or colour selected text
 }
@@ -1129,7 +1141,7 @@ const GG::Y CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT(22);
 CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, GG::Y row_height/* = DEFAULT_ROW_HEIGHT*/) :
     GG::ListBox::Row(GG::X1, row_height, "")
 {
-    push_back(new CUILabel(row_text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP));
+    push_back(GG::Wnd::Create<CUILabel>(row_text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP));
 }
 
 
@@ -1150,7 +1162,7 @@ StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
     m_icon(nullptr),
     m_text(nullptr)
 {
-    m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC);
+    m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC);
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
@@ -1170,7 +1182,7 @@ StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
     m_icon(nullptr),
     m_text(nullptr)
 {
-    m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC);
+    m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC);
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
@@ -1192,7 +1204,7 @@ StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
     m_text(nullptr)
 {
     SetName("StatisticIcon");
-    m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC);
+    m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC);
 
     m_values[0] = value0;
     m_values[1] = value1;
@@ -1300,9 +1312,9 @@ void StatisticIcon::DoLayout() {
 
     if (!m_text) {
         // Create new label in correct place.
-        m_text = new CUILabel(text_elements.Text(), text_elements.Elements(),
-                              format, GG::NO_WND_FLAGS,
-                              text_ul.x, text_ul.y, text_lr.x - text_ul.x, text_lr.y - text_ul.y);
+        m_text = GG::Wnd::Create<CUILabel>(text_elements.Text(), text_elements.Elements(),
+                                           format, GG::NO_WND_FLAGS,
+                                           text_ul.x, text_ul.y, text_lr.x - text_ul.x, text_lr.y - text_ul.y);
         AttachChild(m_text);
     } else {
         // Adjust text and place label.
@@ -1389,10 +1401,10 @@ namespace {
                   GG::X width, GG::Y height, std::shared_ptr<GG::Texture> species_icon)
         {
             GG::Wnd::SetName(species_name);
-            auto icon = new GG::StaticGraphic(species_icon, GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
+            auto icon = GG::Wnd::Create<GG::StaticGraphic>(species_icon, GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
             icon->Resize(GG::Pt(GG::X(Value(height - 5)), height - 5));
             push_back(icon);
-            auto species_label = new CUILabel(localized_name, GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            auto species_label = GG::Wnd::Create<CUILabel>(localized_name, GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             push_back(species_label);
             GG::X first_col_width(Value(height));
             SetColWidth(0, first_col_width);
@@ -1419,11 +1431,12 @@ SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h) :
     Resize(GG::Pt(w, h - 8));
     const SpeciesManager& sm = GetSpeciesManager();
     for (SpeciesManager::playable_iterator it = sm.playable_begin(); it != sm.playable_end(); ++it)
-        Insert(new SpeciesRow(it->second, w, h - 4));
+        Insert(GG::Wnd::Create<SpeciesRow>(it->second, w, h - 4));
     if (!this->Empty()) {
         // Add an option for random selection
-        Insert(new SpeciesRow("RANDOM", UserString("GSETUP_RANDOM"), UserString("GSETUP_SPECIES_RANDOM_DESC"), w, h - 4,
-                              ClientUI::GetTexture(ClientUI::ArtDir() / "icons/unknown.png")));
+        Insert(GG::Wnd::Create<SpeciesRow>("RANDOM", UserString("GSETUP_RANDOM"),
+                                           UserString("GSETUP_SPECIES_RANDOM_DESC"), w, h - 4,
+                                           ClientUI::GetTexture(ClientUI::ArtDir() / "icons/unknown.png")));
         Select(this->begin());
     }
     SelChangedSignal.connect(
@@ -1498,7 +1511,7 @@ namespace {
         ColorRow(const GG::Clr& color, GG::Y h) :
             GG::ListBox::Row(GG::X(Value(h)), h, "")
         {
-            push_back(new ColorSquare(color, h));
+            push_back(GG::Wnd::Create<ColorSquare>(color, h));
         }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
@@ -1514,7 +1527,7 @@ EmpireColorSelector::EmpireColorSelector(GG::Y h) :
 {
     Resize(GG::Pt(COLOR_SELECTOR_WIDTH, h - 8));
     for (const GG::Clr& color : EmpireColors()) {
-        Insert(new ColorRow(color, h - 4));
+        Insert(GG::Wnd::Create<ColorRow>(color, h - 4));
     }
     SelChangedSignal.connect(
         boost::bind(&EmpireColorSelector::SelectionChanged, this, _1));
@@ -1613,9 +1626,12 @@ void ColorSelector::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         ColorChangedSignal(m_default_color);
     };
 
-    CUIPopupMenu popup(pt.x, pt.y);
-    popup.AddMenuItem(GG::MenuItem(UserString("RESET"), false, false, reset_color_action));
-    popup.Run();
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
+    popup->AddMenuItem(GG::MenuItem(UserString("RESET"), false, false, reset_color_action));
+    popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 
@@ -1677,13 +1693,13 @@ void ProductionInfoPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void ProductionInfoPanel::SetTotalPointsCost(float total_points, float total_cost) {
     if (!m_total_points_label) {
-        m_total_points_label = new CUILabel(UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), GG::FORMAT_RIGHT);
-        m_total_points = new CUILabel("", GG::FORMAT_LEFT);
-        m_total_points_P_label = new CUILabel(m_units_str, GG::FORMAT_LEFT);
+        m_total_points_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), GG::FORMAT_RIGHT);
+        m_total_points = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+        m_total_points_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
 
-        m_wasted_points_label = new CUILabel(UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::FORMAT_RIGHT);
-        m_wasted_points = new CUILabel("", GG::FORMAT_LEFT);
-        m_wasted_points_P_label = new CUILabel(m_units_str, GG::FORMAT_LEFT);
+        m_wasted_points_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::FORMAT_RIGHT);
+        m_wasted_points = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+        m_wasted_points_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
 
         AttachChild(m_total_points_label);
         AttachChild(m_total_points);
@@ -1714,13 +1730,13 @@ void ProductionInfoPanel::SetTotalPointsCost(float total_points, float total_cos
 
 void ProductionInfoPanel::SetLocalPointsCost(float local_points, float local_cost, const std::string& location_name) {
     if (!m_local_points_label) {
-        m_local_points_label = new CUILabel(UserString("PRODUCTION_INFO_LOCAL_PS_LABEL"), GG::FORMAT_RIGHT);
-        m_local_points = new CUILabel("", GG::FORMAT_LEFT);
-        m_local_points_P_label = new CUILabel(m_units_str, GG::FORMAT_LEFT);
+        m_local_points_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_LOCAL_PS_LABEL"), GG::FORMAT_RIGHT);
+        m_local_points = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+        m_local_points_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
 
-        m_local_wasted_points_label = new CUILabel(UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::FORMAT_RIGHT);
-        m_local_wasted_points = new CUILabel("", GG::FORMAT_LEFT);
-        m_local_wasted_points_P_label = new CUILabel(m_units_str, GG::FORMAT_LEFT);
+        m_local_wasted_points_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::FORMAT_RIGHT);
+        m_local_wasted_points = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+        m_local_wasted_points_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
 
         AttachChild(m_local_points_label);
         AttachChild(m_local_points);

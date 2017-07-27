@@ -86,10 +86,10 @@ namespace {
             else if (empire)
                 progress = empire->ResearchProgress(elem.name);
 
-            panel = new QueueTechPanel(GG::X(GetLayout()->BorderMargin()), GG::Y(GetLayout()->BorderMargin()),
-                                       ClientWidth(), elem.name, elem.allocated_rp,
-                                       elem.turns_left, progress / per_turn_cost,
-                                       elem.empire_id);
+            panel = GG::Wnd::Create<QueueTechPanel>(GG::X(GetLayout()->BorderMargin()), GG::Y(GetLayout()->BorderMargin()),
+                                                    ClientWidth(), elem.name, elem.allocated_rp,
+                                                    elem.turns_left, progress / per_turn_cost,
+                                                    elem.empire_id);
             push_back(panel);
 
             SetDragDropDataType("RESEARCH_QUEUE_ROW");
@@ -158,13 +158,13 @@ namespace {
         GG::Y top(MARGIN);
         GG::X left(MARGIN);
 
-        m_icon = new GG::StaticGraphic(ClientUI::TechIcon(m_tech_name), GG::GRAPHIC_FITGRAPHIC);
+        m_icon = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::TechIcon(m_tech_name), GG::GRAPHIC_FITGRAPHIC);
         m_icon->MoveTo(GG::Pt(left, top));
         m_icon->Resize(GG::Pt(GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE)));
         m_icon->SetColor(tech ? ClientUI::CategoryColor(tech->Category()) : GG::Clr());
         left += m_icon->Width() + MARGIN;
 
-        m_name_text = new CUILabel(m_paused ? UserString("PAUSED") : UserString(m_tech_name), GG::FORMAT_TOP | GG::FORMAT_LEFT);
+        m_name_text = GG::Wnd::Create<CUILabel>(m_paused ? UserString("PAUSED") : UserString(m_tech_name), GG::FORMAT_TOP | GG::FORMAT_LEFT);
         m_name_text->MoveTo(GG::Pt(left, top));
         m_name_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
         m_name_text->SetTextColor(clr);
@@ -185,12 +185,12 @@ namespace {
         if (m_in_progress)
             outline_color = GG::LightColor(outline_color);
 
-        m_progress_bar = new MultiTurnProgressBar(total_time,
-                                                  perc_complete,
-                                                  next_progress,
-                                                  GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
-                                                  ClientUI::TechWndProgressBarColor(),
-                                                  outline_color);
+        m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(total_time,
+                                                               perc_complete,
+                                                               next_progress,
+                                                               GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
+                                                               ClientUI::TechWndProgressBarColor(),
+                                                               outline_color);
 
         m_progress_bar->MoveTo(GG::Pt(left, top));
         m_progress_bar->Resize(GG::Pt(METER_WIDTH, METER_HEIGHT));
@@ -202,7 +202,7 @@ namespace {
         std::string turns_cost_text = str(FlexibleFormat(UserString("TECH_TURN_COST_STR"))
             % DoubleToString(turn_spending, 3, false)
             % DoubleToString(max_spending_per_turn, 3, false));
-        m_RPs_and_turns_text = new CUILabel(turns_cost_text, GG::FORMAT_LEFT);
+        m_RPs_and_turns_text = GG::Wnd::Create<CUILabel>(turns_cost_text, GG::FORMAT_LEFT);
         m_RPs_and_turns_text->MoveTo(GG::Pt(left, top));
         m_RPs_and_turns_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
         m_RPs_and_turns_text->SetTextColor(clr);
@@ -213,7 +213,7 @@ namespace {
 
         std::string turns_left_text = turns_left < 0 ? UserString("TECH_TURNS_LEFT_NEVER")
                                                      : str(FlexibleFormat(UserString("TECH_TURNS_LEFT_STR")) % turns_left);
-        m_turns_remaining_text = new CUILabel(turns_left_text, GG::FORMAT_RIGHT);
+        m_turns_remaining_text = GG::Wnd::Create<CUILabel>(turns_left_text, GG::FORMAT_RIGHT);
         m_turns_remaining_text->MoveTo(GG::Pt(left, top));
         m_turns_remaining_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
         m_turns_remaining_text->SetTextColor(clr);
@@ -306,11 +306,11 @@ protected:
         auto resume_action = [&it, this]() { this->QueueItemPausedSignal(it, false); };
         auto pause_action = [&it, this]() { this->QueueItemPausedSignal(it, true); };
 
-        CUIPopupMenu popup(pt.x, pt.y);
+        auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-        popup.AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   false, false, MoveToTopAction(it)));
-        popup.AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), false, false, MoveToBottomAction(it)));
-        popup.AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    false, false, DeleteAction(it)));
+        popup->AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   false, false, MoveToTopAction(it)));
+        popup->AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), false, false, MoveToBottomAction(it)));
+        popup->AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    false, false, DeleteAction(it)));
 
         GG::ListBox::Row* row = *it;
         QueueRow* queue_row = row ? dynamic_cast<QueueRow*>(row) : nullptr;
@@ -319,9 +319,9 @@ protected:
 
         // pause / resume commands
         if (queue_row->elem.paused) {
-            popup.AddMenuItem(GG::MenuItem(UserString("RESUME"),           false, false, resume_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("RESUME"),           false, false, resume_action));
         } else {
-            popup.AddMenuItem(GG::MenuItem(UserString("PAUSE"),            false, false, pause_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("PAUSE"),            false, false, pause_action));
         }
 
         // pedia lookup
@@ -335,9 +335,12 @@ protected:
             tech_name = UserString(queue_row->elem.name);
 
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % tech_name);
-        popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_action));
+        popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_action));
 
-        popup.Run();
+        popup->Run();
+
+        // TODO remove when converting to shared_ptr
+        delete popup;
     }
 };
 
@@ -352,7 +355,7 @@ public:
                "research.ResearchQueueWnd"),
         m_queue_lb(nullptr)
     {
-        m_queue_lb = new ResearchQueueListBox(std::string("RESEARCH_QUEUE_ROW"), UserString("RESEARCH_QUEUE_PROMPT"));
+        m_queue_lb = GG::Wnd::Create<ResearchQueueListBox>(std::string("RESEARCH_QUEUE_ROW"), UserString("RESEARCH_QUEUE_PROMPT"));
         m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
         m_queue_lb->SetName("ResearchQueue ListBox");
 
@@ -405,10 +408,11 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
     GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(GG::X(GetOptionsDB().Get<int>("UI.queue-width")), GG::Y0);
 
-    m_research_info_panel = new ProductionInfoPanel(UserString("RESEARCH_WND_TITLE"), UserString("RESEARCH_INFO_RP"),
-                                                    GG::X0, GG::Y0, GG::X(queue_width), GG::Y(100), "research.InfoPanel");
-    m_queue_wnd = new ResearchQueueWnd(GG::X0, GG::Y(100), queue_width, GG::Y(ClientSize().y - 100));
-    m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y, initially_hidden);
+    m_research_info_panel = GG::Wnd::Create<ProductionInfoPanel>(
+        UserString("RESEARCH_WND_TITLE"), UserString("RESEARCH_INFO_RP"),
+        GG::X0, GG::Y0, GG::X(queue_width), GG::Y(100), "research.InfoPanel");
+    m_queue_wnd = GG::Wnd::Create<ResearchQueueWnd>(GG::X0, GG::Y(100), queue_width, GG::Y(ClientSize().y - 100));
+    m_tech_tree_wnd = GG::Wnd::Create<TechTreeWnd>(tech_tree_wnd_size.x, tech_tree_wnd_size.y, initially_hidden);
 
     m_queue_wnd->GetQueueListBox()->MovedRowSignal.connect(
         boost::bind(&ResearchWnd::QueueItemMoved, this, _1, _2));
@@ -557,7 +561,7 @@ void ResearchWnd::UpdateQueue() {
         return;
 
     for (const ResearchQueue::Element& elem : empire->GetResearchQueue()) {
-        auto row = new QueueRow(queue_lb->RowWidth(), elem);
+        auto row = GG::Wnd::Create<QueueRow>(queue_lb->RowWidth(), elem);
         queue_lb->Insert(row);
     }
 

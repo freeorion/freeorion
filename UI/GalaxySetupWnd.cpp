@@ -171,12 +171,14 @@ const GG::X GameRulesPanel::DefaultWidth() {
 
 GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS)
-{
+{}
+
+void GameRulesPanel::CompleteConstruction() {
     const int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
     GG::ListBox* current_page = nullptr;
 
-    m_tabs = new GG::TabWnd(GG::X0, GG::Y0, SPIN_WIDTH, GG::Y1,
-                            ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
+    m_tabs = GG::Wnd::Create<GG::TabWnd>(GG::X0, GG::Y0, SPIN_WIDTH, GG::Y1,
+                                         ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
     AttachChild(m_tabs);
 
     // create storage and default general rule page
@@ -536,10 +538,10 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
     Sound::TempUISoundDisabler sound_disabler;
 
     // seed
-    m_seed_label = new CUILabel(UserString("GSETUP_SEED"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_seed_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SEED"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_seed_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_seed_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.seed")));
-    m_seed_edit = new CUIEdit(GetOptionsDB().Get<std::string>("GameSetup.seed"));
+    m_seed_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("GameSetup.seed"));
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
@@ -553,65 +555,65 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
     m_random->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
     // number of stars
-    m_stars_label = new CUILabel(UserString("GSETUP_STARS"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_stars_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_STARS"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_stars_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_stars_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.stars")));
-    m_stars_spin = new CUISpin<int>(100, 1, 10, 5000, true);
+    m_stars_spin = GG::Wnd::Create<CUISpin<int>>(100, 1, 10, 5000, true);
 
     // galaxy shape
-    m_galaxy_shapes_label = new CUILabel(UserString("GSETUP_SHAPE"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_galaxy_shapes_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SHAPE"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_galaxy_shapes_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_galaxy_shapes_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.galaxy-shape")));
-    m_galaxy_shapes_list = new CUIDropDownList(5);
+    m_galaxy_shapes_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_galaxy_shapes_list->SetStyle(GG::LIST_NOSORT);
 
     // galaxy age
-    m_galaxy_ages_label = new CUILabel(UserString("GSETUP_AGE"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_galaxy_ages_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_AGE"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_galaxy_ages_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_galaxy_ages_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.galaxy-age")));
-    m_galaxy_ages_list = new CUIDropDownList(5);
+    m_galaxy_ages_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_galaxy_ages_list->SetStyle(GG::LIST_NOSORT);
 
     // starlane frequency
-    m_starlane_freq_label = new CUILabel(UserString("GSETUP_STARLANE_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_starlane_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_STARLANE_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_starlane_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_starlane_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.starlane-frequency")));
-    m_starlane_freq_list = new CUIDropDownList(5);
+    m_starlane_freq_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_starlane_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // planet density
-    m_planet_density_label = new CUILabel(UserString("GSETUP_PLANET_DENSITY"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_planet_density_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_PLANET_DENSITY"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_planet_density_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_planet_density_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.planet-density")));
-    m_planet_density_list = new CUIDropDownList(5);
+    m_planet_density_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_planet_density_list->SetStyle(GG::LIST_NOSORT);
 
     // specials frequency
-    m_specials_freq_label = new CUILabel(UserString("GSETUP_SPECIALS_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_specials_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SPECIALS_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_specials_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_specials_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.specials-frequency")));
-    m_specials_freq_list = new CUIDropDownList(5);
+    m_specials_freq_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_specials_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // monster frequency
-    m_monster_freq_label = new CUILabel(UserString("GSETUP_MONSTER_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_monster_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_MONSTER_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_monster_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_monster_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.monster-frequency")));
-    m_monster_freq_list = new CUIDropDownList(5);
+    m_monster_freq_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_monster_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // native frequency
-    m_native_freq_label = new CUILabel(UserString("GSETUP_NATIVE_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_native_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_NATIVE_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_native_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_native_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.native-frequency")));
-    m_native_freq_list = new CUIDropDownList(5);
+    m_native_freq_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_native_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // ai aggression
-    m_ai_aggression_label = new CUILabel(UserString("GSETUP_AI_AGGR"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_ai_aggression_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_AI_AGGR"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_ai_aggression_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_ai_aggression_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.ai-aggression")));
-    m_ai_aggression_list = new CUIDropDownList(5);
+    m_ai_aggression_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_ai_aggression_list->SetStyle(GG::LIST_NOSORT);
 
     AttachChild(m_seed_label);
@@ -678,58 +680,58 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
     m_textures[RANDOM] =      ClientUI::GetTexture(ClientUI::ArtDir() / "gp_random.png");
 
     // fill droplists
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_2ARM")));
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_3ARM")));
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_4ARM")));
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_CLUSTER")));
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_ELLIPTICAL")));
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_DISC")));
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_BOX")));
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_IRREGULAR")));
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RING")));
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RANDOM")));
+    m_galaxy_shapes_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_2ARM")));
+    m_galaxy_shapes_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_3ARM")));
+    m_galaxy_shapes_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_4ARM")));
+    m_galaxy_shapes_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_CLUSTER")));
+    m_galaxy_shapes_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_ELLIPTICAL")));
+    m_galaxy_shapes_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_DISC")));
+    m_galaxy_shapes_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_BOX")));
+    m_galaxy_shapes_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_IRREGULAR")));
+    m_galaxy_shapes_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_RING")));
+    m_galaxy_shapes_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_RANDOM")));
 
-    m_galaxy_ages_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_YOUNG")));
-    m_galaxy_ages_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MATURE")));
-    m_galaxy_ages_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_ANCIENT")));
-    m_galaxy_ages_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RANDOM")));
+    m_galaxy_ages_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_YOUNG")));
+    m_galaxy_ages_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_MATURE")));
+    m_galaxy_ages_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_ANCIENT")));
+    m_galaxy_ages_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_RANDOM")));
 
     if (ALLOW_NO_STARLANES)
-        m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_NONE")));
-    m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_LOW")));
-    m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MEDIUM")));
-    m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_HIGH")));
-    m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RANDOM")));
+        m_starlane_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_NONE")));
+    m_starlane_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_LOW")));
+    m_starlane_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_MEDIUM")));
+    m_starlane_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_HIGH")));
+    m_starlane_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_RANDOM")));
 
-    m_planet_density_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_LOW")));
-    m_planet_density_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MEDIUM")));
-    m_planet_density_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_HIGH")));
-    m_planet_density_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RANDOM")));
+    m_planet_density_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_LOW")));
+    m_planet_density_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_MEDIUM")));
+    m_planet_density_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_HIGH")));
+    m_planet_density_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_RANDOM")));
 
-    m_specials_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_NONE")));
-    m_specials_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_LOW")));
-    m_specials_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MEDIUM")));
-    m_specials_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_HIGH")));
-    m_specials_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RANDOM")));
+    m_specials_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_NONE")));
+    m_specials_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_LOW")));
+    m_specials_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_MEDIUM")));
+    m_specials_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_HIGH")));
+    m_specials_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_RANDOM")));
 
-    m_monster_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_NONE")));
-    m_monster_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_LOW")));
-    m_monster_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MEDIUM")));
-    m_monster_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_HIGH")));
-    m_monster_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RANDOM")));
+    m_monster_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_NONE")));
+    m_monster_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_LOW")));
+    m_monster_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_MEDIUM")));
+    m_monster_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_HIGH")));
+    m_monster_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_RANDOM")));
 
-    m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_NONE")));
-    m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_LOW")));
-    m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MEDIUM")));
-    m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_HIGH")));
-    m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RANDOM")));
+    m_native_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_NONE")));
+    m_native_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_LOW")));
+    m_native_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_MEDIUM")));
+    m_native_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_HIGH")));
+    m_native_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_RANDOM")));
 
-    m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_BEGINNER")));
-    m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_TURTLE")));
-    m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_CAUTIOUS")));
-    m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_TYPICAL")));
-    m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_AGGRESSIVE")));
-    m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MANIACAL")));
+    m_ai_aggression_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_BEGINNER")));
+    m_ai_aggression_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_TURTLE")));
+    m_ai_aggression_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_CAUTIOUS")));
+    m_ai_aggression_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_TYPICAL")));
+    m_ai_aggression_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_AGGRESSIVE")));
+    m_ai_aggression_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_MANIACAL")));
 
     // initial settings from stored results or defaults
     m_seed_edit->SetText(GetOptionsDB().Get<std::string>("GameSetup.seed"));
@@ -941,36 +943,36 @@ GalaxySetupWnd::GalaxySetupWnd() :
 {
     Sound::TempUISoundDisabler sound_disabler;
 
-    m_galaxy_setup_panel = new GalaxySetupPanel();
-    m_game_rules_panel = new GameRulesPanel();
+    m_galaxy_setup_panel = GG::Wnd::Create<GalaxySetupPanel>();
+    m_game_rules_panel = GG::Wnd::Create<GameRulesPanel>();
 
     const GG::X LABELS_WIDTH = (GalaxySetupPanel::DefaultWidth() - 5) / 2;
 
     // player name
-    m_player_name_label = new CUILabel(UserString("GSETUP_PLAYER_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_player_name_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_PLAYER_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_player_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_player_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.player-name")));
-    m_player_name_edit = new CUIEdit(GetOptionsDB().Get<std::string>("GameSetup.player-name"));
+    m_player_name_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("GameSetup.player-name"));
 
     // empire name
-    m_empire_name_label = new CUILabel(UserString("GSETUP_EMPIRE_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_empire_name_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_EMPIRE_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_empire_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_empire_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.empire-name")));
-    m_empire_name_edit = new CUIEdit(GetOptionsDB().Get<std::string>("GameSetup.empire-name"));
+    m_empire_name_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("GameSetup.empire-name"));
 
     // empire color
-    m_empire_color_label = new CUILabel(UserString("GSETUP_EMPIRE_COLOR"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_empire_color_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_EMPIRE_COLOR"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_empire_color_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_empire_color_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.empire-color")));
-    m_empire_color_selector = new EmpireColorSelector(CONTROL_HEIGHT - CONTROL_VMARGIN);
+    m_empire_color_selector = GG::Wnd::Create<EmpireColorSelector>(CONTROL_HEIGHT - CONTROL_VMARGIN);
     m_empire_color_selector->Select(GetOptionsDB().Get<int>("GameSetup.empire-color"));
 
     // starting species
-    m_starting_species_label = new CUILabel(UserString("GSETUP_SPECIES"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_starting_species_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SPECIES"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_starting_species_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_starting_species_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.starting-species")));
     // Subtract the drop down entry padding for the inner element height.
-    m_starting_secies_selector = new SpeciesSelector(LABELS_WIDTH, CONTROL_HEIGHT - 5);
+    m_starting_secies_selector = GG::Wnd::Create<SpeciesSelector>(LABELS_WIDTH, CONTROL_HEIGHT - 5);
     std::string default_starting_species = GetOptionsDB().Get<std::string>("GameSetup.starting-species");
 
     if (default_starting_species.empty() || default_starting_species == "1") {
@@ -996,14 +998,14 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_starting_secies_selector->SelectSpecies(default_starting_species);
 
     // number of AIs
-    m_number_ais_label = new CUILabel(UserString("GSETUP_NUMBER_AIS"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_number_ais_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_NUMBER_AIS"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_number_ais_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_number_ais_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.ai-players")));
-    m_number_ais_spin = new CUISpin<int>(GetOptionsDB().Get<int>("GameSetup.ai-players"), 1, 0, IApp::MAX_AI_PLAYERS(), true);
+    m_number_ais_spin = GG::Wnd::Create<CUISpin<int>>(GetOptionsDB().Get<int>("GameSetup.ai-players"), 1, 0, IApp::MAX_AI_PLAYERS(), true);
 
     // create a temporary texture and static graphic
     static auto temp_tex = std::make_shared<GG::Texture>();
-    m_preview_image =  new GG::StaticGraphic(temp_tex, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE); // create a blank graphic
+    m_preview_image =  GG::Wnd::Create<GG::StaticGraphic>(temp_tex, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE); // create a blank graphic
 
     m_ok = new CUIButton(UserString("OK"));
     m_cancel = new CUIButton(UserString("CANCEL"));

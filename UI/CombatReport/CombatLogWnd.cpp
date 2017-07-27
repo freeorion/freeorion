@@ -149,7 +149,7 @@ namespace {
 
         SetBorderMargin(BORDER_MARGIN);
 
-        SetLayout(new GG::DeferredLayout(UpperLeft().x, UpperLeft().y, Width(), Height(), 1, 1));
+        SetLayout(GG::Wnd::Create<GG::DeferredLayout>(UpperLeft().x, UpperLeft().y, Width(), Height(), 1, 1));
         GetLayout()->Add(title, 0, 0, 1, 1);
         SetCollapsed(true);
         RequirePreRender();
@@ -306,7 +306,7 @@ namespace {
 }
 
 LinkText * CombatLogWnd::Impl::DecorateLinkText(std::string const & text) {
-    auto links = new LazyScrollerLinkText(m_wnd, GG::X0, GG::Y0, text, m_font, GG::CLR_WHITE);
+    auto links = GG::Wnd::Create<LazyScrollerLinkText>(m_wnd, GG::X0, GG::Y0, text, m_font, GG::CLR_WHITE);
 
     links->SetTextFormat(m_text_format_flags);
 
@@ -354,12 +354,12 @@ std::vector<GG::Wnd*> CombatLogWnd::Impl::MakeCombatLogPanel(GG::X w, int viewin
     // details and sub events.
 
     if (!event->FlattenSubEvents() && !event->AreSubEventsEmpty(viewing_empire_id) ) {
-        new_logs.push_back(new CombatLogAccordionPanel(w, *this, viewing_empire_id, event));
+        new_logs.push_back(GG::Wnd::Create<CombatLogAccordionPanel>(w, *this, viewing_empire_id, event));
         return new_logs;
     }
 
     if (!event->FlattenSubEvents() && !event->AreDetailsEmpty(viewing_empire_id)) {
-        new_logs.push_back(new CombatLogAccordionPanel(w, *this, viewing_empire_id, event));
+        new_logs.push_back(GG::Wnd::Create<CombatLogAccordionPanel>(w, *this, viewing_empire_id, event));
         return new_logs;
     }
 
@@ -390,11 +390,11 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
     }
 
     m_wnd.DeleteChildren();
-    auto layout = new GG::DeferredLayout(m_wnd.RelativeUpperLeft().x, m_wnd.RelativeUpperLeft().y,
-                                                m_wnd.Width(), m_wnd.Height(),
-                                                1, 1, ///< numrows, numcols
-                                                0, 0 ///< wnd margin, cell margin
-                                               );
+    auto layout = GG::Wnd::Create<GG::DeferredLayout>(m_wnd.RelativeUpperLeft().x, m_wnd.RelativeUpperLeft().y,
+                                                      m_wnd.Width(), m_wnd.Height(),
+                                                      1, 1, ///< numrows, numcols
+                                                      0, 0 ///< wnd margin, cell margin
+                                                     );
     m_wnd.SetLayout(layout);
 
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();

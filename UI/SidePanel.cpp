@@ -756,7 +756,7 @@ namespace {
         }
 
         void Init() {
-            OwnerColoredSystemName *name(new OwnerColoredSystemName(m_system_id, SystemNameFontSize(), false));
+            OwnerColoredSystemName *name(GG::Wnd::Create<OwnerColoredSystemName>(m_system_id, SystemNameFontSize(), false));
             push_back(name);
             SetColAlignment(0, GG::ALIGN_CENTER);
             GetLayout()->PreRender();
@@ -803,8 +803,9 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
         if (!system)
             return;
 
-        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), ClientUI::TextColor(),
-                            ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+        auto popup = GG::Wnd::Create<GG::PopupMenu>(
+            pt.x, pt.y, ClientUI::GetFont(), ClientUI::TextColor(),
+            ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
 
         auto rename_action = [this, system]() {
             const std::string& old_name(system->Name());
@@ -820,9 +821,12 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
         };
 
         if (m_order_issuing_enabled && system->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-            popup.AddMenuItem(GG::MenuItem(UserString("SP_RENAME_SYSTEM"), false, false, rename_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("SP_RENAME_SYSTEM"), false, false, rename_action));
 
-        popup.Run();
+        popup->Run();
+
+        // TODO remove when converting to shared_ptr
+        delete popup;
     }
 
     bool m_order_issuing_enabled;
@@ -936,14 +940,14 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     GG::X panel_width = w - MaxPlanetDiameter() - 2*EDGE_PAD;
 
     // create planet name control
-    m_planet_name = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", font, ClientUI::TextColor());
+    m_planet_name = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", font, ClientUI::TextColor());
     m_planet_name->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + EDGE_PAD), GG::Y0));
     m_planet_name->Resize(m_planet_name->MinUsableSize());
     AttachChild(m_planet_name);
 
 
     // focus-selection droplist
-    m_focus_drop = new CUIDropDownList(6);
+    m_focus_drop = GG::Wnd::Create<CUIDropDownList>(6);
     AttachChild(m_focus_drop);
     m_focus_drop->DropDownOpenedSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::FocusDropListOpened, this, _1));
@@ -962,32 +966,32 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
 
 
     // meter panels
-    m_population_panel = new PopulationPanel(panel_width, m_planet_id);
+    m_population_panel = GG::Wnd::Create<PopulationPanel>(panel_width, m_planet_id);
     AttachChild(m_population_panel);
     m_population_panel->ExpandCollapseSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::RequirePreRender, this));
 
-    m_resource_panel = new ResourcePanel(panel_width, m_planet_id);
+    m_resource_panel = GG::Wnd::Create<ResourcePanel>(panel_width, m_planet_id);
     AttachChild(m_resource_panel);
     m_resource_panel->ExpandCollapseSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::RequirePreRender, this));
 
-    m_military_panel = new MilitaryPanel(panel_width, m_planet_id);
+    m_military_panel = GG::Wnd::Create<MilitaryPanel>(panel_width, m_planet_id);
     AttachChild(m_military_panel);
     m_military_panel->ExpandCollapseSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::RequirePreRender, this));
 
-    m_buildings_panel = new BuildingsPanel(panel_width, 4, m_planet_id);
+    m_buildings_panel = GG::Wnd::Create<BuildingsPanel>(panel_width, 4, m_planet_id);
     AttachChild(m_buildings_panel);
     m_buildings_panel->ExpandCollapseSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::RequirePreRender, this));
     m_buildings_panel->BuildingRightClickedSignal.connect(
         BuildingRightClickedSignal);
 
-    m_specials_panel = new SpecialsPanel(panel_width, m_planet_id);
+    m_specials_panel = GG::Wnd::Create<SpecialsPanel>(panel_width, m_planet_id);
     AttachChild(m_specials_panel);
 
-    m_env_size = new CUILabel("", GG::FORMAT_NOWRAP);
+    m_env_size = GG::Wnd::Create<CUILabel>("", GG::FORMAT_NOWRAP);
     m_env_size->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0));
     AttachChild(m_env_size);
 
@@ -1127,10 +1131,10 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
         GG::Y texture_height = textures[0]->DefaultHeight();
         GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - texture_width / 2 + 3), GG::Y0);
 
-        m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x, planet_image_pos.y,
-                                                    texture_width, texture_height, true,
-                                                    texture_width, texture_height, 0, textures,
-                                                    GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_planet_graphic = GG::Wnd::Create<GG::DynamicGraphic>(planet_image_pos.x, planet_image_pos.y,
+                                                               texture_width, texture_height, true,
+                                                               texture_width, texture_height, 0, textures,
+                                                               GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         m_planet_graphic->SetFPS(GetAsteroidsFPS());
         m_planet_graphic->SetFrameIndex(RandSmallInt(0, textures.size() - 1));
         AttachChild(m_planet_graphic);
@@ -1139,8 +1143,8 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
         int planet_image_sz = PlanetDiameter(planet->Size());
         GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - planet_image_sz / 2 + 3),
                                 GG::Y(MaxPlanetDiameter() / 2 - planet_image_sz / 2));
-        m_rotating_planet_graphic = new RotatingPlanetControl(planet_image_pos.x, planet_image_pos.y,
-                                                              m_planet_id, m_star_type);
+        m_rotating_planet_graphic = GG::Wnd::Create<RotatingPlanetControl>(planet_image_pos.x, planet_image_pos.y,
+                                                                           m_planet_id, m_star_type);
         AttachChild(m_rotating_planet_graphic);
     }
 }
@@ -1830,9 +1834,9 @@ void SidePanel::PlanetPanel::Refresh() {
         for (const std::string& focus_name : available_foci) {
             std::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(
                 ClientUI::ArtDir() / planet->FocusIcon(focus_name), true);
-            auto graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            auto graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             graphic->Resize(GG::Pt(MeterIconSize().x*3/2, MeterIconSize().y*3/2));
-            auto row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "FOCUS");
+            auto row = GG::Wnd::Create<GG::DropDownList::Row>(graphic->Width(), graphic->Height(), "FOCUS");
 
             row->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
             row->SetBrowseText(
@@ -2047,7 +2051,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         return;
     }
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
     if (planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()) && m_order_issuing_enabled
         && m_planet_name->InClient(pt))
@@ -2065,18 +2069,18 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
             }
 
         };
-        popup.AddMenuItem(GG::MenuItem(UserString("SP_RENAME_PLANET"), false, false, rename_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("SP_RENAME_PLANET"), false, false, rename_action));
     }
 
     auto pedia_to_planet_action = [this]() { ClientUI::GetClientUI()->ZoomToPlanetPedia(m_planet_id); };
 
-    popup.AddMenuItem(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, pedia_to_planet_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, pedia_to_planet_action));
 
     if (planet->OwnedBy(client_empire_id)
         && !peaceful_empires_in_system.empty()
         && !ClientPlayerIsModerator())
     {
-        popup.AddMenuItem(GG::MenuItem(true));
+        popup->AddMenuItem(GG::MenuItem(true));
 
         // submenus for each available recipient empire
         GG::MenuItem give_away_menu(UserString("ORDER_GIVE_PLANET_TO_EMPIRE"), false, false);
@@ -2090,7 +2094,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
                 continue;
             give_away_menu.next_level.push_back(GG::MenuItem(entry.second->Name(), false, false, gift_action));
         }
-        popup.AddMenuItem(std::move(give_away_menu));
+        popup->AddMenuItem(std::move(give_away_menu));
 
         if (planet->OrderedGivenToEmpire() != ALL_EMPIRES) {
             auto ungift_action = [planet]() { // cancel give away order for this fleet
@@ -2108,11 +2112,14 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
 
             };
             GG::MenuItem cancel_give_away_menu(UserString("ORDER_CANCEL_GIVE_PLANET"), false, false, ungift_action);
-            popup.AddMenuItem(std::move(cancel_give_away_menu));
+            popup->AddMenuItem(std::move(cancel_give_away_menu));
         }
     }
 
-    popup.Run();
+    popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -2555,7 +2562,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
 
     // create new panels and connect their signals
     for (std::multimap<int, int>::value_type& orbit_planet : orbits_planets) {
-        auto planet_panel = new PlanetPanel(Width() - m_vscroll->Width(), orbit_planet.second, star_type);
+        auto planet_panel = GG::Wnd::Create<PlanetPanel>(Width() - m_vscroll->Width(), orbit_planet.second, star_type);
         AttachChild(planet_panel);
         m_planet_panels.push_back(planet_panel);
         m_planet_panels.back()->LeftClickedSignal.connect(
@@ -2812,7 +2819,7 @@ SidePanel::SidePanel(const std::string& config_name) :
     m_system_resource_summary(nullptr),
     m_selection_enabled(false)
 {
-    m_planet_panel_container = new PlanetPanelContainer();
+    m_planet_panel_container = GG::Wnd::Create<PlanetPanelContainer>();
     AttachChild(m_planet_panel_container);
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
@@ -2829,7 +2836,7 @@ SidePanel::SidePanel(const std::string& config_name) :
 
     Sound::TempUISoundDisabler sound_disabler;
 
-    m_system_name = new SystemNameDropDownList(6);
+    m_system_name = GG::Wnd::Create<SystemNameDropDownList>(6);
     m_system_name->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
     m_system_name->DisableDropArrow();
     m_system_name->SetInteriorColor(GG::Clr(0, 0, 0, 200));
@@ -2838,12 +2845,12 @@ SidePanel::SidePanel(const std::string& config_name) :
     m_system_name->SetNumCols(1);
     AttachChild(m_system_name);
 
-    m_star_type_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
+    m_star_type_text = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
     AttachChild(m_star_type_text);
     AttachChild(m_button_prev);
     AttachChild(m_button_next);
 
-    m_system_resource_summary = new MultiIconValueIndicator(Width() - EDGE_PAD*2);
+    m_system_resource_summary = GG::Wnd::Create<MultiIconValueIndicator>(Width() - EDGE_PAD*2);
     AttachChild(m_system_resource_summary);
 
     m_system_name->DropDownOpenedSignal.connect(
@@ -3108,7 +3115,7 @@ void SidePanel::RefreshSystemNames() {
     rows.reserve(sorted_systems.size());
     for (const std::pair<std::string, int>& entry : sorted_systems) {
         int sys_id = entry.second;
-        rows.push_back(new SystemRow(sys_id, system_name_height));
+        rows.push_back(GG::Wnd::Create<SystemRow>(sys_id, system_name_height));
     }
     m_system_name->Insert(rows, false);
 
@@ -3154,10 +3161,10 @@ void SidePanel::RefreshImpl() {
     textures.push_back(graphic);
 
     int graphic_width = Value(Width()) - MaxPlanetDiameter();
-    m_star_graphic = new GG::DynamicGraphic(GG::X(MaxPlanetDiameter()), GG::Y0,
-                                            GG::X(graphic_width), GG::Y(graphic_width), true,
-                                            textures[0]->DefaultWidth(), textures[0]->DefaultHeight(),
-                                            0, textures, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_star_graphic = GG::Wnd::Create<GG::DynamicGraphic>(GG::X(MaxPlanetDiameter()), GG::Y0,
+                                                         GG::X(graphic_width), GG::Y(graphic_width), true,
+                                                         textures[0]->DefaultWidth(), textures[0]->DefaultHeight(),
+                                                         0, textures, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
     AttachChild(m_star_graphic);
     MoveChildDown(m_star_graphic);
@@ -3200,8 +3207,8 @@ void SidePanel::RefreshImpl() {
                                                                 {METER_TRADE,      METER_TARGET_TRADE}};
 
     // refresh the system resource summary.
-    m_system_resource_summary = new MultiIconValueIndicator(Width() - MaxPlanetDiameter() - 8,
-                                                            owned_planets, meter_types);
+    m_system_resource_summary = GG::Wnd::Create<MultiIconValueIndicator>(Width() - MaxPlanetDiameter() - 8,
+                                                                         owned_planets, meter_types);
     m_system_resource_summary->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + 4),
                                              140 - m_system_resource_summary->Height()));
     AttachChild(m_system_resource_summary);
@@ -3216,7 +3223,7 @@ void SidePanel::RefreshImpl() {
             MeterType type = entry.first;
             // add tooltip for each meter type
             std::shared_ptr<GG::BrowseInfoWnd> browse_wnd = std::shared_ptr<GG::BrowseInfoWnd>(
-                new SystemResourceSummaryBrowseWnd(MeterToResource(type), s_system_id, HumanClientApp::GetApp()->EmpireID()));
+                GG::Wnd::Create<SystemResourceSummaryBrowseWnd>(MeterToResource(type), s_system_id, HumanClientApp::GetApp()->EmpireID()));
             m_system_resource_summary->SetToolTip(type, browse_wnd);
         }
 

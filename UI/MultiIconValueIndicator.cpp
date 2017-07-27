@@ -53,7 +53,7 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<int>
 		texture = ClientUI::SpeciesIcon(pc->SpeciesName());
         }
 
-        m_icons.push_back(new StatisticIcon(texture, 0.0, 3, false, IconWidth(), IconHeight()));
+        m_icons.push_back(GG::Wnd::Create<StatisticIcon>(texture, 0.0, 3, false, IconWidth(), IconHeight()));
         GG::Pt icon_ul(x, GG::Y(EDGE_PAD));
         GG::Pt icon_lr = icon_ul + GG::Pt(IconWidth(), IconHeight() + ClientUI::Pts()*3/2);
         m_icons.back()->SizeMove(icon_ul, icon_lr);
@@ -146,23 +146,26 @@ bool MultiIconValueIndicator::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
     auto zoom_species_action = [&retval, &species_name]() { retval = ClientUI::GetClientUI()->ZoomToSpecies(species_name); };
     auto zoom_article_action = [&retval, &meter_string]() { retval = ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string);};
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
     std::shared_ptr<const PopCenter> pc = GetPopCenter(*m_object_ids.begin());
     if (meter_type == METER_POPULATION && pc && m_object_ids.size() == 1) {
         species_name = pc->SpeciesName();
         if (!species_name.empty()) {
             std::string species_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
-            popup.AddMenuItem(GG::MenuItem(species_label, false, false, zoom_species_action));
+            popup->AddMenuItem(GG::MenuItem(species_label, false, false, zoom_species_action));
         }
     }
 
     if (!meter_title.empty()) {
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
                                                                 meter_title);
-        popup.AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_article_action));
+        popup->AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_article_action));
     }
-    popup.Run();
+    popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 
     return retval;
 }

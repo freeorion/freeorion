@@ -561,9 +561,9 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
     const int NAME_PTS = PTS*3/2;
     const int SUMMARY_PTS = PTS*4/3;
 
-    m_name_text =    new CUILabel("");
-    m_cost_text =    new CUILabel("");
-    m_summary_text = new CUILabel("");
+    m_name_text =    GG::Wnd::Create<CUILabel>("");
+    m_cost_text =    GG::Wnd::Create<CUILabel>("");
+    m_summary_text = GG::Wnd::Create<CUILabel>("");
 
     m_name_text->SetFont(ClientUI::GetBoldFont(NAME_PTS));
     m_summary_text->SetFont(ClientUI::GetFont(SUMMARY_PTS));
@@ -595,7 +595,7 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
     m_next_button->LeftClickedSignal.connect(
         boost::bind(&EncyclopediaDetailPanel::OnNext, this));
 
-    m_description_rich_text = new GG::RichText(GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), "",
+    m_description_rich_text = GG::Wnd::Create<GG::RichText>(GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), "",
                                                ClientUI::GetFont(), ClientUI::TextColor(),
                                                GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK,
                                                GG::INTERACTIVE);
@@ -618,10 +618,10 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
     m_scroll_panel->SetBackgroundColor(ClientUI::CtrlColor());
     m_scroll_panel->InstallEventFilter(this);
 
-    m_graph = new GraphControl();
+    m_graph = GG::Wnd::Create<GraphControl>();
     m_graph->ShowPoints(false);
 
-    auto search_edit = new SearchEdit();
+    auto search_edit = GG::Wnd::Create<SearchEdit>();
     m_search_edit = search_edit;
     search_edit->TextEnteredSignal.connect(
         boost::bind(&EncyclopediaDetailPanel::HandleSearchTextEntered, this));
@@ -2724,7 +2724,7 @@ void EncyclopediaDetailPanel::RefreshImpl() {
 
     // Create Icons
     if (texture) {
-        m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         if (color != GG::CLR_ZERO)
             m_icon->SetColor(color);
     }

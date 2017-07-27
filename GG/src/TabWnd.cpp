@@ -54,7 +54,7 @@ const std::size_t OverlayWnd::NO_WND = std::numeric_limits<std::size_t>::max();
 OverlayWnd::OverlayWnd(X x, Y y, X w, Y h, Flags<WndFlag> flags) :
     Wnd(x, y, w, h, flags),
     m_current_wnd_index(NO_WND)
-{ SetLayout(new Layout(X0, Y0, w, h, 1, 1)); }
+{ SetLayout(Wnd::Create<Layout>(X0, Y0, w, h, 1, 1)); }
 
 OverlayWnd::~OverlayWnd()
 {
@@ -168,7 +168,7 @@ TabWnd::TabWnd(X x, Y y, X w, Y h, const std::shared_ptr<Font>& font, Clr color,
     m_tab_bar(GetStyleFactory()->NewTabBar(font, color, text_color)),
     m_overlay(new OverlayWnd(X0, Y0, X1, Y1))
 {
-    auto layout = new Layout(X0, Y0, w, h, 2, 1);
+    auto layout = Wnd::Create<Layout>(X0, Y0, Width(), Height(), 2, 1);
     layout->SetRowStretch(1, 1.0);
     layout->Add(m_tab_bar, 0, 0);
     layout->Add(m_overlay, 1, 0);
@@ -272,7 +272,7 @@ TabBar::TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = 
     m_font(font),
     m_left_button(nullptr),
     m_right_button(nullptr),
-    m_left_right_button_layout(new Layout(X0, Y0, X1, TabHeightFromFont(font), 1, 3)),
+    m_left_right_button_layout(Wnd::Create<Layout>(X0, Y0, X1, TabHeightFromFont(font), 1, 3)),
     m_text_color(text_color),
     m_first_tab_shown(0)
 {

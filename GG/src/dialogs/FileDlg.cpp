@@ -509,7 +509,7 @@ void FileDlg::PopulateFilters()
         m_filter_list->Disable();
     } else {
         for (std::pair<std::string, std::string>& file_filter : m_file_filters) {
-            auto row = new ListBox::Row();
+            auto row = Wnd::Create<ListBox::Row>();
             row->push_back(GetStyleFactory()->NewTextControl(file_filter.first, m_font, m_text_color, FORMAT_NOWRAP));
             m_filter_list->Insert(row);
         }
@@ -565,13 +565,13 @@ void FileDlg::UpdateList()
              s_working_dir.branch_path().string() != "") ||
             Win32Paths())
         {
-            auto row = new ListBox::Row();
+            auto row = Wnd::Create<ListBox::Row>();
             row->push_back(GetStyleFactory()->NewTextControl("[..]", m_font, m_text_color, FORMAT_NOWRAP));
             m_files_list->Insert(row);
         }
         // current directory selector
         {
-            auto row = new ListBox::Row();
+            auto row = Wnd::Create<ListBox::Row>();
             row->push_back(GetStyleFactory()->NewTextControl("[.]", m_font, m_text_color, FORMAT_NOWRAP));
             m_files_list->Insert(row);
         }
@@ -590,7 +590,7 @@ void FileDlg::UpdateList()
         for (fs::directory_iterator it(s_working_dir); it != end_it; ++it) {
             try {
                 if (fs::exists(*it) && fs::is_directory(*it) && it->path().filename().native()[0] != '.') {
-                    auto row = new ListBox::Row();
+                    auto row = Wnd::Create<ListBox::Row>();
 
 #if defined(_WIN32)
                     // convert UTF-16 path to UTF-8 for display
@@ -625,7 +625,7 @@ void FileDlg::UpdateList()
                                 meets_filters = true;
                         }
                         if (meets_filters) {
-                            auto row = new ListBox::Row();
+                            auto row = Wnd::Create<ListBox::Row>();
                             row->push_back(GetStyleFactory()->NewTextControl(it->path().filename().string(), m_font, m_text_color, FORMAT_NOWRAP));
                             sorted_rows.insert({it->path().filename().string(), row});
                         }
@@ -642,7 +642,7 @@ void FileDlg::UpdateList()
             try {
                 fs::path path(c + std::string(":"));
                 if (fs::exists(path)) {
-                    auto row = new ListBox::Row();
+                    auto row = Wnd::Create<ListBox::Row>();
                     row->push_back(GetStyleFactory()->NewTextControl("[" + path.root_name().string() + "]", m_font, m_text_color, FORMAT_NOWRAP));
                     m_files_list->Insert(row);
                 }

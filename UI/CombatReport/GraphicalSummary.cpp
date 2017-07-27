@@ -352,18 +352,20 @@ public:
 
         GG::Clr axis_label_color = combat_summary.SideColor();
 
-        m_x_axis_label = new CUILabel( (boost::format( UserString("COMBAT_FLEET_HEALTH_AXIS_LABEL") )
-                                      % combat_summary.SideName()
-                                      % static_cast<int>(combat_summary.total_current_health)
-                                      % static_cast<int>(combat_summary.total_max_health)).str(), GG::FORMAT_LEFT);
+        m_x_axis_label = GG::Wnd::Create<CUILabel>(
+            (boost::format( UserString("COMBAT_FLEET_HEALTH_AXIS_LABEL") )
+             % combat_summary.SideName()
+             % static_cast<int>(combat_summary.total_current_health)
+             % static_cast<int>(combat_summary.total_max_health)).str(),
+            GG::FORMAT_LEFT);
         m_x_axis_label->SetColor(axis_label_color);
         AttachChild(m_x_axis_label);
 
-        m_y_axis_label = new CUILabel(UserString("COMBAT_UNIT_HEALTH_AXIS_LABEL"));
+        m_y_axis_label = GG::Wnd::Create<CUILabel>(UserString("COMBAT_UNIT_HEALTH_AXIS_LABEL"));
         m_y_axis_label->SetColor(axis_label_color);
         AttachChild(m_y_axis_label);
 
-        m_dead_label = new CUILabel( (boost::format(UserString("COMBAT_DESTROYED_LABEL")) % m_side_summary.DestroyedUnits() ).str(), GG::FORMAT_RIGHT);
+        m_dead_label = GG::Wnd::Create<CUILabel>( (boost::format(UserString("COMBAT_DESTROYED_LABEL")) % m_side_summary.DestroyedUnits() ).str(), GG::FORMAT_RIGHT);
         m_dead_label->SetColor(axis_label_color);
         AttachChild(m_dead_label);
 
@@ -373,7 +375,7 @@ public:
     void MakeBars() {
         for (CombatSummary::ParticipantSummaryPtr unit : m_side_summary.unit_summaries) {
             if (unit->max_health > 0) {
-                m_participant_bars.push_back(new ParticipantBar(*unit, m_sizer));
+                m_participant_bars.push_back(GG::Wnd::Create<ParticipantBar>(*unit, m_sizer));
                 AttachChild(m_participant_bars.back());
             }
         }
@@ -776,7 +778,7 @@ void GraphicalSummaryWnd::GenerateGraph() {
                          "before creating a new one.";
         DeleteChild(m_options_bar);
     }
-    m_options_bar = new OptionsBar(m_sizer);
+    m_options_bar = GG::Wnd::Create<OptionsBar>(m_sizer);
     AttachChild(m_options_bar);
     m_options_bar->ChangedSignal.connect(
         boost::bind(&GraphicalSummaryWnd::HandleButtonChanged, this));

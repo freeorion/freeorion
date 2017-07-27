@@ -18,7 +18,7 @@ struct PromptRow : GG::ListBox::Row {
     {
         //std::cout << "PromptRow(" << w << ", ...)" << std::endl;
 
-        m_prompt = new CUILabel(prompt_str, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK);
+        m_prompt = GG::Wnd::Create<CUILabel>(prompt_str, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK);
         m_prompt->MoveTo(GG::Pt(GG::X(2), GG::Y(2)));
         m_prompt->Resize(GG::Pt(Width() - 10, Height()));
         m_prompt->SetTextColor(GG::LightColor(ClientUI::TextColor()));
@@ -192,11 +192,14 @@ void QueueListBox::ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
 { this->ItemRightClickedImpl(it, pt, modkeys); }
 
 void QueueListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
-    CUIPopupMenu popup(pt.x, pt.y);
-    popup.AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   false, false, MoveToTopAction(it)));
-    popup.AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), false, false, MoveToBottomAction(it)));
-    popup.AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    false, false, DeleteAction(it)));
-    popup.Run();
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
+    popup->AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   false, false, MoveToTopAction(it)));
+    popup->AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), false, false, MoveToBottomAction(it)));
+    popup->AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    false, false, DeleteAction(it)));
+    popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 void QueueListBox::EnsurePromptHiddenSlot(iterator it) {
@@ -207,7 +210,7 @@ void QueueListBox::EnsurePromptHiddenSlot(iterator it) {
 }
 
 void QueueListBox::ShowPromptSlot() {
-    Insert(new PromptRow(Width() - 4, m_prompt_str), begin(), false, false);
+    Insert(GG::Wnd::Create<PromptRow>(Width() - 4, m_prompt_str), begin(), false, false);
     m_showing_prompt = true;
 }
 

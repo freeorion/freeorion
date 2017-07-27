@@ -850,9 +850,9 @@ const int CUIEditWnd::CONTROL_MARGIN = 5;
 CUIEditWnd::CUIEditWnd(GG::X w, const std::string& prompt_text, const std::string& edit_text, GG::Flags<GG::WndFlag> flags/* = Wnd::MODAL*/) :
     CUIWnd(prompt_text, GG::X0, GG::Y0, w, GG::Y1, flags)
 {
-    m_edit = new CUIEdit(edit_text);
-    m_ok_bn = new CUIButton(UserString("OK"));
-    m_cancel_bn = new CUIButton(UserString("CANCEL"));
+    m_edit = GG::Wnd::Create<CUIEdit>(edit_text);
+    m_ok_bn = GG::Wnd::Create<CUIButton>(UserString("OK"));
+    m_cancel_bn = GG::Wnd::Create<CUIButton>(UserString("CANCEL"));
 
     m_edit->MoveTo(GG::Pt(LeftBorder() + 3, TopBorder() + 3));
     m_edit->Resize(GG::Pt(ClientWidth() - 2 * BUTTON_WIDTH - 2 * CONTROL_MARGIN - 6 - LeftBorder() - RightBorder(), m_edit->MinUsableSize().y));

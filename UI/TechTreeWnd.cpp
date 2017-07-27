@@ -690,12 +690,12 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     m_enqueued(false)
 {
     const int GRAPHIC_SIZE = Value(TechPanelHeight());
-    m_icon = new GG::StaticGraphic(ClientUI::TechIcon(m_tech_name), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_icon = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::TechIcon(m_tech_name), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_icon->Resize(GG::Pt(GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE)));
 
-    m_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(FontSize()), ClientUI::TextColor(), GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT);
-    m_cost_and_duration_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(FontSize()), ClientUI::TextColor(), GG::FORMAT_VCENTER | GG::FORMAT_RIGHT);
-    m_eta_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(FontSize()),ClientUI::TextColor());
+    m_name_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(FontSize()), ClientUI::TextColor(), GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT);
+    m_cost_and_duration_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(FontSize()), ClientUI::TextColor(), GG::FORMAT_VCENTER | GG::FORMAT_RIGHT);
+    m_eta_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(FontSize()),ClientUI::TextColor());
 
     // intentionally not attaching as child; TechPanel::Render the child Render() function instead.
 
@@ -902,13 +902,16 @@ void TechTreeWnd::LayoutPanel::TechPanel::RClick(const GG::Pt& pt,
     auto dclick_action = [this, pt, mod_keys]() { LDoubleClick(pt, mod_keys); };
     auto pedia_display_action = [this]() { TechPediaDisplaySignal(m_tech_name); };
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     if (!(m_enqueued) && !(m_status == TS_COMPLETE))
-        popup.AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, dclick_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, dclick_action));
 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(m_tech_name));
-    popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
-    popup.Run();
+    popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
+    popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 void TechTreeWnd::LayoutPanel::TechPanel::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -977,7 +980,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
                 }
 
                 if (texture) {
-                    auto graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                    auto graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                     m_unlock_icons.push_back(graphic);
                     graphic->SizeMove(GG::Pt(icon_left, icon_top), GG::Pt(icon_left + icon_width, icon_top + icon_height));
                     icon_left += icon_width + PAD;
@@ -1008,7 +1011,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             for (const std::string& part_name : parts_whose_meters_are_affected) {
                 std::shared_ptr<GG::Texture> texture = ClientUI::PartIcon(part_name);
                 if (texture) {
-                    auto graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                    auto graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                     m_unlock_icons.push_back(graphic);
                     graphic->SizeMove(GG::Pt(icon_left, icon_top), GG::Pt(icon_left + icon_width, icon_top + icon_height));
                     icon_left += icon_width + PAD;
@@ -1017,7 +1020,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             for (MeterType meter_type : meters_affected) {
                 std::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(meter_type);
                 if (texture) {
-                    auto graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                    auto graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                     m_unlock_icons.push_back(graphic);
                     graphic->SizeMove(GG::Pt(icon_left, icon_top), GG::Pt(icon_left + icon_width, icon_top + icon_height));
                     icon_left += icon_width + PAD;
@@ -1027,7 +1030,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             for (const std::string& special_name : specials_affected) {
                 std::shared_ptr<GG::Texture> texture = ClientUI::SpecialIcon(special_name);
                 if (texture) {
-                    auto graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                    auto graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                     m_unlock_icons.push_back(graphic);
                     graphic->SizeMove(GG::Pt(icon_left, icon_top), GG::Pt(icon_left + icon_width, icon_top + icon_height));
                     icon_left += icon_width + PAD;
@@ -1367,7 +1370,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         if (!tech) continue;
         const std::string& tech_name = tech->Name();
         if (!TechVisible(tech_name, m_categories_shown, m_tech_statuses_shown)) continue;
-        m_techs[tech_name] = new TechPanel(tech_name, this);
+        m_techs[tech_name] = GG::Wnd::Create<TechPanel>(tech_name, this);
         m_graph.AddNode(tech_name, m_techs[tech_name]->Width(), m_techs[tech_name]->Height());
     }
 
@@ -1630,39 +1633,39 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
     // TODO replace string padding with new TextFormat flag
     std::string just_pad = "    ";
 
-    auto graphic = new GG::StaticGraphic(ClientUI::TechIcon(m_tech),
-                                                       GG::GRAPHIC_VCENTER | GG::GRAPHIC_CENTER | GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+    auto graphic = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::TechIcon(m_tech),
+                                                      GG::GRAPHIC_VCENTER | GG::GRAPHIC_CENTER | GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
     graphic->Resize(GG::Pt(GRAPHIC_WIDTH, ICON_HEIGHT));
     graphic->SetColor(ClientUI::CategoryColor(this_row_tech->Category()));
     push_back(graphic);
 
-    auto text = new CUILabel(just_pad + UserString(m_tech), GG::FORMAT_LEFT);
+    auto text = GG::Wnd::Create<CUILabel>(just_pad + UserString(m_tech), GG::FORMAT_LEFT);
     text->SetResetMinSize(false);
     text->ClipText(true);
     text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 
     std::string cost_str = std::to_string(std::lround(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID())));
-    text = new CUILabel(cost_str + just_pad + just_pad, GG::FORMAT_RIGHT);
+    text = GG::Wnd::Create<CUILabel>(cost_str + just_pad + just_pad, GG::FORMAT_RIGHT);
     text->SetResetMinSize(false);
     text->ClipText(true);
     text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 
     std::string time_str = std::to_string(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
-    text = new CUILabel(time_str + just_pad + just_pad, GG::FORMAT_RIGHT);
+    text = GG::Wnd::Create<CUILabel>(time_str + just_pad + just_pad, GG::FORMAT_RIGHT);
     text->SetResetMinSize(false);
     text->ClipText(true);
     text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 
-    text = new CUILabel(just_pad + UserString(this_row_tech->Category()), GG::FORMAT_LEFT);
+    text = GG::Wnd::Create<CUILabel>(just_pad + UserString(this_row_tech->Category()), GG::FORMAT_LEFT);
     text->SetResetMinSize(false);
     text->ClipText(true);
     text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 
-    text = new CUILabel(just_pad + UserString(this_row_tech->ShortDescription()), GG::FORMAT_LEFT);
+    text = GG::Wnd::Create<CUILabel>(just_pad + UserString(this_row_tech->ShortDescription()), GG::FORMAT_LEFT);
     text->ClipText(true);
     text->SetChildClippingMode(ClipToWindow);
     push_back(text);
@@ -1720,9 +1723,9 @@ TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
     GG::X row_width = w - ClientUI::ScrollWidth() - ClientUI::Pts();
     std::vector<GG::X> col_widths = TechRow::ColWidths(row_width);
     const GG::Y HEIGHT(Value(col_widths[0]));
-    m_header_row = new GG::ListBox::Row(row_width, HEIGHT, "");
+    m_header_row = GG::Wnd::Create<GG::ListBox::Row>(row_width, HEIGHT, "");
 
-    auto graphic_col = new CUILabel("");  // graphic
+    auto graphic_col = GG::Wnd::Create<CUILabel>("");  // graphic
     graphic_col->Resize(GG::Pt(col_widths[0], HEIGHT));
     graphic_col->ClipText(true);
     graphic_col->SetChildClippingMode(ClipToWindow);
@@ -1822,7 +1825,7 @@ void TechTreeWnd::TechListBox::Populate() {
             const std::string& tech_name = UserString(tech->Name());
             creation_timer.restart();
             m_all_tech_rows.insert(std::make_pair(tech_name,
-                new TechRow(row_width, tech->Name())));
+                GG::Wnd::Create<TechRow>(row_width, tech->Name())));
             creation_elapsed += creation_timer.elapsed();
         }
     }
@@ -1934,13 +1937,16 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
     auto tech_dclick_action = [this, it, pt]() { TechDoubleClicked(it, pt, GG::Flags<GG::ModKey>()); };
     auto pedia_display_action = [this, &tech_name]() { TechPediaDisplay(tech_name); };
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     if (!empire->TechResearched(tech_name))
-        popup.AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, tech_dclick_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, tech_dclick_action));
 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(tech_name));
-    popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
-    popup.Run();
+    popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
+    popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 void TechTreeWnd::TechListBox::TechPediaDisplay(const std::string& tech_name) {
@@ -1968,7 +1974,7 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
 {
     Sound::TempUISoundDisabler sound_disabler;
 
-    m_layout_panel = new LayoutPanel(w, h);
+    m_layout_panel = GG::Wnd::Create<LayoutPanel>(w, h);
     m_layout_panel->TechLeftClickedSignal.connect(
         boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_layout_panel->TechDoubleClickedSignal.connect(
@@ -1977,7 +1983,7 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
         boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
     AttachChild(m_layout_panel);
 
-    m_tech_list = new TechListBox(w, h);
+    m_tech_list = GG::Wnd::Create<TechListBox>(w, h);
     m_tech_list->TechLeftClickedSignal.connect(
         boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_tech_list->TechDoubleClickedSignal.connect(

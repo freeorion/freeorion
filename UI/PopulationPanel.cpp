@@ -50,17 +50,17 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
 
     // small meter indicators - for use when panel is collapsed
     m_meter_stats.push_back(
-        std::make_pair(METER_POPULATION, new StatisticIcon(ClientUI::SpeciesIcon(pop->SpeciesName()),
-                                                           obj->InitialMeterValue(METER_POPULATION), 3, false,
-                                                           MeterIconSize().x, MeterIconSize().y)));
+        std::make_pair(METER_POPULATION, GG::Wnd::Create<StatisticIcon>(ClientUI::SpeciesIcon(pop->SpeciesName()),
+                                                                        obj->InitialMeterValue(METER_POPULATION), 3, false,
+                                                                        MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
-        std::make_pair(METER_HAPPINESS, new StatisticIcon(ClientUI::MeterIcon(METER_HAPPINESS),
-                                                          obj->InitialMeterValue(METER_HAPPINESS), 3, false,
-                                                          MeterIconSize().x, MeterIconSize().y)));
+        std::make_pair(METER_HAPPINESS, GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_HAPPINESS),
+                                                                       obj->InitialMeterValue(METER_HAPPINESS), 3, false,
+                                                                       MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
-        std::make_pair(METER_CONSTRUCTION, new StatisticIcon(ClientUI::MeterIcon(METER_CONSTRUCTION),
-                                                             obj->InitialMeterValue(METER_CONSTRUCTION), 3, false,
-                                                             MeterIconSize().x, MeterIconSize().y)));
+        std::make_pair(METER_CONSTRUCTION, GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_CONSTRUCTION),
+                                                                          obj->InitialMeterValue(METER_CONSTRUCTION), 3, false,
+                                                                          MeterIconSize().x, MeterIconSize().y)));
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType>> meters;
@@ -72,8 +72,8 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     }
 
     // attach and show meter bars and large resource indicators
-    m_multi_icon_value_indicator =  new MultiIconValueIndicator(Width() - 2*EDGE_PAD,   m_popcenter_id, meters);
-    m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       m_popcenter_id, meters);
+    m_multi_icon_value_indicator =  GG::Wnd::Create<MultiIconValueIndicator>(Width() - 2*EDGE_PAD,   m_popcenter_id, meters);
+    m_multi_meter_status_bar =      GG::Wnd::Create<MultiMeterStatusBar>(Width() - 2*EDGE_PAD,       m_popcenter_id, meters);
 
     // determine if this panel has been created yet.
     std::map<int, bool>::iterator it = s_expanded_map.find(m_popcenter_id);
@@ -123,24 +123,27 @@ bool PopulationPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     std::string species_name;
     bool retval = false;
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     std::shared_ptr<const PopCenter> pc = GetPopCenter();
     if (meter_type == METER_POPULATION && pc) {
         species_name = pc->SpeciesName();
         if (!species_name.empty()) {
             auto zoom_species_action = [&retval, &species_name]() { retval = ClientUI::GetClientUI()->ZoomToSpecies(species_name); };
             std::string species_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
-            popup.AddMenuItem(GG::MenuItem(species_label, false, false, zoom_species_action));
+            popup->AddMenuItem(GG::MenuItem(species_label, false, false, zoom_species_action));
         }
     }
 
     if (!meter_title.empty()) {
         auto pedia_meter_type_action = [&retval, &meter_string]() { retval = ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string); };
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % meter_title);
-        popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_meter_type_action));
+        popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_meter_type_action));
     }
 
-    popup.Run();
+    popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
     return retval;
 }
 

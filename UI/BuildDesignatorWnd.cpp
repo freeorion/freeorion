@@ -146,11 +146,11 @@ namespace {
                 time_text = std::to_string(cost_time.second);
             }
 
-            m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-            m_name = new CUILabel(name_text, GG::FORMAT_LEFT);
-            m_cost = new CUILabel(cost_text);
-            m_time = new CUILabel(time_text);
-            m_desc = new CUILabel(desc_text, GG::FORMAT_LEFT);
+            m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            m_name = GG::Wnd::Create<CUILabel>(name_text, GG::FORMAT_LEFT);
+            m_cost = GG::Wnd::Create<CUILabel>(cost_text);
+            m_time = GG::Wnd::Create<CUILabel>(time_text);
+            m_desc = GG::Wnd::Create<CUILabel>(desc_text, GG::FORMAT_LEFT);
 
             AttachChild(m_icon);
             AttachChild(m_name);
@@ -351,7 +351,7 @@ namespace {
                 SetDragDropDataType(m_item.name);
             }
 
-            m_panel = new ProductionItemPanel(w, h, m_item, m_empire_id, m_location_id);
+            m_panel = GG::Wnd::Create<ProductionItemPanel>(w, h, m_item, m_empire_id, m_location_id);
             push_back(m_panel);
 
             if (const Empire* empire = GetEmpire(m_empire_id)) {
@@ -523,7 +523,7 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(const std::string& config_name)
     CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"),
            GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | PINABLE,
            config_name),
-    m_buildable_items(new BuildableItemsListBox()),
+    m_buildable_items(GG::Wnd::Create<BuildableItemsListBox>()),
     m_production_location(INVALID_OBJECT_ID),
     m_empire_id(ALL_EMPIRES)
 {
@@ -548,7 +548,7 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(const std::string& config_name)
     m_buildable_items->RightClickedRowSignal.connect(
         boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this, _1, _2, _3));
 
-    //auto header = new GG::ListBox::Row();
+    //auto header = GG::Wnd::Create<GG::ListBox::Row>();
     //std::shared_ptr<GG::Font> font = ClientUI::GetFont();
     //GG::Clr clr = ClientUI::TextColor();
     //header->push_back("item", font, clr);
@@ -790,9 +790,9 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
             const std::string name = entry.first;
             if (!BuildableItemVisible(BT_BUILDING, name))
                 continue;
-            auto item_row = new ProductionItemRow(row_size.x, row_size.y,
-                                                                ProductionQueue::ProductionItem(BT_BUILDING, name),
-                                                                m_empire_id, m_production_location);
+            auto item_row = GG::Wnd::Create<ProductionItemRow>(row_size.x, row_size.y,
+                                                               ProductionQueue::ProductionItem(BT_BUILDING, name),
+                                                               m_empire_id, m_production_location);
             rows.push_back(item_row);
         }
         m_buildable_items->Insert(rows, false);
@@ -823,9 +823,9 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
             const ShipDesign* ship_design = GetShipDesign(ship_design_id);
             if (!ship_design)
                 continue;
-            auto item_row = new ProductionItemRow(row_size.x, row_size.y,
-                                                                ProductionQueue::ProductionItem(BT_SHIP, ship_design_id),
-                                                                m_empire_id, m_production_location);
+            auto item_row = GG::Wnd::Create<ProductionItemRow>(row_size.x, row_size.y,
+                                                               ProductionQueue::ProductionItem(BT_SHIP, ship_design_id),
+                                                               m_empire_id, m_production_location);
             rows.push_back(item_row);
         }
         m_buildable_items->Insert(rows, false);
@@ -925,19 +925,22 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
         BuildItemLeftClicked(it, pt, modkeys);
     };
 
-    CUIPopupMenu popup(pt.x, pt.y);
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
     if (!((*it)->Disabled())) {
-        popup.AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, add_bottom_queue_action));
-        popup.AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"),  false, false, add_top_queue_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, add_bottom_queue_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"),  false, false, add_top_queue_action));
     }
 
     if (UserStringExists(item_name))
         item_name = UserString(item_name);
 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % item_name);
-    popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_lookup_action));
-    popup.Run();
+    popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_lookup_action));
+    popup->Run();
+
+    // TODO remove when converting to shared_ptr
+    delete popup;
 }
 
 //////////////////////////////////////////////////
