@@ -223,9 +223,6 @@ namespace {
     bool EnqueueLocationTest(const BuildingType& building_type, int empire_id, int loc_id)
     { return building_type.EnqueueLocation(empire_id, loc_id);}
 
-    bool                    GetToggleRule(const GameRules& rules, const std::string& name)
-    { return false; }
-
     bool                    RuleExistsAnyType(const GameRules& rules, const std::string& name)
     { return rules.RuleExists(name); }
     bool                    RuleExistsWithType(const GameRules& rules, const std::string& name, GameRules::RuleType rule_type)
@@ -735,7 +732,7 @@ namespace FreeOrionPython {
             .def("ruleExists",                  RuleExistsAnyType)
             .def("ruleExistsWithType",          RuleExistsWithType)
             .def("getDescription",              make_function(&GameRules::GetDescription,       return_value_policy<copy_const_reference>()))
-            .def("getToggle",                   GetToggleRule)
+            .def("getToggle",                   &GameRules::Get<bool>)
             .def("getInt",                      &GameRules::Get<int>)
             .def("getDouble",                   &GameRules::Get<double>)
             .def("getString",                   make_function(&GameRules::Get<std::string>,     return_value_policy<return_by_value>()));
