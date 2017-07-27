@@ -2507,7 +2507,7 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
 
     popup->AddMenuItem(GG::MenuItem(true)); // separator
     popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_DEFAULT_START"), false, add_defaults,
-                                   toggle_add_default_designs_at_game_start_action));
+                                    toggle_add_default_designs_at_game_start_action));
 
     popup->Run();
 
