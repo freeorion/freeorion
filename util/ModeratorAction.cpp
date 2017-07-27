@@ -178,7 +178,7 @@ namespace {
 }
 
 void Moderator::CreateSystem::Execute() const {
-    std::shared_ptr<System> system = GetUniverse().CreateSystem(m_star_type, GenerateSystemName(), m_x, m_y);
+    auto system = GetUniverse().InsertNew<System>(m_star_type, GenerateSystemName(), m_x, m_y);
     if (!system) {
         ErrorLogger() << "CreateSystem::Execute couldn't create system!";
         return;
@@ -224,7 +224,7 @@ void Moderator::CreatePlanet::Execute() const {
         return;
     }
 
-    std::shared_ptr<Planet> planet = GetUniverse().CreatePlanet(m_planet_type, m_planet_size);
+    auto planet = GetUniverse().InsertNew<Planet>(m_planet_type, m_planet_size);
     if (!planet) {
         ErrorLogger() << "CreatePlanet::Execute unable to create new Planet object";
         return;

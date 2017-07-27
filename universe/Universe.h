@@ -33,6 +33,8 @@ class XMLElement;
 class ShipDesign;
 class System;
 class Pathfinder;
+class IDAllocator;
+
 namespace Condition {
     struct ConditionBase;
     typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
@@ -175,18 +177,23 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    /** Inserts \a ship_design into the universe; returns the ship design ID
-      * assigned to it, or -1 on failure.
-      * \note Universe gains ownership of \a ship_design once inserted. */
-    int             InsertShipDesign(ShipDesign* ship_design);
+    /** Inserts \a ship_design into the universe. Return true on success. The
+        ship design's id will be the newly assigned id.
+        \note Universe gains ownership of \a ship_design once inserted. */
+    bool            InsertShipDesign(ShipDesign* ship_design);
 
-    /** Inserts \a ship_design into the universe with given \a id;  returns
-      * true on success, or false on failure.
-      * \note Universe gains ownership of \a ship_design once inserted. */
-    bool            InsertShipDesignID(ShipDesign* ship_design, int id);
+    /** Inserts \a ship_design into the universe with given \a id; returns true
+      * on success, or false on failure.  An empire id of none indicates that
+      * the server is allocating an id on behalf of itself.  This can be removed
+      * when no longer supporting legacy id allocation in pending Orders. \note
+      * Universe gains ownership of \a ship_design once inserted. */
+    bool            InsertShipDesignID(ShipDesign* ship_design, boost::optional<int> empire_id, int id);
     
     // Resets the universe object to prepare for generation of a new universe
     void            ResetUniverse();
+
+   /** Reset object and ship design id allocation for a new game. */
+    void ResetAllIDAllocation(const std::vector<int>& empire_ids = std::vector<int>());
 
     /** Clears main ObjectMap, empires' latest known objects map, and
       * ShipDesign map. */
@@ -339,15 +346,6 @@ public:
     void            UpdateStatRecords();
     //@}
 
-
-    /** Generates an object ID for a future object. Usually used by the server
-      * to service new ID requests. */
-    int             GenerateObjectID();
-
-    /** Generates design ID for a new (ship) design. Usually used by the
-      * server to service new ID requests. */
-    int             GenerateDesignID() { return ++m_last_allocated_design_id; } // TODO: See GenerateObjectID()
-
     /** Returns true if UniverseOjbectSignals are inhibited, false otherwise. */
     const bool&     UniverseObjectSignalsInhibited();
 
@@ -363,45 +361,69 @@ public:
     bool            AllObjectsVisible() const { return m_all_objects_visible; }
 
     /** \name Generators */ //@{
-    std::shared_ptr<Ship> CreateShip(int id = INVALID_OBJECT_ID);
-    std::shared_ptr<Ship> CreateShip(int empire_id, int design_id, const std::string& species_name,
-                                     int produced_by_empire_id = ALL_EMPIRES, int id = INVALID_OBJECT_ID);
+    /** InsertNew constructs and inserts a UniverseObject into the object map with a new
+        id. It returns the new object. */
+    template <typename T, typename... Args>
+    std::shared_ptr<T> InsertNew(Args&&... args) {
+        int id = GenerateObjectID();
+        return InsertID<T>(id, std::forward<Args>(args)...);
+    }
 
-    std::shared_ptr<Fleet> CreateFleet(int id = INVALID_OBJECT_ID);
-    std::shared_ptr<Fleet> CreateFleet(const std::string& name, double x, double y, int owner, int id = INVALID_OBJECT_ID);
+    /** InsertTemp constructs and inserts a temporary UniverseObject into the object map with a
+        temporary id. It returns the new object. */
+    template <typename T, typename... Args>
+    std::shared_ptr<T> InsertTemp(Args&&... args) {
+        auto id = TEMPORARY_OBJECT_ID;
+        return InsertID<T>(id, std::forward<Args>(args)...);
+    }
 
-    std::shared_ptr<Planet> CreatePlanet(int id = INVALID_OBJECT_ID);
-    std::shared_ptr<Planet> CreatePlanet(PlanetType type, PlanetSize size, int id = INVALID_OBJECT_ID);
+    /** \p empire_id inserts object \p obj into the universe with the given \p id.
+        This is provided for use with Orders which are run once on the client
+        and receive a new id and then are run a second time on the server using
+        the id assigned on the client. */
+    template <typename T, typename... Args>
+    std::shared_ptr<T> InsertByEmpireWithID(int empire_id, int id, Args&&... args) {
+        if (!VerifyUnusedObjectID(empire_id, id))
+            return nullptr;
 
-    std::shared_ptr<System> CreateSystem(int id = INVALID_OBJECT_ID);
-    std::shared_ptr<System> CreateSystem(StarType star, const std::string& name, double x, double y, int id = INVALID_OBJECT_ID);
-    std::shared_ptr<System> CreateSystem(StarType star, const std::map<int, bool>& lanes_and_holes,
-                                         const std::string& name, double x, double y, int id = INVALID_OBJECT_ID);
-
-    std::shared_ptr<Building> CreateBuilding(int id = INVALID_OBJECT_ID);
-    std::shared_ptr<Building> CreateBuilding(int empire_id, const std::string& building_type,
-                                             int produced_by_empire_id = ALL_EMPIRES, int id = INVALID_OBJECT_ID);
-
-    std::shared_ptr<Field> CreateField(int id = INVALID_OBJECT_ID);
-    std::shared_ptr<Field> CreateField(const std::string& field_type, double x, double y, double radius, int id = INVALID_OBJECT_ID);
+        return InsertID<T>(id, std::forward<Args>(args)...);
+    }
     //@}
+
+    /** ObfuscateIDGenerator applies randomization to the IDAllocator to prevent clients from
+        inferring too much information about other client's id generation activities. */
+    void ObfuscateIDGenerator();
 
 private:
     /* Pathfinder setup for the viewing empire
      */
     std::shared_ptr<Pathfinder> const m_pathfinder;
 
-    /** Inserts object \a obj into the universe; returns a std::shared_ptr
-      * to the inserted object. */
-    template <class T>
-    std::shared_ptr<T> Insert(T* obj);
+    /** Generates an object ID for a future object. Usually used by the server
+      * to service new ID requests. */
+    int             GenerateObjectID();
 
-    /** Inserts object \a obj of given ID into the universe; returns a
-      * std::shared_ptr to the inserted object on proper insert, or a null
-      * std::shared_ptr on failure.  Useful mostly for times when ID needs
-      * to be consistent on client and server */
-    template <class T>
-    std::shared_ptr<T> InsertID(T* obj, int id);
+    /** Generates design ID for a new (ship) design. Usually used by the
+      * server to service new ID requests. */
+    int             GenerateDesignID();
+
+    /** Verify that an object ID \p id could be generated by \p empire_id. */
+    bool VerifyUnusedObjectID(const int empire_id, const int id);
+
+    /** Inserts object \p obj into the universe with the given \p id. */
+    template <typename T, typename... Args>
+    std::shared_ptr<T> InsertID(int id, Args&&... args) {
+        auto obj = std::shared_ptr<T>(new T(std::forward<Args>(args)...));
+        auto uobj = std::dynamic_pointer_cast<UniverseObject>(obj);
+        if (!uobj)
+            return std::shared_ptr<T>();
+
+        InsertIDCore(uobj, id);
+        return obj;
+    }
+
+    /** Inserts object \p obj into the universe with the given \p id. */
+    void InsertIDCore(std::shared_ptr<UniverseObject> obj, int id);
 
     /** Clears \a targets_causes, and then populates with all
       * EffectsGroups and their targets in the known universe. */
@@ -453,9 +475,6 @@ private:
     Effect::AccountingMap           m_effect_accounting_map;            ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
     Effect::DiscrepancyMap          m_effect_discrepancy_map;           ///< map from target object id, to map from target meter, to discrepancy between meter's actual initial value, and the initial value that this meter should have as far as the client can tell: the unknown factor affecting the meter
 
-    int                             m_last_allocated_object_id;
-    int                             m_last_allocated_design_id;
-
     std::map<int, std::set<int>>    m_marked_destroyed;                 ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object. key is destroyed object, and value set are the ids of objects that caused the destruction (may be multiples destroying a single target on a given turn)
 
     double                          m_universe_width;
@@ -498,8 +517,11 @@ private:
     /***/
     void    GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_knowledge_object_ids, int encoding_empire) const;
 
-    template <class T>
-    std::shared_ptr<T> InsertNewObject(T* object);
+    /** Manages allocating and verifying new object ids.*/
+    std::unique_ptr<IDAllocator> const m_object_id_allocator;
+
+    /** Manages allocating and verifying new ship design ids.*/
+    std::unique_ptr<IDAllocator> const m_design_id_allocator;
 
     friend class boost::serialization::access;
     template <class Archive>

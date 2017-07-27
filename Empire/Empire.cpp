@@ -2645,21 +2645,14 @@ int Empire::AddShipDesign(ShipDesign* ship_design) {
         }
     }
 
-    // design is apparently new, so add it to the universe and put its new id in the empire's set of designs
-    int new_design_id = GetNewDesignID();   // on the sever, this just generates a new design id.  on clients, it polls the sever for a new id
-
-    if (new_design_id == INVALID_DESIGN_ID) {
-        ErrorLogger() << "Empire::AddShipDesign Unable to get new design id";
-        return new_design_id;
-    }
-
-    bool success = universe.InsertShipDesignID(ship_design, new_design_id);
+    bool success = universe.InsertShipDesign(ship_design);
 
     if (!success) {
         ErrorLogger() << "Empire::AddShipDesign Unable to add new design to universe";
         return INVALID_OBJECT_ID;
     }
 
+    auto new_design_id = ship_design->ID();
     AddShipDesign(new_design_id);
 
     return new_design_id;
@@ -3044,7 +3037,7 @@ void Empire::CheckProductionProgress() {
             std::shared_ptr<Planet> planet = GetPlanet(elem.location);
 
             // create new building
-            std::shared_ptr<Building> building = universe.CreateBuilding(m_id, elem.item.name, m_id);
+            auto building = universe.InsertNew<Building>(m_id, elem.item.name, m_id);
             planet->AddBuilding(building->ID());
             building->SetPlanetID(planet->ID());
             system->Insert(building);
@@ -3094,7 +3087,7 @@ void Empire::CheckProductionProgress() {
 
             for (int count = 0; count < elem.blocksize; count++) {
                 // create ship
-                ship = universe.CreateShip(m_id, elem.item.design_id, species_name, m_id);
+                ship = universe.InsertNew<Ship>(m_id, elem.item.design_id, species_name, m_id);
                 system->Insert(ship);
 
                 // record ship production in empire stats
@@ -3198,7 +3191,7 @@ void Empire::CheckProductionProgress() {
                 std::shared_ptr<Fleet> fleet;
 
                 if (!individual_fleets) {
-                    fleet = universe.CreateFleet("", system->X(), system->Y(), m_id);
+                    fleet = universe.InsertNew<Fleet>("", system->X(), system->Y(), m_id);
 
                     system->Insert(fleet);
                     fleet->SetNextAndPreviousSystems(system->ID(), system->ID());
@@ -3208,7 +3201,7 @@ void Empire::CheckProductionProgress() {
 
                 for (std::shared_ptr<Ship> ship : ships) {
                     if (individual_fleets) {
-                        fleet = universe.CreateFleet("", system->X(), system->Y(), m_id);
+                        fleet = universe.InsertNew<Fleet>("", system->X(), system->Y(), m_id);
 
                         system->Insert(fleet);
                         fleet->SetNextAndPreviousSystems(system->ID(), system->ID());

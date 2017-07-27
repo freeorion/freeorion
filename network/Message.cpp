@@ -477,22 +477,6 @@ Message ClientSaveDataMessage(const OrderSet& orders) {
     return Message(Message::CLIENT_SAVE_DATA, os.str());
 }
 
-Message RequestNewObjectIDMessage()
-{ return Message(Message::REQUEST_NEW_OBJECT_ID, DUMMY_EMPTY_MESSAGE); }
-
-Message DispatchObjectIDMessage(int new_id) {
-    return Message(Message::DISPATCH_NEW_OBJECT_ID,
-                   std::to_string(new_id), true);
-}
-
-Message RequestNewDesignIDMessage()
-{ return Message(Message::REQUEST_NEW_DESIGN_ID, DUMMY_EMPTY_MESSAGE, true); }
-
-Message DispatchDesignIDMessage(int new_id) {
-    return Message(Message::DISPATCH_NEW_DESIGN_ID,
-                   std::to_string(new_id), true);
-}
-
 Message HostSaveGameInitiateMessage(const std::string& filename)
 { return Message(Message::SAVE_GAME_INITIATE, filename); }
 

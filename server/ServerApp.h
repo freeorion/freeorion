@@ -98,10 +98,6 @@ public:
 
     std::string GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) override;
 
-    int GetNewObjectID() override;
-
-    int GetNewDesignID() override;
-
     int CurrentTurn() const override
     { return m_current_turn; }
 

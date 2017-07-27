@@ -47,7 +47,7 @@ namespace {
         if (!ship)
             return nullptr;
 
-        std::shared_ptr<Fleet> fleet = universe.CreateFleet("", x, y, ship->Owner());
+        auto fleet = universe.InsertNew<Fleet>("", x, y, ship->Owner());
 
         std::vector<int> ship_ids;
         ship_ids.push_back(ship->ID());
@@ -1341,7 +1341,7 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    std::shared_ptr<Planet> planet = GetUniverse().CreatePlanet(type, size);
+    auto planet = GetUniverse().InsertNew<Planet>(type, size);
     if (!planet) {
         ErrorLogger() << "CreatePlanet::Execute unable to create new Planet object";
         return;
@@ -1454,7 +1454,7 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    std::shared_ptr<Building> building = GetUniverse().CreateBuilding(ALL_EMPIRES, building_type_name, ALL_EMPIRES);
+    auto building = GetUniverse().InsertNew<Building>(ALL_EMPIRES, building_type_name, ALL_EMPIRES);
     if (!building) {
         ErrorLogger() << "CreateBuilding::Execute couldn't create building!";
         return;
@@ -1625,7 +1625,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     //        fleet = ship->FleetID();
     //// etc.
 
-    std::shared_ptr<Ship> ship = GetUniverse().CreateShip(empire_id, design_id, species_name, ALL_EMPIRES);
+    auto ship = GetUniverse().InsertNew<Ship>(empire_id, design_id, species_name, ALL_EMPIRES);
     system->Insert(ship);
 
     if (m_name) {
@@ -1792,7 +1792,7 @@ void CreateField::Execute(const ScriptingContext& context) const {
     else
         y = target->Y();
 
-    std::shared_ptr<Field> field = GetUniverse().CreateField(field_type->Name(), x, y, size);
+    auto field = GetUniverse().InsertNew<Field>(field_type->Name(), x, y, size);
     if (!field) {
         ErrorLogger() << "CreateField::Execute couldn't create field!";
         return;
@@ -1939,7 +1939,7 @@ void CreateSystem::Execute(const ScriptingContext& context) const {
         name_str = GenerateSystemName();
     }
 
-    std::shared_ptr<System> system = GetUniverse().CreateSystem(star_type, name_str, x, y);
+    auto system = GetUniverse().InsertNew<System>(star_type, name_str, x, y);
     if (!system) {
         ErrorLogger() << "CreateSystem::Execute couldn't create system!";
         return;

@@ -809,10 +809,10 @@ namespace {
 
             for (int n = 0; n < number; ++n) {
                 // create / insert fighter into combat objectmap
-                Fighter* fighter = new Fighter(owner_empire_id, from_ship_id, species, damage);
-                fighter->SetID(next_fighter_id--);
-                fighter->Rename(UserString("OBJ_FIGHTER"));
-                std::shared_ptr<Fighter> fighter_ptr = combat_info.objects.Insert(fighter);
+                auto fighter_ptr = std::make_shared<Fighter>(owner_empire_id, from_ship_id, species, damage);
+                fighter_ptr->SetID(next_fighter_id--);
+                fighter_ptr->Rename(UserString("OBJ_FIGHTER"));
+                combat_info.objects.Insert(fighter_ptr);
                 if (!fighter_ptr) {
                     ErrorLogger() << "AddFighters unable to create and insert new Fighter object...";
                     break;

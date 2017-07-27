@@ -11,6 +11,7 @@
 #include "../parse/Parse.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
+#include "IDAllocator.h"
 #include "Building.h"
 #include "Fleet.h"
 #include "Planet.h"
@@ -80,8 +81,6 @@ namespace boost {
 
 
 extern FO_COMMON_API const int ALL_EMPIRES            = -1;
-// TODO: implement a robust, thread-safe solution for creating multiple client-local temporary objects with unique IDs that will never conflict with each other or the server.
-extern const int MAX_ID                 = 2000000000;
 
 namespace EmpireStatistics {
     const std::map<std::string, ValueRef::ValueRefBase<double>*>& GetEmpireStats() {
@@ -103,17 +102,20 @@ namespace EmpireStatistics {
     }
 }
 
+
 /////////////////////////////////////////////
 // class Universe
 /////////////////////////////////////////////
 Universe::Universe() :
     m_pathfinder(new Pathfinder),
-    m_last_allocated_object_id(-1), // this is conicidentally equal to INVALID_OBJECT_ID as of this writing, but the reason for this to be -1 is so that the first object has id 0, and all object ids are non-negative
-    m_last_allocated_design_id(-1), // same, but for INVALID_DESIGN_ID
     m_universe_width(1000.0),
     m_inhibit_universe_object_signals(false),
     m_encoding_empire(ALL_EMPIRES),
-    m_all_objects_visible(false)
+    m_all_objects_visible(false),
+    m_object_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_OBJECT_ID,
+                                          TEMPORARY_OBJECT_ID, INVALID_OBJECT_ID)),
+    m_design_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_DESIGN_ID,
+                                          TEMPORARY_OBJECT_ID, INVALID_DESIGN_ID))
 {}
 
 Universe::~Universe() {
@@ -142,8 +144,7 @@ void Universe::Clear() {
     m_effect_accounting_map.clear();
     m_effect_discrepancy_map.clear();
 
-    m_last_allocated_object_id = -1;
-    m_last_allocated_design_id = -1;
+    ResetAllIDAllocation();
 
     m_empire_known_destroyed_object_ids.clear();
     m_empire_stale_knowledge_object_ids.clear();
@@ -151,6 +152,29 @@ void Universe::Clear() {
     m_empire_known_ship_design_ids.clear();
 
     m_marked_destroyed.clear();
+}
+
+
+void Universe::ResetAllIDAllocation(const std::vector<int>& empire_ids) {
+
+    // Find the highest already allocated id for saved games that did not partition ids by client
+    int highest_allocated_id = INVALID_OBJECT_ID;
+    for (const auto& obj: m_objects)
+        highest_allocated_id = std::max(highest_allocated_id, obj->ID());
+
+    *m_object_id_allocator = IDAllocator(ALL_EMPIRES, empire_ids, INVALID_OBJECT_ID,
+                                         TEMPORARY_OBJECT_ID, highest_allocated_id);
+
+    // Find the highest already allocated id for saved games that did not partition ids by client
+    int highest_allocated_design_id = INVALID_DESIGN_ID;
+    for (const auto& id_and_obj: m_ship_designs)
+        highest_allocated_design_id = std::max(highest_allocated_design_id, id_and_obj.first);
+
+    *m_design_id_allocator = IDAllocator(ALL_EMPIRES, empire_ids, INVALID_DESIGN_ID,
+                                         TEMPORARY_OBJECT_ID, highest_allocated_design_id);
+
+    DebugLogger() << "Reset id allocators with highest object id = " << highest_allocated_id
+                  << " and highest design id = " << highest_allocated_design_id;
 }
 
 const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const {
@@ -322,78 +346,97 @@ std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(int object_id, 
 }
 
 int Universe::GenerateObjectID() {
-    if (m_last_allocated_object_id + 1 < MAX_ID)
-        return ++m_last_allocated_object_id;
-    // the object id number space is exhausted, which means we're screwed
-    ErrorLogger() << "Universe::GenerateObjectID: object id number space exhausted!";
-    return INVALID_OBJECT_ID;
+    auto new_id = m_object_id_allocator->NewID();
+    return new_id;
 }
 
-template <class T>
-std::shared_ptr<T> Universe::Insert(T* obj) {
-    if (!obj)
-        return nullptr;
+int Universe::GenerateDesignID() {
+    auto new_id = m_design_id_allocator->NewID();
+    return new_id;
+}
 
-    int id = GenerateObjectID();
-    if (id != INVALID_OBJECT_ID) {
-        obj->SetID(id);
-        return m_objects.Insert(obj);
+void Universe::ObfuscateIDGenerator() {
+    m_object_id_allocator->ObfuscateBeforeSerialization();
+    m_design_id_allocator->ObfuscateBeforeSerialization();
+}
+
+bool Universe::VerifyUnusedObjectID(const int empire_id, const int id) {
+    auto good_id_and_possible_legacy = m_object_id_allocator->IsIDValidAndUnused(id, empire_id);
+    if (!good_id_and_possible_legacy.second) {
+        WarnLogger() << "object id = " << id << " should not have been assigned by empire = "
+                     << empire_id << ". It is probably from loading an old saved game. "
+                     << "In future this will be promoted to an error.";
+        m_object_id_allocator->FixLegacyOrderIDs(id);
+        //TODO before version change to v0.4.8 make this a hard failure;
     }
 
-    // Avoid leaking memory if there are more than 2^31 objects in the Universe.
-    // Realistically, we should probably do something a little more drastic in this case,
-    // like terminate the program and call 911 or something.
-    delete obj;
-    return nullptr;
+    return good_id_and_possible_legacy.first;
 }
 
-template <class T>
-std::shared_ptr<T> Universe::InsertID(T* obj, int id) {
-    if (id == INVALID_OBJECT_ID)
-        return Insert(obj);
-    if (!obj || id >= MAX_ID)
-        return nullptr;
+void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, int id) {
+    if (!obj)
+        return;
+
+    auto valid = m_object_id_allocator->UpdateIDAndCheckIfOwned(id);
+    if (!valid) {
+        ErrorLogger() << "An object has not been inserted into the universe because it's id = " << id << " is invalid.";
+        obj->SetID(INVALID_OBJECT_ID);
+        return;
+    }
 
     obj->SetID(id);
-    std::shared_ptr<T> result = m_objects.Insert(obj);
-    if (id > m_last_allocated_object_id )
-        m_last_allocated_object_id = id;
-    DebugLogger() << "Inserting object with id " << id;
-    return result;
+    m_objects.Insert(std::forward<std::shared_ptr<UniverseObject>>(obj));
 }
 
-int Universe::InsertShipDesign(ShipDesign* ship_design) {
-    int retval = INVALID_DESIGN_ID;
-    if (ship_design) {
-        if (m_last_allocated_design_id + 1 < MAX_ID) {
-            m_ship_designs[++m_last_allocated_design_id] = ship_design;
-            ship_design->SetID(m_last_allocated_design_id);
-            retval = m_last_allocated_design_id;
-        } else { // we'll probably never execute this branch, considering how many IDs are available
-            // find a hole in the assigned IDs in which to place the object
-            int last_id_seen = INVALID_DESIGN_ID;
-            for (ShipDesignMap::value_type& entry : m_ship_designs) {
-                if (1 < entry.first - last_id_seen) {
-                    m_ship_designs[last_id_seen + 1] = ship_design;
-                    ship_design->SetID(last_id_seen + 1);
-                    retval = last_id_seen + 1;
-                    break;
-                }
-            }
+bool Universe::InsertShipDesign(ShipDesign* ship_design) {
+    if (!ship_design
+        || (ship_design->ID() != INVALID_DESIGN_ID && m_ship_designs.count(ship_design->ID())))
+        return false;
+
+    int id = GenerateDesignID();
+
+    // TODO move this check int InsertShipDesignID(design, id) before the version change to v0.4.8
+    // **************************************** Non Legacy Check Below ********************
+    m_design_id_allocator->UpdateIDAndCheckIfOwned(id);
+    // **************************************** Non Legacy Check Above ********************
+
+    return InsertShipDesignID(ship_design, boost::none, id);
+}
+
+bool Universe::InsertShipDesignID(ShipDesign* ship_design, boost::optional<int> empire_id, int id) {
+    if (!ship_design)
+        return false;
+
+    // TODO remove this check before the version change to v0.4.8
+    if (empire_id) {
+        auto good_id_and_possible_legacy = m_design_id_allocator->IsIDValidAndUnused(id, *empire_id);
+        if (!good_id_and_possible_legacy.first) {
+            ErrorLogger() << "Ship design id = " << id << " is invalid.";
+            return false;
+        }
+
+        if (!good_id_and_possible_legacy.second) {
+            WarnLogger() << "design id = " << id << " should not have been assigned by empire = "
+                         << *empire_id << ". It is probably from loading an old saved game. "
+                         << "In future this will be promoted to an error.";
+        }
+        m_design_id_allocator->FixLegacyOrderIDs(id);
+    }
+
+    // TODO replace the above code with this check before the version change to v0.4.8
+    // **************************************** Non Legacy Check Below ********************
+    else {
+        auto valid = m_design_id_allocator->UpdateIDAndCheckIfOwned(id);
+        if (!valid) {
+            ErrorLogger() << "Ship design id = " << id << " is invalid.";
+            return false;
         }
     }
-    return retval;
-}
+    // **************************************** Non Legacy Check Above ********************
 
-bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id) {
-    bool retval = false;
-
-    if (ship_design  &&  id != INVALID_DESIGN_ID  &&  id < MAX_ID) {
-        ship_design->SetID(id);
-        m_ship_designs[id] = ship_design;
-        retval = true;
-    }
-    return retval;
+    ship_design->SetID(id);
+    m_ship_designs[id] = ship_design;
+    return true;
 }
 
 bool Universe::DeleteShipDesign(int design_id) {
@@ -2395,7 +2438,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
             if (std::shared_ptr<UniverseObject> known_obj = known_object_map.Object(object_id)) {
                 known_obj->Copy(full_object, empire_id);                    // already a stored version of this object for this empire.  update it, limited by visibility this empire has for this object this turn
             } else {
-                if (UniverseObject* new_obj = full_object->Clone(empire_id))    // no previously-recorded version of this object for this empire.  create a new one, copying only the information limtied by visibility, leaving the rest as default values
+                if (auto new_obj = std::shared_ptr<UniverseObject>(full_object->Clone(empire_id)))    // no previously-recorded version of this object for this empire.  create a new one, copying only the information limtied by visibility, leaving the rest as default values
                     known_object_map.Insert(new_obj);
             }
 
@@ -2980,54 +3023,6 @@ void Universe::GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_k
         empire_stale_knowledge_object_ids[encoding_empire] = it->second;
 }
 
-template <class T>
-std::shared_ptr<T> Universe::InsertNewObject(T* object) {
-    m_objects.Insert(object);
-    return m_objects.Object<T>(object->ID());
-}
-
-std::shared_ptr<Ship> Universe::CreateShip(int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Ship(), id); }
-
-std::shared_ptr<Ship> Universe::CreateShip(int empire_id, int design_id, const std::string& species_name,
-                                           int produced_by_empire_id/*= ALL_EMPIRES*/, int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Ship(empire_id, design_id, species_name, produced_by_empire_id), id); }
-
-std::shared_ptr<Fleet> Universe::CreateFleet(int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Fleet(), id); }
-
-std::shared_ptr<Fleet> Universe::CreateFleet(const std::string& name, double x, double y, int owner, int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Fleet(name, x, y, owner), id); }
-
-std::shared_ptr<Planet> Universe::CreatePlanet(int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Planet(), id); }
-
-std::shared_ptr<Planet> Universe::CreatePlanet(PlanetType type, PlanetSize size, int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Planet(type, size), id); }
-
-std::shared_ptr<System> Universe::CreateSystem(int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new System(), id); }
-
-std::shared_ptr<System> Universe::CreateSystem(StarType star, const std::string& name, double x, double y, int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new System(star, name, x, y), id); }
-
-std::shared_ptr<System> Universe::CreateSystem(StarType star, const std::map<int, bool>& lanes_and_holes,
-                                               const std::string& name, double x, double y, int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new System(star, lanes_and_holes, name, x, y), id); }
-
-std::shared_ptr<Building> Universe::CreateBuilding(int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Building(), id); }
-
-std::shared_ptr<Building> Universe::CreateBuilding(int empire_id, const std::string& building_type,
-                                                   int produced_by_empire_id/* = ALL_EMPIRES*/, int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Building(empire_id, building_type, produced_by_empire_id), id); }
-
-std::shared_ptr<Field> Universe::CreateField(int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Field(), id); }
-
-std::shared_ptr<Field> Universe::CreateField(const std::string& field_type, double x, double y, double radius, int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new Field(field_type, x, y, radius), id); }
-
 void Universe::ResetUniverse() {
     m_objects.Clear();  // wipe out anything present in the object map
 
@@ -3046,12 +3041,7 @@ void Universe::ResetUniverse() {
     m_stat_records.clear();
     m_universe_width = 1000.0;
 
-    // these happen to be equal to INVALID_OBJECT_ID and INVALID_DESIGN_ID,
-    // but the point here is that the latest used ID is incremented before
-    // being assigned, so using -1 here means the first assigned ID will be 0,
-    // which is a valid ID
-    m_last_allocated_object_id = -1;
-    m_last_allocated_design_id = -1;
+    ResetAllIDAllocation();
 
     GetSpeciesManager().ClearSpeciesHomeworlds();
 }

@@ -1617,18 +1617,6 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     return discard_event();
 }
 
-sc::result WaitingForTurnEnd::react(const RequestObjectID& msg) {
-    //TraceLogger(FSM) << "(ServerFSM) WaitingForTurnEnd.RequestObjectID";
-    msg.m_player_connection->SendMessage(DispatchObjectIDMessage(GetUniverse().GenerateObjectID()));
-    return discard_event();
-}
-
-sc::result WaitingForTurnEnd::react(const RequestDesignID& msg) {
-    //TraceLogger(FSM) << "(ServerFSM) WaitingForTurnEnd.RequestDesignID";
-    msg.m_player_connection->SendMessage(DispatchDesignIDMessage(GetUniverse().GenerateDesignID()));
-    return discard_event();
-}
-
 sc::result WaitingForTurnEnd::react(const CheckTurnEndConditions& c) {
     TraceLogger(FSM) << "(ServerFSM) WaitingForTurnEnd.CheckTurnEndConditions";
     ServerApp& server = Server();

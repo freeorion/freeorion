@@ -399,7 +399,7 @@ namespace {
             return false;
         }
 
-        if (universe.InsertShipDesign(design) == INVALID_DESIGN_ID) {
+        if (!universe.InsertShipDesign(design)) {
             ErrorLogger() << "CreateShipDesign: couldn't insert ship design into universe";
             delete design;
             return false;
@@ -667,7 +667,7 @@ namespace {
         }
 
         // Create system and insert it into the object map
-        std::shared_ptr<System> system = GetUniverse().CreateSystem(star_type, star_name, x, y);
+        auto system = GetUniverse().InsertNew<System>(star_type, star_name, x, y);
         if (!system) {
             ErrorLogger() << "CreateSystem : Attempt to insert system into the object map failed";
             return INVALID_OBJECT_ID;
@@ -718,7 +718,7 @@ namespace {
         }
 
         // Create planet and insert it into the object map
-        std::shared_ptr<Planet> planet = GetUniverse().CreatePlanet(planet_type, size);
+        auto planet = GetUniverse().InsertNew<Planet>(planet_type, size);
         if (!planet) {
             ErrorLogger() << "CreateSystem : Attempt to insert planet into the object map failed";
             return INVALID_OBJECT_ID;
@@ -753,7 +753,7 @@ namespace {
             return INVALID_OBJECT_ID;
         }
 
-        std::shared_ptr<Building> building = GetUniverse().CreateBuilding(empire_id, building_type, empire_id);
+        auto building = GetUniverse().InsertNew<Building>(empire_id, building_type, empire_id);
         if (!building) {
             ErrorLogger() << "CreateBuilding: couldn't create building";
             return INVALID_OBJECT_ID;
@@ -774,7 +774,7 @@ namespace {
         }
 
         // Create new fleet at the position of the specified system
-        std::shared_ptr<Fleet> fleet = GetUniverse().CreateFleet(name, system->X(), system->Y(), empire_id);
+        auto fleet = GetUniverse().InsertNew<Fleet>(name, system->X(), system->Y(), empire_id);
         if (!fleet) {
             ErrorLogger() << "CreateFleet: couldn't create new fleet";
             return INVALID_OBJECT_ID;
@@ -835,7 +835,7 @@ namespace {
         }
 
         // create new ship
-        std::shared_ptr<Ship> ship = universe.CreateShip(empire_id, ship_design->ID(), species, empire_id);
+        auto ship = universe.InsertNew<Ship>(empire_id, ship_design->ID(), species, empire_id);
         if (!ship) {
             ErrorLogger() << "CreateShip: couldn't create new ship";
             return INVALID_OBJECT_ID;
@@ -901,7 +901,7 @@ namespace {
         }
 
         // create the new field
-        std::shared_ptr<Field> field = GetUniverse().CreateField(field_type->Name(), x, y, size);
+        auto field = GetUniverse().InsertNew<Field>(field_type->Name(), x, y, size);
         if (!field) {
             ErrorLogger() << "CreateFieldImpl: couldn't create field";
             return nullptr;

@@ -91,6 +91,9 @@
     <ClInclude Include="..\..\universe\Fleet.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\IDAllocator.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\util\blocking_combiner.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
@@ -322,6 +325,9 @@
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\Fleet.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\IDAllocator.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\Meter.cpp">

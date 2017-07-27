@@ -2192,23 +2192,22 @@ namespace {
 
 
         // temporary ship to use for estimating design's meter values
-        std::shared_ptr<Ship> temp = GetUniverse().CreateShip(client_empire_id, design_id, "",
-                                                              client_empire_id, TEMPORARY_OBJECT_ID);
+        auto temp = GetUniverse().InsertTemp<Ship>(client_empire_id, design_id, "", client_empire_id);
 
         // apply empty species for 'Generic' entry
-        GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
+        GetUniverse().UpdateMeterEstimates(temp->ID());
         temp->Resupply();
         detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
 
         // apply various species to ship, re-calculating the meter values for each
         for (const std::string& species_name : species_list) {
             temp->SetSpecies(species_name);
-            GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
+            GetUniverse().UpdateMeterEstimates(temp->ID());
             temp->Resupply();
             detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
         }
 
-        GetUniverse().Delete(TEMPORARY_OBJECT_ID);
+        GetUniverse().Delete(temp->ID());
         GetUniverse().InhibitUniverseObjectSignals(false);
 
 
@@ -2262,7 +2261,7 @@ namespace {
         cost = incomplete_design->ProductionCost(client_empire_id, default_location_id);
         cost_units = UserString("ENC_PP");
 
-        GetUniverse().InsertShipDesignID(new ShipDesign(*incomplete_design), TEMPORARY_OBJECT_ID);
+        GetUniverse().InsertShipDesignID(new ShipDesign(*incomplete_design), client_empire_id, TEMPORARY_OBJECT_ID);
 
         float tech_level = boost::algorithm::clamp(CurrentTurn() / 400.0f, 0.0f, 1.0f);
         float typical_shot = 3 + 27 * tech_level;
@@ -2308,24 +2307,24 @@ namespace {
 
 
         // temporary ship to use for estimating design's meter values
-        std::shared_ptr<Ship> temp = GetUniverse().CreateShip(client_empire_id, TEMPORARY_OBJECT_ID, "",
-                                                              client_empire_id, TEMPORARY_OBJECT_ID);
+        auto temp = GetUniverse().InsertTemp<Ship>(client_empire_id, TEMPORARY_OBJECT_ID, "",
+                                                   client_empire_id);
 
         // apply empty species for 'Generic' entry
-        GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
+        GetUniverse().UpdateMeterEstimates(temp->ID());
         temp->Resupply();
         detailed_description.append(GetDetailedDescriptionStats(temp, incomplete_design.get(), enemy_DR, enemy_shots, cost));
 
         // apply various species to ship, re-calculating the meter values for each
         for (const std::string& species_name : species_list) {
             temp->SetSpecies(species_name);
-            GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
+            GetUniverse().UpdateMeterEstimates(temp->ID());
             temp->Resupply();
             detailed_description.append(GetDetailedDescriptionStats(temp, incomplete_design.get(), enemy_DR, enemy_shots, cost));
         }
 
 
-        GetUniverse().Delete(TEMPORARY_OBJECT_ID);
+        GetUniverse().Delete(temp->ID());
         GetUniverse().DeleteShipDesign(TEMPORARY_OBJECT_ID);
         GetUniverse().InhibitUniverseObjectSignals(false);
     }

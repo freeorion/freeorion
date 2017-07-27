@@ -47,15 +47,6 @@ public:
 
     virtual std::string GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) = 0;
 
-    /** returns a universe object ID which can be used for new objects.
-        Can return INVALID_OBJECT_ID if an ID cannot be created. */
-    virtual int GetNewObjectID() = 0;
-
-    /** returns a design ID which can be used for a new design to uniquely
-        identify it.
-        Can return INVALID_OBJECT_ID if an ID cannot be created. */
-    virtual int GetNewDesignID() = 0;
-
     /** Returns the current game turn. */
     virtual int CurrentTurn() const = 0;
 
@@ -173,14 +164,6 @@ inline std::shared_ptr<Building> GetEmpireKnownBuilding(int object_id, int empir
  * name, if the application isn't supposed to see the real object name. */
 inline std::string GetVisibleObjectName(std::shared_ptr<const UniverseObject> object)
 { return IApp::GetApp()->GetVisibleObjectName(object); }
-
-/** Returns a new object ID from the server */
-inline int GetNewObjectID()
-{ return IApp::GetApp()->GetNewObjectID(); }
-
-/** Returns a new object ID from the server */
-inline int GetNewDesignID()
-{ return IApp::GetApp()->GetNewDesignID(); }
 
 /** Returns current game turn.  This is >= 1 during a game, BEFORE_FIRST_TURN
   * during galaxy setup, or is INVALID_GAME_TURN at other times */

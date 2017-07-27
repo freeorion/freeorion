@@ -114,23 +114,22 @@ NewFleetOrder::NewFleetOrder() :
     m_system_id(INVALID_OBJECT_ID)
 {}
 
-NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, int fleet_id,
+NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name,
                              int system_id, const std::vector<int>& ship_ids,
                              bool aggressive) :
     NewFleetOrder(empire, std::vector<std::string>(1, fleet_name),
-                  std::vector<int>(1, fleet_id),
                   system_id, std::vector<std::vector<int>>(1, ship_ids),
                   std::vector<bool>(1, aggressive) )
 {}
 
 NewFleetOrder::NewFleetOrder(int empire, const std::vector<std::string>& fleet_names,
-                             const std::vector<int>& fleet_ids, int system_id,
+                             int system_id,
                              const std::vector<std::vector<int>>& ship_id_groups,
                              const std::vector<bool>& aggressives) :
     Order(empire),
     m_fleet_names(fleet_names),
     m_system_id(system_id),
-    m_fleet_ids(fleet_ids),
+    m_fleet_ids(std::vector<int>(m_fleet_names.size(), INVALID_OBJECT_ID)),
     m_ship_id_groups(ship_id_groups),
     m_aggressives(aggressives)
 {}
@@ -198,9 +197,21 @@ void NewFleetOrder::ExecuteImpl() const {
         if (validated_ships.empty())
             continue;
 
-        // create fleet
-        std::shared_ptr<Fleet> fleet = GetUniverse().CreateFleet(fleet_name, system->X(), system->Y(),
-                                                                 EmpireID(), fleet_id);
+        std::shared_ptr<Fleet> fleet;
+        if (fleet_id == INVALID_OBJECT_ID) {
+            // create fleet
+            fleet = GetUniverse().InsertNew<Fleet>(fleet_name, system->X(), system->Y(), EmpireID());
+            m_fleet_ids[i] = fleet->ID();
+        } else {
+            fleet = GetUniverse().InsertByEmpireWithID<Fleet>(
+                EmpireID(), fleet_id, fleet_name, system->X(), system->Y(), EmpireID());
+        }
+
+        if (!fleet) {
+            ErrorLogger() << "Unable to create fleet.";
+            return;
+        }
+
         fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
         fleet->SetAggressive(aggressive);
 
@@ -998,9 +1009,9 @@ ShipDesignOrder::ShipDesignOrder(int empire, int design_id_to_erase, bool dummy)
     m_delete_design_from_empire(true)
 {}
 
-ShipDesignOrder::ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design) :
+ShipDesignOrder::ShipDesignOrder(int empire, const ShipDesign& ship_design) :
     Order(empire),
-    m_design_id(new_design_id),
+    m_design_id(INVALID_DESIGN_ID),
     m_uuid(ship_design.UUID()),
     m_create_new_design(true),
     m_name(ship_design.Name(false)),
@@ -1031,7 +1042,7 @@ void ShipDesignOrder::ExecuteImpl() const {
     if (m_delete_design_from_empire) {
         // player is ordering empire to forget about a particular design
         if (!empire->ShipDesignKept(m_design_id)) {
-            ErrorLogger() << "Tried to remove a ShipDesign id = " << m_design_id
+            ErrorLogger() << "Empire, " << EmpireID() << ", tried to remove a ShipDesign id = " << m_design_id
                           << " that the empire wasn't remembering";
             return;
         }
@@ -1040,7 +1051,7 @@ void ShipDesignOrder::ExecuteImpl() const {
     } else if (m_create_new_design) {
         // check if a design with this ID already exists
         if (const auto existing = universe.GetShipDesign(m_design_id)) {
-            ErrorLogger() << "Tried to create a new ShipDesign with an id, " << m_design_id
+            ErrorLogger() << "Empire, " << EmpireID() << ", tried to create a new ShipDesign with an id, " << m_design_id
                           << " of an already-existing ShipDesign " << existing->Name();
 
             return;
@@ -1057,7 +1068,15 @@ void ShipDesignOrder::ExecuteImpl() const {
             return;
         }
 
-        universe.InsertShipDesignID(new_ship_design, m_design_id);
+        if (m_design_id == INVALID_DESIGN_ID) {
+            // On the client create a new design id
+            universe.InsertShipDesign(new_ship_design);
+            m_design_id = new_ship_design->ID();
+        } else {
+            // On the server use the design id passed from the client
+            universe.InsertShipDesignID(new_ship_design, EmpireID(), m_design_id);
+        }
+
         universe.SetEmpireKnowledgeOfShipDesign(m_design_id, EmpireID());
         empire->AddShipDesign(m_design_id);
 
@@ -1066,18 +1085,18 @@ void ShipDesignOrder::ExecuteImpl() const {
         const std::set<int>& empire_known_design_ids = universe.EmpireKnownShipDesignIDs(EmpireID());
         std::set<int>::iterator design_it = empire_known_design_ids.find(m_design_id);
         if (design_it == empire_known_design_ids.end()) {
-            ErrorLogger() << "Tried to rename/redescribe a ShipDesign id = " << m_design_id
+            ErrorLogger() << "Empire, " << EmpireID() << ", tried to rename/redescribe a ShipDesign id = " << m_design_id
                           << " that this empire hasn't seen";
             return;
         }
         const ShipDesign* design = GetShipDesign(*design_it);
         if (!design) {
-            ErrorLogger() << "Tried to rename/redescribe a ShipDesign id = " << m_design_id
+            ErrorLogger() << "Empire, " << EmpireID() << ", tried to rename/redescribe a ShipDesign id = " << m_design_id
                           << " that doesn't exist (but this empire has seen it)!";
             return;
         }
         if (design->DesignedByEmpire() != EmpireID()) {
-            ErrorLogger() << "Tried to rename/redescribe a ShipDesign id = " << m_design_id
+            ErrorLogger() << "Empire, " << EmpireID() << ", tried to rename/redescribe a ShipDesign id = " << m_design_id
                           << " that isn't owned by this empire!";
             return;
         }
@@ -1093,7 +1112,7 @@ void ShipDesignOrder::ExecuteImpl() const {
 
         // check if empire is already remembering the design
         if (empire->ShipDesignKept(m_design_id)) {
-            ErrorLogger() << "Tried to remember a ShipDesign id = " << m_design_id
+            ErrorLogger() << "Empire, " << EmpireID() << ", tried to remember a ShipDesign id = " << m_design_id
                           << " that was already being remembered";
             return;
         }
@@ -1103,7 +1122,7 @@ void ShipDesignOrder::ExecuteImpl() const {
         if (empire_known_design_ids.find(m_design_id) != empire_known_design_ids.end()) {
             empire->AddShipDesign(m_design_id);
         } else {
-            ErrorLogger() << "Tried to remember a ShipDesign id = " << m_design_id
+            ErrorLogger() << "Empire, " << EmpireID() << ", tried to remember a ShipDesign id = " << m_design_id
                           << " that this empire hasn't seen";
             return;
         }

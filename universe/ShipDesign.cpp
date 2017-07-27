@@ -1336,25 +1336,17 @@ namespace {
             }
         }
 
-
-        // generate id for new design
-        int new_design_id = GetNewDesignID();
-        if (new_design_id == INVALID_DESIGN_ID) {
-            ErrorLogger() << "PredefinedShipDesignManager::AddShipDesignsToUniverse Unable to get new design id";
-            return;
-        }
-
-
         // duplicate design to add to Universe
         ShipDesign* copy = new ShipDesign(*design);
 
-        bool success = universe.InsertShipDesignID(copy, new_design_id);
+        bool success = universe.InsertShipDesign(copy);
         if (!success) {
             ErrorLogger() << "Empire::AddShipDesign Unable to add new design to universe";
             delete copy;
             return;
         }
 
+        auto new_design_id = copy->ID();
         design_generic_ids[design->Name(false)] = new_design_id;
         TraceLogger() << "AddShipDesignsToUniverse added ship design "
                       << design->Name() << " to universe.";

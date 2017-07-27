@@ -314,12 +314,6 @@ std::string ServerApp::GetVisibleObjectName(std::shared_ptr<const UniverseObject
     return object->Name();
 }
 
-int ServerApp::GetNewObjectID()
-{ return m_universe.GenerateObjectID(); }
-
-int ServerApp::GetNewDesignID()
-{ return m_universe.GenerateDesignID(); }
-
 void ServerApp::Run() {
     DebugLogger() << "FreeOrion server waiting for network events";
     try {
@@ -410,8 +404,6 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     case Message::CLIENT_SAVE_DATA:         m_fsm->process_event(ClientSaveData(msg, player_connection));   break;
     case Message::PLAYER_CHAT:              m_fsm->process_event(PlayerChat(msg, player_connection));       break;
     case Message::DIPLOMACY:                m_fsm->process_event(Diplomacy(msg, player_connection));        break;
-    case Message::REQUEST_NEW_OBJECT_ID:    m_fsm->process_event(RequestObjectID(msg, player_connection));  break;
-    case Message::REQUEST_NEW_DESIGN_ID:    m_fsm->process_event(RequestDesignID(msg, player_connection));  break;
     case Message::MODERATOR_ACTION:         m_fsm->process_event(ModeratorAct(msg, player_connection));     break;
 
     case Message::ERROR_MSG:
@@ -1326,6 +1318,13 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
 
     // Reset the universe object for a new universe
     universe.ResetUniverse();
+
+    // Reset the object id manager for the new empires.
+    std::vector<int> empire_ids(player_setup_data.size());
+    std::transform(player_setup_data.begin(), player_setup_data.end(), empire_ids.begin(),
+                   [](const std::pair<int,PlayerSetupData> ii) { return ii.first; });
+    universe.ResetAllIDAllocation(empire_ids);
+
     // Add predefined ship designs to universe
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
     // Initialize empire objects for each player
@@ -3091,6 +3090,8 @@ void ServerApp::PostCombatProcessTurns() {
                                         player->GetClientType(),
                                         m_networking.PlayerIsHost(player_id));
     }
+
+    m_universe.ObfuscateIDGenerator();
 
     DebugLogger() << "ServerApp::PostCombatProcessTurns Sending turn updates to players";
     // send new-turn updates to all players

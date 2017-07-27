@@ -145,12 +145,11 @@ public:
     /** \name Structors */ //@{
     NewFleetOrder();
 
-    NewFleetOrder(int empire, const std::string& fleet_name, int fleet_id,
+    NewFleetOrder(int empire, const std::string& fleet_name,
                   int system_id, const std::vector<int>& ship_ids,
                   bool aggressive = false);
 
     NewFleetOrder(int empire, const std::vector<std::string>& fleet_names,
-                  const std::vector<int>& fleet_ids,
                   int system_id, const std::vector<std::vector<int>>& ship_id_groups,
                   const std::vector<bool>& aggressives);
     //@}
@@ -185,7 +184,8 @@ private:
 
     std::vector<std::string> m_fleet_names;
     int m_system_id;
-    std::vector<int> m_fleet_ids;
+    /** m_fleet_ids is mutable because ExecuteImpl generates the fleet ids. */
+    mutable std::vector<int> m_fleet_ids;
     std::vector<std::vector<int>> m_ship_id_groups;
     std::vector<bool> m_aggressives;
 
@@ -594,10 +594,13 @@ public:
 
     ShipDesignOrder(int empire, int design_id_to_erase, bool dummy);
 
-    ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design);
+    ShipDesignOrder(int empire, const ShipDesign& ship_design);
 
     ShipDesignOrder(int empire, int existing_design_id, const std::string& new_name, const std::string& new_description = "");
     //@}
+
+    int DesignID() const
+    { return m_design_id; }
 
 private:
     /**
@@ -620,7 +623,8 @@ private:
      */
     void ExecuteImpl() const override;
 
-    int m_design_id = INVALID_OBJECT_ID;
+    /// m_design_id is mutable to save the id for the server when the client calls ExecuteImpl.
+    mutable int m_design_id = INVALID_DESIGN_ID;
     boost::uuids::uuid m_uuid;
     bool m_update_name_or_description = false;
     bool m_delete_design_from_empire = false;

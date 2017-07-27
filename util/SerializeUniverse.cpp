@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include "Serialize.ipp"
 
+#include "../universe/IDAllocator.h"
 #include "../universe/Building.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
@@ -25,6 +26,8 @@ BOOST_CLASS_EXPORT(Ship)
 BOOST_CLASS_VERSION(Ship, 1)
 BOOST_CLASS_EXPORT(ShipDesign)
 BOOST_CLASS_VERSION(ShipDesign, 1)
+BOOST_CLASS_EXPORT(Universe)
+BOOST_CLASS_VERSION(Universe, 1)
 
 template <class Archive>
 void ObjectMap::serialize(Archive& ar, const unsigned int version)
@@ -114,9 +117,31 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         m_empire_latest_known_objects.swap(empire_latest_known_objects);
     }
 
-    DebugLogger() << "Universe::serialize : " << serializing_label << " last allocated ids";
-    ar  & BOOST_SERIALIZATION_NVP(m_last_allocated_object_id);
-    ar  & BOOST_SERIALIZATION_NVP(m_last_allocated_design_id);
+    if (version >= 1) {
+        DebugLogger() << "Universe::serialize : " << serializing_label << " id allocator version = " << version;
+        m_object_id_allocator->SerializeForEmpire(ar, 0 ,m_encoding_empire);
+        m_design_id_allocator->SerializeForEmpire(ar, 0 ,m_encoding_empire);
+    } else {
+        if (Archive::is_loading::value) {
+            int dummy_last_allocated_object_id;
+            int dummy_last_allocated_design_id;
+            DebugLogger() << "Universe::serialize : " << serializing_label << " legacy last allocated ids version = " << version;
+            ar  & boost::serialization::make_nvp("m_last_allocated_object_id", dummy_last_allocated_object_id);
+            DebugLogger() << "Universe::serialize : " << serializing_label << " legacy last allocated ids2";
+            ar  & boost::serialization::make_nvp("m_last_allocated_design_id", dummy_last_allocated_design_id);
+
+            DebugLogger() << "Universe::serialize : " << serializing_label << " legacy id allocator";
+            // For legacy loads pre-dating the use of the IDAllocator the server
+            // allocators need to be initialized with a list of the empires.
+            std::vector<int> allocating_empire_ids(m_empire_latest_known_objects.size());
+            std::transform(m_empire_latest_known_objects.begin(), m_empire_latest_known_objects.end(),
+                           allocating_empire_ids.begin(),
+                           [](const std::pair<int, ObjectMap> ii) { return ii.first; });
+
+            ResetAllIDAllocation(allocating_empire_ids);
+        }
+    }
+
     ar  & BOOST_SERIALIZATION_NVP(m_stat_records);
     DebugLogger() << "Universe::serialize : " << serializing_label << " " << m_stat_records.size() << " types of statistic";
 

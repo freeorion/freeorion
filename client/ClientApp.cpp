@@ -140,20 +140,6 @@ std::string ClientApp::GetVisibleObjectName(std::shared_ptr<const UniverseObject
     return name_text;
 }
 
-int ClientApp::GetNewObjectID() {
-    const auto msg = m_networking->SendSynchronousMessage(RequestNewObjectIDMessage());
-    if (!msg || msg->Text().empty())
-        throw std::runtime_error("ClientApp::GetNewObjectID() didn't get a new object ID");
-    return boost::lexical_cast<int>(msg->Text());
-}
-
-int ClientApp::GetNewDesignID() {
-    const auto msg = m_networking->SendSynchronousMessage(RequestNewDesignIDMessage());
-    if (!msg || msg->Text().empty())
-        throw std::runtime_error("ClientApp::GetNewDesignID() didn't get a new design ID");
-    return boost::lexical_cast<int>(msg->Text());
-}
-
 ClientApp* ClientApp::GetApp()
 { return static_cast<ClientApp*>(s_app); }
 
