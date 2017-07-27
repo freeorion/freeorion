@@ -859,9 +859,6 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     popup->AddMenuItem(GG::MenuItem(str(FlexibleFormat(UserString("ENC_LOOKUP")) % GetEmpire(clicked_empire_id)->Name()), false, false, pedia_lookup_action));
 
     popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
 }
 
 int PlayerListWnd::PlayerInRow(GG::ListBox::iterator it) const {

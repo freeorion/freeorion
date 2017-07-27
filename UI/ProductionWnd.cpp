@@ -732,9 +732,6 @@ namespace {
             popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_action));
 
             popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
         }
     };
 }

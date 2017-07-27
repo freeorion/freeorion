@@ -168,8 +168,5 @@ bool MultiIconValueIndicator::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
     }
     popup->Run();
 
-    // TODO remove when converting to shared_ptr
-    delete popup;
-
     return retval;
 }

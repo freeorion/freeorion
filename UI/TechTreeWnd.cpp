@@ -924,9 +924,6 @@ void TechTreeWnd::LayoutPanel::TechPanel::RClick(const GG::Pt& pt,
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(m_tech_name));
     popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
     popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
 }
 
 void TechTreeWnd::LayoutPanel::TechPanel::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -1979,9 +1976,6 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(tech_name));
     popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
     popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
 }
 
 void TechTreeWnd::TechListBox::TechPediaDisplay(const std::string& tech_name) {

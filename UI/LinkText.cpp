@@ -91,9 +91,6 @@ void LinkText::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),  false, false, copy_action));
 
     popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
 }
 
 void LinkText::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)

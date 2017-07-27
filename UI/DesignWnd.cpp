@@ -2543,9 +2543,6 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
                                     toggle_add_default_designs_at_game_start_action));
 
     popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
 }
 
 void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
@@ -2603,9 +2600,6 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
                                    toggle_add_all_saved_game_start_action));
 
     popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
 
 }
 

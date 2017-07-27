@@ -457,9 +457,6 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     }
 
     popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
 }
 
 void BuildingIndicator::EnableOrderIssuing(bool enable/* = true*/)

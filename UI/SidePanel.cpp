@@ -825,9 +825,6 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
             popup->AddMenuItem(GG::MenuItem(UserString("SP_RENAME_SYSTEM"), false, false, rename_action));
 
         popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
     }
 
     bool m_order_issuing_enabled;
@@ -2122,9 +2119,6 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
     }
 
     popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
 }
 
 void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)

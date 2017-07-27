@@ -610,13 +610,9 @@ void SitRepPanel::FilterClicked() {
     popup->AddMenuItem(GG::MenuItem((all_checked ? UserString("NONE") : UserString("ALL")),
                                    false, false, all_templates_action));
 
-    if (!popup->Run()) {
-        delete popup;
+    if (!popup->Run())
         return;
-    }
 
-    // TODO remove when converting to shared_ptr
-    delete popup;
     SetHiddenSitRepTemplateStringsInOptions(m_hidden_sitrep_templates);
 
     Update();
@@ -721,13 +717,7 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
                                    false, false, help_action));
 
     if (!popup->Run())
-    {
-        delete popup;
         return;
-    }
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
     Update();
 }
 

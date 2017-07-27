@@ -131,9 +131,6 @@ bool ResourcePanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_zoom_to_article_action));
     popup->Run();
 
-    // TODO remove when converting to shared_ptr
-    delete popup;
-
     return retval;
 }
 
