@@ -346,8 +346,8 @@ protected:
 
         popup->Run();
 
-        // TODO remove when converting to shared_ptr
-        delete popup;
+    // TODO remove when converting to shared_ptr
+    delete popup;
     }
 };
 
