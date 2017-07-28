@@ -156,7 +156,6 @@ void Universe::Clear() {
     m_marked_destroyed.clear();
 }
 
-
 void Universe::ResetAllIDAllocation(const std::vector<int>& empire_ids) {
 
     // Find the highest already allocated id for saved games that did not partition ids by client

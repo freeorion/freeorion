@@ -272,7 +272,7 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, co
                              << "IDAllocator()  server id = "
                              << m_server_id << " empire id = " << empire_id;
 
-    ar & BOOST_SERIALIZATION_NVP(m_invalid_id)
+    ar  & BOOST_SERIALIZATION_NVP(m_invalid_id)
         & BOOST_SERIALIZATION_NVP(m_temp_id)
         & BOOST_SERIALIZATION_NVP(m_stride)
         & BOOST_SERIALIZATION_NVP(m_server_id)
@@ -281,11 +281,11 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, co
 
     if (Archive::is_loading::value) {
         // Always load whatever is there.
-        ar & BOOST_SERIALIZATION_NVP(m_empire_id)
+        ar  & BOOST_SERIALIZATION_NVP(m_empire_id)
             & BOOST_SERIALIZATION_NVP(m_empire_id_to_next_assigned_object_id)
             & BOOST_SERIALIZATION_NVP(m_offset_to_empire_id);
 
-        DebugLogger(IDallocator) << "Deserialized [" << [this](){
+        DebugLogger(IDallocator) << "Deserialized [" << [this]() {
             std::stringstream ss;
             for (auto& empire_and_next_id : m_empire_id_to_next_assigned_object_id) {
                 ss << "empire = " << empire_and_next_id.first << " next id = " << empire_and_next_id.second << ", ";
@@ -300,7 +300,7 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, co
             if (m_empire_id != m_server_id)
                 ErrorLogger() << "An empire with id = " << m_empire_id << " which is not the server "
                               << "is attempting to serialize the IDAllocator for the server.";
-            ar & BOOST_SERIALIZATION_NVP(m_empire_id)
+            ar  & BOOST_SERIALIZATION_NVP(m_empire_id)
                 & BOOST_SERIALIZATION_NVP(m_empire_id_to_next_assigned_object_id)
                 & BOOST_SERIALIZATION_NVP(m_offset_to_empire_id);
         } else {
