@@ -3132,11 +3132,7 @@ void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const G
     const PartControl* part_control = dynamic_cast<const PartControl*>(wnd);
     if (part_control != m_part_control.get())
         return;
-    // SlotContentsAlteredSignal is connected to this->SetPart, which will
-    // delete m_part_control if it is not null.  The drop-accepting Wnd is
-    // responsible for deleting the accepted Wnd, so setting m_part_control = nullptr
-    // here prevents this->SetPart from deleting it prematurely
-    m_part_control = nullptr;
+    DetachChildAndReset(m_part_control);
     SlotContentsAlteredSignal(nullptr);
 }
 
@@ -3148,12 +3144,17 @@ void SlotControl::DragDropEnter(const GG::Pt& pt, std::map<const Wnd*, bool>& dr
 
     DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
 
+    // Note:  If this SlotControl is being dragged over this indicates the dragged part would
+    //        replace this part.
     if (drop_wnds_acceptable.begin()->second && m_part_control)
         m_part_control->Hide();
 }
 
 void SlotControl::DragDropLeave() {
-    if (m_part_control)
+    // Note:  If m_part_control is being dragged, this does nothing, because it is detached.
+    //        If this SlotControl is being dragged over this indicates the dragged part would
+    //        replace this part.
+    if (m_part_control && !GG::GUI::GetGUI()->DragDropWnd(m_part_control.get()))
         m_part_control->Show();
 }
 
