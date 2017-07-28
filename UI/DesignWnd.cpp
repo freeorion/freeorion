@@ -3045,22 +3045,17 @@ void SlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter
     if (std::distance(first, last) != 1)
         return;
 
-    bool acceptable_part_found = false;
     for (DropsAcceptableIter it = first; it != last; ++it) {
-        if (!acceptable_part_found && it->first->DragDropDataType() == PART_CONTROL_DROP_TYPE_STRING) {
-            const auto part_control = boost::polymorphic_downcast<const PartControl* const>(it->first);
-            const PartType* part_type = part_control->Part();
-            if (part_type &&
-                part_type->CanMountInSlotType(m_slot_type) &&
-                part_control != m_part_control.get())
-            {
-                it->second = true;
-                acceptable_part_found = true;
-            } else {
-                it->second = false;
-            }
-        } else {
-            it->second = false;
+        if (it->first->DragDropDataType() != PART_CONTROL_DROP_TYPE_STRING)
+            continue;
+        const auto part_control = boost::polymorphic_downcast<const PartControl* const>(it->first);
+        const PartType* part_type = part_control->Part();
+        if (part_type &&
+            part_type->CanMountInSlotType(m_slot_type) &&
+            part_control != m_part_control.get())
+        {
+            it->second = true;
+            return;
         }
     }
 }
