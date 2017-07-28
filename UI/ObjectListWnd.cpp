@@ -556,8 +556,7 @@ private:
             m_label(GG::Wnd::Create<CUILabel>(UserString(m_condition_key), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP))
         {}
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
             GG::ListBox::Row::CompleteConstruction();
 
             SetChildClippingMode(ClipToClient);
@@ -581,8 +580,7 @@ private:
             m_label = GG::Wnd::Create<CUILabel>(label, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
         }
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
             GG::ListBox::Row::CompleteConstruction();
 
             SetChildClippingMode(ClipToClient);
@@ -1516,8 +1514,7 @@ public:
         m_indent_init(indent)
     {}
 
-    void CompleteConstruction() override
-    {
+    void CompleteConstruction() override {
         GG::ListBox::Row::CompleteConstruction();
 
         SetName("ObjectRow");
@@ -1735,8 +1732,7 @@ public:
         m_panel = GG::Wnd::Create<ObjectHeaderPanel>(w, h);
     }
 
-    void CompleteConstruction() override
-    {
+    void CompleteConstruction() override {
         GG::ListBox::Row::CompleteConstruction();
 
         push_back(m_panel);

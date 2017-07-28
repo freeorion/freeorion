@@ -113,8 +113,7 @@ namespace {
                 }
             }
 
-            void CompleteConstruction() override
-            {
+            void CompleteConstruction() override {
                 GG::ListBox::Row::CompleteConstruction();
                 push_back(m_label);
                 push_back(GG::Wnd::Create<Spacer>());
@@ -226,8 +225,7 @@ namespace {
             m_initial_disabled(disabled)
         {}
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
             PlayerRow::CompleteConstruction();
 
             // human / AI / observer indicator / selector
@@ -353,8 +351,7 @@ namespace {
             m_initial_disabled(disabled)
         {}
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
             PlayerRow::CompleteConstruction();
 
             // human / AI / observer indicator / selector
@@ -474,8 +471,7 @@ namespace {
             PlayerRow()
         {}
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
             PlayerRow::CompleteConstruction();
 
             auto type_drop = GG::Wnd::Create<TypeSelector>(GG::X(90), PlayerRowHeight(), Networking::INVALID_CLIENT_TYPE, false);

@@ -48,8 +48,7 @@ public:
         m_census_val = GG::Wnd::Create<CUILabel>(DoubleToString(census_val, num_digits, false), GG::FORMAT_RIGHT);
     }
 
-    void CompleteConstruction() override
-    {
+    void CompleteConstruction() override {
         GG::Control::CompleteConstruction();
 
         SetChildClippingMode(ClipToClient);

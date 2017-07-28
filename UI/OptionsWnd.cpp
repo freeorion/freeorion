@@ -232,8 +232,7 @@ namespace {
             m_hscroll(nullptr)
         {}
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
             CUIWnd::CompleteConstruction();
 
             GG::Y top = GG::Y1;
@@ -328,8 +327,7 @@ namespace {
                 m_contents = GG::Wnd::Create<RowContentsWnd>(w, h, contents, indentation);
         }
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
             GG::ListBox::Row::CompleteConstruction();
             if (m_contents)
                 push_back(m_contents);

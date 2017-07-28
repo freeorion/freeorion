@@ -641,8 +641,7 @@ namespace {
                 SetDragDropDataType(SHIP_DROP_TYPE_STRING);
         }
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
             GG::ListBox::Row::CompleteConstruction();
 
             m_panel = GG::Wnd::Create<ShipDataPanel>(Width(), Height(), m_ship_id);
@@ -1752,8 +1751,7 @@ namespace {
             SetChildClippingMode(ClipToClient);
         }
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
             GG::ListBox::Row::CompleteConstruction();
 
             m_panel = GG::Wnd::Create<FleetDataPanel>(Width(), Height(), m_fleet_id);

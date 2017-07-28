@@ -642,8 +642,7 @@ namespace {
             m_value_control = GG::Wnd::Create<CUILabel>(value_text, GG::FORMAT_RIGHT);
         }
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
             GG::ListBox::Row::CompleteConstruction();
 
             SetMargin(EDGE_PAD);

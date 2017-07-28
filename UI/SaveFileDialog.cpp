@@ -382,8 +382,7 @@ public:
         SaveFileRow(columns, "")
     {}
 
-    void CompleteConstruction() override
-    {
+    void CompleteConstruction() override {
         SaveFileRow::CompleteConstruction();
 
         SetMargin(ROW_MARGIN);
@@ -402,8 +401,7 @@ public:
     SaveFileDirectoryRow(const std::shared_ptr<std::vector<SaveFileColumn>>& columns, const std::string& directory) :
         SaveFileRow(columns, directory) {}
 
-    void CompleteConstruction() override
-    {
+    void CompleteConstruction() override {
         SaveFileRow::CompleteConstruction();
         SetMargin(ROW_MARGIN);
     }
@@ -460,8 +458,7 @@ public:
         SetBrowseModeTime(tooltip_delay);
     }
 
-    void CompleteConstruction() override
-    {
+    void CompleteConstruction() override {
         SaveFileRow::CompleteConstruction();
 
         SetMargin (ROW_MARGIN);

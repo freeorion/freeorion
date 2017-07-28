@@ -226,8 +226,7 @@ namespace {
             m_link_text(nullptr)
         {}
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
             GG::Control::CompleteConstruction();
 
             SetChildClippingMode(ClipToClient);
@@ -329,8 +328,7 @@ namespace {
             SetName("SitRepRow");
         }
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
             GG::ListBox::Row::CompleteConstruction();
 
             SetMargin(sitrep_row_margin);

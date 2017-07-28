@@ -1398,8 +1398,7 @@ namespace {
             Init(species_name, localized_name, species_desc, w, h, species_icon);
         };
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
             GG::ListBox::Row::CompleteConstruction();
 
             push_back(m_icon);
@@ -1524,8 +1523,7 @@ namespace {
             m_color_square(GG::Wnd::Create<ColorSquare>(color, h))
         {}
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
             GG::ListBox::Row::CompleteConstruction();
             push_back(m_color_square);
         }

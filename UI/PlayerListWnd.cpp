@@ -121,8 +121,7 @@ namespace {
             m_selected(false)
         {}
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
             GG::Control::CompleteConstruction();
 
             SetChildClippingMode(ClipToClient);
@@ -468,8 +467,7 @@ namespace {
             SetChildClippingMode(ClipToClient);
         }
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
 
             GG::ListBox::Row::CompleteConstruction();
             m_panel = GG::Wnd::Create<PlayerDataPanel>(Width(), Height(), m_player_id);

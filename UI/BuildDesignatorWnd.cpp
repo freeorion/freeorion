@@ -368,8 +368,7 @@ namespace {
             //std::cout << "ProductionItemRow(building) height: " << Value(Height()) << std::endl;
         };
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
             GG::ListBox::Row::CompleteConstruction();
 
             push_back(m_panel);

@@ -30,8 +30,7 @@ public:
                     ClientUI::TextColor())
     {}
 
-    void CompleteConstruction() override
-    {
+    void CompleteConstruction() override {
         GG::Spin<T>::CompleteConstruction();
 
         GG::Spin<T>::ValueChangedSignal.connect(detail::PlayValueChangedSound());

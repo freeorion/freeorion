@@ -17,8 +17,7 @@ struct PromptRow : GG::ListBox::Row {
         m_prompt(GG::Wnd::Create<CUILabel>(prompt_str, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK))
     {}
 
-    void CompleteConstruction() override
-    {
+    void CompleteConstruction() override {
         GG::ListBox::Row::CompleteConstruction();        //std::cout << "PromptRow(" << w << ", ...)" << std::endl;
 
         m_prompt->MoveTo(GG::Pt(GG::X(2), GG::Y(2)));

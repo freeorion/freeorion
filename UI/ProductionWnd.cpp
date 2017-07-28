@@ -83,8 +83,7 @@ namespace {
             m_label(GG::Wnd::Create<QuantLabel>(m_quant, designID, nwidth, h, inProgress, amBlockType))
         {}
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
             GG::ListBox::Row::CompleteConstruction();
 
             push_back(m_label);
@@ -366,8 +365,7 @@ namespace {
             RequirePreRender();
         }
 
-        void CompleteConstruction() override
-        {
+        void CompleteConstruction() override {
             GG::ListBox::Row::CompleteConstruction();
 
             push_back(panel);
@@ -753,8 +751,7 @@ public:
         m_queue_lb(nullptr)
     {}
 
-    void CompleteConstruction() override
-    {
+    void CompleteConstruction() override {
         m_queue_lb = GG::Wnd::Create<ProdQueueListBox>();
         m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
         m_queue_lb->SetName("ProductionQueue ListBox");
