@@ -971,7 +971,7 @@ void Wnd::SetDefaultBrowseInfoWnd(const std::shared_ptr<BrowseInfoWnd>& browse_i
 Wnd::DragDropRenderingState Wnd::GetDragDropRenderingState() const
 {
     DragDropRenderingState retval = NOT_DRAGGED;
-    if (GUI::GetGUI()->DragDropWnd(shared_from_this())) {
+    if (GUI::GetGUI()->DragDropWnd(this)) {
         if (!Dragable() && !GUI::GetGUI()->RenderingDragDropWnds())
              retval = IN_PLACE_COPY;
         else if (GUI::GetGUI()->AcceptedDragDropWnd(this))

@@ -1025,8 +1025,17 @@ unsigned int GUI::MinDragDistance() const
 bool GUI::DragWnd(const Wnd* wnd, unsigned int mouse_button) const
 { return wnd && wnd == LockAndResetIfExpired(m_impl->m_drag_wnds[mouse_button < 3 ? mouse_button : 0]).get(); }
 
-bool GUI::DragDropWnd(const std::shared_ptr<const Wnd>& wnd) const
-{ return wnd && m_impl->m_drag_drop_wnds.find(std::const_pointer_cast<Wnd>(wnd)) != m_impl->m_drag_drop_wnds.end(); }
+bool GUI::DragDropWnd(const Wnd* wnd) const
+{
+    if (!wnd)
+        return false;
+    try {
+        auto ptr = std::const_pointer_cast<Wnd>(wnd->shared_from_this());
+        return m_impl->m_drag_drop_wnds.count(ptr);
+    } catch (const std::bad_weak_ptr&) {
+        return false;
+    }
+}
 
 bool GUI::AcceptedDragDropWnd(const Wnd* wnd) const
 {
