@@ -222,8 +222,7 @@ namespace {
         m_turns_remaining_text->SetChildClippingMode(ClipToClient);
     }
 
-    void QueueTechPanel::CompleteConstruction()
-    {
+    void QueueTechPanel::CompleteConstruction() {
         GG::Control::CompleteConstruction();
         AttachChild(m_name_text);
         AttachChild(m_RPs_and_turns_text);
@@ -444,8 +443,7 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
         boost::bind(&ResearchWnd::AddTechsToQueueSlot, this, _1, _2));
 }
 
-void ResearchWnd::CompleteConstruction()
-{
+void ResearchWnd::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
 
     AttachChild(m_research_info_panel);

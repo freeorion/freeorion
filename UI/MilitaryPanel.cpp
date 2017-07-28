@@ -34,8 +34,7 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     m_multi_meter_status_bar(nullptr)
 {}
 
-void MilitaryPanel::CompleteConstruction()
-{
+void MilitaryPanel::CompleteConstruction() {
     AccordionPanel::CompleteConstruction();
 
     SetName("MilitaryPanel");

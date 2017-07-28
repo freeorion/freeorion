@@ -1143,8 +1143,7 @@ CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, 
     m_row_label(GG::Wnd::Create<CUILabel>(row_text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP))
 {}
 
-void CUISimpleDropDownListRow::CompleteConstruction()
-{
+void CUISimpleDropDownListRow::CompleteConstruction() {
     GG::ListBox::Row::CompleteConstruction();
 
     push_back(m_row_label);
@@ -1207,8 +1206,7 @@ StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
     m_show_signs[1] = showsign1;
 }
 
-void StatisticIcon::CompleteConstruction()
-{
+void StatisticIcon::CompleteConstruction() {
     GG::Control::CompleteConstruction();
 
     SetName("StatisticIcon");
@@ -1665,8 +1663,7 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
     m_init_file_filters(std::forward<std::vector<std::pair<std::string, std::string>>>(types))
 {}
 
-void FileDlg::CompleteConstruction()
-{
+void FileDlg::CompleteConstruction() {
     GG::FileDlg::CompleteConstruction();
 
     SetFileFilters(m_init_file_filters);

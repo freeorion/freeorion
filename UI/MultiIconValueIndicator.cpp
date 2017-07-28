@@ -39,8 +39,7 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<int>
     m_object_ids(object_ids)
 {}
 
-void MultiIconValueIndicator::CompleteConstruction()
-{
+void MultiIconValueIndicator::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
 
     SetName("MultiIconValueIndicator");

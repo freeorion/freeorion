@@ -275,8 +275,7 @@ TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) 
     CUIWnd(UserString("TECH_DISPLAY"), GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP, config_name)
 {}
 
-void TechTreeWnd::TechTreeControls::CompleteConstruction()
-{
+void TechTreeWnd::TechTreeControls::CompleteConstruction() {
    const int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
     const boost::filesystem::path icon_dir = ClientUI::ArtDir() / "icons" / "tech" / "controls";
 
@@ -715,8 +714,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 }
 
-void TechTreeWnd::LayoutPanel::TechPanel::CompleteConstruction()
-{
+void TechTreeWnd::LayoutPanel::TechPanel::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
     Update();
 }
@@ -1093,8 +1091,7 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     m_zoom_out_button(nullptr)
 {}
 
-void TechTreeWnd::LayoutPanel::CompleteConstruction()
-{
+void TechTreeWnd::LayoutPanel::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
 
     SetChildClippingMode(ClipToClient);
@@ -1652,8 +1649,7 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
     m_tech(tech_name)
 {}
 
-void TechTreeWnd::TechListBox::TechRow::CompleteConstruction()
-{
+void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
 
     CUIListBox::Row::CompleteConstruction();
 

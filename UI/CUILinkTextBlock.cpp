@@ -12,8 +12,7 @@ CUILinkTextBlock::CUILinkTextBlock(const std::string& str, const std::shared_ptr
                                                       GG::MULTI_NO_VSCROLL))
 {}
 
-void CUILinkTextBlock::CompleteConstruction()
-{
+void CUILinkTextBlock::CompleteConstruction() {
     GG::BlockControl::CompleteConstruction();
 
     AttachChild(m_link_text);

@@ -53,8 +53,7 @@ ServerConnectWnd::ServerConnectWnd() :
     m_cancel_bn(nullptr)
 {}
 
-void ServerConnectWnd::CompleteConstruction()
-{
+void ServerConnectWnd::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     Sound::TempUISoundDisabler sound_disabler;

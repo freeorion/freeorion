@@ -229,8 +229,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
 
 }
 
-void FleetButton::CompleteConstruction()
-{
+void FleetButton::CompleteConstruction() {
     Button::CompleteConstruction();
 
     for (auto& icon: m_icons) {

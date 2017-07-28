@@ -2393,8 +2393,7 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
         boost::bind(&FleetDetailPanel::UniverseObjectDeleted, this, _1));
 }
 
-void FleetDetailPanel::CompleteConstruction()
-{
+void FleetDetailPanel::CompleteConstruction() {
     AttachChild(m_ships_lb);
     DoLayout();
 }
@@ -2691,8 +2690,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
     }
 }
 
-void FleetWnd::CompleteConstruction()
-{
+void FleetWnd::CompleteConstruction() {
     Sound::TempUISoundDisabler sound_disabler;
 
     // add fleet aggregate stat icons

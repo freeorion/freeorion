@@ -20,8 +20,7 @@ About::About():
            GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL)
 {}
 
-void About::CompleteConstruction()
-{
+void About::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     m_done_btn = Wnd::Create<CUIButton>(UserString("DONE"));

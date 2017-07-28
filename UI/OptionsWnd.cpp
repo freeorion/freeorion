@@ -450,8 +450,7 @@ OptionsWnd::OptionsWnd():
     m_done_button(nullptr)
 {}
 
-void OptionsWnd::CompleteConstruction()
-{
+void OptionsWnd::CompleteConstruction() {
     m_done_button = Wnd::Create<CUIButton>(UserString("DONE"));
     // FIXME: PAGE_WIDTH is needed to prevent triggering an assert within the TabBar class.
     // The placement of the tab register buttons assumes that the whole TabWnd is at least

@@ -34,8 +34,7 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     m_multi_meter_status_bar(nullptr)
 {}
 
-void PopulationPanel::CompleteConstruction()
-{
+void PopulationPanel::CompleteConstruction() {
     AccordionPanel::CompleteConstruction();
     SetName("PopulationPanel");
 

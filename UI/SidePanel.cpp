@@ -903,8 +903,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_star_type(star_type)
 {}
 
-void SidePanel::PlanetPanel::CompleteConstruction()
-{
+void SidePanel::PlanetPanel::CompleteConstruction() {
     GG::Control::CompleteConstruction();
 
     SetName(UserString("PLANET_PANEL"));
@@ -2825,8 +2824,7 @@ SidePanel::SidePanel(const std::string& config_name) :
     m_selection_enabled(false)
 {}
 
-void SidePanel::CompleteConstruction()
-{
+void SidePanel::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     m_planet_panel_container = GG::Wnd::Create<PlanetPanelContainer>();

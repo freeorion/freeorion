@@ -655,8 +655,7 @@ SaveFileDialog::SaveFileDialog (bool load) :
     m_extension = MP_SAVE_FILE_EXTENSION;
 }
 
-void SaveFileDialog::CompleteConstruction()
-{
+void SaveFileDialog::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
     Init();
 }

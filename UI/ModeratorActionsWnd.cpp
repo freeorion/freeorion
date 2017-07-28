@@ -45,8 +45,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
 {
 }
 
-void ModeratorActionsWnd::CompleteConstruction()
-{
+void ModeratorActionsWnd::CompleteConstruction() {
     ClientUI* ui = ClientUI::GetClientUI();
     GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
 

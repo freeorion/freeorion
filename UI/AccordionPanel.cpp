@@ -12,8 +12,7 @@ AccordionPanel::AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left /*= fals
     m_border_margin(0)
 {}
 
-void AccordionPanel::CompleteConstruction()
-{
+void AccordionPanel::CompleteConstruction() {
     GG::Control::CompleteConstruction();
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 

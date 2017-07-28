@@ -324,8 +324,7 @@ MessageWnd::MessageWnd(const std::string& config_name) :
     m_history_position()
 {}
 
-void MessageWnd::CompleteConstruction()
-{
+void MessageWnd::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     m_display = GG::Wnd::Create<CUIMultiEdit>("", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE | GG::MULTI_INTEGRAL_HEIGHT);

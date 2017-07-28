@@ -32,8 +32,7 @@ TextBrowseWnd::TextBrowseWnd(const std::string& title_text, const std::string& m
     m_main_text->Resize(m_main_text->MinSize());
 }
 
-void TextBrowseWnd::CompleteConstruction()
-{
+void TextBrowseWnd::CompleteConstruction() {
     GG::BrowseInfoWnd::CompleteConstruction();
 
     AttachChild(m_main_text);

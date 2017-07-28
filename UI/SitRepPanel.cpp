@@ -388,8 +388,7 @@ SitRepPanel::SitRepPanel(const std::string& config_name) :
     m_hidden_sitrep_templates(HiddenSitRepTemplateStringsFromOptions())
 {}
 
-void SitRepPanel::CompleteConstruction()
-{
+void SitRepPanel::CompleteConstruction() {
     Sound::TempUISoundDisabler sound_disabler;
     SetChildClippingMode(DontClip);
 

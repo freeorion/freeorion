@@ -161,8 +161,7 @@ CUIWnd::CUIWnd(const std::string& wnd_name, GG::Flags<GG::WndFlag> flags, const 
     m_config_name(AddWindowOptions(config_name, INVALID_POS, INVALID_POS, 1, 1, visible, false, false))
 { SetName(wnd_name); }
 
-void CUIWnd::CompleteConstruction()
-{
+void CUIWnd::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
     Init();
     ValidatePosition();
@@ -856,8 +855,7 @@ CUIEditWnd::CUIEditWnd(GG::X w, const std::string& prompt_text, const std::strin
     m_edit = GG::Wnd::Create<CUIEdit>(edit_text);
 }
 
-void CUIEditWnd::CompleteConstruction()
-{
+void CUIEditWnd::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     m_ok_bn = GG::Wnd::Create<CUIButton>(UserString("OK"));

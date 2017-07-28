@@ -1034,8 +1034,7 @@ FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPL
     m_condition_widget = GG::Wnd::Create<ConditionWidget>(GG::X(3), GG::Y(3), condition_filter);
 }
 
-void FilterDialog::CompleteConstruction()
-{
+void FilterDialog::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     m_filters_layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X(390), GG::Y(90), 4, 7);
@@ -2301,8 +2300,7 @@ ObjectListWnd::ObjectListWnd(const std::string& config_name) :
     m_collapse_button(nullptr)
 {}
 
-void ObjectListWnd::CompleteConstruction()
-{
+void ObjectListWnd::CompleteConstruction() {
     m_list_box = GG::Wnd::Create<ObjectListBox>();
     m_list_box->SetHiliteColor(GG::CLR_ZERO);
     m_list_box->SetStyle(GG::LIST_NOSORT);

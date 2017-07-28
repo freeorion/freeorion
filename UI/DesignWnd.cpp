@@ -779,8 +779,7 @@ PartControl::PartControl(const PartType* part) :
     m_part(part)
 {}
 
-void PartControl::CompleteConstruction()
-{
+void PartControl::CompleteConstruction() {
     GG::Control::CompleteConstruction();
     if (!m_part)
         return;
@@ -1350,8 +1349,7 @@ DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
     m_superfluous_parts_button(nullptr)
 {}
 
-void DesignWnd::PartPalette::CompleteConstruction()
-{
+void DesignWnd::PartPalette::CompleteConstruction() {
     //TempUISoundDisabler sound_disabler;     // should be redundant with disabler in DesignWnd::DesignWnd.  uncomment if this is not the case
     SetChildClippingMode(ClipToClient);
 
@@ -1794,8 +1792,7 @@ BasesListBox::HullAndNamePanel::HullAndNamePanel(GG::X w, GG::Y h, const std::st
     m_name = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_WORDBREAK | GG::FORMAT_CENTER | GG::FORMAT_TOP);
 }
 
-void BasesListBox::HullAndNamePanel::CompleteConstruction()
-{
+void BasesListBox::HullAndNamePanel::CompleteConstruction() {
     GG::Control::CompleteConstruction();
     AttachChild(m_graphic);
     AttachChild(m_name);
@@ -1832,8 +1829,7 @@ BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h, const std::stri
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 }
 
-void BasesListBox::BasesListBoxRow::CompleteConstruction()
-{
+void BasesListBox::BasesListBoxRow::CompleteConstruction() {
     CUIListBox::Row::CompleteConstruction();
     push_back(m_hull_panel);
 }
@@ -1885,8 +1881,7 @@ BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h, c
     m_parts(parts)
 {}
 
-void BasesListBox::HullAndPartsListBoxRow::CompleteConstruction()
-{
+void BasesListBox::HullAndPartsListBoxRow::CompleteConstruction() {
     BasesListBoxRow::CompleteConstruction();
     SetDragDropDataType(HULL_PARTS_ROW_DROP_TYPE_STRING);
 }
@@ -1897,8 +1892,7 @@ BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(
     m_design_id(design.ID())
 {}
 
-void BasesListBox::CompletedDesignListBoxRow::CompleteConstruction()
-{
+void BasesListBox::CompletedDesignListBoxRow::CompleteConstruction() {
     BasesListBoxRow::CompleteConstruction();
     SetDragDropDataType(COMPLETE_DESIGN_ROW_DROP_STRING);
 }
@@ -1914,8 +1908,7 @@ BasesListBox::BasesListBox(const BasesListBox::AvailabilityManager& availabiliti
     m_availabilities_state(availabilities_state)
 {}
 
-void BasesListBox::CompleteConstruction()
-{
+void BasesListBox::CompleteConstruction() {
     QueueListBox::CompleteConstruction();
 
     InitRowSizes();
@@ -2668,8 +2661,7 @@ SavedDesignsListBox::SavedDesignListBoxRow::SavedDesignListBoxRow(
     m_design_uuid(design.UUID())
 {}
 
-void SavedDesignsListBox::SavedDesignListBoxRow::CompleteConstruction()
-{
+void SavedDesignsListBox::SavedDesignListBoxRow::CompleteConstruction() {
     BasesListBoxRow::CompleteConstruction();
     SetDragDropDataType(SAVED_DESIGN_ROW_DROP_STRING);
 }
@@ -2769,8 +2761,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_availabilities_state{false, true, false}
 {}
 
-void DesignWnd::BaseSelector::CompleteConstruction()
-{
+void DesignWnd::BaseSelector::CompleteConstruction() {
     auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
     m_obsolete_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_obsolete_button);
@@ -3017,8 +3008,7 @@ SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
     m_background(nullptr)
 {}
 
-void SlotControl::CompleteConstruction()
-{
+void SlotControl::CompleteConstruction() {
     GG::Control::CompleteConstruction();
 
     m_background = GG::Wnd::Create<GG::StaticGraphic>(SlotBackgroundTexture(m_slot_type), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
@@ -3471,8 +3461,7 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     m_disabled_by_part_conflict(false)
 {}
 
-void DesignWnd::MainPanel::CompleteConstruction()
-{
+void DesignWnd::MainPanel::CompleteConstruction() {
     SetChildClippingMode(ClipToClient);
 
     m_design_name_label = GG::Wnd::Create<CUILabel>(UserString("DESIGN_WND_DESIGN_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
@@ -4363,8 +4352,7 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     m_main_panel(nullptr)
 {}
 
-void DesignWnd::CompleteConstruction()
-{
+void DesignWnd::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
 
     Sound::TempUISoundDisabler sound_disabler;

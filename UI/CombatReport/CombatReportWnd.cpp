@@ -210,8 +210,7 @@ CombatReportWnd::CombatReportWnd(const std::string& config_name) :
     m_impl(nullptr)
 {}
 
-void CombatReportWnd::CompleteConstruction()
-{
+void CombatReportWnd::CompleteConstruction() {
     m_impl.reset(new Impl(*this));
     CUIWnd::CompleteConstruction();
 }

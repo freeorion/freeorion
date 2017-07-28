@@ -967,8 +967,7 @@ MapWnd::MapWnd() :
     m_zoom_slider(nullptr)
 {}
 
-void MapWnd::CompleteConstruction()
-{
+void MapWnd::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
 
     SetName("MapWnd");

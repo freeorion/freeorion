@@ -551,8 +551,7 @@ PlayerListWnd::PlayerListWnd(const std::string& config_name) :
     m_player_list(nullptr)
 {}
 
-void PlayerListWnd::CompleteConstruction()
-{
+void PlayerListWnd::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     m_player_list = GG::Wnd::Create<PlayerListBox>();

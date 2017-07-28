@@ -559,8 +559,7 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
 {
 }
 
-void EncyclopediaDetailPanel::CompleteConstruction()
-{
+void EncyclopediaDetailPanel::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     const int PTS = ClientUI::Pts();

@@ -544,8 +544,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS)
 {}
 
-void GalaxySetupPanel::CompleteConstruction()
-{
+void GalaxySetupPanel::CompleteConstruction() {
     GG::Control::CompleteConstruction();
 
     Sound::TempUISoundDisabler sound_disabler;
@@ -955,8 +954,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
     CUIWnd(UserString("GSETUP_WINDOW_TITLE"), GG::INTERACTIVE | GG::MODAL)
 {}
 
-void GalaxySetupWnd::CompleteConstruction()
-{
+void GalaxySetupWnd::CompleteConstruction() {
     Sound::TempUISoundDisabler sound_disabler;
 
     m_galaxy_setup_panel = GG::Wnd::Create<GalaxySetupPanel>();

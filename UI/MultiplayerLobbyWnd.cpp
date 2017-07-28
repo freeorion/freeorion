@@ -541,8 +541,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     m_start_conditions_text(nullptr)
 {}
 
-void MultiPlayerLobbyWnd::CompleteConstruction()
-{
+void MultiPlayerLobbyWnd::CompleteConstruction() {
     Sound::TempUISoundDisabler sound_disabler;
 
     m_chat_input_edit = GG::Wnd::Create<CUIEdit>("");
@@ -626,8 +625,7 @@ MultiPlayerLobbyWnd::PlayerLabelRow::PlayerLabelRow(GG::X width /* = GG::X(580)*
     GG::ListBox::Row(width, PlayerRowHeight(), "")
 {}
 
-void MultiPlayerLobbyWnd::PlayerLabelRow::CompleteConstruction()
-{
+void MultiPlayerLobbyWnd::PlayerLabelRow::CompleteConstruction() {
 
     GG::ListBox::Row::CompleteConstruction();
 

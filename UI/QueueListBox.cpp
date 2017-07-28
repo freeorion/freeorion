@@ -56,8 +56,7 @@ QueueListBox::QueueListBox(const boost::optional<std::string>& drop_type_str, co
         AllowDropType(*drop_type_str);
 }
 
-void QueueListBox::CompleteConstruction()
-{
+void QueueListBox::CompleteConstruction() {
     CUIListBox::CompleteConstruction();
 
     SetNumCols(1);

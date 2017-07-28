@@ -29,8 +29,7 @@ InGameMenu::InGameMenu():
            GG::INTERACTIVE | GG::MODAL)
 {}
 
-void InGameMenu::CompleteConstruction()
-{
+void InGameMenu::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     m_save_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_SAVE"));

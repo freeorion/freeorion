@@ -26,8 +26,7 @@ SpecialsPanel::SpecialsPanel(GG::X w, int object_id) :
     SetName("SpecialsPanel");
 }
 
-void SpecialsPanel::CompleteConstruction()
-{
+void SpecialsPanel::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
     Update();
 }

@@ -39,8 +39,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     m_multi_meter_status_bar(nullptr)
 {}
 
-void ResourcePanel::CompleteConstruction()
-{
+void ResourcePanel::CompleteConstruction() {
     AccordionPanel::CompleteConstruction();
 
     SetName("ResourcePanel");

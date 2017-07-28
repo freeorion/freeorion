@@ -808,8 +808,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     m_empire_shown_id(ALL_EMPIRES)
 {}
 
-void ProductionWnd::CompleteConstruction()
-{
+void ProductionWnd::CompleteConstruction() {
      GG::Wnd::CompleteConstruction();
    //DebugLogger() << "ProductionWindow:  app-width: "<< GetOptionsDB().Get<int>("app-width")
     //              << " ; windowed width: " << GetOptionsDB().Get<int>("app-width-windowed");

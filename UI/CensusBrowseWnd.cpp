@@ -136,8 +136,7 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<s
     m_tag_counts(tag_counts)
 {}
 
-void CensusBrowseWnd::CompleteConstruction()
-{
+void CensusBrowseWnd::CompleteConstruction() {
     GG::BrowseInfoWnd::CompleteConstruction();
 
     const GG::Y ROW_HEIGHT(MeterIconSize().y);

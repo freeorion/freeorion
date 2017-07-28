@@ -532,8 +532,7 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(const std::string& config_name)
     m_empire_id(ALL_EMPIRES)
 {}
 
-void BuildDesignatorWnd::BuildSelector::CompleteConstruction()
-{
+void BuildDesignatorWnd::BuildSelector::CompleteConstruction() {
     // create build type toggle buttons (ship, building, all)
     m_build_type_buttons[BT_BUILDING] = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_build_type_buttons[BT_BUILDING]);
@@ -964,8 +963,7 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     m_side_panel(nullptr)
 {}
 
-void BuildDesignatorWnd::CompleteConstruction()
-{
+void BuildDesignatorWnd::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
 
     m_enc_detail_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(

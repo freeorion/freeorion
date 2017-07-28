@@ -28,8 +28,7 @@ ResourceBrowseWnd::ResourceBrowseWnd(const std::string& title_text, const std::s
     m_offset(GG::X0, ICON_BROWSE_ICON_HEIGHT/2)
 {}
 
-void ResourceBrowseWnd::CompleteConstruction()
-{
+void ResourceBrowseWnd::CompleteConstruction() {
     GG::BrowseInfoWnd::CompleteConstruction();
 
     const GG::Y ROW_HEIGHT(ClientUI::Pts()*4/3);

@@ -211,8 +211,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
         GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + wrapped_system_name + "</s>", font, text_color);
 }
 
-void OwnerColoredSystemName::CompleteConstruction()
-{
+void OwnerColoredSystemName::CompleteConstruction() {
     GG::Control::CompleteConstruction();
 
     AttachChild(m_text);
@@ -252,8 +251,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     m_showing_name(false)
 {}
 
-void SystemIcon::CompleteConstruction()
-{
+void SystemIcon::CompleteConstruction() {
     GG::Control::CompleteConstruction();
 
     ClientUI* ui = ClientUI::GetClientUI();
