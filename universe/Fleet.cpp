@@ -1164,9 +1164,7 @@ bool Fleet::Blockaded() const {
     if (!system)
         return false;
 
-    const std::map<int, bool> adjacent_system_IDs = system->StarlanesWormholes();
-
-    for (const auto& target_system : adjacent_system_IDs) {
+    for (const auto& target_system : system->StarlanesWormholes()) {
         if (BlockadedAtSystem(this->SystemID(), target_system.first))
             return true;
     }

@@ -319,7 +319,6 @@ void FleetButton::LayoutIcons() {
     if (m_fleet_blockaded) {
         std::shared_ptr<Fleet> fleet;
         std::shared_ptr<System> current_system;
-        std::map<int, bool> adjacent_system_IDs;
         std::string available_exits = "";
         int available_exits_count = 0;
 
@@ -329,9 +328,8 @@ void FleetButton::LayoutIcons() {
         else return;
 
         current_system = GetSystem(fleet->SystemID());
-        adjacent_system_IDs = current_system->StarlanesWormholes();
 
-        for (const auto& target_system_id : adjacent_system_IDs) {
+        for (const auto& target_system_id : current_system->StarlanesWormholes()) {
             if (fleet->BlockadedAtSystem(fleet->SystemID(), target_system_id.first))
                 continue;
 
