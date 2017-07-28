@@ -3018,8 +3018,6 @@ void SlotControl::CompleteConstruction() {
 }
 
 bool SlotControl::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
-    //std::cout << "SlotControl::EventFilter " << EventTypeName(event) << std::endl << std::flush;
-
     if (w == this)
         return false;
 
@@ -3029,10 +3027,6 @@ bool SlotControl::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     case GG::WndEvent::CheckDrops:
     case GG::WndEvent::DragDropLeave:
     case GG::WndEvent::DragDroppedOn:
-        if (w == this) {
-            ErrorLogger() << "SlotControl::EventFilter w == this";
-            return false;
-        }
         HandleEvent(event);
         return true;
         break;
