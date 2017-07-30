@@ -1948,6 +1948,18 @@ Join a game
 REFRESH_LIST_BN
 Refresh list
 
+##
+## Password Dialog
+##
+
+AUTHENTICATION_WINDOW_TITLE
+Authentication
+
+AUTHENTICATION_DESC
+This player name requires authentication. Reminder! Password will be transfered plain-text.
+
+PASSWORD_LABEL
+Password
 
 ##
 ## Multiplayer lobby

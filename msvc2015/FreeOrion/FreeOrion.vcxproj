@@ -191,6 +191,7 @@
     <ClInclude Include="..\..\UI\MultiplayerLobbyWnd.h" />
     <ClInclude Include="..\..\UI\ObjectListWnd.h" />
     <ClInclude Include="..\..\UI\OptionsWnd.h" />
+    <ClInclude Include="..\..\UI\PasswordEnterWnd.h" />
     <ClInclude Include="..\..\UI\PlayerListWnd.h" />
     <ClInclude Include="..\..\UI\PopulationPanel.h" />
     <ClInclude Include="..\..\UI\ProductionWnd.h" />
@@ -301,6 +302,7 @@
     <ClCompile Include="..\..\UI\MultiplayerLobbyWnd.cpp" />
     <ClCompile Include="..\..\UI\ObjectListWnd.cpp" />
     <ClCompile Include="..\..\UI\OptionsWnd.cpp" />
+    <ClCompile Include="..\..\UI\PasswordEnterWnd.cpp" />
     <ClCompile Include="..\..\UI\PlayerListWnd.cpp" />
     <ClCompile Include="..\..\UI\PopulationPanel.cpp" />
     <ClCompile Include="..\..\UI\ProductionWnd.cpp" />

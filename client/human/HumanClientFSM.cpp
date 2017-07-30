@@ -13,6 +13,7 @@
 #include "../../UI/PlayerListWnd.h"
 #include "../../UI/IntroScreen.h"
 #include "../../UI/MultiplayerLobbyWnd.h"
+#include "../../UI/PasswordEnterWnd.h"
 #include "../../UI/MapWnd.h"
 
 #include <boost/format.hpp>
@@ -352,6 +353,9 @@ boost::statechart::result WaitingForMPJoinAck::react(const AuthRequest& msg) {
     std::string player_name;
     std::string auth;
     ExtractAuthRequestMessageData(msg.m_message, player_name, auth);
+
+    Client().Register(Client().GetClientUI().GetPasswordEnterWnd());
+
     return discard_event();
 }
 

@@ -20,6 +20,7 @@ class MapWnd;
 class MessageWnd;
 class PlayerListWnd;
 class MultiPlayerLobbyWnd;
+class PasswordEnterWnd;
 struct SaveGameUIData;
 class System;
 class ShipDesignManager;
@@ -42,6 +43,7 @@ public:
     std::shared_ptr<PlayerListWnd>          GetPlayerListWnd();                         //!< Returns the players list window.
     std::shared_ptr<IntroScreen>            GetIntroScreen();                           //!< Returns the intro screen / splash window.
     std::shared_ptr<MultiPlayerLobbyWnd>    GetMultiPlayerLobbyWnd();                   //!< Returns the multiplayer lobby window.
+    std::shared_ptr<PasswordEnterWnd>       GetPasswordEnterWnd();                      //!< Returns the authentication window.
 
     /** Returns a perhaps nullptr to any existing SaveFileDialog*/
     std::shared_ptr<SaveFileDialog>         GetSaveFileDialog();
@@ -241,6 +243,7 @@ private:
     std::shared_ptr<IntroScreen>            m_intro_screen;         //!< splash screen / main menu when starting program
     std::shared_ptr<MultiPlayerLobbyWnd>    m_multiplayer_lobby_wnd;//!< the multiplayer lobby
     std::shared_ptr<SaveFileDialog>         m_savefile_dialog = nullptr;
+    std::shared_ptr<PasswordEnterWnd>       m_password_enter_wnd;   //!< the authentication window
 
     PrefixedTextures    m_prefixed_textures;
 

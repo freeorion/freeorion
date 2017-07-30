@@ -41,6 +41,7 @@ target_sources(freeorion
         ${CMAKE_CURRENT_LIST_DIR}/MultiplayerLobbyWnd.h
         ${CMAKE_CURRENT_LIST_DIR}/ObjectListWnd.h
         ${CMAKE_CURRENT_LIST_DIR}/OptionsWnd.h
+        ${CMAKE_CURRENT_LIST_DIR}/PasswordEnterWnd.h
         ${CMAKE_CURRENT_LIST_DIR}/PlayerListWnd.h
         ${CMAKE_CURRENT_LIST_DIR}/PopulationPanel.h
         ${CMAKE_CURRENT_LIST_DIR}/ProductionWnd.h
@@ -99,6 +100,7 @@ target_sources(freeorion
         ${CMAKE_CURRENT_LIST_DIR}/MultiplayerLobbyWnd.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ObjectListWnd.cpp
         ${CMAKE_CURRENT_LIST_DIR}/OptionsWnd.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/PasswordEnterWnd.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PlayerListWnd.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PopulationPanel.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ProductionWnd.cpp
