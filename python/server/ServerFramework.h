@@ -21,6 +21,9 @@ private:
 
     // reference to imported Python turn events module
     boost::python::object m_python_module_turn_events;
+
+    // reference to imported Python auth module
+    boost::python::object m_python_module_auth;
 };
 
 // Returns folder containing the Python universe generator scripts
@@ -29,5 +32,7 @@ const std::string GetPythonUniverseGeneratorDir();
 // Returns folder containing the Python turn events scripts
 const std::string GetPythonTurnEventsDir();
 
+// Returns folder containing the Python auth scripts
+const std::string GetPythonAuthDir();
 
 #endif /* defined(__FreeOrion__Python__ServerFramework__) */
