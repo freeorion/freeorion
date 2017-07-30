@@ -455,11 +455,12 @@ void ServerApp::HandleLoggerConfig(const Message& msg, PlayerConnectionPtr playe
 
 void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection) {
     switch (msg.Type()) {
-    case Message::HOST_SP_GAME: m_fsm->process_event(HostSPGame(msg, player_connection));   break;
-    case Message::HOST_MP_GAME: m_fsm->process_event(HostMPGame(msg, player_connection));   break;
-    case Message::JOIN_GAME:    m_fsm->process_event(JoinGame(msg, player_connection));     break;
-    case Message::ERROR_MSG:    m_fsm->process_event(Error(msg, player_connection));        break;
-    case Message::DEBUG:        break;
+    case Message::HOST_SP_GAME:  m_fsm->process_event(HostSPGame(msg, player_connection));   break;
+    case Message::HOST_MP_GAME:  m_fsm->process_event(HostMPGame(msg, player_connection));   break;
+    case Message::JOIN_GAME:     m_fsm->process_event(JoinGame(msg, player_connection));     break;
+    case Message::AUTH_RESPONSE: m_fsm->process_event(AuthResponse(msg, player_connection)); break;
+    case Message::ERROR_MSG:     m_fsm->process_event(Error(msg, player_connection));        break;
+    case Message::DEBUG:         break;
     default:
         if ((m_networking.size() == 1) && (player_connection->IsLocalConnection()) && (msg.Type() == Message::SHUT_DOWN_SERVER)) {
             DebugLogger() << "ServerApp::HandleNonPlayerMessage received Message::SHUT_DOWN_SERVER from the sole "
@@ -1510,6 +1511,11 @@ bool ServerApp::IsAvailableName(const std::string& player_name) const {
         if ((*it)->PlayerName() == player_name)
             return false;
     }
+    return true;
+}
+
+bool ServerApp::IsAuthRequired(const std::string& player_name) const {
+    /// ToDo: use python to check
     return true;
 }
 

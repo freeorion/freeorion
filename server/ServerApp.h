@@ -128,6 +128,9 @@ public:
 
     /** Checks if server runs in a hostless mode. */
     bool IsHostless() const;
+    
+    /** Checks if \a player_name requires auth to login. */
+    bool IsAuthRequired(const std::string& player_name) const;
     //@}
 
 

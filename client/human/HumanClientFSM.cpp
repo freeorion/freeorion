@@ -346,6 +346,15 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
     }
 }
 
+boost::statechart::result WaitingForMPJoinAck::react(const AuthRequest& msg) {
+    TraceLogger(FSM) << "(HumanClientFSM) WaitingForMPJoinAck.AuthRequest";
+
+    std::string player_name;
+    std::string auth;
+    ExtractAuthRequestMessageData(msg.m_message, player_name, auth);
+    return discard_event();
+}
+
 boost::statechart::result WaitingForMPJoinAck::react(const Disconnection& d) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.Disconnection";
 

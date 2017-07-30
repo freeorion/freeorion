@@ -116,6 +116,22 @@ bool PlayerConnection::IsEstablished() const {
     return (m_ID != INVALID_PLAYER_ID && !m_player_name.empty() && m_client_type != Networking::INVALID_CLIENT_TYPE);
 }
 
+void PlayerConnection::AwaitPlayer(Networking::ClientType client_type,
+                                       const std::string& client_version_string) {
+    TraceLogger(network) << "PlayerConnection(@ " << this << ")::AwaitPlayer("
+                         << client_type << ", " << client_version_string << ")";
+    if (m_client_type != Networking::INVALID_CLIENT_TYPE) {
+        ErrorLogger(network) << "PlayerConnection::AwaitPlayer attempting to re-await an already awaiting connection.";
+        return;
+    }
+    if (client_type == Networking::INVALID_CLIENT_TYPE || client_type >= NUM_CLIENT_TYPES) {
+        ErrorLogger(network) << "PlayerConnection::EstablishPlayer passed invalid client type: " << client_type;
+        return;
+    }
+    m_client_type = client_type;
+    m_client_version_string = client_version_string;
+}
+
 void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type,
                                        const std::string& client_version_string)
 {

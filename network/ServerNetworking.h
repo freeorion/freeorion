@@ -200,6 +200,10 @@ public:
     /** Sends \a synchronous message to out on the connection and return true on success. */
     bool SendMessage(const Message& message);
 
+    /** Set player properties to use them after authentication successed. */
+    void AwaitPlayer(Networking::ClientType client_type,
+                         const std::string& client_version_string);
+
     /** Establishes a connection as a player with a specific name and id.
         This function must only be called once. */
     void EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type,

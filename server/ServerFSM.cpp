@@ -622,6 +622,13 @@ sc::result MPLobby::react(const JoinGame& msg) {
 
     player_name = new_player_name;
 
+    if(client_type != Networking::CLIENT_TYPE_AI_PLAYER && server.IsAuthRequired(player_name)) {
+        // send authentication request
+        player_connection->AwaitPlayer(client_type, client_version_string);
+        player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
+        return discard_event();
+    }
+
     // assign unique player ID to newly connected player
     int player_id = server.m_networking.NewPlayerID();
 
@@ -665,6 +672,19 @@ sc::result MPLobby::react(const JoinGame& msg) {
     for (auto it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
     { (*it)->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data)); }
+
+    return discard_event();
+}
+
+sc::result MPLobby::react(const AuthResponse& msg) {
+    TraceLogger(FSM) << "(ServerFSM) MPLobby.AuthResponse";
+    ServerApp& server = Server();
+    const Message& message = msg.m_message;
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
+
+    std::string player_name;
+    std::string auth;
+    ExtractAuthResponseMessageData(message, player_name, auth);
 
     return discard_event();
 }
@@ -1502,6 +1522,19 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
     // won't get stuck in this state waiting for JoinGame messages that will
     // never come since no other AIs are left to join
     post_event(CheckStartConditions());
+
+    return discard_event();
+}
+
+sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
+    TraceLogger(FSM) << "(ServerFSM) WaitingForMPGameJoiners.AuthResponse";
+    ServerApp& server = Server();
+    const Message& message = msg.m_message;
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
+
+    std::string player_name;
+    std::string auth;
+    ExtractAuthResponseMessageData(message, player_name, auth);
 
     return discard_event();
 }
