@@ -27,6 +27,7 @@
 #include "ValueRef.h"
 #include "Enums.h"
 #include "Pathfinder.h"
+#include "Encyclopedia.h"
 
 #include <boost/property_map/property_map.hpp>
 #include <boost/timer.hpp>
@@ -3082,4 +3083,20 @@ void Universe::ResetUniverse() {
     ResetAllIDAllocation();
 
     GetSpeciesManager().ClearSpeciesHomeworlds();
+}
+
+std::map<std::string, unsigned int> CheckSumContent() {
+    std::map<std::string, unsigned int> checksums;
+
+    // add entries for various content managers...
+    checksums["BuildingTypeManager"] = GetBuildingTypeManager().GetCheckSum();
+    checksums["Encyclopedia"] = GetEncyclopedia().GetCheckSum();
+    checksums["FieldTypeManager"] = GetFieldTypeManager().GetCheckSum();
+    checksums["HullTypeManager"] = GetHullTypeManager().GetCheckSum();
+    checksums["PartTypeManager"] = GetPartTypeManager().GetCheckSum();
+    checksums["PredefinedShipDesignManager"] = GetPredefinedShipDesignManager().GetCheckSum();
+    checksums["SpeciesManager"] = GetSpeciesManager().GetCheckSum();
+    checksums["TechManager"] = GetTechManager().GetCheckSum();
+
+    return checksums;
 }
