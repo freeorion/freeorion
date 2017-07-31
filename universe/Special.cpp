@@ -29,8 +29,6 @@ namespace {
             TraceLogger() << "Specials:";
             for (const auto& entry : m_specials)
                 TraceLogger() << " ... " << entry.first;
-
-            DebugLogger() << "SpecialManager checksum: " << GetCheckSum();
         }
         std::vector<std::string> SpecialNames() const {
             std::vector<std::string> retval;
@@ -48,6 +46,7 @@ namespace {
             for (auto const& name_type_pair : m_specials)
                 CheckSums::CheckSumCombine(retval, name_type_pair);
             CheckSums::CheckSumCombine(retval, m_specials.size());
+            DebugLogger() << "SpecialManager checksum: " << retval;
             return retval;
         }
     private:

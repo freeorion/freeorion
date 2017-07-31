@@ -227,6 +227,7 @@ unsigned int FieldType::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_effects);
     CheckSums::CheckSumCombine(retval, m_graphic);
 
+    DebugLogger() << "FieldTypeManager checksum: " << retval;
     return retval;
 }
 
@@ -258,8 +259,6 @@ FieldTypeManager::FieldTypeManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
-
-    DebugLogger() << "FieldTypeManager checksum: " << GetCheckSum();
 }
 
 const FieldType* FieldTypeManager::GetFieldType(const std::string& name) const {

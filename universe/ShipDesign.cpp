@@ -208,8 +208,6 @@ PartTypeManager::PartTypeManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
-
-    DebugLogger() << "PartTypeManager checksum: " << GetCheckSum();
 }
 
 const PartType* PartTypeManager::GetPartType(const std::string& name) const {
@@ -234,6 +232,8 @@ unsigned int PartTypeManager::GetCheckSum() const {
         CheckSums::CheckSumCombine(retval, name_part_pair);
     CheckSums::CheckSumCombine(retval, m_parts.size());
 
+
+    DebugLogger() << "PartTypeManager checksum: " << retval;
     return retval;
 }
 
@@ -651,8 +651,6 @@ HullTypeManager::HullTypeManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
-
-    DebugLogger() << "HullTypeManager checksum: " << GetCheckSum();
 }
 
 const HullType* HullTypeManager::GetHullType(const std::string& name) const {
@@ -677,6 +675,7 @@ unsigned int HullTypeManager::GetCheckSum() const {
         CheckSums::CheckSumCombine(retval, name_hull_pair);
     CheckSums::CheckSumCombine(retval, m_hulls.size());
 
+    DebugLogger() << "HullTypeManager checksum: " << retval;
     return retval;
 }
 
@@ -1367,8 +1366,6 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
-
-    DebugLogger() << "PredefinedShipDesignManager checksum: " << GetCheckSum();
 }
 
 namespace {
@@ -1466,6 +1463,7 @@ unsigned int PredefinedShipDesignManager::GetCheckSum() const {
     build_checksum(m_ship_ordering);
     build_checksum(m_monster_ordering);
 
+    DebugLogger() << "PredefinedShipDesignManager checksum: " << retval;
     return retval;
 }
 

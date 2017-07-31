@@ -431,8 +431,6 @@ TechManager::TechManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
-
-    DebugLogger() << "TechManager checksum: " << GetCheckSum();
 }
 
 std::string TechManager::FindIllegalDependencies() {
@@ -620,6 +618,7 @@ unsigned int TechManager::GetCheckSum() const {
         CheckSums::CheckSumCombine(retval, tech);
     CheckSums::CheckSumCombine(retval, m_techs.size());
 
+    DebugLogger() << "TechManager checksum: " << retval;
     return retval;
 }
 

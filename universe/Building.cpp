@@ -368,8 +368,6 @@ BuildingTypeManager::BuildingTypeManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
-
-    DebugLogger() << "BuildingTypeManager checksum: " << GetCheckSum();
 }
 
 const BuildingType* BuildingTypeManager::GetBuildingType(const std::string& name) const {
@@ -388,6 +386,8 @@ unsigned int BuildingTypeManager::GetCheckSum() const {
         CheckSums::CheckSumCombine(retval, name_type_pair);
     CheckSums::CheckSumCombine(retval, m_building_types.size());
 
+
+    DebugLogger() << "BuildingTypeManager checksum: " << retval;
     return retval;
 }
 
