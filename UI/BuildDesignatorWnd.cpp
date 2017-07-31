@@ -338,8 +338,6 @@ namespace {
                           int empire_id, int location_id) :
             GG::ListBox::Row(w, h, "", GG::ALIGN_NONE, 0),
             m_item(item),
-            m_empire_id(empire_id),
-            m_location_id(location_id),
             m_panel(nullptr)
         {
             SetName("ProductionItemRow");
@@ -351,27 +349,24 @@ namespace {
                 SetDragDropDataType(m_item.name);
             }
 
-            m_panel = GG::Wnd::Create<ProductionItemPanel>(w, h, m_item, m_empire_id, m_location_id);
+            m_panel = GG::Wnd::Create<ProductionItemPanel>(w, h, m_item, empire_id, location_id);
             push_back(m_panel);
 
-            if (const Empire* empire = GetEmpire(m_empire_id)) {
-                if (!empire->ProducibleItem(m_item, m_location_id)) {
+            if (const Empire* empire = GetEmpire(empire_id)) {
+                if (!empire->ProducibleItem(m_item, location_id)) {
                     this->Disable(true);
                     m_panel->Disable(true);
                 }
             }
 
             SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-            SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, m_location_id, m_empire_id));
+            SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, location_id, empire_id));
 
             //std::cout << "ProductionItemRow(building) height: " << Value(Height()) << std::endl;
         }
 
         const ProductionQueue::ProductionItem& Item() const
         { return m_item; }
-
-        int Location() const
-        { return m_location_id; }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             const GG::Pt old_size = Size();
@@ -383,8 +378,6 @@ namespace {
 
     private:
         ProductionQueue::ProductionItem m_item;
-        int                             m_empire_id;
-        int                             m_location_id;
         ProductionItemPanel*            m_panel;
     };
 
