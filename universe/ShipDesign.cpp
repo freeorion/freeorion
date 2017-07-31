@@ -599,15 +599,6 @@ int HullType::ProductionTime(int empire_id, int location_id) const {
 unsigned int HullType::GetCheckSum() const {
     unsigned int retval{0};
 
-    //// test
-    //std::map<unsigned long int, std::shared_ptr<Blah>> int_pBlah_map{
-    //    {103U, std::make_shared<Blah>()}, {0, nullptr}};
-    //CheckSumCombine(retval, int_pBlah_map);
-    //std::map<MeterType, std::string> metertype_string_map{{METER_INDUSTRY, "STRING!"}};
-    //CheckSumCombine(retval, metertype_string_map);
-    //return retval;
-    //// end test
-
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_description);
     CheckSums::CheckSumCombine(retval, m_speed);
