@@ -170,8 +170,7 @@ TabWnd::TabWnd(X x, Y y, X w, Y h, const std::shared_ptr<Font>& font, Clr color,
     Wnd(x, y, w, h, INTERACTIVE),
     m_tab_bar(GetStyleFactory()->NewTabBar(font, color, text_color)),
     m_overlay(Wnd::Create<OverlayWnd>(X0, Y0, X1, Y1))
-{
-}
+{}
 
 void TabWnd::CompleteConstruction()
 {
@@ -287,7 +286,6 @@ TabBar::TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = 
 
 void TabBar::CompleteConstruction()
 {
-
     SetChildClippingMode(ClipToClient);
 
     const auto& style_factory = GetStyleFactory();

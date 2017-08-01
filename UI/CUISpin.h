@@ -27,7 +27,7 @@ public:
     /** \name Structors */ //@{
     CUISpin(T value, T step, T min, T max, bool edits) :
     GG::Spin<T>(value, step, min, max, edits, ClientUI::GetFont(), ClientUI::CtrlBorderColor(),
-                    ClientUI::TextColor())
+                ClientUI::TextColor())
     {}
 
     void CompleteConstruction() override {

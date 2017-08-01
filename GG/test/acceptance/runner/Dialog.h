@@ -7,7 +7,7 @@
 
 //! A Simple resizable dialog with a single child that fills it.
 class Dialog: public GG::Wnd{
-    public:
+public:
     Dialog(GG::Wnd* child, const std::shared_ptr<GG::Font>& font);
 
     void CompleteConstruction() override;
@@ -17,7 +17,7 @@ class Dialog: public GG::Wnd{
 
     void SizeMove( const GG::Pt& ul, const GG::Pt& lr) override;
 
-    private:
+private:
     GG::Wnd* m_child;
 };
 

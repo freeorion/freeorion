@@ -221,7 +221,7 @@ void Spin<T>::CompleteConstruction()
     AttachChild(m_down_button);
     ConnectSignals();
     SizeMove(UpperLeft(), LowerRight());
-    Spin<T>::SetEditTextFromValue();    // should call any derived-class overloads in derived-class constructor. can't do a virtual method call in base class constructor.
+    Spin<T>::SetEditTextFromValue();
 }
 
 template<class T>
