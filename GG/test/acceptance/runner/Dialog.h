@@ -10,11 +10,11 @@ class Dialog: public GG::Wnd{
 public:
     Dialog(GG::Wnd* child, const std::shared_ptr<GG::Font>& font);
 
-    virtual void Render();
+    void Render() override;
 
-    virtual GG::Pt ClientLowerRight() const;
+    GG::Pt ClientLowerRight() const override;
 
-    virtual void SizeMove( const GG::Pt& ul, const GG::Pt& lr);
+    void SizeMove( const GG::Pt& ul, const GG::Pt& lr) override;
 };
 
 #endif // Dialog_h

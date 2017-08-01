@@ -35,14 +35,15 @@ class MinimalGGApp : public GG::SDLGUI {
 
         virtual ~MinimalGGApp();
 
-        virtual void Enter2DMode();
-        virtual void Exit2DMode();
+        void Enter2DMode() override;
+        void Exit2DMode() override;
         virtual void GLInit();
 
-        virtual void Initialize(){}
+        void Initialize() override
+        {}
 
     protected:
-        virtual void Render();
+        void Render() override;
 };
 
 MinimalGGApp::MinimalGGApp(int width, int height, bool calculate_FPS,

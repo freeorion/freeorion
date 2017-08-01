@@ -8,7 +8,7 @@
 struct gcc_log_formatter : 
     public boost::unit_test::output::compiler_log_formatter
 {
-    void print_prefix(std::ostream& output, boost::unit_test::const_string file_name, std::size_t line)
+    void print_prefix(std::ostream& output, boost::unit_test::const_string file_name, std::size_t line) override
     {
         output << file_name << ':' << line << ": error: ";
     }
