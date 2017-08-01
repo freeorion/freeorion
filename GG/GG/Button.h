@@ -85,7 +85,7 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    void Show(bool children = true) override;
+    void Show() override;
     void Render() override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
 
@@ -186,7 +186,7 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    void Show(bool children = true) override;
+    void Show() override;
     void Render() override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
 

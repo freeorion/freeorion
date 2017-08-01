@@ -512,7 +512,7 @@ void CUIWnd::MinimizeClicked() {
 
         // hide all children, re-showing only position/size controls
         Hide();
-        Show(false);
+        Show();
         if (m_close_button)
             m_close_button->Show();
         if (m_minimize_button)
@@ -595,13 +595,13 @@ void CUIWnd::InitBuffers() {
     //TraceLogger() << "CUIWnd vertex buffer final size: " << previous_buffer_size << std::endl;
 }
 
-void CUIWnd::Hide(bool children) {
-    GG::Wnd::Hide(children);
+void CUIWnd::Hide() {
+    GG::Wnd::Hide();
     SaveOptions();
 }
 
-void CUIWnd::Show(bool children) {
-    GG::Wnd::Show(children);
+void CUIWnd::Show() {
+    GG::Wnd::Show();
     SaveOptions();
 }
 

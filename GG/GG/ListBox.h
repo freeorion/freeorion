@@ -351,7 +351,7 @@ public:
 
     /** Show the  list box.  If \p show_children is true then show the rows that are within the
         boundaries of the list box.*/
-    void Show(bool show_children = true) override;
+    void Show() override;
 
     void Disable(bool b = true) override;
     void SetColor(Clr c) override;

@@ -136,9 +136,9 @@ public:
 
     void MouseLeave() override;
 
-    void Hide(bool children = true) override;
+    void Hide() override;
 
-    void Show(bool children = true) override;
+    void Show() override;
 
     void            ToggleMinimized() { MinimizeClicked(); }
     void            Close()           { CloseClicked(); }

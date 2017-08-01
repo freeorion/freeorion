@@ -2113,8 +2113,8 @@ void TechTreeWnd::InitializeWindows() {
     m_tech_tree_controls->InitSizeMove(controls_ul,  controls_ul + controls_wh);
 }
 
-void TechTreeWnd::Show(bool children) {
-    GG::Wnd::Show(children);
+void TechTreeWnd::Show() {
+    GG::Wnd::Show();
 
     // When Show() is called for TechTree the ClientUI should now have
     // access to the technologies so that parsing does not generate

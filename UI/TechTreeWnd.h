@@ -44,7 +44,7 @@ public:
     //! \name Mutators //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
-    void Show(bool children = true) override;
+    void Show() override;
 
     void            Update();
     void            Clear();

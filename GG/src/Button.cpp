@@ -66,8 +66,11 @@ Button::Button(const std::string& str, const std::shared_ptr<Font>& font, Clr co
 Pt Button::MinUsableSize() const
 { return m_label->MinUsableSize(); }
 
-void Button::Show(bool children/* = true*/)
-{ Wnd::Show(false); }
+void Button::Show()
+{
+    Wnd::Show();
+    m_label->Hide();
+}
 
 Button::ButtonState Button::State() const
 { return m_state; }
@@ -300,8 +303,11 @@ void StateButton::Render()
         m_representer->Render(*this);
 }
 
-void StateButton::Show(bool children/* = true*/)
-{ Wnd::Show(false); }
+void StateButton::Show()
+{
+    Wnd::Show();
+    m_label->Hide();
+}
 
 void StateButton::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
 { SetState(BN_PRESSED); }

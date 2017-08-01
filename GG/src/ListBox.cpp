@@ -1022,19 +1022,16 @@ bool ListBox::ShowVisibleRows(bool do_prerender)
     return a_row_size_changed;
 }
 
-void ListBox::Show(bool show_children /* = true*/)
+void ListBox::Show()
 {
-    Control::Show(false);
-
-    if (!show_children)
-        return;
+    Control::Show();
 
     // Deal with the header row and non row children normally
     for (auto& wnd : Children()) {
         const Row* row(dynamic_cast<Row*>(wnd));
         bool is_regular_row(row && row != m_header_row);
         if (!is_regular_row)
-            wnd->Show(true);
+            wnd->Show();
     }
 
     // Show rows that will be visible when rendered but don't prerender them.

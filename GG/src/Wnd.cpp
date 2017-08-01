@@ -448,22 +448,18 @@ void Wnd::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destinat
 void Wnd::SetName(const std::string& name)
 { m_name = name; }
 
-void Wnd::Hide(bool children/* = true*/)
+void Wnd::Hide()
 {
     m_visible = false;
-    if (children) {
-        for (auto& child : m_children)
-            child->Hide(children);
-    }
+    for (auto& child : m_children)
+        child->Hide();
 }
 
-void Wnd::Show(bool children/* = true*/)
+void Wnd::Show()
 {
     m_visible = true;
-    if (children) {
-        for (auto& child : m_children)
-            child->Show(children);
-    }
+    for (auto& child : m_children)
+        child->Show();
 }
 
 void Wnd::ModalInit()

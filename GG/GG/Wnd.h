@@ -549,11 +549,11 @@ public:
 
     /** Suppresses rendering of this window (and possibly its children) during
         render loop. */
-    virtual void Hide(bool children = true);
+    virtual void Hide();
 
     /** Enables rendering of this window (and possibly its children) during
         render loop. */
-    virtual void Show(bool children = true);
+    virtual void Show();
 
     /** Called during Run(), after a modal window is registered, this is the
         place that subclasses should put specialized modal window
