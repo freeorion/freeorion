@@ -75,8 +75,9 @@ namespace {
                 ;
 
             planet_type
-                =   tok.Planet_
-                >>  parse::detail::label(Type_token)
+                =   (tok.Planet_
+                    >>  parse::detail::label(Type_token)
+                    )
                 >   (
                         ('[' > +parse::detail::planet_type_rules().expr [ push_back(_a, _1) ] > ']')
                     |    parse::detail::planet_type_rules().expr [ push_back(_a, _1) ]
@@ -85,8 +86,9 @@ namespace {
                 ;
 
             planet_size
-                =   tok.Planet_
-                >>  parse::detail::label(Size_token)
+                =   (tok.Planet_
+                    >>  parse::detail::label(Size_token)
+                    )
                 >   (
                         ('[' > +parse::detail::planet_size_rules().expr [ push_back(_a, _1) ] > ']')
                     |    parse::detail::planet_size_rules().expr [ push_back(_a, _1) ]
@@ -95,8 +97,9 @@ namespace {
                 ;
 
             planet_environment
-                =   (tok.Planet_
-                >>  parse::detail::label(Environment_token)
+                =   ((tok.Planet_
+                     >>  parse::detail::label(Environment_token)
+                     )
                 >   (
                         ('[' > +parse::detail::planet_environment_rules().expr [ push_back(_a, _1) ] > ']')
                     |    parse::detail::planet_environment_rules().expr [ push_back(_a, _1) ]

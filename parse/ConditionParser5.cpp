@@ -22,15 +22,17 @@ namespace {
             using phoenix::new_;
 
             has_special
-                =   (   tok.HasSpecial_
-                    >>  parse::detail::label(Name_token) > parse::string_value_ref() [ _val = new_<Condition::HasSpecial>(_1) ]
+                =   (   (tok.HasSpecial_
+                        >>  parse::detail::label(Name_token)
+                        ) > parse::string_value_ref() [ _val = new_<Condition::HasSpecial>(_1) ]
                     )
                 |   tok.HasSpecial_ [ _val = new_<Condition::HasSpecial>() ]
                 ;
 
             has_tag
-                =   (   tok.HasTag_
-                    >>  parse::detail::label(Name_token) > parse::string_value_ref() [ _val = new_<Condition::HasTag>(_1) ]
+                =   (   (tok.HasTag_
+                        >>  parse::detail::label(Name_token)
+                        ) > parse::string_value_ref() [ _val = new_<Condition::HasTag>(_1) ]
                     )
                 |   tok.HasTag_ [ _val = new_<Condition::HasTag>() ]
                 ;
@@ -46,13 +48,15 @@ namespace {
                 ;
 
             predefined_design
-                =   tok.Design_
-                >>  parse::detail::label(Name_token) > parse::string_value_ref() [ _val = new_<Condition::PredefinedShipDesign>(_1) ]
+                =   (tok.Design_
+                    >>  parse::detail::label(Name_token)
+                    ) > parse::string_value_ref() [ _val = new_<Condition::PredefinedShipDesign>(_1) ]
                 ;
 
             design_number
-                =   tok.Design_
-                >>  parse::detail::label(Design_token) > parse::int_value_ref() [ _val = new_<Condition::NumberedShipDesign>(_1) ]
+                =   (tok.Design_
+                    >>  parse::detail::label(Design_token)
+                    ) > parse::int_value_ref() [ _val = new_<Condition::NumberedShipDesign>(_1) ]
                 ;
 
             produced_by_empire // TODO: Lose "empire" part.

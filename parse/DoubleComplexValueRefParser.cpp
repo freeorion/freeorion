@@ -69,19 +69,21 @@ namespace parse {
 
             species_empire_opinion
                 = (
-                    (  tok.SpeciesOpinion_ [ _a = construct<std::string>(TOK_SPECIES_EMPIRE_OPINION) ]
+                    ((  tok.SpeciesOpinion_ [ _a = construct<std::string>(TOK_SPECIES_EMPIRE_OPINION) ]
                        >  parse::detail::label(Species_token) >  parse::string_value_ref() [ _d = _1 ]
-                    )
-                  >> parse::detail::label(Empire_token)  >  simple_int [ _b = _1 ]
+                     )
+                    >> parse::detail::label(Empire_token)
+                    )  >  simple_int [ _b = _1 ]
                   )     [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             species_species_opinion
                 = (
-                    (   tok.SpeciesOpinion_ [ _a = construct<std::string>(TOK_SPECIES_SPECIES_OPINION) ]
+                    ((   tok.SpeciesOpinion_ [ _a = construct<std::string>(TOK_SPECIES_SPECIES_OPINION) ]
                       >  parse::detail::label(Species_token) >  parse::string_value_ref() [ _d = _1 ]
-                    )
-                  >> parse::detail::label(Species_token) >  parse::string_value_ref() [ _e = _1 ]
+                     )
+                    >> parse::detail::label(Species_token)
+                    ) >  parse::string_value_ref() [ _e = _1 ]
                   )     [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 

@@ -57,8 +57,9 @@ namespace {
                 ;
 
             create_ship_1
-                =   (       tok.CreateShip_
-                        >>  parse::detail::label(DesignID_token)    >   parse::int_value_ref()    [ _b = _1 ]
+                =   ((       tok.CreateShip_
+                     >>  parse::detail::label(DesignID_token)
+                     )  >   parse::int_value_ref()    [ _b = _1 ]
                         > -(parse::detail::label(Empire_token)      >   parse::int_value_ref()    [ _c = _1 ])
                         > -(parse::detail::label(Species_token)     >   parse::string_value_ref() [ _d = _1 ])
                         > -(parse::detail::label(Name_token)        >   parse::string_value_ref() [ _e = _1 ])
@@ -72,8 +73,9 @@ namespace {
                 ;
 
             create_ship_2
-                =   (       tok.CreateShip_
-                        >>  parse::detail::label(DesignName_token)  >>  parse::string_value_ref() [ _a = _1 ]
+                =   ((       tok.CreateShip_
+                     >>  parse::detail::label(DesignName_token)  >>  parse::string_value_ref() [ _a = _1 ]
+                     )
                         > -(parse::detail::label(Empire_token)      >   parse::int_value_ref()    [ _c = _1 ])
                         > -(parse::detail::label(Species_token)     >   parse::string_value_ref() [ _d = _1 ])
                         > -(parse::detail::label(Name_token)        >   parse::string_value_ref() [ _e = _1 ])
@@ -87,61 +89,73 @@ namespace {
                 ;
 
             create_field_1
-                =   (       tok.CreateField_
-                        >>  parse::detail::label(Type_token)    >>  parse::string_value_ref() [ _a = _1 ]
-                        >>  parse::detail::label(Size_token)    >   parse::double_value_ref() [ _b = _1 ]
-                        > -(parse::detail::label(Name_token)    >   parse::string_value_ref() [ _d = _1 ])
-                        > -(parse::detail::label(Effects_token)
-                        >   (
-                                ('[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']')
-                            |    parse::effect_parser() [ push_back(_f, _1) ]
-                            )
-                           )
+                =   ((       tok.CreateField_
+                     >>  parse::detail::label(Type_token)    >>  parse::string_value_ref() [ _a = _1 ]
+                     >>  parse::detail::label(Size_token)
+                     )
+                     >   parse::double_value_ref() [ _b = _1 ]
+                     > -(parse::detail::label(Name_token)    >   parse::string_value_ref() [ _d = _1 ])
+                     > -(parse::detail::label(Effects_token)
+                         >
+                         (
+                             ('[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']')
+                             |    parse::effect_parser() [ push_back(_f, _1) ]
+                         )
+                        )
                     ) [ _val = new_<Effect::CreateField>(_a, _b, _d, _f) ]
                 ;
 
             create_field_2
-                =   (       tok.CreateField_
-                        >>  parse::detail::label(Type_token)    >>  parse::string_value_ref() [ _a = _1 ]
-                        >>  parse::detail::label(X_token)       >   parse::double_value_ref() [ _b = _1 ]
-                        >   parse::detail::label(Y_token)       >   parse::double_value_ref() [ _c = _1 ]
-                        >   parse::detail::label(Size_token)    >   parse::double_value_ref() [ _e = _1 ]
-                        > -(parse::detail::label(Name_token)    >   parse::string_value_ref() [ _d = _1 ])
-                        > -(parse::detail::label(Effects_token)
-                        >   (
-                                ('[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']')
-                            |    parse::effect_parser() [ push_back(_f, _1) ]
-                            )
-                           )
+                =   ((       tok.CreateField_
+                     >>  parse::detail::label(Type_token)    >>  parse::string_value_ref() [ _a = _1 ]
+                     >>  parse::detail::label(X_token)
+                     )
+                     >   parse::double_value_ref() [ _b = _1 ]
+                     >   parse::detail::label(Y_token)       >   parse::double_value_ref() [ _c = _1 ]
+                     >   parse::detail::label(Size_token)    >   parse::double_value_ref() [ _e = _1 ]
+                     > -(parse::detail::label(Name_token)    >   parse::string_value_ref() [ _d = _1 ])
+                     > -(parse::detail::label(Effects_token)
+                         >
+                         (
+                             ('[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']')
+                             |    parse::effect_parser() [ push_back(_f, _1) ]
+                         )
+                        )
                     ) [ _val = new_<Effect::CreateField>(_a, _b, _c, _e, _d, _f) ]
                 ;
 
             create_system_1
-                =   (       tok.CreateSystem_
-                        >>  parse::detail::label(Type_token)    >   parse::detail::star_type_rules().expr [ _a = _1 ]
-                        >   parse::detail::label(X_token)       >   parse::double_value_ref()    [ _b = _1 ]
-                        >   parse::detail::label(Y_token)       >   parse::double_value_ref()    [ _c = _1 ]
-                        > -(parse::detail::label(Name_token)    >   parse::string_value_ref()    [ _d = _1 ])
-                        > -(parse::detail::label(Effects_token)
-                        >   (
-                                ('[' > +parse::effect_parser() [ push_back(_e, _1) ] > ']')
-                            |    parse::effect_parser() [ push_back(_e, _1) ]
-                            )
-                           )
+                =   ((       tok.CreateSystem_
+                     >>  parse::detail::label(Type_token)
+                     )
+                     >   parse::detail::star_type_rules().expr [ _a = _1 ]
+                     >   parse::detail::label(X_token)       >   parse::double_value_ref()    [ _b = _1 ]
+                     >   parse::detail::label(Y_token)       >   parse::double_value_ref()    [ _c = _1 ]
+                     > -(parse::detail::label(Name_token)    >   parse::string_value_ref()    [ _d = _1 ])
+                     > -(parse::detail::label(Effects_token)
+                         >
+                         (
+                             ('[' > +parse::effect_parser() [ push_back(_e, _1) ] > ']')
+                             |    parse::effect_parser() [ push_back(_e, _1) ]
+                         )
+                        )
                     ) [ _val = new_<Effect::CreateSystem>(_a, _b, _c, _d, _e) ]
                 ;
 
             create_system_2
-                =   (       tok.CreateSystem_
-                        >>  parse::detail::label(X_token)       >   parse::double_value_ref() [ _b = _1 ]
-                        >   parse::detail::label(Y_token)       >   parse::double_value_ref() [ _c = _1 ]
-                        > -(parse::detail::label(Name_token)    >   parse::string_value_ref() [ _d = _1 ])
-                        > -(parse::detail::label(Effects_token)
-                        >   (
-                                ('[' > +parse::effect_parser() [ push_back(_e, _1) ] > ']')
-                            |    parse::effect_parser() [ push_back(_e, _1) ]
-                            )
-                           )
+                =   ((       tok.CreateSystem_
+                     >>  parse::detail::label(X_token)
+                     )
+                     >   parse::double_value_ref() [ _b = _1 ]
+                     >   parse::detail::label(Y_token)       >   parse::double_value_ref() [ _c = _1 ]
+                     > -(parse::detail::label(Name_token)    >   parse::string_value_ref() [ _d = _1 ])
+                     > -(parse::detail::label(Effects_token)
+                         >
+                         (
+                             ('[' > +parse::effect_parser() [ push_back(_e, _1) ] > ']')
+                             |    parse::effect_parser() [ push_back(_e, _1) ]
+                         )
+                        )
                     ) [ _val = new_<Effect::CreateSystem>(_b, _c, _d, _e) ]
                 ;
 

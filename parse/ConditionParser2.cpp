@@ -43,8 +43,8 @@ namespace {
                 ;
 
             enqueued1
-                =   (   tok.Enqueued_
-                        >>  parse::detail::label(Type_token)   >>   tok.Building_
+                =   (   (tok.Enqueued_
+                        >>  parse::detail::label(Type_token)   >>   tok.Building_)
                         > -(parse::detail::label(Name_token)   >    parse::string_value_ref() [ _e = _1 ])
                         > -(parse::detail::label(Empire_token) >    parse::int_value_ref() [ _a = _1 ])
                         > -(parse::detail::label(Low_token)    >    parse::flexible_int_value_ref() [ _b = _1 ])
@@ -53,8 +53,8 @@ namespace {
                 ;
 
             enqueued2
-                =   (   tok.Enqueued_
-                        >>  parse::detail::label(Type_token)   >>   tok.Ship_
+                =   (   (tok.Enqueued_
+                        >>  parse::detail::label(Type_token)   >>   tok.Ship_)
                         > -(parse::detail::label(Design_token) >    parse::int_value_ref() [ _d = _1 ])
                         > -(parse::detail::label(Empire_token) >    parse::int_value_ref() [ _a = _1 ])
                         > -(parse::detail::label(Low_token)    >    parse::flexible_int_value_ref() [ _b = _1 ])
@@ -63,9 +63,9 @@ namespace {
                 ;
 
             enqueued3
-                =   (   tok.Enqueued_
+                =   (   (tok.Enqueued_
                         >>  parse::detail::label(Type_token)   >>   tok.Ship_
-                        >>  parse::detail::label(Name_token)   >    parse::string_value_ref() [ _e = _1 ]
+                        >>  parse::detail::label(Name_token)   ) >    parse::string_value_ref() [ _e = _1 ]
                         > -(parse::detail::label(Empire_token) >    parse::int_value_ref() [ _a = _1 ])
                         > -(parse::detail::label(Low_token)    >    parse::flexible_int_value_ref() [ _b = _1 ])
                         > -(parse::detail::label(High_token)   >    parse::flexible_int_value_ref() [ _c = _1 ])

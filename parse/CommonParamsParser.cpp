@@ -92,18 +92,19 @@ namespace parse { namespace detail {
                 ;
 
             consumption
-                =   label(Consumption_token)
-                > (
-                        consumable_meter(_r1, _r2)
-                    |   consumable_special(_r1, _r2)
-                    |(  '['
-                        >> *(
-                                consumable_meter(_r1, _r2)
-                            |   consumable_special(_r1, _r2)
+                =   label(Consumption_token) >
+                (   consumable_meter(_r1, _r2)
+                    | consumable_special(_r1, _r2)
+                    |
+                    (
+                        (   '[' >> *
+                            (    consumable_meter(_r1, _r2)
+                                 | consumable_special(_r1, _r2)
                             )
+                        )
                         >   ']'
-                     )
-                  )
+                    )
+                )
                 ;
 
             typedef std::map<std::string, val_cond_pair>::value_type special_consumable_map_value_type;

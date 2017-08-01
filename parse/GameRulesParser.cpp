@@ -102,11 +102,12 @@ namespace {
             const parse::lexer& tok = parse::lexer::instance();
 
             game_rule_bool
-                =   tok.GameRule_
-                >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
-                >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
-                >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
-                >>  parse::detail::label(Type_token) >>         tok.Toggle_
+                =   (tok.GameRule_
+                    >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
+                    >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
+                    >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
+                    >>  parse::detail::label(Type_token) >>         tok.Toggle_
+                    )
                 > ((parse::detail::label(Default_token)
                     >   (
                             tok.On_ [ _i = true ]
@@ -118,11 +119,12 @@ namespace {
                 ;
 
             game_rule_int
-                =   tok.GameRule_
-                >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
-                >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
-                >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
-                >>  parse::detail::label(Type_token) >>         tok.Integer_
+                =   (tok.GameRule_
+                    >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
+                    >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
+                    >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
+                    >>  parse::detail::label(Type_token) >>         tok.Integer_
+                    )
                 >   parse::detail::label(Default_token) >       parse::detail::int_ [ _f = _1 ]
                 >   parse::detail::label(Min_token) >           parse::detail::int_ [ _g = _1 ]
                 >   parse::detail::label(Max_token) >           parse::detail::int_
@@ -130,11 +132,12 @@ namespace {
                 ;
 
             game_rule_double
-                =   tok.GameRule_
-                >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
-                >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
-                >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
-                >>  parse::detail::label(Type_token) >>         tok.Real_
+                =   (tok.GameRule_
+                    >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
+                    >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
+                    >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
+                    >>  parse::detail::label(Type_token) >>         tok.Real_
+                    )
                 >   parse::detail::label(Default_token) >       parse::detail::double_ [ _c = _1 ]
                 >   parse::detail::label(Min_token) >           parse::detail::double_ [ _d = _1 ]
                 >   parse::detail::label(Max_token) >           parse::detail::double_
@@ -142,15 +145,19 @@ namespace {
                 ;
 
             game_rule_string
-                =   tok.GameRule_
-                >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
-                >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
-                >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
-                >>  parse::detail::label(Type_token) >>         tok.String_
+                =   (tok.GameRule_
+                    >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
+                    >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
+                    >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
+                    >>  parse::detail::label(Type_token) >>         tok.String_
+                    )
                 >   parse::detail::label(Default_token) >       tok.string [ _e = _1 ]
-                >  -( parse::detail::label(Allowed_token) >
-                        '[' > +tok.string [ insert(_h, _1) ] > ']'
-                    |    tok.string [ insert(_h, _1) ]
+                >  -( (parse::detail::label(Allowed_token)
+                       > '['
+                       > +tok.string [ insert(_h, _1) ]
+                       > ']'
+                      )
+                      |tok.string [ insert(_h, _1) ]
                     )
                   [ add_rule(_r1, _a, _b, _j, _e, _h) ]
                 ;
