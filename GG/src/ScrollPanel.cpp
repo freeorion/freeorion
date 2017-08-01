@@ -82,7 +82,7 @@ namespace GG {
         SetChildClippingMode(ClipToClient);
 
         // Get the scroll bar from the current style factory.
-        std::shared_ptr<StyleFactory> style = GetStyleFactory();
+        const auto& style = GetStyleFactory();
         m_vscroll = style->NewMultiEditVScroll(CLR_WHITE, CLR_BLACK);
 
         // Don't accept less than MIN_SCROLL_WIDTH pixels wide scrolls.

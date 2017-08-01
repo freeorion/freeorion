@@ -63,7 +63,7 @@ ThreeButtonDlg::ThreeButtonDlg(X w, Y h, const std::string& msg, const std::shar
 
     auto button_layout = Wnd::Create<Layout>(X0, Y0, X1, Y1, 1, buttons, 0, 10);
 
-    std::shared_ptr<StyleFactory> style = GetStyleFactory();
+    const auto& style = GetStyleFactory();
 
     TextControl* message_text = style->NewTextControl(msg, font, m_text_color,
                                                       FORMAT_CENTER | FORMAT_VCENTER | FORMAT_WORDBREAK);

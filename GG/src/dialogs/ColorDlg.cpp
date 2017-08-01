@@ -517,7 +517,7 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
     m_current_color = m_original_color_specified ? Convert(m_original_color) : Convert(CLR_BLACK);
     Clr color = Convert(m_current_color);
 
-    std::shared_ptr<StyleFactory> style = GetStyleFactory();
+    const auto& style = GetStyleFactory();
 
     const int COLOR_BUTTON_ROWS = 4;
     const int COLOR_BUTTON_COLS = 5;

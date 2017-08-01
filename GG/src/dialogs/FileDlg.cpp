@@ -171,7 +171,7 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
     m_init_directory(directory),
     m_init_filename(filename)
 {
-    std::shared_ptr<StyleFactory> style = GetStyleFactory();
+    const auto& style = GetStyleFactory();
 
     if (m_save)
         multi = false;
@@ -183,7 +183,7 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
 
 void FileDlg::CompleteConstruction()
 {
-    std::shared_ptr<StyleFactory> style = GetStyleFactory();
+    const auto& style = GetStyleFactory();
 
     m_files_edit = style->NewEdit("", m_font, m_border_color, m_text_color);
     m_filter_list = style->NewDropDownList(3, m_border_color);
@@ -356,7 +356,7 @@ void FileDlg::OkHandler(bool double_click)
     parse(m_files_edit->Text().c_str(), (+anychar_p)[append(files)], space_p);
     std::sort(files.begin(), files.end());
 
-    std::shared_ptr<StyleFactory> style = GetStyleFactory();
+    const auto& style = GetStyleFactory();
 
     if (m_save) { // file save case
         if (m_ok_button->Text() != m_save_str) {
@@ -689,7 +689,7 @@ void FileDlg::UpdateDirectoryText()
 
 void FileDlg::OpenDirectory()
 {
-    std::shared_ptr<StyleFactory> style = GetStyleFactory();
+    const auto& style = GetStyleFactory();
 
     // see if there is a directory selected; if so open the directory.
     // if more than one is selected, take the first one

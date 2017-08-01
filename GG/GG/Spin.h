@@ -198,7 +198,7 @@ Spin<T>::Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<F
     m_down_button(nullptr),
     m_button_width(15)
 {
-    std::shared_ptr<StyleFactory> style = GetStyleFactory();
+    const auto& style = GetStyleFactory();
     Control::SetColor(color);
     m_edit = style->NewSpinEdit("", font, CLR_ZERO, text_color, CLR_ZERO);
     std::shared_ptr<Font> small_font = GUI::GetGUI()->GetFont(font, static_cast<int>(font->PointSize() * 0.75));
@@ -212,7 +212,7 @@ Spin<T>::Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<F
 template<class T>
 void Spin<T>::CompleteConstruction()
 {
-    std::shared_ptr<StyleFactory> style = GetStyleFactory();
+    const auto& style = GetStyleFactory();
     m_edit->InstallEventFilter(this);
     m_up_button->InstallEventFilter(this);
     m_down_button->InstallEventFilter(this);

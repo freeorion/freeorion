@@ -2225,7 +2225,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
     // Use the precalculated client size if possible.
     auto cl_sz = maybe_client_size ? *maybe_client_size : ClientSizeExcludingScrolls();
 
-    const std::shared_ptr<const StyleFactory> style = GetStyleFactory();
+    const auto& style = GetStyleFactory();
 
     bool horizontal_needed = (required_total_extents.first ? true : false);
     bool vertical_needed = (required_total_extents.second ? true : false);

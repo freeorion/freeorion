@@ -290,7 +290,7 @@ void TabBar::CompleteConstruction()
 
     SetChildClippingMode(ClipToClient);
 
-    std::shared_ptr<StyleFactory> style_factory = GetStyleFactory();
+    const auto& style_factory = GetStyleFactory();
 
     m_tabs = style_factory->NewRadioButtonGroup(HORIZONTAL);
     m_tabs->ExpandButtons(true);
@@ -389,7 +389,7 @@ std::size_t TabBar::AddTab(const std::string& name)
 void TabBar::InsertTab(std::size_t index, const std::string& name)
 {
     assert(index <= m_tab_buttons.size());
-    std::shared_ptr<StyleFactory> style_factory = GetStyleFactory();
+    const auto& style_factory = GetStyleFactory();
     StateButton* button = style_factory->NewTabBarTab(name,
                                                       m_font, FORMAT_CENTER, Color(),
                                                       m_text_color);
