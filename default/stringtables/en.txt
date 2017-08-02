@@ -3401,6 +3401,18 @@ Give Planet To...
 ORDER_CANCEL_GIVE_PLANET
 Cancel Giving Planet
 
+##
+## Fleet Button
+##
+
+FB_TOOLTIP_BLOCKADE_WITH_EXIT
+This fleet is currently being blockaded by a hostile fleet. It can only move to the following systems:
+
+FB_TOOLTIP_BLOCKADE_NO_EXIT
+This fleet is currently being blockaded by a hostile fleet. It is unable to move.
+
+FB_TOOLTIP_BLOCKADE_MONSTER
+This monster fleet is blockaded by an empire fleet. When monsters are blockaded by empire fleets, they are prevented from moving.
 
 ##
 ## Moderator

@@ -172,13 +172,29 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
 
     // select icon(s) for fleet(s)
     int num_ships = 0;
+    m_fleet_blockaded = false;
     for (std::shared_ptr<const Fleet> fleet : fleets) {
-        if (fleet)
+        if (fleet) {
             num_ships += fleet->NumShips();
+            if (!m_fleet_blockaded && fleet->Blockaded())
+                m_fleet_blockaded = true;
+        }
+    }  
+
+    // add graphics for all icons needed
+    if (m_fleet_blockaded) {
+        std::shared_ptr<GG::Texture> blockaded_texture = FleetBlockadedIcon(size_type);
+        if (blockaded_texture) {
+            GG::StaticGraphic* icon = new GG::StaticGraphic(blockaded_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            GG::Clr opposite_clr(255 - this->Color().r, 255 - this->Color().g, 255 - this->Color().b, this->Color().a);
+            icon->SetColor(opposite_clr);
+            m_icons.push_back(icon);
+            AttachChild(icon);
+        }
     }
+
     std::shared_ptr<GG::Texture> size_texture = FleetSizeIcon(num_ships, size_type);
 
-    // add RotatingGraphics for all icons needed
     if (size_texture) {
         auto icon = GG::Wnd::Create<RotatingGraphic>(size_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         icon->SetPhaseOffset(pointing_angle);
@@ -225,9 +241,16 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
 
     if (!at_least_one_fleet_visible)
         AttachChild(m_scanline_control);
+
+    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 }
 
 FleetButton::~FleetButton() {
+    for (auto& icon : m_icons) {
+        DetachChild(icon);
+        delete icon;
+    }
+
     DetachChild(m_selection_indicator);
     delete m_selection_indicator;
 
@@ -290,6 +313,41 @@ void FleetButton::LayoutIcons() {
         GG::Pt subtexture_sz = Size() * sel_ind_scale;
         GG::Pt graphic_ul = middle - subtexture_sz / 2;
         m_selection_indicator->SizeMove(graphic_ul, graphic_ul + subtexture_sz);
+    }
+
+    // refresh fleet button tooltip
+    if (m_fleet_blockaded) {
+        std::shared_ptr<Fleet> fleet;
+        std::shared_ptr<System> current_system;
+        std::string available_exits = "";
+        int available_exits_count = 0;
+
+        if (!m_fleets.empty())
+            // can just pick first fleet because all fleets in system should have same exits
+            fleet = GetFleet(*m_fleets.begin());
+        else return;
+
+        current_system = GetSystem(fleet->SystemID());
+
+        for (const auto& target_system_id : current_system->StarlanesWormholes()) {
+            if (fleet->BlockadedAtSystem(fleet->SystemID(), target_system_id.first))
+                continue;
+
+            std::shared_ptr<System> target_system = GetSystem(target_system_id.first);
+            if (target_system) {
+                available_exits += "\n" + target_system->ApparentName(HumanClientApp::GetApp()->EmpireID());
+                available_exits_count++;
+            }
+        }
+
+        if (fleet->Owner() == ALL_EMPIRES)  // as above, if first fleet of fleet-button is "monster-owned", all fleets are
+            SetBrowseText(UserString("FB_TOOLTIP_BLOCKADE_MONSTER"));
+        else if (available_exits_count >= 1)
+            SetBrowseText(UserString("FB_TOOLTIP_BLOCKADE_WITH_EXIT") + available_exits);
+        else
+            SetBrowseText(UserString("FB_TOOLTIP_BLOCKADE_NO_EXIT"));
+    } else {
+        ClearBrowseInfoWnd();
     }
 }
 
@@ -434,6 +492,23 @@ std::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButton:
     glBindTexture(GL_TEXTURE_2D, 0);
 
     return texture_temp;
+}
+
+std::shared_ptr<GG::Texture> FleetBlockadedIcon(FleetButton::SizeType size_type) {
+    if (size_type == FleetButton::FLEET_BUTTON_NONE)
+        return nullptr;
+
+    std::string size_prefix = FleetIconSizePrefix(size_type);
+    if (size_type == FleetButton::FLEET_BUTTON_TINY)
+        size_prefix = "tiny-";
+
+    std::shared_ptr<GG::Texture> retval = ClientUI::GetClientUI()->GetTexture(ClientUI::ArtDir() / "icons" / "fleet" / (size_prefix + "blockade.png"), false);
+    glBindTexture(GL_TEXTURE_2D, retval->OpenGLId());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    return retval;
 }
 
 std::shared_ptr<GG::Texture> FleetSelectionIndicatorIcon() {
