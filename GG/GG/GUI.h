@@ -467,7 +467,7 @@ private:
     Wnd*           CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_keys);
 
     static GUI*                       s_gui;
-    static std::shared_ptr<GUIImpl> s_impl;
+    std::unique_ptr<GUIImpl>          m_impl;
 
     friend class EventPumpBase; ///< allows EventPumpBase types to drive GUI
     friend struct GUIImpl;
