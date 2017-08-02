@@ -321,6 +321,7 @@
 		B7A7D5391ECF2D9D00E086C2 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 822E325B19BEED6C00A7B707 /* libz.a */; };
 		CE0ED5F91BCFE16E00375001 /* AIWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE0ED5F71BCFE16E00375001 /* AIWrapper.cpp */; };
 		CE13B48F1C8CB0CF0085A4DC /* CommonParamsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE13B48E1C8CB0CF0085A4DC /* CommonParamsParser.cpp */; };
+		CE1939C61F31AD4C0085A4DC /* IDAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE1939C41F31AD4C0085A4DC /* IDAllocator.cpp */; };
 		CE2BAD8F1E3E43E40085A4DC /* Pathfinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE2BAD8D1E3E43E40085A4DC /* Pathfinder.cpp */; };
 		CE2C454D1C65036F0085A4DC /* ResourceBrowseWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE2C454B1C65036F0085A4DC /* ResourceBrowseWnd.cpp */; };
 		CE2C454E1C6503990085A4DC /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 822E325B19BEED6C00A7B707 /* libz.a */; };
@@ -1073,6 +1074,8 @@
 		CE0ED5F81BCFE16E00375001 /* AIWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIWrapper.h; sourceTree = "<group>"; };
 		CE13B48D1C8CB0CF0085A4DC /* CommonParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonParams.h; sourceTree = "<group>"; };
 		CE13B48E1C8CB0CF0085A4DC /* CommonParamsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonParamsParser.cpp; sourceTree = "<group>"; };
+		CE1939C41F31AD4C0085A4DC /* IDAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDAllocator.cpp; sourceTree = "<group>"; };
+		CE1939C51F31AD4C0085A4DC /* IDAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDAllocator.h; sourceTree = "<group>"; };
 		CE2227D41EA971A10085A4DC /* EnumsFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumsFwd.h; sourceTree = "<group>"; };
 		CE2BAD8D1E3E43E40085A4DC /* Pathfinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pathfinder.cpp; sourceTree = "<group>"; };
 		CE2BAD8E1E3E43E40085A4DC /* Pathfinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pathfinder.h; sourceTree = "<group>"; };
@@ -1764,6 +1767,8 @@
 				CED6E5511C6DDC0F0085A4DC /* Fighter.h */,
 				471D5CF40A98A3F900DA9C21 /* Fleet.cpp */,
 				471D5CF50A98A3F900DA9C21 /* Fleet.h */,
+				CE1939C41F31AD4C0085A4DC /* IDAllocator.cpp */,
+				CE1939C51F31AD4C0085A4DC /* IDAllocator.h */,
 				471D5CF70A98A3F900DA9C21 /* Meter.cpp */,
 				471D5CF80A98A3F900DA9C21 /* Meter.h */,
 				82592EF3147E387100B840A5 /* ObjectMap.cpp */,
@@ -2470,6 +2475,7 @@
 				CEED195F1C79BA2F0085A4DC /* Supply.cpp in Sources */,
 				47103BFA0CF04E5900A7DF2B /* Building.cpp in Sources */,
 				82EC868B1B40504700D4584D /* Encyclopedia.cpp in Sources */,
+				CE1939C61F31AD4C0085A4DC /* IDAllocator.cpp in Sources */,
 				47103BFB0CF04E5900A7DF2B /* Condition.cpp in Sources */,
 				47103BFF0CF04E5900A7DF2B /* Effect.cpp in Sources */,
 				47103C010CF04E5900A7DF2B /* Enums.cpp in Sources */,
