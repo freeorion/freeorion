@@ -2559,7 +2559,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     if (ship->OwnedBy(client_empire_id) || ClientPlayerIsModerator()) {
         auto rename_action = [ship, client_empire_id]() {
             std::string ship_name = ship->Name();
-            std::shared_ptr<CUIEditWnd> edit_wnd(GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("ENTER_NEW_NAME"), ship_name));
+            std::shared_ptr<CUIEditWnd> edit_wnd(GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("ENTER_NEW_NAME"), ship_name)); // TODO change the shared_ptr to auto after conversion of Wnd::Create
             edit_wnd->Run();
 
             std::string new_name = edit_wnd->Result();
@@ -3409,7 +3409,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     {
         auto rename_action = [fleet, client_empire_id]() {
             std::string fleet_name = fleet->Name();
-            std::shared_ptr<CUIEditWnd> edit_wnd(GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("ENTER_NEW_NAME"), fleet_name));
+            std::shared_ptr<CUIEditWnd> edit_wnd(GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("ENTER_NEW_NAME"), fleet_name)); // TODO change the shared_ptr to auto after conversion of Wnd::Create
             edit_wnd->Run();
 
             std::string new_name = edit_wnd->Result();
