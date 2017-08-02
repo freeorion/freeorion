@@ -332,7 +332,7 @@ void IntroScreen::OnLoadGame() {
 }
 
 void IntroScreen::OnOptions() {
-    auto  options_wnd = GG::Wnd::Create<OptionsWnd>();
+    auto options_wnd = GG::Wnd::Create<OptionsWnd>();
     options_wnd->Run();
 }
 
