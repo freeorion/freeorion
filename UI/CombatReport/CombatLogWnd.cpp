@@ -379,7 +379,7 @@ std::vector<GG::Wnd*> CombatLogWnd::Impl::MakeCombatLogPanel(GG::X w, int viewin
 
 
 void CombatLogWnd::Impl::AddRow(GG::Wnd* wnd) {
-    if (GG::Layout* layout = m_wnd.GetLayout())
+    if (auto&& layout = m_wnd.GetLayout())
         layout->Add(wnd, layout->Rows(), 0);
 }
 

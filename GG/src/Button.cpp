@@ -657,7 +657,7 @@ void RadioButtonGroup::InsertButton(std::size_t index, StateButton* bn)
         bn->Resize(Pt(std::max(bn->Width(), min_usable_size.x), std::max(bn->Height(), min_usable_size.y)));
     }
     Pt bn_sz = bn->Size();
-    Layout* layout = GetLayout();
+    auto&& layout = GetLayout();
     if (!layout) {
         layout = Wnd::Create<Layout>(X0, Y0, ClientWidth(), ClientHeight(), 1, 1);
         SetLayout(layout);
@@ -716,7 +716,7 @@ void RadioButtonGroup::RemoveButton(StateButton* button)
     assert(index < m_button_slots.size());
 
     const int CELLS_PER_BUTTON = m_expand_buttons ? 1 : 2;
-    Layout* layout = GetLayout();
+    auto&& layout = GetLayout();
     layout->Remove(m_button_slots[index].button);
     for (std::size_t i = index + 1; i < m_button_slots.size(); ++i) {
         layout->Remove(m_button_slots[i].button);

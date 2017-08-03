@@ -144,7 +144,7 @@ void OverlayWnd::SetCurrentWnd(std::size_t index)
         GG::Pt lr = old_current_wnd ? old_current_wnd->LowerRight() : current_wnd->LowerRight();
         current_wnd->SizeMove(ul, lr);
 
-        Layout* layout = GetLayout();
+        auto&& layout = GetLayout();
         layout->Remove(old_current_wnd);
         layout->Add(current_wnd, 0, 0);
 

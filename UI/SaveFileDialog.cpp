@@ -360,7 +360,7 @@ public:
         interaction with the ListBox base class that sets the column widths back to those defined
         by SetColWidths().*/
     virtual void AdjustColumns() {
-        GG::Layout* layout = GetLayout();
+        auto&& layout = GetLayout();
         if (!layout)
             return;
         for (unsigned int i = 0; i < m_columns->size(); ++i) {
@@ -431,7 +431,7 @@ public:
     { return m_filename; }
 
     GG::X DirectoryNameSize() {
-        GG::Layout* layout = GetLayout();
+        auto&& layout = GetLayout();
         if (!layout)
             return ClientUI::GetFont()->SpaceWidth() * 10;
 
