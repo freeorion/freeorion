@@ -6233,7 +6233,7 @@ bool MapWnd::ShowMenu() {
     m_btn_menu->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_mouseover.png")));
     m_btn_menu->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));
 
-    std::shared_ptr<InGameMenu> menu(GG::Wnd::Create<InGameMenu>());
+    auto menu = GG::Wnd::Create<InGameMenu>();
     menu->Run();
     m_menu_showing = false;
 

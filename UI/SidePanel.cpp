@@ -810,7 +810,7 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
 
         auto rename_action = [this, system]() {
             const std::string& old_name(system->Name());
-            std::shared_ptr<CUIEditWnd> edit_wnd(GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("SP_ENTER_NEW_SYSTEM_NAME"), old_name)); // TODO change the shared_ptr to auto after conversion of Wnd::Create
+            auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("SP_ENTER_NEW_SYSTEM_NAME"), old_name);
             edit_wnd->Run();
             const std::string& new_name(edit_wnd->Result());
             if (m_order_issuing_enabled && !new_name.empty() && new_name != old_name) {
@@ -2011,7 +2011,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         && m_planet_name->InClient(pt))
     {
         auto rename_action = [this, planet]() { // rename planet
-            std::shared_ptr<CUIEditWnd> edit_wnd(GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("SP_ENTER_NEW_PLANET_NAME"), planet->Name())); // TODO change the shared_ptr to auto after conversion of Wnd::Create
+            auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("SP_ENTER_NEW_PLANET_NAME"), planet->Name());
             edit_wnd->Run();
             if (edit_wnd->Result() != ""
                 && edit_wnd->Result() != planet->Name()
