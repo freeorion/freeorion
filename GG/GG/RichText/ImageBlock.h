@@ -59,6 +59,7 @@ public:
      * @param image_path The path to the image.
      */
     ImageBlock(const boost::filesystem::path& path, X x, Y y, X w, GG::Flags<GG::WndFlag> flags);
+    void CompleteConstruction() override;
 
     //! Implement from BlockControl sets the maximum width, returns the actual size based on that.
     Pt SetMaxWidth(X width) override;

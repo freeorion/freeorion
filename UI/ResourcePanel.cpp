@@ -37,7 +37,11 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     m_meter_stats(),
     m_multi_icon_value_indicator(nullptr),
     m_multi_meter_status_bar(nullptr)
-{
+{}
+
+void ResourcePanel::CompleteConstruction() {
+    AccordionPanel::CompleteConstruction();
+
     SetName("ResourcePanel");
 
     std::shared_ptr<const ResourceCenter> res = GetResCenter();
@@ -169,12 +173,11 @@ void ResourcePanel::Update() {
     m_multi_icon_value_indicator->Update();
 
     // tooltips
-    std::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
-
     for (auto& meter_stat : m_meter_stats) {
         meter_stat.second->SetValue(obj->InitialMeterValue(meter_stat.first));
 
-        browse_wnd = std::make_shared<MeterBrowseWnd>(m_rescenter_id, meter_stat.first, AssociatedMeterType(meter_stat.first));
+        // TODO remove extra wrapping of shared_ptr after conversion to GG shared_ptr
+        auto browse_wnd = std::shared_ptr<GG::BrowseInfoWnd>(GG::Wnd::Create<MeterBrowseWnd>(m_rescenter_id, meter_stat.first, AssociatedMeterType(meter_stat.first)));
         meter_stat.second->SetBrowseInfoWnd(browse_wnd);
         m_multi_icon_value_indicator->SetToolTip(meter_stat.first, browse_wnd);
     }

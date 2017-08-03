@@ -69,6 +69,7 @@ public:
     FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi, const std::shared_ptr<Font>& font,
             Clr color, Clr border_color, Clr text_color = CLR_BLACK);
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{
     std::set<std::string> Result() const; ///< returns a set of strings that contains the files chosen by the user; there will be only one file if \a multi == false was passed to the ctor
@@ -176,6 +177,9 @@ private:
     Button*          m_cancel_button;
     TextControl*     m_files_label;
     TextControl*     m_file_types_label;
+
+    std::string      m_init_directory; ///< directory passed to constructor
+    std::string      m_init_filename; ///< filename passed to constructor
 
     static boost::filesystem::path s_working_dir; ///< declared static so each instance of FileDlg opens up the same directory
 };

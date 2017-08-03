@@ -13,6 +13,7 @@ class ObjectListWnd : public CUIWnd {
 public:
     //! \name Structors //!@{
     ObjectListWnd(const std::string& config_name = "");
+    void CompleteConstruction() override;
     //!@}
 
     /** \name Mutators */ //@{

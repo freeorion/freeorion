@@ -44,8 +44,15 @@ namespace {
         {
             if (!m_contents)
                 return;
-            AttachChild(m_contents);
             m_contents->MoveTo(GG::Pt(GG::X(indentation_level * INDENTATION), GG::Y0));
+        }
+
+        void CompleteConstruction() override {
+            GG::Control::CompleteConstruction();
+
+            if (!m_contents)
+                return;
+            AttachChild(m_contents);
             DoLayout();
         }
 
@@ -74,21 +81,21 @@ namespace {
         RuleListRow(GG::X w, GG::Y h, RowContentsWnd* contents) :
             GG::ListBox::Row(w, h, ""),
             m_contents(contents)
-        {
-            SetChildClippingMode(ClipToClient);
-            if (m_contents)
-                push_back(m_contents);
-        }
+        {}
 
         RuleListRow(GG::X w, GG::Y h, Wnd* contents, int indentation = 0) :
             GG::ListBox::Row(w, h, ""),
             m_contents(nullptr)
         {
-            SetChildClippingMode(ClipToClient);
-            if (contents) {
+            if (contents)
                 m_contents = GG::Wnd::Create<RowContentsWnd>(w, h, contents, indentation);
+        }
+
+        void CompleteConstruction() override {
+            GG::ListBox::Row::CompleteConstruction();
+            SetChildClippingMode(ClipToClient);
+            if (m_contents)
                 push_back(m_contents);
-            }
         }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
@@ -397,7 +404,11 @@ namespace {
             GG::ListBox::Row(w, h, "", GG::ALIGN_VCENTER, 0)
         {
             GG::Wnd::SetName(key);
-            auto species_label = GG::Wnd::Create<CUILabel>(UserString(key), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+        }
+
+        void CompleteConstruction() override {
+            GG::ListBox::Row::CompleteConstruction();
+            auto species_label = GG::Wnd::Create<CUILabel>(UserString(Name()), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             push_back(species_label);
         }
     };
@@ -531,7 +542,11 @@ const GG::X GalaxySetupPanel::DefaultWidth() {
 
 GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS)
-{
+{}
+
+void GalaxySetupPanel::CompleteConstruction() {
+    GG::Control::CompleteConstruction();
+
     Sound::TempUISoundDisabler sound_disabler;
 
     // seed
@@ -543,7 +558,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
     // random seed button
-    m_random = new CUIButton(
+    m_random = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "randomize.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "randomize_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "randomize_mouseover.png")));
@@ -937,7 +952,9 @@ void GalaxySetupPanel::ShapeChanged(GG::DropDownList::iterator it)
 ////////////////////////////////////////////////
 GalaxySetupWnd::GalaxySetupWnd() :
     CUIWnd(UserString("GSETUP_WINDOW_TITLE"), GG::INTERACTIVE | GG::MODAL)
-{
+{}
+
+void GalaxySetupWnd::CompleteConstruction() {
     Sound::TempUISoundDisabler sound_disabler;
 
     m_galaxy_setup_panel = GG::Wnd::Create<GalaxySetupPanel>();
@@ -1004,8 +1021,8 @@ GalaxySetupWnd::GalaxySetupWnd() :
     static auto temp_tex = std::make_shared<GG::Texture>();
     m_preview_image =  GG::Wnd::Create<GG::StaticGraphic>(temp_tex, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE); // create a blank graphic
 
-    m_ok = new CUIButton(UserString("OK"));
-    m_cancel = new CUIButton(UserString("CANCEL"));
+    m_ok = Wnd::Create<CUIButton>(UserString("OK"));
+    m_cancel = Wnd::Create<CUIButton>(UserString("CANCEL"));
 
     AttachChild(m_galaxy_setup_panel);
     AttachChild(m_game_rules_panel);
@@ -1038,6 +1055,8 @@ GalaxySetupWnd::GalaxySetupWnd() :
         boost::bind(&GalaxySetupWnd::CancelClicked, this));
 
     PreviewImageChanged(m_galaxy_setup_panel->PreviewImage());
+
+    CUIWnd::CompleteConstruction();
 }
 
 const std::string& GalaxySetupWnd::EmpireName() const

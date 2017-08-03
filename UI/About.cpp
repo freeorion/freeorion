@@ -18,7 +18,11 @@
 About::About():
     CUIWnd(UserString("ABOUT_WINDOW_TITLE"), GG::X(80), GG::Y(130), GG::X(600), GG::Y(500),
            GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL)
-{
+{}
+
+void About::CompleteConstruction() {
+    CUIWnd::CompleteConstruction();
+
     m_done_btn = Wnd::Create<CUIButton>(UserString("DONE"));
     m_license = Wnd::Create<CUIButton>(UserString("LICENSE"));
     m_vision = Wnd::Create<CUIButton>(UserString("VISION"));

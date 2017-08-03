@@ -380,7 +380,11 @@ class SaveFileHeaderRow: public SaveFileRow {
 public:
     SaveFileHeaderRow(const std::shared_ptr<std::vector<SaveFileColumn>>& columns) :
         SaveFileRow(columns, "")
-    {
+    {}
+
+    void CompleteConstruction() override {
+        SaveFileRow::CompleteConstruction();
+
         SetMargin(ROW_MARGIN);
 
         for (const SaveFileColumn& column : *m_columns)
@@ -395,7 +399,10 @@ public:
 class SaveFileDirectoryRow: public SaveFileRow {
 public:
     SaveFileDirectoryRow(const std::shared_ptr<std::vector<SaveFileColumn>>& columns, const std::string& directory) :
-        SaveFileRow(columns, directory) {
+        SaveFileRow(columns, directory) {}
+
+    void CompleteConstruction() override {
+        SaveFileRow::CompleteConstruction();
         SetMargin(ROW_MARGIN);
     }
 
@@ -448,8 +455,13 @@ public:
         m_all_columns(columns),
         m_full_preview(full)
     {
-        SetMargin (ROW_MARGIN);
         SetBrowseModeTime(tooltip_delay);
+    }
+
+    void CompleteConstruction() override {
+        SaveFileRow::CompleteConstruction();
+
+        SetMargin (ROW_MARGIN);
     }
 
     void Init() override {
@@ -628,7 +640,6 @@ SaveFileDialog::SaveFileDialog (const std::string& extension, bool load) :
     m_extension = extension;
     m_load_only = load;
     m_server_previews = false;
-    Init();
 }
 
 SaveFileDialog::SaveFileDialog (bool load) :
@@ -639,6 +650,10 @@ SaveFileDialog::SaveFileDialog (bool load) :
     m_load_only = load;
     m_server_previews = true;
     m_extension = MP_SAVE_FILE_EXTENSION;
+}
+
+void SaveFileDialog::CompleteConstruction() {
+    CUIWnd::CompleteConstruction();
     Init();
 }
 
@@ -655,8 +670,8 @@ void SaveFileDialog::Init() {
     m_file_list = GG::Wnd::Create<SaveFileListBox>();
     m_file_list->SetStyle(GG::LIST_SINGLESEL | GG::LIST_SORTDESCENDING);
 
-    m_confirm_btn = new CUIButton(UserString("OK"));
-    auto cancel_btn = new CUIButton(UserString("CANCEL"));
+    m_confirm_btn = Wnd::Create<CUIButton>(UserString("OK"));
+    auto cancel_btn = Wnd::Create<CUIButton>(UserString("CANCEL"));
 
     m_name_edit = GG::Wnd::Create<CUIEdit>("");
     if (m_extension != MP_SAVE_FILE_EXTENSION && m_extension != SP_SAVE_FILE_EXTENSION) {
@@ -677,7 +692,7 @@ void SaveFileDialog::Init() {
     if (!m_server_previews) {
         m_layout->Add(m_current_dir_edit, 0, 1, 1, 3);
 
-        auto delete_btn = new CUIButton(UserString("DELETE"));
+        auto delete_btn = Wnd::Create<CUIButton>(UserString("DELETE"));
         m_layout->Add(delete_btn, 2, 3);
         delete_btn->LeftClickedSignal.connect(
             boost::bind(&SaveFileDialog::AskDelete, this));

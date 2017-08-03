@@ -519,6 +519,10 @@ public:
         m_enabled(false)
     {
         m_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
+    }
+
+    void CompleteConstruction() override {
+        GG::Control::CompleteConstruction();
         AttachChild(m_label);
         std::set<int> dummy = std::set<int>();
         Update(1.0, dummy, INVALID_OBJECT_ID);
@@ -700,14 +704,15 @@ private:
 MapWndPopup::MapWndPopup(const std::string& t, GG::X default_x, GG::Y default_y, GG::X default_w, GG::Y default_h,
                          GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
     CUIWnd(t, default_x, default_y, default_w, default_h, flags, config_name)
-{
-    if (MapWnd *mwnd = ClientUI::GetClientUI()->GetMapWnd())
-        mwnd->RegisterPopup(this);
-}
+{}
 
 MapWndPopup::MapWndPopup(const std::string& t, GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
     CUIWnd(t, flags, config_name)
-{
+{}
+
+void MapWndPopup::CompleteConstruction() {
+    CUIWnd::CompleteConstruction();
+
     // MapWndPopupWnd is registered as a top level window, the same as ClientUI and MapWnd.
     // Consequently, when the GUI shutsdown either could be destroyed before this Wnd
     if (auto client = ClientUI::GetClientUI())
@@ -960,7 +965,11 @@ MapWnd::MapWnd() :
     m_FPS(nullptr),
     m_scale_line(nullptr),
     m_zoom_slider(nullptr)
-{
+{}
+
+void MapWnd::CompleteConstruction() {
+    GG::Wnd::CompleteConstruction();
+
     SetName("MapWnd");
 
     GetUniverse().UniverseObjectDeleteSignal.connect(
@@ -985,7 +994,7 @@ MapWnd::MapWnd() :
     // turn button
     // determine size from the text that will go into the button, using a test year string
     std::string turn_button_longest_reasonable_text =  boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) % "99999"); // it is unlikely a game will go over 100000 turns
-    m_btn_turn = new CUIButton(turn_button_longest_reasonable_text);
+    m_btn_turn = Wnd::Create<CUIButton>(turn_button_longest_reasonable_text);
     m_btn_turn->Resize(m_btn_turn->MinUsableSize());
     m_btn_turn->LeftClickedSignal.connect(
         boost::bind(&MapWnd::EndTurn, this));
@@ -995,7 +1004,7 @@ MapWnd::MapWnd() :
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
     // auto turn button
-    m_btn_auto_turn = new CUIButton(
+    m_btn_auto_turn = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "manual_turn.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "auto_turn.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "manual_turn_mouseover.png")));
@@ -1019,7 +1028,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
                     _2);
     // Menu button
-    m_btn_menu = new SettableInWindowCUIButton(
+    m_btn_menu = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu_mouseover.png")),
@@ -1028,7 +1037,7 @@ MapWnd::MapWnd() :
     m_btn_menu->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ShowMenu, this));
     m_btn_menu->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_menu->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_btn_menu->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_MENU"), UserString("MAP_BTN_MENU_DESC")));
 
     in_window_func =
@@ -1036,7 +1045,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Encyclo"pedia" button
-    m_btn_pedia = new SettableInWindowCUIButton(
+    m_btn_pedia = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia_mouseover.png")),
@@ -1045,7 +1054,7 @@ MapWnd::MapWnd() :
     m_btn_pedia->LeftClickedSignal.connect(
         boost::bind(&MapWnd::TogglePedia, this));
     m_btn_pedia->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_pedia->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_btn_pedia->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_PEDIA"), UserString("MAP_BTN_PEDIA_DESC")));
 
     in_window_func =
@@ -1053,7 +1062,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Graphs button
-    m_btn_graphs = new SettableInWindowCUIButton(
+    m_btn_graphs = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_mouseover.png")),
@@ -1062,7 +1071,7 @@ MapWnd::MapWnd() :
     m_btn_graphs->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ShowGraphs, this));
     m_btn_graphs->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_graphs->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_btn_graphs->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_GRAPH"), UserString("MAP_BTN_GRAPH_DESC")));
 
     in_window_func =
@@ -1070,7 +1079,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Design button
-    m_btn_design = new SettableInWindowCUIButton(
+    m_btn_design = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design_mouseover.png")),
@@ -1079,7 +1088,7 @@ MapWnd::MapWnd() :
     m_btn_design->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleDesign, this));
     m_btn_design->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_design->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_btn_design->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_DESIGN"), UserString("MAP_BTN_DESIGN_DESC")));
 
     in_window_func =
@@ -1087,7 +1096,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Production button
-    m_btn_production = new SettableInWindowCUIButton(
+    m_btn_production = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production_mouseover.png")),
@@ -1096,7 +1105,7 @@ MapWnd::MapWnd() :
     m_btn_production->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleProduction, this));
     m_btn_production->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_production->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_btn_production->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_PRODUCTION"), UserString("MAP_BTN_PRODUCTION_DESC")));
 
     in_window_func =
@@ -1104,7 +1113,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Research button
-    m_btn_research = new SettableInWindowCUIButton(
+    m_btn_research = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research_mouseover.png")),
@@ -1113,7 +1122,7 @@ MapWnd::MapWnd() :
     m_btn_research->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleResearch, this));
     m_btn_research->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_research->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_btn_research->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_RESEARCH"), UserString("MAP_BTN_RESEARCH_DESC")));
 
     in_window_func =
@@ -1121,7 +1130,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Objects button
-    m_btn_objects = new SettableInWindowCUIButton(
+    m_btn_objects = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects_mouseover.png")),
@@ -1130,7 +1139,7 @@ MapWnd::MapWnd() :
     m_btn_objects->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleObjects, this));
     m_btn_objects->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_objects->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_btn_objects->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_OBJECTS"), UserString("MAP_BTN_OBJECTS_DESC")));
 
     in_window_func =
@@ -1138,7 +1147,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Empires button
-    m_btn_empires = new SettableInWindowCUIButton(
+    m_btn_empires = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires_mouseover.png")),
@@ -1147,7 +1156,7 @@ MapWnd::MapWnd() :
     m_btn_empires->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleEmpires, this));
     m_btn_empires->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_empires->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_btn_empires->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_EMPIRES"), UserString("MAP_BTN_EMPIRES_DESC")));
 
     in_window_func =
@@ -1155,7 +1164,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
                     _2);
     // SitRep button
-    m_btn_siterep = new SettableInWindowCUIButton(
+    m_btn_siterep = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep_mouseover.png")),
@@ -1164,7 +1173,7 @@ MapWnd::MapWnd() :
     m_btn_siterep->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleSitRep, this));
     m_btn_siterep->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_siterep->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_btn_siterep->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_SITREP"), UserString("MAP_BTN_SITREP_DESC")));
 
     in_window_func =
@@ -1172,7 +1181,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
                     _2);
     // Messages button
-    m_btn_messages = new SettableInWindowCUIButton(
+    m_btn_messages = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages_mouseover.png")),
@@ -1181,7 +1190,7 @@ MapWnd::MapWnd() :
     m_btn_messages->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleMessages, this));
     m_btn_messages->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_messages->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_btn_messages->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_MESSAGES"), UserString("MAP_BTN_MESSAGES_DESC")));
 
     in_window_func =
@@ -1189,7 +1198,7 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
                     _2);
     // Moderator button
-    m_btn_moderator = new SettableInWindowCUIButton(
+    m_btn_moderator = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator_mouseover.png")),
@@ -1198,7 +1207,7 @@ MapWnd::MapWnd() :
     m_btn_moderator->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleModeratorActions, this));
     m_btn_moderator->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_moderator->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_btn_moderator->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_MODERATOR"), UserString("MAP_BTN_MODERATOR_DESC")));
 
 
@@ -1241,12 +1250,12 @@ MapWnd::MapWnd() :
     GG::SubTexture wasted_ressource_clicked_subtexture = GG::SubTexture(ClientUI::GetTexture(button_texture_dir /
                                                                 "wasted_resource_clicked.png", false));
 
-    m_industry_wasted = new CUIButton(
+    m_industry_wasted = Wnd::Create<CUIButton>(
         wasted_ressource_subtexture,
         wasted_ressource_clicked_subtexture,
         wasted_ressource_mouseover_subtexture);
 
-    m_research_wasted = new CUIButton(
+    m_research_wasted = Wnd::Create<CUIButton>(
         wasted_ressource_subtexture,
         wasted_ressource_clicked_subtexture,
         wasted_ressource_mouseover_subtexture);
@@ -1410,7 +1419,7 @@ MapWnd::MapWnd() :
     ///////////////////
 
     // system-view side panel
-    m_side_panel = new SidePanel(MAP_SIDEPANEL_WND_NAME);
+    m_side_panel = GG::Wnd::Create<SidePanel>(MAP_SIDEPANEL_WND_NAME);
     GG::GUI::GetGUI()->Register(m_side_panel);
 
     SidePanel::SystemSelectedSignal.connect(
@@ -1435,7 +1444,7 @@ MapWnd::MapWnd() :
         boost::bind(&MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this));
 
     // situation report window
-    m_sitrep_panel = new SitRepPanel(SITREP_WND_NAME);
+    m_sitrep_panel = GG::Wnd::Create<SitRepPanel>(SITREP_WND_NAME);
     // Wnd is manually closed by user
     m_sitrep_panel->ClosingSignal.connect(
         boost::bind(&MapWnd::HideSitRep, this));
@@ -1445,7 +1454,7 @@ MapWnd::MapWnd() :
     }
 
     // encyclopedia panel
-    m_pedia_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, MAP_PEDIA_WND_NAME);
+    m_pedia_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, MAP_PEDIA_WND_NAME);
     // Wnd is manually closed by user
     m_pedia_panel->ClosingSignal.connect(
         boost::bind(&MapWnd::HidePedia, this));
@@ -1455,7 +1464,7 @@ MapWnd::MapWnd() :
     }
 
     // objects list
-    m_object_list_wnd = new ObjectListWnd(OBJECT_WND_NAME);
+    m_object_list_wnd = GG::Wnd::Create<ObjectListWnd>(OBJECT_WND_NAME);
     // Wnd is manually closed by user
     m_object_list_wnd->ClosingSignal.connect(
         boost::bind(&MapWnd::HideObjects, this));
@@ -1467,7 +1476,7 @@ MapWnd::MapWnd() :
     }
 
     // moderator actions
-    m_moderator_wnd = new ModeratorActionsWnd(MODERATOR_WND_NAME);
+    m_moderator_wnd = GG::Wnd::Create<ModeratorActionsWnd>(MODERATOR_WND_NAME);
     m_moderator_wnd->ClosingSignal.connect(
         boost::bind(&MapWnd::HideModeratorActions, this));
     if (m_moderator_wnd->Visible()) {
@@ -1476,7 +1485,7 @@ MapWnd::MapWnd() :
     }
 
     // Combat report
-    m_combat_report_wnd = new CombatReportWnd(COMBAT_REPORT_WND_NAME);
+    m_combat_report_wnd = GG::Wnd::Create<CombatReportWnd>(COMBAT_REPORT_WND_NAME);
 
     // position CUIWnds owned by the MapWnd
     InitializeWindows();
@@ -4907,7 +4916,7 @@ void MapWnd::CreateFleetButtonsOfType (
             continue;
 
         // create new fleetbutton for this cluster of fleets
-        auto fb = new FleetButton(fleet_IDs, fleet_button_size);
+        auto fb = GG::Wnd::Create<FleetButton>(fleet_IDs, fleet_button_size);
 
         // store per type of fleet button.
         type_fleet_buttons[key].insert(fb);
@@ -5818,7 +5827,7 @@ void MapWnd::ToggleAutoEndTurn() {
         m_btn_auto_turn->SetRolloverGraphic(    GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "manual_turn_mouseover.png")));
 
         m_btn_auto_turn->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_btn_auto_turn->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        m_btn_auto_turn->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("MAP_BTN_MANUAL_TURN_ADVANCE"),
             UserString("MAP_BTN_MANUAL_TURN_ADVANCE_DESC")
         ));
@@ -5829,7 +5838,7 @@ void MapWnd::ToggleAutoEndTurn() {
         m_btn_auto_turn->SetRolloverGraphic(    GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "auto_turn_mouseover.png")));
 
         m_btn_auto_turn->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_btn_auto_turn->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        m_btn_auto_turn->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("MAP_BTN_AUTO_ADVANCE_ENABLED"),
             UserString("MAP_BTN_AUTO_ADVANCE_ENABLED_DESC")
         ));
@@ -6249,8 +6258,8 @@ bool MapWnd::ShowMenu() {
     m_btn_menu->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_mouseover.png")));
     m_btn_menu->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));
 
-    InGameMenu menu;
-    menu.Run();
+    std::shared_ptr<InGameMenu> menu(GG::Wnd::Create<InGameMenu>());
+    menu->Run();
     m_menu_showing = false;
 
     m_btn_menu->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));
@@ -6284,7 +6293,7 @@ void MapWnd::RefreshTradeResourceIndicator() {
     m_trade->SetValue(empire->ResourceStockpile(RE_TRADE));
     m_trade->ClearBrowseInfoWnd();
     m_trade->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_trade->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_trade->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_TRADE_TITLE"), UserString("MAP_TRADE_TEXT")));
 }
 
@@ -6307,7 +6316,7 @@ void MapWnd::RefreshFleetResourceIndicator() {
     m_fleet->SetValue(total_fleet_count);
     m_fleet->ClearBrowseInfoWnd();
     m_fleet->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_fleet->SetBrowseInfoWnd(std::make_shared<FleetDetailBrowseWnd>(
+    m_fleet->SetBrowseInfoWnd(GG::Wnd::Create<FleetDetailBrowseWnd>(
         empire_id, GG::X(FontBasedUpscale(200))));
 }
 
@@ -6327,7 +6336,7 @@ void MapWnd::RefreshResearchResourceIndicator() {
     double total_RP_wasted = total_RP_output - total_RP_spent;
     double total_RP_target_output = empire->GetResourcePool(RE_RESEARCH)->TargetOutput();
 
-    m_research->SetBrowseInfoWnd(std::make_shared<ResourceBrowseWnd>(
+    m_research->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
         UserString("MAP_RESEARCH_TITLE"), UserString("RESEARCH_INFO_RP"),
         total_RP_spent, total_RP_output, total_RP_target_output
     ));
@@ -6338,7 +6347,7 @@ void MapWnd::RefreshResearchResourceIndicator() {
         m_research_wasted->Show();
         m_research_wasted->ClearBrowseInfoWnd();
         m_research_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_research_wasted->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        m_research_wasted->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("MAP_RES_WASTED_TITLE"),
             boost::io::str(FlexibleFormat(UserString("MAP_RES_WASTED_TEXT"))
                            % DoubleToString(total_RP_output, 3, false)
@@ -6355,7 +6364,7 @@ void MapWnd::RefreshDetectionIndicator() {
     m_detection->SetValue(empire->GetMeter("METER_DETECTION_STRENGTH")->Current());
     m_detection->ClearBrowseInfoWnd();
     m_detection->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_detection->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_detection->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_DETECTION_TITLE"), UserString("MAP_DETECTION_TEXT")));
 }
 
@@ -6375,7 +6384,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     double total_PP_wasted = total_PP_output - total_PP_spent;
     double total_PP_target_output = empire->GetResourcePool(RE_INDUSTRY)->TargetOutput();
 
-    m_industry->SetBrowseInfoWnd(std::make_shared<ResourceBrowseWnd>(
+    m_industry->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
         UserString("MAP_PRODUCTION_TITLE"), UserString("PRODUCTION_INFO_PP"),
         total_PP_spent, total_PP_output, total_PP_target_output));
 
@@ -6385,7 +6394,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
         m_industry_wasted->Show();
         m_industry_wasted->ClearBrowseInfoWnd();
         m_industry_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_industry_wasted->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        m_industry_wasted->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("MAP_PROD_WASTED_TITLE"),
             boost::io::str(FlexibleFormat(UserString("MAP_PROD_WASTED_TEXT"))
                            % DoubleToString(total_PP_output, 3, false)
@@ -6429,7 +6438,7 @@ void MapWnd::RefreshPopulationIndicator() {
     }
 
     m_population->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_population->SetBrowseInfoWnd(std::make_shared<CensusBrowseWnd>(
+    m_population->SetBrowseInfoWnd(GG::Wnd::Create<CensusBrowseWnd>(
         UserString("MAP_POPULATION_DISTRIBUTION"), population_counts, tag_counts));
 }
 

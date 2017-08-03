@@ -62,10 +62,11 @@ public:
     typedef boost::signals2::signal<void ()> ClickedSignalType;
     //@}
 
-    /** \name Structors */ ///@{
+   /** \name Structors */ ///@{
     Button(const std::string& str, const std::shared_ptr<Font>& font, Clr color,
            Clr text_color = CLR_BLACK, Flags<WndFlag> flags = INTERACTIVE);
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
@@ -169,6 +170,7 @@ public:
     StateButton(const std::string& str, const std::shared_ptr<Font>& font, Flags<TextFormat> format,
                 Clr color, std::shared_ptr<StateButtonRepresenter> representer, Clr text_color = CLR_BLACK); ///< Ctor
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;

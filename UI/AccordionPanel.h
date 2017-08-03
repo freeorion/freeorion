@@ -19,6 +19,8 @@ public:
     virtual ~AccordionPanel();
     //@}
 
+    void CompleteConstruction() override;
+
     GG::Pt ClientUpperLeft() const override;
 
     GG::Pt ClientLowerRight() const override;

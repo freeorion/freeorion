@@ -748,6 +748,7 @@ public:
     /** \name Structors */ //@{
     PartControl(const PartType* part);
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     const PartType*     Part() const { return m_part; }
@@ -776,7 +777,10 @@ PartControl::PartControl(const PartType* part) :
     m_icon(nullptr),
     m_background(nullptr),
     m_part(part)
-{
+{}
+
+void PartControl::CompleteConstruction() {
+    GG::Control::CompleteConstruction();
     if (!m_part)
         return;
 
@@ -802,7 +806,7 @@ PartControl::PartControl(const PartType* part) :
 
     //DebugLogger() << "PartControl::PartControl part name: " << m_part->Name();
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
+    SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
         ClientUI::PartIcon(m_part->Name()),
         UserString(m_part->Name()),
         UserString(m_part->Description()) + "\n" + m_part->CapacityDescription()
@@ -1300,6 +1304,7 @@ class DesignWnd::PartPalette : public CUIWnd {
 public:
     /** \name Structors */ //@{
     PartPalette(const std::string& config_name);
+    void CompleteConstruction() override;
     //@}
 
     /** \name Mutators */ //@{
@@ -1342,7 +1347,9 @@ DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
            config_name),
     m_parts_list(nullptr),
     m_superfluous_parts_button(nullptr)
-{
+{}
+
+void DesignWnd::PartPalette::CompleteConstruction() {
     //TempUISoundDisabler sound_disabler;     // should be redundant with disabler in DesignWnd::DesignWnd.  uncomment if this is not the case
     SetChildClippingMode(ClipToClient);
 
@@ -1370,24 +1377,24 @@ DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
         if (!part_of_this_class_exists)
             continue;
 
-        m_class_buttons[part_class] = new CUIStateButton(UserString(boost::lexical_cast<std::string>(part_class)), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+        m_class_buttons[part_class] = GG::Wnd::Create<CUIStateButton>(UserString(boost::lexical_cast<std::string>(part_class)), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
         AttachChild(m_class_buttons[part_class]);
         m_class_buttons[part_class]->CheckedSignal.connect(
             boost::bind(&DesignWnd::PartPalette::ToggleClass, this, part_class, true));
     }
 
     // availability buttons
-    m_availability_buttons.first = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    m_availability_buttons.first = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_availability_buttons.first);
     m_availability_buttons.first->CheckedSignal.connect(
         boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
-    m_availability_buttons.second = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    m_availability_buttons.second = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_availability_buttons.second);
     m_availability_buttons.second->CheckedSignal.connect(
         boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, false, true));
 
     // superfluous parts button
-    m_superfluous_parts_button = new CUIStateButton(UserString("PRODUCTION_WND_REDUNDANT"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    m_superfluous_parts_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_REDUNDANT"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_superfluous_parts_button);
     m_superfluous_parts_button->CheckedSignal.connect(
         boost::bind(&DesignWnd::PartPalette::ToggleSuperfluous, this, true));
@@ -1396,6 +1403,8 @@ DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
     ShowAllClasses(false);
     ShowAvailability(true, false);
     ShowSuperfluous(false);
+
+    CUIWnd::CompleteConstruction();
 
     DoLayout();
 }
@@ -1652,6 +1661,7 @@ public:
                  const boost::optional<std::string>& drop_type = boost::none,
                  const boost::optional<std::string>& empty_prompt = boost::none);
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     //@}
@@ -1683,6 +1693,7 @@ public:
     public:
         HullAndNamePanel(GG::X w, GG::Y h, const std::string& hull, const std::string& name);
 
+        void CompleteConstruction() override;
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
         void Render() override
@@ -1700,6 +1711,7 @@ public:
         public:
         BasesListBoxRow(GG::X w, GG::Y h, const std::string& hull, const std::string& name);
 
+        void CompleteConstruction() override;
         void Render() override;
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -1715,6 +1727,7 @@ public:
     public:
         HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull,
                                const std::vector<std::string>& parts);
+        void CompleteConstruction() override;
         const std::string&              Hull() const    { return m_hull_name; }
         const std::vector<std::string>& Parts() const   { return m_parts; }
     protected:
@@ -1725,6 +1738,7 @@ public:
     class CompletedDesignListBoxRow : public BasesListBoxRow {
     public:
         CompletedDesignListBoxRow(GG::X w, GG::Y h, const ShipDesign& design);
+        void CompleteConstruction() override;
         int                             DesignID() const { return m_design_id; }
     private:
         int                             m_design_id;
@@ -1775,8 +1789,12 @@ BasesListBox::HullAndNamePanel::HullAndNamePanel(GG::X w, GG::Y h, const std::st
     m_graphic = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::HullIcon(hull),
                                                    GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
     m_graphic->Resize(GG::Pt(w, h));
-    AttachChild(m_graphic);
     m_name = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_WORDBREAK | GG::FORMAT_CENTER | GG::FORMAT_TOP);
+}
+
+void BasesListBox::HullAndNamePanel::CompleteConstruction() {
+    GG::Control::CompleteConstruction();
+    AttachChild(m_graphic);
     AttachChild(m_name);
 }
 
@@ -1807,9 +1825,13 @@ BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h, const std::stri
     }
 
     m_hull_panel = GG::Wnd::Create<HullAndNamePanel>(w, h, hull, name);
-    push_back(m_hull_panel);
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+}
+
+void BasesListBox::BasesListBoxRow::CompleteConstruction() {
+    CUIListBox::Row::CompleteConstruction();
+    push_back(m_hull_panel);
 }
 
 void BasesListBox::BasesListBoxRow::Render() {
@@ -1857,7 +1879,10 @@ BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h, c
     BasesListBoxRow(w, h, hull, UserString(hull)),
     m_hull_name(hull),
     m_parts(parts)
-{
+{}
+
+void BasesListBox::HullAndPartsListBoxRow::CompleteConstruction() {
+    BasesListBoxRow::CompleteConstruction();
     SetDragDropDataType(HULL_PARTS_ROW_DROP_TYPE_STRING);
 }
 
@@ -1865,7 +1890,10 @@ BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(
     GG::X w, GG::Y h, const ShipDesign &design) :
     BasesListBoxRow(w, h, design.Hull(), design.Name()),
     m_design_id(design.ID())
-{
+{}
+
+void BasesListBox::CompletedDesignListBoxRow::CompleteConstruction() {
+    BasesListBoxRow::CompleteConstruction();
     SetDragDropDataType(COMPLETE_DESIGN_ROW_DROP_STRING);
 }
 
@@ -1878,7 +1906,11 @@ BasesListBox::BasesListBox(const BasesListBox::AvailabilityManager& availabiliti
                  empty_prompt ? *empty_prompt : UserString("ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT")),
     m_empire_id_shown(ALL_EMPIRES),
     m_availabilities_state(availabilities_state)
-{
+{}
+
+void BasesListBox::CompleteConstruction() {
+    QueueListBox::CompleteConstruction();
+
     InitRowSizes();
     SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
 
@@ -2058,6 +2090,7 @@ class SavedDesignsListBox : public BasesListBox {
     class SavedDesignListBoxRow : public BasesListBoxRow {
         public:
         SavedDesignListBoxRow(GG::X w, GG::Y h, const ShipDesign& design);
+        void CompleteConstruction() override;
         const boost::uuids::uuid        DesignUUID() const;
         const std::string&              DesignName() const;
         const std::string&              Description() const;
@@ -2626,7 +2659,10 @@ SavedDesignsListBox::SavedDesignListBoxRow::SavedDesignListBoxRow(
     GG::X w, GG::Y h, const ShipDesign& design) :
     BasesListBoxRow(w, h, design.Hull(), design.Name()),
     m_design_uuid(design.UUID())
-{
+{}
+
+void SavedDesignsListBox::SavedDesignListBoxRow::CompleteConstruction() {
+    BasesListBoxRow::CompleteConstruction();
     SetDragDropDataType(SAVED_DESIGN_ROW_DROP_STRING);
 }
 
@@ -2673,6 +2709,7 @@ class DesignWnd::BaseSelector : public CUIWnd {
 public:
     /** \name Structors */ //@{
     BaseSelector(const std::string& config_name);
+    void CompleteConstruction() override;
     //@}
 
     /** \name Mutators */ //@{
@@ -2722,29 +2759,31 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_saved_designs_list(nullptr),
     m_monsters_list(nullptr),
     m_availabilities_state{false, true, false}
-{
+{}
+
+void DesignWnd::BaseSelector::CompleteConstruction() {
     auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
-    m_obsolete_button = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    m_obsolete_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_obsolete_button);
     m_obsolete_button->CheckedSignal.connect(
         boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Obsolete));
     m_obsolete_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Obsolete));
 
     auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
-    m_available_button = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    m_available_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_available_button);
     m_available_button->CheckedSignal.connect(
         boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Available));
     m_available_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Available));
 
     auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
-    m_unavailable_button = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    m_unavailable_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_unavailable_button);
     m_unavailable_button->CheckedSignal.connect(
         boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Future));
     m_unavailable_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Future));
 
-    m_tabs = new GG::TabWnd(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
+    m_tabs = GG::Wnd::Create<GG::TabWnd>(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
     m_tabs->TabChangedSignal.connect(
         boost::bind(&DesignWnd::BaseSelector::Reset, this));
     AttachChild(m_tabs);
@@ -2780,6 +2819,8 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
         DesignWnd::BaseSelector::DesignSelectedSignal);
     m_monsters_list->DesignClickedSignal.connect(
         DesignWnd::BaseSelector::DesignClickedSignal);
+
+    CUIWnd::CompleteConstruction();
 
     DoLayout();
 }
@@ -2895,6 +2936,7 @@ public:
     SlotControl();
     SlotControl(double x, double y, ShipSlotType slot_type);
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     ShipSlotType    SlotType() const;
@@ -2964,7 +3006,11 @@ SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
     m_y_position_fraction(y),
     m_part_control(nullptr),
     m_background(nullptr)
-{
+{}
+
+void SlotControl::CompleteConstruction() {
+    GG::Control::CompleteConstruction();
+
     m_background = GG::Wnd::Create<GG::StaticGraphic>(SlotBackgroundTexture(m_slot_type), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_background->Resize(GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT));
     m_background->Show();
@@ -2974,14 +3020,14 @@ SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
 
     // set up empty slot tool tip
     std::string title_text;
-    if (slot_type == SL_EXTERNAL)
+    if (m_slot_type == SL_EXTERNAL)
         title_text = UserString("SL_EXTERNAL");
-    else if (slot_type == SL_INTERNAL)
+    else if (m_slot_type == SL_INTERNAL)
         title_text = UserString("SL_INTERNAL");
-    else if (slot_type == SL_CORE)
+    else if (m_slot_type == SL_CORE)
         title_text = UserString("SL_CORE");
 
-    SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
+    SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
         SlotBackgroundTexture(m_slot_type),
         title_text,
         UserString("SL_TOOLTIP_DESC")
@@ -3176,7 +3222,7 @@ void SlotControl::SetPart(const PartType* part_type) {
         else if (m_slot_type == SL_CORE)
             title_text = UserString("SL_CORE");
 
-        m_part_control->SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
+        m_part_control->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
             ClientUI::PartIcon(part_type->Name()),
             UserString(part_type->Name()) + " (" + title_text + ")",
             UserString(part_type->Description())
@@ -3238,6 +3284,7 @@ public:
 
     /** \name Structors */ //@{
     MainPanel(const std::string& config_name);
+    void CompleteConstruction() override;
     //@}
 
     /** \name Accessors */ //@{
@@ -3412,7 +3459,9 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     m_clear_button(nullptr),
     m_disabled_by_name(false),
     m_disabled_by_part_conflict(false)
-{
+{}
+
+void DesignWnd::MainPanel::CompleteConstruction() {
     SetChildClippingMode(ClipToClient);
 
     m_design_name_label = GG::Wnd::Create<CUILabel>(UserString("DESIGN_WND_DESIGN_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
@@ -3445,6 +3494,8 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     DesignConfirmedSignal.connect(boost::bind(&DesignWnd::MainPanel::AddDesign, this));
 
     DesignChanged(); // Initialize components that rely on the current state of the design.
+
+    CUIWnd::CompleteConstruction();
 
     DoLayout();
 }
@@ -3918,17 +3969,17 @@ void DesignWnd::MainPanel::DesignChanged() {
     m_confirm_button->SetText(UserString("DESIGN_WND_ADD_FINISHED"));
 
     if (!m_hull) {
-        m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        m_replace_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("DESIGN_INVALID"), UserString("DESIGN_UPDATE_INVALID_NO_CANDIDATE")));
-        m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        m_confirm_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_HULL")));
         return;
     }
 
     if (client_empire_id == ALL_EMPIRES) {
-        m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        m_replace_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("DESIGN_INVALID"), UserString("DESIGN_INV_MODERATOR")));
-        m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        m_confirm_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("DESIGN_INVALID"), UserString("DESIGN_INV_MODERATOR")));
         return;
     }
@@ -3936,9 +3987,9 @@ void DesignWnd::MainPanel::DesignChanged() {
     if (!IsDesignNameValid()) {
         m_disabled_by_name = true;
 
-        m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        m_replace_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_NAME")));
-        m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        m_confirm_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_NAME")));
         return;
     }
@@ -3982,12 +4033,12 @@ void DesignWnd::MainPanel::DesignChanged() {
 
 
         if (m_disabled_by_part_conflict) {
-            m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+            m_replace_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                 UserString("DESIGN_COMPONENT_CONFLICT"),
                 boost::io::str(FlexibleFormat(UserString("DESIGN_COMPONENT_CONFLICT_DETAIL"))
                                % UserString(problematic_components.first)
                                % UserString(problematic_components.second))));
-            m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+            m_confirm_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                 UserString("DESIGN_COMPONENT_CONFLICT"),
                 boost::io::str(FlexibleFormat(UserString("DESIGN_COMPONENT_CONFLICT_DETAIL"))
                                % UserString(problematic_components.first)
@@ -4023,7 +4074,7 @@ void DesignWnd::MainPanel::DesignChanged() {
         if (cur_design && !(*cur_design == **replaced_saved_design)) {
             m_replace_button->SetText(UserString("DESIGN_WND_UPDATE_SAVED"));
             m_replace_button->SetBrowseInfoWnd(
-                std::make_shared<TextBrowseWnd>(
+                GG::Wnd::Create<TextBrowseWnd>(
                     UserString("DESIGN_WND_UPDATE_SAVED"),
                     boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_DETAIL_SAVED"))
                                    % (*replaced_saved_design)->Name()
@@ -4035,7 +4086,7 @@ void DesignWnd::MainPanel::DesignChanged() {
     if (producible && replaced_current_design) {
         if (!existing_design_name) {
             // A current design can be replaced if it doesn't duplicate an existing design
-            m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+            m_replace_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                 UserString("DESIGN_WND_UPDATE_FINISHED"),
                 boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_DETAIL_FINISHED"))
                                % (*replaced_current_design)->Name()
@@ -4043,7 +4094,7 @@ void DesignWnd::MainPanel::DesignChanged() {
             m_replace_button->Disable(false);
         } else {
             // Otherwise mark it as known.
-            m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+            m_replace_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                 UserString("DESIGN_KNOWN"),
                 boost::io::str(FlexibleFormat(UserString("DESIGN_KNOWN_DETAIL"))
                                % *existing_design_name)));
@@ -4057,7 +4108,7 @@ void DesignWnd::MainPanel::DesignChanged() {
         // A new saved design can always be created
         m_confirm_button->SetText(UserString("DESIGN_WND_ADD_SAVED"));
         m_confirm_button->SetBrowseInfoWnd(
-            std::make_shared<TextBrowseWnd>(
+            GG::Wnd::Create<TextBrowseWnd>(
                 UserString("DESIGN_WND_ADD_SAVED"),
                 boost::io::str(FlexibleFormat(UserString("DESIGN_WND_ADD_DETAIL_SAVED"))
                                % new_design_name)));
@@ -4065,7 +4116,7 @@ void DesignWnd::MainPanel::DesignChanged() {
     } else if (producible) {
         if (!existing_design_name) {
             // A new current can be added if it does not duplicate an existing design.
-            m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+            m_confirm_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                 UserString("DESIGN_WND_ADD_FINISHED"),
                 boost::io::str(FlexibleFormat(UserString("DESIGN_WND_ADD_DETAIL_FINISHED"))
                                % new_design_name)));
@@ -4073,7 +4124,7 @@ void DesignWnd::MainPanel::DesignChanged() {
 
         } else {
             // Otherwise the design is already known.
-            m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+            m_confirm_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                 UserString("DESIGN_KNOWN"),
                 boost::io::str(FlexibleFormat(UserString("DESIGN_KNOWN_DETAIL"))
                                % *existing_design_name)));
@@ -4299,14 +4350,18 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     m_base_selector(nullptr),
     m_part_palette(nullptr),
     m_main_panel(nullptr)
-{
+{}
+
+void DesignWnd::CompleteConstruction() {
+    GG::Wnd::CompleteConstruction();
+
     Sound::TempUISoundDisabler sound_disabler;
     SetChildClippingMode(ClipToClient);
 
-    m_detail_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE, DES_PEDIA_WND_NAME);
-    m_main_panel = new MainPanel(DES_MAIN_WND_NAME);
-    m_part_palette = new PartPalette(DES_PART_PALETTE_WND_NAME);
-    m_base_selector = new BaseSelector(DES_BASE_SELECTOR_WND_NAME);
+    m_detail_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE, DES_PEDIA_WND_NAME);
+    m_main_panel = GG::Wnd::Create<MainPanel>(DES_MAIN_WND_NAME);
+    m_part_palette = GG::Wnd::Create<PartPalette>(DES_PART_PALETTE_WND_NAME);
+    m_base_selector = GG::Wnd::Create<BaseSelector>(DES_BASE_SELECTOR_WND_NAME);
     InitializeWindows();
     HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
         boost::bind(&DesignWnd::InitializeWindows, this));

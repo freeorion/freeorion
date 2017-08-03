@@ -390,6 +390,16 @@ public:
         }
     }
 
+    void CompleteConstruction() override {
+        GG::Control::CompleteConstruction();
+        AttachChild(m_class_drop);
+        SetMinSize(m_class_drop->Size());
+
+        UpdateParameterControls();
+
+        // TODO: set newly created parameter controls' values based on init condition
+    }
+
     ~ConditionWidget() {
         delete m_class_drop;
         delete m_string_drop;
@@ -542,14 +552,21 @@ private:
     public:
         ConditionRow(const std::string& key, GG::Y row_height) :
             GG::ListBox::Row(GG::X1, row_height, ""),
-            m_condition_key(key)
-        {
+            m_condition_key(key),
+            m_label(GG::Wnd::Create<CUILabel>(UserString(m_condition_key), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP))
+        {}
+
+        void CompleteConstruction() override {
+            GG::ListBox::Row::CompleteConstruction();
+
             SetChildClippingMode(ClipToClient);
-            push_back(GG::Wnd::Create<CUILabel>(UserString(m_condition_key), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP));
+            push_back(m_label);
         }
+
         const std::string&  GetKey() const { return m_condition_key; }
     private:
         std::string m_condition_key;
+        CUILabel* m_label;
     };
 
     class StringRow : public GG::ListBox::Row  {
@@ -558,14 +575,22 @@ private:
             GG::ListBox::Row(GG::X1, row_height, ""),
             m_string(text)
         {
-            SetChildClippingMode(ClipToClient);
             const std::string& label = (text.empty() ? EMPTY_STRING :
                 (stringtable_lookup ? UserString(text) : text));
-            push_back(GG::Wnd::Create<CUILabel>(label, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP));
+            m_label = GG::Wnd::Create<CUILabel>(label, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
         }
+
+        void CompleteConstruction() override {
+            GG::ListBox::Row::CompleteConstruction();
+
+            SetChildClippingMode(ClipToClient);
+            push_back(m_label);
+        }
+
         const std::string&  Text() const { return m_string; }
     private:
         std::string m_string;
+        CUILabel* m_label;
     };
 
     const std::string&              GetString() {
@@ -673,7 +698,6 @@ private:
         m_class_drop = GG::Wnd::Create<CUIDropDownList>(DropListDropHeight());
         m_class_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
         m_class_drop->SetStyle(GG::LIST_NOSORT);
-        AttachChild(m_class_drop);
 
         std::vector<std::string> row_keys ={ALL_CONDITION,              PLANETTYPE_CONDITION,       PLANETSIZE_CONDITION,
                                             HASGROWTHSPECIAL_CONDITION, GGWITHPTYPE_CONDITION,      ASTWITHPTYPE_CONDITION,
@@ -683,7 +707,6 @@ private:
                                             CANCOLONIZE_CONDITION,      HOMEWORLD_CONDITION,        METERVALUE_CONDITION,
                                             CAPITAL_CONDITION };
 
-        SetMinSize(m_class_drop->Size());
         GG::ListBox::iterator select_row_it = m_class_drop->end();
         const std::string& init_condition_key = ConditionClassName(init_condition);
 
@@ -702,9 +725,6 @@ private:
         else if (!m_class_drop->Empty())
             m_class_drop->Select(0);
 
-        UpdateParameterControls();
-
-        // TODO: set newly created parameter controls' values based on init condition
     }
 
     void    ConditionClassSelected(GG::ListBox::iterator iterator)
@@ -960,6 +980,7 @@ class FilterDialog : public CUIWnd {
 public:
     FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPLAY>>& vis_filters,
                  const Condition::ConditionBase* const condition_filter);
+    void CompleteConstruction() override;
 
     bool ChangesAccepted();
 
@@ -1008,6 +1029,12 @@ FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPL
     m_cancel_button(nullptr),
     m_apply_button(nullptr)
 {
+    m_condition_widget = GG::Wnd::Create<ConditionWidget>(GG::X(3), GG::Y(3), condition_filter);
+}
+
+void FilterDialog::CompleteConstruction() {
+    CUIWnd::CompleteConstruction();
+
     m_filters_layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X(390), GG::Y(90), 4, 7);
     AttachChild(m_filters_layout);
 
@@ -1028,7 +1055,7 @@ FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPL
         const auto visibility = std::get<0>(entry);
         const auto label_key = std::get<1>(entry);
 
-        label = new CUIButton(UserString(label_key));
+        label = Wnd::Create<CUIButton>(UserString(label_key));
         label->Resize(GG::Pt(button_width, label->MinUsableSize().y));
         m_filters_layout->Add(label, row, 0, GG::ALIGN_CENTER);
         label->LeftClickedSignal.connect(
@@ -1050,7 +1077,7 @@ FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPL
 
         m_filters_layout->SetColumnStretch(col, 1.0);
 
-        label = new CUIButton(" " + UserString(boost::lexical_cast<std::string>(uot)) + " ");
+        label = Wnd::Create<CUIButton>(" " + UserString(boost::lexical_cast<std::string>(uot)) + " ");
         m_filters_layout->Add(label, 0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
         label->LeftClickedSignal.connect(
             boost::bind(&FilterDialog::UpdateVisFiltersFromObjectTypeButton, this, uot));
@@ -1058,7 +1085,7 @@ FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPL
         int row = 1;
 
         for (auto visibility : {SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED}) {
-            auto button = new CUIStateButton(" ", GG::FORMAT_CENTER, std::make_shared<CUICheckBoxRepresenter>());
+            auto button = GG::Wnd::Create<CUIStateButton>(" ", GG::FORMAT_CENTER, std::make_shared<CUICheckBoxRepresenter>());
             button->SetCheck(vis_display.count(visibility));
             m_filters_layout->Add(button, row, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             button->CheckedSignal.connect(
@@ -1073,9 +1100,9 @@ FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPL
 
 
     // TODO: Add multiple condition widgets initialized for input condition
-    m_condition_widget = new ConditionWidget(GG::X(3), m_filters_layout->Height() + GG::Y(3), condition_filter);
-    m_cancel_button = new CUIButton(UserString("CANCEL"));
-    m_apply_button = new CUIButton(UserString("APPLY"));
+    m_condition_widget->MoveTo(GG::Pt(GG::X(3), m_filters_layout->Height() + GG::Y(3)));
+    m_cancel_button = Wnd::Create<CUIButton>(UserString("CANCEL"));
+    m_apply_button = Wnd::Create<CUIButton>(UserString("APPLY"));
 
     AttachChild(m_condition_widget);
     AttachChild(m_cancel_button);
@@ -1326,12 +1353,12 @@ public:
             boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
             if (m_expanded) {
-                m_expand_button = new CUIButton(
+                m_expand_button = Wnd::Create<CUIButton>(
                     GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "minusnormal.png"     , true)),
                     GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "minusclicked.png"    , true)),
                     GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "minusmouseover.png"  , true)));
             } else {
-                m_expand_button = new CUIButton(
+                m_expand_button = Wnd::Create<CUIButton>(
                     GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "plusnormal.png"   , true)),
                     GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "plusclicked.png"  , true)),
                     GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "plusmouseover.png", true)));
@@ -1485,13 +1512,14 @@ public:
         m_obj_init(obj),
         m_expanded_init(expanded),
         m_indent_init(indent)
-    {
+    {}
+
+    void CompleteConstruction() override {
+        GG::ListBox::Row::CompleteConstruction();
+
         SetName("ObjectRow");
         SetChildClippingMode(ClipToClient);
-        Init();
-    }
 
-    void Init() {
         m_panel = GG::Wnd::Create<ObjectPanel>(ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
                                                ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()),
                                                m_obj_init, m_expanded_init, !m_contained_object_panels.empty(), m_indent_init);
@@ -1674,7 +1702,7 @@ private:
     std::vector<GG::Button*>    GetControls() {
         std::vector<GG::Button*> retval;
 
-        auto control = new CUIButton("-");
+        auto control = Wnd::Create<CUIButton>("-");
         retval.push_back(control);
 
         for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
@@ -1682,7 +1710,7 @@ private:
             const std::string& header_name = GetColumnName(static_cast<int>(i));
             if (!header_name.empty())
                 text = UserString(header_name);
-            control = new CUIButton(text);
+            control = Wnd::Create<CUIButton>(text);
             retval.push_back(control);
         }
 
@@ -1702,6 +1730,11 @@ public:
         m_panel(nullptr)
     {
         m_panel = GG::Wnd::Create<ObjectHeaderPanel>(w, h);
+    }
+
+    void CompleteConstruction() override {
+        GG::ListBox::Row::CompleteConstruction();
+
         push_back(m_panel);
         m_panel->ColumnButtonLeftClickSignal.connect(
             ColumnHeaderLeftClickSignal);
@@ -1764,7 +1797,11 @@ public:
         m_filter_condition(nullptr),
         m_visibilities(),
         m_header_row(nullptr)
-    {
+    {}
+
+    void CompleteConstruction() override {
+        CUIListBox::CompleteConstruction();
+
         // preinitialize listbox/row column widths, because what
         // ListBox::Insert does on default is not suitable for this case
         ManuallyManageColProps();
@@ -2257,7 +2294,9 @@ ObjectListWnd::ObjectListWnd(const std::string& config_name) :
     m_list_box(nullptr),
     m_filter_button(nullptr),
     m_collapse_button(nullptr)
-{
+{}
+
+void ObjectListWnd::CompleteConstruction() {
     m_list_box = GG::Wnd::Create<ObjectListBox>();
     m_list_box->SetHiliteColor(GG::CLR_ZERO);
     m_list_box->SetStyle(GG::LIST_NOSORT);
@@ -2272,15 +2311,17 @@ ObjectListWnd::ObjectListWnd(const std::string& config_name) :
         boost::bind(&ObjectListWnd::DoLayout, this));
     AttachChild(m_list_box);
 
-    m_filter_button = new CUIButton(UserString("FILTERS"));
+    m_filter_button = Wnd::Create<CUIButton>(UserString("FILTERS"));
     m_filter_button->LeftClickedSignal.connect(
         boost::bind(&ObjectListWnd::FilterClicked, this));
     AttachChild(m_filter_button);
 
-    m_collapse_button = new CUIButton(UserString("COLLAPSE_ALL"));
+    m_collapse_button = Wnd::Create<CUIButton>(UserString("COLLAPSE_ALL"));
     m_collapse_button->LeftClickedSignal.connect(
         boost::bind(&ObjectListWnd::CollapseExpandClicked, this));
     AttachChild(m_collapse_button);
+
+    CUIWnd::CompleteConstruction();
 
     DoLayout();
 }
@@ -2582,12 +2623,12 @@ int ObjectListWnd::ObjectInRow(GG::ListBox::iterator it) const {
 }
 
 void ObjectListWnd::FilterClicked() {
-    FilterDialog dlg(m_list_box->Visibilities(), m_list_box->FilterCondition());
-    dlg.Run();
+    auto dlg = GG::Wnd::Create<FilterDialog>(m_list_box->Visibilities(), m_list_box->FilterCondition());
+    dlg->Run();
 
-    if (dlg.ChangesAccepted()) {
-        m_list_box->SetVisibilityFilters(dlg.GetVisibilityFilters());
-        m_list_box->SetFilterCondition(dlg.GetConditionFilter());
+    if (dlg->ChangesAccepted()) {
+        m_list_box->SetVisibilityFilters(dlg->GetVisibilityFilters());
+        m_list_box->SetFilterCondition(dlg->GetConditionFilter());
     }
 }
 

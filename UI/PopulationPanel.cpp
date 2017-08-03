@@ -32,7 +32,10 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     m_meter_stats(),
     m_multi_icon_value_indicator(nullptr),
     m_multi_meter_status_bar(nullptr)
-{
+{}
+
+void PopulationPanel::CompleteConstruction() {
+    AccordionPanel::CompleteConstruction();
     SetName("PopulationPanel");
 
     std::shared_ptr<const PopCenter> pop = GetPopCenter();
@@ -165,12 +168,11 @@ void PopulationPanel::Update() {
     m_multi_icon_value_indicator->Update();
 
     // tooltips
-    std::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
-
     for (auto& meter_stat : m_meter_stats) {
         meter_stat.second->SetValue(pop->InitialMeterValue(meter_stat.first));
 
-        browse_wnd = std::make_shared<MeterBrowseWnd>(m_popcenter_id, meter_stat.first, AssociatedMeterType(meter_stat.first));
+        // TODO remove extra wrapping of shared_ptr after conversion to GG shared_ptr
+        auto browse_wnd = std::shared_ptr<GG::BrowseInfoWnd>(GG::Wnd::Create<MeterBrowseWnd>(m_popcenter_id, meter_stat.first, AssociatedMeterType(meter_stat.first)));
         meter_stat.second->SetBrowseInfoWnd(browse_wnd);
         m_multi_icon_value_indicator->SetToolTip(meter_stat.first, browse_wnd);
     }

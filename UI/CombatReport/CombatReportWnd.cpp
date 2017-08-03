@@ -208,7 +208,12 @@ CombatReportWnd::CombatReportWnd(const std::string& config_name) :
            GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE,
            config_name, false),
     m_impl(nullptr)
-{ m_impl.reset(new Impl(*this)); }
+{}
+
+void CombatReportWnd::CompleteConstruction() {
+    m_impl.reset(new Impl(*this));
+    CUIWnd::CompleteConstruction();
+}
 
 CombatReportWnd::~CombatReportWnd()
 {}

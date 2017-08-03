@@ -1236,7 +1236,7 @@ void MultiEdit::AdjustScrolls()
 
     const int GAP = PIXEL_MARGIN - 2; // the space between the client area and the border
 
-    std::shared_ptr<StyleFactory> style = GetStyleFactory();
+    const auto& style = GetStyleFactory();
 
     Y vscroll_min = (m_style & MULTI_TERMINAL_STYLE) ? cl_sz.y - m_contents_sz.y : Y0;
     if (cl_sz.y - m_contents_sz.y > 0 ) {

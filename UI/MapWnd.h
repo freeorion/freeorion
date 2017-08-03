@@ -61,6 +61,8 @@ public:
     ~MapWnd();
     //!@}
 
+    void CompleteConstruction() override;
+
     //! \name Accessors //!@{
     GG::Pt ClientUpperLeft() const override;
 
@@ -556,6 +558,8 @@ public:
                 GG::Flags<GG::WndFlag> flags, const std::string& config_name = "");
 
     MapWndPopup(const std::string& t, GG::Flags<GG::WndFlag> flags, const std::string& config_name = "");
+
+    void CompleteConstruction() override;
 
     virtual ~MapWndPopup();
 

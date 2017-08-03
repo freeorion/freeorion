@@ -15,23 +15,26 @@ namespace {
 ResourceBrowseWnd::ResourceBrowseWnd(const std::string& title_text, const std::string& unit_label,
                                      float used, float output, float target_output) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, BrowseTextWidth(), GG::Y1),
-    m_title_text(nullptr),
-    m_used_points_label(nullptr),
-    m_used_points(nullptr),
-    m_used_points_P_label(nullptr),
-    m_output_points_label(nullptr),
-    m_output_points(nullptr),
-    m_output_points_P_label(nullptr),
-    m_target_points_label(nullptr),
-    m_target_points(nullptr),
-    m_target_points_P_label(nullptr),
+    m_title_text(GG::Wnd::Create<CUILabel>(title_text, GG::FORMAT_CENTER)),
+    m_used_points_label(GG::Wnd::Create<CUILabel>(UserString("RESOURCE_TT_USED"), GG::FORMAT_RIGHT)),
+    m_used_points(GG::Wnd::Create<CUILabel>(DoubleToString(used, 3, false), GG::FORMAT_LEFT)),
+    m_used_points_P_label(GG::Wnd::Create<CUILabel>(unit_label, GG::FORMAT_LEFT)),
+    m_output_points_label(GG::Wnd::Create<CUILabel>(UserString("RESOURCE_TT_OUTPUT"), GG::FORMAT_RIGHT)),
+    m_output_points(GG::Wnd::Create<CUILabel>(DoubleToString(output, 3, false), GG::FORMAT_LEFT)),
+    m_output_points_P_label(GG::Wnd::Create<CUILabel>(unit_label, GG::FORMAT_LEFT)),
+    m_target_points_label(GG::Wnd::Create<CUILabel>(UserString("RESOURCE_TT_TARGET_OUTPUT"), GG::FORMAT_RIGHT)),
+    m_target_points(GG::Wnd::Create<CUILabel>(DoubleToString(target_output, 3, false), GG::FORMAT_LEFT)),
+    m_target_points_P_label(GG::Wnd::Create<CUILabel>(unit_label, GG::FORMAT_LEFT)),
     m_offset(GG::X0, ICON_BROWSE_ICON_HEIGHT/2)
-{
+{}
+
+void ResourceBrowseWnd::CompleteConstruction() {
+    GG::BrowseInfoWnd::CompleteConstruction();
+
     const GG::Y ROW_HEIGHT(ClientUI::Pts()*4/3);
 
     GG::Pt top_left =  m_offset;
 
-    m_title_text = GG::Wnd::Create<CUILabel>(title_text, GG::FORMAT_CENTER);
     m_title_text->MoveTo(GG::Pt(top_left.x + EDGE_PAD, top_left.y));
     m_title_text->Resize(GG::Pt(BrowseTextWidth() - 2*EDGE_PAD, ROW_HEIGHT));
     m_title_text->SetFont(ClientUI::GetBoldFont());
@@ -56,15 +59,6 @@ ResourceBrowseWnd::ResourceBrowseWnd(const std::string& title_text, const std::s
     const GG::Pt P_LABEL_SIZE(Width() - 2 - 5 - P_LABEL_X, GG::Y(STAT_TEXT_PTS + 4));
 
 
-    m_used_points_label = GG::Wnd::Create<CUILabel>(UserString("RESOURCE_TT_USED"), GG::FORMAT_RIGHT);
-    m_used_points = GG::Wnd::Create<CUILabel>(DoubleToString(used, 3, false), GG::FORMAT_LEFT);
-    m_used_points_P_label = GG::Wnd::Create<CUILabel>(unit_label, GG::FORMAT_LEFT);
-    m_output_points_label = GG::Wnd::Create<CUILabel>(UserString("RESOURCE_TT_OUTPUT"), GG::FORMAT_RIGHT);
-    m_output_points = GG::Wnd::Create<CUILabel>(DoubleToString(output, 3, false), GG::FORMAT_LEFT);
-    m_output_points_P_label = GG::Wnd::Create<CUILabel>(unit_label, GG::FORMAT_LEFT);
-    m_target_points_label = GG::Wnd::Create<CUILabel>(UserString("RESOURCE_TT_TARGET_OUTPUT"), GG::FORMAT_RIGHT);
-    m_target_points = GG::Wnd::Create<CUILabel>(DoubleToString(target_output, 3, false), GG::FORMAT_LEFT);
-    m_target_points_P_label = GG::Wnd::Create<CUILabel>(unit_label, GG::FORMAT_LEFT);
 
     AttachChild(m_used_points_label);
     AttachChild(m_used_points);

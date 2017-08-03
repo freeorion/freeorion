@@ -32,6 +32,7 @@ public:
     EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags = GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE |
                                                            GG::RESIZABLE | CLOSABLE | PINABLE,
                             const std::string& config_name = "");
+    void CompleteConstruction() override;
     virtual ~EncyclopediaDetailPanel();
     //!@}
 

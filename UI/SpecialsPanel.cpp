@@ -24,6 +24,10 @@ SpecialsPanel::SpecialsPanel(GG::X w, int object_id) :
     m_icons()
 {
     SetName("SpecialsPanel");
+}
+
+void SpecialsPanel::CompleteConstruction() {
+    GG::Wnd::CompleteConstruction();
     Update();
 }
 
@@ -95,7 +99,7 @@ void SpecialsPanel::Update() {
             desc += "\n" + Dump(special->Effects());
         }
 
-        graphic->SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
+        graphic->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
             ClientUI::SpecialIcon(special->Name()), UserString(special->Name()), desc));
         m_icons[entry.first] = graphic;
 

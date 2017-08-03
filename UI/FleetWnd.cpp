@@ -639,11 +639,13 @@ namespace {
             SetChildClippingMode(ClipToClient);
             if (GetShip(m_ship_id))
                 SetDragDropDataType(SHIP_DROP_TYPE_STRING);
-            {
-                //ScopedTimer timer("ShipRow Panel creation / pushing");
-                m_panel = GG::Wnd::Create<ShipDataPanel>(w, h, m_ship_id);
-                push_back(m_panel);
-            }
+        }
+
+        void CompleteConstruction() override {
+            GG::ListBox::Row::CompleteConstruction();
+
+            m_panel = GG::Wnd::Create<ShipDataPanel>(Width(), Height(), m_ship_id);
+            push_back(m_panel);
         }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
@@ -867,28 +869,28 @@ void ShipDataPanel::Refresh() {
 
         entry.second->ClearBrowseInfoWnd();
         if (entry.first == METER_CAPACITY) {  // refers to damage
-            entry.second->SetBrowseInfoWnd(std::make_shared<ShipDamageBrowseWnd>(
+            entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipDamageBrowseWnd>(
                 m_ship_id, entry.first));
 
         } else if (entry.first == METER_TROOPS) {
-            entry.second->SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
+            entry.second->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
                 TroopIcon(), UserString("SHIP_TROOPS_TITLE"),
                 UserString("SHIP_TROOPS_STAT")));
 
         } else if (entry.first == METER_SECONDARY_STAT) {
-            entry.second->SetBrowseInfoWnd(std::make_shared<ShipFightersBrowseWnd>(
+            entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipFightersBrowseWnd>(
                 m_ship_id, entry.first));
             entry.second->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip.extended-delay"), 1);
-            entry.second->SetBrowseInfoWnd(std::make_shared<ShipFightersBrowseWnd>(
+            entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipFightersBrowseWnd>(
                 m_ship_id, entry.first, true), 1);
 
         } else if (entry.first == METER_POPULATION) {
-            entry.second->SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
+            entry.second->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
                 ColonyIcon(), UserString("SHIP_COLONY_TITLE"),
                 UserString("SHIP_COLONY_STAT")));
 
         } else {
-            entry.second->SetBrowseInfoWnd(std::make_shared<MeterBrowseWnd>(
+            entry.second->SetBrowseInfoWnd(GG::Wnd::Create<MeterBrowseWnd>(
                 m_ship_id, entry.first, AssociatedMeterType(entry.first)));
         }
     }
@@ -1597,7 +1599,7 @@ void FleetDataPanel::UpdateAggressionToggle() {
         m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetAggressiveIcon()));
         m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetPassiveIcon()));
         m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetAggressiveMouseoverIcon()));
-        m_aggression_toggle->SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
+        m_aggression_toggle->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
             FleetAggressiveIcon(), UserString("FW_AGGRESSIVE"), UserString("FW_AGGRESSIVE_DESC")));
     } else if (aggression == FLEET_PASSIVE) {
         m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetPassiveIcon()));
@@ -1606,13 +1608,13 @@ void FleetDataPanel::UpdateAggressionToggle() {
         else
             m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAggressiveIcon()));
         m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetPassiveMouseoverIcon()));
-        m_aggression_toggle->SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
+        m_aggression_toggle->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
             FleetPassiveIcon(), UserString("FW_PASSIVE"), UserString("FW_PASSIVE_DESC")));
     } else {    // aggression == INVALID_FLEET_AGGRESSION
         m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetAutoIcon()));
         m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAggressiveIcon()));
         m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetAutoMouseoverIcon()));
-        m_aggression_toggle->SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
+        m_aggression_toggle->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
             FleetPassiveIcon(), UserString("FW_AUTO"), UserString("FW_AUTO_DESC")));
     }
 }
@@ -1666,7 +1668,7 @@ void FleetDataPanel::Init() {
     AttachChild(m_fleet_destination_text);
 
     if (m_fleet_id == INVALID_OBJECT_ID) {
-        m_aggression_toggle = new CUIButton(
+        m_aggression_toggle = Wnd::Create<CUIButton>(
             GG::SubTexture(FleetAggressiveIcon()),
             GG::SubTexture(FleetPassiveIcon()),
             GG::SubTexture(FleetAggressiveMouseoverIcon()));
@@ -1706,7 +1708,7 @@ void FleetDataPanel::Init() {
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         if (fleet->OwnedBy(client_empire_id) || fleet->GetVisibility(client_empire_id) >= VIS_FULL_VISIBILITY) {
-            m_aggression_toggle = new CUIButton(
+            m_aggression_toggle = Wnd::Create<CUIButton>(
                 GG::SubTexture(FleetAggressiveIcon()),
                 GG::SubTexture(FleetPassiveIcon()),
                 GG::SubTexture(FleetAggressiveMouseoverIcon()));
@@ -1747,7 +1749,12 @@ namespace {
         {
             SetName("FleetRow");
             SetChildClippingMode(ClipToClient);
-            m_panel = GG::Wnd::Create<FleetDataPanel>(w, h, m_fleet_id);
+        }
+
+        void CompleteConstruction() override {
+            GG::ListBox::Row::CompleteConstruction();
+
+            m_panel = GG::Wnd::Create<FleetDataPanel>(Width(), Height(), m_fleet_id);
             push_back(m_panel);
         }
 
@@ -2321,6 +2328,7 @@ class FleetDetailPanel : public GG::Wnd {
 public:
     FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_issuing_enabled, GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
 
+    void CompleteConstruction() override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     int             FleetID() const;
@@ -2358,11 +2366,12 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
     m_order_issuing_enabled(order_issuing_enabled),
     m_ships_lb(nullptr)
 {
+    GG::Wnd::CompleteConstruction();
+
     SetName("FleetDetailPanel");
     SetChildClippingMode(ClipToClient);
 
     m_ships_lb = GG::Wnd::Create<ShipsListBox>(INVALID_OBJECT_ID, order_issuing_enabled);
-    AttachChild(m_ships_lb);
     m_ships_lb->SetHiliteColor(GG::CLR_ZERO);
 
     SetFleet(fleet_id);
@@ -2380,7 +2389,10 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
         boost::bind(&FleetDetailPanel::ShipRightClicked, this, _1, _2, _3));
     GetUniverse().UniverseObjectDeleteSignal.connect(
         boost::bind(&FleetDetailPanel::UniverseObjectDeleted, this, _1));
+}
 
+void FleetDetailPanel::CompleteConstruction() {
+    AttachChild(m_ships_lb);
     DoLayout();
 }
 
@@ -2547,10 +2559,10 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     if (ship->OwnedBy(client_empire_id) || ClientPlayerIsModerator()) {
         auto rename_action = [ship, client_empire_id]() {
             std::string ship_name = ship->Name();
-            CUIEditWnd edit_wnd(GG::X(350), UserString("ENTER_NEW_NAME"), ship_name);
-            edit_wnd.Run();
+            std::shared_ptr<CUIEditWnd> edit_wnd(GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("ENTER_NEW_NAME"), ship_name)); // TODO change the shared_ptr to auto after conversion of Wnd::Create
+            edit_wnd->Run();
 
-            std::string new_name = edit_wnd.Result();
+            std::string new_name = edit_wnd->Result();
 
             if (!ClientPlayerIsModerator()) {
                 if (new_name != "" && new_name != ship_name) {
@@ -2666,6 +2678,17 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
     for (int fleet_id : fleet_ids)
         m_fleet_ids.insert(fleet_id);
 
+    // verify that the selected fleet id is valid.
+    // TODO this appears to do nothing with selected_fleet_id after the verification.
+    if (selected_fleet_id != INVALID_OBJECT_ID &&
+        m_fleet_ids.find(selected_fleet_id) == m_fleet_ids.end())
+    {
+        ErrorLogger() << "FleetWnd::FleetWnd couldn't find requested selected fleet with id " << selected_fleet_id;
+        selected_fleet_id = INVALID_OBJECT_ID;
+    }
+}
+
+void FleetWnd::CompleteConstruction() {
     Sound::TempUISoundDisabler sound_disabler;
 
     // add fleet aggregate stat icons
@@ -2726,15 +2749,9 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
 
     RefreshStateChangedSignals();
 
-    // verify that the selected fleet id is valid.
-    if (selected_fleet_id != INVALID_OBJECT_ID &&
-        m_fleet_ids.find(selected_fleet_id) == m_fleet_ids.end())
-    {
-        ErrorLogger() << "FleetWnd::FleetWnd couldn't find requested selected fleet with id " << selected_fleet_id;
-        selected_fleet_id = INVALID_OBJECT_ID;
-    }
-
     ResetDefaultPosition();
+    MapWndPopup::CompleteConstruction();
+
     SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, TopBorder() + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM +
                                                  ListRowHeight() + 2*GG::Y(PAD)));
     DoLayout();
@@ -3392,10 +3409,10 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     {
         auto rename_action = [fleet, client_empire_id]() {
             std::string fleet_name = fleet->Name();
-            CUIEditWnd edit_wnd(GG::X(350), UserString("ENTER_NEW_NAME"), fleet_name);
-            edit_wnd.Run();
+            std::shared_ptr<CUIEditWnd> edit_wnd(GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("ENTER_NEW_NAME"), fleet_name)); // TODO change the shared_ptr to auto after conversion of Wnd::Create
+            edit_wnd->Run();
 
-            std::string new_name = edit_wnd.Result();
+            std::string new_name = edit_wnd->Result();
 
             if (ClientPlayerIsModerator())
                 return; // todo: handle moderator actions for this...

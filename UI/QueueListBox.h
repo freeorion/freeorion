@@ -12,6 +12,8 @@ class QueueListBox :
 public:
     QueueListBox(const boost::optional<std::string>& drop_type_str, const std::string& prompt_str);
 
+    void CompleteConstruction() override;
+
     void Render() override;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;

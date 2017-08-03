@@ -381,7 +381,6 @@ void ValuePicker::SetValueFromPt(Pt pt)
 // ColorDlg
 ////////////////////////////////////////////////
 
-// ColorDlg::ColorButton
 ColorDlg::ColorButton::ColorButton(const Clr& color) :
     Button("", nullptr, color),
     m_represented_color(CLR_BLACK)
@@ -518,7 +517,7 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
     m_current_color = m_original_color_specified ? Convert(m_original_color) : Convert(CLR_BLACK);
     Clr color = Convert(m_current_color);
 
-    std::shared_ptr<StyleFactory> style = GetStyleFactory();
+    const auto& style = GetStyleFactory();
 
     const int COLOR_BUTTON_ROWS = 4;
     const int COLOR_BUTTON_COLS = 5;
@@ -567,7 +566,7 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
                                                  COLOR_BUTTON_ROWS, COLOR_BUTTON_COLS, 0, 4);
     for (int i = 0; i < COLOR_BUTTON_ROWS; ++i) {
         for (int j = 0; j < COLOR_BUTTON_COLS; ++j) {
-            m_color_buttons.push_back(new ColorButton(m_color));
+            m_color_buttons.push_back(Wnd::Create<ColorButton>(m_color));
             m_color_buttons.back()->SetRepresentedColor(s_custom_colors[i * COLOR_BUTTON_COLS + j]);
             m_color_buttons_layout->Add(m_color_buttons.back(), i, j);
         }
@@ -612,6 +611,11 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
     m_sliders_ok_cancel_layout->Add(m_ok, 7, 0, 1, 3);
     m_cancel = style->NewButton(style->Translate("Cancel"), font, m_color, m_text_color);
     m_sliders_ok_cancel_layout->Add(m_cancel, 8, 0, 1, 3);
+}
+
+void ColorDlg::CompleteConstruction()
+{
+    Wnd::CompleteConstruction();
 
     auto master_layout = Wnd::Create<Layout>(X0, Y0, ClientWidth(), ClientHeight(), 3, 2, 5, 5);
     master_layout->SetColumnStretch(0, 1.25);

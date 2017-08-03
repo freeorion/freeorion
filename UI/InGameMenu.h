@@ -7,6 +7,7 @@ class InGameMenu : public CUIWnd {
 public:
     /** \name Structors */ //@{
     InGameMenu();
+    void CompleteConstruction() override;
 
     ~InGameMenu();
     //@}

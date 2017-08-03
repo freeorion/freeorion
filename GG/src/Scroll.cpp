@@ -70,7 +70,7 @@ Scroll::Scroll(Orientation orientation, Clr color, Clr interior) :
     m_tab_dragged(false)
 {
     Control::SetColor(color);
-    std::shared_ptr<StyleFactory> style = GetStyleFactory();
+    const auto& style = GetStyleFactory();
     if (m_orientation == VERTICAL) {
         m_decr = style->NewScrollUpButton(color);
         m_incr = style->NewScrollDownButton(color);
@@ -80,6 +80,10 @@ Scroll::Scroll(Orientation orientation, Clr color, Clr interior) :
         m_incr = style->NewScrollRightButton(color);
         m_tab = style->NewHScrollTabButton(color);
     }
+}
+
+void Scroll::CompleteConstruction()
+{
     if (m_decr) {
         AttachChild(m_decr);
         m_decr->LeftClickedSignal.connect(boost::bind(&Scroll::ScrollLineIncrDecrImpl, this, true, -1));

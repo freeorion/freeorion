@@ -43,32 +43,35 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
     m_add_starlane_button(nullptr),
     m_remove_starlane_button(nullptr)
 {
+}
+
+void ModeratorActionsWnd::CompleteConstruction() {
     ClientUI* ui = ClientUI::GetClientUI();
     GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
     // button for no action
-    m_no_action_button = new CUIButton(
+    m_no_action_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "nomoderatoraction.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "nomoderatoraction_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "nomoderatoraction_mouseover.png")));
 
     m_no_action_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_no_action_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_no_action_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MOD_NONE"), UserString("MOD_NONE")));
     AttachChild(m_no_action_button);
     m_no_action_button->LeftClickedSignal.connect(
         boost::bind(&ModeratorActionsWnd::NoActionClicked, this));
 
     // button for create system and droplist to select system type to create
-    m_create_system_button = new CUIButton(
+    m_create_system_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addstar.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addstar_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addstar_mouseover.png")));
 
     m_create_system_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_create_system_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_create_system_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MOD_CREATE_SYSTEM"), UserString("MOD_CREATE_SYSTEM")));
     AttachChild(m_create_system_button);
 
@@ -90,13 +93,13 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         boost::bind(&ModeratorActionsWnd::StarTypeSelected, this, _1));
 
     // button for create planet and droplists to select planet type and size
-    m_create_planet_button = new CUIButton(
+    m_create_planet_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addplanet.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addplanet_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addplanet_mouseover.png")));
 
     m_create_planet_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_create_planet_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_create_planet_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MOD_CREATE_PLANET"), UserString("MOD_CREATE_PLANET")));
     AttachChild(m_create_planet_button);
     m_create_planet_button->LeftClickedSignal.connect(
@@ -133,26 +136,26 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         boost::bind(&ModeratorActionsWnd::PlanetSizeSelected, this, _1));
 
     // button for destroying object
-    m_delete_object_button = new CUIButton(
+    m_delete_object_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "delete.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "delete_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "delete_mouseover.png")));
 
     m_delete_object_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_delete_object_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_delete_object_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MOD_DESTROY"), UserString("MOD_DESTROY")));
     AttachChild(m_delete_object_button);
     m_delete_object_button->LeftClickedSignal.connect(
         boost::bind(&ModeratorActionsWnd::DeleteObjectClicked, this));
 
     // button for setting owner
-    m_set_owner_button = new CUIButton(
+    m_set_owner_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "setowner.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "setowner_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "setowner_mouseover.png")));
 
     m_set_owner_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_set_owner_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_set_owner_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MOD_SET_OWNER"), UserString("MOD_SET_OWNER")));
     AttachChild(m_set_owner_button);
 
@@ -165,30 +168,32 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         boost::bind(&ModeratorActionsWnd::EmpireSelected, this, _1));
 
     // button for creating starlane
-    m_add_starlane_button = new CUIButton(
+    m_add_starlane_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addstarlane.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addstarlane_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addstarlane_mouseover.png")));
 
     m_add_starlane_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_add_starlane_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_add_starlane_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MOD_ADD_STARLANE"), UserString("MOD_ADD_STARLANE")));
     AttachChild(m_add_starlane_button);
     m_add_starlane_button->LeftClickedSignal.connect(
         boost::bind(&ModeratorActionsWnd::AddStarlane, this));
 
     // button for removing starlane
-    m_remove_starlane_button = new CUIButton(
+    m_remove_starlane_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "removestarlane.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "removestarlane_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "removestarlane_mouseover.png")));
 
     m_remove_starlane_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_remove_starlane_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+    m_remove_starlane_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MOD_REMOVE_STARLANE"), UserString("MOD_REMOVE_STARLANE")));
     AttachChild(m_remove_starlane_button);
     m_remove_starlane_button->LeftClickedSignal.connect(
         boost::bind(&ModeratorActionsWnd::RemoveStarlane, this));
+
+    CUIWnd::CompleteConstruction();
 
     DoLayout();
 }

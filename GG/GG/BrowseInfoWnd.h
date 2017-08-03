@@ -109,6 +109,7 @@ public:
     TextBoxBrowseInfoWnd(X w, const std::shared_ptr<Font>& font, Clr color, Clr border_color, Clr text_color,
                          Flags<TextFormat> format = FORMAT_LEFT | FORMAT_WORDBREAK,
                          unsigned int border_width = 2, unsigned int text_margin = 4);
+    void CompleteConstruction() override;
     //@}
 
     /** \name Accessors */ ///@{
@@ -158,6 +159,7 @@ private:
     unsigned int            m_border_width;
     X                       m_preferred_width;
     TextControl*            m_text_control;
+    unsigned int            m_text_margin;
 };
 
 } // namespace GG

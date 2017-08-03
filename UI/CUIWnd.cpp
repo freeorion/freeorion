@@ -144,12 +144,11 @@ CUIWnd::CUIWnd(const std::string& wnd_name,
     m_drag_offset(-GG::X1, -GG::Y1),
     m_config_name(AddWindowOptions(config_name, x, y, w, h, visible, false, false))
 {
-    Init(wnd_name);
+    SetName(wnd_name);
     if (!m_config_name.empty()) {
         // Default position was already supplied
         GetOptionsDB().Set<bool>("UI.windows." + m_config_name + ".initialized", true);
     }
-    ValidatePosition();
 }
 
 CUIWnd::CUIWnd(const std::string& wnd_name, GG::Flags<GG::WndFlag> flags, const std::string& config_name, bool visible) :
@@ -160,10 +159,15 @@ CUIWnd::CUIWnd(const std::string& wnd_name, GG::Flags<GG::WndFlag> flags, const 
     m_pinable(flags & PINABLE),
     m_drag_offset(-GG::X1, -GG::Y1),
     m_config_name(AddWindowOptions(config_name, INVALID_POS, INVALID_POS, 1, 1, visible, false, false))
-{ Init(wnd_name); }
+{ SetName(wnd_name); }
 
-void CUIWnd::Init(const std::string& wnd_name) {
-    SetName(wnd_name);
+void CUIWnd::CompleteConstruction() {
+    GG::Wnd::CompleteConstruction();
+    Init();
+    ValidatePosition();
+}
+
+void CUIWnd::Init() {
     InitButtons();
     SetChildClippingMode(ClipToClientAndWindowSeparately);
 
@@ -183,9 +187,6 @@ void CUIWnd::Init(const std::string& wnd_name) {
     else
         HumanClientApp::GetApp()->WindowResizedSignal.connect(
             boost::bind(&CUIWnd::ResetDefaultPosition, this));
-
-    // call to CUIWnd::MinimizedWidth() because MinimizedWidth is virtual
-    SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, TopBorder() + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 50));
 }
 
 void CUIWnd::InitSizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -244,8 +245,9 @@ void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         }
 
         // Limit window size to be no larger than the containing window.
-        GG::Pt new_size(std::min(lr.x - ul.x, available_size.x),
-                        std::min(lr.y - ul.y, available_size.y));
+        GG::Pt new_size(std::max(std::min(lr.x - ul.x, available_size.x), MinimizedSize().x),
+                        std::max(std::min(lr.y - ul.y, available_size.y),
+                                 TopBorder() + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 50));
 
         // Clamp position of this window to keep its entire area visible in the
         // containing window.
@@ -426,7 +428,7 @@ void CUIWnd::InitButtons() {
 
     // create the close button
     if (m_closable) {
-        m_close_button = new CUIButton(
+        m_close_button = Wnd::Create<CUIButton>(
             GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "close.png")),
             GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "close_clicked.png")),
             GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "close_mouseover.png")));
@@ -442,7 +444,7 @@ void CUIWnd::InitButtons() {
 
     // create the minimize button
     if (m_minimizable) {
-        m_minimize_button = new CUI_MinRestoreButton();
+        m_minimize_button = Wnd::Create<CUI_MinRestoreButton>();
         m_minimize_button->Resize(GG::Pt(GG::X(ClientUI::TitlePts()), GG::Y(ClientUI::TitlePts())));
         m_minimize_button->LeftClickedSignal.connect(
             boost::bind(&CUIWnd::MinimizeClicked, this));
@@ -452,7 +454,7 @@ void CUIWnd::InitButtons() {
 
     // create the pin button
     if (m_pinable) {
-        m_pin_button = new CUI_PinButton();
+        m_pin_button = Wnd::Create<CUI_PinButton>();
         m_pin_button->Resize(GG::Pt(GG::X(ClientUI::TitlePts()), GG::Y(ClientUI::TitlePts())));
         m_pin_button->LeftClickedSignal.connect(
             boost::bind(&CUIWnd::PinClicked, this));
@@ -851,6 +853,11 @@ CUIEditWnd::CUIEditWnd(GG::X w, const std::string& prompt_text, const std::strin
     CUIWnd(prompt_text, GG::X0, GG::Y0, w, GG::Y1, flags)
 {
     m_edit = GG::Wnd::Create<CUIEdit>(edit_text);
+}
+
+void CUIEditWnd::CompleteConstruction() {
+    CUIWnd::CompleteConstruction();
+
     m_ok_bn = GG::Wnd::Create<CUIButton>(UserString("OK"));
     m_cancel_bn = GG::Wnd::Create<CUIButton>(UserString("CANCEL"));
 
@@ -865,8 +872,8 @@ CUIEditWnd::CUIEditWnd(GG::X w, const std::string& prompt_text, const std::strin
     m_cancel_bn->Resize(GG::Pt(BUTTON_WIDTH, m_cancel_bn->MinUsableSize().y));
     m_cancel_bn->OffsetMove(GG::Pt(GG::X0, (m_edit->Height() - m_ok_bn->Height()) / 2));
 
-    Resize(GG::Pt(w, std::max(m_edit->Bottom(), m_cancel_bn->Bottom()) + BottomBorder() + 3));
-    MoveTo(GG::Pt((GG::GUI::GetGUI()->AppWidth() - w) / 2, (GG::GUI::GetGUI()->AppHeight() - Height()) / 2));
+    Resize(GG::Pt(Width(), std::max(m_edit->Bottom(), m_cancel_bn->Bottom()) + BottomBorder() + 3));
+    MoveTo(GG::Pt((GG::GUI::GetGUI()->AppWidth() - Width()) / 2, (GG::GUI::GetGUI()->AppHeight() - Height()) / 2));
 
     AttachChild(m_edit);
     AttachChild(m_ok_bn);

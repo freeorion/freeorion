@@ -224,7 +224,11 @@ namespace {
             m_sitrep_entry(sitrep),
             m_icon(nullptr),
             m_link_text(nullptr)
-        {
+        {}
+
+        void CompleteConstruction() override {
+            GG::Control::CompleteConstruction();
+
             SetChildClippingMode(ClipToClient);
 
             int icon_dim = GetIconSize();
@@ -255,7 +259,7 @@ namespace {
             m_link_text->RightClickedSignal.connect(
                 boost::bind(&SitRepDataPanel::RClick, this, _1, _2));
 
-            DoLayout(GG::Pt(left, top), w);
+            DoLayout(UpperLeft(), Width());
         }
 
         void Render() override {
@@ -322,6 +326,11 @@ namespace {
             m_sitrep(sitrep)
         {
             SetName("SitRepRow");
+        }
+
+        void CompleteConstruction() override {
+            GG::ListBox::Row::CompleteConstruction();
+
             SetMargin(sitrep_row_margin);
             SetChildClippingMode(ClipToClient);
             SetMinSize(GG::Pt(GG::X(2 * GetIconSize() + 2 * sitrep_edge_to_content_spacing),
@@ -375,7 +384,9 @@ SitRepPanel::SitRepPanel(const std::string& config_name) :
     m_filter_button(nullptr),
     m_showing_turn(INVALID_GAME_TURN),
     m_hidden_sitrep_templates(HiddenSitRepTemplateStringsFromOptions())
-{
+{}
+
+void SitRepPanel::CompleteConstruction() {
     Sound::TempUISoundDisabler sound_disabler;
     SetChildClippingMode(DontClip);
 
@@ -386,13 +397,13 @@ SitRepPanel::SitRepPanel(const std::string& config_name) :
     m_sitreps_lb->NormalizeRowsOnInsert(false);
     AttachChild(m_sitreps_lb);
 
-    m_prev_turn_button = new CUIButton(UserString("BACK"));
+    m_prev_turn_button = Wnd::Create<CUIButton>(UserString("BACK"));
     AttachChild(m_prev_turn_button);
-    m_next_turn_button = new CUIButton(UserString("NEXT"));
+    m_next_turn_button = Wnd::Create<CUIButton>(UserString("NEXT"));
     AttachChild(m_next_turn_button);
-    m_last_turn_button = new CUIButton(UserString("LAST"));
+    m_last_turn_button = Wnd::Create<CUIButton>(UserString("LAST"));
     AttachChild(m_last_turn_button);
-    m_filter_button = new CUIButton(UserString("FILTERS"));
+    m_filter_button = Wnd::Create<CUIButton>(UserString("FILTERS"));
     AttachChild(m_filter_button);
 
     m_prev_turn_button->LeftClickedSignal.connect(
@@ -407,6 +418,8 @@ SitRepPanel::SitRepPanel(const std::string& config_name) :
         boost::bind(&SitRepPanel::IgnoreSitRep, this, _1, _2, _3));
     m_sitreps_lb->RightClickedRowSignal.connect(
         boost::bind(&SitRepPanel::DismissalMenu, this, _1, _2, _3));
+
+    CUIWnd::CompleteConstruction();
 
     DoLayout();
 }

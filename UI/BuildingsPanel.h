@@ -15,6 +15,7 @@ public:
     BuildingsPanel(GG::X w, int columns, int planet_id);
     ~BuildingsPanel();
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     int PlanetID() const { return m_planet_id; }
@@ -70,6 +71,8 @@ public:
       * progress bar. */
     BuildingIndicator(GG::X w, const std::string& building_type,
                       double turns_completed, double total_turns, double total_cost, double turn_spending);
+
+    void CompleteConstruction() override;
 
     /** \name Mutators */ //@{
     void PreRender() override;

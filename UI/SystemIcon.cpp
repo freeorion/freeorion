@@ -207,11 +207,16 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
         wrapped_system_name = wrapped_system_name + " (" + std::to_string(system_id) + ")";
     }
 
-    auto text = GG::Wnd::Create<GG::TextControl>(
+    m_text = GG::Wnd::Create<GG::TextControl>(
         GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + wrapped_system_name + "</s>", font, text_color);
-    AttachChild(text);
-    GG::Pt text_size(text->TextLowerRight() - text->TextUpperLeft());
-    text->SizeMove(GG::Pt(GG::X0, GG::Y0), text_size);
+}
+
+void OwnerColoredSystemName::CompleteConstruction() {
+    GG::Control::CompleteConstruction();
+
+    AttachChild(m_text);
+    GG::Pt text_size(m_text->TextLowerRight() - m_text->TextUpperLeft());
+    m_text->SizeMove(GG::Pt(GG::X0, GG::Y0), text_size);
     Resize(text_size);
 }
 
@@ -244,19 +249,23 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     m_selected(false),
     m_colored_name(nullptr),
     m_showing_name(false)
-{
+{}
+
+void SystemIcon::CompleteConstruction() {
+    GG::Control::CompleteConstruction();
+
     ClientUI* ui = ClientUI::GetClientUI();
     if (std::shared_ptr<const System> system = GetSystem(m_system_id)) {
         StarType star_type = system->GetStarType();
         m_disc_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
                                               ClientUI::StarTypeFilePrefixes()[star_type],
-                                              system_id);
+                                              m_system_id);
         m_halo_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
                                               ClientUI::HaloStarTypeFilePrefixes()[star_type],
-                                              system_id);
+                                              m_system_id);
         m_tiny_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
                                               "tiny_" + ClientUI::StarTypeFilePrefixes()[star_type],
-                                              system_id);
+                                              m_system_id);
     } else {
         m_disc_texture = ui->GetTexture(ClientUI::ArtDir() / "misc" / "missing.png");
         m_halo_texture = m_disc_texture;

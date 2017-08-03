@@ -27,12 +27,16 @@ namespace {
 InGameMenu::InGameMenu():
     CUIWnd(UserString("GAME_MENU_WINDOW_TITLE"),
            GG::INTERACTIVE | GG::MODAL)
-{
-    m_save_btn = new CUIButton(UserString("GAME_MENU_SAVE"));
-    m_load_btn = new CUIButton(UserString("GAME_MENU_LOAD"));
-    m_options_btn = new CUIButton(UserString("INTRO_BTN_OPTIONS"));
-    m_exit_btn = new CUIButton(UserString("GAME_MENU_RESIGN"));
-    m_done_btn = new CUIButton(UserString("DONE"));
+{}
+
+void InGameMenu::CompleteConstruction() {
+    CUIWnd::CompleteConstruction();
+
+    m_save_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_SAVE"));
+    m_load_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_LOAD"));
+    m_options_btn = Wnd::Create<CUIButton>(UserString("INTRO_BTN_OPTIONS"));
+    m_exit_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_RESIGN"));
+    m_done_btn = Wnd::Create<CUIButton>(UserString("DONE"));
 
     AttachChild(m_save_btn);
     AttachChild(m_load_btn);
@@ -59,7 +63,7 @@ InGameMenu::InGameMenu():
     if (!HumanClientApp::GetApp()->CanSaveNow()) {
         m_save_btn->Disable();
         m_save_btn->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_save_btn->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        m_save_btn->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("BUTTON_DISABLED"),
             UserString("SAVE_DISABLED_BROWSE_TEXT"),
             GG::X(400)
@@ -160,9 +164,9 @@ void InGameMenu::Save() {
         // When saving in multiplayer, you cannot see the old saves or
         // browse directories, only give a save file name.
         DebugLogger() << "... running save file dialog";
-        SaveFileDialog dlg(app->SinglePlayerGame() ? SAVE_GAME_EXTENSION : MP_SAVE_FILE_EXTENSION);
-        dlg.Run();
-        filename = dlg.Result();
+        auto dlg = GG::Wnd::Create<SaveFileDialog>(app->SinglePlayerGame() ? SAVE_GAME_EXTENSION : MP_SAVE_FILE_EXTENSION);
+        dlg->Run();
+        filename = dlg->Result();
 
         if (!filename.empty()) {
             if (!app->CanSaveNow()) {
@@ -188,8 +192,8 @@ void InGameMenu::Load() {
 }
 
 void InGameMenu::Options() {
-    OptionsWnd options_wnd;
-    options_wnd.Run();
+    auto options_wnd = GG::Wnd::Create<OptionsWnd>();
+    options_wnd->Run();
 }
 
 void InGameMenu::Exit() {

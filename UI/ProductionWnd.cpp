@@ -54,15 +54,21 @@ namespace {
             else
                 nameText = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_REPETITIONS")) % quantity);
             //nameText += GetShipDesign(designID)->Name();
-            auto text = GG::Wnd::Create<CUILabel>(nameText, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
-            text->SetTextColor(txtClr);
-            text->OffsetMove(GG::Pt(GG::X0, GG::Y(-3)));
-            AttachChild(text);
-            Resize(GG::Pt(nwidth, text->Height()));
+            m_text = GG::Wnd::Create<CUILabel>(nameText, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
+            m_text->SetTextColor(txtClr);
+            m_text->OffsetMove(GG::Pt(GG::X0, GG::Y(-3)));
+        }
+
+        void CompleteConstruction() override {
+            GG::Control::CompleteConstruction();
+            AttachChild(m_text);
+            Resize(GG::Pt(Width(), m_text->Height()));
         }
 
         void Render() override
         {}
+
+        CUILabel* m_text;
     };
 
     //////////////
@@ -73,17 +79,22 @@ namespace {
         QuantRow(int quantity, int designID, GG::X nwidth, GG::Y h,
                  bool inProgress, bool amBlockType) :
             GG::ListBox::Row(),
-            m_quant(quantity)
-        {
-            auto newLabel = GG::Wnd::Create<QuantLabel>(m_quant, designID, nwidth, h, inProgress, amBlockType);
-            push_back(newLabel);
-            Resize(GG::Pt(nwidth, newLabel->Height()-GG::Y0));//might subtract more; assessing aesthetics
+            m_quant(quantity),
+            m_label(GG::Wnd::Create<QuantLabel>(m_quant, designID, nwidth, h, inProgress, amBlockType))
+        {}
+
+        void CompleteConstruction() override {
+            GG::ListBox::Row::CompleteConstruction();
+
+            push_back(m_label);
+            Resize(GG::Pt(m_label->Width(), m_label->Height()-GG::Y0));//might subtract more; assessing aesthetics
         }
 
         int Quant() const { return m_quant; }
 
     private:
         int m_quant;
+        QuantLabel* m_label;
     };
 
     //////////////////////
@@ -196,6 +207,7 @@ namespace {
                                  const ProductionQueue::Element& build, double turn_cost, double total_cost,
                                  int turns, int number, double completed_progress);
 
+        void CompleteConstruction() override;
         void PreRender() override;
         void Render() override;
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -308,7 +320,8 @@ namespace {
             title_text = std::to_string(elem.blocksize) + "x ";
         title_text += item_name;
 
-        return std::make_shared<IconTextBrowseWnd>(icon, title_text, main_text);
+        // TODO remove extra wrapping of shared_ptr after conversion to GG shared_ptr
+        return std::shared_ptr<GG::BrowseInfoWnd>(GG::Wnd::Create<IconTextBrowseWnd>(icon, title_text, main_text));
     }
 
     //////////////////////////////////////////////////
@@ -337,11 +350,10 @@ namespace {
             if (pp_accumulated == -1.0f)
                 pp_accumulated = 0.0f;
 
-            panel = GG::Wnd::Create<QueueProductionItemPanel>(GG::X0, GG::Y0, ClientWidth() - MARGIN - MARGIN,
-                                                              elem, elem.allocated_pp, total_cost, minimum_turns, elem.remaining,
-                                                              pp_accumulated);
-            push_back(panel);
-
+            panel = GG::Wnd::Create<QueueProductionItemPanel>(
+                GG::X0, GG::Y0, ClientWidth() - MARGIN - MARGIN,
+                elem, elem.allocated_pp, total_cost, minimum_turns, elem.remaining,
+                pp_accumulated);
             SetDragDropDataType(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE);
 
             SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -351,6 +363,12 @@ namespace {
                 boost::bind(&QueueRow::RowQuantChanged, this, _1, _2));
 
             RequirePreRender();
+        }
+
+        void CompleteConstruction() override {
+            GG::ListBox::Row::CompleteConstruction();
+
+            push_back(panel);
         }
 
         void PreRender() override {
@@ -379,6 +397,7 @@ namespace {
         const int                                           queue_index;
         const ProductionQueue::Element                      elem;
         mutable boost::signals2::signal<void (int,int,int)> RowQuantChangedSignal;
+
     };
 
     //////////////////////////////////////////////////
@@ -402,7 +421,10 @@ namespace {
         m_turn_spending(turn_spending),
         m_total_cost(total_cost),
         m_completed_progress(completed_progress)
-    {
+    {}
+
+    void QueueProductionItemPanel::CompleteConstruction() {
+    GG::Control::CompleteConstruction();
         SetChildClippingMode(ClipToClient);
 
         GG::Clr clr = m_in_progress
@@ -631,6 +653,9 @@ namespace {
             QueueListBox(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE,  UserString("PRODUCTION_QUEUE_PROMPT"))
         {}
 
+        void CompleteConstruction() override
+        { QueueListBox::CompleteConstruction(); }
+
         boost::signals2::signal<void (GG::ListBox::iterator, int)>  QueueItemRalliedToSignal;
         boost::signals2::signal<void ()>                            ShowPediaSignal;
         boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemPausedSignal;
@@ -724,7 +749,9 @@ public:
         CUIWnd("", x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
                "production.ProductionQueueWnd"),
         m_queue_lb(nullptr)
-    {
+    {}
+
+    void CompleteConstruction() override {
         m_queue_lb = GG::Wnd::Create<ProdQueueListBox>();
         m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
         m_queue_lb->SetName("ProductionQueue ListBox");
@@ -732,6 +759,9 @@ public:
         SetEmpire(HumanClientApp::GetApp()->EmpireID());
 
         AttachChild(m_queue_lb);
+
+        CUIWnd::CompleteConstruction();
+
         DoLayout();
     }
     //@}
@@ -773,14 +803,17 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     m_build_designator_wnd(nullptr),
     m_order_issuing_enabled(false),
     m_empire_shown_id(ALL_EMPIRES)
-{
-    //DebugLogger() << "ProductionWindow:  app-width: "<< GetOptionsDB().Get<int>("app-width")
+{}
+
+void ProductionWnd::CompleteConstruction() {
+     GG::Wnd::CompleteConstruction();
+   //DebugLogger() << "ProductionWindow:  app-width: "<< GetOptionsDB().Get<int>("app-width")
     //              << " ; windowed width: " << GetOptionsDB().Get<int>("app-width-windowed");
 
     GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
     GG::Y info_height(ClientUI::Pts()*8);
 
-    m_production_info_panel = new ProductionInfoPanel(UserString("PRODUCTION_WND_TITLE"), UserString("PRODUCTION_INFO_PP"),
+    m_production_info_panel = GG::Wnd::Create<ProductionInfoPanel>(UserString("PRODUCTION_WND_TITLE"), UserString("PRODUCTION_INFO_PP"),
                                                       GG::X0, GG::Y0, queue_width, info_height,
                                                       "production.InfoPanel");
     m_queue_wnd = GG::Wnd::Create<ProductionQueueWnd>(GG::X0, info_height, queue_width, ClientSize().y - info_height);

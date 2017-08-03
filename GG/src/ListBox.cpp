@@ -205,7 +205,7 @@ ListBox::Row::Row() :
     m_margin(ListBox::DEFAULT_MARGIN),
     m_ignore_adjust_layout(false),
     m_is_normalized(false)
-{ SetLayout(Wnd::Create<DeferredLayout>(X0, Y0, Width(), Height(), 1, 1, m_margin, m_margin)); }
+{}
 
 ListBox::Row::Row(X w, Y h, const std::string& drag_drop_data_type,
                   Alignment align/* = ALIGN_VCENTER*/, unsigned int margin/* = 2*/) : 
@@ -218,10 +218,10 @@ ListBox::Row::Row(X w, Y h, const std::string& drag_drop_data_type,
     m_margin(margin),
     m_ignore_adjust_layout(false),
     m_is_normalized(false)
-{
-    SetLayout(Wnd::Create<DeferredLayout>(X0, Y0, w, h, 1, 1, m_margin, m_margin));
-    SetDragDropDataType(drag_drop_data_type);
-}
+{ SetDragDropDataType(drag_drop_data_type); }
+
+void ListBox::Row::CompleteConstruction()
+{ SetLayout(Wnd::Create<DeferredLayout>(X0, Y0, Width(), Height(), 1, 1, m_margin, m_margin)); }
 
 ListBox::Row::~Row()
 {}
@@ -562,6 +562,10 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     m_add_padding_at_end(true)
 {
     Control::SetColor(color);
+}
+
+void ListBox::CompleteConstruction()
+{
     ValidateStyle();
     SetChildClippingMode(ClipToClient);
     m_auto_scroll_timer.Stop();
@@ -2221,7 +2225,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
     // Use the precalculated client size if possible.
     auto cl_sz = maybe_client_size ? *maybe_client_size : ClientSizeExcludingScrolls();
 
-    const std::shared_ptr<const StyleFactory> style = GetStyleFactory();
+    const auto& style = GetStyleFactory();
 
     bool horizontal_needed = (required_total_extents.first ? true : false);
     bool vertical_needed = (required_total_extents.second ? true : false);

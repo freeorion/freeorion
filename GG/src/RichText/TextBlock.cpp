@@ -39,6 +39,11 @@ namespace GG {
         // With these setting the height is largely ignored, so we set it to one.
         m_text = Wnd::Create<TextControl>(GG::X0, GG::Y0, w, Y1, str, font, color,
                                           format | FORMAT_WORDBREAK | FORMAT_LINEWRAP | FORMAT_TOP, flags);
+    }
+
+    void TextBlock::CompleteConstruction()
+    {
+        BlockControl::CompleteConstruction();
         AttachChild(m_text);
     }
 

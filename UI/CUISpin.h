@@ -26,9 +26,13 @@ public:
 
     /** \name Structors */ //@{
     CUISpin(T value, T step, T min, T max, bool edits) :
-        GG::Spin<T>(value, step, min, max, edits, ClientUI::GetFont(), ClientUI::CtrlBorderColor(),
-                    ClientUI::TextColor())
-    {
+    GG::Spin<T>(value, step, min, max, edits, ClientUI::GetFont(), ClientUI::CtrlBorderColor(),
+                ClientUI::TextColor())
+    {}
+
+    void CompleteConstruction() override {
+        GG::Spin<T>::CompleteConstruction();
+
         GG::Spin<T>::ValueChangedSignal.connect(detail::PlayValueChangedSound());
         if (GG::Spin<T>::GetEdit())
             GG::Spin<T>::GetEdit()->SetHiliteColor(ClientUI::EditHiliteColor());

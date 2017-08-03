@@ -10,7 +10,11 @@ CUILinkTextBlock::CUILinkTextBlock(const std::string& str, const std::shared_ptr
     m_link_text(GG::Wnd::Create<CUILinkTextMultiEdit>(str, GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY | GG::MULTI_LEFT |
                                                       GG::MULTI_LINEWRAP | GG::MULTI_TOP | GG::MULTI_NO_HSCROLL |
                                                       GG::MULTI_NO_VSCROLL))
-{
+{}
+
+void CUILinkTextBlock::CompleteConstruction() {
+    GG::BlockControl::CompleteConstruction();
+
     AttachChild(m_link_text);
 
     m_link_text->SetColor(GG::CLR_ZERO);

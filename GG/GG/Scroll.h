@@ -81,6 +81,7 @@ public:
     /** Ctor. */
     Scroll(Orientation orientation, Clr color, Clr interior);
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;

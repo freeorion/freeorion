@@ -241,9 +241,13 @@ IntroScreen::IntroScreen() :
     m_splash(nullptr),
     m_logo(nullptr),
     m_version(nullptr)
-{
-    m_menu = new CUIWnd(UserString("INTRO_WINDOW_TITLE"), GG::X1, GG::Y1,
-                        MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::ONTOP | GG::INTERACTIVE);
+{}
+
+void IntroScreen::CompleteConstruction() {
+    GG::Wnd::CompleteConstruction();
+
+    m_menu = GG::Wnd::Create<CUIWnd>(UserString("INTRO_WINDOW_TITLE"), GG::X1, GG::Y1,
+                                  MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::ONTOP | GG::INTERACTIVE);
 
     m_splash = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(ClientUI::ArtDir() / "splash.png"), GG::GRAPHIC_FITGRAPHIC, GG::INTERACTIVE);
 
@@ -258,16 +262,16 @@ IntroScreen::IntroScreen() :
     m_splash->AttachChild(m_version);
 
     //create buttons
-    m_single_player = new CUIButton(UserString("INTRO_BTN_SINGLE_PLAYER"));
-    m_quick_start =   new CUIButton(UserString("INTRO_BTN_QUICK_START"));
-    m_multi_player =  new CUIButton(UserString("INTRO_BTN_MULTI_PLAYER"));
-    m_load_game =     new CUIButton(UserString("INTRO_BTN_LOAD_GAME"));
-    m_options =       new CUIButton(UserString("INTRO_BTN_OPTIONS"));
-    m_pedia =         new CUIButton(UserString("INTRO_BTN_PEDIA"));
-    m_about =         new CUIButton(UserString("INTRO_BTN_ABOUT"));
-    m_website =       new CUIButton(UserString("INTRO_BTN_WEBSITE"));
-    m_credits =       new CUIButton(UserString("INTRO_BTN_CREDITS"));
-    m_exit_game =     new CUIButton(UserString("INTRO_BTN_EXIT"));
+    m_single_player = Wnd::Create<CUIButton>(UserString("INTRO_BTN_SINGLE_PLAYER"));
+    m_quick_start =   Wnd::Create<CUIButton>(UserString("INTRO_BTN_QUICK_START"));
+    m_multi_player =  Wnd::Create<CUIButton>(UserString("INTRO_BTN_MULTI_PLAYER"));
+    m_load_game =     Wnd::Create<CUIButton>(UserString("INTRO_BTN_LOAD_GAME"));
+    m_options =       Wnd::Create<CUIButton>(UserString("INTRO_BTN_OPTIONS"));
+    m_pedia =         Wnd::Create<CUIButton>(UserString("INTRO_BTN_PEDIA"));
+    m_about =         Wnd::Create<CUIButton>(UserString("INTRO_BTN_ABOUT"));
+    m_website =       Wnd::Create<CUIButton>(UserString("INTRO_BTN_WEBSITE"));
+    m_credits =       Wnd::Create<CUIButton>(UserString("INTRO_BTN_CREDITS"));
+    m_exit_game =     Wnd::Create<CUIButton>(UserString("INTRO_BTN_EXIT"));
 
     //attach buttons
     m_menu->AttachChild(m_single_player);
@@ -328,28 +332,31 @@ void IntroScreen::OnLoadGame() {
 }
 
 void IntroScreen::OnOptions() {
-    OptionsWnd options_wnd;
-    options_wnd.Run();
+    auto options_wnd = GG::Wnd::Create<OptionsWnd>();
+    options_wnd->Run();
 }
 
 void IntroScreen::OnPedia() {
     static const std::string INTRO_PEDIA_WND_NAME = "introscreen.pedia";
-    EncyclopediaDetailPanel enc_panel(GG::MODAL | GG::INTERACTIVE | GG::DRAGABLE |
-                                      GG::RESIZABLE | CLOSABLE | PINABLE, INTRO_PEDIA_WND_NAME);
-    enc_panel.SizeMove(GG::Pt(GG::X(100), GG::Y(100)), Size() - GG::Pt(GG::X(100), GG::Y(100)));
-    enc_panel.ClearItems();
-    enc_panel.SetIndex();
-    enc_panel.ValidatePosition();
+    auto enc_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(
+        GG::MODAL | GG::INTERACTIVE | GG::DRAGABLE |
+        GG::RESIZABLE | CLOSABLE | PINABLE, INTRO_PEDIA_WND_NAME);
+    enc_panel->SizeMove(GG::Pt(GG::X(100), GG::Y(100)), Size() - GG::Pt(GG::X(100), GG::Y(100)));
+    enc_panel->ClearItems();
+    enc_panel->SetIndex();
+    enc_panel->ValidatePosition();
 
-    enc_panel.ClosingSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::EndRun, &enc_panel));
+    enc_panel->ClosingSignal.connect(
+        boost::bind(&EncyclopediaDetailPanel::EndRun, enc_panel));
 
-    enc_panel.Run();
+    enc_panel->Run();
+
+    delete enc_panel;
 }
 
 void IntroScreen::OnAbout() {
-    About about_wnd;
-    about_wnd.Run();
+    auto about_wnd = GG::Wnd::Create<About>();
+    about_wnd->Run();
 }
 
 void IntroScreen::OnWebsite()

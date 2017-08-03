@@ -19,6 +19,7 @@ public:
     ResourcePanel(GG::X w, int object_id);
     ~ResourcePanel();
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     int ResourceCenterID() const { return m_rescenter_id; }

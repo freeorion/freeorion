@@ -10,7 +10,8 @@
 class CombatReportWnd : public CUIWnd {
 public:
     CombatReportWnd(const std::string& config_name = "");
-    // Must have explicit destructor since CombatReportPrivate is incomplete here
+    void CompleteConstruction() override;
+    // Must have explicit destructor since Impl is incomplete here
     virtual ~CombatReportWnd();
 
     void CloseClicked() override;

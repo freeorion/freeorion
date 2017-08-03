@@ -271,9 +271,10 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
         boost::bind(&HumanClientApp::UpdateFPSLimit, this));
 
     std::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
-        new GG::TextBoxBrowseInfoWnd(GG::X(400), ClientUI::GetFont(),
-                                     GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
-                                     GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, 1));
+        GG::Wnd::Create<GG::TextBoxBrowseInfoWnd>(
+            GG::X(400), ClientUI::GetFont(),
+            GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
+            GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, 1));
     GG::Wnd::SetDefaultBrowseInfoWnd(default_browse_info_wnd);
 
     std::shared_ptr<GG::Texture> cursor_texture = m_ui->GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
@@ -468,11 +469,11 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     bool ended_with_ok = false;
     std::vector<std::pair<std::string, std::string>> game_rules = GetGameRules().GetRulesAsStrings();
     if (!quickstart) {
-        GalaxySetupWnd galaxy_wnd;
-        galaxy_wnd.Run();
-        ended_with_ok = galaxy_wnd.EndedWithOk();
+        auto galaxy_wnd = GG::Wnd::Create<GalaxySetupWnd>();
+        galaxy_wnd->Run();
+        ended_with_ok = galaxy_wnd->EndedWithOk();
         if (ended_with_ok)
-            game_rules = galaxy_wnd.GetRulesAsStrings();
+            game_rules = galaxy_wnd->GetRulesAsStrings();
     }
 
     m_connected = m_networking->ConnectToLocalHostServer();
@@ -574,10 +575,10 @@ void HumanClientApp::MultiPlayerGame() {
         return;
     }
 
-    ServerConnectWnd server_connect_wnd;
-    server_connect_wnd.Run();
+    auto server_connect_wnd = GG::Wnd::Create<ServerConnectWnd>();
+    server_connect_wnd->Run();
 
-    std::string server_name = server_connect_wnd.Result().second;
+    std::string server_name = server_connect_wnd->Result().second;
 
     if (server_name.empty())
         return;
@@ -602,16 +603,16 @@ void HumanClientApp::MultiPlayerGame() {
     m_connected = m_networking->ConnectToServer(server_name);
     if (!m_connected) {
         ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-        if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
+        if (server_connect_wnd->Result().second == "HOST GAME SELECTED")
             ResetToIntro();
         return;
     }
 
-    if (server_connect_wnd.Result().second == "HOST GAME SELECTED") {
-        m_networking->SendMessage(HostMPGameMessage(server_connect_wnd.Result().first));
+    if (server_connect_wnd->Result().second == "HOST GAME SELECTED") {
+        m_networking->SendMessage(HostMPGameMessage(server_connect_wnd->Result().first));
         m_fsm->process_event(HostMPGameRequested());
     } else {
-        m_networking->SendMessage(JoinGameMessage(server_connect_wnd.Result().first, Networking::CLIENT_TYPE_HUMAN_PLAYER));
+        m_networking->SendMessage(JoinGameMessage(server_connect_wnd->Result().first, Networking::CLIENT_TYPE_HUMAN_PLAYER));
         m_fsm->process_event(JoinMPGameRequested());
     }
 }
@@ -648,10 +649,10 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         }
     } else {
         try {
-            SaveFileDialog sfd(SP_SAVE_FILE_EXTENSION, true);
-            sfd.Run();
-            if (!sfd.Result().empty())
-                filename = sfd.Result();
+            auto sfd = GG::Wnd::Create<SaveFileDialog>(SP_SAVE_FILE_EXTENSION, true);
+            sfd->Run();
+            if (!sfd->Result().empty())
+                filename = sfd->Result();
         } catch (const std::exception& e) {
             ClientUI::MessageBox(e.what(), true);
         }
@@ -1167,9 +1168,9 @@ void HumanClientApp::Autosave() {
 }
 
 std::string HumanClientApp::SelectLoadFile() {
-    SaveFileDialog sfd(true);
-    sfd.Run();
-    return sfd.Result();
+    auto sfd = GG::Wnd::Create<SaveFileDialog>(true);
+    sfd->Run();
+    return sfd->Result();
 }
 
 void HumanClientApp::ResetClientData() {

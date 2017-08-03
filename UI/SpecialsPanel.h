@@ -11,6 +11,7 @@ public:
     /** \name Structors */ //@{
     SpecialsPanel(GG::X w, int object_id);
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;

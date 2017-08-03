@@ -472,6 +472,7 @@ public:
 
     ~PlanetPanel();
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
@@ -809,9 +810,9 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
 
         auto rename_action = [this, system]() {
             const std::string& old_name(system->Name());
-            CUIEditWnd edit_wnd(GG::X(350), UserString("SP_ENTER_NEW_SYSTEM_NAME"), old_name);
-            edit_wnd.Run();
-            const std::string& new_name(edit_wnd.Result());
+            std::shared_ptr<CUIEditWnd> edit_wnd(GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("SP_ENTER_NEW_SYSTEM_NAME"), old_name)); // TODO change the shared_ptr to auto after conversion of Wnd::Create
+            edit_wnd->Run();
+            const std::string& new_name(edit_wnd->Result());
             if (m_order_issuing_enabled && !new_name.empty() && new_name != old_name) {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
                     std::make_shared<RenameOrder>(HumanClientApp::GetApp()->EmpireID(), system->ID(), new_name));
@@ -900,7 +901,11 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_buildings_panel(nullptr),
     m_specials_panel(nullptr),
     m_star_type(star_type)
-{
+{}
+
+void SidePanel::PlanetPanel::CompleteConstruction() {
+    GG::Control::CompleteConstruction();
+
     SetName(UserString("PLANET_PANEL"));
 
     std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
@@ -937,7 +942,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     else
         font = ClientUI::GetFont(ClientUI::Pts()*4/3);
 
-    GG::X panel_width = w - MaxPlanetDiameter() - 2*EDGE_PAD;
+    GG::X panel_width = Width() - MaxPlanetDiameter() - 2*EDGE_PAD;
 
     // create planet name control
     m_planet_name = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", font, ClientUI::TextColor());
@@ -996,15 +1001,15 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     AttachChild(m_env_size);
 
 
-    m_colonize_button = new CUIButton(UserString("PL_COLONIZE"));
+    m_colonize_button = Wnd::Create<CUIButton>(UserString("PL_COLONIZE"));
     m_colonize_button->LeftClickedSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::ClickColonize, this));
 
-    m_invade_button   = new CUIButton(UserString("PL_INVADE"));
+    m_invade_button   = Wnd::Create<CUIButton>(UserString("PL_INVADE"));
     m_invade_button->LeftClickedSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::ClickInvade, this));
 
-    m_bombard_button  = new CUIButton(UserString("PL_BOMBARD"));
+    m_bombard_button  = Wnd::Create<CUIButton>(UserString("PL_BOMBARD"));
     m_bombard_button->LeftClickedSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::ClickBombard, this));
 
@@ -1917,7 +1922,7 @@ void SidePanel::PlanetPanel::Refresh() {
             }
 
             std::string info = visibility_info + "\n\n" + detection_info;
-            SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("METER_STEALTH"), info));
+            SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("METER_STEALTH"), info));
         }
         else if (visibility == VIS_BASIC_VISIBILITY) {
             visibility_info = UserString("PL_BASIC_VISIBILITY");
@@ -1942,7 +1947,7 @@ void SidePanel::PlanetPanel::Refresh() {
             }
 
             std::string info = visibility_info + "\n\n" + detection_info;
-            SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("METER_STEALTH"), info));
+            SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("METER_STEALTH"), info));
         }
     }
 
@@ -2057,14 +2062,14 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         && m_planet_name->InClient(pt))
     {
         auto rename_action = [this, planet]() { // rename planet
-            CUIEditWnd edit_wnd(GG::X(350), UserString("SP_ENTER_NEW_PLANET_NAME"), planet->Name());
-            edit_wnd.Run();
-            if (edit_wnd.Result() != ""
-                && edit_wnd.Result() != planet->Name()
+            std::shared_ptr<CUIEditWnd> edit_wnd(GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("SP_ENTER_NEW_PLANET_NAME"), planet->Name())); // TODO change the shared_ptr to auto after conversion of Wnd::Create
+            edit_wnd->Run();
+            if (edit_wnd->Result() != ""
+                && edit_wnd->Result() != planet->Name()
                 && m_order_issuing_enabled)
             {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
-                    std::make_shared<RenameOrder>(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd.Result()));
+                    std::make_shared<RenameOrder>(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd->Result()));
                 Refresh();
             }
 
@@ -2465,7 +2470,7 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer() :
     Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
     m_planet_panels(),
     m_selected_planet_id(INVALID_OBJECT_ID),
-    m_vscroll(new CUIScroll(GG::VERTICAL)),
+    m_vscroll(GG::Wnd::Create<CUIScroll>(GG::VERTICAL)),
     m_ignore_recursive_resize(false)
 {
     SetName("PlanetPanelContainer");
@@ -2807,7 +2812,6 @@ boost::signals2::signal<void (int)>        SidePanel::PlanetDoubleClickedSignal;
 boost::signals2::signal<void (int)>        SidePanel::BuildingRightClickedSignal;
 boost::signals2::signal<void (int)>        SidePanel::SystemSelectedSignal;
 
-
 SidePanel::SidePanel(const std::string& config_name) :
     CUIWnd("", GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP, config_name),
     m_system_name(nullptr),
@@ -2818,18 +2822,22 @@ SidePanel::SidePanel(const std::string& config_name) :
     m_planet_panel_container(nullptr),
     m_system_resource_summary(nullptr),
     m_selection_enabled(false)
-{
+{}
+
+void SidePanel::CompleteConstruction() {
+    CUIWnd::CompleteConstruction();
+
     m_planet_panel_container = GG::Wnd::Create<PlanetPanelContainer>();
     AttachChild(m_planet_panel_container);
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
-    m_button_prev = new CUIButton(
+    m_button_prev = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "leftarrownormal.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "leftarrowclicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "leftarrowmouseover.png")));
 
-    m_button_next = new CUIButton(
+    m_button_next = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrownormal.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrowclicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrowmouseover.png")));

@@ -84,7 +84,6 @@ public:
     /** \name Structors */ //@{
     SettableInWindowCUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover, boost::function<bool(const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function);
     //@}
-
     /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
     //@}
@@ -203,6 +202,7 @@ public:
     /** \name Structors */ //@{
     CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format, std::shared_ptr<GG::StateButtonRepresenter> representer);
     //@}
+
 };
 
 /** Tab bar with buttons for selecting tabbed windows. */
@@ -392,7 +392,10 @@ private:
   * lists, such as the ones used in the game setup dialogs. */
 struct CUISimpleDropDownListRow : public GG::ListBox::Row {
     CUISimpleDropDownListRow(const std::string& row_text, GG::Y row_height = DEFAULT_ROW_HEIGHT);
+    void CompleteConstruction() override;
     static const GG::Y DEFAULT_ROW_HEIGHT;
+private:
+    CUILabel* m_row_label;
 };
 
 /** Encapsulates an icon and text that goes with it in a single control.  For
@@ -420,6 +423,8 @@ public:
                   bool showsign0, bool showsign1,
                   GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initializes with two values
     //@}
+
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     double          GetValue(int index = 0) const;
@@ -555,8 +560,11 @@ class FileDlg : public GG::FileDlg {
 public:
     /** \name Structors */ //@{
     FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
-            const std::vector<std::pair<std::string, std::string>>& types);
+            std::vector<std::pair<std::string, std::string>> types);
     //@}
+    void CompleteConstruction() override;
+private:
+    const std::vector<std::pair<std::string, std::string>> m_init_file_filters;
 };
 
 /** Despite the name, this is actually used to display info in both the Research and Production screens. */

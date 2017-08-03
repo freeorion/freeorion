@@ -14,16 +14,17 @@
 struct PromptRow : GG::ListBox::Row {
     PromptRow(GG::X w, std::string prompt_str) :
         GG::ListBox::Row(w, GG::Y(20), ""),
-        m_prompt(nullptr)
-    {
-        //std::cout << "PromptRow(" << w << ", ...)" << std::endl;
+        m_prompt(GG::Wnd::Create<CUILabel>(prompt_str, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK))
+    {}
 
-        m_prompt = GG::Wnd::Create<CUILabel>(prompt_str, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK);
+    void CompleteConstruction() override {
+        GG::ListBox::Row::CompleteConstruction();        //std::cout << "PromptRow(" << w << ", ...)" << std::endl;
+
         m_prompt->MoveTo(GG::Pt(GG::X(2), GG::Y(2)));
         m_prompt->Resize(GG::Pt(Width() - 10, Height()));
         m_prompt->SetTextColor(GG::LightColor(ClientUI::TextColor()));
         m_prompt->ClipText(true);
-        Resize(GG::Pt(w, m_prompt->Height()));
+        Resize(GG::Pt(Width(), m_prompt->Height()));
         push_back(m_prompt);
     }
 
@@ -52,6 +53,16 @@ QueueListBox::QueueListBox(const boost::optional<std::string>& drop_type_str, co
 {
     if (drop_type_str)
         AllowDropType(*drop_type_str);
+}
+
+void QueueListBox::CompleteConstruction() {
+    CUIListBox::CompleteConstruction();
+
+    SetNumCols(1);
+    ManuallyManageColProps();
+    NormalizeRowsOnInsert(false);
+
+    ShowPromptSlot();
 
     BeforeInsertRowSignal.connect(
         boost::bind(&QueueListBox::EnsurePromptHiddenSlot, this, _1));
@@ -61,12 +72,6 @@ QueueListBox::QueueListBox(const boost::optional<std::string>& drop_type_str, co
         boost::bind(&QueueListBox::ShowPromptSlot, this));
     GG::ListBox::RightClickedRowSignal.connect(
         boost::bind(&QueueListBox::ItemRightClicked, this, _1, _2, _3));
-
-    SetNumCols(1);
-    ManuallyManageColProps();
-    NormalizeRowsOnInsert(false);
-
-    ShowPromptSlot();
 }
 
 GG::X QueueListBox::RowWidth() const

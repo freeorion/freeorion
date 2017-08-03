@@ -70,6 +70,8 @@ public:
     GalaxySetupPanel(GG::X w = GG::X(FontBasedUpscale(305)), GG::Y h = GG::Y(330));
     //!@}
 
+    void CompleteConstruction() override;
+
     /** \name Accessors*/ //!@{
     const std::string&              GetSeed() const;                //!< Returns string version of seed. This value is converted to a number or (if that fails) hashed to get the actual seed value.
     int                             Systems() const;                //!< Returns the number of star systems to use in generating the galaxy
@@ -138,6 +140,7 @@ class GalaxySetupWnd : public CUIWnd {
 public:
     /** \name Structors*/ //!@{
     GalaxySetupWnd();
+    void CompleteConstruction() override;
     //!@}
 
     /** \name Accessors*/ //!@{

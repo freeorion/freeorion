@@ -54,12 +54,17 @@ namespace {
     public:
         RowContentsWnd(GG::X w, GG::Y h, Wnd* contents, int indentation_level) :
             Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-            m_contents(contents)
-        {
+            m_contents(contents),
+            m_indentation_level(indentation_level)
+        {}
+
+        void CompleteConstruction() override {
+            GG::Control::CompleteConstruction();
+
             if (!m_contents)
                 return;
             AttachChild(m_contents);
-            m_contents->MoveTo(GG::Pt(GG::X(indentation_level * INDENTATION), GG::Y0));
+            m_contents->MoveTo(GG::Pt(GG::X(m_indentation_level * INDENTATION), GG::Y0));
             DoLayout();
         }
 
@@ -82,6 +87,7 @@ namespace {
         }
     private:
         Wnd* m_contents;
+        int m_indentation_level;
     };
 
     struct BrowseForPathButtonFunctor {
@@ -96,14 +102,14 @@ namespace {
 
         void operator()() {
             try {
-                FileDlg dlg(m_path.string(), m_edit->Text(), false, false, m_filters);
+                auto dlg = GG::Wnd::Create<FileDlg>(m_path.string(), m_edit->Text(), false, false, m_filters);
                 if (m_directory)
-                    dlg.SelectDirectories(true);
-                dlg.Run();
-                if (!dlg.Result().empty()) {
+                    dlg->SelectDirectories(true);
+                dlg->Run();
+                if (!dlg->Result().empty()) {
                     fs::path path = m_return_relative_path ?
-                        RelativePath(m_path, fs::path(*dlg.Result().begin())) :
-                    fs::absolute(*dlg.Result().begin());
+                        RelativePath(m_path, fs::path(*(dlg->Result().begin()))) :
+                        fs::absolute(*(dlg->Result().begin()));
                     *m_edit << path.string();
                     m_edit->EditedSignal(m_edit->Text());
                 }
@@ -224,7 +230,11 @@ namespace {
             m_font_graphic(nullptr),
             m_title_font_graphic(nullptr),
             m_hscroll(nullptr)
-        {
+        {}
+
+        void CompleteConstruction() override {
+            CUIWnd::CompleteConstruction();
+
             GG::Y top = GG::Y1;
 
             std::shared_ptr<GG::Font> font = ClientUI::GetFont();
@@ -251,7 +261,7 @@ namespace {
             }
 
 
-            m_hscroll = new CUIScroll(GG::HORIZONTAL);
+            m_hscroll =  GG::Wnd::Create<CUIScroll>(GG::HORIZONTAL);
             AttachChild(m_hscroll);
 
             m_hscroll->ScrolledSignal.connect(
@@ -259,6 +269,7 @@ namespace {
             DoLayout();
         }
 
+    public:
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             GG::Pt old_size = GG::Wnd::Size();
 
@@ -293,7 +304,7 @@ namespace {
     };
 
     void ShowFontTextureWnd() {
-        auto font_wnd = new FontTextureWnd();
+        auto font_wnd =  GG::Wnd::Create<FontTextureWnd>();
         font_wnd->Run();
         delete font_wnd;
     }
@@ -305,8 +316,6 @@ namespace {
             m_contents(contents)
         {
             SetChildClippingMode(ClipToClient);
-            if (m_contents)
-                push_back(m_contents);
         }
 
         OptionsListRow(GG::X w, GG::Y h, Wnd* contents, int indentation = 0) :
@@ -314,10 +323,14 @@ namespace {
             m_contents(nullptr)
         {
             SetChildClippingMode(ClipToClient);
-            if (contents) {
+            if (contents)
                 m_contents = GG::Wnd::Create<RowContentsWnd>(w, h, contents, indentation);
+        }
+
+        void CompleteConstruction() override {
+            GG::ListBox::Row::CompleteConstruction();
+            if (m_contents)
                 push_back(m_contents);
-            }
         }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
@@ -433,13 +446,17 @@ OptionsWnd::OptionsWnd():
            OPTIONS_WND_NAME),
     m_tabs(nullptr),
     m_done_button(nullptr)
-{
-    m_done_button = new CUIButton(UserString("DONE"));
+{}
+
+void OptionsWnd::CompleteConstruction() {
+    m_done_button = Wnd::Create<CUIButton>(UserString("DONE"));
     // FIXME: PAGE_WIDTH is needed to prevent triggering an assert within the TabBar class.
     // The placement of the tab register buttons assumes that the whole TabWnd is at least
     // wider than the first tab button.
-    m_tabs = new GG::TabWnd(GG::X0, GG::Y0, PAGE_WIDTH, GG::Y1, ClientUI::GetFont(),
-                            ClientUI::WndColor(), ClientUI::TextColor());
+    m_tabs = GG::Wnd::Create<GG::TabWnd>(GG::X0, GG::Y0, PAGE_WIDTH, GG::Y1, ClientUI::GetFont(),
+                                         ClientUI::WndColor(), ClientUI::TextColor());
+
+    CUIWnd::CompleteConstruction();
 
     ResetDefaultPosition();
     SetMinSize(GG::Pt(PAGE_WIDTH + 20, PAGE_HEIGHT + 70));
@@ -989,7 +1006,7 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const 
     auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     auto edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>(option_name));
     edit->Resize(GG::Pt(50*SPIN_WIDTH, edit->Height())); // won't resize within layout bigger than its initial size, so giving a big initial size here
-    auto button = new CUIButton("...");
+    auto button = Wnd::Create<CUIButton>("...");
 
     auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, ROW_WIDTH, button->MinUsableSize().y,
                                               1, 3, 0, 5);

@@ -52,7 +52,11 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
     m_planet_id(planet_id),
     m_columns(columns),
     m_building_indicators()
-{
+{}
+
+void BuildingsPanel::CompleteConstruction() {
+    AccordionPanel::CompleteConstruction();
+
     SetName("BuildingsPanel");
 
     if (m_columns < 1) {
@@ -266,7 +270,6 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
     if (std::shared_ptr<const Building> building = GetBuilding(m_building_id))
         building->StateChangedSignal.connect(
             boost::bind(&BuildingIndicator::RequirePreRender, this));
-    Refresh();
 }
 
 BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
@@ -279,11 +282,10 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
     const BuildingType* type = GetBuildingType(building_type);
     const std::string& desc = type ? type->Description() : "";
 
-    SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
+    SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
         texture, UserString(building_type), UserString(desc)));
 
     m_graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    AttachChild(m_graphic);
 
     float next_progress = turn_spending / std::max(1.0, total_cost);
 
@@ -294,9 +296,18 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
                                                            ClientUI::TechWndProgressBarColor(),
                                                            GG::LightColor(ClientUI::ResearchableTechFillColor()));
 
-    AttachChild(m_progress_bar);
+}
 
-    RequirePreRender();
+void BuildingIndicator::CompleteConstruction() {
+    GG::Wnd::CompleteConstruction();
+
+    if (m_building_id == INVALID_OBJECT_ID) {
+        AttachChild(m_graphic);
+        AttachChild(m_progress_bar);
+        RequirePreRender();
+    } else {
+        Refresh();
+    }
 }
 
 void BuildingIndicator::Render() {
@@ -373,7 +384,7 @@ void BuildingIndicator::Refresh() {
         if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions") && !type->Effects().empty())
             desc += "\n" + Dump(type->Effects());
 
-        SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
+        SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
             texture, UserString(type->Name()), desc));
     }
 

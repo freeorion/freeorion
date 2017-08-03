@@ -16,6 +16,7 @@ public:
     ResearchWnd(GG::X w, GG::Y h, bool initially_hidden = true);
     ~ResearchWnd();
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     int     ShownEmpireID() const;

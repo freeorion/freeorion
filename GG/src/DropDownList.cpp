@@ -46,6 +46,7 @@ public:
     typedef boost::signals2::signal<void (iterator)>   SelChangedSignalType;
 
     ModalListPicker(Clr color, const DropDownList* relative_to_wnd, size_t m_num_shown_rows);
+    void CompleteConstruction() override;
     ~ModalListPicker();
 
     /** ModalListPicker is run then it returns true if it was not destroyed while running.*/
@@ -169,6 +170,9 @@ ModalListPicker::ModalListPicker(Clr color, const DropDownList* relative_to_wnd,
     m_relative_to_wnd(relative_to_wnd),
     m_dropped(false),
     m_only_mouse_scroll_when_dropped(false)
+{}
+
+void ModalListPicker::CompleteConstruction()
 {
     m_lb_wnd->SelRowsChangedSignal.connect(
         boost::bind(&ModalListPicker::LBSelChangedSlot, this, _1));
@@ -538,7 +542,7 @@ void ModalListPicker::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 ////////////////////////////////////////////////
 DropDownList::DropDownList(size_t num_shown_elements, Clr color) :
     Control(X0, Y0, X(1 + 2 * ListBox::BORDER_THICK), Y(1 + 2 * ListBox::BORDER_THICK), INTERACTIVE),
-    m_modal_picker(std::make_shared<ModalListPicker>(color, this, num_shown_elements))
+    m_modal_picker(std::shared_ptr<ModalListPicker>(Wnd::Create<ModalListPicker>(color, this, num_shown_elements)))
 {
     SetStyle(LIST_SINGLESEL);
 

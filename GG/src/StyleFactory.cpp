@@ -85,7 +85,7 @@ std::string StyleFactory::Translate(const std::string& key) const
 
 Button* StyleFactory::NewButton(const std::string& str, const std::shared_ptr<Font>& font,
                                 Clr color, Clr text_color/* = CLR_BLACK*/, Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return new Button(str, font, color, text_color, flags); }
+{ return Wnd::Create<Button>(str, font, color, text_color, flags); }
 
 RadioButtonGroup* StyleFactory::NewRadioButtonGroup(Orientation orientation) const
 { return Wnd::Create<RadioButtonGroup>(orientation); }
@@ -101,18 +101,18 @@ ListBox* StyleFactory::NewListBox(Clr color, Clr interior/* = CLR_ZERO*/) const
 { return Wnd::Create<ListBox>(color, interior); }
 
 Scroll* StyleFactory::NewScroll(Orientation orientation, Clr color, Clr interior) const
-{ return new Scroll(orientation, color, interior); }
+{ return Wnd::Create<Scroll>(orientation, color, interior); }
 
 Slider<int>* StyleFactory::NewIntSlider(int min, int max, Orientation orientation,
                                         Clr color, int tab_width, int line_width/* = 5*/) const
-{ return new Slider<int>(min, max, orientation, color, tab_width, line_width, INTERACTIVE); }
+{ return Wnd::Create<Slider<int>>(min, max, orientation, color, tab_width, line_width, INTERACTIVE); }
 
 TextControl* StyleFactory::NewTextControl(const std::string& str, const std::shared_ptr<Font>& font,
                                           Clr color/* = CLR_BLACK*/, Flags<TextFormat> format/* = FORMAT_NONE*/) const
 { return Wnd::Create<TextControl>(X0, Y0, X1, Y1, str, font, color, format, NO_WND_FLAGS); }
 
 TabBar* StyleFactory::NewTabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
-{ return new TabBar(font, color, text_color, INTERACTIVE); }
+{ return Wnd::Create<TabBar>(font, color, text_color, INTERACTIVE); }
 
 ListBox* StyleFactory::NewDropDownListListBox(Clr color, Clr interior/* = CLR_ZERO*/) const
 {
@@ -174,7 +174,8 @@ StateButton* StyleFactory::NewTabBarTab(const std::string& str,
                                         const std::shared_ptr<Font>& font, Flags<TextFormat> format, Clr color,
                                         Clr text_color/* = CLR_BLACK*/) const
 {
-    auto retval = new StateButton(str, font, format, color, std::make_shared<BeveledTabRepresenter>(), text_color);
+    auto retval = Wnd::Create<StateButton>(
+        str, font, format, color, std::make_shared<BeveledTabRepresenter>(), text_color);
     retval->Resize(retval->MinUsableSize() + Pt(X(12), Y0));
     return retval;
 }

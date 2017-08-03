@@ -12,6 +12,7 @@ class SitRepPanel : public CUIWnd {
 public:
     /** \name Structors */ //@{
     SitRepPanel(const std::string& config_name = "");
+    void CompleteConstruction() override;
     //@}
 
     /** \name Accessors */ //@{

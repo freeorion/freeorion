@@ -322,7 +322,11 @@ MessageWnd::MessageWnd(const std::string& config_name) :
     m_display_show_time(0),
     m_history(),
     m_history_position()
-{
+{}
+
+void MessageWnd::CompleteConstruction() {
+    CUIWnd::CompleteConstruction();
+
     m_display = GG::Wnd::Create<CUIMultiEdit>("", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE | GG::MULTI_INTEGRAL_HEIGHT);
     AttachChild(m_display);
     m_display->SetMaxLinesOfHistory(100); // executing this line seems to cause crashes in MultiEdit when adding more lines to the control than the history limit

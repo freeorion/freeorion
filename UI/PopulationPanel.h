@@ -19,6 +19,7 @@ public:
     PopulationPanel(GG::X w, int object_id);
     ~PopulationPanel();
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     int PopCenterID() const { return m_popcenter_id; }

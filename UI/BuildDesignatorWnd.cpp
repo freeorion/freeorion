@@ -268,8 +268,10 @@ namespace {
             }
 
             // create tooltip
-            return std::make_shared<IconTextBrowseWnd>(
-                ClientUI::BuildingIcon(item.name), title, main_text);
+            // TODO remove extra wrapping of shared_ptr after conversion to GG shared_ptr
+            return std::shared_ptr<IconTextBrowseWnd>(
+                GG::Wnd::Create<IconTextBrowseWnd>(
+                    ClientUI::BuildingIcon(item.name), title, main_text));
         }
 
         // production item is a ship
@@ -319,8 +321,10 @@ namespace {
                 }
 
             // create tooltip
-            return std::make_shared<IconTextBrowseWnd>(
-                ClientUI::ShipDesignIcon(item.design_id), title, main_text);
+            // TODO remove extra wrapping of shared_ptr after conversion to GG shared_ptr
+            return std::shared_ptr<GG::BrowseInfoWnd>(
+                GG::Wnd::Create<IconTextBrowseWnd>(
+                    ClientUI::ShipDesignIcon(item.design_id), title, main_text));
         }
 
         // other production item (?)
@@ -350,7 +354,6 @@ namespace {
             }
 
             m_panel = GG::Wnd::Create<ProductionItemPanel>(w, h, m_item, empire_id, location_id);
-            push_back(m_panel);
 
             if (const Empire* empire = GetEmpire(empire_id)) {
                 if (!empire->ProducibleItem(m_item, location_id)) {
@@ -363,6 +366,12 @@ namespace {
             SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, location_id, empire_id));
 
             //std::cout << "ProductionItemRow(building) height: " << Value(Height()) << std::endl;
+        };
+
+        void CompleteConstruction() override {
+            GG::ListBox::Row::CompleteConstruction();
+
+            push_back(m_panel);
         }
 
         const ProductionQueue::ProductionItem& Item() const
@@ -426,6 +435,7 @@ class BuildDesignatorWnd::BuildSelector : public CUIWnd {
 public:
     /** \name Structors */ //@{
     BuildSelector(const std::string& config_name = "");
+    void CompleteConstruction() override;
     //@}
 
     /** \name Accessors */ //@{
@@ -519,17 +529,19 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(const std::string& config_name)
     m_buildable_items(GG::Wnd::Create<BuildableItemsListBox>()),
     m_production_location(INVALID_OBJECT_ID),
     m_empire_id(ALL_EMPIRES)
-{
+{}
+
+void BuildDesignatorWnd::BuildSelector::CompleteConstruction() {
     // create build type toggle buttons (ship, building, all)
-    m_build_type_buttons[BT_BUILDING] = new CUIStateButton(UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    m_build_type_buttons[BT_BUILDING] = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_build_type_buttons[BT_BUILDING]);
-    m_build_type_buttons[BT_SHIP] = new CUIStateButton(UserString("PRODUCTION_WND_CATEGORY_BT_SHIP"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    m_build_type_buttons[BT_SHIP] = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_CATEGORY_BT_SHIP"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_build_type_buttons[BT_SHIP]);
 
     // create availability toggle buttons (available, not available)
-    m_availability_buttons.push_back(new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>()));
+    m_availability_buttons.push_back(GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>()));
     AttachChild(m_availability_buttons.back());
-    m_availability_buttons.push_back(new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>()));
+    m_availability_buttons.push_back(GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>()));
     AttachChild(m_availability_buttons.back());
 
     // selectable list of buildable items
@@ -559,6 +571,8 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(const std::string& config_name)
     //    m_buildable_items->SetColWidth(i, col_widths[i]);
     //    m_buildable_items->SetColAlignment(i, GG::ALIGN_LEFT);
     //}
+
+    CUIWnd::CompleteConstruction();
 
     DoLayout();
 }
@@ -946,14 +960,19 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     m_enc_detail_panel(nullptr),
     m_build_selector(nullptr),
     m_side_panel(nullptr)
-{
-    m_enc_detail_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, PROD_PEDIA_WND_NAME);
+{}
+
+void BuildDesignatorWnd::CompleteConstruction() {
+    GG::Wnd::CompleteConstruction();
+
+    m_enc_detail_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(
+        GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, PROD_PEDIA_WND_NAME);
     // Wnd is manually closed by user
     m_enc_detail_panel->ClosingSignal.connect(
         boost::bind(&BuildDesignatorWnd::HidePedia, this));
 
-    m_side_panel = new SidePanel(PROD_SIDEPANEL_WND_NAME);
-    m_build_selector = new BuildSelector(PROD_SELECTOR_WND_NAME);
+    m_side_panel = GG::Wnd::Create<SidePanel>(PROD_SIDEPANEL_WND_NAME);
+    m_build_selector = GG::Wnd::Create<BuildSelector>(PROD_SELECTOR_WND_NAME);
     InitializeWindows();
     HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
         boost::bind(&BuildDesignatorWnd::InitializeWindows, this));

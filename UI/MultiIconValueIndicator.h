@@ -20,6 +20,8 @@ public:
 
     MultiIconValueIndicator(GG::X w, const std::vector<int>& object_ids, const std::vector<std::pair<MeterType, MeterType>>& meter_types);
 
+    void CompleteConstruction() override;
+
     bool            Empty();
 
     void Render() override;

@@ -17,6 +17,7 @@ public:
     MilitaryPanel(GG::X w, int planet_id);
     ~MilitaryPanel();
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;

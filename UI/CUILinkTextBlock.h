@@ -15,6 +15,7 @@ public:
                      const GG::Clr& color,
                      GG::Flags< GG::WndFlag > flags);
 
+    void CompleteConstruction() override;
     GG::Pt SetMaxWidth(GG::X width) override;
 
     void Render() override

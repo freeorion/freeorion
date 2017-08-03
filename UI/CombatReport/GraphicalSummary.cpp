@@ -348,15 +348,16 @@ public:
         m_side_summary(combat_summary),
         m_x_axis_label(nullptr),
         m_sizer(sizer)
-    {
+    {}
 
-        GG::Clr axis_label_color = combat_summary.SideColor();
+    void CompleteConstruction() override {
+        GG::Clr axis_label_color = m_side_summary.SideColor();
 
         m_x_axis_label = GG::Wnd::Create<CUILabel>(
             (boost::format( UserString("COMBAT_FLEET_HEALTH_AXIS_LABEL") )
-             % combat_summary.SideName()
-             % static_cast<int>(combat_summary.total_current_health)
-             % static_cast<int>(combat_summary.total_max_health)).str(),
+             % m_side_summary.SideName()
+             % static_cast<int>(m_side_summary.total_current_health)
+             % static_cast<int>(m_side_summary.total_max_health)).str(),
             GG::FORMAT_LEFT);
         m_x_axis_label->SetColor(axis_label_color);
         AttachChild(m_x_axis_label);
@@ -370,6 +371,7 @@ public:
         AttachChild(m_dead_label);
 
         MakeBars();
+
     }
 
     void MakeBars() {
@@ -643,7 +645,7 @@ private:
             parent(parent),
             button(nullptr)
         {
-            button = new CUIButton("-");
+            button = Wnd::Create<CUIButton>("-");
             parent->AttachChild(button);
             button->LeftClickedSignal.connect(
                 boost::bind(&ToggleData::Toggle, this));
@@ -766,7 +768,7 @@ void GraphicalSummaryWnd::GenerateGraph() {
     for (std::map<int, CombatSummary>::value_type& summary : m_summaries) {
         if (summary.second.total_max_health > EPSILON) {
             summary.second.Sort();
-            auto box = new SideBar(summary.second, *m_sizer);
+            auto box = GG::Wnd::Create<SideBar>(summary.second, *m_sizer);
             m_side_boxes.push_back(box);
             AttachChild(box);
         }

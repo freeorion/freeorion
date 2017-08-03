@@ -27,9 +27,11 @@ class OwnerColoredSystemName : public GG::Control {
 public:
     OwnerColoredSystemName(int system_id, int font_size, bool blank_unexplored_and_none);
 
+    void CompleteConstruction() override;
     void Render() override;
-
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+private:
+    GG::TextControl* m_text;
 };
 
 /** A control that allows interaction with a star system.  This class allows
@@ -44,6 +46,7 @@ public:
 
     ~SystemIcon();
     //!@}
+    void CompleteConstruction() override;
 
     //! \name Accessors //!@{
     /** Checks to see if point lies inside in-system fleet buttons before

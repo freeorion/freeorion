@@ -41,6 +41,7 @@ namespace {
         QueueTechPanel(GG::X x, GG::Y y, GG::X w, const std::string& tech_name, double allocated_rp,
                        int turns_left, double turns_completed, int empire_id, bool paused = false);
 
+        void CompleteConstruction() override;
         void Render() override;
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -219,7 +220,10 @@ namespace {
         m_turns_remaining_text->SetTextColor(clr);
         m_turns_remaining_text->ClipText(true);
         m_turns_remaining_text->SetChildClippingMode(ClipToClient);
+    }
 
+    void QueueTechPanel::CompleteConstruction() {
+        GG::Control::CompleteConstruction();
         AttachChild(m_name_text);
         AttachChild(m_RPs_and_turns_text);
         AttachChild(m_turns_remaining_text);
@@ -293,6 +297,9 @@ public:
         QueueListBox(drop_type_str, prompt_str)
     {}
 
+    void CompleteConstruction() override
+    { QueueListBox::CompleteConstruction(); }
+
     boost::signals2::signal<void ()>                            ShowPediaSignal;
     boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemPausedSignal;
 
@@ -354,7 +361,9 @@ public:
         CUIWnd("", x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
                "research.ResearchQueueWnd"),
         m_queue_lb(nullptr)
-    {
+    {}
+
+    void CompleteConstruction() override {
         m_queue_lb = GG::Wnd::Create<ResearchQueueListBox>(std::string("RESEARCH_QUEUE_ROW"), UserString("RESEARCH_QUEUE_PROMPT"));
         m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
         m_queue_lb->SetName("ResearchQueue ListBox");
@@ -362,6 +371,9 @@ public:
         SetEmpire(HumanClientApp::GetApp()->EmpireID());
 
         AttachChild(m_queue_lb);
+
+        CUIWnd::CompleteConstruction();
+
         DoLayout();
     }
     //@}
@@ -428,6 +440,10 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
         boost::bind(&ResearchWnd::QueueItemPaused, this, _1, _2));
     m_tech_tree_wnd->AddTechsToQueueSignal.connect(
         boost::bind(&ResearchWnd::AddTechsToQueueSlot, this, _1, _2));
+}
+
+void ResearchWnd::CompleteConstruction() {
+    GG::Wnd::CompleteConstruction();
 
     AttachChild(m_research_info_panel);
     AttachChild(m_queue_wnd);

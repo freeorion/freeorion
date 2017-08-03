@@ -10,10 +10,13 @@ AccordionPanel::AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left /*= fals
     m_is_left(is_button_on_left),
     m_interior_color(ClientUI::WndColor()),
     m_border_margin(0)
-{
+{}
+
+void AccordionPanel::CompleteConstruction() {
+    GG::Control::CompleteConstruction();
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
-    m_expand_button = new CUIButton(
+    m_expand_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrownormal.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrowclicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrowmouseover.png")));
@@ -22,7 +25,7 @@ AccordionPanel::AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left /*= fals
 
     AttachChild(m_expand_button);
 
-    DoLayout();
+    AccordionPanel::DoLayout();
     InitBuffer();
 }
 

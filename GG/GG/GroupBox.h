@@ -47,6 +47,7 @@ public:
     GroupBox(X x, Y y, X w, Y h, const std::string& label, const std::shared_ptr<Font>& font, Clr color,
              Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO, Flags<WndFlag> flags = NO_WND_FLAGS);
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{
     Pt ClientUpperLeft() const override;
