@@ -1083,6 +1083,58 @@ namespace {
             ErrorLogger() << "Error removing oldest files";
         }
     }
+
+    boost::filesystem::path CreateNewAutosaveFilePath(int client_empire_id, bool is_single_player) {
+        const char* legal_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-";
+
+        // get empire name, filtered for filename acceptability
+        const Empire* empire = GetEmpire(client_empire_id);
+        std::string empire_name;
+        if (empire)
+            empire_name = empire->Name();
+        else
+            empire_name = UserString("OBSERVER");
+        std::string::size_type first_good_empire_char = empire_name.find_first_of(legal_chars);
+        if (first_good_empire_char == std::string::npos) {
+            empire_name.clear();
+        } else {
+            std::string::size_type first_bad_empire_char = empire_name.find_first_not_of(legal_chars, first_good_empire_char);
+            empire_name = empire_name.substr(first_good_empire_char, first_bad_empire_char - first_good_empire_char);
+        }
+
+        // get player name, also filtered
+        std::string player_name;
+        if (empire)
+            player_name = empire->PlayerName();
+        std::string::size_type first_good_player_char = player_name.find_first_of(legal_chars);
+        if (first_good_player_char == std::string::npos) {
+            player_name.clear();
+        } else {
+            std::string::size_type first_bad_player_char = player_name.find_first_not_of(legal_chars, first_good_player_char);
+            player_name = player_name.substr(first_good_player_char, first_bad_player_char - first_good_player_char);
+        }
+
+        // select filename extension
+        const auto& extension = is_single_player ? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION;
+
+        // Add timestamp to autosave generated files
+        std::string datetime_str = FilenameTimestamp();
+
+        boost::filesystem::path autosave_dir_path(GetSaveDir() / "auto");
+
+        std::string save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d_%s%s") % player_name % empire_name % CurrentTurn() % datetime_str % extension);
+        boost::filesystem::path save_path(autosave_dir_path / save_filename);
+
+        try {
+            // ensure autosave directory exists
+            if (!exists(autosave_dir_path))
+                boost::filesystem::create_directories(autosave_dir_path);
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Autosave unable to check / create autosave directory: " << e.what();
+        }
+
+        return save_path;
+    }
 }
 
 void HumanClientApp::Autosave() {
@@ -1098,72 +1150,22 @@ void HumanClientApp::Autosave() {
     if (!m_single_player_game && !GetOptionsDB().Get<bool>("autosave.multiplayer"))
         return;
 
-    const char* legal_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-";
 
-    // get empire name, filtered for filename acceptability
-    int client_empire_id = EmpireID();
-    const Empire* empire = GetEmpire(client_empire_id);
-    std::string empire_name;
-    if (empire)
-        empire_name = empire->Name();
-    else
-        empire_name = UserString("OBSERVER");
-    std::string::size_type first_good_empire_char = empire_name.find_first_of(legal_chars);
-    if (first_good_empire_char == std::string::npos) {
-        empire_name.clear();
-    } else {
-        std::string::size_type first_bad_empire_char = empire_name.find_first_not_of(legal_chars, first_good_empire_char);
-        empire_name = empire_name.substr(first_good_empire_char, first_bad_empire_char - first_good_empire_char);
-    }
 
-    // get player name, also filtered
-    std::string player_name;
-    if (empire)
-        player_name = empire->PlayerName();
-    std::string::size_type first_good_player_char = player_name.find_first_of(legal_chars);
-    if (first_good_player_char == std::string::npos) {
-        player_name.clear();
-    } else {
-        std::string::size_type first_bad_player_char = player_name.find_first_not_of(legal_chars, first_good_player_char);
-        player_name = player_name.substr(first_good_player_char, first_bad_player_char - first_good_player_char);
-    }
 
-    // select filename extension
-    std::string extension;
-    if (m_single_player_game)
-        extension = SP_SAVE_FILE_EXTENSION;
-    else
-        extension = MP_SAVE_FILE_EXTENSION;
-
-    // Add timestamp to autosave generated files
-    std::string datetime_str = FilenameTimestamp();
-
-    boost::filesystem::path autosave_dir_path(GetSaveDir() / "auto");
-
-    std::string save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d_%s%s") % player_name % empire_name % CurrentTurn() % datetime_str % extension);
-    boost::filesystem::path save_path(autosave_dir_path / save_filename);
-    std::string path_string = PathString(save_path);
-
-    try {
-        // ensure autosave directory exists
-        if (!exists(autosave_dir_path))
-            boost::filesystem::create_directories(autosave_dir_path);
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Autosave unable to check / create autosave directory: " << e.what();
-        std::cerr << "Autosave unable to check / create autosave directory: " << e.what() << std::endl;
-    }
+    auto autosave_dir_path = CreateNewAutosaveFilePath(EmpireID(), m_single_player_game);
 
     // check for and remove excess oldest autosaves
     int max_autosaves = GetOptionsDB().Get<int>("autosave.limit");
     RemoveOldestFiles(max_autosaves, autosave_dir_path);
 
     // create new save
+    auto path_string = PathString(autosave_dir_path);
     DebugLogger() << "Autosaving to: " << path_string;
     try {
         SaveGame(path_string);
     } catch (const std::exception& e) {
         ErrorLogger() << "Autosave failed: " << e.what();
-        std::cerr << "Autosave failed: " << e.what() << std::endl;
     }
 }
 
