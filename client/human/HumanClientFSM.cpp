@@ -835,14 +835,10 @@ PlayingTurn::PlayingTurn(my_context ctx) :
             Client().InitAutoTurns(1);
         }
 
-        if (Client().AutoTurnsLeft() <= 0 &&
-            GetOptionsDB().Get<bool>("auto-quit"))
-        {
-            // if no auto turns left, and supposed to quit after that, quit
-            DebugLogger(FSM) << "auto-quit ending game.";
-            std::cout << "auto-quit ending game." << std::endl;
-            Client().ExitApp();
-        }
+        // if no auto turns left, and supposed to quit then autosave
+        // which will lead to a quit when the save completes
+        if (Client().AutoTurnsLeft() <= 0 && GetOptionsDB().Get<bool>("auto-quit"))
+            Client().Autosave();
 
         // if there are still auto turns left, advance the turn automatically,
         // and decrease the auto turn counter
@@ -875,6 +871,16 @@ boost::statechart::result PlayingTurn::react(const SaveGameComplete& msg) {
         boost::io::str(FlexibleFormat(UserString("SERVER_SAVE_COMPLETE")) % save_filename % bytes_written) + "\n");
 
     Client().SaveGameCompleted();
+
+    // auto quit save has completed, close the app
+    if (Client().GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER
+        && Client().AutoTurnsLeft() <= 0
+        && GetOptionsDB().Get<bool>("auto-quit"))
+    {
+        DebugLogger(FSM) << "auto-quit save completed, ending game.";
+        Client().ExitApp();
+    }
+
     return discard_event();
 }
 
@@ -1058,9 +1064,11 @@ boost::statechart::result QuittingGame::react(const TerminateServer& u) {
 
     // Reset the game or quit the app as appropriate
     if (m_reset_to_intro) {
+        TraceLogger(FSM) << "QuittingGame resetting to intro.";
         Client().ResetClientData();
         return transit<IntroMenu>();
     } else {
+        TraceLogger(FSM) << "QuittingGame throwing CleanQuit.";
         throw HumanClientApp::CleanQuit();
     }
 }
