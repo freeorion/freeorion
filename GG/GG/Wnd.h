@@ -341,10 +341,26 @@ public:
         derived from Wnd.  It requires that the T constructor followed by
         T->CompleteConstruction() produce a correct T. */
     template <typename T, typename... Args>
-        static std::shared_ptr<T> Create(Args&&... args)
+    static std::shared_ptr<T> Create(Args&&... args)
     {
         // This intentionally doesn't use std::make_shared in order to make lazy cleanup of
         // weak_ptrs a low priority.
+
+        // std::make_shared<T> might depending on
+        // the stdlib implementation allocate a single block of memory for the
+        // shared_ptr control block and T.  This is efficient in terms of
+        // number of memory allocations.  However, after the shared_ptr count
+        // decreases to zero any existing weak_ptrs will still prevent the
+        // block of memory from being released.
+
+        // std::shared_ptr<T>(new T()) allocates the memory for T and the
+        // shared_ptr control block in two separate allocations.  When the
+        // shared_ptr count decreases to zero the memory allocated for T is
+        // immediately released.
+
+        // Allocating shared_ptr in this manner means any floating weak_ptrs
+        // will not prevent more that a smart pointer control block worth of
+        // memory from being released.
         std::shared_ptr<T> wnd(new T(std::forward<Args>(args)...));
         wnd->CompleteConstruction();
         return wnd;
@@ -616,7 +632,8 @@ public:
 
     /** Remove \p wnd from the child ptr list and reset \p wnd. */
     template <typename T>
-    void DetachChildAndReset(T& wnd) {
+    void DetachChildAndReset(T& wnd)
+    {
         DetachChild(wnd);
         wnd.reset();
     }
