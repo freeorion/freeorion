@@ -105,8 +105,8 @@ private:
 
     iterator FirstNonOnTop();              ///< Returns iterator to first window in list that is non-on-top (returns end() if none found).
 
-    /** Return the first candidate that satisfies \p predicate with a non none result along with
-        the result. Remove any non-existent Wnd examined. */
+    /** Return the pair (iterator, T) for the first satisying wnd where \p predicate(wnd) !=
+        boost::none.  Remove any nullptr found before the first satisying wnd from the list. */
     template <typename T>
     boost::optional<std::pair<iterator, T>> Find(
         const std::function<boost::optional<T> (const std::shared_ptr<Wnd>&)>& predicate) const;

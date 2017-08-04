@@ -194,6 +194,11 @@ template <typename T> boost::optional<std::pair<ZList::iterator, T>> ZList::Find
 {
     auto retval = m_list.begin();
     while (retval != m_list.end()) {
+        if (! *retval) {
+            retval = m_list.erase(retval);
+            continue;
+        }
+
         if (auto result = predicate(*retval))
             return std::make_pair(retval, *result);
 
