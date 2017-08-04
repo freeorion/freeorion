@@ -724,10 +724,8 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     if (!is_new_game)
         Client().GetClientUI().RestoreFromSaveData(ui_data);
 
-    // if I am the host on the first turn, do an autosave. on later turns, will
-    // have just loaded save, so don't need to autosave. might also have just
-    // loaded a turn 1 autosave, but not sure how to check for that here...
-    if (Client().CurrentTurn() == 1 && Client().Networking().PlayerIsHost(Client().PlayerID()))
+    // if I am the host on the first turn, do an autosave.
+    if (is_new_game && Client().Networking().PlayerIsHost(Client().PlayerID()))
         Client().Autosave();
 
     return transit<PlayingTurn>();
