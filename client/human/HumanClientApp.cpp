@@ -1138,20 +1138,25 @@ namespace {
 }
 
 void HumanClientApp::Autosave() {
+    // Create an auto save for 1) new games on turn 1, 2) if auto save is
+    // requested on turn number modulo autosave.turns or 3) on the last turn of
+    // an auto run.
+
     // autosave only on appropriate turn numbers, and when enabled for current
     // game type (single vs. multiplayer)
     int autosave_turns = GetOptionsDB().Get<int>("autosave.turns");
-    if (autosave_turns < 1)
-        return;     // avoid divide by zero
-    if (CurrentTurn() % autosave_turns != 0 && CurrentTurn() != 1)
-        return;     // turns divisible by autosave_turns, and first turn, have autosaves done
-    if (m_single_player_game && !GetOptionsDB().Get<bool>("autosave.single-player"))
+    bool is_valid_autosave =
+        (autosave_turns > 0
+         && CurrentTurn() % autosave_turns == 0
+         && ((m_single_player_game && GetOptionsDB().Get<bool>("autosave.single-player"))
+             || (!m_single_player_game && GetOptionsDB().Get<bool>("autosave.multiplayer"))));
+
+    // is_initial_save is gated in HumanClientFSM for new game vs loaded game
+    bool is_initial_save = CurrentTurn() == 1;
+    bool is_final_save = (AutoTurnsLeft() <= 0 && GetOptionsDB().Get<bool>("auto-quit"));
+
+    if (!(is_initial_save || is_valid_autosave || is_final_save))
         return;
-    if (!m_single_player_game && !GetOptionsDB().Get<bool>("autosave.multiplayer"))
-        return;
-
-
-
 
     auto autosave_dir_path = CreateNewAutosaveFilePath(EmpireID(), m_single_player_game);
 
