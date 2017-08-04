@@ -180,8 +180,11 @@ namespace {
       * empire with the indicated \a empire_id this turn at their build location. */
     void SetProdQueueElementSpending(std::map<std::set<int>, float> available_pp,
                                      const std::vector<std::set<int>>& queue_element_resource_sharing_object_groups,
-                                     ProductionQueue::QueueType& queue, std::map<std::set<int>, float>& allocated_pp,
-                                     int& projects_in_progress, int empire_id)
+                                     const std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<float, int>>& queue_item_costs_and_times,
+                                     const std::vector<bool>& is_producible,
+                                     ProductionQueue::QueueType& queue,
+                                     std::map<std::set<int>, float>& allocated_pp,
+                                     int& projects_in_progress)
     {
         //DebugLogger() << "========SetProdQueueElementSpending========";
         //DebugLogger() << "production status: ";
@@ -205,21 +208,6 @@ namespace {
         allocated_pp.clear();
 
         //DebugLogger() << "queue size: " << queue.size();
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return;
-
-        // cache production item costs and times
-        std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<float, int>> queue_item_costs_and_times;
-        for (ProductionQueue::Element& elem : queue) {
-            // for items that don't depend on location, only store cost/time once
-            int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
-            std::pair<ProductionQueue::ProductionItem, int> key(elem.item, location_id);
-
-            if (queue_item_costs_and_times.find(key) == queue_item_costs_and_times.end())
-                queue_item_costs_and_times[key] = empire->ProductionCostAndTime(elem);
-        }
-
 
         int i = 0;
         for (ProductionQueue::Element& queue_element : queue) {
@@ -260,7 +248,7 @@ namespace {
             //DebugLogger() << "group has " << group_pp_available << " PP available";
 
             // see if item is producible this turn...
-            if (!empire->ProducibleItem(queue_element.item, queue_element.location)) {
+            if (!is_producible[i]) {
                 // can't be produced at this location this turn.
                 queue_element.allocated_pp = 0.0f;
                 //DebugLogger() << "item can't be produced at location this turn";
@@ -272,9 +260,16 @@ namespace {
             // get max contribution per turn and turns to build at max contribution rate
             int location_id = (queue_element.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : queue_element.location);
             std::pair<ProductionQueue::ProductionItem, int> key(queue_element.item, location_id);
-            float item_cost;
-            int build_turns;
-            std::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
+            float item_cost = 1e6;  // dummy/default value, shouldn't ever really be needed
+            int build_turns = 1;    // dummy/default value, shouldn't ever really be needed
+            auto time_cost_it = queue_item_costs_and_times.find(key);
+            if (time_cost_it != queue_item_costs_and_times.end()) {
+                item_cost = time_cost_it->second.first;
+                build_turns = time_cost_it->second.second;
+            } else {
+                ErrorLogger() << "item " << queue_element.item.name 
+                              << " somehow failed time cost lookup for location " << location_id;
+            }
             //DebugLogger() << "item " << queue_element.item.name << " costs " << item_cost << " for " << build_turns << " turns";
 
             float element_this_turn_limit = CalculateProductionPerTurnLimit(queue_element, item_cost, build_turns);
@@ -975,12 +970,28 @@ void ProductionQueue::Update() {
         }
     }
 
+    // cache producibility, and production item costs and times
+    // initialize production queue item completion status to 'never'
+    std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<float, int>> queue_item_costs_and_times;
+    std::vector<bool> is_producible;
+    for (ProductionQueue::Element& elem : m_queue) {
+        is_producible.push_back(empire->ProducibleItem(elem.item, elem.location));
+        // for items that don't depend on location, only store cost/time once
+        int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
+        std::pair<ProductionQueue::ProductionItem, int> key(elem.item, location_id);
+
+        if (queue_item_costs_and_times.find(key) == queue_item_costs_and_times.end())
+            queue_item_costs_and_times[key] = empire->ProductionCostAndTime(elem);
+        
+        elem.turns_left_to_next_item = -1;     
+        elem.turns_left_to_completion = -1;
+    }
 
     // allocate pp to queue elements, returning updated available pp and updated
     // allocated pp for each group of resource sharing objects
-    SetProdQueueElementSpending(available_pp, queue_element_groups, m_queue,
-                                m_object_group_allocated_pp, m_projects_in_progress, m_empire_id);
-
+    SetProdQueueElementSpending(available_pp, queue_element_groups,
+                                queue_item_costs_and_times, is_producible, m_queue,
+                                m_object_group_allocated_pp, m_projects_in_progress);
 
     // if at least one resource-sharing system group have available PP, simulate
     // future turns to predict when build items will be finished
@@ -995,11 +1006,6 @@ void ProductionQueue::Update() {
 
     if (!simulate_future) {
         DebugLogger() << "not enough PP to be worth simulating future turns production.  marking everything as never complete";
-        // since there are so few PPs, indicate that the number of turns left is indeterminate by providing a number < 0
-        for (ProductionQueue::Element& elem : m_queue) {
-            elem.turns_left_to_next_item = -1;     // -1 is sentinel value indicating never to be complete.  ProductionWnd checks for turns to completeion less than 0 and displays "NEVER" when appropriate
-            elem.turns_left_to_completion = -1;
-        }
         ProductionQueueChangedSignal();
         return;
     }
@@ -1011,35 +1017,33 @@ void ProductionQueue::Update() {
 
     // duplicate production queue state for future simulation
     QueueType sim_queue = m_queue;
-    std::vector<std::set<int>>  sim_queue_element_groups = queue_element_groups;
-    std::vector<int>            simulation_results(sim_queue.size(), -1);
     std::vector<unsigned int>   sim_queue_original_indices(sim_queue.size());
     for (unsigned int i = 0; i < sim_queue_original_indices.size(); ++i)
         sim_queue_original_indices[i] = i;
 
 
     const int TOO_MANY_TURNS = 500;     // stop counting turns to completion after this long, to prevent seemingly endless loops
-    const float TOO_LONG_TIME = 0.5f;   // max time in ms to spend simulating queue
+    const float TOO_LONG_TIME = 0.5f;   // max time in seconds to spend simulating queue
 
 
     // remove from simulated queue any items that can't be built due to not
-    // meeting their location conditions might be better to re-check
-    // buildability each turn, but this would require creating a simulated
+    // meeting their location conditions; can't feasibly re-check
+    // buildability each projected turn as this would require creating a simulated
     // universe into which simulated completed buildings could be inserted, as
     // well as spoofing the current turn, or otherwise faking the results for
     // evaluating arbitrary location conditions for the simulated universe.
     // this would also be inaccurate anyway due to player choices or random
     // chance, so for simplicity, it is assumed that building location
-    // conditions evaluated at the present turn apply indefinitely
+    // conditions evaluated at the present turn apply indefinitely.
     //
     // also remove from simulated queue any items that are located in a resource
     // sharing object group that is empty or that does not have any PP available
     for (unsigned int i = 0; i < sim_queue.size(); ++i) {
-        const std::set<int>& group = queue_element_groups[sim_queue_original_indices[i]];
+        const std::set<int>& group = queue_element_groups[i];
 
         // if any removal condition is met, remove item from queue
         bool remove = false;
-        if (group.empty() || !empire->ProducibleItem(sim_queue[i].item, sim_queue[i].location)) {        // empty group or not buildable
+        if (group.empty() || !is_producible[i]) {        // empty group or not buildable
             remove = true;
         } else {
             std::map<std::set<int>, float>::const_iterator available_it = available_pp.find(group);
@@ -1049,10 +1053,9 @@ void ProductionQueue::Update() {
 
         if (remove) {
             // remove unbuildable items from the simulated queue, since they'll never finish...
-            m_queue[sim_queue_original_indices[i]].turns_left_to_completion = -1;   // turns left is indeterminate for this item
-            m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = -1;   // turns left is indeterminate for this item
             sim_queue.erase(sim_queue.begin() + i);
-            sim_queue_element_groups.erase(sim_queue_element_groups.begin() + i);
+            is_producible.erase(is_producible.begin() + i);
+            queue_element_groups.erase(queue_element_groups.begin() + i);
             sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
         }
     }
@@ -1064,51 +1067,21 @@ void ProductionQueue::Update() {
     // "Dynamic Programming" version of queue simulator -- copy the queue simulator containers at this point, after removal of unbuildable items,
     // perform dynamic programming calculation of completion times, then after regular simulation is done compare results
 
-    // initialize production queue to 'never' status
-    for (ProductionQueue::Element& elem : m_queue) {
-        elem.turns_left_to_next_item = -1;     // -1 is sentinel value indicating never to be complete.  ProductionWnd checks for turns to completeion less than 0 and displays "NEVER" when appropriate
-        elem.turns_left_to_completion = -1;
-    }
-
-    // duplicate simulation production queue state (post-bad-item-removal) for dynamic programming
-    QueueType                   dpsim_queue = sim_queue;
-    //std::vector<std::set<int>>  sim_queue_element_groups = queue_element_groups;  //not necessary to duplicate this since won't be further modified
-    std::vector<int>            dpsimulation_results_to_next(sim_queue.size(), -1);
-    std::vector<int>            dpsimulation_results_to_completion(sim_queue.size(), -1);
-    std::vector<unsigned int>   dpsim_queue_original_indices(sim_queue_original_indices); 
-
-    const unsigned int DP_TURNS = TOO_MANY_TURNS; // track up to this many turns
-    const float DP_TOO_LONG_TIME = TOO_LONG_TIME;   // max time in ms to spend simulating queue
-
     // The DP version will do calculations for one resource group at a time
     // unfortunately need to copy code from SetProdQueueElementSpending  in order to work it in more efficiently here
     dp_time_start = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
 
     //invert lookup direction of sim_queue_element_groups:
     std::map< std::set<int>, std::vector<int>  > elements_by_group;
-    for (unsigned int i = 0; i < dpsim_queue.size(); ++i)
-        elements_by_group[sim_queue_element_groups[i]].push_back(i);
-
-
-    // cache production item costs and times
-    std::map<std::pair<ProductionQueue::ProductionItem, int>,
-                std::pair<float, int>>                           queue_item_costs_and_times;
-    for (ProductionQueue::Element& elem : m_queue) {
-        // for items that don't depend on location, only store cost/time once
-        int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
-        std::pair<ProductionQueue::ProductionItem, int> key(elem.item, location_id);
-
-        if (queue_item_costs_and_times.find(key) == queue_item_costs_and_times.end())
-            queue_item_costs_and_times[key] = empire->ProductionCostAndTime(elem);
-    }
-
+    for (unsigned int i = 0; i < sim_queue.size(); ++i)
+        elements_by_group[queue_element_groups[i]].push_back(i);
 
     // within each group, allocate PP to queue items
     for (const std::map<std::set<int>, float>::value_type& group : available_pp) {
         unsigned int first_turn_pp_available = 1; //the first turn any pp in this resource group is available to the next item for this group
         unsigned int turn_jump = 0;
         //pp_still_available[turn-1] gives the PP still available in this resource pool at turn "turn"
-        std::vector<float> pp_still_available(DP_TURNS, group.second);  // initialize to the groups full PP allocation for each turn modeled
+        std::vector<float> pp_still_available(TOO_MANY_TURNS, group.second);  // initialize to the groups full PP allocation for each turn modeled
 
         std::vector<int> &this_group_elements = elements_by_group[group.first];
         std::vector<int>::const_iterator group_begin = this_group_elements.begin();
@@ -1116,19 +1089,19 @@ void ProductionQueue::Update() {
 
         // cycle through items on queue, if in this resource group then allocate production costs over time against those available to group
         for (std::vector<int>::const_iterator el_it = group_begin;
-             (el_it != group_end) && ((boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time())-dp_time_start).total_microseconds()*1e-6 < DP_TOO_LONG_TIME);
+             (el_it != group_end) && ((boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time())-dp_time_start).total_microseconds()*1e-6 < TOO_LONG_TIME);
              ++el_it)
         {
             first_turn_pp_available += turn_jump;
             turn_jump = 0;
-            if (first_turn_pp_available > DP_TURNS) {
+            if (first_turn_pp_available > TOO_MANY_TURNS) {
                 DebugLogger()  << "ProductionQueue::Update: Projections for Resource Group halted at " 
-                               << DP_TURNS << " turns; remaining items in this RG marked completing 'Never'.";
+                               << TOO_MANY_TURNS << " turns; remaining items in this RG marked completing 'Never'.";
                 break; // this resource group is allocated-out for span of simulation; remaining items in group left as never completing
             }
 
             unsigned int i = *el_it;
-            ProductionQueue::Element& element = dpsim_queue[i];
+            ProductionQueue::Element& element = sim_queue[i];
             if (element.paused)
                 continue;
 
@@ -1143,45 +1116,22 @@ void ProductionQueue::Update() {
             std::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
             float total_item_cost = item_cost * element.blocksize;
 
-            // calculate additional PP, beyond already-accumulated PP to finish all repeats of this element; 
-            // that is the total_item_cost times the number of repeats, less the current progress percentage times
-            // the total_item_cost, below reorganized as total_item_cost times the difference between the number
-            // of repeats and the percentage element.progress.
-            float additional_pp_to_complete_element = total_item_cost * (element.remaining - element.progress);
-            //DebugLogger()  << " element total cost: " << element_total_cost << "; progress: " << element.progress;
-            if (additional_pp_to_complete_element < EPSILON) {
-                //DebugLogger()  << "     will complete next turn";
-                m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = 1;
-                m_queue[sim_queue_original_indices[i]].turns_left_to_completion = 1;
-                continue;
-            }
-
-            // need 2+ rather than 1+ below to avoid premature halt with edge cases
-            int max_turns = std::max(std::max(build_turns+1, 1),
-                2 + static_cast<int>(additional_pp_to_complete_element /
-                                     std::max(pp_still_available[first_turn_pp_available-1], 0.01f)));
-            max_turns *= 2;  // double the turns for simulations, because of uncertainties around frontloading
-
-            max_turns = std::min(max_turns, static_cast<int>(DP_TURNS - first_turn_pp_available + 1));
-            //DebugLogger() << "     max turns simulated: "<< max_turns << "first turn pp avail: " << (first_turn_pp_available-1);
-
             float allocation;
             float element_this_turn_limit;
             //DebugLogger() << "ProductionQueue::Update Queue index   Queue Item: " << element.item.name;
 
             // iterate over the turns necessary to complete item
-            for (int j = 0; j < max_turns; j++) {
+            for (int j = 0; j < static_cast<int>(TOO_MANY_TURNS - first_turn_pp_available + 1); j++) {
                 // determine how many pp to allocate to this queue element this turn.  allocation is limited by the
                 // item cost, which is the max number of PP per turn that can be put towards this item, and by the
                 // total cost remaining to complete the last item in the queue element (eg. the element has all but
                 // the last item complete already) and by the total pp available in this element's production location's
                 // resource sharing group
 
-                //DebugLogger()  << "     turn: " << j << "; max_pp_needed: " << additional_pp_to_complete_element << "; per turn limit: " << element_per_turn_limit << "; pp stil avail: " << pp_still_available[first_turn_pp_available+j-1];
+                //DebugLogger()  << "     turn: " << j << "; per turn limit: " << element_per_turn_limit << "; pp stil avail: " << pp_still_available[first_turn_pp_available+j-1];
                 element_this_turn_limit = CalculateProductionPerTurnLimit(element, item_cost, build_turns);
                 allocation = std::max(0.0f, std::min(element_this_turn_limit, pp_still_available[first_turn_pp_available+j-1]));
                 element.progress += allocation / std::max(EPSILON, total_item_cost);    // add turn's progress due to allocation
-                additional_pp_to_complete_element -= allocation;
                 float item_cost_remaining = total_item_cost*(1.0f - element.progress);
                 //DebugLogger()  << "     allocation: " << allocation << "; new progress: "<< element.progress << " with " << item_cost_remaining << " remaining";
                 pp_still_available[first_turn_pp_available+j-1] -= allocation;
@@ -1221,7 +1171,7 @@ void ProductionQueue::Update() {
 
     dp_time_end = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
     dp_time = (dp_time_end - dp_time_start).total_microseconds();
-    if ((dp_time * 1e-6) >= DP_TOO_LONG_TIME) {
+    if ((dp_time * 1e-6) >= TOO_LONG_TIME) {
         DebugLogger()  << "ProductionQueue::Update: Projections timed out after " << dp_time
                        << " microseconds; all remaining items in queue marked completing 'Never'.";
     }
