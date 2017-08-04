@@ -843,12 +843,7 @@ void HumanClientApp::HandleSystemEvents() {
         m_connected = false;
         DisconnectedFromServer();
     } else if (auto msg = Networking().GetMessage()) {
-        try {
-            HandleMessage(*msg);
-        } catch (const std::exception& e) {
-            ErrorLogger() << "exception handing message: " << e.what();
-            ErrorLogger() << "message type: " << msg->Type() << " and text: " << msg->Text();
-        }
+        HandleMessage(*msg);
     }
 }
 
