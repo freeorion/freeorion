@@ -46,6 +46,16 @@ struct ProcessTurn : sc::event<ProcessTurn>                             {};
 struct DisconnectClients : sc::event<DisconnectClients>                 {};
 struct ShutdownServer : sc::event<ShutdownServer>                       {};
 
+/** This is a Boost.Preprocessor list of all non MessageEventBase events. It is
+  * used to generate the unconsumed events message. */
+#define NON_MESSAGE_SERVER_FSM_EVENTS           \
+    (LoadSaveFileFailed)                        \
+    (CheckStartConditions)                      \
+    (CheckEndConditions)                        \
+    (CheckTurnEndConditions)                    \
+    (ProcessTurn)                               \
+    (DisconnectClients)                         \
+    (ShutdownServer)
 
 //  Message events
 /** The base class for all state machine events that are based on Messages. */
