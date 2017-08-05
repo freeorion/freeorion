@@ -332,15 +332,15 @@ void IntroScreen::OnLoadGame() {
 }
 
 void IntroScreen::OnOptions() {
-    auto options_wnd = /*TODO: Remove extra shared_ptr wrap after Wnd::Create converted to return shared_ptr*/std::shared_ptr<OptionsWnd>(GG::Wnd::Create<OptionsWnd>());
+    auto options_wnd = GG::Wnd::Create<OptionsWnd>();
     options_wnd->Run();
 }
 
 void IntroScreen::OnPedia() {
     static const std::string INTRO_PEDIA_WND_NAME = "introscreen.pedia";
-    auto enc_panel = /*TODO: Remove extra shared_ptr wrap after Wnd::Create converted to return shared_ptr*/std::shared_ptr<EncyclopediaDetailPanel>(GG::Wnd::Create<EncyclopediaDetailPanel>(
+    auto enc_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(
         GG::MODAL | GG::INTERACTIVE | GG::DRAGABLE |
-        GG::RESIZABLE | CLOSABLE | PINABLE, INTRO_PEDIA_WND_NAME));
+        GG::RESIZABLE | CLOSABLE | PINABLE, INTRO_PEDIA_WND_NAME);
     enc_panel->SizeMove(GG::Pt(GG::X(100), GG::Y(100)), Size() - GG::Pt(GG::X(100), GG::Y(100)));
     enc_panel->ClearItems();
     enc_panel->SetIndex();
@@ -353,7 +353,7 @@ void IntroScreen::OnPedia() {
 }
 
 void IntroScreen::OnAbout() {
-    auto about_wnd = /*TODO: Remove extra shared_ptr wrap after Wnd::Create converted to return shared_ptr*/std::shared_ptr<About>(GG::Wnd::Create<About>());
+    auto about_wnd = GG::Wnd::Create<About>();
     about_wnd->Run();
 }
 
@@ -378,11 +378,11 @@ void IntroScreen::OnCredits() {
 
     int credit_side_pad(30);
 
-    auto credits_wnd = /*TODO: Remove extra shared_ptr wrap after Wnd::Create converted to return shared_ptr*/std::shared_ptr<CreditsWnd>(GG::Wnd::Create<CreditsWnd>(
+    auto credits_wnd = GG::Wnd::Create<CreditsWnd>(
         GG::X0, nUpperLine, GG::GUI::GetGUI()->AppWidth(), nLowerLine-nUpperLine,
         credits,
         credit_side_pad, 0, Value(m_menu->Left()) - credit_side_pad,
-        Value(nLowerLine-nUpperLine), Value((nLowerLine-nUpperLine))/2));
+        Value(nLowerLine-nUpperLine), Value((nLowerLine-nUpperLine))/2);
 
     credits_wnd->Run();
 }

@@ -994,9 +994,9 @@ ClientUI* ClientUI::GetClientUI()
 { return s_the_UI; }
 
 void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = false*/) {
-    auto dlg = /*TODO: Remove extra shared_ptr wrap after Wnd::Create converted to return shared_ptr*/std::shared_ptr<GG::ThreeButtonDlg>(GG::Wnd::Create<GG::ThreeButtonDlg>(GG::X(320), GG::Y(200), message, GetFont(Pts()+2),
-                                                                                                                                                                              WndColor(), WndOuterBorderColor(), CtrlColor(), TextColor(), 1,
-                                                                                                                                                                              UserString("OK")));
+    auto dlg = GG::Wnd::Create<GG::ThreeButtonDlg>(GG::X(320), GG::Y(200), message, GetFont(Pts()+2),
+                                                   WndColor(), WndOuterBorderColor(), CtrlColor(), TextColor(), 1,
+                                                   UserString("OK"));
     if (play_alert_sound)
         Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.alert"), true);
     dlg->Run();
