@@ -1687,17 +1687,20 @@ void GUI::RenderDragDropWnds()
 
 void GUI::ProcessBrowseInfo()
 {
-    auto curr_wnd_under_cursor = LockAndResetIfExpired(m_impl->m_curr_wnd_under_cursor);
-    assert(curr_wnd_under_cursor);
+    auto&& wnd = LockAndResetIfExpired(m_impl->m_curr_wnd_under_cursor);
+    assert(wnd);
 
     if (!m_impl->m_mouse_button_state[0] && !m_impl->m_mouse_button_state[1] && !m_impl->m_mouse_button_state[2] &&
-        (m_impl->m_modal_wnds.empty() || curr_wnd_under_cursor->RootParent() == m_impl->m_modal_wnds.back().first))
+        (m_impl->m_modal_wnds.empty() || wnd->RootParent() == m_impl->m_modal_wnds.back().first))
     {
-        auto& wnd = curr_wnd_under_cursor;
-        while (!ProcessBrowseInfoImpl(wnd.get()) &&
-               wnd->Parent() &&
-               (dynamic_cast<Control*>(wnd.get()) || dynamic_cast<Layout*>(wnd.get())))
-        { wnd = wnd->Parent(); }
+        auto&& parent = wnd->Parent();
+        while (!ProcessBrowseInfoImpl(wnd.get())
+               && parent
+               && (dynamic_cast<Control*>(wnd.get()) || dynamic_cast<Layout*>(wnd.get())))
+        {
+            wnd = std::move(parent);
+            parent = wnd->Parent();
+        }
     }
 }
 
