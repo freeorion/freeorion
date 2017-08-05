@@ -184,20 +184,20 @@ Clr Layout::OutlineColor() const
 
 void Layout::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
 {
-    if (Parent())
-        Parent()->StartingChildDragDrop(wnd, offset);
+    if (auto&& parent = Parent())
+        parent->StartingChildDragDrop(wnd, offset);
 }
 
 void Layout::CancellingChildDragDrop(const std::vector<const Wnd*>& wnds)
 {
-    if (Parent())
-        Parent()->CancellingChildDragDrop(wnds);
+    if (auto&& parent = Parent())
+        parent->CancellingChildDragDrop(wnds);
 }
 
 void Layout::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination)
 {
-    if (Parent())
-        Parent()->ChildrenDraggedAway(wnds, destination);
+    if (auto&& parent = Parent())
+        parent->ChildrenDraggedAway(wnds, destination);
 }
 
 void Layout::SizeMove(const Pt& ul, const Pt& lr)

@@ -349,7 +349,7 @@ void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, const Pt& pos, i
             m_wnd_resize_offset.y = curr_wnd_under_cursor->Top() - pos.y;
         else
             m_wnd_resize_offset.y = curr_wnd_under_cursor->Bottom() - pos.y;
-        auto drag_wnds_root_parent = curr_wnd_under_cursor->RootParent();
+        auto&& drag_wnds_root_parent = curr_wnd_under_cursor->RootParent();
         GUI::s_gui->MoveUp(drag_wnds_root_parent ? drag_wnds_root_parent : curr_wnd_under_cursor);
         curr_wnd_under_cursor->HandleEvent(WndEvent(ButtonEvent(WndEvent::LButtonDown, mouse_button), pos, m_mod_keys));
     }
@@ -381,7 +381,7 @@ void GUIImpl::HandleMouseDrag(unsigned int mouse_button, const Pt& pos, int curr
                 dragged_wnd->DragDropDataType() != "" &&// Wnd must have a defined drag-drop data type to be drag-dropped
                 mouse_button == 0)                      // left mouse button drag-drop only
             {
-                auto parent = dragged_wnd->Parent();
+                auto&& parent = dragged_wnd->Parent();
                 Pt offset = m_prev_mouse_button_press_pos - dragged_wnd->UpperLeft();
                 // start drag
                 GUI::s_gui->RegisterDragDropWnd(dragged_wnd, offset, parent);
@@ -559,7 +559,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
                     m_drag_drop_wnds_acceptable = event.GetAcceptableDropWnds();
 
                     // prep / handle end of drag-drop
-                    auto drag_drop_originating_wnd = click_drag_wnd->Parent();
+                    auto&& drag_drop_originating_wnd = click_drag_wnd->Parent();
                     m_drag_drop_originating_wnd = drag_drop_originating_wnd;
                     curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::DragDropLeave));
                     m_curr_drag_drop_here_wnd.reset();
@@ -594,7 +594,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
                 m_drag_drop_wnds_acceptable = event.GetAcceptableDropWnds();
 
                 // prep / handle end of drag-drop
-                auto drag_drop_originating_wnd = click_drag_wnd->Parent();
+                auto&& drag_drop_originating_wnd = click_drag_wnd->Parent();
                 m_drag_drop_originating_wnd = drag_drop_originating_wnd;
                 curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::DragDropLeave));
                 m_curr_drag_drop_here_wnd.reset();
@@ -1278,7 +1278,7 @@ void GUI::Register(std::shared_ptr<Wnd> wnd)
         return;
 
     // Make top level by removing from parent
-    if (auto parent = wnd->Parent())
+    if (auto&& parent = wnd->Parent())
         parent->DetachChild(wnd);
 
     m_impl->m_zlist.Add(std::forward<std::shared_ptr<Wnd>>(wnd));
@@ -1673,7 +1673,8 @@ void GUI::RenderDragDropWnds()
         bool old_visible = drop_wnd.first->Visible();
         if (!old_visible)
             drop_wnd.first->Show();
-        Pt parent_offset = drop_wnd.first->Parent() ? drop_wnd.first->Parent()->ClientUpperLeft() : Pt();
+        auto&& drop_wnd_parent = drop_wnd.first->Parent();
+        Pt parent_offset = drop_wnd_parent ? drop_wnd_parent->ClientUpperLeft() : Pt();
         Pt old_pos = drop_wnd.first->UpperLeft() - parent_offset;
         drop_wnd.first->MoveTo(m_impl->m_mouse_pos - parent_offset - drop_wnd.second);
         RenderWindow(drop_wnd.first.get());

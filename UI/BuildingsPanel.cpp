@@ -246,8 +246,9 @@ void BuildingsPanel::DoLayout() {
 
     SetCollapsed(!s_expanded_map[m_planet_id]);
 
-    if (old_size != Size() && Parent())
-        Parent()->RequirePreRender();
+    if (old_size != Size())
+        if (auto&& parent = Parent())
+            parent->RequirePreRender();
 }
 
 std::map<int, bool> BuildingsPanel::s_expanded_map;

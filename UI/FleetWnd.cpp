@@ -2578,7 +2578,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     {
         auto split_one_design_action = [this, design, fleet]() {
             // split ships with same design as clicked ship into separate fleet
-            const auto& parent = this->Parent();
+            const auto&& parent = this->Parent();
             if (!parent)
                 return;
             const FleetWnd* parent_fleet_wnd = dynamic_cast<const FleetWnd*>(parent.get());
@@ -2592,7 +2592,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
 
         auto split_all_designs_action = [this, fleet]() {
             // split all ships into new fleets by ship design
-            const auto& parent = this->Parent();
+            const auto&& parent = this->Parent();
             if (!parent)
                 return;
             const FleetWnd* parent_fleet_wnd = dynamic_cast<const FleetWnd*>(parent.get());

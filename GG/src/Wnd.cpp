@@ -278,7 +278,7 @@ void Wnd::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
 Pt Wnd::UpperLeft() const
 {
     Pt retval = m_upperleft;
-    auto parent = Parent();
+    auto&& parent = Parent();
     if (parent)
         retval += parent->ClientUpperLeft();
     return retval;
@@ -293,7 +293,7 @@ Y Wnd::Top() const
 Pt Wnd::LowerRight() const
 {
     Pt retval = m_lowerright;
-    auto parent = Parent();
+    auto&& parent = Parent();
     if (parent)
         retval += parent->ClientUpperLeft();
     return retval;
@@ -367,11 +367,13 @@ std::shared_ptr<Wnd> Wnd::Parent() const
 
 std::shared_ptr<Wnd> Wnd::RootParent() const
 {
-    auto retval = Parent();
-    while (retval && retval->Parent()) {
-        retval = retval->Parent();
+    auto&& parent = Parent();
+    auto&& gparent = parent ? parent->Parent() : nullptr;
+    while (gparent) {
+        parent = std::move(gparent);
+        gparent = parent->Parent();
     }
-    return retval;
+    return parent;
 }
 
 std::shared_ptr<Layout> Wnd::GetLayout() const
@@ -560,7 +562,7 @@ void Wnd::AttachChild(std::shared_ptr<Wnd> wnd)
         auto my_shared = shared_from_this();
 
         // Remove from previous parent.
-        if (auto parent = wnd->Parent())
+        if (auto&& parent = wnd->Parent())
             parent->DetachChild(wnd.get());
 
         GUI::GetGUI()->Remove(wnd);
@@ -905,7 +907,7 @@ void Wnd::Render() {}
 bool Wnd::Run()
 {
     bool retval = false;
-    auto parent = Parent();
+    auto&& parent = Parent();
     if (!parent && m_flags & MODAL) {
         GUI* gui = GUI::GetGUI();
         gui->RegisterModal(shared_from_this());
