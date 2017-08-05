@@ -189,8 +189,8 @@ void FileDlg::CompleteConstruction()
     m_filter_list = style->NewDropDownList(3, m_border_color);
     m_filter_list->SetStyle(LIST_NOSORT);
 
-    m_curr_dir_text =  style->NewTextControl("", m_font, m_text_color, FORMAT_NOWRAP);
-    m_files_label =  style->NewTextControl(style->Translate("File(s):"), m_font, m_text_color, FORMAT_RIGHT | FORMAT_VCENTER);
+    m_curr_dir_text = style->NewTextControl("", m_font, m_text_color, FORMAT_NOWRAP);
+    m_files_label = style->NewTextControl(style->Translate("File(s):"), m_font, m_text_color, FORMAT_RIGHT | FORMAT_VCENTER);
     m_file_types_label = style->NewTextControl(style->Translate("Type(s):"), m_font, m_text_color, FORMAT_RIGHT | FORMAT_VCENTER);
 
     m_ok_button = style->NewButton(m_save ? m_save_str : m_open_str, m_font, m_color, m_text_color);

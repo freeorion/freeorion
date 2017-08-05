@@ -11,18 +11,18 @@ public:
     std::shared_ptr<GG::DropDownList> NewDropDownList(size_t num_shown_elements, GG::Clr color) const override;
 
     std::shared_ptr<GG::Edit> NewEdit(const std::string& str, const std::shared_ptr<GG::Font>& font,
-                      GG::Clr color, GG::Clr text_color = GG::CLR_BLACK, GG::Clr interior = GG::CLR_ZERO) const override;
+                                      GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+                                      GG::Clr interior = GG::CLR_ZERO) const override;
 
     std::shared_ptr<GG::ListBox> NewListBox(GG::Clr color, GG::Clr interior = GG::CLR_ZERO) const override;
 
     std::shared_ptr<GG::Scroll> NewScroll(GG::Orientation orientation, GG::Clr color, GG::Clr interior) const override;
 
     std::shared_ptr<GG::Slider<int>> NewIntSlider(int min, int max, GG::Orientation orientation,
-                                  GG::Clr color, int tab_width, int line_width = 5) const override;
-
+                                                  GG::Clr color, int tab_width, int line_width = 5) const override;
 
     std::shared_ptr<GG::TabBar> NewTabBar(const std::shared_ptr<GG::Font>& font, GG::Clr color,
-                          GG::Clr text_color = GG::CLR_BLACK) const override;
+                                          GG::Clr text_color = GG::CLR_BLACK) const override;
 
     std::shared_ptr<GG::Button> NewScrollUpButton(GG::Clr color) const override;
 
@@ -45,12 +45,15 @@ public:
     std::shared_ptr<GG::Button> NewSpinDecrButton(const std::shared_ptr<GG::Font>& font, GG::Clr color) const override;
 
     std::shared_ptr<GG::StateButton> NewTabBarTab(const std::string& str,
-                                  const std::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
-                                  GG::Clr text_color = GG::CLR_BLACK) const override;
+                                                  const std::shared_ptr<GG::Font>& font,
+                                                  GG::Flags<GG::TextFormat> format, GG::Clr color,
+                                                  GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    std::shared_ptr<GG::Button> NewTabBarLeftButton(const std::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
+    std::shared_ptr<GG::Button> NewTabBarLeftButton(const std::shared_ptr<GG::Font>& font, GG::Clr color,
+                                                    GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    std::shared_ptr<GG::Button> NewTabBarRightButton(const std::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
+    std::shared_ptr<GG::Button> NewTabBarRightButton(const std::shared_ptr<GG::Font>& font, GG::Clr color,
+                                                     GG::Clr text_color = GG::CLR_BLACK) const override;
 };
 
 #endif // _CUIStyle_h_

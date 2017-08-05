@@ -105,11 +105,13 @@ private:
 
     iterator FirstNonOnTop();              ///< Returns iterator to first window in list that is non-on-top (returns end() if none found).
 
+    template <typename T>
+    using FunctionOfWndReturningMaybeT = std::function<boost::optional<T> (const std::shared_ptr<Wnd>&)>;
+
     /** Return the pair (iterator, T) for the first satisying wnd where \p predicate(wnd) !=
         boost::none.  Remove any nullptr found before the first satisying wnd from the list. */
     template <typename T>
-    boost::optional<std::pair<iterator, T>> Find(
-        const std::function<boost::optional<T> (const std::shared_ptr<Wnd>&)>& predicate) const;
+    boost::optional<std::pair<iterator, T>> Find(const FunctionOfWndReturningMaybeT<T>& predicate) const;
 
     mutable std::list<std::shared_ptr<Wnd>> m_list;
 };

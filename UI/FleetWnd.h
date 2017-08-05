@@ -80,7 +80,8 @@ private:
     bool                                    m_order_issuing_enabled;
 
     /** All fleet windows.  mutable so expired ptrs can be reset(). */
-    mutable std::set<std::weak_ptr<FleetWnd>, std::owner_less<std::weak_ptr<FleetWnd>>> m_fleet_wnds;
+    mutable std::set<std::weak_ptr<FleetWnd>,
+                     std::owner_less<std::weak_ptr<FleetWnd>>> m_fleet_wnds;
     /** Active fleet window.  mutable so expired ptr can be reset(). */
     mutable std::weak_ptr<FleetWnd>                               m_active_fleet_wnd;
 

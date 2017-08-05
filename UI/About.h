@@ -28,10 +28,10 @@ private:
 
 //! \name Controls
 //!@{
-    std::shared_ptr<GG::Button>     m_done_btn;     //!< Done button;
-    std::shared_ptr<GG::Button>     m_license;      //!< License button;
-    std::shared_ptr<GG::Button>     m_vision;       //!< Vision button;
-    std::shared_ptr<GG::MultiEdit>  m_info;         //!< Displays the license or vision information;
+    std::shared_ptr<GG::Button>     m_done_btn;     //!< Done button
+    std::shared_ptr<GG::Button>     m_license;      //!< License button
+    std::shared_ptr<GG::Button>     m_vision;       //!< Vision button
+    std::shared_ptr<GG::MultiEdit>  m_info;         //!< Displays the license or vision information
     std::string     m_license_str;  //!< String containing the copyright license
 };
 

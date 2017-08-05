@@ -376,8 +376,8 @@ void TabBar::InsertTab(std::size_t index, const std::string& name)
 {
     assert(index <= m_tab_buttons.size());
     const auto& style_factory = GetStyleFactory();
-    std::shared_ptr<StateButton> button{style_factory->NewTabBarTab(
-            name, m_font, FORMAT_CENTER, Color(), m_text_color)};
+    auto button = style_factory->NewTabBarTab(
+        name, m_font, FORMAT_CENTER, Color(), m_text_color);
     button->InstallEventFilter(shared_from_this());
     m_tab_buttons.insert(m_tab_buttons.begin() + index, button);
     m_tabs->InsertButton(index, m_tab_buttons[index]);
@@ -434,7 +434,7 @@ void TabBar::TabChanged(std::size_t index, bool signal)
         BringTabIntoView(index);
         std::vector<StateButton*> tab_buttons(m_tab_buttons.size());
         std::transform(m_tab_buttons.begin(), m_tab_buttons.end(), tab_buttons.begin(),
-                      [](const std::shared_ptr<StateButton>& x){ return x.get(); });
+                       [](const std::shared_ptr<StateButton>& x){ return x.get(); });
         DistinguishCurrentTab(tab_buttons);
         if (signal)
             TabChangedSignal(index);

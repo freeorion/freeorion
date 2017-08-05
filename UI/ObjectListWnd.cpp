@@ -1035,7 +1035,7 @@ void FilterDialog::CompleteConstruction() {
     m_filters_layout->SetColumnStretch(0, 0.0);
 
     GG::X button_width = GG::X(ClientUI::Pts()*8);
-    std::shared_ptr<GG::Button> label = nullptr;
+    std::shared_ptr<GG::Button> label;
 
     int row = 1;
 

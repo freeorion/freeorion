@@ -457,8 +457,6 @@ void OptionsWnd::CompleteConstruction() {
 
     CUIWnd::CompleteConstruction();
 
-    CUIWnd::CompleteConstruction();
-
     ResetDefaultPosition();
     SetMinSize(GG::Pt(PAGE_WIDTH + 20, PAGE_HEIGHT + 70));
 
@@ -874,7 +872,7 @@ void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, const st
 GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
     auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     std::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
-    std::shared_ptr<GG::Spin<int>> spin = nullptr;
+    std::shared_ptr<GG::Spin<int>> spin;
     int value = GetOptionsDB().Get<int>(option_name);
     if (std::shared_ptr<const RangedValidator<int>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<int>>(validator))
         spin = GG::Wnd::Create<CUISpin<int>>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
@@ -911,7 +909,7 @@ GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, c
 GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
     auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     std::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
-    std::shared_ptr<GG::Spin<double>> spin = nullptr;
+    std::shared_ptr<GG::Spin<double>> spin;
     double value = GetOptionsDB().Get<double>(option_name);
     if (std::shared_ptr<const RangedValidator<double>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<double>>(validator))
         spin = GG::Wnd::Create<CUISpin<double>>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);

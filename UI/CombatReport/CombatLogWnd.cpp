@@ -35,8 +35,8 @@ public:
     void SetFont(std::shared_ptr<GG::Font> font);
     /// Set which log to show
     void SetLog(int log_id);
-    /** Add a row at the end of the combat report*/
-    void AddRow(std::shared_ptr<GG::Wnd>&& wnd);
+    /** Add a row \p wnd at the end of the combat report. */
+    void AddRow(std::shared_ptr<GG::Wnd> wnd);
     //@}
 
     /** When windows changes forces a re-layout */
@@ -44,7 +44,7 @@ public:
 
     /** DecorateLinkText creates a CUILinkTextMultiEdit using \a text and attaches it to handlers
         \a and_flags are anded to the default flags. */
-    std::shared_ptr<LinkText> DecorateLinkText(std::string const& text);
+    std::shared_ptr<LinkText> DecorateLinkText(const std::string& text);
 
     /** Fill \p new_logs with pointers to the flat log contents of \p
         event using the pre-calculated \p details.*/
@@ -304,7 +304,7 @@ namespace {
 
 }
 
-std::shared_ptr<LinkText> CombatLogWnd::Impl::DecorateLinkText(std::string const & text) {
+std::shared_ptr<LinkText> CombatLogWnd::Impl::DecorateLinkText(const std::string& text) {
     auto links = GG::Wnd::Create<LazyScrollerLinkText>(m_wnd, GG::X0, GG::Y0, text, m_font, GG::CLR_WHITE);
 
     links->SetTextFormat(m_text_format_flags);
@@ -372,7 +372,7 @@ std::vector<std::shared_ptr<GG::Wnd>> CombatLogWnd::Impl::MakeCombatLogPanel(GG:
 }
 
 
-void CombatLogWnd::Impl::AddRow(std::shared_ptr<GG::Wnd>&& wnd) {
+void CombatLogWnd::Impl::AddRow(std::shared_ptr<GG::Wnd> wnd) {
     if (auto&& layout = m_wnd.GetLayout())
         layout->Add(std::move(wnd), layout->Rows(), 0);
 }

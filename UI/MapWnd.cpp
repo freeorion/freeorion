@@ -4920,9 +4920,12 @@ void MapWnd::CreateFleetButtonsOfType (
 }
 
 void MapWnd::DeleteFleetButtons() {
-    for (auto& id_and_fb: m_fleet_buttons)
+    for (auto& id_and_fb : m_fleet_buttons)
         DetachChild(id_and_fb.second);
-    m_fleet_buttons.clear();            // duplicates pointers in following containers
+    m_fleet_buttons.clear();
+
+    // The pointers in the following containers duplicate those in
+    // m_fleet_buttons and therefore don't need to be detached.
     m_stationary_fleet_buttons.clear();
     m_departing_fleet_buttons.clear();
     m_moving_fleet_buttons.clear();
@@ -6810,14 +6813,14 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
 
 void MapWnd::CloseAllPopups() {
     GG::ProcessThenRemoveExpiredPtrs(m_popups,
-                                 [](std::shared_ptr<MapWndPopup>& wnd)
-                                 { wnd->Close(); });
+                                     [](std::shared_ptr<MapWndPopup>& wnd)
+                                     { wnd->Close(); });
 }
 
 void MapWnd::HideAllPopups() {
     GG::ProcessThenRemoveExpiredPtrs(m_popups,
-                                 [](std::shared_ptr<MapWndPopup>& wnd)
-                                 { wnd->Hide(); });
+                                     [](std::shared_ptr<MapWndPopup>& wnd)
+                                     { wnd->Hide(); });
 }
 
 void MapWnd::SetFleetExploring(const int fleet_id) {
@@ -7039,6 +7042,6 @@ void MapWnd::DispatchFleetsExploring() {
 
 void MapWnd::ShowAllPopups() {
     GG::ProcessThenRemoveExpiredPtrs(m_popups,
-                                 [](std::shared_ptr<MapWndPopup>& wnd)
-                                 { wnd->Show(); });
+                                     [](std::shared_ptr<MapWndPopup>& wnd)
+                                     { wnd->Show(); });
 }

@@ -580,7 +580,7 @@ void ListBox::CompleteConstruction()
     if (INSTRUMENT_ALL_SIGNALS) {
         ClearedRowsSignal.connect(ListSignalEcho(*this, "ListBox::ClearedRowsSignal"));
         BeforeInsertRowSignal.connect(ListSignalEcho(*this, "ListBox::BeforeInsertRowSignal"));
-        AfterInsertRowSignal.connect(ListSignalEcho(*this, "ListBox::AterinsertRowSignal"));
+        AfterInsertRowSignal.connect(ListSignalEcho(*this, "ListBox::AfterInsertRowSignal"));
         SelRowsChangedSignal.connect(ListSignalEcho(*this, "ListBox::SelRowsChangedSignal"));
         DroppedRowSignal.connect(ListSignalEcho(*this, "ListBox::DroppedRowSignal"));
         LeftClickedRowSignal.connect(ListSignalEcho(*this, "ListBox::LeftClickedRowSignal"));

@@ -672,9 +672,9 @@ void GUIImpl::HandleIdle(Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_tic
                 curr_ticks - m_last_key_press_repeat_time > m_key_press_repeat_interval)
             {
                 m_last_key_press_repeat_time = curr_ticks;
-                focus_wnd->HandleEvent(WndEvent(
-                                           WndEvent::KeyPress, m_last_pressed_key_code_point.first,
-                                           m_last_pressed_key_code_point.second, mod_keys));
+                focus_wnd->HandleEvent(
+                    WndEvent(WndEvent::KeyPress, m_last_pressed_key_code_point.first,
+                             m_last_pressed_key_code_point.second, mod_keys));
             }
         }
         return;
@@ -808,6 +808,8 @@ void GUIImpl::SetFocusWnd(const std::shared_ptr<Wnd>& wnd)
     if (m_modal_wnds.empty())
         m_focus_wnd = wnd;
     else
+        // m_modal_wnds stores the window that is modal and the child that has
+        // focus separately.
         m_modal_wnds.back().second = wnd;
 
     // inform new focus wnd that it is gaining focus
@@ -815,8 +817,6 @@ void GUIImpl::SetFocusWnd(const std::shared_ptr<Wnd>& wnd)
     if (new_focus_wnd)
         new_focus_wnd->HandleEvent(WndEvent(WndEvent::GainingFocus));
 }
-
-
 
 void GUIImpl::ClearState()
 {
