@@ -168,7 +168,7 @@ private:
             m_min_size += GG::Pt(ClientUI::GetFont()->SpaceWidth()*20, ClientUI::GetFont()->Height());
         }
 
-        auto layout_begin = m_tabs->GetLayout()->Children().begin();
+        auto&& layout_begin = m_tabs->GetLayout()->Children().begin();
         // First object in the layout should be the tab bar.
         if (layout_begin != m_tabs->GetLayout()->Children().end()) {
             GG::Pt tab_min_size = (*layout_begin)->MinUsableSize();

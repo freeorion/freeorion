@@ -256,7 +256,7 @@ bool Wnd::PreRenderRequired() const
     if (m_needs_prerender)
         return true;
 
-    auto layout = GetLayout();
+    auto&& layout = GetLayout();
 
     return (layout && layout->m_needs_prerender);
 }
@@ -328,7 +328,7 @@ Pt Wnd::MaxSize() const
 
 Pt Wnd::MinUsableSize() const
 {
-    auto layout = GetLayout();
+    auto&& layout = GetLayout();
     return layout ? layout->MinUsableSize() : Size();
 }
 
@@ -420,7 +420,7 @@ void Wnd::ClampRectWithMinAndMaxSize(Pt& ul, Pt& lr) const
 {
     Pt min_sz = MinSize();
     Pt max_sz = MaxSize();
-    auto layout = GetLayout();
+    auto&& layout = GetLayout();
     if (layout) {
         Pt layout_min_sz = layout->MinSize() + (Size() - ClientSize());
         min_sz.x = std::max(min_sz.x, layout_min_sz.x);
@@ -517,7 +517,7 @@ void Wnd::SizeMove(const Pt& ul_, const Pt& lr_)
     m_lowerright = lr;
     if (resized) {
         bool size_changed = Size() != original_sz;
-        auto layout = GetLayout();
+        auto&& layout = GetLayout();
         if (layout && size_changed)
             layout->Resize(ClientSize());
         auto containing_layout = LockAndResetIfExpired(m_containing_layout);
@@ -620,7 +620,7 @@ void Wnd::DetachChild(Wnd* wnd)
 
     wnd->m_parent.reset();
 
-    auto layout = GetLayout();
+    auto&& layout = GetLayout();
     if (layout && wnd == layout.get())
         m_layout.reset();
     if (auto this_as_layout = dynamic_cast<Layout*>(this)) {
@@ -837,7 +837,7 @@ void Wnd::GridLayout()
 
 void Wnd::SetLayout(const std::shared_ptr<Layout>& layout)
 {
-    auto mm_layout = GetLayout();
+    auto&& mm_layout = GetLayout();
     if (layout == mm_layout || layout == LockAndResetIfExpired(m_containing_layout))
         throw BadLayout("Wnd::SetLayout() : Attempted to set a Wnd's layout to be its current layout or the layout that contains the Wnd");
     RemoveLayout();
@@ -856,7 +856,7 @@ void Wnd::SetLayout(const std::shared_ptr<Layout>& layout)
 
 void Wnd::RemoveLayout()
 {
-    auto layout = GetLayout();
+    auto&& layout = GetLayout();
     m_layout.reset();
     if (!layout)
         return;
@@ -870,27 +870,27 @@ void Wnd::RemoveLayout()
 
 std::shared_ptr<Layout> Wnd::DetachLayout()
 {
-    auto layout = GetLayout();
+    auto&& layout = GetLayout();
     DetachChild(layout.get());
     return layout;
 }
 
 void Wnd::SetLayoutBorderMargin(unsigned int margin)
 {
-    if (auto layout = GetLayout())
+    if (auto&& layout = GetLayout())
         layout->SetBorderMargin(margin);
 }
 
 void Wnd::SetLayoutCellMargin(unsigned int margin)
 {
-    if (auto layout = GetLayout())
+    if (auto&& layout = GetLayout())
         layout->SetCellMargin(margin);
 }
 
 void Wnd::PreRender()
 {
     m_needs_prerender = false;
-    auto layout = GetLayout();
+    auto&& layout = GetLayout();
     if (!layout)
         return;
     if (layout->m_needs_prerender)
