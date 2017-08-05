@@ -180,12 +180,17 @@ bool ZList::MoveDown(const Wnd* const wnd)
     return bool(found);
 }
 
+namespace {
+    const std::function<boost::optional<bool> (const std::shared_ptr<Wnd>&)> IsNotOnTop =
+        [](const std::shared_ptr<Wnd>& wnd)
+    {
+        return !wnd->OnTop() ? boost::optional<bool>(true) : boost::optional<bool>(boost::none);
+    };
+}
+
 ZList::iterator ZList::FirstNonOnTop()
 {
-    std::function<boost::optional<bool> (const std::shared_ptr<Wnd>&)> on_top =
-        [](const std::shared_ptr<Wnd>& wnd){ return !wnd->OnTop() ? boost::optional<bool>(true) : boost::optional<bool>(boost::none); };
-
-    auto retval = Find(on_top);
+    auto retval = Find(IsNotOnTop);
     return retval ? retval->first : m_list.end();
 }
 
