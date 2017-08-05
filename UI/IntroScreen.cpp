@@ -350,8 +350,6 @@ void IntroScreen::OnPedia() {
         boost::bind(&EncyclopediaDetailPanel::EndRun, enc_panel));
 
     enc_panel->Run();
-
-    delete enc_panel;
 }
 
 void IntroScreen::OnAbout() {

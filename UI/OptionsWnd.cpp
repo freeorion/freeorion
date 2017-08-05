@@ -306,7 +306,6 @@ namespace {
     void ShowFontTextureWnd() {
         auto font_wnd =  GG::Wnd::Create<FontTextureWnd>();
         font_wnd->Run();
-        delete font_wnd;
     }
 
     class OptionsListRow : public GG::ListBox::Row {
