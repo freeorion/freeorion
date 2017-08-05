@@ -1224,7 +1224,7 @@ void HumanClientApp::ResetOrExitApp(bool reset) {
 
     if (m_save_game_in_progress) {
         DebugLogger() << "save game in progress. Checking with player.";
-        auto dlg = GG::Wnd::Create<SaveGamePendingDialog>(reset, this->SaveGameCompletedSignal);
+        auto dlg = /*TODO: Remove extra shared_ptr wrap after Wnd::Create converted to return shared_ptr*/std::shared_ptr<SaveGamePendingDialog>(GG::Wnd::Create<SaveGamePendingDialog>(reset, this->SaveGameCompletedSignal));
         dlg->Run();
     }
 

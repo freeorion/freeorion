@@ -102,7 +102,7 @@ namespace {
 
         void operator()() {
             try {
-                auto dlg = GG::Wnd::Create<FileDlg>(m_path.string(), m_edit->Text(), false, false, m_filters);
+                auto dlg = /*TODO: Remove extra shared_ptr wrap after Wnd::Create converted to return shared_ptr*/std::shared_ptr<FileDlg>(GG::Wnd::Create<FileDlg>(m_path.string(), m_edit->Text(), false, false, m_filters));
                 if (m_directory)
                     dlg->SelectDirectories(true);
                 dlg->Run();
@@ -213,7 +213,7 @@ namespace {
         };
 
         static std::pair<GG::Key, GG::Flags<GG::ModKey>> GetKeypress() {
-            auto ct = GG::Wnd::Create<KeyPressCatcher>();
+            auto ct = /*TODO: Remove extra shared_ptr wrap after Wnd::Create converted to return shared_ptr*/std::shared_ptr<KeyPressCatcher>(GG::Wnd::Create<KeyPressCatcher>());
             ct->Run();
             return std::make_pair(ct->m_key, ct->m_mods);
         };
@@ -304,7 +304,7 @@ namespace {
     };
 
     void ShowFontTextureWnd() {
-        auto font_wnd =  GG::Wnd::Create<FontTextureWnd>();
+        auto font_wnd =  /*TODO: Remove extra shared_ptr wrap after Wnd::Create converted to return shared_ptr*/std::shared_ptr<FontTextureWnd>(GG::Wnd::Create<FontTextureWnd>());
         font_wnd->Run();
     }
 
