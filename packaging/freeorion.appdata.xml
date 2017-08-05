@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>freeorion.desktop</id>
+  <name>FreeOrion</name>
+  <summary>Turn-based space empire and galactic conquest (4X) computer game</summary>
+  <summary xml:lang="de">Rundenbasierendes Weltraum-Strategiespiel</summary>
+  <developer_name>FreeOrion Project</developer_name>
+  <description>
+      <p>
+       FreeOrion is a free, open source, turn-based space empire and galactic conquest (4X) computer game being designed and built by the FreeOrion project. FreeOrion is inspired by the tradition of the Master of Orion games, but is not a clone or remake of that series or any other game.
+      </p>
+  </description>
+  <keywords>
+    <keyword>game</keyword>
+    <keyword>strategy</keyword>
+  </keywords>
+  <metadata_license>CC-BY-SA-3.0</metadata_license>
+  <project_license>GPL-2.0</project_license>
+  <url type="bugtracker">https://github.com/freeorion/freeorion/issues</url>
+  <url type="donation">http://www.freeorion.org/index.php/Donations</url>
+  <url type="faq">http://www.freeorion.org/index.php/FAQ</url>
+  <url type="help">http://www.freeorion.org/forum/viewforum.php?f=25</url>
+  <url type="homepage">http://www.freeorion.org</url>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Galaxy setup</caption>
+      <image height="600" width="786">http://www.freeorion.org/images/thumb/1/1a/Freeorion_0.4.5_b2015-09-01.f203162_singleplayer.JPG/786px-Freeorion_0.4.5_b2015-09-01.f203162_singleplayer.JPG</image>
+    </screenshot>
+    <screenshot>
+      <caption>Ship design</caption>
+      <image height="599" width="787">http://www.freeorion.org/images/thumb/c/c7/Freeorion_0.4.5_b2015-09-01.f203162_ingame-windows_8.JPG/787px-Freeorion_0.4.5_b2015-09-01.f203162_ingame-windows_8.JPG</image>
+    </screenshot>
+    <screenshot>
+      <caption>Map exploration</caption>
+      <image height="599" width="787">http://www.freeorion.org/images/thumb/e/ee/Freeorion_0.4.5_b2015-09-01.f203162_ingame-windows_7.JPG/787px-Freeorion_0.4.5_b2015-09-01.f203162_ingame-windows_7.JPG</image>
+    </screenshot>
+    <screenshot>
+      <caption>In game windows</caption>
+      <image height="599" width="786">http://www.freeorion.org/images/thumb/0/06/Freeorion_0.4.5_b2015-09-01.f203162_ingame-windows_2.JPG/786px-Freeorion_0.4.5_b2015-09-01.f203162_ingame-windows_2.JPG</image>
+    </screenshot>
+    <screenshot>
+      <caption>In game windows</caption>
+      <image height="599" width="788">http://www.freeorion.org/images/thumb/6/62/Freeorion_0.4.5_b2015-09-01.f203162_ingame-windows_1.JPG/788px-Freeorion_0.4.5_b2015-09-01.f203162_ingame-windows_1.JPG</image>
+    </screenshot>
+  </screenshots>
+</component>

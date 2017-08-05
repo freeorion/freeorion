@@ -753,6 +753,12 @@ if(UNIX AND NOT APPLE)
     endif()
 
     install(
+        FILES
+        ${CMAKE_SOURCE_DIR}/packaging/freeorion.appdata.xml
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/metainfo
+    )
+
+    install(
         DIRECTORY default/
         DESTINATION ${CMAKE_INSTALL_DATADIR}/freeorion/default
         PATTERN "*~" EXCLUDE
