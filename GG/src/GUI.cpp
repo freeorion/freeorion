@@ -359,7 +359,7 @@ void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, const Pt& pos, i
 
 void GUIImpl::HandleMouseDrag(unsigned int mouse_button, const Pt& pos, int curr_ticks)
 {
-    auto dragged_wnd = LockAndResetIfExpired(m_drag_wnds[mouse_button]);
+    const auto&& dragged_wnd = LockAndResetIfExpired(m_drag_wnds[mouse_button]);
     if (!dragged_wnd)
         return;
 
@@ -422,10 +422,10 @@ void GUIImpl::HandleMouseDrag(unsigned int mouse_button, const Pt& pos, int curr
             m_curr_wnd_under_cursor = curr_wnd_under_cursor;
             std::map<std::shared_ptr<Wnd>, Pt> drag_drop_wnds;
             drag_drop_wnds[dragged_wnd] = m_wnd_drag_offset;
-            auto prev_wnd_under_cursor = LockAndResetIfExpired(m_prev_wnd_under_cursor);
+            const auto&& prev_wnd_under_cursor = LockAndResetIfExpired(m_prev_wnd_under_cursor);
             if (curr_wnd_under_cursor && prev_wnd_under_cursor == curr_wnd_under_cursor) {
                 // Wnd under cursor has remained the same for the last two updates
-                auto curr_drag_drop_here_wnd = LockAndResetIfExpired(m_curr_drag_drop_here_wnd);
+                const auto&& curr_drag_drop_here_wnd = LockAndResetIfExpired(m_curr_drag_drop_here_wnd);
                 if (curr_drag_drop_here_wnd == curr_wnd_under_cursor) {
                     // Wnd being dragged over is still being dragged over...
                     WndEvent event(WndEvent::DragDropHere, pos, m_drag_drop_wnds, m_mod_keys);
@@ -496,7 +496,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
     m_browse_target = nullptr;
     m_prev_wnd_under_cursor_time = curr_ticks;
 
-    auto click_drag_wnd = LockAndResetIfExpired(m_drag_wnds[mouse_button]);
+    const auto&& click_drag_wnd = LockAndResetIfExpired(m_drag_wnds[mouse_button]);
     std::set<Wnd*> ignores;
     if (m_curr_drag_wnd_dragged && click_drag_wnd)
         ignores.insert(click_drag_wnd.get());
@@ -639,7 +639,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
 
 void GUIImpl::HandleIdle(Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_ticks)
 {
-    auto curr_wnd_under_cursor = LockAndResetIfExpired(m_curr_wnd_under_cursor);
+    const auto&& curr_wnd_under_cursor = LockAndResetIfExpired(m_curr_wnd_under_cursor);
     if (m_mouse_button_down_repeat_delay != 0 &&
         curr_wnd_under_cursor &&
         curr_wnd_under_cursor == GUI::s_gui->CheckedGetWindowUnder(pos, mod_keys) &&
@@ -741,14 +741,14 @@ void GUIImpl::HandleMouseMove(Flags<ModKey> mod_keys, const GG::Pt& pos, const P
 {
     auto curr_wnd_under_cursor = GUI::s_gui->CheckedGetWindowUnder(pos, m_mod_keys);
     m_curr_wnd_under_cursor = curr_wnd_under_cursor;
-    auto prev_wnd_under_cursor = LockAndResetIfExpired(m_prev_wnd_under_cursor);
+    const auto&& prev_wnd_under_cursor = LockAndResetIfExpired(m_prev_wnd_under_cursor);
 
     m_mouse_pos = pos; // record mouse position
     m_mouse_rel = rel; // record mouse movement
 
-    auto m_drag_wnds_0 = LockAndResetIfExpired(m_drag_wnds[0]);
-    auto m_drag_wnds_1 = LockAndResetIfExpired(m_drag_wnds[1]);
-    auto m_drag_wnds_2 = LockAndResetIfExpired(m_drag_wnds[2]);
+    const auto&& m_drag_wnds_0 = LockAndResetIfExpired(m_drag_wnds[0]);
+    const auto&& m_drag_wnds_1 = LockAndResetIfExpired(m_drag_wnds[1]);
+    const auto&& m_drag_wnds_2 = LockAndResetIfExpired(m_drag_wnds[2]);
     if (m_drag_wnds_0 || m_drag_wnds_1 || m_drag_wnds_2) {
         if (m_drag_wnds_0)
             HandleMouseDrag(0, pos, curr_ticks);
@@ -1332,7 +1332,7 @@ void GUI::RegisterDragDropWnd(std::shared_ptr<Wnd> wnd, const Pt& offset, std::s
     assert(wnd);
 
     // Throw if all dragged wnds are not from the same original wnd.
-    auto drag_drop_originating_wnd = LockAndResetIfExpired(m_impl->m_drag_drop_originating_wnd);
+    const auto&& drag_drop_originating_wnd = LockAndResetIfExpired(m_impl->m_drag_drop_originating_wnd);
     if (!m_impl->m_drag_drop_wnds.empty() && originating_wnd != drag_drop_originating_wnd) {
         std::string m_impl_orig_wnd_name("NULL");
         std::string orig_wnd_name("NULL");
@@ -1714,7 +1714,7 @@ void GUI::PreRender()
     }
 
     // pre-render the active browse info window, if any
-    auto curr_wnd_under_cursor = LockAndResetIfExpired(m_impl->m_curr_wnd_under_cursor);
+    const auto&& curr_wnd_under_cursor = LockAndResetIfExpired(m_impl->m_curr_wnd_under_cursor);
     if (m_impl->m_browse_info_wnd && curr_wnd_under_cursor) {
         assert(m_impl->m_browse_target);
         PreRenderWindow(m_impl->m_browse_info_wnd.get());
@@ -1748,7 +1748,7 @@ void GUI::Render()
 
     // render the active browse info window, if any
     if (m_impl->m_browse_info_wnd) {
-        auto curr_wnd_under_cursor = LockAndResetIfExpired(m_impl->m_curr_wnd_under_cursor);
+        const auto&& curr_wnd_under_cursor = LockAndResetIfExpired(m_impl->m_curr_wnd_under_cursor);
         if (!curr_wnd_under_cursor) {
             m_impl->m_browse_info_wnd.reset();
             m_impl->m_browse_info_mode = -1;
@@ -1819,13 +1819,13 @@ std::shared_ptr<Wnd> GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_
     bool unregistered_drag_drop = dragged_wnd && !dragged_wnd->DragDropDataType().empty();
     bool registered_drag_drop = !m_impl->m_drag_drop_wnds.empty();
 
-    auto curr_drag_drop_here_wnd = LockAndResetIfExpired(m_impl->m_curr_drag_drop_here_wnd);
+    const auto&& curr_drag_drop_here_wnd = LockAndResetIfExpired(m_impl->m_curr_drag_drop_here_wnd);
     if (curr_drag_drop_here_wnd && !unregistered_drag_drop && !registered_drag_drop) {
         curr_drag_drop_here_wnd->HandleEvent(WndEvent(WndEvent::DragDropLeave));
         m_impl->m_curr_drag_drop_here_wnd.reset();
     }
 
-    auto curr_wnd_under_cursor = LockAndResetIfExpired(m_impl->m_curr_wnd_under_cursor);
+    const auto&& curr_wnd_under_cursor = LockAndResetIfExpired(m_impl->m_curr_wnd_under_cursor);
     if (wnd_under_pt == curr_wnd_under_cursor)
         return wnd_under_pt;   // same Wnd is under cursor as before; nothing to do
 

@@ -445,7 +445,7 @@ std::shared_ptr<FleetWnd> FleetUIManager::WndForFleet(std::shared_ptr<const Flee
 }
 
 int FleetUIManager::SelectedShipID() const {
-    auto active_wnd = GG::LockAndResetIfExpired(m_active_fleet_wnd);
+    const auto&& active_wnd = GG::LockAndResetIfExpired(m_active_fleet_wnd);
     if (!active_wnd)
         return INVALID_OBJECT_ID;
 
@@ -457,7 +457,7 @@ int FleetUIManager::SelectedShipID() const {
 }
 
 std::set<int> FleetUIManager::SelectedShipIDs() const {
-    auto active_wnd = GG::LockAndResetIfExpired(m_active_fleet_wnd);
+    const auto&& active_wnd = GG::LockAndResetIfExpired(m_active_fleet_wnd);
     if (!active_wnd)
         return std::set<int>();
     return active_wnd->SelectedShipIDs();
@@ -501,7 +501,7 @@ void FleetUIManager::CullEmptyWnds() {
 }
 
 void FleetUIManager::SetActiveFleetWnd(std::shared_ptr<FleetWnd> fleet_wnd) {
-    auto active_wnd = GG::LockAndResetIfExpired(m_active_fleet_wnd);
+    const auto&& active_wnd = GG::LockAndResetIfExpired(m_active_fleet_wnd);
     if (fleet_wnd == active_wnd)
         return;
 
