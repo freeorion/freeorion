@@ -1008,6 +1008,18 @@ Part Cost Scaling
 RULE_SHIP_PART_COST_FACTOR_DESC
 Adjusts costs of ship parts
 
+RULE_BUILDING_COST_FACTOR
+Building Cost Scaling
+
+RULE_BUILDING_COST_FACTOR_DESC
+Adjusts costs of buildings
+
+RULE_TECH_COST_FACTOR
+Building Cost Scaling
+
+RULE_TECH_COST_FACTOR_DESC
+Adjusts costs of buildings
+
 RULE_ENABLE_EXPERIMENTORS
 Enable Experimentors (TEST)
 
