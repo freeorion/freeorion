@@ -90,8 +90,28 @@ void HumanClientFSM::unconsumed_event(const boost::statechart::event_base &event
     BOOST_PP_SEQ_FOR_EACH(EVENT_CASE, _, HUMAN_CLIENT_FSM_EVENTS)
     BOOST_PP_SEQ_FOR_EACH(EVENT_CASE, _, MESSAGE_EVENTS)
 #undef EVENT_CASE
-    ErrorLogger(FSM) << "HumanClientFSM : A " << most_derived_message_type_str << " event was passed to "
-        "the HumanClientFSM.  This event is illegal in the FSM's current state.  It is being ignored.";
+
+    if (terminated()) {
+        ErrorLogger(FSM) << "A " << most_derived_message_type_str << " event was passed to "
+            "the HumanClientFSM.  The FSM has terminated.  The event is being ignored.";
+        return;
+    }
+
+    std::stringstream ss;
+    ss << "[";
+    for (auto leaf_state_it = state_begin(); leaf_state_it != state_end();) {
+        // The following use of typeid assumes that
+        // BOOST_STATECHART_USE_NATIVE_RTTI is defined
+        ss << typeid( *leaf_state_it ).name();
+        ++leaf_state_it;
+        if (leaf_state_it != state_end())
+            ss << ", ";
+    }
+    ss << "]";
+
+    ErrorLogger(FSM) << "A " << most_derived_message_type_str
+                     << " event was not handled by any of these states : "
+                     << ss.str() << ".  It is being ignored.";
 }
 
 

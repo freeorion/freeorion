@@ -197,10 +197,31 @@ void ServerFSM::unconsumed_event(const sc::event_base &event) {
 #define MESSAGE_EVENT_CASE(r, data, name)                               \
     else if (dynamic_cast<const name*>(event_ptr))                      \
         most_derived_message_type_str = BOOST_PP_STRINGIZE(name);
-    BOOST_PP_SEQ_FOR_EACH(MESSAGE_EVENT_CASE, _, MESSAGE_EVENTS);
+    BOOST_PP_SEQ_FOR_EACH(MESSAGE_EVENT_CASE, _, MESSAGE_EVENTS)
+    BOOST_PP_SEQ_FOR_EACH(MESSAGE_EVENT_CASE, _, NON_MESSAGE_SERVER_FSM_EVENTS)
 #undef MESSAGE_EVENT_CASE
-    ErrorLogger(FSM) << "ServerFSM : A " << most_derived_message_type_str << " event was passed to "
-        "the ServerFSM.  This event is illegal in the FSM's current state.  It is being ignored.";
+
+    if (terminated()) {
+        ErrorLogger(FSM) << "A " << most_derived_message_type_str << " event was passed to "
+            "the ServerFSM.  The FSM has terminated.  The event is being ignored.";
+        return;
+    }
+
+    std::stringstream ss;
+    ss << "[";
+    for (auto leaf_state_it = state_begin(); leaf_state_it != state_end();) {
+        // The following use of typeid assumes that
+        // BOOST_STATECHART_USE_NATIVE_RTTI is defined
+        ss << typeid( *leaf_state_it ).name();
+        ++leaf_state_it;
+        if (leaf_state_it != state_end())
+            ss << ", ";
+    }
+    ss << "]";
+
+    ErrorLogger(FSM) << "A " << most_derived_message_type_str
+                     << " event was not handled by any of these states : "
+                     << ss.str() << ".  It is being ignored.";
 }
 
 ServerApp& ServerFSM::Server()
