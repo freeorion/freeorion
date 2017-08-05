@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_BIOTERROR_PROJECTOR"
     description = "BLD_BIOTERROR_PROJECTOR_DESC"
-    buildcost = 75
+    buildcost = 75 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 8
     location = And [
         Planet

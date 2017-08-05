@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_SHIPYARD_ENRG_COMP"
     description = "BLD_SHIPYARD_ENRG_COMP_DESC"
-    buildcost = 200
+    buildcost = 200 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
     tags = "ORBITAL"
     location = And [

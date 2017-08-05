@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_PLANET_CLOAK"
     description = "BLD_PLANET_CLOAK_DESC"
-    buildcost = 150
+    buildcost = 150 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 8
     location = AND [
         Not Contains Building name = "BLD_PLANET_CLOAK"

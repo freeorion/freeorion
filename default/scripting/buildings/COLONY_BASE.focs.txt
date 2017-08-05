@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_COLONY_BASE"
     description = "BLD_COLONY_BASE_DESC"
-    buildcost = 45
+    buildcost = 45 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 1
     location = And [
         Planet

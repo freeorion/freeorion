@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_EVACUATION"
     description = "BLD_EVACUATION_DESC"
-    buildcost = 10
+    buildcost = 10 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 1
     location = AND [
         Planet

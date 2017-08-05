@@ -2,7 +2,7 @@
 BuildingType
     name = "BLD_OBSERVATORY"
     description = "BLD_OBSERVATORY_DESC"
-    buildcost = 60
+    buildcost = 60 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 3
     location = AND [
         Planet

@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_SCRYING_SPHERE"
     description = "BLD_SCRYING_SPHERE_DESC"
-    buildcost = 150
+    buildcost = 150 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
     location = Not WithinStarlaneJumps jumps = 5 condition = Building name = "BLD_SCRYING_SPHERE"
     effectsgroups =

@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_SHIPYARD_AST_REF"
     description = "BLD_SHIPYARD_AST_REF_DESC"
-    buildcost = 500
+    buildcost = 500 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
     location = And [
         Planet

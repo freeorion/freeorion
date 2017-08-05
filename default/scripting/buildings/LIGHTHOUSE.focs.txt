@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_LIGHTHOUSE"
     description = "BLD_LIGHTHOUSE_DESC"
-    buildcost = 25
+    buildcost = 25 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 10
     location = AND [
         Planet

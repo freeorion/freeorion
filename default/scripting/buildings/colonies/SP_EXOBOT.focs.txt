@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_COL_EXOBOT"
     description = "BLD_COL_EXOBOT_DESC"
-    buildcost = 70 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildcost = 70 * [[COLONY_UPKEEP_MULTIPLICATOR]] * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
     tags = [ "SP_EXOBOT" "CTRL_ALWAYS_REPORT" ]
     location = And [

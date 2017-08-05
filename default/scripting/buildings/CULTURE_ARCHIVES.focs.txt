@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_CULTURE_ARCHIVES"
     description = "BLD_CULTURE_ARCHIVES_DESC"
-    buildcost = 200
+    buildcost = 200 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 1
     tags = "ANTIQUATED"
     location = Described description = "NOWHERE" condition = Not All

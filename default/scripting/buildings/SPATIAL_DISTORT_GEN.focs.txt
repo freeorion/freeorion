@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_SPATIAL_DISTORT_GEN"
     description = "BLD_SPATIAL_DISTORT_GEN_DESC"
-    buildcost = 500
+    buildcost = 500 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 8
     location = AND [
         Not Contains Building name = "BLD_SPATIAL_DISTORT_GEN"

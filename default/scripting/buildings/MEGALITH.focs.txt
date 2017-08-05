@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_MEGALITH"
     description = "BLD_MEGALITH_DESC"
-    buildcost = 250
+    buildcost = 250 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 10
     location = And [
         Planet

@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_CLONING_CENTER"
     description = "BLD_CLONING_CENTER_DESC"
-    buildcost = 100
+    buildcost = 100 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
     location = And [
         Planet

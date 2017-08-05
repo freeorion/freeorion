@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_SPACE_ELEVATOR"
     description = "BLD_SPACE_ELEVATOR_DESC"
-    buildcost = 150
+    buildcost = 150 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 6
     location = And [
         Planet

@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_NEUTRONIUM_EXTRACTOR"
     description = "BLD_NEUTRONIUM_EXTRACTOR_DESC"
-    buildcost = 25
+    buildcost = 25 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
     tags = "ORBITAL"
     location = AND [

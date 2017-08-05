@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_AUTO_HISTORY_ANALYSER"
     description = "BLD_AUTO_HISTORY_ANALYSER_DESC"
-    buildcost = 100
+    buildcost = 100 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
     location = And [
         Planet

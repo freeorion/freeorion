@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_XENORESURRECTION_LAB"
     description = "BLD_XENORESURRECTION_LAB_DESC"
-    buildcost = 100
+    buildcost = 100 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 4
     location = And [
         Planet

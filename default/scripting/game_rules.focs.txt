@@ -18,6 +18,24 @@ GameRule
     max = 10.0
 
 GameRule
+    name = "RULE_TECH_COST_FACTOR"
+    description = "RULE_TECH_COST_FACTOR_DESC"
+    category = "BALANCE"
+    type = Real
+    default = 2.0
+    min = 0.1
+    max = 10.0
+
+GameRule
+    name = "RULE_BUILDING_COST_FACTOR"
+    description = "RULE_BUILDING_COST_FACTOR_DESC"
+    category = "BALANCE"
+    type = Real
+    default = 1.0
+    min = 0.1
+    max = 10.0
+
+GameRule
     name = "RULE_ENABLE_EXPERIMENTORS"
     description = "RULE_ENABLE_EXPERIMENTORS_DESC"
     category = "TEST"

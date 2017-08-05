@@ -2,7 +2,7 @@
 BuildingType
     name = "BLD_REMOTE_TERRAFORM"
     description = "BLD_REMOTE_TERRAFORM_DESC"
-    buildcost = 6
+    buildcost = 6 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 16
     location = And [
         Planet

@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_GENOME_BANK"
     description = "BLD_GENOME_BANK_DESC"
-    buildcost = 15
+    buildcost = 15 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 16
     location = And [
         Planet

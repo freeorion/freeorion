@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_SCANNING_FACILITY"
     description = "BLD_SCANNING_FACILITY_DESC"
-    buildcost = 25
+    buildcost = 25 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
     location = AND [
         Planet

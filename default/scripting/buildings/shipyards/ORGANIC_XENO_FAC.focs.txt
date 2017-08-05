@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_SHIPYARD_ORG_XENO_FAC"
     description = "BLD_SHIPYARD_ORG_XENO_FAC_DESC"
-    buildcost = 120
+    buildcost = 120 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 8
     tags = "ORBITAL"
     location = And [

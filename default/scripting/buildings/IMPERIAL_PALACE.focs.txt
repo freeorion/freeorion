@@ -2,7 +2,7 @@ BuildingType
     name = "BLD_IMPERIAL_PALACE"
     description = "BLD_IMPERIAL_PALACE_DESC"
     captureresult = destroy
-    buildcost = 10
+    buildcost = 10 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 8
     location = And [
         Planet

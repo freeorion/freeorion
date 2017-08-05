@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_HYPER_DAM"
     description = "BLD_HYPER_DAM_DESC"
-    buildcost = 250
+    buildcost = 250 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 8
     tags = "ORBITAL"
     location = And [

@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_ENCLAVE_VOID"
     description = "BLD_ENCLAVE_VOID_DESC"
-    buildcost = 100
+    buildcost = 100 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 3
     location = AND [
         Not Contains Building name = "BLD_ENCLAVE_VOID"

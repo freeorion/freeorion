@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_PLANET_DRIVE"
     description = "BLD_PLANET_DRIVE_DESC"
-    buildcost = 125
+    buildcost = 125 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
     location = And [
         Planet

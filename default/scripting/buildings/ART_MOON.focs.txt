@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_ART_MOON"
     description = "BLD_ART_MOON_DESC"
-    buildcost = 250
+    buildcost = 250 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
     location = And [
         Planet
