@@ -23,7 +23,7 @@ Tech
     description = "DEF_PLANET_CLOAK_DESC"
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     category = "DEFENSE_CATEGORY"
-    researchcost = 9999
+    researchcost = 9999 * [[TECH_COST_MULTIPLIER]]
     researchturns = 9999
     Unresearchable
     tags = [ "PEDIA_DEFENSE_CATEGORY" ]
