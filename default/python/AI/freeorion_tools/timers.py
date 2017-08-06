@@ -106,4 +106,5 @@ class AILogTimer(Timer):
                 row.append('%*s ' % (len(header) - 2, int(val)))
             self._write(''.join(row))
 
+
 AITimer = AILogTimer if USE_TIMERS else DummyTimer

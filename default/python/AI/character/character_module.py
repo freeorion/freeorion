@@ -544,6 +544,7 @@ def _make_single_function_combiner(funcnamei, f_combo):
         return f_combo([getattr(x, funcnamei)(*args, **kwargs) for x in self.traits])
     return func
 
+
 # Create combiners for traits that all must be true
 for funcname in ["may_explore_system", "may_surge_industry", "may_maximize_research", "may_invade",
                  "may-invade_with_bases", "may_build_building", "may_produce_troops",
@@ -574,8 +575,10 @@ def average_not_none(llin):
         return 0
     return sum(ll) / float(len(ll))
 
+
 for funcname in ["attitude_to_empire"]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, average_not_none))
+
 
 # Create combiners for traits that use the geometic mean of all not None results
 def geometric_mean_not_none(llin):
@@ -588,8 +591,10 @@ def geometric_mean_not_none(llin):
         return 1
     return math.exp(sum(map(math.log, ll)) / float(len(ll)))
 
+
 for funcname in ["warship_adjusted_production_cost_exponent"]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, geometric_mean_not_none))
+
 
 def _make_most_preferred_combiner(funcnamei):
     """Make a combiner that runs the preference function for each trait and
@@ -603,6 +608,7 @@ def _make_most_preferred_combiner(funcnamei):
             return prefs[0]
         return Counter.most_common(Counter(prefs), 1)[0][0]
     return _most_preferred
+
 
 # Create combiners for traits deal with preference
 for funcname in ["preferred_research_cutoff", "preferred_colonization_portion",

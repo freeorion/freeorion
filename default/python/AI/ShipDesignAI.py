@@ -2149,7 +2149,7 @@ class KrillSpawnerShipDesigner(ShipDesigner):
 def _create_ship_design(design_name, hull_name, part_names, model="fighter",
                         description="", icon="", name_desc_in_string_table=False,
                         verbose=False):
-    """This is basically a wrapper around fo.issueCreateShipDesignOrder to 
+    """This is basically a wrapper around fo.issueCreateShipDesignOrder to
     also update the cache.
 
     :param design_name: the name of the design

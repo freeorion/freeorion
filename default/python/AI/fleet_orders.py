@@ -538,4 +538,3 @@ class OrderRepair(AIFleetOrder):
                 if system_id in foAI.foAIstate.needsEmergencyExploration:
                     del foAI.foAIstate.needsEmergencyExploration[foAI.foAIstate.needsEmergencyExploration.index(system_id)]
             self.order_issued = True
-
