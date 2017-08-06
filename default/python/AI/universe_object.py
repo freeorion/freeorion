@@ -3,6 +3,8 @@ import sys
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from AIDependencies import INVALID_ID
 
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 class UniverseObject(object):
     """

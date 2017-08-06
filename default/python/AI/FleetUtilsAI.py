@@ -9,6 +9,8 @@ from universe_object import Planet
 from ShipDesignAI import get_part_type
 from AIDependencies import INVALID_ID
 import AIDependencies
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 __designStats = {}
 
 

@@ -3,11 +3,14 @@ these methods in turn activate other portions of the python AI code."""
 import pickle  # Python object serialization library
 import sys
 import random
+import logging
 
-from common.configure_logging import redirect_logging_to_freeorion_logger
-redirect_logging_to_freeorion_logger()
+from common.configure_logging import redirect_logging_to_freeorion_logger, convenience_function_references_for_logger
 
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
+
+redirect_logging_to_freeorion_logger()
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger()
 
 from common.option_tools import parse_config
 parse_config(fo.getOptionsDBOptionStr("ai-config"), fo.getUserConfigDir())
@@ -29,7 +32,7 @@ import ResearchAI
 import ResourcesAI
 import TechsListsAI
 from AIDependencies import INVALID_ID
-from freeorion_tools import chat_on_error, print_error, handle_debug_chat, AITimer, init_handlers
+from freeorion_tools import chat_on_error, handle_debug_chat, AITimer, init_handlers
 from common.listeners import listener
 from character.character_module import Aggression
 from character.character_strings_module import get_trait_name_aggression, possible_capitals
@@ -47,8 +50,8 @@ except ImportError:
 
 
 user_dir = fo.getUserDataDir()
-print "Path to folder for user specific data: %s" % user_dir
-print 'Python paths', sys.path
+debug("Path to folder for user specific data: %s" % user_dir)
+debug('Python paths %s' % sys.path)
 
 
 # Mock to have proper inspection and autocomplete for this variable
@@ -72,29 +75,29 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
         return
 
     if empire.eliminated:
-        print "This empire has been eliminated. Ignoring new game start message."
+        info("This empire has been eliminated. Ignoring new game start message.")
         return
 
     turn_timer.start("Server Processing")
 
     # initialize AIstate
     global foAIstate
-    print "Initializing foAIstate..."
+    debug("Initializing foAIstate...")
     foAIstate = AIstate.AIstate(aggression_input)
     aggression_trait = foAIstate.character.get_trait(Aggression)
-    print "New game started, AI Aggression level %d (%s)" % (
-        aggression_trait.key, get_trait_name_aggression(foAIstate.character))
+    debug("New game started, AI Aggression level %d (%s)" % (
+        aggression_trait.key, get_trait_name_aggression(foAIstate.character)))
     foAIstate.session_start_cleanup()
-    print "Initialization of foAIstate complete!"
-    print "Trying to rename our homeworld..."
+    debug("Initialization of foAIstate complete!")
+    debug("Trying to rename our homeworld...")
     planet_id = PlanetUtilsAI.get_capital()
     universe = fo.getUniverse()
     if planet_id is not None and planet_id != INVALID_ID:
         planet = universe.getPlanet(planet_id)
         new_name = " ".join([random.choice(possible_capitals(foAIstate.character)).strip(), planet.name])
-        print "    Renaming to %s..." % new_name
+        debug("    Renaming to %s..." % new_name)
         res = fo.issueRenameOrder(planet_id, new_name)
-        print "    Result: %d; Planet is now named %s" % (res, planet.name)
+        debug("    Result: %d; Planet is now named %s" % (res, planet.name))
 
     diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
                                fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
@@ -118,8 +121,8 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
     global foAIstate
     print "Resuming loaded game"
     if not saved_state_string:
-        print_error("AI given empty state-string to resume from; this is expected if the AI is assigned to an empire "
-                    "previously run by a human, but is otherwise an error. AI will be set to Aggressive.")
+        error("AI given empty state-string to resume from; this is expected if the AI is assigned to an empire "
+              "previously run by a human, but is otherwise an error. AI will be set to Aggressive.")
         foAIstate = AIstate.AIstate(fo.aggression.aggressive)
         foAIstate.session_start_cleanup()
     else:
@@ -131,7 +134,7 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
             # assigning new state
             foAIstate = AIstate.AIstate(fo.aggression.aggressive)
             foAIstate.session_start_cleanup()
-            print_error("Fail to load aiState from saved game: %s" % e)
+            error("Fail to load aiState from saved game: %s", e, exc_info=True)
 
     aggression_trait = foAIstate.character.get_trait(Aggression)
     diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
@@ -152,10 +155,10 @@ def prepareForSave():  # pylint: disable=invalid-name
         return
 
     if empire.eliminated:
-        print "This empire has been eliminated. Save info request"
+        info("This empire has been eliminated. Save info request")
         return
 
-    print "Preparing for game save by serializing state"
+    info("Preparing for game save by serializing state")
 
     # serialize (convert to string) global state dictionary and send to AI client to be stored in save file
     try:
@@ -163,7 +166,7 @@ def prepareForSave():  # pylint: disable=invalid-name
         print "foAIstate pickled to string, about to send to server"
         fo.setSaveStateString(dump_string)
     except:
-        print_error("foAIstate unable to pickle save-state string; the save file should be playable but the AI may have a different aggression.", trace=True)
+        error("foAIstate unable to pickle save-state string; the save file should be playable but the AI may have a different aggression.", exc_info=True)
 
 
 @chat_on_error
@@ -176,10 +179,10 @@ def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
         return
 
     if empire.eliminated:
-        print "This empire has been eliminated. Ignoring chat message"
+        debug("This empire has been eliminated. Ignoring chat message")
         return
 
-    # print "Received chat message from " + str(senderID) + " that says: " + messageText + " - ignoring it"
+    # debug("Received chat message from " + str(senderID) + " that says: " + messageText + " - ignoring it")
     # perhaps it is a debugging interaction
     if handle_debug_chat(sender_id, message_text):
         return
@@ -199,7 +202,7 @@ def handleDiplomaticMessage(message):  # pylint: disable=invalid-name
         return
 
     if empire.eliminated:
-        print "This empire has been eliminated. Ignoring diplomatic message"
+        debug("This empire has been eliminated. Ignoring diplomatic message")
         return
 
     diplomatic_corp.handle_diplomatic_message(message)
@@ -215,7 +218,7 @@ def handleDiplomaticStatusUpdate(status_update):  # pylint: disable=invalid-name
         return
 
     if empire.eliminated:
-        print "This empire has been eliminated. Ignoring diplomatic status update"
+        debug("This empire has been eliminated. Ignoring diplomatic status update")
         return
 
     diplomatic_corp.handle_diplomatic_status_update(status_update)
@@ -246,30 +249,30 @@ def generateOrders():  # pylint: disable=invalid-name
             # not invalidate doneTurn()
             fo.doneTurn()
         except Exception as e:
-            print_error(e)
+            error(e, exc_info=True)
         return
 
     if empire.eliminated:
-        print "This empire has been eliminated. Aborting order generation"
+        debug("This empire has been eliminated. Aborting order generation")
         try:
             # early abort if already eliminated. no need to do meter calculations
             # on last-seen gamestate if nothing can be ordered anyway...
             fo.doneTurn()
         except Exception as e:
-            print_error(e)
+            error(e, exc_info=True)
         return
 
     # This code block is required for correct AI work.
-    print "Meter / Resource Pool updating..."
+    info("Meter / Resource Pool updating...")
     fo.initMeterEstimatesDiscrepancies()
     fo.updateMeterEstimates(False)
     fo.updateResourcePools()
 
     turn = fo.currentTurn()
     turn_uid = foAIstate.set_turn_uid()
-    print "\n\n\n", "=" * 20,
-    print "Starting turn %s (%s) of game: %s" % (turn, turn_uid, foAIstate.uid),
-    print "=" * 20, "\n"
+    debug("\n\n\n" + "=" * 20)
+    debug("Starting turn %s (%s) of game: %s" % (turn, turn_uid, foAIstate.uid))
+    debug("=" * 20 + "\n")
 
     turn_timer.start("AI planning")
     # set the random seed (based on galaxy seed, empire name and current turn)
@@ -311,7 +314,7 @@ def generateOrders():  # pylint: disable=invalid-name
 
     foAIstate.refresh()  # checks exploration border & clears roles/missions of missing fleets & updates fleet locs & threats
     foAIstate.report_system_threats()
-    print("Calling AI Modules")
+    debug("Calling AI Modules")
     # call AI modules
     action_list = [ColonisationAI.survey_universe,
                    ProductionAI.find_best_designs_this_turn,
@@ -333,7 +336,7 @@ def generateOrders():  # pylint: disable=invalid-name
             action()
             main_timer.stop()
         except Exception as e:
-            print_error(e, location=action.__name__)
+            error(e, exc_info=True)
     main_timer.stop_print_and_clear()
     turn_timer.stop_print_and_clear()
     turn_timer.start("Server_Processing")
@@ -341,7 +344,7 @@ def generateOrders():  # pylint: disable=invalid-name
     try:
         fo.doneTurn()
     except Exception as e:
-        print_error(e)  # TODO move it to cycle above
+        error(e, exc_info=True)  # TODO move it to cycle above
 
     if using_statprof:
         try:

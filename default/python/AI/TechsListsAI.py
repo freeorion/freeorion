@@ -5,8 +5,10 @@ researched next.
 """
 import sys
 
-from freeorion_tools import print_error
 import freeOrionAIInterface as fo  # pylint: disable=import-error
+
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 EXOBOT_TECH_NAME = "PRO_EXOBOTS"
 
@@ -646,10 +648,10 @@ def test_tech_integrity():
         techs = this_group.get_techs()
         for tech in techs:
             if not fo.getTech(tech):
-                print_error("In %s: Tech %s seems not to exist!" % (group.__name__, tech))
+                error("In %s: Tech %s seems not to exist!" % (group.__name__, tech))
                 error_occured = True
         for err in this_group.get_errors():
-            print_error(err, location=group.__name__)
+            error(e, exc_info=True)
             error_occured = True
         if not error_occured:
             print "Seems to be OK!"

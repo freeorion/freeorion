@@ -8,6 +8,8 @@ from freeorion_tools import get_ai_tag_grade, dict_to_tuple, tuple_to_dict, cach
 from ShipDesignAI import get_part_type
 from AIDependencies import INVALID_ID
 
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 def get_empire_standard_fighter():
     """Get the current empire standard fighter stats, i.e. the most common shiptype within the empire.

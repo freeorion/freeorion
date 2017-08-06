@@ -14,6 +14,9 @@ from universe_object import UniverseObject, System, Fleet, Planet
 from EnumsAI import MissionType
 from AIDependencies import INVALID_ID
 
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
+
 ORDERS_FOR_MISSION = {
     MissionType.EXPLORATION: OrderMove,
     MissionType.OUTPOST: OrderOutpost,

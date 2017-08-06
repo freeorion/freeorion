@@ -19,9 +19,12 @@ from turn_state import state
 
 from EnumsAI import (PriorityType, EmpireProductionTypes, MissionType, get_priority_production_types,
                      FocusType, ShipRoleType)
-from freeorion_tools import dict_from_map, ppstring, chat_human, tech_is_complete, print_error, AITimer
+from freeorion_tools import dict_from_map, ppstring, chat_human, tech_is_complete, AITimer
 from common.print_utils import Table, Sequence, Text
 from AIDependencies import INVALID_ID
+
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 _best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
 _design_cost_cache = {0: {(-1, -1): 0}}  # outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
@@ -867,7 +870,7 @@ def generate_production_orders():
                     try:
                         distance_map[sys_id] = universe.jumpDistance(homeworld.systemID, sys_id)
                     except Exception as e:
-                        print_error(e, location="ProductionAI.generateProductionOrders")
+                        error(e, exc_info=True)
                 print ([INVALID_ID] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))
                 use_sys = ([(-1, INVALID_ID)] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))[:2][-1][-1]  # kinda messy, but ensures a value
             if use_sys != INVALID_ID:

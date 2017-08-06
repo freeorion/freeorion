@@ -2,8 +2,11 @@ import sys
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import ColonisationAI
-from freeorion_tools import print_error
 from AIDependencies import INVALID_ID
+
+
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 
 def safe_name(univ_object):
@@ -68,7 +71,7 @@ def get_capital():
             if population_id_pairs:
                 return max(population_id_pairs)[-1]
     except Exception as e:
-        print_error(e)
+        error(e, exc_info=True)
     return INVALID_ID  # shouldn't ever reach here
 
 

@@ -232,6 +232,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     RegisterLoggerWithOptionsDB("effects");
     RegisterLoggerWithOptionsDB("FSM");
     RegisterLoggerWithOptionsDB("network");
+    RegisterLoggerWithOptionsDB("python");
 
     InfoLogger() << FreeOrionVersionString();
 

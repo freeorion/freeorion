@@ -1,6 +1,8 @@
 from collections import namedtuple
 
 import freeOrionAIInterface as fo
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 PlanetInfo = namedtuple('PlanetInfo', ['pid', 'species_name', 'owner', 'system_id'])
 

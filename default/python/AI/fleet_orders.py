@@ -9,9 +9,12 @@ import MilitaryAI
 import MoveUtilsAI
 import PlanetUtilsAI
 import CombatRatingsAI
-from freeorion_tools import print_error
 from universe_object import Fleet, System, Planet
 from AIDependencies import INVALID_ID
+
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
+
 dumpTurn = 0
 
 
@@ -78,10 +81,10 @@ class AIFleetOrder(object):
         :type target: universe_object.UniverseObject
         """
         if not isinstance(fleet, Fleet):
-            print_error("Order required fleet got %s" % type(fleet))
+            error("Order required fleet got %s" % type(fleet))
 
         if not isinstance(target, self.TARGET_TYPE):
-            print_error("Target is not allowed, got %s expect %s" % (type(target), self.TARGET_TYPE))
+            error("Target is not allowed, got %s expect %s" % (type(target), self.TARGET_TYPE))
 
         self.fleet = fleet
         self.target = target

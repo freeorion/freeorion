@@ -55,7 +55,10 @@ import AIstate
 import CombatRatingsAI
 import FleetUtilsAI
 from AIDependencies import INVALID_ID
-from freeorion_tools import print_error, UserString, tech_is_complete
+from freeorion_tools import UserString, tech_is_complete
+
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 # Define meta classes for the ship parts  TODO storing as set may not be needed anymore
 ARMOUR = frozenset({fo.shipPartClass.armour})
@@ -357,7 +360,7 @@ class ShipDesignCache(object):
                     print "    Expected: %s, got: %s. Cache was repaired." % (partname, cached_name)
         except Exception as e:
             self.part_by_partname.clear()
-            print_error(e)
+            error(e, exc_info=True)
 
         corrupted = []
         # create a copy of the dict-keys so we can alter the dict
@@ -790,6 +793,7 @@ class ShipDesigner(object):
 
         :returns: float - rating
         """
+        error("WARNING: Rating function not overloaded for class %s!" % self.__class__.__name__)
         raise NotImplementedError
 
     def _set_stats_to_default(self):
@@ -1189,8 +1193,8 @@ class ShipDesigner(object):
                     best_design_list.append((best_rating_for_planet, pid, design_id,
                                              self.production_cost, copy.deepcopy(self.design_stats)))
                 else:
-                    print_error("The best design for %s on planet %d could not be added."
-                                % (self.__class__.__name__, pid))
+                    error("The best design for %s on planet %d could not be added."
+                          % (self.__class__.__name__, pid))
             elif verbose:
                 print "Could not find a suitable design of type %s for planet %s." % (self.__class__.__name__, planet)
         sorted_design_list = sorted(best_design_list, key=lambda x: x[0], reverse=True)
@@ -2334,10 +2338,9 @@ def _get_tech_bonus(upgrade_dict, part_name):
     except KeyError:
         if part_name not in _raised_warnings:
             _raised_warnings.add(part_name)
-            print_error(("WARNING: Encountered unknown part (%s): "
-                         "The AI can play on but its damage estimates may be incorrect leading to worse decision-making. "
-                         "Please update AIDependencies.py") % part_name,
-                        location="ShipDesignAI._get_tech_bonus()", trace=True)
+            error(("WARNING: Encountered unknown part (%s): "
+                   "The AI can play on but its damage estimates may be incorrect leading to worse decision-making. "
+                   "Please update AIDependencies.py") % part_name, exc_info=True)
         return 0
     total_tech_bonus = 0
     for tech, bonus in upgrades:
