@@ -793,7 +793,7 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
         these_allocations = allocations
 
     # send_for_repair(mil_needing_repair_ids) #currently, let get taken care of by AIFleetMission.generate_fleet_orders()
-    
+
     # get systems to defend
 
     avail_mil_fleet_ids = set(avail_mil_fleet_ids)

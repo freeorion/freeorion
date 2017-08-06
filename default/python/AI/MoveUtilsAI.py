@@ -98,7 +98,7 @@ def can_travel_to_system(fleet_id, from_system_target, to_system_target, ensure_
 def can_travel_to_system_and_return_to_resupply(fleet_id, from_system_target, to_system_target):
     """
     Filter systems where fleet can travel from starting system. # TODO rename function
-    
+
     :param fleet_id:
     :type fleet_id: int
     :param from_system_target:

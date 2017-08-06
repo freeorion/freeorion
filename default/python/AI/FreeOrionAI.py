@@ -56,6 +56,7 @@ class AIStateMock(AIstate.AIstate):
     def __init__(self):
         pass
 
+
 # AIstate
 foAIstate = AIStateMock()
 diplomatic_corp = None
@@ -69,7 +70,7 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
     if empire is None:
         print "This client has no empire. Ignoring new game start message."
         return
-    
+
     if empire.eliminated:
         print "This empire has been eliminated. Ignoring new game start message."
         return
@@ -101,13 +102,14 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
     diplomatic_corp = diplomatic_corp_configs.get(aggression_trait.key, DiplomaticCorp.DiplomaticCorp)()
     TechsListsAI.test_tech_integrity()
 
+
 @chat_on_error
 def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
     """Called by client to when resume a loaded game."""
     if fo.getEmpire() is None:
         print "This client has no empire. Doing nothing to resume loaded game."
-        return    
-    
+        return
+
     if fo.getEmpire().eliminated:
         print "This empire has been eliminated. Ignoring resume loaded game."
         return
@@ -147,8 +149,8 @@ def prepareForSave():  # pylint: disable=invalid-name
     empire = fo.getEmpire()
     if empire is None:
         print "This client has no empire. Doing nothing to prepare for save."
-        return     
-    
+        return
+
     if empire.eliminated:
         print "This empire has been eliminated. Save info request"
         return
@@ -172,7 +174,7 @@ def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
     if empire is None:
         print "This client has no empire. Doing nothing to handle chat message."
         return
-    
+
     if empire.eliminated:
         print "This empire has been eliminated. Ignoring chat message"
         return
@@ -195,7 +197,7 @@ def handleDiplomaticMessage(message):  # pylint: disable=invalid-name
     if empire is None:
         print "This client has no empire. Doing nothing to handle diplomatic message."
         return
-    
+
     if empire.eliminated:
         print "This empire has been eliminated. Ignoring diplomatic message"
         return
@@ -211,7 +213,7 @@ def handleDiplomaticStatusUpdate(status_update):  # pylint: disable=invalid-name
     if empire is None:
         print "This client has no empire. Doing nothing to handle diplomatic status message."
         return
-    
+
     if empire.eliminated:
         print "This empire has been eliminated. Ignoring diplomatic status update"
         return
@@ -225,13 +227,13 @@ def generateOrders():  # pylint: disable=invalid-name
     """Called once per turn to tell the Python AI to generate and issue orders to control its empire.
     at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
     and can be sent to the server for processing."""
-    
+
     rules = fo.getGameRules()
     print "Defined game rules:"
     for rule in rules.getRulesAsStrings:
         print "Name: " + rule.name + "  value: " + str(rule.value)
     print "Rule RULE_NUM_COMBAT_ROUNDS value: " + str(rules.getInt("RULE_NUM_COMBAT_ROUNDS"))
-    
+
     empire = fo.getEmpire()
     if empire is None:
         print "This client has no empire. Doing nothing to generate orders."
@@ -241,12 +243,12 @@ def generateOrders():  # pylint: disable=invalid-name
             #
             # note that doneTurn() is issued on behalf of the client network
             # id, not the empire id, so not having a correct empire id does
-            # not invalidate doneTurn()            
+            # not invalidate doneTurn()
             fo.doneTurn()
         except Exception as e:
             print_error(e)
         return
-    
+
     if empire.eliminated:
         print "This empire has been eliminated. Aborting order generation"
         try:

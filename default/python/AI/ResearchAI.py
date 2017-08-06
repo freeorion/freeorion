@@ -32,6 +32,7 @@ class Choices(object):
         self.extra_asteroid_hull = rng.random() < 0.05
         self.extra_energy_hull = rng.random() < 0.05
 
+
 empire_stars = {}
 research_reqs = {}
 choices = Choices()
@@ -419,7 +420,7 @@ def generate_research_orders():
         return
     else:
         print 'New research approach is used'
-    
+
     # initializing priority functions here within generate_research_orders() to avoid import race
     if not priority_funcs:
         init()
@@ -627,7 +628,7 @@ def generate_classic_research_orders():
     for tline in tlines:
         print "%25s %25s %25s" % tline
     print
-    
+
     #
     # report techs currently at head of research queue
     #

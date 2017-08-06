@@ -199,6 +199,7 @@ class TechGroup1SparseB(TechGroup1):
             "SHP_SPACE_FLUX_DRIVE"
         )
 
+
 class TechGroup1SparseC(TechGroup1):
     def __init__(self):
         super(TechGroup1SparseC, self).__init__()

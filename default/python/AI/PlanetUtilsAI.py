@@ -5,6 +5,7 @@ import ColonisationAI
 from freeorion_tools import print_error
 from AIDependencies import INVALID_ID
 
+
 def safe_name(univ_object):
     return (univ_object and univ_object.name) or "?"
 

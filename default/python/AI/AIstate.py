@@ -113,11 +113,11 @@ class AIstate(object):
             raise ConversionError("Version attribute of AIstate must be an integer!")
         if AIstate.version < 0:
             raise ConversionError("AIstate savegame compatibility version must be a positive integer!")
-            
-        # need to store the version explicitly as the class variable "version" is only stored in the 
+
+        # need to store the version explicitly as the class variable "version" is only stored in the
         # self.__class__.__dict__ while we only pickle the object (i.e. self.__dict__ )
         self.version = AIstate.version
-        
+
         # Debug info
         # unique id for game
         self.uid = self.generate_uid(first=True)
@@ -549,7 +549,7 @@ class AIstate(object):
                 sys_status['myFleetRatingVsPlanets'] = CombatRatingsAI.combine_ratings_list(my_ratings_against_planets_list)
                 sys_status['all_local_defenses'] = CombatRatingsAI.combine_ratings(sys_status['myFleetRating'], sys_status['mydefenses']['overall'])
             sys_status['neighbors'] = set(dict_from_map(universe.getSystemNeighborsMap(sys_id, self.empireID)))
-            
+
         for sys_id in system_id_list:
             sys_status = self.systemStatus[sys_id]
             neighbors = sys_status.get('neighbors', set())
