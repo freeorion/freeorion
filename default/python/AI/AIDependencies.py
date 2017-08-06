@@ -79,24 +79,24 @@ INVALID_ID = -1
 POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES = {
     # "Effect": [uninhab, hostile, poor, adequate, good]
     "environment_bonus": [0, -4, -2, 0, 3],
-    "GRO_SYMBIOTIC_BIO": [0, 0, 1, 1, 1],
-    "GRO_XENO_GENETICS": [0, 1, 2, 2, 0],
-    "GRO_XENO_HYBRID":   [0, 2, 1, 0, 0],
-    "GRO_CYBORG":        [0, 2, 0, 0, 0],
+    "GRO_SYMBIOTIC_BIO": [0,  0,  1, 1, 1],
+    "GRO_XENO_GENETICS": [0,  1,  2, 2, 0],
+    "GRO_XENO_HYBRID":   [0,  2,  1, 0, 0],
+    "GRO_CYBORG":        [0,  2,  0, 0, 0],
 }
 
 # Population modifiers scaling with planet size
 #  - [[LATE_PRIORITY]] or later:
 POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES = {
-    "GRO_SUBTER_HAB": [0, 1, 1, 1, 1],
-    "CON_NDIM_STRUC": [0, 2, 2, 2, 2],
+    "GRO_SUBTER_HAB":  [0, 1, 1, 1, 1],
+    "CON_NDIM_STRUC":  [0, 2, 2, 2, 2],
     "CON_ORBITAL_HAB": [0, 1, 1, 1, 1],
 }
 
 # flat boni not dependent on size
 POP_CONST_MOD_MAP = {
     # "Source": [uninhab, hostile, poor, adequate, good]
-    "GRO_PLANET_ECOL":   [0, 0, 0, 1, 1],
+    "GRO_PLANET_ECOL":   [0, 0, 0,  1,  1],
     "GRO_SYMBIOTIC_BIO": [0, 0, 0, -1, -1],
 }
 # </editor-fold>
