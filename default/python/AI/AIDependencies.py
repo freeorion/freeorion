@@ -78,7 +78,7 @@ INVALID_ID = -1
 #  - [[EARLY_PRIORITY]]: Affected by species modifiers
 POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES = {
     # "Effect": [uninhab, hostile, poor, adequate, good]
-    "environment_bonus": [0,-4,-2, 0, 3],
+    "environment_bonus": [0, -4, -2, 0, 3],
     "GRO_SYMBIOTIC_BIO": [0, 0, 1, 1, 1],
     "GRO_XENO_GENETICS": [0, 1, 2, 2, 0],
     "GRO_XENO_HYBRID":   [0, 2, 1, 0, 0],
@@ -97,7 +97,7 @@ POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES = {
 POP_CONST_MOD_MAP = {
     # "Source": [uninhab, hostile, poor, adequate, good]
     "GRO_PLANET_ECOL":   [0, 0, 0, 1, 1],
-    "GRO_SYMBIOTIC_BIO": [0, 0, 0,-1,-1],
+    "GRO_SYMBIOTIC_BIO": [0, 0, 0, -1, -1],
 }
 # </editor-fold>
 
@@ -823,5 +823,3 @@ PART_EFFECTS = {
 # </editor-fold>
 
 # </editor-fold>
-
-
