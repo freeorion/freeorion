@@ -207,7 +207,8 @@ class AIFleetMission(object):
                 return False
             if isinstance(target, Planet):
                 planet = target.get_object()
-                if not planet.unowned or planet.owner != fleet.owner:  # TODO remove latter portion of this check in light of invasion retargeting, or else correct logic
+                # TODO remove latter portion of next check in light of invasion retargeting, or else correct logic
+                if not planet.unowned or planet.owner != fleet.owner:
                     return True
         elif mission_type in [MissionType.MILITARY, MissionType.SECURE, MissionType.ORBITAL_DEFENSE]:
             if isinstance(target, System):
@@ -226,7 +227,8 @@ class AIFleetMission(object):
         if fleet_order.target and isinstance(fleet_order.target, Planet):
             planet = fleet_order.target.get_object()
             if isinstance(fleet_order, OrderColonize):
-                if planet.currentMeterValue(fo.meterType.population) == 0 and (planet.ownedBy(fo.empireID()) or planet.unowned):
+                if (planet.currentMeterValue(fo.meterType.population) == 0 and
+                        (planet.ownedBy(fo.empireID()) or planet.unowned)):
                     return False
             elif isinstance(fleet_order, OrderOutpost):
                 if planet.unowned:
@@ -343,7 +345,8 @@ class AIFleetMission(object):
         # TODO: priority
         order_completed = True
         print
-        print "Checking orders for fleet %s (on turn %d), with mission type %s" % (self.fleet.get_object(), fo.currentTurn(), self.type or 'No mission')
+        print "Checking orders for fleet %s (on turn %d), with mission type %s" % (
+            self.fleet.get_object(), fo.currentTurn(), self.type or 'No mission')
         if MissionType.INVASION == self.type:
             self._check_retarget_invasion()
         just_issued_move_order = False
@@ -352,7 +355,8 @@ class AIFleetMission(object):
             if just_issued_move_order and self.fleet.get_object().systemID != last_move_target_id:
                 # having just issued a move order, we will normally stop issuing orders this turn, except that if there
                 # are consecutive move orders we will consider moving through the first destination rather than stopping
-                if not isinstance(fleet_order, OrderMove) or self.need_to_pause_movement(last_move_target_id, fleet_order):
+                if (not isinstance(fleet_order, OrderMove) or
+                        self.need_to_pause_movement(last_move_target_id, fleet_order)):
                     break
             print "Checking order: %s" % fleet_order
             if isinstance(fleet_order, (OrderColonize, OrderOutpost, OrderInvade)):  # TODO: invasion?
@@ -384,12 +388,14 @@ class AIFleetMission(object):
                 if isinstance(fleet_order, OrderMove):
                     this_system_id = fleet_order.target.id
                     this_status = foAI.foAIstate.systemStatus.setdefault(this_system_id, {})
-                    if this_status.get('monsterThreat', 0) > fo.currentTurn() * MilitaryAI.cur_best_mil_ship_rating() / 4.0:
-                        if (self.type not in (MissionType.MILITARY,
-                                              MissionType.SECURE) or
-                            fleet_order != self.orders[-1]  # if this move order is not this mil fleet's final destination, and blocked by Big Monster, release and hope for more effective reassignment
-                            ):
-                            print "Aborting mission due to being blocked by Big Monster at system %d, threat %d" % (this_system_id, foAI.foAIstate.systemStatus[this_system_id]['monsterThreat'])
+                    threat_threshold = fo.currentTurn() * MilitaryAI.cur_best_mil_ship_rating() / 4.0
+                    if this_status.get('monsterThreat', 0) > threat_threshold:
+                        # if this move order is not this mil fleet's final destination, and blocked by Big Monster,
+                        # release and hope for more effective reassignment
+                        if (self.type not in (MissionType.MILITARY, MissionType.SECURE) or
+                                fleet_order != self.orders[-1]):
+                            print "Aborting mission due to being blocked by Big Monster at system %d, threat %d" % (
+                                this_system_id, foAI.foAIstate.systemStatus[this_system_id]['monsterThreat'])
                             print "Full set of orders were:"
                             for this_order in self.orders:
                                 print " - %s" % this_order
@@ -406,23 +412,33 @@ class AIFleetMission(object):
 
                 if last_order and isinstance(last_order, OrderColonize):
                     planet = universe.getPlanet(last_order.target.id)
-                    sys_partial_vis_turn = universe.getVisibilityTurnsMap(planet.systemID, fo.empireID()).get(fo.visibility.partial, -9999)
-                    planet_partial_vis_turn = universe.getVisibilityTurnsMap(planet.id, fo.empireID()).get(fo.visibility.partial, -9999)
-                    if planet_partial_vis_turn == sys_partial_vis_turn and not planet.currentMeterValue(fo.meterType.population):
-                        print >> sys.stderr, "Fleet %d has tentatively completed its colonize mission but will wait to confirm population." % self.fleet.id
+                    sys_partial_vis_turn = universe.getVisibilityTurnsMap(planet.systemID, fo.empireID()).get(
+                        fo.visibility.partial, -9999)
+                    planet_partial_vis_turn = universe.getVisibilityTurnsMap(planet.id, fo.empireID()).get(
+                        fo.visibility.partial, -9999)
+                    if (planet_partial_vis_turn == sys_partial_vis_turn and
+                            not planet.currentMeterValue(fo.meterType.population)):
+                        print >> sys.stderr, ("Fleet %d has tentatively completed its "
+                                              "colonize mission but will wait to confirm population.") % self.fleet.id
                         print "    Order details are %s" % last_order
-                        print "    Order is valid: %s; issued: %s; executed: %s" % (last_order.is_valid(), last_order.order_issued, last_order.executed)
+                        print "    Order is valid: %s; issued: %s; executed: %s" % (
+                            last_order.is_valid(), last_order.order_issued, last_order.executed)
                         if not last_order.is_valid():
                             source_target = last_order.fleet
                             target_target = last_order.target
-                            print "        source target validity: %s; target target validity: %s " % (bool(source_target), bool(target_target))
+                            print "        source target validity: %s; target target validity: %s " % (
+                                bool(source_target), bool(target_target))
                         return  # colonize order must not have completed yet
                 clear_all = True
                 last_sys_target = INVALID_ID
                 if last_order and isinstance(last_order, OrderMilitary):
                     last_sys_target = last_order.target.id
-                    # if (MissionType.SECURE == self.type) or # not doing this until decide a way to release from a SECURE mission
-                    secure_targets = set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs + AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs)
+                    # not doing this until decide a way to release from a SECURE mission
+                    # if (MissionType.SECURE == self.type) or
+                    secure_targets = set(AIstate.colonyTargetedSystemIDs +
+                                         AIstate.outpostTargetedSystemIDs +
+                                         AIstate.invasionTargetedSystemIDs +
+                                         AIstate.blockadeTargetedSystemIDs)
                     if last_sys_target in secure_targets:  # consider a secure mission
                         if last_sys_target in AIstate.colonyTargetedSystemIDs:
                             secure_type = "Colony"
@@ -434,7 +450,9 @@ class AIFleetMission(object):
                             secure_type = "Blockade"
                         else:
                             secure_type = "Unidentified"
-                        print "Fleet %d has completed initial stage of its mission to secure system %d (targeted for %s), may release a portion of ships" % (self.fleet.id, last_sys_target, secure_type)
+                        print ("Fleet %d has completed initial stage of its mission "
+                               "to secure system %d (targeted for %s), "
+                               "may release a portion of ships" % (self.fleet.id, last_sys_target, secure_type))
                         clear_all = False
                 fleet_id = self.fleet.id
                 if clear_all:
@@ -447,26 +465,33 @@ class AIFleetMission(object):
                         self.clear_target()
                         if foAI.foAIstate.get_fleet_role(fleet_id) in (MissionType.MILITARY,
                                                                        MissionType.SECURE):
-                            allocations = MilitaryAI.get_military_fleets(mil_fleets_ids=[fleet_id], try_reset=False, thisround="Fleet %d Reassignment" % fleet_id)
+                            allocations = MilitaryAI.get_military_fleets(mil_fleets_ids=[fleet_id],
+                                                                         try_reset=False,
+                                                                         thisround="Fleet %d Reassignment" % fleet_id)
                             if allocations:
-                                MilitaryAI.assign_military_fleets_to_systems(use_fleet_id_list=[fleet_id], allocations=allocations)
+                                MilitaryAI.assign_military_fleets_to_systems(use_fleet_id_list=[fleet_id],
+                                                                             allocations=allocations)
                     else:  # no orders
                         print "No Current Orders"
                 else:
                     # TODO: evaluate releasing a smaller portion or none of the ships
                     system_status = foAI.foAIstate.systemStatus.setdefault(last_sys_target, {})
                     new_fleets = []
-                    threat_present = (system_status.get('totalThreat', 0) != 0) or (system_status.get('neighborThreat', 0) != 0)
+                    threat_present = system_status.get('totalThreat', 0) + system_status.get('neighborThreat', 0) > 0
                     target_system = universe.getSystem(last_sys_target)
                     if not threat_present and target_system:
                         for pid in target_system.planetIDs:
                             planet = universe.getPlanet(pid)
-                            if planet and planet.owner != fo.empireID() and planet.currentMeterValue(fo.meterType.maxDefense) > 0:
+                            if (planet and
+                                    planet.owner != fo.empireID() and
+                                    planet.currentMeterValue(fo.meterType.maxDefense) > 0):
                                 threat_present = True
                                 break
                     if not threat_present:
                         print "No current threat in target system; releasing a portion of ships."
-                        new_fleets = FleetUtilsAI.split_fleet(self.fleet.id)  # at least first stage of current task is done; release extra ships for potential other deployments
+                        # at least first stage of current task is done;
+                        # release extra ships for potential other deployments
+                        new_fleets = FleetUtilsAI.split_fleet(self.fleet.id)
                     else:
                         print "Threat remains in target system; NOT releasing any ships."
                     new_military_fleets = []
@@ -475,16 +500,22 @@ class AIFleetMission(object):
                             new_military_fleets.append(fleet_id)
                     allocations = []
                     if new_military_fleets:
-                        allocations = MilitaryAI.get_military_fleets(mil_fleets_ids=new_military_fleets, try_reset=False, thisround="Fleet Reassignment %s" % new_military_fleets)
+                        allocations = MilitaryAI.get_military_fleets(
+                            mil_fleets_ids=new_military_fleets,
+                            try_reset=False,
+                            thisround="Fleet Reassignment %s" % new_military_fleets
+                        )
                     if allocations:
-                        MilitaryAI.assign_military_fleets_to_systems(use_fleet_id_list=new_military_fleets, allocations=allocations)
+                        MilitaryAI.assign_military_fleets_to_systems(use_fleet_id_list=new_military_fleets,
+                                                                     allocations=allocations)
 
     def generate_fleet_orders(self):
         """generates AIFleetOrders from fleets targets to accomplish"""
         universe = fo.getUniverse()
         fleet_id = self.fleet.id
         fleet = universe.getFleet(fleet_id)
-        if (not fleet) or fleet.empty or (fleet_id in universe.destroyedObjectIDs(fo.empireID())):  # fleet was probably merged into another or was destroyed
+        if (not fleet) or fleet.empty or (fleet_id in universe.destroyedObjectIDs(fo.empireID())):
+            # fleet was probably merged into another or was destroyed
             foAI.foAIstate.delete_fleet_info(fleet_id)
             return
 
@@ -492,12 +523,15 @@ class AIFleetMission(object):
         self.clear_fleet_orders()
         system_id = fleet.systemID
         start_sys_id = [fleet.nextSystemID, system_id][system_id >= 0]
-        # if fleet doesn't have any mission, then repair if needed or resupply if is current location not in supplyable system
+        # if fleet doesn't have any mission,
+        # then repair if needed or resupply if is current location not in supplyable system
         empire = fo.getEmpire()
         fleet_supplyable_system_ids = empire.fleetSupplyableSystemIDs
         # if (not self.hasAnyAIMissionTypes()):
-        if not self.target and (system_id not in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs +
-                                                     AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs)):
+        if not self.target and (system_id not in set(AIstate.colonyTargetedSystemIDs +
+                                                     AIstate.outpostTargetedSystemIDs +
+                                                     AIstate.invasionTargetedSystemIDs +
+                                                     AIstate.blockadeTargetedSystemIDs)):
             if self._need_repair():
                 repair_fleet_order = MoveUtilsAI.get_repair_fleet_order(self.fleet, start_sys_id)
                 if repair_fleet_order and repair_fleet_order.is_valid():
