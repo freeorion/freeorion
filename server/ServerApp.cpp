@@ -1477,6 +1477,9 @@ bool ServerApp::IsAvailableName(const std::string& player_name) const {
     return true;
 }
 
+bool ServerApp::IsHostless() const
+{ return GetOptionsDB().Get<bool>("hostless"); }
+
 Networking::ClientType ServerApp::GetEmpireClientType(int empire_id) const
 { return GetPlayerClientType(ServerApp::EmpirePlayerID(empire_id)); }
 

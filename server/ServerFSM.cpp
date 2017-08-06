@@ -279,7 +279,12 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
 ////////////////////////////////////////////////////////////
 Idle::Idle(my_context c) :
     my_base(c)
-{ TraceLogger(FSM) << "(ServerFSM) Idle"; }
+{
+    TraceLogger(FSM) << "(ServerFSM) Idle";
+    if (Server().IsHostless()) {
+        post_event(Hostless());
+    }
+}
 
 Idle::~Idle()
 { TraceLogger(FSM) << "(ServerFSM) ~Idle"; }
@@ -371,6 +376,10 @@ sc::result Idle::react(const Error& msg) {
     return discard_event();
 }
 
+sc::result Idle::react(const Hostless&) {
+    return transit<MPLobby>();
+}
+
 
 ////////////////////////////////////////////////////////////
 // MPLobby
@@ -381,26 +390,27 @@ MPLobby::MPLobby(my_context c) :
     m_server_save_game_data(new ServerSaveGameData())
 {
     TraceLogger(FSM) << "(ServerFSM) MPLobby";
-    ServerApp& server = Server();
-    const SpeciesManager& sm = GetSpeciesManager();
-    int host_id = server.m_networking.HostPlayerID();
-    const PlayerConnectionPtr& player_connection = *(server.m_networking.GetPlayer(host_id));
-
     ClockSeed();
+    ServerApp& server = Server();
+    if (! server.IsHostless()) {
+        const SpeciesManager& sm = GetSpeciesManager();
+        int host_id = server.m_networking.HostPlayerID();
+        const PlayerConnectionPtr& player_connection = *(server.m_networking.GetPlayer(host_id));
 
-    // create player setup data for host, and store in list
-    m_lobby_data->m_players.push_back(std::make_pair(host_id, PlayerSetupData()));
+        // create player setup data for host, and store in list
+        m_lobby_data->m_players.push_back(std::make_pair(host_id, PlayerSetupData()));
 
-    PlayerSetupData& player_setup_data = m_lobby_data->m_players.begin()->second;
+        PlayerSetupData& player_setup_data = m_lobby_data->m_players.begin()->second;
 
-    player_setup_data.m_player_name =           player_connection->PlayerName();
-    player_setup_data.m_empire_name =           (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
-    player_setup_data.m_empire_color =          EmpireColors().at(0);               // since the host is the first joined player, it can be assumed that no other player is using this colour (unlike subsequent join game message responses)
-    player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
-    // leaving save game empire id as default
-    player_setup_data.m_client_type =           player_connection->GetClientType();
+        player_setup_data.m_player_name =           player_connection->PlayerName();
+        player_setup_data.m_empire_name =           (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
+        player_setup_data.m_empire_color =          EmpireColors().at(0);               // since the host is the first joined player, it can be assumed that no other player is using this colour (unlike subsequent join game message responses)
+        player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
+        // leaving save game empire id as default
+        player_setup_data.m_client_type =           player_connection->GetClientType();
 
-    player_connection->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
+        player_connection->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
+    }
 }
 
 MPLobby::~MPLobby()

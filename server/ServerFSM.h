@@ -45,6 +45,7 @@ struct CheckTurnEndConditions : sc::event<CheckTurnEndConditions>       {};
 struct ProcessTurn : sc::event<ProcessTurn>                             {};
 struct DisconnectClients : sc::event<DisconnectClients>                 {};
 struct ShutdownServer : sc::event<ShutdownServer>                       {};
+struct Hostless : sc::event<Hostless>                                   {}; // Empty event to move server into MPLobby state.
 
 /** This is a Boost.Preprocessor list of all non MessageEventBase events. It is
   * used to generate the unconsumed events message. */
@@ -136,14 +137,14 @@ private:
     ServerApp& m_server;
 };
 
-
 /** The server's initial state. */
 struct Idle : sc::state<Idle, ServerFSM> {
     typedef boost::mpl::list<
         sc::custom_reaction<HostMPGame>,
         sc::custom_reaction<HostSPGame>,
         sc::custom_reaction<ShutdownServer>,
-        sc::custom_reaction<Error>
+        sc::custom_reaction<Error>,
+        sc::custom_reaction<Hostless>
     > reactions;
 
     Idle(my_context c);
@@ -153,6 +154,7 @@ struct Idle : sc::state<Idle, ServerFSM> {
     sc::result react(const HostSPGame& msg);
     sc::result react(const ShutdownServer& u);
     sc::result react(const Error& msg);
+    sc::result react(const Hostless&);
 
     SERVER_ACCESSOR
 };
