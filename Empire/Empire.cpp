@@ -140,7 +140,7 @@ namespace {
                 continue;
             bool local_to_stockpile = available_group.first.find(stockpile_location_id) != available_group.first.end();
             float this_transfer_rate = local_to_stockpile ? 
-                        local_stockpile_transfer_rate : remote_stockpile_transfer_rate;
+                local_stockpile_transfer_rate : remote_stockpile_transfer_rate;
             new_contributions += excess_here * this_transfer_rate;
         }
         return starting_stockpile + new_contributions - stockpile_used;
@@ -266,7 +266,7 @@ namespace {
             const std::set<int>& group = queue_element_resource_sharing_object_groups[i];
             std::map<std::set<int>, float>::iterator available_pp_it = available_pp.find(group);
             float& group_pp_available = (available_pp_it != available_pp.end()) ? 
-                        available_pp_it->second : dummy_pp_source;
+                available_pp_it->second : dummy_pp_source;
 
             if ((group_pp_available <= 0) && 
                 (available_stockpile <= 0 || !queue_element.allowed_imperial_stockpile_use)) {
@@ -291,7 +291,7 @@ namespace {
 
             // get max contribution per turn and turns to build at max contribution rate
             int location_id = (queue_element.item.CostIsProductionLocationInvariant() ?
-                        INVALID_OBJECT_ID : queue_element.location);
+                INVALID_OBJECT_ID : queue_element.location);
             std::pair<ProductionQueue::ProductionItem, int> key(queue_element.item, location_id);
             float item_cost = 1e6;  // dummy/default value, shouldn't ever really be needed
             int build_turns = 1;    // dummy/default value, shouldn't ever really be needed
@@ -313,12 +313,12 @@ namespace {
             // the last item complete already) and by the total pp available in this element's production location's
             // resource sharing group (including any stockpile availability)
             float stockpile_conversion_rate = (group.find(stockpile_location_id) != group.end()) ? 
-                        local_stockpile_use_rate : remote_stockpile_use_rate;
+                local_stockpile_use_rate : remote_stockpile_use_rate;
             float stockpile_available_for_this = (queue_element.allowed_imperial_stockpile_use) ?
-                        available_stockpile * stockpile_conversion_rate : 0;
+                available_stockpile * stockpile_conversion_rate : 0;
 
             float allocation = std::max(0.0f, std::min(element_this_turn_limit, 
-                                                       group_pp_available + stockpile_available_for_this));
+                                        group_pp_available + stockpile_available_for_this));
 
             //DebugLogger() << "element accumulated " << element_accumulated_PP << " of total cost "
             //                       << element_total_cost << " and needs " << additional_pp_to_complete_element
@@ -333,7 +333,7 @@ namespace {
             allocated_pp[group] += group_drawdown;  // relies on default initial mapped value of 0.0f
             group_pp_available -= group_drawdown;
             float stockpile_drawdown = allocation == group_drawdown ? 
-                        0.0f : (allocation - group_drawdown) / stockpile_conversion_rate;
+                0.0f : (allocation - group_drawdown) / stockpile_conversion_rate;
 
             // record allocation from stockpile
             // protect against any slight mismatch that might possible happen from multiplying
