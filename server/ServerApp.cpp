@@ -760,7 +760,7 @@ bool ServerApp::NewGameInitVerifyJoiners(
         return false;
     }
 
-    if (!host_in_player_id_setup_data) {
+    if (!host_in_player_id_setup_data && !IsHostless()) {
         ErrorLogger() << "NewGameInitVerifyJoiners : Host id " << m_networking.HostPlayerID()
                       << " is not a valid player id.";
         return false;
