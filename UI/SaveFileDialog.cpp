@@ -122,11 +122,12 @@ namespace {
 
     bool Prompt(const std::string& question){
         std::shared_ptr<GG::Font> font = ClientUI::GetFont();
-        GG::ThreeButtonDlg prompt(PROMT_WIDTH, PROMPT_HEIGHT, question, font,
-                                  ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::CtrlColor(), ClientUI::TextColor(),
-                                  std::size_t(2), UserString("YES"), UserString("CANCEL"), "");
-        prompt.Run();
-        return prompt.Result() == 0;
+        auto prompt = /*TODO: Remove extra shared_ptr wrap after Wnd::Create converted to return shared_ptr*/std::shared_ptr<GG::ThreeButtonDlg>(GG::Wnd::Create<GG::ThreeButtonDlg>(
+            PROMT_WIDTH, PROMPT_HEIGHT, question, font,
+            ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::CtrlColor(), ClientUI::TextColor(),
+            std::size_t(2), UserString("YES"), UserString("CANCEL"), ""));
+        prompt->Run();
+        return prompt->Result() == 0;
     }
 
     /// Returns true if list contains a row with the text str
