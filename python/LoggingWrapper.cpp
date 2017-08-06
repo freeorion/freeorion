@@ -14,23 +14,34 @@ namespace {
     // library.
     static const std::size_t MAX_SINGLE_CHUNK_TEXT_SIZE = 4096;
 
-    // Python sends text as several null-terminated array of char which need to be
-    // concatenated before they are output to the logger.  There's probably a better
-    // way to do this, but I don't know what it is, and this seems reasonably safe...
-    void send_to_log(std::stringstream & ss, const std::string & input, const std::function<void(const std::string&)>& logger) {
+    /** Python streams text as strings which need to be concatenated before
+        they are output to the logger.  Each \p input may end with an
+        incomplete line that is continued in the next \p input from the python
+        executable.  \p ss should be a persistent stringstream per output sink
+        to persist the incomplete line of text. \p is a logger associated with
+        the sink that \p ss represents.
+
+*/
+    void send_to_log(std::stringstream& ss, const std::string& input, const std::function<void(const std::string&)>& logger) {
         if (input.empty()) return;
         ss <<  ((input.size() < MAX_SINGLE_CHUNK_TEXT_SIZE) ? input : input.substr(0, MAX_SINGLE_CHUNK_TEXT_SIZE));
         std::string line;
+
+        // Grab all complete lines of text.
         std::getline(ss, line);
         while (ss.good()) {
             logger(line);
             std::getline(ss, line);
         }
 
+        // If ss is good, store any partial line of text for the next call to send_to_log.
         if (ss.eof()) {
             ss.clear();
             ss << line;
-        } else if (ss.bad() || ss.fail()) {
+        }
+
+        // Report any errors
+        else if (ss.bad() || ss.fail()) {
             ErrorLogger() << "Logger stream from python experienced an error " << ss.rdstate();
             ss.clear();
         }
@@ -85,8 +96,9 @@ namespace {
                       // const std::string& function_name,
                       const std::string& lineno)
     {
-        // Keeping the string assemble in of this switch statement means that it is gated by
-        // log_level and not done unnecessarily when that level of logger is turned off.
+        // Assembling the log in the stream input to the logger means that the
+        // string assembly is gated by the log level.  logs are not assembled
+        // if that log level is disabled.
         switch (log_level) {
         case LogLevel::trace:
             TraceLogger(python) << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " - " << msg;
