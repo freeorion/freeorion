@@ -56,7 +56,8 @@ struct Hostless : sc::event<Hostless>                                   {}; // E
     (CheckTurnEndConditions)                    \
     (ProcessTurn)                               \
     (DisconnectClients)                         \
-    (ShutdownServer)
+    (ShutdownServer)                            \
+    (Hostless)
 
 //  Message events
 /** The base class for all state machine events that are based on Messages. */
@@ -143,6 +144,7 @@ struct Idle : sc::state<Idle, ServerFSM> {
         sc::custom_reaction<HostMPGame>,
         sc::custom_reaction<HostSPGame>,
         sc::custom_reaction<ShutdownServer>,
+        sc::custom_reaction<Hostless>,
         sc::custom_reaction<Error>,
         sc::custom_reaction<Hostless>
     > reactions;
@@ -171,6 +173,7 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
         sc::custom_reaction<HostMPGame>,
         sc::custom_reaction<HostSPGame>,
         sc::custom_reaction<ShutdownServer>,
+        sc::custom_reaction<Hostless>,
         sc::custom_reaction<Error>
     > reactions;
 
@@ -185,6 +188,7 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
     sc::result react(const HostMPGame& msg);
     sc::result react(const HostSPGame& msg);
     sc::result react(const ShutdownServer& u);
+    sc::result react(const Hostless& u);
     sc::result react(const Error& msg);
 
     std::shared_ptr<MultiplayerLobbyData>   m_lobby_data;
@@ -270,6 +274,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
         sc::custom_reaction<ModeratorAct>,
         sc::custom_reaction<RequestCombatLogs>,
         sc::custom_reaction<ShutdownServer>,
+        sc::custom_reaction<Hostless>,
         sc::custom_reaction<Error>
     > reactions;
 
@@ -280,6 +285,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
     sc::result react(const Diplomacy& msg);
     sc::result react(const ModeratorAct& msg);
     sc::result react(const ShutdownServer& u);
+    sc::result react(const Hostless& u);
     sc::result react(const RequestCombatLogs& msg);
     sc::result react(const Error& msg);
 

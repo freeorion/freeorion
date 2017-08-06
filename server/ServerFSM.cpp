@@ -270,7 +270,11 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
 
     if (must_quit) {
         ErrorLogger(FSM) << "Unable to recover server terminating.";
-        m_server.m_fsm->process_event(ShutdownServer());
+        if (m_server.IsHostless()) {
+            m_server.m_fsm->process_event(Hostless());
+        } else {
+            m_server.m_fsm->process_event(ShutdownServer());
+        }
     }
 }
 
@@ -429,10 +433,12 @@ sc::result MPLobby::react(const Disconnection& d) {
         DebugLogger(FSM) << " ... " << (*it)->PlayerID();
     }
 
-    // if there are no humans left, it's time to terminate
-    if (server.m_networking.empty() || server.m_ai_client_processes.size() == server.m_networking.NumEstablishedPlayers()) {
-        DebugLogger(FSM) << "MPLobby.Disconnection : All human players disconnected; server terminating.";
-        return transit<ShuttingDownServer>();
+    if (!server.IsHostless()) {
+        // if there are no humans left, it's time to terminate
+        if (server.m_networking.empty() || server.m_ai_client_processes.size() == server.m_networking.NumEstablishedPlayers()) {
+            DebugLogger(FSM) << "MPLobby.Disconnection : All human players disconnected; server terminating.";
+            return transit<ShuttingDownServer>();
+        }
     }
 
     if (server.m_networking.PlayerIsHost(player_connection->PlayerID()))
@@ -1097,9 +1103,15 @@ sc::result MPLobby::react(const HostSPGame& msg) {
 }
 
 sc::result MPLobby::react(const ShutdownServer& msg) {
-    TraceLogger(FSM) << "(ServerFSM) PlayingGame.ShutdownServer";
+    TraceLogger(FSM) << "(ServerFSM) MPLobby.ShutdownServer";
 
     return transit<ShuttingDownServer>();
+}
+
+sc::result MPLobby::react(const Hostless& msg) {
+    TraceLogger(FSM) << "(ServerFSM) MPLobby.Hostless";
+
+    return discard_event();
 }
 
 sc::result MPLobby::react(const Error& msg) {
@@ -1558,6 +1570,12 @@ sc::result PlayingGame::react(const ShutdownServer& msg) {
     TraceLogger(FSM) << "(ServerFSM) PlayingGame.ShutdownServer";
 
     return transit<ShuttingDownServer>();
+}
+
+sc::result PlayingGame::react(const Hostless& msg) {
+    TraceLogger(FSM) << "(ServerFSM) PlayingGame.Hostless";
+
+    return transit<MPLobby>();
 }
 
 sc::result PlayingGame::react(const RequestCombatLogs& msg) {
