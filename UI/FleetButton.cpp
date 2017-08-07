@@ -188,7 +188,6 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
             GG::Clr opposite_clr(255 - this->Color().r, 255 - this->Color().g, 255 - this->Color().b, this->Color().a);
             icon->SetColor(opposite_clr);
             m_icons.push_back(icon);
-            AttachChild(icon);
         }
     }
 
