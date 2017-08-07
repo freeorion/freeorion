@@ -20,3 +20,5 @@ BuildingType
             effects = Destroy
     ]
     icon = "icons/tech/n-dimensional_structures.png"
+
+#include "/scripting/common/base_prod.macros"

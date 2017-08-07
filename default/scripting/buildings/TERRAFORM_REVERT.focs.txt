@@ -41,3 +41,5 @@ BuildingType
             effects = Destroy
     ]
     icon = "icons/building/terraform_revert.png"
+
+#include "/scripting/common/base_prod.macros"

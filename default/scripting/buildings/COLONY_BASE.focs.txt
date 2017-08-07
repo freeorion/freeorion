@@ -24,3 +24,4 @@ BuildingType
     icon = "icons/ship_hulls/colony_base_hull_small.png"
 
 #include "/scripting/common/misc.macros"
+#include "/scripting/common/base_prod.macros"

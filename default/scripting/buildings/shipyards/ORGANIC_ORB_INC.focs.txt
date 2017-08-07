@@ -17,3 +17,4 @@ BuildingType
     icon = "icons/building/orbital-incubator.png"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/base_prod.macros"

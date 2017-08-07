@@ -22,3 +22,5 @@ BuildingType
             effects = SetTargetConstruction value = Value - 10
     ]
     icon = "icons/building/lighthouse.png"
+
+#include "/scripting/common/base_prod.macros"

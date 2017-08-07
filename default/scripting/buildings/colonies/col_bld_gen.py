@@ -119,8 +119,8 @@ t_main = string.Template('''BuildingType
     icon = "${graphic}"
 
 #include "/scripting/common/misc.macros"
-
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/common/base_prod.macros"
 ''')
 
 t_species_condition = string.Template(

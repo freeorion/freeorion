@@ -13,3 +13,4 @@ BuildingType
     icon = "icons/building/planetary_stardrive.png"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/base_prod.macros"

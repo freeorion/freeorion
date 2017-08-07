@@ -24,3 +24,5 @@ BuildingType
             effects = Destroy
     ]
     icon = ""
+    
+#include "/scripting/common/base_prod.macros"

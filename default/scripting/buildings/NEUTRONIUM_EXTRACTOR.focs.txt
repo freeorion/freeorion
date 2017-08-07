@@ -14,3 +14,4 @@ BuildingType
     icon = "icons/building/neutronium-forge.png"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/base_prod.macros"

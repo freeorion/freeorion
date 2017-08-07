@@ -13,3 +13,5 @@ BuildingType
         ]
     ]
     icon = ""
+
+#include "/scripting/common/base_prod.macros"

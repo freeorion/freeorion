@@ -9,3 +9,5 @@ BuildingType
         OwnedBy empire = Source.Owner
         ]
     icon = "icons/building/neutronium-forge.png"
+
+#include "/scripting/common/base_prod.macros"

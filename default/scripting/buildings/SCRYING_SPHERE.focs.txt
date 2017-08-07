@@ -28,3 +28,5 @@ BuildingType
             ]
             effects = SetVisibility visibility = Partial empire = Source.Planet.Owner
     icon = "icons/specials_huge/ancient_ruins_excavated.png"
+
+#include "/scripting/common/base_prod.macros"

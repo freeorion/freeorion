@@ -48,6 +48,5 @@ BuildingType
     icon = "icons/building/blackhole.png"
 
 #include "/scripting/common/enqueue.macros"
-
-#include "/scripting/common/base_prod.macros"
 #include "/scripting/common/priorities.macros"
+#include "/scripting/common/base_prod.macros"

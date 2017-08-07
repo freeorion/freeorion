@@ -24,3 +24,4 @@ BuildingType
     icon = "icons/building/cellular-growth-chamber.png"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/base_prod.macros"

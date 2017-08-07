@@ -42,3 +42,4 @@ BuildingType
     icon = "icons/building/archive.png"
 
 #include "/scripting/common/priorities.macros"
+#include "/scripting/common/base_prod.macros"

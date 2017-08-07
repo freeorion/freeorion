@@ -41,7 +41,6 @@ BuildingType
     ]
     icon = "icons/building/psi-corps.png"
 
-#include "/scripting/common/base_prod.macros"
-
 #include "/scripting/common/enqueue.macros"
 #include "/scripting/common/priorities.macros"
+#include "/scripting/common/base_prod.macros"

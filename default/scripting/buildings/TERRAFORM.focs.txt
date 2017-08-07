@@ -46,3 +46,5 @@ BuildingType
             effects = Destroy
     ]
     icon = "icons/building/terraform.png"
+
+#include "/scripting/common/base_prod.macros"

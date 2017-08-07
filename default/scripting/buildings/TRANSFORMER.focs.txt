@@ -11,3 +11,4 @@ BuildingType
     icon = "icons/building/transformer.png"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/base_prod.macros"

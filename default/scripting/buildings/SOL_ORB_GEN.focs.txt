@@ -64,6 +64,5 @@ BuildingType
     icon = "icons/building/miniature_sun.png"
 
 #include "/scripting/common/enqueue.macros"
-
 #include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"
