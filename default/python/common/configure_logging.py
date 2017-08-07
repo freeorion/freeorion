@@ -193,7 +193,7 @@ def redirect_logging_to_freeorion_logger(initial_log_level=logging.DEBUG):
         logger.addHandler(_create_narrow_handler(logging.NOTSET))
 
         logger.setLevel(initial_log_level)
-        logger.info("The python logger is initialized with a log level of %s",
+        logger.info("The python logger is initialized with a log level of %s" %
                     logging.getLevelName(logger.getEffectiveLevel()))
 
         redirect_logging_to_freeorion_logger.only_redirect_once = True
