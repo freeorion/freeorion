@@ -37,30 +37,76 @@ namespace {
         rules.Add<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION",
                         "RULE_CHEAP_AND_FAST_SHIP_PRODUCTION_DESC",
                         "", false, true);
+        rules.Add<double>("RULE_SHIP_SPEED_FACTOR", "RULE_SHIP_SPEED_FACTOR_DESC",
+                          "BALANCE", 1.0, true, RangedValidator<double>(0.1, 10.0));
+        rules.Add<double>("RULE_SHIP_STRUCTURE_FACTOR", "RULE_SHIP_STRUCTURE_FACTOR_DESC",
+                          "BALANCE", 1.0, true, RangedValidator<double>(0.1, 10.0));
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 
     const std::string EMPTY_STRING;
 
+    // create effectsgroup that increases the value of \a meter_type
+    // by the result of evalulating \a increase_vr
     std::shared_ptr<Effect::EffectsGroup>
-    IncreaseMeter(MeterType meter_type, float increase) {
+    IncreaseMeter(MeterType meter_type,
+                  ValueRef::ValueRefBase<double>* increase_vr)
+    {
         typedef std::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
         Condition::Source* activation = new Condition::Source;
+
         ValueRef::ValueRefBase<double>* vr =
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,
                 new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
-                new ValueRef::Constant<double>(increase)
+                increase_vr
             );
         return EffectsGroupPtr(
             new Effect::EffectsGroup(
                 scope, activation, Effects(1, new Effect::SetMeter(meter_type, vr))));
     }
 
+    // create effectsgroup that increases the value of \a meter_type
+    // by the specified amount \a fixed_increase
     std::shared_ptr<Effect::EffectsGroup>
-    IncreaseMeter(MeterType meter_type, const std::string& part_name, float increase, bool allow_stacking = true) {
+    IncreaseMeter(MeterType meter_type, float fixed_increase) {
+        ValueRef::ValueRefBase<double>* increase_vr =
+            new ValueRef::Constant<double>(fixed_increase);
+        return IncreaseMeter(meter_type, increase_vr);
+    }
+
+    // create effectsgroup that increases the value of \a meter_type
+    // by the product of \a base_increase and the value of the game
+    // rule of type double with the name \a scaling_factor_rule_name
+    std::shared_ptr<Effect::EffectsGroup>
+    IncreaseMeter(MeterType meter_type, float base_increase,
+                  const std::string& scaling_factor_rule_name)
+    {
+        // if no rule specified, revert to fixed constant increase
+        if (scaling_factor_rule_name.empty())
+            return IncreaseMeter(meter_type, base_increase);
+
+        ValueRef::ValueRefBase<double>* increase_vr = new ValueRef::Operation<double>(
+            ValueRef::TIMES,
+            new ValueRef::Constant<double>(base_increase),
+            new ValueRef::ComplexVariable<double>(
+                "GameRule", nullptr, nullptr, nullptr,
+                new ValueRef::Constant<std::string>(scaling_factor_rule_name)
+            )
+        );
+
+        return IncreaseMeter(meter_type, increase_vr);
+    }
+
+    // create effectsgroup that increases the value of the part meter
+    // of type \a meter_type for part name \a part_name by the fixed
+    // amount \a increase
+    std::shared_ptr<Effect::EffectsGroup>
+    IncreaseMeter(MeterType meter_type, const std::string& part_name,
+                  float increase, bool allow_stacking = true)
+    {
         typedef std::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
@@ -275,10 +321,10 @@ void PartType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& ef
             m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_capacity));
             break;
         case PC_ARMOUR:
-            m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_capacity));
+            m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_capacity,     "RULE_SHIP_STRUCTURE_FACTOR"));
             break;
         case PC_SPEED:
-            m_effects.push_back(IncreaseMeter(METER_SPEED,          m_capacity));
+            m_effects.push_back(IncreaseMeter(METER_SPEED,          m_capacity,     "RULE_SHIP_SPEED_FACTOR"));
             break;
         case PC_RESEARCH:
             m_effects.push_back(IncreaseMeter(METER_TARGET_RESEARCH,m_capacity));
@@ -303,8 +349,18 @@ void PartType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& ef
 PartType::~PartType()
 { delete m_location; }
 
-float PartType::Capacity() const
-{ return m_capacity; }
+float PartType::Capacity() const {
+    switch (m_class) {
+    case PC_ARMOUR:
+        return m_capacity * GetGameRules().Get<double>("RULE_SHIP_STRUCTURE_FACTOR");
+        break;
+    case PC_SPEED:
+        return m_capacity * GetGameRules().Get<double>("RULE_SHIP_SPEED_FACTOR");
+        break;
+    default:
+        return m_capacity;
+    }
+}
 
 float PartType::SecondaryStat() const
 { return m_secondary_stat; }
@@ -443,9 +499,9 @@ void HullType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& ef
     if (m_stealth != 0)
         m_effects.push_back(IncreaseMeter(METER_STEALTH,        m_stealth));
     if (m_structure != 0)
-        m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_structure));
+        m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_structure,    "RULE_SHIP_STRUCTURE_FACTOR"));
     if (m_speed != 0)
-        m_effects.push_back(IncreaseMeter(METER_SPEED,          m_speed));
+        m_effects.push_back(IncreaseMeter(METER_SPEED,          m_speed,        "RULE_SHIP_SPEED_FACTOR"));
 
     for (std::shared_ptr<Effect::EffectsGroup> effect : effects) {
         effect->SetTopLevelContent(m_name);
@@ -456,6 +512,12 @@ void HullType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& ef
 HullType::~HullType()
 { delete m_location; }
 
+float HullType::Speed() const
+{ return m_speed * GetGameRules().Get<double>("RULE_SHIP_SPEED_FACTOR"); }
+
+float HullType::Structure() const
+{ return m_structure * GetGameRules().Get<double>("RULE_SHIP_STRUCTURE_FACTOR"); }
+
 unsigned int HullType::NumSlots(ShipSlotType slot_type) const {
     unsigned int count = 0;
     for (const Slot& slot : m_slots)
@@ -463,7 +525,6 @@ unsigned int HullType::NumSlots(ShipSlotType slot_type) const {
             ++count;
     return count;
 }
-
 
 // HullType:: and PartType::ProductionCost and ProductionTime are almost identical.
 // Chances are, the same is true of buildings and techs as well.

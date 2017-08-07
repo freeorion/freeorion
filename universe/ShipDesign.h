@@ -332,10 +332,10 @@ public:
     const std::string&  Name() const            { return m_name; }              ///< returns name of hull
     const std::string&  Description() const     { return m_description; }       ///< returns description, including a description of the stats and effects of this hull
 
-    float               Speed() const           { return m_speed; }             ///< returns starlane speed of hull
+    float               Speed() const;                                          ///< returns starlane speed of hull
     float               Fuel() const            { return m_fuel; }              ///< returns fuel capacity of hull
     float               Stealth() const         { return m_stealth; }           ///< returns stealth of hull
-    float               Structure() const       { return m_structure; }         ///< returns structure of hull
+    float               Structure() const;                                      ///< returns structure of hull
     float               Shields() const         { return 0.0f; }                ///< returns shields of hull
     float               ColonyCapacity() const  { return 0.0f; }                ///< returns colonist capacity of hull
     float               TroopCapacity() const   { return 0.0f; }                ///< returns the troop capacity of hull

@@ -996,6 +996,18 @@ Random Reseeding
 RULE_RESEED_PRNG_SERVER_DESC
 Random number generation is re-seeded frequently to give more predictable and reproducible values.
 
+RULE_SHIP_SPEED_FACTOR
+Ship Speed Scaling
+
+RULE_SHIP_SPEED_FACTOR_DESC
+Adjusts speeds of ship hulls and speed parts
+
+RULE_SHIP_STRUCTURE_FACTOR
+Ship Structure Scaling
+
+RULE_SHIP_STRUCTURE_FACTOR_DESC
+Adjusts structure of ship hulls and armour parts
+
 RULE_SHIP_HULL_COST_FACTOR
 Hull Cost Scaling
 
@@ -1015,10 +1027,10 @@ RULE_BUILDING_COST_FACTOR_DESC
 Adjusts costs of buildings
 
 RULE_TECH_COST_FACTOR
-Building Cost Scaling
+Tech Cost Scaling
 
 RULE_TECH_COST_FACTOR_DESC
-Adjusts costs of buildings
+Adjusts costs of tech
 
 RULE_ENABLE_EXPERIMENTORS
 Enable Experimentors (TEST)
