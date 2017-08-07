@@ -1228,11 +1228,11 @@ void Statistic<T>::serialize(Archive& ar, const unsigned int version)
 ///////////////////////////////////////////////////////////
 template <class T>
 ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
-                                              ValueRefBase<int>* int_ref1,
-                                              ValueRefBase<int>* int_ref2,
-                                              ValueRefBase<int>* int_ref3,
-                                              ValueRefBase<std::string>* string_ref1,
-                                              ValueRefBase<std::string>* string_ref2) :
+                                    ValueRefBase<int>* int_ref1,
+                                    ValueRefBase<int>* int_ref2,
+                                    ValueRefBase<int>* int_ref3,
+                                    ValueRefBase<std::string>* string_ref1,
+                                    ValueRefBase<std::string>* string_ref2) :
     Variable<T>(NON_OBJECT_REFERENCE, std::vector<std::string>(1, variable_name)),
     m_int_ref1(int_ref1),
     m_int_ref2(int_ref2),
