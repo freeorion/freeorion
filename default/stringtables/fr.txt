@@ -3401,6 +3401,18 @@ Offrir la planète à...
 ORDER_CANCEL_GIVE_PLANET
 Annuler l'offre de la planète
 
+##
+## Fleet Button
+##
+
+FB_TOOLTIP_BLOCKADE_WITH_EXIT
+Cette flotte est actuellement soumise au blocus d'une flotte hostile, et ne peut donc voyager que vers les systèmes suivants:
+
+FB_TOOLTIP_BLOCKADE_NO_EXIT
+Cette flotte est actuellement soumise au blocus d'une flotte hostile, et ne peut plus voyager.
+
+FB_TOOLTIP_BLOCKADE_MONSTER
+Cette flotte de monstres est soumise au blocus d'une flotte de l'empire. Les monstres bloqués par des flottes impériales ne peuvent plus se déplacer.
 
 ##
 ## Moderator
@@ -4769,7 +4781,7 @@ SYSTEM_BLOCKADE_TEXT
 Lors d'un blocus, tous les accès par Voies spatiales au système bloqué seront gardés par la force appliquant le blocus. Par conséquent, toutes forces hostiles entrant dans le système ne pourra en sortir que par la Voie spatiale empruntée pour y entrer. Toutefois, si des flottes supplémentaires de l'empire bloqué entrent dans le système par d'autres Voies spatiales, ces entrées deviendront alors également disponibles comme sorties. Si toutes les flottes armées appartenant à l'empire bloqué sont détruites ou quittent le système avant l'arrivée de nouvelles flottes de l'empire, les points de sortie précédemment ouverts seront à nouveau bloqués.
 Les flottes alliées n'ont pas d'impact direct sur l'interruption de l'Approvisionnement et la disponibilité des Voies spatiales, si ce n'est aider à l'élimination des forces de l'empire exerçant le blocus.
 Si des flottes de deux empires hostiles ou plus arrivent simultanément dans un système non soumis à un blocus, aucun des deux empires ou plus n'établira un blocus à l'encontre de l'autre, mais ces derniers bloqueront le système contre tout autre empire hostile voulant éventuellement accéder au système par la suite.
-Les Monstres spatiaux peuvent également établir des blocus. Cependant, si une flotte de l'empire est bloquée par un monstre spatial, celle-ci sera en mesure se soustraire au blocus après être restée dans le système un tour entier, en quittant le système par n'importe quelle Voie spatiale. De plus, si la flotte bloquée est armée et en mode Agression, la propagation de l'Approvisionnement sera rétablie. Si un Monstre spatial et une flotte de l'empire entrent dans le système simultanément, la flotte de l'empire pourra agir en premier et établir un blocus contre le Monstre.'''
+Les Monstres spatiaux peuvent également établir des blocus. Cependant, si une flotte de l'empire est bloquée par un monstre spatial, le blocus sera interrompu dès qu'un combat aura eu lieu, permettant ainsi à la flotte de l'empire de quitter le système par n'importe quelle Voie spatiale, ou bien d'établir à son tour un blocus à l'encontre du monstre. De plus, si la flotte bloquée est armée et en mode Agression, la propagation de l'Approvisionnement sera rétablie. Si un Monstre spatial et une flotte de l'empire entrent dans le système simultanément, la flotte de l'empire pourra agir en premier et établir un blocus contre le Monstre.'''
 
 
 ##
