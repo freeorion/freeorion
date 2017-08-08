@@ -892,20 +892,18 @@ void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wn
     // should only be one wnd in list because PartControls doesn't allow selection, so dragging is
     // only one-at-a-time
     auto control = dynamic_cast<GG::Control*>(wnds.front());
-    if (!control)
+    if (!control || empty())
         return;
 
     // find control in row
     unsigned int ii = 0;
-    for (; ii <= size(); ++ii) {
-        if (ii == size())
-            return;
-        if (empty())
-            continue;
-
+    for (; ii < size(); ++ii) {
         if (at(ii) != control)
             continue;
     }
+
+    if (ii == size())
+        return;
 
     RemoveCell(ii);  // Wnd that accepts drop takes ownership of dragged-away control
 
