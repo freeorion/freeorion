@@ -229,7 +229,7 @@ void OwnerColoredSystemName::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 
     // Center text
     if (!Children().empty())
-        if (GG::TextControl* text = dynamic_cast<GG::TextControl*>(*Children().begin())) {
+        if (GG::TextControl* text = dynamic_cast<GG::TextControl*>(Children().begin()->get())) {
             text->MoveTo(GG::Pt((Width() - text->Width()) / 2, (Height() - text->Height()) / 2));
         }
 }
@@ -320,14 +320,8 @@ void SystemIcon::CompleteConstruction() {
     Refresh();
 }
 
-SystemIcon::~SystemIcon() {
-    delete m_tiny_graphic;
-    delete m_selection_indicator;
-    delete m_tiny_selection_indicator;
-    delete m_mouseover_indicator;
-    delete m_tiny_mouseover_indicator;
-    delete m_colored_name;
-}
+SystemIcon::~SystemIcon()
+{}
 
 int SystemIcon::SystemID() const
 { return m_system_id; }
@@ -658,15 +652,13 @@ void SystemIcon::Refresh() {
 
 
     // remove existing system name control
-    DetachChild(m_colored_name);
-    delete m_colored_name;
-    m_colored_name = nullptr;
+    DetachChildAndReset(m_colored_name);
 
     // create new system name control
     if (!name.empty()) {
         // get font size
         int name_pts = ClientUI::Pts();
-        if (const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd()) {
+        if (const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd()) {
             name_pts = map_wnd->SystemNamePts();
         }
 

@@ -124,7 +124,7 @@ protected:
     virtual void RenderRollover();
     //@}
 
-    TextControl*   m_label;             ///< Label used to display text
+    std::shared_ptr<TextControl>   m_label;             ///< Label used to display text
 
 private:
     void           RenderDefault();     ///< This just draws the default unadorned square-and-rectangle button
@@ -213,7 +213,7 @@ protected:
 private:
     std::shared_ptr<StateButtonRepresenter> m_representer;
 
-    TextControl*      m_label;       ///< Label used to display text
+    std::shared_ptr<TextControl>      m_label;       ///< Label used to display text
 
     ButtonState       m_state;       ///< Button is always in exactly one of the ButtonState states above
     bool              m_checked;     ///< true when this button in a checked, active state
@@ -386,12 +386,12 @@ public:
         to NO_BUTTON. */
     void DisableButton(std::size_t index, bool b = true); 
 
-    /** Adds a button to the end of the group. */
-    void AddButton(StateButton* bn);
+    /** Adds a button to the end of the group. The button group owns \p bn.*/
+    void AddButton(std::shared_ptr<StateButton> bn);
 
     /** Adds a button to the group at position \a index.  \a index must be in
-        the range [0, NumButtons()]. */
-    void InsertButton(std::size_t index, StateButton* bn);
+        the range [0, NumButtons()]. The button group owns \p bn.*/
+    void InsertButton(std::size_t index, std::shared_ptr<StateButton> bn);
 
     /** Removes \a button from the group.  If \a button is at index i, and is
         the currently-checked button, the currently-checked button index is
@@ -431,9 +431,9 @@ protected:
         RadioButtonGroup. */
     struct GG_API ButtonSlot
     {
-        ButtonSlot(StateButton* button_);
+        ButtonSlot(std::shared_ptr<StateButton>& button_);
 
-        StateButton* button;
+        std::shared_ptr<StateButton> button;
 
         boost::signals2::connection connection;
     };

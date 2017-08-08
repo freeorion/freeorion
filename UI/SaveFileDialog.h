@@ -65,13 +65,13 @@ private:
     std::string GetDirPath() const;                     //!< Gets the current directory path string clean of display decorations
     void        SetDirPath(const std::string& path);    //!< Sets the shown directory path, applying decorations if applicable
 
-    GG::Layout*         m_layout;           //!< The layout of the dialog
+    std::shared_ptr<GG::Layout>         m_layout;           //!< The layout of the dialog;
 
-    SaveFileListBox*    m_file_list;        //!< The list of available saves
-    GG::Edit*           m_name_edit;        //!< The file name edit control
-    GG::Edit*           m_current_dir_edit; //!< The editor for the save directory
-    GG::DropDownList*   m_remote_dir_dropdown; //!< Dropdown to select remote dir
-    GG::Button*         m_confirm_btn;      //!< Button to confirm choice
+    std::shared_ptr<SaveFileListBox>    m_file_list;        //!< The list of available saves
+    std::shared_ptr<GG::Edit>           m_name_edit;        //!< The file name edit control;
+    std::shared_ptr<GG::Edit>           m_current_dir_edit; //!< The editor for the save directory;
+    std::shared_ptr<GG::DropDownList>   m_remote_dir_dropdown; //!< Dropdown to select remote dir;
+    std::shared_ptr<GG::Button>         m_confirm_btn;      //!< Button to confirm choice;
 
     std::string         m_loaded_dir;       //!< The directory whose contents are currently shown
     std::string         m_extension;        //!< The save game file name extension

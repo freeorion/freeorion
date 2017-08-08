@@ -52,7 +52,7 @@ protected:
     virtual void    DoLayout();
     virtual void    InitBuffer();
 
-    GG::Button*     m_expand_button;    ///< at top right/left of panel, toggles the panel open/closed to show details or minimal summary
+    std::shared_ptr<GG::Button>     m_expand_button;    ///< at top right/left of panel, toggles the panel open/closed to show details or minimal summary;
     bool            m_collapsed;
     bool            m_is_left;          ///< Is expand button on the left?
     GG::Clr         m_interior_color;

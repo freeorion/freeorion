@@ -232,7 +232,7 @@ void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     if (m_config_save) {    // can write position/size to OptionsDB
 
         GG::Pt available_size;
-        if (const GG::Wnd* parent = Parent()) {
+        if (const auto&& parent = Parent()) {
             // Keep this CUIWnd entirely inside its parent.
             available_size = parent->ClientSize();
         } else if (const HumanClientApp* app = HumanClientApp::GetApp()) {
@@ -350,7 +350,7 @@ void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> m
         GG::Pt requested_lr = pt - m_drag_offset;
 
         GG::Pt max_lr;
-        if (const GG::Wnd* parent = Parent()) {
+        if (const auto&& parent = Parent()) {
             max_lr = parent->ClientLowerRight();
         } else {
             max_lr.x = GG::GUI::GetGUI()->AppWidth();
@@ -486,10 +486,10 @@ int CUIWnd::InnerBorderAngleOffset() const
 
 void CUIWnd::CloseClicked() {
     m_done = true;
-    if (Parent())
-        Parent()->DetachChild(this);
+    if (auto&& parent = Parent())
+        parent->DetachChild(this);
     else
-        GG::GUI::GetGUI()->Remove(this);
+        GG::GUI::GetGUI()->Remove(shared_from_this());
 
     //m_minimized_buffer.clear();
     //m_outer_border_buffer.clear();
@@ -621,7 +621,8 @@ void CUIWnd::SaveOptions() const {
 
     // The default empty string means 'do not save/load properties'
     // Also do not save while the window is being dragged.
-    if (m_config_name.empty() || !m_config_save || GG::GUI::GetGUI()->DragWnd(this, 0)) {
+    auto gui = GG::GUI::GetGUI();
+    if (m_config_name.empty() || !m_config_save || !gui || gui->DragWnd(this, 0)) {
         return;
     } else if (!db.OptionExists("UI.windows."+m_config_name+".initialized")) {
         ErrorLogger() << "CUIWnd::SaveOptions() : attempted to save window options using name \"" << m_config_name << "\" but the options do not appear to be registered in the OptionsDB.";
@@ -838,7 +839,7 @@ void CUIWnd::InvalidateUnusedOptions() {
     db.Commit();
 }
 
-void CUIWnd::SetParent(GG::Wnd* wnd) {
+void CUIWnd::SetParent(const std::shared_ptr<GG::Wnd>& wnd) {
     GG::Wnd::SetParent(wnd);
     m_vertex_buffer.clear();    // force buffer re-init on next Render call, so background is properly positioned for new parent-relative position
 }

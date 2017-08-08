@@ -42,15 +42,15 @@ private:
 
     std::pair<std::string, std::string> m_result;
 
-    GG::RadioButtonGroup*               m_host_or_join_radio_group;
-    GG::Label*                          m_LAN_game_label;
-    GG::ListBox*                        m_servers_lb;
-    GG::Button*                         m_find_LAN_servers_bn;
-    GG::Label*                          m_internet_game_label;
-    GG::Edit*                           m_IP_address_edit;
-    GG::Edit*                           m_player_name_edit;
-    GG::Button*                         m_ok_bn;
-    GG::Button*                         m_cancel_bn;
+    std::shared_ptr<GG::RadioButtonGroup>               m_host_or_join_radio_group;
+    std::shared_ptr<GG::Label>                          m_LAN_game_label;
+    std::shared_ptr<GG::ListBox>                        m_servers_lb;
+    std::shared_ptr<GG::Button>                         m_find_LAN_servers_bn;
+    std::shared_ptr<GG::Label>                          m_internet_game_label;
+    std::shared_ptr<GG::Edit>                           m_IP_address_edit;
+    std::shared_ptr<GG::Edit>                           m_player_name_edit;
+    std::shared_ptr<GG::Button>                         m_ok_bn;
+    std::shared_ptr<GG::Button>                         m_cancel_bn;
 };
 
 #endif // _ServerConnectWnd_h_

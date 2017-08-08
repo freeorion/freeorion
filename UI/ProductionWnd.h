@@ -130,9 +130,9 @@ private:
     void    QueueItemDuped(GG::ListBox::iterator it);
     void    QueueItemSplit(GG::ListBox::iterator it);
 
-    ProductionInfoPanel*    m_production_info_panel;
-    ProductionQueueWnd*     m_queue_wnd;
-    BuildDesignatorWnd*     m_build_designator_wnd;
+    std::shared_ptr<ProductionInfoPanel>    m_production_info_panel;
+    std::shared_ptr<ProductionQueueWnd>     m_queue_wnd;
+    std::shared_ptr<BuildDesignatorWnd>     m_build_designator_wnd;
     bool                    m_order_issuing_enabled;
 
     int                         m_empire_shown_id;

@@ -28,25 +28,25 @@ GG_ENUM(NewFleetAggression,
 /** Manages the lifetimes of FleetWnds. */
 class FleetUIManager {
 public:
-    typedef std::set<FleetWnd*>::const_iterator iterator;
+    typedef std::set<std::weak_ptr<FleetWnd>>::const_iterator iterator;
 
     //! \name Accessors //@{
     bool            empty() const;
     iterator        begin() const;
     iterator        end() const;
     FleetWnd*       ActiveFleetWnd() const;
-    FleetWnd* WndForFleet(std::shared_ptr<const Fleet> fleet) const;
+    std::shared_ptr<FleetWnd> WndForFleet(std::shared_ptr<const Fleet> fleet) const;
     int             SelectedShipID() const;     // if a single ship is selected in the active fleetwnd, returns that ship's ID.  Otherwise, returns INVALID_OBJECT_ID
     std::set<int>   SelectedShipIDs() const;    // returns the ids of all selected ships in the active fleetwnd
     //@}
 
     //! \name Mutators //@{
-    FleetWnd*       NewFleetWnd(const std::vector<int>& fleet_ids,
-                                int selected_fleet_id = INVALID_OBJECT_ID,
-                                GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE);
+    std::shared_ptr<FleetWnd> NewFleetWnd(const std::vector<int>& fleet_ids,
+                                          int selected_fleet_id = INVALID_OBJECT_ID,
+                                          GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE);
 
     void            CullEmptyWnds();
-    void            SetActiveFleetWnd(FleetWnd* fleet_wnd);
+    void            SetActiveFleetWnd(std::shared_ptr<FleetWnd> fleet_wnd);
     bool            CloseAll();
     void            RefreshAll();
 
@@ -75,11 +75,16 @@ private:
     FleetUIManager();
 
     void            FleetWndClosing(FleetWnd* fleet_wnd);
-    void            FleetWndClicked(FleetWnd* fleet_wnd);                          //!< sets active FleetWnd
+    void            FleetWndClicked(std::shared_ptr<FleetWnd> fleet_wnd);                          //!< sets active FleetWnd
 
     bool                                    m_order_issuing_enabled;
-    std::set<FleetWnd*>                     m_fleet_wnds;
-    FleetWnd*                               m_active_fleet_wnd;
+
+    /** All fleet windows.  mutable so expired ptrs can be reset(). */
+    mutable std::set<std::weak_ptr<FleetWnd>,
+                     std::owner_less<std::weak_ptr<FleetWnd>>> m_fleet_wnds;
+    /** Active fleet window.  mutable so expired ptr can be reset(). */
+    mutable std::weak_ptr<FleetWnd>                               m_active_fleet_wnd;
+
     std::vector<boost::signals2::connection> m_active_fleet_wnd_signals;
 };
 
@@ -126,7 +131,7 @@ public:
 
     mutable boost::signals2::signal<void ()>          SelectedFleetsChangedSignal;
     mutable boost::signals2::signal<void ()>          SelectedShipsChangedSignal;
-    mutable boost::signals2::signal<void (FleetWnd*)> ClickedSignal;
+    mutable boost::signals2::signal<void (std::shared_ptr<FleetWnd>)> ClickedSignal;
     mutable boost::signals2::signal<void (int)>       FleetRightClickedSignal;
     mutable boost::signals2::signal<void (int)>       ShipRightClickedSignal;
 
@@ -169,11 +174,11 @@ private:
 
     bool                m_order_issuing_enabled;
 
-    FleetsListBox*      m_fleets_lb;
-    FleetDataPanel*     m_new_fleet_drop_target;
-    FleetDetailPanel*   m_fleet_detail_panel;
+    std::shared_ptr<FleetsListBox>      m_fleets_lb;
+    std::shared_ptr<FleetDataPanel>     m_new_fleet_drop_target;
+    std::shared_ptr<FleetDetailPanel>   m_fleet_detail_panel;
 
-    std::vector<std::pair<MeterType, StatisticIcon*>> m_stat_icons; /// statistic icons and associated meter types for multi-fleet aggregate
+    std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>> m_stat_icons; /// statistic icons and associated meter types for multi-fleet aggregate
 
     friend class FleetUIManager;
 };
@@ -215,16 +220,16 @@ private:
     bool                        m_initialized;
 
     int                         m_ship_id;
-    GG::StaticGraphic*          m_ship_icon;
-    GG::StaticGraphic*          m_scrap_indicator;
-    GG::StaticGraphic*          m_colonize_indicator;
-    GG::StaticGraphic*          m_invade_indicator;
-    GG::StaticGraphic*          m_bombard_indicator;
-    ScanlineControl*            m_scanline_control;
-    GG::Label*                  m_ship_name_text;
-    GG::Label*                  m_design_name_text;
+    std::shared_ptr<GG::StaticGraphic>          m_ship_icon;
+    std::shared_ptr<GG::StaticGraphic>          m_scrap_indicator;
+    std::shared_ptr<GG::StaticGraphic>          m_colonize_indicator;
+    std::shared_ptr<GG::StaticGraphic>          m_invade_indicator;
+    std::shared_ptr<GG::StaticGraphic>          m_bombard_indicator;
+    std::shared_ptr<ScanlineControl>            m_scanline_control;
+    std::shared_ptr<GG::Label>                  m_ship_name_text;
+    std::shared_ptr<GG::Label>                  m_design_name_text;
 
-    std::vector<std::pair<MeterType, StatisticIcon*>> m_stat_icons;   // statistic icons and associated meter types
+    std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>> m_stat_icons;   // statistic icons and associated meter types
 
     bool                        m_selected;
     boost::signals2::connection m_ship_connection;

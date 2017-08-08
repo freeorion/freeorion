@@ -51,12 +51,12 @@ public:
     public:
         //! Creates a control from the tag (with unparsed parameters) and the content between the tags.
         //! You own the returned control.
-        virtual BlockControl* CreateFromTag(const std::string& tag,
-                                            const TAG_PARAMS& params,
-                                            const std::string& content,
-                                            const std::shared_ptr<Font>& font,
-                                            const Clr& color,
-                                            Flags<TextFormat> format) = 0;
+        virtual std::shared_ptr<BlockControl> CreateFromTag(const std::string& tag,
+                                                            const TAG_PARAMS& params,
+                                                            const std::string& content,
+                                                            const std::shared_ptr<Font>& font,
+                                                            const Clr& color,
+                                                            Flags<TextFormat> format) = 0;
     };
 
     //! The type of the object where we store control factories of tags.

@@ -189,7 +189,7 @@ protected:
     void            Init();                         //!< performs initialization common to all CUIWnd constructors
     void            ResetDefaultPosition();         //!< called via signal from the ClientUI, passes the value from CalculatePosition() to InitSizeMove()
 
-    void SetParent(GG::Wnd* wnd) override;
+    void SetParent(const std::shared_ptr<GG::Wnd>& wnd) override;
     //@}
 
     bool                    m_resizable;            //!< true if the window is able to be resized
@@ -207,9 +207,9 @@ protected:
     bool                    m_config_save = true;   //!< true if SaveOptions() is currently allowed to write to the OptionsDB
     const std::string       m_config_name;          //!< the name that this window will use to save its properties to the OptionsDB, the default empty string means "do not save"
 
-    GG::Button*             m_close_button = nullptr;     //!< the close button
-    CUI_MinRestoreButton*   m_minimize_button = nullptr;  //!< the minimize/restore button
-    CUI_PinButton*          m_pin_button = nullptr;       //!< the pin button
+    std::shared_ptr<GG::Button>             m_close_button = nullptr;     //!< the close button
+    std::shared_ptr<CUI_MinRestoreButton>   m_minimize_button = nullptr;  //!< the minimize/restore button
+    std::shared_ptr<CUI_PinButton>          m_pin_button = nullptr;       //!< the pin button
 
     GG::GL2DVertexBuffer                                m_vertex_buffer;
     std::vector<std::pair<std::size_t, std::size_t>>    m_buffer_indices;
@@ -246,9 +246,9 @@ private:
 
     std::string m_result;
 
-    GG::Edit*   m_edit;
-    GG::Button* m_ok_bn;
-    GG::Button* m_cancel_bn;
+    std::shared_ptr<GG::Edit>   m_edit;
+    std::shared_ptr<GG::Button> m_ok_bn;
+    std::shared_ptr<GG::Button> m_cancel_bn;
 
     static const GG::X BUTTON_WIDTH;
     static const int CONTROL_MARGIN;

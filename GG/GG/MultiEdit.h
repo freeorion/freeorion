@@ -244,8 +244,8 @@ private:
 
     std::size_t     m_max_lines_history;
 
-    Scroll*         m_vscroll;
-    Scroll*         m_hscroll;
+    std::shared_ptr<Scroll>         m_vscroll;
+    std::shared_ptr<Scroll>         m_hscroll;
     unsigned int    m_vscroll_wheel_scroll_increment;
     unsigned int    m_hscroll_wheel_scroll_increment;
 

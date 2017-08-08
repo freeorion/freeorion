@@ -112,18 +112,18 @@ private:
 
     std::weak_ptr<const ShipDesign> m_incomplete_design;
 
-    GG::Label*          m_name_text;            // name
-    GG::Label*          m_cost_text;            // cost and time to build or research
-    GG::Label*          m_summary_text;         // general purpose item
-    GG::RichText*       m_description_rich_text;// detailed and lengthy description
-    GG::ScrollPanel*    m_scroll_panel;         // scroller for m_description_rich_text
-    GG::StaticGraphic*  m_icon;
-    GG::Button*         m_index_button;
-    GG::Button*         m_back_button;
-    GG::Button*         m_next_button;
-    GG::Edit*           m_search_edit;          // box to type to search
+    std::shared_ptr<GG::Label>          m_name_text;            // name
+    std::shared_ptr<GG::Label>          m_cost_text;            // cost and time to build or research
+    std::shared_ptr<GG::Label>          m_summary_text;         // general purpose item
+    std::shared_ptr<GG::RichText>       m_description_rich_text;// detailed and lengthy description
+    std::shared_ptr<GG::ScrollPanel>    m_scroll_panel;         // scroller for m_description_rich_text
+    std::shared_ptr<GG::StaticGraphic>  m_icon;
+    std::shared_ptr<GG::Button>         m_index_button;
+    std::shared_ptr<GG::Button>         m_back_button;
+    std::shared_ptr<GG::Button>         m_next_button;
+    std::shared_ptr<GG::Edit>           m_search_edit;          // box to type to search
 
-    GraphControl*       m_graph;
+    std::shared_ptr<GraphControl>       m_graph;
     bool                m_needs_refresh;        // Indicates that data is stale.
 };
 

@@ -59,7 +59,7 @@ void MilitaryPanel::CompleteConstruction() {
     for (MeterType meter : {METER_SHIELD, METER_DEFENSE, METER_TROOPS, METER_DETECTION, METER_STEALTH})
     {
         auto stat = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(meter), obj->InitialMeterValue(meter), 3, false, MeterIconSize().x, MeterIconSize().y);
-        stat->InstallEventFilter(this);
+        stat->InstallEventFilter(shared_from_this());
         AttachChild(stat);
         m_meter_stats.push_back({meter, stat});
         meters.push_back({meter, AssociatedMeterType(meter)});
@@ -77,15 +77,8 @@ void MilitaryPanel::CompleteConstruction() {
     Refresh();
 }
 
-MilitaryPanel::~MilitaryPanel() {
-    // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
-    delete m_multi_icon_value_indicator;
-    delete m_multi_meter_status_bar;
-
-    for (auto& meter_stat : m_meter_stats) {
-        delete meter_stat.second;
-    }
-}
+MilitaryPanel::~MilitaryPanel()
+{}
 
 void MilitaryPanel::ExpandCollapse(bool expanded) {
     if (expanded == s_expanded_map[m_planet_id]) return; // nothing to do
@@ -101,7 +94,7 @@ bool MilitaryPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 
     MeterType meter_type = INVALID_METER_TYPE;
     for (auto& meter_stat : m_meter_stats) {
-        if (meter_stat.second == w) {
+        if (meter_stat.second.get() == w) {
             meter_type = meter_stat.first;
             break;
         }
@@ -142,8 +135,7 @@ void MilitaryPanel::Update() {
     for (auto& meter_stat : m_meter_stats) {
         meter_stat.second->SetValue(obj->InitialMeterValue(meter_stat.first));
 
-        // TODO remove extra wrapping of shared_ptr after conversion to GG shared_ptr
-        auto browse_wnd = std::shared_ptr<GG::BrowseInfoWnd>(GG::Wnd::Create<MeterBrowseWnd>(m_planet_id, meter_stat.first, AssociatedMeterType(meter_stat.first)));
+        auto browse_wnd = GG::Wnd::Create<MeterBrowseWnd>(m_planet_id, meter_stat.first, AssociatedMeterType(meter_stat.first));
         meter_stat.second->SetBrowseInfoWnd(browse_wnd);
         m_multi_icon_value_indicator->SetToolTip(meter_stat.first, browse_wnd);
     }
@@ -184,7 +176,7 @@ void MilitaryPanel::DoLayout() {
         for (auto& meter_stat : m_meter_stats) {
             GG::X x = n * stride;
 
-            StatisticIcon* icon = meter_stat.second;
+            auto& icon = meter_stat.second;
             GG::Pt icon_ul(x, GG::Y0);
             GG::Pt icon_lr = icon_ul + MeterIconSize();
             icon->SizeMove(icon_ul, icon_lr);

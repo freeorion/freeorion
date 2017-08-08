@@ -110,12 +110,12 @@ namespace GG {
         {}
 
         //! Create a Text block from a plain text tag.
-        BlockControl* CreateFromTag(const std::string& tag,
-                                    const RichText::TAG_PARAMS& params,
-                                    const std::string& content,
-                                    const std::shared_ptr<Font>& font,
-                                    const Clr& color,
-                                    Flags<TextFormat> format) override
+        std::shared_ptr<BlockControl> CreateFromTag(const std::string& tag,
+                                                    const RichText::TAG_PARAMS& params,
+                                                    const std::string& content,
+                                                    const std::shared_ptr<Font>& font,
+                                                    const Clr& color,
+                                                    Flags<TextFormat> format) override
         {
             // Get the path from the parameters.
             fs::path param_path = ExtractPath(params);

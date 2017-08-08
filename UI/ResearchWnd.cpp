@@ -52,11 +52,11 @@ namespace {
         void Draw(GG::Clr clr, bool fill);
 
         const std::string&      m_tech_name;
-        GG::Label*              m_name_text;
-        GG::Label*              m_RPs_and_turns_text;
-        GG::Label*              m_turns_remaining_text;
-        GG::StaticGraphic*      m_icon;
-        MultiTurnProgressBar*   m_progress_bar;
+        std::shared_ptr<GG::Label>              m_name_text;
+        std::shared_ptr<GG::Label>              m_RPs_and_turns_text;
+        std::shared_ptr<GG::Label>              m_turns_remaining_text;
+        std::shared_ptr<GG::StaticGraphic>      m_icon;
+        std::shared_ptr<MultiTurnProgressBar>   m_progress_bar;
         bool                    m_in_progress;
         int                     m_total_turns;
         int                     m_empire_id;
@@ -119,7 +119,7 @@ namespace {
         }
 
         const ResearchQueue::Element elem;
-        GG::Control* panel;
+        std::shared_ptr<GG::Control> panel;
     };
 
     //////////////////////////////////////////////////
@@ -319,8 +319,8 @@ protected:
         popup->AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), false, false, MoveToBottomAction(it)));
         popup->AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    false, false, DeleteAction(it)));
 
-        GG::ListBox::Row* row = *it;
-        QueueRow* queue_row = row ? dynamic_cast<QueueRow*>(row) : nullptr;
+        auto& row = *it;
+        QueueRow* queue_row = row ? dynamic_cast<QueueRow*>(row.get()) : nullptr;
         if (!queue_row)
             return;
 
@@ -345,9 +345,6 @@ protected:
         popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_action));
 
         popup->Run();
-
-        // TODO remove when converting to shared_ptr
-        delete popup;
     }
 };
 
@@ -386,7 +383,7 @@ public:
             DoLayout();
     }
 
-    ResearchQueueListBox*   GetQueueListBox() { return m_queue_lb; }
+    ResearchQueueListBox*   GetQueueListBox() { return m_queue_lb.get(); }
 
     void                SetEmpire(int id) {
         if (const Empire* empire = GetEmpire(id))
@@ -402,7 +399,7 @@ private:
                                 GG::Pt(ClientWidth(), ClientHeight() - GG::Y(CUIWnd::INNER_BORDER_ANGLE_OFFSET)));
     }
 
-    ResearchQueueListBox*   m_queue_lb;
+    std::shared_ptr<ResearchQueueListBox>   m_queue_lb;
 };
 
 
@@ -527,7 +524,7 @@ bool ResearchWnd::PediaVisible()
 { return m_tech_tree_wnd->PediaVisible(); }
 
 void ResearchWnd::QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) {
-    if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*row_it)) {
+    if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(row_it->get())) {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
 
         // This precorrects the position for a factor in Empire::PlaceTechInQueue
@@ -653,7 +650,7 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
         return;
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     OrderSet& orders = HumanClientApp::GetApp()->Orders();
-    if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it))
+    if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(it->get()))
         orders.IssueOrder(std::make_shared<ResearchQueueOrder>(empire_id, queue_row->elem.name));
     if (Empire* empire = GetEmpire(empire_id))
         empire->UpdateResearchQueue();
@@ -664,7 +661,7 @@ void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& p
         if (modkeys & GG::MOD_KEY_CTRL) {
             DeleteQueueItem(it);
         } else {
-            auto queue_row = boost::polymorphic_downcast<QueueRow*>(*it);
+            auto queue_row = boost::polymorphic_downcast<QueueRow*>(it->get());
             if (!queue_row)
                 return;
             ShowTech(queue_row->elem.name, false);
@@ -674,7 +671,7 @@ void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& p
 
 void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
-        QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it);
+        QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(it->get());
         if (!queue_row)
             return;
         ShowTech(queue_row->elem.name);
@@ -691,7 +688,7 @@ void ResearchWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
 
     // todo: reject action if shown queue is not this client's empire's queue
 
-    if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it))
+    if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(it->get()))
         HumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ResearchQueueOrder>(client_empire_id, queue_row->elem.name, pause, -1.0f));
 

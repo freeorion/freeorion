@@ -74,7 +74,7 @@ public:
     static bool SetDefaultImagePath(const boost::filesystem::path& path); //!< The base path to look for images from.
 
 private:
-    StaticGraphic* m_graphic; //! The StaticGraphic used to render the image.
+    std::shared_ptr<StaticGraphic> m_graphic; //! The StaticGraphic used to render the image.
 };
 
 }

@@ -36,13 +36,13 @@ private:
     double              m_production;               // set by UpdateProduction - used to store production in system so that import / export / unused can be more easily calculated
     double              m_allocation;               // set by UpdateAllocation - used like m_production
 
-    GG::Label*          m_production_label;
-    GG::Label*          m_allocation_label;
-    GG::Label*          m_import_export_label;
+    std::shared_ptr<GG::Label>          m_production_label;
+    std::shared_ptr<GG::Label>          m_allocation_label;
+    std::shared_ptr<GG::Label>          m_import_export_label;
 
-    std::vector<std::pair<GG::Label*, GG::Label*>> m_production_labels_and_amounts;
-    std::vector<std::pair<GG::Label*, GG::Label*>> m_allocation_labels_and_amounts;
-    std::vector<std::pair<GG::Label*, GG::Label*>> m_import_export_labels_and_amounts;
+    std::vector<std::pair<std::shared_ptr<GG::Label>, std::shared_ptr<GG::Label>>> m_production_labels_and_amounts;
+    std::vector<std::pair<std::shared_ptr<GG::Label>, std::shared_ptr<GG::Label>>> m_allocation_labels_and_amounts;
+    std::vector<std::pair<std::shared_ptr<GG::Label>, std::shared_ptr<GG::Label>>> m_import_export_labels_and_amounts;
 
     GG::Y               row_height;
 

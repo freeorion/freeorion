@@ -64,7 +64,7 @@ void ResourcePanel::CompleteConstruction() {
     for (MeterType meter : {METER_INDUSTRY, METER_RESEARCH, METER_TRADE, METER_SUPPLY})
     {
         auto stat = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(meter), obj->InitialMeterValue(meter), 3, false, MeterIconSize().x, MeterIconSize().y);
-        stat->InstallEventFilter(this);
+        stat->InstallEventFilter(shared_from_this());
         AttachChild(stat);
         m_meter_stats.push_back({meter, stat});
         meters.push_back({meter, AssociatedMeterType(meter)});
@@ -82,15 +82,8 @@ void ResourcePanel::CompleteConstruction() {
     Refresh();
 }
 
-ResourcePanel::~ResourcePanel() {
-    // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
-    delete m_multi_icon_value_indicator;
-    delete m_multi_meter_status_bar;
-
-    for (auto& meter_stat : m_meter_stats) {
-        delete meter_stat.second;
-    }
-}
+ResourcePanel::~ResourcePanel()
+{}
 
 void ResourcePanel::ExpandCollapse(bool expanded) {
     if (expanded == s_expanded_map[m_rescenter_id]) return; // nothing to do
@@ -106,7 +99,7 @@ bool ResourcePanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 
     MeterType meter_type = INVALID_METER_TYPE;
     for (const auto& meter_stat : m_meter_stats) {
-        if (meter_stat.second == w) {
+        if (meter_stat.second.get() == w) {
             meter_type = meter_stat.first;
             break;
         }
@@ -131,16 +124,15 @@ bool ResourcePanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_zoom_to_article_action));
     popup->Run();
 
-    // TODO remove when converting to shared_ptr
-    delete popup;
-
     return retval;
 }
 
 
 
 namespace {
-    bool sortByMeterValue(std::pair<MeterType, StatisticIcon*> left, std::pair<MeterType, StatisticIcon*> right) {
+    bool sortByMeterValue(std::pair<MeterType, std::shared_ptr<StatisticIcon>> left,
+                          std::pair<MeterType, std::shared_ptr<StatisticIcon>> right)
+    {
         if (left.second->GetValue() == right.second->GetValue()) {
             if (left.first == METER_TRADE && right.first == METER_CONSTRUCTION) {
                 // swap order of METER_TRADE and METER_CONSTRUCTION in relation to
@@ -176,8 +168,7 @@ void ResourcePanel::Update() {
     for (auto& meter_stat : m_meter_stats) {
         meter_stat.second->SetValue(obj->InitialMeterValue(meter_stat.first));
 
-        // TODO remove extra wrapping of shared_ptr after conversion to GG shared_ptr
-        auto browse_wnd = std::shared_ptr<GG::BrowseInfoWnd>(GG::Wnd::Create<MeterBrowseWnd>(m_rescenter_id, meter_stat.first, AssociatedMeterType(meter_stat.first)));
+        auto browse_wnd = GG::Wnd::Create<MeterBrowseWnd>(m_rescenter_id, meter_stat.first, AssociatedMeterType(meter_stat.first));
         meter_stat.second->SetBrowseInfoWnd(browse_wnd);
         m_multi_icon_value_indicator->SetToolTip(meter_stat.first, browse_wnd);
     }
@@ -220,7 +211,7 @@ void ResourcePanel::DoLayout() {
         for (auto& meter_stat : m_meter_stats) {
             GG::X x = n * stride;
 
-            StatisticIcon* icon = meter_stat.second;
+            auto& icon = meter_stat.second;
             GG::Pt icon_ul(x, GG::Y0);
             GG::Pt icon_lr = icon_ul + MeterIconSize();
             icon->SizeMove(icon_ul, icon_lr);

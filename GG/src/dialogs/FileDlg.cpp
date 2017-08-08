@@ -393,9 +393,9 @@ void FileDlg::OkHandler(bool double_click)
             // check to see if file already exists; if so, ask if it's ok to overwrite
             if (fs::exists(p)) {
                 std::string msg_str = boost::str(boost::format(style->Translate("%1% exists.\nOk to overwrite it?")) % save_file);
-                std::shared_ptr<ThreeButtonDlg> dlg(
+                auto dlg =
                     style->NewThreeButtonDlg(X(300), Y(125), msg_str, m_font, m_color, m_border_color, m_color, m_text_color,
-                                             2, style->Translate("Ok"), style->Translate("Cancel")));
+                                             2, style->Translate("Ok"), style->Translate("Cancel"));
                 dlg->Run();
                 results_valid = (dlg->Result() == 0);
             }
@@ -417,9 +417,9 @@ void FileDlg::OkHandler(bool double_click)
                     bool p_is_directory = fs::is_directory(p);
                     if (!m_select_directories && p_is_directory) {
                         std::string msg_str = boost::str(boost::format(style->Translate("\"%1%\"\nis a directory.")) % file_name);
-                        std::shared_ptr<ThreeButtonDlg> dlg(
+                        auto dlg =
                             style->NewThreeButtonDlg(X(300), Y(125), msg_str, m_font, m_color, m_border_color, m_color,
-                                                     m_text_color, 1, style->Translate("Ok")));
+                                                     m_text_color, 1, style->Translate("Ok"));
                         dlg->Run();
                         results_valid = false;
                         break;
@@ -436,9 +436,9 @@ void FileDlg::OkHandler(bool double_click)
                     results_valid = true; // indicate validity only if at least one good file was found
                 } else {
                     std::string msg_str = boost::str(boost::format(style->Translate("File \"%1%\"\ndoes not exist.")) % file_name);
-                    std::shared_ptr<ThreeButtonDlg> dlg(
+                    auto dlg =
                         style->NewThreeButtonDlg(X(300), Y(125), msg_str, m_font, m_color, m_border_color, m_color,
-                                                 m_text_color, 1, style->Translate("Ok")));
+                                                 m_text_color, 1, style->Translate("Ok"));
                     dlg->Run();
                     results_valid = false;
                     break;
@@ -593,7 +593,7 @@ void FileDlg::UpdateList()
             return;
         }
         // contained directories
-        std::multimap<std::string, ListBox::Row*> sorted_rows;
+        std::multimap<std::string, std::shared_ptr<ListBox::Row>> sorted_rows;
         for (fs::directory_iterator it(s_working_dir); it != end_it; ++it) {
             try {
                 if (fs::exists(*it) && fs::is_directory(*it) && it->path().filename().native()[0] != '.') {
@@ -615,7 +615,7 @@ void FileDlg::UpdateList()
             }
         }
 
-        std::vector<ListBox::Row*> rows;
+        std::vector<std::shared_ptr<ListBox::Row>> rows;
         rows.reserve(sorted_rows.size());
         for (auto& row : sorted_rows)
         { rows.push_back(row.second); }
@@ -751,12 +751,12 @@ void FileDlg::OpenDirectory()
                     m_curr_dir_text->SetText("");
                     DoLayout();
                     UpdateList();
-                    std::shared_ptr<ThreeButtonDlg> dlg(
+                    auto dlg =
                         GetStyleFactory()->NewThreeButtonDlg(X(175), Y(75),
                                                              style->Translate("Device is not ready."),
                                                              m_font, m_color,
                                                              m_border_color, m_color,
-                                                             m_text_color, 1));
+                                                             m_text_color, 1);
                     dlg->Run();
                 } else {
                     throw;

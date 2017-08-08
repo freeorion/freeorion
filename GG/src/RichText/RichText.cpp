@@ -175,7 +175,7 @@ namespace GG {
         void SetText(const std::string& content)
         {
             m_blocks.clear();
-            m_owner->DeleteChildren();
+            m_owner->DetachChildren();
 
             // Get a set of tags registered for rich text usage.
             std::set<std::string> known_tags = MapKeys(*m_block_factory_map);
@@ -250,10 +250,10 @@ namespace GG {
                 // Extract the parameters from params_string to the tag_params map.
                 ExtractParameters(tag.tag_params, params);
 
-                BlockControl* block = FactoryMap()[tag.tag]->CreateFromTag(tag.tag, params, tag.content, m_font, m_color, m_format);
+                std::shared_ptr<BlockControl> block(FactoryMap()[tag.tag]->CreateFromTag(tag.tag, params, tag.content, m_font, m_color, m_format));
                 if (block) {
                     m_owner->AttachChild(block);
-                    m_blocks.push_back(block);
+                    m_blocks.push_back(block.get());
                 }
             }
 

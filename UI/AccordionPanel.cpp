@@ -25,6 +25,7 @@ void AccordionPanel::CompleteConstruction() {
 
     AttachChild(m_expand_button);
 
+    // Don't call the virtual function, derived classes may not be completed
     AccordionPanel::DoLayout();
     InitBuffer();
 }
@@ -121,6 +122,6 @@ void AccordionPanel::DoLayout() {
     GG::Pt expand_button_ul(m_is_left ? GG::X(-(EXPAND_BUTTON_SIZE + m_border_margin))
                             : (Width() + GG::X(-(EXPAND_BUTTON_SIZE + m_border_margin))), GG::Y0);
     GG::Pt expand_button_lr = expand_button_ul + GG::Pt(GG::X(EXPAND_BUTTON_SIZE), GG::Y(EXPAND_BUTTON_SIZE));
-    Wnd::MoveChildUp(m_expand_button);
+    Wnd::MoveChildUp(m_expand_button.get());
     m_expand_button->SizeMove(expand_button_ul, expand_button_lr);
 }

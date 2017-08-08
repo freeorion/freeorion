@@ -44,9 +44,9 @@ private:
         {}
 
         /** Stores a pointer to the sound effects check box.*/
-        void SetEffectsButton(GG::StateButton* const button);
+        void SetEffectsButton(std::shared_ptr<GG::StateButton> button);
         /** Stores pointer to music enable check box.*/
-        void SetMusicButton(GG::StateButton* const button);
+        void SetMusicButton(std::shared_ptr<GG::StateButton> button);
 
         /**Enables/disables sound effects when the sound effects check
            box is clicked.*/
@@ -64,8 +64,8 @@ private:
         void SoundInitializationFailure(Sound::InitializationFailureException const &e);
 
     private:
-        GG::StateButton* m_effects_button;
-        GG::StateButton* m_music_button;
+        std::shared_ptr<GG::StateButton> m_effects_button;
+        std::shared_ptr<GG::StateButton> m_music_button;
     };
 
     void                DoLayout();
@@ -94,8 +94,8 @@ private:
 
     void                DoneClicked();
 
-    GG::TabWnd* m_tabs;
-    GG::Button* m_done_button;
+    std::shared_ptr<GG::TabWnd> m_tabs;
+    std::shared_ptr<GG::Button> m_done_button;
 
     // Enable and disable the sound when audio options are changed.
     SoundOptionsFeedback m_sound_feedback;

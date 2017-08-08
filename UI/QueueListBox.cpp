@@ -36,7 +36,7 @@ struct PromptRow : GG::ListBox::Row {
     }
 
 private:
-     GG::Label* m_prompt;
+     std::shared_ptr<GG::Label> m_prompt;
 };
 
 
@@ -93,31 +93,26 @@ void QueueListBox::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags
     }
 }
 
-void QueueListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
-    if (wnds.size() > 1) {
-        // delete any extra wnds that won't be processed below
-        for (auto it = ++wnds.begin(); it != wnds.end(); ++it)
-            delete *it;
+void QueueListBox::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) {
+    if (wnds.size() > 1)
         ErrorLogger() << "QueueListBox::AcceptDrops given multiple wnds unexpectedly...";
-    }
-    GG::Wnd* wnd = *wnds.begin();
+    auto& wnd = *wnds.begin();
     const std::string& drop_type = wnd->DragDropDataType();
-    GG::ListBox::Row* row = boost::polymorphic_downcast<GG::ListBox::Row*>(wnd);
+    const auto& row = std::dynamic_pointer_cast<GG::ListBox::Row>(wnd);
     if (!AllowedDropType(drop_type) ||
         !row ||
         std::find(begin(), end(), row) == end())
     {
-        delete wnd;
         return;
     }
-    ListBox::AcceptDrops(pt, std::vector<GG::Wnd*>{wnd}, mod_keys);
+    ListBox::AcceptDrops(pt, std::vector<std::shared_ptr<GG::Wnd>>{wnd}, mod_keys);
 }
 
 void QueueListBox::Render() {
     ListBox::Render();
     // render drop point line
     if (m_show_drop_point && m_order_issuing_enabled) {
-        GG::ListBox::Row* row = *(m_drop_point == end() ? --end() : m_drop_point);
+        auto&& row = m_drop_point == end() ? (--end())->get() : m_drop_point->get();
         if (!row)
             return;
         GG::Pt ul = row->UpperLeft(), lr = row->LowerRight();
@@ -142,7 +137,7 @@ void QueueListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     }
 }
 
-void QueueListBox::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+void QueueListBox::DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                                  GG::Flags<GG::ModKey> mod_keys)
 {
     CUIListBox::DragDropHere(pt, drop_wnds_acceptable, mod_keys);
@@ -202,9 +197,6 @@ void QueueListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& 
     popup->AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), false, false, MoveToBottomAction(it)));
     popup->AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    false, false, DeleteAction(it)));
     popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
 }
 
 void QueueListBox::EnsurePromptHiddenSlot(iterator it) {

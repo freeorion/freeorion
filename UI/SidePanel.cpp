@@ -541,22 +541,22 @@ private:
     void                    FocusDropListOpened(bool is_open);
 
     int                     m_planet_id;                ///< id for the planet with is represented by this planet panel
-    GG::TextControl*        m_planet_name;              ///< planet name
-    GG::Label*              m_env_size;                 ///< indicates size and planet environment rating uncolonized planets
-    GG::Button*             m_colonize_button;          ///< btn which can be pressed to colonize this planet
-    GG::Button*             m_invade_button;            ///< btn which can be pressed to invade this planet
-    GG::Button*             m_bombard_button;           ///< btn which can be pressed to bombard this planet
-    GG::DynamicGraphic*     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids
-    RotatingPlanetControl*  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
+    std::shared_ptr<GG::TextControl>        m_planet_name;              ///< planet name;
+    std::shared_ptr<GG::Label>              m_env_size;                 ///< indicates size and planet environment rating uncolonized planets;
+    std::shared_ptr<GG::Button>             m_colonize_button;          ///< btn which can be pressed to colonize this planet;
+    std::shared_ptr<GG::Button>             m_invade_button;            ///< btn which can be pressed to invade this planet;
+    std::shared_ptr<GG::Button>             m_bombard_button;           ///< btn which can be pressed to bombard this planet;
+    std::shared_ptr<GG::DynamicGraphic>     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids;
+    std::shared_ptr<RotatingPlanetControl>  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
     bool                    m_selected;                 ///< is this planet panel selected
     bool                    m_order_issuing_enabled;    ///< can orders be issues via this planet panel?
     GG::Clr                 m_empire_colour;            ///< colour to use for empire-specific highlighting.  set based on ownership of planet.
-    GG::DropDownList*       m_focus_drop;               ///< displays and allows selection of planetary focus
-    PopulationPanel*        m_population_panel;         ///< contains info about population and health
-    ResourcePanel*          m_resource_panel;           ///< contains info about resources production and focus selection UI
-    MilitaryPanel*          m_military_panel;           ///< contains icons representing military-related meters
-    BuildingsPanel*         m_buildings_panel;          ///< contains icons representing buildings
-    SpecialsPanel*          m_specials_panel;           ///< contains icons representing specials
+    std::shared_ptr<GG::DropDownList>       m_focus_drop;               ///< displays and allows selection of planetary focus;
+    std::shared_ptr<PopulationPanel>        m_population_panel;         ///< contains info about population and health
+    std::shared_ptr<ResourcePanel>          m_resource_panel;           ///< contains info about resources production and focus selection UI
+    std::shared_ptr<MilitaryPanel>          m_military_panel;           ///< contains icons representing military-related meters
+    std::shared_ptr<BuildingsPanel>         m_buildings_panel;          ///< contains icons representing buildings
+    std::shared_ptr<SpecialsPanel>          m_specials_panel;           ///< contains icons representing specials
     StarType                m_star_type;
 
     boost::signals2::connection m_planet_connection;
@@ -630,14 +630,14 @@ private:
 
     void            VScroll(int pos_top, int pos_bottom, int range_min, int range_max); //!< responds to user scrolling of planet panels list.  all but first parameter ignored
 
-    std::vector<PlanetPanel*>   m_planet_panels;
+    std::vector<std::shared_ptr<PlanetPanel>>   m_planet_panels;
 
     int                         m_selected_planet_id;
     std::set<int>               m_candidate_ids;
 
     std::shared_ptr<UniverseObjectVisitor> m_valid_selection_predicate;
 
-    GG::Scroll*                 m_vscroll; ///< the vertical scroll (for viewing all the planet panes)
+    std::shared_ptr<GG::Scroll>                 m_vscroll; ///< the vertical scroll (for viewing all the planet panes);
 
     bool                        m_ignore_recursive_resize;
 };
@@ -757,7 +757,7 @@ namespace {
         }
 
         void Init() {
-            OwnerColoredSystemName *name(GG::Wnd::Create<OwnerColoredSystemName>(m_system_id, SystemNameFontSize(), false));
+            auto name(GG::Wnd::Create<OwnerColoredSystemName>(m_system_id, SystemNameFontSize(), false));
             push_back(name);
             SetColAlignment(0, GG::ALIGN_CENTER);
             GetLayout()->PreRender();
@@ -796,7 +796,7 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
         if (CurrentItem() == end())
             return;
 
-        SystemRow* system_row(dynamic_cast<SystemRow*>(*CurrentItem()));
+        SystemRow* system_row(dynamic_cast<SystemRow*>(CurrentItem()->get()));
         if (!system_row)
             return;
 
@@ -810,13 +810,13 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
 
         auto rename_action = [this, system]() {
             const std::string& old_name(system->Name());
-            std::shared_ptr<CUIEditWnd> edit_wnd(GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("SP_ENTER_NEW_SYSTEM_NAME"), old_name)); // TODO change the shared_ptr to auto after conversion of Wnd::Create
+            auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("SP_ENTER_NEW_SYSTEM_NAME"), old_name);
             edit_wnd->Run();
             const std::string& new_name(edit_wnd->Result());
             if (m_order_issuing_enabled && !new_name.empty() && new_name != old_name) {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
                     std::make_shared<RenameOrder>(HumanClientApp::GetApp()->EmpireID(), system->ID(), new_name));
-                if (SidePanel* side_panel = dynamic_cast<SidePanel*>(Parent()))
+                if (SidePanel* side_panel = dynamic_cast<SidePanel*>(Parent().get()))
                     side_panel->Refresh();
             }
         };
@@ -825,9 +825,6 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
             popup->AddMenuItem(GG::MenuItem(UserString("SP_RENAME_SYSTEM"), false, false, rename_action));
 
         popup->Run();
-
-        // TODO remove when converting to shared_ptr
-        delete popup;
     }
 
     bool m_order_issuing_enabled;
@@ -1020,18 +1017,8 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     RequirePreRender();
 }
 
-SidePanel::PlanetPanel::~PlanetPanel() {
-    delete m_colonize_button;
-    delete m_invade_button;
-    delete m_bombard_button;
-    delete m_env_size;
-    delete m_focus_drop;
-    delete m_population_panel;
-    delete m_resource_panel;
-    delete m_military_panel;
-    delete m_buildings_panel;
-    delete m_specials_panel;
-}
+SidePanel::PlanetPanel::~PlanetPanel()
+{}
 
 void SidePanel::PlanetPanel::DoLayout() {
     GG::X left = GG::X0 + MaxPlanetDiameter() + EDGE_PAD;
@@ -1048,49 +1035,49 @@ void SidePanel::PlanetPanel::DoLayout() {
         y += m_specials_panel->Height() + EDGE_PAD;
     }
 
-    if (m_env_size && m_env_size->Parent() == this) {
+    if (m_env_size && m_env_size->Parent().get() == this) {
         m_env_size->MoveTo(GG::Pt(left, y));
         y += m_env_size->Height() + EDGE_PAD;
     }
 
-    if (m_colonize_button && m_colonize_button->Parent() == this) {
+    if (m_colonize_button && m_colonize_button->Parent().get() == this) {
         m_colonize_button->MoveTo(GG::Pt(left, y));
         m_colonize_button->Resize(GG::Pt(GG::X(ClientUI::Pts()*15), m_colonize_button->MinUsableSize().y));
         y += m_colonize_button->Height() + EDGE_PAD;
     }
-    if (m_invade_button && m_invade_button->Parent() == this) {
+    if (m_invade_button && m_invade_button->Parent().get() == this) {
         m_invade_button->MoveTo(GG::Pt(left, y));
         m_invade_button->Resize(GG::Pt(GG::X(ClientUI::Pts()*15), m_invade_button->MinUsableSize().y));
         y += m_invade_button->Height() + EDGE_PAD;
     }
-    if (m_bombard_button && m_bombard_button->Parent() == this) {
+    if (m_bombard_button && m_bombard_button->Parent().get() == this) {
         m_bombard_button->MoveTo(GG::Pt(left, y));
         m_bombard_button->Resize(GG::Pt(GG::X(ClientUI::Pts()*15), m_bombard_button->MinUsableSize().y));
         y += m_bombard_button->Height() + EDGE_PAD;
     }
 
-    if (m_focus_drop && m_focus_drop->Parent() == this) {
+    if (m_focus_drop && m_focus_drop->Parent().get() == this) {
         m_focus_drop->MoveTo(GG::Pt(left, y));
         m_focus_drop->Resize(GG::Pt(MeterIconSize().x*4, MeterIconSize().y*3/2 + 4));
         y += m_focus_drop->Height() + EDGE_PAD;
     }
 
-    if (m_population_panel && m_population_panel->Parent() == this) {
+    if (m_population_panel && m_population_panel->Parent().get() == this) {
         m_population_panel->SizeMove(GG::Pt(left, y), GG::Pt(right, y + m_population_panel->Height()));
         y += m_population_panel->Height() + EDGE_PAD;
     }
 
-    if (m_resource_panel && m_resource_panel->Parent() == this) {
+    if (m_resource_panel && m_resource_panel->Parent().get() == this) {
         m_resource_panel->SizeMove(GG::Pt(left, y), GG::Pt(right, y + m_resource_panel->Height()));
         y += m_resource_panel->Height() + EDGE_PAD;
     }
 
-    if (m_military_panel && m_military_panel->Parent() == this) {
+    if (m_military_panel && m_military_panel->Parent().get() == this) {
         m_military_panel->SizeMove(GG::Pt(left, y), GG::Pt(right, y + m_military_panel->Height()));
         y += m_military_panel->Height() + EDGE_PAD;
     }
 
-    if (m_buildings_panel && m_buildings_panel->Parent() == this) {
+    if (m_buildings_panel && m_buildings_panel->Parent().get() == this) {
         m_buildings_panel->SizeMove(GG::Pt(left, y), GG::Pt(right, y + m_buildings_panel->Height()));
         y += m_buildings_panel->Height() + EDGE_PAD;
     }
@@ -1119,14 +1106,8 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
     if (!planet || !GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown"))
         return;
 
-    if (m_planet_graphic) {
-        delete m_planet_graphic;
-        m_planet_graphic = nullptr;
-    }
-    if (m_rotating_planet_graphic) {
-        delete m_rotating_planet_graphic;
-        m_rotating_planet_graphic = nullptr;
-    }
+    DetachChildAndReset(m_planet_graphic);
+    DetachChildAndReset(m_rotating_planet_graphic);
 
     if (planet->Type() == PT_ASTEROIDS) {
         const std::vector<std::shared_ptr<GG::Texture>>& textures = GetAsteroidTextures();
@@ -1503,49 +1484,17 @@ void SidePanel::PlanetPanel::Refresh() {
     if (!planet) {
         DebugLogger() << "PlanetPanel::Refresh couldn't get planet!";
         // clear / hide everything...
-        DetachChild(m_planet_name);
-        delete m_planet_name;
-        m_planet_name = nullptr;
-
-        DetachChild(m_env_size);
-        delete m_env_size;
-        m_env_size = nullptr;
-
-        DetachChild(m_focus_drop);
-        delete m_focus_drop;
-        m_focus_drop = nullptr;
-
-        DetachChild(m_population_panel);
-        delete m_population_panel;
-        m_population_panel = nullptr;
-
-        DetachChild(m_resource_panel);
-        delete m_resource_panel;
-        m_resource_panel = nullptr;
-
-        DetachChild(m_military_panel);
-        delete m_military_panel;
-        m_military_panel = nullptr;
-
-        DetachChild(m_buildings_panel);
-        delete m_buildings_panel;
-        m_buildings_panel = nullptr;
-
-        DetachChild(m_colonize_button);
-        delete m_colonize_button;
-        m_colonize_button = nullptr;
-
-        DetachChild(m_invade_button);
-        delete m_invade_button;
-        m_invade_button = nullptr;
-
-        DetachChild(m_bombard_button);
-        delete m_bombard_button;
-        m_bombard_button = nullptr;
-
-        DetachChild(m_specials_panel);
-        delete m_specials_panel;
-        m_specials_panel = nullptr;
+        DetachChildAndReset(m_planet_name);
+        DetachChildAndReset(m_env_size);
+        DetachChildAndReset(m_focus_drop);
+        DetachChildAndReset(m_population_panel);
+        DetachChildAndReset(m_resource_panel);
+        DetachChildAndReset(m_military_panel);
+        DetachChildAndReset(m_buildings_panel);
+        DetachChildAndReset(m_colonize_button);
+        DetachChildAndReset(m_invade_button);
+        DetachChildAndReset(m_bombard_button);
+        DetachChildAndReset(m_specials_panel);
 
         RequirePreRender();
         return;
@@ -1834,7 +1783,7 @@ void SidePanel::PlanetPanel::Refresh() {
 
         // refresh items in list
         m_focus_drop->Clear();
-        std::vector<GG::DropDownList::Row*> rows;
+        std::vector<std::shared_ptr<GG::DropDownList::Row>> rows;
         rows.reserve(available_foci.size());
         for (const std::string& focus_name : available_foci) {
             std::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(
@@ -2050,7 +1999,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
     }
 
 
-    const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+    const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
     if (ClientPlayerIsModerator() && map_wnd->GetModeratorActionSetting() != MAS_NoAction) {
         RightClickedSignal(planet->ID());  // response handled in MapWnd
         return;
@@ -2062,7 +2011,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         && m_planet_name->InClient(pt))
     {
         auto rename_action = [this, planet]() { // rename planet
-            std::shared_ptr<CUIEditWnd> edit_wnd(GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("SP_ENTER_NEW_PLANET_NAME"), planet->Name())); // TODO change the shared_ptr to auto after conversion of Wnd::Create
+            auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("SP_ENTER_NEW_PLANET_NAME"), planet->Name());
             edit_wnd->Run();
             if (edit_wnd->Result() != ""
                 && edit_wnd->Result() != planet->Name()
@@ -2122,9 +2071,6 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
     }
 
     popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
 }
 
 void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -2481,7 +2427,7 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer() :
 }
 
 SidePanel::PlanetPanelContainer::~PlanetPanelContainer()
-{ delete m_vscroll; }
+{}
 
 bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const {
     // ensure pt is below top of container
@@ -2503,7 +2449,7 @@ bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const {
 }
 
 void SidePanel::PlanetPanelContainer::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {
-    if (m_vscroll && m_vscroll->Parent() == this) {
+    if (m_vscroll && m_vscroll->Parent().get() == this) {
         const std::pair<int, int> initial_pos = m_vscroll->PosnRange();
         if (move < 0)
             m_vscroll->ScrollLineIncr();
@@ -2518,14 +2464,14 @@ void SidePanel::PlanetPanelContainer::LDrag(const GG::Pt& pt, const GG::Pt& move
 { ForwardEventToParent(); }
 
 int SidePanel::PlanetPanelContainer::ScrollPosition() const {
-    if (m_vscroll && m_vscroll->Parent() == this)
+    if (m_vscroll && m_vscroll->Parent().get() == this)
         return m_vscroll->PosnRange().first;
     else
         return 0;
 }
 
 void SidePanel::PlanetPanelContainer::ScrollTo(int pos) {
-    if (m_vscroll && m_vscroll->Parent() == this) {
+    if (m_vscroll && m_vscroll->Parent().get() == this) {
         const std::pair<int, int> initial_pos = m_vscroll->PosnRange();
         m_vscroll->ScrollTo(pos);
         if (initial_pos != m_vscroll->PosnRange())
@@ -2536,8 +2482,7 @@ void SidePanel::PlanetPanelContainer::ScrollTo(int pos) {
 void SidePanel::PlanetPanelContainer::Clear() {
     m_planet_panels.clear();
     m_selected_planet_id = INVALID_OBJECT_ID;
-    DetachChild(m_vscroll);
-    DeleteChildren();
+    DetachChildren();
     AttachChild(m_vscroll);
 }
 
@@ -2612,7 +2557,7 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
     }
 
     bool vscroll_expected((initially_used_height > available_height)
-                          || ((m_vscroll->Parent() == this)
+                          || ((m_vscroll->Parent().get() == this)
                               && (m_vscroll->PosnRange().first > 0)) );
 
     // Size panels accounting for the expected vscroll
@@ -2635,7 +2580,7 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
 
     // if scrollbar present, start placing panels above the top of this
     // container by a distances determined by the scrollbar position
-    if (vscroll_required && m_vscroll->Parent() == this)
+    if (vscroll_required && m_vscroll->Parent().get() == this)
         y = GG::Y(-m_vscroll->PosnRange().first);
 
     // place panels in sequence from the top, each below the previous
@@ -2720,7 +2665,7 @@ void SidePanel::PlanetPanelContainer::SetValidSelectionPredicate(const std::shar
 void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
     //std::cout << "SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates" << std::endl;
     m_candidate_ids.clear();
-    std::set<PlanetPanel*>   disabled_panels;
+    std::set<std::shared_ptr<PlanetPanel>>   disabled_panels;
 
     if (m_valid_selection_predicate) {
         // if there is a selection predicate, which determines which planet panels
@@ -2802,7 +2747,7 @@ int                                        SidePanel::s_system_id = INVALID_OBJE
 int                                        SidePanel::s_planet_id = INVALID_OBJECT_ID;
 bool                                       SidePanel::s_needs_update = false;
 bool                                       SidePanel::s_needs_refresh = false;
-std::set<SidePanel*>                       SidePanel::s_side_panels;
+std::set<std::weak_ptr<SidePanel>, std::owner_less<std::weak_ptr<SidePanel>>> SidePanel::s_side_panels;
 std::set<boost::signals2::connection>      SidePanel::s_system_connections;
 std::map<int, boost::signals2::connection> SidePanel::s_fleet_state_change_signals;
 boost::signals2::signal<void ()>           SidePanel::ResourceCenterChangedSignal;
@@ -2888,7 +2833,7 @@ void SidePanel::CompleteConstruction() {
     RequirePreRender();
     Hide();
 
-    s_side_panels.insert(this);
+    s_side_panels.insert(std::weak_ptr<SidePanel>(std::dynamic_pointer_cast<SidePanel>(shared_from_this())));
 }
 
 SidePanel::~SidePanel() {
@@ -2901,16 +2846,12 @@ SidePanel::~SidePanel() {
         s_fleet_state_change_signals.begin()->second.disconnect();
         s_fleet_state_change_signals.erase(s_fleet_state_change_signals.begin());
     }
-    s_side_panels.erase(this);
-
-    delete m_star_graphic;
-    delete m_system_resource_summary;
 }
 
 bool SidePanel::InWindow(const GG::Pt& pt) const {
     return (UpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0) <= pt && pt < LowerRight())
            || (m_planet_panel_container && m_planet_panel_container->InWindow(pt))
-           || (m_system_resource_summary && m_system_resource_summary->Parent() == this && m_system_resource_summary->InWindow(pt));
+           || (m_system_resource_summary && m_system_resource_summary->Parent().get() == this && m_system_resource_summary->InWindow(pt));
 }
 
 GG::Pt SidePanel::ClientUpperLeft() const
@@ -2998,8 +2939,9 @@ void SidePanel::PreRender() {
 
     // Update updates the data for each planet tab in all SidePanels
     if (s_needs_update) {
-        for (auto& panel : s_side_panels)
-            panel->UpdateImpl();
+        for (auto& weak_panel : s_side_panels)
+            if (auto panel = weak_panel.lock())
+                panel->UpdateImpl();
     }
 
     // On a resize only DoLayout should be called.
@@ -3018,8 +2960,9 @@ void SidePanel::PreRender() {
 
 void SidePanel::Update() {
     s_needs_update = true;
-    for (auto& panel : s_side_panels)
-        panel->RequirePreRender();
+    for (auto& weak_panel : s_side_panels)
+        if (auto panel = weak_panel.lock())
+            panel->RequirePreRender();
 }
 
 void SidePanel::UpdateImpl() {
@@ -3032,8 +2975,9 @@ void SidePanel::UpdateImpl() {
 
 void SidePanel::Refresh() {
     s_needs_refresh = true;
-    for (auto& panel : s_side_panels)
-        panel->RequirePreRender();
+    for (auto& weak_panel : s_side_panels)
+        if (auto panel = weak_panel.lock())
+            panel->RequirePreRender();
 }
 
 void SidePanel::RefreshInPreRender() {
@@ -3052,8 +2996,9 @@ void SidePanel::RefreshInPreRender() {
 
 
     // refresh individual panels' contents
-    for (auto& panel : s_side_panels)
-        panel->RefreshImpl();
+    for (auto& weak_panel : s_side_panels)
+        if (auto panel = weak_panel.lock())
+            panel->RefreshImpl();
 
 
     // early exit if no valid system object to get or connect signals to
@@ -3119,7 +3064,7 @@ void SidePanel::RefreshSystemNames() {
     GG::Y system_name_height(system_name_font->Lineskip() + 4);
 
     // Make a vector of sorted rows and insert them in a single operation.
-    std::vector<GG::DropDownList::Row*> rows;
+    std::vector<std::shared_ptr<GG::DropDownList::Row>> rows;
     rows.reserve(sorted_systems.size());
     for (const std::pair<std::string, int>& entry : sorted_systems) {
         int sys_id = entry.second;
@@ -3131,7 +3076,7 @@ void SidePanel::RefreshSystemNames() {
     for (GG::DropDownList::iterator it = m_system_name->begin();
          it != m_system_name->end(); ++it)
     {
-        if (const SystemRow* row = dynamic_cast<const SystemRow*>(*it)) {
+        if (const SystemRow* row = dynamic_cast<const SystemRow*>(it->get())) {
             if (s_system_id == row->SystemID()) {
                 m_system_name->Select(it);
                 break;
@@ -3147,10 +3092,8 @@ void SidePanel::RefreshImpl() {
     // clear out current contents
     m_planet_panel_container->Clear();
     m_star_type_text->SetText("");
-    delete m_star_graphic;
-    m_star_graphic = nullptr;
-    delete m_system_resource_summary;
-    m_system_resource_summary = nullptr;
+    DetachChildAndReset(m_star_graphic);
+    DetachChildAndReset(m_system_resource_summary);
 
 
     RefreshSystemNames();
@@ -3169,6 +3112,7 @@ void SidePanel::RefreshImpl() {
     textures.push_back(graphic);
 
     int graphic_width = Value(Width()) - MaxPlanetDiameter();
+    DetachChild(m_star_graphic);
     m_star_graphic = GG::Wnd::Create<GG::DynamicGraphic>(GG::X(MaxPlanetDiameter()), GG::Y0,
                                                          GG::X(graphic_width), GG::Y(graphic_width), true,
                                                          textures[0]->DefaultWidth(), textures[0]->DefaultHeight(),
@@ -3230,8 +3174,8 @@ void SidePanel::RefreshImpl() {
         for (const std::pair<MeterType, MeterType>& entry : meter_types) {
             MeterType type = entry.first;
             // add tooltip for each meter type
-            std::shared_ptr<GG::BrowseInfoWnd> browse_wnd = std::shared_ptr<GG::BrowseInfoWnd>(
-                GG::Wnd::Create<SystemResourceSummaryBrowseWnd>(MeterToResource(type), s_system_id, HumanClientApp::GetApp()->EmpireID()));
+            auto browse_wnd = GG::Wnd::Create<SystemResourceSummaryBrowseWnd>(
+                MeterToResource(type), s_system_id, HumanClientApp::GetApp()->EmpireID());
             m_system_resource_summary->SetToolTip(type, browse_wnd);
         }
 
@@ -3321,7 +3265,7 @@ void SidePanel::SystemSelectionChangedSlot(GG::DropDownList::iterator it) {
         is open. */
     int system_id = INVALID_OBJECT_ID;
     if (it != m_system_name->end())
-        system_id = boost::polymorphic_downcast<const SystemRow*>(*it)->SystemID();
+        system_id = boost::polymorphic_downcast<const SystemRow*>(it->get())->SystemID();
     if (SystemID() != system_id)
         SystemSelectedSignal(system_id);
 }
@@ -3409,11 +3353,12 @@ void SidePanel::SelectPlanet(int planet_id) {
 
     // Use the first sidepanel with selection enabled to determine if planet is selectable.
     bool planet_selectable(false);
-    for (auto& panel : s_side_panels) {
-        if (panel->m_selection_enabled) {
-            planet_selectable = panel->PlanetSelectable(planet_id);
-            break;
-        }
+    for (auto& weak_panel : s_side_panels) {
+        if (auto panel = weak_panel.lock())
+            if (panel->m_selection_enabled) {
+                planet_selectable = panel->PlanetSelectable(planet_id);
+                break;
+            }
     }
 
     s_planet_id = INVALID_OBJECT_ID;
@@ -3423,8 +3368,9 @@ void SidePanel::SelectPlanet(int planet_id) {
 
     s_planet_id = planet_id;
 
-    for (auto& panel : s_side_panels)
-        panel->RequirePreRender();
+    for (auto& weak_panel : s_side_panels)
+        if (auto panel = weak_panel.lock())
+            panel->RequirePreRender();
 
     PlanetSelectedSignal(s_planet_id);
 }

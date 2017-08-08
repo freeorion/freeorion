@@ -368,7 +368,7 @@ void StateButton::SetTextColor(Clr c)
 { m_label->SetTextColor(c); }
 
 TextControl* StateButton::GetLabel() const
-{ return m_label; }
+{ return m_label.get(); }
 
 
 ////////////////////////////////////////////////
@@ -555,7 +555,7 @@ void BeveledTabRepresenter::Render(const StateButton& button) const
 // GG::RadioButtonGroup
 ////////////////////////////////////////////////
 // ButtonSlot
-RadioButtonGroup::ButtonSlot::ButtonSlot(StateButton* button_) :
+RadioButtonGroup::ButtonSlot::ButtonSlot(std::shared_ptr<StateButton>& button_) :
     button(button_)
 {}
 
@@ -617,7 +617,7 @@ bool RadioButtonGroup::RenderOutline() const
 void RadioButtonGroup::RaiseCheckedButton()
 {
     if (m_checked_button != NO_BUTTON)
-        MoveChildUp(m_button_slots[m_checked_button].button);
+        MoveChildUp(m_button_slots[m_checked_button].button.get());
 }
 
 void RadioButtonGroup::Render()
@@ -646,10 +646,10 @@ void RadioButtonGroup::DisableButton(std::size_t index, bool b/* = true*/)
     }
 }
 
-void RadioButtonGroup::AddButton(StateButton* bn)
-{ InsertButton(m_button_slots.size(), bn); }
+void RadioButtonGroup::AddButton(std::shared_ptr<StateButton> bn)
+{ InsertButton(m_button_slots.size(), std::forward<std::shared_ptr<StateButton>>(bn)); }
 
-void RadioButtonGroup::InsertButton(std::size_t index, StateButton* bn)
+void RadioButtonGroup::InsertButton(std::size_t index, std::shared_ptr<StateButton> bn)
 {
     assert(index <= m_button_slots.size());
     if (!m_expand_buttons) {
@@ -682,7 +682,7 @@ void RadioButtonGroup::InsertButton(std::size_t index, StateButton* bn)
             layout->SetColumnStretch(layout->Columns() - CELLS_PER_BUTTON, X_STRETCH);
         }
         for (std::size_t i = m_button_slots.size() - 1; index <= i; --i) {
-            layout->Remove(m_button_slots[i].button);
+            layout->Remove(m_button_slots[i].button.get());
             layout->Add(m_button_slots[i].button,
                         m_orientation == VERTICAL ? i * CELLS_PER_BUTTON + CELLS_PER_BUTTON : 0,
                         m_orientation == VERTICAL ? 0 : i * CELLS_PER_BUTTON + CELLS_PER_BUTTON);
@@ -708,7 +708,7 @@ void RadioButtonGroup::RemoveButton(StateButton* button)
 {
     std::size_t index = NO_BUTTON;
     for (std::size_t i = 0; i < m_button_slots.size(); ++i) {
-        if (m_button_slots[i].button == button) {
+        if (m_button_slots[i].button.get() == button) {
             index = i;
             break;
         }
@@ -717,9 +717,9 @@ void RadioButtonGroup::RemoveButton(StateButton* button)
 
     const int CELLS_PER_BUTTON = m_expand_buttons ? 1 : 2;
     auto&& layout = GetLayout();
-    layout->Remove(m_button_slots[index].button);
+    layout->Remove(m_button_slots[index].button.get());
     for (std::size_t i = index + 1; i < m_button_slots.size(); ++i) {
-        layout->Remove(m_button_slots[i].button);
+        layout->Remove(m_button_slots[i].button.get());
         if (m_orientation == VERTICAL) {
             layout->Add(m_button_slots[i].button, i * CELLS_PER_BUTTON - CELLS_PER_BUTTON, 0);
             layout->SetRowStretch(i * CELLS_PER_BUTTON - CELLS_PER_BUTTON, layout->RowStretch(i * CELLS_PER_BUTTON));
@@ -752,11 +752,11 @@ void RadioButtonGroup::ExpandButtons(bool expand)
 {
     if (expand != m_expand_buttons) {
         std::size_t old_checked_button = m_checked_button;
-        std::vector<StateButton*> buttons(m_button_slots.size());
+        std::vector<std::shared_ptr<StateButton>> buttons(m_button_slots.size());
         while (!m_button_slots.empty()) {
-            StateButton* button = m_button_slots.back().button;
+            auto button = m_button_slots.back().button;
             buttons[m_button_slots.size() - 1] = button;
-            RemoveButton(button);
+            RemoveButton(button.get());
         }
         m_expand_buttons = expand;
         for (auto& button : buttons) {
@@ -770,11 +770,11 @@ void RadioButtonGroup::ExpandButtonsProportionally(bool proportional)
 {
     if (proportional != m_expand_buttons_proportionally) {
         std::size_t old_checked_button = m_checked_button;
-        std::vector<StateButton*> buttons(m_button_slots.size());
+        std::vector<std::shared_ptr<StateButton>> buttons(m_button_slots.size());
         while (!m_button_slots.empty()) {
-            StateButton* button = m_button_slots.back().button;
+            auto& button = m_button_slots.back().button;
             buttons[m_button_slots.size() - 1] = button;
-            RemoveButton(button);
+            RemoveButton(button.get());
         }
         m_expand_buttons_proportionally = proportional;
         for (auto& button : buttons) {

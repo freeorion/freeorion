@@ -97,10 +97,10 @@ private:
     std::size_t m_default;
     std::size_t m_escape;
     std::size_t m_result;
-    Button*     m_button_0;
-    Button*     m_button_1;
-    Button*     m_button_2;
-    Layout*     m_button_layout;
+    std::shared_ptr<Button>     m_button_0;
+    std::shared_ptr<Button>     m_button_1;
+    std::shared_ptr<Button>     m_button_2;
+    std::shared_ptr<Layout>     m_button_layout;
 };
 
 } // namespace GG

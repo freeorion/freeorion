@@ -74,9 +74,6 @@ void CUILabel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"), false, false, copy_wnd_action));
     popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
 }
 
 
@@ -901,9 +898,6 @@ void CUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
     popup->Run();
 
-    // TODO remove when converting to shared_ptr
-    delete popup;
-
     // todo: italicize, underline, or colour selected text
 }
 
@@ -998,9 +992,6 @@ void CUIMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
     popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
     popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
     // todo: italicize, underline, or colour selected text
 }
 
@@ -1066,9 +1057,6 @@ void CUILinkTextMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_ke
     popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
     popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
     popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
 
     // todo: italicize, underline, or colour selected text
 }
@@ -1424,8 +1412,8 @@ namespace {
             }
         }
 
-        GG::StaticGraphic* m_icon;
-        CUILabel* m_species_label;
+        std::shared_ptr<GG::StaticGraphic> m_icon;
+        std::shared_ptr<CUILabel> m_species_label;
 
     };
 }
@@ -1457,7 +1445,7 @@ const std::string& SpeciesSelector::CurrentSpeciesName() const {
     CUIDropDownList::iterator row_it = this->CurrentItem();
     if (row_it == this->end())
         return EMPTY_STRING;
-    const CUIDropDownList::Row* row = *row_it;
+    const auto& row = *row_it;
     if (!row) {
         ErrorLogger() << "SpeciesSelector::CurrentSpeciesName couldn't get current item due to invalid Row pointer";
         return EMPTY_STRING;
@@ -1468,15 +1456,15 @@ const std::string& SpeciesSelector::CurrentSpeciesName() const {
 std::vector<std::string> SpeciesSelector::AvailableSpeciesNames() const {
     std::vector<std::string> retval;
     for (auto& row : *this)
-        if (const SpeciesRow* species_row = dynamic_cast<const SpeciesRow*>(row))
+        if (const auto& species_row = dynamic_cast<const SpeciesRow*>(row.get()))
             retval.push_back(species_row->Name());
     return retval;
 }
 
 void SpeciesSelector::SelectSpecies(const std::string& species_name) {
-    for (CUIDropDownList::iterator row_it = this->begin(); row_it != this->end(); ++row_it) {
-        CUIDropDownList::Row* row = *row_it;
-        if (const SpeciesRow* species_row = dynamic_cast<const SpeciesRow*>(row)) {
+    for (auto row_it = this->begin(); row_it != this->end(); ++row_it) {
+        auto& row = *row_it;
+        if (const auto& species_row = dynamic_cast<const SpeciesRow*>(row.get())) {
             if (species_row->Name() == species_name) {
                 Select(row_it);
                 return;
@@ -1487,13 +1475,10 @@ void SpeciesSelector::SelectSpecies(const std::string& species_name) {
 }
 
 void SpeciesSelector::SelectionChanged(GG::DropDownList::iterator it) {
-    const GG::ListBox::Row* row = nullptr;
-    if (it != this->end())
-        row = *it;
-    if (row)
-        SpeciesChangedSignal(row->Name());
-    else
+    if (it == this->end() || !(*it))
         SpeciesChangedSignal(EMPTY_STRING);
+
+    SpeciesChangedSignal((*it)->Name());
 }
 
 
@@ -1533,7 +1518,7 @@ namespace {
             GG::Control::SizeMove(ul, GG::Pt(ul.x + Width(), lr.y));
         }
     private:
-    ColorSquare* m_color_square;
+    std::shared_ptr<ColorSquare> m_color_square;
 
     };
 }
@@ -1554,7 +1539,7 @@ GG::Clr EmpireColorSelector::CurrentColor() const
 
 void EmpireColorSelector::SelectColor(const GG::Clr& clr) {
     for (iterator list_it = begin(); list_it != end(); ++list_it) {
-        const GG::ListBox::Row* row = *list_it;
+        const auto& row = *list_it;
         if (row && !row->empty() && row->at(0)->Color() == clr) {
             Select(list_it);
             return;
@@ -1564,7 +1549,7 @@ void EmpireColorSelector::SelectColor(const GG::Clr& clr) {
 }
 
 void EmpireColorSelector::SelectionChanged(GG::DropDownList::iterator it) {
-    const GG::ListBox::Row* row = *it;
+    const auto& row = *it;
     bool error(it == end() || !row || row->empty());
     if (error)
         ErrorLogger() << "EmpireColorSelector::SelectionChanged had trouble getting colour from row.  Using CLR_RED";
@@ -1627,7 +1612,7 @@ void ColorSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void ColorSelector::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     GG::X x = std::min(pt.x, GG::GUI::GetGUI()->AppWidth() - 315);    // 315 is width of ColorDlg from GG::ColorDlg:::ColorDlg
     GG::Y y = std::min(pt.y, GG::GUI::GetGUI()->AppHeight() - 300);   // 300 is height of ColorDlg from GG::ColorDlg:::ColorDlg
-    auto dlg = /*TODO: Remove extra shared_ptr wrap after Wnd::Create converted to return shared_ptr*/std::shared_ptr<GG::ColorDlg>(GG::Wnd::Create<GG::ColorDlg>(x, y, Color(), ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor()));
+    auto dlg = GG::Wnd::Create<GG::ColorDlg>(x, y, Color(), ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor());
     dlg->Run();
     if (dlg->ColorWasSelected()) {
         GG::Clr clr = dlg->Result();
@@ -1645,9 +1630,6 @@ void ColorSelector::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     popup->AddMenuItem(GG::MenuItem(UserString("RESET"), false, false, reset_color_action));
     popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
 }
 
 
@@ -1801,18 +1783,12 @@ void ProductionInfoPanel::SetEmpireID(int empire_id) {
 }
 
 void ProductionInfoPanel::ClearLocalInfo() {
-    delete m_local_points_label;
-    m_local_points_label = nullptr;
-    delete m_local_points;
-    m_local_points = nullptr;
-    delete m_local_points_P_label;
-    m_local_points_P_label = nullptr;
-    delete m_local_wasted_points_label;
-    m_local_wasted_points_label = nullptr;
-    delete m_local_wasted_points;
-    m_local_wasted_points = nullptr;
-    delete m_local_wasted_points_P_label;
-    m_local_wasted_points_P_label = nullptr;
+    DetachChildAndReset(m_local_points_label);
+    DetachChildAndReset(m_local_points);
+    DetachChildAndReset(m_local_points_P_label);
+    DetachChildAndReset(m_local_wasted_points_label);
+    DetachChildAndReset(m_local_wasted_points);
+    DetachChildAndReset(m_local_wasted_points_P_label);
 
     const Empire* empire = GetEmpire(m_empire_id);
     std::string empire_name;
@@ -1823,18 +1799,12 @@ void ProductionInfoPanel::ClearLocalInfo() {
 }
 
 void ProductionInfoPanel::Clear() {
-    delete m_total_points_label;
-    m_total_points_label = nullptr;
-    delete m_total_points;
-    m_total_points = nullptr;
-    delete m_total_points_P_label;
-    m_total_points_P_label = nullptr;
-    delete m_wasted_points_label;
-    m_wasted_points_label = nullptr;
-    delete m_wasted_points;
-    m_wasted_points = nullptr;
-    delete m_wasted_points_P_label;
-    m_wasted_points_P_label = nullptr;
+    DetachChildAndReset(m_total_points_label);
+    DetachChildAndReset(m_total_points);
+    DetachChildAndReset(m_total_points_P_label);
+    DetachChildAndReset(m_wasted_points_label);
+    DetachChildAndReset(m_wasted_points);
+    DetachChildAndReset(m_wasted_points_P_label);
     m_empire_id = ALL_EMPIRES;
 
     ClearLocalInfo();

@@ -201,7 +201,7 @@ public:
 
     void            ResetEmpireShown();                             //!< auto-resets the shown empire in any contained Wnds, to the current client's empire (if any)
 
-    void            RegisterPopup(MapWndPopup* popup);              //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
+    void            RegisterPopup(const std::shared_ptr<MapWndPopup>& popup);              //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
     void            RemovePopup(MapWndPopup* popup);                //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
     void            Sanitize();                                     //!< sanitizes the MapWnd after a game
     //!@}
@@ -259,7 +259,7 @@ private:
         type_fleet_buttons and record the fleet buttons in \p m_fleet_buttons.*/
     template <typename K>
     void            CreateFleetButtonsOfType(
-        boost::unordered_map<K, std::unordered_set<FleetButton*>>& type_fleet_buttons,
+        boost::unordered_map<K, std::unordered_set<std::shared_ptr<FleetButton>>>& type_fleet_buttons,
         const boost::unordered_map<std::pair<K, int>, std::vector<int>> &fleets_map,
         const FleetButton::SizeType& fleet_button_size);
 
@@ -446,33 +446,33 @@ private:
     std::set<int>               m_selected_ship_ids;
 
     double                      m_zoom_steps_in;    //!< number of zoom steps in.  each 1.0 step increases display scaling by the same zoom step factor
-    SidePanel*                  m_side_panel;       //!< planet view panel on the side of the main map
-    boost::unordered_map<int, SystemIcon*>  m_system_icons;     //!< system icons in the main map, indexed by system id
-    std::map<int, FieldIcon*>   m_field_icons;      //!< field icons in the main map, indexed by field id
-    SitRepPanel*                m_sitrep_panel;     //!< sitrep panel
-    ResearchWnd*                m_research_wnd;     //!< research screen
-    ProductionWnd*              m_production_wnd;   //!< production screen
-    DesignWnd*                  m_design_wnd;       //!< design screen
-    EncyclopediaDetailPanel*    m_pedia_panel;      //!< encyclpedia panel
-    ObjectListWnd*              m_object_list_wnd;  //!< filterable list of objects in universe
-    ModeratorActionsWnd*        m_moderator_wnd;    //!< buttons to select moderator actions
-    CombatReportWnd*            m_combat_report_wnd;//!< shows graphical reports of combats
+    std::shared_ptr<SidePanel>                  m_side_panel;       //!< planet view panel on the side of the main map
+    boost::unordered_map<int, std::shared_ptr<SystemIcon>>  m_system_icons;     //!< system icons in the main map, indexed by system id
+    std::map<int, std::shared_ptr<FieldIcon>>   m_field_icons;      //!< field icons in the main map, indexed by field id
+    std::shared_ptr<SitRepPanel>                m_sitrep_panel;     //!< sitrep panel
+    std::shared_ptr<ResearchWnd>                m_research_wnd;     //!< research screen
+    std::shared_ptr<ProductionWnd>              m_production_wnd;   //!< production screen
+    std::shared_ptr<DesignWnd>                  m_design_wnd;       //!< design screen
+    std::shared_ptr<EncyclopediaDetailPanel>    m_pedia_panel;      //!< encyclpedia panel
+    std::shared_ptr<ObjectListWnd>              m_object_list_wnd;  //!< filterable list of objects in universe
+    std::shared_ptr<ModeratorActionsWnd>        m_moderator_wnd;    //!< buttons to select moderator actions
+    std::shared_ptr<CombatReportWnd>            m_combat_report_wnd;//!< shows graphical reports of combats
 
     std::map<std::pair<int, int>, LaneEndpoints>    m_starlane_endpoints;                   //!< map from starlane start and end system IDs (stored in pair in increasing order) to the universe coordiates at which to draw the starlane ends
 
     /** Icons representing fleets at a system that are not departing, indexed
         by system. */
-    boost::unordered_map<int, std::unordered_set<FleetButton*>> m_stationary_fleet_buttons;
+    boost::unordered_map<int, std::unordered_set<std::shared_ptr<FleetButton>>> m_stationary_fleet_buttons;
 
     /** Icons representing fleets at a system that are departing, indexed by
         system. */
-    boost::unordered_map<int, std::unordered_set<FleetButton*>> m_departing_fleet_buttons;
+    boost::unordered_map<int, std::unordered_set<std::shared_ptr<FleetButton>>> m_departing_fleet_buttons;
 
     /** Icons representing fleets not at a system. */
     boost::unordered_map<std::pair<double, double>,
-                         std::unordered_set<FleetButton*>>              m_moving_fleet_buttons;
+                         std::unordered_set<std::shared_ptr<FleetButton>>>              m_moving_fleet_buttons;
 
-    boost::unordered_map<int, FleetButton*>                             m_fleet_buttons;                        //!< fleet icons, index by fleet
+    boost::unordered_map<int, std::shared_ptr<FleetButton>>                             m_fleet_buttons;                        //!< fleet icons, index by fleet
 
     boost::unordered_map<int, boost::signals2::connection>              m_fleet_state_change_signals;
     boost::unordered_map<int, std::vector<boost::signals2::connection>> m_system_fleet_insert_remove_signals;
@@ -516,10 +516,10 @@ private:
 
     GG::Pt                      m_drag_offset;      //!< distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
     bool                        m_dragged;          //!< tracks whether or not a drag occurs during a left button down sequence of events
-    GG::Button*                 m_btn_turn;         //!< button that updates player's turn
-    GG::Button*                 m_btn_auto_turn;    //!< button that toggles whether to automatically end turns
+    std::shared_ptr<GG::Button>                 m_btn_turn;         //!< button that updates player's turn;
+    std::shared_ptr<GG::Button>                 m_btn_auto_turn;    //!< button that toggles whether to automatically end turns;
     bool                        m_auto_end_turn;    //!< should turns be ended automatically by this client?
-    std::list<MapWndPopup*>     m_popups;           //!< list of currently active popup windows
+    std::list<std::weak_ptr<MapWndPopup>>       m_popups;           //!< list of currently active popup windows
     bool                        m_menu_showing;     //!< set during ShowMenu() to prevent reentrency
     int                         m_current_owned_system;
     int                         m_current_fleet_id;
@@ -527,17 +527,17 @@ private:
 
     bool                        m_sidepanel_open_before_showing_other;  //!< was the sidepanel open before switching to production, research or design screens?  If so, it should be restored when leaving them.
 
-    CUIToolBar*                 m_toolbar;
-    StatisticIcon               *m_trade, *m_population, *m_research, *m_industry, *m_detection, *m_fleet;
-    GG::Button                  *m_industry_wasted, *m_research_wasted;
-    GG::Button                  *m_btn_moderator, *m_btn_messages, *m_btn_empires,
-                                *m_btn_siterep, *m_btn_research, *m_btn_production,
-                                *m_btn_design, *m_btn_pedia, *m_btn_graphs,
-                                *m_btn_objects, *m_btn_menu;
-    GG::Label*                  m_FPS;
+    std::shared_ptr<CUIToolBar>                 m_toolbar;
+    std::shared_ptr<StatisticIcon>              m_trade, m_population, m_research, m_industry, m_detection, m_fleet;
+    std::shared_ptr<GG::Button>                 m_industry_wasted, m_research_wasted;
+    std::shared_ptr<GG::Button>                 m_btn_moderator, m_btn_messages, m_btn_empires,
+                                                m_btn_siterep, m_btn_research, m_btn_production,
+                                                m_btn_design, m_btn_pedia, m_btn_graphs,
+                                                m_btn_objects, m_btn_menu;
+    std::shared_ptr<GG::Label>                  m_FPS;
 
-    MapScaleLine*               m_scale_line;       //!< indicates the on-screen distance that reprensents an in-universe distance
-    GG::Slider<double>*         m_zoom_slider;      //!< allows user to set zoom level
+    std::shared_ptr<MapScaleLine>               m_scale_line;       //!< indicates the on-screen distance that reprensents an in-universe distance
+    std::shared_ptr<GG::Slider<double>>         m_zoom_slider;      //!< allows user to set zoom level;
 
     std::set<int>               m_fleets_exploring;
 

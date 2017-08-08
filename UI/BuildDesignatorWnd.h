@@ -126,9 +126,9 @@ private:
 
     void            InitializeWindows();
 
-    EncyclopediaDetailPanel*    m_enc_detail_panel;
-    BuildSelector*              m_build_selector;
-    SidePanel*                  m_side_panel;
+    std::shared_ptr<EncyclopediaDetailPanel>    m_enc_detail_panel;
+    std::shared_ptr<BuildSelector>              m_build_selector;
+    std::shared_ptr<SidePanel>                  m_side_panel;
     std::map<int, int>          m_system_default_planets;   //!< map from system id to id of planet to auto select when viewing each system
 };
 

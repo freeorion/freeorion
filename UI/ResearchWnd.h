@@ -61,9 +61,9 @@ private:
     void    QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    QueueItemPaused(GG::ListBox::iterator it, bool pause);
 
-    ProductionInfoPanel*        m_research_info_panel;
-    ResearchQueueWnd*           m_queue_wnd;
-    TechTreeWnd*                m_tech_tree_wnd;
+    std::shared_ptr<ProductionInfoPanel>        m_research_info_panel;
+    std::shared_ptr<ResearchQueueWnd>           m_queue_wnd;
+    std::shared_ptr<TechTreeWnd>                m_tech_tree_wnd;
     bool                        m_enabled;
 
     int                         m_empire_shown_id;

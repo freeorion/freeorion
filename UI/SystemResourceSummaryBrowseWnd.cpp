@@ -172,8 +172,8 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     // adds pairs of labels for ResourceCenter name and production of resource starting at vertical position \a top
     // and updates \a top to the vertical position after the last entry
     for (const auto& label_pair : m_production_labels_and_amounts) {
-        DeleteChild(label_pair.first);
-        DeleteChild(label_pair.second);
+        DetachChild(label_pair.first);
+        DetachChild(label_pair.second);
     }
     m_production_labels_and_amounts.clear();
 
@@ -214,7 +214,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         value->Resize(GG::Pt(ValueWidth(), row_height));
         AttachChild(value);
 
-        m_production_labels_and_amounts.push_back(std::pair<GG::Label*, GG::Label*>(label, value));
+        m_production_labels_and_amounts.push_back(std::make_pair(label, value));
 
         top += row_height;
     }
@@ -232,7 +232,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         value->Resize(GG::Pt(ValueWidth(), row_height));
         AttachChild(value);
 
-        m_production_labels_and_amounts.push_back(std::pair<GG::Label*, GG::Label*>(label, value));
+        m_production_labels_and_amounts.push_back(std::make_pair(label, value));
 
         top += row_height;
     }
@@ -262,8 +262,8 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
     // adds pairs of labels for allocation of resources in system, starting at vertical position \a top and
     // updates \a top to be the vertical position after the last entry
     for (const auto& label_pair : m_allocation_labels_and_amounts) {
-        DeleteChild(label_pair.first);
-        DeleteChild(label_pair.second);
+        DetachChild(label_pair.first);
+        DetachChild(label_pair.second);
     }
     m_allocation_labels_and_amounts.clear();
 
@@ -312,7 +312,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         value->Resize(GG::Pt(ValueWidth(), row_height));
         AttachChild(value);
 
-        m_allocation_labels_and_amounts.push_back(std::pair<GG::Label*, GG::Label*>(label, value));
+        m_allocation_labels_and_amounts.push_back(std::make_pair(label, value));
 
         top += row_height;
     }
@@ -330,7 +330,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         value->Resize(GG::Pt(ValueWidth(), row_height));
         AttachChild(value);
 
-        m_allocation_labels_and_amounts.push_back(std::pair<GG::Label*, GG::Label*>(label, value));
+        m_allocation_labels_and_amounts.push_back(std::make_pair(label, value));
 
         top += row_height;
     }
@@ -430,31 +430,31 @@ void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
     value->Resize(GG::Pt(ValueWidth(), row_height));
     AttachChild(value);
 
-    m_import_export_labels_and_amounts.push_back(std::pair<GG::Label*, GG::Label*>(label, value));
+    m_import_export_labels_and_amounts.push_back(std::make_pair(label, value));
 
     top += row_height;
 }
 
 void SystemResourceSummaryBrowseWnd::Clear() {
-    DeleteChild(m_production_label);
-    DeleteChild(m_allocation_label);
-    DeleteChild(m_import_export_label);
+    DetachChildAndReset(m_production_label);
+    DetachChildAndReset(m_allocation_label);
+    DetachChildAndReset(m_import_export_label);
 
     for (const auto& label_pair : m_production_labels_and_amounts) {
-        DeleteChild(label_pair.first);
-        DeleteChild(label_pair.second);
+        DetachChild(label_pair.first);
+        DetachChild(label_pair.second);
     }
     m_production_labels_and_amounts.clear();
 
     for (const auto& label_pair : m_allocation_labels_and_amounts) {
-        DeleteChild(label_pair.first);
-        DeleteChild(label_pair.second);
+        DetachChild(label_pair.first);
+        DetachChild(label_pair.second);
     }
     m_allocation_labels_and_amounts.clear();
 
     for (const auto& label_pair : m_import_export_labels_and_amounts) {
-        DeleteChild(label_pair.first);
-        DeleteChild(label_pair.second);
+        DetachChild(label_pair.first);
+        DetachChild(label_pair.second);
     }
     m_import_export_labels_and_amounts.clear();
 }

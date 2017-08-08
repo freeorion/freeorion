@@ -18,8 +18,8 @@ public:
     void Render() override;
 
 private:
-    GG::Label*          m_title_text;
-    GG::Label*          m_main_text;
+    std::shared_ptr<GG::Label>          m_title_text;
+    std::shared_ptr<GG::Label>          m_main_text;
     GG::Pt              m_offset;
 };
 

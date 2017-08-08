@@ -80,12 +80,8 @@ void BuildingsPanel::CompleteConstruction() {
     RequirePreRender();
 }
 
-BuildingsPanel::~BuildingsPanel() {
-    // delete building indicators
-    for (auto& indicator : m_building_indicators)
-        delete indicator;
-    m_building_indicators.clear();
-}
+BuildingsPanel::~BuildingsPanel()
+{}
 
 void BuildingsPanel::ExpandCollapse(bool expanded) {
     if (expanded == s_expanded_map[m_planet_id]) return; // nothing to do
@@ -98,10 +94,8 @@ void BuildingsPanel::Update() {
     //std::cout << "BuildingsPanel::Update" << std::endl;
 
     // remove old indicators
-    for (auto& indicator : m_building_indicators) {
-        DetachChild(indicator);
-        delete (indicator);
-    }
+    for (auto& indicator : m_building_indicators)
+        DetachChild(indicator.get());
     m_building_indicators.clear();
 
     std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
@@ -210,7 +204,7 @@ void BuildingsPanel::DoLayout() {
                 ind->SizeMove(ul, lr);
                 AttachChild(ind);
             } else {
-                DetachChild(ind);
+                DetachChild(ind.get());
             }
             ++n;
         }
@@ -240,7 +234,7 @@ void BuildingsPanel::DoLayout() {
 
     if (m_building_indicators.empty()) {
         height = GG::Y(0);  // hide if empty
-        DetachChild(m_expand_button);
+        DetachChild(m_expand_button.get());
     } else {
         AttachChild(m_expand_button);
         m_expand_button->Show();
@@ -252,8 +246,9 @@ void BuildingsPanel::DoLayout() {
 
     SetCollapsed(!s_expanded_map[m_planet_id]);
 
-    if (old_size != Size() && Parent())
-        Parent()->RequirePreRender();
+    if (old_size != Size())
+        if (auto&& parent = Parent())
+            parent->RequirePreRender();
 }
 
 std::map<int, bool> BuildingsPanel::s_expanded_map;
@@ -364,14 +359,8 @@ void BuildingIndicator::Refresh() {
 
     ClearBrowseInfoWnd();
 
-    if (m_graphic) {
-        delete m_graphic;
-        m_graphic = nullptr;
-    }
-    if (m_scrap_indicator) {
-        delete m_scrap_indicator;
-        m_scrap_indicator = nullptr;
-    }
+    DetachChildAndReset(m_graphic);
+    DetachChildAndReset(m_scrap_indicator);
 
     if (const BuildingType* type = GetBuildingType(building->BuildingTypeName())) {
         std::shared_ptr<GG::Texture> texture = ClientUI::BuildingIcon(type->Name());
@@ -418,7 +407,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     if (!building)
         return;
 
-    const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+    const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
     if (ClientPlayerIsModerator() && map_wnd->GetModeratorActionSetting() != MAS_NoAction) {
         RightClickedSignal(m_building_id);  // response handled in MapWnd
         return;
@@ -457,9 +446,6 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     }
 
     popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
 }
 
 void BuildingIndicator::EnableOrderIssuing(bool enable/* = true*/)

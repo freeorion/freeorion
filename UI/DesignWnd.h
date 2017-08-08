@@ -90,10 +90,10 @@ private:
 
     void    InitializeWindows();
 
-    EncyclopediaDetailPanel*    m_detail_panel;
-    BaseSelector*               m_base_selector;
-    PartPalette*                m_part_palette;
-    MainPanel*                  m_main_panel;
+    std::shared_ptr<EncyclopediaDetailPanel>    m_detail_panel;
+    std::shared_ptr<BaseSelector>               m_base_selector;
+    std::shared_ptr<PartPalette>                m_part_palette;
+    std::shared_ptr<MainPanel>                  m_main_panel;
 };
 
 #endif // _DesignWnd_h_

@@ -68,7 +68,7 @@ namespace {
         void Render() override
         {}
 
-        CUILabel* m_text;
+        std::shared_ptr<CUILabel> m_text;
     };
 
     //////////////
@@ -94,7 +94,7 @@ namespace {
 
     private:
         int m_quant;
-        QuantLabel* m_label;
+        std::shared_ptr<QuantLabel> m_label;
     };
 
     //////////////////////
@@ -136,7 +136,7 @@ namespace {
                 myQuantSet.insert(quantity);
 
             for (int quantity : myQuantSet) {
-                QuantRow* row =  GG::Wnd::Create<QuantRow>(quantity, build.item.design_id, nwidth, h, inProgress, amBlockType);
+                auto row =  GG::Wnd::Create<QuantRow>(quantity, build.item.design_id, nwidth, h, inProgress, amBlockType);
                 GG::DropDownList::iterator latest_it = Insert(row);
 
                 if (amBlockType) {
@@ -157,7 +157,7 @@ namespace {
 
             DebugLogger() << "QuantSelector:  selection made ";
             if (it != end()) {
-                int quant = boost::polymorphic_downcast<const QuantRow*>(*it)->Quant();
+                int quant = boost::polymorphic_downcast<const QuantRow*>(it->get())->Quant();
                 if (amBlockType) {
                     DebugLogger() << "Blocksize Selector:  selection changed to " << quant;
                     blocksize = quant;
@@ -225,14 +225,14 @@ namespace {
         void            DoLayout();
 
         const ProductionQueue::Element  elem;
-        GG::Label*                      m_name_text;
-        GG::Label*                      m_location_text;
-        GG::Label*                      m_PPs_and_turns_text;
-        GG::Label*                      m_turns_remaining_until_next_complete_text;
-        GG::StaticGraphic*              m_icon;
-        MultiTurnProgressBar*           m_progress_bar;
-        QuantitySelector*               m_quantity_selector;
-        QuantitySelector*               m_block_size_selector;
+        std::shared_ptr<GG::Label>                      m_name_text;
+        std::shared_ptr<GG::Label>                      m_location_text;
+        std::shared_ptr<GG::Label>                      m_PPs_and_turns_text;
+        std::shared_ptr<GG::Label>                      m_turns_remaining_until_next_complete_text;
+        std::shared_ptr<GG::StaticGraphic>              m_icon;
+        std::shared_ptr<MultiTurnProgressBar>           m_progress_bar;
+        std::shared_ptr<QuantitySelector>               m_quantity_selector;
+        std::shared_ptr<QuantitySelector>               m_block_size_selector;
         bool                            m_in_progress;
         int                             m_total_turns;
         double                          m_turn_spending;
@@ -320,8 +320,7 @@ namespace {
             title_text = std::to_string(elem.blocksize) + "x ";
         title_text += item_name;
 
-        // TODO remove extra wrapping of shared_ptr after conversion to GG shared_ptr
-        return std::shared_ptr<GG::BrowseInfoWnd>(GG::Wnd::Create<IconTextBrowseWnd>(icon, title_text, main_text));
+        return GG::Wnd::Create<IconTextBrowseWnd>(icon, title_text, main_text);
     }
 
     //////////////////////////////////////////////////
@@ -393,7 +392,7 @@ namespace {
             RowQuantChangedSignal(queue_index, quantity, blocksize);
         }
 
-        QueueProductionItemPanel*                           panel;
+        std::shared_ptr<QueueProductionItemPanel>                           panel;
         const int                                           queue_index;
         const ProductionQueue::Element                      elem;
         mutable boost::signals2::signal<void (int,int,int)> RowQuantChangedSignal;
@@ -550,8 +549,8 @@ namespace {
     }
 
     void QueueProductionItemPanel::PreRender() {
-        GG::GUI::PreRenderWindow(m_quantity_selector);
-        GG::GUI::PreRenderWindow(m_block_size_selector);
+        GG::GUI::PreRenderWindow(m_quantity_selector.get());
+        GG::GUI::PreRenderWindow(m_block_size_selector.get());
 
         GG::Wnd::PreRender();
         DoLayout();
@@ -684,8 +683,8 @@ namespace {
             popup->AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    false, false, DeleteAction(it)));
 
             // inspect clicked item: was it a ship?
-            GG::ListBox::Row* row = *it;
-            QueueRow* queue_row = row ? dynamic_cast<QueueRow*>(row) : nullptr;
+            auto& row = *it;
+            QueueRow* queue_row = row ? dynamic_cast<QueueRow*>(row.get()) : nullptr;
 
             int remaining = 0;
             bool location_passes = true;
@@ -732,9 +731,6 @@ namespace {
             popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_action));
 
             popup->Run();
-
-            // TODO remove when converting to shared_ptr
-            delete popup;
         }
     };
 }
@@ -774,7 +770,7 @@ public:
             DoLayout();
     }
 
-    ProdQueueListBox*   GetQueueListBox() { return m_queue_lb; }
+    ProdQueueListBox*   GetQueueListBox() { return m_queue_lb.get(); }
 
     void                SetEmpire(int id) {
         if (const Empire* empire = GetEmpire(id))
@@ -790,7 +786,7 @@ private:
                              GG::Pt(ClientWidth(), ClientHeight() - GG::Y(CUIWnd::INNER_BORDER_ANGLE_OFFSET)));
     }
 
-    ProdQueueListBox*   m_queue_lb;
+    std::shared_ptr<ProdQueueListBox>   m_queue_lb;
 };
 
 //////////////////////////////////////////////////

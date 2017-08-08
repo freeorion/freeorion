@@ -89,10 +89,10 @@ private:
 
     void    InitializeWindows();
 
-    TechTreeControls*           m_tech_tree_controls;
-    EncyclopediaDetailPanel*    m_enc_detail_panel;
-    LayoutPanel*                m_layout_panel;
-    TechListBox*                m_tech_list;
+    std::shared_ptr<TechTreeControls>           m_tech_tree_controls;
+    std::shared_ptr<EncyclopediaDetailPanel>    m_enc_detail_panel;
+    std::shared_ptr<LayoutPanel>                m_layout_panel;
+    std::shared_ptr<TechListBox>                m_tech_list;
 
     /// If m_init_flag is true tech categories are not parsed until the
     /// first time Show() is called.  TechTreeWnd is constructed before the

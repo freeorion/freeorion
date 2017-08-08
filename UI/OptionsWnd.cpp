@@ -52,9 +52,9 @@ namespace {
 
     class RowContentsWnd : public GG::Control {
     public:
-        RowContentsWnd(GG::X w, GG::Y h, Wnd* contents, int indentation_level) :
+        RowContentsWnd(GG::X w, GG::Y h, std::shared_ptr<Wnd> contents, int indentation_level) :
             Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-            m_contents(contents),
+            m_contents(std::forward<std::shared_ptr<Wnd>>(contents)),
             m_indentation_level(indentation_level)
         {}
 
@@ -86,23 +86,23 @@ namespace {
             //GG::FlatRectangle(UpperLeft(), LowerRight(), GG::CLR_DARK_RED, GG::CLR_PINK, 1);
         }
     private:
-        Wnd* m_contents;
+        std::shared_ptr<Wnd> m_contents;
         int m_indentation_level;
     };
 
     struct BrowseForPathButtonFunctor {
         BrowseForPathButtonFunctor(const fs::path& path, const std::vector<std::pair<std::string, std::string>>& filters,
-                                   GG::Edit* edit, bool directory, bool return_relative_path) :
+                                   std::shared_ptr<GG::Edit> edit, bool directory, bool return_relative_path) :
             m_path(path),
             m_filters(filters),
-            m_edit(edit),
+            m_edit(std::forward<std::shared_ptr<GG::Edit>>(edit)),
             m_directory(directory),
             m_return_relative_path(return_relative_path)
         {}
 
         void operator()() {
             try {
-                auto dlg = /*TODO: Remove extra shared_ptr wrap after Wnd::Create converted to return shared_ptr*/std::shared_ptr<FileDlg>(GG::Wnd::Create<FileDlg>(m_path.string(), m_edit->Text(), false, false, m_filters));
+                auto dlg = GG::Wnd::Create<FileDlg>(m_path.string(), m_edit->Text(), false, false, m_filters);
                 if (m_directory)
                     dlg->SelectDirectories(true);
                 dlg->Run();
@@ -120,7 +120,7 @@ namespace {
 
         fs::path                                            m_path;
         std::vector<std::pair<std::string, std::string>>    m_filters;
-        GG::Edit*                                           m_edit;
+        std::shared_ptr<GG::Edit>                                           m_edit;
         bool                                                m_directory;
         bool                                                m_return_relative_path;
     };
@@ -213,7 +213,7 @@ namespace {
         };
 
         static std::pair<GG::Key, GG::Flags<GG::ModKey>> GetKeypress() {
-            auto ct = /*TODO: Remove extra shared_ptr wrap after Wnd::Create converted to return shared_ptr*/std::shared_ptr<KeyPressCatcher>(GG::Wnd::Create<KeyPressCatcher>());
+            auto ct = GG::Wnd::Create<KeyPressCatcher>();
             ct->Run();
             return std::make_pair(ct->m_key, ct->m_mods);
         };
@@ -298,26 +298,26 @@ namespace {
         }
 
     private:
-        GG::StaticGraphic*  m_font_graphic;
-        GG::StaticGraphic*  m_title_font_graphic;
-        GG::Scroll*         m_hscroll;
+        std::shared_ptr<GG::StaticGraphic>  m_font_graphic;
+        std::shared_ptr<GG::StaticGraphic>  m_title_font_graphic;
+        std::shared_ptr<GG::Scroll>         m_hscroll;
     };
 
     void ShowFontTextureWnd() {
-        auto font_wnd =  /*TODO: Remove extra shared_ptr wrap after Wnd::Create converted to return shared_ptr*/std::shared_ptr<FontTextureWnd>(GG::Wnd::Create<FontTextureWnd>());
+        auto font_wnd =  GG::Wnd::Create<FontTextureWnd>();
         font_wnd->Run();
     }
 
     class OptionsListRow : public GG::ListBox::Row {
     public:
-        OptionsListRow(GG::X w, GG::Y h, RowContentsWnd* contents) :
+        OptionsListRow(GG::X w, GG::Y h, std::shared_ptr<RowContentsWnd> contents) :
             GG::ListBox::Row(w, h, ""),
-            m_contents(contents)
+            m_contents(std::forward<std::shared_ptr<RowContentsWnd>>(contents))
         {
             SetChildClippingMode(ClipToClient);
         }
 
-        OptionsListRow(GG::X w, GG::Y h, Wnd* contents, int indentation = 0) :
+        OptionsListRow(GG::X w, GG::Y h, std::shared_ptr<Wnd> contents, int indentation = 0) :
             GG::ListBox::Row(w, h, ""),
             m_contents(nullptr)
         {
@@ -344,7 +344,7 @@ namespace {
             //GG::FlatRectangle(UpperLeft(), LowerRight(), GG::CLR_DARK_BLUE, GG::CLR_YELLOW, 1);
         }
     private:
-        RowContentsWnd* m_contents;
+        std::shared_ptr<RowContentsWnd> m_contents;
     };
 
     class OptionsList : public CUIListBox {
@@ -432,7 +432,7 @@ namespace {
             [option_name, drop_list](const GG::ListBox::const_iterator& it) {
                 if (it == drop_list->end())
                     return;
-                const auto row = dynamic_cast<CUISimpleDropDownListRow* const>(*it);
+                const auto row = dynamic_cast<CUISimpleDropDownListRow* const>(it->get());
                 const auto& option_value = row->Name();
                 HumanClientApp::GetApp()->ChangeLoggerThreshold(option_name, to_LogLevel(option_value));
             });
@@ -774,7 +774,7 @@ GG::ListBox* OptionsWnd::CreatePage(const std::string& name) {
     auto page = GG::Wnd::Create<OptionsList>();
     m_tabs->AddWnd(page, name);
     m_tabs->SetCurrentWnd(m_tabs->NumWnds() - 1);
-    return page;
+    return page.get();
 }
 
 void OptionsWnd::CreateSectionHeader(GG::ListBox* page, int indentation_level,
@@ -805,7 +805,7 @@ GG::StateButton* OptionsWnd::BoolOption(GG::ListBox* page, int indentation_level
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     button->CheckedSignal.connect(
         [option_name](const bool& value){ GetOptionsDB().Set(option_name, value); });
-    return button;
+    return button.get();
 }
 
 namespace {
@@ -862,9 +862,9 @@ void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, const st
                                                layout, indentation_level);
 
     button->LeftClickedSignal.connect(
-        boost::bind(HandleSetHotkeyOption, hotkey_name, button));
+        boost::bind(HandleSetHotkeyOption, hotkey_name, button.get()));
     button->RightClickedSignal.connect(
-        boost::bind(HandleResetHotkeyOption, hotkey_name, button));
+        boost::bind(HandleResetHotkeyOption, hotkey_name, button.get()));
 
     page->Insert(row);
 }
@@ -872,7 +872,7 @@ void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, const st
 GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
     auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     std::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
-    GG::Spin<int>* spin = nullptr;
+    std::shared_ptr<GG::Spin<int>> spin;
     int value = GetOptionsDB().Get<int>(option_name);
     if (std::shared_ptr<const RangedValidator<int>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<int>>(validator))
         spin = GG::Wnd::Create<CUISpin<int>>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
@@ -903,13 +903,13 @@ GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, c
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     spin->ValueChangedSignal.connect(
         [option_name](const int& value){ GetOptionsDB().Set(option_name, value); });
-    return spin;
+    return spin.get();
 }
 
 GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
     auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     std::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
-    GG::Spin<double>* spin = nullptr;
+    std::shared_ptr<GG::Spin<double>> spin;
     double value = GetOptionsDB().Get<double>(option_name);
     if (std::shared_ptr<const RangedValidator<double>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<double>>(validator))
         spin = GG::Wnd::Create<CUISpin<double>>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
@@ -940,7 +940,7 @@ GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_le
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     spin->ValueChangedSignal.connect(
         [option_name](const double& value){ GetOptionsDB().Set(option_name, value); });
-    return spin;
+    return spin.get();
 }
 
 void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, SoundOptionsFeedback &fb) {
@@ -962,11 +962,11 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, Sou
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription("UI.sound.music-enabled")));
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("UI.sound.music-volume")));
-    fb.SetMusicButton(button);
     button->CheckedSignal.connect(
         boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicClicked, &fb, _1));
     slider->SlidSignal.connect(
         boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid, &fb, _1, _2, _3));
+    fb.SetMusicButton(std::move(button));
 }
 
 void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const std::string& toggle_option_name,
@@ -991,11 +991,11 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription(toggle_option_name)));
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription(volume_option_name)));
-    fb.SetEffectsButton(button);
     button->CheckedSignal.connect(
         boost::bind(&OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked, &fb, _1));
     slider->SlidAndStoppedSignal.connect(
         boost::bind(&OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid, &fb, _1, _2, _3));
+    fb.SetEffectsButton(std::move(button));
 }
 
 void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const fs::path& path,
@@ -1224,7 +1224,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
         [drop_list](GG::ListBox::iterator it) {
             if (it == drop_list->end())
                 return;
-            const GG::ListBox::Row* row = *it;
+            const auto& row = *it;
             if (!row)
                 return;
             int w, h;
@@ -1306,10 +1306,10 @@ void OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid(int pos, int low, int 
     Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
 }
 
-void OptionsWnd::SoundOptionsFeedback::SetMusicButton(GG::StateButton* button)
+void OptionsWnd::SoundOptionsFeedback::SetMusicButton(std::shared_ptr<GG::StateButton> button)
 { m_music_button = button; }
 
-void OptionsWnd::SoundOptionsFeedback::SetEffectsButton(GG::StateButton* button)
+void OptionsWnd::SoundOptionsFeedback::SetEffectsButton(std::shared_ptr<GG::StateButton> button)
 { m_effects_button = button; }
 
 void OptionsWnd::SoundOptionsFeedback::SoundInitializationFailure(Sound::InitializationFailureException const &e) {

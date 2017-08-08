@@ -50,7 +50,7 @@ public:
     Pt SetMaxWidth(X width) override;
 
 private:
-    TextControl* m_text; //! The text control used to handle the text.
+    std::shared_ptr<TextControl> m_text; //! The text control used to handle the text.
 };
 
 }

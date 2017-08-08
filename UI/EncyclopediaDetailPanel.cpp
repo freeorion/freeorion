@@ -621,7 +621,7 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     m_description_rich_text->SetPadding(DESCRIPTION_PADDING);
 
     m_scroll_panel->SetBackgroundColor(ClientUI::CtrlColor());
-    m_scroll_panel->InstallEventFilter(this);
+    m_scroll_panel->InstallEventFilter(shared_from_this());
 
     m_graph = GG::Wnd::Create<GraphControl>();
     m_graph->ShowPoints(false);
@@ -648,10 +648,8 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX");
 }
 
-EncyclopediaDetailPanel::~EncyclopediaDetailPanel() {
-    if (m_graph && m_graph->Parent() != this)
-    delete m_graph;
-}
+EncyclopediaDetailPanel::~EncyclopediaDetailPanel()
+{}
 
 void EncyclopediaDetailPanel::DoLayout() {
     const int PTS = ClientUI::Pts();
@@ -1454,7 +1452,7 @@ namespace {
         name = UserString(item_name);
         texture = ClientUI::BuildingIcon(item_name);
         int default_location_id = DefaultLocationForEmpire(client_empire_id);
-        const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+        const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
         int this_location_id = map_wnd->SelectedPlanetID();
         turns = building_type->ProductionTime(client_empire_id, default_location_id);
         cost = building_type->ProductionCost(client_empire_id, default_location_id);
@@ -2140,7 +2138,7 @@ namespace {
         std::set<float> enemy_shots;
         enemy_shots.insert(typical_shot);
         std::set<std::string> additional_species; // from currently selected planet and fleets, if any
-        const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+        const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
         if (const std::shared_ptr<Planet> planet = GetPlanet(map_wnd->SelectedPlanetID())) {
             if (!planet->SpeciesName().empty())
                 additional_species.insert(planet->SpeciesName());
@@ -2275,7 +2273,7 @@ namespace {
         std::set<float> enemy_shots;
         enemy_shots.insert(typical_shot);
         std::set<std::string> additional_species; // TODO: from currently selected planet and ship, if any
-        const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+        const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
         if (const std::shared_ptr<Planet> planet = GetPlanet(map_wnd->SelectedPlanetID())) {
             if (!planet->SpeciesName().empty())
                 additional_species.insert(planet->SpeciesName());
@@ -2657,7 +2655,7 @@ void EncyclopediaDetailPanel::PreRender() {
 
 void EncyclopediaDetailPanel::RefreshImpl() {
     if (m_icon) {
-        DeleteChild(m_icon);
+        DetachChild(m_icon);
         m_icon = nullptr;
     }
     m_name_text->Clear();

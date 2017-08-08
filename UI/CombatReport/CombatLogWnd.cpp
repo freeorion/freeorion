@@ -35,8 +35,8 @@ public:
     void SetFont(std::shared_ptr<GG::Font> font);
     /// Set which log to show
     void SetLog(int log_id);
-    /** Add a row at the end of the combat report*/
-    void AddRow(GG::Wnd* wnd);
+    /** Add a row \p wnd at the end of the combat report. */
+    void AddRow(std::shared_ptr<GG::Wnd> wnd);
     //@}
 
     /** When windows changes forces a re-layout */
@@ -44,16 +44,16 @@ public:
 
     /** DecorateLinkText creates a CUILinkTextMultiEdit using \a text and attaches it to handlers
         \a and_flags are anded to the default flags. */
-    LinkText* DecorateLinkText(std::string const& text);
+    std::shared_ptr<LinkText> DecorateLinkText(const std::string& text);
 
     /** Fill \p new_logs with pointers to the flat log contents of \p
         event using the pre-calculated \p details.*/
     void PopulateWithFlatLogs(
-        GG::X w, int viewing_empire_id, std::vector<GG::Wnd *>& new_logs,
+        GG::X w, int viewing_empire_id, std::vector<std::shared_ptr<GG::Wnd>>& new_logs,
         ConstCombatEventPtr& event, std::string& details);
 
     // Returns either a simple LinkText for a simple log or a CombatLogAccordionPanel for a complex log
-    std::vector<GG::Wnd*> MakeCombatLogPanel(
+    std::vector<std::shared_ptr<GG::Wnd>> MakeCombatLogPanel(
         GG::X w, int viewing_empire_id, ConstCombatEventPtr event);
 
     // public interface
@@ -124,8 +124,8 @@ namespace {
         CombatLogWnd::Impl & log;
         int viewing_empire_id;
         ConstCombatEventPtr event;
-        LinkText* title;
-        std::vector<GG::Wnd *> details;
+        std::shared_ptr<LinkText> title;
+        std::vector<std::shared_ptr<GG::Wnd>> details;
 
         // distance between expansion symbol and text
         static const unsigned int BORDER_MARGIN = 5;
@@ -159,19 +159,14 @@ namespace {
         RequirePreRender();
     }
 
-    CombatLogAccordionPanel::~CombatLogAccordionPanel() {
-        if (!IsCollapsed() && !details.empty()) {
-            for (auto& wnd : details) {
-                delete wnd;
-            }
-        }
-    }
+    CombatLogAccordionPanel::~CombatLogAccordionPanel()
+    {}
 
     void CombatLogAccordionPanel::ToggleExpansion() {
         bool new_collapsed = !IsCollapsed();
         if (new_collapsed) {
             for (auto& wnd : details) {
-                GetLayout()->Remove(wnd);
+                GetLayout()->Remove(wnd.get());
             }
         } else {
             if (details.empty()) {
@@ -209,7 +204,7 @@ namespace {
         GG::Wnd const * iwnd = parent;
         T const* type_T = nullptr;
         while (iwnd && !(type_T = dynamic_cast<const T*>(iwnd))){
-            iwnd = iwnd->Parent();
+            iwnd = iwnd->Parent().get();
         }
         return type_T;
     }
@@ -271,12 +266,12 @@ namespace {
         void HandleMaybeVisible() {
 
             // Assumes the log is the second tab.
-            GG::OverlayWnd const* tab = FindParentOfType<const GG::OverlayWnd>(Parent());
+            const auto& tab = FindParentOfType<const GG::OverlayWnd>(Parent().get());
             if (tab && (tab->CurrentWndIndex() != 1))
                 return;
 
             // Check if any part of text is in the scrollers visible area
-            GG::ScrollPanel const* scroll_panel = FindParentOfType<GG::ScrollPanel>(Parent());
+            GG::ScrollPanel const* scroll_panel = FindParentOfType<GG::ScrollPanel>(Parent().get());
             if (scroll_panel && (scroll_panel->InClient(UpperLeft())
                                  || scroll_panel->InClient(LowerRight())
                                  || scroll_panel->InClient(GG::Pt(Right(), Top()))
@@ -309,7 +304,7 @@ namespace {
 
 }
 
-LinkText * CombatLogWnd::Impl::DecorateLinkText(std::string const & text) {
+std::shared_ptr<LinkText> CombatLogWnd::Impl::DecorateLinkText(const std::string& text) {
     auto links = GG::Wnd::Create<LazyScrollerLinkText>(m_wnd, GG::X0, GG::Y0, text, m_font, GG::CLR_WHITE);
 
     links->SetTextFormat(m_text_format_flags);
@@ -330,7 +325,7 @@ LinkText * CombatLogWnd::Impl::DecorateLinkText(std::string const & text) {
 
 /** Fill \p new_logs with pointers to the flat log contents of \p
     event using the pre-calculated \p details.*/
-void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id, std::vector<GG::Wnd*> &new_logs,
+void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id, std::vector<std::shared_ptr<GG::Wnd>> &new_logs,
                                               ConstCombatEventPtr& event, std::string& details)
 {
     if (!details.empty()) {
@@ -338,9 +333,8 @@ void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id, st
     }
 
     if (!event->AreSubEventsEmpty(viewing_empire_id)) {
-        for (ConstCombatEventPtr sub_event : event->SubEvents(viewing_empire_id)) {
-            std::vector<GG::Wnd*> flat_logs =
-                MakeCombatLogPanel(w, viewing_empire_id, sub_event);
+        for (auto& sub_event : event->SubEvents(viewing_empire_id)) {
+            auto&& flat_logs = MakeCombatLogPanel(w, viewing_empire_id, sub_event);
             new_logs.insert(new_logs.end(), flat_logs.begin(), flat_logs.end());
         }
     }
@@ -348,10 +342,10 @@ void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id, st
 
 
 // Returns either a simple LinkText for a simple log or a CombatLogAccordionPanel for a complex log
-std::vector<GG::Wnd*> CombatLogWnd::Impl::MakeCombatLogPanel(GG::X w, int viewing_empire_id,
-                                                             ConstCombatEventPtr event)
+std::vector<std::shared_ptr<GG::Wnd>> CombatLogWnd::Impl::MakeCombatLogPanel(GG::X w, int viewing_empire_id,
+                                                                             ConstCombatEventPtr event)
 {
-    std::vector<GG::Wnd *> new_logs;
+    std::vector<std::shared_ptr<GG::Wnd>> new_logs;
 
     // Create an accordion log if there are detail or sub events and
     // the log isn't explicitly flattened.  Otherwise, flatten the log,
@@ -378,9 +372,9 @@ std::vector<GG::Wnd*> CombatLogWnd::Impl::MakeCombatLogPanel(GG::X w, int viewin
 }
 
 
-void CombatLogWnd::Impl::AddRow(GG::Wnd* wnd) {
+void CombatLogWnd::Impl::AddRow(std::shared_ptr<GG::Wnd> wnd) {
     if (auto&& layout = m_wnd.GetLayout())
-        layout->Add(wnd, layout->Rows(), 0);
+        layout->Add(std::move(wnd), layout->Rows(), 0);
 }
 
 void CombatLogWnd::Impl::SetFont(std::shared_ptr<GG::Font> font)
@@ -393,7 +387,7 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
         return;
     }
 
-    m_wnd.DeleteChildren();
+    m_wnd.DetachChildren();
     auto layout = GG::Wnd::Create<GG::DeferredLayout>(m_wnd.RelativeUpperLeft().x, m_wnd.RelativeUpperLeft().y,
                                                       m_wnd.Width(), m_wnd.Height(),
                                                       1, 1, ///< numrows, numcols
@@ -425,8 +419,8 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
     for (CombatEventPtr event : log->combat_events) {
         DebugLogger(combat_log) << "event debug info: " << event->DebugString();
 
-        for (auto& wnd : MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, event)) {
-            AddRow(wnd);
+        for (auto&& wnd : MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, event)) {
+            AddRow(std::move(wnd));
         }
     }
 

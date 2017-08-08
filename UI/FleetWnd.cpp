@@ -25,6 +25,7 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/Enum.h>
+#include <GG/GUI.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 
@@ -415,7 +416,7 @@ namespace {
 ////////////////////////////////////////////////
 FleetUIManager::FleetUIManager() :
     m_order_issuing_enabled(true),
-    m_active_fleet_wnd(nullptr)
+    m_active_fleet_wnd()
 {}
 
 FleetUIManager::iterator FleetUIManager::begin() const
@@ -428,25 +429,27 @@ FleetUIManager::iterator FleetUIManager::end() const
 { return m_fleet_wnds.end(); }
 
 FleetWnd* FleetUIManager::ActiveFleetWnd() const
-{ return m_active_fleet_wnd; }
+{ return GG::LockAndResetIfExpired(m_active_fleet_wnd).get(); }
 
-FleetWnd* FleetUIManager::WndForFleet(std::shared_ptr<const Fleet> fleet) const {
+std::shared_ptr<FleetWnd> FleetUIManager::WndForFleet(std::shared_ptr<const Fleet> fleet) const {
     assert(fleet);
-    FleetWnd* retval = nullptr;
-    for (auto& wnd : m_fleet_wnds) {
-        if (wnd->ContainsFleet(fleet->ID())) {
-            retval = wnd;
-            break;
-        }
-    }
+
+    std::shared_ptr<FleetWnd> retval = nullptr;
+    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
+                                 [&retval, &fleet](std::shared_ptr<FleetWnd>& wnd)
+                                 {
+                                     if (!retval && wnd->ContainsFleet(fleet->ID()))
+                                         retval = wnd;
+                                 });
     return retval;
 }
 
 int FleetUIManager::SelectedShipID() const {
-    if (!m_active_fleet_wnd)
+    const auto&& active_wnd = GG::LockAndResetIfExpired(m_active_fleet_wnd);
+    if (!active_wnd)
         return INVALID_OBJECT_ID;
 
-    std::set<int> selected_ship_ids = m_active_fleet_wnd->SelectedShipIDs();
+    std::set<int> selected_ship_ids = active_wnd->SelectedShipIDs();
     if (selected_ship_ids.size() != 1)
         return INVALID_OBJECT_ID;
 
@@ -454,12 +457,13 @@ int FleetUIManager::SelectedShipID() const {
 }
 
 std::set<int> FleetUIManager::SelectedShipIDs() const {
-    if (!m_active_fleet_wnd)
+    const auto&& active_wnd = GG::LockAndResetIfExpired(m_active_fleet_wnd);
+    if (!active_wnd)
         return std::set<int>();
-    return m_active_fleet_wnd->SelectedShipIDs();
+    return active_wnd->SelectedShipIDs();
 }
 
-FleetWnd* FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
+std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
                                       int selected_fleet_id/* = INVALID_OBJECT_ID*/,
                                       GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE*/)
 {
@@ -471,7 +475,7 @@ FleetWnd* FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
     }
     auto retval = GG::Wnd::Create<FleetWnd>(fleet_ids, m_order_issuing_enabled, selected_fleet_id, flags, config_name);
 
-    m_fleet_wnds.insert(retval);
+    m_fleet_wnds.insert(std::weak_ptr<FleetWnd>(retval));
     retval->ClosingSignal.connect(
         boost::bind(&FleetUIManager::FleetWndClosing, this, _1));
     retval->ClickedSignal.connect(
@@ -487,23 +491,22 @@ FleetWnd* FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
 }
 
 void FleetUIManager::CullEmptyWnds() {
-    std::vector<FleetWnd*> to_be_closed;
     // scan through FleetWnds, deleting those that have no fleets
-    for (auto& cur_wnd : m_fleet_wnds) {
-        if (cur_wnd->FleetIDs().empty())
-            to_be_closed.push_back(cur_wnd);
-    }
-
-    for (auto &close : to_be_closed)
-        close->CloseClicked();
+    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
+                                 [](std::shared_ptr<FleetWnd>& wnd)
+                                 {
+                                     if (wnd->FleetIDs().empty())
+                                         wnd->CloseClicked();
+                                 });
 }
 
-void FleetUIManager::SetActiveFleetWnd(FleetWnd* fleet_wnd) {
-    if (fleet_wnd == m_active_fleet_wnd)
+void FleetUIManager::SetActiveFleetWnd(std::shared_ptr<FleetWnd> fleet_wnd) {
+    const auto&& active_wnd = GG::LockAndResetIfExpired(m_active_fleet_wnd);
+    if (fleet_wnd == active_wnd)
         return;
 
     // disconnect old active FleetWnd signals
-    if (m_active_fleet_wnd) {
+    if (active_wnd) {
         for (boost::signals2::connection& con : m_active_fleet_wnd_signals)
             con.disconnect();
         m_active_fleet_wnd_signals.clear();
@@ -513,36 +516,34 @@ void FleetUIManager::SetActiveFleetWnd(FleetWnd* fleet_wnd) {
     m_active_fleet_wnd = fleet_wnd;
 
     // connect new active FleetWnd selection changed signal
-    m_active_fleet_wnd_signals.push_back(m_active_fleet_wnd->SelectedFleetsChangedSignal.connect(
+    m_active_fleet_wnd_signals.push_back(fleet_wnd->SelectedFleetsChangedSignal.connect(
         ActiveFleetWndSelectedFleetsChangedSignal));
-    m_active_fleet_wnd_signals.push_back(m_active_fleet_wnd->SelectedShipsChangedSignal.connect(
+    m_active_fleet_wnd_signals.push_back(fleet_wnd->SelectedShipsChangedSignal.connect(
         ActiveFleetWndSelectedShipsChangedSignal));
 
     ActiveFleetWndChangedSignal();
 }
 
 bool FleetUIManager::CloseAll() {
-    bool retval = !m_fleet_wnds.empty();
+    bool retval = false;
 
     // closing a fleet window removes it from m_fleet_wnds
-    std::vector<FleetWnd*> vec(m_fleet_wnds.begin(), m_fleet_wnds.end());
+    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
+                                 [&retval](std::shared_ptr<FleetWnd>& wnd) {
+                                     retval = true;
+                                     wnd->CloseClicked();
+                                 });
 
-    for (auto& wnd : vec)
-        wnd->CloseClicked();
-
-    m_active_fleet_wnd = nullptr;
-
+    m_active_fleet_wnd.reset();
     ActiveFleetWndChangedSignal();
 
     return retval;
 }
 
 void FleetUIManager::RefreshAll() {
-    if (m_fleet_wnds.empty())
-        return;
-
-    for (auto& wnd : m_fleet_wnds)
-        wnd->Refresh();
+    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
+                                 [](std::shared_ptr<FleetWnd>& wnd)
+                                 { wnd->Refresh(); });
 }
 
 FleetUIManager& FleetUIManager::GetFleetUIManager() {
@@ -551,26 +552,23 @@ FleetUIManager& FleetUIManager::GetFleetUIManager() {
 }
 
 void FleetUIManager::FleetWndClosing(FleetWnd* fleet_wnd) {
-    bool active_wnd_affected = false;
-    if (fleet_wnd == m_active_fleet_wnd) {
-        m_active_fleet_wnd = nullptr;
-        active_wnd_affected = true;
+    if (m_active_fleet_wnd.expired()) {
+        m_active_fleet_wnd.reset();
+        ActiveFleetWndChangedSignal();
     }
-    m_fleet_wnds.erase(fleet_wnd);
-    if (active_wnd_affected)
-        ActiveFleetWndChangedSignal();  // let anything that cares know the active fleetwnd just closed
 }
 
-void FleetUIManager::FleetWndClicked(FleetWnd* fleet_wnd) {
-    if (fleet_wnd == m_active_fleet_wnd)
+void FleetUIManager::FleetWndClicked(std::shared_ptr<FleetWnd> fleet_wnd) {
+    if (fleet_wnd == GG::LockAndResetIfExpired(m_active_fleet_wnd))
         return;
-    SetActiveFleetWnd(fleet_wnd);
+    SetActiveFleetWnd(std::forward<std::shared_ptr<FleetWnd>>(fleet_wnd));
 }
 
 void FleetUIManager::EnableOrderIssuing(bool enable/* = true*/) {
     m_order_issuing_enabled = enable;
-    for (auto& wnd : m_fleet_wnds)
-        wnd->EnableOrderIssuing(m_order_issuing_enabled);
+    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
+                                 [&enable](std::shared_ptr<FleetWnd>& wnd)
+                                 { wnd->EnableOrderIssuing(enable); });
 }
 
 namespace {
@@ -659,7 +657,7 @@ namespace {
         int             ShipID() const {return m_ship_id;}
     private:
         int             m_ship_id;
-        ShipDataPanel*  m_panel;
+        std::shared_ptr<ShipDataPanel>  m_panel;
     };
 }
 
@@ -745,25 +743,12 @@ void ShipDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void ShipDataPanel::SetShipIcon() {
-    delete m_ship_icon;
-    m_ship_icon = nullptr;
-
-    delete m_scrap_indicator;
-    m_scrap_indicator = nullptr;
-
-    delete m_colonize_indicator;
-    m_colonize_indicator = nullptr;
-
-    delete m_invade_indicator;
-    m_invade_indicator = nullptr;
-
-    delete m_bombard_indicator;
-    m_bombard_indicator = nullptr;
-
-    if (m_scanline_control) {
-        delete m_scanline_control;
-        m_scanline_control = nullptr;
-    }
+    DetachChildAndReset(m_ship_icon);
+    DetachChildAndReset(m_scrap_indicator);
+    DetachChildAndReset(m_colonize_indicator);
+    DetachChildAndReset(m_invade_indicator);
+    DetachChildAndReset(m_bombard_indicator);
+    DetachChildAndReset(m_scanline_control);
 
     std::shared_ptr<const Ship> ship = GetShip(m_ship_id);
     if (!ship)
@@ -821,12 +806,9 @@ void ShipDataPanel::Refresh() {
     if (!ship) {
         // blank text and delete icons
         m_ship_name_text->SetText("");
-        if (m_design_name_text) {
-            delete m_design_name_text;
-            m_design_name_text = nullptr;
-        }
-        for (auto& entry : m_stat_icons)
-            delete entry.second;
+        DetachChildAndReset(m_design_name_text);
+        for (auto& type_and_icon: m_stat_icons)
+            DetachChild(type_and_icon.second);
         m_stat_icons.clear();
         return;
     }
@@ -1007,7 +989,7 @@ void ShipDataPanel::Init() {
     meters_icons.push_back({METER_STEALTH,    ClientUI::MeterIcon(METER_STEALTH)});
     meters_icons.push_back({METER_SPEED,      ClientUI::MeterIcon(METER_SPEED)});
 
-    for (std::pair<MeterType, std::shared_ptr<GG::Texture>>& entry : meters_icons) {
+    for (auto& entry : meters_icons) {
         auto icon = GG::Wnd::Create<StatisticIcon>(entry.second, 0, 0, false, StatIconSize().x, StatIconSize().y);
         m_stat_icons.push_back({entry.first, icon});
         AttachChild(icon);
@@ -1046,15 +1028,15 @@ public:
 
     void Render() override;
 
-    void DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+    void DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                       GG::Flags<GG::ModKey> mod_keys) override;
 
-    void CheckDrops(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+    void CheckDrops(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                     GG::Flags<GG::ModKey> mod_keys) override;
 
     void DragDropLeave() override;
 
-    void AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) override;
+    void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
@@ -1088,14 +1070,14 @@ private:
 
     boost::signals2::connection  m_fleet_connection;
 
-    GG::Control*        m_fleet_icon = nullptr;
-    GG::Label*          m_fleet_name_text = nullptr;
-    GG::Label*          m_fleet_destination_text = nullptr;
-    GG::Button*         m_aggression_toggle = nullptr;
-    GG::StaticGraphic*  m_gift_indicator = nullptr;
-    ScanlineControl*    m_scanline_control = nullptr;
+    std::shared_ptr<GG::Control>        m_fleet_icon = nullptr;
+    std::shared_ptr<GG::Label>          m_fleet_name_text = nullptr;
+    std::shared_ptr<GG::Label>          m_fleet_destination_text = nullptr;
+    std::shared_ptr<GG::Button>         m_aggression_toggle = nullptr;
+    std::shared_ptr<GG::StaticGraphic>  m_gift_indicator = nullptr;
+    std::shared_ptr<ScanlineControl>    m_scanline_control = nullptr;
 
-    std::vector<std::pair<MeterType, StatisticIcon*>>   m_stat_icons;   // statistic icons and associated meter types
+    std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>>   m_stat_icons;   // statistic icons and associated meter types
 
     bool                m_selected = false;
     bool                m_initialized = false;
@@ -1123,15 +1105,8 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     SetChildClippingMode(ClipToClient);
 }
 
-FleetDataPanel::~FleetDataPanel() {
-    for (auto& entry : m_stat_icons) {
-        const auto& icon = entry.second;
-
-        // Some of the icons may not be currently attached.
-        DetachChild(icon);
-        delete icon;
-    }
-}
+FleetDataPanel::~FleetDataPanel()
+{}
 
 GG::Pt FleetDataPanel::ClientUpperLeft() const
 { return UpperLeft() + GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); }
@@ -1172,7 +1147,7 @@ void FleetDataPanel::Render() {
     GG::FlatRectangle(text_ul,  text_lr,    border_colour,      GG::CLR_ZERO,  0);                  // title background box
 }
 
-void FleetDataPanel::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+void FleetDataPanel::DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                                   GG::Flags<GG::ModKey> mod_keys)
 {
     if (!m_is_new_fleet_drop_target) {
@@ -1207,7 +1182,7 @@ void FleetDataPanel::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, boo
     }
 }
 
-void FleetDataPanel::CheckDrops(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+void FleetDataPanel::CheckDrops(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                                 GG::Flags<GG::ModKey> mod_keys)
 {
     if (!m_is_new_fleet_drop_target) {
@@ -1282,7 +1257,7 @@ void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableI
     }
 }
 
-void FleetDataPanel::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
+void FleetDataPanel::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) {
     if (!m_is_new_fleet_drop_target && Parent()) {
         // normally the containing row (or the listbox that contains that) will
         // handle drag-drops
@@ -1296,7 +1271,7 @@ void FleetDataPanel::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& 
     std::vector<int> ship_ids;
     ship_ids.reserve(wnds.size());
     for (auto& wnd : wnds)
-        if (const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(wnd))
+        if (const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(wnd.get()))
             ship_ids.push_back(ship_row->ShipID());
     std::string id_list;
     for (int ship_id : ship_ids)
@@ -1382,14 +1357,9 @@ void FleetDataPanel::ToggleAggression() {
 }
 
 void FleetDataPanel::Refresh() {
-    delete m_fleet_icon;
-    m_fleet_icon = nullptr;
-    if (m_scanline_control) {
-        delete m_scanline_control;
-        m_scanline_control = nullptr;
-    }
-    delete m_gift_indicator;
-    m_gift_indicator = nullptr;
+    DetachChildAndReset(m_fleet_icon);
+    DetachChildAndReset(m_scanline_control);
+    DetachChildAndReset(m_gift_indicator);
 
     if (m_is_new_fleet_drop_target) {
         m_fleet_name_text->SetText(UserString("FW_NEW_FLEET_LABEL"));
@@ -1645,7 +1615,7 @@ void FleetDataPanel::DoLayout() {
     // position stat icons, centering them vertically if there's more space than required
     GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
     for (auto& entry : m_stat_icons) {
-        if (entry.second->Parent() != this)
+        if (entry.second->Parent().get() != this)
             continue;
         entry.second->SizeMove(icon_ul, icon_ul + StatIconSize());
         icon_ul.x += StatIconSize().x;
@@ -1698,7 +1668,7 @@ void FleetDataPanel::Init() {
             m_stat_icons.push_back({std::get<0>(entry), icon});
             icon->SetBrowseModeTime(tooltip_delay);
             icon->SetBrowseText(UserString(std::get<2>(entry)));
-            icon->InstallEventFilter(this);
+            icon->InstallEventFilter(shared_from_this());
             AttachChild(icon);
             icon->SetBrowseModeTime(tooltip_delay);
         }
@@ -1769,7 +1739,7 @@ namespace {
         int             FleetID() const {return m_fleet_id;}
     private:
         int             m_fleet_id;
-        FleetDataPanel* m_panel;
+        std::shared_ptr<FleetDataPanel> m_panel;
     };
 }
 
@@ -1790,7 +1760,7 @@ public:
         m_order_issuing_enabled = enable;
     }
 
-    void AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) override {
+    void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override {
         //DebugLogger() << "FleetsListBox::AcceptDrops";
         if (wnds.empty()) {
             ErrorLogger() << "FleetsListBox::AcceptDrops dropped wnds empty";
@@ -1810,7 +1780,7 @@ public:
         //DebugLogger() << "... drop row is in position: " << std::distance(begin(), drop_target_row);
 
         // get drop target fleet
-        const FleetRow* drop_target_fleet_row = boost::polymorphic_downcast<FleetRow*>(*drop_target_row);
+        const FleetRow* drop_target_fleet_row = boost::polymorphic_downcast<FleetRow*>(drop_target_row->get());
         if (!drop_target_fleet_row) {
             ErrorLogger() << "FleetsListBox::AcceptDrops  drop target not a fleet row. aborting";
             return;
@@ -1830,13 +1800,13 @@ public:
 
         //DebugLogger() << "... getting/sorting dropped fleets or ships...";
         for (const auto& wnd : wnds) {
-            if (drop_target_fleet_row == wnd) {
+            if (drop_target_fleet_row == wnd.get()) {
                 ErrorLogger() << "FleetsListBox::AcceptDrops  dropped wnd is same as drop target?! skipping";
                 continue;
             }
 
             if (wnd->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
-                const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(wnd);
+                const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(wnd.get());
                 if (!fleet_row) {
                     ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get fleet row from dropped wnd";
                     continue;
@@ -1844,7 +1814,7 @@ public:
                 dropped_fleets.push_back(GetFleet(fleet_row->FleetID()));
 
             } else if (wnd->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
-                const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(wnd);
+                const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(wnd.get());
                 if (!ship_row) {
                     ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get ship row from dropped wnd";
                     continue;
@@ -1913,7 +1883,7 @@ public:
         //DebugLogger() << "FleetsListBox::AcceptDrops finished";
     }
 
-    void DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+    void DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                       GG::Flags<GG::ModKey> mod_keys) override
     {
         //std::cout << "FleetsListBox::DragDropHere" << std::endl << std::flush;
@@ -1935,7 +1905,7 @@ public:
         // check if row under drop point is already selected.  if it is, don't
         // need to highlight it, since as of this writing, the two are the same
         // thing, visually and internally
-        GG::ListBox::Row* drop_target_row = *row_it;
+        auto& drop_target_row = *row_it;
         assert(drop_target_row);
         assert(!drop_target_row->empty());
 
@@ -1948,7 +1918,7 @@ public:
         if (drop_target_data_panel->Selected())
             return;
 
-        FleetRow* drop_target_fleet_row = boost::polymorphic_downcast<FleetRow*>(drop_target_row);
+        FleetRow* drop_target_fleet_row = boost::polymorphic_downcast<FleetRow*>(drop_target_row.get());
         assert(drop_target_fleet_row);
 
         std::shared_ptr<Fleet> drop_target_fleet = GetFleet(drop_target_fleet_row->FleetID());
@@ -1970,7 +1940,7 @@ public:
             if (!drop_wnd_acceptable.second)
                 return; // a row was an invalid drop. abort without highlighting drop target.
 
-            const GG::Wnd* dropped_wnd = drop_wnd_acceptable.first;
+            const auto dropped_wnd = drop_wnd_acceptable.first;
             if (dropped_wnd->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
                 fleets_seen = true;
                 if (ships_seen)
@@ -2052,7 +2022,7 @@ protected:
             return;
 
         // extract drop target fleet from row under drop point
-        const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(*row);
+        const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(row->get());
         std::shared_ptr<const Fleet> target_fleet;
         if (fleet_row)
             target_fleet = GetFleet(fleet_row->FleetID());
@@ -2092,7 +2062,7 @@ private:
             return;
 
         // get FleetDataPanel of row pointed to by row_it
-        GG::ListBox::Row* selected_row = *row_it;
+        auto& selected_row = *row_it;
         assert(selected_row);
         assert(!selected_row->empty());
         GG::Control* control = !selected_row->empty() ? selected_row->at(0) : nullptr;
@@ -2136,7 +2106,7 @@ private:
             return;
         }
 
-        GG::ListBox::Row* selected_row = *m_highlighted_row_it;
+        auto& selected_row = *m_highlighted_row_it;
         if (!selected_row) {
             ErrorLogger() << "FleetsListBox::ClearHighlighting : no selected row!";
             return;
@@ -2208,7 +2178,7 @@ public:
             GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
         const std::set<int> ship_ids = fleet->ShipIDs();
-        std::vector<GG::ListBox::Row*> rows;
+        std::vector<std::shared_ptr<GG::ListBox::Row>> rows;
         rows.reserve(ship_ids.size());
         for (int ship_id : ship_ids) {
             // skip known destroyed and stale info objects
@@ -2248,7 +2218,7 @@ public:
             if (!m_order_issuing_enabled)
                 continue;
 
-            const ShipRow* ship_row = dynamic_cast<const ShipRow*>(it->first);
+            const auto& ship_row = dynamic_cast<const ShipRow*>(it->first);
             if (!ship_row)
                 continue;
 
@@ -2272,7 +2242,7 @@ public:
         }
     }
 
-    void AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) override {
+    void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override {
         if (wnds.empty())
             return;
 
@@ -2280,7 +2250,7 @@ public:
         std::vector<int> ship_ids;
         for (const auto& wnd : wnds) {
             if (wnd->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
-                const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(wnd);
+                const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(wnd.get());
                 assert(ship_row);
                 ship_ids.push_back(ship_row->ShipID());
                 ship_from_dropped_wnd = GetShip(ship_row->ShipID());
@@ -2357,7 +2327,7 @@ private:
     bool                        m_order_issuing_enabled;
     boost::signals2::connection m_fleet_connection;
 
-    ShipsListBox*               m_ships_lb;
+    std::shared_ptr<ShipsListBox>               m_ships_lb;
 };
 
 FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_issuing_enabled, GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/) :
@@ -2397,7 +2367,7 @@ void FleetDetailPanel::CompleteConstruction() {
 }
 
 int FleetDetailPanel::GetShipIDOfListRow(GG::ListBox::iterator it) const
-{ return boost::polymorphic_downcast<ShipRow*>(*it)->ShipID(); }
+{ return boost::polymorphic_downcast<ShipRow*>(it->get())->ShipID(); }
 
 void FleetDetailPanel::SetFleet(int fleet_id) {
     // save old fleet id and set to new id
@@ -2434,7 +2404,7 @@ void FleetDetailPanel::SetSelectedShips(const std::set<int>& ship_ids) {
 
     // loop through ships, selecting any indicated
     for (GG::ListBox::iterator it = m_ships_lb->begin(); it != m_ships_lb->end(); ++it) {
-        ShipRow* row = dynamic_cast<ShipRow*>(*it);
+        ShipRow* row = dynamic_cast<ShipRow*>(it->get());
         if (!row) {
             ErrorLogger() << "FleetDetailPanel::SetSelectedShips couldn't cast a listbow row to ShipRow?";
             continue;
@@ -2470,8 +2440,8 @@ std::set<int> FleetDetailPanel::SelectedShipIDs() const {
             ErrorLogger() << "FleetDetailPanel::SelectedShipIDs tried to get invalid ship row selection;";
             continue;
         }
-        GG::ListBox::Row* row = *selection;
-        ShipRow* ship_row = dynamic_cast<ShipRow*>(row);
+        auto& row = *selection;
+        ShipRow* ship_row = dynamic_cast<ShipRow*>(row.get());
         if (ship_row && (ship_row->ShipID() != INVALID_OBJECT_ID))
             retval.insert(ship_row->ShipID());
     }
@@ -2528,7 +2498,7 @@ void FleetDetailPanel::ShipSelectionChanged(const GG::ListBox::SelectionSet& row
 
 void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // get ship that was clicked, aborting if problems arise doing so
-    ShipRow* ship_row = dynamic_cast<ShipRow*>(*it);
+    ShipRow* ship_row = dynamic_cast<ShipRow*>(it->get());
     if (!ship_row)
         return;
 
@@ -2537,7 +2507,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
         return;
     std::shared_ptr<Fleet> fleet = GetFleet(m_fleet_id);
 
-    const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+    const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
     if (ClientPlayerIsModerator() && map_wnd->GetModeratorActionSetting() != MAS_NoAction) {
         ShipRightClickedSignal(ship->ID());  // response handled in MapWnd
         return;
@@ -2559,7 +2529,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     if (ship->OwnedBy(client_empire_id) || ClientPlayerIsModerator()) {
         auto rename_action = [ship, client_empire_id]() {
             std::string ship_name = ship->Name();
-            std::shared_ptr<CUIEditWnd> edit_wnd(GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("ENTER_NEW_NAME"), ship_name)); // TODO change the shared_ptr to auto after conversion of Wnd::Create
+            auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("ENTER_NEW_NAME"), ship_name);
             edit_wnd->Run();
 
             std::string new_name = edit_wnd->Result();
@@ -2608,10 +2578,10 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     {
         auto split_one_design_action = [this, design, fleet]() {
             // split ships with same design as clicked ship into separate fleet
-            const GG::Wnd* parent = this->Parent();
+            const auto&& parent = this->Parent();
             if (!parent)
                 return;
-            const FleetWnd* parent_fleet_wnd = dynamic_cast<const FleetWnd*>(parent);
+            const FleetWnd* parent_fleet_wnd = dynamic_cast<const FleetWnd*>(parent.get());
             if (!parent_fleet_wnd)
                 return;
             if (!design)
@@ -2622,10 +2592,10 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
 
         auto split_all_designs_action = [this, fleet]() {
             // split all ships into new fleets by ship design
-            const GG::Wnd* parent = this->Parent();
+            const auto&& parent = this->Parent();
             if (!parent)
                 return;
-            const FleetWnd* parent_fleet_wnd = dynamic_cast<const FleetWnd*>(parent);
+            const FleetWnd* parent_fleet_wnd = dynamic_cast<const FleetWnd*>(parent.get());
             if (!parent_fleet_wnd)
                 return;
             CreateNewFleetsFromShipsForEachDesign(fleet->ShipIDs(),
@@ -2638,16 +2608,13 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     }
 
     popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
 }
 
 int FleetDetailPanel::ShipInRow(GG::ListBox::iterator it) const {
     if (it == m_ships_lb->end())
         return INVALID_OBJECT_ID;
 
-    if (ShipRow* ship_row = dynamic_cast<ShipRow*>(*it))
+    if (ShipRow* ship_row = dynamic_cast<ShipRow*>(it->get()))
         return ship_row->ShipID();
 
     return INVALID_OBJECT_ID;
@@ -2989,14 +2956,12 @@ void FleetWnd::Refresh() {
     RefreshStateChangedSignals();
 }
 
-void FleetWnd::CloseClicked() {
-    CUIWnd::CloseClicked();
-    delete this;
-}
+void FleetWnd::CloseClicked()
+{ CUIWnd::CloseClicked(); }
 
 void FleetWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     MapWndPopup::LClick(pt, mod_keys);
-    ClickedSignal(this);
+    ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this()));
 }
 
 void FleetWnd::DoLayout() {
@@ -3097,7 +3062,7 @@ void FleetWnd::SelectFleet(int fleet_id) {
     }
 
     for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
-        FleetRow* row = dynamic_cast<FleetRow*>(*it);
+        FleetRow* row = dynamic_cast<FleetRow*>(it->get());
         if (row && row->FleetID() == fleet_id) {
             m_fleets_lb->DeselectAll();
             m_fleets_lb->SelectRow(it);
@@ -3116,7 +3081,7 @@ void FleetWnd::SetSelectedFleets(const std::set<int>& fleet_ids) {
 
     // loop through fleets, selecting any indicated
     for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
-        FleetRow* row = dynamic_cast<FleetRow*>(*it);
+        FleetRow* row = dynamic_cast<FleetRow*>(it->get());
         if (!row) {
             ErrorLogger() << "FleetWnd::SetSelectedFleets couldn't cast a listbow row to FleetRow?";
             continue;
@@ -3409,7 +3374,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     {
         auto rename_action = [fleet, client_empire_id]() {
             std::string fleet_name = fleet->Name();
-            std::shared_ptr<CUIEditWnd> edit_wnd(GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("ENTER_NEW_NAME"), fleet_name)); // TODO change the shared_ptr to auto after conversion of Wnd::Create
+            auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("ENTER_NEW_NAME"), fleet_name);
             edit_wnd->Run();
 
             std::string new_name = edit_wnd->Result();
@@ -3540,16 +3505,13 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
    }
 
     popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
 }
 
 void FleetWnd::FleetLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
-{ ClickedSignal(this); }
+{ ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this())); }
 
 void FleetWnd::FleetDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
-{ ClickedSignal(this); }
+{ ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this())); }
 
 int FleetWnd::FleetInRow(GG::ListBox::iterator it) const {
     if (it == m_fleets_lb->end())
@@ -3557,7 +3519,7 @@ int FleetWnd::FleetInRow(GG::ListBox::iterator it) const {
 
     try {
         //DebugLogger() << "FleetWnd::FleetInRow casting iterator to fleet row";
-        if (FleetRow* fleet_row = dynamic_cast<FleetRow*>(*it)) {
+        if (FleetRow* fleet_row = dynamic_cast<FleetRow*>(it->get())) {
             return fleet_row->FleetID();
         }
     } catch (const std::exception& e) {
@@ -3653,7 +3615,7 @@ void FleetWnd::UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj) 
     for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
         int row_fleet_id = FleetInRow(it);
         if (objects.Object<Fleet>(row_fleet_id) == deleted_fleet) {
-            delete m_fleets_lb->Erase(it);
+            m_fleets_lb->Erase(it);
             break;
         }
     }

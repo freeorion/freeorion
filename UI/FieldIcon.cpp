@@ -26,11 +26,8 @@ FieldIcon::FieldIcon(int field_id) :
     Refresh();
 }
 
-FieldIcon::~FieldIcon() {
-    delete m_selection_indicator;
-    delete m_mouseover_indicator;
-    delete m_name;
-}
+FieldIcon::~FieldIcon()
+{}
 
 int FieldIcon::FieldID() const
 { return m_field_id; }
@@ -109,9 +106,6 @@ void FieldIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     auto pedia_lookup_field_type_action = [field_type_name]() { ClientUI::GetClientUI()->ZoomToFieldType(field_type_name); };
     popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_lookup_field_type_action));
     popup->Run();
-
-    // TODO remove when converting to shared_ptr
-    delete popup;
 }
 
 void FieldIcon::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {

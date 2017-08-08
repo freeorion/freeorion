@@ -169,14 +169,14 @@ private:
     std::string      m_save_str;
     std::string      m_open_str;
 
-    TextControl*     m_curr_dir_text;
-    ListBox*         m_files_list;
-    Edit*            m_files_edit;
-    DropDownList*    m_filter_list;
-    Button*          m_ok_button;
-    Button*          m_cancel_button;
-    TextControl*     m_files_label;
-    TextControl*     m_file_types_label;
+    std::shared_ptr<TextControl>     m_curr_dir_text;
+    std::shared_ptr<ListBox>         m_files_list;
+    std::shared_ptr<Edit>            m_files_edit;
+    std::shared_ptr<DropDownList>    m_filter_list;
+    std::shared_ptr<Button>          m_ok_button;
+    std::shared_ptr<Button>          m_cancel_button;
+    std::shared_ptr<TextControl>     m_files_label;
+    std::shared_ptr<TextControl>     m_file_types_label;
 
     std::string      m_init_directory; ///< directory passed to constructor
     std::string      m_init_filename; ///< filename passed to constructor

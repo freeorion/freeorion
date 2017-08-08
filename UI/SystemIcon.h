@@ -31,7 +31,7 @@ public:
     void Render() override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 private:
-    GG::TextControl* m_text;
+    std::shared_ptr<GG::TextControl> m_text;
 };
 
 /** A control that allows interaction with a star system.  This class allows
@@ -124,14 +124,14 @@ private:
     std::shared_ptr<GG::Texture> m_overlay_texture;
 
     double                          m_overlay_size;             //!< size of extra texture in universe units
-    GG::StaticGraphic*              m_tiny_graphic;             //!< non-scaled texture shown when zoomed far enough out
-    RotatingGraphic*                m_selection_indicator;      //!< shown to indicate system is selected in sidepanel
-    RotatingGraphic*                m_tiny_selection_indicator; //!< non-scaled indicator shown when showing tiny graphic
-    GG::StaticGraphic*              m_mouseover_indicator;      //!< shown when the mouse cursor is over the system and the system has been explored by the client empire
-    GG::StaticGraphic*              m_mouseover_unexplored_indicator; //!< shown when the mouse cursor is over the system and teh system is unexplored by the client empire
-    GG::StaticGraphic*              m_tiny_mouseover_indicator; //!< non-scaled indicator shown when showing tiny graphic
+    std::shared_ptr<GG::StaticGraphic>              m_tiny_graphic;             //!< non-scaled texture shown when zoomed far enough out;
+    std::shared_ptr<RotatingGraphic>                m_selection_indicator;      //!< shown to indicate system is selected in sidepanel
+    std::shared_ptr<RotatingGraphic>                m_tiny_selection_indicator; //!< non-scaled indicator shown when showing tiny graphic
+    std::shared_ptr<GG::StaticGraphic>              m_mouseover_indicator;      //!< shown when the mouse cursor is over the system and the system has been explored by the client empire;
+    std::shared_ptr<GG::StaticGraphic>              m_mouseover_unexplored_indicator; //!< shown when the mouse cursor is over the system and teh system is unexplored by the client empire;
+    std::shared_ptr<GG::StaticGraphic>              m_tiny_mouseover_indicator; //!< non-scaled indicator shown when showing tiny graphic;
     bool                            m_selected;                 //!< is this icon presently selected / should it show m_selected_indicator
-    OwnerColoredSystemName*         m_colored_name;             //!< the control that holds the name of the system
+    std::shared_ptr<OwnerColoredSystemName>         m_colored_name;             //!< the control that holds the name of the system
     bool                            m_showing_name;             //!< is the icon supposed to show its name?
 
     boost::signals2::connection     m_system_connection;

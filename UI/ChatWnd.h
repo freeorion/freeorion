@@ -48,8 +48,8 @@ private:
     void            MessageHistoryUpRequested();
     void            MessageHistoryDownRequested();
 
-    GG::MultiEdit*          m_display;
-    MessageWndEdit*         m_edit;
+    std::shared_ptr<GG::MultiEdit>          m_display;
+    std::shared_ptr<MessageWndEdit>         m_edit;
     int                     m_display_show_time;
     std::deque<std::string> m_history;
     int                     m_history_position;
