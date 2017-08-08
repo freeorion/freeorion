@@ -576,7 +576,9 @@ void Wnd::AttachChild(std::shared_ptr<Wnd> wnd)
         std::cerr << std::endl << "Wnd::AttachChild called either during the constructor "
                   << "or after the destructor has run. Not attaching child."
                   << std::endl << " parent = " << m_name << " child = " << wnd->m_name;
-        throw;
+        // Soft failure:
+        // Intentionally do nothing, to create minimal disruption to non-dev
+        // players if a dev accidentally puts an AttachChild in its own constructor.
     }
 }
 
