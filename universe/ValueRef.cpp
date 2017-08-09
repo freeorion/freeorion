@@ -267,7 +267,7 @@ std::string ReconstructName(const std::vector<std::string>& property_name,
     case CONDITION_LOCAL_CANDIDATE_REFERENCE: retval = "LocalCandidate";  break;
     case CONDITION_ROOT_CANDIDATE_REFERENCE:  retval = "RootCandidate";   break;
     case NON_OBJECT_REFERENCE:                retval = "";                break;
-    default:                                            retval = "?????";           break;
+    default:                                  retval = "?????";           break;
     }
 
     if (ref_type != EFFECT_TARGET_VALUE_REFERENCE) {
@@ -2595,6 +2595,33 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
             formatter % op->Eval(context);
         }
         return formatter.str();
+
+    } else if (m_op_type >= COMPARE_EQUAL && m_op_type <= COMPARE_NOT_EQUAL) {
+        const std::string&& lhs_val = LHS()->Eval(context);
+        const std::string&& rhs_val = RHS()->Eval(context);
+        bool test_result = false;
+        switch (m_op_type) {
+            case COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
+            case COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
+            case COMPARE_GREATER_THAN_OR_EQUAL: test_result = lhs_val >= rhs_val;   break;
+            case COMPARE_LESS_THAN:             test_result = lhs_val < rhs_val;    break;
+            case COMPARE_LESS_THAN_OR_EQUAL:    test_result = lhs_val <= rhs_val;   break;
+            case COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
+            default:    break;  // ??? do nothing, default to false
+        }
+        if (m_operands.size() < 3) {
+            return test_result ? "true" : "false";
+        } else if (m_operands.size() < 4) {
+            if (test_result)
+                return m_operands[2]->Eval(context);
+            else
+                return "false";
+        } else {
+            if (test_result)
+                return m_operands[2]->Eval(context);
+            else
+                return m_operands[3]->Eval(context);
+        }
     }
 
     throw std::runtime_error("std::string ValueRef evaluated with an unknown or invalid OpType.");
@@ -2685,12 +2712,41 @@ double      Operation<double>::EvalImpl(const ScriptingContext& context) const
             break;
         }
 
-        default:
-            throw std::runtime_error("double ValueRef evaluated with an unknown or invalid OpType.");
-            break;
+        case COMPARE_EQUAL:
+        case COMPARE_GREATER_THAN:
+        case COMPARE_GREATER_THAN_OR_EQUAL:
+        case COMPARE_LESS_THAN:
+        case COMPARE_LESS_THAN_OR_EQUAL:
+        case COMPARE_NOT_EQUAL: {
+            const double&& lhs_val = LHS()->Eval(context);
+            const double&& rhs_val = RHS()->Eval(context);
+            bool test_result = false;
+            switch (m_op_type) {
+                case COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
+                case COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
+                case COMPARE_GREATER_THAN_OR_EQUAL: test_result = lhs_val >= rhs_val;   break;
+                case COMPARE_LESS_THAN:             test_result = lhs_val < rhs_val;    break;
+                case COMPARE_LESS_THAN_OR_EQUAL:    test_result = lhs_val <= rhs_val;   break;
+                case COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
+                default:    break;  // ??? do nothing, default to false
+            }
+            if (m_operands.size() < 3) {
+                return static_cast<double>(test_result);
+            } else if (m_operands.size() < 4) {
+                if (test_result)
+                    return m_operands[2]->Eval(context);
+                else
+                    return 0.0;
+            } else {
+                if (test_result)
+                    return m_operands[2]->Eval(context);
+                else
+                    return m_operands[3]->Eval(context);
+            }
+        }
     }
 
-    // Dummy return value to prevent spurious compiler warning
+    throw std::runtime_error("double ValueRef evaluated with an unknown or invalid OpType.");
     return 0.0;
 }
 
@@ -2785,12 +2841,41 @@ int         Operation<int>::EvalImpl(const ScriptingContext& context) const
             break;
         }
 
-        default:
-            throw std::runtime_error("int ValueRef evaluated with an unknown or invalid OpType.");
-            break;
+        case COMPARE_EQUAL:
+        case COMPARE_GREATER_THAN:
+        case COMPARE_GREATER_THAN_OR_EQUAL:
+        case COMPARE_LESS_THAN:
+        case COMPARE_LESS_THAN_OR_EQUAL:
+        case COMPARE_NOT_EQUAL: {
+            const int&& lhs_val = LHS()->Eval(context);
+            const int&& rhs_val = RHS()->Eval(context);
+            bool test_result = false;
+            switch (m_op_type) {
+                case COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
+                case COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
+                case COMPARE_GREATER_THAN_OR_EQUAL: test_result = lhs_val >= rhs_val;   break;
+                case COMPARE_LESS_THAN:             test_result = lhs_val < rhs_val;    break;
+                case COMPARE_LESS_THAN_OR_EQUAL:    test_result = lhs_val <= rhs_val;   break;
+                case COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
+                default:    break;  // ??? do nothing, default to false
+            }
+            if (m_operands.size() < 3) {
+                return static_cast<int>(test_result);
+            } else if (m_operands.size() < 4) {
+                if (test_result)
+                    return m_operands[2]->Eval(context);
+                else
+                    return 0;
+            } else {
+                if (test_result)
+                    return m_operands[2]->Eval(context);
+                else
+                    return m_operands[3]->Eval(context);
+            }
+        }
     }
 
-    // Dummy return value to prevent spurious compiler warning
-    return 0.0;
+    throw std::runtime_error("double ValueRef evaluated with an unknown or invalid OpType.");
+    return 0;
 }
 } // namespace ValueRef

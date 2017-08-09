@@ -54,7 +54,13 @@ namespace ValueRef {
         MAXIMUM,
         RANDOM_UNIFORM,
         RANDOM_PICK,
-        SUBSTITUTION
+        SUBSTITUTION,
+        COMPARE_EQUAL,
+        COMPARE_GREATER_THAN,
+        COMPARE_GREATER_THAN_OR_EQUAL,
+        COMPARE_LESS_THAN,
+        COMPARE_LESS_THAN_OR_EQUAL,
+        COMPARE_NOT_EQUAL
     };
 }
 
