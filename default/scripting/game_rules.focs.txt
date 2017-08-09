@@ -38,7 +38,7 @@ GameRule
 GameRule
     name = "RULE_ENABLE_EXPERIMENTORS"
     description = "RULE_ENABLE_EXPERIMENTORS_DESC"
-    category = "TEST"
+    category = "CONTENT"
     type = Toggle
     default = On
 

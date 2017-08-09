@@ -264,6 +264,8 @@ Test
 BALANCE
 Balance
 
+CONTENT
+Content
 
 ##
 ## Major errors
@@ -1033,10 +1035,10 @@ RULE_TECH_COST_FACTOR_DESC
 Adjusts costs of tech
 
 RULE_ENABLE_EXPERIMENTORS
-Enable Experimentors (TEST)
+Enable Experimentors
 
 RULE_ENABLE_EXPERIMENTORS_DESC
-Test
+Enables Experimentors during galaxy generation
 
 RULE_TEST_INT
 Test Integer

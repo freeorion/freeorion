@@ -183,6 +183,7 @@ MonsterFleet
     spawnrate = 1000.0
     spawnlimit = 1
     location = And [
+        ((GameRule name = "RULE_ENABLE_EXPERIMENTORS") > 0)
         Contains And [
             Planet
             Unowned
