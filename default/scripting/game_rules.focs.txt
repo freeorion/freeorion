@@ -43,15 +43,6 @@ GameRule
     default = On
 
 GameRule
-    name = "RULE_TEST_INT"
-    description = "RULE_TEST_INT_DESC"
-    category = "TEST"
-    type = Integer
-    default = 1
-    min = 0
-    max = 15
-
-GameRule
     name = "RULE_TEST_STRING"
     description = "RULE_TEST_STRING_DESC"
     category = "TEST"
