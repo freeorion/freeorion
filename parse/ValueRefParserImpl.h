@@ -322,7 +322,31 @@ struct arithmetic_rules
                         [ _val = new_<ValueRef::Operation<T>>(_c, _d) ] >> ')'
                     )
                 |   (
-                        lit('-') >> functional_expr                                   // single parameter math function with a function expression rather than any arbitrary expression as parameter, because negating more general expressions can be ambiguous
+                        lit('(') >> expr [ push_back(_d, _1) ]
+                        >> (
+                                (     lit("==")   [ _c = ValueRef::COMPARE_EQUAL ]
+                                    | lit('=')    [ _c = ValueRef::COMPARE_EQUAL ]
+                                    | lit(">=")   [ _c = ValueRef::COMPARE_GREATER_THAN_OR_EQUAL ]
+                                    | lit('>')    [ _c = ValueRef::COMPARE_GREATER_THAN ]
+                                    | lit("<=")   [ _c = ValueRef::COMPARE_LESS_THAN_OR_EQUAL ]
+                                    | lit('<')    [ _c = ValueRef::COMPARE_LESS_THAN ]
+                                    | lit("!=")   [ _c = ValueRef::COMPARE_NOT_EQUAL ]
+                                )
+                            > expr [ push_back(_d, _1) ]
+                           )
+                        > (
+                                lit(')')
+                            | (
+                               (lit('?') > expr [ push_back(_d, _1) ])
+                               > (
+                                    lit(')')
+                                 |  lit(':') > expr [ push_back(_d, _1) ] > ')'
+                                 )
+                              )
+                          ) [ _val = new_<ValueRef::Operation<T>>(_c, _d) ]
+                    )
+                |   (
+                        lit('-') >> functional_expr // single parameter math function with a function expression rather than any arbitrary expression as parameter, because negating more general expressions can be ambiguous
                         [ _val = new_<ValueRef::Operation<T>>(ValueRef::NEGATE, _1) ]
                     )
                 |   (

@@ -91,6 +91,8 @@ lexer::lexer() :
         |     '>'
         |     '<'
         |     '!'
+        |     ':'
+        |     '?'
         ;
 
 #define REGISTER_TOKEN(r, _, name)                                    \
