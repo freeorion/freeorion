@@ -421,11 +421,13 @@ float PartType::ProductionCost(int empire_id, int location_id) const {
     } else {
         if (m_production_cost->ConstantExpr())
             return static_cast<float>(m_production_cost->Eval());
+        else if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant())
+            return static_cast<float>(m_production_cost->Eval());
 
         const auto arbitrary_large_number = 999999.9f;
 
         std::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
-        if (!location)
+        if (!location && !m_production_cost->TargetInvariant())
             return arbitrary_large_number;
 
         std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
@@ -446,9 +448,11 @@ int PartType::ProductionTime(int empire_id, int location_id) const {
     } else {
         if (m_production_time->ConstantExpr())
             return m_production_time->Eval();
+        else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant())
+            return m_production_time->Eval();
 
         std::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
-        if (!location)
+        if (!location && !m_production_time->TargetInvariant())
             return arbitrary_large_number;
 
         std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
@@ -545,11 +549,13 @@ float HullType::ProductionCost(int empire_id, int location_id) const {
     } else {
         if (m_production_cost->ConstantExpr())
             return static_cast<float>(m_production_cost->Eval());
+        else if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant())
+            return static_cast<float>(m_production_cost->Eval());
 
         const auto arbitrary_large_number = 999999.9f;
 
         std::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
-        if (!location)
+        if (!location && !m_production_cost->TargetInvariant())
             return arbitrary_large_number;
 
         std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
@@ -568,11 +574,13 @@ int HullType::ProductionTime(int empire_id, int location_id) const {
     } else {
         if (m_production_time->ConstantExpr())
             return m_production_time->Eval();
+        else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant())
+            return m_production_time->Eval();
 
         const auto arbitrary_large_number = 999999;
 
         std::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
-        if (!location)
+        if (!location && !m_production_time->TargetInvariant())
             return arbitrary_large_number;
 
         std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
