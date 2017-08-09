@@ -23,6 +23,8 @@ namespace {
             qi::_d_type _d;
             qi::_e_type _e;
             qi::_f_type _f;
+            qi::_g_type _g;
+            qi::_h_type _h;
             qi::_val_type _val;
             qi::lit_type lit;
             using phoenix::new_;
@@ -68,7 +70,7 @@ namespace {
                       | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _d = Condition::LESS_THAN ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                >> parse::double_value_ref()
+                > parse::double_value_ref() // assuming the trinary form already didn't pass, can expect a (double) here, though it might be an (int) casted to (double). By matching the (int) cases first, can assume that at least one of the parameters here is not an (int) casted to double.
                 [ _val = new_<Condition::ValueTest>(_a, _d, _1) ]
                 >> ')'
                 ;
@@ -91,7 +93,7 @@ namespace {
                       | lit("<=")   [ _e = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _e = Condition::LESS_THAN ]
                       | lit("!=")   [ _e = Condition::NOT_EQUAL ])
-                  ) >  parse::double_value_ref()
+                  ) >  parse::double_value_ref()    // if already seen (double) (operator) (double) (operator) can expect to see another (double). Some of these (double) may be (int) casted to double, though not all of them can be, as in that case, the (int) parser should have matched.
                 [ _val = new_<Condition::ValueTest>(_a, _d, _b, _e, _1) ]
                 >  ')'
                 ;
@@ -102,7 +104,7 @@ namespace {
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                >> parse::string_value_ref()
+                > parse::string_value_ref() // assuming the trinary (string) form already didn't parse, if already seen (string) (operator) can expect another (string)
                 [ _val = new_<Condition::ValueTest>(_c, _d, _1) ]
                 >> ')'
                 ;
@@ -117,8 +119,46 @@ namespace {
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit("!=")   [ _e = Condition::NOT_EQUAL ])
-                ) >  parse::string_value_ref()
+                ) >  parse::string_value_ref() // if already seen (string) (operator) (string) (operator) can expect to see another (string)
                 [ _val = new_<Condition::ValueTest>(_c, _d, _f, _e, _1) ]
+                >  ')'
+                ;
+
+            value_test_5
+                = '('
+                >> parse::int_value_ref() [ _g = _1 ]
+                >> (    lit("==")   [ _d = Condition::EQUAL ]
+                      | lit('=')    [ _d = Condition::EQUAL ]
+                      | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
+                      | lit('>')    [ _d = Condition::GREATER_THAN ]
+                      | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
+                      | lit('<')    [ _d = Condition::LESS_THAN ]
+                      | lit("!=")   [ _d = Condition::NOT_EQUAL ])
+                >> parse::int_value_ref()   // can't expect an (int) here, as it could actually be a (double) comparision with the first (double) cased from an (int)
+                [ _val = new_<Condition::ValueTest>(_g, _d, _1) ]
+                >> ')'
+                ;
+
+            value_test_6
+                = ('('
+                >> parse::int_value_ref() [ _g = _1 ]
+                >> (    lit("==")   [ _d = Condition::EQUAL ]
+                      | lit('=')    [ _d = Condition::EQUAL ]
+                      | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
+                      | lit('>')    [ _d = Condition::GREATER_THAN ]
+                      | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
+                      | lit('<')    [ _d = Condition::LESS_THAN ]
+                      | lit("!=")   [ _d = Condition::NOT_EQUAL ])
+                >> parse::int_value_ref() [ _h = _1 ]
+                >> (    lit("==")   [ _d = Condition::EQUAL ]
+                      | lit('=')    [ _d = Condition::EQUAL ]
+                      | lit(">=")   [ _e = Condition::GREATER_THAN_OR_EQUAL ]
+                      | lit('>')    [ _e = Condition::GREATER_THAN ]
+                      | lit("<=")   [ _e = Condition::LESS_THAN_OR_EQUAL ]
+                      | lit('<')    [ _e = Condition::LESS_THAN ]
+                      | lit("!=")   [ _e = Condition::NOT_EQUAL ])
+                  ) >> parse::int_value_ref()   // only treat as trinary (int) comparison if all parameters are (int). otherwise fall back to (double) comparison, which allows some of the parameters to be (int) casted to (double)
+                [ _val = new_<Condition::ValueTest>(_g, _d, _h, _e, _1) ]
                 >  ')'
                 ;
 
@@ -190,10 +230,12 @@ namespace {
                 |   within_distance
                 |   within_starlane_jumps
                 |   number
+                |   value_test_5    // more complicated format that is strict extension of value_test_3 format, so needs to be tested before it
+                |   value_test_6    //  first int ...
                 |   value_test_2    // more complicated format that is strict extension of value_test_1 format, so needs to be tested before it
-                |   value_test_1
+                |   value_test_1    //  ... then double (which may include int(s) casted to double(s))...
                 |   value_test_4    // more complicated format that is strict extension of value_test_3 format, so needs to be tested before it
-                |   value_test_3
+                |   value_test_3    //  ... then string
                 |   turn
                 |   created_on_turn
                 |   number_of
@@ -242,7 +284,9 @@ namespace {
                 ValueRef::ValueRefBase<std::string>*,
                 Condition::ComparisonType,
                 Condition::ComparisonType,
-                ValueRef::ValueRefBase<std::string>*
+                ValueRef::ValueRefBase<std::string>*,
+                ValueRef::ValueRefBase<int>*,
+                ValueRef::ValueRefBase<int>*
             >
         > double_ref_double_ref_rule;
 
@@ -279,6 +323,8 @@ namespace {
         double_ref_double_ref_rule              value_test_2;
         double_ref_double_ref_rule              value_test_3;
         double_ref_double_ref_rule              value_test_4;
+        double_ref_double_ref_rule              value_test_5;
+        double_ref_double_ref_rule              value_test_6;
         int_ref_int_ref_rule                    turn;
         int_ref_int_ref_rule                    created_on_turn;
         int_ref_sorting_method_double_ref_rule  number_of;
