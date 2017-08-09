@@ -387,7 +387,7 @@ struct arithmetic_rules
         statistic_collection_expr
             =   (tok.Statistic_
                  >> (   tok.Count_  [ _b = ValueRef::COUNT ]
-                        |   tok.If_     [ _b = ValueRef::IF ]
+                    |   tok.If_     [ _b = ValueRef::IF ]
                     )
                 )
                 >   parse::detail::label(Condition_token) >    parse::detail::condition_parser
