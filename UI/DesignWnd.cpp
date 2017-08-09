@@ -889,44 +889,41 @@ PartsListBox::PartsListBoxRow::PartsListBoxRow(GG::X w, GG::Y h) :
 void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) {
     if (wnds.empty())
         return;
-    const GG::Wnd* wnd = wnds.front();  // should only be one wnd in list because PartControls doesn't allow selection, so dragging is only one-at-a-time
-    const GG::Control* control = dynamic_cast<const GG::Control*>(wnd);
-    if (!control)
+    // should only be one wnd in list because PartControls doesn't allow selection, so dragging is
+    // only one-at-a-time
+    auto control = dynamic_cast<GG::Control*>(wnds.front());
+    if (!control || empty())
         return;
-
-    GG::Control* dragged_control = nullptr;
 
     // find control in row
-    unsigned int i = -1;
-    for (i = 0; i < size(); ++i) {
-        dragged_control = !empty() ? at(i) : nullptr;
-        if (dragged_control == control)
-            break;
-        else
-            dragged_control = nullptr;
+    unsigned int ii = 0;
+    for (; ii < size(); ++ii) {
+        if (at(ii) != control)
+            continue;
     }
 
-    if (!dragged_control)
+    if (ii == size())
         return;
 
-    PartControl* part_control = dynamic_cast<PartControl*>(dragged_control);
-    const PartType* part_type = nullptr;
-    if (part_control)
-        part_type = part_control->Part();
+    RemoveCell(ii);  // Wnd that accepts drop takes ownership of dragged-away control
 
-    RemoveCell(i);  // Wnd that accepts drop takes ownership of dragged-away control
+    auto part_control = dynamic_cast<PartControl*>(control);
+    if (!part_control)
+        return;
 
-    if (part_type) {
-        auto new_part_control = GG::Wnd::Create<PartControl>(part_type);
-        const PartsListBox* parent = dynamic_cast<const PartsListBox*>(Parent().get());
-        if (parent) {
-            new_part_control->ClickedSignal.connect(
-                parent->PartTypeClickedSignal);
-            new_part_control->DoubleClickedSignal.connect(
-                parent->PartTypeDoubleClickedSignal);
-        }
-        SetCell(i, new_part_control);
+    const auto part_type = part_control->Part();
+    if (!part_type)
+        return;
+
+    auto new_part_control = GG::Wnd::Create<PartControl>(part_type);
+    const auto parent = dynamic_cast<const PartsListBox*>(Parent().get());
+    if (parent) {
+        new_part_control->ClickedSignal.connect(
+            parent->PartTypeClickedSignal);
+        new_part_control->DoubleClickedSignal.connect(
+            parent->PartTypeDoubleClickedSignal);
     }
+    SetCell(ii, new_part_control);
 }
 
 PartsListBox::PartsListBox(void) :
@@ -3019,8 +3016,6 @@ void SlotControl::CompleteConstruction() {
 }
 
 bool SlotControl::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
-    //std::cout << "SlotControl::EventFilter " << EventTypeName(event) << std::endl << std::flush;
-
     if (w == this)
         return false;
 
@@ -3030,10 +3025,6 @@ bool SlotControl::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     case GG::WndEvent::CheckDrops:
     case GG::WndEvent::DragDropLeave:
     case GG::WndEvent::DragDroppedOn:
-        if (w == this) {
-            ErrorLogger() << "SlotControl::EventFilter w == this";
-            return false;
-        }
         HandleEvent(event);
         return true;
         break;
@@ -3052,22 +3043,17 @@ void SlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter
     if (std::distance(first, last) != 1)
         return;
 
-    bool acceptable_part_found = false;
     for (DropsAcceptableIter it = first; it != last; ++it) {
-        if (!acceptable_part_found && it->first->DragDropDataType() == PART_CONTROL_DROP_TYPE_STRING) {
-            const auto part_control = boost::polymorphic_downcast<const PartControl* const>(it->first);
-            const PartType* part_type = part_control->Part();
-            if (part_type &&
-                part_type->CanMountInSlotType(m_slot_type) &&
-                part_control != m_part_control.get())
-            {
-                it->second = true;
-                acceptable_part_found = true;
-            } else {
-                it->second = false;
-            }
-        } else {
-            it->second = false;
+        if (it->first->DragDropDataType() != PART_CONTROL_DROP_TYPE_STRING)
+            continue;
+        const auto part_control = boost::polymorphic_downcast<const PartControl* const>(it->first);
+        const PartType* part_type = part_control->Part();
+        if (part_type &&
+            part_type->CanMountInSlotType(m_slot_type) &&
+            part_control != m_part_control.get())
+        {
+            it->second = true;
+            return;
         }
     }
 }
@@ -3133,11 +3119,7 @@ void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const G
     const PartControl* part_control = dynamic_cast<const PartControl*>(wnd);
     if (part_control != m_part_control.get())
         return;
-    // SlotContentsAlteredSignal is connected to this->SetPart, which will
-    // delete m_part_control if it is not null.  The drop-accepting Wnd is
-    // responsible for deleting the accepted Wnd, so setting m_part_control = nullptr
-    // here prevents this->SetPart from deleting it prematurely
-    m_part_control = nullptr;
+    DetachChildAndReset(m_part_control);
     SlotContentsAlteredSignal(nullptr);
 }
 
@@ -3149,12 +3131,17 @@ void SlotControl::DragDropEnter(const GG::Pt& pt, std::map<const Wnd*, bool>& dr
 
     DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
 
+    // Note:  If this SlotControl is being dragged over this indicates the dragged part would
+    //        replace this part.
     if (drop_wnds_acceptable.begin()->second && m_part_control)
         m_part_control->Hide();
 }
 
 void SlotControl::DragDropLeave() {
-    if (m_part_control)
+    // Note:  If m_part_control is being dragged, this does nothing, because it is detached.
+    //        If this SlotControl is being dragged over this indicates the dragged part would
+    //        replace this part.
+    if (m_part_control && !GG::GUI::GetGUI()->DragDropWnd(m_part_control.get()))
         m_part_control->Show();
 }
 
