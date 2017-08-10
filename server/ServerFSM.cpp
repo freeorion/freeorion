@@ -234,6 +234,10 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
                      << ", named \"" << player_connection->PlayerName() << "\".";
 
     bool must_quit = false;
+    if (id == ALL_EMPIRES) {
+        ErrorLogger(FSM) << "Client quit before id was assigned.";
+        must_quit = true;
+    }
 
     // Did an active player (AI or Human) disconnect?  If so, game is over
     if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
