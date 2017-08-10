@@ -1,6 +1,10 @@
-import random
-
 from common.configure_logging import redirect_logging_to_freeorion_logger, convenience_function_references_for_logger
+
+# Logging is redirected before other imports so that import errors appear in log files.
+redirect_logging_to_freeorion_logger()
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger()
+
+import random
 
 import freeorion as fo
 
@@ -15,9 +19,6 @@ from specials import distribute_specials
 from util import int_hash, seed_rng, report_error, error_list
 from universe_tables import MAX_JUMPS_BETWEEN_SYSTEMS, MAX_STARLANE_LENGTH
 import universe_statistics
-
-redirect_logging_to_freeorion_logger()
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger()
 
 
 class PyGalaxySetupData:
