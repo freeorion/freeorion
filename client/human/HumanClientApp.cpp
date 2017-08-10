@@ -479,7 +479,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
     m_connected = m_networking->ConnectToLocalHostServer();
     if (!m_connected) {
-        ResetToIntro();
+        ResetToIntro(true);
         ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
         return;
     }
@@ -566,7 +566,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
     } else {
         ErrorLogger() << "HumanClientApp::NewSinglePlayerGame failed to start new game, killing server.";
-        ResetToIntro();
+        ResetToIntro(true);
     }
 }
 
@@ -605,7 +605,7 @@ void HumanClientApp::MultiPlayerGame() {
     if (!m_connected) {
         ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
         if (server_connect_wnd->Result().second == "HOST GAME SELECTED")
-            ResetToIntro();
+            ResetToIntro(true);
         return;
     }
 
@@ -666,7 +666,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
 
     // end any currently-playing game before loading new one
     if (m_game_started) {
-        ResetToIntro();
+        ResetToIntro(false);
         // delay to make sure old game is fully cleaned up before attempting to start a new one
         std::this_thread::sleep_for(std::chrono::seconds(3));
     } else {
@@ -685,7 +685,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() Connecting to server";
     m_connected = m_networking->ConnectToLocalHostServer();
     if (!m_connected) {
-        ResetToIntro();
+        ResetToIntro(true);
         ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
         return;
     }
@@ -719,7 +719,7 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
         DebugLogger() << "HumanClientApp::RequestSavePreviews Connecting to server";
         m_connected = m_networking->ConnectToLocalHostServer();
         if (!m_connected) {
-            ResetToIntro();
+            ResetToIntro(true);
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
             return;
         }
@@ -999,7 +999,7 @@ void HumanClientApp::HandleAppQuitting() {
 
 bool HumanClientApp::HandleHotkeyResetGame() {
     DebugLogger() << "HumanClientApp::HandleHotkeyResetGame()";
-    ResetToIntro();
+    ResetToIntro(false);
     return true;
 }
 
@@ -1212,18 +1212,18 @@ namespace {
     };
 }
 
-void HumanClientApp::ResetToIntro()
-{ ResetOrExitApp(true); }
+void HumanClientApp::ResetToIntro(bool is_error /*= false*/)
+{ ResetOrExitApp(true, is_error); }
 
 void HumanClientApp::ExitApp()
-{ ResetOrExitApp(false); }
+{ ResetOrExitApp(false, false); }
 
-void HumanClientApp::ResetOrExitApp(bool reset) {
+void HumanClientApp::ResetOrExitApp(bool reset, bool is_error) {
     DebugLogger() << (reset ? "HumanClientApp::ResetToIntro" : "HumanClientApp::ExitApp");
 
     m_game_started = false;
 
-    if (m_save_game_in_progress) {
+    if (m_save_game_in_progress && !is_error) {
         DebugLogger() << "save game in progress. Checking with player.";
         auto dlg = GG::Wnd::Create<SaveGamePendingDialog>(reset, this->SaveGameCompletedSignal);
         dlg->Run();

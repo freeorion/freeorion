@@ -69,7 +69,7 @@ public:
     /** Update the logger in OptionsDB and the other processes if hosting. */
     void                ChangeLoggerThreshold(const std::string& option_name, LogLevel option_value);
 
-    void                ResetToIntro();
+    void                ResetToIntro(bool is_error);
     void                ExitApp();
     void                ResetClientData();
     void                LoadSinglePlayerGame(std::string filename = "");///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
@@ -131,7 +131,7 @@ private:
 
     void            DisconnectedFromServer();           ///< called by ClientNetworking when the TCP connection to the server is lost
 
-    void            ResetOrExitApp(bool reset);
+    void            ResetOrExitApp(bool reset, bool is_error);
 
     std::unique_ptr<HumanClientFSM> m_fsm;
 
