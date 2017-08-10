@@ -4,6 +4,9 @@
 #include "../util/Logger.h"
 #include "CommonWrappers.h"
 
+#include <boost/python/tuple.hpp>
+#include <boost/python/list.hpp>
+#include <boost/python/extract.hpp>
 #include <boost/python/docstring_options.hpp>
 
 using boost::python::object;

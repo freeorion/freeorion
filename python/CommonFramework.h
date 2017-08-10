@@ -2,10 +2,7 @@
 #define __FreeOrion__Python__CommonFramework__
 
 #include <boost/python.hpp>
-#include <boost/python/tuple.hpp>
-#include <boost/python/list.hpp>
 #include <boost/python/dict.hpp>
-#include <boost/python/extract.hpp>
 
 #include <vector>
 #include <string>
