@@ -249,7 +249,7 @@ def generateOrders():  # pylint: disable=invalid-name
             # not invalidate doneTurn()
             fo.doneTurn()
         except Exception as e:
-            error(e, exc_info=True)
+            error("Exception in doneTurn() on non-existent empire", e, exc_info=True)
         return
 
     if empire.eliminated:
@@ -259,7 +259,7 @@ def generateOrders():  # pylint: disable=invalid-name
             # on last-seen gamestate if nothing can be ordered anyway...
             fo.doneTurn()
         except Exception as e:
-            error(e, exc_info=True)
+            error("Exception while trying doneTurn() on eliminated empire", e, exc_info=True)
         return
 
     # This code block is required for correct AI work.
@@ -336,7 +336,7 @@ def generateOrders():  # pylint: disable=invalid-name
             action()
             main_timer.stop()
         except Exception as e:
-            error(e, exc_info=True)
+            error("Exception while trying to %s" % action.__name__, e, exc_info=True)
     main_timer.stop_print_and_clear()
     turn_timer.stop_print_and_clear()
     turn_timer.start("Server_Processing")
@@ -344,7 +344,7 @@ def generateOrders():  # pylint: disable=invalid-name
     try:
         fo.doneTurn()
     except Exception as e:
-        error(e, exc_info=True)  # TODO move it to cycle above
+        error("Exception while trying doneTurn()", e, exc_info=True)  # TODO move it to cycle above
 
     if using_statprof:
         try:
