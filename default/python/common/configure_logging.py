@@ -153,7 +153,7 @@ class _LoggerHandler(logging.Handler):
         }[level]
 
     def emit(self, record):
-        self.logger(record.msg + "\n", str(record.name), str(record.filename),
+        self.logger(str(record.msg) + "\n", str(record.name), str(record.filename),
                     str(record.funcName), str(record.lineno))
 
 
