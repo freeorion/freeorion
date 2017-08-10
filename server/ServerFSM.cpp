@@ -1179,7 +1179,10 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
 
     server.CreateAIClients(players, m_single_player_setup_data->m_ai_aggr);    // also disconnects any currently-connected AI clients
 
-    server.InitializePython();
+    if (!server.InitializePython()) {
+        post_event(ShutdownServer());
+        return;
+    }
 
     if (m_single_player_setup_data->m_new_game) {
         // For SP game start inializaing while waiting for AI callbacks.
@@ -1295,6 +1298,11 @@ sc::result WaitingForSPGameJoiners::react(const LoadSaveFileFailed& u) {
     return transit<Idle>();
 }
 
+sc::result WaitingForSPGameJoiners::react(const ShutdownServer& msg) {
+    TraceLogger(FSM) << "(ServerFSM) WaitingForSPGameJoiners.ShutdownServer";
+    return transit<ShuttingDownServer>();
+}
+
 sc::result WaitingForSPGameJoiners::react(const Error& msg) {
     auto fatal = HandleErrorMessage(msg, Server());
     if (fatal) {
@@ -1333,7 +1341,10 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
 
     server.CreateAIClients(player_setup_data, m_lobby_data->m_ai_aggr);
 
-    server.InitializePython();
+    if (!server.InitializePython()) {
+        post_event(ShutdownServer());
+        return;
+    }
 
     // force immediate check if all expected AIs are present, so that the FSM
     // won't get stuck in this state waiting for JoinGame messages that will
@@ -1419,6 +1430,11 @@ sc::result WaitingForMPGameJoiners::react(const CheckStartConditions& u) {
     }
 
     return discard_event();
+}
+
+sc::result WaitingForMPGameJoiners::react(const ShutdownServer& msg) {
+    TraceLogger(FSM) << "(ServerFSM) WaitingForMPGameJoiners.ShutdownServer";
+    return transit<ShuttingDownServer>();
 }
 
 sc::result WaitingForMPGameJoiners::react(const Error& msg) {
