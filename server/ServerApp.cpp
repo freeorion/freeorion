@@ -327,15 +327,14 @@ void ServerApp::Run() {
     {}
 }
 
-bool ServerApp::InitializePython() {
+void ServerApp::InitializePython() {
     if (m_python_server.IsPythonRunning())
-        return true;
+        return;
 
     if (m_python_server.Initialize())
-        return true;
+        return;
 
     ErrorLogger() << "Server's python interpreter failed to initialize.";
-    return false;
 }
 
 void ServerApp::CleanupAIs() {

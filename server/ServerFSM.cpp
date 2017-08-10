@@ -1188,12 +1188,9 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
 
     server.CreateAIClients(players, m_single_player_setup_data->m_ai_aggr);    // also disconnects any currently-connected AI clients
 
-    if (!server.InitializePython()) {
-        post_event(ShutdownServer());
-        return;
-    }
+    server.InitializePython();
 
-    if (m_single_player_setup_data->m_new_game) {
+    if (server.m_python_server.IsPythonRunning() && m_single_player_setup_data->m_new_game) {
         // For SP game start inializaing while waiting for AI callbacks.
         DebugLogger(FSM) << "Initializing new SP game...";
         server.NewSPGameInit(*m_single_player_setup_data);
@@ -1277,6 +1274,12 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
     // if all expected players have connected, proceed to start new or load game
     if (static_cast<int>(server.m_networking.NumEstablishedPlayers()) == m_num_expected_players) {
         DebugLogger(FSM) << "WaitingForSPGameJoiners::react(const CheckStartConditions& u) : have all " << m_num_expected_players << " expected players connected.";
+
+        if (!server.m_python_server.IsPythonRunning()) {
+            post_event(ShutdownServer());
+            return discard_event();
+        }
+
         if (m_single_player_setup_data->m_new_game) {
             DebugLogger(FSM) << "Verify AIs SP game...";
             if (server.VerifySPGameAIs(*m_single_player_setup_data))
@@ -1350,10 +1353,7 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
 
     server.CreateAIClients(player_setup_data, m_lobby_data->m_ai_aggr);
 
-    if (!server.InitializePython()) {
-        post_event(ShutdownServer());
-        return;
-    }
+    server.InitializePython();
 
     // force immediate check if all expected AIs are present, so that the FSM
     // won't get stuck in this state waiting for JoinGame messages that will
@@ -1428,6 +1428,11 @@ sc::result WaitingForMPGameJoiners::react(const CheckStartConditions& u) {
     ServerApp& server = Server();
 
     if (static_cast<int>(server.m_networking.NumEstablishedPlayers()) == m_num_expected_players) {
+        if (!server.m_python_server.IsPythonRunning()) {
+            post_event(ShutdownServer());
+            return discard_event();
+        }
+
         if (m_player_save_game_data.empty()) {
             DebugLogger(FSM) << "Initializing new MP game...";
             server.NewMPGameInit(*m_lobby_data);

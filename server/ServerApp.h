@@ -218,7 +218,7 @@ private:
     void    Run();          ///< initializes app state, then executes main event handler/render loop (Poll())
 
     /** Initialize the python engine if not already running. Return true on success. */
-    bool InitializePython();
+    void InitializePython();
 
     /** Called when server process receive termination signal */
     void    SignalHandler(const boost::system::error_code& error, int signal_number);
