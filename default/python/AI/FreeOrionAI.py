@@ -3,7 +3,6 @@ these methods in turn activate other portions of the python AI code."""
 import pickle  # Python object serialization library
 import sys
 import random
-import logging
 
 from common.configure_logging import redirect_logging_to_freeorion_logger, convenience_function_references_for_logger
 
