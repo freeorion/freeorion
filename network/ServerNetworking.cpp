@@ -257,16 +257,22 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
         // why this is so, but putting a pause in place seems to at least
         // mask the problem.  For now, this is sufficient, since rapid
         // connects and disconnects are not a priority.
-        if (m_new_connection) {
+        if (m_new_connection && error != boost::asio::error::eof) {
             ErrorLogger(network) << "PlayerConnection::HandleMessageHeaderRead(): "
                                  << "new connection error #" << error.value() << " \""
                                  << error.message() << "\"" << " waiting for 0.5s";
             // wait half a second if the first data read is an error; we
             // probably just need more setup time
-            ErrorLogger(network) << "PlayerConnection::HandleMessageHeaderRead(): "
-                                 << "new connection error #" << error.value() << " \""
-                                 << error.message() << "\"" << " waiting for 0.5s";
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            m_new_connection = false;
+            if (m_socket.is_open()) {
+                ErrorLogger(network) << "Spurious network error on startup of client. player id = "
+                                     << m_ID << ".  Retrying read...";
+                AsyncReadMessage();
+            } else {
+                ErrorLogger(network) << "Network connection for client failed on startup. "
+                                     << "player id = " << m_ID << "";
+            }
         } else {
             if (error == boost::asio::error::eof ||
                 error == boost::asio::error::connection_reset) {
