@@ -25,7 +25,7 @@ public:
 
        Call PyErr_Print() if the exception is an error.
 
-       HandleErrorAlreadySet is idempotent, calling it mutliple times
+       HandleErrorAlreadySet is idempotent, calling it multiple times
        won't crash or hang the process.
      */
     void         HandleErrorAlreadySet();
