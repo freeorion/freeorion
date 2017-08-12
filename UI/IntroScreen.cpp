@@ -310,9 +310,8 @@ void IntroScreen::CompleteConstruction() {
     DoLayout();
 }
 
-IntroScreen::~IntroScreen() {
-    // m_menu, m_version, m_logo were childs of m_splash, so don't need to be deleted here
-}
+IntroScreen::~IntroScreen()
+{}
 
 void IntroScreen::OnSinglePlayer() {
     HumanClientApp::GetApp()->NewSinglePlayerGame();
