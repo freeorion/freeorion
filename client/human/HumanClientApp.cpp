@@ -1054,6 +1054,40 @@ void HumanClientApp::UpdateCombatLogManager() {
 }
 
 namespace {
+    std::string NewestSinglePlayerAutosave() {
+        using namespace boost::filesystem;
+        try {
+            boost::filesystem::path autosave_dir_path(GetSaveDir() / "auto");
+
+            if (!is_directory(autosave_dir_path))
+                return "";
+
+            std::map<std::time_t, path> files_by_write_time;
+
+            for (directory_iterator dir_it(autosave_dir_path);
+                 dir_it != directory_iterator(); ++dir_it)
+            {
+                const path& file_path = dir_it->path();
+                if (!is_regular_file(file_path))
+                    continue;
+                if (file_path.extension() != SP_SAVE_FILE_EXTENSION)
+                    continue;
+
+                std::time_t t = last_write_time(file_path);
+                files_by_write_time.insert({t, file_path});
+            }
+
+            if (files_by_write_time.empty())
+                return "";
+
+            return PathString(files_by_write_time.rbegin()->second);
+
+        } catch (const boost::filesystem::filesystem_error& e) {
+            ErrorLogger() << "File system error " << e.what() << " while finding newest autosave";
+            return "";
+        }
+    }
+
     void RemoveOldestFiles(int files_limit, boost::filesystem::path& p) {
         using namespace boost::filesystem;
         try {
