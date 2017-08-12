@@ -692,6 +692,8 @@ void OptionsWnd::CompleteConstruction() {
     BoolOption(current_page, 0, "autosave.multiplayer",   UserString("OPTIONS_MULTIPLAYER"));
     IntOption(current_page,  0, "autosave.turns",         UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"));
     IntOption(current_page,  0, "autosave.limit",         UserString("OPTIONS_AUTOSAVE_LIMIT"));
+    BoolOption(current_page, 0, "autosave.initial-turn",  UserString("OPTIONS_AUTOSAVE_INITIAL_TURN"));
+    BoolOption(current_page, 0, "autosave.last-turn",     UserString("OPTIONS_AUTOSAVE_LAST_TURN"));
     m_tabs->SetCurrentWnd(0);
 
     // Keyboard shortcuts tab

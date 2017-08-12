@@ -98,6 +98,8 @@ namespace {
         db.Add("autosave.multiplayer",          UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER"),       true,   Validator<bool>());
         db.Add("autosave.turns",                UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),             1,      RangedValidator<int>(1, 50));
         db.Add("autosave.limit",                UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),             10,     RangedValidator<int>(1, 100));
+        db.Add("autosave.initial-turn",         UserStringNop("OPTIONS_DB_AUTOSAVE_INITIAL_TURN"),      true,   Validator<bool>());
+        db.Add("autosave.last-turn",            UserStringNop("OPTIONS_DB_AUTOSAVE_LAST_TURN"),         true,   Validator<bool>());
         db.Add("UI.swap-mouse-lr",              UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),           false);
         db.Add("UI.keypress-repeat-delay",      UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_DELAY"),      360,    RangedValidator<int>(0, 1000));
         db.Add("UI.keypress-repeat-interval",   UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"),   20,     RangedValidator<int>(0, 1000));
@@ -1136,7 +1138,7 @@ namespace {
 void HumanClientApp::Autosave() {
     // Create an auto save for 1) new games on turn 1, 2) if auto save is
     // requested on turn number modulo autosave.turns or 3) on the last turn of
-    // an auto run.
+    // play.
 
     // autosave only on appropriate turn numbers, and when enabled for current
     // game type (single vs. multiplayer)
@@ -1148,8 +1150,8 @@ void HumanClientApp::Autosave() {
              || (!m_single_player_game && GetOptionsDB().Get<bool>("autosave.multiplayer"))));
 
     // is_initial_save is gated in HumanClientFSM for new game vs loaded game
-    bool is_initial_save = CurrentTurn() == 1;
-    bool is_final_save = (AutoTurnsLeft() <= 0 && GetOptionsDB().Get<bool>("auto-quit"));
+    bool is_initial_save = (GetOptionsDB().Get<bool>("autosave.initial-turn") && CurrentTurn() == 1);
+    bool is_final_save = (GetOptionsDB().Get<bool>("autosave.last-turn") && !m_game_started);
 
     if (!(is_initial_save || is_valid_autosave || is_final_save))
         return;
@@ -1162,7 +1164,14 @@ void HumanClientApp::Autosave() {
 
     // create new save
     auto path_string = PathString(autosave_dir_path);
-    DebugLogger() << "Autosaving to: " << path_string;
+
+    if (is_initial_save)
+        DebugLogger() << "Turn 0 autosave to: " << path_string;
+    if (is_valid_autosave)
+        DebugLogger() << "Autosave to: " << path_string;
+    if (is_final_save)
+        DebugLogger() << "End of play autosave to: " << path_string;
+
     try {
         SaveGame(path_string);
     } catch (const std::exception& e) {
