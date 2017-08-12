@@ -1228,6 +1228,10 @@ void HumanClientApp::Autosave() {
     }
 }
 
+void HumanClientApp::ContinueSinglePlayerGame() {
+    LoadSinglePlayerGame(NewestSinglePlayerAutosave());
+}
+
 std::string HumanClientApp::SelectLoadFile() {
     auto sfd = GG::Wnd::Create<SaveFileDialog>(true);
     sfd->Run();
