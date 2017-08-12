@@ -584,7 +584,7 @@ install(
 install(
     FILES
     ${CMAKE_SOURCE_DIR}/freeorion.appdata.xml
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/appdata
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/metainfo
 )
 
 foreach(SIZE 16 24 32 64 128 256)
