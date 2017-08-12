@@ -9,6 +9,7 @@
 #include <GG/SDL/SDLGUI.h>
 
 #include <memory>
+#include <queue>
 #include <string>
 
 struct HumanClientFSM;
@@ -148,8 +149,8 @@ private:
     int                         m_auto_turns;           ///< auto turn counter
     bool                        m_have_window_focus;
 
-    bool                        m_save_game_in_progress;
-    boost::signals2::signal<void ()> SaveGameCompletedSignal;
+    std::queue<std::string>     m_game_saves_in_progress;
+    boost::signals2::signal<void ()> SaveGamesCompletedSignal;
 };
 
 #endif // _HumanClientApp_h_

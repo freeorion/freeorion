@@ -200,7 +200,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     m_connected(false),
     m_auto_turns(0),
     m_have_window_focus(true),
-    m_save_game_in_progress(false)
+    m_game_saves_in_progress()
 {
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);
@@ -627,16 +627,29 @@ void HumanClientApp::CancelMultiplayerGameFromLobby()
 { m_fsm->process_event(CancelMPGameClicked()); }
 
 void HumanClientApp::SaveGame(const std::string& filename) {
-    m_save_game_in_progress = true;
-    Message response_msg;
+    m_game_saves_in_progress.push(filename);
+
+    // Start a save if there is not one in progress
+    if (m_game_saves_in_progress.size() > 1) {
+        DebugLogger() << "Add pending save to queue.";
+        return;
+    }
+
     m_networking->SendMessage(HostSaveGameInitiateMessage(filename));
-    DebugLogger() << "HumanClientApp::SaveGame sent save initiate message to server...";
+    DebugLogger() << "Sent save initiate message to server.";
 }
 
 void HumanClientApp::SaveGameCompleted() {
-    DebugLogger() << "HumanClientApp::SaveGameCompleted by server.";
-    m_save_game_in_progress = false;
-    SaveGameCompletedSignal();
+    m_game_saves_in_progress.pop();
+
+    // Either indicate that all save are completed or start the next save.
+    if (m_game_saves_in_progress.empty()) {
+        DebugLogger() << "Save games completed.";
+        SaveGamesCompletedSignal();
+    } else {
+        m_networking->SendMessage(HostSaveGameInitiateMessage(m_game_saves_in_progress.front()));
+        DebugLogger() << "Sent next save initiate message to server.";
+    }
 }
 
 void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
@@ -1230,12 +1243,19 @@ void HumanClientApp::ExitApp()
 void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame) {
     DebugLogger() << (reset ? "HumanClientApp::ResetToIntro" : "HumanClientApp::ExitApp");
 
+    auto was_playing = m_game_started;
     m_game_started = false;
 
-    if (m_save_game_in_progress && !skip_savegame) {
-        DebugLogger() << "save game in progress. Checking with player.";
-        auto dlg = GG::Wnd::Create<SaveGamePendingDialog>(reset, this->SaveGameCompletedSignal);
-        dlg->Run();
+    // Only save if not exiting due to an error.
+    if (!skip_savegame) {
+        if (was_playing && GetOptionsDB().Get<bool>("autosave.last-turn"))
+            Autosave();
+
+        if (!m_game_saves_in_progress.empty()) {
+            DebugLogger() << "save game in progress. Checking with player.";
+            auto dlg = GG::Wnd::Create<SaveGamePendingDialog>(reset, this->SaveGamesCompletedSignal);
+            dlg->Run();
+        }
     }
 
     m_fsm->process_event(StartQuittingGame(reset, m_server_process));
