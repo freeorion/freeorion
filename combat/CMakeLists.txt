@@ -20,7 +20,9 @@ target_sources(freeorionca
         ${CMAKE_CURRENT_LIST_DIR}/CombatSystem.cpp
 )
 
-target_sources(freeorion
-    PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/CombatSystem.cpp
-)
+if(NOT BUILD_HEADLESS)
+    target_sources(freeorion
+        PRIVATE
+            ${CMAKE_CURRENT_LIST_DIR}/CombatSystem.cpp
+    )
+endif()

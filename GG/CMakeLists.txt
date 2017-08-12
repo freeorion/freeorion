@@ -48,7 +48,6 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-option(BUILD_SHARED_LIBS "Build project as shared libraries." ON)
 option(ENABLE_PNG_TEXTURES "Enable PNG texture support." ON)
 option(ENABLE_TIFF_TEXTURES "Enable TIFF texture support." OFF)
 option(BUILD_SDL_DRIVER "Builds GG SDL support (the GiGiSDL library)." ON)

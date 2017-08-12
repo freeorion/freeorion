@@ -30,9 +30,10 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+option(BUILD_SHARED_LIBS "Build project as shared libraries." ON)
 option(BUILD_TESTING "Build the testing tree." OFF)
 option(FO_LINK_STATIC_BOOST_LIBS "Link static boost libraries." ${APPLE})
-
+option(BUILD_HEADLESS "Build only headless components: server and AI." OFF)
 
 if(BUILD_TESTING)
     message( STATUS "Building Tests")
@@ -166,17 +167,19 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
         thread
     REQUIRED)
 find_package(ZLIB REQUIRED)
-find_package(Freetype REQUIRED)
-find_package(OpenGL REQUIRED)
+if(NOT BUILD_HEADLESS)
+    find_package(Freetype REQUIRED)
+    find_package(OpenGL REQUIRED)
 
-if(NOT OPENGL_GLU_FOUND)
-    message(FATAL_ERROR "OpenGL GLU library not found.")
+    if(NOT OPENGL_GLU_FOUND)
+        message(FATAL_ERROR "OpenGL GLU library not found.")
+    endif()
+
+    find_package(SDL REQUIRED)
+    find_package(OpenAL REQUIRED)
+    find_package(Ogg REQUIRED)
+    find_package(Vorbis REQUIRED)
 endif()
-
-find_package(SDL REQUIRED)
-find_package(OpenAL REQUIRED)
-find_package(Ogg REQUIRED)
-find_package(Vorbis REQUIRED)
 
 if(APPLE)
     find_library(CORE_FOUNDATION_LIBRARY CoreFoundation)
@@ -187,12 +190,14 @@ if(BUILD_TESTING)
     add_subdirectory(test)
 endif()
 
-set(BUILD_DEVEL_PACKAGE OFF CACHE INTERNAL "Disables installation of GiGi development files." FORCE)
-set(_ORIG_CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
-set(CMAKE_INSTALL_LIBDIR "${FreeOrion_INSTALL_LIBDIR}")
-add_subdirectory(GG)
-set(CMAKE_INSTALL_LIBDIR ${_ORIG_CMAKE_INSTALL_LIBDIR})
-unset(_ORIG_CMAKE_INSTALL_LIBDIR)
+if(NOT BUILD_HEADLESS)
+    set(BUILD_DEVEL_PACKAGE OFF CACHE INTERNAL "Disables installation of GiGi development files." FORCE)
+    set(_ORIG_CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
+    set(CMAKE_INSTALL_LIBDIR "${FreeOrion_INSTALL_LIBDIR}")
+    add_subdirectory(GG)
+    set(CMAKE_INSTALL_LIBDIR ${_ORIG_CMAKE_INSTALL_LIBDIR})
+    unset(_ORIG_CMAKE_INSTALL_LIBDIR)
+endif()
 
 set_property(DIRECTORY APPEND
     PROPERTY COMPILE_DEFINITIONS
@@ -457,77 +462,77 @@ target_link_libraries(freeorionca
 target_dependencies_copy_to_build(freeorionca)
 target_dependent_data_symlink_to_build(freeorionca ${PROJECT_SOURCE_DIR}/default)
 
+if(NOT BUILD_HEADLESS)
+    add_executable(freeorion "")
 
-add_executable(freeorion "")
-
-if(WIN32)
-    set_property(TARGET freeorion
-        PROPERTY
-            OUTPUT_NAME FreeOrion
-    )
-    if(MSVC AND (CMAKE_VERSION VERSION_GREATER "3.6"))
-        set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    if(WIN32)
+        set_property(TARGET freeorion
             PROPERTY
-                VS_STARTUP_PROJECT freeorion
+                OUTPUT_NAME FreeOrion
+        )
+        if(MSVC AND (CMAKE_VERSION VERSION_GREATER "3.6"))
+            set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+                PROPERTY
+                    VS_STARTUP_PROJECT freeorion
+            )
+        endif()
+    endif()
+
+    target_compile_options(freeorion
+        PRIVATE
+            $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
+            $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
+            $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
+    )
+
+    target_compile_definitions(freeorion
+        PRIVATE
+            -DFREEORION_BUILD_HUMAN
+    )
+
+    target_include_directories(freeorion SYSTEM
+        PRIVATE
+            ${Boost_INCLUDE_DIRS}
+            ${OPENGL_INCLUDE_DIR}
+            ${GLEW_INCLUDE_DIRS}
+            ${SDL_INCLUDE_DIRS}
+            ${OPENAL_INCLUDE_DIR}
+            ${OGG_INCLUDE_DIRS}
+            ${VORBIS_INCLUDE_DIRS}
+            ${FREETYPE_INCLUDE_DIRS}
+            ${ZLIB_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/GG
+    )
+
+    if(WIN32)
+        target_sources(freeorion
+            PRIVATE
+                ${CMAKE_CURRENT_LIST_DIR}/FreeOrion.ico
         )
     endif()
-endif()
 
-target_compile_options(freeorion
-    PRIVATE
-        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
-        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
-        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
-)
-
-target_compile_definitions(freeorion
-    PRIVATE
-        -DFREEORION_BUILD_HUMAN
-)
-
-target_include_directories(freeorion SYSTEM
-    PRIVATE
-        ${Boost_INCLUDE_DIRS}
-        ${OPENGL_INCLUDE_DIR}
-        ${GLEW_INCLUDE_DIRS}
-        ${SDL_INCLUDE_DIRS}
-        ${OPENAL_INCLUDE_DIR}
-        ${OGG_INCLUDE_DIRS}
-        ${VORBIS_INCLUDE_DIRS}
-        ${FREETYPE_INCLUDE_DIRS}
-        ${ZLIB_INCLUDE_DIRS}
-        ${PROJECT_SOURCE_DIR}/GG
-)
-
-if(WIN32)
-    target_sources(freeorion
-        PRIVATE
-            ${CMAKE_CURRENT_LIST_DIR}/FreeOrion.ico
+    target_link_libraries(freeorion
+        freeorioncommon
+        freeorionparse
+        GiGi
+        GiGiSDL
+        ${OPENGL_gl_LIBRARY}
+        ${OPENGL_glu_LIBRARY}
+        ${OPENAL_LIBRARY}
+        ${SDL_LIBRARIES}
+        ${OGG_LIBRARIES}
+        ${VORBIS_LIBRARIES}
+        ${ZLIB_LIBRARIES}
+        ${Boost_LOCALE_LIBRARY}
+        ${Boost_LOG_LIBRARY}
+        ${Boost_LOG_SETUP_LIBRARY}
+        ${ICONV_LIBRARY}
+        ${CMAKE_THREAD_LIBS_INIT}
     )
+
+    target_dependencies_copy_to_build(freeorion)
+    target_dependent_data_symlink_to_build(freeorion ${PROJECT_SOURCE_DIR}/default)
 endif()
-
-target_link_libraries(freeorion
-    freeorioncommon
-    freeorionparse
-    GiGi
-    GiGiSDL
-    ${OPENGL_gl_LIBRARY}
-    ${OPENGL_glu_LIBRARY}
-    ${OPENAL_LIBRARY}
-    ${SDL_LIBRARIES}
-    ${OGG_LIBRARIES}
-    ${VORBIS_LIBRARIES}
-    ${ZLIB_LIBRARIES}
-    ${Boost_LOCALE_LIBRARY}
-    ${Boost_LOG_LIBRARY}
-    ${Boost_LOG_SETUP_LIBRARY}
-    ${ICONV_LIBRARY}
-    ${CMAKE_THREAD_LIBS_INIT}
-)
-
-target_dependencies_copy_to_build(freeorion)
-target_dependent_data_symlink_to_build(freeorion ${PROJECT_SOURCE_DIR}/default)
-
 
 ##
 ## Recurse into sources.
@@ -541,7 +546,9 @@ add_subdirectory(network)
 add_subdirectory(parse)
 add_subdirectory(python)
 add_subdirectory(server)
-add_subdirectory(UI)
+if(NOT BUILD_HEADLESS)
+    add_subdirectory(UI)
+endif()
 add_subdirectory(universe)
 add_subdirectory(util)
 add_subdirectory(check)
@@ -564,7 +571,6 @@ install(
     TARGETS
         freeoriond
         freeorionca
-        freeorion
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
@@ -575,11 +581,19 @@ install(
     PATTERN "*.pyc" EXCLUDE
 )
 
-install(
-    FILES
-    ${CMAKE_SOURCE_DIR}/freeorion.desktop
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications
-)
+if(NOT BUILD_HEADLESS)
+    install(
+        TARGETS
+            freeorion
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    )
+
+    install(
+        FILES
+        ${CMAKE_SOURCE_DIR}/freeorion.desktop
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications
+    )
+endif()
 
 foreach(SIZE 16 24 32 64 128 256)
     install(
