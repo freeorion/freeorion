@@ -1169,14 +1169,15 @@ void HumanClientApp::Autosave() {
     if (!(is_initial_save || is_valid_autosave || is_final_save))
         return;
 
-    auto autosave_dir_path = CreateNewAutosaveFilePath(EmpireID(), m_single_player_game);
+    auto autosave_file_path = CreateNewAutosaveFilePath(EmpireID(), m_single_player_game);
 
     // check for and remove excess oldest autosaves
+    boost::filesystem::path autosave_dir_path(GetSaveDir() / "auto");
     int max_autosaves = GetOptionsDB().Get<int>("autosave.limit");
     RemoveOldestFiles(max_autosaves, autosave_dir_path);
 
     // create new save
-    auto path_string = PathString(autosave_dir_path);
+    auto path_string = PathString(autosave_file_path);
 
     if (is_initial_save)
         DebugLogger() << "Turn 0 autosave to: " << path_string;
