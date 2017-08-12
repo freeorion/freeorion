@@ -262,6 +262,7 @@ void IntroScreen::CompleteConstruction() {
     m_splash->AttachChild(m_version);
 
     //create buttons
+    m_continue =      Wnd::Create<CUIButton>(UserString("INTRO_BTN_CONTINUE"));
     m_single_player = Wnd::Create<CUIButton>(UserString("INTRO_BTN_SINGLE_PLAYER"));
     m_quick_start =   Wnd::Create<CUIButton>(UserString("INTRO_BTN_QUICK_START"));
     m_multi_player =  Wnd::Create<CUIButton>(UserString("INTRO_BTN_MULTI_PLAYER"));
@@ -274,6 +275,8 @@ void IntroScreen::CompleteConstruction() {
     m_exit_game =     Wnd::Create<CUIButton>(UserString("INTRO_BTN_EXIT"));
 
     //attach buttons
+    if (GetOptionsDB().Get<bool>("autosave.last-turn"))
+        m_menu->AttachChild(m_continue);
     m_menu->AttachChild(m_single_player);
     m_menu->AttachChild(m_quick_start);
     m_menu->AttachChild(m_multi_player);
@@ -286,6 +289,8 @@ void IntroScreen::CompleteConstruction() {
     m_menu->AttachChild(m_exit_game);
 
     //connect signals and slots
+    m_continue->LeftClickedSignal.connect(
+        boost::bind(&IntroScreen::OnContinue, this));
     m_single_player->LeftClickedSignal.connect(
         boost::bind(&IntroScreen::OnSinglePlayer, this));
     m_quick_start->LeftClickedSignal.connect(
@@ -312,6 +317,10 @@ void IntroScreen::CompleteConstruction() {
 
 IntroScreen::~IntroScreen()
 {}
+
+void IntroScreen::OnContinue() {
+    HumanClientApp::GetApp()->ContinueSinglePlayerGame();
+}
 
 void IntroScreen::OnSinglePlayer() {
     HumanClientApp::GetApp()->NewSinglePlayerGame();
@@ -416,6 +425,8 @@ void IntroScreen::DoLayout() {
     GG::Y mainmenu_height(0);           //height of the mainmenu
 
     //calculate necessary button width
+    if (GetOptionsDB().Get<bool>("autosave.last-turn"))
+        button_width = std::max(button_width, m_continue->MinUsableSize().x);
     button_width = std::max(button_width, m_single_player->MinUsableSize().x);
     button_width = std::max(button_width, m_quick_start->MinUsableSize().x);
     button_width = std::max(button_width, m_multi_player->MinUsableSize().x);
@@ -432,7 +443,7 @@ void IntroScreen::DoLayout() {
     button_cell_height = std::max(MIN_BUTTON_HEIGHT, m_exit_game->MinUsableSize().y);
     //culate window width and height
     mainmenu_width  =         button_width  + H_MAINMENU_MARGIN;
-    mainmenu_height = 10.75 * button_cell_height + V_MAINMENU_MARGIN; // 10 rows + 0.75 before exit button
+    mainmenu_height = 11.75 * button_cell_height + V_MAINMENU_MARGIN; // 11 rows + 0.75 before exit button
 
     // place buttons
     GG::Pt button_ul(GG::X(15), GG::Y(12));
@@ -440,6 +451,9 @@ void IntroScreen::DoLayout() {
 
     button_lr += button_ul;
 
+    m_continue->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_cell_height);
+    button_lr.y += GG::Y(button_cell_height);
     m_single_player->SizeMove(button_ul, button_lr);
     button_ul.y += GG::Y(button_cell_height);
     button_lr.y += GG::Y(button_cell_height);
