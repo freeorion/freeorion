@@ -2943,6 +2943,10 @@ void ServerApp::PostCombatProcessTurns() {
 
     DebugLogger() << "ServerApp::PostCombatProcessTurns empire resources updates";
 
+    // now that we've had combat and applied Effects, update visibilities again, prior
+    //  to updating system obstructions below.
+    m_universe.UpdateEmpireObjectVisibilities();
+    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
     // Determine how much of each resource is available, and determine how to
     // distribute it to planets or on queues
