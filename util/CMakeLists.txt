@@ -65,7 +65,9 @@ target_sources(freeorionca
         ${CMAKE_CURRENT_LIST_DIR}/DependencyVersions.cpp
 )
 
-target_sources(freeorion
-    PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/DependencyVersions.cpp
-)
+if(NOT BUILD_HEADLESS)
+    target_sources(freeorion
+        PRIVATE
+            ${CMAKE_CURRENT_LIST_DIR}/DependencyVersions.cpp
+    )
+endif()

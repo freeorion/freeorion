@@ -12,7 +12,6 @@
 #include "../util/AppInterface.h"
 #include "../util/VarText.h"
 #include "../util/MultiplayerCommon.h"
-#include "../UI/LinkText.h"
 #include "../Empire/Empire.h"
 
 #include <sstream>
