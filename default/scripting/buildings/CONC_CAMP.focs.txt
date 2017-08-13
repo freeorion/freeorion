@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_CONC_CAMP"
     description = "BLD_CONC_CAMP_DESC"
-    buildcost = 5
+    buildcost = 5 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 1
     location = AND [
         Not Contains Building name = "BLD_CONC_CAMP"
@@ -71,4 +71,3 @@ BuildingType
     icon = "icons/building/concentration-camp.png"
 
 #include "/scripting/common/*.macros"
-#include "/scripting/common/priorities.macros"

@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_XENORESURRECTION_LAB"
     description = "BLD_XENORESURRECTION_LAB_DESC"
-    buildcost = 100
+    buildcost = 100 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 4
     location = And [
         Planet
@@ -59,3 +59,4 @@ BuildingType
     icon = "icons/building/the_caducean_institute.png"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/base_prod.macros"

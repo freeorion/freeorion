@@ -175,6 +175,9 @@ float Tech::ResearchCost(int empire_id) const {
     } else if (m_research_cost->ConstantExpr()) {
         return m_research_cost->Eval();
 
+    } else if (m_research_cost->SourceInvariant()) {
+        return m_research_cost->Eval();
+
     } else if (empire_id == ALL_EMPIRES) {
         return arbitrary_large_number;
 
@@ -198,6 +201,9 @@ int Tech::ResearchTime(int empire_id) const {
         return 1;
 
     } else if (m_research_turns->ConstantExpr()) {
+            return m_research_turns->Eval();
+
+    } else if (m_research_turns->SourceInvariant()) {
             return m_research_turns->Eval();
 
     } else if (empire_id == ALL_EMPIRES) {

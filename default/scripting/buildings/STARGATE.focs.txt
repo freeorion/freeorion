@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_STARGATE"
     description = "BLD_STARGATE_DESC"
-    buildcost = 500
+    buildcost = 500 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 8
     tags = "ORBITAL"
     location = AND [
@@ -13,3 +13,4 @@ BuildingType
     icon = "icons/building/stargate.png"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/base_prod.macros"

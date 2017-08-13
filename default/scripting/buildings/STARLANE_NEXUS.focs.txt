@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_STARLANE_NEXUS"
     description = "BLD_STARLANE_NEXUS_DESC"
-    buildcost = 1000
+    buildcost = 1000 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 8
     location = Planet
     effectsgroups = [
@@ -20,3 +20,5 @@ BuildingType
             effects = Destroy
     ]
     icon = "icons/tech/n-dimensional_structures.png"
+
+#include "/scripting/common/base_prod.macros"

@@ -47,7 +47,7 @@ time_factor = {"SP_HAPPY": "1.2", "SP_PHINNERT": "0.75"}
 t_main = string.Template('''BuildingType
     name = "BLD_COL_${name}"
     description = "BLD_COL_${name}_DESC"
-    buildcost = ${cost} * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildcost = ${cost} * [[COLONY_UPKEEP_MULTIPLICATOR]] * [[BUILDING_COST_MULTIPLIER]]
     buildtime = ${time}
     tags = [ ${tags} ]
     location = And [
@@ -119,8 +119,8 @@ t_main = string.Template('''BuildingType
     icon = "${graphic}"
 
 #include "/scripting/common/misc.macros"
-
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/common/base_prod.macros"
 ''')
 
 t_species_condition = string.Template(

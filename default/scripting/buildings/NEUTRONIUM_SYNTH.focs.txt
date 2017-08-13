@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_NEUTRONIUM_SYNTH"
     description = "BLD_NEUTRONIUM_SYNTH_DESC"
-    buildcost = 1200
+    buildcost = 1200 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 10
     location = AND [
         Planet
@@ -9,3 +9,5 @@ BuildingType
         OwnedBy empire = Source.Owner
         ]
     icon = "icons/building/neutronium-forge.png"
+
+#include "/scripting/common/base_prod.macros"

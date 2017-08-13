@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_SHIPYARD_ORG_ORB_INC"
     description = "BLD_SHIPYARD_ORG_ORB_INC_DESC"
-    buildcost = 40
+    buildcost = 40 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 8
     tags = "ORBITAL"
     location = And [
@@ -17,3 +17,4 @@ BuildingType
     icon = "icons/building/orbital-incubator.png"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/base_prod.macros"

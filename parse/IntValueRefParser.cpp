@@ -112,7 +112,7 @@ namespace {
                 = parse::double_value_ref() [ _val = new_<ValueRef::StaticCast<double, int>>(_1) ]
                 ;
 
-            flexible_int 
+            flexible_int
                 = parse::int_value_ref()
                 | castable_expr
                 ;

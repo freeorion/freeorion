@@ -93,7 +93,7 @@ struct ScriptingContext {
     std::shared_ptr<UniverseObject> effect_target;
     std::shared_ptr<const UniverseObject> condition_root_candidate;
     std::shared_ptr<const UniverseObject> condition_local_candidate;
-    const boost::any                    current_value;
+    const boost::any current_value;
 };
 
 namespace ValueRef {
@@ -1228,11 +1228,11 @@ void Statistic<T>::serialize(Archive& ar, const unsigned int version)
 ///////////////////////////////////////////////////////////
 template <class T>
 ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
-                                              ValueRefBase<int>* int_ref1,
-                                              ValueRefBase<int>* int_ref2,
-                                              ValueRefBase<int>* int_ref3,
-                                              ValueRefBase<std::string>* string_ref1,
-                                              ValueRefBase<std::string>* string_ref2) :
+                                    ValueRefBase<int>* int_ref1,
+                                    ValueRefBase<int>* int_ref2,
+                                    ValueRefBase<int>* int_ref3,
+                                    ValueRefBase<std::string>* string_ref1,
+                                    ValueRefBase<std::string>* string_ref2) :
     Variable<T>(NON_OBJECT_REFERENCE, std::vector<std::string>(1, variable_name)),
     m_int_ref1(int_ref1),
     m_int_ref2(int_ref2),
@@ -1980,10 +1980,43 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
             break;
         }
 
+        case COMPARE_EQUAL:
+        case COMPARE_GREATER_THAN:
+        case COMPARE_GREATER_THAN_OR_EQUAL:
+        case COMPARE_LESS_THAN:
+        case COMPARE_LESS_THAN_OR_EQUAL:
+        case COMPARE_NOT_EQUAL: {
+            const T&& lhs_val = LHS()->Eval(context);
+            const T&& rhs_val = RHS()->Eval(context);
+            bool test_result = false;
+            switch(m_op_type) {
+                case COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
+                case COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
+                case COMPARE_GREATER_THAN_OR_EQUAL: test_result = lhs_val >= rhs_val;   break;
+                case COMPARE_LESS_THAN:             test_result = lhs_val < rhs_val;    break;
+                case COMPARE_LESS_THAN_OR_EQUAL:    test_result = lhs_val <= rhs_val;   break;
+                case COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
+                default:    break;  // ??? do nothing, default to false
+            }
+            if (m_operands.size() < 3) {
+                return T(1);
+            } else if (m_operands.size() < 4) {
+                if (test_result)
+                    return m_operands[2]->Eval(context);
+                else
+                    return T(0);
+            } else {
+                if (test_result)
+                    return m_operands[2]->Eval(context);
+                else
+                    return m_operands[3]->Eval(context);
+            }
+            break;
+        }
+
         default:
             break;
     }
-
 
     throw std::runtime_error("ValueRef::Operation<T>::EvalImpl evaluated with an unknown or invalid OpType.");
 }

@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_SCRYING_SPHERE"
     description = "BLD_SCRYING_SPHERE_DESC"
-    buildcost = 150
+    buildcost = 150 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
     location = Not WithinStarlaneJumps jumps = 5 condition = Building name = "BLD_SCRYING_SPHERE"
     effectsgroups =
@@ -28,3 +28,5 @@ BuildingType
             ]
             effects = SetVisibility visibility = Partial empire = Source.Planet.Owner
     icon = "icons/specials_huge/ancient_ruins_excavated.png"
+
+#include "/scripting/common/base_prod.macros"

@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_EVACUATION"
     description = "BLD_EVACUATION_DESC"
-    buildcost = 10
+    buildcost = 10 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 1
     location = AND [
         Planet
@@ -85,3 +85,4 @@ BuildingType
     icon = "icons/building/evacuation.png"
 
 #include "/scripting/common/pop_reduce.macros"
+#include "/scripting/common/base_prod.macros"

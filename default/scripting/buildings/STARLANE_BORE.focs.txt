@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_STARLANE_BORE"
     description = "BLD_STARLANE_BORE_DESC"
-    buildcost = 200 + 50 * Target.System.NumStarlanes
+    buildcost = (200 + 50 * Target.System.NumStarlanes) * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 1 + Target.System.NumStarlanes
     location = Planet
     effectsgroups = [
@@ -27,3 +27,5 @@ BuildingType
             effects = Destroy
     ]
     icon = "icons/tech/n-dimensional_structures.png"
+
+#include "/scripting/common/base_prod.macros"

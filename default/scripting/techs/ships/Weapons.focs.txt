@@ -271,7 +271,7 @@ Tech
     description = "SHP_KRILL_SPAWN_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     category = "SHIP_WEAPONS_CATEGORY"
-    researchcost = 9999
+    researchcost = 9999 * [[TECH_COST_MULTIPLIER]]
     researchturns = 9999
     Unresearchable
     tags = [ "PEDIA_SHIP_WEAPONS_CATEGORY" ]

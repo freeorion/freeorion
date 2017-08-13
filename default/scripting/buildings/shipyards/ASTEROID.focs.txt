@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_SHIPYARD_AST"
     description = "BLD_SHIPYARD_AST_DESC"
-    buildcost = 75
+    buildcost = 75 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
     location = And [
         Planet
@@ -19,3 +19,4 @@ BuildingType
     icon = "icons/building/shipyard-5.png"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/base_prod.macros"

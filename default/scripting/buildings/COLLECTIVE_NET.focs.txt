@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_COLLECTIVE_NET"
     description = "BLD_COLLECTIVE_NET_DESC"
-    buildcost = 250
+    buildcost = 250 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 10
     location = And [
         Planet
@@ -41,7 +41,6 @@ BuildingType
     ]
     icon = "icons/building/psi-corps.png"
 
-#include "/scripting/common/base_prod.macros"
-
 #include "/scripting/common/enqueue.macros"
 #include "/scripting/common/priorities.macros"
+#include "/scripting/common/base_prod.macros"

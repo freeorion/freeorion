@@ -9,7 +9,7 @@
 BuildingType
     name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
     description = "BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC"
-    buildcost = 20
+    buildcost = 20 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
     tags = "ORBITAL"
     location = And [
@@ -186,5 +186,5 @@ PLANET_OWNED_DRYDOCK_HIGHEST_HAPPINESS
 '''
 
 #include "/scripting/common/enqueue.macros"
-
 #include "/scripting/common/priorities.macros"
+#include "/scripting/common/base_prod.macros"

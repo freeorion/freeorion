@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_TRANSFORMER"
     description = "BLD_TRANSFORMER_DESC"
-    buildcost = 600
+    buildcost = 600 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 8
     location = AND [
         Not Contains Building name = "BLD_TRANSFORMER"
@@ -11,3 +11,4 @@ BuildingType
     icon = "icons/building/transformer.png"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/base_prod.macros"

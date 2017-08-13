@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_GENOME_BANK"
     description = "BLD_GENOME_BANK_DESC"
-    buildcost = 15
+    buildcost = 15 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 16
     location = And [
         Planet
@@ -13,3 +13,4 @@ BuildingType
     icon = "icons/building/genome_bank.png"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/base_prod.macros"

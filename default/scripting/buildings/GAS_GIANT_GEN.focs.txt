@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_GAS_GIANT_GEN"
     description = "BLD_GAS_GIANT_GEN_DESC"
-    buildcost = 25
+    buildcost = 25 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 3
     tags = "ORBITAL"
     location = And [
@@ -32,3 +32,4 @@ BuildingType
 
 #include "/scripting/common/enqueue.macros"
 #include "/scripting/common/priorities.macros"
+#include "/scripting/common/base_prod.macros"

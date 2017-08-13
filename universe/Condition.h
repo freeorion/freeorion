@@ -2528,6 +2528,12 @@ struct FO_COMMON_API ValueTest : public ConditionBase {
               ComparisonType comp2 = INVALID_COMPARISON,
               ValueRef::ValueRefBase<std::string>* value_ref3 = nullptr);
 
+    ValueTest(ValueRef::ValueRefBase<int>* value_ref1,
+              ComparisonType comp1,
+              ValueRef::ValueRefBase<int>* value_ref2,
+              ComparisonType comp2 = INVALID_COMPARISON,
+              ValueRef::ValueRefBase<int>* value_ref3 = nullptr);
+
     virtual ~ValueTest();
 
     bool operator==(const ConditionBase& rhs) const override;
@@ -2558,6 +2564,10 @@ private:
     ValueRef::ValueRefBase<std::string>* m_string_value_ref1 = nullptr;
     ValueRef::ValueRefBase<std::string>* m_string_value_ref2 = nullptr;
     ValueRef::ValueRefBase<std::string>* m_string_value_ref3 = nullptr;
+    ValueRef::ValueRefBase<int>* m_int_value_ref1 = nullptr;
+    ValueRef::ValueRefBase<int>* m_int_value_ref2 = nullptr;
+    ValueRef::ValueRefBase<int>* m_int_value_ref3 = nullptr;
+
     ComparisonType m_compare_type1 = INVALID_COMPARISON;
     ComparisonType m_compare_type2 = INVALID_COMPARISON;
 
@@ -3160,6 +3170,9 @@ void ValueTest::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_string_value_ref1)
         & BOOST_SERIALIZATION_NVP(m_string_value_ref2)
         & BOOST_SERIALIZATION_NVP(m_string_value_ref3)
+        & BOOST_SERIALIZATION_NVP(m_int_value_ref1)
+        & BOOST_SERIALIZATION_NVP(m_int_value_ref2)
+        & BOOST_SERIALIZATION_NVP(m_int_value_ref3)
         & BOOST_SERIALIZATION_NVP(m_compare_type1)
         & BOOST_SERIALIZATION_NVP(m_compare_type2);
 }

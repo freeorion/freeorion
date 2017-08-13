@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_NOVA_BOMB_ACTIVATOR"
     description = "BLD_NOVA_BOMB_ACTIVATOR_DESC"
-    buildcost = 25
+    buildcost = 25 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 1
     location = All
     effectsgroups =
@@ -9,3 +9,5 @@ BuildingType
             scope = Source
             effects = Destroy
     icon = "icons/building/nova-bomb-activator.png"
+
+#include "/scripting/common/base_prod.macros"

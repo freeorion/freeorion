@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_GAIA_TRANS"
     description = "BLD_GAIA_TRANS_DESC"
-    buildcost = 200 * Target.SizeAsDouble
+    buildcost = 200 * Target.SizeAsDouble * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 12
     location = And [
         Planet
@@ -47,3 +47,4 @@ BuildingType
     icon = "icons/specials_huge/gaia.png"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/base_prod.macros"

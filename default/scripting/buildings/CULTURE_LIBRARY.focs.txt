@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_CULTURE_LIBRARY"
     description = "BLD_CULTURE_LIBRARY_DESC"
-    buildcost = 200
+    buildcost = 200 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 1
     tags = "ANTIQUATED"
     location = Not All
@@ -26,3 +26,4 @@ BuildingType
     icon = "icons/building/archive.png"
 
 #include "/scripting/common/priorities.macros"
+#include "/scripting/common/base_prod.macros"

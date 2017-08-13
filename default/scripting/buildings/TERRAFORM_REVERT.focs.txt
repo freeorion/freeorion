@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_TERRAFORM_REVERT"
     description = "BLD_TERRAFORM_REVERT_DESC"
-    buildcost = 150
+    buildcost = 150 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 6
     location = And [
         Planet
@@ -41,3 +41,5 @@ BuildingType
             effects = Destroy
     ]
     icon = "icons/building/terraform_revert.png"
+
+#include "/scripting/common/base_prod.macros"

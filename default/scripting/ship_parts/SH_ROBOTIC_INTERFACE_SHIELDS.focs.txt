@@ -41,10 +41,11 @@ Statistic Count condition = And [
 
 ROBOTIC_SHIELD_EFFECT
 '''
-min(min(
-        [[COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS]],            
-        (([[COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS]] * 7 ) ^ 0.5 )),
-        20)
+min(
+    20.0,
+    [[COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS]],
+    ([[COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS]] * 7 ) ^ 0.5
+)
 '''
 
 #include "stacking.macros"

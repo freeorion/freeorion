@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_BLACK_HOLE_COLLAPSER"
     description = "BLD_BLACK_HOLE_COLLAPSER_DESC"
-    buildcost = 5000
+    buildcost = 5000 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 10
     location = AND [
         Planet
@@ -20,3 +20,4 @@ BuildingType
     icon = ""
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/base_prod.macros"

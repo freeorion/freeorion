@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_ENCLAVE_VOID"
     description = "BLD_ENCLAVE_VOID_DESC"
-    buildcost = 100
+    buildcost = 100 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 3
     location = AND [
         Not Contains Building name = "BLD_ENCLAVE_VOID"
@@ -22,7 +22,6 @@ BuildingType
     ]
     icon = "icons/building/science-institute.png"
 
-#include "/scripting/common/base_prod.macros"
-
 #include "/scripting/common/enqueue.macros"
 #include "/scripting/common/priorities.macros"
+#include "/scripting/common/base_prod.macros"

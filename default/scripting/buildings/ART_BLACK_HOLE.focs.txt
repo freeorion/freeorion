@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_ART_BLACK_HOLE"
     description = "BLD_ART_BLACK_HOLE_DESC"
-    buildcost = 40
+    buildcost = 40 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 10
     location = And [
         Planet
@@ -35,3 +35,4 @@ BuildingType
     icon = "icons/building/blackhole.png"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/base_prod.macros"

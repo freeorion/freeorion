@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_NEUTRONIUM_FORGE"
     description = "BLD_NEUTRONIUM_FORGE_DESC"
-    buildcost = 100
+    buildcost = 100 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 3
     tags = "ORBITAL"
     location = And [
@@ -25,3 +25,4 @@ BuildingType
     icon = "icons/building/neutronium-forge.png"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/base_prod.macros"
