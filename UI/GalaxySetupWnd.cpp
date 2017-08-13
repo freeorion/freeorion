@@ -258,8 +258,13 @@ void GameRulesPanel::SettingChanged() {
 
 GG::ListBox* GameRulesPanel::CreatePage(const std::string& name) {
     auto page = GG::Wnd::Create<GameRulesList>();
+    if (!page) {
+        ErrorLogger() << "GameRulesPanel::CreatePage(" << name << ") failed to create page!";
+        return nullptr;
+    }
+
     m_tabs->AddWnd(page, name);
-    m_tabs->SetCurrentWnd(m_tabs->NumWnds() - 1);
+
     return page.get();
 }
 
@@ -285,7 +290,7 @@ GG::StateButton* GameRulesPanel::BoolRuleWidget(GG::ListBox* page, int indentati
                                                 const std::string& rule_name)
 {
     auto button = GG::Wnd::Create<CUIStateButton>(UserString(rule_name), GG::FORMAT_LEFT,
-                                                 std::make_shared<CUICheckBoxRepresenter>());
+                                                  std::make_shared<CUICheckBoxRepresenter>());
     auto row = GG::Wnd::Create<RuleListRow>(Width(), button->MinUsableSize().y + CONTROL_VMARGIN + 6,
                                             button, indentation_level);
 
