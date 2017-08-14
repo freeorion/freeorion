@@ -7,7 +7,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "LITHIC" "BAD_RESEARCH" "AVERAGE_SUPPLY" "BAD_ATTACKTROOPS" "PEDIA_LITHIC_SPECIES_CLASS" ]
+    tags = [ "LITHIC" "BAD_RESEARCH" "AVERAGE_SUPPLY"  "PEDIA_LITHIC_SPECIES_CLASS" ] 
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -26,7 +26,6 @@ Species
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
         [[BAD_DEFENSE_TROOPS]]
-        [[BAD_OFFENSE_TROOPS]]
         EffectsGroup
             scope = Source
             activation = Turn high = 1
