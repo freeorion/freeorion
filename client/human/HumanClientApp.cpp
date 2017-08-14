@@ -1212,18 +1212,18 @@ namespace {
     };
 }
 
-void HumanClientApp::ResetToIntro(bool is_error /*= false*/)
-{ ResetOrExitApp(true, is_error); }
+void HumanClientApp::ResetToIntro(bool skip_savegame)
+{ ResetOrExitApp(true, skip_savegame); }
 
 void HumanClientApp::ExitApp()
 { ResetOrExitApp(false, false); }
 
-void HumanClientApp::ResetOrExitApp(bool reset, bool is_error) {
+void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame) {
     DebugLogger() << (reset ? "HumanClientApp::ResetToIntro" : "HumanClientApp::ExitApp");
 
     m_game_started = false;
 
-    if (m_save_game_in_progress && !is_error) {
+    if (m_save_game_in_progress && !skip_savegame) {
         DebugLogger() << "save game in progress. Checking with player.";
         auto dlg = GG::Wnd::Create<SaveGamePendingDialog>(reset, this->SaveGameCompletedSignal);
         dlg->Run();
