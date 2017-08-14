@@ -275,8 +275,7 @@ void IntroScreen::CompleteConstruction() {
     m_exit_game =     Wnd::Create<CUIButton>(UserString("INTRO_BTN_EXIT"));
 
     //attach buttons
-    if (GetOptionsDB().Get<bool>("autosave.last-turn"))
-        m_menu->AttachChild(m_continue);
+    m_menu->AttachChild(m_continue);
     m_menu->AttachChild(m_single_player);
     m_menu->AttachChild(m_quick_start);
     m_menu->AttachChild(m_multi_player);
@@ -425,8 +424,7 @@ void IntroScreen::DoLayout() {
     GG::Y mainmenu_height(0);           //height of the mainmenu
 
     //calculate necessary button width
-    if (GetOptionsDB().Get<bool>("autosave.last-turn"))
-        button_width = std::max(button_width, m_continue->MinUsableSize().x);
+    button_width = std::max(button_width, m_continue->MinUsableSize().x);
     button_width = std::max(button_width, m_single_player->MinUsableSize().x);
     button_width = std::max(button_width, m_quick_start->MinUsableSize().x);
     button_width = std::max(button_width, m_multi_player->MinUsableSize().x);
@@ -441,9 +439,9 @@ void IntroScreen::DoLayout() {
 
     //calculate  necessary button height
     button_cell_height = std::max(MIN_BUTTON_HEIGHT, m_exit_game->MinUsableSize().y);
-    //culate window width and height
+    // calculate window width and height
     mainmenu_width  =         button_width  + H_MAINMENU_MARGIN;
-    mainmenu_height = 11.75 * button_cell_height + V_MAINMENU_MARGIN; // 11 rows + 0.75 before exit button
+    mainmenu_height = 1.75 * button_cell_height + V_MAINMENU_MARGIN; // 1.75 for the exit button
 
     // place buttons
     GG::Pt button_ul(GG::X(15), GG::Y(12));
@@ -451,36 +449,26 @@ void IntroScreen::DoLayout() {
 
     button_lr += button_ul;
 
-    m_continue->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_single_player->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_quick_start->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_multi_player->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_load_game->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_options->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_pedia->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_about->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_website->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_credits->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height) * 1.75;
-    button_lr.y += GG::Y(button_cell_height) * 1.75;
+    const auto place_button = [&button_ul, &button_lr, &button_cell_height, &mainmenu_height](GG::Button* button) {
+        button->SizeMove(button_ul, button_lr);
+        button_ul.y += GG::Y(button_cell_height);
+        button_lr.y += GG::Y(button_cell_height);
+        mainmenu_height += button_cell_height;
+    };
+
+    place_button(m_continue.get());
+    place_button(m_single_player.get());
+    place_button(m_quick_start.get());
+    place_button(m_multi_player.get());
+    place_button(m_load_game.get());
+    place_button(m_options.get());
+    place_button(m_pedia.get());
+    place_button(m_about.get());
+    place_button(m_website.get());
+    place_button(m_credits.get());
+
+    button_ul.y += GG::Y(button_cell_height) * 0.75;
+    button_lr.y += GG::Y(button_cell_height) * 0.75;
     m_exit_game->SizeMove(button_ul, button_lr);
 
     // position menu window
