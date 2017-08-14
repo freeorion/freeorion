@@ -671,6 +671,10 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         try {
             auto sfd = GG::Wnd::Create<SaveFileDialog>(SP_SAVE_FILE_EXTENSION, true);
             sfd->Run();
+
+            // Update intro screen Load & Continue buttons if all savegames are deleted.
+            m_ui->GetIntroScreen()->RequirePreRender();
+
             if (!sfd->Result().empty())
                 filename = sfd->Result();
         } catch (const std::exception& e) {

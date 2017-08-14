@@ -26,6 +26,11 @@ public:
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
     void Render() override;
+
+    /**Note:  Since there is poor filesystem tracking of deleted savegames, use
+       RequirePreRender() to force an update of the conditional placement of
+       the Continue and Load buttons when a player might have deleted the last
+       savegame. */
     void PreRender() override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
