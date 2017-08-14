@@ -1206,9 +1206,10 @@ void HumanClientApp::Autosave() {
 
     auto autosave_file_path = CreateNewAutosaveFilePath(EmpireID(), m_single_player_game);
 
-    // check for and remove excess oldest autosaves
+    // check for and remove excess oldest autosaves.  The minimum is 1 for the
+    // initial or final save.
     boost::filesystem::path autosave_dir_path(GetSaveDir() / "auto");
-    int max_autosaves = GetOptionsDB().Get<int>("autosave.limit");
+    int max_autosaves = std::max(1, GetOptionsDB().Get<int>("autosave.limit"));
     RemoveOldestFiles(max_autosaves, autosave_dir_path);
 
     // create new save
