@@ -134,7 +134,6 @@ protected:
     /** Create planet from @p type and @p size. */
     Planet(PlanetType type, PlanetSize size);
 
-    template <typename T> friend void UniverseObjectDeleter(T*);
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
 public:

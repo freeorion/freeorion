@@ -51,7 +51,6 @@ protected:
 
     Field(const std::string& field_type, double x, double y, double radius);
 
-    template <typename T> friend void UniverseObjectDeleter(T*);
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
 public:
