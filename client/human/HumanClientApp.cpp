@@ -1054,32 +1054,37 @@ void HumanClientApp::UpdateCombatLogManager() {
 }
 
 namespace {
-    std::string NewestSinglePlayerAutosave() {
+    std::string NewestSinglePlayerSavegame() {
         using namespace boost::filesystem;
         try {
-            boost::filesystem::path autosave_dir_path(GetSaveDir() / "auto");
-
-            if (!is_directory(autosave_dir_path))
-                return "";
-
             std::map<std::time_t, path> files_by_write_time;
 
-            for (directory_iterator dir_it(autosave_dir_path);
-                 dir_it != directory_iterator(); ++dir_it)
-            {
-                const path& file_path = dir_it->path();
-                if (!is_regular_file(file_path))
-                    continue;
-                if (file_path.extension() != SP_SAVE_FILE_EXTENSION)
-                    continue;
+            auto add_all_savegames_in = [&files_by_write_time](const path& path) {
+                if (!is_directory(path))
+                    return;
 
-                std::time_t t = last_write_time(file_path);
-                files_by_write_time.insert({t, file_path});
-            }
+                for (directory_iterator dir_it(path);
+                     dir_it != directory_iterator(); ++dir_it)
+                {
+                    const auto& file_path = dir_it->path();
+                    if (!is_regular_file(file_path))
+                        continue;
+                    if (file_path.extension() != SP_SAVE_FILE_EXTENSION)
+                        continue;
+
+                    std::time_t t = last_write_time(file_path);
+                    files_by_write_time.insert({t, file_path});
+                }
+            };
+
+            // Find all save games in either player or autosaves
+            add_all_savegames_in(GetSaveDir());
+            add_all_savegames_in(GetSaveDir() / "auto");
 
             if (files_by_write_time.empty())
                 return "";
 
+            // Return the newest
             return PathString(files_by_write_time.rbegin()->second);
 
         } catch (const boost::filesystem::filesystem_error& e) {
@@ -1230,7 +1235,7 @@ void HumanClientApp::Autosave() {
 }
 
 void HumanClientApp::ContinueSinglePlayerGame() {
-    LoadSinglePlayerGame(NewestSinglePlayerAutosave());
+    LoadSinglePlayerGame(NewestSinglePlayerSavegame());
 }
 
 std::string HumanClientApp::SelectLoadFile() {
