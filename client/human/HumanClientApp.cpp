@@ -642,7 +642,8 @@ void HumanClientApp::SaveGame(const std::string& filename) {
 void HumanClientApp::SaveGameCompleted() {
     m_game_saves_in_progress.pop();
 
-    // Either indicate that all save are completed or start the next save.
+    // Either indicate that all saves are completed or start the next save.
+    // Autosaves and player saves can be concurrent.
     if (m_game_saves_in_progress.empty()) {
         DebugLogger() << "Save games completed.";
         SaveGamesCompletedSignal();

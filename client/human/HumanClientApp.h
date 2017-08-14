@@ -149,6 +149,8 @@ private:
     int                         m_auto_turns;           ///< auto turn counter
     bool                        m_have_window_focus;
 
+    /** Filenames of all in progress saves.  There maybe multiple saves in
+        progress if a player and an autosave are initiated at the same time. */
     std::queue<std::string>     m_game_saves_in_progress;
     boost::signals2::signal<void ()> SaveGamesCompletedSignal;
 };
