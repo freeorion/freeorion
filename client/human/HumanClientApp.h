@@ -78,6 +78,7 @@ public:
     void                Autosave();                                     ///< autosaves the current game, iff autosaves are enabled and any turn number requirements are met
     /** Load the newest single player autosave and continue playing game. */
     void                ContinueSinglePlayerGame();
+    bool                IsLoadGameAvailable() const;
     std::string         SelectLoadFile();                               //< Lets the user select a multiplayer save to load.
     void                InitAutoTurns(int auto_turns);                  ///< Initialize auto turn counter
     void                DecAutoTurns(int n = 1);                        ///< Decrease auto turn counter

@@ -45,6 +45,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
+#include <boost/optional/optional.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -1054,7 +1055,7 @@ void HumanClientApp::UpdateCombatLogManager() {
 }
 
 namespace {
-    std::string NewestSinglePlayerSavegame() {
+    boost::optional<std::string> NewestSinglePlayerSavegame() {
         using namespace boost::filesystem;
         try {
             std::map<std::time_t, path> files_by_write_time;
@@ -1082,14 +1083,14 @@ namespace {
             add_all_savegames_in(GetSaveDir() / "auto");
 
             if (files_by_write_time.empty())
-                return "";
+                return boost::none;
 
             // Return the newest
             return PathString(files_by_write_time.rbegin()->second);
 
         } catch (const boost::filesystem::filesystem_error& e) {
             ErrorLogger() << "File system error " << e.what() << " while finding newest autosave";
-            return "";
+            return boost::none;
         }
     }
 
@@ -1235,7 +1236,12 @@ void HumanClientApp::Autosave() {
 }
 
 void HumanClientApp::ContinueSinglePlayerGame() {
-    LoadSinglePlayerGame(NewestSinglePlayerSavegame());
+    if (const auto file = NewestSinglePlayerSavegame())
+        LoadSinglePlayerGame(*file);
+}
+
+bool HumanClientApp::IsLoadGameAvailable() const {
+    return bool(NewestSinglePlayerSavegame());
 }
 
 std::string HumanClientApp::SelectLoadFile() {
