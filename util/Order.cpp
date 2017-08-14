@@ -637,10 +637,10 @@ void InvadeOrder::ExecuteImpl() const {
         ErrorLogger() << "InvadeOrder::ExecuteImpl given unpopulated planet";
         return;
     }
-    if (planet->CurrentMeterValue(METER_SHIELD) > 0.0) {
+    /*if (planet->CurrentMeterValue(METER_SHIELD) > 0.0) {
         ErrorLogger() << "InvadeOrder::ExecuteImpl given planet with shield > 0";
         return;
-    }
+    }*/
     if (planet->OwnedBy(empire_id)) {
         ErrorLogger() << "InvadeOrder::ExecuteImpl given planet that is already owned by the order-issuing empire";
         return;

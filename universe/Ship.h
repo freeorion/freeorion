@@ -72,6 +72,7 @@ public:
     float                       Speed() const;
     float                       ColonyCapacity() const;
     float                       TroopCapacity() const;
+    float                       TroopCapacityAgainstShields(float against_shields) const;
 
     bool                        OrderedScrapped() const         { return m_ordered_scrapped; }          ///< returns true iff this ship has been ordered scrapped, or false otherwise
     int                         OrderedColonizePlanet() const   { return m_ordered_colonize_planet_id; }///< returns the ID of the planet this ship has been ordered to colonize, or INVALID_OBJECT_ID if this ship hasn't been ordered to colonize a planet

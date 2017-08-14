@@ -319,6 +319,9 @@ float Ship::TroopCapacity() const {
     return retval;
 }
 
+float Ship::TroopCapacityAgainstShields(float against_shields) const
+{ return TroopCapacity() / (1.0f + std::log(std::max(1.0f, against_shields + 1.0f))); }
+
 bool Ship::CanHaveTroops() const {
     const ShipDesign* design = Design();
     return design ? design->HasTroops() : false;

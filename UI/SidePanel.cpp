@@ -1426,7 +1426,9 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenInvasionShips(int targe
         if (!AvailableToInvade(ship, system_id, empire_id))
             continue;
 
-        invasion_troops += ship->TroopCapacity();
+        // how many troops are invading?
+        float effective_troops = ship->TroopCapacityAgainstShields(target_planet->CurrentMeterValue(METER_SHIELD));
+        invasion_troops += effective_troops;
 
         retval.insert(ship);
 
@@ -1595,7 +1597,7 @@ void SidePanel::PlanetPanel::Refresh() {
     bool habitable =        planet_env_for_colony_species >= PE_HOSTILE && planet_env_for_colony_species <= PE_GOOD;
     bool visible =          GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY;
     bool shielded =         planet->CurrentMeterValue(METER_SHIELD) > 0.0;
-    bool has_defenses =     planet->CurrentMeterValue(METER_MAX_SHIELD) > 0.0 || 
+    bool has_defenses =     planet->CurrentMeterValue(METER_MAX_SHIELD) > 0.0 ||
                                     planet->CurrentMeterValue(METER_MAX_DEFENSE) > 0.0 ||
                                     planet->CurrentMeterValue(METER_MAX_TROOPS) > 0.0;
     bool being_colonized =  planet->IsAboutToBeColonized();
@@ -1606,7 +1608,7 @@ void SidePanel::PlanetPanel::Refresh() {
     bool at_war_with_me =   !mine && (populated || (has_owner && Empires().GetDiplomaticStatus(client_empire_id, planet->Owner()) == DIPLO_WAR));
 
     bool being_invaded =    planet->IsAboutToBeInvaded();
-    bool invadable =        at_war_with_me && !shielded && visible && !being_invaded && !invasion_ships.empty();
+    bool invadable =        at_war_with_me && /*!shielded && visible && */ !being_invaded && !invasion_ships.empty();
 
     bool being_bombarded =  planet->IsAboutToBeBombarded();
     bool bombardable =      at_war_with_me && visible && !being_bombarded && !bombard_ships.empty();
@@ -1730,7 +1732,9 @@ void SidePanel::PlanetPanel::Refresh() {
         AttachChild(m_invade_button);
         float invasion_troops = 0.0f;
         for (std::shared_ptr<const Ship> invasion_ship : invasion_ships) {
-            invasion_troops += invasion_ship->TroopCapacity();
+            // how many troops are invading?
+            float effective_troops = invasion_ship->TroopCapacityAgainstShields(planet->CurrentMeterValue(METER_SHIELD));
+            invasion_troops += effective_troops;
         }
         std::string invasion_troops_text = DoubleToString(invasion_troops, 3, false);
 
@@ -2274,7 +2278,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
     std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
     if (!planet ||
         !m_order_issuing_enabled ||
-        (planet->CurrentMeterValue(METER_POPULATION) <= 0.0 && planet->Unowned()))
+        (planet->CurrentMeterValue(METER_POPULATION) <= 0.0 && planet->Unowned()))  // can't invade planets that have both no population and no owner, as these are unowned empty planets. with an owner but no population is an outpost, with population but no owner is a native-populated planet.
     { return; }
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
