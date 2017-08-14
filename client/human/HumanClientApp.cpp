@@ -953,10 +953,8 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
     if (ClientUI* ui = ClientUI::GetClientUI()) {
         if (auto&& map_wnd = ui->GetMapWnd())
             map_wnd->DoLayout();
-        if (auto&& intro_screen = ui->GetIntroScreen()) {
+        if (auto&& intro_screen = ui->GetIntroScreen())
             intro_screen->Resize(GG::Pt(w, h));
-            intro_screen->DoLayout();
-        }
     }
 
     if (!GetOptionsDB().Get<bool>("fullscreen") &&

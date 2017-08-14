@@ -311,7 +311,7 @@ void IntroScreen::CompleteConstruction() {
     m_exit_game->LeftClickedSignal.connect(
         boost::bind(&IntroScreen::OnExitGame, this));
 
-    DoLayout();
+    RequirePreRender();
 }
 
 IntroScreen::~IntroScreen()
@@ -405,10 +405,21 @@ void IntroScreen::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<
 void IntroScreen::Close()
 { OnExitGame(); }
 
+void IntroScreen::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    GG::Pt old_size = GG::Wnd::Size();
+
+    GG::Wnd::SizeMove(ul, lr);
+
+    if (old_size != GG::Wnd::Size())
+        RequirePreRender();
+}
+
 void IntroScreen::Render()
 {}
 
-void IntroScreen::DoLayout() {
+void IntroScreen::PreRender() {
+    GG::Wnd::PreRender();
+
     m_splash->Resize(this->Size());
     m_logo->Resize(GG::Pt(this->Width(), this->Height() / 10));
     m_version->MoveTo(GG::Pt(this->Width() - m_version->Width(), this->Height() - m_version->Height()));

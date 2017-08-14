@@ -26,6 +26,8 @@ public:
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
     void Render() override;
+    void PreRender() override;
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void            OnContinue();
     void            OnSinglePlayer();  //!< called when single player is clicked
@@ -39,8 +41,6 @@ public:
     void            OnCredits();
     void            OnExitGame();
 
-
-    void            DoLayout();
     virtual void    Close();
     //!@}
 
