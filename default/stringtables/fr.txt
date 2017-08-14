@@ -264,6 +264,8 @@ Test
 BALANCE
 Équilibrage
 
+CONTENT
+Contenu
 
 ##
 ## Major errors
@@ -996,6 +998,18 @@ Regénération aléatoire
 RULE_RESEED_PRNG_SERVER_DESC
 La génération du nombre aléatoire d'une graine est effectuée plus fréquemment pour favoriser des caractéristiques plus prévisibles et reproductibles.
 
+RULE_SHIP_SPEED_FACTOR
+Ajustement Vitesse des Astronefs
+
+RULE_SHIP_SPEED_FACTOR_DESC
+Définit les vitesses des coques et équipements d'astronef
+
+RULE_SHIP_STRUCTURE_FACTOR
+Ajustement Résistance des Astronefs
+
+RULE_SHIP_STRUCTURE_FACTOR_DESC
+Définit les résistances des coques et blindages d'astronef
+
 RULE_SHIP_HULL_COST_FACTOR
 Ajustement Coût des Coques
 
@@ -1008,11 +1022,23 @@ Ajustement Coût des Équipements
 RULE_SHIP_PART_COST_FACTOR_DESC
 Définit les coûts des équipements d'astronef
 
-RULE_ENABLE_EXPERIMENTORS
-Activer Expérimentateurs (TEST)
+RULE_BUILDING_COST_FACTOR
+Ajustement Coût des Structures
 
-RULE_ENABLE_EXPERIMENTORS_DESC  # translated
-Test
+RULE_BUILDING_COST_FACTOR_DESC
+Définit les coûts des structures
+
+RULE_TECH_COST_FACTOR
+Ajustement Coût des Technologies
+
+RULE_TECH_COST_FACTOR_DESC
+Définit les coûts des technologies
+
+RULE_ENABLE_EXPERIMENTORS
+Activer Expérimentateurs
+
+RULE_ENABLE_EXPERIMENTORS_DESC
+Active les Expérimentateurs lors de la génération de la galaxie
 
 RULE_TEST_INT
 Test des Entiers (Integer)
