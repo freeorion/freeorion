@@ -217,7 +217,7 @@ private:
 
     void    Run();          ///< initializes app state, then executes main event handler/render loop (Poll())
 
-    /** Initialize the python engine or exit. */
+    /** Initialize the python engine if not already running. Return true on success. */
     void InitializePython();
 
     /** Called when server process receive termination signal */

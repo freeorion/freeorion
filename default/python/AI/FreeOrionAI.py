@@ -1,16 +1,17 @@
 """The FreeOrionAI module contains the methods which can be made by the C AIInterface;
 these methods in turn activate other portions of the python AI code."""
+from common.configure_logging import redirect_logging_to_freeorion_logger, convenience_function_references_for_logger
+
+# Logging is redirected before other imports so that import errors appear in log files.
+redirect_logging_to_freeorion_logger()
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger()
+
 import pickle  # Python object serialization library
 import sys
 import random
-import logging
-
-from common.configure_logging import redirect_logging_to_freeorion_logger, convenience_function_references_for_logger
 
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 
-redirect_logging_to_freeorion_logger()
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger()
 
 from common.option_tools import parse_config
 parse_config(fo.getOptionsDBOptionStr("ai-config"), fo.getUserConfigDir())

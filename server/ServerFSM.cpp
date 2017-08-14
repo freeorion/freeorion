@@ -230,6 +230,14 @@ ServerApp& ServerFSM::Server()
 void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
     PlayerConnectionPtr& player_connection = d.m_player_connection;
     int id = player_connection->PlayerID();
+    DebugLogger(FSM) << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << id
+                     << ", named \"" << player_connection->PlayerName() << "\".";
+
+    bool must_quit = false;
+    if (id == ALL_EMPIRES) {
+        ErrorLogger(FSM) << "Client quit before id was assigned.";
+        must_quit = true;
+    }
 
     // Did an active player (AI or Human) disconnect?  If so, game is over
     if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
@@ -245,22 +253,23 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
         const Empire* empire = GetEmpire(m_server.PlayerEmpireID(id));
         // eliminated and non-empire players can leave safely
         if (empire && !empire->Eliminated()) {
+            must_quit = true;
             // player abnormally disconnected during a regular game
-            DebugLogger(FSM) << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << id
-                          << ", named \"" << player_connection->PlayerName() << "\"; server terminating.";
-            std::string message = player_connection->PlayerName();
-            for (ServerNetworking::const_established_iterator it = m_server.m_networking.established_begin(); it != m_server.m_networking.established_end(); ++it) {
-                if ((*it)->PlayerID() == id)
-                    continue;
-                // in the future we may find a way to recover from this, but for now we will immediately send a game ending message as well
-                (*it)->SendMessage(EndGameMessage(Message::PLAYER_DISCONNECT, player_connection->PlayerName()));
-            }
+            ErrorLogger(FSM) << "Player #" << id << ", named \""
+                             << player_connection->PlayerName() << "\"quit before empire was eliminated.";
         }
     }
 
     // independently of everything else, if there are no humans left, it's time to terminate
-    if (m_server.m_networking.empty() || m_server.m_ai_client_processes.size() == m_server.m_networking.NumEstablishedPlayers()) {
+    if (m_server.m_networking.empty()
+        || m_server.m_ai_client_processes.size() == m_server.m_networking.NumEstablishedPlayers())
+    {
+        must_quit = true;
         DebugLogger(FSM) << "ServerFSM::HandleNonLobbyDisconnection : All human players disconnected; server terminating.";
+    }
+
+    if (must_quit) {
+        ErrorLogger(FSM) << "Unable to recover server terminating.";
         m_server.m_fsm->process_event(ShutdownServer());
     }
 }
@@ -1181,7 +1190,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
 
     server.InitializePython();
 
-    if (m_single_player_setup_data->m_new_game) {
+    if (server.m_python_server.IsPythonRunning() && m_single_player_setup_data->m_new_game) {
         // For SP game start inializaing while waiting for AI callbacks.
         DebugLogger(FSM) << "Initializing new SP game...";
         server.NewSPGameInit(*m_single_player_setup_data);
@@ -1265,6 +1274,12 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
     // if all expected players have connected, proceed to start new or load game
     if (static_cast<int>(server.m_networking.NumEstablishedPlayers()) == m_num_expected_players) {
         DebugLogger(FSM) << "WaitingForSPGameJoiners::react(const CheckStartConditions& u) : have all " << m_num_expected_players << " expected players connected.";
+
+        if (!server.m_python_server.IsPythonRunning()) {
+            post_event(ShutdownServer());
+            return discard_event();
+        }
+
         if (m_single_player_setup_data->m_new_game) {
             DebugLogger(FSM) << "Verify AIs SP game...";
             if (server.VerifySPGameAIs(*m_single_player_setup_data))
@@ -1293,6 +1308,11 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
 sc::result WaitingForSPGameJoiners::react(const LoadSaveFileFailed& u) {
     TraceLogger(FSM) << "(ServerFSM) WaitingForSPGameJoiners.LoadSaveFileFailed";
     return transit<Idle>();
+}
+
+sc::result WaitingForSPGameJoiners::react(const ShutdownServer& msg) {
+    TraceLogger(FSM) << "(ServerFSM) WaitingForSPGameJoiners.ShutdownServer";
+    return transit<ShuttingDownServer>();
 }
 
 sc::result WaitingForSPGameJoiners::react(const Error& msg) {
@@ -1408,6 +1428,11 @@ sc::result WaitingForMPGameJoiners::react(const CheckStartConditions& u) {
     ServerApp& server = Server();
 
     if (static_cast<int>(server.m_networking.NumEstablishedPlayers()) == m_num_expected_players) {
+        if (!server.m_python_server.IsPythonRunning()) {
+            post_event(ShutdownServer());
+            return discard_event();
+        }
+
         if (m_player_save_game_data.empty()) {
             DebugLogger(FSM) << "Initializing new MP game...";
             server.NewMPGameInit(*m_lobby_data);
@@ -1419,6 +1444,11 @@ sc::result WaitingForMPGameJoiners::react(const CheckStartConditions& u) {
     }
 
     return discard_event();
+}
+
+sc::result WaitingForMPGameJoiners::react(const ShutdownServer& msg) {
+    TraceLogger(FSM) << "(ServerFSM) WaitingForMPGameJoiners.ShutdownServer";
+    return transit<ShuttingDownServer>();
 }
 
 sc::result WaitingForMPGameJoiners::react(const Error& msg) {

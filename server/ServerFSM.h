@@ -201,6 +201,7 @@ struct WaitingForSPGameJoiners : sc::state<WaitingForSPGameJoiners, ServerFSM> {
         sc::custom_reaction<JoinGame>,
         sc::custom_reaction<CheckStartConditions>,
         sc::custom_reaction<LoadSaveFileFailed>,
+        sc::custom_reaction<ShutdownServer>,
         sc::custom_reaction<Error>
     > reactions;
 
@@ -212,6 +213,7 @@ struct WaitingForSPGameJoiners : sc::state<WaitingForSPGameJoiners, ServerFSM> {
     // in SP games, save data is loaded when setting up AI clients, in order to
     // know which / how many to set up.  Loading might fail.
     sc::result react(const LoadSaveFileFailed& u);
+    sc::result react(const ShutdownServer& u);
     sc::result react(const Error& msg);
 
     std::shared_ptr<SinglePlayerSetupData>   m_single_player_setup_data;
@@ -231,6 +233,7 @@ struct WaitingForMPGameJoiners : sc::state<WaitingForMPGameJoiners, ServerFSM> {
         sc::in_state_reaction<Disconnection, ServerFSM, &ServerFSM::HandleNonLobbyDisconnection>,
         sc::custom_reaction<JoinGame>,
         sc::custom_reaction<CheckStartConditions>,
+        sc::custom_reaction<ShutdownServer>,
         sc::custom_reaction<Error>
     > reactions;
 
@@ -242,6 +245,7 @@ struct WaitingForMPGameJoiners : sc::state<WaitingForMPGameJoiners, ServerFSM> {
     // unlike in SP game setup, no save file data needs to be loaded in this
     // state, as all the relevant info about AIs is provided by the lobby data.
     // as such, no file load error handling reaction is needed in this state.
+    sc::result react(const ShutdownServer& u);
     sc::result react(const Error& msg);
 
     std::shared_ptr<MultiplayerLobbyData>   m_lobby_data;

@@ -331,10 +331,10 @@ void ServerApp::InitializePython() {
     if (m_python_server.IsPythonRunning())
         return;
 
-    if (!m_python_server.Initialize()) {
-        ErrorLogger() << "Server's python interpreter failed to initialize.";
-        m_fsm->process_event(ShutdownServer());
-    }
+    if (m_python_server.Initialize())
+        return;
+
+    ErrorLogger() << "Server's python interpreter failed to initialize.";
 }
 
 void ServerApp::CleanupAIs() {

@@ -190,7 +190,7 @@ boost::statechart::result WaitingForSPHostAck::react(const Disconnection& d) {
 
     // See reaction_transition_note.
     auto retval = discard_event();
-    Client().ResetToIntro();
+    Client().ResetToIntro(true);
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
     return retval;
 }
@@ -210,7 +210,7 @@ boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
     // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal) {
-        Client().ResetToIntro();
+        Client().ResetToIntro(true);
         ClientUI::MessageBox(UserString(problem), true);
         client.GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
     }
@@ -272,7 +272,7 @@ boost::statechart::result WaitingForMPHostAck::react(const Disconnection& d) {
 
     // See reaction_transition_note.
     auto retval = discard_event();
-    Client().ResetToIntro();
+    Client().ResetToIntro(true);
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
     return retval;
 }
@@ -292,7 +292,7 @@ boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
     // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal) {
-        Client().ResetToIntro();
+        Client().ResetToIntro(true);
         ClientUI::MessageBox(UserString(problem), true);
         client.GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
     }
@@ -350,7 +350,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const Disconnection& d) {
 
     // See reaction_transition_note.
     auto retval = discard_event();
-    Client().ResetToIntro();
+    Client().ResetToIntro(true);
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
     return retval;
 }
@@ -370,7 +370,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
     // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal) {
-        Client().ResetToIntro();
+        Client().ResetToIntro(true);
         ClientUI::MessageBox(UserString(problem), true);
         client.GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
     }
@@ -408,7 +408,7 @@ boost::statechart::result MPLobby::react(const Disconnection& d) {
 
     // See reaction_transition_note.
     auto retval = discard_event();
-    Client().ResetToIntro();
+    Client().ResetToIntro(true);
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
     return retval;
 }
@@ -457,7 +457,7 @@ boost::statechart::result MPLobby::react(const CancelMPGameClicked& a)
 
     // See reaction_transition_note.
     auto retval = discard_event();
-    Client().ResetToIntro();
+    Client().ResetToIntro(true);
     return retval;
 }
 
@@ -496,7 +496,7 @@ boost::statechart::result MPLobby::react(const Error& msg) {
     // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal) {
-        Client().ResetToIntro();
+        Client().ResetToIntro(true);
         ClientUI::MessageBox(UserString(problem), true);
     }
 
@@ -578,7 +578,7 @@ boost::statechart::result PlayingGame::react(const Disconnection& d) {
 
     // See reaction_transition_note.
     auto retval = discard_event();
-    Client().ResetToIntro();
+    Client().ResetToIntro(true);
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
     return retval;
 }
@@ -636,7 +636,7 @@ boost::statechart::result PlayingGame::react(const EndGame& msg) {
 
     // See reaction_transition_note.
     auto retval = discard_event();
-    Client().ResetToIntro();
+    Client().ResetToIntro(true);
     ClientUI::MessageBox(reason_message, error);
     return retval;
 }
@@ -663,7 +663,7 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
     // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal)
-        Client().ResetToIntro();
+        Client().ResetToIntro(true);
 
     ClientUI::MessageBox(UserString(problem), fatal);
 
