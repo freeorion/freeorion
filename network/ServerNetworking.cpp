@@ -169,7 +169,7 @@ PlayerConnectionPtr PlayerConnection::NewConnection(boost::asio::io_service& io_
 
 namespace {
     std::string MessageTypeName(Message::MessageType type) {
-        switch(type) {
+        switch (type) {
         case Message::UNDEFINED:                return "Undefined";
         case Message::DEBUG:                    return "Debug";
         case Message::ERROR_MSG:                return "Error";

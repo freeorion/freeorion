@@ -8487,7 +8487,7 @@ unsigned int OrderedBombarded::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 namespace {
     bool Comparison(float val1, ComparisonType comp, float val2) {
-        switch(comp) {
+        switch (comp) {
             case EQUAL:                 return val1 == val2;
             case GREATER_THAN:          return val1 > val2;
             case GREATER_THAN_OR_EQUAL: return val1 >= val2;
@@ -8501,7 +8501,7 @@ namespace {
     bool Comparison(const std::string& val1, ComparisonType comp,
                     const std::string& val2)
     {
-        switch(comp) {
+        switch (comp) {
             case EQUAL:                 return val1 == val2;
             case NOT_EQUAL:             return val1 != val2;
             case INVALID_COMPARISON:
@@ -8510,7 +8510,7 @@ namespace {
     }
 
     std::string CompareTypeString(ComparisonType comp) {
-        switch(comp) {
+        switch (comp) {
         case EQUAL:                 return "=";
         case GREATER_THAN:          return ">";
         case GREATER_THAN_OR_EQUAL: return ">=";

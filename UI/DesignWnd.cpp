@@ -1998,7 +1998,7 @@ BasesListBox::AvailabilityManager::AvailabilityManager(bool obsolete, bool avail
 {}
 
 bool BasesListBox::AvailabilityManager::GetAvailability(const Availability::Enum type) const {
-    switch(type) {
+    switch (type) {
     case Availability::Obsolete:
         return std::get<Availability::Obsolete>(m_availabilities);
     case Availability::Available:
@@ -2010,7 +2010,7 @@ bool BasesListBox::AvailabilityManager::GetAvailability(const Availability::Enum
 }
 
 void BasesListBox::AvailabilityManager::SetAvailability(const Availability::Enum type, const bool state) {
-    switch(type) {
+    switch (type) {
     case Availability::Obsolete:
         std::get<Availability::Obsolete>(m_availabilities) = state;
         break;
@@ -2845,7 +2845,7 @@ void DesignWnd::BaseSelector::SetEmpireShown(int empire_id, bool refresh_list) {
 void DesignWnd::BaseSelector::ToggleAvailability(Availability::Enum type) {
     std::shared_ptr<CUIStateButton> button;
     bool state;
-    switch(type) {
+    switch (type) {
     case Availability::Obsolete:
         m_availabilities_state.ToggleAvailability(Availability::Obsolete);
         state = m_availabilities_state.GetAvailability(Availability::Obsolete);
@@ -3817,7 +3817,7 @@ void DesignWnd::MainPanel::HighlightSlotType(std::vector<ShipSlotType>& slot_typ
 void DesignWnd::MainPanel::HandleBaseTypeChange(DesignWnd::BaseSelector::BaseSelectorTab base_type) {
     if (m_type_to_create == base_type)
         return;
-    switch(base_type) {
+    switch (base_type) {
     case DesignWnd::BaseSelector::BaseSelectorTab::Current:
     case DesignWnd::BaseSelector::BaseSelectorTab::Saved:
         m_type_to_create = base_type;

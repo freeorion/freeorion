@@ -1989,7 +1989,7 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
             const T&& lhs_val = LHS()->Eval(context);
             const T&& rhs_val = RHS()->Eval(context);
             bool test_result = false;
-            switch(m_op_type) {
+            switch (m_op_type) {
                 case COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
                 case COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
                 case COMPARE_GREATER_THAN_OR_EQUAL: test_result = lhs_val >= rhs_val;   break;

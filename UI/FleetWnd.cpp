@@ -1480,7 +1480,7 @@ void FleetDataPanel::SetStatIconValues() {
         MeterType stat_name = entry.first;
         const auto& icon = entry.second;
         DetachChild(icon);
-        switch(stat_name) {
+        switch (stat_name) {
         case METER_SIZE:
             icon->SetValue(ship_count);
             AttachChild(icon);

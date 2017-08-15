@@ -245,7 +245,7 @@ const std::string* WndEvent::GetText() const
 { return m_text; }
 
 std::string EventTypeName(const WndEvent& event) {
-    switch(event.Type()) {
+    switch (event.Type()) {
     case WndEvent::LButtonDown:     return "(LButtonDown)";
     case WndEvent::LDrag:           return "(LDrag)";
     case WndEvent::LButtonUp:       return "(LButtonUp)";

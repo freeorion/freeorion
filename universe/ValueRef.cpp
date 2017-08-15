@@ -46,7 +46,7 @@ namespace {
         //              << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0");
 
         std::shared_ptr<const UniverseObject> obj;
-        switch(ref_type) {
+        switch (ref_type) {
         case ValueRef::NON_OBJECT_REFERENCE:                    return context.condition_local_candidate;   break;
         case ValueRef::SOURCE_REFERENCE:                        obj = context.source;                       break;
         case ValueRef::EFFECT_TARGET_REFERENCE:                 obj = context.effect_target;                break;
@@ -57,7 +57,7 @@ namespace {
 
         if (!obj) {
             std::string type_string;
-            switch(ref_type) {
+            switch (ref_type) {
             case ValueRef::SOURCE_REFERENCE:                        type_string = "Source";         break;
             case ValueRef::EFFECT_TARGET_REFERENCE:                 type_string = "Target";         break;
             case ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE:      type_string = "RootCandidate";  break;
@@ -102,7 +102,7 @@ namespace {
     {
         std::shared_ptr<const UniverseObject> obj, initial_obj;
         std::string retval = ReconstructName(property_name, ref_type) + " : ";
-        switch(ref_type) {
+        switch (ref_type) {
         case ValueRef::NON_OBJECT_REFERENCE:
             retval += " | Non Object Reference |";
             return retval;
@@ -2744,6 +2744,8 @@ double      Operation<double>::EvalImpl(const ScriptingContext& context) const
                     return m_operands[3]->Eval(context);
             }
         }
+
+        default:    break;
     }
 
     throw std::runtime_error("double ValueRef evaluated with an unknown or invalid OpType.");
@@ -2873,6 +2875,8 @@ int         Operation<int>::EvalImpl(const ScriptingContext& context) const
                     return m_operands[3]->Eval(context);
             }
         }
+
+        default:    break;
     }
 
     throw std::runtime_error("double ValueRef evaluated with an unknown or invalid OpType.");

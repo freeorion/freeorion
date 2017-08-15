@@ -204,7 +204,7 @@ void GameRulesPanel::CompleteConstruction() {
         auto current_page = itr->second;
 
         // add rule to page
-        switch(rule.second.rule_type) {
+        switch (rule.second.rule_type) {
         case GameRules::TOGGLE:
             BoolRuleWidget(current_page, 0, rule.first);
             break;
