@@ -163,7 +163,7 @@ std::vector<std::string> PythonBase::ErrorReport() {
             return err_list;
         }
 
-        for(int i = 0; i < len(py_err_list); i++) {
+        for (int i = 0; i < len(py_err_list); i++) {
             err_list.push_back(extract<std::string>(py_err_list[i]));
         }
     }

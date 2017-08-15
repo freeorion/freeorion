@@ -217,7 +217,7 @@ namespace parse {
         const auto& scripts = ListScripts(path, permissive_mode);
         bool result = true;
 
-        for(const boost::filesystem::path& file : scripts) {
+        for (const auto& file : scripts) {
             if (file.filename() == "ShipDesignOrdering.focs.txt" ) {
                 manifest_file = file;
                 continue;

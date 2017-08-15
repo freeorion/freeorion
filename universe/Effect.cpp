@@ -445,7 +445,7 @@ void SetMeter::Execute(const ScriptingContext& context,
         }
 
         // process each target separately in order to do effect accounting for each
-        for (auto target : targets) {
+        for (auto& target : targets) {
             // get Meter for this effect and target
             const Meter* meter = target->GetMeter(m_meter);
             if (!meter)
@@ -480,7 +480,7 @@ void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets
     if (m_value->TargetInvariant()) {
         // meter value does not depend on target, so handle with single ValueRef evaluation
         float val = m_value->Eval(context);
-        for (auto target : targets) {
+        for (auto& target : targets) {
             Meter* m = target->GetMeter(m_meter);
             if (!m) continue;
             m->SetCurrent(val);
@@ -509,7 +509,7 @@ void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets
         }
         //DebugLogger() << "simple increment: " << increment;
         // increment all target meters...
-        for (auto target : targets) {
+        for (auto& target : targets) {
             Meter* m = target->GetMeter(m_meter);
             if (!m) continue;
             m->AddToCurrent(increment);
@@ -3334,7 +3334,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, 
 {}
 
 GenerateSitRepMessage::~GenerateSitRepMessage() {
-    for (std::pair<std::string, ValueRef::ValueRefBase<std::string>*>& entry : m_message_parameters) {
+    for (auto& entry : m_message_parameters) {
         delete entry.second;
     }
     delete m_recipient_empire_id;
@@ -3354,7 +3354,7 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
 
     // evaluate all parameter valuerefs so they can be substituted into sitrep template
     std::vector<std::pair<std::string, std::string>> parameter_tag_values;
-    for (const std::pair<std::string, ValueRef::ValueRefBase<std::string>*>& entry : m_message_parameters) {
+    for (auto& entry : m_message_parameters) {
         parameter_tag_values.push_back(std::make_pair(entry.first, entry.second->Eval(context)));
 
         // special case for ship designs: make sure sitrep recipient knows about the design
@@ -3378,7 +3378,7 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
 
     case AFFIL_ALLY: {
         // add allies of specified empire
-        for (const std::map<int, Empire*>::value_type& empire_id : Empires()) {
+        for (auto& empire_id : Empires()) {
             if (empire_id.first == recipient_id || recipient_id == ALL_EMPIRES)
                 continue;
 
@@ -3391,7 +3391,7 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
 
     case AFFIL_ENEMY: {
         // add enemies of specified empire
-        for (const std::map<int, Empire*>::value_type& empire_id : Empires()) {
+        for (auto& empire_id : Empires()) {
             if (empire_id.first == recipient_id || recipient_id == ALL_EMPIRES)
                 continue;
 
@@ -3409,7 +3409,7 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
             m_condition->Eval(context, condition_matches);
 
         // add empires that can see any condition-matching object
-        for (const std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+        for (auto& empire_entry : Empires()) {
             int empire_id = empire_entry.first;
             for (auto& object : condition_matches) {
                 if (object->GetVisibility(empire_id) >= VIS_BASIC_VISIBILITY) {
@@ -3432,7 +3432,7 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
     case AFFIL_ANY:
     default: {
         // add all empires
-        for (const std::map<int, Empire*>::value_type& empire_entry : Empires())
+        for (auto& empire_entry : Empires())
             recipient_empire_ids.insert(empire_entry.first);
         break;
     }
@@ -3465,7 +3465,7 @@ std::string GenerateSitRepMessage::Dump() const {
         retval += DumpIndent() + "parameters = tag = " + m_message_parameters[0].first + " data = " + m_message_parameters[0].second->Dump() + "\n";
     } else if (!m_message_parameters.empty()) {
         retval += DumpIndent() + "parameters = [ ";
-        for (const std::pair<std::string, ValueRef::ValueRefBase<std::string>*>& entry : m_message_parameters) {
+        for (const auto& entry : m_message_parameters) {
             retval += " tag = " + entry.first
                    + " data = " + entry.second->Dump()
                    + " ";
@@ -3494,7 +3494,7 @@ std::string GenerateSitRepMessage::Dump() const {
 }
 
 void GenerateSitRepMessage::SetTopLevelContent(const std::string& content_name) {
-    for (std::pair<std::string, ValueRef::ValueRefBase<std::string>*>& entry : m_message_parameters) {
+    for (auto& entry : m_message_parameters) {
         entry.second->SetTopLevelContent(content_name);
     }
     if (m_recipient_empire_id)
@@ -3638,7 +3638,7 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
 
     case AFFIL_ALLY: {
         // add allies of specified empire
-        for (const std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+        for (const auto& empire_entry : Empires()) {
             if (empire_entry.first == empire_id || empire_id == ALL_EMPIRES)
                 continue;
 
@@ -3651,7 +3651,7 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
 
     case AFFIL_ENEMY: {
         // add enemies of specified empire
-        for (const std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+        for (const auto& empire_entry : Empires()) {
             if (empire_entry.first == empire_id || empire_id == ALL_EMPIRES)
                 continue;
 
@@ -3673,7 +3673,7 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
     case AFFIL_ANY:
     default: {
         // add all empires
-        for (const std::map<int, Empire*>::value_type& empire_entry : Empires())
+        for (const auto& empire_entry : Empires())
             empire_ids.insert(empire_entry.first);
         break;
     }

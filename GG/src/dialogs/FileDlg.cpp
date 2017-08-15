@@ -460,7 +460,7 @@ void FileDlg::FileSetChanged(const ListBox::SelectionSet& files)
 {
     std::string all_files;
     bool dir_selected = false;
-    for (const ListBox::SelectionSet::value_type& file : files) {
+    for (const auto& file : files) {
         std::string filename = !(**file).empty() ? boost::polymorphic_downcast<TextControl*>((**file).at(0))->Text() : "";
         if (filename[0] != '[') {
             if (!all_files.empty())
@@ -515,7 +515,7 @@ void FileDlg::PopulateFilters()
         m_file_types_label->Disable();
         m_filter_list->Disable();
     } else {
-        for (std::pair<std::string, std::string>& file_filter : m_file_filters) {
+        for (auto& file_filter : m_file_filters) {
             auto row = Wnd::Create<ListBox::Row>();
             row->push_back(GetStyleFactory()->NewTextControl(file_filter.first, m_font, m_text_color, FORMAT_NOWRAP));
             m_filter_list->Insert(row);

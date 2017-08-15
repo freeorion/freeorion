@@ -1785,9 +1785,10 @@ bool GUI::ProcessBrowseInfoImpl(Wnd* wnd)
     if (!browse_modes.empty()) {
         unsigned int delta_t = Ticks() - m_impl->m_prev_wnd_under_cursor_time;
         std::size_t i = 0;
-        for (std::vector<Wnd::BrowseInfoMode>::const_reverse_iterator it = browse_modes.rbegin();
+        for (auto it = browse_modes.rbegin();
              it != browse_modes.rend();
-             ++it, ++i) {
+             ++it, ++i)
+        {
             if (it->time < delta_t) {
                 if (it->wnd && it->wnd->WndHasBrowseInfo(wnd, i)) {
                     if (m_impl->m_browse_target != wnd || m_impl->m_browse_info_wnd != it->wnd || m_impl->m_browse_info_mode != static_cast<int>(i)) {

@@ -213,11 +213,11 @@ namespace GG {
         }
 
         // Get the set of keys from a map.
-        template <typename T, typename V> std::set<T> MapKeys(const std::map<T, V>& arg_map)
+        template <typename T, typename V>
+        std::set<T> MapKeys(const std::map<T, V>& arg_map)
         {
-            typedef typename std::map<T, V>::value_type map_value;
             std::set<T> keys;
-            for (const map_value& pair : arg_map) {
+            for (const auto& pair : arg_map) {
                 keys.insert(pair.first);
             }
             return keys;

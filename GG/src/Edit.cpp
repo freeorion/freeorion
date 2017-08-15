@@ -661,7 +661,7 @@ CPSize GG::NextWordEdgeFrom(const std::string& text, CPSize from_position, bool 
 
         // start with the leftmost word, traverse words to the right
         // until past the reference point
-        for (const std::pair<CPSize, CPSize>& word_range : words) {
+        for (const auto& word_range : words) {
             if (word_range.first > from_position) {
                 // found word is after of the position. can stop
                 // searching and use whatever the last found word's position was
@@ -701,9 +701,7 @@ CPSize GG::NextWordEdgeFrom(const std::string& text, CPSize from_position, bool 
 
         // start and the rightmost end, traverse the words leftwards
         // until past the reference point
-        for (std::set<std::pair<CPSize, CPSize>>::const_reverse_iterator rit = words.rbegin();
-            rit != words.rend(); ++rit)
-        {
+        for (auto rit = words.rbegin(); rit != words.rend(); ++rit) {
             if (rit->second < from_position) {
                 // found word is before the position. can stop
                 // searching and use whatever the last found word's position was

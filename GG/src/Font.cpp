@@ -1168,7 +1168,7 @@ X Font::RenderText(const Pt& pt_, const std::string& text) const
     RenderCache cache;
     RenderState render_state;
 
-    for (std::string::const_iterator text_it = text.begin(); text_it != text.end();) {
+    for (auto text_it = text.begin(); text_it != text.end();) {
         std::uint32_t c = utf8::next(text_it, text.end());
         GlyphMap::const_iterator it = m_glyphs.find(c);
         if (it == m_glyphs.end()) {
@@ -1689,7 +1689,7 @@ std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<
     // the index of the first code point of the current TextElement
     CPSize code_point_offset(0);
     std::vector<std::shared_ptr<TextElement>> pending_formatting_tags;
-    for (const std::shared_ptr<TextElement>& elem : text_elements) {
+    for (const auto& elem : text_elements) {
         // if a newline is explicitly requested, start a new one
         if (elem->Type() == TextElement::NEWLINE) {
             line_data.push_back(LineData());
@@ -1949,7 +1949,7 @@ void Font::Init(FT_Face& face)
     Y y = Y0;
     X max_x = X0;
     Y max_y = Y0;
-    for (const std::pair<std::uint32_t, std::uint32_t>& range : range_vec) {
+    for (const auto& range : range_vec) {
         std::uint32_t low = range.first;
         std::uint32_t high = range.second;
 
