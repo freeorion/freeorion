@@ -177,16 +177,18 @@ EffectsGroup::~EffectsGroup() {
     }
 }
 
-void EffectsGroup::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
+void EffectsGroup::Execute(const TargetsCauses& targets_causes,
+                           AccountingMap* accounting_map,
                            bool only_meter_effects, bool only_appearance_effects,
-                           bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
+                           bool include_empire_meter_effects,
+                           bool only_generate_sitrep_effects) const
 {
     // execute each effect of the group one by one, unless filtered by flags
-    for (EffectBase* effect : m_effects)
-    {
+    for (EffectBase* effect : m_effects) {
         effect->Execute(targets_causes, accounting_map,
                         only_meter_effects, only_appearance_effects,
-                        include_empire_meter_effects, only_generate_sitrep_effects);
+                        include_empire_meter_effects,
+                        only_generate_sitrep_effects);
     }
 }
 
@@ -297,19 +299,43 @@ std::string Dump(const std::vector<std::shared_ptr<EffectsGroup>>& effects_group
 EffectBase::~EffectBase()
 {}
 
-void EffectBase::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
+void EffectBase::Execute(const TargetsCauses& targets_causes,
+                         AccountingMap* accounting_map,
                          bool only_meter_effects, bool only_appearance_effects,
-                         bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
+                         bool include_empire_meter_effects,
+                         bool only_generate_sitrep_effects) const
 {
-    if (only_appearance_effects || only_meter_effects || only_generate_sitrep_effects)
-        return; // overrides should catch all these effects
-
+    if (   (only_appearance_effects      && !this->IsAppearanceEffect())
+        || (only_meter_effects           && !this->IsMeterEffect())
+        || (!include_empire_meter_effects && this->IsEmpireMeterEffect())
+        || (only_generate_sitrep_effects && !this->IsSitrepEffect()))
+    { return; }
     // apply this effect for each source causing it
-    ScriptingContext source_context;
-    for (const std::pair<SourcedEffectsGroup, TargetsAndCause>& targets_entry : targets_causes) {
-        source_context.source = GetUniverseObject(targets_entry.first.source_object_id);
-        Execute(source_context, targets_entry.second.target_set);
+    for (const auto& targets_entry : targets_causes) {
+        ScriptingContext source_context(GetUniverseObject(targets_entry.first.source_object_id));
+        Execute(source_context, targets_entry.second.target_set,
+                accounting_map, targets_entry.second.effect_cause,
+                only_meter_effects, only_appearance_effects,
+                include_empire_meter_effects, only_generate_sitrep_effects);
     }
+}
+
+void EffectBase::Execute(const ScriptingContext& context,
+                         const TargetSet& targets,
+                         AccountingMap* accounting_map,
+                         const EffectCause& effect_cause,
+                         bool only_meter_effects, bool only_appearance_effects,
+                         bool include_empire_meter_effects,
+                         bool only_generate_sitrep_effects) const
+{
+    if (   (only_appearance_effects      && !this->IsAppearanceEffect())
+        || (only_meter_effects           && !this->IsMeterEffect())
+        || (!include_empire_meter_effects && this->IsEmpireMeterEffect())
+        || (only_generate_sitrep_effects && !this->IsSitrepEffect()))
+    { return; }
+    // generic / most effects don't do anything special for accounting, so just
+    // use standard Execute. overrides may implement something else.
+    Execute(context, targets);
 }
 
 void EffectBase::Execute(const ScriptingContext& context, const TargetSet& targets) const {
@@ -318,10 +344,9 @@ void EffectBase::Execute(const ScriptingContext& context, const TargetSet& targe
 
     // execute effects on targets
     ScriptingContext local_context = context;
-
-    for (std::shared_ptr<UniverseObject> target : targets) {
+    for (const auto& target : targets) {
         local_context.effect_target = target;
-        this->Execute(local_context);
+        Execute(local_context);
     }
 }
 
@@ -383,90 +408,85 @@ void SetMeter::Execute(const ScriptingContext& context) const {
     m->SetCurrent(val);
 }
 
-void SetMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
-                       bool only_meter_effects, bool only_appearance_effects,
-                       bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
+void SetMeter::Execute(const ScriptingContext& context,
+                       const TargetSet& targets,
+                       AccountingMap* accounting_map,
+                       const EffectCause& effect_cause,
+                       bool only_meter_effects,
+                       bool only_appearance_effects,
+                       bool include_empire_meter_effects,
+                       bool only_generate_sitrep_effects) const
 {
     if (only_appearance_effects || only_generate_sitrep_effects)
         return;
 
-    // apply this effect for each source causing it
-    for (const std::pair<SourcedEffectsGroup, TargetsAndCause>& targets_entry : targets_causes) {
-        const SourcedEffectsGroup& sourced_effects_group = targets_entry.first;
-        int                                 source_id             = sourced_effects_group.source_object_id;
-        std::shared_ptr<const UniverseObject> source = GetUniverseObject(source_id);
-        ScriptingContext                    source_context(source);
-        const TargetsAndCause&              targets_and_cause     = targets_entry.second;
-        TargetSet                           targets               = targets_and_cause.target_set;
+    TraceLogger(effects) << "\n\nExecute SetMeter effect: \n" << Dump();
+    TraceLogger(effects) << "SetMeter execute targets before: ";
+    for (const auto& target : targets)
+        TraceLogger(effects) << " ... " << target->Dump();
 
+    if (!accounting_map) {
+        // without accounting, can do default batch execute
+        Execute(context, targets);
 
-        TraceLogger(effects) << "\n\nExecute SetMeter effect: \n" << Dump();
-        TraceLogger(effects) << "SetMeter execute targets before: ";
-        for (std::shared_ptr<UniverseObject> target : targets)
-            TraceLogger(effects) << " ... " << target->Dump();
+    } else if (!accounting_map) {
+        // process each target separately in order to do effect accounting for each
+        for (auto target : targets)
+            Execute(ScriptingContext(context.source, target));
 
-        if (!accounting_map) {
-            // without accounting, can do default batch execute
-            Execute(source_context, targets);
-
-        } else if (!accounting_map) {
-            // process each target separately in order to do effect accounting for each
-            for (std::shared_ptr<UniverseObject> target : targets) {
-                Execute(ScriptingContext(source, target));
-            }
-
-        } else {
-            // accounting info for this effect on this meter, starting with non-target-dependent info
-            AccountingInfo info;
-            if (accounting_map) {
-                info.cause_type =           targets_and_cause.effect_cause.cause_type;
-                info.specific_cause =       targets_and_cause.effect_cause.specific_cause;
-                info.custom_label =         (m_accounting_label.empty() ? targets_and_cause.effect_cause.custom_label : m_accounting_label);
-                info.source_id =            source_id;
-            }
-
-            // process each target separately in order to do effect accounting for each
-            for (std::shared_ptr<UniverseObject> target : targets) {
-                // get Meter for this effect and target
-                const Meter* meter = target->GetMeter(m_meter);
-                if (!meter)
-                    continue;   // some objects might match target conditions, but not actually have the relevant meter. In that case, don't need to do accounting.
-
-                // record pre-effect meter values...
-
-                // accounting info for this effect on this meter of this target
-                info.running_meter_total =  meter->Current();
-
-                // actually execute effect to modify meter
-                Execute(ScriptingContext(source, target));
-
-                // update for meter change and new total
-                info.meter_change = meter->Current() - info.running_meter_total;
-                info.running_meter_total = meter->Current();
-
-                // add accounting for this effect to end of vector
-                (*accounting_map)[target->ID()][m_meter].push_back(info);
-            }
+    } else {
+        // accounting info for this effect on this meter, starting with non-target-dependent info
+        AccountingInfo info;
+        if (accounting_map) {
+            info.cause_type =     effect_cause.cause_type;
+            info.specific_cause = effect_cause.specific_cause;
+            info.custom_label =   (m_accounting_label.empty() ? effect_cause.custom_label : m_accounting_label);
+            info.source_id =      context.source->ID();
         }
 
-        TraceLogger(effects) << "SetMeter execute targets after: ";
-        for (std::shared_ptr<UniverseObject> target : targets)
-            TraceLogger(effects) << " ... " << target->Dump();
+        // process each target separately in order to do effect accounting for each
+        for (auto target : targets) {
+            // get Meter for this effect and target
+            const Meter* meter = target->GetMeter(m_meter);
+            if (!meter)
+                continue;   // some objects might match target conditions, but not actually have the relevant meter. In that case, don't need to do accounting.
+
+            // record pre-effect meter values...
+
+            // accounting info for this effect on this meter of this target
+            info.running_meter_total =  meter->Current();
+
+            // actually execute effect to modify meter
+            Execute(ScriptingContext(context.source, target));
+
+            // update for meter change and new total
+            info.meter_change = meter->Current() - info.running_meter_total;
+            info.running_meter_total = meter->Current();
+
+            // add accounting for this effect to end of vector
+            (*accounting_map)[target->ID()][m_meter].push_back(info);
+        }
     }
+
+    TraceLogger(effects) << "SetMeter execute targets after: ";
+    for (std::shared_ptr<UniverseObject> target : targets)
+        TraceLogger(effects) << " ... " << target->Dump();
 }
 
 void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets) const {
     if (targets.empty())
         return;
+
     if (m_value->TargetInvariant()) {
         // meter value does not depend on target, so handle with single ValueRef evaluation
         float val = m_value->Eval(context);
-        for (std::shared_ptr<UniverseObject> target : targets) {
+        for (auto target : targets) {
             Meter* m = target->GetMeter(m_meter);
             if (!m) continue;
             m->SetCurrent(val);
         }
         return;
+
     } else if (m_value->SimpleIncrement()) {
         // meter value is a consistent constant increment for each target, so handle with
         // deep inspection single ValueRef evaluation
@@ -489,7 +509,7 @@ void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets
         }
         //DebugLogger() << "simple increment: " << increment;
         // increment all target meters...
-        for (std::shared_ptr<UniverseObject> target : targets) {
+        for (auto target : targets) {
             Meter* m = target->GetMeter(m_meter);
             if (!m) continue;
             m->AddToCurrent(increment);
@@ -600,7 +620,7 @@ void SetShipPartMeter::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    std::string part_name = m_part_name->Eval(context);
+    std::string&& part_name = m_part_name->Eval(context);
 
     // get meter, evaluate new value, assign
     Meter* meter = ship->GetPartMeter(m_meter, part_name);
@@ -611,33 +631,28 @@ void SetShipPartMeter::Execute(const ScriptingContext& context) const {
     meter->SetCurrent(val);
 }
 
-void SetShipPartMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
-                               bool only_meter_effects, bool only_appearance_effects,
-                               bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
+void SetShipPartMeter::Execute(const ScriptingContext& context,
+                               const TargetSet& targets,
+                               AccountingMap* accounting_map,
+                               const EffectCause& effect_cause,
+                               bool only_meter_effects,
+                               bool only_appearance_effects,
+                               bool include_empire_meter_effects,
+                               bool only_generate_sitrep_effects) const
 {
     if (only_appearance_effects || only_generate_sitrep_effects)
         return;
 
-    // apply this effect for each source causing it
-    for (const std::pair<SourcedEffectsGroup, TargetsAndCause>& targets_entry : targets_causes) {
-        const SourcedEffectsGroup& sourced_effects_group = targets_entry.first;
-        int                                 source_id             = sourced_effects_group.source_object_id;
-        std::shared_ptr<const UniverseObject> source = GetUniverseObject(source_id);
-        ScriptingContext                    source_context(source);
-        const TargetsAndCause&              targets_and_cause     = targets_entry.second;
-        TargetSet                           targets               = targets_and_cause.target_set;
+    TraceLogger(effects) << "\n\nExecute SetShipPartMeter effect: \n" << Dump();
+    TraceLogger(effects) << "SetShipPartMeter execute targets before: ";
+    for (std::shared_ptr<UniverseObject> target : targets)
+        TraceLogger(effects) << " ... " << target->Dump();
 
-        TraceLogger(effects) << "\n\nExecute SetShipPartMeter effect: \n" << Dump();
-        TraceLogger(effects) << "SetShipPartMeter execute targets before: ";
-        for (std::shared_ptr<UniverseObject> target : targets)
-            TraceLogger(effects) << " ... " << target->Dump();
+    Execute(context, targets);
 
-        Execute(source_context, targets);
-
-        TraceLogger(effects) << "SetShipPartMeter execute targets after: ";
-        for (std::shared_ptr<UniverseObject> target : targets)
-            TraceLogger(effects) << " ... " << target->Dump();
-    }
+    TraceLogger(effects) << "SetShipPartMeter execute targets after: ";
+    for (std::shared_ptr<UniverseObject> target : targets)
+        TraceLogger(effects) << " ... " << target->Dump();
 }
 
 void SetShipPartMeter::Execute(const ScriptingContext& context, const TargetSet& targets) const {
@@ -647,27 +662,37 @@ void SetShipPartMeter::Execute(const ScriptingContext& context, const TargetSet&
         ErrorLogger() << "SetShipPartMeter::Execute missing part name or value ValueRefs";
         return;
     }
-    std::string part_name = m_part_name->Eval(context);
+
+    // TODO: Handle efficiently the case where the part name varies from target
+    // to target, but the value is target-invariant
+    if (!m_part_name->TargetInvariant()) {
+        DebugLogger() << "SetShipPartMeter::Execute has target-variant part name, which it is not (yet) coded to handle efficiently!";
+        EffectBase::Execute(context, targets);
+        return;
+    }
+
+    // part name doesn't depend on target, so handle with single ValueRef evaluation
+    const std::string&& part_name = m_part_name->Eval(context);
 
     if (m_value->TargetInvariant()) {
         // meter value does not depend on target, so handle with single ValueRef evaluation
-        float val = m_value->Eval(context);
-        for (std::shared_ptr<UniverseObject> target : targets) {
+        const float&& val = m_value->Eval(context);
+        for (auto& target : targets) {
             if (target->ObjectType() != OBJ_SHIP)
                 continue;
-            std::shared_ptr<Ship> ship = std::dynamic_pointer_cast<Ship>(target);
+            auto& ship = std::dynamic_pointer_cast<Ship>(target);
             if (!ship)
                 continue;
             Meter* m = ship->GetPartMeter(m_meter, part_name);
-            if (!m) continue;
-            m->SetCurrent(val);
+            if (m)
+                m->SetCurrent(val);
         }
         return;
 
     } else if (m_value->SimpleIncrement()) {
         // meter value is a consistent constant increment for each target, so handle with
         // deep inspection single ValueRef evaluation
-        ValueRef::Operation<double>* op = dynamic_cast<ValueRef::Operation<double>*>(m_value);
+        auto op = dynamic_cast<ValueRef::Operation<double>*>(m_value);
         if (!op) {
             ErrorLogger() << "SetShipPartMeter::Execute couldn't cast simple increment ValueRef to an Operation...";
             return;
@@ -684,22 +709,23 @@ void SetShipPartMeter::Execute(const ScriptingContext& context, const TargetSet&
         }
         //DebugLogger() << "simple increment: " << increment;
         // increment all target meters...
-        for (std::shared_ptr<UniverseObject> target : targets) {
+        for (auto& target : targets) {
             if (target->ObjectType() != OBJ_SHIP)
                 continue;
-            std::shared_ptr<Ship> ship = std::dynamic_pointer_cast<Ship>(target);
+            auto& ship = std::dynamic_pointer_cast<Ship>(target);
             if (!ship)
                 continue;
             Meter* m = ship->GetPartMeter(m_meter, part_name);
-            if (!m) continue;
-            m->AddToCurrent(increment);
+            if (m)
+                m->AddToCurrent(increment);
         }
         return;
-    }
 
-    //DebugLogger() << "complicated meter adjustment...";
-    // meter value depends on target non-trivially, so handle with default case of per-target ValueRef evaluation
-    EffectBase::Execute(context, targets);
+    } else {
+        //DebugLogger() << "complicated meter adjustment...";
+        // meter value depends on target non-trivially, so handle with default case of per-target ValueRef evaluation
+        EffectBase::Execute(context, targets);
+    }
 }
 
 std::string SetShipPartMeter::Dump() const {
@@ -762,8 +788,16 @@ SetEmpireMeter::~SetEmpireMeter() {
 }
 
 void SetEmpireMeter::Execute(const ScriptingContext& context) const {
-    int empire_id = m_empire_id->Eval(context);
+    if (!context.effect_target) {
+        DebugLogger() << "SetEmpireMeter::Execute passed null target pointer";
+        return;
+    }
+    if (!m_empire_id || !m_value || m_meter.empty()) {
+        ErrorLogger() << "SetEmpireMeter::Execute missing empire id or value ValueRefs, or given empty meter name";
+        return;
+    }
 
+    int&& empire_id = m_empire_id->Eval(context);
     Empire* empire = GetEmpire(empire_id);
     if (!empire) {
         DebugLogger() << "SetEmpireMeter::Execute unable to find empire with id " << empire_id;
@@ -776,26 +810,47 @@ void SetEmpireMeter::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    double value = m_value->Eval(ScriptingContext(context, meter->Current()));
+    double&& value = m_value->Eval(ScriptingContext(context, meter->Current()));
 
     meter->SetCurrent(value);
 }
 
-void SetEmpireMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
-                             bool only_meter_effects, bool only_appearance_effects,
-                             bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
+void SetEmpireMeter::Execute(const ScriptingContext& context,
+                             const TargetSet& targets,
+                             AccountingMap* accounting_map,
+                             const EffectCause& effect_cause,
+                             bool only_meter_effects,
+                             bool only_appearance_effects,
+                             bool include_empire_meter_effects,
+                             bool only_generate_sitrep_effects) const
 {
-    if (only_appearance_effects || only_generate_sitrep_effects)
-        return;
-    if (!include_empire_meter_effects)
-        return;
+    if (!include_empire_meter_effects ||
+        only_appearance_effects ||
+        only_generate_sitrep_effects)
+    { return; }
+    // presently no accounting done for empire meters.
+    // TODO: maybe implement empire meter effect accounting?
+    Execute(context, targets);
+}
 
-    // apply this effect for each source causing it
-    ScriptingContext source_context;
-    for (const std::pair<SourcedEffectsGroup, TargetsAndCause>& targets_entry : targets_causes) {
-        source_context.source = GetUniverseObject(targets_entry.first.source_object_id);
-        EffectBase::Execute(source_context, targets_entry.second.target_set);
+void SetEmpireMeter::Execute(const ScriptingContext& context, const TargetSet& targets) const {
+    if (targets.empty())
+        return;
+    if (!m_empire_id || m_meter.empty() || !m_value) {
+        ErrorLogger() << "SetEmpireMeter::Execute missing empire id or value ValueRefs or meter name";
+        return;
     }
+
+    // TODO: efficiently handle target invariant empire id and value
+    EffectBase::Execute(context, targets);
+    //return;
+
+    //if (m_empire_id->TargetInvariant() && m_value->TargetInvariant()) {
+    //}
+
+    ////DebugLogger() << "complicated meter adjustment...";
+    //// meter value depends on target non-trivially, so handle with default case of per-target ValueRef evaluation
+    //EffectBase::Execute(context, targets);
 }
 
 std::string SetEmpireMeter::Dump() const
@@ -3400,21 +3455,6 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
     }
 }
 
-void GenerateSitRepMessage::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
-                                    bool only_meter_effects, bool only_appearance_effects,
-                                    bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
-{
-    if (only_appearance_effects || only_meter_effects)
-        return;
-
-    // apply this effect for each source causing it
-    ScriptingContext source_context;
-    for (const std::pair<SourcedEffectsGroup, TargetsAndCause>& targets_entry : targets_causes) {
-        source_context.source = GetUniverseObject(targets_entry.first.source_object_id);
-        EffectBase::Execute(source_context, targets_entry.second.target_set);
-    }
-}
-
 std::string GenerateSitRepMessage::Dump() const {
     std::string retval = DumpIndent();
     retval += "GenerateSitRepMessage\n";
@@ -3503,21 +3543,6 @@ void SetOverlayTexture::Execute(const ScriptingContext& context) const {
         system->SetOverlayTexture(m_texture, size);
 }
 
-void SetOverlayTexture::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
-                                bool only_meter_effects, bool only_appearance_effects,
-                                bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
-{
-    if (only_generate_sitrep_effects || only_meter_effects)
-        return;
-
-    // apply this effect for each source causing it
-    ScriptingContext source_context;
-    for (const std::pair<SourcedEffectsGroup, TargetsAndCause>& targets_entry : targets_causes) {
-        source_context.source = GetUniverseObject(targets_entry.first.source_object_id);
-        EffectBase::Execute(source_context, targets_entry.second.target_set);
-    }
-}
-
 std::string SetOverlayTexture::Dump() const {
     std::string retval = DumpIndent() + "SetOverlayTexture texture = " + m_texture;
     if (m_size)
@@ -3555,21 +3580,6 @@ void SetTexture::Execute(const ScriptingContext& context) const {
         return;
     if (std::shared_ptr<Planet> planet = std::dynamic_pointer_cast<Planet>(context.effect_target))
         planet->SetSurfaceTexture(m_texture);
-}
-
-void SetTexture::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
-                         bool only_meter_effects, bool only_appearance_effects,
-                         bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
-{
-    if (only_generate_sitrep_effects || only_meter_effects)
-        return;
-
-    // apply this effect for each source causing it
-    ScriptingContext source_context;
-    for (const std::pair<SourcedEffectsGroup, TargetsAndCause>& targets_entry : targets_causes) {
-        source_context.source = GetUniverseObject(targets_entry.first.source_object_id);
-        EffectBase::Execute(source_context, targets_entry.second.target_set);
-    }
 }
 
 std::string SetTexture::Dump() const
@@ -3759,6 +3769,7 @@ Conditional::Conditional(Condition::ConditionBase* target_condition,
 void Conditional::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
         return;
+
     if (!m_target_condition || m_target_condition->Eval(context, context.effect_target)) {
         for (EffectBase* effect : m_true_effects) {
             if (effect)
@@ -3777,7 +3788,8 @@ void Conditional::Execute(const ScriptingContext& context, const TargetSet& targ
         return;
 
     // apply sub-condition to target set to pick which to act on with which of sub-effects
-    const Condition::ObjectSet& potential_target_objects = *reinterpret_cast<const Condition::ObjectSet*>(&targets);
+    const Condition::ObjectSet& potential_target_objects =
+        *reinterpret_cast<const Condition::ObjectSet*>(&targets);
 
     Condition::ObjectSet matches = potential_target_objects;
     Condition::ObjectSet non_matches;
@@ -3785,14 +3797,16 @@ void Conditional::Execute(const ScriptingContext& context, const TargetSet& targ
         m_target_condition->Eval(context, matches, non_matches, Condition::MATCHES);
 
     if (!matches.empty() && !m_true_effects.empty()) {
-        Effect::TargetSet& match_targets = *reinterpret_cast<Effect::TargetSet*>(&matches);
+        Effect::TargetSet& match_targets =
+            *reinterpret_cast<Effect::TargetSet*>(&matches);
         for (EffectBase* effect : m_true_effects) {
             if (effect)
                 effect->Execute(context, match_targets);
         }
     }
     if (!non_matches.empty() && !m_false_effects.empty()) {
-        Effect::TargetSet& non_match_targets = *reinterpret_cast<Effect::TargetSet*>(&non_matches);
+        Effect::TargetSet& non_match_targets =
+            *reinterpret_cast<Effect::TargetSet*>(&non_matches);
         for (EffectBase* effect : m_false_effects) {
             if (effect)
                 effect->Execute(context, non_match_targets);
@@ -3800,134 +3814,45 @@ void Conditional::Execute(const ScriptingContext& context, const TargetSet& targ
     }
 }
 
-namespace {
-    void GetFilteredEffects(std::vector<EffectBase*>& filtered_effects_out,
-                            const std::vector<EffectBase*>& effects_in,
-                            bool only_meter_effects, bool only_appearance_effects,
-                            bool include_empire_meter_effects, bool only_generate_sitrep_effects)
-    {
-        filtered_effects_out.clear();
-        filtered_effects_out.reserve(effects_in.size());
-        for (EffectBase* effect : effects_in) {
-            if (!effect)
-                continue;
-            if (only_meter_effects && !effect->IsMeterEffect())
-                continue;
-            if (only_appearance_effects && !effect->IsAppearanceEffect())
-                continue;
-            if (only_generate_sitrep_effects && !effect->IsSitrepEffect())
-                continue;
-            if (!include_empire_meter_effects && effect->IsEmpireMeterEffect())
-                continue;
-            filtered_effects_out.push_back(effect);
-        }
-    }
-}
-
-void Conditional::Execute(const ScriptingContext& context, const TargetSet& targets,
+void Conditional::Execute(const ScriptingContext& context,
+                          const TargetSet& targets,
                           AccountingMap* accounting_map,
-                          bool only_meter_effects, bool only_appearance_effects,
-                          bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
+                          const EffectCause& effect_cause,
+                          bool only_meter_effects,
+                          bool only_appearance_effects,
+                          bool include_empire_meter_effects,
+                          bool only_generate_sitrep_effects) const
 {
-    // filter true and false effects to get only those that match the bool flags
-    std::vector<EffectBase*> filtered_true_effects;
-    GetFilteredEffects(filtered_true_effects, m_true_effects, only_meter_effects, only_appearance_effects,
-                       include_empire_meter_effects, only_generate_sitrep_effects);
-    std::vector<EffectBase*> filtered_false_effects;
-    GetFilteredEffects(filtered_false_effects, m_false_effects, only_meter_effects, only_appearance_effects,
-                       include_empire_meter_effects, only_generate_sitrep_effects);
-
     // apply sub-condition to target set to pick which to act on with which of sub-effects
-    const Condition::ObjectSet& potential_target_objects = *reinterpret_cast<const Condition::ObjectSet*>(&targets);
+    const Condition::ObjectSet& potential_target_objects =
+        *reinterpret_cast<const Condition::ObjectSet*>(&targets);
     Condition::ObjectSet matches = potential_target_objects;
     Condition::ObjectSet non_matches;
     if (m_target_condition)
-        m_target_condition->Eval(context, matches, non_matches, Condition::MATCHES);
+        m_target_condition->Eval(context, matches, non_matches,
+                                 Condition::MATCHES);
 
-    // execute filtered true and false effects to target matches and non-matches respectively
+    // execute true and false effects to target matches and non-matches respectively
     if (!matches.empty() && !m_true_effects.empty()) {
-        Effect::TargetSet& match_targets = *reinterpret_cast<Effect::TargetSet*>(&matches);
-        for (EffectBase* effect : filtered_true_effects) {
-            if (!effect)
-                continue;
-            if (effect->IsConditionalEffect()) {
-                if (Conditional* cond_effect = dynamic_cast<Conditional*>(effect))
-                    cond_effect->Execute(context, match_targets, accounting_map, only_meter_effects, 
-                                         only_appearance_effects, include_empire_meter_effects, only_generate_sitrep_effects);
-            } else {
-                effect->Execute(context, match_targets);
-            }
+        Effect::TargetSet& match_targets =
+            *reinterpret_cast<Effect::TargetSet*>(&matches);
+        for (EffectBase* effect : m_true_effects) {
+            effect->Execute(context, match_targets, accounting_map,
+                            effect_cause,
+                            only_meter_effects, only_appearance_effects,
+                            include_empire_meter_effects,
+                            only_generate_sitrep_effects);
         }
     }
     if (!non_matches.empty() && !m_false_effects.empty()) {
-        Effect::TargetSet& non_match_targets = *reinterpret_cast<Effect::TargetSet*>(&non_matches);
-        for (EffectBase* effect : filtered_false_effects) {
-            if (!effect)
-                continue;
-            if (effect->IsConditionalEffect()) {
-                if (Conditional* cond_effect = dynamic_cast<Conditional*>(effect))
-                    cond_effect->Execute(context, non_match_targets, accounting_map, only_meter_effects, 
-                                            only_appearance_effects, include_empire_meter_effects, only_generate_sitrep_effects);
-            } else {
-                effect->Execute(context, non_match_targets);
-            }
-        }
-    }
-}
-
-void Conditional::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
-                          bool only_meter_effects, bool only_appearance_effects,
-                          bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
-{
-    // filter true and false effects to get only those that match the bool flags
-    std::vector<EffectBase*> filtered_true_effects;
-    GetFilteredEffects(filtered_true_effects, m_true_effects, only_meter_effects, only_appearance_effects,
-                       include_empire_meter_effects, only_generate_sitrep_effects);
-    std::vector<EffectBase*> filtered_false_effects;
-    GetFilteredEffects(filtered_false_effects, m_false_effects, only_meter_effects, only_appearance_effects,
-                       include_empire_meter_effects, only_generate_sitrep_effects);
-
-
-    // apply this effect for each source causing it
-    ScriptingContext source_context;
-    for (const std::pair<SourcedEffectsGroup, TargetsAndCause>& targets_entry : targets_causes) {
-        source_context.source = GetUniverseObject(targets_entry.first.source_object_id);
-
-        // apply sub-condition to target set to pick which to act on with which of sub-effects
-        const Condition::ObjectSet& potential_target_objects = *reinterpret_cast<const Condition::ObjectSet*>(&(targets_entry.second.target_set));
-        Condition::ObjectSet matches = potential_target_objects;
-        Condition::ObjectSet non_matches;
-        if (m_target_condition)
-            m_target_condition->Eval(source_context, matches, non_matches, Condition::MATCHES);
-
-        // execute filtered true and false effects to target matches and non-matches respectively
-        if (!matches.empty() && !m_true_effects.empty()) {
-            Effect::TargetSet& match_targets = *reinterpret_cast<Effect::TargetSet*>(&matches);
-            for (EffectBase* effect : filtered_true_effects) {
-                if (!effect)
-                    continue;
-                if (effect->IsConditionalEffect()) {
-                    if (Conditional* cond_effect = dynamic_cast<Conditional*>(effect))
-                        cond_effect->Execute(source_context, match_targets, accounting_map, only_meter_effects, 
-                                             only_appearance_effects, include_empire_meter_effects, only_generate_sitrep_effects);
-                } else {
-                    effect->Execute(source_context, match_targets);
-                }
-            }
-        }
-        if (!non_matches.empty() && !m_false_effects.empty()) {
-            Effect::TargetSet& non_match_targets = *reinterpret_cast<Effect::TargetSet*>(&non_matches);
-            for (EffectBase* effect : filtered_false_effects) {
-                if (!effect)
-                    continue;
-                if (effect->IsConditionalEffect()) {
-                    if (Conditional* cond_effect = dynamic_cast<Conditional*>(effect))
-                        cond_effect->Execute(source_context, non_match_targets, accounting_map, only_meter_effects, 
-                                             only_appearance_effects, include_empire_meter_effects, only_generate_sitrep_effects);
-                } else {
-                    effect->Execute(source_context, non_match_targets);
-                }
-            }
+        Effect::TargetSet& non_match_targets =
+            *reinterpret_cast<Effect::TargetSet*>(&non_matches);
+        for (EffectBase* effect : m_false_effects) {
+            effect->Execute(context, non_match_targets, accounting_map,
+                            effect_cause,
+                            only_meter_effects, only_appearance_effects,
+                            include_empire_meter_effects,
+                            only_generate_sitrep_effects);
         }
     }
 }

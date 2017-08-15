@@ -53,14 +53,6 @@ public:
     {}
     virtual ~EffectsGroup();
 
-    //void    GetTargetSet(int source_id, TargetSet& targets) const;
-    //void    GetTargetSet(int source_id, TargetSet& targets, const TargetSet& potential_targets) const;
-    ///** WARNING: this GetTargetSet version will modify potential_targets.
-    //  * in particular, it will move detected targets from potential_targets
-    //  * to targets. Cast the second parameter to \c const \c TargetSet& in
-    //  * order to leave potential_targets unchanged. */
-    //void    GetTargetSet(int source_id, TargetSet& targets, TargetSet& potential_targets) const;
-
     /** execute all effects in group */
     void    Execute(const TargetsCauses& targets_causes,
                     AccountingMap* accounting_map = nullptr,
@@ -116,8 +108,17 @@ public:
 
     virtual void Execute(const ScriptingContext& context, const TargetSet& targets) const;
 
-    virtual void Execute(const TargetsCauses& targets_causes,
-                         AccountingMap* accounting_map = nullptr,
+    void Execute(const TargetsCauses& targets_causes,
+                 AccountingMap* accounting_map,
+                 bool only_meter_effects = false,
+                 bool only_appearance_effects = false,
+                 bool include_empire_meter_effects = false,
+                 bool only_generate_sitrep_effects = false) const;
+
+    virtual void Execute(const ScriptingContext& context,
+                         const TargetSet& targets,
+                         AccountingMap* accounting_map,
+                         const EffectCause& effect_cause,
                          bool only_meter_effects = false,
                          bool only_appearance_effects = false,
                          bool include_empire_meter_effects = false,
@@ -177,9 +178,9 @@ private:
   * done. */
 class FO_COMMON_API SetMeter : public EffectBase {
 public:
-
     SetMeter(MeterType meter, ValueRef::ValueRefBase<double>* value);
-    SetMeter(MeterType meter, ValueRef::ValueRefBase<double>* value, const std::string& accounting_label);
+    SetMeter(MeterType meter, ValueRef::ValueRefBase<double>* value,
+             const std::string& accounting_label);
 
     virtual ~SetMeter();
 
@@ -187,8 +188,10 @@ public:
 
     void Execute(const ScriptingContext& context, const TargetSet& targets) const override;
 
-    void Execute(const TargetsCauses& targets_causes,
-                 AccountingMap* accounting_map = nullptr,
+    void Execute(const ScriptingContext& context,
+                 const TargetSet& targets,
+                 AccountingMap* accounting_map,
+                 const EffectCause& effect_cause,
                  bool only_meter_effects = false,
                  bool only_appearance_effects = false,
                  bool include_empire_meter_effects = false,
@@ -239,8 +242,10 @@ public:
 
     void Execute(const ScriptingContext& context, const TargetSet& targets) const override;
 
-    void Execute(const TargetsCauses& targets_causes,
-                 AccountingMap* accounting_map = nullptr,
+    void Execute(const ScriptingContext& context,
+                 const TargetSet& targets,
+                 AccountingMap* accounting_map,
+                 const EffectCause& effect_cause,
                  bool only_meter_effects = false,
                  bool only_appearance_effects = false,
                  bool include_empire_meter_effects = false,
@@ -285,8 +290,12 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    void Execute(const TargetsCauses& targets_causes,
-                 AccountingMap* accounting_map = nullptr,
+    void Execute(const ScriptingContext& context, const TargetSet& targets) const override;
+
+    void Execute(const ScriptingContext& context,
+                 const TargetSet& targets,
+                 AccountingMap* accounting_map,
+                 const EffectCause& effect_cause,
                  bool only_meter_effects = false,
                  bool only_appearance_effects = false,
                  bool include_empire_meter_effects = false,
@@ -1105,13 +1114,6 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    void Execute(const TargetsCauses& targets_causes,
-                 AccountingMap* accounting_map = nullptr,
-                 bool only_meter_effects = false,
-                 bool only_appearance_effects = false,
-                 bool include_empire_meter_effects = false,
-                 bool only_generate_sitrep_effects = false) const override;
-
     bool IsSitrepEffect() const override
     { return true; }
 
@@ -1163,13 +1165,6 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    void Execute(const TargetsCauses& targets_causes,
-                 AccountingMap* accounting_map = nullptr,
-                 bool only_meter_effects = false,
-                 bool only_appearance_effects = false,
-                 bool include_empire_meter_effects = false,
-                 bool only_generate_sitrep_effects = false) const override;
-
     std::string Dump() const override;
 
     bool IsAppearanceEffect() const override
@@ -1194,13 +1189,6 @@ public:
     explicit SetTexture(const std::string& texture);
 
     void Execute(const ScriptingContext& context) const override;
-
-    void Execute(const TargetsCauses& targets_causes,
-                 AccountingMap* accounting_map = nullptr,
-                 bool only_meter_effects = false,
-                 bool only_appearance_effects = false,
-                 bool include_empire_meter_effects = false,
-                 bool only_generate_sitrep_effects = false) const override;
 
     std::string Dump() const override;
 
@@ -1275,8 +1263,10 @@ public:
 
     void Execute(const ScriptingContext& context, const TargetSet& targets) const override;
 
-    void Execute(const TargetsCauses& targets_causes,
-                 AccountingMap* accounting_map = nullptr,
+    void Execute(const ScriptingContext& context,
+                 const TargetSet& targets,
+                 AccountingMap* accounting_map,
+                 const EffectCause& effect_cause,
                  bool only_meter_effects = false,
                  bool only_appearance_effects = false,
                  bool include_empire_meter_effects = false,
@@ -1297,18 +1287,10 @@ public:
 
     unsigned int GetCheckSum() const override;
 
-protected:
-    void Execute(const ScriptingContext& context, const TargetSet& targets,
-                 AccountingMap* accounting_map = nullptr,
-                 bool only_meter_effects = false,
-                 bool only_appearance_effects = false,
-                 bool include_empire_meter_effects = false,
-                 bool only_generate_sitrep_effects = false) const;
-
 private:
-    Condition::ConditionBase* m_target_condition; // condition to apply to each target object to determine which effects to execute
-    std::vector<EffectBase*> m_true_effects;     // effects to execute if m_target_condition matches target object
-    std::vector<EffectBase*> m_false_effects;    // effects to execute if m_target_condition does not match target object
+    Condition::ConditionBase* m_target_condition;   // condition to apply to each target object to determine which effects to execute on it
+    std::vector<EffectBase*> m_true_effects;        // effects to execute if m_target_condition matches target object
+    std::vector<EffectBase*> m_false_effects;       // effects to execute if m_target_condition does not match target object
 
     friend class boost::serialization::access;
     template <class Archive>
