@@ -34,7 +34,7 @@ Species
         [[STANDARD_SHIP_SHIELDS]]
     ]
 
-    [[TUNDRA_NARROW_EP]]
+    [[OCEAN_NARROW_EP]]
 
     graphic = "icons/species/sslith.png"
 

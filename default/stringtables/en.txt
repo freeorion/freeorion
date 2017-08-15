@@ -6887,6 +6887,27 @@ Homeworld:
 Their planet has low gravity and a very thick atmosphere. Its composition is unique as it has a low proportion of heavier metals, but a much higher proportion of other heavy elements, particularly noble gases. It also has very stable tectonic formations meaning that the surface of the crust is very flat, and so is mostly covered with shallow, standing water. The entire world is like a giant everglade.
 '''
 
+SP_REPLICON
+Replicon
+
+SP_REPLICON_GAMEPLAY_DESC
+'''Barely-sentient self replicating robots.
+Prefer [[PT_RADIATED]] planets.
+[[encyclopedia ROBOTIC_SPECIES_TITLE]]
+'''
+
+SP_REPLICON_DESC
+'''Description:
+The Replicons look like a 3m tall robotic spider with wings. The wings are actually highly efficient solar panels that fold out to a relatively large area, the 'abdomen' is actually the 'industrial processing center' where replacement parts and new Replicons are forged.
+
+Social Structure:
+Replicons have a relatively primitive social structure. They have a planetary government, because a few feudal lords discovered space travel as a convenient way of attacking people really far away. Their government is effectively feudal, due to some unusual effects that allowed them to reach space flight before achieving the nationstate/industrial revolution stage of development. Because of the wide variety of self-replicating machines on Cisarruj, most needs that are met by industry on other worlds are met by 'agriculture' or 'breeding' by Replicons. They end up without any actual 'Industrial Base' or even much of an understanding of technology other than what verious 'natural' parts and products can be used for. This means that their society is highly illiterate, most people passing on knowledge that their pappies taught them on how to skin a "creature's" titanium coat, just enough so that it could grow it back or how much uranium ore to feed a reprocessing reactor if it was giving bad aluminum. Most things that normal 'developed' societies would expect are only present in the lord's estates, the remainder of society looks like something out of a post-apocalyptic novel. 
+
+Homeworld:
+Cisarruj is a heavily irradiated planet with a profound mystery about it. The planet is dominated by a wide variety of autonomous self replicating machines. There are recorded histories of who went to war with who when, and this is actually significant when dealing with the formation of the Cisarruj Empire. However, most simply reads like any other world's pre industrial history periods of powers large and small waxing and waning. The Mystery of the Replicons, however is in their prehistory. Did a sentient race assemble them as an experiment maybe, or were they some type of accident (an industrial development project left unsupervised) did their creators simply leave and forget about them, or did their creators meet a worse fate possibly at the hands of those beings they created.
+'''
+
+
 SP_EGASSEM
 Egassem
 
@@ -11821,6 +11842,12 @@ Phinnert Colony
 
 BLD_COL_PHINNERT_DESC
 [[BLD_COL_PART_1]] [[species SP_PHINNERT]] colony. [[BLD_COL_PART_2]] Phinnert colony [[BLD_COL_PART_3]].
+
+BLD_COL_REPLICON
+Replicon Colony
+
+BLD_COL_REPLICON_DESC
+[[BLD_COL_PART_1]] [[species SP_REPLICON]] colony. [[BLD_COL_PART_2]] Replicon colony [[BLD_COL_PART_3]].
 
 BLD_COL_SCYLIOR
 Scylior Colony

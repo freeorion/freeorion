@@ -2,11 +2,12 @@ Species
     name = "SP_ABADDONI"
     description = "SP_ABADDONI_DESC"
     gameplay_description = "SP_ABADDONI_GAMEPLAY_DESC"
-    Native
+    Playable
+    //Native
     CanProduceShips
     CanColonize
 
-    tags = [ "LITHIC" "BAD_RESEARCH" "AVERAGE_SUPPLY" "BAD_ATTACKTROOPS" "PEDIA_LITHIC_SPECIES_CLASS" ]
+    tags = [ "LITHIC" "BAD_RESEARCH" "AVERAGE_SUPPLY"  "PEDIA_LITHIC_SPECIES_CLASS" ] 
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -25,15 +26,22 @@ Species
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
         [[BAD_DEFENSE_TROOPS]]
-        [[BAD_OFFENSE_TROOPS]]
+        EffectsGroup
+            scope = Source
+            activation = Turn high = 1
+            effects = [
+                GiveEmpireTech name = "GRO_SUBTER_HAB" empire = Target.Owner
+           ]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
+        [[LARGE_PLANET]]
+        [[BROAD_EP]]
         [[STANDARD_SHIP_SHIELDS]]
     ]
 
-    [[INFERNO_STANDARD_EP]]
+    [[INFERNO_BROAD_EP]]
 
     graphic = "icons/species/abaddonnian.png"
 
