@@ -1,7 +1,7 @@
 Species
-    name = "SP_RADON"
-    description = "SP_RADON_DESC"
-    gameplay_description = "SP_RADON_GAMEPLAY_DESC"
+    name = "SP_REPLICON"
+    description = "SP_REPLICON_DESC"
+    gameplay_description = "SP_REPLICON_GAMEPLAY_DESC"
     Playable
     CanProduceShips
     CanColonize
@@ -35,7 +35,7 @@ Species
 
     [[RADIATED_STANDARD_EP]]
 
-    graphic = "icons/species/robotic-05.png"
+    graphic = "icons/species/replicon.png"
 
 #include "common/*.macros"
 
