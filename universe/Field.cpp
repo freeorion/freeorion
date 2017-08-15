@@ -180,7 +180,7 @@ FieldType::FieldType(const std::string& name, const std::string& description,
     if (m_stealth != 0.0f)
         m_effects.push_back(IncreaseMeter(METER_STEALTH,    m_stealth));
 
-    for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+    for (auto& effect : m_effects) {
         effect->SetTopLevelContent(m_name);
     }
 }
@@ -205,7 +205,7 @@ std::string FieldType::Dump() const {
     } else {
         retval += DumpIndent() + "effectsgroups = [\n";
         ++g_indent;
-        for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+        for (auto& effect : m_effects) {
             retval += effect->Dump();
         }
         --g_indent;

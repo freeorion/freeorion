@@ -284,7 +284,7 @@ namespace {
             const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
             const std::set<int>& this_client_stale_object_info       = GetUniverse().EmpireStaleKnowledgeObjectIDs(HumanClientApp::GetApp()->EmpireID());
 
-            for (std::shared_ptr<const Ship> ship : objects.FindObjects<Ship>()) {
+            for (auto& ship : objects.FindObjects<Ship>()) {
                 if (empire) {
                     if (ship->Owner() == empire->EmpireID()
                         && this_client_known_destroyed_objects.find(ship->ID()) == this_client_known_destroyed_objects.end()
@@ -294,7 +294,7 @@ namespace {
                 }
             }
 
-            for (std::shared_ptr<const Planet> planet : objects.FindObjects<Planet>()) {
+            for (auto& planet : objects.FindObjects<Planet>()) {
                 if (empire) {
                     if (planet->Owner() == empire->EmpireID()) {
                         empires_planet_count      += 1;

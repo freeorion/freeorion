@@ -2047,7 +2047,7 @@ MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<std::shar
     m_graphics(),
     m_styles(styles)
 {
-    for (std::shared_ptr<GG::Texture> texture : textures)
+    for (auto& texture : textures)
         m_graphics.push_back(GG::SubTexture(texture, GG::X0, GG::Y0, texture->DefaultWidth(), texture->DefaultHeight()));
     Init();
 }

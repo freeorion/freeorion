@@ -1316,7 +1316,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
 
     // get all ships that can colonize and that are free to do so in the
     // specified planet'ssystem and that can colonize the requested planet
-    for (std::shared_ptr<const Ship> ship : ships) {
+    for (auto& ship : ships) {
         if (!AvailableToColonize(ship, system_id, empire_id))
             continue;
         if (!CanColonizePlanetType(ship, target_planet_type))
@@ -1340,7 +1340,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     bool changed_planet = false;
 
     GetUniverse().InhibitUniverseObjectSignals(true);
-    for (std::shared_ptr<const Ship> ship : capable_and_available_colony_ships) {
+    for (auto& ship : capable_and_available_colony_ships) {
         if (!ship)
             continue;
         int ship_id = ship->ID();
@@ -1422,7 +1422,7 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenInvasionShips(int targe
     double defending_troops = target_planet->NextTurnCurrentMeterValue(METER_TROOPS);
 
     double invasion_troops = 0;
-    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<Ship>()) {
+    for (auto& ship : Objects().FindObjects<Ship>()) {
         if (!AvailableToInvade(ship, system_id, empire_id))
             continue;
 
@@ -1459,7 +1459,7 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenBombardShips(int target
     if (target_planet->OwnedBy(empire_id))
         return retval;
 
-    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<Ship>()) {
+    for (auto& ship : Objects().FindObjects<Ship>()) {
         // owned ship is capable of bombarding a planet in this system
         if (!AvailableToBombard(ship, system_id, empire_id))
             continue;
@@ -1729,7 +1729,7 @@ void SidePanel::PlanetPanel::Refresh() {
         // show invade button
         AttachChild(m_invade_button);
         float invasion_troops = 0.0f;
-        for (std::shared_ptr<const Ship> invasion_ship : invasion_ships) {
+        for (auto& invasion_ship : invasion_ships) {
             invasion_troops += invasion_ship->TroopCapacity();
         }
         std::string invasion_troops_text = DoubleToString(invasion_troops, 3, false);
@@ -1985,7 +1985,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
     if (system) {
         std::vector<std::shared_ptr<const UniverseObject>> system_objects =
             Objects().FindObjects<const UniverseObject>(system->ObjectIDs());
-        for (std::shared_ptr<const UniverseObject> obj : system_objects) {
+        for (auto& obj : system_objects) {
             if (obj->GetVisibility(client_empire_id) < VIS_PARTIAL_VISIBILITY)
                 continue;
             if (obj->Owner() == client_empire_id || obj->Unowned())
@@ -2299,7 +2299,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
             invasion_ships.insert(autoselected_invasion_ships.begin(), autoselected_invasion_ships.end());
         }
 
-        for (std::shared_ptr<const Ship> ship : invasion_ships) {
+        for (auto& ship : invasion_ships) {
             if (!ship)
                 continue;
 
@@ -2344,7 +2344,7 @@ void SidePanel::PlanetPanel::ClickBombard() {
             bombard_ships.insert(autoselected_bombard_ships.begin(), autoselected_bombard_ships.end());
         }
 
-        for (std::shared_ptr<const Ship> ship : bombard_ships) {
+        for (auto& ship : bombard_ships) {
             if (!ship)
                 continue;
 
@@ -3013,12 +3013,12 @@ void SidePanel::RefreshInPreRender() {
         return;
     }
 
-    for (std::shared_ptr<Planet> planet : Objects().FindObjects<Planet>(system->PlanetIDs())) {
+    for (auto& planet : Objects().FindObjects<Planet>(system->PlanetIDs())) {
         s_system_connections.insert(planet->ResourceCenterChangedSignal.connect(
                                         SidePanel::ResourceCenterChangedSignal));
     }
 
-    for (std::shared_ptr<Fleet> fleet : Objects().FindObjects<Fleet>(system->FleetIDs())) {
+    for (auto& fleet : Objects().FindObjects<Fleet>(system->FleetIDs())) {
         s_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
                                                         &SidePanel::Update);
     }
@@ -3054,7 +3054,7 @@ void SidePanel::RefreshSystemNames() {
     // maintaing the list by incrementally inserting/deleting system
     // names, then this approach should also be dropped.
     std::set<std::pair<std::string, int>> sorted_systems;
-    for (std::shared_ptr<const System> system : Objects().FindObjects<System>()) {
+    for (auto& system : Objects().FindObjects<System>()) {
         // Skip rows for systems that aren't known to this client, except the selected system
         if (!system->Name().empty() || system->ID() == s_system_id)
             sorted_systems.insert(std::make_pair(system->Name(), system->ID()));
@@ -3148,7 +3148,7 @@ void SidePanel::RefreshImpl() {
     // get just planets owned by player's empire
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     std::vector<int> owned_planets;
-    for (std::shared_ptr<const Planet> planet : Objects().FindObjects<const Planet>(planet_ids)) {
+    for (auto& planet : Objects().FindObjects<const Planet>(planet_ids)) {
         if (planet->OwnedBy(empire_id))
             owned_planets.push_back(planet->ID());
     }
@@ -3294,7 +3294,7 @@ void SidePanel::PlanetClickedSlot(int planet_id) {
 }
 
 void SidePanel::FleetsInserted(const std::vector<std::shared_ptr<Fleet>>& fleets) {
-    for (std::shared_ptr<Fleet> fleet : fleets) {
+    for (auto& fleet : fleets) {
         s_fleet_state_change_signals[fleet->ID()].disconnect();  // in case already present
         s_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
                                                         &SidePanel::Update);
@@ -3303,7 +3303,7 @@ void SidePanel::FleetsInserted(const std::vector<std::shared_ptr<Fleet>>& fleets
 }
 
 void SidePanel::FleetsRemoved(const std::vector<std::shared_ptr<Fleet>>& fleets) {
-    for (std::shared_ptr<Fleet> fleet : fleets) {
+    for (auto& fleet : fleets) {
         std::map<int, boost::signals2::connection>::iterator signal_it = s_fleet_state_change_signals.find(fleet->ID());
         if (signal_it != s_fleet_state_change_signals.end()) {
             signal_it->second.disconnect();

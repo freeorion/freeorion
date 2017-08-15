@@ -700,7 +700,7 @@ void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const {
 }
 
 bool ClientUI::ZoomToObject(const std::string& name) {
-    for (std::shared_ptr<const UniverseObject> obj : GetUniverse().Objects().FindObjects<UniverseObject>())
+    for (auto& obj : GetUniverse().Objects().FindObjects<UniverseObject>())
         if (boost::iequals(obj->Name(), name))
             return ZoomToObject(obj->ID());
     return false;

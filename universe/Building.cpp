@@ -164,7 +164,7 @@ void BuildingType::Init() {
         m_location->SetTopLevelContent(m_name);
     if (m_enqueue_location)
         m_enqueue_location->SetTopLevelContent(m_name);
-    for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+    for (auto& effect : m_effects) {
         effect->SetTopLevelContent(m_name);
     }
 }
@@ -215,7 +215,7 @@ std::string BuildingType::Dump() const {
     } else {
         retval += DumpIndent() + "effectsgroups = [\n";
         ++g_indent;
-        for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+        for (auto& effect : m_effects) {
             retval += effect->Dump();
         }
         --g_indent;

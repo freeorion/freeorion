@@ -676,7 +676,7 @@ std::map<std::string, std::map<int, float>> ProductionQueue::ProductionItem::Com
                 }
 
                 // determine how much to take from each matched object
-                for (std::shared_ptr<const UniverseObject> object : matches) {
+                for (auto& object : matches) {
                     context.effect_target = std::const_pointer_cast<UniverseObject>(object);
                     retval[psc.first][object->ID()] += psc.second.first->Eval(context);
                 }
@@ -1307,7 +1307,7 @@ std::shared_ptr<const UniverseObject> Empire::Source() const {
 
     // Find any object owned by the empire
     // TODO determine if ExistingObjects() is faster and acceptable
-    for (std::shared_ptr<const UniverseObject> obj_it : Objects()) {
+    for (auto& obj_it : Objects()) {
         if (obj_it->OwnedBy(m_id)) {
             m_source_id = obj_it->ID();
             return (obj_it);
@@ -1804,7 +1804,7 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
     }
 
     //std::cout << "... empire owns " << owned_planets.size() << " planets" << std::endl;
-    for (std::shared_ptr<const UniverseObject> obj : owned_planets) {
+    for (auto& obj : owned_planets) {
         //std::cout << "... considering owned planet: " << obj->Name() << std::endl;
 
         // ensure object is within a system, from which it can distribute supplies
@@ -1853,7 +1853,7 @@ void Empire::UpdateUnobstructedFleets() {
         if (!system)
             continue;
 
-        for (std::shared_ptr<Fleet> fleet : Objects().FindObjects<Fleet>(system->FleetIDs())) {
+        for (auto& fleet : Objects().FindObjects<Fleet>(system->FleetIDs())) {
             if (known_destroyed_objects.find(fleet->ID()) != known_destroyed_objects.end())
                 continue;
             if (fleet->OwnedBy(m_id))
@@ -1916,7 +1916,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
     std::set<int> unrestricted_friendly_systems;
     std::set<int> systems_containing_obstructing_objects;
     std::set<int> unrestricted_obstruction_systems;
-    for (std::shared_ptr<const Fleet> fleet : GetUniverse().Objects().FindObjects<Fleet>()) {
+    for (auto& fleet : GetUniverse().Objects().FindObjects<Fleet>()) {
         int system_id = fleet->SystemID();
         if (system_id == INVALID_OBJECT_ID) {
             continue;   // not in a system, so can't affect system obstruction
@@ -3104,7 +3104,7 @@ void Empire::CheckProductionProgress() {
 
         // group ships into fleets by rally point and design
         std::map<int, std::map<int, std::vector<std::shared_ptr<Ship>>>> new_ships_by_rally_point_id_and_design_id;
-        for (std::shared_ptr<Ship> ship : new_ships) {
+        for (auto& ship : new_ships) {
             int rally_point_id = INVALID_OBJECT_ID;
 
             std::map<int, int>::const_iterator rally_it = new_ship_rally_point_ids.find(ship->ID());
@@ -3149,7 +3149,7 @@ void Empire::CheckProductionProgress() {
                     fleets.push_back(fleet);
                 }
 
-                for (std::shared_ptr<Ship> ship : ships) {
+                for (auto& ship : ships) {
                     if (individual_fleets) {
                         fleet = universe.InsertNew<Fleet>("", system->X(), system->Y(), m_id);
 
@@ -3163,7 +3163,7 @@ void Empire::CheckProductionProgress() {
                     ship->SetFleetID(fleet->ID());
                 }
 
-                for (std::shared_ptr<Fleet> fleet : fleets) {
+                for (auto& fleet : fleets) {
                     // rename fleet, given its id and the ship that is in it
                     fleet->Rename(fleet->GenerateFleetName());
                     fleet->SetAggressive(fleet->HasArmedShips() || fleet->HasFighterShips());

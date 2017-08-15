@@ -119,7 +119,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     std::set<int> owner_empire_ids;
     std::vector<std::shared_ptr<const Planet>> system_planets = Objects().FindObjects<const Planet>(system->PlanetIDs());
 
-    for (std::shared_ptr<const Planet> planet : system_planets) {
+    for (auto& planet : system_planets) {
         int planet_id = planet->ID();
 
         if (known_destroyed_object_ids.find(planet_id) != known_destroyed_object_ids.end())
@@ -150,7 +150,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
 
         // does planet contain a shipyard?
         if (!has_shipyard) {
-            for (std::shared_ptr<const Building> building : Objects().FindObjects<const Building>(planet->BuildingIDs())) {
+            for (auto& building : Objects().FindObjects<const Building>(planet->BuildingIDs())) {
                 int building_id = building->ID();
 
                 if (known_destroyed_object_ids.find(building_id) != known_destroyed_object_ids.end())

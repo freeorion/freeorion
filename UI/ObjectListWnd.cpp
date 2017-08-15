@@ -809,7 +809,7 @@ private:
             // collect all valid tags on any object in universe
             std::set<std::string> all_tags;
 
-            for (std::shared_ptr<const UniverseObject> obj : GetUniverse().Objects().FindObjects<UniverseObject>()) {
+            for (auto& obj : GetUniverse().Objects().FindObjects<UniverseObject>()) {
                 std::set<std::string> tags = obj->Tags();
                 all_tags.insert(tags.begin(), tags.end());
             }
@@ -894,7 +894,7 @@ private:
 
             // collect all valid foci on any object in universe
             std::set<std::string> all_foci;
-            for (std::shared_ptr<const Planet> planet : Objects().FindObjects<Planet>()) {
+            for (auto& planet : Objects().FindObjects<Planet>()) {
                 std::vector<std::string> obj_foci = planet->AvailableFoci();
                 std::copy(obj_foci.begin(), obj_foci.end(), std::inserter(all_foci, all_foci.end()));
             }
@@ -1932,7 +1932,7 @@ public:
         std::map<int, std::set<int>>    planet_buildings;
         std::set<int>                   fields;
 
-        for (std::shared_ptr<const UniverseObject> obj : GetUniverse().Objects()) {
+        for (auto& obj : GetUniverse().Objects()) {
             if (!ObjectShown(obj))
                 continue;
 

@@ -994,7 +994,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             std::set<MeterType> meters_affected;
             std::set<std::string> specials_affected;
             std::set<std::string> parts_whose_meters_are_affected;
-            for (std::shared_ptr<Effect::EffectsGroup> effects_group : tech->Effects()) {
+            for (auto& effects_group : tech->Effects()) {
                 for (Effect::EffectBase* effect : effects_group->EffectsList()) {
                     if (const Effect::SetMeter* set_meter_effect = dynamic_cast<const Effect::SetMeter*>(effect)) {
                         meters_affected.insert(set_meter_effect->GetMeterType());

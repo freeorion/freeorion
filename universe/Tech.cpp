@@ -104,7 +104,7 @@ void Tech::Init() {
     if (m_research_turns)
         m_research_turns->SetTopLevelContent(m_name);
 
-    for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects)
+    for (auto& effect : m_effects)
     { effect->SetTopLevelContent(m_name); }
 }
 
@@ -154,7 +154,7 @@ std::string Tech::Dump() const {
         } else {
             retval += DumpIndent() + "effectsgroups = [\n";
             ++g_indent;
-            for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+            for (auto& effect : m_effects) {
                 retval += effect->Dump();
             }
             --g_indent;

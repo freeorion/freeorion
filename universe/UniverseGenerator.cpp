@@ -156,7 +156,7 @@ namespace Delauney {
 
         // extract systems positions, and store in vector.  Can't use actual systems data since
         // systems have position limitations which would interfere with algorithm
-        for (std::shared_ptr<System> system : systems) {
+        for (auto& system : systems) {
             points.push_back(Delauney::DTPoint(system->X(), system->Y()));
         }
 
@@ -741,7 +741,7 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
 
     // check for each pair of meter types.  if both exist, set active
     // meter current value equal to target meter current value.
-    for (std::shared_ptr<UniverseObject> object : object_map) {
+    for (auto& object : object_map) {
         for (std::map<MeterType, MeterType>::value_type& entry : meters)
             if (Meter* meter = object->GetMeter(entry.first))
                 if (Meter* targetmax_meter = object->GetMeter(entry.second))
@@ -750,7 +750,7 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
 }
 
 void SetNativePopulationValues(ObjectMap& object_map) {
-    for (std::shared_ptr<UniverseObject> object : object_map) {
+    for (auto& object : object_map) {
         Meter* meter = object->GetMeter(METER_POPULATION);
         Meter* targetmax_meter = object->GetMeter(METER_TARGET_POPULATION);
         // only applies to unowned planets

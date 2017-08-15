@@ -1351,7 +1351,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet() {
     int best_planet_id = INVALID_OBJECT_ID; // id of selected planet
     double best_planet_pop = -99999.9;                      // arbitrary negative number, so any planet's pop will be better
 
-    for (std::shared_ptr<const Planet> planet : planets) {
+    for (auto& planet : planets) {
         int planet_id = planet->ID();
         if (!m_side_panel->PlanetSelectable(planet_id))
             continue;

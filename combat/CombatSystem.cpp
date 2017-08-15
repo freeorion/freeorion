@@ -52,7 +52,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     // find ships and their owners in system
     std::vector<std::shared_ptr<Ship>> ships = Objects().FindObjects<Ship>(system->ShipIDs());
 
-    for (std::shared_ptr<Ship> ship : ships) {
+    for (auto& ship : ships) {
         // add owner to empires that have assets in this battle
         empire_ids.insert(ship->Owner());
 
@@ -63,7 +63,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     std::vector<std::shared_ptr<Planet>> planets =
         Objects().FindObjects<Planet>(system->PlanetIDs());
 
-    for (std::shared_ptr<Planet> planet : planets) {
+    for (auto& planet : planets) {
         // if planet is populated, add owner to empires that have assets in this battle
         if (!planet->Unowned() || planet->CurrentMeterValue(METER_POPULATION) > 0.0)
             empire_ids.insert(planet->Owner());
@@ -80,7 +80,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     InitializeObjectVisibility();
 
     // ships
-    for (std::shared_ptr<Ship> ship : ships) {
+    for (auto& ship : ships) {
         int ship_id = ship->ID();
         std::shared_ptr<const Fleet> fleet = GetFleet(ship->FleetID());
         if (!fleet) {
@@ -107,7 +107,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     }
 
     // planets
-    for (std::shared_ptr<Planet> planet : planets) {
+    for (auto& planet : planets) {
         int planet_id = planet->ID();
         std::string planet_known = "At " + system->Name() + " Planet " + std::to_string(planet_id) + " owned by empire " +
                                     std::to_string(planet->Owner()) + " visible to empires: ";
@@ -1586,7 +1586,7 @@ namespace {
                 }
             }
 
-            for (std::shared_ptr<const WeaponFireEvent> this_attack : weapon_fire_events) {
+            for (auto this_attack : weapon_fire_events) {
                 combat_info.ForceAtLeastBasicVisibility(this_attack->attacker_id, this_attack->target_id);
                 int target_empire = combat_info.objects.Object(this_attack->target_id)->Owner();
                 std::set<int>::iterator attacker_targettable_it

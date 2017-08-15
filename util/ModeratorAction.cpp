@@ -164,7 +164,7 @@ namespace {
         for (const std::string& star_name : star_names) {
             // does an existing system have this name?
             bool dupe = false;
-            for (std::shared_ptr<const System> system : systems) {
+            for (auto& system : systems) {
                 if (system->Name() == star_name) {
                     dupe = true;
                     break;  // another system has this name. skip to next potential name.

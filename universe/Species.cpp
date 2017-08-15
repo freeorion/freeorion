@@ -93,7 +93,7 @@ Species::~Species()
 void Species::Init() {
     if (m_location)
         m_location->SetTopLevelContent(this->m_name);
-    for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+    for (auto& effect : m_effects) {
         effect->SetTopLevelContent(m_name);
     }
 }
@@ -132,7 +132,7 @@ std::string Species::Dump() const {
     } else {
         retval += DumpIndent() + "effectsgroups = [\n";
         ++g_indent;
-        for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+        for (auto& effect : m_effects) {
             retval += effect->Dump();
         }
         --g_indent;
@@ -168,7 +168,7 @@ std::string Species::GameplayDescription() const {
 
     bool requires_separator = true;
 
-    for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+    for (auto& effect : m_effects) {
         const std::string& description = effect->GetDescription();
         if (description.empty())
             continue;

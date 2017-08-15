@@ -140,7 +140,7 @@ std::vector<std::shared_ptr<const UniverseObject>> ObjectMap::FindObjects(const 
 
 std::vector<std::shared_ptr<UniverseObject>> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) {
     std::vector<std::shared_ptr<UniverseObject>> result;
-    for (std::shared_ptr<UniverseObject> obj : *this) {
+    for (auto& obj : *this) {
         if (std::shared_ptr<UniverseObject> match = obj->Accept(visitor))
             result.push_back(Object(match->ID()));
     }
@@ -310,7 +310,7 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
     std::map<int, std::set<int>>    contained_ships;
     std::map<int, std::set<int>>    contained_fields;
 
-    for (std::shared_ptr<const UniverseObject> contained : *this) {
+    for (auto& contained : *this) {
         if (destroyed_object_ids.find(contained->ID()) != destroyed_object_ids.end())
             continue;
 
@@ -347,7 +347,7 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
     }
 
     // set contained objects of all possible containers
-    for (std::shared_ptr<UniverseObject> obj : *this) {
+    for (auto& obj : *this) {
         if (obj->ObjectType() == OBJ_SYSTEM) {
             std::shared_ptr<System> sys = std::dynamic_pointer_cast<System>(obj);
             if (!sys)

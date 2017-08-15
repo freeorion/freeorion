@@ -442,7 +442,7 @@ namespace {
                 return;
 
             const std::set<int>& destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(m_empire_id);
-            for (std::shared_ptr<const Ship> ship : Objects().FindObjects<Ship>()) {
+            for (auto& ship : Objects().FindObjects<Ship>()) {
                 if (!ship->OwnedBy(m_empire_id) || destroyed_objects.find(ship->ID()) != destroyed_objects.end())
                     continue;
                 m_values[FLEET_DETAIL_SHIP_COUNT]++;
@@ -2021,7 +2021,7 @@ void MapWnd::RenderSystems() {
                     std::map<int, int> colony_count_by_empire_id;
                     const std::set<int>& known_destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
 
-                    for (std::shared_ptr<const Planet> planet : Objects().FindObjects<const Planet>(system->PlanetIDs())) {
+                    for (auto& planet : Objects().FindObjects<const Planet>(system->PlanetIDs())) {
                         if (known_destroyed_object_ids.count(planet->ID()) > 0)
                             continue;
 
@@ -2681,7 +2681,7 @@ void MapWnd::InitTurn() {
 
     timer.EnterSection("fleet signals");
     // connect system fleet add and remove signals
-    for (std::shared_ptr<const System> system : objects.FindObjects<System>()) {
+    for (auto& system : objects.FindObjects<System>()) {
         m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsInsertedSignal.connect(
             boost::bind(&MapWnd::FleetsInsertedSignalHandler, this, _1)));
         m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsRemovedSignal.connect(
@@ -2869,7 +2869,7 @@ void MapWnd::InitTurnRendering() {
     m_system_icons.clear();
 
     // create system icons
-    for (std::shared_ptr<const System> sys : objects.FindObjects<System>()) {
+    for (auto& sys : objects.FindObjects<System>()) {
         int sys_id = sys->ID();
 
         // skip known destroyed objects
@@ -2916,7 +2916,7 @@ void MapWnd::InitTurnRendering() {
     m_field_icons.clear();
 
     // create field icons
-    for (std::shared_ptr<const Field> field : objects.FindObjects<Field>()) {
+    for (auto& field : objects.FindObjects<Field>()) {
         int fld_id = field->ID();
 
         // skip known destroyed and stale fields
@@ -3972,7 +3972,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     // for each map position and empire, find max value of detection range at that position
     std::map<std::pair<int, std::pair<float, float>>, float> empire_position_max_detection_ranges;
 
-    for (std::shared_ptr<const UniverseObject> obj : objects.FindObjects<UniverseObject>()) {
+    for (auto& obj : objects.FindObjects<UniverseObject>()) {
         int object_id = obj->ID();
         // skip destroyed objects
         if (destroyed_object_ids.find(object_id) != destroyed_object_ids.end())
@@ -4933,7 +4933,7 @@ void MapWnd::DeleteFleetButtons() {
 
 void MapWnd::RemoveFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet>>& fleets) {
     ScopedTimer timer("RemoveFleetsStateChangedSignal()", true);
-    for (std::shared_ptr<Fleet> fleet : fleets) {
+    for (auto& fleet : fleets) {
         boost::unordered_map<int, boost::signals2::connection>::iterator
             found_signal = m_fleet_state_change_signals.find(fleet->ID());
         if (found_signal != m_fleet_state_change_signals.end()) {
@@ -4945,7 +4945,7 @@ void MapWnd::RemoveFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fl
 
 void MapWnd::AddFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet>>& fleets) {
     ScopedTimer timer("AddFleetsStateChangedSignal()", true);
-    for (std::shared_ptr<Fleet> fleet : fleets) {
+    for (auto& fleet : fleets) {
         m_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
             boost::bind( &MapWnd::RefreshFleetButtons, this));
     }
@@ -5212,7 +5212,7 @@ void MapWnd::SystemRightClicked(int system_id, GG::Flags< GG::ModKey > mod_keys)
             if (!system)
                 return;
 
-            for (std::shared_ptr<const UniverseObject> obj : Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs())) {
+            for (auto& obj : Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs())) {
                 UniverseObjectType obj_type = obj->ObjectType();
                 if (obj_type >= OBJ_BUILDING && obj_type < OBJ_SYSTEM) {
                     net.SendMessage(ModeratorActionMessage(
@@ -6286,7 +6286,7 @@ void MapWnd::RefreshFleetResourceIndicator() {
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
 
     int total_fleet_count = 0;
-    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<Ship>()) {
+    for (auto& ship : Objects().FindObjects<Ship>()) {
         if (ship->OwnedBy(empire_id) && this_client_known_destroyed_objects.find(ship->ID()) == this_client_known_destroyed_objects.end())
             total_fleet_count++;
     }
@@ -6471,7 +6471,7 @@ namespace {
     std::set<std::pair<std::string, int>, CustomRowCmp> GetSystemNamesIDs() {
         // get systems, store alphabetized
         std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
-        for (std::shared_ptr<const System> system : Objects().FindObjects<System>()) {
+        for (auto& system : Objects().FindObjects<System>()) {
             system_names_ids.insert({system->Name(), system->ID()});
         }
         return system_names_ids;
@@ -6482,7 +6482,7 @@ namespace {
 
         // get IDs of systems that contain any owned planets
         std::unordered_set<int> system_ids;
-        for (std::shared_ptr<UniverseObject> obj : owned_planets)
+        for (auto& obj : owned_planets)
         { system_ids.insert(obj->SystemID()); }
 
         // store systems, sorted alphabetically

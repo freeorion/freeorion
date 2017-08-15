@@ -90,7 +90,7 @@ TextControl::TextControl(const TextControl& that) :
     m_cached_minusable_size_width(that.m_cached_minusable_size_width),
     m_cached_minusable_size(that.m_cached_minusable_size)
 {
-    for (std::shared_ptr<Font::TextElement> elem : m_text_elements) {
+    for (auto& elem : m_text_elements) {
         elem->Bind(m_text);
     }
 }
@@ -112,7 +112,7 @@ TextControl& TextControl::operator=(const TextControl& that)
     m_cached_minusable_size_width = that.m_cached_minusable_size_width;
     m_cached_minusable_size = that.m_cached_minusable_size;
 
-    for (std::shared_ptr<Font::TextElement> elem : m_text_elements) {
+    for (auto& elem : m_text_elements) {
         elem->Bind(m_text);
     }
 
@@ -251,7 +251,7 @@ void TextControl::SetText(const std::string& str,
         return;
 
     std::size_t expected_length(0);
-    for (std::shared_ptr<Font::TextElement> elem : text_elements) {
+    for (auto& elem : text_elements) {
         expected_length += elem->text.size();
     }
 
@@ -261,7 +261,7 @@ void TextControl::SetText(const std::string& str,
     m_text = str;
 
     m_text_elements = text_elements;
-    for (std::shared_ptr<Font::TextElement> elem : m_text_elements) {
+    for (auto& elem : m_text_elements) {
         elem->Bind(m_text);
     }
 

@@ -201,7 +201,7 @@ namespace AIInterface {
             // ownership to all, while remembering which planets this is done
             // to.
             universe.InhibitUniverseObjectSignals(true);
-            for (std::shared_ptr<Planet> planet : universe.Objects().FindObjects<Planet>()) {
+            for (auto& planet : universe.Objects().FindObjects<Planet>()) {
                  if (planet->Unowned()) {
                      unowned_planets.push_back(planet);
                      planet->SetOwner(player_id);
@@ -214,7 +214,7 @@ namespace AIInterface {
 
         if (pretend_to_own_unowned_planets) {
             // remove temporary ownership added above
-            for (std::shared_ptr<Planet> planet : unowned_planets)
+            for (auto& planet : unowned_planets)
                 planet->SetOwner(ALL_EMPIRES);
             universe.InhibitUniverseObjectSignals(false);
         }
@@ -670,7 +670,7 @@ namespace AIInterface {
         bool recipient_has_something_here = false;
         std::vector<std::shared_ptr<const UniverseObject>> system_objects =
             Objects().FindObjects<const UniverseObject>(system->ObjectIDs());
-        for (std::shared_ptr<const UniverseObject> obj : system_objects) {
+        for (auto& obj : system_objects) {
             if (obj->Owner() == recipient_id) {
                 recipient_has_something_here = true;
                 break;

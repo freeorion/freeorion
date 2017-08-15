@@ -897,7 +897,7 @@ void Statistic<T>::GetObjectPropertyValues(const ScriptingContext& context,
     if (m_value_ref) {
         // evaluate ValueRef with each condition match as the LocalCandidate
         // TODO: Can / should this be paralleized?
-        for (std::shared_ptr<const UniverseObject> object : objects) {
+        for (auto& object : objects) {
             T property_value = m_value_ref->Eval(ScriptingContext(context, object));
             object_property_values[object] = property_value;
         }

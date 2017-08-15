@@ -340,7 +340,7 @@ void PartType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& ef
         }
     }
 
-    for (std::shared_ptr<Effect::EffectsGroup> effect : effects) {
+    for (auto& effect : effects) {
         effect->SetTopLevelContent(m_name);
         m_effects.push_back(effect);
     }
@@ -507,7 +507,7 @@ void HullType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& ef
     if (m_speed != 0)
         m_effects.push_back(IncreaseMeter(METER_SPEED,          m_speed,        "RULE_SHIP_SPEED_FACTOR"));
 
-    for (std::shared_ptr<Effect::EffectsGroup> effect : effects) {
+    for (auto& effect : effects) {
         effect->SetTopLevelContent(m_name);
         m_effects.push_back(effect);
     }

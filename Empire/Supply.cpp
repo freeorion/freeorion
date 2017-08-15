@@ -319,7 +319,7 @@ void SupplyManager::Update() {
         const std::set<int>& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
         std::set<int> systems_containing_friendly_fleets;
 
-        for (std::shared_ptr<const Fleet> fleet : fleets) {
+        for (auto& fleet : fleets) {
             int system_id = fleet->SystemID();
             if (system_id == INVALID_OBJECT_ID) {
                 continue;   // not in a system, so can't affect system obstruction
@@ -438,7 +438,7 @@ void SupplyManager::Update() {
                 if (std::shared_ptr<const System> sys = GetSystem(sys_id)) {
                     std::vector<int> obj_ids;
                     std::copy(sys->ContainedObjectIDs().begin(), sys->ContainedObjectIDs().end(), std::back_inserter(obj_ids));
-                    for (std::shared_ptr<UniverseObject> obj : Objects().FindObjects(obj_ids)) {
+                    for (auto& obj : Objects().FindObjects(obj_ids)) {
                         if (!obj)
                             continue;
                         if (!obj->OwnedBy(empire_id))

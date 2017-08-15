@@ -227,7 +227,7 @@ void NewFleetOrder::ExecuteImpl() const {
             fleet->SetArrivalStarlane(firstFleet->ArrivalStarlane());
 
         // remove ships from old fleet(s) and add to new
-        for (std::shared_ptr<Ship> ship : validated_ships) {
+        for (auto& ship : validated_ships) {
             if (std::shared_ptr<Fleet> old_fleet = GetFleet(ship->FleetID())) {
                 modified_fleets.insert(old_fleet);
                 old_fleet->RemoveShip(ship->ID());
@@ -248,7 +248,7 @@ void NewFleetOrder::ExecuteImpl() const {
     system->StateChangedSignal();
 
     // Signal changed state of modified fleets and remove any empty fleets.
-    for (std::shared_ptr<Fleet> modified_fleet : modified_fleets) {
+    for (auto& modified_fleet : modified_fleets) {
         if (!modified_fleet->Empty())
             modified_fleet->StateChangedSignal();
         else {
@@ -439,7 +439,7 @@ void FleetTransferOrder::ExecuteImpl() const {
     std::vector<int>                 validated_ship_ids;
     validated_ship_ids.reserve(m_add_ships.size());
 
-    for (std::shared_ptr<Ship> ship : ships) {
+    for (auto& ship : ships) {
         if (!ship->OwnedBy(EmpireID()))
             continue;
         if (ship->SystemID() != target_fleet->SystemID())
@@ -456,7 +456,7 @@ void FleetTransferOrder::ExecuteImpl() const {
 
     // remove from old fleet(s)
     std::set<std::shared_ptr<Fleet>> modified_fleets;
-    for (std::shared_ptr<Ship> ship : validated_ships) {
+    for (auto& ship : validated_ships) {
         if (std::shared_ptr<Fleet> source_fleet = GetFleet(ship->FleetID())) {
             source_fleet->RemoveShip(ship->ID());
             modified_fleets.insert(source_fleet);
@@ -472,7 +472,7 @@ void FleetTransferOrder::ExecuteImpl() const {
     // signal change to fleet states
     modified_fleets.insert(target_fleet);
 
-    for (std::shared_ptr<Fleet> modified_fleet : modified_fleets) {
+    for (auto& modified_fleet : modified_fleets) {
         if (!modified_fleet->Empty())
             modified_fleet->StateChangedSignal();
         else {

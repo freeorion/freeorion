@@ -162,7 +162,7 @@ void ResourcePool::Update() {
     // system.  If a group does, place the object into that system group's set
     // of objects.  If no group contains the object, place the object in its own
     // single-object group.
-    for (std::shared_ptr<const UniverseObject> obj : Objects().FindObjects<const UniverseObject>(m_object_ids)) {
+    for (auto& obj : Objects().FindObjects<const UniverseObject>(m_object_ids)) {
         int object_id = obj->ID();
         int object_system_id = obj->SystemID();
         // can't generate resources when not in a system
@@ -205,7 +205,7 @@ void ResourcePool::Update() {
         std::set<int> object_group_ids;
         float total_group_output = 0.0f;
         float total_group_target_output = 0.0f;
-        for (std::shared_ptr<const UniverseObject> obj : object_group) {
+        for (auto& obj : object_group) {
             if (obj->GetMeter(meter_type))
                 total_group_output += obj->CurrentMeterValue(meter_type);
             if (obj->GetMeter(target_meter_type))

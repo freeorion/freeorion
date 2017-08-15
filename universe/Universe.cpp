@@ -469,7 +469,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters(bool do_accounting) {
     // value can be calculated (by accumulating all effects' modifications this
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
-    for (std::shared_ptr<UniverseObject> object : m_objects) {
+    for (auto& object : m_objects) {
         object->ResetTargetMaxUnpairedMeters();
         object->ResetPairedActiveMeters();
     }
@@ -479,7 +479,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters(bool do_accounting) {
     ExecuteEffects(targets_causes, do_accounting, false, false, true);
     // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     // clamp max and target meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
-    for (std::shared_ptr<UniverseObject> object : m_objects)
+    for (auto& object : m_objects)
         object->ClampMeters();
 }
 
@@ -503,7 +503,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
     // value can be calculated (by accumulating all effects' modifications this
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
-    for (std::shared_ptr<UniverseObject> object : objects) {
+    for (auto& object : objects) {
         object->ResetTargetMaxUnpairedMeters();
         object->ResetPairedActiveMeters();
     }
@@ -513,7 +513,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
 
     ExecuteEffects(targets_causes, do_accounting, true);
 
-    for (std::shared_ptr<UniverseObject> object : objects)
+    for (auto& object : objects)
         object->ClampMeters();
 }
 
@@ -527,7 +527,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes);
 
-    for (std::shared_ptr<UniverseObject> object : m_objects) {
+    for (auto& object : m_objects) {
         object->ResetTargetMaxUnpairedMeters();
         object->ResetPairedActiveMeters();
     }
@@ -535,7 +535,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
         entry.second->ResetMeters();
     ExecuteEffects(targets_causes, do_accounting, true, false, true);
 
-    for (std::shared_ptr<UniverseObject> object : m_objects)
+    for (auto& object : m_objects)
         object->ClampMeters();
 }
 
@@ -548,13 +548,13 @@ void Universe::ApplyMeterEffectsAndUpdateTargetMaxUnpairedMeters(bool do_account
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes);
 
-    for (std::shared_ptr<UniverseObject> object : m_objects) {
+    for (auto& object : m_objects) {
         object->ResetTargetMaxUnpairedMeters();
     }
 
     ExecuteEffects(targets_causes, do_accounting, true, false, true);
 
-    for (std::shared_ptr<UniverseObject> object : m_objects)
+    for (auto& object : m_objects)
         object->ClampMeters();
 }
 
@@ -720,7 +720,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
                        boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second, _1));
     }
 
-    for (std::shared_ptr<UniverseObject> obj : object_ptrs) {
+    for (auto& obj : object_ptrs) {
         int obj_id = obj->ID();
 
         // Reset max meters to DEFAULT_VALUE and current meters to initial value at start of this turn
@@ -746,7 +746,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     }
 
     TraceLogger(effects) << "UpdateMeterEstimatesImpl after resetting meters objects:";
-    for (std::shared_ptr<UniverseObject> obj : object_ptrs)
+    for (auto& obj : object_ptrs)
             TraceLogger(effects) << obj->Dump();
 
     // cache all activation and scoping condition results before applying Effects, since the application of
@@ -758,14 +758,14 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     ExecuteEffects(targets_causes, do_accounting, true, false, false, false);
 
     TraceLogger(effects) << "UpdateMeterEstimatesImpl after executing effects objects:";
-    for (std::shared_ptr<UniverseObject> obj : object_ptrs)
+    for (auto& obj : object_ptrs)
         TraceLogger(effects) << obj->Dump();
 
     // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
     // max at the start of the turn
     if (!m_effect_discrepancy_map.empty() && do_accounting) {
-        for (std::shared_ptr<UniverseObject> obj : object_ptrs) {
+        for (auto& obj : object_ptrs) {
             int obj_id = obj->ID();
 
             // check if this object has any discrepancies
@@ -800,7 +800,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     }
 
     // clamp meters to valid range of max values, and so current is less than max
-    for (std::shared_ptr<UniverseObject> obj : object_ptrs) {
+    for (auto& obj : object_ptrs) {
         // currently this clamps all meters, even if not all meters are being processed by this function...
         // but that shouldn't be a problem, as clamping meters that haven't changed since they were last
         // updated should have no effect
@@ -808,14 +808,14 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     }
 
     TraceLogger(effects) << "UpdateMeterEstimatesImpl after discrepancies and clamping objects:";
-    for (std::shared_ptr<UniverseObject> obj : object_ptrs)
+    for (auto& obj : object_ptrs)
         TraceLogger(effects) << obj->Dump();
 
 }
 
 void Universe::BackPropagateObjectMeters(const std::vector<int>& object_ids) {
     // copy current meter values to initial values
-    for (std::shared_ptr<UniverseObject> obj : m_objects.FindObjects(object_ids))
+    for (auto& obj : m_objects.FindObjects(object_ids))
         obj->BackPropagateMeters();
 }
 
@@ -1027,7 +1027,7 @@ namespace {
         // create temporary container for concurrent work
         Effect::TargetSet target_objects(*m_target_objects);
         // process all sources in set provided
-        for (std::shared_ptr<const UniverseObject> source : *m_sources) {
+        for (auto& source : *m_sources) {
             ScriptingContext source_context(source);
             int source_object_id = (source ? source->ID() : INVALID_OBJECT_ID);
             ScopedTimer update_timer("... StoreTargetsAndCausesOfEffectsGroups done processing source " +
@@ -1096,7 +1096,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     Effect::TargetSet all_potential_targets = m_objects.FindObjects(target_objects);
 
     TraceLogger(effects) << "target objects:";
-    for (std::shared_ptr<UniverseObject> obj : all_potential_targets)
+    for (auto& obj : all_potential_targets)
         TraceLogger(effects) << obj->Dump();
 
     // caching space for each source object's results of finding matches for
@@ -1131,7 +1131,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
     // find each species planets in single pass, maintaining object map order per-species
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> species_objects;
-    for (std::shared_ptr<Planet> planet : m_objects.FindObjects<Planet>()) {
+    for (auto& planet : m_objects.FindObjects<Planet>()) {
         if (m_destroyed_object_ids.find(planet->ID()) != m_destroyed_object_ids.end())
             continue;
         const std::string& species_name = planet->SpeciesName();
@@ -1149,7 +1149,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     type_timer.restart();
 
     // find each species ships in single pass, maintaining object map order per-species
-    for (std::shared_ptr<Ship> ship : m_objects.FindObjects<Ship>()) {
+    for (auto& ship : m_objects.FindObjects<Ship>()) {
         if (m_destroyed_object_ids.find(ship->ID()) != m_destroyed_object_ids.end())
             continue;
         const std::string& species_name = ship->SpeciesName();
@@ -1174,7 +1174,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         if (species_objects_it == species_objects.end())
             continue;
 
-        for (std::shared_ptr<Effect::EffectsGroup> effects_group : species->Effects()) {
+        for (auto& effects_group : species->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
                 effects_group, species_objects_it->second, ECT_SPECIES, species_name,
@@ -1190,7 +1190,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     type_timer.restart();
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> specials_objects;
     // determine objects with specials in a single pass
-    for (std::shared_ptr<const UniverseObject> obj : m_objects) {
+    for (auto& obj : m_objects) {
         int source_object_id = obj->ID();
         if (m_destroyed_object_ids.find(source_object_id) != m_destroyed_object_ids.end())
             continue;
@@ -1212,7 +1212,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         if (specials_objects_it == specials_objects.end())
             continue;
 
-        for (std::shared_ptr<Effect::EffectsGroup> effects_group : special->Effects()) {
+        for (auto& effects_group : special->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
                 effects_group, specials_objects_it->second, ECT_SPECIAL, special_name,
@@ -1239,7 +1239,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             const Tech* tech = GetTech(tech_name);
             if (!tech) continue;
 
-            for (std::shared_ptr<Effect::EffectsGroup> effects_group : tech->Effects()) {
+            for (auto& effects_group : tech->Effects()) {
                 targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
                 run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
                     effects_group, tech_sources.back(), ECT_TECH, tech->Name(),
@@ -1258,7 +1258,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
     // determine buildings of each type in a single pass
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> buildings_by_type;
-    for (std::shared_ptr<Building> building : m_objects.FindObjects<Building>()) {
+    for (auto& building : m_objects.FindObjects<Building>()) {
         if (m_destroyed_object_ids.find(building->ID()) != m_destroyed_object_ids.end())
             continue;
         const std::string&  building_type_name = building->BuildingTypeName();
@@ -1281,7 +1281,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         if (buildings_by_type_it == buildings_by_type.end())
             continue;
 
-        for (std::shared_ptr<Effect::EffectsGroup> effects_group : building_type->Effects()) {
+        for (auto& effects_group : building_type->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
                 effects_group, buildings_by_type_it->second, ECT_BUILDING, building_type_name,
@@ -1301,7 +1301,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     // recomputing targets for the same ship and part is kind of silly here, but shouldn't hurt
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_hull_type;
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_part_type;
-    for (std::shared_ptr<const Ship> ship : m_objects.FindObjects<Ship>()) {
+    for (auto& ship : m_objects.FindObjects<Ship>()) {
         if (m_destroyed_object_ids.find(ship->ID()) != m_destroyed_object_ids.end())
             continue;
 
@@ -1338,7 +1338,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         if (ships_by_hull_type_it == ships_by_hull_type.end())
             continue;
 
-        for (std::shared_ptr<Effect::EffectsGroup> effects_group : hull_type->Effects()) {
+        for (auto& effects_group : hull_type->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
                 effects_group, ships_by_hull_type_it->second, ECT_SHIP_HULL, hull_type_name,
@@ -1357,7 +1357,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         if (ships_by_part_type_it == ships_by_part_type.end())
             continue;
 
-        for (std::shared_ptr<Effect::EffectsGroup> effects_group : part_type->Effects()) {
+        for (auto& effects_group : part_type->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
                 effects_group, ships_by_part_type_it->second, ECT_SHIP_PART, part_type_name,
@@ -1374,7 +1374,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     type_timer.restart();
     // determine fields of each type in a single pass
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> fields_by_type;
-    for (std::shared_ptr<const Field> field : m_objects.FindObjects<Field>()) {
+    for (auto& field : m_objects.FindObjects<Field>()) {
         if (m_destroyed_object_ids.find(field->ID()) != m_destroyed_object_ids.end())
             continue;
 
@@ -1397,7 +1397,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         if (fields_by_type_it == fields_by_type.end())
             continue;
 
-        for (std::shared_ptr<Effect::EffectsGroup> effects_group : field_type->Effects()) {
+        for (auto effects_group : field_type->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
                 effects_group, fields_by_type_it->second, ECT_FIELD, field_type_name,
@@ -1754,7 +1754,7 @@ namespace {
     std::map<int, std::map<std::pair<double, double>, float>> GetEmpiresPositionDetectionRanges() {
         std::map<int, std::map<std::pair<double, double>, float>> retval;
 
-        for (std::shared_ptr<const UniverseObject> obj : Objects()) {
+        for (auto& obj : Objects()) {
             // skip unowned objects, which can't provide detection to any empire
             if (obj->Unowned())
                 continue;
@@ -1932,7 +1932,7 @@ namespace {
                 detecting_empire_entry.second;
 
             // for each field, try to find a detector position in range for this empire
-            for (std::shared_ptr<const Field> field : objects.FindObjects<Field>()) {
+            for (auto& field : objects.FindObjects<Field>()) {
                 if (field->GetMeter(METER_STEALTH)->Current() > detection_strength)
                     continue;
                 double field_size = field->GetMeter(METER_SIZE)->Current();
@@ -2005,7 +2005,7 @@ namespace {
     /** sets visibility of objects that empires own for those objects */
     void SetEmpireOwnedObjectVisibilities() {
         Universe& universe = GetUniverse();
-        for (std::shared_ptr<const UniverseObject> obj : Objects()) {
+        for (auto& obj : Objects()) {
             if (obj->Unowned())
                 continue;
             universe.SetEmpireObjectVisibility(obj->Owner(), obj->ID(), VIS_FULL_VISIBILITY);
@@ -2055,7 +2055,7 @@ namespace {
 
         // get planets, check their locations...
         std::vector<std::shared_ptr<const Planet>> planets = objects.FindObjects<Planet>();
-        for (std::shared_ptr<const Planet> planet : objects.FindObjects<Planet>()) {
+        for (auto& planet : objects.FindObjects<Planet>()) {
             int system_id = planet->SystemID();
             if (system_id == INVALID_OBJECT_ID)
                 continue;
@@ -2164,7 +2164,7 @@ namespace {
 
     void PropagateVisibilityToSystemsAlongStarlanes(const ObjectMap& objects,
                                                     Universe::EmpireObjectVisibilityMap& empire_object_visibility) {
-        for (std::shared_ptr<const System> system : objects.FindObjects<System>()) {
+        for (auto& system : objects.FindObjects<System>()) {
             int system_id = system->ID();
 
             // for each empire with a visibility map
@@ -2210,7 +2210,7 @@ namespace {
         // moving are at least basically visible, so that the starlane itself can /
         // will be visible
         std::vector<std::shared_ptr<const Fleet>> moving_fleets;
-        for (std::shared_ptr<const UniverseObject> obj : objects.FindObjects(MovingFleetVisitor())) {
+        for (auto& obj : objects.FindObjects(MovingFleetVisitor())) {
             if (obj->Unowned() || obj->SystemID() == INVALID_OBJECT_ID || obj->ObjectType() != OBJ_FLEET)
                 continue;
             std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(obj);
@@ -2404,7 +2404,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
         return;
 
     // for each object in universe
-    for (std::shared_ptr<const UniverseObject> full_object : m_objects) {
+    for (auto& full_object : m_objects) {
         if (!full_object) {
             ErrorLogger() << "UpdateEmpireLatestKnownObjectsAndVisibilityTurns found null object in m_objects";
             continue;
@@ -2713,12 +2713,12 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
 
         // remove any starlane connections to this system
         int this_sys_id = obj_system->ID();
-        for (std::shared_ptr<System> sys : m_objects.FindObjects<System>()) {
+        for (auto& sys : m_objects.FindObjects<System>()) {
             sys->RemoveStarlane(this_sys_id);
         }
 
         // remove fleets / ships moving along destroyed starlane
-        for (std::shared_ptr<Fleet> fleet : m_objects.FindObjects<Fleet>()) {
+        for (auto& fleet : m_objects.FindObjects<Fleet>()) {
             if (fleet->SystemID() == INVALID_OBJECT_ID && (
                 fleet->NextSystemID() == this_sys_id ||
                 fleet->PreviousSystemID() == this_sys_id))

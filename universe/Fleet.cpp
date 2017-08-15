@@ -66,7 +66,7 @@ namespace {
     void MoveFleetWithShips(std::shared_ptr<Fleet>& fleet, double x, double y){
         fleet->MoveTo(x, y);
 
-        for (std::shared_ptr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
+        for (auto& ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
             ship->MoveTo(x, y);
         }
     }
@@ -74,7 +74,7 @@ namespace {
     void InsertFleetWithShips(std::shared_ptr<Fleet>& fleet, std::shared_ptr<System>& system){
         system->Insert(fleet);
 
-        for (std::shared_ptr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
+        for (auto& ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
             system->Insert(ship);
         }
     }
@@ -575,7 +575,7 @@ float Fleet::Fuel() const {
     float fuel = Meter::LARGE_VALUE;
     bool is_fleet_scrapped = true;
 
-    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
         const Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL);
         if (!meter) {
             ErrorLogger() << "Fleet::Fuel skipping ship with no fuel meter";
@@ -601,7 +601,7 @@ float Fleet::MaxFuel() const {
     float max_fuel = Meter::LARGE_VALUE;
     bool is_fleet_scrapped = true;
 
-    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
         const Meter* meter = ship->UniverseObject::GetMeter(METER_MAX_FUEL);
         if (!meter) {
             ErrorLogger() << "Fleet::MaxFuel skipping ship with no max fuel meter";
@@ -627,7 +627,7 @@ int Fleet::FinalDestinationID() const {
 } 
 
 bool Fleet::HasMonsters() const {
-    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->IsMonster())
             return true;
     }
@@ -635,7 +635,7 @@ bool Fleet::HasMonsters() const {
 }
 
 bool Fleet::HasArmedShips() const {
-    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->IsArmed())
             return true;
     }
@@ -643,7 +643,7 @@ bool Fleet::HasArmedShips() const {
 }
 
 bool Fleet::HasFighterShips() const {
-    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->HasFighters())
             return true;
     }
@@ -651,7 +651,7 @@ bool Fleet::HasFighterShips() const {
 }
 
 bool Fleet::HasColonyShips() const {
-    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->CanColonize())
             if (const ShipDesign* design = ship->Design())
                 if (design->ColonyCapacity() > 0.0)
@@ -661,7 +661,7 @@ bool Fleet::HasColonyShips() const {
 }
 
 bool Fleet::HasOutpostShips() const {
-    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->CanColonize())
             if (const ShipDesign* design = ship->Design())
                 if (design->ColonyCapacity() == 0.0)
@@ -671,7 +671,7 @@ bool Fleet::HasOutpostShips() const {
 }
 
 bool Fleet::HasTroopShips() const {
-    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->HasTroops())
             return true;
     }
@@ -679,7 +679,7 @@ bool Fleet::HasTroopShips() const {
 }
 
 bool Fleet::HasShipsOrderedScrapped() const {
-    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->OrderedScrapped())
             return true;
     }
@@ -687,7 +687,7 @@ bool Fleet::HasShipsOrderedScrapped() const {
 }
 
 bool Fleet::HasShipsWithoutScrapOrders() const {
-    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (!ship->OrderedScrapped())
             return true;
     }
@@ -703,7 +703,7 @@ float Fleet::ResourceOutput(ResourceType type) const {
         return output;
 
     // determine resource output of each ship in this fleet
-    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
         output += ship->CurrentMeterValue(meter_type);
     }
     return output;
@@ -823,7 +823,7 @@ void Fleet::MovementPhase() {
     // if owner of fleet can resupply ships at the location of this fleet, then
     // resupply all ships in this fleet
     if (GetSupplyManager().SystemHasFleetSupply(fleet->SystemID(), fleet->Owner(), ALLOW_ALLIED_SUPPLY)) {
-        for (std::shared_ptr<Ship> ship : ships) {
+        for (auto& ship : ships) {
             ship->Resupply();
         }
     }
@@ -882,7 +882,7 @@ void Fleet::MovementPhase() {
             //if (fleet->FinalDestinationID() == INVALID_OBJECT_ID ||
             //    fleet->FinalDestinationID() == fleet->SystemID())
             //{
-            //    for (std::shared_ptr<Ship> ship : ships) {
+            //    for (auto& ship : ships) {
             //        if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
             //            fuel_meter->AddToCurrent(0.1001f);  // .0001 to prevent rounding down
             //            fuel_meter->BackPropagate();
@@ -900,7 +900,7 @@ void Fleet::MovementPhase() {
             // remove fleet and ships from system they are departing
             current_system->Remove(fleet->ID());
             fleet->SetSystem(INVALID_OBJECT_ID);
-            for (std::shared_ptr<Ship> ship : ships) {
+            for (auto& ship : ships) {
                 current_system->Remove(ship->ID());
                 ship->SetSystem(INVALID_OBJECT_ID);
             }
@@ -958,7 +958,7 @@ void Fleet::MovementPhase() {
             if (resupply_here) {
                 //DebugLogger() << " ... node has fuel supply.  consumed fuel for movement reset to 0 and fleet resupplied";
                 fuel_consumed = 0.0f;
-                for (std::shared_ptr<Ship> ship : ships) {
+                for (auto& ship : ships) {
                     ship->Resupply();
                 }
             }
@@ -1015,7 +1015,7 @@ void Fleet::MovementPhase() {
 
     // consume fuel from ships in fleet
     if (fuel_consumed > 0.0f) {
-        for (std::shared_ptr<Ship> ship : ships) {
+        for (auto& ship : ships) {
             if (Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
                 meter->AddToCurrent(-fuel_consumed);
                 meter->BackPropagate();
@@ -1214,7 +1214,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     }
 
     float lowest_ship_stealth = 99999.9f; // arbitrary large number. actual stealth of ships should be less than this...
-    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(this->ShipIDs())) {
+    for (auto& ship : Objects().FindObjects<const Ship>(this->ShipIDs())) {
         if (lowest_ship_stealth > ship->CurrentMeterValue(METER_STEALTH))
             lowest_ship_stealth = ship->CurrentMeterValue(METER_STEALTH);
     }
@@ -1222,11 +1222,11 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     float monster_detection = 0.0f;
     std::vector<std::shared_ptr<const Fleet>> fleets =
         Objects().FindObjects<const Fleet>(current_system->FleetIDs());
-    for (std::shared_ptr<const Fleet> fleet : fleets) {
+    for (auto& fleet : fleets) {
         if (!fleet->Unowned())
             continue;
 
-        for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(fleet->ShipIDs())) {
+        for (auto& ship : Objects().FindObjects<const Ship>(fleet->ShipIDs())) {
             float cur_detection = ship->CurrentMeterValue(METER_DETECTION);
             if (cur_detection >= monster_detection)
                 monster_detection = cur_detection;
@@ -1234,7 +1234,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     }
 
     bool can_be_blockaded = false;
-    for (std::shared_ptr<const Fleet> fleet : fleets) {
+    for (auto& fleet : fleets) {
         if (fleet->NextSystemID() != INVALID_OBJECT_ID) //fleets trying to leave this turn can't blockade pre-combat.
             continue;
         bool unrestricted = (fleet->m_arrival_starlane == start_system_id);

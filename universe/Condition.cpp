@@ -717,7 +717,7 @@ namespace {
 
         // get sort key values for all objects in from_set, and sort by inserting into map
         std::multimap<float, std::shared_ptr<const UniverseObject>> sort_key_objects;
-        for (std::shared_ptr<const UniverseObject> from : from_set) {
+        for (auto& from : from_set) {
             float sort_value = sort_key->Eval(ScriptingContext(context, from));
             sort_key_objects.insert(std::make_pair(sort_value, from));
         }
@@ -870,7 +870,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
 
     if (search_domain == NON_MATCHES) {
         // put matched objects that are in subcondition_matching_non_matches into matches
-        for (std::shared_ptr<const UniverseObject> matched_object : matched_objects) {
+        for (auto& matched_object : matched_objects) {
             // is this matched object in subcondition_matching_non_matches?
             ObjectSet::iterator smnt_it = std::find(subcondition_matching_non_matches.begin(), subcondition_matching_non_matches.end(), matched_object);
             if (smnt_it != subcondition_matching_non_matches.end()) {
@@ -893,7 +893,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
 
     } else { /*(search_domain == MATCHES)*/
         // put matched objecs that are in subcondition_matching_matches back into matches
-        for (std::shared_ptr<const UniverseObject> matched_object : matched_objects) {
+        for (auto& matched_object : matched_objects) {
             // is this matched object in subcondition_matching_matches?
             ObjectSet::iterator smt_it = std::find(subcondition_matching_matches.begin(), subcondition_matching_matches.end(), matched_object);
             if (smt_it != subcondition_matching_matches.end()) {
@@ -2674,7 +2674,7 @@ namespace {
             // for each candidate.
             m_subcondition_matches_ids.reserve(subcondition_matches.size());
             // gather the ids
-            for (std::shared_ptr<const UniverseObject> obj : subcondition_matches) {
+            for (auto& obj : subcondition_matches) {
                 if (obj)
                     m_subcondition_matches_ids.push_back(obj->ID());
             }
@@ -2823,7 +2823,7 @@ bool Contains::Match(const ScriptingContext& local_context) const {
     m_condition->Eval(local_context, subcondition_matches);
 
     // does candidate object contain any subcondition matches?
-    for (std::shared_ptr<const UniverseObject> obj : subcondition_matches)
+    for (auto& obj : subcondition_matches)
         if (candidate->Contains(obj->ID()))
             return true;
 
@@ -2879,7 +2879,7 @@ namespace {
             // executed for each candidate.
             m_subcondition_matches_ids.reserve(subcondition_matches.size());
             // gather the ids
-            for (std::shared_ptr<const UniverseObject> obj : subcondition_matches) {
+            for (auto& obj : subcondition_matches) {
                 if (obj)
                 { m_subcondition_matches_ids.push_back(obj->ID()); }
             }
@@ -7052,7 +7052,7 @@ namespace {
                 return false;
 
             // is candidate object close enough to any of the passed-in objects?
-            for (std::shared_ptr<const UniverseObject> obj : m_from_objects) {
+            for (auto& obj : m_from_objects) {
                 double delta_x = candidate->X() - obj->X();
                 double delta_y = candidate->Y() - obj->Y();
                 if (delta_x*delta_x + delta_y*delta_y <= m_distance2)
@@ -7473,7 +7473,7 @@ namespace {
 
         // loop over all existing lanes in all systems, checking if a lane
         // beween the specified systems would cross any of the existing lanes
-        for (std::shared_ptr<const System> system : objects.FindObjects<System>()) {
+        for (auto& system : objects.FindObjects<System>()) {
             if (system == lane_end_sys1 || system == lane_end_sys2)
                 continue;
 
@@ -7511,7 +7511,7 @@ namespace {
 
         // loop over all existing systems, checking if each is too close to a
         // lane between the specified lane endpoints
-        for (std::shared_ptr<const System> system : systems) {
+        for (auto& system : systems) {
             if (system == lane_end_sys1 || system == lane_end_sys2)
                 continue;
 
@@ -7529,7 +7529,7 @@ namespace {
             // get (one of each of) set of systems that are or that contain any
             // destination objects
             std::set<std::shared_ptr<const System>> dest_systems;
-            for (std::shared_ptr<const UniverseObject> obj : destination_objects) {
+            for (auto& obj : destination_objects) {
                 if (std::shared_ptr<const System> sys = GetSystem(obj->SystemID()))
                     dest_systems.insert(sys);
             }
@@ -7549,14 +7549,14 @@ namespace {
 
 
             // check if candidate is one of the destination systems
-            for (std::shared_ptr<const System> destination : m_destination_systems) {
+            for (auto& destination : m_destination_systems) {
                 if (candidate_sys->ID() == destination->ID())
                     return false;
             }
 
 
             // check if candidate already has a lane to any of the destination systems
-            for (std::shared_ptr<const System> destination : m_destination_systems) {
+            for (auto& destination : m_destination_systems) {
                 if (candidate_sys->HasStarlaneTo(destination->ID()))
                     return false;
             }
@@ -7570,7 +7570,7 @@ namespace {
                     continue;
 
                 // check this existing lane against potential lanes to all destination systems
-                for (std::shared_ptr<const System> dest_sys : m_destination_systems) {
+                for (auto& dest_sys : m_destination_systems) {
                     if (LanesAngularlyTooClose(candidate_sys, candidate_existing_lane_end_sys, dest_sys)) {
                         //TraceLogger() << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys->UniverseObject::Name() << " due to existing lane to " << candidate_existing_lane_end_sys->UniverseObject::Name() << std::endl;
                         return false;
@@ -7582,7 +7582,7 @@ namespace {
             // check if any of the proposed lanes are too close to any already-
             // present lanes of any of the destination systems
             //TraceLogger() << "... Checking lanes of destination systems:" << std::endl;
-            for (std::shared_ptr<const System> dest_sys : m_destination_systems) {
+            for (auto& dest_sys : m_destination_systems) {
                 // check this destination system's existing lanes against a lane
                 // to the candidate system
                 for (const std::map<int, bool>::value_type& dest_lane : dest_sys->StarlanesWormholes()) {
@@ -7621,7 +7621,7 @@ namespace {
             // check that the proposed lanes are not too close to any existing
             // system they are not connected to
             //TraceLogger() << "... Checking proposed lanes for proximity to other systems" <<std::endl;
-            for (std::shared_ptr<const System> dest_sys : m_destination_systems) {
+            for (auto& dest_sys : m_destination_systems) {
                 if (LaneTooCloseToOtherSystem(candidate_sys, dest_sys)) {
                     //TraceLogger() << " ... ... can't add lane from candidate: " << candidate_sys->Name() << " to " << dest_sys->Name() << " due to proximity to another system." << std::endl;
                     return false;
@@ -7631,7 +7631,7 @@ namespace {
 
             // check that there are no lanes already existing that cross the proposed lanes
             //TraceLogger() << "... Checking for potential lanes crossing existing lanes" << std::endl;
-            for (std::shared_ptr<const System> dest_sys : m_destination_systems) {
+            for (auto& dest_sys : m_destination_systems) {
                 if (LaneCrossesExistingLane(candidate_sys, dest_sys)) {
                     //TraceLogger() << " ... ... can't add lane from candidate: " << candidate_sys->Name() << " to " << dest_sys->Name() << " due to crossing an existing lane." << std::endl;
                     return false;
@@ -8092,7 +8092,7 @@ namespace {
                 return false;
 
             // is candidate object connected to a subcondition matching object by resource supply?
-            for (std::shared_ptr<const UniverseObject> from_object : m_from_objects) {
+            for (auto& from_object : m_from_objects) {
                 for (const std::set<int>& group : groups) {
                     if (group.find(from_object->SystemID()) != group.end()) {
                         // found resource sharing group containing test object.  Does it also contain candidate?
@@ -8395,7 +8395,7 @@ namespace {
                 return false;
 
             // check if any of the by_objects is ordered to bombard the candidate planet
-            for (std::shared_ptr<const UniverseObject> obj : m_by_objects) {
+            for (auto& obj : m_by_objects) {
                 std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(obj);
                 if (!ship)
                     continue;

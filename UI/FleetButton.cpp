@@ -101,7 +101,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
     } else {
         owner_id = (*fleets.begin())->Owner();
         // use ALL_EMPIRES if there are multiple owners (including no owner and an owner)
-        for (std::shared_ptr<const Fleet> fleet : fleets) {
+        for (auto& fleet : fleets) {
             if (fleet->Owner() != owner_id) {
                 owner_id = ALL_EMPIRES;
                 multiple_owners = true;
@@ -118,7 +118,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
         // all ships owned by now empire
         bool monsters = true;
         // find if any ship in fleets in button is not a monster
-        for (std::shared_ptr<const Fleet> fleet : fleets) {
+        for (auto& fleet : fleets) {
             for (int ship_id : fleet->ShipIDs()) {
                 if (std::shared_ptr<const Ship> ship = GetShip(ship_id)) {
                     if (!ship->IsMonster()) {
@@ -172,7 +172,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
     // select icon(s) for fleet(s)
     int num_ships = 0;
     m_fleet_blockaded = false;
-    for (std::shared_ptr<const Fleet> fleet : fleets) {
+    for (auto& fleet : fleets) {
         if (fleet) {
             num_ships += fleet->NumShips();
             if (!m_fleet_blockaded && fleet->Blockaded())
@@ -201,7 +201,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
         Resize(GG::Pt(size_texture->DefaultWidth(), size_texture->DefaultHeight()));
     }
 
-    for (std::shared_ptr<GG::Texture> texture : FleetHeadIcons(fleets, size_type)) {
+    for (auto& texture : FleetHeadIcons(fleets, size_type)) {
         auto icon = GG::Wnd::Create<RotatingGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         icon->SetPhaseOffset(pointing_angle);
         icon->SetRPM(0.0f);
@@ -415,7 +415,7 @@ std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(const std::vector<std::
 
     // the set of fleets is treated like a fleet that contains all the ships
     bool hasColonyShips = false; bool hasOutpostShips = false; bool hasTroopShips = false; bool hasMonsters = false; bool hasArmedShips = false;
-    for (std::shared_ptr<const Fleet> fleet : fleets) {
+    for (auto& fleet : fleets) {
         if (!fleet)
             continue;
 

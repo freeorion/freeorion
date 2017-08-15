@@ -295,7 +295,7 @@ namespace {
 
                 // occupied planets
                 std::vector<std::shared_ptr<const Planet>> species_occupied_planets;
-                for (std::shared_ptr<Planet> planet : Objects().FindObjects<Planet>()) {
+                for (auto& planet : Objects().FindObjects<Planet>()) {
                     if ((planet->SpeciesName() == entry.first) && (known_homeworlds.find(planet->ID()) == known_homeworlds.end()))
                         species_occupied_planets.push_back(planet);
                 }
@@ -304,7 +304,7 @@ namespace {
                         species_entry += "  |   " + std::to_string(species_occupied_planets.size()) + " " + UserString("OCCUPIED_PLANETS");
                     } else {
                         species_entry += "  |   " + UserString("OCCUPIED_PLANETS") + ":  ";
-                        for (std::shared_ptr<const Planet> planet : species_occupied_planets) {
+                        for (auto& planet : species_occupied_planets) {
                             species_entry += LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), planet->PublicName(client_empire_id)) + "   ";
                         }
                     }
@@ -361,7 +361,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_SHIP") {
-            for (std::shared_ptr<const Ship> ship : Objects().FindObjects<Ship>()) {
+            for (auto& ship : Objects().FindObjects<Ship>()) {
                 const std::string& ship_name = ship->PublicName(client_empire_id);
                 sorted_entries_list.insert({ship_name,
                                             {LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name) + "  ",
@@ -369,7 +369,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_MONSTER") {
-            for (std::shared_ptr<const Ship> ship : Objects().FindObjects<Ship>()) {
+            for (auto& ship : Objects().FindObjects<Ship>()) {
                 if (!ship->IsMonster())
                     continue;
                 const std::string& ship_name = ship->PublicName(client_empire_id);
@@ -386,7 +386,7 @@ namespace {
                                                  std::to_string(it->first)}});
 
         } else if (dir_name == "ENC_FLEET") {
-            for (std::shared_ptr<const Fleet> fleet : Objects().FindObjects<Fleet>()) {
+            for (auto& fleet : Objects().FindObjects<Fleet>()) {
                 const std::string& flt_name = fleet->PublicName(client_empire_id);
                 sorted_entries_list.insert({flt_name,
                                             {LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet->ID(), flt_name) + "  ",
@@ -394,7 +394,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_PLANET") {
-            for (std::shared_ptr<const Planet> planet : Objects().FindObjects<Planet>()) {
+            for (auto& planet : Objects().FindObjects<Planet>()) {
                 const std::string& plt_name = planet->PublicName(client_empire_id);
                 sorted_entries_list.insert({plt_name,
                                             {LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), plt_name) + "  ",
@@ -402,7 +402,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_BUILDING") {
-            for (std::shared_ptr<const Building> building : Objects().FindObjects<Building>()) {
+            for (auto& building : Objects().FindObjects<Building>()) {
                 const std::string& bld_name = building->PublicName(client_empire_id);
                 sorted_entries_list.insert({bld_name,
                                             {LinkTaggedIDText(VarText::BUILDING_ID_TAG, building->ID(), bld_name) + "  ",
@@ -410,7 +410,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_SYSTEM") {
-            for (std::shared_ptr<const System> system : Objects().FindObjects<System>()) {
+            for (auto& system : Objects().FindObjects<System>()) {
                 const std::string& sys_name = system->ApparentName(client_empire_id);
                 sorted_entries_list.insert({sys_name,
                                             {LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name) + "  ",
@@ -418,7 +418,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_FIELD") {
-            for (std::shared_ptr<const Field> field : Objects().FindObjects<Field>()) {
+            for (auto& field : Objects().FindObjects<Field>()) {
                 const std::string& field_name = field->Name();
                 sorted_entries_list.insert({field_name,
                                             {LinkTaggedIDText(VarText::FIELD_ID_TAG, field->ID(), field_name) + "  ",
@@ -1113,7 +1113,7 @@ namespace {
         // TODO: only loop over planets?
         // TODO: pass in a location condition, and pick a location that matches it if possible
         if (!location) {
-            for (std::shared_ptr<const UniverseObject> obj : Objects()) {
+            for (auto& obj : Objects()) {
                 if (obj->OwnedBy(empire_id)) {
                     location = obj;
                     break;
@@ -1519,13 +1519,13 @@ namespace {
 
         // objects that have special
         std::vector<std::shared_ptr<const UniverseObject>> objects_with_special;
-        for (std::shared_ptr<const UniverseObject> obj : Objects())
+        for (auto& obj : Objects())
             if (obj->Specials().find(item_name) != obj->Specials().end())
                 objects_with_special.push_back(obj);
 
         if (!objects_with_special.empty()) {
             detailed_description += "\n\n" + UserString("OBJECTS_WITH_SPECIAL");
-            for (std::shared_ptr<const UniverseObject> obj : objects_with_special) {
+            for (auto& obj : objects_with_special) {
                 if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(obj))
                     detailed_description += LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship->PublicName(client_empire_id)) + "  ";
 
@@ -1599,7 +1599,7 @@ namespace {
         std::vector<std::shared_ptr<UniverseObject>> empire_planets = Objects().FindObjects(OwnedVisitor<Planet>(empire_id));
         if (!empire_planets.empty()) {
             detailed_description += "\n\n" + UserString("OWNED_PLANETS");
-            for (std::shared_ptr<const UniverseObject> obj : empire_planets) {
+            for (auto& obj : empire_planets) {
                 detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, obj->ID(), obj->PublicName(client_empire_id)) + "  ";
             }
         } else {
@@ -1608,14 +1608,14 @@ namespace {
 
         // Fleets
         std::vector<std::shared_ptr<const UniverseObject>> nonempty_empire_fleets;
-        for (std::shared_ptr<UniverseObject> maybe_fleet : Objects().FindObjects(OwnedVisitor<Fleet>(empire_id))) {
+        for (auto& maybe_fleet : Objects().FindObjects(OwnedVisitor<Fleet>(empire_id))) {
             if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(maybe_fleet))
                 if (!fleet->Empty())
                     nonempty_empire_fleets.push_back(fleet);
         }
         if (!nonempty_empire_fleets.empty()) {
             detailed_description += "\n\n" + UserString("OWNED_FLEETS") + "\n";
-            for (std::shared_ptr<const UniverseObject> obj : nonempty_empire_fleets) {
+            for (auto& obj : nonempty_empire_fleets) {
                 std::string fleet_link = LinkTaggedIDText(VarText::FLEET_ID_TAG, obj->ID(), obj->PublicName(client_empire_id));
                 std::string system_link;
                 if (std::shared_ptr<const System> system = GetSystem(obj->SystemID())) {
@@ -1953,7 +1953,7 @@ namespace {
 
         if (!species_occupied_planets.empty()) {
             detailed_description += "\n" + UserString("OCCUPIED_PLANETS") + "\n";
-            for (std::shared_ptr<const Planet> planet : species_occupied_planets) {
+            for (auto& planet : species_occupied_planets) {
                 detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(),
                                                          planet->PublicName(client_empire_id)) + "  ";
             }
@@ -2139,7 +2139,7 @@ namespace {
         enemy_shots.insert(typical_shot);
         std::set<std::string> additional_species; // from currently selected planet and fleets, if any
         const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-        if (const std::shared_ptr<Planet> planet = GetPlanet(map_wnd->SelectedPlanetID())) {
+        if (const auto planet = GetPlanet(map_wnd->SelectedPlanetID())) {
             if (!planet->SpeciesName().empty())
                 additional_species.insert(planet->SpeciesName());
         }
@@ -2187,7 +2187,7 @@ namespace {
             }
         }
         for (int ship_id : chosen_ships)
-            if (const std::shared_ptr<Ship> this_ship = GetShip(ship_id))
+            if (const auto this_ship = GetShip(ship_id))
                 if (!this_ship->SpeciesName().empty())
                     additional_species.insert(this_ship->SpeciesName());
         std::vector<std::string> species_list(additional_species.begin(), additional_species.end());
@@ -2224,7 +2224,7 @@ namespace {
         }
         if (!design_ships.empty()) {
             detailed_description += "\n\n" + UserString("SHIPS_OF_DESIGN");
-            for (std::shared_ptr<const Ship> ship : design_ships) {
+            for (auto& ship : design_ships) {
                 detailed_description += LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(),
                                                          ship->PublicName(client_empire_id)) + "  ";
             }
@@ -2302,7 +2302,7 @@ namespace {
             }
         }
         for (int ship_id : chosen_ships)
-            if (const std::shared_ptr<Ship> this_ship = GetShip(ship_id))
+            if (const auto this_ship = GetShip(ship_id))
                 if (!this_ship->SpeciesName().empty())
                     additional_species.insert(this_ship->SpeciesName());
         std::vector<std::string> species_list(additional_species.begin(), additional_species.end());
@@ -2369,7 +2369,7 @@ namespace {
         general_type = UserString("SP_PLANET_SUITABILITY");
 
         int planet_id = boost::lexical_cast<int>(item_name);
-        std::shared_ptr<Planet> planet = GetPlanet(planet_id);
+        auto planet = GetPlanet(planet_id);
 
         // show image of planet environment at the top of the suitability report
         std::string planet_type = boost::lexical_cast<std::string>(planet->Type());

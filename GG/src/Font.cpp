@@ -1046,7 +1046,7 @@ Font::LineData::CharData::CharData(X extent_, StrSize str_index, StrSize str_siz
     code_point_index(cp_index),
     tags()
 {
-    for (std::shared_ptr<TextElement> tag : tags_) {
+    for (auto tag : tags_) {
         tags.push_back(std::dynamic_pointer_cast<FormattingTag>(tag));
     }
 }
@@ -1255,7 +1255,7 @@ void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Fl
         std::string::const_iterator string_end_it = text.end();
         for (CPSize j = start; j < end; ++j) {
             const LineData::CharData& char_data = line.char_data[Value(j)];
-            for (std::shared_ptr<FormattingTag> tag : char_data.tags) {
+            for (auto tag : char_data.tags) {
                 HandleTag(tag, orig_color, render_state);
             }
             std::uint32_t c = utf8::peek_next(text.begin() + Value(char_data.string_index), string_end_it);
@@ -1310,8 +1310,9 @@ void Font::ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState
         const LineData& line = line_data[i];
         for (CPSize j = CP0;
              j < ((i == begin_line) ? begin_char : CPSize(line.char_data.size()));
-             ++j) {
-            for (std::shared_ptr<Font::FormattingTag> tag : line.char_data[Value(j)].tags) {
+             ++j)
+        {
+            for (auto& tag : line.char_data[Value(j)].tags) {
                 HandleTag(tag, orig_color, render_state);
             }
         }
@@ -1385,7 +1386,7 @@ void Font::ThrowBadGlyph(const std::string& format_str, std::uint32_t c)
 namespace DebugOutput {
     void PrintParseResults(const std::vector<std::shared_ptr<Font::TextElement>>& text_elements) {
         std::cout << "results of parse:\n";
-        for (std::shared_ptr<Font::TextElement> elem : text_elements) {
+        for (auto& elem : text_elements) {
             if (std::shared_ptr<Font::FormattingTag> tag_elem = std::dynamic_pointer_cast<Font::FormattingTag>(elem)) {
                 std::cout << "FormattingTag\n    text=\"" << tag_elem->text << "\" (@ "
                           << static_cast<const void*>(&*tag_elem->text.begin()) << ")\n    widths=";
@@ -1440,7 +1441,7 @@ namespace DebugOutput {
             }
             std::cout << "\"" << std::endl;
             for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
-                for (std::shared_ptr<Font::FormattingTag> tag_elem : line_data[i].char_data[j].tags) {
+                for (auto& tag_elem : line_data[i].char_data[j].tags) {
                     if (tag_elem) {
                         std::cout << "FormattingTag @" << j << "\n    text=\"" << tag_elem->text << "\"\n    widths=";
                         for (const X& width : tag_elem->widths) {

@@ -152,7 +152,7 @@ namespace {
         for (const std::string& star_name : star_names) {
             // does an existing system have this name?
             bool dupe = false;
-            for (std::shared_ptr<const System> system : Objects().FindObjects<System>()) {
+            for (auto& system : Objects().FindObjects<System>()) {
                 if (system->Name() == star_name) {
                     dupe = true;
                     break;  // another systme has this name. skip to next potential name.
@@ -285,7 +285,7 @@ unsigned int EffectsGroup::GetCheckSum() const {
 std::string Dump(const std::vector<std::shared_ptr<EffectsGroup>>& effects_groups) {
     std::stringstream retval;
 
-    for (std::shared_ptr<EffectsGroup> effects_group : effects_groups) {
+    for (auto& effects_group : effects_groups) {
         retval << "\n" << effects_group->Dump();
     }
 
@@ -3411,7 +3411,7 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
         // add empires that can see any condition-matching object
         for (const std::map<int, Empire*>::value_type& empire_entry : Empires()) {
             int empire_id = empire_entry.first;
-            for (std::shared_ptr<const UniverseObject> object : condition_matches) {
+            for (auto& object : condition_matches) {
                 if (object->GetVisibility(empire_id) >= VIS_BASIC_VISIBILITY) {
                     recipient_empire_ids.insert(empire_id);
                     break;
@@ -3686,7 +3686,7 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
     } else {
         Condition::ObjectSet condition_matches;
         m_condition->Eval(context, condition_matches);
-        for (std::shared_ptr<const UniverseObject> object : condition_matches) {
+        for (auto& object : condition_matches) {
             object_ids.insert(object->ID());
         }
     }

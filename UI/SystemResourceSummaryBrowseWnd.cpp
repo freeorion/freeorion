@@ -189,7 +189,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     std::vector<std::shared_ptr<const UniverseObject>> objects =
         Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs());
 
-    for (std::shared_ptr<const UniverseObject> obj : objects) {
+    for (auto& obj : objects) {
         // display information only for the requested player
         if (m_empire_id != ALL_EMPIRES && !obj->OwnedBy(m_empire_id))
             continue;   // if m_empire_id == -1, display resource production for all empires.  otherwise, skip this resource production if it's not owned by the requested player
@@ -276,7 +276,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
 
 
     // add label-value pair for each resource-consuming object in system to indicate amount of resource consumed
-    for (std::shared_ptr<const UniverseObject> obj : Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs())) {
+    for (auto& obj : Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs())) {
         // display information only for the requested player
         if (m_empire_id != ALL_EMPIRES && !obj->OwnedBy(m_empire_id))
             continue;   // if m_empire_id == ALL_EMPIRES, display resource production for all empires.  otherwise, skip this resource production if it's not owned by the requested player

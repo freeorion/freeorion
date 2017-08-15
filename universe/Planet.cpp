@@ -664,7 +664,7 @@ void Planet::Conquer(int conquerer) {
     Empire::ConquerProductionQueueItemsAtLocation(ID(), conquerer);
 
     // deal with UniverseObjects (eg. buildings) located on this planet
-    for (std::shared_ptr<Building> building : Objects().FindObjects<Building>(m_buildings)) {
+    for (auto& building : Objects().FindObjects<Building>(m_buildings)) {
         const BuildingType* type = GetBuildingType(building->BuildingTypeName());
 
         // determine what to do with building of this type...
@@ -775,7 +775,7 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
     SetOwner(empire_id);
 
     // if there are buildings on the planet, set the specified empire as their owner too
-    for (std::shared_ptr<Building> building : Objects().FindObjects<Building>(BuildingIDs()))
+    for (auto& building : Objects().FindObjects<Building>(BuildingIDs()))
     { building->SetOwner(empire_id); }
 
     return true;

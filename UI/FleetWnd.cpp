@@ -226,7 +226,7 @@ namespace {
             // validate that ships are in the same system and all owned by this
             // client's empire.
             // also record the fleets from which ships are taken
-            for (std::shared_ptr<const Ship> ship : ships) {
+            for (auto& ship : ships) {
                 if (ship->SystemID() != system->ID()) {
                     ErrorLogger() << "CreateNewFleetsForShips passed ships with inconsistent system ids";
                     continue;
@@ -291,7 +291,7 @@ namespace {
 
         // select ships with the requested design id
         std::vector<int> ships_of_design_ids;
-        for (std::shared_ptr<const Ship> ship : Objects().FindObjects<Ship>(ship_ids)) {
+        for (auto& ship : Objects().FindObjects<Ship>(ship_ids)) {
             if (ship->DesignID() == design_id)
                 ships_of_design_ids.push_back(ship->ID());
         }
@@ -312,7 +312,7 @@ namespace {
 
         // sort ships by ID into container, indexed by design id
         std::map<int, std::vector<int>> designs_ship_ids;
-        for (std::shared_ptr<Ship> ship : Objects().FindObjects<Ship>(ship_ids)) {
+        for (auto& ship : Objects().FindObjects<Ship>(ship_ids)) {
             designs_ship_ids[ship->DesignID()].push_back(ship->ID());
         }
 
@@ -352,7 +352,7 @@ namespace {
         empire_system_fleets.reserve(all_system_fleets.size());
         std::vector<int> empire_system_ship_ids;
 
-        for (std::shared_ptr<Fleet> fleet : all_system_fleets) {
+        for (auto& fleet : all_system_fleets) {
             if (!fleet->OwnedBy(client_empire_id))
                 continue;
             if (fleet->ID() == target_fleet->ID() || fleet->ID() == INVALID_OBJECT_ID)
@@ -1451,7 +1451,7 @@ void FleetDataPanel::SetStatIconValues() {
 
     fuels.reserve(fleet->NumShips());
     speeds.reserve(fleet->NumShips());
-    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(fleet->ShipIDs())) {
+    for (auto& ship : Objects().FindObjects<const Ship>(fleet->ShipIDs())) {
         int ship_id = ship->ID();
         // skip known destroyed and stale info objects
         if (this_client_known_destroyed_objects.find(ship_id) != this_client_known_destroyed_objects.end())
@@ -1841,7 +1841,7 @@ public:
             //DebugLogger() << " ... processing dropped " << dropped_fleets.size() << " fleets";
             // dropping fleets.  get each ships of all source fleets and transfer to the target fleet
 
-            for (std::shared_ptr<const Fleet> dropped_fleet : dropped_fleets) {
+            for (auto& dropped_fleet : dropped_fleets) {
                 if (!dropped_fleet) {
                     ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get dropped fleet?";
                     continue;
@@ -1867,7 +1867,7 @@ public:
             // compile ship IDs into a vector, while also recording original fleets from which ships are being taken
             std::vector<int> ship_ids_vec;
             std::set<int> dropped_ships_fleets;
-            for (std::shared_ptr<const Ship> ship : dropped_ships) {
+            for (auto& ship : dropped_ships) {
                 if (!ship) {
                     ErrorLogger() << "FleetsListBox::AcceptDrops  couldn't get dropped ship?";
                     continue;
@@ -2756,11 +2756,11 @@ void FleetWnd::SetStatIconValues() {
     float troop_tally =     0.0f;
     float colony_tally =    0.0f;
 
-    for (std::shared_ptr<const Fleet> fleet : Objects().FindObjects<const Fleet>(m_fleet_ids)) {
+    for (auto& fleet : Objects().FindObjects<const Fleet>(m_fleet_ids)) {
         if ( !(((m_empire_id == ALL_EMPIRES) && (fleet->Unowned())) || fleet->OwnedBy(m_empire_id)) )
             continue;
 
-        for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(fleet->ShipIDs())) {
+        for (auto& ship : Objects().FindObjects<const Ship>(fleet->ShipIDs())) {
             int ship_id = ship->ID();
 
             // skip known destroyed and stale info objects
@@ -2902,7 +2902,7 @@ void FleetWnd::Refresh() {
     if (std::shared_ptr<const System> system = GetSystem(m_system_id)) {
         m_fleet_ids.clear();
         // get fleets to show from system, based on required ownership
-        for (std::shared_ptr<const Fleet> fleet : Objects().FindObjects<Fleet>(system->FleetIDs())) {
+        for (auto& fleet : Objects().FindObjects<Fleet>(system->FleetIDs())) {
             int fleet_id = fleet->ID();
 
             // skip known destroyed and stale info objects
@@ -3233,7 +3233,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     // an owned object in this fleet's system
     std::set<int> peaceful_empires_in_system;
     if (system) {
-        for (std::shared_ptr<const UniverseObject> obj : Objects().FindObjects<const UniverseObject>(system->ObjectIDs())) {
+        for (auto& obj : Objects().FindObjects<const UniverseObject>(system->ObjectIDs())) {
             if (obj->GetVisibility(client_empire_id) < VIS_PARTIAL_VISIBILITY)
                 continue;
             if (obj->Owner() == client_empire_id || obj->Unowned())

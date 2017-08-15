@@ -343,7 +343,7 @@ void TextLinker::FindLinks() {
                         else
                             link.data.clear();
                         link.text_posn.first = Value(curr_char.string_index);
-                        for (std::shared_ptr<GG::Font::FormattingTag> itag : curr_char.tags) {
+                        for (auto& itag : curr_char.tags) {
                             link.text_posn.first -= Value(itag->StringSize());
                         }
                     }

@@ -75,7 +75,7 @@ std::string Special::Description() const {
 
     result << UserString(m_description) << "\n";
 
-    for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+    for (auto& effect : m_effects) {
         const std::string& description = effect->GetDescription();
 
         if (!description.empty()) {
@@ -89,7 +89,7 @@ std::string Special::Description() const {
 void Special::Init() {
     if (m_stealth)
         m_stealth->SetTopLevelContent(m_name);
-    for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+    for (auto& effect : m_effects) {
         effect->SetTopLevelContent(m_name);
     }
     if (m_initial_capacity)
@@ -132,7 +132,7 @@ std::string Special::Dump() const {
     } else {
         retval += DumpIndent() + "effectsgroups = [\n";
         ++g_indent;
-        for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+        for (auto& effect : m_effects) {
             retval += effect->Dump();
         }
         --g_indent;
