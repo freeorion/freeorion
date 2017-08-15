@@ -139,7 +139,7 @@ namespace parse {
     bool ship_parts(std::map<std::string, PartType*>& parts) {
         bool result = true;
 
-        for(const boost::filesystem::path& file : ListScripts("scripting/ship_parts")) {
+        for (const auto& file : ListScripts("scripting/ship_parts")) {
             result &= detail::parse_file<rules, std::map<std::string, PartType*>>(file, parts);
         }
 

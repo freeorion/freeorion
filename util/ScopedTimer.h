@@ -65,7 +65,7 @@ private:
 
         profiled_code();
 
-        for() {
+        for () {
             timer.EnterSection("for loop 1 section");
 
             more_code();

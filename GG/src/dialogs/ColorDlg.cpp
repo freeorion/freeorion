@@ -580,7 +580,7 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
 
     int row = 0;
 
-    for(auto entry : {
+    for (auto entry : {
             std::make_tuple(static_cast<int>(color.r), 0, 255, "R:"),
             std::make_tuple(static_cast<int>(color.g), 0, 255, "G:"),
             std::make_tuple(static_cast<int>(color.b), 0, 255, "B:"),

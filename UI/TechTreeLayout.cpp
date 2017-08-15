@@ -66,7 +66,7 @@ int TechTreeLayout::Column::ClosestFreeIndex(int index, TechTreeLayout::Node* no
 
 bool TechTreeLayout::Column::Place(int index, TechTreeLayout::Node* node) {
     if (Fit(index, node)) {
-        for ( int i = index + node->GetWeight(); i-->index; )
+        for (int i = index + node->GetWeight(); i-->index; )
             m_column[i] = node;
 
         node->m_row = index;
@@ -77,7 +77,7 @@ bool TechTreeLayout::Column::Place(int index, TechTreeLayout::Node* node) {
 
 bool TechTreeLayout::Column::Move(int to, TechTreeLayout::Node* node) {
     if (Fit(to, node)) {
-        for ( int i = node->m_row + node->GetWeight(); i-->node->m_row; )
+        for (int i = node->m_row + node->GetWeight(); i-->node->m_row; )
             m_column[i] = nullptr;
 
         Place(to, node);
@@ -148,14 +148,14 @@ const std::string& TechTreeLayout::Edge::GetTechTo() const
 void TechTreeLayout::Edge::AddPoint(double x, double y)
 { m_points.push_back(std::pair<double, double>(x, y)); }
 
-void TechTreeLayout::Edge::ReadPoints(std::vector<std::pair<double, double>> & points) const {
-    for(const std::pair<double, double>& p : m_points)
+void TechTreeLayout::Edge::ReadPoints(std::vector<std::pair<double, double>>& points) const {
+    for (const auto& p : m_points)
         points.push_back(p);
 }
 
 void TechTreeLayout::Edge::Debug() const {
     DebugLogger() << "Edge " << m_from << "-> " << m_to << ": ";
-    for(const std::pair<double, double>& p : m_points)
+    for (const auto& p : m_points)
         DebugLogger() << "(" << p.first << "," << p.second << ") ";
     DebugLogger() << "\n";
 }
@@ -217,7 +217,7 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
         nodes_at_each_depth[node->GetDepth()].push_back(node);
     }
     // sort within each depth column
-    for (std::vector<Node*>& level : nodes_at_each_depth)
+    for (auto& level : nodes_at_each_depth)
     { std::sort(level.begin(), level.end(), NodePointerCmp()); }
 
 
@@ -657,14 +657,14 @@ void TechTreeLayout::Node::DoLayout(std::vector<Column>& row_index, bool cat) {
     int index = 0;
     int count = 0;
     //check children
-    for(int i = m_children.size(); i --> 0;) {
+    for (int i = m_children.size(); i --> 0;) {
         if (m_children[i]->m_row != -1) {
             index += m_children[i]->m_row;
             count++;
         }
     }
     //check parents
-    for(int i = m_parents.size(); i --> 0;) {
+    for (int i = m_parents.size(); i --> 0;) {
         if (m_parents[i]->m_row != -1) {
             index += m_parents[i]->m_row;
             count++;

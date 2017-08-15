@@ -84,7 +84,7 @@ public:
         // We highlight lines that lead to techs that are queued for research
         if (const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID())) {
             const ResearchQueue& queue = empire->GetResearchQueue();
-            for(std::map<std::string, std::set<std::string>>::value_type& edge : m_edges_to_show) {
+            for (const auto& edge : m_edges_to_show) {
                 std::string tech1 = edge.first;
                 const std::set<std::string>& heads = edge.second;
 
