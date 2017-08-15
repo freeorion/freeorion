@@ -1307,7 +1307,7 @@ std::shared_ptr<const UniverseObject> Empire::Source() const {
 
     // Find any object owned by the empire
     // TODO determine if ExistingObjects() is faster and acceptable
-    for (auto& obj_it : Objects()) {
+    for (const auto& obj_it : Objects()) {
         if (obj_it->OwnedBy(m_id)) {
             m_source_id = obj_it->ID();
             return (obj_it);

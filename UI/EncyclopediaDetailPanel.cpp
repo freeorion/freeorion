@@ -1113,7 +1113,7 @@ namespace {
         // TODO: only loop over planets?
         // TODO: pass in a location condition, and pick a location that matches it if possible
         if (!location) {
-            for (auto& obj : Objects()) {
+            for (const auto& obj : Objects()) {
                 if (obj->OwnedBy(empire_id)) {
                     location = obj;
                     break;
@@ -1519,7 +1519,7 @@ namespace {
 
         // objects that have special
         std::vector<std::shared_ptr<const UniverseObject>> objects_with_special;
-        for (auto& obj : Objects())
+        for (const auto& obj : Objects())
             if (obj->Specials().find(item_name) != obj->Specials().end())
                 objects_with_special.push_back(obj);
 

@@ -469,7 +469,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters(bool do_accounting) {
     // value can be calculated (by accumulating all effects' modifications this
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
-    for (auto& object : m_objects) {
+    for (const auto& object : m_objects) {
         object->ResetTargetMaxUnpairedMeters();
         object->ResetPairedActiveMeters();
     }
@@ -479,7 +479,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters(bool do_accounting) {
     ExecuteEffects(targets_causes, do_accounting, false, false, true);
     // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     // clamp max and target meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
-    for (auto& object : m_objects)
+    for (const auto& object : m_objects)
         object->ClampMeters();
 }
 
@@ -527,7 +527,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes);
 
-    for (auto& object : m_objects) {
+    for (const auto& object : m_objects) {
         object->ResetTargetMaxUnpairedMeters();
         object->ResetPairedActiveMeters();
     }
@@ -535,7 +535,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
         entry.second->ResetMeters();
     ExecuteEffects(targets_causes, do_accounting, true, false, true);
 
-    for (auto& object : m_objects)
+    for (const auto& object : m_objects)
         object->ClampMeters();
 }
 
@@ -548,13 +548,13 @@ void Universe::ApplyMeterEffectsAndUpdateTargetMaxUnpairedMeters(bool do_account
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes);
 
-    for (auto& object : m_objects) {
+    for (const auto& object : m_objects) {
         object->ResetTargetMaxUnpairedMeters();
     }
 
     ExecuteEffects(targets_causes, do_accounting, true, false, true);
 
-    for (auto& object : m_objects)
+    for (const auto& object : m_objects)
         object->ClampMeters();
 }
 
@@ -1190,7 +1190,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     type_timer.restart();
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> specials_objects;
     // determine objects with specials in a single pass
-    for (auto& obj : m_objects) {
+    for (const auto& obj : m_objects) {
         int source_object_id = obj->ID();
         if (m_destroyed_object_ids.find(source_object_id) != m_destroyed_object_ids.end())
             continue;
@@ -1754,7 +1754,7 @@ namespace {
     std::map<int, std::map<std::pair<double, double>, float>> GetEmpiresPositionDetectionRanges() {
         std::map<int, std::map<std::pair<double, double>, float>> retval;
 
-        for (auto& obj : Objects()) {
+        for (const auto& obj : Objects()) {
             // skip unowned objects, which can't provide detection to any empire
             if (obj->Unowned())
                 continue;
@@ -2005,7 +2005,7 @@ namespace {
     /** sets visibility of objects that empires own for those objects */
     void SetEmpireOwnedObjectVisibilities() {
         Universe& universe = GetUniverse();
-        for (auto& obj : Objects()) {
+        for (const auto& obj : Objects()) {
             if (obj->Unowned())
                 continue;
             universe.SetEmpireObjectVisibility(obj->Owner(), obj->ID(), VIS_FULL_VISIBILITY);
@@ -2404,7 +2404,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
         return;
 
     // for each object in universe
-    for (auto& full_object : m_objects) {
+    for (const auto& full_object : m_objects) {
         if (!full_object) {
             ErrorLogger() << "UpdateEmpireLatestKnownObjectsAndVisibilityTurns found null object in m_objects";
             continue;
