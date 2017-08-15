@@ -137,14 +137,17 @@ ServerApp::ServerApp() :
     m_current_turn(INVALID_GAME_TURN),
     m_single_player_game(false)
 {
-    const std::string SERVER_LOG_FILENAME((GetUserDataDir() / "freeoriond.log").string());
-
+    // Force the log file if requested.
+    if (GetOptionsDB().Get<std::string>("log-file").empty()) {
+        const std::string SERVER_LOG_FILENAME((GetUserDataDir() / "freeoriond.log").string());
+        GetOptionsDB().Set("log-file", SERVER_LOG_FILENAME);
+    }
     // Force the log threshold if requested.
     auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
     if (!force_log_level.empty())
         OverrideAllLoggersThresholds(to_LogLevel(force_log_level));
 
-    InitLoggingSystem(SERVER_LOG_FILENAME, "Server");
+    InitLoggingSystem(GetOptionsDB().Get<std::string>("log-file"), "Server");
     InitLoggingOptionsDBSystem();
 
     InfoLogger() << FreeOrionVersionString();

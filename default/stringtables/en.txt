@@ -1599,6 +1599,9 @@ Sets the root directory for the game resource files (game content and data files
 OPTIONS_DB_LOG_LEVEL
 Overrides all loggers' thresholds to this level at or above which log messages will be output.
 
+OPTIONS_DB_LOG_FILE
+Overrides default log file location.
+
 OPTIONS_DB_LOGGER_FILE_SINK_LEVEL
 Sets the threshold at or above which log messages will be generated for the default source for this process.
 

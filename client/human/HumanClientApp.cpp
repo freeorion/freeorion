@@ -208,14 +208,17 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 #endif
     m_fsm.reset(new HumanClientFSM(*this));
 
-    const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserDataDir() / "freeorion.log").string());
-
+    // Force the log file if requested.
+    if (GetOptionsDB().Get<std::string>("log-file").empty()) {
+        const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserDataDir() / "freeorion.log").string());
+        GetOptionsDB().Set("log-file", HUMAN_CLIENT_LOG_FILENAME);
+    }
     // Force the log threshold if requested.
     auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
     if (!force_log_level.empty())
         OverrideAllLoggersThresholds(to_LogLevel(force_log_level));
 
-    InitLoggingSystem(HUMAN_CLIENT_LOG_FILENAME, "Client");
+    InitLoggingSystem(GetOptionsDB().Get<std::string>("log-file"), "Client");
     InitLoggingOptionsDBSystem();
 
     // Force loggers to always appear in the config.xml and OptionsWnd even before their
