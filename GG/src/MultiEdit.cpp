@@ -117,6 +117,10 @@ MultiEdit::MultiEdit(const std::string& str, const std::shared_ptr<Font>& font, 
     m_ignore_adjust_scrolls(false)
 {
     SetColor(color);
+}
+
+ void MultiEdit::CompleteConstruction()
+{
     SetStyle(m_style);
     SizeMove(UpperLeft(), LowerRight()); // do this to set up the scrolls, and in case MULTI_INTEGRAL_HEIGHT is in effect
 }

@@ -955,7 +955,11 @@ void CUIEdit::Render() {
 ///////////////////////////////////////
 CUIMultiEdit::CUIMultiEdit(const std::string& str, GG::Flags<GG::MultiEditStyle> style/* = MULTI_LINEWRAP*/) :
     MultiEdit(str, ClientUI::GetFont(), ClientUI::CtrlBorderColor(), style, ClientUI::TextColor(), ClientUI::CtrlColor())
-{
+{}
+
+void CUIMultiEdit::CompleteConstruction() {
+    GG::MultiEdit::CompleteConstruction();
+
     RecreateScrolls();
     SetHiliteColor(ClientUI::EditHiliteColor());
 }
@@ -1004,7 +1008,11 @@ CUILinkTextMultiEdit::CUILinkTextMultiEdit(const std::string& str, GG::Flags<GG:
     TextLinker(),
     m_already_setting_text_so_dont_link(false),
     m_raw_text(str)
-{
+{}
+
+void CUILinkTextMultiEdit::CompleteConstruction() {
+    CUIMultiEdit::CompleteConstruction();
+
     FindLinks();
     MarkLinks();
 }

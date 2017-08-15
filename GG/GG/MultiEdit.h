@@ -68,6 +68,7 @@ public:
 
     virtual ~MultiEdit();
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;

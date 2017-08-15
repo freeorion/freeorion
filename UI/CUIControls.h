@@ -333,6 +333,7 @@ public:
     /** \name Structors */ //@{
     CUIMultiEdit(const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
     //@}
+    void CompleteConstruction() override;
 
     /** \name Mutators */ //@{
     void Render() override;
@@ -347,6 +348,7 @@ public:
     /** \name Structors */ //@{
     CUILinkTextMultiEdit(const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
     //@}
+    void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
     const std::vector<GG::Font::LineData>& GetLineData() const override;
