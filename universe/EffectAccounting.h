@@ -45,7 +45,7 @@ namespace Effect {
     struct TargetsAndCause {
         TargetsAndCause();
         TargetsAndCause(const TargetSet& target_set_, const EffectCause& effect_cause_);
-        TargetSet   target_set;
+        TargetSet target_set;
         EffectCause effect_cause;
     };
 
@@ -53,10 +53,8 @@ namespace Effect {
     struct SourcedEffectsGroup {
         SourcedEffectsGroup();
         SourcedEffectsGroup(int source_object_id_, const std::shared_ptr<EffectsGroup>& effects_group_);
-        bool    operator<(const SourcedEffectsGroup& right) const;
-        void    Execute(const TargetSet& targets) const;
-        void    Execute(const TargetsAndCause& targets_and_cause, AccountingMap& accounting_map) const;
-        int                             source_object_id;
+        bool operator<(const SourcedEffectsGroup& right) const;
+        int source_object_id;
         std::shared_ptr<EffectsGroup> effects_group;
     };
 
