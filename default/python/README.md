@@ -37,3 +37,4 @@ Final stage is to setup automatic check to avoid adding new cases.
 `pycodestyle python/AI/AIDependencies.py --ignore=E501,E241`
 `pycodestyle python/AI/AIFleetMission.py --max-line-length=120`
 `pycodestyle python/AI/AIstate.py --max-line-length=120`
+`pycodestyle python/AI/ColonisationAI.py --max-line-length=120`

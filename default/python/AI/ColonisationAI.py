@@ -1,4 +1,5 @@
 import sys
+from operator import itemgetter
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from common.print_utils import Table, Text, Sequence, Bool, Float
@@ -231,9 +232,9 @@ def check_supply():
     annexable_ring2.update(systems_by_supply_tier.get(-2, []))
     annexable_ring3.update(systems_by_supply_tier.get(-3, []))
 
-    print "First Ring of annexable systems: ", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-1, [])))
-    print "Second Ring of annexable systems: ", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-2, [])))
-    print "Third Ring of annexable systems: ", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-3, [])))
+    print "First Ring of annexable systems:", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-1, [])))
+    print "Second Ring of annexable systems:", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-2, [])))
+    print "Third Ring of annexable systems:", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-3, [])))
 
     supply_distance = get_supply_tech_range()
     # extra potential supply contributions:
@@ -431,7 +432,7 @@ def survey_universe():
             state.set_medium_pilot_rating(rating_list[0])
         else:
             state.set_medium_pilot_rating(rating_list[1 + int(len(rating_list) / 5)])
-    # the idea behind this was to note systems that the empire has claimed-- either has a current colony or has targetted
+    # the idea behind this was to note systems that the empire has claimed-- either has a current colony or has targeted
     # for making/invading a colony
     # claimedStars = {}
     # for sType in AIstate.empireStars:
@@ -507,7 +508,8 @@ def get_colony_fleets():
     evaluated_colony_planet_ids = list(unowned_empty_planet_ids.union(AIstate.outpostIDs) - set(
         colony_targeted_planet_ids))  # places for possible colonyBase
 
-    # foAI.foAIstate.qualifyingOutpostBaseTargets.clear() #don't want to lose the info by clearing, but #TODO: should double check if still own colonizer planet
+    # don't want to lose the info by clearing, but #TODO: should double check if still own colonizer planet
+    # foAI.foAIstate.qualifyingOutpostBaseTargets.clear()
     # foAI.foAIstate.qualifyingColonyBaseTargets.clear()
     cost_ratio = 120  # TODO: temp ratio; reest to 12 *; consider different ratio
     for pid in evaluated_colony_planet_ids:  # TODO: reorganize
@@ -549,7 +551,8 @@ def get_colony_fleets():
                 this_score = max(this_score, evaluate_planet(pid, MissionType.COLONISATION, species, []))
             planet = universe.getPlanet(pid)
             if this_score == 0:
-                # print "Potential outpost base (rejected) for %s to be built at planet id(%d); outpost score %.1f" % ( ((planet and planet.name) or "unknown"), loc, this_score)
+                # print "Potential outpost base (rejected) for %s to be built at planet id(%d); outpost score %.1f" % (
+                # ((planet and planet.name) or "unknown"), loc, this_score)
                 continue
             print "Potential outpost base for %s to be built at planet id(%d); outpost score %.1f" % (
                 ((planet and planet.name) or "unknown"), loc, this_score)
@@ -560,8 +563,10 @@ def get_colony_fleets():
             best_ship, col_design, build_choices = ProductionAI.get_best_ship_info(
                 PriorityType.PRODUCTION_ORBITAL_OUTPOST, loc)
             if best_ship is None:
-                print >> sys.stderr, "Can't get standard best outpost base design that can be built at ", PlanetUtilsAI.planet_name_ids([loc])
-                outpost_base_design_ids = [design for design in empire.availableShipDesigns if "SD_OUTPOST_BASE" == fo.getShipDesign(design).name]
+                print >> sys.stderr, "Can't get standard best outpost base design that can be built at %s" % (
+                    PlanetUtilsAI.planet_name_ids([loc]))
+                outpost_base_design_ids = [design for design in empire.availableShipDesigns if
+                                           "SD_OUTPOST_BASE" == fo.getShipDesign(design).name]
                 if outpost_base_design_ids:
                     print "trying fallback outpost base design SD_OUTPOST_BASE"
                     best_ship = outpost_base_design_ids.pop()
@@ -836,11 +841,15 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     cur_best_mil_ship_rating = max(MilitaryAI.cur_best_mil_ship_rating(), 0.001)
     fleet_threat_ratio = (sys_status.get('fleetThreat', 0) - myrating) / float(cur_best_mil_ship_rating)
     monster_threat_ratio = sys_status.get('monsterThreat', 0) / float(cur_best_mil_ship_rating)
-    neighbor_threat_ratio = ((sys_status.get('neighborThreat', 0)) / float(cur_best_mil_ship_rating)) + \
-                            min(0, fleet_threat_ratio)  # last portion gives credit for inner extra defenses
+    neighbor_threat_ratio = (
+        (sys_status.get('neighborThreat', 0)) / float(cur_best_mil_ship_rating) +
+        min(0, fleet_threat_ratio)
+    )  # last portion gives credit for inner extra defenses
     myrating = sys_status.get('my_neighbor_rating', 0)
-    jump2_threat_ratio = ((max(0, sys_status.get('jump2_threat', 0) - myrating) / float(cur_best_mil_ship_rating)) +
-                         min(0, neighbor_threat_ratio))  # last portion gives credit for inner extra defenses
+    jump2_threat_ratio = (
+        (max(0, sys_status.get('jump2_threat', 0) - myrating) / float(cur_best_mil_ship_rating)) +
+        min(0, neighbor_threat_ratio)
+    )  # last portion gives credit for inner extra defenses
 
     thrt_factor = 1.0
     ship_limit = 2 * (2 ** (fo.currentTurn() / 40.0))
@@ -1374,11 +1383,11 @@ def _print_empire_species_roster():
     species_table = Table(header, table_name="Empire species roster Turn %d" % fo.currentTurn())
     for species_name, planet_ids in state.get_empire_planets_by_species().items():
         species_tags = fo.getSpecies(species_name).tags
-        grade_symbol = lambda x: grade_map.get(get_ai_tag_grade(species_tags, x).upper(), "o")
+
         is_colonizer = species_name in empire_colonizers
         number_of_shipyards = len(empire_ship_builders.get(species_name, []))
         this_row = [species_name, planet_ids, is_colonizer, number_of_shipyards]
-        this_row.extend(grade_symbol(tag) for tag in grade_tags)
+        this_row.extend(grade_map.get(get_ai_tag_grade(species_tags, tag).upper(), "o") for tag in grade_tags)
         this_row.append([tag for tag in species_tags if not any(s in tag for s in grade_tags) and 'PEDIA' not in tag])
         species_table.add_row(this_row)
     print
@@ -1404,21 +1413,23 @@ def _print_colony_candidate_table(candidates):
 def __print_candidate_table(candidates, mission):
     universe = fo.getUniverse()
     if mission == 'Colonization':
-        col1 = Text('(Score, Species)')
-        col1_value = lambda x: (round(x[0], 2), x[1])
+        first_column = Text('(Score, Species)')
+
+        def get_first_column_value(x):
+            return round(x[0], 2), x[1]
     elif mission == 'Outposts':
-        col1 = Float('Score')
-        col1_value = lambda x: x[0]
+        first_column = Float('Score')
+        get_first_column_value = itemgetter(0)
     else:
         print >> sys.stderr, "__print_candidate_table(%s, %s): Invalid mission type" % (candidates, mission)
         return
-    candidate_table = Table([col1, Text('Planet'), Text('System'), Sequence('Specials')],
+    candidate_table = Table([first_column, Text('Planet'), Text('System'), Sequence('Specials')],
                             table_name='Potential Targets for %s in Turn %d' % (mission, fo.currentTurn()))
     for planet_id, score_tuple in candidates:
         if score_tuple[0] > 0.5:
             planet = universe.getPlanet(planet_id)
             candidate_table.add_row([
-                col1_value(score_tuple),
+                get_first_column_value(score_tuple),
                 planet,
                 universe.getSystem(planet.systemID),
                 planet.specials,
