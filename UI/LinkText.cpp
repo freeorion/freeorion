@@ -182,7 +182,7 @@ void TextLinker::SetDecorator(const std::string& link_type, LinkDecorator* decor
 std::string TextLinker::LinkDefaultFormatTag(const Link& link, const std::string& content) const {
     const LinkDecorator* decorator = &DEFAULT_DECORATOR;
 
-    std::map<std::string, LinkDecoratorPtr>::const_iterator it = m_decorators.find(link.type);
+    auto it = m_decorators.find(link.type);
     if (it != m_decorators.end()){
         decorator = it->second.get();
     }
@@ -193,7 +193,7 @@ std::string TextLinker::LinkDefaultFormatTag(const Link& link, const std::string
 std::string TextLinker::LinkRolloverFormatTag(const Link& link, const std::string& content) const {
     const LinkDecorator* decorator = &DEFAULT_DECORATOR;
 
-    std::map<std::string, LinkDecoratorPtr>::const_iterator it = m_decorators.find(link.type);
+    auto it = m_decorators.find(link.type);
     if (it != m_decorators.end())
         decorator = it->second.get();
 
@@ -367,7 +367,7 @@ void TextLinker::LocateLinks() {
 
     // We assume that links are stored in m_links in the order they appear in the text.
     // We shall iterate through the text, updating the rectangles of a link whenever we know we are inside it
-    std::vector<Link>::iterator current_link = m_links.begin();
+    auto current_link = m_links.begin();
     bool inside_link = false;
 
     for (const GG::Font::LineData& curr_line : GetLineData()) {

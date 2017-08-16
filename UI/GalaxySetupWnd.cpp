@@ -522,7 +522,7 @@ void GameRulesPanel::StringRuleChanged(const GG::DropDownList* drop,
     if (!val || !drop)
         return;
 
-    GG::DropDownList::iterator it = drop->CurrentItem();
+    auto it = drop->CurrentItem();
     const auto row = *it;
     if (!row) {
         ErrorLogger() << "GameRulesPanel::StringRuleChanged couldn't get current item due to invalid Row pointer";

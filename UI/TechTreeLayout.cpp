@@ -297,7 +297,7 @@ const GG::Y TechTreeLayout::GetHeight() const
 { return GG::Y(static_cast<int>(m_height)); }
 
 const TechTreeLayout::Node* TechTreeLayout::GetNode(const std::string & name) const {
-    std::map< std::string, TechTreeLayout::Node*>::const_iterator item = m_node_map.find(name);
+    auto item = m_node_map.find(name);
     if (item == m_node_map.end()) {
         DebugLogger() << "TechTreeLayout::getNode: missing node " << name << "\n";
         Debug();
@@ -316,14 +316,14 @@ void TechTreeLayout::AddNode(const std::string& tech, GG::X width, GG::Y height)
 }
 
 void TechTreeLayout::AddEdge(const std::string& parent, const std::string& child) {
-    std::map<std::string, TechTreeLayout::Node*>::iterator p = m_node_map.find(parent);
-    std::map<std::string, TechTreeLayout::Node*>::iterator c = m_node_map.find(child);
+    auto p = m_node_map.find(parent);
+    auto c = m_node_map.find(child);
     assert(p != m_node_map.end() && c != m_node_map.end());
     p->second->AddChild(c->second);
 }
 
 const std::vector<TechTreeLayout::Edge*>& TechTreeLayout::GetOutEdges(const std::string& name) const {
-    std::map< std::string, TechTreeLayout::Node*>::const_iterator item = m_node_map.find(name);
+    auto item = m_node_map.find(name);
     if (item == m_node_map.end()) {
         DebugLogger() << "TechTreeLayout::getNode: missing node " << name << "\n";
         Debug();

@@ -2403,7 +2403,7 @@ void FleetDetailPanel::SetSelectedShips(const std::set<int>& ship_ids) {
     m_ships_lb->DeselectAll();
 
     // loop through ships, selecting any indicated
-    for (GG::ListBox::iterator it = m_ships_lb->begin(); it != m_ships_lb->end(); ++it) {
+    for (auto it = m_ships_lb->begin(); it != m_ships_lb->end(); ++it) {
         ShipRow* row = dynamic_cast<ShipRow*>(it->get());
         if (!row) {
             ErrorLogger() << "FleetDetailPanel::SetSelectedShips couldn't cast a listbow row to ShipRow?";
@@ -2483,7 +2483,7 @@ void FleetDetailPanel::UniverseObjectDeleted(std::shared_ptr<const UniverseObjec
 }
 
 void FleetDetailPanel::ShipSelectionChanged(const GG::ListBox::SelectionSet& rows) {
-    for (GG::ListBox::iterator it = m_ships_lb->begin(); it != m_ships_lb->end(); ++it) {
+    for (auto it = m_ships_lb->begin(); it != m_ships_lb->end(); ++it) {
         try {
             ShipDataPanel* ship_panel = boost::polymorphic_downcast<ShipDataPanel*>(!(**it).empty() ? (**it).at(0) : nullptr);
             ship_panel->Select(rows.find(it) != rows.end());
@@ -2562,8 +2562,8 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     {
         auto unscrap_action = [ship]() {
             // find order to scrap this ship, and recind it
-            std::map<int, int> pending_scrap_orders = PendingScrapOrders();
-            std::map<int, int>::const_iterator it = pending_scrap_orders.find(ship->ID());
+            auto pending_scrap_orders = PendingScrapOrders();
+            auto it = pending_scrap_orders.find(ship->ID());
             if (it != pending_scrap_orders.end())
                 HumanClientApp::GetApp()->Orders().RescindOrder(it->second);
         };
@@ -2884,14 +2884,13 @@ void FleetWnd::Refresh() {
     }
 
     // Use fleets that are at the determined location
-    boost::unordered_multimap<std::pair<int, GG::Pt>, int>::const_iterator fleets_at_location_begin, fleets_at_location_end;
-    std::tie(fleets_at_location_begin, fleets_at_location_end) = fleet_locations_ids.equal_range(location);
+    boost::unordered_multimap<std::pair<int, GG::Pt>, int>::const_iterator
+        fleets_at_location_begin, fleets_at_location_end;
+    std::tie(fleets_at_location_begin, fleets_at_location_end) =
+        fleet_locations_ids.equal_range(location);
 
-    for (boost::unordered_multimap<std::pair<int, GG::Pt>, int>::const_iterator it = fleets_at_location_begin;
-         it != fleets_at_location_end; ++it)
-    {
-        m_fleet_ids.insert(it->second);
-    }
+    for (auto it = fleets_at_location_begin; it != fleets_at_location_end; ++it)
+    { m_fleet_ids.insert(it->second); }
 
     m_system_id = location.first;
 
@@ -2928,11 +2927,9 @@ void FleetWnd::Refresh() {
     std::tie(selected_fleets_at_location_begin, selected_fleets_at_location_end) =
         selected_fleet_locations_ids.equal_range(location);
 
-    for (boost::unordered_multimap<std::pair<int, GG::Pt>, int>::const_iterator it = selected_fleets_at_location_begin;
+    for (auto it = selected_fleets_at_location_begin; 
          it != selected_fleets_at_location_end; ++it)
-    {
-        still_present_initially_selected_fleets.insert(it->second);
-    }
+    { still_present_initially_selected_fleets.insert(it->second); }
 
     if (!still_present_initially_selected_fleets.empty()) {
         // reselect any previously-selected fleets
@@ -3061,7 +3058,7 @@ void FleetWnd::SelectFleet(int fleet_id) {
         return;
     }
 
-    for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
+    for (auto it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
         FleetRow* row = dynamic_cast<FleetRow*>(it->get());
         if (row && row->FleetID() == fleet_id) {
             m_fleets_lb->DeselectAll();
@@ -3080,7 +3077,7 @@ void FleetWnd::SetSelectedFleets(const std::set<int>& fleet_ids) {
     m_fleets_lb->DeselectAll();
 
     // loop through fleets, selecting any indicated
-    for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
+    for (auto it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
         FleetRow* row = dynamic_cast<FleetRow*>(it->get());
         if (!row) {
             ErrorLogger() << "FleetWnd::SetSelectedFleets couldn't cast a listbow row to FleetRow?";
@@ -3117,8 +3114,8 @@ int FleetWnd::EmpireID() const
 { return m_empire_id; }
 
 bool FleetWnd::ContainsFleet(int fleet_id) const {
-    for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
-        std::shared_ptr<Fleet> fleet = GetFleet(FleetInRow(it));
+    for (auto it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
+        auto fleet = GetFleet(FleetInRow(it));
         if (fleet && fleet->ID() == fleet_id)
             return true;
     }
@@ -3130,7 +3127,7 @@ const std::set<int>& FleetWnd::FleetIDs() const
 
 std::set<int> FleetWnd::SelectedFleetIDs() const {
     std::set<int> retval;
-    for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
+    for (auto it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
         if (!m_fleets_lb->Selected(it))
             continue;
 
@@ -3157,7 +3154,7 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     if (rows.size() == 1) {
         // find selected row and fleet
         bool found_row = false;
-        for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
+        for (auto it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
             if (rows.find(it) != rows.end()) {
                 m_fleet_detail_panel->SetFleet(FleetInRow(it));
                 found_row = true;
@@ -3171,9 +3168,9 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     }
 
 
-    for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
+    for (auto it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
         try {
-            if (FleetDataPanel* fleet_panel = boost::polymorphic_downcast<FleetDataPanel*>(!(**it).empty() ? (**it).at(0) : nullptr))
+            if (auto* fleet_panel = boost::polymorphic_downcast<FleetDataPanel*>(!(**it).empty() ? (**it).at(0) : nullptr))
                 fleet_panel->Select(rows.find(it) != rows.end());
         } catch (const std::exception& e) {
             ErrorLogger() << "FleetWnd::FleetSelectionChanged caught exception: " << e.what();
@@ -3337,7 +3334,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         auto split_action = [this, &ship_ids_set]() {
             ScopedTimer split_fleet_timer("FleetWnd::SplitFleet", true);
             // remove first ship from set, so it stays in its existing fleet
-            std::set<int>::iterator it = ship_ids_set.begin();
+            auto it = ship_ids_set.begin();
             ship_ids_set.erase(it);
 
             // assemble container of containers of ids of fleets to create.
@@ -3494,9 +3491,9 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             RequirePreRender();
             ClientUI::GetClientUI()->GetMapWnd()->RemoveFleet(fleet->ID());
         };
-        Universe::VisibilityTurnMap visibility_turn_map =
+        auto visibility_turn_map =
             GetUniverse().GetObjectVisibilityTurnMapByEmpire(fleet->ID(), client_empire_id);
-        Universe::VisibilityTurnMap::const_iterator last_turn_visible_it = visibility_turn_map.find(VIS_BASIC_VISIBILITY);
+        auto last_turn_visible_it = visibility_turn_map.find(VIS_BASIC_VISIBILITY);
         if (last_turn_visible_it != visibility_turn_map.end()
             && last_turn_visible_it->second < CurrentTurn())
         {
@@ -3612,7 +3609,7 @@ void FleetWnd::UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj) 
     const ObjectMap& objects = GetUniverse().Objects();
 
     // remove deleted fleet's row
-    for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
+    for (auto it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
         int row_fleet_id = FleetInRow(it);
         if (objects.Object<Fleet>(row_fleet_id) == deleted_fleet) {
             m_fleets_lb->Erase(it);

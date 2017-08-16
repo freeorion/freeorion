@@ -36,15 +36,16 @@ namespace {
 
     //! Skips over white space characters. On return, \a it will point to \a end
     //! or the next non-white space character.
-    void pass_space(std::string::const_iterator& it, const std::string::const_iterator& end)
+    void pass_space(std::string::const_iterator& it,
+                    const std::string::const_iterator& end)
     {
-        for (; it != end && isspace(*it); ++it) {
-        }
+        for (; it != end && isspace(*it); ++it) {}
     }
 
     //! Reads from \a it, expecting to find somthing of the form "key =".
     //! Returns key. Leaves \a it past the '=' or at \a end.
-    std::string read_key(std::string::const_iterator& it, const std::string::const_iterator& end)
+    std::string read_key(std::string::const_iterator& it,
+                         const std::string::const_iterator& end)
     {
         // Move past space.
         pass_space(it, end);
@@ -70,7 +71,8 @@ namespace {
     //! Read from \a it, expecting a string of the form '"escape \" with \\"'.
     //! Returns the text between the quotes.
     //! \a it will be at the first character after the second " or at \a end.
-    std::string read_quoted(std::string::const_iterator& it, const std::string::const_iterator& end)
+    std::string read_quoted(std::string::const_iterator& it,
+                            const std::string::const_iterator& end)
     {
         // Move past space.
         pass_space(it, end);
@@ -114,7 +116,8 @@ namespace {
     }
 
     //! Extracts key="value" pairs from a string to a map.
-    void ExtractParameters(const std::string& params_string, RichText::TAG_PARAMS& tag_params)
+    void ExtractParameters(const std::string& params_string,
+                           RichText::TAG_PARAMS& tag_params)
     {
         // Next key to be stored.
         std::string key;
@@ -148,7 +151,6 @@ namespace {
 }
 
 namespace GG {
-
     /**
      * \brief The tag to use for text without explicit tags, or inside unknown (to the rich text system) tags.
      */
@@ -159,7 +161,8 @@ namespace GG {
      */
     class RichTextPrivate {
     public:
-        RichTextPrivate(RichText* q, const std::string& str, const std::shared_ptr<Font>& font,
+        RichTextPrivate(RichText* q, const std::string& str,
+                        const std::shared_ptr<Font>& font,
                         Clr color, Flags<TextFormat> format = FORMAT_NONE) :
             m_owner(q),
             m_font(font),
@@ -261,7 +264,8 @@ namespace GG {
         }
 
         // Update the sizes of all blocks.
-        void DoLayout() {
+        void DoLayout()
+        {
             X width = m_owner->ClientWidth() - X(m_padding)*2;
             Pt pos = Pt(X(m_padding), Y(m_padding));
 
@@ -282,9 +286,10 @@ namespace GG {
     /// RichText public interface //
     ///////////////////////////////
     RichText::RichText(X x, Y y, X w, Y h, const std::string& str,
-                       const std::shared_ptr<Font>& font, Clr color, Flags<TextFormat> format,
-                       Flags<WndFlag> flags) :
-        Control(x, y, w, h, flags), m_self(new RichTextPrivate(this, str, font, color, format))
+                       const std::shared_ptr<Font>& font, Clr color,
+                       Flags<TextFormat> format, Flags<WndFlag> flags) :
+        Control(x, y, w, h, flags),
+        m_self(new RichTextPrivate(this, str, font, color, format))
     {
         // Set text requires our members to be set.
         // Therefore we must call it here, not in constructor of Private.
@@ -313,7 +318,8 @@ namespace GG {
         return tag_map;
     }
 
-    int RichText::RegisterDefaultBlock(const std::string& tag, std::shared_ptr<IBlockControlFactory>&& factory)
+    int RichText::RegisterDefaultBlock(const std::string& tag,
+                                       std::shared_ptr<IBlockControlFactory>&& factory)
     {
         Font::RegisterKnownTag(tag);
         (*DefaultBlockFactoryMap()) [tag] = std::move(factory);

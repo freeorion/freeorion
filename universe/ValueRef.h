@@ -1056,7 +1056,7 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
         }
         case UNIQUE_COUNT: {
             std::set<T> observed_values;
-            for (const typename std::map<std::shared_ptr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+            for (const auto& entry : object_property_values) {
                 observed_values.insert(entry.second);
             }
             return T(observed_values.size());
@@ -1070,7 +1070,7 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
         }
         case SUM: {
             T accumulator(0);
-            for (const typename std::map<std::shared_ptr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+            for (const auto& entry : object_property_values) {
                 accumulator += entry.second;
             }
             return accumulator;
@@ -1079,7 +1079,7 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
 
         case MEAN: {
             T accumulator(0);
-            for (const typename std::map<std::shared_ptr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+            for (const auto& entry : object_property_values) {
                 accumulator += entry.second;
             }
             return accumulator / static_cast<T>(object_property_values.size());
@@ -1088,7 +1088,7 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
 
         case RMS: {
             T accumulator(0);
-            for (const typename std::map<std::shared_ptr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+            for (const auto& entry : object_property_values) {
                 accumulator += (entry.second * entry.second);
             }
             accumulator /= static_cast<T>(object_property_values.size());
@@ -1101,13 +1101,13 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
         case MODE: {
             // count number of each result, tracking which has the most occurances
             std::map<T, unsigned int> histogram;
-            typename std::map<T, unsigned int>::const_iterator most_common_property_value_it = histogram.begin();
+            auto most_common_property_value_it = histogram.begin();
             unsigned int max_seen(0);
 
-            for (const typename std::map<std::shared_ptr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+            for (const auto& entry : object_property_values) {
                 const T& property_value = entry.second;
 
-                typename std::map<T, unsigned int>::iterator hist_it = histogram.find(property_value);
+               auto hist_it = histogram.find(property_value);
                 if (hist_it == histogram.end())
                     hist_it = histogram.insert({property_value, 0}).first;
                 unsigned int& num_seen = hist_it->second;
@@ -1126,9 +1126,9 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
         }
 
         case MAX: {
-            typename std::map<std::shared_ptr<const UniverseObject>, T>::const_iterator max_it = object_property_values.begin();
+            auto max_it = object_property_values.begin();
 
-            for (typename std::map<std::shared_ptr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
+            for (auto it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             {
                 const T& property_value = it->second;
@@ -1142,9 +1142,9 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
         }
 
         case MIN: {
-            typename std::map<std::shared_ptr<const UniverseObject>, T>::const_iterator min_it = object_property_values.begin();
+            auto min_it = object_property_values.begin();
 
-            for (typename std::map<std::shared_ptr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
+            for (auto it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             {
                 const T& property_value = it->second;
@@ -1158,10 +1158,10 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
         }
 
         case SPREAD: {
-            typename std::map<std::shared_ptr<const UniverseObject>, T>::const_iterator max_it = object_property_values.begin();
-            typename std::map<std::shared_ptr<const UniverseObject>, T>::const_iterator min_it = object_property_values.begin();
+            auto max_it = object_property_values.begin();
+            auto min_it = object_property_values.begin();
 
-            for (typename std::map<std::shared_ptr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
+            for (auto it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             {
                 const T& property_value = it->second;
@@ -1182,14 +1182,14 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
 
             // find sample mean
             T accumulator(0);
-            for (const typename std::map<std::shared_ptr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+            for (const auto& entry : object_property_values) {
                 accumulator += entry.second;
             }
             const T MEAN(accumulator / static_cast<T>(object_property_values.size()));
 
             // find average of squared deviations from sample mean
             accumulator = T(0);
-            for (const typename std::map<std::shared_ptr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+            for (const auto& entry : object_property_values) {
                 accumulator += (entry.second - MEAN) * (entry.second - MEAN);
             }
             const T MEAN_DEV2(accumulator / static_cast<T>(static_cast<int>(object_property_values.size()) - 1));
@@ -1200,7 +1200,7 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
 
         case PRODUCT: {
             T accumulator(1);
-            for (const typename std::map<std::shared_ptr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+            for (const auto& entry : object_property_values) {
                 accumulator *= entry.second;
             }
             return accumulator;
@@ -2101,7 +2101,7 @@ bool Operation<T>::SimpleIncrement() const
         return false;
     if (!(m_operands[1]->ConstantExpr()))
         return false;
-    const Variable<T>* lhs = dynamic_cast<const Variable<T>*>(m_operands[0]);
+    auto lhs = dynamic_cast<const Variable<T>*>(m_operands[0]);
     if (!lhs)
         return false;
     return lhs->GetReferenceType() == EFFECT_TARGET_VALUE_REFERENCE;
@@ -2111,7 +2111,7 @@ template <class T>
 std::string Operation<T>::Description() const
 {
     if (m_op_type == NEGATE) {
-        if (const Operation<T>* rhs = dynamic_cast<const Operation<T>*>(LHS())) {
+        if (auto rhs = dynamic_cast<const Operation<T>*>(LHS())) {
             OpType op_type = rhs->GetOpType();
             if (op_type == PLUS     || op_type == MINUS ||
                 op_type == TIMES    || op_type == DIVIDE ||
@@ -2133,9 +2133,7 @@ std::string Operation<T>::Description() const
 
     if (m_op_type == MINIMUM) {
         std::string retval = "min(";
-        for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
-             it != m_operands.end(); ++it)
-        {
+        for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
                 retval += ", ";
             retval += (*it)->Description();
@@ -2145,9 +2143,7 @@ std::string Operation<T>::Description() const
     }
     if (m_op_type == MAXIMUM) {
         std::string retval = "max(";
-        for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
-             it != m_operands.end(); ++it)
-        {
+        for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
                 retval += ", ";
             retval += (*it)->Description();
@@ -2161,9 +2157,7 @@ std::string Operation<T>::Description() const
 
     if (m_op_type == RANDOM_PICK) {
         std::string retval = "OneOf(";
-        for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
-             it != m_operands.end(); ++it)
-        {
+        for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
                 retval += ", ";
             retval += (*it)->Description();
@@ -2174,7 +2168,7 @@ std::string Operation<T>::Description() const
 
     bool parenthesize_lhs = false;
     bool parenthesize_rhs = false;
-    if (const Operation<T>* lhs = dynamic_cast<const Operation<T>*>(LHS())) {
+    if (auto lhs = dynamic_cast<const Operation<T>*>(LHS())) {
         OpType op_type = lhs->GetOpType();
         if (
             (m_op_type == EXPONENTIATE &&
@@ -2186,7 +2180,7 @@ std::string Operation<T>::Description() const
            )
             parenthesize_lhs = true;
     }
-    if (const Operation<T>* rhs = dynamic_cast<const Operation<T>*>(RHS())) {
+    if (auto rhs = dynamic_cast<const Operation<T>*>(RHS())) {
         OpType op_type = rhs->GetOpType();
         if (
             (m_op_type == EXPONENTIATE &&
@@ -2226,7 +2220,7 @@ template <class T>
 std::string Operation<T>::Dump() const
 {
     if (m_op_type == NEGATE) {
-        if (const Operation<T>* rhs = dynamic_cast<const Operation<T>*>(LHS())) {
+        if (auto rhs = dynamic_cast<const Operation<T>*>(LHS())) {
             OpType op_type = rhs->GetOpType();
             if (op_type == PLUS     || op_type == MINUS ||
                 op_type == TIMES    || op_type == DIVIDE ||
@@ -2248,9 +2242,7 @@ std::string Operation<T>::Dump() const
 
     if (m_op_type == MINIMUM) {
         std::string retval = "min(";
-        for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
-             it != m_operands.end(); ++it)
-        {
+        for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
                 retval += ", ";
             retval += (*it)->Dump();
@@ -2260,9 +2252,7 @@ std::string Operation<T>::Dump() const
     }
     if (m_op_type == MAXIMUM) {
         std::string retval = "max(";
-        for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
-             it != m_operands.end(); ++it)
-        {
+        for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
                 retval += ", ";
             retval += (*it)->Dump();
@@ -2276,9 +2266,7 @@ std::string Operation<T>::Dump() const
 
     if (m_op_type == RANDOM_PICK) {
         std::string retval = "randompick(";
-        for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
-             it != m_operands.end(); ++it)
-        {
+        for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
                 retval += ", ";
             retval += (*it)->Dump();
@@ -2290,7 +2278,7 @@ std::string Operation<T>::Dump() const
 
     bool parenthesize_lhs = false;
     bool parenthesize_rhs = false;
-    if (const Operation<T>* lhs = dynamic_cast<const Operation<T>*>(LHS())) {
+    if (auto lhs = dynamic_cast<const Operation<T>*>(LHS())) {
         OpType op_type = lhs->GetOpType();
         if (
             (m_op_type == EXPONENTIATE &&
@@ -2302,7 +2290,7 @@ std::string Operation<T>::Dump() const
            )
             parenthesize_lhs = true;
     }
-    if (const Operation<T>* rhs = dynamic_cast<const Operation<T>*>(RHS())) {
+    if (auto rhs = dynamic_cast<const Operation<T>*>(RHS())) {
         OpType op_type = rhs->GetOpType();
         if (
             (m_op_type == EXPONENTIATE &&
