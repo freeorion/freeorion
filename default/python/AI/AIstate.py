@@ -396,7 +396,7 @@ class AIstate(object):
                     if not fleet.ownedBy(-1) and (fleet.hasArmedShips or fleet.hasFighterShips):
                         ship_stats = CombatRatingsAI.FleetCombatStats(fleet_id).get_ship_stats(hashable=True)
                         # track old/dead enemy fighters for rating assessments in case not enough current info
-                        e_f_dict = cur_e_fighters if not dead_fleet else old_e_fighters
+                        e_f_dict = old_e_fighters if dead_fleet else cur_e_fighters
                         for stats in ship_stats:
                             attacks = stats[0]
                             if attacks:
