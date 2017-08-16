@@ -370,9 +370,8 @@ class AIstate(object):
         verbose = False
 
         # assess enemy fleets that may have been momentarily visible
-        # start with a dummy entry
+        # start with a dummy entries
         cur_e_fighters = {CombatRatingsAI.default_ship_stats().get_stats(hashable=True): [0]}
-        # start with a dummy entry
         old_e_fighters = {CombatRatingsAI.default_ship_stats().get_stats(hashable=True): [0]}
         enemy_fleet_ids = []
         enemies_by_system = {}
@@ -418,8 +417,7 @@ class AIstate(object):
                                 self.misc.setdefault('enemies_sighted', {}
                                                      ).setdefault(current_turn, []).append(fleet_id)
                                 rating = CombatRatingsAI.get_fleet_rating(
-                                    fleet_id,
-                                    enemy_stats=CombatRatingsAI.get_empire_standard_fighter())
+                                    fleet_id, enemy_stats=CombatRatingsAI.get_empire_standard_fighter())
                                 if rating > 0.25 * my_milship_rating:
                                     self.misc.setdefault('dangerous_enemies_sighted', {}
                                                          ).setdefault(current_turn, []).append(fleet_id)
@@ -464,8 +462,7 @@ class AIstate(object):
                 if not fleet:
                     continue
                 fleet_rating = CombatRatingsAI.get_fleet_rating(
-                    fid,
-                    enemy_stats=CombatRatingsAI.get_empire_standard_fighter())
+                    fid, enemy_stats=CombatRatingsAI.get_empire_standard_fighter())
                 if fleet.speed == 0:
                     monster_ratings.append(fleet_rating)
                     if verbose:
@@ -487,23 +484,21 @@ class AIstate(object):
             # but just in case...
             if not system or partial_vis_turn == -9999:
                 if verbose:
-                    print ("Have never had partial vis for system %d ( %s ) "
-                           "-- basing threat assessment on old info and lost ships") % (
-                        sys_id, sys_status.get('name', "name unknown"))
+                    print "Never had partial vis for %s - basing threat assessment on old info and lost ships" % system
                 sys_status.setdefault('local_fleet_threats', set())
                 sys_status['planetThreat'] = 0
                 sys_status['fleetThreat'] = int(max(
                     CombatRatingsAI.combine_ratings(enemy_rating, mob_rating),
                     0.98 * sys_status.get('fleetThreat', 0),
-                    1.1 * lost_fleet_rating - monster_rating)
-                )
+                    1.1*lost_fleet_rating - monster_rating))
                 sys_status['monsterThreat'] = int(max(
-                    monster_rating, 0.98 * sys_status.get('monsterThreat', 0),
-                    1.1 * lost_fleet_rating - enemy_rating - mob_rating)
-                )
+                    monster_rating,
+                    0.98 * sys_status.get('monsterThreat', 0),
+                    1.1 * lost_fleet_rating - enemy_rating - mob_rating))
                 sys_status['enemy_threat'] = int(max(
-                    enemy_rating, 0.98 * sys_status.get('enemy_threat', 0),
-                    1.1 * lost_fleet_rating - monster_rating - mob_rating))
+                    enemy_rating,
+                    0.98 * sys_status.get('enemy_threat', 0),
+                    1.1*lost_fleet_rating - monster_rating - mob_rating))
                 sys_status['mydefenses'] = {'overall': 0, 'attack': 0, 'health': 0}
                 sys_status['totalThreat'] = sys_status['fleetThreat']
                 sys_status['regional_fleet_threats'] = sys_status['local_fleet_threats'].copy()
@@ -536,10 +531,9 @@ class AIstate(object):
             # TODO use sitrep combat info rather than estimating stealthed enemies by fleets lost to them
             # TODO also only consider past stealthed fleet threat to still be present if the system is still obstructed
             # TODO: track visibility across turns in order to distinguish the blip of visibility in (losing) combat,
-            # which FO currently treats as being for the previous turn,
-            #  partially superseding the previous visibility for that turn
+            #       which FO currently treats as being for the previous turn,
+            #       partially superseding the previous visibility for that turn
 
-            # (universe.getVisibility(sys_id, self.empire_id) >= fo.visibility.partial)
             if not partial_vis_turn == current_turn:
                 sys_status.setdefault('local_fleet_threats', set())
                 sys_status['currently_visible'] = False
@@ -549,31 +543,29 @@ class AIstate(object):
                 sys_status['fleetThreat'] = int(max(
                     CombatRatingsAI.combine_ratings(enemy_rating, mob_rating),
                     0.98 * sys_status.get('fleetThreat', 0),
-                    2.0 * lost_fleet_rating - max(sys_status.get('monsterThreat', 0), monster_rating))
-                )
+                    2.0 * lost_fleet_rating - max(sys_status.get('monsterThreat', 0), monster_rating)))
                 sys_status['enemy_threat'] = int(max(
                     enemy_rating,
                     0.98 * sys_status.get('enemy_threat', 0),
-                    1.1 * lost_fleet_rating - max(sys_status.get('monsterThreat', 0), monster_rating))
-                )
+                    1.1*lost_fleet_rating - max(sys_status.get('monsterThreat', 0), monster_rating)))
                 sys_status['monsterThreat'] = int(max(monster_rating, 0.98 * sys_status.get('monsterThreat', 0)))
                 # sys_status['totalThreat'] = ((pattack + enemy_attack + monster_attack) ** 0.8)\
                 #                             * ((phealth + enemy_health + monster_health)** 0.6)  # reevaluate this
                 sys_status['totalThreat'] = max(
                     CombatRatingsAI.combine_ratings_list([enemy_rating, mob_rating, monster_rating, pattack * phealth]),
-                    2 * lost_fleet_rating, 0.98 * sys_status.get('totalThreat', 0)
-                )
+                    2 * lost_fleet_rating,
+                    0.98 * sys_status.get('totalThreat', 0))
             else:  # system considered visible #TODO: reevaluate as visibility rules change
                 sys_status['currently_visible'] = True
                 sys_status['local_fleet_threats'] = set(mobile_fleets)
                 # includes mobile monsters
                 sys_status['fleetThreat'] = int(max(
-                    CombatRatingsAI.combine_ratings(enemy_rating, mob_rating), 2 * lost_fleet_rating - monster_rating))
+                    CombatRatingsAI.combine_ratings(enemy_rating, mob_rating), 2*lost_fleet_rating - monster_rating))
                 if verbose:
                     print "enemy threat calc parts: enemy rating %.1f, lost fleet rating %.1f, monster_rating %.1f" % (
                         enemy_rating, lost_fleet_rating, monster_rating)
                 # does NOT include mobile monsters
-                sys_status['enemy_threat'] = int(max(enemy_rating, 2 * lost_fleet_rating - monster_rating))
+                sys_status['enemy_threat'] = int(max(enemy_rating, 2*lost_fleet_rating - monster_rating))
                 sys_status['monsterThreat'] = monster_rating
                 sys_status['totalThreat'] = CombatRatingsAI.combine_ratings_list(
                     [enemy_rating, mob_rating, monster_rating, pattack * phealth])
@@ -586,8 +578,7 @@ class AIstate(object):
                 sys_status['fleetThreat'] = max(sys_status['fleetThreat'], min_hidden_attack * min_hidden_health)
                 sys_status['totalThreat'] = max(
                     sys_status['totalThreat'],
-                    ((pattack + min_hidden_attack) ** 0.8) * ((phealth + min_hidden_health) ** 0.6)
-                )
+                    ((pattack + min_hidden_attack) ** 0.8) * ((phealth + min_hidden_health) ** 0.6))
             if verbose and sys_status['fleetThreat'] > 0:
                 print "%s intermediate status: %s" % (system, sys_status)
 
@@ -645,8 +636,7 @@ class AIstate(object):
             # for local system includes both enemies and mobs
             threat_keys = ['fleetThreat', 'neighborThreat', 'jump2_threat']
             sys_status['regional_threat'] = CombatRatingsAI.combine_ratings_list(
-                [sys_status.get(x, 0) for x in threat_keys]
-                )
+                [sys_status.get(x, 0) for x in threat_keys])
             # TODO: investigate cases where regional_threat has been nonzero but no regional_threat_fleets
             # (probably due to attenuating history of past threats)
             sys_status.setdefault('regional_fleet_threats', set()).update(j1_threats, j2_threats)
@@ -852,7 +842,7 @@ class AIstate(object):
             if fleet_id not in ok_fleets:  # or fleet.empty:
                 if (fleet and self.__fleetRoleByID.get(fleet_id, -1) != -1 and
                         fleet_id not in destroyed_object_ids and
-                        [ship_id for ship_id in fleet.shipIDs if ship_id not in destroyed_object_ids]):
+                        any(ship_id not in destroyed_object_ids for ship_id in fleet.shipIDs)):
                     if not just_resumed:
                         fleetsLostBySystem.setdefault(old_sys_id, []).append(max(rating, MilitaryAI.MinThreat))
                 if fleet_id in self.__fleetRoleByID:
