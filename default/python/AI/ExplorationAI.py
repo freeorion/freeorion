@@ -158,8 +158,8 @@ def follow_vis_system_connections(start_system_id, home_system_id):
 
         has_been_visible = universe.getVisibilityTurnsMap(cur_system_id, empire_id).get(fo.visibility.partial, 0) > 0
         is_connected = universe.systemsConnected(cur_system_id, home_system_id, -1)  # self.empire_id)
-        status_info.append("    -- is%s partially visible" % ([" not", ""][has_been_visible]))
-        status_info.append("    -- is%s visibly connected to homesystem" % ([" not", ""][is_connected]))
+        status_info.append("    -- is%s partially visible" % ("" if has_been_visible else " not"))
+        status_info.append("    -- is%s visibly connected to homesystem" % ("" if is_connected else " not"))
         if has_been_visible:
             sys_status = foAI.foAIstate.systemStatus.setdefault(cur_system_id, {})
             foAI.foAIstate.visInteriorSystemIDs.add(cur_system_id)

@@ -396,7 +396,7 @@ class AIstate(object):
                     if not fleet.ownedBy(-1) and (fleet.hasArmedShips or fleet.hasFighterShips):
                         ship_stats = CombatRatingsAI.FleetCombatStats(fleet_id).get_ship_stats(hashable=True)
                         # track old/dead enemy fighters for rating assessments in case not enough current info
-                        e_f_dict = [cur_e_fighters, old_e_fighters][dead_fleet]
+                        e_f_dict = cur_e_fighters if not dead_fleet else old_e_fighters
                         for stats in ship_stats:
                             attacks = stats[0]
                             if attacks:
@@ -421,7 +421,7 @@ class AIstate(object):
                                 if rating > 0.25 * my_milship_rating:
                                     self.misc.setdefault('dangerous_enemies_sighted', {}
                                                          ).setdefault(current_turn, []).append(fleet_id)
-        e_f_dict = [cur_e_fighters, old_e_fighters][len(cur_e_fighters) == 1]
+        e_f_dict = cur_e_fighters if len(cur_e_fighters) > 1 else old_e_fighters
         std_fighter = sorted([(v, k) for k, v in e_f_dict.items()])[-1][1]
         self.__empire_standard_enemy = std_fighter
         self.empire_standard_enemy_rating = self.get_standard_enemy().get_rating()

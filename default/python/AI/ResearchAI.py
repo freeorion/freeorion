@@ -986,7 +986,8 @@ def generate_classic_research_orders():
                 if this_spec and ("TELEPATHIC" in list(this_spec.tags)):
                     got_telepathy = True
                     break
-            if empire.population() > ([300, 100][got_telepathy]):
+            pop_threshold = 100 if got_telepathy else 300
+            if empire.population() > pop_threshold:
                 insert_idx = num_techs_accelerated
                 for dt_ech in ["LRN_PHYS_BRAIN", "LRN_TRANSLING_THT", "LRN_PSIONICS", "LRN_DISTRIB_THOUGHT"]:
                     if (dt_ech not in research_queue_list[:insert_idx + 2] and not tech_is_complete(dt_ech)

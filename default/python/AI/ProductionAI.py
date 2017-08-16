@@ -1368,7 +1368,7 @@ def generate_production_orders():
                         pname = loc_planet.name
                         this_rating = ColonisationAI.rate_planetary_piloting(loc)
                         rating_ratio = float(this_rating) / state.best_pilot_rating
-                        qualifier = ["", "suboptimal"][rating_ratio < 1.0]
+                        qualifier = "suboptimal" if rating_ratio < 1.0 else ""
                         print "Building mil ship at loc %d (%s) with %s pilot Rating: %.1f; ratio to empire best is %.1f" % (loc, pname, qualifier, this_rating, rating_ratio)
                 while total_pp > 40 * per_turn_cost:
                     ship_number *= 2
