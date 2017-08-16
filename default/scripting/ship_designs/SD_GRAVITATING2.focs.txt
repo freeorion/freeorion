@@ -11,7 +11,7 @@ ShipDesign
         "SR_WEAPON_0_1"
         "FU_SINGULARITY_ENGINE_CORE"
         "AR_XENTRONIUM_PLATE"
-        "FU_N_DIMENSIONAL_ENGINE_MATRIX"
+        "FU_BASIC_TANK"
         "SH_BLACK"
     ]
     model = "mark1"
