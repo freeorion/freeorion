@@ -613,7 +613,13 @@ def calculate_estimated_time_of_arrival(fleet_id, target_system_id):
 
 
 def get_fleet_system(fleet):
-    """Return the current fleet location or the target system if currently on starlane."""
+    """Return the current fleet location or the target system if currently on starlane.
+
+    :param fleet:
+    :type fleet: universe_object.Fleet | int
+    :return: current system_id or target system_id if currently on starlane
+    :rtype: int
+    """
     if isinstance(fleet, int):
         fleet = fo.getUniverse().getFleet(fleet)
     return fleet.systemID if fleet.systemID != INVALID_ID else fleet.nextSystemID
