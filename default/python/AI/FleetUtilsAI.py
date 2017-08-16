@@ -610,3 +610,10 @@ def calculate_estimated_time_of_arrival(fleet_id, target_system_id):
         return 99999
     distance = universe.shortestPathDistance(fleet_id, target_system_id)
     return math.ceil(float(distance) / fleet.speed)
+
+
+def get_fleet_system(fleet):
+    """Return the current fleet location or the target system if currently on starlane."""
+    if isinstance(fleet, int):
+        fleet = fo.getUniverse().getFleet(fleet)
+    return fleet.systemID if fleet.systemID != INVALID_ID else fleet.nextSystemID
