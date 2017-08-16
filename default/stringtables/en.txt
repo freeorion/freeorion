@@ -6634,7 +6634,7 @@ Trith
 
 SP_TRITH_GAMEPLAY_DESC
 '''Bereaved xenophobic telepaths.
-Prefer [[PT_DESERT]] planets.
+Prefer [[PT_RADIATED]] planets.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 '''
 
@@ -6933,7 +6933,7 @@ Sslith
 
 SP_SSLITH_GAMEPLAY_DESC
 '''Flat, aquatic, pliable creatures.
-Prefer [[PT_TUNDRA]] planets.
+Prefer [[PT_OCEAN]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
