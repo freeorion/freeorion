@@ -6455,11 +6455,14 @@ void MapWnd::RefreshIndustryResourceIndicator() {
 
     double total_PP_spent = empire->GetProductionQueue().TotalPPsSpent();
     double total_PP_output = empire->GetResourcePool(RE_INDUSTRY)->TotalOutput();
-    double total_PP_wasted = total_PP_output - total_PP_spent;
     double total_PP_target_output = empire->GetResourcePool(RE_INDUSTRY)->TargetOutput();
     float stockpile = empire->GetResourcePool(RE_INDUSTRY)->Stockpile();
     float stockpile_used = boost::accumulate(empire->GetProductionQueue().AllocatedStockpilePP() | boost::adaptors::map_values, 0.0f);
     float expected_stockpile = empire->GetProductionQueue().ExpectedNewStockpileAmount();
+    float  PP_to_stockpile_yield = empire->GetMeter("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")->Current();
+    double total_PP_to_stockpile = expected_stockpile - stockpile + stockpile_used;
+    double total_PP_overproduction = total_PP_output - total_PP_spent;
+    double total_PP_wasted = total_PP_output - total_PP_spent - total_PP_to_stockpile;
 
     m_industry->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
         UserString("MAP_PRODUCTION_TITLE"), UserString("PRODUCTION_INFO_PP"),
@@ -6476,6 +6479,9 @@ void MapWnd::RefreshIndustryResourceIndicator() {
             UserString("MAP_PROD_WASTED_TITLE"),
             boost::io::str(FlexibleFormat(UserString("MAP_PROD_WASTED_TEXT"))
                            % DoubleToString(total_PP_output, 3, false)
+                           % DoubleToString(total_PP_overproduction, 3, false)
+                           % DoubleToString(PP_to_stockpile_yield, 3, false)
+                           % DoubleToString(total_PP_to_stockpile, 3, false)
                            % DoubleToString(total_PP_wasted, 3, false))));
     } else {
         m_industry_wasted->Hide();
