@@ -1904,6 +1904,31 @@ void ProductionInfoPanel::SetTotalPointsCost(float total_points, float total_cos
     SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % empire_name));
 }
 
+void ProductionInfoPanel::SetStockpileCost(float stockpile, float stockpile_max, float stockpile_use, float stockpile_use_max) {
+    if (!m_stockpile_points_label) {
+        m_stockpile_points_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_STOCKPILE_PS_LABEL"), GG::FORMAT_RIGHT);
+        m_stockpile_points = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+        m_stockpile_points_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
+
+        AttachChild(m_stockpile_points_label);
+        AttachChild(m_stockpile_points);
+        AttachChild(m_stockpile_points_P_label);
+
+        DoLayout();
+    }
+
+    *m_stockpile_points << DoubleToString(stockpile, 3, false);
+    *m_stockpile_points << std::string(" / ");
+    *m_stockpile_points << DoubleToString(stockpile_max, 3, false);
+
+    const Empire* empire = GetEmpire(m_empire_id);
+    std::string empire_name;
+    if (empire)
+        empire_name = empire->Name();
+
+    SetName(boost::io::str(FlexibleFormat(UserString("STOCKPILE_INFO_EMPIRE")) % m_title_str % empire_name));
+}
+
 void ProductionInfoPanel::SetLocalPointsCost(float local_points, float local_cost, const std::string& location_name) {
     if (!m_local_points_label) {
         m_local_points_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_LOCAL_PS_LABEL"), GG::FORMAT_RIGHT);
