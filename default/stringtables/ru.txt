@@ -4975,7 +4975,7 @@ DESIGN_WINDOW_ARTICLE_TEXT
 
 [[DESIGN_WND_PART_PALETTE_TITLE]] отображает части. Если связанные технологии с данной частью исследованы, то она может использоваться в текущих проектах. Другие части не могут использоваться, потому что либо связанная с ними технология не была исследована, либо часть доступна только монстрам
 
-"[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]" и "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" установка фильтров на [[DESIGN_WND_STARTS]] и [[DESIGN_WND_PART PALETTE TITLE]] позволит переключать отображение частей, которые империя может использовать или которые ограничены. Некоторые недоступные части могут быть разблокированы, исследуя связанные с ней [[encyclopedia ENC_TECH]]
+"[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]" и "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" установка фильтров на [[DESIGN_WND_STARTS]] и [[DESIGN_WND_PART_PALETTE_TITLE]] позволит переключать отображение частей, которые империя может использовать или которые ограничены. Некоторые недоступные части могут быть разблокированы, исследуя связанные с ней [[encyclopedia ENC_TECH]]
 
 В окне [[DESIGN_WND_PART_PALETTE_TITLE]] есть фильтры для отображения / скрытия целых категорий частей
 
