@@ -92,7 +92,7 @@ std::shared_ptr<UniverseObject> ObjectMap::Object(int id)
 std::vector<std::shared_ptr<const UniverseObject>> ObjectMap::FindObjects(const std::vector<int>& object_ids) const {
     std::vector<std::shared_ptr<const UniverseObject>> result;
     for (int object_id : object_ids)
-        if (std::shared_ptr<const UniverseObject> obj = Object(object_id))
+        if (auto obj = Object(object_id))
             result.push_back(obj);
         else
             ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
@@ -102,7 +102,7 @@ std::vector<std::shared_ptr<const UniverseObject>> ObjectMap::FindObjects(const 
 std::vector<std::shared_ptr<const UniverseObject>> ObjectMap::FindObjects(const std::set<int>& object_ids) const {
     std::vector<std::shared_ptr<const UniverseObject>> result;
     for (int object_id : object_ids)
-        if (std::shared_ptr<const UniverseObject> obj = Object(object_id))
+        if (auto obj = Object(object_id))
             result.push_back(obj);
         else
             ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
@@ -112,7 +112,7 @@ std::vector<std::shared_ptr<const UniverseObject>> ObjectMap::FindObjects(const 
 std::vector<std::shared_ptr<UniverseObject>> ObjectMap::FindObjects(const std::vector<int>& object_ids) {
     std::vector<std::shared_ptr<UniverseObject>> result;
     for (int object_id : object_ids)
-        if (std::shared_ptr<UniverseObject> obj = Object(object_id))
+        if (auto obj = Object(object_id))
             result.push_back(obj);
         else
             ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
@@ -122,7 +122,7 @@ std::vector<std::shared_ptr<UniverseObject>> ObjectMap::FindObjects(const std::v
 std::vector<std::shared_ptr<UniverseObject>> ObjectMap::FindObjects(const std::set<int>& object_ids) {
     std::vector<std::shared_ptr<UniverseObject>> result;
     for (int object_id : object_ids)
-        if (std::shared_ptr<UniverseObject> obj = Object(object_id))
+        if (auto obj = Object(object_id))
             result.push_back(obj);
         else
             ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
@@ -132,7 +132,7 @@ std::vector<std::shared_ptr<UniverseObject>> ObjectMap::FindObjects(const std::s
 std::vector<std::shared_ptr<const UniverseObject>> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) const {
     std::vector<std::shared_ptr<const UniverseObject>> result;
     for (const_iterator<> it = const_begin(); it != const_end(); ++it) {
-        if (std::shared_ptr<UniverseObject> obj = it->Accept(visitor))
+        if (auto obj = it->Accept(visitor))
             result.push_back(Object(obj->ID()));
     }
     return result;

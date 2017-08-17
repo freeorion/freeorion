@@ -2778,7 +2778,7 @@ void MapWnd::InitTurn() {
 
     if (turn_number == 1 && this_client_empire) {
         // start first turn with player's system selected
-        if (std::shared_ptr<const UniverseObject> obj = objects.Object(this_client_empire->CapitalID())) {
+        if (auto obj = objects.Object(this_client_empire->CapitalID())) {
             SelectSystem(obj->SystemID());
             CenterOnMapCoord(obj->X(), obj->Y());
         }
@@ -4323,7 +4323,7 @@ void MapWnd::ShowEncyclopediaEntry(const std::string& str) {
 }
 
 void MapWnd::CenterOnObject(int id) {
-    if (std::shared_ptr<UniverseObject> obj = GetUniverseObject(id))
+    if (auto obj = GetUniverseObject(id))
         CenterOnMapCoord(obj->X(), obj->Y());
 }
 
@@ -4399,7 +4399,7 @@ void MapWnd::ReselectLastFleet() {
     //// DEBUG
     //std::cout << "MapWnd::ReselectLastFleet m_selected_fleet_ids: " << std::endl;
     //for (int fleet_id : m_selected_fleet_ids) {
-    //    std::shared_ptr<const UniverseObject> obj = GetUniverse().Object(fleet_id);
+    //    auto obj = GetUniverse().Object(fleet_id);
     //    if (obj)
     //        std::cout << "    " << obj->Name() << "(" << fleet_id << ")" << std::endl;
     //    else
@@ -6154,7 +6154,7 @@ void MapWnd::ShowProduction() {
     // home system (ie. where the capital is)
     if (SidePanel::SystemID() == INVALID_OBJECT_ID) {
         if (const Empire* empire = HumanClientApp::GetApp()->GetEmpire(HumanClientApp::GetApp()->EmpireID()))
-            if (std::shared_ptr<const UniverseObject> obj = GetUniverseObject(empire->CapitalID()))
+            if (auto obj = GetUniverseObject(empire->CapitalID()))
                 SelectSystem(obj->SystemID());
     } else {
         // if a system is already shown, make sure a planet gets selected by
@@ -6398,8 +6398,8 @@ void MapWnd::RefreshPopulationIndicator() {
 
     //tally up all species population counts
     for (int pop_center_id : pop_center_ids) {
-        std::shared_ptr<const UniverseObject> obj = objects.Object(pop_center_id);
-        std::shared_ptr<const PopCenter> pc = std::dynamic_pointer_cast<const PopCenter>(obj);
+        auto obj = objects.Object(pop_center_id);
+        auto pc = std::dynamic_pointer_cast<const PopCenter>(obj);
         if (!pc)
             continue;
 
@@ -6692,7 +6692,7 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
         return false; // shouldn't happen?
     for (const std::set<int>& obj_ids : wasted_PP_objects) {
         for (int obj_id : obj_ids) {
-            std::shared_ptr<const UniverseObject> obj = GetUniverseObject(obj_id);
+            auto obj = GetUniverseObject(obj_id);
             if (obj && obj->SystemID() != INVALID_OBJECT_ID) {
                 // found object with wasted PP that is in a system.  zoom there.
                 CenterOnObject(obj->SystemID());
@@ -6837,7 +6837,7 @@ void MapWnd::StopFleetExploring(const int fleet_id) {
     // force UI update. Removing a fleet from the UI's list of exploring fleets
     // doesn't actually change the Fleet object's state in any way, so the UI
     // would otherwise still show the fleet as "exploring"
-    if (std::shared_ptr<Fleet> fleet = GetFleet(fleet_id))
+    if (auto fleet = GetFleet(fleet_id))
         fleet->StateChangedSignal();
 }
 
@@ -6896,15 +6896,15 @@ void MapWnd::DispatchFleetsExploring() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire *empire = HumanClientApp::GetApp()->GetEmpire(empire_id);
     if (!empire) return;
-    const std::set<int> destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
+    auto destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
 
-    //int nbr_ship_idle = 0;
     std::set<int> fleet_idle;
     std::set<int> systems_being_explored; //all systems ID for which an exploring fleet is in route
 
-    //clean the fleet list by removing non-existing fleet, and extract the fleets waiting for orders
-    for (std::set<int>::iterator it = m_fleets_exploring.begin(); it != m_fleets_exploring.end();) {
-        std::shared_ptr<Fleet> fleet = GetFleet(*it);
+    // clean the fleet list by removing non-existing fleet, and extract the
+    // fleets waiting for orders
+    for (auto it = m_fleets_exploring.begin(); it != m_fleets_exploring.end();) {
+        auto fleet = GetFleet(*it);
         if (!fleet || destroyed_objects.find(fleet->ID()) != destroyed_objects.end()) {
             m_fleets_exploring.erase(it++); //this fleet can't explore anymore
         } else {
@@ -6961,7 +6961,7 @@ void MapWnd::DispatchFleetsExploring() {
         int better_fleet_id;
 
         for (int fleet_id : fleet_idle) {
-            std::shared_ptr<Fleet> fleet = GetFleet(fleet_id);
+            auto fleet = GetFleet(fleet_id);
             if (!fleet || !fleet->MovePath().empty())
                 continue;
 

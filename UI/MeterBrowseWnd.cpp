@@ -131,7 +131,7 @@ void MeterBrowseWnd::Initialize() {
     const GG::X TOTAL_WIDTH = MeterBrowseLabelWidth() + MeterBrowseValueWidth();
 
     // get objects and meters to verify that they exist
-    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_object_id);
+    auto obj = GetUniverseObject(m_object_id);
     if (!obj) {
         ErrorLogger() << "MeterBrowseWnd couldn't get object with id " << m_object_id;
         return;
@@ -150,7 +150,7 @@ void MeterBrowseWnd::Initialize() {
         std::string summary_title_text;
         if (m_primary_meter_type == METER_POPULATION) {
             std::string human_readable_species_name;
-            if (std::shared_ptr<const PopCenter> pop = std::dynamic_pointer_cast<const PopCenter>(obj)) {
+            if (auto pop = std::dynamic_pointer_cast<const PopCenter>(obj)) {
                 const std::string& species_name = pop->SpeciesName();
                 if (!species_name.empty())
                     human_readable_species_name = UserString(species_name);
@@ -237,7 +237,7 @@ namespace {
         int obj_id, const MeterType& meter_type)
     {
         // get object and meter, aborting if not valid
-        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(obj_id);
+        auto obj = GetUniverseObject(obj_id);
         if (!obj) {
             ErrorLogger() << "Couldn't get object with id " << obj_id;
             return boost::none;
@@ -313,7 +313,7 @@ namespace DualMeter {
 }
 
 void MeterBrowseWnd::UpdateSummary() {
-    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_object_id);
+    auto obj = GetUniverseObject(m_object_id);
     if (!obj)
         return;
 

@@ -202,7 +202,7 @@ namespace {
 }
 
 SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id, int empire_id) {
-    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
+    auto obj = GetUniverseObject(object_id);
     if (!obj)
         return GenericCombatDamagedObjectSitrep(combat_system_id);
 
@@ -250,7 +250,7 @@ SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id,
 }
 
 SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_id, int empire_id) {
-    std::shared_ptr<const UniverseObject> obj = GetEmpireKnownObject(object_id, empire_id);
+    auto obj = GetEmpireKnownObject(object_id, empire_id);
     if (!obj) {
         DebugLogger() << "Object " << object_id << " does not exist!!!";
         return GenericCombatDestroyedObjectSitrep(combat_system_id);
@@ -367,7 +367,7 @@ SitRepEntry CreatePlanetOutpostedSitRep(int planet_id) {
 }
 
 SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, int recipient_empire_id) {
-    std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
+    auto fleet = GetFleet(fleet_id);
 
     //bool system_contains_recipient_empire_planets = false;
     //if (const System* system = GetSystem(system_id)) {
@@ -406,7 +406,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
             sitrep.AddVariable(VarText::FLEET_ID_TAG,      std::to_string(fleet_id));
             int ship_id = *fleet->ShipIDs().begin();
             sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
-            if (std::shared_ptr<const Ship> ship = GetShip(ship_id))
+            if (auto ship = GetShip(ship_id))
                 sitrep.AddVariable(VarText::DESIGN_ID_TAG, std::to_string(ship->DesignID()));
             return sitrep;
         } else {
@@ -442,7 +442,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
             sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     std::to_string(fleet->Owner()));
             int ship_id = *fleet->ShipIDs().begin();
             sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
-            if (std::shared_ptr<const Ship> ship = GetShip(ship_id))
+            if (auto ship = GetShip(ship_id))
                 sitrep.AddVariable(VarText::DESIGN_ID_TAG, std::to_string(ship->DesignID()));
             return sitrep;
         } else {
@@ -469,7 +469,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
             sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     std::to_string(fleet->Owner()));
             int ship_id = *fleet->ShipIDs().begin();
             sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
-            if (std::shared_ptr<const Ship> ship = GetShip(ship_id))
+            if (auto ship = GetShip(ship_id))
                 sitrep.AddVariable(VarText::DESIGN_ID_TAG, std::to_string(ship->DesignID()));
             return sitrep;
         } else {

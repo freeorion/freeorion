@@ -307,16 +307,16 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     std::map<std::string, std::map<int, int>> named_key_maps;
     parse::keymaps(named_key_maps);
     TraceLogger() << "Keymaps:";
-    for (std::map<std::string, std::map<int, int>>::value_type& km : named_key_maps) {
+    for (auto& km : named_key_maps) {
         TraceLogger() << "Keymap name = \"" << km.first << "\"";
-        for (std::map<int, int>::value_type& keys : km.second)
+        for (auto& keys : km.second)
             TraceLogger() << "    " << char(keys.first) << " : " << char(keys.second);
     }
-    std::map<std::string, std::map<int, int>>::const_iterator km_it = named_key_maps.find("TEST");
+    auto km_it = named_key_maps.find("TEST");
     if (km_it != named_key_maps.end()) {
-        const std::map<int, int> int_key_map = km_it->second;
+        const auto int_key_map = km_it->second;
         std::map<GG::Key, GG::Key> key_map;
-        for (const std::map<int, int>::value_type& int_key : int_key_map)
+        for (const auto& int_key : int_key_map)
         { key_map[GG::Key(int_key.first)] = GG::Key(int_key.second); }
         this->SetKeyMap(key_map);
     }
@@ -368,13 +368,12 @@ bool HumanClientApp::CanSaveNow() const {
         return false;
 
     // can't save while AIs are playing their turns...
-    for (const std::map<int, PlayerInfo>::value_type& entry : m_player_info) {
+    for (const auto& entry : m_player_info) {
         const PlayerInfo& info = entry.second;
         if (info.client_type != Networking::CLIENT_TYPE_AI_PLAYER)
             continue;   // only care about AIs
 
-        std::map<int, Message::PlayerStatus>::const_iterator
-            status_it = m_player_status.find(entry.first);
+        auto status_it = m_player_status.find(entry.first);
 
         if (status_it == this->m_player_status.end()) {
             return false;  // missing status for AI; can't assume it's ready
@@ -1061,7 +1060,7 @@ namespace {
             }
 
             //DebugLogger() << "files by write time:";
-            //for (std::multimap<std::time_t, path>::value_type& entry : files_by_write_time)
+            //for (auto& entry : files_by_write_time)
             //{ DebugLogger() << entry.first << " : " << entry.second.filename(); }
 
             int num_to_delete = files_by_write_time.size() - files_limit + 1;   // +1 because will add a new file after deleting, bringing number back up to limit
@@ -1069,7 +1068,7 @@ namespace {
                 return; // don't need to delete anything.
 
             int num_deleted = 0;
-            for (std::multimap<std::time_t, path>::value_type& entry : files_by_write_time) {
+            for (auto& entry : files_by_write_time) {
                 if (num_deleted >= num_to_delete)
                     break;
                 remove(entry.second);

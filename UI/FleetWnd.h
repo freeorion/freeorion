@@ -161,7 +161,7 @@ private:
 
     void            ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
 
-    void UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj);
+    void            UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj);
 
     void            SetStatIconValues();          ///< sets values for multi-fleet aggregate stat icons at top of FleetWnd
     mutable boost::signals2::signal<void (FleetWnd*)> ClosingSignal;

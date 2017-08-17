@@ -288,8 +288,8 @@ int  System::Owner() const {
     // Check if all of the owners are the same empire.
     int first_owner_found(ALL_EMPIRES);
     for (int planet_id : m_planets) {
-        if (std::shared_ptr<const Planet> planet = GetPlanet(planet_id)) {
-            const int owner(planet->Owner());
+        if (auto planet = GetPlanet(planet_id)) {
+            const int owner = planet->Owner();
             if (owner == ALL_EMPIRES)
                 continue;
             if (first_owner_found == ALL_EMPIRES)
@@ -439,7 +439,7 @@ void System::Remove(int id) {
     m_objects.erase(id);
 
     if (removed_fleet) {
-        if (std::shared_ptr<Fleet> fleet = GetFleet(id)) {
+        if (auto fleet = GetFleet(id)) {
             std::vector<std::shared_ptr<Fleet>> fleets;
             fleets.push_back(fleet);
             FleetsRemovedSignal(fleets);

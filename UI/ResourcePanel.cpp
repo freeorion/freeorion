@@ -44,7 +44,7 @@ void ResourcePanel::CompleteConstruction() {
 
     SetName("ResourcePanel");
 
-    std::shared_ptr<const ResourceCenter> res = GetResCenter();
+    auto res = GetResCenter();
     if (!res)
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
 
@@ -154,7 +154,7 @@ void ResourcePanel::Update() {
         m_multi_icon_value_indicator->ClearToolTip(meter_stat.first);
     }
 
-    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_rescenter_id);
+    auto obj = GetUniverseObject(m_rescenter_id);
     if (!obj) {
         ErrorLogger() << "BuildingPanel::Update couldn't get object with id " << m_rescenter_id;
         return;
@@ -247,7 +247,7 @@ void ResourcePanel::DoLayout() {
 }
 
 std::shared_ptr<const ResourceCenter> ResourcePanel::GetResCenter() const {
-    std::shared_ptr<const ResourceCenter> res = GetResourceCenter(m_rescenter_id);
+    auto res = GetResourceCenter(m_rescenter_id);
     if (!res) {
         ErrorLogger() << "ResourcePanel tried to get an object with an invalid m_rescenter_id";
         return nullptr;

@@ -3328,7 +3328,7 @@ void ObjectID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
     if (object_id == INVALID_OBJECT_ID)
         return;
 
-    std::shared_ptr<UniverseObject> obj = Objects().ExistingObject(object_id);
+    auto obj = Objects().ExistingObject(object_id);
     if (obj)
         condition_non_targets.push_back(obj);
 }
@@ -4531,10 +4531,10 @@ namespace {
                 return false;
 
             // is it a ResourceCenter or a Building on a Planet (that is a ResourceCenter)
-            std::shared_ptr<const ResourceCenter> res_center = std::dynamic_pointer_cast<const ResourceCenter>(candidate);
+            auto res_center = std::dynamic_pointer_cast<const ResourceCenter>(candidate);
             std::shared_ptr<const ::Building> building;
             if (!res_center && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-                if (std::shared_ptr<const Planet> planet = GetPlanet(building->PlanetID()))
+                if (auto planet = GetPlanet(building->PlanetID()))
                     res_center = std::dynamic_pointer_cast<const ResourceCenter>(planet);
             }
             if (res_center) {
@@ -4636,21 +4636,21 @@ std::string FocusType::Dump() const {
 }
 
 bool FocusType::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "FocusType::Match passed no candidate object";
         return false;
     }
 
     // is it a ResourceCenter or a Building on a Planet (that is a ResourceCenter)
-    std::shared_ptr<const ResourceCenter> res_center = std::dynamic_pointer_cast<const ResourceCenter>(candidate);
+    auto res_center = std::dynamic_pointer_cast<const ResourceCenter>(candidate);
     std::shared_ptr<const ::Building> building;
     if (!res_center && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-        if (std::shared_ptr<const Planet> planet = GetPlanet(building->PlanetID()))
+        if (auto planet = GetPlanet(building->PlanetID()))
             res_center = std::dynamic_pointer_cast<const ResourceCenter>(planet);
     }
     if (res_center) {
-        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        for (auto name : m_names) {
             if (name->Eval(local_context) == res_center->Focus())
                 return true;
         }
@@ -8247,7 +8247,7 @@ bool CanColonize::Match(const ScriptingContext& local_context) const {
             ErrorLogger() << "CanColonize couldn't cast supposedly building candidate";
             return false;
         }
-        std::shared_ptr<const Planet> planet = GetPlanet(building->PlanetID());
+        auto planet = GetPlanet(building->PlanetID());
         if (!planet) {
             ErrorLogger() << "CanColonize couldn't get building's planet";
             return false;
@@ -8315,12 +8315,12 @@ bool CanProduceShips::Match(const ScriptingContext& local_context) const {
         species_name = planet->SpeciesName();
 
     } else if (candidate->ObjectType() == OBJ_BUILDING) {
-        std::shared_ptr<const ::Building> building = std::dynamic_pointer_cast<const ::Building>(candidate);
+        auto building = std::dynamic_pointer_cast<const ::Building>(candidate);
         if (!building) {
             ErrorLogger() << "CanProduceShips couldn't cast supposedly building candidate";
             return false;
         }
-        std::shared_ptr<const Planet> planet = GetPlanet(building->PlanetID());
+        auto planet = GetPlanet(building->PlanetID());
         if (!planet) {
             ErrorLogger() << "CanProduceShips couldn't get building's planet";
             return false;
@@ -8328,7 +8328,7 @@ bool CanProduceShips::Match(const ScriptingContext& local_context) const {
         species_name = planet->SpeciesName();
 
     } else if (candidate->ObjectType() == OBJ_SHIP) {
-        std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(candidate);
+        auto ship = std::dynamic_pointer_cast<const Ship>(candidate);
         if (!ship) {
             ErrorLogger() << "CanProduceShips couldn't cast supposedly ship candidate";
             return false;
@@ -8338,7 +8338,7 @@ bool CanProduceShips::Match(const ScriptingContext& local_context) const {
 
     if (species_name.empty())
         return false;
-    const ::Species* species = GetSpecies(species_name);
+    auto species = GetSpecies(species_name);
     if (!species) {
         ErrorLogger() << "CanProduceShips couldn't get species: " << species_name;
         return false;

@@ -712,7 +712,7 @@ bool ClientUI::ZoomToObject(int id) {
 }
 
 bool ClientUI::ZoomToPlanet(int id) {
-    if (std::shared_ptr<const Planet> planet = GetPlanet(id)) {
+    if (auto planet = GetPlanet(id)) {
         GetMapWnd()->CenterOnObject(planet->SystemID());
         GetMapWnd()->SelectSystem(planet->SystemID());
         GetMapWnd()->SelectPlanet(id);
@@ -744,13 +744,13 @@ bool ClientUI::ZoomToFleet(int id) {
 }
 
 bool ClientUI::ZoomToShip(int id) {
-    if (std::shared_ptr<const Ship> ship = GetShip(id))
+    if (auto ship = GetShip(id))
         return ZoomToFleet(ship->FleetID());
     return false;
 }
 
 bool ClientUI::ZoomToBuilding(int id) {
-    if (std::shared_ptr<const Building> building = GetBuilding(id)) {
+    if (auto building = GetBuilding(id)) {
         ZoomToBuildingType(building->BuildingTypeName());
         return ZoomToPlanet(building->PlanetID());
     }
@@ -758,7 +758,7 @@ bool ClientUI::ZoomToBuilding(int id) {
 }
 
 bool ClientUI::ZoomToField(int id) {
-    //if (const Field* field = GetField(id)) {
+    //if (auto field = GetField(id)) {
     //  // TODO: implement this
     //}
     return false;
@@ -801,19 +801,19 @@ bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup/* = fa
             if (boost::iequals(name, UserString(entry.first)))
                 return ZoomToBuildingType(entry.first);
 
-        for (const std::string& special_name : SpecialNames())
+        for (const auto& special_name : SpecialNames())
             if (boost::iequals(name, UserString(special_name)))
                 return ZoomToSpecial(special_name);
 
-        for (const std::map<std::string, HullType*>::value_type& entry : GetHullTypeManager())
+        for (const auto& entry : GetHullTypeManager())
             if (boost::iequals(name, UserString(entry.first)))
                 return ZoomToShipHull(entry.first);
 
-        for (const std::map<std::string, PartType*>::value_type& entry : GetPartTypeManager())
+        for (const auto& entry : GetPartTypeManager())
             if (boost::iequals(name, UserString(entry.first)))
                 return ZoomToShipPart(entry.first);
 
-        for (const std::map<std::string, Species*>::value_type& entry : GetSpeciesManager())
+        for (const auto& entry : GetSpeciesManager())
             if (boost::iequals(name, UserString(entry.first)))
                 return ZoomToSpecies(entry.first);
 
@@ -904,7 +904,7 @@ bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str) {
 }
 
 void ClientUI::DumpObject(int object_id) {
-    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
+    auto obj = GetUniverseObject(object_id);
     if (!obj)
         return;
     m_message_wnd->HandleLogMessage(obj->Dump() + "\n");

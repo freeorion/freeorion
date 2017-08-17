@@ -366,7 +366,7 @@ private:
     void            ShipRightClicked(int fleet_id);
     void            ShipsRightClicked(const std::vector<int>& fleet_ids);
 
-    void UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj);
+    void            UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj);
 
     bool            ReturnToMap();
 

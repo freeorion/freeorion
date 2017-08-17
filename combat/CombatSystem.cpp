@@ -772,7 +772,7 @@ namespace {
     float GetMonsterDetection(const CombatInfo& combat_info) {
         float monster_detection = 0.0;
         for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin(); it != combat_info.objects.const_end(); ++it) {
-            std::shared_ptr<const UniverseObject> obj = *it;
+            auto obj = *it;
             if (obj->Unowned() && (obj->ObjectType() == OBJ_SHIP || obj->ObjectType() == OBJ_PLANET )){
                 monster_detection = std::max(monster_detection, obj->CurrentMeterValue(METER_DETECTION));
             }
@@ -867,7 +867,7 @@ namespace {
             for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin();
                  it != combat_info.objects.const_end(); ++it)
             {
-                std::shared_ptr<const UniverseObject> obj = *it;
+                auto obj = *it;
 
                 // There may be objects, for example unowned planets, that were
                 // not a part of the battle to start with. Ignore them
@@ -1020,7 +1020,7 @@ namespace {
             DebugLogger(combat) << "Reporting Invisible Objects";
             InitialStealthEvent::StealthInvisbleMap report;
             for (int object_id : valid_target_object_ids) {
-                std::shared_ptr<const UniverseObject> obj = combat_info.objects.Object(object_id);
+                auto obj = combat_info.objects.Object(object_id);
 
                 // for all empires, can they attack this object?
                 for (int attacking_empire_id : combat_info.empire_ids) {
@@ -1067,7 +1067,7 @@ namespace {
             for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin();
                  it != combat_info.objects.const_end(); ++it)
             {
-                std::shared_ptr<const UniverseObject> obj = *it;
+                auto obj = *it;
                 bool can_attack{ObjectCanAttack(obj)};
                 if (can_attack) {
                     valid_attacker_object_ids.insert(it->ID());
@@ -1088,7 +1088,7 @@ namespace {
         // could potentially target.
         void PopulateEmpireTargets(const CombatInfo& combat_info) {
             for (int object_id : valid_target_object_ids) {
-                std::shared_ptr<const UniverseObject> obj = combat_info.objects.Object(object_id);
+                auto obj = combat_info.objects.Object(object_id);
                 for (int attacking_empire_id : combat_info.empire_ids) {
                     if (attacking_empire_id == ALL_EMPIRES) {
                         if (ObjectAttackableByMonsters(obj, monster_detection))

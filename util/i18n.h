@@ -77,7 +77,7 @@ boost::format FlexibleFormatList(
 
     boost::format header_fmt = FlexibleFormat(header_template) % boost::lexical_cast<std::string>(words.size());
 
-    for (const typename HeaderContainer::value_type& word : header_words) {
+    for (const auto& word : header_words) {
         header_fmt % word;
     }
 
@@ -124,7 +124,7 @@ boost::format FlexibleFormatList(
 
     boost::format fmt = FlexibleFormat(template_str) % header_fmt.str();
 
-    for (const typename ListContainer::value_type& word : words) {
+    for (const auto& word : words) {
         fmt % word;
     }
 

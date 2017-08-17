@@ -1596,7 +1596,7 @@ namespace {
         // for visible fleets by an empire, check visibility of fleets by that empire
         if (empire_id != ALL_EMPIRES) {
             for (int fleet_id : fleet_ids) {
-                std::shared_ptr<Fleet> fleet = GetFleet(fleet_id);
+                auto fleet = GetFleet(fleet_id);
                 if (!fleet)
                     continue;
                 if (fleet->OwnedBy(empire_id))
@@ -1645,12 +1645,14 @@ namespace {
         }
     }
 
-    void GetPlanetsVisibleToEmpireAtSystem(std::set<int>& visible_planets, int empire_id, int system_id) {
+    void GetPlanetsVisibleToEmpireAtSystem(std::set<int>& visible_planets,
+                                           int empire_id, int system_id)
+    {
         visible_planets.clear();
-        std::shared_ptr<const System> system = GetSystem(system_id);
+        auto system = GetSystem(system_id);
         if (!system)
             return; // no such system
-        const std::set<int>& planet_ids = system->PlanetIDs();
+        const auto& planet_ids = system->PlanetIDs();
         if (planet_ids.empty())
             return; // no planets to be seen
         if (empire_id != ALL_EMPIRES && !GetEmpire(empire_id))
@@ -1664,7 +1666,7 @@ namespace {
                 if (planet_vis <= VIS_BASIC_VISIBILITY)
                     continue;
                 // skip planets that have no owner and that are unpopulated; don't matter for combat conditions test
-                std::shared_ptr<const Planet> planet = GetPlanet(planet_id);
+                auto planet = GetPlanet(planet_id);
                 if (planet->Unowned() && planet->CurrentMeterValue(METER_POPULATION) <= 0.0)
                     continue;
                 visible_planets.insert(planet->ID());
@@ -1945,7 +1947,7 @@ namespace {
 
                 for (int dest_obj_id : empire_kdos.second) {
                     //DebugLogger() << "Creating destroyed object sitrep for empire " << empire_id << " and object " << dest_obj_id;
-                    //if (std::shared_ptr<UniverseObject> obj = GetEmpireKnownObject(dest_obj_id, empire_id)) {
+                    //if (auto obj = GetEmpireKnownObject(dest_obj_id, empire_id)) {
                     //    DebugLogger() << "Object known to empire: " << obj->Dump();
                     //} else {
                     //    DebugLogger() << "Object not known to empire";

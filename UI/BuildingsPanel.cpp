@@ -98,7 +98,7 @@ void BuildingsPanel::Update() {
         DetachChild(indicator.get());
     m_building_indicators.clear();
 
-    std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
+    auto planet = GetPlanet(m_planet_id);
     if (!planet) {
         ErrorLogger() << "BuildingsPanel::Update couldn't get planet with id " << m_planet_id;
         return;
@@ -108,8 +108,8 @@ void BuildingsPanel::Update() {
     const int indicator_size = static_cast<int>(Value(Width() * 1.0 / m_columns));
 
     int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
-    const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
+    const auto& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
+    const auto& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
     // get existing / finished buildings and use them to create building indicators
     for (int object_id : planet->BuildingIDs()) {
@@ -119,7 +119,7 @@ void BuildingsPanel::Update() {
         if (this_client_stale_object_info.find(object_id) != this_client_stale_object_info.end())
             continue;
 
-        std::shared_ptr<const Building> building = GetBuilding(object_id);
+        auto building = GetBuilding(object_id);
         if (!building) {
             ErrorLogger() << "BuildingsPanel::Update couldn't get building with id: " << object_id << " on planet " << planet->Name();
             continue;
@@ -140,7 +140,7 @@ void BuildingsPanel::Update() {
         return;
 
     int queue_index = -1;
-    for (const ProductionQueue::Element& elem : empire->GetProductionQueue()) {
+    for (const auto& elem : empire->GetProductionQueue()) {
         ++queue_index;
         //std::cout << "queue index: " << queue_index << " elem: " << elem.Dump() << std::endl;
         if (elem.item.build_type != BT_BUILDING) continue;  // don't show in-progress ships in BuildingsPanel...

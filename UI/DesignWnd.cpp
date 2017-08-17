@@ -967,7 +967,7 @@ void PartsListBox::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG:
 PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire) {
     PartGroupsType part_groups;
     // loop through all possible parts
-    for (const std::map<std::string, PartType*>::value_type& entry : GetPartTypeManager()) {
+    for (const auto& entry : GetPartTypeManager()) {
         const PartType* part = entry.second;
         if (!part->Producible())
             continue;
@@ -1147,13 +1147,13 @@ void PartsListBox::Populate() {
     // get empire id and location to use for cost and time comparisons
     int loc_id = INVALID_OBJECT_ID;
     if (empire) {
-        std::shared_ptr<const UniverseObject> location = GetUniverseObject(empire->CapitalID());
+        auto location = GetUniverseObject(empire->CapitalID());
         loc_id = location ? location->ID() : INVALID_OBJECT_ID;
     }
 
     // if showing parts for a particular empire, cull redundant parts (if enabled)
     if (empire) {
-        for (PartGroupsType::value_type& part_group : part_groups) {
+        for (auto& part_group : part_groups) {
             ShipPartClass pclass = part_group.first.first;
             if (!m_show_superfluous_parts)
                 CullSuperfluousParts(part_group.second, pclass, empire_id, loc_id);
@@ -1164,7 +1164,7 @@ void PartsListBox::Populate() {
     // sorting in a multimap also, if a part was in multiple groups due to being
     // compatible with multiple slot types, ensure it is only displayed once
     std::set<const PartType* > already_added;
-    for (PartGroupsType::value_type& part_group : part_groups) {
+    for (auto& part_group : part_groups) {
         std::multimap<double, const PartType*> sorted_group;
         for (const PartType* part : part_group.second) {
             if (already_added.find(part) != already_added.end())
@@ -1174,7 +1174,7 @@ void PartsListBox::Populate() {
         }
 
         // take the sorted parts and make UI elements (technically rows) for the PartsListBox
-        for (std::multimap<double, const PartType*>::value_type& group : sorted_group) {
+        for (auto& group : sorted_group) {
             const PartType* part = group.second;
             // check if current row is full, and make a new row if necessary
             if (cur_col >= NUM_COLUMNS) {
@@ -1218,7 +1218,7 @@ void PartsListBox::ShowAllClasses(bool refresh_list) {
 }
 
 void PartsListBox::HideClass(ShipPartClass part_class, bool refresh_list) {
-    std::set<ShipPartClass>::iterator it = m_part_classes_shown.find(part_class);
+    auto it = m_part_classes_shown.find(part_class);
     if (it != m_part_classes_shown.end()) {
         m_part_classes_shown.erase(it);
         if (refresh_list)
@@ -1296,34 +1296,35 @@ public:
     /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
-    void            ShowClass(ShipPartClass part_class, bool refresh_list = true);
-    void            ShowAllClasses(bool refresh_list = true);
-    void            HideClass(ShipPartClass part_class, bool refresh_list = true);
-    void            HideAllClasses(bool refresh_list = true);
-    void            ToggleClass(ShipPartClass part_class, bool refresh_list = true);
-    void            ToggleAllClasses(bool refresh_list = true);
+    void ShowClass(ShipPartClass part_class, bool refresh_list = true);
+    void ShowAllClasses(bool refresh_list = true);
+    void HideClass(ShipPartClass part_class, bool refresh_list = true);
+    void HideAllClasses(bool refresh_list = true);
+    void ToggleClass(ShipPartClass part_class, bool refresh_list = true);
+    void ToggleAllClasses(bool refresh_list = true);
 
-    void            ShowAvailability(bool available, bool refresh_list = true);
-    void            HideAvailability(bool available, bool refresh_list = true);
-    void            ToggleAvailability(bool available, bool refresh_list = true);
+    void ShowAvailability(bool available, bool refresh_list = true);
+    void HideAvailability(bool available, bool refresh_list = true);
+    void ToggleAvailability(bool available, bool refresh_list = true);
 
-    void            ShowSuperfluous(bool refresh_list = true);
-    void            HideSuperfluous(bool refresh_list = true);
-    void            ToggleSuperfluous(bool refresh_list = true);
+    void ShowSuperfluous(bool refresh_list = true);
+    void HideSuperfluous(bool refresh_list = true);
+    void ToggleSuperfluous(bool refresh_list = true);
 
-    void            Reset();
+    void Reset();
     //@}
 
     mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
     mutable boost::signals2::signal<void (const PartType*)> PartTypeDoubleClickedSignal;
 
 private:
-    void            DoLayout();
+    void DoLayout();
 
     std::shared_ptr<PartsListBox>   m_parts_list;
 
     std::map<ShipPartClass, std::shared_ptr<CUIStateButton>>    m_class_buttons;
-    std::pair<std::shared_ptr<CUIStateButton>, std::shared_ptr<CUIStateButton>> m_availability_buttons;
+    std::pair<std::shared_ptr<CUIStateButton>,
+              std::shared_ptr<CUIStateButton>>                  m_availability_buttons;
     std::shared_ptr<CUIStateButton>                             m_superfluous_parts_button;
 };
 
@@ -1352,7 +1353,7 @@ void DesignWnd::PartPalette::CompleteConstruction() {
     for (ShipPartClass part_class = ShipPartClass(0); part_class != NUM_SHIP_PART_CLASSES; part_class = ShipPartClass(part_class + 1)) {
         // are there any parts of this class?
         bool part_of_this_class_exists = false;
-        for (const std::map<std::string, PartType*>::value_type& entry : part_manager) {
+        for (const auto& entry : part_manager) {
             if (const PartType* part = entry.second) {
                 if (part->Class() == part_class) {
                     part_of_this_class_exists = true;
@@ -1543,7 +1544,7 @@ void DesignWnd::PartPalette::HideAllClasses(bool refresh_list) {
 
 void DesignWnd::PartPalette::ToggleClass(ShipPartClass part_class, bool refresh_list) {
     if (part_class >= ShipPartClass(0) && part_class < NUM_SHIP_PART_CLASSES) {
-        const std::set<ShipPartClass>& classes_shown = m_parts_list->GetClassesShown();
+        const auto& classes_shown = m_parts_list->GetClassesShown();
         if (classes_shown.find(part_class) == classes_shown.end())
             ShowClass(part_class, refresh_list);
         else
@@ -1555,7 +1556,7 @@ void DesignWnd::PartPalette::ToggleClass(ShipPartClass part_class, bool refresh_
 
 void DesignWnd::PartPalette::ToggleAllClasses(bool refresh_list)
 {
-    const std::set<ShipPartClass>& classes_shown = m_parts_list->GetClassesShown();
+    const auto& classes_shown = m_parts_list->GetClassesShown();
     if (classes_shown.size() == NUM_SHIP_PART_CLASSES)
         HideAllClasses(refresh_list);
     else
@@ -1579,7 +1580,7 @@ void DesignWnd::PartPalette::HideAvailability(bool available, bool refresh_list)
 }
 
 void DesignWnd::PartPalette::ToggleAvailability(bool available, bool refresh_list) {
-    const std::pair<bool, bool>& avail_shown = m_parts_list->GetAvailabilitiesShown();
+    const auto& avail_shown = m_parts_list->GetAvailabilitiesShown();
     if (available) {
         if (avail_shown.first)
             HideAvailability(true, refresh_list);
@@ -1660,9 +1661,9 @@ public:
     virtual void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it)
     {}
 
-    void                            SetEmpireShown(int empire_id, bool refresh_list = true);
+    void SetEmpireShown(int empire_id, bool refresh_list = true);
 
-    virtual void                    Populate();
+    virtual void Populate();
 
     //@}
 

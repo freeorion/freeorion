@@ -334,7 +334,7 @@ std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(int object_id, 
             return std::set<std::string>();
         return object_it->second;
     } else {
-        std::shared_ptr<const UniverseObject> obj = m_objects.Object(object_id);
+        auto obj = m_objects.Object(object_id);
         if (!obj)
             return std::set<std::string>();
         // all specials visible
@@ -614,7 +614,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
         if (m_destroyed_object_ids.find(object_id) != m_destroyed_object_ids.end())
             continue;
         // get object
-        std::shared_ptr<UniverseObject> obj = m_objects.Object(object_id);
+        auto obj = m_objects.Object(object_id);
         if (!obj) {
             ErrorLogger() << "Universe::InitMeterEstimatesAndDiscrepancies couldn't find an object that was in the effect accounting map...?";
             continue;
@@ -1549,7 +1549,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
 
     for (std::map<int, std::set<int>>::value_type& entry : m_marked_destroyed) {
         int obj_id = entry.first;
-        std::shared_ptr<UniverseObject> obj = GetUniverseObject(obj_id);
+        auto obj = GetUniverseObject(obj_id);
         if (!obj)
             continue;
 
@@ -1606,7 +1606,7 @@ namespace {
 }
 
 void Universe::CountDestructionInStats(int object_id, int source_object_id) {
-    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
+    auto obj = GetUniverseObject(object_id);
     if (!obj)
         return;
     std::shared_ptr<const UniverseObject> source = GetUniverseObject(source_object_id);
@@ -1670,7 +1670,7 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
     if (objects.Empty())
         return;
 
-    std::shared_ptr<UniverseObject> obj = objects.Object(object_id);
+    auto obj = objects.Object(object_id);
     if (!obj) {
         ErrorLogger() << "ForgetKnownObject empire: " << empire_id
                       << " bad object id: " << object_id;
@@ -1725,7 +1725,7 @@ void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibilit
 
     // if object is a ship, empire also gets knowledge of its design
     if (vis >= VIS_PARTIAL_VISIBILITY) {
-        if (std::shared_ptr<const Ship> ship = GetShip(object_id))
+        if (auto ship = GetShip(object_id))
             SetEmpireKnowledgeOfShipDesign(ship->DesignID(), empire_id);
     }
 }
@@ -1736,7 +1736,7 @@ void Universe::SetEmpireSpecialVisibility(int empire_id, int object_id,
 {
     if (empire_id == ALL_EMPIRES || special_name.empty() || object_id == INVALID_OBJECT_ID)
         return;
-    //std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
+    //auto obj = GetUniverseObject(object_id);
     //if (!obj)
     //    return;
     //if (!obj->HasSpecial(special_name))
@@ -1827,7 +1827,7 @@ namespace {
         for (ObjectMap::const_iterator<> object_it = objects.const_begin();
              object_it != objects.const_end(); ++object_it)
         {
-            std::shared_ptr<const UniverseObject> obj = *object_it;
+            auto obj = *object_it;
             int object_id = object_it->ID();
             const Meter* stealth_meter = obj->GetMeter(METER_STEALTH);
             if (!stealth_meter)
@@ -2038,7 +2038,7 @@ namespace {
         std::map<int, std::set<int>> empires_systems_with_owned_objects;
         // get systems where empires have owned objects
         for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it) {
-            std::shared_ptr<const UniverseObject> obj = *it;
+            auto obj = *it;
             if (obj->Unowned() || obj->SystemID() == INVALID_OBJECT_ID)
                 continue;
             empires_systems_with_owned_objects[obj->Owner()].insert(obj->SystemID());
@@ -2265,7 +2265,7 @@ namespace {
                     continue;
 
                 int object_id = obj_entry.first;
-                std::shared_ptr<const UniverseObject> obj = objects.Object(object_id);
+                auto obj = objects.Object(object_id);
                 if (!obj)
                     continue;
 
@@ -2333,7 +2333,7 @@ namespace {
                         obj_vis_map[obj_id] = allied_vis;
                         if (allied_vis < VIS_PARTIAL_VISIBILITY)
                             continue;
-                        if (std::shared_ptr<const Ship> ship = GetShip(obj_id))
+                        if (auto ship = GetShip(obj_id))
                             universe.SetEmpireKnowledgeOfShipDesign(ship->DesignID(), empire_id);
                     }
                 }
@@ -2595,7 +2595,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
         }
 
         //for (int stale_id : stale_set) {
-        //    std::shared_ptr<const UniverseObject> obj = latest_known_objects.Object(stale_id);
+        //    auto obj = latest_known_objects.Object(stale_id);
         //    DebugLogger() << "Object " << stale_id << " : " << (obj ? obj->Name() : "(unknown)") << " is stale for empire " << empire_id ;
         //}
     }
@@ -2628,7 +2628,7 @@ void Universe::SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id)
 
 void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = true*/) {
     // remove object from any containing UniverseObject
-    std::shared_ptr<UniverseObject> obj = m_objects.Object(object_id);
+    auto obj = m_objects.Object(object_id);
     if (!obj) {
         ErrorLogger() << "Universe::Destroy called for nonexistant object with id: " << object_id;
         return;
@@ -2655,7 +2655,7 @@ void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = t
 std::set<int> Universe::RecursiveDestroy(int object_id) {
     std::set<int> retval;
 
-    std::shared_ptr<UniverseObject> obj = m_objects.Object(object_id);
+    auto obj = m_objects.Object(object_id);
     if (!obj) {
         DebugLogger() << "Universe::RecursiveDestroy asked to destroy nonexistant object with id " << object_id;
         return retval;
@@ -2665,7 +2665,7 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
 
     if (std::shared_ptr<Ship> ship = std::dynamic_pointer_cast<Ship>(obj)) {
         // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
-        std::shared_ptr<Fleet> fleet = GetFleet(ship->FleetID());
+        auto fleet = GetFleet(ship->FleetID());
         if (fleet) {
             fleet->RemoveShip(ship->ID());
             if (fleet->Empty()) {
@@ -2754,7 +2754,7 @@ bool Universe::Delete(int object_id) {
     DebugLogger() << "Universe::Delete with ID: " << object_id;
     // find object amongst existing objects and delete directly, without storing
     // any info about the previous object (as is done for destroying an object)
-    std::shared_ptr<UniverseObject> obj = m_objects.Object(object_id);
+    auto obj = m_objects.Object(object_id);
     if (!obj) {
         ErrorLogger() << "Tried to delete a nonexistant object with id: " << object_id;
         return false;

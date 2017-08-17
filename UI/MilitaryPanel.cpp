@@ -39,7 +39,7 @@ void MilitaryPanel::CompleteConstruction() {
 
     SetName("MilitaryPanel");
 
-    std::shared_ptr<const Planet> planet = GetPlanet();
+    auto planet = this->GetPlanet();
     if (!planet)
         throw std::invalid_argument("Attempted to construct a MilitaryPanel with an object id is not a Planet");
 
@@ -121,7 +121,7 @@ bool MilitaryPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 }
 
 void MilitaryPanel::Update() {
-    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
+    auto obj = GetUniverseObject(m_planet_id);
     if (!obj) {
         ErrorLogger() << "MilitaryPanel::Update coudln't get object with id  " << m_planet_id;
         return;
@@ -212,7 +212,7 @@ void MilitaryPanel::DoLayout() {
 }
 
 std::shared_ptr<const Planet> MilitaryPanel::GetPlanet() const {
-    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
+    auto obj = GetUniverseObject(m_planet_id);
     if (!obj) {
         ErrorLogger() << "MilitaryPanel tried to get an object with an invalid m_planet_id";
         return nullptr;

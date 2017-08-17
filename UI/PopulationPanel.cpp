@@ -38,7 +38,7 @@ void PopulationPanel::CompleteConstruction() {
     AccordionPanel::CompleteConstruction();
     SetName("PopulationPanel");
 
-    std::shared_ptr<const PopCenter> pop = GetPopCenter();
+    auto pop = GetPopCenter();
     if (!pop)
         throw std::invalid_argument("Attempted to construct a PopulationPanel with an object id is not a PopCenter");
 
@@ -120,7 +120,7 @@ bool PopulationPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     bool retval = false;
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-    std::shared_ptr<const PopCenter> pc = GetPopCenter();
+    auto pc = GetPopCenter();
     if (meter_type == METER_POPULATION && pc) {
         species_name = pc->SpeciesName();
         if (!species_name.empty()) {
@@ -147,7 +147,7 @@ void PopulationPanel::Update() {
         m_multi_icon_value_indicator->ClearToolTip(meter_stat.first);
     }
 
-    std::shared_ptr<const PopCenter> pop = GetPopCenter();
+    auto pop = GetPopCenter();
     if (!pop) {
         ErrorLogger() << "PopulationPanel::Update couldn't get PopCenter or couldn't get UniverseObject";
         return;
@@ -238,7 +238,7 @@ void PopulationPanel::DoLayout() {
 }
 
 std::shared_ptr<const PopCenter> PopulationPanel::GetPopCenter() const {
-    std::shared_ptr<const PopCenter> pop = ::GetPopCenter(m_popcenter_id);
+    auto pop = ::GetPopCenter(m_popcenter_id);
     if (!pop) {
         ErrorLogger() << "PopulationPanel tried to get an object with an invalid m_popcenter_id";
         return nullptr;

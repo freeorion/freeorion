@@ -244,7 +244,7 @@ void PopulationPool::Update() {
     float future_population = 0.0f;
     // sum population from all PopCenters in this pool
     for (int pop_center_id : m_pop_center_ids) {
-        if (std::shared_ptr<const PopCenter> center = GetPopCenter(pop_center_id)) {
+        if (auto center = GetPopCenter(pop_center_id)) {
             m_population += center->CurrentMeterValue(METER_POPULATION);
             future_population += center->NextTurnCurrentMeterValue(METER_POPULATION);
         }

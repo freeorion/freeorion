@@ -163,14 +163,12 @@ void CensusBrowseWnd::CompleteConstruction() {
 
     // put into multimap to sort by population, ascending
     std::multimap<float, std::string> counts_species;
-    for (const std::map<std::string, float>::value_type& entry : m_population_counts)
+    for (const auto& entry : m_population_counts)
     { counts_species.insert({entry.second, entry.first}); }
     m_population_counts.clear();
 
     // add species rows
-    for (std::multimap<float, std::string>::const_reverse_iterator it = counts_species.rbegin();
-         it != counts_species.rend(); ++it)
-    {
+    for (auto it = counts_species.rbegin(); it != counts_species.rend(); ++it) {
         auto row = GG::Wnd::Create<GG::ListBox::Row>(m_list->Width(), ROW_HEIGHT, "Census Species Row");
         row->push_back(GG::Wnd::Create<CensusRowPanel>(m_list->Width(), ROW_HEIGHT, it->second, it->first, true));
         m_list->Insert(row);
@@ -211,7 +209,7 @@ void CensusBrowseWnd::CompleteConstruction() {
     // add tags/characteristics rows
     for (const std::string& tag_ord : tag_order) {
         //DebugLogger() << "Census checking for tag '"<< tag_ord <<"'";
-        std::map<std::string, float>::const_iterator it2 = m_tag_counts.find(tag_ord);
+        auto it2 = m_tag_counts.find(tag_ord);
         if (it2 != m_tag_counts.end()) {
             auto row = GG::Wnd::Create<GG::ListBox::Row>(m_list->Width(), ROW_HEIGHT, "Census Characteristics Row");
             row->push_back(GG::Wnd::Create<CensusRowPanel>(m_tags_list->Width(), ROW_HEIGHT, it2->first, it2->second, false));

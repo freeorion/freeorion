@@ -55,7 +55,7 @@ public:
     OrderVec FindOrders(Pred pred) const
     {
         OrderVec retval;
-        for (const OrderMap::value_type& order : m_orders) {
+        for (const auto& order : m_orders) {
             auto &o = order.second;
             if (pred(o))
                 retval.push_back(o);

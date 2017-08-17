@@ -552,11 +552,11 @@ void SpeciesManager::UpdatePopulationCounter() {
     // ships of each species and design
     m_species_object_populations.clear();
     for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingObjects()) {
-        std::shared_ptr<UniverseObject> obj = entry.second;
+        auto obj = entry.second;
         if (obj->ObjectType() != OBJ_PLANET && obj->ObjectType() != OBJ_POP_CENTER)
             continue;
 
-        std::shared_ptr<PopCenter> pop_center = std::dynamic_pointer_cast<PopCenter>(obj);
+        auto pop_center = std::dynamic_pointer_cast<PopCenter>(obj);
         if (!pop_center)
             continue;
 

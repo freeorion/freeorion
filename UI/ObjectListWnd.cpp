@@ -1279,7 +1279,7 @@ public:
         m_selected(false)
     {
         SetChildClippingMode(ClipToClient);
-        std::shared_ptr<const ResourceCenter> rcobj = std::dynamic_pointer_cast<const ResourceCenter>(obj);
+        auto rcobj = std::dynamic_pointer_cast<const ResourceCenter>(obj);
         if (rcobj)
             rcobj->ResourceCenterChangedSignal.connect(
                 boost::bind(&ObjectPanel::ResourceCenterChanged, this));
@@ -1362,7 +1362,7 @@ public:
             AttachChild(m_dot);
         }
 
-        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_object_id);
+        auto obj = GetUniverseObject(m_object_id);
         std::vector<std::shared_ptr<GG::Texture>> textures = ObjectTextures(obj);
 
         m_icon = GG::Wnd::Create<MultiTextureStaticGraphic>(textures,
@@ -1443,7 +1443,7 @@ private:
     void                RefreshCache() const {
         m_column_val_cache.clear();
         m_column_val_cache.reserve(NUM_COLUMNS);
-        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_object_id);
+        auto obj = GetUniverseObject(m_object_id);
         ScriptingContext context(obj);
 
         // get currently displayed column value refs, put values into this panel's cache
@@ -2156,7 +2156,7 @@ private:
     void            AddObjectRow(int object_id, int container, const std::set<int>& contents,
                                  int indent, GG::ListBox::iterator it)
     {
-        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
+        auto obj = GetUniverseObject(object_id);
         if (!obj)
             return;
         const GG::Pt row_size = ListRowSize();
@@ -2248,7 +2248,7 @@ private:
     void            ObjectStateChanged(int object_id) {
         if (object_id == INVALID_OBJECT_ID)
             return;
-        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
+        auto obj = GetUniverseObject(object_id);
         DebugLogger() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
         if (!obj)
             return;
@@ -2442,7 +2442,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     // create popup menu with object commands in it
     popup->AddMenuItem(GG::MenuItem(UserString("DUMP"), false, false, dump_action));
 
-    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
+    auto obj = GetUniverseObject(object_id);
     //DebugLogger() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
     if (!obj)
         return;

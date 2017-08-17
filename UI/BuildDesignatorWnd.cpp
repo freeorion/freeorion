@@ -300,7 +300,7 @@ namespace {
                     ship_part_names.insert(std::pair<std::string, int>(part_name, 1));
             }
 
-            for (const std::map<std::string, int>::value_type& part_name_count : ship_part_names) {
+            for (const auto& part_name_count : ship_part_names) {
                 if (!UserStringExists(part_name_count.first)) continue;
                 if (ship_part_names[part_name_count.first] == 1)
                     ship_parts_formatted += (UserString(part_name_count.first) + ", ");

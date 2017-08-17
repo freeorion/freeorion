@@ -329,7 +329,7 @@ namespace {
         if (client_empire_id == ALL_EMPIRES)
             return;
 
-        std::shared_ptr<Fleet> target_fleet = GetFleet(fleet_id);
+        auto target_fleet = GetFleet(fleet_id);
         if (!target_fleet) {
             ErrorLogger() << "MergeFleetsIntoFleet couldn't get a fleet with id " << fleet_id;
             return;
@@ -1000,7 +1000,7 @@ void ShipDataPanel::Init() {
     m_ship_connection = ship->StateChangedSignal.connect(
         boost::bind(&ShipDataPanel::Refresh, this));
 
-    if (std::shared_ptr<Fleet> fleet = GetFleet(ship->FleetID()))
+    if (auto fleet = GetFleet(ship->FleetID()))
         m_fleet_connection = fleet->StateChangedSignal.connect(
             boost::bind(&ShipDataPanel::Refresh, this));
 
@@ -1787,7 +1787,7 @@ public:
         }
 
         int target_fleet_id = drop_target_fleet_row->FleetID();
-        std::shared_ptr<Fleet> target_fleet = GetFleet(target_fleet_id);
+        auto target_fleet = GetFleet(target_fleet_id);
         if (!target_fleet) {
             ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get target fleet with id: " << target_fleet_id;
             return;
@@ -1921,7 +1921,7 @@ public:
         FleetRow* drop_target_fleet_row = boost::polymorphic_downcast<FleetRow*>(drop_target_row.get());
         assert(drop_target_fleet_row);
 
-        std::shared_ptr<Fleet> drop_target_fleet = GetFleet(drop_target_fleet_row->FleetID());
+        auto drop_target_fleet = GetFleet(drop_target_fleet_row->FleetID());
         assert(drop_target_fleet);
 
 
@@ -1948,7 +1948,7 @@ public:
 
                 const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(dropped_wnd);
                 assert(fleet_row);
-                std::shared_ptr<Fleet> fleet = GetFleet(fleet_row->FleetID());
+                auto fleet = GetFleet(fleet_row->FleetID());
 
                 if (!ValidFleetMerge(fleet, drop_target_fleet))
                     return; // not a valid drop
@@ -2318,7 +2318,7 @@ public:
 private:
     int             GetShipIDOfListRow(GG::ListBox::iterator it) const; ///< returns the ID number of the ship in row \a row_idx of the ships listbox
     void            DoLayout();
-    void UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj);
+    void            UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj);
     void            ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
     void            ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     int             ShipInRow(GG::ListBox::iterator it) const;
@@ -2505,7 +2505,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     std::shared_ptr<Ship> ship = GetShip(ship_row->ShipID());
     if (!ship)
         return;
-    std::shared_ptr<Fleet> fleet = GetFleet(m_fleet_id);
+    auto fleet = GetFleet(m_fleet_id);
 
     const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
     if (ClientPlayerIsModerator() && map_wnd->GetModeratorActionSetting() != MAS_NoAction) {
@@ -3185,7 +3185,7 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
 void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    std::shared_ptr<Fleet> fleet = GetFleet(FleetInRow(it));
+    auto fleet = GetFleet(FleetInRow(it));
     if (!fleet)
         return;
 

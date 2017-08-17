@@ -724,7 +724,7 @@ std::map<MeterType, std::map<int, float>> ProductionQueue::ProductionItem::Compl
     switch (build_type) {
     case BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
-            std::shared_ptr<const UniverseObject> obj = GetUniverseObject(location_id);
+            auto obj = GetUniverseObject(location_id);
             ScriptingContext context(obj);
 
             for (const std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>::value_type& pmc : bt->ProductionMeterConsumption()) {
@@ -737,7 +737,7 @@ std::map<MeterType, std::map<int, float>> ProductionQueue::ProductionItem::Compl
     }
     case BT_SHIP: {
         if (const ShipDesign* sd = GetShipDesign(design_id)) {
-            std::shared_ptr<const UniverseObject> obj = GetUniverseObject(location_id);
+            auto obj = GetUniverseObject(location_id);
             ScriptingContext context(obj);
 
             if (const HullType* ht = GetHullType(sd->Hull())) {
@@ -2911,7 +2911,7 @@ void Empire::CheckProductionProgress() {
             if (consumption_impossible)
                 break;
             for (std::map<int, float>::value_type& special_meter : special_type.second) {
-                std::shared_ptr<UniverseObject> obj = GetUniverseObject(special_meter.first);
+                auto obj = GetUniverseObject(special_meter.first);
                 float capacity = obj ? obj->SpecialCapacity(special_type.first) : 0.0f;
                 if (capacity < special_meter.second * elem.blocksize) {
                     consumption_impossible = true;
@@ -2924,7 +2924,7 @@ void Empire::CheckProductionProgress() {
             if (consumption_impossible)
                 break;
             for (std::map<int, float>::value_type& object_meter : meter_type.second) {
-                std::shared_ptr<UniverseObject> obj = GetUniverseObject(object_meter.first);
+                auto obj = GetUniverseObject(object_meter.first);
                 const Meter* meter = obj ? obj->GetMeter(meter_type.first) : nullptr;
                 if (!meter || meter->Current() < object_meter.second * elem.blocksize) {
                     consumption_impossible = true;
@@ -2955,7 +2955,7 @@ void Empire::CheckProductionProgress() {
         // consume the item's special and meter consumption
         for (std::map<std::string, std::map<int, float>>::value_type& special_type : sc) {
             for (std::map<int, float>::value_type& special_meter : special_type.second) {
-                std::shared_ptr<UniverseObject> obj = GetUniverseObject(special_meter.first);
+                auto obj = GetUniverseObject(special_meter.first);
                 if (!obj)
                     continue;
                 if (!obj->HasSpecial(special_type.first))
@@ -2967,7 +2967,7 @@ void Empire::CheckProductionProgress() {
         }
         for (std::map<MeterType, std::map<int, float>>::value_type& meter_type : mc) {
             for (const std::map<int, float>::value_type& object_meter : meter_type.second) {
-                std::shared_ptr<UniverseObject> obj = GetUniverseObject(object_meter.first);
+                auto obj = GetUniverseObject(object_meter.first);
                 if (!obj)
                     continue;
                 Meter*meter = obj->GetMeter(meter_type.first);
@@ -3013,7 +3013,7 @@ void Empire::CheckProductionProgress() {
             // is a valid capital, or otherwise ???
             // TODO: Add more fallbacks if necessary
             std::string species_name;
-            if (std::shared_ptr<const PopCenter> location_pop_center = std::dynamic_pointer_cast<const PopCenter>(build_location))
+            if (auto location_pop_center = std::dynamic_pointer_cast<const PopCenter>(build_location))
                 species_name = location_pop_center->SpeciesName();
             else if (std::shared_ptr<const Ship> location_ship = std::dynamic_pointer_cast<const Ship>(build_location))
                 species_name = location_ship->SpeciesName();

@@ -741,7 +741,7 @@ namespace {
 
     /** Return the location of the object with id \p object_id.*/
     GeneralizedLocationType GeneralizedLocation(int object_id) {
-        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
+        auto obj = GetUniverseObject(object_id);
         return GeneralizedLocation(obj);
     }
 

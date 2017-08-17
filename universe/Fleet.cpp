@@ -1106,7 +1106,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
             ErrorLogger() << "Fleet::CalculateRoute got empty route from ShortestPath";
             return;
         }
-        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(sys_list1.front());
+        auto obj = GetUniverseObject(sys_list1.front());
         if (!obj) {
             ErrorLogger() << "Fleet::CalculateRoute couldn't get path start object with id " << path1.first.front();
             return;
@@ -1269,7 +1269,7 @@ float Fleet::Speed() const {
     bool fleet_is_scrapped = true;
     float retval = MAX_SHIP_SPEED;  // max speed no ship can go faster than
     for (int ship_id : m_ships) {
-        std::shared_ptr<const Ship> ship = GetShip(ship_id);
+        auto ship = GetShip(ship_id);
         if (!ship || ship->OrderedScrapped())
             continue;
         if (ship->Speed() < retval)
@@ -1290,9 +1290,9 @@ float Fleet::Damage() const {
     bool fleet_is_scrapped = true;
     float retval = 0.0f;
     for (int ship_id : m_ships) {
-        if (std::shared_ptr<const Ship> ship = GetShip(ship_id)) {
+        if (auto ship = GetShip(ship_id)) {
             if (!ship->OrderedScrapped()) {
-                if (const ShipDesign* design = ship->Design()){
+                if (const auto design = ship->Design()){
                     retval += design->Attack();
                 }
                 fleet_is_scrapped = false;
@@ -1313,7 +1313,7 @@ float Fleet::Structure() const {
     bool fleet_is_scrapped = true;
     float retval = 0.0f;
     for (int ship_id : m_ships) {
-        if (std::shared_ptr<const Ship> ship = GetShip(ship_id)) {
+        if (auto ship = GetShip(ship_id)) {
             if (!ship->OrderedScrapped()) {
                 retval += ship->CurrentMeterValue(METER_STRUCTURE);
                 fleet_is_scrapped = false;
@@ -1334,7 +1334,7 @@ float Fleet::Shields() const {
     bool fleet_is_scrapped = true;
     float retval = 0.0f;
     for (int ship_id : m_ships) {
-        if (std::shared_ptr<const Ship> ship = GetShip(ship_id)) {
+        if (auto ship = GetShip(ship_id)) {
             if (!ship->OrderedScrapped()) {
                 retval += ship->CurrentMeterValue(METER_SHIELD);
                 fleet_is_scrapped = false;
@@ -1364,7 +1364,8 @@ void Fleet::ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_sys
     }
 
     // remove any extra systems from the route after the apparent destination
-    std::list<int>::iterator end_it = std::find_if(m_travel_route.begin(), visible_end_it, boost::bind(&SystemHasNoVisibleStarlanes, _1, this->Owner()));
+    auto end_it = std::find_if(m_travel_route.begin(), visible_end_it,
+                               boost::bind(&SystemHasNoVisibleStarlanes, _1, this->Owner()));
     std::copy(m_travel_route.begin(), end_it, std::back_inserter(travel_route));
 
     // If no Systems in a nonempty route are known reachable, default to just
@@ -1381,7 +1382,7 @@ std::string Fleet::GenerateFleetName() {
 
     std::vector<std::shared_ptr<const Ship>> ships;
     for (int ship_id : m_ships) {
-        if (std::shared_ptr<const Ship> ship = GetShip(ship_id)) {
+        if (auto ship = GetShip(ship_id)) {
             ships.push_back(ship);
         }
     }

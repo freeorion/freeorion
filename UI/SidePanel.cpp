@@ -1139,7 +1139,7 @@ namespace {
     bool IsAvailable(std::shared_ptr<const Ship> ship, int system_id, int empire_id) {
         if (!ship)
             return false;
-        std::shared_ptr<Fleet> fleet = GetFleet(ship->FleetID());
+        auto fleet = GetFleet(ship->FleetID());
         if (!fleet)
             return false;
         if (ship->SystemID() == system_id &&
@@ -1154,7 +1154,7 @@ namespace {
     bool AvailableToColonize(std::shared_ptr<const Ship> ship, int system_id, int empire_id) {
         if (!ship)
             return false;
-        std::shared_ptr<Fleet> fleet = GetFleet(ship->FleetID());
+        auto fleet = GetFleet(ship->FleetID());
         if (!fleet)
             return false;
         if (IsAvailable(ship, system_id, empire_id) &&
@@ -1167,7 +1167,7 @@ namespace {
     bool AvailableToInvade(std::shared_ptr<const Ship> ship, int system_id, int empire_id) {
         if (!ship)
             return false;
-        std::shared_ptr<Fleet> fleet = GetFleet(ship->FleetID());
+        auto fleet = GetFleet(ship->FleetID());
         if (!fleet)
             return false;
         if (IsAvailable(ship, system_id, empire_id) &&
@@ -1180,7 +1180,7 @@ namespace {
     bool AvailableToBombard(std::shared_ptr<const Ship> ship, int system_id, int empire_id) {
         if (!ship)
             return false;
-        std::shared_ptr<Fleet> fleet = GetFleet(ship->FleetID());
+        auto fleet = GetFleet(ship->FleetID());
         if (!fleet)
             return false;
         if (IsAvailable(ship, system_id, empire_id) &&
@@ -2375,7 +2375,7 @@ void SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot(GG::DropDownList:
         return;
     }
 
-    std::shared_ptr<const ResourceCenter> res = GetResourceCenter(m_planet_id);
+    auto res = GetResourceCenter(m_planet_id);
     if (!res) {
         ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged couldn't convert object with id " << m_planet_id << " to a ResourceCenter";
         return;
@@ -2402,7 +2402,7 @@ void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable/* = true*/) {
 
     m_buildings_panel->EnableOrderIssuing(enable);
 
-    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
+    auto obj = GetUniverseObject(m_planet_id);
     if (!enable || !obj || !obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         m_focus_drop->Disable();
     else

@@ -119,7 +119,7 @@ public:
         // We want to measure health on a single scale that shows as much as possible
         // while fitting the data of both sides.
         // Therefore we make the side with more health fill the window
-        for (const std::map<int, CombatSummary>::value_type& combat_summary : combat_summaries) {
+        for (const auto& combat_summary : combat_summaries) {
             m_max_total_max_health = std::max(combat_summary.second.total_max_health, m_max_total_max_health);
             m_max_units_on_a_side = std::max(static_cast<int>(combat_summary.second.unit_summaries.size()), m_max_units_on_a_side);
             m_sum_of_max_max_healths += combat_summary.second.max_max_health;
@@ -755,7 +755,7 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
             }
         }
 
-        for (std::map<int, CombatSummary>::value_type& summary : m_summaries) {
+        for (auto& summary : m_summaries) {
             DebugLogger() << "MakeSummaries: empire " << summary.first
                           << " total health: " << summary.second.total_current_health
                           << " max health: " << summary.second.total_max_health

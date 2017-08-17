@@ -60,7 +60,7 @@ namespace {
         {
             std::cerr << "GG SIGNAL : " << m_name << "(sels=[ ";
 
-            for (const ListBox::SelectionSet::value_type& sel : sels)
+            for (const auto& sel : sels)
             { std::cerr << RowIndex(sel) << ' '; }
 
             std::cerr << "])" << std::endl;

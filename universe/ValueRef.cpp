@@ -685,36 +685,36 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         return object->Y();
 
     } else if (property_name == "SizeAsDouble") {
-        if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object))
+        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->SizeAsInt();
 
     } else if (property_name == "DistanceFromOriginalType") {
-        if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object))
+        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->DistanceFromOriginalType();
 
     } else if (property_name == "NextTurnPopGrowth") {
-        if (std::shared_ptr<const PopCenter> pop = std::dynamic_pointer_cast<const PopCenter>(object))
+        if (auto pop = std::dynamic_pointer_cast<const PopCenter>(object))
             return pop->NextTurnPopGrowth();
 
     } else if (property_name == "CurrentTurn") {
         return CurrentTurn();
 
     } else if (property_name == "Attack") {
-        if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(object))
+        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->Damage();
-        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
+        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->TotalWeaponsDamage();
 
     } else if (property_name == "PropagatedSupplyRange") {
-        const std::map<int, float>& ranges = GetSupplyManager().PropagatedSupplyRanges();
-        std::map<int, float>::const_iterator range_it = ranges.find(object->SystemID());
+        const auto& ranges = GetSupplyManager().PropagatedSupplyRanges();
+        auto range_it = ranges.find(object->SystemID());
         if (range_it == ranges.end())
             return 0.0;
         return range_it->second;
 
     } else if (property_name == "PropagatedSupplyDistance") {
-        const std::map<int, float>& ranges = GetSupplyManager().PropagatedSupplyDistances();
-        std::map<int, float>::const_iterator range_it = ranges.find(object->SystemID());
+        const auto& ranges = GetSupplyManager().PropagatedSupplyDistances();
+        auto range_it = ranges.find(object->SystemID());
         if (range_it == ranges.end())
             return 0.0;
         return range_it->second;
@@ -2493,7 +2493,7 @@ std::string NameLookup::Eval(const ScriptingContext& context) const {
 
     switch (m_lookup_type) {
     case OBJECT_NAME: {
-        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_value_ref->Eval(context));
+        auto obj = GetUniverseObject(m_value_ref->Eval(context));
         return obj ? obj->Name() : "";
         break;
     }

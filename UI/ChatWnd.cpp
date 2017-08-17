@@ -154,7 +154,7 @@ void MessageWndEdit::KeyPress(GG::Key key, std::uint32_t key_code_point,
 
 void MessageWndEdit::FindGameWords() {
      // add player and empire names
-    for (std::map<int, Empire*>::value_type& entry : Empires()) {
+    for (auto& entry : Empires()) {
         m_game_words.insert(entry.second->Name());
         m_game_words.insert(entry.second->PlayerName());
     }
@@ -180,7 +180,7 @@ void MessageWndEdit::FindGameWords() {
             m_game_words.insert(UserString(special_name));
     }
      // add species names
-    for (const std::map<std::string, Species*>::value_type& entry : GetSpeciesManager()) {
+    for (const auto& entry : GetSpeciesManager()) {
         if (entry.second->Name() != "")
             m_game_words.insert(UserString(entry.second->Name()));
     }

@@ -181,7 +181,7 @@ std::string SupplyManager::Dump(int empire_id) const {
 
                 for (const std::set<std::pair<int, int>>::value_type& trav : m_supply_starlane_traversals.at(empire_supply.first)) {
                     if (trav.first == sys->ID()) {
-                        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(trav.second);
+                        auto obj = GetUniverseObject(trav.second);
                         if (obj)
                             retval += obj->PublicName(empire_id) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
@@ -191,7 +191,7 @@ std::string SupplyManager::Dump(int empire_id) const {
                 retval += "Traversals to here from: ";
                 for (const std::set<std::pair<int, int>>::value_type& trav : m_supply_starlane_traversals.at(empire_supply.first)) {
                     if (trav.second == sys->ID()) {
-                        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(trav.first);
+                        auto obj = GetUniverseObject(trav.first);
                         if (obj)
                             retval += obj->PublicName(empire_id) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
@@ -201,7 +201,7 @@ std::string SupplyManager::Dump(int empire_id) const {
                 retval += "Blocked Traversals from here to: ";
                 for (const std::set<std::pair<int, int>>::value_type& trav : m_supply_starlane_obstructed_traversals.at(empire_supply.first)) {
                     if (trav.first == sys->ID()) {
-                        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(trav.second);
+                        auto obj = GetUniverseObject(trav.second);
                         if (obj)
                             retval += obj->PublicName(empire_id) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
@@ -211,7 +211,7 @@ std::string SupplyManager::Dump(int empire_id) const {
                 retval += "Blocked Traversals to here from: ";
                 for (const std::set<std::pair<int, int>>::value_type& trav : m_supply_starlane_obstructed_traversals.at(empire_supply.first)) {
                     if (trav.second == sys->ID()) {
-                        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(trav.first);
+                        auto obj = GetUniverseObject(trav.first);
                         if (obj)
                             retval += obj->PublicName(empire_id) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
