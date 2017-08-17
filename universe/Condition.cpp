@@ -174,7 +174,7 @@ std::string ConditionFailedDescription(const std::vector<ConditionBase*>& condit
     std::string retval;
 
     // test candidate against all input conditions, and store descriptions of each
-    for (std::map<std::string, bool>::value_type& result : ConditionDescriptionAndTest(conditions, parent_context, candidate_object)) {
+    for (const auto& result : ConditionDescriptionAndTest(conditions, parent_context, candidate_object)) {
             if (!result.second)
                  retval += UserString("FAILED") + " <rgba 255 0 0 255>" + result.first +"</rgba>\n";
     }
@@ -197,7 +197,7 @@ std::string ConditionDescription(const std::vector<ConditionBase*>& conditions,
     std::map<std::string, bool> condition_description_and_test_results =
         ConditionDescriptionAndTest(conditions, parent_context, candidate_object);
     bool all_conditions_match_candidate = true, at_least_one_condition_matches_candidate = false;
-    for (std::map<std::string, bool>::value_type& result : condition_description_and_test_results) {
+    for (const auto& result : condition_description_and_test_results) {
         all_conditions_match_candidate = all_conditions_match_candidate && result.second;
         at_least_one_condition_matches_candidate = at_least_one_condition_matches_candidate || result.second;
     }
@@ -213,7 +213,7 @@ std::string ConditionDescription(const std::vector<ConditionBase*>& conditions,
     }
     // else just output single condition description and PASS/FAIL text
 
-    for (std::map<std::string, bool>::value_type& result : condition_description_and_test_results) {
+    for (const auto& result : condition_description_and_test_results) {
         retval += (result.second ? UserString("PASSED") : UserString("FAILED"));
         retval += " " + result.first + "\n";
     }
@@ -732,9 +732,9 @@ namespace {
         if (sorting_method == SORT_MIN) {
             // move (number) objects with smallest sort key (at start of map)
             // from the from_set into the to_set.
-            for (std::multimap<float, std::shared_ptr<const UniverseObject>>::value_type& entry : sort_key_objects) {
-                std::shared_ptr<const UniverseObject> object_to_transfer = entry.second;
-                ObjectSet::iterator from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
+            for (const auto& entry : sort_key_objects) {
+                auto object_to_transfer = entry.second;
+                auto from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                 if (from_it != from_set.end()) {
                     *from_it = from_set.back();
                     from_set.pop_back();
@@ -747,11 +747,11 @@ namespace {
         } else if (sorting_method == SORT_MAX) {
             // move (number) objects with largest sort key (at end of map)
             // from the from_set into the to_set.
-            for (std::multimap<float, std::shared_ptr<const UniverseObject>>::reverse_iterator sorted_it = sort_key_objects.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
+            for (auto sorted_it = sort_key_objects.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
                  sorted_it != sort_key_objects.rend(); ++sorted_it)
             {
-                std::shared_ptr<const UniverseObject> object_to_transfer = sorted_it->second;
-                ObjectSet::iterator from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
+                auto object_to_transfer = sorted_it->second;
+                auto from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                 if (from_it != from_set.end()) {
                     *from_it = from_set.back();
                     from_set.pop_back();
@@ -764,33 +764,31 @@ namespace {
         } else if (sorting_method == SORT_MODE) {
             // compile histogram of of number of times each sort key occurs
             std::map<float, unsigned int> histogram;
-            for (std::multimap<float, std::shared_ptr<const UniverseObject>>::value_type& entry : sort_key_objects) {
+            for (const auto& entry : sort_key_objects) {
                 histogram[entry.first]++;
             }
             // invert histogram to index by number of occurances
             std::multimap<unsigned int, float> inv_histogram;
-            for (std::map<float, unsigned int>::value_type& entry : histogram) {
+            for (const auto& entry : histogram) {
                 inv_histogram.insert(std::make_pair(entry.second, entry.first));
             }
             // reverse-loop through inverted histogram to find which sort keys
             // occurred most frequently, and transfer objects with those sort
             // keys from from_set to to_set.
-            for (std::multimap<unsigned int, float>::reverse_iterator inv_hist_it = inv_histogram.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
+            for (auto inv_hist_it = inv_histogram.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
                  inv_hist_it != inv_histogram.rend(); ++inv_hist_it)
             {
                 float cur_sort_key = inv_hist_it->second;
 
                 // get range of objects with the current sort key
-                std::pair<std::multimap<float, std::shared_ptr<const UniverseObject>>::const_iterator,
-                          std::multimap<float, std::shared_ptr<const UniverseObject>>::const_iterator> key_range =
-                    sort_key_objects.equal_range(cur_sort_key);
+                auto key_range = sort_key_objects.equal_range(cur_sort_key);
 
                 // loop over range, selecting objects to transfer from from_set to to_set
-                for (std::multimap<float, std::shared_ptr<const UniverseObject>>::const_iterator sorted_it = key_range.first;
+                for (auto sorted_it = key_range.first;
                      sorted_it != key_range.second; ++sorted_it)
                 {
-                    std::shared_ptr<const UniverseObject> object_to_transfer = sorted_it->second;
-                    ObjectSet::iterator from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
+                    auto object_to_transfer = sorted_it->second;
+                    auto from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                     if (from_it != from_set.end()) {
                         *from_it = from_set.back();
                         from_set.pop_back();
@@ -1618,9 +1616,9 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
 
     if (m_names.empty()) {
         // match homeworlds for any species
-        for (const std::map<std::string, ::Species*>::value_type& entry : manager) {
-            if (const ::Species* species = entry.second) {
-                const std::set<int>& homeworld_ids = species->Homeworlds();
+        for (const auto& entry : manager) {
+            if (const auto species = entry.second) {
+                const auto& homeworld_ids = species->Homeworlds();
                 if (homeworld_ids.find(planet_id) != homeworld_ids.end())   // is this planet the homeworld for this species?
                     return true;
             }
@@ -1628,10 +1626,10 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
 
     } else {
         // match any of the species specified
-        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
-            const std::string& species_name = name->Eval(local_context);
-            if (const ::Species* species = manager.GetSpecies(species_name)) {
-                const std::set<int>& homeworld_ids = species->Homeworlds();
+        for (auto name : m_names) {
+            const auto& species_name = name->Eval(local_context);
+            if (const auto species = manager.GetSpecies(species_name)) {
+                const auto& homeworld_ids = species->Homeworlds();
                 if (homeworld_ids.find(planet_id) != homeworld_ids.end())   // is this planet the homeworld for this species?
                     return true;
             }
@@ -1646,7 +1644,7 @@ void Homeworld::GetDefaultInitialCandidateObjects(const ScriptingContext& parent
 { AddPlanetSet(condition_non_targets); }
 
 void Homeworld::SetTopLevelContent(const std::string& content_name) {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+    for (auto name : m_names) {
         if (name)
             name->SetTopLevelContent(content_name);
     }
@@ -1678,7 +1676,7 @@ std::string Capital::Dump() const
 { return DumpIndent() + "Capital\n"; }
 
 bool Capital::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Capital::Match passed no candidate object";
         return false;
@@ -1687,7 +1685,7 @@ bool Capital::Match(const ScriptingContext& local_context) const {
 
     // check if any empire's capital's ID is that candidate object's id.
     // if it is, the candidate object is a capital.
-    for (const std::map<int, Empire*>::value_type& entry : Empires())
+    for (const auto& entry : Empires())
         if (entry.second->CapitalID() == candidate_id)
             return true;
     return false;
@@ -1722,13 +1720,13 @@ std::string Monster::Dump() const
 { return DumpIndent() + "Monster\n"; }
 
 bool Monster::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Monster::Match passed no candidate object";
         return false;
     }
 
-    if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(candidate))
+    if (auto ship = std::dynamic_pointer_cast<const Ship>(candidate))
         if (ship->IsMonster())
             return true;
 
@@ -1764,13 +1762,13 @@ std::string Armed::Dump() const
 { return DumpIndent() + "Armed\n"; }
 
 bool Armed::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Armed::Match passed no candidate object";
         return false;
     }
 
-    if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(candidate))
+    if (auto ship = std::dynamic_pointer_cast<const Ship>(candidate))
         if (ship->IsArmed() || ship->HasFighters())
             return true;
 
@@ -1896,7 +1894,7 @@ std::string Type::Dump() const {
 }
 
 bool Type::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Type::Match passed no candidate object";
         return false;
@@ -2006,7 +2004,7 @@ namespace {
                 return false;
 
             // is it a building?
-            std::shared_ptr<const ::Building> building = std::dynamic_pointer_cast<const ::Building>(candidate);
+            auto building = std::dynamic_pointer_cast<const ::Building>(candidate);
             if (!building)
                 return false;
 
@@ -2040,7 +2038,7 @@ void Building::Eval(const ScriptingContext& parent_context,
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
         // get all names from valuerefs
-        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        for (auto name : m_names) {
             names.push_back(name->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, BuildingSimpleMatch(names));
@@ -2051,7 +2049,7 @@ void Building::Eval(const ScriptingContext& parent_context,
 }
 
 bool Building::RootCandidateInvariant() const {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+    for (auto name : m_names) {
         if (!name->RootCandidateInvariant())
             return false;
     }
@@ -2059,7 +2057,7 @@ bool Building::RootCandidateInvariant() const {
 }
 
 bool Building::TargetInvariant() const {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+    for (auto name : m_names) {
         if (!name->TargetInvariant())
             return false;
     }
@@ -2067,7 +2065,7 @@ bool Building::TargetInvariant() const {
 }
 
 bool Building::SourceInvariant() const {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+    for (auto name : m_names) {
         if (!name->SourceInvariant())
             return false;
     }
@@ -2100,7 +2098,7 @@ std::string Building::Dump() const {
         retval += m_names[0]->Dump() + "\n";
     } else {
         retval += "[ ";
-        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        for (auto name : m_names) {
             retval += name->Dump() + " ";
         }
         retval += "]\n";
@@ -2113,21 +2111,21 @@ void Building::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 { AddBuildingSet(condition_non_targets); }
 
 bool Building::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Building::Match passed no candidate object";
         return false;
     }
 
     // is it a building?
-    std::shared_ptr<const ::Building> building = std::dynamic_pointer_cast<const ::Building>(candidate);
+    auto building = std::dynamic_pointer_cast<const ::Building>(candidate);
     if (building) {
         // match any building type?
         if (m_names.empty())
             return true;
 
         // match one of the specified building types
-        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        for (auto name : m_names) {
             if (name->Eval(local_context) == building->BuildingTypeName())
                 return true;
         }
@@ -2137,7 +2135,7 @@ bool Building::Match(const ScriptingContext& local_context) const {
 }
 
 void Building::SetTopLevelContent(const std::string& content_name) {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+    for (auto name : m_names) {
         if (name)
             name->SetTopLevelContent(content_name);
     }
@@ -2207,7 +2205,7 @@ namespace {
             if (m_name.empty())
                 return !candidate->Specials().empty();
 
-            std::map<std::string, std::pair<int, float>>::const_iterator it = candidate->Specials().find(m_name);
+            auto it = candidate->Specials().find(m_name);
             if (it == candidate->Specials().end())
                 return false;
 
@@ -2343,7 +2341,7 @@ std::string HasSpecial::Dump() const {
 }
 
 bool HasSpecial::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "HasSpecial::Match passed no candidate object";
         return false;
@@ -2488,7 +2486,7 @@ std::string HasTag::Dump() const {
 }
 
 bool HasTag::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "HasTag::Match passed no candidate object";
         return false;
@@ -2612,7 +2610,7 @@ std::string CreatedOnTurn::Dump() const {
 }
 
 bool CreatedOnTurn::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "CreatedOnTurn::Match passed no candidate object";
         return false;
@@ -2687,7 +2685,7 @@ namespace {
                 return false;
 
             bool match = false;
-            const std::set<int>& candidate_elements = candidate->ContainedObjectIDs(); // guaranteed O(1)
+            const auto& candidate_elements = candidate->ContainedObjectIDs(); // guaranteed O(1)
 
             // We need to test whether candidate_elements and m_subcondition_matches_ids have a common element.
             // We choose the strategy that is more efficient by comparing the sizes of both sets.
@@ -2695,8 +2693,8 @@ namespace {
                 // candidate_elements is smaller, so we iterate it and look up each candidate element in m_subcondition_matches_ids
                 for (int id : candidate_elements) {
                     // std::lower_bound requires m_subcondition_matches_ids to be sorted
-                    std::vector<int>::const_iterator matching_it = std::lower_bound(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end(), id);
-                    
+                    auto matching_it = std::lower_bound(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end(), id);
+
                     if (matching_it != m_subcondition_matches_ids.end() && *matching_it == id) {
                         match = true;
                         break;
@@ -2812,7 +2810,7 @@ void Contains::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 }
 
 bool Contains::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Contains::Match passed no candidate object";
         return false;
@@ -2908,7 +2906,7 @@ namespace {
                 for (int id : candidate_containers) {
                     // std::lower_bound requires m_subcondition_matches_ids to be sorted
                     std::vector<int>::const_iterator matching_it = std::lower_bound(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end(), id);
-                    
+
                     if (matching_it != m_subcondition_matches_ids.end() && *matching_it == id) {
                         match = true;
                         break;
@@ -3032,7 +3030,7 @@ void ContainedBy::GetDefaultInitialCandidateObjects(const ScriptingContext& pare
 }
 
 bool ContainedBy::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "ContainedBy::Match passed no candidate object";
         return false;

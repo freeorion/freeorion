@@ -998,13 +998,13 @@ T Statistic<T>::Eval(const ScriptingContext& context) const
 
     // count number of each result, tracking which has the most occurances
     std::map<T, unsigned int> histogram;
-    typename std::map<T, unsigned int>::const_iterator most_common_property_value_it = histogram.begin();
+    auto most_common_property_value_it = histogram.begin();
     unsigned int max_seen(0);
 
-    for (const typename std::map<std::shared_ptr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+    for (const auto& entry : object_property_values) {
         const T& property_value = entry.second;
 
-        typename std::map<T, unsigned int>::iterator hist_it = histogram.find(property_value);
+        auto hist_it = histogram.find(property_value);
         if (hist_it == histogram.end())
             hist_it = histogram.insert({property_value, 0}).first;
         unsigned int& num_seen = hist_it->second;

@@ -318,7 +318,7 @@ namespace {
 
         // note that this will cause a UI update for each call to CreateNewFleetFromShips
         // we can re-evaluate this code if it presents a noticable performance problem
-        for (const std::map<int, std::vector<int>>::value_type& entry : designs_ship_ids)
+        for (const auto& entry : designs_ship_ids)
         { CreateNewFleetFromShips(entry.second, aggression); }
     }
 
@@ -2428,7 +2428,7 @@ std::set<int> FleetDetailPanel::SelectedShipIDs() const {
     //std::cout << "FleetDetailPanel::SelectedShipIDs()" << std::endl;
     std::set<int> retval;
 
-    for (const GG::ListBox::SelectionSet::value_type& selection : m_ships_lb->Selections()) {
+    for (const auto& selection : m_ships_lb->Selections()) {
         bool hasRow = false;
         for (auto& lb_row : *m_ships_lb) {
             if (lb_row == *selection) {
@@ -3440,7 +3440,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
 
         // submenus for each available recipient empire
         GG::MenuItem give_away_menu(UserString("ORDER_GIVE_FLEET_TO_EMPIRE"), false, false);
-        for (std::map<int, Empire*>::value_type& entry : Empires()) {
+        for (auto& entry : Empires()) {
             int recipient_empire_id = entry.first;
             if (peaceful_empires_in_system.find(recipient_empire_id) == peaceful_empires_in_system.end())
                 continue;
