@@ -3744,6 +3744,9 @@ Wasted Points
 PRODUCTION_INFO_LOCAL_PS_LABEL
 Points Available Here
 
+PRODUCTION_INFO_STOCKPILE_PS_LABEL
+Stockpile (Available/Max)
+
 STOCKPILE_LABEL
 Stockpile
 
