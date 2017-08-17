@@ -123,9 +123,10 @@ namespace {
             return 0.0f;
         }
         float stockpile_transfer_efficiency = empire->GetMeter("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")->Current();
+        // FIXME cleanup
         // locally, within same resource group as the stockpile location (empire capital) we currently allow stockpile contribution at no penalty
-        float local_stockpile_transfer_rate = 1.0;
-        float remote_stockpile_transfer_rate = stockpile_transfer_efficiency;
+//        float local_stockpile_transfer_rate = 1.0;
+//        float remote_stockpile_transfer_rate = stockpile_transfer_efficiency;
         
         float stockpile_used = boost::accumulate(allocated_stockpile_pp | boost::adaptors::map_values, 0.0f);
         float new_contributions = 0.0f;
@@ -135,10 +136,11 @@ namespace {
             float excess_here = available_group.second - allocated_here;
             if (excess_here < EPSILON)
                 continue;
-            bool local_to_stockpile = available_group.first.find(stockpile_location_id) != available_group.first.end();
-            float this_transfer_rate = local_to_stockpile ? 
-                        local_stockpile_transfer_rate : remote_stockpile_transfer_rate;
-            new_contributions += excess_here * this_transfer_rate;
+            // Transfer excess to stockpile
+//            bool local_to_stockpile = available_group.first.find(stockpile_location_id) != available_group.first.end();
+//            float this_transfer_rate = local_to_stockpile ? 
+//                        local_stockpile_transfer_rate : remote_stockpile_transfer_rate;
+            new_contributions += excess_here * stockpile_transfer_efficiency;
         }
         return starting_stockpile + new_contributions - stockpile_used;
     }
@@ -1007,11 +1009,23 @@ void ProductionQueue::Update() {
     auto industry_resource_pool = empire->GetResourcePool(RE_INDUSTRY);
     std::map<std::set<int>, float> available_pp = AvailablePP(industry_resource_pool);
     int stockpile_location_id = industry_resource_pool->StockpileObjectID();
-    float available_stockpile = industry_resource_pool->Stockpile();
-    float stockpile_transfer_efficiency = empire->GetMeter("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")->Current();
+    float pp_in_stockpile = industry_resource_pool->Stockpile();
+    DebugLogger() << "========= pp_in_stockpile: " << pp_in_stockpile << " ========";
+    //float available_stockpile = pp_in_stockpile * (empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT")? empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT")->Current() : 1.0);
+    const Meter* pp_use_meter = empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT");
+    DebugLogger() << "========= METER_IMPERIAL_PP_USE_LIMIT meter: " << pp_use_meter;
+    float available_stockpile = pp_in_stockpile;
+    if (pp_use_meter) {
+        DebugLogger() << "========= METER_IMPERIAL_PP_USE_LIMIT: " << empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT")->Current() << " ========";
+        available_stockpile *= pp_use_meter->Current();
+    };
+     DebugLogger() << "========= alrighty then";
+    // FIXME after discussion - extraction is lossless
+//    float stockpile_transfer_efficiency = empire->GetMeter("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")->Current();
     // locally, within same resource group as the stockpile location (empire capital) we currently allow stockpile use at no penalty
-    float local_stockpile_use_rate = 1.0;
-    float remote_stockpile_use_rate = stockpile_transfer_efficiency;
+      float local_stockpile_use_rate = 1.0;
+//    float remote_stockpile_use_rate = stockpile_transfer_efficiency;
+      float remote_stockpile_use_rate = 1.0;
 
     // determine which resource sharing group each queue item is located in
     std::vector<std::set<int>> queue_element_groups;
@@ -1076,7 +1090,9 @@ void ProductionQueue::Update() {
     //update expected new stockpile amount
     float new_stockpile_amount = CalculateNewStockpile(m_empire_id, stockpile_location_id, available_stockpile, available_pp, 
                                                        m_object_group_allocated_pp, m_object_group_allocated_stockpile_pp);
+    DebugLogger() << "========= new_stockpile_amount: " << new_stockpile_amount << " ========";
     float stockpile_limit = empire->GetMeter("METER_IMPERIAL_PP_STOCKPILE_LIMIT")->Current();
+    DebugLogger() << "========= METER_IMPERIAL_PP_STOCKPILE_LIMIT: " << empire->GetMeter("METER_IMPERIAL_PP_STOCKPILE_LIMIT")->Current() << " ========";
     m_expected_new_stockpile_amount = std::max(0.0f, std::min(new_stockpile_amount, stockpile_limit));
     
     // if at least one resource-sharing system group have available PP, simulate
@@ -1248,6 +1264,7 @@ void Empire::Init() {
 
     m_meters[UserStringNop("METER_DETECTION_STRENGTH")];
     m_meters[UserStringNop("METER_IMPERIAL_PP_STOCKPILE_LIMIT")];
+    m_meters[UserStringNop("METER_IMPERIAL_PP_USE_LIMIT")];
     m_meters[UserStringNop("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")];
     m_meters[UserStringNop("METER_BUILDING_COST_FACTOR")];
     m_meters[UserStringNop("METER_SHIP_COST_FACTOR")];
