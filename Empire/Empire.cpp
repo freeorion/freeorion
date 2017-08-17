@@ -966,6 +966,7 @@ std::set<std::set<int>> ProductionQueue::ObjectsWithWastedPP(
         // find this group's allocated PP
         auto alloc_it = m_object_group_allocated_pp.find(group);
         // is less allocated than is available?  if so, some is wasted (assumes stockpile contribuutions can never be lossless)
+        // XXX maybe should check stockpile input ratio
         if (alloc_it == m_object_group_allocated_pp.end() || alloc_it->second < avail_pp.second)
             retval.insert(avail_pp.first);
     }
