@@ -72,7 +72,7 @@ public:
 
     void                ResetToIntro(bool skip_savegame);
     void                ExitApp();
-    void                ResetClientData();
+    void                ResetClientData(bool save_connection = false);
     void                LoadSinglePlayerGame(std::string filename = "");///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
     void                RequestSavePreviews(const std::string& directory, PreviewInformation& previews); ///< Requests the savegame previews for choosing one.
     void                Autosave();                                     ///< autosaves the current game, iff autosaves are enabled and any turn number requirements are met

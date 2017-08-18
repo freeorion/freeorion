@@ -690,6 +690,19 @@ boost::statechart::result PlayingGame::react(const TurnPartialUpdate& msg) {
     return discard_event();
 }
 
+boost::statechart::result PlayingGame::react(const LobbyUpdate& msg) {
+    TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.LobbyUpdate";
+
+    // need to re-post the lobby update message to be re-handled after
+    // transitioning into MPLobby
+    post_event(msg);
+
+    Client().ResetClientData(true);
+    Client().GetClientUI().ShowMultiPlayerLobbyWnd();
+
+    return transit<MPLobby>();
+}
+
 
 ////////////////////////////////////////////////////////////
 // WaitingForGameStart
