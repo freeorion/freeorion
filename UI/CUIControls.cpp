@@ -1844,6 +1844,9 @@ ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::st
     m_wasted_points_label(nullptr),
     m_wasted_points(nullptr),
     m_wasted_points_P_label(nullptr),
+    m_stockpile_points_label(nullptr),
+    m_stockpile_points(nullptr),
+    m_stockpile_points_P_label(nullptr),
     m_local_points_label(nullptr),
     m_local_points(nullptr),
     m_local_points_P_label(nullptr),
@@ -1906,6 +1909,7 @@ void ProductionInfoPanel::SetTotalPointsCost(float total_points, float total_cos
 
 void ProductionInfoPanel::SetStockpileCost(float stockpile, float stockpile_max, float stockpile_use, float stockpile_use_max) {
     if (!m_stockpile_points_label) {
+        DebugLogger() << "SetStockpileCost:  create";
         m_stockpile_points_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_STOCKPILE_PS_LABEL"), GG::FORMAT_RIGHT);
         m_stockpile_points = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
         m_stockpile_points_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
@@ -1917,16 +1921,18 @@ void ProductionInfoPanel::SetStockpileCost(float stockpile, float stockpile_max,
         DoLayout();
     }
 
-    *m_stockpile_points << DoubleToString(stockpile, 3, false);
-    *m_stockpile_points << std::string(" / ");
-    *m_stockpile_points << DoubleToString(stockpile_max, 3, false);
+    DebugLogger() << "SetStockpileCost:  update values";
+    std::string stockpileVsMax = DoubleToString(stockpile, 3, false) + std::string(" / ") + DoubleToString(stockpile_max, 3, false);
+    *m_stockpile_points << stockpileVsMax;
 
+    DebugLogger() << "SetStockpileCost:  set name";
     const Empire* empire = GetEmpire(m_empire_id);
     std::string empire_name;
     if (empire)
         empire_name = empire->Name();
 
     SetName(boost::io::str(FlexibleFormat(UserString("STOCKPILE_INFO_EMPIRE")) % m_title_str % empire_name));
+    DebugLogger() << "SetStockpileCost:  done.";
 }
 
 void ProductionInfoPanel::SetLocalPointsCost(float local_points, float local_cost, const std::string& location_name) {
@@ -1996,6 +2002,22 @@ void ProductionInfoPanel::ClearLocalInfo() {
     SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % empire_name));
 }
 
+void ProductionInfoPanel::ClearStockpileInfo() {
+    delete m_stockpile_points_label;
+    m_stockpile_points_label = nullptr;
+    delete m_stockpile_points;
+    m_stockpile_points = nullptr;
+    delete m_stockpile_points_P_label;
+    m_stockpile_points_P_label = nullptr;
+
+    const Empire* empire = GetEmpire(m_empire_id);
+    std::string empire_name;
+    if (empire)
+        empire_name = empire->Name();
+
+    SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % empire_name));
+}
+
 void ProductionInfoPanel::Clear() {
     DetachChildAndReset(m_total_points_label);
     DetachChildAndReset(m_total_points);
@@ -2006,17 +2028,20 @@ void ProductionInfoPanel::Clear() {
     m_empire_id = ALL_EMPIRES;
 
     ClearLocalInfo();
+    ClearStockpileInfo();
     SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % ""));
 }
 
 void ProductionInfoPanel::DoLayout() {
     const int STAT_TEXT_PTS = ClientUI::Pts();
     const int CENTERLINE_GAP = 4;
-    const GG::X LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 2 / 3;
+    const GG::X LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 5 / 8;
     const GG::X VALUE_TEXT_WIDTH = Width() - 4 - CENTERLINE_GAP - LABEL_TEXT_WIDTH;
     const GG::X LEFT_TEXT_X(0);
     const GG::X RIGHT_TEXT_X = LEFT_TEXT_X + LABEL_TEXT_WIDTH + 8 + CENTERLINE_GAP;
     const GG::X P_LABEL_X = RIGHT_TEXT_X + 40;
+    const GG::X DOUBLE_RIGHT_TEXT_X = RIGHT_TEXT_X + 40;
+    const GG::X DOUBLE_P_LABEL_X = DOUBLE_RIGHT_TEXT_X + 40;
 
     std::pair<int, int> m_center_gap(Value(LABEL_TEXT_WIDTH + 2), Value(LABEL_TEXT_WIDTH + 2 + CENTERLINE_GAP));
 
@@ -2046,6 +2071,17 @@ void ProductionInfoPanel::DoLayout() {
         m_wasted_points_P_label->Resize(P_LABEL_SIZE);
 
         row_offset += m_wasted_points_label->Height();
+    }
+     
+    if (m_stockpile_points_label) {
+        m_stockpile_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
+        m_stockpile_points_label->Resize(LABEL_TEXT_SIZE);
+        m_stockpile_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
+        m_stockpile_points->Resize(VALUE_TEXT_SIZE);
+        m_stockpile_points_P_label->MoveTo(GG::Pt(DOUBLE_P_LABEL_X, row_offset));
+        m_stockpile_points_P_label->Resize(P_LABEL_SIZE);
+
+        row_offset += m_stockpile_points_label->Height();
     }
 
     if (m_local_points_label) {
