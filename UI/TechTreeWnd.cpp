@@ -714,6 +714,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
 
 void TechTreeWnd::LayoutPanel::TechPanel::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
+    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     Update();
 }
 
@@ -1699,13 +1700,17 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
     // TODO replace string padding with new TextFormat flag
     std::string just_pad = "    ";
 
-    std::string cost_str = std::to_string(std::lround(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID())));
+    auto client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    std::string cost_str = std::to_string(std::lround(this_row_tech->ResearchCost(client_empire_id)));
     if (GG::Button* cost_btn = dynamic_cast<GG::Button*>((size() >= 3) ? at(2) : nullptr))
         cost_btn->SetText(cost_str + just_pad + just_pad);
 
-    std::string time_str = std::to_string(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
+    std::string time_str = std::to_string(this_row_tech->ResearchTime(client_empire_id));
     if (GG::Button* time_btn = dynamic_cast<GG::Button*>((size() >= 4) ? at(3) : nullptr))
         time_btn->SetText(time_str + just_pad + just_pad);
+
+    ClearBrowseInfoWnd();
+    SetBrowseInfoWnd(TechPanelRowBrowseWnd(m_tech, client_empire_id));
 }
 
 void TechTreeWnd::TechListBox::ToggleSortCol(unsigned int col) {
