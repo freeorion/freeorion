@@ -133,7 +133,7 @@ std::shared_ptr<GG::BrowseInfoWnd> TechRowBrowseWnd(const std::string& tech_name
 
     std::string main_text;
 
-    main_text += UserString(tech->Category()) + " ";
+    main_text += UserString(tech->Category()) + " \u2013 ";  // u2013 = 'En dash'
     main_text += UserString(tech->ShortDescription()) + "\n";
 
     if (empire) {
