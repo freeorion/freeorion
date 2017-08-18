@@ -388,6 +388,44 @@ sc::result Idle::react(const Hostless&) {
 ////////////////////////////////////////////////////////////
 // MPLobby
 ////////////////////////////////////////////////////////////
+
+namespace {
+    GG::Clr GetUnusedEmpireColour(const std::list<std::pair<int, PlayerSetupData>>& psd) {
+        //DebugLogger(FSM) << "finding colours for empire of player " << player_name;
+        GG::Clr empire_colour = GG::Clr(192, 192, 192, 255);
+        for (const GG::Clr& possible_colour : EmpireColors()) {
+            //DebugLogger(FSM) << "trying colour " << possible_colour.r << ", " << possible_colour.g << ", " << possible_colour.b;
+
+            // check if any other player / empire is using this colour
+            bool colour_is_new = true;
+            for (const std::pair<int, PlayerSetupData>& entry : psd) {
+                const GG::Clr& player_colour = entry.second.m_empire_color;
+                if (player_colour == possible_colour) {
+                    colour_is_new = false;
+                    break;
+                }
+            }
+
+            // use colour and exit loop if no other empire is using the colour
+            if (colour_is_new) {
+                empire_colour = possible_colour;
+                break;
+            }
+
+            //DebugLogger(FSM) << " ... colour already used.";
+        }
+        return empire_colour;
+    }
+
+    // return true if player has important changes.
+    bool IsPlayerChanged(const PlayerSetupData& lhs, const PlayerSetupData& rhs) {
+        return (lhs.m_client_type != rhs.m_client_type) ||
+            (lhs.m_starting_species_name != rhs.m_starting_species_name) ||
+            (lhs.m_save_game_empire_id != rhs.m_save_game_empire_id) ||
+            (lhs.m_empire_color != rhs.m_empire_color);
+    }
+}
+
 MPLobby::MPLobby(my_context c) :
     my_base(c),
     m_lobby_data(new MultiplayerLobbyData()),
@@ -396,8 +434,36 @@ MPLobby::MPLobby(my_context c) :
     TraceLogger(FSM) << "(ServerFSM) MPLobby";
     ClockSeed();
     ServerApp& server = Server();
-    if (! server.IsHostless()) {
-        const SpeciesManager& sm = GetSpeciesManager();
+    const SpeciesManager& sm = GetSpeciesManager();
+    if (server.IsHostless()) {
+        std::list<PlayerConnectionPtr> to_disconnect;
+        // Try to use connections:
+        for (const auto& player_connection : server.m_networking) {
+            int player_id = player_connection->PlayerID();
+            if (player_id != Networking::INVALID_PLAYER_ID) {
+                PlayerSetupData player_setup_data;
+                player_setup_data.m_player_name =   player_connection->PlayerName();
+                player_setup_data.m_client_type =   player_connection->GetClientType();
+                player_setup_data.m_empire_name =   (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
+                player_setup_data.m_empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
+                if (m_lobby_data->m_seed != "")
+                    player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
+                else
+                    player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
+
+                m_lobby_data->m_players.push_back(std::make_pair(player_id, player_setup_data));
+            } else {
+                // If connection was not established disconnect it.
+                to_disconnect.push_back(player_connection);
+            }
+        }
+
+        for (const auto& player_connection : to_disconnect) {
+            server.Networking().Disconnect(player_connection);
+        }
+
+        server.Networking().SendMessageAll(ServerLobbyUpdateMessage(*m_lobby_data));
+    } else {
         int host_id = server.m_networking.HostPlayerID();
         const PlayerConnectionPtr& player_connection = *(server.m_networking.GetPlayer(host_id));
 
@@ -475,43 +541,6 @@ sc::result MPLobby::react(const Disconnection& d) {
     }
 
     return discard_event();
-}
-
-namespace {
-    GG::Clr GetUnusedEmpireColour(const std::list<std::pair<int, PlayerSetupData>>& psd) {
-        //DebugLogger(FSM) << "finding colours for empire of player " << player_name;
-        GG::Clr empire_colour = GG::Clr(192, 192, 192, 255);
-        for (const GG::Clr& possible_colour : EmpireColors()) {
-            //DebugLogger(FSM) << "trying colour " << possible_colour.r << ", " << possible_colour.g << ", " << possible_colour.b;
-
-            // check if any other player / empire is using this colour
-            bool colour_is_new = true;
-            for (const std::pair<int, PlayerSetupData>& entry : psd) {
-                const GG::Clr& player_colour = entry.second.m_empire_color;
-                if (player_colour == possible_colour) {
-                    colour_is_new = false;
-                    break;
-                }
-            }
-
-            // use colour and exit loop if no other empire is using the colour
-            if (colour_is_new) {
-                empire_colour = possible_colour;
-                break;
-            }
-
-            //DebugLogger(FSM) << " ... colour already used.";
-        }
-        return empire_colour;
-    }
-
-    // return true if player has important changes.
-    bool IsPlayerChanged(const PlayerSetupData& lhs, const PlayerSetupData& rhs) {
-        return (lhs.m_client_type != rhs.m_client_type) ||
-            (lhs.m_starting_species_name != rhs.m_starting_species_name) ||
-            (lhs.m_save_game_empire_id != rhs.m_save_game_empire_id) ||
-            (lhs.m_empire_color != rhs.m_empire_color);
-    }
 }
 
 sc::result MPLobby::react(const JoinGame& msg) {
@@ -1574,6 +1603,13 @@ sc::result PlayingGame::react(const ShutdownServer& msg) {
 
 sc::result PlayingGame::react(const Hostless& msg) {
     TraceLogger(FSM) << "(ServerFSM) PlayingGame.Hostless";
+
+    ServerApp& server = Server();
+
+    // Remove the ai processes.  They either all acknowledged the shutdown and are free or were all killed.
+    server.m_ai_client_processes.clear();
+
+    // Don't DisconnectAll. It cause segfault here.
 
     return transit<MPLobby>();
 }
