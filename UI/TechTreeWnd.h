@@ -10,8 +10,8 @@
 class Tech;
 class EncyclopediaDetailPanel;
 
-/** Returns a browse wnd for tech panels */
-std::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& tech_name, int empire_id);
+/** Returns a browse wnd for tech entries */
+std::shared_ptr<GG::BrowseInfoWnd> TechRowBrowseWnd(const std::string& tech_name, int empire_id);
 
 /** Contains the tech graph layout, some controls to control what is visible in
   * the tech layout, the tech navigator, and the tech detail window. */

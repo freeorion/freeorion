@@ -123,9 +123,9 @@ namespace {
 }
 
 ///////////////////////////
-// TechPanelRowBrowseWnd //
+// TechRowBrowseWnd //
 ///////////////////////////
-std::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& tech_name, int empire_id) {
+std::shared_ptr<GG::BrowseInfoWnd> TechRowBrowseWnd(const std::string& tech_name, int empire_id) {
     const Empire* empire = GetEmpire(empire_id);
     const Tech* tech = GetTech(tech_name);
     if (!tech)
@@ -1061,7 +1061,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
     m_eta_label->SetText("<s>" + m_eta_text + "</s>");
 
     ClearBrowseInfoWnd();
-    SetBrowseInfoWnd(TechPanelRowBrowseWnd(m_tech_name, client_empire_id));
+    SetBrowseInfoWnd(TechRowBrowseWnd(m_tech_name, client_empire_id));
 
     RequirePreRender();
 }
@@ -1710,7 +1710,7 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
         time_btn->SetText(time_str + just_pad + just_pad);
 
     ClearBrowseInfoWnd();
-    SetBrowseInfoWnd(TechPanelRowBrowseWnd(m_tech, client_empire_id));
+    SetBrowseInfoWnd(TechRowBrowseWnd(m_tech, client_empire_id));
 }
 
 void TechTreeWnd::TechListBox::ToggleSortCol(unsigned int col) {
