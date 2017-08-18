@@ -194,6 +194,7 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
     std::shared_ptr<MultiplayerLobbyData>   m_lobby_data;
     std::vector<PlayerSaveGameData>         m_player_save_game_data;
     std::shared_ptr<ServerSaveGameData>     m_server_save_game_data;
+    int                                     m_ai_count;
 
     SERVER_ACCESSOR
 };

@@ -429,7 +429,8 @@ namespace {
 MPLobby::MPLobby(my_context c) :
     my_base(c),
     m_lobby_data(new MultiplayerLobbyData()),
-    m_server_save_game_data(new ServerSaveGameData())
+    m_server_save_game_data(new ServerSaveGameData()),
+    m_ai_count(1)
 {
     TraceLogger(FSM) << "(ServerFSM) MPLobby";
     ClockSeed();
@@ -675,7 +676,6 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
         DebugLogger(FSM) << "Get message from host or allowed player.";
 
-        static int AI_count = 1;
         const GG::Clr CLR_NONE = GG::Clr(0, 0, 0, 0);
 
         // assign unique names / colours to any lobby entry that lacks them, or
@@ -702,14 +702,14 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     psd.m_empire_color = GetUnusedEmpireColour(incoming_lobby_data.m_players);
                 if (psd.m_player_name.empty())
                     // ToDo: Should we translate player_name?
-                    psd.m_player_name = UserString("AI_PLAYER") + "_" + std::to_string(AI_count++);
+                    psd.m_player_name = UserString("AI_PLAYER") + "_" + std::to_string(m_ai_count++);
                 if (psd.m_empire_name.empty())
                     psd.m_empire_name = GenerateEmpireName(psd.m_player_name, incoming_lobby_data.m_players);
                 if (psd.m_starting_species_name.empty()) {
                     if (m_lobby_data->m_seed != "")
                         psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
                     else
-                        psd.m_starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(AI_count);
+                        psd.m_starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(m_ai_count);
                 }
 
             } else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
