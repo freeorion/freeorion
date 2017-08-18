@@ -606,6 +606,7 @@ public:
     void            SetStockpileCost(float stockpile, float stockpile_max, float stockpile_use, float stockpile_use_max);
     void            SetLocalPointsCost(float local_points, float local_cost, const std::string& location_name);
     void            SetEmpireID(int empire_id);
+    void            ClearStockpileInfo();
     void            ClearLocalInfo();
     void            Clear();
     //@}
