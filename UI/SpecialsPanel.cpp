@@ -73,7 +73,7 @@ void SpecialsPanel::Update() {
 
     // get specials and use them to create specials icons
     // for specials with a nonzero
-    for (const std::map<std::string, std::pair<int, float>>::value_type& entry : obj->Specials()) {
+    for (const auto& entry : obj->Specials()) {
         const Special* special = GetSpecial(entry.first);
         std::shared_ptr<StatisticIcon> graphic;
         if (entry.second.second > 0.0f)

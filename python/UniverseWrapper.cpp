@@ -147,7 +147,7 @@ namespace {
 
     std::vector<int>        ImmediateNeighborsP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
         std::vector<int> retval;
-        for (const std::multimap<double, int>::value_type& entry : universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id))
+        for (const auto& entry : universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id))
         { retval.push_back(entry.second); }
         return retval;
     }
@@ -155,7 +155,7 @@ namespace {
 
     std::map<int,double>    SystemNeighborsMapP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
         std::map<int,double> retval;
-        for (const std::multimap<double, int>::value_type& entry : universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id))
+        for (const auto& entry : universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id))
         { retval[entry.second] = entry.first; }
         return retval;
     }
@@ -167,7 +167,7 @@ namespace {
 
     std::vector<std::string> ObjectSpecials(const UniverseObject& object) {
         std::vector<std::string> retval;
-        for (const std::map<std::string, std::pair<int, float>>::value_type& special : object.Specials())
+        for (const auto& special : object.Specials())
         { retval.push_back(special.first); }
         return retval;
     }

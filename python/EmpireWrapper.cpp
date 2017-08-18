@@ -134,7 +134,7 @@ namespace {
 
         //// DEBUG
         //DebugLogger() << "jumpsToSuppliedSystemP results for empire, " << empire.Name() << " (" << empire.EmpireID() << ") :";
-        //for (const std::map<int, int>::value_type& system_jumps : retval) {
+        //for (const auto& system_jumps : retval) {
         //    DebugLogger() << "sys " << system_jumps.first << "  range: " << system_jumps.second;
         //}
         //// END DEBUG
@@ -142,76 +142,75 @@ namespace {
         return retval;
     }
 
-    boost::function<std::map<int,int>(const Empire&)> jumpsToSuppliedSystemFunc =               &jumpsToSuppliedSystemP;
+    auto jumpsToSuppliedSystemFunc = &jumpsToSuppliedSystemP;
 
     const std::set<int>& EmpireFleetSupplyableSystemIDsP(const Empire& empire)
     { return GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID()); }
-    boost::function<const std::set<int>& (const Empire&)> empireFleetSupplyableSystemIDsFunc =  &EmpireFleetSupplyableSystemIDsP;
+    auto empireFleetSupplyableSystemIDsFunc =  &EmpireFleetSupplyableSystemIDsP;
 
     typedef std::pair<float, int> FloatIntPair;
 
     typedef PairToTupleConverter<float, int> FloatIntPairConverter;
 
     //boost::mpl::vector<FloatIntPair, const Empire&, const ProductionQueue::Element&>()
-    FloatIntPair ProductionCostAndTimeP(const Empire& empire, const ProductionQueue::Element& element)
+    FloatIntPair ProductionCostAndTimeP(const Empire& empire,
+                                        const ProductionQueue::Element& element)
     { return empire.ProductionCostAndTime(element); }
-    boost::function<FloatIntPair(const Empire&,const ProductionQueue::Element& element)> ProductionCostAndTimeFunc = &ProductionCostAndTimeP;
+    auto ProductionCostAndTimeFunc = &ProductionCostAndTimeP;
 
     //.def("availablePP",                     make_function(&ProductionQueue::AvailablePP,          return_value_policy<return_by_value>()))
     //.add_property("allocatedPP",            make_function(&ProductionQueue::AllocatedPP,          return_internal_reference<>()))
     //.def("objectsWithWastedPP",             make_function(&ProductionQueue::ObjectsWithWastedPP,  return_value_policy<return_by_value>()))
 
     std::map<std::set<int>, float> PlanetsWithAvailablePP_P(const Empire& empire) {
-        const std::shared_ptr<ResourcePool>& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
-        const ProductionQueue& prodQueue = empire.GetProductionQueue();
-        std::map<std::set<int>, float> planetsWithAvailablePP;
-        for (const std::map<std::set<int>, float>::value_type& objects_pp : prodQueue.AvailablePP(industry_pool)) {
-            std::set<int> planetSet;
+        const auto& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
+        const ProductionQueue& prod_queue = empire.GetProductionQueue();
+        std::map<std::set<int>, float> planets_with_available_pp;
+        for (const auto& objects_pp : prod_queue.AvailablePP(industry_pool)) {
+            std::set<int> planets;
             for (int object_id : objects_pp.first) {
                 if (/* std::shared_ptr<const Planet> planet = */ GetPlanet(object_id))
-                    planetSet.insert(object_id);
+                    planets.insert(object_id);
             }
-            if (!planetSet.empty())
-                planetsWithAvailablePP[planetSet] = objects_pp.second;
+            if (!planets.empty())
+                planets_with_available_pp[planets] = objects_pp.second;
         }
-        return planetsWithAvailablePP;
+        return planets_with_available_pp;
     }
     boost::function<std::map<std::set<int>, float>(const Empire& )> PlanetsWithAvailablePP_Func =   &PlanetsWithAvailablePP_P;
 
     std::map<std::set<int>, float> PlanetsWithAllocatedPP_P(const Empire& empire) {
-        const ProductionQueue& prodQueue = empire.GetProductionQueue();
-        std::map<std::set<int>, float> planetsWithAllocatedPP;
-        std::map<std::set<int>, float> objectsWithAllocatedPP = prodQueue.AllocatedPP();
-        for (const std::map<std::set<int>, float>::value_type& objects_pp : objectsWithAllocatedPP) {
-            std::set<int> planetSet;
+        const auto& prod_queue = empire.GetProductionQueue();
+        std::map<std::set<int>, float> planets_with_allocated_pp;
+        for (const auto& objects_pp : prod_queue.AllocatedPP()) {
+            std::set<int> planets;
             for (int object_id : objects_pp.first) {
-                if (/* std::shared_ptr<const Planet> planet = */ GetPlanet(object_id))
-                    planetSet.insert(object_id);
+                if (GetPlanet(object_id))
+                    planets.insert(object_id);
             }
-            if (!planetSet.empty())
-                planetsWithAllocatedPP[planetSet] = objects_pp.second;
+            if (!planets.empty())
+                planets_with_allocated_pp[planets] = objects_pp.second;
         }
-        return planetsWithAllocatedPP;
+        return planets_with_allocated_pp;
     }
     boost::function<std::map<std::set<int>, float>(const Empire& )> PlanetsWithAllocatedPP_Func =   &PlanetsWithAllocatedPP_P;
 
     std::set<std::set<int>> PlanetsWithWastedPP_P(const Empire& empire) {
-        const std::shared_ptr<ResourcePool>& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
-        const ProductionQueue& prodQueue = empire.GetProductionQueue();
-        std::set<std::set<int>> planetsWithWastedPP;
-        std::set<std::set<int>> objectsWithWastedPP = prodQueue.ObjectsWithWastedPP(industry_pool);
-        for (const std::set<int>&  objects : objectsWithWastedPP) {
-                 std::set<int> planetSet;
+        const auto& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
+        const ProductionQueue& prod_queue = empire.GetProductionQueue();
+        std::set<std::set<int>> planets_with_wasted_pp;
+        for (const auto& objects : prod_queue.ObjectsWithWastedPP(industry_pool)) {
+                 std::set<int> planets;
                  for (int object_id : objects) {
-                     if (/* std::shared_ptr<const Planet> planet = */ GetPlanet(object_id))
-                         planetSet.insert(object_id);
+                     if (GetPlanet(object_id))
+                         planets.insert(object_id);
                  }
-                 if (!planetSet.empty())
-                     planetsWithWastedPP.insert(planetSet);
+                 if (!planets.empty())
+                     planets_with_wasted_pp.insert(planets);
              }
-             return planetsWithWastedPP;
+             return planets_with_wasted_pp;
     }
-    boost::function<std::set<std::set<int>>(const Empire&)>         PlanetsWithWastedPP_Func =      &PlanetsWithWastedPP_P;
+    boost::function<std::set<std::set<int>>(const Empire&)> PlanetsWithWastedPP_Func = &PlanetsWithWastedPP_P;
 }
 
 namespace FreeOrionPython {
@@ -261,7 +260,7 @@ namespace FreeOrionPython {
         class_<ResourcePool, std::shared_ptr<ResourcePool>, boost::noncopyable>("resPool", boost::python::no_init);
         //FreeOrionPython::SetWrapper<int>::Wrap("IntSet");
         FreeOrionPython::SetWrapper<IntSet>::Wrap("IntSetSet");
-        class_<std::map<std::set<int>, float>> ("resPoolMap")
+        class_<std::map<std::set<int>, float>>("resPoolMap")
             .def(boost::python::map_indexing_suite<std::map<std::set<int>, float>, true>())
         ;
 
@@ -290,17 +289,17 @@ namespace FreeOrionPython {
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<FloatIntPair, const Empire&, const ProductionQueue::Element& >()
                                                     ))
-            .add_property("planetsWithAvailablePP", make_function(
+            .add_property("planets_with_available_pp", make_function(
                                                         PlanetsWithAvailablePP_Func,
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<std::map<std::set<int>, float>, const Empire& >()
                                                     ))
-            .add_property("planetsWithAllocatedPP", make_function(
+            .add_property("planets_with_allocated_pp", make_function(
                                                         PlanetsWithAllocatedPP_Func,
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<std::map<std::set<int>, float>, const Empire& >()
                                                     ))
-            .add_property("planetsWithWastedPP",    make_function(
+            .add_property("planets_with_wasted_pp",    make_function(
                                                         PlanetsWithWastedPP_Func,
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<std::set<std::set<int>>, const Empire& >()

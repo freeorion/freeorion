@@ -619,7 +619,7 @@ void PlayerListWnd::Refresh() {
 
     const GG::Pt row_size = m_player_list->ListRowSize();
 
-    for (const std::map<int, PlayerInfo>::value_type& player : players) {
+    for (const auto& player : players) {
         int player_id = player.first;
         auto player_row = GG::Wnd::Create<PlayerRow>(row_size.x, row_size.y, player_id);
         m_player_list->Insert(player_row);
@@ -630,7 +630,7 @@ void PlayerListWnd::Refresh() {
 }
 
 void PlayerListWnd::SetSelectedPlayers(const std::set<int>& player_ids) {
-    const GG::ListBox::SelectionSet initial_selections = m_player_list->Selections();
+    const auto initial_selections = m_player_list->Selections();
 
     m_player_list->DeselectAll();
 

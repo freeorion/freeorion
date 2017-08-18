@@ -1239,7 +1239,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
 
 void OptionsWnd::HotkeysPage() {
     GG::ListBox* page = CreatePage(UserString("OPTIONS_PAGE_HOTKEYS"));
-    for (const std::map<std::string, std::set<std::string>>::value_type& class_hotkeys : Hotkey::ClassifyHotkeys()) {
+    for (const auto& class_hotkeys : Hotkey::ClassifyHotkeys()) {
         CreateSectionHeader(page, 0, UserString(class_hotkeys.first));
         for (const std::string& hotkey : class_hotkeys.second)
             HotkeyOption(page, 0, hotkey);

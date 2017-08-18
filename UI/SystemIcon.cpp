@@ -98,11 +98,11 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
 
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    std::shared_ptr<const System> system = GetSystem(system_id);
+    auto system = GetSystem(system_id);
     if (!system)
         return;
 
-    const std::set<int>& known_destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
+    const auto& known_destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
     if (known_destroyed_object_ids.find(system_id) != known_destroyed_object_ids.end())
         return;
 
@@ -117,7 +117,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     bool capital = false, homeworld = false, has_shipyard = false, has_neutrals = false, has_player_planet = false;
 
     std::set<int> owner_empire_ids;
-    std::vector<std::shared_ptr<const Planet>> system_planets = Objects().FindObjects<const Planet>(system->PlanetIDs());
+    auto system_planets = Objects().FindObjects<const Planet>(system->PlanetIDs());
 
     for (auto& planet : system_planets) {
         int planet_id = planet->ID();
@@ -127,7 +127,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
 
         // is planet a capital?
         if (!capital) {
-            for (const std::map<int, Empire*>::value_type& entry : empire_manager) {
+            for (const auto& entry : empire_manager) {
                 if (entry.second->CapitalID() == planet_id) {
                     capital = true;
                     break;
@@ -137,9 +137,9 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
 
         // is planet a homeworld? (for any species)
         if (!homeworld) {
-            for (const std::map<std::string, Species*>::value_type& entry : species_manager) {
+            for (const auto& entry : species_manager) {
                 if (const Species* species = entry.second) {
-                    const std::set<int>& homeworld_ids = species->Homeworlds();
+                    const auto& homeworld_ids = species->Homeworlds();
                     if (homeworld_ids.find(planet_id) != homeworld_ids.end()) {
                         homeworld = true;
                         break;

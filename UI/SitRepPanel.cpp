@@ -131,8 +131,8 @@ namespace {
         std::set<std::string> template_set;
 
         // get templates for each empire
-        for (std::map<int, Empire*>::value_type& entry : Empires()) {
-            std::set<std::string> empire_strings = EmpireSitRepTemplateStrings(entry.first);
+        for (auto& entry : Empires()) {
+            auto empire_strings = EmpireSitRepTemplateStrings(entry.first);
             template_set.insert(empire_strings.begin(), empire_strings.end());
         }
 
@@ -487,7 +487,7 @@ namespace {
         } else {
             // Moderator mode, sort sitreps from all empires
             EmpireManager& empires = Empires();
-            for (std::map<int, Empire*>::value_type& entry : empires)
+            for (auto& entry : empires)
                 sr_empires.insert(entry.second);
         }
         for (Empire* empire : sr_empires) {
@@ -500,7 +500,7 @@ namespace {
                     continue;
                 if (permanently_snoozed_sitreps.find(sitrep_it->GetText()) != permanently_snoozed_sitreps.end())
                     continue;
-                std::map< int, std::set<std::string>>::iterator sitrep_set_it = snoozed_sitreps.find(sitrep_it->GetTurn());
+                auto sitrep_set_it = snoozed_sitreps.find(sitrep_it->GetTurn());
                 if (sitrep_set_it != snoozed_sitreps.end() && sitrep_set_it->second.find(sitrep_it->GetText()) != sitrep_set_it->second.end())
                     continue;
                 turns[sitrep_it->GetTurn()].push_back(*sitrep_it);

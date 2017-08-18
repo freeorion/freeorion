@@ -50,13 +50,13 @@ namespace {
             // PP (equal to mineral and industry) cost of objects on production queue at this object's location
             if (empire) {
                 // add allocated PP for all production items at this location for this empire
-                for (const ProductionQueue::Element& elem : empire->GetProductionQueue())
+                for (const auto& elem : empire->GetProductionQueue())
                     if (elem.location == obj->ID())
                         prod_queue_allocation_sum += elem.allocated_pp;
 
             } else {
                 // add allocated PP for all production items at this location for all empires
-                for (std::map<int, Empire*>::value_type& entry : Empires()) {
+                for (auto& entry : Empires()) {
                     empire = entry.second;
                     for (const ProductionQueue::Element& elem : empire->GetProductionQueue())
                         if (elem.location == obj->ID())

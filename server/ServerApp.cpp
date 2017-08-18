@@ -693,12 +693,12 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
 
     // initialize empire owned object counters
     EmpireManager& empires = Empires();
-    for (std::map<int, Empire*>::value_type& entry : empires)
+    for (auto& entry : empires)
         entry.second->UpdateOwnedObjectCounters();
 
 
     // Determine initial supply distribution and exchanging and resource pools for empires
-    for (std::map<int, Empire*>::value_type& entry : empires) {
+    for (auto& entry : empires) {
         Empire* empire = entry.second;
         if (empire->Eliminated())
             continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
@@ -709,7 +709,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
 
     GetSupplyManager().Update();
 
-    for (std::map<int, Empire*>::value_type& entry : empires) {
+    for (auto& entry : empires) {
         Empire* empire = entry.second;
         if (empire->Eliminated())
             continue;
@@ -1200,7 +1200,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
     // Determine supply distribution and exchanging and resource pools for empires
     EmpireManager& empires = Empires();
-    for (std::map<int, Empire*>::value_type& entry : empires) {
+    for (auto& entry : empires) {
         Empire* empire = entry.second;
         if (empire->Eliminated())
             continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
@@ -1210,7 +1210,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
     GetSupplyManager().Update();
 
-    for (std::map<int, Empire*>::value_type& entry : empires) {
+    for (auto& entry : empires) {
         Empire* empire = entry.second;
         if (empire->Eliminated())
             continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
@@ -1223,7 +1223,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     // assemble player state information, and send game start messages
     DebugLogger() << "ServerApp::CommonGameInit: Sending GameStartMessages to players";
 
-    for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
+    for (auto player_connection_it = m_networking.established_begin();
          player_connection_it != m_networking.established_end(); ++player_connection_it)
     {
         const PlayerConnectionPtr player_connection = *player_connection_it;
@@ -1232,7 +1232,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
         // attempt to find saved state data for this player.
         PlayerSaveGameData psgd;
-        std::map<int, PlayerSaveGameData>::const_iterator save_data_it = player_id_save_game_data.find(player_id);
+        auto save_data_it = player_id_save_game_data.find(player_id);
         if (save_data_it != player_id_save_game_data.end()) {
             psgd = save_data_it->second;
         } else {
@@ -1446,14 +1446,14 @@ int ServerApp::PlayerEmpireID(int player_id) const {
 }
 
 int ServerApp::EmpirePlayerID(int empire_id) const {
-    for (const std::map<int, int>::value_type& entry : m_player_empire_ids)
+    for (const auto& entry : m_player_empire_ids)
         if (entry.second == empire_id)
             return entry.first;
     return Networking::INVALID_PLAYER_ID;
 }
 
 bool ServerApp::IsLocalHumanPlayer(int player_id) {
-    ServerNetworking::const_established_iterator it = m_networking.GetPlayer(player_id);
+    auto it = m_networking.GetPlayer(player_id);
     if (it == m_networking.established_end()) {
         ErrorLogger() << "ServerApp::IsLocalHumanPlayer : could not get player connection for player id " << player_id;
         return false;
@@ -1465,7 +1465,7 @@ bool ServerApp::IsLocalHumanPlayer(int player_id) {
 }
 
 bool ServerApp::IsAvailableName(const std::string& player_name) const {
-    for (ServerNetworking::const_established_iterator it = m_networking.established_begin();
+    for (auto it = m_networking.established_begin();
          it != m_networking.established_end(); ++it)
     {
         if ((*it)->PlayerName() == player_name)
@@ -1481,7 +1481,7 @@ Networking::ClientType ServerApp::GetPlayerClientType(int player_id) const {
     if (player_id == Networking::INVALID_PLAYER_ID)
         return Networking::INVALID_CLIENT_TYPE;
 
-    ServerNetworking::const_established_iterator it = m_networking.GetPlayer(player_id);
+   auto it = m_networking.GetPlayer(player_id);
     if (it == m_networking.established_end())
         return Networking::INVALID_CLIENT_TYPE;
     PlayerConnectionPtr player_connection = *it;
@@ -1719,7 +1719,7 @@ namespace {
 
         // which empires have aggressive ships here? (including monsters as id ALL_EMPIRES)
         std::set<int> empires_with_aggressive_fleets_here;
-        for (std::map<int, std::set<int>>::value_type& empire_fleets : empire_fleets_here) {
+        for (auto& empire_fleets : empire_fleets_here) {
             int empire_id = empire_fleets.first;
             for (int fleet_id : empire_fleets.second) {
                 std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
@@ -1746,17 +1746,17 @@ namespace {
 
         // all empires with something here
         std::set<int> empires_here;
-        for (std::map<int, std::set<int>>::value_type& empire_fleets : empire_fleets_here)
+        for (auto& empire_fleets : empire_fleets_here)
         { empires_here.insert(empire_fleets.first); }
-        for (std::map<int, std::set<int>>::value_type& empire_planets : empire_planets_here)
+        for (auto& empire_planets : empire_planets_here)
         { empires_here.insert(empire_planets.first); }
 
         // what combinations of present empires are at war?
         std::map<int, std::set<int>> empires_here_at_war;  // for each empire, what other empires here is it at war with?
-        for (std::set<int>::const_iterator emp1_it = empires_here.begin();
+        for (auto emp1_it = empires_here.begin();
              emp1_it != empires_here.end(); ++emp1_it)
         {
-            std::set<int>::const_iterator emp2_it = emp1_it;
+            auto emp2_it = emp1_it;
             ++emp2_it;
             for (; emp2_it != empires_here.end(); ++emp2_it) {
                 if (*emp1_it == ALL_EMPIRES || *emp2_it == ALL_EMPIRES ||
@@ -1774,7 +1774,7 @@ namespace {
         // empire it is at war with here?
         for (int aggressive_empire_id : empires_with_aggressive_fleets_here) {
             // what empires is the aggressive empire at war with?
-            const std::set<int>& at_war_with_empire_ids = empires_here_at_war[aggressive_empire_id];
+            const auto& at_war_with_empire_ids = empires_here_at_war[aggressive_empire_id];
 
             // what planets can the aggressive empire see?
             std::set<int> aggressive_empire_visible_planets;
@@ -1782,7 +1782,7 @@ namespace {
 
             // is any planet owned by an empire at war with aggressive empire?
             for (int planet_id : aggressive_empire_visible_planets) {
-                std::shared_ptr<const Planet> planet = GetPlanet(planet_id);
+                auto planet = GetPlanet(planet_id);
                 if (!planet)
                     continue;
                 int visible_planet_empire_id = planet->Owner();
@@ -1797,7 +1797,7 @@ namespace {
         // planet of an empire it is at war with here?
         for (int aggressive_empire_id : empires_with_aggressive_fleets_here) {
             // what empires is the aggressive empire at war with?
-            const std::set<int>& at_war_with_empire_ids = empires_here_at_war[aggressive_empire_id];
+            const auto& at_war_with_empire_ids = empires_here_at_war[aggressive_empire_id];
             if (at_war_with_empire_ids.empty())
                 continue;
 
@@ -1807,7 +1807,7 @@ namespace {
 
             // is any fleet owned by an empire at war with aggressive empire?
             for (int fleet_id : aggressive_empire_visible_fleets) {
-                std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
+                auto fleet = GetFleet(fleet_id);
                 if (!fleet)
                     continue;
                 int visible_fleet_empire_id = fleet->Owner();
@@ -1855,8 +1855,8 @@ namespace {
             std::map<int, std::set<int>> empires_to_update_of_fleet_destruction;
 
             // update visibilities.
-            for (const Universe::EmpireObjectVisibilityMap::value_type& empire_vis : combat_info.empire_object_visibility) {
-                for (const Universe::ObjectVisibilityMap::value_type& object_vis : empire_vis.second) {
+            for (const auto& empire_vis : combat_info.empire_object_visibility) {
+                for (const auto& object_vis : empire_vis.second) {
                     if (object_vis.second > GetUniverse().GetObjectVisibilityByEmpire(empire_vis.first, object_vis.first))
                         universe.SetEmpireObjectVisibility(empire_vis.first, object_vis.first, object_vis.second);
                 }
@@ -1868,7 +1868,7 @@ namespace {
             // be empires in this battle that otherwise couldn't see the object
             // as determined for galaxy map purposes, but which do know it has
             // been destroyed from having observed it during the battle.
-            for (const std::map<int, std::set<int>>::value_type& dok : combat_info.destroyed_object_knowers) {
+            for (const auto& dok : combat_info.destroyed_object_knowers) {
                 int empire_id = dok.first;
 
                 for (int object_id : dok.second) {
@@ -1878,7 +1878,7 @@ namespace {
 
                     // should empire also be informed of potential fleet
                     // destruction if all ships in the fleet are destroyed?
-                    if (std::shared_ptr<Ship> ship = GetShip(object_id)) {
+                    if (auto ship = GetShip(object_id)) {
                         if (ship->FleetID() != INVALID_OBJECT_ID)
                             empires_to_update_of_fleet_destruction[ship->FleetID()].insert(empire_id);
                     }
@@ -1898,7 +1898,7 @@ namespace {
 
             // after recursive object destruction, fleets might have been
             // destroyed. If so, need to also update empires knowledge of this
-            for (const std::map<int, std::set<int>>::value_type& fleet_empires : empires_to_update_of_fleet_destruction) {
+            for (const auto& fleet_empires : empires_to_update_of_fleet_destruction) {
                 int fleet_id = fleet_empires.first;
                 if (all_destroyed_object_ids.find(fleet_id) == all_destroyed_object_ids.end())
                     continue;   // fleet wasn't destroyed
@@ -1913,7 +1913,7 @@ namespace {
 
             // update system ownership after combat.  may be necessary if the
             // combat caused planets to change ownership.
-            if (std::shared_ptr<System> system = GetSystem(combat_info.system_id)) {
+            if (auto system = GetSystem(combat_info.system_id)) {
                 // ensure all participants get updates on system.  this ensures
                 // that an empire who lose all objects in the system still
                 // knows about a change in system ownership
@@ -1939,7 +1939,7 @@ namespace {
             }
 
             // sitreps about destroyed objects
-            for (const std::map<int, std::set<int>>::value_type& empire_kdos : combat_info.destroyed_object_knowers) {
+            for (const auto& empire_kdos : combat_info.destroyed_object_knowers) {
                 int empire_id = empire_kdos.first;
                 Empire* empire = GetEmpire(empire_id);
                 if (!empire)
@@ -1966,7 +1966,7 @@ namespace {
                     continue;
                 }
                 // which empires know about this object?
-                for (const std::map<int, ObjectMap>::value_type& empire_ko : combat_info.empire_known_objects) {
+                for (const auto& empire_ko : combat_info.empire_known_objects) {
                     //DebugLogger() << "Checking if empire " << empire_ko.first << " knows about the object.";
                     // does this empire know about this object?
                     const ObjectMap& objects = empire_ko.second;
@@ -2086,22 +2086,21 @@ namespace {
 
     /** Records info in Empires about where they invaded. */
     void UpdateEmpireInvasionInfo(const std::map<int, std::map<int, double>>& planet_empire_invasion_troops) {
-        for (const std::map<int, std::map<int, double>>::value_type& planet_empire_troops : planet_empire_invasion_troops) {
+        for (const auto& planet_empire_troops : planet_empire_invasion_troops) {
             int planet_id = planet_empire_troops.first;
-            std::shared_ptr<const Planet> planet = GetPlanet(planet_id);
+            auto planet = GetPlanet(planet_id);
             if (!planet)
                 continue;
-            const std::string& planet_species = planet->SpeciesName();
+            const auto& planet_species = planet->SpeciesName();
             if (planet_species.empty())
                 continue;
 
-            for (const std::map<int, double>::value_type& empire_troops : planet_empire_troops.second) {
+            for (const auto& empire_troops : planet_empire_troops.second) {
                 Empire* invader_empire = GetEmpire(empire_troops.first);
                 if (!invader_empire)
                     continue;
 
-                std::map<std::string, int>::iterator species_it =
-                    invader_empire->SpeciesPlanetsInvaded().find(planet_species);
+                auto species_it = invader_empire->SpeciesPlanetsInvaded().find(planet_species);
                 if (species_it == invader_empire->SpeciesPlanetsInvaded().end())
                     invader_empire->SpeciesPlanetsInvaded()[planet_species] = 1;
                 else
@@ -2112,19 +2111,19 @@ namespace {
 
     /** Does colonization, with safety checks */
     bool ColonizePlanet(int ship_id, int planet_id) {
-        std::shared_ptr<Ship> ship = GetShip(ship_id);
+        auto ship = GetShip(ship_id);
         if (!ship) {
             ErrorLogger() << "ColonizePlanet couldn't get ship with id " << ship_id;
             return false;
         }
-        std::shared_ptr<Planet> planet = GetPlanet(planet_id);
+        auto planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "ColonizePlanet couldn't get planet with id " << planet_id;
             return false;
         }
 
         // get species to colonize with: species of ship
-        const std::string& species_name = ship->SpeciesName();
+        const auto& species_name = ship->SpeciesName();
         if (species_name.empty()) {
             ErrorLogger() << "ColonizePlanet ship has no species";
             return false;
@@ -2153,10 +2152,10 @@ namespace {
             return false;
         }
 
-        std::shared_ptr<System> system = GetSystem(ship->SystemID());
+        auto system = GetSystem(ship->SystemID());
 
         // destroy colonizing ship, and its fleet if now empty
-        std::shared_ptr<Fleet> fleet = GetFleet(ship->FleetID());
+        auto fleet = GetFleet(ship->FleetID());
         if (fleet) {
             fleet->RemoveShip(ship->ID());
             if (fleet->Empty()) {
@@ -2211,26 +2210,26 @@ namespace {
         // execute colonization except when:
         // 1) an enemy empire has armed aggressive ships in the system
         // 2) multiple empires try to colonize a planet on the same turn
-        for (std::map<int, std::map<int, std::set<int>>>::value_type& planet_colonization : planet_empire_colonization_ship_ids) {
+        for (auto& planet_colonization : planet_empire_colonization_ship_ids) {
             // can't colonize if multiple empires attempting to do so on same turn
-            std::map<int, std::set<int>>& empires_ships_colonizing = planet_colonization.second;
+            auto& empires_ships_colonizing = planet_colonization.second;
             if (empires_ships_colonizing.size() != 1)
                 continue;
             int colonizing_empire_id = empires_ships_colonizing.begin()->first;
 
-            const std::set<int>& empire_ships_colonizing = empires_ships_colonizing.begin()->second;
+            const auto& empire_ships_colonizing = empires_ships_colonizing.begin()->second;
             if (empire_ships_colonizing.empty())
                 continue;
             int colonizing_ship_id = *empire_ships_colonizing.begin();
 
             int planet_id = planet_colonization.first;
-            std::shared_ptr<const Planet> planet = GetPlanet(planet_id);
+            auto planet = GetPlanet(planet_id);
             if (!planet) {
                 ErrorLogger() << "HandleColonization couldn't get planet with id " << planet_id;
                 continue;
             }
             int system_id = planet->SystemID();
-            std::shared_ptr<const System> system = GetSystem(system_id);
+            auto system = GetSystem(system_id);
             if (!system) {
                 ErrorLogger() << "HandleColonization couldn't get system with id " << system_id;
                 continue;
@@ -2260,10 +2259,10 @@ namespace {
                 continue;
 
             // before actual colonization, which deletes the colony ship, store ship info for later use with sitrep generation
-            std::shared_ptr<Ship> ship = GetShip(colonizing_ship_id);
+            auto ship = GetShip(colonizing_ship_id);
             if (!ship)
                 ErrorLogger() << "HandleColonization couldn't get ship with id " << colonizing_ship_id;
-            const std::string& species_name = ship ? ship->SpeciesName() : "";
+            const auto& species_name = ship ? ship->SpeciesName() : "";
             float colonist_capacity = ship ? ship->ColonyCapacity() : 0.0f;
 
 
@@ -2294,14 +2293,14 @@ namespace {
             return;
 
         std::multimap<double, int> inverted_empires_troops;
-        for (const std::map<int, double>::value_type& entry : empires_troops)
+        for (const auto& entry : empires_troops)
             inverted_empires_troops.insert(std::make_pair(entry.second, entry.first));
 
         // everyone but victor loses all troops.  victor's troops remaining are
         // what the victor started with minus what the second-largest troop
         // amount was
-        std::multimap<double, int>::reverse_iterator victor_it = inverted_empires_troops.rbegin();
-        std::multimap<double, int>::reverse_iterator next_it = victor_it;
+        auto victor_it = inverted_empires_troops.rbegin();
+        auto next_it = victor_it;
         ++next_it;
         int victor_id = victor_it->second;
         double victor_troops = victor_it->first - next_it->first;
@@ -2381,9 +2380,9 @@ namespace {
         }
 
         // process each planet's ground combats
-        for (std::map<int, std::map<int, double>>::value_type& planet_combat : planet_empire_troops) {
+        for (auto& planet_combat : planet_empire_troops) {
             int planet_id = planet_combat.first;
-            std::shared_ptr<Planet> planet = GetPlanet(planet_id);
+            auto planet = GetPlanet(planet_id);
             std::set<int> all_involved_empires;
             int planet_initial_owner_id = planet->Owner();
 
@@ -2407,11 +2406,11 @@ namespace {
                 }
             } else {
                 DebugLogger() << "Ground combat troops on " << planet->Name() << " :";
-                for (const std::map<int, double>::value_type& empire_troops : empires_troops)
+                for (const auto& empire_troops : empires_troops)
                 { DebugLogger() << " ... empire: " << empire_troops.first << " : " << empire_troops.second; }
 
                 // create sitreps for all empires involved in battle
-                for (const std::map<int, double>::value_type& empire_troops : empires_troops) {
+                for (const auto& empire_troops : empires_troops) {
                     if (empire_troops.first != ALL_EMPIRES)
                         all_involved_empires.insert(empire_troops.first);
                 }
@@ -2442,21 +2441,21 @@ namespace {
                     }
 
                     DebugLogger() << "Empire conquers planet";
-                    for (const std::map<int, double>::value_type& empire_troops : empires_troops)
+                    for (const auto& empire_troops : empires_troops)
                     { DebugLogger() << " empire: " << empire_troops.first << ": " << empire_troops.second; }
 
 
                 } else if (!planet->Unowned() && victor_id == ALL_EMPIRES) {
                     planet->Conquer(ALL_EMPIRES);
                     DebugLogger() << "Independents conquer planet";
-                    for (const std::map<int, double>::value_type& empire_troops : empires_troops)
+                    for (const auto& empire_troops : empires_troops)
                     { DebugLogger() << " empire: " << empire_troops.first << ": " << empire_troops.second; }
 
                     // TODO: planet lost to rebels sitrep
                 } else {
                     // defender held theh planet
                     DebugLogger() << "Defender holds planet";
-                    for (const std::map<int, double>::value_type& empire_troops : empires_troops)
+                    for (const auto& empire_troops : empires_troops)
                     { DebugLogger() << " empire: " << empire_troops.first << ": " << empire_troops.second; }
                 }
 
@@ -2496,8 +2495,7 @@ namespace {
                 continue;
             fleet->ClearGiveToEmpire(); // in case things fail, to avoid potential inconsistent state
 
-            if (   fleet->Unowned()
-                || fleet->OwnedBy(ordered_given_to_empire_id))
+            if (fleet->Unowned() || fleet->OwnedBy(ordered_given_to_empire_id))
             { continue; }
 
             empire_gifted_objects[ordered_given_to_empire_id].push_back(fleet);
@@ -2510,15 +2508,14 @@ namespace {
                 continue;
             planet->ClearGiveToEmpire(); // in case things fail, to avoid potential inconsistent state
 
-            if (   planet->Unowned()
-                || planet->OwnedBy(ordered_given_to_empire_id))
+            if (planet->Unowned() || planet->OwnedBy(ordered_given_to_empire_id))
             { continue; }
 
             empire_gifted_objects[ordered_given_to_empire_id].push_back(planet);
         }
 
         // further filter ordered given objects and do giving if appropriate
-        for (std::map<int, std::vector<std::shared_ptr<UniverseObject>>>::value_type& gifted_objects : empire_gifted_objects) {
+        for (auto& gifted_objects : empire_gifted_objects) {
             int recipient_empire_id = gifted_objects.first;
             std::map<int, bool> systems_contain_recipient_empire_owned_objects;
 
@@ -2530,7 +2527,7 @@ namespace {
                 // gifted object must be in a system
                 if (gifted_obj->SystemID() == INVALID_OBJECT_ID)
                     continue;
-                std::shared_ptr<System> system = GetSystem(gifted_obj->SystemID());
+                auto system = GetSystem(gifted_obj->SystemID());
                 if (!system)
                     continue;
 
@@ -2538,7 +2535,7 @@ namespace {
                 bool can_receive_here = false;
 
                 // is reception ability for this location cached?
-                std::map<int, bool>::iterator sys_it = systems_contain_recipient_empire_owned_objects.find(system->ID());
+                auto sys_it = systems_contain_recipient_empire_owned_objects.find(system->ID());
                 if (sys_it != systems_contain_recipient_empire_owned_objects.end()) {
                     can_receive_here = sys_it->second;
 
@@ -2583,11 +2580,11 @@ namespace {
 
             DebugLogger() << "... ship: " << ship->ID() << " ordered scrapped";
 
-            std::shared_ptr<System> system = GetSystem(ship->SystemID());
+            auto system = GetSystem(ship->SystemID());
             if (system)
                 system->Remove(ship->ID());
 
-            std::shared_ptr<Fleet> fleet = GetFleet(ship->FleetID());
+            auto fleet = GetFleet(ship->FleetID());
             if (fleet) {
                 fleet->RemoveShip(ship->ID());
                 if (fleet->Empty()) {
@@ -2600,13 +2597,13 @@ namespace {
             // record scrapping in empire stats
             Empire* scrapping_empire = GetEmpire(ship->Owner());
             if (scrapping_empire) {
-                std::map<int, int>& designs_scrapped = scrapping_empire->ShipDesignsScrapped();
+                auto& designs_scrapped = scrapping_empire->ShipDesignsScrapped();
                 if (designs_scrapped.find(ship->DesignID()) != designs_scrapped.end())
                     designs_scrapped[ship->DesignID()]++;
                 else
                     designs_scrapped[ship->DesignID()] = 1;
 
-                std::map<std::string, int>& species_ships_scrapped = scrapping_empire->SpeciesShipsScrapped();
+                auto& species_ships_scrapped = scrapping_empire->SpeciesShipsScrapped();
                 if (species_ships_scrapped.find(ship->SpeciesName()) != species_ships_scrapped.end())
                     species_ships_scrapped[ship->SpeciesName()]++;
                 else
@@ -2621,16 +2618,16 @@ namespace {
             if (!building->OrderedScrapped())
                 continue;
 
-            if (std::shared_ptr<Planet> planet = GetPlanet(building->PlanetID()))
+            if (auto planet = GetPlanet(building->PlanetID()))
                 planet->RemoveBuilding(building->ID());
 
-            if (std::shared_ptr<System> system = GetSystem(building->SystemID()))
+            if (auto system = GetSystem(building->SystemID()))
                 system->Remove(building->ID());
 
             // record scrapping in empire stats
             Empire* scrapping_empire = GetEmpire(building->Owner());
             if (scrapping_empire) {
-                std::map<std::string, int>& buildings_scrapped = scrapping_empire->BuildingTypesScrapped();
+                auto& buildings_scrapped = scrapping_empire->BuildingTypesScrapped();
                 if (buildings_scrapped.find(building->BuildingTypeName()) != buildings_scrapped.end())
                     buildings_scrapped[building->BuildingTypeName()]++;
                 else
@@ -2714,7 +2711,7 @@ void ServerApp::PreCombatProcessTurns() {
     CleanEmptyFleets();
 
     // update production queues after order execution
-    for (std::map<int, Empire*>::value_type& entry : Empires()) {
+    for (auto& entry : Empires()) {
         if (entry.second->Eliminated())
             continue;   // skip eliminated empires
         entry.second->UpdateProductionQueue();
@@ -2765,7 +2762,7 @@ void ServerApp::PreCombatProcessTurns() {
         if (!fleet || !fleet->ArrivedThisTurn())
             continue;
         // sitreps for all empires that can see fleet at new location
-        for (std::map<int, Empire*>::value_type& entry : Empires()) {
+        for (auto& entry : Empires()) {
             if (fleet->GetVisibility(entry.first) >= VIS_BASIC_VISIBILITY)
                 entry.second->AddSitRepEntry(
                     CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID(),
@@ -2777,7 +2774,7 @@ void ServerApp::PreCombatProcessTurns() {
     m_networking.SendMessageAll(TurnProgressMessage(Message::DOWNLOADING));
 
     // send partial turn updates to all players after orders and movement
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
+    for (auto player_it = m_networking.established_begin();
          player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
@@ -2809,7 +2806,7 @@ void ServerApp::ProcessCombats() {
         //const System* combat_system = combat_info.GetSystem();
         //DebugLogger() << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System)");
         //DebugLogger() << combat_info.objects.Dump();
-        //for (const std::map<int, ObjectMap>::value_type& eko : combat_info.empire_known_objects) {
+        //for (const auto& eko : combat_info.empire_known_objects) {
         //    DebugLogger() << "known objects for empire " << eko.first;
         //    DebugLogger() << eko.second.Dump();
         //}
@@ -2909,9 +2906,9 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // check for loss of empire capitals
-    for (std::map<int, Empire*>::value_type& entry : empires) {
+    for (auto& entry : empires) {
         int capital_id = entry.second->CapitalID();
-        if (std::shared_ptr<const UniverseObject> capital = GetUniverseObject(capital_id)) {
+        if (auto capital = GetUniverseObject(capital_id)) {
             if (!capital->OwnedBy(entry.first))
                 entry.second->SetCapitalID(INVALID_OBJECT_ID);
         } else {
@@ -2952,7 +2949,7 @@ void ServerApp::PostCombatProcessTurns() {
 
     // Determine how much of each resource is available, and determine how to
     // distribute it to planets or on queues
-    for (std::map<int, Empire*>::value_type& entry : empires) {
+    for (auto& entry : empires) {
         Empire* empire = entry.second;
         if (empire->Eliminated())
             continue;   // skip eliminated empires
@@ -2963,7 +2960,7 @@ void ServerApp::PostCombatProcessTurns() {
 
     GetSupplyManager().Update();
 
-    for (std::map<int, Empire*>::value_type& entry : empires) {
+    for (auto& entry : empires) {
         Empire* empire = entry.second;
         if (empire->Eliminated())
             continue;   // skip eliminated empires
@@ -2974,7 +2971,7 @@ void ServerApp::PostCombatProcessTurns() {
 
     // Update fleet travel restrictions (monsters and empire fleets)
     UpdateMonsterTravelRestrictions();
-    for (std::map<int, Empire*>::value_type& entry : empires) {
+    for (auto& entry : empires) {
         if (!entry.second->Eliminated()) {
             Empire* empire = entry.second;
             empire->UpdateAvailableLanes();
@@ -2990,7 +2987,7 @@ void ServerApp::PostCombatProcessTurns() {
     // Consume distributed resources to planets and on queues, create new
     // objects for completed production and give techs to empires that have
     // researched them
-    for (std::map<int, Empire*>::value_type& entry : empires) {
+    for (auto& entry : empires) {
         Empire* empire = entry.second;
         if (empire->Eliminated())
             continue;   // skip eliminated empires
@@ -3030,9 +3027,9 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // check for loss of empire capitals
-    for (std::map<int, Empire*>::value_type& entry : empires) {
+    for (auto& entry : empires) {
         int capital_id = entry.second->CapitalID();
-        if (std::shared_ptr<const UniverseObject> capital = GetUniverseObject(capital_id)) {
+        if (auto capital = GetUniverseObject(capital_id)) {
             if (!capital->OwnedBy(entry.first))
                 entry.second->SetCapitalID(INVALID_OBJECT_ID);
         } else {
@@ -3075,7 +3072,7 @@ void ServerApp::PostCombatProcessTurns() {
 
     // misc. other updates and records
     m_universe.UpdateStatRecords();
-    for (std::map<int, Empire*>::value_type& entry : empires)
+    for (auto& entry : empires)
         entry.second->UpdateOwnedObjectCounters();
     GetSpeciesManager().UpdatePopulationCounter();
 
@@ -3086,7 +3083,7 @@ void ServerApp::PostCombatProcessTurns() {
 
     // compile map of PlayerInfo, indexed by player ID
     std::map<int, PlayerInfo> players;
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
+    for (auto player_it = m_networking.established_begin();
          player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
@@ -3101,7 +3098,7 @@ void ServerApp::PostCombatProcessTurns() {
 
     DebugLogger() << "ServerApp::PostCombatProcessTurns Sending turn updates to players";
     // send new-turn updates to all players
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
+    for (auto player_it = m_networking.established_begin();
          player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
@@ -3117,7 +3114,7 @@ void ServerApp::PostCombatProcessTurns() {
 
 void ServerApp::CheckForEmpireElimination() {
     std::set<Empire*> surviving_empires;
-    for (std::map<int, Empire*>::value_type& entry : Empires()) {
+    for (auto& entry : Empires()) {
         if (entry.second->Eliminated())
             continue;   // don't double-eliminate an empire
         else if (EmpireEliminated(entry.first))
@@ -3134,7 +3131,7 @@ void ServerApp::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
     DiplomaticStatus status = Empires().GetDiplomaticStatus(empire1_id, empire2_id);
     DiplomaticStatusUpdateInfo update(empire1_id, empire2_id, status);
 
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
+    for (auto player_it = m_networking.established_begin();
          player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
@@ -3150,10 +3147,10 @@ void ServerApp::HandleDiplomaticMessageChange(int empire1_id, int empire2_id) {
     if (player1_id == Networking::INVALID_PLAYER_ID || player2_id == Networking::INVALID_PLAYER_ID)
         return;
 
-    ServerNetworking::established_iterator player1_it = m_networking.GetPlayer(player1_id);
+    auto player1_it = m_networking.GetPlayer(player1_id);
     if (player1_it != m_networking.established_end())
         (*player1_it)->SendMessage(DiplomacyMessage(message));
-    ServerNetworking::established_iterator player2_it = m_networking.GetPlayer(player2_id);
+    auto player2_it = m_networking.GetPlayer(player2_id);
     if (player2_it != m_networking.established_end())
         (*player2_it)->SendMessage(DiplomacyMessage(message));
 }

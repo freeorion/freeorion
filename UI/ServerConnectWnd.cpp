@@ -23,9 +23,8 @@ namespace {
     const GG::X WINDOW_WIDTH(400);
     const GG::Y WINDOW_HEIGHT(535);
 
-    bool NameOK(const std::string& name)
-    {
-        for (const std::string::value_type& character : name) {
+    bool NameOK(const std::string& name) {
+        for (const auto& character : name) {
             if (!std::isalnum(character) && character != '_' && character != '-')
                 return false;
         }

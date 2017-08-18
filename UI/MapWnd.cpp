@@ -2762,7 +2762,7 @@ void MapWnd::InitTurn() {
 
 
     timer.EnterSection("update resource pools");
-    for (std::map<int, Empire*>::value_type& entry : Empires())
+    for (auto& entry : Empires())
         entry.second->UpdateResourcePools();
 
 

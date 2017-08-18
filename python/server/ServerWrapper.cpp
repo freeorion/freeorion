@@ -95,7 +95,7 @@ namespace {
     // Wrapper for getting empire objects
     list GetAllEmpires() {
         list empire_list;
-        for (const std::map<int, Empire*>::value_type& entry : Empires())
+        for (const auto& entry : Empires())
             empire_list.append(entry.second->EmpireID());
         return empire_list;
     }
@@ -117,8 +117,9 @@ namespace {
         }
 
         if (empire_id == ALL_EMPIRES) {
-            for (const std::map<int, Empire*>::value_type& entry : Empires()) {
-                entry.second->AddSitRepEntry(CreateSitRep(template_string, sitrep_turn, icon, params));
+            for (const auto& entry : Empires()) {
+                entry.second->AddSitRepEntry(CreateSitRep(template_string, sitrep_turn,
+                                                          icon, params));
             }
         } else {
             Empire* empire = GetEmpire(empire_id);
@@ -183,7 +184,7 @@ namespace {
 
     list GetAllSpecies() {
         list            species_list;
-        for (const std::map<std::string, Species*>::value_type& entry : GetSpeciesManager()) {
+        for (const auto& entry : GetSpeciesManager()) {
             species_list.append(object(entry.first));
         }
         return species_list;
@@ -192,18 +193,18 @@ namespace {
     list GetPlayableSpecies() {
         list            species_list;
         SpeciesManager& species_manager = GetSpeciesManager();
-        for (SpeciesManager::playable_iterator it = species_manager.playable_begin(); it != species_manager.playable_end(); ++it) {
-            species_list.append(object(it->first));
-        }
+        for (auto it = species_manager.playable_begin();
+             it != species_manager.playable_end(); ++it)
+        { species_list.append(object(it->first)); }
         return species_list;
     }
 
     list GetNativeSpecies() {
         list            species_list;
         SpeciesManager& species_manager = GetSpeciesManager();
-        for (SpeciesManager::native_iterator it = species_manager.native_begin(); it != species_manager.native_end(); ++it) {
-            species_list.append(object(it->first));
-        }
+        for (auto it = species_manager.native_begin();
+             it != species_manager.native_end(); ++it)
+        { species_list.append(object(it->first)); }
         return species_list;
     }
 
@@ -284,7 +285,7 @@ namespace {
 
     list GetAllSpecials() {
         list py_specials;
-        for (const std::string& special_name : SpecialNames()) {
+        for (const auto& special_name : SpecialNames()) {
             py_specials.append(object(special_name));
         }
         return py_specials;
@@ -309,7 +310,9 @@ namespace {
         return SetEmpireHomeworld(empire, planet_id, species_name);
     }
 
-    void EmpireUnlockItem(int empire_id, UnlockableItemType item_type, const std::string& item_name) {
+    void EmpireUnlockItem(int empire_id, UnlockableItemType item_type,
+                          const std::string& item_name)
+    {
         Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "EmpireUnlockItem: couldn't get empire with ID " << empire_id;
@@ -344,7 +347,7 @@ namespace {
         list py_items;
         std::vector<ItemSpec> items;
         parse::items(items);
-        for (const ItemSpec& item : items) {
+        for (const auto& item : items) {
             py_items.append(object(item));
         }
         return py_items;
@@ -365,9 +368,10 @@ namespace {
     }
 
     // Wrappers for ship designs and premade ship designs
-    bool ShipDesignCreate(const std::string& name, const std::string& description, const std::string& hull,
-                          const list& py_parts,    const std::string& icon,        const std::string& model,
-                          bool  monster)
+    bool ShipDesignCreate(const std::string& name, const std::string& description,
+                          const std::string& hull, const list& py_parts,
+                          const std::string& icon, const std::string& model,
+                          bool monster)
     {
         Universe& universe = GetUniverse();
         // Check for empty name
@@ -392,7 +396,8 @@ namespace {
         // Create the design and add it to the universe
         ShipDesign* design;
         try {
-            design = new ShipDesign(std::invalid_argument(""), name, description, BEFORE_FIRST_TURN, ALL_EMPIRES,
+            design = new ShipDesign(std::invalid_argument(""), name, description,
+                                    BEFORE_FIRST_TURN, ALL_EMPIRES,
                                     hull, parts, icon, model, true, monster);
         } catch (const std::invalid_argument&) {
             ErrorLogger() << "CreateShipDesign: invalid ship design";
@@ -418,7 +423,7 @@ namespace {
 
     list ShipDesignGetMonsterList() {
         list py_monster_designs;
-        const PredefinedShipDesignManager& manager = GetPredefinedShipDesignManager();
+        const auto& manager = GetPredefinedShipDesignManager();
         for (const auto& monster : manager.GetOrderedMonsterDesigns()) {
             py_monster_designs.append(object(monster->Name(false)));
         }
@@ -450,7 +455,7 @@ namespace {
 
         list ShipDesigns() {
             list py_designs;
-            for (const std::string& design_name : m_fleet_plan->ShipDesigns()) {
+            for (const auto& design_name : m_fleet_plan->ShipDesigns()) {
                 py_designs.append(object(design_name));
             }
             return list(py_designs);
@@ -502,7 +507,7 @@ namespace {
 
         list ShipDesigns() {
             list py_designs;
-            for (const std::string& design_name : m_monster_fleet_plan->ShipDesigns()) {
+            for (const auto& design_name : m_monster_fleet_plan->ShipDesigns()) {
                 py_designs.append(object(design_name));
             }
             return list(py_designs);
@@ -529,7 +534,7 @@ namespace {
         list py_monster_fleet_plans;
         std::vector<MonsterFleetPlan*> monster_fleet_plans;
         parse::monster_fleet_plans(monster_fleet_plans);
-        for (MonsterFleetPlan* fleet_plan : monster_fleet_plans) {
+        for (auto* fleet_plan : monster_fleet_plans) {
             py_monster_fleet_plans.append(new MonsterFleetPlanWrapper(fleet_plan));
         }
         return list(py_monster_fleet_plans);
@@ -582,7 +587,8 @@ namespace {
         auto obj = GetUniverseObject(object_id);
         if (!obj) {
             ErrorLogger() << "GetPos: Couldn't get object with ID " << object_id;
-            return make_tuple(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
+            return make_tuple(UniverseObject::INVALID_POSITION,
+                              UniverseObject::INVALID_POSITION);
         }
         return make_tuple(obj->X(), obj->Y());
     }
@@ -1070,7 +1076,7 @@ namespace {
         // get list of systems the source system has starlanes to
         // we actually get a map of ids and a bool indicating if the entry is a starlane (false) or wormhole (true)
         // iterate over the map we got, only copy starlanes to the python list object we are going to return
-        for (const std::map<int, bool>::value_type& lane : system->StarlanesWormholes()) {
+        for (const auto& lane : system->StarlanesWormholes()) {
             // if the bool value is false, we have a starlane
             // in this case copy the destination system id to our starlane list
             if (!(lane.second)) {

@@ -920,7 +920,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     bool capital = false;
 
     // need to check all empires for capitals
-    for (const std::map<int, Empire*>::value_type& entry : Empires()) {
+    for (const auto& entry : Empires()) {
         const Empire* empire = entry.second;
         if (!empire) {
             ErrorLogger() << "PlanetPanel::PlanetPanel got null empire pointer for id " << entry.first;
@@ -1509,9 +1509,9 @@ void SidePanel::PlanetPanel::Refresh() {
     bool homeworld = false, has_shipyard = false;
 
     // need to check all species for homeworlds
-    for (const std::map<std::string, Species*>::value_type& entry : GetSpeciesManager()) {
+    for (const auto& entry : GetSpeciesManager()) {
         if (const Species* species = entry.second) {
-            const std::set<int>& homeworld_ids = species->Homeworlds();
+            const auto& homeworld_ids = species->Homeworlds();
             if (homeworld_ids.find(m_planet_id) != homeworld_ids.end()) {
                 homeworld = true;
                 break;
@@ -1520,9 +1520,10 @@ void SidePanel::PlanetPanel::Refresh() {
     }
 
     // check for shipyard
-    const std::set<int>& known_destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
+    const auto& known_destroyed_object_ids =
+        GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
     for (int building_id : planet->BuildingIDs()) {
-        std::shared_ptr<const Building> building = GetBuilding(building_id);
+        auto building = GetBuilding(building_id);
         if (!building)
             continue;
         if (known_destroyed_object_ids.find(building_id) != known_destroyed_object_ids.end())
@@ -2038,11 +2039,12 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
 
         // submenus for each available recipient empire
         GG::MenuItem give_away_menu(UserString("ORDER_GIVE_PLANET_TO_EMPIRE"), false, false);
-        for (std::map<int, Empire*>::value_type& entry : Empires()) {
+        for (auto& entry : Empires()) {
             int recipient_empire_id = entry.first;
             auto gift_action = [recipient_empire_id, client_empire_id, planet]() {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
-                    std::make_shared<GiveObjectToEmpireOrder>(client_empire_id, planet->ID(), recipient_empire_id));
+                    std::make_shared<GiveObjectToEmpireOrder>(
+                        client_empire_id, planet->ID(), recipient_empire_id));
             };
             if (peaceful_empires_in_system.find(recipient_empire_id) == peaceful_empires_in_system.end())
                 continue;
@@ -2054,8 +2056,8 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
             auto ungift_action = [planet]() { // cancel give away order for this fleet
                 const OrderSet orders = HumanClientApp::GetApp()->Orders();
                 for (const auto& id_and_order : orders) {
-                    if (std::shared_ptr<GiveObjectToEmpireOrder> order =
-                        std::dynamic_pointer_cast<GiveObjectToEmpireOrder>(id_and_order.second))
+                    if (auto order = std::dynamic_pointer_cast<
+                        GiveObjectToEmpireOrder>(id_and_order.second))
                     {
                         if (order->ObjectID() == planet->ID()) {
                             HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
@@ -2502,7 +2504,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
             continue;
         }
         int system_id = planet->SystemID();
-        std::shared_ptr<const System> system = GetSystem(system_id);
+        auto system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "PlanetPanelContainer::SetPlanets couldn't find system of planet" << planet->Name();
             continue;
@@ -2511,8 +2513,9 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
     }
 
     // create new panels and connect their signals
-    for (std::multimap<int, int>::value_type& orbit_planet : orbits_planets) {
-        auto planet_panel = GG::Wnd::Create<PlanetPanel>(Width() - m_vscroll->Width(), orbit_planet.second, star_type);
+    for (auto& orbit_planet : orbits_planets) {
+        auto planet_panel = GG::Wnd::Create<PlanetPanel>(Width() - m_vscroll->Width(),
+                                                         orbit_planet.second, star_type);
         AttachChild(planet_panel);
         m_planet_panels.push_back(planet_panel);
         m_planet_panels.back()->LeftClickedSignal.connect(
@@ -2982,11 +2985,11 @@ void SidePanel::Refresh() {
 
 void SidePanel::RefreshInPreRender() {
     // disconnect any existing system and fleet signals
-    for (const boost::signals2::connection& con : s_system_connections)
+    for (const auto& con : s_system_connections)
         con.disconnect();
     s_system_connections.clear();
 
-    for (std::map<int, boost::signals2::connection>::value_type& entry : s_fleet_state_change_signals)
+    for (auto& entry : s_fleet_state_change_signals)
         entry.second.disconnect();
     s_fleet_state_change_signals.clear();
 
@@ -3007,7 +3010,7 @@ void SidePanel::RefreshInPreRender() {
 
 
     // connect state changed and insertion signals for planets and fleets in system
-    std::shared_ptr<const System> system = GetSystem(s_system_id);
+    auto system = GetSystem(s_system_id);
     if (!system) {
         ErrorLogger() << "SidePanel::Refresh couldn't get system with id " << s_system_id;
         return;
@@ -3031,7 +3034,7 @@ void SidePanel::RefreshInPreRender() {
 }
 
 void SidePanel::RefreshSystemNames() {
-    std::shared_ptr<const System> system = GetSystem(s_system_id);
+    auto system = GetSystem(s_system_id);
     if (!system)
         return;
 
@@ -3060,23 +3063,21 @@ void SidePanel::RefreshSystemNames() {
             sorted_systems.insert(std::make_pair(system->Name(), system->ID()));
     }
 
-    std::shared_ptr<GG::Font> system_name_font(ClientUI::GetBoldFont(SystemNameFontSize()));
+    auto system_name_font(ClientUI::GetBoldFont(SystemNameFontSize()));
     GG::Y system_name_height(system_name_font->Lineskip() + 4);
 
     // Make a vector of sorted rows and insert them in a single operation.
     std::vector<std::shared_ptr<GG::DropDownList::Row>> rows;
     rows.reserve(sorted_systems.size());
-    for (const std::pair<std::string, int>& entry : sorted_systems) {
+    for (const auto& entry : sorted_systems) {
         int sys_id = entry.second;
         rows.push_back(GG::Wnd::Create<SystemRow>(sys_id, system_name_height));
     }
     m_system_name->Insert(rows, false);
 
     // Select in the ListBox the currently-selected system.
-    for (GG::DropDownList::iterator it = m_system_name->begin();
-         it != m_system_name->end(); ++it)
-    {
-        if (const SystemRow* row = dynamic_cast<const SystemRow*>(it->get())) {
+    for (auto it = m_system_name->begin(); it != m_system_name->end(); ++it) {
+        if (auto row = dynamic_cast<const SystemRow*>(it->get())) {
             if (s_system_id == row->SystemID()) {
                 m_system_name->Select(it);
                 break;
@@ -3098,25 +3099,25 @@ void SidePanel::RefreshImpl() {
 
     RefreshSystemNames();
 
-    std::shared_ptr<const System> system = GetSystem(s_system_id);
+    auto system = GetSystem(s_system_id);
     // if no system object, there is nothing to populate with.  early abort.
     if (!system)
         return;
 
     // (re)create top right star graphic
-    std::shared_ptr<GG::Texture> graphic =
-        ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars_sidepanel",
-                                                  ClientUI::StarTypeFilePrefixes()[system->GetStarType()],
-                                                  s_system_id);
+    auto graphic = ClientUI::GetClientUI()->GetModuloTexture(
+        ClientUI::ArtDir() / "stars_sidepanel",
+        ClientUI::StarTypeFilePrefixes()[system->GetStarType()],
+        s_system_id);
     std::vector<std::shared_ptr<GG::Texture>> textures;
     textures.push_back(graphic);
 
     int graphic_width = Value(Width()) - MaxPlanetDiameter();
     DetachChild(m_star_graphic);
-    m_star_graphic = GG::Wnd::Create<GG::DynamicGraphic>(GG::X(MaxPlanetDiameter()), GG::Y0,
-                                                         GG::X(graphic_width), GG::Y(graphic_width), true,
-                                                         textures[0]->DefaultWidth(), textures[0]->DefaultHeight(),
-                                                         0, textures, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_star_graphic = GG::Wnd::Create<GG::DynamicGraphic>(
+        GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(graphic_width), GG::Y(graphic_width),
+        true, textures[0]->DefaultWidth(), textures[0]->DefaultHeight(),
+        0, textures, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
     AttachChild(m_star_graphic);
     MoveChildDown(m_star_graphic);
@@ -3138,7 +3139,7 @@ void SidePanel::RefreshImpl() {
 
     // update planet panel container contents (applying just-set selection predicate)
     //std::cout << " ... setting planet panel container planets" << std::endl;
-    const std::set<int>& planet_ids = system->PlanetIDs();
+    const auto& planet_ids = system->PlanetIDs();
     std::vector<int> planet_ids_vec(planet_ids.begin(), planet_ids.end());
     m_planet_panel_container->SetPlanets(planet_ids_vec, system->GetStarType());
 
@@ -3154,13 +3155,14 @@ void SidePanel::RefreshImpl() {
     }
 
     // specify which meter types to include in resource summary.  Oddly enough, these are the resource meters.
-    std::vector<std::pair<MeterType, MeterType>> meter_types = {{METER_INDUSTRY,   METER_TARGET_INDUSTRY},
-                                                                {METER_RESEARCH,   METER_TARGET_RESEARCH},
-                                                                {METER_TRADE,      METER_TARGET_TRADE}};
+    std::vector<std::pair<MeterType, MeterType>> meter_types =
+        {{METER_INDUSTRY,   METER_TARGET_INDUSTRY},
+         {METER_RESEARCH,   METER_TARGET_RESEARCH},
+         {METER_TRADE,      METER_TARGET_TRADE}};
 
     // refresh the system resource summary.
-    m_system_resource_summary = GG::Wnd::Create<MultiIconValueIndicator>(Width() - MaxPlanetDiameter() - 8,
-                                                                         owned_planets, meter_types);
+    m_system_resource_summary = GG::Wnd::Create<MultiIconValueIndicator>(
+        Width() - MaxPlanetDiameter() - 8, owned_planets, meter_types);
     m_system_resource_summary->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + 4),
                                              140 - m_system_resource_summary->Height()));
     AttachChild(m_system_resource_summary);
@@ -3171,7 +3173,7 @@ void SidePanel::RefreshImpl() {
         DetachChild(m_system_resource_summary);
     } else {
         // add tooltips to the system resource summary
-        for (const std::pair<MeterType, MeterType>& entry : meter_types) {
+        for (const auto& entry : meter_types) {
             MeterType type = entry.first;
             // add tooltip for each meter type
             auto browse_wnd = GG::Wnd::Create<SystemResourceSummaryBrowseWnd>(
@@ -3227,7 +3229,7 @@ void SidePanel::DoLayout() {
     GG::GUI::PreRenderWindow(m_planet_panel_container);
 
     // hide scrollbar if there is no planets in the system
-    std::shared_ptr<const System> system = GetSystem(s_system_id);
+    auto system = GetSystem(s_system_id);
     if (system) {
         if (system->PlanetIDs().empty())
             m_planet_panel_container->HideScrollbar();
@@ -3272,7 +3274,7 @@ void SidePanel::SystemSelectionChangedSlot(GG::DropDownList::iterator it) {
 
 void SidePanel::PrevButtonClicked() {
     assert(!m_system_name->Empty());
-    GG::DropDownList::iterator selected = m_system_name->CurrentItem();
+    auto selected = m_system_name->CurrentItem();
     if (selected == m_system_name->begin())
         selected = m_system_name->end();
     m_system_name->Select(--selected);
@@ -3281,7 +3283,7 @@ void SidePanel::PrevButtonClicked() {
 
 void SidePanel::NextButtonClicked() {
     assert(!m_system_name->Empty());
-    GG::DropDownList::iterator selected = m_system_name->CurrentItem();
+    auto selected = m_system_name->CurrentItem();
     if (++selected == m_system_name->end())
         selected = m_system_name->begin();
     m_system_name->Select(selected);
@@ -3296,15 +3298,15 @@ void SidePanel::PlanetClickedSlot(int planet_id) {
 void SidePanel::FleetsInserted(const std::vector<std::shared_ptr<Fleet>>& fleets) {
     for (auto& fleet : fleets) {
         s_fleet_state_change_signals[fleet->ID()].disconnect();  // in case already present
-        s_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
-                                                        &SidePanel::Update);
+        s_fleet_state_change_signals[fleet->ID()] =
+            fleet->StateChangedSignal.connect(&SidePanel::Update);
     }
     SidePanel::Update();
 }
 
 void SidePanel::FleetsRemoved(const std::vector<std::shared_ptr<Fleet>>& fleets) {
     for (auto& fleet : fleets) {
-        std::map<int, boost::signals2::connection>::iterator signal_it = s_fleet_state_change_signals.find(fleet->ID());
+        auto signal_it = s_fleet_state_change_signals.find(fleet->ID());
         if (signal_it != s_fleet_state_change_signals.end()) {
             signal_it->second.disconnect();
             s_fleet_state_change_signals.erase(signal_it);
@@ -3323,15 +3325,15 @@ bool SidePanel::PlanetSelectable(int planet_id) const {
     if (!m_selection_enabled)
         return false;
 
-    std::shared_ptr<const System> system = GetSystem(s_system_id);
+    auto system = GetSystem(s_system_id);
     if (!system)
         return false;
 
-    const std::set<int>& planet_ids = system->PlanetIDs();
+    const auto& planet_ids = system->PlanetIDs();
     if (planet_ids.count(planet_id) == 0)
         return false;
 
-    std::shared_ptr<const Planet> planet = GetPlanet(planet_id);
+    auto planet = GetPlanet(planet_id);
     if (!planet)
         return false;
 
@@ -3379,7 +3381,7 @@ void SidePanel::SetSystem(int system_id) {
     if (s_system_id == system_id)
         return;
 
-    std::shared_ptr<const System> system = GetSystem(system_id);
+    auto system = GetSystem(system_id);
     if (!system) {
         s_system_id = INVALID_OBJECT_ID;
         return;

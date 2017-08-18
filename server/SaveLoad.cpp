@@ -62,7 +62,7 @@ namespace fs = boost::filesystem;
 namespace {
     std::map<int, SaveGameEmpireData> CompileSaveGameEmpireData(const EmpireManager& empire_manager) {
         std::map<int, SaveGameEmpireData> retval;
-        for (const std::map<int, Empire*>::value_type& entry : Empires())
+        for (const auto& entry : Empires())
             retval[entry.first] = SaveGameEmpireData(entry.first, entry.second->Name(), entry.second->PlayerName(), entry.second->Color());
         return retval;
     }

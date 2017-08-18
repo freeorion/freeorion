@@ -931,7 +931,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         // Show each effect for part capacity summaries
 
         // add labels for bay parts
-        for (const std::map<std::string, std::pair<int, int>>::value_type& bay_part : bay_parts) {
+        for (const auto& bay_part : bay_parts) {
             const std::string& part_name = UserString(bay_part.first);
             int part_qty = bay_part.second.first;
             int fighter_total = bay_part.second.second * part_qty;
@@ -988,7 +988,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         // Damage labels for each combat round
         GG::X left = GG::X0;
         int previous_docked = hangar_current_fighters;
-        for (std::map<int, FighterBoutInfo>::value_type& current_bout : bout_info) {
+        for (auto& current_bout : bout_info) {
             const FighterBoutInfo& bout = current_bout.second;
             // combat round label
             std::string bout_text = boost::io::str(FlexibleFormat(UserString("TT_COMBAT_ROUND"))

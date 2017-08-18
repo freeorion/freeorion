@@ -203,7 +203,7 @@ namespace {
     }
 
     const ValueRef::ValueRefBase<std::string>* GetValueRefByName(const std::string& name) {
-        for (const std::map<std::pair<std::string, std::string>, ValueRef::ValueRefBase<std::string>*>::value_type& entry : AvailableColumnTypes()) {
+        for (const auto& entry : AvailableColumnTypes()) {
             if (entry.first.first == name)
                 return entry.second;
         }
@@ -425,7 +425,7 @@ public:
 
             // get id of empire matching name
             int empire_id = ALL_EMPIRES;
-            for (std::map<int, Empire*>::value_type& entry : Empires()) {
+            for (auto& entry : Empires()) {
                 if (entry.second->Name() == empire_name) {
                     empire_id = entry.first;
                     break;
@@ -772,12 +772,14 @@ private:
             param_widget_top += m_string_drop->Height();
 
             // add empty row, allowing for matching any species
-            GG::ListBox::iterator row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>("", GG::Y(ClientUI::Pts())));
+            auto row_it = m_string_drop->Insert(
+                GG::Wnd::Create<StringRow>("", GG::Y(ClientUI::Pts())));
             m_string_drop->Select(row_it);
 
-            for (const std::map<std::string, Species*>::value_type& entry : GetSpeciesManager()) {
+            for (const auto& entry : GetSpeciesManager()) {
                 const std::string& species_name = entry.first;
-                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(species_name, GG::Y(ClientUI::Pts())));
+                row_it = m_string_drop->Insert(
+                    GG::Wnd::Create<StringRow>(species_name, GG::Y(ClientUI::Pts())));
             }
 
         } else if (condition_key == HASSPECIAL_CONDITION) {
@@ -790,11 +792,13 @@ private:
             param_widget_top += m_string_drop->Height();
 
             // add empty row, allowing for matching any special
-            GG::ListBox::iterator row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>("", GG::Y(ClientUI::Pts())));
+            auto row_it = m_string_drop->Insert(
+                GG::Wnd::Create<StringRow>("", GG::Y(ClientUI::Pts())));
             m_string_drop->Select(row_it);
 
             for (const std::string& special_name : SpecialNames()) {
-                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(special_name, GG::Y(ClientUI::Pts())));
+                row_it = m_string_drop->Insert(
+                    GG::Wnd::Create<StringRow>(special_name, GG::Y(ClientUI::Pts())));
             }
 
         } else if (condition_key == HASTAG_CONDITION) {
@@ -949,9 +953,10 @@ private:
 
             // add rows for empire names
             GG::ListBox::iterator row_it = m_string_drop->end();
-            for (const std::map<int, Empire*>::value_type& entry : Empires()) {
+            for (const auto& entry : Empires()) {
                 const std::string& empire_name = entry.second->Name();
-                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(empire_name, GG::Y(ClientUI::Pts()), false));
+                row_it = m_string_drop->Insert(
+                    GG::Wnd::Create<StringRow>(empire_name, GG::Y(ClientUI::Pts()), false));
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
@@ -1657,7 +1662,7 @@ private:
         GG::MenuItem planets_submenu(UserString("PLANETS_SUBMENU"), false, false);
         GG::MenuItem fleets_submenu(UserString("FLEETS_SUBMENU"),   false, false);
 
-        for (const std::map<std::pair<std::string, std::string>, ValueRef::ValueRefBase<std::string>*>::value_type& entry : available_column_types) {
+        for (const auto& entry : available_column_types) {
             const auto& new_column_type = entry.first.first;
             bool check = (current_column_type == new_column_type);
             const std::string& menu_label = UserString(new_column_type);
@@ -1672,11 +1677,14 @@ private:
             if (entry.first.second.empty())
                 popup->AddMenuItem(GG::MenuItem(menu_label, false, check, col_action));
             else if (entry.first.second == "METERS_SUBMENU")
-                meters_submenu.next_level.push_back(GG::MenuItem(menu_label,  false, check, col_action));
+                meters_submenu.next_level.push_back(
+                    GG::MenuItem(menu_label,  false, check, col_action));
             else if (entry.first.second == "PLANETS_SUBMENU")
-                planets_submenu.next_level.push_back(GG::MenuItem(menu_label, false, check, col_action));
+                planets_submenu.next_level.push_back(
+                    GG::MenuItem(menu_label, false, check, col_action));
             else if (entry.first.second == "FLEETS_SUBMENU")
-                fleets_submenu.next_level.push_back(GG::MenuItem(menu_label,  false, check, col_action));
+                fleets_submenu.next_level.push_back(
+                    GG::MenuItem(menu_label,  false, check, col_action));
             ++index;
         }
         popup->AddMenuItem(std::move(meters_submenu));
@@ -1893,12 +1901,14 @@ public:
 
     void            ClearContents() {
         Clear();
-        for (std::map<int, boost::signals2::connection>::value_type& entry : m_object_change_connections)
+        for (auto& entry : m_object_change_connections)
         { entry.second.disconnect(); }
         m_object_change_connections.clear();
     }
 
-    bool            ObjectShown(std::shared_ptr<const UniverseObject> obj, bool assume_visible_without_checking = false) {
+    bool            ObjectShown(std::shared_ptr<const UniverseObject> obj,
+                                bool assume_visible_without_checking = false)
+    {
         if (!obj)
             return false;
 
@@ -2030,13 +2040,13 @@ public:
 
 
         // add planets not in shown systems
-        for (const std::map<int, std::set<int>>::value_type& sp : system_planets) {
+        for (const auto& sp : system_planets) {
             for (int planet_id : sp.second) {
-                std::map<int, std::set<int>>::iterator pb_it = planet_buildings.find(planet_id);
+                auto pb_it = planet_buildings.find(planet_id);
 
                 AddObjectRow(planet_id, INVALID_OBJECT_ID,
-                                pb_it != planet_buildings.end() ? pb_it->second : std::set<int>(),
-                                indent);
+                             pb_it != planet_buildings.end() ? pb_it->second : std::set<int>(),
+                             indent);
                 ++indent;
 
                 // add building rows on this planet
@@ -2056,7 +2066,7 @@ public:
 
 
         // add buildings not in a shown planet
-        for (const std::map<int, std::set<int>>::value_type& pb : planet_buildings) {
+        for (const auto& pb : planet_buildings) {
             for (int building_id : pb.second) {
                 AddObjectRow(building_id, INVALID_OBJECT_ID, std::set<int>(), indent);
             }
@@ -2065,7 +2075,7 @@ public:
 
 
         // add fleets not in shown systems
-        for (const std::map<int, std::set<int>>::value_type& sf : system_fleets) {
+        for (const auto& sf : system_fleets) {
             for (int fleet_id : sf.second) {
                 std::map<int, std::set<int>>::iterator fs_it = fleet_ships.find(fleet_id);
 
@@ -2090,7 +2100,7 @@ public:
 
 
         // add any remaining ships not in shown fleets
-        for (const std::map<int, std::set<int>>::value_type& fs : fleet_ships) {
+        for (const auto& fs : fleet_ships) {
             for (int ship_id : fs.second) {
                 AddObjectRow(ship_id, INVALID_OBJECT_ID, std::set<int>(), indent);
             }
@@ -2388,7 +2398,7 @@ void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it, const GG::Pt& 
 std::set<int> ObjectListWnd::SelectedObjectIDs() const {
     std::set<int> sel_ids;
     const GG::ListBox::SelectionSet sel = m_list_box->Selections();
-    for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
+    for (const auto& entry : m_list_box->Selections()) {
         ObjectRow *row = dynamic_cast<ObjectRow *>(entry->get());
         if (row) {
             int selected_object_id = row->ObjectID();
@@ -2460,10 +2470,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     if (type == OBJ_PLANET) {
         popup->AddMenuItem(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, suitability_action));
 
-        for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
+        for (const auto& entry : m_list_box->Selections()) {
             ObjectRow *row = dynamic_cast<ObjectRow *>(entry->get());
             if (row) {
-                std::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());
+                auto one_planet = GetPlanet(row->ObjectID());
                 if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
                     for (const std::string& planet_focus : one_planet->AvailableFoci())
                         all_foci[planet_focus]++;
@@ -2484,7 +2494,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             }
         }
         GG::MenuItem focusMenuItem(UserString("MENUITEM_SET_FOCUS"), false, false/*, no action*/);
-        for (std::map<std::string, int>::value_type& entry : all_foci) {
+        for (auto& entry : all_foci) {
             menuitem_id++;
             auto focus_action = [this, entry, app, &focus_ship_building_common_action]() {
                 std::string focus = entry.first;
@@ -2493,12 +2503,13 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     if (!row)
                         continue;
 
-                    std::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());
+                    auto one_planet = GetPlanet(row->ObjectID());
                     if (!(one_planet && one_planet->OwnedBy(app->EmpireID())))
                         continue;
 
                     one_planet->SetFocus(focus);
-                    app->Orders().IssueOrder(std::make_shared<ChangeFocusOrder>(app->EmpireID(), one_planet->ID(), focus));
+                    app->Orders().IssueOrder(std::make_shared<
+                        ChangeFocusOrder>(app->EmpireID(), one_planet->ID(), focus));
                 }
 
                 focus_ship_building_common_action();
@@ -2506,13 +2517,14 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
 
             std::stringstream out;
             out << UserString(entry.first) << " (" << entry.second << ")";
-            focusMenuItem.next_level.push_back(GG::MenuItem(out.str(), false, false, focus_action));
+            focusMenuItem.next_level.push_back(
+                GG::MenuItem(out.str(), false, false, focus_action));
         }
         if (menuitem_id > MENUITEM_SET_FOCUS_BASE)
             popup->AddMenuItem(std::move(focusMenuItem));
 
         GG::MenuItem ship_menu_item(UserString("MENUITEM_ENQUEUE_SHIPDESIGN"), false, false);
-        for (std::map<int, int>::iterator it = avail_designs.begin();
+        for (auto it = avail_designs.begin();
              it != avail_designs.end() && ship_menuitem_id < MENUITEM_SET_BUILDING_BASE; ++it)
         {
             ship_menuitem_id++;
@@ -2524,11 +2536,12 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     ObjectRow* row = dynamic_cast<ObjectRow*>(entry->get());
                     if (!row)
                         continue;
-                    std::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());
+                    auto one_planet = GetPlanet(row->ObjectID());
                     if (!one_planet || !one_planet->OwnedBy(app->EmpireID()) || !cur_empire->ProducibleItem(BT_SHIP, ship_design, row->ObjectID()))
                         continue;
                     ProductionQueue::ProductionItem ship_item(BT_SHIP, ship_design);
-                    app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(app->EmpireID(), ship_item, 1, row->ObjectID()));
+                    app->Orders().IssueOrder(std::make_shared<
+                        ProductionQueueOrder>(app->EmpireID(), ship_item, 1, row->ObjectID()));
                     needs_queue_update = true;
                 }
                 if (needs_queue_update)
@@ -2546,7 +2559,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             popup->AddMenuItem(std::move(ship_menu_item));
 
         GG::MenuItem building_menu_item(UserString("MENUITEM_ENQUEUE_BUILDING"), false, false);
-        for (std::map<std::string, int>::value_type& entry : avail_blds) {
+        for (auto& entry : avail_blds) {
             bld_menuitem_id++;
 
             auto produce_building_action = [this, entry, app, cur_empire, &focus_ship_building_common_action]() {
