@@ -907,11 +907,15 @@ void TechTreeWnd::LayoutPanel::TechPanel::RClick(const GG::Pt& pt,
                                                  GG::Flags<GG::ModKey> mod_keys)
 {
     auto dclick_action = [this, pt, mod_keys]() { LDoubleClick(pt, mod_keys); };
+    auto ctrl_dclick_action = [this, pt]() { LDoubleClick(pt, GG::MOD_KEY_CTRL); };
     auto pedia_display_action = [this]() { TechPediaDisplaySignal(m_tech_name); };
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-    if (!(m_enqueued) && !(m_status == TS_COMPLETE))
+    if (!(m_enqueued) && !(m_status == TS_COMPLETE)) {
         popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, dclick_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"), false, false,
+                                        ctrl_dclick_action));
+    }
 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(m_tech_name));
     popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
