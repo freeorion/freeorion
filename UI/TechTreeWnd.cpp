@@ -1958,11 +1958,15 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
         return;
 
     auto tech_dclick_action = [this, it, pt]() { TechDoubleClicked(it, pt, GG::Flags<GG::ModKey>()); };
+    auto tech_ctrl_dclick_action = [this, it, pt]() { TechDoubleClicked(it, pt, GG::MOD_KEY_CTRL); };
     auto pedia_display_action = [this, &tech_name]() { TechPediaDisplay(tech_name); };
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-    if (!empire->TechResearched(tech_name))
+    if (!empire->TechResearched(tech_name)) {
         popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, tech_dclick_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"), false, false,
+                                        tech_ctrl_dclick_action));
+    }
 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(tech_name));
     popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
