@@ -68,7 +68,7 @@ int EmpireManager::NumEmpires() const
 
 std::string EmpireManager::Dump() const {
     std::string retval = "Empires:\n";
-    for (const std::map<int, Empire*>::value_type& entry : m_empire_map)
+    for (const auto& entry : m_empire_map)
         retval += entry.second->Dump();
     retval += DumpDiplomacy();
     return retval;
@@ -76,9 +76,7 @@ std::string EmpireManager::Dump() const {
 
 std::string EmpireManager::DumpDiplomacy() const {
     std::string retval = "Diplomatic Statuses:\n";
-    for (const std::map<std::pair<int, int>, DiplomaticStatus>::value_type&
-         entry : m_empire_diplomatic_statuses)
-    {
+    for (const auto& entry : m_empire_diplomatic_statuses) {
         const Empire* empire1 = GetEmpire(entry.first.first);
         const Empire* empire2 = GetEmpire(entry.first.second);
         if (!empire1 || !empire2)
@@ -116,7 +114,7 @@ EmpireManager::iterator EmpireManager::end()
 { return m_empire_map.end(); }
 
 void EmpireManager::BackPropagateMeters() {
-    for (std::map<int, Empire*>::value_type& entry : m_empire_map)
+    for (auto& entry : m_empire_map)
         entry.second->BackPropagateMeters();
 }
 
@@ -146,7 +144,7 @@ void EmpireManager::InsertEmpire(Empire* empire) {
 }
 
 void EmpireManager::Clear() {
-    for (std::map<int, Empire*>::value_type& entry : m_empire_map)
+    for (auto& entry : m_empire_map)
         delete entry.second;
     m_empire_map.clear();
     m_empire_diplomatic_statuses.clear();
@@ -361,7 +359,7 @@ void EmpireManager::GetDiplomaticMessagesToSerialize(std::map<std::pair<int, int
     }
 
     // find all messages involving encoding empire
-    for (const std::map<std::pair<int, int>, DiplomaticMessage>::value_type& entry : m_diplomatic_messages) {
+    for (const auto& entry : m_diplomatic_messages) {
         if (entry.first.first == encoding_empire || entry.first.second == encoding_empire)
             messages.insert(entry);
     }

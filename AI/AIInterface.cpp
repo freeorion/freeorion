@@ -76,8 +76,8 @@ namespace AIInterface {
     { return AIClientApp::GetApp()->PlayerName(); }
 
     const std::string& PlayerName(int player_id) {
-        const std::map<int, PlayerInfo>& players = AIClientApp::GetApp()->Players();
-        std::map<int, PlayerInfo>::const_iterator it = players.find(player_id);
+        auto& players = AIClientApp::GetApp()->Players();
+        auto it = players.find(player_id);
         if (it != players.end())
             return it->second.name;
         else {
@@ -93,7 +93,7 @@ namespace AIInterface {
     { return AIClientApp::GetApp()->EmpireID(); }
 
     int PlayerEmpireID(int player_id) {
-        for (std::map<int, PlayerInfo>::value_type& entry : AIClientApp::GetApp()->Players()) {
+        for (auto& entry : AIClientApp::GetApp()->Players()) {
             if (entry.first == player_id)
                 return entry.second.empire_id;
         }
@@ -102,7 +102,7 @@ namespace AIInterface {
 
     std::vector<int>  AllEmpireIDs() {
         std::vector<int> empire_ids;
-        for (std::map<int, PlayerInfo>::value_type& entry : AIClientApp::GetApp()->Players())
+        for (auto& entry : AIClientApp::GetApp()->Players())
             empire_ids.push_back(entry.second.empire_id);
         return empire_ids;
     }
@@ -122,7 +122,7 @@ namespace AIInterface {
 
     std::vector<int> AllPlayerIDs() {
         std::vector<int> player_ids;
-        for (std::map<int, PlayerInfo>::value_type& entry : AIClientApp::GetApp()->Players())
+        for (auto& entry : AIClientApp::GetApp()->Players())
             player_ids.push_back(entry.first);
         return player_ids;
     }
@@ -131,8 +131,8 @@ namespace AIInterface {
     { return AIClientApp::GetApp()->GetPlayerClientType(player_id) == Networking::CLIENT_TYPE_AI_PLAYER; }
 
     bool PlayerIsHost(int player_id) {
-        const std::map<int, PlayerInfo>& players = AIClientApp::GetApp()->Players();
-        std::map<int, PlayerInfo>::const_iterator it = players.find(player_id);
+        auto& players = AIClientApp::GetApp()->Players();
+        auto it = players.find(player_id);
         if (it == players.end())
             return false;
         return it->second.host;
@@ -221,7 +221,7 @@ namespace AIInterface {
     }
 
     void UpdateResourcePools() {
-//        for (std::map<int, Empire*>::value_type& entry : AIClientApp::GetApp()->Empires())
+//        for (auto& entry : AIClientApp::GetApp()->Empires())
 //            entry.second->UpdateResourcePools();
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = ::GetEmpire(empire_id);

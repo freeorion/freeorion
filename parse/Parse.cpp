@@ -341,13 +341,15 @@ namespace parse {
     }
 
     void check_for_cyclic_macro_references(const std::map<std::string, std::string>& macros) {
-        for (const std::map<std::string, std::string>::value_type& macro : macros) {
+        for (const auto& macro : macros) {
             if (macro_deep_referenced_in_text(macro.first, macro.second, macros))
                 ErrorLogger() << "Cyclic macro found: " << macro.first << " references itself (eventually)";
         }
     }
 
-    void replace_macro_references(std::string& text, const std::map<std::string, std::string>& macros) {
+    void replace_macro_references(std::string& text,
+                                  const std::map<std::string, std::string>& macros)
+    {
         try {
             std::size_t position = 0; // position in the text, past the already processed part
             smatch match;
@@ -405,7 +407,7 @@ namespace parse {
 
         // recursively expand macro keys: replace [[MACRO_KEY]] in other macro
         // text with the macro text corresponding to MACRO_KEY.
-        for (std::map<std::string, std::string>::value_type& macro : macros)
+        for (auto& macro : macros)
         { replace_macro_references(macro.second, macros); }
 
         // substitute macro keys - replace [[MACRO_KEY]] in the input text with

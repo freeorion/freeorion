@@ -33,7 +33,9 @@ namespace {
     struct insert_key_map_ {
         typedef void result_type;
 
-        void operator()(NamedKeymaps& named_keymaps, const NamedKeymaps::value_type& name_keymap) const {
+        void operator()(NamedKeymaps& named_keymaps,
+                        const NamedKeymaps::value_type& name_keymap) const
+        {
             named_keymaps[name_keymap.first] = name_keymap.second;
             //std::cout << "inserted keymap: " << name_keymap.first << std::endl;
         }

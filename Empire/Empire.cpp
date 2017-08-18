@@ -341,7 +341,7 @@ float ResearchQueue::TotalRPsSpent() const
 
 std::vector<std::string> ResearchQueue::AllEnqueuedProjects() const {
     std::vector<std::string> retval;
-    for (const QueueType::value_type& entry : m_queue)
+    for (const auto& entry : m_queue)
         retval.push_back(entry.name);
     return retval;
 }
@@ -350,7 +350,7 @@ std::string ResearchQueue::Dump() const {
     std::stringstream retval;
     retval << "ResearchQueue:\n";
     float spent_rp{0.0f};
-    for (const QueueType::value_type& entry : m_queue) {
+    for (const auto& entry : m_queue) {
         retval << " ... " << entry.Dump();
         spent_rp += entry.allocated_rp;
     }
@@ -663,7 +663,7 @@ std::map<std::string, std::map<int, float>> ProductionQueue::ProductionItem::Com
             std::shared_ptr<UniverseObject> location_obj = GetUniverseObject(location_id);
             ScriptingContext context(location_obj);
 
-            for (const std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>::value_type& psc : bt->ProductionSpecialConsumption()) {
+            for (const auto& psc : bt->ProductionSpecialConsumption()) {
                 if (!psc.second.first)
                     continue;
                 Condition::ObjectSet matches;
@@ -686,11 +686,11 @@ std::map<std::string, std::map<int, float>> ProductionQueue::ProductionItem::Com
     }
     case BT_SHIP: {
         if (const ShipDesign* sd = GetShipDesign(design_id)) {
-            std::shared_ptr<const UniverseObject> location_obj = GetUniverseObject(location_id);
+            auto location_obj = GetUniverseObject(location_id);
             ScriptingContext context(location_obj);
 
             if (const HullType* ht = GetHullType(sd->Hull())) {
-                for (const std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>::value_type& psc : ht->ProductionSpecialConsumption()) {
+                for (const auto& psc : ht->ProductionSpecialConsumption()) {
                     if (!psc.second.first)
                         continue;
                     retval[psc.first][location_id] += psc.second.first->Eval(context);
@@ -701,7 +701,7 @@ std::map<std::string, std::map<int, float>> ProductionQueue::ProductionItem::Com
                 const PartType* pt = GetPartType(part_name);
                 if (!pt)
                     continue;
-                for (const std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>::value_type& psc : pt->ProductionSpecialConsumption()) {
+                for (const auto& psc : pt->ProductionSpecialConsumption()) {
                     if (!psc.second.first)
                         continue;
                     retval[psc.first][location_id] += psc.second.first->Eval(context);
@@ -718,7 +718,9 @@ std::map<std::string, std::map<int, float>> ProductionQueue::ProductionItem::Com
     return retval;
 }
 
-std::map<MeterType, std::map<int, float>> ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) const {
+std::map<MeterType, std::map<int, float>>
+ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) const
+{
     std::map<MeterType, std::map<int, float>> retval;
 
     switch (build_type) {
@@ -727,7 +729,7 @@ std::map<MeterType, std::map<int, float>> ProductionQueue::ProductionItem::Compl
             auto obj = GetUniverseObject(location_id);
             ScriptingContext context(obj);
 
-            for (const std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>::value_type& pmc : bt->ProductionMeterConsumption()) {
+            for (const auto& pmc : bt->ProductionMeterConsumption()) {
                 if (!pmc.second.first)
                     continue;
                 retval[pmc.first][location_id] = pmc.second.first->Eval(context);
@@ -741,8 +743,7 @@ std::map<MeterType, std::map<int, float>> ProductionQueue::ProductionItem::Compl
             ScriptingContext context(obj);
 
             if (const HullType* ht = GetHullType(sd->Hull())) {
-                for (const std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>::value_type& pmc : ht->ProductionMeterConsumption())
-                {
+                for (const auto& pmc : ht->ProductionMeterConsumption()) {
                     if (!pmc.second.first)
                         continue;
                     retval[pmc.first][location_id] += pmc.second.first->Eval(context);
@@ -753,8 +754,7 @@ std::map<MeterType, std::map<int, float>> ProductionQueue::ProductionItem::Compl
                 const PartType* pt = GetPartType(part_name);
                 if (!pt)
                     continue;
-                for (const std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>::value_type& pmc : pt->ProductionMeterConsumption())
-                {
+                for (const auto& pmc : pt->ProductionMeterConsumption()) {
                     if (!pmc.second.first)
                         continue;
                     retval[pmc.first][location_id] += pmc.second.first->Eval(context);
@@ -850,7 +850,7 @@ int ProductionQueue::ProjectsInProgress() const
 float ProductionQueue::TotalPPsSpent() const {
     // add up allocated PP from all resource sharing object groups
     float retval = 0.0f;
-    for (const std::map<std::set<int>, float>::value_type& entry : m_object_group_allocated_pp)
+    for (const auto& entry : m_object_group_allocated_pp)
     { retval += entry.second; }
     return retval;
 }
@@ -865,7 +865,7 @@ std::map<std::set<int>, float> ProductionQueue::AvailablePP(
     }
 
     // determine available PP (ie. industry) in each resource sharing group of systems
-    for (std::map<std::set<int>, float>::value_type& ind : industry_pool->Available()) {
+    for (const auto& ind : industry_pool->Available()) {
         // get group of systems in industry pool
         const std::set<int>& group = ind.first;
         retval[group] = ind.second;
@@ -886,14 +886,14 @@ std::set<std::set<int>> ProductionQueue::ObjectsWithWastedPP(
         return retval;
     }
 
-    for (std::map<std::set<int>, float>::value_type& avail_pp : AvailablePP(industry_pool)) {
+    for (auto& avail_pp : AvailablePP(industry_pool)) {
         //std::cout << "available PP groups size: " << avail_pp.first.size() << " pp: " << avail_pp.second << std::endl;
 
         if (avail_pp.second <= 0)
             continue;   // can't waste if group has no PP
         const std::set<int>& group = avail_pp.first;
         // find this group's allocated PP
-        std::map<std::set<int>, float>::const_iterator alloc_it = m_object_group_allocated_pp.find(group);
+        auto alloc_it = m_object_group_allocated_pp.find(group);
         // is less allocated than is available?  if so, some is wasted
         if (alloc_it == m_object_group_allocated_pp.end() || alloc_it->second < avail_pp.second)
             retval.insert(avail_pp.first);
@@ -941,16 +941,16 @@ void ProductionQueue::Update() {
 
     ScopedTimer update_timer("ProductionQueue::Update");
 
-    std::map<std::set<int>, float> available_pp = AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
+    auto available_pp = AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
 
     // determine which resource sharing group each queue item is located in
     std::vector<std::set<int>> queue_element_groups;
-    for (const ProductionQueue::Element& element : m_queue) {
+    for (const auto& element : m_queue) {
         // get location object for element
         int location_id = element.location;
 
         // search through groups to find object
-        for (std::map<std::set<int>, float>::const_iterator groups_it = available_pp.begin();
+        for (auto groups_it = available_pp.begin();
              true; ++groups_it)
         {
             if (groups_it == available_pp.end()) {
@@ -960,8 +960,8 @@ void ProductionQueue::Update() {
             }
 
             // check if location object id is in this group
-            const std::set<int>& group = groups_it->first;
-            std::set<int>::const_iterator set_it = group.find(location_id);
+            const auto& group = groups_it->first;
+            auto set_it = group.find(location_id);
             if (set_it != group.end()) {
                 // system is in this group.
                 queue_element_groups.push_back(group);  // record this discovery
@@ -972,9 +972,10 @@ void ProductionQueue::Update() {
 
     // cache producibility, and production item costs and times
     // initialize production queue item completion status to 'never'
-    std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<float, int>> queue_item_costs_and_times;
+    std::map<std::pair<ProductionQueue::ProductionItem, int>,
+             std::pair<float, int>> queue_item_costs_and_times;
     std::vector<bool> is_producible;
-    for (ProductionQueue::Element& elem : m_queue) {
+    for (auto& elem : m_queue) {
         is_producible.push_back(empire->ProducibleItem(elem.item, elem.location));
         // for items that don't depend on location, only store cost/time once
         int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
@@ -982,8 +983,8 @@ void ProductionQueue::Update() {
 
         if (queue_item_costs_and_times.find(key) == queue_item_costs_and_times.end())
             queue_item_costs_and_times[key] = empire->ProductionCostAndTime(elem);
-        
-        elem.turns_left_to_next_item = -1;     
+
+        elem.turns_left_to_next_item = -1;
         elem.turns_left_to_completion = -1;
     }
 
@@ -996,7 +997,7 @@ void ProductionQueue::Update() {
     // if at least one resource-sharing system group have available PP, simulate
     // future turns to predict when build items will be finished
     bool simulate_future = false;
-    for (std::map<std::set<int>, float>::value_type& available : available_pp) {
+    for (auto& available : available_pp) {
         if (available.second > EPSILON) {
             simulate_future = true;
             break;
@@ -1017,7 +1018,7 @@ void ProductionQueue::Update() {
 
     // duplicate production queue state for future simulation
     QueueType sim_queue = m_queue;
-    std::vector<unsigned int>   sim_queue_original_indices(sim_queue.size());
+    std::vector<unsigned int> sim_queue_original_indices(sim_queue.size());
     for (unsigned int i = 0; i < sim_queue_original_indices.size(); ++i)
         sim_queue_original_indices[i] = i;
 
@@ -1046,8 +1047,8 @@ void ProductionQueue::Update() {
         if (group.empty() || !is_producible[i]) {        // empty group or not buildable
             remove = true;
         } else {
-            std::map<std::set<int>, float>::const_iterator available_it = available_pp.find(group);
-            if (available_it == available_pp.end() || available_it->second < EPSILON)                   // missing group or non-empty group with no PP available
+            auto available_it = available_pp.find(group);
+            if (available_it == available_pp.end() || available_it->second < EPSILON)   // missing group or non-empty group with no PP available
                 remove = true;
         }
 
@@ -1077,18 +1078,18 @@ void ProductionQueue::Update() {
         elements_by_group[queue_element_groups[i]].push_back(i);
 
     // within each group, allocate PP to queue items
-    for (const std::map<std::set<int>, float>::value_type& group : available_pp) {
+    for (const auto& group : available_pp) {
         unsigned int first_turn_pp_available = 1; //the first turn any pp in this resource group is available to the next item for this group
         unsigned int turn_jump = 0;
         //pp_still_available[turn-1] gives the PP still available in this resource pool at turn "turn"
         std::vector<float> pp_still_available(TOO_MANY_TURNS, group.second);  // initialize to the groups full PP allocation for each turn modeled
 
         std::vector<int> &this_group_elements = elements_by_group[group.first];
-        std::vector<int>::const_iterator group_begin = this_group_elements.begin();
-        std::vector<int>::const_iterator group_end = this_group_elements.end();
+        auto group_begin = this_group_elements.begin();
+        auto group_end = this_group_elements.end();
 
         // cycle through items on queue, if in this resource group then allocate production costs over time against those available to group
-        for (std::vector<int>::const_iterator el_it = group_begin;
+        for (auto el_it = group_begin;
              (el_it != group_end) && ((boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time())-dp_time_start).total_microseconds()*1e-6 < TOO_LONG_TIME);
              ++el_it)
         {
@@ -1101,7 +1102,7 @@ void ProductionQueue::Update() {
             }
 
             unsigned int i = *el_it;
-            ProductionQueue::Element& element = sim_queue[i];
+            auto& element = sim_queue[i];
             if (element.paused)
                 continue;
 
@@ -1323,7 +1324,7 @@ std::string Empire::Dump() const {
                          " ID: " + std::to_string(m_id) +
                          " Capital ID: " + std::to_string(m_capital_id);
     retval += " meters:\n";
-    for (const std::map<std::string, Meter>::value_type& meter : m_meters) {
+    for (const auto& meter : m_meters) {
         retval += UserString(meter.first) + ": " +
                   std::to_string(meter.second.Initial()) + "\n";
     }
@@ -1348,7 +1349,7 @@ void Empire::SetCapitalID(int id) {
 }
 
 Meter* Empire::GetMeter(const std::string& name) {
-    std::map<std::string, Meter>::iterator it = m_meters.find(name);
+    auto it = m_meters.find(name);
     if (it != m_meters.end())
         return &(it->second);
     else
@@ -1356,7 +1357,7 @@ Meter* Empire::GetMeter(const std::string& name) {
 }
 
 const Meter* Empire::GetMeter(const std::string& name) const {
-    std::map<std::string, Meter>::const_iterator it = m_meters.find(name);
+    auto it = m_meters.find(name);
     if (it != m_meters.end())
         return &(it->second);
     else
@@ -1364,7 +1365,7 @@ const Meter* Empire::GetMeter(const std::string& name) const {
 }
 
 void Empire::BackPropagateMeters() {
-    for (std::map<std::string, Meter>::value_type& meter : m_meters)
+    for (auto& meter : m_meters)
         meter.second.BackPropagate();
 }
 
@@ -1372,7 +1373,7 @@ bool Empire::ResearchableTech(const std::string& name) const {
     const Tech* tech = GetTech(name);
     if (!tech)
         return false;
-    for (const std::string& prereq : tech->Prerequisites()) {
+    for (const auto& prereq : tech->Prerequisites()) {
         if (m_techs.find(prereq) == m_techs.end())
             return false;
     }
@@ -1385,7 +1386,7 @@ bool Empire::HasResearchedPrereqAndUnresearchedPrereq(const std::string& name) c
         return false;
     bool one_unresearched = false;
     bool one_researched = false;
-    for (const std::string& prereq : tech->Prerequisites()) {
+    for (const auto& prereq : tech->Prerequisites()) {
         if (m_techs.find(prereq) != m_techs.end())
             one_researched = true;
         else
@@ -1398,7 +1399,7 @@ const ResearchQueue& Empire::GetResearchQueue() const
 { return m_research_queue; }
 
 float Empire::ResearchProgress(const std::string& name) const {
-    std::map<std::string, float>::const_iterator it = m_research_progress.find(name);
+    auto it = m_research_progress.find(name);
     if (it == m_research_progress.end())
         return 0.0f;
     const Tech* tech = GetTech(it->first);
@@ -1436,7 +1437,7 @@ const std::string& Empire::MostExpensiveEnqueuedTech() const {
 
     const ResearchQueue::Element* best_elem = nullptr;
 
-    for (const ResearchQueue::Element& elem : m_research_queue) {
+    for (const auto& elem : m_research_queue) {
         const Tech* tech = GetTech(elem.name);
         if (!tech)
             continue;
@@ -1459,7 +1460,7 @@ const std::string& Empire::LeastExpensiveEnqueuedTech() const {
 
     const ResearchQueue::Element* best_elem = nullptr;
 
-    for (const ResearchQueue::Element& elem : m_research_queue) {
+    for (const auto& elem : m_research_queue) {
         const Tech* tech = GetTech(elem.name);
         if (!tech)
             continue;
@@ -1479,8 +1480,8 @@ const std::string& Empire::MostRPSpentEnqueuedTech() const {
     float most_spent = -999999.9f;  // arbitrary small number
     const std::map<std::string, float>::value_type* best_progress = nullptr;
 
-    for (const std::map<std::string, float>::value_type& progress : m_research_progress) {
-        const std::string& tech_name = progress.first;
+    for (const auto& progress : m_research_progress) {
+        const auto& tech_name = progress.first;
         if (m_research_queue.find(tech_name) == m_research_queue.end())
             continue;
         float rp_spent = progress.second;
@@ -1499,8 +1500,8 @@ const std::string& Empire::MostRPCostLeftEnqueuedTech() const {
     float most_left = -999999.9f;  // arbitrary small number
     const std::map<std::string, float>::value_type* best_progress = nullptr;
 
-    for (const std::map<std::string, float>::value_type& progress : m_research_progress) {
-        const std::string& tech_name = progress.first;
+    for (const auto& progress : m_research_progress) {
+        const auto& tech_name = progress.first;
         const Tech* tech = GetTech(tech_name);
         if (!tech)
             continue;
@@ -1526,7 +1527,7 @@ const std::string& Empire::MostRPCostLeftEnqueuedTech() const {
 const std::string& Empire::TopPriorityResearchableTech() const {
     if (m_research_queue.empty())
         return EMPTY_STRING;
-    for (const ResearchQueue::Element& elem : m_research_queue) {
+    for (const auto& elem : m_research_queue) {
         if (this->ResearchableTech(elem.name))
             return elem.name;
     }
@@ -1534,19 +1535,19 @@ const std::string& Empire::TopPriorityResearchableTech() const {
 }
 
 const std::string& Empire::MostExpensiveResearchableTech() const {
-    return EMPTY_STRING;
+    return EMPTY_STRING;    // TODO: IMPLEMENT THIS
 }
 
 const std::string& Empire::LeastExpensiveResearchableTech() const {
-    return EMPTY_STRING;
+    return EMPTY_STRING;    // TODO: IMPLEMENT THIS
 }
 
 const std::string& Empire::MostRPSpentResearchableTech() const {
-    return EMPTY_STRING;
+    return EMPTY_STRING;    // TODO: IMPLEMENT THIS
 }
 
 const std::string& Empire::MostRPCostLeftResearchableTech() const {
-    return EMPTY_STRING;
+    return EMPTY_STRING;    // TODO: IMPLEMENT THIS
 }
 
 const std::set<std::string>& Empire::AvailableBuildingTypes() const
@@ -1578,8 +1579,8 @@ bool Empire::ShipDesignAvailable(const ShipDesign& design) const {
 
     // design is kept, but still need to verify that it is buildable at this time.  Part or hull tech
     // requirements might prevent it from being built.
-    for (const std::string& name : design.Parts()) {
-        if (name == "")
+    for (const auto& name : design.Parts()) {
+        if (name.empty())
             continue;   // empty slot can't be unavailable
         if (!ShipPartAvailable(name))
             return false;
@@ -1750,7 +1751,7 @@ bool Empire::Eliminated() const {
 void Empire::Eliminate() {
     m_eliminated = true;
 
-    for (std::map<int, Empire*>::value_type& entry : Empires())
+    for (auto& entry : Empires())
         entry.second->AddSitRepEntry(CreateEmpireEliminatedSitRep(EmpireID()));
 
     // some Empire data not cleared when eliminating since it might be useful
@@ -1769,7 +1770,7 @@ void Empire::Eliminate() {
     // m_explored_systems;
     // m_ship_designs;
     m_sitrep_entries.clear();
-    for (std::map<ResourceType, std::shared_ptr<ResourcePool>>::value_type& entry : m_resource_pools) {
+    for (auto& entry : m_resource_pools) {
         entry.second->SetObjects(std::vector<int>());
     }
     m_population_pool.SetPopCenters(std::vector<int>());
@@ -1785,7 +1786,7 @@ bool Empire::Won() const {
 
 void Empire::Win(const std::string& reason) {
     if (m_victories.insert(reason).second) {
-        for (std::map<int, Empire*>::value_type& entry : Empires()) {
+        for (auto& entry : Empires()) {
             entry.second->AddSitRepEntry(CreateVictorySitRep(reason, EmpireID()));
         }
     }
@@ -1798,7 +1799,7 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
     // as of this writing, only planets can generate supply propagation
     std::vector<std::shared_ptr<const UniverseObject>> owned_planets;
     for (int object_id : known_objects) {
-        if (std::shared_ptr<const Planet> planet = GetPlanet(object_id))
+        if (auto planet = GetPlanet(object_id))
             if (planet->OwnedBy(this->EmpireID()))
                 owned_planets.push_back(planet);
     }
@@ -1818,7 +1819,7 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
             float supply_range = obj->NextTurnCurrentMeterValue(METER_SUPPLY);
 
             // if this object can provide more supply range than the best previously checked object in this system, record its range as the new best for the system
-            std::map<int, float>::iterator system_it = m_supply_system_ranges.find(system_id);  // try to find a previous entry for this system's supply range
+            auto system_it = m_supply_system_ranges.find(system_id);  // try to find a previous entry for this system's supply range
             if (system_it == m_supply_system_ranges.end() || supply_range > system_it->second) {// if there is no previous entry, or the previous entry is shorter than the new one, add or replace the entry
                 //std::cout << " ... object " << obj->Name() << " has resource supply range: " << resource_supply_range << std::endl;
                 m_supply_system_ranges[system_id] = supply_range;
@@ -1849,7 +1850,7 @@ void Empire::UpdateUnobstructedFleets() {
         GetUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
     for (int system_id : m_supply_unobstructed_systems) {
-        std::shared_ptr<const System> system = GetSystem(system_id);
+        auto system = GetSystem(system_id);
         if (!system)
             continue;
 
@@ -1886,17 +1887,17 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
     // get systems with historically at least partial visibility
     std::set<int> systems_with_at_least_partial_visibility_at_some_point;
     for (int system_id : known_systems) {
-        const Universe::VisibilityTurnMap& vis_turns = GetUniverse().GetObjectVisibilityTurnMapByEmpire(system_id, m_id);
+        const auto& vis_turns = GetUniverse().GetObjectVisibilityTurnMapByEmpire(system_id, m_id);
         if (vis_turns.find(VIS_PARTIAL_VISIBILITY) != vis_turns.end())
             systems_with_at_least_partial_visibility_at_some_point.insert(system_id);
     }
 
     // get all fleets, or just those visible to this client's empire
-    const std::set<int>& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
+    const auto& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
     // get empire supply ranges
     std::map<int, std::map<int, float>> empire_system_supply_ranges;
-    for (const std::map<int, Empire*>::value_type& entry : Empires()) {
+    for (const auto& entry : Empires()) {
         const Empire* empire = entry.second;
         empire_system_supply_ranges[entry.first] = empire->SystemSupplyRanges();
     }
@@ -1997,15 +1998,15 @@ void Empire::RecordPendingLaneUpdate(int start_system_id, int dest_system_id) {
         m_pending_system_exit_lanes[start_system_id].insert(dest_system_id); 
 
     } else { // if the system is unobstructed, mark all its lanes as avilable
-        std::shared_ptr<const System> system = GetSystem(start_system_id);
-        for (const std::map<int, bool>::value_type& lane : system->StarlanesWormholes()) {
+        auto system = GetSystem(start_system_id);
+        for (const auto& lane : system->StarlanesWormholes()) {
             m_pending_system_exit_lanes[start_system_id].insert(lane.first); // will add both starlanes and wormholes
         }
     }
 }
 
 void Empire::UpdateAvailableLanes() {
-    for (std::map<int, std::set<int>>::value_type& system : m_pending_system_exit_lanes) {
+    for (auto& system : m_pending_system_exit_lanes) {
         m_available_system_exit_lanes[system.first].insert(system.second.begin(), system.second.end());
         system.second.clear();
     }
@@ -2019,7 +2020,7 @@ const std::set<int>& Empire::SupplyUnobstructedSystems() const
 { return m_supply_unobstructed_systems; }
 
 const bool Empire::UnrestrictedLaneTravel(int start_system_id, int dest_system_id) const {
-    std::map<int, std::set<int>>::const_iterator find_it = m_available_system_exit_lanes.find(start_system_id);
+    auto find_it = m_available_system_exit_lanes.find(start_system_id);
     if (find_it != m_available_system_exit_lanes.end() ) {
         if (find_it->second.find(dest_system_id) != find_it->second.end())
             return true;
@@ -2037,7 +2038,7 @@ const std::map<int, std::set<int>> Empire::KnownStarlanes() const {
     const Universe& universe = GetUniverse();
 
     const std::set<int>& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
-    for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
+    for (auto sys_it = Objects().const_begin<System>();
          sys_it != Objects().const_end<System>(); ++sys_it)
     {
         int start_id = sys_it->ID();
@@ -2046,7 +2047,7 @@ const std::map<int, std::set<int>> Empire::KnownStarlanes() const {
         if (known_destroyed_objects.find(start_id) != known_destroyed_objects.end())
             continue;
 
-        for (const std::map<int, bool>::value_type& lane : sys_it->StarlanesWormholes()) {
+        for (const auto& lane : sys_it->StarlanesWormholes()) {
             if (lane.second || known_destroyed_objects.find(lane.second) != known_destroyed_objects.end())
                 continue;   // is a wormhole, not a starlane, or is connected to a known destroyed system
             int end_id = lane.first;
@@ -2064,7 +2065,7 @@ const std::map<int, std::set<int>> Empire::VisibleStarlanes() const {
     const Universe& universe = GetUniverse();
     const ObjectMap& objects = universe.Objects();
 
-    for (ObjectMap::const_iterator<System> sys_it = objects.const_begin<System>();
+    for (auto sys_it = objects.const_begin<System>();
          sys_it != objects.const_end<System>(); ++sys_it)
     {
         int start_id = sys_it->ID();
@@ -2074,7 +2075,7 @@ const std::map<int, std::set<int>> Empire::VisibleStarlanes() const {
             continue;
 
         // get system's visible lanes for this empire
-        for (std::map<int, bool>::value_type& lane : sys_it->VisibleStarlanesWormholes(m_id)) {
+        for (auto& lane : sys_it->VisibleStarlanesWormholes(m_id)) {
             if (lane.second)
                 continue;   // is a wormhole, not a starlane
             int end_id = lane.first;
@@ -2096,28 +2097,28 @@ float Empire::ProductionPoints() const
 { return GetResourcePool(RE_INDUSTRY)->TotalAvailable(); }
 
 const std::shared_ptr<ResourcePool> Empire::GetResourcePool(ResourceType resource_type) const {
-    std::map<ResourceType, std::shared_ptr<ResourcePool>>::const_iterator it = m_resource_pools.find(resource_type);
+    auto it = m_resource_pools.find(resource_type);
     if (it == m_resource_pools.end())
         return nullptr;
     return it->second;
 }
 
 float Empire::ResourceStockpile(ResourceType type) const {
-    std::map<ResourceType, std::shared_ptr<ResourcePool>>::const_iterator it = m_resource_pools.find(type);
+    auto it = m_resource_pools.find(type);
     if (it == m_resource_pools.end())
         throw std::invalid_argument("Empire::ResourceStockpile passed invalid ResourceType");
     return it->second->Stockpile();
 }
 
 float Empire::ResourceOutput(ResourceType type) const {
-    std::map<ResourceType, std::shared_ptr<ResourcePool>>::const_iterator it = m_resource_pools.find(type);
+    auto it = m_resource_pools.find(type);
     if (it == m_resource_pools.end())
         throw std::invalid_argument("Empire::ResourceOutput passed invalid ResourceType");
     return it->second->Output();
 }
 
 float Empire::ResourceAvailable(ResourceType type) const {
-    std::map<ResourceType, std::shared_ptr<ResourcePool>>::const_iterator it = m_resource_pools.find(type);
+    auto it = m_resource_pools.find(type);
     if (it == m_resource_pools.end())
         throw std::invalid_argument("Empire::ResourceAvailable passed invalid ResourceType");
     return it->second->TotalAvailable();
@@ -2130,7 +2131,7 @@ float Empire::Population() const
 { return m_population_pool.Population(); }
 
 void Empire::SetResourceStockpile(ResourceType resource_type, float stockpile) {
-    std::map<ResourceType, std::shared_ptr<ResourcePool>>::const_iterator it = m_resource_pools.find(resource_type);
+    auto it = m_resource_pools.find(resource_type);
     if (it == m_resource_pools.end())
         throw std::invalid_argument("Empire::SetResourceStockpile passed invalid ResourceType");
     return it->second->SetStockpile(stockpile);
@@ -2143,7 +2144,7 @@ void Empire::PlaceTechInQueue(const std::string& name, int pos/* = -1*/) {
     if (!tech || !tech->Researchable())
         return;
 
-    ResearchQueue::iterator it = m_research_queue.find(name);
+    auto it = m_research_queue.find(name);
 
     if (pos < 0 || static_cast<int>(m_research_queue.size()) <= pos) {
         // default to putting at end
@@ -2167,19 +2168,19 @@ void Empire::PlaceTechInQueue(const std::string& name, int pos/* = -1*/) {
 }
 
 void Empire::RemoveTechFromQueue(const std::string& name) {
-    ResearchQueue::iterator it = m_research_queue.find(name);
+    auto it = m_research_queue.find(name);
     if (it != m_research_queue.end())
         m_research_queue.erase(it);
 }
 
 void Empire::PauseResearch(const std::string& name) {
-    ResearchQueue::iterator it = m_research_queue.find(name);
+    auto it = m_research_queue.find(name);
     if (it != m_research_queue.end())
         it->paused = true;
 }
 
 void Empire::ResumeResearch(const std::string& name){
-    ResearchQueue::iterator it = m_research_queue.find(name);
+    auto it = m_research_queue.find(name);
     if (it != m_research_queue.end())
         it->paused = false;
 }
@@ -2227,7 +2228,8 @@ void Empire::PlaceProductionOnQueue(BuildType build_type, const std::string& nam
         return;
     }
 
-    ProductionQueue::Element build(build_type, name, m_id, number, number, blocksize, location);
+    ProductionQueue::Element build(build_type, name, m_id, number, number,
+                                   blocksize, location);
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
         m_production_queue.push_back(build);
     else
@@ -2316,7 +2318,7 @@ void Empire::DuplicateProductionItem(int index) {
     if (index < 0 || static_cast<int>(m_production_queue.size()) <= index)
         throw std::runtime_error("Empire::DuplicateProductionItem() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
 
-    ProductionQueue::Element& elem = m_production_queue[index];
+    auto& elem = m_production_queue[index];
     PlaceProductionOnQueue(elem.item, elem.remaining, elem.blocksize, elem.location, index + 1);
 }
 
@@ -2349,7 +2351,7 @@ void Empire::MoveProductionWithinQueue(int index, int new_index) {
         ErrorLogger() << "Attempted to move a production queue item to or from an invalid index.";
         return;
     }
-    ProductionQueue::Element build = m_production_queue[index];
+    auto build = m_production_queue[index];
     m_production_queue.erase(index);
     m_production_queue.insert(m_production_queue.begin() + new_index, build);
 }
@@ -2397,15 +2399,15 @@ void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_i
     }
 
 
-    for (std::map<int, Empire*>::value_type& entry : Empires()) {
+    for (auto& entry : Empires()) {
         int from_empire_id = entry.first;
         if (from_empire_id == empire_id) continue;    // skip this empire; can't capture one's own ProductionItems
 
         Empire* from_empire = entry.second;
         ProductionQueue& queue = from_empire->m_production_queue;
 
-        for (ProductionQueue::iterator queue_it = queue.begin(); queue_it != queue.end(); ) {
-            ProductionQueue::Element elem = *queue_it;
+        for (auto queue_it = queue.begin(); queue_it != queue.end(); ) {
+            auto elem = *queue_it;
             if (elem.location != location_id) {
                 ++queue_it;
                 continue; // skip projects with wrong location
@@ -2826,7 +2828,7 @@ void Empire::CheckProductionProgress() {
             queue_item_costs_and_times[key] = ProductionCostAndTime(elem);
     }
 
-    //for (std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<float, int>>::value_type& entry : queue_item_costs_and_times)
+    //for (auto& entry : queue_item_costs_and_times)
     //{ DebugLogger() << entry.first.first.design_id << " : " << entry.second.first; }
 
 
@@ -2836,7 +2838,7 @@ void Empire::CheckProductionProgress() {
     // from the queue
     std::vector<int> to_erase;
     for (unsigned int i = 0; i < m_production_queue.size(); ++i) {
-        ProductionQueue::Element& elem = m_production_queue[i];
+        auto& elem = m_production_queue[i];
         float item_cost;
         int build_turns;
 
@@ -2907,10 +2909,10 @@ void Empire::CheckProductionProgress() {
         // only if consumed resources are available, then item can be completd
         bool consumption_impossible = false;
         std::map<std::string, std::map<int, float>> sc = elem.item.CompletionSpecialConsumption(elem.location);
-        for (std::map<std::string, std::map<int, float>>::value_type& special_type : sc) {
+        for (auto& special_type : sc) {
             if (consumption_impossible)
                 break;
-            for (std::map<int, float>::value_type& special_meter : special_type.second) {
+            for (auto& special_meter : special_type.second) {
                 auto obj = GetUniverseObject(special_meter.first);
                 float capacity = obj ? obj->SpecialCapacity(special_type.first) : 0.0f;
                 if (capacity < special_meter.second * elem.blocksize) {
@@ -2919,11 +2921,11 @@ void Empire::CheckProductionProgress() {
                 }
             }
         }
-        std::map<MeterType, std::map<int, float>> mc = elem.item.CompletionMeterConsumption(elem.location);
-        for (std::map<MeterType, std::map<int, float>>::value_type& meter_type : mc) {
+        auto mc = elem.item.CompletionMeterConsumption(elem.location);
+        for (auto& meter_type : mc) {
             if (consumption_impossible)
                 break;
-            for (std::map<int, float>::value_type& object_meter : meter_type.second) {
+            for (auto& object_meter : meter_type.second) {
                 auto obj = GetUniverseObject(object_meter.first);
                 const Meter* meter = obj ? obj->GetMeter(meter_type.first) : nullptr;
                 if (!meter || meter->Current() < object_meter.second * elem.blocksize) {
@@ -2953,8 +2955,8 @@ void Empire::CheckProductionProgress() {
 
 
         // consume the item's special and meter consumption
-        for (std::map<std::string, std::map<int, float>>::value_type& special_type : sc) {
-            for (std::map<int, float>::value_type& special_meter : special_type.second) {
+        for (auto& special_type : sc) {
+            for (auto& special_meter : special_type.second) {
                 auto obj = GetUniverseObject(special_meter.first);
                 if (!obj)
                     continue;
@@ -2965,8 +2967,8 @@ void Empire::CheckProductionProgress() {
                 obj->SetSpecialCapacity(special_type.first, new_capacity);
             }
         }
-        for (std::map<MeterType, std::map<int, float>>::value_type& meter_type : mc) {
-            for (const std::map<int, float>::value_type& object_meter : meter_type.second) {
+        for (auto& meter_type : mc) {
+            for (const auto& object_meter : meter_type.second) {
                 auto obj = GetUniverseObject(object_meter.first);
                 if (!obj)
                     continue;
@@ -3091,7 +3093,7 @@ void Empire::CheckProductionProgress() {
     }
 
     // create fleets for new ships and put ships into fleets
-    for (std::map<int, std::vector<std::shared_ptr<Ship>>>::value_type& entry : system_new_ships) {
+    for (auto& entry : system_new_ships) {
         std::shared_ptr<System> system = GetSystem(entry.first);
         if (!system) {
             ErrorLogger() << "Couldn't get system with id " << entry.first << " for creating new fleets for newly produced ships";
@@ -3107,7 +3109,7 @@ void Empire::CheckProductionProgress() {
         for (auto& ship : new_ships) {
             int rally_point_id = INVALID_OBJECT_ID;
 
-            std::map<int, int>::const_iterator rally_it = new_ship_rally_point_ids.find(ship->ID());
+            auto rally_it = new_ship_rally_point_ids.find(ship->ID());
             if (rally_it != new_ship_rally_point_ids.end())
                 rally_point_id = rally_it->second;
 
@@ -3118,15 +3120,14 @@ void Empire::CheckProductionProgress() {
         // ship design
         // Do not group unarmed ships with no troops (i.e. scouts and
         // colony ships).
-        for (std::map<int, std::map<int, std::vector<std::shared_ptr<Ship>>>>::value_type& entry : new_ships_by_rally_point_id_and_design_id)
-        {
+        for (auto& entry : new_ships_by_rally_point_id_and_design_id) {
             int rally_point_id = entry.first;
-            std::map<int, std::vector<std::shared_ptr<Ship>>>& new_ships_by_design = entry.second;
+            auto& new_ships_by_design = entry.second;
 
-            for (std::map<int, std::vector<std::shared_ptr<Ship>>>::value_type& ships_by_design : new_ships_by_design) {
+            for (auto& ships_by_design : new_ships_by_design) {
                 std::vector<int> ship_ids;
 
-                std::vector<std::shared_ptr<Ship>>& ships = ships_by_design.second;
+                auto& ships = ships_by_design.second;
                 if (ships.empty())
                     continue;
 
@@ -3171,7 +3172,7 @@ void Empire::CheckProductionProgress() {
                     if (rally_point_id != INVALID_OBJECT_ID) {
                         if (GetSystem(rally_point_id)) {
                             fleet->CalculateRouteTo(rally_point_id);
-                        } else if (std::shared_ptr<const UniverseObject> rally_obj = GetUniverseObject(rally_point_id)) {
+                        } else if (auto rally_obj = GetUniverseObject(rally_point_id)) {
                             if (GetSystem(rally_obj->SystemID()))
                                 fleet->CalculateRouteTo(rally_obj->SystemID());
                         } else {
@@ -3186,7 +3187,7 @@ void Empire::CheckProductionProgress() {
     }
 
     // removed completed items from queue
-    for (std::vector<int>::reverse_iterator it = to_erase.rbegin(); it != to_erase.rend(); ++it)
+    for (auto it = to_erase.rbegin(); it != to_erase.rend(); ++it)
         m_production_queue.erase(*it);
 }
 
@@ -3206,12 +3207,12 @@ void Empire::InitResourcePools() {
     // get this empire's owned resource centers and ships (which can both produce resources)
     std::vector<int> res_centers;
     res_centers.reserve(Objects().ExistingResourceCenters().size());
-    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingResourceCenters()) {
+    for (const auto& entry : Objects().ExistingResourceCenters()) {
         if (!entry.second->OwnedBy(m_id))
             continue;
         res_centers.push_back(entry.first);
     }
-    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingShips()) {
+    for (const auto& entry : Objects().ExistingShips()) {
         if (!entry.second->OwnedBy(m_id))
             continue;
         res_centers.push_back(entry.first);
@@ -3223,7 +3224,7 @@ void Empire::InitResourcePools() {
     // get this empire's owned population centers
     std::vector<int> pop_centers;
     pop_centers.reserve(Objects().ExistingPopCenters().size());
-    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingPopCenters()) {
+    for (const auto& entry : Objects().ExistingPopCenters()) {
         if (entry.second->OwnedBy(m_id))
             pop_centers.push_back(entry.first);
     }
@@ -3236,7 +3237,7 @@ void Empire::InitResourcePools() {
     // set non-blockadeable resource pools to share resources between all systems
     std::set<std::set<int>> sets_set;
     std::set<int> all_systems_set;
-    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingSystems()) {
+    for (const auto& entry : Objects().ExistingSystems()) {
         all_systems_set.insert(entry.first);
     }
     sets_set.insert(all_systems_set);
@@ -3248,7 +3249,7 @@ void Empire::InitResourcePools() {
     //static std::vector<ResourceType> res_type_vec {RE_INDUSTRY, RE_TRADE, RE_RESEARCH};
     for (ResourceType res_type : {RE_INDUSTRY, RE_TRADE, RE_RESEARCH}) {
         int stockpile_object_id = INVALID_OBJECT_ID;
-        if (std::shared_ptr<const UniverseObject> stockpile_obj = GetUniverseObject(StockpileID(res_type)))
+        if (auto stockpile_obj = GetUniverseObject(StockpileID(res_type)))
             stockpile_object_id = stockpile_obj->ID();
         m_resource_pools[res_type]->SetStockpileObject(stockpile_object_id);
     }
@@ -3287,7 +3288,7 @@ void Empire::UpdatePopulationGrowth()
 { m_population_pool.Update(); }
 
 void Empire::ResetMeters() {
-    for (std::map<std::string, Meter>::value_type& entry : m_meters) {
+    for (auto& entry : m_meters) {
         entry.second.ResetCurrent();
     }
 }
@@ -3296,10 +3297,10 @@ void Empire::UpdateOwnedObjectCounters() {
     // ships of each species and design
     m_species_ships_owned.clear();
     m_ship_designs_owned.clear();
-    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingShips()) {
+    for (const auto& entry : Objects().ExistingShips()) {
         if (!entry.second->OwnedBy(this->EmpireID()))
             continue;
-        std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(entry.second);
+        auto ship = std::dynamic_pointer_cast<const Ship>(entry.second);
         if (!ship)
             continue;
         if (!ship->SpeciesName().empty())
@@ -3310,27 +3311,27 @@ void Empire::UpdateOwnedObjectCounters() {
     // update ship part counts
     m_ship_part_types_owned.clear();
     m_ship_part_class_owned.clear();
-    for (const std::map<int, int>::value_type& design_count : m_ship_designs_owned) {
+    for (const auto& design_count : m_ship_designs_owned) {
         const ShipDesign* design = GetShipDesign(design_count.first);
         if (!design)
             continue;
 
         // update count of PartTypes
-        for (const std::map<std::string, int>::value_type& part_type : design->PartTypeCount())
+        for (const auto& part_type : design->PartTypeCount())
             m_ship_part_types_owned[part_type.first] += part_type.second * design_count.second;
 
         // update count of ShipPartClasses
-        for (const std::map<ShipPartClass, int>::value_type& part_class : design->PartClassCount())
+        for (const auto& part_class : design->PartClassCount())
             m_ship_part_class_owned[part_class.first] += part_class.second * design_count.second;
     }
 
     // colonies of each species, and unspecified outposts
     m_species_colonies_owned.clear();
     m_outposts_owned = 0;
-    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingPlanets()) {
+    for (const auto& entry : Objects().ExistingPlanets()) {
         if (!entry.second->OwnedBy(this->EmpireID()))
             continue;
-        std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(entry.second);
+        auto planet = std::dynamic_pointer_cast<const Planet>(entry.second);
         if (!planet)
             continue;
         if (planet->SpeciesName().empty())
@@ -3341,10 +3342,10 @@ void Empire::UpdateOwnedObjectCounters() {
 
     // buildings of each type
     m_building_types_owned.clear();
-    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingBuildings()) {
+    for (const auto& entry : Objects().ExistingBuildings()) {
         if (!entry.second->OwnedBy(this->EmpireID()))
             continue;
-        std::shared_ptr<const Building> building = std::dynamic_pointer_cast<const Building>(entry.second);
+        auto building = std::dynamic_pointer_cast<const Building>(entry.second);
         if (!building)
             continue;
         m_building_types_owned[building->BuildingTypeName()]++;
@@ -3356,7 +3357,7 @@ int Empire::TotalShipsOwned() const {
     // (not using species ship counts, as an empire could potentially own a
     //  ship that has no species...)
     int counter = 0;
-    for (const std::map<int, int>::value_type& entry : m_ship_designs_owned)
+    for (const auto& entry : m_ship_designs_owned)
     { counter += entry.second; }
     return counter;
 }
@@ -3365,7 +3366,7 @@ int Empire::TotalShipPartsOwned() const {
     // sum counts of all ship parts owned by this empire
     int retval = 0;
 
-    for (const std::map<ShipPartClass, int>::value_type& part_class : m_ship_part_class_owned)
+    for (const auto& part_class : m_ship_part_class_owned)
         retval += part_class.second;
 
     return retval;
@@ -3374,7 +3375,7 @@ int Empire::TotalShipPartsOwned() const {
 int Empire::TotalBuildingsOwned() const {
     // sum up counts for each building type owned by this empire
     int counter = 0;
-    for (const std::map<std::string, int>::value_type& entry : m_building_types_owned)
+    for (const auto& entry : m_building_types_owned)
     { counter += entry.second; }
     return counter;
 }

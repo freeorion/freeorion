@@ -742,7 +742,7 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
     // check for each pair of meter types.  if both exist, set active
     // meter current value equal to target meter current value.
     for (const auto& object : object_map) {
-        for (std::map<MeterType, MeterType>::value_type& entry : meters)
+        for (auto& entry : meters)
             if (Meter* meter = object->GetMeter(entry.first))
                 if (Meter* targetmax_meter = object->GetMeter(entry.second))
                     meter->SetCurrent(targetmax_meter->Current());
@@ -790,7 +790,7 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
         // invert map from planet type to environments to map from
         // environments to type, sorted by environment
         std::map<PlanetEnvironment, PlanetType> sept;
-        for (const std::map<PlanetType, PlanetEnvironment>::value_type& entry : spte)
+        for (const auto& entry : spte)
             sept[entry.second] = entry.first;
         // assuming enum values are ordered in increasing goodness...
         PlanetType preferred_planet_type = sept.rbegin()->second;
@@ -820,11 +820,10 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
     DebugLogger() << "Initializing " << player_setup_data.size() << " empires";
 
     // copy empire colour table, so that individual colours can be removed after they're used
-    std::vector<GG::Clr> colors = EmpireColors();
+    auto colors = EmpireColors();
 
     // create empire objects and do some basic initilization for each player
-    for (const std::map<int, PlayerSetupData>::value_type& entry : player_setup_data)
-    {
+    for (const auto& entry : player_setup_data) {
         int         player_id =     entry.first;
         if (player_id == Networking::INVALID_PLAYER_ID)
             ErrorLogger() << "InitEmpires player id (" << player_id << ") is invalid";

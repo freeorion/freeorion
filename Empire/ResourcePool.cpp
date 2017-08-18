@@ -30,15 +30,14 @@ float ResourcePool::Stockpile() const
 
 float ResourcePool::Output() const {
     float retval = 0.0f;
-    for (const std::map<std::set<int>, float>::value_type& entry : m_connected_object_groups_resource_output)
+    for (const auto& entry : m_connected_object_groups_resource_output)
     { retval += entry.second; }
     return retval;
 }
 
 float ResourcePool::GroupOutput(int object_id) const {
     // find group containing specified object
-    for (const std::map<std::set<int>, float>::value_type& entry : m_connected_object_groups_resource_output)
-    {
+    for (const auto& entry : m_connected_object_groups_resource_output) {
         const std::set<int>& group = entry.first;
         if (group.find(object_id) != group.end())
             return entry.second;
@@ -52,14 +51,14 @@ float ResourcePool::GroupOutput(int object_id) const {
 
 float ResourcePool::TargetOutput() const {
     float retval = 0.0f;
-    for (const std::map<std::set<int>, float>::value_type& entry : m_connected_object_groups_resource_target_output)
+    for (const auto& entry : m_connected_object_groups_resource_target_output)
     { retval += entry.second; }
     return retval;
 }
 
 float ResourcePool::GroupTargetOutput(int object_id) const {
     // find group containing specified object
-    for (const std::map<std::set<int>, float>::value_type& entry : m_connected_object_groups_resource_target_output) {
+    for (const auto& entry : m_connected_object_groups_resource_target_output) {
         const std::set<int>& group = entry.first;
         if (group.find(object_id) != group.end())
             return entry.second;
@@ -72,19 +71,19 @@ float ResourcePool::GroupTargetOutput(int object_id) const {
 
 float ResourcePool::TotalAvailable() const {
     float retval = m_stockpile;
-    for (const std::map<std::set<int>, float>::value_type& entry : m_connected_object_groups_resource_output)
+    for (const auto& entry : m_connected_object_groups_resource_output)
     { retval += entry.second; }
     return retval;
 }
 
 std::map<std::set<int>, float> ResourcePool::Available() const {
-    std::map<std::set<int>, float> retval = m_connected_object_groups_resource_output;
+    auto retval = m_connected_object_groups_resource_output;
 
     if (INVALID_OBJECT_ID == m_stockpile_object_id)
         return retval;  // early exit for no stockpile
 
     // find group that contains the stockpile, and add the stockpile to that group's production to give its availability
-    for (std::map<std::set<int>, float>::value_type& entry : retval) {
+    for (auto& entry : retval) {
         const std::set<int>& group = entry.first;
         if (group.find(m_stockpile_object_id) != group.end()) {
             entry.second += m_stockpile;
@@ -102,8 +101,8 @@ float ResourcePool::GroupAvailable(int object_id) const {
         return GroupOutput(object_id);
 
     // need to find if stockpile object is in the requested object's group
-    for (const std::map<std::set<int>, float>::value_type& entry : m_connected_object_groups_resource_output) {
-        const std::set<int>& group = entry.first;
+    for (const auto& entry : m_connected_object_groups_resource_output) {
+        const auto& group = entry.first;
         if (group.find(object_id) != group.end()) {
             // found group for requested object.  is stockpile also in this group?
             if (group.find(m_stockpile_object_id) != group.end())
@@ -200,8 +199,8 @@ void ResourcePool::Update() {
 
     // sum the resource production for object groups, and store the total
     // group production, indexed by group of object ids
-    for (std::map<std::set<int>, std::set<std::shared_ptr<const UniverseObject>>>::value_type& entry : system_groups_to_object_groups) {
-        const std::set<std::shared_ptr<const UniverseObject>>& object_group = entry.second;
+    for (auto& entry : system_groups_to_object_groups) {
+        const auto& object_group = entry.second;
         std::set<int> object_group_ids;
         float total_group_output = 0.0f;
         float total_group_target_output = 0.0f;
