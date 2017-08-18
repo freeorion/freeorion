@@ -806,7 +806,7 @@ void Fleet::SetNextAndPreviousSystems(int next, int prev) {
 void Fleet::MovementPhase() {
     //DebugLogger() << "Fleet::MovementPhase this: " << this->Name() << " id: " << this->ID();
 
-    std::shared_ptr<Fleet> fleet = std::dynamic_pointer_cast<Fleet>(shared_from_this());
+    auto fleet = std::dynamic_pointer_cast<Fleet>(shared_from_this());
     if (fleet.get() != this) {
         ErrorLogger() << "Fleet::MovementPhase was passed a std::shared_ptr different from itself.";
         return;
@@ -919,7 +919,7 @@ void Fleet::MovementPhase() {
     for (it = move_path.begin(); it != move_path.end(); ++it) {
         next_it = it;   ++next_it;
 
-        std::shared_ptr<System> system = GetSystem(it->object_id);
+        auto system = GetSystem(it->object_id);
 
         // is this system the last node reached this turn?  either it's an end of turn node,
         // or there are no more nodes after this one on path
@@ -1159,7 +1159,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
 bool Fleet::Blockaded() const {
     /** returns true if fleet is in a system and is prevented from using at least
         one starlane entry to leave its current system */
-    std::shared_ptr<System> system = GetSystem(this->SystemID());
+    auto system = GetSystem(this->SystemID());
 
     if (!system)
         return false;

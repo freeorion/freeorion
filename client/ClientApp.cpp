@@ -134,7 +134,7 @@ std::string ClientApp::GetVisibleObjectName(std::shared_ptr<const UniverseObject
     }
 
     std::string name_text = object->PublicName(m_empire_id);
-    if (std::shared_ptr<const System> system = std::dynamic_pointer_cast<const System>(object))
+    if (auto system = std::dynamic_pointer_cast<const System>(object))
         name_text = system->ApparentName(m_empire_id);
 
     return name_text;

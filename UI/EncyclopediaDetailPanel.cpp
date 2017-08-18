@@ -1547,10 +1547,10 @@ namespace {
         if (!objects_with_special.empty()) {
             detailed_description += "\n\n" + UserString("OBJECTS_WITH_SPECIAL");
             for (auto& obj : objects_with_special) {
-                if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(obj))
+                if (auto ship = std::dynamic_pointer_cast<const Ship>(obj))
                     detailed_description += LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship->PublicName(client_empire_id)) + "  ";
 
-                else if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(obj))
+                else if (auto fleet = std::dynamic_pointer_cast<const Fleet>(obj))
                     detailed_description += LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet->ID(), fleet->PublicName(client_empire_id)) + "  ";
 
                 else if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(obj))
@@ -1559,7 +1559,7 @@ namespace {
                 else if (std::shared_ptr<const Building> building = std::dynamic_pointer_cast<const Building>(obj))
                     detailed_description += LinkTaggedIDText(VarText::BUILDING_ID_TAG, building->ID(), building->PublicName(client_empire_id)) + "  ";
 
-                else if (std::shared_ptr<const System> system = std::dynamic_pointer_cast<const System>(obj))
+                else if (auto system = std::dynamic_pointer_cast<const System>(obj))
                     detailed_description += LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), system->PublicName(client_empire_id)) + "  ";
 
                 else
@@ -1634,7 +1634,7 @@ namespace {
         // Fleets
         std::vector<std::shared_ptr<const UniverseObject>> nonempty_empire_fleets;
         for (auto& maybe_fleet : Objects().FindObjects(OwnedVisitor<Fleet>(empire_id))) {
-            if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(maybe_fleet))
+            if (auto fleet = std::dynamic_pointer_cast<const Fleet>(maybe_fleet))
                 if (!fleet->Empty())
                     nonempty_empire_fleets.push_back(fleet);
         }

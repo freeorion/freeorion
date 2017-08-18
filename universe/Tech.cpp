@@ -282,20 +282,20 @@ const Tech* TechManager::GetTech(const std::string& name) const {
 }
 
 const TechCategory* TechManager::GetTechCategory(const std::string& name) const {
-    std::map<std::string, TechCategory*>::const_iterator it = m_categories.find(name);
+    auto it = m_categories.find(name);
     return it == m_categories.end() ? nullptr : it->second;
 }
 
 std::vector<std::string> TechManager::CategoryNames() const {
     std::vector<std::string> retval;
-    for (const std::map<std::string, TechCategory*>::value_type& entry : m_categories)
+    for (const auto& entry : m_categories)
         retval.push_back(entry.first);
     return retval;
 }
 
 std::vector<std::string> TechManager::TechNames() const {
     std::vector<std::string> retval;
-    for (const TechContainer::value_type& tech : m_techs.get<NameIndex>())
+    for (const auto& tech : m_techs.get<NameIndex>())
         retval.push_back(tech->Name());
     return retval;
 }
@@ -363,8 +363,8 @@ TechManager::TechManager() {
     }
 
     std::set<std::string> empty_defined_categories;
-    for (const std::map<std::string, TechCategory*>::value_type& map : m_categories) {
-        std::set<std::string>::iterator set_it = categories_seen_in_techs.find(map.first);
+    for (const auto& map : m_categories) {
+        auto set_it = categories_seen_in_techs.find(map.first);
         if (set_it == categories_seen_in_techs.end()) {
             empty_defined_categories.insert(map.first);
         } else {
@@ -433,7 +433,7 @@ TechManager::TechManager() {
 }
 
 TechManager::~TechManager() {
-    for (std::map<std::string, TechCategory*>::value_type& entry : m_categories)
+    for (auto& entry : m_categories)
         delete entry.second;
     for (const Tech* tech : m_techs)
         delete tech;
@@ -538,7 +538,7 @@ std::string TechManager::FindRedundantDependency() {
             AllChildren(prereq_tech, techs_unlocked_by_prereqs);
         }
         for (const std::string& prereq_name : prereqs) {
-            std::map<std::string, std::string>::const_iterator map_it = techs_unlocked_by_prereqs.find(prereq_name);
+            auto map_it = techs_unlocked_by_prereqs.find(prereq_name);
             if (map_it != techs_unlocked_by_prereqs.end()) {
                 std::stringstream stream;
                 stream << "ERROR: Redundant tech dependency found (A <-- B means A is a prerequisite of B): "
@@ -608,7 +608,7 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
 
     // extract sorted techs into vector, to be passed to signal...
     std::vector<std::string> retval;
-    for (const std::multimap<float, std::string>::value_type& tech_to_add : techs_to_add_map)
+    for (const auto& tech_to_add : techs_to_add_map)
     { retval.push_back(tech_to_add.second); }
 
     return retval;

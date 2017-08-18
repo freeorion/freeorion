@@ -80,8 +80,9 @@ namespace {
         std::string m_str;
     };
 
-    Key           KeyMappedKey(Key key, const std::map<Key, Key>& key_map) {
-        std::map<Key, Key>::const_iterator it = key_map.find(key);
+    Key           KeyMappedKey(Key key, const std::map<Key, Key>& key_map)
+    {
+        auto it = key_map.find(key);
         if (it != key_map.end())
             return it->second;
         return key;
@@ -1120,7 +1121,7 @@ bool GUI::ContainsWord(const std::string& str, const std::string& word) const
         utf8_wchar_iterator word_pos_it = first;
 
         std::advance(word_pos_it, match_result.position());
-        std::string::const_iterator start_it = word_pos_it.base();
+        auto start_it = word_pos_it.base();
         std::advance(word_pos_it, match_result.length());
         std::string word_in_str(start_it, word_pos_it.base());
 

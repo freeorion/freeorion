@@ -199,9 +199,9 @@ void GraphControl::DoLayout() {
         float screen_x, screen_y;
 
         // pairs of n and n+1 point, starting with first-second, to the second-last-last
-        std::vector<std::pair<double, double>>::const_iterator curve_it = curve_pts.begin();
+        auto curve_it = curve_pts.begin();
         for (; curve_it != curve_pts.end(); ++curve_it) {
-            std::vector<std::pair<double, double>>::const_iterator next_it = curve_it;
+            auto next_it = curve_it;
             ++next_it;
             if (next_it == curve_pts.end())
                 break;

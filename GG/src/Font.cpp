@@ -1170,7 +1170,7 @@ X Font::RenderText(const Pt& pt_, const std::string& text) const
 
     for (auto text_it = text.begin(); text_it != text.end();) {
         std::uint32_t c = utf8::next(text_it, text.end());
-        GlyphMap::const_iterator it = m_glyphs.find(c);
+        auto it = m_glyphs.find(c);
         if (it == m_glyphs.end()) {
             pt.x += m_space_width; // move forward by the extent of the character when a whitespace or unprintable glyph is requested
         } else {
@@ -1252,9 +1252,9 @@ void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Fl
         if (i == end_line - 1)
             end = std::max(CP0, std::min(end_char, CPSize(line.char_data.size())));
 
-        std::string::const_iterator string_end_it = text.end();
+        auto string_end_it = text.end();
         for (CPSize j = start; j < end; ++j) {
-            const LineData::CharData& char_data = line.char_data[Value(j)];
+            const auto& char_data = line.char_data[Value(j)];
             for (auto tag : char_data.tags) {
                 HandleTag(tag, orig_color, render_state);
             }
@@ -1262,7 +1262,7 @@ void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Fl
             assert((text[Value(char_data.string_index)] == '\n') == (c == WIDE_NEWLINE));
             if (c == WIDE_NEWLINE)
                 continue;
-            GlyphMap::const_iterator it = m_glyphs.find(c);
+            auto it = m_glyphs.find(c);
             if (it == m_glyphs.end()) {
                 x = x_origin + char_data.extent; // move forward by the extent of the character when a whitespace or unprintable glyph is requested
             } else {
@@ -1517,10 +1517,8 @@ std::vector<std::shared_ptr<Font::TextElement>> Font::ExpensiveParseFromTextToTe
                 // might have RGB parameters.
                 if (1 < (*it).nested_results().size()) {
                     element->params.reserve((*it).nested_results().size() - 1);
-                    for (smatch::nested_results_type::const_iterator nested_it =
-                             ++(*it).nested_results().begin();
-                         nested_it != (*it).nested_results().end();
-                         ++nested_it)
+                    for (auto nested_it = ++(*it).nested_results().begin();
+                         nested_it != (*it).nested_results().end(); ++nested_it)
                     {
                         element->params.push_back(Substring(text, (*nested_it)[0]));
                     }
@@ -1576,20 +1574,20 @@ void Font::FillTemplatedText(
     std::vector<std::shared_ptr<Font::TextElement>>::iterator start) const
 {
     // For each TextElement in text_elements starting from start.
-    std::vector<std::shared_ptr<Font::TextElement>>::iterator& te_it = start;
+    auto& te_it = start;
     for (; te_it != text_elements.end(); ++te_it) {
         std::shared_ptr<TextElement> elem = (*te_it);
 
         // For each character in the TextElement.
-        std::string::const_iterator it = elem->text.begin();
-        std::string::const_iterator end_it = elem->text.end();
+        auto it = elem->text.begin();
+        auto end_it = elem->text.end();
         while (it != end_it) {
 
             // Find and set the width of the character glyph.
             elem->widths.push_back(X0);
             std::uint32_t c = utf8::next(it, end_it);
             if (c != WIDE_NEWLINE) {
-                GlyphMap::const_iterator it = m_glyphs.find(c);
+                auto it = m_glyphs.find(c);
                 // use a space when an unrendered glyph is requested (the
                 // space chararacter is always renderable)
                 elem->widths.back() = (it != m_glyphs.end()) ? it->second.advance : m_space_width;
@@ -1698,9 +1696,10 @@ std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<
                              orig_just,
                              line_data[line_data.size() - 2].justification);
             x = X0;
+
         } else if (elem->Type() == TextElement::WHITESPACE) {
-            std::string::const_iterator it = elem->text.begin();
-            std::string::const_iterator end_it = elem->text.end();
+            auto it = elem->text.begin();
+            auto end_it = elem->text.end();
             while (it != end_it) {
                 StrSize char_index(std::distance(elem->text.begin(), it));
                 std::uint32_t c = utf8::next(it, end_it);
@@ -1766,8 +1765,8 @@ std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<
                                      orig_just,
                                      line_data[line_data.size() - 2].justification);
                 }
-                std::string::const_iterator it = elem->text.begin();
-                std::string::const_iterator end_it = elem->text.end();
+                auto it = elem->text.begin();
+                auto end_it = elem->text.end();
                 std::size_t j = 0;
                 while (it != end_it) {
                     StrSize char_index(std::distance(elem->text.begin(), it));
@@ -1785,8 +1784,8 @@ std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<
                     ++code_point_offset;
                 }
             } else {
-                std::string::const_iterator it = elem->text.begin();
-                std::string::const_iterator end_it = elem->text.end();
+                auto it = elem->text.begin();
+                auto end_it = elem->text.end();
                 std::size_t j = 0;
                 while (it != end_it) {
                     StrSize char_index(std::distance(elem->text.begin(), it));
@@ -2016,7 +2015,7 @@ void Font::Init(FT_Face& face)
         m_glyphs[glyph_data.first] = Glyph(m_texture, glyph_data.second.ul, glyph_data.second.lr, glyph_data.second.y_offset, glyph_data.second.left_b, glyph_data.second.adv);
 
     // record the width of the space character
-    GlyphMap::const_iterator glyph_it = m_glyphs.find(WIDE_SPACE);
+    auto glyph_it = m_glyphs.find(WIDE_SPACE);
     assert(glyph_it != m_glyphs.end());
     m_space_width = glyph_it->second.advance;
 }

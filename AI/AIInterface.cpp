@@ -253,7 +253,7 @@ namespace AIInterface {
     }
 
     int IssueFleetMoveOrder(int fleet_id, int destination_id) {
-        std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
+        auto fleet = GetFleet(fleet_id);
         if (!fleet) {
             ErrorLogger() << "IssueFleetMoveOrder : passed an invalid fleet_id";
             return 0;
@@ -368,9 +368,9 @@ namespace AIInterface {
             return 0;
         }
 
-        std::vector<int>::const_iterator it = ship_ids.begin();
+        auto it = ship_ids.begin();
         for (++it; it != ship_ids.end(); ++it) {
-            std::shared_ptr<const Ship> ship2 = GetShip(*it);
+            auto ship2 = GetShip(*it);
             if (ship2->SystemID() != system_id) {
                 ErrorLogger() << "IssueNewFleetOrder : passed ship_ids of ships at different locations";
                 return 0;
@@ -407,7 +407,7 @@ namespace AIInterface {
             return 0;
         }
 
-        std::shared_ptr<const Fleet> fleet = GetFleet(new_fleet_id);
+        auto fleet = GetFleet(new_fleet_id);
         if (!fleet) {
             ErrorLogger() << "IssueFleetTransferOrder : passed an invalid new_fleet_id " << new_fleet_id;
             return 0;
@@ -615,7 +615,7 @@ namespace AIInterface {
     int IssueAggressionOrder(int object_id, bool aggressive) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
 
-        std::shared_ptr<const Fleet> fleet = GetFleet(object_id);
+        auto fleet = GetFleet(object_id);
         if (!fleet) {
             ErrorLogger() << "IssueAggressionOrder : no fleet with passed id";
             return 0;
@@ -660,7 +660,7 @@ namespace AIInterface {
             return 0;
         }
 
-        std::shared_ptr<System> system = GetSystem(obj->SystemID());
+        auto system = GetSystem(obj->SystemID());
         if (!system) {
             ErrorLogger() << "IssueGiveObjectToEmpireOrder : couldn't get system of object";
             return 0;

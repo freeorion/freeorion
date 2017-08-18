@@ -438,7 +438,7 @@ void TextLinker::MarkLinks() {
     //std::cout << "raw text:" << raw_text << std::endl;
 
     int copy_start_index = 0;
-    std::string::const_iterator raw_text_start_it = raw_text.begin();
+    auto raw_text_start_it = raw_text.begin();
 
     std::string marked_text;
 

@@ -441,7 +441,7 @@ namespace {
             if (m_empire_id == ALL_EMPIRES)
                 return;
 
-            const std::set<int>& destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(m_empire_id);
+            const auto& destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(m_empire_id);
             for (auto& ship : Objects().FindObjects<Ship>()) {
                 if (!ship->OwnedBy(m_empire_id) || destroyed_objects.find(ship->ID()) != destroyed_objects.end())
                     continue;
@@ -590,7 +590,7 @@ public:
         // get selected fleet speeds and detection ranges
         std::set<double> fixed_distances;
         for (int fleet_id : fleet_ids) {
-            if (std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id)) {
+            if (auto fleet = GetFleet(fleet_id)) {
                 if (fleet->Speed() > 20)
                     fixed_distances.insert(fleet->Speed());
                 for (int ship_id : fleet->ShipIDs()) {
@@ -606,9 +606,9 @@ public:
             }
         }
         // get detection ranges for planets in the selected system (if any)
-        if (const std::shared_ptr<const System> system = GetSystem(sel_system_id)) {
+        if (const auto system = GetSystem(sel_system_id)) {
             for (int planet_id : system->PlanetIDs()) {
-                if (const std::shared_ptr<Planet> planet = GetPlanet(planet_id)) {
+                if (const auto planet = GetPlanet(planet_id)) {
                     const float planet_range = planet->CurrentMeterValue(METER_DETECTION);
                     if (planet_range > 20)
                         fixed_distances.insert(planet_range);
@@ -845,7 +845,7 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
         // 2) Get apparent universe positions of nodes, which depend on endpoints of lane and actual universe position of nodes
 
         // get lane end points
-        std::map<std::pair<int, int>, LaneEndpoints>::const_iterator ends_it = lane_end_points_map.find({prev_sys_id, next_sys_id});
+        auto ends_it = lane_end_points_map.find({prev_sys_id, next_sys_id});
         if (ends_it == lane_end_points_map.end()) {
             ErrorLogger() << "couldn't get endpoints of lane for move line";
             break;
@@ -853,8 +853,8 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
         const LaneEndpoints& lane_endpoints = ends_it->second;
 
         // get on-screen positions of nodes shifted to fit on starlane
-        std::pair<double, double> start_xy =    ScreenPosOnStarane(prev_node_x, prev_node_y, prev_sys_id, next_sys_id, lane_endpoints);
-        std::pair<double, double> end_xy =      ScreenPosOnStarane(node.x,      node.y,      prev_sys_id, next_sys_id, lane_endpoints);
+        auto start_xy = ScreenPosOnStarane(prev_node_x, prev_node_y, prev_sys_id, next_sys_id, lane_endpoints);
+        auto end_xy =   ScreenPosOnStarane(node.x,      node.y,      prev_sys_id, next_sys_id, lane_endpoints);
 
 
         // 3) Add points for line segment to list of Vertices
@@ -2014,7 +2014,7 @@ void MapWnd::RenderSystems() {
             // render circles around systems that have at least one starlane, if they are enabled
             if (!circles) continue;
 
-            if (std::shared_ptr<const System> system = GetSystem(system_icon.first)) {
+            if (auto system = GetSystem(system_icon.first)) {
                 if (system->NumStarlanes() > 0) {
                     bool has_empire_planet = false;
                     bool has_neutrals = false;
@@ -2979,7 +2979,7 @@ void MapWnd::InitSystemRenderingBuffers() {
     for (const auto& system_icon : m_system_icons) {
         const auto& icon = system_icon.second;
         int system_id = system_icon.first;
-        std::shared_ptr<const System> system = GetSystem(system_id);
+        auto system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "MapWnd::InitSystemRenderingBuffers couldn't get system with id " << system_id;
             continue;
@@ -4513,7 +4513,7 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
     if (fleet_id == INVALID_OBJECT_ID)
         return;
 
-    std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
+    auto fleet = GetFleet(fleet_id);
     if (!fleet) {
         ErrorLogger() << "MapWnd::SetFleetMovementLine was passed invalid fleet id " << fleet_id;
         return;
@@ -5220,7 +5220,7 @@ void MapWnd::SystemRightClicked(int system_id, GG::Flags< GG::ModKey > mod_keys)
             }
         } else if (mas == MAS_SetOwner) {
             int empire_id = m_moderator_wnd->SelectedEmpire();
-            std::shared_ptr<const System> system = GetSystem(system_id);
+            auto system = GetSystem(system_id);
             if (!system)
                 return;
 
@@ -5630,7 +5630,7 @@ void MapWnd::UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj) {
         DebugLogger() << "MapWnd::UniverseObjectDeleted: " << obj->ID();
     else
         DebugLogger() << "MapWnd::UniverseObjectDeleted: NO OBJECT";
-    if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(obj))
+    if (auto fleet = std::dynamic_pointer_cast<const Fleet>(obj))
         RemoveFleet(fleet->ID());
 }
 

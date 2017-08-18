@@ -381,7 +381,7 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text, int sender_pla
     }
 
     const std::map<int, PlayerInfo>& players = app->Players();
-    std::map<int, PlayerInfo>::const_iterator player_it = players.find(sender_player_id);
+    auto player_it = players.find(sender_player_id);
     if (player_it == players.end()) {
         ErrorLogger() << "MessageWnd::HandlePlayerChatMessage couldn't message sending player with id: " << sender_player_id;
         return;

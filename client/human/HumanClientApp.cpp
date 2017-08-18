@@ -898,9 +898,7 @@ void HumanClientApp::UpdateCombatLogs(const Message& msg){
     ExtractDispatchCombatLogsMessageData(msg, logs);
 
     // Update the combat log manager with the completed logs.
-    for (std::vector<std::pair<int, CombatLog>>::const_iterator it = logs.begin();
-         it != logs.end(); ++it)
-    {
+    for (auto it = logs.begin(); it != logs.end(); ++it) {
         GetCombatLogManager().CompleteLog(it->first, it->second);
     }
 }

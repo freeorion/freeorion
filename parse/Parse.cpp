@@ -326,7 +326,7 @@ namespace parse {
         // check if macros referenced in text reference macro_to_find
         for (const std::string& direct_referenced_macro_key : macros_directly_referenced_in_input_text) {
             // get text of directly referenced macro
-            std::map<std::string, std::string>::const_iterator macro_it = macros.find(direct_referenced_macro_key);
+            auto macro_it = macros.find(direct_referenced_macro_key);
             if (macro_it == macros.end()) {
                 ErrorLogger() << "macro_deep_referenced_in_text couldn't find referenced macro: " << direct_referenced_macro_key;
                 continue;
@@ -358,7 +358,7 @@ namespace parse {
                 const std::string& matched_text = match.str();  // [[MACRO_KEY]] or [[MACRO_KEY(foo,bar,...)]]
                 const std::string& macro_key = match[1];        // just MACRO_KEY
                 // look up macro key to insert
-                std::map<std::string, std::string>::const_iterator macro_lookup_it = macros.find(macro_key);
+                auto macro_lookup_it = macros.find(macro_key);
                 if (macro_lookup_it != macros.end()) {
                     // verify that macro is safe: check for cyclic reference of macro to itself
                     if (macro_deep_referenced_in_text(macro_key, macro_lookup_it->second, macros)) {

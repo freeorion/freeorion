@@ -132,13 +132,13 @@ namespace {
         }
         retval += " | ";
 
-        std::vector<std::string>::const_iterator first = property_name.begin();
-        std::vector<std::string>::const_iterator last = property_name.end();
+        auto first = property_name.begin();
+        auto last = property_name.end();
         while (first != last) {
             std::string property_name = *first;
             retval += " " + property_name + " ";
             if (property_name == "Planet") {
-                if (std::shared_ptr<const Building> b = std::dynamic_pointer_cast<const Building>(obj)) {
+                if (auto b = std::dynamic_pointer_cast<const Building>(obj)) {
                     retval += "(" + std::to_string(b->PlanetID()) + "): ";
                     obj = GetPlanet(b->PlanetID());
                 } else
@@ -149,7 +149,7 @@ namespace {
                     obj = GetSystem(obj->SystemID());
                 }
             } else if (property_name == "Fleet") {
-                if (std::shared_ptr<const Ship> s = std::dynamic_pointer_cast<const Ship>(obj))  {
+                if (auto s = std::dynamic_pointer_cast<const Ship>(obj))  {
                     retval += "(" + std::to_string(s->FleetID()) + "): ";
                     obj = GetFleet(s->FleetID());
                 } else
@@ -242,14 +242,14 @@ namespace {
 namespace ValueRef {
 MeterType NameToMeter(const std::string& name) {
     MeterType retval = INVALID_METER_TYPE;
-    std::map<std::string, MeterType>::const_iterator it = GetMeterNameMap().find(name);
+    auto it = GetMeterNameMap().find(name);
     if (it != GetMeterNameMap().end())
         retval = it->second;
     return retval;
 }
 
 std::string MeterToName(MeterType meter) {
-    for (const std::map<std::string, MeterType>::value_type& entry : GetMeterNameMap()) {
+    for (const auto& entry : GetMeterNameMap()) {
         if (entry.second == meter)
             return entry.first;
     }
@@ -802,7 +802,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
             return 0;
 
     } else if (property_name == "ProducedByEmpireID") {
-        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
+        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->ProducedByEmpireID();
         else if (std::shared_ptr<const Building> building = std::dynamic_pointer_cast<const Building>(object))
             return building->ProducedByEmpireID();
@@ -810,13 +810,13 @@ int Variable<int>::Eval(const ScriptingContext& context) const
             return ALL_EMPIRES;
 
     } else if (property_name == "ArrivedOnTurn") {
-        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
+        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->ArrivedOnTurn();
         else
             return INVALID_GAME_TURN;
 
     } else if (property_name == "DesignID") {
-        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
+        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->DesignID();
         else
             return INVALID_DESIGN_ID;
@@ -824,15 +824,15 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     } else if (property_name == "SpeciesID") {
         if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object))
             return GetSpeciesManager().GetSpeciesID(planet->SpeciesName());
-        else if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
+        else if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return GetSpeciesManager().GetSpeciesID(ship->SpeciesName());
         else
             return -1;
 
     } else if (property_name == "FleetID") {
-        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
+        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->FleetID();
-        else if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(object))
+        else if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->ID();
         else
             return INVALID_OBJECT_ID;
@@ -849,19 +849,19 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return object->SystemID();
 
     } else if (property_name == "FinalDestinationID") {
-        if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(object))
+        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->FinalDestinationID();
         else
             return INVALID_OBJECT_ID;
 
     } else if (property_name == "NextSystemID") {
-        if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(object))
+        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->NextSystemID();
         else
             return INVALID_OBJECT_ID;
 
     } else if (property_name == "PreviousSystemID") {
-        if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(object))
+        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->PreviousSystemID();
         else
             return INVALID_OBJECT_ID;
@@ -873,38 +873,38 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return GetPathfinder()->NearestSystemTo(object->X(), object->Y());
 
     } else if (property_name == "NumShips") {
-        if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(object))
+        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->NumShips();
         else
             return 0;
 
     } else if (property_name == "NumStarlanes") {
-        if (std::shared_ptr<const System> system = std::dynamic_pointer_cast<const System>(object))
+        if (auto system = std::dynamic_pointer_cast<const System>(object))
             return system->NumStarlanes();
         else
             return 0;
 
     } else if (property_name == "LastTurnBattleHere") {
-        if (std::shared_ptr<const System> system = std::dynamic_pointer_cast<const System>(object))
+        if (auto system = std::dynamic_pointer_cast<const System>(object))
             return system->LastTurnBattleHere();
-        else if (std::shared_ptr<const System> system = GetSystem(object->SystemID()))
+        else if (auto system = GetSystem(object->SystemID()))
             return system->LastTurnBattleHere();
         else
             return INVALID_GAME_TURN;
 
     } else if (property_name == "LastTurnActiveInBattle") {
-        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
+        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->LastTurnActiveInCombat();
         else
             return INVALID_GAME_TURN;
 
     } else if (property_name == "Orbit") {
-        if (std::shared_ptr<const System> system = GetSystem(object->SystemID()))
+        if (auto system = GetSystem(object->SystemID()))
             return system->OrbitOfPlanet(object->ID());
         return -1;
 
     } else if (property_name == "ETA") {
-        if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(object))
+        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->ETA().first;
         else
             return 0;
@@ -973,7 +973,7 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(const Scriptin
             return planet->AvailableFoci();
     }
     else if (property_name == "Parts") {
-        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
+        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             if (const ShipDesign* design = ship->Design())
                 return design->Parts();
     }
@@ -1037,11 +1037,11 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
     } else if (property_name == "Species") {
         if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->SpeciesName();
-        else if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
+        else if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->SpeciesName();
 
     } else if (property_name == "Hull") {
-        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
+        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             if (const ShipDesign* design = ship->Design())
                 return design->Hull();
 
@@ -1057,7 +1057,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         const Species* species = nullptr;
         if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object)) {
             species = GetSpecies(planet->SpeciesName());
-        } else if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object)) {
+        } else if (auto ship = std::dynamic_pointer_cast<const Ship>(object)) {
             species = GetSpecies(ship->SpeciesName());
         }
         if (species)
@@ -1170,13 +1170,13 @@ std::string Statistic<std::string>::Eval(const ScriptingContext& context) const
 
     // count number of each result, tracking which has the most occurances
     std::map<std::string, unsigned int> histogram;
-    std::map<std::string, unsigned int>::const_iterator most_common_property_value_it = histogram.begin();
+    auto most_common_property_value_it = histogram.begin();
     unsigned int max_seen(0);
 
-    for (const std::map<std::shared_ptr<const UniverseObject>, std::string>::value_type& entry : object_property_values) {
+    for (const auto& entry : object_property_values) {
         const std::string& property_value = entry.second;
 
-        std::map<std::string, unsigned int>::iterator hist_it = histogram.find(property_value);
+        auto hist_it = histogram.find(property_value);
         if (hist_it == histogram.end())
             hist_it = histogram.insert(std::make_pair(property_value, 0)).first;
         unsigned int& num_seen = hist_it->second;
@@ -1314,17 +1314,17 @@ namespace {
 
         // single empire
         if (empire_id != ALL_EMPIRES) {
-            const std::map<std::string, int>& map = GetEmpireStringIntMap(empire_id, parsed_property_name);
-            std::map<std::string, int>::const_iterator it = map.find(map_key);
+            const auto& map = GetEmpireStringIntMap(empire_id, parsed_property_name);
+            auto it = map.find(map_key);
             if (it == map.end())
                 return 0;
             return it->second;
         }
 
         // all empires summed
-        for (std::map<int, Empire*>::value_type& entry : Empires()) {
-            const std::map<std::string, int>& map = GetEmpireStringIntMap(entry.first, parsed_property_name);
-            std::map<std::string, int>::const_iterator map_it = map.find(map_key);
+        for (auto& entry : Empires()) {
+            const auto& map = GetEmpireStringIntMap(entry.first, parsed_property_name);
+            auto map_it = map.find(map_key);
             if (map_it != map.end())
                 sum += map_it->second;
         }
@@ -1338,14 +1338,14 @@ namespace {
         // single empire
         if (empire_id != ALL_EMPIRES) {
             // sum of all key entries for this empire
-            for (const std::map<std::string, int>::value_type& entry : GetEmpireStringIntMap(empire_id, parsed_property_name))
+            for (const auto& entry : GetEmpireStringIntMap(empire_id, parsed_property_name))
                 sum += entry.second;
             return sum;
         }
 
         // all empires summed
-        for (const std::map<int, Empire*>::value_type& empire_entry : Empires()) {
-            for (const std::map<std::string, int>::value_type& property_entry : GetEmpireStringIntMap(empire_entry.first, parsed_property_name))
+        for (const auto& empire_entry : Empires()) {
+            for (const auto& property_entry : GetEmpireStringIntMap(empire_entry.first, parsed_property_name))
                 sum += property_entry.second;
         }
         return sum;
@@ -1359,17 +1359,17 @@ namespace {
 
         // single empire
         if (empire_id != ALL_EMPIRES) {
-            const std::map<int, int>& map = GetEmpireIntIntMap(empire_id, parsed_property_name);
-            std::map<int, int>::const_iterator it = map.find(map_key);
+            const auto& map = GetEmpireIntIntMap(empire_id, parsed_property_name);
+            auto it = map.find(map_key);
             if (it == map.end())
                 return 0;
             return it->second;
         }
 
         // all empires summed
-        for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
-            const std::map<int, int>& map = GetEmpireIntIntMap(empire_entry.first, parsed_property_name);
-            std::map<int, int>::const_iterator map_it = map.find(map_key);
+        for (const auto& empire_entry : Empires()) {
+            const auto& map = GetEmpireIntIntMap(empire_entry.first, parsed_property_name);
+            auto map_it = map.find(map_key);
             if (map_it != map.end())
                 sum += map_it->second;
         }
@@ -1383,17 +1383,17 @@ namespace {
 
         // single empire
         if (empire_id != ALL_EMPIRES) {
-            const std::map<int, float>& map = GetEmpireIntFloatMap(empire_id, parsed_property_name);
-            std::map<int, float>::const_iterator it = map.find(map_key);
+            const auto& map = GetEmpireIntFloatMap(empire_id, parsed_property_name);
+            auto it = map.find(map_key);
             if (it == map.end())
                 return 0.0f;
             return it->second;
         }
 
         // all empires summed
-        for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
-            const std::map<int, float>& map = GetEmpireIntFloatMap(empire_entry.first, parsed_property_name);
-            std::map<int, float>::const_iterator map_it = map.find(map_key);
+        for (const auto& empire_entry : Empires()) {
+            const auto& map = GetEmpireIntFloatMap(empire_entry.first, parsed_property_name);
+            auto map_it = map.find(map_key);
             if (map_it != map.end())
                 sum += map_it->second;
         }
@@ -1407,14 +1407,14 @@ namespace {
         // single empire
         if (empire_id != ALL_EMPIRES) {
             // sum of all key entries for this empire
-            for (const std::map<int, int>::value_type& property_entry : GetEmpireIntIntMap(empire_id, parsed_property_name))
+            for (const auto& property_entry : GetEmpireIntIntMap(empire_id, parsed_property_name))
                 sum += property_entry.second;
             return sum;
         }
 
         // all empires summed
-        for (const std::map<int, Empire*>::value_type& empire_entry : Empires()) {
-            for (const std::map<int, int>::value_type& property_entry : GetEmpireIntIntMap(empire_entry.first, parsed_property_name))
+        for (const auto& empire_entry : Empires()) {
+            for (const auto& property_entry : GetEmpireIntIntMap(empire_entry.first, parsed_property_name))
                 sum += property_entry.second;
         }
         return sum;
@@ -1426,14 +1426,14 @@ namespace {
         // single empire
         if (empire_id != ALL_EMPIRES) {
             // sum of all key entries for this empire
-            for (const std::map<int, float>::value_type& property_entry : GetEmpireIntFloatMap(empire_id, parsed_property_name))
+            for (const auto& property_entry : GetEmpireIntFloatMap(empire_id, parsed_property_name))
                 sum += property_entry.second;
             return sum;
         }
 
         // all empires summed
-        for (const std::map<int, Empire*>::value_type& empire_entry : Empires()) {
-            for (const std::map<int, float>::value_type& property_entry : GetEmpireIntFloatMap(empire_entry.first, parsed_property_name))
+        for (const auto& empire_entry : Empires()) {
+            for (const auto& property_entry : GetEmpireIntFloatMap(empire_entry.first, parsed_property_name))
                 sum += property_entry.second;
         }
         return sum;
@@ -1464,7 +1464,7 @@ namespace {
         }
 
         // all empires summed
-        for (const std::map<int, Empire*>::value_type& empire_entry : Empires())
+        for (const auto& empire_entry : Empires())
             sum += GetIntEmpirePropertyNoKeyImpl(empire_entry.first, parsed_property_name);
         return sum;
     }
@@ -1583,16 +1583,16 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             // single empire
             if (empire_id != ALL_EMPIRES) {
                 Empire* empire = GetEmpire(empire_id);
-                for (const std::map<ShipPartClass, int>::value_type& property_entry : empire->ShipPartClassOwned())
+                for (const auto& property_entry : empire->ShipPartClassOwned())
                     if (part_class == NUM_SHIP_PART_CLASSES || property_entry.first == part_class)
                         sum += property_entry.second;
                 return sum;
             }
 
             // all empires summed
-            for (const std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+            for (const auto& empire_entry : Empires()) {
                 Empire* empire = GetEmpire(empire_entry.first);
-                for (const std::map<ShipPartClass, int>::value_type& property_entry : empire->ShipPartClassOwned())
+                for (const auto& property_entry : empire->ShipPartClassOwned())
                     if (part_class == NUM_SHIP_PART_CLASSES || property_entry.first == part_class)
                         sum += property_entry.second;
             }
@@ -2247,7 +2247,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         // search queue to find which transferrable tech is at the top of the list
         const ResearchQueue& queue = empire2->GetResearchQueue();
         for (const std::string& tech : sendable_techs) {
-            ResearchQueue::const_iterator queue_it = queue.find(tech);
+            auto queue_it = queue.find(tech);
             if (queue_it == queue.end())
                 continue;
             int queue_pos = std::distance(queue.begin(), queue_it);

@@ -309,8 +309,8 @@ namespace {
 
     const std::vector<float>& StarLightColour(StarType star_type) {
         static std::vector<float> white(4, 0.0f);
-        const std::map<StarType, std::vector<float>>& colour_map = GetStarLightColors();
-        std::map<StarType, std::vector<float>>::const_iterator it = colour_map.find(star_type);
+        const auto& colour_map = GetStarLightColors();
+        auto it = colour_map.find(star_type);
         if (it != colour_map.end())
             return it->second;
         return white;
@@ -694,9 +694,9 @@ public:
         m_visibility = GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, HumanClientApp::GetApp()->EmpireID());
 
         const std::string texture_filename;
-        const std::map<PlanetType, std::vector<RotatingPlanetData>>& planet_data = GetRotatingPlanetData();
+        const auto& planet_data = GetRotatingPlanetData();
 
-        std::map<PlanetType, std::vector<RotatingPlanetData>>::const_iterator it = planet_data.find(planet->Type());
+        auto it = planet_data.find(planet->Type());
         int num_planets_of_type;
         if (it != planet_data.end() && (num_planets_of_type = planet_data.find(planet->Type())->second.size())) {
             unsigned int hash_value = static_cast<int>(m_planet_id);
@@ -704,10 +704,10 @@ public:
             m_surface_texture = ClientUI::GetTexture(ClientUI::ArtDir() / rpd.filename, true);
             m_shininess = rpd.shininess;
 
-            const std::map<std::string, PlanetAtmosphereData>& atmosphere_data = GetPlanetAtmosphereData();
-            std::map<std::string, PlanetAtmosphereData>::const_iterator it = atmosphere_data.find(rpd.filename);
+            const auto& atmosphere_data = GetPlanetAtmosphereData();
+            auto it = atmosphere_data.find(rpd.filename);
             if (it != atmosphere_data.end()) {
-                const PlanetAtmosphereData::Atmosphere& atmosphere = it->second.atmospheres[RandSmallInt(0, it->second.atmospheres.size() - 1)];
+                const auto& atmosphere = it->second.atmospheres[RandSmallInt(0, it->second.atmospheres.size() - 1)];
                 m_atmosphere_texture = ClientUI::GetTexture(ClientUI::ArtDir() / atmosphere.filename, true);
                 m_atmosphere_alpha = atmosphere.alpha;
                 m_atmosphere_planet_rect = GG::Rect(GG::X1, GG::Y1, m_atmosphere_texture->DefaultWidth() - 4, m_atmosphere_texture->DefaultHeight() - 4);
@@ -726,10 +726,10 @@ private:
     int                             m_diameter;
     double                          m_axial_tilt;
     Visibility                      m_visibility;
-    std::shared_ptr<GG::Texture> m_surface_texture;
+    std::shared_ptr<GG::Texture>    m_surface_texture;
     double                          m_shininess;
-    std::shared_ptr<GG::Texture> m_overlay_texture;
-    std::shared_ptr<GG::Texture> m_atmosphere_texture;
+    std::shared_ptr<GG::Texture>    m_overlay_texture;
+    std::shared_ptr<GG::Texture>    m_atmosphere_texture;
     int                             m_atmosphere_alpha;
     GG::Rect                        m_atmosphere_planet_rect;
     double                          m_initial_rotation;
@@ -1283,7 +1283,7 @@ std::shared_ptr<const Ship> ValidSelectedColonyShip(int system_id) {
 
     // is there a valid selected ship in the active FleetWnd?
     for (int ship_id : FleetUIManager::GetFleetUIManager().SelectedShipIDs())
-        if (std::shared_ptr<const Ship> ship = GetShip(ship_id))
+        if (auto ship = GetShip(ship_id))
             if (ship->SystemID() == system_id && ship->CanColonize() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
                 return ship;
     return nullptr;
@@ -1299,7 +1299,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     if (!target_planet)
         return INVALID_OBJECT_ID;
     int system_id = target_planet->SystemID();
-    std::shared_ptr<const System> system = GetSystem(system_id);
+    auto system = GetSystem(system_id);
     if (!system)
         return INVALID_OBJECT_ID;
     // is planet a valid colonization target?
@@ -1409,7 +1409,7 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenInvasionShips(int targe
     if (!target_planet)
         return retval;
     int system_id = target_planet->SystemID();
-    std::shared_ptr<const System> system = GetSystem(system_id);
+    auto system = GetSystem(system_id);
     if (!system)
         return retval;
 
@@ -1451,7 +1451,7 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenBombardShips(int target
     if (!target_planet)
         return retval;
     int system_id = target_planet->SystemID();
-    std::shared_ptr<const System> system = GetSystem(system_id);
+    auto system = GetSystem(system_id);
     if (!system)
         return retval;
 
@@ -1480,7 +1480,7 @@ void SidePanel::PlanetPanel::Refresh() {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     m_planet_connection.disconnect();
 
-    std::shared_ptr<Planet> planet = GetPlanet(m_planet_id);
+    auto planet = GetPlanet(m_planet_id);
     if (!planet) {
         DebugLogger() << "PlanetPanel::Refresh couldn't get planet!";
         // clear / hide everything...
@@ -1857,7 +1857,7 @@ void SidePanel::PlanetPanel::Refresh() {
                                           " (id: " << m_planet_id << ") without having seen it before!";
             }
 
-            std::shared_ptr<System> system = GetSystem(planet->SystemID());
+            auto system = GetSystem(planet->SystemID());
             if (system && system->GetVisibility(client_empire_id) <= VIS_BASIC_VISIBILITY) { // HACK: system is basically visible or less, so we must not be in detection range of the planet.
                 detection_info = UserString("PL_NOT_IN_RANGE");
             }
@@ -1978,7 +1978,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
     if (!planet)
         return;
 
-    std::shared_ptr<const System> system = GetSystem(planet->SystemID());
+    auto system = GetSystem(planet->SystemID());
 
     // determine which other empires are at peace with client empire and have
     // an owned object in this fleet's system
@@ -2248,7 +2248,7 @@ void SidePanel::PlanetPanel::ClickColonize() {
 
     } else {
         // find colony ship and order it to colonize
-        std::shared_ptr<const Ship> ship = ValidSelectedColonyShip(SidePanel::SystemID());
+        auto ship = ValidSelectedColonyShip(SidePanel::SystemID());
         if (!ship)
             ship = GetShip(AutomaticallyChosenColonyShip(m_planet_id));
 

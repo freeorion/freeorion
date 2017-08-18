@@ -145,7 +145,7 @@ public:
         // Take into account the size of the y-axis label.
         total_space.x -= label_margin;
 
-        CombatSummaryMap::const_iterator side_summary_it = m_summaries.find(participant.empire_id);
+        auto side_summary_it = m_summaries.find(participant.empire_id);
 
         if ( side_summary_it == m_summaries.end() ) {
             ErrorLogger() << "The empire of the object " << participant.object_id
@@ -244,7 +244,7 @@ private:
         // The client (participant bar) height of this side bar.
         GG::Y calculated_height(GG::Y0);
 
-        CombatSummaryMap::const_iterator summary_it = m_summaries.find(empire_id);
+        auto summary_it = m_summaries.find(empire_id);
 
         if ( Get(TOGGLE_GRAPH_HEIGHT_PROPORTIONAL) && summary_it != m_summaries.end() ) {
             calculated_height = m_available_participant_bar_height * summary_it->second.max_max_health / m_sum_of_max_max_healths;
@@ -747,7 +747,7 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
             if (m_summaries.find(owner_id) == m_summaries.end())
                 m_summaries[owner_id] = CombatSummary(owner_id);
 
-            std::map<int, CombatParticipantState>::const_iterator map_it = log->participant_states.find(object_id);
+            auto map_it = log->participant_states.find(object_id);
             if (map_it != log->participant_states.end()) {
                 m_summaries[owner_id].AddUnit(object_id, map_it->second);
             } else {

@@ -124,8 +124,8 @@ namespace {
         // Next value to be stored.
         std::string value;
 
-        std::string::const_iterator it = params_string.begin();
-        const std::string::const_iterator& end = params_string.end();
+        auto it = params_string.begin();
+        const auto& end = params_string.end();
 
         try {
             while (it != end) {

@@ -9,7 +9,7 @@ OrderSet::OrderSet()
 
 const OrderPtr OrderSet::ExamineOrder(int order) const {
     OrderPtr retval;
-    OrderMap::const_iterator it = m_orders.find(order);
+    auto it = m_orders.find(order);
     if (it != m_orders.end())
         retval = it->second;
     return retval;
@@ -30,13 +30,13 @@ int OrderSet::IssueOrder(OrderPtr&& order) {
 
 void OrderSet::ApplyOrders() {
     DebugLogger() << "OrderSet::ApplyOrders() executing " << m_orders.size() << " orders";
-    for (OrderMap::value_type& order : m_orders)
+    for (auto& order : m_orders)
         order.second->Execute();
 }
 
 bool OrderSet::RescindOrder(int order) {
     bool retval = false;
-    OrderMap::iterator it = m_orders.find(order);
+    auto it = m_orders.find(order);
     if (it != m_orders.end()) {
         if (it->second->Undo()) {
             m_orders.erase(it);

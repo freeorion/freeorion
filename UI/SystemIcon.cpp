@@ -255,7 +255,7 @@ void SystemIcon::CompleteConstruction() {
     GG::Control::CompleteConstruction();
 
     ClientUI* ui = ClientUI::GetClientUI();
-    if (std::shared_ptr<const System> system = GetSystem(m_system_id)) {
+    if (auto system = GetSystem(m_system_id)) {
         StarType star_type = system->GetStarType();
         m_disc_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
                                               ClientUI::StarTypeFilePrefixes()[star_type],
@@ -641,7 +641,7 @@ void SystemIcon::Refresh() {
     std::string name;
     m_system_connection.disconnect();
 
-    std::shared_ptr<const System> system = GetSystem(m_system_id);
+    auto system = GetSystem(m_system_id);
     if (system) {
         name = system->Name();
         m_system_connection = system->StateChangedSignal.connect(

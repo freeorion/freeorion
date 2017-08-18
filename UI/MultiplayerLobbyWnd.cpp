@@ -371,8 +371,8 @@ namespace {
             m_empire_list = GG::Wnd::Create<CUIDropDownList>(6);
             m_empire_list->Resize(GG::Pt(EMPIRE_NAME_WIDTH, PlayerRowHeight()));
             m_empire_list->SetStyle(GG::LIST_NOSORT);
-            std::map<int, SaveGameEmpireData>::const_iterator save_game_empire_it = m_save_game_empire_data.end();
-            for (std::map<int, SaveGameEmpireData>::const_iterator it = m_save_game_empire_data.begin();
+            auto save_game_empire_it = m_save_game_empire_data.end();
+            for (auto it = m_save_game_empire_data.begin();
                  it != m_save_game_empire_data.end(); ++it)
             {
                 // insert row into droplist of empires for this player row
@@ -446,7 +446,7 @@ namespace {
                 ErrorLogger() << "Empire changed to no empire.  Ignoring change.";
                 return;
             }
-            std::map<int, SaveGameEmpireData>::const_iterator it = m_save_game_empire_data.begin();
+            auto it = m_save_game_empire_data.begin();
             std::advance(it, m_empire_list->IteratorToIndex(selected_it));
             m_player_data.m_empire_name =           it->second.m_empire_name;
             m_player_data.m_empire_color =          it->second.m_color;

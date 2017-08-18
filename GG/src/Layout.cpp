@@ -104,7 +104,7 @@ std::size_t Layout::Columns() const
 
 Flags<Alignment> Layout::ChildAlignment(const Wnd* wnd) const
 {
-    std::map<Wnd*, WndPosition>::const_iterator it = m_wnd_positions.find(const_cast<Wnd*>(wnd));
+    auto it = m_wnd_positions.find(const_cast<Wnd*>(wnd));
     if (it == m_wnd_positions.end())
         throw NoSuchChild("Layout::ChildAlignment() : Alignment of a nonexistent child was requested");
     return it->second.alignment;
@@ -549,7 +549,7 @@ void Layout::Add(std::shared_ptr<Wnd> wnd, std::size_t row, std::size_t column, 
 
 void Layout::Remove(Wnd* wnd)
 {
-    std::map<Wnd*, WndPosition>::const_iterator it = m_wnd_positions.find(wnd);
+    auto it = m_wnd_positions.find(wnd);
     if (it == m_wnd_positions.end())
         return;
 

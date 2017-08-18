@@ -246,7 +246,7 @@ void ObjectMap::swap(ObjectMap& rhs) {
 
 std::vector<int> ObjectMap::FindExistingObjectIDs() const {
     std::vector<int> result;
-    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : m_existing_objects)
+    for (const auto& entry : m_existing_objects)
     { result.push_back(entry.first); }
     return result;
 }
@@ -261,12 +261,12 @@ void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_obj
     m_existing_pop_centers.clear();
     m_existing_resource_centers.clear();
     m_existing_systems.clear();
-    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : m_objects) {
+    for (const auto& entry : m_objects) {
         if (!entry.second)
             continue;
         if (destroyed_object_ids.find(entry.first) != destroyed_object_ids.end())
             continue;
-        std::shared_ptr<UniverseObject> this_item = this->Object(entry.first);
+        auto this_item = this->Object(entry.first);
         m_existing_objects[entry.first] = this_item;
         switch (entry.second->ObjectType()) {
             case OBJ_BUILDING:

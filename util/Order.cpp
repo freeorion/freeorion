@@ -141,7 +141,7 @@ void NewFleetOrder::ExecuteImpl() const {
         ErrorLogger() << "Empire attempted to create a new fleet outside a system";
         return;
     }
-    std::shared_ptr<System> system = GetSystem(m_system_id);
+    auto system = GetSystem(m_system_id);
     if (!system) {
         ErrorLogger() << "Empire attempted to create a new fleet in a nonexistant system";
         return;
@@ -1226,7 +1226,7 @@ void GiveObjectToEmpireOrder::ExecuteImpl() const {
         if (fleet->OwnedBy(empire_id))
             fleet->SetGiveToEmpire(m_recipient_empire_id);
 
-    } else if (std::shared_ptr<Planet> planet = GetPlanet(m_object_id)) {
+    } else if (auto planet = GetPlanet(m_object_id)) {
         if (planet->OwnedBy(empire_id))
             planet->SetGiveToEmpire(m_recipient_empire_id);
     }

@@ -233,7 +233,7 @@ void MeterBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
 
 namespace {
     /** Return the vector of accounting information from \p obj_id of \p meter_type.*/
-    boost::optional<const std::vector<Effect::AccountingInfo>& > GetAccountingInfo(
+    boost::optional<const std::vector<Effect::AccountingInfo>&> GetAccountingInfo(
         int obj_id, const MeterType& meter_type)
     {
         // get object and meter, aborting if not valid
@@ -245,24 +245,22 @@ namespace {
 
         // get effect accounting info for this MeterBrowseWnd's object, aborting if non available
         const Universe& universe = GetUniverse();
-        const Effect::AccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
-        Effect::AccountingMap::const_iterator map_it = effect_accounting_map.find(obj_id);
+        const auto& effect_accounting_map = universe.GetEffectAccountingMap();
+        auto map_it = effect_accounting_map.find(obj_id);
         if (map_it == effect_accounting_map.end())
             return boost::none;
         const std::map<MeterType, std::vector<Effect::AccountingInfo>>& meter_map = map_it->second;
 
         // get accounting info for this MeterBrowseWnd's meter type, aborting if none available
-        std::map<MeterType, std::vector<Effect::AccountingInfo>>::const_iterator meter_it = meter_map.find(meter_type);
+        auto meter_it = meter_map.find(meter_type);
         if (meter_it == meter_map.end() || meter_it->second.empty())
             return boost::none;
 
-        const std::vector<Effect::AccountingInfo>& info_vec = meter_it->second;
-        return info_vec;
+        return meter_it->second;
     }
 }
 
 namespace DualMeter {
-
     /** Return the triplet of {Current, Projected, Target} meter value for the pair of meters \p
         actual_meter_type and \p target_meter_type associated with \p obj. */
     std::tuple<float, float, float> CurrentProjectedTarget(
@@ -279,10 +277,10 @@ namespace DualMeter {
             // If there is accounting info, correct the projected result by including the
             // results of all known effects in addition to the default meter change.
             if (boost::optional<const std::vector<Effect::AccountingInfo>&>
-                maybe_info_vec = GetAccountingInfo(obj.ID(), actual_meter_type))
+                    maybe_info_vec = GetAccountingInfo(obj.ID(), actual_meter_type))
             {
                 projected -= current;
-                for (const Effect::AccountingInfo& info : *maybe_info_vec) {
+                for (const auto& info : *maybe_info_vec) {
                     if ((info.cause_type == ECT_UNKNOWN_CAUSE)
                         || (info.cause_type == INVALID_EFFECTS_GROUP_CAUSE_TYPE))
                     {
@@ -543,7 +541,7 @@ void ShipDamageBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
 }
 
 void ShipDamageBrowseWnd::UpdateSummary() {
-    std::shared_ptr<const Ship> ship = GetShip(m_object_id);
+    auto ship = GetShip(m_object_id);
     if (!ship)
         return;
 
@@ -568,7 +566,7 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     m_effect_labels_and_values.clear();
 
     // get object and meter, aborting if not valid
-    std::shared_ptr<const Ship> ship = GetShip(m_object_id);
+    auto ship = GetShip(m_object_id);
     if (!ship) {
         ErrorLogger() << "ShipDamageBrowseWnd::UpdateEffectLabelsAndValues couldn't get ship with id " << m_object_id;
         return;
@@ -738,7 +736,7 @@ void ShipFightersBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
 }
 
 void ShipFightersBrowseWnd::UpdateSummary() {
-    std::shared_ptr<const Ship> ship = GetShip(m_object_id);
+    auto ship = GetShip(m_object_id);
     if (!ship)
         return;
 
@@ -810,7 +808,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     m_hangar_list->DetachChildren();
 
     // early return if no valid ship, ship design, or no parts in the design
-    std::shared_ptr<const Ship> ship = GetShip(m_object_id);
+    auto ship = GetShip(m_object_id);
     if (!ship) {
         ErrorLogger() << "Couldn't get ship with id " << m_object_id;
         return;

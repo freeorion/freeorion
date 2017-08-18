@@ -89,23 +89,23 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    iterator        CurrentItem() const;        ///< returns the currently selected list item (returns end() if none is selected)
-    std::size_t     CurrentItemIndex() const;   ///< returns the position of the currently selected list item within the list (returns -1 if none is selected)
+    iterator        CurrentItem() const;            ///< returns the currently selected list item (returns end() if none is selected)
+    std::size_t     CurrentItemIndex() const;       ///< returns the position of the currently selected list item within the list (returns -1 if none is selected)
 
     std::size_t     IteratorToIndex(iterator it) const;     ///< returns the position of \a it within the list (returns -1 if \a it == end())
     iterator        IndexToIterator(std::size_t n) const;   ///< returns an iterator to the row in position \a n (returns end() if \a n is an invalid index)
 
     bool            Empty() const;                  ///< returns true when the list is empty
 
-    const_iterator          begin() const;          ///< returns an iterator to the first list row
-    const_iterator          end() const;            ///< returns an iterator to the imaginary row one past the last
+    const_iterator  begin() const;                  ///< returns an iterator to the first list row
+    const_iterator  end() const;                    ///< returns an iterator to the imaginary row one past the last
 
     const Row&      GetRow(std::size_t n) const;    ///< returns a const reference to the row at index \a n; not range-checked.  \note This function is O(n).
     bool            Selected(iterator it) const;    ///< returns true if row \a it is selected
     bool            Selected(std::size_t n) const;  ///< returns true if row at position \a n is selected
     Clr             InteriorColor() const;          ///< returns the color painted into the client area of the control
 
-    Y               DropHeight() const; ///< returns the height of the drop-down list
+    Y               DropHeight() const;             ///< returns the height of the drop-down list
     bool            Dropped() const;                ///< Return true if the drop down list is open.
 
     /** Returns the style flags of the list \see GG::ListBoxStyle */

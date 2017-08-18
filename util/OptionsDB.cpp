@@ -223,7 +223,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
     if (description_width <= 0)
         throw std::runtime_error("The longest parameter name leaves no room for a description.");
 
-    for (const std::map<std::string, Option>::value_type& option : m_options) {
+    for (const auto& option : m_options) {
         // Ignore unrecognized options that have not been formally registered
         // with Add().
         if (!option.second.recognized)
@@ -240,7 +240,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
         boost::char_separator<char> separator(" \t");
         Tokenizer tokens(UserString(option.second.description), separator);
         int curr_column = description_column;
-        for (const Tokenizer::value_type& token : tokens) {
+        for (const auto& token : tokens) {
             if (80 < curr_column + token.size()) {
                 os << "\n" << std::string(description_column, ' ') << token;
                 curr_column = description_column + token.size();

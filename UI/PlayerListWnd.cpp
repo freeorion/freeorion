@@ -243,7 +243,7 @@ namespace {
 
             const std::map<int, PlayerInfo>& players = app->Players();
 
-            std::map<int, PlayerInfo>::const_iterator player_it = players.find(m_player_id);
+            auto player_it = players.find(m_player_id);
             if (player_it == players.end()) {
                 ErrorLogger() << "PlayerDataPanel::Update couldn't find player with id " << m_player_id;
                 return;
@@ -745,7 +745,7 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
 
     // get empire id of clicked player
     const std::map<int, PlayerInfo>& players = app->Players();
-    std::map<int, PlayerInfo>::const_iterator clicked_player_it = players.find(clicked_player_id);
+    auto clicked_player_it = players.find(clicked_player_id);
     if (clicked_player_it == players.end()) {
         ErrorLogger() << "PlayerListWnd::PlayerRightClicked couldn't find player with id " << clicked_player_id;
         return;

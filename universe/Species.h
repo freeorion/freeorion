@@ -228,9 +228,9 @@ private:
 class FO_COMMON_API SpeciesManager {
 private:
     struct FO_COMMON_API PlayableSpecies
-    { bool operator()(const std::map<std::string, Species*>::value_type& species_map_iterator) const; };
+    { bool operator()(const std::map<std::string, Species*>::value_type& species_entry) const; };
     struct FO_COMMON_API NativeSpecies
-    { bool operator()(const std::map<std::string, Species*>::value_type& species_map_iterator) const; };
+    { bool operator()(const std::map<std::string, Species*>::value_type& species_entry) const; };
 
 public:
     typedef std::map<std::string, Species*>::const_iterator     iterator;

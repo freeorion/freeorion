@@ -83,7 +83,7 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
     if (vis >= VIS_BASIC_VISIBILITY) {
         // add any visible lanes, without removing existing entries
         std::map<int, bool> visible_lanes_holes = copied_system->VisibleStarlanesWormholes(empire_id);
-        for (const std::map<int, bool>::value_type& entry : visible_lanes_holes)
+        for (const auto& entry : visible_lanes_holes)
         { this->m_starlanes_wormholes[entry.first] = entry.second; }
 
         // copy visible info of visible contained objects
@@ -170,7 +170,7 @@ std::string System::Dump() const {
         os << "  objects per orbit: ";
 
         int orbit_index = 0;
-        for (std::vector<int>::const_iterator it = m_orbits.begin();
+        for (auto it = m_orbits.begin();
             it != m_orbits.end();)
         {
             os << "[" << orbit_index << "]" << *it;
@@ -182,7 +182,7 @@ std::string System::Dump() const {
     }
 
     os << "  starlanes: ";
-    for (std::map<int, bool>::const_iterator it = m_starlanes_wormholes.begin();
+    for (auto it = m_starlanes_wormholes.begin();
          it != m_starlanes_wormholes.end();)
     {
         int lane_end_id = it->first;
@@ -191,7 +191,7 @@ std::string System::Dump() const {
     }
 
     os << "  objects: ";
-    for (std::set<int>::const_iterator it = m_objects.begin(); it != m_objects.end();) {
+    for (auto it = m_objects.begin(); it != m_objects.end();) {
         int obj_id = *it;
         ++it;
         if (obj_id == INVALID_OBJECT_ID)
@@ -208,7 +208,7 @@ const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and
         return this->PublicName(empire_id);
 
     // has the indicated empire ever detected this system?
-    const Universe::VisibilityTurnMap& vtm = GetUniverse().GetObjectVisibilityTurnMapByEmpire(this->ID(), empire_id);
+    const auto& vtm = GetUniverse().GetObjectVisibilityTurnMapByEmpire(this->ID(), empire_id);
     if (vtm.find(VIS_PARTIAL_VISIBILITY) == vtm.end()) {
         if (blank_unexplored_and_none)
             return EMPTY_STRING;
@@ -221,7 +221,7 @@ const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and
 
     if (m_star == STAR_NONE) {
         // determine if there are any planets in the system
-        for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingPlanets()) {
+        for (const auto& entry : Objects().ExistingPlanets()) {
             if (entry.second->SystemID() == this->ID())
                 return this->PublicName(empire_id);
         }
@@ -258,7 +258,7 @@ StarType System::NextYoungerStarType() const {
 
 int System::NumStarlanes() const {
     int retval = 0;
-    for (const std::map<int, bool>::value_type& entry : m_starlanes_wormholes) {
+    for (const auto& entry : m_starlanes_wormholes) {
         if (!entry.second)
             ++retval;
     }
@@ -267,7 +267,7 @@ int System::NumStarlanes() const {
 
 int System::NumWormholes() const {
     int retval = 0;
-    for (const std::map<int, bool>::value_type& entry : m_starlanes_wormholes) {
+    for (const auto& entry : m_starlanes_wormholes) {
         if (entry.second)
             ++retval;
     }
@@ -275,12 +275,12 @@ int System::NumWormholes() const {
 }
 
 bool System::HasStarlaneTo(int id) const {
-    std::map<int, bool>::const_iterator it = m_starlanes_wormholes.find(id);
+    auto it = m_starlanes_wormholes.find(id);
     return (it == m_starlanes_wormholes.end() ? false : it->second == false);
 }
 
 bool System::HasWormholeTo(int id) const {
-    std::map<int, bool>::const_iterator it = m_starlanes_wormholes.find(id);
+    auto it = m_starlanes_wormholes.find(id);
     return (it == m_starlanes_wormholes.end() ? false : it->second == true);
 }
 
@@ -559,7 +559,7 @@ std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id) const {
 
 
     // check if any of the adjacent systems are partial or better visible
-    for (const std::map<int, bool>::value_type& entry : m_starlanes_wormholes) {
+    for (const auto& entry : m_starlanes_wormholes) {
         int lane_end_sys_id = entry.first;
         if (universe.GetObjectVisibilityByEmpire(lane_end_sys_id, empire_id) >= VIS_PARTIAL_VISIBILITY)
             retval[lane_end_sys_id] = entry.second;
@@ -576,7 +576,7 @@ std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id) const {
     // get moving fleets owned by empire
     std::vector<std::shared_ptr<const Fleet>> moving_empire_fleets;
     for (auto& object : objects.FindObjects(MovingFleetVisitor())) {
-        if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(object))
+        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             if (fleet->OwnedBy(empire_id))
                 moving_empire_fleets.push_back(fleet);
     }
@@ -602,7 +602,7 @@ std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id) const {
             other_lane_end_sys_id = prev_sys_id;
 
         if (other_lane_end_sys_id != INVALID_OBJECT_ID) {
-            std::map<int, bool>::const_iterator lane_it = m_starlanes_wormholes.find(other_lane_end_sys_id);
+            auto lane_it = m_starlanes_wormholes.find(other_lane_end_sys_id);
             if (lane_it == m_starlanes_wormholes.end()) {
                 ErrorLogger() << "System::VisibleStarlanesWormholes found an owned fleet moving along a starlane connected to this system that isn't also connected to one of this system's starlane-connected systems...?";
                 continue;

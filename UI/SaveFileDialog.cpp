@@ -891,17 +891,17 @@ void SaveFileDialog::AskDelete() {
         if (Prompt (question)) {
             fs::remove(chosen);
             // Move selection to next if any or previous, if any
-            GG::ListBox::SelectionSet::const_iterator it = m_file_list->Selections().begin();
+            auto it = m_file_list->Selections().begin();
             if (it != m_file_list->Selections().end()) {
-                GG::ListBox::iterator row_it = *it;
-                GG::ListBox::iterator next(row_it);
-                ++next;
-                if (next != m_file_list->end()) {
-                    m_file_list->SelectRow(next, true);
+                auto row_it = *it;
+                auto next_it(row_it);
+                ++next_it;
+                if (next_it != m_file_list->end()) {
+                    m_file_list->SelectRow(next_it, true);
                 } else if (row_it != m_file_list->begin()) {
-                    GG::ListBox::iterator prev(row_it);
-                    --prev;
-                    m_file_list->SelectRow(next, true);
+                    auto prev_it(row_it);
+                    --prev_it;
+                    m_file_list->SelectRow(next_it, true);
                 }
                 m_file_list->Erase(row_it);
             }

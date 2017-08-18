@@ -177,7 +177,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     }
     m_production_labels_and_amounts.clear();
 
-    std::shared_ptr<const System> system = GetSystem(m_system_id);
+    auto system = GetSystem(m_system_id);
     if (!system || m_resource_type == INVALID_RESOURCE_TYPE)
         return;
 
@@ -267,7 +267,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
     }
     m_allocation_labels_and_amounts.clear();
 
-    std::shared_ptr<const System> system = GetSystem(m_system_id);
+    auto system = GetSystem(m_system_id);
     if (!system || m_resource_type == INVALID_RESOURCE_TYPE)
         return;
 

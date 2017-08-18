@@ -944,7 +944,7 @@ bool GG::FontManager::HasFont(const std::string& font_filename, unsigned int pts
 {
     bool retval = false;
     FontKey key(font_filename, pts);
-    std::map<FontKey, std::shared_ptr<Font>>::const_iterator it = m_rendered_fonts.find(key);
+    auto it = m_rendered_fonts.find(key);
     if (it != m_rendered_fonts.end()) {
         std::set<UnicodeCharset> requested_charsets(first, last);
         std::set<UnicodeCharset> found_charsets(it->second->UnicodeCharsets().begin(),

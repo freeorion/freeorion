@@ -257,13 +257,13 @@ FieldTypeManager::FieldTypeManager() {
 }
 
 FieldTypeManager::~FieldTypeManager() {
-    for (const std::map<std::string, FieldType*>::value_type& entry : m_field_types) {
+    for (const auto& entry : m_field_types) {
         delete entry.second;
     }
 }
 
 const FieldType* FieldTypeManager::GetFieldType(const std::string& name) const {
-    std::map<std::string, FieldType*>::const_iterator it = m_field_types.find(name);
+    auto it = m_field_types.find(name);
     return it != m_field_types.end() ? it->second : nullptr;
 }
 

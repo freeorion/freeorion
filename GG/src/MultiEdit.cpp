@@ -707,10 +707,8 @@ std::pair<CPSize, CPSize> MultiEdit::GetDoubleButtonDownWordIndices(CPSize char_
     this->m_double_click_cursor_pos = std::pair<CPSize, CPSize>(CP0, CP0);
     if (m_in_double_click_mode) {
         //std::cout << "GetDoubleButtonDownWordIndices in double click mode!" << std::endl;
-        std::set<std::pair<CPSize, CPSize>> words =
-            GUI::GetGUI()->FindWords(Text());
-        std::set<std::pair<CPSize, CPSize>>::const_iterator it =
-            std::find_if(words.begin(), words.end(), InRange(char_index));
+        auto words = GUI::GetGUI()->FindWords(Text());
+        auto it = std::find_if(words.begin(), words.end(), InRange(char_index));
         if (it != words.end())
             this->m_double_click_cursor_pos = *it;
     }

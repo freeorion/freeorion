@@ -154,14 +154,14 @@ std::string TextControl::Text(CPSize from, CPSize to) const
 
     //std::cout << "low: " << low << "  high: " << high << std::endl << std::flush;
 
-    std::pair<std::size_t, CPSize> low_pos = LinePositionOf(low, m_line_data);
-    std::pair<std::size_t, CPSize> high_pos = LinePositionOf(high, m_line_data);
+    auto low_pos = LinePositionOf(low, m_line_data);
+    auto high_pos = LinePositionOf(high, m_line_data);
 
     StrSize low_string_idx = StringIndexOf(low_pos.first, low_pos.second, m_line_data);
     StrSize high_string_idx = StringIndexOf(high_pos.first, high_pos.second, m_line_data);
 
-    std::string::const_iterator low_it = m_text.begin() + Value(low_string_idx);
-    std::string::const_iterator high_it = m_text.begin() + Value(high_string_idx);
+    auto low_it = m_text.begin() + Value(low_string_idx);
+    auto high_it = m_text.begin() + Value(high_string_idx);
 
     try {
         //std::cout << "dist begin to low: " << std::distance(m_text.begin(), low_it) << std::endl << std::flush;

@@ -125,7 +125,7 @@ std::ostream& XMLElement::WriteElement(std::ostream& os, int indent/* = 0*/, boo
     if (whitespace)
         os << std::string(indent * 2, ' ');
     os << '<' << m_tag;
-    for (const std::map<std::string, std::string>::value_type& attribute : attributes)
+    for (const auto& attribute : attributes)
         os << ' ' << attribute.first << "=\"" << attribute.second << "\"";
     if (children.empty() && m_text.empty() && !m_root) {
         os << "/>";

@@ -2905,7 +2905,7 @@ namespace {
                 // candidate_containers is smaller, so we iterate it and look up each candidate container in m_subcondition_matches_ids
                 for (int id : candidate_containers) {
                     // std::lower_bound requires m_subcondition_matches_ids to be sorted
-                    std::vector<int>::const_iterator matching_it = std::lower_bound(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end(), id);
+                    auto matching_it = std::lower_bound(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end(), id);
 
                     if (matching_it != m_subcondition_matches_ids.end() && *matching_it == id) {
                         match = true;
@@ -3137,7 +3137,7 @@ std::string InSystem::Description(bool negated/* = false*/) const {
     int system_id = INVALID_OBJECT_ID;
     if (m_system_id && m_system_id->ConstantExpr())
         system_id = m_system_id->Eval();
-    if (std::shared_ptr<const System> system = GetSystem(system_id))
+    if (auto system = GetSystem(system_id))
         system_str = system->Name();
     else if (m_system_id)
         system_str = m_system_id->Description();
@@ -3184,7 +3184,7 @@ void InSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 
     // simple case of a single specified system id; can add just objects in that system
     int system_id = m_system_id->Eval(parent_context);
-    std::shared_ptr<const System> system = GetSystem(system_id);
+    auto system = GetSystem(system_id);
     if (!system)
         return;
 
@@ -3291,7 +3291,7 @@ std::string ObjectID::Description(bool negated/* = false*/) const {
     int object_id = INVALID_OBJECT_ID;
     if (m_object_id && m_object_id->ConstantExpr())
         object_id = m_object_id->Eval();
-    if (std::shared_ptr<const System> system = GetSystem(object_id))
+    if (auto system = GetSystem(object_id))
         object_str = system->Name();
     else if (m_object_id)
         object_str = m_object_id->Description();
@@ -4142,7 +4142,7 @@ bool Species::Match(const ScriptingContext& local_context) const {
         }
     }
     // is it a ship?
-    std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(candidate);
+    auto ship = std::dynamic_pointer_cast<const Ship>(candidate);
     if (ship) {
         if (m_names.empty()) {
             return !ship->SpeciesName().empty();    // match any species name
@@ -4275,7 +4275,7 @@ namespace {
             int count = 0;
 
             if (m_empire_id == ALL_EMPIRES) {
-                for (std::map<int, Empire*>::value_type& item : Empires()) {
+                for (auto& item : Empires()) {
                     const Empire* empire = item.second;
                     count += NumberOnQueue(empire->GetProductionQueue(), m_build_type,
                                            candidate->ID(), m_name, m_design_id);
@@ -4816,7 +4816,7 @@ std::string StarType::Dump() const {
 }
 
 bool StarType::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "StarType::Match passed no candidate object";
         return false;
@@ -4824,7 +4824,7 @@ bool StarType::Match(const ScriptingContext& local_context) const {
 
     std::shared_ptr<const System> system = GetSystem(candidate->SystemID());
     if (system || (system = std::dynamic_pointer_cast<const System>(candidate))) {
-        for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
+        for (auto type : m_types) {
             if (type->Eval(local_context) == system->GetStarType())
                 return true;
         }
@@ -4833,7 +4833,7 @@ bool StarType::Match(const ScriptingContext& local_context) const {
 }
 
 void StarType::SetTopLevelContent(const std::string& content_name) {
-    for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
+    for (auto type : m_types) {
         if (type)
             (type)->SetTopLevelContent(content_name);
     }
@@ -4879,7 +4879,7 @@ namespace {
                 return false;
 
             // is it a ship?
-            std::shared_ptr<const ::Ship> ship = std::dynamic_pointer_cast<const ::Ship>(candidate);
+            auto ship = std::dynamic_pointer_cast<const ::Ship>(candidate);
             if (!ship)
                 return false;
             // with a valid design?
@@ -4943,7 +4943,7 @@ std::string DesignHasHull::Dump() const {
 }
 
 bool DesignHasHull::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "DesignHasHull::Match passed no candidate object";
         return false;
@@ -4955,7 +4955,7 @@ bool DesignHasHull::Match(const ScriptingContext& local_context) const {
 }
 
 void DesignHasHull::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                  ObjectSet& condition_non_targets) const
+                                                      ObjectSet& condition_non_targets) const
 {
     AddShipSet(condition_non_targets);
 }
@@ -5347,7 +5347,7 @@ namespace {
         {}
 
         bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
-            std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(candidate);
+            auto ship = std::dynamic_pointer_cast<const Ship>(candidate);
             if (!ship)
                 return false;
             const ShipDesign* candidate_design = ship->Design();
@@ -5482,7 +5482,7 @@ namespace {
                 return false;
             if (m_design_id == INVALID_DESIGN_ID)
                 return false;
-            if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(candidate))
+            if (auto ship = std::dynamic_pointer_cast<const Ship>(candidate))
                 if (ship->DesignID() == m_design_id)
                     return true;
             return false;
@@ -5990,7 +5990,7 @@ namespace {
         bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
-            std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(candidate);
+            auto ship = std::dynamic_pointer_cast<const Ship>(candidate);
             if (!ship)
                 return false;
             const Meter* meter = ship->GetPartMeter(m_meter, m_part_name);
@@ -7478,7 +7478,7 @@ namespace {
             const std::map<int, bool>& sys_existing_lanes = system->StarlanesWormholes();
 
             // check all existing lanes of currently-being-checked system
-            for (const std::map<int, bool>::value_type& lane : sys_existing_lanes) {
+            for (const auto& lane : sys_existing_lanes) {
                 std::shared_ptr<const System> lane_end_sys3 = GetSystem(lane.first);
                 if (!lane_end_sys3)
                     continue;
@@ -7562,7 +7562,7 @@ namespace {
             // check if any of the proposed lanes are too close to any already-
             // present lanes of the candidate system
             //TraceLogger() << "... Checking lanes of candidate system: " << candidate->UniverseObject::Name() << std::endl;
-            for (const std::map<int, bool>::value_type& lane : candidate_sys->StarlanesWormholes()) {
+            for (const auto& lane : candidate_sys->StarlanesWormholes()) {
                 std::shared_ptr<const System> candidate_existing_lane_end_sys = GetSystem(lane.first);
                 if (!candidate_existing_lane_end_sys)
                     continue;
@@ -7583,7 +7583,7 @@ namespace {
             for (auto& dest_sys : m_destination_systems) {
                 // check this destination system's existing lanes against a lane
                 // to the candidate system
-                for (const std::map<int, bool>::value_type& dest_lane : dest_sys->StarlanesWormholes()) {
+                for (const auto& dest_lane : dest_sys->StarlanesWormholes()) {
                     std::shared_ptr<const System> dest_lane_end_sys = GetSystem(dest_lane.first);
                     if (!dest_lane_end_sys)
                         continue;
@@ -7598,16 +7598,16 @@ namespace {
 
             // check if any of the proposed lanes are too close to eachother
             //TraceLogger() << "... Checking proposed lanes against eachother" << std::endl;
-            for (std::vector<std::shared_ptr<const System>>::const_iterator it1 = m_destination_systems.begin();
+            for (auto it1 = m_destination_systems.begin();
                  it1 != m_destination_systems.end(); ++it1)
             {
-                std::shared_ptr<const System> dest_sys1 = *it1;
+                auto dest_sys1 = *it1;
 
                 // don't need to check a lane in both directions, so start at one past it1
-                std::vector<std::shared_ptr<const System>>::const_iterator it2 = it1;
+                auto it2 = it1;
                 ++it2;
                 for (; it2 != m_destination_systems.end(); ++it2) {
-                    std::shared_ptr<const System> dest_sys2 = *it2;
+                    auto dest_sys2 = *it2;
                     if (LanesAngularlyTooClose(candidate_sys, dest_sys1, dest_sys2)) {
                         //TraceLogger() << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys1->UniverseObject::Name() << " and also to " << dest_sys2->UniverseObject::Name() << std::endl;
                         return false;
@@ -7853,9 +7853,9 @@ bool Stationary::Match(const ScriptingContext& local_context) const {
     // the only objects that can move are fleets and the ships in them.  so,
     // attempt to cast the candidate object to a fleet or ship, and if it's a ship
     // get the fleet of that ship
-    std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(candidate);
+    auto fleet = std::dynamic_pointer_cast<const Fleet>(candidate);
     if (!fleet)
-        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(candidate))
+        if (auto ship = std::dynamic_pointer_cast<const Ship>(candidate))
             fleet = GetFleet(ship->FleetID());
 
     if (fleet) {
@@ -7911,9 +7911,9 @@ bool Aggressive::Match(const ScriptingContext& local_context) const {
     // the only objects that can be aggressive are fleets and the ships in them.
     // so, attempt to cast the candidate object to a fleet or ship, and if it's
     // a ship get the fleet of that ship
-    std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(candidate);
+    auto fleet = std::dynamic_pointer_cast<const Fleet>(candidate);
     if (!fleet)
-        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(candidate))
+        if (auto ship = std::dynamic_pointer_cast<const Ship>(candidate))
             fleet = GetFleet(ship->FleetID());
 
     if (!fleet)
@@ -7966,8 +7966,8 @@ namespace {
                 return false;
 
             const SupplyManager& supply = GetSupplyManager();
-            const std::map<int, std::set<int>>& empire_supplyable_systems = supply.FleetSupplyableSystemIDs();
-            std::map<int, std::set<int>>::const_iterator it = empire_supplyable_systems.find(m_empire_id);
+            const auto& empire_supplyable_systems = supply.FleetSupplyableSystemIDs();
+            auto it = empire_supplyable_systems.find(m_empire_id);
             if (it == empire_supplyable_systems.end())
                 return false;
             return it->second.find(candidate->SystemID()) != it->second.end();
@@ -8255,7 +8255,7 @@ bool CanColonize::Match(const ScriptingContext& local_context) const {
         species_name = planet->SpeciesName();
 
     } else if (candidate->ObjectType() == OBJ_SHIP) {
-        std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(candidate);
+        auto ship = std::dynamic_pointer_cast<const Ship>(candidate);
         if (!ship) {
             ErrorLogger() << "CanColonize couldn't cast supposedly ship candidate";
             return false;
@@ -8394,7 +8394,7 @@ namespace {
 
             // check if any of the by_objects is ordered to bombard the candidate planet
             for (auto& obj : m_by_objects) {
-                std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(obj);
+                auto ship = std::dynamic_pointer_cast<const Ship>(obj);
                 if (!ship)
                     continue;
                 if (ship->OrderedBombardPlanet() == planet_id)

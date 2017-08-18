@@ -90,9 +90,11 @@ namespace {
         return objects_per_owner;
     }
 
-    std::string CountsToText(const std::map<int, int>& count_per_empire, const std::string& delimiter = ", ") {
+    std::string CountsToText(const std::map<int, int>& count_per_empire,
+                             const std::string& delimiter = ", ")
+    {
         std::stringstream ss;
-        for (std::map<int,int>::const_iterator it = count_per_empire.begin(); it != count_per_empire.end(); ) {
+        for (auto it = count_per_empire.begin(); it != count_per_empire.end(); ) {
             std::string owner_string;
             if (const Empire* owner = GetEmpire(it->first))
                 owner_string = GG::RgbaTag(owner->Color()) + "<" + VarText::EMPIRE_ID_TAG + " "
@@ -400,7 +402,7 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
     // Write Header text
     DebugLogger(combat_log) << "Showing combat log #" << log_id << " with " << log->combat_events.size() << " events";
 
-    std::shared_ptr<const System> system = GetSystem(log->system_id);
+    auto system = GetSystem(log->system_id);
     const std::string& sys_name = (system ? system->PublicName(client_empire_id) : UserString("ERROR"));
 
     AddRow(DecorateLinkText(str(FlexibleFormat(UserString("ENC_COMBAT_LOG_DESCRIPTION_STR"))

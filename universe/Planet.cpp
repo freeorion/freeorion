@@ -677,7 +677,7 @@ void Planet::Conquer(int conquerer) {
             // destroy object
             //DebugLogger() << "Planet::Conquer destroying object: " << building->Name();
             this->RemoveBuilding(building->ID());
-            if (std::shared_ptr<System> system = GetSystem(this->SystemID()))
+            if (auto system = GetSystem(this->SystemID()))
                 system->Remove(building->ID());
             GetUniverse().Destroy(building->ID());
         } else if (cap_result == CR_RETAIN) {

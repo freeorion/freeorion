@@ -16,7 +16,9 @@ SitRepEntry::SitRepEntry() :
     m_icon("/icons/sitrep/generic.png")
 {}
 
-SitRepEntry::SitRepEntry(const std::string& template_string, int turn, const std::string& icon, const std::string label, bool stringtable_lookup) :
+SitRepEntry::SitRepEntry(const std::string& template_string, int turn,
+                         const std::string& icon, const std::string label,
+                         bool stringtable_lookup) :
     VarText(template_string, stringtable_lookup),
     m_turn(turn),
     m_icon(icon.empty() ? "/icons/sitrep/generic.png" : icon),
@@ -24,7 +26,7 @@ SitRepEntry::SitRepEntry(const std::string& template_string, int turn, const std
 {}
 
 int SitRepEntry::GetDataIDNumber(const std::string& tag) const {
-    std::map<std::string, std::string>::const_iterator elem = m_variables.find(tag);
+    auto elem = m_variables.find(tag);
     try {
         if (elem != m_variables.end())
             return boost::lexical_cast<int>(elem->second);
@@ -36,7 +38,7 @@ int SitRepEntry::GetDataIDNumber(const std::string& tag) const {
 
 const std::string& SitRepEntry::GetDataString(const std::string& tag) const {
     static const std::string EMPTY_STRING;
-    std::map<std::string, std::string>::const_iterator elem = m_variables.find(tag);
+    auto elem = m_variables.find(tag);
     if (elem == m_variables.end())
         return EMPTY_STRING;
     return elem->second;
@@ -44,7 +46,7 @@ const std::string& SitRepEntry::GetDataString(const std::string& tag) const {
 
 std::string SitRepEntry::Dump() const {
     std::string retval = "SitRep template_string = \"" + m_template_string + "\"";
-    for (const std::map<std::string, std::string>::value_type& variable : m_variables)
+    for (const auto& variable : m_variables)
         retval += " " + variable.first + " = " + variable.second;
     retval += " turn = " + std::to_string(m_turn);
     retval += " icon = " + m_icon;
@@ -208,7 +210,7 @@ SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id,
 
     SitRepEntry sitrep;
 
-    if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(obj)) {
+    if (auto ship = std::dynamic_pointer_cast<const Ship>(obj)) {
         if (ship->Unowned())
             sitrep = SitRepEntry(
                 UserStringNop("SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM"),
@@ -258,7 +260,7 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_i
 
     SitRepEntry sitrep;
 
-    if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(obj)) {
+    if (auto ship = std::dynamic_pointer_cast<const Ship>(obj)) {
         if (ship->Unowned())
             sitrep = SitRepEntry(
                 UserStringNop("SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM"),
@@ -280,7 +282,7 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_i
         sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(object_id));
         sitrep.AddVariable(VarText::DESIGN_ID_TAG,     std::to_string(ship->DesignID()));
 
-    } else if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(obj)) {
+    } else if (auto fleet = std::dynamic_pointer_cast<const Fleet>(obj)) {
         if (fleet->Unowned())
             sitrep = SitRepEntry(
                 UserStringNop("SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM"),

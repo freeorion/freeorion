@@ -40,7 +40,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     turn(turn_),
     system_id(system_id_)
 {
-    std::shared_ptr<System> system = ::GetSystem(system_id);
+    auto system = ::GetSystem(system_id);
     if (!system) {
         ErrorLogger() << "CombatInfo constructed with invalid system id: " << system_id;
         return;
@@ -82,7 +82,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     // ships
     for (auto& ship : ships) {
         int ship_id = ship->ID();
-        std::shared_ptr<const Fleet> fleet = GetFleet(ship->FleetID());
+        auto fleet = GetFleet(ship->FleetID());
         if (!fleet) {
             ErrorLogger() << "CombatInfo::CombatInfo couldn't get fleet with id "
                                    << ship->FleetID() << " in system " << system->Name() << " (" << system_id << ")";
@@ -233,7 +233,7 @@ void CombatInfo::GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisi
 void CombatInfo::InitializeObjectVisibility()
 {
     // system and empire visibility of all objects in it
-    std::shared_ptr<System> system = ::GetSystem(system_id);
+    auto system = ::GetSystem(system_id);
     std::set< int > local_object_ids = system->ContainedObjectIDs();
     for (int empire_id : empire_ids) {
         if (empire_id == ALL_EMPIRES)
@@ -664,7 +664,7 @@ namespace {
     }
 
     bool ObjectCanAttack(std::shared_ptr<const UniverseObject> obj) {
-        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(obj)) {
+        if (auto ship = std::dynamic_pointer_cast<const Ship>(obj)) {
             return ship->IsArmed() || ship->HasFighters();
         } else if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(obj)) {
             return planet->CurrentMeterValue(METER_DEFENSE) > 0.0f;
@@ -751,7 +751,7 @@ namespace {
                 if (combat_info.destroyed_object_ids.find(attacker_id) != combat_info.destroyed_object_ids.end())
                     continue;   // destroyed objects can't launch fighters
 
-                std::shared_ptr<const Ship> ship = combat_info.objects.Object<Ship>(attacker_id);
+                auto ship = combat_info.objects.Object<Ship>(attacker_id);
                 if (!ship)
                     continue;   // non-ships can't launch fighters
 
@@ -771,7 +771,7 @@ namespace {
     // Calculate monster detection strength in system
     float GetMonsterDetection(const CombatInfo& combat_info) {
         float monster_detection = 0.0;
-        for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin(); it != combat_info.objects.const_end(); ++it) {
+        for (auto it = combat_info.objects.const_begin(); it != combat_info.objects.const_end(); ++it) {
             auto obj = *it;
             if (obj->Unowned() && (obj->ObjectType() == OBJ_SHIP || obj->ObjectType() == OBJ_PLANET )){
                 monster_detection = std::max(monster_detection, obj->CurrentMeterValue(METER_DETECTION));
@@ -864,7 +864,7 @@ namespace {
             IncapacitationsEventPtr incaps_event =
                 std::make_shared<IncapacitationsEvent>();
 
-            for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin();
+            for (auto it = combat_info.objects.const_begin();
                  it != combat_info.objects.const_end(); ++it)
             {
                 auto obj = *it;
@@ -1062,7 +1062,7 @@ namespace {
 
         // Populate lists of things that can attack and be attacked. List attackers also by empire.
         void PopulateAttackersAndTargets(const CombatInfo& combat_info) {
-            for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin();
+            for (auto it = combat_info.objects.const_begin();
                  it != combat_info.objects.const_end(); ++it)
             {
                 auto obj = *it;

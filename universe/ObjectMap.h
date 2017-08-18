@@ -443,8 +443,7 @@ ObjectMap::const_iterator<T> ObjectMap::const_end() const
 
 template <class T>
 std::shared_ptr<const T> ObjectMap::Object(int id) const {
-    typename std::map<int, std::shared_ptr<typename boost::remove_const<T>::type>>::const_iterator it =
-        Map<typename boost::remove_const<T>::type>().find(id);
+    auto it = Map<typename boost::remove_const<T>::type>().find(id);
     return std::shared_ptr<const T>(
         it != Map<typename boost::remove_const<T>::type>().end()
             ? it->second
@@ -453,8 +452,7 @@ std::shared_ptr<const T> ObjectMap::Object(int id) const {
 
 template <class T>
 std::shared_ptr<T> ObjectMap::Object(int id) {
-    typename std::map<int, std::shared_ptr<typename boost::remove_const<T>::type>>::iterator it =
-        Map<typename boost::remove_const<T>::type>().find(id);
+    auto it = Map<typename boost::remove_const<T>::type>().find(id);
     return std::shared_ptr<T>(
         it != Map<typename boost::remove_const<T>::type>().end()
             ? it->second
@@ -464,7 +462,7 @@ std::shared_ptr<T> ObjectMap::Object(int id) {
 template <class T>
 std::vector<std::shared_ptr<const T>> ObjectMap::FindObjects() const {
     std::vector<std::shared_ptr<const T>> result;
-    for (const_iterator<T> it = const_begin<T>(); it != const_end<T>(); ++it)
+    for (auto it = const_begin<T>(); it != const_end<T>(); ++it)
         result.push_back(*it);
     return result;
 }
@@ -472,7 +470,7 @@ std::vector<std::shared_ptr<const T>> ObjectMap::FindObjects() const {
 template <class T>
 std::vector<std::shared_ptr<T>> ObjectMap::FindObjects() {
     std::vector<std::shared_ptr<T>> result;
-    for (iterator<T> it = begin<T>(); it != end<T>(); ++it)
+    for (auto it = begin<T>(); it != end<T>(); ++it)
         result.push_back(*it);
     return result;
 }
@@ -480,8 +478,7 @@ std::vector<std::shared_ptr<T>> ObjectMap::FindObjects() {
 template <class T>
 std::vector<int> ObjectMap::FindObjectIDs() const {
     std::vector<int> result;
-    for (typename std::map<int, std::shared_ptr<T>>::const_iterator
-         it = Map<typename boost::remove_const<T>::type>().begin();
+    for (auto it = Map<typename boost::remove_const<T>::type>().begin();
          it != Map<typename boost::remove_const<T>::type>().end(); ++it)
     { result.push_back(it->first); }
     return result;
@@ -492,7 +489,7 @@ std::vector<std::shared_ptr<const T>> ObjectMap::FindObjects(const std::vector<i
     std::vector<std::shared_ptr<const T>> retval;
     typedef typename boost::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
-        typename std::map<int, std::shared_ptr<mutableT>>::const_iterator map_it = Map<mutableT>().find(object_id);
+        auto map_it = Map<mutableT>().find(object_id);
         if (map_it != Map<mutableT>().end())
             retval.push_back(std::shared_ptr<const T>(map_it->second));
     }
@@ -504,7 +501,7 @@ std::vector<std::shared_ptr<const T>> ObjectMap::FindObjects(const std::set<int>
     std::vector<std::shared_ptr<const T>> retval;
     typedef typename boost::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
-        typename std::map<int, std::shared_ptr<mutableT>>::const_iterator map_it = Map<mutableT>().find(object_id);
+        auto map_it = Map<mutableT>().find(object_id);
         if (map_it != Map<mutableT>().end())
             retval.push_back(std::shared_ptr<const T>(map_it->second));
     }
@@ -516,7 +513,7 @@ std::vector<std::shared_ptr<T>> ObjectMap::FindObjects(const std::vector<int>& o
     std::vector<std::shared_ptr<T>> retval;
     typedef typename boost::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
-        typename std::map<int, std::shared_ptr<mutableT>>::const_iterator map_it = Map<mutableT>().find(object_id);
+        auto map_it = Map<mutableT>().find(object_id);
         if (map_it != Map<mutableT>().end())
             retval.push_back(std::shared_ptr<T>(map_it->second));
     }
@@ -528,7 +525,7 @@ std::vector<std::shared_ptr<T>> ObjectMap::FindObjects(const std::set<int>& obje
     std::vector<std::shared_ptr<T>> retval;
     typedef typename boost::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
-        typename std::map<int, std::shared_ptr<mutableT>>::const_iterator map_it = Map<mutableT>().find(object_id);
+        auto map_it = Map<mutableT>().find(object_id);
         if (map_it != Map<mutableT>().end())
             retval.push_back(std::shared_ptr<T>(map_it->second));
     }

@@ -207,13 +207,13 @@ PartTypeManager::PartTypeManager() {
 }
 
 PartTypeManager::~PartTypeManager() {
-    for (std::map<std::string, PartType*>::value_type& entry : m_parts) {
+    for (auto& entry : m_parts) {
         delete entry.second;
     }
 }
 
 const PartType* PartTypeManager::GetPartType(const std::string& name) const {
-    std::map<std::string, PartType*>::const_iterator it = m_parts.find(name);
+    auto it = m_parts.find(name);
     return it != m_parts.end() ? it->second : nullptr;
 }
 
@@ -661,13 +661,13 @@ HullTypeManager::HullTypeManager() {
 }
 
 HullTypeManager::~HullTypeManager() {
-    for (std::map<std::string, HullType*>::value_type& entry : m_hulls) {
+    for (auto& entry : m_hulls) {
         delete entry.second;
     }
 }
 
 const HullType* HullTypeManager::GetHullType(const std::string& name) const {
-    std::map<std::string, HullType*>::const_iterator it = m_hulls.find(name);
+    auto it = m_hulls.find(name);
     return it != m_hulls.end() ? it->second : nullptr;
 }
 

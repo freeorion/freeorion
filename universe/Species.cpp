@@ -148,7 +148,7 @@ std::string Species::Dump() const {
     } else {
         retval += DumpIndent() + "environments = [\n";
         ++g_indent;
-        for (const std::map<PlanetType, PlanetEnvironment>::value_type& entry : m_planet_environments) {
+        for (const auto& entry : m_planet_environments) {
             retval += DumpIndent() + "type = " + PlanetTypeToString(entry.first)
                                    + " environment = " + PlanetEnvironmentToString(entry.second)
                                    + "\n";
@@ -204,7 +204,7 @@ const Condition::ConditionBase* Species::Location() const {
 }
 
 PlanetEnvironment Species::GetPlanetEnvironment(PlanetType planet_type) const {
-    std::map<PlanetType, PlanetEnvironment>::const_iterator it = m_planet_environments.find(planet_type);
+    auto it = m_planet_environments.find(planet_type);
     if (it == m_planet_environments.end())
         return PE_UNINHABITABLE;
     else
@@ -244,7 +244,7 @@ PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const
     // determine which environment rating is the best available for this species
     PlanetEnvironment best_environment = PE_UNINHABITABLE;
     //std::set<PlanetType> best_types;
-    for (const std::map<PlanetType, PlanetEnvironment>::value_type& entry : m_planet_environments) {
+    for (const auto& entry : m_planet_environments) {
         if (entry.second == best_environment) {
             //best_types.insert(entry.first);
         } else if (entry.second > best_environment) {
@@ -344,12 +344,12 @@ unsigned int Species::GetCheckSum() const {
 SpeciesManager* SpeciesManager::s_instance = nullptr;
 
 bool SpeciesManager::PlayableSpecies::operator()(
-    const std::map<std::string, Species*>::value_type& species_map_iterator) const
-{ return species_map_iterator.second->Playable(); }
+    const std::map<std::string, Species*>::value_type& species_entry) const
+{ return species_entry.second->Playable(); }
 
 bool SpeciesManager::NativeSpecies::operator()(
-    const std::map<std::string, Species*>::value_type& species_map_iterator) const
-{ return species_map_iterator.second->Native(); }
+    const std::map<std::string, Species*>::value_type& species_entry) const
+{ return species_entry.second->Native(); }
 
 SpeciesManager::SpeciesManager() {
     if (s_instance)
@@ -379,17 +379,17 @@ SpeciesManager::SpeciesManager() {
 }
 
 SpeciesManager::~SpeciesManager() {
-    for (std::map<std::string, Species*>::value_type& entry : m_species)
+    for (auto& entry : m_species)
         delete entry.second;
 }
 
 const Species* SpeciesManager::GetSpecies(const std::string& name) const {
-    std::map<std::string, Species*>::const_iterator it = m_species.find(name);
+    auto it = m_species.find(name);
     return it != m_species.end() ? it->second : nullptr;
 }
 
 Species* SpeciesManager::GetSpecies(const std::string& name) {
-    std::map<std::string, Species*>::iterator it = m_species.find(name);
+    auto it = m_species.find(name);
     return it != m_species.end() ? it->second : nullptr;
 }
 
@@ -465,18 +465,18 @@ const std::string& SpeciesManager::SequentialPlayableSpeciesName(int id) const {
 }
 
 void SpeciesManager::ClearSpeciesHomeworlds() {
-    for (std::map<std::string, Species*>::value_type& entry : m_species)
+    for (auto& entry : m_species)
         entry.second->SetHomeworlds(std::set<int>());
 }
 
 void SpeciesManager::SetSpeciesHomeworlds(const std::map<std::string, std::set<int>>& species_homeworld_ids) {
     ClearSpeciesHomeworlds();
-    for (const std::map<std::string, std::set<int>>::value_type& entry : species_homeworld_ids) {
+    for (auto& entry : species_homeworld_ids) {
         const std::string& species_name = entry.first;
         const std::set<int>& homeworlds = entry.second;
 
         Species* species = nullptr;
-        std::map<std::string, Species*>::iterator species_it = m_species.find(species_name);
+        auto species_it = m_species.find(species_name);
         if (species_it != m_species.end())
             species = species_it->second;
 
@@ -502,7 +502,7 @@ void SpeciesManager::SetSpeciesSpeciesOpinion(const std::string& opinionated_spe
 
 std::map<std::string, std::set<int>> SpeciesManager::GetSpeciesHomeworldsMap(int encoding_empire/* = ALL_EMPIRES*/) const {
     std::map<std::string, std::set<int>> retval;
-    for (const std::map<std::string, Species*>::value_type& entry : m_species) {
+    for (const auto& entry : m_species) {
         const std::string species_name = entry.first;
         const Species* species = entry.second;
         if (!species) {
@@ -522,22 +522,22 @@ const std::map<std::string, std::map<std::string, float>>& SpeciesManager::GetSp
 { return m_species_species_opinions; }
 
 float SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, int empire_id) const {
-    std::map<std::string, std::map<int, float>>::const_iterator sp_it = m_species_empire_opinions.find(species_name);
+    auto sp_it = m_species_empire_opinions.find(species_name);
     if (sp_it == m_species_empire_opinions.end())
         return 0.0f;
     const std::map<int, float>& emp_map = sp_it->second;
-    std::map<int, float>::const_iterator emp_it = emp_map.find(empire_id);
+    auto emp_it = emp_map.find(empire_id);
     if (emp_it == emp_map.end())
         return 0.0f;
     return emp_it->second;
 }
 
 float SpeciesManager::SpeciesSpeciesOpinion(const std::string& opinionated_species_name, const std::string& rated_species_name) const {
-    std::map<std::string, std::map<std::string, float>>::const_iterator sp_it = m_species_species_opinions.find(opinionated_species_name);
+    auto sp_it = m_species_species_opinions.find(opinionated_species_name);
     if (sp_it == m_species_species_opinions.end())
         return 0.0f;
-    const std::map<std::string, float>& ra_sp_map = sp_it->second;
-    std::map<std::string, float>::const_iterator ra_sp_it = ra_sp_map.find(rated_species_name);
+    const auto& ra_sp_map = sp_it->second;
+    auto ra_sp_it = ra_sp_map.find(rated_species_name);
     if (ra_sp_it == ra_sp_map.end())
         return 0.0f;
     return ra_sp_it->second;
@@ -551,7 +551,7 @@ void SpeciesManager::ClearSpeciesOpinions() {
 void SpeciesManager::UpdatePopulationCounter() {
     // ships of each species and design
     m_species_object_populations.clear();
-    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingObjects()) {
+    for (const auto& entry : Objects().ExistingObjects()) {
         auto obj = entry.second;
         if (obj->ObjectType() != OBJ_PLANET && obj->ObjectType() != OBJ_POP_CENTER)
             continue;

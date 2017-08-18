@@ -43,7 +43,7 @@ const EmpireManager& EmpireManager::operator=(EmpireManager& rhs) {
 }
 
 const Empire* EmpireManager::GetEmpire(int id) const {
-    const_iterator it = m_empire_map.find(id);
+    auto it = m_empire_map.find(id);
     return it == m_empire_map.end() ? nullptr : it->second;
 }
 
@@ -53,7 +53,7 @@ std::shared_ptr<const UniverseObject> EmpireManager::GetSource(int id) const {
 }
 
 const std::string& EmpireManager::GetEmpireName(int id) const {
-    const_iterator it = m_empire_map.find(id);
+    auto it = m_empire_map.find(id);
     return it == m_empire_map.end() ? EMPTY_STRING : it->second->Name();
 }
 

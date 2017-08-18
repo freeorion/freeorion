@@ -147,7 +147,7 @@ namespace GG {
     /////////////
     template <class EnumType>
     const std::string& EnumMap<EnumType>::operator[](EnumType value) const {
-        typename std::map<EnumType, std::string>::const_iterator it = m_value_to_name_map.find(value);
+        auto it = m_value_to_name_map.find(value);
         if (it != m_value_to_name_map.end()) {
             return it->second;
         } else {
@@ -158,7 +158,7 @@ namespace GG {
 
     template <class EnumType>
     EnumType EnumMap<EnumType>::operator[](const std::string& name) const {
-        typename std::map<std::string, EnumType>::const_iterator it = m_name_to_value_map.find(name);
+        auto it = m_name_to_value_map.find(name);
         if (it != m_name_to_value_map.end()) {
             return it->second;
         } else {

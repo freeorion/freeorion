@@ -196,7 +196,7 @@ public:
         unknown flag's stringification is requested. */
     const std::string& ToString(FlagType flag) const
     {
-        typename std::map<FlagType, std::string>::const_iterator it = m_strings.find(flag);
+        auto it = m_strings.find(flag);
         if (it == m_strings.end())
             throw UnknownFlag("Could not find string corresponding to unknown flag");
         return it->second;

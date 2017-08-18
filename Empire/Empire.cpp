@@ -133,7 +133,7 @@ namespace {
                 ErrorLogger() << "SetTechQueueElementSpending found null tech on research queue?!";
                 continue;
             }
-            std::map<std::string, TechStatus>::const_iterator status_it = research_status.find(elem.name);
+            auto status_it = research_status.find(elem.name);
             if (status_it == research_status.end()) {
                 ErrorLogger() << "SetTechQueueElementSpending couldn't find tech with name " << elem.name << " in the research status map";
                 continue;
@@ -143,7 +143,7 @@ namespace {
                 researchable = true;
 
             if (researchable && !elem.paused) {
-                std::map<std::string, float>::const_iterator progress_it = research_progress.find(elem.name);
+                auto progress_it = research_progress.find(elem.name);
                 float tech_cost = tech->ResearchCost(empire_id);
                 float progress = progress_it == research_progress.end() ? 0.0f : progress_it->second;
                 float RPs_needed = tech->ResearchCost(empire_id) - progress*tech_cost;
@@ -321,7 +321,7 @@ bool ResearchQueue::InQueue(const std::string& tech_name) const
 { return find(tech_name) != end(); }
 
 bool ResearchQueue::Paused(const std::string& tech_name) const {
-    const_iterator it = find(tech_name);
+    auto it = find(tech_name);
     if (it == end())
         return false;
     return it->paused;
@@ -371,7 +371,7 @@ ResearchQueue::const_iterator ResearchQueue::end() const
 { return m_queue.end(); }
 
 ResearchQueue::const_iterator ResearchQueue::find(const std::string& tech_name) const {
-    for (const_iterator it = begin(); it != end(); ++it) {
+    for (auto it = begin(); it != end(); ++it) {
         if (it->name == tech_name)
             return it;
     }
@@ -1425,7 +1425,7 @@ TechStatus Empire::GetTechStatus(const std::string& name) const {
 const std::string& Empire::TopPriorityEnqueuedTech() const {
     if (m_research_queue.empty())
         return EMPTY_STRING;
-    ResearchQueue::const_iterator it = m_research_queue.begin();
+    auto it = m_research_queue.begin();
     const std::string& tech = it->name;
     return tech;
 }
@@ -2648,21 +2648,21 @@ void Empire::LockItem(const ItemSpec& item) {
 }
 
 void Empire::RemoveBuildingType(const std::string& name) {
-    std::set<std::string>::const_iterator it = m_available_building_types.find(name);
+    auto it = m_available_building_types.find(name);
     if (it == m_available_building_types.end())
         DebugLogger() << "Empire::RemoveBuildingType asked to remove building type " << name << " that was no available to this empire";
     m_available_building_types.erase(name);
 }
 
 void Empire::RemovePartType(const std::string& name) {
-    std::set<std::string>::const_iterator it = m_available_part_types.find(name);
+    auto it = m_available_part_types.find(name);
     if (it == m_available_part_types.end())
         DebugLogger() << "Empire::RemovePartType asked to remove part type " << name << " that was no available to this empire";
     m_available_part_types.erase(name);
 }
 
 void Empire::RemoveHullType(const std::string& name) {
-    std::set<std::string>::const_iterator it = m_available_hull_types.find(name);
+    auto it = m_available_hull_types.find(name);
     if (it == m_available_hull_types.end())
         DebugLogger() << "Empire::RemoveHullType asked to remove hull type " << name << " that was no available to this empire";
     m_available_hull_types.erase(name);
@@ -2676,7 +2676,7 @@ namespace {
     void SanitizeResearchQueue(ResearchQueue& queue) {
         bool done = false;
         while (!done) {
-            ResearchQueue::iterator it = queue.begin();
+            auto it = queue.begin();
             while (true) {
                 if (it == queue.end()) {
                     done = true;        // got all the way through the queue without finding an invalid tech
@@ -2701,7 +2701,7 @@ void Empire::CheckResearchProgress() {
 
     // process items on queue
     std::vector<std::string> to_erase;
-    for (ResearchQueue::Element& elem : m_research_queue) {
+    for (auto& elem : m_research_queue) {
         const Tech* tech = GetTech(elem.name);
         if (!tech) {
             ErrorLogger() << "Empire::CheckResearchProgress couldn't find tech on queue, even after sanitizing!";
@@ -2727,7 +2727,7 @@ void Empire::CheckResearchProgress() {
     // if there are left over RPs, any tech on the queue presumably can't
     // have RP allocated to it
     std::unordered_set<std::string> techs_not_suitable_for_auto_allocation;
-    for (ResearchQueue::Element& elem : m_research_queue)
+    for (auto& elem : m_research_queue)
         techs_not_suitable_for_auto_allocation.insert(elem.name);
 
     // for all available and suitable techs, store ordered by cost to complete
@@ -2884,7 +2884,7 @@ void Empire::CheckProductionProgress() {
             ErrorLogger() << "Couldn't get valid build location for completed " << build_description;
             continue;
         }
-        std::shared_ptr<System> system = GetSystem(build_location->SystemID());
+        auto system = GetSystem(build_location->SystemID());
         // TODO: account for shipyards and/or other ship production
         // sites that are in interstellar space, if needed
         if (!system) {
@@ -2986,7 +2986,7 @@ void Empire::CheckProductionProgress() {
         // create actual thing(s) being produced
         switch (elem.item.build_type) {
         case BT_BUILDING: {
-            std::shared_ptr<Planet> planet = GetPlanet(elem.location);
+            auto planet = GetPlanet(elem.location);
 
             // create new building
             auto building = universe.InsertNew<Building>(m_id, elem.item.name, m_id);
@@ -3094,7 +3094,7 @@ void Empire::CheckProductionProgress() {
 
     // create fleets for new ships and put ships into fleets
     for (auto& entry : system_new_ships) {
-        std::shared_ptr<System> system = GetSystem(entry.first);
+        auto system = GetSystem(entry.first);
         if (!system) {
             ErrorLogger() << "Couldn't get system with id " << entry.first << " for creating new fleets for newly produced ships";
             continue;

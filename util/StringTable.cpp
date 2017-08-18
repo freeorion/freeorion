@@ -35,12 +35,12 @@ bool StringTable_::Empty() const
 
 const std::string& StringTable_::operator[] (const std::string& index) const {
     static std::string error_retval;
-    std::map<std::string, std::string>::const_iterator it = m_strings.find(index);
+    auto it = m_strings.find(index);
     return it == m_strings.end() ? error_retval = S_ERROR_STRING + index : it->second;
 }
 
 void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
-    boost::filesystem::path path = FilenameToPath(m_filename);
+    auto path = FilenameToPath(m_filename);
     std::string file_contents;
 
     bool read_success = parse::read_file(path, file_contents);
@@ -102,7 +102,7 @@ void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
             it = end - matches.suffix().length();
 
             if (well_formed) {
-                for (smatch::nested_results_type::const_iterator match_it = matches.nested_results().begin();
+                for (auto match_it = matches.nested_results().begin();
                      match_it != matches.nested_results().end(); ++match_it)
                 {
                     if (match_it->regex_id() == KEY.regex_id()) {
@@ -140,7 +140,7 @@ void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
 
     if (well_formed) {
         // recursively expand keys -- replace [[KEY]] by the text resulting from expanding everything in the definition for KEY
-        for (std::map<std::string, std::string>::value_type& entry : m_strings) {
+        for (auto& entry : m_strings) {
             //DebugLogger() << "Checking key expansion for: " << entry.first;
             std::size_t position = 0; // position in the definition string, past the already processed part
             smatch match;
@@ -148,13 +148,14 @@ void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
             cyclic_reference_check[entry.first] = entry.second.length();
             std::string rawtext = entry.second;
             std::string cumulative_subsititions;
+
             while (regex_search(entry.second.begin() + position, entry.second.end(), match, KEYEXPANSION)) {
                 position += match.position();
                 //DebugLogger() << "checking next internal keyword match: " << match[1] << " with matchlen " << match.length();
                 if (match[1].length() != match.length() - 4)
                     ErrorLogger() << "Positional error in key expansion: " << match[1] << " with length: " << match[1].length() << "and matchlen: " << match.length();
                 // clear out any keywords that have been fully processed
-                for (std::map< std::string, std::size_t >::iterator ref_check_it = cyclic_reference_check.begin(); 
+                for (auto ref_check_it = cyclic_reference_check.begin(); 
                      ref_check_it != cyclic_reference_check.end(); )
                 {
                     if (ref_check_it->second <= position) {
@@ -174,7 +175,7 @@ void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
                 if (cyclic_reference_check.find(match[1]) == cyclic_reference_check.end()) {
                     //DebugLogger() << "Pushing to cyclic ref check: " << match[1];
                     cyclic_reference_check[match[1]] = position + match.length();
-                    std::map<std::string, std::string>::iterator map_lookup_it = m_strings.find(match[1]);
+                    auto map_lookup_it = m_strings.find(match[1]);
                     bool foundmatch = map_lookup_it != m_strings.end();
                     if (!foundmatch && lookups_fallback_table) {
                         DebugLogger() << "Key expansion: " << match[1] << " not found in primary stringtable: " << m_filename 
@@ -187,7 +188,7 @@ void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
                         cumulative_subsititions += substitution + "|**|";
                         entry.second.replace(position, match.length(), substitution);
                         std::size_t added_chars = substitution.length() - match.length();
-                        for (std::map<std::string, std::size_t>::value_type& ref_check : cyclic_reference_check) {
+                        for (auto& ref_check : cyclic_reference_check) {
                             ref_check.second += added_chars;
                         }
                         // replace recursively -- do not skip past substitution
@@ -207,12 +208,12 @@ void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
         }
 
         // nonrecursively replace references -- convert [[type REF]] to <type REF>string for REF</type>
-        for (std::map<std::string, std::string>::value_type& entry : m_strings) {
+        for (auto& entry : m_strings) {
             std::size_t position = 0; // position in the definition string, past the already processed part
             smatch match;
             while (regex_search(entry.second.begin() + position, entry.second.end(), match, REFERENCE)) {
                 position += match.position();
-                std::map<std::string, std::string>::iterator map_lookup_it = m_strings.find(match[2]);
+                auto map_lookup_it = m_strings.find(match[2]);
                 bool foundmatch = map_lookup_it != m_strings.end();
                 if (!foundmatch && lookups_fallback_table) {
                     DebugLogger() << "Key reference: " << match[2] << " not found in primary stringtable: " << m_filename 

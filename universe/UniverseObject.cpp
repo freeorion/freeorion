@@ -52,19 +52,18 @@ void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object, V
     }
 
     std::map<MeterType, Meter> censored_meters = copied_object->CensoredMeters(vis);
-    for (const std::map<MeterType, Meter>::value_type& entry : copied_object->m_meters)
-    {
+    for (const auto& entry : copied_object->m_meters) {
         MeterType type = entry.first;
 
         // get existing meter in this object, or create a default one
-        std::map<MeterType, Meter>::iterator m_meter_it = m_meters.find(type);
+        auto m_meter_it = m_meters.find(type);
         bool meter_already_known = (m_meter_it != m_meters.end());
         if (!meter_already_known)
             m_meters[type]; // default initialize to (0, 0).  Alternative: = Meter(Meter::INVALID_VALUE, Meter::INVALID_VALUE);*/
         Meter& this_meter = m_meters[type];
 
         // if there is an update to meter from censored meters, update this object's copy
-        std::map<MeterType, Meter>::const_iterator censored_it = censored_meters.find(type);
+        auto censored_it = censored_meters.find(type);
         if (censored_it != censored_meters.end()) {
             const Meter& copied_object_meter = censored_it->second;
 
@@ -91,7 +90,7 @@ void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object, V
         this->m_y =                     copied_object->m_y;
 
         this->m_specials.clear();
-        for (const std::map<std::string, std::pair<int, float>>::value_type& entry_special : copied_object->m_specials) {
+        for (const auto& entry_special : copied_object->m_specials) {
             if (visible_specials.find(entry_special.first) != visible_specials.end())
             { this->m_specials[entry_special.first] = entry_special.second; }
         }
@@ -146,14 +145,14 @@ bool UniverseObject::HasSpecial(const std::string& name) const
 { return m_specials.find(name) != m_specials.end(); }
 
 int UniverseObject::SpecialAddedOnTurn(const std::string& name) const {
-    std::map<std::string, std::pair<int, float>>::const_iterator it = m_specials.find(name);
+    auto it = m_specials.find(name);
     if (it == m_specials.end())
         return INVALID_GAME_TURN;
     return it->second.first;
 }
 
 float UniverseObject::SpecialCapacity(const std::string& name) const {
-    std::map<std::string, std::pair<int, float>>::const_iterator it = m_specials.find(name);
+    auto it = m_specials.find(name);
     if (it == m_specials.end())
         return 0.0f;
     return it->second.second;
@@ -169,7 +168,7 @@ UniverseObjectType UniverseObject::ObjectType() const
 { return INVALID_UNIVERSE_OBJECT_TYPE; }
 
 std::string UniverseObject::Dump() const {
-    std::shared_ptr<const System> system = GetSystem(this->SystemID());
+    auto system = GetSystem(this->SystemID());
 
     std::stringstream os;
 
@@ -185,7 +184,7 @@ std::string UniverseObject::Dump() const {
     } else {
         os << "  at: (" << this->X() << ", " << this->Y() << ")";
         int near_id = GetPathfinder()->NearestSystemTo(this->X(), this->Y());
-        std::shared_ptr<const System> system = GetSystem(near_id);
+        auto system = GetSystem(near_id);
         if (system) {
             const std::string& sys_name = system->Name();
             if (sys_name.empty())
@@ -197,7 +196,7 @@ std::string UniverseObject::Dump() const {
     if (Unowned()) {
         os << " owner: (Unowned) ";
     } else {
-        std::string empire_name = Empires().GetEmpireName(m_owner_empire_id);
+        const std::string& empire_name = Empires().GetEmpireName(m_owner_empire_id);
         if (!empire_name.empty())
             os << " owner: " << empire_name;
         else
@@ -205,10 +204,10 @@ std::string UniverseObject::Dump() const {
     }
     os << " created on turn: " << m_created_on_turn
        << " specials: ";
-    for (const std::map<std::string, std::pair<int, float>>::value_type& entry : m_specials)
+    for (const auto& entry : m_specials)
         os << "(" << entry.first << ", " << entry.second.first << ", " << entry.second.second << ") ";
     os << "  Meters: ";
-    for (const std::map<MeterType, Meter>::value_type& entry : m_meters)
+    for (const auto& entry : m_meters)
         os << entry.first
            << ": " << entry.second.Dump() << "  ";
     return os.str();
@@ -241,14 +240,14 @@ bool UniverseObject::ContainedBy(int object_id) const
 { return false; }
 
 const Meter* UniverseObject::GetMeter(MeterType type) const {
-    std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
+    auto it = m_meters.find(type);
     if (it != m_meters.end())
         return &(it->second);
     return nullptr;
 }
 
 float UniverseObject::CurrentMeterValue(MeterType type) const {
-    std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
+    auto it = m_meters.find(type);
     if (it == m_meters.end())
         throw std::invalid_argument("UniverseObject::CurrentMeterValue was passed a MeterType that this UniverseObject does not have: " + boost::lexical_cast<std::string>(type));
 
@@ -256,7 +255,7 @@ float UniverseObject::CurrentMeterValue(MeterType type) const {
 }
 
 float UniverseObject::InitialMeterValue(MeterType type) const {
-    std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
+    auto it = m_meters.find(type);
     if (it == m_meters.end())
         throw std::invalid_argument("UniverseObject::InitialMeterValue was passed a MeterType that this UniverseObject does not have: " + boost::lexical_cast<std::string>(type));
 
@@ -330,7 +329,7 @@ void UniverseObject::MoveTo(double x, double y) {
 }
 
 Meter* UniverseObject::GetMeter(MeterType type) {
-    std::map<MeterType, Meter>::iterator it = m_meters.find(type);
+    auto it = m_meters.find(type);
     if (it != m_meters.end())
         return &(it->second);
     return nullptr;

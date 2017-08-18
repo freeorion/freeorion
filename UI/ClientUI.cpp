@@ -728,7 +728,7 @@ bool ClientUI::ZoomToPlanetPedia(int id) {
 }
 
 bool ClientUI::ZoomToSystem(int id) {
-    if (std::shared_ptr<const System> system = GetSystem(id)) {
+    if (auto system = GetSystem(id)) {
         ZoomToSystem(system);
         return true;
     }
@@ -736,7 +736,7 @@ bool ClientUI::ZoomToSystem(int id) {
 }
 
 bool ClientUI::ZoomToFleet(int id) {
-    if (std::shared_ptr<const Fleet> fleet = GetFleet(id)) {
+    if (auto fleet = GetFleet(id)) {
         ZoomToFleet(fleet);
         return true;
     }

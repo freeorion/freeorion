@@ -81,7 +81,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
 {
     std::vector<std::shared_ptr<const Fleet>> fleets;
     for (int fleet_id : fleet_IDs) {
-        std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
+        auto fleet = GetFleet(fleet_id);
         if (!fleet) {
             ErrorLogger() << "FleetButton::FleetButton couldn't get fleet with id " << fleet_id;
             continue;
@@ -120,7 +120,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
         // find if any ship in fleets in button is not a monster
         for (auto& fleet : fleets) {
             for (int ship_id : fleet->ShipIDs()) {
-                if (std::shared_ptr<const Ship> ship = GetShip(ship_id)) {
+                if (auto ship = GetShip(ship_id)) {
                     if (!ship->IsMonster()) {
                         monsters = false;
                         break;

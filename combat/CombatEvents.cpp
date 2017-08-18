@@ -362,8 +362,7 @@ std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id) con
     }
 
     //Viewing empire defending
-    StealthInvisbleMap::const_iterator attack_empire =
-        target_empire_id_to_invisble_obj_id.find(viewing_empire_id);
+    auto attack_empire = target_empire_id_to_invisble_obj_id.find(viewing_empire_id);
     if (attack_empire != target_empire_id_to_invisble_obj_id.end() &&
         !attack_empire->second.empty())
     {

@@ -417,8 +417,8 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ScrapOrder>(empire_id, m_building_id));};
     auto un_scrap_building_action = [building]() {
         // find order to scrap this building, and recind it
-        std::map<int, int> pending_scrap_orders = PendingScrapOrders();
-        std::map<int, int>::const_iterator it = pending_scrap_orders.find(building->ID());
+        auto pending_scrap_orders = PendingScrapOrders();
+        auto it = pending_scrap_orders.find(building->ID());
         if (it != pending_scrap_orders.end())
             HumanClientApp::GetApp()->Orders().RescindOrder(it->second);
     };

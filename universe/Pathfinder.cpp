@@ -630,7 +630,7 @@ namespace {
     std::shared_ptr<const Fleet> FleetFromObject(std::shared_ptr<const UniverseObject> obj) {
         std::shared_ptr<const Fleet> retval = std::dynamic_pointer_cast<const Fleet>(obj);
         if (!retval) {
-            if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(obj))
+            if (auto ship = std::dynamic_pointer_cast<const Ship>(obj))
                 retval = GetFleet(ship->FleetID());
         }
         return retval;
@@ -727,11 +727,11 @@ namespace {
             return nullptr;
 
         int system_id = obj->SystemID();
-        std::shared_ptr<const System> system = GetSystem(system_id);
+        auto system = GetSystem(system_id);
         if (system)
             return system_id;
 
-        std::shared_ptr<const Fleet> fleet = FleetFromObject(obj);
+        auto fleet = FleetFromObject(obj);
         if (fleet)
             return std::make_pair(fleet->PreviousSystemID(), fleet->NextSystemID());
 
@@ -993,7 +993,7 @@ bool Pathfinder::SystemHasVisibleStarlanes(int system_id, int empire_id) const {
 }
 
 bool Pathfinder::PathfinderImpl::SystemHasVisibleStarlanes(int system_id, int empire_id) const {
-    if (std::shared_ptr<const System> system = GetEmpireKnownSystem(system_id, empire_id))
+    if (auto system = GetEmpireKnownSystem(system_id, empire_id))
         if (!system->StarlanesWormholes().empty())
             return true;
     return false;

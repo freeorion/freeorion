@@ -1217,7 +1217,7 @@ namespace {
         std::vector<std::shared_ptr<GG::Texture>> retval;
 
         if (obj->ObjectType() == OBJ_SHIP) {
-            std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(obj);
+            auto ship = std::dynamic_pointer_cast<const Ship>(obj);
             if (ship) {
                 if (const ShipDesign* design = ship->Design())
                     retval.push_back(ClientUI::ShipDesignIcon(design->ID()));
@@ -1226,7 +1226,7 @@ namespace {
                 retval.push_back(ClientUI::ShipDesignIcon(INVALID_OBJECT_ID));  // default icon
             }
         } else if (obj->ObjectType() == OBJ_FLEET) {
-            if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(obj)) {
+            if (auto fleet = std::dynamic_pointer_cast<const Fleet>(obj)) {
                 std::shared_ptr<GG::Texture> size_icon = FleetSizeIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
                 if (size_icon)
                     retval.push_back(size_icon);
@@ -1234,7 +1234,7 @@ namespace {
                 std::copy(head_icons.begin(), head_icons.end(), std::back_inserter(retval));
             }
         } else if (obj->ObjectType() == OBJ_SYSTEM) {
-            if (std::shared_ptr<const System> system = std::dynamic_pointer_cast<const System>(obj)) {
+            if (auto system = std::dynamic_pointer_cast<const System>(obj)) {
                 StarType star_type = system->GetStarType();
                 ClientUI* ui = ClientUI::GetClientUI();
                 std::shared_ptr<GG::Texture> disc_texture = ui->GetModuloTexture(
@@ -1952,9 +1952,9 @@ public:
                 systems.insert(object_id);
             } else if (obj->ObjectType() == OBJ_FIELD) {
                 fields.insert(object_id);
-            } else if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(obj)) {
+            } else if (auto fleet = std::dynamic_pointer_cast<const Fleet>(obj)) {
                 system_fleets[fleet->SystemID()].insert(object_id);
-            } else if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(obj)) {
+            } else if (auto ship = std::dynamic_pointer_cast<const Ship>(obj)) {
                 fleet_ships[ship->FleetID()].insert(object_id);
             } else if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(obj)) {
                 system_planets[planet->SystemID()].insert(object_id);

@@ -572,9 +572,8 @@ std::pair<CPSize, CPSize> Edit::GetDoubleButtonDownDragWordIndices(CPSize char_i
 {
     std::pair<CPSize, CPSize> retval(char_index, char_index);
 
-    std::set<std::pair<CPSize, CPSize>> words = GUI::GetGUI()->FindWords(Text());
-    std::set<std::pair<CPSize, CPSize>>::const_iterator it =
-        std::find_if(words.begin(), words.end(), InRange(char_index));
+    auto words = GUI::GetGUI()->FindWords(Text());
+    auto it = std::find_if(words.begin(), words.end(), InRange(char_index));
 
     if (it != words.end())
         retval = *it;

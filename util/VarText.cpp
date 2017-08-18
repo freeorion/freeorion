@@ -231,14 +231,14 @@ namespace {
             }
 
             // look up child
-            std::map<std::string, std::string>::const_iterator elem = m_variables.find(label);
+            auto elem = m_variables.find(label);
             if (m_variables.end() == elem) {
                 m_str += UserString("ERROR");
                 m_valid = false;
                 return;
             }
 
-            std::map<std::string, TagString>::const_iterator substituter = SubstitutionMap().find(tag);
+            auto substituter = SubstitutionMap().find(tag);
             if (substituter != SubstitutionMap().end()) {
                 m_str += substituter->second(elem->second, tag, m_valid);
             } else {
@@ -248,9 +248,9 @@ namespace {
             }
         }
 
-        const std::map<std::string, std::string>&   m_variables;
-        std::string&        m_str;
-        bool&               m_valid;
+        const std::map<std::string, std::string>& m_variables;
+        std::string& m_str;
+        bool& m_valid;
     };
 
     // sticks a sequence of characters onto the end of a std::string
@@ -320,7 +320,7 @@ void VarText::SetTemplateString(const std::string& text, bool stringtable_lookup
 
 std::vector<std::string> VarText::GetVariableTags() const {
     std::vector<std::string> retval;
-    for (const std::map<std::string, std::string>::value_type& variable : m_variables)
+    for (const auto& variable : m_variables)
         retval.push_back(variable.first);
     return retval;
 }

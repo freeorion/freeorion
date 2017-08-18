@@ -206,10 +206,10 @@ const std::vector<UnicodeCharset>& GG::AllUnicodeCharsets()
 std::set<UnicodeCharset> GG::UnicodeCharsetsToRender(const std::string& str)
 {
     std::set<UnicodeCharset> retval;
-    std::string::const_iterator it = str.begin();
-    std::string::const_iterator end_it = str.end();
+    auto it = str.begin();
+    auto end_it = str.end();
     while (it != end_it) {
-        if (const UnicodeCharset* charset = CharsetContaining(utf8::next(it, end_it)))
+        if (auto charset = CharsetContaining(utf8::next(it, end_it)))
             retval.insert(*charset);
     }
     return retval;
@@ -240,6 +240,6 @@ const UnicodeCharset* GG::CharsetWithName(const std::string& name)
             s_name_map[uchs.m_script_name] = &uchs;
         }
     }
-    std::map<std::string, const UnicodeCharset*>::const_iterator it = s_name_map.find(name);
+    auto it = s_name_map.find(name);
     return it == s_name_map.end() ? nullptr : it->second;
 }

@@ -702,7 +702,7 @@ namespace {
             BuildType build_type = queue_row ? queue_row->elem.item.build_type : INVALID_BUILD_TYPE;
             if (build_type == BT_SHIP) {
                 // for ships, add a set rally point command
-                if (std::shared_ptr<const System> system = GetSystem(SidePanel::SystemID())) {
+                if (auto system = GetSystem(SidePanel::SystemID())) {
                     std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM")) % system->PublicName(HumanClientApp::GetApp()->EmpireID()));
                     popup->AddMenuItem(GG::MenuItem(rally_prompt,               false, false, rally_to_action));
                 }

@@ -778,7 +778,7 @@ bool ServerApp::NewGameInitVerifyJoiners(
         Networking::ClientType client_type = player_connection->GetClientType();
         int player_id = player_connection->PlayerID();
 
-        std::map<int, PlayerSetupData>::const_iterator player_id_setup_data_it = player_id_setup_data.find(player_id);
+        auto player_id_setup_data_it = player_id_setup_data.find(player_id);
         if (player_id_setup_data_it == player_id_setup_data.end()) {
             ErrorLogger() << "ServerApp::NewGameInitVerifyJoiners couldn't find player setup data for player with ID " << player_id;
             return false;
@@ -1438,7 +1438,7 @@ std::map<int, PlayerInfo> ServerApp::GetPlayerInfoMap() const {
 }
 
 int ServerApp::PlayerEmpireID(int player_id) const {
-    std::map<int, int>::const_iterator it = m_player_empire_ids.find(player_id);
+    auto it = m_player_empire_ids.find(player_id);
     if (it != m_player_empire_ids.end())
         return it->second;
     else
@@ -1561,7 +1561,7 @@ namespace {
 
     void GetEmpireFleetsAtSystem(std::map<int, std::set<int>>& empire_fleets, int system_id) {
         empire_fleets.clear();
-        std::shared_ptr<const System> system = GetSystem(system_id);
+        auto system = GetSystem(system_id);
         if (!system)
             return;
         for (auto& fleet : Objects().FindObjects<const Fleet>(system->FleetIDs())) {
@@ -1571,7 +1571,7 @@ namespace {
 
     void GetEmpirePlanetsAtSystem(std::map<int, std::set<int>>& empire_planets, int system_id) {
         empire_planets.clear();
-        std::shared_ptr<const System> system = GetSystem(system_id);
+        auto system = GetSystem(system_id);
         if (!system)
             return;
         for (auto& planet : Objects().FindObjects<const Planet>(system->PlanetIDs())) {
@@ -1584,7 +1584,7 @@ namespace {
 
     void GetFleetsVisibleToEmpireAtSystem(std::set<int>& visible_fleets, int empire_id, int system_id) {
         visible_fleets.clear();
-        std::shared_ptr<const System> system = GetSystem(system_id);
+        auto system = GetSystem(system_id);
         if (!system)
             return; // no such system
         const std::set<int>& fleet_ids = system->FleetIDs();
@@ -1615,7 +1615,7 @@ namespace {
         // get best monster detection strength here.  Use monster detection meters for this...
         double monster_detection_strength_here = 0.0;
         for (int ship_id : system->ShipIDs()) {
-            std::shared_ptr<const Ship> ship = GetShip(ship_id);
+            auto ship = GetShip(ship_id);
             if (!ship || !ship->Unowned())  // only want unowned / monster ships
                 continue;
             if (ship->CurrentMeterValue(METER_DETECTION) > monster_detection_strength_here)
@@ -1624,7 +1624,7 @@ namespace {
 
         // test each ship in each fleet for visibility by best monster detection here
         for (int fleet_id : fleet_ids) {
-            std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
+            auto fleet = GetFleet(fleet_id);
             if (!fleet)
                 continue;
             if (fleet->Unowned()) {
@@ -1633,7 +1633,7 @@ namespace {
             }
 
             for (int ship_id : fleet->ShipIDs()) {
-                std::shared_ptr<const Ship> ship = GetShip(ship_id);
+                auto ship = GetShip(ship_id);
                 if (!ship)
                     continue;
                 // if a ship is low enough stealth, its fleet can be seen by monsters
@@ -1722,7 +1722,7 @@ namespace {
         for (auto& empire_fleets : empire_fleets_here) {
             int empire_id = empire_fleets.first;
             for (int fleet_id : empire_fleets.second) {
-                std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
+                auto fleet = GetFleet(fleet_id);
                 if (!fleet)
                     continue;
                 // an unarmed Monster will not trigger combat
@@ -2192,7 +2192,7 @@ namespace {
 
             ship->SetColonizePlanet(INVALID_OBJECT_ID); // reset so failed colonization doesn't leave ship with hanging colonization order set
 
-            std::shared_ptr<Planet> planet = GetPlanet(colonize_planet_id);
+            auto planet = GetPlanet(colonize_planet_id);
             if (!planet)
                 continue;
 
@@ -2324,7 +2324,7 @@ namespace {
             int invade_planet_id = ship->OrderedInvadePlanet();
             if (invade_planet_id == INVALID_OBJECT_ID)
                 continue;
-            std::shared_ptr<Planet> planet = GetPlanet(invade_planet_id);
+            auto planet = GetPlanet(invade_planet_id);
             if (!planet)
                 continue;
             planet->ResetIsAboutToBeInvaded();
@@ -2337,10 +2337,10 @@ namespace {
             // how many troops are invading?
             planet_empire_troops[invade_planet_id][ship->Owner()] += ship->TroopCapacity();
 
-            std::shared_ptr<System> system = GetSystem(ship->SystemID());
+            auto system = GetSystem(ship->SystemID());
 
             // destroy invading ships and their fleets if now empty
-            std::shared_ptr<Fleet> fleet = GetFleet(ship->FleetID());
+            auto fleet = GetFleet(ship->FleetID());
             if (fleet) {
                 fleet->RemoveShip(ship->ID());
                 if (fleet->Empty()) {
@@ -2799,7 +2799,7 @@ void ServerApp::ProcessCombats() {
     // loop through assembled combat infos, handling each combat to update the
     // various systems' CombatInfo structs
     for (CombatInfo& combat_info : combats) {
-        if (std::shared_ptr<System> system = combat_info.GetSystem())
+        if (auto system = combat_info.GetSystem())
             system->SetLastTurnBattleHere(CurrentTurn());
 
         //// DEBUG
@@ -2843,7 +2843,7 @@ void ServerApp::ProcessCombats() {
 
 void ServerApp::UpdateMonsterTravelRestrictions() {
     for (auto const &maybe_system : m_universe.Objects().ExistingSystems()) {
-        std::shared_ptr<const System> system = std::dynamic_pointer_cast<const System>(maybe_system.second);
+        auto system = std::dynamic_pointer_cast<const System>(maybe_system.second);
         if (!system) {
             ErrorLogger() << "Non System object in ExistingSystems with id = " << maybe_system.second->ID();
             continue;
@@ -2854,7 +2854,7 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
         bool unrestricted_empires_present = false;
         std::vector<std::shared_ptr<Fleet>> monsters;
         for (auto maybe_fleet : m_universe.Objects().FindObjects(system->FleetIDs())) {
-            std::shared_ptr<Fleet> fleet = std::dynamic_pointer_cast<Fleet>(maybe_fleet);
+            auto fleet = std::dynamic_pointer_cast<Fleet>(maybe_fleet);
             if (!fleet) {
                 ErrorLogger() << "Non Fleet object in system(" << system->ID()
                               << ") fleets with id = " << maybe_fleet->ID();

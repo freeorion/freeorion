@@ -139,7 +139,7 @@ namespace GG {
         static fs::path ExtractPath(const RichText::TAG_PARAMS& params)
         {
             // Find the src.
-            RichText::TAG_PARAMS::const_iterator src_param = params.find("src");
+            auto src_param = params.find("src");
 
             // If src not found, error out.
             if (src_param == params.end()) {
@@ -179,9 +179,9 @@ namespace GG {
     bool ImageBlock::SetDefaultImagePath(const fs::path& path)
     {
         // Find the image block factory from the default map and give it the path.
-        RichText::BLOCK_FACTORY_MAP::const_iterator factory_it = RichText::DefaultBlockFactoryMap()->find(IMAGE_TAG);
+        auto factory_it = RichText::DefaultBlockFactoryMap()->find(IMAGE_TAG);
         if (factory_it != RichText::DefaultBlockFactoryMap()->end()) {
-            if (ImageBlockFactory* factory = dynamic_cast<ImageBlockFactory*>(factory_it->second.get())) {
+            if (auto factory = dynamic_cast<ImageBlockFactory*>(factory_it->second.get())) {
                 return SetImagePath(factory, path);
             }
         }

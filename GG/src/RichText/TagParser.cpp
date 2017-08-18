@@ -30,7 +30,8 @@
 
 namespace GG {
 
-    RichTextTag::RichTextTag(const std::string& tag, const std::string& params_string,
+    RichTextTag::RichTextTag(const std::string& tag,
+                             const std::string& params_string,
                              const std::string& content)
     : tag(tag), tag_params(params_string), content(content)
     {
@@ -149,10 +150,11 @@ namespace GG {
 
             // Helper. Return true if str is a prefix of the string (start..end) or vice versa.
             bool StartsWith(const std::string::const_iterator& start,
-                            const std::string::const_iterator& end, const std::string& str)
+                            const std::string::const_iterator& end,
+                            const std::string& str)
             {
-                std::string::const_iterator current = start;
-                std::string::const_iterator str_current = str.begin();
+                auto current = start;
+                auto str_current = str.begin();
 
                 while (current != end && str_current != str.end()) {
                     if (*current != *str_current) {
@@ -179,7 +181,7 @@ namespace GG {
             {
                 // Use ParseTagsImpl to get the the beginning of the first unmatched end tag.
                 // We are interested only in the first level tags, so don't pass the vector to populate.
-                std::string::const_iterator current = ParseTagsImpl(start, end, nullptr);
+                auto current = ParseTagsImpl(start, end, nullptr);
 
                 // It is an error if the end tag is not found.
                 if (current == end) {

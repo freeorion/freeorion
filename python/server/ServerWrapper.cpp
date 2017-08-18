@@ -683,7 +683,7 @@ namespace {
     }
 
     int CreatePlanet(PlanetSize size, PlanetType planet_type, int system_id, int orbit, const std::string& name) {
-        std::shared_ptr<System> system = Objects().Object<System>(system_id);
+        auto system = Objects().Object<System>(system_id);
 
         // Perform some validity checks
         // Check if system with id system_id exists
@@ -741,13 +741,13 @@ namespace {
     }
 
     int CreateBuilding(const std::string& building_type, int planet_id, int empire_id) {
-        std::shared_ptr<Planet> planet = Objects().Object<Planet>(planet_id);
+        auto planet = Objects().Object<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "CreateBuilding: couldn't get planet with ID " << planet_id;
             return INVALID_OBJECT_ID;
         }
 
-        std::shared_ptr<System> system = GetSystem(planet->SystemID());
+        auto system = GetSystem(planet->SystemID());
         if (!system) {
             ErrorLogger() << "CreateBuilding: couldn't get system for planet";
             return INVALID_OBJECT_ID;
@@ -773,7 +773,7 @@ namespace {
 
     int CreateFleet(const std::string& name, int system_id, int empire_id) {
         // Get system and check if it exists
-        std::shared_ptr<System> system = Objects().Object<System>(system_id);
+        auto system = Objects().Object<System>(system_id);
         if (!system) {
             ErrorLogger() << "CreateFleet: couldn't get system with ID " << system_id;
             return INVALID_OBJECT_ID;
@@ -822,7 +822,7 @@ namespace {
             return INVALID_OBJECT_ID;
         }
 
-        std::shared_ptr<System> system = GetSystem(fleet->SystemID());
+        auto system = GetSystem(fleet->SystemID());
         if (!system) {
             ErrorLogger() << "CreateShip: couldn't get system for fleet";
             return INVALID_OBJECT_ID;
@@ -928,7 +928,7 @@ namespace {
 
     int CreateFieldInSystem(const std::string& field_type_name, double size, int system_id) {
         // check if system exists and get system
-        std::shared_ptr<System> system = GetSystem(system_id);
+        auto system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "CreateFieldInSystem: couldn't get system with ID" << system_id;
             return INVALID_OBJECT_ID;
@@ -978,7 +978,7 @@ namespace {
 
     // Wrappers for System class member functions
     StarType SystemGetStarType(int system_id) {
-        std::shared_ptr<System> system = GetSystem(system_id);
+        auto system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetStarType: couldn't get system with ID " << system_id;
             return INVALID_STAR_TYPE;
@@ -993,7 +993,7 @@ namespace {
             return;
         }
 
-        std::shared_ptr<System> system = GetSystem(system_id);
+        auto system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "SystemSetStarType : Couldn't get system with ID " << system_id;
             return;
@@ -1003,7 +1003,7 @@ namespace {
     }
 
     int SystemGetNumOrbits(int system_id) {
-        std::shared_ptr<System> system = GetSystem(system_id);
+        auto system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetNumOrbits : Couldn't get system with ID " << system_id;
             return 0;
@@ -1013,7 +1013,7 @@ namespace {
 
     list SystemFreeOrbits(int system_id) {
         list py_orbits;
-        std::shared_ptr<System> system = GetSystem(system_id);
+        auto system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "SystemFreeOrbits : Couldn't get system with ID " << system_id;
             return py_orbits;
@@ -1024,7 +1024,7 @@ namespace {
     }
 
     bool SystemOrbitOccupied(int system_id, int orbit) {
-        std::shared_ptr<System> system = GetSystem(system_id);
+        auto system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "SystemOrbitOccupied : Couldn't get system with ID " << system_id;
             return 0;
@@ -1033,7 +1033,7 @@ namespace {
     }
 
     int SystemOrbitOfPlanet(int system_id, int planet_id) {
-        std::shared_ptr<System> system = GetSystem(system_id);
+        auto system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "SystemOrbitOfPlanet : Couldn't get system with ID " << system_id;
             return 0;
@@ -1043,7 +1043,7 @@ namespace {
 
     list SystemGetPlanets(int system_id) {
         list py_planets;
-        std::shared_ptr<System> system = GetSystem(system_id);
+        auto system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetPlanets : Couldn't get system with ID " << system_id;
             return py_planets;
@@ -1055,7 +1055,7 @@ namespace {
 
     list SystemGetFleets(int system_id) {
         list py_fleets;
-        std::shared_ptr<System> system = GetSystem(system_id);
+        auto system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetFleets : Couldn't get system with ID " << system_id;
             return py_fleets;
@@ -1068,7 +1068,7 @@ namespace {
     list SystemGetStarlanes(int system_id) {
         list py_starlanes;
         // get source system
-        std::shared_ptr<System> system = GetSystem(system_id);
+        auto system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetStarlanes : Couldn't get system with ID " << system_id;
             return py_starlanes;
@@ -1122,7 +1122,7 @@ namespace {
 
     // Wrapper for Planet class member functions
     PlanetType PlanetGetType(int planet_id) {
-        std::shared_ptr<Planet> planet = GetPlanet(planet_id);
+        auto planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetType: Couldn't get planet with ID " << planet_id;
             return INVALID_PLANET_TYPE;
@@ -1131,7 +1131,7 @@ namespace {
     }
 
     void PlanetSetType(int planet_id, PlanetType planet_type) {
-        std::shared_ptr<Planet> planet = GetPlanet(planet_id);
+        auto planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetType: Couldn't get planet with ID " << planet_id;
             return;
@@ -1149,7 +1149,7 @@ namespace {
     }
 
     PlanetSize PlanetGetSize(int planet_id) {
-        std::shared_ptr<Planet> planet = GetPlanet(planet_id);
+        auto planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetSize: Couldn't get planet with ID " << planet_id;
             return INVALID_PLANET_SIZE;
@@ -1158,7 +1158,7 @@ namespace {
     }
 
     void PlanetSetSize(int planet_id, PlanetSize planet_size) {
-        std::shared_ptr<Planet> planet = GetPlanet(planet_id);
+        auto planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetSize: Couldn't get planet with ID " << planet_id;
             return;
@@ -1174,7 +1174,7 @@ namespace {
     }
 
     object PlanetGetSpecies(int planet_id) {
-        std::shared_ptr<Planet> planet = GetPlanet(planet_id);
+        auto planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetSpecies: Couldn't get planet with ID " << planet_id;
             return object("");
@@ -1183,7 +1183,7 @@ namespace {
     }
 
     void PlanetSetSpecies(int planet_id, const std::string& species_name) {
-        std::shared_ptr<Planet> planet = GetPlanet(planet_id);
+        auto planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetSpecies: Couldn't get planet with ID " << planet_id;
             return;
@@ -1192,7 +1192,7 @@ namespace {
     }
 
     object PlanetGetFocus(int planet_id) {
-        std::shared_ptr<Planet> planet = GetPlanet(planet_id);
+        auto planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetFocus: Couldn't get planet with ID " << planet_id;
             return object("");
@@ -1201,7 +1201,7 @@ namespace {
     }
 
     void PlanetSetFocus(int planet_id, const std::string& focus) {
-        std::shared_ptr<Planet> planet = GetPlanet(planet_id);
+        auto planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetSpecies: Couldn't get planet with ID " << planet_id;
             return;
@@ -1211,7 +1211,7 @@ namespace {
 
     list PlanetAvailableFoci(int planet_id) {
         list py_foci;
-        std::shared_ptr<Planet> planet = GetPlanet(planet_id);
+        auto planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetAvailableFoci: Couldn't get planet with ID " << planet_id;
             return py_foci;
@@ -1223,7 +1223,7 @@ namespace {
     }
 
     bool PlanetMakeOutpost(int planet_id, int empire_id) {
-        std::shared_ptr<Planet> planet = GetPlanet(planet_id);
+        auto planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetMakeOutpost: couldn't get planet with ID:" << planet_id;
             return false;
@@ -1238,7 +1238,7 @@ namespace {
     }
 
     bool PlanetMakeColony(int planet_id, int empire_id, const std::string& species, double population) {
-        std::shared_ptr<Planet> planet = GetPlanet(planet_id);
+        auto planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetMakeColony: couldn't get planet with ID:" << planet_id;
             return false;
@@ -1261,7 +1261,7 @@ namespace {
     }
 
     object PlanetCardinalSuffix(int planet_id) {
-        std::shared_ptr<Planet> planet = GetPlanet(planet_id);
+        auto planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetCardinalSuffix: couldn't get planet with ID:" << planet_id;
             return object(UserString("ERROR"));
