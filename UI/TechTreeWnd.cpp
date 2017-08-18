@@ -1973,7 +1973,7 @@ void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it, const
     // determine type of row that was clicked, and emit appropriate signal
     TechRow* tech_row = dynamic_cast<TechRow*>(it->get());
     if (tech_row)
-        TechDoubleClickedSignal(tech_row->GetTech(), GG::Flags<GG::ModKey>());
+        TechDoubleClickedSignal(tech_row->GetTech(), modkeys);
 }
 
 
