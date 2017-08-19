@@ -1012,12 +1012,12 @@ void ProductionQueue::Update() {
     float pp_in_stockpile = industry_resource_pool->Stockpile();
     DebugLogger() << "========= pp_in_stockpile: " << pp_in_stockpile << " ========";
     //float available_stockpile = pp_in_stockpile * (empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT")? empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT")->Current() : 1.0);
-    const Meter* pp_use_meter = empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT");
-    DebugLogger() << "========= METER_IMPERIAL_PP_USE_LIMIT meter: " << pp_use_meter;
+    const Meter* pp_use_limit = empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT");
+    DebugLogger() << "========= METER_IMPERIAL_PP_USE_LIMIT meter: " << pp_use_limit;
     float available_stockpile = pp_in_stockpile;
-    if (pp_use_meter) {
+    if (pp_use_limit) {
         DebugLogger() << "========= METER_IMPERIAL_PP_USE_LIMIT: " << empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT")->Current() << " ========";
-        available_stockpile *= pp_use_meter->Current();
+        available_stockpile = std::min(available_stockpile, pp_use_limit->Current());
     };
      DebugLogger() << "========= alrighty then";
     // FIXME after discussion - extraction is lossless
