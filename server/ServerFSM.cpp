@@ -441,7 +441,7 @@ MPLobby::MPLobby(my_context c) :
         // Try to use connections:
         for (const auto& player_connection : server.m_networking) {
             int player_id = player_connection->PlayerID();
-            if (player_id != Networking::INVALID_PLAYER_ID) {
+            if (player_id != Networking::INVALID_PLAYER_ID && player_connection->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER ) {
                 PlayerSetupData player_setup_data;
                 player_setup_data.m_player_name =   player_connection->PlayerName();
                 player_setup_data.m_client_type =   player_connection->GetClientType();
