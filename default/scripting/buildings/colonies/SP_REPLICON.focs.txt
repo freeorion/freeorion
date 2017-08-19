@@ -71,7 +71,7 @@ BuildingType
                 Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
             ]
             effects = [
-                SetSpecies name = "SP_RADON"
+                SetSpecies name = "SP_REPLICON"
                 SetPopulation value = 1
             ]
         EffectsGroup
@@ -84,7 +84,7 @@ BuildingType
                 Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
             ]
             effects = [
-                SetSpecies name = "SP_RADON"
+                SetSpecies name = "SP_REPLICON"
                 SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
             ]
         EffectsGroup
@@ -97,7 +97,7 @@ BuildingType
                 GenerateSitRepMessage
                     message = "SITREP_NEW_COLONY_ESTABLISHED"
                     label = "SITREP_NEW_COLONY_ESTABLISHED_LABEL"
-                    icon = "icons/species/robotic-05.png"
+                    icon = "icons/species/replicon.png"
                     parameters = [
                         tag = "species" data = "SP_REPLICON"
                         tag = "planet" data = Target.ID
