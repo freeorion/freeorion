@@ -1575,6 +1575,7 @@ private:
 
     private:
         std::string m_tech;
+        GG::Clr m_background_color;
     };
 
     void    Populate();
@@ -1594,7 +1595,7 @@ private:
 void TechTreeWnd::TechListBox::TechRow::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::FlatRectangle(ul, lr, ClientUI::WndColor(), GG::CLR_WHITE, 1);
+    GG::FlatRectangle(ul, lr, m_background_color, GG::CLR_WHITE, 1);
 }
 
 std::vector<GG::X> TechTreeWnd::TechListBox::TechRow::ColWidths(GG::X total_width) {
@@ -1638,7 +1639,8 @@ bool TechTreeWnd::TechListBox::TechRowCmp(const GG::ListBox::Row& lhs, const GG:
 
 TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name) :
     CUIListBox::Row(w, GG::Y(ClientUI::Pts() * 2 + 5), "TechListBox::TechRow"),
-    m_tech(tech_name)
+    m_tech(tech_name),
+    m_background_color(ClientUI::WndColor())
 {}
 
 void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
@@ -1708,6 +1710,21 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
     std::string time_str = std::to_string(this_row_tech->ResearchTime(client_empire_id));
     if (GG::Button* time_btn = dynamic_cast<GG::Button*>((size() >= 4) ? at(3) : nullptr))
         time_btn->SetText(time_str + just_pad + just_pad);
+
+    // Adjust colors for tech status
+    auto foreground_color = ClientUI::CategoryColor(this_row_tech->Category());
+    auto this_row_status = GetEmpire(client_empire_id)->GetTechStatus(m_tech);
+    if (this_row_status == TS_COMPLETE) {
+        foreground_color.a = m_background_color.a;  // preserve users 'wnd-color' trasparency
+        AdjustBrightness(foreground_color, 0.3);
+        m_background_color = foreground_color;
+        foreground_color = ClientUI::TextColor();
+    } else if (this_row_status == TS_UNRESEARCHABLE || this_row_status == TS_HAS_RESEARCHED_PREREQ) {
+        foreground_color.a = 96;
+    }
+
+    for (std::size_t i = 0; i < size(); ++i)
+        at(i)->SetColor(foreground_color);
 
     ClearBrowseInfoWnd();
     SetBrowseInfoWnd(TechRowBrowseWnd(m_tech, client_empire_id));
