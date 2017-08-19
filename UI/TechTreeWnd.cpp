@@ -47,7 +47,7 @@ namespace {
         // TechListBox::TechRow column widths
         int default_pts = 16;
         db.Add("UI.research.listbox.column-widths.graphic",     UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_GRAPHIC"),
-               default_pts * 2,         StepValidator<int>(1));
+               default_pts * 3,         StepValidator<int>(1));
         db.Add("UI.research.listbox.column-widths.name",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_NAME"),
                default_pts * 18,        StepValidator<int>(1));
         db.Add("UI.research.listbox.column-widths.cost",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_COST"),
@@ -1661,7 +1661,7 @@ void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
 
     std::vector<GG::X> col_widths = ColWidths(Width());
     const GG::X GRAPHIC_WIDTH =   col_widths[0];
-    const GG::Y ICON_HEIGHT(std::max(ClientUI::Pts(), Value(GRAPHIC_WIDTH) - 6));
+    const GG::Y ICON_HEIGHT(std::min(Value(Height()) - 12, std::max(ClientUI::Pts(), Value(GRAPHIC_WIDTH) - 6)));
     // TODO replace string padding with new TextFormat flag
     std::string just_pad = "    ";
 
