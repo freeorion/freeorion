@@ -1576,6 +1576,7 @@ private:
     private:
         std::string m_tech;
         GG::Clr m_background_color;
+        bool m_enqueued;
     };
 
     void    Populate();
@@ -1595,7 +1596,13 @@ private:
 void TechTreeWnd::TechListBox::TechRow::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::FlatRectangle(ul, lr, m_background_color, GG::CLR_WHITE, 1);
+    GG::Pt offset{GG::X(3), GG::Y(3)};
+    if (m_enqueued) {
+        GG::FlatRectangle(ul, lr, ClientUI::WndColor(), GG::CLR_WHITE, 1);
+        GG::FlatRoundedRectangle(ul + offset, lr - offset, m_background_color, GG::CLR_WHITE);
+    } else {
+        GG::FlatRectangle(ul, lr, m_background_color, GG::CLR_WHITE, 1);
+    }
 }
 
 std::vector<GG::X> TechTreeWnd::TechListBox::TechRow::ColWidths(GG::X total_width) {
@@ -1640,7 +1647,8 @@ bool TechTreeWnd::TechListBox::TechRowCmp(const GG::ListBox::Row& lhs, const GG:
 TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name) :
     CUIListBox::Row(w, GG::Y(ClientUI::Pts() * 2 + 5), "TechListBox::TechRow"),
     m_tech(tech_name),
-    m_background_color(ClientUI::WndColor())
+    m_background_color(ClientUI::WndColor()),
+    m_enqueued(false)
 {}
 
 void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
@@ -1703,6 +1711,7 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
     std::string just_pad = "    ";
 
     auto client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    auto empire = GetEmpire(client_empire_id);
     std::string cost_str = std::to_string(std::lround(this_row_tech->ResearchCost(client_empire_id)));
     if (GG::Button* cost_btn = dynamic_cast<GG::Button*>((size() >= 3) ? at(2) : nullptr))
         cost_btn->SetText(cost_str + just_pad + just_pad);
@@ -1713,7 +1722,7 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
 
     // Adjust colors for tech status
     auto foreground_color = ClientUI::CategoryColor(this_row_tech->Category());
-    auto this_row_status = GetEmpire(client_empire_id)->GetTechStatus(m_tech);
+    auto this_row_status = empire->GetTechStatus(m_tech);
     if (this_row_status == TS_COMPLETE) {
         foreground_color.a = m_background_color.a;  // preserve users 'wnd-color' trasparency
         AdjustBrightness(foreground_color, 0.3);
@@ -1725,6 +1734,9 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
 
     for (std::size_t i = 0; i < size(); ++i)
         at(i)->SetColor(foreground_color);
+
+    const ResearchQueue& rq = empire->GetResearchQueue();
+    m_enqueued = rq.find(m_tech) != rq.end();
 
     ClearBrowseInfoWnd();
     SetBrowseInfoWnd(TechRowBrowseWnd(m_tech, client_empire_id));
