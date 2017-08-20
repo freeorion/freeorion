@@ -272,28 +272,20 @@ public:
     std::shared_ptr<UniverseObject> ExistingObject(int id);
     const std::map<int, std::shared_ptr<UniverseObject>>& ExistingObjects()
     { return m_existing_objects; }
-
     const std::map<int, std::shared_ptr<UniverseObject>>& ExistingResourceCenters()
     { return m_existing_resource_centers; }
-
     const std::map<int, std::shared_ptr<UniverseObject>>& ExistingPopCenters()
     { return m_existing_pop_centers; }
-
     const std::map<int, std::shared_ptr<UniverseObject>>& ExistingShips()
     { return m_existing_ships; }
-
     const std::map<int, std::shared_ptr<UniverseObject>>& ExistingFleets()
     { return m_existing_fleets; }
-
     const std::map<int, std::shared_ptr<UniverseObject>>& ExistingPlanets()
     { return m_existing_planets; }
-
     const std::map<int, std::shared_ptr<UniverseObject>>& ExistingSystems()
     { return m_existing_systems; }
-
     const std::map<int, std::shared_ptr<UniverseObject>>& ExistingBuildings()
     { return m_existing_buildings; }
-
     const std::map<int, std::shared_ptr<UniverseObject>>& ExistingFields()
     { return m_existing_fields; }
 
@@ -313,12 +305,12 @@ public:
       * Copy or Clone functions of the copied UniverseObjects.  Any objects
       * in this ObjectMap that have no corresponding object in \a copied_map
       * are left unchanged. */
-    void                Copy(const ObjectMap& copied_map, int empire_id = ALL_EMPIRES);
+    void Copy(const ObjectMap& copied_map, int empire_id = ALL_EMPIRES);
 
     /** Copies the contents of the ObjectMap \a copied_map into this ObjectMap, in
      * preparation for serializing this ObjectMap.  The normal object-by-object 
      * CopyObject process is bypassed and only m_objects is copied, in a direct fashion. */
-    void                CopyForSerialize(const ObjectMap& copied_map);
+    void CopyForSerialize(const ObjectMap& copied_map);
 
     /** Copies the passed \a object into this ObjectMap, overwriting any
       * existing information about that object or creating a new object in this
@@ -345,20 +337,20 @@ public:
 
     /** Empties map, removing shared ownership by this map of all
       * previously contained objects. */
-    void                Clear();
+    void Clear();
 
     /** Swaps the contents of *this with \a rhs. */
-    void                swap(ObjectMap& rhs);
+    void swap(ObjectMap& rhs);
 
     /** */
-    void                UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_object_ids);
+    void UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_object_ids);
 
     /** Recalculates contained objects for all objects in this ObjectMap based
       * on what other objects exist in this ObjectMap. Useful to eliminate
       * cases where there are inconsistencies between whan an object thinks it
       * contains, and what other objects think they are contained by the first
       * object. */
-    void                AuditContainment(const std::set<int>& destroyed_object_ids);
+    void AuditContainment(const std::set<int>& destroyed_object_ids);
     //@}
 
 private:
@@ -385,39 +377,23 @@ private:
     static void SwapMap(std::map<int, std::shared_ptr<T>>& map, ObjectMap& rhs);
 
     std::map<int, std::shared_ptr<UniverseObject>> m_objects;
-
     std::map<int, std::shared_ptr<ResourceCenter>> m_resource_centers;
-
     std::map<int, std::shared_ptr<PopCenter>> m_pop_centers;
-
     std::map<int, std::shared_ptr<Ship>> m_ships;
-
     std::map<int, std::shared_ptr<Fleet>> m_fleets;
-
     std::map<int, std::shared_ptr<Planet>> m_planets;
-
     std::map<int, std::shared_ptr<System>> m_systems;
-
     std::map<int, std::shared_ptr<Building>> m_buildings;
-
     std::map<int, std::shared_ptr<Field>> m_fields;
 
     std::map<int, std::shared_ptr<UniverseObject>> m_existing_objects;
-
     std::map<int, std::shared_ptr<UniverseObject>> m_existing_resource_centers;
-
     std::map<int, std::shared_ptr<UniverseObject>> m_existing_pop_centers;
-
     std::map<int, std::shared_ptr<UniverseObject>> m_existing_ships;
-
     std::map<int, std::shared_ptr<UniverseObject>> m_existing_fleets;
-
     std::map<int, std::shared_ptr<UniverseObject>> m_existing_planets;
-
     std::map<int, std::shared_ptr<UniverseObject>> m_existing_systems;
-
     std::map<int, std::shared_ptr<UniverseObject>> m_existing_buildings;
-
     std::map<int, std::shared_ptr<UniverseObject>> m_existing_fields;
 
     friend class boost::serialization::access;
