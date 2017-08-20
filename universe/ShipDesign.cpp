@@ -417,20 +417,26 @@ float PartType::Capacity() const {
 float PartType::SecondaryStat() const
 { return m_secondary_stat; }
 
+float PartType::TertiaryStat() const
+{ return m_tertiary_stat; }
+
 std::string PartType::CapacityDescription() const {
     std::string desc_string;
     float main_stat = Capacity();
     float sdry_stat = SecondaryStat();
+    float ttry_stat = TertiaryStat();
 
     switch (m_class) {
     case PC_FUEL:
     case PC_TROOPS:
     case PC_COLONY:
-    case PC_FIGHTER_BAY:
         desc_string += str(FlexibleFormat(UserString("PART_DESC_CAPACITY")) % main_stat);
         break;
+    case PC_FIGHTER_BAY:
+        desc_string += str(FlexibleFormat(UserString("PART_DESC_FIGHTER_BAY_STATS")) % main_stat % ttry_stat);
+        break;
     case PC_DIRECT_WEAPON:
-        desc_string += str(FlexibleFormat(UserString("PART_DESC_DIRECT_FIRE_STATS")) % main_stat % sdry_stat);
+        desc_string += str(FlexibleFormat(UserString("PART_DESC_DIRECT_FIRE_STATS")) % main_stat % sdry_stat % ttry_stat);
         break;
     case PC_FIGHTER_HANGAR:
         desc_string += str(FlexibleFormat(UserString("PART_DESC_HANGAR_STATS")) % main_stat % sdry_stat);
