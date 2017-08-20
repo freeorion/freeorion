@@ -1052,6 +1052,11 @@ Test String
 RULE_TEST_STRING_DESC
 Test
 
+RULE_STARLANES_EVERYWHERE
+Starlanes Everywhere
+
+RULE_STARLANES_EVERYWHERE_DESC
+Starlanes are generated between every pair of systems, regardless of geometry. Lanes may still be removed during a game, however. Lanes are also not rendered on the galaxy map.
 
 ##
 ## Command-line and options database entries

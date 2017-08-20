@@ -2109,6 +2109,10 @@ void MapWnd::RenderSystems() {
 }
 
 void MapWnd::RenderStarlanes() {
+    // if lanes everywhere, don't render the lanes
+    if (GetGameRules().Get<bool>("RULE_STARLANES_EVERYWHERE"))
+        return;
+
     bool coloured = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
     float core_multiplier = static_cast<float>(GetOptionsDB().Get<double>("UI.starlane-core-multiplier"));
     RenderStarlanes(m_RC_starlane_vertices, m_RC_starlane_colors, core_multiplier * ZoomFactor(), coloured, false);

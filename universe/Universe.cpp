@@ -60,6 +60,8 @@ namespace {
         // makes all PRNG be reseeded frequently
         rules.Add<bool>("RULE_RESEED_PRNG_SERVER", "RULE_RESEED_PRNG_SERVER_DESC",
                         "", true, true);
+        rules.Add<bool>("RULE_STARLANES_EVERYWHERE", "RULE_STARLANES_EVERYWHERE_DESC",
+                        "TEST", false, true);
     }
     bool temp_bool2 = RegisterGameRules(&AddRules);
 
