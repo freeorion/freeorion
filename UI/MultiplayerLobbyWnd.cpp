@@ -11,7 +11,6 @@
 #include "../network/Message.h"
 #include "../network/ClientNetworking.h"
 #include "../client/human/HumanClientApp.h"
-#include "CUIControls.h"
 #include "Hotkeys.h"
 #include "Sound.h"
 
@@ -527,6 +526,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
            GG::ONTOP | GG::INTERACTIVE | GG::RESIZABLE),
     m_chat_box(nullptr),
     m_chat_input_edit(nullptr),
+    m_any_can_edit(nullptr),
     m_new_load_game_buttons(nullptr),
     m_galaxy_setup_panel(nullptr),
     m_browse_saves_btn(nullptr),
@@ -544,6 +544,8 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     m_chat_input_edit = GG::Wnd::Create<CUIEdit>("");
     m_chat_box = GG::Wnd::Create<CUIMultiEdit>("", GG::MULTI_LINEWRAP | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE);
     m_chat_box->SetMaxLinesOfHistory(250);
+
+    m_any_can_edit = GG::Wnd::Create<CUIStateButton>(UserString("EDITABLE_GALAXY_SETTINGS"), GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
 
     m_galaxy_setup_panel = GG::Wnd::Create<GalaxySetupPanel>(GALAXY_SETUP_PANEL_WIDTH, GALAXY_SETUP_PANEL_HEIGHT);
 
@@ -580,6 +582,7 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
 
     AttachChild(m_chat_box);
     AttachChild(m_chat_input_edit);
+    AttachChild(m_any_can_edit);
     AttachChild(m_new_load_game_buttons);
     AttachChild(m_galaxy_setup_panel);
     AttachChild(m_save_file_text);
@@ -795,11 +798,15 @@ void MultiPlayerLobbyWnd::DoLayout() {
 
     const GG::Y RADIO_BN_HT(ClientUI::Pts() + 4);
 
-    GG::Pt galaxy_setup_panel_ul(CHAT_WIDTH + 2*CONTROL_MARGIN, RADIO_BN_HT);
+    GG::Pt galaxy_setup_panel_ul(CHAT_WIDTH + 2*CONTROL_MARGIN, GG::Y(2 * CONTROL_MARGIN) + 2 * RADIO_BN_HT);
     GG::Pt galaxy_setup_panel_lr = galaxy_setup_panel_ul + GG::Pt(GALAXY_SETUP_PANEL_WIDTH, GALAXY_SETUP_PANEL_HEIGHT);
     m_galaxy_setup_panel->SizeMove(galaxy_setup_panel_ul, galaxy_setup_panel_lr);
 
-    GG::Pt game_buttons_ul(CHAT_WIDTH + CONTROL_MARGIN, GG::Y(CONTROL_MARGIN));
+    GG::Pt any_can_edit_ul(CHAT_WIDTH + CONTROL_MARGIN, GG::Y(CONTROL_MARGIN));
+    GG::Pt any_can_edit_lr = any_can_edit_ul + GG::Pt(GALAXY_SETUP_PANEL_WIDTH, RADIO_BN_HT);
+    m_any_can_edit->SizeMove(any_can_edit_ul, any_can_edit_lr);
+
+    GG::Pt game_buttons_ul(CHAT_WIDTH + CONTROL_MARGIN, GG::Y(2 * CONTROL_MARGIN) + RADIO_BN_HT);
     GG::Pt game_buttons_lr = game_buttons_ul + m_galaxy_setup_panel->RelativeLowerRight();
     m_new_load_game_buttons->SizeMove(game_buttons_ul, game_buttons_lr);
 

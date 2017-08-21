@@ -1941,6 +1941,9 @@ Previous Player
 MULTIPLAYER_PLAYER_LIST_STARTING_SPECIES
 Starting Species
 
+EDITABLE_GALAXY_SETTINGS
+Anyone can edit galaxy and AI settings.
+
 NEW_GAME_BN
 New game
 
