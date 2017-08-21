@@ -764,27 +764,27 @@ void MultiPlayerLobbyWnd::LobbyUpdate(const MultiplayerLobbyData& lobby_data) {
 
     bool send_update_back = PopulatePlayerList();
 
-    if (send_update_back && ThisClientIsHost())
+    if (send_update_back && (ThisClientIsHost() || m_lobby_data.m_any_can_edit))
         SendUpdate();
 
     LogPlayerSetupData(m_lobby_data.m_players);
 }
 
 void MultiPlayerLobbyWnd::Refresh() {
-    if (ThisClientIsHost()) {
+    m_any_can_edit->Disable(! ThisClientIsHost());
+
+    if (ThisClientIsHost() || m_lobby_data.m_any_can_edit) {
         for (std::size_t i = 0; i < m_new_load_game_buttons->NumButtons(); ++i)
             m_new_load_game_buttons->DisableButton(i, false);
         m_galaxy_setup_panel->Disable(false);
         m_save_file_text->Disable(false);
         m_browse_saves_btn->Disable(false);
-        m_any_can_edit->Disable(false);
     } else {
         for (std::size_t i = 0; i < m_new_load_game_buttons->NumButtons(); ++i)
             m_new_load_game_buttons->DisableButton(i);
         m_galaxy_setup_panel->Disable();
         m_save_file_text->Disable();
         m_browse_saves_btn->Disable();
-        m_any_can_edit->Disable();
     }
 }
 
@@ -937,14 +937,14 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
         PlayerSetupData& psd = entry.second;
 
         if (m_lobby_data.m_new_game) {
-            bool immutable_row = !ThisClientIsHost() && (data_player_id != HumanClientApp::GetApp()->PlayerID());   // host can modify any player's row.  non-hosts can only modify their own row.  As of SVN 4026 this is not enforced on the server, but should be.
+            bool immutable_row = !ThisClientIsHost() && (data_player_id != HumanClientApp::GetApp()->PlayerID()) && !(psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER && m_lobby_data.m_any_can_edit);   // host can modify any player's row.  non-hosts can only modify their own row.  As of SVN 4026 this is not enforced on the server, but should be.
             auto row = GG::Wnd::Create<NewGamePlayerRow>(psd, data_player_id, immutable_row);
             m_players_lb->Insert(row);
             row->DataChangedSignal.connect(
                 boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
 
         } else {
-            bool immutable_row = (!ThisClientIsHost() && (data_player_id != HumanClientApp::GetApp()->PlayerID())) || m_lobby_data.m_save_game_empire_data.empty();
+            bool immutable_row = (!ThisClientIsHost() && (data_player_id != HumanClientApp::GetApp()->PlayerID()) && !(psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER && m_lobby_data.m_any_can_edit)) || m_lobby_data.m_save_game_empire_data.empty();
             auto row = GG::Wnd::Create<LoadGamePlayerRow>(psd, data_player_id, m_lobby_data.m_save_game_empire_data, immutable_row);
             m_players_lb->Insert(row);
             row->DataChangedSignal.connect(
@@ -973,7 +973,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
     // on host, add extra empty row, which the host can use to select
     // "Add AI" to add an AI to the game.  This row's details are treated
     // specially when sending a lobby update to the server.
-    if (ThisClientIsHost()) {
+    if (ThisClientIsHost() || m_lobby_data.m_any_can_edit) {
         auto row = GG::Wnd::Create<EmptyPlayerRow>();
         m_players_lb->Insert(row);
         row->DataChangedSignal.connect(
