@@ -620,8 +620,15 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     // during this copying and is updated below from the save file(s)
 
     if (server.m_networking.PlayerIsHost(sender->PlayerID())) {
+        if (m_lobby_data->m_any_can_edit != incoming_lobby_data.m_any_can_edit) {
+            has_important_changes = true;
+            m_lobby_data->m_any_can_edit = incoming_lobby_data.m_any_can_edit;
+        }
+    }
 
-        DebugLogger(FSM) << "Get message from host.";
+    if (server.m_networking.PlayerIsHost(sender->PlayerID()) || m_lobby_data->m_any_can_edit) {
+
+        DebugLogger(FSM) << "Get message from host or allowed player.";
 
         static int AI_count = 1;
         const GG::Clr CLR_NONE = GG::Clr(0, 0, 0, 0);
@@ -712,8 +719,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 (m_lobby_data->m_native_freq != incoming_lobby_data.m_native_freq) ||
                 (m_lobby_data->m_ai_aggr != incoming_lobby_data.m_ai_aggr) ||
                 (m_lobby_data->m_new_game != incoming_lobby_data.m_new_game) ||
-                (m_lobby_data->m_game_rules != incoming_lobby_data.m_game_rules) ||
-                (m_lobby_data->m_any_can_edit != incoming_lobby_data.m_any_can_edit);
+                (m_lobby_data->m_game_rules != incoming_lobby_data.m_game_rules);
 
             if (player_setup_data_changed) {
                 if (m_lobby_data->m_players.size() != incoming_lobby_data.m_players.size()) {
@@ -752,8 +758,6 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             // directly configurable lobby data
             m_lobby_data->m_new_game       = incoming_lobby_data.m_new_game;
             m_lobby_data->m_players        = incoming_lobby_data.m_players;
-
-            m_lobby_data->m_any_can_edit   = incoming_lobby_data.m_any_can_edit;
 
             LogPlayerSetupData(m_lobby_data->m_players);
 
