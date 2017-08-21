@@ -312,6 +312,7 @@ private:
 struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
     /** \name Structors */ //@{
     MultiplayerLobbyData() :
+        m_any_can_edit(false),
         m_new_game(true),
         m_players(),
         m_save_game(),
@@ -321,6 +322,7 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
 
     std::string Dump() const;
 
+    bool                                        m_any_can_edit;
     bool                                        m_new_game;
     // TODO: Change from a list<(player_id, PlayerSetupData)> where
     // PlayerSetupData contain player_id to a vector of PlayerSetupData

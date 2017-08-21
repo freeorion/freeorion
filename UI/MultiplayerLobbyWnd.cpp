@@ -603,6 +603,8 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     m_save_file_text->Disable();
     m_browse_saves_btn->Disable();
 
+    m_any_can_edit->CheckedSignal.connect(
+        boost::bind(&MultiPlayerLobbyWnd::AnyCanEdit, this, _1));
     m_new_load_game_buttons->ButtonChangedSignal.connect(
         boost::bind(&MultiPlayerLobbyWnd::NewLoadClicked, this, _1));
     m_galaxy_setup_panel->SettingsChangedSignal.connect(
@@ -754,6 +756,8 @@ void MultiPlayerLobbyWnd::LobbyUpdate(const MultiplayerLobbyData& lobby_data) {
     m_new_load_game_buttons->SetCheck(!lobby_data.m_new_game);
     m_galaxy_setup_panel->SetFromSetupData(lobby_data);
 
+    m_any_can_edit->SetCheck(lobby_data.m_any_can_edit);
+
     m_save_file_text->SetText(lobby_data.m_save_game);
 
     m_lobby_data = lobby_data;
@@ -773,12 +777,14 @@ void MultiPlayerLobbyWnd::Refresh() {
         m_galaxy_setup_panel->Disable(false);
         m_save_file_text->Disable(false);
         m_browse_saves_btn->Disable(false);
+        m_any_can_edit->Disable(false);
     } else {
         for (std::size_t i = 0; i < m_new_load_game_buttons->NumButtons(); ++i)
             m_new_load_game_buttons->DisableButton(i);
         m_galaxy_setup_panel->Disable();
         m_save_file_text->Disable();
         m_browse_saves_btn->Disable();
+        m_any_can_edit->Disable();
     }
 }
 
@@ -1077,3 +1083,10 @@ void MultiPlayerLobbyWnd::ReadyClicked() {
 
 void MultiPlayerLobbyWnd::CancelClicked()
 { HumanClientApp::GetApp()->CancelMultiplayerGameFromLobby(); }
+
+void MultiPlayerLobbyWnd::AnyCanEdit(bool checked) {
+    if (ThisClientIsHost()) {
+        m_lobby_data.m_any_can_edit = m_any_can_edit->Checked();
+        SendUpdate();
+    }
+}

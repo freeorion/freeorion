@@ -98,7 +98,8 @@ void MultiplayerLobbyData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_new_game)
         & BOOST_SERIALIZATION_NVP(m_players)
         & BOOST_SERIALIZATION_NVP(m_save_game)
-        & BOOST_SERIALIZATION_NVP(m_save_game_empire_data);
+        & BOOST_SERIALIZATION_NVP(m_save_game_empire_data)
+        & BOOST_SERIALIZATION_NVP(m_any_can_edit);
 }
 
 template void MultiplayerLobbyData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);

@@ -712,7 +712,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 (m_lobby_data->m_native_freq != incoming_lobby_data.m_native_freq) ||
                 (m_lobby_data->m_ai_aggr != incoming_lobby_data.m_ai_aggr) ||
                 (m_lobby_data->m_new_game != incoming_lobby_data.m_new_game) ||
-                (m_lobby_data->m_game_rules != incoming_lobby_data.m_game_rules);
+                (m_lobby_data->m_game_rules != incoming_lobby_data.m_game_rules) ||
+                (m_lobby_data->m_any_can_edit != incoming_lobby_data.m_any_can_edit);
 
             if (player_setup_data_changed) {
                 if (m_lobby_data->m_players.size() != incoming_lobby_data.m_players.size()) {
@@ -751,6 +752,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             // directly configurable lobby data
             m_lobby_data->m_new_game       = incoming_lobby_data.m_new_game;
             m_lobby_data->m_players        = incoming_lobby_data.m_players;
+
+            m_lobby_data->m_any_can_edit   = incoming_lobby_data.m_any_can_edit;
 
             LogPlayerSetupData(m_lobby_data->m_players);
 
