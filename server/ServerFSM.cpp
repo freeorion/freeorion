@@ -437,6 +437,8 @@ MPLobby::MPLobby(my_context c) :
     ServerApp& server = Server();
     const SpeciesManager& sm = GetSpeciesManager();
     if (server.IsHostless()) {
+        m_lobby_data->m_any_can_edit = true;
+
         std::list<PlayerConnectionPtr> to_disconnect;
         // Try to use connections:
         for (const auto& player_connection : server.m_networking) {
