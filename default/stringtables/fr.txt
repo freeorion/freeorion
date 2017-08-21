@@ -1052,6 +1052,11 @@ Test des Chaînes (String)
 RULE_TEST_STRING_DESC  # translated
 Test
 
+RULE_STARLANES_EVERYWHERE
+Voies Spatiales Systématiques
+
+RULE_STARLANES_EVERYWHERE_DESC
+Les Voies spatiales sont générées entre chaque paire de systèmes, indépendamment de toute géométrie. Toutefois, ces Voies peuvent toujours être supprimées durant une partie. Dans ce mode, les Voies ne sont pas affichées sur la carte galactique.
 
 ##
 ## Command-line and options database entries
@@ -1598,6 +1603,9 @@ L'adresse du répertoire où sont localisées les ressources du jeu (fichiers ex
 
 OPTIONS_DB_LOG_LEVEL
 Outrepasse tous les seuils d'enregistrement à ce niveau ou au-delà, à partir duquel les messages du journal seront créés.
+
+OPTIONS_DB_LOG_FILE
+Outrepasse l'emplacement par défaut du fichier journal.
 
 OPTIONS_DB_LOGGER_FILE_SINK_LEVEL
 Fixe le seuil à partir duquel les messages du journal seront générés pour la source par défaut de ce processus.
@@ -6634,7 +6642,7 @@ Trith
 
 SP_TRITH_GAMEPLAY_DESC
 '''Télépathes xénophobes tourmentés.
-Préfèrent les Planètes [[PT_DESERT]]s.
+Préfèrent les Planètes [[PT_RADIATED]]s.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 '''
 
@@ -6887,6 +6895,27 @@ Planète Natale:
 Leur planète possède une faible gravité et une atmosphère très épaisse. Sa composition géologique est unique du fait de la faible proportion de métaux lourds, mais de la bien plus forte présence d'autres éléments lourds, particulièrement les gaz nobles. De son activité tectonique très stable, résulte une croûte terrestre très plate, qui par conséquent est principalement recouverte d'eaux stagnantes et peu profondes. La totalité de leur monde s'apparente à une zone marécageuse géante.
 '''
 
+SP_REPLICON  # translated
+Replicon
+
+SP_REPLICON_GAMEPLAY_DESC
+'''Robots auto-réplicants à peine sensibles.
+Préfèrent les Planètes [[PT_RADIATED]]s.
+[[encyclopedia ROBOTIC_SPECIES_TITLE]]
+'''
+
+SP_REPLICON_DESC
+'''Description:
+Un Replicon a l'apparence d'une araignée robotique d'une envergure de 3m et munie d'ailes. Ces ailes sont en réalité des panneaux solaires hautement efficients car couvrant une grande superficie. "L'abdomen" de la créature s'avère être un "centre industriel de production" où les membres de remplacement et les nouveaux Replicons sont créés.
+
+Structure sociale:
+Les Replicons ont une structure sociale relativement primitive. Ils sont dirigés par un gouvernement planétaire s'appuyant sur quelques seigneurs féodaux, ces derniers ayant découvert le voyage spatial, devenu rapidement une solution très pratique pour lancer des attaques contre des peuplades très lointaines. Leur gouvernement est donc féodal en raison d'un fait assez inhabituel: la découverte du vol spatial par quelques individus avant l'avènement d'une révolution industrielle à l'échelle d'une nation. De par la grande variété des machines auto-réplicantes sur Cisarruj, la plupart des besoins normalement satisfaits par l'industrie sur les autres planètes, le sont par "l'agriculture" ou "reproduction" chez les Replicons. En effet, les Replicons ne disposent d'aucune base industrielle ni d'aucune connaissance technologique à proprement parler, autres que l'usage d'équipements et produits créés "naturellement" par leur soin. Par conséquent, leur société est très peu érudite, la plupart des individus transmettant la connaissance d'une manière discontinue et partielle: comment forger un revêtement de titane ou quelle quantité de minerai d'uranium est nécessaire pour alimenter son réacteur de production. La plupart des connaissances que les sociétés développées regroupent, partagent et mettent en relation, ne sont détenues que par les seigneurs, le reste de la société se développant aléatoirement grâce aux quelques savoirs appris et conservés, à la manière d'un monde post-apocalyptique. 
+
+Planète natale:
+Cisarruj est une planète fortement irradiée, dominée par une grande variété de machines autonomes auto-réplicantes, et entourée d'un grand mystère. Il existe bien quelques rares archives historiques sur les protagonistes de la guerre ayant mené à la naissance de l'Empire Cisarruj. Cependant, la plupart de ces écrits ne relatent que les faits classiques d'une ère pré-industrielle, parsemée de périodes d'essor ou de déclin. Le Grand Mystère des Replicons quant à lui, reste entier. Une race supérieure a-t-elle conçu les Replicons au terme de nombreuses expériences, ou sont-ils le résultat d'un accident industriel poussant leurs infortunés créateurs à abandonner la planète? Ou bien ont-ils subi un destin encore plus funeste de la main-même des créatures qu'ils ont engendrées...
+'''
+
+
 SP_EGASSEM  # translated
 Egassem
 
@@ -6912,7 +6941,7 @@ Sslith
 
 SP_SSLITH_GAMEPLAY_DESC
 '''Créatures aquatiques plates et souples.
-Préfèrent les Planètes [[PT_TUNDRA]].
+Préfèrent les Planètes [[PT_OCEAN]]s.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
@@ -11821,6 +11850,12 @@ Colonie Phinnert
 
 BLD_COL_PHINNERT_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_PHINNERT]]. [[BLD_COL_PART_2]] colonie Phinnert [[BLD_COL_PART_3]].
+
+BLD_COL_REPLICON
+Colonie Replicon
+
+BLD_COL_REPLICON_DESC
+[[BLD_COL_PART_1]] colonie [[species SP_REPLICON]]. [[BLD_COL_PART_2]] colonie Replicon [[BLD_COL_PART_3]].
 
 BLD_COL_SCYLIOR
 Colonie Scylior
