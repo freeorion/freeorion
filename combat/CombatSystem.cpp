@@ -792,10 +792,10 @@ namespace {
 
     // Calculate monster detection strength in system
     float GetMonsterDetection(const CombatInfo& combat_info) {
-        float monster_detection = 0.0;
+        float monster_detection = 0.0f;
         for (auto it = combat_info.objects.const_begin(); it != combat_info.objects.const_end(); ++it) {
             auto obj = *it;
-            if (obj->Unowned() && (obj->ObjectType() == OBJ_SHIP || obj->ObjectType() == OBJ_PLANET )){
+            if (obj->Unowned() && (obj->ObjectType() == OBJ_SHIP || obj->ObjectType() == OBJ_PLANET )) {
                 monster_detection = std::max(monster_detection, obj->InitialMeterValue(METER_DETECTION));
             }
         }
