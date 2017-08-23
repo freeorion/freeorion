@@ -498,9 +498,8 @@ class AIstate(object):
                 continue
 
             # have either stale or current info
-            pattack = 0
-            phealth = 0
-            mypattack, myphealth = 0, 0
+            pattack = phealth = 0
+            mypattack = myphealth = 0
             for pid in system.planetIDs:
                 prating = self.assess_planet_threat(pid, sighting_age=current_turn - partial_vis_turn)
                 planet = universe.getPlanet(pid)
