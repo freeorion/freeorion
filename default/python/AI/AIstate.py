@@ -634,7 +634,6 @@ class AIstate(object):
         """Returns (fleet_threat, max_threat, myFleetRating, threat_fleets) compiled over a group of systems."""
         myrating = threat = max_threat = 0
         threat_fleets = set()
-        threat_detail = []
         for sys_id in system_ids:
             sys_status = self.systemStatus.get(sys_id, {})
             # TODO: have distinct treatment for both enemy_threat and fleetThreat, respectively
@@ -643,7 +642,6 @@ class AIstate(object):
             threat = CombatRatingsAI.combine_ratings(threat, fthreat)
             myrating = CombatRatingsAI.combine_ratings(myrating, sys_status.get('myFleetRating', 0))
             # myrating = FleetUtilsAI.combine_ratings(myrating, sys_status.get('all_local_defenses', 0))
-            threat_detail.append((sys_id, fthreat, sys_status.get('local_fleet_threats', [])))
             threat_fleets.update(sys_status.get('local_fleet_threats', []))
         return threat, max_threat, myrating, threat_fleets
 
