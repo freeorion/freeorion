@@ -51,7 +51,6 @@ void LinkText::Render() {
 
 void LinkText::SetText(const std::string& str) {
     m_raw_text = str;
-    GG::TextControl::SetText(m_raw_text);   // so that line data is updated for use in FindLinks
     FindLinks();
     MarkLinks();
 }
@@ -306,6 +305,10 @@ void TextLinker::FindLinks() {
 
     GG::Y y_posn(0); // y-coordinate of the top of the current line
     Link link;
+
+    // control text needs to be updated so that the line data is calculated from
+    // the raw text and not the marked text set in MarkText().
+    SetLinkedText(RawText());
 
     for (const GG::Font::LineData& curr_line : GetLineData()) {
         for (const GG::Font::LineData::CharData& curr_char : curr_line.char_data) {
