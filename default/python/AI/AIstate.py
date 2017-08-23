@@ -470,7 +470,7 @@ class AIstate(object):
             monster_rating = CombatRatingsAI.combine_ratings_list(monster_ratings)
             mob_rating = CombatRatingsAI.combine_ratings_list(mob_ratings)
             lost_fleets = fleetsLostBySystem.get(sys_id, [])
-            lost_fleet_rating = CombatRatingsAI.combine_ratings_list(fleetsLostBySystem[sys_id]) if lost_fleets else 0
+            lost_fleet_rating = CombatRatingsAI.combine_ratings_list(lost_fleets)
 
             # under current visibility rules should not be possible to have any losses or other info here,
             # but just in case...
