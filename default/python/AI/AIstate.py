@@ -402,26 +402,29 @@ class AIstate(object):
                     attacks = stats[0]
                     if attacks:
                         e_f_dict.setdefault(stats, [0])[0] += 1
+
+            # TODO: consider checking death of individual ships.  If ships had been moved from this fleet
+            # into another fleet, we might have witnessed their death in that other fleet but if this fleet
+            # had not been seen since before that transfer then the ships might also still be listed here.
+            if dead_fleet:
+                continue
+
             visibility_turns_map = universe.getVisibilityTurnsMap(fleet_id, empire_id)
             partial_vis_turn = visibility_turns_map.get(fo.visibility.partial, -9999)
-            if not dead_fleet:
-                # TODO: consider checking death of individual ships.  If ships had been moved from this fleet
-                # into another fleet, we might have witnessed their death in that other fleet but if this fleet
-                # had not been seen since before that transfer then the ships might also still be listed here.
-                sys_status = self.systemStatus.setdefault(this_system_id, {})
-                sys_status['enemy_ship_count'] = sys_status.get('enemy_ship_count', 0) + len(fleet.shipIDs)
-                if partial_vis_turn >= current_turn - 1:  # only interested in immediately recent data
-                    saw_enemies_at_system[fleet.systemID] = True
-                    enemy_fleet_ids.append(fleet_id)
-                    enemies_by_system.setdefault(this_system_id, []).append(fleet_id)
-                    if not fleet.ownedBy(-1):
-                        self.misc.setdefault('enemies_sighted', {}
+            sys_status = self.systemStatus.setdefault(this_system_id, {})
+            sys_status['enemy_ship_count'] = sys_status.get('enemy_ship_count', 0) + len(fleet.shipIDs)
+            if partial_vis_turn >= current_turn - 1:  # only interested in immediately recent data
+                saw_enemies_at_system[fleet.systemID] = True
+                enemy_fleet_ids.append(fleet_id)
+                enemies_by_system.setdefault(this_system_id, []).append(fleet_id)
+                if not fleet.ownedBy(-1):
+                    self.misc.setdefault('enemies_sighted', {}
+                                         ).setdefault(current_turn, []).append(fleet_id)
+                    rating = CombatRatingsAI.get_fleet_rating(
+                        fleet_id, enemy_stats=CombatRatingsAI.get_empire_standard_fighter())
+                    if rating > 0.25 * my_milship_rating:
+                        self.misc.setdefault('dangerous_enemies_sighted', {}
                                              ).setdefault(current_turn, []).append(fleet_id)
-                        rating = CombatRatingsAI.get_fleet_rating(
-                            fleet_id, enemy_stats=CombatRatingsAI.get_empire_standard_fighter())
-                        if rating > 0.25 * my_milship_rating:
-                            self.misc.setdefault('dangerous_enemies_sighted', {}
-                                                 ).setdefault(current_turn, []).append(fleet_id)
         e_f_dict = cur_e_fighters if len(cur_e_fighters) > 1 else old_e_fighters
         std_fighter = sorted([(v, k) for k, v in e_f_dict.items()])[-1][1]
         self.__empire_standard_enemy = std_fighter
