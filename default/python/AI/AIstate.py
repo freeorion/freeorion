@@ -445,7 +445,6 @@ class AIstate(object):
 
             # update threats
             partial_vis_turn = get_partial_visibility_turn(sys_id)
-            lost_fleet_rating = 0
             monster_ratings = []  # immobile
             enemy_ratings = []  # owned & mobile
             mob_ratings = []  # mobile & unowned
@@ -469,8 +468,9 @@ class AIstate(object):
             enemy_rating = CombatRatingsAI.combine_ratings_list(enemy_ratings)
             monster_rating = CombatRatingsAI.combine_ratings_list(monster_ratings)
             mob_rating = CombatRatingsAI.combine_ratings_list(mob_ratings)
-            if fleetsLostBySystem.get(sys_id, []):
-                lost_fleet_rating = CombatRatingsAI.combine_ratings_list(fleetsLostBySystem[sys_id])
+            lost_fleets = fleetsLostBySystem.get(sys_id, [])
+            lost_fleet_rating = CombatRatingsAI.combine_ratings_list(fleetsLostBySystem[sys_id]) if lost_fleets else 0
+
             # under current visibility rules should not be possible to have any losses or other info here,
             # but just in case...
             if not system or partial_vis_turn < 0:
