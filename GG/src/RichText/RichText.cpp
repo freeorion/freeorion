@@ -163,32 +163,12 @@ namespace GG {
     public:
         RichTextPrivate(RichText* q, const std::string& str,
                         const std::shared_ptr<Font>& font,
-                        Clr color, Flags<TextFormat> format = FORMAT_NONE) :
-            m_owner(q),
-            m_font(font),
-            m_color(color),
-            m_format(format),
-            m_block_factory_map(RichText::DefaultBlockFactoryMap()),
-            m_padding(0)
-        {}
+                        Clr color, Flags<TextFormat> format = FORMAT_NONE);
 
         virtual ~RichTextPrivate() {}
 
         // Set the text to show. Parses it into tags and uses the factory map to turn them into blocks.
-        void SetText(const std::string& content)
-        {
-            m_blocks.clear();
-            m_owner->DetachChildren();
-
-            // Get a set of tags registered for rich text usage.
-            std::set<std::string> known_tags = MapKeys(*m_block_factory_map);
-
-            // Parse the content into a vector of tags.
-            std::vector<RichTextTag> tags = TagParser::ParseTags(content, known_tags);
-
-            // Create blocks from the tags and populate the control with them.
-            PopulateBlocks(tags);
-        }
+        void SetText(const std::string& content);
 
         /**
           * @brief Set the whitespace around the content.
@@ -196,41 +176,28 @@ namespace GG {
           * @param pixels The number of pixels to reserve for empty space around the content.
           * @return void
           */
-        void SetPadding(int pixels)
-        {
-            if (m_padding != pixels) {
-                m_padding = pixels;
-                DoLayout();
-            }
-        }
-
-        void SizeMove(Pt ul, Pt lr)
-        {
-            Pt original_size = m_owner->Size();
-            m_owner->Control::SizeMove(ul, lr);
-
-            // Redo layout if necessary.
-            if (m_owner->Size() != original_size) {
-                DoLayout();
-            }
-        }
+        void SetPadding(int pixels);
+        void SizeMove(Pt ul, Pt lr);
 
         // Get the set of keys from a map.
         template <typename T, typename V>
-        std::set<T> MapKeys(const std::map<T, V>& arg_map)
-        {
-            std::set<T> keys;
-            for (const auto& pair : arg_map) {
-                keys.insert(pair.first);
-            }
-            return keys;
-        }
+        std::set<T> MapKeys(const std::map<T, V>& arg_map);
 
         // Set the mapping from tags to factories that should be used to generate blocks from them.
         void SetBlockFactoryMap(std::shared_ptr<RichText::BLOCK_FACTORY_MAP> block_factory_map)
         { m_block_factory_map = block_factory_map; }
 
     private:
+        // Easier access to m_block_factory_map
+        RichText::BLOCK_FACTORY_MAP& FactoryMap()
+        { return *m_block_factory_map; }
+
+        // Create blocks from tags.
+        void PopulateBlocks(const std::vector<RichTextTag>& tags);
+
+        // Update the sizes of all blocks.
+        void DoLayout();
+
         RichText* const             m_owner;                //!< The public control.
         std::shared_ptr<Font>       m_font;                 //!< The font to use for text.
         Clr                         m_color;                //! < The color to use for text.
@@ -240,47 +207,100 @@ namespace GG {
         std::vector<BlockControl*>  m_blocks;               //!< The blocks generated from our content.
         int                         m_padding;
 
-        // Easier access to m_block_factory_map
-        RichText::BLOCK_FACTORY_MAP& FactoryMap()
-        { return *m_block_factory_map; }
+    };
 
-        // Create blocks from tags.
-        void PopulateBlocks(const std::vector<RichTextTag>& tags)
-        {
-            // Create blocks using factories.
-            for (const RichTextTag& tag : tags) {
-                RichText::TAG_PARAMS params;
-                // Extract the parameters from params_string to the tag_params map.
-                ExtractParameters(tag.tag_params, params);
+    RichTextPrivate::RichTextPrivate(RichText* q, const std::string& str,
+                                     const std::shared_ptr<Font>& font,
+                                     Clr color, Flags<TextFormat> format /*= FORMAT_NONE*/) :
+        m_owner(q),
+        m_font(font),
+        m_color(color),
+        m_format(format),
+        m_block_factory_map(RichText::DefaultBlockFactoryMap()),
+        m_padding(0)
+    {}
 
-                std::shared_ptr<BlockControl> block(FactoryMap()[tag.tag]->CreateFromTag(tag.tag, params, tag.content, m_font, m_color, m_format));
-                if (block) {
-                    m_owner->AttachChild(block);
-                    m_blocks.push_back(block.get());
-                }
-            }
+    void RichTextPrivate::SetText(const std::string& content)
+    {
+        m_blocks.clear();
+        m_owner->DetachChildren();
 
+        // Get a set of tags registered for rich text usage.
+        std::set<std::string> known_tags = MapKeys(*m_block_factory_map);
+
+        // Parse the content into a vector of tags.
+        std::vector<RichTextTag> tags = TagParser::ParseTags(content, known_tags);
+
+        // Create blocks from the tags and populate the control with them.
+        PopulateBlocks(tags);
+    }
+
+    void RichTextPrivate::SetPadding(int pixels)
+    {
+        if (m_padding != pixels) {
+            m_padding = pixels;
             DoLayout();
         }
+    }
 
-        // Update the sizes of all blocks.
-        void DoLayout()
-        {
-            X width = m_owner->ClientWidth() - X(m_padding)*2;
-            Pt pos = Pt(X(m_padding), Y(m_padding));
+    void RichTextPrivate::SizeMove(Pt ul, Pt lr)
+    {
+        Pt original_size = m_owner->Size();
+        m_owner->Control::SizeMove(ul, lr);
 
-            // The contract between RichText and block controls is this:
-            // RichText tells them their width, and they determine their height.
-            for (auto& block : m_blocks) {
-                Pt size = block->SetMaxWidth(width);
-                block->MoveTo(pos);
-                pos.y += size.y;
-            }
-
-            Pt size(m_owner->Width(), pos.y + Y(m_padding));
-            m_owner->Resize(size);
+        // Redo layout if necessary.
+        if (m_owner->Size() != original_size) {
+            DoLayout();
         }
-    };
+    }
+
+    // Get the set of keys from a map.
+    template <typename T, typename V>
+    std::set<T> RichTextPrivate::MapKeys(const std::map<T, V>& arg_map)
+    {
+        std::set<T> keys;
+        for (const auto& pair : arg_map) {
+            keys.insert(pair.first);
+        }
+        return keys;
+    }
+
+    // Create blocks from tags.
+    void RichTextPrivate::PopulateBlocks(const std::vector<RichTextTag>& tags)
+    {
+        // Create blocks using factories.
+        for (const RichTextTag& tag : tags) {
+            RichText::TAG_PARAMS params;
+            // Extract the parameters from params_string to the tag_params map.
+            ExtractParameters(tag.tag_params, params);
+
+            std::shared_ptr<BlockControl> block(FactoryMap()[tag.tag]->CreateFromTag(tag.tag, params, tag.content, m_font, m_color, m_format));
+            if (block) {
+                m_owner->AttachChild(block);
+                m_blocks.push_back(block.get());
+            }
+        }
+
+        DoLayout();
+    }
+
+    // Update the sizes of all blocks.
+    void RichTextPrivate::DoLayout()
+    {
+        X width = m_owner->ClientWidth() - X(m_padding)*2;
+        Pt pos = Pt(X(m_padding), Y(m_padding));
+
+        // The contract between RichText and block controls is this:
+        // RichText tells them their width, and they determine their height.
+        for (auto& block : m_blocks) {
+            Pt size = block->SetMaxWidth(width);
+            block->MoveTo(pos);
+            pos.y += size.y;
+        }
+
+        Pt size(m_owner->Width(), pos.y + Y(m_padding));
+        m_owner->Resize(size);
+    }
 
     /////////////////////////////////
     /// RichText public interface //
