@@ -385,12 +385,13 @@ class AIstate(object):
                 continue
             # TODO: check if currently in system and blockaded before accepting destination as location
             this_system_id = fleet.nextSystemID if fleet.nextSystemID != INVALID_ID else fleet.systemID
+            dead_fleet = fleet_id in destroyed_object_ids
+
             if fleet.ownedBy(empire_id):
-                if fleet_id not in destroyed_object_ids:
+                if not dead_fleet:
                     my_fleets_by_system.setdefault(this_system_id, []).append(fleet_id)
                     fleet_spot_position.setdefault(fleet.systemID, []).append(fleet_id)
             else:
-                dead_fleet = fleet_id in destroyed_object_ids
                 if not fleet.ownedBy(-1) and (fleet.hasArmedShips or fleet.hasFighterShips):
                     ship_stats = CombatRatingsAI.FleetCombatStats(fleet_id).get_ship_stats(hashable=True)
                     # track old/dead enemy fighters for rating assessments in case not enough current info
