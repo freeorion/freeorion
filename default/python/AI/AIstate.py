@@ -364,13 +364,12 @@ class AIstate(object):
         supply_unobstructed_systems = set(empire.supplyUnobstructedSystems)
         min_hidden_attack = 4
         min_hidden_health = 8
-        system_id_list = universe.systemIDs  # will normally look at this, the list of all known systems
 
         # for use in debugging
         verbose = False
 
         # assess enemy fleets that may have been momentarily visible
-        # start with a dummy entries
+        # start with dummy entries
         cur_e_fighters = {CombatRatingsAI.default_ship_stats().get_stats(hashable=True): [0]}
         old_e_fighters = {CombatRatingsAI.default_ship_stats().get_stats(hashable=True): [0]}
         enemy_fleet_ids = []
@@ -427,7 +426,7 @@ class AIstate(object):
         # TODO: If no current information available, rate against own fighters
 
         # assess fleet and planet threats & my local fleets
-        for sys_id in system_id_list:
+        for sys_id in universe.systemIDs:
             sys_status = self.systemStatus.setdefault(sys_id, {})
             system = universe.getSystem(sys_id)
             if verbose:
@@ -583,7 +582,7 @@ class AIstate(object):
 
         enemy_supply, enemy_near_supply = self.assess_enemy_supply()  # TODO: assess change in enemy supply over time
         # assess secondary threats (threats of surrounding systems) and update my fleet rating
-        for sys_id in system_id_list:
+        for sys_id in universe.systemIDs:
             sys_status = self.systemStatus[sys_id]
             sys_status['enemies_supplied'] = enemy_supply.get(sys_id, [])
             sys_status['enemies_nearly_supplied'] = enemy_near_supply.get(sys_id, [])
@@ -601,7 +600,7 @@ class AIstate(object):
                     sys_status['myFleetRating'], sys_status['mydefenses']['overall'])
             sys_status['neighbors'] = set(dict_from_map(universe.getSystemNeighborsMap(sys_id, self.empireID)))
 
-        for sys_id in system_id_list:
+        for sys_id in universe.systemIDs:
             sys_status = self.systemStatus[sys_id]
             neighbors = sys_status.get('neighbors', set())
             this_system = fo.getUniverse().getSystem(sys_id)
