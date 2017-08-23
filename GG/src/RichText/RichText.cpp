@@ -185,7 +185,7 @@ namespace GG {
 
         // Set the mapping from tags to factories that should be used to generate blocks from them.
         void SetBlockFactoryMap(std::shared_ptr<RichText::BLOCK_FACTORY_MAP> block_factory_map)
-        { m_block_factory_map = block_factory_map; }
+        { m_block_factory_map = std::move(block_factory_map); }
 
     private:
         // Easier access to m_block_factory_map
