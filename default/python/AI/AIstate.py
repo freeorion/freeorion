@@ -632,9 +632,7 @@ class AIstate(object):
 
     def area_ratings(self, system_ids):
         """Returns (fleet_threat, max_threat, myFleetRating, threat_fleets) compiled over a group of systems."""
-        max_threat = 0
-        threat = 0
-        myrating = 0
+        myrating = threat = max_threat = 0
         threat_fleets = set()
         threat_detail = []
         for sys_id in system_ids:
