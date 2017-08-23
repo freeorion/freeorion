@@ -372,7 +372,6 @@ class AIstate(object):
         # start with dummy entries
         cur_e_fighters = {CombatRatingsAI.default_ship_stats().get_stats(hashable=True): [0]}
         old_e_fighters = {CombatRatingsAI.default_ship_stats().get_stats(hashable=True): [0]}
-        enemy_fleet_ids = []
         enemies_by_system = {}
         my_fleets_by_system = {}
         fleet_spot_position = {}
@@ -416,7 +415,6 @@ class AIstate(object):
             sys_status = self.systemStatus.setdefault(this_system_id, {})
             sys_status['enemy_ship_count'] = sys_status.get('enemy_ship_count', 0) + len(fleet.shipIDs)
             saw_enemies_at_system[fleet.systemID] = True
-            enemy_fleet_ids.append(fleet_id)
             enemies_by_system.setdefault(this_system_id, []).append(fleet_id)
 
             if fleet.unowned:
