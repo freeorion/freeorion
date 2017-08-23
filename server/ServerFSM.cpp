@@ -428,7 +428,7 @@ namespace {
 
 MPLobby::MPLobby(my_context c) :
     my_base(c),
-    m_lobby_data(new MultiplayerLobbyData()),
+    m_lobby_data(new MultiplayerLobbyData(std::move(Server().m_galaxy_setup_data))),
     m_server_save_game_data(new ServerSaveGameData()),
     m_ai_count(1)
 {

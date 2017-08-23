@@ -151,6 +151,10 @@ private:
 struct FO_COMMON_API GalaxySetupData {
     /** \name Structors */ //@{
     GalaxySetupData();
+
+    GalaxySetupData(const GalaxySetupData&) = default;
+
+    GalaxySetupData(GalaxySetupData&& base);
     //@}
 
     /** \name Accessors */ //@{
@@ -167,6 +171,8 @@ struct FO_COMMON_API GalaxySetupData {
     const std::vector<std::pair<std::string, std::string>>&
                         GetGameRules() const;
     //@}
+
+    GalaxySetupData& operator=(const GalaxySetupData&) = default;
 
     std::string         m_seed;
     int                 m_size;
@@ -312,6 +318,15 @@ private:
 struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
     /** \name Structors */ //@{
     MultiplayerLobbyData() :
+        m_any_can_edit(false),
+        m_new_game(true),
+        m_players(),
+        m_save_game(),
+        m_save_game_empire_data()
+    {}
+
+    MultiplayerLobbyData(GalaxySetupData&& base) :
+        GalaxySetupData(std::move(base)),
         m_any_can_edit(false),
         m_new_game(true),
         m_players(),

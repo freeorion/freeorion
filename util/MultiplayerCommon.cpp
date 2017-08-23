@@ -224,6 +224,20 @@ GalaxySetupData::GalaxySetupData() :
     m_ai_aggr(MANIACAL)
 {}
 
+GalaxySetupData::GalaxySetupData(GalaxySetupData&& base) :
+    m_seed(std::move(base.m_seed)),
+    m_size(base.m_size),
+    m_shape(base.m_shape),
+    m_age(base.m_age),
+    m_starlane_freq(base.m_starlane_freq),
+    m_planet_density(base.m_planet_density),
+    m_specials_freq(base.m_specials_freq),
+    m_monster_freq(base.m_monster_freq),
+    m_native_freq(base.m_native_freq),
+    m_ai_aggr(base.m_ai_aggr),
+    m_game_rules(std::move(base.m_game_rules))
+{}
+
 const std::string& GalaxySetupData::GetSeed() const
 { return m_seed; }
 
