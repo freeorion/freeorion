@@ -457,14 +457,16 @@ class AIstate(object):
                     monster_ratings.append(fleet_rating)
                     if verbose:
                         print "\t immobile enemy fleet %s has rating %.1f" % (fleet, fleet_rating)
+                    continue
+
+                if verbose:
+                    print "\t mobile enemy fleet %s has rating %.1f" % (fleet, fleet_rating)
+                mobile_fleets.append(fid)
+                if fleet.unowned:
+                    mob_ratings.append(fleet_rating)
                 else:
-                    if verbose:
-                        print "\t mobile enemy fleet %s has rating %.1f" % (fleet, fleet_rating)
-                    mobile_fleets.append(fid)
-                    if fleet.unowned:
-                        mob_ratings.append(fleet_rating)
-                    else:
-                        enemy_ratings.append(fleet_rating)
+                    enemy_ratings.append(fleet_rating)
+
             enemy_rating = CombatRatingsAI.combine_ratings_list(enemy_ratings)
             monster_rating = CombatRatingsAI.combine_ratings_list(monster_ratings)
             mob_rating = CombatRatingsAI.combine_ratings_list(mob_ratings)
