@@ -415,10 +415,9 @@ class AIstate(object):
             sys_status['enemy_ship_count'] = sys_status.get('enemy_ship_count', 0) + len(fleet.shipIDs)
             enemies_by_system.setdefault(this_system_id, []).append(fleet_id)
 
-            if fleet.unowned:
-                continue
+            if not fleet.unowned:
+                self.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(fleet_id)
 
-            self.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(fleet_id)
         e_f_dict = cur_e_fighters if len(cur_e_fighters) > 1 else old_e_fighters
         std_fighter = sorted([(v, k) for k, v in e_f_dict.items()])[-1][1]
         self.__empire_standard_enemy = std_fighter
