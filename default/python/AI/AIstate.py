@@ -382,45 +382,44 @@ class AIstate(object):
         current_turn = fo.currentTurn()
         for fleet_id in universe.fleetIDs:
             fleet = universe.getFleet(fleet_id)
-            if fleet is None:
+            if not fleet or fleet.empty:
                 continue
-            if not fleet.empty:
-                # TODO: check if currently in system and blockaded before accepting destination as location
-                this_system_id = fleet.nextSystemID if fleet.nextSystemID != INVALID_ID else fleet.systemID
-                if fleet.ownedBy(empire_id):
-                    if fleet_id not in destroyed_object_ids:
-                        my_fleets_by_system.setdefault(this_system_id, []).append(fleet_id)
-                        fleet_spot_position.setdefault(fleet.systemID, []).append(fleet_id)
-                else:
-                    dead_fleet = fleet_id in destroyed_object_ids
-                    if not fleet.ownedBy(-1) and (fleet.hasArmedShips or fleet.hasFighterShips):
-                        ship_stats = CombatRatingsAI.FleetCombatStats(fleet_id).get_ship_stats(hashable=True)
-                        # track old/dead enemy fighters for rating assessments in case not enough current info
-                        e_f_dict = old_e_fighters if dead_fleet else cur_e_fighters
-                        for stats in ship_stats:
-                            attacks = stats[0]
-                            if attacks:
-                                e_f_dict.setdefault(stats, [0])[0] += 1
-                    visibility_turns_map = universe.getVisibilityTurnsMap(fleet_id, empire_id)
-                    partial_vis_turn = visibility_turns_map.get(fo.visibility.partial, -9999)
-                    if not dead_fleet:
-                        # TODO: consider checking death of individual ships.  If ships had been moved from this fleet
-                        # into another fleet, we might have witnessed their death in that other fleet but if this fleet
-                        # had not been seen since before that transfer then the ships might also still be listed here.
-                        sys_status = self.systemStatus.setdefault(this_system_id, {})
-                        sys_status['enemy_ship_count'] = sys_status.get('enemy_ship_count', 0) + len(fleet.shipIDs)
-                        if partial_vis_turn >= current_turn - 1:  # only interested in immediately recent data
-                            saw_enemies_at_system[fleet.systemID] = True
-                            enemy_fleet_ids.append(fleet_id)
-                            enemies_by_system.setdefault(this_system_id, []).append(fleet_id)
-                            if not fleet.ownedBy(-1):
-                                self.misc.setdefault('enemies_sighted', {}
+            # TODO: check if currently in system and blockaded before accepting destination as location
+            this_system_id = fleet.nextSystemID if fleet.nextSystemID != INVALID_ID else fleet.systemID
+            if fleet.ownedBy(empire_id):
+                if fleet_id not in destroyed_object_ids:
+                    my_fleets_by_system.setdefault(this_system_id, []).append(fleet_id)
+                    fleet_spot_position.setdefault(fleet.systemID, []).append(fleet_id)
+            else:
+                dead_fleet = fleet_id in destroyed_object_ids
+                if not fleet.ownedBy(-1) and (fleet.hasArmedShips or fleet.hasFighterShips):
+                    ship_stats = CombatRatingsAI.FleetCombatStats(fleet_id).get_ship_stats(hashable=True)
+                    # track old/dead enemy fighters for rating assessments in case not enough current info
+                    e_f_dict = old_e_fighters if dead_fleet else cur_e_fighters
+                    for stats in ship_stats:
+                        attacks = stats[0]
+                        if attacks:
+                            e_f_dict.setdefault(stats, [0])[0] += 1
+                visibility_turns_map = universe.getVisibilityTurnsMap(fleet_id, empire_id)
+                partial_vis_turn = visibility_turns_map.get(fo.visibility.partial, -9999)
+                if not dead_fleet:
+                    # TODO: consider checking death of individual ships.  If ships had been moved from this fleet
+                    # into another fleet, we might have witnessed their death in that other fleet but if this fleet
+                    # had not been seen since before that transfer then the ships might also still be listed here.
+                    sys_status = self.systemStatus.setdefault(this_system_id, {})
+                    sys_status['enemy_ship_count'] = sys_status.get('enemy_ship_count', 0) + len(fleet.shipIDs)
+                    if partial_vis_turn >= current_turn - 1:  # only interested in immediately recent data
+                        saw_enemies_at_system[fleet.systemID] = True
+                        enemy_fleet_ids.append(fleet_id)
+                        enemies_by_system.setdefault(this_system_id, []).append(fleet_id)
+                        if not fleet.ownedBy(-1):
+                            self.misc.setdefault('enemies_sighted', {}
+                                                 ).setdefault(current_turn, []).append(fleet_id)
+                            rating = CombatRatingsAI.get_fleet_rating(
+                                fleet_id, enemy_stats=CombatRatingsAI.get_empire_standard_fighter())
+                            if rating > 0.25 * my_milship_rating:
+                                self.misc.setdefault('dangerous_enemies_sighted', {}
                                                      ).setdefault(current_turn, []).append(fleet_id)
-                                rating = CombatRatingsAI.get_fleet_rating(
-                                    fleet_id, enemy_stats=CombatRatingsAI.get_empire_standard_fighter())
-                                if rating > 0.25 * my_milship_rating:
-                                    self.misc.setdefault('dangerous_enemies_sighted', {}
-                                                         ).setdefault(current_turn, []).append(fleet_id)
         e_f_dict = cur_e_fighters if len(cur_e_fighters) > 1 else old_e_fighters
         std_fighter = sorted([(v, k) for k, v in e_f_dict.items()])[-1][1]
         self.__empire_standard_enemy = std_fighter
