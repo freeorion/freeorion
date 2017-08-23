@@ -14,7 +14,7 @@ from EnumsAI import MissionType, ShipRoleType
 import CombatRatingsAI
 import MilitaryAI
 import PlanetUtilsAI
-from freeorion_tools import dict_from_map
+from freeorion_tools import dict_from_map, get_partial_visibility_turn
 from universe_object import System
 from AIDependencies import INVALID_ID
 from character.character_module import create_character, Aggression
@@ -410,9 +410,7 @@ class AIstate(object):
                 continue
 
             # we are only interested in immediately recent data
-            visibility_turns_map = universe.getVisibilityTurnsMap(fleet_id, empire_id)
-            partial_vis_turn = visibility_turns_map.get(fo.visibility.partial, -9999)
-            if partial_vis_turn < (current_turn - 1):
+            if get_partial_visibility_turn(fleet_id) < (current_turn - 1):
                 continue
 
             sys_status = self.systemStatus.setdefault(this_system_id, {})
@@ -420,17 +418,15 @@ class AIstate(object):
             saw_enemies_at_system[fleet.systemID] = True
             enemy_fleet_ids.append(fleet_id)
             enemies_by_system.setdefault(this_system_id, []).append(fleet_id)
-            
+
             if fleet.unowned:
                 continue
 
-            self.misc.setdefault('enemies_sighted', {}
-                                 ).setdefault(current_turn, []).append(fleet_id)
-            rating = CombatRatingsAI.get_fleet_rating(
-                fleet_id, enemy_stats=CombatRatingsAI.get_empire_standard_fighter())
+            self.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(fleet_id)
+            rating = CombatRatingsAI.get_fleet_rating(fleet_id,
+                                                      enemy_stats=CombatRatingsAI.get_empire_standard_fighter())
             if rating > 0.25 * my_milship_rating:
-                self.misc.setdefault('dangerous_enemies_sighted', {}
-                                     ).setdefault(current_turn, []).append(fleet_id)
+                self.misc.setdefault('dangerous_enemies_sighted', {}).setdefault(current_turn, []).append(fleet_id)
         e_f_dict = cur_e_fighters if len(cur_e_fighters) > 1 else old_e_fighters
         std_fighter = sorted([(v, k) for k, v in e_f_dict.items()])[-1][1]
         self.__empire_standard_enemy = std_fighter
@@ -460,8 +456,7 @@ class AIstate(object):
                         continue
 
             # update threats
-            sys_vis_dict = universe.getVisibilityTurnsMap(sys_id, fo.empireID())
-            partial_vis_turn = sys_vis_dict.get(fo.visibility.partial, -9999)
+            partial_vis_turn = get_partial_visibility_turn(sys_id)
             mob_ratings = []  # for mobile unowned monster fleets
             lost_fleet_rating = 0
             enemy_ratings = []
@@ -492,7 +487,7 @@ class AIstate(object):
                 lost_fleet_rating = CombatRatingsAI.combine_ratings_list(fleetsLostBySystem[sys_id])
             # under current visibility rules should not be possible to have any losses or other info here,
             # but just in case...
-            if not system or partial_vis_turn == -9999:
+            if not system or partial_vis_turn < 0:
                 if verbose:
                     print "Never had partial vis for %s - basing threat assessment on old info and lost ships" % system
                 sys_status.setdefault('local_fleet_threats', set())
