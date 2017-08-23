@@ -596,7 +596,7 @@ class AIstate(object):
         for sys_id in universe.systemIDs:
             sys_status = self.systemStatus[sys_id]
             neighbors = sys_status.get('neighbors', set())
-            this_system = fo.getUniverse().getSystem(sys_id)
+            this_system = universe.getSystem(sys_id)
             if verbose:
                 print "Regional Assessment for %s with local fleet threat %.1f" % (
                     this_system, sys_status.get('fleetThreat', 0))
