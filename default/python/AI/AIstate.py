@@ -441,7 +441,6 @@ class AIstate(object):
                     fleet = universe.getFleet(fid)
                     if not fleet or fleet.empty or fid in destroyed_object_ids:
                         self.delete_fleet_info(fid)  # this is safe even if fleet wasn't mine
-                        continue
 
             # update threats
             monster_ratings = []  # immobile
@@ -487,7 +486,7 @@ class AIstate(object):
                 sys_status['monsterThreat'] = max(
                     monster_rating,
                     0.98 * sys_status.get('monsterThreat', 0),
-                    1.1 * lost_fleet_rating - enemy_rating - mob_rating)
+                    1.1*lost_fleet_rating - enemy_rating - mob_rating)
                 sys_status['enemy_threat'] = max(
                     enemy_rating,
                     0.98 * sys_status.get('enemy_threat', 0),
@@ -547,7 +546,7 @@ class AIstate(object):
                     CombatRatingsAI.combine_ratings_list([enemy_rating, mob_rating, monster_rating, pattack * phealth]),
                     2 * lost_fleet_rating,
                     0.98 * sys_status.get('totalThreat', 0))
-            else:  # system considered visible #TODO: reevaluate as visibility rules change
+            else:  # system considered visible
                 sys_status['currently_visible'] = True
                 sys_status['local_fleet_threats'] = set(mobile_fleets)
                 # includes mobile monsters
@@ -632,9 +631,6 @@ class AIstate(object):
             # TODO: investigate cases where regional_threat has been nonzero but no regional_threat_fleets
             # (probably due to attenuating history of past threats)
             sys_status.setdefault('regional_fleet_threats', set()).update(j1_threats, j2_threats)
-            # threat, max_threat, myrating, j4_threats = self.area_ratings(jump4ring)
-            # sys_status['jump4_threat'] = threat
-            # sys_status['my_jump4_rating'] = myrating
 
     def area_ratings(self, system_ids):
         """Returns (fleet_threat, max_threat, myFleetRating, threat_fleets) compiled over a group of systems."""
