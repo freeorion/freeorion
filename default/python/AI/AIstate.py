@@ -417,11 +417,11 @@ class AIstate(object):
             if not fleet.unowned:
                 self.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(fleet_id)
 
+        # TODO: If no current information available, rate against own fighters
         e_f_dict = cur_e_fighters if len(cur_e_fighters) > 1 else old_e_fighters
         std_fighter = sorted([(v, k) for k, v in e_f_dict.items()])[-1][1]
         self.__empire_standard_enemy = std_fighter
         self.empire_standard_enemy_rating = self.get_standard_enemy().get_rating()
-        # TODO: If no current information available, rate against own fighters
 
         # assess fleet and planet threats & my local fleets
         for sys_id in universe.systemIDs:
@@ -436,12 +436,10 @@ class AIstate(object):
             sys_status['localEnemyFleetIDs'] = local_enemy_fleet_ids
             if system:
                 sys_status['name'] = system.name
+                # TODO: double check are these checks/deletes necessary?
                 for fid in system.fleetIDs:
-                    if fid in destroyed_object_ids:  # TODO: double check are these checks/deletes necessary?
-                        self.delete_fleet_info(fid)  # this is safe even if fleet wasn't mine
-                        continue
                     fleet = universe.getFleet(fid)
-                    if not fleet or fleet.empty:
+                    if not fleet or fleet.empty or fid in destroyed_object_ids:
                         self.delete_fleet_info(fid)  # this is safe even if fleet wasn't mine
                         continue
 
