@@ -375,7 +375,6 @@ class AIstate(object):
         enemies_by_system = {}
         my_fleets_by_system = {}
         fleet_spot_position = {}
-        saw_enemies_at_system = {}
         my_milship_rating = MilitaryAI.cur_best_mil_ship_rating()
         current_turn = fo.currentTurn()
         for fleet_id in universe.fleetIDs:
@@ -414,7 +413,6 @@ class AIstate(object):
 
             sys_status = self.systemStatus.setdefault(this_system_id, {})
             sys_status['enemy_ship_count'] = sys_status.get('enemy_ship_count', 0) + len(fleet.shipIDs)
-            saw_enemies_at_system[fleet.systemID] = True
             enemies_by_system.setdefault(this_system_id, []).append(fleet_id)
 
             if fleet.unowned:
