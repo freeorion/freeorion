@@ -394,7 +394,7 @@ class AIstate(object):
                 continue
 
             # this is a fleet not owned by us
-            if not fleet.ownedBy(-1) and (fleet.hasArmedShips or fleet.hasFighterShips):
+            if not fleet.unowned and (fleet.hasArmedShips or fleet.hasFighterShips):
                 ship_stats = CombatRatingsAI.FleetCombatStats(fleet_id).get_ship_stats(hashable=True)
                 # track old/dead enemy fighters for rating assessments in case not enough current info
                 e_f_dict = old_e_fighters if dead_fleet else cur_e_fighters
@@ -420,7 +420,7 @@ class AIstate(object):
             saw_enemies_at_system[fleet.systemID] = True
             enemy_fleet_ids.append(fleet_id)
             enemies_by_system.setdefault(this_system_id, []).append(fleet_id)
-            if not fleet.ownedBy(-1):
+            if not fleet.unowned:
                 self.misc.setdefault('enemies_sighted', {}
                                      ).setdefault(current_turn, []).append(fleet_id)
                 rating = CombatRatingsAI.get_fleet_rating(
