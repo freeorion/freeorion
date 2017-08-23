@@ -14,7 +14,8 @@ import TechsListsAI
 import MilitaryAI
 from turn_state import state
 from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
-from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, cache_by_turn, AITimer
+from freeorion_tools import (dict_from_map, tech_is_complete, get_ai_tag_grade, cache_by_turn, AITimer,
+                             get_partial_visibility_turn)
 from AIDependencies import (INVALID_ID, POP_CONST_MOD_MAP, POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES,
                             POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES)
 
@@ -401,8 +402,7 @@ def survey_universe():
                 if spec_name == "":
                     unowned_empty_planet_ids.add(pid)
             else:
-                partial_vis_turn = universe.getVisibilityTurnsMap(pid, empire_id).get(fo.visibility.partial, -9999)
-                if partial_vis_turn >= current_turn - 1:  # only interested in immediately recent data
+                if get_partial_visibility_turn(pid) >= current_turn - 1:  # only interested in immediately recent data
                     foAI.foAIstate.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(pid)
 
         if empire_has_qualifying_planet:
@@ -866,9 +866,8 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     elif fleet_threat_ratio + neighbor_threat_ratio + monster_threat_ratio > 0.2 * ship_limit:
         thrt_factor = 0.8
 
-    sys_partial_vis_turn = universe.getVisibilityTurnsMap(this_sysid, empire.empireID).get(fo.visibility.partial, -9999)
-    planet_partial_vis_turn = universe.getVisibilityTurnsMap(planet_id, empire.empireID).get(fo.visibility.partial,
-                                                                                             -9999)
+    sys_partial_vis_turn = get_partial_visibility_turn(this_sysid)
+    planet_partial_vis_turn = get_partial_visibility_turn(planet_id)
 
     if planet_partial_vis_turn < sys_partial_vis_turn:
         # last time we had partial vis of the system, the planet was stealthed to us
