@@ -161,9 +161,11 @@ namespace GG {
      */
     class RichTextPrivate {
     public:
-        RichTextPrivate(RichText* q, const std::string& str,
+        RichTextPrivate(RichText* q, const std::string& content,
                         const std::shared_ptr<Font>& font,
                         Clr color, Flags<TextFormat> format = FORMAT_NONE);
+
+        void CompleteConstruction();
 
         virtual ~RichTextPrivate() {}
 
@@ -215,7 +217,7 @@ namespace GG {
 
     };
 
-    RichTextPrivate::RichTextPrivate(RichText* q, const std::string& str,
+    RichTextPrivate::RichTextPrivate(RichText* q, const std::string& content,
                                      const std::shared_ptr<Font>& font,
                                      Clr color, Flags<TextFormat> format /*= FORMAT_NONE*/) :
         m_owner(q),
@@ -224,7 +226,16 @@ namespace GG {
         m_format(format),
         m_block_factory_map(RichText::DefaultBlockFactoryMap()),
         m_padding(0)
-    {}
+    {
+        // Parse the content into a vector of tags.
+        auto tags = ParseTags(content);
+
+        // Create blocks from the tags and populate the control with them.
+        CreateBlocks(tags);
+    }
+
+    void RichTextPrivate::CompleteConstruction()
+    { AttachBlocks(); }
 
     void RichTextPrivate::SetText(const std::string& content)
     {
@@ -331,10 +342,11 @@ namespace GG {
                        Flags<TextFormat> format, Flags<WndFlag> flags) :
         Control(x, y, w, h, flags),
         m_self(new RichTextPrivate(this, str, font, color, format))
-    {
-        // Set text requires our members to be set.
-        // Therefore we must call it here, not in constructor of Private.
-        m_self->SetText(str);
+    {}
+
+    void RichText::CompleteConstruction() {
+        Control::CompleteConstruction();
+        m_self->CompleteConstruction();
     }
 
     RichText::~RichText() {}
