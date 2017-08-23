@@ -546,6 +546,8 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     m_chat_box->SetMaxLinesOfHistory(250);
 
     m_any_can_edit = GG::Wnd::Create<CUIStateButton>(UserString("EDITABLE_GALAXY_SETTINGS"), GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
+    m_any_can_edit->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_any_can_edit->SetBrowseText(UserString("EDITABLE_GALAXY_SETTINGS_DESC"));
 
     m_galaxy_setup_panel = GG::Wnd::Create<GalaxySetupPanel>(GALAXY_SETUP_PANEL_WIDTH, GALAXY_SETUP_PANEL_HEIGHT);
 
@@ -804,15 +806,11 @@ void MultiPlayerLobbyWnd::DoLayout() {
 
     const GG::Y RADIO_BN_HT(ClientUI::Pts() + 4);
 
-    GG::Pt galaxy_setup_panel_ul(CHAT_WIDTH + 2*CONTROL_MARGIN, GG::Y(2 * CONTROL_MARGIN) + 2 * RADIO_BN_HT);
+    GG::Pt galaxy_setup_panel_ul(CHAT_WIDTH + 2*CONTROL_MARGIN, RADIO_BN_HT);
     GG::Pt galaxy_setup_panel_lr = galaxy_setup_panel_ul + GG::Pt(GALAXY_SETUP_PANEL_WIDTH, GALAXY_SETUP_PANEL_HEIGHT);
     m_galaxy_setup_panel->SizeMove(galaxy_setup_panel_ul, galaxy_setup_panel_lr);
 
-    GG::Pt any_can_edit_ul(CHAT_WIDTH + CONTROL_MARGIN, GG::Y(CONTROL_MARGIN));
-    GG::Pt any_can_edit_lr = any_can_edit_ul + GG::Pt(GALAXY_SETUP_PANEL_WIDTH, RADIO_BN_HT);
-    m_any_can_edit->SizeMove(any_can_edit_ul, any_can_edit_lr);
-
-    GG::Pt game_buttons_ul(CHAT_WIDTH + CONTROL_MARGIN, GG::Y(2 * CONTROL_MARGIN) + RADIO_BN_HT);
+    GG::Pt game_buttons_ul(CHAT_WIDTH + CONTROL_MARGIN, GG::Y(CONTROL_MARGIN));
     GG::Pt game_buttons_lr = game_buttons_ul + m_galaxy_setup_panel->RelativeLowerRight();
     m_new_load_game_buttons->SizeMove(game_buttons_ul, game_buttons_lr);
 
@@ -829,8 +827,14 @@ void MultiPlayerLobbyWnd::DoLayout() {
 
     x = CHAT_WIDTH + CONTROL_MARGIN;
     GG::Y y = std::max(m_save_file_text->RelativeLowerRight().y, m_preview_image->RelativeLowerRight().y) + 5*CONTROL_MARGIN;
+
+    GG::Pt any_can_edit_ul(x, y);
+    GG::Pt any_can_edit_lr = any_can_edit_ul + GG::Pt(GALAXY_SETUP_PANEL_WIDTH, RADIO_BN_HT);
+    m_any_can_edit->SizeMove(any_can_edit_ul, any_can_edit_lr);
+
     const GG::Y TEXT_HEIGHT = GG::Y(ClientUI::Pts() * 3/2);
 
+    y += CONTROL_MARGIN + RADIO_BN_HT;
     GG::Pt players_lb_ul(x, y);
     GG::Pt players_lb_lr = players_lb_ul + GG::Pt(ClientWidth() - CONTROL_MARGIN - x, m_chat_input_edit->RelativeUpperLeft().y - CONTROL_MARGIN - y);
     m_players_lb->SizeMove(players_lb_ul, players_lb_lr);
