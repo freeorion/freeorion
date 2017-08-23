@@ -508,10 +508,10 @@ class AIstate(object):
                     mypattack += prating['attack']
                     myphealth += prating['health']
                 else:
-                    if [special for special in planet.specials if "_NEST_" in special]:
-                        sys_status['nest_threat'] = 100
                     pattack += prating['attack']
                     phealth += prating['health']
+                    if any("_NEST_" in special for special in planet.specials):
+                        sys_status['nest_threat'] = 100
             sys_status['planetThreat'] = pattack * phealth
             sys_status['mydefenses'] = {'overall': mypattack * myphealth, 'attack': mypattack, 'health': myphealth}
 
