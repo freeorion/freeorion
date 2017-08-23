@@ -445,11 +445,11 @@ class AIstate(object):
 
             # update threats
             partial_vis_turn = get_partial_visibility_turn(sys_id)
-            mob_ratings = []  # for mobile unowned monster fleets
             lost_fleet_rating = 0
-            enemy_ratings = []
-            monster_ratings = []
-            mobile_fleets = []
+            monster_ratings = []  # immobile
+            enemy_ratings = []  # owned & mobile
+            mob_ratings = []  # mobile & unowned
+            mobile_fleets = []  # mobile and either owned or unowned
             for fid in local_enemy_fleet_ids:
                 fleet = universe.getFleet(fid)
                 if not fleet:
