@@ -375,7 +375,6 @@ class AIstate(object):
         enemies_by_system = {}
         my_fleets_by_system = {}
         fleet_spot_position = {}
-        my_milship_rating = MilitaryAI.cur_best_mil_ship_rating()
         current_turn = fo.currentTurn()
         for fleet_id in universe.fleetIDs:
             fleet = universe.getFleet(fleet_id)
