@@ -1945,7 +1945,7 @@ EDITABLE_GALAXY_SETTINGS
 All Can Edit Settings
 
 EDITABLE_GALAXY_SETTINGS_DESC
-Anyone can edit galaxy and AI settings.
+All players can edit galaxy and AI settings.
 
 NEW_GAME_BN
 New game

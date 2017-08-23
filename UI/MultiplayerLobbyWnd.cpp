@@ -773,7 +773,7 @@ void MultiPlayerLobbyWnd::LobbyUpdate(const MultiplayerLobbyData& lobby_data) {
 }
 
 void MultiPlayerLobbyWnd::Refresh() {
-    m_any_can_edit->Disable(! ThisClientIsHost());
+    m_any_can_edit->Disable(!ThisClientIsHost());
 
     if (ThisClientIsHost() || m_lobby_data.m_any_can_edit) {
         for (std::size_t i = 0; i < m_new_load_game_buttons->NumButtons(); ++i)
