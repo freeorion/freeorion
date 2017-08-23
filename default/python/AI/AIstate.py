@@ -430,7 +430,6 @@ class AIstate(object):
             if verbose:
                 print "AIState threat evaluation for %s" % system
             # update fleets
-            local_enemy_fleet_ids = sys_status['localEnemyFleetIDs']
             if system:
                 sys_status['name'] = system.name
                 # TODO: double check are these checks/deletes necessary?
@@ -444,7 +443,7 @@ class AIstate(object):
             enemy_ratings = []  # owned & mobile
             mob_ratings = []  # mobile & unowned
             mobile_fleets = []  # mobile and either owned or unowned
-            for fid in local_enemy_fleet_ids:
+            for fid in sys_status['localEnemyFleetIDs']:
                 fleet = universe.getFleet(fid)  # ensured to exist
                 fleet_rating = CombatRatingsAI.get_fleet_rating(
                     fid, enemy_stats=CombatRatingsAI.get_empire_standard_fighter())
