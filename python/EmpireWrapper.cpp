@@ -289,17 +289,17 @@ namespace FreeOrionPython {
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<FloatIntPair, const Empire&, const ProductionQueue::Element& >()
                                                     ))
-            .add_property("planets_with_available_pp", make_function(
+            .add_property("planetsWithAvailablePP", make_function(
                                                         PlanetsWithAvailablePP_Func,
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<std::map<std::set<int>, float>, const Empire& >()
                                                     ))
-            .add_property("planets_with_allocated_pp", make_function(
+            .add_property("planetsWithAllocatedPP", make_function(
                                                         PlanetsWithAllocatedPP_Func,
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<std::map<std::set<int>, float>, const Empire& >()
                                                     ))
-            .add_property("planets_with_wasted_pp",    make_function(
+            .add_property("planetsWithWastedPP",    make_function(
                                                         PlanetsWithWastedPP_Func,
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<std::set<std::set<int>>, const Empire& >()
