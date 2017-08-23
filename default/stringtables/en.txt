@@ -1078,7 +1078,7 @@ OPTIONS_DB_SINGLEPLAYER
 Start server in single player host mode. This only allows clients on localhost to connect.
 
 OPTIONS_DB_HOSTLESS
-Start server in hostless mode. Server doesn't require host.
+Start server in hostless mode. Server accepts players in the multiplayer lobby where returns after the game session ends.
 
 OPTIONS_DB_GENERATE_CONFIG_XML
 Uses default settings, settings from any existing config.xml file, and settings given on the command line to generate a config.xml file. This will overwrite the current config.xml file, if it exists.
