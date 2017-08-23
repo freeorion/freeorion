@@ -487,18 +487,18 @@ class AIstate(object):
                     print "Never had partial vis for %s - basing threat assessment on old info and lost ships" % system
                 sys_status.setdefault('local_fleet_threats', set())
                 sys_status['planetThreat'] = 0
-                sys_status['fleetThreat'] = int(max(
+                sys_status['fleetThreat'] = max(
                     CombatRatingsAI.combine_ratings(enemy_rating, mob_rating),
                     0.98 * sys_status.get('fleetThreat', 0),
-                    1.1*lost_fleet_rating - monster_rating))
-                sys_status['monsterThreat'] = int(max(
+                    1.1*lost_fleet_rating - monster_rating)
+                sys_status['monsterThreat'] = max(
                     monster_rating,
                     0.98 * sys_status.get('monsterThreat', 0),
-                    1.1 * lost_fleet_rating - enemy_rating - mob_rating))
-                sys_status['enemy_threat'] = int(max(
+                    1.1 * lost_fleet_rating - enemy_rating - mob_rating)
+                sys_status['enemy_threat'] = max(
                     enemy_rating,
                     0.98 * sys_status.get('enemy_threat', 0),
-                    1.1*lost_fleet_rating - monster_rating - mob_rating))
+                    1.1*lost_fleet_rating - monster_rating - mob_rating)
                 sys_status['mydefenses'] = {'overall': 0, 'attack': 0, 'health': 0}
                 sys_status['totalThreat'] = sys_status['fleetThreat']
                 sys_status['regional_fleet_threats'] = sys_status['local_fleet_threats'].copy()
@@ -540,15 +540,15 @@ class AIstate(object):
                 # print ("Stale visibility for system %d ( %s ) -- last seen %d, "
                 #        "current Turn %d -- basing threat assessment on old info and lost ships") % (
                 #     sys_id, sys_status.get('name', "name unknown"), partial_vis_turn, currentTurn)
-                sys_status['fleetThreat'] = int(max(
+                sys_status['fleetThreat'] = max(
                     CombatRatingsAI.combine_ratings(enemy_rating, mob_rating),
                     0.98 * sys_status.get('fleetThreat', 0),
-                    2.0 * lost_fleet_rating - max(sys_status.get('monsterThreat', 0), monster_rating)))
-                sys_status['enemy_threat'] = int(max(
+                    2.0 * lost_fleet_rating - max(sys_status.get('monsterThreat', 0), monster_rating))
+                sys_status['enemy_threat'] = max(
                     enemy_rating,
                     0.98 * sys_status.get('enemy_threat', 0),
-                    1.1*lost_fleet_rating - max(sys_status.get('monsterThreat', 0), monster_rating)))
-                sys_status['monsterThreat'] = int(max(monster_rating, 0.98 * sys_status.get('monsterThreat', 0)))
+                    1.1*lost_fleet_rating - max(sys_status.get('monsterThreat', 0), monster_rating))
+                sys_status['monsterThreat'] = max(monster_rating, 0.98 * sys_status.get('monsterThreat', 0))
                 # sys_status['totalThreat'] = ((pattack + enemy_attack + monster_attack) ** 0.8)\
                 #                             * ((phealth + enemy_health + monster_health)** 0.6)  # reevaluate this
                 sys_status['totalThreat'] = max(
@@ -559,13 +559,13 @@ class AIstate(object):
                 sys_status['currently_visible'] = True
                 sys_status['local_fleet_threats'] = set(mobile_fleets)
                 # includes mobile monsters
-                sys_status['fleetThreat'] = int(max(
-                    CombatRatingsAI.combine_ratings(enemy_rating, mob_rating), 2*lost_fleet_rating - monster_rating))
+                sys_status['fleetThreat'] = max(
+                    CombatRatingsAI.combine_ratings(enemy_rating, mob_rating), 2*lost_fleet_rating - monster_rating)
                 if verbose:
                     print "enemy threat calc parts: enemy rating %.1f, lost fleet rating %.1f, monster_rating %.1f" % (
                         enemy_rating, lost_fleet_rating, monster_rating)
                 # does NOT include mobile monsters
-                sys_status['enemy_threat'] = int(max(enemy_rating, 2*lost_fleet_rating - monster_rating))
+                sys_status['enemy_threat'] = max(enemy_rating, 2*lost_fleet_rating - monster_rating)
                 sys_status['monsterThreat'] = monster_rating
                 sys_status['totalThreat'] = CombatRatingsAI.combine_ratings_list(
                     [enemy_rating, mob_rating, monster_rating, pattack * phealth])
