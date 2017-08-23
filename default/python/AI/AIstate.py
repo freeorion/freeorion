@@ -451,9 +451,7 @@ class AIstate(object):
             mob_ratings = []  # mobile & unowned
             mobile_fleets = []  # mobile and either owned or unowned
             for fid in local_enemy_fleet_ids:
-                fleet = universe.getFleet(fid)
-                if not fleet:
-                    continue
+                fleet = universe.getFleet(fid)  # ensured to exist
                 fleet_rating = CombatRatingsAI.get_fleet_rating(
                     fid, enemy_stats=CombatRatingsAI.get_empire_standard_fighter())
                 if fleet.speed == 0:
