@@ -842,12 +842,12 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     fleet_threat_ratio = (sys_status.get('fleetThreat', 0) - myrating) / float(cur_best_mil_ship_rating)
     monster_threat_ratio = sys_status.get('monsterThreat', 0) / float(cur_best_mil_ship_rating)
     neighbor_threat_ratio = (
-        (sys_status.get('neighborThreat', 0)) / float(cur_best_mil_ship_rating) +
+        sys_status.get('neighborThreat', 0) / float(cur_best_mil_ship_rating) +
         min(0, fleet_threat_ratio)
     )  # last portion gives credit for inner extra defenses
     myrating = sys_status.get('my_neighbor_rating', 0)
     jump2_threat_ratio = (
-        (max(0, sys_status.get('jump2_threat', 0) - myrating) / float(cur_best_mil_ship_rating)) +
+        max(0, sys_status.get('jump2_threat', 0) - myrating) / float(cur_best_mil_ship_rating) +
         min(0, neighbor_threat_ratio)
     )  # last portion gives credit for inner extra defenses
 
@@ -1383,7 +1383,6 @@ def _print_empire_species_roster():
     species_table = Table(header, table_name="Empire species roster Turn %d" % fo.currentTurn())
     for species_name, planet_ids in state.get_empire_planets_by_species().items():
         species_tags = fo.getSpecies(species_name).tags
-
         is_colonizer = species_name in empire_colonizers
         number_of_shipyards = len(empire_ship_builders.get(species_name, []))
         this_row = [species_name, planet_ids, is_colonizer, number_of_shipyards]
