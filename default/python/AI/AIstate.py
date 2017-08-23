@@ -399,8 +399,8 @@ class AIstate(object):
                 # track old/dead enemy fighters for rating assessments in case not enough current info
                 e_f_dict = old_e_fighters if dead_fleet else cur_e_fighters
                 for stats in ship_stats:
-                    attacks = stats[0]
-                    if attacks:
+                    # log only ships that are armed
+                    if stats[0]:
                         e_f_dict.setdefault(stats, [0])[0] += 1
 
             # TODO: consider checking death of individual ships.  If ships had been moved from this fleet
