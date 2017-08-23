@@ -412,7 +412,7 @@ class AIstate(object):
             # we are only interested in immediately recent data
             visibility_turns_map = universe.getVisibilityTurnsMap(fleet_id, empire_id)
             partial_vis_turn = visibility_turns_map.get(fo.visibility.partial, -9999)
-            if not partial_vis_turn >= current_turn - 1:
+            if partial_vis_turn < (current_turn - 1):
                 continue
 
             sys_status = self.systemStatus.setdefault(this_system_id, {})
