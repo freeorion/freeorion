@@ -641,8 +641,7 @@ class AIstate(object):
             sys_status = self.systemStatus.get(sys_id, {})
             # TODO: have distinct treatment for both enemy_threat and fleetThreat, respectively
             fthreat = sys_status.get('enemy_threat', 0)
-            if fthreat > max_threat:
-                max_threat = fthreat
+            max_threat = max(max_threat, fthreat)
             threat = CombatRatingsAI.combine_ratings(threat, fthreat)
             myrating = CombatRatingsAI.combine_ratings(myrating, sys_status.get('myFleetRating', 0))
             # myrating = FleetUtilsAI.combine_ratings(myrating, sys_status.get('all_local_defenses', 0))
