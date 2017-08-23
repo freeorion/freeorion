@@ -274,32 +274,6 @@ void TextLinker::MouseLeave_() {
     MarkLinks();
 }
 
-const std::vector<GG::Font::LineData>& TextLinker::GetLineData() const {
-    static std::vector<GG::Font::LineData> retval;
-    return retval;
-}
-
-const std::shared_ptr<GG::Font>& TextLinker::GetFont() const {
-    static std::shared_ptr<GG::Font> retval;
-    if (!retval)
-        retval = ClientUI::GetFont();
-    return retval;
-}
-
-GG::Pt TextLinker::TextUpperLeft() const
-{ return GG::Pt(); }
-
-GG::Pt TextLinker::TextLowerRight() const
-{ return GG::Pt(); }
-
-void TextLinker::SetLinkedText(const std::string& str)
-{}
-
-const std::string& TextLinker::RawText() const {
-    static std::string retval;
-    return retval;
-}
-
 void TextLinker::FindLinks() {
     m_links.clear();
 
