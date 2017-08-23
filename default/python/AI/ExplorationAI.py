@@ -46,7 +46,8 @@ def assign_scouts_to_explore_systems():
     if not border_unexplored_system_ids or (capital_sys_id == INVALID_ID):
         return
     exp_systems_by_dist = sorted((universe.linearDistance(capital_sys_id, x), x) for x in border_unexplored_system_ids)
-    print "Exploration system considering following system-distance pairs:\n  %s" % ("\n  ".join("%3d: %5.1f" % info for info in exp_systems_by_dist))
+    print "Exploration system considering following system-distance pairs:\n  %s" % (
+        "\n  ".join("%3d: %5.1f" % info for info in exp_systems_by_dist))
     explore_list = [sys_id for dist, sys_id in exp_systems_by_dist]
 
     already_covered, available_scouts = get_current_exploration_info()
@@ -56,13 +57,16 @@ def assign_scouts_to_explore_systems():
     needs_vis = foAI.foAIstate.misc.setdefault('needs_vis', [])
     check_list = foAI.foAIstate.needsEmergencyExploration + needs_vis + explore_list
     if INVALID_ID in check_list:  # shouldn't normally happen, unless due to bug elsewhere
-        for sys_list, name in [(foAI.foAIstate.needsEmergencyExploration, "foAI.foAIstate.needsEmergencyExploration"), (needs_vis, "needs_vis"), (explore_list, "explore_list")]:
+        for sys_list, name in [(foAI.foAIstate.needsEmergencyExploration, "foAI.foAIstate.needsEmergencyExploration"),
+                               (needs_vis, "needs_vis"), (explore_list, "explore_list")]:
             if INVALID_ID in sys_list:
                 error("INVALID_ID found in " + name, exc_info=True)
-    needs_coverage = [sys_id for sys_id in check_list if sys_id not in already_covered and sys_id != INVALID_ID]  # emergency coverage can be due to invasion detection trouble, etc.
+    # emergency coverage can be due to invasion detection trouble, etc.
+    needs_coverage = [sys_id for sys_id in check_list if sys_id not in already_covered and sys_id != INVALID_ID]
     print "Needs coverage: %s" % needs_coverage
 
-    print "Available scouts & AIstate locs: %s" % [(x, foAI.foAIstate.fleetStatus.get(x, {}).get('sysID', INVALID_ID)) for x in available_scouts]
+    print "Available scouts & AIstate locs: %s" % [(x, foAI.foAIstate.fleetStatus.get(x, {}).get('sysID', INVALID_ID))
+                                                   for x in available_scouts]
     print "Available scouts & universe locs: %s" % [(x, universe.getFleet(x).systemID) for x in available_scouts]
     if not needs_coverage or not available_scouts:
         return
@@ -83,11 +87,14 @@ def assign_scouts_to_explore_systems():
                 print "system id %d already currently visible; skipping exploration" % this_sys_id
                 continue
         # TODO: if blocked byu monster, try to find nearby system from which to see this system
-        if not foAI.foAIstate.character.may_explore_system(sys_status.setdefault('monsterThreat', 0)) or (fo.currentTurn() < 20 and foAI.foAIstate.systemStatus[this_sys_id]['monsterThreat'] > 200):
-            print "Skipping exploration of system %d due to Big Monster, threat %d" % (this_sys_id, foAI.foAIstate.systemStatus[this_sys_id]['monsterThreat'])
+        if (not foAI.foAIstate.character.may_explore_system(sys_status.setdefault('monsterThreat', 0)) or (
+                fo.currentTurn() < 20 and foAI.foAIstate.systemStatus[this_sys_id]['monsterThreat'] > 200)):
+            print "Skipping exploration of system %d due to Big Monster, threat %d" % (
+                this_sys_id, foAI.foAIstate.systemStatus[this_sys_id]['monsterThreat'])
             continue
         this_fleet_list = FleetUtilsAI.get_fleets_for_mission(target_stats={}, min_stats={}, cur_stats={},
-                                                              starting_system=this_sys_id, fleet_pool_set=available_scouts,
+                                                              starting_system=this_sys_id,
+                                                              fleet_pool_set=available_scouts,
                                                               fleet_list=[])
         if not this_fleet_list:
             print "Seem to have run out of scouts while trying to cover sys_id %d" % this_sys_id
@@ -95,7 +102,8 @@ def assign_scouts_to_explore_systems():
         fleet_id = this_fleet_list[0]
         fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
         target = universe_object.System(this_sys_id)
-        if len(MoveUtilsAI.can_travel_to_system_and_return_to_resupply(fleet_id, fleet_mission.get_location_target(), target)) > 0:
+        if MoveUtilsAI.can_travel_to_system_and_return_to_resupply(fleet_id, fleet_mission.get_location_target(),
+                                                                   target):
             fleet_mission.set_target(MissionType.EXPLORATION, target)
             sent_list.append(this_sys_id)
         else:  # system too far out, skip it, but can add scout back to available pool
@@ -122,7 +130,8 @@ def assign_scouts_to_explore_systems():
             target = AITarget.AITarget(AITargetType.TARGET_SYSTEM, sys_id )
             # add exploration mission to fleet with target unexplored system and this system is in range
             #print "try to assign scout to system %d"%systemID
-            if len(MoveUtilsAI.can_travel_to_system_and_return_to_resupply(fleet_id, fleet_mission.get_location_target(), target, fo.empireID())) > 0:
+            if MoveUtilsAI.can_travel_to_system_and_return_to_resupply(fleet_id, fleet_mission.get_location_target(),
+                                                                       target, fo.empireID()):
                 fleet_mission.addAITarget(MissionType.EXPLORATION, target)
                 sent_list.append(sys_id)
                 break
@@ -192,7 +201,9 @@ def update_explored_systems():
     newly_explored = []
     still_unexplored = []
     for sys_id in list(foAI.foAIstate.unexploredSystemIDs):
-        if empire.hasExploredSystem(sys_id):  # consider making determination according to visibility rather than actual visit, which I think is what empire.hasExploredSystem covers
+        # consider making determination according to visibility rather than actual visit,
+        # which I think is what empire.hasExploredSystem covers (Dilvish-fo)
+        if empire.hasExploredSystem(sys_id):
             foAI.foAIstate.unexploredSystemIDs.discard(sys_id)
             foAI.foAIstate.exploredSystemIDs.add(sys_id)
             system = universe.getSystem(sys_id)
@@ -208,7 +219,8 @@ def update_explored_systems():
         for sys_id in id_list:
             neighbors = list(universe.getImmediateNeighbors(sys_id, empire_id))
             for neighbor_id in neighbors:
-                if neighbor_id not in foAI.foAIstate.unexploredSystemIDs:  # when it matters, unexplored will be smaller than explored
+                # when it matters, unexplored will be smaller than explored
+                if neighbor_id not in foAI.foAIstate.unexploredSystemIDs:
                     next_list.append(neighbor_id)
 
     for sys_id in still_unexplored:
