@@ -196,7 +196,9 @@ namespace GG {
         std::vector<RichTextTag> ParseTags(const std::string& content);
 
         // Create blocks from tags.
-        void PopulateBlocks(const std::vector<RichTextTag>& tags);
+        void CreateBlocks(const std::vector<RichTextTag>& tags);
+
+        void AttachBlocks();
 
         // Update the sizes of all blocks.
         void DoLayout();
@@ -207,7 +209,8 @@ namespace GG {
         Flags<TextFormat>           m_format;               //!< Text format.
         std::shared_ptr<RichText::BLOCK_FACTORY_MAP>
                                     m_block_factory_map;    //!< A map that tells us how to generate block controls from tags.
-        std::vector<BlockControl*>  m_blocks;               //!< The blocks generated from our content.
+        std::vector<std::shared_ptr<BlockControl>>
+                                    m_blocks;               //!< The blocks generated from our content.
         int                         m_padding;
 
     };
@@ -225,14 +228,12 @@ namespace GG {
 
     void RichTextPrivate::SetText(const std::string& content)
     {
-        m_blocks.clear();
-        m_owner->DetachChildren();
-
         // Parse the content into a vector of tags.
         auto tags = ParseTags(content);
 
         // Create blocks from the tags and populate the control with them.
-        PopulateBlocks(tags);
+        CreateBlocks(tags);
+        AttachBlocks();
     }
 
     void RichTextPrivate::SetPadding(int pixels)
@@ -278,20 +279,28 @@ namespace GG {
     }
 
     // Create blocks from tags.
-    void RichTextPrivate::PopulateBlocks(const std::vector<RichTextTag>& tags)
+    void RichTextPrivate::CreateBlocks(const std::vector<RichTextTag>& tags)
     {
+        m_blocks.clear();
+
         // Create blocks using factories.
         for (const RichTextTag& tag : tags) {
             RichText::TAG_PARAMS params;
             // Extract the parameters from params_string to the tag_params map.
             ExtractParameters(tag.tag_params, params);
 
-            std::shared_ptr<BlockControl> block(FactoryMap()[tag.tag]->CreateFromTag(tag.tag, params, tag.content, m_font, m_color, m_format));
-            if (block) {
-                m_owner->AttachChild(block);
-                m_blocks.push_back(block.get());
-            }
+            auto block(FactoryMap()[tag.tag]->CreateFromTag(tag.tag, params, tag.content, m_font, m_color, m_format));
+            if (block)
+                m_blocks.push_back(block);
         }
+    }
+
+    void RichTextPrivate::AttachBlocks()
+    {
+        m_owner->DetachChildren();
+
+        for (auto& block : m_blocks)
+            m_owner->AttachChild(block);
 
         DoLayout();
     }
