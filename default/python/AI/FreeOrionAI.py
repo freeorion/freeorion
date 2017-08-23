@@ -135,7 +135,7 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
             # assigning new state
             foAIstate = AIstate.AIstate(fo.aggression.aggressive)
             foAIstate.session_start_cleanup()
-            error("Fail to load aiState from saved game: %s", e, exc_info=True)
+            error("Fail to load aiState from saved game: %s" % e, exc_info=True)
 
     aggression_trait = foAIstate.character.get_trait(Aggression)
     diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
@@ -250,7 +250,7 @@ def generateOrders():  # pylint: disable=invalid-name
             # not invalidate doneTurn()
             fo.doneTurn()
         except Exception as e:
-            error("Exception in doneTurn() on non-existent empire", e, exc_info=True)
+            error("Exception %s in doneTurn() on non-existent empire" % e, exc_info=True)
         return
 
     if empire.eliminated:
@@ -260,7 +260,7 @@ def generateOrders():  # pylint: disable=invalid-name
             # on last-seen gamestate if nothing can be ordered anyway...
             fo.doneTurn()
         except Exception as e:
-            error("Exception while trying doneTurn() on eliminated empire", e, exc_info=True)
+            error("Exception %s while trying doneTurn() on eliminated empire" % e, exc_info=True)
         return
 
     # This code block is required for correct AI work.
@@ -337,7 +337,7 @@ def generateOrders():  # pylint: disable=invalid-name
             action()
             main_timer.stop()
         except Exception as e:
-            error("Exception while trying to %s" % action.__name__, e, exc_info=True)
+            error("Exception %s while trying to %s" % (e, action.__name__), exc_info=True)
     main_timer.stop_print_and_clear()
     turn_timer.stop_print_and_clear()
     turn_timer.start("Server_Processing")
@@ -345,7 +345,7 @@ def generateOrders():  # pylint: disable=invalid-name
     try:
         fo.doneTurn()
     except Exception as e:
-        error("Exception while trying doneTurn()", e, exc_info=True)  # TODO move it to cycle above
+        error("Exception %s while trying doneTurn()" % e, exc_info=True)  # TODO move it to cycle above
 
     if using_statprof:
         try:
