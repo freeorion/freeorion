@@ -505,7 +505,7 @@ class AIstate(object):
                 if not planet:
                     continue
                 prating = self.assess_planet_threat(pid, sighting_age=current_turn - partial_vis_turn)
-                if planet.owner == self.empireID:  # TODO: check for diplomatic status
+                if planet.ownedBy(empire_id):  # TODO: check for diplomatic status
                     mypattack += prating['attack']
                     myphealth += prating['health']
                 else:
