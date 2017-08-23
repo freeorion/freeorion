@@ -419,8 +419,7 @@ class AIstate(object):
 
         # TODO: If no current information available, rate against own fighters
         e_f_dict = cur_e_fighters if len(cur_e_fighters) > 1 else old_e_fighters
-        std_fighter = sorted([(v, k) for k, v in e_f_dict.items()])[-1][1]
-        self.__empire_standard_enemy = std_fighter
+        self.__empire_standard_enemy = sorted([(v, k) for k, v in e_f_dict.items()])[-1][1]
         self.empire_standard_enemy_rating = self.get_standard_enemy().get_rating()
 
         # assess fleet and planet threats & my local fleets
