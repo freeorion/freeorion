@@ -86,7 +86,9 @@ class MissionType(Enum):
     EXPLORATION = 5
     INVASION = 9
     MILITARY = 10
-    SECURE = 11  # mostly same as MILITARY, but waits for system removal from all targeted system lists (invasion, colonization, outpost, blockade) before clearing
+    # mostly same as MILITARY, but waits for system removal from all targeted system lists
+    # (invasion, colonization, outpost, blockade) before clearing
+    SECURE = 11
     ORBITAL_DEFENSE = 12
     ORBITAL_INVASION = 13
     ORBITAL_OUTPOST = 14

@@ -11,6 +11,7 @@ from AIDependencies import INVALID_ID
 from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
+
 def get_empire_standard_fighter():
     """Get the current empire standard fighter stats, i.e. the most common shiptype within the empire.
 
