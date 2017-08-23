@@ -16,7 +16,7 @@ import ColonisationAI
 import MilitaryAI
 from EnumsAI import MissionType, PriorityType
 import CombatRatingsAI
-from freeorion_tools import tech_is_complete, AITimer
+from freeorion_tools import tech_is_complete, AITimer, get_partial_visibility_turn
 from AIDependencies import INVALID_ID
 
 from common.configure_logging import convenience_function_references_for_logger
@@ -106,8 +106,8 @@ def get_invasion_fleets():
             if not planet:
                 continue
             sys_id = planet.systemID
-            sys_partial_vis_turn = universe.getVisibilityTurnsMap(planet.systemID, empire_id).get(fo.visibility.partial, -9999)
-            planet_partial_vis_turn = universe.getVisibilityTurnsMap(pid, empire_id).get(fo.visibility.partial, -9999)
+            sys_partial_vis_turn = get_partial_visibility_turn(sys_id)
+            planet_partial_vis_turn = get_partial_visibility_turn(pid)
             if planet_partial_vis_turn < sys_partial_vis_turn:
                 continue
             best_base_planet = INVALID_ID
@@ -333,8 +333,8 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
         print "invasion AI couldn't access any info for planet id %d" % planet_id
         return [0, 0]
 
-    sys_partial_vis_turn = universe.getVisibilityTurnsMap(planet.systemID, empire_id).get(fo.visibility.partial, -9999)
-    planet_partial_vis_turn = universe.getVisibilityTurnsMap(planet_id, empire_id).get(fo.visibility.partial, -9999)
+    sys_partial_vis_turn = get_partial_visibility_turn(planet.systemID)
+    planet_partial_vis_turn = get_partial_visibility_turn(planet_id)
 
     if planet_partial_vis_turn < sys_partial_vis_turn:
         print "invasion AI couldn't get current info on planet id %d (was stealthed at last sighting)" % planet_id
