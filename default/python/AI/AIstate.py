@@ -444,7 +444,6 @@ class AIstate(object):
                         continue
 
             # update threats
-            partial_vis_turn = get_partial_visibility_turn(sys_id)
             monster_ratings = []  # immobile
             enemy_ratings = []  # owned & mobile
             mob_ratings = []  # mobile & unowned
@@ -475,6 +474,7 @@ class AIstate(object):
 
             # under current visibility rules should not be possible to have any losses or other info here,
             # but just in case...
+            partial_vis_turn = get_partial_visibility_turn(sys_id)
             if not system or partial_vis_turn < 0:
                 if verbose:
                     print "Never had partial vis for %s - basing threat assessment on old info and lost ships" % system
