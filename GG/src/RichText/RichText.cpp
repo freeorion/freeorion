@@ -192,6 +192,9 @@ namespace GG {
         RichText::BLOCK_FACTORY_MAP& FactoryMap()
         { return *m_block_factory_map; }
 
+        // Parses content into tags.
+        std::vector<RichTextTag> ParseTags(const std::string& content);
+
         // Create blocks from tags.
         void PopulateBlocks(const std::vector<RichTextTag>& tags);
 
@@ -225,11 +228,8 @@ namespace GG {
         m_blocks.clear();
         m_owner->DetachChildren();
 
-        // Get a set of tags registered for rich text usage.
-        std::set<std::string> known_tags = MapKeys(*m_block_factory_map);
-
         // Parse the content into a vector of tags.
-        std::vector<RichTextTag> tags = TagParser::ParseTags(content, known_tags);
+        auto tags = ParseTags(content);
 
         // Create blocks from the tags and populate the control with them.
         PopulateBlocks(tags);
@@ -263,6 +263,18 @@ namespace GG {
             keys.insert(pair.first);
         }
         return keys;
+    }
+
+    // Parses content into tags.
+    std::vector<RichTextTag> RichTextPrivate::ParseTags(const std::string& content)
+    {
+        // Get a set of tags registered for rich text usage.
+        std::set<std::string> known_tags = MapKeys(*m_block_factory_map);
+
+        // Parse the content into a vector of tags.
+        std::vector<RichTextTag> tags = TagParser::ParseTags(content, known_tags);
+
+        return tags;
     }
 
     // Create blocks from tags.
