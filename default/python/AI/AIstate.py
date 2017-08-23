@@ -417,10 +417,13 @@ class AIstate(object):
         for fleet_id in universe.fleetIDs:
             fleet = universe.getFleet(fleet_id)
             if not fleet or fleet.empty:
+                self.delete_fleet_info(fleet_id)  # this is safe even if fleet wasn't mine
                 continue
             # TODO: check if currently in system and blockaded before accepting destination as location
             this_system_id = fleet.nextSystemID if fleet.nextSystemID != INVALID_ID else fleet.systemID
             dead_fleet = fleet_id in destroyed_object_ids
+            if dead_fleet:
+                self.delete_fleet_info(fleet_id)
 
             if fleet.ownedBy(empire_id):
                 if not dead_fleet:
@@ -458,11 +461,6 @@ class AIstate(object):
             sys_status['localEnemyFleetIDs'] = local_enemy_fleet_ids
             if system:
                 sys_status['name'] = system.name
-                # TODO: double check are these checks/deletes necessary?
-                for fid in system.fleetIDs:
-                    fleet = universe.getFleet(fid)
-                    if not fleet or fleet.empty or fid in destroyed_object_ids:
-                        self.delete_fleet_info(fid)  # this is safe even if fleet wasn't mine
 
             # update threats
             monster_ratings = []  # immobile
