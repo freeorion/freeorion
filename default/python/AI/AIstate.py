@@ -612,13 +612,11 @@ class AIstate(object):
             sys_status['2jump_ring'] = jump2ring
             sys_status['3jump_ring'] = jump3ring
             sys_status['4jump_ring'] = jump4ring
-            threat, max_threat, myrating, j1_threats = self.area_ratings(
-                neighbors, ref_sys_name="neighbors %s" % this_system) if verbose else self.area_ratings(neighbors)
+            threat, max_threat, myrating, j1_threats = self.area_ratings(neighbors)
             sys_status['neighborThreat'] = threat
             sys_status['max_neighbor_threat'] = max_threat
             sys_status['my_neighbor_rating'] = myrating
-            threat, max_threat, myrating, j2_threats = self.area_ratings(
-                jump2ring, ref_sys_name="jump2 %s" % this_system) if verbose else self.area_ratings(jump2ring)
+            threat, max_threat, myrating, j2_threats = self.area_ratings(jump2ring)
             sys_status['jump2_threat'] = threat
             sys_status['my_jump2_rating'] = myrating
             threat, max_threat, myrating, j3_threats = self.area_ratings(jump3ring)
