@@ -4,6 +4,19 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 
 
+## [v0.4.7.1] - 2017-08-24
+
+
+#### Bug Fixes
+
+- Production queue: reverted behavior when increasing batch size of a build item back to a proportional reduction of the progress already made, instead of resetting progress to 0.
+- Fixed bug in production queue projections.
+- Several fixes to AI calculations regarding population/colonization.
+- Fixed potential issues for phototrophic species.
+- Fixed issues with visibility after combat resolution.
+
+
+
 ## [v0.4.7] - 2017-04-24
 
 
