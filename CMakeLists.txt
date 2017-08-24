@@ -25,7 +25,7 @@ include(GNUInstallDirs)
 include(UseCodeCoverage)
 include(TargetDependencies)
 
-set(FreeOrion_VERSION 0.4.7)
+set(FreeOrion_VERSION 0.4.7.1)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
