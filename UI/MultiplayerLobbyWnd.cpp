@@ -826,7 +826,7 @@ void MultiPlayerLobbyWnd::DoLayout() {
     m_preview_image->SizeMove(g_preview_ul, g_preview_ul + PREVIEW_SZ);
 
     x = CHAT_WIDTH + CONTROL_MARGIN;
-    GG::Y y = std::max(m_save_file_text->RelativeLowerRight().y, m_preview_image->RelativeLowerRight().y) + 5*CONTROL_MARGIN;
+    GG::Y y = std::max(m_save_file_text->RelativeLowerRight().y, m_preview_image->RelativeLowerRight().y) + 7*CONTROL_MARGIN;
 
     GG::Pt any_can_edit_ul(x, y);
     GG::Pt any_can_edit_lr = any_can_edit_ul + GG::Pt(GALAXY_SETUP_PANEL_WIDTH, RADIO_BN_HT);
