@@ -11,7 +11,6 @@
 #include "../network/Message.h"
 #include "../network/ClientNetworking.h"
 #include "../client/human/HumanClientApp.h"
-#include "CUIControls.h"
 #include "Hotkeys.h"
 #include "Sound.h"
 
@@ -527,6 +526,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
            GG::ONTOP | GG::INTERACTIVE | GG::RESIZABLE),
     m_chat_box(nullptr),
     m_chat_input_edit(nullptr),
+    m_any_can_edit(nullptr),
     m_new_load_game_buttons(nullptr),
     m_galaxy_setup_panel(nullptr),
     m_browse_saves_btn(nullptr),
@@ -544,6 +544,10 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     m_chat_input_edit = GG::Wnd::Create<CUIEdit>("");
     m_chat_box = GG::Wnd::Create<CUIMultiEdit>("", GG::MULTI_LINEWRAP | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE);
     m_chat_box->SetMaxLinesOfHistory(250);
+
+    m_any_can_edit = GG::Wnd::Create<CUIStateButton>(UserString("EDITABLE_GALAXY_SETTINGS"), GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
+    m_any_can_edit->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_any_can_edit->SetBrowseText(UserString("EDITABLE_GALAXY_SETTINGS_DESC"));
 
     m_galaxy_setup_panel = GG::Wnd::Create<GalaxySetupPanel>(GALAXY_SETUP_PANEL_WIDTH, GALAXY_SETUP_PANEL_HEIGHT);
 
@@ -580,6 +584,7 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
 
     AttachChild(m_chat_box);
     AttachChild(m_chat_input_edit);
+    AttachChild(m_any_can_edit);
     AttachChild(m_new_load_game_buttons);
     AttachChild(m_galaxy_setup_panel);
     AttachChild(m_save_file_text);
@@ -600,6 +605,8 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     m_save_file_text->Disable();
     m_browse_saves_btn->Disable();
 
+    m_any_can_edit->CheckedSignal.connect(
+        boost::bind(&MultiPlayerLobbyWnd::AnyCanEdit, this, _1));
     m_new_load_game_buttons->ButtonChangedSignal.connect(
         boost::bind(&MultiPlayerLobbyWnd::NewLoadClicked, this, _1));
     m_galaxy_setup_panel->SettingsChangedSignal.connect(
@@ -751,20 +758,24 @@ void MultiPlayerLobbyWnd::LobbyUpdate(const MultiplayerLobbyData& lobby_data) {
     m_new_load_game_buttons->SetCheck(!lobby_data.m_new_game);
     m_galaxy_setup_panel->SetFromSetupData(lobby_data);
 
+    m_any_can_edit->SetCheck(lobby_data.m_any_can_edit);
+
     m_save_file_text->SetText(lobby_data.m_save_game);
 
     m_lobby_data = lobby_data;
 
     bool send_update_back = PopulatePlayerList();
 
-    if (send_update_back && ThisClientIsHost())
+    if (send_update_back && (ThisClientIsHost() || m_lobby_data.m_any_can_edit))
         SendUpdate();
 
     LogPlayerSetupData(m_lobby_data.m_players);
 }
 
 void MultiPlayerLobbyWnd::Refresh() {
-    if (ThisClientIsHost()) {
+    m_any_can_edit->Disable(!ThisClientIsHost());
+
+    if (ThisClientIsHost() || m_lobby_data.m_any_can_edit) {
         for (std::size_t i = 0; i < m_new_load_game_buttons->NumButtons(); ++i)
             m_new_load_game_buttons->DisableButton(i, false);
         m_galaxy_setup_panel->Disable(false);
@@ -815,9 +826,15 @@ void MultiPlayerLobbyWnd::DoLayout() {
     m_preview_image->SizeMove(g_preview_ul, g_preview_ul + PREVIEW_SZ);
 
     x = CHAT_WIDTH + CONTROL_MARGIN;
-    GG::Y y = std::max(m_save_file_text->RelativeLowerRight().y, m_preview_image->RelativeLowerRight().y) + 5*CONTROL_MARGIN;
+    GG::Y y = std::max(m_save_file_text->RelativeLowerRight().y, m_preview_image->RelativeLowerRight().y) + 7*CONTROL_MARGIN;
+
+    GG::Pt any_can_edit_ul(x, y);
+    GG::Pt any_can_edit_lr = any_can_edit_ul + GG::Pt(GALAXY_SETUP_PANEL_WIDTH, RADIO_BN_HT);
+    m_any_can_edit->SizeMove(any_can_edit_ul, any_can_edit_lr);
+
     const GG::Y TEXT_HEIGHT = GG::Y(ClientUI::Pts() * 3/2);
 
+    y += CONTROL_MARGIN + RADIO_BN_HT;
     GG::Pt players_lb_ul(x, y);
     GG::Pt players_lb_lr = players_lb_ul + GG::Pt(ClientWidth() - CONTROL_MARGIN - x, m_chat_input_edit->RelativeUpperLeft().y - CONTROL_MARGIN - y);
     m_players_lb->SizeMove(players_lb_ul, players_lb_lr);
@@ -924,14 +941,14 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
         PlayerSetupData& psd = entry.second;
 
         if (m_lobby_data.m_new_game) {
-            bool immutable_row = !ThisClientIsHost() && (data_player_id != HumanClientApp::GetApp()->PlayerID());   // host can modify any player's row.  non-hosts can only modify their own row.  As of SVN 4026 this is not enforced on the server, but should be.
+            bool immutable_row = !ThisClientIsHost() && (data_player_id != HumanClientApp::GetApp()->PlayerID()) && !(psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER && m_lobby_data.m_any_can_edit);   // host can modify any player's row.  non-hosts can only modify their own row.  As of SVN 4026 this is not enforced on the server, but should be.
             auto row = GG::Wnd::Create<NewGamePlayerRow>(psd, data_player_id, immutable_row);
             m_players_lb->Insert(row);
             row->DataChangedSignal.connect(
                 boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
 
         } else {
-            bool immutable_row = (!ThisClientIsHost() && (data_player_id != HumanClientApp::GetApp()->PlayerID())) || m_lobby_data.m_save_game_empire_data.empty();
+            bool immutable_row = (!ThisClientIsHost() && (data_player_id != HumanClientApp::GetApp()->PlayerID()) && !(psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER && m_lobby_data.m_any_can_edit)) || m_lobby_data.m_save_game_empire_data.empty();
             auto row = GG::Wnd::Create<LoadGamePlayerRow>(psd, data_player_id, m_lobby_data.m_save_game_empire_data, immutable_row);
             m_players_lb->Insert(row);
             row->DataChangedSignal.connect(
@@ -960,7 +977,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
     // on host, add extra empty row, which the host can use to select
     // "Add AI" to add an AI to the game.  This row's details are treated
     // specially when sending a lobby update to the server.
-    if (ThisClientIsHost()) {
+    if (ThisClientIsHost() || m_lobby_data.m_any_can_edit) {
         auto row = GG::Wnd::Create<EmptyPlayerRow>();
         m_players_lb->Insert(row);
         row->DataChangedSignal.connect(
@@ -1070,3 +1087,10 @@ void MultiPlayerLobbyWnd::ReadyClicked() {
 
 void MultiPlayerLobbyWnd::CancelClicked()
 { HumanClientApp::GetApp()->CancelMultiplayerGameFromLobby(); }
+
+void MultiPlayerLobbyWnd::AnyCanEdit(bool checked) {
+    if (ThisClientIsHost()) {
+        m_lobby_data.m_any_can_edit = m_any_can_edit->Checked();
+        SendUpdate();
+    }
+}

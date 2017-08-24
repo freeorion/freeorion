@@ -620,8 +620,15 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     // during this copying and is updated below from the save file(s)
 
     if (server.m_networking.PlayerIsHost(sender->PlayerID())) {
+        if (m_lobby_data->m_any_can_edit != incoming_lobby_data.m_any_can_edit) {
+            has_important_changes = true;
+            m_lobby_data->m_any_can_edit = incoming_lobby_data.m_any_can_edit;
+        }
+    }
 
-        DebugLogger(FSM) << "Get message from host.";
+    if (server.m_networking.PlayerIsHost(sender->PlayerID()) || m_lobby_data->m_any_can_edit) {
+
+        DebugLogger(FSM) << "Get message from host or allowed player.";
 
         static int AI_count = 1;
         const GG::Clr CLR_NONE = GG::Clr(0, 0, 0, 0);

@@ -5,6 +5,7 @@
 #include <GG/GGFwd.h>
 
 #include "CUIWnd.h"
+#include "CUIControls.h"
 #include "GalaxySetupWnd.h"
 #include "../util/MultiplayerCommon.h"
 
@@ -66,11 +67,13 @@ private:
     bool            ThisClientIsHost() const;
     void            ReadyClicked();
     void            CancelClicked();
+    void            AnyCanEdit(bool checked);
 
     MultiplayerLobbyData    m_lobby_data;   ///< a copy of the most recently received lobby update
 
     std::shared_ptr<GG::MultiEdit>          m_chat_box;
     std::shared_ptr<GG::Edit>               m_chat_input_edit;
+    std::shared_ptr<CUIStateButton>         m_any_can_edit;
     std::shared_ptr<GG::RadioButtonGroup>   m_new_load_game_buttons;
     std::shared_ptr<GalaxySetupPanel>       m_galaxy_setup_panel;
     std::shared_ptr<GG::Label>              m_save_file_text;
