@@ -276,6 +276,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
         sc::custom_reaction<RequestCombatLogs>,
         sc::custom_reaction<ShutdownServer>,
         sc::custom_reaction<Hostless>,
+        sc::custom_reaction<JoinGame>,
         sc::custom_reaction<Error>
     > reactions;
 
@@ -288,6 +289,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
     sc::result react(const ShutdownServer& u);
     sc::result react(const Hostless& u);
     sc::result react(const RequestCombatLogs& msg);
+    sc::result react(const JoinGame& msg);
     sc::result react(const Error& msg);
 
     SERVER_ACCESSOR

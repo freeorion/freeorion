@@ -958,6 +958,9 @@ Universe generation completed with errors. See log files for detailed error mess
 SERVER_TURN_EVENTS_ERRORS
 Python scripted turn events executed with errors. See log files for detailed error messages. Game can continue, but gameplay will probably be impaired.
 
+SERVER_ALREADY_PLAYING_GAME
+Server doesn't accept players. The game is already started.
+
 ERROR_PYTHON_AI_CRASHED
 Python AI for %1% crashed.
 

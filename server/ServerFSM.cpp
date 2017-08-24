@@ -234,7 +234,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
                      << ", named \"" << player_connection->PlayerName() << "\".";
 
     bool must_quit = false;
-    if (id == ALL_EMPIRES) {
+    if (id == ALL_EMPIRES && (! m_server.IsHostless())) {
         ErrorLogger(FSM) << "Client quit before id was assigned.";
         must_quit = true;
     }
@@ -1619,6 +1619,13 @@ sc::result PlayingGame::react(const Hostless& msg) {
 sc::result PlayingGame::react(const RequestCombatLogs& msg) {
     DebugLogger(FSM) << "(ServerFSM) PlayingGame::RequestCombatLogs message received";
     Server().UpdateCombatLogs(msg.m_message, msg.m_player_connection);
+    return discard_event();
+}
+
+sc::result PlayingGame::react(const JoinGame& msg) {
+    DebugLogger(FSM) << "(ServerFSM) PlayingGame::JoinGame message received";
+    msg.m_player_connection->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_PLAYING_GAME")));
+    Server().Networking().Disconnect(msg.m_player_connection);
     return discard_event();
 }
 
