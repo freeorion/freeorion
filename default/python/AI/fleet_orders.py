@@ -53,8 +53,8 @@ def trooper_move_reqs_met(main_fleet_mission, order, verbose):
                 return FleetUtilsAI.calculate_estimated_time_of_arrival(fleet_id, invasion_system.id)
 
             eta_this_fleet = eta(order.fleet.id)
-            if all(((eta_this_fleet - delay_to_move_troops) <= eta(fid) and eta(fid)) for fid in
-                   military_support_fleets):
+            if all(((eta_this_fleet - delay_to_move_troops) <= eta(fid) and eta(fid))
+                   for fid in military_support_fleets):
                 if verbose:
                     print ("trooper_move_reqs_met() holding Invasion fleet %d before leaving supply "
                            "because target (%s) has nonzero max shields and no assigned military fleet would arrive"
@@ -243,8 +243,7 @@ class OrderMove(AIFleetOrder):
         if system_id == fleet.systemID:
             if foAI.foAIstate.get_fleet_role(fleet_id) == MissionType.EXPLORATION:
                 if system_id in foAI.foAIstate.needsEmergencyExploration:
-                    del foAI.foAIstate.needsEmergencyExploration[
-                        foAI.foAIstate.needsEmergencyExploration.index(system_id)]
+                    foAI.foAIstate.needsEmergencyExploration.remove(system_id)
         self.order_issued = True
 
 
@@ -281,8 +280,7 @@ class OrderResupply(AIFleetOrder):
         if system_id == fleet.systemID:
             if foAI.foAIstate.get_fleet_role(fleet_id) == MissionType.EXPLORATION:
                 if system_id in foAI.foAIstate.needsEmergencyExploration:
-                    del foAI.foAIstate.needsEmergencyExploration[
-                        foAI.foAIstate.needsEmergencyExploration.index(system_id)]
+                    foAI.foAIstate.needsEmergencyExploration.remove(system_id)
             self.order_issued = True
 
 
@@ -391,10 +389,9 @@ class OrderColonize(AIFleetOrder):
         if (planet_partial_vis_turn == sys_partial_vis_turn and planet.unowned or
                 (planet.ownedBy(fo.empireID()) and not planet.currentMeterValue(fo.meterType.population))):
             return self.fleet.get_object().hasColonyShips
-        else:
-            self.executed = True
-            self.order_issued = True
-            return False
+        self.executed = True
+        self.order_issued = True
+        return False
 
     def can_issue_order(self, verbose=False):
         if not super(OrderColonize, self).is_valid():
@@ -573,6 +570,5 @@ class OrderRepair(AIFleetOrder):
         if system_id == fleet.systemID:
             if foAI.foAIstate.get_fleet_role(fleet_id) == MissionType.EXPLORATION:
                 if system_id in foAI.foAIstate.needsEmergencyExploration:
-                    del foAI.foAIstate.needsEmergencyExploration[
-                        foAI.foAIstate.needsEmergencyExploration.index(system_id)]
+                    foAI.foAIstate.needsEmergencyExploration.remove(system_id)
             self.order_issued = True
