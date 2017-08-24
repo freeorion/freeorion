@@ -1646,6 +1646,12 @@ Sets the number of turns between autosaves.
 OPTIONS_DB_AUTOSAVE_LIMIT
 Sets the maximum number of autosave files to keep.
 
+OPTIONS_DB_AUTOSAVE_GALAXY_CREATION
+Toggles whether to autosave after the galaxy is created before any game play.
+
+OPTIONS_DB_AUTOSAVE_GAME_CLOSE
+Toggles whether to autosave when resigning or closing the game.
+
 OPTIONS_DB_UI_MOUSE_LR_SWAP
 Swaps results of clicking left and right mouse buttons.
 

@@ -176,7 +176,6 @@ void InGameMenu::Save() {
             DebugLogger() << "... initiating save to " << filename ;
             app->SaveGame(filename);
             CloseClicked();
-            DebugLogger() << "... save done";
         }
 
     } catch (const std::exception& e) {

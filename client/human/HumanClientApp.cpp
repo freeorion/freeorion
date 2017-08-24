@@ -98,6 +98,8 @@ namespace {
         db.Add("autosave.multiplayer",          UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER"),       true,   Validator<bool>());
         db.Add("autosave.turns",                UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),             1,      RangedValidator<int>(1, 50));
         db.Add("autosave.limit",                UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),             10,     RangedValidator<int>(1, 100));
+        db.Add("autosave.galaxy-creation",      UserStringNop("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"),      true,   Validator<bool>());
+        db.Add("autosave.game-close",           UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),         true,   Validator<bool>());
         db.Add("UI.swap-mouse-lr",              UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),           false);
         db.Add("UI.keypress-repeat-delay",      UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_DELAY"),      360,    RangedValidator<int>(0, 1000));
         db.Add("UI.keypress-repeat-interval",   UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"),   20,     RangedValidator<int>(0, 1000));
@@ -198,7 +200,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     m_connected(false),
     m_auto_turns(0),
     m_have_window_focus(true),
-    m_save_game_in_progress(false)
+    m_game_saves_in_progress()
 {
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);
@@ -627,16 +629,30 @@ void HumanClientApp::CancelMultiplayerGameFromLobby()
 { m_fsm->process_event(CancelMPGameClicked()); }
 
 void HumanClientApp::SaveGame(const std::string& filename) {
-    m_save_game_in_progress = true;
-    Message response_msg;
+    m_game_saves_in_progress.push(filename);
+
+    // Start a save if there is not one in progress
+    if (m_game_saves_in_progress.size() > 1) {
+        DebugLogger() << "Add pending save to queue.";
+        return;
+    }
+
     m_networking->SendMessage(HostSaveGameInitiateMessage(filename));
-    DebugLogger() << "HumanClientApp::SaveGame sent save initiate message to server...";
+    DebugLogger() << "Sent save initiate message to server.";
 }
 
 void HumanClientApp::SaveGameCompleted() {
-    DebugLogger() << "HumanClientApp::SaveGameCompleted by server.";
-    m_save_game_in_progress = false;
-    SaveGameCompletedSignal();
+    m_game_saves_in_progress.pop();
+
+    // Either indicate that all saves are completed or start the next save.
+    // Autosaves and player saves can be concurrent.
+    if (m_game_saves_in_progress.empty()) {
+        DebugLogger() << "Save games completed.";
+        SaveGamesCompletedSignal();
+    } else {
+        m_networking->SendMessage(HostSaveGameInitiateMessage(m_game_saves_in_progress.front()));
+        DebugLogger() << "Sent next save initiate message to server.";
+    }
 }
 
 void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
@@ -1136,7 +1152,7 @@ namespace {
 void HumanClientApp::Autosave() {
     // Create an auto save for 1) new games on turn 1, 2) if auto save is
     // requested on turn number modulo autosave.turns or 3) on the last turn of
-    // an auto run.
+    // play.
 
     // autosave only on appropriate turn numbers, and when enabled for current
     // game type (single vs. multiplayer)
@@ -1148,21 +1164,29 @@ void HumanClientApp::Autosave() {
              || (!m_single_player_game && GetOptionsDB().Get<bool>("autosave.multiplayer"))));
 
     // is_initial_save is gated in HumanClientFSM for new game vs loaded game
-    bool is_initial_save = CurrentTurn() == 1;
-    bool is_final_save = (AutoTurnsLeft() <= 0 && GetOptionsDB().Get<bool>("auto-quit"));
+    bool is_initial_save = (GetOptionsDB().Get<bool>("autosave.galaxy-creation") && CurrentTurn() == 1);
+    bool is_final_save = (GetOptionsDB().Get<bool>("autosave.game-close") && !m_game_started);
 
     if (!(is_initial_save || is_valid_autosave || is_final_save))
         return;
 
-    auto autosave_dir_path = CreateNewAutosaveFilePath(EmpireID(), m_single_player_game);
+    auto autosave_file_path = CreateNewAutosaveFilePath(EmpireID(), m_single_player_game);
 
     // check for and remove excess oldest autosaves
+    boost::filesystem::path autosave_dir_path(GetSaveDir() / "auto");
     int max_autosaves = GetOptionsDB().Get<int>("autosave.limit");
     RemoveOldestFiles(max_autosaves, autosave_dir_path);
 
     // create new save
-    auto path_string = PathString(autosave_dir_path);
-    DebugLogger() << "Autosaving to: " << path_string;
+    auto path_string = PathString(autosave_file_path);
+
+    if (is_initial_save)
+        DebugLogger() << "Turn 0 autosave to: " << path_string;
+    if (is_valid_autosave)
+        DebugLogger() << "Autosave to: " << path_string;
+    if (is_final_save)
+        DebugLogger() << "End of play autosave to: " << path_string;
+
     try {
         SaveGame(path_string);
     } catch (const std::exception& e) {
@@ -1221,12 +1245,19 @@ void HumanClientApp::ExitApp()
 void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame) {
     DebugLogger() << (reset ? "HumanClientApp::ResetToIntro" : "HumanClientApp::ExitApp");
 
+    auto was_playing = m_game_started;
     m_game_started = false;
 
-    if (m_save_game_in_progress && !skip_savegame) {
-        DebugLogger() << "save game in progress. Checking with player.";
-        auto dlg = GG::Wnd::Create<SaveGamePendingDialog>(reset, this->SaveGameCompletedSignal);
-        dlg->Run();
+    // Only save if not exiting due to an error.
+    if (!skip_savegame) {
+        if (was_playing && GetOptionsDB().Get<bool>("autosave.game-close"))
+            Autosave();
+
+        if (!m_game_saves_in_progress.empty()) {
+            DebugLogger() << "save game in progress. Checking with player.";
+            auto dlg = GG::Wnd::Create<SaveGamePendingDialog>(reset, this->SaveGamesCompletedSignal);
+            dlg->Run();
+        }
     }
 
     m_fsm->process_event(StartQuittingGame(reset, m_server_process));
