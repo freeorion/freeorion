@@ -98,8 +98,8 @@ namespace {
         db.Add("autosave.multiplayer",          UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER"),       true,   Validator<bool>());
         db.Add("autosave.turns",                UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),             1,      RangedValidator<int>(1, 50));
         db.Add("autosave.limit",                UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),             10,     RangedValidator<int>(1, 100));
-        db.Add("autosave.initial-turn",         UserStringNop("OPTIONS_DB_AUTOSAVE_INITIAL_TURN"),      true,   Validator<bool>());
-        db.Add("autosave.last-turn",            UserStringNop("OPTIONS_DB_AUTOSAVE_LAST_TURN"),         true,   Validator<bool>());
+        db.Add("autosave.galaxy-creation",      UserStringNop("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"),      true,   Validator<bool>());
+        db.Add("autosave.game-close",           UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),         true,   Validator<bool>());
         db.Add("UI.swap-mouse-lr",              UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),           false);
         db.Add("UI.keypress-repeat-delay",      UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_DELAY"),      360,    RangedValidator<int>(0, 1000));
         db.Add("UI.keypress-repeat-interval",   UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"),   20,     RangedValidator<int>(0, 1000));
@@ -1164,8 +1164,8 @@ void HumanClientApp::Autosave() {
              || (!m_single_player_game && GetOptionsDB().Get<bool>("autosave.multiplayer"))));
 
     // is_initial_save is gated in HumanClientFSM for new game vs loaded game
-    bool is_initial_save = (GetOptionsDB().Get<bool>("autosave.initial-turn") && CurrentTurn() == 1);
-    bool is_final_save = (GetOptionsDB().Get<bool>("autosave.last-turn") && !m_game_started);
+    bool is_initial_save = (GetOptionsDB().Get<bool>("autosave.galaxy-creation") && CurrentTurn() == 1);
+    bool is_final_save = (GetOptionsDB().Get<bool>("autosave.game-close") && !m_game_started);
 
     if (!(is_initial_save || is_valid_autosave || is_final_save))
         return;
@@ -1250,7 +1250,7 @@ void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame) {
 
     // Only save if not exiting due to an error.
     if (!skip_savegame) {
-        if (was_playing && GetOptionsDB().Get<bool>("autosave.last-turn"))
+        if (was_playing && GetOptionsDB().Get<bool>("autosave.game-close"))
             Autosave();
 
         if (!m_game_saves_in_progress.empty()) {

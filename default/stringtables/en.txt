@@ -1638,11 +1638,11 @@ Sets the number of turns between autosaves.
 OPTIONS_DB_AUTOSAVE_LIMIT
 Sets the maximum number of autosave files to keep.
 
-OPTIONS_DB_AUTOSAVE_INTIAL_TURN
-If true, autosave the initial turn before any game play.
+OPTIONS_DB_AUTOSAVE_GALAXY_CREATION
+Toggles whether to autosave after the galaxy is created before any game play.
 
-OPTIONS_DB_AUTOSAVE_LAST_TURN
-If true, autosave on game exit.
+OPTIONS_DB_AUTOSAVE_GAME_CLOSE
+Toggles whether to autosave when resigning or closing the game.
 
 OPTIONS_DB_UI_MOUSE_LR_SWAP
 Swaps results of clicking left and right mouse buttons.
@@ -2272,12 +2272,6 @@ Autosaves limit
 
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
 Turns between autosaves
-
-OPTIONS_AUTOSAVE_INITIAL_TURN
-Autosave on turn 0 before any game play
-
-OPTIONS_AUTOSAVE_LAST_TURN
-Autosave before game exit
 
 OPTIONS_LANGUAGE
 Language file
