@@ -42,3 +42,4 @@ Final stage is to setup automatic check to avoid adding new cases.
 `pycodestyle python/AI/DiplomaticCorp.py --max-line-length=120`
 `pycodestyle python/AI/EnumsAI.py --max-line-length=120`
 `pycodestyle python/AI/ExplorationAI.py --max-line-length=120`
+`pycodestyle python/AI/fleet_orders.py --max-line-length=120`
