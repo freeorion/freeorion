@@ -234,7 +234,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
                      << ", named \"" << player_connection->PlayerName() << "\".";
 
     bool must_quit = false;
-    if (id == ALL_EMPIRES && (! m_server.IsHostless())) {
+    if (id == ALL_EMPIRES && !m_server.IsHostless()) {
         ErrorLogger(FSM) << "Client quit before id was assigned.";
         must_quit = true;
     }

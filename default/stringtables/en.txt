@@ -959,7 +959,7 @@ SERVER_TURN_EVENTS_ERRORS
 Python scripted turn events executed with errors. See log files for detailed error messages. Game can continue, but gameplay will probably be impaired.
 
 SERVER_ALREADY_PLAYING_GAME
-Server doesn't accept players. The game is already started.
+The server is not currently accepting players because a game is being played.
 
 ERROR_PYTHON_AI_CRASHED
 Python AI for %1% crashed.
