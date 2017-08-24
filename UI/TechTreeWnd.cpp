@@ -123,9 +123,9 @@ namespace {
 }
 
 ///////////////////////////
-// TechPanelRowBrowseWnd //
+// TechRowBrowseWnd //
 ///////////////////////////
-std::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& tech_name, int empire_id) {
+std::shared_ptr<GG::BrowseInfoWnd> TechRowBrowseWnd(const std::string& tech_name, int empire_id) {
     const Empire* empire = GetEmpire(empire_id);
     const Tech* tech = GetTech(tech_name);
     if (!tech)
@@ -133,7 +133,7 @@ std::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& tech
 
     std::string main_text;
 
-    main_text += UserString(tech->Category()) + " ";
+    main_text += UserString(tech->Category()) + " \u2013 ";  // u2013 = 'En dash'
     main_text += UserString(tech->ShortDescription()) + "\n";
 
     if (empire) {
@@ -714,6 +714,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
 
 void TechTreeWnd::LayoutPanel::TechPanel::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
+    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     Update();
 }
 
@@ -906,12 +907,16 @@ void TechTreeWnd::LayoutPanel::TechPanel::LClick(const GG::Pt& pt, GG::Flags<GG:
 void TechTreeWnd::LayoutPanel::TechPanel::RClick(const GG::Pt& pt,
                                                  GG::Flags<GG::ModKey> mod_keys)
 {
-    auto dclick_action = [this, pt, mod_keys]() { LDoubleClick(pt, mod_keys); };
+    auto dclick_action = [this, pt]() { LDoubleClick(pt, GG::Flags<GG::ModKey>()); };
+    auto ctrl_dclick_action = [this, pt]() { LDoubleClick(pt, GG::MOD_KEY_CTRL); };
     auto pedia_display_action = [this]() { TechPediaDisplaySignal(m_tech_name); };
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-    if (!(m_enqueued) && !(m_status == TS_COMPLETE))
+    if (!(m_enqueued) && !(m_status == TS_COMPLETE)) {
         popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, dclick_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"), false, false,
+                                        ctrl_dclick_action));
+    }
 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(m_tech_name));
     popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
@@ -1056,7 +1061,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
     m_eta_label->SetText("<s>" + m_eta_text + "</s>");
 
     ClearBrowseInfoWnd();
-    SetBrowseInfoWnd(TechPanelRowBrowseWnd(m_tech_name, client_empire_id));
+    SetBrowseInfoWnd(TechRowBrowseWnd(m_tech_name, client_empire_id));
 
     RequirePreRender();
 }
@@ -1695,13 +1700,17 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
     // TODO replace string padding with new TextFormat flag
     std::string just_pad = "    ";
 
-    std::string cost_str = std::to_string(std::lround(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID())));
+    auto client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    std::string cost_str = std::to_string(std::lround(this_row_tech->ResearchCost(client_empire_id)));
     if (GG::Button* cost_btn = dynamic_cast<GG::Button*>((size() >= 3) ? at(2) : nullptr))
         cost_btn->SetText(cost_str + just_pad + just_pad);
 
-    std::string time_str = std::to_string(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
+    std::string time_str = std::to_string(this_row_tech->ResearchTime(client_empire_id));
     if (GG::Button* time_btn = dynamic_cast<GG::Button*>((size() >= 4) ? at(3) : nullptr))
         time_btn->SetText(time_str + just_pad + just_pad);
+
+    ClearBrowseInfoWnd();
+    SetBrowseInfoWnd(TechRowBrowseWnd(m_tech, client_empire_id));
 }
 
 void TechTreeWnd::TechListBox::ToggleSortCol(unsigned int col) {
@@ -1949,19 +1958,24 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
         return;
     const std::string& tech_name = tech_row->GetTech();
 
-    const ResearchQueue& rq = empire->GetResearchQueue();
-    if (rq.find(tech_name) != rq.end())
-        return;
-
-    auto tech_dclick_action = [this, it, pt]() { TechDoubleClicked(it, pt, GG::Flags<GG::ModKey>()); };
-    auto pedia_display_action = [this, &tech_name]() { TechPediaDisplay(tech_name); };
-
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-    if (!empire->TechResearched(tech_name))
-        popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, tech_dclick_action));
+    const ResearchQueue& rq = empire->GetResearchQueue();
+    if (rq.find(tech_name) == rq.end()) {
+        auto tech_dclick_action = [this, it, pt]() { TechDoubleClicked(it, pt, GG::Flags<GG::ModKey>()); };
+        auto tech_ctrl_dclick_action = [this, it, pt]() { TechDoubleClicked(it, pt, GG::MOD_KEY_CTRL); };
 
+        if (!empire->TechResearched(tech_name)) {
+            popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"), false, false,
+                                            tech_dclick_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"), false, false,
+                                            tech_ctrl_dclick_action));
+        }
+    }
+
+    auto pedia_display_action = [this, &tech_name]() { TechPediaDisplay(tech_name); };
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(tech_name));
     popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
+
     popup->Run();
 }
 
@@ -1973,7 +1987,7 @@ void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it, const
     // determine type of row that was clicked, and emit appropriate signal
     TechRow* tech_row = dynamic_cast<TechRow*>(it->get());
     if (tech_row)
-        TechDoubleClickedSignal(tech_row->GetTech(), GG::Flags<GG::ModKey>());
+        TechDoubleClickedSignal(tech_row->GetTech(), modkeys);
 }
 
 

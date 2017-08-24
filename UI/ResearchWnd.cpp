@@ -96,7 +96,7 @@ namespace {
             SetDragDropDataType("RESEARCH_QUEUE_ROW");
 
             SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-            SetBrowseInfoWnd(TechPanelRowBrowseWnd(elem.name, elem.empire_id));
+            SetBrowseInfoWnd(TechRowBrowseWnd(elem.name, elem.empire_id));
         }
 
         void PreRender() override {
