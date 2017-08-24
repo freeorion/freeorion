@@ -51,7 +51,6 @@ void LinkText::Render() {
 
 void LinkText::SetText(const std::string& str) {
     m_raw_text = str;
-    GG::TextControl::SetText(m_raw_text);   // so that line data is updated for use in FindLinks
     FindLinks();
     MarkLinks();
 }
@@ -275,37 +274,15 @@ void TextLinker::MouseLeave_() {
     MarkLinks();
 }
 
-const std::vector<GG::Font::LineData>& TextLinker::GetLineData() const {
-    static std::vector<GG::Font::LineData> retval;
-    return retval;
-}
-
-const std::shared_ptr<GG::Font>& TextLinker::GetFont() const {
-    static std::shared_ptr<GG::Font> retval;
-    if (!retval)
-        retval = ClientUI::GetFont();
-    return retval;
-}
-
-GG::Pt TextLinker::TextUpperLeft() const
-{ return GG::Pt(); }
-
-GG::Pt TextLinker::TextLowerRight() const
-{ return GG::Pt(); }
-
-void TextLinker::SetLinkedText(const std::string& str)
-{}
-
-const std::string& TextLinker::RawText() const {
-    static std::string retval;
-    return retval;
-}
-
 void TextLinker::FindLinks() {
     m_links.clear();
 
     GG::Y y_posn(0); // y-coordinate of the top of the current line
     Link link;
+
+    // control text needs to be updated so that the line data is calculated from
+    // the raw text and not the marked text set in MarkText().
+    SetLinkedText(RawText());
 
     for (const GG::Font::LineData& curr_line : GetLineData()) {
         for (const GG::Font::LineData::CharData& curr_char : curr_line.char_data) {
