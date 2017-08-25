@@ -603,7 +603,7 @@ public:
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void            SetTotalPointsCost(float total_points, float total_cost);
-    void            SetStockpileCost(float stockpile, float stockpile_max, float stockpile_use, float stockpile_use_max);
+    void            SetStockpileCost(float stockpile, float stockpile_use, float stockpile_use_max);
     void            SetLocalPointsCost(float local_points, float local_cost, const std::string& location_name);
     void            SetEmpireID(int empire_id);
     void            ClearStockpileInfo();

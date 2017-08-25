@@ -1911,7 +1911,7 @@ void ProductionInfoPanel::SetTotalPointsCost(float total_points, float total_cos
     SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % empire_name));
 }
 
-void ProductionInfoPanel::SetStockpileCost(float stockpile, float stockpile_max, float stockpile_use, float stockpile_use_max) {
+void ProductionInfoPanel::SetStockpileCost(float stockpile, float stockpile_use, float stockpile_use_max) {
     if (!m_stockpile_points_label) {
         DebugLogger() << "SetStockpileCost:  create";
         m_stockpile_points_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_STOCKPILE_PS_LABEL"), GG::FORMAT_RIGHT);
@@ -1934,12 +1934,8 @@ void ProductionInfoPanel::SetStockpileCost(float stockpile, float stockpile_max,
     }
 
     
-    // u8"\u0444" Boost.Nowide
-    std::string stockpile_max_str = (stockpile_max < 0) ? "\u221e" : DoubleToString(stockpile_max, 3, false);
-
     DebugLogger() << "SetStockpileCost:  update values";
-    std::string stockpileVsMax = DoubleToString(stockpile, 3, false) + std::string(" / ") + stockpile_max_str;
-    *m_stockpile_points << stockpileVsMax;
+    *m_stockpile_points << DoubleToString(stockpile, 3, false);
 
     std::string useVsTransfer = DoubleToString(stockpile_use, 3, false) + std::string(" / ") + DoubleToString(stockpile_use_max, 3, false);
     *m_stockpile_use << useVsTransfer;
