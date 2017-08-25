@@ -1641,10 +1641,10 @@ OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED_VALUE
 Forced value of the EmpireID Trait.  A value from 0 to 39.
 
 OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
-If true, autosaves will occur during single-player games.
+Enable single-player autosaves.
 
 OPTIONS_DB_AUTOSAVE_MULTIPLAYER
-If true, autosaves will occur during multiplayer games.
+Enable multi-player autosaves.
 
 OPTIONS_DB_AUTOSAVE_TURNS
 Sets the number of turns between autosaves.
@@ -1653,10 +1653,10 @@ OPTIONS_DB_AUTOSAVE_LIMIT
 Sets the maximum number of autosave files to keep.
 
 OPTIONS_DB_AUTOSAVE_GALAXY_CREATION
-Toggles whether to autosave after the galaxy is created before any game play.
+Enable autosave after the galaxy is created before any game play.
 
 OPTIONS_DB_AUTOSAVE_GAME_CLOSE
-Toggles whether to autosave when resigning or closing the game.
+Enable autosave when resigning or closing the game.
 
 OPTIONS_DB_UI_MOUSE_LR_SWAP
 Swaps results of clicking left and right mouse buttons.
