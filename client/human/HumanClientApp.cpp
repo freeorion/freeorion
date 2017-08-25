@@ -690,7 +690,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
 
     // end any currently-playing game before loading new one
     if (m_game_started) {
-        ResetToIntro(false);
+        ResetToIntro(true);
         // delay to make sure old game is fully cleaned up before attempting to start a new one
         std::this_thread::sleep_for(std::chrono::seconds(3));
     } else {
