@@ -437,14 +437,18 @@ MPLobby::MPLobby(my_context c) :
     ServerApp& server = Server();
     const SpeciesManager& sm = GetSpeciesManager();
     if (server.IsHostless()) {
+        DebugLogger(FSM) << "(ServerFSM) MPLobby. Fill MPLobby data from the previous game.";
+
         m_lobby_data->m_any_can_edit = true;
 
         std::list<PlayerConnectionPtr> to_disconnect;
         // Try to use connections:
         for (const auto& player_connection : server.m_networking) {
             int player_id = player_connection->PlayerID();
-            if (player_id != Networking::INVALID_PLAYER_ID && player_connection->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER ) {
+            DebugLogger(FSM) << "(ServerFSM) MPLobby. Fill MPLobby player " << player_id;
+            if (player_id != Networking::INVALID_PLAYER_ID && player_connection->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER) {
                 PlayerSetupData player_setup_data;
+                player_setup_data.m_player_id =     player_id;
                 player_setup_data.m_player_name =   player_connection->PlayerName();
                 player_setup_data.m_client_type =   player_connection->GetClientType();
                 player_setup_data.m_empire_name =   (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
@@ -455,6 +459,21 @@ MPLobby::MPLobby(my_context c) :
                     player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
 
                 m_lobby_data->m_players.push_back(std::make_pair(player_id, player_setup_data));
+            } else if (player_id != Networking::INVALID_PLAYER_ID && player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
+                PlayerSetupData player_setup_data;
+                player_setup_data.m_player_id =     -1;
+                player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_count++);
+                player_setup_data.m_client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
+                player_setup_data.m_empire_name =   GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
+                player_setup_data.m_empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
+                if (m_lobby_data->m_seed != "")
+                    player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
+                else
+                    player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
+
+                m_lobby_data->m_players.push_back(std::make_pair(-1, player_setup_data));
+                // disconnect AI
+                to_disconnect.push_back(player_connection);
             } else {
                 // If connection was not established disconnect it.
                 to_disconnect.push_back(player_connection);
