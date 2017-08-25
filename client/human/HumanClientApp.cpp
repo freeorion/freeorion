@@ -1201,7 +1201,7 @@ std::string HumanClientApp::SelectLoadFile() {
 }
 
 void HumanClientApp::ResetClientData(bool save_connection) {
-    if (! save_connection) {
+    if (!save_connection) {
         m_networking->SetPlayerID(Networking::INVALID_PLAYER_ID);
         m_networking->SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     }
