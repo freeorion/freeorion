@@ -141,7 +141,11 @@ namespace {
 //            float this_transfer_rate = local_to_stockpile ? 
 //                        local_stockpile_transfer_rate : remote_stockpile_transfer_rate;
             new_contributions += excess_here * stockpile_transfer_efficiency;
+            DebugLogger() << "allocated_here " << allocated_here;
+            DebugLogger() << "excess_here  " << excess_here;
+            DebugLogger() << "new_contributions " << new_contributions;
         }
+        DebugLogger() << "stockpile_used " << stockpile_used;
         return starting_stockpile + new_contributions - stockpile_used;
     }
                                          
@@ -311,10 +315,10 @@ namespace {
             // total cost remaining to complete the last item in the queue element (eg. the element has all but
             // the last item complete already) and by the total pp available in this element's production location's
             // resource sharing group (including any stockpile availability)
-            float stockpile_conversion_rate = (group.find(stockpile_location_id) != group.end()) ? 
-                        local_stockpile_use_rate : remote_stockpile_use_rate;
+//XXX            float stockpile_conversion_rate = (group.find(stockpile_location_id) != group.end()) ? 
+//                        local_stockpile_use_rate : remote_stockpile_use_rate;
             float stockpile_available_for_this = (queue_element.allowed_imperial_stockpile_use) ?
-                        available_stockpile * stockpile_conversion_rate : 0;
+                        available_stockpile : 0;
             
             float allocation = std::max(0.0f, std::min(element_this_turn_limit, 
                                                        group_pp_available + stockpile_available_for_this));
@@ -331,14 +335,20 @@ namespace {
             float group_drawdown = std::min(allocation, group_pp_available);
             allocated_pp[group] += group_drawdown;  // relies on default initial mapped value of 0.0f
             group_pp_available -= group_drawdown;
+            
             float stockpile_drawdown = allocation == group_drawdown ? 
-                        0.0f : (allocation - group_drawdown) / stockpile_conversion_rate;
+                        0.0f : (allocation - group_drawdown);
+//XXX                        0.0f : (allocation - group_drawdown) / stockpile_conversion_rate;
+            DebugLogger() << "allocation " << group_pp_available;
+            DebugLogger() << "group_drawdown " << group_drawdown;
+            DebugLogger() << "stockpile_drawdown" << stockpile_drawdown;
 
             // record allocation from stockpile
             // protect against any slight mismatch that might possible happen from multiplying
             // and dividing by a very very small stockpile_conversion_rate
             stockpile_drawdown = std::min(stockpile_drawdown, available_stockpile);
             if (stockpile_drawdown) {
+                DebugLogger() << "allocated " << stockpile_drawdown << " imperial PP";
                 allocated_stockpile_pp[group] += stockpile_drawdown;
                 available_stockpile -= stockpile_drawdown;
             }
@@ -1018,8 +1028,8 @@ void ProductionQueue::Update() {
     if (pp_use_limit) {
         DebugLogger() << "========= METER_IMPERIAL_PP_USE_LIMIT: " << empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT")->Current() << " ========";
         available_stockpile = std::min(available_stockpile, pp_use_limit->Current());
-    };
-     DebugLogger() << "========= alrighty then";
+    }
+    DebugLogger() << "========= alrighty then";
     // FIXME after discussion - extraction is lossless
 //    float stockpile_transfer_efficiency = empire->GetMeter("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")->Current();
     // locally, within same resource group as the stockpile location (empire capital) we currently allow stockpile use at no penalty
@@ -1088,13 +1098,15 @@ void ProductionQueue::Update() {
                                 m_projects_in_progress, false);
 
     //update expected new stockpile amount
-    float new_stockpile_amount = CalculateNewStockpile(m_empire_id, stockpile_location_id, available_stockpile, available_pp, 
+    float new_stockpile_amount = CalculateNewStockpile(m_empire_id, stockpile_location_id, pp_in_stockpile, available_pp, 
                                                        m_object_group_allocated_pp, m_object_group_allocated_stockpile_pp);
     DebugLogger() << "========= new_stockpile_amount: " << new_stockpile_amount << " ========";
     float stockpile_limit = empire->GetMeter("METER_IMPERIAL_PP_STOCKPILE_LIMIT")->Current();
     DebugLogger() << "========= METER_IMPERIAL_PP_STOCKPILE_LIMIT: " << empire->GetMeter("METER_IMPERIAL_PP_STOCKPILE_LIMIT")->Current() << " ========";
     m_expected_new_stockpile_amount = std::max(0.0f, std::min(new_stockpile_amount, stockpile_limit));
-    
+    DebugLogger() << "========= available_stockpile (alt): " << available_stockpile << " ========";
+    DebugLogger() << "========= m_expected_new_stockpile_amount: " << m_expected_new_stockpile_amount << " ========";
+
     // if at least one resource-sharing system group have available PP, simulate
     // future turns to predict when build items will be finished
     bool simulate_future = false;
@@ -1143,6 +1155,7 @@ void ProductionQueue::Update() {
     sim_time_start = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
     std::map<std::set<int>, float>  allocated_pp;
     float sim_available_stockpile = available_stockpile;
+    float sim_pp_in_stockpile = available_stockpile;
     std::map<std::set<int>, float>  allocated_stockpile_pp;
     int dummy_int = 0;
     
@@ -1180,8 +1193,9 @@ void ProductionQueue::Update() {
                 sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
             }
         }
-        sim_available_stockpile = CalculateNewStockpile(m_empire_id, stockpile_location_id, sim_available_stockpile,
+        sim_pp_in_stockpile = CalculateNewStockpile(m_empire_id, stockpile_location_id, sim_pp_in_stockpile,
                                                         available_pp, allocated_pp, allocated_stockpile_pp);
+        sim_available_stockpile = std::min(sim_pp_in_stockpile, pp_use_limit->Current());
     }    
 
     sim_time_end = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
