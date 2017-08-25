@@ -1098,14 +1098,8 @@ void ProductionQueue::Update() {
                                 m_projects_in_progress, false);
 
     //update expected new stockpile amount
-    float new_stockpile_amount = CalculateNewStockpile(m_empire_id, stockpile_location_id, pp_in_stockpile, available_pp, 
+    m_expected_new_stockpile_amount = CalculateNewStockpile(m_empire_id, stockpile_location_id, pp_in_stockpile, available_pp, 
                                                        m_object_group_allocated_pp, m_object_group_allocated_stockpile_pp);
-    DebugLogger() << "========= new_stockpile_amount: " << new_stockpile_amount << " ========";
-    float stockpile_limit = empire->GetMeter("METER_IMPERIAL_PP_STOCKPILE_LIMIT")->Current();
-    DebugLogger() << "========= METER_IMPERIAL_PP_STOCKPILE_LIMIT: " << empire->GetMeter("METER_IMPERIAL_PP_STOCKPILE_LIMIT")->Current() << " ========";
-    m_expected_new_stockpile_amount = std::max(0.0f, std::min(new_stockpile_amount, stockpile_limit));
-    DebugLogger() << "========= available_stockpile (alt): " << available_stockpile << " ========";
-    DebugLogger() << "========= m_expected_new_stockpile_amount: " << m_expected_new_stockpile_amount << " ========";
 
     // if at least one resource-sharing system group have available PP, simulate
     // future turns to predict when build items will be finished
@@ -1277,7 +1271,6 @@ void Empire::Init() {
     m_eliminated = false;
 
     m_meters[UserStringNop("METER_DETECTION_STRENGTH")];
-    m_meters[UserStringNop("METER_IMPERIAL_PP_STOCKPILE_LIMIT")];
     m_meters[UserStringNop("METER_IMPERIAL_PP_USE_LIMIT")];
     m_meters[UserStringNop("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")];
     m_meters[UserStringNop("METER_BUILDING_COST_FACTOR")];
