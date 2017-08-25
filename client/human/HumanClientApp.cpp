@@ -1193,6 +1193,10 @@ namespace {
 }
 
 void HumanClientApp::Autosave() {
+    // only host can save in multiplayer
+    if (!m_single_player_game && !Networking().PlayerIsHost(PlayerID()))
+        return;
+
     // Create an auto save for 1) new games on turn 1, 2) if auto save is
     // requested on turn number modulo autosave.turns or 3) on the last turn of
     // play.
