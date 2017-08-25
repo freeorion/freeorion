@@ -1,14 +1,15 @@
 BuildingType
     name = "BLD_INTERSPECIES_ACADEMY"
     description = "BLD_INTERSPECIES_ACADEMY_DESC"
-    buildcost = 100
-    buildtime = 1
+    buildcost = 30
+    buildtime = 5
     location = AND [
         // Homeworld
         Species
         Not Contains Building name = "BLD_INTERSPECIES_ACADEMY"
         OwnedBy empire = Source.Owner
-        Happiness low = 20
+        // some species dont have preferred focus - else low=20 would be nicer
+        Happiness low = 15
         Not WithinStarlaneJumps jumps = 3 condition = And [
             System
             Contains And [
@@ -82,6 +83,7 @@ BuildingType
                     ]
                     empire = Source.Owner
                 SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_TRANSFER_EFFICIENCY" value = Value + 0.05
+                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_USE_LIMIT"           value = Value + 1
             ]
     ]
     icon = "icons/building/science-institute.png"

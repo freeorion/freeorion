@@ -5,11 +5,12 @@ Tech
     category = "SPY_CATEGORY"
     researchcost = 1
     researchturns = 1
-
+/*
     effectsgroups = [
         EffectsGroup
             scope = Source
             effects = [
-                GiveEmpireTech name = "TECH_COL_BANFORO"
+                 GiveEmpireTech name = "TECH_COL_BANFORO"
             ]
     ]
+'/
