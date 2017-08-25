@@ -1847,6 +1847,9 @@ ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::st
     m_stockpile_points_label(nullptr),
     m_stockpile_points(nullptr),
     m_stockpile_points_P_label(nullptr),
+    m_stockpile_use_label(nullptr),
+    m_stockpile_use(nullptr),
+    m_stockpile_use_P_label(nullptr),
     m_local_points_label(nullptr),
     m_local_points(nullptr),
     m_local_points_P_label(nullptr),
@@ -1914,16 +1917,31 @@ void ProductionInfoPanel::SetStockpileCost(float stockpile, float stockpile_max,
         m_stockpile_points = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
         m_stockpile_points_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
 
+        m_stockpile_use_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_STOCKPILE_USE_PS_LABEL"), GG::FORMAT_RIGHT);
+        m_stockpile_use = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+        m_stockpile_use_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
+
         AttachChild(m_stockpile_points_label);
         AttachChild(m_stockpile_points);
         AttachChild(m_stockpile_points_P_label);
 
+        AttachChild(m_stockpile_use_label);
+        AttachChild(m_stockpile_use);
+        AttachChild(m_stockpile_use_P_label);
+
         DoLayout();
     }
 
+    
+    // u8"\u0444" Boost.Nowide
+    std::string stockpile_max_str = (stockpile_max < 0) ? "\u221e" : DoubleToString(stockpile_max, 3, false);
+
     DebugLogger() << "SetStockpileCost:  update values";
-    std::string stockpileVsMax = DoubleToString(stockpile, 3, false) + std::string(" / ") + DoubleToString(stockpile_max, 3, false);
+    std::string stockpileVsMax = DoubleToString(stockpile, 3, false) + std::string(" / ") + stockpile_max_str;
     *m_stockpile_points << stockpileVsMax;
+
+    std::string useVsTransfer = DoubleToString(stockpile_use, 3, false) + std::string(" / ") + DoubleToString(stockpile_use_max, 3, false);
+    *m_stockpile_use << useVsTransfer;
 
     DebugLogger() << "SetStockpileCost:  set name";
     const Empire* empire = GetEmpire(m_empire_id);
@@ -2010,6 +2028,13 @@ void ProductionInfoPanel::ClearStockpileInfo() {
     delete m_stockpile_points_P_label;
     m_stockpile_points_P_label = nullptr;
 
+    delete m_stockpile_use_label;
+    m_stockpile_use_label = nullptr;
+    delete m_stockpile_use;
+    m_stockpile_use = nullptr;
+    delete m_stockpile_use_P_label;
+    m_stockpile_use_P_label = nullptr;
+
     const Empire* empire = GetEmpire(m_empire_id);
     std::string empire_name;
     if (empire)
@@ -2082,6 +2107,17 @@ void ProductionInfoPanel::DoLayout() {
         m_stockpile_points_P_label->Resize(P_LABEL_SIZE);
 
         row_offset += m_stockpile_points_label->Height();
+    }
+
+    if (m_stockpile_use_label) {
+        m_stockpile_use_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
+        m_stockpile_use_label->Resize(LABEL_TEXT_SIZE);
+        m_stockpile_use->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
+        m_stockpile_use->Resize(VALUE_TEXT_SIZE);
+        m_stockpile_use_P_label->MoveTo(GG::Pt(DOUBLE_P_LABEL_X, row_offset));
+        m_stockpile_use_P_label->Resize(P_LABEL_SIZE);
+
+        row_offset += m_stockpile_use_label->Height();
     }
 
     if (m_local_points_label) {
