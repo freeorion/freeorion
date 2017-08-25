@@ -430,7 +430,7 @@ MPLobby::MPLobby(my_context c) :
     my_base(c),
     m_lobby_data(new MultiplayerLobbyData(std::move(Server().m_galaxy_setup_data))),
     m_server_save_game_data(new ServerSaveGameData()),
-    m_ai_count(1)
+    m_ai_next_index(1)
 {
     TraceLogger(FSM) << "(ServerFSM) MPLobby";
     ClockSeed();
@@ -462,14 +462,14 @@ MPLobby::MPLobby(my_context c) :
             } else if (player_id != Networking::INVALID_PLAYER_ID && player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
                 PlayerSetupData player_setup_data;
                 player_setup_data.m_player_id =     -1;
-                player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_count++);
+                player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
                 player_setup_data.m_client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
                 player_setup_data.m_empire_name =   GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
                 player_setup_data.m_empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
                 if (m_lobby_data->m_seed != "")
                     player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
                 else
-                    player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
+                    player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
 
                 m_lobby_data->m_players.push_back(std::make_pair(-1, player_setup_data));
                 // disconnect AI
@@ -723,14 +723,14 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     psd.m_empire_color = GetUnusedEmpireColour(incoming_lobby_data.m_players);
                 if (psd.m_player_name.empty())
                     // ToDo: Should we translate player_name?
-                    psd.m_player_name = UserString("AI_PLAYER") + "_" + std::to_string(m_ai_count++);
+                    psd.m_player_name = UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
                 if (psd.m_empire_name.empty())
                     psd.m_empire_name = GenerateEmpireName(psd.m_player_name, incoming_lobby_data.m_players);
                 if (psd.m_starting_species_name.empty()) {
                     if (m_lobby_data->m_seed != "")
                         psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
                     else
-                        psd.m_starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(m_ai_count);
+                        psd.m_starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(m_ai_next_index);
                 }
 
             } else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
