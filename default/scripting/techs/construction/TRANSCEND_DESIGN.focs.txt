@@ -3,8 +3,8 @@ Tech
     description = "CON_TRANS_DESIGN_DESC"
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 50 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 6
+    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
     prerequisites = [
         "LRN_PSIONICS"
         "CON_ARCH_PSYCH"
