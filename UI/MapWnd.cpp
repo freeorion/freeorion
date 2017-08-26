@@ -2058,10 +2058,8 @@ void MapWnd::RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuff
 
         glDisable(GL_TEXTURE_2D);
         glEnable(GL_LINE_SMOOTH);
-        glEnable(GL_LINE_STIPPLE);
 
         glLineWidth(static_cast<GLfloat>(thickness * GetOptionsDB().Get<double>("UI.starlane-thickness")));
-        glLineStipple(1, 0xffff);   // solid line / no stipple
 
         glPushAttrib(GL_COLOR_BUFFER_BIT);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
@@ -2086,7 +2084,6 @@ void MapWnd::RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuff
 
         glEnable(GL_TEXTURE_2D);
         glDisable(GL_LINE_SMOOTH);
-        glDisable(GL_LINE_STIPPLE);
     }
 
     glLineWidth(1.0);
