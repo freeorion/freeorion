@@ -96,8 +96,10 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add("autosave.single-player",        UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER"),     true,   Validator<bool>());
-        db.Add("autosave.multiplayer",          UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER"),       true,   Validator<bool>());
+        db.Add("autosave.single-player.turn-start", UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START"),     true,   Validator<bool>());
+        db.Add("autosave.single-player.turn-end",   UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END"),     false,   Validator<bool>());
+        db.Add("autosave.multiplayer.turn-start",   UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"),       true,   Validator<bool>());
+        db.Add("autosave.multiplayer.turn-end",     UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_END"),       false,   Validator<bool>());
         db.Add("autosave.turns",                UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),             1,      RangedValidator<int>(1, 50));
         db.Add("autosave.limit",                UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),             10,     RangedValidator<int>(1, 100));
         db.Add("autosave.galaxy-creation",      UserStringNop("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"),      true,   Validator<bool>());
@@ -855,6 +857,14 @@ void HumanClientApp::StartTurn() {
                       << " " << static_cast<int>(color.a);
     }
 
+    // Do the turn end autosave.
+    if ((m_single_player_game && GetOptionsDB().Get<bool>("autosave.single-player.turn-end"))
+        || (!m_single_player_game && GetOptionsDB().Get<bool>("autosave.multiplayer.turn-end")))
+    {
+        DebugLogger() << "Starting end of turn autosave.";
+        Autosave();
+    }
+
     ClientApp::StartTurn();
     m_fsm->process_event(TurnEnded());
 }
@@ -1212,11 +1222,18 @@ void HumanClientApp::Autosave() {
     // autosave only on appropriate turn numbers, and when enabled for current
     // game type (single vs. multiplayer)
     int autosave_turns = GetOptionsDB().Get<int>("autosave.turns");
+    bool is_single_player_enabled =
+        (m_single_player_game
+         && (GetOptionsDB().Get<bool>("autosave.single-player.turn-start")
+             || GetOptionsDB().Get<bool>("autosave.single-player.turn-end")));
+    bool is_multi_player_enabled =
+        (!m_single_player_game
+         && (GetOptionsDB().Get<bool>("autosave.multiplayer.turn-start")
+             || GetOptionsDB().Get<bool>("autosave.multiplayer.turn-end")));
     bool is_valid_autosave =
         (autosave_turns > 0
          && CurrentTurn() % autosave_turns == 0
-         && ((m_single_player_game && GetOptionsDB().Get<bool>("autosave.single-player"))
-             || (!m_single_player_game && GetOptionsDB().Get<bool>("autosave.multiplayer"))));
+         && (is_single_player_enabled || is_multi_player_enabled));
 
     // is_initial_save is gated in HumanClientFSM for new game vs loaded game
     bool is_initial_save = (GetOptionsDB().Get<bool>("autosave.galaxy-creation") && CurrentTurn() == 1);
