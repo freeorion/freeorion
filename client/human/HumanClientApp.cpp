@@ -100,8 +100,8 @@ namespace {
         db.Add("autosave.single-player.turn-end",   UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END"),     false,   Validator<bool>());
         db.Add("autosave.multiplayer.turn-start",   UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"),       true,   Validator<bool>());
         db.Add("autosave.multiplayer.turn-end",     UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_END"),       false,   Validator<bool>());
-        db.Add("autosave.turns",                UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),             1,      RangedValidator<int>(1, 50));
-        db.Add("autosave.limit",                UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),             10,     RangedValidator<int>(1, 100));
+        db.Add("autosave.turns",                    UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),             1,      RangedValidator<int>(1, 50));
+        db.Add("autosave.turn-limit",               UserStringNop("OPTIONS_DB_AUTOSAVE_TURN_LIMIT"),       10,     RangedValidator<int>(1, 100));
         db.Add("autosave.galaxy-creation",      UserStringNop("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"),      true,   Validator<bool>());
         db.Add("autosave.game-close",           UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),         true,   Validator<bool>());
         db.Add("UI.swap-mouse-lr",              UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),           false);
@@ -1244,10 +1244,21 @@ void HumanClientApp::Autosave() {
 
     auto autosave_file_path = CreateNewAutosaveFilePath(EmpireID(), m_single_player_game);
 
-    // check for and remove excess oldest autosaves.  The minimum is 1 for the
-    // initial or final save.
+    // check for and remove excess oldest autosaves.
     boost::filesystem::path autosave_dir_path(GetSaveDir() / "auto");
-    int max_autosaves = std::max(1, GetOptionsDB().Get<int>("autosave.limit"));
+    int max_turns = std::max(1, GetOptionsDB().Get<int>("autosave.turn-limit"));
+    bool is_two_saves_per_turn =
+        (m_single_player_game
+         && GetOptionsDB().Get<bool>("autosave.single-player.turn-start")
+         && GetOptionsDB().Get<bool>("autosave.single-player.turn-end"))
+        ||
+        (!m_single_player_game
+         && GetOptionsDB().Get<bool>("autosave.multiplayer.turn-start")
+         && GetOptionsDB().Get<bool>("autosave.multiplayer.turn-end"));
+    int max_autosaves =
+        (max_turns * (is_two_saves_per_turn ? 2 : 1)
+         + (GetOptionsDB().Get<bool>("autosave.galaxy-creation") ? 1 : 0)
+         + (GetOptionsDB().Get<bool>("autosave.game-close") ? 1 : 0));
     RemoveOldestFiles(max_autosaves, autosave_dir_path);
 
     // create new save
