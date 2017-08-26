@@ -234,7 +234,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
                      << ", named \"" << player_connection->PlayerName() << "\".";
 
     bool must_quit = false;
-    if (id == ALL_EMPIRES) {
+    if (id == ALL_EMPIRES && !m_server.IsHostless()) {
         ErrorLogger(FSM) << "Client quit before id was assigned.";
         must_quit = true;
     }
@@ -270,7 +270,11 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
 
     if (must_quit) {
         ErrorLogger(FSM) << "Unable to recover server terminating.";
-        m_server.m_fsm->process_event(ShutdownServer());
+        if (m_server.IsHostless()) {
+            m_server.m_fsm->process_event(Hostless());
+        } else {
+            m_server.m_fsm->process_event(ShutdownServer());
+        }
     }
 }
 
@@ -279,7 +283,12 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
 ////////////////////////////////////////////////////////////
 Idle::Idle(my_context c) :
     my_base(c)
-{ TraceLogger(FSM) << "(ServerFSM) Idle"; }
+{
+    TraceLogger(FSM) << "(ServerFSM) Idle";
+    if (Server().IsHostless()) {
+        post_event(Hostless());
+    }
+}
 
 Idle::~Idle()
 { TraceLogger(FSM) << "(ServerFSM) ~Idle"; }
@@ -371,95 +380,14 @@ sc::result Idle::react(const Error& msg) {
     return discard_event();
 }
 
+sc::result Idle::react(const Hostless&) {
+    return transit<MPLobby>();
+}
+
 
 ////////////////////////////////////////////////////////////
 // MPLobby
 ////////////////////////////////////////////////////////////
-MPLobby::MPLobby(my_context c) :
-    my_base(c),
-    m_lobby_data(new MultiplayerLobbyData()),
-    m_server_save_game_data(new ServerSaveGameData())
-{
-    TraceLogger(FSM) << "(ServerFSM) MPLobby";
-    ServerApp& server = Server();
-    const SpeciesManager& sm = GetSpeciesManager();
-    int host_id = server.m_networking.HostPlayerID();
-    const PlayerConnectionPtr& player_connection = *(server.m_networking.GetPlayer(host_id));
-
-    ClockSeed();
-
-    // create player setup data for host, and store in list
-    m_lobby_data->m_players.push_back(std::make_pair(host_id, PlayerSetupData()));
-
-    PlayerSetupData& player_setup_data = m_lobby_data->m_players.begin()->second;
-
-    player_setup_data.m_player_name =           player_connection->PlayerName();
-    player_setup_data.m_empire_name =           (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
-    player_setup_data.m_empire_color =          EmpireColors().at(0);               // since the host is the first joined player, it can be assumed that no other player is using this colour (unlike subsequent join game message responses)
-    player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
-    // leaving save game empire id as default
-    player_setup_data.m_client_type =           player_connection->GetClientType();
-
-    player_connection->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
-}
-
-MPLobby::~MPLobby()
-{ TraceLogger(FSM) << "(ServerFSM) ~MPLobby"; }
-
-sc::result MPLobby::react(const Disconnection& d) {
-    TraceLogger(FSM) << "(ServerFSM) MPLobby.Disconnection";
-    ServerApp& server = Server();
-    PlayerConnectionPtr& player_connection = d.m_player_connection;
-
-    DebugLogger(FSM) << "MPLobby::react(Disconnection) player id: " << player_connection->PlayerID();
-    DebugLogger(FSM) << "Remaining player ids: ";
-    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
-         it != server.m_networking.established_end(); ++it)
-    {
-        DebugLogger(FSM) << " ... " << (*it)->PlayerID();
-    }
-
-    // if there are no humans left, it's time to terminate
-    if (server.m_networking.empty() || server.m_ai_client_processes.size() == server.m_networking.NumEstablishedPlayers()) {
-        DebugLogger(FSM) << "MPLobby.Disconnection : All human players disconnected; server terminating.";
-        return transit<ShuttingDownServer>();
-    }
-
-    if (server.m_networking.PlayerIsHost(player_connection->PlayerID()))
-        server.SelectNewHost();
-
-    // if the disconnected player wasn't in the lobby, don't need to do anything more.
-    // if player is in lobby, need to remove it
-    int id = player_connection->PlayerID();
-    bool player_was_in_lobby = false;
-    for (std::list<std::pair<int, PlayerSetupData>>::iterator it = m_lobby_data->m_players.begin();
-         it != m_lobby_data->m_players.end(); ++it)
-    {
-        if (it->first == id) {
-            player_was_in_lobby = true;
-            m_lobby_data->m_players.erase(it);
-            break;
-        }
-    }
-    if (player_was_in_lobby) {
-        // drop ready flag as player list changed
-        for (std::pair<int, PlayerSetupData>& plrs : m_lobby_data->m_players) {
-            plrs.second.m_player_ready = false;
-        }
-    } else {
-        DebugLogger(FSM) << "MPLobby.Disconnection : Disconnecting player (" << id << ") was not in lobby";
-        return discard_event();
-    }
-
-    // send updated lobby data to players after disconnection-related changes
-    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
-         it != server.m_networking.established_end(); ++it)
-    {
-        (*it)->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
-    }
-
-    return discard_event();
-}
 
 namespace {
     GG::Clr GetUnusedEmpireColour(const std::list<std::pair<int, PlayerSetupData>>& psd) {
@@ -496,6 +424,145 @@ namespace {
             (lhs.m_save_game_empire_id != rhs.m_save_game_empire_id) ||
             (lhs.m_empire_color != rhs.m_empire_color);
     }
+}
+
+MPLobby::MPLobby(my_context c) :
+    my_base(c),
+    m_lobby_data(new MultiplayerLobbyData(std::move(Server().m_galaxy_setup_data))),
+    m_server_save_game_data(new ServerSaveGameData()),
+    m_ai_next_index(1)
+{
+    TraceLogger(FSM) << "(ServerFSM) MPLobby";
+    ClockSeed();
+    ServerApp& server = Server();
+    const SpeciesManager& sm = GetSpeciesManager();
+    if (server.IsHostless()) {
+        DebugLogger(FSM) << "(ServerFSM) MPLobby. Fill MPLobby data from the previous game.";
+
+        m_lobby_data->m_any_can_edit = true;
+
+        std::list<PlayerConnectionPtr> to_disconnect;
+        // Try to use connections:
+        for (const auto& player_connection : server.m_networking) {
+            int player_id = player_connection->PlayerID();
+            DebugLogger(FSM) << "(ServerFSM) MPLobby. Fill MPLobby player " << player_id;
+            if (player_id != Networking::INVALID_PLAYER_ID && player_connection->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER) {
+                PlayerSetupData player_setup_data;
+                player_setup_data.m_player_id =     player_id;
+                player_setup_data.m_player_name =   player_connection->PlayerName();
+                player_setup_data.m_client_type =   player_connection->GetClientType();
+                player_setup_data.m_empire_name =   (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
+                player_setup_data.m_empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
+                if (m_lobby_data->m_seed != "")
+                    player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
+                else
+                    player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
+
+                m_lobby_data->m_players.push_back(std::make_pair(player_id, player_setup_data));
+            } else if (player_id != Networking::INVALID_PLAYER_ID && player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
+                PlayerSetupData player_setup_data;
+                player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
+                player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
+                player_setup_data.m_client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
+                player_setup_data.m_empire_name =   GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
+                player_setup_data.m_empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
+                if (m_lobby_data->m_seed != "")
+                    player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
+                else
+                    player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
+
+                m_lobby_data->m_players.push_back(std::make_pair(Networking::INVALID_PLAYER_ID, player_setup_data));
+                // disconnect AI
+                to_disconnect.push_back(player_connection);
+            } else {
+                // If connection was not established disconnect it.
+                to_disconnect.push_back(player_connection);
+            }
+        }
+
+        for (const auto& player_connection : to_disconnect) {
+            server.Networking().Disconnect(player_connection);
+        }
+
+        server.Networking().SendMessageAll(ServerLobbyUpdateMessage(*m_lobby_data));
+    } else {
+        int host_id = server.m_networking.HostPlayerID();
+        const PlayerConnectionPtr& player_connection = *(server.m_networking.GetPlayer(host_id));
+
+        // create player setup data for host, and store in list
+        m_lobby_data->m_players.push_back(std::make_pair(host_id, PlayerSetupData()));
+
+        PlayerSetupData& player_setup_data = m_lobby_data->m_players.begin()->second;
+
+        player_setup_data.m_player_name =           player_connection->PlayerName();
+        player_setup_data.m_empire_name =           (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
+        player_setup_data.m_empire_color =          EmpireColors().at(0);               // since the host is the first joined player, it can be assumed that no other player is using this colour (unlike subsequent join game message responses)
+        player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
+        // leaving save game empire id as default
+        player_setup_data.m_client_type =           player_connection->GetClientType();
+
+        player_connection->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
+    }
+}
+
+MPLobby::~MPLobby()
+{ TraceLogger(FSM) << "(ServerFSM) ~MPLobby"; }
+
+sc::result MPLobby::react(const Disconnection& d) {
+    TraceLogger(FSM) << "(ServerFSM) MPLobby.Disconnection";
+    ServerApp& server = Server();
+    PlayerConnectionPtr& player_connection = d.m_player_connection;
+
+    DebugLogger(FSM) << "MPLobby::react(Disconnection) player id: " << player_connection->PlayerID();
+    DebugLogger(FSM) << "Remaining player ids: ";
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+         it != server.m_networking.established_end(); ++it)
+    {
+        DebugLogger(FSM) << " ... " << (*it)->PlayerID();
+    }
+
+    if (!server.IsHostless()) {
+        // if there are no humans left, it's time to terminate
+        if (server.m_networking.empty() || server.m_ai_client_processes.size() == server.m_networking.NumEstablishedPlayers()) {
+            DebugLogger(FSM) << "MPLobby.Disconnection : All human players disconnected; server terminating.";
+            return transit<ShuttingDownServer>();
+        }
+    }
+
+    if (server.m_networking.PlayerIsHost(player_connection->PlayerID()))
+        server.SelectNewHost();
+
+    // if the disconnected player wasn't in the lobby, don't need to do anything more.
+    // if player is in lobby, need to remove it
+    int id = player_connection->PlayerID();
+    bool player_was_in_lobby = false;
+    for (std::list<std::pair<int, PlayerSetupData>>::iterator it = m_lobby_data->m_players.begin();
+         it != m_lobby_data->m_players.end(); ++it)
+    {
+        if (it->first == id) {
+            player_was_in_lobby = true;
+            m_lobby_data->m_players.erase(it);
+            break;
+        }
+    }
+    if (player_was_in_lobby) {
+        // drop ready flag as player list changed
+        for (std::pair<int, PlayerSetupData>& plrs : m_lobby_data->m_players) {
+            plrs.second.m_player_ready = false;
+        }
+    } else {
+        DebugLogger(FSM) << "MPLobby.Disconnection : Disconnecting player (" << id << ") was not in lobby";
+        return discard_event();
+    }
+
+    // send updated lobby data to players after disconnection-related changes
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+         it != server.m_networking.established_end(); ++it)
+    {
+        (*it)->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
+    }
+
+    return discard_event();
 }
 
 sc::result MPLobby::react(const JoinGame& msg) {
@@ -630,7 +697,6 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
         DebugLogger(FSM) << "Get message from host or allowed player.";
 
-        static int AI_count = 1;
         const GG::Clr CLR_NONE = GG::Clr(0, 0, 0, 0);
 
         // assign unique names / colours to any lobby entry that lacks them, or
@@ -657,14 +723,14 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     psd.m_empire_color = GetUnusedEmpireColour(incoming_lobby_data.m_players);
                 if (psd.m_player_name.empty())
                     // ToDo: Should we translate player_name?
-                    psd.m_player_name = UserString("AI_PLAYER") + "_" + std::to_string(AI_count++);
+                    psd.m_player_name = UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
                 if (psd.m_empire_name.empty())
                     psd.m_empire_name = GenerateEmpireName(psd.m_player_name, incoming_lobby_data.m_players);
                 if (psd.m_starting_species_name.empty()) {
                     if (m_lobby_data->m_seed != "")
                         psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
                     else
-                        psd.m_starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(AI_count);
+                        psd.m_starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(m_ai_next_index);
                 }
 
             } else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
@@ -1087,9 +1153,15 @@ sc::result MPLobby::react(const HostSPGame& msg) {
 }
 
 sc::result MPLobby::react(const ShutdownServer& msg) {
-    TraceLogger(FSM) << "(ServerFSM) PlayingGame.ShutdownServer";
+    TraceLogger(FSM) << "(ServerFSM) MPLobby.ShutdownServer";
 
     return transit<ShuttingDownServer>();
+}
+
+sc::result MPLobby::react(const Hostless& msg) {
+    TraceLogger(FSM) << "(ServerFSM) MPLobby.Hostless";
+
+    return discard_event();
 }
 
 sc::result MPLobby::react(const Error& msg) {
@@ -1550,9 +1622,29 @@ sc::result PlayingGame::react(const ShutdownServer& msg) {
     return transit<ShuttingDownServer>();
 }
 
+sc::result PlayingGame::react(const Hostless& msg) {
+    TraceLogger(FSM) << "(ServerFSM) PlayingGame.Hostless";
+
+    ServerApp& server = Server();
+
+    // Remove the ai processes.  They either all acknowledged the shutdown and are free or were all killed.
+    server.m_ai_client_processes.clear();
+
+    // Don't DisconnectAll. It cause segfault here.
+
+    return transit<MPLobby>();
+}
+
 sc::result PlayingGame::react(const RequestCombatLogs& msg) {
     DebugLogger(FSM) << "(ServerFSM) PlayingGame::RequestCombatLogs message received";
     Server().UpdateCombatLogs(msg.m_message, msg.m_player_connection);
+    return discard_event();
+}
+
+sc::result PlayingGame::react(const JoinGame& msg) {
+    DebugLogger(FSM) << "(ServerFSM) PlayingGame::JoinGame message received";
+    msg.m_player_connection->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_PLAYING_GAME")));
+    Server().Networking().Disconnect(msg.m_player_connection);
     return discard_event();
 }
 

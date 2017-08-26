@@ -1200,9 +1200,11 @@ std::string HumanClientApp::SelectLoadFile() {
     return sfd->Result();
 }
 
-void HumanClientApp::ResetClientData() {
-    m_networking->SetPlayerID(Networking::INVALID_PLAYER_ID);
-    m_networking->SetHostPlayerID(Networking::INVALID_PLAYER_ID);
+void HumanClientApp::ResetClientData(bool save_connection) {
+    if (!save_connection) {
+        m_networking->SetPlayerID(Networking::INVALID_PLAYER_ID);
+        m_networking->SetHostPlayerID(Networking::INVALID_PLAYER_ID);
+    }
     SetEmpireID(ALL_EMPIRES);
     m_ui->GetMapWnd()->Sanitize();
 

@@ -45,6 +45,7 @@ struct CheckTurnEndConditions : sc::event<CheckTurnEndConditions>       {};
 struct ProcessTurn : sc::event<ProcessTurn>                             {};
 struct DisconnectClients : sc::event<DisconnectClients>                 {};
 struct ShutdownServer : sc::event<ShutdownServer>                       {};
+struct Hostless : sc::event<Hostless>                                   {}; // Empty event to move server into MPLobby state.
 
 /** This is a Boost.Preprocessor list of all non MessageEventBase events. It is
   * used to generate the unconsumed events message. */
@@ -55,7 +56,8 @@ struct ShutdownServer : sc::event<ShutdownServer>                       {};
     (CheckTurnEndConditions)                    \
     (ProcessTurn)                               \
     (DisconnectClients)                         \
-    (ShutdownServer)
+    (ShutdownServer)                            \
+    (Hostless)
 
 //  Message events
 /** The base class for all state machine events that are based on Messages. */
@@ -136,14 +138,15 @@ private:
     ServerApp& m_server;
 };
 
-
 /** The server's initial state. */
 struct Idle : sc::state<Idle, ServerFSM> {
     typedef boost::mpl::list<
         sc::custom_reaction<HostMPGame>,
         sc::custom_reaction<HostSPGame>,
         sc::custom_reaction<ShutdownServer>,
-        sc::custom_reaction<Error>
+        sc::custom_reaction<Hostless>,
+        sc::custom_reaction<Error>,
+        sc::custom_reaction<Hostless>
     > reactions;
 
     Idle(my_context c);
@@ -153,6 +156,7 @@ struct Idle : sc::state<Idle, ServerFSM> {
     sc::result react(const HostSPGame& msg);
     sc::result react(const ShutdownServer& u);
     sc::result react(const Error& msg);
+    sc::result react(const Hostless&);
 
     SERVER_ACCESSOR
 };
@@ -169,6 +173,7 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
         sc::custom_reaction<HostMPGame>,
         sc::custom_reaction<HostSPGame>,
         sc::custom_reaction<ShutdownServer>,
+        sc::custom_reaction<Hostless>,
         sc::custom_reaction<Error>
     > reactions;
 
@@ -183,11 +188,13 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
     sc::result react(const HostMPGame& msg);
     sc::result react(const HostSPGame& msg);
     sc::result react(const ShutdownServer& u);
+    sc::result react(const Hostless& u);
     sc::result react(const Error& msg);
 
     std::shared_ptr<MultiplayerLobbyData>   m_lobby_data;
     std::vector<PlayerSaveGameData>         m_player_save_game_data;
     std::shared_ptr<ServerSaveGameData>     m_server_save_game_data;
+    int                                     m_ai_next_index;
 
     SERVER_ACCESSOR
 };
@@ -268,6 +275,8 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
         sc::custom_reaction<ModeratorAct>,
         sc::custom_reaction<RequestCombatLogs>,
         sc::custom_reaction<ShutdownServer>,
+        sc::custom_reaction<Hostless>,
+        sc::custom_reaction<JoinGame>,
         sc::custom_reaction<Error>
     > reactions;
 
@@ -278,7 +287,9 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
     sc::result react(const Diplomacy& msg);
     sc::result react(const ModeratorAct& msg);
     sc::result react(const ShutdownServer& u);
+    sc::result react(const Hostless& u);
     sc::result react(const RequestCombatLogs& msg);
+    sc::result react(const JoinGame& msg);
     sc::result react(const Error& msg);
 
     SERVER_ACCESSOR

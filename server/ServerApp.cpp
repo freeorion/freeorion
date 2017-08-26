@@ -760,7 +760,7 @@ bool ServerApp::NewGameInitVerifyJoiners(
         return false;
     }
 
-    if (!host_in_player_id_setup_data) {
+    if (!host_in_player_id_setup_data && !IsHostless()) {
         ErrorLogger() << "NewGameInitVerifyJoiners : Host id " << m_networking.HostPlayerID()
                       << " is not a valid player id.";
         return false;
@@ -1476,6 +1476,9 @@ bool ServerApp::IsAvailableName(const std::string& player_name) const {
     }
     return true;
 }
+
+bool ServerApp::IsHostless() const
+{ return GetOptionsDB().Get<bool>("hostless"); }
 
 Networking::ClientType ServerApp::GetEmpireClientType(int empire_id) const
 { return GetPlayerClientType(ServerApp::EmpirePlayerID(empire_id)); }

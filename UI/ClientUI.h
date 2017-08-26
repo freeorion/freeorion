@@ -52,6 +52,7 @@ public:
         PlayerListWnd if visible, but doesn't create them just to hide them.
      **/
     void    ShowIntroScreen();
+    void    ShowMultiPlayerLobbyWnd();
     void    InitTurn(int turn_number);                                  //!< resets all active controls to use the latest data when it has been changed at the beginning of a new turn
     void    RestoreFromSaveData(const SaveGameUIData& elem);            //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
 

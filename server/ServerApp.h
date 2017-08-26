@@ -125,6 +125,9 @@ public:
 
     /** Checks if \a player_name are not used by other players. */
     bool IsAvailableName(const std::string& player_name) const;
+
+    /** Checks if server runs in a hostless mode. */
+    bool IsHostless() const;
     //@}
 
 

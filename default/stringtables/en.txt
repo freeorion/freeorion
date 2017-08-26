@@ -958,6 +958,9 @@ Universe generation completed with errors. See log files for detailed error mess
 SERVER_TURN_EVENTS_ERRORS
 Python scripted turn events executed with errors. See log files for detailed error messages. Game can continue, but gameplay will probably be impaired.
 
+SERVER_ALREADY_PLAYING_GAME
+The server is not currently accepting players because a game is being played.
+
 ERROR_PYTHON_AI_CRASHED
 Python AI for %1% crashed.
 
@@ -1076,6 +1079,9 @@ Print version and exit.
 
 OPTIONS_DB_SINGLEPLAYER
 Start server in single player host mode. This only allows clients on localhost to connect.
+
+OPTIONS_DB_HOSTLESS
+Start server in hostless mode. Server accepts players in the multiplayer lobby, and returns to the lobby after the game session ends.
 
 OPTIONS_DB_GENERATE_CONFIG_XML
 Uses default settings, settings from any existing config.xml file, and settings given on the command line to generate a config.xml file. This will overwrite the current config.xml file, if it exists.

@@ -691,6 +691,19 @@ void ClientUI::ShowIntroScreen()
     HumanClientApp::GetApp()->Remove(m_multiplayer_lobby_wnd);
 }
 
+void ClientUI::ShowMultiPlayerLobbyWnd() {
+    if (m_map_wnd) {
+        HumanClientApp::GetApp()->Remove(m_map_wnd);
+        m_map_wnd->RemoveWindows();
+        m_map_wnd->Hide();
+    }
+
+    HumanClientApp::GetApp()->Register(m_multiplayer_lobby_wnd);
+    HumanClientApp::GetApp()->Remove(m_message_wnd);
+    HumanClientApp::GetApp()->Remove(m_player_list_wnd);
+    HumanClientApp::GetApp()->Remove(m_intro_screen);
+}
+
 std::shared_ptr<MultiPlayerLobbyWnd> ClientUI::GetMultiPlayerLobbyWnd()
 { return m_multiplayer_lobby_wnd; }
 
@@ -717,7 +730,7 @@ bool ClientUI::ZoomToPlanet(int id) {
         GetMapWnd()->SelectSystem(planet->SystemID());
         GetMapWnd()->SelectPlanet(id);
         return true;
-    }        
+    }
     return false;
 }
 
@@ -1023,7 +1036,7 @@ std::shared_ptr<GG::Font> ClientUI::GetFont(int pts/* = Pts()*/) {
         } catch (...) {
              return GG::GUI::GetGUI()->GetStyleFactory()->DefaultFont(pts);
         }
-    } 
+    }
 }
 
 std::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts/* = Pts()*/) {
