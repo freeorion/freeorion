@@ -2120,8 +2120,8 @@ void MapWnd::RenderStarlanes() {
 }
 
 void MapWnd::RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuffer& colours,
-                             double thickness, bool coloured, bool doBase) {
-    if (vertices.size() && (colours.size() || !coloured) && (coloured || doBase)) {
+                             double thickness, bool coloured, bool do_base_render) {
+    if (vertices.size() && (colours.size() || !coloured) && (coloured || do_base_render)) {
         // render starlanes with vertex buffer (and possibly colour buffer)
         const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
 

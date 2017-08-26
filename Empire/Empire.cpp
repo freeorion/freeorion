@@ -1930,7 +1930,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
             if (fleet->OwnedBy(m_id)) {
                 if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
                     systems_containing_friendly_fleets.insert(system_id);
-                    if (fleet->ArrivalStarlane()==system_id)
+                    if (fleet->ArrivalStarlane() == system_id)
                         unrestricted_friendly_systems.insert(system_id);
                     else
                         systems_with_lane_preserving_fleets.insert(system_id);
