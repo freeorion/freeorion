@@ -155,6 +155,10 @@ public:
     /** @brief Send the OrderSet to the server and start a new turn */
     virtual void StartTurn();
 
+    /** \brief Handle server acknowledgement of receipt of orders and clear
+        the orders. */
+    virtual void HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id);
+
     /** @brief Return the set of known Empire s for this client
      *
      * @return The EmpireManager instance in charge of maintaining the Empire

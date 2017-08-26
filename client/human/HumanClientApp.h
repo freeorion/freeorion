@@ -48,6 +48,9 @@ public:
 
     void StartTurn() override;
 
+    /** \brief Handle UI and state updates with changes in turn phase. */
+    void HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) override;
+
     void                SetSinglePlayerGame(bool sp = true);
 
     void                StartServer();                  ///< starts a server process on localhost

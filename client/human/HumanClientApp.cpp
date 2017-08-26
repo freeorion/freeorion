@@ -4,6 +4,7 @@
 #include "HumanClientApp.h"
 
 #include "HumanClientFSM.h"
+#include "../../UI/ChatWnd.h"
 #include "../../UI/CUIControls.h"
 #include "../../UI/CUIStyle.h"
 #include "../../UI/MapWnd.h"
@@ -856,6 +857,13 @@ void HumanClientApp::StartTurn() {
 
     ClientApp::StartTurn();
     m_fsm->process_event(TurnEnded());
+}
+
+void HumanClientApp::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) {
+    ClientApp::HandleTurnPhaseUpdate(phase_id);
+
+    // Pass updates to message window.
+    GetClientUI().GetMessageWnd()->HandleTurnPhaseUpdate(phase_id);
 }
 
 void HumanClientApp::HandleSystemEvents() {

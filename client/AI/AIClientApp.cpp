@@ -345,7 +345,13 @@ void AIClientApp::HandleMessage(const Message& msg) {
         ExtractTurnPartialUpdateMessageData(msg, m_empire_id, m_universe);
         break;
 
-    case Message::TURN_PROGRESS:
+    case Message::TURN_PROGRESS: {
+        Message::TurnProgressPhase phase_id;
+        ExtractTurnProgressMessageData(msg, phase_id);
+        ClientApp::HandleTurnPhaseUpdate(phase_id);
+        break;
+    }
+
     case Message::PLAYER_STATUS:
         break;
 
