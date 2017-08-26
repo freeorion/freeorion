@@ -461,7 +461,7 @@ MPLobby::MPLobby(my_context c) :
                 m_lobby_data->m_players.push_back(std::make_pair(player_id, player_setup_data));
             } else if (player_id != Networking::INVALID_PLAYER_ID && player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
                 PlayerSetupData player_setup_data;
-                player_setup_data.m_player_id =     -1;
+                player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
                 player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
                 player_setup_data.m_client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
                 player_setup_data.m_empire_name =   GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
@@ -471,7 +471,7 @@ MPLobby::MPLobby(my_context c) :
                 else
                     player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
 
-                m_lobby_data->m_players.push_back(std::make_pair(-1, player_setup_data));
+                m_lobby_data->m_players.push_back(std::make_pair(Networking::INVALID_PLAYER_ID, player_setup_data));
                 // disconnect AI
                 to_disconnect.push_back(player_connection);
             } else {
