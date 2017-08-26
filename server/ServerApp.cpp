@@ -47,6 +47,8 @@ namespace fs = boost::filesystem;
 void Seed(unsigned int seed);
 
 namespace {
+    DeclareThreadSafeLogger(combat);
+
     //If there's only one other empire, return their ID:
     int EnemyId(int empire_id, const std::set<int> &empire_ids) {
         if (empire_ids.size() == 2) {
@@ -1599,6 +1601,7 @@ namespace {
         if (empire_id != ALL_EMPIRES && !GetEmpire(empire_id))
             return; // no such empire
 
+        TraceLogger(combat) << "\t** GetFleetsVisibleToEmpire " << empire_id << " at system " << system->Name();
         // for visible fleets by an empire, check visibility of fleets by that empire
         if (empire_id != ALL_EMPIRES) {
             for (int fleet_id : fleet_ids) {
@@ -1608,6 +1611,7 @@ namespace {
                 if (fleet->OwnedBy(empire_id))
                     continue;   // don't care about fleets owned by the same empire for determining combat conditions
                 Visibility fleet_vis = GetUniverse().GetObjectVisibilityByEmpire(fleet->ID(), empire_id);
+                TraceLogger(combat) << "\t\tfleet (" << fleet_id << ") has visibility rank " << fleet_vis;
                 if (fleet_vis >= VIS_BASIC_VISIBILITY)
                     visible_fleets.insert(fleet->ID());
             }
@@ -1664,11 +1668,13 @@ namespace {
         if (empire_id != ALL_EMPIRES && !GetEmpire(empire_id))
             return; // no such empire
 
+        TraceLogger(combat) << "\t** GetPlanetsVisibleToEmpire " << empire_id << " at system " << system->Name();
         // for visible planets by an empire, check visibility of planet by that empire
         if (empire_id != ALL_EMPIRES) {
             for (int planet_id : planet_ids) {
                 // include planets visible to empire
                 Visibility planet_vis = GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id);
+                TraceLogger(combat) << "\t\tplanet (" << planet_id << ") has visibility rank " << planet_vis;
                 if (planet_vis <= VIS_BASIC_VISIBILITY)
                     continue;
                 // skip planets that have no owner and that are unpopulated; don't matter for combat conditions test
@@ -1723,6 +1729,8 @@ namespace {
         if (empire_fleets_here.empty())
             return false;
 
+        auto this_system = GetSystem(system_id);
+        DebugLogger(combat) << "CombatConditionsInSystem() for system (" << system_id << ") " << this_system->Name();
         // which empires have aggressive ships here? (including monsters as id ALL_EMPIRES)
         std::set<int> empires_with_aggressive_fleets_here;
         for (auto& empire_fleets : empire_fleets_here) {
@@ -1735,20 +1743,26 @@ namespace {
                 if (  (fleet->Aggressive() || fleet->Unowned())  &&
                       (fleet->HasArmedShips() || fleet->HasFighterShips() || !fleet->Unowned())  )
                 {
+                    if (empires_with_aggressive_fleets_here.find(empire_id) == empires_with_aggressive_fleets_here.end())
+                        DebugLogger(combat) << "\t Empire " << empire_id << " has at least one aggressive fleet present";
                     empires_with_aggressive_fleets_here.insert(empire_id);
                     break;
                 }
             }
         }
-        if (empires_with_aggressive_fleets_here.empty())
+        if (empires_with_aggressive_fleets_here.empty()) {
+            DebugLogger(combat) << "\t All fleets present are either passive or both unowned and unarmed: no combat.";
             return false;
+        }
 
         // what empires have planets here?  Unowned planets are included for
         // ALL_EMPIRES if they have population > 0
         std::map<int, std::set<int>> empire_planets_here;
         GetEmpirePlanetsAtSystem(empire_planets_here, system_id);
-        if (empire_planets_here.empty() && empire_fleets_here.size() <= 1)
+        if (empire_planets_here.empty() && empire_fleets_here.size() <= 1) {
+            DebugLogger(combat) << "\t Only one combatant present: no combat.";
             return false;
+        }
 
         // all empires with something here
         std::set<int> empires_here;
@@ -1773,8 +1787,10 @@ namespace {
                 }
             }
         }
-        if (empires_here_at_war.empty())
+        if (empires_here_at_war.empty()) {
+            DebugLogger(combat) << "\t No warring combatants present: no combat.";
             return false;
+        }
 
         // is an empire with an aggressive fleet here able to see a planet of an
         // empire it is at war with here?
@@ -1795,7 +1811,10 @@ namespace {
 
                 if (aggressive_empire_id != visible_planet_empire_id &&
                     at_war_with_empire_ids.find(visible_planet_empire_id) != at_war_with_empire_ids.end())
-                { return true; }    // an aggressive empire can see a planet onwned by an empire it is at war with
+                {
+                    DebugLogger(combat) << "\t Empire " << aggressive_empire_id << " sees target planet " << planet->Name();
+                    return true;  // an aggressive empire can see a planet onwned by an empire it is at war with
+                }
             }
         }
 
@@ -1820,10 +1839,14 @@ namespace {
 
                 if (aggressive_empire_id != visible_fleet_empire_id &&
                     at_war_with_empire_ids.find(visible_fleet_empire_id) != at_war_with_empire_ids.end())
-                { return true; }    // an aggressive empire can see a fleet onwned by an empire it is at war with
+                {
+                    DebugLogger(combat) << "\t Empire " << aggressive_empire_id << " sees target fleet " << fleet->Name();
+                    return true;  // an aggressive empire can see a fleet onwned by an empire it is at war with
+                }
             }
         }
-
+        
+        DebugLogger(combat) << "\t No aggressive fleet can see a target: no combat.";
         return false;   // no possible conditions for combat were found
     }
 
