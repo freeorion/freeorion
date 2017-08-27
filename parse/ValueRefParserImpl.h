@@ -340,7 +340,7 @@ struct arithmetic_rules
                                (lit('?') > expr [ push_back(_d, _1) ])
                                > (
                                     lit(')')
-                                 |  lit(':') > expr [ push_back(_d, _1) ] > ')'
+                                    |  ( lit(':') > expr [ push_back(_d, _1) ] > ')' )
                                  )
                               )
                           ) [ _val = new_<ValueRef::Operation<T>>(_c, _d) ]
