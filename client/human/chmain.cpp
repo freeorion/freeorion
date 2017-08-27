@@ -128,6 +128,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         GetOptionsDB().Add<bool>("fake-mode-change",        UserStringNop("OPTIONS_DB_FAKE_MODE_CHANGE"),     FAKE_MODE_CHANGE_FLAG);
         GetOptionsDB().Add<int>("fullscreen-monitor-id",    UserStringNop("OPTIONS_DB_FULLSCREEN_MONITOR_ID"), 0, RangedValidator<int>(0, 5));
         GetOptionsDB().AddFlag('q', "quickstart",           UserStringNop("OPTIONS_DB_QUICKSTART"),            false);
+        GetOptionsDB().AddFlag("continue",                  UserStringNop("OPTIONS_DB_CONTINUE"),              false);
         GetOptionsDB().AddFlag("auto-quit",                 UserStringNop("OPTIONS_DB_AUTO_QUIT"),             false);
         GetOptionsDB().Add<int>("auto-advance-n-turns",     UserStringNop("OPTIONS_DB_AUTO_N_TURNS"),          0, RangedValidator<int>(0, 400), false);
         GetOptionsDB().Add<std::string>("load",             UserStringNop("OPTIONS_DB_LOAD"),                  "", Validator<std::string>(), false);
@@ -242,6 +243,13 @@ int mainSetupAndRun() {
             // standard quickstart, without requiring the user to click the
             // quickstart button).
             app.NewSinglePlayerGame(true);  // acceptable to call before app()
+        }
+
+        if (GetOptionsDB().Get<bool>("continue")) {
+            // immediately start the server, establish network connections, and
+            // go into a single player game, continuing from the newest
+            // autosave game.
+            app.ContinueSinglePlayerGame();  // acceptable to call before app()
         }
 
         std::string load_filename = GetOptionsDB().Get<std::string>("load");

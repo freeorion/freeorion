@@ -27,6 +27,14 @@ public:
 
     void Render() override;
 
+    /**Note:  Since there is poor filesystem tracking of deleted savegames, use
+       RequirePreRender() to force an update of the conditional placement of
+       the Continue and Load buttons when a player might have deleted the last
+       savegame. */
+    void PreRender() override;
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+    void            OnContinue();
     void            OnSinglePlayer();  //!< called when single player is clicked
     void            OnQuickStart();    //!< called when quick start is clicked
     void            OnMultiPlayer();   //!< ...
@@ -38,12 +46,11 @@ public:
     void            OnCredits();
     void            OnExitGame();
 
-
-    void            DoLayout();
     virtual void    Close();
     //!@}
 
 private:
+    std::shared_ptr<GG::Button>         m_continue;      //!< continues from last autosave
     std::shared_ptr<GG::Button>         m_single_player;//!< opens up the single player game dialog
     std::shared_ptr<GG::Button>         m_quick_start;  //!< starts a single-player game with the default options (no dialog)
     std::shared_ptr<GG::Button>         m_multi_player; //!< opens up the multi player game dialog

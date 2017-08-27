@@ -45,6 +45,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
+#include <boost/optional/optional.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -642,7 +643,8 @@ void HumanClientApp::SaveGame(const std::string& filename) {
 }
 
 void HumanClientApp::SaveGameCompleted() {
-    m_game_saves_in_progress.pop();
+    if (!m_game_saves_in_progress.empty())
+        m_game_saves_in_progress.pop();
 
     // Either indicate that all saves are completed or start the next save.
     // Autosaves and player saves can be concurrent.
@@ -670,6 +672,10 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         try {
             auto sfd = GG::Wnd::Create<SaveFileDialog>(SP_SAVE_FILE_EXTENSION, true);
             sfd->Run();
+
+            // Update intro screen Load & Continue buttons if all savegames are deleted.
+            m_ui->GetIntroScreen()->RequirePreRender();
+
             if (!sfd->Result().empty())
                 filename = sfd->Result();
         } catch (const std::exception& e) {
@@ -684,7 +690,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
 
     // end any currently-playing game before loading new one
     if (m_game_started) {
-        ResetToIntro(false);
+        ResetToIntro(true);
         // delay to make sure old game is fully cleaned up before attempting to start a new one
         std::this_thread::sleep_for(std::chrono::seconds(3));
     } else {
@@ -952,10 +958,8 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
     if (ClientUI* ui = ClientUI::GetClientUI()) {
         if (auto&& map_wnd = ui->GetMapWnd())
             map_wnd->DoLayout();
-        if (auto&& intro_screen = ui->GetIntroScreen()) {
+        if (auto&& intro_screen = ui->GetIntroScreen())
             intro_screen->Resize(GG::Pt(w, h));
-            intro_screen->DoLayout();
-        }
     }
 
     if (!GetOptionsDB().Get<bool>("fullscreen") &&
@@ -1054,6 +1058,45 @@ void HumanClientApp::UpdateCombatLogManager() {
 }
 
 namespace {
+    boost::optional<std::string> NewestSinglePlayerSavegame() {
+        using namespace boost::filesystem;
+        try {
+            std::map<std::time_t, path> files_by_write_time;
+
+            auto add_all_savegames_in = [&files_by_write_time](const path& path) {
+                if (!is_directory(path))
+                    return;
+
+                for (directory_iterator dir_it(path);
+                     dir_it != directory_iterator(); ++dir_it)
+                {
+                    const auto& file_path = dir_it->path();
+                    if (!is_regular_file(file_path))
+                        continue;
+                    if (file_path.extension() != SP_SAVE_FILE_EXTENSION)
+                        continue;
+
+                    std::time_t t = last_write_time(file_path);
+                    files_by_write_time.insert({t, file_path});
+                }
+            };
+
+            // Find all save games in either player or autosaves
+            add_all_savegames_in(GetSaveDir());
+            add_all_savegames_in(GetSaveDir() / "auto");
+
+            if (files_by_write_time.empty())
+                return boost::none;
+
+            // Return the newest
+            return PathString(files_by_write_time.rbegin()->second);
+
+        } catch (const boost::filesystem::filesystem_error& e) {
+            ErrorLogger() << "File system error " << e.what() << " while finding newest autosave";
+            return boost::none;
+        }
+    }
+
     void RemoveOldestFiles(int files_limit, boost::filesystem::path& p) {
         using namespace boost::filesystem;
         try {
@@ -1150,6 +1193,10 @@ namespace {
 }
 
 void HumanClientApp::Autosave() {
+    // only host can save in multiplayer
+    if (!m_single_player_game && !Networking().PlayerIsHost(PlayerID()))
+        return;
+
     // Create an auto save for 1) new games on turn 1, 2) if auto save is
     // requested on turn number modulo autosave.turns or 3) on the last turn of
     // play.
@@ -1172,9 +1219,10 @@ void HumanClientApp::Autosave() {
 
     auto autosave_file_path = CreateNewAutosaveFilePath(EmpireID(), m_single_player_game);
 
-    // check for and remove excess oldest autosaves
+    // check for and remove excess oldest autosaves.  The minimum is 1 for the
+    // initial or final save.
     boost::filesystem::path autosave_dir_path(GetSaveDir() / "auto");
-    int max_autosaves = GetOptionsDB().Get<int>("autosave.limit");
+    int max_autosaves = std::max(1, GetOptionsDB().Get<int>("autosave.limit"));
     RemoveOldestFiles(max_autosaves, autosave_dir_path);
 
     // create new save
@@ -1192,6 +1240,15 @@ void HumanClientApp::Autosave() {
     } catch (const std::exception& e) {
         ErrorLogger() << "Autosave failed: " << e.what();
     }
+}
+
+void HumanClientApp::ContinueSinglePlayerGame() {
+    if (const auto file = NewestSinglePlayerSavegame())
+        LoadSinglePlayerGame(*file);
+}
+
+bool HumanClientApp::IsLoadGameAvailable() const {
+    return bool(NewestSinglePlayerSavegame());
 }
 
 std::string HumanClientApp::SelectLoadFile() {

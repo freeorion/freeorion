@@ -685,6 +685,9 @@ void ClientUI::ShowIntroScreen()
         m_map_wnd->Hide();
     }
 
+    // Update intro screen Load & Continue buttons if all savegames are deleted.
+    m_intro_screen->RequirePreRender();
+
     HumanClientApp::GetApp()->Register(m_intro_screen);
     HumanClientApp::GetApp()->Remove(m_message_wnd);
     HumanClientApp::GetApp()->Remove(m_player_list_wnd);

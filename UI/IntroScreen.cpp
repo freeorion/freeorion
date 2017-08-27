@@ -262,6 +262,7 @@ void IntroScreen::CompleteConstruction() {
     m_splash->AttachChild(m_version);
 
     //create buttons
+    m_continue =      Wnd::Create<CUIButton>(UserString("INTRO_BTN_CONTINUE"));
     m_single_player = Wnd::Create<CUIButton>(UserString("INTRO_BTN_SINGLE_PLAYER"));
     m_quick_start =   Wnd::Create<CUIButton>(UserString("INTRO_BTN_QUICK_START"));
     m_multi_player =  Wnd::Create<CUIButton>(UserString("INTRO_BTN_MULTI_PLAYER"));
@@ -273,19 +274,9 @@ void IntroScreen::CompleteConstruction() {
     m_credits =       Wnd::Create<CUIButton>(UserString("INTRO_BTN_CREDITS"));
     m_exit_game =     Wnd::Create<CUIButton>(UserString("INTRO_BTN_EXIT"));
 
-    //attach buttons
-    m_menu->AttachChild(m_single_player);
-    m_menu->AttachChild(m_quick_start);
-    m_menu->AttachChild(m_multi_player);
-    m_menu->AttachChild(m_load_game);
-    m_menu->AttachChild(m_options);
-    m_menu->AttachChild(m_pedia);
-    m_menu->AttachChild(m_about);
-    m_menu->AttachChild(m_website);
-    m_menu->AttachChild(m_credits);
-    m_menu->AttachChild(m_exit_game);
-
     //connect signals and slots
+    m_continue->LeftClickedSignal.connect(
+        boost::bind(&IntroScreen::OnContinue, this));
     m_single_player->LeftClickedSignal.connect(
         boost::bind(&IntroScreen::OnSinglePlayer, this));
     m_quick_start->LeftClickedSignal.connect(
@@ -307,11 +298,15 @@ void IntroScreen::CompleteConstruction() {
     m_exit_game->LeftClickedSignal.connect(
         boost::bind(&IntroScreen::OnExitGame, this));
 
-    DoLayout();
+    RequirePreRender();
 }
 
 IntroScreen::~IntroScreen()
 {}
+
+void IntroScreen::OnContinue() {
+    HumanClientApp::GetApp()->ContinueSinglePlayerGame();
+}
 
 void IntroScreen::OnSinglePlayer() {
     HumanClientApp::GetApp()->NewSinglePlayerGame();
@@ -397,10 +392,21 @@ void IntroScreen::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<
 void IntroScreen::Close()
 { OnExitGame(); }
 
+void IntroScreen::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    GG::Pt old_size = GG::Wnd::Size();
+
+    GG::Wnd::SizeMove(ul, lr);
+
+    if (old_size != GG::Wnd::Size())
+        RequirePreRender();
+}
+
 void IntroScreen::Render()
 {}
 
-void IntroScreen::DoLayout() {
+void IntroScreen::PreRender() {
+    GG::Wnd::PreRender();
+
     m_splash->Resize(this->Size());
     m_logo->Resize(GG::Pt(this->Width(), this->Height() / 10));
     m_version->MoveTo(GG::Pt(this->Width() - m_version->Width(), this->Height() - m_version->Height()));
@@ -416,6 +422,7 @@ void IntroScreen::DoLayout() {
     GG::Y mainmenu_height(0);           //height of the mainmenu
 
     //calculate necessary button width
+    button_width = std::max(button_width, m_continue->MinUsableSize().x);
     button_width = std::max(button_width, m_single_player->MinUsableSize().x);
     button_width = std::max(button_width, m_quick_start->MinUsableSize().x);
     button_width = std::max(button_width, m_multi_player->MinUsableSize().x);
@@ -430,9 +437,9 @@ void IntroScreen::DoLayout() {
 
     //calculate  necessary button height
     button_cell_height = std::max(MIN_BUTTON_HEIGHT, m_exit_game->MinUsableSize().y);
-    //culate window width and height
+    // calculate window width and height
     mainmenu_width  =         button_width  + H_MAINMENU_MARGIN;
-    mainmenu_height = 10.75 * button_cell_height + V_MAINMENU_MARGIN; // 10 rows + 0.75 before exit button
+    mainmenu_height = 1.75 * button_cell_height + V_MAINMENU_MARGIN; // 1.75 for the exit button
 
     // place buttons
     GG::Pt button_ul(GG::X(15), GG::Y(12));
@@ -440,33 +447,41 @@ void IntroScreen::DoLayout() {
 
     button_lr += button_ul;
 
-    m_single_player->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_quick_start->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_multi_player->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_load_game->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_options->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_pedia->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_about->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_website->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_credits->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height) * 1.75;
-    button_lr.y += GG::Y(button_cell_height) * 1.75;
+    const auto place_button =
+        [&button_ul, &button_lr, &button_cell_height, &mainmenu_height]
+        (CUIWnd* menu, std::shared_ptr<GG::Button> button)
+        {
+            button->SizeMove(button_ul, button_lr);
+            menu->AttachChild(std::move(button));
+            button_ul.y += GG::Y(button_cell_height);
+            button_lr.y += GG::Y(button_cell_height);
+            mainmenu_height += button_cell_height;
+        };
+
+    const auto unplace_button = [](CUIWnd* menu, const std::shared_ptr<GG::Button>& button) {
+        menu->DetachChild(button);
+    };
+
+    if (HumanClientApp::GetApp()->IsLoadGameAvailable())
+        place_button(m_menu.get(), m_continue);
+    else
+        unplace_button(m_menu.get(), m_continue);
+    place_button(m_menu.get(), m_single_player);
+    place_button(m_menu.get(), m_quick_start);
+    place_button(m_menu.get(), m_multi_player);
+    if (HumanClientApp::GetApp()->IsLoadGameAvailable())
+        place_button(m_menu.get(), m_load_game);
+    else
+        unplace_button(m_menu.get(), m_load_game);
+    place_button(m_menu.get(), m_options);
+    place_button(m_menu.get(), m_pedia);
+    place_button(m_menu.get(), m_about);
+    place_button(m_menu.get(), m_website);
+    place_button(m_menu.get(), m_credits);
+
+    button_ul.y += GG::Y(button_cell_height) * 0.75;
+    button_lr.y += GG::Y(button_cell_height) * 0.75;
+    m_menu->AttachChild(m_exit_game);
     m_exit_game->SizeMove(button_ul, button_lr);
 
     // position menu window
