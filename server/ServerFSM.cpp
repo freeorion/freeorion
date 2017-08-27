@@ -212,7 +212,8 @@ void ServerFSM::unconsumed_event(const sc::event_base &event) {
     for (auto leaf_state_it = state_begin(); leaf_state_it != state_end();) {
         // The following use of typeid assumes that
         // BOOST_STATECHART_USE_NATIVE_RTTI is defined
-        ss << typeid( *leaf_state_it ).name();
+        const auto& leaf_state = *leaf_state_it;
+        ss << typeid(leaf_state).name();
         ++leaf_state_it;
         if (leaf_state_it != state_end())
             ss << ", ";
