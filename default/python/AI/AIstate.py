@@ -386,7 +386,7 @@ class AIstate(object):
                 continue
             if not fleet.empty:
                 # TODO: check if currently in system and blockaded before accepting destination as location
-                this_system_id = (fleet.nextSystemID != INVALID_ID and fleet.nextSystemID) or fleet.systemID
+                this_system_id = fleet.nextSystemID if fleet.nextSystemID != INVALID_ID else fleet.systemID
                 if fleet.ownedBy(empire_id):
                     if fleet_id not in destroyed_object_ids:
                         my_fleets_by_system.setdefault(this_system_id, []).append(fleet_id)
