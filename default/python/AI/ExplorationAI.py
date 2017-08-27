@@ -47,7 +47,7 @@ def assign_scouts_to_explore_systems():
         return
     exp_systems_by_dist = sorted((universe.linearDistance(capital_sys_id, x), x) for x in border_unexplored_system_ids)
     print "Exploration system considering following system-distance pairs:\n  %s" % (
-        "\n  ".join("%3d: %5.1f" % info for info in exp_systems_by_dist))
+        "\n  ".join("%3d: %5.1f" % (sys_id, dist) for (dist, sys_id) in exp_systems_by_dist))
     explore_list = [sys_id for dist, sys_id in exp_systems_by_dist]
 
     already_covered, available_scouts = get_current_exploration_info()
