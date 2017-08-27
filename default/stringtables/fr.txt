@@ -958,6 +958,9 @@ L'Univers généré contient des erreurs. Consultez le fichier log pour le déta
 SERVER_TURN_EVENTS_ERRORS
 Les événements de tour scriptés contiennent des erreurs. Consultez le fichier log pour le détail des messages d'erreur. La partie peut continuer, mais le gameplay en sera probablement impacté.
 
+SERVER_ALREADY_PLAYING_GAME
+Le serveur n'accepte pas de nouveaux joueurs car une partie est actuellement en cours.
+
 ERROR_PYTHON_AI_CRASHED
 L'IA Python pour %1% a rencontré une erreur fatale.
 
@@ -1076,6 +1079,9 @@ Copier le numéro de version et quitter.
 
 OPTIONS_DB_SINGLEPLAYER
 Démarre le serveur en mode hébergement d'une partie solo. Seuls les clients du serveur local peuvent se connecter.
+
+OPTIONS_DB_HOSTLESS
+Démarre le serveur en mode sans hôte. Le serveur accepte les joueurs dans le salon multijoueur, et retourne au salon lorsque la session de jeu est terminée.
 
 OPTIONS_DB_GENERATE_CONFIG_XML
 Génère un fichier config.xml à partir des réglages contenus dans les fichiers config.xml existants et donnés dans la ligne de commande. Ceci écrasera le fichier config.xml actuel, s'il existe.
@@ -1635,16 +1641,22 @@ OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED_VALUE
 Valeur forcée pour le Niveau selon l'EmpireID. Une valeur de 0 à 39.
 
 OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
-Si activé, les parties solo bénéficieront d'une sauvegarde automatique régulière.
+Active la sauvegarde automatique pour les parties solo.
 
 OPTIONS_DB_AUTOSAVE_MULTIPLAYER
-Si activé, les parties multijoueurs bénéficieront d'une sauvegarde automatique régulière.
+Active la sauvegarde automatique pour les parties multijoueurs.
 
 OPTIONS_DB_AUTOSAVE_TURNS
 Fixe le nombre de tours séparant les sauvegardes automatiques.
 
 OPTIONS_DB_AUTOSAVE_LIMIT
 Fixe le nombre maximal de sauvegardes automatiques à conserver.
+
+OPTIONS_DB_AUTOSAVE_GALAXY_CREATION
+Active une sauvegarde automatique dès que la galaxie est créée et avant toute action de jeu.
+
+OPTIONS_DB_AUTOSAVE_GAME_CLOSE
+Active une sauvegarde automatique lors d'un abandon ou de la fermeture du jeu.
 
 OPTIONS_DB_UI_MOUSE_LR_SWAP
 Si activé, les effets des clics droit et gauche de la souris seront inversés.
@@ -1654,6 +1666,9 @@ Fixe le volume sonore de la musique (de 0 à 255).
 
 OPTIONS_DB_QUICKSTART
 Lance une nouvelle partie en court-circuitant le menu principal.
+
+OPTIONS_DB_CONTINUE
+Reprend une partie depuis la dernière sauvegarde automatique, sans passer par le menu principal.
 
 OPTIONS_DB_AUTO_N_TURNS
 Clique le bouton "Tour" automatiquement pour les N premiers tours (jusqu'à 400 tours, valeur défaut à zéro); utile pour le débogage notamment avec --quickstart ou --load, et éventuellement --auto-quit.
@@ -1850,6 +1865,9 @@ A
 INTRO_WINDOW_TITLE
 Menu principal
 
+INTRO_BTN_CONTINUE
+Continuer
+
 INTRO_BTN_SINGLE_PLAYER
 Partie solo
 
@@ -1940,6 +1958,12 @@ Joueur précédent
 
 MULTIPLAYER_PLAYER_LIST_STARTING_SPECIES
 Espèce de départ
+
+EDITABLE_GALAXY_SETTINGS
+Édition ouverte des réglages
+
+EDITABLE_GALAXY_SETTINGS_DESC
+Tous les joueurs peuvent modifier les réglages de la galaxie et de l'IA.
 
 NEW_GAME_BN
 Nouvelle partie
