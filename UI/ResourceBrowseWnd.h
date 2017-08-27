@@ -30,15 +30,15 @@ private:
     std::shared_ptr<GG::Label>  m_target_points;
     std::shared_ptr<GG::Label>  m_target_points_P_label;
     bool        m_show_stockpile;
-    GG::Label*  m_stockpile_points_label;
-    GG::Label*  m_stockpile_points;
-    GG::Label*  m_stockpile_points_P_label;
-    GG::Label*  m_stockpile_used_points_label;
-    GG::Label*  m_stockpile_used_points;
-    GG::Label*  m_stockpile_used_points_P_label;
-    GG::Label*  m_stockpile_change_points_label;
-    GG::Label*  m_stockpile_change_points;
-    GG::Label*  m_stockpile_change_points_P_label;
+    std::shared_ptr<GG::Label>  m_stockpile_points_label;
+    std::shared_ptr<GG::Label>  m_stockpile_points;
+    std::shared_ptr<GG::Label>  m_stockpile_points_P_label;
+    std::shared_ptr<GG::Label>  m_stockpile_used_points_label;
+    std::shared_ptr<GG::Label>  m_stockpile_used_points;
+    std::shared_ptr<GG::Label>  m_stockpile_used_points_P_label;
+    std::shared_ptr<GG::Label>  m_stockpile_change_points_label;
+    std::shared_ptr<GG::Label>  m_stockpile_change_points;
+    std::shared_ptr<GG::Label>  m_stockpile_change_points_P_label;
     
     GG::Pt      m_offset;
 };
