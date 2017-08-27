@@ -1,7 +1,6 @@
 import math
 import random
 import sys
-import traceback
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies

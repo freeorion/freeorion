@@ -1,4 +1,3 @@
-import sys
 from operator import itemgetter
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -363,15 +362,10 @@ def survey_universe():
                     # TODO What causes this?
                     empire_outpost_ids.add(pid)
                     AIstate.outpostIDs.append(pid)
-                    print
-                    print >> sys.stderr, "+ + +"
-                    print >> sys.stderr, "DEBUG: ColonisationAI.survey_universe()"
-                    print >> sys.stderr, "Found a planet we own that has pop > 0 but has no species"
-                    print >> sys.stderr, "Planet: ", universe.getPlanet(pid)
-                    print >> sys.stderr, "Species: ", spec_name, "  ", this_spec
-                    print >> sys.stderr, "Population: ", planet_population
-                    print >> sys.stderr, "+ + +"
-                    print
+                    warn("Found a planet we own that has pop > 0 but has no species")
+                    warn("Planet: %s" % universe.getPlanet(pid))
+                    warn("Species: %s(%s)" % (spec_name, this_spec))
+                    warn("Population: %f" % planet_population)
 
                 this_grade_facilities = facilities_by_species_grade.setdefault(weapons_grade, {})
                 for facility in ship_facilities:
@@ -561,8 +555,8 @@ def get_colony_fleets():
             best_ship, col_design, build_choices = ProductionAI.get_best_ship_info(
                 PriorityType.PRODUCTION_ORBITAL_OUTPOST, loc)
             if best_ship is None:
-                print >> sys.stderr, "Can't get standard best outpost base design that can be built at %s" % (
-                    PlanetUtilsAI.planet_name_ids([loc]))
+                warn("Can't get standard best outpost base design that can be built at %s" % (
+                    PlanetUtilsAI.planet_name_ids([loc])))
                 outpost_base_design_ids = [design for design in empire.availableShipDesigns if
                                            "SD_OUTPOST_BASE" == fo.getShipDesign(design).name]
                 if outpost_base_design_ids:
@@ -1268,7 +1262,7 @@ def assign_colony_fleets_to_colonise():
         avail_planets = set(system.planetIDs).intersection(set(foAI.foAIstate.qualifyingOutpostBaseTargets.keys()))
         targets = [pid for pid in avail_planets if foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] != -1]
         if not targets:
-            print >> sys.stderr, "Found no valid target for outpost base in system %s (%d)" % (system.name, sys_id)
+            warn("Found no valid target for outpost base in system %s" % system)
             continue
         target_id = INVALID_ID
         best_score = -1
@@ -1326,7 +1320,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
     for fid in fleet_pool:
         fleet = universe.getFleet(fid)
         if not fleet or fleet.empty:
-            print >> sys.stderr, "Bad fleet ( ID %d ) given to colonization routine; will be skipped" % fid
+            warn("Bad fleet ( ID %d ) given to colonization routine; will be skipped" % fid)
             fleet_pool.remove(fid)
             continue
         report_str = "Fleet ID (%d): %d ships; species: " % (fid, fleet.numShips)
@@ -1421,7 +1415,7 @@ def __print_candidate_table(candidates, mission):
         first_column = Float('Score')
         get_first_column_value = itemgetter(0)
     else:
-        print >> sys.stderr, "__print_candidate_table(%s, %s): Invalid mission type" % (candidates, mission)
+        warn("__print_candidate_table(%s, %s): Invalid mission type" % (candidates, mission))
         return
     candidate_table = Table([first_column, Text('Planet'), Text('System'), Sequence('Specials')],
                             table_name='Potential Targets for %s in Turn %d' % (mission, fo.currentTurn()))

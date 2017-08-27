@@ -1,8 +1,6 @@
 from functools import partial
 import math
 import random
-import sys
-import traceback
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
@@ -454,7 +452,7 @@ def generate_research_orders():
             tech_turns_left[element.tech] = element.turnsLeft
             this_tech = fo.getTech(element.tech)
             if not this_tech:
-                print >> sys.stderr, "Can't retrieve tech ", element.tech
+                warn("Can't retrieve tech ", element.tech)
                 continue
             missing_prereqs = [preReq for preReq in this_tech.recursivePrerequisites(empire_id) if preReq not in completed_techs]
             # unlocked_items = [(uli.name, uli.type) for uli in this_tech.unlocked_items]
@@ -648,7 +646,7 @@ def generate_classic_research_orders():
                 inProgressTechs[element.tech] = True
             this_tech = fo.getTech(element.tech)
             if not this_tech:
-                print >> sys.stderr, "Can't retrieve tech ", element.tech
+                warn("Can't retrieve tech ", element.tech)
                 continue
             missing_prereqs = [preReq for preReq in this_tech.recursivePrerequisites(empire_id) if preReq not in completed_techs]
             # unlocked_items = [(uli.name, uli.type) for uli in this_tech.unlocked_items]
@@ -678,7 +676,7 @@ def generate_classic_research_orders():
             if tech not in tech_base:
                 this_tech = fo.getTech(tech)
                 if this_tech is None:
-                    print >> sys.stderr, "Desired tech '%s' appears to not exist" % tech
+                    warn("Desired tech '%s' appears to not exist" % tech)
                     continue
                 missing_prereqs = [preReq for preReq in this_tech.recursivePrerequisites(empire_id) if preReq not in tech_base]
                 techs_to_add.extend(missing_prereqs + [tech])
@@ -696,10 +694,9 @@ def generate_classic_research_orders():
                         cum_cost += this_cost
                     print "    Enqueued Tech: %20s \t\t %8.0f \t %8.0f" % (name, this_cost, cum_cost)
                 else:
-                    print >> sys.stderr, "    Failed attempt to enqueued Tech: " + name
+                    warn("    Failed attempt to enqueued Tech: " + name)
             except:
-                print >> sys.stderr, "    Failed attempt to enqueued Tech: " + name
-                print >> sys.stderr, "    Exception triggered and caught: ", traceback.format_exc()
+                warn("    Failed attempt to enqueued Tech: " + name, exc_info=True)
 
         print '\n\nAll techs:'
         print '=' * 20

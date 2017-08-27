@@ -1,5 +1,3 @@
-import sys
-
 from EnumsAI import ShipRoleType, MissionType
 import AIstate
 import FleetUtilsAI
@@ -399,7 +397,7 @@ class OrderColonize(AIFleetOrder):
         universe = fo.getUniverse()
         ship = universe.getShip(ship_id)
         if ship and not ship.canColonize:
-            print >> sys.stderr, "colonization fleet %d has no colony ship" % self.fleet.id
+            warn("colonization fleet %d has no colony ship" % self.fleet.id)
         return ship is not None and self.fleet.get_object().systemID == self.target.get_system().id and ship.canColonize
 
 
