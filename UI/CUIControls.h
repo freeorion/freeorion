@@ -617,18 +617,18 @@ private:
     std::string m_title_str;
     int         m_empire_id;
 
-    std::shared_ptr<GG::Label*>  m_total_points_label;
-    std::shared_ptr<GG::Label*>  m_total_points;
-    std::shared_ptr<GG::Label*>  m_total_points_P_label;
-    std::shared_ptr<GG::Label*>  m_stockpile_points_label;
-    std::shared_ptr<GG::Label*>  m_stockpile_points;
-    std::shared_ptr<GG::Label*>  m_stockpile_points_P_label;
-    std::shared_ptr<GG::Label*>  m_stockpile_use_label;
-    std::shared_ptr<GG::Label*>  m_stockpile_use;
-    std::shared_ptr<GG::Label*>  m_stockpile_use_P_label;
-    std::shared_ptr<GG::Label*>  m_wasted_points_label;
-    std::shared_ptr<GG::Label*>  m_wasted_points;
-    std::shared_ptr<GG::Label*>  m_wasted_points_P_label;
+    std::shared_ptr<GG::Label>  m_total_points_label;
+    std::shared_ptr<GG::Label>  m_total_points;
+    std::shared_ptr<GG::Label>  m_total_points_P_label;
+    std::shared_ptr<GG::Label>  m_stockpile_points_label;
+    std::shared_ptr<GG::Label>  m_stockpile_points;
+    std::shared_ptr<GG::Label>  m_stockpile_points_P_label;
+    std::shared_ptr<GG::Label>  m_stockpile_use_label;
+    std::shared_ptr<GG::Label>  m_stockpile_use;
+    std::shared_ptr<GG::Label>  m_stockpile_use_P_label;
+    std::shared_ptr<GG::Label>  m_wasted_points_label;
+    std::shared_ptr<GG::Label>  m_wasted_points;
+    std::shared_ptr<GG::Label>  m_wasted_points_P_label;
 
     std::shared_ptr<GG::Label>  m_local_points_label;
     std::shared_ptr<GG::Label>  m_local_points;

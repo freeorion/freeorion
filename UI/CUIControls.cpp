@@ -2017,19 +2017,13 @@ void ProductionInfoPanel::ClearLocalInfo() {
 }
 
 void ProductionInfoPanel::ClearStockpileInfo() {
-    delete m_stockpile_points_label;
-    m_stockpile_points_label = nullptr;
-    delete m_stockpile_points;
-    m_stockpile_points = nullptr;
-    delete m_stockpile_points_P_label;
-    m_stockpile_points_P_label = nullptr;
+    DetachChildAndReset(m_stockpile_points_label);
+    DetachChildAndReset(m_stockpile_points);
+    DetachChildAndReset(m_stockpile_points_P_label);
 
-    delete m_stockpile_use_label;
-    m_stockpile_use_label = nullptr;
-    delete m_stockpile_use;
-    m_stockpile_use = nullptr;
-    delete m_stockpile_use_P_label;
-    m_stockpile_use_P_label = nullptr;
+    DetachChildAndReset(m_stockpile_use_label);
+    DetachChildAndReset(m_stockpile_use);
+    DetachChildAndReset(m_stockpile_use_P_label);
 
     const Empire* empire = GetEmpire(m_empire_id);
     std::string empire_name;
