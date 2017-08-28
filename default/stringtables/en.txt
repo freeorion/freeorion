@@ -1674,7 +1674,7 @@ OPTIONS_DB_QUICKSTART
 Starts a new quick-start game, bypassing the main menu.
 
 OPTIONS_DB_CONTINUE
-Continues play from lastest autosave, bypassing the main menu.
+Continues play from latest save, bypassing the main menu.
 
 OPTIONS_DB_AUTO_N_TURNS
 Hits the "Turn" button automatically on the first N turns (up to 400 turns, defaults to zero); useful for various testing particularly with --quickstart or --load, possibly also --auto-quit.
