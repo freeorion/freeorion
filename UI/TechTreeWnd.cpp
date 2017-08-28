@@ -1867,12 +1867,21 @@ void TechTreeWnd::TechListBox::Update(bool populate /* = true */) {
     double insertion_elapsed = 0.0;
     boost::timer insertion_timer;
     GG::X row_width = Width() - ClientUI::ScrollWidth() - ClientUI::Pts();
+    std::string first_tech_shown{};
+
+    // Try to preserve the first row, only works if a row for the tech is still visible
+    if (auto first_row_shown = dynamic_cast<TechRow*>(FirstRowShown()->get()))
+        first_tech_shown = first_row_shown->GetTech();
+
+    // Skip setting first row during insertion
+    bool first_tech_set = first_tech_shown.empty();
 
     // remove techs in listbox, then reset the rest of its state
     for (iterator it = begin(); it != end(); ) {
         iterator temp_it = it++;
         Erase(temp_it);
     }
+
     Clear();
 
     // Add rows from cache
@@ -1881,8 +1890,12 @@ void TechTreeWnd::TechListBox::Update(bool populate /* = true */) {
         if (TechVisible(tech_row->GetTech(), m_categories_shown, m_tech_statuses_shown)) {
             tech_row->Update();
             insertion_timer.restart();
-            Insert(tech_row);
+            auto listbox_row_it = Insert(tech_row);
             insertion_elapsed += insertion_timer.elapsed();
+            if (!first_tech_set && row.first == first_tech_shown) {
+                first_tech_set = true;
+                SetFirstRowShown(listbox_row_it);
+            }
         }
     }
 
@@ -1896,8 +1909,8 @@ void TechTreeWnd::TechListBox::Update(bool populate /* = true */) {
     }
     if (SortCol() < 1)
         SetSortCol(2);
-    // TODO workaround for header rendering excessively high and overlapping some rows
-    if (begin() != end())
+
+    if (!first_tech_set || first_tech_shown.empty())
         BringRowIntoView(begin());
 
     DebugLogger() << "Tech List Box Updating Done, Insertion time = " << (insertion_elapsed * 1000) << " ms";
