@@ -1588,7 +1588,7 @@ private:
 
     std::set<std::string>                   m_categories_shown;
     std::set<TechStatus>                    m_tech_statuses_shown;
-    std::multimap<std::string, std::shared_ptr<TechRow>>    m_all_tech_rows;
+    std::unordered_map<std::string, std::shared_ptr<TechRow>> m_tech_row_cache;
     std::shared_ptr<GG::ListBox::Row>                       m_header_row;
     size_t                                  m_previous_sort_col;
 };
@@ -1876,7 +1876,7 @@ void TechTreeWnd::TechListBox::Update(bool populate /* = true */) {
     Clear();
 
     // Add rows from cache
-    for (auto& row : m_all_tech_rows) {
+    for (auto& row : m_tech_row_cache) {
         auto& tech_row = row.second;
         if (TechVisible(tech_row->GetTech(), m_categories_shown, m_tech_statuses_shown)) {
             tech_row->Update();
@@ -1906,22 +1906,18 @@ void TechTreeWnd::TechListBox::Update(bool populate /* = true */) {
 void TechTreeWnd::TechListBox::Populate(bool update /* = true*/) {
     DebugLogger() << "Tech List Box Populating";
 
-    double creation_elapsed = 0.0;
+    GG::X row_width = Width() - ClientUI::ScrollWidth() - ClientUI::Pts();
+
     boost::timer creation_timer;
 
-    GG::X row_width = Width() - ClientUI::ScrollWidth() - ClientUI::Pts();
-    // HACK! This caching of TechRows works only if there are no "hidden" techs
-    // that are added to the manager mid-game.
-    TechManager& manager = GetTechManager();
-    if (m_all_tech_rows.empty()) {
-        for (const Tech* tech : manager) {
-            const std::string& tech_name = UserString(tech->Name());
-            creation_timer.restart();
-            m_all_tech_rows.insert(std::make_pair(tech_name,
-                GG::Wnd::Create<TechRow>(row_width, tech->Name())));
-            creation_elapsed += creation_timer.elapsed();
-        }
+    // Skip lookup check when starting with empty cache
+    bool new_cache = m_tech_row_cache.empty();
+    for (auto& tech : GetTechManager()) {
+        if (new_cache || !m_tech_row_cache.count(tech->Name()))
+            m_tech_row_cache.emplace(tech->Name(), GG::Wnd::Create<TechRow>(row_width, tech->Name()));
     }
+
+    auto creation_elapsed = creation_timer.elapsed();
 
     DebugLogger() << "Tech List Box Populating Done,  Creation time = " << (creation_elapsed * 1000) << "ms";
 
