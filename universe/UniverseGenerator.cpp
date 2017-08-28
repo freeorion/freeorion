@@ -14,6 +14,8 @@
 #include "ValueRef.h"
 #include "Enums.h"
 
+#include <limits>
+
 //////////////////////////////////////////
 //  Universe Setup Functions            //
 //////////////////////////////////////////
@@ -169,10 +171,15 @@ namespace Delauney {
         triangle_list.push_front({num_points_in_vec - 1, num_points_in_vec - 2,
                                   num_points_in_vec - 3, points_vec});
 
+        if (points_vec.size() > std::numeric_limits<int>::max()) {
+            ErrorLogger() << "Attempted to run Delauney Triangulation on " << points_vec.size()
+                          << " points.  The limit is " << std::numeric_limits<int>::max();
+            return std::list<Delauney::DTTriangle>();
+        }
 
         // loop through points generated from systems, excluding the final
         // 3 points added for the covering triangle
-        for (int n = 0; n < points_vec.size() - 3; n++) {
+        for (std::size_t n = 0; n < points_vec.size() - 3; n++) {
             // list of indices in vector of points extracted from removed
             // triangles that need to be retriangulated
             std::list<Delauney::SortValInt> point_idx_list;
@@ -249,7 +256,7 @@ namespace Delauney {
 
             // add triangle for last and first points and n
             triangle_list.push_front(
-                {n, (point_idx_list.front()).num, (point_idx_list.back()).num, points_vec});
+                {static_cast<int>(n), (point_idx_list.front()).num, (point_idx_list.back()).num, points_vec});
 
 
             // go through list of points, making new triangles out of them
@@ -260,7 +267,7 @@ namespace Delauney {
                 int num2 = num;
                 num = idx_list_it->num;
 
-                triangle_list.push_front({n, num2, num, points_vec});
+                triangle_list.push_front({static_cast<int>(n), num2, num, points_vec});
 
                 ++idx_list_it;
             } // end while
@@ -383,13 +390,12 @@ namespace {
         // 2 component vector and vect + magnitude typedefs
         typedef std::pair<double, double> VectTypeQQ;
         typedef std::pair<VectTypeQQ, double> VectAndMagTypeQQ;
-        typedef std::pair<int, VectAndMagTypeQQ> MapInsertableTypeQQ;
 
         std::map<int, VectAndMagTypeQQ> laneVectsMap;  // componenets of vectors of lanes of current system, indexed by destination system number
         std::set<std::pair<int, int>> lanesToRemoveSet;  // start and end stars of lanes to be removed in final step...
 
         // make sure data is consistent
-        if (static_cast<int>(system_lanes.size()) != systems.size()) {
+        if (system_lanes.size() != systems.size()) {
             ErrorLogger() << "CullAngularlyTooCloseLanes got different size vectors of lane sets and systems.  Doing nothing.";
             return;
         }
@@ -698,13 +704,13 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length) {
 
             // get system ids for ends of lanes from the sys_vec indices
             int sys1_id = INVALID_OBJECT_ID;
-            if (s1 < sys_vec.size())
+            if (static_cast<std::size_t>(s1) < sys_vec.size())
                 sys1_id = sys_vec.at(s1)->ID();
             int sys2_id = INVALID_OBJECT_ID;
-            if (s2 < sys_vec.size())
+            if (static_cast<std::size_t>(s2) < sys_vec.size())
                 sys2_id = sys_vec.at(s2)->ID();
             int sys3_id = INVALID_OBJECT_ID;
-            if (s3 < sys_vec.size())
+            if (static_cast<std::size_t>(s3) < sys_vec.size())
                 sys3_id = sys_vec.at(s3)->ID();
 
 

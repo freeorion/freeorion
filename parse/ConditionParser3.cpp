@@ -61,7 +61,7 @@ namespace {
                 ;
 
             value_test_1
-                = '('
+                = ('('
                 >> parse::double_value_ref() [ _a = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
@@ -70,7 +70,7 @@ namespace {
                       | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _d = Condition::LESS_THAN ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                > parse::double_value_ref() // assuming the trinary form already didn't pass, can expect a (double) here, though it might be an (int) casted to (double). By matching the (int) cases first, can assume that at least one of the parameters here is not an (int) casted to double.
+                  ) > parse::double_value_ref() // assuming the trinary form already didn't pass, can expect a (double) here, though it might be an (int) casted to (double). By matching the (int) cases first, can assume that at least one of the parameters here is not an (int) casted to double.
                 [ _val = new_<Condition::ValueTest>(_a, _d, _1) ]
                 >> ')'
                 ;
@@ -99,12 +99,12 @@ namespace {
                 ;
 
             value_test_3
-                = '('
+                = ( '('
                 >> parse::string_value_ref() [ _c = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                > parse::string_value_ref() // assuming the trinary (string) form already didn't parse, if already seen (string) (operator) can expect another (string)
+                  ) > parse::string_value_ref() // assuming the trinary (string) form already didn't parse, if already seen (string) (operator) can expect another (string)
                 [ _val = new_<Condition::ValueTest>(_c, _d, _1) ]
                 >> ')'
                 ;
@@ -157,9 +157,9 @@ namespace {
                       | lit("<=")   [ _e = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _e = Condition::LESS_THAN ]
                       | lit("!=")   [ _e = Condition::NOT_EQUAL ])
-                  ) >> parse::int_value_ref()   // only treat as trinary (int) comparison if all parameters are (int). otherwise fall back to (double) comparison, which allows some of the parameters to be (int) casted to (double)
-                [ _val = new_<Condition::ValueTest>(_g, _d, _h, _e, _1) ]
-                >  ')'
+                 >> parse::int_value_ref()   // only treat as trinary (int) comparison if all parameters are (int). otherwise fall back to (double) comparison, which allows some of the parameters to be (int) casted to (double)
+                 [ _val = new_<Condition::ValueTest>(_g, _d, _h, _e, _1) ]
+                  ) >  ')'
                 ;
 
             turn
