@@ -3685,16 +3685,19 @@ PRODUCTION_INFO_EMPIRE
 %2% %1%
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
-Total Available Points
+Available Points
 
 PRODUCTION_INFO_WASTED_PS_LABEL
-Wasted Points
+Overproduction
 
 PRODUCTION_INFO_LOCAL_PS_LABEL
 Points Available Here
 
 PRODUCTION_INFO_STOCKPILE_PS_LABEL
-Stockpile (Available/Max)
+Stockpiled Points
+
+PRODUCTION_INFO_STOCKPILE_USE_PS_LABEL
+Stockpile Use
 
 STOCKPILE_LABEL
 Stockpile
@@ -3805,9 +3808,10 @@ It also allows for some interaction with the [[encyclopedia MAP_WINDOW_ARTICLE_T
 
 (default position: top left)
 The Production Summary panel shows available Production Points.
-Total Available Points relates to the PP available across your entire empire.
-Points Available Here are the maximum available for the selected system.  This may be less than the total available when all of your empire's systems are not [[metertype METER_SUPPLY]] connected.
-Wasted Points will be lost, if not allocated before ending the turn.
+If a system is selected there are two columns shown else only one. The (left) column shows production points across your entire empire. The right column gives production points for the selected system.
+Available Points relates to the PP available for production. The right value are the maximum available production points for the selected system. This may be less than the total available when all of your empire's systems are not [[metertype METER_SUPPLY]] connected.
+Stockpile relates to the PP available for production using the imperial stockpile. Production items specifically need to be enabled to draw from the stockpile. 
+Overproduction PP will not go into production, if not allocated before ending the turn. A part of overproduction gets stored in the imperial stockpile, but usually the bigger part gets wasted and is lost.
 
 
 <u>Producible Items panel</u>
