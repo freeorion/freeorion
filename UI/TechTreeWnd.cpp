@@ -1856,7 +1856,10 @@ std::set<TechStatus> TechTreeWnd::TechListBox::GetTechStatusesShown() const
 { return m_tech_statuses_shown; }
 
 void TechTreeWnd::TechListBox::Reset()
-{ Populate(); }
+{
+    m_tech_row_cache.clear();
+    Populate();
+}
 
 void TechTreeWnd::TechListBox::Update(bool populate /* = true */) {
     if (populate)
