@@ -1662,6 +1662,8 @@ void Universe::ApplyEffectDerivedVisibilities() {
             m_empire_object_visibility[empire_entry.first][object_entry.first] = object_entry.second;
         }
     }
+
+    m_effect_specified_empire_object_visibilities.clear();
 }
 
 void Universe::ForgetKnownObject(int empire_id, int object_id) {
