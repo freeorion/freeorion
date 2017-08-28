@@ -17,6 +17,12 @@
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/algorithm/string.hpp>
 
+// TextLinker static(s)
+const std::string TextLinker::ENCYCLOPEDIA_TAG("encyclopedia");
+const std::string TextLinker::GRAPH_TAG("graph");
+const std::string TextLinker::URL_TAG("url");
+const std::string TextLinker::BROWSE_PATH_TAG("browsepath");
+
 namespace {
     static const bool RENDER_DEBUGGING_LINK_RECTS = false;
 
@@ -229,12 +235,6 @@ struct TextLinker::Link {
 ///////////////////////////////////////
 // TextLinker
 ///////////////////////////////////////
-// static(s)
-const std::string TextLinker::ENCYCLOPEDIA_TAG("encyclopedia");
-const std::string TextLinker::GRAPH_TAG("graph");
-const std::string TextLinker::URL_TAG("url");
-const std::string TextLinker::BROWSE_PATH_TAG("browsepath");
-
 TextLinker::TextLinker() :
     m_links(),
     m_rollover_link(-1)
