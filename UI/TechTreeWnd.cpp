@@ -1545,7 +1545,7 @@ public:
 
     //! \name Mutators //@{
     void    Reset();
-    void    Update();
+    void    Update(bool populate = true);
 
     void    ShowCategory(const std::string& category);
     void    ShowAllCategories();
@@ -1579,7 +1579,7 @@ private:
         bool m_enqueued;
     };
 
-    void    Populate();
+    void    Populate(bool update = true);
     void    TechDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
@@ -1858,39 +1858,15 @@ std::set<TechStatus> TechTreeWnd::TechListBox::GetTechStatusesShown() const
 void TechTreeWnd::TechListBox::Reset()
 { Populate(); }
 
-void TechTreeWnd::TechListBox::Update() {
-    for (auto& row : m_all_tech_rows) {
-        auto& tech_row = row.second;
-        if (TechVisible(tech_row->GetTech(), m_categories_shown, m_tech_statuses_shown))
-            tech_row->Update();
-    }
-}
+void TechTreeWnd::TechListBox::Update(bool populate /* = true */) {
+    if (populate)
+        Populate(false);
 
-void TechTreeWnd::TechListBox::Populate() {
-    // abort of not visible to see results
-    if (!Visible())
-        return;
+    DebugLogger() << "Tech List Box Updating";
 
-    DebugLogger() << "Tech List Box Populating";
-
-    double creation_elapsed = 0.0;
     double insertion_elapsed = 0.0;
-    boost::timer creation_timer;
     boost::timer insertion_timer;
-
     GG::X row_width = Width() - ClientUI::ScrollWidth() - ClientUI::Pts();
-    // HACK! This caching of TechRows works only if there are no "hidden" techs
-    // that are added to the manager mid-game.
-    TechManager& manager = GetTechManager();
-    if (m_all_tech_rows.empty()) {
-        for (const Tech* tech : manager) {
-            const std::string& tech_name = UserString(tech->Name());
-            creation_timer.restart();
-            m_all_tech_rows.insert(std::make_pair(tech_name,
-                GG::Wnd::Create<TechRow>(row_width, tech->Name())));
-            creation_elapsed += creation_timer.elapsed();
-        }
-    }
 
     // remove techs in listbox, then reset the rest of its state
     for (iterator it = begin(); it != end(); ) {
@@ -1899,6 +1875,7 @@ void TechTreeWnd::TechListBox::Populate() {
     }
     Clear();
 
+    // Add rows from cache
     for (auto& row : m_all_tech_rows) {
         auto& tech_row = row.second;
         if (TechVisible(tech_row->GetTech(), m_categories_shown, m_tech_statuses_shown)) {
@@ -1923,9 +1900,33 @@ void TechTreeWnd::TechListBox::Populate() {
     if (begin() != end())
         BringRowIntoView(begin());
 
-    DebugLogger() << "Tech List Box Done Populating";
-    DebugLogger() << "    Creation time=" << (creation_elapsed * 1000) << "ms";
-    DebugLogger() << "    Insertion time=" << (insertion_elapsed * 1000) << "ms";
+    DebugLogger() << "Tech List Box Updating Done, Insertion time = " << (insertion_elapsed * 1000) << " ms";
+}
+
+void TechTreeWnd::TechListBox::Populate(bool update /* = true*/) {
+    DebugLogger() << "Tech List Box Populating";
+
+    double creation_elapsed = 0.0;
+    boost::timer creation_timer;
+
+    GG::X row_width = Width() - ClientUI::ScrollWidth() - ClientUI::Pts();
+    // HACK! This caching of TechRows works only if there are no "hidden" techs
+    // that are added to the manager mid-game.
+    TechManager& manager = GetTechManager();
+    if (m_all_tech_rows.empty()) {
+        for (const Tech* tech : manager) {
+            const std::string& tech_name = UserString(tech->Name());
+            creation_timer.restart();
+            m_all_tech_rows.insert(std::make_pair(tech_name,
+                GG::Wnd::Create<TechRow>(row_width, tech->Name())));
+            creation_elapsed += creation_timer.elapsed();
+        }
+    }
+
+    DebugLogger() << "Tech List Box Populating Done,  Creation time = " << (creation_elapsed * 1000) << "ms";
+
+    if (update)
+        Update(false);
 }
 
 void TechTreeWnd::TechListBox::ShowCategory(const std::string& category) {
