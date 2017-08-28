@@ -256,7 +256,7 @@ namespace Delauney {
 
             // add triangle for last and first points and n
             triangle_list.push_front(
-                {int(n), (point_idx_list.front()).num, (point_idx_list.back()).num, points_vec});
+                {static_cast<int>(n), (point_idx_list.front()).num, (point_idx_list.back()).num, points_vec});
 
 
             // go through list of points, making new triangles out of them
@@ -267,7 +267,7 @@ namespace Delauney {
                 int num2 = num;
                 num = idx_list_it->num;
 
-                triangle_list.push_front({int(n), num2, num, points_vec});
+                triangle_list.push_front({static_cast<int>(n), num2, num, points_vec});
 
                 ++idx_list_it;
             } // end while
@@ -704,13 +704,13 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length) {
 
             // get system ids for ends of lanes from the sys_vec indices
             int sys1_id = INVALID_OBJECT_ID;
-            if (std::size_t(s1) < sys_vec.size())
+            if (static_cast<std::size_t>(s1) < sys_vec.size())
                 sys1_id = sys_vec.at(s1)->ID();
             int sys2_id = INVALID_OBJECT_ID;
-            if (std::size_t(s2) < sys_vec.size())
+            if (static_cast<std::size_t>(s2) < sys_vec.size())
                 sys2_id = sys_vec.at(s2)->ID();
             int sys3_id = INVALID_OBJECT_ID;
-            if (std::size_t(s3) < sys_vec.size())
+            if (static_cast<std::size_t>(s3) < sys_vec.size())
                 sys3_id = sys_vec.at(s3)->ID();
 
 
