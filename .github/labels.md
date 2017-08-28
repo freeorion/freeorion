@@ -163,7 +163,7 @@ the number of the covering Issue/PR in a comment and close this Issue/PR.  For
 PRs document why the other PR was chosen over this PR.  For Issues copy over
 new knowledge that is valuable to solve the covering Issue.
 
-#### Label `status:follow up`
+#### Label `status:superseded`
 
 The PR discussion showed that the proposed implementation is insufficient in
 some way or the PR in itself is malformed.  Usually not required as we prefer
