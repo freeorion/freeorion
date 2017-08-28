@@ -2050,22 +2050,27 @@ void ProductionInfoPanel::Clear() {
 void ProductionInfoPanel::DoLayout() {
     const int STAT_TEXT_PTS = ClientUI::Pts();
     const int CENTERLINE_GAP = 4;
-    const GG::X LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 5 / 8;
-    const GG::X VALUE_TEXT_WIDTH = Width() - 4 - CENTERLINE_GAP - LABEL_TEXT_WIDTH;
+    const GG::X LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 7 / 16 ;
+    const GG::X VALUE_TEXT_WIDTH = ((Width() - 4 - CENTERLINE_GAP) - LABEL_TEXT_WIDTH) / 2;
+    // global             local
+    // label  value  PP   value  PP  label
     const GG::X LEFT_TEXT_X(0);
     const GG::X RIGHT_TEXT_X = LEFT_TEXT_X + LABEL_TEXT_WIDTH + 8 + CENTERLINE_GAP;
     const GG::X P_LABEL_X = RIGHT_TEXT_X + 40;
-    const GG::X DOUBLE_RIGHT_TEXT_X = RIGHT_TEXT_X + 40;
-    const GG::X DOUBLE_P_LABEL_X = DOUBLE_RIGHT_TEXT_X + 40;
+    const GG::X DOUBLE_LEFT_TEXT_X = P_LABEL_X + 30 + 4;
+    const GG::X DOUBLE_P_LABEL_X = DOUBLE_LEFT_TEXT_X + 40;
+    const GG::X DOUBLE_RIGHT_TEXT_X = DOUBLE_P_LABEL_X + 20;
+    
 
     std::pair<int, int> m_center_gap(Value(LABEL_TEXT_WIDTH + 2), Value(LABEL_TEXT_WIDTH + 2 + CENTERLINE_GAP));
 
     const GG::Pt LABEL_TEXT_SIZE(LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4));
     const GG::Pt VALUE_TEXT_SIZE(VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4));
-    const GG::Pt P_LABEL_SIZE(Width() - 2 - 5 - P_LABEL_X, GG::Y(STAT_TEXT_PTS + 4));
+    const GG::Pt P_LABEL_SIZE(Width() - 2 - 5 - DOUBLE_P_LABEL_X, GG::Y(STAT_TEXT_PTS + 4));
 
     GG::Y row_offset(4);
 
+    // Show total/local points
     if (m_total_points_label) {
         m_total_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
         m_total_points_label->Resize(LABEL_TEXT_SIZE);
@@ -2073,9 +2078,29 @@ void ProductionInfoPanel::DoLayout() {
         m_total_points->Resize(VALUE_TEXT_SIZE);
         m_total_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
         m_total_points_P_label->Resize(P_LABEL_SIZE);
-
+    }
+    if (m_local_points_label && m_total_points_label) {
+        // put label to the right (or dont show it at all)
+        m_local_points_label->MoveTo(GG::Pt(DOUBLE_RIGHT_TEXT_X, row_offset));
+        m_local_points_label->Resize(LABEL_TEXT_SIZE);
+        m_local_points->MoveTo(GG::Pt(DOUBLE_LEFT_TEXT_X, row_offset));
+        m_local_points->Resize(VALUE_TEXT_SIZE);
+        m_local_points_P_label->MoveTo(GG::Pt(DOUBLE_P_LABEL_X, row_offset));
+        m_local_points_P_label->Resize(P_LABEL_SIZE);
+    }
+    // not sure if the following case exists
+    if (m_local_points_label && !m_total_points_label) {
+        m_local_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
+        m_local_points_label->Resize(LABEL_TEXT_SIZE);
+        m_local_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
+        m_local_points->Resize(VALUE_TEXT_SIZE);
+        m_local_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
+        m_local_points_P_label->Resize(P_LABEL_SIZE);
+    }
+    if (m_total_points_label || m_local_points_label) {
         row_offset += m_total_points_label->Height();
     }
+
 
     if (m_wasted_points_label) {
         m_wasted_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
@@ -2084,16 +2109,25 @@ void ProductionInfoPanel::DoLayout() {
         m_wasted_points->Resize(VALUE_TEXT_SIZE);
         m_wasted_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
         m_wasted_points_P_label->Resize(P_LABEL_SIZE);
-
+    }
+    if (m_local_wasted_points_label) {
+        m_local_wasted_points_label->MoveTo(GG::Pt(DOUBLE_RIGHT_TEXT_X, row_offset));
+        m_local_wasted_points_label->Resize(LABEL_TEXT_SIZE);
+        m_local_wasted_points->MoveTo(GG::Pt(DOUBLE_LEFT_TEXT_X, row_offset));
+        m_local_wasted_points->Resize(VALUE_TEXT_SIZE);
+        m_local_wasted_points_P_label->MoveTo(GG::Pt(DOUBLE_P_LABEL_X, row_offset));
+        m_local_wasted_points_P_label->Resize(P_LABEL_SIZE);
+    }
+    if (m_wasted_points_label || m_local_wasted_points_label) {
         row_offset += m_wasted_points_label->Height();
     }
-     
+
     if (m_stockpile_points_label) {
         m_stockpile_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
         m_stockpile_points_label->Resize(LABEL_TEXT_SIZE);
         m_stockpile_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
         m_stockpile_points->Resize(VALUE_TEXT_SIZE);
-        m_stockpile_points_P_label->MoveTo(GG::Pt(DOUBLE_P_LABEL_X, row_offset));
+        m_stockpile_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
         m_stockpile_points_P_label->Resize(P_LABEL_SIZE);
 
         row_offset += m_stockpile_points_label->Height();
@@ -2106,29 +2140,8 @@ void ProductionInfoPanel::DoLayout() {
         m_stockpile_use->Resize(VALUE_TEXT_SIZE);
         m_stockpile_use_P_label->MoveTo(GG::Pt(DOUBLE_P_LABEL_X, row_offset));
         m_stockpile_use_P_label->Resize(P_LABEL_SIZE);
-
-        row_offset += m_stockpile_use_label->Height();
     }
 
-    if (m_local_points_label) {
-        m_local_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
-        m_local_points_label->Resize(LABEL_TEXT_SIZE);
-        m_local_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
-        m_local_points->Resize(VALUE_TEXT_SIZE);
-        m_local_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
-        m_local_points_P_label->Resize(P_LABEL_SIZE);
-
-        row_offset += m_local_points_label->Height();
-    }
-
-    if (m_local_wasted_points_label) {
-        m_local_wasted_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
-        m_local_wasted_points_label->Resize(LABEL_TEXT_SIZE);
-        m_local_wasted_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
-        m_local_wasted_points->Resize(VALUE_TEXT_SIZE);
-        m_local_wasted_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
-        m_local_wasted_points_P_label->Resize(P_LABEL_SIZE);
-    }
 }
 
 
