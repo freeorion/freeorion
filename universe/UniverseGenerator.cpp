@@ -171,10 +171,15 @@ namespace Delauney {
         triangle_list.push_front({num_points_in_vec - 1, num_points_in_vec - 2,
                                   num_points_in_vec - 3, points_vec});
 
+        if (points_vec.size() > std::numeric_limits<int>::max()) {
+            ErrorLogger() << "Attempted to run Delauney Triangulation on " << points_vec.size()
+                          << " points.  The limit is " << std::numeric_limits<int>::max();
+            return std::list<Delauney::DTTriangle>();
+        }
 
         // loop through points generated from systems, excluding the final
         // 3 points added for the covering triangle
-        for (std::size_t n = 0; n < points_vec.size() - 3 && n < std::numeric_limits<int>::max() ; n++) {
+        for (std::size_t n = 0; n < points_vec.size() - 3; n++) {
             // list of indices in vector of points extracted from removed
             // triangles that need to be retriangulated
             std::list<Delauney::SortValInt> point_idx_list;
