@@ -53,8 +53,10 @@ Tech
         "PRO_FUSION_GEN"
     ]
     unlock = [
-        Item type = ShipPart name = "FU_DEUTERIUM_TANK"
         Item type = ShipPart name = "FU_RAMSCOOP"
+    ]
+    effectsgroups = [
+        [[PART_UPGRADE_MAXCAPACITY_EFFECTS(FU_BASIC_TANK,1)]]
     ]
     graphic = "icons/ship_parts/deuterium_tank.png"
 
@@ -70,7 +72,9 @@ Tech
         "SHP_DEUTERIUM_TANK"
         "LRN_FORCE_FIELD"
     ]
-    unlock = Item type = ShipPart name = "FU_ANTIMATTER_TANK"
+    effectsgroups = [
+        [[PART_UPGRADE_MAXCAPACITY_EFFECTS(FU_BASIC_TANK,3)]]
+    ]
     graphic = "icons/ship_parts/antimatter_tank.png"
 
 Tech
@@ -256,5 +260,20 @@ Tech
     ]
     unlock = Item type = ShipPart name = "SP_CHAOS_WAVE"
     graphic = "icons/ship_parts/chaos-wave.png"
+
+
+PART_UPGRADE_MAXCAPACITY_EFFECTS
+'''
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "@1@"
+            ]
+            accountinglabel = "@1@_TECH_BOOST"
+            effects = [
+                SetMaxFuel value = Value + (@2@ * (PartsInShipDesign Name = "FU_BASIC_TANK" design = Target.DesignID))
+            ]
+'''
 
 #include "/scripting/common/base_prod.macros"
