@@ -122,7 +122,7 @@ namespace {
             ErrorLogger() << "CalculateStockpileContribution() passed null empire.  doing nothing.";
             return 0.0f;
         }
-        float stockpile_transfer_efficiency = empire->GetMeter("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")->Current();      
+        float stockpile_transfer_efficiency = std::min(1.0f,empire->GetMeter("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")->Current());      
         float stockpile_used = boost::accumulate(allocated_stockpile_pp | boost::adaptors::map_values, 0.0f);
         float new_contributions = 0.0f;
         for (auto const& available_group: available_pp) {
