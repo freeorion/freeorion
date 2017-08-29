@@ -1130,7 +1130,7 @@ void ProductionQueue::Update() {
     int dummy_int = 0;
     
     for (int sim_turn = 1; sim_turn <= TOO_MANY_TURNS; sim_turn ++) {
-        long sim_time_until_now =  (boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()) - sim_time_start).total_microseconds();
+        long sim_time_until_now = (boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()) - sim_time_start).total_microseconds();
         if ((sim_time_until_now * 1e-6) >= TOO_LONG_TIME)
             break;
         
@@ -1626,7 +1626,7 @@ std::pair<float, int> Empire::ProductionCostAndTime(const ProductionQueue::Produ
                                                     int location_id) const
 {
     if (item.build_type == BT_BUILDING) {
-        const BuildingType* type =  GetBuildingType(item.name);
+        const BuildingType* type = GetBuildingType(item.name);
         if (!type)
             return std::make_pair(-1.0, -1);
         return std::make_pair(type->ProductionCost(m_id, location_id),
