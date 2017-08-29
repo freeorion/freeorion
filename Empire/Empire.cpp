@@ -122,12 +122,7 @@ namespace {
             ErrorLogger() << "CalculateStockpileContribution() passed null empire.  doing nothing.";
             return 0.0f;
         }
-        float stockpile_transfer_efficiency = empire->GetMeter("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")->Current();
-        // FIXME cleanup
-        // locally, within same resource group as the stockpile location (empire capital) we currently allow stockpile contribution at no penalty
-//        float local_stockpile_transfer_rate = 1.0;
-//        float remote_stockpile_transfer_rate = stockpile_transfer_efficiency;
-        
+        float stockpile_transfer_efficiency = empire->GetMeter("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")->Current();      
         float stockpile_used = boost::accumulate(allocated_stockpile_pp | boost::adaptors::map_values, 0.0f);
         float new_contributions = 0.0f;
         for (auto const& available_group: available_pp) {
@@ -137,9 +132,6 @@ namespace {
             if (excess_here < EPSILON)
                 continue;
             // Transfer excess to stockpile
-//            bool local_to_stockpile = available_group.first.find(stockpile_location_id) != available_group.first.end();
-//            float this_transfer_rate = local_to_stockpile ? 
-//                        local_stockpile_transfer_rate : remote_stockpile_transfer_rate;
             new_contributions += excess_here * stockpile_transfer_efficiency;
             DebugLogger() << "allocated_here " << allocated_here;
             DebugLogger() << "excess_here  " << excess_here;
@@ -223,7 +215,6 @@ namespace {
       * empire with the indicated \a empire_id this turn at their build location. 
       * Also checks if elements will be completed this turn. */
     void SetProdQueueElementSpending(std::map<std::set<int>, float> available_pp, float available_stockpile, int stockpile_location_id,
-                                     float local_stockpile_use_rate, float remote_stockpile_use_rate,
                                      const std::vector<std::set<int>>& queue_element_resource_sharing_object_groups,
                                      const std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<float, int> >& queue_item_costs_and_times,
                                      const std::vector<bool>& is_producible,
@@ -315,10 +306,8 @@ namespace {
             // total cost remaining to complete the last item in the queue element (eg. the element has all but
             // the last item complete already) and by the total pp available in this element's production location's
             // resource sharing group (including any stockpile availability)
-//XXX            float stockpile_conversion_rate = (group.find(stockpile_location_id) != group.end()) ? 
-//                        local_stockpile_use_rate : remote_stockpile_use_rate;
-            float stockpile_available_for_this = (queue_element.allowed_imperial_stockpile_use) ?
-                        available_stockpile : 0;
+            float stockpile_available_for_this = 
+                (queue_element.allowed_imperial_stockpile_use) ? available_stockpile : 0;
             
             float allocation = std::max(0.0f, std::min(element_this_turn_limit, 
                                                        group_pp_available + stockpile_available_for_this));
@@ -1020,21 +1009,10 @@ void ProductionQueue::Update() {
     std::map<std::set<int>, float> available_pp = AvailablePP(industry_resource_pool);
     int stockpile_location_id = industry_resource_pool->StockpileObjectID();
     float pp_in_stockpile = industry_resource_pool->Stockpile();
-    DebugLogger() << "========= pp_in_stockpile: " << pp_in_stockpile << " ========";
-    //float available_stockpile = pp_in_stockpile * (empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT")? empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT")->Current() : 1.0);
+    DebugLogger() << "========= pp_in_stockpile:     " << pp_in_stockpile << " ========";
     const Meter* pp_use_limit = empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT");
-    float available_stockpile = pp_in_stockpile;
-    if (pp_use_limit) {
-        DebugLogger() << "========= METER_IMPERIAL_PP_USE_LIMIT: " << empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT")->Current() << " ========";
-        available_stockpile = std::min(available_stockpile, pp_use_limit->Current());
-    }
-    DebugLogger() << "========= alrighty then";
-    // FIXME after discussion - extraction is lossless
-//    float stockpile_transfer_efficiency = empire->GetMeter("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")->Current();
-    // locally, within same resource group as the stockpile location (empire capital) we currently allow stockpile use at no penalty
-      float local_stockpile_use_rate = 1.0;
-//    float remote_stockpile_use_rate = stockpile_transfer_efficiency;
-      float remote_stockpile_use_rate = 1.0;
+    float available_stockpile = pp_use_limit? std::min(pp_in_stockpile, pp_use_limit->Current()) : pp_in_stockpile;
+    DebugLogger() << "========= available_stockpile: " << pp_in_stockpile << " ========";
 
     // determine which resource sharing group each queue item is located in
     std::vector<std::set<int>> queue_element_groups;
@@ -1090,7 +1068,6 @@ void ProductionQueue::Update() {
     // allocate pp to queue elements, returning updated available pp and updated
     // allocated pp for each group of resource sharing objects
     SetProdQueueElementSpending(available_pp, available_stockpile, stockpile_location_id,
-                                local_stockpile_use_rate, remote_stockpile_use_rate,
                                 queue_element_groups,
                                 queue_item_costs_and_times, is_producible, m_queue,
                                 m_object_group_allocated_pp, m_object_group_allocated_stockpile_pp,
@@ -1161,7 +1138,6 @@ void ProductionQueue::Update() {
         allocated_stockpile_pp.clear();
 
         SetProdQueueElementSpending(available_pp, sim_available_stockpile, stockpile_location_id,
-                                    local_stockpile_use_rate, remote_stockpile_use_rate,
                                     queue_element_groups,
                                     queue_item_costs_and_times, is_producible, sim_queue,
                                     allocated_pp, allocated_stockpile_pp, dummy_int, true);
