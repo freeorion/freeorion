@@ -2921,6 +2921,11 @@ Current Output
 RESOURCE_TT_TARGET_OUTPUT
 Target Output
 
+MAP_STOCKPILE
+Imperial Stockpile
+
+
+
 MAP_RESEARCH_TITLE
 Research
 
@@ -6334,6 +6339,21 @@ EFFECT_ART_PLANET
 
 EFFECT_ART_PLANET_LABEL
 Black Hole
+
+INTERSPECIES_ACADEMY_LABEL
+Species InterDesign Academy
+
+EFFECT_INTERSPECIES_ACADEMY
+Additional effect by the %species% on %planet% joining the InterDesign design academy. Each design academy adds 0.05 to %rawtext%.
+
+EFFECT_INTERSPECIES_ACADEMY_LABEL
+New InterDesign Academy
+
+EFFECT_INTERSPECIES_ACADEMY_DESTROY
+Destroying fake duplicate design academy %planet%.
+
+EFFECT_INTERSPECIES_ACADEMY_DESTROY_LABEL
+Duplicate Academy Destroyed
 
 EFFECT_TAME_MONSTER_HATCHED
 At %planet%: a tamed %predefinedshipdesign% is ready for service.
