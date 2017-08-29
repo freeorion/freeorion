@@ -56,7 +56,7 @@ Tech
         Item type = ShipPart name = "FU_RAMSCOOP"
     ]
     effectsgroups = [
-        [[PART_UPGRADE_MAXCAPACITY_EFFECTS(FU_BASIC_TANK,1)]]
+        [[PART_UPGRADE_MAXFUEL_EFFECTS(SHP_DEUTERIUM_TANK_EFFECT,1)]]
     ]
     graphic = "icons/ship_parts/deuterium_tank.png"
 
@@ -73,7 +73,7 @@ Tech
         "LRN_FORCE_FIELD"
     ]
     effectsgroups = [
-        [[PART_UPGRADE_MAXCAPACITY_EFFECTS(FU_BASIC_TANK,3)]]
+        [[PART_UPGRADE_MAXFUEL_EFFECTS(SHP_ANTIMATTER_TANK_EFFECT,3)]]
     ]
     graphic = "icons/ship_parts/antimatter_tank.png"
 
@@ -262,15 +262,15 @@ Tech
     graphic = "icons/ship_parts/chaos-wave.png"
 
 
-PART_UPGRADE_MAXCAPACITY_EFFECTS
+PART_UPGRADE_MAXFUEL_EFFECTS
 '''
         EffectsGroup
             scope = And [
                 Ship
                 OwnedBy empire = Source.Owner
-                DesignHasPart  name = "@1@"
+                DesignHasPart  name = "FU_BASIC_TANK"
             ]
-            accountinglabel = "@1@_TECH_BOOST"
+            accountinglabel = "@1@"
             effects = [
                 SetMaxFuel value = Value + (@2@ * (PartsInShipDesign Name = "FU_BASIC_TANK" design = Target.DesignID))
             ]

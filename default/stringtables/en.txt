@@ -11030,11 +11030,17 @@ Deuterium Tank
 SHP_DEUTERIUM_TANK_DESC
 Unlocks [[shippart FU_DEUTERIUM_TANK]] ship part.
 
+SHP_DEUTERIUM_TANK_EFFECT
+Deuterium Tank Technology
+
 SHP_ANTIMATTER_TANK
 Antimatter Tank
 
 SHP_ANTIMATTER_TANK_DESC
 Unlocks [[shippart FU_ANTIMATTER_TANK]] ship part.
+
+SHP_ANTIMATTER_TANK_EFFECT
+Antimatter Tank Technology
 
 SHP_ZERO_POINT
 Zero-Point Fuel Generator
