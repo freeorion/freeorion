@@ -1130,8 +1130,8 @@ void ProductionQueue::Update() {
     int dummy_int = 0;
     
     for (int sim_turn = 1; sim_turn <= TOO_MANY_TURNS; sim_turn ++) {
-        if ((boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()) -
-                    sim_time_start).total_microseconds()*1e-6 >= TOO_LONG_TIME)
+        long sim_time_until_now =  (boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()) - sim_time_start).total_microseconds();
+        if ((sim_time_until_now * 1e-6) >= TOO_LONG_TIME)
             break;
         
         allocated_pp.clear();
