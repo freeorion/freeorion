@@ -8,8 +8,12 @@ BuildingType
         Species
         Not Contains Building name = "BLD_INTERSPECIES_ACADEMY"
         OwnedBy empire = Source.Owner
-        // some species dont have preferred focus - else low=20 would be nicer
         Happiness low = 15
+        // For species with preferred focus 
+        Not And [
+            Focus type = Source.PreferredFocus
+            Happiness high = 19
+        ]
         Not WithinStarlaneJumps jumps = 3 condition = And [
             System
             Contains And [
@@ -37,6 +41,7 @@ BuildingType
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
+        // Destroy superfluous academies
         EffectsGroup 
             scope = NumberOf number = 1 condition = And [
                 Building name = "BLD_INTERSPECIES_ACADEMY"
@@ -50,9 +55,8 @@ BuildingType
             ]
             effects = [
                 GenerateSitRepMessage
-                    message = "Destroying fake duplicate design academy %planet%."
-                    label = "EFFECT_BLACKHOLE_LABEL"
-                    NoStringtableLookup
+                    message = "EFFECT_INTERSPECIES_ACADEMY_DESTROY"
+                    label = "EFFECT_INTERSPECIES_ACADEMY_DESTROY_LABEL"
                     icon = "icons/building/blackhole.png"
                     parameters = [
                         tag = "planet" data = Target.PlanetID
@@ -60,7 +64,8 @@ BuildingType
                     empire = Source.Owner
                 Destroy
             ]
-            
+        
+        // Apply stockpile effects
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
@@ -69,12 +74,26 @@ BuildingType
                 Species
             ]
             activation = Source
+            accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
             priority = [[LATE_PRIORITY]]
             effects = [
-                GenerateSitRepMessage
-                    message = "Additional effect by the %species% on %planet% joining the design academy. Each design academy adds 0.05 to %rawtext%"
-                    label = "EFFECT_BLACKHOLE_LABEL"
-                    NoStringtableLookup
+                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_TRANSFER_EFFICIENCY" value = min(1.0, Value + 0.05)
+                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_USE_LIMIT"           value = Value + 1
+            ]
+        // Once per academy tell the user.
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                OwnedBy empire = Source.Owner
+                Species
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            priority = [[LATE_PRIORITY]]
+            effects = [
+               GenerateSitRepMessage
+                    message = "EFFECT_INTERSPECIES_ACADEMY"
+                    label = "EFFECT_INTERSPECIES_ACADEMY_LABEL"
                     icon = "icons/building/blackhole.png"
                     parameters = [
                         tag = "planet" data = Source.PlanetID
@@ -82,9 +101,7 @@ BuildingType
                         tag = "rawtext" data = EmpireMeterValue empire = Source.Owner meter = "METER_IMPERIAL_PP_TRANSFER_EFFICIENCY"
                     ]
                     empire = Source.Owner
-                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_TRANSFER_EFFICIENCY" value = min(1.0, Value + 0.05)
-                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_USE_LIMIT"           value = Value + 1
-            ]
+ 
     ]
     icon = "icons/building/science-institute.png"
 
