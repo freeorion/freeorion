@@ -113,9 +113,9 @@ namespace {
     }
 
     float CalculateNewStockpile(int empire_id, int stockpile_location_id, float starting_stockpile,
-                                         const std::map<std::set<int>, float>& available_pp,
-                                         const std::map<std::set<int>, float>& allocated_pp,
-                                         const std::map<std::set<int>, float>& allocated_stockpile_pp)
+        const std::map<std::set<int>, float>& available_pp,
+        const std::map<std::set<int>, float>& allocated_pp,
+        const std::map<std::set<int>, float>& allocated_stockpile_pp)
     {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
@@ -294,7 +294,7 @@ namespace {
 
             // get max contribution per turn and turns to build at max contribution rate
             int location_id = (queue_element.item.CostIsProductionLocationInvariant() ?
-                        INVALID_OBJECT_ID : queue_element.location);
+                INVALID_OBJECT_ID : queue_element.location);
             std::pair<ProductionQueue::ProductionItem, int> key(queue_element.item, location_id);
             float item_cost = 1e6;  // dummy/default value, shouldn't ever really be needed
             int build_turns = 1;    // dummy/default value, shouldn't ever really be needed
@@ -1023,7 +1023,6 @@ void ProductionQueue::Update() {
     DebugLogger() << "========= pp_in_stockpile: " << pp_in_stockpile << " ========";
     //float available_stockpile = pp_in_stockpile * (empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT")? empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT")->Current() : 1.0);
     const Meter* pp_use_limit = empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT");
-    DebugLogger() << "========= METER_IMPERIAL_PP_USE_LIMIT meter: " << pp_use_limit;
     float available_stockpile = pp_in_stockpile;
     if (pp_use_limit) {
         DebugLogger() << "========= METER_IMPERIAL_PP_USE_LIMIT: " << empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT")->Current() << " ========";
@@ -1099,7 +1098,7 @@ void ProductionQueue::Update() {
 
     //update expected new stockpile amount
     m_expected_new_stockpile_amount = CalculateNewStockpile(m_empire_id, stockpile_location_id, pp_in_stockpile, available_pp, 
-                                                       m_object_group_allocated_pp, m_object_group_allocated_stockpile_pp);
+                                                            m_object_group_allocated_pp, m_object_group_allocated_stockpile_pp);
 
     // if at least one resource-sharing system group have available PP, simulate
     // future turns to predict when build items will be finished
