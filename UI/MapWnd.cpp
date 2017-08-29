@@ -953,6 +953,7 @@ MapWnd::MapWnd() :
     m_industry(nullptr),
     m_detection(nullptr),
     m_fleet(nullptr),
+    m_stockpile(nullptr),
     m_industry_wasted(nullptr),
     m_research_wasted(nullptr),
     m_btn_moderator(nullptr),
@@ -1228,6 +1229,10 @@ void MapWnd::CompleteConstruction() {
     m_industry->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleProduction, this));
 
+    m_stockpile = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_INDUSTRY), 0, 3, false,
+        ICON_DUAL_WIDTH, m_btn_turn->Height());
+    m_stockpile->SetName("Stockpile StatisticIcon");
+
     m_research = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false,
                                                 ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_research->SetName("Research StatisticIcon");
@@ -1309,7 +1314,11 @@ void MapWnd::CompleteConstruction() {
     ++layout_column;
 
     layout->SetColumnStretch(layout_column, 1.0);
-    layout->Add(m_industry,         0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
+    layout->Add(m_industry, 0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetColumnStretch(layout_column, 1.0);
+    layout->Add(m_stockpile, 0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetMinimumColumnWidth(layout_column, ICON_WIDTH);
@@ -6447,6 +6456,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     if (!empire) {
         m_industry->SetValue(0.0);
         m_industry_wasted->Hide();
+        m_stockpile->SetValue(0.0);
         return;
     }
     m_industry->SetValue(empire->ResourceOutput(RE_INDUSTRY));
@@ -6468,6 +6478,14 @@ void MapWnd::RefreshIndustryResourceIndicator() {
         UserString("MAP_PRODUCTION_TITLE"), UserString("PRODUCTION_INFO_PP"),
         total_PP_spent, total_PP_output, total_PP_target_output,
         true, stockpile, stockpile_used, expected_stockpile));
+
+    m_stockpile->SetValue(stockpile);
+    m_stockpile->SetValue(total_PP_to_stockpile, 1); // TODO check this
+    m_stockpile->ClearBrowseInfoWnd();
+    m_stockpile->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_stockpile->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
+        UserString("MAP_STOCKPILE_TITLE"), UserString("PRODUCTION_INFO_PP"),
+        stockpile_used, stockpile, expected_stockpile));
 
     if (total_PP_wasted > 0.05) {
         DebugLogger()  << "MapWnd::RefreshIndustryResourceIndicator: Showing Industry Wasted Icon with Industry spent: "
