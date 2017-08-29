@@ -1712,10 +1712,6 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
 
     auto client_empire_id = HumanClientApp::GetApp()->EmpireID();
     auto empire = GetEmpire(client_empire_id);
-    if (!empire) {
-        WarnLogger() << "No valid client empire with id: " << client_empire_id << ", aborting row update";
-        return;
-    }
 
     std::string cost_str = std::to_string(std::lround(this_row_tech->ResearchCost(client_empire_id)));
     if (GG::Button* cost_btn = dynamic_cast<GG::Button*>((size() >= 3) ? at(2) : nullptr))
@@ -1727,7 +1723,7 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
 
     // Adjust colors for tech status
     auto foreground_color = ClientUI::CategoryColor(this_row_tech->Category());
-    auto this_row_status = empire->GetTechStatus(m_tech);
+    auto this_row_status = empire ? empire->GetTechStatus(m_tech) : TS_RESEARCHABLE;
     if (this_row_status == TS_COMPLETE) {
         foreground_color.a = m_background_color.a;  // preserve users 'wnd-color' trasparency
         AdjustBrightness(foreground_color, 0.3);
@@ -1740,8 +1736,12 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
     for (std::size_t i = 0; i < size(); ++i)
         at(i)->SetColor(foreground_color);
 
-    const ResearchQueue& rq = empire->GetResearchQueue();
-    m_enqueued = rq.find(m_tech) != rq.end();
+    if (empire) {
+        const ResearchQueue& rq = empire->GetResearchQueue();
+        m_enqueued = rq.find(m_tech) != rq.end();
+    } else {
+        m_enqueued = false;
+    }
 
     ClearBrowseInfoWnd();
     SetBrowseInfoWnd(TechRowBrowseWnd(m_tech, client_empire_id));
