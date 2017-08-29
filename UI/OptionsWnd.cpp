@@ -688,10 +688,11 @@ void OptionsWnd::CompleteConstruction() {
 
     // Ausosave settings tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_AUTOSAVE"));
-    BoolOption(current_page, 0, "autosave.single-player",   UserString("OPTIONS_SINGLEPLAYER"));
-    BoolOption(current_page, 0, "autosave.multiplayer",     UserString("OPTIONS_MULTIPLAYER"));
+    BoolOption(current_page, 0, "autosave.single-player.turn-start", UserString("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START"));
+    BoolOption(current_page, 0, "autosave.single-player.turn-end",   UserString("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END"));
+    BoolOption(current_page, 0, "autosave.multiplayer.turn-start",   UserString("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"));
     IntOption(current_page,  0, "autosave.turns",           UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"));
-    IntOption(current_page,  0, "autosave.limit",           UserString("OPTIONS_AUTOSAVE_LIMIT"));
+    IntOption(current_page,  0, "autosave.turn-limit",      UserString("OPTIONS_AUTOSAVE_LIMIT"));
     BoolOption(current_page, 0, "autosave.galaxy-creation", UserString("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"));
     BoolOption(current_page, 0, "autosave.game-close",      UserString("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"));
     m_tabs->SetCurrentWnd(0);

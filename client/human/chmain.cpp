@@ -248,7 +248,7 @@ int mainSetupAndRun() {
         if (GetOptionsDB().Get<bool>("continue")) {
             // immediately start the server, establish network connections, and
             // go into a single player game, continuing from the newest
-            // autosave game.
+            // save game.
             app.ContinueSinglePlayerGame();  // acceptable to call before app()
         }
 

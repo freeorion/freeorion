@@ -1640,11 +1640,17 @@ Boolean for AI testing which indicates if all AIs are forced to have the same Em
 OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED_VALUE
 Forced value of the EmpireID Trait.  A value from 0 to 39.
 
-OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
-Enable single-player autosaves.
+OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START
+Enable single-player autosaves at turn start.
 
-OPTIONS_DB_AUTOSAVE_MULTIPLAYER
-Enable multi-player autosaves.
+OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END
+Enable single-player autosaves at turn end.
+
+OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START
+Enable multi-player autosaves at turn start.
+
+OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_END
+Enable multi-player autosaves at turn end.
 
 OPTIONS_DB_AUTOSAVE_TURNS
 Sets the number of turns between autosaves.
@@ -1668,7 +1674,7 @@ OPTIONS_DB_QUICKSTART
 Starts a new quick-start game, bypassing the main menu.
 
 OPTIONS_DB_CONTINUE
-Continues play from lastest autosave, bypassing the main menu.
+Continues play from latest save, bypassing the main menu.
 
 OPTIONS_DB_AUTO_N_TURNS
 Hits the "Turn" button automatically on the first N turns (up to 400 turns, defaults to zero); useful for various testing particularly with --quickstart or --load, possibly also --auto-quit.
@@ -2286,12 +2292,6 @@ Automatically reposition windows
 
 OPTIONS_MISC_UI
 Miscellaneous UI Settings
-
-OPTIONS_SINGLEPLAYER
-Single player
-
-OPTIONS_MULTIPLAYER
-Multiplayer
 
 OPTIONS_AUTOSAVE_LIMIT
 Autosaves limit

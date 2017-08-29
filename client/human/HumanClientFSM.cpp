@@ -676,7 +676,7 @@ boost::statechart::result PlayingGame::react(const TurnProgress& msg) {
 
     Message::TurnProgressPhase phase_id;
     ExtractTurnProgressMessageData(msg.m_message, phase_id);
-    Client().GetClientUI().GetMessageWnd()->HandleTurnPhaseUpdate(phase_id);
+    Client().HandleTurnPhaseUpdate(phase_id);
 
     return discard_event();
 }
