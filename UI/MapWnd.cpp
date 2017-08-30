@@ -1227,7 +1227,7 @@ void MapWnd::CompleteConstruction() {
     m_industry->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleProduction, this));
 
-    m_stockpile = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_INDUSTRY), 0, 3, false,
+    m_stockpile = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_IMPERIAL_PP_TRANSFER_EFFICIENCY), 0, 3, false,
         ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_stockpile->SetName("Stockpile StatisticIcon");
 
