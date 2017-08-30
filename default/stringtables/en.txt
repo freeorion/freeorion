@@ -6398,6 +6398,9 @@ Black Hole
 INTERSPECIES_ACADEMY_LABEL
 Species InterDesign Academy
 
+CONDITION_INTERSPECIES_ACADEMY_SPECIES_ALREADY_EXISTS
+Academies of this planet's species already exist in the empire
+
 EFFECT_INTERSPECIES_ACADEMY
 Additional effect by the %species% on %planet% joining the InterDesign design academy. Each design academy adds 0.05 to %rawtext%.
 
