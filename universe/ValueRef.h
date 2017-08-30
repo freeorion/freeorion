@@ -1950,9 +1950,6 @@ template <class T>
 T Operation<T>::EvalImpl(const ScriptingContext& context) const
 {
     switch (m_op_type) {
-        if (m_operands.empty())
-            return T(-1);   // should be INVALID_T of enum types
-
         case MAXIMUM:
         case MINIMUM: {
             // evaluate all operands, return smallest
