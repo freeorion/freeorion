@@ -15,31 +15,31 @@ Tech
             scope = And [
                 ProductionCenter
                 OwnedBy empire = Source.Owner
-                Industry high = RootCandidate.TargetIndustry - 3
+                Industry high = RootCandidate.TargetIndustry - 2
             ]
-            effects = SetIndustry value = Value + 2
+            effects = SetIndustry value = Value + 1
 
         EffectsGroup
             scope = And [
                 ProductionCenter
                 OwnedBy empire = Source.Owner
-                Research high = RootCandidate.TargetResearch - 3
+                Research high = RootCandidate.TargetResearch - 2
             ]
-            effects = SetResearch value = Value + 2
+            effects = SetResearch value = Value + 1
 
         EffectsGroup
             scope = And [
                 ProductionCenter
                 OwnedBy empire = Source.Owner
-                Construction high = RootCandidate.TargetConstruction - 3
+                Construction high = RootCandidate.TargetConstruction - 2
             ]
-            effects = SetConstruction value = Value + 2
+            effects = SetConstruction value = Value + 1
 
         EffectsGroup
             scope = And [
                 ProductionCenter
                 OwnedBy empire = Source.Owner
-                Industry low = RootCandidate.TargetIndustry - 3 high = RootCandidate.TargetIndustry
+                Industry low = RootCandidate.TargetIndustry - 2 high = RootCandidate.TargetIndustry
             ]
             effects = SetIndustry value = Target.TargetIndustry
 
@@ -47,7 +47,7 @@ Tech
             scope = And [
                 ProductionCenter
                 OwnedBy empire = Source.Owner
-                Research low = RootCandidate.TargetResearch - 3 high = RootCandidate.TargetResearch
+                Research low = RootCandidate.TargetResearch - 2 high = RootCandidate.TargetResearch
             ]
             effects = SetResearch value = Target.TargetResearch
 
