@@ -2845,7 +2845,7 @@ void DesignWnd::BaseSelector::SetEmpireShown(int empire_id, bool refresh_list) {
 
 void DesignWnd::BaseSelector::ToggleAvailability(Availability::Enum type) {
     std::shared_ptr<CUIStateButton> button;
-    bool state;
+    bool state = false;
     switch (type) {
     case Availability::Obsolete:
         m_availabilities_state.ToggleAvailability(Availability::Obsolete);
