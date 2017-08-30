@@ -26,7 +26,7 @@ BuildingType
             Species name = RootCandidate.Species
             OwnedBy empire = RootCandidate.Owner
         ]
-        Number low = 0 high = 0 condition = Described description = "Academies of this species already exist in the empire" condition = And [
+        Number low = 0 high = 0 condition = Described description = "CONDITION_INTERSPECIES_ACADEMY_SPECIES_ALREADY_EXISTS" condition = And [
             Planet
             Enqueued type = Building name = "BLD_INTERSPECIES_ACADEMY"
             Species name = RootCandidate.Species
