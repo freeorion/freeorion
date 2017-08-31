@@ -54,9 +54,8 @@ YES
 
 NO
 Нет
+
 # Used as a placeholder for unexpanded content in the combat log window.
-ELLIPSIS
-...
 
 EMPIRE
 Империя
@@ -103,18 +102,8 @@ RENAME
 ENTER_NEW_NAME
 Введите новое имя
 
-NOTHING_VALUE_SYMBOL
---
-
-UNKNOWN_VALUE_SYMBOL
-?
-
-UNKNOWN_VALUE_SYMBOL_2
-???
-
 ERROR
 ОШИБКА
-
 
 RESET
 Рестарт
@@ -200,12 +189,8 @@ NEW_BATTLE_FLEET_NAME
 #      If any other asteroids are in the system, the roman numeral is appended.
 # %1% name of the system this planet is created in.
 # %2% suffix for this planet
-NEW_PLANET_NAME
-%1% %2%
 
 # The label pre-pended to a new asteroids naming suffix
-NEW_ASTEROIDS_SUFFIX
-[[PT_ASTEROIDS]]
 
 EMPTY_SPACE
 Глубокий космос
@@ -215,9 +200,6 @@ UNEXPLORED_REGION
 
 UNEXPLORED_SYSTEM
 Неисследованная система
-
-NOT_APPLICABLE
-N/A
 
 BOMBER
 Бомбардировщик
@@ -259,7 +241,6 @@ NOWHERE
 POPUP_MENU_PEDIA_PREFIX
 '''Помощь: '''
 
-
 ##
 ## Major errors
 ##
@@ -283,9 +264,6 @@ FORMAT_LIST_DEFAULT_EMPTY_HEADER
 # Used as a prefix for the FORMAT_LIST_[0-MANY]_ITEMS translation entries.
 FORMAT_LIST_DEFAULT_DUAL_HEADER
 Имеются:
-
-FORMAT_LIST_0_ITEMS
-%1%
 
 FORMAT_LIST_1_ITEMS
 %1% %2%
@@ -317,9 +295,6 @@ FORMAT_LIST_9_ITEMS
 FORMAT_LIST_10_ITEMS
 %1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10% и %11%
 
-FORMAT_LIST_MANY_ITEMS
-%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10%, %11% ...
-
 ##
 ## Predefined Ship Designs (located in default/scripting/ship_designs/)
 ##
@@ -341,6 +316,7 @@ SD_SCOUT
 
 SD_SCOUT_DESC
 Маленький дешевый безоружный корабль, спроектированный для разведки [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_REQUIRED]]
+
 SD_SCOUT_2
 Радиолокационный разведчик
 
@@ -376,6 +352,7 @@ SD_MARK_1
 
 SD_MARK1_DESC
 Простой фрегат с электро-магнитным орудием [[BLD_SHIPYARD_BASE_REQUIRED]]
+
 SD_LARGE_MARK_1
 Крейсер Ms
 
@@ -465,6 +442,7 @@ SD_GRAVITATING1
 
 SD_GRAVITATING1_DESC
 Огромный корабль для участия во флоте, вооруженный и бронированный по последнему слову техники [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
+
 SD_GRAVITATING2
 Линкор Dfx BS
 
@@ -500,6 +478,7 @@ SD_OUTPOST_SHIP
 
 SD_OUTPOST_SHIP_DESC
 Безоружный корабль, создающий аванпост в непригодных для жилья местах [[SHIPDESIGN_OUTPOSTS_CAPACITY]]. [[BLD_SHIPYARD_BASE_REQUIRED]]
+
 SD_ORG_OUTPOST_SHIP
 Органический аванпост
 
@@ -511,6 +490,7 @@ SD_COLONY_BASE
 
 SD_COLONY_BASE_DESC
 Безоружный корабль, может создать колонию только в системе, где он был построен [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_THREE_REQUIRED]] [[SHIPDESIGN_NO_TRAVEL]]
+
 SD_CRYONIC_COLONY_BASE
 Крионическая колониальная база
 
@@ -522,6 +502,7 @@ SD_OUTPOST_BASE
 
 SD_OUTPOST_BASE_DESC
 Безоружный корабль [[SHIPDESIGN_OUTPOSTS_CAPACITY]], создающий аванпост только в системе, где он был построен [[SHIPDESIGN_NO_TRAVEL]]
+
 SD_BASE_DECOY
 Спутник связи
 
@@ -557,7 +538,6 @@ SD_DRAGON_TOOTH
 
 SD_DRAGON_TOOTH_DESC
 Древний корабль с мощным вооружением и защитной системой [[BLD_SHIPYARD_BASE_REQUIRED]]
-
 
 ##
 ## Monsters
@@ -619,6 +599,7 @@ SM_DRONE_FACTORY
 
 SM_DRONE_FACTORY_DESC
 Созданная в давно ушедшие времена для защиты давно погибших цивилизаций, фабрика до сих пор каким-то чудом функционирует, производя боевых роботов
+
 SM_GUARD_0
 Технический корабль
 
@@ -663,6 +644,7 @@ SM_KRAKEN_3
 SM_KRAKEN_3_DESC
 '''Грозный и очень сильный космический монстр
 [[SM_KRAKEN_ENVIRONMENT]]'''
+
 SM_WHITE_KRAKEN
 Белый Кракен
 
@@ -796,7 +778,6 @@ SM_COSMIC_DRAGON_DESC
 
 Космический дракон - это биоинженерные космические монстры, невероятно жестокие с опасным оружием и сильным [[metertype METER_STEALTH]]. Для их выслеживания потребуется мощный флот и хорошая [[encyclopedia DETECTION_TITLE]]. Они ищут и атакуют обитаемые планеты и могут испарять целые звездные системы, если их вовремя не уничтожить'''
 
-
 ##
 ## Fields
 ##
@@ -818,11 +799,6 @@ FLD_NEBULA_1
 
 FLD_NEBULA_1_DESC
 Облако водорода, которое может сжаться, сформировав новую звезду
-FLD_NEBULA_2
-[[FLD_NEBULA_1]]
-
-FLD_NEBULA_2_DESC
-[[FLD_NEBULA_1_DESC]]
 
 FLD_SUBSPACE_RIFT
 Пространственный разрыв
@@ -835,7 +811,6 @@ FLD_ACCRETION_DISC
 
 FLD_ACCRETION_DISC_DESC
 Аккреционный диск представляет собой структуру (часто околозвездный диск), образованную рассеянным материалом на движущейся орбите вокруг массивного центрального тела. Все планеты в затронутой системе получают штраф [[metertype METER_SUPPLY]] -1
-
 
 ##
 ## Predefined starting fleets
@@ -852,7 +827,6 @@ FN_COLONY_FLEET
 
 MONSTERS
 Монстры
-
 
 ##
 ## Status update messages
@@ -892,6 +866,7 @@ UNABLE_TO_WRITE_CONFIG_XML
 
 UNABLE_TO_READ_CONFIG_XML
 Ошибка при чтении config.xml. Будут использованы настройки по умолчанию.
+
 UNABLE_TO_READ_PERSISTENT_CONFIG_XML
 Ошибка при попытке прочитать дополнительный файл persistent_config.xml (вероятно, данный файл не существует и это нормально)
 
@@ -940,6 +915,9 @@ Python AI для %1% вызвал ошибку
 ERROR_PLAYER_NAME_ALREADY_USED
 Игрок %1% уже используется
 
+##
+## Game Rules
+##
 
 ##
 ## Command-line and options database entries
@@ -987,6 +965,7 @@ OPTIONS_DB_FAKE_MODE_CHANGE
 
 OPTIONS_DB_FULLSCREEN_MONITOR_ID
 Выберите монитор для использования в полноэкранном режиме. Основной монитор имеет индекс 0. Необходим перезапуск, чтобы изменения вступили в силу.
+
 OPTIONS_DB_UI_SAVE_DIALOG_COLUMNS
 '''Список столбцов, отображаемых в диалоговом окне при сохранении файлов разделенных запятыми.
 Доступные столбцы: time, turn, player, empire, systems, seed, galaxy_age, galaxy_shape, planet_freq, native_freq, specials_freq, starlane_freq'''
@@ -1330,6 +1309,11 @@ OPTIONS_DB_UI_TOOLTIP_LONG_DELAY
 OPTIONS_DB_UI_ENC_SEARCH_ARTICLE
 При поиске в энциклопедии проверять совпадения в содержимом параграфа.
 
+# Section title for options window logging
+
+# This is a label to designate the logger as the general or default logger for a process
+# %1% is the name of a process logger, client, server or ai
+
 OPTIONS_DB_KEYPRESS_REPEAT_DELAY
 Устанавливает задержку между удерживанием клавиши и генерированием повторяющихся нажатий.
 
@@ -1522,20 +1506,11 @@ OPTIONS_DB_RESET_FSSIZE
 OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC
 Включает сброс групп эффектов в технических, строительных или корабельных описаниях
 
-OPTIONS_DB_VERBOSE_LOGGING_DESC
-Детальная запись журнала событий вселенной и эффектов
-
-OPTIONS_DB_VERBOSE_COMBAT_LOGGING_DESC
-Подробное протоколирование информации об итогах боевых действий
-
 OPTIONS_DB_VERBOSE_SITREP_DESC
 Включать сообщения об ошибках в отчет о событиях
 
 OPTIONS_DB_EFFECT_ACCOUNTING
 Учитывать содержимое таблицы после внесенных изменений в состояние игры
-
-OPTIONS_DB_PRNG_RESEEDING
-Повторный посев генерации случайных чисел каждый ход с предсказуемыми и воспроизводимыми значениями
 
 OPTIONS_DB_UI_SITREP_ICONSIZE
 Устанавливает ширину и высоту значка сводки; по умолчанию 16 (мин. 12, макс. 64)
@@ -1645,7 +1620,6 @@ OPTIONS_DB_NETWORK_DISCOVERY_PORT
 OPTIONS_DB_NETWORK_MESSAGE_PORT
 Сетевой порт для обмена сообщениями клиент-сервер
 
-
 ##
 ## File dialog
 ##
@@ -1671,7 +1645,6 @@ FILE_DLG_FILE_DOES_NOT_EXIST
 FILE_DLG_DEVICE_IS_NOT_READY
 Устройство не готово
 
-
 ##
 ## Color selection dialog
 ##
@@ -1681,28 +1654,6 @@ COLOR_DLG_NEW
 
 COLOR_DLG_OLD
 Старый
-
-COLOR_DLG_RED
-R:
-
-COLOR_DLG_GREEN
-G:
-
-COLOR_DLG_BLUE
-B:
-
-COLOR_DLG_HUE
-H:
-
-COLOR_DLG_SATURATION
-S:
-
-COLOR_DLG_VALUE
-V:
-
-COLOR_DLG_ALPHA
-A:
-
 
 ##
 ## Intro screen
@@ -1726,9 +1677,6 @@ INTRO_BTN_LOAD_GAME
 INTRO_BTN_OPTIONS
 Опции
 
-INTRO_BTN_PEDIA
-[[MAP_BTN_PEDIA]]
-
 INTRO_BTN_ABOUT
 Об игре
 
@@ -1746,7 +1694,6 @@ ERR_CONNECT_TIMED_OUT
 
 INTRO_CREDITS_LICENSE
 Выпущено под
-
 
 ##
 ## Server Setup Screen
@@ -1772,7 +1719,6 @@ JOIN_GAME_BN
 
 REFRESH_LIST_BN
 Обновить
-
 
 ##
 ## Multiplayer lobby
@@ -1810,12 +1756,12 @@ LOAD_GAME_BN
 
 START_GAME_BN
 Запуск игры
+
 READY_BN
 Принять
 
 NOT_READY_BN
 Отклонить
-
 
 ##
 ## Galaxy Setup Screen
@@ -1891,6 +1837,7 @@ GSETUP_CLUSTER
 # A galaxy shape to select when generating a universe.
 GSETUP_ELLIPTICAL
 Эллиптическая
+
 # A galaxy shape to select when generating a universe.
 GSETUP_DISC
 Диск
@@ -1962,10 +1909,10 @@ GSETUP_AGGRESSIVE
 # AI aggression level.
 GSETUP_MANIACAL
 Маниакальные
+
 # Random species selection description
 GSETUP_SPECIES_RANDOM_DESC
 Подбирает сучайный вид из доступных на выбор
-
 
 ##
 ## About dialog
@@ -1982,7 +1929,6 @@ VISION
 
 FREEORION_VISION
 FreeOrion - игра с открытым исходным кодом, основанная на Master of Orion - пошаговая масштабная космическая стратегия, строящаяся на классической модели '4X' с добавлением элементов развития наций, как в Europa Universalis 2 с гибким движком тактических боев. Так как проект модульный, принцип открытых исходных кодов позволяет значительно упростить доработку игровых элементов и движка с помощью сообществ, в то время как команда FreeOrion будет сосредоточена построением живущей, дышащей вселенной в "великой кампании".
-
 
 ##
 ## In-game menu
@@ -2002,12 +1948,12 @@ GAME_MENU_RESIGN
 
 GAME_MENU_SAVE_FILES
 Файлы сохраненных игр
+
 BUTTON_DISABLED
 Кнопка отключена
 
 SAVE_DISABLED_BROWSE_TEXT
 Кнопка «Сохранить игру» отключена либо потому, что это многопользовательская игра, в которой вы не являетесь ни хостом, ни модератором, либо потому, что в то время, когда это меню было открыто, по крайней мере один из ИИ еще не завершил свои передвижения на текущем ходе (индикация значка состояния в виде зеленого треугольника слева от значка игрока в окне «Империи»)
-
 
 ##
 ## Save game dialog
@@ -2097,7 +2043,6 @@ SAVE_REALLY_DELETE
 SAVE_REALLY_OVERRIDE
 Вы действительно хотите отменить %1%?
 
-
 ##
 ## Game options
 ##
@@ -2113,6 +2058,7 @@ OPTIONS_QUICK_CLOSE_WNDS
 
 OPTIONS_SHOW_SIDEPANEL_PLANETS
 Показывать боковую панель с планетами
+
 OPTIONS_AUTO_REPOSITION_WINDOWS
 Автоматическая перестановка окон
 
@@ -2124,6 +2070,7 @@ OPTIONS_SINGLEPLAYER
 
 OPTIONS_MULTIPLAYER
 Сетевая игра
+
 OPTIONS_AUTOSAVE_LIMIT
 Количество автосохранений
 
@@ -2168,6 +2115,7 @@ OPTIONS_TECH_CTRL_ICON_SIZE
 
 OPTIONS_TOOLTIP_DELAY
 Задержка подсказок (мс)
+
 OPTIONS_KEYPRESS_REPEAT_DELAY
 Задержка повтор. нажатия клавиши (мс)
 
@@ -2209,6 +2157,7 @@ OPTIONS_APP_TOP_WINDOWED
 
 OPTIONS_FULLSCREEN
 Полноэкранный
+
 OPTIONS_FAKE_MODE_CHANGE
 Замена ориг. разрешения подставным
 
@@ -2223,6 +2172,7 @@ OPTIONS_LIMIT_FPS
 
 OPTIONS_MAX_FPS
 Максимум FPS
+
 OPTIONS_LIMIT_FPS_NO_FOCUS
 Предел FPS (вне фокуса)
 
@@ -2231,6 +2181,7 @@ OPTIONS_MAX_FPS_NO_FOCUS
 
 OPTIONS_APPLY
 Применить
+
 OPTIONS_FLUSH_STRINGTABLE
 Очистка строковой таблицы
 
@@ -2299,11 +2250,13 @@ OPTIONS_GALAXY_MAP_STARFIELDS
 
 OPTIONS_GALAXY_MAP_SCALE_LINE
 Масштаб увеличения галактики
+
 OPTIONS_GALAXY_MAP_SCALE_CIRCLE
 Круговой масштаб увеличения галактики
 
 OPTIONS_GALAXY_MAP_ZOOM_SLIDER
 Слайдер увеличения галактики
+
 OPTIONS_UI_SYSTEM_UNEXPLORED_OVERLAY
 Отличительный оверлей при наведении мыши на неисследованную систему
 
@@ -2315,6 +2268,7 @@ OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY
 
 OPTIONS_GALAXY_MAP_POPUP
 Контекстное меню на карте галактики
+
 OPTIONS_UI_HIDE_MAP_PANELS
 Скрывать панели карт в режиме производства
 
@@ -2341,6 +2295,7 @@ OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE
 
 OPTIONS_UNOWNED_STARLANE_COLOUR
 Цвет звездных путей по умолчанию
+
 OPTIONS_UI_QUEUE_WIDTH
 Ширина очереди
 
@@ -2388,6 +2343,7 @@ OPTIONS_SOUND_WINDOW
 
 OPTIONS_SOUND_BUTTON
 Звуки кнопки
+
 OPTIONS_SOUND_NEWTURN
 Новый ход
 
@@ -2480,6 +2436,7 @@ OPTIONS_PAGE_AUTOSAVE
 
 OPTIONS_PAGE_UI
 Интерфейс
+
 OPTIONS_PAGE_OBJECTS_WINDOW
 Список объектов
 
@@ -2567,7 +2524,6 @@ OPTIONS_ADD_SAVED_DESIGNS
 OPTIONS_USE_BINARY_SERIALIZATION
 Создание двоичных (сжатых) файлов сохранения
 
-
 ##
 ## Main map window
 ##
@@ -2575,9 +2531,8 @@ OPTIONS_USE_BINARY_SERIALIZATION
 # %1% current turn number.
 MAP_BTN_TURN_UPDATE
 Ход %1%
+
 # %1% number of frames currently displayed per second.
-MAP_INDICATOR_FPS
-%1% FPS
 
 # %1% number of 'universe units' which the bar scale on the map represents.
 MAP_SCALE_INDICATOR
@@ -2585,70 +2540,42 @@ MAP_SCALE_INDICATOR
 
 MAP_BTN_MENU
 Меню
-MAP_BTN_MENU_DESC
-''''''
 
 MAP_BTN_AUTO_ADVANCE_ENABLED
 Автопродолжение хода
 
-MAP_BTN_AUTO_ADVANCE_ENABLED_DESC
-''''''
-
 MAP_BTN_MANUAL_TURN_ADVANCE
 Ручное продолжение хода
-MAP_BTN_MANUAL_TURN_ADVANCE_DESC
-''''''
 
 MAP_BTN_MODERATOR
 Модератор
-MAP_BTN_MODERATOR_DESC
-''''''
 
 MAP_BTN_OBJECTS
 Объекты
-MAP_BTN_OBJECTS_DESC
-''''''
 
 MAP_BTN_SITREP
 События
-MAP_BTN_SITREP_DESC
-''''''
 
 MAP_BTN_RESEARCH
 Наука
 
-MAP_BTN_RESEARCH_DESC
-''''''
-
 MAP_BTN_PRODUCTION
 Производство
-MAP_BTN_PRODUCTION_DESC
-''''''
 
 MAP_BTN_DESIGN
 Дизайн
-MAP_BTN_DESIGN_DESC
-''''''
 
 MAP_BTN_GRAPH
 Графики
-MAP_BTN_GRAPH_DESC
-''''''
 
 MAP_BTN_PEDIA
 Энциклопедия
-MAP_BTN_PEDIA_DESC
-''''''
 
 MAP_BTN_EMPIRES
 Империи
-MAP_BTN_EMPIRES_DESC
-''''''
 
 MAP_BTN_MESSAGES
 Сообщения
-MAP_BTN_MESSAGES_DESC
-''''''
 
 MAP_PRODUCTION_TITLE
 Производство
@@ -2732,7 +2659,6 @@ MAP_FLEET_PART_COUNT
 MAP_FLEET_SLOT_COUNT
 Всего кораб. слотов
 
-
 ##
 ## Side panel/System information
 ##
@@ -2777,7 +2703,6 @@ RESOURCE_EXPORT
 RESOURCE_SELF_SUFFICIENT
 Ни импорта, ни экспорта
 
-
 ##
 ## Side panel/Planet panel
 ##
@@ -2816,14 +2741,10 @@ PL_CANCEL_BOMBARD
 
 # %1% the planet size as text (small, medium, large, ...).
 # %2% type of the planet environment (desert, oceanic, terran, ...).
-PL_TYPE_SIZE
-%1% %2%
 
 # %1% the planet size as text (small, medium, large, ...).
 # %2% type of the planet environment (desert, oceanic, terran, ...).
 # %3% suitability of the planet for a concrete species (adequate, hostile, ...).
-PL_TYPE_SIZE_ENV
-%1% %2% (%3%)
 
 PL_NO_VISIBILITY
 Планету в данный момент не видно
@@ -2856,6 +2777,7 @@ PL_APPARENT_STEALTH_EXCEEDS_DETECTION
 
 PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION
 Последняя известная [[metertype METER_STEALTH]] устарела. Фактическая скрытность превышает [[DETECTION_TITLE]] или местный [[METER_DETECTION_VALUE_LABEL]] сильно ослаблен
+
 MENUITEM_SET_FOCUS
 Установить фокус
 
@@ -2865,7 +2787,6 @@ MENUITEM_ENQUEUE_BUILDING
 MENUITEM_ENQUEUE_SHIPDESIGN
 Корабли в очереди
 
-
 ##
 ## Side panel/Resources panel
 ##
@@ -2873,7 +2794,6 @@ MENUITEM_ENQUEUE_SHIPDESIGN
 # %1% current resource this planet is focused on producing.
 RP_FOCUS_TOOLTIP
 Цель: %1%
-
 
 ##
 ## Side panel/Specials panel
@@ -2890,7 +2810,6 @@ ADDED_ON_TURN
 ADDED_ON_INITIAL_TURN
 Зародилась изначально
 
-
 ##
 ## Side panel/Buildings panel
 ##
@@ -2900,7 +2819,6 @@ ORDER_BUIDLING_SCRAP
 
 ORDER_CANCEL_BUIDLING_SCRAP
 Отменить уничтожение
-
 
 ##
 ## General tooltips
@@ -2917,8 +2835,6 @@ TT_CHANGE
 
 # %1% the meter name displayed.
 # %2% the meter value.
-TT_BREAKDOWN_SUMMARY
-%1%: %2%
 
 TT_INHERENT
 Присущий
@@ -2952,10 +2868,9 @@ TT_SPECIAL
 # %2% name of species
 TT_SPECIES
 Виды <i>%2%</i>
+
 # %1% name of this fields field type.
 # %2% name of field
-TT_FIELD
-<i>%2%</i>
 
 TT_FIGHTER_LAUNCH
 Запускающий
@@ -2977,9 +2892,8 @@ TT_COMBAT_ROUND
 
 TT_UNKNOWN
 Неизвестный
+
 # %1% name of the species.
-TT_SPECIES_POPULATION
-%1% [[METER_POPULATION]]
 
 SP_RENAME_SYSTEM
 Переименовать систему
@@ -2996,7 +2910,6 @@ SP_ENTER_NEW_PLANET_NAME
 SP_PLANET_SUITABILITY
 Пригодность планеты
 
-
 ##
 ## Fleet window
 ##
@@ -3008,6 +2921,7 @@ FW_FLEET_HOLDING_AT
 # %1% system name where this fleet is moving to.
 FW_FLEET_MOVING_TO
 Двигаться к %1%
+
 # %1% system name where this fleet is moving to.
 # %2% estiminated time in turns when the fleet will arrive.
 FW_FLEET_MOVING_TO_ETA
@@ -3056,10 +2970,9 @@ FW_AUTO_DESC
 
 FW_UNKNOWN_DESIGN_NAME
 Неизвестный дизайн
+
 # %1% name of the ship design that was used by this ship.
 # %2% name of the ship owning species.
-FW_SPECIES_SHIP_DESIGN_LABEL
-(%2%) %1%
 
 # Displayed when creating a new fleet by dropping ships into the new fleet slot.
 FW_NEW_FLEET_LABEL
@@ -3070,6 +2983,7 @@ FW_NEW_FLEET_LABEL
 # %2% system where those fleets hold.
 FW_EMPIRE_FLEETS_AT_SYSTEM
 %1% Флотов в системе %2%
+
 # %1% empire, which owns the fleets.
 # %2% system where those fleets hold.
 FW_EMPIRE_FLEETS_NEAR_SYSTEM
@@ -3088,6 +3002,7 @@ FW_NO_FLEET
 # %1% system where those fleets hold.
 FW_GENERIC_FLEETS_AT_SYSTEM
 Флоты в %1%
+
 # Fleet window title
 # %1% system where those fleets hold.
 FW_GENERIC_FLEETS_NEAR_SYSTEM
@@ -3096,6 +3011,7 @@ FW_GENERIC_FLEETS_NEAR_SYSTEM
 # Fleet window title
 FW_GENERIC_FLEETS
 Флоты
+
 # the name that is used for fleets the client's player does not control but is
 # owned by an empire.
 # %1% empire name.
@@ -3204,6 +3120,7 @@ FW_SPLIT_DAMAGED_FLEET
 
 FW_SPLIT_UNFUELED_FLEET
 Отделить корабли без топлива от флота
+
 FW_SPLIT_NOT_FULL_FIGHTERS_FLEET
 Отделить корабли без истребителей от флота
 
@@ -3237,6 +3154,7 @@ ORDER_FLEET_EXPLORE
 
 ORDER_CANCEL_FLEET_EXPLORE
 Прекратить разведку
+
 ORDER_GIVE_FLEET_TO_EMPIRE
 Передать флот...
 
@@ -3249,6 +3167,9 @@ ORDER_GIVE_PLANET_TO_EMPIRE
 ORDER_CANCEL_GIVE_PLANET
 Отменить передачу планеты
 
+##
+## Fleet Button
+##
 
 ##
 ## Moderator
@@ -3275,7 +3196,6 @@ MOD_ADD_STARLANE
 MOD_REMOVE_STARLANE
 Удалить межзвездный путь
 
-
 ##
 ## Diplomacy
 ##
@@ -3300,6 +3220,7 @@ PEACE_PROPOSAL_CANCEL
 
 PEACE_ACCEPT
 Принять мирный договор
+
 PEACE_REJECT
 Отклонить мирное предложение
 
@@ -3318,7 +3239,6 @@ ALLIES_REJECT
 END_ALLIANCE_DECLARATION
 Объявить об окончании альянса
 
-
 ##
 ## TechTreeWnd
 ##
@@ -3333,8 +3253,6 @@ TECH_TOTAL_COST_ALT_STR
 
 # %1% research points used this turn.
 # %2% research points available for this turn.
-TECH_TURN_COST_STR
-+%1% / %2% RP
 
 # %1% number of remaining turns to complete the technology research.
 TECH_TURNS_LEFT_STR
@@ -3354,6 +3272,7 @@ TECH_WND_STATUS_PARTIAL_UNLOCK
 
 TECH_WND_STATUS_LOCKED
 Заблокировано
+
 TECH_WND_UNRESEARCHABLE
 Недостижимо
 
@@ -3377,6 +3296,7 @@ TECH_WND_PROGRESS
 # %1% estimated turns left until technology is researched.
 TECH_WND_ETA
 %1% ходов прошло
+
 TECH_WND_LIST_COLUMN_NAME
 Название
 
@@ -3392,7 +3312,6 @@ TECH_WND_LIST_COLUMN_CATEGORY
 TECH_WND_LIST_COLUMN_DESCRIPTION
 Описание
 
-
 ##
 ## Production info panel
 ##
@@ -3405,16 +3324,15 @@ PRODUCTION_INFO_AT_LOCATION_TITLE
 
 # %1% type of resource (Research, Production, ...).
 # %2% name of the empire which owns this resource produced.
-PRODUCTION_INFO_EMPIRE
-%2% %1%
+
 PRODUCTION_INFO_TOTAL_PS_LABEL
 Всего доступно очков
 
 PRODUCTION_INFO_WASTED_PS_LABEL
 Потерянные очки
+
 PRODUCTION_INFO_LOCAL_PS_LABEL
 Доступно очков
-
 
 ##
 ## Research window
@@ -3422,18 +3340,15 @@ PRODUCTION_INFO_LOCAL_PS_LABEL
 
 RESEARCH_WND_TITLE
 Исследования
+
 # %1% name of the empire which owns this research queue.
 RESEARCH_QUEUE_EMPIRE
 %1% очередь исследований
-
-RESEARCH_INFO_RP
-RP
 
 RESEARCH_QUEUE_PROMPT
 '''Дважды щелкните мышью или нажмите Shift на любой элемент, чтобы добавить его к очереди исследования
 
 Удерживайте нажатой кнопку, затем кликните выше, чтобы добавить элемент в верхнюю часть очереди'''
-
 
 ##
 ## Build selector window
@@ -3463,8 +3378,6 @@ PRODUCTION_WND_REDUNDANT
 
 # %1% currently used amount of production points used per turn to build an item.
 # %2% maximum available amount of production points for this turn.
-PRODUCTION_TURN_COST_STR
-+%1% / %2% PP
 
 # %1% number of turns left to finish the production of an item.
 PRODUCTION_TURNS_LEFT_STR
@@ -3475,12 +3388,12 @@ PRODUCTION_TURNS_LEFT_NEVER
 
 PRODUCTION_DETAIL_ADD_TO_QUEUE
 Добавить в очередь
+
 PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE
 Добавить в начало очереди
 
 PRODUCTION_QUEUE_PROMPT
 Дважды нажмите на любой элемент, чтобы добавить его к очереди производства
-
 
 ##
 ## Production window
@@ -3488,6 +3401,7 @@ PRODUCTION_QUEUE_PROMPT
 
 PRODUCTION_WND_TITLE
 Производство
+
 PRODUCTION_WINDOW_ARTICLE_TITLE
 Окно производства
 
@@ -3600,15 +3514,11 @@ A Survey Ship costs 36 PP with a minimum of 3 turns (max 12 PP/turn).
 
 '''
 
-PRODUCTION_INFO_PP
-PP
 # %1% name of the empire that owns the production queue.
 PRODUCTION_QUEUE_EMPIRE
 %1% очередь производства
 
 # %1% the amount of items that should be produced in a single batch.
-PRODUCTION_QUEUE_MULTIPLES
-'''%1%x '''
 
 # %1% number of repetions an item should be produced on after another.
 PRODUCTION_QUEUE_REPETITIONS
@@ -3625,6 +3535,7 @@ PRODUCTION_WND_PROGRESS
 # %1% location where the item is produced.
 PRODUCTION_QUEUE_ITEM_LOCATION
 В %1%
+
 # %1% location where the item is enqueued for production.
 PRODUCTION_QUEUE_ENQUEUED_ITEM_LOCATION
 Очередь на %1%
@@ -3665,21 +3576,18 @@ PRODUCTION_WND_TOOLTIP_PARTS
 PRODUCTION_WND_TOOLTIP_FAILED_COND
 Неудовлетворительные требования производства в %1%
 
-
 ##
 ## Design window
 ##
 
 SHIP_DESIGN_FILES
 Файлы дизайна
+
 DESIGN_SAVE
 Сохранить файл дизайна
 
 DESIGN_ADD
 Добавить дизайн к списку дизайнов империи
-
-DESIGN_ADD_ALL
-Добавить все сохраненные дизайны империи
 
 DESIGN_NAME_DEFAULT
 Пользов. дизайн корабля
@@ -3698,6 +3606,7 @@ DESIGN_WND_FINISHED_DESIGNS
 
 DESIGN_WND_SAVED_DESIGNS
 Сохраненные проекты
+
 DESIGN_WND_MONSTERS
 Монстры
 
@@ -3733,6 +3642,7 @@ DESIGN_INV_NO_HULL
 
 DESIGN_INV_NO_NAME
 Имя проекта не может быть пустым
+
 DESIGN_KNOWN
 Дублирует существующий дизайн
 
@@ -3748,36 +3658,23 @@ DESIGN_COMPONENT_CONFLICT
 DESIGN_COMPONENT_CONFLICT_DETAIL
 Конструкция судна не может содержать как %1% так и %2%
 
-DESIGN_OBSOLETE
-Устаревший дизайн
+# %1% name of the new ship design.
 
-DESIGN_WND_ADD
-Добавить новый дизайн
+# %1% previous name of the existing design.
+# %2% new name of the existing design.
 
 # %1% name of the new ship design.
-DESIGN_WND_ADD_DETAIL
-'''Добавить новый дизайн называемый
-"%1%"
-для завершения'''
 
-DESIGN_WND_UPDATE
-Обновить старый дизайн
-
-# %1% old name of the existing design.
-# %2% new name of the existing design.
-DESIGN_WND_UPDATE_DETAIL
-'''Заменить старый дизайн
-"%1%"
-новым дизайном
-"%2%"
-для завершения'''
+# %1% old name of the saved design.
+# %2% new name of the saved design.
 
 DESIGN_UPDATE_INVALID_NO_CANDIDATE
 Выберите существующий проект для обновления
 
 ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT
-Выберите корпус, добавьте части и нажмите "[[DESIGN_WND_ADD]]" для создания доступного дизайна
+Выберите корпус, добавьте части и нажмите "[[DESIGN_WND_ADD_FINISHED]]" для создания доступного дизайна
 
+# %1% File path of unwritable file
 
 ##
 ## Statistics
@@ -3843,21 +3740,17 @@ STATISTICS_TEST_2
 STATISTICS_TEST_3
 Анализ статистики 3
 
-
 ##
 ## Encyclopedia
 ##
 
 # %1% name of the species.
-ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1
-'''%1%:	'''
 
 # %1% content of ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1 expanded to match
 #     column width.
 # %2% the planet environment for a species.
 # %3% the planet population capacity for a species.
-ENC_SPECIES_PLANET_TYPE_SUITABILITY
-%1%	%2% (%3%)
+
 # %1% name of the planet.
 ENC_SUITABILITY_REPORT_POSITIVE_HEADER
 '''%1% подходит для заселения этими видами
@@ -3904,13 +3797,16 @@ ENC_GALAXY_SETUP_SETTINGS
 Аборигены: %9%
 Макс. агрессивность ИИ: %10%
 '''
+
 ENC_SHIP_PART
 - модуль корабля
+
 ENC_SHIP_PART_DESC
 Модуль корабля она же часть/деталь может быть установлен на [[encyclopedia ENC_SHIP_HULL]] (в доступной [[encyclopedia SLOT_TITLE]]) при проектировании корабля, чтобы улучшить его параметры. Некоторые низкоуровневые части доступны по умолчанию, но лучшие версии или новые типы деталей могут быть разблокированы [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]]. Каждая часть судна относится к одной из категорий ниже
 
 ENC_SHIP_HULL
 Корпус корабля
+
 ENC_SHIP_HULL_DESC
 Корпус корабля является основным элементом архитектуры судна, определяющим базовые параметры его конструкции (когда еще не установлен [[encyclopedia ENC_SHIP_PART]]). По умолчанию доступны некоторые низкоуровневые корпуса, но лучшие версии корпуса могут быть разблокированы [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]]. Каждый корпус судна относится к одной из категорий ниже
 
@@ -3933,7 +3829,7 @@ ENC_SPECIES
 Виды
 
 ENC_SPECIES_DESC
-Каждый вид классифицируется по [[encyclopedia METABOLISM_TITLE]] 
+'''Каждый вид классифицируется по [[encyclopedia METABOLISM_TITLE]] '''
 
 ENC_FIELD_TYPE
 Тип поля
@@ -3958,6 +3854,7 @@ EMPIRE_CAPITAL
 
 NO_CAPITAL
 Нет известной столицы
+
 EMPIRE_ID
 ID Империи
 
@@ -3980,6 +3877,7 @@ OWNED_FLEET_AT_SYSTEM
 
 NO_OWNED_FLEETS_KNOWN
 Нет известных принадлежащих флотов
+
 EMPIRE_SHIPS_DESTROYED
 Уничтоженные корабли империи
 
@@ -4027,6 +3925,7 @@ ENC_SHIP
 
 ENC_MONSTER
 [Игра - Монстр]
+
 ENC_MONSTER_TYPE
 Типы монстра
 
@@ -4041,6 +3940,7 @@ ENC_BUILDING
 
 ENC_SYSTEM
 [Игра - Системы]
+
 ENC_FIELD
 [Игра - Области]
 
@@ -4050,11 +3950,9 @@ ENC_HOMEWORLDS
 ENC_TEXTURES
 [Тест - Структура]
 
-ENC_TEXTURE_INFO
-%4% -- %1% x %2% px @ %3% BPP<img src = "%4%"></img>
-
 ENC_INDEX
 Оглавление энциклопедии
+
 SEARCH_RESULTS
 Результаты поиска
 
@@ -4077,14 +3975,6 @@ ENC_SEARCH_NOTHING_FOUND
 #     (e.g. for a ship part it would be the ship part class).
 # %2% general type description of the thing described in the encyclopedia.
 #     (e.g. for a ship part it would be the content of 'ENC_SHIP_PART').
-ENC_DETAIL_TYPE_STR
-%1% %2%
-
-ENC_PP
-PP
-
-ENC_RP
-RP
 
 # Concise listing of costs required to produce item or research tech.
 # %1% cost to complete requested item or technology.
@@ -4169,12 +4059,6 @@ ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
             (<i>противник с атакой %17$.1f и щитами %18$.1f</i>):  %19$.f   (%20$.2f за PP)
 '''
 
-ENC_SDD_HANGAR
-[[encyclopedia PC_FIGHTER_HANGAR]] [[METER_CAPACITY]]
-
-ENC_SDD_BAY
-[[encyclopedia PC_FIGHTER_BAY]] [[METER_CAPACITY]]
-
 ENC_UNLOCKED_BY
 '''<u>Открытые технологии:</u>
 
@@ -4187,20 +4071,16 @@ ENC_UNLOCKS
 
 ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES
 '''Можно установить - '''
+
 ENC_SHIP_EXCLUSIONS
 '''Не может быть в дизайне с: '''
 
 # %1% name of the item type unlocked (building, ship part, hull, ...).
 # %2% name of the item unlocked (a specific building or ship part, ...).
-ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
-'''%1%: %2%
-'''
 
 # %1% category of the technology.
 # %2% UNUSED
 # %3% short description of the technology.
-ENC_TECH_DETAIL_TYPE_STR
-%3%
 
 # %1% object, technology or other content that should be looked up in the
 #     encyclopedia.
@@ -4220,6 +4100,7 @@ ENC_COMBAT_LOG_DESCRIPTION_STR
 # %5% the draw number (a draw is the acting of a single combat unit).
 ENC_COMBAT_ATTACK_STR
 %1% атаковал %2%, нанеся %3% урона
+
 # %1% link to a ship part description.
 # %2% potential damage done by the weapon.
 # %3% damage consumed by the target shields.
@@ -4234,7 +4115,6 @@ ENC_COMBAT_SHIELD_PIERCED
 # %2% name of the unit attacked.
 ENC_COMBAT_ATTACK_SIMPLE_STR
 %1% атакует %2%
-
 
 # %1% number of repeated events.
 # %2% link to the attacking unit or empire.
@@ -4266,6 +4146,7 @@ ENC_ROUND_BEGIN
 # %2% name of the attacked unit.
 ENC_COMBAT_UNKNOWN_DESTROYED_STR
 %2% выведен из строя
+
 # %1% name of the empire which owns the attacked unit.
 # %2% name of the attacked fighter.
 ENC_COMBAT_FIGHTER_INCAPACITATED_STR
@@ -4287,6 +4168,7 @@ ENC_COMBAT_PLANET_INCAPACITATED_STR
 # %2% name of the attacked unit.
 ENC_COMBAT_DESTROYED_STR
 Корабль %2% уничтожен
+
 # %1% unused
 # %2% name of empire
 ENC_COMBAT_INITIAL_STEALTH_LIST
@@ -4335,7 +4217,6 @@ ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
 
 ENC_METER_TYPE
 Тип измерителя
-
 
 ##
 ## Combat report
@@ -4433,7 +4314,6 @@ COMBAT_UNIT_HEALTH_AXIS_LABEL
 COMBAT_DESTROYED_LABEL
 Потери: %1%
 
-
 ##
 ## Encyclopedia article categories and short descriptions
 ##
@@ -4470,6 +4350,7 @@ POPULATION_TITLE_SHORT_DESC
 
 MANAGEMENT_TITLE_SHORT_DESC
 Управление
+
 ##
 ## Encyclopedia subcategories
 ##
@@ -4520,94 +4401,9 @@ SPECIES_TRAITS_TITLE
 SPECIES_TRAITS_TEXT
 Неполный список особенностей Видов:
 
-
 ##
 ## Encyclopedia articles
 ##
-
-METER_TARGET_POPULATION_VALUE_LABEL
-[[METER_POPULATION_VALUE_LABEL]]
-
-METER_TARGET_POPULATION_VALUE_DESC
-[[METER_POPULATION_VALUE_DESC]]
-
-METER_TARGET_INDUSTRY_VALUE_LABEL
-[[METER_INDUSTRY_VALUE_LABEL]]
-
-METER_TARGET_INDUSTRY_VALUE_DESC
-[[METER_INDUSTRY_VALUE_DESC]]
-
-METER_TARGET_RESEARCH_VALUE_LABEL
-[[METER_RESEARCH_VALUE_LABEL]]
-
-METER_TARGET_RESEARCH_VALUE_DESC
-[[METER_RESEARCH_VALUE_DESC]]
-
-METER_TARGET_TRADE_VALUE_LABEL
-[[METER_TRADE_VALUE_LABEL]]
-
-METER_TARGET_TRADE_VALUE_DESC
-[[METER_TRADE_VALUE_DESC]]
-
-METER_TARGET_CONSTRUCTION_VALUE_LABEL
-[[METER_CONSTRUCTION_VALUE_LABEL]]
-
-METER_TARGET_CONSTRUCTION_VALUE_DESC
-[[METER_CONSTRUCTION_VALUE_DESC]]
-
-METER_TARGET_HAPPINESS_VALUE_LABEL
-[[METER_HAPPINESS_VALUE_LABEL]]
-
-METER_TARGET_HAPPINESS_VALUE_DESC
-[[METER_HAPPINESS_VALUE_DESC]]
-
-METER_MAX_CAPACITY_VALUE_LABEL
-[[METER_CAPACITY_VALUE_LABEL]]
-
-METER_MAX_CAPACITY_VALUE_DESC
-[[METER_CAPACITY_VALUE_DESC]]
-
-METER_MAX_SECONDARY_STAT_VALUE_LABEL
-[[METER_SECONDARY_STAT_VALUE_LABEL]]
-
-METER_MAX_SECONDARY_STAT_VALUE_DESC
-[[METER_SECONDARY_STAT_VALUE_DESC]]
-
-METER_MAX_FUEL_VALUE_LABEL
-[[METER_FUEL_VALUE_LABEL]]
-
-METER_MAX_FUEL_VALUE_DESC
-[[METER_FUEL_VALUE_DESC]]
-
-METER_MAX_SHIELD_VALUE_LABEL
-[[METER_SHIELD_VALUE_LABEL]]
-
-METER_MAX_SHIELD_VALUE_DESC
-[[METER_SHIELD_VALUE_DESC]]
-
-METER_MAX_STRUCTURE_VALUE_LABEL
-[[METER_STRUCTURE_VALUE_LABEL]]
-
-METER_MAX_STRUCTURE_VALUE_DESC
-[[METER_STRUCTURE_VALUE_DESC]]
-
-METER_MAX_DEFENSE_VALUE_LABEL
-[[METER_DEFENSE_VALUE_LABEL]]
-
-METER_MAX_DEFENSE_VALUE_DESC
-[[METER_DEFENSE_VALUE_DESC]]
-
-METER_MAX_SUPPLY_VALUE_LABEL
-[[METER_SUPPLY_VALUE_LABEL]]
-
-METER_MAX_SUPPLY_VALUE_DESC
-[[METER_SUPPLY_VALUE_DESC]]
-
-METER_MAX_TROOPS_VALUE_LABEL
-[[METER_TROOPS_VALUE_LABEL]]
-
-METER_MAX_TROOPS_VALUE_DESC
-[[METER_TROOPS_VALUE_DESC]]
 
 METER_POPULATION_VALUE_LABEL
 Население
@@ -4639,8 +4435,6 @@ METER_RESEARCH_VALUE_DESC
 
 METER_TRADE_VALUE_LABEL
 Торговля
-METER_TRADE_VALUE_DESC
-[[MAP_TRADE_TEXT]]
 
 METER_CONSTRUCTION_VALUE_LABEL
 Инфраструктура
@@ -4691,6 +4485,7 @@ METER_STRUCTURE_VALUE_LABEL
 
 METER_STRUCTURE_VALUE_DESC
 Структура это некое количество [[encyclopedia DAMAGE_TITLE]], которое корабль может принять пока не будет полностью уничтожен. Структура может быть восстановлена путем ремонта, а ее максимальное значение увеличено с помощью [[encyclopedia ARMOR_TITLE]]
+
 METER_DEFENSE_VALUE_LABEL
 Оборона
 
@@ -4699,6 +4494,7 @@ METER_DEFENSE_VALUE_DESC
 
 METER_SUPPLY_VALUE_LABEL
 Снабжение
+
 METER_SUPPLY_VALUE_DESC
 '''Показатель снабжения на планете представляет собой количество пересечений источников линий снабжения. Меньшие планеты могут обеспечивать снабжение на большие расстояния, большие же планеты уменьшают расстояния.
 
@@ -4750,12 +4546,6 @@ METER_SPEED_VALUE_LABEL
 
 METER_SPEED_VALUE_DESC
 Скорость на карте галактики (uu / ход). Расстояние uu, пройденное кораблем за один ход, равно его скорости на звездной карте и отображается пунктирной линией, за которой следует круг, показывающий количество ходов необходимых для полного перемещения и достижения следующей системы. Если скорость звездолета корабля меньше чем длина звездного пути для завершения путешествия потребуется не менее 2 ходов. Каждая пройденная звезда будет потреблять только 1 единицу [[metertype METER_FUEL]] независимо от требуемых ходов
-
-METER_DETECTION_STRENGTH_VALUE_LABEL
-[[DETECTION_TITLE]]
-
-METER_DETECTION_STRENGTH_VALUE_DESC
-[[DETECTION_TEXT]]
 
 PEACE_TITLE
 Мир
@@ -4968,7 +4758,7 @@ DESIGN_WINDOW_ARTICLE_TEXT
 
 [[DESIGN_WND_STARTS]] имеет четыре вкладки: пустую [[DESIGN_WND_HULLS]], [[DESIGN_WND_FINISHED_DESIGNS]] дизайны, [[DESIGN_WND_SAVED_DESIGNS]] проекты предыдущих игр и [[DESIGN_WND_MONSTERS]] проекты для контроля. Перетащите или дважды щелкните по корпусам, рисункам или монстрам, чтобы отредактировать / осмотреть их в проектировщике
 
-[[DESIGN_WND_FINISHED_DESIGNS]] проекты отображаются в том же порядке, что и «Производственном окне». Дизайны можно перемещать в списке, чтобы изменить их порядок. Удалите проекты с помощью «[[DESIGN_OBSOLETE]]» из контекстного меню. Корабли уже поставленные в очередь для производства будут по-прежнему строиться со старым дизайном. Сохраните проекты на диске для будущих игр с помощью «[[DESIGN_SAVE]]» в контекстном меню
+[[DESIGN_WND_FINISHED_DESIGNS]] проекты отображаются в том же порядке, что и «Производственном окне». Дизайны можно перемещать в списке, чтобы изменить их порядок. Удалите проекты с помощью «[[DESIGN_WND_DELETE_DESIGN]]» из контекстного меню. Корабли уже поставленные в очередь для производства будут по-прежнему строиться со старым дизайном. Сохраните проекты на диске для будущих игр с помощью «[[DESIGN_SAVE]]» в контекстном меню
 
 Щелкните правой кнопкой мыши [[DESIGN_WND_SAVED_DESIGNS]] по дизайну и скопируйте один или все сохраненные проекты в доступный список проектов империи. Если в настройках игры активировать «[[OPTIONS_ADD_SAVED_DESIGNS]], то все конструкции [[DESIGN_WND_SAVED_DESIGNS]] будут автоматически импортированы при старте новой игры 
 
@@ -4986,9 +4776,9 @@ DESIGN_WINDOW_ARTICLE_TEXT
 
 Добавьте имя и необязательное описание дизайна
 
-Нажмите «[[DESIGN_WND_ADD]]», чтобы добавить проект в конец списка существующих проектов [[DESIGN_WND_FINISHED_DESIGNS]]
+Нажмите «[[DESIGN_WND_ADD_FINISHED]]», чтобы добавить проект в конец списка существующих проектов [[DESIGN_WND_FINISHED_DESIGNS]]
 
-Нажмите «[[DESIGN_WND_UPDATE]]», чтобы заменить недавно выбранный дизайн [[DESIGN_WND_FINISHED_DESIGNS]] новым дизайном. «[[DESIGN_WND_UPDATE]]» будет активным только в том случае, если этот проект был запущен из проекта в списке [[DESIGN_WND_FINISHED_DESIGNS]]. «[[DESIGN_WND_UPDATE]]» только меняет новый дизайн, любые суда уже поставленные в очередь для производства или уже выпущенные останутся не обновленными
+Нажмите «[[DESIGN_WND_UPDATE_FINISHED]]», чтобы заменить недавно выбранный дизайн [[DESIGN_WND_FINISHED_DESIGNS]] новым дизайном. «[[DESIGN_WND_UPDATE_FINISHED]]» будет активным только в том случае, если этот проект был запущен из проекта в списке [[DESIGN_WND_FINISHED_DESIGNS]]. «[[DESIGN_WND_UPDATE_FINISHED]]» только меняет новый дизайн, любые суда уже поставленные в очередь для производства или уже выпущенные останутся не обновленными
 '''
 
 FLEET_MOVEMENT_ARTICLE_TITLE
@@ -5025,8 +4815,6 @@ FIELDS_TITLE
 FIELDS_TEXT
 Существует несколько типов областей, каждая из которых имеет своеобразный, несколько диффузный внешний вид. Щелчок правой кнопкой мыши по ним в [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] вызывает небольшое всплывающее меню, идентифицирующее их тип и предоставляющее возможность просмотреть их данные
 
-
-
 ##
 ## Guides
 ##
@@ -5045,7 +4833,6 @@ GREETINGS_INTRO
 
 GREETINGS_GUIDE_REFERENCE
 Новичкам этой вселенной, возможно, особенно захочется познакомиться с [[encyclopedia QUICK_START_GUIDE_TITLE]]
-
 
 GREETINGS_GUIDE_TEXT
 '''[[GREETINGS_INTRO]]
@@ -5129,7 +4916,6 @@ ORBITAL_DRYDOCK_REPAIR_TEXT
 
 Любой бой в системе нарушит ремонт на этом ходу'''
 
-
 ##
 ## Turn progress
 ##
@@ -5167,12 +4953,12 @@ TURN_PROGRESS_STARTING_AIS
 # %1% number of the current turn.
 TURN_BEGIN
 Начало хода %1%
+
 ERROR_PROCESSING_SERVER_MESSAGE
 Ошибка обработки сообщения с сервера
 
 ERROR_EARLY_TURN_UPDATE
 Получено неожиданное обновление с сервера
-
 
 ##
 ## Messages panel
@@ -5180,7 +4966,6 @@ ERROR_EARLY_TURN_UPDATE
 
 MESSAGES_PANEL_TITLE
 Сообщения
-
 
 ##
 ## Players list
@@ -5198,7 +4983,6 @@ RESOLVING_COMBAT
 WAITING
 Ожидания
 
-
 ##
 ## Objects window
 ##
@@ -5212,7 +4996,6 @@ COLLAPSE_ALL
 EXPAND_ALL
 Развернуть все
 
-
 ##
 ## Objects columns
 ##
@@ -5225,9 +5008,6 @@ PLANETS_SUBMENU
 
 FLEETS_SUBMENU
 Флот / Корабли
-
-ID
-ID
 
 NAME
 Название
@@ -5261,8 +5041,10 @@ OBJECT_TYPE
 
 CREATION_TURN
 Построение хода
+
 AGE
 Возраст
+
 TURNS_SINCE_FOCUS_CHANGE
 Прошло ходов после изменения цели
 
@@ -5350,7 +5132,6 @@ SPECIALS
 TAGS
 Теги
 
-
 ##
 ## Filters dialog
 ##
@@ -5369,6 +5150,7 @@ CONDITION_ALL
 
 CONDITION_EMPIREAFFILIATION
 Империя владелец
+
 CONDITION_ARMED
 Вооруженный
 
@@ -5407,11 +5189,13 @@ CONDITION_PLANETSIZE
 
 CONDITION_PLANETTYPE
 Тип планеты
+
 CONDITION_FOCUSTYPE
 Настройка фокуса (цели)
 
 CONDITION_STARTYPE
 Тип звезды
+
 CONDITION_METERVALUE
 Значение свойства объекта
 
@@ -5427,7 +5211,6 @@ CONDITION_PTYPE_W_AST
 CONDITION_ANY
 Любой
 
-
 ##
 ## Situation report
 ##
@@ -5442,6 +5225,7 @@ SITREP_PANEL_TITLE_TURN
 
 FILTERS
 Фильтры
+
 SITREP_IGNORE_MENU
 Игнорировать
 
@@ -5469,9 +5253,6 @@ SITREP_HIDE_TEMPLATE
 
 SITREP_SHOWALL_TEMPLATES
 Показать все заблокированные данные
-
-SITREP_WELCOME
-[[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_GUIDE_REFERENCE]]
 
 SITREP_WELCOME_LABEL
 Добро пожаловать
@@ -5547,6 +5328,7 @@ SITREP_OBJECT_DESTROYED_AT_SYSTEM
 
 SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL
 Объект уничтожен
+
 SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM
 В %system%: %shipdesign% (%empire% корабль '%ship%') был уничтожен
 
@@ -5636,6 +5418,7 @@ SITREP_GROUND_BATTLE
 
 SITREP_GROUND_BATTLE_LABEL
 Битва на планете
+
 SITREP_GROUND_BATTLE_ENEMY
 На %planet%: произошло наземное столкновение с %empire%
 
@@ -5659,6 +5442,7 @@ SITREP_PLANET_COLONIZED
 
 SITREP_PLANET_COLONIZED_LABEL
 Колонизирована планета
+
 SITREP_PLANET_OUTPOSTED
 На %planet% был установлен аванпост
 
@@ -5760,6 +5544,7 @@ EFFECT_ANCIENT_TECH_RUMORS
 
 EFFECT_ANCIENT_TECH_RUMORS_LABEL
 Древние руины - слухи о технологии
+
 EFFECT_ANCIENT_EXTINCT_SPECIES
 На %planet%: хорошо сохранившиеся тела вымерших видов %species% были найдены в Древних Руинах!
 
@@ -5777,6 +5562,7 @@ EFFECT_ANCIENT_RUINS_EMPTY
 
 EFFECT_ANCIENT_RUINS_EMPTY_LABEL
 Древние руины - пусто
+
 EFFECT_NATIVES_TECH
 На %planet%: технология %tech% была воспринята от %species%!
 
@@ -5794,6 +5580,7 @@ EFFECT_CONC_CAMP_COMLETE
 
 EFFECT_CONC_CAMP_COMLETE_LABEL
 Этническая чистка
+
 SITREP_SHIP_REPAIR_DOCK_NONE
 Орбитальный ремонтный док - пусто
 
@@ -5823,11 +5610,13 @@ EFFECT_MONSTER_SPAWNING
 
 EFFECT_MONSTER_SPAWNING_LABEL
 Появился монстр
+
 EFFECT_GAIAN_TERRAFORM
 На %planet% завершено терраформирование, чтобы лучше приспособиться к новым жителям
 
 EFFECT_GAIAN_TERRAFORM_LABEL
 Терраформирование Гайи
+
 EFFECT_GAIA
 На %planet%: проходят неописуемые празднества, поскольку теперь их мир является [[special GAIA_SPECIAL]] раем
 
@@ -5839,6 +5628,7 @@ EFFECT_TERRAFORM
 
 EFFECT_TERRAFORM_LABEL
 Терраформирование
+
 EFFECT_STARLANE_BORE
 В %system%: открылась новая связь с близлежащей системой
 
@@ -5898,6 +5688,7 @@ EFFECT_NEBULA
 
 EFFECT_NEBULA_LABEL
 Туманность
+
 EFFECT_TREE
 В %system%: новый лес Дайсона начал разрастаться и окружать звезду
 
@@ -5909,11 +5700,13 @@ EFFECT_DERELICT_MAP
 
 EFFECT_DERELICT_MAP_LABEL
 Заброшенная карта
+
 EFFECT_DERELICT_FUEL
 В %system%: корабли были дозаправлены из оставшихся запасов найденных в заброшенном %special%
 
 EFFECT_DERELICT_FUEL_LABEL
 Заброшенное топливо
+
 EFFECT_BIOWEAPON
 На %planet% потеряно %rawtext% населения из-за %shippart% атак
 
@@ -5925,6 +5718,7 @@ EFFECT_EVACUEES
 
 EFFECT_EVACUEES_LABEL
 Эвакуированные
+
 EFFECT_STARGATE
 В %system%: флот %fleet% достиг Звездных Врат
 
@@ -5990,25 +5784,17 @@ HEAD_ON_A_SPIKE_MESSAGE
 
 HEAD_ON_A_SPIKE_MESSAGE_LABEL
 Вражеская столица захвачена
+
 CUSTOM_SITREP_INTRODUCTION
 Добро пожаловать в первоначальный брифинг о состоянии дел и обстановке в империи. В соответствии с директивой %tech% все занятые служащие империи стремятся собрать важную информацию и отправить ее на %system%, где она компилируется в отчеты, например, с уведомлением о важных событиях и других напоминаниях, выбранных лидером империи
 
 # This message value must contain no spaces. Use underlines instead.
-CUSTOM_1
-Custom_1
 
 # This message value must contain no spaces. Use underlines instead.
-CUSTOM_2
-Custom_2
 
 # This message value must contain no spaces. Use underlines instead.
-CUSTOM_3
-Custom_3
 
 # This message value must contain no spaces. Use underlines instead.
-CUSTOM_4
-Custom_4
-
 
 ##
 ## Victory/defeat
@@ -6022,15 +5808,14 @@ VICTORY_ALL_ENEMIES_ELIMINATED
 
 VICTORY_EXPERIMENTOR_CAPTURE
 ПОБЕДА! %empire% захватила мощных Экспериментаторов и покончила со страшной угрозой наводнившую галактику
+
 SITREP_VICTORY_LABEL
 Победа
 
 SITREP_EMPIRE_ELIMINATED
 Империя %empire% была уничтожена
-
 SITREP_EMPIRE_ELIMINATED_LABEL
 Империя уничтожена
-
 
 ##
 ## Random beginner hints
@@ -6158,7 +5943,6 @@ BEGINNER_HINT_21
 BEGINNER_HINT_22
 22: Выбрав систему и нажав на ALT-C вы увидите диапазон окружности системы, увеличение или уменьшение масштаба позволит оценить расстояние, посмотрев на величину измеряемого расстояния
 
-
 ##
 ## Species
 ##
@@ -6189,6 +5973,7 @@ OCCUPIED_PLANETS
 
 ENVIRONMENTAL_PREFERENCES
 Предпочтения [[encyclopedia ENVIRONMENT_TITLE]]:
+
 FOCUS_PREFERENCE
 '''Предпочтительный [[encyclopedia FOCUS_TITLE]]: '''
 
@@ -6295,6 +6080,7 @@ The Gysache are always wary of predators and are easily alarmed. Their natural r
 Домашний мир:
 Their homeworld has a thick atmosphere of nitrogen, ammonia and carbon dioxide. Most parts of it are moist but it lacks large oceans, only 5% of its surface is covered in water. The main topographical features are enormous high rocky mesas cut by mile deep canyons the bottoms of which contain the only standing water
 '''
+
 SP_CHATO
 Чато
 
@@ -6311,6 +6097,7 @@ The Chato'matou'Gormoshk are actually two species together, however it is not en
 Социальный строй:
 In Chato'matou society, age is the most important factor as they are nearly immortal. Every command the elders issue is obeyed at once and to disobey an elder is the greatest crime in Chato'matou society. They developed a system to transmit signals without delay throughout an entire colony, enabling them to converse with near the speed of light. This greatly enhanced the species mental capabilities, as all new ideas and theories could be instantly processed throughout the colony. The Gormoshk are valued as mounts and well cared for under normal circumstances, however they are also seen mostly as animals
 '''
+
 SP_TRITH
 Трит
 
@@ -6319,6 +6106,7 @@ SP_TRITH_GAMEPLAY_DESC
 Предпочитают [[PT_DESERT]] планеты
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 '''
+
 SP_TRITH_DESC
 '''Описание:
 The Trith are a mixture of matter and enormous psychic energies. Their shape is vaguely humanoid. All Trith are telepathic, and herein lies the reason for their rage: while the Trith can learn to keep their own thoughts to themselves, they are unable to tune out the thoughts of others. To mature Trith this is merely vexing, but for young Trith it can be fatal. Sometimes, Trith that gain their telepathic ability before adolescence are not ready to cope with the combined minds of all people in the universe screaming at them and go mad or die
@@ -6371,6 +6159,7 @@ Hhhoh locomotion is performed by using their two, large front legs, while using 
 Социальный строй:
 Hhhohs describe themselves as social pragmatists. Elders are very much revered, some living close to 230 years. Their sloth-like disposition makes them aversive to any fast movements, as well as hasty decisions.
 '''
+
 SP_EAXAW
 Эксо
 
@@ -6424,6 +6213,7 @@ The Laenfa are long and vine-like, able to attach and detach into any number of 
 Социальный строй:
 The Laenfa have a unified culture due to their telepathy but because their telepathic communication weakens with distance, there is a large central vine that decides on most important decisions. This vine carries out its debates in secret but takes into account the voices of all Laenfa it is able to detect. The Laenfa carry out their duties with hive-like efficiency with each individual working for the collective goals of gaining knowledge of other species and protecting knowledge of themselves.
 '''
+
 SP_LEMBALALAM
 Лембала'Лам
 SP_LEMBALALAM_GAMEPLAY_DESC
@@ -6440,6 +6230,7 @@ The Lembala'Lam are an ancient species in the evening of its existence. They had
 Социальный строй:
 The Lembala know each other for eons, but are suspicious of each and every one of the others. Their democratic government is forever paralyzed by long accepted stalemates. Due to paranoia and their lack of altruism even the most basic cooperation is rare and short lived.
 '''
+
 SP_TAEGHIRUS
 Т'игфирус
 
@@ -6472,6 +6263,7 @@ Mu Ursh are a peaceful, non-aggressive race of vaguely feline appearance, they b
 
 Социальный строй:
 To their regret, their natural abilities seem to make them exceptionally gifted pilots, and some amongst their number have decided the best way to ensure galactic peace is to conquer and control all aggressive intelligent species, making the galaxy as peaceful as their homeworld.'''
+
 SP_GEORGE
 Гооги
 
@@ -6489,6 +6281,7 @@ George is a single telepathic entity that consists of multiple mobile telepathic
 The units that make up George look like 2.5 meter long, 0.5 meter tall centipedes except with a far smoother skin and a cluster of about 6 tentacle/antennae at the front for manipulation. The units can't act or even think on their own. The mind of George is the sum of all the units communicating telepathically, over any distance.
 Due to their telepathic abilities, George share a communal vision with all other George in the universe, regardless of empire affiliation.
 '''
+
 SP_CRAY
 Крэй
 
@@ -6506,6 +6299,7 @@ The Cray resemble a large black box of smooth shiny plastic with rounded corners
 The Cray are a tribal society. Each tribe is formed around a single Cray known as a Master Craftsman who has the skills to build and maintain Cray. Because the Cray are so badly designed even the Master Craftsmen rarely get them perfect and each tribe gets its own “racial characteristics” based on the idiosyncrasies of its Master Craftsman's work.
 Day to day decisions run on an extremely complex web of favors. All Cray will happily help their kin if asked and afterwards both will remember exactly what the debt is. While not the most efficient way of running an economy this system means that within a tribe the Cray will owe or be owed favors by a good portion of the community fostering exceptionally strong social bonds and that is just the way they like it.
 '''
+
 SP_ETTY
 Етти
 
@@ -6524,6 +6318,7 @@ The robot bodies of the Etty serve as legs, eyes, ears and hands. A socket conne
 Социальный строй:
 The Etty are exceedingly polite and strictly honor all contracts and agreements. Their culture is very clean, civil, kind and courteous, but very withdrawn. Etty government is a true democracy with a strong civil service held in check by a powerful press.
 '''
+
 SP_CYNOS
 Синос
 
@@ -6563,6 +6358,7 @@ Life is much shorter for Phinnerts than for most other sentient life, owing to t
 Домашний мир:
 Their planet has low gravity and a very thick atmosphere. Its composition is unique as it has a low proportion of heavier metals, but a much higher proportion of other heavy elements, particularly noble gases. It also has very stable tectonic formations meaning that the surface of the crust is very flat, and so is mostly covered with shallow, standing water. The entire world is like a giant everglade.
 '''
+
 SP_EGASSEM
 Егассем
 
@@ -6582,6 +6378,7 @@ Egassem society is essentially feudalistic, with each Egassem individual being o
 Домашний мир:
 A world wracked with tidal and geological heating, as well as the more conventional solar radiation. Large 'oceans' of liquid rock cover most of the surface.
 '''
+
 SP_SSLITH
 Сслит
 
@@ -6599,8 +6396,6 @@ In its relaxed state, an individual Sslith is essentially a 2.15cm thick rectang
 The Sslith are organized into groups called Pnacra which serve as independent governmental units. Though there are a few global laws that all Sslith in all Pnacra obey, each Pnacra has it's own rules and laws as to conduct and actions. The Pnacra move around of their own accord, and have no fixed geographic location. If two or more of them meet, then members who are discontented with their present Pnacra can move to another to try out its ways and customs.
 '''
 
-SP_FIFTYSEVEN
-Fifty-Seven
 SP_FIFTYSEVEN_GAMEPLAY_DESC
 '''Одержимые математикой летучие змеи, распевающие фрактальные песни на всю планету
 
@@ -6640,6 +6435,7 @@ Setinon society is based on two factors, firstly their strongly individualistic,
 Домашний мир:
 A swamp world with a dense atmosphere and fairly dense biosphere.
 '''
+
 SP_NYMNMN
 Нимнмн
 
@@ -6649,8 +6445,6 @@ SP_NYMNMN_GAMEPLAY_DESC
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 '''
 
-SP_NYMNMN_DESC
-''''''
 SP_TRENCHERS
 Тренчеры
 
@@ -6659,9 +6453,6 @@ SP_TRENCHERS_GAMEPLAY_DESC
 Предпочитают [[PT_BARREN]] планеты
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
-
-SP_TRENCHERS_DESC
-''''''
 
 SP_RAAAGH
 Раааах
@@ -6685,6 +6476,7 @@ The Raaagh homeworld is of the Terran type. Sea and land are more or less evenly
 Причина пребывания:
 There's not bit of land big enough for an individual Raaagh to live on that hasn't been fought over for centuries. The genetic compulsion of a Raaagh is to guard his territory with his life, and when possible to expand into adjacent land. Abandoning one's territory is inconceivable, and a Raaagh forcibly removed from his territory goes violently insane.
 '''
+
 SP_BEIGEGOO
 Бежевая слизь
 
@@ -6692,10 +6484,6 @@ SP_BEIGEGOO_GAMEPLAY_DESC
 '''Безумный, чрезвычайно закрытый, планетарный нанитовый рой
 Предпочитают [[PT_RADIATED]] планеты
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-'''
-
-SP_BEIGEGOO_DESC
-'''The entire planet is covered in a beige haze of Nanites. It is unknown whether they were dropped as a weapon, were an out of control experiment, or are a means of extracting resources, but they have been thorough. There's nothing left but the planet's radioactive core. These Nanites are very efficient assemblers, and are eager to do so if provided raw materials. However the Nanites, are extremely protective of the secret of their design - they self destruct if any are captured or removed from the planet.
 '''
 
 SP_SILEXIAN
@@ -6720,6 +6508,7 @@ The Silexians have a hierarchical caste system under a dictatorship government. 
 История:
 The Silexians were created by the Caretakers in order to increase the efficiency and automation of their environmental maintenance projects. Eventually, all of the Caretakers’ worlds were inhabited and maintained by the peaceful and loyal Silexians. When the Caretakers left the galaxy, some Silexians were abandoned.
 '''
+
 SP_KOBUNTURA
 Кобунтура
 
@@ -6736,6 +6525,7 @@ A Kobuntura is composed of trillions of magnetic dust particles. Their dense cor
 Социальный строй:
 The Kobuntura have a guild system since ancient times, but one of the guilds, the Dark Enclave specialized in martial arts, has gained control over all the other guilds and established a military dictatorship. Despite this, there are no secrets amongst Kobuntura as they can't communicate without all the other Kobuntura noticing. Recreation and trade are very limited, as the sole intent of the Dark Enclave, and indeed all of Kobuntura society, is to find one of the Precursor species, the Builders, and unlock the greatest secrets of construction. This goal is the impetus driving their entire civilization.
 '''
+
 SP_UGMORS
 Угморы
 
@@ -6759,6 +6549,7 @@ An Ugmor can take on many shapes, but all of them consist of rocks or sheets of 
 Домашний мир:
 The Ugmor homeworld is a rocky planet that rotates very quickly (once every 3 and a half hours). 30% of its surface is covered by seas of lava and liquid metals.
 '''
+
 SP_GISGUFGTHRIM
 Гис Гуф Г-трим
 
@@ -6766,10 +6557,6 @@ SP_GISGUFGTHRIM_GAMEPLAY_DESC
 '''Травоядные ракообразные, живущие в колонии вне планеты в гелеобразной субстанции
 Предпочитают [[PT_TOXIC]] планеты
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-'''
-
-SP_GISGUFGTHRIM_DESC
-'''Most of the equatorial region of the Gis Guf Gthrim homeworld is covered with a single gelatinous organism known as the amber expanse, that replaces all plant life. The Gis (and many other creatures) live on and feed only on the Amber expanse. The Gis life-cycle is also closely tied to the amber expanse. The expanse itself seems to be immortal, and non-reproducing. Attempts to clone part of it have failed, so it seems the Gis will be unable to leave their world.
 '''
 
 SP_HIDDENGARDENER
@@ -6809,6 +6596,7 @@ At the end of each of their 6 short crab like legs, is an inflatable sac which e
 Социальный строй:
 The entire Abaddonnian species lives in a dictatorship ruled by a sentient artificial intelligence called Mother. This AI was created by the Abaddoni as a governmental assistant, but slowly took over. Now every newborn Abaddoni gets a wireless transmitter placed into the brain, for Mother to read their thoughts and being able to terminate them when necessary. There is no real social structure between the Abaddoni, they are all the same - slaves.
 '''
+
 SP_ACIREMA
 Ахирема
 
@@ -6855,6 +6643,7 @@ The homeworld, Oolur is orbited by 23 moons.
 Причина пребывания:
 The Ourbools find their sense of position via the regular movements of the 23 moons. Everything is perceived against that gravitational background. To be removed from that context is extremely disorienting to the point of "blinding" the unlucky traveler. He no longer has the familiar to calibrate against so all he can perceive is meaningless graviton noise.
 '''
+
 SP_VOLP
 Ворп-Углуш
 
@@ -6898,6 +6687,7 @@ The Furthest report that their homeworld was once full of the deadliest predator
 Причина пребывания:
 The Furthest generally consider space travel far too dangerous for a sane being, but some who consider their homeworld too dangerous may consider relocating to another world.
 '''
+
 SP_BANFORO
 Банфоро
 
@@ -6958,6 +6748,7 @@ The whole life of Misiorlas is wrapped around piloting space vessels. Piloting i
 Причина вымирания:
 At one point in history the Final Ones, one of the Precursor civilizations, decided that the Misiorla could be a threat to their ultimate goal.
 '''
+
 SP_EXOBOT
 Экзоботы
 
@@ -6972,15 +6763,10 @@ SP_EXOBOT_DESC
 
 SP_ANCIENT_GUARDIANS
 Древние стражи
-
 SP_ANCIENT_GUARDIANS_GAMEPLAY_DESC
 '''Древние стражи-роботы, построенные цивилизацией Предтеч
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 Будут самоуничтожаться при завоевании, оставив аванпост, принадлежащий завоевателю
-'''
-
-SP_ANCIENT_GUARDIANS_DESC
-'''Constructed by precursor technology, these ancient machines can adapt to and fight in any kind of environment. With unwavering loyalty and commitment, they have protected the planet from any invaders, never wasting time to repair and improve the fortifications. Upon being captured, every Guardian Robot will automatically self-destruct.
 '''
 
 SP_EXPERIMENTOR
@@ -7003,9 +6789,6 @@ SP_SUPER_TEST_GAMEPLAY_DESC
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 [[encyclopedia TELEPATHIC_TITLE]]
 '''
-
-SP_SUPER_TEST_DESC
-''''''
 
 ##
 ## Specials
@@ -7295,6 +7078,7 @@ DERELICT_SPECIAL3
 
 DERELICT_SPECIAL_DESC
 Древний покинутый корабль с непонятными артефактами. Кто знает, что он может скрывать в себе...
+
 ACCRETION_DISC_SPECIAL
 Аккреционный диск
 
@@ -7372,9 +7156,9 @@ CRYSTALS_SPECIAL_DESC
 
 ELERIUM_SPECIAL
 Чистый Элериум
+
 ELERIUM_SPECIAL_DESC
 Эта планета имеет богатое природное месторождение чистого элерия, значительно увеличивающее производство или рост педобионтов (каменная/почвенная жизнь)
-
 
 ##
 ## Enumeration values
@@ -7415,6 +7199,7 @@ OBJ_SYSTEM
 # Universe object types
 OBJ_FIELD
 Область
+
 # Universe object types
 OBJ_FIGHTER
 Истребитель
@@ -7454,6 +7239,7 @@ STAR_BLACK
 # Star types
 STAR_NONE
 Не звезда
+
 # Planet types
 INVALID_PLANET_TYPE
 Неопознанная планета
@@ -7501,6 +7287,7 @@ PT_ASTEROIDS
 # Planet types
 PT_GASGIANT
 Газовый гигант
+
 # Planet sizes
 INVALID_PLANET_SIZE
 Неопознанный размер планеты
@@ -7536,6 +7323,7 @@ SZ_ASTEROIDS
 # Planet sizes
 SZ_GASGIANT
 Газовый гигант
+
 # Planet environments
 INVALID_PLANET_ENVIRONMENT
 неизвестная планетарная среда
@@ -7602,6 +7390,7 @@ FOCUS_STARGATE_SEND_DESC
 # Focus types
 FOCUS_STARGATE_RECEIVE
 Получение через Звездный врата
+
 FOCUS_STARGATE_RECEIVE_DESC
 Открыть Звездные врата кораблям отправляемым из других мест
 
@@ -7616,6 +7405,7 @@ FOCUS_PROTECTION
 
 FOCUS_PROTECTION_DESC
 Повышает энерго-щиты, оборону и наземные силы
+
 FOCUS_DOMINATION
 Психическое господство
 
@@ -7705,6 +7495,7 @@ METER_CONSTRUCTION
 # Meter types
 METER_HAPPINESS
 Счастье
+
 # Meter types
 METER_CAPACITY
 Вместимость
@@ -7758,8 +7549,6 @@ METER_SPEED
 Скорость
 
 # Meter types
-METER_DETECTION_STRENGTH
-[[DETECTION_TITLE]]
 
 METER_BUILDING_COST_FACTOR
 Фактор затрат на строительство
@@ -7847,6 +7636,7 @@ BT_BUILDING
 # Build types
 BT_SHIP
 Корабль
+
 # Resource types
 INVALID_RESOURCE_TYPE
 Неверный тип ресурса
@@ -7870,12 +7660,14 @@ SL_EXTERNAL
 # Ship slot types
 SL_INTERNAL
 Внутренний слот
+
 # Ship slot types
 SL_CORE
 Центральный слот
 
 SL_TOOLTIP_DESC
 Пустой
+
 # Ship part classes
 INVALID_SHIP_PART_CLASS
 неверный класс части судна
@@ -7912,6 +7704,7 @@ PC_FIGHTER_BAY_DESC
 # Ship part classes
 PC_SHIELD
 Щиты
+
 PC_SHIELD_DESC
 '''Щит уменьшает [[encyclopedia DAMAGE_TITLE]] полученные от каждого оружия.
 
@@ -7920,12 +7713,14 @@ PC_SHIELD_DESC
 # Ship part classes
 PC_ARMOUR
 Броня
+
 PC_ARMOUR_DESC
 Броня увеличивает [[metertype METER_STRUCTURE]] корабля, позволяя судну выдерживать больше урона прежде чем полностью разрушиться
 
 # Ship part classes
 PC_TROOPS
 Наземные силы
+
 PC_TROOPS_DESC
 '''Войска увеличивают значение [[metertype METER_TROOPS]] на борту, которое можно использовать для вторжения на планеты противника
 
@@ -7935,6 +7730,7 @@ PC_TROOPS_DESC
 # Ship part classes
 PC_DETECTION
 Обнаружение
+
 PC_DETECTION_DESC
 '''Детали обнаружения увеличивают значение [[metertype METER_DETECTION]] для корабля на котором они установлены
 
@@ -7943,6 +7739,7 @@ PC_DETECTION_DESC
 # Ship part classes
 PC_STEALTH
 Скрытность
+
 PC_STEALTH_DESC
 '''Детали невидимости увеличивают [[metertype METER_STEALTH]] корабля. Эффекты от этих частей не дополняют друг друга, на корабль будет влиять только самая высокая номинальная часть
 
@@ -7953,6 +7750,7 @@ PC_STEALTH_DESC
 # Ship part classes
 PC_FUEL
 Топливо
+
 PC_FUEL_DESC
 '''Детали топлива влияют на [[metertype METER_FUEL]] корабля. Такие части могут увеличить максимальную топливную вместительность или увеличить количество топлива, которое судно может собрать или регенерировать.
 
@@ -7961,6 +7759,7 @@ PC_FUEL_DESC
 # Ship part classes
 PC_COLONY
 Колонизация
+
 PC_COLONY_DESC
 '''Части колонии интегрируются с кораблем, чтобы обеспечить необходимое оборудование для установления владения на новой планете
 
@@ -7983,12 +7782,14 @@ PC_SPEED_DESC
 # Ship part classes
 PC_GENERAL
 Общие
+
 PC_GENERAL_DESC
 Универсальные и специализированные детали, которые не относятся к какой-либо конкретной категории
 
 # Ship part classes
 PC_BOMBARD
 Бомбардировка
+
 PC_BOMBARD_DESC
 '''Детали бомбардировки позволяют кораблю бомбардировать вражескую планету, как правило, уменьшая численность населения планеты на величину мощности любых применимых частей входящих в общий потенциал бомбардировки на борту
 
@@ -8113,7 +7914,6 @@ HULL_MONSTER_TREE
 HULL_MONSTER_TREE_DESC
 Корпуса используемые в дизайнах монстров-деревьев
 
-
 ##
 ## FOCS value references, effects & condition descriptions
 ##
@@ -8132,6 +7932,7 @@ DESC_VAR_SOURCE
 
 DESC_VAR_TARGET
 цель
+
 DESC_VAR_LOCAL_CANDIDATE
 локальный кандидат состояния
 
@@ -8140,6 +7941,7 @@ DESC_VAR_ROOT_CANDIDATE
 
 DESC_STATISTIC
 статистика
+
 DESC_STAT_TYPE
 тип отчета
 
@@ -8154,11 +7956,13 @@ DESC_VAR_SIZEASDOUBLE
 
 DESC_VAR_PLANETTYPE
 тип планеты
+
 DESC_VAR_ORIGINALTYPE
 ориг. тип планеты
 
 DESC_VAR_NEXTBETTERPLANETTYPE
 следующая планета, подходящая для видов
+
 DESC_VAR_DISTANCEFROMORIGINALTYPE
 расстояние от ориг. типа планеты
 
@@ -8173,6 +7977,7 @@ DESC_VAR_STARTYPE
 
 DESC_VAR_VALUE
 предыдущее значение
+
 DESC_VAR_GALAXYMAXAIAGGRESSION
 установка макс. агрессии в галактике
 
@@ -8203,93 +8008,6 @@ DESC_VAR_GALAXYSTARLANEFREQUENCY
 DESC_VAR_NON_OBJECT_REFERENCE
 свободная переменная
 
-DESC_VAR_TARGETPOPULATION
-[[METER_TARGET_POPULATION]]
-
-DESC_VAR_TARGETINDUSTRY
-[[METER_TARGET_INDUSTRY]]
-
-DESC_VAR_TARGETRESEARCH
-[[METER_TARGET_RESEARCH]]
-
-DESC_VAR_TARGETTRADE
-[[METER_TARGET_TRADE]]
-
-DESC_VAR_TARGETCONSTRUCTION
-[[METER_TARGET_CONSTRUCTION]]
-
-DESC_VAR_MAXFUEL
-[[METER_MAX_FUEL]]
-
-DESC_VAR_MAXSHIELD
-[[METER_MAX_SHIELD]]
-
-DESC_VAR_MAXSTRUCTURE
-[[METER_MAX_STRUCTURE]]
-
-DESC_VAR_MAXDEFENSE
-[[METER_MAX_DEFENSE]]
-
-DESC_VAR_MAXTROOPS
-[[METER_MAX_TROOPS]]
-
-DESC_VAR_MAXCAPACITY
-[[METER_MAX_CAPACITY]]
-
-DESC_VAR_MAX_SECONDARY_STAT
-[[METER_MAX_SECONDARY_STAT]]
-
-DESC_VAR_POPULATION
-[[METER_POPULATION]]
-
-DESC_VAR_INDUSTRY
-[[METER_INDUSTRY]]
-
-DESC_VAR_RESEARCH
-[[METER_RESEARCH]]
-
-DESC_VAR_TRADE
-[[METER_TRADE]]
-
-DESC_VAR_CONSTRUCTION
-[[METER_CONSTRUCTION]]
-
-DESC_VAR_FUEL
-[[METER_FUEL]]
-
-DESC_VAR_SHIELD
-[[METER_SHIELD]]
-
-DESC_VAR_STRUCTURE
-[[METER_STRUCTURE]]
-
-DESC_VAR_DEFENSE
-[[METER_DEFENSE]]
-
-DESC_VAR_TROOPS
-[[METER_TROOPS]]
-
-DESC_VAR_SUPPLY
-[[METER_SUPPLY]]
-
-DESC_VAR_STEALTH
-[[METER_STEALTH]]
-
-DESC_VAR_DETECTION
-[[METER_DETECTION]]
-
-DESC_VAR_SPEED
-[[METER_SPEED]]
-
-DESC_VAR_CAPACITY
-[[METER_CAPACITY]]
-
-DESC_VAR_SECONDARY_STAT
-[[METER_SECONDARY_STAT]]
-
-DESC_VAR_SIZE
-[[METER_SIZE]]
-
 DESC_VAR_TRADESTOCKPILE
 торговый запас
 
@@ -8304,8 +8022,6 @@ DESC_VAR_RESEARCHOUTPUT
 
 DESC_VAR_OWNER
 владелец
-DESC_VAR_ID
-ID
 
 DESC_VAR_AGE
 возраст в ходах
@@ -8339,6 +8055,7 @@ DESC_VAR_PREVIOUSSYSTEMID
 
 DESC_VAR_NUMSHIPS
 количество кораблей
+
 DESC_VAR_NUMSTARLANES
 количество соединенных звезд
 
@@ -8356,6 +8073,7 @@ DESC_VAR_BUILDINGTYPE
 
 DESC_VAR_FOCUS
 цель
+
 DESC_VAR_AVAILABLE_FOCI
 доступные цели (фокусы)
 
@@ -8376,6 +8094,7 @@ DESC_VAR_OWNERTOPPRIORITYENQUEUEDTECH
 
 DESC_VAR_LASTTURNBATTLEHERE
 в последний раз бой был здесь
+
 DESC_COMPLEX
 Совокупность переменных
 
@@ -8384,8 +8103,6 @@ DESC_VARIABLE_NAME
 
 # FOCS variable reference description text.
 # %1% reference type of the FOCS variable.
-DESC_VALUE_REF_MULTIPART_VARIABLE0
-%1%
 
 # FOCS variable reference description text.
 # %1% reference type of the FOCS variable.
@@ -8449,7 +8166,6 @@ DESC_VALUE_REF_MULTIPART_VARIABLE6
 DESC_VALUE_REF_MULTIPART_VARIABLEMANY
 %1% %2% %3% %4% %5% %6% %7% ...
 
-
 ##
 ## FOCS condition descriptions
 ##
@@ -8459,11 +8175,6 @@ DESC_ALL
 
 DESC_ALL_NOT
 ''' не во вселенной'''
-DESC_NONE
-[[DESC_ALL_NOT]]
-
-DESC_NONE_NOT
-[[DESC_ALL]]
 
 # %1% name of the empire this condition applies to.
 DESC_EMPIRE_AFFILIATION_SELF
@@ -8556,6 +8267,7 @@ DESC_SPECIAL
 # %1% name of the special the object should not have.
 DESC_SPECIAL_NOT
 ''' не имеет артефакт: %1%'''
+
 # %1% name of the special the object should have.
 # %2% FIXME
 # %3% FIXME
@@ -8623,6 +8335,7 @@ DESC_PLANET_ENVIRONMENT
 # %2% name of the species.
 DESC_PLANET_ENVIRONMENT_NOT
 ''' это не планета %1% для вида %2%'''
+
 DESC_PLANET_ENVIRONMENT_CUR_SPECIES
 имеет сейчас
 
@@ -8633,6 +8346,7 @@ DESC_SPECIES
 # %1% textual decription of the species.
 DESC_SPECIES_NOT
 ''' не содержит вида %1%'''
+
 # %1% name of the empire that enqueued items.
 # %2% textual description of the lower limit for the number of enqueued items.
 # %3% textual description of the upper limit for the number of enqueued items.
@@ -8778,6 +8492,7 @@ DESC_METER_VALUE_CURRENT
 # %3% textual description of the upper limit for the meter value.
 DESC_METER_VALUE_CURRENT_NOT
 ''' не имеет %1% между %2% и %3%'''
+
 # %1% name of the meter.
 # %2% textual description of the lower limit for the meter value.
 DESC_METER_VALUE_CURRENT_MIN
@@ -8805,7 +8520,7 @@ DESC_METER_VALUE_CURRENT_MAX_NOT
 DESC_SHIP_PART_METER_VALUE_CURRENT
 ''' есть %2% %1% между %3% и %4%'''
 
-# %1% name of the ship eter.
+# %1% name of the ship meter.
 # %2% textual description of the ship part.
 # %3% textual description of the lower limit for the meter value.
 # %4% textual description of the upper limit for the meter value.
@@ -8887,6 +8602,7 @@ DESC_STATIONARY
 
 DESC_STATIONARY_NOT
 ''' движущийся объект'''
+
 DESC_AGGRESSIVE
 ''' агрессивен'''
 
@@ -8926,6 +8642,7 @@ DESC_SUPPLY_CONNECTED_RESOURCE
 # %2% textual description of the condition.
 DESC_SUPPLY_CONNECTED_RESOURCE_NOT
 ''' этот ресурс не связан империей %1% с объектом %2%'''
+
 # %1% textual description of the bombarding object.
 DESC_ORDERED_BOMBARDED
 ''' бомбардирован объектом %1%'''
@@ -9017,6 +8734,7 @@ DESC_MODE_NUMBER_OF
 # %3% FIXME
 DESC_MODE_NUMBER_OF_NOT
 ''' не один из %1% объектов со средним показателем %2% и %3%'''
+
 # %1% FIXME
 DESC_VALUE_TEST
 ''' когда %1%'''
@@ -9074,6 +8792,7 @@ DESC_OWNER_HAS_SHIP_DESIGN
 
 DESC_OWNER_HAS_SHIP_DESIGN_NOT
 ''' проект корабля заблокирован для империи'''
+
 DESC_OWNER_HAS_SHIP_PART
 ''' деталь корабля разблокирована для империи'''
 
@@ -9097,7 +8816,6 @@ DESC_HAS_TAG
 DESC_HAS_TAG_NOT
 ''' это не %1%'''
 
-
 ##
 ## Technology categories
 ##
@@ -9110,16 +8828,19 @@ LEARNING_CATEGORY_DESC
 
 PRODUCTION_CATEGORY
 Производство
+
 PRODUCTION_CATEGORY_DESC
 Технология относится к производству
 
 CONSTRUCTION_CATEGORY
 Строительство
+
 CONSTRUCTION_CATEGORY_DESC
 Технология относится к строительству
 
 GROWTH_CATEGORY
 Демография
+
 GROWTH_CATEGORY_DESC
 Технология относится к росту
 
@@ -9227,6 +8948,7 @@ BOMBARD_WEAPON_TECHS_DESC
 
 DEFENSE_CATEGORY
 Оборона
+
 DEFENSE_CATEGORY_DESC
 Технология относится к обороне планет и целых систем
 
@@ -9240,8 +8962,7 @@ EXTINCT_SPECIES_TECHS
 Вымершие виды
 
 EXTINCT_SPECIES_TECHS_DESC
-Технология специализируется на вымерших видах 
-
+'''Технология специализируется на вымерших видах '''
 
 ##
 ## Technology theories
@@ -9384,6 +9105,7 @@ GRO_GENETIC_ENG
 
 GRO_GENETIC_ENG_DESC
 Палитра генетики настолько же разнообразна, как и формы жизни из которых она заимствуется. Гены могут быть удалены, скопированы и заменены в геноме для создания трансгенных организмов с набором особенностей невозможных в природе. Также, гены могут быть изменены перед заменой, записывая измененные базовые коды напрямую, что позволяет создавать полностью новые гены. Несмотря на это, методы ограничены небольшими модификациями существующих генов, доступных для анализа
+
 CON_REMOTE_COL
 Отдаленная колонизация
 
@@ -9458,6 +9180,7 @@ GRO_NANO_CYBERNET_DESC
 
 GRO_TRANSORG_SENT
 Трансорганическая чувствительность
+
 GRO_TRANSORG_SENT_DESC
 Ощущение, как мы его знаем, всегда наблюдается как неразрывно связанное с биологической жизнью. Ухватив истинную природу и происхождение самого чувства, можно было бы создать сознательные сущности, которые нельзя было бы отнести к жизни, той которую мы знаем
 
@@ -9493,7 +9216,6 @@ PRO_ROBOTIC_PROD_DESC
 
 PRO_EXOBOTS
 Полуавтоматические экзоботы
-
 PRO_EXOBOTS_DESC
 Позволяет производить экзоботов, оптимизированных для производства и добычи на враждебных планетах
 
@@ -9559,6 +9281,7 @@ PRO_ZERO_GEN_DESC
 
 PRO_NEUTRONIUM_EXTRACTION
 Нейтронная экстракция
+
 PRO_NEUTRONIUM_EXTRACTION_DESC
 Ядро звезды [[STAR_NEUTRON]] состоит из вырожденного нейтронного вещества, сжатого под действием силы гравитации до плотности, намного большей чем самая тяжелая нормальная материя. Этот экзотический материал имеет многочисленные применения, как только это вещество будет извлечено из звезды, перед вами откроются невероятные возможности позволяющие производить конструкции и части кораблей
 
@@ -9620,11 +9343,13 @@ CON_GAL_INFRA_DESC
 
 CON_ART_HEAVENLY
 Искусственные божественные тела
+
 CON_ART_HEAVENLY_DESC
 Когда приблизительная масса маленькой луны или большой уже недостаточно, чтобы представить чем является выделенный объект «структурой», «станцией» или «кораблем». Скорее, за пределами этого масштаба объект становится больше похож на небесное тело. Его гравитационное притяжение влияет на орбитальные движения, он может сохранять тонкую атмосферу на своей поверхности и может вращаться по орбите с несколькими меньшими структурами-спутниками на своей орбите. В еще больших масштабах целые планеты могут быть построены или перестроены или даже новые звезды могут быть сформированы и воспламенены, ознаменовав силу и решительность своих создателей во вселенной
 
 CON_TRANS_ARCH
 Трансцендентальная архитектура
+
 CON_TRANS_ARCH_DESC
 '''Осваивая передовые технологии орбитального конструирования, ученые создают методы, позволяющие создавать впечатляющий и вдохновляющий [[buildingtype BLD_MEGALITH]]
 
@@ -9676,6 +9401,7 @@ SHP_MIL_ROBO_CONT_DESC
 
 SHP_SPACE_FLUX_DRIVE
 Пространственно-потоковый двигатель
+
 SHP_SPACE_FLUX_DRIVE_DESC
 Обычно движение в космосе ограничено топливом или двигателем. Однако на относительно небольших масштабах можно перемещать объект в пространстве так же, как и в воде: путем отталкивания назад среды, в которую объект погружен. Это требует манипуляции с самим пространством, в результате которого самые маленькие единицы пространства разрушаются, заставляя материю, которую они когда-то содержали переходить в смежные единицы пространства. Этот метод движения очень эффективен, но опасен в больших масштабах и легко обнаруживается из-за пространственных эффектов. Дальнейшее исследование стелс-технологий может уменьшить пространственные разрушение
 
@@ -9687,6 +9413,7 @@ SHP_CONTGRAV_MAINT_DESC
 
 SHP_NANOROBO_MAINT
 Обслуживание нано-роботов
+
 SHP_NANOROBO_MAINT_DESC
 Так же, как нанороботы могут использоваться для производства, так их можно использовать и для обслуживания. С дополнением к корпусу централизованно организованных нанитовых инженеров можно быстро восстановить повреждение даже во время боя. Такие машины с большим трудом отличали бы органических существа от части корпуса, нуждающегося в ремонте и, как таковая, эта концепция может применяться только к автоматическим корпусам
 
@@ -9698,6 +9425,7 @@ SHP_MASSPROP_SPEC_DESC
 
 SHP_TRANSSPACE_DRIVE
 Транс-пространственный двигатель
+
 SHP_TRANSSPACE_DRIVE_DESC
 '''[[COLONY_BUILDING_TIME_DECREASE]]
 
@@ -9705,11 +9433,13 @@ SHP_TRANSSPACE_DRIVE_DESC
 
 SHP_MIDCOMB_LOG
 Средне-тыловое обеспечение
+
 SHP_MIDCOMB_LOG_DESC
 Когда межзвездные флоты совершают обычное взаимодействие, передача персонала и материала в отсутствие вражеских кораблей является относительно тривиальной задачей. Однако, в бою, когда такие передачи могут иметь большое тактическое преимущество, есть большие трудности с координирующими аспектами логистики из-за возможности внезапных изменений в тактическом сценарии. Используя единый мобильный командный пункт, можно организовать в разгар боя и ввести в действие логистические модели
 
 SHP_ASTEROID_HULLS
 Астероидные корпуса
+
 SHP_ASTEROID_HULLS_DESC
 Вместо того, чтобы строить корпус с нуля, гораздо легче взять уже существующий космический объект и приспособить его, чтобы он выполнял роль корпуса корабля. Мало того, что такие корабли будут очень недорогими для производства, но они также смогут избежать обнаружения вражескими кораблями, скрываясь среди других астероидов
 
@@ -9721,26 +9451,31 @@ SHP_HEAVY_AST_HULL_DESC
 
 SHP_ASTEROID_REFORM
 Астероидная реформация
+
 SHP_ASTEROID_REFORM_DESC
 Благодаря передовой обработке астероидных тел может быть изготовлена скальная (каменная) броня, которая столь же дешева, но более прочна чем свинцовое покрытие брони
 
 SHP_MONOMOLEC_LATTICE
 Мономолекулярная решетка
+
 SHP_MONOMOLEC_LATTICE_DESC
 Корпуса астероидов могут быть усилены и бронированы, но факт остается фактом: основное вещество из которого состоит большинство астероидов, имеет меньшую прочность чем большинство современных сплавов. Однако, если бы молекулярная структура самой породы была перегруппирована в кристаллическую решетку, ее прочность могла бы быть значительно увеличена, что позволило бы производить астероидные корпуса с ранее невозможным усилением
 
 SHP_MULTICELL_CAST
 Многоклеточное литье
+
 SHP_MULTICELL_CAST_DESC
 Даже когда он неактивен, органический материал гораздо более универсален чем стандартные материалы. Неживое многоклеточное судно обеспечило бы некоторые из преимуществ органических материалов без обычных неприятностей органической жизни
 
 SHP_DOMESTIC_MONSTER
 Одомашненная мега-фауна
+
 SHP_DOMESTIC_MONSTER_DESC
 Хотя чужаки и огромны, проверенные временем искусства одомашнивания также могут быть применены к космическим монстрам, которые путешествуют среди звезд. Строительство колонии или аванпостов в гнездах монстров позволит выращивать одомашненных монстров
 
 SHP_ENDOCRINE_SYSTEMS
 Эндокринные системы мега-фауны
+
 SHP_ENDOCRINE_SYSTEMS_DESC
 Изучение эндокринных систем космических организмов позволит расширить внутренние структуры органических судов
 
@@ -9752,6 +9487,7 @@ SHP_MONOCELL_EXP_DESC
 
 SHP_CONT_SYMB
 Хитрый симбиоз
+
 SHP_CONT_SYMB_DESC
 Любой корпус судна находится в симбиотических отношениях с его создателями, поскольку они создают его и поддерживают, а он выполняет их желаемые функции. Однако это чисто поведенческий тип симбиоза. Благодаря тщательному планированию и дизайну органический корабль может быть создан с биологическими симбиотическими взаимоотношениями с его экипажем, каждый из которых обеспечивает неотъемлемую часть жизни
 
@@ -9763,11 +9499,13 @@ SHP_CONT_BIOADAPT_DESC
 
 SHP_BIOADAPTIVE_SPEC
 Био-нейронная специализация
+
 SHP_BIOADAPTIVE_SPEC_DESC
 Поскольку вид развивает умственные способности, индивидуумы, чьи умы не идеально настроены на потребности их тел, не могут конкурировать с теми, чьи умы идеально специализированы для своих тел. Таким образом, все развитые формы жизни имеют почти идеальное умственное развитие для своего типа тела. Однако таких гарантий для искусственных форм жизни нет и часто истинный потенциал такого существа не реализуется из-за тонкой несовместимости между умом и телом. Специализируясь на нейронных структурах организма, чтобы соответствовать его типу тела, эти несовместимости можно устранить
 
 SHP_FRC_ENRG_COMP
 Сильно-сжатая энергия
+
 SHP_FRC_ENRG_COMP_DESC
 Как правило для манипуляции с энергией требуется, чтобы она находилась в форме вещества, дабы возможная энергия могла быть сохранена по желанию и выпущена по требованию. Вещество преобразованное в чистую энергию и хранящуюся в ткани пространства-времени, было бы более универсальной, чем любая материальная субстанция, но для такого содержания необходимы продвинутые технологии силовых полей
 
@@ -9779,6 +9517,7 @@ SHP_ENRG_FRIGATE_DESC
 
 SHP_QUANT_ENRG_MAG
 Увеличение квантовой энергий
+
 SHP_QUANT_ENRG_MAG_DESC
 '''[[COLONY_BUILDING_TIME_DECREASE]]
 
@@ -9786,6 +9525,7 @@ SHP_QUANT_ENRG_MAG_DESC
 
 SHP_ENRG_BOUND_MAN
 Манипуляция пограничной энергией
+
 SHP_ENRG_BOUND_MAN_DESC
 '''Будучи построенными, выращенными или адаптированными из ранее существовавшей структуры, корабли, состоящие из материи, должны иметь логическую и скоординированную структуру, представляющую даже элементарную полезность. Однако чистая энергия не имеет таких ограничений. Это позволяет корпусу чистой энергии принимать какую-либо форму, несмотря на нецелесообразным казалось бы с материальной точки зрения
 '''
@@ -9798,16 +9538,13 @@ SHP_SOLAR_CONT_DESC
 
 SHP_KRILL_SPAWN
 Создатель криля
-
 SHP_KRILL_SPAWN_DESC
 Разблокирует [[shippart SP_KRILL_SPAWNER]] деталь корабля, которая заставляет дикий космический криль появляться в системах с поясами астероидов
 
 SPY_ROOT_DECEPTION
 Маскировка
-
 SPY_ROOT_DECEPTION_DESC
 Искусство обмана не является естественным для каждого вида, но способность скрывать правду может быть весьма полезной
-
 
 ##
 ## Technology application
@@ -9918,6 +9655,7 @@ CON_PLANET_DRIVE_DESC
 
 CON_STARGATE
 Космические врата
+
 CON_STARGATE_DESC
 В особенности, в более экспансивных империях потребность в переходе кораблей в определенное защитное место в большой спешке часто превышает возможности выполнения. Создавая деформацию между двумя или более точками пространства-времени, можно сделать возможным перемещение кораблей даже по всей империи по мере необходимости, что позволит использовать новые наступательные и оборонительные стратегии
 
@@ -9943,11 +9681,13 @@ GRO_SUBTER_HAB_DESC
 
 GRO_GENOME_BANK
 Банк генотипов
+
 GRO_GENOME_BANK_DESC
 Неизвестные переменные при геномных расчетах для любых видов остаются серьезными для всех, кроме простейшего генетического восстановления, не говоря уже о важности изменений, которые генетическая модификация может принести для более крупной многовидовой биосферы. Чтобы по-настоящему осознать преимущества генетической медицины, необходимо собрать массивную базу данных генома для всех видов из всех известных миров
 
 GRO_INDUSTRY_CLONE
 Промышленное клонирование
+
 GRO_INDUSTRY_CLONE_DESC
 Простые ручные методы клонирования с использованием атомного переноса немного более чем новшество для крупных организмов. Применяя методы, аналогичные промышленному массовому производству или биохимическому процессу, становится возможным генерировать десятки или миллионы полных копий одного генетического проекта. Население может быть составлено на заказ, приспособленное для удовлетворения конкретных потребностей общества
 
@@ -9962,6 +9702,7 @@ GRO_TERRAFORM_SHORT_DESC
 
 GRO_REMOTE_TERRAFORM
 Удаленный терраформинг
+
 GRO_REMOTE_TERRAFORM_DESC
 Традиционные методы терраформирования относятся к планете как к структуре и пытаются изменить ее среду с помощью физических и химических средств. Это требует, чтобы большая часть планеты была доступна для терраформинга, что в целом ограничивает ее полезность. Обращаясь к планете как к организму и косвенно коснувшись ее физиологии, можно использовать менее трудоемкие, хотя и более затратные методы терраформирования, позволяющие аванпостам в бедных и враждебных мирах использовать терраформирование
 
@@ -9970,6 +9711,7 @@ GRO_BIOTERROR
 
 GRO_BIOTERROR_DESC
 Исследовательский центр, созданный для безопасного развития наиболее опасного биологического оружия и охраняемый при этом от посторонних глаз. Биологическое оружие вступает в силу слишком медленно, чтобы его можно было использовать в прямом военном конфликте, но как оружие террора оно непревзойденно. Медленно растущее загрязнение будет распространять панику, образы отчаявшихся людей, помещенных на карантине их собственным правительством, будет наводить отчаяние за пределы пострадавшего района. Однако при разработке таких организмов необходимо проявлять осторожность, чтобы нечаянно не вызвать их случайное освобождение. Кроме того, требуется полная тайна, чтобы развеять риск ухудшения отношений с гражданскими лицами и другими империями
+
 GRO_REMOTE_TERRAFORM_SHORT_DESC
 Позволяет удаленный терраформинг
 
@@ -9993,11 +9735,13 @@ GRO_GAIA_TRANS_SHORT_DESC
 
 LRN_OBSERVATORY_I
 Обсерватория
+
 LRN_OBSERVATORY_I_DESC
 Изучение и понимание природы звезд и их внутренних и внешних атрибутов дает мощное представление о природе звездных явлений и планетных тел. Кроме того, фрактальные алгоритмы могут быть использованы для расшифровки рассредоточения звездных путей по всей галактике, позволяя любым звездам, каким-то образом связанным, хотя и косвенно с известной сетью звездных путей, которые должны быть идентифицированы путем наблюдения
 
 LRN_SOLAR_MAN
 Манипуляции со звездами
+
 LRN_SOLAR_MAN_DESC
 Различные типы звезд не только имеют свои собственные атрибуты и возможности для использования, но также имеют тенденцию приводящую к возникновению на орбите определенных типов планет. Часто звезда определенного типа дает желаемый бонус, но почти наверняка будет лишена каких-либо желательных планет или не будет присутствовать в подходящем месте в галактике. Путем манипуляции высокоэнергетическими реакциями в сердцевине звезды можно было бы либо изменить, либо ускорить естественные процессы внутри звезды, что позволило бы изменить тип на совершенно другой при необходимости
 
@@ -10011,6 +9755,7 @@ LRN_DISTRIB_THOUGHT_DESC
 
 LRN_STELLAR_TOMOGRAPHY
 Звездная томография
+
 LRN_STELLAR_TOMOGRAPHY_DESC
 '''Увеличивает [[metertype METER_RESEARCH]] на планетах с фокусом на исследования за единицу населения и зависит от типа звезды:
 * [[STAR_BLACK]] (x1)
@@ -10022,6 +9767,7 @@ LRN_STELLAR_TOMOGRAPHY_DESC
 
 LRN_SPATIAL_DISTORT_GEN
 Пространственный генератор искажений
+
 LRN_SPATIAL_DISTORT_GEN_DESC
 Путем манипулирования пространственных свойств звездных путей можно было бы выборочно изгибать их. Медленные входящие корабли могут быть возвращены в прежнюю систему вылета, а более быстрые суда могут быть существенно замедлены
 
@@ -10039,11 +9785,13 @@ LRN_ENCLAVE_VOID_DESC
 
 LRN_ART_BLACK_HOLE
 Искусственная черная дыра
+
 LRN_ART_BLACK_HOLE_DESC
 Осторожно сжав [[STAR_RED]] звезду, можно сформировать небольшую [[STAR_BLACK]]. Это дорогостоящее и опасное мероприятие, но с большими потенциальными преимуществами для [[metertype METER_RESEARCH]] и [[metertype METER_INDUSTRY]]
 
 LRN_PSY_DOM
 Психогенное господство
+
 LRN_PSY_DOM_DESC
 '''Имеет 10% шанс взять под контроль вражеские корабли с нетелепатическими экипажами в той же системе, что и планета с фокусом на господство, за исключением вражеских империй также знающих [[tech LRN_PSY_DOM]].
 Защищает от [[predefinedshipdesign SM_PSIONIC_SNOWFLAKE]] захвата ваших кораблей
@@ -10055,11 +9803,13 @@ MIND_CONTROL_SHORT_DESC
 
 PRO_SOL_ORB_GEN
 Солнечный орбитальный генератор
+
 PRO_SOL_ORB_GEN_DESC
 Традиционные методы солнечной генерации полагаются исключительно на излучение солнечной энергии. Помещая генераторы на низкой орбите вокруг самой звезды, возможность прямого использования энергии сверхмассивных звездных явлений становится возможной и можно получить значительное и далеко идущее преимущество в [[metertype METER_INDUSTRY]]
 
 PRO_INDUSTRY_CENTER_I
 Индустриальные центры
+
 PRO_INDUSTRY_CENTER_I_DESC
 '''Координация производственной деятельности между планетами и звездными системами может быть эффективно выполнена на крупных централизованных комплексах
 
@@ -10232,6 +9982,7 @@ SHP_ROOT_AGGRESSION
 
 SHP_ROOT_AGGRESSION_DESC
 Позволяет использовать базовое оружие и [[shippart GT_TROOP_POD]]
+
 SHP_BOMBARD
 Бомбардировка
 
@@ -10269,16 +10020,19 @@ SHP_FIGHTERS_4_DESC
 
 SHP_WEAPON_1_2
 Электромагнитное орудие 2
+
 SHP_WEAPON_1_2_DESC
 Обновляет детали [[shippart SR_WEAPON_1_1]] на всех кораблях в пределах [[metertype METER_SUPPLY]] (или при достижении данного предела позже). Улучшенная деталь оружия наносит урон от выстрела в размере 4
 
 SHP_WEAPON_1_3
 Электромагнитное орудие 3
+
 SHP_WEAPON_1_3_DESC
 Обновляет детали [[shippart SR_WEAPON_1_1]] на всех кораблях в пределах [[metertype METER_SUPPLY]] (или при достижении данного предела позже). Улучшенная деталь оружия наносит урон от выстрела в размере 5
 
 SHP_WEAPON_1_4
 Электромагнитное орудие 4
+
 SHP_WEAPON_1_4_DESC
 Обновляет детали [[shippart SR_WEAPON_1_1]] на всех кораблях в пределах [[metertype METER_SUPPLY]] (или при достижении данного предела позже). Улучшенная деталь оружия наносит урон от выстрела в размере 6
 
@@ -10290,71 +10044,85 @@ SHP_WEAPON_2_1_DESC
 
 SHP_WEAPON_2_2
 Лазер 2
+
 SHP_WEAPON_2_2_DESC
 Обновляет детали [[shippart SR_WEAPON_2_1]] на всех кораблях в пределах [[metertype METER_SUPPLY]] (или при достижении данного предела позже). Улучшенная деталь оружия наносит урон от выстрела в размере 7
 
 SHP_WEAPON_2_3
 Лазер 3
+
 SHP_WEAPON_2_3_DESC
 Обновляет детали [[shippart SR_WEAPON_2_1]] на всех кораблях в пределах [[metertype METER_SUPPLY]] (или при достижении данного предела позже). Улучшенная деталь оружия наносит урон от выстрела в размере 9
 
 SHP_WEAPON_2_4
 Лазер 4
+
 SHP_WEAPON_2_4_DESC
 Обновляет детали [[shippart SR_WEAPON_2_1]] на всех кораблях в пределах [[metertype METER_SUPPLY]] (или при достижении данного предела позже). Улучшенная деталь оружия наносит урон от выстрела в размере 11
 
 SHP_WEAPON_3_1
 Плазменная пушка 1
+
 SHP_WEAPON_3_1_DESC
 Разблокирует [[shippart SR_WEAPON_3_1]] более мощное оружие корабля чем [[shippart SR_WEAPON_2_1]]
 
 SHP_WEAPON_3_2
 Плазменная пушка 2
+
 SHP_WEAPON_3_2_DESC
 Обновляет детали [[shippart SR_WEAPON_3_1]] на всех кораблях в пределах [[metertype METER_SUPPLY]] (или при достижении данного предела позже). Улучшенная деталь оружия наносит урон от выстрела в размере 12
 
 SHP_WEAPON_3_3
 Плазменная пушка 3
+
 SHP_WEAPON_3_3_DESC
 Обновляет детали [[shippart SR_WEAPON_3_1]] на всех кораблях в пределах [[metertype METER_SUPPLY]] (или при достижении данного предела позже). Улучшенная деталь оружия наносит урон от выстрела в размере 15
 
 SHP_WEAPON_3_4
 Плазменная пушка 4
+
 SHP_WEAPON_3_4_DESC
 Обновляет детали [[shippart SR_WEAPON_3_1]] на всех кораблях в пределах [[metertype METER_SUPPLY]] (или при достижении данного предела позже). Улучшенная деталь оружия наносит урон от выстрела в размере 18
 
 SHP_WEAPON_4_1
 Смертоносный луч 1
+
 SHP_WEAPON_4_1_DESC
 Разблокирует [[shippart SR_WEAPON_4_1]] более мощное оружие корабля чем [[shippart SR_WEAPON_3_1]]
 
 SHP_WEAPON_4_2
 Смертоносный луч 2
+
 SHP_WEAPON_4_2_DESC
 Обновляет детали [[shippart SR_WEAPON_4_1]] на всех кораблях в пределах [[metertype METER_SUPPLY]] (или при достижении данного предела позже). Улучшенная деталь оружия наносит урон от выстрела в размере 20
 
 SHP_WEAPON_4_3
 Смертоносный луч 3
+
 SHP_WEAPON_4_3_DESC
 Обновляет детали [[shippart SR_WEAPON_4_1]] на всех кораблях в пределах [[metertype METER_SUPPLY]] (или при достижении данного предела позже). Улучшенная деталь оружия наносит урон от выстрела в размере 25
 
 SHP_WEAPON_4_4
 Смертоносный луч 4
+
 SHP_WEAPON_4_4_DESC
 Обновляет детали [[shippart SR_WEAPON_4_1]] на всех кораблях в пределах [[metertype METER_SUPPLY]] (или при достижении данного предела позже). Улучшенная деталь оружия наносит урон от выстрела в размере 30
 
 SHP_ION_CANNON
 Ионное орудие
+
 SHP_ION_CANNON_DESC
 Разблокирует ионную пушку как деталь корабля
 
 SHP_WEAPON_1
 Электромагнитное орудие
+
 SHP_WEAPON_1_DESC
 С появлением оружия космической эпохи, сдвиг парадигмы имеет тенденцию уходить от метательных снарядов к оружию на основе энергии или частиц. Однако, поскольку способность манипулировать веществом постоянно возрастает, становится возможным стрельба массивными снарядами на релятивистских скоростях, более смертоносными чем большинство энергетического вооружения
 
 SHP_WEAPON_4
 Смертоносный луч
+
 SHP_WEAPON_4_DESC
 Разрушительный пучок сверхмассивных частиц высокой энергии, создающий открытые смертельные трещины в пространстве-времени, а также оказывает невероятное энергетическое воздействие
 
@@ -10420,11 +10188,13 @@ SHP_MULTISPEC_SHIELD_DESC
 
 SPY_DETECT_1
 Оптический сканер
+
 SPY_DETECT_1_DESC
 Все колонии начинают игру с уровнем [[metertype METER_DETECTION]] 50 и общее [[encyclopedia DETECTION_TITLE]] империи 10, а деталь корабля [[shippart DT_DETECTOR_1]] позволяет судам достичь такого же уровня обнаружения
 
 SPY_DETECT_2
 Активная радиолокация
+
 SPY_DETECT_2_DESC
 '''Разблокирует деталь корабля [[shippart DT_DETECTOR_2]] и здание [[buildingtype BLD_SCANNING_FACILITY]], увеличивает [[metertype METER_DETECTION]] всех планет до 75 и общее [[encyclopedia DETECTION_TITLE]] империи до 30
 
@@ -10432,6 +10202,7 @@ SPY_DETECT_2_DESC
 
 SPY_DETECT_3
 Нейтронный сканер
+
 SPY_DETECT_3_DESC
 '''Разблокирует деталь корабля [[shippart DT_DETECTOR_3]], увеличивает [[metertype METER_DETECTION]] всех планет до 150 и общее [[encyclopedia DETECTION_TITLE]] империи до 50
 
@@ -10439,6 +10210,7 @@ SPY_DETECT_3_DESC
 
 SPY_DETECT_4
 Сенсоры
+
 SPY_DETECT_4_DESC
 Разблокирует деталь корабля [[shippart DT_DETECTOR_4]], увеличивает [[metertype METER_DETECTION]] всех планет до 200 и общее [[encyclopedia DETECTION_TITLE]] империи до 70
 
@@ -10450,6 +10222,7 @@ SPY_DETECT_5_DESC
 
 SPY_STEALTH_1
 Электромагнитный демпфер
+
 SPY_STEALTH_1_DESC
 '''Дает всем планетам и аванпостам в империи особенность [[special CLOUD_COVER_SLAVE_SPECIAL]], которая увеличивает [[metertype METER_STEALTH]] всех планет и зданий на 20
 
@@ -10477,6 +10250,7 @@ SPY_STEALTH_PART_2_DESC
 
 SPY_STEALTH_3
 Пространственная маскировка
+
 SPY_STEALTH_3_DESC
 '''Дает всем планетам и аванпостам в империи особенность [[special DIM_RIFT_SLAVE_SPECIAL]], которая увеличивает [[metertype METER_STEALTH]] всех планет и зданий на 60
 
@@ -10515,6 +10289,7 @@ SPY_CUSTOM_ADVISORIES_DESC
 
 SHP_IMPROVED_ENGINE_COUPLINGS
 Улучшенная связка двигателей
+
 SHP_IMPROVED_ENGINE_COUPLINGS_DESC
 '''[[COLONY_BUILDING_TIME_DECREASE]]
 
@@ -10530,6 +10305,7 @@ SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC
 
 SHP_SINGULARITY_ENGINE_CORE
 Сингулярный двигатель ядра
+
 SHP_SINGULARITY_ENGINE_CORE_DESC
 '''[[COLONY_BUILDING_TIME_DECREASE]]
 
@@ -10537,11 +10313,13 @@ SHP_SINGULARITY_ENGINE_CORE_DESC
 
 SHP_DEUTERIUM_TANK
 Емкость для дейтерия
+
 SHP_DEUTERIUM_TANK_DESC
 Разблокирует [[shippart FU_DEUTERIUM_TANK]] как одну из возможных деталей корабля
 
 SHP_ANTIMATTER_TANK
 Емкость для антиматерий
+
 SHP_ANTIMATTER_TANK_DESC
 Разблокирует [[shippart FU_ANTIMATTER_TANK]] как одну из возможных деталей корабля
 
@@ -10591,6 +10369,7 @@ SHP_DEFLECTOR_SHIELD_DESC
 
 SHP_PLASMA_SHIELD
 Плазменный щит
+
 SHP_PLASMA_SHIELD_DESC
 '''Передовая технология [[metertype METER_SHIELD]] корабля
 
@@ -10612,16 +10391,19 @@ SPY_DIST_MOD_DESC
 
 SHP_ANTIMAT_TORP
 Торпеды из антиматерии
+
 SHP_ANTIMAT_TORP_DESC
 Быстрая ракета дальнего действия, работающая на [[tech SHP_SPACE_FLUX_DRIVE]] и вооруженная мощной боеголовкой на антиматерии
 
 SHP_PLASMA_TORP
 Плазменные торпеды
+
 SHP_PLASMA_TORP_DESC
 Быстрая ракета дальнего действия с отличной [[metertype METER_STEALTH]], работающая на [[tech SHP_TRANSSPACE_DRIVE]] и вооруженная разрушительно мощной плазменной боеголовкой
 
 SHP_CAMO_AST_HULL
 Камуфляж корпуса астероида
+
 SHP_CAMO_AST_HULL_DESC
 Этот корпус спроектирован так, чтобы выглядеть как настоящий астероид и получает огромный бонус к [[metertype METER_STEALTH]] на карте галактики, когда он находится в системе с поясом астероидов и в бою, когда он прячется в поясе астероидов
 
@@ -10633,11 +10415,13 @@ SHP_MINIAST_SWARM_DESC
 
 SHP_SCAT_AST_HULL
 Рассеянный корпус астероида
+
 SHP_SCAT_AST_HULL_DESC
 Этот флагман построен из нескольких крупных астероидов, некоторые из которых были объединены в основной корпус, а некоторые из них были расщеплены на части, чтобы образовать многочисленные крошечные астероиды, которые контролируются основным корпусом. Эти астероиды защищают не только главный корабль, но и все сопутствующие дружественные корабли, давая бонус [[metertype METER_SHIELD]] всем принадлежащим кораблям и кораблям союзников поблизости
 
 SHP_ORG_HULL
 Органический корпус
+
 SHP_ORG_HULL_DESC
 '''Если раньше не были исследованы более быстрые корпуса кораблей, эта технология сокращает время, чтобы построить колонию, расположенную далеко от соответствующих видов в империи
 
@@ -10645,16 +10429,19 @@ SHP_ORG_HULL_DESC
 
 SHP_ENDOSYMB_HULL
 Эндосимбиотический корпус
+
 SHP_ENDOSYMB_HULL_DESC
 Этот моно ячеечный корпус существует в симбиотических отношениях с его экипажем, откладывая их в своей цитоплазме и используя их в качестве органелл
 
 SHP_SENT_HULL
 Разумный корпус
+
 SHP_SENT_HULL_DESC
 Этот флагман с самосознанием обладает мощными аналитическими способностями и огромной емкостью памяти, которая позволяют ему управлять дружественными кораблями и предоставлять им полезную информацию и малозаметные тактические сигналы в бою
 
 SHP_BIOINTERCEPTOR
 Био-перехватчики
+
 SHP_BIOINTERCEPTOR_DESC
 Живые перехватчики предназначены для уничтожения ракет и вражеских истребителей. Гораздо эффективнее обычных перехватчиков. [[BLD_SHIPYARD_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED_ANY_SYSTEM]]
 
@@ -10666,18 +10453,22 @@ SHP_BIOBOMBER_DESC
 
 SHP_NOVA_BOMB
 Бомба Нова
+
 SHP_NOVA_BOMB_DESC
 Самое мощное оружие, когда-либо созданное, способное уничтожить всю звездную систему
 
 SHP_DEATH_SPORE
 Споры смерти
+
 SHP_DEATH_SPORE_DESC
 Разблокирует [[shippart SP_DEATH_SPORE]] как одну из возможных деталей корабля, [[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_ORGANIC_POP]]
 
 SHP_BIOTERM
 Био-терминаторы
+
 SHP_BIOTERM_DESC
 Разблокирует [[shippart SP_BIOTERM]] как одну из возможных деталей корабля, [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ORGANIC_POP]]
+
 SHP_EMP
 EMP генератор
 
@@ -10729,7 +10520,6 @@ SPY_PLANET_STEALTH_MOD_DESC
 BASIC_PLANET_STEALTH
 Универсальная базовая скрытность
 
-
 ##
 ## Technology refinement
 ##
@@ -10742,14 +10532,15 @@ TECH_REFINE_SHORT_DESC
 
 PRO_INDUSTRY_CENTER_II
 Улучшенный промышленный центр
+
 PRO_INDUSTRY_CENTER_II_DESC
 Улучшенное централизованное управление разбросанными промышленными предприятиями еще больше увеличивает объем промышленного производства. Бонус к [[metertype METER_INDUSTRY]] будет вдвое больше чем базовый [[buildingtype BLD_INDUSTRY_CENTER]]
 
 PRO_INDUSTRY_CENTER_III
 Выдающийся промышленный центр
+
 PRO_INDUSTRY_CENTER_III_DESC
 Дополнительный опыт и усовершенствования средств еще больше расширяют размеры промышленного производства. Бонус к [[metertype METER_INDUSTRY]] будет втрое больше чем базовый [[buildingtype BLD_INDUSTRY_CENTER]]
-
 
 ##
 ## Buildings
@@ -10759,10 +10550,11 @@ BLD_EVACUATION
 Переселение
 
 BLD_EVACUATION_DESC
-'''Удаляет населения с этой планеты в течение нескольких ходов. Если подходящие альтернативные планеты доступны, с тем же видом и достаточным дополнительным местом, население будет переселяться туда'''
+Удаляет населения с этой планеты в течение нескольких ходов. Если подходящие альтернативные планеты доступны, с тем же видом и достаточным дополнительным местом, население будет переселяться туда
 
 BLD_OBSERVATORY
 Обсерватория
+
 BLD_OBSERVATORY_DESC
 '''Одна случайная звезда будет показываться каждый ход для всей галактики. Иногда может быть обнаружена звезда, которая уже видима / исследована, в результате чего новая звезда не станет известна империям в галактике
 
@@ -10864,6 +10656,7 @@ BLD_SHIPYARD_AST_REF_DESC
 
 BLD_SHIPYARD_ORG_ORB_INC
 Орбитальный инкубатор
+
 BLD_SHIPYARD_ORG_ORB_INC_DESC
 '''Это обновление до [[buildingtype BLD_SHIPYARD_BASE]], требуется для разработки всех органических корпусов и для производства всех дальнейших модернизаций судостроительной верфи. Сам по себе он может построить [[shiphull SH_ORGANIC]], [[shiphull SH_SYMBIOTIC]] и [[shiphull SH_STATIC_MULTICELLULAR]] корпуса
 
@@ -10887,6 +10680,7 @@ BLD_SHIPYARD_ORG_XENO_FAC_DESC
 
 BLD_SHIPYARD_ENRG_COMP
 Компрессор энергии
+
 BLD_SHIPYARD_ENRG_COMP_DESC
 '''Это обновление до [[buildingtype BLD_SHIPYARD_BASE]] и требуется для формирования всех энергетических корпусов и всех дальнейших модернизаций верфи энергетического корпуса
 
@@ -10906,6 +10700,7 @@ BLD_SHIPYARD_ENRG_SOLAR_DESC
 
 BLD_BIOTERROR_PROJECTOR
 База проектирования биотеррора
+
 BLD_BIOTERROR_PROJECTOR_DESC
 '''Дает планете на которой построен Биотеррор, возможность уменьшать популяцию на планетах противника в пределах 4 звездных прыжков со скоростью 2 за ход, но при условии, что вражеская империя не имеет Банк генома
 
@@ -10927,6 +10722,7 @@ BLD_SCANNING_FACILITY_DESC
 
 BLD_INDUSTRY_CENTER
 Промышленный центр
+
 BLD_INDUSTRY_CENTER_DESC
 '''С самого начала предоставляет бонус к [[metertype METER_INDUSTRY]] на всех планетах, соединенных линиями [[metertype METER_SUPPLY]], с фокусом производства на 0.2 за единицу населения
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
@@ -10975,6 +10771,7 @@ BLD_GAIA_TRANS_DESC
 
 BLD_COLLECTIVE_NET
 Коллективный сетевой разум
+
 BLD_COLLECTIVE_NET_DESC
 '''Увеличивает  [[metertype METER_INDUSTRY]] на планетах с фокусом промышленности на 0.5 на единицу населения и [[metertype METER_RESEARCH]] на планетах с фокусом исследований на 0.5 за единицу населения. Межзвездное путешествие в пределах 200 световых лет нарушит эффективность этого здания и ликвидирует эти бонусы
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
@@ -10983,6 +10780,7 @@ BLD_COLLECTIVE_NET_DESC
 
 BLD_GATEWAY_VOID
 Врата в пустоту
+
 BLD_GATEWAY_VOID_DESC
 '''Возможность закрыть систему почти полностью, может быть полезна для империи в обороне. Любые суда, которые войдут в эту систему не пройдя через один и тот же проход, будут уничтожены, а все колонии внутри немедленно сведены к статусу [[encyclopedia OUTPOSTS_TITLE]]ов. [[metertype METER_STEALTH]] всех объектов в системе увеличивается на 1000, что делает их практически невозможными для обнаружения
 
@@ -10999,6 +10797,7 @@ BLD_ENCLAVE_VOID_DESC
 
 BLD_ART_BLACK_HOLE
 Искусственная черная дыра
+
 BLD_ART_BLACK_HOLE_DESC
 Введя огромное количество искусственной гравитации в звезду не увеличивая ее энергию, ее можно заставить взорвать себя и сформировать [[STAR_BLACK]]. Однако этот метод ограничивается звездами [[STAR_RED]], поскольку преодоление внутреннего давления более горячей звезды потребует невероятно мощного генератора гравитации. Этот процесс может происходить на [[encyclopedia OUTPOSTS_TITLE]]
 
@@ -11010,6 +10809,7 @@ BLD_BLACK_HOLE_COLLAPSER_DESC
 
 BLD_HYPER_DAM
 Гиперпространственная перемычка
+
 BLD_HYPER_DAM_DESC
 '''Для планет не связанных с [[buildingtype BLD_BLACK_HOLE_POW_GEN]], увеличивается целевую [[metertype METER_INDUSTRY]] на планетах связанных линиями [[metertype METER_SUPPLY]], с фокусом Производства на 1 за единицу населения, но само население на таких планетах уменьшается в зависимости от размера планеты: ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5)
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
@@ -11111,6 +10911,7 @@ BLD_BLACK_HOLE_POW_GEN_DESC
 
 BLD_PLANET_DRIVE
 Планетарный межзвездный двигатель
+
 BLD_PLANET_DRIVE_DESC
 '''Позволяет планете перемещаться между звездными системами. Необходимо наличие [[buildingtype BLD_LIGHTHOUSE]] в пределах 200 световых лет от целевой системы назначения, чтобы планета могла безопасно перемещаться. В противном случае у планеты есть 50% шанс быть уничтоженной в пути. Это опасное путешествие даже при поддержке межзвездного маяка и если планета доберется, только половина населения выживет. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], но не может использоваться, если планета не колонизирована
 
@@ -11120,11 +10921,13 @@ BLD_PLANET_DRIVE_DESC
 
 BLD_PLANET_BEACON
 Планетарный маяк
+
 BLD_PLANET_BEACON_DESC
 Обозначает цель для [[buildingtype BLD_PLANET_DRIVE]]. [[BUILDING_AVAILABLE_ON_OUTPOSTS]]
 
 BLD_ART_PLANET
 Искусственная планета
+
 BLD_ART_PLANET_DESC
 Формирует искусственную планету из пояса астероидов или газового гиганта. [[PT_ASTEROIDS]] становится [[SZ_TINY]] [[PT_BARREN]] планетами и [[PT_GASGIANT]] становится [[SZ_HUGE]] [[PT_BARREN]] планетами. [[ARTIFICIAL_PLANET_PROCESS_LOCATION]]
 
@@ -11142,6 +10945,7 @@ BLD_ART_PARADISE_PLANET_DESC
 
 BLD_ART_MOON
 Искусственная луна
+
 BLD_ART_MOON_DESC
 '''Формирует искусственную луну с орбитальным периодом 1:1 - резонанс вращательного периода. Добавляет специальную функцию планете [[special RESONANT_MOON_SPECIAL]]
 
@@ -11165,6 +10969,7 @@ BLD_TRANSFORMER_DESC
 
 BLD_PLANET_CLOAK
 Планетарное маскирующее устройство
+
 BLD_PLANET_CLOAK_DESC
 '''Дает планете на которой построено огромный бонус к [[metertype METER_STEALTH]]
 
@@ -11172,11 +10977,13 @@ BLD_PLANET_CLOAK_DESC
 
 BLD_SPATIAL_DISTORT_GEN
 Пространственный генератор искажений
+
 BLD_SPATIAL_DISTORT_GEN_DESC
 Манипулирует пространственными свойствами соседних звездных путей. Вражеские корабли, движущиеся к системе, содержащей это здание, будут отброшены назад на 40 световых лет, пока они не завершили свое путешествие и не прибыли в систему. Это активируется с помощью фокуса пространственного искажения
 
 BLD_STARGATE
 Звездные Врата
+
 BLD_STARGATE_DESC
 '''Способны создавать кратчайший путь через пространство-время между собой и любыми другими ЗВ, принадлежащими империи. Расходы на электроэнергию такого устройства во время активации достигают невероятных значений и могут отключать целую планету, хотя в остальное время побочных эффектов нет. К сожалению, из-за квантовых флуктуаций невозможно предсказать, куда отправляется корабль в конечном итоге, если более чем одни ЗВ будут активны для получения
 
@@ -11223,6 +11030,7 @@ BLD_EXPERIMENTOR_OUTPOST_DESC
 
 BLD_NOVA_BOMB_ACTIVATOR
 Активатор бомбы-Нова
+
 BLD_NOVA_BOMB_ACTIVATOR_DESC
 Активирует все [[shippart SP_NOVA_BOMB]] в пределах одного звездного прыжка
 
@@ -11406,7 +11214,6 @@ BLD_COL_SUPER_TEST
 BLD_COL_SUPER_TEST_DESC
 Колония супер-тестеров [[BLD_COL_PART_1]]. [[BLD_COL_PART_2]] Колония супер-тестеров [[BLD_COL_PART_3]]
 
-
 ##
 ## Hull and ship part description templates
 ##
@@ -11415,10 +11222,6 @@ BLD_COL_SUPER_TEST_DESC
 # %2% hull base fuel capacity.
 # %3% hull base starlane speed.
 # %4% hull base structure value.
-HULL_DESC
-'''[[metertype METER_SPEED]]: %1%
-[[metertype METER_FUEL]]: %2%
-[[metertype METER_STRUCTURE]]: %4%'''
 
 # %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
@@ -11427,25 +11230,24 @@ PART_DESC_CAPACITY
 # %1% ship part strength (other).
 PART_DESC_STRENGTH
 Сила: %1%
+
 # %1% ship part strength (shield).
 PART_DESC_SHIELD_STRENGTH
 Сила щита: %1%
 
 # %1% ship part strength (detection).
-PART_DESC_DETECTION
-[[metertype METER_DETECTION]]: %1%
 
 # %1% ship part damage done (direct fire weapons).
 # %2% number of shots done per attack.
 PART_DESC_DIRECT_FIRE_STATS
 '''Урон [[encyclopedia DAMAGE_TITLE]]: %1%
 Выстрелов за атаку: %2%'''
+
 # %1% ship part damage done (fighters).
 # %2% number of deployable fighters.
 PART_DESC_HANGAR_STATS
 '''Урон [[encyclopedia DAMAGE_TITLE]]: %1%
 Количество истребителей: %2%'''
-
 
 ##
 ## Ship parts
@@ -11467,7 +11269,7 @@ FT_HANGAR_0
 Ангар 0
 
 FT_HANGAR_0_DESC
-Система хранения невооруженных кораблей 
+Система хранения невооруженных кораблей
 
 FT_HANGAR_1
 Ангар перехватчиков
@@ -11600,6 +11402,7 @@ PD_PULSE_LASER
 
 PD_PULSE_LASER_DESC
 Орудие с высоким темпом стрельбы
+
 PD_PHASOR
 Фазор
 
@@ -11723,6 +11526,7 @@ FU_SINGULARITY_ENGINE_CORE
 
 FU_SINGULARITY_ENGINE_CORE_DESC
 Близкий родственник [[buildingtype BLD_HYPER_DAM]] разработанный для кораблей. Сингулярный двигатель ядра значительно повышает мощность. Увеличивает межзвездную [[metertype METER_SPEED]] на 30
+
 FU_TRANSPATIAL_DRIVE
 Транс-пространственный привод
 
@@ -11793,26 +11597,31 @@ ST_CLOAK_4_DESC
 
 AR_STD_PLATE
 Стандартная броня
+
 AR_STD_PLATE_DESC
 Усиливает корпус судна [[metertype METER_STRUCTURE]]. Базовая обшивка обеспечивает лишь умеренное повышение долговечности корпуса судна
 
 AR_ZORTRIUM_PLATE
 Зортриумная броня
+
 AR_ZORTRIUM_PLATE_DESC
 Усиливает корпус судна [[metertype METER_STRUCTURE]]. Более сильная защита чем [[shippart AR_STD_PLATE]]
 
 AR_DIAMOND_PLATE
 Алмазная броня
+
 AR_DIAMOND_PLATE_DESC
 Усиливает корпус судна [[metertype METER_STRUCTURE]]. Более сильная защита чем [[shippart AR_ZORTRIUM_PLATE]]
 
 AR_XENTRONIUM_PLATE
 Ксентронимная броня
+
 AR_XENTRONIUM_PLATE_DESC
 Усиливает корпус судна [[metertype METER_STRUCTURE]]. Чрезвычайно крепкая и прочная броня
 
 AR_ROCK_PLATE
 Скальная броня
+
 AR_ROCK_PLATE_DESC
 Усиливает корпус судна [[metertype METER_STRUCTURE]]. Крепкая и дешевая альтернатива сплавам. [[BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM_SHIP_PARTS_TEXT]]
 
@@ -11824,6 +11633,7 @@ AR_CRYSTAL_PLATE_DESC
 
 AR_NEUTRONIUM_PLATE
 Нейтронная броня
+
 AR_NEUTRONIUM_PLATE_DESC
 Усиливает корпус судна [[metertype METER_STRUCTURE]]. Самое крепкое и самое прочное покрытие брони. Восхитительная защита. [[MACRO_NEUTRONIUM_BUILDINGS]]
 
@@ -11835,6 +11645,7 @@ AR_PRECURSOR_PLATE_DESC
 
 SH_DEFENSE_GRID
 Защитная сетка
+
 SH_DEFENSE_GRID_DESC
 '''Обеспечивает основную экранированную защиту. Способный полностью поглощать или по крайней мере существенно уменьшать [[encyclopedia DAMAGE_TITLE]] от ударов с низким уровнем мощности оружия
 
@@ -11842,6 +11653,7 @@ SH_DEFENSE_GRID_DESC
 
 SH_DEFLECTOR
 Отражающий щит
+
 SH_DEFLECTOR_DESC
 '''Обеспечивает продвинутую экранированную защиту. Может поглощать или по крайней мере существенно уменьшать [[encyclopedia DAMAGE_TITLE]] наносимый оружием умеренной мощности
 
@@ -11849,6 +11661,7 @@ SH_DEFLECTOR_DESC
 
 SH_PLASMA
 Плазменный щит
+
 SH_PLASMA_DESC
 '''Мощный щит, который значительно уменьшает [[encyclopedia DAMAGE_TITLE]], получаемый от воздействия даже продвинутого оружия и полностью поглощает что-то более слабое
 
@@ -11856,6 +11669,7 @@ SH_PLASMA_DESC
 
 SH_BLACK
 Черный щит
+
 SH_BLACK_DESC
 '''Самая мощная экранированная защита может быть пробита только самым мощным оружием. Чрезвычайно дорога для исследования и создания
 
@@ -11863,6 +11677,7 @@ SH_BLACK_DESC
 
 SH_MULTISPEC
 Мультиспектральный щит
+
 SH_MULTISPEC_DESC
 '''Мощный [[metertype METER_SHIELD]] способный защищать корабль внутри звезды. Предоставляет высокий бонус [[metertype METER_STEALTH]] на карте галактики, когда корабль находится в звезде, отличной от звезды класса [[STAR_BLACK]] или [[STAR_NEUTRON]] и позволяет кораблю входить в звезду в бою
 
@@ -11870,6 +11685,7 @@ SH_MULTISPEC_DESC
 
 SH_ROBOTIC_INTERFACE_SHIELDS
 Роботизированный интерфейс: щиты
+
 SH_ROBOTIC_INTERFACE_SHIELDS_DESC
 '''Роботизированный интерфейс: щиты имеют прочность щита примерно 1 прочность щита за другой дополнительный роботизированный интерфейс. Таким образом происходит увеличение общего экранирования кораблей находящимся в том же месте, хотя и с уменьшающейся отдачей при более высоких количествах. Эффект ограничен 20-процентной прочностью, применяется только к судам, имеющим экипаж [[encyclopedia ROBOTIC_SPECIES_TITLE]] вида и может быть размещен только на типе корпуса корабля [[encyclopedia HULL_LINE_ROBOTIC]]
 
@@ -11878,6 +11694,7 @@ SH_ROBOTIC_INTERFACE_SHIELDS_DESC
 
 CO_COLONY_POD
 Модуль колоний
+
 CO_COLONY_POD_DESC
 '''Базовые средства для колонистов, чтобы пережить путешествие на новую планету. Позволяет кораблю колонизировать новые миры
 
@@ -11885,6 +11702,7 @@ CO_COLONY_POD_DESC
 
 CO_SUSPEND_ANIM_POD
 Крионический модуль колоний
+
 CO_SUSPEND_ANIM_POD_DESC
 '''Колонисты содержатся в крионических модулях во время путешествия колонизации, тем самым устраняя необходимость обеспечивать пропитание и значительно увеличивая количество колонистов, которых можно перевозить на одном корабле
 
@@ -11892,6 +11710,7 @@ CO_SUSPEND_ANIM_POD_DESC
 
 CO_OUTPOST_POD
 Модуль аванпоста
+
 CO_OUTPOST_POD_DESC
 '''Модули [[encyclopedia OUTPOSTS_TITLE]] позволяют установить беспилотную станцию. Это может быть место на необитаемых планетах. У них нет населения и, как правило, нет ресурсов. Но они обеспечивают видимость создавая линии [[metertype METER_SUPPLY]], когда исследована необходимая технология. Аванпосты могут быть модернизированы до колонии
 
@@ -11921,6 +11740,7 @@ SP_PLANET_BEACON_DESC
 
 SP_DISTORTION_MODULATOR
 Модулятор помех
+
 SP_DISTORTION_MODULATOR_DESC
 Распознает естественные геометрические неровности отличные от кораблей противника, манипулируя пространственно-временными искажениями, вызванными всеми объектами поблизости. Все объекты в том же месте имеют максимальную [[metertype METER_STEALTH]] сниженную на 20. Эффект не складывается
 
@@ -11929,6 +11749,7 @@ SP_CLOUD
 
 SP_ASH
 Генератор пепла
+
 SP_DIM
 Пространственный рассекатель
 
@@ -11937,11 +11758,13 @@ SP_VOID
 
 SP_DEATH_SPORE
 Споры смерти
+
 SP_DEATH_SPORE_DESC
 Биологическое оружие [[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_ORGANIC_POP]]
 
 SP_BIOTERM
 Био-терминаторы
+
 SP_BIOTERM_DESC
 Мощное биологическое оружие [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ORGANIC_POP]]
 
@@ -11989,6 +11812,7 @@ SP_CHAOS_WAVE_DESC
 
 SP_NOVA_BOMB
 Бомба Нова
+
 SP_NOVA_BOMB_DESC
 Оружие огромной силы, способное уничтожить всю систему. Оружие активируется, когда получает сигнал от [[buildingtype BLD_NOVA_BOMB_ACTIVATOR]] на расстоянии не более одного звездного прыжка
 
@@ -12045,7 +11869,6 @@ RS_AUTOTRADER
 
 RS_AUTOTRADER_DESC
 Генерирует торговлю владельцу
-
 
 ##
 ## Ship hulls
@@ -12622,6 +12445,7 @@ SH_DAMPENING_CLOUD_BODY
 
 SH_DAMPENING_CLOUD_BODY_DESC
 Космическое облако высокоэнергетических частиц
+
 ##
 ## Monsters Macros
 ##
@@ -12643,7 +12467,6 @@ SM_SNOWFLAKE_ENVIRONMENT
 
 SM_JUGGERNAUT_ENVIRONMENT
 Благоприятная среда: [[PT_ASTEROIDS]]. Гнезда сокрушительных сил (джаггернауты) обычно находятся в поясах Астероидов, а сами джаггернауты могут созреть в более крупные формы в системах с поясами [[PT_ASTEROIDS]]
-
 
 ##
 ## Buildings macros
@@ -12669,7 +12492,6 @@ BLD_COL_PART_2
 
 BLD_COL_PART_3
 Время создания будет и дальше увеличивать сокращение путем исследования технологий, которые позволят быстрее направлять колонии используя новые детали двигателей и более быстрые корпуса
-
 
 # Macro keys formatting for ship designs, hulls or parts:
 # BLD_SHIPYARD_TYPE1_TYPE2_REQUIRED (required building type(s) owned by
@@ -12748,7 +12570,6 @@ SHIPDESIGN_NO_TRAVEL
 SHIPDESIGN_PLANET_INVASION
 [[metertype METER_TROOPS]] и оборудование, которое может быть использовано для вторжения в планету
 
-
 ##
 ## Ship part/tech application macros
 ##
@@ -12811,7 +12632,6 @@ ENEMY_PLANET_ANY_POP
 COLONY_BUILDING_TIME_DECREASE
 Среди прочего, эта технология уменьшает время, чтобы построить колонию, расположенную далеко от соответствующих видов в империи
 
-
 ##
 ## Growth macros
 ##
@@ -12838,6 +12658,7 @@ GROWTH_SPECIAL_POPULATION_INCREASE
 
 GROWTH_SPECIAL_INDUSTRY_BOOST
 Если планета нацелена на промышленность, то максимум [[metertype METER_INDUSTRY]] увеличивается на 0.2 за единицу населения
+
 GROWTH_SPECIALS_ENTRY_LIST
 '''Специальные планеты, ориентированные на рост, помогают только одной классификации видов. Некоторые специальные функции действуют только для органических видов, некоторые только для каменных видов, а некоторые только для роботизированных видов
 
@@ -12852,7 +12673,6 @@ GROWTH_SPECIALS_ENTRY_LIST
 
 GROWTH_SPECIAL_LABEL
 Планета <i>%1%</i> [[TT_SPECIAL]]
-
 
 ##
 ## Species picks
@@ -12911,6 +12731,7 @@ GREAT_DEFENSE_TROOPS_DESC
 
 ULTIMATE_DEFENSE_TROOPS_DESC
 +++	Превосходные защитные [[metertype METER_TROOPS]]: 300%
+
 ANCIENT_DEFENSE_TROOPS_DESC
 +++	Древняя оборонительная платформа [[metertype METER_TROOPS]]: 10 за население
 
@@ -12979,6 +12800,7 @@ AVERAGE_POPULATION_DESC
 
 GOOD_POPULATION_DESC
 +	 Большое население 125%
+
 FIXED_LOW_POPULATION_DESC
 −−	Максимальное население фиксировано 5
 
@@ -13011,6 +12833,7 @@ BROAD_EP_DESC
 
 NARROW_EP_DESC
 -	Плохая приспособляемость, может обитать на меньшем количестве типов планет
+
 FAST_COLONIZATION_DESC
 +	Быстрая колонизация: -25% к времени основания колонии
 
@@ -13030,8 +12853,7 @@ TELEPATHIC_DETECTION_DESC
 +	Телепатическое обнаружение: может ощущать близлежащие населенные планеты
 
 COMMUNAL_VISION_DESC
-	Общая концепция: разделяет обзор в рамках одинаковых видов
-
+'''	Общая концепция: разделяет обзор в рамках одинаковых видов'''
 
 ##
 ## Fuel regeneration
@@ -13042,7 +12864,6 @@ AVERAGE_BASE_FUEL_REGEN_DESC
 
 LIVING_HULL_BASE_FUEL_REGEN_DESC
 '''	Живой органический корпус [[metertype METER_FUEL]] восполнение: + 0.3'''
-
 
 ##
 ## Accounting labels
@@ -13067,6 +12888,7 @@ POOR_ENVIRONMENT_LABEL
 # %1% FIXME
 HOSTILE_ENVIRONMENT_LABEL
 %1% Враждебная окружающая среда
+
 # %1% FIXME
 UNINHABTIABLE_ENVIRONMENT_LABEL
 %1% Непригодная окружающая среда
@@ -13077,6 +12899,7 @@ ENV_ENCAPSUL_LABEL
 
 SELF_SUSTAINING_LABEL
 Самодостаточные
+
 IMMORTAL_LABEL
 Бессмертные и не воспроизводящийся
 
@@ -13085,6 +12908,7 @@ SUBTERRANEAN_LABEL
 
 GAIA_LABEL
 Гайя-бонус
+
 WORLDTREE_LABEL
 Бонус мирового дерева
 
@@ -13153,6 +12977,7 @@ GREAT_RESEARCH_LABEL
 # %2% FIXME
 ULTIMATE_RESEARCH_LABEL
 %2% Беспрецедентная наука
+
 # %1% FIXME
 # %2% FIXME
 BAD_SUPPLY_LABEL
@@ -13197,6 +13022,7 @@ GREAT_TROOPS_LABEL
 # %2% FIXME
 ULTIMATE_TROOPS_LABEL
 %2% Беспрецедентные войска
+
 INDEPENDENT_TROOP_LABEL
 Независимый домашний мир
 
@@ -13205,6 +13031,7 @@ MEGALITH_LABEL
 
 OUTPOST_TROOP_LABEL
 Аванпост
+
 # %1% FIXME
 # %2% FIXME
 NATIVE_PLANETARY_DEFENSE_LABEL
@@ -13226,6 +13053,7 @@ DIM_STAR
 
 NO_STAR
 Нет звезды
+
 TINY_PLANET_LABEL
 Крошечная планета
 
@@ -13246,6 +13074,7 @@ HOMEWORLD_SUPPLY
 
 HOMEWORLD_BONUS
 Домашний мир
+
 CAPITAL_LABEL
 Столица
 
@@ -13260,6 +13089,7 @@ N-мерная структура
 
 WEAK_VISION_LABEL
 Плохая видимость
+
 POOR_VISION_LABEL
 Слабая видимость
 
@@ -13286,6 +13116,7 @@ XENOPHOBIC_LABEL_EAXAW_OTHER
 
 ORGANIC_GROWTH
 Органический рост
+
 ASTEROID_FIELD_STEALTH
 Скрытность астероидов
 
@@ -13309,6 +13140,7 @@ DETECTOR_INTERFERENCE
 
 CLOAK_INTERFERENCE
 Маскировка кросс-интерференции
+
 TRANSPATIAL_CLOAK_INTERACTION
 Транспатиал двигатель - маскировка
 
@@ -13321,7 +13153,6 @@ SPATIAL_FLUX_MALUS
 SPATIAL_FLUX_BONUS
 Бонус флюкс-двигателя
 
-
 ##
 ## Tags
 ##
@@ -13331,6 +13162,7 @@ ANTIQUATED
 
 STYLISH
 Изысканные
+
 ORGANIC
 Органическая жизнь
 
@@ -13352,44 +13184,21 @@ TELEPATHIC
 ORBITAL
 Орбитальные
 
-
 ##
 ## AI strings
 ##
 
 # Newline separated list of capitol names for beginner AIs
-AI_CAPITOL_NAMES_BEGINNER
-'''Ivory Tower
-Nunnery
-Monastery
-Orphanage'''
+
 # Newline separated list of capitol names for turtle AIs
-AI_CAPITOL_NAMES_TURTLE
-'''Citadel
-Prison'''
 
 # Newline separated list of capitol names for cautious AIs
-AI_CAPITOL_NAMES_CAUTIOUS
-'''Bastion
-Stronghold'''
 
 # Newline separated list of capitol names for typical AIs
-AI_CAPITOL_NAMES_TYPICAL
-'''Haven
-Free Trade Zone
-Homeworld'''
 
 # Newline separated list of capitol names for aggressive AIs
-AI_CAPITOL_NAMES_AGGRESSIVE
-'''Royal
-Imperial'''
 
 # Newline separated list of capitol names for maniacal AIs
-AI_CAPITOL_NAMES_MANIACAL
-'''Glorious
-Supreme
-Eternal
-Invincible'''
 
 AI_SHIPDESIGN_NAME_INVALID
 Неверный дизайн
@@ -13397,25 +13206,6 @@ AI_SHIPDESIGN_NAME_INVALID
 # Newline separated list of military ship names owned by AIs.
 # The usage is determined by a rating defined inside the AI scripts. The names
 # are roughly ordered by order of appearance in the game.
-AI_SHIPDESIGN_NAME_MILITARY
-'''Harpy
-Gorgon
-Centaur
-Cerberus
-Griffin
-Manticore
-Hydra
-Python
-Pegasus
-Phoenix
-Hercules
-Atlas
-Helios
-Prometheus
-Poseidon
-Hades
-Nemesis
-Zeus'''
 
 # Newline separated list of local troop transporter names owned by AIs.
 # The usage is determined by a rating defined inside the AI scripts. The names
@@ -13464,7 +13254,6 @@ AI_SHIPDESIGN_NAME_SCOUT
 
 AI_SHIPDESIGN_NAME_KRILLSPAWNER
 Порождение планктона (криля)
-
 
 ##
 ## AI diplomacy strings and lists
@@ -13612,46 +13401,16 @@ AI_FIRST_TURN_GREETING_MSG608
 Послать вас к вашим предкам - наш священный долг!
 
 # Don't translate this entry.
-AI_FIRST_TURN_GREETING_LIST_BEGINNER
-'''AI_FIRST_TURN_GREETING_MSG101
-AI_FIRST_TURN_GREETING_MSG102
-AI_FIRST_TURN_GREETING_MSG103'''
 
 # Don't translate this entry.
-AI_FIRST_TURN_GREETING_LIST_TURTLE
-'''AI_FIRST_TURN_GREETING_MSG201
-AI_FIRST_TURN_GREETING_MSG202'''
 
 # Don't translate this entry.
-AI_FIRST_TURN_GREETING_LIST_CAUTIOUS
-'''AI_FIRST_TURN_GREETING_MSG301
-AI_FIRST_TURN_GREETING_MSG302'''
 
 # Don't translate this entry.
-AI_FIRST_TURN_GREETING_LIST_TYPICAL
-'''AI_FIRST_TURN_GREETING_MSG401
-AI_FIRST_TURN_GREETING_MSG402
-AI_FIRST_TURN_GREETING_MSG403'''
 
 # Don't translate this entry.
-AI_FIRST_TURN_GREETING_LIST_AGGRESSIVE
-'''AI_FIRST_TURN_GREETING_MSG501
-AI_FIRST_TURN_GREETING_MSG502
-AI_FIRST_TURN_GREETING_MSG503
-AI_FIRST_TURN_GREETING_MSG504
-AI_FIRST_TURN_GREETING_MSG505
-AI_FIRST_TURN_GREETING_MSG506'''
 
 # Don't translate this entry.
-AI_FIRST_TURN_GREETING_LIST_MANIACAL
-'''AI_FIRST_TURN_GREETING_MSG601
-AI_FIRST_TURN_GREETING_MSG602
-AI_FIRST_TURN_GREETING_MSG603
-AI_FIRST_TURN_GREETING_MSG604
-AI_FIRST_TURN_GREETING_MSG605
-AI_FIRST_TURN_GREETING_MSG606
-AI_FIRST_TURN_GREETING_MSG607
-AI_FIRST_TURN_GREETING_MSG608'''
 
 ##
 ## Hotkey names and descriptions
@@ -13798,3342 +13557,60 @@ HOTKEY_FULLSCREEN
 ##
 ## Name lists
 ##
+
 # Newline separated list of star cluster names
-STAR_GROUP_WORDS
-'''Alpha
-Beta
-Gamma
-Delta
-Epsilon
-Zeta
-Eta
-Theta
-Iota
-Kappa
-Lambda
-Mu
-Nu
-Xi
-Omicron
-Pi
-Rho
-Sigma
-Tau
-Upsilon
-Phi
-Chi
-Psi
-Omega'''
 
 # Newline separated list of star cluster suffixes
-STAR_GROUP_CHARS
-'''α
-β
-γ
-δ
-ε
-ζ
-η
-θ
-ι
-κ
-λ
-μ
-ν
-ξ
-ο
-π
-ρ
-σ
-τ
-υ
-φ
-χ
-ψ
-ω'''
 
 # Newline separated list of star cluster names
-STAR_GROUP_NAMES
-Centauri
 
 # Newline separated list of star names
-STAR_NAMES
-'''Aadhavan
-Aaftaab
-Aberdeen
-Abydos
-Abyormen
-Acamar
-Achernar
-Achird
-Acrux
-Acubens
-Adams
-Adhafera
-Adhara
-Adhil
-Aditya
-Adria
-Aegir
-Aegis
-Aftab
-Agemem
-Agena
-Ahl
-Ain
-Airy
-Ajai
-Ajax
-Akrab
-Al Borak
-Alathfar
-Albaldah
-Albali
-Albans
-Albion
-Albireo
-Alchiba
-Alcor
-Alcyone
-Aldebaran
-Alderamin
-Aldhibah
-Aleel
-Alfecca
-Alfirk
-Algedi
-Algenib
-Algernon
-Algieba
-Algiz
-Algol
-Algorab
-Alhague
-Alhena
-Alioth
-Alkaid
-Alkalurops
-Alkes
-Alkurhah
-Almaak
-Almach
-Alnair
-Alnasl
-Alnath
-Alnilam
-Alnitak
-Alniyat
-Alphard
-Alphecca
-Alpheratz
-Alrai
-Alrescha
-Alrisha
-Alsafi
-Alsciaukat
-Alshain
-Alshat
-Alsuhail
-Altair
-Alterf
-Aludra
-Alula
-Alven
-Alya
-Alzirr
-Ambrozius
-Amel
-An Ghrian
-Anacreon
-Anar
-Anarres
-Ancale
-Ancha
-Andor
-Angel
-Angetenar
-Angstrom
-Ankaa
-Ankh
-Anraq
-Anser
-Ansuz
-Antares
-Antilia
-Applejack
-Apus
-Aquila
-Aquilae
-Araw
-Arbol
-Arcturus
-Ares
-Argus
-Ariel
-Arietis
-Arka
-Arkab
-Arneb
-Arrakis
-Artatore
-Artemis
-Aruna
-Arunan
-Arusha
-Ascella
-Asellus
-Asgard
-Asimov
-Asmodeus
-Aspidiske
-Astéri
-Asteria
-Asterope
-Astley
-Astraea
-Astrum
-Asvins
-Aten
-Athena
-Athens
-Atik
-Atlas
-Atria
-Atutuahi
-Aurelia
-Aurigae
-Aurinko
-Aurora
-Auseklis
-Austin
-Auva
-Avior
-Axis
-Ayora
-Azelfafage
-Azha
-Azmidiske
-Baade
-Baal-Samem
-Babel
-Bacabs
-Bach
-Baer
-Baham
-Bahcall
-Baía
-Balan
-Balder
-Ballybran
-Barcia
-Barnard
-Baten
-Bato
-Baxtim
-Beaivi
-Beaumonde
-Becrux
-Beid
-Bell
-Bellatrix
-Belzagor
-Benetnasch
-Berel
-Berkano
-Bernadette
-Bessel
-Betelgeuse
-Bexley
-Beylix
-Bhanu
-Bhaskar
-Biham
-Bintang
-Bituín
-Bladehill
-Bob
-Boca
-Bode
-Bok
-Bolton
-Bootis
-Bop
-Borealis
-Borlach
-Boros
-Botein
-Brachium
-Bradbury
-Bragi
-Bravio
-Brethil
-Brey
-Brog
-Bud
-Burbidge
-Burke
-Caebeth
-Calafia
-Cannon
-Canopus
-Capella
-Caph
-Caps
-Carcharoth
-Carina
-Caroli
-Cassandra
-Cassini
-Castor
-Cavo
-Cebalrai
-Celaeno
-Celestia
-Celtsi
-Ceti
-Cetus
-Chadwick
-Chara
-Charlie
-Cheleb
-Cherruve
-Chertan
-Chhonnai
-Chih Nu
-Chiron
-Chort
-Chthon
-Ciryon
-Citlālin
-Coatlicue
-Coccolino
-Collassa
-Constance
-Copernicus
-Cor
-Cormack
-Corona
-Correctos
-Crawford
-Crius
-Crow
-Crypto
-Cryslon
-Crystous
-Csillag
-Cursa
-Cygni
-Cynosura
-Cyteen
-D'Korsh
-D'nebag
-Dabih
-Dagaz
-Dairuin
-Dar
-Darquan
-Darrian
-Deadwood
-Deemi
-Delphi
-Demeter
-Deneb
-Denebola
-Denubius
-Deucalion
-Dhrawn
-Diadem
-Dicke
-Diell
-Diggity
-Diphda
-Divakara
-Dnoces
-Dolz
-Doow-tsae
-Dosadi
-Dosis
-Draco
-Draconis
-Drakka
-Draper
-Drengist
-Dres
-Dreven
-Dschubba
-Dsiban
-Dubhe
-Dukalis
-Duna
-Dunatis
-Dungortheb
-Durash
-Durgosh
-Dvorak
-Dyson
-Dyton
-Ea
-Ecthelion
-Edasich
-Edda
-Eddington
-Eek
-Eeloo
-Eguzki
-Ehwaz
-Eilinel
-Ekkaia
-Ekul
-El Gero
-Elased
-Electra
-Elena
-Elnath
-Eltanin
-Elu
-Encke
-Endoria
-Endymion
-Engolong
-Engwar
-Enif
-Eos
-Ephyse
-Epsylon
-Eridani
-Erigone
-Erna
-Eros
-Errai
-Erythro
-Escalon
-Escher
-Esper
-Estela
-Estreya
-Ètâila
-Eternia
-Étoile
-Eurphates
-Euterpe
-Eve
-Ewia
-Ex
-Exis
-Ezellohar
-Ezra
-Fafnir
-Fairchild
-Falmari
-Faraday
-Farlight
-Fehu
-Felix
-Fetter
-Fetū
-Fhloston
-Fieras
-Finisterre
-Fiorina
-Firma
-Fiumena
-Fixas
-Fluttershy
-Fomalhaut
-Formic
-Fornacis
-Fowler
-Fox
-Frack
-Fraunhofer
-Frey
-Fuinur
-Furud
-Gabriel
-Gacrux
-Gaea
-Gaia
-Galileo
-Galle
-Gallifrey
-Galos
-Gamab
-Gamow
-Ganges
-Gari
-Garnet
-Garriot
-Garth
-Gawara
-Gebo
-Gefjon
-Gehenna
-Gemroy
-Geni
-Giacconi
-Gianfar
-Giausar
-Giedi
-Gienah
-Giiziss
-Gilly
-Gimboid
-Gimilzôr
-Ginglith
-Gion
-Girtab
-Glade
-Gladiolus
-Gloom
-Glund
-Gnayiru
-Gne
-Godel
-Goltucot
-Gomeisa
-Gomorrah
-Gor
-Gorgonea
-Gorra
-Gorta
-Gorthol
-Goth
-Graffias
-Grail
-Gram
-Gray
-Grian
-Grotto
-Grue
-Gruis
-Grumium
-Gundung
-Guradas
-Guth
-Gwiazda
-Gygax
-Haalar
-Hadar
-Hadhodrond
-Hador
-Haedi
-Hagalaz
-Hale
-Haleth
-Halley
-Hamal
-Hananim
-Haretha
-Harlequin
-Hartmann
-Harvest
-Hashi
-Hassaleh
-Hathoor
-Haven
-Hawking
-Hegira
-Heimdall
-Heinlein
-Helevorn
-Helix
-Helliconia
-Helos
-Helotrix
-Hematopf
-Henderson
-Henge
-Hera
-Herbert
-Herbig
-Hercules
-Herculis
-Herschel
-Hesikos
-Hesperus
-Hetu’u
-Heulo
-Hewish
-Heze
-Hhnub
-Highgate
-Hiigara
-Hijra
-Himring
-Hiru
-Hisa
-Hisemtuk
-Hluqhl
-Hnau
-Hnub Qub
-Hocotate
-Hoedus
-Holly
-Homam
-Honeydew
-Horst
-Hoyle
-Huachuca
-Huan
-Hubble
-Huggins
-Huishtín
-Hulse
-Huygens
-Hvězda
-Hviezda
-Hyades
-Hyadum
-Hyboria
-Hydros
-Hyperion
-Icarius
-Idril
-Idun
-Ike
-Iliad
-Ilios
-Ilium
-Illuin
-Imlach
-Imra
-Incedius
-Ingwaz
-Inti
-Inupiaq
-Ioram
-Ipsum
-Iranha
-Ìràwọ̀
-Ireta
-Irk
-Iru
-Isa
-Ishtar
-Iskander
-Israfel
-Isteddu
-Istélla
-Iszm
-Ita
-Ithil
-Itzamna
-Ix
-Ixchel
-Ixitixl
-Izar
-Jabbah
-Jansky
-Jelena
-Jera
-Jhonaai
-Jiangyin
-Jijo
-Jinga
-Jinx
-Jirntu
-Jool
-Jophekka
-Jua
-Juthtath
-Jyothisha
-Kaashyapa
-Kadiravan
-Kailis
-Kaitos
-Kajam
-Kakata
-Kala
-Kalas
-Kalidasa
-Kapteyn
-Karahkwa
-Kartaka
-Kartow
-Kaus
-Kazzkark
-Keeta
-Keid
-Kelvin
-Kenaz
-Kent
-Kentaurus
-Kephra
-Kepler
-Kerbin
-Kerry
-Kewkba
-Khaga
-Khama
-Kharak
-Khiori
-Kholdan
-Khonvoum
-Khorshid
-Khursheed
-Kilipi
-Kilja
-King
-Kintana
-Kirkwood
-Kitalpha
-Kithrup
-Klazart
-Klystron
-Knuth
-Kobol
-Kochab
-Kochanski
-Kornephori
-Kraj
-Krampus
-Kraz
-Kregen
-Kril
-Kronos
-Krull
-Kryten
-Kuiper
-Kulthea
-Kulthos
-Kuma
-La
-Laan
-Laganini
-Lagash
-Lagrange
-Laguz
-Lalaith
-Lamarckia
-Lambda
-Langa
-Laplace
-Lassell
-Lava
-Laythe
-Leera
-Leibowitz
-Lemaitre
-Leonis
-Leporis
-Lesath
-Levitt
-Lhûn
-Lilac
-Lintang
-Lir
-Listavus
-Lister
-Lithia
-Lockyer
-Locris
-Loki
-Lomadia
-Lómelindi
-Londinium
-Lorenzo
-Lorum
-Losi
-Lossini
-Luinil
-Lumen
-Lupi
-Lurga
-Lusitania
-Lyae
-Lynx
-Lyonesse
-Lyot
-Lystena
-Maalor
-Maasym
-Maelas
-Magrathea
-Máhanaxar
-Mahtan
-Maia
-Majipoor
-Makina
-Malacandra
-Malin
-Mallus
-Mambo
-Mamura
-Mangaroa
-Mannaz
-Mannga
-Manzil
-Maretta
-Marfik
-Margrave
-Marich
-Marinara
-Markab
-Marklar
-Masoandro
-Mat Troi
-Matahari
-Matar
-Matenga
-Mbyja
-Mebsuta
-Medea
-Media
-Megalon
-Megrez
-Meiji
-Meissa
-Mejare
-Mekbuda
-Meklon
-Meness
-Menkab
-Menkalinan
-Menkar
-Menkent
-Menkib
-Mentar
-Merak
-Merga
-Merops
-Mesa
-Mesarthim
-Mesklin
-Messier
-Metallah
-Metaluna
-Miaplacidi
-Micojan
-Midkemia
-Mier
-Miki
-Mimosa
-Minerva
-Minkar
-Minkowski
-Minmus
-Mintaka
-Mira
-Mirach
-Miram
-Miranda
-Mirfak
-Miri
-Míriel
-Miron
-Mirphak
-Mirzam
-Misha
-Mithra
-Mitra
-Miyamoto
-Mizar
-Mnemon
-Mobas
-Mobius
-Moctezuma
-Moho
-Moletrap
-Molyneux
-Mongo
-Montra
-Monzoto
-Mor-Tax
-Morma
-Moro
-Morrig
-Morthrai
-Moskva
-Mothallah
-Mufrid
-Mughaling
-Muhlifain
-Muir
-Muliphen
-Mün
-Muphrid
-Murzim
-Muscida
-Myomachia
-Myrtilus
-Mze
-Na Atibu
-Na'ir
-Nacre
-Nahar
-Nakshatras
-Naledi
-Namcap
-Naos
-Nap
-Narsilion
-Narzina
-Nash
-Nashira
-Násti
-Natanik
-Nauthiz
-Navi
-Nay
-Nazin
-Needle
-Nekkar
-Nemari
-Nenning
-Neptunus
-Neruval
-Newton
-Nexus
-Ngôi Sao
-Nidor
-Nihal
-Nihil
-Niikhirch
-Nikko
-Nile
-Nipiruk
-Nirn
-Nit
-Nitzer
-Nivrim
-Niyat
-Njord
-Nocobi
-Nodus
-Nordia
-Normalus
-Norris
-Note
-Nuk
-Nunki
-Nusakan
-Nyarl
-Nyénye
-Nyota
-Oa
-Oakka
-Oasis
-Obaca
-Octo
-Odin
-Odyssey
-Ohisama
-Oiolossë
-Olakira
-Olbers
-Olduvai
-Olympus
-Onsay
-Oort
-Ophiuchi
-Optera
-Orchid
-Orionis
-Orocarni
-Orthe
-Osiris
-Othila
-Oyarsa
-Pacifica
-Pagalos
-Paladia
-Pandora
-Panon Poe
-Papis
-Paquin
-Paranar
-Parth
-Path
-Pawn
-Pay
-Peacock
-Peel
-Pegasus
-Pell
-Pelorum
-PemHov
-Penrose
-Penzias
-Perdide
-Perelandra
-Pern
-Persephone
-Perseus
-Perth
-Pet
-Petaybee
-Phact
-Phad
-Phaet
-Phantos
-Pharagos
-Phecda
-Pherkad
-Phoenix
-Phyco
-Piazzi
-Pickering
-Pike
-Pinatha
-Pinkie
-Pisces
-Piscium
-Plato
-Pleione
-Po
-Poi
-Poiesis
-Polaris
-Pollus
-Pollux
-Polyphemus
-PooshNa
-Porrima
-Posterior
-Prace
-Praecipua
-Praxis
-Primodius
-Prior
-Procyon
-Prokets
-Propus
-Proteus
-Proxima
-Prysmos
-Ptolemy
-Pulcherri
-Puppis
-Pyrrus
-Qar'To
-Quayal
-Quillur
-Ra
-Radar
-Ragnarok
-Rai
-Rainbow
-Rama
-Ran
-Rana
-Rangi
-Rarity
-Ras
-Rasalgethi
-Rastaban
-Rasto
-Rauros
-Raven
-Ravi
-Rayden
-Razmus
-Reach
-Réalta
-Rebelus
-Reber
-Regina
-Regis
-Regor
-Regulus
-Rehua
-Reilsa
-Remulak
-Requiem
-Reticuli
-Reul
-Reverie
-Reynolds
-Rha
-Rhampora
-Rheims
-Rhilus
-Rhovanion
-Ri-pog
-Riccioli
-Rigel
-Rimmer
-Rin
-Robi
-Rochallor
-Rollage
-Rome
-Romeo
-Romulas
-Rook
-Rosetta
-Rossi
-Rotan
-Rotanev
-Rothinzil
-Roua
-Rov
-Rubanis
-Rubin
-Ruchba
-Rukbat
-Rukvash
-Rum
-Russell
-Rylos
-Ryoun
-Sabik
-Sadalbari
-Sadalmelik
-Sadalsuud
-Sadatoni
-Sadr
-Saeros
-Sagan
-Sagittari
-Saiph
-Sakuru
-Salm
-Salpeter
-Salusa
-Sandage
-Sangre
-Santo
-Sargas
-Sarin
-Sarma
-Satry
-Saule
-Saurak
-Savitru
-Scarab
-Sceptrum
-Scheat
-Schedar
-Schmidt
-Schwarzs
-Scorpii
-Scylla
-Secilia
-Segin
-Seginus
-Seidon
-Seiren
-Selia
-Sera
-Seregon
-Seren
-Setag
-Seyfert
-Shade
-Sham
-Shams
-Shapiro
-Shapley
-Sharatan
-Shaula
-Shedir
-Sheliak
-Shelly
-Shemesh
-Sheratan
-Shikasta
-Shoggoth
-Shokodo
-Shora
-Shtern
-Sidus
-Sihnon
-Silk
-Silpion
-Silverhold
-Simius
-Siqieiq
-Sirius
-Sitoele
-Sitter
-Situla
-Sjtar
-Skadi
-Skaro
-Skat
-Slipher
-Slunce
-Smeg
-Soare
-Sodom
-Sole
-Soleil
-Solen
-Solntze
-Soma
-Sonce
-Sonne
-Soorajh
-Sooriyan
-Soorya
-Sopota
-Soror
-Sowilo
-Sparta
-Spica
-Sssla
-Staila
-Stalaz
-Starbow
-Starillus
-Stärn
-Statler
-Stea
-Stedda
-Stèila
-Steja
-Stella
-Stelo
-Ster
-Stëra
-Steredenn
-Steren
-Stêrk
-Stern
-Sterope
-Stidda
-Stilla
-Stivan
-Stjarna
-Stjer
-Sto
-Stràla
-Stroggos
-Struve
-Styx
-Sualocin
-Subra
-Suhail
-Sulafat
-Sulva
-Sunce
-Sunna
-Suno
-Supina
-Suraj
-Surya
-Suryudu
-Synnax
-Syrma
-T'ae-yang
-Tabit
-Tabul
-Tähti
-Tai yong
-Taiyo
-Takis
-Taladas
-Talas
-Talitha
-Tama
-Tane
-Tania
-Tanis
-Tanith
-Tao
-Taonoui
-Tarak
-Tarazed
-Targ
-Tauraro
-Tauri
-Taygeta
-Taylor
-Techno
-Tegmen
-Tegmine
-Teja
-Tejat
-Teka
-Tele
-Telemachus
-Tenebra
-Teoblan
-Terebellum
-Terminus
-Tewari
-Thabit
-Thalassa
-Theemim
-Thor
-Thorne
-Thra
-Thrax
-Threshold
-Thuban
-Thulcandra
-Thule
-Thurisaz
-Tiamat
-Tiberius
-Tier
-Tigris
-Tinapolis
-Tirawa
-Tirol
-Tiwaz
-Tombaugh
-Tombstone
-Toranor
-Tork
-Tormance
-Tradamere
-Tran
-Tranai
-Trantor
-Trax
-Trebakka
-Triumph
-Trixie
-Troas
-Trobia
-Troika
-Trondheim
-Trophy
-Troy
-Tschai
-Tsehay
-Tum
-Tumunzahar
-Turais
-Turbin
-Tusk
-Twa
-Twilight
-Tycho
-Tylo
-Typhon
-Tyr
-Uch-Akip
-Udaya
-Uftivan
-Uinen
-Ukko
-Ulduz
-Ull
-Uluru
-Úmanyar
-Undo
-Unukalhai
-Ur
-Urania
-Urchachka
-Urras
-Ursa
-Uruz
-Uvluġiaq
-Uxmai
-Valeria
-Valier
-Vall
-Van Allen
-Vanant
-Vargas
-Vaza
-Vega
-Vekta
-Velorum
-Venice
-Verbena
-Verrier
-Vhilinyar
-Vindeatrix
-Vinea
-Vista
-Volantis
-Vox
-Vulcan
-Waglen
-Waldorf
-Walter
-Wangülen
-Warawara
-Wasat
-Watt
-Wazn
-Wedge
-Wei
-Weizsacker
-Wen-chang
-Wezen
-Wheeler
-Whetuu
-Whipple
-Whitefall
-Whittier
-Whynil
-Wiily
-Wilka
-Willow
-Wilson
-Wilwarin
-Winter
-Wolf
-Wonderbolt
-Worlorn
-Wormwood
-Woz
-Wraith
-Wunjo
-Xanadu
-Xanthus
-Xendalla
-Xengara
-Xenon
-Xenos
-Xephos
-Xiddig
-Xocotl
-Xudax
-Yaraay
-Yarak
-Yarrow
-Yatakya
-Yed
-Yekub
-Yildiz
-Yildun
-Yiminga
-Yll
-Yoka
-Yoldiz
-Yonder
-York
-Yoyo
-Yr Haul
-Yuggoth
-Zakuri
-Zaniah
-Zanzibar
-Zarra
-Zaurak
-Zavijava
-Zavron
-Zecora
-Zeelich
-Zeist
-Zen
-Zhardan
-Zibal
-Zillikian
-Zoctan
-Zomg
-Zon
-Zora
-Zosma
-Zun di
-Zvaigzne
-Zvezda
-Zvijezda
-Zwicky
-Zygot
-Zyrgon
-'''
 
 # Newline separated list of empire names
-EMPIRE_NAMES
-'''Academy
-Accord
-Administration
-Affiliation
-Agglomeration
-Aggregate
-Alliance
-Amalgamation
-Aristocracy
-Ascendancy
-Assembly
-Association
-Authority
-Barony
-Binding
-Bishopric
-Bloc
-Brotherhood
-Cabal
-Center
-Civilization
-Cluster
-Coalition
-Collaboration
-Collectivity
-Command
-Commonwealth
-Community
-Compact
-Concord
-Confederation
-Conglomerate
-Congregation
-Consensus
-Consortium
-Control
-Cooperative
-County
-Covenant
-Delimitation
-Demarcation
-Division
-Domain
-Domination
-Dominion
-Duchy
-Empire
-Enclave
-Entente
-Entirety
-Entity
-Equality
-Federation
-Foundation
-Front
-Governance
-Growth
-Harmony
-Hegemony
-Hierocracy
-Imperium
-Integration
-Invincible
-Joining
-Jurisdiction
-Kingdom
-League
-Marvelous
-Matriarchy
-Oligarchy
-Order
-Pacificat
-Pact
-Panarchy
-Patriarchy
-Peace
-Perfection
-Plurality
-Possession
-Preeminence
-Primacy
-Principality
-Protectorate
-Realm
-Region
-Republic
-Righteous
-Section
-Sector
-Segment
-Seigniory
-Sept
-Singularity
-Society
-Solidarity
-Sovereignty
-Sphere
-Supremacy
-Suzerainty
-Syndicate
-Synthesis
-Territory
-Totality
-Tribes
-Unanimity
-Unification
-Union
-Unity
-Zone'''
 
 # Newline separated list of mammal-based ship names
-SHIP_NAME_MAMMALS
-'''Aardvark
-Aardwolf
-Agouti
-Alpaca
-Ape
-Armadillo
-Aye-Aye
-Babirusa
-Baboon
-Badger
-Bandicoot
-Bat
-Beaver
-Boar
-Bobcat
-Bonobo
-Camel
-Capuchin
-Caracal
-Cat
-Chevrotain
-Chimpanzee
-Chinchilla
-Civet
-Coati
-Colobus
-Cottontail
-Coyote
-Deer
-Dhole
-Dingo
-Dog
-Dolphin
-Donkey
-Dromedary
-Dugong
-Elephant
-Elk
-Fennec
-Ferret
-Fox
-Genet
-Gibbon
-Giraffe
-Goat
-Gorilla
-Guanaco
-Hare
-Hart
-Hedgehog
-Hippopotamus
-Hog
-Horse
-Humpback
-Hyena
-Hyrax
-Jackal
-Jackrabbit
-Jaguar
-Jaguarundi
-Kangaroo
-Kine
-Kinkajou
-Kodiak
-Langur
-Lemur
-Leopard
-Lion
-Llama
-Loris
-Lynx
-Macaque
-Mammoth
-Manatee
-Mandrill
-Margay
-Marmoset
-Marten
-Mink
-Mole
-Mongoose
-Monkey
-Moose
-Mouse
-Mule
-Muntjac
-Narwhale
-Ocelot
-Okapi
-Onager
-Opossum
-Orangutan
-Orca
-Otter
-Ox
-Panda
-Pangolin
-Pika
-Platypus
-Polecat
-Porpoises
-Pronghorn
-Puma
-Rabbit
-Raccoon
-Ram
-Rat
-Reindeer
-Rhinoceros
-Sabretooth
-Seal
-Shrew
-Skunk
-Sloth
-Stag
-Tamandua
-Tamarin
-Tapir
-Tarpan
-Tarsius
-Tenrec
-Tiger
-Vicugna
-Wallaby
-Walrus
-Warthog
-Weasel
-Whale
-Wildebeest
-Wolf
-Wolverine
-Wombat
-Zebra'''
 
 # Newline separated list of bird-based ship names
-SHIP_NAME_BIRDS
-'''Albatross
-Canary
-Condor
-Cormorant
-Crow
-Dove
-Eagle
-Falcon
-Finch
-Flamingo
-Goose
-Heron
-Kestrel
-Kiwi
-Lark
-Osprey
-Ostrich
-Pelican
-Penguin
-Pheasant
-Pidgeon
-Quail
-Raven
-Rhea
-Sparrow
-Stork
-Swallow
-Swan
-Thrush
-Woodpecker'''
 
 # Newline separated list of ship-based ship names
-SHIP_NAME_FISH
-'''Albacore
-Anchovy
-Barracuda
-Bass
-Capelin
-Char
-Coelacanth
-Eel
-Flounder
-Gourami
-Guppy
-Herring
-Koi
-Lamprey
-Mackerel
-Marlin
-Minnow
-Pike
-Piranha
-Remora
-Sculpin
-Shark
-Sockeye
-Stingray
-Trout
-Walleye'''
 
 # Newline separated list of plant-based ship names
-SHIP_NAME_FLORA
-'''Almond
-Apple
-Arbutus
-Ash
-Aspen
-Avocado
-Balsa
-Bamboo
-Beech
-Birch
-Cacao
-Cedar
-Cherry
-Chestnut
-Cinnamon
-Cork
-Cypress
-Dogwood
-Durian
-Elm
-Eucalyptus
-Fig
-Fir
-Hazel
-Hickory
-Holly
-Juniper
-Larch
-Lime
-Mahogany
-Mango
-Maple
-Oak
-Olive
-Orange
-Palm
-Pear
-Persimmon
-Pine
-Plum
-Poplar
-Rubber
-Sequoia
-Spruce
-Sumac
-Willow'''
 
 # Newline separated list of mineral-based ship names
-SHIP_NAME_STONE
-'''Amphibolite
-Andesite
-Basalt
-Chalk
-Clay
-Dolomite
-Flint
-Gabbro
-Gneiss
-Granite
-Komatite
-Limestone
-Marble
-Obsidian
-Pegmatite
-Pumice
-Quartzite
-Sandstone
-Schist
-Shale
-Slate'''
 
 # Newline separated list of weather-based ship names
-SHIP_NAME_WEATHER
-'''Autumn
-Avalanche
-Blizzard
-Breeze
-Calm
-Cold
-Cyclone
-Dawn
-Daybreak
-Drizzle
-Drought
-Dusk
-Earthquake
-Eclipse
-Fog
-Heatwave
-Hurricane
-Lavaflow
-Lightning
-Maelstrom
-Mist
-Monsoon
-Nightfall
-Rainbow
-Rainfall
-Seacurrent
-Sleet
-Snap
-Snowfall
-Solstice
-Spring
-Stormcloud
-Summer
-Sunshine
-Thermal
-Thunder
-Tide
-Tornado
-Tsunami
-Twister
-Vortex
-Whirlwind
-Wind
-Winter'''
 
 # Newline separated list of star constellationbased ship names
-SHIP_NAME_CONSTELLATIONS
-'''Andromeda
-Antlia
-Apus
-Aquarius
-Aquila
-Ara
-Aries
-Auriga
-Bootes
-Caelum
-Camelopardalis
-Cancer
-Canes
-Venatici
-Canis
-Capricornus
-Carina
-Cassiopeia
-Centaurus
-Cepheus
-Cetus
-Chamaeleon
-Circinus
-Columba
-Coma
-Berenices
-Corona
-Corvus
-Crater
-Crux
-Cygnus
-Delphinus
-Dorado
-Draco
-Equuleus
-Eridanus
-Fornax
-Gemini
-Grus
-Hercules
-Horologium
-Hydra
-Hydrus
-Indus
-Lacerta
-Leo
-Lepus
-Libra
-Lupus
-Lyra
-Mensa
-Microscopium
-Monoceros
-Musca
-Norma
-Octans
-Ophiuchus
-Orion
-Pavo
-Perseus
-Phoenix
-Pictor
-Pisces
-Puppis
-Pyxis
-Reticulum
-Sagitta
-Sagittarius
-Scorpius
-Sculptor
-Scutum
-Serpens
-Sextans
-Taurus
-Telescopium
-Triangulum
-Tucana
-Ursa
-Vela
-Virgo
-Volans
-Vulpecula'''
 
 # Newline separated list of various namebased ship names
-SHIP_NAME_STARS
-'''Acamar
-Achernar
-Achird
-Acrux
-Acubens
-Adhafera
-Adhil
-Agena
-Ain
-Al Athfar
-Al Bali
-Al Dhanab
-Al Dulfim
-Al Gieba
-Al Giedi
-Al Haud
-Al Nair
-Al Niyat
-Al Rescha
-Al Thalimain
-Alaraph
-Albireo
-Alchibah
-Alcyone
-Aldebaran
-Alfirk
-Algenib
-Algol
-Algorab
-Alioth
-Alkalurops
-Alkes
-Almach
-Almeisan
-Alnilam
-Alnitak
-Alphard
-Alpheratz
-Alruccabah
-Alsafi
-Alshain
-Altair
-Aludra
-Alya
-Ancha
-Angetenar
-Ankaa
-Antares
-Arcturus
-Arkab
-Arrakis
-Ascella
-Asellus
-Asmidiske
-Asterope
-Atik
-Atlas
-Atria
-Auva
-Avior
-Azelfafage
-Azha
-Azimech
-Baham
-Baten
-Beid
-Bellatrix
-Benetnasch
-Betelgeuse
-Botein
-Canopus
-Capella
-Caph
-Caput
-Trianguli
-Castor
-Celaeno
-Celbalrai
-Chara
-Cheleb
-Chertan
-Chort
-Cih
-Cor Caroli
-Cor Hydrae
-Cor Leonis
-Coxa
-Cujam
-Cursa
-Dabih
-Deneb
-Denebola
-Diphda
-Dnoces
-Dschubba
-Dubhe
-Dziban
-Edasich
-El
-Nath
-Electra
-Eltanin
-Enif
-Er
-Rai
-Eschamali
-Fomalhaut
-Furud
-Gacrux
-Garnet
-Gemma
-Giauzar
-Gienah
-Gomeisa
-Graffias
-Grumium
-Hadar
-Hamal
-Heka
-Heze
-Homam
-Izar
-Jabbah
-Kabdhilinan
-Kaffaljidhmah
-Kaitos
-Kalb
-Kaou
-Pih
-Kaus
-Ke
-Kwan
-Keid
-Kentaurus
-Kin
-Yu
-Kitalpha
-Kochab
-Kokab
-Kornephoros
-Kraz
-Kuma
-Kurhah
-Lesuth
-Maasim
-Maaz
-Maia
-Marchab
-Marfak
-Markab
-Matar
-Mebsuta
-Megrez
-Meissa
-Mekbuda
-Men
-Menkab
-Menkalinan
-Menkar
-Menkent
-Menkib
-Merak
-Merope
-Mesarthim
-Miaplacidus
-Mimosa
-Minkar
-Mintaka
-Mira
-Mirach
-Mirak
-Mirzam
-Mizar
-Mothallah
-Muhlifain
-Muliphein
-Mulu-lizi
-Muphrid
-Nakkar
-Naos
-Nashira
-Navi
-Nekkar
-Nihal
-Nodus
-Nunki
-Nusakan
-Phact
-Phad
-Phaet
-Phecda
-Pherkab
-Pleione
-Polaris
-Pollux
-Porrima
-Praecipula
-Prijipati
-Primus
-Hyadum
-Procyon
-Propus
-Pulcherrima
-Rana
-Ras Algethi
-Ras Alhague
-Ras Elased
-Rasalas
-Rastaban
-Regor
-Regulus
-Rigel
-Rigilkent
-Rischa
-Rotanev
-Ruchba
-Rukbah
-Rukbat
-Sabik
-Sadachbia
-Sadal Melik
-Sadal Suud
-Sadalbari
-Sadatoni
-Sadr
-Saiph
-Samakah
-Sargas
-Sarin
-Scheat
-Schedar
-Schemali
-Scutulum
-Segin
-Seginus
-Shaula
-Shedir
-Sheliak
-Shelyak
-Sheratan
-Sirius
-Situla
-Skat
-Spica
-Sualocin
-Suhail
-Sulafat
-Syrma
-Talitha
-Tania
-Tarazed
-Tarf
-Taygeta
-Tchou
-Tegmine
-Tejat
-Thabit
-Thuban
-Tseen
-Tsih
-Tso
-Hea
-Tsze
-Tseang
-Tyl
-Ukdah
-Unukalhai
-Vega
-Vindemiatrix
-Wasat
-Wezen
-Wezn
-Yed
-Yildun
-Zaniah
-Zaurak
-Zavijava
-Zozma
-Zubanalakrab
-Zubenhakrabi
-Aardharaa
-Aashada
-Aaslesha
-Abhijit
-Ashresha
-Ashwini
-Bharani
-Bhargava
-Bhishaja
-Bhomyavasar
-Brihaspativasara
-Budhavar
-Chitra
-Dhanishta
-Dhanu
-Guruvar
-Hastaa
-Induvasar
-Jyeshta
-Kanya
-Karkataka
-Krittika
-Kumbha
-Makara
-Mangalvar
-Mesha
-Mithuna
-Mrigasheerisham
-Phalguni
-Proshtapada
-Pubba
-Punarvasu
-Purvashada
-Pushya
-Ravivar
-Revathi
-Rohini
-Savitru
-Shaniva
-Shatha
-Shravana
-Shukravar
-Simha
-Somavar
-Sthiravasara
-Swati
-Tishya
-Tula
-Uttara
-Uttarashada
-Vichruta
-Vishaaka
-Vrishchika'''
 
 # Newline separated list of roman mythology-based ship names
-SHIP_NAME_ROMAN_MYTHOLOGY
-'''Aurora
-Auster
-Bacchus
-Bellona
-Decima
-Diana
-Orcus
-Fama
-Faunus
-Favonius
-Fortuna
-Galinthis
-Gratiae
-Juno
-Justitia
-Latona
-Matuta
-Minerva
-Morta
-Nona
-Parcae
-Pax
-Proserpina
-Salacia
-Salus
-Silvanus
-Somnus
-Tellus
-Ulysses
-Veiovis
-Vesper
-Vesta
-Vulturnus'''
 
 # Newline separated list of greek mythology-based ship names
-SHIP_NAME_GREEK_MYTHOLOGY
-'''Aesculapius
-Achelois
-Acheron
-Acis
-Adrasteia
-Aegaeon
-Aeolus
-Aether
-Agdistis
-Agrius
-Alastor
-Alcyoneus
-Alectrona
-Aloadae
-Alpheus
-Amphitrite
-Ananke
-Antaeus
-Antheia
-Aphaea
-Aphrodite
-Arethusa
-Argus
-Aristaeus
-Artemis
-Asclepius
-Asopus
-Asteria
-Astraeus
-Ate
-Athena
-Atropos
-Attis
-Auxo
-Bia
-Boreas
-Briareus
-Brontes
-Cabiri
-Caerus
-Calliope
-Calypso
-Ceto
-Chloris
-Chronos
-Circe
-Cladeus
-Cleochareia
-Clio
-Clymene
-Clytie
-Coeus
-Cotys
-Cragus
-Crataeis
-Crius
-Cronus
-Cybele
-Cyclopes
-Daphne
-Demeter
-Dinlas
-Dionysus
-Dioscuri
-Doris
-Echo
-Efreisone
-Eidyia
-Eileithyia
-Elpis
-Enyalius
-Enyo
-Eos
-Eosphorus
-Ephialtes
-Epimetheus
-Erato
-Erebus
-Erinyes
-Ethehofos
-Eunomia
-Eurotas
-Eurus
-Euterpe
-Galinthias
-Giants
-Glaucus
-Gyes
-Hades
-Hamadryads
-Hebe
-Hecate
-Hecatoncheires
-Helios
-Hemera
-Hephaestus
-Hera
-Heracles
-Hermes
-Hespera
-Hesperos
-Hestia
-Horae
-Hybris
-Hypnos
-Irene
-Iris
-Lachesis
-Leto
-Melpomene
-Metis
-Metope
-Mnemosyne
-Moirae
-Momus
-Morpheus
-Naiads
-Nemesis
-Nereids
-Nereus
-Notus
-Oceanid
-Odysseus
-Ophion
-Oreads
-Otus
-Peitho
-Peneus
-Persephone
-Pheme
-Phoebe
-Phorcys
-Phosporus
-Pleiades
-Polyhymnia
-Polyphemus
-Poseidon
-Priapus
-Prometheus
-Selene
-Semele
-Silenus
-Sterope
-Steropes
-Tartarus
-Taygete
-Terpsichore
-Thalia
-Thallo
-Thanatos
-Theia
-Themis
-Thetis
-Titan
-Tityas
-Tyche
-Typhon
-Zephyrus
-Zeus'''
 
 # Newline separated list of norse mythology-based ship names
-SHIP_NAME_NORSE_MYTHOLOGY
-'''Aegir
-Alaisiagae
-Alberich
-Alfhild
-Alfrodull
-Alvis
-Andhrimnir
-Andvaranaut
-Andvari
-Angrboda
-As
-Asgard
-Embla
-Astrild
-Asynjur
-Atla
-Audhumla
-Balder
-Beldegg
-Bergelmir
-Beyla
-Bifrost
-Billing
-Bor
-Borghild
-Bragi
-Brono
-Brunhilde
-Buri
-Bylgia
-Dagur
-Disen
-Dvalin
-Edda
-Einmyria
-Eir
-Eisa
-Elli
-Fafnir
-Fenrir
-Forseti
-Freyr
-Frigg
-Gefion
-Geirrod
-Ginnungagap
-Gjallar
-Gladsheim
-Glen
-Glum
-Gna
-Gullveig
-Gunnar
-Heimdall
-Heimskringla
-Helheim
-Hermod
-Hladgunnr
-Hlin
-Honir
-Muninn
-Hymir
-Idun
-Jord
-Jormungand
-Jotunheim
-Jotuns
-Kari
-Ketill
-Kvasir
-Laga
-Landvaettir
-Lifthrasir
-Lofn
-Loki
-Magni
-Modi
-Miming
-Mimir
-Mjollnir
-Mundilfari
-Muspell
-Nidhogg
-Niflheim
-Njord
-Norn
-Nott
-Odin
-Ragnarok
-Sceaf
-Sif
-Sigurd
-Sjofn
-Skadi
-Sleipnir
-Snotra
-Surt
-Svadilfari
-Svalin
-Syn
-Thiazi
-Thor
-Thrud
-Tyr
-Utgard
-Valhalla
-Vali
-Valkyri
-Vanaheim
-Vanir
-Ve
-Vidar
-Vili
-Yggdrasil
-Ymir'''
 
 # Newline separated list of basque mythology-based ship names
-SHIP_NAME_BASQUE_MYTHOLOGY
-'''Aatxe
-Adur
-Aide
-Aideko
-Akerbeltz
-Ama
-Amalur
-Argiduna
-Atarrabi
-Axular
-Basa
-Begizko
-Beigorri
-Benzozia
-Betadur
-Birao
-Eate
-Egoi
-Eguzku
-Ekaitz
-Eki
-Erditse
-Erensuge
-Erge
-Erio
-Etsai
-Euri
-Gaixtoak
-Gaizkin
-Galtzagorri
-Gauargi
-Gaueko
-Goikoa
-Gorritxiki
-Hodei
-Iduzki
-Ieltxu
-Iguzki
-Ilargi
-Inguma
-Inizitu
-Intxixu
-Iratargi
-Iritxu
-Itsaso
-Itxasgorrieta
-Iuski
-Laino
-Laminak
-Lur
-Lurra
-Maju
-Mayi
-Mikelats
-Mozorro
-Numen
-Oaztargi
-Odei
-Ortz
-Ortzeder
-Ortzi
-Ost
-Ostadar
-Ostots
-Ostri
-Ozkarri
-Patuek
-Sakre
-Sorguin
-Sugoi
-Tartaro
-Torto
-Tronagarru
-Txaalgorri
-Tximistarri
-Ur
-Urci
-Urtzi
-Yaun
-Zezengorri
-Zuberoa'''
 
 # FIXME: Sort these into their proper locations?
 # Newline separated list of various mythology-based ship names
-SHIP_NAME_UNSORTED_MYTHOLOGY
-'''Gorgon
-Sphinx
-Medusa
-Pegasus
-Echidna
-Satyr
-Nymph
-Cyclops
-Harpy
-Abarimon
-Abatwa
-Ahriman
-Aitvaras
-Ajatar
-Amphisbaena
-Anubite
-Apis
-Aspare
-Aswang
-Athos
-Automatas
-Aziza
-Bahamut
-Bakhtak
-Baku
-Balaur
-Banshee
-Barbegazi
-Barghest
-Basilisk
-Baxajuan
-Boobrie
-Broxa
-Bukavac
-Bunyip
-Buraq
-Catoblepas
-Cerberus
-Charybdis
-Cherufe
-Chimaera
-Chimera
-Chiron
-Chrysaor
-Cikavac
-Cluricaun
-Coblynau
-Cockatrice
-Crocotta
-Dahu
-Diwata
-Domowije
-Drac
-Draugr
-Drekavac
-Dvergr
-Dybbuk
-Eloko
-Empusa
-Encantado
-Ettin
-Euryale
-Fachen
-Feeorin
-Gaki
-Gancanagh
-Gargoyle
-Garuda
-Geryon
-Grendel
-Griffin
-Guivre
-Gwyllgi
-Haetae
-Hippogriff
-Hitotsume-kozou
-Huldra
-Huldrefolk
-Hypocampus
-Ifrit
-Ixionidae
-Jengu
-Jikininki
-Kabouter
-Kallikantzaroi
-Kapre
-Karkadann
-Kharybdis
-Kishi
-Kitsune
-Klytias
-Kobold
-Kraken
-Kroni
-Kujuta
-Kumiho
-Ladon
-Lamia
-Lammasu
-Lampades
-Leshii
-Leyak
-Liderc
-Maal
-Manananggal
-Mandrake
-Manticore
-Mara
-Menehune
-Merrow
-Midwayer
-Mimi
-Minotaur
-Mitmitke
-Myling
-Naga
-Naiad
-Ngoro
-Nue
-Nukekubi
-Oni
-Opinicus
-Oread
-Orochi
-Orthrus
-Ouroboros
-Ovinnik
-Patupairehe
-Penanggalan
-Piasa
-Pixie
-Polevik
-Ponaturi
-Pooka
-Rabisu
-Raiju
-Rakshasa
-Redcap
-Roc
-Rokurokubi
-Rusalka
-Samebito
-Scylla
-Selkie
-Serpopard
-Shedim
-Simurgh
-Sirena
-Skvader
-Sluagh
-Spriggan
-Squonk
-Stheno
-Stryx
-Talos
-Taniwha
-Tanuki
-Tarasque
-Tengu
-Tikbalang
-Tomte
-Tonttu
-Trowe
-Turul
-Unwaba
-Vetter
-Voadkyn
-Vodyanoy
-Wendigo
-Wyrm
-Wyvern
-Yuki-onna
-Yuurei'''
 
 # Newline separated list of scientist-based ship names
-SHIP_NAME_SCIENTISTS
-'''Ampere
-Angstrom
-Archimedes
-Aristotle
-Avogadro
-Becquerel
-Bell
-Bernoulli
-Bohr
-Boltzmann
-Boyle
-Cassini
-Cavendish
-Celsius
-Chandrasekhar
-Copernicus
-Coulomb
-Crick
-Curie
-Darwin
-Dalton
-Descartes
-Dirac
-Doppler
-Edison
-Einstein
-Euler
-Faraday
-Fermi
-Feynman
-Flemming
-Ford
-Foucault
-Franklin
-Galen
-Galileo
-Galvani
-Gauss
-Glenn
-Goddard
-Golgi
-Goodall
-Hales
-Halley
-Hawking
-Heisenberg
-Helmholtz
-Herschel
-Hertzsprung
-Hooke
-Hoyle
-Hubble
-Huygens
-Hertz
-Jenner
-Kelvin
-Kepler
-Kuiper
-Lagrange
-Lavoisier
-Leeuwenhoek
-Linnaeus
-Lorenz
-Mach
-Malpighi
-Maxwell
-Mendeleev
-Needham
-Newton
-Oersted
-Ohm
-Oort
-Oppenheimer
-Pasteur
-Pauling
-Planck
-Pliny
-Redi
-Richter
-Rontgen
-Rutherford
-Sagan
-Salk
-Schwann
-Schrodinger
-Schwarzschild
-Spallanzani
-Tesla
-Tycho
-Vesalius
-Van
-Allen
-Volta
-Voltaire
-Watson'''
 
 # Newline separated list of author-based ship names
-SHIP_NAME_AUTHORS
-'''Adams
-Aldiss
-Alexander
-Anderson
-Anthony
-Asimov
-Banks
-Baum
-Beagle
-Bear
-Bester
-Bisson
-Blish
-Bloch
-Bova
-Bradbury
-Bradley
-Brin
-Brooks
-Brunner
-Bujold
-Burroughs
-Butler
-Capek
-Card
-Charnas
-Cherryh
-Chesterton
-Chiang
-Clarke
-Clement
-Clifton
-Cordwainer
-Crichton
-Davidson
-Delany
-Dick
-Dickson
-Effinger
-Egan
-Ellison
-Farmer
-Foster
-Gaiman
-Gerrold
-Gibson
-Greeley
-Haldeman
-Heinlein
-Henderson
-Herbert
-Hickman
-Johnson
-Jordan
-Kagan
-Kelly
-Keyes
-Knight
-Kornbluth
-Kress
-L'Engle
-Lafferty
-Landis
-Langford
-Larson
-Le Guin
-Leckie
-Leiber
-Leinster
-Lem
-Levine
-Lewis
-Link
-Longyear
-Lucas
-Martin
-McCaffrey
-McHugh
-McIntyre
-Miller
-Niven
-Orwell
-Perry
-Pratchett
-Pohl
-Resnick
-Riley
-Robinson
-Roddenberry
-Rowling
-Rusch
-Russ
-Russell
-Sawyer
-Sheffield
-Shelley
-Shepard
-Silverberg
-Simak
-Simmons
-Stapledon
-Steele
-Stephenson
-Sterling
-Straczynski
-Stross
-Sturgeon
-Swanwick
-Tiptree
-Tolkien
-Turtledove
-Vance
-Varley
-Verne
-Vinge
-Vonnegut
-Watt-Evans
-Wells
-Wilhelm
-Williamson
-Willis
-Wilson
-Wolfe
-Wolverton
-Zahn
-Zelazny'''
 
 # Newline separated list of artist-based ship names
-SHIP_NAME_ARTISTS
-'''Botticelli
-Bruegel
-Caravaggio
-Cezanne
-Chagall
-Da Vinci
-Dali
-Degas
-Delacroix
-Dore
-Duerer
-Escher
-Gauguin
-Giotto
-Goya
-Holbein
-Kahlo
-Kandinsky
-Klee
-Klimt
-Magritte
-Manet
-Matisse
-Michelangelo
-Miro
-Modigliani
-Mondrian
-Monet
-O'Keeffe
-Picasso
-Pollock
-Raphael
-Rembrandt
-Renoir
-Rodin
-Rubens
-Van Gogh
-Warhol
-Whistler'''
-
-SHIP_NAME_VIRTUES
-'''Altruism
-Autonomy
-Balance
-Charity
-Chastity
-Commitment
-Compassion
-Continence
-Cooperation
-Courage
-Courtesy
-Creativity
-Curiosity
-Dependability
-Detachment
-Determination
-Diligence
-Discipline
-Empathy
-Endurance
-Enthusiasm
-Excellence
-Fairness
-Faith
-Fidelity
-Focus
-Foresight
-Forgiveness
-Fortitude
-Freedom
-Generosity
-Happiness
-Helpfulness
-Honesty
-Honor
-Hospitality
-Humility
-Humor
-Idealism
-Imagination
-Independence
-Innocence
-Integrity
-Justice
-Kindness
-Liberty
-Loyalty
-Mercy
-Moderation
-Modesty
-Nurture
-Obedience
-Optimism
-Patience
-Peace
-Perfection
-Perseverance
-Piety
-Prudence
-Purity
-Reason
-Refinement
-Respect
-Restraint
-Self-Discipline
-Sensitivity
-Sincerity
-Strength
-Sympathy
-Tactfulness
-Temperance
-Tolerance
-Trust
-Truth
-Understanding
-Unselfishness
-Valor
-Virtue
-Wisdom
-Zeal'''
 
 # Newline separated list of emotion-based ship names
-SHIP_NAME_EMOTIONS
-'''Acceptance
-Agony
-Ambivalance
-Anger
-Angst
-Anticipation
-Awe
-Boredom
-Confidence
-Depression
-Disgust
-Ecstasy
-Envy
-Fear
-Frustration
-Guilt
-Hate
-Hope
-Jealousy
-Joy
-Loneliness
-Love
-Pride
-Rage
-Remorse
-Shame
-Smugness
-Sorrow
-Surprise
-Suspicion'''
 
 # Newline separated list of architecture-based ship names
-SHIP_NAME_ARCHITECTURE
-'''Apex
-Arch
-Barrel
-Buttress
-Ceiling
-Column
-Cornice
-Dome
-Eaves
-Facade
-Foundation
-Frieze
-Gable
-Keystone
-Minaret
-Pediment
-Pier
-Pilaster
-Pillar
-Rotunda
-Spandrel
-Stucco
-Terrace
-Tower
-Truss
-Vault
-Veranda
-Wall
-Window'''
 
 # Newline separated list of "master of orion 2"-based ship names
-SHIP_NAME_MOO2_STARS
-'''Akrab
-Endoria
-Erigone
-Ezra
-Fixas
-Lir
-Manzil
-Muscida
-Tewari
-Vox
-Woz
-Xanthus
-Yarak
-Yekub'''
 
 SHIP_NAME_OTHER
 Бесконечный сентябрь
 
 # Newline separated list of developer name based ship names
-SHIP_NAME_DEVS
-'''Adrian Broher
-Aquataine
-Big Joe
-Cami
-Dilvish
-Eleazar
-Geoff the Medio
-PD
-Tyreth
-Tzlaine
-Vezzra'''
-
-SHIP_NAMES
-'''[[SHIP_NAME_MAMMALS]]
-[[SHIP_NAME_BIRDS]]
-[[SHIP_NAME_FISH]]
-[[SHIP_NAME_FLORA]]
-[[SHIP_NAME_STONE]]
-[[SHIP_NAME_WEATHER]]
-[[SHIP_NAME_CONSTELLATIONS]]
-[[SHIP_NAME_STARS]]
-[[SHIP_NAME_SCIENTISTS]]
-[[SHIP_NAME_AUTHORS]]
-[[SHIP_NAME_ARTISTS]]
-[[SHIP_NAME_VIRTUES]]
-[[SHIP_NAME_EMOTIONS]]
-[[SHIP_NAME_ARCHITECTURE]]
-[[SHIP_NAME_MOO2_STARS]]
-[[SHIP_NAME_OTHER]]'''
-
-MONSTER_NAMES
-'''[[SHIP_NAME_ROMAN_MYTHOLOGY]]
-[[SHIP_NAME_GREEK_MYTHOLOGY]]
-[[SHIP_NAME_NORSE_MYTHOLOGY]]
-[[SHIP_NAME_BASQUE_MYTHOLOGY]]
-[[SHIP_NAME_UNSORTED_MYTHOLOGY]]
-[[SHIP_NAME_DEVS]]'''
-
 
 #include "../global_settings.txt"
 #include "../content_specific_parameters.txt"
