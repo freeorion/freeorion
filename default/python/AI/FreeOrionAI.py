@@ -164,7 +164,8 @@ def prepareForSave():  # pylint: disable=invalid-name
         print "foAIstate pickled to string, about to send to server"
         fo.setSaveStateString(dump_string)
     except:
-        error("foAIstate unable to pickle save-state string; the save file should be playable but the AI may have a different aggression.", exc_info=True)
+        error("foAIstate unable to pickle save-state string; "
+              "the save file should be playable but the AI may have a different aggression.", exc_info=True)
 
 
 def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
@@ -286,7 +287,7 @@ def generateOrders():  # pylint: disable=invalid-name
     print ("Generating Orders")
     print ("EmpireID: {empire.empireID}"
            " Name: {empire.name}_{empire.empireID}_pid:{p_id}_{p_name}RIdx_{res_idx}_{aggression}"
-           " Turn: {turn}").format(empire=empire,  p_id=fo.playerID(), p_name=fo.playerName(),
+           " Turn: {turn}").format(empire=empire, p_id=fo.playerID(), p_name=fo.playerName(),
                                    res_idx=ResearchAI.get_research_index(), turn=turn,
                                    aggression=aggression_name.capitalize())
     print "EmpireColors: {0.colour.r} {0.colour.g} {0.colour.b} {0.colour.a}".format(empire)
@@ -301,7 +302,8 @@ def generateOrders():  # pylint: disable=invalid-name
         declare_war_on_all()
         human_player = fo.empirePlayerID(1)
         greet = diplomatic_corp.get_first_turn_greet_message()
-        fo.sendChatMessage(human_player, '%s (%s): [[%s]]' % (empire.name, get_trait_name_aggression(foAIstate.character), greet))
+        fo.sendChatMessage(human_player,
+                           '%s (%s): [[%s]]' % (empire.name, get_trait_name_aggression(foAIstate.character), greet))
 
     foAIstate.prepare_for_new_turn()
     debug("Calling AI Modules")
@@ -345,7 +347,8 @@ def generateOrders():  # pylint: disable=invalid-name
             pass
 
 
-# The following methods should probably be moved to the AIstate module, to keep this module more focused on implementing required interface
+# The following methods should probably be moved to the AIstate module,
+# to keep this module more focused on implementing required interface
 def declare_war_on_all():  # pylint: disable=invalid-name
     """Used to declare war on all other empires (at start of game)"""
     my_emp_id = fo.empireID()

@@ -41,11 +41,13 @@ def get_invasion_fleets():
     visible_system_ids = list(foAI.foAIstate.visInteriorSystemIDs) + list(foAI.foAIstate.visBorderSystemIDs)
 
     if home_system_id != INVALID_ID:
-        accessible_system_ids = [sys_id for sys_id in visible_system_ids
-                                 if (sys_id != INVALID_ID) and universe.systemsConnected(sys_id, home_system_id, empire_id)]
+        accessible_system_ids = [sys_id for sys_id in visible_system_ids if
+                                 (sys_id != INVALID_ID) and universe.systemsConnected(sys_id, home_system_id,
+                                                                                      empire_id)]
     else:
         print "Warning: Empire has no identifiable homeworld; will treat all visible planets as accessible."
-        accessible_system_ids = visible_system_ids  # TODO: check if any troop ships owned, use their system as home system
+        # TODO: check if any troop ships owned, use their system as home system
+        accessible_system_ids = visible_system_ids
 
     acessible_planet_ids = PlanetUtilsAI.get_planets_in__systems_ids(accessible_system_ids)
     all_owned_planet_ids = PlanetUtilsAI.get_all_owned_planet_ids(acessible_planet_ids)  # includes unpopulated outposts
@@ -54,7 +56,8 @@ def get_invasion_fleets():
     invadable_planet_ids = set(all_owned_planet_ids).union(all_populated_planets) - set(empire_owned_planet_ids)
 
     invasion_targeted_planet_ids = get_invasion_targeted_planet_ids(universe.planetIDs, MissionType.INVASION)
-    invasion_targeted_planet_ids.extend(get_invasion_targeted_planet_ids(universe.planetIDs, MissionType.ORBITAL_INVASION))
+    invasion_targeted_planet_ids.extend(
+        get_invasion_targeted_planet_ids(universe.planetIDs, MissionType.ORBITAL_INVASION))
     all_invasion_targeted_system_ids = set(PlanetUtilsAI.get_systems(invasion_targeted_planet_ids))
 
     invasion_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.INVASION)
@@ -176,7 +179,8 @@ def get_invasion_fleets():
             if not troops_per_ship:
                 warn("The best orbital invasion design at %s seems not to have any troop capacity." % loc_planet)
                 continue
-            _, col_design, build_choices = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION, loc)
+            _, col_design, build_choices = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION,
+                                                                           loc)
             if not col_design:
                 continue
             if loc not in build_choices:
@@ -196,7 +200,8 @@ def get_invasion_fleets():
             print "Invasion base planning, need %d troops at %d pership, will build %d ships." % (
                 (planet_troops + 1), troops_per_ship, n_bases)
             retval = fo.issueEnqueueShipProductionOrder(col_design.id, loc)
-            print "Enqueueing %d Troop Bases at %s for %s" % (n_bases, PlanetUtilsAI.planet_name_ids([loc]), PlanetUtilsAI.planet_name_ids([pid]))
+            print "Enqueueing %d Troop Bases at %s for %s" % (n_bases, PlanetUtilsAI.planet_name_ids([loc]),
+                                                              PlanetUtilsAI.planet_name_ids([pid]))
             if retval != 0:
                 all_invasion_targeted_system_ids.add(planet.systemID)
                 reserved_troop_base_targets.append(pid)
@@ -206,7 +211,8 @@ def get_invasion_fleets():
 
     invasion_timer.start("evaluating target planets")
     # TODO: check if any invasion_targeted_planet_ids need more troops assigned
-    evaluated_planet_ids = list(set(invadable_planet_ids) - set(invasion_targeted_planet_ids) - set(reserved_troop_base_targets))
+    evaluated_planet_ids = list(
+        set(invadable_planet_ids) - set(invasion_targeted_planet_ids) - set(reserved_troop_base_targets))
     evaluated_planets = assign_invasion_values(evaluated_planet_ids)
 
     sorted_planets = [(pid, pscore % 10000, ptroops) for pid, (pscore, ptroops) in evaluated_planets.items()]
@@ -283,14 +289,21 @@ def assign_invasion_values(planet_ids):
                 species_name2 = (planet2 and planet2.speciesName) or ""
                 species2 = fo.getSpecies(species_name2)
                 if species2 and species2.canProduceShips:
-                    planet_industries[pid2] = planet2.currentMeterValue(fo.meterType.industry) + 0.1  # to prevent divide-by-zero
+                    # to prevent divide-by-zero
+                    planet_industries[pid2] = planet2.currentMeterValue(fo.meterType.industry) + 0.1
             industry_ratio = planet_industries[pid] / max(planet_industries.values())
             for pid2 in system.planetIDs:
                 if pid2 == pid:
                     continue
                 planet2 = universe.getPlanet(pid2)
-                if planet2 and (planet2.owner != empire_id) and ((planet2.owner != -1) or (planet.currentMeterValue(fo.meterType.population) > 0)):  # TODO check for allies
-                    planet_values[pid][0] += industry_ratio * neighbor_val_ratio * (neighbor_values.setdefault(pid2, evaluate_invasion_planet(pid2, secure_missions))[0])
+                # TODO check for allies
+                if (planet2 and (planet2.owner != empire_id) and
+                        ((planet2.owner != -1) or (planet.currentMeterValue(fo.meterType.population) > 0))):
+                    planet_values[pid][0] += (
+                        industry_ratio *
+                        neighbor_val_ratio *
+                        (neighbor_values.setdefault(pid2, evaluate_invasion_planet(pid2, secure_missions))[0])
+                    )
     return planet_values
 
 
@@ -422,7 +435,8 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     supply_val = 0
     enemy_val = 0
     if planet.owner != -1:  # value in taking this away from an enemy
-        enemy_val = 20 * (planet.currentMeterValue(fo.meterType.targetIndustry) + 2*planet.currentMeterValue(fo.meterType.targetResearch))
+        enemy_val = 20 * (planet.currentMeterValue(fo.meterType.targetIndustry) +
+                          2*planet.currentMeterValue(fo.meterType.targetResearch))
     if p_sys_id in ColonisationAI.annexable_system_ids:  # TODO: extend to rings
         supply_val = 100
     elif p_sys_id in ColonisationAI.annexable_ring1:
@@ -437,7 +451,8 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
         else:
             supply_val *= 0.2
 
-    threat_factor = min(1, 0.2*MilitaryAI.get_tot_mil_rating()/(sys_total_threat+0.001))**2  # devalue invasions that would require too much military force
+    # devalue invasions that would require too much military force
+    threat_factor = min(1, 0.2*MilitaryAI.get_tot_mil_rating()/(sys_total_threat+0.001))**2
 
     design_id, _, locs = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_INVASION)
     if not locs or not universe.getPlanet(locs[0]):

@@ -13,23 +13,20 @@ from common.configure_logging import convenience_function_references_for_logger
 __designStats = {}
 
 
-def stats_meet_reqs(stats, reqs):
+def stats_meet_reqs(stats, requirements):
     """Check if (fleet) stats meet requirements.
 
     :param stats: Stats (of fleet)
     :type stats: dict
-    :param reqs: Requirements
-    :type reqs: dict
+    :param requirements: Requirements
+    :type requirements: dict
     :return: True if requirements are met.
     :rtype: bool
     """
-    try:
-        for key in reqs:
-            if stats.get(key, 0) < reqs[key]:
-                return False
-        return True
-    except:
-        return False
+    for key in requirements:
+        if stats.get(key, 0) < requirements[key]:
+            return False
+    return True
 
 
 def count_troops_in_fleet(fleet_id):
@@ -129,7 +126,8 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
             if species:
                 for ship_id in fleet.shipIDs:
                     ship = universe.getShip(ship_id)
-                    if ship and foAI.foAIstate.get_ship_role(ship.design.id) in colonization_roles and species == ship.speciesName:
+                    if (ship and foAI.foAIstate.get_ship_role(ship.design.id) in colonization_roles and
+                            species == ship.speciesName):
                         break
                 else:  # no suitable species found
                     continue
@@ -213,9 +211,11 @@ def split_fleet(fleet_id):
             foAI.foAIstate.newlySplitFleets[new_fleet_id] = True
         else:
             if fleet.systemID == INVALID_ID:
-                warn("Tried to split ship id (%d) from fleet %d when fleet is in starlane" % (ship_id, fleet_id))
+                warn("Tried to split ship id (%d) from fleet %d when fleet is in starlane" % (
+                    ship_id, fleet_id))
             else:
-                warn("Got no fleet ID back after trying to split ship id (%d) from fleet %d" % (ship_id, fleet_id))
+                warn("Got no fleet ID back after trying to split ship id (%d) from fleet %d" % (
+                    ship_id, fleet_id))
     foAI.foAIstate.get_fleet_role(fleet_id, force_new=True)
     foAI.foAIstate.update_fleet_rating(fleet_id)
     if newfleets:
@@ -428,7 +428,8 @@ def generate_fleet_orders_for_fleet_missions():
     print "Orbital Defense Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.ORBITAL_DEFENSE)
     print "Outpost Base Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.ORBITAL_OUTPOST)
     print "Invasion Base Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.ORBITAL_INVASION)
-    print "Securing Fleets: %s  (currently FLEET_MISSION_MILITARY should be used instead of this Role)" % get_empire_fleet_ids_by_role(MissionType.SECURE)
+    print "Securing Fleets: %s  (currently FLEET_MISSION_MILITARY should be used instead of this Role)" % (
+        get_empire_fleet_ids_by_role(MissionType.SECURE))
 
     if fo.currentTurn() < 50:
         print
@@ -462,7 +463,8 @@ def generate_fleet_orders_for_fleet_missions():
     for outpost_fleet_mission in outpost_fleet_missions:
         print "    %s" % outpost_fleet_mission
 
-    outpost_base_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.ORBITAL_OUTPOST])
+    outpost_base_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types(
+        [MissionType.ORBITAL_OUTPOST])
     if outpost_base_fleet_missions:
         print "Outpost Base targets (must have been interrupted by combat): "
     else:
