@@ -1659,7 +1659,11 @@ void Universe::ApplyEffectDerivedVisibilities() {
         for (const auto& object_entry : empire_entry.second) {
             if (object_entry.first <= INVALID_OBJECT_ID)
                 continue;
-            m_empire_object_visibility[empire_entry.first][object_entry.first] = object_entry.second;
+            // TODO: If/when the parser for SetVisibility is expanded to allow ValueRefs like
+            // max(Target.visibility, Basic)
+            // then the folllowing should be reverted to a simple assignment.
+            m_empire_object_visibility[empire_entry.first][object_entry.first] = 
+                std::max(object_entry.second, m_empire_object_visibility[empire_entry.first][object_entry.first]);
         }
     }
 }
