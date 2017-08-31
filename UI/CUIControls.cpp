@@ -1011,7 +1011,12 @@ CUILinkTextMultiEdit::CUILinkTextMultiEdit(const std::string& str, GG::Flags<GG:
 {}
 
 void CUILinkTextMultiEdit::CompleteConstruction() {
+    // Prevent double wrapping or setting the raw_text equal to an already
+    // wrapped raw text.  CUIMultiEdit::CompleteConstruction calls
+    // SetText when adjusting the scroll bars.
+    m_already_setting_text_so_dont_link = true;
     CUIMultiEdit::CompleteConstruction();
+    m_already_setting_text_so_dont_link = false;
 
     FindLinks();
     MarkLinks();
