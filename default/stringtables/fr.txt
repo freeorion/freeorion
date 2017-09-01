@@ -12021,10 +12021,10 @@ Hangar 4
 FT_HANGAR_4_DESC
 Système de stockage pour chasseurs lourdement armés.
 
-FT_KRILL
+FT_HANGAR_KRILL
 Essaim Krill
 
-FT_KRILL_DESC
+FT_HANGAR_KRILL_DESC
 Essaim de Krill.
 
 FT_BAY_KRILL

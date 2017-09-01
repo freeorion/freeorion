@@ -12045,10 +12045,10 @@ Hangar 4
 FT_HANGAR_4_DESC
 Storage system for heavily armed fighters.
 
-FT_KRILL
+FT_HANGAR_KRILL
 Krill Swarm
 
-FT_KRILL_DESC
+FT_HANGAR_KRILL_DESC
 Krill Swarm.
 
 FT_BAY_KRILL

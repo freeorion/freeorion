@@ -11295,10 +11295,10 @@ FT_HANGAR_4
 FT_HANGAR_4_DESC
 Система хранения для тяжело вооруженных истребителей
 
-FT_KRILL
+FT_HANGAR_KRILL
 Рой криля
 
-FT_KRILL_DESC
+FT_HANGAR_KRILL_DESC
 Рой криля
 
 FT_BAY_KRILL

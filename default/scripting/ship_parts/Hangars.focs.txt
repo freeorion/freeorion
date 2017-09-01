@@ -69,8 +69,8 @@ Part
     icon = "icons/ship_parts/fighter01.png"
 
 Part
-    name = "FT_KRILL"
-    description = "FT_KRILL_DESC"
+    name = "FT_HANGAR_KRILL"
+    description = "FT_HANGAR_KRILL_DESC"
     class = FighterHangar
     capacity = 30
     damage = 1
