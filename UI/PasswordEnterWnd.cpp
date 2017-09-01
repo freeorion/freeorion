@@ -3,6 +3,7 @@
 #include <GG/GUI.h>
 
 #include "../util/i18n.h"
+#include "../client/human/HumanClientApp.h"
 
 namespace {
     const GG::X WINDOW_WIDTH(400);
@@ -51,6 +52,11 @@ void PasswordEnterWnd::CompleteConstruction() {
     SetLayout(layout);
 
     ResetDefaultPosition();
+
+    m_ok_bn->LeftClickedSignal.connect(
+        boost::bind(&PasswordEnterWnd::OkClicked, this));
+    m_cancel_bn->LeftClickedSignal.connect(
+        boost::bind(&PasswordEnterWnd::CancelClicked, this));
 }
 
 GG::Rect PasswordEnterWnd::CalculatePosition() const {
@@ -65,4 +71,13 @@ void PasswordEnterWnd::ModalInit()
 
 void PasswordEnterWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
 }
+
+void PasswordEnterWnd::SetPlayerName(const std::string& player_name)
+{ m_player_name_edit->SetText(player_name); }
+
+void PasswordEnterWnd::OkClicked() {
+}
+
+void PasswordEnterWnd::CancelClicked()
+{ HumanClientApp::GetApp()->CancelMultiplayerGameFromLobby(); }
 

@@ -184,6 +184,7 @@ struct WaitingForMPJoinAck : boost::statechart::simple_state<WaitingForMPJoinAck
         boost::statechart::custom_reaction<AuthRequest>,
         boost::statechart::custom_reaction<Disconnection>,
         boost::statechart::custom_reaction<StartQuittingGame>,
+        boost::statechart::custom_reaction<CancelMPGameClicked>,
         boost::statechart::custom_reaction<Error>
     > reactions;
 
@@ -194,6 +195,7 @@ struct WaitingForMPJoinAck : boost::statechart::simple_state<WaitingForMPJoinAck
     boost::statechart::result react(const AuthRequest& a);
     boost::statechart::result react(const Disconnection& d);
     boost::statechart::result react(const StartQuittingGame& msg);
+    boost::statechart::result react(const CancelMPGameClicked& msg);
     boost::statechart::result react(const Error& msg);
 
     CLIENT_ACCESSOR
