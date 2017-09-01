@@ -82,7 +82,6 @@ log.
 import sys
 import string
 import logging
-import inspect
 import os
 
 try:
