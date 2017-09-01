@@ -3,6 +3,7 @@
 #include <GG/GUI.h>
 
 #include "../util/i18n.h"
+#include "../network/ClientNetworking.h"
 #include "../client/human/HumanClientApp.h"
 
 namespace {
@@ -70,12 +71,18 @@ void PasswordEnterWnd::ModalInit()
 { GG::GUI::GetGUI()->SetFocusWnd(m_password_edit); }
 
 void PasswordEnterWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+    if (key == GG::GGK_ESCAPE) { // Same behaviour as if "Cancel" was pressed
+        CancelClicked();
+    }
 }
 
 void PasswordEnterWnd::SetPlayerName(const std::string& player_name)
 { m_player_name_edit->SetText(player_name); }
 
 void PasswordEnterWnd::OkClicked() {
+    HumanClientApp::GetApp()->Networking().SendMessage(AuthResponseMessage(*m_player_name_edit, *m_password_edit));
+    // hide window
+    HumanClientApp::GetApp()->Remove(shared_from_this());
 }
 
 void PasswordEnterWnd::CancelClicked()
