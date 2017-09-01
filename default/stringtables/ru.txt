@@ -11938,7 +11938,7 @@ SH_ASTEROID
 Корпус астероида
 
 SH_ASTEROID_DESC
-'''Этот корпус изготовлен из астероида среднего размера, его постройка недорога. Он немного просторнее, чем [[shiphull SH_STANDARD]], в нем 4 внешних слота и 2 внутренних 
+'''Этот корпус изготовлен из астероида среднего размера, его постройка недорога. Он немного просторнее, чем [[shiphull SH_BASIC_LARGE]], в нем 4 внешних слота и 2 внутренних 
 
 [[metertype METER_STEALTH]] средняя, но корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов и в бою, когда он скрывается в поясе астероидов. [[metertype METER_DETECTION]] среднее, [[metertype METER_SPEED]] низкая  
 
@@ -12228,10 +12228,10 @@ SH_BASIC_MEDIUM_DESC
 
 [[BLD_SHIPYARD_BASE_REQUIRED]]'''
 
-SH_STANDARD
+SH_BASIC_LARGE
 Большой корпус
 
-SH_STANDARD_DESC
+SH_BASIC_LARGE_DESC
 '''Большой межзвездный корпус с 3 внешними и 1 внутренним слотом
 
 [[metertype METER_STEALTH]] средняя, [[metertype METER_DETECTION]] среднее и [[metertype METER_SPEED]] низкая

@@ -12679,7 +12679,7 @@ SH_ASTEROID
 Coque Astéroïdale
 
 SH_ASTEROID_DESC
-'''Cette coque est conçue à partir d'un astéroïde de taille moyenne et s'avère assez économique à produire. Légèrement plus spacieuse que la [[shiphull SH_STANDARD]], elle dispose de quatre niches externes et de deux niches internes.
+'''Cette coque est conçue à partir d'un astéroïde de taille moyenne et s'avère assez économique à produire. Légèrement plus spacieuse que la [[shiphull SH_BASIC_LARGE]], elle dispose de quatre niches externes et de deux niches internes.
 
 Sa [[metertype METER_STEALTH]] est standard mais cette coque bénéficie d'un bonus conséquent de Furtivité lorsqu'elle se trouve dans un système abritant une Ceinture d'Astéroïdes, ou en combat lorsqu'elle se dissimule dans une Ceinture d'Astéroïdes. Son [[metertype METER_DETECTION]] est standard et sa [[metertype METER_SPEED]] est faible.
 
@@ -12969,10 +12969,10 @@ Sa [[metertype METER_STEALTH]] est standard de même que son [[metertype METER_D
 
 [[BLD_SHIPYARD_BASE_REQUIRED]]'''
 
-SH_STANDARD
+SH_BASIC_LARGE
 Coque Basique Massive
 
-SH_STANDARD_DESC
+SH_BASIC_LARGE_DESC
 '''Une coque interstellaire de base pour astronef de grande taille. Elle dispose de trois niches externes et d'une niche interne.
 
 Sa [[metertype METER_STEALTH]] est standard de même que son [[metertype METER_DETECTION]], tandis que sa [[metertype METER_SPEED]] est faible.

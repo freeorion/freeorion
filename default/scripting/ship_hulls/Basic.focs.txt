@@ -55,8 +55,8 @@ Hull
     graphic = "hulls_design/basic-medium-hull.png"
 
 Hull
-    name = "SH_STANDARD"
-    description = "SH_STANDARD_DESC"
+    name = "SH_BASIC_LARGE"
+    description = "SH_BASIC_LARGE_DESC"
     speed = 60
     fuel = 3
     stealth = 5
