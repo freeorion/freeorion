@@ -1,0 +1,10 @@
+// Helper macro that contains all detector parts
+ALL_DETECTORS
+'''
+[
+    "DT_DETECTOR_1"
+    "DT_DETECTOR_2"
+    "DT_DETECTOR_3"
+    "DT_DETECTOR_4"
+]
+'''
