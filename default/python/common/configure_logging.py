@@ -80,6 +80,7 @@ log.
 
 """
 import sys
+import string
 import logging
 import inspect
 import os
@@ -129,7 +130,12 @@ class _stdXLikeStream(object):
     def write(self, msg):
         # Grab the caller's call frame info
         try:
-            (filename, line_number, function_name, _, _) = inspect.getframeinfo(sys._getframe(1), context=0)
+            frame = sys._getframe(1)
+            line_number = frame.f_lineno
+            function_name = frame.f_code.co_name
+            filename = frame.f_code.co_filename
+            if string.lower(filename[-4:]) in ('.pyc', '.pyo'):
+                filename = filename[:-4] + '.py'
         except:
             (filename, line_number, function_name) = ("", "", "")
 
