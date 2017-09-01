@@ -9,7 +9,7 @@ BuildingType
         Not Contains Building name = "BLD_INTERSPECIES_ACADEMY"
         OwnedBy empire = Source.Owner
         Happiness low = 15
-        // For species with preferred focus 
+        // For species with preferred focus its the happiness bonus helps only a bit
         Not And [
             Focus type = Source.PreferredFocus
             Happiness high = 19
@@ -78,7 +78,7 @@ BuildingType
             priority = [[LATE_PRIORITY]]
             effects = [
                 SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_TRANSFER_EFFICIENCY" value = min(1.0, Value + 0.05)
-                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_USE_LIMIT"           value = Value + 1
+                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_USE_LIMIT"           value = Value + 2
             ]
         // Once per academy tell the user.
         EffectsGroup
