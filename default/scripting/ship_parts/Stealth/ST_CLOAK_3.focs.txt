@@ -1,0 +1,16 @@
+Part
+    name = "ST_CLOAK_3"
+    description = "ST_CLOAK_3_DESC"
+    exclusions = [[ALL_CLOAKS]]
+    class = Stealth
+    capacity = 60
+    mountableSlotTypes = Internal
+    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 7
+    tags = [ "PEDIA_PC_STEALTH" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/cloak-3.png"
+
+#include "stealth.macros"
+
+#include "/scripting/common/upkeep.macros"

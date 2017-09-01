@@ -1,0 +1,10 @@
+// Helper macro containing the names of all cloaks
+ALL_CLOAKS
+'''
+[
+    "ST_CLOAK_1"
+    "ST_CLOAK_2"
+    "ST_CLOAK_3"
+    "ST_CLOAK_4"
+]
+'''
