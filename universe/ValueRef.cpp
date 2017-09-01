@@ -383,6 +383,18 @@ std::string Constant<StarType>::Dump() const
 }
 
 template <>
+std::string Constant<Visibility>::Dump() const
+{
+    switch (m_value) {
+    case VIS_NO_VISIBILITY:     return "Invisible";
+    case VIS_BASIC_VISIBILITY:  return "Basic";
+    case VIS_PARTIAL_VISIBILITY:return "Partial";
+    case VIS_FULL_VISIBILITY:   return "Full";
+    default:                    return "Unknown";
+    }
+}
+
+template <>
 std::string Constant<int>::Dump() const
 { return Description(); }
 
@@ -625,6 +637,22 @@ StarType Variable<StarType>::Eval(const ScriptingContext& context) const
         ErrorLogger() << "source (none)";
 
     return INVALID_STAR_TYPE;
+}
+
+template <>
+Visibility Variable<Visibility>::Eval(const ScriptingContext& context) const
+{
+    const std::string& property_name = m_property_name.back();
+
+    IF_CURRENT_VALUE(Visibility)
+
+    // As of this writing, there are no properties of objects that directly
+    // return a Visibility, as it will normally need to be queried for a
+    // particular empire
+
+    ErrorLogger() << "Variable<Visibility>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
+
+    return INVALID_VISIBILITY;
 }
 
 template <>
@@ -1202,7 +1230,7 @@ PlanetSize ComplexVariable<PlanetSize>::Eval(const ScriptingContext& context) co
 
 template <>
 PlanetType ComplexVariable<PlanetType>::Eval(const ScriptingContext& context) const
-{ return INVALID_PLANET_TYPE; }
+{ return INVALID_PLANET_TYPE; } // TODO: Species favourite planet type?
 
 template <>
 PlanetEnvironment ComplexVariable<PlanetEnvironment>::Eval(const ScriptingContext& context) const
@@ -1215,6 +1243,32 @@ UniverseObjectType ComplexVariable<UniverseObjectType>::Eval(const ScriptingCont
 template <>
 StarType ComplexVariable<StarType>::Eval(const ScriptingContext& context) const
 { return INVALID_STAR_TYPE; }
+
+template <>
+Visibility ComplexVariable<Visibility>::Eval(const ScriptingContext& context) const
+{
+    const std::string& variable_name = m_property_name.back();
+
+    if (variable_name == "EmpireObjectVisiblity") {
+        int empire_id = ALL_EMPIRES;
+        if (m_int_ref1) {
+            empire_id = m_int_ref1->Eval(context);
+            if (empire_id == ALL_EMPIRES)
+                return VIS_NO_VISIBILITY;
+        }
+
+        int object_id = INVALID_OBJECT_ID;
+        if (m_int_ref2) {
+            object_id = m_int_ref2->Eval(context);
+            if (object_id == INVALID_OBJECT_ID)
+                return VIS_NO_VISIBILITY;
+        }
+
+        return GetUniverse().GetObjectVisibilityByEmpire(object_id, empire_id);
+    }
+
+    return INVALID_VISIBILITY;
+}
 
 namespace {
     static std::map<std::string, int> EMPTY_STRING_INT_MAP;

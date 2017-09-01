@@ -3599,7 +3599,8 @@ unsigned int SetTexture::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetVisibility                                         //
 ///////////////////////////////////////////////////////////
-SetVisibility::SetVisibility(Visibility vis, EmpireAffiliationType affiliation,
+SetVisibility::SetVisibility(ValueRef::ValueRefBase<Visibility>* vis,
+                             EmpireAffiliationType affiliation,
                              ValueRef::ValueRefBase<int>* empire_id,
                              Condition::ConditionBase* of_objects) :
     m_vis(vis),
@@ -3609,6 +3610,7 @@ SetVisibility::SetVisibility(Visibility vis, EmpireAffiliationType affiliation,
 {}
 
 SetVisibility::~SetVisibility() {
+    delete m_vis;
     delete m_empire_id;
     delete m_condition;
 }
@@ -3619,8 +3621,8 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
 
     // Note: currently ignoring upgrade-only flag
 
-    if (m_vis == INVALID_VISIBILITY)
-        return;
+    if (!m_vis)
+        return; // nothing to evaluate!
 
     int empire_id = ALL_EMPIRES;
     if (m_empire_id)
@@ -3691,27 +3693,25 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
         }
     }
 
+    int source_id = INVALID_OBJECT_ID;
+    if (context.source)
+        source_id = context.source->ID();
+
     for (int emp_id : empire_ids) {
         if (!GetEmpire(emp_id))
             continue;
         for (int obj_id : object_ids) {
-            GetUniverse().SetEffectDerivedVisibility(emp_id, obj_id, m_vis);
+            // store source object id and ValueRef to evaluate to determine
+            // what visibility level to set at time of application
+            GetUniverse().SetEffectDerivedVisibility(emp_id, obj_id, source_id, m_vis);
         }
     }
 }
 
 std::string SetVisibility::Dump() const {
     std::string retval = DumpIndent();
-    retval += "SetVisibility visibility = ";
-
-    switch (m_vis) {
-    case VIS_NO_VISIBILITY:     retval += "Invisible";  break;
-    case VIS_BASIC_VISIBILITY:  retval += "Basic";      break;
-    case VIS_PARTIAL_VISIBILITY:retval += "Partial";    break;
-    case VIS_FULL_VISIBILITY:   retval += "Full";       break;
-    case INVALID_VISIBILITY:
-    default:            retval += "?";                  break;
-    }
+    if (m_vis)
+        retval += "SetVisibility visibility = " + m_vis->Dump();
 
     retval += DumpIndent() + "affiliation = ";
     switch (m_affiliation) {
@@ -3735,6 +3735,8 @@ std::string SetVisibility::Dump() const {
 }
 
 void SetVisibility::SetTopLevelContent(const std::string& content_name) {
+    if (m_vis)
+        m_vis->SetTopLevelContent(content_name);
     if (m_empire_id)
         m_empire_id->SetTopLevelContent(content_name);
     if (m_condition)

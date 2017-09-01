@@ -40,6 +40,8 @@ enum_value_ref_rules<PlanetType>& planet_type_rules();
 
 enum_value_ref_rules<StarType>& star_type_rules();
 
+enum_value_ref_rules<Visibility>& visibility_rules();
+
 enum_value_ref_rules<UniverseObjectType>& universe_object_type_rules();
 
 }

@@ -70,19 +70,19 @@ using expression_rule = parse::detail::rule<
 >;
 
 
-const reference_token_rule&                     variable_scope();
-const name_token_rule&                          container_type();
+const reference_token_rule&                 variable_scope();
+const name_token_rule&                      container_type();
 
-const variable_rule<int>&                       int_bound_variable();
-const variable_rule<int>&                       int_free_variable();
-const statistic_rule<int>&                      int_var_statistic();
-const complex_variable_rule<int>&               int_var_complex();
-const parse::value_ref_rule<int>&               int_simple();
+const variable_rule<int>&                   int_bound_variable();
+const variable_rule<int>&                   int_free_variable();
+const statistic_rule<int>&                  int_var_statistic();
+const complex_variable_rule<int>&           int_var_complex();
+const parse::value_ref_rule<int>&           int_simple();
 
-const complex_variable_rule<double>&            double_var_complex();
-const parse::value_ref_rule<double>&            double_simple();
+const complex_variable_rule<double>&        double_var_complex();
+const parse::value_ref_rule<double>&        double_simple();
 
-const complex_variable_rule<std::string>&       string_var_complex();
+const complex_variable_rule<std::string>&   string_var_complex();
 
 
 template <typename T>

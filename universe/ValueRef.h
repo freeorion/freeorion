@@ -699,6 +699,9 @@ template <>
 FO_COMMON_API std::string Constant<StarType>::Dump() const;
 
 template <>
+FO_COMMON_API std::string Constant<Visibility>::Dump() const;
+
+template <>
 FO_COMMON_API std::string Constant<double>::Dump() const;
 
 template <>
@@ -809,6 +812,9 @@ FO_COMMON_API UniverseObjectType Variable<UniverseObjectType>::Eval(const Script
 
 template <>
 FO_COMMON_API StarType Variable<StarType>::Eval(const ScriptingContext& context) const;
+
+template <>
+FO_COMMON_API Visibility Variable<Visibility>::Eval(const ScriptingContext& context) const;
 
 template <>
 FO_COMMON_API double Variable<double>::Eval(const ScriptingContext& context) const;
@@ -1449,6 +1455,9 @@ FO_COMMON_API UniverseObjectType ComplexVariable<UniverseObjectType>::Eval(const
 
 template <>
 FO_COMMON_API StarType ComplexVariable<StarType>::Eval(const ScriptingContext& context) const;
+
+template <>
+FO_COMMON_API Visibility ComplexVariable<Visibility>::Eval(const ScriptingContext& context) const;
 
 template <>
 FO_COMMON_API double ComplexVariable<double>::Eval(const ScriptingContext& context) const;

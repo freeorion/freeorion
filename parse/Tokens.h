@@ -104,6 +104,7 @@
     (Empire)                                    \
     (EmpireMeter)                               \
     (EmpireMeterValue)                          \
+    (EmpireObjectVisiblity)                     \
     (EmpireShipsDestroyed)                      \
     (Enabled)                                   \
     (Endpoint)                                  \
