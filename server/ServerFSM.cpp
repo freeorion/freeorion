@@ -679,12 +679,78 @@ sc::result MPLobby::react(const JoinGame& msg) {
 sc::result MPLobby::react(const AuthResponse& msg) {
     TraceLogger(FSM) << "(ServerFSM) MPLobby.AuthResponse";
     ServerApp& server = Server();
+    const SpeciesManager& sm = GetSpeciesManager();
     const Message& message = msg.m_message;
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     std::string player_name;
     std::string auth;
     ExtractAuthResponseMessageData(message, player_name, auth);
+
+    if (!server.IsAuthSuccessed(player_name, auth)) {
+        // wrong password
+        player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_WRONG_PASSWORD")) % player_name),
+                                                    true));
+        server.Networking().Disconnect(player_connection);
+        return discard_event();
+    }
+
+    if (!server.IsAvailableName(player_name)) {
+        player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % player_name),
+                                                    true));
+        server.Networking().Disconnect(player_connection);
+        return discard_event();
+    }
+
+    // TODO: Merge it with MPLobby::react(const JoinGame& msg)
+    // assign unique player ID to newly connected player
+    int player_id = server.m_networking.NewPlayerID();
+
+    Networking::ClientType client_type = player_connection->GetClientType();
+
+    // establish player with requested client type and acknowldge via connection
+    player_connection->EstablishPlayer(player_id,
+                    player_name,
+                    client_type,
+                    player_connection->ClientVersionString());
+    player_connection->SendMessage(ContentCheckSumMessage());
+    player_connection->SendMessage(JoinAckMessage(player_id));
+
+    // inform player of host
+    player_connection->SendMessage(HostIDMessage(server.m_networking.HostPlayerID()));
+
+    // Inform AI of logging configuration.
+    if (client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+        player_connection->SendMessage(
+            LoggerConfigMessage(Networking::INVALID_PLAYER_ID, LoggerOptionsLabelsAndLevels(LoggerTypes::both)));
+
+    // assign player info from defaults or from connection to lobby data players list
+    PlayerSetupData player_setup_data;
+    player_setup_data.m_player_name =   player_name;
+    player_setup_data.m_client_type =   client_type;
+    player_setup_data.m_empire_name =   (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_name : GenerateEmpireName(player_name, m_lobby_data->m_players);
+    player_setup_data.m_empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
+    if (m_lobby_data->m_seed != "")
+        player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
+    else
+        player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
+
+    // after setting all details, push into lobby data
+    m_lobby_data->m_players.push_back(std::make_pair(player_id, player_setup_data));
+
+    // drop ready player flag at new player
+    for (std::pair<int, PlayerSetupData>& plr : m_lobby_data->m_players) {
+        if (plr.second.m_empire_name == player_name) {
+            // change empire name
+            plr.second.m_empire_name = (plr.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? plr.second.m_player_name : GenerateEmpireName(plr.second.m_player_name, m_lobby_data->m_players);
+        }
+
+        plr.second.m_player_ready = false;
+    }
+
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+         it != server.m_networking.established_end(); ++it)
+    { (*it)->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data)); }
 
     return discard_event();
 }

@@ -1519,6 +1519,11 @@ bool ServerApp::IsAuthRequired(const std::string& player_name) const {
     return true;
 }
 
+bool ServerApp::IsAuthSuccessed(const std::string& player_name, const std::string& auth) const {
+    /// ToDo: use python to check
+    return true;
+}
+
 bool ServerApp::IsHostless() const
 { return GetOptionsDB().Get<bool>("hostless"); }
 

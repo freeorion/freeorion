@@ -970,6 +970,10 @@ Python AI for %1% crashed.
 ERROR_PLAYER_NAME_ALREADY_USED
 Player name %1% already in use.
 
+ERROR_WRONG_PASSWORD
+Password wrong for player name %1%.
+
+
 ##
 ## Game Rules
 ##
