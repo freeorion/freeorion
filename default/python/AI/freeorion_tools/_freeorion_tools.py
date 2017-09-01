@@ -1,9 +1,11 @@
 # This Python file uses the following encoding: utf-8
+import cProfile, pstats, StringIO
 import re
 import logging
+import sys
+from functools import wraps
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-from functools import wraps
 
 
 # color wrappers for chat:
@@ -198,3 +200,21 @@ def tuple_to_dict(tup):
         except:
             print >> sys.stderr, "Can't convert tuple_list to dict: ", tup
             return {}
+
+
+def profile(function):
+
+    @wraps(function)
+    def wrapper(*args, **kwargs):
+        pr = cProfile.Profile()
+        pr.enable()
+        retval = function(*args, **kwargs)
+        pr.disable()
+        s = StringIO.StringIO()
+        sortby = 'cumulative'
+        ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+        ps.print_stats()
+        print s.getvalue()
+        return retval
+
+    return wrapper
