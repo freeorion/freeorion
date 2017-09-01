@@ -15,21 +15,4 @@ Part
 //  consumption = Troops consumption = 1 condition = Source
     icon = "icons/ship_parts/troops.png"
 
-Part
-    name = "GT_TROOP_POD_2"
-    description = "GT_TROOP_POD_2_DESC"
-    class = Troops
-    capacity = 4
-    mountableSlotTypes = [External Internal]
-    buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
-    buildtime = 1
-    tags = [ "PEDIA_PC_TROOPS" ]
-    location = And [
-        OwnedBy empire = Source.Owner
-        Not HasTag name = "NO_ATTACKTROOPS"
-        Troops low = 4
-    ]
-//  consumption = Troops consumption = 2 condition = Source
-    icon = "icons/meter/rebels.png"
-
 #include "/scripting/common/upkeep.macros"
