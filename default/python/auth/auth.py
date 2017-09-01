@@ -15,5 +15,5 @@ class AuthProvider:
         return player_name in self.logins
 
     def is_success_auth(self, player_name, auth):
-        return True
+        return self.logins.get(player_name) == auth
 

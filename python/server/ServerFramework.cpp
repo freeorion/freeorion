@@ -124,6 +124,22 @@ bool PythonServer::IsRequireAuth(const std::string& player_name, bool &result) c
     return true;
 }
 
+bool PythonServer::IsSuccessAuth(const std::string& player_name, const std::string& auth, bool &result) const {
+    boost::python::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
+    if (!auth_provider) {
+        ErrorLogger() << "Unable to get Python object auth_provider";
+        return false;
+    }
+    boost::python::object f = auth_provider.attr("is_success_auth");
+    if (!f) {
+        ErrorLogger() << "Unable to call Python method is_success_auth";
+        return false;
+    }
+    boost::python::object r = f(player_name, auth);
+    result = boost::python::extract<bool>(r);
+    return true;
+}
+
 bool PythonServer::CreateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
     dict py_player_setup_data;
 
