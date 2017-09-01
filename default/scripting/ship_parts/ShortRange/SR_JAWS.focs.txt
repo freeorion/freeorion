@@ -1,0 +1,15 @@
+Part
+    name = "SR_JAWS"
+    description = "SR_JAWS_DESC"
+    class = ShortRange
+    damage = 5
+    mountableSlotTypes = External
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 1
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/teeth.png"
+
+#include "shortrange.macros"
+
+#include "/scripting/common/upkeep.macros"

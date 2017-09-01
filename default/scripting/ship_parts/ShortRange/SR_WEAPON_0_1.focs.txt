@@ -1,0 +1,19 @@
+Part
+    name = "SR_WEAPON_0_1"
+    description = "SR_WEAPON_0_1_DESC"
+    class = ShortRange
+    damage = 1
+    shots = 3
+    NoDefaultCapacityEffect
+    mountableSlotTypes = External
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 1
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
+    location = OwnedBy empire = Source.Owner
+    effectsgroups =
+        [[WEAPON_BASE_DEFAULT_EFFECTS(SR_WEAPON_0_1)]]
+    icon = "icons/ship_parts/flak.png"
+
+#include "shortrange.macros"
+
+#include "/scripting/common/upkeep.macros"

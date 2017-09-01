@@ -1,0 +1,15 @@
+Part
+    name = "SR_ICE_BEAM"
+    description = "SR_ICE_BEAM_DESC"
+    class = ShortRange
+    damage = 9
+    mountableSlotTypes = External
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 2
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/snowflake_laser.png"
+
+#include "shortrange.macros"
+
+#include "/scripting/common/upkeep.macros"

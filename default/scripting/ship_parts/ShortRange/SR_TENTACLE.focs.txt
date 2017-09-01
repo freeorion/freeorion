@@ -1,0 +1,15 @@
+Part
+    name = "SR_TENTACLE"
+    description = "SR_TENTACLE_DESC"
+    class = ShortRange
+    damage = 5
+    mountableSlotTypes = External
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 2
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/tentacle.png"
+
+#include "shortrange.macros"
+
+#include "/scripting/common/upkeep.macros"

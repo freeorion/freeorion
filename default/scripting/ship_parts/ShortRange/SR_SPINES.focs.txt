@@ -1,0 +1,15 @@
+Part
+    name = "SR_SPINES"
+    description = "SR_SPINES_DESC"
+    class = ShortRange
+    damage = 20
+    mountableSlotTypes = External
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 3
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/claw.png"
+
+#include "shortrange.macros"
+
+#include "/scripting/common/upkeep.macros"
