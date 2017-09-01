@@ -1,0 +1,23 @@
+Part
+    name = "AR_NEUTRONIUM_PLATE"
+    description = "AR_NEUTRONIUM_PLATE_DESC"
+    class = Armour
+    capacity = 40
+    mountableSlotTypes = External
+    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 5
+    tags = [ "PEDIA_PC_ARMOUR" ]
+    location = And [
+        OwnedBy empire = Source.Owner
+        Contains Building name = "BLD_NEUTRONIUM_FORGE"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            OwnedBy empire = Source.Owner
+            Or [
+                Building name = "BLD_NEUTRONIUM_EXTRACTOR"
+                Building name = "BLD_NEUTRONIUM_SYNTH"
+            ]
+        ]
+    ]
+    icon = "icons/ship_parts/neutronium_plating.png"
+
+#include "/scripting/common/upkeep.macros"
