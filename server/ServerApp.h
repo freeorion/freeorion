@@ -128,12 +128,6 @@ public:
 
     /** Checks if server runs in a hostless mode. */
     bool IsHostless() const;
-
-    /** Checks if \a player_name requires auth to login. */
-    bool IsAuthRequired(const std::string& player_name) const;
-
-    /** Checks if \a auth match \a player_name. */
-    bool IsAuthSuccessed(const std::string& player_name, const std::string& auth) const;
     //@}
 
 
@@ -211,6 +205,12 @@ public:
     void    LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
                            const std::vector<PlayerSaveGameData>& player_save_game_data,
                            std::shared_ptr<ServerSaveGameData> server_save_game_data);
+
+    /** Checks if \a player_name requires auth to login. */
+    bool IsAuthRequired(const std::string& player_name);
+
+    /** Checks if \a auth match \a player_name. */
+    bool IsAuthSuccessed(const std::string& player_name, const std::string& auth);
     //@}
 
     void UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection);

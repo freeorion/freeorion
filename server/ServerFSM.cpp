@@ -436,6 +436,7 @@ MPLobby::MPLobby(my_context c) :
     TraceLogger(FSM) << "(ServerFSM) MPLobby";
     ClockSeed();
     ServerApp& server = Server();
+    server.InitializePython();
     const SpeciesManager& sm = GetSpeciesManager();
     if (server.IsHostless()) {
         DebugLogger(FSM) << "(ServerFSM) MPLobby. Fill MPLobby data from the previous game.";

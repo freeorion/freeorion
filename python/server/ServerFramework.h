@@ -14,6 +14,7 @@ public:
 
     bool CreateUniverse(std::map<int, PlayerSetupData>& player_setup_data); // Wraps call to the main Python universe generator function
     bool ExecuteTurnEvents();    // Wraps call to the main Python turn events function
+    bool IsRequireAuth(const std::string& player_name, bool &result) const; // Wraps call to AuthProvider's method is_require_auth
 
 private:
     // reference to imported Python universe generator module

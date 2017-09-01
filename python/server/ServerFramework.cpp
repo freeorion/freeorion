@@ -101,7 +101,26 @@ bool PythonServer::InitModules() {
     // import auth script file
     m_python_module_auth = import("auth");
 
+    // Save AuthProvider instance in auth module's namespace
+    m_python_module_auth.attr("__dict__")["auth_provider"] = m_python_module_auth.attr("AuthProvider")();
+
     DebugLogger() << "Server Python modules successfully initialized!";
+    return true;
+}
+
+bool PythonServer::IsRequireAuth(const std::string& player_name, bool &result) const {
+    boost::python::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
+    if (!auth_provider) {
+        ErrorLogger() << "Unable to get Python object auth_provider";
+        return false;
+    }
+    boost::python::object f = auth_provider.attr("is_require_auth");
+    if (!f) {
+        ErrorLogger() << "Unable to call Python method is_require_auth";
+        return false;
+    }
+    boost::python::object r = f(player_name);
+    result = boost::python::extract<bool>(r);
     return true;
 }
 

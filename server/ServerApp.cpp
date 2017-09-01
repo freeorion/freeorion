@@ -1514,12 +1514,35 @@ bool ServerApp::IsAvailableName(const std::string& player_name) const {
     return true;
 }
 
-bool ServerApp::IsAuthRequired(const std::string& player_name) const {
-    /// ToDo: use python to check
-    return true;
+bool ServerApp::IsAuthRequired(const std::string& player_name) {
+    bool result = false;
+    bool success(false);
+    try {
+        m_python_server.SetCurrentDir(GetPythonAuthDir());
+        // Call the main Python turn events function
+        success = m_python_server.IsRequireAuth(player_name, result);
+    } catch (boost::python::error_already_set err) {
+        success = false;
+        m_python_server.HandleErrorAlreadySet();
+        if (!m_python_server.IsPythonRunning()) {
+            ErrorLogger() << "Python interpreter is no longer running.  Attempting to restart.";
+            if (m_python_server.Initialize()) {
+                ErrorLogger() << "Python interpreter successfully restarted.";
+            } else {
+                ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
+                m_fsm->process_event(ShutdownServer());
+            }
+        }
+    }
+
+    if (!success) {
+        ErrorLogger() << "Python scripted turn events failed.";
+        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
+    }
+    return result;
 }
 
-bool ServerApp::IsAuthSuccessed(const std::string& player_name, const std::string& auth) const {
+bool ServerApp::IsAuthSuccessed(const std::string& player_name, const std::string& auth) {
     /// ToDo: use python to check
     return true;
 }
