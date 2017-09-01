@@ -128,14 +128,20 @@ class _stdXLikeStream(object):
 
     def write(self, msg):
         # Grab the caller's call frame info
-        try:
+        if hasattr(sys, '_getframe'):
             frame = sys._getframe(1)
-            line_number = frame.f_lineno
-            function_name = frame.f_code.co_name
-            filename = frame.f_code.co_filename
-            if string.lower(filename[-4:]) in ('.pyc', '.pyo'):
-                filename = filename[:-4] + '.py'
-        except:
+            try:
+                line_number = frame.f_lineno
+                function_name = frame.f_code.co_name
+                filename = frame.f_code.co_filename
+                if string.lower(filename[-4:]) in ('.pyc', '.pyo'):
+                    filename = filename[:-4] + '.py'
+            except:
+                (filename, line_number, function_name) = ("", "", "")
+            finally:
+                # Explicitly del references to the caller's frame to avoid persistent reference cycles
+                del frame
+        else:
             (filename, line_number, function_name) = ("", "", "")
 
         try:
