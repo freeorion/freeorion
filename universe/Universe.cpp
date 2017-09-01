@@ -1659,7 +1659,11 @@ void Universe::ApplyEffectDerivedVisibilities() {
         for (const auto& object_entry : empire_entry.second) {
             if (object_entry.first <= INVALID_OBJECT_ID)
                 continue;
-            m_empire_object_visibility[empire_entry.first][object_entry.first] = object_entry.second;
+            // TODO: If/when the parser for SetVisibility is expanded to allow ValueRefs like
+            // max(Target.visibility, Basic)
+            // then the folllowing should be reverted to a simple assignment.
+            m_empire_object_visibility[empire_entry.first][object_entry.first] = 
+                std::max(object_entry.second, m_empire_object_visibility[empire_entry.first][object_entry.first]);
         }
     }
 }
@@ -2975,6 +2979,19 @@ void Universe::GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& e
     auto it = m_empire_object_visibility_turns.find(encoding_empire);
     if (it != m_empire_object_visibility_turns.end())
         empire_object_visibility_turns[encoding_empire] = it->second;
+}
+
+void Universe::GetEffectSpecifiedVisibilities(EmpireObjectVisibilityMap& effect_specified_empire_object_visibilities, int encoding_empire) const {
+    if (encoding_empire == ALL_EMPIRES) {
+        effect_specified_empire_object_visibilities = m_effect_specified_empire_object_visibilities;
+        return;
+    }
+    
+    // include just requested empire's visibility effects
+    effect_specified_empire_object_visibilities.clear();
+    auto it = m_effect_specified_empire_object_visibilities.find(encoding_empire);
+    if (it != m_effect_specified_empire_object_visibilities.end())
+        effect_specified_empire_object_visibilities[encoding_empire] = it->second;
 }
 
 void Universe::GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids, int encoding_empire) const {

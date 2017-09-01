@@ -512,6 +512,9 @@ private:
     void    GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& empire_object_visibility_turns, int encoding_empire) const;
 
     /***/
+    void    GetEffectSpecifiedVisibilities(EmpireObjectVisibilityMap& effect_specified_empire_object_visibilities, int encoding_empire) const;
+    
+    /***/
     void    GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids, int encoding_empire) const;
 
     /***/
