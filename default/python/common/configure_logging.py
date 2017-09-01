@@ -128,11 +128,9 @@ class _stdXLikeStream(object):
 
     def write(self, msg):
         # Grab the caller's call frame info
-        stack = inspect.stack()
-        if len(stack) > 1:
-            (_, filename, line_number, function_name, _, _) = inspect.stack()[1]
-        else:
-            # No available call frame info
+        try:
+            (filename, line_number, function_name, _, _) = inspect.getframeinfo(sys._getframe(1), context=0)
+        except:
             (filename, line_number, function_name) = ("", "", "")
 
         try:
@@ -140,7 +138,6 @@ class _stdXLikeStream(object):
 
         finally:
             # Explicitly del references to the caller's frame to avoid persistent reference cycles
-            del stack
             del filename
             del line_number
             del function_name
