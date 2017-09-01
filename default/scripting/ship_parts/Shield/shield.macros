@@ -1,0 +1,11 @@
+// Helper macro containing the name of all shields
+ALL_SHIELDS
+'''
+[
+    "SH_MULTISPEC"
+    "SH_BLACK"
+    "SH_PLASMA"
+    "SH_DEFLECTOR"
+    "SH_DEFENSE_GRID"
+]
+'''

@@ -1,0 +1,16 @@
+Part
+    name = "SH_PLASMA"
+    description = "SH_PLASMA_DESC"
+    exclusions = [[ALL_SHIELDS]]
+    class = Shield
+    capacity = 9
+    mountableSlotTypes = Internal
+    buildcost = 90 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 5
+    tags = [ "PEDIA_PC_SHIELD" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/plasma_shield.png"
+
+#include "shield.macros"
+
+#include "/scripting/common/upkeep.macros"

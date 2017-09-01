@@ -1,0 +1,16 @@
+Part
+    name = "SH_BLACK"
+    description = "SH_BLACK_DESC"
+    exclusions = [[ALL_SHIELDS]]
+    class = Shield
+    capacity = 15
+    mountableSlotTypes = Internal
+    buildcost = 150 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 6
+    tags = [ "PEDIA_PC_SHIELD" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/blackshield.png"
+
+#include "shield.macros"
+
+#include "/scripting/common/upkeep.macros"
