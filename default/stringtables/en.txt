@@ -11028,7 +11028,7 @@ SHP_DEUTERIUM_TANK
 Deuterium Tank
 
 SHP_DEUTERIUM_TANK_DESC
-Unlocks [[shippart FU_DEUTERIUM_TANK]] ship part.
+Small upgrade to each of your [[shippart FU_BASIC_TANK]] ship parts. Increases [[metertype METER_FUEL]] capacity and thereby the number of jumps your ships can do with refueling.
 
 SHP_DEUTERIUM_TANK_EFFECT
 Deuterium Tank Technology
@@ -11037,7 +11037,7 @@ SHP_ANTIMATTER_TANK
 Antimatter Tank
 
 SHP_ANTIMATTER_TANK_DESC
-Unlocks [[shippart FU_ANTIMATTER_TANK]] ship part.
+Moderate upgrade to each of your [[shippart FU_BASIC_TANK]] ship parts. Increases [[metertype METER_FUEL]] capacity and thereby the number of jumps your ships can do with refueling.
 
 SHP_ANTIMATTER_TANK_EFFECT
 Antimatter Tank Technology
@@ -12286,19 +12286,7 @@ FU_BASIC_TANK
 Extra Fuel Tank
 
 FU_BASIC_TANK_DESC
-Increases [[metertype METER_FUEL]] capacity, allowing an additional jump.
-
-FU_DEUTERIUM_TANK
-Deuterium Tank
-
-FU_DEUTERIUM_TANK_DESC
-Small increase to ship range by increasing [[metertype METER_FUEL]] capacity. Bulky and vulnerable to weapons fire.
-
-FU_ANTIMATTER_TANK
-Antimatter Tank
-
-FU_ANTIMATTER_TANK_DESC
-Moderate increase to ship range by increasing [[metertype METER_FUEL]] capacity. Compact and low mass.
+Increases [[metertype METER_FUEL]] capacity, allowing an additional jump. Later technologies further increase the number of additional jumps per tank.
 
 FU_ZERO_FUEL
 Zero-Point Fuel Generator
