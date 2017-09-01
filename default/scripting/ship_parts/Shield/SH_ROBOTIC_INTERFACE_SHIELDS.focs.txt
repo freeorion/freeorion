@@ -48,6 +48,20 @@ min(
 )
 '''
 
-#include "stacking.macros"
+BEST_SHIELD_EFFECT
+'''
+max(max(max(max(
+    min(1, PartsInShipDesign Name = "SH_DEFENSE_GRID" design = Source.DesignID)
+    * PartCapacity name = "SH_DEFENSE_GRID",
+    min(1, PartsInShipDesign Name = "SH_DEFLECTOR" design = Source.DesignID)
+    * PartCapacity name = "SH_DEFLECTOR"),
+    min(1, PartsInShipDesign Name = "SH_PLASMA" design = Source.DesignID)
+    * PartCapacity name = "SH_PLASMA"),
+    min(1, PartsInShipDesign Name = "SH_BLACK" design = Source.DesignID)
+    * PartCapacity name = "SH_BLACK"),
+    min(1, PartsInShipDesign Name = "SH_MULTISPEC" design = Source.DesignID)
+    * PartCapacity name = "SH_MULTISPEC" 
+    )
+'''
 
 #include "/scripting/common/upkeep.macros"
