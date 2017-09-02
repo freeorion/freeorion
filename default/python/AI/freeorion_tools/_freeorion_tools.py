@@ -218,3 +218,14 @@ def profile(function):
         return retval
 
     return wrapper
+
+
+def get_partial_visibility_turn(obj_id):
+    """Return the last turn an object had at least partial visibility.
+
+    :type obj_id: int
+    :return: Last turn an object had at least partial visibility, -9999 if never
+    :rtype: int
+    """
+    visibility_turns_map = fo.getUniverse().getVisibilityTurnsMap(obj_id, fo.empireID())
+    return visibility_turns_map.get(fo.visibility.partial, -9999)

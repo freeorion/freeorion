@@ -11,6 +11,7 @@ import PlanetUtilsAI
 import CombatRatingsAI
 from universe_object import Fleet, System, Planet
 from AIDependencies import INVALID_ID
+from freeorion_tools import get_partial_visibility_turn
 
 from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
@@ -315,12 +316,9 @@ class OrderOutpost(AIFleetOrder):
     def is_valid(self):
         if not super(OrderOutpost, self).is_valid():
             return False
-        universe = fo.getUniverse()
         planet = self.target.get_object()
-        sys_partial_vis_turn = universe.getVisibilityTurnsMap(planet.systemID, fo.empireID()).get(fo.visibility.partial,
-                                                                                                  -9999)
-        planet_partial_vis_turn = universe.getVisibilityTurnsMap(planet.id, fo.empireID()).get(fo.visibility.partial,
-                                                                                               -9999)
+        sys_partial_vis_turn = get_partial_visibility_turn(planet.systemID)
+        planet_partial_vis_turn = get_partial_visibility_turn(planet.id)
         if not (planet_partial_vis_turn == sys_partial_vis_turn and planet.unowned):
             self.executed = True
             self.order_issued = True
@@ -380,12 +378,10 @@ class OrderColonize(AIFleetOrder):
     def is_valid(self):
         if not super(OrderColonize, self).is_valid():
             return False
-        universe = fo.getUniverse()
         planet = self.target.get_object()
-        sys_partial_vis_turn = universe.getVisibilityTurnsMap(planet.systemID, fo.empireID()).get(fo.visibility.partial,
-                                                                                                  -9999)
-        planet_partial_vis_turn = universe.getVisibilityTurnsMap(planet.id, fo.empireID()).get(fo.visibility.partial,
-                                                                                               -9999)
+
+        sys_partial_vis_turn = get_partial_visibility_turn(planet.systemID)
+        planet_partial_vis_turn = get_partial_visibility_turn(planet.id)
         if (planet_partial_vis_turn == sys_partial_vis_turn and planet.unowned or
                 (planet.ownedBy(fo.empireID()) and not planet.currentMeterValue(fo.meterType.population))):
             return self.fleet.get_object().hasColonyShips
