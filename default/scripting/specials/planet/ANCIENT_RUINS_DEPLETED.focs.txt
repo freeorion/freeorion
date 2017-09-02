@@ -18,4 +18,5 @@ Special
     graphic = "icons/specials_huge/ancient_ruins_excavated.png"
 
 #include "/scripting/common/base_prod.macros"
+
 #include "/scripting/common/priorities.macros"

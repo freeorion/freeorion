@@ -1,12 +1,12 @@
 Special
-    name = "MONOPOLE_SPECIAL"
-    description = "MONOPOLE_SPECIAL_DESC"
+    name = "PROBIOTIC_SPECIAL"
+    description = "PROBIOTIC_SPECIAL_DESC"
     stealth = 0
     spawnrate = 9.0
     spawnlimit = 8
     location = And [
         Planet
-        Planet type = [Radiated Barren Inferno]
+        Planet type = [Ocean Swamp Toxic]
         Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
@@ -16,10 +16,11 @@ Special
         ]
     ]
     effectsgroups = [
-        [[STANDARD_INDUSTRY_BOOST]]
-        [[POPULATION_BOOST_ROBOTIC(MONOPOLE)]]
+        [[POPULATION_BOOST_ORGANIC(PROBIOTIC)]]
         [[CHANCE_OF_GUARD_1]]
     ]
-    graphic = "icons/specials_huge/monopole.png"
+    graphic = "icons/specials_huge/probiotic.png"
 
-#include "specials.macros"
+#include "growth.macros"
+
+#include "../monster_guard.macros"

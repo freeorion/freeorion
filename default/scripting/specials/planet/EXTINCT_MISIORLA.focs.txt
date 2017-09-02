@@ -1,0 +1,5 @@
+Special
+    name = "EXTINCT_MISIORLA_SPECIAL"
+    description = "EXTINCT_MISIORLA_SPECIAL_DESC"
+    spawnrate = 0.0
+    graphic = "icons/specials_huge/extinct_misiorla.png"

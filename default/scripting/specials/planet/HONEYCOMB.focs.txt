@@ -84,4 +84,5 @@ Special
     graphic = "icons/specials_huge/honeycomb.png"
 
 #include "/scripting/common/base_prod.macros"
+
 #include "/scripting/common/priorities.macros"

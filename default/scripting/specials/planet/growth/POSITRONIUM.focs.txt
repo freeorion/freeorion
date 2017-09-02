@@ -1,12 +1,12 @@
 Special
-    name = "SPICE_SPECIAL"
-    description = "SPICE_SPECIAL_DESC"
+    name = "POSITRONIUM_SPECIAL"
+    description = "POSITRONIUM_SPECIAL_DESC"
     stealth = 0
     spawnrate = 9.0
     spawnlimit = 8
     location = And [
         Planet
-        Planet type = [Tundra Desert Terran]
+        Planet type = [Radiated Barren Inferno]
         Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
@@ -16,9 +16,12 @@ Special
         ]
     ]
     effectsgroups = [
-        [[POPULATION_BOOST_ORGANIC(SPICE)]]
+        [[STANDARD_INDUSTRY_BOOST]]
+        [[POPULATION_BOOST_ROBOTIC(POSITRONIUM)]]
         [[CHANCE_OF_GUARD_1]]
     ]
-    graphic = "icons/specials_huge/spice.png"
+    graphic = "icons/specials_huge/positronium.png"
 
-#include "specials.macros"
+#include "growth.macros"
+
+#include "../monster_guard.macros"

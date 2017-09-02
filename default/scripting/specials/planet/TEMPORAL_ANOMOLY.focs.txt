@@ -26,4 +26,5 @@ Special
     graphic = "icons/specials_huge/temporal_anomaly.png"
 
 #include "/scripting/common/base_prod.macros"
+
 #include "/scripting/common/priorities.macros"

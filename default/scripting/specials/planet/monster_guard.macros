@@ -1,0 +1,23 @@
+CHANCE_OF_GUARD_1
+'''        EffectsGroup
+            scope = Source
+            activation = AND [
+                Turn high = 0
+                Random probability = 0.70
+                (GalaxyMaxAIAggression >= 1)
+                (GalaxyMonsterFrequency >= 1)
+                Not ContainedBy Contains OR [
+                    Design name = "SM_EXP_OUTPOST"
+                    Building name = "BLD_EXPERIMENTOR_OUTPOST"
+                    And [ Planet HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL" ]
+                ]
+            ]
+            effects = [
+                If condition = Or [ Random probability = 0.6   Homeworld ]
+                    effects = CreateShip designname = OneOf("SM_GUARD_0", "SM_GUARD_1")
+                else = [
+                    SetSpecies name = "SP_ANCIENT_GUARDIANS"
+                    SetPopulation value = Target.TargetPopulation
+                ]
+            ]
+'''

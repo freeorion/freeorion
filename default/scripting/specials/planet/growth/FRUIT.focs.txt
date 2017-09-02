@@ -1,12 +1,12 @@
 Special
-    name = "PROBIOTIC_SPECIAL"
-    description = "PROBIOTIC_SPECIAL_DESC"
+    name = "FRUIT_SPECIAL"
+    description = "FRUIT_SPECIAL_DESC"
     stealth = 0
     spawnrate = 9.0
     spawnlimit = 8
     location = And [
         Planet
-        Planet type = [Ocean Swamp Toxic]
+        Planet type = [Desert Terran Ocean Swamp]
         Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
@@ -16,9 +16,11 @@ Special
         ]
     ]
     effectsgroups = [
-        [[POPULATION_BOOST_ORGANIC(PROBIOTIC)]]
+        [[POPULATION_BOOST_ORGANIC(FRUIT)]]
         [[CHANCE_OF_GUARD_1]]
     ]
-    graphic = "icons/specials_huge/probiotic.png"
+    graphic = "icons/specials_huge/fruit.png"
 
-#include "specials.macros"
+#include "growth.macros"
+
+#include "../monster_guard.macros"

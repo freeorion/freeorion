@@ -1,12 +1,12 @@
 Special
-    name = "SUPERCONDUCTOR_SPECIAL"
-    description = "SUPERCONDUCTOR_SPECIAL_DESC"
+    name = "MINERALS_SPECIAL"
+    description = "MINERALS_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 9.0
+    spawnrate = 1.0
     spawnlimit = 8
     location = And [
         Planet
-        Planet type = [Radiated Barren Inferno]
+        Not Planet type = [Asteroids GasGiant]
         Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
@@ -17,9 +17,11 @@ Special
     ]
     effectsgroups = [
         [[STANDARD_INDUSTRY_BOOST]]
-        [[POPULATION_BOOST_ROBOTIC(SUPERCONDUCTOR)]]
+        [[POPULATION_BOOST_LITHIC(MINERALS)]]
         [[CHANCE_OF_GUARD_1]]
     ]
-    graphic = "icons/specials_huge/superconductor.png"
+    graphic = "icons/specials_huge/minerals.png"
 
-#include "specials.macros"
+#include "growth.macros"
+
+#include "../monster_guard.macros"

@@ -50,4 +50,5 @@ Special
             effects = SetTargetConstruction value = Value - 20
     ]
     graphic = "icons/specials_huge/philospher-planet.png"
+
 #include "/scripting/common/priorities.macros"

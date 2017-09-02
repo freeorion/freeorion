@@ -1,12 +1,12 @@
 Special
-    name = "POSITRONIUM_SPECIAL"
-    description = "POSITRONIUM_SPECIAL_DESC"
+    name = "CRYSTALS_SPECIAL"
+    description = "CRYSTALS_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 9.0
+    spawnrate = 1.0
     spawnlimit = 8
     location = And [
         Planet
-        Planet type = [Radiated Barren Inferno]
+        Not Planet type = [GasGiant]
         Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
@@ -17,9 +17,11 @@ Special
     ]
     effectsgroups = [
         [[STANDARD_INDUSTRY_BOOST]]
-        [[POPULATION_BOOST_ROBOTIC(POSITRONIUM)]]
+        [[POPULATION_BOOST_LITHIC(CRYSTALS)]]
         [[CHANCE_OF_GUARD_1]]
     ]
-    graphic = "icons/specials_huge/positronium.png"
+    graphic = "icons/specials_huge/crystals.png"
 
-#include "specials.macros"
+#include "growth.macros"
+
+#include "../monster_guard.macros"

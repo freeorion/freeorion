@@ -22,4 +22,6 @@ Special
     ]
     graphic = "icons/specials_huge/metaloids.png"
 
-#include "specials.macros"
+#include "growth.macros"
+
+#include "../monster_guard.macros"
