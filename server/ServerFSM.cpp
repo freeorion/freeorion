@@ -230,35 +230,35 @@ ServerApp& ServerFSM::Server()
 
 void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
     PlayerConnectionPtr& player_connection = d.m_player_connection;
-    int id = player_connection->PlayerID();
-    DebugLogger(FSM) << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << id
-                     << ", named \"" << player_connection->PlayerName() << "\".";
-
     bool must_quit = false;
-    if (id == ALL_EMPIRES && !m_server.IsHostless()) {
-        ErrorLogger(FSM) << "Client quit before id was assigned.";
-        must_quit = true;
-    }
 
-    // Did an active player (AI or Human) disconnect?  If so, game is over
-    if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-        player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
-    {
-        // can continue.  Select new host if necessary.
-        if (m_server.m_networking.PlayerIsHost(player_connection->PlayerID()))
-            m_server.SelectNewHost();
+    if (player_connection->IsEstablished()) {
+        int id = player_connection->PlayerID();
+        DebugLogger(FSM) << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << id
+                         << ", named \"" << player_connection->PlayerName() << "\".";
 
-    } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-               player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER)
-    {
-        const Empire* empire = GetEmpire(m_server.PlayerEmpireID(id));
-        // eliminated and non-empire players can leave safely
-        if (empire && !empire->Eliminated()) {
-            must_quit = true;
-            // player abnormally disconnected during a regular game
-            ErrorLogger(FSM) << "Player #" << id << ", named \""
-                             << player_connection->PlayerName() << "\"quit before empire was eliminated.";
+        // Did an active player (AI or Human) disconnect?  If so, game is over
+        if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+            player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+        {
+            // can continue.  Select new host if necessary.
+            if (m_server.m_networking.PlayerIsHost(id))
+                m_server.SelectNewHost();
+
+        } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
+                   player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER)
+        {
+            const Empire* empire = GetEmpire(m_server.PlayerEmpireID(id));
+            // eliminated and non-empire players can leave safely
+            if (empire && !empire->Eliminated()) {
+                must_quit = true;
+                // player abnormally disconnected during a regular game
+                ErrorLogger(FSM) << "Player #" << id << ", named \""
+                                 << player_connection->PlayerName() << "\"quit before empire was eliminated.";
+            }
         }
+    } else {
+        DebugLogger(FSM) << "Client quit before id was assigned.";
     }
 
     // independently of everything else, if there are no humans left, it's time to terminate
