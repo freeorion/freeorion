@@ -26,6 +26,8 @@ void PasswordEnterWnd::CompleteConstruction() {
     m_player_name_edit = GG::Wnd::Create<CUIEdit>("");
     auto password_label = GG::Wnd::Create<CUILabel>(UserString("PASSWORD_LABEL"), GG::FORMAT_LEFT);
     m_password_edit = GG::Wnd::Create<CUIEdit>("");
+    m_password_edit->SetTextColor(m_password_edit->InteriorColor());
+    m_password_edit->SetSelectedTextColor(m_password_edit->HiliteColor());
     m_ok_bn = Wnd::Create<CUIButton>(UserString("OK"));
     m_cancel_bn = Wnd::Create<CUIButton>(UserString("CANCEL"));
 
@@ -73,11 +75,19 @@ void PasswordEnterWnd::ModalInit()
 void PasswordEnterWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     if (key == GG::GGK_ESCAPE) { // Same behaviour as if "Cancel" was pressed
         CancelClicked();
+    } else if (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) {
+        if (GG::GUI::GetGUI()->FocusWnd() == m_player_name_edit) {
+            GG::GUI::GetGUI()->SetFocusWnd(m_password_edit);
+        } else if (GG::GUI::GetGUI()->FocusWnd() == m_password_edit) {
+            OkClicked();
+        }
     }
 }
 
-void PasswordEnterWnd::SetPlayerName(const std::string& player_name)
-{ m_player_name_edit->SetText(player_name); }
+void PasswordEnterWnd::SetPlayerName(const std::string& player_name) {
+    m_player_name_edit->SetText(player_name);
+    m_password_edit->SetText(std::string());
+}
 
 void PasswordEnterWnd::OkClicked() {
     HumanClientApp::GetApp()->Networking().SendMessage(AuthResponseMessage(*m_player_name_edit, *m_password_edit));
