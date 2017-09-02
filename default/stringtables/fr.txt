@@ -11028,13 +11028,13 @@ SHP_DEUTERIUM_TANK
 Réservoir de Deutérium
 
 SHP_DEUTERIUM_TANK_DESC
-Débloque l'équipement [[shippart FU_DEUTERIUM_TANK]] pour les astronefs.
+Augmente la capacité en [[metertype METER_FUEL]] d'un astronef. Débloque l'équipement [[shippart FU_RAMSCOOP]] pour les astronefs.
 
 SHP_ANTIMATTER_TANK
 Réservoir d'Anti-Matière
 
 SHP_ANTIMATTER_TANK_DESC
-Débloque l'équipement [[shippart FU_ANTIMATTER_TANK]] pour les astronefs.
+Augmente la capacité en [[metertype METER_FUEL]] d'un astronef.
 
 SHP_ZERO_POINT
 Générateur Zero-Point de Carburant
@@ -12281,18 +12281,6 @@ Réservoir Additionnel de Carburant
 
 FU_BASIC_TANK_DESC
 Augmente la capacité en [[metertype METER_FUEL]] d'un astronef, permettant un voyage supplémentaire sur une Voie spatiale.
-
-FU_DEUTERIUM_TANK
-Réservoir de Deutérium
-
-FU_DEUTERIUM_TANK_DESC
-Augmente la capacité en [[metertype METER_FUEL]] d'un astronef. Volumineux et vulnérable à toute puissance de feu.
-
-FU_ANTIMATTER_TANK
-Réservoir d'Anti-Matière
-
-FU_ANTIMATTER_TANK_DESC
-Augmente la capacité en [[metertype METER_FUEL]] d'un astronef. Compact et solide.
 
 FU_ZERO_FUEL
 Générateur Zero-Point de Carburant

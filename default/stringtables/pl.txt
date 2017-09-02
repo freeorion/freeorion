@@ -951,6 +951,17 @@ Czym jest "teraz", "przyszłość", "przeszłość"? Paradoks bliźniąt w szcze
 ## Technology application
 ##
 
+SHP_DEUTERIUM_TANK
+Zbiornik deuterium
+
+SHP_DEUTERIUM_TANK_DESC
+Nieznacznie zwiększa zasięg okrętu powiększając jego zasoby paliwa.
+
+SHP_ANTIMATTER_TANK
+Zbiornik antymaterii
+
+SHP_ANTIMATTER_TANK_DESC
+Zwiększa zasięg okrętu powiększając jego zasoby paliwa.
 
 ##
 ## Technology refinement
@@ -997,18 +1008,6 @@ Radar aktywny
 
 DT_DETECTOR_2_DESC
 Średnia skuteczność wykrywania, niestety bardzo ułatwia też wykrycie okręty, na którym jest zamontowany.
-
-FU_DEUTERIUM_TANK
-Zbiornik deuterium
-
-FU_DEUTERIUM_TANK_DESC
-Nieznacznie zwiększa zasięg okrętu powiększając jego zasoby paliwa. Masywny i wrażliwy na ogień przeciwnika.
-
-FU_ANTIMATTER_TANK
-Zbiornik antymaterii
-
-FU_ANTIMATTER_TANK_DESC
-Zwiększa zasięg okrętu powiększając jego zasoby paliwa. Zwarty, o niewielkiem masie.
 
 ST_CLOAK_1
 Tłumik elektromagnetyczny

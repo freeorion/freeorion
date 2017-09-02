@@ -3575,6 +3575,15 @@ Campo di Assorbimento
 SHP_DEUTERIUM_TANK
 Serbatoio di deuterio
 
+SHP_DEUTERIUM_TANK_DESC
+Piccolo aumento del raggio d'azione incrementando la capacità del serbatoio.
+
+SHP_ANTIMATTER_TANK
+Serbatoio di Antimateria
+
+SHP_ANTIMATTER_TANK_DESC
+Medio aumento del raggio d'azione incrementando la capacità del serbatoio.
+
 SHP_ORG_HULL
 Scafo Organico
 
@@ -3754,18 +3763,6 @@ La ricerca su N-Dimensionale nel subspazio ha determinato una matrice di motore 
 
 FU_SINGULARITY_ENGINE_CORE_DESC
 '''Un cugino più piccolo della diga Hyperspace attrezzata per le navi, il motore singolo aumenta drasticamente la generazione di energia. Aumenta la velocità di Starlane entro 20. '''
-
-FU_DEUTERIUM_TANK
-Serbatoio Deuterio
-
-FU_DEUTERIUM_TANK_DESC
-Piccolo aumento del raggio d'azione incrementando la capacità del serbatoio. Ingombrante e vulnerabile al fuoco nemico.
-
-FU_ANTIMATTER_TANK
-Serbatoio Antimateria
-
-FU_ANTIMATTER_TANK_DESC
-Medio aumento del raggio d'azione incrementando la capacità del serbatoio. Compatto e leggero.
 
 ST_CLOAK_1
 Smorzatore Elettromagnetico
