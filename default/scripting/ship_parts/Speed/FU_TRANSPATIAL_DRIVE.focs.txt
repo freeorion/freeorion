@@ -20,18 +20,18 @@ Part
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = (1 <= [[BEST_CLOAK_EFFECT]] <= 40)
+            activation = (1 <= [[BEST_STEALTH_EFFECT]] <= 40)
             stackinggroup = "ENGINE_STEALTH_PART_STACK1"
             accountinglabel = "TRANSPATIAL_CLOAK_INTERACTION"
-            effects = SetStealth value = Value - [[BEST_CLOAK_EFFECT]]
+            effects = SetStealth value = Value - [[BEST_STEALTH_EFFECT]]
         EffectsGroup
             scope = Source
-            activation = (40 >= [[BEST_CLOAK_EFFECT]])
+            activation = (40 >= [[BEST_STEALTH_EFFECT]])
             stackinggroup = "ENGINE_STEALTH_PART_STACK2"
             effects = SetStealth value = Value + 40
     ]
     icon = "icons/ship_parts/engine-4.png"
 
-#include "stacking.macros"
+#include "../Stealth/best_stealth.macros"
 
 #include "/scripting/common/upkeep.macros"
