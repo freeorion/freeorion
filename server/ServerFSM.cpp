@@ -523,7 +523,7 @@ sc::result MPLobby::react(const Disconnection& d) {
     for (auto it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
     {
-        DebugLogger(FSM) << " ... " << (*it)->PlayerID();
+        DebugLogger(FSM) << " ... " << (*it)->PlayerID() << " (" << (*it)->PlayerName() << ")";
     }
 
     if (!server.IsHostless()) {
@@ -582,6 +582,13 @@ sc::result MPLobby::react(const JoinGame& msg) {
     std::string client_version_string;
     ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
 
+    if(client_type != Networking::CLIENT_TYPE_AI_PLAYER && server.IsAuthRequired(player_name)) {
+        // send authentication request
+        player_connection->AwaitPlayer(client_type, client_version_string);
+        player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
+        return discard_event();
+    }
+
     std::string original_player_name = player_name;
 
     // Remove AI prefix to distinguish Human from AI.
@@ -622,13 +629,6 @@ sc::result MPLobby::react(const JoinGame& msg) {
     }
 
     player_name = new_player_name;
-
-    if(client_type != Networking::CLIENT_TYPE_AI_PLAYER && server.IsAuthRequired(player_name)) {
-        // send authentication request
-        player_connection->AwaitPlayer(client_type, client_version_string);
-        player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
-        return discard_event();
-    }
 
     // assign unique player ID to newly connected player
     int player_id = server.m_networking.NewPlayerID();
@@ -696,13 +696,6 @@ sc::result MPLobby::react(const AuthResponse& msg) {
         return discard_event();
     }
 
-    if (!server.IsAvailableName(player_name)) {
-        player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % player_name),
-                                                    true));
-        server.Networking().Disconnect(player_connection);
-        return discard_event();
-    }
-
     // TODO: Merge it with MPLobby::react(const JoinGame& msg)
     // assign unique player ID to newly connected player
     int player_id = server.m_networking.NewPlayerID();
@@ -748,6 +741,19 @@ sc::result MPLobby::react(const AuthResponse& msg) {
 
         plr.second.m_player_ready = false;
     }
+
+    // drop other connection with same name
+    std::list<PlayerConnectionPtr> to_disconnect;
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+         it != server.m_networking.established_end(); ++it)
+    {
+        if ((*it)->PlayerName() == player_name && player_connection != (*it)) {
+            (*it)->SendMessage(ErrorMessage(UserString("ERROR_CONNECTION_WAS_REPLACED"), true));
+            to_disconnect.push_back(*it);
+        }
+    }
+    for (const auto& conn : to_disconnect)
+    { server.Networking().Disconnect(conn); }
 
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)

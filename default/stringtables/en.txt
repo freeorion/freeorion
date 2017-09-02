@@ -973,6 +973,8 @@ Player name %1% already in use.
 ERROR_WRONG_PASSWORD
 Password wrong for player name %1%.
 
+ERROR_CONNECTION_WAS_REPLACED
+Your connection was replaced.
 
 ##
 ## Game Rules
