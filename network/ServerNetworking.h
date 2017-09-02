@@ -188,6 +188,9 @@ public:
     /** Checks if client associated with this connection runs on the same
         physical machine as the server */
     bool IsLocalConnection() const;
+
+    /** Checks if the player is established, has a valid name, id and client type. */
+    bool IsEstablished() const;
     //@}
 
     /** \name Mutators */ //@{
