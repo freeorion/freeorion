@@ -1148,12 +1148,12 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
          player_connection_it != m_networking.established_end(); ++player_connection_it)
     {
         const PlayerConnectionPtr player_connection = *player_connection_it;
-        int player_id = player_connection->PlayerID();
-        if (player_id == Networking::INVALID_PLAYER_ID) {
-            ErrorLogger() << "LoadGameInit got invalid player id from connection";
+        if (!player_connection->IsEstablished()) {
+            ErrorLogger() << "LoadGameInit got player from connection";
             continue;
         }
 
+        int player_id = player_connection->PlayerID();
 
         // get index into save game data for this player id
         int player_save_game_data_index = -1;   // default invalid index

@@ -445,9 +445,15 @@ MPLobby::MPLobby(my_context c) :
         std::list<PlayerConnectionPtr> to_disconnect;
         // Try to use connections:
         for (const auto& player_connection : server.m_networking) {
+            // If connection was not established disconnect it.
+            if (!player_connection->IsEstablished()) {
+                to_disconnect.push_back(player_connection);
+                continue;
+            }
+
             int player_id = player_connection->PlayerID();
             DebugLogger(FSM) << "(ServerFSM) MPLobby. Fill MPLobby player " << player_id;
-            if (player_id != Networking::INVALID_PLAYER_ID && player_connection->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER) {
+            if (player_connection->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER) {
                 PlayerSetupData player_setup_data;
                 player_setup_data.m_player_id =     player_id;
                 player_setup_data.m_player_name =   player_connection->PlayerName();
@@ -460,7 +466,7 @@ MPLobby::MPLobby(my_context c) :
                     player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
 
                 m_lobby_data->m_players.push_back(std::make_pair(player_id, player_setup_data));
-            } else if (player_id != Networking::INVALID_PLAYER_ID && player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
+            } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
                 PlayerSetupData player_setup_data;
                 player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
                 player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
@@ -474,9 +480,6 @@ MPLobby::MPLobby(my_context c) :
 
                 m_lobby_data->m_players.push_back(std::make_pair(Networking::INVALID_PLAYER_ID, player_setup_data));
                 // disconnect AI
-                to_disconnect.push_back(player_connection);
-            } else {
-                // If connection was not established disconnect it.
                 to_disconnect.push_back(player_connection);
             }
         }
@@ -835,9 +838,9 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                  player_connection_it != server.m_networking.established_end(); ++player_connection_it)
             {
                 PlayerConnectionPtr player_connection = *player_connection_it;
-                int player_id = player_connection->PlayerID();
-                if (player_id == Networking::INVALID_PLAYER_ID)
+                if (!player_connection->IsEstablished())
                     continue;
+                int player_id = player_connection->PlayerID();
 
                 // get lobby data for this player connection
                 bool found_player_lobby_data = false;
