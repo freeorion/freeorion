@@ -1,0 +1,19 @@
+Tech
+    name = "SHP_NOVA_BOMB"
+    description = "SHP_NOVA_BOMB_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    category = "SHIP_WEAPONS_CATEGORY"
+    researchcost = 750 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 12
+    tags = [ "PEDIA_SHIP_WEAPONS_CATEGORY" ]
+    prerequisites = [
+        "LRN_TIME_MECH"
+        "PRO_ZERO_GEN"
+    ]
+    unlock = [
+        Item type = ShipPart name = "SP_NOVA_BOMB"
+        Item type = Building name = "BLD_NOVA_BOMB_ACTIVATOR"
+    ]
+    graphic = "icons/ship_parts/nova-bomb.png"
+
+#include "/scripting/common/base_prod.macros"

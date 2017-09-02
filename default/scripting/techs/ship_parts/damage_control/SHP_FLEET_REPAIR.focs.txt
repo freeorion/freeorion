@@ -1,0 +1,26 @@
+Tech
+    name = "SHP_FLEET_REPAIR"
+    description = "SHP_FLEET_REPAIR_DESC"
+    short_description = "SHIP_REPAIR_DESC"
+    category = "SHIP_PARTS_CATEGORY"
+    researchcost = 80 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 10
+    tags = [ "PEDIA_DAMAGE_CONTROL_PART_TECHS" ]
+    prerequisites = [
+        "SHP_INTSTEL_LOG"
+        "SHP_BASIC_DAM_CONT"
+            ]
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                InSystem
+                Stationary
+                OwnedBy empire = Source.Owner
+                Turn low = LocalCandidate.System.LastTurnBattleHere + 1
+                Structure high = LocalCandidate.MaxStructure - 0.001
+                ResupplyableBy empire = Source.Owner
+            ]
+            effects = SetStructure value = Value + (Target.MaxStructure/10)
+
+#include "/scripting/common/base_prod.macros"

@@ -1,0 +1,32 @@
+Tech
+    name = "SHP_FIGHTERS_3"
+    description = "SHP_FIGHTERS_3_DESC"
+    short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
+    category = "SHIP_WEAPONS_CATEGORY"
+    researchcost = 100 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 2
+    tags = [ "PEDIA_FIGHTER_TECHS" ]
+    prerequisites = [
+        "SHP_WEAPON_3_1"
+        "SHP_FIGHTERS_2"
+        ]
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                Or [
+                    DesignHasPart  name = "FT_HANGAR_1"
+                    DesignHasPart  name = "FT_HANGAR_2"
+                    DesignHasPart  name = "FT_HANGAR_3"
+                ]
+            ]
+            accountinglabel = "SHP_FIGHTERS_3"
+            effects = [
+                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 1
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 3
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 4
+                ]
+    graphic = "icons/ship_parts/fighter05.png"
+
+#include "/scripting/common/base_prod.macros"

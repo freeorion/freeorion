@@ -1,0 +1,20 @@
+Tech
+    name = "SHP_ANTIMATTER_TANK"
+    description = "SHP_ANTIMATTER_TANK_DESC"
+    short_description = "SHIP_FUEL_IMPROVE_SHORT_DESC"
+    category = "SHIP_PARTS_CATEGORY"
+    researchcost = 175 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 3
+    tags = [ "PEDIA_FUEL_PART_TECHS" ]
+    prerequisites = [
+        "SHP_DEUTERIUM_TANK"
+        "LRN_FORCE_FIELD"
+    ]
+    effectsgroups = [
+        [[PART_UPGRADE_MAXFUEL_EFFECTS(SHP_ANTIMATTER_TANK_EFFECT,3)]]
+    ]
+    graphic = "icons/ship_parts/antimatter_tank.png"
+
+#include "fuel.macros"
+
+#include "/scripting/common/base_prod.macros"

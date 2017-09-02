@@ -1,0 +1,28 @@
+// @1@ part name
+WEAPON_BASE_EFFECTS
+'''        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "@1@"
+            ]
+            accountinglabel = "@1@"
+            effects = [
+                SetMaxCapacity partname = "@1@" value = Value + PartCapacity name = "@1@"
+                SetMaxSecondaryStat partname = "@1@" value = Value + PartSecondaryStat name = "@1@"
+            ]
+'''
+
+// @1@ part name
+// @2@ value added to max capacity
+WEAPON_UPGRADE_CAPACITY_EFFECTS
+'''
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "@1@"
+            ]
+            accountinglabel = "@1@"
+            effects = SetMaxCapacity partname = "@1@" value = Value + @2@
+'''
