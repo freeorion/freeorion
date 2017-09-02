@@ -53,7 +53,9 @@ public:
 
     void                SetSinglePlayerGame(bool sp = true);
 
-    void                StartServer();                  ///< starts a server process on localhost
+    /** Starts a server process on localhost.  Throws a runtime_error if
+        another server is already running. */
+    void                StartServer();
     void                FreeServer();                   ///< frees (relinquishes ownership and control of) any running server process already started by this client; performs no cleanup of other processes, such as AIs
     void                NewSinglePlayerGame(bool quickstart = false);
     void                MultiPlayerGame();                              ///< shows multiplayer connection window, and then transitions to multiplayer lobby if connected

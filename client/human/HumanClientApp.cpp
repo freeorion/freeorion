@@ -411,7 +411,20 @@ namespace {
 #include <stdlib.h>
 #endif
 
+namespace {
+    class LocalServerAlreadyRunningException : public std::runtime_error {
+    public:
+        explicit LocalServerAlreadyRunningException(const std::string& s) : std::runtime_error(s) {}
+    };
+}
+
 void HumanClientApp::StartServer() {
+    auto connected = m_networking->ConnectToLocalHostServer(std::chrono::milliseconds(100));
+    if (connected) {
+        ErrorLogger() << "Can't start local server because a server is already connecting at 127.0.0.0.";
+        throw LocalServerAlreadyRunningException("LOCAL_SERVER_ALREADY_RUNNING_ERROR");
+    }
+
     std::string SERVER_CLIENT_EXE = ServerClientExe();
     DebugLogger() << "HumanClientApp::StartServer: " << SERVER_CLIENT_EXE;
 
@@ -467,6 +480,9 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         m_single_player_game = true;
         try {
             StartServer();
+        } catch (const LocalServerAlreadyRunningException& err) {
+            ClientUI::MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
+            return;
         } catch (const std::runtime_error& err) {
             ErrorLogger() << "HumanClientApp::NewSinglePlayerGame : Couldn't start server.  Got error message: " << err.what();
             ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
@@ -597,6 +613,9 @@ void HumanClientApp::MultiPlayerGame() {
             try {
                 StartServer();
                 FreeServer();
+            } catch (const LocalServerAlreadyRunningException& err) {
+                ClientUI::MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
+                return;
             } catch (const std::runtime_error& err) {
                 ErrorLogger() << "Couldn't start server.  Got error message: " << err.what();
                 ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
@@ -606,7 +625,6 @@ void HumanClientApp::MultiPlayerGame() {
         }
         server_name = GetOptionsDB().Get<std::string>("external-server-address");
     }
-
 
     m_connected = m_networking->ConnectToServer(server_name);
     if (!m_connected) {
@@ -701,9 +719,16 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
 
     if (!GetOptionsDB().Get<bool>("force-external-server")) {
         m_single_player_game = true;
-        DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() Starting server";
-        StartServer();
-        DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() Server started";
+        try {
+            StartServer();
+        } catch (const LocalServerAlreadyRunningException& err) {
+            ClientUI::MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
+            return;
+        } catch (const std::runtime_error& err) {
+            ErrorLogger() << "HumanClientApp::NewSinglePlayerGame : Couldn't start server.  Got error message: " << err.what();
+            ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
+            return;
+        }
     } else {
         DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() assuming external server will be available";
     }
@@ -740,7 +765,16 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
         DebugLogger() << "HumanClientApp::RequestSavePreviews: No game running. Start a server for savegame queries.";
 
         m_single_player_game = true;
-        StartServer();
+        try {
+            StartServer();
+        } catch (const LocalServerAlreadyRunningException& err) {
+            ClientUI::MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
+            return;
+        } catch (const std::runtime_error& err) {
+            ErrorLogger() << "HumanClientApp::NewSinglePlayerGame : Couldn't start server.  Got error message: " << err.what();
+            ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
+            return;
+        }
 
         DebugLogger() << "HumanClientApp::RequestSavePreviews Connecting to server";
         m_connected = m_networking->ConnectToLocalHostServer();

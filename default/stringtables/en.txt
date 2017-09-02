@@ -893,6 +893,9 @@ The server is not responding.
 SERVER_LOST
 The connection to the server has been lost.
 
+LOCAL_SERVER_ALREADY_RUNNING_ERROR
+Can't start server.  A local server is already running.
+
 PLAYER_DISCONNECTED
 Player %1% no longer has a connection to the server.
 
