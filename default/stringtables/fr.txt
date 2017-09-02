@@ -338,12 +338,6 @@ Porteur d'Escorte
 SD_CARRIER_DESC
 Porteur conçu pour défendre les autres vaisseaux armés via le lancement d'escadrons d'Intercepteurs.
 
-SD_FLAK
-Porteur de Flotte
-
-SD_FLAK_DESC
-Porteur conçu pour prendre part aux actions offensives de flotte, à l'aide d'escadrons de Bombardiers et de Canons Mitrailleurs.
-
 SD_SCOUT
 Éclaireur
 

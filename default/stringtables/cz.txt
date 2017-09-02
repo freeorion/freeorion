@@ -96,18 +96,6 @@ Průzkumník
 SD_SCOUT_DESC
 Malé a levné neozbrojené plavidlo určené pro průzkum.
 
-SD_MARK1_DESC
-Cenově dostupná ozbrojená hlídka.
-
-SD_MARK2_DESC
-Křižník se silnou obrannou a útočnou schopností.
-
-SD_MARK3_DESC
-Rozšířené křižník s těžkými zbraněmi a obrněním na dělaní špinavé práce.
-
-SD_MARK4_DESC
-Masivní válečná loď ozbrojená a chráněná nejnovějšími technologiemi. Cena se od toho odvíjí.
-
 SD_COLONY_SHIP
 Kolonizační loď
 
@@ -582,9 +570,6 @@ Rychle-zavřít okna
 
 OPTIONS_MISC_UI
 Různé UI Nastavení
-
-OPTIONS_SINGLEPLAYER
-Jeden hráč
 
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
 Tahy mezi autouložením

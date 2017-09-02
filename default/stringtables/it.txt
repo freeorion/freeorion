@@ -160,24 +160,6 @@ Mark I
 SD_MARK1_DESC
 Fregata da pattugliamento base armata di cannone a rotaia.
 
-SD_MARK_2
-Mark II
-
-SD_MARK2_DESC
-Fregata da pattugliamento migliorata armata di cannone a rotaia.
-
-SD_MARK_3
-Mark III
-
-SD_MARK3_DESC
-Fregata da pattugliamento base armata di laser.
-
-SD_MARK_4
-Mark IV
-
-SD_MARK4_DESC
-Fregata da pattugliamento migliorata armata di laser.
-
 SD_GRAVITATING1_DESC
 Massiccia nave da guerra armata e protetta con gli ultimi ritrovati tecnologici. Fissato il prezzo di conseguenza.
 
@@ -634,12 +616,6 @@ Imposta il livello sopra al quale i messaggi di log verranno mostrati (livelli i
 OPTIONS_DB_STRINGTABLE_FILENAME
 Imposta il file della lingua.
 
-OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
-Salvataggi automatici per la modalità giocatore singolo.
-
-OPTIONS_DB_AUTOSAVE_MULTIPLAYER
-Salvataggi automatici per la modalità multigiocatore.
-
 OPTIONS_DB_AUTOSAVE_TURNS
 Imposta il numero di turni da attendere fra due salvataggi automatici.
 
@@ -973,12 +949,6 @@ Mostra pannello laterale pianeti
 
 OPTIONS_MISC_UI
 Impostazioni varie interfaccia utente
-
-OPTIONS_SINGLEPLAYER
-Giocatore Singolo
-
-OPTIONS_MULTIPLAYER
-Multi giocatore
 
 OPTIONS_AUTOSAVE_LIMIT
 Salvataggi automatici da conservare
@@ -2093,7 +2063,7 @@ Industria
 METER_INDUSTRY_VALUE_DESC
 '''L'industria rappresenta la produzione e la modifica di beni fisici. È necessaria per la produzione di edifici, navi spaziali e altri progetti.
 
-L'industria di un pianeta può essere utilizzata per qualsiasi progetto di produzione di [[enciclopedia SUPPLY_TITLE]] linea pianeti collegati. La produzione di qualunque industria non in funzione viene sprecata ad ogni turno.
+L'industria di un pianeta può essere utilizzata per qualsiasi progetto di produzione di [[enciclopedia METER_SUPPLY]] linea pianeti collegati. La produzione di qualunque industria non in funzione viene sprecata ad ogni turno.
 
 Ogni progetto ha un numero minimo di turni necessari per essere costruito. Per esempio, se un progetto che è costato 15 PP, e ha avuto un tempo minimo di 3 giri, 5 PPS è il massimo che potrebbe essere messo verso il suo completamento per turno.
 Il progetto nella parte superiore della coda è dato PP prima. Qualunque PP rimanenti vengono poi dati al progetto successivo in coda, e se vi è ancora più attuale dalla prossima - e così via. È possibile modificare la priorità degli elementi della coda trascinando gli elementi più importanti più vicini alla cima.
@@ -2196,7 +2166,7 @@ GROWTH_FOCUS_TITLE
 Focus sulla Crescita
 
 GROWTH_FOCUS_TEXT
-Il focus sulla crescita rappresenta l'esportazione di materiali rari e sostanze che aiutano la crescita della popolazione di una determinata specie. È disponibile solo in determinate situazioni: su alcuni mondi e su pianeti con speciali caratteristiche di crescita. Un pianeta incentrato sulla crescita aumenta la popolazione massima solo su altri pianeti ad esso collegati da linee di [[enciclopedia SUPPLY_TITLE]]. Un pianeta natale focalizzato sulla crescita aiuta solo altri pianeti della stessa specie. Pianeti con caratteristiche speciali di crescita, fanno progredire lo sviluppo di una singola specie, per esempio, alcuni aiutano lo sviluppo delle specie organiche.
+Il focus sulla crescita rappresenta l'esportazione di materiali rari e sostanze che aiutano la crescita della popolazione di una determinata specie. È disponibile solo in determinate situazioni: su alcuni mondi e su pianeti con speciali caratteristiche di crescita. Un pianeta incentrato sulla crescita aumenta la popolazione massima solo su altri pianeti ad esso collegati da linee di [[enciclopedia METER_SUPPLY]]. Un pianeta natale focalizzato sulla crescita aiuta solo altri pianeti della stessa specie. Pianeti con caratteristiche speciali di crescita, fanno progredire lo sviluppo di una singola specie, per esempio, alcuni aiutano lo sviluppo delle specie organiche.
 
 TRADE_FOCUS_TITLE
 Focus sul Commercio

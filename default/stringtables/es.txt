@@ -107,9 +107,6 @@ Corbeta I
 SD_SMALL_MARK1_DESC
 Pequeña y barata nave con catapulta electromagnéticap.
 
-SD_SMALL_MARK_2
-Corbeta II
-
 SD_SMALL_MARK2_DESC
 Pequeña y barata nave con catapulta electromagnéticap.
 
@@ -118,24 +115,6 @@ Fragata I
 
 SD_MARK1_DESC
 Asequible fragata con catapulta electromagnética.
-
-SD_MARK_2
-Fragata II
-
-SD_MARK2_DESC
-Fragata mejorada con catapulta electromagnética.
-
-SD_MARK_3
-Fragata III
-
-SD_MARK3_DESC
-Asequible fragata con laser.
-
-SD_MARK_4
-Fragata IV
-
-SD_MARK4_DESC
-Fragata mejorada con laser.
 
 SD_LARGE_MARK_1
 Crucero I
@@ -557,12 +536,6 @@ Establece el nivel arriba o abajo donde los mensajes de log son extraídos (nive
 OPTIONS_DB_STRINGTABLE_FILENAME
 Establece el archivo de tablas de cadenas de idioma.
 
-OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
-Si es verdadero, auto guardar ocurrirá durante los juegos en solitario.
-
-OPTIONS_DB_AUTOSAVE_MULTIPLAYER
-Si es verdadero, auto guardar ocurrirá durante los juegos multijugador.
-
 OPTIONS_DB_AUTOSAVE_TURNS
 Establece el número de turnos que pasarán entre auto guardados.
 
@@ -868,12 +841,6 @@ Cierre rápido de ventanas
 
 OPTIONS_MISC_UI
 Ajustes Misceláneos UI
-
-OPTIONS_SINGLEPLAYER
-Un jugador
-
-OPTIONS_MULTIPLAYER
-Multijugador
 
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
 Turnos entre guardados automáticos

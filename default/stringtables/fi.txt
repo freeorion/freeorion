@@ -385,12 +385,6 @@ Tekoälyvastustajien määrä pelissä.
 OPTIONS_DB_STRINGTABLE_FILENAME
 Asettaa käännöstiedoston.
 
-OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
-Jos päällä peli tallentaa itsensä automaattisesti tietyin väliajoin yksinpelissä.
-
-OPTIONS_DB_AUTOSAVE_MULTIPLAYER
-Jos päällä peli tallentaa itsensä automaattisesti tietyin väliajoin moninpelissä.
-
 OPTIONS_DB_AUTOSAVE_TURNS
 Asettaa automaattitallennusten välillä kuluvan ajan (vuoroissa).
 
@@ -695,12 +689,6 @@ Nopeasti suljettavat ikkunat*
 
 OPTIONS_MISC_UI
 Sekalaiset käyttöliittymäasetukset
-
-OPTIONS_SINGLEPLAYER
-Yksinpeli
-
-OPTIONS_MULTIPLAYER
-Moninpeli
 
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
 Vuoroja automaattitallennusten välillä

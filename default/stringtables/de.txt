@@ -292,20 +292,11 @@ Prototyp Raumträger
 SD_CARRIER_DESC
 Prototypentwurf, welcher Jäger in den Kampf sendet, anstatt Geschütze zu nutzen.
 
-SD_FLAK
-Prototyp Raumabwehrschiff
-
-SD_FLAK_DESC
-Prototypentwurf, welcher Flakkanonen als kostengünstige Maßnahme gegen Jäger nutzt.
-
 SD_SCOUT
 Kundschafter
 
 SD_SCOUT_DESC
 Kleines und billiges unbewaffnetes Schiff entworfen für Aufklärung und Erforschung. Weitere [[metertype METER_RESEARCH]], welche die [[metertype METER_DETECTION]] verbessert, würde bessere Entwürfe ermöglichen. Dieses Schiff kann nur auf Kolonien mit einem [[buildingtype BLD_SHIPYARD_BASE]] gebaut werden.
-
-SD_AST_SCOUT
-Asteroidenkundschafter
 
 SD_SCOUT_2
 Radarkundschafter
@@ -322,32 +313,11 @@ Energiekundschafter
 SD_SMALL_MARK_1
 Korvette (M)
 
-SD_SMALL_MARK_2
-Korvette (L)
-
 SD_MARK_1
 Fregatte (M1)
 
 SD_MARK1_DESC
 Einfache Fregatte mit Massenkatapult. Kann nur auf Kolonien mit einem [[buildingtype BLD_SHIPYARD_BASE]] gebaut werden.
-
-SD_MARK_2
-Fregatte (M2)
-
-SD_MARK2_DESC
-Verbesserte Fregatte mit Massenkatapult. Kann nur auf Kolonien mit einem [[buildingtype BLD_SHIPYARD_BASE]] gebaut werden.
-
-SD_MARK_3
-Fregatte (L1)
-
-SD_MARK3_DESC
-Einfache Laserfregatte. Kann nur auf Kolonien mit einem [[buildingtype BLD_SHIPYARD_BASE]] gebaut werden.
-
-SD_MARK_4
-Fregatte (L2)
-
-SD_MARK4_DESC
-Verbesserte Laserfrigatte. Kann nur auf Kolonien mit einem [[buildingtype BLD_SHIPYARD_BASE]] gebaut werden.
 
 SD_LARGE_MARK_1
 Zerstörer (M1)
@@ -1093,12 +1063,6 @@ Setzt den Grad ab dem Meldungen im Log aufgezeichnet werden. (Grade in abfallend
 OPTIONS_DB_STRINGTABLE_FILENAME
 Setzt die sprachspezifischen Übersetzungsdateien.
 
-OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
-Wenn gesetzt, wird während eines Einzelspielerspiels automatisch gespeichert.
-
-OPTIONS_DB_AUTOSAVE_MULTIPLAYER
-Wenn gesetzt, wird während eines Mehrspielerspiels automatisch gespeichert.
-
 OPTIONS_DB_AUTOSAVE_TURNS
 Setzt die Anzahl der Runden, welche zwischen automatischen Speicherungen liegen sollen.
 
@@ -1560,12 +1524,6 @@ Zeigt das Planeten Seitenfenster
 
 OPTIONS_MISC_UI
 Verschiedene UI-Einstellungen
-
-OPTIONS_SINGLEPLAYER
-Einzelspieler
-
-OPTIONS_MULTIPLAYER
-Mehrspieler
 
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
 Runden zwischen dem automatischem Speichern
