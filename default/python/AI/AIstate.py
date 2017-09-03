@@ -372,12 +372,9 @@ class AIstate(object):
         # start with dummy entries
         cur_e_fighters = {CombatRatingsAI.default_ship_stats().get_stats(hashable=True): [0]}
         old_e_fighters = {CombatRatingsAI.default_ship_stats().get_stats(hashable=True): [0]}
-        enemy_fleet_ids = []
         enemies_by_system = {}
         my_fleets_by_system = {}
         fleet_spot_position = {}
-        saw_enemies_at_system = {}
-        my_milship_rating = MilitaryAI.cur_best_mil_ship_rating()
         current_turn = fo.currentTurn()
         for fleet_id in universe.fleetIDs:
             fleet = universe.getFleet(fleet_id)
@@ -399,8 +396,8 @@ class AIstate(object):
                 # track old/dead enemy fighters for rating assessments in case not enough current info
                 e_f_dict = old_e_fighters if dead_fleet else cur_e_fighters
                 for stats in ship_stats:
-                    attacks = stats[0]
-                    if attacks:
+                    # log only ships that are armed
+                    if stats[0]:
                         e_f_dict.setdefault(stats, [0])[0] += 1
 
             # TODO: consider checking death of individual ships.  If ships had been moved from this fleet
@@ -415,23 +412,16 @@ class AIstate(object):
 
             sys_status = self.systemStatus.setdefault(this_system_id, {})
             sys_status['enemy_ship_count'] = sys_status.get('enemy_ship_count', 0) + len(fleet.shipIDs)
-            saw_enemies_at_system[fleet.systemID] = True
-            enemy_fleet_ids.append(fleet_id)
             enemies_by_system.setdefault(this_system_id, []).append(fleet_id)
 
-            if fleet.unowned:
-                continue
+            if not fleet.unowned:
+                self.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(fleet_id)
 
-            self.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(fleet_id)
-            rating = CombatRatingsAI.get_fleet_rating(fleet_id,
-                                                      enemy_stats=CombatRatingsAI.get_empire_standard_fighter())
-            if rating > 0.25 * my_milship_rating:
-                self.misc.setdefault('dangerous_enemies_sighted', {}).setdefault(current_turn, []).append(fleet_id)
+        # TODO: If no current information available, rate against own fighters
         e_f_dict = cur_e_fighters if len(cur_e_fighters) > 1 else old_e_fighters
         std_fighter = sorted([(v, k) for k, v in e_f_dict.items()])[-1][1]
         self.__empire_standard_enemy = std_fighter
         self.empire_standard_enemy_rating = self.get_standard_enemy().get_rating()
-        # TODO: If no current information available, rate against own fighters
 
         # assess fleet and planet threats & my local fleets
         for sys_id in universe.systemIDs:
@@ -446,47 +436,45 @@ class AIstate(object):
             sys_status['localEnemyFleetIDs'] = local_enemy_fleet_ids
             if system:
                 sys_status['name'] = system.name
+                # TODO: double check are these checks/deletes necessary?
                 for fid in system.fleetIDs:
-                    if fid in destroyed_object_ids:  # TODO: double check are these checks/deletes necessary?
-                        self.delete_fleet_info(fid)  # this is safe even if fleet wasn't mine
-                        continue
                     fleet = universe.getFleet(fid)
-                    if not fleet or fleet.empty:
+                    if not fleet or fleet.empty or fid in destroyed_object_ids:
                         self.delete_fleet_info(fid)  # this is safe even if fleet wasn't mine
                         continue
 
             # update threats
-            partial_vis_turn = get_partial_visibility_turn(sys_id)
-            mob_ratings = []  # for mobile unowned monster fleets
-            lost_fleet_rating = 0
-            enemy_ratings = []
-            monster_ratings = []
-            mobile_fleets = []
+            monster_ratings = []  # immobile
+            enemy_ratings = []  # owned & mobile
+            mob_ratings = []  # mobile & unowned
+            mobile_fleets = []  # mobile and either owned or unowned
             for fid in local_enemy_fleet_ids:
-                fleet = universe.getFleet(fid)
-                if not fleet:
-                    continue
+                fleet = universe.getFleet(fid)  # ensured to exist
                 fleet_rating = CombatRatingsAI.get_fleet_rating(
                     fid, enemy_stats=CombatRatingsAI.get_empire_standard_fighter())
                 if fleet.speed == 0:
                     monster_ratings.append(fleet_rating)
                     if verbose:
                         print "\t immobile enemy fleet %s has rating %.1f" % (fleet, fleet_rating)
+                    continue
+
+                if verbose:
+                    print "\t mobile enemy fleet %s has rating %.1f" % (fleet, fleet_rating)
+                mobile_fleets.append(fid)
+                if fleet.unowned:
+                    mob_ratings.append(fleet_rating)
                 else:
-                    if verbose:
-                        print "\t mobile enemy fleet %s has rating %.1f" % (fleet, fleet_rating)
-                    mobile_fleets.append(fid)
-                    if fleet.unowned:
-                        mob_ratings.append(fleet_rating)
-                    else:
-                        enemy_ratings.append(fleet_rating)
+                    enemy_ratings.append(fleet_rating)
+
             enemy_rating = CombatRatingsAI.combine_ratings_list(enemy_ratings)
             monster_rating = CombatRatingsAI.combine_ratings_list(monster_ratings)
             mob_rating = CombatRatingsAI.combine_ratings_list(mob_ratings)
-            if fleetsLostBySystem.get(sys_id, []):
-                lost_fleet_rating = CombatRatingsAI.combine_ratings_list(fleetsLostBySystem[sys_id])
+            lost_fleets = fleetsLostBySystem.get(sys_id, [])
+            lost_fleet_rating = CombatRatingsAI.combine_ratings_list(lost_fleets)
+
             # under current visibility rules should not be possible to have any losses or other info here,
             # but just in case...
+            partial_vis_turn = get_partial_visibility_turn(sys_id)
             if not system or partial_vis_turn < 0:
                 if verbose:
                     print "Never had partial vis for %s - basing threat assessment on old info and lost ships" % system
@@ -510,14 +498,13 @@ class AIstate(object):
                 continue
 
             # have either stale or current info
-            pattack = 0
-            phealth = 0
-            mypattack, myphealth = 0, 0
+            pattack = phealth = 0
+            mypattack = myphealth = 0
             for pid in system.planetIDs:
-                prating = self.assess_planet_threat(pid, sighting_age=current_turn - partial_vis_turn)
                 planet = universe.getPlanet(pid)
                 if not planet:
                     continue
+                prating = self.assess_planet_threat(pid, sighting_age=current_turn - partial_vis_turn)
                 if planet.owner == self.empireID:  # TODO: check for diplomatic status
                     mypattack += prating['attack']
                     myphealth += prating['health']
