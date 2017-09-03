@@ -53,10 +53,6 @@ public:
 
     void                SetSinglePlayerGame(bool sp = true);
 
-    /** Starts a server process on localhost.  Throws a runtime_error if
-        another server is already running. */
-    void                StartServer();
-    void                FreeServer();                   ///< frees (relinquishes ownership and control of) any running server process already started by this client; performs no cleanup of other processes, such as AIs
     void                NewSinglePlayerGame(bool quickstart = false);
     void                MultiPlayerGame();                              ///< shows multiplayer connection window, and then transitions to multiplayer lobby if connected
     void                StartMultiPlayerGameFromLobby();                ///< begins
@@ -120,6 +116,18 @@ protected:
     void Initialize() override;
 
 private:
+    /** Starts a server process on localhost.
+
+        Throws a runtime_error if the server process can't be started.
+
+        Throws LocalServerAlreadyRunningException (derived from runtime_error
+        in HumanClientApp.cpp) if another server is already running. */
+    void                StartServer();
+    /** frees (relinquishes ownership and control of) any running server
+        process already started by this client; performs no cleanup of other
+        processes, such as AIs. */
+    void                FreeServer();
+
     void HandleSystemEvents() override;
 
     void RenderBegin() override;
