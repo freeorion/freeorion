@@ -414,7 +414,9 @@ namespace {
 namespace {
     class LocalServerAlreadyRunningException : public std::runtime_error {
     public:
-        explicit LocalServerAlreadyRunningException(const std::string& s) : std::runtime_error(s) {}
+        LocalServerAlreadyRunningException() :
+            std::runtime_error("LOCAL_SERVER_ALREADY_RUNNING_ERROR")
+        {}
     };
 }
 
@@ -422,7 +424,7 @@ void HumanClientApp::StartServer() {
     auto connected = m_networking->ConnectToLocalHostServer(std::chrono::milliseconds(100));
     if (connected) {
         ErrorLogger() << "Can't start local server because a server is already connecting at 127.0.0.0.";
-        throw LocalServerAlreadyRunningException("LOCAL_SERVER_ALREADY_RUNNING_ERROR");
+        throw LocalServerAlreadyRunningException();
     }
 
     std::string SERVER_CLIENT_EXE = ServerClientExe();
