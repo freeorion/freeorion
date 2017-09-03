@@ -5495,6 +5495,44 @@ void MapWnd::FleetButtonRightClicked(const FleetButton* fleet_btn) {
         return;
     }
 
+    // if fleetbutton holds currently not visible fleets, offer to dismiss them
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    std::vector<int> sensor_ghosts;
+
+    // find sensor ghosts
+    for (int fleet_id : btn_fleets) {
+        auto fleet = GetFleet(fleet_id);
+        if (!fleet)
+            continue;
+        if (fleet->OwnedBy(empire_id))
+            continue;
+        if (GetUniverse().GetObjectVisibilityByEmpire(fleet_id, empire_id) >= VIS_BASIC_VISIBILITY)
+            continue;
+        sensor_ghosts.push_back(fleet_id);
+    }
+
+    // should there be sensor ghosts, offer to dismiss them
+    if (sensor_ghosts.size() > 0) {
+        auto popup = GG::Wnd::Create<CUIPopupMenu>(fleet_btn->LowerRight().x, fleet_btn->LowerRight().y);
+
+        auto forget_fleet_actions = [this, empire_id, sensor_ghosts]() {
+            for (auto fleet_id : sensor_ghosts) {
+                HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ForgetOrder>(empire_id, fleet_id));
+                GetUniverse().ForgetKnownObject(ALL_EMPIRES, fleet_id);
+                ClientUI::GetClientUI()->GetMapWnd()->RemoveFleet(fleet_id);
+            }
+        };
+
+        popup->AddMenuItem(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST_ALL"), false, false, forget_fleet_actions));
+        popup->Run();
+
+        // Force a redraw
+        RequirePreRender();
+        auto fleet_wnd = FleetUIManager::GetFleetUIManager().ActiveFleetWnd();
+        if (fleet_wnd)
+            fleet_wnd->RequirePreRender();
+    }
+
     FleetsRightClicked(btn_fleets);
 }
 
