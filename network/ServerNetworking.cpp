@@ -113,7 +113,7 @@ bool PlayerConnection::SendMessage(const Message& message) {
 }
 
 bool PlayerConnection::IsEstablished() const {
-    return (m_ID != INVALID_PLAYER_ID || !m_player_name.empty() || m_client_type != Networking::INVALID_CLIENT_TYPE);
+    return (m_ID != INVALID_PLAYER_ID && !m_player_name.empty() && m_client_type != Networking::INVALID_CLIENT_TYPE);
 }
 
 void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type,
