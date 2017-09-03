@@ -11357,7 +11357,7 @@ BLD_SHIPYARD_AST
 Asteroid Processor
 
 BLD_SHIPYARD_AST_DESC
-'''This building is required for the production of all asteroid hulls and all further asteroid processor upgrades. This building can only be built on an asteroid belt, which also can be an [[encyclopedia OUTPOSTS_TITLE]].
+'''This building is required for the production of all asteroid hulls and for further asteroid processor upgrades. This building can only be built at an [[encyclopedia OUTPOSTS_TITLE]], on an asteroid belt, in a system with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 A massive processing plant dedicated to the purpose of hollowing out asteroids and preparing them to be used as ships' hulls. Asteroids thus prepared are sent to a [[buildingtype BLD_SHIPYARD_BASE]] in the same system, where they are turned into the final hull.'''
 
@@ -11365,9 +11365,9 @@ BLD_SHIPYARD_AST_REF
 Asteroid Reformation Processor
 
 BLD_SHIPYARD_AST_REF_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_AST]] and allows production of [[shiphull SH_MINIASTEROID_SWARM]]s, [[shiphull SH_SCATTERED_ASTEROID]]s, and [[shiphull SH_CRYSTALLIZED_ASTEROID]]s. In addition, this processor upgrade allows any shipyard in the empire or an ally's empire to produce ships with the [[shippart AR_ROCK_PLATE]] and [[shippart AR_CRYSTAL_PLATE]] ship parts.
+'''This building can be built on its own or as an upgrade to the [[buildingtype BLD_SHIPYARD_AST]].   On its own, this processor allows any shipyard in the empire or an ally's empire to produce ships with the [[shippart AR_ROCK_PLATE]] and [[shippart AR_CRYSTAL_PLATE]] ship parts.  As an upgrade to the [[buildingtype BLD_SHIPYARD_AST]], it allows production of [[shiphull SH_MINIASTEROID_SWARM]]s, [[shiphull SH_SCATTERED_ASTEROID]]s, and [[shiphull SH_CRYSTALLIZED_ASTEROID]]s. 
 
-An extensive facility dedicated to fusing, shattering, deconstructing and rebuilding preexisting asteroids to form ship's parts and prepare them to be used as hulls.'''
+An extensive facility dedicated to fusing, shattering, deconstructing and rebuilding preexisting asteroids to form ship's parts and prepare them to be used as advanced hulls.'''
 
 BLD_SHIPYARD_ORG_ORB_INC
 Orbital Incubator
