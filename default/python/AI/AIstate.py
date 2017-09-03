@@ -419,8 +419,7 @@ class AIstate(object):
 
         # TODO: If no current information available, rate against own fighters
         e_f_dict = cur_e_fighters if len(cur_e_fighters) > 1 else old_e_fighters
-        std_fighter = sorted([(v, k) for k, v in e_f_dict.items()])[-1][1]
-        self.__empire_standard_enemy = std_fighter
+        self.__empire_standard_enemy = sorted([(v, k) for k, v in e_f_dict.items()])[-1][1]
         self.empire_standard_enemy_rating = self.get_standard_enemy().get_rating()
 
         # assess fleet and planet threats & my local fleets
@@ -441,7 +440,6 @@ class AIstate(object):
                     fleet = universe.getFleet(fid)
                     if not fleet or fleet.empty or fid in destroyed_object_ids:
                         self.delete_fleet_info(fid)  # this is safe even if fleet wasn't mine
-                        continue
 
             # update threats
             monster_ratings = []  # immobile
@@ -487,7 +485,7 @@ class AIstate(object):
                 sys_status['monsterThreat'] = max(
                     monster_rating,
                     0.98 * sys_status.get('monsterThreat', 0),
-                    1.1 * lost_fleet_rating - enemy_rating - mob_rating)
+                    1.1*lost_fleet_rating - enemy_rating - mob_rating)
                 sys_status['enemy_threat'] = max(
                     enemy_rating,
                     0.98 * sys_status.get('enemy_threat', 0),
@@ -505,14 +503,14 @@ class AIstate(object):
                 if not planet:
                     continue
                 prating = self.assess_planet_threat(pid, sighting_age=current_turn - partial_vis_turn)
-                if planet.owner == self.empireID:  # TODO: check for diplomatic status
+                if planet.ownedBy(empire_id):  # TODO: check for diplomatic status
                     mypattack += prating['attack']
                     myphealth += prating['health']
                 else:
-                    if [special for special in planet.specials if "_NEST_" in special]:
-                        sys_status['nest_threat'] = 100
                     pattack += prating['attack']
                     phealth += prating['health']
+                    if any("_NEST_" in special for special in planet.specials):
+                        sys_status['nest_threat'] = 100
             sys_status['planetThreat'] = pattack * phealth
             sys_status['mydefenses'] = {'overall': mypattack * myphealth, 'attack': mypattack, 'health': myphealth}
 
@@ -547,7 +545,7 @@ class AIstate(object):
                     CombatRatingsAI.combine_ratings_list([enemy_rating, mob_rating, monster_rating, pattack * phealth]),
                     2 * lost_fleet_rating,
                     0.98 * sys_status.get('totalThreat', 0))
-            else:  # system considered visible #TODO: reevaluate as visibility rules change
+            else:  # system considered visible
                 sys_status['currently_visible'] = True
                 sys_status['local_fleet_threats'] = set(mobile_fleets)
                 # includes mobile monsters
@@ -597,7 +595,7 @@ class AIstate(object):
         for sys_id in universe.systemIDs:
             sys_status = self.systemStatus[sys_id]
             neighbors = sys_status.get('neighbors', set())
-            this_system = fo.getUniverse().getSystem(sys_id)
+            this_system = universe.getSystem(sys_id)
             if verbose:
                 print "Regional Assessment for %s with local fleet threat %.1f" % (
                     this_system, sys_status.get('fleetThreat', 0))
@@ -613,13 +611,11 @@ class AIstate(object):
             sys_status['2jump_ring'] = jump2ring
             sys_status['3jump_ring'] = jump3ring
             sys_status['4jump_ring'] = jump4ring
-            threat, max_threat, myrating, j1_threats = self.area_ratings(
-                neighbors, ref_sys_name="neighbors %s" % this_system) if verbose else self.area_ratings(neighbors)
+            threat, max_threat, myrating, j1_threats = self.area_ratings(neighbors)
             sys_status['neighborThreat'] = threat
             sys_status['max_neighbor_threat'] = max_threat
             sys_status['my_neighbor_rating'] = myrating
-            threat, max_threat, myrating, j2_threats = self.area_ratings(
-                jump2ring, ref_sys_name="jump2 %s" % this_system) if verbose else self.area_ratings(jump2ring)
+            threat, max_threat, myrating, j2_threats = self.area_ratings(jump2ring)
             sys_status['jump2_threat'] = threat
             sys_status['my_jump2_rating'] = myrating
             threat, max_threat, myrating, j3_threats = self.area_ratings(jump3ring)
@@ -632,27 +628,19 @@ class AIstate(object):
             # TODO: investigate cases where regional_threat has been nonzero but no regional_threat_fleets
             # (probably due to attenuating history of past threats)
             sys_status.setdefault('regional_fleet_threats', set()).update(j1_threats, j2_threats)
-            # threat, max_threat, myrating, j4_threats = self.area_ratings(jump4ring)
-            # sys_status['jump4_threat'] = threat
-            # sys_status['my_jump4_rating'] = myrating
 
     def area_ratings(self, system_ids):
         """Returns (fleet_threat, max_threat, myFleetRating, threat_fleets) compiled over a group of systems."""
-        max_threat = 0
-        threat = 0
-        myrating = 0
+        myrating = threat = max_threat = 0
         threat_fleets = set()
-        threat_detail = []
         for sys_id in system_ids:
             sys_status = self.systemStatus.get(sys_id, {})
             # TODO: have distinct treatment for both enemy_threat and fleetThreat, respectively
             fthreat = sys_status.get('enemy_threat', 0)
-            if fthreat > max_threat:
-                max_threat = fthreat
+            max_threat = max(max_threat, fthreat)
             threat = CombatRatingsAI.combine_ratings(threat, fthreat)
             myrating = CombatRatingsAI.combine_ratings(myrating, sys_status.get('myFleetRating', 0))
             # myrating = FleetUtilsAI.combine_ratings(myrating, sys_status.get('all_local_defenses', 0))
-            threat_detail.append((sys_id, fthreat, sys_status.get('local_fleet_threats', [])))
             threat_fleets.update(sys_status.get('local_fleet_threats', []))
         return threat, max_threat, myrating, threat_fleets
 
