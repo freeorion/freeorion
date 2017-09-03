@@ -83,6 +83,7 @@ import sys
 import logging
 import inspect
 import os
+import traceback
 
 try:
     import freeorion_logger  # FreeOrion logger interface pylint: disable=import-error
@@ -183,6 +184,12 @@ def _create_narrow_handler(level):
     return h
 
 
+def _unhandled_exception_hook(*exc_info):
+    traceback_msg = "Uncaught exception: {0}".format(
+        "".join(traceback.format_exception(*exc_info)))
+    logging.getLogger().error(traceback_msg)
+
+
 def redirect_logging_to_freeorion_logger(initial_log_level=logging.DEBUG):
     """Redirect stdout, stderr and the logging.logger to hosting process' freeorion_logger."""
 
@@ -198,6 +205,9 @@ def redirect_logging_to_freeorion_logger(initial_log_level=logging.DEBUG):
         logger.addHandler(_create_narrow_handler(logging.ERROR))
         logger.addHandler(_create_narrow_handler(logging.FATAL))
         logger.addHandler(_create_narrow_handler(logging.NOTSET))
+
+        # Replace the system unhandled exception handler
+        sys.excepthook = _unhandled_exception_hook
 
         logger.setLevel(initial_log_level)
         logger.info("The python logger is initialized with a log level of %s" %
