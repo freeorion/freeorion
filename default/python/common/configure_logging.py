@@ -80,7 +80,6 @@ log.
 
 """
 import sys
-import string
 import logging
 import os
 
