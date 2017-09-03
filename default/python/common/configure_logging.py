@@ -134,8 +134,6 @@ class _stdXLikeStream(object):
                 line_number = frame.f_lineno
                 function_name = frame.f_code.co_name
                 filename = frame.f_code.co_filename
-                if string.lower(filename[-4:]) in ('.pyc', '.pyo'):
-                    filename = filename[:-4] + '.py'
             except:
                 (filename, line_number, function_name) = ("", "", "")
             finally:
