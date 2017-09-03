@@ -1837,50 +1837,34 @@ public:
         if (ClientPlayerIsModerator())
             return; // todo: handle moderator actions for this...
 
-        if (!dropped_fleets.empty()) {
-            //DebugLogger() << " ... processing dropped " << dropped_fleets.size() << " fleets";
-            // dropping fleets.  get each ships of all source fleets and transfer to the target fleet
+        // Collected ship ids for the transfer.
+        std::vector<int> ship_ids;
+        ship_ids.reserve(dropped_ships.size() + dropped_fleets.size());
 
-            for (auto& dropped_fleet : dropped_fleets) {
-                if (!dropped_fleet) {
-                    ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get dropped fleet?";
-                    continue;
-                }
-
-                // get fleet's ships in a vector, as this is what FleetTransferOrder takes
-                const std::set<int>& ship_ids_set = dropped_fleet->ShipIDs();
-                const std::vector<int> ship_ids_vec(ship_ids_set.begin(), ship_ids_set.end());
-
-                // order the transfer
-                HumanClientApp::GetApp()->Orders().IssueOrder(
-                    std::make_shared<FleetTransferOrder>(empire_id, target_fleet_id, ship_ids_vec));
+        // Need ship ids in a vector for fleet transfer order
+        for (const auto& dropped_fleet : dropped_fleets) {
+            if (!dropped_fleet) {
+                ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get dropped fleet?";
+                continue;
             }
 
-        } else if (!dropped_ships.empty()) {
-            //DebugLogger() << " ... processing dropped " << dropped_ships.size() << " ships";
-            // dropping ships.  transfer to target fleet.
-
-            // get source fleet of ship(s).  assumes all ships are from the same source fleet.
-            std::shared_ptr<const Ship> first_ship = dropped_ships[0];
-            assert(first_ship);
-
-            // compile ship IDs into a vector, while also recording original fleets from which ships are being taken
-            std::vector<int> ship_ids_vec;
-            std::set<int> dropped_ships_fleets;
-            for (auto& ship : dropped_ships) {
-                if (!ship) {
-                    ErrorLogger() << "FleetsListBox::AcceptDrops  couldn't get dropped ship?";
-                    continue;
-                }
-                ship_ids_vec.push_back(ship->ID());
-                dropped_ships_fleets.insert(ship->FleetID());
-            }
-
-            // order the transfer
-            HumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<FleetTransferOrder>(empire_id, target_fleet_id, ship_ids_vec));
+            // get fleet's ships in a vector, as this is what FleetTransferOrder takes
+            const auto& ship_ids_set = dropped_fleet->ShipIDs();
+            std::copy(ship_ids_set.begin(), ship_ids_set.end(), std::back_inserter(ship_ids));
         }
-        //DebugLogger() << "FleetsListBox::AcceptDrops finished";
+
+        for (const auto& ship : dropped_ships) {
+            if (!ship) {
+                ErrorLogger() << "FleetsListBox::AcceptDrops  couldn't get dropped ship?";
+                continue;
+            }
+            ship_ids.push_back(ship->ID());
+        }
+
+        // order the transfer
+        if (!ship_ids.empty())
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<FleetTransferOrder>(empire_id, target_fleet_id, ship_ids));
     }
 
     void DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
