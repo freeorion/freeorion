@@ -1839,6 +1839,7 @@ public:
 
         // Collected ship ids for the transfer.
         std::vector<int> ship_ids;
+        ship_ids.reserve(dropped_ships.size() + dropped_fleets.size());
 
         // Need ship ids in a vector for fleet transfer order
         for (const auto& dropped_fleet : dropped_fleets) {
