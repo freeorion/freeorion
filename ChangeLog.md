@@ -4,7 +4,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 
 
-## [v0.4.7.1] - 2017-08-24
+## [v0.4.7.1] - 2017-09-03
 
 
 #### Bug Fixes
@@ -14,6 +14,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Several fixes to AI calculations regarding population/colonization.
 - Fixed potential issues for phototrophic species.
 - Fixed issues with visibility after combat resolution.
+- Fixed bug which caused starlanes not to be rendered on certain systems/setups.
 
 
 
