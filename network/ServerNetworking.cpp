@@ -112,6 +112,10 @@ bool PlayerConnection::SendMessage(const Message& message) {
     return SyncWriteMessage(message);
 }
 
+bool PlayerConnection::IsEstablished() const {
+    return (m_ID != INVALID_PLAYER_ID && !m_player_name.empty() && m_client_type != Networking::INVALID_CLIENT_TYPE);
+}
+
 void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type,
                                        const std::string& client_version_string)
 {
@@ -120,7 +124,7 @@ void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, N
                          << client_type << ", " << client_version_string << ")";
 
     // ensure that this connection isn't already established
-    if (m_ID != INVALID_PLAYER_ID || !m_player_name.empty() || m_client_type != Networking::INVALID_CLIENT_TYPE) {
+    if (IsEstablished()) {
         ErrorLogger(network) << "PlayerConnection::EstablishPlayer attempting to re-establish an already established connection.";
         return;
     }
