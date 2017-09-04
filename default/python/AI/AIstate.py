@@ -277,23 +277,17 @@ class AIstate(object):
             del self.__fleetRoleByID[fleet_id]
 
     def __report_system_threats(self):
-        if fo.currentTurn() >= 100:
-            return
-        universe = fo.getUniverse()
-        sys_id_list = sorted(universe.systemIDs)  # will normally look at this, the list of all known systems
+        """Print a table with system threats to the logfile."""
         current_turn = fo.currentTurn()
-        # assess fleet and planet threats
+        if current_turn >= 100:
+            return
         threat_table = Table([
             Text('System'), Text('Vis.'), Float('Total'), Float('by Monsters'), Float('by Fleets'),
             Float('by Planets'), Float('1 jump away'), Float('2 jumps'), Float('3 jumps')],
             table_name="System Threat Turn %d" % current_turn
         )
-        defense_table = Table([
-            Text('System Defenses'), Float('Total'), Float('by Planets'), Float('by Fleets'),
-            Float('Fleets 1 jump away'), Float('2 jumps'), Float('3 jumps')],
-            table_name="System Defenses Turn %d" % current_turn
-        )
-        for sys_id in sys_id_list:
+        universe = fo.getUniverse()
+        for sys_id in universe.systemIDs:
             sys_status = self.systemStatus.get(sys_id, {})
             system = universe.getSystem(sys_id)
             threat_table.add_row([
@@ -307,6 +301,22 @@ class AIstate(object):
                 sys_status.get('jump2_threat', 0.0),
                 sys_status.get('jump3_threat', 0.0),
             ])
+        threat_table.print_table()
+
+    def __report_system_defenses(self):
+        """Print a table with system defenses to the logfile."""
+        current_turn = fo.currentTurn()
+        if current_turn >= 100:
+            return
+        defense_table = Table([
+            Text('System Defenses'), Float('Total'), Float('by Planets'), Float('by Fleets'),
+            Float('Fleets 1 jump away'), Float('2 jumps'), Float('3 jumps')],
+                table_name="System Defenses Turn %d" % current_turn
+        )
+        universe = fo.getUniverse()
+        for sys_id in universe.systemIDs:
+            sys_status = self.systemStatus.get(sys_id, {})
+            system = universe.getSystem(sys_id)
             defense_table.add_row([
                 system,
                 sys_status.get('all_local_defenses', 0.0),
@@ -316,7 +326,6 @@ class AIstate(object):
                 sys_status.get('my_jump2_rating', 0.0),
                 sys_status.get('my_jump3_rating', 0.0),
             ])
-        threat_table.print_table()
         defense_table.print_table()
 
     def assess_planet_threat(self, pid, sighting_age=0):
@@ -940,6 +949,7 @@ class AIstate(object):
         self.__split_new_fleets()
         self.__refresh() # checks exploration border & clears roles/missions of missing fleets & updates fleet locs & threats
         self.__report_system_threats()
+        self.__report_system_defenses()
 
     def log_peace_request(self, initiating_empire_id, recipient_empire_id):
         """Keep a record of peace requests made or received by this empire."""
