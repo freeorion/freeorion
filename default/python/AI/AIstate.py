@@ -261,12 +261,6 @@ class AIstate(object):
             print "-------------------------------------------------"
             print "Newly explored systems:\n%s" % "\n".join(nametags)
             print "-------------------------------------------------"
-        # cleanup fleet roles
-        # self.update_fleet_locs()
-        self.__clean_fleet_roles()
-        self.__clean_fleet_missions(FleetUtilsAI.get_empire_fleet_ids())
-        print "Fleets lost by system: %s" % fleetsLostBySystem
-        self.update_system_status()
 
     def delete_fleet_info(self, fleet_id):
         if fleet_id in self.__aiMissionsByFleetID:
@@ -947,7 +941,11 @@ class AIstate(object):
     def prepare_for_new_turn(self):
         self.__report_last_turn_fleet_missions()
         self.__split_new_fleets()
-        self.__refresh() # checks exploration border & clears roles/missions of missing fleets & updates fleet locs & threats
+        self.__refresh()  # checks exploration border & clears roles/missions of missing fleets & updates threats
+        self.__clean_fleet_roles()
+        self.__clean_fleet_missions(FleetUtilsAI.get_empire_fleet_ids())
+        print "Fleets lost by system: %s" % fleetsLostBySystem
+        self.update_system_status()
         self.__report_system_threats()
         self.__report_system_defenses()
 
