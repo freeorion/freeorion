@@ -3090,6 +3090,12 @@ Bombard
 PL_CANCEL_BOMBARD
 Cancel Bombarding
 
+PL_DESTROY
+Destroy Planet
+
+PL_CANCEL_DESTROY
+Cancel Destruction
+
 # %1% the planet size as text (small, medium, large, ...).
 # %2% type of the planet environment (desert, oceanic, terran, ...).
 PL_TYPE_SIZE
@@ -6410,6 +6416,15 @@ EFFECT_BIOWEAPON
 EFFECT_BIOWEAPON_LABEL
 Bioweapon Attack
 
+EFFECT_PLANET_DESTRUCTION
+We have destroyed the %empire% planet %planet%!
+
+EFFECT_PLANET_DESTRUCTION_OWN
+Our planet %planet% was destroyed by %empire%!
+
+EFFECT_PLANET_DESTRUCTION_LABEL
+Planet Destruction
+
 EFFECT_EVACUEES
 At %planet%: evacuees have settled.
 
@@ -6481,6 +6496,12 @@ The capital of the %empire% empire has fallen.
 
 HEAD_ON_A_SPIKE_MESSAGE_LABEL
 Empire Capital Captured
+
+DESTROYED_HOMEWORLD_SPECIAL
+Destroyed Homeworld
+
+DESTROYED_HOMEWORLD_SPECIAL_DESC
+The former homeworld of a once thriving species, now nothing more than rubble.
 
 CUSTOM_SITREP_INTRODUCTION
 Welcome to the initial Situation Report Briefing. Pursuant to the %tech% Directive, all the busy empire servants endeavor to collect important information and send it back to %system%, where it is compiled into Situation Reports, such as this, providing notice of important events and other reminders selected by the empire leadership.
@@ -8547,6 +8568,13 @@ PC_BOMBARD_DESC
 The majority of bombardment parts only affect one [[encyclopedia METABOLISM_TITLE]].'''
 
 # Ship part classes
+PC_DESTROY
+Planet Destruction
+
+PC_DESTROY_DESC
+'''Weapons which allow the destruction of entire planets.'''
+
+# Ship part classes
 PC_INDUSTRY
 Industry
 
@@ -9533,6 +9561,14 @@ DESC_ORDERED_BOMBARDED
 # %1% textual description of the bombarding object.
 DESC_ORDERED_BOMBARDED_NOT
 ''' that is not being bombarded by an object %1%'''
+
+# %1% textual description of the planet-destroying object.
+DESC_ORDERED_DESTROYED
+''' that is being destroyed by an object %1%'''
+
+# %1% textual description of the bombarding object.
+DESC_ORDERED_DESTROYED_NOT
+''' that is not being destroyed by an object %1%'''
 
 DESC_AND_BETWEEN_OPERANDS
 ''' and'''
@@ -11241,6 +11277,12 @@ Spinal Antimatter Cannon
 SHP_SPINAL_ANTIMATTER_DESC
 A huge spinal mount mass driver firing heavy projectiles made of antimatter. Needs a Core [[encyclopedia SLOT_TITLE]] to install.
 
+SHP_PLANET_DESTROYER
+Planet Destroyer Cannon
+
+SHP_PLANET_DESTROYER_DESC
+The ultimate beam weapon, able to destroy a whole planet in a single shot. Needs a Core [[encyclopedia SLOT_TITLE]] to install.
+
 SHP_ROOT_ARMOR
 Armor Plating
 
@@ -12288,6 +12330,13 @@ Spinal Antimatter Cannon
 
 SR_SPINAL_ANTIMATTER_DESC
 A huge spinal mount mass driver firing heavy projectiles made of antimatter.
+
+DE_PLANET_DESTROYER
+Planet Destroyer Cannon
+
+DE_PLANET_DESTROYER_DESC
+'''The ultimate beam weapon, able to destroy a whole planet in a single shot. It can only target planets and is to slow to aim at individual ships.
+This terrifying weapon can destroy a planet even if its shields are still up. The only way to save a planet is to destroy the ship carrying the weapon in battle. If the ship survives the battle, the planet will be destroyed.'''
 
 SR_JAWS
 Jaws

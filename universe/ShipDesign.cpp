@@ -1246,6 +1246,9 @@ void ShipDesign::BuildStatCaches() {
         case PC_BOMBARD:
             m_can_bombard = true;
             break;
+        case PC_DESTROY:
+            m_can_destroy = true;
+            break;
         case PC_RESEARCH:
             m_research_generation += part->Capacity();
             break;

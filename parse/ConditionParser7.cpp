@@ -31,6 +31,7 @@ namespace parse { namespace detail {
         qi::_a_type _a;
         qi::_b_type _b;
         qi::_c_type _c;
+        qi::_d_type _d;
         qi::_val_type _val;
         using phoenix::new_;
         using phoenix::push_back;
@@ -40,6 +41,12 @@ namespace parse { namespace detail {
             >   -labeller.rule(Condition_token) > condition_parser
             [ _val = new_<Condition::OrderedBombarded>(_1) ]
             ;
+
+            ordered_destroyed_by
+                =    tok.OrderedDestroyedBy_
+                >   -parse::detail::label(Condition_token) > parse::detail::condition_parser
+                     [ _val = new_<Condition::OrderedDestroyed>(_1) ]
+                ;
 
         contains
             =    tok.Contains_
@@ -89,6 +96,7 @@ namespace parse { namespace detail {
 
         start
             %=   ordered_bombarded_by
+            |    ordered_destroyed_by
             |    contains
             |    contained_by
             |    star_type
@@ -97,6 +105,7 @@ namespace parse { namespace detail {
             ;
 
         ordered_bombarded_by.name("OrderedBombardedBy");
+        ordered_destroyed_by.name("OrderedDestroyedBy");
         contains.name("Contains");
         contained_by.name("ContainedBy");
         star_type.name("StarType");
@@ -105,6 +114,7 @@ namespace parse { namespace detail {
 
 #if DEBUG_CONDITION_PARSERS
         debug(ordered_bombarded_by);
+        debug(ordered_destroyed_by);
         debug(contains);
         debug(contained_by);
         debug(star_type);

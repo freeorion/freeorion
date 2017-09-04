@@ -1,0 +1,81 @@
+Part
+    name = "DE_PLANET_DESTROYER"
+    description = "DE_PLANET_DESTROYER_DESC"
+    class = Destroy
+    mountableSlotTypes = Core
+    buildcost = 800 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 8
+    tags = [ "CTRL_ALWAYS_BOMBARD" ]
+    location = All
+    effectsgroups = [
+        EffectsGroup    // if a homeworld was destroyed, create a special sitrep
+            scope = And [
+                Planet
+                Homeworld
+                InSystem id = Source.SystemID
+                OrderedDestroyedBy condition = Source
+                VisibleToEmpire empire = Source.Owner
+            ]
+            effects = [
+                GenerateSitRepMessage
+                    message = "HEAD_ON_A_SPIKE_MESSAGE"
+                    label = "HEAD_ON_A_SPIKE_MESSAGE_LABEL"
+                    icon = "icons/sitrep/empire_eliminated.png"
+                    parameters = [
+                          tag = "empire" data = Target.Owner
+                    ]
+            ]
+        EffectsGroup    // destroy planet if ordered by user
+            scope = And [
+                Planet
+                InSystem id = Source.SystemID
+                OrderedDestroyedBy condition = Source
+                Or [
+                    OwnedBy affiliation = EnemyOf empire = Source.Owner
+                    Unowned
+                ]
+                VisibleToEmpire empire = Source.Owner
+            ]
+            effects = [
+                GenerateSitRepMessage  // sitrep for destroying empire
+                    message = "EFFECT_PLANET_DESTRUCTION"
+                    label = "EFFECT_PLANET_DESTRUCTION_LABEL"
+                    icon = "icons/sitrep/planet_destroyed.png"
+                    parameters = [
+                        tag = "planet" data = Target.ID
+                        tag = "empire" data = Target.Owner
+                    ]
+                    empire = Source.Owner
+                GenerateSitRepMessage  // sitrep for targeted empire
+                    message = "EFFECT_PLANET_DESTRUCTION_OWN"
+                    label = "EFFECT_PLANET_DESTRUCTION_LABEL"
+                    icon = "icons/sitrep/planet_destroyed.png"
+                    parameters = [
+                        tag = "planet" data = Target.ID
+                        tag = "empire" data = Source.Owner
+                    ]
+                    empire = Target.Owner
+                RemoveAllSpecials
+                RemoveAllBuildings
+                SetOwner empire = -1
+                SetSpecies name = ""
+                SetPopulation value = 0
+                SetPlanetType type = Asteroids
+            ]
+        EffectsGroup    // if a homeworld was destroyed, create a special as a reminder
+            scope = And [
+                Planet
+                Homeworld
+                InSystem id = Source.SystemID
+                OrderedDestroyedBy condition = Source
+                VisibleToEmpire empire = Source.Owner
+            ]
+            effects = [
+                AddSpecial name = "DESTROYED_HOMEWORLD_SPECIAL"
+            ]
+    ]
+    icon = "icons/ship_parts/planet_destroyer.png"
+
+#include "/scripting/common/upkeep.macros"
+
+#include "/scripting/common/misc.macros"

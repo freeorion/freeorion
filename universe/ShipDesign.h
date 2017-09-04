@@ -593,6 +593,7 @@ public:
     bool                            CanColonize() const;
     bool                            HasTroops() const       { return (m_troop_capacity > 0.0f); }
     bool                            CanBombard() const      { return m_can_bombard; }
+    bool                            CanDestroy() const      { return m_can_destroy; }
     bool                            IsArmed() const         { return m_is_armed; }
     bool                            HasFighters() const     { return m_has_fighters; }
     bool                            IsMonster() const       { return m_is_monster; }
@@ -687,6 +688,7 @@ private:
     bool    m_is_armed = false;
     bool    m_has_fighters = false;
     bool    m_can_bombard = false;
+    bool    m_can_destroy = false;
     float   m_detection = 0.0f;
     float   m_colony_capacity = 0.0f;
     float   m_troop_capacity = 0.0f;

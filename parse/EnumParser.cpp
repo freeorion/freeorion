@@ -67,6 +67,7 @@ namespace parse {
             |   tok.Speed_              [ _val = PC_SPEED ]
             |   tok.General_            [ _val = PC_GENERAL ]
             |   tok.Bombard_            [ _val = PC_BOMBARD ]
+            |   tok.Destroy_            [ _val = PC_DESTROY ]
             |   tok.Research_           [ _val = PC_RESEARCH ]
             |   tok.Industry_           [ _val = PC_INDUSTRY ]
             |   tok.Trade_              [ _val = PC_TRADE ]

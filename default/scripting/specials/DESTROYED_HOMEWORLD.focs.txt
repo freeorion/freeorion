@@ -1,0 +1,5 @@
+Special
+    name = "DESTROYED_HOMEWORLD_SPECIAL"
+    description = "DESTROYED_HOMEWORLD_SPECIAL_DESC"
+    spawnrate = 0.0
+    graphic = "icons/sitrep/empire_eliminated.png"

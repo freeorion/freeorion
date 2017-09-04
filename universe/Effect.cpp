@@ -2143,6 +2143,96 @@ unsigned int AddSpecial::GetCheckSum() const {
 
 
 ///////////////////////////////////////////////////////////
+// RemoveAllBuildings                                    //
+///////////////////////////////////////////////////////////
+RemoveAllBuildings::RemoveAllBuildings()
+{}
+
+RemoveAllBuildings::~RemoveAllBuildings()
+{}
+
+void RemoveAllBuildings::Execute(const ScriptingContext& context) const {
+    if (!context.effect_target) {
+        ErrorLogger() << "RemoveAllBuildings::Execute passed no target object";
+        return;
+    }
+
+    Universe& universe = GetUniverse();
+
+    auto planet = std::dynamic_pointer_cast<Planet>(context.effect_target);
+    if (!planet) {
+        ErrorLogger() << "RemoveAllBuildings:: Target object is not a planet";
+        return;
+    }
+
+    for (auto& building_id : planet->BuildingIDs())
+        universe.EffectDestroy(building_id);
+
+    // if imperial palace is removed, also reset capital of empire
+    int empire_id = planet->Owner();
+    Empire* empire = GetEmpire(empire_id);
+    if (!empire) {
+        ErrorLogger() << "RemoveAllBuildings:: could'nt get empire of planet";
+        return;
+    }
+
+    if (planet->ID() == empire->CapitalID())
+        empire->SetCapitalID(INVALID_OBJECT_ID);
+}
+
+std::string RemoveAllBuildings::Dump() const {
+    return DumpIndent();
+}
+
+unsigned int RemoveAllBuildings::GetCheckSum() const {
+    unsigned int retval{ 0 };
+
+    CheckSums::CheckSumCombine(retval, "RemoveAllBuildings");
+
+    TraceLogger() << "GetCheckSum(RemoveAllBuildings): retval: " << retval;
+    return retval;
+}
+
+
+///////////////////////////////////////////////////////////
+// RemoveAllSpecials                                     //
+///////////////////////////////////////////////////////////
+RemoveAllSpecials::RemoveAllSpecials()
+{}
+
+RemoveAllSpecials::~RemoveAllSpecials()
+{}
+
+void RemoveAllSpecials::Execute(const ScriptingContext& context) const {
+    if (!context.effect_target) {
+        ErrorLogger() << "RemoveAllSpecials::Execute passed no target object";
+        return;
+    }
+
+    std::vector<std::string> special_names;
+
+    for (auto& special : context.effect_target->Specials())
+        special_names.push_back(special.first);
+
+    for (auto& special_name : special_names)
+        context.effect_target->RemoveSpecial(special_name);
+}
+
+std::string RemoveAllSpecials::Dump() const {
+    return DumpIndent();
+}
+
+unsigned int RemoveAllSpecials::GetCheckSum() const {
+    unsigned int retval{ 0 };
+
+    CheckSums::CheckSumCombine(retval, "RemoveAllSpecials");
+
+    TraceLogger() << "GetCheckSum(RemoveAllSpecials): retval: " << retval;
+    return retval;
+}
+
+
+///////////////////////////////////////////////////////////
 // RemoveSpecial                                         //
 ///////////////////////////////////////////////////////////
 RemoveSpecial::RemoveSpecial(const std::string& name) :

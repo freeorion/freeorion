@@ -270,6 +270,7 @@
     (Orange)                                    \
     (Orbit)                                     \
     (OrderedBombardedBy)                        \
+    (OrderedDestroyedBy)                        \
     (OriginalType)                              \
     (OutpostsOwned)                             \
     (OwnedBy)                                   \
@@ -336,6 +337,8 @@
     (RebelTroops)                               \
     (Red)                                       \
     (Refinement)                                \
+    (RemoveAllBuildings)                        \
+    (RemoveAllSpecials)                         \
     (RemoveSpecial)                             \
     (RemoveStarlanes)                           \
     (Research)                                  \

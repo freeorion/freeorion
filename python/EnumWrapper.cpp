@@ -167,6 +167,7 @@ namespace FreeOrionPython {
             .value("speed",             PC_SPEED)
             .value("general",           PC_GENERAL)
             .value("bombard",           PC_BOMBARD)
+            .value("destroy",           PC_DESTROY)
             .value("industry",          PC_INDUSTRY)
             .value("research",          PC_RESEARCH)
             .value("trade",             PC_TRADE)

@@ -280,6 +280,11 @@ bool Ship::CanBombard() const {
     return design && design->CanBombard();
 }
 
+bool Ship::CanDestroy() const {
+    const ShipDesign* design = Design();
+    return design && design->CanDestroy();
+}
+
 float Ship::Speed() const
 { return CurrentMeterValue(METER_SPEED); }
 
@@ -677,6 +682,15 @@ void Ship::SetBombardPlanet(int planet_id) {
 
 void Ship::ClearBombardPlanet()
 { SetBombardPlanet(INVALID_OBJECT_ID); }
+
+void Ship::SetDestroyPlanet(int planet_id) {
+    if (planet_id == m_ordered_destroy_planet_id) return;
+    m_ordered_destroy_planet_id = planet_id;
+    StateChangedSignal();
+}
+
+void Ship::ClearDestroyPlanet()
+{ SetDestroyPlanet(INVALID_OBJECT_ID); }
 
 void Ship::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();

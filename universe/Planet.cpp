@@ -121,6 +121,7 @@ void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
                 this->m_is_about_to_be_colonized =  copied_planet->m_is_about_to_be_colonized;
                 this->m_is_about_to_be_invaded   =  copied_planet->m_is_about_to_be_invaded;
                 this->m_is_about_to_be_bombarded =  copied_planet->m_is_about_to_be_bombarded;
+                this->m_is_about_to_be_destroyed =  copied_planet->m_is_about_to_be_destroyed;
                 this->m_ordered_given_to_empire_id =copied_planet->m_ordered_given_to_empire_id;
                 this->m_last_turn_attacked_by_ship= copied_planet->m_last_turn_attacked_by_ship;
             } else {
@@ -193,6 +194,8 @@ std::string Planet::Dump() const {
         os << " (Just Conquered)";
     if (m_is_about_to_be_bombarded)
         os << " (About to be Bombarded)";
+    if (m_is_about_to_be_destroyed)
+        os << " (About to be Destroyed)";
     if (m_ordered_given_to_empire_id != ALL_EMPIRES)
         os << " (Ordered to be given to empire with id: " << m_ordered_given_to_empire_id << ")";
     os << " last attacked on turn: " << m_last_turn_attacked_by_ship;
@@ -661,6 +664,7 @@ void Planet::Reset() {
     m_is_about_to_be_colonized = false;
     m_is_about_to_be_invaded = false;
     m_is_about_to_be_bombarded = false;
+    m_is_about_to_be_destroyed = false;
     SetOwner(ALL_EMPIRES);
 }
 
@@ -756,6 +760,7 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
         m_is_about_to_be_colonized = false;
         m_is_about_to_be_invaded = false;
         m_is_about_to_be_bombarded = false;
+        m_is_about_to_be_destroyed = false;
         SetOwner(ALL_EMPIRES);
     }
 
@@ -828,6 +833,17 @@ void Planet::SetIsAboutToBeBombarded(bool b) {
 
 void Planet::ResetIsAboutToBeBombarded()
 { SetIsAboutToBeBombarded(false); }
+
+void Planet::SetIsAboutToBeDestroyed(bool b) {
+    bool initial_status = m_is_about_to_be_destroyed;
+    if (b == initial_status) return;
+    m_is_about_to_be_destroyed = b;
+    StateChangedSignal();
+}
+
+void Planet::ResetIsAboutToBeDestroyed()
+{ SetIsAboutToBeDestroyed(false); }
+
 
 void Planet::SetGiveToEmpire(int empire_id) {
     if (empire_id == m_ordered_given_to_empire_id) return;

@@ -332,6 +332,7 @@ namespace AIInterface {
     int IssueColonizeOrder(int ship_id, int planet_id);
     int IssueInvadeOrder(int ship_id, int planet_id);
     int IssueBombardOrder(int ship_id, int planet_id);
+    int IssueDestroyOrder(int ship_id, int planet_id);
     int IssueAggressionOrder(int object_id, bool aggressive);
     int IssueGiveObjectToEmpireOrder(int object_id, int recipient_id);
 

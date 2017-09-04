@@ -811,6 +811,8 @@ namespace {
             add_overlay("invading.png");
         if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID)
             add_overlay("bombarding.png");
+        if (ship->OrderedDestroyPlanet() != INVALID_OBJECT_ID)
+            add_overlay("destroying.png");
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         if ((ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
