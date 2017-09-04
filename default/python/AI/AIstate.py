@@ -805,6 +805,7 @@ class AIstate(object):
             Text('Location'), Text('Destination')],
             table_name="Fleet Summary Turn %d" % fo.currentTurn()
         )
+        # need to loop over a copy as entries are deleted in loop
         for fleet_id in list(self.__fleetRoleByID):
             fleet_status = self.fleetStatus.setdefault(fleet_id, {})
             rating = CombatRatingsAI.get_fleet_rating(fleet_id, self.get_standard_enemy())
@@ -821,6 +822,7 @@ class AIstate(object):
                 # however,this has been observed happening, and is the reason a fleet check was added a few lines below.
                 # Not at all sure how this came about, but was throwing off threat assessments
                 sys_id = old_sys_id
+
             if fleet_id not in current_empire_fleets:  # or fleet.empty:
                 if (fleet and self.__fleetRoleByID.get(fleet_id, -1) != -1 and
                         fleet_id not in destroyed_object_ids and
@@ -834,33 +836,34 @@ class AIstate(object):
                 if fleet_id in self.fleetStatus:
                     del self.fleetStatus[fleet_id]
                 continue
-            else:  # fleet in ok fleets
-                this_sys = universe.getSystem(sys_id)
-                next_sys = universe.getSystem(fleet.nextSystemID)
 
-                fleet_table.add_row(
-                    [
-                        fleet,
-                        rating,
-                        FleetUtilsAI.count_troops_in_fleet(fleet_id),
-                        this_sys or 'starlane',
-                        next_sys or '-',
-                    ])
+            # fleet does still exist
+            this_sys = universe.getSystem(sys_id)
+            next_sys = universe.getSystem(fleet.nextSystemID)
 
-                fleet_status['rating'] = rating
-                if next_sys:
-                    fleet_status['sysID'] = next_sys.id
-                elif this_sys:
-                    fleet_status['sysID'] = this_sys.id
-                else:
-                    main_mission = self.get_fleet_mission(fleet_id)
-                    main_mission_type = (main_mission.getAIMissionTypes() + [-1])[0]
-                    if main_mission_type != -1:
-                        targets = main_mission.getAITargets(main_mission_type)
-                        if targets:
-                            m_mt0 = targets[0]
-                            if isinstance(m_mt0.target_type, System):
-                                fleet_status['sysID'] = m_mt0.target.id  # hmm, but might still be a fair ways from here
+            fleet_table.add_row(
+                [
+                    fleet,
+                    rating,
+                    FleetUtilsAI.count_troops_in_fleet(fleet_id),
+                    this_sys or 'starlane',
+                    next_sys or '-',
+                ])
+
+            fleet_status['rating'] = rating
+            if next_sys:
+                fleet_status['sysID'] = next_sys.id
+            elif this_sys:
+                fleet_status['sysID'] = this_sys.id
+            else:
+                main_mission = self.get_fleet_mission(fleet_id)
+                main_mission_type = (main_mission.getAIMissionTypes() + [-1])[0]
+                if main_mission_type != -1:
+                    targets = main_mission.getAITargets(main_mission_type)
+                    if targets:
+                        m_mt0 = targets[0]
+                        if isinstance(m_mt0.target_type, System):
+                            fleet_status['sysID'] = m_mt0.target.id  # hmm, but might still be a fair ways from here
         fleet_table.print_table()
         # Next string used in charts. Don't modify it!
         print "Empire Ship Count: ", self.shipCount
