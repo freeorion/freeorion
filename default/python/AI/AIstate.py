@@ -798,7 +798,7 @@ class AIstate(object):
         universe = fo.getUniverse()
         ok_fleets = FleetUtilsAI.get_empire_fleet_ids()
         fleet_list = sorted(list(self.__fleetRoleByID))
-        ship_count = 0
+        self.shipCount = 0
         destroyed_object_ids = universe.destroyedObjectIDs(fo.empireID())
 
         fleet_table = Table([
@@ -817,7 +817,7 @@ class AIstate(object):
                 if old_sys_id in [-2, -1]:
                     old_sys_id = sys_id
                 status['nships'] = len(fleet.shipIDs)
-                ship_count += status['nships']
+                self.shipCount += status['nships']
             else:
                 # can still retrieve a fleet object even if fleet was just destroyed, so shouldn't get here
                 # however,this has been observed happening, and is the reason a fleet check was added a few lines below.
@@ -864,9 +864,8 @@ class AIstate(object):
                             if isinstance(m_mt0.target_type, System):
                                 status['sysID'] = m_mt0.target.id  # hmm, but might still be a fair ways from here
         fleet_table.print_table()
-        self.shipCount = ship_count
         # Next string used in charts. Don't modify it!
-        print "Empire Ship Count: ", ship_count
+        print "Empire Ship Count: ", self.shipCount
         print "Empire standard fighter summary: ", CombatRatingsAI.get_empire_standard_fighter().get_stats()
         print "------------------------"
 
