@@ -693,15 +693,16 @@ class AIstate(object):
             if self.get_fleet_mission(fleet_id) is None:
                 self.__add_fleet_mission(fleet_id)
 
-    def __clean_fleet_missions(self, fleet_ids):
+    def __clean_fleet_missions(self):
         """Cleanup of AIFleetMissions."""
-        for fleet_id in fleet_ids:
+        current_empire_fleets = FleetUtilsAI.get_empire_fleet_ids()
+        for fleet_id in current_empire_fleets:
             if self.get_fleet_mission(fleet_id) is None:
                 self.__add_fleet_mission(fleet_id)
 
         deleted_fleet_ids = []
         for mission in self.get_all_fleet_missions():
-            if mission.fleet.id not in fleet_ids:
+            if mission.fleet.id not in current_empire_fleets:
                 deleted_fleet_ids.append(mission.fleet.id)
         for deleted_fleet_id in deleted_fleet_ids:
             self.__remove_fleet_mission(deleted_fleet_id)
@@ -947,7 +948,7 @@ class AIstate(object):
         self.__refresh()  # checks exploration border & clears roles/missions of missing fleets & updates threats
         self.__border_exploration_update()
         self.__clean_fleet_roles()
-        self.__clean_fleet_missions(FleetUtilsAI.get_empire_fleet_ids())
+        self.__clean_fleet_missions()
         print "Fleets lost by system: %s" % fleetsLostBySystem
         self.update_system_status()
         self.__report_system_threats()
