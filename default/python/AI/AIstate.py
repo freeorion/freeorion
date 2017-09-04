@@ -928,6 +928,11 @@ class AIstate(object):
                 # in current system, orig new fleet will not yet have been assigned a role
                 # self.remove_fleet_role(fleet_id)
 
+    def prepare_for_new_turn(self):
+        self.split_new_fleets()
+        self.refresh() # checks exploration border & clears roles/missions of missing fleets & updates fleet locs & threats
+        self.report_system_threats()
+
     def log_peace_request(self, initiating_empire_id, recipient_empire_id):
         """Keep a record of peace requests made or received by this empire."""
 
