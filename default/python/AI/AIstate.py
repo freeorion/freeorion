@@ -225,7 +225,7 @@ class AIstate(object):
         """
         return self.turn_uids.get(fo.currentTurn() - 1, '0')
 
-    def refresh(self):
+    def __refresh(self):
         """Turn start AIstate cleanup/refresh."""
         universe = fo.getUniverse()
         # checks exploration border & clears roles/missions of missing fleets & updates fleet locs & threats
@@ -276,7 +276,7 @@ class AIstate(object):
         if fleet_id in self.__fleetRoleByID:
             del self.__fleetRoleByID[fleet_id]
 
-    def report_system_threats(self):
+    def __report_system_threats(self):
         if fo.currentTurn() >= 100:
             return
         universe = fo.getUniverse()
@@ -906,7 +906,7 @@ class AIstate(object):
                 ])
         mission_table.print_table()
 
-    def split_new_fleets(self):
+    def __split_new_fleets(self):
         """Split any new fleets (at new game creation, can have unplanned mix of ship roles)."""
         universe = fo.getUniverse()
         # TODO: check length of fleets for losses or do in AIstat.__cleanRoles
@@ -934,9 +934,9 @@ class AIstate(object):
 
     def prepare_for_new_turn(self):
         self.__report_last_turn_fleet_missions()
-        self.split_new_fleets()
-        self.refresh() # checks exploration border & clears roles/missions of missing fleets & updates fleet locs & threats
-        self.report_system_threats()
+        self.__split_new_fleets()
+        self.__refresh() # checks exploration border & clears roles/missions of missing fleets & updates fleet locs & threats
+        self.__report_system_threats()
 
     def log_peace_request(self, initiating_empire_id, recipient_empire_id):
         """Keep a record of peace requests made or received by this empire."""
