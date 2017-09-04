@@ -796,7 +796,7 @@ class AIstate(object):
     def __clean_fleet_roles(self, just_resumed=False):
         """Removes fleetRoles if a fleet has been lost, and update fleet Ratings."""
         universe = fo.getUniverse()
-        ok_fleets = FleetUtilsAI.get_empire_fleet_ids()
+        current_empire_fleets = FleetUtilsAI.get_empire_fleet_ids()
         self.shipCount = 0
         destroyed_object_ids = universe.destroyedObjectIDs(fo.empireID())
 
@@ -806,23 +806,23 @@ class AIstate(object):
             table_name="Fleet Summary Turn %d" % fo.currentTurn()
         )
         for fleet_id in list(self.__fleetRoleByID):
-            status = self.fleetStatus.setdefault(fleet_id, {})
+            fleet_status = self.fleetStatus.setdefault(fleet_id, {})
             rating = CombatRatingsAI.get_fleet_rating(fleet_id, self.get_standard_enemy())
             troops = FleetUtilsAI.count_troops_in_fleet(fleet_id)
-            old_sys_id = status.get('sysID', -2)
+            old_sys_id = fleet_status.get('sysID', -2)  # TODO: Introduce helper function instead
             fleet = universe.getFleet(fleet_id)
             if fleet:
                 sys_id = fleet.systemID
                 if old_sys_id in [-2, -1]:
                     old_sys_id = sys_id
-                status['nships'] = len(fleet.shipIDs)
-                self.shipCount += status['nships']
+                fleet_status['nships'] = len(fleet.shipIDs)  # TODO: Introduce helper function instead
+                self.shipCount += fleet_status['nships']
             else:
                 # can still retrieve a fleet object even if fleet was just destroyed, so shouldn't get here
                 # however,this has been observed happening, and is the reason a fleet check was added a few lines below.
                 # Not at all sure how this came about, but was throwing off threat assessments
                 sys_id = old_sys_id
-            if fleet_id not in ok_fleets:  # or fleet.empty:
+            if fleet_id not in current_empire_fleets:  # or fleet.empty:
                 if (fleet and self.__fleetRoleByID.get(fleet_id, -1) != -1 and
                         fleet_id not in destroyed_object_ids and
                         any(ship_id not in destroyed_object_ids for ship_id in fleet.shipIDs)):
@@ -848,11 +848,11 @@ class AIstate(object):
                         next_sys or '-',
                     ])
 
-                status['rating'] = rating
+                fleet_status['rating'] = rating
                 if next_sys:
-                    status['sysID'] = next_sys.id
+                    fleet_status['sysID'] = next_sys.id
                 elif this_sys:
-                    status['sysID'] = this_sys.id
+                    fleet_status['sysID'] = this_sys.id
                 else:
                     main_mission = self.get_fleet_mission(fleet_id)
                     main_mission_type = (main_mission.getAIMissionTypes() + [-1])[0]
@@ -861,7 +861,7 @@ class AIstate(object):
                         if targets:
                             m_mt0 = targets[0]
                             if isinstance(m_mt0.target_type, System):
-                                status['sysID'] = m_mt0.target.id  # hmm, but might still be a fair ways from here
+                                fleet_status['sysID'] = m_mt0.target.id  # hmm, but might still be a fair ways from here
         fleet_table.print_table()
         # Next string used in charts. Don't modify it!
         print "Empire Ship Count: ", self.shipCount
