@@ -946,7 +946,7 @@ class AIstate(object):
     def prepare_for_new_turn(self):
         self.__report_last_turn_fleet_missions()
         self.__split_new_fleets()
-        self.__refresh()  # checks exploration border & clears roles/missions of missing fleets & updates threats
+        self.__refresh()  # TODO: Use turn_state instead
         self.__border_exploration_update()
         self.__clean_fleet_roles()
         self.__clean_fleet_missions()
