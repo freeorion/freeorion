@@ -356,7 +356,7 @@ class AIstate(object):
                     near_supply.setdefault(sys_id, []).append(enemy_id)
         return actual_supply, near_supply
 
-    def update_system_status(self):
+    def __update_system_status(self):
         print 10 * "=", "Updating System Threats", 10 * "="
         universe = fo.getUniverse()
         empire = fo.getEmpire()
@@ -956,7 +956,7 @@ class AIstate(object):
         self.__clean_fleet_roles()
         self.__clean_fleet_missions()
         print "Fleets lost by system: %s" % fleetsLostBySystem
-        self.update_system_status()
+        self.__update_system_status()
         self.__report_system_threats()
         self.__report_system_defenses()
 
