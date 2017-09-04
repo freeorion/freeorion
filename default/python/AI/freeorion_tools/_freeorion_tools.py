@@ -89,17 +89,6 @@ def ppstring(foo):
         return str(foo)
 
 
-def chat_on_error(function):
-    @wraps(function)
-    def wrapper(*args, **kw):
-        try:
-            return function(*args, **kw)
-        except Exception as e:
-            logging.getLogger().exception(e)
-            raise
-    return wrapper
-
-
 class ConsoleLogHandler(logging.Handler):
     """A log handler to send errors to the console. """
     def emit(self, record):
