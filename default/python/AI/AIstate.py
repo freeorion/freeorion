@@ -907,9 +907,14 @@ class AIstate(object):
         mission_table.print_table()
 
     def __split_new_fleets(self):
-        """Split any new fleets (at new game creation, can have unplanned mix of ship roles)."""
+        """Split any new fleets.
+
+        This function is supposed to be called once at the beginning of the turn.
+        Splitting the auto generated fleets at game start or those created by
+        recently built ships allows the AI to assign correct roles to all ships.
+        """
+        # TODO: check length of fleets for losses or do in AIstate.__cleanRoles
         universe = fo.getUniverse()
-        # TODO: check length of fleets for losses or do in AIstat.__cleanRoles
         known_fleets = self.get_fleet_roles_map()
         self.newlySplitFleets.clear()
 
