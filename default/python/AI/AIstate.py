@@ -883,12 +883,12 @@ class AIstate(object):
             return copy.deepcopy(self.__priorityByType[priority_type])
         return 0
 
-    def split_new_fleets(self):
-        """Split any new fleets (at new game creation, can have unplanned mix of ship roles)."""
+    def __report_last_turn_fleet_missions(self):
+        """Print a table reviewing last turn fleet missions to the log file."""
         universe = fo.getUniverse()
         mission_table = Table(
-            [Text('Fleet'), Text('Mission'), Text('Ships'), Float('Rating'), Float('Troops'), Text('Target')],
-            table_name="Turn %d: Fleet Mission Review from Last Turn" % fo.currentTurn())
+                [Text('Fleet'), Text('Mission'), Text('Ships'), Float('Rating'), Float('Troops'), Text('Target')],
+                table_name="Turn %d: Fleet Mission Review from Last Turn" % fo.currentTurn())
         for fleet_id, mission in self.get_fleet_missions_map().items():
             fleet = universe.getFleet(fleet_id)
             if not fleet:
@@ -905,6 +905,10 @@ class AIstate(object):
                     mission.target or "-"
                 ])
         mission_table.print_table()
+
+    def split_new_fleets(self):
+        """Split any new fleets (at new game creation, can have unplanned mix of ship roles)."""
+        universe = fo.getUniverse()
         # TODO: check length of fleets for losses or do in AIstat.__cleanRoles
         known_fleets = self.get_fleet_roles_map()
         self.newlySplitFleets.clear()
@@ -929,6 +933,7 @@ class AIstate(object):
                 # self.remove_fleet_role(fleet_id)
 
     def prepare_for_new_turn(self):
+        self.__report_last_turn_fleet_missions()
         self.split_new_fleets()
         self.refresh() # checks exploration border & clears roles/missions of missing fleets & updates fleet locs & threats
         self.report_system_threats()
