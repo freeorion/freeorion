@@ -81,7 +81,6 @@ log.
 """
 import sys
 import logging
-import inspect
 import os
 
 try:
@@ -128,11 +127,18 @@ class _stdXLikeStream(object):
 
     def write(self, msg):
         # Grab the caller's call frame info
-        stack = inspect.stack()
-        if len(stack) > 1:
-            (_, filename, line_number, function_name, _, _) = inspect.stack()[1]
+        if hasattr(sys, '_getframe'):
+            frame = sys._getframe(1)
+            try:
+                line_number = frame.f_lineno
+                function_name = frame.f_code.co_name
+                filename = frame.f_code.co_filename
+            except:
+                (filename, line_number, function_name) = ("", "", "")
+            finally:
+                # Explicitly del references to the caller's frame to avoid persistent reference cycles
+                del frame
         else:
-            # No available call frame info
             (filename, line_number, function_name) = ("", "", "")
 
         try:
@@ -140,7 +146,6 @@ class _stdXLikeStream(object):
 
         finally:
             # Explicitly del references to the caller's frame to avoid persistent reference cycles
-            del stack
             del filename
             del line_number
             del function_name
