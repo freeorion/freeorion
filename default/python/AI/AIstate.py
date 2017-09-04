@@ -823,12 +823,15 @@ class AIstate(object):
                 # Not at all sure how this came about, but was throwing off threat assessments
                 sys_id = old_sys_id
 
+            # check if fleet is destroyed and if so, delete stored information
             if fleet_id not in current_empire_fleets:  # or fleet.empty:
+                # TODO(Morlic): Is this condition really correct? Seems like should actually be in destroyed object ids
                 if (fleet and self.__fleetRoleByID.get(fleet_id, -1) != -1 and
                         fleet_id not in destroyed_object_ids and
                         any(ship_id not in destroyed_object_ids for ship_id in fleet.shipIDs)):
                     if not just_resumed:
                         fleetsLostBySystem.setdefault(old_sys_id, []).append(max(rating, MilitaryAI.MinThreat))
+
                 if fleet_id in self.__fleetRoleByID:
                     del self.__fleetRoleByID[fleet_id]
                 if fleet_id in self.__aiMissionsByFleetID:
@@ -837,12 +840,11 @@ class AIstate(object):
                     del self.fleetStatus[fleet_id]
                 continue
 
-            # fleet does still exist
+            # if reached here, the fleet does still exist
             this_sys = universe.getSystem(sys_id)
             next_sys = universe.getSystem(fleet.nextSystemID)
 
-            fleet_table.add_row(
-                [
+            fleet_table.add_row([
                     fleet,
                     rating,
                     FleetUtilsAI.count_troops_in_fleet(fleet_id),
@@ -855,7 +857,7 @@ class AIstate(object):
                 fleet_status['sysID'] = next_sys.id
             elif this_sys:
                 fleet_status['sysID'] = this_sys.id
-            else:
+            else:  # TODO: This branch consists of broken code, must be revisited or removed
                 main_mission = self.get_fleet_mission(fleet_id)
                 main_mission_type = (main_mission.getAIMissionTypes() + [-1])[0]
                 if main_mission_type != -1:
