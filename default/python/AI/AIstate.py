@@ -924,7 +924,7 @@ class AIstate(object):
         for fleet_id in fleets_to_split:
             fleet = universe.getFleet(fleet_id)
             if not fleet:
-                print >> sys.stderr, "After splitting fleet: resulting fleet ID %d appears to not exist" % fleet_id
+                print >> sys.stderr, "Trying to split fleet %d but seemingly does not exist" % fleet_id
                 continue
             fleet_len = len(list(fleet.shipIDs))
             if fleet_len == 1:
