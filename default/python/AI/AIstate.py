@@ -711,11 +711,10 @@ class AIstate(object):
         for mission in self.get_all_fleet_missions():
             if mission.fleet.id not in current_empire_fleets:
                 deleted_fleet_ids.append(mission.fleet.id)
+            else:
+                mission.clean_invalid_targets()
         for deleted_fleet_id in deleted_fleet_ids:
             self.__remove_fleet_mission(deleted_fleet_id)
-
-        for mission in self.get_all_fleet_missions():
-            mission.clean_invalid_targets()
 
     def has_target(self, mission_type, target):
         for mission in self.get_fleet_missions_with_any_mission_types([mission_type]):
