@@ -926,12 +926,11 @@ class AIstate(object):
             if not fleet:
                 print >> sys.stderr, "Trying to split fleet %d but seemingly does not exist" % fleet_id
                 continue
-            fleet_len = len(list(fleet.shipIDs))
+            fleet_len = len(fleet.shipIDs)
             if fleet_len == 1:
                 continue
-            new_fleets = FleetUtilsAI.split_fleet(fleet_id)  # try splitting fleet
-            print "\t from splitting fleet ID %4d with %d ships, got %d new fleets:" % (
-                fleet_id, fleet_len, len(new_fleets))
+            new_fleets = FleetUtilsAI.split_fleet(fleet_id)
+            print "Split fleet %d with %d ships into %d new fleets:" % (fleet_id, fleet_len, len(new_fleets))
             # old fleet may have different role after split, later will be again identified
             # in current system, orig new fleet will not yet have been assigned a role
             # self.remove_fleet_role(fleet_id)
