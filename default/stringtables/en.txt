@@ -10269,7 +10269,7 @@ SHIP_PART_UNLOCK_SHORT_DESC
 Unlocks Ship Part
 
 SHIP_FUEL_IMPROVE_SHORT_DESC
-Improves Tanks Fuel Capacity
+Improves Ships Fuel Tanks
 
 SHIP_WEAPON_UNLOCK_SHORT_DESC
 Unlocks Ship Weapon

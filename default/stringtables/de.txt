@@ -5283,7 +5283,7 @@ SHIP_PART_UNLOCK_SHORT_DESC
 Schaltet Schiffsteile frei
 
 SHIP_FUEL_IMPROVE_SHORT_DESC
-Erhöht die Kapazität der Treibstofftanks
+Verbessert Treibstofftanks
 
 SHIP_WEAPON_UNLOCK_SHORT_DESC
 Schaltet Schiffsbewaffnung frei
