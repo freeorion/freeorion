@@ -797,7 +797,6 @@ class AIstate(object):
         """Removes fleetRoles if a fleet has been lost, and update fleet Ratings."""
         universe = fo.getUniverse()
         ok_fleets = FleetUtilsAI.get_empire_fleet_ids()
-        fleet_list = sorted(list(self.__fleetRoleByID))
         self.shipCount = 0
         destroyed_object_ids = universe.destroyedObjectIDs(fo.empireID())
 
@@ -806,7 +805,7 @@ class AIstate(object):
             Text('Location'), Text('Destination')],
             table_name="Fleet Summary Turn %d" % fo.currentTurn()
         )
-        for fleet_id in fleet_list:
+        for fleet_id in list(self.__fleetRoleByID):
             status = self.fleetStatus.setdefault(fleet_id, {})
             rating = CombatRatingsAI.get_fleet_rating(fleet_id, self.get_standard_enemy())
             troops = FleetUtilsAI.count_troops_in_fleet(fleet_id)
