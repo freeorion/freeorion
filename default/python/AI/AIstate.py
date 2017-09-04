@@ -678,9 +678,11 @@ class AIstate(object):
         return result
 
     def __add_fleet_mission(self, fleet_id):
-        """Add new AIFleetMission with fleetID if it already not exists."""
-        if self.get_fleet_mission(fleet_id) is None:
-            self.__aiMissionsByFleetID[fleet_id] = AIFleetMission.AIFleetMission(fleet_id)
+        """Add a new dummy AIFleetMission for the passed fleet_id if it has no mission yet."""
+        if self.get_fleet_mission(fleet_id) is not None:
+            warn("Tried to add a new fleet mission for fleet that already had a mission.")
+            return
+        self.__aiMissionsByFleetID[fleet_id] = AIFleetMission.AIFleetMission(fleet_id)
 
     def __remove_fleet_mission(self, fleet_id):
         """Remove invalid AIFleetMission with fleetID if it exists."""
@@ -694,12 +696,17 @@ class AIstate(object):
                 self.__add_fleet_mission(fleet_id)
 
     def __clean_fleet_missions(self):
-        """Cleanup of AIFleetMissions."""
+        """Assign a new dummy mission to new fleets and clean up existing, now invalid missions."""
         current_empire_fleets = FleetUtilsAI.get_empire_fleet_ids()
+
+        # assign a new (dummy) mission to new fleets
         for fleet_id in current_empire_fleets:
             if self.get_fleet_mission(fleet_id) is None:
                 self.__add_fleet_mission(fleet_id)
 
+        # Check all fleet missions for validity and clear invalid targets.
+        # If a fleet does not exist anymore, mark mission for deletion.
+        # Deleting only after the loop allows us to avoid an expensive copy.
         deleted_fleet_ids = []
         for mission in self.get_all_fleet_missions():
             if mission.fleet.id not in current_empire_fleets:
