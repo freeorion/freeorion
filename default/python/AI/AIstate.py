@@ -229,8 +229,6 @@ class AIstate(object):
         """Turn start AIstate cleanup/refresh."""
         fleetsLostBySystem.clear()
         invasionTargets[:] = []
-        for system_id, info in sorted(self.systemStatus.items()):
-            self.systemStatus[system_id]['enemy_ship_count'] = 0  # clear now in prep for update_system_status()
 
     def __border_exploration_update(self):
         universe = fo.getUniverse()
@@ -367,6 +365,13 @@ class AIstate(object):
         supply_unobstructed_systems = set(empire.supplyUnobstructedSystems)
         min_hidden_attack = 4
         min_hidden_health = 8
+
+        # TODO: Variables that are recalculated each turn from scratch should not be stored in AIstate
+        # clear previous game state
+        for sys_id in self.systemStatus:
+            self.systemStatus[sys_id]['enemy_ship_count'] = 0
+            self.systemStatus[sys_id]['myFleetRating'] = 0
+            self.systemStatus[sys_id]['myFleetRatingVsPlanets'] = 0
 
         # for use in debugging
         verbose = False
@@ -790,10 +795,6 @@ class AIstate(object):
 
     def __clean_fleet_roles(self, just_resumed=False):
         """Removes fleetRoles if a fleet has been lost, and update fleet Ratings."""
-        for sys_id in self.systemStatus:
-            self.systemStatus[sys_id]['myFleetRating'] = 0
-            self.systemStatus[sys_id]['myFleetRatingVsPlanets'] = 0
-
         universe = fo.getUniverse()
         ok_fleets = FleetUtilsAI.get_empire_fleet_ids()
         fleet_list = sorted(list(self.__fleetRoleByID))
