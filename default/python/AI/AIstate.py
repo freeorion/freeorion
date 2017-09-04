@@ -839,12 +839,7 @@ class AIstate(object):
                     if not just_resumed:
                         fleetsLostBySystem.setdefault(old_sys_id, []).append(max(rating, MilitaryAI.MinThreat))
 
-                if fleet_id in self.__fleetRoleByID:
-                    del self.__fleetRoleByID[fleet_id]
-                if fleet_id in self.__aiMissionsByFleetID:
-                    del self.__aiMissionsByFleetID[fleet_id]
-                if fleet_id in self.fleetStatus:
-                    del self.fleetStatus[fleet_id]
+                self.delete_fleet_info(fleet_id)
                 continue
 
             # if reached here, the fleet does still exist
