@@ -227,17 +227,17 @@ class AIstate(object):
 
     def __refresh(self):
         """Turn start AIstate cleanup/refresh."""
-        universe = fo.getUniverse()
-        # checks exploration border & clears roles/missions of missing fleets & updates fleet locs & threats
         fleetsLostBySystem.clear()
         invasionTargets[:] = []
+        for system_id, info in sorted(self.systemStatus.items()):
+            self.systemStatus[system_id]['enemy_ship_count'] = 0  # clear now in prep for update_system_status()
+
+    def __border_exploration_update(self):
+        universe = fo.getUniverse()
         exploration_center = PlanetUtilsAI.get_capital_sys_id()
         # a bad state probably from an old savegame, or else empire has lost (or almost has)
         if exploration_center == INVALID_ID:
             exploration_center = self.__origin_home_system_id
-
-        for system_id, info in sorted(self.systemStatus.items()):
-            self.systemStatus[system_id]['enemy_ship_count'] = 0  # clear now in prep for update_system_status()
         ExplorationAI.graph_flags.clear()
         if fo.currentTurn() < 50:
             print "-------------------------------------------------"
@@ -942,6 +942,7 @@ class AIstate(object):
         self.__report_last_turn_fleet_missions()
         self.__split_new_fleets()
         self.__refresh()  # checks exploration border & clears roles/missions of missing fleets & updates threats
+        self.__border_exploration_update()
         self.__clean_fleet_roles()
         self.__clean_fleet_missions(FleetUtilsAI.get_empire_fleet_ids())
         print "Fleets lost by system: %s" % fleetsLostBySystem
