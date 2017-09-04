@@ -161,7 +161,14 @@ class _LoggerHandler(logging.Handler):
         }[level]
 
     def emit(self, record):
-        self.logger(str(record.msg) + "\n", str(record.name), str(record.filename),
+        record.message = record.getMessage()
+        msg = str(record.message) + "\n"
+        if record.exc_info:
+            if not isinstance(record.exc_info, tuple):
+                record.exc_info = sys.exc_info()
+            traceback_msg = "".join(traceback.format_exception(*record.exc_info))
+            msg += traceback_msg
+        self.logger(msg, str(record.name), str(record.filename),
                     str(record.funcName), str(record.lineno))
 
 
