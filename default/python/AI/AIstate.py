@@ -919,23 +919,22 @@ class AIstate(object):
         self.newlySplitFleets.clear()
 
         fleets_to_split = [fleet_id for fleet_id in FleetUtilsAI.get_empire_fleet_ids() if fleet_id not in known_fleets]
-
         if fleets_to_split:
-            print "Splitting new fleets"
-            for fleet_id in fleets_to_split:
-                fleet = universe.getFleet(fleet_id)
-                if not fleet:
-                    print >> sys.stderr, "After splitting fleet: resulting fleet ID %d appears to not exist" % fleet_id
-                    continue
-                fleet_len = len(list(fleet.shipIDs))
-                if fleet_len == 1:
-                    continue
-                new_fleets = FleetUtilsAI.split_fleet(fleet_id)  # try splitting fleet
-                print "\t from splitting fleet ID %4d with %d ships, got %d new fleets:" % (
-                    fleet_id, fleet_len, len(new_fleets))
-                # old fleet may have different role after split, later will be again identified
-                # in current system, orig new fleet will not yet have been assigned a role
-                # self.remove_fleet_role(fleet_id)
+            print "Trying to split %d new fleets" % len(fleets_to_split)
+        for fleet_id in fleets_to_split:
+            fleet = universe.getFleet(fleet_id)
+            if not fleet:
+                print >> sys.stderr, "After splitting fleet: resulting fleet ID %d appears to not exist" % fleet_id
+                continue
+            fleet_len = len(list(fleet.shipIDs))
+            if fleet_len == 1:
+                continue
+            new_fleets = FleetUtilsAI.split_fleet(fleet_id)  # try splitting fleet
+            print "\t from splitting fleet ID %4d with %d ships, got %d new fleets:" % (
+                fleet_id, fleet_len, len(new_fleets))
+            # old fleet may have different role after split, later will be again identified
+            # in current system, orig new fleet will not yet have been assigned a role
+            # self.remove_fleet_role(fleet_id)
 
     def prepare_for_new_turn(self):
         self.__report_last_turn_fleet_missions()
