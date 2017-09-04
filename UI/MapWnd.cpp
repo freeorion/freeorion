@@ -6470,6 +6470,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     float stockpile_used = boost::accumulate(empire->GetProductionQueue().AllocatedStockpilePP() | boost::adaptors::map_values, 0.0f);
     float expected_stockpile = empire->GetProductionQueue().ExpectedNewStockpileAmount();
     float  PP_to_stockpile_yield = empire->GetMeter("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")->Current();
+    float stockpile_plusminus_next_turn = expected_stockpile - stockpile;
     double total_PP_to_stockpile = expected_stockpile - stockpile + stockpile_used;
     double total_PP_overproduction = total_PP_output - total_PP_spent;
     double total_PP_wasted = total_PP_output - total_PP_spent - total_PP_to_stockpile;
@@ -6480,7 +6481,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
         true, stockpile_used, stockpile, expected_stockpile));
 
     m_stockpile->SetValue(stockpile);
-    m_stockpile->SetValue(total_PP_to_stockpile, 1);
+    m_stockpile->SetValue(stockpile_plusminus_next_turn, 1);
     m_stockpile->ClearBrowseInfoWnd();
     m_stockpile->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_stockpile->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
