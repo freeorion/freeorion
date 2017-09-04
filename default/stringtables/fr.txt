@@ -893,6 +893,9 @@ Le serveur ne répond pas.
 SERVER_LOST
 La connexion au serveur a été perdue.
 
+LOCAL_SERVER_ALREADY_RUNNING_ERROR
+Impossible de démarrer le serveur. Un serveur local est déjà activé.
+
 PLAYER_DISCONNECTED
 Le joueur %1% n'est plus connecté au serveur.
 
@@ -1640,11 +1643,17 @@ Valeur boléenne pour test d'IA indiquant si toutes les IAs ont forcément le m�
 OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED_VALUE
 Valeur forcée pour le Niveau selon l'EmpireID. Une valeur de 0 à 39.
 
-OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
-Active la sauvegarde automatique pour les parties solo.
+OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START
+Active la sauvegarde automatique au début de chaque tour pour les parties solo.
 
-OPTIONS_DB_AUTOSAVE_MULTIPLAYER
-Active la sauvegarde automatique pour les parties multijoueurs.
+OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END
+Active la sauvegarde automatique à la fin de chaque tour pour les parties solo.
+
+OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START
+Active la sauvegarde automatique au début de chaque tour pour les parties multijoueurs.
+
+OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_END
+Active la sauvegarde automatique à la fin de chaque tour pour les parties multijoueurs.
 
 OPTIONS_DB_AUTOSAVE_TURNS
 Fixe le nombre de tours séparant les sauvegardes automatiques.
@@ -1668,7 +1677,7 @@ OPTIONS_DB_QUICKSTART
 Lance une nouvelle partie en court-circuitant le menu principal.
 
 OPTIONS_DB_CONTINUE
-Reprend une partie depuis la dernière sauvegarde automatique, sans passer par le menu principal.
+Reprend une partie depuis la sauvegarde la plus récente, sans passer par le menu principal.
 
 OPTIONS_DB_AUTO_N_TURNS
 Clique le bouton "Tour" automatiquement pour les N premiers tours (jusqu'à 400 tours, valeur défaut à zéro); utile pour le débogage notamment avec --quickstart ou --load, et éventuellement --auto-quit.
@@ -2286,12 +2295,6 @@ Repositionnement automatique des fenêtres
 
 OPTIONS_MISC_UI
 Options diverses de l'interface utilisateur
-
-OPTIONS_SINGLEPLAYER
-Parties solo
-
-OPTIONS_MULTIPLAYER
-Parties multijoueurs
 
 OPTIONS_AUTOSAVE_LIMIT
 Nombre maximal de sauvegardes automatiques
