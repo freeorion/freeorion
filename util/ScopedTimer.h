@@ -103,4 +103,4 @@ private:
     std::unique_ptr<Impl> const m_impl;
 };
 
-#endif // _MultiplayerCommon_h_
+#endif // _ScopedTimer_h_
