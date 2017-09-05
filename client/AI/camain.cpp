@@ -47,6 +47,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     // if config.xml and persistent_config.xml are present, read and set options entries
     GetOptionsDB().SetFromFile(GetConfigPath(), FreeOrionVersionString());
     GetOptionsDB().SetFromFile(GetPersistentConfigPath());
+    GetOptionsDB().SetFromCommandLine(args);
 
 #ifndef FREEORION_CAMAIN_KEEP_STACKTRACE
     try {
