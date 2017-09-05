@@ -119,6 +119,7 @@ namespace {
         db.Add("UI.fleet-supply-line-width",        UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH"),            3.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
         db.Add("UI.fleet-supply-line-dot-spacing",  UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING"),      20,         RangedStepValidator<int>(1, 3, 40));
         db.Add("UI.fleet-supply-line-dot-rate",     UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE"),         0.02,       RangedStepValidator<double>(0.01, 0.01, 0.1));
+        db.Add("UI.fleet.explore.hostile.ignored",  UserStringNop("OPTIONS_DB_FLEET_EXPLORE_IGNORE_HOSTILE"),       false,      Validator<bool>());
         db.Add("UI.unowned-starlane-colour",        UserStringNop("OPTIONS_DB_UNOWNED_STARLANE_COLOUR"),            GG::Clr(72,  72,  72,  255),    Validator<GG::Clr>());
 
         db.Add("UI.show-detection-range",           UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE"),         true,       Validator<bool>());
@@ -7008,6 +7009,9 @@ void MapWnd::DispatchFleetsExploring() {
     std::set<int> systems_order_sent; //list all systems ID for which a ship was sent this turn
     int nbr_fleet_to_send = fleet_idle.size();
     bool remaining_system_to_explore = true;
+    bool ignore_hostile_route = GetOptionsDB().Get<bool>("UI.fleet.explore.hostile.ignored");
+    auto fleet_pred = std::make_shared<HostileVisitor<Fleet>>(empire_id);
+
     for (int i = 0; i < nbr_fleet_to_send; i++) { //at each iteration, send one ship on its way
 
         double min_dist = DBL_MAX;
@@ -7028,8 +7032,17 @@ void MapWnd::DispatchFleetsExploring() {
                 if (systems_order_sent.find(system_supply.first) != systems_order_sent.end())
                     continue; //someone already went there this turn
 
-                auto pair = GetPathfinder()->ShortestPath(
-                    fleet->SystemID(), system_supply.first, empire_id);
+                std::pair<std::list<int>, double> pair;
+                if (ignore_hostile_route)
+                    pair = GetPathfinder()->ShortestPath(fleet->SystemID(), system_supply.first, empire_id);
+                else
+                    pair = GetPathfinder()->ShortestPath(fleet->SystemID(), system_supply.first, empire_id, fleet_pred);
+
+                if (pair.second <= 0.0) {
+                    DebugLogger() << "MapWnd::DispatchFleetsExploring No suitable route from system " << fleet->SystemID()
+                                  << " to " << system_supply.first << " (" << pair.first.size() << ">" << pair.second << ")";
+                    continue;
+                }
 
                 //we check for the fuel.
                 bool is_doable_for_fuel = true;

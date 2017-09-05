@@ -1184,6 +1184,9 @@ Sets how far apart to render dots for fleet supply lines.
 OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE
 Sets how fast to render dots for fleet supply lines.
 
+OPTIONS_DB_FLEET_EXPLORE_IGNORE_HOSTILE
+Ignore hostile ships when a fleet is set to explore
+
 OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE
 Toggles whether to show circles around objects to indicate their detection range on the galaxy map.
 
