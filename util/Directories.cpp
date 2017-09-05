@@ -323,9 +323,9 @@ void InitBinDir(const std::string& argv0) {
             fs::path binary_file = fs::system_complete(fs::path(path_text));
             bin_dir = binary_file.branch_path();
 
-            // check that a "freeorion" file (hopefully the freeorion binary) exists in the found directory
+            // check that a "freeoriond" file (hopefully the freeorion server binary) exists in the found directory
             fs::path p(bin_dir);
-            p /= "freeorion";
+            p /= "freeoriond";
             if (!exists(p))
                 problem = true;
         }
