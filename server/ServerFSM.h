@@ -144,7 +144,6 @@ struct Idle : sc::state<Idle, ServerFSM> {
         sc::custom_reaction<HostMPGame>,
         sc::custom_reaction<HostSPGame>,
         sc::custom_reaction<ShutdownServer>,
-        sc::custom_reaction<Hostless>,
         sc::custom_reaction<Error>,
         sc::custom_reaction<Hostless>
     > reactions;
