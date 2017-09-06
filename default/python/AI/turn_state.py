@@ -95,7 +95,7 @@ class State(object):
             supply_tier = 0
         return self.__systems_by_jumps_to_supply.get(supply_tier, tuple())
 
-    def get_empire_inhabited_planets_by_system(self):
+    def get_empire_planets_by_system(self, include_outposts):
         """
         Return dict from system id to planet ids of empire with species.
 
@@ -103,7 +103,8 @@ class State(object):
         """
         # TODO: as currently used, is duplicative with combo of foAI.foAIstate.popCtrSystemIDs and foAI.foAIstate.colonizedSystems
         empire_id = fo.empireID()
-        empire_planets_with_species = (x for x in self.__planet_info.itervalues() if x.owner == empire_id and x.species_name)
+        empire_planets_with_species = (x for x in self.__planet_info.itervalues()
+                                       if x.owner == empire_id and (x.species_name or include_outposts))
         result = {}
         for x in empire_planets_with_species:
             result.setdefault(x.system_id, []).append(x.pid)

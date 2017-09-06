@@ -488,7 +488,7 @@ def get_colony_fleets():
         if not planet:
             continue
         sys_id = planet.systemID
-        for pid2 in state.get_empire_inhabited_planets_by_system().get(sys_id, []):
+        for pid2 in state.get_empire_planets_by_system(include_outposts=False).get(sys_id, []):
             planet2 = universe.getPlanet(pid2)
             if not (planet2 and planet2.speciesName in empire_colonizers):
                 continue

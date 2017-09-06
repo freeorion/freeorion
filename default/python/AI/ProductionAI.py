@@ -381,7 +381,7 @@ def generate_production_orders():
                 queued_defenses[sys_id] = queued_defenses.get(sys_id, 0) + element.blocksize*element.remaining
                 defense_allocation += element.allocation
         print "Queued Defenses:", [(ppstring(PlanetUtilsAI.sys_name_ids([sys_id])), num) for sys_id, num in queued_defenses.items()]
-        for sys_id, pids in state.get_empire_inhabited_planets_by_system().items():
+        for sys_id, pids in state.get_empire_planets_by_system(include_outposts=False).items():
             if foAI.foAIstate.systemStatus.get(sys_id, {}).get('fleetThreat', 1) > 0:
                 continue  # don't build orbital shields if enemy fleet present
             if defense_allocation > max_defense_portion * total_pp:
@@ -416,7 +416,7 @@ def generate_production_orders():
     system_colonies = {}
     colony_systems = {}
     empire_species = state.get_empire_planets_by_species()
-    systems_with_species = state.get_empire_inhabited_planets_by_system()
+    systems_with_species = state.get_empire_planets_by_system(include_outposts=False)
     for spec_name in ColonisationAI.empire_colonizers:
         if (len(ColonisationAI.empire_colonizers[spec_name]) == 0) and (spec_name in empire_species):  # not enough current shipyards for this species#TODO: also allow orbital incubators and/or asteroid ships
             for pid in state.get_empire_planets_with_species(spec_name):  # SP_EXOBOT may not actually have a colony yet but be in empireColonizers
@@ -1033,7 +1033,7 @@ def generate_production_orders():
 
         max_dock_builds = int(0.8 + empire.productionPoints/120.0)
         print "Considering building %s, found current and queued systems %s" % (building_name, ppstring(PlanetUtilsAI.sys_name_ids(cur_drydoc_sys.union(queued_sys))))
-        for sys_id, pids in state.get_empire_inhabited_planets_by_system().items():  # TODO: sort/prioritize in some fashion
+        for sys_id, pids in state.get_empire_planets_by_system(include_outposts=False).items():  # TODO: sort/prioritize in some fashion
             local_top_pilots = dict(top_pilot_systems.get(sys_id, []))
             local_drydocks = ColonisationAI.empire_dry_docks.get(sys_id, [])
             if len(queued_locs) >= max_dock_builds:
