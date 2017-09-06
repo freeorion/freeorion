@@ -101,7 +101,7 @@ class State(object):
 
         :rtype: dict[int, list[int]]
         """
-        # TODO: as currently used, is duplicative with combo of foAI.foAIstate.popCtrSystemIDs and foAI.foAIstate.colonizedSystems
+        # TODO: as currently used, is duplicative with combo of foAI.foAIstate.popCtrSystemIDs
         empire_id = fo.empireID()
         empire_planets_with_species = (x for x in self.__planet_info.itervalues()
                                        if x.owner == empire_id and (x.species_name or include_outposts))

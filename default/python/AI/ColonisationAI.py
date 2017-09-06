@@ -270,7 +270,6 @@ def survey_universe():
         AIstate.popCtrSystemIDs[:] = []
         AIstate.outpostIDs[:] = []
         AIstate.outpostSystemIDs[:] = []
-        AIstate.colonizedSystems.clear()
         pilot_ratings.clear()
         unowned_empty_planet_ids.clear()
         facilities_by_species_grade.clear()
@@ -309,8 +308,6 @@ def survey_universe():
             weapons_grade = "WEAPONS_0.0"
             if owner_id == empire_id:
                 empire_has_colony_in_sys = True
-                AIstate.colonizedSystems.setdefault(sys_id, []).append(
-                    pid)  # track these to plan Solar Generators and Singularity Generators, etc.
                 if planet_population <= 0.0:
                     empire_outpost_ids.add(pid)
                     AIstate.outpostIDs.append(pid)
@@ -776,7 +773,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     # only count existing presence if not target planet
     # TODO: consider neighboring sytems for smaller contribution, and bigger contributions for
     # local colonies versus local outposts
-    locally_owned_planets = [lpid for lpid in AIstate.colonizedSystems.get(this_sysid, []) if lpid != planet_id]
+    locally_owned_planets = [lpid for lpid in state.get_empire_planets_by_system(include_outposts=True).get(this_sysid, []) if lpid != planet_id]
     planets_with_species = state.get_inhabited_planets()
     locally_owned_pop_ctrs = [lpid for lpid in locally_owned_planets if lpid in planets_with_species]
     # triple count pop_ctrs
