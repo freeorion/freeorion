@@ -236,8 +236,6 @@ class AIstate(object):
         if exploration_center == INVALID_ID:
             exploration_center = self.__origin_home_system_id
 
-        for system_id, info in sorted(self.systemStatus.items()):
-            self.systemStatus[system_id]['enemy_ship_count'] = 0  # clear now in prep for update_system_status()
         ExplorationAI.graph_flags.clear()
         if fo.currentTurn() < 50:
             print "-------------------------------------------------"
@@ -368,13 +366,18 @@ class AIstate(object):
         # for use in debugging
         verbose = False
 
+        # clear values that are computed from scratch each turn
+        for sys_id in universe.systemIDs:
+            sys_status = self.systemStatus.setdefault(sys_id, {})
+            sys_status['enemy_ship_count'] = 0
+            sys_status['myfleets'] = []
+            sys_status['myFleetsAccessible'] = []
+            sys_status['localEnemyFleetIDs'] = []
+
         # assess enemy fleets that may have been momentarily visible
         # start with dummy entries
         cur_e_fighters = {CombatRatingsAI.default_ship_stats().get_stats(hashable=True): [0]}
         old_e_fighters = {CombatRatingsAI.default_ship_stats().get_stats(hashable=True): [0]}
-        enemies_by_system = {}
-        my_fleets_by_system = {}
-        fleet_spot_position = {}
         current_turn = fo.currentTurn()
         for fleet_id in universe.fleetIDs:
             fleet = universe.getFleet(fleet_id)
@@ -386,8 +389,8 @@ class AIstate(object):
 
             if fleet.ownedBy(empire_id):
                 if not dead_fleet:
-                    my_fleets_by_system.setdefault(this_system_id, []).append(fleet_id)
-                    fleet_spot_position.setdefault(fleet.systemID, []).append(fleet_id)
+                    self.systemStatus[this_system_id]['myfleets'].append(fleet_id)
+                    self.systemStatus[fleet.systemID]['myFleetsAccessible'].append(fleet_id)
                 continue
 
             # this is a fleet not owned by us
@@ -410,10 +413,8 @@ class AIstate(object):
             if get_partial_visibility_turn(fleet_id) < (current_turn - 1):
                 continue
 
-            sys_status = self.systemStatus.setdefault(this_system_id, {})
-            sys_status['enemy_ship_count'] = sys_status.get('enemy_ship_count', 0) + len(fleet.shipIDs)
-            enemies_by_system.setdefault(this_system_id, []).append(fleet_id)
-
+            self.systemStatus[this_system_id]['enemy_ship_count'] += len(fleet.shipIDs)
+            self.systemStatus[this_system_id]['localEnemyFleetIDs'].append(fleet_id)
             if not fleet.unowned:
                 self.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(fleet_id)
 
@@ -429,10 +430,6 @@ class AIstate(object):
             if verbose:
                 print "AIState threat evaluation for %s" % system
             # update fleets
-            sys_status['myfleets'] = my_fleets_by_system.get(sys_id, [])
-            sys_status['myFleetsAccessible'] = fleet_spot_position.get(sys_id, [])
-            local_enemy_fleet_ids = enemies_by_system.get(sys_id, [])
-            sys_status['localEnemyFleetIDs'] = local_enemy_fleet_ids
             if system:
                 sys_status['name'] = system.name
                 # TODO: double check are these checks/deletes necessary?
@@ -446,7 +443,7 @@ class AIstate(object):
             enemy_ratings = []  # owned & mobile
             mob_ratings = []  # mobile & unowned
             mobile_fleets = []  # mobile and either owned or unowned
-            for fid in local_enemy_fleet_ids:
+            for fid in sys_status['localEnemyFleetIDs']:
                 fleet = universe.getFleet(fid)  # ensured to exist
                 fleet_rating = CombatRatingsAI.get_fleet_rating(
                     fid, enemy_stats=CombatRatingsAI.get_empire_standard_fighter())
