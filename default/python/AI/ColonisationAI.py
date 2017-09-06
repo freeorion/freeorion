@@ -35,8 +35,6 @@ annexable_system_ids = set()
 annexable_ring1 = set()
 annexable_ring2 = set()
 annexable_ring3 = set()
-systems_by_supply_tier = {}
-system_supply = {}
 planet_supply_cache = {}  # includes system supply
 all_colony_opportunities = {}
 
@@ -212,28 +210,19 @@ def check_supply():
     empire = fo.getEmpire()
 
     colonization_timer.start('Getting Empire Supply Info')
-    systems_by_supply_tier.clear()
-    system_supply.clear()
-    system_supply.update(empire.supplyProjections())  # number of jumps away from fleet-supplied system (0 = in supply)
-    for sys_id, supply_val in system_supply.items():
-        systems_by_supply_tier.setdefault(min(0, supply_val), []).append(sys_id)
-
     print "Base Supply:", dict_from_map(empire.systemSupplyRanges)
-    print "Supply connected systems: ", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(0, [])))
-    print
+    for i in range(-3, 1):
+        print "Systems %d jumps away from supply:", ', '.join(
+                PlanetUtilsAI.sys_name_ids(state.get_systems_by_supply_tier(i)))
 
     colonization_timer.start('Determining Annexable Systems')
     annexable_system_ids.clear()  # TODO: distinguish colony-annexable systems and outpost-annexable systems
     annexable_ring1.clear()
     annexable_ring2.clear()
     annexable_ring3.clear()
-    annexable_ring1.update(systems_by_supply_tier.get(-1, []))
-    annexable_ring2.update(systems_by_supply_tier.get(-2, []))
-    annexable_ring3.update(systems_by_supply_tier.get(-3, []))
-
-    print "First Ring of annexable systems:", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-1, [])))
-    print "Second Ring of annexable systems:", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-2, [])))
-    print "Third Ring of annexable systems:", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-3, [])))
+    annexable_ring1.update(state.get_systems_by_supply_tier(-1))
+    annexable_ring2.update(state.get_systems_by_supply_tier(-2))
+    annexable_ring3.update(state.get_systems_by_supply_tier(-3))
 
     supply_distance = get_supply_tech_range()
     # extra potential supply contributions:
@@ -246,7 +235,7 @@ def check_supply():
 
     # we should not rely on constant here, for system, supply in supplyProjections need to add systems in supply range
     for jumps in range(-supply_distance, 1):  # [-supply_distance, ..., -2, -1, 0]
-        annexable_system_ids.update(systems_by_supply_tier.get(jumps, []))
+        annexable_system_ids.update(state.get_systems_by_supply_tier(jumps))
     colonization_timer.stop()
 
 
@@ -804,7 +793,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     system = universe.getSystem(this_sysid)
     sys_status = foAI.foAIstate.systemStatus.get(this_sysid, {})
 
-    sys_supply = system_supply.get(this_sysid, -99)
+    sys_supply = state.get_system_supply(this_sysid)
     planet_supply = AIDependencies.supply_by_size.get(int(planet_size), 0)
     bld_types = set(universe.getBuilding(bldg).buildingTypeName for bldg in planet.buildingIDs).intersection(
         AIDependencies.building_supply)

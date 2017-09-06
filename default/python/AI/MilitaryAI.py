@@ -7,12 +7,12 @@ import FleetUtilsAI
 from CombatRatingsAI import combine_ratings
 import PlanetUtilsAI
 import PriorityAI
-import ColonisationAI
 import ProductionAI
 import CombatRatingsAI
 from freeorion_tools import ppstring, cache_by_turn
 from AIDependencies import INVALID_ID
 from common.configure_logging import convenience_function_references_for_logger
+from turn_state import state
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 MinThreat = 10  # the minimum threat level that will be ascribed to an unknown threat capable of killing scouts
@@ -683,8 +683,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         # TODO blockade enemy systems
 
         # interior systems
-        targetable_ids = set(ColonisationAI.systems_by_supply_tier.get(0, []) +
-                             ColonisationAI.systems_by_supply_tier.get(1, []))
+        targetable_ids = set(state.get_systems_by_supply_tier(0))
         current_mil_systems = [sid for sid, _, _, _, _ in allocation_helper.allocations]
         interior_targets1 = targetable_ids.difference(current_mil_systems)
         interior_targets = [sid for sid in interior_targets1 if (

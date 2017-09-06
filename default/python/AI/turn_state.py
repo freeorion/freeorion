@@ -29,12 +29,17 @@ class State(object):
         self.__medium_pilot_rating = 1e-8
         self.__planet_info = {}  # map from planet_id to PlanetInfo
 
+        # supply info - negative values indicate jumps away from supply
+        self.__system_supply = {}  # map from system_id to supply
+        self.__systems_by_jumps_to_supply = {}  # map from supply to list of system_ids
+
     def update(self):
         """
         Must be called at each turn (before first use) to update inner state.
         """
         self.__init__()
         self.__update_planets()
+        self.__update_supply()
 
     def __update_planets(self):
         """
@@ -44,6 +49,51 @@ class State(object):
         for pid in universe.planetIDs:
             planet = universe.getPlanet(pid)
             self.__planet_info[pid] = PlanetInfo(pid, planet.speciesName, planet.owner, planet.systemID)
+
+    def __update_supply(self):
+        """
+        Update information about supply.
+        """
+        self.__system_supply.update(fo.getEmpire().supplyProjections())
+        for sys_id, supply_val in self.__system_supply.iteritems():
+            self.__systems_by_jumps_to_supply.setdefault(min(0, supply_val), []).append(sys_id)
+
+        # By converting the lists to immutable tuples now, we don't have to return copies when queried.
+        for key in self.__systems_by_jumps_to_supply:
+            self.__systems_by_jumps_to_supply[key] = tuple(self.__systems_by_jumps_to_supply[key])
+
+    def get_system_supply(self, sys_id):
+        """Get the supply level of a system.
+
+        Negative values indicate jumps away from supply.
+
+        :type sys_id: int
+        :return: Supply value of a system or -99 if system is not connected
+        :rtype: int
+        """
+        retval = self.__system_supply.get(sys_id, -99)
+        if retval == -99:
+            # This is only expected to happen if a system has no path to any supplied system.
+            # As the current code should not allow such queries, this is logged as warning.
+            # If future code breaks this assumption, feel free to adjust logging.
+            warn("Queried supply value of a system not mapped in empire.supplyProjections().")
+        return retval
+
+    def get_systems_by_supply_tier(self, supply_tier):
+        """Get systems with supply tier.
+
+        The current implementation does not distinguish between positive supply levels and caps at 0.
+        Negative values indicate jumps away from supply.
+
+        :type supply_tier: int
+        :return: system_ids in specified supply tier
+        :rtype: tuple[int]
+        """
+        if supply_tier > 0:
+            warn("The current implementation does not distinguish between positive supply levels. "
+                 "Interpreting the query as supply_tier=0 (indicating system in supply).")
+            supply_tier = 0
+        return self.__systems_by_jumps_to_supply.get(supply_tier, tuple())
 
     def get_empire_inhabited_planets_by_system(self):
         """
