@@ -1870,11 +1870,13 @@ void TechTreeWnd::TechListBox::Update(bool populate /* = true */) {
     double insertion_elapsed = 0.0;
     boost::timer insertion_timer;
     GG::X row_width = Width() - ClientUI::ScrollWidth() - ClientUI::Pts();
-    std::string first_tech_shown{};
 
     // Try to preserve the first row, only works if a row for the tech is still visible
-    if (auto first_row_shown = dynamic_cast<TechRow*>(FirstRowShown()->get()))
-        first_tech_shown = first_row_shown->GetTech();
+    std::string first_tech_shown;
+    if (FirstRowShown() != end())
+        if (auto first_row = FirstRowShown()->get())
+            if (auto first_row_shown = dynamic_cast<TechRow*>(first_row))
+                first_tech_shown = first_row_shown->GetTech();
 
     // Skip setting first row during insertion
     bool first_tech_set = first_tech_shown.empty();
