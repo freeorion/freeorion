@@ -310,11 +310,7 @@ def generateOrders():  # pylint: disable=invalid-name
         greet = diplomatic_corp.get_first_turn_greet_message()
         fo.sendChatMessage(human_player, '%s (%s): [[%s]]' % (empire.name, get_trait_name_aggression(foAIstate.character), greet))
 
-    # turn cleanup !!! this was formerly done at start of every turn -- not sure why
-    foAIstate.split_new_fleets()
-
-    foAIstate.refresh()  # checks exploration border & clears roles/missions of missing fleets & updates fleet locs & threats
-    foAIstate.report_system_threats()
+    foAIstate.prepare_for_new_turn()
     debug("Calling AI Modules")
     # call AI modules
     action_list = [ColonisationAI.survey_universe,
