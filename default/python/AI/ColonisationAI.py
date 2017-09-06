@@ -210,7 +210,6 @@ def get_supply_tech_range():
 
 def check_supply():
     print "\n", 10 * "=", "Supply calculations", 10 * "=", "\n"
-    universe = fo.getUniverse()
     empire = fo.getEmpire()
 
     colonization_timer.start('Getting Empire Supply Info')
@@ -256,7 +255,6 @@ def survey_universe():
     check_supply()
     colonization_timer.start("Categorizing Visible Planets")
     universe = fo.getUniverse()
-    empire = fo.getEmpire()
     empire_id = fo.empireID()
     current_turn = fo.currentTurn()
 
