@@ -295,7 +295,6 @@ def survey_universe():
         unowned_empty_planet_ids.clear()
         facilities_by_species_grade.clear()
         system_facilities.clear()
-        state.update()
 
     # var setup done
 
