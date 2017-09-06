@@ -5,17 +5,37 @@
 #include "../universe/Enums.h"
 
 
-namespace {
+namespace parse {
     struct visibility_parser_rules :
         public parse::detail::enum_value_ref_rules<Visibility>
     {
         visibility_parser_rules() :
             enum_value_ref_rules("Visibility")
         {
-            using boost::phoenix::construct;
-            using boost::phoenix::new_;
-            using boost::phoenix::push_back;
             namespace qi = boost::spirit::qi;
+            qi::_val_type _val;
+
+            const parse::lexer& tok = parse::lexer::instance();
+
+            // variable_name left empty, as no direct object properties are
+            // available that return a visibility
+
+            enum_expr
+                =   tok.Invisible_  [ _val = VIS_NO_VISIBILITY ]
+                |   tok.Basic_      [ _val = VIS_BASIC_VISIBILITY ]
+                |   tok.Partial_    [ _val = VIS_PARTIAL_VISIBILITY ]
+                |   tok.Full_       [ _val = VIS_FULL_VISIBILITY ]
+                ;
+        }
+    };
+
+    struct visibility_complex_parser_rules {
+        visibility_complex_parser_rules() {
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::construct;
+            using phoenix::new_;
 
             qi::_1_type _1;
             qi::_a_type _a;
@@ -29,32 +49,34 @@ namespace {
             const parse::lexer& tok = parse::lexer::instance();
             const parse::value_ref_rule<int>& simple_int = int_simple();
 
-            // variable_name left empty, as no direct object properties are
-            // available that return a visibility
-
-            enum_expr
-                =   tok.Invisible_  [ _val = VIS_NO_VISIBILITY ]
-                |   tok.Basic_      [ _val = VIS_BASIC_VISIBILITY ]
-                |   tok.Partial_    [ _val = VIS_PARTIAL_VISIBILITY ]
-                |   tok.Full_       [ _val = VIS_FULL_VISIBILITY ]
-                ;
-
-            complex_expr
+            empire_object_visibility
                 =   tok.EmpireObjectVisiblity_ [ _a = construct<std::string>(_1) ]
-                >   parse::detail::label(Empire_token)  > simple_int [ _b = _1 ]
-                >   parse::detail::label(Object_token)  > simple_int [ _c = _1 ]
+                >   detail::label(Empire_token) >   simple_int [ _b = _1 ]
+                >   detail::label(Object_token) >   simple_int [ _c = _1 ]
                     [ _val = new_<ValueRef::ComplexVariable<Visibility>>(_a, _b, _c, _f, _d, _e) ]
                 ;
+
+            start
+                =   empire_object_visibility
+                ;
+
+            empire_object_visibility.name("EmpireObjectVisibility");
+
+#if DEBUG_DOUBLE_COMPLEX_PARSERS
+            debug(empire_object_visibility);
+
+#endif
         }
+        complex_variable_rule<Visibility> empire_object_visibility;
+        complex_variable_rule<Visibility> start;
     };
+
+    namespace detail {
+        visibility_complex_parser_rules visibility_complex_parser;
+
+        enum_value_ref_rules<Visibility>& visibility_rules() {
+            static visibility_parser_rules retval;
+            return retval;
+        }
+    }
 }
-
-namespace parse { namespace detail {
-
-enum_value_ref_rules<Visibility>& visibility_rules()
-{
-    static visibility_parser_rules retval;
-    return retval;
-}
-
-} }
