@@ -592,7 +592,9 @@ namespace {
         return false;
     }
 
-    bool ObjectDiplomaticallyAttackableByEmpire(std::shared_ptr<const UniverseObject> obj, int empire_id) {
+    bool ObjectDiplomaticallyAttackableByEmpire(std::shared_ptr<const UniverseObject> obj,
+                                                int empire_id)
+    {
         if (!obj)
             return false;
         if (obj->OwnedBy(empire_id))
@@ -620,13 +622,17 @@ namespace {
         return true;
     }
 
-    bool ObjectAttackableByEmpire(std::shared_ptr<const UniverseObject> obj, int empire_id) {
+    bool ObjectAttackableByEmpire(std::shared_ptr<const UniverseObject> obj,
+                                  int empire_id)
+    {
         return ObjectTypeCanBeAttacked(obj)
             && ObjectDiplomaticallyAttackableByEmpire(obj, empire_id)
             && ObjectTargettableByEmpire(obj, empire_id);
     }
 
-    bool ObjectUnTargettableByEmpire(std::shared_ptr<const UniverseObject> obj, int empire_id) {
+    bool ObjectUnTargettableByEmpire(std::shared_ptr<const UniverseObject> obj,
+                                     int empire_id)
+    {
         return ObjectTypeCanBeAttacked(obj)
             && ObjectDiplomaticallyAttackableByEmpire(obj, empire_id)
             && !ObjectTargettableByEmpire(obj, empire_id);
@@ -638,7 +644,9 @@ namespace {
         return (!obj->Unowned());
     }
 
-    bool ObjectTargettableByMonsters(std::shared_ptr<const UniverseObject> obj, float monster_detection = 0.0f) {
+    bool ObjectTargettableByMonsters(std::shared_ptr<const UniverseObject> obj,
+                                     float monster_detection = 0.0f)
+    {
         UniverseObjectType obj_type = obj->ObjectType();
         if (obj_type == OBJ_PLANET || obj_type == OBJ_FIGHTER) {
             return true;
@@ -651,13 +659,17 @@ namespace {
         return false;
     }
 
-    bool ObjectAttackableByMonsters(std::shared_ptr<const UniverseObject> obj, float monster_detection = 0.0f) {
+    bool ObjectAttackableByMonsters(std::shared_ptr<const UniverseObject> obj,
+                                    float monster_detection = 0.0f)
+    {
         return ObjectTypeCanBeAttacked(obj)
             && ObjectDiplomaticallyAttackableByMonsters(obj)
             && ObjectTargettableByMonsters(obj, monster_detection);
     }
 
-    bool ObjectUnTargettableByMonsters(std::shared_ptr<const UniverseObject> obj, float monster_detection = 0.0f) {
+    bool ObjectUnTargettableByMonsters(std::shared_ptr<const UniverseObject> obj,
+                                       float monster_detection = 0.0f)
+    {
         return ObjectTypeCanBeAttacked(obj)
             && ObjectDiplomaticallyAttackableByMonsters(obj)
             && !ObjectTargettableByMonsters(obj, monster_detection);
@@ -666,9 +678,9 @@ namespace {
     bool ObjectCanAttack(std::shared_ptr<const UniverseObject> obj) {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(obj)) {
             return ship->IsArmed() || ship->HasFighters();
-        } else if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(obj)) {
+        } else if (auto planet = std::dynamic_pointer_cast<const Planet>(obj)) {
             return planet->CurrentMeterValue(METER_DEFENSE) > 0.0f;
-        } else if (std::shared_ptr<const Fighter> fighter = std::dynamic_pointer_cast<const Fighter>(obj)) {
+        } else if (auto fighter = std::dynamic_pointer_cast<const Fighter>(obj)) {
             return fighter->Damage() > 0.0f;
         } else {
             return false;
@@ -742,8 +754,8 @@ namespace {
     struct EmpireCombatInfo {
         std::set<int> attacker_ids;
         std::set<int> target_ids;
-        bool HasTargets() const                 { return !target_ids.empty(); }
-        bool HasAttackers() const               { return !attacker_ids.empty(); }
+        bool HasTargets() const { return !target_ids.empty(); }
+        bool HasAttackers() const { return !attacker_ids.empty(); }
 
         bool HasUnlauchedArmedFighters(const CombatInfo& combat_info) const {
             // check each ship to see if it has any unlaunched armed fighters...
@@ -755,7 +767,7 @@ namespace {
                 if (!ship)
                     continue;   // non-ships can't launch fighters
 
-                std::vector<PartAttackInfo> weapons = ShipWeaponsStrengths(ship);
+                auto weapons = ShipWeaponsStrengths(ship);
                 for (const PartAttackInfo& weapon : weapons) {
                     if (weapon.part_class == PC_FIGHTER_BAY &&
                         weapon.fighters_launched > 0 &&

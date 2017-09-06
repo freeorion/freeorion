@@ -205,7 +205,7 @@ namespace {
             enqueue_conditions.push_back(const_cast<Condition::ConditionBase*>(building_type->EnqueueLocation()));
             enqueue_conditions.push_back(const_cast<Condition::ConditionBase*>(building_type->Location()));
         }
-        std::shared_ptr<const UniverseObject> source = GetSourceObjectForEmpire(empire_id);
+        auto source = GetSourceObjectForEmpire(empire_id);
         if (only_failed_conditions)
             return ConditionFailedDescription(enqueue_conditions, GetUniverseObject(candidate_object_id), source);
         else
@@ -233,7 +233,7 @@ namespace {
                     location_conditions.push_back(const_cast<Condition::ConditionBase*>(part_type->Location()));
             }
         }
-        std::shared_ptr<const UniverseObject> source = GetSourceObjectForEmpire(empire_id);
+        auto source = GetSourceObjectForEmpire(empire_id);
 
         if (only_failed_conditions)
             return ConditionFailedDescription(location_conditions, GetUniverseObject(candidate_object_id), source);
@@ -639,7 +639,7 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id/* = ALL_EMPIRE
 
 void BuildDesignatorWnd::BuildSelector::Refresh() {
     ScopedTimer timer("BuildDesignatorWnd::BuildSelector::Refresh()");
-    if (std::shared_ptr<const UniverseObject> prod_loc = GetUniverseObject(this->m_production_location))
+    if (auto prod_loc = GetUniverseObject(this->m_production_location))
         this->SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE_LOCATION")) % prod_loc->Name()));
     else
         this->SetName(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"));
@@ -1049,7 +1049,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
     const ProductionQueue& queue = empire->GetProductionQueue();
     if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
         int location_id = queue[queue_idx].location;
-        if (std::shared_ptr<const UniverseObject> build_location = objects.Object(location_id)) {
+        if (auto build_location = objects.Object(location_id)) {
             // centre map on system of build location
             int system_id = build_location->SystemID();
             auto&& map = ClientUI::GetClientUI()->GetMapWnd();

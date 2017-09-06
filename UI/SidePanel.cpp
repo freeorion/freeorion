@@ -1974,7 +1974,7 @@ void SidePanel::PlanetPanel::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey
 void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
+    auto planet = GetPlanet(m_planet_id);
     if (!planet)
         return;
 
@@ -1984,8 +1984,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
     // an owned object in this fleet's system
     std::set<int> peaceful_empires_in_system;
     if (system) {
-        std::vector<std::shared_ptr<const UniverseObject>> system_objects =
-            Objects().FindObjects<const UniverseObject>(system->ObjectIDs());
+        auto system_objects = Objects().FindObjects<const UniverseObject>(system->ObjectIDs());
         for (auto& obj : system_objects) {
             if (obj->GetVisibility(client_empire_id) < VIS_PARTIAL_VISIBILITY)
                 continue;

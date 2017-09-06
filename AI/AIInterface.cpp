@@ -668,8 +668,7 @@ namespace AIInterface {
 
         // can only give to empires with something present to receive the gift
         bool recipient_has_something_here = false;
-        std::vector<std::shared_ptr<const UniverseObject>> system_objects =
-            Objects().FindObjects<const UniverseObject>(system->ObjectIDs());
+        auto system_objects = Objects().FindObjects<const UniverseObject>(system->ObjectIDs());
         for (auto& obj : system_objects) {
             if (obj->Owner() == recipient_id) {
                 recipient_has_something_here = true;

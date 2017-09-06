@@ -13,7 +13,10 @@ namespace {
     /** Returns how much of specified \a resource_type is being consumed by the
       * empire with id \a empire_id at the location of the specified
       * object \a obj. */
-    double ObjectResourceConsumption(std::shared_ptr<const UniverseObject> obj, ResourceType resource_type, int empire_id = ALL_EMPIRES) {
+    double ObjectResourceConsumption(std::shared_ptr<const UniverseObject> obj,
+                                     ResourceType resource_type,
+                                     int empire_id = ALL_EMPIRES)
+    {
         if (!obj) {
             ErrorLogger() << "ObjectResourceConsumption passed a null object";
             return 0.0;
@@ -186,15 +189,14 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
 
 
     // add label-value pair for each resource-producing object in system to indicate amount of resource produced
-    std::vector<std::shared_ptr<const UniverseObject>> objects =
-        Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs());
+    auto objects = Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs());
 
     for (auto& obj : objects) {
         // display information only for the requested player
         if (m_empire_id != ALL_EMPIRES && !obj->OwnedBy(m_empire_id))
             continue;   // if m_empire_id == -1, display resource production for all empires.  otherwise, skip this resource production if it's not owned by the requested player
 
-        std::shared_ptr<const ResourceCenter> rc = std::dynamic_pointer_cast<const ResourceCenter>(obj);
+        auto rc = std::dynamic_pointer_cast<const ResourceCenter>(obj);
         if (!rc) continue;
 
         std::string name = obj->Name();

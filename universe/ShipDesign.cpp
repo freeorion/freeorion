@@ -426,11 +426,11 @@ float PartType::ProductionCost(int empire_id, int location_id) const {
 
         const auto arbitrary_large_number = 999999.9f;
 
-        std::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
+        auto location = GetUniverseObject(location_id);
         if (!location && !m_production_cost->TargetInvariant())
             return arbitrary_large_number;
 
-        std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
+        auto source = Empires().GetSource(empire_id);
         if (!source && !m_production_cost->SourceInvariant())
             return arbitrary_large_number;
 
@@ -451,11 +451,11 @@ int PartType::ProductionTime(int empire_id, int location_id) const {
         else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant())
             return m_production_time->Eval();
 
-        std::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
+        auto location = GetUniverseObject(location_id);
         if (!location && !m_production_time->TargetInvariant())
             return arbitrary_large_number;
 
-        std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
+        auto source = Empires().GetSource(empire_id);
         if (!source && !m_production_time->SourceInvariant())
             return arbitrary_large_number;
 
@@ -554,11 +554,11 @@ float HullType::ProductionCost(int empire_id, int location_id) const {
 
         const auto arbitrary_large_number = 999999.9f;
 
-        std::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
+        auto location = GetUniverseObject(location_id);
         if (!location && !m_production_cost->TargetInvariant())
             return arbitrary_large_number;
 
-        std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
+        auto source = Empires().GetSource(empire_id);
         if (!source && !m_production_cost->SourceInvariant())
             return arbitrary_large_number;
 
@@ -579,11 +579,11 @@ int HullType::ProductionTime(int empire_id, int location_id) const {
 
         const auto arbitrary_large_number = 999999;
 
-        std::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
+        auto location = GetUniverseObject(location_id);
         if (!location && !m_production_time->TargetInvariant())
             return arbitrary_large_number;
 
-        std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
+        auto source = Empires().GetSource(empire_id);
         if (!source && !m_production_time->SourceInvariant())
             return arbitrary_large_number;
 
@@ -938,7 +938,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     }
 
     // must own the production location...
-    std::shared_ptr<const UniverseObject> location = GetUniverseObject(location_id);
+    auto location = GetUniverseObject(location_id);
     if (!location) {
         WarnLogger() << "ShipDesign::ProductionLocation unable to get location object with id " << location_id;
         return false;
@@ -946,7 +946,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     if (!location->OwnedBy(empire_id))
         return false;
 
-    std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(location);
+    auto planet = std::dynamic_pointer_cast<const Planet>(location);
     std::shared_ptr<const Ship> ship;
     if (!planet)
         ship = std::dynamic_pointer_cast<const Ship>(location);

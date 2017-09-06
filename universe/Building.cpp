@@ -247,11 +247,11 @@ float BuildingType::ProductionCost(int empire_id, int location_id) const {
 
         const auto arbitrary_large_number = 999999.9f;
 
-        std::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
+        auto location = GetUniverseObject(location_id);
         if (!location && !m_production_cost->TargetInvariant())
             return arbitrary_large_number;
 
-        std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
+        auto source = Empires().GetSource(empire_id);
         if (!source && !m_production_cost->SourceInvariant())
             return arbitrary_large_number;
 
@@ -275,11 +275,11 @@ int BuildingType::ProductionTime(int empire_id, int location_id) const {
 
         const auto arbitrary_large_number = 9999;
 
-        std::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
+        auto location = GetUniverseObject(location_id);
         if (!location && !m_production_time->TargetInvariant())
             return arbitrary_large_number;
 
-        std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
+        auto source = Empires().GetSource(empire_id);
         if (!source && !m_production_time->SourceInvariant())
             return arbitrary_large_number;
 
@@ -293,11 +293,11 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     if (!m_location)
         return true;
 
-    std::shared_ptr<const UniverseObject> location = GetUniverseObject(location_id);
+    auto location = GetUniverseObject(location_id);
     if (!location)
         return false;
 
-    std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
+    auto source = Empires().GetSource(empire_id);
     if (!source)
         return false;
 
@@ -308,11 +308,11 @@ bool BuildingType::EnqueueLocation(int empire_id, int location_id) const {
     if (!m_enqueue_location)
         return ProductionLocation(empire_id, location_id);
 
-    std::shared_ptr<const UniverseObject> location = GetUniverseObject(location_id);
+    auto location = GetUniverseObject(location_id);
     if (!location)
         return false;
 
-    std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
+    auto source = Empires().GetSource(empire_id);
     if (!source)
         return false;
 

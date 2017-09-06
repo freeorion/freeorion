@@ -1286,7 +1286,7 @@ int Empire::StockpileID(ResourceType res) const {
 }
 
 int Empire::SourceID() const {
-    std::shared_ptr<const UniverseObject> good_source = Source();
+    auto good_source = Source();
     return good_source ? good_source->ID() : INVALID_OBJECT_ID;
 }
 

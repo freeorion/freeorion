@@ -1302,7 +1302,7 @@ std::string EmpireAffiliation::Dump() const {
 }
 
 bool EmpireAffiliation::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "EmpireAffiliation::Match passed no candidate object";
         return false;
@@ -1470,7 +1470,7 @@ namespace {
                 return false;
 
             // is it a planet or a building on a planet?
-            std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(candidate);
+            auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
             std::shared_ptr<const ::Building> building;
             if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
                 planet = GetPlanet(building->PlanetID());
@@ -1483,9 +1483,9 @@ namespace {
 
             if (m_names.empty()) {
                 // match homeworlds for any species
-                for (SpeciesManager::iterator species_it = manager.begin(); species_it != manager.end(); ++species_it) {
-                    if (const ::Species* species = species_it->second) {
-                        const std::set<int>& homeworld_ids = species->Homeworlds();
+                for (auto species_it = manager.begin(); species_it != manager.end(); ++species_it) {
+                    if (auto species = species_it->second) {
+                        const auto& homeworld_ids = species->Homeworlds();
                         if (homeworld_ids.find(planet_id) != homeworld_ids.end())
                             return true;
                     }
@@ -1494,8 +1494,8 @@ namespace {
             } else {
                 // match any of the species specified
                 for (const std::string& name : m_names) {
-                    if (const ::Species* species = GetSpecies(name)) {
-                        const std::set<int>& homeworld_ids = species->Homeworlds();
+                    if (auto species = GetSpecies(name)) {
+                        const auto& homeworld_ids = species->Homeworlds();
                         if (homeworld_ids.find(planet_id) != homeworld_ids.end())
                             return true;
                     }
@@ -1516,7 +1516,7 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        for (auto name : m_names) {
             if (!name->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -1527,7 +1527,7 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
         // get all names from valuerefs
-        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        for (auto name : m_names) {
             names.push_back(name->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, HomeworldSimpleMatch(names));
@@ -1538,7 +1538,7 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
 }
 
 bool Homeworld::RootCandidateInvariant() const {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+    for (auto name : m_names) {
         if (!name->RootCandidateInvariant())
             return false;
     }
@@ -1546,7 +1546,7 @@ bool Homeworld::RootCandidateInvariant() const {
 }
 
 bool Homeworld::TargetInvariant() const {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+    for (auto name : m_names) {
         if (!name->TargetInvariant())
             return false;
     }
@@ -1554,7 +1554,7 @@ bool Homeworld::TargetInvariant() const {
 }
 
 bool Homeworld::SourceInvariant() const {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+    for (auto name : m_names) {
         if (!name->SourceInvariant())
             return false;
     }
@@ -1596,14 +1596,14 @@ std::string Homeworld::Dump() const {
 }
 
 bool Homeworld::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Homeworld::Match passed no candidate object";
         return false;
     }
 
     // is it a planet or a building on a planet?
-    std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(candidate);
+    auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
     std::shared_ptr<const ::Building> building;
     if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
@@ -3190,7 +3190,7 @@ void InSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 
     const ObjectMap& obj_map = Objects();
     const std::set<int>& system_object_ids = system->ObjectIDs();
-    std::vector<std::shared_ptr<const UniverseObject>> sys_objs = obj_map.FindObjects(system_object_ids);
+    auto sys_objs = obj_map.FindObjects(system_object_ids);
 
     // insert all objects that have the specified system id
     condition_non_targets.reserve(sys_objs.size() + 1);
@@ -3200,7 +3200,7 @@ void InSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 }
 
 bool InSystem::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "InSystem::Match passed no candidate object";
         return false;
@@ -3334,7 +3334,7 @@ void ObjectID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 }
 
 bool ObjectID::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "ObjectID::Match passed no candidate object";
         return false;
@@ -3395,7 +3395,7 @@ namespace {
                 return false;
 
             // is it a planet or on a planet?
-            std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(candidate);
+            auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
             std::shared_ptr<const ::Building> building;
             if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
                 planet = GetPlanet(building->PlanetID());
@@ -3419,7 +3419,7 @@ void PlanetType::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
+        for (auto type : m_types) {
             if (!type->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -3430,7 +3430,7 @@ void PlanetType::Eval(const ScriptingContext& parent_context,
         // evaluate types once, and use to check all candidate objects
         std::vector< ::PlanetType> types;
         // get all types from valuerefs
-        for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
+        for (auto type : m_types) {
             types.push_back(type->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, PlanetTypeSimpleMatch(types));
@@ -3441,7 +3441,7 @@ void PlanetType::Eval(const ScriptingContext& parent_context,
 }
 
 bool PlanetType::RootCandidateInvariant() const {
-    for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
+    for (auto type : m_types) {
         if (!type->RootCandidateInvariant())
             return false;
     }
@@ -3449,7 +3449,7 @@ bool PlanetType::RootCandidateInvariant() const {
 }
 
 bool PlanetType::TargetInvariant() const {
-    for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
+    for (auto type : m_types) {
         if (!type->TargetInvariant())
             return false;
     }
@@ -3457,7 +3457,7 @@ bool PlanetType::TargetInvariant() const {
 }
 
 bool PlanetType::SourceInvariant() const {
-    for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
+    for (auto type : m_types) {
         if (!type->SourceInvariant())
             return false;
     }
@@ -3506,19 +3506,19 @@ void PlanetType::GetDefaultInitialCandidateObjects(const ScriptingContext& paren
 }
 
 bool PlanetType::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "PlanetType::Match passed no candidate object";
         return false;
     }
 
-    std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(candidate);
+    auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
     std::shared_ptr<const ::Building> building;
     if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
-        for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
+        for (auto type : m_types) {
             if (type->Eval(ScriptingContext(local_context)) == planet->Type())
                 return true;
         }
@@ -3527,7 +3527,7 @@ bool PlanetType::Match(const ScriptingContext& local_context) const {
 }
 
 void PlanetType::SetTopLevelContent(const std::string& content_name) {
-    for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
+    for (auto type : m_types) {
         if (type)
             type->SetTopLevelContent(content_name);
     }
@@ -3580,14 +3580,14 @@ namespace {
                 return false;
 
             // is it a planet or on a planet? TODO: This concept should be generalized and factored out.
-            std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(candidate);
+            auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
             std::shared_ptr<const ::Building> building;
             if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
                 planet = GetPlanet(building->PlanetID());
             }
             if (planet) {
                 // is it one of the specified building types?
-                for (::PlanetSize size : m_sizes) {
+                for (auto size : m_sizes) {
                     if (planet->Size() == size)
                         return true;
                 }
@@ -3607,7 +3607,7 @@ void PlanetSize::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
+        for (auto size : m_sizes) {
             if (!size->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -3618,7 +3618,7 @@ void PlanetSize::Eval(const ScriptingContext& parent_context,
         // evaluate types once, and use to check all candidate objects
         std::vector< ::PlanetSize> sizes;
         // get all types from valuerefs
-        for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
+        for (auto size : m_sizes) {
             sizes.push_back(size->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, PlanetSizeSimpleMatch(sizes));
@@ -3629,7 +3629,7 @@ void PlanetSize::Eval(const ScriptingContext& parent_context,
 }
 
 bool PlanetSize::RootCandidateInvariant() const {
-    for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
+    for (auto size : m_sizes) {
         if (!size->RootCandidateInvariant())
             return false;
     }
@@ -3637,7 +3637,7 @@ bool PlanetSize::RootCandidateInvariant() const {
 }
 
 bool PlanetSize::TargetInvariant() const {
-    for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
+    for (auto size : m_sizes) {
         if (!size->TargetInvariant())
             return false;
     }
@@ -3645,7 +3645,7 @@ bool PlanetSize::TargetInvariant() const {
 }
 
 bool PlanetSize::SourceInvariant() const {
-    for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
+    for (auto size : m_sizes) {
         if (!size->SourceInvariant())
             return false;
     }
@@ -3694,19 +3694,19 @@ void PlanetSize::GetDefaultInitialCandidateObjects(const ScriptingContext& paren
 }
 
 bool PlanetSize::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "PlanetSize::Match passed no candidate object";
         return false;
     }
 
-    std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(candidate);
+    auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
     std::shared_ptr<const ::Building> building;
     if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
-        for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
+        for (auto size : m_sizes) {
             if (size->Eval(local_context) == planet->Size())
                 return true;
         }
@@ -3715,7 +3715,7 @@ bool PlanetSize::Match(const ScriptingContext& local_context) const {
 }
 
 void PlanetSize::SetTopLevelContent(const std::string& content_name) {
-    for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
+    for (auto size : m_sizes) {
         if (size)
             size->SetTopLevelContent(content_name);
     }
@@ -3735,7 +3735,7 @@ unsigned int PlanetSize::GetCheckSum() const {
 // PlanetEnvironment                                     //
 ///////////////////////////////////////////////////////////
 PlanetEnvironment::~PlanetEnvironment() {
-    for (ValueRef::ValueRefBase<::PlanetEnvironment>* environment : m_environments) {
+    for (auto environment : m_environments) {
         delete environment;
     }
     delete m_species_name;
@@ -3773,14 +3773,14 @@ namespace {
                 return false;
 
             // is it a planet or on a planet? TODO: factor out
-            std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(candidate);
+            auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
             std::shared_ptr<const ::Building> building;
             if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
                 planet = GetPlanet(building->PlanetID());
             }
             if (planet) {
                 // is it one of the specified building types?
-                for (::PlanetEnvironment environment : m_environments) {
+                for (auto environment : m_environments) {
                     if (planet->EnvironmentForSpecies(m_species) == environment)
                         return true;
                 }
@@ -3795,14 +3795,14 @@ namespace {
 }
 
 void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
-                                        ObjectSet& matches, ObjectSet& non_matches,
-                                        SearchDomain search_domain/* = NON_MATCHES*/) const
+                             ObjectSet& matches, ObjectSet& non_matches,
+                             SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ((!m_species_name || m_species_name->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (ValueRef::ValueRefBase<::PlanetEnvironment>* environment : m_environments) {
+        for (auto environment : m_environments) {
             if (!environment->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -3813,7 +3813,7 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
         // evaluate types once, and use to check all candidate objects
         std::vector< ::PlanetEnvironment> environments;
         // get all types from valuerefs
-        for (ValueRef::ValueRefBase<::PlanetEnvironment>* environment : m_environments) {
+        for (auto environment : m_environments) {
             environments.push_back(environment->Eval(parent_context));
         }
         std::string species_name;
@@ -3829,7 +3829,7 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
 bool PlanetEnvironment::RootCandidateInvariant() const {
     if (m_species_name && !m_species_name->RootCandidateInvariant())
         return false;
-    for (ValueRef::ValueRefBase<::PlanetEnvironment>* environment : m_environments) {
+    for (auto environment : m_environments) {
         if (!environment->RootCandidateInvariant())
             return false;
     }
@@ -3839,7 +3839,7 @@ bool PlanetEnvironment::RootCandidateInvariant() const {
 bool PlanetEnvironment::TargetInvariant() const {
     if (m_species_name && !m_species_name->TargetInvariant())
         return false;
-    for (ValueRef::ValueRefBase<::PlanetEnvironment>* environment : m_environments) {
+    for (auto environment : m_environments) {
         if (!environment->TargetInvariant())
             return false;
     }
@@ -3849,7 +3849,7 @@ bool PlanetEnvironment::TargetInvariant() const {
 bool PlanetEnvironment::SourceInvariant() const {
     if (m_species_name && !m_species_name->SourceInvariant())
         return false;
-    for (ValueRef::ValueRefBase<::PlanetEnvironment>* environment : m_environments) {
+    for (auto environment : m_environments) {
         if (!environment->SourceInvariant())
             return false;
     }
@@ -3891,7 +3891,7 @@ std::string PlanetEnvironment::Dump() const {
         retval += m_environments[0]->Dump();
     } else {
         retval += "[ ";
-        for (ValueRef::ValueRefBase<::PlanetEnvironment>* environment : m_environments) {
+        for (auto environment : m_environments) {
             retval += environment->Dump() + " ";
         }
         retval += "]";
@@ -3910,14 +3910,14 @@ void PlanetEnvironment::GetDefaultInitialCandidateObjects(const ScriptingContext
 }
 
 bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "PlanetEnvironment::Match passed no candidate object";
         return false;
     }
 
     // is it a planet or on a planet? TODO: factor out
-    std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(candidate);
+    auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
     std::shared_ptr<const ::Building> building;
     if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
@@ -3929,8 +3929,8 @@ bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
     if (m_species_name)
         species_name = m_species_name->Eval(local_context);
 
-    ::PlanetEnvironment env_for_planets_species = planet->EnvironmentForSpecies(species_name);
-    for (ValueRef::ValueRefBase<::PlanetEnvironment>* environment : m_environments) {
+    auto env_for_planets_species = planet->EnvironmentForSpecies(species_name);
+    for (auto environment : m_environments) {
         if (environment->Eval(local_context) == env_for_planets_species)
             return true;
     }
@@ -3940,7 +3940,7 @@ bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
 void PlanetEnvironment::SetTopLevelContent(const std::string& content_name) {
     if (m_species_name)
         m_species_name->SetTopLevelContent(content_name);
-    for (ValueRef::ValueRefBase<::PlanetEnvironment>* environment : m_environments) {
+    for (auto environment : m_environments) {
         if (environment)
             environment->SetTopLevelContent(content_name);
     }
@@ -3961,7 +3961,7 @@ unsigned int PlanetEnvironment::GetCheckSum() const {
 // Species                                              //
 ///////////////////////////////////////////////////////////
 Species::~Species() {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names)
+    for (auto name : m_names)
         delete name;
 }
 
@@ -3993,20 +3993,20 @@ namespace {
                 return false;
 
             // is it a population centre?
-            if (std::shared_ptr<const ::PopCenter> pop = std::dynamic_pointer_cast<const ::PopCenter>(candidate)) {
+            if (auto pop = std::dynamic_pointer_cast<const ::PopCenter>(candidate)) {
                 const std::string& species_name = pop->SpeciesName();
                 // if the popcenter has a species and that species is one of those specified...
                 return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
             }
             // is it a ship?
-            if (std::shared_ptr<const ::Ship> ship = std::dynamic_pointer_cast<const Ship>(candidate)) {
+            if (auto ship = std::dynamic_pointer_cast<const Ship>(candidate)) {
                 // if the ship has a species and that species is one of those specified...
                 const std::string& species_name = ship->SpeciesName();
                 return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
             }
             // is it a building on a planet?
-            if (std::shared_ptr<const ::Building> building = std::dynamic_pointer_cast<const ::Building>(candidate)) {
-                std::shared_ptr<const ::Planet> planet = GetPlanet(building->PlanetID());
+            if (auto building = std::dynamic_pointer_cast<const ::Building>(candidate)) {
+                auto planet = GetPlanet(building->PlanetID());
                 const std::string& species_name = planet->SpeciesName();
                 // if the planet (which IS a popcenter) has a species and that species is one of those specified...
                 return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
@@ -4026,7 +4026,7 @@ void Species::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        for (auto name : m_names) {
             if (!name->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -4037,7 +4037,7 @@ void Species::Eval(const ScriptingContext& parent_context,
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
         // get all names from valuerefs
-        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        for (auto name : m_names) {
             names.push_back(name->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, SpeciesSimpleMatch(names));
@@ -4048,7 +4048,7 @@ void Species::Eval(const ScriptingContext& parent_context,
 }
 
 bool Species::RootCandidateInvariant() const {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+    for (auto name : m_names) {
         if (!name->RootCandidateInvariant())
             return false;
     }
@@ -4056,7 +4056,7 @@ bool Species::RootCandidateInvariant() const {
 }
 
 bool Species::TargetInvariant() const {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+    for (auto name : m_names) {
         if (!name->TargetInvariant())
             return false;
     }
@@ -4064,7 +4064,7 @@ bool Species::TargetInvariant() const {
 }
 
 bool Species::SourceInvariant() const {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+    for (auto name : m_names) {
         if (!name->SourceInvariant())
             return false;
     }
@@ -4101,7 +4101,7 @@ std::string Species::Dump() const {
         retval += " name = " + m_names[0]->Dump() + "\n";
     } else {
         retval += " name = [ ";
-        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        for (auto name : m_names) {
             retval += name->Dump() + " ";
         }
         retval += "]\n";
@@ -4118,14 +4118,14 @@ void Species::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_c
 }
 
 bool Species::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Species::Match passed no candidate object";
         return false;
     }
 
     // is it a planet or a building on a planet? TODO: factor out
-    std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(candidate);
+    auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
     std::shared_ptr<const ::Building> building;
     if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
@@ -4135,7 +4135,7 @@ bool Species::Match(const ScriptingContext& local_context) const {
             return !planet->SpeciesName().empty();  // match any species name
         } else {
             // match only specified species names
-            for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+            for (auto name : m_names) {
                 if (name->Eval(local_context) == planet->SpeciesName())
                     return true;
             }
@@ -4148,7 +4148,7 @@ bool Species::Match(const ScriptingContext& local_context) const {
             return !ship->SpeciesName().empty();    // match any species name
         } else {
             // match only specified species names
-            for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+            for (auto name : m_names) {
                 if (name->Eval(local_context) == ship->SpeciesName())
                     return true;
             }
@@ -4158,7 +4158,7 @@ bool Species::Match(const ScriptingContext& local_context) const {
 }
 
 void Species::SetTopLevelContent(const std::string& content_name) {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+    for (auto name : m_names) {
         if (name)
             name->SetTopLevelContent(content_name);
     }
@@ -4230,7 +4230,7 @@ namespace {
                       const std::string& name = "", int design_id = INVALID_DESIGN_ID)
     {
         int retval = 0;
-        for (const ProductionQueue::Element& element : queue) {
+        for (const auto& element : queue) {
             if (!(build_type == INVALID_BUILD_TYPE || build_type == element.item.build_type))
                 continue;
             if (location_id != element.location)
@@ -4448,7 +4448,7 @@ std::string Enqueued::Dump() const {
 }
 
 bool Enqueued::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Enqueued::Match passed no candidate object";
         return false;
@@ -4498,7 +4498,7 @@ unsigned int Enqueued::GetCheckSum() const {
 // FocusType                                             //
 ///////////////////////////////////////////////////////////
 FocusType::~FocusType() {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+    for (auto name : m_names) {
         delete name;
     }
 }
@@ -4556,7 +4556,7 @@ void FocusType::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        for (auto name : m_names) {
             if (!name->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -4567,7 +4567,7 @@ void FocusType::Eval(const ScriptingContext& parent_context,
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
         // get all names from valuerefs
-        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        for (auto name : m_names) {
             names.push_back(name->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, FocusTypeSimpleMatch(names));
@@ -4578,7 +4578,7 @@ void FocusType::Eval(const ScriptingContext& parent_context,
 }
 
 bool FocusType::RootCandidateInvariant() const {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+    for (auto name : m_names) {
         if (!name->RootCandidateInvariant())
             return false;
     }
@@ -4586,7 +4586,7 @@ bool FocusType::RootCandidateInvariant() const {
 }
 
 bool FocusType::TargetInvariant() const {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+    for (auto name : m_names) {
         if (!name->TargetInvariant())
             return false;
     }
@@ -4594,7 +4594,7 @@ bool FocusType::TargetInvariant() const {
 }
 
 bool FocusType::SourceInvariant() const {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+    for (auto name : m_names) {
         if (!name->SourceInvariant())
             return false;
     }
@@ -4627,7 +4627,7 @@ std::string FocusType::Dump() const {
         retval += m_names[0]->Dump() + "\n";
     } else {
         retval += "[ ";
-        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        for (auto name : m_names) {
             retval += name->Dump() + " ";
         }
         retval += "]\n";
@@ -4666,7 +4666,7 @@ void FocusType::GetDefaultInitialCandidateObjects(const ScriptingContext& parent
 }
 
 void FocusType::SetTopLevelContent(const std::string& content_name) {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+    for (auto name : m_names) {
         if (name)
             name->SetTopLevelContent(content_name);
     }
@@ -4736,7 +4736,7 @@ void StarType::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
+        for (auto type : m_types) {
             if (!type->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -4747,7 +4747,7 @@ void StarType::Eval(const ScriptingContext& parent_context,
         // evaluate types once, and use to check all candidate objects
         std::vector< ::StarType> types;
         // get all types from valuerefs
-        for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
+        for (auto type : m_types) {
             types.push_back(type->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, StarTypeSimpleMatch(types));
@@ -4758,7 +4758,7 @@ void StarType::Eval(const ScriptingContext& parent_context,
 }
 
 bool StarType::RootCandidateInvariant() const {
-    for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
+    for (auto type : m_types) {
         if (!type->RootCandidateInvariant())
             return false;
     }
@@ -4766,7 +4766,7 @@ bool StarType::RootCandidateInvariant() const {
 }
 
 bool StarType::TargetInvariant() const {
-    for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
+    for (auto type : m_types) {
         if (!type->TargetInvariant())
             return false;
     }
@@ -4774,7 +4774,7 @@ bool StarType::TargetInvariant() const {
 }
 
 bool StarType::SourceInvariant() const {
-    for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
+    for (auto type : m_types) {
         if (!type->SourceInvariant())
             return false;
     }
@@ -4807,7 +4807,7 @@ std::string StarType::Dump() const {
         retval += m_types[0]->Dump() + "\n";
     } else {
         retval += "[ ";
-        for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
+        for (auto type : m_types) {
             retval += type->Dump() + " ";
         }
         retval += "]\n";
@@ -5012,7 +5012,7 @@ namespace {
                 return false;
 
             // is it a ship?
-            std::shared_ptr<const ::Ship> ship = std::dynamic_pointer_cast<const ::Ship>(candidate);
+            auto ship = std::dynamic_pointer_cast<const ::Ship>(candidate);
             if (!ship)
                 return false;
             // with a valid design?
@@ -5113,7 +5113,7 @@ std::string DesignHasPart::Dump() const {
 }
 
 bool DesignHasPart::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "DesignHasPart::Match passed no candidate object";
         return false;
@@ -5191,7 +5191,7 @@ namespace {
                 return false;
 
             // is it a ship?
-            std::shared_ptr<const ::Ship> ship = std::dynamic_pointer_cast<const ::Ship>(candidate);
+            auto ship = std::dynamic_pointer_cast<const ::Ship>(candidate);
             if (!ship)
                 return false;
             // with a valid design?
@@ -5278,7 +5278,7 @@ std::string DesignHasPartClass::Dump() const {
 }
 
 bool DesignHasPartClass::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "DesignHasPartClass::Match passed no candidate object";
         return false;
@@ -5424,7 +5424,7 @@ std::string PredefinedShipDesign::Dump() const {
 }
 
 bool PredefinedShipDesign::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "PredefinedShipDesign::Match passed no candidate object";
         return false;
@@ -5534,7 +5534,7 @@ std::string NumberedShipDesign::Dump() const
 { return DumpIndent() + "NumberedShipDesign design_id = " + m_design_id->Dump(); }
 
 bool NumberedShipDesign::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "NumberedShipDesign::Match passed no candidate object";
         return false;
@@ -5586,9 +5586,9 @@ namespace {
             if (!candidate)
                 return false;
 
-            if (std::shared_ptr<const ::Ship> ship = std::dynamic_pointer_cast<const ::Ship>(candidate))
+            if (auto ship = std::dynamic_pointer_cast<const ::Ship>(candidate))
                 return ship->ProducedByEmpireID() == m_empire_id;
-            else if (std::shared_ptr<const ::Building> building = std::dynamic_pointer_cast<const ::Building>(candidate))
+            else if (auto building = std::dynamic_pointer_cast<const ::Building>(candidate))
                 return building->ProducedByEmpireID() == m_empire_id;
             return false;
         }
@@ -5646,7 +5646,7 @@ std::string ProducedByEmpire::Dump() const
 { return DumpIndent() + "ProducedByEmpire empire_id = " + m_empire_id->Dump(); }
 
 bool ProducedByEmpire::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "ProducedByEmpire::Match passed no candidate object";
         return false;
@@ -5921,7 +5921,7 @@ std::string MeterValue::Dump() const {
 }
 
 bool MeterValue::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "MeterValue::Match passed no candidate object";
         return false;
@@ -6090,7 +6090,7 @@ std::string ShipPartMeterValue::Dump() const {
 }
 
 bool ShipPartMeterValue::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "ShipPartMeterValue::Match passed no candidate object";
         return false;
@@ -6263,7 +6263,7 @@ std::string EmpireMeterValue::Dump() const {
 }
 
 bool EmpireMeterValue::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "EmpireMeterValue::Match passed no candidate object";
         return false;
@@ -6412,7 +6412,7 @@ std::string EmpireStockpileValue::Dump() const {
 }
 
 bool EmpireStockpileValue::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "EmpireStockpileValue::Match passed no candidate object";
         return false;
@@ -6533,7 +6533,7 @@ std::string OwnerHasTech::Dump() const {
 }
 
 bool OwnerHasTech::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "OwnerHasTech::Match passed no candidate object";
         return false;
@@ -6649,7 +6649,7 @@ std::string OwnerHasBuildingTypeAvailable::Dump() const {
 }
 
 bool OwnerHasBuildingTypeAvailable::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "OwnerHasTech::Match passed no candidate object";
         return false;
@@ -6765,7 +6765,7 @@ std::string OwnerHasShipDesignAvailable::Dump() const {
 }
 
 bool OwnerHasShipDesignAvailable::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "OwnerHasTech::Match passed no candidate object";
         return false;
@@ -6882,8 +6882,7 @@ std::string OwnerHasShipPartAvailable::Dump() const {
 }
 
 bool OwnerHasShipPartAvailable::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate =
-        local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "OwnerHasShipPart::Match passed no candidate object";
         return false;
@@ -6992,7 +6991,7 @@ std::string VisibleToEmpire::Dump() const
 { return DumpIndent() + "VisibleToEmpire empire_id = " + m_empire_id->Dump() + "\n"; }
 
 bool VisibleToEmpire::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "VisibleToEmpire::Match passed no candidate object";
         return false;
@@ -7119,7 +7118,7 @@ std::string WithinDistance::Dump() const {
 }
 
 bool WithinDistance::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "WithinDistance::Match passed no candidate object";
         return false;
@@ -7226,7 +7225,7 @@ std::string WithinStarlaneJumps::Dump() const {
 }
 
 bool WithinStarlaneJumps::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "WithinStarlaneJumps::Match passed no candidate object";
         return false;
@@ -7475,11 +7474,11 @@ namespace {
             if (system == lane_end_sys1 || system == lane_end_sys2)
                 continue;
 
-            const std::map<int, bool>& sys_existing_lanes = system->StarlanesWormholes();
+            const auto& sys_existing_lanes = system->StarlanesWormholes();
 
             // check all existing lanes of currently-being-checked system
             for (const auto& lane : sys_existing_lanes) {
-                std::shared_ptr<const System> lane_end_sys3 = GetSystem(lane.first);
+                auto lane_end_sys3 = GetSystem(lane.first);
                 if (!lane_end_sys3)
                     continue;
                 // don't need to check against existing lanes that include one
@@ -7505,7 +7504,7 @@ namespace {
             return true;
 
         const ObjectMap& objects = Objects();
-        std::vector<std::shared_ptr<const System>> systems = objects.FindObjects<System>();
+        auto systems = objects.FindObjects<System>();
 
         // loop over all existing systems, checking if each is too close to a
         // lane between the specified lane endpoints
@@ -7528,7 +7527,7 @@ namespace {
             // destination objects
             std::set<std::shared_ptr<const System>> dest_systems;
             for (auto& obj : destination_objects) {
-                if (std::shared_ptr<const System> sys = GetSystem(obj->SystemID()))
+                if (auto sys = GetSystem(obj->SystemID()))
                     dest_systems.insert(sys);
             }
             std::copy(dest_systems.begin(), dest_systems.end(), std::inserter(m_destination_systems, m_destination_systems.end()));
@@ -7539,7 +7538,7 @@ namespace {
                 return false;
 
             // get system from candidate
-            std::shared_ptr<const System> candidate_sys = std::dynamic_pointer_cast<const System>(candidate);
+            auto candidate_sys = std::dynamic_pointer_cast<const System>(candidate);
             if (!candidate_sys)
                 candidate_sys = GetSystem(candidate->SystemID());
             if (!candidate_sys)
@@ -7563,7 +7562,7 @@ namespace {
             // present lanes of the candidate system
             //TraceLogger() << "... Checking lanes of candidate system: " << candidate->UniverseObject::Name() << std::endl;
             for (const auto& lane : candidate_sys->StarlanesWormholes()) {
-                std::shared_ptr<const System> candidate_existing_lane_end_sys = GetSystem(lane.first);
+                auto candidate_existing_lane_end_sys = GetSystem(lane.first);
                 if (!candidate_existing_lane_end_sys)
                     continue;
 
@@ -7584,7 +7583,7 @@ namespace {
                 // check this destination system's existing lanes against a lane
                 // to the candidate system
                 for (const auto& dest_lane : dest_sys->StarlanesWormholes()) {
-                    std::shared_ptr<const System> dest_lane_end_sys = GetSystem(dest_lane.first);
+                    auto dest_lane_end_sys = GetSystem(dest_lane.first);
                     if (!dest_lane_end_sys)
                         continue;
 
@@ -7688,7 +7687,7 @@ std::string CanAddStarlaneConnection::Dump() const {
 }
 
 bool CanAddStarlaneConnection::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "CanAddStarlaneConnection::Match passed no candidate object";
         return false;
@@ -7804,7 +7803,7 @@ std::string ExploredByEmpire::Dump() const
 { return DumpIndent() + "ExploredByEmpire empire_id = " + m_empire_id->Dump(); }
 
 bool ExploredByEmpire::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "ExploredByEmpire::Match passed no candidate object";
         return false;
@@ -7844,7 +7843,7 @@ std::string Stationary::Dump() const
 { return DumpIndent() + "Stationary\n"; }
 
 bool Stationary::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Stationary::Match passed no candidate object";
         return false;
@@ -7902,7 +7901,7 @@ std::string Aggressive::Dump() const
 { return DumpIndent() + (m_aggressive ? "Aggressive\n" : "Passive\n"); }
 
 bool Aggressive::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Aggressive::Match passed no candidate object";
         return false;
@@ -8026,7 +8025,7 @@ std::string FleetSupplyableByEmpire::Dump() const
 { return DumpIndent() + "ResupplyableBy empire_id = " + m_empire_id->Dump(); }
 
 bool FleetSupplyableByEmpire::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "FleetSupplyableByEmpire::Match passed no candidate object";
         return false;
@@ -8085,13 +8084,13 @@ namespace {
                 return false;
             if (m_from_objects.empty())
                 return false;
-            const std::set<std::set<int>>& groups = GetSupplyManager().ResourceSupplyGroups(m_empire_id);
+            const auto& groups = GetSupplyManager().ResourceSupplyGroups(m_empire_id);
             if (groups.empty())
                 return false;
 
             // is candidate object connected to a subcondition matching object by resource supply?
             for (auto& from_object : m_from_objects) {
-                for (const std::set<int>& group : groups) {
+                for (const auto& group : groups) {
                     if (group.find(from_object->SystemID()) != group.end()) {
                         // found resource sharing group containing test object.  Does it also contain candidate?
                         if (group.find(candidate->SystemID()) != group.end())
@@ -8149,7 +8148,7 @@ bool ResourceSupplyConnectedByEmpire::SourceInvariant() const
 { return m_empire_id->SourceInvariant() && m_condition->SourceInvariant(); }
 
 bool ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "ResourceSupplyConnectedByEmpire::Match passed no candidate object";
         return false;
@@ -8225,7 +8224,7 @@ std::string CanColonize::Dump() const
 { return DumpIndent() + "CanColonize\n"; }
 
 bool CanColonize::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "CanColonize::Match passed no candidate object";
         return false;
@@ -8234,7 +8233,7 @@ bool CanColonize::Match(const ScriptingContext& local_context) const {
     // is it a ship, a planet, or a building on a planet?
     std::string species_name;
     if (candidate->ObjectType() == OBJ_PLANET) {
-        std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(candidate);
+        auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
         if (!planet) {
             ErrorLogger() << "CanColonize couldn't cast supposedly planet candidate";
             return false;
@@ -8242,7 +8241,7 @@ bool CanColonize::Match(const ScriptingContext& local_context) const {
         species_name = planet->SpeciesName();
 
     } else if (candidate->ObjectType() == OBJ_BUILDING) {
-        std::shared_ptr<const ::Building> building = std::dynamic_pointer_cast<const ::Building>(candidate);
+        auto building = std::dynamic_pointer_cast<const ::Building>(candidate);
         if (!building) {
             ErrorLogger() << "CanColonize couldn't cast supposedly building candidate";
             return false;
@@ -8265,7 +8264,7 @@ bool CanColonize::Match(const ScriptingContext& local_context) const {
 
     if (species_name.empty())
         return false;
-    const ::Species* species = GetSpecies(species_name);
+    auto species = GetSpecies(species_name);
     if (!species) {
         ErrorLogger() << "CanColonize couldn't get species: " << species_name;
         return false;
@@ -8298,7 +8297,7 @@ std::string CanProduceShips::Dump() const
 { return DumpIndent() + "CanColonize\n"; }
 
 bool CanProduceShips::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "CanProduceShips::Match passed no candidate object";
         return false;
@@ -8307,7 +8306,7 @@ bool CanProduceShips::Match(const ScriptingContext& local_context) const {
     // is it a ship, a planet, or a building on a planet?
     std::string species_name;
     if (candidate->ObjectType() == OBJ_PLANET) {
-        std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(candidate);
+        auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
         if (!planet) {
             ErrorLogger() << "CanProduceShips couldn't cast supposedly planet candidate";
             return false;
@@ -8385,7 +8384,7 @@ namespace {
                 return false;
             if (m_by_objects.empty())
                 return false;
-            std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(candidate);
+            auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
             if (!planet)
                 return false;
             int planet_id = planet->ID();
@@ -8452,7 +8451,7 @@ std::string OrderedBombarded::Dump() const
 { return DumpIndent() + "OrderedBombarded by_object = " + m_by_object_condition->Dump(); }
 
 bool OrderedBombarded::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "OrderedBombarded::Match passed no candidate object";
         return false;
@@ -8794,7 +8793,7 @@ std::string ValueTest::Dump() const {
 }
 
 bool ValueTest::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "ValueTest::Match passed no candidate object";
         return false;
@@ -8902,28 +8901,28 @@ namespace {
             return nullptr;
         switch (content_type) {
         case CONTENT_BUILDING: {
-            if (const BuildingType* bt = GetBuildingType(name1))
+            if (auto bt = GetBuildingType(name1))
                 return bt->Location();
             break;
         }
         case CONTENT_SPECIES: {
-            const ::Species* s = GetSpecies(name1);
+            auto s = GetSpecies(name1);
             if (!s)
                 return nullptr;
             return s->Location();
         }
         case CONTENT_SHIP_HULL: {
-            if (const HullType* h = GetHullType(name1))
+            if (auto h = GetHullType(name1))
                 return h->Location();
             break;
         }
         case CONTENT_SHIP_PART: {
-            if (const PartType* p = GetPartType(name1))
+            if (auto p = GetPartType(name1))
                 return p->Location();
             break;
         }
         case CONTENT_SPECIAL: {
-            if (const Special* s = GetSpecial(name1))
+            if (auto s = GetSpecial(name1))
                 return s->Location();
             break;
         }
@@ -8931,8 +8930,8 @@ namespace {
             if (name2.empty())
                 return nullptr;
             // get species, then focus from that species
-            if (const ::Species* s = GetSpecies(name1)) {
-                for (const ::FocusType& f : s->Foci()) {
+            if (auto s = GetSpecies(name1)) {
+                for (auto& f : s->Foci()) {
                     if (f.Name() == name2)
                         return f.Location();
                 }
@@ -8985,7 +8984,7 @@ void Location::Eval(const ScriptingContext& parent_context,
         std::string name2 = (m_name2 ? m_name2->Eval(local_context) : "");
 
         // get condition from content, apply to matches / non_matches
-        const ConditionBase* condition = GetLocationCondition(m_content_type, name1, name2);
+        const auto condition = GetLocationCondition(m_content_type, name1, name2);
         if (condition && condition != this) {
             condition->Eval(parent_context, matches, non_matches, search_domain);
         } else {
@@ -9060,7 +9059,7 @@ std::string Location::Dump() const {
 }
 
 bool Location::Match(const ScriptingContext& local_context) const {
-    std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Location::Match passed no candidate object";
         return false;
@@ -9069,7 +9068,7 @@ bool Location::Match(const ScriptingContext& local_context) const {
     std::string name1 = (m_name1 ? m_name1->Eval(local_context) : "");
     std::string name2 = (m_name2 ? m_name2->Eval(local_context) : "");
 
-    const ConditionBase* condition = GetLocationCondition(m_content_type, name1, name2);
+    const auto condition = GetLocationCondition(m_content_type, name1, name2);
     if (!condition || condition == this)
         return false;
 
@@ -9101,7 +9100,7 @@ unsigned int Location::GetCheckSum() const {
 // And                                                   //
 ///////////////////////////////////////////////////////////
 And::~And() {
-    for (ConditionBase* operand : m_operands)
+    for (auto operand : m_operands)
         delete operand;
 }
 
@@ -9132,7 +9131,7 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         ErrorLogger() << "And::Eval given no operands!";
         return;
     }
-    for (ConditionBase* operand : m_operands) {
+    for (auto operand : m_operands) {
         if (!operand) {
             ErrorLogger() << "And::Eval given null operand!";
             return;
@@ -9163,7 +9162,7 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         // check all operand conditions on all objects in the matches set, moving those
         // that don't pass a condition to the non-matches set
 
-        for (ConditionBase* operand : m_operands) {
+        for (auto operand : m_operands) {
             if (matches.empty()) break;
             operand->Eval(local_context, matches, non_matches, MATCHES);
         }
@@ -9177,7 +9176,7 @@ bool And::RootCandidateInvariant() const {
     if (m_root_candidate_invariant != UNKNOWN_INVARIANCE)
         return m_root_candidate_invariant == INVARIANT;
 
-    for (ConditionBase* operand : m_operands) {
+    for (auto operand : m_operands) {
         if (!operand->RootCandidateInvariant()) {
             m_root_candidate_invariant = VARIANT;
             return false;
@@ -9191,7 +9190,7 @@ bool And::TargetInvariant() const {
     if (m_target_invariant != UNKNOWN_INVARIANCE)
         return m_target_invariant == INVARIANT;
 
-    for (ConditionBase* operand : m_operands) {
+    for (auto operand : m_operands) {
         if (!operand->TargetInvariant()) {
             m_target_invariant = VARIANT;
             return false;
@@ -9205,7 +9204,7 @@ bool And::SourceInvariant() const {
     if (m_source_invariant != UNKNOWN_INVARIANCE)
         return m_source_invariant == INVARIANT;
 
-    for (ConditionBase* operand : m_operands) {
+    for (auto operand : m_operands) {
         if (!operand->SourceInvariant()) {
             m_source_invariant = VARIANT;
             return false;
@@ -9251,7 +9250,7 @@ void And::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_conte
 }
 
 void And::SetTopLevelContent(const std::string& content_name) {
-    for (ConditionBase* operand : m_operands) {
+    for (auto operand : m_operands) {
         operand->SetTopLevelContent(content_name);
     }
 }
@@ -9270,7 +9269,7 @@ unsigned int And::GetCheckSum() const {
 // Or                                                    //
 ///////////////////////////////////////////////////////////
 Or::~Or() {
-    for (ConditionBase* operand : m_operands)
+    for (auto operand : m_operands)
         delete operand;
 }
 
@@ -9301,7 +9300,7 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         ErrorLogger() << "Or::Eval given no operands!";
         return;
     }
-    for (ConditionBase* operand : m_operands) {
+    for (auto operand : m_operands) {
         if (!operand) {
             ErrorLogger() << "Or::Eval given null operand!";
             return;
@@ -9313,7 +9312,7 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         // if a non-candidate item matches an operand condition, move the item to the
         // matches set.
 
-        for (ConditionBase* operand : m_operands) {
+        for (auto operand : m_operands) {
             if (non_matches.empty()) break;
             operand->Eval(local_context, matches, non_matches, NON_MATCHES);
         }
@@ -9330,7 +9329,7 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         m_operands[0]->Eval(local_context, matches, partly_checked_matches, MATCHES);
 
         // move items that pass any of the other conditions back into matches
-        for (ConditionBase* operand : m_operands) {
+        for (auto operand : m_operands) {
             if (partly_checked_matches.empty()) break;
             operand->Eval(local_context, matches, partly_checked_matches, NON_MATCHES);
         }
@@ -9348,7 +9347,7 @@ bool Or::RootCandidateInvariant() const {
     if (m_root_candidate_invariant != UNKNOWN_INVARIANCE)
         return m_root_candidate_invariant == INVARIANT;
 
-    for (ConditionBase* operand : m_operands) {
+    for (auto operand : m_operands) {
         if (!operand->RootCandidateInvariant()) {
             m_root_candidate_invariant = VARIANT;
             return false;
@@ -9362,7 +9361,7 @@ bool Or::TargetInvariant() const {
     if (m_target_invariant != UNKNOWN_INVARIANCE)
         return m_target_invariant == INVARIANT;
 
-    for (ConditionBase* operand : m_operands) {
+    for (auto operand : m_operands) {
         if (!operand->TargetInvariant()) {
             m_target_invariant = VARIANT;
             return false;
@@ -9376,7 +9375,7 @@ bool Or::SourceInvariant() const {
     if (m_source_invariant != UNKNOWN_INVARIANCE)
         return m_source_invariant == INVARIANT;
 
-    for (ConditionBase* operand : m_operands) {
+    for (auto operand : m_operands) {
         if (!operand->SourceInvariant()) {
             m_source_invariant = VARIANT;
             return false;
@@ -9405,7 +9404,7 @@ std::string Or::Description(bool negated/* = false*/) const {
 std::string Or::Dump() const {
     std::string retval = DumpIndent() + "Or [\n";
     ++g_indent;
-    for (ConditionBase* operand : m_operands) {
+    for (auto operand : m_operands) {
         retval += operand->Dump();
     }
     --g_indent;
@@ -9414,7 +9413,7 @@ std::string Or::Dump() const {
 }
 
 void Or::SetTopLevelContent(const std::string& content_name) {
-    for (ConditionBase* operand : m_operands) {
+    for (auto operand : m_operands) {
         operand->SetTopLevelContent(content_name);
     }
 }

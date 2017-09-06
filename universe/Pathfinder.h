@@ -112,7 +112,8 @@ public:
 
     /** Returns the partition (near, far) of the \p candidate objects into two sets, those that are within \p
         jumps of the \p stationary objects and that are not.*/
-    std::pair<std::vector<std::shared_ptr<const UniverseObject>>, std::vector<std::shared_ptr<const UniverseObject>>>
+    std::pair<std::vector<std::shared_ptr<const UniverseObject>>,
+              std::vector<std::shared_ptr<const UniverseObject>>>
         WithinJumpsOfOthers(
             int jumps,
             const std::vector<std::shared_ptr<const UniverseObject>>& candidates,

@@ -386,11 +386,11 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         return;
 
     // add label-value pairs for each alteration recorded for this meter
-    for (const Effect::AccountingInfo& info : *maybe_info_vec) {
-        std::shared_ptr<const UniverseObject> source = GetUniverseObject(info.source_id);
+    for (const auto& info : *maybe_info_vec) {
+        auto source = GetUniverseObject(info.source_id);
 
-        std::string     text;
-        std::string     name;
+        std::string text;
+        std::string name;
         if (source)
             name = source->Name();
 
@@ -503,7 +503,7 @@ void ShipDamageBrowseWnd::Initialize() {
     const GG::X TOTAL_WIDTH = MeterBrowseLabelWidth() + MeterBrowseValueWidth();
 
     // get objects and meters to verify that they exist
-    std::shared_ptr<const UniverseObject> ship = GetShip(m_object_id);
+    auto ship = GetShip(m_object_id);
     if (!ship) {
         ErrorLogger() << "ShipDamageBrowseWnd couldn't get ship with id " << m_object_id;
         return;
@@ -681,7 +681,7 @@ void ShipFightersBrowseWnd::Initialize() {
     const GG::Clr BG_COLOR = ClientUI::WndColor();
 
     // get objects and meters to verify that they exist
-    std::shared_ptr<const UniverseObject> ship = GetShip(m_object_id);
+    auto ship = GetShip(m_object_id);
     if (!ship) {
         ErrorLogger() << "Couldn't get ship with id " << m_object_id;
         return;

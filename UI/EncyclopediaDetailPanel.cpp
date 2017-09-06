@@ -1129,7 +1129,7 @@ namespace {
             return INVALID_OBJECT_ID;
         }
         // get a location where the empire might build something.
-        std::shared_ptr<const UniverseObject> location = GetUniverseObject(empire->CapitalID());
+        auto location = GetUniverseObject(empire->CapitalID());
         // no capital?  scan through all objects to find one owned by this empire
         // TODO: only loop over planets?
         // TODO: pass in a location condition, and pick a location that matches it if possible

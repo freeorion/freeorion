@@ -2050,14 +2050,14 @@ namespace {
             // multiple destroyed ships for its owner.
             // TODO: fix similar issue for overlogging on attacker side
             std::set<int> already_logged__target_ships;
-            for (WeaponFireEvent::ConstWeaponFireEventPtr attack_event : events_that_killed) {
-                std::shared_ptr<const UniverseObject> attacker = GetUniverseObject(attack_event->attacker_id);
+            for (const auto& attack_event : events_that_killed) {
+                auto attacker = GetUniverseObject(attack_event->attacker_id);
                 if (!attacker)
                     continue;
                 int attacker_empire_id = attacker->Owner();
                 Empire* attacker_empire = GetEmpire(attacker_empire_id);
 
-                std::shared_ptr<const Ship> target_ship = GetShip(attack_event->target_id);
+                auto target_ship = GetShip(attack_event->target_id);
                 if (!target_ship)
                     continue;
                 int target_empire_id = target_ship->Owner();
