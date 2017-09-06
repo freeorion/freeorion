@@ -1,4 +1,5 @@
 from collections import namedtuple
+from freeorion_tools import ReadOnlyDict
 
 import freeOrionAIInterface as fo
 from common.configure_logging import convenience_function_references_for_logger
@@ -32,6 +33,7 @@ class State(object):
         # supply info - negative values indicate jumps away from supply
         self.__system_supply = {}  # map from system_id to supply
         self.__systems_by_jumps_to_supply = {}  # map from supply to list of system_ids
+        self.__empire_planets_by_system = {}
 
     def update(self):
         """
@@ -99,16 +101,21 @@ class State(object):
         """
         Return dict from system id to planet ids of empire with species.
 
-        :rtype: dict[int, list[int]]
+        :rtype: ReadOnlyDict[int, list[int]]
         """
         # TODO: as currently used, is duplicative with combo of foAI.foAIstate.popCtrSystemIDs
-        empire_id = fo.empireID()
-        empire_planets_with_species = (x for x in self.__planet_info.itervalues()
-                                       if x.owner == empire_id and (x.species_name or include_outposts))
-        result = {}
-        for x in empire_planets_with_species:
-            result.setdefault(x.system_id, []).append(x.pid)
-        return result
+        if include_outposts not in self.__empire_planets_by_system:
+            empire_id = fo.empireID()
+            empire_planets = (x for x in self.__planet_info.itervalues()
+                               if x.owner == empire_id and (x.species_name or include_outposts))
+            result = {}
+            for x in empire_planets:
+                result.setdefault(x.system_id, []).append(x.pid)
+            self.__empire_planets_by_system[include_outposts] = ReadOnlyDict(
+                    {k: tuple(v) for k, v in result.iteritems()}
+            )
+
+        return self.__empire_planets_by_system[include_outposts]
 
     def get_inhabited_planets(self):
         """
