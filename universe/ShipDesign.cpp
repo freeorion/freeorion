@@ -939,6 +939,10 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
 
     // must own the production location...
     std::shared_ptr<const UniverseObject> location = GetUniverseObject(location_id);
+    if (!location) {
+        WarnLogger() << "ShipDesign::ProductionLocation unable to get location object with id " << location_id;
+        return false;
+    }
     if (!location->OwnedBy(empire_id))
         return false;
 
