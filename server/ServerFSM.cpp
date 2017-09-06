@@ -1529,6 +1529,17 @@ sc::result WaitingForMPGameJoiners::react(const CheckStartConditions& u) {
     return discard_event();
 }
 
+sc::result WaitingForMPGameJoiners::react(const Hostless& msg) {
+    TraceLogger(FSM) << "(ServerFSM) WaitingForMPGameJoiners.Hostless";
+    ServerApp& server = Server();
+
+    // Remove the ai processes.  They either all acknowledged the shutdown and are free or were all killed.
+    server.m_ai_client_processes.clear();
+
+    // Don't DisconnectAll. It cause segfault here.
+    return transit<MPLobby>();
+}
+
 sc::result WaitingForMPGameJoiners::react(const ShutdownServer& msg) {
     TraceLogger(FSM) << "(ServerFSM) WaitingForMPGameJoiners.ShutdownServer";
     return transit<ShuttingDownServer>();
