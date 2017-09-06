@@ -32,6 +32,9 @@ namespace {
                 |   tok.BlackHole_      [ _val = STAR_BLACK ]
                 |   tok.NoStar_         [ _val = STAR_NONE ]
                 ;
+
+            // complex_expr left empty, as no direct complex variable
+            // expressions are available available that return a StarType
         }
     };
 }
