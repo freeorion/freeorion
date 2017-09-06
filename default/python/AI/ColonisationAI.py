@@ -246,15 +246,6 @@ def survey_universe():
     empire_id = fo.empireID()
     current_turn = fo.currentTurn()
 
-    # get outpost and colonization planets
-    explored_system_ids = foAI.foAIstate.get_explored_system_ids()
-    un_ex_sys_ids = foAI.foAIstate.get_unexplored_system_ids()
-
-    print "Unexplored Systems: %s " % map(universe.getSystem, un_ex_sys_ids)
-    print "Explored SystemIDs: %s" % map(universe.getSystem, explored_system_ids)
-    print "Explored PlanetIDs: %s" % PlanetUtilsAI.get_planets_in__systems_ids(explored_system_ids)
-    print
-
     # set up / reset various variables; the 'if' is purely for code folding convenience
     if True:
         colony_status['colonies_under_attack'] = []

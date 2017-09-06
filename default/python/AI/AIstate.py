@@ -966,6 +966,14 @@ class AIstate(object):
         self.__update_system_status()
         self.__report_system_threats()
         self.__report_system_defenses()
+        self.__report_exploration_status()
+
+    def __report_exploration_status(self):
+        universe = fo.getUniverse()
+        explored_system_ids = self.get_explored_system_ids()
+        print "Unexplored Systems: %s " % map(universe.getSystem, self.get_unexplored_system_ids())
+        print "Explored SystemIDs: %s" % map(universe.getSystem, explored_system_ids)
+        print "Explored PlanetIDs: %s" % PlanetUtilsAI.get_planets_in__systems_ids(explored_system_ids)
 
     def log_peace_request(self, initiating_empire_id, recipient_empire_id):
         """Keep a record of peace requests made or received by this empire."""
