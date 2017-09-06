@@ -86,11 +86,26 @@ def can_travel_to_system(fleet_id, from_system_target, to_system_target, ensure_
             print "target in Ring 2, has enough aggression"
         elif target_sys_id in ColonisationAI.annexable_ring3 and foAI.foAIstate.character.may_travel_beyond_supply(3):
             print "target in Ring 2, has enough aggression"
-    if (not unsupplied_stops or not ensure_return or
-        target_sys_id in fleet_supplyable_system_ids and len(unsupplied_stops) <= fuel
-        or target_sys_id in ColonisationAI.annexable_ring1 and len(unsupplied_stops) < fuel
-        or target_sys_id in ColonisationAI.annexable_ring2 and foAI.foAIstate.character.may_travel_beyond_supply(2) and len(unsupplied_stops) < fuel - 1
-        or target_sys_id in ColonisationAI.annexable_ring3 and foAI.foAIstate.character.may_travel_beyond_supply(3) and len(unsupplied_stops) < fuel - 2):
+
+    def has_enough_fuel(distance_from_supply):
+        # Let f be the ships fuel
+        # Let n be the number of unsupplied stops
+        # Let d be the distance from target system to supply
+        #
+        # After reaching our target, we have f_new = f_current - n
+        # We then need another d fuel to resupply,
+        # i.e. f_new >= d or f_current >= (n + d)
+        return fuel > (len(unsupplied_stops) + distance_from_supply)
+
+    def movement_allowed(x):
+        return foAI.foAIstate.character.may_travel_beyond_supply(x) and has_enough_fuel(x)
+
+    # TODO: use any-iterator to simplify conditions
+    if (not unsupplied_stops or not ensure_return
+            or target_sys_id in fleet_supplyable_system_ids and movement_allowed(0)
+            or target_sys_id in ColonisationAI.annexable_ring1 and movement_allowed(1)
+            or target_sys_id in ColonisationAI.annexable_ring2 and movement_allowed(2)
+            or target_sys_id in ColonisationAI.annexable_ring3 and movement_allowed(3)):
         return [universe_object.System(sid) for sid in short_path]
     else:
         # print " getting path from 'can_travel_to_system_and_return_to_resupply' ",
