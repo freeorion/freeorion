@@ -1080,7 +1080,7 @@ def generate_production_orders():
 
     queued_clny_bld_locs = [element.locationID for element in production_queue if element.name.startswith('BLD_COL_')]
     colony_bldg_entries = ([entry for entry in foAI.foAIstate.colonisablePlanetIDs.items() if entry[1][0] > 60 and
-                           entry[0] not in queued_clny_bld_locs and entry[0] in ColonisationAI.empire_outpost_ids]
+                           entry[0] not in queued_clny_bld_locs and entry[0] in state.get_empire_outposts()]
                            [:PriorityAI.allottedColonyTargets+2])
     for entry in colony_bldg_entries:
         pid = entry[0]

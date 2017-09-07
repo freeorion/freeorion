@@ -42,7 +42,6 @@ pilot_ratings = {}
 colony_status = {}
 empire_status = {'industrialists': 0, 'researchers': 0}
 unowned_empty_planet_ids = set()
-empire_outpost_ids = set()
 facilities_by_species_grade = {}
 system_facilities = {}
 
@@ -261,7 +260,6 @@ def survey_universe():
         empire_status.clear()
         empire_status.update({'industrialists': 0, 'researchers': 0})
         AIstate.empireStars.clear()
-        empire_outpost_ids.clear()
         empire_colonizers.clear()
         empire_ship_builders.clear()
         empire_shipyards.clear()
@@ -285,7 +283,6 @@ def survey_universe():
         system = universe.getSystem(sys_id)
         if not system:
             continue
-        empire_has_colony_in_sys = False
         local_ast = False
         local_gg = False
         empire_has_qualifying_planet = False
@@ -310,10 +307,7 @@ def survey_universe():
             ship_facilities = set(AIDependencies.SHIP_FACILITIES).intersection(buildings_here)
             weapons_grade = "WEAPONS_0.0"
             if owner_id == empire_id:
-                empire_has_colony_in_sys = True
-                if planet_population <= 0.0:
-                    empire_outpost_ids.add(pid)
-                elif this_spec:
+                if planet_population > 0.0 and this_spec:
                     empire_has_qualifying_planet = True
                     for metab in [tag for tag in this_spec.tags if tag in AIDependencies.metabolismBoostMap]:
                         empire_metabolisms[metab] = empire_metabolisms.get(metab, 0.0) + planet.size
@@ -377,7 +371,7 @@ def survey_universe():
             elif local_gg:
                 state.set_have_gas_giant()
 
-        if empire_has_colony_in_sys:
+        if sys_id in state.get_empire_planets_by_system():
             AIstate.empireStars.setdefault(system.starType, []).append(sys_id)
             sys_status = foAI.foAIstate.systemStatus.setdefault(sys_id, {})
             if sys_status.get('fleetThreat', 0) > 0:
@@ -487,7 +481,7 @@ def get_colony_fleets():
                     foAI.foAIstate.qualifyingOutpostBaseTargets.setdefault(pid, [pid2, -1])
             if ((pid not in foAI.foAIstate.qualifyingColonyBaseTargets) and
                     (colony_cost < cost_ratio * avail_pp_by_sys.get(sys_id, 0)) and
-                    (planet.unowned or pid in empire_outpost_ids)):
+                    (planet.unowned or pid in state.get_empire_outposts())):
                 # TODO: enable actual building, remove from outpostbases, check other local colonizers for better score
                 foAI.foAIstate.qualifyingColonyBaseTargets.setdefault(pid, [pid2, -1])
 
