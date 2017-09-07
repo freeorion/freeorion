@@ -33,7 +33,7 @@ import ResearchAI
 import ResourcesAI
 import TechsListsAI
 from AIDependencies import INVALID_ID
-from freeorion_tools import chat_on_error, handle_debug_chat, AITimer, init_handlers
+from freeorion_tools import handle_debug_chat, AITimer, init_handlers
 from common.listeners import listener
 from character.character_module import Aggression
 from character.character_strings_module import get_trait_name_aggression, possible_capitals
@@ -66,7 +66,6 @@ foAIstate = AIStateMock()
 diplomatic_corp = None
 
 
-@chat_on_error
 def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=invalid-name
     """Called by client when a new game is started (but not when a game is loaded).
     Should clear any pre-existing state and set up whatever is needed for AI to generate orders."""
@@ -107,7 +106,6 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
     TechsListsAI.test_tech_integrity()
 
 
-@chat_on_error
 def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
     """Called by client to when resume a loaded game."""
     if fo.getEmpire() is None:
@@ -145,7 +143,6 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
     TechsListsAI.test_tech_integrity()
 
 
-@chat_on_error
 def prepareForSave():  # pylint: disable=invalid-name
     """Called by client when the game is about to be saved, to let the Python AI know it should save any AI state
     information, such as plans or knowledge about the game from previous turns,
@@ -170,7 +167,6 @@ def prepareForSave():  # pylint: disable=invalid-name
         error("foAIstate unable to pickle save-state string; the save file should be playable but the AI may have a different aggression.", exc_info=True)
 
 
-@chat_on_error
 def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
     """Called when this player receives a chat message. sender_id is the player who sent the message, and
     message_text is the text of the sent message."""
@@ -193,7 +189,6 @@ def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
         diplomatic_corp.handle_midgame_chat(sender_id, message_text)
 
 
-@chat_on_error
 def handleDiplomaticMessage(message):  # pylint: disable=invalid-name
     """Called when this player receives a diplomatic message update from the server,
     such as if another player declares war, accepts peace, or cancels a proposed peace treaty."""
@@ -209,7 +204,6 @@ def handleDiplomaticMessage(message):  # pylint: disable=invalid-name
     diplomatic_corp.handle_diplomatic_message(message)
 
 
-@chat_on_error
 def handleDiplomaticStatusUpdate(status_update):  # pylint: disable=invalid-name
     """Called when this player receives an update about the diplomatic status between players, which may
     or may not include this player."""
@@ -225,7 +219,6 @@ def handleDiplomaticStatusUpdate(status_update):  # pylint: disable=invalid-name
     diplomatic_corp.handle_diplomatic_status_update(status_update)
 
 
-@chat_on_error
 @listener
 def generateOrders():  # pylint: disable=invalid-name
     """Called once per turn to tell the Python AI to generate and issue orders to control its empire.

@@ -5,7 +5,7 @@ import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
 from character.character_module import Aggression
 from character.character_strings_module import possible_greetings
-from freeorion_tools import UserStringList, chat_on_error
+from freeorion_tools import UserStringList
 
 from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
@@ -25,7 +25,6 @@ class DiplomaticCorp(object):
     def __init__(self):
         self.be_chatty = True
 
-    @chat_on_error
     def handle_diplomatic_message(self, message):
         """Handle a diplomatic message update from the server,
         such as if another player declares war, accepts peace, or cancels a proposed peace treaty.
@@ -82,7 +81,6 @@ class DiplomaticCorp(object):
             greets = UserStringList("AI_FIRST_TURN_GREETING_BEGINNER")
         return random.choice(greets)
 
-    @chat_on_error
     def handle_diplomatic_status_update(self, status_update):
         """Handle an update about the diplomatic status between players, which may
         or may not include this player."""
