@@ -96,7 +96,7 @@ namespace parse { namespace detail {
 
 
     void parse_file_common(const boost::filesystem::path& path,
-                           const lexer& l,
+                           const lexer& lexer,
                            std::string& filename,
                            std::string& file_contents,
                            text_iterator& first,
@@ -112,9 +112,9 @@ namespace parse { namespace detail {
 
         boost::timer timer;
 
-        const lexer& l = lexer::instance();
+        const lexer& lexer = lexer::instance();
 
-        parse_file_common(path, l, filename, file_contents, first, it);
+        parse_file_common(path, lexer, filename, file_contents, first, it);
 
         //TraceLogger() << "Parse: parsed contents for " << path.string() << " : \n" << file_contents;
 
@@ -122,7 +122,7 @@ namespace parse { namespace detail {
 
         static Rules rules;
 
-        bool success = boost::spirit::qi::phrase_parse(it, l.end(), rules.start(boost::phoenix::ref(arg1)), in_state("WS")[l.self]);
+        bool success = boost::spirit::qi::phrase_parse(it, lexer.end(), rules.start(boost::phoenix::ref(arg1)), in_state("WS")[lexer.self]);
 
         TraceLogger() << "Parse: Elapsed time to parse " << path.string() << " = " << (timer.elapsed() * 1000.0);
 

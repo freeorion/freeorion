@@ -590,12 +590,12 @@ namespace parse {
             static std::map<const char*, label_rule> rules;
             std::map<const char*, label_rule>::iterator it = rules.find(name);
             if (it == rules.end()) {
-                const lexer& l = lexer::instance();
+                const lexer& lexer = lexer::instance();
                 label_rule& retval = rules[name];
                 if (PARSING_LABELS_OPTIONAL) {
-                    retval = -(l.name_token(name) >> '=');
+                    retval = -(lexer.name_token(name) >> '=');
                 } else {
-                    retval =  (l.name_token(name) >> '=');
+                    retval =  (lexer.name_token(name) >> '=');
                 }
                 retval.name(std::string(name) + " =");
                 return retval;
@@ -633,7 +633,7 @@ namespace parse {
          * @param[out] first content iterator
          * @param[out] it lexer iterator
          */
-        void parse_file_common(const boost::filesystem::path& path, const parse::lexer& l,
+        void parse_file_common(const boost::filesystem::path& path, const parse::lexer& lexer,
                                std::string& filename, std::string& file_contents,
                                parse::text_iterator& first, parse::token_iterator& it)
         {
@@ -660,7 +660,7 @@ namespace parse {
             parse::detail::s_begin = first;
             parse::detail::s_end = last;
             parse::detail::s_filename = filename.c_str();
-            it = l.begin(first, last);
+            it = lexer.begin(first, last);
         }
     }
 }
