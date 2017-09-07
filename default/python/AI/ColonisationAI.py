@@ -554,10 +554,6 @@ def get_colony_fleets():
     foAI.foAIstate.colonisablePlanetIDs.clear()
     foAI.foAIstate.colonisablePlanetIDs.update(sorted_planets)
 
-    # get outpost fleets
-    all_outpost_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.OUTPOST)
-    AIstate.outpostFleetIDs = FleetUtilsAI.extract_fleet_ids_without_mission_types(all_outpost_fleet_ids)
-
     evaluated_outpost_planets = assign_colonisation_values(evaluated_outpost_planet_ids, MissionType.OUTPOST, None)
     # if outposted planet would be in supply range, let outpost value be best of outpost value or colonization value
     for pid in set(evaluated_outpost_planets).intersection(evaluated_colony_planets):
@@ -1241,7 +1237,9 @@ def assign_colony_fleets_to_colonise():
                       MissionType.COLONISATION)
 
     # assign fleet targets to colonisable outposts
-    send_colony_ships(AIstate.outpostFleetIDs, foAI.foAIstate.colonisableOutpostIDs.items(),
+    all_outpost_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.OUTPOST)
+    send_colony_ships(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_outpost_fleet_ids),
+                      foAI.foAIstate.colonisableOutpostIDs.items(),
                       MissionType.OUTPOST)
 
 
