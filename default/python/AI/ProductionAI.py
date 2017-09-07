@@ -709,7 +709,7 @@ def generate_production_orders():
                     use_sys = ([(-1, INVALID_ID)] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))[:2][-1][-1]  # kinda messy, but ensures a value
                 if use_sys != INVALID_ID:
                     try:
-                        use_loc = state.get_empire_planets_by_system(use_sys, include_outposts=True)[0]
+                        use_loc = state.get_empire_planets_by_system(use_sys)[0]
                         res = fo.issueEnqueueBuildingProductionOrder(building_name, use_loc)
                         print "Enqueueing %s at planet %d (%s) , with result %d" % (building_name, use_loc, universe.getPlanet(use_loc).name, res)
                         if res:
@@ -736,8 +736,7 @@ def generate_production_orders():
         if not bh_pilots and len(queued_building_locs) == 0 and (red_pilots or not already_got_one):
             use_loc = None
             nominal_home = homeworld or universe.getPlanet(
-                (red_pilots + state.get_empire_planets_by_system(AIstate.empireStars[fo.starType.red][0],
-                                                                 include_outposts=True))[0])
+                (red_pilots + state.get_empire_planets_by_system(AIstate.empireStars[fo.starType.red][0]))[0])
             distance_map = {}
             for sys_id in AIstate.empireStars.get(fo.starType.red, []):
                 if sys_id == INVALID_ID:
@@ -748,7 +747,7 @@ def generate_production_orders():
                     pass
             red_sys_list = sorted([(dist, sys_id) for sys_id, dist in distance_map.items()])
             for dist, sys_id in red_sys_list:
-                for loc in state.get_empire_planets_by_system(sys_id, include_outposts=True):
+                for loc in state.get_empire_planets_by_system(sys_id):
                     planet = universe.getPlanet(loc)
                     if planet and planet.speciesName not in ["", None]:
                         species = fo.getSpecies(planet.speciesName)
@@ -797,7 +796,7 @@ def generate_production_orders():
                 use_sys = ([(-1, INVALID_ID)] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))[:2][-1][-1]  # kinda messy, but ensures a value
             if use_sys != INVALID_ID:
                 try:
-                    use_loc = state.get_empire_planets_by_system(use_sys, include_outposts=True)[0]
+                    use_loc = state.get_empire_planets_by_system(use_sys)[0]
                     res = fo.issueEnqueueBuildingProductionOrder(building_name, use_loc)
                     print "Enqueueing %s at planet %d (%s) , with result %d" % (building_name, use_loc, universe.getPlanet(use_loc).name, res)
                     if res:
@@ -876,7 +875,7 @@ def generate_production_orders():
                 use_sys = ([(-1, INVALID_ID)] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))[:2][-1][-1]  # kinda messy, but ensures a value
             if use_sys != INVALID_ID:
                 try:
-                    use_loc = state.get_empire_planets_by_system(use_sys, include_outposts=True)[0]
+                    use_loc = state.get_empire_planets_by_system(use_sys)[0]
                     res = fo.issueEnqueueBuildingProductionOrder(building_name, use_loc)
                     print "Enqueueing %s at planet %d (%s) , with result %d" % (building_name, use_loc, universe.getPlanet(use_loc).name, res)
                     if res:
@@ -986,7 +985,7 @@ def generate_production_orders():
                 if (pid in queued_locs) or (building_name in [bld.buildingTypeName for bld in map(universe.getBuilding, planet.buildingIDs)]):
                     scanner_locs[planet.systemID] = True
         max_scanner_builds = max(1, int(empire.productionPoints / 30))
-        for sys_id in state.get_empire_planets_by_system(include_outposts=True).keys():
+        for sys_id in state.get_empire_planets_by_system().keys():
             if len(queued_locs) >= max_scanner_builds:
                 break
             if sys_id in scanner_locs:
@@ -999,7 +998,7 @@ def generate_production_orders():
             if not need_scanner:
                 continue
             build_locs = []
-            for pid in state.get_empire_planets_by_system(sys_id, include_outposts=True):
+            for pid in state.get_empire_planets_by_system(sys_id):
                 planet = universe.getPlanet(pid)
                 if not planet:
                     continue
@@ -1427,8 +1426,7 @@ def build_ship_facilities(bld_name, best_pilot_facilities, top_locs=None):
                            for pid in best_pilot_facilities.get("BLD_SHIPYARD_BASE", [])).difference(current_coverage)
         try_systems = open_systems.intersection(ColonisationAI.system_facilities.get(
             prereq_bldg, {}).get('systems', [])) if prereq_bldg else open_systems
-        try_locs = set(pid for sys_id in try_systems
-                       for pid in state.get_empire_planets_by_system(sys_id, include_outposts=True))
+        try_locs = set(pid for sys_id in try_systems for pid in state.get_empire_planets_by_system(sys_id))
     else:
         current_locs = best_pilot_facilities.get(bld_name, [])
         try_locs = set(best_pilot_facilities.get(prereq_bldg, [])).difference(
@@ -1456,8 +1454,7 @@ def build_ship_facilities(bld_name, best_pilot_facilities, top_locs=None):
         print "Enqueueing %s at planet %s , with result %d" % (bld_name, universe.getPlanet(pid), res)
         if res:
             num_queued += 1
-            already_covered.extend(state.get_empire_planets_by_system(universe.getPlanet(pid).systemID,
-                                                                      include_outposts=True))
+            already_covered.extend(state.get_empire_planets_by_system(universe.getPlanet(pid).systemID))
 
 
 def _print_production_queue(after_turn=False):
