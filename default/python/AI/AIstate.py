@@ -38,7 +38,6 @@ outpostFleetIDs = []
 invasionFleetIDs = []
 fleetsLostBySystem = {}  # keys are system_ids, values are ratings for the fleets lost
 empireStars = {}
-outpostIDs = []
 
 
 class ConversionError(Exception):
@@ -797,7 +796,6 @@ class AIstate(object):
         self.__clean_fleet_roles(just_resumed=True)
         fleetsLostBySystem.clear()
         empireStars.clear()
-        outpostIDs[:] = []
         ResourcesAI.lastFociCheck[0] = 0
         self.qualifyingColonyBaseTargets.clear()
         self.qualifyingOutpostBaseTargets.clear()

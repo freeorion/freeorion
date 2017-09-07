@@ -274,7 +274,6 @@ def survey_universe():
         for spec_name in AIDependencies.EXTINCT_SPECIES:
             if tech_is_complete("TECH_COL_" + spec_name):
                 empire_colonizers["SP_" + spec_name] = []  # get it into colonizer list even if no colony yet
-        AIstate.outpostIDs[:] = []
         pilot_ratings.clear()
         unowned_empty_planet_ids.clear()
         facilities_by_species_grade.clear()
@@ -287,7 +286,6 @@ def survey_universe():
         if not system:
             continue
         empire_has_colony_in_sys = False
-        empire_has_pop_ctr_in_sys = False
         local_ast = False
         local_gg = False
         empire_has_qualifying_planet = False
@@ -315,7 +313,6 @@ def survey_universe():
                 empire_has_colony_in_sys = True
                 if planet_population <= 0.0:
                     empire_outpost_ids.add(pid)
-                    AIstate.outpostIDs.append(pid)
                 elif this_spec:
                     empire_has_qualifying_planet = True
                     for metab in [tag for tag in this_spec.tags if tag in AIDependencies.metabolismBoostMap]:
@@ -339,8 +336,6 @@ def survey_universe():
                 else:
                     # Logic says this should not happen, but it seems to happen some time for a single turm
                     # TODO What causes this?
-                    empire_outpost_ids.add(pid)
-                    AIstate.outpostIDs.append(pid)
                     warn("Found a planet we own that has pop > 0 but has no species")
                     warn("Planet: %s" % universe.getPlanet(pid))
                     warn("Species: %s(%s)" % (spec_name, this_spec))
@@ -471,7 +466,7 @@ def get_colony_fleets():
                 build_planet = universe.getPlanet(element.locationID)
                 queued_colony_bases.append(build_planet.systemID)
 
-    evaluated_colony_planet_ids = list(unowned_empty_planet_ids.union(AIstate.outpostIDs) - set(
+    evaluated_colony_planet_ids = list(unowned_empty_planet_ids.union(state.get_empire_outposts()) - set(
         colony_targeted_planet_ids))  # places for possible colonyBase
 
     # don't want to lose the info by clearing, but #TODO: should double check if still own colonizer planet

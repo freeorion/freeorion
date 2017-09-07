@@ -238,7 +238,7 @@ def generate_production_orders():
     building_expense = 0.0
     building_ratio = foAI.foAIstate.character.preferred_building_ratio([0.4, 0.35, 0.30])
     print "Buildings present on all owned planets:"
-    for pid in list(state.get_inhabited_planets()) + list(AIstate.outpostIDs):
+    for pid in state.get_all_empire_planets():
         planet = universe.getPlanet(pid)
         if planet:
             print "%30s: %s" % (planet.name, [universe.getBuilding(bldg).name for bldg in planet.buildingIDs])
@@ -557,7 +557,7 @@ def generate_production_orders():
             asteroid_yards = {}
             shipyard_systems = {}
             builder_systems = {}
-            for pid in list(state.get_inhabited_planets()) + list(AIstate.outpostIDs):
+            for pid in state.get_all_empire_planets():
                 planet = universe.getPlanet(pid)
                 this_spec = planet.speciesName
                 sys_id = planet.systemID
@@ -638,7 +638,7 @@ def generate_production_orders():
     if empire.buildingTypeAvailable(building_name) and foAI.foAIstate.character.may_build_building(building_name):
         queued_building_locs = [element.locationID for element in production_queue if (element.name == building_name)]
         building_type = fo.getBuildingType(building_name)
-        for pid in list(state.get_inhabited_planets()) + list(AIstate.outpostIDs):  # TODO: check to ensure that a resource center exists in system, or GGG would be wasted
+        for pid in state.get_all_empire_planets():  # TODO: check to ensure that a resource center exists in system, or GGG would be wasted
             if pid not in queued_building_locs and building_type.canBeProduced(empire.empireID, pid):  # TODO: verify that canBeProduced() checks for preexistence of a barring building
                 planet = universe.getPlanet(pid)
                 if planet.systemID in systems_with_species:
@@ -664,7 +664,7 @@ def generate_production_orders():
     building_name = "BLD_SOL_ORB_GEN"
     if empire.buildingTypeAvailable(building_name) and foAI.foAIstate.character.may_build_building(building_name):
         already_got_one = 99
-        for pid in list(state.get_inhabited_planets()) + list(AIstate.outpostIDs):
+        for pid in state.get_all_empire_planets():
             planet = universe.getPlanet(pid)
             if planet and building_name in [bld.buildingTypeName for bld in map(universe.getBuilding, planet.buildingIDs)]:
                 system = universe.getSystem(planet.systemID)
@@ -728,7 +728,7 @@ def generate_production_orders():
         len(AIstate.empireStars.get(fo.starType.red, [])) > 0
     ):
         already_got_one = False
-        for pid in list(state.get_inhabited_planets()) + list(AIstate.outpostIDs):
+        for pid in state.get_all_empire_planets():
             planet = universe.getPlanet(pid)
             if planet and building_name in [bld.buildingTypeName for bld in map(universe.getBuilding, planet.buildingIDs)]:
                 already_got_one = True  # has been built, needs one turn to activate
@@ -776,7 +776,7 @@ def generate_production_orders():
     building_name = "BLD_BLACK_HOLE_POW_GEN"
     if empire.buildingTypeAvailable(building_name) and  foAI.foAIstate.character.may_build_building(building_name):
         already_got_one = False
-        for pid in list(state.get_inhabited_planets()) + list(AIstate.outpostIDs):
+        for pid in state.get_all_empire_planets():
             planet = universe.getPlanet(pid)
             if planet and building_name in [bld.buildingTypeName for bld in map(universe.getBuilding, planet.buildingIDs)]:
                 already_got_one = True
@@ -809,7 +809,7 @@ def generate_production_orders():
     building_name = "BLD_ENCLAVE_VOID"
     if empire.buildingTypeAvailable(building_name):
         already_got_one = False
-        for pid in list(state.get_inhabited_planets()) + list(AIstate.outpostIDs):
+        for pid in state.get_all_empire_planets():
             planet = universe.getPlanet(pid)
             if planet and building_name in [bld.buildingTypeName for bld in map(universe.getBuilding, planet.buildingIDs)]:
                 already_got_one = True
@@ -827,7 +827,7 @@ def generate_production_orders():
     building_name = "BLD_GENOME_BANK"
     if empire.buildingTypeAvailable(building_name):
         already_got_one = False
-        for pid in list(state.get_inhabited_planets()) + list(AIstate.outpostIDs):
+        for pid in state.get_all_empire_planets():
             planet = universe.getPlanet(pid)
             if planet and building_name in [bld.buildingTypeName for bld in map(universe.getBuilding, planet.buildingIDs)]:
                 already_got_one = True
@@ -850,7 +850,7 @@ def generate_production_orders():
         AIstate.empireStars.get(fo.starType.neutron, [])
     ):
         # building_type = fo.getBuildingType(building_name)
-        for pid in list(state.get_inhabited_planets()) + list(AIstate.outpostIDs):
+        for pid in state.get_all_empire_planets():
             planet = universe.getPlanet(pid)
             if planet:
                 building_names = [bld.buildingTypeName for bld in map(universe.getBuilding, planet.buildingIDs)]
@@ -979,7 +979,7 @@ def generate_production_orders():
     if empire.buildingTypeAvailable(building_name):
         queued_locs = [element.locationID for element in production_queue if (element.name == building_name)]
         scanner_locs = {}
-        for pid in list(state.get_inhabited_planets()) + list(AIstate.outpostIDs):
+        for pid in state.get_all_empire_planets():
             planet = universe.getPlanet(pid)
             if planet:
                 if (pid in queued_locs) or (building_name in [bld.buildingTypeName for bld in map(universe.getBuilding, planet.buildingIDs)]):
@@ -1066,7 +1066,7 @@ def generate_production_orders():
 
     building_name = "BLD_XENORESURRECTION_LAB"
     queued_xeno_lab_locs = [element.locationID for element in production_queue if element.name == building_name]
-    for pid in list(state.get_inhabited_planets())+list(AIstate.outpostIDs):
+    for pid in state.get_all_empire_planets():
         if pid in queued_xeno_lab_locs or not empire.canBuild(fo.buildType.building, building_name, pid):
             continue
         res = fo.issueEnqueueBuildingProductionOrder(building_name, pid)
@@ -1141,7 +1141,7 @@ def generate_production_orders():
             block_str, element.name, element.turnsLeft, element.allocation,
             element.progress, universe.getObject(element.locationID).name)
         if element.turnsLeft == -1:
-            if element.locationID not in list(state.get_inhabited_planets()) + AIstate.outpostIDs:
+            if element.locationID not in state.get_all_empire_planets():
                 # dequeue_list.append(queue_index) #TODO add assessment of recapture -- invasion target etc.
                 print "element %s will never be completed as stands and location %d no longer owned; could consider deleting from queue" % (element.name, element.locationID)  # TODO:
             else:
@@ -1534,7 +1534,7 @@ def find_automatic_historic_analyzer_candidates():
 
     # find possible locations
     possible_locations = set()
-    for pid in list(state.get_inhabited_planets()) + list(AIstate.outpostIDs):
+    for pid in state.get_all_empire_planets():
         planet = universe.getPlanet(pid)
         if not planet or planet.currentMeterValue(fo.meterType.targetPopulation) < 1:
             continue

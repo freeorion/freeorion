@@ -127,6 +127,14 @@ class State(object):
         empire_id = fo.empireID()
         return frozenset(x.pid for x in self.__planet_info.itervalues() if x.owner == empire_id and x.species_name)
 
+    def get_empire_outposts(self):
+        empire_id = fo.empireID()
+        return tuple(x.pid for x in self.__planet_info.itervalues() if x.owner == empire_id and x.species_name)
+
+    def get_all_empire_planets(self):
+        empire_id = fo.empireID()
+        return tuple(x.pid for x in self.__planet_info.itervalues() if x.owner == empire_id)
+
     def get_empire_planets_with_species(self, species_name):
         """
         Return tuple of empire planet ids with species.
