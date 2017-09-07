@@ -406,9 +406,6 @@ def get_colony_fleets():
     universe = fo.getUniverse()
     empire = fo.getEmpire()
 
-    colonization_timer.start('Getting avail colony fleets')
-    all_colony_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.COLONISATION)
-
     colonization_timer.start('Identify Existing colony/outpost targets')
     colony_targeted_planet_ids = FleetUtilsAI.get_targeted_planet_ids(universe.planetIDs, MissionType.COLONISATION)
     all_colony_targeted_system_ids = PlanetUtilsAI.get_systems(colony_targeted_planet_ids)
@@ -436,7 +433,6 @@ def get_colony_fleets():
     # export targeted systems for other AI modules
     AIstate.colonyTargetedSystemIDs = all_colony_targeted_system_ids
     AIstate.outpostTargetedSystemIDs = all_outpost_targeted_system_ids
-    AIstate.colonyFleetIDs[:] = FleetUtilsAI.extract_fleet_ids_without_mission_types(all_colony_fleet_ids)
 
     colonization_timer.start('Identify colony base targets')
     # keys are sets of ints; data is doubles
@@ -1213,8 +1209,7 @@ def get_claimed_stars():
 
 def assign_colony_fleets_to_colonise():
     universe = fo.getUniverse()
-    all_outpost_base_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(
-        MissionType.ORBITAL_OUTPOST)
+    all_outpost_base_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.ORBITAL_OUTPOST)
     avail_outpost_base_fleet_ids = FleetUtilsAI.extract_fleet_ids_without_mission_types(all_outpost_base_fleet_ids)
     for fid in avail_outpost_base_fleet_ids:
         fleet = universe.getFleet(fid)
@@ -1240,7 +1235,9 @@ def assign_colony_fleets_to_colonise():
             ai_fleet_mission.set_target(MissionType.ORBITAL_OUTPOST, ai_target)
 
     # assign fleet targets to colonisable planets
-    send_colony_ships(AIstate.colonyFleetIDs, foAI.foAIstate.colonisablePlanetIDs.items(),
+    all_colony_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.COLONISATION)
+    send_colony_ships(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_colony_fleet_ids),
+                      foAI.foAIstate.colonisablePlanetIDs.items(),
                       MissionType.COLONISATION)
 
     # assign fleet targets to colonisable outposts
