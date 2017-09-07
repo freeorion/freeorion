@@ -159,6 +159,9 @@ class State(object):
             result.setdefault(x.species_name, []).append(x.pid)
         return result
 
+    def get_number_of_colonies(self):
+        return len(self.get_inhabited_planets())
+
     @property
     def have_gas_giant(self):
         return self.__have_gas_giant

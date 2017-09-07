@@ -71,11 +71,11 @@ def _get_planet_size(planet):
 
 
 def colony_pod_cost():
-    return AIDependencies.COLONY_POD_COST * (1 + len(state.get_inhabited_planets())*AIDependencies.COLONY_POD_UPKEEP)
+    return AIDependencies.COLONY_POD_COST * (1 + state.get_number_of_colonies()*AIDependencies.COLONY_POD_UPKEEP)
 
 
 def outpod_pod_cost():
-    return AIDependencies.OUTPOST_POD_COST * (1 + len(state.get_inhabited_planets())*AIDependencies.COLONY_POD_UPKEEP)
+    return AIDependencies.OUTPOST_POD_COST * (1 + state.get_number_of_colonies()*AIDependencies.COLONY_POD_UPKEEP)
 
 
 def calc_max_pop(planet, species, detail):
