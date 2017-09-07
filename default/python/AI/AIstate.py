@@ -37,7 +37,6 @@ colonyFleetIDs = []
 outpostFleetIDs = []
 invasionFleetIDs = []
 fleetsLostBySystem = {}  # keys are system_ids, values are ratings for the fleets lost
-popCtrSystemIDs = []
 empireStars = {}
 popCtrIDs = []
 outpostIDs = []
@@ -799,7 +798,6 @@ class AIstate(object):
             self.ensure_have_fleet_missions([fleetID])
         self.__clean_fleet_roles(just_resumed=True)
         fleetsLostBySystem.clear()
-        popCtrSystemIDs[:] = []  # resets without detroying existing references
         empireStars.clear()
         popCtrIDs[:] = []
         outpostIDs[:] = []

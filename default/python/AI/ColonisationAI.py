@@ -267,7 +267,6 @@ def survey_universe():
             if tech_is_complete("TECH_COL_" + spec_name):
                 empire_colonizers["SP_" + spec_name] = []  # get it into colonizer list even if no colony yet
         AIstate.popCtrIDs[:] = []
-        AIstate.popCtrSystemIDs[:] = []
         AIstate.outpostIDs[:] = []
         AIstate.outpostSystemIDs[:] = []
         pilot_ratings.clear()
@@ -380,9 +379,7 @@ def survey_universe():
                 state.set_have_gas_giant()
 
         if empire_has_colony_in_sys:
-            if empire_has_pop_ctr_in_sys:
-                AIstate.popCtrSystemIDs.append(sys_id)
-            else:
+            if not empire_has_pop_ctr_in_sys:
                 AIstate.outpostSystemIDs.append(sys_id)
             AIstate.empireStars.setdefault(system.starType, []).append(sys_id)
             sys_status = foAI.foAIstate.systemStatus.setdefault(sys_id, {})
@@ -850,7 +847,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     fixed_ind = 0
     fixed_res = 0
     if system:
-        already_got_this_one = this_sysid in (AIstate.popCtrSystemIDs + AIstate.outpostSystemIDs)
+        already_got_this_one = this_sysid in state.get_empire_planets_by_system()
         # TODO: Should probably consider pilot rating also for Phototropic species
         if "PHOTOTROPHIC" not in tag_list and pilot_rating >= state.best_pilot_rating:
             if system.starType == fo.starType.red and tech_is_complete("LRN_STELLAR_TOMOGRAPHY"):

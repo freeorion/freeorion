@@ -413,7 +413,7 @@ def _calculate_military_priority():
     allotted_invasion_targets = 1 + int(fo.currentTurn()/25)
     target_planet_ids = [pid for pid, pscore, trp in AIstate.invasionTargets[:allotted_invasion_targets]] + [pid for pid, pscore in foAI.foAIstate.colonisablePlanetIDs.items()[:allottedColonyTargets]] + [pid for pid, pscore in foAI.foAIstate.colonisableOutpostIDs.items()[:allottedColonyTargets]]
 
-    my_systems = set(AIstate.popCtrSystemIDs).union(AIstate.outpostSystemIDs)
+    my_systems = set(state.get_empire_planets_by_system())
     target_systems = set(PlanetUtilsAI.get_systems(target_planet_ids))
 
     cur_ship_rating = ProductionAI.cur_best_military_design_rating()
