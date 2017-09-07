@@ -66,7 +66,9 @@ namespace {
     BOOST_PHOENIX_ADAPT_FUNCTION(boost::uuids::uuid, parse_uuid_, parse_uuid, 1)
 
     struct rules {
-        rules() {
+        rules(const std::string& filename,
+              const parse::text_iterator& first, const parse::text_iterator& last)
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -135,7 +137,7 @@ namespace {
             debug(design);
 #endif
 
-            qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
+            qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
         using design_prefix_rule = parse::detail::rule<
@@ -164,7 +166,9 @@ namespace {
     };
 
     struct manifest_rules {
-        manifest_rules() {
+        manifest_rules(const std::string& filename,
+              const parse::text_iterator& first, const parse::text_iterator& last)
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -193,7 +197,7 @@ namespace {
             debug(design_manifest);
 #endif
 
-            qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
+            qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
         using manifest_rule = parse::detail::rule<void (std::vector<boost::uuids::uuid>&)>;

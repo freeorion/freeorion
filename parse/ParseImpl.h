@@ -100,6 +100,7 @@ namespace parse { namespace detail {
                            std::string& filename,
                            std::string& file_contents,
                            text_iterator& first,
+                           text_iterator& last,
                            token_iterator& it);
 
     template <typename Rules, typename Arg1>
@@ -108,19 +109,20 @@ namespace parse { namespace detail {
         std::string filename;
         std::string file_contents;
         text_iterator first;
+        text_iterator last;
         token_iterator it;
 
         boost::timer timer;
 
         const lexer& lexer = lexer::instance();
 
-        parse_file_common(path, lexer, filename, file_contents, first, it);
+        parse_file_common(path, lexer, filename, file_contents, first, last, it);
 
         //TraceLogger() << "Parse: parsed contents for " << path.string() << " : \n" << file_contents;
 
         boost::spirit::qi::in_state_type in_state;
 
-        static Rules rules;
+        Rules rules(filename, first, last);
 
         bool success = boost::spirit::qi::phrase_parse(it, lexer.end(), rules.start(boost::phoenix::ref(arg1)), in_state("WS")[lexer.self]);
 
