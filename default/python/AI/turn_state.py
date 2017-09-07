@@ -97,7 +97,7 @@ class State(object):
             supply_tier = 0
         return self.__systems_by_jumps_to_supply.get(supply_tier, tuple())
 
-    def get_empire_planets_by_system(self, include_outposts):
+    def get_empire_planets_by_system(self, sys_id=None, include_outposts=True):
         """
         Return dict from system id to planet ids of empire with species.
 
@@ -107,14 +107,15 @@ class State(object):
         if include_outposts not in self.__empire_planets_by_system:
             empire_id = fo.empireID()
             empire_planets = (x for x in self.__planet_info.itervalues()
-                               if x.owner == empire_id and (x.species_name or include_outposts))
+                              if x.owner == empire_id and (x.species_name or include_outposts))
             result = {}
             for x in empire_planets:
                 result.setdefault(x.system_id, []).append(x.pid)
             self.__empire_planets_by_system[include_outposts] = ReadOnlyDict(
                     {k: tuple(v) for k, v in result.iteritems()}
             )
-
+        if sys_id is not None:
+            return self.__empire_planets_by_system[include_outposts].get(sys_id, tuple())
         return self.__empire_planets_by_system[include_outposts]
 
     def get_inhabited_planets(self):

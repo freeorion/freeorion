@@ -485,7 +485,7 @@ def get_colony_fleets():
         if not planet:
             continue
         sys_id = planet.systemID
-        for pid2 in state.get_empire_planets_by_system(include_outposts=False).get(sys_id, []):
+        for pid2 in state.get_empire_planets_by_system(sys_id, include_outposts=False):
             planet2 = universe.getPlanet(pid2)
             if not (planet2 and planet2.speciesName in empire_colonizers):
                 continue
@@ -773,7 +773,8 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     # only count existing presence if not target planet
     # TODO: consider neighboring sytems for smaller contribution, and bigger contributions for
     # local colonies versus local outposts
-    locally_owned_planets = [lpid for lpid in state.get_empire_planets_by_system(include_outposts=True).get(this_sysid, []) if lpid != planet_id]
+    locally_owned_planets = [lpid for lpid in state.get_empire_planets_by_system(this_sysid, include_outposts=True)
+                             if lpid != planet_id]
     planets_with_species = state.get_inhabited_planets()
     locally_owned_pop_ctrs = [lpid for lpid in locally_owned_planets if lpid in planets_with_species]
     # triple count pop_ctrs

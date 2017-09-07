@@ -114,7 +114,7 @@ def get_invasion_fleets():
                 continue
             best_base_planet = INVALID_ID
             best_trooper_count = 0
-            for pid2 in state.get_empire_planets_by_system(include_outposts=False).get(sys_id, []):
+            for pid2 in state.get_empire_planets_by_system(sys_id, include_outposts=False):
                 if available_pp.get(pid2, 0) < 2:  # TODO: improve troop base PP sufficiency determination
                     break
                 planet2 = universe.getPlanet(pid2)
