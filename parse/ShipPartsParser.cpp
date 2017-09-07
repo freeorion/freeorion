@@ -32,7 +32,9 @@ namespace {
     const boost::phoenix::function<parse::detail::insert> insert_;
 
     struct rules {
-        rules() {
+        rules(const std::string& filename,
+              const parse::text_iterator& first, const parse::text_iterator& last)
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -103,7 +105,7 @@ namespace {
             debug(part_type);
 #endif
 
-            qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
+            qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
         typedef parse::detail::rule<

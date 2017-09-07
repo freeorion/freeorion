@@ -635,7 +635,7 @@ namespace parse {
          */
         void parse_file_common(const boost::filesystem::path& path, const parse::lexer& lexer,
                                std::string& filename, std::string& file_contents,
-                               parse::text_iterator& first, parse::token_iterator& it)
+                               parse::text_iterator& first, parse::text_iterator& last, parse::token_iterator& it)
         {
             filename = path.string();
 
@@ -651,15 +651,9 @@ namespace parse {
             file_substitution(file_contents, path.parent_path());
             macro_substitution(file_contents);
 
-            first = parse::text_iterator(file_contents.begin());
-            parse::text_iterator last(file_contents.end());
+            first = file_contents.begin();
+            last = file_contents.end();
 
-            // WARNING: These static global values assume that only one file is parsed at a time.
-            // That assumption is incorrect, and these values will be unreliable.
-            parse::detail::s_text_it = &first;
-            parse::detail::s_begin = first;
-            parse::detail::s_end = last;
-            parse::detail::s_filename = filename.c_str();
             it = lexer.begin(first, last);
         }
     }
