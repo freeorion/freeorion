@@ -30,7 +30,6 @@ outpostTargetedSystemIDs = []
 opponentPlanetIDs = []
 invasionTargets = []
 invasionTargetedSystemIDs = []
-blockadeTargetedSystemIDs = []  # TODO also never filled atm... either implement this or remove redundant code
 fleetsLostBySystem = {}  # keys are system_ids, values are ratings for the fleets lost
 empireStars = {}
 

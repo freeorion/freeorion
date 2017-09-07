@@ -435,8 +435,7 @@ class AIFleetMission(object):
                     # if (MissionType.SECURE == self.type) or
                     secure_targets = set(AIstate.colonyTargetedSystemIDs +
                                          AIstate.outpostTargetedSystemIDs +
-                                         AIstate.invasionTargetedSystemIDs +
-                                         AIstate.blockadeTargetedSystemIDs)
+                                         AIstate.invasionTargetedSystemIDs)
                     if last_sys_target in secure_targets:  # consider a secure mission
                         if last_sys_target in AIstate.colonyTargetedSystemIDs:
                             secure_type = "Colony"
@@ -444,8 +443,6 @@ class AIFleetMission(object):
                             secure_type = "Outpost"
                         elif last_sys_target in AIstate.invasionTargetedSystemIDs:
                             secure_type = "Invasion"
-                        elif last_sys_target in AIstate.blockadeTargetedSystemIDs:
-                            secure_type = "Blockade"
                         else:
                             secure_type = "Unidentified"
                         print ("Fleet %d has completed initial stage of its mission "
@@ -528,8 +525,7 @@ class AIFleetMission(object):
         # if (not self.hasAnyAIMissionTypes()):
         if not self.target and (system_id not in set(AIstate.colonyTargetedSystemIDs +
                                                      AIstate.outpostTargetedSystemIDs +
-                                                     AIstate.invasionTargetedSystemIDs +
-                                                     AIstate.blockadeTargetedSystemIDs)):
+                                                     AIstate.invasionTargetedSystemIDs)):
             if self._need_repair():
                 repair_fleet_order = MoveUtilsAI.get_repair_fleet_order(self.fleet, start_sys_id)
                 if repair_fleet_order and repair_fleet_order.is_valid():
