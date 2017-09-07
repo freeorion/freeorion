@@ -268,7 +268,6 @@ def survey_universe():
                 empire_colonizers["SP_" + spec_name] = []  # get it into colonizer list even if no colony yet
         AIstate.popCtrIDs[:] = []
         AIstate.outpostIDs[:] = []
-        AIstate.outpostSystemIDs[:] = []
         pilot_ratings.clear()
         unowned_empty_planet_ids.clear()
         facilities_by_species_grade.clear()
@@ -379,8 +378,6 @@ def survey_universe():
                 state.set_have_gas_giant()
 
         if empire_has_colony_in_sys:
-            if not empire_has_pop_ctr_in_sys:
-                AIstate.outpostSystemIDs.append(sys_id)
             AIstate.empireStars.setdefault(system.starType, []).append(sys_id)
             sys_status = foAI.foAIstate.systemStatus.setdefault(sys_id, {})
             if sys_status.get('fleetThreat', 0) > 0:

@@ -40,7 +40,6 @@ fleetsLostBySystem = {}  # keys are system_ids, values are ratings for the fleet
 empireStars = {}
 popCtrIDs = []
 outpostIDs = []
-outpostSystemIDs = []
 
 
 class ConversionError(Exception):
@@ -801,7 +800,6 @@ class AIstate(object):
         empireStars.clear()
         popCtrIDs[:] = []
         outpostIDs[:] = []
-        outpostSystemIDs[:] = []
         ResourcesAI.lastFociCheck[0] = 0
         self.qualifyingColonyBaseTargets.clear()
         self.qualifyingOutpostBaseTargets.clear()
