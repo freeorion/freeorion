@@ -39,11 +39,11 @@ def calculate_priorities():
 
     print "\n*** Updating Colonization Status ***\n"
     prioritiees_timer.start('Evaluating Colonization Status')
-    ColonisationAI.get_colony_fleets()  # sets foAI.foAIstate.colonisablePlanetIDs and foAI.foAIstate.outpostPlanetIDs and many other values used by other modules
+    ColonisationAI.get_colony_fleets()  # sets foAI.foAIstate.colonisablePlanetIDs and many other values used by other modules
 
     print "\n*** Updating Invasion Status ***\n"
     prioritiees_timer.start('Evaluating Invasion Status')
-    InvasionAI.get_invasion_fleets()  # sets AIstate.invasionFleetIDs, AIstate.opponentPlanetIDs, and AIstate.invasionTargetedPlanetIDs
+    InvasionAI.get_invasion_fleets()  # sets AIstate.opponentPlanetIDs, and AIstate.invasionTargetedPlanetIDs
 
     print "\n*** Updating Military Status ***\n"
     prioritiees_timer.start('Evaluating Military Status')

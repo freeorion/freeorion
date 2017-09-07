@@ -745,13 +745,6 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         print "------------------------------\nFinal %s Round Military Allocations: %s \n-----------------------" % (thisround, dict([(sid, alloc) for sid, alloc, _, _, _ in new_allocations]))
         print "(Apparently) remaining military rating: %.1f" % remaining_mil_rating
 
-    # export military systems for other AI modules
-    if "Main" in thisround:
-        AIstate.militarySystemIDs = list(set([sid for sid, _, _, _, _ in new_allocations]).union(
-                [sid for sid in allocation_helper.already_assigned_rating
-                 if allocation_helper.already_assigned_rating[sid] > 0]))
-    else:
-        AIstate.militarySystemIDs = list(set([sid for sid, _, _, _, _ in new_allocations]).union(AIstate.militarySystemIDs))
     return new_allocations
 
 
