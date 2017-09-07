@@ -71,6 +71,14 @@ def _get_planet_size(planet):
     return planet_size
 
 
+def colony_pod_cost():
+    return AIDependencies.COLONY_POD_COST * (1 + len(state.get_inhabited_planets())*AIDependencies.COLONY_POD_UPKEEP)
+
+
+def outpod_pod_cost():
+    return AIDependencies.OUTPOST_POD_COST * (1 + len(state.get_inhabited_planets())*AIDependencies.COLONY_POD_UPKEEP)
+
+
 def calc_max_pop(planet, species, detail):
     planet_size = _get_planet_size(planet)
     planet_env = ENVIRONS[str(species.getPlanetEnvironment(planet.type))]
@@ -266,7 +274,6 @@ def survey_universe():
         for spec_name in AIDependencies.EXTINCT_SPECIES:
             if tech_is_complete("TECH_COL_" + spec_name):
                 empire_colonizers["SP_" + spec_name] = []  # get it into colonizer list even if no colony yet
-        AIstate.popCtrIDs[:] = []
         AIstate.outpostIDs[:] = []
         pilot_ratings.clear()
         unowned_empty_planet_ids.clear()
@@ -311,8 +318,6 @@ def survey_universe():
                     AIstate.outpostIDs.append(pid)
                 elif this_spec:
                     empire_has_qualifying_planet = True
-                    AIstate.popCtrIDs.append(pid)
-                    empire_has_pop_ctr_in_sys = True
                     for metab in [tag for tag in this_spec.tags if tag in AIDependencies.metabolismBoostMap]:
                         empire_metabolisms[metab] = empire_metabolisms.get(metab, 0.0) + planet.size
                     if this_spec.canProduceShips:
@@ -451,9 +456,8 @@ def get_colony_fleets():
     avail_pp_by_sys = {}
     for p_set in available_pp:
         avail_pp_by_sys.update([(sys_id, available_pp[p_set]) for sys_id in set(PlanetUtilsAI.get_systems(p_set))])
-    colony_cost = AIDependencies.COLONY_POD_COST * (1 + AIDependencies.COLONY_POD_UPKEEP * len(list(AIstate.popCtrIDs)))
-    outpost_cost = AIDependencies.OUTPOST_POD_COST * (
-        1 + AIDependencies.COLONY_POD_UPKEEP * len(list(AIstate.popCtrIDs)))
+    colony_cost = colony_pod_cost()
+    outpost_cost = outpod_pod_cost()
     production_queue = empire.productionQueue
     queued_outpost_bases = []
     queued_colony_bases = []
@@ -1260,10 +1264,10 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
     fleet_pool = colony_fleet_ids[:]
     try_all = False
     if mission_type == MissionType.OUTPOST:
-        cost = 20 + AIDependencies.OUTPOST_POD_COST * (1 + len(AIstate.popCtrIDs) * AIDependencies.COLONY_POD_UPKEEP)
+        cost = 20 + outpod_pod_cost()
     else:
         try_all = True
-        cost = 20 + AIDependencies.COLONY_POD_COST * (1 + len(AIstate.popCtrIDs) * AIDependencies.COLONY_POD_UPKEEP)
+        cost = 20 + colony_pod_cost()
         if fo.currentTurn() < 50:
             cost *= 0.4  # will be making fast tech progress so value is underestimated
         elif fo.currentTurn() < 80:
