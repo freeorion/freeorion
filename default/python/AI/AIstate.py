@@ -28,7 +28,6 @@ from common.configure_logging import convenience_function_references_for_logger
 colonyTargetedSystemIDs = []
 outpostTargetedSystemIDs = []
 opponentPlanetIDs = []
-opponentSystemIDs = []  # TODO: Currently never filled but some (uncommented) code in MilitaryAI refers to this...
 invasionTargets = []
 invasionTargetedSystemIDs = []
 blockadeTargetedSystemIDs = []  # TODO also never filled atm... either implement this or remove redundant code
