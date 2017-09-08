@@ -461,9 +461,11 @@ namespace SystemPathing {
         std::multimap<double, int> retval;
         ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, graph);
         ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph);
-        std::pair<OutEdgeIterator, OutEdgeIterator> edges = boost::out_edges(id_to_graph_index.at(system_id), graph);
-        for (OutEdgeIterator it = edges.first; it != edges.second; ++it)
-        { retval.insert(std::make_pair(edge_weight_map[*it], sys_id_property_map[boost::target(*it, graph)])); }
+        auto edges = boost::out_edges(id_to_graph_index.at(system_id), graph);
+        for (OutEdgeIterator it = edges.first; it != edges.second; ++it) {
+            retval.insert(std::make_pair(edge_weight_map[*it],
+                                         sys_id_property_map[boost::target(*it, graph)]));
+        }
         return retval;
     }
 
@@ -641,7 +643,8 @@ namespace {
  */
 void Pathfinder::PathfinderImpl::HandleCacheMiss(size_t ii, distance_matrix_storage<short>::row_ref row) const {
 
-    typedef boost::iterator_property_map<std::vector<short>::iterator, boost::identity_property_map> DistancePropertyMap;
+    typedef boost::iterator_property_map<std::vector<short>::iterator,
+                                         boost::identity_property_map> DistancePropertyMap;
 
     distance_matrix_storage<short>::row_ref distance_buffer = row;
     distance_buffer.assign(m_system_jumps.size(), SHRT_MAX);
@@ -870,8 +873,7 @@ std::pair<std::list<int>, double> Pathfinder::PathfinderImpl::ShortestPath(int s
     }
 
     // find path on single empire's view of system graph
-    GraphImpl::EmpireViewSystemGraphMap::const_iterator graph_it =
-        m_graph_impl->empire_system_graph_views.find(empire_id);
+    auto graph_it = m_graph_impl->empire_system_graph_views.find(empire_id);
     if (graph_it == m_graph_impl->empire_system_graph_views.end()) {
         ErrorLogger() << "PathfinderImpl::ShortestPath passed unknown empire id: " << empire_id;
         throw std::out_of_range("PathfinderImpl::ShortestPath passed unknown empire id");
@@ -959,8 +961,7 @@ std::pair<std::list<int>, int> Pathfinder::PathfinderImpl::LeastJumpsPath(
     }
 
     // find path on single empire's view of system graph
-    GraphImpl::EmpireViewSystemGraphMap::const_iterator graph_it =
-        m_graph_impl->empire_system_graph_views.find(empire_id);
+    auto graph_it = m_graph_impl->empire_system_graph_views.find(empire_id);
     if (graph_it == m_graph_impl->empire_system_graph_views.end()) {
         ErrorLogger() << "PathfinderImpl::LeastJumpsPath passed unknown empire id: " << empire_id;
         throw std::out_of_range("PathfinderImpl::LeastJumpsPath passed unknown empire id");
@@ -1005,11 +1006,13 @@ std::multimap<double, int> Pathfinder::ImmediateNeighbors(int system_id, int emp
 
 std::multimap<double, int> Pathfinder::PathfinderImpl::ImmediateNeighbors(int system_id, int empire_id/* = ALL_EMPIRES*/) const {
     if (empire_id == ALL_EMPIRES) {
-        return ImmediateNeighborsImpl(m_graph_impl->system_graph, system_id, m_system_id_to_graph_index);
+        return ImmediateNeighborsImpl(m_graph_impl->system_graph, system_id,
+                                      m_system_id_to_graph_index);
     } else {
-        GraphImpl::EmpireViewSystemGraphMap::const_iterator graph_it = m_graph_impl->empire_system_graph_views.find(empire_id);
+        auto graph_it = m_graph_impl->empire_system_graph_views.find(empire_id);
         if (graph_it != m_graph_impl->empire_system_graph_views.end())
-            return ImmediateNeighborsImpl(*graph_it->second, system_id, m_system_id_to_graph_index);
+            return ImmediateNeighborsImpl(*graph_it->second, system_id,
+                                          m_system_id_to_graph_index);
     }
     return std::multimap<double, int>();
 }
@@ -1274,13 +1277,13 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const std::vector<int> sy
                 continue;
 
             // get new_graph_impl->system_graph index for this system
-            boost::unordered_map<int, size_t>::iterator reverse_lookup_map_it = m_system_id_to_graph_index.find(lane_dest_id);
+            auto reverse_lookup_map_it = m_system_id_to_graph_index.find(lane_dest_id);
             if (reverse_lookup_map_it == m_system_id_to_graph_index.end())
                 continue;   // couldn't find destination system id in vertex lookup map; don't add to graph
             size_t lane_dest_graph_index = reverse_lookup_map_it->second;
 
-            std::pair<EdgeDescriptor, bool> add_edge_result =
-                boost::add_edge(system1_index, lane_dest_graph_index, new_graph_impl->system_graph);
+            auto add_edge_result = boost::add_edge(system1_index, lane_dest_graph_index,
+                                                   new_graph_impl->system_graph);
 
             if (add_edge_result.second) {   // if this is a non-duplicate starlane or wormhole
                 if (lane_dest.second) {         // if this is a wormhole
@@ -1302,7 +1305,9 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const std::vector<int> sy
 
     // if all previous edges still exist in the new graph, and the number of vertices and edges hasn't changed,
     // then no vertices or edges can have been added either, so it is still the same graph
-    graph_changed = graph_changed || boost::num_edges(new_graph_impl->system_graph) != boost::num_edges(m_graph_impl->system_graph);
+    graph_changed = graph_changed ||
+        boost::num_edges(new_graph_impl->system_graph) !=
+            boost::num_edges(m_graph_impl->system_graph);
 
     if (graph_changed) {
         new_graph_impl.swap(m_graph_impl);

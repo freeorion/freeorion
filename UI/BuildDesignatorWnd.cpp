@@ -661,7 +661,7 @@ void BuildDesignatorWnd::BuildSelector::ShowType(BuildType type, bool refresh_li
 }
 
 void BuildDesignatorWnd::BuildSelector::HideType(BuildType type, bool refresh_list) {
-    std::set<BuildType>::iterator it = m_build_types_shown.find(type);
+    auto it = m_build_types_shown.find(type);
     if (it != m_build_types_shown.end()) {
         m_build_types_shown.erase(it);
         if (refresh_list)
@@ -812,10 +812,11 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         std::vector<int> design_ids;
         if (empire) {
             design_ids = ClientUI::GetClientUI()->GetShipDesignManager()->CurrentDesigns()->OrderedIDs();
+        } else {
+            for (auto it = GetUniverse().beginShipDesigns();
+                 it != GetUniverse().endShipDesigns(); ++it)
+            { design_ids.push_back(it->first); }
         }
-        else
-            for (Universe::ship_design_iterator it = GetUniverse().beginShipDesigns(); it != GetUniverse().endShipDesigns(); ++it)
-                design_ids.push_back(it->first);
 
         // create and insert rows...
         std::vector<std::shared_ptr<GG::ListBox::Row>> rows;
@@ -826,9 +827,10 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
             const ShipDesign* ship_design = GetShipDesign(ship_design_id);
             if (!ship_design)
                 continue;
-            auto item_row = GG::Wnd::Create<ProductionItemRow>(row_size.x, row_size.y,
-                                                               ProductionQueue::ProductionItem(BT_SHIP, ship_design_id),
-                                                               m_empire_id, m_production_location);
+            auto item_row = GG::Wnd::Create<ProductionItemRow>(
+                row_size.x, row_size.y, 
+                ProductionQueue::ProductionItem(BT_SHIP, ship_design_id),
+                m_empire_id, m_production_location);
             rows.push_back(item_row);
         }
         m_buildable_items->Insert(rows, false);
@@ -1318,7 +1320,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet() {
 
     // select recorded default planet for this system, if there is one recorded
     // unless that planet can't be selected or doesn't exist in this system
-    std::map<int, int>::iterator it = m_system_default_planets.find(system_id);
+    auto it = m_system_default_planets.find(system_id);
     if (it != m_system_default_planets.end()) {
         int planet_id = it->second;
         if (m_side_panel->PlanetSelectable(planet_id)) {

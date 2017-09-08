@@ -455,7 +455,7 @@ void ServerApp::HandleLoggerConfig(const Message& msg, PlayerConnectionPtr playe
 
     // Forward the message to all the AIs
     const auto relay_options_message = LoggerConfigMessage(Networking::INVALID_PLAYER_ID, options);
-    for (ServerNetworking::established_iterator players_it = m_networking.established_begin();
+    for (auto players_it = m_networking.established_begin();
          players_it != m_networking.established_end(); ++players_it)
     {
         if ((*players_it)->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
@@ -505,7 +505,7 @@ void ServerApp::SelectNewHost() {
     DebugLogger() << "ServerApp::SelectNewHost old host id: " << old_host_id;
 
     // scan through players for a human to host
-    for (ServerNetworking::established_iterator players_it = m_networking.established_begin();
+    for (auto players_it = m_networking.established_begin();
          players_it != m_networking.established_end(); ++players_it)
     {
         PlayerConnectionPtr player_connection = *players_it;
@@ -537,14 +537,12 @@ void ServerApp::NewSPGameInit(const SinglePlayerSetupData& single_player_setup_d
     // PlayerSetupData.  AI player connections are assigned one of the remaining
     // PlayerSetupData entries that is for an AI player.
     std::map<int, PlayerSetupData> player_id_setup_data;
-    const std::vector<PlayerSetupData>& player_setup_data = single_player_setup_data.m_players;
-
+    const auto& player_setup_data = single_player_setup_data.m_players;
     NewGameInitConcurrentWithJoiners(single_player_setup_data, player_setup_data);
 }
 
 bool ServerApp::VerifySPGameAIs(const SinglePlayerSetupData& single_player_setup_data) {
-    const std::vector<PlayerSetupData>& player_setup_data = single_player_setup_data.m_players;
-
+    const auto& player_setup_data = single_player_setup_data.m_players;
     return NewGameInitVerifyJoiners(single_player_setup_data, player_setup_data);
 }
 
@@ -554,9 +552,9 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
     // before now because the lobby data was set up without connected/established
     // clients for the AIs.
     std::map<int, PlayerSetupData> player_id_setup_data;
-    const std::list<std::pair<int, PlayerSetupData>>& player_setup_data = multiplayer_lobby_data.m_players;
+    const auto& player_setup_data = multiplayer_lobby_data.m_players;
 
-    for (const std::pair<int, PlayerSetupData>& entry : player_setup_data) {
+    for (const auto& entry : player_setup_data) {
         const PlayerSetupData& psd = entry.second;
         if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
             psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
@@ -568,7 +566,7 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
             // find player connection with same ID as this player setup data
             bool found_matched_id_connection = false;
             int player_id = entry.first;
-            for (ServerNetworking::const_established_iterator established_player_it = m_networking.established_begin();
+            for (auto established_player_it = m_networking.established_begin();
                  established_player_it != m_networking.established_end(); ++established_player_it)
             {
                 const PlayerConnectionPtr player_connection = *established_player_it;
@@ -589,7 +587,7 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
             // find player connection with same name as this player setup data
             bool found_matched_name_connection = false;
             const std::string& player_name = psd.m_player_name;
-            for (ServerNetworking::const_established_iterator established_player_it = m_networking.established_begin();
+            for (auto established_player_it = m_networking.established_begin();
                  established_player_it != m_networking.established_end(); ++established_player_it)
             {
                 const PlayerConnectionPtr player_connection = *established_player_it;
@@ -776,7 +774,7 @@ bool ServerApp::NewGameInitVerifyJoiners(
     }
 
     // validate some connection info / determine which players need empires created
-    for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
+    for (auto player_connection_it = m_networking.established_begin();
          player_connection_it != m_networking.established_end(); ++player_connection_it)
     {
         const PlayerConnectionPtr player_connection = *player_connection_it;
@@ -818,7 +816,7 @@ void ServerApp::SendNewGameStartMessages() {
 
     // send new game start messages
     DebugLogger() << "SendGameStartMessages: Sending GameStartMessages to players";
-    for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
+    for (auto player_connection_it = m_networking.established_begin();
          player_connection_it != m_networking.established_end(); ++player_connection_it)
     {
         const PlayerConnectionPtr player_connection = *player_connection_it;
@@ -840,7 +838,7 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
     // Need to determine which data in player_save_game_data should be assigned to which established player
     std::vector<std::pair<int, int>> player_id_to_save_game_data_index;
 
-    ServerNetworking::const_established_iterator established_player_it = m_networking.established_begin();
+    auto established_player_it = m_networking.established_begin();
 
     // assign all saved game data to a player ID
     for (int i = 0; i < static_cast<int>(player_save_game_data.size()); ++i) {
@@ -909,7 +907,7 @@ void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_
 
     // Compose a vector of the requested ids and logs
     std::vector<std::pair<int, const CombatLog>> logs;
-    for (std::vector<int>::iterator it = ids.begin(); it != ids.end(); ++it) {
+    for (auto it = ids.begin(); it != ids.end(); ++it) {
         boost::optional<const CombatLog&> log = GetCombatLogManager().GetLog(*it);
         if (!log) {
             ErrorLogger() << "UpdateCombatLogs can't fetch log with id = "<< *it << " ... skipping.";
@@ -929,16 +927,16 @@ namespace {
     bool HumanPlayerWithIdConnected(const ServerNetworking& sn, int id) {
         // make sure there is a human player connected with the player id
         // matching what this PlayerSetupData say
-        ServerNetworking::const_established_iterator established_player_it = sn.GetPlayer(id);
+        auto established_player_it = sn.GetPlayer(id);
         if (established_player_it == sn.established_end()) {
             ErrorLogger() << "ServerApp::LoadMPGameInit couldn't find player connection for "
-                                    << "human player setup data with player id: " << id;
+                          << "human player setup data with player id: " << id;
             return false;
         }
         const PlayerConnectionPtr player_connection = *established_player_it;
         if (player_connection->GetClientType() != Networking::CLIENT_TYPE_HUMAN_PLAYER) {
             ErrorLogger() << "ServerApp::LoadMPGameInit found player connection of wrong type "
-                                    << "for human player setup data with player id: " << id;
+                          << "for human player setup data with player id: " << id;
             return false;
         }
         return true;
@@ -992,7 +990,7 @@ namespace {
         if (player_name.empty())
             return Networking::INVALID_PLAYER_ID;
 
-        for (ServerNetworking::const_established_iterator established_player_it = sn.established_begin();
+        for (auto established_player_it = sn.established_begin();
              established_player_it != sn.established_end(); ++established_player_it)
         {
             const PlayerConnectionPtr player_connection = *established_player_it;
@@ -1117,7 +1115,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     }
 
     // validate some connection info
-    for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
+    for (auto player_connection_it = m_networking.established_begin();
          player_connection_it != m_networking.established_end(); ++player_connection_it)
     {
         const PlayerConnectionPtr player_connection = *player_connection_it;

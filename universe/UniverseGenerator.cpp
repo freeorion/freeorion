@@ -885,7 +885,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
 
         // validate or generate empire colour
         // ensure no other empire gets auto-assigned this colour automatically
-        std::vector<GG::Clr>::iterator color_it = std::find(colors.begin(), colors.end(), empire_colour);
+        auto color_it = std::find(colors.begin(), colors.end(), empire_colour);
         if (color_it != colors.end())
             colors.erase(color_it);
 

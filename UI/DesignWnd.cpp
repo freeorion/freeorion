@@ -1011,8 +1011,8 @@ bool LocationASubsumesLocationB(const Condition::ConditionBase* check_part_loc, 
 bool PartALocationSubsumesPartB(const PartType* check_part, const PartType* ref_part) {
     static std::map<std::pair<std::string, std::string>, bool> part_loc_comparison_map;
 
-    std::pair<std::string, std::string> part_pair = {check_part->Name(), ref_part->Name()};
-    std::map<std::pair<std::string, std::string>, bool>::iterator map_it = part_loc_comparison_map.find(part_pair);
+    auto part_pair = std::make_pair(check_part->Name(), ref_part->Name());
+    auto map_it = part_loc_comparison_map.find(part_pair);
     if (map_it != part_loc_comparison_map.end())
         return map_it->second;
 
@@ -1020,8 +1020,8 @@ bool PartALocationSubsumesPartB(const PartType* check_part, const PartType* ref_
     if (check_part->Name() == "SH_MULTISPEC" || ref_part->Name() == "SH_MULTISPEC")
         result = false;
 
-    const Condition::ConditionBase* check_part_loc = check_part->Location();
-    const Condition::ConditionBase* ref_part_loc = ref_part->Location();
+    auto check_part_loc = check_part->Location();
+    auto ref_part_loc = ref_part->Location();
     result = result && LocationASubsumesLocationB(check_part_loc, ref_part_loc);
     part_loc_comparison_map[part_pair] = result;
     //if (result && check_part_loc && ref_part_loc) {
@@ -1073,7 +1073,7 @@ void PartsListBox::CullSuperfluousParts(std::vector<const PartType* >& this_grou
         } catch (...) {}
     }
 
-    for (std::vector<const PartType* >::iterator part_it = this_group.begin();
+    for (auto part_it = this_group.begin();
          part_it != this_group.end(); ++part_it)
     {
         const PartType* checkPart = *part_it;
@@ -2193,7 +2193,7 @@ void CompletedDesignsListBox::PopulateCore() {
         }
     } else if (showing_available) {
         // add all known / existing designs
-        for (Universe::ship_design_iterator it = universe.beginShipDesigns();
+        for (auto it = universe.beginShipDesigns();
              it != universe.endShipDesigns(); ++it)
         {
             const ShipDesign* design = it->second;
@@ -2243,13 +2243,14 @@ void MonstersListBox::PopulateCore() {
     Clear();
     const GG::Pt row_size = ListRowSize();
 
-    for (Universe::ship_design_iterator it = universe.beginShipDesigns();
-            it != universe.endShipDesigns(); ++it)
+    for (auto it = universe.beginShipDesigns();
+         it != universe.endShipDesigns(); ++it)
     {
         const ShipDesign* design = it->second;
         if (!design->IsMonster())
             continue;
-        auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, *design);
+        auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y,
+                                                              *design);
         Insert(row);
         row->Resize(row_size);
     }
@@ -2397,7 +2398,8 @@ void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& 
 }
 
 
-void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                        const GG::Flags<GG::ModKey>& modkeys)
 {
     HullAndPartsListBoxRow* hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
     if (!hull_parts_row)
@@ -2409,7 +2411,8 @@ void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& 
         HullClickedSignal(hull_type);
 }
 
-void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                              const GG::Flags<GG::ModKey>& modkeys)
 {
     CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!design_row)
@@ -2429,7 +2432,8 @@ void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG
         DesignClickedSignal(design);
 }
 
-void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                          const GG::Flags<GG::ModKey>& modkeys)
 {
     SavedDesignListBoxRow* saved_design_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
     if (!saved_design_row)

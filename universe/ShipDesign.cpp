@@ -1392,7 +1392,7 @@ namespace {
 
         Universe& universe = GetUniverse();
         /* check if there already exists this same design in the universe. */
-        for (Universe::ship_design_iterator it = universe.beginShipDesigns();
+        for (auto it = universe.beginShipDesigns();
              it != universe.endShipDesigns(); ++it)
         {
             const ShipDesign* existing_design = it->second;
