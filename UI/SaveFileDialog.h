@@ -57,7 +57,16 @@ private:
     void UpdateDirectory(const std::string& newdir);                    //!< Change current directory
     void DirectoryDropdownSelect(GG::DropDownList::iterator selection); //!< On remote directory select
 
+    /** Either directly update from the local save directory, or request the
+        server for save preview information*/
     void UpdatePreviewList();
+    /** Update the preview list from a local save directory*/
+    void SetPreviewList(const boost::filesystem::path& path);
+    /** Update the previews with \p preview_information*/
+    void SetPreviewList(const PreviewInformation& preview_info);
+    /** Update the previews with preview info set by \p setup_preview_info*/
+    void SetPreviewListCore(const std::function<void ()>& setup_preview_info);
+
     bool CheckChoiceValidity();                         //!< Disables confirm if filename invalid. Returns false if not valid.
     void FileNameEdited(const std::string& filename);   //!< Called when the filename changes
     void DirectoryEdited(const std::string& filename);  //!< Called when the directory text changes

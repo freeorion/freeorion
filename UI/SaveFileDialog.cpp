@@ -950,26 +950,35 @@ void SaveFileDialog::DirectoryDropdownSelect(GG::DropDownList::iterator selectio
 }
 
 void SaveFileDialog::UpdatePreviewList() {
-    DebugLogger() << "SaveFileDialog::UpdatePreviewList";
-
-    m_file_list->Clear();
-    m_file_list->Init();
-
     // If no browsing, no reloading
     if (!m_server_previews) {
-        m_file_list->LoadSaveGamePreviews(FilenameToPath(GetDirPath()), m_extension);
+        SetPreviewList(FilenameToPath(GetDirPath()));
     } else {
-        PreviewInformation preview_information;
-        HumanClientApp::GetApp()->RequestSavePreviews(GetDirPath(), preview_information);
-        m_file_list->LoadSaveGamePreviews(preview_information.previews);
+        DebugLogger() << "Requesting save previews from server";
+        PreviewInformation preview_info;
+        HumanClientApp::GetApp()->RequestSavePreviews(GetDirPath(), preview_info);
+        SetPreviewList(preview_info);
+    }
+}
+
+void SaveFileDialog::SetPreviewList(const fs::path& path) {
+    auto setup_func = [this, &path]() { m_file_list->LoadSaveGamePreviews(path, m_extension); };
+
+    CheckChoiceValidity();
+    SetPreviewListCore(setup_func);
+}
+
+void SaveFileDialog::SetPreviewList(const PreviewInformation& preview_info) {
+    auto setup_func = [this, &preview_info]() {
+        m_file_list->LoadSaveGamePreviews(preview_info.previews);
         m_remote_dir_dropdown->Clear();
-        SetDirPath(preview_information.folder);
+        SetDirPath(preview_info.folder);
 
         auto row = GG::Wnd::Create<GG::DropDownList::Row>();
         row->push_back(GG::Wnd::Create<CUILabel>(SERVER_LABEL));
         m_remote_dir_dropdown->Insert(row);
 
-        for (const std::string& subdir : preview_information.subdirectories) {
+        for (const std::string& subdir : preview_info.subdirectories) {
             auto row = GG::Wnd::Create<GG::DropDownList::Row>();
             if (subdir.find("/") == 0) {
                 row->push_back(GG::Wnd::Create<CUILabel>(SERVER_LABEL + subdir));
@@ -981,7 +990,16 @@ void SaveFileDialog::UpdatePreviewList() {
 
             m_remote_dir_dropdown->Insert(row);
         }
-    }
+    };
+
+    SetPreviewListCore(setup_func);
+}
+
+void SaveFileDialog::SetPreviewListCore(const std::function<void ()>& setup_preview_info) {
+    m_file_list->Clear();
+    m_file_list->Init();
+
+    setup_preview_info();
 
     // HACK: Sometimes the first row is not drawn without this
     m_file_list->BringRowIntoView(m_file_list->begin());
