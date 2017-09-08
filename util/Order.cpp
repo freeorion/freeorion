@@ -1003,7 +1003,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
 
             } else if (m_use_imperial_pp == USE_IMPERIAL_PP) {
                 DebugLogger() << "ProductionQueueOrder: allow use of imperial PP stockpile";
-                empire->AllowUseImperialPP(m_index, true);; // 
+                empire->AllowUseImperialPP(m_index, true); 
 
             } else if (m_use_imperial_pp == DONT_USE_IMPERIAL_PP) {
                 DebugLogger() << "ProductionQueueOrder: disallow use of imperial PP stockpile";
