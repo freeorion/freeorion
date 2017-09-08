@@ -154,10 +154,6 @@ void InGameMenu::Save() {
         return;
     }
 
-    const std::string SAVE_GAME_EXTENSION =
-        app->SinglePlayerGame() ?
-        SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION;
-
     try {
         std::string filename;
 
