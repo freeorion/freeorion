@@ -692,7 +692,9 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         }
     } else {
         try {
-            auto sfd = GG::Wnd::Create<SaveFileDialog>(SP_SAVE_FILE_EXTENSION, true);
+            auto sfd = GG::Wnd::Create<SaveFileDialog>(
+                SaveFileDialog::Purpose::Load,
+                SaveFileDialog::SaveType::SinglePlayer);
             sfd->Run();
 
             // Update intro screen Load & Continue buttons if all savegames are deleted.
@@ -1319,7 +1321,9 @@ bool HumanClientApp::IsLoadGameAvailable() const {
 }
 
 std::string HumanClientApp::SelectLoadFile() {
-    auto sfd = GG::Wnd::Create<SaveFileDialog>(true);
+    auto sfd = GG::Wnd::Create<SaveFileDialog>(
+        SaveFileDialog::Purpose::Load,
+        SaveFileDialog::SaveType::MultiPlayer);
     sfd->Run();
     return sfd->Result();
 }

@@ -21,14 +21,11 @@ struct PreviewInformation;
  */
 class SaveFileDialog : public CUIWnd {
 public:
-    /** \name Structors */ //@{
-    /// Constructor for local browsing
-    /// @param extension The extension to enforce on the file name
-    /// @param load If set to true, only allow choosing existing files
-    SaveFileDialog(const std::string& extension, bool load = false);
+    enum class Purpose {Save, Load};
+    enum class SaveType {SinglePlayer, MultiPlayer};
 
-    /// Contruct for getting the previews from the server
-    SaveFileDialog(bool load = false);
+    /** \name Structors */ //@{
+    SaveFileDialog(const Purpose purpose = Purpose::Load, const SaveType type = SaveType::SinglePlayer);
 
     void CompleteConstruction() override;
     ~SaveFileDialog();

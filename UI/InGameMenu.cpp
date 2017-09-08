@@ -164,7 +164,9 @@ void InGameMenu::Save() {
         // When saving in multiplayer, you cannot see the old saves or
         // browse directories, only give a save file name.
         DebugLogger() << "... running save file dialog";
-        auto dlg = GG::Wnd::Create<SaveFileDialog>(app->SinglePlayerGame() ? SAVE_GAME_EXTENSION : MP_SAVE_FILE_EXTENSION);
+        auto dlg = GG::Wnd::Create<SaveFileDialog>(
+            SaveFileDialog::Purpose::Save,
+            app->SinglePlayerGame() ? SaveFileDialog::SaveType::SinglePlayer : SaveFileDialog::SaveType::MultiPlayer);
         dlg->Run();
         filename = dlg->Result();
 

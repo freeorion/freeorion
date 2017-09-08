@@ -632,25 +632,15 @@ private:
     }
 };
 
-SaveFileDialog::SaveFileDialog (const std::string& extension, bool load) :
+SaveFileDialog::SaveFileDialog(const Purpose purpose /* =Purpose::Load*/,
+                               const SaveType type /*= SaveType::SinglePlayer*/) :
     CUIWnd(UserString("GAME_MENU_SAVE_FILES"),
            GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE,
-           SAVE_FILE_WND_NAME)
-{
-    m_extension = extension;
-    m_load_only = load;
-    m_server_previews = false;
-}
-
-SaveFileDialog::SaveFileDialog (bool load) :
-    CUIWnd(UserString("GAME_MENU_SAVE_FILES"),
-           GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE,
-           SAVE_FILE_WND_NAME)
-{
-    m_load_only = load;
-    m_server_previews = true;
-    m_extension = MP_SAVE_FILE_EXTENSION;
-}
+           SAVE_FILE_WND_NAME),
+    m_extension((type == SaveType::SinglePlayer) ? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION),
+    m_load_only(purpose == Purpose::Load),
+    m_server_previews((type == SaveType::SinglePlayer) ? false : true)
+{}
 
 void SaveFileDialog::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
