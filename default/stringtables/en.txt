@@ -10144,7 +10144,7 @@ The imperial stockpile service has a fleet for distributing raw materials to pla
 This task is difficult as the service has to predict when demand happens, where it happens, what materials and goods are demanded and also who the users will be.
 
 This is the basic technology for the imperial stockpile.
-The imperial stockpile service starts with 20% [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and to draw 2PP/turn from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
+The imperial stockpile service starts with 20% [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allows drawing 2 PP / turn from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
 
 PRO_IMPERIAL_STOCKPILE_2
 Generic Supplies
@@ -10158,7 +10158,7 @@ Reaching this state of sophistication, Generic Supplies can be used to construct
 This frees the imperial stockpile service from having to know which goods will be demanded exactly. Predicting the location is enough.
 
 This is an upgrade technology for the imperial stockpile.
-It adds 20% to the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allows to draw 3PP/turn extra from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
+It adds 20% to the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allows drawing 3 PP / turn extra from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
 
 PRO_IMPERIAL_STOCKPILE_3
 Interstellar Entanglement Factory
@@ -10168,7 +10168,7 @@ IMPERIAL_STOCKPILE_3_DESC
 Putting the empires best engineers directly in charge of building using the stockpiled goods helps making the most out of these.
 
 This is an upgrade technology for the imperial stockpile.
-It adds 20% to the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allows to draw 5PP/turn extra from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
+It adds 20% to the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allows drawing 5 PP / turn extra from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
 
 PRO_MICROGRAV_MAN
 Microgravity Industry
@@ -10265,12 +10265,13 @@ PRO_IMPERIAL_SUPPLY_1
 Imperial Supply Stockpiling
 
 IMPERIAL_STOCKPILE_SHORT_DESC
-Allows for a small Imperial Production Stockpile
+Allows for a Imperial Production Stockpiling
 
 IMPERIAL_STOCKPILE_1_DESC
-'''Unused PP, which would otherwise be wasted, can have a portion instead be retained and transferred to the Imperial Production Stockpile.  An item on the production queue which does not have its full turn allotment of PP available to it via the normal supply mechanism, can draw on the Imperial Stockpile if the item has been explicitly enabled for doing so (via right-click menu on the Production Queue).
+'''A portion of unused PP be transferred to the Imperial Production Stockpile the other part going to waste. 
+An item on the production queue can draw on the Imperial Stockpile if the item has been explicitly enabled for doing so.
 
-The retention efficiency rate, and the maximum amount that may be used from the Imperial Stockpile, are governed by the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and [[metertype METER_IMPERIAL_PP_USE_LIMIT]] empire meters.
+The efficiency of transfer ratio and the maximum amount that may be used from the Imperial Stockpile, are governed by the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and [[metertype METER_IMPERIAL_PP_USE_LIMIT]] empire meters.
 '''
 
 CON_ARCH_PSYCH

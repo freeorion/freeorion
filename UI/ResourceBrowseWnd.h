@@ -30,7 +30,7 @@ private:
     std::shared_ptr<GG::Label>  m_target_points_label;
     std::shared_ptr<GG::Label>  m_target_points;
     std::shared_ptr<GG::Label>  m_target_points_P_label;
-    bool        m_show_stockpile;
+    bool                        m_show_stockpile;
     std::shared_ptr<GG::Label>  m_stockpile_points_label;
     std::shared_ptr<GG::Label>  m_stockpile_points;
     std::shared_ptr<GG::Label>  m_stockpile_points_P_label;

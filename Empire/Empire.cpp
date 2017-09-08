@@ -247,7 +247,6 @@ namespace {
         float dummy_pp_source = 0;
         
         //DebugLogger() << "queue size: " << queue.size();
-      
         int i = 0;
         for (ProductionQueue::Element& queue_element : queue) {
             if (queue_element.paused) {
