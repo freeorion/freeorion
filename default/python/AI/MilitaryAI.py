@@ -696,8 +696,9 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
 
         # border protections
         visible_system_ids = foAI.foAIstate.visInteriorSystemIDs | foAI.foAIstate.visBorderSystemIDs
-        accessible_system_ids = [sys_id for sys_id in visible_system_ids if
+        accessible_system_ids = ([sys_id for sys_id in visible_system_ids if
                                  universe.systemsConnected(sys_id, home_system_id, empire_id)]
+                                 if home_system_id != INVALID_ID else [])
         current_mil_systems = [sid for sid, alloc, rvp, take_any, _ in allocation_helper.allocations if alloc > 0]
         border_targets1 = [sid for sid in accessible_system_ids if sid not in current_mil_systems]
         border_targets = [sid for sid in border_targets1 if (
