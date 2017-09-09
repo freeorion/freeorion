@@ -129,7 +129,7 @@ class State(object):
 
     def get_empire_outposts(self):
         empire_id = fo.empireID()
-        return tuple(x.pid for x in self.__planet_info.itervalues() if x.owner == empire_id and x.species_name)
+        return tuple(x.pid for x in self.__planet_info.itervalues() if x.owner == empire_id and not x.species_name)
 
     def get_all_empire_planets(self):
         empire_id = fo.empireID()
