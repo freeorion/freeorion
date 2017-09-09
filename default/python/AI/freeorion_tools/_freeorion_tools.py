@@ -239,7 +239,6 @@ class ReadOnlyDict(Mapping):
           print my_dict[k]
       for k, v in my_dict.iteritems():
           print k, v
-      my_dict['a'].append(3)  # this actually modifies the dict!
       my_dict[5] = 4  # throws TypeError
       del my_dict[1]  # throws TypeError
      """
