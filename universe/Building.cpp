@@ -352,19 +352,6 @@ BuildingTypeManager::BuildingTypeManager() :
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one BuildingTypeManager.");
 
-    m_pending_building_types = std::async(std::launch::async, []{
-            TraceLogger() << "BuildingTypeManager::BuildingTypeManager() about to parse buildings.";
-
-            auto building_types = parse::buildings();
-
-            TraceLogger() << "Building Types:";
-            for (const auto& entry : building_types) {
-                TraceLogger() << " ... " << entry.first;
-            }
-
-            return building_types;
-        });
-
     // Only update the global pointer on sucessful construction.
     s_instance = this;
 }

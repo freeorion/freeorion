@@ -350,6 +350,9 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     RegisterLinkTags();
 
     m_fsm->initiate();
+
+    // Start parsing content
+    ParseUniverseObjectTypes();
 }
 
 void HumanClientApp::ConnectKeyboardAcceleratorSignals() {

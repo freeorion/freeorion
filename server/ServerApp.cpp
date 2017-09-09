@@ -618,6 +618,9 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
 {
     DebugLogger() << "ServerApp::NewGameInitConcurrentWithJoiners";
 
+    // Start parsing content
+    ParseUniverseObjectTypes();
+
     m_galaxy_setup_data = galaxy_setup_data;
     GetGameRules().SetFromStrings(m_galaxy_setup_data.GetGameRules());
 
@@ -823,6 +826,9 @@ void ServerApp::SendNewGameStartMessages() {
 void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
                                std::shared_ptr<ServerSaveGameData> server_save_game_data)
 {
+    // Start parsing content
+    ParseUniverseObjectTypes();
+
     // Need to determine which data in player_save_game_data should be assigned to which established player
     std::vector<std::pair<int, int>> player_id_to_save_game_data_index;
 
@@ -1090,6 +1096,9 @@ void ServerApp::LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
                                const std::vector<PlayerSaveGameData>& player_save_game_data,
                                std::shared_ptr<ServerSaveGameData> server_save_game_data)
 {
+    // Start parsing content
+    ParseUniverseObjectTypes();
+
     // Need to determine which data in player_save_game_data should be assigned to which established player
     std::vector<std::pair<int, int>> player_id_to_save_game_data_index;
 
