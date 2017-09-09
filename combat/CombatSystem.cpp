@@ -50,7 +50,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
 
 
     // find ships and their owners in system
-    std::vector<std::shared_ptr<Ship>> ships = Objects().FindObjects<Ship>(system->ShipIDs());
+    auto ships = Objects().FindObjects<Ship>(system->ShipIDs());
 
     for (auto& ship : ships) {
         // add owner to empires that have assets in this battle
@@ -60,8 +60,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     }
 
     // find planets and their owners in system
-    std::vector<std::shared_ptr<Planet>> planets =
-        Objects().FindObjects<Planet>(system->PlanetIDs());
+    auto planets = Objects().FindObjects<Planet>(system->PlanetIDs());
 
     for (auto& planet : planets) {
         // if planet is populated, add owner to empires that have assets in this battle
@@ -250,8 +249,8 @@ void CombatInfo::InitializeObjectVisibility()
 
 void CombatInfo::ForceAtLeastBasicVisibility(int attacker_id, int target_id)
 {
-    std::shared_ptr<UniverseObject> attacker = objects.Object(attacker_id);
-    std::shared_ptr<UniverseObject> target = objects.Object(target_id);
+    auto attacker = objects.Object(attacker_id);
+    auto target = objects.Object(target_id);
     // Also ensure that attacker (and their fleet if attacker was a ship) are
     // revealed with at least BASIC_VISIBILITY to the target empire
     Visibility old_visibility = empire_object_visibility[target->Owner()][attacker->ID()];
@@ -268,7 +267,8 @@ void CombatInfo::ForceAtLeastBasicVisibility(int attacker_id, int target_id)
 ////////////////////////////////////////////////
 namespace {
     struct PartAttackInfo {
-        PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_, float part_attack_) :
+        PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
+                       float part_attack_) :
             part_class(part_class_),
             part_type_name(part_name_),
             part_attack(part_attack_),
@@ -291,8 +291,9 @@ namespace {
         float           fighter_damage;     // for fighter bays, input value should be determined by ship fighter weapon setup
     };
 
-    void AttackShipShip(std::shared_ptr<Ship> attacker, const PartAttackInfo& weapon, std::shared_ptr<Ship> target,
-                        CombatInfo& combat_info, int bout, int round,
+    void AttackShipShip(std::shared_ptr<Ship> attacker, const PartAttackInfo& weapon,
+                        std::shared_ptr<Ship> target, CombatInfo& combat_info,
+                        int bout, int round,
                         WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
         if (!attacker || !target) return;
@@ -329,8 +330,9 @@ namespace {
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void AttackShipPlanet(std::shared_ptr<Ship> attacker, const PartAttackInfo& weapon, std::shared_ptr<Planet> target,
-                          CombatInfo& combat_info, int bout, int round,
+    void AttackShipPlanet(std::shared_ptr<Ship> attacker, const PartAttackInfo& weapon,
+                          std::shared_ptr<Planet> target, CombatInfo& combat_info,
+                          int bout, int round,
                           WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
         if (!attacker || !target) return;
@@ -377,7 +379,8 @@ namespace {
             damaged_object_ids.insert(target->ID());
 
         if (defense_damage >= target_defense->Current())
-            construction_damage = std::min(target_construction->Current(), power - shield_damage - defense_damage);
+            construction_damage = std::min(target_construction->Current(),
+                                           power - shield_damage - defense_damage);
 
         if (shield_damage >= 0) {
             target_shield->AddToCurrent(-shield_damage);
@@ -400,15 +403,16 @@ namespace {
 
         //TODO report the planet damage details more clearly
         float total_damage = shield_damage + defense_damage + construction_damage;
-        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.part_type_name, power, 0.0f, total_damage);
+        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.part_type_name,
+                               power, 0.0f, total_damage);
 
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
         target->SetLastTurnAttackedByShip(CurrentTurn());
     }
 
-    void AttackShipFighter(std::shared_ptr<Ship> attacker, const PartAttackInfo& weapon, std::shared_ptr<Fighter> target,
-                           CombatInfo& combat_info, int bout, int round,
-                           AttacksEventPtr &attacks_event,
+    void AttackShipFighter(std::shared_ptr<Ship> attacker, const PartAttackInfo& weapon,
+                           std::shared_ptr<Fighter> target, CombatInfo& combat_info,
+                           int bout, int round, AttacksEventPtr& attacks_event,
                            WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
         float power = weapon.part_attack;
@@ -417,12 +421,14 @@ namespace {
             // any damage is enough to kill any fighter
             target->SetDestroyed();
         }
-        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.part_type_name, power, 0.0f, 1.0f);
+        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.part_type_name,
+                               power, 0.0f, 1.0f);
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void AttackPlanetShip(std::shared_ptr<Planet> attacker, const PartAttackInfo& weapon, std::shared_ptr<Ship> target,
-                          CombatInfo& combat_info, int bout, int round,
+    void AttackPlanetShip(std::shared_ptr<Planet> attacker, const PartAttackInfo& weapon,
+                          std::shared_ptr<Ship> target, CombatInfo& combat_info,
+                          int bout, int round,
                           WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
         if (!attacker || !target) return;
@@ -457,14 +463,15 @@ namespace {
                                 << target->ID() << ")";
         }
 
-        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.part_type_name, power, shield, damage);
+        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.part_type_name,
+                               power, shield, damage);
 
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void AttackPlanetFighter(std::shared_ptr<Planet> attacker, const PartAttackInfo& weapon, std::shared_ptr<Fighter> target,
-                             CombatInfo& combat_info, int bout, int round,
-                             AttacksEventPtr &attacks_event,
+    void AttackPlanetFighter(std::shared_ptr<Planet> attacker, const PartAttackInfo& weapon,
+                             std::shared_ptr<Fighter> target, CombatInfo& combat_info,
+                             int bout, int round, AttacksEventPtr& attacks_event,
                              WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
         if (!attacker || !target) return;
@@ -479,12 +486,13 @@ namespace {
             target->SetDestroyed();
         }
 
-        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.part_type_name, power, 0.0f, 1.0f);
+        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.part_type_name,
+                               power, 0.0f, 1.0f);
     }
 
-    void AttackFighterShip(std::shared_ptr<Fighter> attacker, const PartAttackInfo& weapon, std::shared_ptr<Ship> target,
-                           CombatInfo& combat_info, int bout, int round,
-                           AttacksEventPtr &attacks_event)
+    void AttackFighterShip(std::shared_ptr<Fighter> attacker, const PartAttackInfo& weapon,
+                           std::shared_ptr<Ship> target, CombatInfo& combat_info,
+                           int bout, int round, AttacksEventPtr& attacks_event)
     {
         if (!attacker || !target) return;
 
@@ -524,8 +532,9 @@ namespace {
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void AttackFighterFighter(std::shared_ptr<Fighter> attacker, const PartAttackInfo& weapon, std::shared_ptr<Fighter> target,
-                              CombatInfo& combat_info, int bout, int round,
+    void AttackFighterFighter(std::shared_ptr<Fighter> attacker, const PartAttackInfo& weapon,
+                              std::shared_ptr<Fighter> target, CombatInfo& combat_info,
+                              int bout, int round,
                               std::shared_ptr<FightersAttackFightersEvent>& fighter_on_fighter_event)
     {
         if (!attacker || !target) return;
@@ -541,17 +550,17 @@ namespace {
     }
 
     void Attack(std::shared_ptr<UniverseObject>& attacker, const PartAttackInfo& weapon,
-                std::shared_ptr<UniverseObject>& target, CombatInfo& combat_info, int bout, int round,
-                AttacksEventPtr &attacks_event,
+                std::shared_ptr<UniverseObject>& target, CombatInfo& combat_info,
+                int bout, int round, AttacksEventPtr& attacks_event,
                 WeaponsPlatformEvent::WeaponsPlatformEventPtr platform_event,
                 std::shared_ptr<FightersAttackFightersEvent>& fighter_on_fighter_event)
     {
-        std::shared_ptr<Ship> attack_ship = std::dynamic_pointer_cast<Ship>(attacker);
-        std::shared_ptr<Planet> attack_planet = std::dynamic_pointer_cast<Planet>(attacker);
-        std::shared_ptr<Fighter> attack_fighter = std::dynamic_pointer_cast<Fighter>(attacker);
-        std::shared_ptr<Ship> target_ship = std::dynamic_pointer_cast<Ship>(target);
-        std::shared_ptr<Planet> target_planet = std::dynamic_pointer_cast<Planet>(target);
-        std::shared_ptr<Fighter> target_fighter = std::dynamic_pointer_cast<Fighter>(target);
+        auto attack_ship = std::dynamic_pointer_cast<Ship>(attacker);
+        auto attack_planet = std::dynamic_pointer_cast<Planet>(attacker);
+        auto attack_fighter = std::dynamic_pointer_cast<Fighter>(attacker);
+        auto target_ship = std::dynamic_pointer_cast<Ship>(target);
+        auto target_planet = std::dynamic_pointer_cast<Planet>(target);
+        auto target_fighter = std::dynamic_pointer_cast<Fighter>(target);
 
         if (attack_ship && target_ship) {
             AttackShipShip(attack_ship, weapon, target_ship, combat_info, bout, round, platform_event);
@@ -701,7 +710,7 @@ namespace {
         std::map<std::string, int> part_fighter_launch_capacities;
 
         // determine what ship does during combat, based on parts and their meters...
-        for (const std::string& part_name : design->Parts()) {
+        for (const auto& part_name : design->Parts()) {
             const PartType* part = GetPartType(part_name);
             if (!part)
                 continue;
@@ -740,7 +749,8 @@ namespace {
 
                 if (to_launch <= 0)
                     continue;
-                retval.push_back(PartAttackInfo(PC_FIGHTER_BAY, launch.first, to_launch, fighter_attack)); // attack may be 0; that's ok: decoys
+                retval.push_back(PartAttackInfo(PC_FIGHTER_BAY, launch.first, to_launch,
+                                                fighter_attack)); // attack may be 0; that's ok: decoys
                 available_fighters -= to_launch;
                 if (available_fighters <= 0)
                     break;
@@ -1151,7 +1161,7 @@ namespace {
         ss << "Attacker " << attacker->ID() << " can't attack potential targets: ";
 
         for (int target_id : potential_target_ids) {
-            std::shared_ptr<UniverseObject> target = combat_state.combat_info.objects.Object(target_id);
+            auto target = combat_state.combat_info.objects.Object(target_id);
             if (!target)
                 continue;
 
@@ -1178,7 +1188,7 @@ namespace {
         bool any_invalid_targets{false};
 
         for (int target_id : potential_target_ids) {
-            std::shared_ptr<UniverseObject> target = combat_state.combat_info.objects.Object(target_id);
+            auto target = combat_state.combat_info.objects.Object(target_id);
             if (!target) {
                 ErrorLogger() << "AutoResolveCombat couldn't get target object with id " << target_id;
                 continue;
@@ -1316,7 +1326,8 @@ namespace {
         }
     }
 
-    void LaunchFighters(std::shared_ptr<UniverseObject>& attacker, const std::vector<PartAttackInfo>& weapons,
+    void LaunchFighters(std::shared_ptr<UniverseObject>& attacker,
+                        const std::vector<PartAttackInfo>& weapons,
                         AutoresolveInfo& combat_state, int bout, int round,
                         FighterLaunchesEventPtr &launches_event)
     {
@@ -1326,10 +1337,10 @@ namespace {
         }
 
         static const std::string EMPTY_STRING;
-        std::shared_ptr<Ship> attacker_ship = std::dynamic_pointer_cast<Ship>(attacker);
-        const std::string& species_name = attacker_ship ? attacker_ship->SpeciesName() : EMPTY_STRING;
+        auto attacker_ship = std::dynamic_pointer_cast<Ship>(attacker);
+        const auto& species_name = attacker_ship ? attacker_ship->SpeciesName() : EMPTY_STRING;
 
-        for (const PartAttackInfo& weapon : weapons) {
+        for (const auto& weapon : weapons) {
             // skip non-fighter weapons
             // direct fire weapons handled separately
             if (weapon.part_class != PC_FIGHTER_BAY)    // passed in weapons container should have already checked for adequate supply of fighters to launch and the available bays, and condensed into a single entry...
@@ -1422,7 +1433,7 @@ namespace {
         }
 
         for (auto& entry : ships_fighters_to_add_back) {
-            std::shared_ptr<Ship> ship = combat_info.objects.Object<Ship>(entry.first);
+            auto ship = combat_info.objects.Object<Ship>(entry.first);
             if (!ship) {
                 ErrorLogger() << "Couldn't get ship with id " << entry.first << " for fighter to return to...";
                 continue;

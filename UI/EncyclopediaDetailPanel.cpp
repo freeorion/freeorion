@@ -984,7 +984,7 @@ namespace {
         std::unordered_map<std::string, std::pair<std::string, std::string>> sub_dirs;
         std::multimap<std::string, std::pair<std::string, std::string>> sorted_entries;
         GetSortedPediaDirEntires(dir_name, sorted_entries);
-        for (auto&& entry : sorted_entries) {
+        for (auto& entry : sorted_entries) {
             // explicitly exclude textures
             if (entry.second.second == "ENC_TEXTURES")
                 continue;
@@ -993,7 +993,7 @@ namespace {
         }
 
         // Add each article for this directory
-        for (auto&& article : sub_dirs) {
+        for (auto& article : sub_dirs) {
             if (article.first == dir_name)
                 continue;
             // If a sub-category, add this article and any nested categories
@@ -1021,7 +1021,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
 
     // find distinct words in search text
     std::set<std::string> words_in_search_text;
-    for (const std::pair<GG::StrSize, GG::StrSize>& word_range : GG::GUI::GetGUI()->FindWordsStringIndices(search_text)) {
+    for (const auto& word_range : GG::GUI::GetGUI()->FindWordsStringIndices(search_text)) {
         if (word_range.first == word_range.second)
             continue;
         std::string word(search_text.begin() + Value(word_range.first), search_text.begin() + Value(word_range.second));
@@ -1283,10 +1283,10 @@ namespace {
         if (!slot_types_list.empty())
             detailed_description += "\n\n" + UserString("ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES") + slot_types_list;
 
-        const std::set<std::string>& exclusions = part->Exclusions();
+        const auto& exclusions = part->Exclusions();
         if (!exclusions.empty()) {
             detailed_description += "\n\n" + UserString("ENC_SHIP_EXCLUSIONS");
-            for (const std::string& exclusion : exclusions) {
+            for (const auto& exclusion : exclusions) {
                 if (GetPartType(exclusion)) {
                     detailed_description += LinkTaggedText(VarText::SHIP_PART_TAG, exclusion) + "  ";
                 } else if (GetHullType(exclusion)) {
@@ -1297,10 +1297,10 @@ namespace {
             }
         }
 
-        std::vector<std::string> unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_SHIP_PART, item_name));
+        auto unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_SHIP_PART, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
-            for (const std::string& tech_name : unlocked_by_techs)
+            for (const auto& tech_name : unlocked_by_techs)
             { detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_name) + "  "; }
             detailed_description += "\n\n";
         }
@@ -1342,7 +1342,7 @@ namespace {
             % hull->Speed()
             % hull->Structure());
 
-        const std::set<std::string>& exclusions = hull->Exclusions();
+        const auto& exclusions = hull->Exclusions();
         if (!exclusions.empty()) {
             detailed_description += "\n\n" + UserString("ENC_SHIP_EXCLUSIONS");
             for (const std::string& exclusion : exclusions) {
@@ -1356,10 +1356,10 @@ namespace {
             }
         }
 
-        std::vector<std::string> unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_SHIP_HULL, item_name));
+        auto unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_SHIP_HULL, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
-            for (const std::string& tech_name : unlocked_by_techs)
+            for (const auto& tech_name : unlocked_by_techs)
             { detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_name) + "  "; }
             detailed_description += "\n\n";
         }
@@ -1405,7 +1405,7 @@ namespace {
             detailed_description += UserString("ENC_UNLOCKS");
 
         if (!unlocked_techs.empty()) {
-            for (const std::string& tech_name : unlocked_techs) {
+            for (const auto& tech_name : unlocked_techs) {
                 std::string link_text = LinkTaggedText(VarText::TECH_TAG, tech_name);
                 detailed_description += str(FlexibleFormat(UserString("ENC_TECH_DETAIL_UNLOCKED_ITEM_STR"))
                     % UserString("UIT_TECH")

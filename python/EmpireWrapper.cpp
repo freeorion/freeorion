@@ -169,7 +169,7 @@ namespace {
         for (const auto& objects_pp : prod_queue.AvailablePP(industry_pool)) {
             std::set<int> planets;
             for (int object_id : objects_pp.first) {
-                if (/* std::shared_ptr<const Planet> planet = */ GetPlanet(object_id))
+                if (/* auto planet = */ GetPlanet(object_id))
                     planets.insert(object_id);
             }
             if (!planets.empty())

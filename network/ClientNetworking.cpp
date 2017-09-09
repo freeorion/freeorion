@@ -209,7 +209,7 @@ private:
     void HandleException(const boost::system::system_error& error);
     void HandleConnection(boost::asio::ip::tcp::resolver::iterator* it,
                           const boost::system::error_code& error);
-    void CancelRetries();
+
     void NetworkingThread(const std::shared_ptr<const ClientNetworking> self);
     void HandleMessageBodyRead(const std::shared_ptr<const ClientNetworking>& keep_alive,
                                boost::system::error_code error, std::size_t bytes_transferred);

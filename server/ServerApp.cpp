@@ -86,7 +86,8 @@ PlayerSaveHeaderData::PlayerSaveHeaderData() :
     m_client_type(Networking::INVALID_CLIENT_TYPE)
 {}
 
-PlayerSaveHeaderData::PlayerSaveHeaderData(const std::string& name, int empire_id, Networking::ClientType client_type) :
+PlayerSaveHeaderData::PlayerSaveHeaderData(const std::string& name, int empire_id,
+                                           Networking::ClientType client_type) :
     m_name(name),
     m_empire_id(empire_id),
     m_client_type(client_type)
@@ -103,8 +104,10 @@ PlayerSaveGameData::PlayerSaveGameData() :
     m_save_state_string()
 {}
 
-PlayerSaveGameData::PlayerSaveGameData(const std::string& name, int empire_id, const std::shared_ptr<OrderSet>& orders,
-                                       const std::shared_ptr<SaveGameUIData>& ui_data, const std::string& save_state_string,
+PlayerSaveGameData::PlayerSaveGameData(const std::string& name, int empire_id,
+                                       const std::shared_ptr<OrderSet>& orders,
+                                       const std::shared_ptr<SaveGameUIData>& ui_data,
+                                       const std::string& save_state_string,
                                        Networking::ClientType client_type) :
     PlayerSaveHeaderData(name, empire_id, client_type),
     m_orders(orders),
@@ -1056,7 +1059,7 @@ void ServerApp::LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
     // Need to determine which data in player_save_game_data should be assigned to which established player
     std::vector<std::pair<int, int>> player_id_to_save_game_data_index;
 
-    const std::list<std::pair<int, PlayerSetupData>>& player_setup_data = lobby_data.m_players;
+    const auto& player_setup_data = lobby_data.m_players;
 
     // * Multiplayer lobby data has a map from player ID to PlayerSetupData.
     // * PlayerSetupData contains an empire ID that the player will be controlling.
@@ -1069,7 +1072,7 @@ void ServerApp::LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
 
     // for every player setup data entry that represents an empire in the game,
     // assign saved game data to the player ID of an established human or AI player
-    for (const std::pair<int, PlayerSetupData>& entry : player_setup_data) {
+    for (const auto& entry : player_setup_data) {
         const PlayerSetupData& psd = entry.second;
 
         if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
@@ -1251,7 +1254,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         // restore saved orders.  these will be re-executed on client and
         // re-sent to the server (after possibly modification) by clients
         // when they end their turn
-        std::shared_ptr<OrderSet> orders = psgd.m_orders;
+        auto orders = psgd.m_orders;
 
         bool use_binary_serialization = player_connection->ClientVersionStringMatchesThisServer();
 
@@ -1551,11 +1554,11 @@ namespace {
         for (auto it = server_networking.established_begin();
              it != server_networking.established_end(); ++it)
         {
-            std::shared_ptr<PlayerConnection> player_connection = *it;
-            Networking::ClientType client_type =        player_connection->GetClientType();
+            auto player_connection = *it;
+            auto client_type = player_connection->GetClientType();
             if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-                int player_id =         player_connection->PlayerID();
-                int empire_id =         server_app->PlayerEmpireID(player_id);
+                int player_id = player_connection->PlayerID();
+                int empire_id = server_app->PlayerEmpireID(player_id);
                 if (empire_id == ALL_EMPIRES || player_id == Networking::INVALID_PLAYER_ID)
                     ErrorLogger() << "HumanControlledEmpires couldn't get a human player id or empire id";
                 else
@@ -2692,7 +2695,7 @@ namespace {
             if (!fleet->Empty())
                 continue;
 
-            std::shared_ptr<System> sys = GetSystem(fleet->SystemID());
+            auto sys = GetSystem(fleet->SystemID());
             if (sys)
                 sys->Remove(fleet->ID());
 
@@ -2768,7 +2771,7 @@ void ServerApp::PreCombatProcessTurns() {
 
 
     // fleet movement
-    std::vector<std::shared_ptr<Fleet>> fleets = objects.FindObjects<Fleet>();
+    auto fleets = objects.FindObjects<Fleet>();
     for (auto& fleet : fleets) {
         if (fleet)
             fleet->ClearArrivalFlag();

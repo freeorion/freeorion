@@ -888,7 +888,9 @@ namespace {
     int CreateMonster(const std::string& design_name, int fleet_id)
     { return CreateShip(NewMonsterName(), design_name, "", fleet_id); }
 
-    std::shared_ptr<Field> CreateFieldImpl(const std::string& field_type_name, double x, double y, double size) {
+    std::shared_ptr<Field> CreateFieldImpl(const std::string& field_type_name,
+                                           double x, double y, double size)
+    {
         // check if a field type with the specified field type name exists and get the field type
         const FieldType* field_type = GetFieldType(field_type_name);
         if (!field_type) {
@@ -919,7 +921,7 @@ namespace {
     }
 
     int CreateField(const std::string& field_type_name, double x, double y, double size) {
-        std::shared_ptr<Field> field = CreateFieldImpl(field_type_name, x, y, size);
+        auto field = CreateFieldImpl(field_type_name, x, y, size);
         if (field)
             return field->ID();
         else
@@ -934,7 +936,7 @@ namespace {
             return INVALID_OBJECT_ID;
         }
         // create the field with the coordinates of the system
-        std::shared_ptr<Field> field = CreateFieldImpl(field_type_name, system->X(), system->Y(), size);
+        auto field = CreateFieldImpl(field_type_name, system->X(), system->Y(), size);
         if (!field)
             return INVALID_OBJECT_ID;
         system->Insert(field); // insert the field into the system
@@ -1088,12 +1090,12 @@ namespace {
 
     void SystemAddStarlane(int from_sys_id, int to_sys_id) {
         // get source and destination system, check that both exist
-        std::shared_ptr<System> from_sys = GetSystem(from_sys_id);
+        auto from_sys = GetSystem(from_sys_id);
         if (!from_sys) {
             ErrorLogger() << "SystemAddStarlane : Couldn't find system with ID " << from_sys_id;
             return;
         }
-        std::shared_ptr<System> to_sys = GetSystem(to_sys_id);
+        auto to_sys = GetSystem(to_sys_id);
         if (!to_sys) {
             ErrorLogger() << "SystemAddStarlane : Couldn't find system with ID " << to_sys_id;
             return;
@@ -1105,12 +1107,12 @@ namespace {
 
     void SystemRemoveStarlane(int from_sys_id, int to_sys_id) {
         // get source and destination system, check that both exist
-        std::shared_ptr<System> from_sys = GetSystem(from_sys_id);
+        auto from_sys = GetSystem(from_sys_id);
         if (!from_sys) {
             ErrorLogger() << "SystemRemoveStarlane : Couldn't find system with ID " << from_sys_id;
             return;
         }
-        std::shared_ptr<System> to_sys = GetSystem(to_sys_id);
+        auto to_sys = GetSystem(to_sys_id);
         if (!to_sys) {
             ErrorLogger() << "SystemRemoveStarlane : Couldn't find system with ID " << to_sys_id;
             return;
