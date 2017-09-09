@@ -832,6 +832,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     # least a portion of the existing empire) if the planet becomes owned by the AI.
 
     planet_supply += supply_tag_mod
+    planet_supply = max(planet_supply, 0)  # planets can't have negative supply
     if planet.speciesName == (spec_name or ""):  # adding or "" in case None was passed as spec_name
         planet_supply_cache[planet_id] = planet_supply + sys_supply
 
@@ -1054,6 +1055,8 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
         if existing_presence:
             detail.append("preexisting system colony")
             retval = (retval + existing_presence * get_defense_value(spec_name)) * 1.5
+
+        # Fixme - sys_supply is always <= 0 leading to incorrect supply bonus score
         supply_val = 0
         if sys_supply < 0:
             if sys_supply + planet_supply >= 0:
@@ -1083,6 +1086,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
             retval += honey_val
             detail.append("%s %.1f" % ("HONEYCOMB_SPECIAL", honey_val))
 
+        # Fixme - sys_supply is always <= 0 leading to incorrect supply bonus score
         if sys_supply <= 0:
             if sys_supply + planet_supply >= 0:
                 supply_val = 40 * (planet_supply - max(-3, sys_supply))
