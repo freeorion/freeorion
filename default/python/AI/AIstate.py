@@ -410,7 +410,6 @@ class AIstate(object):
         verbose = False
 
         # assess enemy fleets that may have been momentarily visible
-        # start with dummy entries
         enemies_by_system = {}
         my_fleets_by_system = {}
         fleet_spot_position = {}
