@@ -1,5 +1,10 @@
 #include "AppInterface.h"
 
+#include "../parse/Parse.h"
+#include "../universe/Building.h"
+
+#include <future>
+
 const int INVALID_GAME_TURN = -(2 << 15) + 1;
 const int BEFORE_FIRST_TURN = -(2 << 14);
 const int IMPOSSIBLY_LARGE_TURN = 2 << 15;
@@ -27,4 +32,12 @@ int IApp::MAX_AI_PLAYERS() {
     // different threads.
     static const int max_number_AIs = 40;
     return max_number_AIs;
+}
+
+void IApp::ParseUniverseObjectTypes() {
+    auto pending_building_types = std::async(std::launch::async, [] {
+            return parse::buildings();
+        });
+    GetBuildingTypeManager().SetBuildingTypes(std::move(pending_building_types));
+
 }
