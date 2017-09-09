@@ -346,33 +346,43 @@ unsigned int BuildingType::GetCheckSum() const {
 // static(s)
 BuildingTypeManager* BuildingTypeManager::s_instance = nullptr;
 
-BuildingTypeManager::BuildingTypeManager() {
+BuildingTypeManager::BuildingTypeManager() :
+    m_building_types()
+{
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one BuildingTypeManager.");
 
-    ScopedTimer timer("BuildingTypeManager Init", true, std::chrono::milliseconds(1));
+    m_pending_building_types = std::async(std::launch::async, []{
+            TraceLogger() << "BuildingTypeManager::BuildingTypeManager() about to parse buildings.";
 
-    TraceLogger() << "BuildingTypeManager::BuildingTypeManager() about to parse buildings.";
+            auto building_types = parse::buildings();
 
-    try {
-        m_building_types = parse::buildings();
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing buildings: error: " << e.what();
-        throw e;
-    }
+            TraceLogger() << "Building Types:";
+            for (const auto& entry : building_types) {
+                TraceLogger() << " ... " << entry.first;
+            }
 
-    TraceLogger() << "Building Types:";
-    for (const auto& entry : m_building_types) {
-        TraceLogger() << " ... " << entry.first;
-    }
+            return building_types;
+        });
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
 }
 
 const BuildingType* BuildingTypeManager::GetBuildingType(const std::string& name) const {
+    CheckPendingBuildingTypes();
     const auto& it = m_building_types.find(name);
     return it != m_building_types.end() ? it->second.get() : nullptr;
+}
+
+BuildingTypeManager::iterator BuildingTypeManager::begin() const {
+    CheckPendingBuildingTypes();
+    return m_building_types.begin();
+}
+
+BuildingTypeManager::iterator BuildingTypeManager::end() const {
+    CheckPendingBuildingTypes();
+    return m_building_types.end();
 }
 
 BuildingTypeManager& BuildingTypeManager::GetBuildingTypeManager() {
@@ -381,6 +391,7 @@ BuildingTypeManager& BuildingTypeManager::GetBuildingTypeManager() {
 }
 
 unsigned int BuildingTypeManager::GetCheckSum() const {
+    CheckPendingBuildingTypes();
     unsigned int retval{0};
     for (auto const& name_type_pair : m_building_types)
         CheckSums::CheckSumCombine(retval, name_type_pair);
@@ -389,6 +400,29 @@ unsigned int BuildingTypeManager::GetCheckSum() const {
 
     DebugLogger() << "BuildingTypeManager checksum: " << retval;
     return retval;
+}
+
+void BuildingTypeManager::SetBuildingTypes(std::future<BuildingTypeMap>&& pending_building_types)
+{ m_pending_building_types = std::move(pending_building_types); }
+
+void BuildingTypeManager::CheckPendingBuildingTypes() const {
+    if (!m_pending_building_types)
+        return;
+
+    // Only print waiting message if not immediately ready
+    while (m_pending_building_types->wait_for(std::chrono::seconds(1)) == std::future_status::timeout) {
+        DebugLogger() << "Waiting for Building types to parse.";
+    }
+
+    try {
+        auto x = std::move(m_pending_building_types->get());
+        std::swap(m_building_types, x);
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Failed parsing buildings: error: " << e.what();
+        throw e;
+    }
+
+    m_pending_building_types = boost::none;
 }
 
 ///////////////////////////////////////////////////////////
