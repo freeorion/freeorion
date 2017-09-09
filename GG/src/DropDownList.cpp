@@ -121,13 +121,13 @@ private:
     /** Used by CorrectListSize() to determine the list height from the current first shown row. */
     Pt DetermineListHeight(const Pt& drop_down_size);
 
-    std::shared_ptr<ListBox>            m_lb_wnd;
-    const size_t        m_num_shown_rows;
-    const DropDownList* m_relative_to_wnd;
-    bool                m_dropped; ///< Is the drop down list open.
+    std::shared_ptr<ListBox>    m_lb_wnd;
+    const size_t                m_num_shown_rows;
+    const DropDownList*         m_relative_to_wnd;
+    bool                        m_dropped; ///< Is the drop down list open.
 
     /** Should the list wnd scroll only when dropped? */
-    bool                m_only_mouse_scroll_when_dropped;
+    bool                        m_only_mouse_scroll_when_dropped;
 };
 
 namespace {
@@ -198,8 +198,8 @@ ModalListPicker::~ModalListPicker()
     EndRun();
 }
 
-bool ModalListPicker::RunAndCheckSelfDestruction() {
-
+bool ModalListPicker::RunAndCheckSelfDestruction()
+{
     //    const std::shared_ptr<ModalListPicker> leash_holder_prevents_destruction = leash;
     const auto keep_alive = shared_from_this();
 
@@ -779,10 +779,11 @@ void DropDownList::SizeMove(const Pt& ul, const Pt& lr)
 void DropDownList::SetColor(Clr c)
 { LB()->SetColor(c); }
 
-DropDownList::iterator DropDownList::Insert(std::shared_ptr<Row> row, iterator it, bool signal/* = true*/)
+DropDownList::iterator DropDownList::Insert(std::shared_ptr<Row> row, iterator it,
+                                            bool signal/* = true*/)
 {
     row->SetDragDropDataType("");
-    DropDownList::iterator ret = LB()->Insert(std::forward<std::shared_ptr<Row>>(row), it, signal);
+    auto ret = LB()->Insert(std::forward<std::shared_ptr<Row>>(row), it, signal);
     Resize(Size());
     RequirePreRender();
     return ret;
@@ -791,13 +792,14 @@ DropDownList::iterator DropDownList::Insert(std::shared_ptr<Row> row, iterator i
 DropDownList::iterator DropDownList::Insert(std::shared_ptr<Row> row, bool signal/* = true*/)
 {
     row->SetDragDropDataType("");
-    DropDownList::iterator ret = LB()->Insert(std::forward<std::shared_ptr<Row>>(row), signal);
+    auto ret = LB()->Insert(std::forward<std::shared_ptr<Row>>(row), signal);
     Resize(Size());
     RequirePreRender();
     return ret;
 }
 
-void DropDownList::Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it, bool signal/* = true*/)
+void DropDownList::Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it,
+                          bool signal/* = true*/)
 {
     for (auto& row : rows)
     { row->SetDragDropDataType(""); }
@@ -806,7 +808,8 @@ void DropDownList::Insert(const std::vector<std::shared_ptr<Row>>& rows, iterato
     RequirePreRender();
 }
 
-void DropDownList::Insert(const std::vector<std::shared_ptr<Row>>& rows, bool signal/* = true*/)
+void DropDownList::Insert(const std::vector<std::shared_ptr<Row>>& rows,
+                          bool signal/* = true*/)
 {
     for (auto& row : rows)
     { row->SetDragDropDataType(""); }
@@ -885,7 +888,7 @@ void DropDownList::LClick(const Pt& pt, Flags<ModKey> mod_keys)
     if (Disabled())
         return;
 
-    const ListBox::SelectionSet& LB_sels = LB()->Selections();
+    const auto& LB_sels = LB()->Selections();
     if (!LB_sels.empty()) {
         if (LB()->m_vscroll) {
             LB()->m_vscroll->ScrollTo(0);
@@ -917,8 +920,8 @@ void DropDownList::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
         auto corrected_move = (LB()->InWindow(pt)? move : -move);
-        m_modal_picker->SignalChanged(
-            m_modal_picker->Select(m_modal_picker->MouseWheelCommon(pt, corrected_move, mod_keys)));
+        m_modal_picker->SignalChanged(m_modal_picker->Select(
+            m_modal_picker->MouseWheelCommon(pt, corrected_move, mod_keys)));
     } else {
         Control::MouseWheel(pt, move, mod_keys);
     }

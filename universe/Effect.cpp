@@ -113,7 +113,7 @@ namespace {
             return;
         }
 
-        std::shared_ptr<const System> next_system = GetSystem(new_next_system);
+        auto next_system = GetSystem(new_next_system);
         if (!next_system) {
             ErrorLogger() << "UpdateFleetRoute couldn't get new next system with id: " << new_next_system;
             return;
@@ -2452,9 +2452,9 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             // if destination object is a fleet or is part of a fleet, can use
             // that fleet's previous and next systems to get valid next and
             // previous systems for the target fleet.
-            std::shared_ptr<const Fleet> dest_fleet = std::dynamic_pointer_cast<const Fleet>(destination);
+            auto dest_fleet = std::dynamic_pointer_cast<const Fleet>(destination);
             if (!dest_fleet)
-                if (std::shared_ptr<const Ship> dest_ship = std::dynamic_pointer_cast<const Ship>(destination))
+                if (auto dest_ship = std::dynamic_pointer_cast<const Ship>(destination))
                     dest_fleet = GetFleet(dest_ship->FleetID());
             if (dest_fleet) {
                 UpdateFleetRoute(fleet, dest_fleet->NextSystemID(), dest_fleet->PreviousSystemID());

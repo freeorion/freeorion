@@ -89,7 +89,7 @@ Planet* Planet::Clone(int empire_id) const {
 void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id) {
     if (copied_object.get() == this)
         return;
-    std::shared_ptr<const Planet> copied_planet = std::dynamic_pointer_cast<const Planet>(copied_object);
+    auto copied_planet = std::dynamic_pointer_cast<const Planet>(copied_object);
     if (!copied_planet) {
         ErrorLogger() << "Planet::Copy passed an object that wasn't a Planet";
         return;
@@ -461,7 +461,7 @@ std::string Planet::CardinalSuffix() const {
         return retval;
     }
 
-    std::shared_ptr<System> cur_system = GetSystem(SystemID());
+    auto cur_system = GetSystem(SystemID());
     // Early return for no system
     if (!cur_system) {
         ErrorLogger() << "Planet " << Name() << "(" << ID()
@@ -542,13 +542,13 @@ bool Planet::ContainedBy(int object_id) const
 
 std::vector<std::string> Planet::AvailableFoci() const {
     std::vector<std::string> retval;
-    std::shared_ptr<const Planet> this_planet = std::dynamic_pointer_cast<const Planet>(UniverseObject::shared_from_this());
+    auto this_planet = std::dynamic_pointer_cast<const Planet>(UniverseObject::shared_from_this());
     if (!this_planet)
         return retval;
     ScriptingContext context(this_planet);
-    if (const Species* species = GetSpecies(this_planet->SpeciesName())) {
-        for (const FocusType& focus_type : species->Foci()) {
-            if (const Condition::ConditionBase* location = focus_type.Location()) {
+    if (const auto* species = GetSpecies(this_planet->SpeciesName())) {
+        for (const auto& focus_type : species->Foci()) {
+            if (const auto* location = focus_type.Location()) {
                 if (location->Eval(context, this_planet))
                     retval.push_back(focus_type.Name());
             }
@@ -635,7 +635,7 @@ void Planet::Reset() {
 
     if (m_is_about_to_be_colonized && !OwnedBy(ALL_EMPIRES)) {
         for (int building_id : m_buildings)
-            if (std::shared_ptr<Building> building = GetBuilding(building_id))
+            if (auto building = GetBuilding(building_id))
                 building->Reset();
     }
 
@@ -732,7 +732,7 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
     } else {
         PopCenter::Reset();
         for (int building_id : m_buildings)
-            if (std::shared_ptr<Building> building = GetBuilding(building_id))
+            if (auto building = GetBuilding(building_id))
                 building->Reset();
         m_just_conquered = false;
         m_is_about_to_be_colonized = false;

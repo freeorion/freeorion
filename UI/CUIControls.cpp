@@ -1441,7 +1441,7 @@ SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h) :
 
     Resize(GG::Pt(w, h - 8));
     const SpeciesManager& sm = GetSpeciesManager();
-    for (SpeciesManager::playable_iterator it = sm.playable_begin(); it != sm.playable_end(); ++it)
+    for (auto it = sm.playable_begin(); it != sm.playable_end(); ++it)
         Insert(GG::Wnd::Create<SpeciesRow>(it->second, w, h - 4));
     if (!this->Empty()) {
         // Add an option for random selection
@@ -1455,7 +1455,7 @@ SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h) :
 }
 
 const std::string& SpeciesSelector::CurrentSpeciesName() const {
-    CUIDropDownList::iterator row_it = this->CurrentItem();
+    auto row_it = this->CurrentItem();
     if (row_it == this->end())
         return EMPTY_STRING;
     const auto& row = *row_it;

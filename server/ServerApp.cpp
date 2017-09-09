@@ -1142,7 +1142,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     std::map<int, PlayerSaveGameData> player_id_save_game_data;
 
     // add empires to turn processing and record empires for each player
-    for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
+    for (auto player_connection_it = m_networking.established_begin();
          player_connection_it != m_networking.established_end(); ++player_connection_it)
     {
         const PlayerConnectionPtr player_connection = *player_connection_it;
@@ -1411,7 +1411,7 @@ std::map<int, PlayerInfo> ServerApp::GetPlayerInfoMap() const {
     // compile information about players to send out to other players at start of game.
     DebugLogger() << "ServerApp::GetPlayerInfoMap: Compiling PlayerInfo for each player";
     std::map<int, PlayerInfo> player_info_map;
-    for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
+    for (auto player_connection_it = m_networking.established_begin();
          player_connection_it != m_networking.established_end(); ++player_connection_it)
     {
         const PlayerConnectionPtr player_connection = *player_connection_it;
@@ -1548,7 +1548,7 @@ namespace {
         if (!server_app)
             return retval;
 
-        for (ServerNetworking::const_established_iterator it = server_networking.established_begin();
+        for (auto it = server_networking.established_begin();
              it != server_networking.established_end(); ++it)
         {
             std::shared_ptr<PlayerConnection> player_connection = *it;

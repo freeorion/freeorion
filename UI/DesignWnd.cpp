@@ -2388,7 +2388,7 @@ void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::
 }
 
 void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                            const GG::Flags<GG::ModKey>& modkeys)
+                                        const GG::Flags<GG::ModKey>& modkeys)
 {
     CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)

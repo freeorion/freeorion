@@ -60,7 +60,7 @@ Building* Building::Clone(int empire_id) const {
 void Building::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id) {
     if (copied_object.get() == this)
         return;
-    std::shared_ptr<const Building> copied_building = std::dynamic_pointer_cast<const Building>(copied_object);
+    auto copied_building = std::dynamic_pointer_cast<const Building>(copied_object);
     if (!copied_building) {
         ErrorLogger() << "Building::Copy passed an object that wasn't a Building";
         return;
@@ -68,7 +68,7 @@ void Building::Copy(std::shared_ptr<const UniverseObject> copied_object, int emp
 
     int copied_object_id = copied_object->ID();
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
-    std::set<std::string> visible_specials = GetUniverse().GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
+    auto visible_specials = GetUniverse().GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
 
     UniverseObject::Copy(copied_object, vis, visible_specials);
 

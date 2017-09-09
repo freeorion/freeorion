@@ -194,7 +194,7 @@ std::string ConditionDescription(const std::vector<ConditionBase*>& conditions,
 
     ScriptingContext parent_context(source_object);
     // test candidate against all input conditions, and store descriptions of each
-    std::map<std::string, bool> condition_description_and_test_results =
+    auto condition_description_and_test_results =
         ConditionDescriptionAndTest(conditions, parent_context, candidate_object);
     bool all_conditions_match_candidate = true, at_least_one_condition_matches_candidate = false;
     for (const auto& result : condition_description_and_test_results) {
@@ -242,7 +242,7 @@ struct ConditionBase::MatchHelper {
     { return m_this->Match(ScriptingContext(m_parent_context, candidate)); }
 
     const ConditionBase* m_this;
-    const ScriptingContext&         m_parent_context;
+    const ScriptingContext& m_parent_context;
 };
 
 ConditionBase::~ConditionBase()

@@ -46,7 +46,7 @@ namespace GG {
         m_graphic(nullptr)
     {
         try {
-            std::shared_ptr<Texture> texture = GetTextureManager().GetTexture(path);
+            auto texture = GetTextureManager().GetTexture(path);
             m_graphic = Wnd::Create<StaticGraphic>(texture, GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER);
         } catch (GG::Texture::BadFile&) {
             // No can do inside GiGi.

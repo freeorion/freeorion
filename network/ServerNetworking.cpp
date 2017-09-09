@@ -448,7 +448,7 @@ bool ServerNetworking::ModeratorsInGame() const {
 
 bool ServerNetworking::SendMessageAll(const Message& message) {
     bool success = true;
-    for (ServerNetworking::const_established_iterator player_it = established_begin();
+    for (auto player_it = established_begin();
         player_it != established_end(); ++player_it)
     {
         success = success && (*player_it)->SendMessage(message);

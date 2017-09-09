@@ -266,8 +266,10 @@ void Button::RenderDefault()
 ////////////////////////////////////////////////
 // GG::StateButton
 ////////////////////////////////////////////////
-StateButton::StateButton(const std::string& str, const std::shared_ptr<Font>& font, Flags<TextFormat> format,
-                         Clr color, std::shared_ptr<StateButtonRepresenter> representer, Clr text_color/* = CLR_BLACK*/) :
+StateButton::StateButton(const std::string& str, const std::shared_ptr<Font>& font,
+                         Flags<TextFormat> format, Clr color,
+                         std::shared_ptr<StateButtonRepresenter> representer,
+                         Clr text_color/* = CLR_BLACK*/) :
     Control(X0, Y0, X1, Y1, INTERACTIVE),
     m_representer(representer),
     m_label(Wnd::Create<TextControl>(X0, Y0, X1, Y1, str, font, text_color, format, NO_WND_FLAGS)),

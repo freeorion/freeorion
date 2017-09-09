@@ -40,7 +40,7 @@ namespace {
         }
         ServerNetworking& networking = server->Networking();
 
-        for (ServerNetworking::const_established_iterator player_it = networking.established_begin();
+        for (auto player_it = networking.established_begin();
              player_it != networking.established_end();
              ++player_it)
         {
@@ -57,7 +57,7 @@ namespace {
         }
         ServerNetworking& networking = server->Networking();
 
-        ServerNetworking::established_iterator host_it = networking.GetPlayer(networking.HostPlayerID());
+        auto host_it = networking.GetPlayer(networking.HostPlayerID());
         if (host_it == networking.established_end()) {
             ErrorLogger(FSM) << "SendMessageToHost couldn't get host player.";
             return;
@@ -121,10 +121,10 @@ namespace {
                                    std::list<std::pair<int, PlayerSetupData>>& players)
     {
         // load default empire names
-        std::vector<std::string> empire_names = UserStringList("EMPIRE_NAMES");
+        auto empire_names = UserStringList("EMPIRE_NAMES");
         std::set<std::string> valid_names(empire_names.begin(), empire_names.end());
-        for (const std::pair<int, PlayerSetupData>& psd : players) {
-            std::set<std::string>::iterator name_it = valid_names.find(psd.second.m_empire_name);
+        for (const auto& psd : players) {
+            auto name_it = valid_names.find(psd.second.m_empire_name);
             if (name_it != valid_names.end())
                 valid_names.erase(name_it);
             name_it = valid_names.find(psd.second.m_player_name);
@@ -519,7 +519,7 @@ sc::result MPLobby::react(const Disconnection& d) {
 
     DebugLogger(FSM) << "MPLobby::react(Disconnection) player id: " << player_connection->PlayerID();
     DebugLogger(FSM) << "Remaining player ids: ";
-    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+    for (auto it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
     {
         DebugLogger(FSM) << " ... " << (*it)->PlayerID();
@@ -540,7 +540,7 @@ sc::result MPLobby::react(const Disconnection& d) {
     // if player is in lobby, need to remove it
     int id = player_connection->PlayerID();
     bool player_was_in_lobby = false;
-    for (std::list<std::pair<int, PlayerSetupData>>::iterator it = m_lobby_data->m_players.begin();
+    for (auto it = m_lobby_data->m_players.begin();
          it != m_lobby_data->m_players.end(); ++it)
     {
         if (it->first == id) {
@@ -551,7 +551,7 @@ sc::result MPLobby::react(const Disconnection& d) {
     }
     if (player_was_in_lobby) {
         // drop ready flag as player list changed
-        for (std::pair<int, PlayerSetupData>& plrs : m_lobby_data->m_players) {
+        for (auto& plrs : m_lobby_data->m_players) {
             plrs.second.m_player_ready = false;
         }
     } else {
@@ -560,7 +560,7 @@ sc::result MPLobby::react(const Disconnection& d) {
     }
 
     // send updated lobby data to players after disconnection-related changes
-    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+    for (auto it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
     {
         (*it)->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
@@ -662,7 +662,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
         plr.second.m_player_ready = false;
     }
 
-    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+    for (auto it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
     { (*it)->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data)); }
 
@@ -834,7 +834,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             // update player connection types according to modified lobby selections,
             // while recording connections that are to be dropped
             std::vector<PlayerConnectionPtr> player_connections_to_drop;
-            for (ServerNetworking::established_iterator player_connection_it = server.m_networking.established_begin();
+            for (auto player_connection_it = server.m_networking.established_begin();
                  player_connection_it != server.m_networking.established_end(); ++player_connection_it)
             {
                 PlayerConnectionPtr player_connection = *player_connection_it;
@@ -844,7 +844,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
                 // get lobby data for this player connection
                 bool found_player_lobby_data = false;
-                std::list<std::pair<int, PlayerSetupData>>::iterator player_setup_it = m_lobby_data->m_players.begin();
+                auto player_setup_it = m_lobby_data->m_players.begin();
                 while (player_setup_it != m_lobby_data->m_players.end()) {
                     if (player_setup_it->first == player_id) {
                         found_player_lobby_data = true;
@@ -885,10 +885,10 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             // from the lobby.  this will also occur when humans are dropped, but those
             // cases should have been handled above when checking the lobby data for
             // each player connection.
-            std::list<std::pair<int, PlayerSetupData>>::iterator player_setup_it = m_lobby_data->m_players.begin();
+            auto player_setup_it = m_lobby_data->m_players.begin();
             while (player_setup_it != m_lobby_data->m_players.end()) {
                 if (player_setup_it->second.m_client_type == Networking::INVALID_CLIENT_TYPE) {
-                    std::list<std::pair<int, PlayerSetupData>>::iterator erase_it = player_setup_it;
+                    auto erase_it = player_setup_it;
                     ++player_setup_it;
                     m_lobby_data->m_players.erase(erase_it);
                 } else {
@@ -1031,7 +1031,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
     // propagate lobby changes to players, so everyone has the latest updated
     // version of the lobby data
-    for (ServerNetworking::const_established_iterator player_connection_it = server.m_networking.established_begin();
+    for (auto player_connection_it = server.m_networking.established_begin();
          player_connection_it != server.m_networking.established_end(); ++player_connection_it)
     {
         const PlayerConnectionPtr& player_connection = *player_connection_it;
@@ -1059,12 +1059,12 @@ sc::result MPLobby::react(const PlayerChat& msg) {
     ExtractPlayerChatMessageData(message, receiver, data);
 
     if (receiver == Networking::INVALID_PLAYER_ID) { // the receiver is everyone (except the sender)
-        for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
+        for (auto it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
             if ((*it)->PlayerID() != sender->PlayerID())
                 (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), data));
         }
     } else {
-        ServerNetworking::const_established_iterator it = server.m_networking.GetPlayer(receiver);
+        auto it = server.m_networking.GetPlayer(receiver);
         if (it != server.m_networking.established_end())
             (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), data));
     }
@@ -1572,7 +1572,7 @@ sc::result PlayingGame::react(const PlayerChat& msg) {
     int receiver;
     ExtractPlayerChatMessageData(message, receiver, data);
 
-    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+    for (auto it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
     {
         if (receiver == Networking::INVALID_PLAYER_ID ||
@@ -1754,7 +1754,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
 
 
     // notify other player that this player submitted orders
-    for (ServerNetworking::const_established_iterator player_it = server.m_networking.established_begin();
+    for (auto player_it = server.m_networking.established_begin();
          player_it != server.m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player_ctn = *player_it;
@@ -1842,7 +1842,7 @@ WaitingForSaveData::WaitingForSaveData(my_context c) :
     TraceLogger(FSM) << "(ServerFSM) WaitingForSaveData";
 
     ServerApp& server = Server();
-    for (ServerNetworking::const_established_iterator player_it = server.m_networking.established_begin();
+    for (auto player_it = server.m_networking.established_begin();
          player_it != server.m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
@@ -1968,7 +1968,7 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
     server.PostCombatProcessTurns();
 
     // update players that other players are now playing their turn
-    for (ServerNetworking::const_established_iterator player_it = server.m_networking.established_begin();
+    for (auto player_it = server.m_networking.established_begin();
          player_it != server.m_networking.established_end();
          ++player_it)
     {
@@ -1979,7 +1979,7 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
             player_ctn->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
         {
             // inform all players that this player is playing a turn
-            for (ServerNetworking::const_established_iterator recipient_player_it = server.m_networking.established_begin();
+            for (auto recipient_player_it = server.m_networking.established_begin();
                 recipient_player_it != server.m_networking.established_end();
                 ++recipient_player_it)
             {

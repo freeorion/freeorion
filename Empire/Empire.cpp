@@ -626,7 +626,7 @@ bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id) 
     switch (build_type) {
     case BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
-            std::shared_ptr<UniverseObject> location_obj = GetUniverseObject(location_id);
+            auto location_obj = GetUniverseObject(location_id);
             const Condition::ConditionBase* c = bt->EnqueueLocation();
             if (!c)
                 return true;
@@ -654,13 +654,14 @@ bool ProductionQueue::ProductionItem::operator<(const ProductionItem& rhs) const
     return false;
 }
 
-std::map<std::string, std::map<int, float>> ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) const {
+std::map<std::string, std::map<int, float>>
+ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) const {
     std::map<std::string, std::map<int, float>> retval;
 
     switch (build_type) {
     case BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
-            std::shared_ptr<UniverseObject> location_obj = GetUniverseObject(location_id);
+            auto location_obj = GetUniverseObject(location_id);
             ScriptingContext context(location_obj);
 
             for (const auto& psc : bt->ProductionSpecialConsumption()) {
@@ -1654,11 +1655,11 @@ bool Empire::ProducibleItem(BuildType build_type, const std::string& name, int l
     if (build_type == BT_BUILDING && !BuildingTypeAvailable(name))
         return false;
 
-    const BuildingType* building_type = GetBuildingType(name);
+    const auto* building_type = GetBuildingType(name);
     if (!building_type || !building_type->Producible())
         return false;
 
-    std::shared_ptr<UniverseObject> build_location = GetUniverseObject(location);
+    auto build_location = GetUniverseObject(location);
     if (!build_location)
         return false;
 
@@ -1685,7 +1686,7 @@ bool Empire::ProducibleItem(BuildType build_type, int design_id, int location) c
     if (!ship_design || !ship_design->Producible())
         return false;
 
-    std::shared_ptr<UniverseObject> build_location = GetUniverseObject(location);
+    auto build_location = GetUniverseObject(location);
     if (!build_location) return false;
 
     if (build_type == BT_SHIP) {
@@ -1712,11 +1713,11 @@ bool Empire::EnqueuableItem(BuildType build_type, const std::string& name, int l
     if (build_type != BT_BUILDING)
         return false;
 
-    const BuildingType* building_type = GetBuildingType(name);
+    const auto* building_type = GetBuildingType(name);
     if (!building_type || !building_type->Producible())
         return false;
 
-    std::shared_ptr<UniverseObject> build_location = GetUniverseObject(location);
+    auto build_location = GetUniverseObject(location);
     if (!build_location)
         return false;
 
@@ -2807,7 +2808,7 @@ void Empire::CheckProductionProgress() {
     Universe& universe = GetUniverse();
 
     std::map<int, std::vector<std::shared_ptr<Ship>>> system_new_ships;
-    std::map<int, int>                                  new_ship_rally_point_ids;
+    std::map<int, int> new_ship_rally_point_ids;
 
     // preprocess the queue to get all the costs and times of all items
     // at every location at which they are being produced,
@@ -2817,12 +2818,12 @@ void Empire::CheckProductionProgress() {
     // sufficent PP to complete an object at the start of a turn,
     // items above it on the queue getting finished don't increase the
     // cost and result in it not being finished that turn.
-    std::map<std::pair<ProductionQueue::ProductionItem, int>,
-             std::pair<float, int>>                           queue_item_costs_and_times;
-    for (ProductionQueue::Element& elem : m_production_queue) {
+    std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<float, int>>
+        queue_item_costs_and_times;
+    for (auto& elem : m_production_queue) {
         // for items that don't depend on location, only store cost/time once
         int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
-        std::pair<ProductionQueue::ProductionItem, int> key(elem.item, location_id);
+        auto key = std::make_pair(elem.item, location_id);
 
         if (queue_item_costs_and_times.find(key) == queue_item_costs_and_times.end())
             queue_item_costs_and_times[key] = ProductionCostAndTime(elem);
@@ -2879,7 +2880,7 @@ void Empire::CheckProductionProgress() {
                 build_description = "unknown build type";
         }
 
-        std::shared_ptr<UniverseObject> build_location = GetUniverseObject(elem.location);
+        auto build_location = GetUniverseObject(elem.location);
         if (!build_location || (elem.item.build_type == BT_BUILDING && build_location->ObjectType() != OBJ_PLANET)) {
             ErrorLogger() << "Couldn't get valid build location for completed " << build_description;
             continue;
@@ -3017,14 +3018,14 @@ void Empire::CheckProductionProgress() {
             std::string species_name;
             if (auto location_pop_center = std::dynamic_pointer_cast<const PopCenter>(build_location))
                 species_name = location_pop_center->SpeciesName();
-            else if (std::shared_ptr<const Ship> location_ship = std::dynamic_pointer_cast<const Ship>(build_location))
+            else if (auto location_ship = std::dynamic_pointer_cast<const Ship>(build_location))
                 species_name = location_ship->SpeciesName();
-            else if (std::shared_ptr<const Planet> capital_planet = GetPlanet(this->CapitalID()))
+            else if (auto capital_planet = GetPlanet(this->CapitalID()))
                 species_name = capital_planet->SpeciesName();
             // else give up...
             if (species_name.empty()) {
                 // only really a problem for colony ships, which need to have a species to function
-                const ShipDesign* design = GetShipDesign(elem.item.design_id);
+                const auto* design = GetShipDesign(elem.item.design_id);
                 if (!design) {
                     ErrorLogger() << "Couldn't get ShipDesign with id: " << elem.item.design_id;
                     break;
@@ -3100,12 +3101,13 @@ void Empire::CheckProductionProgress() {
             continue;
         }
 
-        std::vector<std::shared_ptr<Ship>>& new_ships = entry.second;
+        auto& new_ships = entry.second;
         if (new_ships.empty())
             continue;
 
         // group ships into fleets by rally point and design
-        std::map<int, std::map<int, std::vector<std::shared_ptr<Ship>>>> new_ships_by_rally_point_id_and_design_id;
+        std::map<int, std::map<int, std::vector<std::shared_ptr<Ship>>>>
+            new_ships_by_rally_point_id_and_design_id;
         for (auto& ship : new_ships) {
             int rally_point_id = INVALID_OBJECT_ID;
 

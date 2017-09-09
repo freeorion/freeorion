@@ -137,8 +137,9 @@ void TextBoxBrowseInfoWnd::SetText(const std::string& str)
     unsigned int margins = 2 * TextMargin();
 
     Flags<TextFormat> fmt = GetTextFormat();
-    std::vector<std::shared_ptr<Font::TextElement>> text_elements = m_font->ExpensiveParseFromTextToTextElements(str, fmt);
-    std::vector<Font::LineData> lines = m_font->DetermineLines(str, fmt, m_preferred_width - X(margins), text_elements);
+    auto text_elements = m_font->ExpensiveParseFromTextToTextElements(str, fmt);
+    auto lines = m_font->DetermineLines(str, fmt, m_preferred_width - X(margins),
+                                        text_elements);
     Pt extent = m_font->TextExtent(lines);
     SetMinSize(extent + Pt(X(margins), Y(margins)));
     m_text_control->SetText(str);

@@ -172,7 +172,7 @@ std::string SupplyManager::Dump(int empire_id) const {
                 continue;
             retval += "Supplyable systems for empire " + std::to_string(empire_supply.first) + "\n";
             for (int system_id : empire_supply.second) {
-                std::shared_ptr<const System> sys = GetSystem(system_id);
+                auto sys = GetSystem(system_id);
                 if (!sys)
                     continue;
                 retval += "\n" + sys->PublicName(empire_id) + " (" + std::to_string(sys->ID()) + ") ";
@@ -312,7 +312,7 @@ void SupplyManager::Update() {
     // probably temporary: additional restriction here for supply propagation
     // but not for general system obstruction as determind within Empire::UpdateSupplyUnobstructedSystems
     /////
-    const std::vector<std::shared_ptr<Fleet>> fleets = GetUniverse().Objects().FindObjects<Fleet>();
+    const auto fleets = GetUniverse().Objects().FindObjects<Fleet>();
 
     for (const auto& entry : Empires()) {
         int empire_id = entry.first;

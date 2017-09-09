@@ -154,7 +154,8 @@ void ResourcePool::Update() {
 
     // temporary storage: indexed by group of systems, which objects
     // are located in that system group?
-    std::map<std::set<int>, std::set<std::shared_ptr<const UniverseObject>>> system_groups_to_object_groups;
+    std::map<std::set<int>, std::set<std::shared_ptr<const UniverseObject>>>
+        system_groups_to_object_groups;
 
 
     // for every object, find if a connected system group contains the object's
@@ -170,7 +171,7 @@ void ResourcePool::Update() {
 
         // is object's system in a system group?
         std::set<int> object_system_group;
-        for (const std::set<int>& sys_group : m_connected_system_groups) {
+        for (const auto& sys_group : m_connected_system_groups) {
             if (sys_group.find(object_system_id) != sys_group.end()) {
                 object_system_group = sys_group;
                 break;
