@@ -99,6 +99,12 @@ def get_sectioned_option_dict():
 
 
 def parse_config(option_string, config_dir):
+
+    if option_string is not None and not isinstance(option_string, str):
+        # probably called by unit test
+        print >> sys.stderr, "Specified option string is not a string: ", option_string
+        return
+
     # get defaults; check if don't already exist and can write
     default_file = _get_option_file(config_dir)
     if os.path.exists(default_file):
