@@ -944,10 +944,7 @@ void SaveFileDialog::UpdatePreviewList() {
     if (!m_server_previews) {
         SetPreviewList(FilenameToPath(GetDirPath()));
     } else {
-        DebugLogger() << "Requesting save previews from server";
-        PreviewInformation preview_info;
-        HumanClientApp::GetApp()->RequestSavePreviews(GetDirPath(), preview_info);
-        SetPreviewList(preview_info);
+        HumanClientApp::GetApp()->RequestSavePreviews(GetDirPath());
     }
 }
 

@@ -35,6 +35,9 @@ public:
     void ModalInit() override;
 
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
+
+    /** Update the previews with \p preview_information*/
+    void SetPreviewList(const PreviewInformation& preview_info);
     //@}
 
     /// Get the chosen save files full path
@@ -59,8 +62,6 @@ private:
     void UpdatePreviewList();
     /** Update the preview list from a local save directory*/
     void SetPreviewList(const boost::filesystem::path& path);
-    /** Update the previews with \p preview_information*/
-    void SetPreviewList(const PreviewInformation& preview_info);
     /** Update the previews with preview info set by \p setup_preview_info*/
     void SetPreviewListCore(const std::function<void ()>& setup_preview_info);
 

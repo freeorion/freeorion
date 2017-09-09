@@ -757,9 +757,8 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     m_fsm->process_event(HostSPGameRequested());
 }
 
-void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewInformation& previews) {
-    //TraceLogger() << "HumanClientApp::RequestSavePreviews directory: " << directory << " valid UTF-8: " << utf8::is_valid(directory.begin(), directory.end()) << std::endl;
-    DebugLogger() << "HumanClientApp::RequestSavePreviews directory: " << directory << " valid UTF-8: " << utf8::is_valid(directory.begin(), directory.end());
+void HumanClientApp::RequestSavePreviews(const std::string& directory) {
+    TraceLogger() << "HumanClientApp::RequestSavePreviews directory: " << directory << " valid UTF-8: " << utf8::is_valid(directory.begin(), directory.end());
 
     std::string  generic_directory = directory;//PathString(fs::path(directory));
     if (!m_networking->IsConnected()) {
@@ -790,13 +789,7 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
         SendLoggingConfigToServer();
     }
     DebugLogger() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
-    const auto response = m_networking->SendSynchronousMessage(RequestSavePreviewsMessage(generic_directory));
-    if (response && response->Type() == Message::DISPATCH_SAVE_PREVIEWS) {
-        ExtractDispatchSavePreviewsMessageData(*response, previews);
-        DebugLogger() << "HumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
-    } else {
-        ErrorLogger() << "HumanClientApp::RequestSavePreviews: Wrong response type from server: " << response->Type();
-    }
+    m_networking->SendMessage(RequestSavePreviewsMessage(generic_directory));
 }
 
 std::pair<int, int> HumanClientApp::GetWindowLeftTop() {
@@ -952,6 +945,7 @@ void HumanClientApp::HandleMessage(Message& msg) {
     case Message::END_GAME:                 m_fsm->process_event(::EndGame(msg));               break;
 
     case Message::DISPATCH_COMBAT_LOGS:     m_fsm->process_event(DispatchCombatLogs(msg));       break;
+    case Message::DISPATCH_SAVE_PREVIEWS:   HandleSaveGamePreviews(msg);                         break;
     default:
         ErrorLogger() << "HumanClientApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
     }
@@ -976,6 +970,18 @@ void HumanClientApp::UpdateCombatLogs(const Message& msg){
     for (auto it = logs.begin(); it != logs.end(); ++it) {
         GetCombatLogManager().CompleteLog(it->first, it->second);
     }
+}
+
+void HumanClientApp::HandleSaveGamePreviews(const Message& msg) {
+    auto sfd = GetClientUI().GetSaveFileDialog();
+    if (!sfd)
+        return;
+
+    PreviewInformation previews;
+    ExtractDispatchSavePreviewsMessageData(msg, previews);
+    DebugLogger() << "HumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
+
+    sfd->SetPreviewList(previews);
 }
 
 void HumanClientApp::ChangeLoggerThreshold(const std::string& option_name, LogLevel option_value) {
