@@ -692,16 +692,13 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         }
     } else {
         try {
-            auto sfd = GG::Wnd::Create<SaveFileDialog>(
+            filename = ClientUI::GetClientUI()->GetFilenameWithSaveFileDialog(
                 SaveFileDialog::Purpose::Load,
                 SaveFileDialog::SaveType::SinglePlayer);
-            sfd->Run();
 
             // Update intro screen Load & Continue buttons if all savegames are deleted.
             m_ui->GetIntroScreen()->RequirePreRender();
 
-            if (!sfd->Result().empty())
-                filename = sfd->Result();
         } catch (const std::exception& e) {
             ClientUI::MessageBox(e.what(), true);
         }
@@ -1321,11 +1318,9 @@ bool HumanClientApp::IsLoadGameAvailable() const {
 }
 
 std::string HumanClientApp::SelectLoadFile() {
-    auto sfd = GG::Wnd::Create<SaveFileDialog>(
+    return ClientUI::GetClientUI()->GetFilenameWithSaveFileDialog(
         SaveFileDialog::Purpose::Load,
         SaveFileDialog::SaveType::MultiPlayer);
-    sfd->Run();
-    return sfd->Result();
 }
 
 void HumanClientApp::ResetClientData(bool save_connection) {
