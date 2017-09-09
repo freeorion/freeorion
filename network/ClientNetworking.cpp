@@ -191,10 +191,6 @@ public:
         Remove the message from the incoming message queue. */
     boost::optional<Message> GetMessage();
 
-    /** Sends \a message to the server, then blocks until it sees the first
-        synchronous response from the server. */
-    boost::optional<Message> SendSynchronousMessage(const Message& message);
-
     /** Disconnects the client from the server. */
     void DisconnectFromServer();
 
@@ -255,7 +251,7 @@ ClientNetworking::Impl::Impl() :
     m_socket(m_io_service),
     m_rx_connected(false),
     m_tx_connected(false),
-    m_incoming_messages(m_mutex, m_rx_connected)
+    m_incoming_messages(m_mutex)
 {}
 
 bool ClientNetworking::Impl::IsConnected() const {
@@ -442,20 +438,6 @@ boost::optional<Message> ClientNetworking::Impl::GetMessage() {
     return message;
 }
 
-boost::optional<Message> ClientNetworking::Impl::SendSynchronousMessage(const Message& message) {
-    TraceLogger(network) << "ClientNetworking::SendSynchronousMessage : sending message "
-                         << message;
-    SendMessage(message);
-    // note that this is a blocking operation
-    auto response_message = m_incoming_messages.GetFirstSynchronousMessage();
-
-    if (response_message)
-        TraceLogger(network) << "ClientNetworking::SendSynchronousMessage : received "
-                             << "response message " << *response_message;
-
-    return response_message;
-}
-
 void ClientNetworking::Impl::HandleConnection(tcp::resolver::iterator* it,
                                               const boost::system::error_code& error)
 {
@@ -498,7 +480,6 @@ void ClientNetworking::Impl::NetworkingThread(const std::shared_ptr<const Client
     } catch (const boost::system::system_error& error) {
         HandleException(error);
     }
-    m_incoming_messages.RxDisconnected();
     m_outgoing_messages.clear();
     m_io_service.reset();
     { // Mutex scope
@@ -693,6 +674,3 @@ void ClientNetworking::SendMessage(const Message& message)
 
 boost::optional<Message> ClientNetworking::GetMessage()
 { return m_impl->GetMessage(); }
-
-boost::optional<Message> ClientNetworking::SendSynchronousMessage(const Message& message)
-{ return m_impl->SendSynchronousMessage(message); }
