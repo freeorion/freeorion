@@ -73,12 +73,13 @@ class State(object):
         :return: Supply value of a system or -99 if system is not connected
         :rtype: int
         """
-        retval = self.__system_supply.get(sys_id, -99)
-        if retval == -99:
+        retval = self.__system_supply.get(sys_id, None)
+        if retval is None:
             # This is only expected to happen if a system has no path to any supplied system.
             # As the current code should not allow such queries, this is logged as warning.
             # If future code breaks this assumption, feel free to adjust logging.
             warn("Queried supply value of a system not mapped in empire.supplyProjections().")
+            return -99  # pretend it is very far away from supply
         return retval
 
     def get_systems_by_supply_tier(self, supply_tier):
