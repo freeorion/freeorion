@@ -170,6 +170,8 @@ namespace {
                                                 std::pair<std::string,
                                                           std::string>>& sorted_entries_list)
     {
+        ScopedTimer subdir_timer("GetSortedPediaDirEntires(" + dir_name + ")", true);
+
         const Encyclopedia& encyclopedia = GetEncyclopedia();
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
@@ -972,6 +974,8 @@ namespace {
     std::unordered_map<std::string, std::pair<std::string, std::string>>
         GetSubDirs(const std::string& dir_name, int depth = 0)
     {
+        ScopedTimer subdir_timer("GetSubDirs(" + dir_name + ", " + std::to_string(depth) + ")", true);
+
         depth++;
         std::unordered_map<std::string, std::pair<std::string, std::string>> retval;
         // safety check to pre-empt potential infinite loop
@@ -980,6 +984,7 @@ namespace {
                          << " category " << dir_name;
             return retval;
         }
+
 
         std::unordered_map<std::string, std::pair<std::string, std::string>> sub_dirs;
         std::multimap<std::string, std::pair<std::string, std::string>> sorted_entries;
