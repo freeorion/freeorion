@@ -78,6 +78,10 @@ FO_COMMON_API const boost::filesystem::path GetPersistentConfigPath();
   * the directory "save" within the user directory. */
 FO_COMMON_API const boost::filesystem::path GetSaveDir();
 
+/** Returns the directory where server save files are located.  This is typically
+  * the directory "save" within the user directory. */
+FO_COMMON_API const boost::filesystem::path GetServerSaveDir();
+
 /** Returns a canonical utf-8 string from the given filesystem path. */
 FO_COMMON_API std::string PathString(const boost::filesystem::path& path);
 
