@@ -566,12 +566,6 @@ public:
                 DebugLogger() << "SaveFileDialog::LoadDirectories name: " << utf8_dir_name << " valid UTF-8: " << IsValidUTF8(utf8_dir_name);
                 auto row = GG::Wnd::Create<SaveFileDirectoryRow>(m_visible_columns, utf8_dir_name);
                 Insert(row);
-
-                //boost::filesystem::path::string_type path_native = last_bit_of_path.native();
-                //std::string path_string;
-                //utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(path_string));
-                //DebugLogger() << "SaveFileDialog::LoadDirectories name: " << path_string << " valid UTF-8: " << IsValidUTF8(path_string);
-                //Insert(GG::Wnd::Create<SaveFileDirectoryRow>(path_string));
             }
         }
     }
