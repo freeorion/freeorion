@@ -101,7 +101,7 @@ BuildingType
                         tag = "rawtext" data = EmpireMeterValue empire = Source.Owner meter = "METER_IMPERIAL_PP_TRANSFER_EFFICIENCY"
                     ]
                     empire = Source.Owner
- 
+            ]
     ]
     icon = "icons/building/science-institute.png"
 
