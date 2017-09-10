@@ -10219,8 +10219,8 @@ PRO_IMPERIAL_STOCKPILE_3
 Interstellar Entanglement Factory
 
 IMPERIAL_STOCKPILE_3_DESC
-'''Quantum entanglement of stockpiled goods allows specialists to operate machines remotely from other star systems.
-Putting the empires best engineers directly in charge of building using the stockpiled goods helps making the most out of these.
+'''Quantum entanglement of factory control rooms allows to operate machines remotely from other star systems.
+Decoupling workforce and the means of production helps to produce just in time and increases efficiency of the imperial stockpile service.
 
 This is an upgrade technology for the imperial stockpile.
 It adds 20% to the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allows drawing 5 PP / turn extra from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
