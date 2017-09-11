@@ -55,7 +55,6 @@ private:
     void Cancel();                          //!< when m_load_btn button is pressed
     void SelectionChanged(const GG::ListBox::SelectionSet& files);      //!< When file selection changes.
     void UpdateDirectory(const std::string& newdir);                    //!< Change current directory
-    void DirectoryDropdownSelect(GG::DropDownList::iterator selection); //!< On remote directory select
 
     /** Either directly update from the local save directory, or request the
         server for save preview information*/
@@ -77,7 +76,6 @@ private:
     std::shared_ptr<SaveFileListBox>    m_file_list;        //!< The list of available saves
     std::shared_ptr<GG::Edit>           m_name_edit;        //!< The file name edit control;
     std::shared_ptr<GG::Edit>           m_current_dir_edit; //!< The editor for the save directory;
-    std::shared_ptr<GG::DropDownList>   m_remote_dir_dropdown; //!< Dropdown to select remote dir;
     std::shared_ptr<GG::Button>         m_confirm_btn;      //!< Button to confirm choice;
 
     std::string         m_loaded_dir;       //!< The directory whose contents are currently shown

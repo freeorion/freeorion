@@ -129,25 +129,6 @@ namespace {
         prompt->Run();
         return prompt->Result() == 0;
     }
-
-    /// Returns true if list contains a row with the text str
-    bool HasRow(const GG::DropDownList* list, const std::string& str){
-        if (!list)
-            return false;
-
-        for (const auto& row : *list) {
-            for (unsigned j = 0; j < row->size(); ++j) {
-                const GG::Control* control = row->at(j);
-                const GG::Label* text = dynamic_cast<const GG::Label*>(control);
-                if (text) {
-                    if (text->Text() == str || text->Text() + "/" == str) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
 }
 
 /** Describes how a column should be set up in the dialog */
@@ -699,9 +680,7 @@ void SaveFileDialog::Init() {
         m_layout->SetMinimumColumnWidth(3, std::max( cancel_btn->MinUsableSize().x,
                                         delete_btn->MinUsableSize().x) + SAVE_FILE_BUTTON_MARGIN);
     } else {
-        m_remote_dir_dropdown = GG::Wnd::Create<CUIDropDownList>(6);
-        m_layout->Add(m_current_dir_edit, 0, 1, 1, 1);
-        m_layout->Add(m_remote_dir_dropdown, 0, 2 , 1, 2);
+        m_layout->Add(m_current_dir_edit, 0, 1, 1, 3);
         GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
         std::string server_label(SERVER_LABEL+SERVER_LABEL+SERVER_LABEL);
         std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements =
@@ -711,9 +690,6 @@ void SaveFileDialog::Init() {
         GG::X drop_width = font->TextExtent(lines).x;
         m_layout->SetMinimumColumnWidth(2, std::max(m_confirm_btn->MinUsableSize().x + 2*SAVE_FILE_BUTTON_MARGIN, drop_width/2));
         m_layout->SetMinimumColumnWidth(3, std::max(cancel_btn->MinUsableSize().x + SAVE_FILE_BUTTON_MARGIN, drop_width / 2));
-
-        m_remote_dir_dropdown->SelChangedSignal.connect(
-            boost::bind(&SaveFileDialog::DirectoryDropdownSelect, this, _1));
     }
 
     m_layout->Add(m_file_list,      1, 0, 1, 4);
@@ -939,18 +915,6 @@ void SaveFileDialog::UpdateDirectory(const std::string& newdir) {
     UpdatePreviewList();
 }
 
-void SaveFileDialog::DirectoryDropdownSelect(GG::DropDownList::iterator selection) {
-    if (selection == m_remote_dir_dropdown->end())
-        return;
-    GG::DropDownList::Row& row = **selection;
-    if (row.size() > 0) {
-        GG::Label* control = dynamic_cast<GG::Label*>(row.at(0));
-        if (control) {
-            UpdateDirectory(control->Text());
-        }
-    }
-}
-
 void SaveFileDialog::UpdatePreviewList() {
     // If no browsing, no reloading
     if (!m_server_previews) {
@@ -981,10 +945,9 @@ void SaveFileDialog::SetPreviewList(const PreviewInformation& preview_info) {
                 prefixed_subdirs.push_back(SERVER_LABEL + "/" + subdir);
             }
         }
-        m_file_list->LoadDirectories(prefixed_subdirs);
 
+        m_file_list->LoadDirectories(prefixed_subdirs);
         m_file_list->LoadSaveGamePreviews(preview_info.previews);
-        // m_remote_dir_dropdown->Clear();
         SetDirPath(preview_info.folder);
     };
 
@@ -1011,12 +974,6 @@ bool SaveFileDialog::CheckChoiceValidity() {
     if (!m_server_previews) {
         fs::path dir(FilenameToPath(GetDirPath()));
         if (fs::exists(dir) && fs::is_directory(dir)) {
-            m_current_dir_edit->SetColor(ClientUI::TextColor());
-        } else {
-            m_current_dir_edit->SetColor(GG::CLR_RED);
-        }
-    } else {
-        if (HasRow(m_remote_dir_dropdown.get(), m_current_dir_edit->Text())) {
             m_current_dir_edit->SetColor(ClientUI::TextColor());
         } else {
             m_current_dir_edit->SetColor(GG::CLR_RED);
