@@ -43,12 +43,6 @@ namespace {
 }
 
 void IApp::ParseUniverseObjectTypes() {
-    auto pending_articles = std::async(std::launch::async, []{
-            return parse::encyclopedia_articles();});
-    GetEncyclopedia().SetArticles(std::move(pending_articles));
-
-    auto pending_building_types = std::async(std::launch::async, [] {
-            return parse::buildings();});
-    GetBuildingTypeManager().SetBuildingTypes(std::move(pending_building_types));
-
+    GetEncyclopedia().SetArticles(StartParsing(parse::encyclopedia_articles));
+    GetBuildingTypeManager().SetBuildingTypes(StartParsing(parse::buildings));
 }
