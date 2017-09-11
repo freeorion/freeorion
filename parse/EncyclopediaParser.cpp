@@ -17,7 +17,7 @@ namespace std {
 #endif
 
 namespace {
-    using ArticleMap = std::map<std::string, std::vector<EncyclopediaArticle>>;
+    using ArticleMap = Encyclopedia::ArticleMap;
 
     struct insert_ {
         typedef void result_type;
