@@ -863,7 +863,6 @@ namespace {
         /** Check that \p path is a file or directory in the server save
         directory. */
     bool IsInServerSaveDir(const fs::path& path) {
-
         fs::path server_dir = GetServerSaveDir();
         if (!fs::exists(server_dir) || !fs::is_directory(server_dir))
             return false;
@@ -891,11 +890,11 @@ namespace {
         if (!fs::is_directory(directory))
             return list;
 
-        std::string server_dir_str = fs::canonical(GetServerSaveDir()).generic_string();
+        auto server_dir_str = PathString(fs::canonical(GetServerSaveDir()));
 
         // Adds \p subdir to the list
         auto add_to_list = [&list, &server_dir_str](const fs::path& subdir) {
-            auto subdir_str = fs::canonical(subdir).generic_string();
+            auto subdir_str = PathString(fs::canonical(subdir));
             auto rel_path = subdir_str.substr(server_dir_str.length());
             list.push_back(rel_path);
             TraceLogger() << "Added relative path " << rel_path << " in " << subdir
