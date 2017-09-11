@@ -823,14 +823,14 @@ void SaveFileDialog::Confirm() {
     DebugLogger() << "SaveFileDialog::Confirm: Confirming";
 
     if (!CheckChoiceValidity()) {
-        DebugLogger() << "SaveFileDialog::Confirm: Invalid choice. abort.";
+        WarnLogger() << "SaveFileDialog::Confirm: Invalid choice. abort.";
         return;
     }
 
     /// Check if we chose a directory
     std::string choice = m_name_edit->Text();
     if (choice.empty()) {
-        DebugLogger() << "SaveFileDialog::Confirm: Returning no file.";
+        WarnLogger() << "SaveFileDialog::Confirm: Returning no file.";
         CloseClicked();
         return;
     }
@@ -845,13 +845,18 @@ void SaveFileDialog::Confirm() {
     DebugLogger() << "chosen_full_path PathString: " << PathString(chosen_full_path) << " valid utf-8: " << IsValidUTF8(PathString(chosen_full_path));
     DebugLogger() << "chosen_full_path is directory? : " << fs::is_directory(chosen_full_path);
 
-
     if (fs::is_directory(chosen_full_path)) {
         DebugLogger() << "SaveFileDialog::Confirm: " << PathString(chosen_full_path) << " is a directory. Listing content.";
         UpdateDirectory(PathString(chosen_full_path));
         return;
+    }
 
-    } else if (!m_load_only) {
+    if (m_server_previews && choice_path.generic_string().find(SERVER_LABEL) == 0) {
+        UpdateDirectory(PathString(choice_path));
+        return;
+    }
+
+    if (!m_load_only) {
         // append appropriate extension if invalid
         std::string chosen_ext = fs::path(chosen_full_path).extension().string();
         if (chosen_ext != m_extension) {
