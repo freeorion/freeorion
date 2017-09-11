@@ -421,7 +421,7 @@ def set_planet_growth_specials(focus_manager):
                             planet.name, pid, special, pop, metab, metab_inc_pop)
                         if pinfo.current_focus == GROWTH:
                             pop -= 4  # discourage changing current focus to minimize focus-changing penalties
-                            ranked_planets.append((pop, pid, pinfo.current_focus))
+                        ranked_planets.append((pop, pid, pinfo.current_focus))
                 if not ranked_planets:
                     continue
                 ranked_planets.sort()
