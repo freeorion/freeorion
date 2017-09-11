@@ -107,13 +107,12 @@ namespace {
 }
 
 namespace parse {
-    bool buildings(std::map<std::string, std::unique_ptr<BuildingType>>& building_types) {
-        bool result = true;
-
+    std::map<std::string, std::unique_ptr<BuildingType>> buildings() {
+        std::map<std::string, std::unique_ptr<BuildingType>> building_types;
         for (const boost::filesystem::path& file : ListScripts("scripting/buildings")) {
-            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<BuildingType>>>(file, building_types);
+            /*auto success =*/ detail::parse_file<rules, std::map<std::string, std::unique_ptr<BuildingType>>>(file, building_types);
         }
 
-        return result;
+        return building_types;
     }
 }

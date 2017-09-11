@@ -170,13 +170,13 @@ namespace {
 }
 
 namespace parse {
-    bool specials(std::map<std::string, std::unique_ptr<Special>>& specials_) {
-        bool result = true;
+    std::map<std::string, std::unique_ptr<Special>> specials() {
+        std::map<std::string, std::unique_ptr<Special>> specials_;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/specials")) {
-            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<Special>>>(file, specials_);
+            /*auto success =*/ detail::parse_file<rules, std::map<std::string, std::unique_ptr<Special>>>(file, specials_);
         }
 
-        return result;
+        return specials_;
     }
 }

@@ -150,13 +150,13 @@ namespace {
 }
 
 namespace parse {
-    bool ship_parts(std::map<std::string, std::unique_ptr<PartType>>& parts) {
-        bool result = true;
+    std::map<std::string, std::unique_ptr<PartType>> ship_parts() {
+        std::map<std::string, std::unique_ptr<PartType>> parts;
 
         for (const auto& file : ListScripts("scripting/ship_parts")) {
-            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<PartType>>>(file, parts);
+            /*auto success =*/ detail::parse_file<rules, std::map<std::string, std::unique_ptr<PartType>>>(file, parts);
         }
 
-        return result;
+        return parts;
     }
 }

@@ -20,7 +20,7 @@ namespace {
             ScopedTimer timer("SpecialManager Init", true, std::chrono::milliseconds(1));
 
             try {
-                parse::specials(m_specials);
+                m_specials = parse::specials();
             } catch (const std::exception& e) {
                 ErrorLogger() << "Failed parsing specials: error: " << e.what();
                 throw e;

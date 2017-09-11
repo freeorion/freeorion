@@ -253,13 +253,13 @@ namespace {
 }
 
 namespace parse {
-    bool species(std::map<std::string, std::unique_ptr<Species>>& species_) {
-        bool result = true;
+    std::map<std::string, std::unique_ptr<Species>> species() {
+        std::map<std::string, std::unique_ptr<Species>> species_;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/species")) {
-            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<Species>>>(file, species_);
+            /*auto success =*/ detail::parse_file<rules, std::map<std::string, std::unique_ptr<Species>>>(file, species_);
         }
 
-        return result;
+        return species_;
     }
 }

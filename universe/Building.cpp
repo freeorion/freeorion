@@ -355,7 +355,7 @@ BuildingTypeManager::BuildingTypeManager() {
     TraceLogger() << "BuildingTypeManager::BuildingTypeManager() about to parse buildings.";
 
     try {
-        parse::buildings(m_building_types);
+        m_building_types = parse::buildings();
     } catch (const std::exception& e) {
         ErrorLogger() << "Failed parsing buildings: error: " << e.what();
         throw e;

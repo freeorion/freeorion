@@ -359,7 +359,7 @@ SpeciesManager::SpeciesManager() {
     ScopedTimer timer("SpeciesManager Init", true, std::chrono::milliseconds(1));
 
     try {
-        parse::species(m_species);
+        m_species = parse::species();
     } catch (const std::exception& e) {
         ErrorLogger() << "Failed parsing species: error: " << e.what();
         throw e;

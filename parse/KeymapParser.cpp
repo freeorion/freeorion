@@ -110,8 +110,10 @@ namespace {
 }
 
 namespace parse {
-    bool keymaps(NamedKeymaps& nkm) {
+    NamedKeymaps keymaps() {
+        NamedKeymaps nkm;
         boost::filesystem::path path = GetResourceDir() / "scripting/keymaps.inf";
-        return detail::parse_file<rules, NamedKeymaps>(path, nkm);
+        /*auto success =*/ detail::parse_file<rules, NamedKeymaps>(path, nkm);
+        return nkm;
     }
 }

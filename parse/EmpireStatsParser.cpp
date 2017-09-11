@@ -70,13 +70,13 @@ namespace {
 }
 
 namespace parse {
-    bool statistics(std::map<std::string, ValueRef::ValueRefBase<double>*>& stats_) {
-        bool result = true;
+    std::map<std::string, ValueRef::ValueRefBase<double>*> statistics() {
+        std::map<std::string, ValueRef::ValueRefBase<double>*> stats_;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/empire_statistics")) {
-            result &= detail::parse_file<rules, std::map<std::string, ValueRef::ValueRefBase<double>*>>(file, stats_);
+            /*auto success =*/ detail::parse_file<rules, std::map<std::string, ValueRef::ValueRefBase<double>*>>(file, stats_);
         }
 
-        return result;
+        return stats_;
     }
 }

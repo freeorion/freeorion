@@ -244,7 +244,7 @@ FieldTypeManager::FieldTypeManager() {
     ScopedTimer timer("FieldTypeManager Init", true, std::chrono::milliseconds(1));
 
     try {
-        parse::fields(m_field_types);
+        m_field_types = parse::fields();
     } catch (const std::exception& e) {
         ErrorLogger() << "Failed parsing fields: error: " << e.what();
         throw e;

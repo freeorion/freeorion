@@ -91,7 +91,7 @@ namespace EmpireStatistics {
         static std::map<std::string, ValueRef::ValueRefBase<double>*> s_stats;
         if (s_stats.empty()) {
             try {
-                parse::statistics(s_stats);
+                s_stats = parse::statistics();
             } catch (const std::exception& e) {
                 ErrorLogger() << "Failed parsing empire statistics: error: " << e.what();
                 throw e;

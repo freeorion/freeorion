@@ -80,8 +80,10 @@ namespace {
 }
 
 namespace parse {
-    bool fleet_plans(std::vector<FleetPlan*>& fleet_plans_) {
+    std::vector<FleetPlan*> fleet_plans() {
+        std::vector<FleetPlan*> fleet_plans_;
         const boost::filesystem::path& path = GetResourceDir() / "scripting/starting_unlocks/fleets.inf";
-        return detail::parse_file<rules, std::vector<FleetPlan*>>(path, fleet_plans_);
+        /*auto success =*/ detail::parse_file<rules, std::vector<FleetPlan*>>(path, fleet_plans_);
+        return fleet_plans_;
     }
 }

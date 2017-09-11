@@ -191,7 +191,7 @@ PartTypeManager::PartTypeManager() {
     ScopedTimer timer("PartTypeManager Init", true, std::chrono::milliseconds(1));
 
     try {
-        parse::ship_parts(m_parts);
+        m_parts = parse::ship_parts();
     } catch (const std::exception& e) {
         ErrorLogger() << "Failed parsing ship parts: error: " << e.what();
         throw;
@@ -632,7 +632,7 @@ HullTypeManager::HullTypeManager() {
     ScopedTimer timer("HullTypeManager Init", true, std::chrono::milliseconds(1));
 
     try {
-        parse::ship_hulls(m_hulls);
+        m_hulls = parse::ship_hulls();
     } catch (const std::exception& e) {
         ErrorLogger() << "Failed parsing ship hulls: error: " << e.what();
         throw;

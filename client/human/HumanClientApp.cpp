@@ -318,8 +318,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     this->SetMouseLRSwapped(GetOptionsDB().Get<bool>("UI.swap-mouse-lr"));
 
-    std::map<std::string, std::map<int, int>> named_key_maps;
-    parse::keymaps(named_key_maps);
+    auto named_key_maps = parse::keymaps();
     TraceLogger() << "Keymaps:";
     for (auto& km : named_key_maps) {
         TraceLogger() << "Keymap name = \"" << km.first << "\"";

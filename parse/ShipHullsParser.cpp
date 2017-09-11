@@ -178,13 +178,13 @@ namespace {
 }
 
 namespace parse {
-    bool ship_hulls(std::map<std::string, std::unique_ptr<HullType>>& hulls) {
-        bool result = true;
+    std::map<std::string, std::unique_ptr<HullType>> ship_hulls() {
+        std::map<std::string, std::unique_ptr<HullType>> hulls;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/ship_hulls")) {
-            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<HullType>>>(file, hulls);
+            /*auto success =*/ detail::parse_file<rules, std::map<std::string, std::unique_ptr<HullType>>>(file, hulls);
         }
 
-        return result;
+        return hulls;
     }
 }

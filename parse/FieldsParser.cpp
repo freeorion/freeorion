@@ -103,13 +103,13 @@ namespace {
 }
 
 namespace parse {
-    bool fields(std::map<std::string, std::unique_ptr<FieldType>>& field_types) {
-        bool result = true;
+    std::map<std::string, std::unique_ptr<FieldType>> fields() {
+        std::map<std::string, std::unique_ptr<FieldType>> field_types;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/fields")) {
-            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<FieldType>>>(file, field_types);
+            /*auto success =*/ detail::parse_file<rules, std::map<std::string, std::unique_ptr<FieldType>>>(file, field_types);
         }
 
-        return result;
+        return field_types;
     }
 }

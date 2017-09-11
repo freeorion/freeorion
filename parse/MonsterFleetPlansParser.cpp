@@ -127,8 +127,10 @@ namespace {
 }
 
 namespace parse {
-    bool monster_fleet_plans(std::vector<MonsterFleetPlan*>& monster_fleet_plans_) {
+    std::vector<MonsterFleetPlan*> monster_fleet_plans() {
+        std::vector<MonsterFleetPlan*> monster_fleet_plans_;
         boost::filesystem::path path = GetResourceDir() / "scripting/monster_fleets.inf";
-        return detail::parse_file<rules, std::vector<MonsterFleetPlan*>>(path, monster_fleet_plans_);
+        /*auto success =*/ detail::parse_file<rules, std::vector<MonsterFleetPlan*>>(path, monster_fleet_plans_);
+        return monster_fleet_plans_;
     }
 }
