@@ -92,23 +92,23 @@ except ImportError as e:
     class _FreeOrionLoggerForTest(object):
         """A stub freeorion_logger for testing"""
         @staticmethod
-        def debug(msg):
+        def debug(msg, *args):
             print msg
 
         @staticmethod
-        def info(msg):
+        def info(msg, *args):
             print msg
 
         @staticmethod
-        def warn(msg):
+        def warn(msg, *args):
             print msg
 
         @staticmethod
-        def error(msg):
+        def error(msg, *args):
             print >> sys.stderr, msg
 
         @staticmethod
-        def fatal(msg):
+        def fatal(msg, *args):
             print >> sys.stderr, msg
 
     freeorion_logger = _FreeOrionLoggerForTest()
