@@ -297,7 +297,7 @@ FO_COMMON_API Message ModeratorActionMessage(const Moderator::ModeratorAction& m
 FO_COMMON_API Message ShutdownServerMessage();
 
 /** requests previews of savefiles from server */
-FO_COMMON_API Message RequestSavePreviewsMessage(std::string directory);
+FO_COMMON_API Message RequestSavePreviewsMessage(std::string relative_directory);
 
 /** returns the savegame previews to the client */
 FO_COMMON_API Message DispatchSavePreviewsMessage(const PreviewInformation& preview);

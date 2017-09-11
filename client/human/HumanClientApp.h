@@ -75,7 +75,9 @@ public:
     void                ExitApp();
     void                ResetClientData(bool save_connection = false);
     void                LoadSinglePlayerGame(std::string filename = "");
-    void                RequestSavePreviews(const std::string& directory); ///< Requests the savegame previews for choosing one.
+    /** Requests the savegame previews from the server in \p relative_directory
+        to the server save directory. */
+    void                RequestSavePreviews(const std::string& relative_directory);
     void                Autosave();                                     ///< autosaves the current game, iff autosaves are enabled and any turn number requirements are met
     /** Load the newest single player autosave and continue playing game. */
     void                ContinueSinglePlayerGame();
