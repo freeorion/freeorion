@@ -239,21 +239,24 @@ namespace {
 }
 
 namespace parse {
-    bool techs(TechManager::TechContainer& techs_,
-               std::map<std::string, std::unique_ptr<TechCategory>>& categories,
-               std::set<std::string>& categories_seen)
-    {
-        bool result = true;
+    std::tuple<
+        TechManager::TechContainer, // techs_
+        std::map<std::string, std::unique_ptr<TechCategory>>, // tech_categories,
+        std::set<std::string>> // categories_seen
+    techs() {
+        TechManager::TechContainer techs_;
+        std::map<std::string, std::unique_ptr<TechCategory>> categories;
+        std::set<std::string> categories_seen;
 
         g_categories_seen = &categories_seen;
         g_categories = &categories;
 
-        result &= detail::parse_file<rules, TechManager::TechContainer>(GetResourceDir() / "scripting/techs/Categories.inf", techs_);
+        /*auto success =*/ detail::parse_file<rules, TechManager::TechContainer>(GetResourceDir() / "scripting/techs/Categories.inf", techs_);
 
         for (const boost::filesystem::path& file : ListScripts("scripting/techs")) {
-            result &= detail::parse_file<rules, TechManager::TechContainer>(file, techs_);
+            /*auto success =*/ detail::parse_file<rules, TechManager::TechContainer>(file, techs_);
         }
 
-        return result;
+        return std::make_tuple(std::move(techs_), std::move(categories), categories_seen);
     }
 }

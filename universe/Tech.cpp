@@ -359,7 +359,7 @@ TechManager::TechManager() {
     std::set<std::string> categories_seen_in_techs;
 
     try {
-        parse::techs(m_techs, m_categories, categories_seen_in_techs);
+        std::tie(m_techs, m_categories, categories_seen_in_techs) = parse::techs();
     } catch (const std::exception& e) {
         ErrorLogger() << "Failed parsing techs: error: " << e.what();
         throw e;
