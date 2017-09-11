@@ -1,6 +1,6 @@
 import copy
 import sys
-from collections import OrderedDict as odict
+from collections import Counter, OrderedDict as odict
 from time import time
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -356,6 +356,39 @@ class AIstate(object):
                     near_supply.setdefault(sys_id, []).append(enemy_id)
         return actual_supply, near_supply
 
+    def __update_empire_standard_enemy(self):
+        """Update the empire's standard enemy.
+
+        The standard enemy is the enemy that is most often seen.
+        """
+        # TODO: If no current information available, rate against own fighters
+        universe = fo.getUniverse()
+        empire_id = fo.empireID()
+
+        # assess enemy fleets that may have been momentarily visible (start with dummy entries)
+        dummy_stats = CombatRatingsAI.default_ship_stats().get_stats(hashable=True)
+        cur_e_fighters = Counter()  # actual visible enemies
+        old_e_fighters = Counter({dummy_stats: 0})  # destroyed enemies TODO: consider seen but out of sight enemies
+
+        for fleet_id in universe.fleetIDs:
+            fleet = universe.getFleet(fleet_id)
+            if (not fleet or fleet.empty or fleet.ownedBy(empire_id) or fleet.unowned or
+                    not (fleet.hasArmedShips or fleet.hasFighterShips)):
+                continue
+
+            # track old/dead enemy fighters for rating assessments in case not enough current info
+            ship_stats = CombatRatingsAI.FleetCombatStats(fleet_id).get_ship_stats(hashable=True)
+            dead_fleet = fleet_id in universe.destroyedObjectIDs(empire_id)
+            e_f_dict = old_e_fighters if dead_fleet else cur_e_fighters
+            for stats in ship_stats:
+                # log only ships that are armed
+                if stats[0]:
+                    e_f_dict[stats] += 1
+
+        e_f_dict = cur_e_fighters or old_e_fighters
+        self.__empire_standard_enemy = sorted([(v, k) for k, v in e_f_dict.items()])[-1][1]
+        self.empire_standard_enemy_rating = self.get_standard_enemy().get_rating()
+
     def __update_system_status(self):
         print 10 * "=", "Updating System Threats", 10 * "="
         universe = fo.getUniverse()
@@ -377,9 +410,6 @@ class AIstate(object):
         verbose = False
 
         # assess enemy fleets that may have been momentarily visible
-        # start with dummy entries
-        cur_e_fighters = {CombatRatingsAI.default_ship_stats().get_stats(hashable=True): [0]}
-        old_e_fighters = {CombatRatingsAI.default_ship_stats().get_stats(hashable=True): [0]}
         enemies_by_system = {}
         my_fleets_by_system = {}
         fleet_spot_position = {}
@@ -398,16 +428,6 @@ class AIstate(object):
                     fleet_spot_position.setdefault(fleet.systemID, []).append(fleet_id)
                 continue
 
-            # this is a fleet not owned by us
-            if not fleet.unowned and (fleet.hasArmedShips or fleet.hasFighterShips):
-                ship_stats = CombatRatingsAI.FleetCombatStats(fleet_id).get_ship_stats(hashable=True)
-                # track old/dead enemy fighters for rating assessments in case not enough current info
-                e_f_dict = old_e_fighters if dead_fleet else cur_e_fighters
-                for stats in ship_stats:
-                    # log only ships that are armed
-                    if stats[0]:
-                        e_f_dict.setdefault(stats, [0])[0] += 1
-
             # TODO: consider checking death of individual ships.  If ships had been moved from this fleet
             # into another fleet, we might have witnessed their death in that other fleet but if this fleet
             # had not been seen since before that transfer then the ships might also still be listed here.
@@ -424,11 +444,6 @@ class AIstate(object):
 
             if not fleet.unowned:
                 self.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(fleet_id)
-
-        # TODO: If no current information available, rate against own fighters
-        e_f_dict = cur_e_fighters if len(cur_e_fighters) > 1 else old_e_fighters
-        self.__empire_standard_enemy = sorted([(v, k) for k, v in e_f_dict.items()])[-1][1]
-        self.empire_standard_enemy_rating = self.get_standard_enemy().get_rating()
 
         # assess fleet and planet threats & my local fleets
         for sys_id in universe.systemIDs:
@@ -951,6 +966,7 @@ class AIstate(object):
         self.__clean_fleet_roles()
         self.__clean_fleet_missions()
         print "Fleets lost by system: %s" % fleetsLostBySystem
+        self.__update_empire_standard_enemy()
         self.__update_system_status()
         self.__report_system_threats()
         self.__report_system_defenses()
