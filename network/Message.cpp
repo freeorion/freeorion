@@ -736,46 +736,53 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
                         GalaxySetupData& galaxy_setup_data)
 {
     try {
-        try {
-            // first attempt binary deserialziation
-            std::istringstream is(msg.Text());
+        bool try_xml = false;
+        if (strncmp(msg.Data(), "<?xml", 5)) {
+            try {
+                // first attempt binary deserialziation
+                std::istringstream is(msg.Text());
 
-            freeorion_bin_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(single_player_game)
-               >> BOOST_SERIALIZATION_NVP(empire_id)
-               >> BOOST_SERIALIZATION_NVP(current_turn);
-            GetUniverse().EncodingEmpire() = empire_id;
+                freeorion_bin_iarchive ia(is);
+                ia >> BOOST_SERIALIZATION_NVP(single_player_game)
+                   >> BOOST_SERIALIZATION_NVP(empire_id)
+                   >> BOOST_SERIALIZATION_NVP(current_turn);
+                GetUniverse().EncodingEmpire() = empire_id;
 
-            boost::timer deserialize_timer;
-            ia >> BOOST_SERIALIZATION_NVP(empires);
-            DebugLogger() << "ExtractGameStartMessage empire deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+                boost::timer deserialize_timer;
+                ia >> BOOST_SERIALIZATION_NVP(empires);
+                DebugLogger() << "ExtractGameStartMessage empire deserialization time " << (deserialize_timer.elapsed() * 1000.0);
 
-            ia >> BOOST_SERIALIZATION_NVP(species);
-            combat_logs.SerializeIncompleteLogs(ia, 1);
-            ia >> BOOST_SERIALIZATION_NVP(supply);
+                ia >> BOOST_SERIALIZATION_NVP(species);
+                combat_logs.SerializeIncompleteLogs(ia, 1);
+                ia >> BOOST_SERIALIZATION_NVP(supply);
 
-            deserialize_timer.restart();
-            Deserialize(ia, universe);
-            DebugLogger() << "ExtractGameStartMessage universe deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+                deserialize_timer.restart();
+                Deserialize(ia, universe);
+                DebugLogger() << "ExtractGameStartMessage universe deserialization time " << (deserialize_timer.elapsed() * 1000.0);
 
 
-            ia >> BOOST_SERIALIZATION_NVP(players)
-               >> BOOST_SERIALIZATION_NVP(loaded_game_data);
-            if (loaded_game_data) {
-                Deserialize(ia, orders);
-                ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
-                if (ui_data_available)
-                    ia >> BOOST_SERIALIZATION_NVP(ui_data);
-                ia >> BOOST_SERIALIZATION_NVP(save_state_string_available);
-                if (save_state_string_available)
-                    ia >> BOOST_SERIALIZATION_NVP(save_state_string);
-            } else {
-                ui_data_available = false;
-                save_state_string_available = false;
+                ia >> BOOST_SERIALIZATION_NVP(players)
+                   >> BOOST_SERIALIZATION_NVP(loaded_game_data);
+                if (loaded_game_data) {
+                    Deserialize(ia, orders);
+                    ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
+                    if (ui_data_available)
+                        ia >> BOOST_SERIALIZATION_NVP(ui_data);
+                    ia >> BOOST_SERIALIZATION_NVP(save_state_string_available);
+                    if (save_state_string_available)
+                        ia >> BOOST_SERIALIZATION_NVP(save_state_string);
+                } else {
+                    ui_data_available = false;
+                    save_state_string_available = false;
+                }
+                ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
+            } catch (...) {
+                try_xml = true;
             }
-            ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
-
-        } catch (...) {
+        } else {
+            try_xml = true;
+        }
+        if (try_xml) {
             // if binary deserialization failed, try more-portable XML deserialization
             std::istringstream is(msg.Text());
 
@@ -864,20 +871,27 @@ void ExtractTurnUpdateMessageData(const Message& msg, int empire_id, int& curren
     try {
         ScopedTimer timer("Turn Update Unpacking", true);
 
-        try {
-            // first attempt binary deserialization
-            std::istringstream is(msg.Text());
-            freeorion_bin_iarchive ia(is);
-            GetUniverse().EncodingEmpire() = empire_id;
-            ia >> BOOST_SERIALIZATION_NVP(current_turn)
-               >> BOOST_SERIALIZATION_NVP(empires)
-               >> BOOST_SERIALIZATION_NVP(species);
-            combat_logs.SerializeIncompleteLogs(ia, 1);
-            ia >> BOOST_SERIALIZATION_NVP(supply);
-            Deserialize(ia, universe);
-            ia >> BOOST_SERIALIZATION_NVP(players);
-
-        } catch (...) {
+        bool try_xml = false;
+        if (std::strncmp(msg.Data(), "<?xml", 5)) {
+            try {
+                // first attempt binary deserialization
+                std::istringstream is(msg.Text());
+                freeorion_bin_iarchive ia(is);
+                GetUniverse().EncodingEmpire() = empire_id;
+                ia >> BOOST_SERIALIZATION_NVP(current_turn)
+                   >> BOOST_SERIALIZATION_NVP(empires)
+                   >> BOOST_SERIALIZATION_NVP(species);
+                combat_logs.SerializeIncompleteLogs(ia, 1);
+                ia >> BOOST_SERIALIZATION_NVP(supply);
+                Deserialize(ia, universe);
+                ia >> BOOST_SERIALIZATION_NVP(players);
+            } catch (...) {
+                try_xml = true;
+            }
+        } else {
+            try_xml = true;
+        }
+        if (try_xml) {
             // try again with more-portable XML deserialization
             std::istringstream is(msg.Text());
             freeorion_xml_iarchive ia(is);
@@ -902,14 +916,21 @@ void ExtractTurnPartialUpdateMessageData(const Message& msg, int empire_id, Univ
     try {
         ScopedTimer timer("Mid Turn Update Unpacking", true);
 
-        try {
-            // first attempt binary deserialization
-            std::istringstream is(msg.Text());
-            freeorion_bin_iarchive ia(is);
-            GetUniverse().EncodingEmpire() = empire_id;
-            Deserialize(ia, universe);
-
-        } catch (...) {
+        bool try_xml = false;
+        if (std::strncmp(msg.Data(), "<?xml", 5)) {
+            try {
+                // first attempt binary deserialization
+                std::istringstream is(msg.Text());
+                freeorion_bin_iarchive ia(is);
+                GetUniverse().EncodingEmpire() = empire_id;
+                Deserialize(ia, universe);
+            } catch (...) {
+                try_xml = true;
+            }
+        } else {
+            try_xml = true;
+        }
+        if (try_xml) {
             // try again with more-portable XML deserialization
             std::istringstream is(msg.Text());
             freeorion_xml_iarchive ia(is);
