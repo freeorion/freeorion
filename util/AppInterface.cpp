@@ -2,6 +2,7 @@
 
 #include "../parse/Parse.h"
 #include "../universe/Building.h"
+#include "../universe/Encyclopedia.h"
 
 #include <future>
 
@@ -35,9 +36,12 @@ int IApp::MAX_AI_PLAYERS() {
 }
 
 void IApp::ParseUniverseObjectTypes() {
+    auto pending_articles = std::async(std::launch::async, []{
+            return parse::encyclopedia_articles();});
+    GetEncyclopedia().SetArticles(std::move(pending_articles));
+
     auto pending_building_types = std::async(std::launch::async, [] {
-            return parse::buildings();
-        });
+            return parse::buildings();});
     GetBuildingTypeManager().SetBuildingTypes(std::move(pending_building_types));
 
 }

@@ -7,7 +7,7 @@
 #include "../parse/Parse.h"
 
 
-const Encyclopedia& GetEncyclopedia() {
+Encyclopedia& GetEncyclopedia() {
     static Encyclopedia encyclopedia;
     return encyclopedia;
 }
@@ -15,10 +15,7 @@ const Encyclopedia& GetEncyclopedia() {
 Encyclopedia::Encyclopedia() :
     empty_article(),
     m_articles()
-{
-    m_pending_articles = std::async(std::launch::async, []{
-            return parse::encyclopedia_articles();});
-}
+{}
 
 unsigned int Encyclopedia::GetCheckSum() const {
     unsigned int retval{0};

@@ -54,6 +54,6 @@ private:
     mutable boost::optional<std::future<ArticleMap>> m_pending_articles = boost::none;
 };
 
-FO_COMMON_API const Encyclopedia& GetEncyclopedia();
+FO_COMMON_API Encyclopedia& GetEncyclopedia();
 
 #endif
