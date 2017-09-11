@@ -969,26 +969,23 @@ void SaveFileDialog::SetPreviewList(const fs::path& path) {
 
 void SaveFileDialog::SetPreviewList(const PreviewInformation& preview_info) {
     auto setup_func = [this, &preview_info]() {
-        m_file_list->LoadSaveGamePreviews(preview_info.previews);
-        m_remote_dir_dropdown->Clear();
-        SetDirPath(preview_info.folder);
 
-        auto row = GG::Wnd::Create<GG::DropDownList::Row>();
-        row->push_back(GG::Wnd::Create<CUILabel>(SERVER_LABEL));
-        m_remote_dir_dropdown->Insert(row);
-
+        // Prefix directories with the server label;
+        std::vector<std::string> prefixed_subdirs;
         for (const std::string& subdir : preview_info.subdirectories) {
-            auto row = GG::Wnd::Create<GG::DropDownList::Row>();
             if (subdir.find("/") == 0) {
-                row->push_back(GG::Wnd::Create<CUILabel>(SERVER_LABEL + subdir));
+                prefixed_subdirs.push_back(SERVER_LABEL + subdir);
             } else if(subdir.find("./") == 0) {
-                row->push_back(GG::Wnd::Create<CUILabel>(SERVER_LABEL + subdir.substr(1)));
+                prefixed_subdirs.push_back(SERVER_LABEL + subdir.substr(1));
             } else {
-                row->push_back(GG::Wnd::Create<CUILabel>(SERVER_LABEL + "/" + subdir));
+                prefixed_subdirs.push_back(SERVER_LABEL + "/" + subdir);
             }
-
-            m_remote_dir_dropdown->Insert(row);
         }
+        m_file_list->LoadDirectories(prefixed_subdirs);
+
+        m_file_list->LoadSaveGamePreviews(preview_info.previews);
+        // m_remote_dir_dropdown->Clear();
+        SetDirPath(preview_info.folder);
     };
 
     SetPreviewListCore(setup_func);
