@@ -59,22 +59,6 @@ namespace {
         }
         return ALL_EMPIRES;
     }
-
-    /// Generates information on the subdirectories of the save directory
-    void ListSaveSubdirectories(std::vector<std::string>& list) {
-        fs::recursive_directory_iterator end;
-        std::string savedir = fs::canonical(GetSaveDir()).generic_string();
-        for (fs::recursive_directory_iterator it(GetSaveDir()); it != end; ++it) {
-            if (fs::is_directory(it->path())) {
-                std::string subdirectory = it->path().generic_string();
-                if (subdirectory.find(savedir) == 0){
-                    list.push_back(subdirectory.substr(savedir.length()));
-                } else {
-                    ErrorLogger() << "ListSaveSubfolders Expected a subdirectory of " << GetSaveDir() << " got " << subdirectory;
-                }
-            }
-        }
-    }
 };
 
 ////////////////////////////////////////////////
@@ -875,32 +859,96 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
     LoadGameInit(player_save_game_data, player_id_to_save_game_data_index, server_save_game_data);
 }
 
+namespace {
+        /** Check that \p path is a file or directory in the server save
+        directory. */
+    bool IsInServerSaveDir(const fs::path& path) {
+
+        fs::path server_dir = GetServerSaveDir();
+        if (!fs::exists(server_dir) || !fs::is_directory(server_dir))
+            return false;
+
+        if (!fs::exists(path))
+            return false;
+
+        // Resolve any symbolic links, dots or dot-dots
+        auto canon_server = fs::canonical(server_dir);
+        auto canon_path = fs::canonical(path);
+
+        // Paths shorter than the server save dir are not in the server dir
+        auto save_dir_length = std::distance(canon_server.begin(), canon_server.end());
+        auto path_length = std::distance(canon_path.begin(), canon_path.end());
+        if (path_length < save_dir_length)
+            return false;
+
+        // Check that the whole server save dir path matches the test path
+        return std::equal(canon_server.begin(), canon_server.end(), path.begin());
+    }
+
+    /// Generates information on the subdirectories of \p directory
+    std::vector<std::string> ListSaveSubdirectories(const fs::path& directory) {
+        std::vector<std::string> list;
+        if (!fs::is_directory(directory))
+            return list;
+
+        std::string server_dir_str = fs::canonical(GetServerSaveDir()).generic_string();
+
+        // Adds \p subdir to the list
+        auto add_to_list = [&list, &server_dir_str](const fs::path& subdir) {
+            auto subdir_str = fs::canonical(subdir).generic_string();
+            auto rel_path = subdir_str.substr(server_dir_str.length());
+            list.push_back(rel_path);
+            TraceLogger() << "Added relative path " << rel_path << " in " << subdir
+                          << " to save preview directories";
+        };
+
+        // Add parent dir if still within server_dir_str
+        auto parent = directory / "..";
+        if (IsInServerSaveDir(parent))
+            add_to_list(parent);
+
+        // Add all directories to list
+        fs::directory_iterator end;
+        for (fs::directory_iterator it(fs::canonical(directory)); it != end; ++it) {
+            if (!fs::is_directory(it->path()) || !IsInServerSaveDir(it->path()))
+                continue;
+            add_to_list(it->path());
+        }
+        return list;
+    }
+}
+
 void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection){
-    DebugLogger() << "ServerApp::UpdateSavePreviews: ServerApp UpdateSavePreviews";
 
-    std::string directory_name;
-    ExtractRequestSavePreviewsMessageData(msg, directory_name);
+    // Only relative paths are allowed to prevent client from list arbitrary
+    // directories, or knowing the absolute path of the server save directory.
+    std::string relative_directory_name;
+    ExtractRequestSavePreviewsMessageData(msg, relative_directory_name);
 
-    DebugLogger() << "ServerApp::UpdateSavePreviews: Got preview request for directory: " << directory_name;
+    DebugLogger() << "ServerApp::UpdateSavePreviews: Preview request for sub directory: " << relative_directory_name;
 
-    fs::path directory = GetSaveDir() / directory_name;
-    // Do not allow a relative path to lead outside the save directory.
-    if(!IsInside(directory, GetSaveDir())) {
+    fs::path directory = GetServerSaveDir() / relative_directory_name;
+    // Do not allow a relative path to explore outside the save directory.
+    bool contains_dot_dot = relative_directory_name.find("..") != std::string::npos;
+    if (contains_dot_dot || !IsInServerSaveDir(directory)) {
+        directory = GetServerSaveDir();
         ErrorLogger() << "ServerApp::UpdateSavePreviews: Tried to load previews from "
-                      << directory_name
+                      << relative_directory_name
                       << " which is outside the allowed save directory. Defaulted to the save directory, "
                       << directory;
-        directory = GetSaveDir();
-        directory_name = ".";
+        relative_directory_name = ".";
     }
 
     PreviewInformation preview_information;
-    preview_information.folder = directory_name;
-    ListSaveSubdirectories( preview_information.subdirectories);
-    LoadSaveGamePreviews(directory_name, m_single_player_game? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION, preview_information.previews);
-    DebugLogger() << "ServerApp::UpdateSavePreviews: Sending " << preview_information.previews.size() << " previews in response.";
+    preview_information.folder = relative_directory_name;
+    preview_information.subdirectories = ListSaveSubdirectories(directory);
+    LoadSaveGamePreviews(
+        relative_directory_name,
+        m_single_player_game? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION,
+        preview_information.previews);
+    DebugLogger() << "ServerApp::UpdateSavePreviews: Sending " << preview_information.previews.size()
+                  << " previews in response.";
     player_connection->SendMessage(DispatchSavePreviewsMessage(preview_information));
-    DebugLogger() << "ServerApp::UpdateSavePreviews: Previews sent.";
 }
 
 void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_connection){
