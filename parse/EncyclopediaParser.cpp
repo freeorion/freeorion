@@ -17,11 +17,13 @@ namespace std {
 #endif
 
 namespace {
+    using ArticleMap = std::map<std::string, std::vector<EncyclopediaArticle>>;
+
     struct insert_ {
         typedef void result_type;
 
-        void operator()(Encyclopedia& enc, const EncyclopediaArticle& article) const
-        { enc.articles[article.category].push_back(article); }
+        void operator()(ArticleMap& articles, const EncyclopediaArticle& article) const
+        { articles[article.category].push_back(article); }
     };
     const boost::phoenix::function<insert_> insert;
 
@@ -70,7 +72,7 @@ namespace {
         }
 
         typedef parse::detail::rule<
-            void (Encyclopedia&),
+            void (ArticleMap&),
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
@@ -80,7 +82,7 @@ namespace {
         > strings_rule;
 
         typedef parse::detail::rule<
-            void (Encyclopedia&)
+            void (ArticleMap&)
         > start_rule;
 
 
@@ -90,15 +92,14 @@ namespace {
 }
 
 namespace parse {
-    bool encyclopedia_articles(Encyclopedia& enc) {
-        bool result = true;
-
+    ArticleMap encyclopedia_articles() {
         std::vector<boost::filesystem::path> file_list = ListScripts("scripting/encyclopedia");
 
+        ArticleMap articles;
         for (const boost::filesystem::path& file : file_list) {
-            result &= detail::parse_file<rules, Encyclopedia>(file, enc);
+            /*auto success =*/ detail::parse_file<rules, ArticleMap>(file, articles);
         }
 
-        return result;
+        return articles;
     }
 }

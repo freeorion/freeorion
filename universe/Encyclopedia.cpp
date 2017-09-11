@@ -17,7 +17,7 @@ Encyclopedia::Encyclopedia() :
     empty_article()
 {
     try {
-        parse::encyclopedia_articles(*this);
+        articles = parse::encyclopedia_articles();
         DebugLogger() << "Encyclopedia Articles checksum: " << GetCheckSum();
 
     } catch (const std::exception& e) {

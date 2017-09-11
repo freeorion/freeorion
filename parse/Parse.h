@@ -21,7 +21,7 @@ class PartType;
 class ShipDesign;
 class Special;
 class Species;
-struct Encyclopedia;
+struct EncyclopediaArticle;
 class GameRules;
 
 namespace parse {
@@ -73,7 +73,7 @@ namespace parse {
 
     FO_PARSE_API std::map<std::string, ValueRef::ValueRefBase<double>*> statistics();
 
-    FO_PARSE_API bool encyclopedia_articles(Encyclopedia& enc);
+    FO_PARSE_API std::map<std::string, std::vector<EncyclopediaArticle>> encyclopedia_articles();
 
     FO_PARSE_API std::map<std::string, std::map<int, int>> keymaps();
 
