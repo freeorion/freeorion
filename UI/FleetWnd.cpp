@@ -3456,7 +3456,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
 
 
     // Allow dismissal of stale visibility information
-    if (!fleet->OwnedBy(client_empire_id)){
+    if (!fleet->OwnedBy(client_empire_id)) {
         auto forget_fleet_action = [this, client_empire_id, fleet]() {
             // Remove visibility information for this fleet from
             // the empire's visibility table.
@@ -3481,9 +3481,9 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         if (last_turn_visible_it != visibility_turn_map.end()
             && last_turn_visible_it->second < CurrentTurn())
         {
-            popup->AddMenuItem(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"),   false, false, forget_fleet_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"), false, false, forget_fleet_action));
         }
-   }
+    }
 
     popup->Run();
 }
