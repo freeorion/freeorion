@@ -1488,10 +1488,10 @@ LoadShipDesignsAndManifestOrderFromFileSystem(const boost::filesystem::path& dir
                        std::pair<std::unique_ptr<ShipDesign>,
                                  boost::filesystem::path>,
                        boost::hash<boost::uuids::uuid>>  saved_designs;
-    std::vector<boost::uuids::uuid> disk_ordering;
 
-    std::vector<std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>> designs_and_paths;
-    parse::ship_designs(dir, designs_and_paths, disk_ordering);
+    auto designs_paths_and_ordering = parse::ship_designs(dir);
+    auto& designs_and_paths = designs_paths_and_ordering.first;
+    auto& disk_ordering = designs_paths_and_ordering.second;
 
     for (auto&& design_and_path : designs_and_paths) {
         auto& design = design_and_path.first;

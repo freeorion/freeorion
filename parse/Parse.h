@@ -50,16 +50,20 @@ namespace parse {
     /** Parse all ship designs in directory \p path, store them with their filename in \p
         design_and_path. If a file exists called ShipDesignOrdering.focs.txt, parse it and
         store the order in \p ordering. */
-    FO_PARSE_API bool ship_designs(const boost::filesystem::path& path,
-                                   std::vector<std::pair<std::unique_ptr<ShipDesign>,
-                                                         boost::filesystem::path>>& designs_and_paths,
-                                   std::vector<boost::uuids::uuid>& ordering);
+    FO_PARSE_API std::pair<
+        std::vector<std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>>, // designs_and_paths,
+        std::vector<boost::uuids::uuid> // ordering
+        > ship_designs(const boost::filesystem::path& path);
 
-    FO_PARSE_API bool ship_designs(std::vector<std::unique_ptr<ShipDesign>>& designs,
-                                   std::vector<boost::uuids::uuid>& ordering);
+    FO_PARSE_API std::pair<
+        std::vector<std::unique_ptr<ShipDesign>>, // designs
+        std::vector<boost::uuids::uuid> // ordering
+        > ship_designs();
 
-    FO_PARSE_API bool monster_designs(std::vector<std::unique_ptr<ShipDesign>>& designs,
-                                      std::vector<boost::uuids::uuid>& ordering);
+    FO_PARSE_API std::pair<
+        std::vector<std::unique_ptr<ShipDesign>>, // designs
+        std::vector<boost::uuids::uuid> // ordering
+        > monster_designs();
 
     FO_PARSE_API std::vector<FleetPlan*> fleet_plans();
 
