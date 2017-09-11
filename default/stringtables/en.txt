@@ -1,4 +1,4 @@
-English
+﻿English
 
 # This is the English String Table file for FreeOrion
 #
@@ -1056,6 +1056,12 @@ Enable Experimentors
 
 RULE_ENABLE_EXPERIMENTORS_DESC
 Enables Experimentors during galaxy generation
+
+RULE_ENABLE_DOOMSDAY_WEAPONS
+Enable Doomsday Weapons
+
+RULE_ENABLE_DOOMSDAY_WEAPONS_DESC
+Enable use of doomsday weapons (Nova Bomb, Black Hole Collapser and Planet Destroyer Cannon)
 
 RULE_ENABLE_SUPER_TESTER
 Enable Super-Tester Takeover
@@ -10918,6 +10924,15 @@ Aggression
 
 SHP_ROOT_AGGRESSION_DESC
 Allows basic weapons and [[shippart GT_TROOP_POD]]s.
+
+DOOMSDAY_WEAPON_UNLOCK
+Doomsday Weapon Prerequisite
+
+DOOMSDAY_WEAPON_UNLOCK_DESC
+Enables the research doomsday weapons if allowed by game rule.
+
+DOOMSDAY_WEAPON_UNLOCK_SHORT_DESC
+Game Rule Prerequisite
 
 SHP_BOMBARD
 Bombardment

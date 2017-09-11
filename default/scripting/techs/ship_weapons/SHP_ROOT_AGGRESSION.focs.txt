@@ -14,6 +14,11 @@ Tech
     effectsgroups = [
         [[WEAPON_BASE_EFFECTS(SR_WEAPON_0_1)]]
         [[WEAPON_BASE_EFFECTS(SR_WEAPON_1_1)]]
+        EffectsGroup
+            scope = Source
+            activation = ((GameRule name = "RULE_ENABLE_DOOMSDAY_WEAPONS") > 0)
+            effects = GiveEmpireTech name = "SHP_DOOMSDAY_WEAPON_UNLOCK"
+    ]
     ]
     graphic = "icons/tech/planetary_colonialism.png"
 

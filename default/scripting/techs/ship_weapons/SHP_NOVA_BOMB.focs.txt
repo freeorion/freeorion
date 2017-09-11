@@ -9,6 +9,7 @@ Tech
     prerequisites = [
         "LRN_TIME_MECH"
         "PRO_ZERO_GEN"
+        "SHP_DOOMSDAY_WEAPON_UNLOCK"
     ]
     unlock = [
         Item type = ShipPart name = "SP_NOVA_BOMB"
