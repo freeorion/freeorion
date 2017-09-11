@@ -530,8 +530,8 @@ public:
     /// Loads preview data on all save files in a directory specidifed by path.
     /// @param[in] path The path of the directory
     /// @param[in] extension File name extension to filter by
-    void LoadSaveGamePreviews(const fs::path& path, const std::string& extension) {
-        LoadDirectories(path);
+    void LoadLocalSaveGamePreviews(const fs::path& path, const std::string& extension) {
+        LoadDirectories(FindLocalRelativeDirs(path));
 
         vector<FullPreview> previews;
         ::LoadSaveGamePreviews(path, extension, previews);
@@ -552,22 +552,35 @@ public:
         Insert(rows, false);
     }
 
-    void LoadDirectories(const fs::path& path) {
-        fs::directory_iterator end_it;
+    /** Find local sub directories of \p path. */
+    std::vector<std::string> FindLocalRelativeDirs(const fs::path& path) {
+        std::vector<std::string> dirs;
         if (path.has_parent_path() && path.parent_path() != path) {
-            auto row = GG::Wnd::Create<SaveFileDirectoryRow>(m_visible_columns, "..");
-            Insert(row);
+                dirs.push_back("..");
         }
 
+        fs::directory_iterator end_it;
         for (fs::directory_iterator it(path); it != end_it; ++it) {
             if (fs::is_directory(it->path())) {
                 fs::path last_bit_of_path = it->path().filename();
                 std::string utf8_dir_name = PathString(last_bit_of_path);
-                DebugLogger() << "SaveFileDialog::LoadDirectories name: " << utf8_dir_name << " valid UTF-8: " << IsValidUTF8(utf8_dir_name);
-                auto row = GG::Wnd::Create<SaveFileDirectoryRow>(m_visible_columns, utf8_dir_name);
-                Insert(row);
+                DebugLogger() << "SaveFileDialog::FindLocalRelativeDirs name: " << utf8_dir_name
+                              << " valid UTF-8: " << IsValidUTF8(utf8_dir_name);
+                dirs.push_back(utf8_dir_name);
             }
         }
+
+        return dirs;
+    }
+
+    void LoadDirectories(const std::vector<std::string>& dirs) {
+        std::vector<std::shared_ptr<Row>> rows;
+        for (const auto& dir : dirs) {
+            rows.push_back(GG::Wnd::Create<SaveFileDirectoryRow>(m_visible_columns, dir));
+        }
+
+        // Insert rows enmasse to avoid per insertion vector sort costs.
+        Insert(rows, false);
     }
 
     bool HasFile(const std::string& filename) {
@@ -943,7 +956,7 @@ void SaveFileDialog::UpdatePreviewList() {
 }
 
 void SaveFileDialog::SetPreviewList(const fs::path& path) {
-    auto setup_func = [this, &path]() { m_file_list->LoadSaveGamePreviews(path, m_extension); };
+    auto setup_func = [this, &path]() { m_file_list->LoadLocalSaveGamePreviews(path, m_extension); };
 
     CheckChoiceValidity();
     SetPreviewListCore(setup_func);
