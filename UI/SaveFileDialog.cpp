@@ -660,7 +660,7 @@ void SaveFileDialog::Init() {
 
     auto filename_label = GG::Wnd::Create<CUILabel>(UserString("SAVE_FILENAME"), GG::FORMAT_NOWRAP);
     auto directory_label = GG::Wnd::Create<CUILabel>(UserString("SAVE_DIRECTORY"), GG::FORMAT_NOWRAP);
-    //std::cout << "pathstrnig: " << PathString(GetSaveDir()) << std::endl;
+
     DebugLogger() << "pathstring: " << PathString(GetSaveDir());
     m_current_dir_edit = GG::Wnd::Create<CUIEdit>(PathString(GetSaveDir()));
 
@@ -910,7 +910,6 @@ void SaveFileDialog::SelectionChanged(const GG::ListBox::SelectionSet& selection
 }
 
 void SaveFileDialog::UpdateDirectory(const std::string& newdir) {
-    //std::cout << "SaveFileDialog::UpdateDirectory newdir: " << newdir << std::endl;
     SetDirPath(newdir);
     UpdatePreviewList();
 }
@@ -1003,7 +1002,6 @@ void SaveFileDialog::DirectoryEdited(const string& filename)
 std::string SaveFileDialog::GetDirPath() const {
     const std::string& path_edit_text = m_current_dir_edit->Text();
 
-    //std::cout << "SaveFileDialog::GetDirPath text: " << path_edit_text << " valid UTF-8: " << utf8::is_valid(path_edit_text.begin(), path_edit_text.end()) << std::endl;
     //DebugLogger() << "SaveFileDialog::GetDirPath text: " << path_edit_text << " valid UTF-8: " << utf8::is_valid(path_edit_text.begin(), path_edit_text.end());
     if (!m_server_previews) {
         return path_edit_text;
@@ -1026,7 +1024,6 @@ std::string SaveFileDialog::GetDirPath() const {
     } else {
         // Translate the server label into the standard relative path marker the server understands
         std::string retval = "." + dir.substr(SERVER_LABEL.size());
-        //std::cout << "SaveFileDialog::GetDirPath retval: " << retval << " valid UTF-8: " << utf8::is_valid(retval.begin(), retval.end()) << std::endl;
         DebugLogger() << "SaveFileDialog::GetDirPath retval: " << retval << " valid UTF-8: " << utf8::is_valid(retval.begin(), retval.end());
         return retval;
     }
