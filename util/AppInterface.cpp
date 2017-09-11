@@ -35,6 +35,13 @@ int IApp::MAX_AI_PLAYERS() {
     return max_number_AIs;
 }
 
+namespace {
+    template <typename ParserFunc>
+    auto StartParsing(const ParserFunc& parser) -> std::future<decltype(parser())> {
+        return std::async(std::launch::async, parser);
+    }
+}
+
 void IApp::ParseUniverseObjectTypes() {
     auto pending_articles = std::async(std::launch::async, []{
             return parse::encyclopedia_articles();});
