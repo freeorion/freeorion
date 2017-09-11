@@ -926,7 +926,7 @@ void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr playe
 
     DebugLogger() << "ServerApp::UpdateSavePreviews: Preview request for sub directory: " << relative_directory_name;
 
-    fs::path directory = GetServerSaveDir() / relative_directory_name;
+    fs::path directory = GetServerSaveDir() / FilenameToPath(relative_directory_name);
     // Do not allow a relative path to explore outside the save directory.
     bool contains_dot_dot = relative_directory_name.find("..") != std::string::npos;
     if (contains_dot_dot || !IsInServerSaveDir(directory)) {

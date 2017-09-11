@@ -936,7 +936,7 @@ void SaveFileDialog::SetPreviewList(const PreviewInformation& preview_info) {
         // Prefix directories with the server label;
         std::vector<std::string> prefixed_subdirs;
         for (const std::string& subdir : preview_info.subdirectories) {
-            if (subdir.find("/") == 0) {
+            if (subdir.find("/") == 0 || subdir.find("\\") == 0) {
                 prefixed_subdirs.push_back(SERVER_LABEL + subdir);
             } else if(subdir.find("./") == 0) {
                 prefixed_subdirs.push_back(SERVER_LABEL + subdir.substr(1));
@@ -1037,11 +1037,11 @@ void SaveFileDialog::SetDirPath(const string& path) {
         dirname = GenericPathString(fs::path(path));
         // Indicate that the path is on the server
         if (path.find("./") == 0) {
-            dirname = SERVER_LABEL + path.substr(1);
+            dirname = SERVER_LABEL + dirname.substr(1);
         } else if (path.find(SERVER_LABEL) == 0) {
             // Already has label. No need to change
         } else {
-            dirname = SERVER_LABEL + "/" + path;
+            dirname = SERVER_LABEL + "/" + dirname;
         }
     } else {
         // Normalize path
