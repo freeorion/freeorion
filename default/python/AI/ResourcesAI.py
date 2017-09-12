@@ -9,8 +9,6 @@ have their future focus decided.
 """
 # Note: The algorithm is not stable with respect to pid order.  i.e. Two empire with
 #       exactly the same colonies, but different pids may make different choices.
-import sys
-
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
 from EnumsAI import PriorityType, get_priority_resource_types, FocusType
@@ -468,8 +466,9 @@ def set_planet_production_and_research_specials(focus_manager):
                 continue
             else:
                 new_planet = universe.getPlanet(pid)
-                print >> sys.stderr, ("Failed setting %s for Concentration Camp planet %s (%d) with species %s and current focus %s, but new planet copy shows %s" %
-                                      (pinfo.future_focus, planet.name, pid, planet.speciesName, planet.focus, new_planet.focus))
+                warn("Failed setting %s for Concentration Camp planet %s (%d)"
+                     " with species %s and current focus %s, but new planet copy shows %s" % (
+                        pinfo.future_focus, planet.name, pid, planet.speciesName, planet.focus, new_planet.focus))
 
 
 def set_planet_protection_foci(focus_manager):
@@ -487,8 +486,9 @@ def set_planet_protection_foci(focus_manager):
                 continue
             else:
                 newplanet = universe.getPlanet(pid)
-                print >> sys.stderr, ("Error: Failed setting %s for planet %s (%d) with species %s and current focus %s, but new planet copy shows %s" %
-                                      (focus_manager.new_foci[pid], planet.name, pid, planet.speciesName, planet.focus, newplanet.focus))
+                warn("Failed setting %s for planet %s (%d) with species %s and current focus %s,"
+                     " but new planet copy shows %s" % (focus_manager.new_foci[pid], planet.name, pid,
+                                                        planet.speciesName, planet.focus, newplanet.focus))
 
 
 def set_planet_happiness_foci(focus_manager):

@@ -1,5 +1,4 @@
 from collections import Counter
-import sys
 
 import freeOrionAIInterface as fo
 import FleetUtilsAI
@@ -302,7 +301,7 @@ def _get_species_grades(species_name, grade_type):
         if species:
             spec_tags = species.tags
         else:
-            print >> sys.stderr, "get_species_grades() couldn't retrieve species '%s'\n" % species_name
+            warn("get_species_grades() couldn't retrieve species '%s'\n" % species_name)
     return get_ai_tag_grade(spec_tags, grade_type)
 
 

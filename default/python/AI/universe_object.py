@@ -1,5 +1,3 @@
-import sys
-
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from AIDependencies import INVALID_ID
 
@@ -15,7 +13,7 @@ class UniverseObject(object):
     def __init__(self, target_id):
         self.id = target_id
         if not self:
-            print >> sys.stderr, "Target is invalid %s" % self
+            warn("Target is invalid %s" % self)
 
     def __cmp__(self, other):
         return type(self) == type(other) and cmp(self.id, other.id)

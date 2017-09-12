@@ -1,5 +1,4 @@
 import copy
-import sys
 from collections import Counter, OrderedDict as odict
 from time import time
 
@@ -182,9 +181,8 @@ class AIstate(object):
             else:
                 try:
                     aggression = state['character'].get_trait(Aggression).key
-                except Exception as e:
-                    print >> sys.stderr, "Could not find the aggression level of the AI, defaulting to typical."
-                    print >> sys.stderr, e
+                except Exception:
+                    warn("Could not find the aggression level of the AI, defaulting to typical.", exc_info=True)
                     aggression = fo.aggression.typical
             self.__init__(aggression)
 
@@ -945,7 +943,7 @@ class AIstate(object):
         for fleet_id in fleets_to_split:
             fleet = universe.getFleet(fleet_id)
             if not fleet:
-                print >> sys.stderr, "Trying to split fleet %d but seemingly does not exist" % fleet_id
+                warn("Trying to split fleet %d but seemingly does not exist" % fleet_id)
                 continue
             fleet_len = len(fleet.shipIDs)
             if fleet_len == 1:

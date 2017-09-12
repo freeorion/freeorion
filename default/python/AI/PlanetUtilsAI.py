@@ -1,5 +1,3 @@
-import sys
-
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import ColonisationAI
 from AIDependencies import INVALID_ID
@@ -43,7 +41,7 @@ def get_capital():
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     if empire is None:
-        print >> sys.stderr, "Danger Danger! FO can't find an empire for me!!!!"
+        warn("Danger Danger! FO can't find an empire for me!!!!")
         return INVALID_ID
     empire_id = empire.empireID
     capital_id = empire.capitalID

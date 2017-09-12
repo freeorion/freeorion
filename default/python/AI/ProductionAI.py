@@ -1,7 +1,6 @@
 import math
 import random
 import sys
-import traceback
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies
@@ -869,8 +868,8 @@ def generate_production_orders():
                         continue
                     try:
                         distance_map[sys_id] = universe.jumpDistance(homeworld.systemID, sys_id)
-                    except Exception as e:
-                        error(e, exc_info=True)
+                    except Exception:
+                        warn("Could not get jump distance from %d to %d" % (homeworld.systemID, sys_id), exc_info=True)
                 print ([INVALID_ID] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))
                 use_sys = ([(-1, INVALID_ID)] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))[:2][-1][-1]  # kinda messy, but ensures a value
             if use_sys != INVALID_ID:
