@@ -602,10 +602,9 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
         target_rp += (rr - tr)
         target_pp -= (ii - ri)
 
-    # Any planet in the ratios list and still raw is set to industry
-    for ratio, pid, pinfo in ratios:
-        if pid in focus_manager.raw_planet_info:
-            focus_manager.bake_future_focus(pid, INDUSTRY, False)
+    # Any planet still raw is set to industry
+    for pid in focus_manager.raw_planet_info:
+        focus_manager.bake_future_focus(pid, INDUSTRY, False)
 
 
 def set_planet_resource_foci():
