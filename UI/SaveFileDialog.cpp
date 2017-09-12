@@ -1023,7 +1023,7 @@ std::string SaveFileDialog::GetDirPath() const {
         return ".";
     } else {
         // Translate the server label into the standard relative path marker the server understands
-        std::string retval = "." + dir.substr(SERVER_LABEL.size());
+        auto retval = GenericPathString(fs::path("." + dir.substr(SERVER_LABEL.size())));
         DebugLogger() << "SaveFileDialog::GetDirPath retval: " << retval << " valid UTF-8: " << utf8::is_valid(retval.begin(), retval.end());
         return retval;
     }
