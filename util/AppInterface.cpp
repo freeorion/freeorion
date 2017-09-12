@@ -3,6 +3,7 @@
 #include "../parse/Parse.h"
 #include "../universe/Building.h"
 #include "../universe/Encyclopedia.h"
+#include "../universe/Field.h"
 
 #include <future>
 
@@ -45,4 +46,5 @@ namespace {
 void IApp::ParseUniverseObjectTypes() {
     GetEncyclopedia().SetArticles(StartParsing(parse::encyclopedia_articles));
     GetBuildingTypeManager().SetBuildingTypes(StartParsing(parse::buildings));
+    GetFieldTypeManager().SetFieldTypes(StartParsing(parse::fields));
 }
