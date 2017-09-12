@@ -646,10 +646,10 @@ def test_tech_integrity():
         techs = this_group.get_techs()
         for tech in techs:
             if not fo.getTech(tech):
-                error("In %s: Tech %s seems not to exist!" % (group.__name__, tech))
+                warn("In %s: Tech %s seems not to exist!" % (group.__name__, tech))
                 error_occured = True
         for err in this_group.get_errors():
-            error(e, exc_info=True)
+            warn(err, exc_info=True)
             error_occured = True
         if not error_occured:
             print "Seems to be OK!"
