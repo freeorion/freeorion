@@ -528,7 +528,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
         cumulative_pp += i_pp
         cumulative_rp += i_rp
         if RESEARCH not in pinfo.planet.availableFoci:
-            if focus_manager.bake_future_focus(pid, pinfo.current_focus, False):
+            if focus_manager.bake_future_focus(pid, INDUSTRY, False):
                 target_pp += i_pp
                 target_rp += i_rp
 
