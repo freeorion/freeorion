@@ -4,6 +4,7 @@
 #include "../universe/Building.h"
 #include "../universe/Encyclopedia.h"
 #include "../universe/Field.h"
+#include "../universe/Species.h"
 
 #include <future>
 
@@ -47,4 +48,5 @@ void IApp::ParseUniverseObjectTypes() {
     GetEncyclopedia().SetArticles(StartParsing(parse::encyclopedia_articles));
     GetBuildingTypeManager().SetBuildingTypes(StartParsing(parse::buildings));
     GetFieldTypeManager().SetFieldTypes(StartParsing(parse::fields));
+    GetSpeciesManager().SetSpeciesTypes(StartParsing(parse::species));
 }
