@@ -75,9 +75,6 @@ bool PythonServer::InitModules() {
     }
     AddToSysPath(GetPythonUniverseGeneratorDir());
 
-    // import universe generator script file
-    m_python_module_universe_generator = import("universe_generator");
-
     // Confirm existence of the directory containing the turn event Python
     // scripts and add it to Pythons sys.path to make sure Python will find
     // our scripts
@@ -141,6 +138,18 @@ bool PythonServer::IsSuccessAuth(const std::string& player_name, const std::stri
 }
 
 bool PythonServer::CreateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
+    // Confirm existence of the directory containing the universe generation
+    // Python scripts and add it to Pythons sys.path to make sure Python will
+    // find our scripts
+    if (!fs::exists(GetPythonUniverseGeneratorDir())) {
+        ErrorLogger() << "Can't find folder containing universe generation scripts";
+        return false;
+    }
+    AddToSysPath(GetPythonUniverseGeneratorDir());
+
+    // import universe generator script file
+    m_python_module_universe_generator = import("universe_generator");
+
     dict py_player_setup_data;
 
     // the universe generator module should contain an "error_report" function,
