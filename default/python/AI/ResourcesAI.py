@@ -603,7 +603,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
         target_pp -= (ii - ri)
 
     # Any planet still raw is set to industry
-    for pid in focus_manager.raw_planet_info:
+    for pid in focus_manager.raw_planet_info.keys():
         focus_manager.bake_future_focus(pid, INDUSTRY, False)
 
 
