@@ -2,6 +2,7 @@ import random
 from collections import defaultdict
 
 import freeorion as fo
+
 import universe_statistics
 import universe_tables
 

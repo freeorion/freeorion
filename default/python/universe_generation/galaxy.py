@@ -1,11 +1,12 @@
 import sys
-from random import random, uniform, randint, gauss
-from math import pi, sin, cos, acos, sqrt, ceil, floor
 from collections import defaultdict
+from math import acos, ceil, cos, floor, pi, sin, sqrt
+from random import gauss, randint, random, uniform
 
 import freeorion as fo
-import util
+
 import universe_tables
+import util
 
 
 class AdjacencyGrid(object):

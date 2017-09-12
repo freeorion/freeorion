@@ -1,6 +1,6 @@
 import freeorion as fo
-from planets import planet_types_real, planet_sizes_real
 
+from planets import planet_sizes_real, planet_types_real
 
 ###############################
 ## STAR GROUP NAMING OPTIONS ##

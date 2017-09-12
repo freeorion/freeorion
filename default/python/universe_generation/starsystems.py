@@ -1,10 +1,12 @@
-import sys
 import random
-import freeorion as fo
-import planets
-import util
-import universe_tables
+import sys
 from itertools import product
+
+import freeorion as fo
+
+import planets
+import universe_tables
+import util
 
 # tuple of available star types
 star_types = (fo.starType.blue, fo.starType.white, fo.starType.yellow, fo.starType.orange,

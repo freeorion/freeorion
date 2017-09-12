@@ -1,8 +1,8 @@
 import freeorion as fo
-from common.print_utils import Table, Text, Float, Sequence
+from common.print_utils import Float, Sequence, Table, Text
 
-import planets
 import natives
+import planets
 import universe_tables
 
 species_summary = {species: 0 for species in fo.get_native_species()}
