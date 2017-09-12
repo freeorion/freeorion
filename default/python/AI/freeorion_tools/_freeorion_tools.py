@@ -255,9 +255,6 @@ class ReadOnlyDict(Mapping):
     def __getitem__(self, item):
         return self._data[item]
 
-    def __contains__(self, item):
-        return item in self._data
-
     def __iter__(self):
         return iter(self._data)
 
@@ -266,6 +263,3 @@ class ReadOnlyDict(Mapping):
 
     def __str__(self):
         return str(self._data)
-
-    def __nonzero__(self):
-        return self.__len__() > 0
