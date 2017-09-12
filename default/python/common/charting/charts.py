@@ -183,10 +183,10 @@ def main():
                 turnsP = allData[playerName].get("turnsP", [])
                 thisData = allData.get(playerName, {}).get(plotType, [])
                 print "plotting with color for player: ", playerName, "data min/max: ", min(allData[playerName].get(plotType, [])), ' | ', max(allData[playerName].get(plotType, []))
-                plot(turnsP, thisData, 'o-', color=empireColors[playerName], label="%s - %.1f" % (playerName, sum(thisData)), linewidth=2.0)
+                pylab.plot(turnsP, thisData, 'o-', color=empireColors[playerName], label="%s - %.1f" % (playerName, sum(thisData)), linewidth=2.0)
             else:
                 print "plotting withOUT color for player: ", playerName, "data min/max: ", min(allData[playerName].get(plotType, [])), ' | ', max(allData[playerName].get(plotType, []))
-                plot(turnsP, allData[playerName].get(plotType, []), 'bx-', label=playerName, linewidth=2.0)
+                pylab.plot(turnsP, allData[playerName].get(plotType, []), 'bx-', label=playerName, linewidth=2.0)
         print "Ranked by ", plotType
         for rank, name in rankings[::-1]:
             print name
@@ -195,7 +195,7 @@ def main():
                 pylab.plot(range(turns[0], turns[0] + len(adata)), adata, color=empireColors[name], label="%s: %s - %.1f" % (name, species[name], sum(adata)), linewidth=2.0)
             else:
                 print "can't find empire color for ", name
-                # plot(range(turns[0], turns[0]+len(allData[name])), allData[name].get(plotType, []), label="(%d) "%(empires.index(name)+1)+name+" : "+species[name], linewidth=2.0)
+                # pylab.plot(range(turns[0], turns[0]+len(allData[name])), allData[name].get(plotType, []), label="(%d) "%(empires.index(name)+1)+name+" : "+species[name], linewidth=2.0)
         # legend(loc='upper left',prop={"size":'medium'})
         pylab.legend(loc='upper left', prop={"size": 9}, labelspacing=0.2)
         pylab.xlabel('Turn')
