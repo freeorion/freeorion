@@ -187,7 +187,7 @@ class ShipDesignCache(object):
         elif isinstance(pid, list):
             planets = pid
         else:
-            warn("Invalid parameter 'pid' for 'print_hulls_for_planets'. Expected int, list or None.")
+            error("Invalid parameter 'pid' for 'print_hulls_for_planets'. Expected int, list or None.")
             return
         print "Hull-cache:"
         get_planet = fo.getUniverse().getPlanet
@@ -206,7 +206,7 @@ class ShipDesignCache(object):
         elif isinstance(pid, list):
             planets = pid
         else:
-            warn("Invalid parameter 'pid' for 'print_parts_for_planets'. Expected int, list or None.")
+            error("Invalid parameter 'pid' for 'print_parts_for_planets'. Expected int, list or None.")
             return
         print "Available parts per planet:"
         get_planet = fo.getUniverse().getPlanet
@@ -562,8 +562,8 @@ class ShipDesignCache(object):
                 if i != idx:
                     available_hulls[i], available_hulls[idx] = available_hulls[idx], available_hulls[i]
             except ValueError:
-                warn("hull in testhull cache not in available_hulls even though it is supposed to be a proper subset.",
-                     exc_info=True)
+                error("hull in testhull cache not in available_hulls even though it is supposed to be a proper subset.",
+                      exc_info=True)
 
         # 4. Cache the list of buildable ship parts for each planet
         print "Caching buildable ship parts per planet..."
@@ -1037,8 +1037,8 @@ class ShipDesigner(object):
                 return _get_design_by_name(Cache.map_reference_design_name[reference_name]).id
             except AttributeError:
                 cached_name = Cache.map_reference_design_name[reference_name]
-                warn("%s maps to %s in Cache.map_reference_design_name." % (reference_name, cached_name))
-                warn("But the design seems not to exist...", exc_info=True)
+                error("%s maps to %s in Cache.map_reference_design_name."
+                      " But the design seems not to exist..." % (reference_name, cached_name), exc_info=True)
                 return None
 
         if verbose:
@@ -1086,7 +1086,7 @@ class ShipDesigner(object):
         elif isinstance(loc, list):
             planets = loc
         else:
-            warn("Invalid loc parameter for optimize_design(). Expected int or list but got %s" % loc)
+            error("Invalid loc parameter for optimize_design(). Expected int or list but got %s" % loc)
             return []
 
         self.consider_fleet_count = consider_fleet_count

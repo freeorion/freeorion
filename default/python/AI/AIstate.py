@@ -182,7 +182,7 @@ class AIstate(object):
                 try:
                     aggression = state['character'].get_trait(Aggression).key
                 except Exception:
-                    warn("Could not find the aggression level of the AI, defaulting to typical.", exc_info=True)
+                    error("Could not find the aggression level of the AI, defaulting to typical.", exc_info=True)
                     aggression = fo.aggression.typical
             self.__init__(aggression)
 
