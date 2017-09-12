@@ -11,6 +11,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <map>
 
 
 namespace Effect {
@@ -117,5 +118,21 @@ void Special::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_graphic);
 }
+
+/** Look up table for specials.*/
+class SpecialsManager {
+    public:
+    SpecialsManager();
+    ~SpecialsManager();
+
+    std::vector<std::string> SpecialNames() const;
+    const Special* GetSpecial(const std::string& name) const;
+    unsigned int GetCheckSum() const;
+
+    private:
+    std::map<std::string, std::unique_ptr<Special>> m_specials;
+};
+
+const SpecialsManager& GetSpecialsManager();
 
 #endif // _Special_h_
