@@ -13,23 +13,14 @@
 
 #include <boost/filesystem/fstream.hpp>
 
-SpecialsManager::SpecialsManager() {
-    try {
-        m_specials = std::move(parse::specials());
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing specials: error: " << e.what();
-        throw e;
-    }
-
-    TraceLogger() << "Specials:";
-    for (const auto& entry : m_specials)
-        TraceLogger() << " ... " << entry.first;
-}
+SpecialsManager::SpecialsManager()
+{}
 
 SpecialsManager::~SpecialsManager()
 {}
 
 std::vector<std::string> SpecialsManager::SpecialNames() const {
+    CheckPendingSpecialsTypes();
     std::vector<std::string> retval;
     for (const auto& entry : m_specials) {
         retval.push_back(entry.first);
@@ -38,11 +29,13 @@ std::vector<std::string> SpecialsManager::SpecialNames() const {
 }
 
 const Special* SpecialsManager::GetSpecial(const std::string& name) const {
+    CheckPendingSpecialsTypes();
     auto it = m_specials.find(name);
     return it != m_specials.end() ? it->second.get() : nullptr;
 }
 
 unsigned int SpecialsManager::GetCheckSum() const {
+    CheckPendingSpecialsTypes();
     unsigned int retval{0};
     for (auto const& name_type_pair : m_specials)
         CheckSums::CheckSumCombine(retval, name_type_pair);
@@ -51,7 +44,30 @@ unsigned int SpecialsManager::GetCheckSum() const {
     return retval;
 }
 
-const SpecialsManager& GetSpecialsManager() {
+void SpecialsManager::SetSpecialsTypes(std::future<SpecialsTypeMap>&& future)
+{ m_pending_types = std::move(future); }
+
+void SpecialsManager::CheckPendingSpecialsTypes() const {
+    if (!m_pending_types)
+        return;
+
+    // Only print waiting message if not immediately ready
+    while (m_pending_types->wait_for(std::chrono::seconds(1)) == std::future_status::timeout) {
+        DebugLogger() << "Waiting for Specials types to parse.";
+    }
+
+    try {
+        auto x = std::move(m_pending_types->get());
+        std::swap(m_specials, x);
+
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Failed parsing specials: error: " << e.what();
+    }
+
+    m_pending_types = boost::none;
+}
+
+SpecialsManager& GetSpecialsManager() {
     static SpecialsManager special_manager;
     return special_manager;
 }
