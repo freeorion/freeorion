@@ -315,12 +315,6 @@ Zet het niveau op of boven welke log berichten uitgevoerd moeten worden (niveau 
 OPTIONS_DB_STRINGTABLE_FILENAME
 Zet de taalspecifieke stringtabel bestandsnaam.
 
-OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
-Indien waar, zal automatisch opgeslagen worden tijdens enkele speler spellen.
-
-OPTIONS_DB_AUTOSAVE_MULTIPLAYER
-Indien waar, zal automatisch opgeslagen worden tijdens netwerkspellen.
-
 OPTIONS_DB_AUTOSAVE_TURNS
 Zet het aantal beurten die moeten verstrijken tussen een auto-opslaan.
 
@@ -573,12 +567,6 @@ Snel-sluit vensters
 
 OPTIONS_MISC_UI
 Overige Gebruikersinterface Instellingen
-
-OPTIONS_SINGLEPLAYER
-Enkele speler
-
-OPTIONS_MULTIPLAYER
-Netwerkspel
 
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
 Beurtem tussen een auto-opslaan

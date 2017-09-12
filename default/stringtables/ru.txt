@@ -1473,11 +1473,17 @@ OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED
 OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED_VALUE
 Принудительное значение EmpireID. Значение от 0 до 39.
 
-OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
-Включить автосохранения в одиночной игре.
+OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START
+Включить автосохранения в начале хода для одиночной игры.
 
-OPTIONS_DB_AUTOSAVE_MULTIPLAYER
-Включить автосохранения в сетевой игре.
+OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END
+Включить автосохранения в конце хода для одиночной игры.
+
+OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START
+Включить автосохранения в конце хода для одиночной игры.
+
+OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_END
+Включить автосохранения в конце хода для сетевой игры.
 
 OPTIONS_DB_AUTOSAVE_TURNS
 Количество ходов между автосохранениями.
@@ -2064,12 +2070,6 @@ OPTIONS_AUTO_REPOSITION_WINDOWS
 
 OPTIONS_MISC_UI
 Различные настройки интерфейса
-
-OPTIONS_SINGLEPLAYER
-Одиночная игра
-
-OPTIONS_MULTIPLAYER
-Сетевая игра
 
 OPTIONS_AUTOSAVE_LIMIT
 Количество автосохранений

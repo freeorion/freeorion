@@ -416,12 +416,6 @@ Ustala, którego poziomu lub wyższego wiadomości będą logowane (poziomy w ko
 OPTIONS_DB_STRINGTABLE_FILENAME
 Ustala nazwę pliku językowego.
 
-OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
-Jeśli włączone, gra będzie automatycznie zapisywana podczas gry jednoosobowej.
-
-OPTIONS_DB_AUTOSAVE_MULTIPLAYER
-Jeśli włączone, gra będzie automatycznie zapisywana podczas gry wieloosobowej.
-
 OPTIONS_DB_AUTOSAVE_TURNS
 Ustala ilość tur, które powinny minąć pomiędzy autozapisami gry.
 
@@ -682,10 +676,6 @@ Pliki zapisanych gier
 
 OPTIONS_TITLE
 Opcje
-
-OPTIONS_MULTIPLAYER
-Mulitplayer
-
 
 ##
 ## Main map window
