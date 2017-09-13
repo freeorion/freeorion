@@ -3248,13 +3248,13 @@ SHP_DEUTERIUM_TANK
 Tanque de Deuterio
 
 SHP_DEUTERIUM_TANK_DESC
-Desbloquea la parte de nave del Tanque de Deuterio.
+Pequeño incremento del alcance de la nave, incrementando la capacidad de combustible. Desbloquea la parte de nave del [[FU_RAMSCOOP]].
 
 SHP_ANTIMATTER_TANK
 Tanque de Antimateria
 
 SHP_ANTIMATTER_TANK_DESC
-Desbloquea la parte de nave Tanque de Antimateria.
+Incremento moderado del alcance de la nave, incrementado su capacidad de combustible.
 
 SHP_ZORTRIUM_PLATE
 Armadura de Blindaje de Zortrium
@@ -3841,18 +3841,6 @@ Sensores
 
 DT_DETECTOR_4_DESC
 Detección Definitiva
-
-FU_DEUTERIUM_TANK
-Tanque de Deuterio
-
-FU_DEUTERIUM_TANK_DESC
-Pequeño incremento del alcance de la nave, incrementando la capacidad de combustible.  Aparatoso y vulnerable a los disparos.
-
-FU_ANTIMATTER_TANK
-Tanque Anti materia
-
-FU_ANTIMATTER_TANK_DESC
-Incremento moderado del alcance de la nave, incrementado su capacidad de combustible.  Compacto y con poca masa.
 
 FU_ZERO_FUEL
 Generador de Combustible Punto Cero

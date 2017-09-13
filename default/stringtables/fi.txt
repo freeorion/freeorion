@@ -2232,9 +2232,6 @@ Avaa aktiivitutkan, aluksen osa.
 SHP_DEUTERIUM_TANK
 Deuteriumtankki
 
-SHP_DEUTERIUM_TANK_DESC
-Avaa Deuteriumtankin, aluksen osa.
-
 
 ##
 ## Technology refinement
@@ -2300,12 +2297,6 @@ Aktiivitutka
 
 DT_DETECTOR_2_DESC
 Keskinkertainen havainnointikyky, suuri häiverangaistus alukselle
-
-FU_DEUTERIUM_TANK
-Deuteriumtankki
-
-FU_ANTIMATTER_TANK
-Antimateriatankki
 
 SH_DEFENSE_GRID
 Puolustusverkko

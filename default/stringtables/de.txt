@@ -3453,7 +3453,7 @@ EFFECT_DERELICT_MAP_LABEL
 Karte aus einem Wrack
 
 EFFECT_DERELICT_FUEL
-Schiffe sind durch restlichen Treibstoff von verlassenen Wracks auf %system% aufgetankt worden.
+Schiffe sind mit dem restlichen Treibstoff verlassener Wracks auf %system% aufgetankt worden.
 
 EFFECT_DERELICT_FUEL_LABEL
 Treibstoff aus Wrack
@@ -5240,6 +5240,9 @@ Bringt den Sieg!
 SHIP_PART_UNLOCK_SHORT_DESC
 Schaltet Schiffsteile frei
 
+SHIP_FUEL_IMPROVE_SHORT_DESC
+Verbessert Treibstofftanks
+
 SHIP_WEAPON_UNLOCK_SHORT_DESC
 Schaltet Schiffsbewaffnung frei
 
@@ -5684,13 +5687,19 @@ SHP_DEUTERIUM_TANK
 Deuteriumtank
 
 SHP_DEUTERIUM_TANK_DESC
-Schaltet das Schiffsteil [[shippart FU_DEUTERIUM_TANK]] frei.
+Erhöht die Kapazität der Treibstofftanks etwas und schaltet das Schiffsteil [[shippart FU_RAMSCOOP]] frei.
+
+SHP_DEUTERIUM_TANK_EFFECT
+Deuterium Treibstoff
 
 SHP_ANTIMATTER_TANK
 Antimaterietank
 
 SHP_ANTIMATTER_TANK_DESC
-Schaltet das Schiffsteil [[shippart FU_ANTIMATTER_TANK]] frei.
+Erhöht die Kapazität der Treibstofftanks ordentlich.
+
+SHP_ANTIMATTER_TANK
+Antimateriespeicher
 
 SHP_ZERO_POINT
 Nullpunkt-Treibstoffgenerator
@@ -5985,22 +5994,16 @@ FU_BASIC_TANK
 Zusatz Treibstofftank
 
 FU_BASIC_TANK_DESC
-Erhöht die  [[metertype METER_FUEL]]kapazität, was einen zusätzlichen Sprung erlaubt.
-
-FU_DEUTERIUM_TANK
-Deuterium-Tank
-
-FU_DEUTERIUM_TANK_DESC
-Kleine Steigerung der Schiffsreichweite durch eine verbesserte Treibstoffkapazität. Sperrig und verwundbar durch Beschuss.
-
-FU_ANTIMATTER_TANK
-Antimaterietank
-
-FU_ANTIMATTER_TANK_DESC
-Moderate Steigerung der Schiffsreichweite durch eine verbesserte Treibstoffkapazität. Kompakt und geringe Masse.
+Erhöht die [[metertype METER_FUEL]]kapazität, was einen zusätzlichen Sprung erlaubt. Weiterentwicklungen erlauben weitere Sprünge pro Tank.
 
 FU_ZERO_FUEL
 Nullpunkt-Treibstoffgenerator
+
+FU_RAMSCOOP
+Bussardkollektor 
+
+FU_RAMSCOOP_DESC
+Erzeugt langsam [[metertype METER_FUEL]] in Sternensystemen indem es den Wasserstoff im interplanetaren Raum sammelt.
 
 ST_CLOAK_1
 Elektromagnetische Dämpfung

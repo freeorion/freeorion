@@ -43,7 +43,7 @@ Tech
 Tech
     name = "SHP_DEUTERIUM_TANK"
     description = "SHP_DEUTERIUM_TANK_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    short_description = "SHIP_FUEL_IMPROVE_SHORT_DESC"
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 24 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
@@ -53,15 +53,17 @@ Tech
         "PRO_FUSION_GEN"
     ]
     unlock = [
-        Item type = ShipPart name = "FU_DEUTERIUM_TANK"
         Item type = ShipPart name = "FU_RAMSCOOP"
+    ]
+    effectsgroups = [
+        [[PART_UPGRADE_MAXFUEL_EFFECTS(SHP_DEUTERIUM_TANK_EFFECT,1)]]
     ]
     graphic = "icons/ship_parts/deuterium_tank.png"
 
 Tech
     name = "SHP_ANTIMATTER_TANK"
     description = "SHP_ANTIMATTER_TANK_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    short_description = "SHIP_FUEL_IMPROVE_SHORT_DESC"
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 175 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
@@ -70,7 +72,9 @@ Tech
         "SHP_DEUTERIUM_TANK"
         "LRN_FORCE_FIELD"
     ]
-    unlock = Item type = ShipPart name = "FU_ANTIMATTER_TANK"
+    effectsgroups = [
+        [[PART_UPGRADE_MAXFUEL_EFFECTS(SHP_ANTIMATTER_TANK_EFFECT,3)]]
+    ]
     graphic = "icons/ship_parts/antimatter_tank.png"
 
 Tech
@@ -256,5 +260,25 @@ Tech
     ]
     unlock = Item type = ShipPart name = "SP_CHAOS_WAVE"
     graphic = "icons/ship_parts/chaos-wave.png"
+
+/**
+ * Increase the fuel capacity of ships with FU_BASIC_TANK parts.
+ * Adds the given increase amount times the number of FU_BASIC_TANK parts in the design to the max fuel meter.
+ * @1@ Accounting label to present this effect with
+ * @2@ Fuel capacity increase per fuel part
+ */
+PART_UPGRADE_MAXFUEL_EFFECTS
+'''
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FU_BASIC_TANK"
+            ]
+            accountinglabel = "@1@"
+            effects = [
+                SetMaxFuel value = Value + (@2@ * (PartsInShipDesign Name = "FU_BASIC_TANK" design = Target.DesignID))
+            ]
+'''
 
 #include "/scripting/common/base_prod.macros"

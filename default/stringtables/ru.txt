@@ -11539,18 +11539,6 @@ FU_BASIC_TANK
 FU_BASIC_TANK_DESC
 Увеличивает вместимость [[metertype METER_FUEL]], позволяя совершать дополнительный прыжок
 
-FU_DEUTERIUM_TANK
-Бак дейтерия
-
-FU_DEUTERIUM_TANK_DESC
-Небольшое увеличение дальности корабля за счет увеличения вместимости [[metertype METER_FUEL]]. Громоздкий и уязвимый для оружия
-
-FU_ANTIMATTER_TANK
-Бак антиматерий
-
-FU_ANTIMATTER_TANK_DESC
-Среднее увеличение дальности корабля за счет увеличения вместимости [[metertype METER_FUEL]]. Компактный и с малой массой
-
 FU_ZERO_FUEL
 Генератор топлива с нулевой точкой
 

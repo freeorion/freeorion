@@ -1680,9 +1680,6 @@ Bioterreur Faciliteiten
 SPY_DETECT_2_DESC
 Ontsluit Actieve Radar scheepsonderdeel.
 
-SHP_DEUTERIUM_TANK_DESC
-Ontsluit Deuterium Tank scheepsonderdeel.
-
 
 ##
 ## Technology refinement
