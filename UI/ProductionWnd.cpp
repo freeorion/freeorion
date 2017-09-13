@@ -1112,8 +1112,18 @@ void ProductionWnd::UpdateInfoPanel() {
             }
         }
 
+        float stockpile_local_use = 0.0f;
+
+        for (const auto& map : empire->GetProductionQueue().AllocatedStockpilePP()) {
+            if (map.first.find(prod_loc_id) != map.first.end()) {
+                stockpile_local_use = map.second;
+                break;
+            }
+        }
+
+        float stockpile_local_use_max = stockpile_use_max;
         m_production_info_panel->SetLocalPointsCost(
-            available_pp_at_loc, allocated_pp_at_loc, loc_obj->Name());
+            available_pp_at_loc, allocated_pp_at_loc, stockpile_local_use, stockpile_local_use_max, loc_obj->Name());
     } else {
         // else clear local info...
         m_production_info_panel->ClearLocalInfo();
