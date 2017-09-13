@@ -267,7 +267,7 @@ std::string IDAllocator::StateString() const {
 }
 
 template <class Archive>
-void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, const int empire_id) {
+void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, int empire_id) {
     DebugLogger(IDallocator) << (Archive::is_loading::value ? "Deserialize " : "Serialize ")
                              << "IDAllocator()  server id = "
                              << m_server_id << " empire id = " << empire_id;
@@ -304,8 +304,7 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, co
                 & BOOST_SERIALIZATION_NVP(m_empire_id_to_next_assigned_object_id)
                 & BOOST_SERIALIZATION_NVP(m_offset_to_empire_id);
         } else {
-            auto temp_empire_id = empire_id;
-            ar  & BOOST_SERIALIZATION_NVP(temp_empire_id);
+            ar  & boost::serialization::make_nvp(BOOST_PP_STRINGIZE(m_empire_id), empire_id);
 
             // Filter the map for empires so they only have their own actual next id and no
             // information about other clients.
@@ -321,8 +320,8 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, co
                 temp_offset_to_empire_id[it->second % m_stride] = empire_id;
             }
 
-            ar & BOOST_SERIALIZATION_NVP(temp_empire_id_to_object_id);
-            ar & BOOST_SERIALIZATION_NVP(temp_offset_to_empire_id);
+            ar & boost::serialization::make_nvp(BOOST_PP_STRINGIZE(m_empire_id_to_next_assigned_object_id), temp_empire_id_to_object_id);
+            ar & boost::serialization::make_nvp(BOOST_PP_STRINGIZE(m_offset_to_empire_id), temp_offset_to_empire_id);
 
             DebugLogger(IDallocator) << "Serialized [" << [this, &temp_empire_id_to_object_id](){
                 std::stringstream ss;

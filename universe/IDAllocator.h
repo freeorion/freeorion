@@ -72,7 +72,7 @@ public:
 
     /** Serialize while stripping out information not known to \p empire_id. */
     template <class Archive>
-        void SerializeForEmpire(Archive& ar, const unsigned int version, const int empire_id);
+        void SerializeForEmpire(Archive& ar, const unsigned int version, int empire_id);
 
 private:
     /** Return the empire that should have assigned \p id. */
