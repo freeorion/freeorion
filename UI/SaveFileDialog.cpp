@@ -1024,20 +1024,16 @@ std::string SaveFileDialog::GetDirPath() const {
     if (dir.length() < SERVER_LABEL.size()) {
         ErrorLogger() << "SaveFileDialog::GetDirPath: Error decorating directory for server: not long enough";
         return ".";
-    } else {
-        // Translate the server label into the standard relative path marker the server understands
-        auto retval = GenericPathString(fs::path("." + dir.substr(SERVER_LABEL.size())));
-        DebugLogger() << "SaveFileDialog::GetDirPath retval: " << retval << " valid UTF-8: " << utf8::is_valid(retval.begin(), retval.end());
-        return retval;
     }
+
+    auto retval = "." + dir.substr(SERVER_LABEL.size());
+    DebugLogger() << "SaveFileDialog::GetDirPath retval: " << retval << " valid UTF-8: " << utf8::is_valid(retval.begin(), retval.end());
+    return retval;
 }
 
 void SaveFileDialog::SetDirPath(const string& path) {
     std::string dirname = path;
     if (m_server_previews) {
-        // convert the path string into the boost filesystem "generic" format
-        // to allow scanning for delimeters like "/"
-        dirname = GenericPathString(fs::path(path));
         // Indicate that the path is on the server
         if (path.find("./") == 0) {
             dirname = SERVER_LABEL + dirname.substr(1);
