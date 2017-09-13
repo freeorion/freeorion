@@ -257,6 +257,21 @@ def generateOrders():  # pylint: disable=invalid-name
             error("Exception %s while trying doneTurn() on eliminated empire" % e, exc_info=True)
         return
 
+    universe = fo.getUniverse()
+    if not any(planet and planet.speciesName and planet.ownedBy(empire.empireID)
+               for planet in map(universe.getPlanet, universe.planetIDs)):
+        debug("This empire has no colonies left. Surrendering.")
+        if not foAIstate.surrendered:
+            foAIstate.surrender()
+
+    if foAIstate.surrendered:
+        try:
+            debug("The AI has surrendered. Aborting order calculation.")
+            fo.doneTurn()
+        except Exception as e:
+            error("Exception %s while trying doneTurn() on surrendered AI" % e, exc_info=True)
+        return
+
     # This code block is required for correct AI work.
     info("Meter / Resource Pool updating...")
     fo.initMeterEstimatesDiscrepancies()
