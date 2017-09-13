@@ -32,6 +32,7 @@ import ProductionAI
 import ResearchAI
 import ResourcesAI
 import TechsListsAI
+import turn_state
 from AIDependencies import INVALID_ID
 from freeorion_tools import handle_debug_chat, AITimer, init_handlers
 from common.listeners import listener
@@ -306,6 +307,7 @@ def generateOrders():  # pylint: disable=invalid-name
                            '%s (%s): [[%s]]' % (empire.name, get_trait_name_aggression(foAIstate.character), greet))
 
     foAIstate.prepare_for_new_turn()
+    turn_state.state.update()
     debug("Calling AI Modules")
     # call AI modules
     action_list = [ColonisationAI.survey_universe,

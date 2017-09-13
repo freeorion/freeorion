@@ -28,21 +28,10 @@ from common.configure_logging import convenience_function_references_for_logger
 colonyTargetedSystemIDs = []
 outpostTargetedSystemIDs = []
 opponentPlanetIDs = []
-opponentSystemIDs = []  # TODO: Currently never filled but some (uncommented) code in MilitaryAI refers to this...
 invasionTargets = []
 invasionTargetedSystemIDs = []
-blockadeTargetedSystemIDs = []  # TODO also never filled atm... either implement this or remove redundant code
-militarySystemIDs = []
-colonyFleetIDs = []
-outpostFleetIDs = []
-invasionFleetIDs = []
 fleetsLostBySystem = {}  # keys are system_ids, values are ratings for the fleets lost
-popCtrSystemIDs = []
-colonizedSystems = {}
 empireStars = {}
-popCtrIDs = []
-outpostIDs = []
-outpostSystemIDs = []
 
 
 class ConversionError(Exception):
@@ -800,12 +789,7 @@ class AIstate(object):
             self.ensure_have_fleet_missions([fleetID])
         self.__clean_fleet_roles(just_resumed=True)
         fleetsLostBySystem.clear()
-        popCtrSystemIDs[:] = []  # resets without detroying existing references
-        colonizedSystems.clear()
         empireStars.clear()
-        popCtrIDs[:] = []
-        outpostIDs[:] = []
-        outpostSystemIDs[:] = []
         ResourcesAI.lastFociCheck[0] = 0
         self.qualifyingColonyBaseTargets.clear()
         self.qualifyingOutpostBaseTargets.clear()
@@ -966,6 +950,14 @@ class AIstate(object):
         self.__update_system_status()
         self.__report_system_threats()
         self.__report_system_defenses()
+        self.__report_exploration_status()
+
+    def __report_exploration_status(self):
+        universe = fo.getUniverse()
+        explored_system_ids = self.get_explored_system_ids()
+        print "Unexplored Systems: %s " % map(universe.getSystem, self.get_unexplored_system_ids())
+        print "Explored SystemIDs: %s" % map(universe.getSystem, explored_system_ids)
+        print "Explored PlanetIDs: %s" % PlanetUtilsAI.get_planets_in__systems_ids(explored_system_ids)
 
     def log_peace_request(self, initiating_empire_id, recipient_empire_id):
         """Keep a record of peace requests made or received by this empire."""

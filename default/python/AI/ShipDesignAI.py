@@ -54,6 +54,7 @@ import CombatRatingsAI
 import FleetUtilsAI
 from AIDependencies import INVALID_ID
 from freeorion_tools import UserString, tech_is_complete
+from turn_state import state
 
 from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
@@ -307,7 +308,7 @@ class ShipDesignCache(object):
             hulls_to_update.update(hullnames)
 
         # no need to update items we already cached in this turn
-        pids = AIstate.popCtrIDs
+        pids = list(state.get_inhabited_planets())
         if self.production_cost and pids:
             cached_items = set(self.production_cost[pids[0]].keys())
             parts_to_update -= cached_items
@@ -408,7 +409,7 @@ class ShipDesignCache(object):
         #
         self.hulls_for_planets.clear()
         self.parts_for_planets.clear()
-        inhabited_planets = AIstate.popCtrIDs
+        inhabited_planets = state.get_inhabited_planets()
         if not inhabited_planets:
             print "No inhabited planets found. The design process was aborted."
             return
@@ -1080,7 +1081,7 @@ class ShipDesigner(object):
         :type consider_fleet_count: bool
         """
         if loc is None:
-            planets = AIstate.popCtrIDs
+            planets = state.get_inhabited_planets()
         elif isinstance(loc, int):
             planets = [loc]
         elif isinstance(loc, list):

@@ -1,4 +1,5 @@
 from collections import namedtuple
+from freeorion_tools import ReadOnlyDict
 
 import freeOrionAIInterface as fo
 from common.configure_logging import convenience_function_references_for_logger
@@ -29,12 +30,18 @@ class State(object):
         self.__medium_pilot_rating = 1e-8
         self.__planet_info = {}  # map from planet_id to PlanetInfo
 
+        # supply info - negative values indicate jumps away from supply
+        self.__system_supply = {}  # map from system_id to supply
+        self.__systems_by_jumps_to_supply = {}  # map from supply to list of system_ids
+        self.__empire_planets_by_system = {}
+
     def update(self):
         """
         Must be called at each turn (before first use) to update inner state.
         """
         self.__init__()
         self.__update_planets()
+        self.__update_supply()
 
     def __update_planets(self):
         """
@@ -45,19 +52,72 @@ class State(object):
             planet = universe.getPlanet(pid)
             self.__planet_info[pid] = PlanetInfo(pid, planet.speciesName, planet.owner, planet.systemID)
 
-    def get_empire_inhabited_planets_by_system(self):
+    def __update_supply(self):
+        """
+        Update information about supply.
+        """
+        self.__system_supply.update(fo.getEmpire().supplyProjections())
+        for sys_id, supply_val in self.__system_supply.iteritems():
+            self.__systems_by_jumps_to_supply.setdefault(min(0, supply_val), []).append(sys_id)
+
+        # By converting the lists to immutable tuples now, we don't have to return copies when queried.
+        for key in self.__systems_by_jumps_to_supply:
+            self.__systems_by_jumps_to_supply[key] = tuple(self.__systems_by_jumps_to_supply[key])
+
+    def get_system_supply(self, sys_id):
+        """Get the supply level of a system.
+
+        Negative values indicate jumps away from supply.
+
+        :type sys_id: int
+        :return: Supply value of a system or -99 if system is not connected
+        :rtype: int
+        """
+        retval = self.__system_supply.get(sys_id, None)
+        if retval is None:
+            # This is only expected to happen if a system has no path to any supplied system.
+            # As the current code should not allow such queries, this is logged as warning.
+            # If future code breaks this assumption, feel free to adjust logging.
+            warn("Queried supply value of a system not mapped in empire.supplyProjections().")
+            return -99  # pretend it is very far away from supply
+        return retval
+
+    def get_systems_by_supply_tier(self, supply_tier):
+        """Get systems with supply tier.
+
+        The current implementation does not distinguish between positive supply levels and caps at 0.
+        Negative values indicate jumps away from supply.
+
+        :type supply_tier: int
+        :return: system_ids in specified supply tier
+        :rtype: tuple[int]
+        """
+        if supply_tier > 0:
+            warn("The current implementation does not distinguish between positive supply levels. "
+                 "Interpreting the query as supply_tier=0 (indicating system in supply).")
+            supply_tier = 0
+        return self.__systems_by_jumps_to_supply.get(supply_tier, tuple())
+
+    def get_empire_planets_by_system(self, sys_id=None, include_outposts=True):
         """
         Return dict from system id to planet ids of empire with species.
 
-        :rtype: dict[int, list[int]]
+        :rtype: ReadOnlyDict[int, list[int]]
         """
-        # TODO: as currently used, is duplicative with combo of foAI.foAIstate.popCtrSystemIDs and foAI.foAIstate.colonizedSystems
-        empire_id = fo.empireID()
-        empire_planets_with_species = (x for x in self.__planet_info.itervalues() if x.owner == empire_id and x.species_name)
-        result = {}
-        for x in empire_planets_with_species:
-            result.setdefault(x.system_id, []).append(x.pid)
-        return result
+        # TODO: as currently used, is duplicative with combo of foAI.foAIstate.popCtrSystemIDs
+        if include_outposts not in self.__empire_planets_by_system:
+            empire_id = fo.empireID()
+            empire_planets = (x for x in self.__planet_info.itervalues()
+                              if x.owner == empire_id and (x.species_name or include_outposts))
+            result = {}
+            for x in empire_planets:
+                result.setdefault(x.system_id, []).append(x.pid)
+            self.__empire_planets_by_system[include_outposts] = ReadOnlyDict(
+                    {k: tuple(v) for k, v in result.iteritems()}
+            )
+        if sys_id is not None:
+            return self.__empire_planets_by_system[include_outposts].get(sys_id, tuple())
+        return self.__empire_planets_by_system[include_outposts]
 
     def get_inhabited_planets(self):
         """
@@ -67,6 +127,14 @@ class State(object):
         """
         empire_id = fo.empireID()
         return frozenset(x.pid for x in self.__planet_info.itervalues() if x.owner == empire_id and x.species_name)
+
+    def get_empire_outposts(self):
+        empire_id = fo.empireID()
+        return tuple(x.pid for x in self.__planet_info.itervalues() if x.owner == empire_id and not x.species_name)
+
+    def get_all_empire_planets(self):
+        empire_id = fo.empireID()
+        return tuple(x.pid for x in self.__planet_info.itervalues() if x.owner == empire_id)
 
     def get_empire_planets_with_species(self, species_name):
         """
@@ -91,6 +159,9 @@ class State(object):
         for x in (x for x in self.__planet_info.itervalues() if x.owner == empire_id and x.species_name):
             result.setdefault(x.species_name, []).append(x.pid)
         return result
+
+    def get_number_of_colonies(self):
+        return len(self.get_inhabited_planets())
 
     @property
     def have_gas_giant(self):

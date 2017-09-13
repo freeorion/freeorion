@@ -34,9 +34,6 @@ def get_invasion_fleets():
     empire = fo.getEmpire()
     empire_id = fo.empireID()
 
-    all_invasion_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.INVASION)
-    AIstate.invasionFleetIDs = FleetUtilsAI.extract_fleet_ids_without_mission_types(all_invasion_fleet_ids)
-
     home_system_id = PlanetUtilsAI.get_capital_sys_id()
     visible_system_ids = list(foAI.foAIstate.visInteriorSystemIDs) + list(foAI.foAIstate.visBorderSystemIDs)
 
@@ -114,7 +111,7 @@ def get_invasion_fleets():
                 continue
             best_base_planet = INVALID_ID
             best_trooper_count = 0
-            for pid2 in state.get_empire_inhabited_planets_by_system().get(sys_id, []):
+            for pid2 in state.get_empire_planets_by_system(sys_id, include_outposts=False):
                 if available_pp.get(pid2, 0) < 2:  # TODO: improve troop base PP sufficiency determination
                     break
                 planet2 = universe.getPlanet(pid2)
@@ -594,7 +591,8 @@ def assign_invasion_fleets_to_invade():
 
     assign_invasion_bases()
 
-    invasion_fleet_ids = AIstate.invasionFleetIDs
+    all_invasion_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.INVASION)
+    invasion_fleet_ids = FleetUtilsAI.extract_fleet_ids_without_mission_types(all_invasion_fleet_ids)
     send_invasion_fleets(invasion_fleet_ids, AIstate.invasionTargets, MissionType.INVASION)
     all_invasion_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.INVASION)
     for fid in FleetUtilsAI.extract_fleet_ids_without_mission_types(all_invasion_fleet_ids):

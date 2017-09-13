@@ -28,7 +28,7 @@ def create_move_orders_to_system(fleet, target):
     starting_system = fleet.get_system()  # current fleet location or current target system if on starlane
     # if the mission does not end at the targeted system, make sure we can actually return to supply after moving.
     ensure_return = target.id not in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs
-                                         + AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs)
+                                         + AIstate.invasionTargetedSystemIDs)
     system_targets = can_travel_to_system(fleet.id, starting_system, target, ensure_return=ensure_return)
     result = [fleet_orders.OrderMove(fleet, system) for system in system_targets]
     if not result and starting_system.id != target.id:

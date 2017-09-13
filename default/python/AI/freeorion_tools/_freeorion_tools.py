@@ -3,6 +3,7 @@ import cProfile, pstats, StringIO
 import re
 import logging
 import sys
+from collections import Mapping
 from functools import wraps
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -218,3 +219,47 @@ def get_partial_visibility_turn(obj_id):
     """
     visibility_turns_map = fo.getUniverse().getVisibilityTurnsMap(obj_id, fo.empireID())
     return visibility_turns_map.get(fo.visibility.partial, -9999)
+
+
+class ReadOnlyDict(Mapping):
+    """A dict that offers only read access.
+
+     Note that if the values of the ReadOnlyDict are mutable,
+     then those objects may actually be changed.
+
+     It is strongly advised to store only immutable objects.
+     A slight protection is offered by checking for hashability of the values.
+
+      Example usage:
+      my_dict = ReadOnlyDict({1:2, 3:4})
+      print my_dict[1]
+      for k in my_dict:
+          print my_dict.get(k, -1)
+      for k in my_dict.keys():
+          print my_dict[k]
+      for k, v in my_dict.iteritems():
+          print k, v
+      my_dict[5] = 4  # throws TypeError
+      del my_dict[1]  # throws TypeError
+     """
+
+    def __init__(self, *args, **kwargs):
+        self._data = dict(*args, **kwargs)
+        for k, v in self._data.iteritems():
+            try:
+                hash(v)
+            except TypeError:
+                print >> sys.stderr, "Tried to store a non-hashable value in ReadOnlyDict"
+                raise
+
+    def __getitem__(self, item):
+        return self._data[item]
+
+    def __iter__(self):
+        return iter(self._data)
+
+    def __len__(self):
+        return len(self._data)
+
+    def __str__(self):
+        return str(self._data)
