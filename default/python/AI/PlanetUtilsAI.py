@@ -40,9 +40,6 @@ def get_capital():
     """
     universe = fo.getUniverse()
     empire = fo.getEmpire()
-    if empire is None:
-        warn("Danger Danger! FO can't find an empire for me!!!!")
-        return INVALID_ID
     empire_id = empire.empireID
     capital_id = empire.capitalID
     homeworld = universe.getPlanet(capital_id)
