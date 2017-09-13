@@ -994,6 +994,7 @@ class AIstate(object):
 
     def surrender(self):
         chat_human("Well played. I surrender.")
+        chat_human("NOTE: The AI will accept any peace or alliance proposal at this point.")
         self.surrendered = True
         my_empire_id = fo.empireID()
         for empire_id in fo.allEmpireIDs():
