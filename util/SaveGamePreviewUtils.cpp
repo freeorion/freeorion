@@ -260,21 +260,3 @@ void LoadSaveGamePreviews(const fs::path& orig_path, const std::string& extensio
         }
     }
 }
-
-bool IsInside(const fs::path& path, const fs::path& directory) {
-    const fs::path target = fs::canonical(directory);
-
-    if (!path.has_parent_path()) {
-        return false;
-    }
-
-    fs::path cur = path.parent_path();
-    while (cur.has_parent_path()) {
-        if (cur == target) {
-            return true;
-        } else {
-            cur = cur.parent_path();
-        }
-    }
-    return false;
-}
