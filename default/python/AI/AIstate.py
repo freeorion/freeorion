@@ -995,3 +995,21 @@ class AIstate(object):
     def surrender(self):
         chat_human("Well played. I surrender.")
         self.surrendered = True
+        my_empire_id = fo.empireID()
+        for empire_id in fo.allEmpireIDs():
+            if empire_id == my_empire_id or fo.playerIsAI(empire_id):
+                continue
+            try:
+                msg = fo.diplomaticMessage(my_empire_id, empire_id,
+                                           fo.diplomaticMessageType.peaceProposal)
+                debug("Sending peace proposal")
+                fo.sendDiplomaticMessage(msg)
+            except:
+                pass
+            try:
+                msg = fo.diplomaticMessage(my_empire_id, empire_id,
+                                           fo.diplomaticMessageType.alliesProposal)
+                debug("Sending allies proposal")
+                fo.sendDiplomaticMessage(msg)
+            except:
+                pass
