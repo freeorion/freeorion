@@ -97,5 +97,8 @@ FO_COMMON_API std::vector<boost::filesystem::path> ListDir(const boost::filesyst
 /** Returns true iff the string \a in is valid UTF-8. */
 FO_COMMON_API bool IsValidUTF8(const std::string& in);
 
+/** Returns true iff the \p test_dir is in \p dir and both \p dir and test_dir
+    are existing directories. */
+FO_COMMON_API bool IsInDir(const boost::filesystem::path& dir, const boost::filesystem::path& test_dir);
 
 #endif

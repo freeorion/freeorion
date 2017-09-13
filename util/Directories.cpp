@@ -547,3 +547,25 @@ std::vector<fs::path> ListDir(const fs::path& path) {
 
 bool IsValidUTF8(const std::string& in)
 { return utf8::is_valid(in.begin(), in.end()); }
+
+bool IsInDir(const fs::path& dir, const fs::path& test_dir) {
+    if (!fs::exists(dir) || !fs::is_directory(dir))
+        return false;
+
+    if (!fs::exists(test_dir) || !fs::is_directory(test_dir))
+        return false;
+
+    // Resolve any symbolic links, dots or dot-dots
+    auto canon_dir = fs::canonical(dir);
+    auto canon_path = fs::canonical(test_dir);
+
+    // Paths shorter than dir are not in dir
+    auto dir_length = std::distance(canon_dir.begin(), canon_dir.end());
+    auto path_length = std::distance(canon_path.begin(), canon_path.end());
+    if (path_length < dir_length)
+        return false;
+
+    // Check that the whole dir path matches the test path
+    // Extra portions of path are contained in dir
+    return std::equal(canon_dir.begin(), canon_dir.end(), canon_path.begin());
+}
