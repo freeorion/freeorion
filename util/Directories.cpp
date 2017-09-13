@@ -97,6 +97,10 @@ void InitDirs(const std::string& argv0) {
     if (!exists(p))
         fs::create_directories(p);
 
+    // Intentionally do not create the server save dir.
+    // The server save dir is publically accessible and should not be
+    // automatically created for the user.
+
     g_initialized = true;
 }
 
@@ -260,6 +264,10 @@ void InitDirs(const std::string& argv0) {
         fs::create_directories(p);
     }
 
+    // Intentionally do not create the server save dir.
+    // The server save dir is publically accessible and should not be
+    // automatically created for the user.
+
     InitBinDir(argv0);
 
     g_initialized = true;
@@ -364,6 +372,10 @@ void InitDirs(const std::string& argv0) {
     fs::path p(GetSaveDir());
     if (!exists(p))
         fs::create_directories(p);
+
+    // Intentionally do not create the server save dir.
+    // The server save dir is publically accessible and should not be
+    // automatically created for the user.
 
     InitBinDir(argv0);
 

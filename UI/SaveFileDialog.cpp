@@ -514,8 +514,12 @@ public:
     void LoadLocalSaveGamePreviews(const fs::path& path, const std::string& extension) {
         LoadDirectories(FindLocalRelativeDirs(path));
 
+        auto abs_path = path;
+        if (abs_path.is_relative())
+            abs_path = GetSaveDir() / path;
+
         vector<FullPreview> previews;
-        ::LoadSaveGamePreviews(path, extension, previews);
+        ::LoadSaveGamePreviews(abs_path, extension, previews);
         LoadSaveGamePreviews(previews);
     }
 
@@ -661,13 +665,11 @@ void SaveFileDialog::Init() {
     auto filename_label = GG::Wnd::Create<CUILabel>(UserString("SAVE_FILENAME"), GG::FORMAT_NOWRAP);
     auto directory_label = GG::Wnd::Create<CUILabel>(UserString("SAVE_DIRECTORY"), GG::FORMAT_NOWRAP);
 
-    DebugLogger() << "pathstring: " << PathToString(GetSaveDir());
-    m_current_dir_edit = GG::Wnd::Create<CUIEdit>(PathToString(GetSaveDir()));
-
     m_layout->Add(directory_label, 0, 0);
 
     std::shared_ptr<GG::Font> font = ClientUI::GetFont();
     if (!m_server_previews) {
+        m_current_dir_edit = GG::Wnd::Create<CUIEdit>(PathToString(GetSaveDir()));
         m_layout->Add(m_current_dir_edit, 0, 1, 1, 3);
 
         auto delete_btn = Wnd::Create<CUIButton>(UserString("DELETE"));
@@ -680,6 +682,7 @@ void SaveFileDialog::Init() {
         m_layout->SetMinimumColumnWidth(3, std::max( cancel_btn->MinUsableSize().x,
                                         delete_btn->MinUsableSize().x) + SAVE_FILE_BUTTON_MARGIN);
     } else {
+        m_current_dir_edit = GG::Wnd::Create<CUIEdit>(SERVER_LABEL + "/.");
         m_layout->Add(m_current_dir_edit, 0, 1, 1, 3);
         GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
         std::string server_label(SERVER_LABEL+SERVER_LABEL+SERVER_LABEL);

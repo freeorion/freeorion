@@ -866,7 +866,8 @@ namespace {
         if (!fs::exists(path))
             return false;
 
-        return IsInDir(GetServerSaveDir(), path);
+        return IsInDir(GetServerSaveDir(),
+                       (fs::is_regular_file(path) ? path.parent_path() : path));
     }
 
     /// Generates information on the subdirectories of \p directory
@@ -927,7 +928,7 @@ void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr playe
     preview_information.folder = relative_directory_name;
     preview_information.subdirectories = ListSaveSubdirectories(directory);
     LoadSaveGamePreviews(
-        relative_directory_name,
+        directory,
         m_single_player_game? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION,
         preview_information.previews);
     DebugLogger() << "ServerApp::UpdateSavePreviews: Sending " << preview_information.previews.size()

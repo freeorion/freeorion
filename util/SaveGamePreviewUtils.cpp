@@ -234,7 +234,8 @@ void LoadSaveGamePreviews(const fs::path& orig_path, const std::string& extensio
     fs::path path = orig_path;
     // Relative path relative to the save directory
     if (path.is_relative()) {
-        path = GetSaveDir() / path;
+        ErrorLogger() << "LoadSaveGamePreviews: supplied path must not be relative, \"" << path << "\" ";
+        return;
     }
 
     if (!fs::exists(path)) {

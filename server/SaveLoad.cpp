@@ -150,16 +150,19 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
 
     try {
         fs::path path = FilenameToPath(filename);
+
         // A relative path should be relative to the save directory.
         if (path.is_relative()) {
-            path = GetSaveDir() / path;
+            path = (multiplayer ? GetServerSaveDir() : GetSaveDir()) / path;
             DebugLogger() << "Made save path relative to save dir. Is now: " << path;
         }
 
         if (multiplayer) {
             // Make sure the path points into our save directory
-            if (!IsInDir(GetSaveDir(), path)) {
-                path = GetSaveDir() / path.filename();
+            if (!IsInDir(GetServerSaveDir(), path.parent_path())) {
+                WarnLogger() << "Path \"" << path << "\" is not in server save directory.";
+                path = GetServerSaveDir() / path.filename();
+                WarnLogger() << "Path changed to \"" << path << "\"";
             }
         }
 

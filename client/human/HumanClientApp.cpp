@@ -1232,7 +1232,7 @@ namespace {
         // Add timestamp to autosave generated files
         std::string datetime_str = FilenameTimestamp();
 
-        boost::filesystem::path autosave_dir_path(GetSaveDir() / "auto");
+        boost::filesystem::path autosave_dir_path((is_single_player ? GetSaveDir() : GetServerSaveDir()) / "auto");
 
         std::string save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d_%s%s") % player_name % empire_name % CurrentTurn() % datetime_str % extension);
         boost::filesystem::path save_path(autosave_dir_path / save_filename);
@@ -1283,7 +1283,7 @@ void HumanClientApp::Autosave() {
     auto autosave_file_path = CreateNewAutosaveFilePath(EmpireID(), m_single_player_game);
 
     // check for and remove excess oldest autosaves.
-    boost::filesystem::path autosave_dir_path(GetSaveDir() / "auto");
+    boost::filesystem::path autosave_dir_path((m_single_player_game ? GetSaveDir() : GetServerSaveDir()) / "auto");
     int max_turns = std::max(1, GetOptionsDB().Get<int>("autosave.turn-limit"));
     bool is_two_saves_per_turn =
         (m_single_player_game
