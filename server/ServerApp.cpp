@@ -863,25 +863,10 @@ namespace {
         /** Check that \p path is a file or directory in the server save
         directory. */
     bool IsInServerSaveDir(const fs::path& path) {
-        fs::path server_dir = GetServerSaveDir();
-        if (!fs::exists(server_dir) || !fs::is_directory(server_dir))
-            return false;
-
         if (!fs::exists(path))
             return false;
 
-        // Resolve any symbolic links, dots or dot-dots
-        auto canon_server = fs::canonical(server_dir);
-        auto canon_path = fs::canonical(path);
-
-        // Paths shorter than the server save dir are not in the server dir
-        auto save_dir_length = std::distance(canon_server.begin(), canon_server.end());
-        auto path_length = std::distance(canon_path.begin(), canon_path.end());
-        if (path_length < save_dir_length)
-            return false;
-
-        // Check that the whole server save dir path matches the test path
-        return std::equal(canon_server.begin(), canon_server.end(), canon_path.begin());
+        return IsInDir(GetServerSaveDir(), path);
     }
 
     /// Generates information on the subdirectories of \p directory

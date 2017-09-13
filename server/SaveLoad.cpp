@@ -158,7 +158,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
 
         if (multiplayer) {
             // Make sure the path points into our save directory
-            if (!IsInside(path, GetSaveDir())) {
+            if (!IsInDir(GetSaveDir(), path)) {
                 path = GetSaveDir() / path.filename();
             }
         }
