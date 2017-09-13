@@ -478,27 +478,31 @@ fs::path RelativePath(const fs::path& from, const fs::path& to) {
     return retval;
 }
 
+#if defined(FREEORION_WIN32)
+
 std::string PathToString(const fs::path& path) {
-#ifndef FREEORION_WIN32
-    return path.string();
-#else
     fs::path::string_type native_string = path.native();
     std::string retval;
     utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
     return retval;
-#endif
 }
 
 const fs::path FilenameToPath(const std::string& path_str) {
-#if defined(FREEORION_WIN32)
     // convert UTF-8 directory string to UTF-16
     boost::filesystem::path::string_type directory_native;
     utf8::utf8to16(path_str.begin(), path_str.end(), std::back_inserter(directory_native));
     return fs::path(directory_native);
-#else
-    return fs::path(path_str);
-#endif
 }
+
+#else // defined(FREEORION_WIN32)
+
+std::string PathToString(const fs::path& path)
+{ return path.string(); }
+
+const fs::path FilenameToPath(const std::string& path_str)
+{ return fs::path(path_str); }
+
+#endif // defined(FREEORION_WIN32)
 
 std::string FilenameTimestamp() {
     boost::posix_time::time_facet* facet = new boost::posix_time::time_facet("%Y%m%d_%H%M%S");

@@ -82,7 +82,7 @@ FO_COMMON_API const boost::filesystem::path GetSaveDir();
   * the directory "save" within the user directory. */
 FO_COMMON_API const boost::filesystem::path GetServerSaveDir();
 
-/** Returns a canonical utf-8 string from the given filesystem path. */
+/** Returns a utf-8 string from the given filesystem path. */
 FO_COMMON_API std::string PathToString(const boost::filesystem::path& path);
 
 /** Returns current timestamp in a form that can be used in file names */
