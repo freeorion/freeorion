@@ -487,7 +487,7 @@ std::string PathToString(const fs::path& path) {
     return retval;
 }
 
-const fs::path FilenameToPath(const std::string& path_str) {
+fs::path FilenameToPath(const std::string& path_str) {
     // convert UTF-8 directory string to UTF-16
     boost::filesystem::path::string_type directory_native;
     utf8::utf8to16(path_str.begin(), path_str.end(), std::back_inserter(directory_native));
@@ -499,7 +499,7 @@ const fs::path FilenameToPath(const std::string& path_str) {
 std::string PathToString(const fs::path& path)
 { return path.string(); }
 
-const fs::path FilenameToPath(const std::string& path_str)
+fs::path FilenameToPath(const std::string& path_str)
 { return fs::path(path_str); }
 
 #endif // defined(FREEORION_WIN32)

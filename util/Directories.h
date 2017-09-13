@@ -40,7 +40,7 @@ FO_COMMON_API const boost::filesystem::path GetUserDataDir();
 
 /** Converts UTF-8 string into a path, doing any required wide-character
   * conversions as determined by the operating system / filesystem. */
-FO_COMMON_API const boost::filesystem::path FilenameToPath(const std::string& path_str);
+FO_COMMON_API boost::filesystem::path FilenameToPath(const std::string& path_str);
 
 /** Returns the directory that contains all game content files, such as string
   * table files, in-game tech, building, special, etc. definition files, and
