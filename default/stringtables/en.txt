@@ -2900,15 +2900,15 @@ Unused Production
 
 # %1% number of production points generated.
 # %2% number of production points currently neither used for production nor for stockpile.
-# %3% yield ratio of importing PP into the imperial stockpile (the other part goes to waste)
+# %3% waste ratio of excess production (the other part goes is transferred to the imperial stockpile)
 # %4% number of production points transferred to the imperial stockpile.
 # %5% number of production points currently neither used for production nor for stockpile.
 MAP_PROD_WASTED_TEXT
-'''Total Production : %1%
-Overproduction : %2%
-Stockpile Import Ratio: %3%
-Transfer to Stockpile: %4%
-Wasted Production : %5%
+'''Production Capacity: %1%
+Excess Production : %2%
+Excess Waste Ratio : %3%
+Excess to Stockpile : %4%
+Wasted Capacity : %5%
 
 Click here to open the production menu'''
 
@@ -3681,7 +3681,7 @@ Description
 # %2% name of the location where the resource is produced.
 # %3% name of the empire which owns this resource produced.
 PRODUCTION_INFO_AT_LOCATION_TITLE
-%3% %1% at %2%
+%3% %1% .. at %2%
 
 # %1% type of resource (Research, Production, ...).
 # %2% name of the empire which owns this resource produced.
@@ -3692,13 +3692,19 @@ PRODUCTION_INFO_TOTAL_PS_LABEL
 Available Points
 
 PRODUCTION_INFO_WASTED_PS_LABEL
-Overproduction
+Excess
 
-PRODUCTION_INFO_LOCAL_PS_LABEL
-Points Available Here
+PRODUCTION_INFO_LOCAL_LABEL
+..
 
 PRODUCTION_INFO_STOCKPILE_PS_LABEL
 Stockpiled Points
+
+PRODUCTION_INFO_LOCAL_STOCKPILE_USE_PS_LABEL
+..
+
+PRODUCTION_INFO_STOCKPILE_USE_MAX_LABEL
+Maximum Use
 
 PRODUCTION_INFO_STOCKPILE_USE_PS_LABEL
 Stockpile Use
@@ -3815,7 +3821,7 @@ The Production Summary panel shows available Production Points.
 If a system is selected there are two columns shown else only one. The (left) column shows production points across your entire empire. The right column gives production points for the selected system.
 Available Points relates to the PP available for production. The right value are the maximum available production points for the selected system. This may be less than the total available when all of your empire's systems are not [[metertype METER_SUPPLY]] connected.
 Stockpile relates to the PP available for production using the imperial stockpile. Production items specifically need to be enabled to draw from the stockpile. 
-Overproduction PP will not go into production, if not allocated before ending the turn. A part of overproduction gets stored in the imperial stockpile, but usually the bigger part gets wasted and is lost.
+Most of excess PP will be wasted and lost. A part of the excess gets stored in the imperial stockpile.
 
 
 <u>Producible Items panel</u>
@@ -5047,7 +5053,7 @@ Industry to Stockpile PP Transfer Ratio
 METER_IMPERIAL_PP_TRANSFER_EFFICIENCY_VALUE_DESC
 '''The transfer ratio represents the efficiency of stockpiling items in the [[IMPERIAL_STOCKPILE]] and having them available for production in anywhere in your empire.
 
-You start with [[tech PRO_IMPERIAL_STOCKPILE_1]] and a 0.2 ratio (i.e. 20% of your overproduction PP are added to the [[IMPERIAL_STOCKPILE]]).
+You start with [[tech PRO_IMPERIAL_STOCKPILE_1]] and a 0.2 ratio (i.e. 20% of your excess PP are added to the [[IMPERIAL_STOCKPILE]]).
 Technologies [[tech PRO_IMPERIAL_STOCKPILE_2]] and [[tech PRO_IMPERIAL_STOCKPILE_3]] each add 0.2 .
 [[tech CON_TRANS_DESIGN]] adds up to 0.3.  As such your ratio can be between 20% to 90% efficiency.''' 
 
