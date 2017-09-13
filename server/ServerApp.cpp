@@ -881,7 +881,7 @@ namespace {
             return false;
 
         // Check that the whole server save dir path matches the test path
-        return std::equal(canon_server.begin(), canon_server.end(), path.begin());
+        return std::equal(canon_server.begin(), canon_server.end(), canon_path.begin());
     }
 
     /// Generates information on the subdirectories of \p directory
