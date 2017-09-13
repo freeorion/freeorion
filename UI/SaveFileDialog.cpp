@@ -109,17 +109,6 @@ namespace {
         return text;
     }
 
-    std::string GenericPathString(const fs::path& path) {
-#ifndef FREEORION_WIN32
-        return path.generic_string();
-#else
-        fs::path::string_type native_string = path.generic_wstring();
-        std::string retval;
-        utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
-        return retval;
-#endif
-    }
-
     bool Prompt(const std::string& question){
         std::shared_ptr<GG::Font> font = ClientUI::GetFont();
         auto prompt = GG::Wnd::Create<GG::ThreeButtonDlg>(
