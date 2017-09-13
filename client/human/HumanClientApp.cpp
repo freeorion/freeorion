@@ -400,7 +400,7 @@ void HumanClientApp::SetSinglePlayerGame(bool sp/* = true*/)
 namespace {
     std::string ServerClientExe() {
 #ifdef FREEORION_WIN32
-        return PathString(GetBinDir() / "freeoriond.exe");
+        return PathToString(GetBinDir() / "freeoriond.exe");
 #else
         return (GetBinDir() / "freeoriond").string();
 #endif
@@ -692,14 +692,13 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         }
     } else {
         try {
-            auto sfd = GG::Wnd::Create<SaveFileDialog>(SP_SAVE_FILE_EXTENSION, true);
-            sfd->Run();
+            filename = ClientUI::GetClientUI()->GetFilenameWithSaveFileDialog(
+                SaveFileDialog::Purpose::Load,
+                SaveFileDialog::SaveType::SinglePlayer);
 
             // Update intro screen Load & Continue buttons if all savegames are deleted.
             m_ui->GetIntroScreen()->RequirePreRender();
 
-            if (!sfd->Result().empty())
-                filename = sfd->Result();
         } catch (const std::exception& e) {
             ClientUI::MessageBox(e.what(), true);
         }
@@ -758,11 +757,11 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     m_fsm->process_event(HostSPGameRequested());
 }
 
-void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewInformation& previews) {
-    //TraceLogger() << "HumanClientApp::RequestSavePreviews directory: " << directory << " valid UTF-8: " << utf8::is_valid(directory.begin(), directory.end()) << std::endl;
-    DebugLogger() << "HumanClientApp::RequestSavePreviews directory: " << directory << " valid UTF-8: " << utf8::is_valid(directory.begin(), directory.end());
+void HumanClientApp::RequestSavePreviews(const std::string& relative_directory) {
+    TraceLogger() << "HumanClientApp::RequestSavePreviews directory: " << relative_directory
+                  << " valid UTF-8: " << utf8::is_valid(relative_directory.begin(), relative_directory.end());
 
-    std::string  generic_directory = directory;//PathString(fs::path(directory));
+    std::string  generic_directory = relative_directory;
     if (!m_networking->IsConnected()) {
         DebugLogger() << "HumanClientApp::RequestSavePreviews: No game running. Start a server for savegame queries.";
 
@@ -791,13 +790,7 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
         SendLoggingConfigToServer();
     }
     DebugLogger() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
-    const auto response = m_networking->SendSynchronousMessage(RequestSavePreviewsMessage(generic_directory));
-    if (response && response->Type() == Message::DISPATCH_SAVE_PREVIEWS) {
-        ExtractDispatchSavePreviewsMessageData(*response, previews);
-        DebugLogger() << "HumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
-    } else {
-        ErrorLogger() << "HumanClientApp::RequestSavePreviews: Wrong response type from server: " << response->Type();
-    }
+    m_networking->SendMessage(RequestSavePreviewsMessage(generic_directory));
 }
 
 std::pair<int, int> HumanClientApp::GetWindowLeftTop() {
@@ -953,6 +946,7 @@ void HumanClientApp::HandleMessage(Message& msg) {
     case Message::END_GAME:                 m_fsm->process_event(::EndGame(msg));               break;
 
     case Message::DISPATCH_COMBAT_LOGS:     m_fsm->process_event(DispatchCombatLogs(msg));       break;
+    case Message::DISPATCH_SAVE_PREVIEWS:   HandleSaveGamePreviews(msg);                         break;
     default:
         ErrorLogger() << "HumanClientApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
     }
@@ -977,6 +971,18 @@ void HumanClientApp::UpdateCombatLogs(const Message& msg){
     for (auto it = logs.begin(); it != logs.end(); ++it) {
         GetCombatLogManager().CompleteLog(it->first, it->second);
     }
+}
+
+void HumanClientApp::HandleSaveGamePreviews(const Message& msg) {
+    auto sfd = GetClientUI().GetSaveFileDialog();
+    if (!sfd)
+        return;
+
+    PreviewInformation previews;
+    ExtractDispatchSavePreviewsMessageData(msg, previews);
+    DebugLogger() << "HumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
+
+    sfd->SetPreviewList(previews);
 }
 
 void HumanClientApp::ChangeLoggerThreshold(const std::string& option_name, LogLevel option_value) {
@@ -1140,7 +1146,7 @@ namespace {
                 return boost::none;
 
             // Return the newest
-            return PathString(files_by_write_time.rbegin()->second);
+            return PathToString(files_by_write_time.rbegin()->second);
 
         } catch (const boost::filesystem::filesystem_error& e) {
             ErrorLogger() << "File system error " << e.what() << " while finding newest autosave";
@@ -1226,7 +1232,7 @@ namespace {
         // Add timestamp to autosave generated files
         std::string datetime_str = FilenameTimestamp();
 
-        boost::filesystem::path autosave_dir_path(GetSaveDir() / "auto");
+        boost::filesystem::path autosave_dir_path((is_single_player ? GetSaveDir() : GetServerSaveDir()) / "auto");
 
         std::string save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d_%s%s") % player_name % empire_name % CurrentTurn() % datetime_str % extension);
         boost::filesystem::path save_path(autosave_dir_path / save_filename);
@@ -1277,7 +1283,7 @@ void HumanClientApp::Autosave() {
     auto autosave_file_path = CreateNewAutosaveFilePath(EmpireID(), m_single_player_game);
 
     // check for and remove excess oldest autosaves.
-    boost::filesystem::path autosave_dir_path(GetSaveDir() / "auto");
+    boost::filesystem::path autosave_dir_path((m_single_player_game ? GetSaveDir() : GetServerSaveDir()) / "auto");
     int max_turns = std::max(1, GetOptionsDB().Get<int>("autosave.turn-limit"));
     bool is_two_saves_per_turn =
         (m_single_player_game
@@ -1293,7 +1299,7 @@ void HumanClientApp::Autosave() {
     RemoveOldestFiles(max_autosaves, autosave_dir_path);
 
     // create new save
-    auto path_string = PathString(autosave_file_path);
+    auto path_string = PathToString(autosave_file_path);
 
     if (is_initial_save)
         DebugLogger() << "Turn 0 autosave to: " << path_string;
@@ -1319,9 +1325,9 @@ bool HumanClientApp::IsLoadGameAvailable() const {
 }
 
 std::string HumanClientApp::SelectLoadFile() {
-    auto sfd = GG::Wnd::Create<SaveFileDialog>(true);
-    sfd->Run();
-    return sfd->Result();
+    return ClientUI::GetClientUI()->GetFilenameWithSaveFileDialog(
+        SaveFileDialog::Purpose::Load,
+        SaveFileDialog::SaveType::MultiPlayer);
 }
 
 void HumanClientApp::ResetClientData(bool save_connection) {

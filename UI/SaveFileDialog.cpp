@@ -109,17 +109,6 @@ namespace {
         return text;
     }
 
-    std::string GenericPathString(const fs::path& path) {
-#ifndef FREEORION_WIN32
-        return path.generic_string();
-#else
-        fs::path::string_type native_string = path.generic_wstring();
-        std::string retval;
-        utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
-        return retval;
-#endif
-    }
-
     bool Prompt(const std::string& question){
         std::shared_ptr<GG::Font> font = ClientUI::GetFont();
         auto prompt = GG::Wnd::Create<GG::ThreeButtonDlg>(
@@ -128,25 +117,6 @@ namespace {
             std::size_t(2), UserString("YES"), UserString("CANCEL"), "");
         prompt->Run();
         return prompt->Result() == 0;
-    }
-
-    /// Returns true if list contains a row with the text str
-    bool HasRow(const GG::DropDownList* list, const std::string& str){
-        if (!list)
-            return false;
-
-        for (const auto& row : *list) {
-            for (unsigned j = 0; j < row->size(); ++j) {
-                const GG::Control* control = row->at(j);
-                const GG::Label* text = dynamic_cast<const GG::Label*>(control);
-                if (text) {
-                    if (text->Text() == str || text->Text() + "/" == str) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 }
 
@@ -530,11 +500,15 @@ public:
     /// Loads preview data on all save files in a directory specidifed by path.
     /// @param[in] path The path of the directory
     /// @param[in] extension File name extension to filter by
-    void LoadSaveGamePreviews(const fs::path& path, const std::string& extension) {
-        LoadDirectories(path);
+    void LoadLocalSaveGamePreviews(const fs::path& path, const std::string& extension) {
+        LoadDirectories(FindLocalRelativeDirs(path));
+
+        auto abs_path = path;
+        if (abs_path.is_relative())
+            abs_path = GetSaveDir() / path;
 
         vector<FullPreview> previews;
-        ::LoadSaveGamePreviews(path, extension, previews);
+        ::LoadSaveGamePreviews(abs_path, extension, previews);
         LoadSaveGamePreviews(previews);
     }
 
@@ -552,28 +526,35 @@ public:
         Insert(rows, false);
     }
 
-    void LoadDirectories(const fs::path& path) {
-        fs::directory_iterator end_it;
+    /** Find local sub directories of \p path. */
+    std::vector<std::string> FindLocalRelativeDirs(const fs::path& path) {
+        std::vector<std::string> dirs;
         if (path.has_parent_path() && path.parent_path() != path) {
-            auto row = GG::Wnd::Create<SaveFileDirectoryRow>(m_visible_columns, "..");
-            Insert(row);
+                dirs.push_back("..");
         }
 
+        fs::directory_iterator end_it;
         for (fs::directory_iterator it(path); it != end_it; ++it) {
             if (fs::is_directory(it->path())) {
                 fs::path last_bit_of_path = it->path().filename();
-                std::string utf8_dir_name = PathString(last_bit_of_path);
-                DebugLogger() << "SaveFileDialog::LoadDirectories name: " << utf8_dir_name << " valid UTF-8: " << IsValidUTF8(utf8_dir_name);
-                auto row = GG::Wnd::Create<SaveFileDirectoryRow>(m_visible_columns, utf8_dir_name);
-                Insert(row);
-
-                //boost::filesystem::path::string_type path_native = last_bit_of_path.native();
-                //std::string path_string;
-                //utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(path_string));
-                //DebugLogger() << "SaveFileDialog::LoadDirectories name: " << path_string << " valid UTF-8: " << IsValidUTF8(path_string);
-                //Insert(GG::Wnd::Create<SaveFileDirectoryRow>(path_string));
+                std::string utf8_dir_name = PathToString(last_bit_of_path);
+                DebugLogger() << "SaveFileDialog::FindLocalRelativeDirs name: " << utf8_dir_name
+                              << " valid UTF-8: " << IsValidUTF8(utf8_dir_name);
+                dirs.push_back(utf8_dir_name);
             }
         }
+
+        return dirs;
+    }
+
+    void LoadDirectories(const std::vector<std::string>& dirs) {
+        std::vector<std::shared_ptr<Row>> rows;
+        for (const auto& dir : dirs) {
+            rows.push_back(GG::Wnd::Create<SaveFileDirectoryRow>(m_visible_columns, dir));
+        }
+
+        // Insert rows enmasse to avoid per insertion vector sort costs.
+        Insert(rows, false);
     }
 
     bool HasFile(const std::string& filename) {
@@ -632,25 +613,15 @@ private:
     }
 };
 
-SaveFileDialog::SaveFileDialog (const std::string& extension, bool load) :
+SaveFileDialog::SaveFileDialog(const Purpose purpose /* =Purpose::Load*/,
+                               const SaveType type /*= SaveType::SinglePlayer*/) :
     CUIWnd(UserString("GAME_MENU_SAVE_FILES"),
            GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE,
-           SAVE_FILE_WND_NAME)
-{
-    m_extension = extension;
-    m_load_only = load;
-    m_server_previews = false;
-}
-
-SaveFileDialog::SaveFileDialog (bool load) :
-    CUIWnd(UserString("GAME_MENU_SAVE_FILES"),
-           GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE,
-           SAVE_FILE_WND_NAME)
-{
-    m_load_only = load;
-    m_server_previews = true;
-    m_extension = MP_SAVE_FILE_EXTENSION;
-}
+           SAVE_FILE_WND_NAME),
+    m_extension((type == SaveType::SinglePlayer) ? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION),
+    m_load_only(purpose == Purpose::Load),
+    m_server_previews((type == SaveType::SinglePlayer) ? false : true)
+{}
 
 void SaveFileDialog::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
@@ -682,14 +653,12 @@ void SaveFileDialog::Init() {
 
     auto filename_label = GG::Wnd::Create<CUILabel>(UserString("SAVE_FILENAME"), GG::FORMAT_NOWRAP);
     auto directory_label = GG::Wnd::Create<CUILabel>(UserString("SAVE_DIRECTORY"), GG::FORMAT_NOWRAP);
-    //std::cout << "pathstrnig: " << PathString(GetSaveDir()) << std::endl;
-    DebugLogger() << "pathstring: " << PathString(GetSaveDir());
-    m_current_dir_edit = GG::Wnd::Create<CUIEdit>(PathString(GetSaveDir()));
 
     m_layout->Add(directory_label, 0, 0);
 
     std::shared_ptr<GG::Font> font = ClientUI::GetFont();
     if (!m_server_previews) {
+        m_current_dir_edit = GG::Wnd::Create<CUIEdit>(PathToString(GetSaveDir()));
         m_layout->Add(m_current_dir_edit, 0, 1, 1, 3);
 
         auto delete_btn = Wnd::Create<CUIButton>(UserString("DELETE"));
@@ -702,9 +671,8 @@ void SaveFileDialog::Init() {
         m_layout->SetMinimumColumnWidth(3, std::max( cancel_btn->MinUsableSize().x,
                                         delete_btn->MinUsableSize().x) + SAVE_FILE_BUTTON_MARGIN);
     } else {
-        m_remote_dir_dropdown = GG::Wnd::Create<CUIDropDownList>(6);
-        m_layout->Add(m_current_dir_edit, 0, 1, 1, 1);
-        m_layout->Add(m_remote_dir_dropdown, 0, 2 , 1, 2);
+        m_current_dir_edit = GG::Wnd::Create<CUIEdit>(SERVER_LABEL + "/.");
+        m_layout->Add(m_current_dir_edit, 0, 1, 1, 3);
         GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
         std::string server_label(SERVER_LABEL+SERVER_LABEL+SERVER_LABEL);
         std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements =
@@ -714,9 +682,6 @@ void SaveFileDialog::Init() {
         GG::X drop_width = font->TextExtent(lines).x;
         m_layout->SetMinimumColumnWidth(2, std::max(m_confirm_btn->MinUsableSize().x + 2*SAVE_FILE_BUTTON_MARGIN, drop_width/2));
         m_layout->SetMinimumColumnWidth(3, std::max(cancel_btn->MinUsableSize().x + SAVE_FILE_BUTTON_MARGIN, drop_width / 2));
-
-        m_remote_dir_dropdown->SelChangedSignal.connect(
-            boost::bind(&SaveFileDialog::DirectoryDropdownSelect, this, _1));
     }
 
     m_layout->Add(m_file_list,      1, 0, 1, 4);
@@ -826,14 +791,14 @@ void SaveFileDialog::Confirm() {
     DebugLogger() << "SaveFileDialog::Confirm: Confirming";
 
     if (!CheckChoiceValidity()) {
-        DebugLogger() << "SaveFileDialog::Confirm: Invalid choice. abort.";
+        WarnLogger() << "SaveFileDialog::Confirm: Invalid choice. abort.";
         return;
     }
 
     /// Check if we chose a directory
     std::string choice = m_name_edit->Text();
     if (choice.empty()) {
-        DebugLogger() << "SaveFileDialog::Confirm: Returning no file.";
+        WarnLogger() << "SaveFileDialog::Confirm: Returning no file.";
         CloseClicked();
         return;
     }
@@ -842,19 +807,24 @@ void SaveFileDialog::Confirm() {
     DebugLogger() << "choice: " << choice << " valid utf-8: " << IsValidUTF8(choice);
 
     fs::path current_dir = FilenameToPath(GetDirPath());
-    DebugLogger() << "current dir PathString: " << PathString(current_dir) << " valid utf-8: " << IsValidUTF8(PathString(current_dir));
+    DebugLogger() << "current dir PathString: " << PathToString(current_dir) << " valid utf-8: " << IsValidUTF8(PathToString(current_dir));
 
     fs::path chosen_full_path = current_dir / choice_path;
-    DebugLogger() << "chosen_full_path PathString: " << PathString(chosen_full_path) << " valid utf-8: " << IsValidUTF8(PathString(chosen_full_path));
+    DebugLogger() << "chosen_full_path PathString: " << PathToString(chosen_full_path) << " valid utf-8: " << IsValidUTF8(PathToString(chosen_full_path));
     DebugLogger() << "chosen_full_path is directory? : " << fs::is_directory(chosen_full_path);
 
-
     if (fs::is_directory(chosen_full_path)) {
-        DebugLogger() << "SaveFileDialog::Confirm: " << PathString(chosen_full_path) << " is a directory. Listing content.";
-        UpdateDirectory(PathString(chosen_full_path));
+        DebugLogger() << "SaveFileDialog::Confirm: " << PathToString(chosen_full_path) << " is a directory. Listing content.";
+        UpdateDirectory(PathToString(chosen_full_path));
         return;
+    }
 
-    } else if (!m_load_only) {
+    if (m_server_previews && choice_path.generic_string().find(SERVER_LABEL) == 0) {
+        UpdateDirectory(choice);
+        return;
+    }
+
+    if (!m_load_only) {
         // append appropriate extension if invalid
         std::string chosen_ext = fs::path(chosen_full_path).extension().string();
         if (chosen_ext != m_extension) {
@@ -862,7 +832,7 @@ void SaveFileDialog::Confirm() {
             chosen_full_path += m_extension;
             m_name_edit->SetText(m_name_edit->Text() + m_extension);
         }
-        DebugLogger() << "SaveFileDialog::Confirm: File " << PathString(chosen_full_path) << " chosen.";
+        DebugLogger() << "SaveFileDialog::Confirm: File " << PathToString(chosen_full_path) << " chosen.";
         // If not loading and file exists(and is regular file), ask to confirm override
         if (fs::is_regular_file(chosen_full_path)) {
             std::string question = str((FlexibleFormat(UserString("SAVE_REALLY_OVERRIDE")) % choice));
@@ -932,56 +902,54 @@ void SaveFileDialog::SelectionChanged(const GG::ListBox::SelectionSet& selection
 }
 
 void SaveFileDialog::UpdateDirectory(const std::string& newdir) {
-    //std::cout << "SaveFileDialog::UpdateDirectory newdir: " << newdir << std::endl;
     SetDirPath(newdir);
     UpdatePreviewList();
 }
 
-void SaveFileDialog::DirectoryDropdownSelect(GG::DropDownList::iterator selection) {
-    if (selection == m_remote_dir_dropdown->end())
-        return;
-    GG::DropDownList::Row& row = **selection;
-    if (row.size() > 0) {
-        GG::Label* control = dynamic_cast<GG::Label*>(row.at(0));
-        if (control) {
-            UpdateDirectory(control->Text());
-        }
+void SaveFileDialog::UpdatePreviewList() {
+    // If no browsing, no reloading
+    if (!m_server_previews) {
+        SetPreviewList(FilenameToPath(GetDirPath()));
+    } else {
+        HumanClientApp::GetApp()->RequestSavePreviews(GetDirPath());
     }
 }
 
-void SaveFileDialog::UpdatePreviewList() {
-    DebugLogger() << "SaveFileDialog::UpdatePreviewList";
+void SaveFileDialog::SetPreviewList(const fs::path& path) {
+    auto setup_func = [this, &path]() { m_file_list->LoadLocalSaveGamePreviews(path, m_extension); };
 
+    CheckChoiceValidity();
+    SetPreviewListCore(setup_func);
+}
+
+void SaveFileDialog::SetPreviewList(const PreviewInformation& preview_info) {
+    auto setup_func = [this, &preview_info]() {
+
+        // Prefix directories with the server label;
+        std::vector<std::string> prefixed_subdirs;
+        for (const std::string& subdir : preview_info.subdirectories) {
+            if (subdir.find("/") == 0 || subdir.find("\\") == 0) {
+                prefixed_subdirs.push_back(SERVER_LABEL + subdir);
+            } else if(subdir.find("./") == 0) {
+                prefixed_subdirs.push_back(SERVER_LABEL + subdir.substr(1));
+            } else {
+                prefixed_subdirs.push_back(SERVER_LABEL + "/" + subdir);
+            }
+        }
+
+        m_file_list->LoadDirectories(prefixed_subdirs);
+        m_file_list->LoadSaveGamePreviews(preview_info.previews);
+        SetDirPath(preview_info.folder);
+    };
+
+    SetPreviewListCore(setup_func);
+}
+
+void SaveFileDialog::SetPreviewListCore(const std::function<void ()>& setup_preview_info) {
     m_file_list->Clear();
     m_file_list->Init();
 
-    // If no browsing, no reloading
-    if (!m_server_previews) {
-        m_file_list->LoadSaveGamePreviews(FilenameToPath(GetDirPath()), m_extension);
-    } else {
-        PreviewInformation preview_information;
-        HumanClientApp::GetApp()->RequestSavePreviews(GetDirPath(), preview_information);
-        m_file_list->LoadSaveGamePreviews(preview_information.previews);
-        m_remote_dir_dropdown->Clear();
-        SetDirPath(preview_information.folder);
-
-        auto row = GG::Wnd::Create<GG::DropDownList::Row>();
-        row->push_back(GG::Wnd::Create<CUILabel>(SERVER_LABEL));
-        m_remote_dir_dropdown->Insert(row);
-
-        for (const std::string& subdir : preview_information.subdirectories) {
-            auto row = GG::Wnd::Create<GG::DropDownList::Row>();
-            if (subdir.find("/") == 0) {
-                row->push_back(GG::Wnd::Create<CUILabel>(SERVER_LABEL + subdir));
-            } else if(subdir.find("./") == 0) {
-                row->push_back(GG::Wnd::Create<CUILabel>(SERVER_LABEL + subdir.substr(1)));
-            } else {
-                row->push_back(GG::Wnd::Create<CUILabel>(SERVER_LABEL + "/" + subdir));
-            }
-
-            m_remote_dir_dropdown->Insert(row);
-        }
-    }
+    setup_preview_info();
 
     // HACK: Sometimes the first row is not drawn without this
     m_file_list->BringRowIntoView(m_file_list->begin());
@@ -997,12 +965,6 @@ bool SaveFileDialog::CheckChoiceValidity() {
     if (!m_server_previews) {
         fs::path dir(FilenameToPath(GetDirPath()));
         if (fs::exists(dir) && fs::is_directory(dir)) {
-            m_current_dir_edit->SetColor(ClientUI::TextColor());
-        } else {
-            m_current_dir_edit->SetColor(GG::CLR_RED);
-        }
-    } else {
-        if (HasRow(m_remote_dir_dropdown.get(), m_current_dir_edit->Text())) {
             m_current_dir_edit->SetColor(ClientUI::TextColor());
         } else {
             m_current_dir_edit->SetColor(GG::CLR_RED);
@@ -1032,7 +994,6 @@ void SaveFileDialog::DirectoryEdited(const string& filename)
 std::string SaveFileDialog::GetDirPath() const {
     const std::string& path_edit_text = m_current_dir_edit->Text();
 
-    //std::cout << "SaveFileDialog::GetDirPath text: " << path_edit_text << " valid UTF-8: " << utf8::is_valid(path_edit_text.begin(), path_edit_text.end()) << std::endl;
     //DebugLogger() << "SaveFileDialog::GetDirPath text: " << path_edit_text << " valid UTF-8: " << utf8::is_valid(path_edit_text.begin(), path_edit_text.end());
     if (!m_server_previews) {
         return path_edit_text;
@@ -1052,35 +1013,30 @@ std::string SaveFileDialog::GetDirPath() const {
     if (dir.length() < SERVER_LABEL.size()) {
         ErrorLogger() << "SaveFileDialog::GetDirPath: Error decorating directory for server: not long enough";
         return ".";
-    } else {
-        // Translate the server label into the standard relative path marker the server understands
-        std::string retval = "." + dir.substr(SERVER_LABEL.size());
-        //std::cout << "SaveFileDialog::GetDirPath retval: " << retval << " valid UTF-8: " << utf8::is_valid(retval.begin(), retval.end()) << std::endl;
-        DebugLogger() << "SaveFileDialog::GetDirPath retval: " << retval << " valid UTF-8: " << utf8::is_valid(retval.begin(), retval.end());
-        return retval;
     }
+
+    auto retval = "." + dir.substr(SERVER_LABEL.size());
+    DebugLogger() << "SaveFileDialog::GetDirPath retval: " << retval << " valid UTF-8: " << utf8::is_valid(retval.begin(), retval.end());
+    return retval;
 }
 
 void SaveFileDialog::SetDirPath(const string& path) {
     std::string dirname = path;
     if (m_server_previews) {
-        // convert the path string into the boost filesystem "generic" format
-        // to allow scanning for delimeters like "/"
-        dirname = GenericPathString(fs::path(path));
         // Indicate that the path is on the server
         if (path.find("./") == 0) {
-            dirname = SERVER_LABEL + path.substr(1);
+            dirname = SERVER_LABEL + dirname.substr(1);
         } else if (path.find(SERVER_LABEL) == 0) {
             // Already has label. No need to change
         } else {
-            dirname = SERVER_LABEL + "/" + path;
+            dirname = SERVER_LABEL + "/" + dirname;
         }
     } else {
         // Normalize path
         fs::path path(dirname);
         if (fs::is_directory(path)) {
             path = fs::canonical(path);
-            dirname = PathString(path);
+            dirname = PathToString(path);
         }
     }
     m_current_dir_edit->SetText(dirname);
@@ -1096,5 +1052,5 @@ std::string SaveFileDialog::Result() const {
     fs::path current_dir = FilenameToPath(GetDirPath());
     fs::path chosen_full_path = current_dir / choice_path;
 
-    return PathString(chosen_full_path);
+    return PathToString(chosen_full_path);
 }

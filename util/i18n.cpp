@@ -7,7 +7,7 @@
 
 namespace {
     std::string GetDefaultStringTableFileName()
-    { return PathString(GetResourceDir() / "stringtables" / "en.txt"); }
+    { return PathToString(GetResourceDir() / "stringtables" / "en.txt"); }
 
     std::string GetStringTableFileName() {
         std::string option_filename = GetOptionsDB().Get<std::string>("stringtable-filename");

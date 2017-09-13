@@ -461,7 +461,7 @@ namespace parse {
 
             // If in permissive mode and no scripts are found allow all files to be scripts.
             if (allow_permissive && scripts.empty() && !files.empty()) {
-                WarnLogger() << PathString(path) << " does not contain scripts with the expected suffix .focs.txt. "
+                WarnLogger() << PathToString(path) << " does not contain scripts with the expected suffix .focs.txt. "
                              << " Trying a more permissive mode and ignoring file suffix.";
                 scripts = files;
             }
@@ -569,9 +569,9 @@ namespace parse {
                     file_content.append("\n");
                     process_include_substitutions(file_content, match_path.parent_path(), files_included);
                     text = regex_replace(text, INCL_ONCE_SEARCH, file_content, regex_constants::format_first_only);
-                } else if (missing_include_files.insert(PathString(match_path)).second) {
-                    ErrorLogger() << "Parse: " << PathString(match_path) << " was not found for inclusion (Path:"
-                                  << PathString(base_path) << ") (File:" << fn_str << ")";
+                } else if (missing_include_files.insert(PathToString(match_path)).second) {
+                    ErrorLogger() << "Parse: " << PathToString(match_path) << " was not found for inclusion (Path:"
+                                  << PathToString(base_path) << ") (File:" << fn_str << ")";
                 }
             }
             // remove any remaining includes of this file

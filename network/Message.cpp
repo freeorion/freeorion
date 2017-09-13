@@ -543,8 +543,8 @@ Message ShutdownServerMessage()
 { return Message(Message::SHUT_DOWN_SERVER, DUMMY_EMPTY_MESSAGE); }
 
 /** requests previews of savefiles from server synchronously */
-Message RequestSavePreviewsMessage(std::string directory)
-{ return Message(Message::REQUEST_SAVE_PREVIEWS, directory); }
+Message RequestSavePreviewsMessage(std::string relative_directory)
+{ return Message(Message::REQUEST_SAVE_PREVIEWS, relative_directory); }
 
 /** returns the savegame previews to the client */
 Message DispatchSavePreviewsMessage(const PreviewInformation& previews) {

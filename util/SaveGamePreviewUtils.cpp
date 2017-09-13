@@ -52,7 +52,7 @@ namespace {
 
         fs::ifstream ifs(path, std::ios_base::binary);
 
-        full.filename = PathString(path.filename());
+        full.filename = PathToString(path.filename());
 
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
@@ -234,7 +234,8 @@ void LoadSaveGamePreviews(const fs::path& orig_path, const std::string& extensio
     fs::path path = orig_path;
     // Relative path relative to the save directory
     if (path.is_relative()) {
-        path = GetSaveDir() / path;
+        ErrorLogger() << "LoadSaveGamePreviews: supplied path must not be relative, \"" << path << "\" ";
+        return;
     }
 
     if (!fs::exists(path)) {
@@ -248,7 +249,7 @@ void LoadSaveGamePreviews(const fs::path& orig_path, const std::string& extensio
 
     for (fs::directory_iterator it(path); it != end_it; ++it) {
         try {
-            std::string filename = PathString(it->path().filename());
+            std::string filename = PathToString(it->path().filename());
             if ((it->path().filename().extension() == extension) && !fs::is_directory(it->path())) {
                 if (LoadSaveGamePreviewData(*it, data)) {
                     // Add preview entry to list
@@ -259,22 +260,4 @@ void LoadSaveGamePreviews(const fs::path& orig_path, const std::string& extensio
             ErrorLogger() << "LoadSaveGamePreviews: Failed loading preview from " << it->path() << " because: " << e.what();
         }
     }
-}
-
-bool IsInside(const fs::path& path, const fs::path& directory) {
-    const fs::path target = fs::canonical(directory);
-
-    if (!path.has_parent_path()) {
-        return false;
-    }
-
-    fs::path cur = path.parent_path();
-    while (cur.has_parent_path()) {
-        if (cur == target) {
-            return true;
-        } else {
-            cur = cur.parent_path();
-        }
-    }
-    return false;
 }

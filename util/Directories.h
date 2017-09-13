@@ -40,7 +40,7 @@ FO_COMMON_API const boost::filesystem::path GetUserDataDir();
 
 /** Converts UTF-8 string into a path, doing any required wide-character
   * conversions as determined by the operating system / filesystem. */
-FO_COMMON_API const boost::filesystem::path FilenameToPath(const std::string& path_str);
+FO_COMMON_API boost::filesystem::path FilenameToPath(const std::string& path_str);
 
 /** Returns the directory that contains all game content files, such as string
   * table files, in-game tech, building, special, etc. definition files, and
@@ -78,8 +78,12 @@ FO_COMMON_API const boost::filesystem::path GetPersistentConfigPath();
   * the directory "save" within the user directory. */
 FO_COMMON_API const boost::filesystem::path GetSaveDir();
 
-/** Returns a canonical utf-8 string from the given filesystem path. */
-FO_COMMON_API std::string PathString(const boost::filesystem::path& path);
+/** Returns the directory where server save files are located.  This is typically
+  * the directory "save" within the user directory. */
+FO_COMMON_API const boost::filesystem::path GetServerSaveDir();
+
+/** Returns a utf-8 string from the given filesystem path. */
+FO_COMMON_API std::string PathToString(const boost::filesystem::path& path);
 
 /** Returns current timestamp in a form that can be used in file names */
 FO_COMMON_API std::string FilenameTimestamp();
@@ -93,5 +97,8 @@ FO_COMMON_API std::vector<boost::filesystem::path> ListDir(const boost::filesyst
 /** Returns true iff the string \a in is valid UTF-8. */
 FO_COMMON_API bool IsValidUTF8(const std::string& in);
 
+/** Returns true iff the \p test_dir is in \p dir and both \p dir and test_dir
+    are existing directories. */
+FO_COMMON_API bool IsInDir(const boost::filesystem::path& dir, const boost::filesystem::path& test_dir);
 
 #endif

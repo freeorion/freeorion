@@ -710,6 +710,27 @@ void ClientUI::ShowMultiPlayerLobbyWnd() {
 std::shared_ptr<MultiPlayerLobbyWnd> ClientUI::GetMultiPlayerLobbyWnd()
 { return m_multiplayer_lobby_wnd; }
 
+
+std::shared_ptr<SaveFileDialog> ClientUI::GetSaveFileDialog()
+{ return m_savefile_dialog; }
+
+std::string ClientUI::GetFilenameWithSaveFileDialog(
+    const SaveFileDialog::Purpose purpose, const SaveFileDialog::SaveType type)
+{
+    // There can only be a single savefile_dialog at a time, becauase it is for
+    // a specific purpose.
+    if (m_savefile_dialog)
+        return "";
+
+    m_savefile_dialog = GG::Wnd::Create<SaveFileDialog>(purpose, type);
+
+    m_savefile_dialog->Run();
+    auto filename = m_savefile_dialog->Result();
+
+    m_savefile_dialog = nullptr;
+    return filename;
+}
+
 void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const {
     GetMapWndConst()->GetSaveGameUIData(data);
     m_ship_designs->Save(data);

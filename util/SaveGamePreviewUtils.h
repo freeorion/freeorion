@@ -88,8 +88,4 @@ FO_COMMON_API std::string ColumnInPreview(const FullPreview& full, const std::st
 /// \param [out] previews The previews will be put here
 FO_COMMON_API void LoadSaveGamePreviews(const boost::filesystem::path& path, const std::string& extension,
                                         std::vector<FullPreview>& previews);
-
-/// If path is inside directory, returns true
-FO_COMMON_API bool IsInside(const boost::filesystem::path& path, const boost::filesystem::path& directory);
-
 #endif // SAVEGAMEPREVIEW_H

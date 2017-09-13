@@ -6,6 +6,7 @@
 
 #include <boost/filesystem/path.hpp>
 
+#include "SaveFileDialog.h"
 #include "../universe/EnumsFwd.h"
 #include "../util/Random.h"
 
@@ -42,6 +43,9 @@ public:
     std::shared_ptr<IntroScreen>            GetIntroScreen();                           //!< Returns the intro screen / splash window.
     std::shared_ptr<MultiPlayerLobbyWnd>    GetMultiPlayerLobbyWnd();                   //!< Returns the multiplayer lobby window.
 
+    /** Returns a perhaps nullptr to any existing SaveFileDialog*/
+    std::shared_ptr<SaveFileDialog>         GetSaveFileDialog();
+
     ShipDesignManager* GetShipDesignManager() { return m_ship_designs.get(); };
 
     void    GetSaveGameUIData(SaveGameUIData& data) const;              //!< populates the relevant UI state that should be restored after a save-and-load cycle
@@ -53,6 +57,13 @@ public:
      **/
     void    ShowIntroScreen();
     void    ShowMultiPlayerLobbyWnd();
+
+    /** Creates a SaveFileDialog with \p purpose, Save or Load and \p type,
+        SinglePlayer or MultiPlayer if one does not already exist. Returns the
+        filename provided by the player, if any.*/
+    std::string GetFilenameWithSaveFileDialog(const SaveFileDialog::Purpose purpose,
+                                              const SaveFileDialog::SaveType type);
+
     void    InitTurn(int turn_number);                                  //!< resets all active controls to use the latest data when it has been changed at the beginning of a new turn
     void    RestoreFromSaveData(const SaveGameUIData& elem);            //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
 
@@ -229,6 +240,7 @@ private:
     std::shared_ptr<PlayerListWnd>          m_player_list_wnd;      //!< the players list
     std::shared_ptr<IntroScreen>            m_intro_screen;         //!< splash screen / main menu when starting program
     std::shared_ptr<MultiPlayerLobbyWnd>    m_multiplayer_lobby_wnd;//!< the multiplayer lobby
+    std::shared_ptr<SaveFileDialog>         m_savefile_dialog = nullptr;
 
     PrefixedTextures    m_prefixed_textures;
 

@@ -163,9 +163,9 @@ void OptionsDB::Commit() {
         m_dirty = false;
     } else {
         std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
-        std::cerr << PathString(GetConfigPath()) << std::endl;
+        std::cerr << PathToString(GetConfigPath()) << std::endl;
         ErrorLogger() << UserString("UNABLE_TO_WRITE_CONFIG_XML");
-        ErrorLogger() << PathString(GetConfigPath());
+        ErrorLogger() << PathToString(GetConfigPath());
     }
 }
 

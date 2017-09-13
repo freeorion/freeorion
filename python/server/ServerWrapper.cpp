@@ -90,7 +90,7 @@ namespace {
 
     // Wrapper for GetResourceDir
     object GetResourceDirWrapper()
-    { return object(PathString(GetResourceDir())); }
+    { return object(PathToString(GetResourceDir())); }
 
     // Wrapper for getting empire objects
     list GetAllEmpires() {

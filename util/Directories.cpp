@@ -97,6 +97,10 @@ void InitDirs(const std::string& argv0) {
     if (!exists(p))
         fs::create_directories(p);
 
+    // Intentionally do not create the server save dir.
+    // The server save dir is publically accessible and should not be
+    // automatically created for the user.
+
     g_initialized = true;
 }
 
@@ -260,6 +264,10 @@ void InitDirs(const std::string& argv0) {
         fs::create_directories(p);
     }
 
+    // Intentionally do not create the server save dir.
+    // The server save dir is publically accessible and should not be
+    // automatically created for the user.
+
     InitBinDir(argv0);
 
     g_initialized = true;
@@ -365,6 +373,10 @@ void InitDirs(const std::string& argv0) {
     if (!exists(p))
         fs::create_directories(p);
 
+    // Intentionally do not create the server save dir.
+    // The server save dir is publically accessible and should not be
+    // automatically created for the user.
+
     InitBinDir(argv0);
 
     g_initialized = true;
@@ -450,6 +462,15 @@ const fs::path GetSaveDir() {
     return FilenameToPath(options_save_dir);
 }
 
+const fs::path GetServerSaveDir() {
+    // if server save dir option has been set, use specified location.  otherwise,
+    // use default location
+    std::string options_save_dir = GetOptionsDB().Get<std::string>("server-save-dir");
+    if (options_save_dir.empty())
+        options_save_dir = GetOptionsDB().GetDefault<std::string>("server-save-dir");
+    return FilenameToPath(options_save_dir);
+}
+
 fs::path RelativePath(const fs::path& from, const fs::path& to) {
     fs::path retval;
     fs::path from_abs = fs::absolute(from);
@@ -469,27 +490,31 @@ fs::path RelativePath(const fs::path& from, const fs::path& to) {
     return retval;
 }
 
-std::string PathString(const fs::path& path) {
-#ifndef FREEORION_WIN32
-    return path.string();
-#else
+#if defined(FREEORION_WIN32)
+
+std::string PathToString(const fs::path& path) {
     fs::path::string_type native_string = path.native();
     std::string retval;
     utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
     return retval;
-#endif
 }
 
-const fs::path FilenameToPath(const std::string& path_str) {
-#if defined(FREEORION_WIN32)
+fs::path FilenameToPath(const std::string& path_str) {
     // convert UTF-8 directory string to UTF-16
     boost::filesystem::path::string_type directory_native;
     utf8::utf8to16(path_str.begin(), path_str.end(), std::back_inserter(directory_native));
     return fs::path(directory_native);
-#else
-    return fs::path(path_str);
-#endif
 }
+
+#else // defined(FREEORION_WIN32)
+
+std::string PathToString(const fs::path& path)
+{ return path.string(); }
+
+fs::path FilenameToPath(const std::string& path_str)
+{ return fs::path(path_str); }
+
+#endif // defined(FREEORION_WIN32)
 
 std::string FilenameTimestamp() {
     boost::posix_time::time_facet* facet = new boost::posix_time::time_facet("%Y%m%d_%H%M%S");
@@ -510,7 +535,7 @@ std::vector<fs::path> ListDir(const fs::path& path) {
     std::vector<fs::path> retval;
     bool is_rel = path.is_relative();
     if (!is_rel && (fs::is_empty(path) || !fs::is_directory(path))) {
-        DebugLogger() << "ListDir: File " << PathString(path) << " was not included as it is empty or not a directoy";
+        DebugLogger() << "ListDir: File " << PathToString(path) << " was not included as it is empty or not a directoy";
     } else {
         const fs::path& default_path = is_rel ? GetResourceDir() / path : path;
 
@@ -520,7 +545,7 @@ std::vector<fs::path> ListDir(const fs::path& path) {
             if (fs::is_regular_file(dir_it->status())) {
                 retval.push_back(dir_it->path());
             } else if (!fs::is_directory(dir_it->status())) {
-                TraceLogger() << "Parse: Unknown file not included: " << PathString(dir_it->path());
+                TraceLogger() << "Parse: Unknown file not included: " << PathToString(dir_it->path());
             }
         }
     }
@@ -534,3 +559,25 @@ std::vector<fs::path> ListDir(const fs::path& path) {
 
 bool IsValidUTF8(const std::string& in)
 { return utf8::is_valid(in.begin(), in.end()); }
+
+bool IsInDir(const fs::path& dir, const fs::path& test_dir) {
+    if (!fs::exists(dir) || !fs::is_directory(dir))
+        return false;
+
+    if (!fs::exists(test_dir) || !fs::is_directory(test_dir))
+        return false;
+
+    // Resolve any symbolic links, dots or dot-dots
+    auto canon_dir = fs::canonical(dir);
+    auto canon_path = fs::canonical(test_dir);
+
+    // Paths shorter than dir are not in dir
+    auto dir_length = std::distance(canon_dir.begin(), canon_dir.end());
+    auto path_length = std::distance(canon_path.begin(), canon_path.end());
+    if (path_length < dir_length)
+        return false;
+
+    // Check that the whole dir path matches the test path
+    // Extra portions of path are contained in dir
+    return std::equal(canon_dir.begin(), canon_dir.end(), canon_path.begin());
+}
