@@ -656,7 +656,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     // clear previous game player state info
     m_turn_sequence.clear();
     m_player_empire_ids.clear();
-
+    m_empires.Clear();
 
     // set server state info for new game
     m_current_turn = BEFORE_FIRST_TURN;
@@ -1846,7 +1846,7 @@ namespace {
                 }
             }
         }
-        
+
         DebugLogger(combat) << "\t No aggressive fleet can see a target: no combat.";
         return false;   // no possible conditions for combat were found
     }
