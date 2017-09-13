@@ -169,7 +169,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
             {
                 DebugLogger() << "Default Resources directory missing or does not contain expected files. Cannot start game.";
                 throw std::runtime_error("Unable to load game resources at default location: " +
-                                         PathString(GetResourceDir()) + " : Install may be broken.");
+                                         PathToString(GetResourceDir()) + " : Install may be broken.");
             }
         }
 

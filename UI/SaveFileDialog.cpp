@@ -544,7 +544,7 @@ public:
         for (fs::directory_iterator it(path); it != end_it; ++it) {
             if (fs::is_directory(it->path())) {
                 fs::path last_bit_of_path = it->path().filename();
-                std::string utf8_dir_name = PathString(last_bit_of_path);
+                std::string utf8_dir_name = PathToString(last_bit_of_path);
                 DebugLogger() << "SaveFileDialog::FindLocalRelativeDirs name: " << utf8_dir_name
                               << " valid UTF-8: " << IsValidUTF8(utf8_dir_name);
                 dirs.push_back(utf8_dir_name);
@@ -661,8 +661,8 @@ void SaveFileDialog::Init() {
     auto filename_label = GG::Wnd::Create<CUILabel>(UserString("SAVE_FILENAME"), GG::FORMAT_NOWRAP);
     auto directory_label = GG::Wnd::Create<CUILabel>(UserString("SAVE_DIRECTORY"), GG::FORMAT_NOWRAP);
 
-    DebugLogger() << "pathstring: " << PathString(GetSaveDir());
-    m_current_dir_edit = GG::Wnd::Create<CUIEdit>(PathString(GetSaveDir()));
+    DebugLogger() << "pathstring: " << PathToString(GetSaveDir());
+    m_current_dir_edit = GG::Wnd::Create<CUIEdit>(PathToString(GetSaveDir()));
 
     m_layout->Add(directory_label, 0, 0);
 
@@ -815,20 +815,20 @@ void SaveFileDialog::Confirm() {
     DebugLogger() << "choice: " << choice << " valid utf-8: " << IsValidUTF8(choice);
 
     fs::path current_dir = FilenameToPath(GetDirPath());
-    DebugLogger() << "current dir PathString: " << PathString(current_dir) << " valid utf-8: " << IsValidUTF8(PathString(current_dir));
+    DebugLogger() << "current dir PathString: " << PathToString(current_dir) << " valid utf-8: " << IsValidUTF8(PathToString(current_dir));
 
     fs::path chosen_full_path = current_dir / choice_path;
-    DebugLogger() << "chosen_full_path PathString: " << PathString(chosen_full_path) << " valid utf-8: " << IsValidUTF8(PathString(chosen_full_path));
+    DebugLogger() << "chosen_full_path PathString: " << PathToString(chosen_full_path) << " valid utf-8: " << IsValidUTF8(PathToString(chosen_full_path));
     DebugLogger() << "chosen_full_path is directory? : " << fs::is_directory(chosen_full_path);
 
     if (fs::is_directory(chosen_full_path)) {
-        DebugLogger() << "SaveFileDialog::Confirm: " << PathString(chosen_full_path) << " is a directory. Listing content.";
-        UpdateDirectory(PathString(chosen_full_path));
+        DebugLogger() << "SaveFileDialog::Confirm: " << PathToString(chosen_full_path) << " is a directory. Listing content.";
+        UpdateDirectory(PathToString(chosen_full_path));
         return;
     }
 
     if (m_server_previews && choice_path.generic_string().find(SERVER_LABEL) == 0) {
-        UpdateDirectory(PathString(choice_path));
+        UpdateDirectory(choice);
         return;
     }
 
@@ -840,7 +840,7 @@ void SaveFileDialog::Confirm() {
             chosen_full_path += m_extension;
             m_name_edit->SetText(m_name_edit->Text() + m_extension);
         }
-        DebugLogger() << "SaveFileDialog::Confirm: File " << PathString(chosen_full_path) << " chosen.";
+        DebugLogger() << "SaveFileDialog::Confirm: File " << PathToString(chosen_full_path) << " chosen.";
         // If not loading and file exists(and is regular file), ask to confirm override
         if (fs::is_regular_file(chosen_full_path)) {
             std::string question = str((FlexibleFormat(UserString("SAVE_REALLY_OVERRIDE")) % choice));
@@ -1048,7 +1048,7 @@ void SaveFileDialog::SetDirPath(const string& path) {
         fs::path path(dirname);
         if (fs::is_directory(path)) {
             path = fs::canonical(path);
-            dirname = PathString(path);
+            dirname = PathToString(path);
         }
     }
     m_current_dir_edit->SetText(dirname);
@@ -1064,5 +1064,5 @@ std::string SaveFileDialog::Result() const {
     fs::path current_dir = FilenameToPath(GetDirPath());
     fs::path chosen_full_path = current_dir / choice_path;
 
-    return PathString(chosen_full_path);
+    return PathToString(chosen_full_path);
 }

@@ -400,7 +400,7 @@ void HumanClientApp::SetSinglePlayerGame(bool sp/* = true*/)
 namespace {
     std::string ServerClientExe() {
 #ifdef FREEORION_WIN32
-        return PathString(GetBinDir() / "freeoriond.exe");
+        return PathToString(GetBinDir() / "freeoriond.exe");
 #else
         return (GetBinDir() / "freeoriond").string();
 #endif
@@ -1146,7 +1146,7 @@ namespace {
                 return boost::none;
 
             // Return the newest
-            return PathString(files_by_write_time.rbegin()->second);
+            return PathToString(files_by_write_time.rbegin()->second);
 
         } catch (const boost::filesystem::filesystem_error& e) {
             ErrorLogger() << "File system error " << e.what() << " while finding newest autosave";
@@ -1299,7 +1299,7 @@ void HumanClientApp::Autosave() {
     RemoveOldestFiles(max_autosaves, autosave_dir_path);
 
     // create new save
-    auto path_string = PathString(autosave_file_path);
+    auto path_string = PathToString(autosave_file_path);
 
     if (is_initial_save)
         DebugLogger() << "Turn 0 autosave to: " << path_string;

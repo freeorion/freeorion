@@ -81,10 +81,10 @@ namespace {
     }
 
     boost::python::str GetUserConfigDirWrapper()
-    { return boost::python::str(PathString(GetUserConfigDir())); }
+    { return boost::python::str(PathToString(GetUserConfigDir())); }
 
     boost::python::str GetUserDataDirWrapper()
-    { return boost::python::str(PathString(GetUserDataDir())); }
+    { return boost::python::str(PathToString(GetUserDataDir())); }
 
 }
 

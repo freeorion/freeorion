@@ -890,11 +890,11 @@ namespace {
         if (!fs::is_directory(directory))
             return list;
 
-        auto server_dir_str = PathString(fs::canonical(GetServerSaveDir()));
+        auto server_dir_str = PathToString(fs::canonical(GetServerSaveDir()));
 
         // Adds \p subdir to the list
         auto add_to_list = [&list, &server_dir_str](const fs::path& subdir) {
-            auto subdir_str = PathString(fs::canonical(subdir));
+            auto subdir_str = PathToString(fs::canonical(subdir));
             auto rel_path = subdir_str.substr(server_dir_str.length());
             list.push_back(rel_path);
             TraceLogger() << "Added relative path " << rel_path << " in " << subdir

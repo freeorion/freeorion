@@ -141,7 +141,7 @@ namespace {
                 return ReportFileError(file);
 
             ofs << ss;
-            TraceLogger() << "Wrote to " << PathString(file);
+            TraceLogger() << "Wrote to " << PathToString(file);
 
         } catch (const boost::filesystem::filesystem_error& e) {
             ErrorLogger() << "Error writing to file.  Exception: " << ": " << e.what();
@@ -166,7 +166,7 @@ namespace {
         std::string file_name =
             DESIGN_FILENAME_PREFIX + boost::uuids::to_string(design.UUID()) + DESIGN_FILENAME_EXTENSION;
 
-        return boost::filesystem::absolute(PathString(designs_dir_path / file_name));
+        return boost::filesystem::absolute(PathToString(designs_dir_path / file_name));
     }
 
 
@@ -422,7 +422,7 @@ namespace {
         std::string file_name = DESIGN_MANIFEST_PREFIX + DESIGN_FILENAME_EXTENSION;
 
         boost::filesystem::path file =
-            boost::filesystem::absolute(PathString(designs_dir_path / file_name));
+            boost::filesystem::absolute(PathToString(designs_dir_path / file_name));
 
         std::stringstream ss;
         ss << DESIGN_MANIFEST_PREFIX << "\n";

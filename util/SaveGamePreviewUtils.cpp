@@ -52,7 +52,7 @@ namespace {
 
         fs::ifstream ifs(path, std::ios_base::binary);
 
-        full.filename = PathString(path.filename());
+        full.filename = PathToString(path.filename());
 
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
@@ -248,7 +248,7 @@ void LoadSaveGamePreviews(const fs::path& orig_path, const std::string& extensio
 
     for (fs::directory_iterator it(path); it != end_it; ++it) {
         try {
-            std::string filename = PathString(it->path().filename());
+            std::string filename = PathToString(it->path().filename());
             if ((it->path().filename().extension() == extension) && !fs::is_directory(it->path())) {
                 if (LoadSaveGamePreviewData(*it, data)) {
                     // Add preview entry to list
