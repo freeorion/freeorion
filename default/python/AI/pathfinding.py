@@ -14,11 +14,12 @@ def find_path_with_resupply(start, target, fleet_id):
     # initialize data structures
     start_fuel = fleet.maxFuel if start in supplied_systems else fleet.fuel
     path_cache = {}
-    queue = [(path_information(distance=0, fuel=start_fuel, path=tuple()), start)]
+    shortest_possible_path = universe.shortestPathDistance(start, target)
+    queue = [(shortest_possible_path, path_information(distance=0, fuel=start_fuel, path=(start,)), start)]
 
     while queue:
         # get next system u with path information
-        (path_info, u) = heappop(queue)
+        (_, path_info, u) = heappop(queue)
 
         # did we reach the target?
         if u == target:
@@ -38,7 +39,9 @@ def find_path_with_resupply(start, target, fleet_id):
             new_dist = path_info.distance + universe.linearDistance(u, neighbor)
             new_fuel = fleet.maxFuel if neighbor in supplied_systems else path_info.fuel - 1
             if all((new_dist < dist or new_fuel > fuel) for dist, fuel, _ in path_cache.get(neighbor, [])):
-                heappush(queue, (path_information(new_dist, new_fuel, (path_info.path, u)), neighbor))
+                predicted_distance = new_dist + universe.shortestPathDistance(neighbor, target)
+                heappush(queue, (predicted_distance, path_information(new_dist, new_fuel, path_info.path + (neighbor,)),
+                                 neighbor))
 
     # no path exists, not even if we refuel on the way
     return None
@@ -52,4 +55,6 @@ def run(s1, s2):
         ss = universe.systemIDs
         s1 = ss[0]
         s2 = ss[1]
-    print find_path_with_resupply(s1, s2, f)
+    path_info = find_path_with_resupply(s1, s2, f)
+    print map(universe.getSystem, path_info.path)
+
