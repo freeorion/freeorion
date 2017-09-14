@@ -4,7 +4,7 @@ ShipDesign
     description = "SM_KRILL_2_DESC"
     hull = "SH_KRILL_2_BODY"
     parts = [
-        "FT_KRILL"
+        "FT_HANGAR_KRILL"
         "FT_BAY_KRILL"
     ]
     icon = "icons/monsters/krill-2.png"

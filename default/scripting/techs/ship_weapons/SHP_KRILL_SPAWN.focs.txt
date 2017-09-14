@@ -1,0 +1,12 @@
+Tech
+    name = "SHP_KRILL_SPAWN"
+    description = "SHP_KRILL_SPAWN_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    category = "SHIP_WEAPONS_CATEGORY"
+    researchcost = 9999 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 9999
+    Unresearchable
+    tags = [ "PEDIA_SHIP_WEAPONS_CATEGORY" ]
+    unlock = Item type = ShipPart name = "SP_KRILL_SPAWNER"
+
+#include "/scripting/common/base_prod.macros"

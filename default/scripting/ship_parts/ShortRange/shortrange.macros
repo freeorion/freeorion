@@ -1,0 +1,16 @@
+// If unowned or owner has not unlocked the ship part yet.
+// @1@ Weapon name
+WEAPON_BASE_DEFAULT_EFFECTS
+'''        EffectsGroup
+            scope = Source
+            activation = Or [
+                Unowned
+                Not OwnerHasShipPartAvailable name = "@1@"
+            ]
+            stackinggroup = "WEAPON_BASE_DEFAULT_EFFECTS_@1@"
+            accountinglabel = "@1@"
+            effects = [
+                SetMaxCapacity partname = "@1@" value = Value + PartCapacity name = "@1@"
+                SetMaxSecondaryStat partname = "@1@" value = Value + PartSecondaryStat name = "@1@"
+            ]
+'''

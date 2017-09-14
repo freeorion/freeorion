@@ -1,0 +1,18 @@
+Part
+    name = "SR_WEAPON_4_1"
+    description = "SR_WEAPON_4_1_DESC"
+    class = ShortRange
+    damage = 15
+    NoDefaultCapacityEffect
+    mountableSlotTypes = External
+    buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 4
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
+    location = OwnedBy empire = Source.Owner
+    effectsgroups =
+        [[WEAPON_BASE_DEFAULT_EFFECTS(SR_WEAPON_4_1)]]
+    icon = "icons/ship_parts/death-ray.png"
+
+#include "shortrange.macros"
+
+#include "/scripting/common/upkeep.macros"

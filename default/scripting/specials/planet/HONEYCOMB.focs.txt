@@ -1,0 +1,88 @@
+Special
+    name = "HONEYCOMB_SPECIAL"
+    description = "HONEYCOMB_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 9.0
+    spawnlimit = 1
+    location = And [
+        Planet
+        Not Planet type = Asteroids
+        Not WithinStarlaneJumps jumps = 2 condition = And [
+            System
+            Contains And [
+                Planet
+                Or [
+                    Species
+                    HasSpecial
+                ]
+            ]
+        ]
+        Not WithinStarlaneJumps jumps = 5 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Planet
+                Not Species
+                Not HasSpecial
+                WithinStarlaneJumps jumps = 2 condition = Source
+                Not ContainedBy Contains OR [
+                    Design name = "SM_EXP_OUTPOST"
+                    Building name = "BLD_EXPERIMENTOR_OUTPOST"
+                ]
+            ]
+            activation = Turn high = 0
+            stackinggroup = "GAME_START_MOD_STACK"
+            priority = [[VERY_EARLY_PRIORITY]]
+            effects = [
+                SetPlanetSize planetsize = asteroids
+                SetPlanetType type = asteroids
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Turn high = 0
+            stackinggroup = "GAME_START_MOD_STACK"
+            priority = [[VERY_EARLY_PRIORITY]]
+            effects = [
+                SetPlanetSize planetsize = Huge
+                SetPlanetType type = Barren
+            ]
+
+        EffectsGroup     
+            scope = Source     
+            activation = AND [
+                Turn high = 0
+                (GalaxyMaxAIAggression >= 1)
+                (GalaxyMonsterFrequency >= 1)
+                Not ContainedBy Contains OR [
+                    Design name = "SM_EXP_OUTPOST"
+                    Building name = "BLD_EXPERIMENTOR_OUTPOST"
+                ]
+            ]
+            effects = CreateShip designname = "SM_GUARD_3"
+
+        EffectsGroup
+            scope = And [
+                Planet
+                Focus type = "FOCUS_INDUSTRY"
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+            ]
+            activation = Focus type = "FOCUS_INDUSTRY"
+            stackinggroup = "HONEYCOMB_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetIndustry value = Value + Target.Population * 2.5 * [[INDUSTRY_PER_POP]]
+
+    ]
+    graphic = "icons/specials_huge/honeycomb.png"
+
+#include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/priorities.macros"

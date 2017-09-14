@@ -1,0 +1,5 @@
+Special
+    name = "EXTINCT_KILANDOW_SPECIAL"
+    description = "EXTINCT_KILANDOW_SPECIAL_DESC"
+    spawnrate = 0.0
+    graphic = "icons/specials_huge/extinct_kilandow.png"

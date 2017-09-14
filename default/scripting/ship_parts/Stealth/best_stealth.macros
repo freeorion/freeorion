@@ -1,0 +1,12 @@
+BEST_STEALTH_EFFECT
+'''
+max(max(max(
+    min(1, PartsInShipDesign Name = "ST_CLOAK_1" design = Source.DesignID)
+    * PartCapacity name = "ST_CLOAK_1",
+    min(1, PartsInShipDesign Name = "ST_CLOAK_2" design = Source.DesignID)
+    * PartCapacity name = "ST_CLOAK_2"),
+    min(1, PartsInShipDesign Name = "ST_CLOAK_3" design = Source.DesignID)
+    * PartCapacity name = "ST_CLOAK_3"),
+    min(1, PartsInShipDesign Name = "ST_CLOAK_4" design = Source.DesignID)
+    * PartCapacity name = "ST_CLOAK_4")
+'''

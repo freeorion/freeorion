@@ -1,0 +1,23 @@
+Special
+    name = "ECCENTRIC_ORBIT_SPECIAL"
+    description = "ECCENTRIC_ORBIT_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Capital
+        Not Planet type = [Asteroids GasGiant]
+    ]
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = NOT Population high = 0
+            priority = [[LATE_PRIORITY]]
+            effects = [
+                SetTargetResearch value = Value + 3
+                SetMaxSupply value = Value -2
+            ]
+    graphic = "icons/specials_huge/eccentric_orbit.png"
+
+#include "/scripting/common/priorities.macros"

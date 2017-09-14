@@ -1,0 +1,16 @@
+Tech
+    name = "SHP_ORGANIC_WAR_ADAPTION"
+    description = "SHP_ORGANIC_WAR_ADAPTION_DESC"
+    short_description = "SHP_ORGANIC_WAR_ADAPTION_SHORT_DESC"
+    category = "SHIP_WEAPONS_CATEGORY"
+    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
+    prerequisites = [
+        "SHP_WEAPON_2_2"
+        "SHP_ORG_HULL"
+    ]
+    unlock = Item type = ShipPart name = "SP_SOLAR_CONCENTRATOR"
+    graphic = "icons/ship_parts/solarcollector.png"
+
+#include "/scripting/common/base_prod.macros"

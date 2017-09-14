@@ -1,0 +1,43 @@
+Special
+    name = "COMPUTRONIUM_SPECIAL"
+    description = "COMPUTRONIUM_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Planet type = [Asteroids GasGiant]
+        Not ContainedBy And [
+            System 
+            Contains Capital
+        ]
+        Not WithinStarlaneJumps jumps = 2 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Planet
+                Focus type = "FOCUS_RESEARCH"
+                OwnedBy empire = Source.Owner
+            ]
+            activation = Focus type = "FOCUS_RESEARCH"
+            stackinggroup = "COMPUTRONIUM_STACK"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetResearch value = Value + Target.Population * 1 * [[RESEARCH_PER_POP]]
+
+        [[CHANCE_OF_GUARD_1]]
+
+    ]
+    graphic = "icons/specials_huge/computronium.png"
+
+#include "monster_guard.macros"
+
+#include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/priorities.macros"

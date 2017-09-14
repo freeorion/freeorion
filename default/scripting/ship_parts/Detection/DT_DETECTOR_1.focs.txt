@@ -1,0 +1,16 @@
+Part
+    name = "DT_DETECTOR_1"
+    description = "DT_DETECTOR_1_DESC"
+    exclusions = [[ALL_DETECTORS]]
+    class = Detection
+    capacity = 25
+    mountableSlotTypes = External
+    buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 2
+    tags = [ "PEDIA_PC_DETECTION" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/detector-1.png"
+
+#include "detection.macros"
+
+#include "/scripting/common/upkeep.macros"

@@ -1,0 +1,16 @@
+Tech
+    name = "SHP_ZERO_POINT"
+    description = "SHP_ZERO_POINT_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    category = "SHIP_PARTS_CATEGORY"
+    researchcost = 175 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 3
+    tags = [ "PEDIA_FUEL_PART_TECHS" ]
+    prerequisites = [
+        "SHP_ANTIMATTER_TANK"
+        "PRO_ZERO_GEN"
+    ]
+    unlock = Item type = ShipPart name = "FU_ZERO_FUEL"
+    graphic = "icons/ship_parts/zero-point-generator.png"
+
+#include "/scripting/common/base_prod.macros"

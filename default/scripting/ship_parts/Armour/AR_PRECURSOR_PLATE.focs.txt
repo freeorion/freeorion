@@ -1,0 +1,13 @@
+Part
+    name = "AR_PRECURSOR_PLATE"
+    description = "AR_PRECURSOR_PLATE_DESC"
+    class = Armour
+    capacity = 400
+    mountableSlotTypes = External
+    buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 1
+    tags = [ "PEDIA_PC_ARMOUR" ]
+    location = Not All  // to keep this from making all other armor look redundant in DesignWnd; ok since not player-buildable currently
+    icon = ""
+
+#include "/scripting/common/upkeep.macros"

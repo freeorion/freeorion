@@ -1,0 +1,26 @@
+Special
+    name = "SPICE_SPECIAL"
+    description = "SPICE_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 9.0
+    spawnlimit = 8
+    location = And [
+        Planet
+        Planet type = [Tundra Desert Terran]
+        Not WithinStarlaneJumps jumps = 1 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+    ]
+    effectsgroups = [
+        [[POPULATION_BOOST_ORGANIC(SPICE)]]
+        [[CHANCE_OF_GUARD_1]]
+    ]
+    graphic = "icons/specials_huge/spice.png"
+
+#include "growth.macros"
+
+#include "../monster_guard.macros"

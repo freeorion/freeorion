@@ -1,0 +1,33 @@
+Hull
+    name = "SH_BASIC_MEDIUM"
+    description = "SH_BASIC_MEDIUM_DESC"
+    speed = 60
+    fuel = 3
+    stealth = 5
+    structure = 10
+    slots = [
+        Slot type = External position = (0.65, 0.25)
+        Slot type = External position = (0.65, 0.55)
+        Slot type = Internal position = (0.35, 0.35)
+    ]
+    buildCost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
+    buildTime = 2
+    tags = [ "PEDIA_HULL_LINE_GENERIC" ]
+    location = Contains And [
+        Building name = "BLD_SHIPYARD_BASE"
+        OwnedBy empire = Source.Owner
+    ]
+    effectsgroups = [
+        [[AVERAGE_BASE_FUEL_REGEN]]
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/basic-medium-hull_small.png"
+    graphic = "hulls_design/basic-medium-hull.png"
+
+#include "ship_hulls.macros"
+
+#include "/scripting/common/upkeep.macros"
+

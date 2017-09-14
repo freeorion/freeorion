@@ -2,7 +2,7 @@ ShipDesign
     name = "SD_CARRIER_2"
     uuid = "08a58b08-0929-496d-84fc-faa91424ca05"
     description = "SD_CARRIER_2_DESC"
-    hull = "SH_STANDARD"
+    hull = "SH_BASIC_LARGE"
     parts = [
         "FT_BAY_1"
         "SR_WEAPON_1_1"

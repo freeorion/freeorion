@@ -1,0 +1,22 @@
+Part
+    name = "AR_ROCK_PLATE"
+    description = "AR_ROCK_PLATE_DESC"
+    class = Armour
+    capacity = 18
+    mountableSlotTypes = External
+    buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 2
+    tags = [ "PEDIA_PC_ARMOUR" ]
+    location = And [
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Building name = "BLD_SHIPYARD_AST_REF"
+            Or [
+                OwnedBy empire = Source.Owner
+                OwnedBy affiliation = AllyOf empire = Source.Owner
+            ]
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    icon = "icons/ship_parts/rock_plating.png"
+
+#include "/scripting/common/upkeep.macros"

@@ -1,0 +1,16 @@
+Part
+    name = "SH_DEFLECTOR"
+    description = "SH_DEFLECTOR_DESC"
+    exclusions = [[ALL_SHIELDS]]
+    class = Shield
+    capacity = 5
+    mountableSlotTypes = Internal
+    buildcost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 4
+    tags = [ "PEDIA_PC_SHIELD" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/deflector_shield.png"
+
+#include "shield.macros"
+
+#include "/scripting/common/upkeep.macros"

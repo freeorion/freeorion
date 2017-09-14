@@ -1,0 +1,15 @@
+Part
+    name = "SR_SPINAL_ANTIMATTER"
+    description = "SR_SPINAL_ANTIMATTER_DESC"
+    class = ShortRange
+    damage = 100
+    mountableSlotTypes = Core
+    buildcost = 250 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 4
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/spinal_antimatter.png"
+
+#include "shortrange.macros"
+
+#include "/scripting/common/upkeep.macros"

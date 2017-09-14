@@ -1,0 +1,285 @@
+Special
+    name = "ANCIENT_RUINS_SPECIAL"
+    description = "ANCIENT_RUINS_SPECIAL_DESCRIPTION"
+    stealth = 0
+    spawnrate = 0.7
+    spawnlimit = 9999
+    location = And [
+        Or [
+            (GalaxyMonsterFrequency >= 1)
+            Random probability = 0.2
+        ]
+        Planet
+        Not Planet type = [Asteroids GasGiant]
+        Not ContainedBy And [
+            System 
+            Contains Or [
+                And [ Planet HasSpecial name = "ANCIENT_RUINS_SPECIAL" ]
+                Design name = "SM_EXP_OUTPOST"
+            ]
+        ]
+        Not WithinStarlaneJumps jumps = 2 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            effects = SetTexture name = "planets/overlays/ruins.png"
+
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Turn high = 0
+                Random probability = 0.9
+                (GalaxyMaxAIAggression >= 1)
+                (GalaxyMonsterFrequency >= 1)
+            ]
+            effects = CreateShip designname = "SM_GUARD_2"
+
+        EffectsGroup
+            scope = And [
+                Source
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetResearch value = Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Random probability = .2
+                OwnerHasTech name = "LRN_XENOARCH"
+            ]
+            stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
+            effects = [
+                CreateShip designname = "SD_DRAGON_TOOTH" empire = Source.Owner species = Source.Species
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_SHIP"
+                    label = "EFFECT_ANCIENT_SHIP_LABEL"
+                    icon = "icons/specials_huge/ancient_ruins_excavated.png"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "predefinedshipdesign" data = "SD_DRAGON_TOOTH"
+                    ]
+                    empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_SHIP_RUMORS"
+                    label = "EFFECT_ANCIENT_SHIP_RUMORS_LABEL"
+                    icon = "icons/specials_huge/ancient_ruins_excavated.png"
+                    parameters = [
+                        tag = "predefinedshipdesign" data = "SD_DRAGON_TOOTH"
+                    ]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Random probability = 0.25
+                OwnerHasTech name = "LRN_XENOARCH"
+            ]
+            stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
+            effects = [
+                CreateBuilding type = "BLD_NEUTRONIUM_SYNTH"
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_BUILDING"
+                    label = "EFFECT_ANCIENT_BUILDING_LABEL"
+                    icon = "icons/specials_huge/ancient_ruins_excavated.png"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "buildingtype" data = "BLD_NEUTRONIUM_SYNTH"
+                    ]
+                    empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_BUILDING_RUMORS"
+                    label = "EFFECT_ANCIENT_BUILDING_RUMORS_LABEL"
+                    icon = "icons/specials_huge/ancient_ruins_excavated.png"
+                    parameters = [
+                        tag = "buildingtype" data = "BLD_NEUTRONIUM_SYNTH"
+                    ]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Random probability = 0.50
+                NotOwnerHasTech name = "SHP_WEAPON_4_1"
+                OwnerHasTech name = "LRN_XENOARCH"
+            ]
+            stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
+            effects = [
+                GiveEmpireTech name = "SHP_WEAPON_4_1" empire = Target.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_TECH"
+                    label = "EFFECT_ANCIENT_TECH_LABEL"
+                    icon = "icons/specials_huge/ancient_ruins_excavated.png"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "tech" data = "SHP_WEAPON_4_1"
+                    ]
+                    empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_TECH_RUMORS"
+                    label = "EFFECT_ANCIENT_TECH_RUMORS_LABEL"
+                    icon = "icons/specials_huge/ancient_ruins_excavated.png"
+                    parameters = [
+                        tag = "tech" data = "SHP_WEAPON_4_1"
+                    ]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Not OwnerHasTech name = "SHP_MULTISPEC_SHIELD"
+                OwnerHasTech name = "LRN_XENOARCH"
+            ]
+            stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
+            effects = [
+                GiveEmpireTech name = "SHP_MULTISPEC_SHIELD" empire = Target.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_TECH"
+                    label = "EFFECT_ANCIENT_TECH_LABEL"
+                    icon = "icons/specials_huge/ancient_ruins_excavated.png"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "tech" data = "SHP_MULTISPEC_SHIELD"
+                    ]
+                    empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_TECH_RUMORS"
+                    label = "EFFECT_ANCIENT_TECH_RUMORS_LABEL"
+                    icon = "icons/specials_huge/ancient_ruins_excavated.png"
+                    parameters = [
+                        tag = "tech" data = "SHP_MULTISPEC_SHIELD"
+                    ]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Not OwnerHasTech name = "SHP_KRILL_SPAWN"
+                OwnerHasTech name = "LRN_XENOARCH"
+            ]
+            stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
+            effects = [
+                GiveEmpireTech name = "SHP_KRILL_SPAWN" empire = Target.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_TECH"
+                    label = "EFFECT_ANCIENT_TECH_LABEL"
+                    icon = "icons/specials_huge/ancient_ruins_excavated.png"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "tech" data = "SHP_KRILL_SPAWN"
+                    ]
+                    empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_TECH_RUMORS"
+                    label = "EFFECT_ANCIENT_TECH_RUMORS_LABEL"
+                    icon = "icons/specials_huge/ancient_ruins_excavated.png"
+                    parameters = [
+                        tag = "tech" data = "SHP_KRILL_SPAWN"
+                    ]
+            ]
+
+        // make a default sitrep to confirm empty excavation
+        EffectsGroup
+            scope = Source
+            activation = OwnerHasTech name = "LRN_XENOARCH"
+            stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
+            effects = [
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_RUINS_EMPTY"
+                    label = "EFFECT_ANCIENT_RUINS_EMPTY_LABEL"
+                    icon = "icons/specials_huge/ancient_ruins.png"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                    ]
+                    empire = Source.Owner
+            ]
+
+        // Find extinct species
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Random probability = 0.75
+                OwnerHasTech name = "LRN_XENOARCH"
+            ]
+            effects = [
+                If condition = Random probability = 0.33
+                    effects = [ 
+                        AddSpecial name = "EXTINCT_BANFORO_SPECIAL"
+                        GenerateSitRepMessage
+                            message = "EFFECT_ANCIENT_EXTINCT_SPECIES"
+                            label = "EFFECT_ANCIENT_EXTINCT_SPECIES_LABEL"
+                            icon = "icons/specials_huge/extinct_banforo.png"
+                            parameters = [
+                                tag = "planet" data = Source.ID
+                                tag = "species" data = "SP_BANFORO"
+                            ]
+                            empire = Source.Owner
+                         GenerateSitRepMessage
+                            message = "EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS"
+                            label = "EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS_LABEL"
+                            icon = "icons/specials_huge/extinct_banforo.png"
+                            parameters = [
+                                tag = "species" data = "SP_BANFORO"
+                            ]
+                    ]
+                else = If condition = Random probability = 0.5
+                    effects = [ 
+                        AddSpecial name = "EXTINCT_KILANDOW_SPECIAL"
+                        GenerateSitRepMessage
+                            message = "EFFECT_ANCIENT_EXTINCT_SPECIES"
+                            label = "EFFECT_ANCIENT_EXTINCT_SPECIES_LABEL"
+                            icon = "icons/specials_huge/extinct_kilandow.png"
+                            parameters = [
+                                tag = "planet" data = Source.ID
+                                tag = "species" data = "SP_KILANDOW"
+                            ]
+                            empire = Source.Owner
+                         GenerateSitRepMessage
+                            message = "EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS"
+                            label = "EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS_LABEL"
+                            icon = "icons/specials_huge/extinct_kilandow.png"
+                            parameters = [
+                                tag = "species" data = "SP_KILANDOW"
+                            ]
+                    ]
+                    else = [
+                        AddSpecial name = "EXTINCT_MISIORLA_SPECIAL"
+                        GenerateSitRepMessage
+                            message = "EFFECT_ANCIENT_EXTINCT_SPECIES"
+                            label = "EFFECT_ANCIENT_EXTINCT_SPECIES_LABEL"
+                            icon = "icons/specials_huge/extinct_misiorla.png"
+                            parameters = [
+                                tag = "planet" data = Source.ID
+                                tag = "species" data = "SP_MISIORLA"
+                            ]
+                            empire = Source.Owner
+                        GenerateSitRepMessage
+                            message = "EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS"
+                            label = "EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS_LABEL"
+                            icon = "icons/specials_huge/extinct_misiorla.png"
+                            parameters = [
+                                tag = "species" data = "SP_MISIORLA"
+                            ]
+                     ]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = OwnerHasTech name = "LRN_XENOARCH"
+            effects = [
+                AddSpecial name = "ANCIENT_RUINS_DEPLETED_SPECIAL"
+                RemoveSpecial name = "ANCIENT_RUINS_SPECIAL"
+            ]
+    ]
+    graphic = "icons/specials_huge/ancient_ruins.png"
+
+#include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/priorities.macros"

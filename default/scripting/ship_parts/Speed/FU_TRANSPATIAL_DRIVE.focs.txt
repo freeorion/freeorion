@@ -1,0 +1,37 @@
+Part
+    name = "FU_TRANSPATIAL_DRIVE"
+    description = "FU_TRANSPATIAL_DRIVE_DESC"
+    exclusions = [
+        "FU_IMPROVED_ENGINE_COUPLINGS"
+        "FU_N_DIMENSIONAL_ENGINE_MATRIX"
+        "FU_SINGULARITY_ENGINE_CORE"
+        "FU_TRANSPATIAL_DRIVE"
+    ]
+    class = Speed
+    capacity = 60
+    mountableSlotTypes = Core
+    buildcost = 80 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 8
+    tags = [ "PEDIA_PC_SPEED" ]
+    location = And [
+        OwnedBy empire = Source.Owner
+        Contains Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
+        ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = (1 <= [[BEST_STEALTH_EFFECT]] <= 40)
+            stackinggroup = "ENGINE_STEALTH_PART_STACK1"
+            accountinglabel = "TRANSPATIAL_CLOAK_INTERACTION"
+            effects = SetStealth value = Value - [[BEST_STEALTH_EFFECT]]
+        EffectsGroup
+            scope = Source
+            activation = (40 >= [[BEST_STEALTH_EFFECT]])
+            stackinggroup = "ENGINE_STEALTH_PART_STACK2"
+            effects = SetStealth value = Value + 40
+    ]
+    icon = "icons/ship_parts/engine-4.png"
+
+#include "../Stealth/best_stealth.macros"
+
+#include "/scripting/common/upkeep.macros"

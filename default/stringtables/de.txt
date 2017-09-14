@@ -6101,10 +6101,10 @@ SH_BASIC_MEDIUM_DESC
 
 Ein Planet benötigt eine [[buildingtype BLD_SHIPYARD_BASE]], um ein solches Schiff zu bauen.'''
 
-SH_STANDARD
+SH_BASIC_LARGE
 Großer Basisrumpf
 
-SH_STANDARD_DESC
+SH_BASIC_LARGE_DESC
 '''Ein großer Schiffsrumpf für interstellare Reisen.
 
 Ein Planet benötigt eine [[buildingtype BLD_SHIPYARD_BASE]], um ein solches Schiff zu bauen.'''

@@ -1,0 +1,26 @@
+Special
+    name = "FRUIT_SPECIAL"
+    description = "FRUIT_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 9.0
+    spawnlimit = 8
+    location = And [
+        Planet
+        Planet type = [Desert Terran Ocean Swamp]
+        Not WithinStarlaneJumps jumps = 1 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+    ]
+    effectsgroups = [
+        [[POPULATION_BOOST_ORGANIC(FRUIT)]]
+        [[CHANCE_OF_GUARD_1]]
+    ]
+    graphic = "icons/specials_huge/fruit.png"
+
+#include "growth.macros"
+
+#include "../monster_guard.macros"

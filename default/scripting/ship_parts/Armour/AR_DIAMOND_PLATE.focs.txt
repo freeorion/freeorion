@@ -1,0 +1,13 @@
+Part
+    name = "AR_DIAMOND_PLATE"
+    description = "AR_DIAMOND_PLATE_DESC"
+    class = Armour
+    capacity = 18
+    mountableSlotTypes = External
+    buildcost = 8 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 1
+    tags = [ "PEDIA_PC_ARMOUR" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/diamond_plating.png"
+
+#include "/scripting/common/upkeep.macros"

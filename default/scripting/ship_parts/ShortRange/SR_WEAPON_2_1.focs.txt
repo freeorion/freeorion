@@ -1,0 +1,18 @@
+Part
+    name = "SR_WEAPON_2_1"
+    description = "SR_WEAPON_2_1_DESC"
+    class = ShortRange
+    damage = 5
+    NoDefaultCapacityEffect
+    mountableSlotTypes = External
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 2
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
+    location = OwnedBy empire = Source.Owner
+    effectsgroups =
+        [[WEAPON_BASE_DEFAULT_EFFECTS(SR_WEAPON_2_1)]]
+    icon = "icons/ship_parts/laser.png"
+
+#include "shortrange.macros"
+
+#include "/scripting/common/upkeep.macros"

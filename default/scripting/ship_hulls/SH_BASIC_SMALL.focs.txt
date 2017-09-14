@@ -1,0 +1,30 @@
+Hull
+    name = "SH_BASIC_SMALL"
+    description = "SH_BASIC_SMALL_DESC"
+    speed = 75
+    fuel = 4
+    stealth = 5
+    structure = 5
+    slots = [
+        Slot type = External position = (0.50, 0.45)
+    ]
+    buildCost = 10.0 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
+    buildTime = 2
+    tags = [ "PEDIA_HULL_LINE_GENERIC" ]
+    location = Contains And [
+        Building name = "BLD_SHIPYARD_BASE"
+        OwnedBy empire = Source.Owner
+    ]
+    effectsgroups = [
+        [[AVERAGE_BASE_FUEL_REGEN]]
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/basic-small-hull_small.png"
+    graphic = "hulls_design/basic-small-hull.png"
+
+#include "ship_hulls.macros"
+
+#include "/scripting/common/upkeep.macros"

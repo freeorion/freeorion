@@ -12045,10 +12045,10 @@ Hangar 4
 FT_HANGAR_4_DESC
 Storage system for heavily armed fighters.
 
-FT_KRILL
+FT_HANGAR_KRILL
 Krill Swarm
 
-FT_KRILL_DESC
+FT_HANGAR_KRILL_DESC
 Krill Swarm.
 
 FT_BAY_KRILL
@@ -12703,7 +12703,7 @@ SH_ASTEROID
 Asteroid Hull
 
 SH_ASTEROID_DESC
-'''This hull is constructed from an average-sized asteroid and it is fairly inexpensive to build. A bit roomier than the [[shiphull SH_STANDARD]], it has four external slots and two internal slots.
+'''This hull is constructed from an average-sized asteroid and it is fairly inexpensive to build. A bit roomier than the [[shiphull SH_BASIC_LARGE]], it has four external slots and two internal slots.
 
 [[metertype METER_STEALTH]] is medium but the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is low.
 
@@ -12993,10 +12993,10 @@ SH_BASIC_MEDIUM_DESC
 
 [[BLD_SHIPYARD_BASE_REQUIRED]]'''
 
-SH_STANDARD
+SH_BASIC_LARGE
 Basic Large Hull
 
-SH_STANDARD_DESC
+SH_BASIC_LARGE_DESC
 '''A large, basic interstellar hull, with three external slots and one internal slot.
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is low.

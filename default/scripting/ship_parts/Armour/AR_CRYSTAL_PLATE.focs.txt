@@ -1,0 +1,22 @@
+Part
+    name = "AR_CRYSTAL_PLATE"
+    description = "AR_CRYSTAL_PLATE_DESC"
+    class = Armour
+    capacity = 30
+    mountableSlotTypes = External
+    buildcost = 8 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 3
+    tags = [ "PEDIA_PC_ARMOUR" ]
+    location = And [
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Building name = "BLD_SHIPYARD_AST_REF"
+            Or [
+                OwnedBy empire = Source.Owner
+                OwnedBy affiliation = AllyOf empire = Source.Owner
+            ]
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    icon = "icons/ship_parts/crystal_plating.png"
+
+#include "/scripting/common/upkeep.macros"

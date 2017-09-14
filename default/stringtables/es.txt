@@ -4173,10 +4173,10 @@ SH_SOLAR_DESC
 
 Requiere un Astillero Básico, un Compresor de Energía y una Unidad de Contención Solar en el planeta en el que se construye.'''
 
-SH_STANDARD
+SH_BASIC_LARGE
 Casco Standard
 
-SH_STANDARD_DESC
+SH_BASIC_LARGE_DESC
 '''Casco interestelar básico.
 
 Requiere un Astillero Básico y un Dique Seco Orbital en el planeta en el que se construye.'''

@@ -1,0 +1,16 @@
+Part
+    name = "SH_DEFENSE_GRID"
+    description = "SH_DEFENSE_GRID_DESC"
+    exclusions = [[ALL_SHIELDS]]
+    class = Shield
+    capacity = 3
+    mountableSlotTypes = Internal
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 2
+    tags = [ "PEDIA_PC_SHIELD" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/defense_grid.png"
+
+#include "shield.macros"
+
+#include "/scripting/common/upkeep.macros"

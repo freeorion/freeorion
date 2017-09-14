@@ -1,0 +1,23 @@
+Part
+    name = "SH_MULTISPEC"
+    description = "SH_MULTISPEC_DESC"
+    exclusions = [[ALL_SHIELDS]]
+    class = Shield
+    capacity = 10
+    mountableSlotTypes = Internal
+    buildcost = 100 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 8
+    tags = [ "PEDIA_PC_SHIELD" ]
+    location = OwnedBy empire = Source.Owner
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Star type = [Red Orange Yellow White Blue]
+            stackinggroup = "STEALTH_SOLAR_STACK"
+            effects = SetStealth value = Value + 60
+    ]
+    icon = "icons/ship_parts/multi-spectral.png"
+
+#include "shield.macros"
+
+#include "/scripting/common/upkeep.macros"

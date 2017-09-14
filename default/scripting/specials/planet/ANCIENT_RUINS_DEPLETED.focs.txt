@@ -1,0 +1,22 @@
+Special
+    name = "ANCIENT_RUINS_DEPLETED_SPECIAL"
+    description = "ANCIENT_RUINS_DEPLETED_SPECIAL_DESC"
+    spawnrate = 0.0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            effects = SetTexture name = "planets/overlays/ruins.png"
+
+        EffectsGroup
+            scope = And [
+                Source
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetResearch value = Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
+        ]
+    graphic = "icons/specials_huge/ancient_ruins_excavated.png"
+
+#include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/priorities.macros"
