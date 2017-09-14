@@ -582,7 +582,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
     std::string client_version_string;
     ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
 
-    if(client_type != Networking::CLIENT_TYPE_AI_PLAYER && server.IsAuthRequired(player_name)) {
+    if (client_type != Networking::CLIENT_TYPE_AI_PLAYER && server.IsAuthRequired(player_name)) {
         // send authentication request
         player_connection->AwaitPlayer(client_type, client_version_string);
         player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
@@ -688,7 +688,7 @@ sc::result MPLobby::react(const AuthResponse& msg) {
     std::string auth;
     ExtractAuthResponseMessageData(message, player_name, auth);
 
-    if (!server.IsAuthSuccessed(player_name, auth)) {
+    if (!server.IsAuthSuccess(player_name, auth)) {
         // wrong password
         player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_WRONG_PASSWORD")) % player_name),
                                                     true));
@@ -704,9 +704,9 @@ sc::result MPLobby::react(const AuthResponse& msg) {
 
     // establish player with requested client type and acknowldge via connection
     player_connection->EstablishPlayer(player_id,
-                    player_name,
-                    client_type,
-                    player_connection->ClientVersionString());
+                                       player_name,
+                                       client_type,
+                                       player_connection->ClientVersionString());
     player_connection->SendMessage(ContentCheckSumMessage());
     player_connection->SendMessage(JoinAckMessage(player_id));
 

@@ -11,8 +11,9 @@ namespace {
     const GG::Y WINDOW_HEIGHT(535);
 }
 
-PasswordEnterWnd::PasswordEnterWnd()
-    :CUIWnd(UserString("AUTHENTICATION_WINDOW_TITLE"), GG::X(80), GG::Y(130), WINDOW_WIDTH, WINDOW_HEIGHT,
+PasswordEnterWnd::PasswordEnterWnd() :
+    CUIWnd(UserString("AUTHENTICATION_WINDOW_TITLE"), GG::X(80), GG::Y(130),
+           WINDOW_WIDTH, WINDOW_HEIGHT,
            GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL),
     m_player_name_edit(nullptr),
     m_password_edit(nullptr),

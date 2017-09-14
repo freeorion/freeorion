@@ -202,7 +202,7 @@ public:
 
     /** Set player properties to use them after authentication successed. */
     void AwaitPlayer(Networking::ClientType client_type,
-                         const std::string& client_version_string);
+                     const std::string& client_version_string);
 
     /** Establishes a connection as a player with a specific name and id.
         This function must only be called once. */

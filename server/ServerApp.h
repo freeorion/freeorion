@@ -210,7 +210,7 @@ public:
     bool IsAuthRequired(const std::string& player_name);
 
     /** Checks if \a auth match \a player_name. */
-    bool IsAuthSuccessed(const std::string& player_name, const std::string& auth);
+    bool IsAuthSuccess(const std::string& player_name, const std::string& auth);
     //@}
 
     void UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection);

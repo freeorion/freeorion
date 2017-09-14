@@ -117,7 +117,8 @@ bool PlayerConnection::IsEstablished() const {
 }
 
 void PlayerConnection::AwaitPlayer(Networking::ClientType client_type,
-                                       const std::string& client_version_string) {
+                                   const std::string& client_version_string)
+{
     TraceLogger(network) << "PlayerConnection(@ " << this << ")::AwaitPlayer("
                          << client_type << ", " << client_version_string << ")";
     if (m_client_type != Networking::INVALID_CLIENT_TYPE) {

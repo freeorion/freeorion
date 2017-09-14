@@ -1516,7 +1516,7 @@ bool ServerApp::IsAvailableName(const std::string& player_name) const {
 
 bool ServerApp::IsAuthRequired(const std::string& player_name) {
     bool result = false;
-    bool success(false);
+    bool success = false;
     try {
         m_python_server.SetCurrentDir(GetPythonAuthDir());
         // Call the main Python turn events function
@@ -1537,14 +1537,15 @@ bool ServerApp::IsAuthRequired(const std::string& player_name) {
 
     if (!success) {
         ErrorLogger() << "Python scripted turn events failed.";
-        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
+        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
+                                                                      false));
     }
     return result;
 }
 
-bool ServerApp::IsAuthSuccessed(const std::string& player_name, const std::string& auth) {
+bool ServerApp::IsAuthSuccess(const std::string& player_name, const std::string& auth) {
     bool result = false;
-    bool success(false);
+    bool success = false;
     try {
         m_python_server.SetCurrentDir(GetPythonAuthDir());
         // Call the main Python turn events function
@@ -1565,7 +1566,8 @@ bool ServerApp::IsAuthSuccessed(const std::string& player_name, const std::strin
 
     if (!success) {
         ErrorLogger() << "Python scripted turn events failed.";
-        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
+        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
+                                                                      false));
     }
     return result;
 }
