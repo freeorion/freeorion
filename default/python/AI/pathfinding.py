@@ -40,6 +40,9 @@ def find_path_with_resupply(start, target, fleet_id):
             new_fuel = fleet.maxFuel if neighbor in supplied_systems else path_info.fuel - 1
             if all((new_dist < dist or new_fuel > fuel) for dist, fuel, _ in path_cache.get(neighbor, [])):
                 predicted_distance = new_dist + universe.shortestPathDistance(neighbor, target)
+                if predicted_distance > max(2*shortest_possible_path, shortest_possible_path+5):
+                    # do not consider unreasonable long paths
+                    continue
                 heappush(queue, (predicted_distance, path_information(new_dist, new_fuel, path_info.path + (neighbor,)),
                                  neighbor))
 
