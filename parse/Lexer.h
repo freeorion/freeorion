@@ -34,6 +34,9 @@ typedef boost::spirit::lex::lexertl::actor_lexer<token_type> spirit_lexer_base_t
 struct lexer :
     boost::spirit::lex::lexer<spirit_lexer_base_type>
 {
+    /** Ctor. */
+    lexer();
+
     static const lexer& instance();
 
     /** \name Comment tokens */ ///@{
@@ -85,9 +88,6 @@ struct lexer :
     static const char* string_regex;
 
 private:
-    /** Ctor. */
-    lexer();
-
     std::map<const char*, boost::spirit::lex::token_def<const char*>*> m_name_tokens;
 };
 
