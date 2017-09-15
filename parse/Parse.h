@@ -33,11 +33,7 @@ namespace parse {
 
     FO_PARSE_API std::map<std::string, std::unique_ptr<Species>> species();
 
-    FO_PARSE_API std::tuple<
-        TechManager::TechContainer, // techs_
-        std::map<std::string, std::unique_ptr<TechCategory>>, // tech_categories,
-        std::set<std::string> // categories_seen
-        > techs();
+    FO_PARSE_API TechManager::TechParseTuple techs();
 
     FO_PARSE_API std::vector<ItemSpec> items();
 

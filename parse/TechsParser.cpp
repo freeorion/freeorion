@@ -260,11 +260,7 @@ namespace {
 }
 
 namespace parse {
-    std::tuple<
-        TechManager::TechContainer, // techs_
-        std::map<std::string, std::unique_ptr<TechCategory>>, // tech_categories,
-        std::set<std::string>> // categories_seen
-    techs() {
+    TechManager::TechParseTuple techs() {
         const lexer lexer;
         TechManager::TechContainer techs_;
         std::map<std::string, std::unique_ptr<TechCategory>> categories;

@@ -51,4 +51,5 @@ void IApp::ParseUniverseObjectTypes() {
     GetFieldTypeManager().SetFieldTypes(StartParsing(parse::fields));
     GetSpecialsManager().SetSpecialsTypes(StartParsing(parse::specials));
     GetSpeciesManager().SetSpeciesTypes(StartParsing(parse::species));
+    GetTechManager().SetTechs(StartParsing(parse::techs));
 }
