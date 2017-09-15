@@ -70,8 +70,8 @@ using expression_rule = parse::detail::rule<
 >;
 
 
-const reference_token_rule&                 variable_scope();
-const name_token_rule&                      container_type();
+const reference_token_rule                      variable_scope(const parse::lexer& tok);
+const name_token_rule                           container_type(const parse::lexer& tok);
 
 const variable_rule<int>&                   int_bound_variable();
 const variable_rule<int>&                   int_free_variable();
@@ -113,7 +113,9 @@ void initialize_nonnumeric_statistic_parser(
 template <typename T>
 void initialize_bound_variable_parser(
     variable_rule<T>& bound_variable,
-    const name_token_rule& variable_name)
+    const name_token_rule& variable_name,
+    const reference_token_rule& variable_scope_rule,
+    const name_token_rule& container_type_rule)
 {
     using boost::phoenix::construct;
     using boost::phoenix::new_;
@@ -125,8 +127,8 @@ void initialize_bound_variable_parser(
     boost::spirit::qi::_val_type _val;
 
     bound_variable
-        =   variable_scope() [ _b = _1 ] >> '.'
-        >>-(container_type() [ push_back(_a, construct<std::string>(_1)) ] > '.')
+        =   variable_scope_rule [ _b = _1 ] >> '.'
+        >>-(container_type_rule [ push_back(_a, construct<std::string>(_1)) ] > '.')
         >>  variable_name    [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::Variable<T>>(_b, _a) ]
         ;
 }
@@ -152,7 +154,9 @@ struct enum_value_ref_rules {
             =   enum_expr [ _val = new_<ValueRef::Constant<T>>(_1) ]
             ;
 
-        initialize_bound_variable_parser<T>(bound_variable_expr, variable_name);
+        variable_scope_rule = variable_scope(tok);
+        container_type_rule = container_type(tok);
+        initialize_bound_variable_parser<T>(bound_variable_expr, variable_name, variable_scope_rule, container_type_rule);
 
         statistic_sub_value_ref
             =   constant_expr
@@ -228,6 +232,8 @@ struct enum_value_ref_rules {
     statistic_rule<T> statistic_expr;
     complex_variable_rule<T> complex_expr;
     parse::value_ref_rule<T> expr;
+    reference_token_rule variable_scope_rule;
+    name_token_rule container_type_rule;
 };
 
 
@@ -255,7 +261,9 @@ struct simple_variable_rules
             |   bound_variable
             ;
 
-         initialize_bound_variable_parser<T>(bound_variable, bound_variable_name);
+        variable_scope_rule = variable_scope(tok);
+        container_type_rule = container_type(tok);
+        initialize_bound_variable_parser<T>(bound_variable, bound_variable_name, variable_scope_rule, container_type_rule);
 
 #if DEBUG_VALUEREF_PARSERS
         debug(bound_variable_name);
@@ -280,6 +288,8 @@ struct simple_variable_rules
     variable_rule<T> free_variable;
     variable_rule<T> bound_variable;
     parse::value_ref_rule<T> simple;
+    reference_token_rule variable_scope_rule;
+    name_token_rule container_type_rule;
 };
 
 } }

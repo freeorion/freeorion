@@ -48,7 +48,10 @@ namespace {
                 |   tok.GalaxySeed_     [ _val = new_<ValueRef::Variable<std::string>>(ValueRef::NON_OBJECT_REFERENCE, _1) ]
                 ;
 
-            initialize_bound_variable_parser<std::string>(bound_variable, bound_variable_name);
+            variable_scope_rule = variable_scope(tok);
+            container_type_rule = container_type(tok);
+            initialize_bound_variable_parser<std::string>(bound_variable, bound_variable_name,
+                                                          variable_scope_rule, container_type_rule);
 
             statistic_sub_value_ref
                 =   constant
@@ -139,6 +142,8 @@ namespace {
         expression_rule<std::string> operated_expr;
         parse::value_ref_rule<std::string> expr;
         parse::value_ref_rule<std::string> primary_expr;
+        reference_token_rule variable_scope_rule;
+        name_token_rule container_type_rule;
     };
 }
 
