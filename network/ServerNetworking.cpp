@@ -59,6 +59,7 @@ PlayerConnection::PlayerConnection(boost::asio::io_service& io_service,
     m_ID(INVALID_PLAYER_ID),
     m_new_connection(true),
     m_client_type(Networking::INVALID_CLIENT_TYPE),
+    m_authenticated(false),
     m_nonplayer_message_callback(nonplayer_message_callback),
     m_player_message_callback(player_message_callback),
     m_disconnected_callback(disconnected_callback)
@@ -116,6 +117,10 @@ bool PlayerConnection::IsEstablished() const {
     return (m_ID != INVALID_PLAYER_ID && !m_player_name.empty() && m_client_type != Networking::INVALID_CLIENT_TYPE);
 }
 
+bool PlayerConnection::IsAuthenticated() const {
+    return m_authenticated;
+}
+
 void PlayerConnection::AwaitPlayer(Networking::ClientType client_type,
                                    const std::string& client_version_string)
 {
@@ -170,6 +175,10 @@ void PlayerConnection::SetClientType(Networking::ClientType client_type) {
     m_client_type = client_type;
     if (m_client_type == Networking::INVALID_CLIENT_TYPE)
         ErrorLogger(network) << "PlayerConnection client type set to INVALID_CLIENT_TYPE...?";
+}
+
+void PlayerConnection::SetAuthenticated() {
+    m_authenticated = true;
 }
 
 const std::string& PlayerConnection::ClientVersionString() const

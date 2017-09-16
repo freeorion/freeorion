@@ -198,6 +198,12 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
     std::shared_ptr<ServerSaveGameData>     m_server_save_game_data;
     int                                     m_ai_next_index;
 
+private:
+    void EstablishPlayer(const PlayerConnectionPtr& player_connection,
+                         const std::string& player_name,
+                         Networking::ClientType client_type,
+                         const std::string& client_version_string);
+
     SERVER_ACCESSOR
 };
 

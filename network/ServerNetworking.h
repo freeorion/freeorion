@@ -191,6 +191,9 @@ public:
 
     /** Checks if the player is established, has a valid name, id and client type. */
     bool IsEstablished() const;
+
+    /** Checks if the player was authenticated. */
+    bool IsAuthenticated() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -212,6 +215,9 @@ public:
     /** Sets this connection's client type. Useful for already-connected players
       * changing type such as in the multiplayer lobby. */
     void SetClientType(Networking::ClientType client_type);
+
+    /** Sets authenticated status for connection. */
+    void SetAuthenticated();
     //@}
 
     mutable boost::signals2::signal<void (const NullaryFn&)> EventSignal;
@@ -240,6 +246,7 @@ private:
     bool                            m_new_connection;
     Networking::ClientType          m_client_type;
     std::string                     m_client_version_string;
+    bool                            m_authenticated;
 
     MessageAndConnectionFn          m_nonplayer_message_callback;
     MessageAndConnectionFn          m_player_message_callback;
