@@ -1396,17 +1396,13 @@ void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame) {
 }
 
 void HumanClientApp::InitAutoTurns(int auto_turns) {
-    if (auto_turns > 0)
-        m_auto_turns = auto_turns;
-    else
+    m_auto_turns = auto_turns;
+    if (!m_game_started || m_auto_turns < 0)
         m_auto_turns = 0;
 }
 
-void HumanClientApp::DecAutoTurns(int n) {
-    m_auto_turns -= n;
-    if (m_auto_turns < 0)
-        m_auto_turns = 0;
-}
+void HumanClientApp::DecAutoTurns(int n)
+{ InitAutoTurns(m_auto_turns - n); }
 
 int HumanClientApp::AutoTurnsLeft() const
 { return m_auto_turns; }
