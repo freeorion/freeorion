@@ -8,6 +8,7 @@ import planets
 import universe_tables
 import util
 
+
 # tuple of available star types
 star_types = (fo.starType.blue, fo.starType.white, fo.starType.yellow, fo.starType.orange,
               fo.starType.red, fo.starType.neutron, fo.starType.blackHole, fo.starType.noStar)

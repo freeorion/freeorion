@@ -5,6 +5,7 @@ import freeorion as fo
 import names
 import options
 
+
 # for starname modifiers
 stargroup_words = []
 stargroup_chars = []

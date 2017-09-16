@@ -5,6 +5,7 @@ import natives
 import planets
 import universe_tables
 
+
 species_summary = {species: 0 for species in fo.get_native_species()}
 empire_species = {species: 0 for species in fo.get_playable_species()}
 potential_native_planet_summary = {planet_type: 0 for planet_type in planets.planet_types}
