@@ -1921,15 +1921,15 @@ void ProductionInfoPanel::SetStockpileCost(float stockpile, float stockpile_use,
         DebugLogger() << "SetStockpileCost:  create";
         m_stockpile_points_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_STOCKPILE_PS_LABEL"), GG::FORMAT_RIGHT);
         m_stockpile_points = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
-        m_stockpile_points_P_label = GG::Wnd::Create<CUILabel>("SP", GG::FORMAT_LEFT);
+        m_stockpile_points_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
 
         m_stockpile_use_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_STOCKPILE_USE_PS_LABEL"), GG::FORMAT_RIGHT);
         m_stockpile_use = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
-        m_stockpile_use_P_label = GG::Wnd::Create<CUILabel>("SP", GG::FORMAT_LEFT);
+        m_stockpile_use_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
 
         m_stockpile_max_use_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_STOCKPILE_USE_MAX_LABEL"), GG::FORMAT_RIGHT);
         m_stockpile_max_use = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
-        m_stockpile_max_use_P_label = GG::Wnd::Create<CUILabel>("SP", GG::FORMAT_LEFT);
+        m_stockpile_max_use_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
 
         AttachChild(m_stockpile_points_label);
         AttachChild(m_stockpile_points);
@@ -1976,7 +1976,7 @@ void ProductionInfoPanel::SetLocalPointsCost(float local_points, float local_cos
 
         m_local_stockpile_use_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_LOCAL_STOCKPILE_USE_PS_LABEL"), GG::FORMAT_RIGHT);
         m_local_stockpile_use = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
-        m_local_stockpile_use_P_label = GG::Wnd::Create<CUILabel>("SP", GG::FORMAT_LEFT);
+        m_local_stockpile_use_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
 
         AttachChild(m_local_points_label);
         AttachChild(m_local_points);
