@@ -14,6 +14,28 @@ from turn_state import state
 #    - For large graphs, check if there are any must-visit nodes (e.g. only possible resupplying system),
 #      then try to find the shortest path between those and start/target.
 def find_path_with_resupply(start, target, fleet_id):
+    """Find the shortest possible path between two systems that complies with FreeOrion fuel mechanics.
+
+     If the fleet can travel the shortest possible path between start and target system, then return that path.
+     Otherwise, find the shortest possible detour including refueling.
+
+
+     The core algorithm is a modified A* with the universe.shortestPathDistance as heuristic.
+     While searching for a path, keep track of the fleet's fuel. Compared to standard A*/dijkstra,
+     nodes are locked only for a certain minimum level of fuel. If a longer path yields a higher fuel
+     level at a given system, then that path considered for pathfinding and added to the queue.
+
+
+    :param start: start system id
+    :type start: int
+    :param target:  target system id
+    :type target: int
+    :param fleet_id: fleet to find the path for
+    :type fleet_id: int
+    :return: shortest possible path including resupply-deroutes in the form of system ids
+             including both start and target system
+    :rtype: tuple[int]
+    """
     path_information = namedtuple('path_information', ['distance', 'fuel', 'path'])
     universe = fo.getUniverse()
     empire_id = fo.empireID()
