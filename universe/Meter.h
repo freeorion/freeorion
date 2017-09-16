@@ -62,7 +62,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-BOOST_CLASS_VERSION(Meter, 2)
+BOOST_CLASS_VERSION(Meter, 1)
 
 // template implementations
 template <class Archive>
