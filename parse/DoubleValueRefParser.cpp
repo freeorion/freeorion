@@ -92,7 +92,7 @@ parse::double_parser_rules::double_parser_rules() :
         ;
 
     int_statistic_cast
-        =   int_var_statistic() [ _val = new_<ValueRef::StaticCast<int, double>>(_1) ]
+        =   int_rules.statistic_expr [ _val = new_<ValueRef::StaticCast<int, double>>(_1) ]
         ;
 
     int_complex_variable_cast

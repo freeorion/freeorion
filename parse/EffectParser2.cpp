@@ -49,7 +49,7 @@ namespace {
             set_empire_stockpile
                 =   tok.SetEmpireTradeStockpile_ [ _a = RE_TRADE ]
                 >   (
-                        (   parse::detail::label(Empire_token) > parse::int_value_ref() [ _b = _1 ]
+                        (   parse::detail::label(Empire_token) > int_rules.expr [ _b = _1 ]
                         >   parse::detail::label(Value_token)  > double_rules.expr [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
                         )
                         |  (parse::detail::label(Value_token)  > double_rules.expr [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ])
@@ -59,7 +59,7 @@ namespace {
             set_empire_capital
                 =    tok.SetEmpireCapital_
                 >   (
-                        (parse::detail::label(Empire_token) > parse::int_value_ref() [ _val = new_<Effect::SetEmpireCapital>(_1) ])
+                        (parse::detail::label(Empire_token) > int_rules.expr [ _val = new_<Effect::SetEmpireCapital>(_1) ])
                     |    eps [ _val = new_<Effect::SetEmpireCapital>() ]
                     )
                 ;
@@ -81,14 +81,14 @@ namespace {
 
             set_owner
                 =    tok.SetOwner_
-                >    parse::detail::label(Empire_token) > parse::int_value_ref() [ _val = new_<Effect::SetOwner>(_1) ]
+                >    parse::detail::label(Empire_token) > int_rules.expr [ _val = new_<Effect::SetOwner>(_1) ]
                 ;
 
             set_species_opinion
                 =    tok.SetSpeciesOpinion_
                 >    parse::detail::label(Species_token) >    parse::string_value_ref() [ _a = _1 ]
                 > (
-                    (   parse::detail::label(Empire_token) >  parse::int_value_ref() [ _c = _1 ]
+                    (   parse::detail::label(Empire_token) >  int_rules.expr [ _c = _1 ]
                      >  parse::detail::label(Opinion_token) > double_rules.expr
                         [ _val = new_<Effect::SetSpeciesEmpireOpinion>(_a, _c, _1) ])
                    |
@@ -110,7 +110,7 @@ namespace {
                                 |    eps [ _d = AFFIL_SELF ]
                                 )
                             >>  parse::detail::label(Empire_token)
-                            ) > parse::int_value_ref() [ _b = _1 ]
+                            ) > int_rules.expr [ _b = _1 ]
                         )
                      |  (   // no empire id or condition specified, with or without an
                             // affiliation type: useful to specify no or all empires
@@ -193,6 +193,7 @@ namespace {
             >
         > string_string_int_rule;
 
+        parse::int_arithmetic_rules         int_rules;
         parse::double_parser_rules          double_rules;
         set_meter_rule                      set_meter;
         set_meter_rule                      set_ship_part_meter;

@@ -56,7 +56,7 @@ namespace {
             empire_meter_value1
                 =   (
                     (tok.EmpireMeter_
-                    >>  parse::detail::label(Empire_token))   >   parse::int_value_ref() [ _b = _1 ]
+                    >>  parse::detail::label(Empire_token))   >   int_rules.expr [ _b = _1 ]
                     >   parse::detail::label(Meter_token)    >   tok.string [ _a = _1 ]
                     >  -(parse::detail::label(Low_token)     >   double_rules.expr [ _c = _1 ])
                     >  -(parse::detail::label(High_token)    >   double_rules.expr [ _d = _1 ])
@@ -115,6 +115,7 @@ namespace {
             >
         > empire_meter_value_rule;
 
+        parse::int_arithmetic_rules     int_rules;
         parse::double_parser_rules      double_rules;
         meter_value_rule                meter_value;
         meter_value_rule                ship_part_meter_value;

@@ -93,14 +93,18 @@ struct simple_double_parser_rules :
 }}
 
 namespace parse {
-    value_ref_rule<int>& int_value_ref();
     value_ref_rule<int>& flexible_int_value_ref();
 
     value_ref_rule<std::string>& string_value_ref();
 
+    struct int_arithmetic_rules : public parse::detail::arithmetic_rules<int> {
+        int_arithmetic_rules();
+    };
+
     struct double_parser_rules : public detail::arithmetic_rules<double> {
         double_parser_rules();
 
+        parse::int_arithmetic_rules        int_rules;
         detail::simple_double_parser_rules simple_double_rules;
         parse::value_ref_rule<double> int_constant_cast;
         parse::value_ref_rule<double> int_bound_variable_cast;

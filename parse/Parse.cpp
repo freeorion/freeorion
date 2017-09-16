@@ -245,8 +245,6 @@ namespace parse {
         debug(detail::double_);
 #endif
 
-        int_value_ref();
-
         condition_parser();
     }
 

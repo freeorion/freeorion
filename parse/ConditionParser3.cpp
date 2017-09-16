@@ -126,7 +126,7 @@ namespace {
 
             value_test_5
                 = '('
-                >> parse::int_value_ref() [ _g = _1 ]
+                >> int_rules.expr [ _g = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
@@ -134,14 +134,14 @@ namespace {
                       | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _d = Condition::LESS_THAN ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                >> parse::int_value_ref()   // can't expect an (int) here, as it could actually be a (double) comparision with the first (double) cased from an (int)
+                >> int_rules.expr   // can't expect an (int) here, as it could actually be a (double) comparision with the first (double) cased from an (int)
                 [ _val = new_<Condition::ValueTest>(_g, _d, _1) ]
                 >> ')'
                 ;
 
             value_test_6
                 = ('('
-                >> parse::int_value_ref() [ _g = _1 ]
+                >> int_rules.expr [ _g = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
@@ -149,7 +149,7 @@ namespace {
                       | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _d = Condition::LESS_THAN ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                >> parse::int_value_ref() [ _h = _1 ]
+                >> int_rules.expr [ _h = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit(">=")   [ _e = Condition::GREATER_THAN_OR_EQUAL ]
@@ -157,7 +157,7 @@ namespace {
                       | lit("<=")   [ _e = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _e = Condition::LESS_THAN ]
                       | lit("!=")   [ _e = Condition::NOT_EQUAL ])
-                 >> parse::int_value_ref()   // only treat as trinary (int) comparison if all parameters are (int). otherwise fall back to (double) comparison, which allows some of the parameters to be (int) casted to (double)
+                 >> int_rules.expr   // only treat as trinary (int) comparison if all parameters are (int). otherwise fall back to (double) comparison, which allows some of the parameters to be (int) casted to (double)
                  [ _val = new_<Condition::ValueTest>(_g, _d, _h, _e, _1) ]
                   ) >  ')'
                 ;
@@ -214,7 +214,7 @@ namespace {
 
             resource_supply_connected
                 =   tok.ResourceSupplyConnected_
-                >   parse::detail::label(Empire_token)    > parse::int_value_ref() [ _a = _1 ]
+                >   parse::detail::label(Empire_token)    > int_rules.expr [ _a = _1 ]
                 >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::ResourceSupplyConnectedByEmpire>(_a, _1) ]
                 ;
@@ -315,6 +315,7 @@ namespace {
             >
         > resource_type_double_ref_rule;
 
+        parse::int_arithmetic_rules             int_rules;
         parse::double_parser_rules              double_rules;
         double_ref_double_ref_rule              has_special_capacity;
         double_ref_double_ref_rule              within_distance;

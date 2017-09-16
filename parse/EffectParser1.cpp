@@ -33,7 +33,7 @@ namespace {
 
             set_empire_meter_1
                 =    (tok.SetEmpireMeter_ >>   parse::detail::label(Empire_token))
-                >    parse::int_value_ref() [ _b = _1 ]
+                >    int_rules.expr [ _b = _1 ]
                 >    parse::detail::label(Meter_token)  >  tok.string [ _a = _1 ]
                 >    parse::detail::label(Value_token)  >  double_rules.expr [ _val = new_<Effect::SetEmpireMeter>(_b, _a, _1) ]
                 ;
@@ -47,7 +47,7 @@ namespace {
             give_empire_tech
                 =   (   tok.GiveEmpireTech_
                     >   parse::detail::label(Name_token) >      parse::string_value_ref() [ _d = _1 ]
-                    > -(parse::detail::label(Empire_token) >    parse::int_value_ref()    [ _b = _1 ])
+                    > -(parse::detail::label(Empire_token) >    int_rules.expr    [ _b = _1 ])
                     ) [ _val = new_<Effect::GiveEmpireTech>(_d, _b) ]
                 ;
 
@@ -56,7 +56,7 @@ namespace {
                 >    parse::detail::label(Name_token)     >  parse::string_value_ref() [ _a = _1 ]
                 >    parse::detail::label(Progress_token) >  double_rules.expr [ _b = _1 ]
                 >    (
-                        (parse::detail::label(Empire_token) > parse::int_value_ref() [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b, _1) ])
+                        (parse::detail::label(Empire_token) > int_rules.expr [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b, _1) ])
                      |  eps [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b) ]
                      )
                 ;
@@ -80,7 +80,7 @@ namespace {
                              |    eps [ _d = AFFIL_SELF ]
                              )
                             >>  parse::detail::label(Empire_token)
-                            ) > parse::int_value_ref()
+                            ) > int_rules.expr
                             [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _1, _d, _e, _f) ]
                         )
                     |   (   // condition specified, with an affiliation type of CanSee:
@@ -114,7 +114,7 @@ namespace {
             string_and_string_ref
                 =    parse::detail::label(Tag_token)  >  tok.string [ _a = _1 ]
                 >    parse::detail::label(Data_token)
-                >  ( parse::int_value_ref()      [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<int>>(_1)) ]
+                >  ( int_rules.expr      [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<int>>(_1)) ]
                    | double_rules.expr   [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<double>>(_1)) ]
                    | tok.string         [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::Constant<std::string>>(_1)) ]
                    | parse::string_value_ref()   [ _val = construct<string_and_string_ref_pair>(_a, _1) ]
@@ -197,6 +197,7 @@ namespace {
             std::vector<string_and_string_ref_pair> ()
         > string_and_string_ref_vector_rule;
 
+        parse::int_arithmetic_rules         int_rules;
         parse::double_parser_rules          double_rules;
         string_and_intref_and_intref_rule   set_empire_meter_1;
         string_and_intref_and_intref_rule   set_empire_meter_2;
