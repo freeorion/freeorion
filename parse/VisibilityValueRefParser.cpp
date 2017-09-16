@@ -61,7 +61,7 @@ namespace parse {
             qi::_val_type _val;
 
             const parse::lexer& tok = parse::lexer::instance();
-            const parse::value_ref_rule<int>& simple_int = int_simple();
+            const parse::value_ref_rule<int>& simple_int = simple_int_rules.simple;
 
             empire_object_visibility
                 =   tok.EmpireObjectVisibility_ [ _a = construct<std::string>(_1) ]
@@ -81,6 +81,7 @@ namespace parse {
 
 #endif
         }
+        parse::detail::simple_int_parser_rules  simple_int_rules;
         complex_variable_rule<Visibility> empire_object_visibility;
         complex_variable_rule<Visibility> start;
     };

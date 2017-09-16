@@ -20,7 +20,7 @@ namespace parse {
             qi::_val_type _val;
 
             const parse::lexer& tok = parse::lexer::instance();
-            const parse::value_ref_rule<int>& simple_int = int_simple();
+            const parse::value_ref_rule<int>& simple_int = simple_int_rules.simple;
 
 
             game_rule
@@ -93,6 +93,7 @@ namespace parse {
 #endif
         }
 
+        parse::detail::simple_int_parser_rules  simple_int_rules;
         complex_variable_rule<std::string> game_rule;
 
         complex_variable_rule<std::string> empire_ref;
