@@ -53,8 +53,8 @@ namespace parse {
                 ;
 
             // in shortest_path would have liked to be able to use 
-            //            >   parse::detail::label(Object_token) >   (simple_int [ _b = _1 ] | int_var_statistic() [ _b = _1 ])
-            //            >   parse::detail::label(Object_token) >   (simple_int [ _c = _1 ] | int_var_statistic() [ _c = _1 ])
+            //            >   parse::detail::label(Object_token) >   (simple_int [ _b = _1 ] | int_rules.statistic_expr [ _b = _1 ])
+            //            >   parse::detail::label(Object_token) >   (simple_int [ _c = _1 ] | int_rules.statistic_expr [ _c = _1 ])
             // but getting crashes upon program start, presumably due to initialization order problems
 
             shortest_path

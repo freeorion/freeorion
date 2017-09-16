@@ -73,32 +73,6 @@ namespace {
         return retval;
     }
 
-
-    struct int_arithmetic_rules : public parse::detail::arithmetic_rules<int> {
-        int_arithmetic_rules() :
-            arithmetic_rules("integer")
-        {
-            const parse::value_ref_rule<int>& simple = int_simple();
-
-            statistic_value_ref_expr
-                =   simple
-                |   int_var_complex()
-            ;
-
-            primary_expr
-                =   '(' >> expr >> ')'
-                |   simple
-                |   statistic_expr
-                |   int_var_complex()
-                ;
-        }
-    };
-
-    int_arithmetic_rules& get_int_arithmetic_rules() {
-        static int_arithmetic_rules retval;
-        return retval;
-    }
-
     struct castable_as_int_parser_rules {
         castable_as_int_parser_rules() {
             namespace phoenix = boost::phoenix;
@@ -114,7 +88,7 @@ namespace {
                 ;
 
             flexible_int
-                = parse::int_value_ref()
+                = int_rules.expr
                 | castable_expr
                 ;
 
@@ -126,6 +100,7 @@ namespace {
 #endif
         }
 
+        parse::int_arithmetic_rules     int_rules;
         parse::double_parser_rules      double_rules;
         parse::value_ref_rule<int> castable_expr;
         parse::value_ref_rule<int> flexible_int;
@@ -137,6 +112,23 @@ namespace {
     }
 }
 
+parse::int_arithmetic_rules::int_arithmetic_rules() :
+    arithmetic_rules("integer")
+{
+    const parse::value_ref_rule<int>& simple = int_simple();
+
+    statistic_value_ref_expr
+        =   simple
+        |   int_var_complex()
+        ;
+
+    primary_expr
+        =   '(' >> expr >> ')'
+        |   simple
+        |   statistic_expr
+        |   int_var_complex()
+        ;
+}
 
 const parse::detail::variable_rule<int>& int_bound_variable()
 { return get_simple_int_parser_rules().bound_variable; }
@@ -147,14 +139,7 @@ const parse::detail::variable_rule<int>& int_free_variable()
 const parse::value_ref_rule<int>& int_simple()
 { return get_simple_int_parser_rules().simple; }
 
-const parse::detail::statistic_rule<int>& int_var_statistic()
-{ return get_int_arithmetic_rules().statistic_expr; }
-
-
 namespace parse {
-    value_ref_rule<int>& int_value_ref()
-    { return get_int_arithmetic_rules().expr; }
-
     value_ref_rule<int>& flexible_int_value_ref()
     { return get_castable_as_int_parser_rules().flexible_int; }
 }

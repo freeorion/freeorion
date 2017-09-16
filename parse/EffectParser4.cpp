@@ -59,8 +59,8 @@ namespace {
             create_ship_1
                 =   ((       tok.CreateShip_
                      >>  parse::detail::label(DesignID_token)
-                     )  >   parse::int_value_ref()    [ _b = _1 ]
-                        > -(parse::detail::label(Empire_token)      >   parse::int_value_ref()    [ _c = _1 ])
+                     )  >   int_rules.expr    [ _b = _1 ]
+                        > -(parse::detail::label(Empire_token)      >   int_rules.expr    [ _c = _1 ])
                         > -(parse::detail::label(Species_token)     >   parse::string_value_ref() [ _d = _1 ])
                         > -(parse::detail::label(Name_token)        >   parse::string_value_ref() [ _e = _1 ])
                         > -(parse::detail::label(Effects_token)
@@ -76,7 +76,7 @@ namespace {
                 =   ((       tok.CreateShip_
                      >>  parse::detail::label(DesignName_token)  >>  parse::string_value_ref() [ _a = _1 ]
                      )
-                        > -(parse::detail::label(Empire_token)      >   parse::int_value_ref()    [ _c = _1 ])
+                        > -(parse::detail::label(Empire_token)      >   int_rules.expr    [ _c = _1 ])
                         > -(parse::detail::label(Species_token)     >   parse::string_value_ref() [ _d = _1 ])
                         > -(parse::detail::label(Name_token)        >   parse::string_value_ref() [ _e = _1 ])
                         > -(parse::detail::label(Effects_token)
@@ -245,6 +245,7 @@ namespace {
             >
         > create_field_rule;
 
+        parse::int_arithmetic_rules     int_rules;
         parse::double_parser_rules      double_rules;
         create_planet_rule              create_planet;
         create_building_rule            create_building;

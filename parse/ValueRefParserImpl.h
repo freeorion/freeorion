@@ -37,7 +37,6 @@ const parse::detail::name_token_rule                           container_type(co
 
 const parse::detail::variable_rule<int>&                       int_bound_variable();
 const parse::detail::variable_rule<int>&                       int_free_variable();
-const parse::detail::statistic_rule<int>&                      int_var_statistic();
 const complex_variable_rule<int>&               int_var_complex();
 const parse::value_ref_rule<int>&               int_simple();
 

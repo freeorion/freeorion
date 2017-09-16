@@ -85,7 +85,7 @@ namespace {
             owned_by_1
                 =   (tok.OwnedBy_
                      >>  parse::detail::label(Empire_token)
-                    ) > parse::int_value_ref()
+                    ) > int_rules.expr
                     [ _val = new_<Condition::EmpireAffiliation>(_1) ]
                 ;
 
@@ -108,7 +108,7 @@ namespace {
             owned_by_5
                 =   (tok.OwnedBy_
                 >>  parse::detail::label(Affiliation_token) >> parse::empire_affiliation_type_enum() [ _a = _1 ]
-                >>  parse::detail::label(Empire_token)    ) >  parse::int_value_ref()
+                >>  parse::detail::label(Empire_token)    ) >  int_rules.expr
                 [ _val = new_<Condition::EmpireAffiliation>(_1, _a) ]
                 ;
 
@@ -216,6 +216,7 @@ namespace {
             qi::locals<std::string>
         > described_rule;
 
+        parse::int_arithmetic_rules     int_rules;
         parse::condition_parser_rule    all;
         parse::condition_parser_rule    none;
         parse::condition_parser_rule    source;
