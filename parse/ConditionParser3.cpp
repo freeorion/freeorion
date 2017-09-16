@@ -47,15 +47,15 @@ namespace {
 
             within_starlane_jumps
                 =   tok.WithinStarlaneJumps_
-                >   parse::detail::label(Jumps_token)     > parse::flexible_int_value_ref() [ _a = _1 ]
+                >   parse::detail::label(Jumps_token)     > castable_int_rules.flexible_int [ _a = _1 ]
                 >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::WithinStarlaneJumps>(_a, _1) ]
                 ;
 
             number
                 =   tok.Number_
-                > -(parse::detail::label(Low_token)   >  parse::flexible_int_value_ref() [ _a = _1 ])
-                > -(parse::detail::label(High_token)  >  parse::flexible_int_value_ref() [ _b = _1 ])
+                > -(parse::detail::label(Low_token)   >  castable_int_rules.flexible_int [ _a = _1 ])
+                > -(parse::detail::label(High_token)  >  castable_int_rules.flexible_int [ _b = _1 ])
                 >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::Number>(_a, _b, _1) ]
                 ;
@@ -164,21 +164,21 @@ namespace {
 
             turn
                 =  (tok.Turn_
-                > -(parse::detail::label(Low_token)  > (parse::flexible_int_value_ref() [ _a = _1 ]))
-                > -(parse::detail::label(High_token) > (parse::flexible_int_value_ref() [ _b = _1 ])))
+                > -(parse::detail::label(Low_token)  > (castable_int_rules.flexible_int [ _a = _1 ]))
+                > -(parse::detail::label(High_token) > (castable_int_rules.flexible_int [ _b = _1 ])))
                 [ _val = new_<Condition::Turn>(_a, _b) ]
                 ;
 
             created_on_turn
                 =  (tok.CreatedOnTurn_
-                > -(parse::detail::label(Low_token)  > parse::flexible_int_value_ref() [ _a = _1 ])
-                > -(parse::detail::label(High_token) > parse::flexible_int_value_ref() [ _b = _1 ]))
+                > -(parse::detail::label(Low_token)  > castable_int_rules.flexible_int [ _a = _1 ])
+                > -(parse::detail::label(High_token) > castable_int_rules.flexible_int [ _b = _1 ]))
                 [ _val = new_<Condition::CreatedOnTurn>(_a, _b) ]
                 ;
 
             number_of1
                 =   tok.NumberOf_
-                >   parse::detail::label(Number_token)    > parse::flexible_int_value_ref() [ _a = _1 ]
+                >   parse::detail::label(Number_token)    > castable_int_rules.flexible_int [ _a = _1 ]
                 >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::SortedNumberOf>(_a, _1) ]
                 ;
@@ -188,7 +188,7 @@ namespace {
                     |   tok.MinimumNumberOf_ [ _b = Condition::SORT_MIN ]
                     |   tok.ModeNumberOf_    [ _b = Condition::SORT_MODE ]
                     )
-                >   parse::detail::label(Number_token)    > parse::flexible_int_value_ref() [ _a = _1 ]
+                >   parse::detail::label(Number_token)    > castable_int_rules.flexible_int [ _a = _1 ]
                 >   parse::detail::label(SortKey_token)   > double_rules.expr [ _c = _1 ]
                 >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::SortedNumberOf>(_a, _c, _b, _1) ]
@@ -316,6 +316,7 @@ namespace {
         > resource_type_double_ref_rule;
 
         parse::int_arithmetic_rules             int_rules;
+        parse::castable_as_int_parser_rules     castable_int_rules;
         parse::double_parser_rules              double_rules;
         double_ref_double_ref_rule              has_special_capacity;
         double_ref_double_ref_rule              within_distance;

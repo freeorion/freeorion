@@ -84,11 +84,11 @@ parse::double_parser_rules::double_parser_rules() :
         ;
 
     int_bound_variable_cast
-        =   int_bound_variable() [ _val = new_<ValueRef::StaticCast<int, double>>(_1) ]
+        =   simple_int_rules.bound_variable [ _val = new_<ValueRef::StaticCast<int, double>>(_1) ]
         ;
 
     int_free_variable_cast
-        =   int_free_variable() [ _val = new_<ValueRef::StaticCast<int, double>>(_1) ]
+        =   simple_int_rules.free_variable [ _val = new_<ValueRef::StaticCast<int, double>>(_1) ]
         ;
 
     int_statistic_cast

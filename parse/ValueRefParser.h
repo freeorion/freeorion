@@ -84,27 +84,29 @@ struct simple_variable_rules
         parse::value_ref_rule<T> expr;
     };
 
-struct simple_double_parser_rules :
-    public simple_variable_rules<double>
-{
+struct simple_int_parser_rules : public parse::detail::simple_variable_rules<int> {
+    simple_int_parser_rules();
+};
+
+struct simple_double_parser_rules : public simple_variable_rules<double> {
     simple_double_parser_rules();
 };
 
 }}
 
 namespace parse {
-    value_ref_rule<int>& flexible_int_value_ref();
-
     value_ref_rule<std::string>& string_value_ref();
 
     struct int_arithmetic_rules : public parse::detail::arithmetic_rules<int> {
         int_arithmetic_rules();
+        detail::simple_int_parser_rules  simple_int_rules;
     };
 
     struct double_parser_rules : public detail::arithmetic_rules<double> {
         double_parser_rules();
 
         parse::int_arithmetic_rules        int_rules;
+        detail::simple_int_parser_rules    simple_int_rules;
         detail::simple_double_parser_rules simple_double_rules;
         parse::value_ref_rule<double> int_constant_cast;
         parse::value_ref_rule<double> int_bound_variable_cast;
@@ -113,7 +115,18 @@ namespace parse {
         parse::value_ref_rule<double> int_complex_variable_cast;
     };
 
+    struct castable_as_int_parser_rules {
+        castable_as_int_parser_rules();
+
+        parse::int_arithmetic_rules     int_rules;
+        parse::double_parser_rules      double_rules;
+        parse::value_ref_rule<int> castable_expr;
+        parse::value_ref_rule<int> flexible_int;
+    };
+
+
     namespace detail {
+
     template <typename T>
     struct enum_value_ref_rules;
 

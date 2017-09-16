@@ -80,8 +80,8 @@ namespace parse { namespace detail {
 
             common
                 =
-                >   label(BuildTime_token)  > parse::flexible_int_value_ref() [ _b = _1 ]
                 (   label(BuildCost_token)  > double_rules.expr [ _a = _1 ]
+                >   label(BuildTime_token)  > castable_int_rules.flexible_int [ _b = _1 ]
                 >   producible                                          [ _c = _1 ]
                 >   parse::detail::tags_parser()(_d)
                 >   location(_e)
@@ -170,6 +170,7 @@ namespace parse { namespace detail {
             void (std::set<std::string>&)
         > exclusions_rule;
 
+        castable_as_int_parser_rules    castable_int_rules;
         double_parser_rules     double_rules;
         producible_rule         producible;
         location_rule           location;
