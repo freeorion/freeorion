@@ -54,7 +54,7 @@ struct ValueRefDoubleFixture: boost::unit_test::test_observer {
 
         bool matched = boost::spirit::qi::phrase_parse(
             begin, end,
-            parse::double_value_ref()[boost::phoenix::ref(result) = _1] > eoi,
+            double_rules[boost::phoenix::ref(result) = _1] > eoi,
             in_state("WS")[lexer.self]
         );
 

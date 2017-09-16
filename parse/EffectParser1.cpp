@@ -35,13 +35,13 @@ namespace {
                 =    (tok.SetEmpireMeter_ >>   parse::detail::label(Empire_token))
                 >    parse::int_value_ref() [ _b = _1 ]
                 >    parse::detail::label(Meter_token)  >  tok.string [ _a = _1 ]
-                >    parse::detail::label(Value_token)  >  parse::double_value_ref() [ _val = new_<Effect::SetEmpireMeter>(_b, _a, _1) ]
+                >    parse::detail::label(Value_token)  >  double_rules.expr [ _val = new_<Effect::SetEmpireMeter>(_b, _a, _1) ]
                 ;
 
             set_empire_meter_2
                 =    (tok.SetEmpireMeter_ >>   parse::detail::label(Meter_token))
                 >    tok.string [ _a = _1 ]
-                >    parse::detail::label(Value_token) >  parse::double_value_ref() [ _val = new_<Effect::SetEmpireMeter>(_a, _1) ]
+                >    parse::detail::label(Value_token) >  double_rules.expr [ _val = new_<Effect::SetEmpireMeter>(_a, _1) ]
                 ;
 
             give_empire_tech
@@ -54,7 +54,7 @@ namespace {
             set_empire_tech_progress
                 =    tok.SetEmpireTechProgress_
                 >    parse::detail::label(Name_token)     >  parse::string_value_ref() [ _a = _1 ]
-                >    parse::detail::label(Progress_token) >  parse::double_value_ref() [ _b = _1 ]
+                >    parse::detail::label(Progress_token) >  double_rules.expr [ _b = _1 ]
                 >    (
                         (parse::detail::label(Empire_token) > parse::int_value_ref() [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b, _1) ])
                      |  eps [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b) ]
@@ -108,15 +108,15 @@ namespace {
             set_overlay_texture
                 =    tok.SetOverlayTexture_
                 >    parse::detail::label(Name_token)    > tok.string [ _a = _1 ]
-                >    parse::detail::label(Size_token)    > parse::double_value_ref() [ _val = new_<Effect::SetOverlayTexture>(_a, _1) ]
+                >    parse::detail::label(Size_token)    > double_rules.expr [ _val = new_<Effect::SetOverlayTexture>(_a, _1) ]
                 ;
 
             string_and_string_ref
                 =    parse::detail::label(Tag_token)  >  tok.string [ _a = _1 ]
                 >    parse::detail::label(Data_token)
                 >  ( parse::int_value_ref()      [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<int>>(_1)) ]
-                   | parse::double_value_ref()   [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<double>>(_1)) ]
-                   | tok.string                  [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::Constant<std::string>>(_1)) ]
+                   | double_rules.expr   [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<double>>(_1)) ]
+                   | tok.string         [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::Constant<std::string>>(_1)) ]
                    | parse::string_value_ref()   [ _val = construct<string_and_string_ref_pair>(_a, _1) ]
                    )
                 ;
@@ -197,6 +197,7 @@ namespace {
             std::vector<string_and_string_ref_pair> ()
         > string_and_string_ref_vector_rule;
 
+        parse::double_parser_rules          double_rules;
         string_and_intref_and_intref_rule   set_empire_meter_1;
         string_and_intref_and_intref_rule   set_empire_meter_2;
         string_and_intref_and_intref_rule   give_empire_tech;

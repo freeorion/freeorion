@@ -80,8 +80,8 @@ namespace parse { namespace detail {
 
             common
                 =
-                (   label(BuildCost_token)  > parse::double_value_ref() [ _a = _1 ]
                 >   label(BuildTime_token)  > parse::flexible_int_value_ref() [ _b = _1 ]
+                (   label(BuildCost_token)  > double_rules.expr [ _a = _1 ]
                 >   producible                                          [ _c = _1 ]
                 >   parse::detail::tags_parser()(_d)
                 >   location(_e)
@@ -112,7 +112,7 @@ namespace parse { namespace detail {
                 =   tok.Special_
                 > (
                     label(Name_token)        > tok.string [ _b = _1 ]
-                >   label(Consumption_token) > parse::double_value_ref() [ _c = _1 ]
+                >   label(Consumption_token) > double_rules.expr [ _c = _1 ]
                 > -(label(Condition_token)   > parse::detail::condition_parser [ _d = _1 ])
                   )
                 [ insert(_r2, construct<special_consumable_map_value_type>(_b, construct<val_cond_pair>(_c, _d))) ]
@@ -122,7 +122,7 @@ namespace parse { namespace detail {
             consumable_meter
                 = (
                     parse::non_ship_part_meter_type_enum() [ _a = _1 ]
-                >   label(Consumption_token) > parse::double_value_ref() [ _c = _1 ]
+                >   label(Consumption_token) > double_rules.expr [ _c = _1 ]
                 > -(label(Condition_token)   > parse::detail::condition_parser [ _d = _1 ])
                   )
                 [ insert(_r1, construct<meter_consumable_map_value_type>(_a, construct<val_cond_pair>(_c, _d))) ]
@@ -170,6 +170,7 @@ namespace parse { namespace detail {
             void (std::set<std::string>&)
         > exclusions_rule;
 
+        double_parser_rules     double_rules;
         producible_rule         producible;
         location_rule           location;
         location_rule           enqueue_location;

@@ -109,9 +109,9 @@ namespace {
 
             special
                 =    special_prefix(_r1, _a, _b)
-                >  -(parse::detail::label(Stealth_token)            > parse::double_value_ref() [ _g = _1 ])
+                >  -(parse::detail::label(Stealth_token)            > double_rules.expr [ _g = _1 ])
                 >    spawn(_c, _d)
-                >  -(parse::detail::label(Capacity_token)           > parse::double_value_ref() [ _h = _1 ])
+                >  -(parse::detail::label(Capacity_token)           > double_rules.expr [ _h = _1 ])
                 >  -(parse::detail::label(Location_token)           > parse::detail::condition_parser [ _e = _1 ])
                 >  -(parse::detail::label(EffectsGroups_token)      > parse::detail::effects_group_parser() [ _f = _1 ])
                 >    parse::detail::label(Graphic_token)            > tok.string
@@ -162,6 +162,7 @@ namespace {
         > start_rule;
 
 
+        parse::double_parser_rules      double_rules;
         special_prefix_rule special_prefix;
         spawn_rule          spawn;
         special_rule        special;

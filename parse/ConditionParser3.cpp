@@ -33,14 +33,14 @@ namespace {
             has_special_capacity
                 =   (   tok.HasSpecialCapacity_
                 >       parse::detail::label(Name_token) >  parse::string_value_ref() [ _c = _1 ]
-                >     -(parse::detail::label(Low_token)  >  parse::double_value_ref() [ _a = _1 ] )
-                >     -(parse::detail::label(High_token) >  parse::double_value_ref() [ _b = _1 ] )
+                >     -(parse::detail::label(Low_token)  >  double_rules.expr [ _a = _1 ] )
+                >     -(parse::detail::label(High_token) >  double_rules.expr [ _b = _1 ] )
                     ) [ _val = new_<Condition::HasSpecial>(_c, _a, _b) ]
                 ;
 
             within_distance
                 =   tok.WithinDistance_
-                >   parse::detail::label(Distance_token)  > parse::double_value_ref() [ _a = _1 ]
+                >   parse::detail::label(Distance_token)  > double_rules.expr [ _a = _1 ]
                 >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::WithinDistance>(_a, _1) ]
                 ;
@@ -62,7 +62,7 @@ namespace {
 
             value_test_1
                 = ('('
-                >> parse::double_value_ref() [ _a = _1 ]
+                >> double_rules.expr [ _a = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
@@ -70,14 +70,14 @@ namespace {
                       | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _d = Condition::LESS_THAN ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                  ) > parse::double_value_ref() // assuming the trinary form already didn't pass, can expect a (double) here, though it might be an (int) casted to (double). By matching the (int) cases first, can assume that at least one of the parameters here is not an (int) casted to double.
+                  ) > double_rules.expr // assuming the trinary form already didn't pass, can expect a (double) here, though it might be an (int) casted to (double). By matching the (int) cases first, can assume that at least one of the parameters here is not an (int) casted to double.
                 [ _val = new_<Condition::ValueTest>(_a, _d, _1) ]
                 >> ')'
                 ;
 
             value_test_2
                 = ('('
-                >> parse::double_value_ref() [ _a = _1 ]
+                >> double_rules.expr [ _a = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
@@ -85,7 +85,7 @@ namespace {
                       | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _d = Condition::LESS_THAN ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                >> parse::double_value_ref() [ _b = _1 ]
+                >> double_rules.expr [ _b = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit(">=")   [ _e = Condition::GREATER_THAN_OR_EQUAL ]
@@ -93,7 +93,7 @@ namespace {
                       | lit("<=")   [ _e = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _e = Condition::LESS_THAN ]
                       | lit("!=")   [ _e = Condition::NOT_EQUAL ])
-                  ) >  parse::double_value_ref()    // if already seen (double) (operator) (double) (operator) can expect to see another (double). Some of these (double) may be (int) casted to double, though not all of them can be, as in that case, the (int) parser should have matched.
+                  ) >  double_rules.expr    // if already seen (double) (operator) (double) (operator) can expect to see another (double). Some of these (double) may be (int) casted to double, though not all of them can be, as in that case, the (int) parser should have matched.
                 [ _val = new_<Condition::ValueTest>(_a, _d, _b, _e, _1) ]
                 >  ')'
                 ;
@@ -189,7 +189,7 @@ namespace {
                     |   tok.ModeNumberOf_    [ _b = Condition::SORT_MODE ]
                     )
                 >   parse::detail::label(Number_token)    > parse::flexible_int_value_ref() [ _a = _1 ]
-                >   parse::detail::label(SortKey_token)   > parse::double_value_ref() [ _c = _1 ]
+                >   parse::detail::label(SortKey_token)   > double_rules.expr [ _c = _1 ]
                 >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::SortedNumberOf>(_a, _c, _b, _1) ]
                 ;
@@ -201,14 +201,14 @@ namespace {
 
             random
                 =   tok.Random_
-                >   parse::detail::label(Probability_token) > parse::double_value_ref()
+                >   parse::detail::label(Probability_token) > double_rules.expr
                 [ _val = new_<Condition::Chance>(_1) ]
                 ;
 
             owner_stockpile
                 =   tok.OwnerTradeStockpile_ [ _a = RE_TRADE ]
-                >   parse::detail::label(Low_token)  > parse::double_value_ref() [ _b = _1 ]
-                >   parse::detail::label(High_token) > parse::double_value_ref()
+                >   parse::detail::label(Low_token)  > double_rules.expr [ _b = _1 ]
+                >   parse::detail::label(High_token) > double_rules.expr
                 [ _val = new_<Condition::EmpireStockpileValue>(_a, _b, _1) ]
                 ;
 
@@ -315,6 +315,7 @@ namespace {
             >
         > resource_type_double_ref_rule;
 
+        parse::double_parser_rules              double_rules;
         double_ref_double_ref_rule              has_special_capacity;
         double_ref_double_ref_rule              within_distance;
         int_ref_int_ref_rule                    within_starlane_jumps;

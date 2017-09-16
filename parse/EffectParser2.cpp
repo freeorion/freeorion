@@ -34,7 +34,7 @@ namespace {
                     parse::set_non_ship_part_meter_type_enum() [ _a = _1 ]
                     >>  parse::detail::label(Value_token)
                 )
-                >   parse::double_value_ref() [ _c = _1 ]
+                >   double_rules.expr [ _c = _1 ]
                 >   (
                         (parse::detail::label(AccountingLabel_token) > tok.string [ _val = new_<Effect::SetMeter>(_a, _c, _1) ] )
                     |    eps [ _val = new_<Effect::SetMeter>(_a, _c) ]
@@ -42,17 +42,17 @@ namespace {
                 ;
 
             set_ship_part_meter
-                =    (parse::set_ship_part_meter_type_enum() [ _a = _1 ] >> parse::detail::label(PartName_token))   > parse::string_value_ref() [ _b = _1 ]
-                >    parse::detail::label(Value_token) >                    parse::double_value_ref() [ _val = new_<Effect::SetShipPartMeter>(_a, _b, _1) ]
+                =    (parse::set_ship_part_meter_type_enum() [ _a = _1 ] >>   parse::detail::label(PartName_token))   > parse::string_value_ref() [ _b = _1 ]
+                >    parse::detail::label(Value_token)      > double_rules.expr [ _val = new_<Effect::SetShipPartMeter>(_a, _b, _1) ]
                 ;
 
             set_empire_stockpile
                 =   tok.SetEmpireTradeStockpile_ [ _a = RE_TRADE ]
                 >   (
                         (   parse::detail::label(Empire_token) > parse::int_value_ref() [ _b = _1 ]
-                        >   parse::detail::label(Value_token)  > parse::double_value_ref() [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
+                        >   parse::detail::label(Value_token)  > double_rules.expr [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
                         )
-                        |  (parse::detail::label(Value_token)  > parse::double_value_ref() [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ])
+                        |  (parse::detail::label(Value_token)  > double_rules.expr [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ])
                     )
                 ;
 
@@ -89,11 +89,11 @@ namespace {
                 >    parse::detail::label(Species_token) >    parse::string_value_ref() [ _a = _1 ]
                 > (
                     (   parse::detail::label(Empire_token) >  parse::int_value_ref() [ _c = _1 ]
-                     >  parse::detail::label(Opinion_token) > parse::double_value_ref()
+                     >  parse::detail::label(Opinion_token) > double_rules.expr
                         [ _val = new_<Effect::SetSpeciesEmpireOpinion>(_a, _c, _1) ])
                    |
                     (   parse::detail::label(Species_token) > parse::string_value_ref() [ _b = _1 ]
-                    >   parse::detail::label(Opinion_token) > parse::double_value_ref()
+                    >   parse::detail::label(Opinion_token) > double_rules.expr
                         [ _val = new_<Effect::SetSpeciesSpeciesOpinion>(_a, _b, _1) ])
                    )
                 ;
@@ -193,6 +193,7 @@ namespace {
             >
         > string_string_int_rule;
 
+        parse::double_parser_rules          double_rules;
         set_meter_rule                      set_meter;
         set_meter_rule                      set_ship_part_meter;
         set_stockpile_or_vis_rule           set_empire_stockpile;
