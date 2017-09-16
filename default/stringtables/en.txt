@@ -2949,14 +2949,16 @@ Unused Production
 
 # %1% number of production points generated.
 # %2% number of production points currently neither used for production nor for stockpile.
-# %3% waste ratio of excess production (the other part goes is transferred to the imperial stockpile)
+# %3% stockpile yield of excess production (the other part is wasted)
 # %4% number of production points transferred to the imperial stockpile.
 # %5% number of production points currently neither used for production nor for stockpile.
 MAP_PROD_WASTED_TEXT
-'''Production Capacity: %1%
+'''Production Capacity : %1%
 Excess Production : %2%
-Excess Waste Ratio : %3%
+
+Stockpile Efficiency : %3%%%
 Excess to Stockpile : %4%
+
 Wasted Capacity : %5%
 
 Click here to open the production menu'''
