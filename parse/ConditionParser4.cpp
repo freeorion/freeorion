@@ -38,8 +38,8 @@ namespace {
             meter_value
                 =   (
                         parse::non_ship_part_meter_type_enum() [ _a = _1 ]
-                        >  -(parse::detail::label(Low_token)  > parse::double_value_ref() [ _b = _1 ])
-                        >  -(parse::detail::label(High_token) > parse::double_value_ref() [ _c = _1 ])
+                        >  -(parse::detail::label(Low_token)  > double_rules.expr [ _b = _1 ])
+                        >  -(parse::detail::label(High_token) > double_rules.expr [ _c = _1 ])
                     ) [ _val = new_<Condition::MeterValue>(_a, _b, _c) ]
                 ;
 
@@ -48,8 +48,8 @@ namespace {
                         tok.ShipPartMeter_
                         >   parse::detail::label(Part_token)    >   parse::string_value_ref() [ _e = _1 ]
                         >   parse::ship_part_meter_type_enum() [ _a = _1 ]
-                        >  -(parse::detail::label(Low_token)    >   parse::double_value_ref() [ _b = _1 ])
-                        >  -(parse::detail::label(High_token)   >   parse::double_value_ref() [ _c = _1 ])
+                        >  -(parse::detail::label(Low_token)    >   double_rules.expr [ _b = _1 ])
+                        >  -(parse::detail::label(High_token)   >   double_rules.expr [ _c = _1 ])
                     ) [ _val = new_<Condition::ShipPartMeterValue>(_e, _a, _b, _c) ]
                 ;
 
@@ -58,8 +58,8 @@ namespace {
                     (tok.EmpireMeter_
                     >>  parse::detail::label(Empire_token))   >   parse::int_value_ref() [ _b = _1 ]
                     >   parse::detail::label(Meter_token)    >   tok.string [ _a = _1 ]
-                    >  -(parse::detail::label(Low_token)     >   parse::double_value_ref() [ _c = _1 ])
-                    >  -(parse::detail::label(High_token)    >   parse::double_value_ref() [ _d = _1 ])
+                    >  -(parse::detail::label(Low_token)     >   double_rules.expr [ _c = _1 ])
+                    >  -(parse::detail::label(High_token)    >   double_rules.expr [ _d = _1 ])
                     ) [ _val = new_<Condition::EmpireMeterValue>(_b, _a, _c, _d) ]
                 ;
 
@@ -67,8 +67,8 @@ namespace {
                 =   (
                     (tok.EmpireMeter_
                     >>  parse::detail::label(Meter_token))    >   tok.string [ _a = _1 ]
-                    >  -(parse::detail::label(Low_token)     >   parse::double_value_ref() [ _c = _1 ])
-                    >  -(parse::detail::label(High_token)    >   parse::double_value_ref() [ _d = _1 ])
+                    >  -(parse::detail::label(Low_token)     >   double_rules.expr [ _c = _1 ])
+                    >  -(parse::detail::label(High_token)    >   double_rules.expr [ _d = _1 ])
                     ) [ _val = new_<Condition::EmpireMeterValue>(_a, _c, _d) ]
                 ;
 
@@ -115,6 +115,7 @@ namespace {
             >
         > empire_meter_value_rule;
 
+        parse::double_parser_rules      double_rules;
         meter_value_rule                meter_value;
         meter_value_rule                ship_part_meter_value;
         empire_meter_value_rule         empire_meter_value;

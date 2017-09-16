@@ -74,7 +74,7 @@ namespace {
     }
 
 
-    struct int_arithmetic_rules : public arithmetic_rules<int> {
+    struct int_arithmetic_rules : public parse::detail::arithmetic_rules<int> {
         int_arithmetic_rules() :
             arithmetic_rules("integer")
         {
@@ -110,7 +110,7 @@ namespace {
             qi::_val_type _val;
 
             castable_expr
-                = parse::double_value_ref() [ _val = new_<ValueRef::StaticCast<double, int>>(_1) ]
+                = double_rules.expr [ _val = new_<ValueRef::StaticCast<double, int>>(_1) ]
                 ;
 
             flexible_int
@@ -126,6 +126,7 @@ namespace {
 #endif
         }
 
+        parse::double_parser_rules      double_rules;
         parse::value_ref_rule<int> castable_expr;
         parse::value_ref_rule<int> flexible_int;
     };
@@ -137,16 +138,16 @@ namespace {
 }
 
 
-const variable_rule<int>& int_bound_variable()
+const parse::detail::variable_rule<int>& int_bound_variable()
 { return get_simple_int_parser_rules().bound_variable; }
 
-const variable_rule<int>& int_free_variable()
+const parse::detail::variable_rule<int>& int_free_variable()
 { return get_simple_int_parser_rules().free_variable; }
 
 const parse::value_ref_rule<int>& int_simple()
 { return get_simple_int_parser_rules().simple; }
 
-const statistic_rule<int>& int_var_statistic()
+const parse::detail::statistic_rule<int>& int_var_statistic()
 { return get_int_arithmetic_rules().statistic_expr; }
 
 

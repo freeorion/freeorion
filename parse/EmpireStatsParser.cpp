@@ -38,7 +38,7 @@ namespace {
             stat
                 =   tok.Statistic_
                 >   parse::detail::label(Name_token)    > tok.string [ _a = _1 ]
-                >   parse::detail::label(Value_token)   > parse::double_value_ref()
+                >   parse::detail::label(Value_token)   > double_rules.expr
                 [ _val = construct<std::pair<std::string, ValueRef::ValueRefBase<double>*>>(_a, _1) ]
                 ;
 
@@ -64,6 +64,7 @@ namespace {
             void (std::map<std::string, ValueRef::ValueRefBase<double>*>&)
         > start_rule;
 
+        parse::double_parser_rules      double_rules;
         stat_rule   stat;
         start_rule  start;
     };

@@ -93,7 +93,7 @@ namespace {
                      >>  parse::detail::label(Type_token)    >>  parse::string_value_ref() [ _a = _1 ]
                      >>  parse::detail::label(Size_token)
                      )
-                     >   parse::double_value_ref() [ _b = _1 ]
+                     >   double_rules.expr [ _b = _1 ]
                      > -(parse::detail::label(Name_token)    >   parse::string_value_ref() [ _d = _1 ])
                      > -(parse::detail::label(Effects_token)
                          >
@@ -110,9 +110,9 @@ namespace {
                      >>  parse::detail::label(Type_token)    >>  parse::string_value_ref() [ _a = _1 ]
                      >>  parse::detail::label(X_token)
                      )
-                     >   parse::double_value_ref() [ _b = _1 ]
-                     >   parse::detail::label(Y_token)       >   parse::double_value_ref() [ _c = _1 ]
-                     >   parse::detail::label(Size_token)    >   parse::double_value_ref() [ _e = _1 ]
+                     >   double_rules.expr [ _b = _1 ]
+                     >   parse::detail::label(Y_token)       >   double_rules.expr [ _c = _1 ]
+                     >   parse::detail::label(Size_token)    >   double_rules.expr [ _e = _1 ]
                      > -(parse::detail::label(Name_token)    >   parse::string_value_ref() [ _d = _1 ])
                      > -(parse::detail::label(Effects_token)
                          >
@@ -129,8 +129,8 @@ namespace {
                      >>  parse::detail::label(Type_token)
                      )
                      >   parse::detail::star_type_rules().expr [ _a = _1 ]
-                     >   parse::detail::label(X_token)       >   parse::double_value_ref()    [ _b = _1 ]
-                     >   parse::detail::label(Y_token)       >   parse::double_value_ref()    [ _c = _1 ]
+                     >   parse::detail::label(X_token)       >   double_rules.expr    [ _b = _1 ]
+                     >   parse::detail::label(Y_token)       >   double_rules.expr    [ _c = _1 ]
                      > -(parse::detail::label(Name_token)    >   parse::string_value_ref()    [ _d = _1 ])
                      > -(parse::detail::label(Effects_token)
                          >
@@ -146,8 +146,8 @@ namespace {
                 =   ((       tok.CreateSystem_
                      >>  parse::detail::label(X_token)
                      )
-                     >   parse::double_value_ref() [ _b = _1 ]
-                     >   parse::detail::label(Y_token)       >   parse::double_value_ref() [ _c = _1 ]
+                     >   double_rules.expr [ _b = _1 ]
+                     >   parse::detail::label(Y_token)       >   double_rules.expr [ _c = _1 ]
                      > -(parse::detail::label(Name_token)    >   parse::string_value_ref() [ _d = _1 ])
                      > -(parse::detail::label(Effects_token)
                          >
@@ -245,6 +245,7 @@ namespace {
             >
         > create_field_rule;
 
+        parse::double_parser_rules      double_rules;
         create_planet_rule              create_planet;
         create_building_rule            create_building;
         create_ship_rule                create_ship_1;

@@ -111,7 +111,7 @@ namespace {
             tech_info
                 =   tech_info_name_desc(_a, _b, _c)
                 >   parse::detail::label(Category_token)      > tok.string      [ _e = _1 ]
-                >   parse::detail::label(ResearchCost_token)  > parse::double_value_ref() [ _f = _1 ]
+                >   parse::detail::label(ResearchCost_token)  > double_rules.expr [ _f = _1 ]
                 >   parse::detail::label(ResearchTurns_token) > parse::flexible_int_value_ref() [ _g = _1 ]
                 >  (    tok.Unresearchable_ [ _h = false ]
                     |   tok.Researchable_ [ _h = true ]
@@ -228,6 +228,7 @@ namespace {
             void (TechManager::TechContainer&)
         > start_rule;
 
+        parse::double_parser_rules  double_rules;
         tech_info_name_desc_rule    tech_info_name_desc;
         tech_info_rule              tech_info;
         prerequisites_rule          prerequisites;

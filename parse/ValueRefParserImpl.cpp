@@ -1,9 +1,9 @@
 #include "ValueRefParserImpl.h"
 
-const reference_token_rule variable_scope(const parse::lexer& tok) {
+const parse::detail::reference_token_rule variable_scope(const parse::lexer& tok) {
     boost::spirit::qi::_val_type _val;
 
-    reference_token_rule variable_scope;
+    parse::detail::reference_token_rule variable_scope;
     variable_scope
         =   tok.Source_         [ _val = ValueRef::SOURCE_REFERENCE ]
         |   tok.Target_         [ _val = ValueRef::EFFECT_TARGET_REFERENCE ]
@@ -16,8 +16,8 @@ const reference_token_rule variable_scope(const parse::lexer& tok) {
     return variable_scope;
 }
 
-const name_token_rule container_type(const parse::lexer& tok) {
-    name_token_rule container_type;
+const parse::detail::name_token_rule container_type(const parse::lexer& tok) {
+    parse::detail::name_token_rule container_type;
     container_type
         =   tok.Planet_
         |   tok.System_
