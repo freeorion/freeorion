@@ -9,6 +9,7 @@
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
 #include "../util/CheckSums.h"
+#include "../util/ScopedTimer.h"
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -16,6 +17,8 @@ namespace {
     class SpecialManager {
     public:
         SpecialManager() {
+            ScopedTimer timer("SpecialManager Init", true, std::chrono::milliseconds(1));
+
             try {
                 parse::specials(m_specials);
             } catch (const std::exception& e) {

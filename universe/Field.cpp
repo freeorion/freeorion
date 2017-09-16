@@ -12,6 +12,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 #include "../util/CheckSums.h"
+#include "../util/ScopedTimer.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -238,6 +239,8 @@ FieldTypeManager* FieldTypeManager::s_instance = nullptr;
 FieldTypeManager::FieldTypeManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one FieldTypeManager.");
+
+    ScopedTimer timer("FieldTypeManager Init", true, std::chrono::milliseconds(1));
 
     try {
         parse::fields(m_field_types);

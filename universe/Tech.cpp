@@ -9,6 +9,7 @@
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/CheckSums.h"
+#include "../util/ScopedTimer.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "ValueRef.h"
@@ -352,6 +353,8 @@ TechManager::category_iterator TechManager::category_end(const std::string& name
 TechManager::TechManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one TechManager.");
+
+    ScopedTimer timer("TechManager Init", true, std::chrono::milliseconds(1));
 
     std::set<std::string> categories_seen_in_techs;
 

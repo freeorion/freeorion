@@ -5,6 +5,7 @@
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/CheckSums.h"
+#include "../util/ScopedTimer.h"
 #include "../parse/Parse.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
@@ -186,6 +187,8 @@ PartTypeManager* PartTypeManager::s_instance = nullptr;
 PartTypeManager::PartTypeManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one PartTypeManager.");
+
+    ScopedTimer timer("PartTypeManager Init", true, std::chrono::milliseconds(1));
 
     try {
         parse::ship_parts(m_parts);
@@ -637,6 +640,8 @@ HullTypeManager* HullTypeManager::s_instance = nullptr;
 HullTypeManager::HullTypeManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one HullTypeManager.");
+
+    ScopedTimer timer("HullTypeManager Init", true, std::chrono::milliseconds(1));
 
     try {
         parse::ship_hulls(m_hulls);
@@ -1359,6 +1364,8 @@ namespace {
 PredefinedShipDesignManager::PredefinedShipDesignManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one PredefinedShipDesignManager.");
+
+    ScopedTimer timer("PredefinedShipDesignManager Init", true, std::chrono::milliseconds(1));
 
     DebugLogger() << "Initializing PredefinedShipDesignManager";
 

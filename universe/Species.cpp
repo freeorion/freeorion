@@ -13,6 +13,7 @@
 #include "../util/Random.h"
 #include "../util/AppInterface.h"
 #include "../util/CheckSums.h"
+#include "../util/ScopedTimer.h"
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -354,6 +355,8 @@ bool SpeciesManager::NativeSpecies::operator()(
 SpeciesManager::SpeciesManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one SpeciesManager.");
+
+    ScopedTimer timer("SpeciesManager Init", true, std::chrono::milliseconds(1));
 
     try {
         parse::species(m_species);

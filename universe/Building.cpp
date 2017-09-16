@@ -15,6 +15,7 @@
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/CheckSums.h"
+#include "../util/ScopedTimer.h"
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -348,6 +349,8 @@ BuildingTypeManager* BuildingTypeManager::s_instance = nullptr;
 BuildingTypeManager::BuildingTypeManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one BuildingTypeManager.");
+
+    ScopedTimer timer("BuildingTypeManager Init", true, std::chrono::milliseconds(1));
 
     TraceLogger() << "BuildingTypeManager::BuildingTypeManager() about to parse buildings.";
 
