@@ -1,7 +1,9 @@
 import random
+
 import freeorion as fo
-import options
+
 import names
+import options
 
 
 # for starname modifiers

@@ -2,8 +2,10 @@ import random
 from collections import defaultdict
 
 import freeorion as fo
+
 import universe_statistics
 import universe_tables
+
 
 # REPEAT_RATE along with calculate_number_of_specials_to_place determines if there are multiple
 # specials in a single location.  There can only be at most 4 specials in a single location.

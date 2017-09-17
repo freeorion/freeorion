@@ -1,8 +1,10 @@
-import sys
 import random
+import sys
+
 import freeorion as fo
-import util
+
 import universe_tables as tables
+import util
 
 
 # tuple of all valid planet sizes (with "no world")

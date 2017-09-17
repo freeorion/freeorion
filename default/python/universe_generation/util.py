@@ -1,8 +1,7 @@
-import sys
 import math
 import random
+import sys
 from hashlib import md5
-
 
 error_list = []
 
