@@ -1,7 +1,7 @@
 #include "ValueRefParserImpl.h"
 
 
-parse::detail::simple_double_parser_rules::simple_double_parser_rules() :
+parse::detail::simple_double_parser_rules::simple_double_parser_rules(const parse::lexer& tok) :
     simple_variable_rules("double")
 {
     namespace phoenix = boost::phoenix;
@@ -11,8 +11,6 @@ parse::detail::simple_double_parser_rules::simple_double_parser_rules() :
 
     qi::_1_type _1;
     qi::_val_type _val;
-
-    const parse::lexer& tok = parse::lexer::instance();
 
     bound_variable_name
         =   tok.Industry_
@@ -64,8 +62,9 @@ parse::detail::simple_double_parser_rules::simple_double_parser_rules() :
         ;
 }
 
-parse::double_parser_rules::double_parser_rules() :
-    arithmetic_rules("real number")
+parse::double_parser_rules::double_parser_rules(const parse::lexer& tok) :
+    arithmetic_rules("real number"),
+    simple_double_rules(tok)
 {
     namespace phoenix = boost::phoenix;
     namespace qi = boost::spirit::qi;
@@ -76,7 +75,6 @@ parse::double_parser_rules::double_parser_rules() :
     qi::_1_type _1;
     qi::_val_type _val;
 
-    const parse::lexer& tok = parse::lexer::instance();
     const parse::value_ref_rule<double>& simple = simple_double_rules.simple;
 
     int_constant_cast

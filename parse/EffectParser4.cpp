@@ -13,7 +13,9 @@ namespace phoenix = boost::phoenix;
 
 namespace {
     struct effect_parser_rules_4 {
-        effect_parser_rules_4() {
+        effect_parser_rules_4(const parse::lexer& tok) :
+            double_rules(tok)
+        {
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_b_type _b;
@@ -26,8 +28,6 @@ namespace {
             using phoenix::new_;
             using phoenix::construct;
             using phoenix::push_back;
-
-            const parse::lexer& tok = parse::lexer::instance();
 
             create_planet
                 =   (       tok.CreatePlanet_
@@ -261,7 +261,7 @@ namespace {
 
 namespace parse { namespace detail {
     const effect_parser_rule& effect_parser_4() {
-        static effect_parser_rules_4 retval;
+        static effect_parser_rules_4 retval(parse::lexer::instance());
         return retval.start;
     }
 } }

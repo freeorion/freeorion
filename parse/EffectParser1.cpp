@@ -15,7 +15,9 @@ namespace phoenix = boost::phoenix;
 
 namespace {
     struct effect_parser_rules_1 {
-        effect_parser_rules_1() {
+        effect_parser_rules_1(const parse::lexer& tok) :
+            double_rules(tok)
+        {
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_b_type _b;
@@ -28,8 +30,6 @@ namespace {
             using phoenix::new_;
             using phoenix::construct;
             using phoenix::push_back;
-
-            const parse::lexer& tok = parse::lexer::instance();
 
             set_empire_meter_1
                 =    (tok.SetEmpireMeter_ >>   parse::detail::label(Empire_token))
@@ -213,7 +213,7 @@ namespace {
 
 namespace parse { namespace detail {
     const effect_parser_rule& effect_parser_1() {
-        static effect_parser_rules_1 retval;
+        static effect_parser_rules_1 retval(parse::lexer::instance());
         return retval.start;
     }
 } }

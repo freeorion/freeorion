@@ -62,7 +62,9 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules() :
         ;
 }
 
-parse::castable_as_int_parser_rules::castable_as_int_parser_rules() {
+parse::castable_as_int_parser_rules::castable_as_int_parser_rules() :
+    double_rules(parse::lexer::instance())
+{
     namespace phoenix = boost::phoenix;
     namespace qi = boost::spirit::qi;
 
