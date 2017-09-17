@@ -65,7 +65,8 @@ namespace {
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_special_, insert_special, 2)
 
     struct rules {
-        rules(const std::string& filename,
+        rules(const parse::lexer& tok,
+              const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
             double_rules(parse::lexer::instance())
         {
@@ -89,8 +90,6 @@ namespace {
             qi::_r2_type _r2;
             qi::_r3_type _r3;
             qi::eps_type eps;
-
-            const parse::lexer& tok = parse::lexer::instance();
 
             special_prefix
                 =    tok.Special_

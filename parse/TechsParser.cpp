@@ -71,7 +71,8 @@ namespace {
 
 
     struct rules {
-        rules(const std::string& filename,
+        rules(const parse::lexer& tok,
+              const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
             castable_int_rules(parse::lexer::instance()),
             double_rules(parse::lexer::instance())
@@ -101,8 +102,6 @@ namespace {
             qi::_r3_type _r3;
             qi::_val_type _val;
             qi::eps_type eps;
-
-            const parse::lexer& tok = parse::lexer::instance();
 
             tech_info_name_desc
                 =   parse::detail::label(Name_token)              > tok.string [ _r1 = _1 ]

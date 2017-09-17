@@ -66,7 +66,8 @@ namespace {
     BOOST_PHOENIX_ADAPT_FUNCTION(boost::uuids::uuid, parse_uuid_, parse_uuid, 1)
 
     struct rules {
-        rules(const std::string& filename,
+        rules(const parse::lexer& tok,
+              const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
             namespace phoenix = boost::phoenix;
@@ -93,8 +94,6 @@ namespace {
             qi::_r4_type _r4;
             qi::_r5_type _r5;
             qi::eps_type eps;
-
-            const parse::lexer& tok = parse::lexer::instance();
 
             design_prefix
                 =    tok.ShipDesign_
@@ -166,8 +165,9 @@ namespace {
     };
 
     struct manifest_rules {
-        manifest_rules(const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+        manifest_rules(const parse::lexer& tok,
+                       const std::string& filename,
+                       const parse::text_iterator& first, const parse::text_iterator& last)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -179,8 +179,6 @@ namespace {
             qi::_3_type _3;
             qi::_4_type _4;
             qi::_r1_type _r1;
-
-            const parse::lexer& tok = parse::lexer::instance();
 
             design_manifest
                 =    tok.ShipDesignOrdering_

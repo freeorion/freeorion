@@ -37,7 +37,8 @@ namespace {
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_fieldtype_, insert_fieldtype, 7)
 
     struct rules {
-        rules(const std::string& filename,
+        rules(const parse::lexer& tok,
+              const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
             namespace phoenix = boost::phoenix;
@@ -54,8 +55,6 @@ namespace {
             qi::_e_type _e;
             qi::_pass_type _pass;
             qi::_r1_type _r1;
-
-            const parse::lexer& tok = parse::lexer::instance();
 
             field
                 =   tok.FieldType_

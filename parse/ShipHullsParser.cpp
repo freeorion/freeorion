@@ -45,7 +45,8 @@ namespace {
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_hulltype_, insert_hulltype, 7)
 
     struct rules {
-        rules(const std::string& filename,
+        rules(const parse::lexer& tok,
+              const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
             namespace phoenix = boost::phoenix;
@@ -69,8 +70,6 @@ namespace {
             qi::_val_type _val;
             qi::eps_type eps;
             qi::lit_type lit;
-
-            const parse::lexer& tok = parse::lexer::instance();
 
             hull_stats
                 =   parse::detail::label(Speed_token)       >   parse::detail::double_ [ _a = _1 ]

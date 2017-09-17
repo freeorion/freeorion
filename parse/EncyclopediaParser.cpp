@@ -28,7 +28,8 @@ namespace {
     const boost::phoenix::function<insert_> insert;
 
     struct rules {
-        rules(const std::string& filename,
+        rules(const parse::lexer& tok,
+              const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
             namespace phoenix = boost::phoenix;
@@ -45,8 +46,6 @@ namespace {
             qi::_c_type _c;
             qi::_d_type _d;
             qi::_r1_type _r1;
-
-            const parse::lexer& tok = parse::lexer::instance();
 
             article
                 =    tok.Article_
