@@ -8,6 +8,7 @@
 
 #include "Tokens.h"
 
+#include <unordered_map>
 
 /** \namespace parse \brief The namespace that encloses the script file lexer
     and parser. */
@@ -88,7 +89,7 @@ struct lexer :
     static const char* string_regex;
 
 private:
-    std::map<const char*, boost::spirit::lex::token_def<const char*>*> m_name_tokens;
+    std::unordered_map<const char*, boost::spirit::lex::token_def<const char*>*> m_name_tokens;
 };
 
 /** The type of iterator passed to the script file parser by the script file
