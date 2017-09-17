@@ -61,24 +61,19 @@ std::ostream& operator<<(std::ostream& os, const Message& msg) {
 ////////////////////////////////////////////////
 Message::Message() :
     m_type(UNDEFINED),
-    m_synchronous_response(false),
     m_message_size(0),
     m_message_text()
 {}
 
 Message::Message(MessageType type,
-                 const std::string& text, bool synchronous_response/* = false*/) :
+                 const std::string& text) :
     m_type(type),
-    m_synchronous_response(synchronous_response),
     m_message_size(text.size()),
     m_message_text(new char[text.size()])
 { std::copy(text.begin(), text.end(), m_message_text.get()); }
 
 Message::MessageType Message::Type() const
 { return m_type; }
-
-bool Message::SynchronousResponse() const
-{ return m_synchronous_response; }
 
 std::size_t Message::Size() const
 { return m_message_size; }
@@ -99,7 +94,6 @@ char* Message::Data()
 
 void Message::Swap(Message& rhs) {
     std::swap(m_type, rhs.m_type);
-    std::swap(m_synchronous_response, rhs.m_synchronous_response);
     std::swap(m_message_size, rhs.m_message_size);
     std::swap(m_message_text, rhs.m_message_text);
 }
@@ -118,13 +112,11 @@ void swap(Message& lhs, Message& rhs)
 
 void BufferToHeader(const Message::HeaderBuffer& buffer, Message& message) {
     message.m_type = static_cast<Message::MessageType>(buffer[Message::Parts::TYPE]);
-    message.m_synchronous_response = (buffer[Message::Parts::RESPONSE] != 0);
     message.m_message_size = buffer[Message::Parts::SIZE];
 }
 
 void HeaderToBuffer(const Message& message, Message::HeaderBuffer& buffer) {
     buffer[Message::Parts::TYPE] = message.Type();
-    buffer[Message::Parts::RESPONSE] = message.SynchronousResponse();
     buffer[Message::Parts::SIZE] = message.Size();
 }
 
@@ -480,8 +472,8 @@ Message ClientSaveDataMessage(const OrderSet& orders) {
 Message HostSaveGameInitiateMessage(const std::string& filename)
 { return Message(Message::SAVE_GAME_INITIATE, filename); }
 
-Message ServerSaveGameDataRequestMessage(bool synchronous_response) {
-    return Message(Message::SAVE_GAME_DATA_REQUEST, DUMMY_EMPTY_MESSAGE, synchronous_response);
+Message ServerSaveGameDataRequestMessage() {
+    return Message(Message::SAVE_GAME_DATA_REQUEST, DUMMY_EMPTY_MESSAGE);
 }
 
 Message ServerSaveGameCompleteMessage(const std::string& save_filename, int bytes_written) {
@@ -553,7 +545,7 @@ Message DispatchSavePreviewsMessage(const PreviewInformation& previews) {
         freeorion_xml_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(previews);
     }
-    return Message(Message::DISPATCH_SAVE_PREVIEWS, os.str(), true);
+    return Message(Message::DISPATCH_SAVE_PREVIEWS, os.str());
 }
 
 Message RequestCombatLogsMessage(const std::vector<int>& ids) {
@@ -567,7 +559,7 @@ Message DispatchCombatLogsMessage(const std::vector<std::pair<int, const CombatL
     std::ostringstream os;
     freeorion_xml_oarchive oa(os);
     oa << BOOST_SERIALIZATION_NVP(logs);
-    return Message(Message::DISPATCH_COMBAT_LOGS, os.str(), true);
+    return Message(Message::DISPATCH_COMBAT_LOGS, os.str());
 }
 
 Message LoggerConfigMessage(int sender, const std::set<std::tuple<std::string, std::string, LogLevel>>& options) {
@@ -583,7 +575,7 @@ Message LoggerConfigMessage(int sender, const std::set<std::tuple<std::string, s
         oa << BOOST_SERIALIZATION_NVP(name);
         oa << BOOST_SERIALIZATION_NVP(value);
     }
-    return Message(Message::LOGGER_CONFIG, os.str(), true);
+    return Message(Message::LOGGER_CONFIG, os.str());
 }
 
 ////////////////////////////////////////////////

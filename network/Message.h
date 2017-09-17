@@ -49,7 +49,7 @@ namespace Moderator {
   * misbehave as well.) */
 class FO_COMMON_API Message {
 public:
-    enum Parts : size_t {TYPE = 0, RESPONSE, SIZE, Parts_Count};
+    enum Parts : size_t {TYPE = 0, SIZE, Parts_Count};
 
     typedef std::array<int, Parts::Parts_Count> HeaderBuffer;
 
@@ -126,13 +126,11 @@ public:
     Message();
 
     Message(MessageType message_type,
-            const std::string& text,
-            bool synchronous_response = false);
+            const std::string& text);
     //@}
 
     /** \name Accessors */ //@{
     MessageType Type() const;               ///< Returns the type of the message.
-    bool        SynchronousResponse() const;///< Returns true if this message is in reponse to a synchronous message
     std::size_t Size() const;               ///< Returns the size of the underlying buffer.
     const char* Data() const;               ///< Returns the underlying buffer.
     std::string Text() const;               ///< Returns the underlying buffer as a std::string.
@@ -146,7 +144,6 @@ public:
 
 private:
     MessageType   m_type;
-    bool          m_synchronous_response;
     int           m_message_size;
 
     boost::shared_array<char> m_message_text;
@@ -269,7 +266,7 @@ FO_COMMON_API Message HostSaveGameInitiateMessage(const std::string& filename);
 /** creates a SAVE_GAME_DATA_REQUEST data request message.  This message should
     only be sent by the server to get game data from a client, or to respond to
     the host player requesting a save be initiated. */
-FO_COMMON_API Message ServerSaveGameDataRequestMessage(bool synchronous_response);
+FO_COMMON_API Message ServerSaveGameDataRequestMessage();
 
 /** creates a SAVE_GAME_COMPLETE complete message.  This message should only be
     sent by the server to inform clients that the last initiated save has been

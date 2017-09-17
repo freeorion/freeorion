@@ -1847,7 +1847,7 @@ WaitingForSaveData::WaitingForSaveData(my_context c) :
     {
         PlayerConnectionPtr player = *player_it;
         int player_id = player->PlayerID();
-        player->SendMessage(ServerSaveGameDataRequestMessage(false));
+        player->SendMessage(ServerSaveGameDataRequestMessage());
         m_needed_reponses.insert(player_id);
     }
 }

@@ -16,7 +16,7 @@ class Message;
 class FO_COMMON_API MessageQueue
 {
 public:
-    MessageQueue(boost::mutex& monitor, const bool& rx_connected);
+    MessageQueue(boost::mutex& monitor);
 
     /** Returns true iff the queue is empty. */
     bool Empty() const;
@@ -33,19 +33,9 @@ public:
     /** Return and remove the first message in the queue. */
     boost::optional<Message> PopFront();
 
-    /** Indicates that no more new message will be added to the queue. This causes any pending
-        GetFirstSynchronousMessage() to return boost::none.*/
-    void RxDisconnected();
-
-    /** Return and remove the first synchronous repsonse message from the queue or return
-        boost::none if there is no synchronous message and the queue has stopped growwing. */
-    boost::optional<Message> GetFirstSynchronousMessage();
-
 private:
     std::list<Message> m_queue;
-    boost::condition   m_have_synchronous_response;
     boost::mutex&      m_monitor;
-    const bool&        m_rx_connected;
 };
 
 
