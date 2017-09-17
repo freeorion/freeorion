@@ -338,6 +338,12 @@ Porteur d'Escorte
 SD_CARRIER_DESC
 Porteur conçu pour défendre les autres vaisseaux armés via le lancement d'escadrons d'Intercepteurs.
 
+SD_CARRIER_2
+Porteur de Flotte
+
+SD_CARRIER_2_DESC
+Porteur conçu pour prendre part aux actions offensives de flotte, à l'aide d'escadrons de Bombardiers et de Canons Mitrailleurs.
+
 SD_SCOUT
 Éclaireur
 
@@ -1599,7 +1605,10 @@ OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE
 Ajuste la taille des icônes de la barre d'affichage des technologies dans la Fenêtre Recherche.
 
 OPTIONS_DB_SAVE_DIR
-L'adresse du répertoire où sauvegarder (et d'où charger) les parties.
+L'adresse du répertoire où sauvegarder et à partir duquel charger les parties.
+
+OPTIONS_DB_SERVER_SAVE_DIR
+Le répertoire public pour les parties sauvegardées sur le serveur.
 
 OPTIONS_DB_RESOURCE_DIR
 L'adresse du répertoire où sont localisées les ressources du jeu (fichiers exécutables et fichiers de données).
@@ -2704,6 +2713,9 @@ Fichiers de ressources
 OPTIONS_FOLDER_SAVE
 Fichiers de sauvegarde
 
+OPTIONS_SERVER_FOLDER_SAVE
+Fichiers de sauvegarde Serveur
+
 OPTIONS_LANGUAGE_FILE
 Fichiers de langue
 
@@ -3425,6 +3437,9 @@ Créer une Flotte pour chaque type d'astronef
 # Remove old visibility information from the client empire's saved information
 FW_ORDER_DISMISS_SENSOR_GHOST
 Supprimer les données obsolètes de Détection
+
+FW_ORDER_DISMISS_SENSOR_GHOST_ALL
+Supprimer toutes les données obsolètes de Détection
 
 ORDER_SHIP_SCRAP
 Envoyer l'astronef à la casse
@@ -10265,6 +10280,9 @@ Donne la victoire!
 SHIP_PART_UNLOCK_SHORT_DESC
 Débloque un équipement d'astronef
 
+SHIP_FUEL_IMPROVE_SHORT_DESC
+Améliore un réservoir d'astronef
+
 SHIP_WEAPON_UNLOCK_SHORT_DESC
 Débloque un armement d'astronef
 
@@ -11025,13 +11043,19 @@ SHP_DEUTERIUM_TANK
 Réservoir de Deutérium
 
 SHP_DEUTERIUM_TANK_DESC
-Augmente la capacité en [[metertype METER_FUEL]] d'un astronef. Débloque l'équipement [[shippart FU_RAMSCOOP]] pour les astronefs.
+Légère amélioration de chaque [[shippart FU_BASIC_TANK]] d'un astronef. Augmente la capacité en [[metertype METER_FUEL]] d'un astronef et par conséquent le nombre maximum de Voies spatiales pouvant être parcourues avec un réservoir plein.
+
+SHP_DEUTERIUM_TANK_EFFECT
+Technologie Réservoir de Deutérium
 
 SHP_ANTIMATTER_TANK
 Réservoir d'Anti-Matière
 
 SHP_ANTIMATTER_TANK_DESC
-Augmente la capacité en [[metertype METER_FUEL]] d'un astronef.
+Notable amélioration de chaque [[shippart FU_BASIC_TANK]] d'un astronef. Augmente la capacité en [[metertype METER_FUEL]] d'un astronef et par conséquent le nombre maximum de Voies spatiales pouvant être parcourues avec un réservoir plein.
+
+SHP_ANTIMATTER_TANK_EFFECT
+Technologie Réservoir d'Anti-Matière
 
 SHP_ZERO_POINT
 Générateur Zero-Point de Carburant
@@ -12277,7 +12301,7 @@ FU_BASIC_TANK
 Réservoir Additionnel de Carburant
 
 FU_BASIC_TANK_DESC
-Augmente la capacité en [[metertype METER_FUEL]] d'un astronef, permettant un voyage supplémentaire sur une Voie spatiale.
+Augmente la capacité en [[metertype METER_FUEL]] d'un astronef, permettant un voyage supplémentaire sur une Voie spatiale. Des technologies plus avancées augmenteront le nombre de voyages supplémentaires pour chaque réservoir de carburant équipant un astronef. 
 
 FU_ZERO_FUEL
 Générateur Zero-Point de Carburant
