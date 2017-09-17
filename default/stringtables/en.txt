@@ -1046,6 +1046,12 @@ Enable Experimentors
 RULE_ENABLE_EXPERIMENTORS_DESC
 Enables Experimentors during galaxy generation
 
+RULE_ENABLE_SUPER_TESTER
+Enable Super-Tester Takeover
+
+RULE_ENABLE_SUPER_TESTER_DESC
+Enables Super-Tester Takeover building.
+
 RULE_TEST_INT
 Test Integer
 
