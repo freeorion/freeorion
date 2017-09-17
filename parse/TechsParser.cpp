@@ -73,6 +73,7 @@ namespace {
     struct rules {
         rules(const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
+            castable_int_rules(parse::lexer::instance()),
             double_rules(parse::lexer::instance())
         {
             namespace phoenix = boost::phoenix;

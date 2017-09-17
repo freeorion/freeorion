@@ -64,6 +64,8 @@ parse::detail::simple_double_parser_rules::simple_double_parser_rules(const pars
 
 parse::double_parser_rules::double_parser_rules(const parse::lexer& tok) :
     arithmetic_rules("real number"),
+    int_rules(tok),
+    simple_int_rules(tok),
     simple_double_rules(tok)
 {
     namespace phoenix = boost::phoenix;

@@ -1,7 +1,7 @@
 #include "ValueRefParserImpl.h"
 
 
-parse::detail::simple_int_parser_rules::simple_int_parser_rules() :
+parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lexer& tok) :
     simple_variable_rules("integer")
 {
     namespace phoenix = boost::phoenix;
@@ -11,8 +11,6 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules() :
 
     qi::_1_type _1;
     qi::_val_type _val;
-
-    const parse::lexer& tok = parse::lexer::instance();
 
     // TODO: Should we apply elements of this list only to certain
     // objects? For example, if one writes "Source.Planet.",
@@ -62,8 +60,9 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules() :
         ;
 }
 
-parse::castable_as_int_parser_rules::castable_as_int_parser_rules() :
-    double_rules(parse::lexer::instance())
+parse::castable_as_int_parser_rules::castable_as_int_parser_rules(const parse::lexer& tok) :
+    int_rules(tok),
+    double_rules(tok)
 {
     namespace phoenix = boost::phoenix;
     namespace qi = boost::spirit::qi;
@@ -90,8 +89,9 @@ parse::castable_as_int_parser_rules::castable_as_int_parser_rules() :
 #endif
 }
 
-parse::int_arithmetic_rules::int_arithmetic_rules() :
-    arithmetic_rules("integer")
+parse::int_arithmetic_rules::int_arithmetic_rules(const parse::lexer& tok) :
+    arithmetic_rules("integer"),
+    simple_int_rules(tok)
 {
     const parse::value_ref_rule<int>& simple = simple_int_rules.simple;
 

@@ -21,6 +21,7 @@ namespace parse { namespace detail {
 
 
         rules(const parse::lexer& tok) :
+            castable_int_rules(tok),
             double_rules(tok)
         {
             namespace qi = boost::spirit::qi;

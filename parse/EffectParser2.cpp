@@ -16,6 +16,7 @@ namespace phoenix = boost::phoenix;
 namespace {
     struct effect_parser_rules_2 {
         effect_parser_rules_2(const parse::lexer& tok) :
+            int_rules(tok),
             double_rules(tok)
         {
             qi::_1_type _1;

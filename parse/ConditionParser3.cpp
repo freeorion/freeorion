@@ -14,6 +14,8 @@ namespace phoenix = boost::phoenix;
 namespace {
     struct condition_parser_rules_3 {
         condition_parser_rules_3(const parse::lexer& tok) :
+            int_rules(tok),
+            castable_int_rules(tok),
             double_rules(tok)
         {
             qi::_1_type _1;

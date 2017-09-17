@@ -22,6 +22,7 @@ namespace std {
 namespace {
     struct condition_parser_rules_4 {
         condition_parser_rules_4(const parse::lexer& tok) :
+            int_rules(tok),
             double_rules(tok)
         {
             qi::_1_type _1;

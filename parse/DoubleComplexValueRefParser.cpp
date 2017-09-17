@@ -3,7 +3,10 @@
 
 namespace parse {
     struct double_complex_parser_rules {
-        double_complex_parser_rules() {
+        double_complex_parser_rules(const parse::lexer& tok) :
+            simple_int_rules(tok),
+            castable_int_rules(tok)
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -21,8 +24,6 @@ namespace parse {
 
             static const std::string TOK_SPECIES_EMPIRE_OPINION{"SpeciesEmpireOpinion"};
             static const std::string TOK_SPECIES_SPECIES_OPINION{"SpeciesSpeciesOpinion"};
-
-            const parse::lexer& tok = parse::lexer::instance();
 
             const parse::value_ref_rule<int>& simple_int = simple_int_rules.simple;
 
@@ -137,7 +138,7 @@ namespace parse {
     };
 
     namespace detail {
-        double_complex_parser_rules double_complex_parser;
+    double_complex_parser_rules double_complex_parser(parse::lexer::instance());
     }
 }
 

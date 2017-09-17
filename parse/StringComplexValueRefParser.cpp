@@ -3,7 +3,9 @@
 
 namespace parse {
     struct string_complex_parser_rules {
-        string_complex_parser_rules() {
+        string_complex_parser_rules(const parse::lexer& tok) :
+            simple_int_rules(tok)
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -19,9 +21,7 @@ namespace parse {
             qi::_f_type _f;
             qi::_val_type _val;
 
-            const parse::lexer& tok = parse::lexer::instance();
             const parse::value_ref_rule<int>& simple_int = simple_int_rules.simple;
-
 
             game_rule
                 =   tok.GameRule_ [ _a = construct<std::string>(_1) ]
@@ -103,7 +103,7 @@ namespace parse {
     };
 
     namespace detail {
-        string_complex_parser_rules string_complex_parser;
+    string_complex_parser_rules string_complex_parser(parse::lexer::instance());
     }
 }
 
