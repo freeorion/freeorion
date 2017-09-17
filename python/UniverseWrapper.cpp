@@ -14,6 +14,7 @@
 #include "../universe/Species.h"
 #include "../universe/Enums.h"
 #include "../universe/EffectAccounting.h"
+#include "../universe/Predicates.h"
 #include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
 
@@ -119,6 +120,15 @@ namespace {
         return retval;
     }
     boost::function<std::vector<int>(const Universe&, int, int, int)> ShortestPathFunc =        &ShortestPath;
+
+    std::vector<int>        ShortestNonHostilePath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
+        std::vector<int> retval;
+        auto fleet_pred = std::make_shared<HostileVisitor<System>>(empire_id);
+        std::pair<std::list<int>, int> path = universe.GetPathfinder()->ShortestPath(start_sys, end_sys, empire_id, fleet_pred);
+        std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
+        return retval;
+    }
+    boost::function<std::vector<int>(const Universe&, int, int, int)> ShortestNonHostilePathFunc = &ShortestNonHostilePath;
 
     double                  ShortestPathDistance(const Universe& universe, int object1_id, int object2_id) {
         return universe.GetPathfinder()->ShortestPathDistance(object1_id, object2_id);
@@ -382,6 +392,16 @@ namespace FreeOrionPython {
                                                     return_value_policy<return_by_value>(),
                                                     boost::mpl::vector<std::vector<int>, const Universe&, int, int, int>()
                                                 ))
+
+            .def("shortestNonHostilePath",      make_function(
+                                                    ShortestNonHostilePathFunc,
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<std::vector<int>, const Universe&, int, int, int>()
+                                                ),
+                                                "Shortest sequence of System ids and distance from System (number1) to "
+                                                "System (number2) with no hostile Fleets as determined by visibility "
+                                                "of Empire (number3).  (number3) must be a valid empire."
+                                                )
 
             .def("shortestPathDistance",        make_function(
                                                     ShortestPathDistanceFunc,
