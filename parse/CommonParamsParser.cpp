@@ -20,7 +20,9 @@ namespace parse { namespace detail {
         typedef std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> val_cond_pair;
 
 
-        rules() {
+        rules(const parse::lexer& tok) :
+            double_rules(tok)
+        {
             namespace qi = boost::spirit::qi;
 
             using phoenix::new_;
@@ -41,8 +43,6 @@ namespace parse { namespace detail {
             qi::_r2_type _r2;
             qi::_val_type _val;
             qi::eps_type eps;
-
-            const parse::lexer& tok = parse::lexer::instance();
 
             producible
                 =   tok.Unproducible_ [ _val = false ]
@@ -184,7 +184,7 @@ namespace parse { namespace detail {
     };
 
     rules& GetRules() {
-        static rules retval;
+        static rules retval(parse::lexer::instance());
         return retval;
     }
 

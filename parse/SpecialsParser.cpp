@@ -66,7 +66,8 @@ namespace {
 
     struct rules {
         rules(const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+              const parse::text_iterator& first, const parse::text_iterator& last) :
+            double_rules(parse::lexer::instance())
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;

@@ -89,7 +89,7 @@ struct simple_int_parser_rules : public parse::detail::simple_variable_rules<int
 };
 
 struct simple_double_parser_rules : public simple_variable_rules<double> {
-    simple_double_parser_rules();
+    simple_double_parser_rules(const parse::lexer& tok);
 };
 
 }}
@@ -103,7 +103,7 @@ namespace parse {
     };
 
     struct double_parser_rules : public detail::arithmetic_rules<double> {
-        double_parser_rules();
+        double_parser_rules(const parse::lexer& tok);
 
         parse::int_arithmetic_rules        int_rules;
         detail::simple_int_parser_rules    simple_int_rules;

@@ -14,15 +14,15 @@ namespace phoenix = boost::phoenix;
 
 namespace {
     struct effect_parser_rules_3 {
-        effect_parser_rules_3() {
+        effect_parser_rules_3(const parse::lexer& tok) :
+            double_rules(tok)
+        {
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_b_type _b;
             qi::_c_type _c;
             qi::_val_type _val;
             using phoenix::new_;
-
-            const parse::lexer& tok =                                                   parse::lexer::instance();
 
             move_to
                 =    tok.MoveTo_
@@ -200,7 +200,7 @@ namespace {
 
 namespace parse { namespace detail {
     const effect_parser_rule& effect_parser_3() {
-        static effect_parser_rules_3 retval;
+        static effect_parser_rules_3 retval(parse::lexer::instance());
         return retval.start;
     }
 } }
