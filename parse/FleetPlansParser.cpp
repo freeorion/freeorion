@@ -19,7 +19,8 @@ namespace std {
 
 namespace {
     struct rules {
-        rules(const std::string& filename,
+        rules(const parse::lexer& tok,
+              const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
             namespace phoenix = boost::phoenix;
@@ -35,8 +36,6 @@ namespace {
             qi::_a_type _a;
             qi::_b_type _b;
             qi::_r1_type _r1;
-
-            const parse::lexer& tok = parse::lexer::instance();
 
             fleet_plan
                 =    tok.Fleet_

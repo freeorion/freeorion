@@ -75,7 +75,8 @@ namespace {
     const boost::phoenix::function<insert_rule_> add_rule;
 
     struct rules {
-        rules(const std::string& filename,
+        rules(const parse::lexer& tok,
+              const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
             namespace phoenix = boost::phoenix;
@@ -100,8 +101,6 @@ namespace {
             qi::_j_type _j;
             qi::_r1_type _r1;
             qi::eps_type eps;
-
-            const parse::lexer& tok = parse::lexer::instance();
 
             game_rule_bool
                 =   (tok.GameRule_

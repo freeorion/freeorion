@@ -16,7 +16,8 @@ namespace std {
 
 namespace {
     struct rules {
-        rules(const std::string& filename,
+        rules(const parse::lexer& tok,
+              const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
             double_rules(parse::lexer::instance())
         {
@@ -33,8 +34,6 @@ namespace {
             qi::_a_type _a;
             qi::_r1_type _r1;
             qi::_val_type _val;
-
-            const parse::lexer& tok = parse::lexer::instance();
 
             stat
                 =   tok.Statistic_
