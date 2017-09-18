@@ -14,46 +14,40 @@
 
 namespace parse { namespace detail {
 
-    typedef rule<
-        bool ()
-    > producible_rule;
-    const producible_rule& producible_parser();
-
-    typedef rule<
-        void (Condition::ConditionBase*&)
-    > location_rule;
-    const location_rule& location_parser();
-
-    typedef rule<
-        CommonParams (),
-        boost::spirit::qi::locals<
-            ValueRef::ValueRefBase<double>*,
-            ValueRef::ValueRefBase<int>*,
-            bool,
-            std::set<std::string>,
-            Condition::ConditionBase*,
-            std::vector<std::shared_ptr<Effect::EffectsGroup>>,
-            std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>,
-            std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>,
-            Condition::ConditionBase*
-        >
-    > common_params_rule;
-    const common_params_rule& common_params_parser();
-
-    typedef rule<
-        MoreCommonParams (),
-        boost::spirit::qi::locals<
-            std::string,
-            std::string,
-            std::set<std::string>
-        >
-    > more_common_params_rule;
-    const more_common_params_rule& more_common_params_parser();
-
     struct common_params_rules {
         typedef std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> val_cond_pair;
 
-        common_params_rules(const parse::lexer& tok, parse::detail::Labeller& labeller);
+        typedef rule<
+            bool ()
+            > producible_rule;
+
+        typedef rule<
+            void (Condition::ConditionBase*&)
+            > location_rule;
+
+        typedef rule<
+            CommonParams (),
+            boost::spirit::qi::locals<
+                ValueRef::ValueRefBase<double>*,
+                ValueRef::ValueRefBase<int>*,
+                bool,
+                std::set<std::string>,
+                Condition::ConditionBase*,
+                std::vector<std::shared_ptr<Effect::EffectsGroup>>,
+                std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>,
+                std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>,
+                Condition::ConditionBase*
+                >
+            > common_params_rule;
+
+        typedef rule<
+            MoreCommonParams (),
+            boost::spirit::qi::locals<
+                std::string,
+                std::string,
+                std::set<std::string>
+                >
+            > more_common_params_rule;
 
         typedef rule<
             void (std::map<MeterType, val_cond_pair>&,
@@ -73,6 +67,8 @@ namespace parse { namespace detail {
         typedef rule<
             void (std::set<std::string>&)
         > exclusions_rule;
+
+        common_params_rules(const parse::lexer& tok, parse::detail::Labeller& labeller);
 
         parse::castable_as_int_parser_rules    castable_int_rules;
         parse::double_parser_rules     double_rules;
