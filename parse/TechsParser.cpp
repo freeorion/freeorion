@@ -2,6 +2,7 @@
 
 #include "ParseImpl.h"
 #include "EnumParser.h"
+#include "EffectParser.h"
 #include "ValueRefParser.h"
 
 #include "../universe/Species.h"

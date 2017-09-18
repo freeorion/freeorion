@@ -6,6 +6,7 @@
 #include "ParseImpl.h"
 #include "EnumParser.h"
 #include "ConditionParserImpl.h"
+#include "EffectParser.h"
 #include "ValueRefParser.h"
 
 #include "../universe/Condition.h"

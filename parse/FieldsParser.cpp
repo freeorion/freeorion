@@ -1,6 +1,7 @@
 #include "Parse.h"
 
 #include "ParseImpl.h"
+#include "EffectParser.h"
 
 #include "../universe/Condition.h"
 #include "../universe/Field.h"
