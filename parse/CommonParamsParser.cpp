@@ -18,10 +18,10 @@ namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
     common_params_rules::common_params_rules(const parse::lexer& tok,
-                                         parse::detail::Labeller& labeller) :
+                                             parse::detail::Labeller& labeller) :
         castable_int_rules(tok),
         double_rules(tok),
-        effects_group_grammar(tok)
+        effects_group_grammar(tok, labeller)
     {
         namespace qi = boost::spirit::qi;
 
