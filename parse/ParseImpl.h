@@ -12,6 +12,14 @@
 #include <GG/Clr.h>
 
 
+namespace Condition {
+    struct ConditionBase;
+}
+
+namespace Effect {
+    class EffectBase;
+}
+
 namespace parse { namespace detail {
 
     /// A functor to determine if \p key will be unique in \p map of \p type, and log an error otherwise.
@@ -91,7 +99,6 @@ namespace parse { namespace detail {
         void (std::set<std::string>&)
     > tags_rule;
     tags_rule& tags_parser();
-
 
     typedef rule<
         GG::Clr (),

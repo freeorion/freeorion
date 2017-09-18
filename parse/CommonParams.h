@@ -4,6 +4,7 @@
 #include "Lexer.h"
 #include "ParseImpl.h"
 #include "ValueRefParser.h"
+#include "EffectParser.h"
 #include "../universe/EnumsFwd.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Condition.h"
@@ -72,6 +73,7 @@ namespace parse { namespace detail {
 
         parse::castable_as_int_parser_rules    castable_int_rules;
         parse::double_parser_rules     double_rules;
+        parse::effects_group_grammar effects_group_grammar;
         producible_rule         producible;
         location_rule           location;
         location_rule           enqueue_location;

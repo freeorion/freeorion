@@ -1,10 +1,11 @@
 #include "EffectParser.h"
 #include "EffectParserImpl.h"
 
+#include "ConditionParserImpl.h"
+
 #include "../universe/Effect.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-
 
 namespace parse {
     effects_parser_grammar::effects_parser_grammar(
@@ -26,9 +27,9 @@ namespace parse {
         start.name("Effect");
     }
 
-    struct effects_group_rules {
-        effects_group_rules() :
-            effects_grammar(parse::lexer::instance())
+    effects_group_grammar::effects_group_grammar(const lexer& tok) :
+        effects_group_grammar::base_type(start, "effects_group_grammar"),
+        effects_grammar(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -48,8 +49,6 @@ namespace parse {
             qi::_val_type _val;
             qi::lit_type lit;
             qi::eps_type eps;
-
-            const parse::lexer& tok = parse::lexer::instance();
 
             effects_group
                 =   tok.EffectsGroup_
@@ -80,31 +79,4 @@ namespace parse {
             debug(start);
 #endif
         }
-
-        typedef parse::detail::rule<
-            Effect::EffectsGroup* (),
-            boost::spirit::qi::locals<
-                Condition::ConditionBase*,
-                Condition::ConditionBase*,
-                std::string,
-                std::vector<Effect::EffectBase*>,
-                std::string,
-                int,
-                std::string
-            >
-        > effects_group_rule;
-
-        parse::effects_parser_grammar effects_grammar;
-        effects_group_rule effects_group;
-        parse::detail::effects_group_rule start;
-    };
-
-    namespace detail {
-    effects_group_rule& effects_group_parser() {
-        static effects_group_rules rules;
-        return rules.start;
-    }
-    }
-
 }
-
