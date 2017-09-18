@@ -42,6 +42,7 @@ namespace {
 
     struct rules {
         rules(const parse::lexer& tok,
+              parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
@@ -62,14 +63,14 @@ namespace {
 
             building_type
                 =   tok.BuildingType_
-                >   parse::detail::label(Name_token)
+                >   labeller.rule(Name_token)
                 >   tok.string        [ _pass = is_unique_(_r1, BuildingType_token, _1), _a = _1 ]
-                >   parse::detail::label(Description_token)         > tok.string        [ _b = _1 ]
-                >   (   parse::detail::label(CaptureResult_token)   >> parse::capture_result_enum() [ _d = _1 ]
+                >   labeller.rule(Description_token)         > tok.string        [ _b = _1 ]
+                >   (   labeller.rule(CaptureResult_token)   >> parse::capture_result_enum() [ _d = _1 ]
                     |   eps [ _d = CR_CAPTURE ]
                     )
                 >   parse::detail::common_params_parser() [ _c = _1 ]
-                >   parse::detail::label(Icon_token)      > tok.string
+                >   labeller.rule(Icon_token)      > tok.string
                 [ insert_building_(_r1, _a, _b, _c, _d, _1) ]
                 ;
 

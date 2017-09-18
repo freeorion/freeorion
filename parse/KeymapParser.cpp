@@ -44,6 +44,7 @@ namespace {
 
     struct rules {
         rules(const parse::lexer& tok,
+              parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
@@ -67,8 +68,8 @@ namespace {
 
             keymap
                 =   tok.Keymap_
-                >   parse::detail::label(Name_token) > tok.string [ _a = _1 ]
-                >   parse::detail::label(Keys_token)
+                >   labeller.rule(Name_token) > tok.string [ _a = _1 ]
+                >   labeller.rule(Keys_token)
                 >   ( '[' > *(int_pair(_b)) > ']' )
                     [ insert_key_map(_r1, construct<NamedKeymaps::value_type>(_a, _b)) ]
                 ;

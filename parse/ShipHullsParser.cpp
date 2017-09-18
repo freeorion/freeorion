@@ -46,6 +46,7 @@ namespace {
 
     struct rules {
         rules(const parse::lexer& tok,
+              parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
@@ -72,24 +73,24 @@ namespace {
             qi::lit_type lit;
 
             hull_stats
-                =   parse::detail::label(Speed_token)       >   parse::detail::double_ [ _a = _1 ]
-                >   parse::detail::label(Fuel_token)        >   parse::detail::double_ [ _c = _1 ]
-                >   parse::detail::label(Stealth_token)     >   parse::detail::double_ [ _d = _1 ]
-                >   parse::detail::label(Structure_token)   >   parse::detail::double_
+                =   labeller.rule(Speed_token)       >   parse::detail::double_ [ _a = _1 ]
+                >   labeller.rule(Fuel_token)        >   parse::detail::double_ [ _c = _1 ]
+                >   labeller.rule(Stealth_token)     >   parse::detail::double_ [ _d = _1 ]
+                >   labeller.rule(Structure_token)   >   parse::detail::double_
                     [ _val = construct<HullTypeStats>(_c, _a, _d, _1) ]
                 ;
 
             slot
                 =   tok.Slot_
-                >   parse::detail::label(Type_token) > parse::ship_slot_type_enum() [ _a = _1 ]
-                >   parse::detail::label(Position_token)
+                >   labeller.rule(Type_token) > parse::ship_slot_type_enum() [ _a = _1 ]
+                >   labeller.rule(Position_token)
                 >   '(' > parse::detail::double_ [ _b = _1 ] > ',' > parse::detail::double_ [ _c = _1 ] > lit(')')
                     [ _val = construct<HullType::Slot>(_a, _b, _c) ]
                 ;
 
             slots
                 =  -(
-                        parse::detail::label(Slots_token)
+                        labeller.rule(Slots_token)
                     >   (
                                 ('[' > +slot [ push_back(_r1, _1) ] > ']')
                             |    slot [ push_back(_r1, _1) ]
@@ -104,8 +105,8 @@ namespace {
                 >   hull_stats                                  [ _c = _1 ]
                 >  -slots(_e)
                 >   parse::detail::common_params_parser()       [ _d = _1 ]
-                >   parse::detail::label(Icon_token)    > tok.string    [ _f = _1 ]
-                >   parse::detail::label(Graphic_token) > tok.string
+                >   labeller.rule(Icon_token)    > tok.string    [ _f = _1 ]
+                >   labeller.rule(Graphic_token) > tok.string
                 [ insert_hulltype_(_r1, _c, _d, _a, _e, _f, _1) ]
                 ;
 
