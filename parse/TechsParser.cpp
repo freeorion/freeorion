@@ -72,6 +72,7 @@ namespace {
 
     struct rules {
         rules(const parse::lexer& tok,
+              parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
             castable_int_rules(parse::lexer::instance()),
@@ -104,16 +105,16 @@ namespace {
             qi::eps_type eps;
 
             tech_info_name_desc
-                =   parse::detail::label(Name_token)              > tok.string [ _r1 = _1 ]
-                >   parse::detail::label(Description_token)       > tok.string [ _r2 = _1 ]
-                >   parse::detail::label(Short_Description_token) > tok.string [ _r3 = _1 ] // TODO: Get rid of underscore.
+                =   labeller.rule(Name_token)              > tok.string [ _r1 = _1 ]
+                >   labeller.rule(Description_token)       > tok.string [ _r2 = _1 ]
+                >   labeller.rule(Short_Description_token) > tok.string [ _r3 = _1 ] // TODO: Get rid of underscore.
                 ;
 
             tech_info
                 =   tech_info_name_desc(_a, _b, _c)
-                >   parse::detail::label(Category_token)      > tok.string      [ _e = _1 ]
-                >   parse::detail::label(ResearchCost_token)  > double_rules.expr [ _f = _1 ]
-                >   parse::detail::label(ResearchTurns_token) > castable_int_rules.flexible_int [ _g = _1 ]
+                >   labeller.rule(Category_token)      > tok.string      [ _e = _1 ]
+                >   labeller.rule(ResearchCost_token)  > double_rules.expr [ _f = _1 ]
+                >   labeller.rule(ResearchTurns_token) > castable_int_rules.flexible_int [ _g = _1 ]
                 >  (    tok.Unresearchable_ [ _h = false ]
                     |   tok.Researchable_ [ _h = true ]
                     |   eps [ _h = true ]
@@ -123,14 +124,14 @@ namespace {
                 ;
 
             prerequisites
-                =   parse::detail::label(Prerequisites_token)
+                =   labeller.rule(Prerequisites_token)
                 >  (    ('[' > +tok.string [ insert(_r1, _1) ] > ']')
                     |    tok.string [ insert(_r1, _1) ]
                    )
                 ;
 
             unlocks
-                =   parse::detail::label(Unlock_token)
+                =   labeller.rule(Unlock_token)
                 >  (    ('[' > +parse::detail::item_spec_parser() [ push_back(_r1, _1) ] > ']')
                     |    parse::detail::item_spec_parser() [ push_back(_r1, _1) ]
                    )
@@ -141,16 +142,16 @@ namespace {
                 >   tech_info [ _a = _1 ]
                 >  -prerequisites(_b)
                 >  -unlocks(_c)
-                > -(parse::detail::label(EffectsGroups_token) > parse::detail::effects_group_parser() [ _d = _1 ])
-                > -(parse::detail::label(Graphic_token) > tok.string [ _e = _1 ])
+                > -(labeller.rule(EffectsGroups_token) > parse::detail::effects_group_parser() [ _d = _1 ])
+                > -(labeller.rule(Graphic_token) > tok.string [ _e = _1 ])
                    ) [ insert_tech_(_r1, _a, _d, _b, _c, _e) ]
                 ;
 
             category
                 =   tok.Category_
-                >   parse::detail::label(Name_token)    > tok.string [ _pass = is_unique_(_r1, Category_token, _1), _a = _1 ]
-                >   parse::detail::label(Graphic_token) > tok.string [ _b = _1 ]
-                >   parse::detail::label(Colour_token)  > parse::detail::color_parser() [ insert_category_(_r1, _a, _b, _1) ]
+                >   labeller.rule(Name_token)    > tok.string [ _pass = is_unique_(_r1, Category_token, _1), _a = _1 ]
+                >   labeller.rule(Graphic_token) > tok.string [ _b = _1 ]
+                >   labeller.rule(Colour_token)  > parse::detail::color_parser() [ insert_category_(_r1, _a, _b, _1) ]
                 ;
 
             start

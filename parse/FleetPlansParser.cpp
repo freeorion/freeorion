@@ -20,6 +20,7 @@ namespace std {
 namespace {
     struct rules {
         rules(const parse::lexer& tok,
+              parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
@@ -39,8 +40,8 @@ namespace {
 
             fleet_plan
                 =    tok.Fleet_
-                >    parse::detail::label(Name_token) > tok.string [ _a = _1 ]
-                >    parse::detail::label(Ships_token)
+                >    labeller.rule(Name_token) > tok.string [ _a = _1 ]
+                >    labeller.rule(Ships_token)
                 >    (
                             ('[' > +tok.string [ push_back(_b, _1) ] > ']')
                         |    tok.string [ push_back(_b, _1) ]

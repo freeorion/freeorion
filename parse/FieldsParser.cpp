@@ -38,6 +38,7 @@ namespace {
 
     struct rules {
         rules(const parse::lexer& tok,
+              parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
@@ -58,13 +59,13 @@ namespace {
 
             field
                 =   tok.FieldType_
-                >   parse::detail::label(Name_token)
+                >   labeller.rule(Name_token)
                 >   tok.string        [ _pass = is_unique_(_r1, FieldType_token, _1), _a = _1 ]
-                >   parse::detail::label(Description_token)         > tok.string [ _b = _1 ]
-                >   parse::detail::label(Stealth_token)             > parse::detail::double_ [ _c = _1]
+                >   labeller.rule(Description_token)         > tok.string [ _b = _1 ]
+                >   labeller.rule(Stealth_token)             > parse::detail::double_ [ _c = _1]
                 >   parse::detail::tags_parser()(_d)
-                > -(parse::detail::label(EffectsGroups_token)       > parse::detail::effects_group_parser() [ _e = _1 ])
-                >   parse::detail::label(Graphic_token)             > tok.string
+                > -(labeller.rule(EffectsGroups_token)       > parse::detail::effects_group_parser() [ _e = _1 ])
+                >   labeller.rule(Graphic_token)             > tok.string
                 [ insert_fieldtype_(_r1, _a, _b, _c, _d, _e, _1) ]
                 ;
 

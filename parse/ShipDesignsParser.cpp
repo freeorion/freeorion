@@ -67,6 +67,7 @@ namespace {
 
     struct rules {
         rules(const parse::lexer& tok,
+              parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
@@ -97,30 +98,30 @@ namespace {
 
             design_prefix
                 =    tok.ShipDesign_
-                >    parse::detail::label(Name_token) > tok.string [ _r1 = _1 ]
-                >    ((parse::detail::label(UUID_token)
+                >    labeller.rule(Name_token) > tok.string [ _r1 = _1 ]
+                >    ((labeller.rule(UUID_token)
                        > tok.string [_pass = is_valid_uuid_(_1),  _r5 = parse_uuid_(_1) ])
                       | eps [ _r5 = boost::uuids::nil_generator()() ]
                      )
-                >    parse::detail::label(Description_token) > tok.string [ _r2 = _1 ]
+                >    labeller.rule(Description_token) > tok.string [ _r2 = _1 ]
                 > (
                      tok.NoStringtableLookup_ [ _r4 = false ]
                     | eps [ _r4 = true ]
                   )
-                >    parse::detail::label(Hull_token)        > tok.string [ _r3 = _1 ]
+                >    labeller.rule(Hull_token)        > tok.string [ _r3 = _1 ]
                 ;
 
             design
                 =    design_prefix(_a, _b, _c, _f, _g)
-                >    parse::detail::label(Parts_token)
+                >    labeller.rule(Parts_token)
                 >    (
                             ('[' > +tok.string [ push_back(_d, _1) ] > ']')
                         |    tok.string [ push_back(_d, _1) ]
                      )
                 >   -(
-                        parse::detail::label(Icon_token)     > tok.string [ _e = _1 ]
+                        labeller.rule(Icon_token)     > tok.string [ _e = _1 ]
                      )
-                >    parse::detail::label(Model_token)       > tok.string
+                >    labeller.rule(Model_token)       > tok.string
                 [ insert_ship_design_(_r1, _a, _b, _c, _d, _e, _1, _f, _g) ]
                 ;
 
@@ -166,6 +167,7 @@ namespace {
 
     struct manifest_rules {
         manifest_rules(const parse::lexer& tok,
+                       parse::detail::Labeller& labeller,
                        const std::string& filename,
                        const parse::text_iterator& first, const parse::text_iterator& last)
         {
@@ -182,7 +184,7 @@ namespace {
 
             design_manifest
                 =    tok.ShipDesignOrdering_
-                >    *(parse::detail::label(UUID_token)       > tok.string [ push_back(_r1, parse_uuid_(_1)) ])
+                >    *(labeller.rule(UUID_token)       > tok.string [ push_back(_r1, parse_uuid_(_1)) ])
                 ;
 
             start

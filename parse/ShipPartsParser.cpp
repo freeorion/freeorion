@@ -48,6 +48,7 @@ namespace {
 
     struct rules {
         rules(const parse::lexer& tok,
+              parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
@@ -74,7 +75,7 @@ namespace {
 
             slots
                 =  -(
-                        parse::detail::label(MountableSlotTypes_token)
+                        labeller.rule(MountableSlotTypes_token)
                     >   (
                             ('[' > +parse::ship_slot_type_enum() [ push_back(_r1, _1) ] > ']')
                         |    parse::ship_slot_type_enum() [ push_back(_r1, _1) ]
@@ -86,13 +87,13 @@ namespace {
                 = ( tok.Part_
                 >   parse::detail::more_common_params_parser()
                     [_pass = is_unique_(_r1, PartType_token, phoenix::bind(&MoreCommonParams::name, _1)), _a = _1 ]
-                >   parse::detail::label(Class_token)       > parse::ship_part_class_enum() [ _c = _1 ]
-                > (  (parse::detail::label(Capacity_token)  > parse::detail::double_ [ _d = _1 ])
-                   | (parse::detail::label(Damage_token)    > parse::detail::double_ [ _d = _1 ])
+                >   labeller.rule(Class_token)       > parse::ship_part_class_enum() [ _c = _1 ]
+                > (  (labeller.rule(Capacity_token)  > parse::detail::double_ [ _d = _1 ])
+                   | (labeller.rule(Damage_token)    > parse::detail::double_ [ _d = _1 ])
                    |  eps [ _d = 0.0 ]
                   )
-                > (  (parse::detail::label(Damage_token)    > parse::detail::double_ [ _h = _1 ])   // damage is secondary for fighters
-                   | (parse::detail::label(Shots_token)     > parse::detail::double_ [ _h = _1 ])   // shots is secondary for direct fire weapons
+                > (  (labeller.rule(Damage_token)    > parse::detail::double_ [ _h = _1 ])   // damage is secondary for fighters
+                   | (labeller.rule(Shots_token)     > parse::detail::double_ [ _h = _1 ])   // shots is secondary for direct fire weapons
                    |  eps [ _h = 1.0 ]
                   )
                 > (   tok.NoDefaultCapacityEffect_ [ _g = false ]
@@ -100,7 +101,7 @@ namespace {
                   )
                 >   slots(_f)
                 >   parse::detail::common_params_parser()           [ _e = _1 ]
-                >   parse::detail::label(Icon_token)        > tok.string    [ _b = _1 ]
+                >   labeller.rule(Icon_token)        > tok.string    [ _b = _1 ]
                   ) [ insert_parttype_(_r1, _c, _d, _h, _e, _a, _f, _b, _g) ]
                 ;
 
