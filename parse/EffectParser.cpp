@@ -9,7 +9,7 @@
 
 namespace parse {
     effects_parser_grammar::effects_parser_grammar(
-        const parse::lexer& tok) :
+        const parse::lexer& tok, detail::Labeller& labeller) :
         effects_parser_grammar::base_type(start, "effects_parser_grammar"),
         effect_parser_1(tok),
         effect_parser_2(tok),
@@ -27,9 +27,9 @@ namespace parse {
         start.name("Effect");
     }
 
-    effects_group_grammar::effects_group_grammar(const lexer& tok) :
+    effects_group_grammar::effects_group_grammar(const lexer& tok, detail::Labeller& labeller) :
         effects_group_grammar::base_type(start, "effects_group_grammar"),
-        effects_grammar(tok)
+        effects_grammar(tok, labeller)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -52,13 +52,13 @@ namespace parse {
 
             effects_group
                 =   tok.EffectsGroup_
-                > -(parse::detail::label(Description_token)      > tok.string [ _g = _1 ])
-                >   parse::detail::label(Scope_token)            > parse::detail::condition_parser [ _a = _1 ]
-                > -(parse::detail::label(Activation_token)       > parse::detail::condition_parser [ _b = _1 ])
-                > -(parse::detail::label(StackingGroup_token)    > tok.string [ _c = _1 ])
-                > -(parse::detail::label(AccountingLabel_token)  > tok.string [ _e = _1 ])
-                > ((parse::detail::label(Priority_token)         > tok.int_ [ _f = _1 ]) | eps [ _f = 100 ])
-                >   parse::detail::label(Effects_token)
+                > -(labeller.rule(Description_token)      > tok.string [ _g = _1 ])
+                >   labeller.rule(Scope_token)            > parse::detail::condition_parser [ _a = _1 ]
+                > -(labeller.rule(Activation_token)       > parse::detail::condition_parser [ _b = _1 ])
+                > -(labeller.rule(StackingGroup_token)    > tok.string [ _c = _1 ])
+                > -(labeller.rule(AccountingLabel_token)  > tok.string [ _e = _1 ])
+                > ((labeller.rule(Priority_token)         > tok.int_ [ _f = _1 ]) | eps [ _f = 100 ])
+                >   labeller.rule(Effects_token)
                 >   (
                             ('[' > +effects_grammar [ push_back(_d, _1) ] > ']')
                         |    effects_grammar [ push_back(_d, _1) ]

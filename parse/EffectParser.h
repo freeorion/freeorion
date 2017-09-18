@@ -249,7 +249,7 @@ namespace parse { namespace detail {
 
 namespace parse {
     struct effects_parser_grammar : public detail::effect_parser_grammar {
-        effects_parser_grammar(const lexer& tok);
+        effects_parser_grammar(const lexer& tok, detail::Labeller& labeller);
 
         detail::effect_parser_rules_1 effect_parser_1;
         detail::effect_parser_rules_2 effect_parser_2;
@@ -263,7 +263,7 @@ namespace parse {
     using effects_group_rule = detail::rule<effects_group_signature>;
 
     struct effects_group_grammar : public detail::grammar<effects_group_signature> {
-        effects_group_grammar(const lexer& tok);
+        effects_group_grammar(const lexer& tok, detail::Labeller& labeller);
 
         typedef parse::detail::rule<
             Effect::EffectsGroup* (),
