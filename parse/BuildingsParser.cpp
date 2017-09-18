@@ -44,7 +44,8 @@ namespace {
         rules(const parse::lexer& tok,
               parse::detail::Labeller& labeller,
               const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+              const parse::text_iterator& first, const parse::text_iterator& last) :
+            common_rules(tok, labeller)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -69,7 +70,7 @@ namespace {
                 >   (   labeller.rule(CaptureResult_token)   >> parse::capture_result_enum() [ _d = _1 ]
                     |   eps [ _d = CR_CAPTURE ]
                     )
-                >   parse::detail::common_params_parser() [ _c = _1 ]
+                >   common_rules.common [ _c = _1 ]
                 >   labeller.rule(Icon_token)      > tok.string
                 [ insert_building_(_r1, _a, _b, _c, _d, _1) ]
                 ;
@@ -101,6 +102,7 @@ namespace {
             void (std::map<std::string, std::unique_ptr<BuildingType>>&)
         > start_rule;
 
+        parse::detail::common_params_rules common_rules;
         building_type_rule          building_type;
         start_rule                  start;
     };

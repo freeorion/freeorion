@@ -50,7 +50,8 @@ namespace {
         rules(const parse::lexer& tok,
               parse::detail::Labeller& labeller,
               const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+              const parse::text_iterator& first, const parse::text_iterator& last) :
+            common_rules(tok, labeller)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -85,7 +86,7 @@ namespace {
 
             part_type
                 = ( tok.Part_
-                >   parse::detail::more_common_params_parser()
+                >   common_rules.more_common
                     [_pass = is_unique_(_r1, PartType_token, phoenix::bind(&MoreCommonParams::name, _1)), _a = _1 ]
                 >   labeller.rule(Class_token)       > parse::ship_part_class_enum() [ _c = _1 ]
                 > (  (labeller.rule(Capacity_token)  > parse::detail::double_ [ _d = _1 ])
@@ -100,7 +101,7 @@ namespace {
                    |  eps [ _g = true ]
                   )
                 >   slots(_f)
-                >   parse::detail::common_params_parser()           [ _e = _1 ]
+                >   common_rules.common           [ _e = _1 ]
                 >   labeller.rule(Icon_token)        > tok.string    [ _b = _1 ]
                   ) [ insert_parttype_(_r1, _c, _d, _h, _e, _a, _f, _b, _g) ]
                 ;
@@ -142,9 +143,10 @@ namespace {
             void (std::map<std::string, std::unique_ptr<PartType>>&)
         > start_rule;
 
-        slots_rule                                  slots;
-        part_type_rule                              part_type;
-        start_rule                                  start;
+        parse::detail::common_params_rules common_rules;
+        slots_rule                         slots;
+        part_type_rule                     part_type;
+        start_rule                         start;
     };
 
 }

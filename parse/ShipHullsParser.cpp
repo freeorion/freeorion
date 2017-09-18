@@ -48,7 +48,8 @@ namespace {
         rules(const parse::lexer& tok,
               parse::detail::Labeller& labeller,
               const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+              const parse::text_iterator& first, const parse::text_iterator& last) :
+            common_rules(tok, labeller)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -100,11 +101,11 @@ namespace {
 
             hull
                 =   tok.Hull_
-                >   parse::detail::more_common_params_parser()
+                >   common_rules.more_common
                     [_pass = is_unique_(_r1, HullType_token, phoenix::bind(&MoreCommonParams::name, _1)), _a = _1 ]
                 >   hull_stats                                  [ _c = _1 ]
                 >  -slots(_e)
-                >   parse::detail::common_params_parser()       [ _d = _1 ]
+                >   common_rules.common       [ _d = _1 ]
                 >   labeller.rule(Icon_token)    > tok.string    [ _f = _1 ]
                 >   labeller.rule(Graphic_token) > tok.string
                 [ insert_hulltype_(_r1, _c, _d, _a, _e, _f, _1) ]
@@ -169,6 +170,7 @@ namespace {
             void (std::map<std::string, std::unique_ptr<HullType>>&)
         > start_rule;
 
+        parse::detail::common_params_rules common_rules;
         hull_stats_rule                             hull_stats;
         slot_rule                                   slot;
         slots_rule                                  slots;
