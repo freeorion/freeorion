@@ -3,6 +3,7 @@
 
 #include "Lexer.h"
 #include "ParseImpl.h"
+#include "ValueRefParser.h"
 #include "../universe/EnumsFwd.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Condition.h"
@@ -48,6 +49,43 @@ namespace parse { namespace detail {
         >
     > more_common_params_rule;
     const more_common_params_rule& more_common_params_parser();
+
+    struct common_params_rules {
+        typedef std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> val_cond_pair;
+
+        common_params_rules(const parse::lexer& tok, parse::detail::Labeller& labeller);
+
+        typedef rule<
+            void (std::map<MeterType, val_cond_pair>&,
+                  std::map<std::string, val_cond_pair>&)
+        > consumption_rule;
+
+        typedef rule<
+            void (std::map<MeterType, val_cond_pair>&, std::map<std::string, val_cond_pair>&),
+            boost::spirit::qi::locals<
+                MeterType,
+                std::string,
+                ValueRef::ValueRefBase<double>*,
+                Condition::ConditionBase*
+            >
+        > consumable_rule;
+
+        typedef rule<
+            void (std::set<std::string>&)
+        > exclusions_rule;
+
+        parse::castable_as_int_parser_rules    castable_int_rules;
+        parse::double_parser_rules     double_rules;
+        producible_rule         producible;
+        location_rule           location;
+        location_rule           enqueue_location;
+        exclusions_rule         exclusions;
+        more_common_params_rule more_common;
+        common_params_rule      common;
+        consumption_rule        consumption;
+        consumable_rule         consumable_special;
+        consumable_rule         consumable_meter;
+    };
 
 } }
 
