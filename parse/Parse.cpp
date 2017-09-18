@@ -61,7 +61,9 @@ namespace {
     };
 
     struct effects_group_rules {
-        effects_group_rules() {
+        effects_group_rules() :
+            effects_grammar(parse::lexer::instance())
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -93,8 +95,8 @@ namespace {
                 > ((parse::detail::label(Priority_token)         > tok.int_ [ _f = _1 ]) | eps [ _f = 100 ])
                 >   parse::detail::label(Effects_token)
                 >   (
-                            ('[' > +parse::effect_parser() [ push_back(_d, _1) ] > ']')
-                        |    parse::effect_parser() [ push_back(_d, _1) ]
+                            ('[' > +effects_grammar [ push_back(_d, _1) ] > ']')
+                        |    effects_grammar [ push_back(_d, _1) ]
                     )
                     [ _val = new_<Effect::EffectsGroup>(_a, _b, _d, _e, _c, _f, _g) ]
                 ;
@@ -126,6 +128,7 @@ namespace {
             >
         > effects_group_rule;
 
+        parse::effects_parser_grammar effects_grammar;
         effects_group_rule effects_group;
         parse::detail::effects_group_rule start;
     };
