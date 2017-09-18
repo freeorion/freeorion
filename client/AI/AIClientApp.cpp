@@ -393,6 +393,21 @@ void AIClientApp::HandleMessage(const Message& msg) {
          break;
     }
 
+    case Message::CHECKSUM: {
+        TraceLogger() << "(AIClientApp) CheckSum.";
+        std::map<std::string, unsigned int> checksums;
+        ExtractContentCheckSumMessageData(msg, checksums);
+
+        auto log_msg = [checksums]() {
+                std::string retval("");
+                for (const auto& cs : checksums)
+                    retval.append("\n\t" + cs.first + " : " + std::to_string(cs.second));
+                return retval;
+            };
+        DebugLogger() << "Got checksum message from server:" << log_msg();
+        break;
+    }
+
     default: {
         ErrorLogger() << "AIClientApp::HandleMessage : Received unknown Message type code " << msg.Type();
         break;
