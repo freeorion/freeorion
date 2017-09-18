@@ -13,8 +13,8 @@ namespace parse { namespace detail {
     const effect_parser_rule& effect_parser_1();
     const effect_parser_rule& effect_parser_2();
     const effect_parser_rule& effect_parser_3();
-    const effect_parser_rule& effect_parser_4();
-    const effect_parser_rule& effect_parser_5();
+    const effect_parser_rule& effect_parser_4(const effect_parser_rule& effect_parser);
+    const effect_parser_rule& effect_parser_5(const effect_parser_rule& effect_parser);
 
 } }
 

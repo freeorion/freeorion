@@ -11,7 +11,7 @@ namespace phoenix = boost::phoenix;
 
 namespace {
     struct effect_parser_rules_5 {
-        effect_parser_rules_5() {
+        effect_parser_rules_5(const parse::effect_parser_rule& effect_parser) {
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_b_type _b;
@@ -28,13 +28,13 @@ namespace {
                         >   parse::detail::label(Condition_token)   >   parse::detail::condition_parser [ _a = _1 ]
                         >   parse::detail::label(Effects_token)
                         >   (
-                                ('[' > +parse::effect_parser() [ push_back(_b, _1) ] > ']')
-                            |    parse::effect_parser() [ push_back(_b, _1) ]
+                                ('[' > +effect_parser [ push_back(_b, _1) ] > ']')
+                            |    effect_parser [ push_back(_b, _1) ]
                             )
                         > -(parse::detail::label(Else_token)
                         >   (
-                                ('[' > +parse::effect_parser() [ push_back(_c, _1) ] > ']')
-                            |    parse::effect_parser() [ push_back(_c, _1) ]
+                                ('[' > +effect_parser [ push_back(_c, _1) ] > ']')
+                            |    effect_parser [ push_back(_c, _1) ]
                             )
                            )
                     ) [ _val = new_<Effect::Conditional>(_a, _b, _c) ]
@@ -66,8 +66,8 @@ namespace {
 }
 
 namespace parse { namespace detail {
-    const effect_parser_rule& effect_parser_5() {
-        static effect_parser_rules_5 retval;
+    const effect_parser_rule& effect_parser_5(const effect_parser_rule& effect_parser) {
+        static effect_parser_rules_5 retval(effect_parser);
         return retval.start;
     }
 } }

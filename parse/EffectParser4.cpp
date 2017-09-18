@@ -13,7 +13,7 @@ namespace phoenix = boost::phoenix;
 
 namespace {
     struct effect_parser_rules_4 {
-        effect_parser_rules_4(const parse::lexer& tok) :
+        effect_parser_rules_4(const parse::lexer& tok, const parse::effect_parser_rule& effect_parser) :
             int_rules(tok),
             double_rules(tok)
         {
@@ -37,8 +37,8 @@ namespace {
                         > -(parse::detail::label(Name_token)        >   parse::string_value_ref()      [ _c = _1 ])
                         > -(parse::detail::label(Effects_token)
                         >   (
-                                ('[' > +parse::effect_parser() [ push_back(_d, _1) ] > ']')
-                            |    parse::effect_parser() [ push_back(_d, _1) ]
+                                ('[' > +effect_parser [ push_back(_d, _1) ] > ']')
+                            |    effect_parser [ push_back(_d, _1) ]
                             )
                            )
                     ) [ _val = new_<Effect::CreatePlanet>(_a, _b, _c, _d) ]
@@ -50,8 +50,8 @@ namespace {
                         > -(parse::detail::label(Name_token)        >   parse::string_value_ref() [ _b = _1 ])
                         > -(parse::detail::label(Effects_token)
                         >   (
-                                ('[' > +parse::effect_parser() [ push_back(_c, _1) ] > ']')
-                            |    parse::effect_parser() [ push_back(_c, _1) ]
+                                ('[' > +effect_parser [ push_back(_c, _1) ] > ']')
+                            |    effect_parser [ push_back(_c, _1) ]
                             )
                            )
                     ) [ _val = new_<Effect::CreateBuilding>(_a, _b, _c) ]
@@ -66,8 +66,8 @@ namespace {
                         > -(parse::detail::label(Name_token)        >   parse::string_value_ref() [ _e = _1 ])
                         > -(parse::detail::label(Effects_token)
                         >   (
-                                ('[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']')
-                            |    parse::effect_parser() [ push_back(_f, _1) ]
+                                ('[' > +effect_parser [ push_back(_f, _1) ] > ']')
+                            |    effect_parser [ push_back(_f, _1) ]
                             )
                            )
                     ) [ _val = new_<Effect::CreateShip>(_b, _c, _d, _e, _f) ]
@@ -82,8 +82,8 @@ namespace {
                         > -(parse::detail::label(Name_token)        >   parse::string_value_ref() [ _e = _1 ])
                         > -(parse::detail::label(Effects_token)
                         >   (
-                                ('[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']')
-                            |    parse::effect_parser() [ push_back(_f, _1) ]
+                                ('[' > +effect_parser [ push_back(_f, _1) ] > ']')
+                            |    effect_parser [ push_back(_f, _1) ]
                             )
                            )
                     ) [ _val = new_<Effect::CreateShip>(_a, _c, _d, _e, _f) ]
@@ -99,8 +99,8 @@ namespace {
                      > -(parse::detail::label(Effects_token)
                          >
                          (
-                             ('[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']')
-                             |    parse::effect_parser() [ push_back(_f, _1) ]
+                             ('[' > +effect_parser [ push_back(_f, _1) ] > ']')
+                             |    effect_parser [ push_back(_f, _1) ]
                          )
                         )
                     ) [ _val = new_<Effect::CreateField>(_a, _b, _d, _f) ]
@@ -118,8 +118,8 @@ namespace {
                      > -(parse::detail::label(Effects_token)
                          >
                          (
-                             ('[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']')
-                             |    parse::effect_parser() [ push_back(_f, _1) ]
+                             ('[' > +effect_parser [ push_back(_f, _1) ] > ']')
+                             |    effect_parser [ push_back(_f, _1) ]
                          )
                         )
                     ) [ _val = new_<Effect::CreateField>(_a, _b, _c, _e, _d, _f) ]
@@ -136,8 +136,8 @@ namespace {
                      > -(parse::detail::label(Effects_token)
                          >
                          (
-                             ('[' > +parse::effect_parser() [ push_back(_e, _1) ] > ']')
-                             |    parse::effect_parser() [ push_back(_e, _1) ]
+                             ('[' > +effect_parser [ push_back(_e, _1) ] > ']')
+                             |    effect_parser [ push_back(_e, _1) ]
                          )
                         )
                     ) [ _val = new_<Effect::CreateSystem>(_a, _b, _c, _d, _e) ]
@@ -153,8 +153,8 @@ namespace {
                      > -(parse::detail::label(Effects_token)
                          >
                          (
-                             ('[' > +parse::effect_parser() [ push_back(_e, _1) ] > ']')
-                             |    parse::effect_parser() [ push_back(_e, _1) ]
+                             ('[' > +effect_parser [ push_back(_e, _1) ] > ']')
+                             |    effect_parser [ push_back(_e, _1) ]
                          )
                         )
                     ) [ _val = new_<Effect::CreateSystem>(_b, _c, _d, _e) ]
@@ -261,8 +261,8 @@ namespace {
 }
 
 namespace parse { namespace detail {
-    const effect_parser_rule& effect_parser_4() {
-        static effect_parser_rules_4 retval(parse::lexer::instance());
+    const effect_parser_rule& effect_parser_4(const effect_parser_rule& effect_parser) {
+        static effect_parser_rules_4 retval(parse::lexer::instance(), effect_parser);
         return retval.start;
     }
 } }
