@@ -10,7 +10,8 @@ namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
-    effect_parser_rules_5::effect_parser_rules_5(const effect_parser_grammar& effect_parser) :
+    effect_parser_rules_5::effect_parser_rules_5(const effect_parser_grammar& effect_parser,
+                                                 Labeller& labeller) :
         effect_parser_rules_5::base_type(start, "effect_parser_rules_5")
     {
         qi::_1_type _1;
@@ -26,13 +27,13 @@ namespace parse { namespace detail {
 
         conditional
             =   (       tok.If_
-                        >   parse::detail::label(Condition_token)   >   parse::detail::condition_parser [ _a = _1 ]
-                        >   parse::detail::label(Effects_token)
+                        >   labeller.rule(Condition_token)   >   parse::detail::condition_parser [ _a = _1 ]
+                        >   labeller.rule(Effects_token)
                         >   (
                             ('[' > +effect_parser [ push_back(_b, _1) ] > ']')
                             |    effect_parser [ push_back(_b, _1) ]
                         )
-                        > -(parse::detail::label(Else_token)
+                        > -(labeller.rule(Else_token)
                             >   (
                                 ('[' > +effect_parser [ push_back(_c, _1) ] > ']')
                                 |    effect_parser [ push_back(_c, _1) ]

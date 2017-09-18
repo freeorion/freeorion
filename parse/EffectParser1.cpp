@@ -14,7 +14,7 @@ namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
-    effect_parser_rules_1::effect_parser_rules_1(const parse::lexer& tok) :
+    effect_parser_rules_1::effect_parser_rules_1(const parse::lexer& tok, Labeller& labeller) :
         effect_parser_rules_1::base_type(start, "effect_parser_rules_1"),
         int_rules(tok),
         double_rules(tok)
@@ -33,31 +33,31 @@ namespace parse { namespace detail {
         using phoenix::push_back;
 
         set_empire_meter_1
-            =    (tok.SetEmpireMeter_ >>   parse::detail::label(Empire_token))
+            =    (tok.SetEmpireMeter_ >>   labeller.rule(Empire_token))
             >    int_rules.expr [ _b = _1 ]
-            >    parse::detail::label(Meter_token)  >  tok.string [ _a = _1 ]
-            >    parse::detail::label(Value_token)  >  double_rules.expr [ _val = new_<Effect::SetEmpireMeter>(_b, _a, _1) ]
+            >    labeller.rule(Meter_token)  >  tok.string [ _a = _1 ]
+            >    labeller.rule(Value_token)  >  double_rules.expr [ _val = new_<Effect::SetEmpireMeter>(_b, _a, _1) ]
             ;
 
         set_empire_meter_2
-            =    (tok.SetEmpireMeter_ >>   parse::detail::label(Meter_token))
+            =    (tok.SetEmpireMeter_ >>   labeller.rule(Meter_token))
             >    tok.string [ _a = _1 ]
-            >    parse::detail::label(Value_token) >  double_rules.expr [ _val = new_<Effect::SetEmpireMeter>(_a, _1) ]
+            >    labeller.rule(Value_token) >  double_rules.expr [ _val = new_<Effect::SetEmpireMeter>(_a, _1) ]
             ;
 
         give_empire_tech
             =   (   tok.GiveEmpireTech_
-                    >   parse::detail::label(Name_token) >      parse::string_value_ref() [ _d = _1 ]
-                    > -(parse::detail::label(Empire_token) >    int_rules.expr    [ _b = _1 ])
+                    >   labeller.rule(Name_token) >      parse::string_value_ref() [ _d = _1 ]
+                    > -(labeller.rule(Empire_token) >    int_rules.expr    [ _b = _1 ])
                 ) [ _val = new_<Effect::GiveEmpireTech>(_d, _b) ]
             ;
 
         set_empire_tech_progress
             =    tok.SetEmpireTechProgress_
-            >    parse::detail::label(Name_token)     >  parse::string_value_ref() [ _a = _1 ]
-            >    parse::detail::label(Progress_token) >  double_rules.expr [ _b = _1 ]
+            >    labeller.rule(Name_token)     >  parse::string_value_ref() [ _a = _1 ]
+            >    labeller.rule(Progress_token) >  double_rules.expr [ _b = _1 ]
             >    (
-                (parse::detail::label(Empire_token) > int_rules.expr [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b, _1) ])
+                (labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b, _1) ])
                 |  eps [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b) ]
             )
             ;
@@ -65,40 +65,40 @@ namespace parse { namespace detail {
         // Note: the NoStringtableLookup flag controls the lookup both of template in Vartext and of the label in SitrepPanel.
         generate_sitrep_message
             =    tok.GenerateSitrepMessage_
-            >    parse::detail::label(Message_token)    >  tok.string [ _a = _1 ]
-            >    parse::detail::label(Label_token)      >  tok.string [ _e = _1 ]
+            >    labeller.rule(Message_token)    >  tok.string [ _a = _1 ]
+            >    labeller.rule(Label_token)      >  tok.string [ _e = _1 ]
             >   (
                 tok.NoStringtableLookup_ [ _f = false ]
                 | eps [ _f = true ]
             )
-            >  -(parse::detail::label(Icon_token)       >  tok.string [ _b = _1 ] )
-            >  -(parse::detail::label(Parameters_token) >  string_and_string_ref_vector [ _c = _1 ] )
+            >  -(labeller.rule(Icon_token)       >  tok.string [ _b = _1 ] )
+            >  -(labeller.rule(Parameters_token) >  string_and_string_ref_vector [ _c = _1 ] )
             >   (
                 (   // empire id specified, optionally with an affiliation type:
                     // useful to specify a single recipient empire, or the allies
                     // or enemies of a single empire
-                    ((   (parse::detail::label(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
+                    ((   (labeller.rule(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
                          |    eps [ _d = AFFIL_SELF ]
                      )
-                     >>  parse::detail::label(Empire_token)
+                     >>  labeller.rule(Empire_token)
                     ) > int_rules.expr
                     [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _1, _d, _e, _f) ]
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
-                    (parse::detail::label(Affiliation_token) >>  tok.CanSee_)
-                    >   parse::detail::label(Condition_token)   >   parse::detail::condition_parser
+                    (labeller.rule(Affiliation_token) >>  tok.CanSee_)
+                    >   labeller.rule(Condition_token)   >   parse::detail::condition_parser
                     [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_CAN_SEE, _1, _e, _f) ]
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
-                    (parse::detail::label(Affiliation_token) >>  tok.Human_)
-                    >   parse::detail::label(Condition_token)   >   parse::detail::condition_parser
+                    (labeller.rule(Affiliation_token) >>  tok.Human_)
+                    >   labeller.rule(Condition_token)   >   parse::detail::condition_parser
                     [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_HUMAN, _1, _e, _f) ]
                 )
                 |   (   // no empire id or condition specified, with or without an
                     // affiliation type: useful to specify no or all empires
-                    (   (parse::detail::label(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
+                    (   (labeller.rule(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
                         |    eps [ _d = AFFIL_ANY ]
                     )
                     [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _d, _e, _f) ]
@@ -108,13 +108,13 @@ namespace parse { namespace detail {
 
         set_overlay_texture
             =    tok.SetOverlayTexture_
-            >    parse::detail::label(Name_token)    > tok.string [ _a = _1 ]
-            >    parse::detail::label(Size_token)    > double_rules.expr [ _val = new_<Effect::SetOverlayTexture>(_a, _1) ]
+            >    labeller.rule(Name_token)    > tok.string [ _a = _1 ]
+            >    labeller.rule(Size_token)    > double_rules.expr [ _val = new_<Effect::SetOverlayTexture>(_a, _1) ]
             ;
 
         string_and_string_ref
-            =    parse::detail::label(Tag_token)  >  tok.string [ _a = _1 ]
-            >    parse::detail::label(Data_token)
+            =    labeller.rule(Tag_token)  >  tok.string [ _a = _1 ]
+            >    labeller.rule(Data_token)
             >  ( int_rules.expr      [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<int>>(_1)) ]
                  | double_rules.expr   [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<double>>(_1)) ]
                  | tok.string         [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::Constant<std::string>>(_1)) ]

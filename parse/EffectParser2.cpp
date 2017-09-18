@@ -14,7 +14,7 @@ namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
-    effect_parser_rules_2::effect_parser_rules_2(const parse::lexer& tok) :
+    effect_parser_rules_2::effect_parser_rules_2(const parse::lexer& tok, Labeller& labeller) :
         effect_parser_rules_2::base_type(start, "effect_parser_rules_2"),
         int_rules(tok),
         double_rules(tok)
@@ -33,68 +33,68 @@ namespace parse { namespace detail {
             (
                 /* has some overlap with parse::set_ship_part_meter_type_enum() so can't use '>' */
                 parse::set_non_ship_part_meter_type_enum() [ _a = _1 ]
-                >>  parse::detail::label(Value_token)
+                >>  labeller.rule(Value_token)
             )
             >   double_rules.expr [ _c = _1 ]
             >   (
-                (parse::detail::label(AccountingLabel_token) > tok.string [ _val = new_<Effect::SetMeter>(_a, _c, _1) ] )
+                (labeller.rule(AccountingLabel_token) > tok.string [ _val = new_<Effect::SetMeter>(_a, _c, _1) ] )
                 |    eps [ _val = new_<Effect::SetMeter>(_a, _c) ]
             )
             ;
 
         set_ship_part_meter
-            =    (parse::set_ship_part_meter_type_enum() [ _a = _1 ] >>   parse::detail::label(PartName_token))   > parse::string_value_ref() [ _b = _1 ]
-            >    parse::detail::label(Value_token)      > double_rules.expr [ _val = new_<Effect::SetShipPartMeter>(_a, _b, _1) ]
+            =    (parse::set_ship_part_meter_type_enum() [ _a = _1 ] >>   labeller.rule(PartName_token))   > parse::string_value_ref() [ _b = _1 ]
+            >    labeller.rule(Value_token)      > double_rules.expr [ _val = new_<Effect::SetShipPartMeter>(_a, _b, _1) ]
             ;
 
         set_empire_stockpile
             =   tok.SetEmpireTradeStockpile_ [ _a = RE_TRADE ]
             >   (
-                (   parse::detail::label(Empire_token) > int_rules.expr [ _b = _1 ]
-                    >   parse::detail::label(Value_token)  > double_rules.expr [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
+                (   labeller.rule(Empire_token) > int_rules.expr [ _b = _1 ]
+                    >   labeller.rule(Value_token)  > double_rules.expr [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
                 )
-                |  (parse::detail::label(Value_token)  > double_rules.expr [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ])
+                |  (labeller.rule(Value_token)  > double_rules.expr [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ])
             )
             ;
 
         set_empire_capital
             =    tok.SetEmpireCapital_
             >   (
-                (parse::detail::label(Empire_token) > int_rules.expr [ _val = new_<Effect::SetEmpireCapital>(_1) ])
+                (labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Effect::SetEmpireCapital>(_1) ])
                 |    eps [ _val = new_<Effect::SetEmpireCapital>() ]
             )
             ;
 
         set_planet_type
             =    tok.SetPlanetType_
-            >    parse::detail::label(Type_token) > parse::detail::planet_type_rules().expr [ _val = new_<Effect::SetPlanetType>(_1) ]
+            >    labeller.rule(Type_token) > parse::detail::planet_type_rules().expr [ _val = new_<Effect::SetPlanetType>(_1) ]
             ;
 
         set_planet_size
             =    tok.SetPlanetSize_
-            >    parse::detail::label(PlanetSize_token) > parse::detail::planet_size_rules().expr [ _val = new_<Effect::SetPlanetSize>(_1) ]
+            >    labeller.rule(PlanetSize_token) > parse::detail::planet_size_rules().expr [ _val = new_<Effect::SetPlanetSize>(_1) ]
             ;
 
         set_species
             =    tok.SetSpecies_
-            >    parse::detail::label(Name_token) > parse::string_value_ref() [ _val = new_<Effect::SetSpecies>(_1) ]
+            >    labeller.rule(Name_token) > parse::string_value_ref() [ _val = new_<Effect::SetSpecies>(_1) ]
             ;
 
         set_owner
             =    tok.SetOwner_
-            >    parse::detail::label(Empire_token) > int_rules.expr [ _val = new_<Effect::SetOwner>(_1) ]
+            >    labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Effect::SetOwner>(_1) ]
             ;
 
         set_species_opinion
             =    tok.SetSpeciesOpinion_
-            >    parse::detail::label(Species_token) >   parse::string_value_ref() [ _a = _1 ]
+            >    labeller.rule(Species_token) >   parse::string_value_ref() [ _a = _1 ]
             > (
-                (   parse::detail::label(Empire_token) >  int_rules.expr [ _c = _1 ]
-                    >  parse::detail::label(Opinion_token) > double_rules.expr
+                (   labeller.rule(Empire_token) >  int_rules.expr [ _c = _1 ]
+                    >  labeller.rule(Opinion_token) > double_rules.expr
                     [ _val = new_<Effect::SetSpeciesEmpireOpinion>(_a, _c, _1) ])
                 |
-                (   parse::detail::label(Species_token) > parse::string_value_ref() [ _b = _1 ]
-                    >   parse::detail::label(Opinion_token) > double_rules.expr
+                (   labeller.rule(Species_token) > parse::string_value_ref() [ _b = _1 ]
+                    >   labeller.rule(Opinion_token) > double_rules.expr
                     [ _val = new_<Effect::SetSpeciesSpeciesOpinion>(_a, _b, _1) ])
             )
             ;
@@ -107,21 +107,21 @@ namespace parse { namespace detail {
                         // useful to specify a single recipient empire, or the allies
                         // or enemies of a single empire
                         (
-                            (   (parse::detail::label(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
+                            (   (labeller.rule(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
                                 |    eps [ _d = AFFIL_SELF ]
                             )
-                            >>  parse::detail::label(Empire_token)
+                            >>  labeller.rule(Empire_token)
                         ) > int_rules.expr [ _b = _1 ]
                     )
                     |  (   // no empire id or condition specified, with or without an
                         // affiliation type: useful to specify no or all empires
-                        (   (parse::detail::label(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
+                        (   (labeller.rule(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
                             |    eps [ _d = AFFIL_ANY ]
                         )
                     )
                 )
-                >  parse::detail::label(Visibility_token) > parse::detail::visibility_rules().expr [ _c = _1 ]
-                >-(parse::detail::label(Condition_token) > parse::detail::condition_parser [ _e = _1 ])
+                >  labeller.rule(Visibility_token) > parse::detail::visibility_rules().expr [ _c = _1 ]
+                >-(labeller.rule(Condition_token) > parse::detail::condition_parser [ _e = _1 ])
             ) [ _val = new_<Effect::SetVisibility>(_c, _d, _b, _e) ]
             ;
 
