@@ -12,7 +12,9 @@ namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
-    effect_parser_rules_4::effect_parser_rules_4(const parse::lexer& tok, const effect_parser_grammar& effect_parser) :
+    effect_parser_rules_4::effect_parser_rules_4(const parse::lexer& tok,
+                                                 const effect_parser_grammar& effect_parser,
+                                                 Labeller& labeller) :
         effect_parser_rules_4::base_type(start, "effect_parser_rules_4"),
         int_rules(tok),
         double_rules(tok)
@@ -32,10 +34,10 @@ namespace parse { namespace detail {
 
         create_planet
             =   (       tok.CreatePlanet_
-                        >   parse::detail::label(Type_token)        >   parse::detail::planet_type_rules().expr [ _a = _1 ]
-                        >   parse::detail::label(PlanetSize_token)  >   parse::detail::planet_size_rules().expr [ _b = _1 ]
-                        > -(parse::detail::label(Name_token)        >   parse::string_value_ref()      [ _c = _1 ])
-                        > -(parse::detail::label(Effects_token)
+                        >   labeller.rule(Type_token)        >   parse::detail::planet_type_rules().expr [ _a = _1 ]
+                        >   labeller.rule(PlanetSize_token)  >   parse::detail::planet_size_rules().expr [ _b = _1 ]
+                        > -(labeller.rule(Name_token)        >   parse::string_value_ref()      [ _c = _1 ])
+                        > -(labeller.rule(Effects_token)
                             >   (
                                 ('[' > +effect_parser [ push_back(_d, _1) ] > ']')
                                 |    effect_parser [ push_back(_d, _1) ]
@@ -46,9 +48,9 @@ namespace parse { namespace detail {
 
         create_building
             =   (       tok.CreateBuilding_
-                        >   parse::detail::label(Type_token)        >   parse::string_value_ref() [ _a = _1 ]
-                        > -(parse::detail::label(Name_token)        >   parse::string_value_ref() [ _b = _1 ])
-                        > -(parse::detail::label(Effects_token)
+                        >   labeller.rule(Type_token)        >   parse::string_value_ref() [ _a = _1 ]
+                        > -(labeller.rule(Name_token)        >   parse::string_value_ref() [ _b = _1 ])
+                        > -(labeller.rule(Effects_token)
                             >   (
                                 ('[' > +effect_parser [ push_back(_c, _1) ] > ']')
                                 |    effect_parser [ push_back(_c, _1) ]
@@ -59,12 +61,12 @@ namespace parse { namespace detail {
 
         create_ship_1
             =   ((       tok.CreateShip_
-                         >>  parse::detail::label(DesignID_token)
+                         >>  labeller.rule(DesignID_token)
                  )  >   int_rules.expr    [ _b = _1 ]
-                 > -(parse::detail::label(Empire_token)      >   int_rules.expr    [ _c = _1 ])
-                 > -(parse::detail::label(Species_token)     >   parse::string_value_ref() [ _d = _1 ])
-                 > -(parse::detail::label(Name_token)        >   parse::string_value_ref() [ _e = _1 ])
-                 > -(parse::detail::label(Effects_token)
+                 > -(labeller.rule(Empire_token)      >   int_rules.expr    [ _c = _1 ])
+                 > -(labeller.rule(Species_token)     >   parse::string_value_ref() [ _d = _1 ])
+                 > -(labeller.rule(Name_token)        >   parse::string_value_ref() [ _e = _1 ])
+                 > -(labeller.rule(Effects_token)
                      >   (
                          ('[' > +effect_parser [ push_back(_f, _1) ] > ']')
                          |    effect_parser [ push_back(_f, _1) ]
@@ -75,12 +77,12 @@ namespace parse { namespace detail {
 
         create_ship_2
             =   ((       tok.CreateShip_
-                         >>  parse::detail::label(DesignName_token)  >>  parse::string_value_ref() [ _a = _1 ]
+                         >>  labeller.rule(DesignName_token)  >>  parse::string_value_ref() [ _a = _1 ]
                  )
-                 > -(parse::detail::label(Empire_token)      >   int_rules.expr    [ _c = _1 ])
-                 > -(parse::detail::label(Species_token)     >   parse::string_value_ref() [ _d = _1 ])
-                 > -(parse::detail::label(Name_token)        >   parse::string_value_ref() [ _e = _1 ])
-                 > -(parse::detail::label(Effects_token)
+                 > -(labeller.rule(Empire_token)      >   int_rules.expr    [ _c = _1 ])
+                 > -(labeller.rule(Species_token)     >   parse::string_value_ref() [ _d = _1 ])
+                 > -(labeller.rule(Name_token)        >   parse::string_value_ref() [ _e = _1 ])
+                 > -(labeller.rule(Effects_token)
                      >   (
                          ('[' > +effect_parser [ push_back(_f, _1) ] > ']')
                          |    effect_parser [ push_back(_f, _1) ]
@@ -91,12 +93,12 @@ namespace parse { namespace detail {
 
         create_field_1
             =   ((       tok.CreateField_
-                         >>  parse::detail::label(Type_token)    >>  parse::string_value_ref() [ _a = _1 ]
-                         >>  parse::detail::label(Size_token)
+                         >>  labeller.rule(Type_token)    >>  parse::string_value_ref() [ _a = _1 ]
+                         >>  labeller.rule(Size_token)
                  )
                  >   double_rules.expr [ _b = _1 ]
-                 > -(parse::detail::label(Name_token)    >   parse::string_value_ref() [ _d = _1 ])
-                 > -(parse::detail::label(Effects_token)
+                 > -(labeller.rule(Name_token)    >   parse::string_value_ref() [ _d = _1 ])
+                 > -(labeller.rule(Effects_token)
                      >
                      (
                          ('[' > +effect_parser [ push_back(_f, _1) ] > ']')
@@ -108,14 +110,14 @@ namespace parse { namespace detail {
 
         create_field_2
             =   ((       tok.CreateField_
-                         >>  parse::detail::label(Type_token)    >>  parse::string_value_ref() [ _a = _1 ]
-                         >>  parse::detail::label(X_token)
+                         >>  labeller.rule(Type_token)    >>  parse::string_value_ref() [ _a = _1 ]
+                         >>  labeller.rule(X_token)
                  )
                  >   double_rules.expr [ _b = _1 ]
-                 >   parse::detail::label(Y_token)       >   double_rules.expr [ _c = _1 ]
-                 >   parse::detail::label(Size_token)    >   double_rules.expr [ _e = _1 ]
-                 > -(parse::detail::label(Name_token)    >   parse::string_value_ref() [ _d = _1 ])
-                 > -(parse::detail::label(Effects_token)
+                 >   labeller.rule(Y_token)       >   double_rules.expr [ _c = _1 ]
+                 >   labeller.rule(Size_token)    >   double_rules.expr [ _e = _1 ]
+                 > -(labeller.rule(Name_token)    >   parse::string_value_ref() [ _d = _1 ])
+                 > -(labeller.rule(Effects_token)
                      >
                      (
                          ('[' > +effect_parser [ push_back(_f, _1) ] > ']')
@@ -127,13 +129,13 @@ namespace parse { namespace detail {
 
         create_system_1
             =   ((       tok.CreateSystem_
-                         >>  parse::detail::label(Type_token)
+                         >>  labeller.rule(Type_token)
                  )
                  >   parse::detail::star_type_rules().expr [ _a = _1 ]
-                 >   parse::detail::label(X_token)       >   double_rules.expr    [ _b = _1 ]
-                 >   parse::detail::label(Y_token)       >   double_rules.expr    [ _c = _1 ]
-                 > -(parse::detail::label(Name_token)    >   parse::string_value_ref()    [ _d = _1 ])
-                 > -(parse::detail::label(Effects_token)
+                 >   labeller.rule(X_token)       >   double_rules.expr    [ _b = _1 ]
+                 >   labeller.rule(Y_token)       >   double_rules.expr    [ _c = _1 ]
+                 > -(labeller.rule(Name_token)    >   parse::string_value_ref()    [ _d = _1 ])
+                 > -(labeller.rule(Effects_token)
                      >
                      (
                          ('[' > +effect_parser [ push_back(_e, _1) ] > ']')
@@ -145,12 +147,12 @@ namespace parse { namespace detail {
 
         create_system_2
             =   ((       tok.CreateSystem_
-                         >>  parse::detail::label(X_token)
+                         >>  labeller.rule(X_token)
                  )
                  >   double_rules.expr [ _b = _1 ]
-                 >   parse::detail::label(Y_token)       >   double_rules.expr [ _c = _1 ]
-                 > -(parse::detail::label(Name_token)    >   parse::string_value_ref() [ _d = _1 ])
-                 > -(parse::detail::label(Effects_token)
+                 >   labeller.rule(Y_token)       >   double_rules.expr [ _c = _1 ]
+                 > -(labeller.rule(Name_token)    >   parse::string_value_ref() [ _d = _1 ])
+                 > -(labeller.rule(Effects_token)
                      >
                      (
                          ('[' > +effect_parser [ push_back(_e, _1) ] > ']')

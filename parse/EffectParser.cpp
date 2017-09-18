@@ -11,11 +11,11 @@ namespace parse {
     effects_parser_grammar::effects_parser_grammar(
         const parse::lexer& tok, detail::Labeller& labeller) :
         effects_parser_grammar::base_type(start, "effects_parser_grammar"),
-        effect_parser_1(tok),
-        effect_parser_2(tok),
-        effect_parser_3(tok),
-        effect_parser_4(tok, *this),
-        effect_parser_5(*this)
+        effect_parser_1(tok, labeller),
+        effect_parser_2(tok, labeller),
+        effect_parser_3(tok, labeller),
+        effect_parser_4(tok, *this, labeller),
+        effect_parser_5(*this, labeller)
     {
         start
             = effect_parser_1

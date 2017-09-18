@@ -13,7 +13,7 @@ namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
-    effect_parser_rules_3::effect_parser_rules_3(const parse::lexer& tok) :
+    effect_parser_rules_3::effect_parser_rules_3(const parse::lexer& tok, Labeller& labeller) :
         effect_parser_rules_3::base_type(start, "effect_parser_rules_3"),
         double_rules(tok)
     {
@@ -26,38 +26,38 @@ namespace parse { namespace detail {
 
         move_to
             =    tok.MoveTo_
-            >    parse::detail::label(Destination_token) > parse::detail::condition_parser [ _val = new_<Effect::MoveTo>(_1) ]
+            >    labeller.rule(Destination_token) > parse::detail::condition_parser [ _val = new_<Effect::MoveTo>(_1) ]
             ;
 
         move_in_orbit
             =    tok.MoveInOrbit_
-            >    parse::detail::label(Speed_token) >  double_rules.expr [ _a = _1 ]
+            >    labeller.rule(Speed_token) >  double_rules.expr [ _a = _1 ]
             >   (
-                (parse::detail::label(Focus_token) >  parse::detail::condition_parser [ _val = new_<Effect::MoveInOrbit>(_a, _1) ])
+                (labeller.rule(Focus_token) >  parse::detail::condition_parser [ _val = new_<Effect::MoveInOrbit>(_a, _1) ])
                 |
                 (
-                    parse::detail::label(X_token)     >  double_rules.expr [ _b = _1 ]
-                    >   parse::detail::label(Y_token)     >  double_rules.expr [ _val = new_<Effect::MoveInOrbit>(_a, _b, _1) ]
+                    labeller.rule(X_token)     >  double_rules.expr [ _b = _1 ]
+                    >   labeller.rule(Y_token)     >  double_rules.expr [ _val = new_<Effect::MoveInOrbit>(_a, _b, _1) ]
                 )
             )
             ;
 
         move_towards
             =    tok.MoveTowards_
-            >    parse::detail::label(Speed_token) > double_rules.expr [ _a = _1 ]
+            >    labeller.rule(Speed_token) > double_rules.expr [ _a = _1 ]
             >    (
-                (parse::detail::label(Target_token) >  parse::detail::condition_parser [ _val = new_<Effect::MoveTowards>(_a, _1) ])
+                (labeller.rule(Target_token) >  parse::detail::condition_parser [ _val = new_<Effect::MoveTowards>(_a, _1) ])
                 |
                 (
-                    parse::detail::label(X_token)     > double_rules.expr [ _b = _1 ]
-                    >   parse::detail::label(Y_token)     > double_rules.expr [ _val = new_<Effect::MoveTowards>(_a, _b, _1) ]
+                    labeller.rule(X_token)     > double_rules.expr [ _b = _1 ]
+                    >   labeller.rule(Y_token)     > double_rules.expr [ _val = new_<Effect::MoveTowards>(_a, _b, _1) ]
                 )
             )
             ;
 
         set_destination
             =    tok.SetDestination_
-            >    parse::detail::label(Destination_token) > parse::detail::condition_parser [ _val = new_<Effect::SetDestination>(_1) ]
+            >    labeller.rule(Destination_token) > parse::detail::condition_parser [ _val = new_<Effect::SetDestination>(_1) ]
             ;
 
         set_aggression
@@ -75,45 +75,45 @@ namespace parse { namespace detail {
 
         victory
             =    tok.Victory_
-            >    parse::detail::label(Reason_token) > tok.string [ _val = new_<Effect::Victory>(_1) ]
+            >    labeller.rule(Reason_token) > tok.string [ _val = new_<Effect::Victory>(_1) ]
             ;
 
         add_special_1
             =   tok.AddSpecial_
-            >   parse::detail::label(Name_token) > parse::string_value_ref() [ _val = new_<Effect::AddSpecial>(_1) ]
+            >   labeller.rule(Name_token) > parse::string_value_ref() [ _val = new_<Effect::AddSpecial>(_1) ]
             ;
 
         add_special_2
             =  ((tok.AddSpecial_ | tok.SetSpecialCapacity_)
-                >>  parse::detail::label(Name_token) >> parse::string_value_ref() [ _c = _1 ]
-                >> (parse::detail::label(Capacity_token) | parse::detail::label(Value_token))
+                >>  labeller.rule(Name_token) >> parse::string_value_ref() [ _c = _1 ]
+                >> (labeller.rule(Capacity_token) | labeller.rule(Value_token))
                )
             >   double_rules.expr [ _val = new_<Effect::AddSpecial>(_c, _1) ]
             ;
 
         remove_special
             =   tok.RemoveSpecial_
-            >   parse::detail::label(Name_token) > parse::string_value_ref() [ _val = new_<Effect::RemoveSpecial>(_1) ]
+            >   labeller.rule(Name_token) > parse::string_value_ref() [ _val = new_<Effect::RemoveSpecial>(_1) ]
             ;
 
         add_starlanes
             =   tok.AddStarlanes_
-            >   parse::detail::label(Endpoint_token) > parse::detail::condition_parser [ _val = new_<Effect::AddStarlanes>(_1) ]
+            >   labeller.rule(Endpoint_token) > parse::detail::condition_parser [ _val = new_<Effect::AddStarlanes>(_1) ]
             ;
 
         remove_starlanes
             =   tok.RemoveStarlanes_
-            >   parse::detail::label(Endpoint_token) > parse::detail::condition_parser [ _val = new_<Effect::RemoveStarlanes>(_1) ]
+            >   labeller.rule(Endpoint_token) > parse::detail::condition_parser [ _val = new_<Effect::RemoveStarlanes>(_1) ]
             ;
 
         set_star_type
             =   tok.SetStarType_
-            >   parse::detail::label(Type_token) > parse::detail::star_type_rules().expr [ _val = new_<Effect::SetStarType>(_1) ]
+            >   labeller.rule(Type_token) > parse::detail::star_type_rules().expr [ _val = new_<Effect::SetStarType>(_1) ]
             ;
 
         set_texture
             =   tok.SetTexture_
-            >   parse::detail::label(Name_token) > tok.string [ _val = new_<Effect::SetTexture>(_1) ]
+            >   labeller.rule(Name_token) > tok.string [ _val = new_<Effect::SetTexture>(_1) ]
             ;
 
         start
