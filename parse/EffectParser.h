@@ -3,6 +3,8 @@
 
 #include "Lexer.h"
 #include "ParseImpl.h"
+#include "ConditionParserImpl.h"
+#include "ValueRefParser.h"
 
 #include <boost/spirit/include/qi.hpp>
 
@@ -18,6 +20,250 @@ namespace parse {
 
     /** Returns a const reference to the Effect parser. */
     effect_parser_rule& effect_parser();
+
+    using effect_parser_grammar = detail::grammar<Effect::EffectBase* ()>;
+}
+
+namespace parse { namespace detail {
+    struct effect_parser_rules_1 : public effect_parser_grammar {
+        effect_parser_rules_1(const parse::lexer& tok);
+
+        typedef parse::detail::rule<
+            Effect::EffectBase* (),
+            boost::spirit::qi::locals<
+                std::string,
+                ValueRef::ValueRefBase<int>*,
+                ValueRef::ValueRefBase<int>*,
+                ValueRef::ValueRefBase<std::string>*
+                >
+            > string_and_intref_and_intref_rule;
+
+        typedef parse::detail::rule<
+            Effect::EffectBase* (),
+            boost::spirit::qi::locals<
+                ValueRef::ValueRefBase<std::string>*,
+                ValueRef::ValueRefBase<double>*,
+                ValueRef::ValueRefBase<double>*
+                >
+            > stringref_and_doubleref_rule;
+
+        typedef parse::detail::rule<
+            Effect::EffectBase* (),
+            boost::spirit::qi::locals<
+                std::string,
+                std::string,
+                std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>,
+                EmpireAffiliationType,
+                std::string,
+                bool
+                >
+            > generate_sitrep_message_rule;
+
+        typedef std::pair<std::string, ValueRef::ValueRefBase<std::string>*> string_and_string_ref_pair;
+
+        typedef parse::detail::rule<
+            string_and_string_ref_pair (),
+            boost::spirit::qi::locals<std::string>
+            > string_and_string_ref_rule;
+
+        typedef parse::detail::rule<
+            std::vector<string_and_string_ref_pair> ()
+            > string_and_string_ref_vector_rule;
+
+        parse::int_arithmetic_rules         int_rules;
+        parse::double_parser_rules          double_rules;
+        string_and_intref_and_intref_rule   set_empire_meter_1;
+        string_and_intref_and_intref_rule   set_empire_meter_2;
+        string_and_intref_and_intref_rule   give_empire_tech;
+        stringref_and_doubleref_rule        set_empire_tech_progress;
+        generate_sitrep_message_rule        generate_sitrep_message;
+        string_and_intref_and_intref_rule   set_overlay_texture;
+        string_and_string_ref_rule          string_and_string_ref;
+        string_and_string_ref_vector_rule   string_and_string_ref_vector;
+        parse::effect_parser_rule           start;
+    };
+
+    struct effect_parser_rules_2 : public effect_parser_grammar {
+        effect_parser_rules_2(const parse::lexer& tok);
+
+        typedef parse::detail::rule<
+            Effect::EffectBase* (),
+            boost::spirit::qi::locals<
+                MeterType,
+                ValueRef::ValueRefBase<std::string>*,
+                ValueRef::ValueRefBase<double>*,
+                std::string
+            >
+        > set_meter_rule;
+
+        typedef parse::detail::rule<
+            Effect::EffectBase* (),
+            boost::spirit::qi::locals<
+                ResourceType,
+                ValueRef::ValueRefBase<int>*,
+                ValueRef::ValueRefBase<Visibility>*,
+                EmpireAffiliationType,
+                Condition::ConditionBase*
+            >
+        > set_stockpile_or_vis_rule;
+
+        typedef parse::detail::rule<
+            Effect::EffectBase* (),
+            boost::spirit::qi::locals<
+                ValueRef::ValueRefBase<std::string>*,
+                ValueRef::ValueRefBase<std::string>*,
+                ValueRef::ValueRefBase<int>*
+            >
+        > string_string_int_rule;
+
+        parse::int_arithmetic_rules         int_rules;
+        parse::double_parser_rules          double_rules;
+        set_meter_rule                      set_meter;
+        set_meter_rule                      set_ship_part_meter;
+        set_stockpile_or_vis_rule           set_empire_stockpile;
+        parse::effect_parser_rule           set_empire_capital;
+        parse::effect_parser_rule           set_planet_type;
+        parse::effect_parser_rule           set_planet_size;
+        parse::effect_parser_rule           set_species;
+        string_string_int_rule              set_species_opinion;
+        parse::effect_parser_rule           set_owner;
+        set_stockpile_or_vis_rule           set_visibility;
+        parse::effect_parser_rule           start;
+    };
+
+    struct effect_parser_rules_3 : public effect_parser_grammar {
+        effect_parser_rules_3(const parse::lexer& tok);
+
+        typedef parse::detail::rule<
+            Effect::EffectBase* (),
+            boost::spirit::qi::locals<
+                ValueRef::ValueRefBase<double>*,
+                ValueRef::ValueRefBase<double>*,
+                ValueRef::ValueRefBase<std::string>*
+            >
+        > doubles_string_rule;
+
+        parse::double_parser_rules          double_rules;
+        parse::effect_parser_rule           move_to;
+        doubles_string_rule                 move_in_orbit;
+        doubles_string_rule                 move_towards;
+        parse::effect_parser_rule           set_destination;
+        parse::effect_parser_rule           set_aggression;
+        parse::effect_parser_rule           destroy;
+        parse::effect_parser_rule           noop;
+        parse::effect_parser_rule           victory;
+        parse::effect_parser_rule           add_special_1;
+        doubles_string_rule                 add_special_2;
+        parse::effect_parser_rule           remove_special;
+        parse::effect_parser_rule           add_starlanes;
+        parse::effect_parser_rule           remove_starlanes;
+        parse::effect_parser_rule           set_star_type;
+        parse::effect_parser_rule           set_texture;
+        parse::effect_parser_rule           start;
+    };
+
+    struct effect_parser_rules_4 : public effect_parser_grammar {
+        effect_parser_rules_4(const parse::lexer& tok, const effect_parser_grammar& effect_parser);
+
+        typedef parse::detail::rule<
+            Effect::EffectBase* (),
+            boost::spirit::qi::locals<
+                ValueRef::ValueRefBase< ::PlanetType>*,
+                ValueRef::ValueRefBase< ::PlanetSize>*,
+                ValueRef::ValueRefBase<std::string>*,
+                std::vector<Effect::EffectBase*>
+            >
+        > create_planet_rule;
+
+        typedef parse::detail::rule<
+            Effect::EffectBase* (),
+            boost::spirit::qi::locals<
+                ValueRef::ValueRefBase<std::string>*,
+                ValueRef::ValueRefBase<std::string>*,
+                std::vector<Effect::EffectBase*>
+            >
+        > create_building_rule;
+
+        typedef parse::detail::rule<
+            Effect::EffectBase* (),
+            boost::spirit::qi::locals<
+                ValueRef::ValueRefBase< ::StarType>*,
+                ValueRef::ValueRefBase<double>*,
+                ValueRef::ValueRefBase<double>*,
+                ValueRef::ValueRefBase<std::string>*,
+                std::vector<Effect::EffectBase*>
+            >
+        > create_system_rule;
+
+        typedef parse::detail::rule<
+            Effect::EffectBase* (),
+            boost::spirit::qi::locals<
+                ValueRef::ValueRefBase<std::string>*,
+                ValueRef::ValueRefBase<int>*,
+                ValueRef::ValueRefBase<int>*,
+                ValueRef::ValueRefBase<std::string>*,
+                ValueRef::ValueRefBase<std::string>*,
+                std::vector<Effect::EffectBase*>
+            >
+        > create_ship_rule;
+
+        typedef parse::detail::rule<
+            Effect::EffectBase* (),
+            boost::spirit::qi::locals<
+                ValueRef::ValueRefBase<std::string>*,
+                ValueRef::ValueRefBase<double>*,
+                ValueRef::ValueRefBase<double>*,
+                ValueRef::ValueRefBase<std::string>*,
+                ValueRef::ValueRefBase<double>*,
+                std::vector<Effect::EffectBase*>
+            >
+        > create_field_rule;
+
+        parse::int_arithmetic_rules     int_rules;
+        parse::double_parser_rules      double_rules;
+        create_planet_rule              create_planet;
+        create_building_rule            create_building;
+        create_ship_rule                create_ship_1;
+        create_ship_rule                create_ship_2;
+        create_field_rule               create_field_1;
+        create_field_rule               create_field_2;
+        create_system_rule              create_system_1;
+        create_system_rule              create_system_2;
+        parse::effect_parser_rule       start;
+    };
+
+    struct effect_parser_rules_5 : public effect_parser_grammar {
+        effect_parser_rules_5(const effect_parser_grammar& effect_parser);
+
+        typedef parse::detail::rule<
+            Effect::EffectBase* (),
+            boost::spirit::qi::locals<
+                Condition::ConditionBase*,
+                std::vector<Effect::EffectBase*>,
+                std::vector<Effect::EffectBase*>
+            >
+        > conditional_rule;
+
+        conditional_rule            conditional;
+        parse::effect_parser_rule   start;
+    };
+
+
+    } //end namespace detail
+} //end namespace parse
+
+namespace parse {
+    struct effects_parser_grammar : public effect_parser_grammar {
+        effects_parser_grammar(const parse::lexer& tok);
+
+        detail::effect_parser_rules_1 effect_parser_1;
+        detail::effect_parser_rules_2 effect_parser_2;
+        detail::effect_parser_rules_3 effect_parser_3;
+        detail::effect_parser_rules_4 effect_parser_4;
+        detail::effect_parser_rules_5 effect_parser_5;
+        effect_parser_rule start;
+    };
+
 }
 
 #endif
