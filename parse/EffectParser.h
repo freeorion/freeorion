@@ -18,9 +18,6 @@ namespace parse {
         Effect::EffectBase* ()
     > effect_parser_rule;
 
-    /** Returns a const reference to the Effect parser. */
-    effect_parser_rule& effect_parser();
-
     using effect_parser_grammar = detail::grammar<Effect::EffectBase* ()>;
 }
 

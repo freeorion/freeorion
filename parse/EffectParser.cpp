@@ -2,29 +2,6 @@
 
 
 namespace parse {
-    namespace detail {
-        effect_parser_rule effect_parser;
-    }
-
-    effect_parser_rule& effect_parser() {
-        static bool once = true;
-        if (once) {
-            once = false;
-            detail::effect_parser
-                =    detail::effect_parser_1()
-                |    detail::effect_parser_2()
-                |    detail::effect_parser_3()
-                |    detail::effect_parser_4x(detail::effect_parser)
-                |    detail::effect_parser_5x(detail::effect_parser)
-                ;
-            detail::effect_parser.name("Effect");
-#if DEBUG_EFFECT_PARSERS
-            debug(detail::effect_parser);
-#endif
-        }
-        return detail::effect_parser;
-    }
-
     effects_parser_grammar::effects_parser_grammar(
         const parse::lexer& tok) :
         effects_parser_grammar::base_type(start, "effects_parser_grammar"),
