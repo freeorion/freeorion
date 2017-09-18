@@ -41,7 +41,8 @@ namespace {
         rules(const parse::lexer& tok,
               parse::detail::Labeller& labeller,
               const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+              const parse::text_iterator& first, const parse::text_iterator& last) :
+            effects_group_grammar(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -65,7 +66,7 @@ namespace {
                 >   labeller.rule(Description_token)         > tok.string [ _b = _1 ]
                 >   labeller.rule(Stealth_token)             > parse::detail::double_ [ _c = _1]
                 >   parse::detail::tags_parser()(_d)
-                > -(labeller.rule(EffectsGroups_token)       > parse::detail::effects_group_parser() [ _e = _1 ])
+                > -(labeller.rule(EffectsGroups_token)       > effects_group_grammar [ _e = _1 ])
                 >   labeller.rule(Graphic_token)             > tok.string
                 [ insert_fieldtype_(_r1, _a, _b, _c, _d, _e, _1) ]
                 ;
@@ -98,6 +99,7 @@ namespace {
             void (std::map<std::string, std::unique_ptr<FieldType>>&)
         > start_rule;
 
+        parse::effects_group_grammar effects_group_grammar;
         field_rule          field;
         start_rule          start;
     };

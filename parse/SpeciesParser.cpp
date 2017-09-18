@@ -53,7 +53,8 @@ namespace {
         rules(const parse::lexer& tok,
               parse::detail::Labeller& labeller,
               const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+              const parse::text_iterator& first, const parse::text_iterator& last) :
+            effects_group_grammar(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -96,7 +97,7 @@ namespace {
                 ;
 
             effects
-                =    labeller.rule(EffectsGroups_token) > parse::detail::effects_group_parser() [ _r1 = _1 ]
+                =    labeller.rule(EffectsGroups_token) > effects_group_grammar [ _r1 = _1 ]
                 ;
 
             environment_map_element
@@ -240,6 +241,7 @@ namespace {
             void (std::map<std::string, std::unique_ptr<Species>>&)
         > start_rule;
 
+        parse::effects_group_grammar effects_group_grammar;
         foci_rule                       foci;
         focus_type_rule                 focus_type;
         effects_rule                    effects;

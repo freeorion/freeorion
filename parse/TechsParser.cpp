@@ -77,7 +77,8 @@ namespace {
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
             castable_int_rules(parse::lexer::instance()),
-            double_rules(parse::lexer::instance())
+            double_rules(parse::lexer::instance()),
+            effects_group_grammar(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -143,7 +144,7 @@ namespace {
                 >   tech_info [ _a = _1 ]
                 >  -prerequisites(_b)
                 >  -unlocks(_c)
-                > -(labeller.rule(EffectsGroups_token) > parse::detail::effects_group_parser() [ _d = _1 ])
+                > -(labeller.rule(EffectsGroups_token) > effects_group_grammar [ _d = _1 ])
                 > -(labeller.rule(Graphic_token) > tok.string [ _e = _1 ])
                    ) [ insert_tech_(_r1, _a, _d, _b, _c, _e) ]
                 ;
@@ -233,6 +234,7 @@ namespace {
 
         parse::castable_as_int_parser_rules     castable_int_rules;
         parse::double_parser_rules  double_rules;
+        parse::effects_group_grammar effects_group_grammar;
         tech_info_name_desc_rule    tech_info_name_desc;
         tech_info_rule              tech_info;
         prerequisites_rule          prerequisites;

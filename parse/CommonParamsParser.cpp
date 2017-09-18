@@ -20,7 +20,8 @@ namespace parse { namespace detail {
     common_params_rules::common_params_rules(const parse::lexer& tok,
                                          parse::detail::Labeller& labeller) :
         castable_int_rules(tok),
-        double_rules(tok)
+        double_rules(tok),
+        effects_group_grammar(tok)
     {
         namespace qi = boost::spirit::qi;
 
@@ -86,7 +87,7 @@ namespace parse { namespace detail {
                 >   location(_e)
                 >   enqueue_location(_i)
                 >  -consumption(_g, _h)
-                > -(labeller.rule(EffectsGroups_token)> parse::detail::effects_group_parser() [ _f = _1 ])
+                > -(labeller.rule(EffectsGroups_token)> effects_group_grammar [ _f = _1 ])
             ) [ _val = construct<CommonParams>(_a, _b, _c, _d, _e, _f, _g, _h, _i) ]
             ;
 

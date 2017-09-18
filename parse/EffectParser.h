@@ -3,30 +3,22 @@
 
 #include "Lexer.h"
 #include "ParseImpl.h"
-#include "ConditionParserImpl.h"
 #include "ValueRefParser.h"
 
 #include <boost/spirit/include/qi.hpp>
+
+namespace Condition {
+    struct ConditionBase;
+}
 
 namespace Effect {
     class EffectBase;
 }
 
-namespace parse {
-    typedef detail::rule<
-        // TODO: Change this type to Effect::Base in the FO code.
-        Effect::EffectBase* ()
-    > effect_parser_rule;
-
-    using effect_parser_grammar = detail::grammar<Effect::EffectBase* ()>;
-}
-
 namespace parse { namespace detail {
-    typedef rule<
-        std::vector<std::shared_ptr<Effect::EffectsGroup>> ()
-    > effects_group_rule;
-    effects_group_rule& effects_group_parser();
-
+    using effect_signature      = Effect::EffectBase* ();
+    using effect_parser_rule    = rule<effect_signature>;
+    using effect_parser_grammar = grammar<effect_signature>;
 
     struct effect_parser_rules_1 : public effect_parser_grammar {
         effect_parser_rules_1(const parse::lexer& tok);
@@ -83,7 +75,7 @@ namespace parse { namespace detail {
         string_and_intref_and_intref_rule   set_overlay_texture;
         string_and_string_ref_rule          string_and_string_ref;
         string_and_string_ref_vector_rule   string_and_string_ref_vector;
-        parse::effect_parser_rule           start;
+        parse::detail::effect_parser_rule   start;
     };
 
     struct effect_parser_rules_2 : public effect_parser_grammar {
@@ -119,19 +111,19 @@ namespace parse { namespace detail {
             >
         > string_string_int_rule;
 
-        parse::int_arithmetic_rules         int_rules;
-        parse::double_parser_rules          double_rules;
-        set_meter_rule                      set_meter;
-        set_meter_rule                      set_ship_part_meter;
-        set_stockpile_or_vis_rule           set_empire_stockpile;
-        parse::effect_parser_rule           set_empire_capital;
-        parse::effect_parser_rule           set_planet_type;
-        parse::effect_parser_rule           set_planet_size;
-        parse::effect_parser_rule           set_species;
-        string_string_int_rule              set_species_opinion;
-        parse::effect_parser_rule           set_owner;
-        set_stockpile_or_vis_rule           set_visibility;
-        parse::effect_parser_rule           start;
+        parse::int_arithmetic_rules       int_rules;
+        parse::double_parser_rules        double_rules;
+        set_meter_rule                    set_meter;
+        set_meter_rule                    set_ship_part_meter;
+        set_stockpile_or_vis_rule         set_empire_stockpile;
+        parse::detail::effect_parser_rule set_empire_capital;
+        parse::detail::effect_parser_rule set_planet_type;
+        parse::detail::effect_parser_rule set_planet_size;
+        parse::detail::effect_parser_rule set_species;
+        string_string_int_rule            set_species_opinion;
+        parse::detail::effect_parser_rule set_owner;
+        set_stockpile_or_vis_rule         set_visibility;
+        parse::detail::effect_parser_rule start;
     };
 
     struct effect_parser_rules_3 : public effect_parser_grammar {
@@ -147,22 +139,22 @@ namespace parse { namespace detail {
         > doubles_string_rule;
 
         parse::double_parser_rules          double_rules;
-        parse::effect_parser_rule           move_to;
+        parse::detail::effect_parser_rule           move_to;
         doubles_string_rule                 move_in_orbit;
         doubles_string_rule                 move_towards;
-        parse::effect_parser_rule           set_destination;
-        parse::effect_parser_rule           set_aggression;
-        parse::effect_parser_rule           destroy;
-        parse::effect_parser_rule           noop;
-        parse::effect_parser_rule           victory;
-        parse::effect_parser_rule           add_special_1;
+        parse::detail::effect_parser_rule           set_destination;
+        parse::detail::effect_parser_rule           set_aggression;
+        parse::detail::effect_parser_rule           destroy;
+        parse::detail::effect_parser_rule           noop;
+        parse::detail::effect_parser_rule           victory;
+        parse::detail::effect_parser_rule           add_special_1;
         doubles_string_rule                 add_special_2;
-        parse::effect_parser_rule           remove_special;
-        parse::effect_parser_rule           add_starlanes;
-        parse::effect_parser_rule           remove_starlanes;
-        parse::effect_parser_rule           set_star_type;
-        parse::effect_parser_rule           set_texture;
-        parse::effect_parser_rule           start;
+        parse::detail::effect_parser_rule           remove_special;
+        parse::detail::effect_parser_rule           add_starlanes;
+        parse::detail::effect_parser_rule           remove_starlanes;
+        parse::detail::effect_parser_rule           set_star_type;
+        parse::detail::effect_parser_rule           set_texture;
+        parse::detail::effect_parser_rule           start;
     };
 
     struct effect_parser_rules_4 : public effect_parser_grammar {
@@ -232,7 +224,7 @@ namespace parse { namespace detail {
         create_field_rule               create_field_2;
         create_system_rule              create_system_1;
         create_system_rule              create_system_2;
-        parse::effect_parser_rule       start;
+        parse::detail::effect_parser_rule       start;
     };
 
     struct effect_parser_rules_5 : public effect_parser_grammar {
@@ -248,7 +240,7 @@ namespace parse { namespace detail {
         > conditional_rule;
 
         conditional_rule            conditional;
-        parse::effect_parser_rule   start;
+        parse::detail::effect_parser_rule   start;
     };
 
 
@@ -256,15 +248,39 @@ namespace parse { namespace detail {
 } //end namespace parse
 
 namespace parse {
-    struct effects_parser_grammar : public effect_parser_grammar {
-        effects_parser_grammar(const parse::lexer& tok);
+    struct effects_parser_grammar : public detail::effect_parser_grammar {
+        effects_parser_grammar(const lexer& tok);
 
         detail::effect_parser_rules_1 effect_parser_1;
         detail::effect_parser_rules_2 effect_parser_2;
         detail::effect_parser_rules_3 effect_parser_3;
         detail::effect_parser_rules_4 effect_parser_4;
         detail::effect_parser_rules_5 effect_parser_5;
-        effect_parser_rule start;
+        detail::effect_parser_rule start;
+    };
+
+    using effects_group_signature = std::vector<std::shared_ptr<Effect::EffectsGroup>> ();
+    using effects_group_rule = detail::rule<effects_group_signature>;
+
+    struct effects_group_grammar : public detail::grammar<effects_group_signature> {
+        effects_group_grammar(const lexer& tok);
+
+        typedef parse::detail::rule<
+            Effect::EffectsGroup* (),
+            boost::spirit::qi::locals<
+                Condition::ConditionBase*,
+                Condition::ConditionBase*,
+                std::string,
+                std::vector<Effect::EffectBase*>,
+                std::string,
+                int,
+                std::string
+            >
+        > effects_group_rule;
+
+        effects_parser_grammar effects_grammar;
+        effects_group_rule effects_group;
+        parse::effects_group_rule start;
     };
 
 }

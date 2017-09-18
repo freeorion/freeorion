@@ -4,6 +4,7 @@
 #include "ConditionParserImpl.h"
 #include "EffectParser.h"
 #include "ValueRefParser.h"
+#include "EffectParser.h"
 
 #include "../universe/Special.h"
 
@@ -70,7 +71,8 @@ namespace {
               parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
-            double_rules(parse::lexer::instance())
+            double_rules(parse::lexer::instance()),
+            effects_group_grammar(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -115,7 +117,7 @@ namespace {
                 >    spawn(_c, _d)
                 >  -(labeller.rule(Capacity_token)           > double_rules.expr [ _h = _1 ])
                 >  -(labeller.rule(Location_token)           > parse::detail::condition_parser [ _e = _1 ])
-                >  -(labeller.rule(EffectsGroups_token)      > parse::detail::effects_group_parser() [ _f = _1 ])
+                >  -(labeller.rule(EffectsGroups_token)      > effects_group_grammar [ _f = _1 ])
                 >    labeller.rule(Graphic_token)            > tok.string
                 [ insert_special_(_r1, phoenix::construct<special_pod>(_a, _b, _g, _f, _c, _d, _h, _e, _1)) ]
                 ;
@@ -165,6 +167,7 @@ namespace {
 
 
         parse::double_parser_rules      double_rules;
+        parse::effects_group_grammar effects_group_grammar;
         special_prefix_rule special_prefix;
         spawn_rule          spawn;
         special_rule        special;
