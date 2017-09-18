@@ -94,12 +94,6 @@ namespace parse { namespace detail {
 
 
     typedef rule<
-        std::vector<std::shared_ptr<Effect::EffectsGroup>> ()
-    > effects_group_rule;
-    effects_group_rule& effects_group_parser();
-
-
-    typedef rule<
         GG::Clr (),
         boost::spirit::qi::locals<
             unsigned int,

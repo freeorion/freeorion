@@ -22,6 +22,12 @@ namespace parse {
 }
 
 namespace parse { namespace detail {
+    typedef rule<
+        std::vector<std::shared_ptr<Effect::EffectsGroup>> ()
+    > effects_group_rule;
+    effects_group_rule& effects_group_parser();
+
+
     struct effect_parser_rules_1 : public effect_parser_grammar {
         effect_parser_rules_1(const parse::lexer& tok);
 

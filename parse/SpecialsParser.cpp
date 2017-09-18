@@ -2,6 +2,7 @@
 
 #include "ParseImpl.h"
 #include "ConditionParserImpl.h"
+#include "EffectParser.h"
 #include "ValueRefParser.h"
 
 #include "../universe/Special.h"
