@@ -48,6 +48,16 @@ namespace parse { namespace detail {
         locals
     >;
 
+    template <
+        typename signature = boost::spirit::qi::unused_type,
+        typename locals = boost::spirit::qi::unused_type
+    >
+    using grammar = boost::spirit::qi::grammar<
+        parse::token_iterator,
+        parse::skipper_type,
+        signature,
+        locals
+    >;
 
     using double_rule = detail::rule<
         double ()
