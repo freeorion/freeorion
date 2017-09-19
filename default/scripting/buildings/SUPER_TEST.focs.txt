@@ -3,7 +3,10 @@ BuildingType
     description = "BLD_SUPER_TEST_DESC"
     buildcost = 1
     buildtime = 1
-    location = Planet
+    location = And [
+        Planet
+        ((GameRule name = "RULE_ENABLE_SUPER_TESTER") > 0)
+    ]
     effectsgroups = [
         Effectsgroup
         scope = And [

@@ -44,6 +44,7 @@ BuildingType
             Population low = [[MIN_RECOLONIZING_SIZE]]
             Happiness low = 5
         ]
+        ((GameRule name = "RULE_ENABLE_SUPER_TESTER") > 0)
     ]
     EnqueueLocation = And [
         Planet
@@ -59,6 +60,7 @@ BuildingType
             Population low = [[MIN_RECOLONIZING_SIZE]]
             Happiness low = 5
         ]
+        ((GameRule name = "RULE_ENABLE_SUPER_TESTER") > 0)
     ]
     effectsgroups = [
         EffectsGroup

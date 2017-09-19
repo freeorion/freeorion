@@ -245,6 +245,8 @@ for sp_id, sp_desc_name, sp_graphic in species_list:
         data['tags'] += ' "CTRL_EXTINCT"'
         data['species_condition'] = t_species_condition_extinct.substitute(tech_name=sp_tech, id=sp_id, name=sp_name)
         data['time'] = t_buildtime_extinct.substitute(id=sp_id, name=sp_name, t_factor=time_factor.get(sp_id, "1.0"))
+    elif sp_id == "SP_SUPER_TEST":
+        data['species_condition'] += "\n        ((GameRule name = \"RULE_ENABLE_SUPER_TESTER\") > 0)"
 
     with open(os.path.join(outpath, sp_filename), "w") as f:
         f.write(t_main.substitute(**data))
