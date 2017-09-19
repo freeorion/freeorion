@@ -1,0 +1,68 @@
+PLANET_DESTRUCTION_EFFECT
+'''             GenerateSitRepMessage  // sitrep for destroying empire
+                    message = "EFFECT_PLANET_DESTRUCTION"
+                    label = "EFFECT_PLANET_DESTRUCTION_LABEL"
+                    icon = "icons/specials_huge/planet_destroyed_blue.png"
+                    parameters = [
+                        tag = "planet" data = Target.ID
+                        tag = "empire" data = Target.Owner
+                    ]
+                    empire = Source.Owner
+                GenerateSitRepMessage  // sitrep for targeted empire
+                    message = "EFFECT_PLANET_DESTRUCTION_OWN"
+                    label = "EFFECT_PLANET_DESTRUCTION_LABEL"
+                    icon = "icons/specials_huge/planet_destroyed_blue.png"
+                    parameters = [
+                        tag = "planet" data = Target.ID
+                        tag = "empire" data = Source.Owner
+                    ]
+                    empire = Target.Owner
+                RemoveAllSpecials
+                RemoveAllBuildings
+                SetOwner empire = -1
+                SetSpecies name = ""
+                SetPlanetType type = Asteroids
+                AddSpecial name = "PLANET_DESTRUCTION_SPECIAL"
+'''
+
+PLANET_DESTRUCTION_WARNING_SITREP
+'''             GenerateSitRepMessage
+                    message = "EFFECT_PLANET_TARGETED"
+                    label = "EFFECT_PLANET_DESTRUCTION_LABEL"
+                    icon = "icons/meter/damage.png"
+                    parameters = [
+                        tag = "planet" data = Target.ID
+                        tag = "empire" data = Source.Owner
+                    ]
+                    empire = Target.Owner
+
+'''
+
+PDC_SCOPE
+'''             Planet
+                InSystem id = Source.SystemID
+                OrderedDestroyedBy condition = Source
+                Or [
+                    OwnedBy affiliation = EnemyOf empire = Source.Owner
+                    Unowned
+                ]
+                VisibleToEmpire empire = Source.Owner
+'''
+
+PDC_LVL0
+'''         And [
+                Not OwnerHasTech name = "SHP_PLANET_DESTROYER_REF_1"
+                Not OwnerHasTech name = "SHP_PLANET_DESTROYER_REF_2"
+            ]
+'''
+
+PDC_LVL1
+'''         And [
+                OwnerHasTech name = "SHP_PLANET_DESTROYER_REF_1"
+                Not OwnerHasTech name = "SHP_PLANET_DESTROYER_REF_2"
+            ]
+'''
+
+PDC_LVL2
+'''         OwnerHasTech name = "SHP_PLANET_DESTROYER_REF_2"
+'''

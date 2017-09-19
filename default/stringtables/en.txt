@@ -6422,6 +6422,9 @@ EFFECT_BIOWEAPON
 EFFECT_BIOWEAPON_LABEL
 Bioweapon Attack
 
+EFFECT_PLANET_TARGETED
+Our planet % planet is being targeted by a planet destroyer cannon!
+
 EFFECT_PLANET_DESTRUCTION
 We have destroyed the %empire% planet %planet%!
 
@@ -6503,11 +6506,23 @@ The capital of the %empire% empire has fallen.
 HEAD_ON_A_SPIKE_MESSAGE_LABEL
 Empire Capital Captured
 
+DESTRUCTION_COUNTDOWN_SPECIAL
+Planet Destruction Countdown
+
+DESTRUCTION_COUNTDOWN_SPECIAL_DESC
+This planet has been targeted for destruction by a planet destroyer cannon. The time remaining until the planet's destruction is displayed to the right.
+
+PLANET_DESTRUCTION_SPECIAL
+Planet Destroyed
+
+PLANET_DESTRUCTION_SPECIAL_DESC
+This planet has just been destroyed by a planet destroyer cannon.
+
 DESTROYED_HOMEWORLD_SPECIAL
 Destroyed Homeworld
 
 DESTROYED_HOMEWORLD_SPECIAL_DESC
-The former homeworld of a once thriving species, now nothing more than rubble.
+The former homeworld of a once thriving species, now no more than rubble.
 
 CUSTOM_SITREP_INTRODUCTION
 Welcome to the initial Situation Report Briefing. Pursuant to the %tech% Directive, all the busy empire servants endeavor to collect important information and send it back to %system%, where it is compiled into Situation Reports, such as this, providing notice of important events and other reminders selected by the empire leadership.
@@ -10925,13 +10940,13 @@ Aggression
 SHP_ROOT_AGGRESSION_DESC
 Allows basic weapons and [[shippart GT_TROOP_POD]]s.
 
-DOOMSDAY_WEAPON_UNLOCK
+SHP_DOOMSDAY_WEAPON_UNLOCK
 Doomsday Weapon Prerequisite
 
-DOOMSDAY_WEAPON_UNLOCK_DESC
+SHP_DOOMSDAY_WEAPON_UNLOCK_DESC
 Enables the research doomsday weapons if allowed by game rule.
 
-DOOMSDAY_WEAPON_UNLOCK_SHORT_DESC
+SHP_DOOMSDAY_WEAPON_UNLOCK_SHORT_DESC
 Game Rule Prerequisite
 
 SHP_BOMBARD
@@ -11296,7 +11311,19 @@ SHP_PLANET_DESTROYER
 Planet Destroyer Cannon
 
 SHP_PLANET_DESTROYER_DESC
-The ultimate beam weapon, able to destroy a whole planet in a single shot. Needs a Core [[encyclopedia SLOT_TITLE]] to install.
+The ultimate beam weapon, able to destroy a whole planet after a loadup time of 2 turns. Needs a Core [[encyclopedia SLOT_TITLE]] to install.
+
+SHP_PLANET_DESTROYER_REF_1
+Planet Destroyer Cannon 2
+
+SHP_PLANET_DESTROYER_REF_1_DESC
+This refinement of the [[shippart SP_PLANET_DESTROYER]] only requires a loadup time of 1 turn before it can destroy a planet.
+
+SHP_PLANET_DESTROYER_REF_2
+Planet Destroyer Cannon 3
+
+SHP_PLANET_DESTROYER_REF_2_DESC
+This further refinement of the [[shippart SP_PLANET_DESTROYER]] can destroy a whole planet in a single turn.
 
 SHP_ROOT_ARMOR
 Armor Plating
@@ -12346,12 +12373,12 @@ Spinal Antimatter Cannon
 SR_SPINAL_ANTIMATTER_DESC
 A huge spinal mount mass driver firing heavy projectiles made of antimatter.
 
-DE_PLANET_DESTROYER
+SP_PLANET_DESTROYER
 Planet Destroyer Cannon
 
-DE_PLANET_DESTROYER_DESC
-'''The ultimate beam weapon, able to destroy a whole planet in a single shot. It can only target planets and is to slow to aim at individual ships.
-This terrifying weapon can destroy a planet even if its shields are still up. The only way to save a planet is to destroy the ship carrying the weapon in battle. If the ship survives the battle, the planet will be destroyed.'''
+SP_PLANET_DESTROYER_DESC
+'''The ultimate beam weapon, able to destroy a whole planet. It can only target planets and is too slow to aim at individual ships.
+This terrifying weapon can destroy a planet even if its shields are still up. The only way to save a planet is to destroy the ship carrying the weapon in battle.'''
 
 SR_JAWS
 Jaws

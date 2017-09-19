@@ -1,0 +1,76 @@
+Part
+    name = "SP_PLANET_DESTROYER"
+    description = "SP_PLANET_DESTROYER_DESC"
+    class = Destroy
+    mountableSlotTypes = Core
+    buildcost = 800 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 8
+    tags = [ "CTRL_ALWAYS_BOMBARD" ]
+    location = All
+    effectsgroups = [    
+
+        // if pdc tech is lvl 0 and no countdown is set, start countdown at 2
+        EffectsGroup
+            scope = And [
+                [[PDC_SCOPE]]
+                Not HasSpecial name = "DESTRUCTION_COUNTDOWN_SPECIAL"
+            ]
+            activation = [[PDC_LVL0]]
+            effects = [
+                AddSpecial name = "DESTRUCTION_COUNTDOWN_SPECIAL"
+                SetSpecialCapacity name = "DESTRUCTION_COUNTDOWN_SPECIAL" value = 2
+                [[PLANET_DESTRUCTION_WARNING_SITREP]]
+            ]
+
+         // if pdc tech is lvl 1 and no countdown is set, start countdown at 1
+         EffectsGroup
+             scope = And [
+                 [[PDC_SCOPE]]
+                 Not HasSpecial name = "DESTRUCTION_COUNTDOWN_SPECIAL"
+             ]
+             activation = [[PDC_LVL1]]
+             effects = [
+                 AddSpecial name = "DESTRUCTION_COUNTDOWN_SPECIAL"
+                 SetSpecialCapacity name = "DESTRUCTION_COUNTDOWN_SPECIAL" value = 1
+                 [[PLANET_DESTRUCTION_WARNING_SITREP]]
+             ]
+
+          // if a homeworld is destroyed, generate specific sitRep (need to do it here, otherwise owner info is lost)
+          EffectsGroup
+              scope = And [ [[PDC_SCOPE]] ]
+              activation = Or [
+                  [[PDC_LVL2]]
+                  Number low = 1 condition = HasSpecialCapacity name = "DESTRUCTION_COUNTDOWN_SPECIAL" high = 1
+              ]
+              effects = GenerateSitRepMessage
+                    message = "HEAD_ON_A_SPIKE_MESSAGE"
+                    label = "HEAD_ON_A_SPIKE_MESSAGE_LABEL"
+                    icon = "icons/sitrep/empire_eliminated.png"
+                    parameters = [
+                        tag = "empire" data = Target.Owner
+                    ]
+
+          // if pdc tech is lvl 2, destroy planet instantly
+          EffectsGroup
+              scope = And [ [[PDC_SCOPE]] ]
+              activation = [[PDC_LVL2]]
+              effects = [
+                  [[PLANET_DESTRUCTION_EFFECT]]
+                  SetPopulation value = 0
+              ]
+
+          // if countdown ends, destroy planet
+          EffectsGroup
+              scope = And [
+                  [[PDC_SCOPE]]
+                  HasSpecialCapacity name = "DESTRUCTION_COUNTDOWN_SPECIAL" high = 1
+              ]
+              effects = [ [[PLANET_DESTRUCTION_EFFECT]] ]
+ 
+    ]
+    icon = "icons/ship_parts/planet_destroyer.png"
+
+#include "/scripting/common/upkeep.macros"
+
+#include "/scripting/ship_parts/General/planet_destruction.macros"
+
