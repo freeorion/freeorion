@@ -1245,23 +1245,35 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
                 return false;
             continue;
         }
+        if (!unrestricted && !not_yet_in_system)
+            continue;
+
         bool can_see;
-        if (!fleet->Unowned()) {
+        if (!fleet->Unowned())
             can_see = (GetEmpire(fleet->Owner())->GetMeter("METER_DETECTION_STRENGTH")->Current() >= lowest_ship_stealth);
-        } else {
+        else
             can_see = (monster_detection >= lowest_ship_stealth);
-        }
+        if (!can_see)
+            continue;
+
         bool at_war = Unowned() || fleet->Unowned() ||
                       Empires().GetDiplomaticStatus(this->Owner(), fleet->Owner()) == DIPLO_WAR;
+        if (!at_war)
+            continue;
         bool aggressive = (fleet->Aggressive() || fleet->Unowned());
+        if (!aggressive)
+            continue;
 
-        if (aggressive && (fleet->HasArmedShips() || fleet->HasFighterShips()) && at_war && can_see && (unrestricted || not_yet_in_system))
-            can_be_blockaded = true; // don't exit early here, because blockade may yet be thwarted by ownership & presence check above
+        // These are the most costly checks.  Do them last
+        if (!fleet->HasArmedShips() && !fleet->HasFighterShips())
+            continue;
+
+        // don't exit early here, because blockade may yet be thwarted by ownership & presence check above
+        can_be_blockaded = true;
+
     }
-    if (can_be_blockaded) {
-        return true;
-    }
-    return false;
+
+    return can_be_blockaded;
 }
 
 float Fleet::Speed() const {
