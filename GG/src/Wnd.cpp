@@ -618,6 +618,18 @@ void Wnd::DetachChild(const std::shared_ptr<Wnd>& wnd)
 
 void Wnd::DetachChild(Wnd* wnd)
 {
+    const auto it = std::find_if(m_children.begin(), m_children.end(),
+                                 [&wnd](const std::shared_ptr<Wnd>& x){ return x.get() == wnd; });
+    if (it == m_children.end())
+        return;
+
+    DetachChildCore(wnd);
+
+    m_children.erase(it);
+}
+
+void Wnd::DetachChildCore(Wnd* wnd)
+{
     if (!wnd)
         return;
 
@@ -626,25 +638,21 @@ void Wnd::DetachChild(Wnd* wnd)
     auto&& layout = GetLayout();
     if (layout && wnd == layout.get())
         m_layout.reset();
+
     if (auto this_as_layout = dynamic_cast<Layout*>(this)) {
         this_as_layout->Remove(wnd);
         wnd->m_containing_layout.reset();
     }
-
-    const auto it = std::find_if(m_children.begin(), m_children.end(),
-                                 [&wnd](const std::shared_ptr<Wnd>& x){ return x.get() == wnd; });
-    if (it == m_children.end())
-        return;
-    m_children.erase(it);
 }
 
 void Wnd::DetachChildren()
 {
-    for (auto it = m_children.begin(); it != m_children.end();) {
-        const auto temp = it;
-        ++it;
-        DetachChild(temp->get());
+    m_layout.reset();
+
+    for (auto& wnd : m_children) {
+        DetachChildCore(wnd.get());
     }
+    m_children.clear();
 }
 
 void Wnd::InstallEventFilter(const std::shared_ptr<Wnd>& wnd)

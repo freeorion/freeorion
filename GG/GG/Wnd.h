@@ -1015,6 +1015,9 @@ private:
     virtual void BeginNonclientClippingImpl();
     virtual void EndNonclientClippingImpl();
 
+    /** Code common to DetachChild and DetachChildren. */
+    void DetachChildCore(Wnd* wnd);
+
     /// m_parent may be expired or null if there is no parent.  m_parent will reset itself if expired.
     mutable std::weak_ptr<Wnd> m_parent;
     std::string       m_name;          ///< A user-significant name for this Wnd
