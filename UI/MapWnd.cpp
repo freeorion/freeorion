@@ -6880,7 +6880,12 @@ void MapWnd::SetFleetExploring(const int fleet_id) {
 }
 
 void MapWnd::StopFleetExploring(const int fleet_id) {
-    m_fleets_exploring.erase(fleet_id);
+    auto it = m_fleets_exploring.find(fleet_id);
+    if (it == m_fleets_exploring.end())
+        return;
+
+    m_fleets_exploring.erase(it);
+
     DispatchFleetsExploring();
     // force UI update. Removing a fleet from the UI's list of exploring fleets
     // doesn't actually change the Fleet object's state in any way, so the UI
