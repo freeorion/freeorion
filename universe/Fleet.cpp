@@ -626,6 +626,24 @@ int Fleet::FinalDestinationID() const {
     }
 } 
 
+namespace {
+    bool HasXShips(const std::function<bool(const std::shared_ptr<const Ship>&)>& pred, const std::set<int>& ship_ids) {
+        // Searching for each Ship one at a time is faster than
+        // FindObjects(ship_ids), because an early exit avoids searching the
+        // remaining ids.
+        return std::any_of(
+            ship_ids.begin(), ship_ids.end(),
+            [&pred](const int ship_id) {
+                const auto& ship = Objects().Object<const Ship>(ship_id);
+                if (!ship) {
+                    WarnLogger() << "Object map is missing ship with expected id " << ship_id;
+                    return false;
+                }
+                return pred(ship);
+            });
+    }
+}
+
 bool Fleet::HasMonsters() const {
     for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->IsMonster())
