@@ -759,7 +759,7 @@ void Fleet::SetRoute(const std::list<int>& route) {
             m_prev_system = SystemID();
         }
         std::list<int>::const_iterator it = m_travel_route.begin();
-        m_next_system = m_prev_system == SystemID() ? (*++it) : (*it);
+        m_next_system = m_prev_system == SystemID() && m_travel_route.size() > 1 ? (*++it) : (*it);
     }
 
     StateChangedSignal();
