@@ -6502,7 +6502,8 @@ void MapWnd::RefreshIndustryResourceIndicator() {
                            % DoubleToString(total_PP_excess, 3, false)
                            % DoubleToString(PP_to_stockpile_yield * 100, 1, false)
                            % DoubleToString(total_PP_to_stockpile, 3, false)
-                           % DoubleToString(total_PP_wasted, 3, false))));
+                           % DoubleToString(total_PP_wasted, 3, false)),
+            GG::X(240)));
     } else {
         m_industry_wasted->Hide();
     }
