@@ -5366,7 +5366,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
 
         // get path to destination...
         std::list<int> route = GetPathfinder()->ShortestPath(start_system, system_id, empire_id).first;
-        if (append && !fleet->TravelRoute().empty()) {
+        if (append && !fleet->TravelRoute().empty() && !route.empty()) {
             std::list<int> old_route(fleet->TravelRoute());
             old_route.erase(--old_route.end()); //end of old is begin of new
             route.splice(route.begin(), old_route);
