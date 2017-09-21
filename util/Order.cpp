@@ -390,11 +390,13 @@ void FleetMoveOrder::ExecuteImpl() const {
         return;
     }
 
-    std::string waypoints;
-    for (int waypoint : route_list) {
-        waypoints += std::string(" ") + std::to_string(waypoint);
-    }
-    DebugLogger() << "FleetMoveOrder::ExecuteImpl Setting route of fleet " << fleet->ID() << " to " << waypoints;
+    DebugLogger() << [fleet, route_list]() {
+        std::stringstream ss;
+        ss << "FleetMoveOrder::ExecuteImpl Setting route of fleet " << fleet->ID() << " to ";
+        for (int waypoint : route_list)
+            ss << " " << std::to_string(waypoint);
+        return ss.str();
+    }();
 
     fleet->SetRoute(route_list);
 }

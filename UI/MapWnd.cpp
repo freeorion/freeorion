@@ -5366,7 +5366,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
 
         // get path to destination...
         std::list<int> route = GetPathfinder()->ShortestPath(start_system, system_id, empire_id).first;
-        if (append && !fleet->TravelRoute().empty()) {
+        if (append && !fleet->TravelRoute().empty() && !route.empty()) {
             std::list<int> old_route(fleet->TravelRoute());
             old_route.erase(--old_route.end()); //end of old is begin of new
             route.splice(route.begin(), old_route);
@@ -6880,7 +6880,12 @@ void MapWnd::SetFleetExploring(const int fleet_id) {
 }
 
 void MapWnd::StopFleetExploring(const int fleet_id) {
-    m_fleets_exploring.erase(fleet_id);
+    auto it = m_fleets_exploring.find(fleet_id);
+    if (it == m_fleets_exploring.end())
+        return;
+
+    m_fleets_exploring.erase(it);
+
     DispatchFleetsExploring();
     // force UI update. Removing a fleet from the UI's list of exploring fleets
     // doesn't actually change the Fleet object's state in any way, so the UI

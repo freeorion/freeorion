@@ -626,72 +626,74 @@ int Fleet::FinalDestinationID() const {
     }
 } 
 
-bool Fleet::HasMonsters() const {
-    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
-        if (ship->IsMonster())
-            return true;
+namespace {
+    bool HasXShips(const std::function<bool(const std::shared_ptr<const Ship>&)>& pred, const std::set<int>& ship_ids) {
+        // Searching for each Ship one at a time is faster than
+        // FindObjects(ship_ids), because an early exit avoids searching the
+        // remaining ids.
+        return std::any_of(
+            ship_ids.begin(), ship_ids.end(),
+            [&pred](const int ship_id) {
+                const auto& ship = Objects().Object<const Ship>(ship_id);
+                if (!ship) {
+                    WarnLogger() << "Object map is missing ship with expected id " << ship_id;
+                    return false;
+                }
+                return pred(ship);
+            });
     }
-    return false;
+}
+
+bool Fleet::HasMonsters() const {
+    auto isX = [](const std::shared_ptr<const Ship>& ship){ return ship->IsMonster(); };
+    return HasXShips(isX, m_ships);
 }
 
 bool Fleet::HasArmedShips() const {
-    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
-        if (ship->IsArmed())
-            return true;
-    }
-    return false;
+    auto isX = [](const std::shared_ptr<const Ship>& ship){ return ship->IsArmed(); };
+    return HasXShips(isX, m_ships);
 }
 
 bool Fleet::HasFighterShips() const {
-    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
-        if (ship->HasFighters())
-            return true;
-    }
-    return false;
+    auto isX = [](const std::shared_ptr<const Ship>& ship){ return ship->HasFighters(); };
+    return HasXShips(isX, m_ships);
 }
 
 bool Fleet::HasColonyShips() const {
-    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
+    auto isX = [](const std::shared_ptr<const Ship>& ship){
         if (ship->CanColonize())
-            if (const ShipDesign* design = ship->Design())
+            if (const auto design = ship->Design())
                 if (design->ColonyCapacity() > 0.0)
                     return true;
-    }
-    return false;
+        return false;
+    };
+    return HasXShips(isX, m_ships);
 }
 
 bool Fleet::HasOutpostShips() const {
-    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
+    auto isX = [](const std::shared_ptr<const Ship>& ship){
         if (ship->CanColonize())
-            if (const ShipDesign* design = ship->Design())
+            if (const auto design = ship->Design())
                 if (design->ColonyCapacity() == 0.0)
                     return true;
-    }
-    return false;
+        return false;
+    };
+    return HasXShips(isX, m_ships);
 }
 
 bool Fleet::HasTroopShips() const {
-    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
-        if (ship->HasTroops())
-            return true;
-    }
-    return false;
+    auto isX = [](const std::shared_ptr<const Ship>& ship){ return ship->HasTroops(); };
+    return HasXShips(isX, m_ships);
 }
 
 bool Fleet::HasShipsOrderedScrapped() const {
-    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
-        if (ship->OrderedScrapped())
-            return true;
-    }
-    return false;
+    auto isX = [](const std::shared_ptr<const Ship>& ship){ return ship->OrderedScrapped(); };
+    return HasXShips(isX, m_ships);
 }
 
 bool Fleet::HasShipsWithoutScrapOrders() const {
-    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
-        if (!ship->OrderedScrapped())
-            return true;
-    }
-    return false;
+    auto isX = [](const std::shared_ptr<const Ship>& ship){ return !ship->OrderedScrapped(); };
+    return HasXShips(isX, m_ships);
 }
 
 float Fleet::ResourceOutput(ResourceType type) const {
@@ -757,7 +759,7 @@ void Fleet::SetRoute(const std::list<int>& route) {
             m_prev_system = SystemID();
         }
         std::list<int>::const_iterator it = m_travel_route.begin();
-        m_next_system = m_prev_system == SystemID() ? (*++it) : (*it);
+        m_next_system = m_prev_system == SystemID() && m_travel_route.size() > 1 ? (*++it) : (*it);
     }
 
     StateChangedSignal();
@@ -1243,23 +1245,35 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
                 return false;
             continue;
         }
+        if (!unrestricted && !not_yet_in_system)
+            continue;
+
         bool can_see;
-        if (!fleet->Unowned()) {
+        if (!fleet->Unowned())
             can_see = (GetEmpire(fleet->Owner())->GetMeter("METER_DETECTION_STRENGTH")->Current() >= lowest_ship_stealth);
-        } else {
+        else
             can_see = (monster_detection >= lowest_ship_stealth);
-        }
+        if (!can_see)
+            continue;
+
         bool at_war = Unowned() || fleet->Unowned() ||
                       Empires().GetDiplomaticStatus(this->Owner(), fleet->Owner()) == DIPLO_WAR;
+        if (!at_war)
+            continue;
         bool aggressive = (fleet->Aggressive() || fleet->Unowned());
+        if (!aggressive)
+            continue;
 
-        if (aggressive && (fleet->HasArmedShips() || fleet->HasFighterShips()) && at_war && can_see && (unrestricted || not_yet_in_system))
-            can_be_blockaded = true; // don't exit early here, because blockade may yet be thwarted by ownership & presence check above
+        // These are the most costly checks.  Do them last
+        if (!fleet->HasArmedShips() && !fleet->HasFighterShips())
+            continue;
+
+        // don't exit early here, because blockade may yet be thwarted by ownership & presence check above
+        can_be_blockaded = true;
+
     }
-    if (can_be_blockaded) {
-        return true;
-    }
-    return false;
+
+    return can_be_blockaded;
 }
 
 float Fleet::Speed() const {

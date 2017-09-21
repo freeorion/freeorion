@@ -2161,7 +2161,7 @@ public:
         const std::set<int>& this_client_stale_object_info =
             GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
-        const std::set<int> ship_ids = fleet->ShipIDs();
+        const std::set<int>& ship_ids = fleet->ShipIDs();
         std::vector<std::shared_ptr<GG::ListBox::Row>> rows;
         rows.reserve(ship_ids.size());
         for (int ship_id : ship_ids) {
