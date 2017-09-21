@@ -68,14 +68,14 @@ def find_path_with_resupply(start, target, fleet_id):
 
     while queue:
         # get next system u with path information
-        (_, path_info, u) = heappop(queue)
+        (_, path_info, current) = heappop(queue)
 
         # did we reach the target?
-        if u == target:
+        if current == target:
             return path_info
 
         # add information about how we reached here to the cache
-        path_cache.setdefault(u, []).append(path_info)
+        path_cache.setdefault(current, []).append(path_info)
 
         # check if we have enough fuel to travel to neighbors
         if path_info.fuel < 1:
@@ -84,8 +84,8 @@ def find_path_with_resupply(start, target, fleet_id):
         # add neighboring systems to the queue if the resulting path
         # is either shorter or offers more fuel than the other paths
         # which we already found to those systems
-        for neighbor in universe.getImmediateNeighbors(u, empire_id):
-            new_dist = path_info.distance + universe.linearDistance(u, neighbor)
+        for neighbor in universe.getImmediateNeighbors(current, empire_id):
+            new_dist = path_info.distance + universe.linearDistance(current, neighbor)
             new_fuel = fleet.maxFuel if neighbor in supplied_systems else path_info.fuel - 1
             if all((new_dist < dist or new_fuel > fuel) for dist, fuel, _ in path_cache.get(neighbor, [])):
                 predicted_distance = new_dist + universe.shortestPathDistance(neighbor, target)
