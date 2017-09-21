@@ -890,6 +890,12 @@ void SDLGUI::Run()
     }
 }
 
+bool SDLGUI::AppHasMouseFocus() const {
+    auto window_flags = SDL_GetWindowFlags(m_window);
+
+    return window_flags & SDL_WINDOW_MOUSE_FOCUS;
+}
+
 std::vector<std::string> SDLGUI::GetSupportedResolutions() const
 {
     std::vector<std::string> mode_vec;
