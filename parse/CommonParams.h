@@ -69,7 +69,9 @@ namespace parse { namespace detail {
             void (std::set<std::string>&)
         > exclusions_rule;
 
-        common_params_rules(const parse::lexer& tok, parse::detail::Labeller& labeller);
+        common_params_rules(const parse::lexer& tok,
+                            parse::detail::Labeller& labeller,
+                            const parse::condition_parser_rule& condition_parser);
 
         parse::castable_as_int_parser_rules    castable_int_rules;
         parse::double_parser_rules     double_rules;

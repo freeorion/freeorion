@@ -49,7 +49,8 @@ namespace {
               parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
-            common_rules(tok, labeller)
+            condition_parser(parse::detail::condition_parser),
+            common_rules(tok, labeller, condition_parser)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -170,6 +171,7 @@ namespace {
             void (std::map<std::string, std::unique_ptr<HullType>>&)
         > start_rule;
 
+        parse::condition_parser_rule& condition_parser;
         parse::detail::common_params_rules common_rules;
         hull_stats_rule                             hull_stats;
         slot_rule                                   slot;

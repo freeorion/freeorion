@@ -18,10 +18,11 @@ namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
     common_params_rules::common_params_rules(const parse::lexer& tok,
-                                             parse::detail::Labeller& labeller) :
+                                             parse::detail::Labeller& labeller,
+                                             const parse::condition_parser_rule& condition_parser) :
         castable_int_rules(tok),
         double_rules(tok),
-        effects_group_grammar(tok, labeller)
+        effects_group_grammar(tok, labeller, condition_parser)
     {
         namespace qi = boost::spirit::qi;
 
@@ -113,7 +114,7 @@ namespace parse { namespace detail {
             > (
                 labeller.rule(Name_token)        > tok.string [ _b = _1 ]
                 >   labeller.rule(Consumption_token) > double_rules.expr [ _c = _1 ]
-                > -(labeller.rule(Condition_token)   > parse::detail::condition_parser [ _d = _1 ])
+                > -(labeller.rule(Condition_token)   > condition_parser [ _d = _1 ])
             )
             [ insert(_r2, construct<special_consumable_map_value_type>(_b, construct<val_cond_pair>(_c, _d))) ]
             ;
@@ -123,7 +124,7 @@ namespace parse { namespace detail {
             = (
                 parse::non_ship_part_meter_type_enum() [ _a = _1 ]
                 >   labeller.rule(Consumption_token) > double_rules.expr [ _c = _1 ]
-                > -(labeller.rule(Condition_token)   > parse::detail::condition_parser [ _d = _1 ])
+                > -(labeller.rule(Condition_token)   > condition_parser [ _d = _1 ])
             )
             [ insert(_r1, construct<meter_consumable_map_value_type>(_a, construct<val_cond_pair>(_c, _d))) ]
             ;

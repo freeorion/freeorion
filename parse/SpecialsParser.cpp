@@ -72,7 +72,8 @@ namespace {
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
             double_rules(parse::lexer::instance()),
-            effects_group_grammar(tok, labeller)
+            condition_parser(parse::detail::condition_parser),
+            effects_group_grammar(tok, labeller, condition_parser)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -116,7 +117,7 @@ namespace {
                 >  -(labeller.rule(Stealth_token)            > double_rules.expr [ _g = _1 ])
                 >    spawn(_c, _d)
                 >  -(labeller.rule(Capacity_token)           > double_rules.expr [ _h = _1 ])
-                >  -(labeller.rule(Location_token)           > parse::detail::condition_parser [ _e = _1 ])
+                >  -(labeller.rule(Location_token)           > condition_parser [ _e = _1 ])
                 >  -(labeller.rule(EffectsGroups_token)      > effects_group_grammar [ _f = _1 ])
                 >    labeller.rule(Graphic_token)            > tok.string
                 [ insert_special_(_r1, phoenix::construct<special_pod>(_a, _b, _g, _f, _c, _d, _h, _e, _1)) ]
@@ -167,6 +168,7 @@ namespace {
 
 
         parse::double_parser_rules      double_rules;
+        parse::condition_parser_rule& condition_parser;
         parse::effects_group_grammar effects_group_grammar;
         special_prefix_rule special_prefix;
         spawn_rule          spawn;

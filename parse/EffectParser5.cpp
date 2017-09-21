@@ -11,7 +11,8 @@ namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
     effect_parser_rules_5::effect_parser_rules_5(const effect_parser_grammar& effect_parser,
-                                                 Labeller& labeller) :
+                                                 Labeller& labeller,
+                                                 const parse::condition_parser_rule& condition_parser) :
         effect_parser_rules_5::base_type(start, "effect_parser_rules_5")
     {
         qi::_1_type _1;
@@ -27,7 +28,7 @@ namespace parse { namespace detail {
 
         conditional
             =   (       tok.If_
-                        >   labeller.rule(Condition_token)   >   parse::detail::condition_parser [ _a = _1 ]
+                        >   labeller.rule(Condition_token)   >   condition_parser [ _a = _1 ]
                         >   labeller.rule(Effects_token)
                         >   (
                             ('[' > +effect_parser [ push_back(_b, _1) ] > ']')

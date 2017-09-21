@@ -135,7 +135,7 @@ namespace {
 
 namespace parse { namespace detail {
     const condition_parser_rule& condition_parser_7() {
-        static condition_parser_rules_7 retval;
+        static condition_parser_rules_7 retval(parse::condition_parser());
         return retval.start;
     }
 } }

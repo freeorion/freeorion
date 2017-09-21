@@ -245,7 +245,7 @@ namespace {
 
 namespace parse { namespace detail {
     const condition_parser_rule& condition_parser_1() {
-        static condition_parser_rules_1 retval(parse::lexer::instance());
+        static condition_parser_rules_1 retval(parse::lexer::instance(), parse::condition_parser());
         return retval.start;
     }
 } }
