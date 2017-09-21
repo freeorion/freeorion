@@ -14,7 +14,11 @@ namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
-    effect_parser_rules_1::effect_parser_rules_1(const parse::lexer& tok, Labeller& labeller) :
+    effect_parser_rules_1::effect_parser_rules_1(
+        const parse::lexer& tok,
+        Labeller& labeller,
+        const condition_parser_grammar& condition_parser)
+        :
         effect_parser_rules_1::base_type(start, "effect_parser_rules_1"),
         int_rules(tok),
         double_rules(tok)

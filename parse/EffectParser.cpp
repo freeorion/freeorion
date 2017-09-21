@@ -14,10 +14,10 @@ namespace parse {
         const parse::condition_parser_rule& condition_parser
     ) :
         effects_parser_grammar::base_type(start, "effects_parser_grammar"),
-        effect_parser_1(tok, labeller),
+        effect_parser_1(tok, labeller, condition_parser),
         effect_parser_2(tok, labeller, condition_parser),
         effect_parser_3(tok, labeller, condition_parser),
-        effect_parser_4(tok, *this, labeller),
+        effect_parser_4(tok, *this, labeller, condition_parser),
         effect_parser_5(*this, labeller, condition_parser)
     {
         start

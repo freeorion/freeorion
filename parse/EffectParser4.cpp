@@ -14,7 +14,8 @@ namespace phoenix = boost::phoenix;
 namespace parse { namespace detail {
     effect_parser_rules_4::effect_parser_rules_4(const parse::lexer& tok,
                                                  const effect_parser_grammar& effect_parser,
-                                                 Labeller& labeller) :
+                                                 Labeller& labeller,
+                                                 const parse::condition_parser_rule& condition_parser) :
         effect_parser_rules_4::base_type(start, "effect_parser_rules_4"),
         int_rules(tok),
         double_rules(tok)

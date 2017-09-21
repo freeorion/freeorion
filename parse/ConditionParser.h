@@ -74,7 +74,8 @@ namespace parse { namespace detail {
     };
 
     struct condition_parser_rules_2 : public condition_parser_grammar {
-        condition_parser_rules_2(const parse::lexer& tok);
+        condition_parser_rules_2(const parse::lexer& tok,
+                                 const condition_parser_grammar& condition_parser);
 
         typedef parse::detail::rule<
             Condition::ConditionBase* (),
@@ -170,7 +171,8 @@ namespace parse { namespace detail {
     };
 
     struct condition_parser_rules_4 : public condition_parser_grammar {
-        condition_parser_rules_4(const parse::lexer& tok);
+        condition_parser_rules_4(const parse::lexer& tok,
+                                 const condition_parser_grammar& condition_parser);
 
         typedef parse::detail::rule<
             Condition::ConditionBase* (),
@@ -205,7 +207,8 @@ namespace parse { namespace detail {
 
 
     struct condition_parser_rules_5 : public condition_parser_grammar {
-        condition_parser_rules_5(const parse::lexer& tok);
+        condition_parser_rules_5(const parse::lexer& tok,
+                                 const condition_parser_grammar& condition_parser);
 
         parse::int_arithmetic_rules     int_rules;
         parse::condition_parser_rule    has_special;

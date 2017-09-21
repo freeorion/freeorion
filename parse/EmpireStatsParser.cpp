@@ -2,6 +2,7 @@
 
 #include "ParseImpl.h"
 #include "ValueRefParser.h"
+#include "ConditionParserImpl.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -20,7 +21,8 @@ namespace {
               parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
-            double_rules(parse::lexer::instance())
+            condition_parser(parse::condition_parser()),
+            double_rules(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -65,6 +67,7 @@ namespace {
             void (std::map<std::string, ValueRef::ValueRefBase<double>*>&)
         > start_rule;
 
+        parse::condition_parser_rule& condition_parser;
         parse::double_parser_rules      double_rules;
         stat_rule   stat;
         start_rule  start;

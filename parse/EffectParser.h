@@ -22,7 +22,9 @@ namespace parse { namespace detail {
     using effect_parser_grammar = grammar<effect_signature>;
 
     struct effect_parser_rules_1 : public effect_parser_grammar {
-        effect_parser_rules_1(const parse::lexer& tok, Labeller& labeller);
+        effect_parser_rules_1(const parse::lexer& tok,
+                              Labeller& labeller,
+                              const condition_parser_grammar& condition_parser);
 
         typedef parse::detail::rule<
             Effect::EffectBase* (),
@@ -165,7 +167,8 @@ namespace parse { namespace detail {
     struct effect_parser_rules_4 : public effect_parser_grammar {
         effect_parser_rules_4(const parse::lexer& tok,
                               const effect_parser_grammar& effect_parser,
-                              Labeller& labeller);
+                              Labeller& labeller,
+                              const parse::condition_parser_rule& condition_parser);
 
         typedef parse::detail::rule<
             Effect::EffectBase* (),
