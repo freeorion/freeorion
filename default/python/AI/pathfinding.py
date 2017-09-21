@@ -90,7 +90,8 @@ def find_path_with_resupply(start, target, fleet_id):
         # which we already found to those systems
         for neighbor in universe.getImmediateNeighbors(current, empire_id):
             new_dist = path_info.distance + universe.linearDistance(current, neighbor)
-            new_fuel = fleet.maxFuel if neighbor in supplied_systems else path_info.fuel - 1
+            new_fuel = (fleet.maxFuel if (neighbor in supplied_systems or current in supplied_systems) else
+                        path_info.fuel - 1)
             if all((new_dist < dist or new_fuel > fuel) for dist, fuel, _ in path_cache.get(neighbor, [])):
                 predicted_distance = new_dist + universe.shortestPathDistance(neighbor, target)
                 if predicted_distance > max(2*shortest_possible_path_distance, shortest_possible_path_distance+5):
