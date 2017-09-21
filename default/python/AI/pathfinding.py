@@ -4,6 +4,9 @@ from collections import namedtuple
 import freeOrionAIInterface as fo
 from turn_state import state
 
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
+
 
 # TODO Allow short idling in system to refuel
 # TODO Consider additional optimizations:
@@ -13,7 +16,7 @@ from turn_state import state
 #    - For large graphs, check existance on a simplified graph (use single node to represent supply clusters)
 #    - For large graphs, check if there are any must-visit nodes (e.g. only possible resupplying system),
 #      then try to find the shortest path between those and start/target.
-def find_path_with_resupply(start, target, fleet_id):
+def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0):
     """Find the shortest possible path between two systems that complies with FreeOrion fuel mechanics.
 
      If the fleet can travel the shortest possible path between start and target system, then return that path.
@@ -32,6 +35,9 @@ def find_path_with_resupply(start, target, fleet_id):
     :type target: int
     :param fleet_id: fleet to find the path for
     :type fleet_id: int
+    :param minimum_fuel_at_target: optional - if specified, only accept paths that leave the
+                                   fleet with at least this much fuel left at the target system
+    :type minimum_fuel_at_target: int
     :return: shortest possible path including resupply-deroutes in the form of system ids
              including both start and target system
     :rtype: tuple[int]
@@ -45,6 +51,15 @@ def find_path_with_resupply(start, target, fleet_id):
     # make sure the target is connected to the start system
     shortest_possible_path_distance = universe.shortestPathDistance(start, target)
     if shortest_possible_path_distance == -1:
+        warn("Requested path between disconnected systems, doing nothing.")
+        return None
+
+    # make sure the minimum fuel at target is realistic
+    if minimum_fuel_at_target < 0:
+        error("Requested negative fuel at target.")
+        return None
+
+    if fleet.maxFuel < minimum_fuel_at_target:
         return None
 
     start_fuel = fleet.maxFuel if start in supplied_systems else fleet.fuel
@@ -57,9 +72,9 @@ def find_path_with_resupply(start, target, fleet_id):
     # in a system that is now blockaded by an enemy or we have found
     # the refuel special.
     target_distance_from_supply = -state.get_systems_by_supply_tier(target)
-    if (fleet.maxFuel + 1 < target_distance_from_supply and
-            universe.jumpDistance(start, target) > start_fuel):
-        # can't possibly reach this system
+    if (fleet.maxFuel + 1 < (target_distance_from_supply + minimum_fuel_at_target) and
+            universe.jumpDistance(start, target) > (start_fuel - minimum_fuel_at_target)):
+        # can't possibly reach this system with the required fuel
         return None
 
     # initialize data structures
@@ -76,6 +91,10 @@ def find_path_with_resupply(start, target, fleet_id):
 
         # did we reach the target?
         if current == target:
+            # do we satisfy fuel constraints?
+            if path_info.fuel < minimum_fuel_at_target:
+                continue
+
             return path_info
 
         # add information about how we reached here to the cache
