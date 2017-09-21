@@ -64,7 +64,11 @@ def find_path_with_resupply(start, target, fleet_id):
 
     # initialize data structures
     path_cache = {}
-    queue = [(shortest_possible_path_distance, path_information(distance=0, fuel=start_fuel, path=(start,)), start)]
+    queue = []
+
+    # add starting system to queue
+    heappush(queue, (shortest_possible_path_distance, path_information(distance=0, fuel=start_fuel, path=(start,)),
+                     start))
 
     while queue:
         # get next system u with path information
