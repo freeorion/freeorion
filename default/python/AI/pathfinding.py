@@ -103,7 +103,7 @@ def find_path_with_resupply(start, target, fleet_id):
             predicted_distance = new_dist + universe.shortestPathDistance(neighbor, target)
 
             # Ignore paths that are much longer than the shortest possible path
-            if predicted_distance > max(2*shortest_possible_path_distance, shortest_possible_path_distance+5):
+            if predicted_distance > max(2*shortest_possible_path_distance, shortest_possible_path_distance+2000):
                 continue
 
             # All checks passed, consider this path for further pathfinding
