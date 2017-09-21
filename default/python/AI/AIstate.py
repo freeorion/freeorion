@@ -8,7 +8,6 @@ from common.print_utils import Table, Text, Float
 import AIFleetMission
 import ExplorationAI
 import FleetUtilsAI
-import ResourcesAI
 from EnumsAI import MissionType, ShipRoleType
 import CombatRatingsAI
 import MilitaryAI
@@ -790,7 +789,6 @@ class AIstate(object):
         self.__clean_fleet_roles(just_resumed=True)
         fleetsLostBySystem.clear()
         empireStars.clear()
-        ResourcesAI.lastFociCheck[0] = 0
         self.qualifyingColonyBaseTargets.clear()
         self.qualifyingOutpostBaseTargets.clear()
         self.qualifyingTroopBaseTargets.clear()
