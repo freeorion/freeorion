@@ -13,7 +13,7 @@ namespace phoenix = boost::phoenix;
 
 namespace {
     struct condition_parser_rules_3 {
-        condition_parser_rules_3(const parse::lexer& tok) :
+        condition_parser_rules_3(const parse::lexer& tok, const parse::condition_parser_rule& condition_parser) :
             int_rules(tok),
             castable_int_rules(tok),
             double_rules(tok)
@@ -43,14 +43,14 @@ namespace {
             within_distance
                 =   tok.WithinDistance_
                 >   parse::detail::label(Distance_token)  > double_rules.expr [ _a = _1 ]
-                >   parse::detail::label(Condition_token) > parse::detail::condition_parser
+                >   parse::detail::label(Condition_token) > condition_parser
                 [ _val = new_<Condition::WithinDistance>(_a, _1) ]
                 ;
 
             within_starlane_jumps
                 =   tok.WithinStarlaneJumps_
                 >   parse::detail::label(Jumps_token)     > castable_int_rules.flexible_int [ _a = _1 ]
-                >   parse::detail::label(Condition_token) > parse::detail::condition_parser
+                >   parse::detail::label(Condition_token) > condition_parser
                 [ _val = new_<Condition::WithinStarlaneJumps>(_a, _1) ]
                 ;
 
@@ -58,7 +58,7 @@ namespace {
                 =   tok.Number_
                 > -(parse::detail::label(Low_token)   >  castable_int_rules.flexible_int [ _a = _1 ])
                 > -(parse::detail::label(High_token)  >  castable_int_rules.flexible_int [ _b = _1 ])
-                >   parse::detail::label(Condition_token) > parse::detail::condition_parser
+                >   parse::detail::label(Condition_token) > condition_parser
                 [ _val = new_<Condition::Number>(_a, _b, _1) ]
                 ;
 
@@ -181,7 +181,7 @@ namespace {
             number_of1
                 =   tok.NumberOf_
                 >   parse::detail::label(Number_token)    > castable_int_rules.flexible_int [ _a = _1 ]
-                >   parse::detail::label(Condition_token) > parse::detail::condition_parser
+                >   parse::detail::label(Condition_token) > condition_parser
                 [ _val = new_<Condition::SortedNumberOf>(_a, _1) ]
                 ;
 
@@ -192,7 +192,7 @@ namespace {
                     )
                 >   parse::detail::label(Number_token)    > castable_int_rules.flexible_int [ _a = _1 ]
                 >   parse::detail::label(SortKey_token)   > double_rules.expr [ _c = _1 ]
-                >   parse::detail::label(Condition_token) > parse::detail::condition_parser
+                >   parse::detail::label(Condition_token) > condition_parser
                 [ _val = new_<Condition::SortedNumberOf>(_a, _c, _b, _1) ]
                 ;
 
@@ -217,13 +217,13 @@ namespace {
             resource_supply_connected
                 =   tok.ResourceSupplyConnected_
                 >   parse::detail::label(Empire_token)    > int_rules.expr [ _a = _1 ]
-                >   parse::detail::label(Condition_token) > parse::detail::condition_parser
+                >   parse::detail::label(Condition_token) > condition_parser
                 [ _val = new_<Condition::ResourceSupplyConnectedByEmpire>(_a, _1) ]
                 ;
 
             can_add_starlane
                 =   tok.CanAddStarlanesTo_
-                >   parse::detail::label(Condition_token) > parse::detail::condition_parser
+                >   parse::detail::label(Condition_token) > condition_parser
                 [ _val = new_<Condition::CanAddStarlaneConnection>(_1) ]
                 ;
 
