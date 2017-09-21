@@ -71,7 +71,7 @@ def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0):
     # supply graph suggests. For example, we could have recently refueled
     # in a system that is now blockaded by an enemy or we have found
     # the refuel special.
-    target_distance_from_supply = -min(state.get_systems_by_supply_tier(target), 0)
+    target_distance_from_supply = -min(state.get_system_supply(target), 0)
     if (fleet.maxFuel + 1 < (target_distance_from_supply + minimum_fuel_at_target) and
             universe.jumpDistance(start, target) > (start_fuel - minimum_fuel_at_target)):
         # can't possibly reach this system with the required fuel
