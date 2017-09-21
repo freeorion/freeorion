@@ -8,8 +8,6 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
-EXOBOT_TECH_NAME = "PRO_EXOBOTS"
-
 
 def unusable_techs():
     """

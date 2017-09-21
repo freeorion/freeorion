@@ -10,7 +10,6 @@ from AIDependencies import INVALID_ID
 import AIDependencies
 from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
-__designStats = {}
 
 
 def stats_meet_reqs(stats, requirements):

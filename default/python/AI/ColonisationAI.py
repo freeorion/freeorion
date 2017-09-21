@@ -9,7 +9,6 @@ import FleetUtilsAI
 import FreeOrionAI as foAI
 import PlanetUtilsAI
 import ProductionAI
-import TechsListsAI
 import MilitaryAI
 from turn_state import state
 from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
@@ -49,6 +48,17 @@ ENVIRONS = {str(fo.planetEnvironment.uninhabitable): 0, str(fo.planetEnvironment
             str(fo.planetEnvironment.poor): 2, str(fo.planetEnvironment.adequate): 3, str(fo.planetEnvironment.good): 4}
 PHOTO_MAP = {fo.starType.blue: 3, fo.starType.white: 1.5, fo.starType.red: -1, fo.starType.neutron: -1,
              fo.starType.blackHole: -10, fo.starType.noStar: -10}
+
+NEST_VAL_MAP = {
+    "SNOWFLAKE_NEST_SPECIAL": 15,
+    "KRAKEN_NEST_SPECIAL": 40,
+    "JUGGERNAUT_NEST_SPECIAL": 80,
+}
+
+AVG_PILOT_RATING = 2.0
+GOOD_PILOT_RATING = 4.0
+GREAT_PILOT_RATING = 6.0
+ULT_PILOT_RATING = 12.0
 
 
 def _get_planet_size(planet):
@@ -170,18 +180,6 @@ def calc_max_pop(planet, species, detail):
     return max_pop_size()
 
 
-NEST_VAL_MAP = {
-    "SNOWFLAKE_NEST_SPECIAL": 15,
-    "KRAKEN_NEST_SPECIAL": 40,
-    "JUGGERNAUT_NEST_SPECIAL": 80,
-}
-
-AVG_PILOT_RATING = 2.0
-GOOD_PILOT_RATING = 4.0
-GREAT_PILOT_RATING = 6.0
-ULT_PILOT_RATING = 12.0
-
-
 def galaxy_is_sparse():
     setup_data = fo.getGalaxySetupData()
     avg_empire_systems = setup_data.size / len(fo.allEmpireIDs())
@@ -267,7 +265,7 @@ def survey_universe():
         empire_metabolisms.clear()
         available_growth_specials.clear()
         active_growth_specials.clear()
-        if tech_is_complete(TechsListsAI.EXOBOT_TECH_NAME):
+        if tech_is_complete(AIDependencies.EXOBOT_TECH_NAME):
             empire_colonizers["SP_EXOBOT"] = []  # get it into colonizer list even if no colony yet
         for spec_name in AIDependencies.EXTINCT_SPECIES:
             if tech_is_complete("TECH_COL_" + spec_name):
