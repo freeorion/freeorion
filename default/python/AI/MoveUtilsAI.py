@@ -28,6 +28,9 @@ def create_move_orders_to_system(fleet, target):
     # TODO: use Graph Theory to construct move orders
     # TODO: add priority
     starting_system = fleet.get_system()  # current fleet location or current target system if on starlane
+    if starting_system == target:
+        # nothing to do here
+        return []
     # if the mission does not end at the targeted system, make sure we can actually return to supply after moving.
     ensure_return = target.id not in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs
                                          + AIstate.invasionTargetedSystemIDs)
@@ -53,6 +56,9 @@ def can_travel_to_system(fleet_id, start, target, ensure_return=False):
     :return:
     :rtype: list
     """
+    if start == target:
+        return [universe_object.System(start.id)]
+
     debug("Requesting path from %s to %s" % (start, target))
     target_distance_from_supply = -min(state.get_system_supply(target.id), 0)
 
