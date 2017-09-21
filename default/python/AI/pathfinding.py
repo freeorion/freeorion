@@ -92,13 +92,23 @@ def find_path_with_resupply(start, target, fleet_id):
             new_dist = path_info.distance + universe.linearDistance(current, neighbor)
             new_fuel = (fleet.maxFuel if (neighbor in supplied_systems or current in supplied_systems) else
                         path_info.fuel - 1)
-            if all((new_dist < dist or new_fuel > fuel) for dist, fuel, _ in path_cache.get(neighbor, [])):
-                predicted_distance = new_dist + universe.shortestPathDistance(neighbor, target)
-                if predicted_distance > max(2*shortest_possible_path_distance, shortest_possible_path_distance+5):
-                    # do not consider unreasonable long paths
-                    continue
-                heappush(queue, (predicted_distance, path_information(new_dist, new_fuel, path_info.path + (neighbor,)),
-                                 neighbor))
+
+            # check if the node is already closed, i.e. a path was already found which both is shorter and offers
+            # more fuel. Priority queueing should ensure that all previously found paths here are shorter but check
+            # it anyway to be sure...
+            if any((dist <= new_dist and fuel >= new_fuel) for dist, fuel, _ in path_cache.get(neighbor, [])):
+                continue
+
+            # calculate the new distance prediction, i.e. the A* heuristic.
+            predicted_distance = new_dist + universe.shortestPathDistance(neighbor, target)
+
+            # Ignore paths that are much longer than the shortest possible path
+            if predicted_distance > max(2*shortest_possible_path_distance, shortest_possible_path_distance+5):
+                continue
+
+            # All checks passed, consider this path for further pathfinding
+            heappush(queue, (predicted_distance, path_information(new_dist, new_fuel, path_info.path + (neighbor,)),
+                             neighbor))
 
     # no path exists, not even if we refuel on the way
     return None
