@@ -1638,8 +1638,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             }
         }
         return 0;
-
-    } else if (variable_name == "PartsInShipDesign") {
+    }
+    else if (variable_name == "PartsInShipDesign") {
         int design_id = INVALID_DESIGN_ID;
         if (m_int_ref1) {
             design_id = m_int_ref1->Eval(context);
@@ -1666,8 +1666,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
                 count ++;
         }
         return count;
-
-    } else if (variable_name == "PartOfClassInShipDesign") {
+    }
+    else if (variable_name == "PartOfClassInShipDesign") {
         int design_id = INVALID_DESIGN_ID;
         if (m_int_ref1) {
             design_id = m_int_ref1->Eval(context);
@@ -1705,8 +1705,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
                 count++;
         }
         return count;
-
-    } else if (variable_name == "JumpsBetween") {
+    }
+    else if (variable_name == "JumpsBetween") {
         int object1_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             object1_id = m_int_ref1->Eval(context);
@@ -1719,8 +1719,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         if (retval == INT_MAX)
             return -1;
         return retval;
-
-    } else if (variable_name == "JumpsBetweenByEmpireSupplyConnections") {
+    }
+    else if (variable_name == "JumpsBetweenByEmpireSupplyConnections") {
         int object1_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             object1_id = m_int_ref1->Eval(context);
@@ -1735,13 +1735,12 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         //if (m_int_ref3)
         //    empire_id = m_int_ref3->Eval(context);
 
-
         int retval = GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id/*, empire_id*/);
         if (retval == INT_MAX)
             return -1;
         return retval;
-
-    } else if (variable_name == "SlotsInHull") {
+    }
+    else if (variable_name == "SlotsInHull") {
         const HullType* hull_type = nullptr;
         if (m_string_ref1) {
             std::string hull_name = m_string_ref1->Eval(context);
@@ -1751,10 +1750,9 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         } else {
             return 0;
         }
-
         return hull_type->Slots().size();
-
-    } else if (variable_name == "SlotsInShipDesign") {
+    }
+    else if (variable_name == "SlotsInShipDesign") {
         int design_id = INVALID_DESIGN_ID;
         if (m_int_ref1) {
             design_id = m_int_ref1->Eval(context);
@@ -1772,6 +1770,24 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         if (!hull_type)
             return 0;
         return hull_type->Slots().size();
+    }
+    else if (variable_name == "SpecialAddedOnTurn") {
+        int object_id = INVALID_OBJECT_ID;
+        if (m_int_ref1)
+            object_id = m_int_ref1->Eval(context);
+        if (object_id == INVALID_OBJECT_ID)
+            return 0;
+        auto object = GetUniverseObject(object_id);
+        if (!object)
+            return 0;
+
+        std::string special_name;
+        if (m_string_ref1)
+            special_name = m_string_ref1->Eval(context);
+        if (special_name.empty())
+            return 0;
+
+        return object->SpecialAddedOnTurn(special_name);
     }
 
     return 0;
@@ -1820,7 +1836,8 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         }
         return 0.0;
 
-    } else if (variable_name == "HullFuel") {
+    }
+    else if (variable_name == "HullFuel") {
         std::string hull_type_name;
         if (m_string_ref1)
             hull_type_name = m_string_ref1->Eval(context);
@@ -1962,6 +1979,22 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
             rated_species_name = m_string_ref2->Eval(context);
 
         return GetSpeciesManager().SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
+    }
+    else if (variable_name == "SpecialCapacity") {
+        int object_id = INVALID_OBJECT_ID;
+        if (m_int_ref1)
+            object_id = m_int_ref1->Eval(context);
+        auto object = GetUniverseObject(object_id);
+        if (!object)
+            return 0.0;
+
+        std::string special_name;
+        if (m_string_ref1)
+            special_name = m_string_ref1->Eval(context);
+        if (special_name.empty())
+            return 0.0;
+
+        return object->SpecialCapacity(special_name);
     }
 
     return 0.0;

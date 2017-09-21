@@ -249,6 +249,14 @@ namespace parse {
                     ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
+            special_added_on_turn
+                =   (
+                            tok.SpecialAddedOnTurn_ [ _a = construct<std::string>(_1) ]
+                        >-( detail::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
+                        >-( detail::label(Object_token) >   parse::int_value_ref() [ _b = _1 ] )
+                    ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
+                ;
+
             start
                 %=  game_rule
                 |   building_types_owned
@@ -277,6 +285,7 @@ namespace parse {
                 |   species_ships_owned
                 |   species_ships_produced
                 |   species_ships_scrapped
+                |   special_added_on_turn
                 ;
 
             game_rule.name("GameRule");
@@ -306,6 +315,7 @@ namespace parse {
             species_ships_owned.name("SpeciesShipsOwned");
             species_ships_produced.name("SpeciesShipsProduced");
             species_ships_scrapped.name("SpeciesShipsScrapped");
+            special_added_on_turn.name("SpecialAddedOnTurn");
 
 #if DEBUG_INT_COMPLEX_PARSERS
             debug(game_rule);
@@ -335,7 +345,7 @@ namespace parse {
             debug(species_ships_owned);
             debug(species_ships_produced);
             debug(species_ships_scrapped);
-
+            debug(special_added_on_turn);
 #endif
         }
 
@@ -366,6 +376,7 @@ namespace parse {
         complex_variable_rule<int> species_ships_owned;
         complex_variable_rule<int> species_ships_produced;
         complex_variable_rule<int> species_ships_scrapped;
+        complex_variable_rule<int> special_added_on_turn;
         complex_variable_rule<int> start;
     };
 

@@ -402,7 +402,9 @@
     (SetTexture)                                \
     (SetTrade)                                  \
     (SetTroops)                                 \
-    (SetVisibility)                             \
+    (SetVisibility)
+
+#define TOKEN_SEQ_13                            \
     (Shield)                                    \
     (ShipDesign)                                \
     (ShipDesignOrdering)                        \
@@ -425,7 +427,7 @@
     (Size)                                      \
     (SizeAsDouble)
 
-#define TOKEN_SEQ_13                            \
+#define TOKEN_SEQ_14                            \
     (Slot)                                      \
     (Slots)                                     \
     (SlotsInHull)                               \
@@ -439,11 +441,15 @@
     (SpawnLimit)                                \
     (SpawnRate)                                 \
     (Special)                                   \
+    (SpecialAddedOnTurn)                        \
+    (SpecialCapacity)                           \
     (Species)                                   \
     (SpeciesID)                                 \
     (SpeciesOpinion)                            \
     (SpeciesPlanetsBombed)                      \
-    (SpeciesColoniesOwned)                      \
+    (SpeciesColoniesOwned)
+
+#define TOKEN_SEQ_15                            \
     (SpeciesPlanetsDepoped)                     \
     (SpeciesPlanetsInvaded)                     \
     (SpeciesShipsDestroyed)                     \
@@ -470,7 +476,7 @@
     (System)                                    \
     (SystemID)
 
-#define TOKEN_SEQ_14                            \
+#define TOKEN_SEQ_16                            \
     (Tag)                                       \
     (Tags)                                      \
     (Target)                                    \
@@ -501,7 +507,7 @@
     (Trade)                                     \
     (TradeStockpile)
 
-#define TOKEN_SEQ_15                            \
+#define TOKEN_SEQ_17                            \
     (Troops)                                    \
     (Tundra)                                    \
     (Turn)                                      \
@@ -545,6 +551,8 @@ BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_12)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_13)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_14)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_15)
+BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_16)
+BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_17)
 
 #undef DECLARE_TOKEN
 

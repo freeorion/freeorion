@@ -42,7 +42,7 @@ namespace parse {
 
             empire_meter_value
                 = (     tok.EmpireMeterValue_ [ _a = construct<std::string>(_1)]
-                     >  parse::detail::label(Empire_token)  >  simple_int[ _b = _1]
+                     >  parse::detail::label(Empire_token) > simple_int[ _b = _1]
                      >  parse::detail::label(Meter_token) > tok.string[ _d = new_<ValueRef::Constant<std::string>>(_1)]
                   )     [_val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e)]
                 ;
@@ -62,15 +62,15 @@ namespace parse {
             shortest_path
                 =   (
                             tok.ShortestPath_ [ _a = construct<std::string>(_1) ]
-                        >   parse::detail::label(Object_token) >   simple_int [ _b = _1 ]
-                        >   parse::detail::label(Object_token) >   simple_int [ _c = _1 ]
+                        >   parse::detail::label(Object_token) > simple_int [ _b = _1 ]
+                        >   parse::detail::label(Object_token) > simple_int [ _c = _1 ]
                     )       [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             species_empire_opinion
                 = (
                     ((  tok.SpeciesOpinion_ [ _a = construct<std::string>(TOK_SPECIES_EMPIRE_OPINION) ]
-                       >  parse::detail::label(Species_token) >  parse::string_value_ref() [ _d = _1 ]
+                       >  parse::detail::label(Species_token) > parse::string_value_ref() [ _d = _1 ]
                      )
                     >> parse::detail::label(Empire_token)
                     )  >  simple_int [ _b = _1 ]
@@ -87,6 +87,16 @@ namespace parse {
                   )     [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
+            special_capacity
+                = (
+                    ((  tok.SpecialCapacity_ [ _a = construct<std::string>(_1) ]
+                       >  parse::detail::label(Name_token) > parse::string_value_ref() [ _d = _1 ]
+                     )
+                    >> parse::detail::label(Object_token)
+                    )  >  simple_int [ _b = _1 ]
+                  )     [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
+                ;
+
             start
                 %=  game_rule
                 |   part_capacity
@@ -95,6 +105,7 @@ namespace parse {
                 |   shortest_path
                 |   species_empire_opinion
                 |   species_species_opinion
+                |   special_capacity
                 ;
 
             game_rule.name("GameRule");
@@ -104,9 +115,18 @@ namespace parse {
             shortest_path.name("ShortestPathBetween");
             species_empire_opinion.name("SpeciesOpinion (of empire)");
             species_species_opinion.name("SpeciesOpinion (of species)");
+            special_capacity.name("SpecialCapacity");
 
 #if DEBUG_DOUBLE_COMPLEX_PARSERS
             debug(part_capacity);
+            debug(game_rule);
+            debug(part_capacity);
+            debug(empire_meter_value);
+            debug(direct_distance);
+            debug(shortest_path);
+            debug(species_empire_opinion);
+            debug(species_species_opinion);
+            debug(special_capacity);
 #endif
         }
 
@@ -117,6 +137,7 @@ namespace parse {
         complex_variable_rule<double> shortest_path;
         complex_variable_rule<double> species_empire_opinion;
         complex_variable_rule<double> species_species_opinion;
+        complex_variable_rule<double> special_capacity;
         complex_variable_rule<double> start;
     };
 
