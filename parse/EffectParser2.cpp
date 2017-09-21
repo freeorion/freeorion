@@ -14,7 +14,10 @@ namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
-    effect_parser_rules_2::effect_parser_rules_2(const parse::lexer& tok, Labeller& labeller) :
+    effect_parser_rules_2::effect_parser_rules_2(
+        const parse::lexer& tok, Labeller& labeller,
+        const parse::condition_parser_rule& condition_parser
+    ) :
         effect_parser_rules_2::base_type(start, "effect_parser_rules_2"),
         int_rules(tok),
         double_rules(tok)
@@ -121,7 +124,7 @@ namespace parse { namespace detail {
                     )
                 )
                 >  labeller.rule(Visibility_token) > parse::detail::visibility_rules().expr [ _c = _1 ]
-                >-(labeller.rule(Condition_token) > parse::detail::condition_parser [ _e = _1 ])
+                >-(labeller.rule(Condition_token) > condition_parser [ _e = _1 ])
             ) [ _val = new_<Effect::SetVisibility>(_c, _d, _b, _e) ]
             ;
 

@@ -13,7 +13,11 @@ namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
-    effect_parser_rules_3::effect_parser_rules_3(const parse::lexer& tok, Labeller& labeller) :
+    effect_parser_rules_3::effect_parser_rules_3(
+        const parse::lexer& tok,
+        Labeller& labeller,
+        const parse::condition_parser_rule& condition_parser
+    ) :
         effect_parser_rules_3::base_type(start, "effect_parser_rules_3"),
         double_rules(tok)
     {
@@ -26,14 +30,14 @@ namespace parse { namespace detail {
 
         move_to
             =    tok.MoveTo_
-            >    labeller.rule(Destination_token) > parse::detail::condition_parser [ _val = new_<Effect::MoveTo>(_1) ]
+            >    labeller.rule(Destination_token) > condition_parser [ _val = new_<Effect::MoveTo>(_1) ]
             ;
 
         move_in_orbit
             =    tok.MoveInOrbit_
             >    labeller.rule(Speed_token) >  double_rules.expr [ _a = _1 ]
             >   (
-                (labeller.rule(Focus_token) >  parse::detail::condition_parser [ _val = new_<Effect::MoveInOrbit>(_a, _1) ])
+                (labeller.rule(Focus_token) >  condition_parser [ _val = new_<Effect::MoveInOrbit>(_a, _1) ])
                 |
                 (
                     labeller.rule(X_token)     >  double_rules.expr [ _b = _1 ]
@@ -46,7 +50,7 @@ namespace parse { namespace detail {
             =    tok.MoveTowards_
             >    labeller.rule(Speed_token) > double_rules.expr [ _a = _1 ]
             >    (
-                (labeller.rule(Target_token) >  parse::detail::condition_parser [ _val = new_<Effect::MoveTowards>(_a, _1) ])
+                (labeller.rule(Target_token) >  condition_parser [ _val = new_<Effect::MoveTowards>(_a, _1) ])
                 |
                 (
                     labeller.rule(X_token)     > double_rules.expr [ _b = _1 ]
@@ -57,7 +61,7 @@ namespace parse { namespace detail {
 
         set_destination
             =    tok.SetDestination_
-            >    labeller.rule(Destination_token) > parse::detail::condition_parser [ _val = new_<Effect::SetDestination>(_1) ]
+            >    labeller.rule(Destination_token) > condition_parser [ _val = new_<Effect::SetDestination>(_1) ]
             ;
 
         set_aggression
@@ -98,12 +102,12 @@ namespace parse { namespace detail {
 
         add_starlanes
             =   tok.AddStarlanes_
-            >   labeller.rule(Endpoint_token) > parse::detail::condition_parser [ _val = new_<Effect::AddStarlanes>(_1) ]
+            >   labeller.rule(Endpoint_token) > condition_parser [ _val = new_<Effect::AddStarlanes>(_1) ]
             ;
 
         remove_starlanes
             =   tok.RemoveStarlanes_
-            >   labeller.rule(Endpoint_token) > parse::detail::condition_parser [ _val = new_<Effect::RemoveStarlanes>(_1) ]
+            >   labeller.rule(Endpoint_token) > condition_parser [ _val = new_<Effect::RemoveStarlanes>(_1) ]
             ;
 
         set_star_type

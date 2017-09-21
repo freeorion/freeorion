@@ -4,6 +4,7 @@
 #include "Lexer.h"
 #include "ParseImpl.h"
 #include "ValueRefParser.h"
+#include "ConditionParser.h"
 
 #include <boost/spirit/include/qi.hpp>
 
@@ -79,7 +80,9 @@ namespace parse { namespace detail {
     };
 
     struct effect_parser_rules_2 : public effect_parser_grammar {
-        effect_parser_rules_2(const parse::lexer& tok, Labeller& labeller);
+        effect_parser_rules_2(const parse::lexer& tok,
+                              Labeller& labeller,
+                              const parse::condition_parser_rule& condition_parser);
 
         typedef parse::detail::rule<
             Effect::EffectBase* (),
@@ -127,7 +130,9 @@ namespace parse { namespace detail {
     };
 
     struct effect_parser_rules_3 : public effect_parser_grammar {
-        effect_parser_rules_3(const parse::lexer& tok, Labeller& labeller);
+        effect_parser_rules_3(const parse::lexer& tok,
+                              Labeller& labeller,
+                              const parse::condition_parser_rule& condition_parser);
 
         typedef parse::detail::rule<
             Effect::EffectBase* (),
@@ -230,7 +235,9 @@ namespace parse { namespace detail {
     };
 
     struct effect_parser_rules_5 : public effect_parser_grammar {
-        effect_parser_rules_5(const effect_parser_grammar& effect_parser, Labeller& labeller);
+        effect_parser_rules_5(const effect_parser_grammar& effect_parser,
+                              Labeller& labeller,
+                              const parse::condition_parser_rule& condition_parser);
 
         typedef parse::detail::rule<
             Effect::EffectBase* (),
@@ -251,7 +258,9 @@ namespace parse { namespace detail {
 
 namespace parse {
     struct effects_parser_grammar : public detail::effect_parser_grammar {
-        effects_parser_grammar(const lexer& tok, detail::Labeller& labeller);
+        effects_parser_grammar(const lexer& tok,
+                               detail::Labeller& labeller,
+                               const parse::condition_parser_rule& condition_parser);
 
         detail::effect_parser_rules_1 effect_parser_1;
         detail::effect_parser_rules_2 effect_parser_2;
@@ -265,7 +274,9 @@ namespace parse {
     using effects_group_rule = detail::rule<effects_group_signature>;
 
     struct effects_group_grammar : public detail::grammar<effects_group_signature> {
-        effects_group_grammar(const lexer& tok, detail::Labeller& labeller);
+        effects_group_grammar(const lexer& tok,
+                              detail::Labeller& labeller,
+                              const parse::condition_parser_rule& condition_parser);
 
         typedef parse::detail::rule<
             Effect::EffectsGroup* (),

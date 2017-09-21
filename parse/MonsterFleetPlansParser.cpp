@@ -49,6 +49,8 @@ namespace {
             qi::_val_type _val;
             qi::eps_type eps;
 
+            auto& condition_parser = parse::detail::condition_parser;
+
             monster_fleet_plan_prefix
                 =    tok.MonsterFleet_
                 >    labeller.rule(Name_token) > tok.string [ phoenix::ref(_a) = _1 ]
@@ -79,7 +81,7 @@ namespace {
                             monster_fleet_plan_prefix
                         >   ships
                         >   spawns
-                        > -(labeller.rule(Location_token) > parse::detail::condition_parser [ phoenix::ref(_e) = _1 ])
+                        > -(labeller.rule(Location_token) > condition_parser [ phoenix::ref(_e) = _1 ])
                      )
                 [ _val = new_monster_fleet_plan(phoenix::ref(_a), phoenix::ref(_b), phoenix::ref(_c), phoenix::ref(_d), phoenix::ref(_e)) ]
                 ;
