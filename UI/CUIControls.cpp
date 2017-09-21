@@ -13,6 +13,7 @@
 #include "../Empire/Empire.h"
 #include "TextBrowseWnd.h"
 
+#include <GG/utf8/checked.h>
 #include <GG/dialogs/ColorDlg.h>
 #include <GG/DrawUtil.h>
 #include <GG/GUI.h>
@@ -874,10 +875,10 @@ void CUIDropDownList::EnableDropArrow()
 // class CUIEdit
 ///////////////////////////////////////
 CUIEdit::CUIEdit(const std::string& str) :
-    Edit(str, ClientUI::GetFont(), ClientUI::CtrlBorderColor(), ClientUI::TextColor(), ClientUI::CtrlColor())
+    Edit(str, ClientUI::GetFont(), ClientUI::CtrlBorderColor(),
+         ClientUI::TextColor(), ClientUI::CtrlColor())
 {
-    EditedSignal.connect(-1,
-        &PlayTextTypingSound);
+    EditedSignal.connect(-1, &PlayTextTypingSound);
     SetHiliteColor(ClientUI::EditHiliteColor());
 }
 
@@ -901,7 +902,9 @@ void CUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     // todo: italicize, underline, or colour selected text
 }
 
-void CUIEdit::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+void CUIEdit::KeyPress(GG::Key key, std::uint32_t key_code_point,
+                       GG::Flags<GG::ModKey> mod_keys)
+{
     if (Disabled()) {
         GG::Edit::KeyPress(key, key_code_point, mod_keys);
         return;
@@ -951,10 +954,164 @@ void CUIEdit::Render() {
 
 
 ///////////////////////////////////////
+// class CensoredCUIEdit
+///////////////////////////////////////
+CensoredCUIEdit::CensoredCUIEdit(const std::string& str, char display_placeholder) :
+    CUIEdit(str),
+    m_placeholder{display_placeholder},
+    m_raw_text{str}
+{
+    // TODO: allow multi-byte UTF-8 characters as placeholders, stored in a string...?
+    if (m_placeholder == 0)
+        m_placeholder = ' ';
+}
+
+const std::string& CensoredCUIEdit::RawText() const
+{ return m_raw_text; }
+
+void CensoredCUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    auto hotkey_paste_action      = [this]() { GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText()); };
+    auto hotkey_select_all_action = [this]() { GG::GUI::GetGUI()->WndSelectAll(this); };
+    auto hotkey_deselect_action   = [this]() { GG::GUI::GetGUI()->WndDeselect(this); };
+
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
+
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),         false, false, hotkey_paste_action));
+    popup->AddMenuItem(GG::MenuItem(true)); // separator
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
+    popup->Run();
+}
+
+void CensoredCUIEdit::KeyPress(GG::Key key, std::uint32_t key_code_point,
+                               GG::Flags<GG::ModKey> mod_keys)
+{
+    if (Disabled()) {
+        CUIEdit::KeyPress(key, key_code_point, mod_keys);
+        return;
+    }
+
+    bool shift_down = mod_keys & (GG::MOD_KEY_LSHIFT | GG::MOD_KEY_RSHIFT);
+    //bool ctrl_down = mod_keys & (GG::MOD_KEY_CTRL | GG::MOD_KEY_RCTRL);
+    //bool numlock_on = mod_keys & GG::MOD_KEY_NUM;
+
+    if (key == GG::GGK_DELETE && shift_down) {
+        GG::GUI::GetGUI()->CutWndText(this);    // should just copy the placeholder character
+
+    } else if (key == GG::GGK_INSERT && shift_down) {
+        GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText());
+
+    } else if (key == GG::GGK_BACKSPACE) {
+        if (MultiSelected()) {
+            ClearSelected();
+
+        } else if (0 < m_cursor_pos.first) {
+            // delete character before cursor
+            m_cursor_pos.second = m_cursor_pos.first--;
+            ClearSelected();
+        }
+
+    } else if (key == GG::GGK_DELETE) {
+        if (MultiSelected()) {
+            ClearSelected();
+
+        } else {
+            m_cursor_pos.second = m_cursor_pos.first + 1;
+            ClearSelected();
+        }
+
+    } else {
+        CUIEdit::KeyPress(key, key_code_point, mod_keys);
+    }
+}
+
+void CensoredCUIEdit::SetText(const std::string& str) {
+    m_raw_text = str;
+
+    auto font = GetFont();
+    if (!font) {
+        ErrorLogger() << "CensoredCUIEdit::SetText couldn't get font!";
+        return;
+    }
+    auto format = this->GetTextFormat();
+    auto text_elements = font->ExpensiveParseFromTextToTextElements(m_raw_text, format);
+    auto line_data = font->DetermineLines(m_raw_text, format, ClientSize().x, text_elements);
+
+    // generate censored text by appending one placeholder char per char in raw text
+    std::string censored_text;
+    for (const auto& curr_line : line_data)
+        for (const auto& curr_char : curr_line.char_data)
+            censored_text += m_placeholder;
+
+    CUIEdit::SetText(censored_text);
+}
+
+void CensoredCUIEdit::AcceptPastedText(const std::string& text) {
+    if (!Interactive())
+        return;
+    if (!utf8::is_valid(text.begin(), text.end()))
+        return;
+
+    bool modified_text = false;
+
+    if (MultiSelected()) {
+        ClearSelected();
+        modified_text = true;
+        m_cursor_pos.second = m_cursor_pos.first;   // should be redundant
+    }
+
+    if (!text.empty()) {
+        GG::CPSize pos;
+        std::size_t line;
+        std::tie(line, pos) = LinePositionOf(m_cursor_pos.first, GetLineData());
+
+        auto new_raw_text = m_raw_text;
+        new_raw_text.insert(Value(StringIndexOf(line, pos, GetLineData())), text);
+
+        SetText(new_raw_text);
+
+        modified_text = true;
+    }
+
+    if (modified_text) {
+        // moves cursor to end of pasted text
+        GG::CPSize text_span(utf8::distance(text.begin(), text.end()));
+        GG::CPSize new_cursor_pos = std::max(GG::CP0, std::min(Length(), m_cursor_pos.second + text_span));
+        m_cursor_pos.second = new_cursor_pos;
+
+        // ensure nothing is selected after pasting
+        m_cursor_pos.first = m_cursor_pos.second;
+
+        // notify rest of GUI of change to text in this Edit
+        EditedSignal(Text());
+    }
+}
+
+void CensoredCUIEdit::ClearSelected() {
+    // get range of indices to remove
+    GG::CPSize low = std::min(m_cursor_pos.first, m_cursor_pos.second);
+    GG::CPSize high = std::max(m_cursor_pos.first, m_cursor_pos.second);
+    // set cursor start/end to start of range to remove
+    m_cursor_pos = {low, low};
+
+    auto it = m_raw_text.begin() + Value(low);
+    auto end_it = m_raw_text.begin() + Value(high);
+
+    if (it == end_it)
+        return;
+
+    m_raw_text.erase(it, end_it);
+
+    SetText(m_raw_text);
+}
+
+///////////////////////////////////////
 // class CUIMultiEdit
 ///////////////////////////////////////
-CUIMultiEdit::CUIMultiEdit(const std::string& str, GG::Flags<GG::MultiEditStyle> style/* = MULTI_LINEWRAP*/) :
-    MultiEdit(str, ClientUI::GetFont(), ClientUI::CtrlBorderColor(), style, ClientUI::TextColor(), ClientUI::CtrlColor())
+CUIMultiEdit::CUIMultiEdit(const std::string& str,
+                           GG::Flags<GG::MultiEditStyle> style/* = MULTI_LINEWRAP*/) :
+    MultiEdit(str, ClientUI::GetFont(), ClientUI::CtrlBorderColor(), style,
+              ClientUI::TextColor(), ClientUI::CtrlColor())
 {}
 
 void CUIMultiEdit::CompleteConstruction() {
@@ -1003,7 +1160,8 @@ void CUIMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 ///////////////////////////////////////
 // class CUILinkTextMultiEdit
 ///////////////////////////////////////
-CUILinkTextMultiEdit::CUILinkTextMultiEdit(const std::string& str, GG::Flags<GG::MultiEditStyle> style) :
+CUILinkTextMultiEdit::CUILinkTextMultiEdit(const std::string& str,
+                                           GG::Flags<GG::MultiEditStyle> style) :
     CUIMultiEdit(str, style),
     TextLinker(),
     m_already_setting_text_so_dont_link(false),
@@ -1105,12 +1263,15 @@ void CUILinkTextMultiEdit::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void CUILinkTextMultiEdit::SetText(const std::string& str) {
-    // MultiEdit have scrollbars that are adjusted every time the text is set.  Adjusting scrollbars also requires
-    // setting text, because the space for the text is added or removed when scrollbars are shown or hidden.
-    // Since highlighting links on rollover also involves setting text, there are a lot of potentially unnecessary
-    // calls to SetText and FindLinks.  This check for whether text is already being set eliminates many of those
-    // calls when they aren't necessary, since the results will be overridden later anyway by the outermost (or
-    // lowest on stack, or first) call to SetText
+    // MultiEdit have scrollbars that are adjusted every time the text is set.
+    // Adjusting scrollbars also requires setting text, because the space for
+    // the text is added or removed when scrollbars are shown or hidden. Since
+    // highlighting links on rollover also involves setting text, there are a
+    // lot of potentially unnecessary calls to SetText and FindLinks.  This
+    // check for whether text is already being set eliminates many of those
+    // calls when they aren't necessary, since the results will be overridden
+    // later anyway by the outermost (or lowest on stack, or first) call to
+    // SetText
     if (!m_already_setting_text_so_dont_link) {
         m_already_setting_text_so_dont_link = true;
         m_raw_text = str;
@@ -1139,14 +1300,14 @@ void CUILinkTextMultiEdit::SetLinkedText(const std::string& str) {
 // static(s)
 const GG::Y CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT(22);
 
-CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, GG::Y row_height/* = DEFAULT_ROW_HEIGHT*/) :
+CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text,
+                                                   GG::Y row_height/* = DEFAULT_ROW_HEIGHT*/) :
     GG::ListBox::Row(GG::X1, row_height, ""),
     m_row_label(GG::Wnd::Create<CUILabel>(row_text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP))
 {}
 
 void CUISimpleDropDownListRow::CompleteConstruction() {
     GG::ListBox::Row::CompleteConstruction();
-
     push_back(m_row_label);
 }
 

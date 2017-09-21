@@ -308,18 +308,15 @@ private:
 class CUIEdit : public GG::Edit {
 public:
     /** \name Structors */ //@{
-    CUIEdit(const std::string& str);
+    explicit CUIEdit(const std::string& str);
     //@}
 
     /** \name Mutators */ //@{
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
-    void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
-
+    void KeyPress(GG::Key key, std::uint32_t key_code_point,
+                  GG::Flags<GG::ModKey> mod_keys) override;
     void GainingFocus() override;
-
     void LosingFocus() override;
-
     void Render() override;
     //@}
 
@@ -327,17 +324,46 @@ public:
     mutable boost::signals2::signal<void ()> LosingFocusSignal;
 };
 
+/** a FreeOrion Edit control that replaces its displayed characters with a
+  * placeholder. Useful for password entry.*/
+class CensoredCUIEdit : public CUIEdit {
+public:
+    /** \name Structors */ //@{
+    explicit CensoredCUIEdit(const std::string& str, char display_placeholder = '*');
+    //@}
+
+    /** \name Accessors */ //@{
+    const std::string& RawText() const;
+    //@}
+
+    /** \name Mutators */ //@{
+    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void KeyPress(GG::Key key, std::uint32_t key_code_point,
+                  GG::Flags<GG::ModKey> mod_keys) override;
+    void SetText(const std::string& str) override;
+    void AcceptPastedText(const std::string& text) override;
+    //@}
+
+protected:
+    char m_placeholder = '*';
+
+private:
+    void ClearSelected();
+
+    std::string m_raw_text = "";
+};
+
 /** a FreeOrion MultiEdit control */
 class CUIMultiEdit : public GG::MultiEdit {
 public:
     /** \name Structors */ //@{
-    CUIMultiEdit(const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
+    explicit CUIMultiEdit(const std::string& str,
+                          GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
     //@}
     void CompleteConstruction() override;
 
     /** \name Mutators */ //@{
     void Render() override;
-
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     //@}
 };
@@ -352,25 +378,17 @@ public:
 
     /** \name Accessors */ //@{
     const std::vector<GG::Font::LineData>& GetLineData() const override;
-
     const std::shared_ptr<GG::Font>& GetFont() const override;
-
     GG::Pt TextUpperLeft() const override;
-
     GG::Pt TextLowerRight() const override;
-
     const std::string& RawText() const override;
     //@}
 
     /** \name Mutators */ //@{
     void Render() override;
-
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void MouseLeave() override;
 
     /** Needed primarily so the SetText call will take a RawText. */
