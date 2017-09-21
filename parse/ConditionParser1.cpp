@@ -21,7 +21,7 @@ namespace std {
 
 namespace {
     struct condition_parser_rules_1 {
-        condition_parser_rules_1(const parse::lexer& tok) :
+        condition_parser_rules_1(const parse::lexer& tok, const parse::condition_parser_rule& condition_parser) :
             int_rules(tok)
         {
             qi::_1_type _1;
@@ -122,25 +122,25 @@ namespace {
 
             and_
                 =   tok.And_
-                >   '[' > +parse::detail::condition_parser [ push_back(_a, _1) ] > lit(']')
+                >   '[' > +condition_parser [ push_back(_a, _1) ] > lit(']')
                 [ _val = new_<Condition::And>(_a) ]
                 ;
 
             or_
                 =   tok.Or_
-                >   '[' > +parse::detail::condition_parser [ push_back(_a, _1) ] > lit(']')
+                >   '[' > +condition_parser [ push_back(_a, _1) ] > lit(']')
                 [ _val = new_<Condition::Or>(_a) ]
                 ;
 
             not_
                 =   tok.Not_
-                >   parse::detail::condition_parser [ _val = new_<Condition::Not>(_1) ]
+                >   condition_parser [ _val = new_<Condition::Not>(_1) ]
                 ;
 
             described
                 =   tok.Described_
                 >   parse::detail::label(Description_token) > tok.string [ _a = _1 ]
-                >   parse::detail::label(Condition_token) > parse::detail::condition_parser
+                >   parse::detail::label(Condition_token) > condition_parser
                 [ _val = new_<Condition::Described>(_1, _a) ]
                 ;
 

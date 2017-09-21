@@ -20,7 +20,7 @@ namespace std {
 
 namespace {
     struct condition_parser_rules_7 {
-        condition_parser_rules_7() {
+        condition_parser_rules_7(const parse::condition_parser_rule& condition_parser) {
             const parse::lexer& tok = parse::lexer::instance();
 
             qi::_1_type _1;
@@ -33,19 +33,19 @@ namespace {
 
             ordered_bombarded_by
                 =    tok.OrderedBombardedBy_
-                >   -parse::detail::label(Condition_token) > parse::detail::condition_parser
+                >   -parse::detail::label(Condition_token) > condition_parser
                      [ _val = new_<Condition::OrderedBombarded>(_1) ]
                 ;
 
             contains
                 =    tok.Contains_
-                >   -parse::detail::label(Condition_token) > parse::detail::condition_parser
+                >   -parse::detail::label(Condition_token) > condition_parser
                 [ _val = new_<Condition::Contains>(_1) ]
                 ;
 
             contained_by
                 =    tok.ContainedBy_
-                >   -parse::detail::label(Condition_token) > parse::detail::condition_parser
+                >   -parse::detail::label(Condition_token) > condition_parser
                 [ _val = new_<Condition::ContainedBy>(_1) ]
                 ;
 
