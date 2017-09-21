@@ -13,7 +13,7 @@ namespace phoenix = boost::phoenix;
 
 namespace {
     struct condition_parser_rules_5 {
-        condition_parser_rules_5(const parse::lexer& tok) :
+        condition_parser_rules_5(const parse::lexer& tok, const parse::condition_parser_rule& condition_parser) :
             int_rules(tok)
         {
             qi::_1_type _1;
@@ -143,11 +143,14 @@ namespace {
 
 namespace parse { namespace detail {
     const condition_parser_rule& condition_parser_5() {
-        static condition_parser_rules_5 retval(parse::lexer::instance());
+        static condition_parser_rules_5 retval(parse::lexer::instance(), parse::condition_parser());
         return retval.start;
     }
 
-    condition_parser_rules_5::condition_parser_rules_5(const parse::lexer& tok) :
+    condition_parser_rules_5::condition_parser_rules_5(
+        const parse::lexer& tok,
+        const condition_parser_grammar& condition_parser)
+        :
         condition_parser_rules_5::base_type(start, "condition_parser_rules_5"),
         int_rules(tok)
     {
