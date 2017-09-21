@@ -468,9 +468,13 @@ protected:
     // EventPumpBase interface
     void SetFPS(double FPS);               ///< sets the FPS value based on the most recent calculation
     void SetDeltaT(unsigned int delta_t);  ///< sets the time between the most recent frame and the one before it, in ms
+
     //@}
 
     virtual void   Run() = 0;              ///< initializes GUI state, then executes main event handler/render loop (PollAndRender())
+
+    /** Determine if the app has the mouse focus. */
+    virtual bool AppHasMouseFocus() const { return true; };
 
 private:
     bool           ProcessBrowseInfoImpl(Wnd* wnd);
