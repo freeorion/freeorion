@@ -132,15 +132,3 @@ def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0):
     # no path exists, not even if we refuel on the way
     return None
 
-
-def run(s1, s2):
-    universe = fo.getUniverse()
-    fleets = universe.fleetIDs
-    f = [fid for fid in universe.getSystem(126).fleetIDs][0]
-    if not (s1 and s2):
-        ss = universe.systemIDs
-        s1 = ss[0]
-        s2 = ss[1]
-    path_info = find_path_with_resupply(s1, s2, f)
-    print map(universe.getSystem, path_info.path)
-
