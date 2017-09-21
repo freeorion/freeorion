@@ -3,6 +3,7 @@ Part
     description = "SR_PLASMA_DISCHARGE_DESC"
     class = ShortRange
     damage = 20
+    noisiness = 50
     mountableSlotTypes = External
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 3

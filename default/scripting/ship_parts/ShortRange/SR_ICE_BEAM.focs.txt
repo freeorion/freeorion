@@ -3,6 +3,7 @@ Part
     description = "SR_ICE_BEAM_DESC"
     class = ShortRange
     damage = 9
+    noisiness = 20
     mountableSlotTypes = External
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 2

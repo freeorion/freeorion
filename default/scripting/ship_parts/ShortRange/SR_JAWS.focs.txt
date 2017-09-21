@@ -3,6 +3,7 @@ Part
     description = "SR_JAWS_DESC"
     class = ShortRange
     damage = 5
+    noisiness = 50
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1

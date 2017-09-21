@@ -3,6 +3,7 @@ Part
     description = "SR_WEAPON_2_1_DESC"
     class = ShortRange
     damage = 5
+    noisiness = 5
     NoDefaultCapacityEffect
     mountableSlotTypes = External
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
