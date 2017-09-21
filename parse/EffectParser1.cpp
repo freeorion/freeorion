@@ -116,7 +116,7 @@ namespace {
                 >    parse::detail::label(Data_token)
                 >  ( parse::int_value_ref()      [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<int>>(_1)) ]
                    | parse::double_value_ref()   [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<double>>(_1)) ]
-                   | tok.string         [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::Constant<std::string>>(_1)) ]
+                   | tok.string                  [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::Constant<std::string>>(_1)) ]
                    | parse::string_value_ref()   [ _val = construct<string_and_string_ref_pair>(_a, _1) ]
                    )
                 ;
