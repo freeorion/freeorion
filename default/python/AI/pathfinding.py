@@ -7,8 +7,8 @@ from turn_state import state
 
 # TODO Allow short idling in system to refuel
 # TODO Consider additional optimizations:
-#    - Check if universe.shortestPath is valid before running pathfinder
-#      (seemingly not worth it - we have exact heuristic in that case)
+#    - Check if universe.shortestPath complies with fuel mechanics before running
+#      pathfinder (seemingly not worth it - we have exact heuristic in that case)
 #    - Cut off branches that can't reach target due to supply distance
 #    - For large graphs, check existance on a simplified graph (use single node to represent supply clusters)
 #    - For large graphs, check if there are any must-visit nodes (e.g. only possible resupplying system),
@@ -42,6 +42,11 @@ def find_path_with_resupply(start, target, fleet_id):
     fleet = universe.getFleet(fleet_id)
     supplied_systems = set(fo.getEmpire().fleetSupplyableSystemIDs)
 
+    # make sure the target is connected to the start system
+    shortest_possible_path_distance = universe.shortestPathDistance(start, target)
+    if shortest_possible_path_distance == -1:
+        return None
+
     start_fuel = fleet.maxFuel if start in supplied_systems else fleet.fuel
 
     # We have 1 free jump from supplied system into unsupplied systems.
@@ -59,8 +64,7 @@ def find_path_with_resupply(start, target, fleet_id):
 
     # initialize data structures
     path_cache = {}
-    shortest_possible_path = universe.shortestPathDistance(start, target)
-    queue = [(shortest_possible_path, path_information(distance=0, fuel=start_fuel, path=(start,)), start)]
+    queue = [(shortest_possible_path_distance, path_information(distance=0, fuel=start_fuel, path=(start,)), start)]
 
     while queue:
         # get next system u with path information
@@ -85,7 +89,7 @@ def find_path_with_resupply(start, target, fleet_id):
             new_fuel = fleet.maxFuel if neighbor in supplied_systems else path_info.fuel - 1
             if all((new_dist < dist or new_fuel > fuel) for dist, fuel, _ in path_cache.get(neighbor, [])):
                 predicted_distance = new_dist + universe.shortestPathDistance(neighbor, target)
-                if predicted_distance > max(2*shortest_possible_path, shortest_possible_path+5):
+                if predicted_distance > max(2*shortest_possible_path_distance, shortest_possible_path_distance+5):
                     # do not consider unreasonable long paths
                     continue
                 heappush(queue, (predicted_distance, path_information(new_dist, new_fuel, path_info.path + (neighbor,)),
