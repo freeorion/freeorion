@@ -1371,7 +1371,6 @@ void MultiEdit::AcceptPastedText(const std::string& text)
         //std::cout << "right after inserting, cursor begin at line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << std::endl;
         //std::cout << "right after inserting, cursor end at line: " << m_cursor_end.first << " char: " << m_cursor_end.second << std::endl;
         //std::cout << "right after inserting, cursor pose: " << this->m_cursor_pos.first << " // " << this->m_cursor_pos.second << std::endl;
-
     }
 
     if (modified_text) {

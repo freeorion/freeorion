@@ -31,11 +31,14 @@
 
 namespace GG {
 
-    TextBlock::TextBlock(X x, Y y, X w, const std::string& str, const std::shared_ptr<Font>& font,
-                         Clr color, Flags<TextFormat> format, Flags<WndFlag> flags) :
+    TextBlock::TextBlock(X x, Y y, X w, const std::string& str,
+                         const std::shared_ptr<Font>& font,
+                         Clr color, Flags<TextFormat> format,
+                         Flags<WndFlag> flags) :
         BlockControl(x, y, w, flags)
     {
-        // Construct the text control. Activatee full text wrapping features, and make it stick to the top.
+        // Construct the text control. Activate full text wrapping features,
+        // and make it stick to the top.
         // With these setting the height is largely ignored, so we set it to one.
         m_text = Wnd::Create<TextControl>(GG::X0, GG::Y0, w, Y1, str, font, color,
                                           format | FORMAT_WORDBREAK | FORMAT_LINEWRAP | FORMAT_TOP, flags);

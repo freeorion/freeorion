@@ -37,8 +37,10 @@ namespace {
 ////////////////////////////////////////////////
 // GG::TextControl
 ////////////////////////////////////////////////
-TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const std::shared_ptr<Font>& font, Clr color/* = CLR_BLACK*/,
-                         Flags<TextFormat> format/* = FORMAT_NONE*/, Flags<WndFlag> flags/* = NO_WND_FLAGS*/) :
+TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str,
+                         const std::shared_ptr<Font>& font, Clr color/* = CLR_BLACK*/,
+                         Flags<TextFormat> format/* = FORMAT_NONE*/,
+                         Flags<WndFlag> flags/* = NO_WND_FLAGS*/) :
     Control(x, y, w, h, flags),
     m_format(format),
     m_text_color(color),
@@ -134,7 +136,7 @@ Pt TextControl::MinUsableSize(X width) const
     // Calculate and cache the minimum usable size when m_cached_minusable_size is equal to width.
     // Create dummy line data with line breaks added so that lines are not wider than width.
     Flags<TextFormat> dummy_format(m_format);
-    std::vector<Font::LineData> dummy_line_data =
+    auto dummy_line_data =
         m_font->DetermineLines(m_text, dummy_format, width, m_text_elements);
     m_cached_minusable_size = m_font->TextExtent(dummy_line_data)
         + (ClientUpperLeft() - UpperLeft()) + (LowerRight() - ClientLowerRight());

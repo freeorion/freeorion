@@ -284,9 +284,9 @@ void TextLinker::FindLinks() {
     // the raw text and not the marked text set in MarkText().
     SetLinkedText(RawText());
 
-    for (const GG::Font::LineData& curr_line : GetLineData()) {
-        for (const GG::Font::LineData::CharData& curr_char : curr_line.char_data) {
-            for (const std::shared_ptr<GG::Font::FormattingTag>& tag : curr_char.tags) {
+    for (const auto& curr_line : GetLineData()) {
+        for (const auto& curr_char : curr_line.char_data) {
+            for (const auto& tag : curr_char.tags) {
                 if (tag->tag_name == VarText::PLANET_ID_TAG ||
                     tag->tag_name == VarText::SYSTEM_ID_TAG ||
                     tag->tag_name == VarText::SHIP_ID_TAG ||
@@ -335,22 +335,22 @@ void TextLinker::FindLinks() {
 }
 
 void TextLinker::LocateLinks() {
-    const std::shared_ptr<GG::Font>& font = GetFont();
-
     if (m_links.empty())
         return;
 
     GG::Y y_posn(0); // y-coordinate of the top of the current line
+    const auto& font = GetFont();
 
     // We assume that links are stored in m_links in the order they appear in the text.
     // We shall iterate through the text, updating the rectangles of a link whenever we know we are inside it
     auto current_link = m_links.begin();
     bool inside_link = false;
 
-    for (const GG::Font::LineData& curr_line : GetLineData()) {
+    for (const auto& curr_line : GetLineData()) {
         // if the last line ended without the current tag ending
         if (inside_link)
-            current_link->rects.push_back(GG::Rect(GG::X0, y_posn, GG::X0, y_posn + font->Height()));
+            current_link->rects.push_back(GG::Rect(GG::X0, y_posn, GG::X0,
+                                                   y_posn + font->Height()));
 
         for (unsigned int i = 0; i < curr_line.char_data.size(); ++i) {
             // The link text_posn is at the beginning of the tag, whereas

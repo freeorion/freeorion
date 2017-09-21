@@ -1462,8 +1462,9 @@ namespace DebugOutput {
     }
 }
 
-std::vector<std::shared_ptr<Font::TextElement>> Font::ExpensiveParseFromTextToTextElements(const std::string& text,
-                                                                                              const Flags<TextFormat>& format) const
+std::vector<std::shared_ptr<Font::TextElement>>
+    Font::ExpensiveParseFromTextToTextElements(const std::string& text,
+                                               const Flags<TextFormat>& format) const
 {
     std::vector<std::shared_ptr<TextElement>> text_elements;
 
