@@ -44,8 +44,6 @@ unowned_empty_planet_ids = set()
 facilities_by_species_grade = {}
 system_facilities = {}
 
-ENVIRONS = {str(fo.planetEnvironment.uninhabitable): 0, str(fo.planetEnvironment.hostile): 1,
-            str(fo.planetEnvironment.poor): 2, str(fo.planetEnvironment.adequate): 3, str(fo.planetEnvironment.good): 4}
 PHOTO_MAP = {fo.starType.blue: 3, fo.starType.white: 1.5, fo.starType.red: -1, fo.starType.neutron: -1,
              fo.starType.blackHole: -10, fo.starType.noStar: -10}
 
@@ -69,7 +67,6 @@ def _get_planet_size(planet):
     :return: size of the planet
     :rtype: int
     """
-
     if planet.size == fo.planetSize.asteroids:
         planet_size = 3
     elif planet.size == fo.planetSize.gasGiant:
@@ -90,7 +87,7 @@ def outpod_pod_cost():
 
 def calc_max_pop(planet, species, detail):
     planet_size = _get_planet_size(planet)
-    planet_env = ENVIRONS[str(species.getPlanetEnvironment(planet.type))]
+    planet_env = species.getPlanetEnvironment(planet.type)
     tag_list = list(species.tags) if species else []
     pop_tag_mod = AIDependencies.SPECIES_POPULATION_MODIFIER.get(get_ai_tag_grade(tag_list, "POPULATION"), 1.0)
 
