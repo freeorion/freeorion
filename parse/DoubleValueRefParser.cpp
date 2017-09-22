@@ -69,7 +69,8 @@ parse::double_parser_rules::double_parser_rules(
     arithmetic_rules("real number", condition_parser),
     int_rules(tok, condition_parser),
     simple_int_rules(tok),
-    simple_double_rules(tok)
+    simple_double_rules(tok),
+    double_complex_grammar(tok, condition_parser)
 {
     namespace phoenix = boost::phoenix;
     namespace qi = boost::spirit::qi;
@@ -110,7 +111,7 @@ parse::double_parser_rules::double_parser_rules(
         |    simple
         |    statistic_expr
         |    int_statistic_cast
-        |    double_var_complex()
+        |    double_complex_grammar
         |    int_constant_cast
         |    int_free_variable_cast
         |    int_bound_variable_cast

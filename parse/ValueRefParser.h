@@ -99,6 +99,23 @@ struct simple_double_parser_rules : public simple_variable_rules<double> {
     simple_double_parser_rules(const parse::lexer& tok);
 };
 
+    template <typename T>
+    using complex_variable_signature = ValueRef::ComplexVariable<T>* ();
+    using complex_variable_locals =
+        boost::spirit::qi::locals<
+        std::string,
+        ValueRef::ValueRefBase<int>*,
+        ValueRef::ValueRefBase<int>*,
+        ValueRef::ValueRefBase<std::string>*,
+        ValueRef::ValueRefBase<std::string>*,
+        ValueRef::ValueRefBase<int>*
+        >;
+
+    template <typename T>
+    using complex_variable_rule = parse::detail::rule<complex_variable_signature<T>, complex_variable_locals>;
+    template <typename T>
+    using complex_variable_grammar = parse::detail::grammar<complex_variable_signature<T>, complex_variable_locals>;
+
 }}
 
 namespace parse {
@@ -111,6 +128,20 @@ namespace parse {
         detail::simple_int_parser_rules  simple_int_rules;
     };
 
+    struct double_complex_parser_grammar : public detail::complex_variable_grammar<double> {
+        double_complex_parser_grammar(const lexer& tok, const condition_parser_rule& condition_parser);
+
+        detail::simple_int_parser_rules simple_int_rules;
+        detail::complex_variable_rule<double> name_property_rule;
+        detail::complex_variable_rule<double> empire_meter_value;
+        detail::complex_variable_rule<double> direct_distance;
+        detail::complex_variable_rule<double> shortest_path;
+        detail::complex_variable_rule<double> species_empire_opinion;
+        detail::complex_variable_rule<double> species_species_opinion;
+        detail::complex_variable_rule<double> special_capacity;
+        detail::complex_variable_rule<double> start;
+    };
+
     struct double_parser_rules : public detail::arithmetic_rules<double> {
         double_parser_rules(
             const parse::lexer& tok,
@@ -119,6 +150,7 @@ namespace parse {
         parse::int_arithmetic_rules        int_rules;
         detail::simple_int_parser_rules    simple_int_rules;
         detail::simple_double_parser_rules simple_double_rules;
+        parse::double_complex_parser_grammar double_complex_grammar;
         parse::value_ref_rule<double> int_constant_cast;
         parse::value_ref_rule<double> int_bound_variable_cast;
         parse::value_ref_rule<double> int_free_variable_cast;
