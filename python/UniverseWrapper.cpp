@@ -308,7 +308,7 @@ namespace FreeOrionPython {
             .def(boost::python::vector_indexing_suite<
                  std::vector<Effect::AccountingInfo>, true>())
         ;
-        class_<std::map<Visibility, int>>("MeterTypeAccountingInfoVecMap")
+        class_<std::map<MeterType, std::vector<Effect::AccountingInfo>>>("MeterTypeAccountingInfoVecMap")
             .def(boost::python::map_indexing_suite<
                  std::map<MeterType, std::vector<Effect::AccountingInfo>>, true>())
         ;
