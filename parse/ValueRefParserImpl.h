@@ -154,9 +154,10 @@ struct enum_value_ref_rules {
 
         initialize_bound_variable_parser<T>(bound_variable_expr, variable_name);
 
-        statistic_value_ref_expr
+        statistic_sub_value_ref
             =   constant_expr
             |   bound_variable_expr
+            |   complex_expr
             ;
 
         functional_expr
@@ -181,12 +182,13 @@ struct enum_value_ref_rules {
             =   functional_expr
             ;
 
-        initialize_nonnumeric_statistic_parser<T>(statistic_expr, statistic_value_ref_expr);
+        initialize_nonnumeric_statistic_parser<T>(statistic_expr, statistic_sub_value_ref);
 
         primary_expr
             =   constant_expr
             |   bound_variable_expr
             |   statistic_expr
+            |   complex_expr
             ;
 
 #if DEBUG_VALUEREF_PARSERS
@@ -205,7 +207,7 @@ struct enum_value_ref_rules {
         enum_expr.name(type_name);
         constant_expr.name(type_name);
         bound_variable_expr.name(type_name + " variable");
-        statistic_value_ref_expr.name(type_name + " statistic value reference");
+        statistic_sub_value_ref.name(type_name + " statistic value reference");
         statistic_expr.name(type_name + " statistic");
         primary_expr.name(type_name + " expression");
         expr.name(type_name + " expression");
@@ -217,8 +219,9 @@ struct enum_value_ref_rules {
     variable_rule<T> bound_variable_expr;
     expression_rule<T> functional_expr;
     parse::value_ref_rule<T> primary_expr;
-    parse::value_ref_rule<T> statistic_value_ref_expr;
+    parse::value_ref_rule<T> statistic_sub_value_ref;
     statistic_rule<T> statistic_expr;
+    complex_variable_rule<T> complex_expr;
     parse::value_ref_rule<T> expr;
 };
 

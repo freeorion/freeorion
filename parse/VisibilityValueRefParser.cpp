@@ -6,6 +6,8 @@
 
 
 namespace parse {
+    const complex_variable_rule<Visibility>& visibility_var_complex();
+
     struct visibility_parser_rules :
         public parse::detail::enum_value_ref_rules<Visibility>
     {
@@ -25,6 +27,10 @@ namespace parse {
                 |   tok.Basic_      [ _val = VIS_BASIC_VISIBILITY ]
                 |   tok.Partial_    [ _val = VIS_PARTIAL_VISIBILITY ]
                 |   tok.Full_       [ _val = VIS_FULL_VISIBILITY ]
+                ;
+
+            complex_expr
+                =   visibility_var_complex()
                 ;
         }
     };
@@ -71,9 +77,13 @@ namespace parse {
         complex_variable_rule<Visibility> start;
     };
 
-    namespace detail {
-        visibility_complex_parser_rules visibility_complex_parser;
+    const complex_variable_rule<Visibility>& visibility_var_complex()
+    {
+        static visibility_complex_parser_rules visibility_complex_parser;
+        return visibility_complex_parser.start;
+    }
 
+    namespace detail {
         enum_value_ref_rules<Visibility>& visibility_rules() {
             static visibility_parser_rules retval;
             return retval;
