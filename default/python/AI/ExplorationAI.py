@@ -12,9 +12,6 @@ from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 
-TARGET_POP = 'targetPop'
-TROOPS = 'troops'
-
 graph_flags = set()
 border_unexplored_system_ids = set()
 

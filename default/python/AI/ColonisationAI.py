@@ -44,8 +44,6 @@ unowned_empty_planet_ids = set()
 facilities_by_species_grade = {}
 system_facilities = {}
 
-PHOTO_MAP = {fo.starType.blue: 3, fo.starType.white: 1.5, fo.starType.red: -1, fo.starType.neutron: -1,
-             fo.starType.blackHole: -10, fo.starType.noStar: -10}
 
 NEST_VAL_MAP = {
     "SNOWFLAKE_NEST_SPECIAL": 15,
@@ -164,7 +162,7 @@ def calc_max_pop(planet, species, detail):
 
     if "PHOTOTROPHIC" in tag_list and max_pop_size() > 0:
         star_type = fo.getUniverse().getSystem(planet.systemID).starType
-        star_pop_mod = PHOTO_MAP.get(star_type, 0)
+        star_pop_mod = AIDependencies.POP_MOD_PHOTOTROPHIC_STAR_MAP.get(star_type, 0)
         base_pop_not_modified_by_species += star_pop_mod
         detail.append("Phototropic Star Bonus_PSM_late(%0.1f)" % star_pop_mod)
 
