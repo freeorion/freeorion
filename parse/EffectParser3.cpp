@@ -16,10 +16,11 @@ namespace parse { namespace detail {
     effect_parser_rules_3::effect_parser_rules_3(
         const parse::lexer& tok,
         Labeller& labeller,
-        const parse::condition_parser_rule& condition_parser
+        const parse::condition_parser_rule& condition_parser,
+        const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         effect_parser_rules_3::base_type(start, "effect_parser_rules_3"),
-        double_rules(tok, condition_parser)
+        double_rules(tok, condition_parser, string_grammar)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -84,12 +85,12 @@ namespace parse { namespace detail {
 
         add_special_1
             =   tok.AddSpecial_
-            >   labeller.rule(Name_token) > parse::string_value_ref() [ _val = new_<Effect::AddSpecial>(_1) ]
+            >   labeller.rule(Name_token) > string_grammar [ _val = new_<Effect::AddSpecial>(_1) ]
             ;
 
         add_special_2
             =  ((tok.AddSpecial_ | tok.SetSpecialCapacity_)
-                >>  labeller.rule(Name_token) >> parse::string_value_ref() [ _c = _1 ]
+                >>  labeller.rule(Name_token) >> string_grammar [ _c = _1 ]
                 >> (labeller.rule(Capacity_token) | labeller.rule(Value_token))
                )
             >   double_rules.expr [ _val = new_<Effect::AddSpecial>(_c, _1) ]
@@ -97,7 +98,7 @@ namespace parse { namespace detail {
 
         remove_special
             =   tok.RemoveSpecial_
-            >   labeller.rule(Name_token) > parse::string_value_ref() [ _val = new_<Effect::RemoveSpecial>(_1) ]
+            >   labeller.rule(Name_token) > string_grammar [ _val = new_<Effect::RemoveSpecial>(_1) ]
             ;
 
         add_starlanes

@@ -21,8 +21,10 @@ namespace std {
 
 namespace {
     struct condition_parser_rules_1 {
-        condition_parser_rules_1(const parse::lexer& tok, const parse::condition_parser_rule& condition_parser) :
-            int_rules(tok, condition_parser)
+        condition_parser_rules_1(const parse::lexer& tok,
+                                 const parse::condition_parser_rule& condition_parser,
+                                 const parse::value_ref_grammar<std::string>& string_grammar) :
+            int_rules(tok, condition_parser, string_grammar)
         {
             qi::_1_type _1;
             qi::_a_type _a;
@@ -245,14 +247,18 @@ namespace {
 
 namespace parse { namespace detail {
     const condition_parser_rule& condition_parser_1() {
-        static condition_parser_rules_1 retval(parse::lexer::instance(), parse::condition_parser());
+        static string_parser_grammar string_grammar(parse::lexer::instance(), parse::condition_parser());
+        static condition_parser_rules_1 retval(parse::lexer::instance(), parse::condition_parser(), string_grammar);
         return retval.start;
     }
 
     condition_parser_rules_1::condition_parser_rules_1(
-        const parse::lexer& tok, const condition_parser_grammar& condition_parser) :
+        const parse::lexer& tok,
+        const condition_parser_grammar& condition_parser,
+        const parse::value_ref_grammar<std::string>& string_grammar
+    ) :
         condition_parser_rules_1::base_type(start, "condition_parser_rules_1"),
-        int_rules(tok, condition_parser)
+        int_rules(tok, condition_parser, string_grammar)
     {
         qi::_1_type _1;
         qi::_a_type _a;

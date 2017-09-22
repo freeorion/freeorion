@@ -62,10 +62,11 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lex
 
 parse::castable_as_int_parser_rules::castable_as_int_parser_rules(
     const parse::lexer& tok,
-    const parse::condition_parser_rule& condition_parser)
-    :
-    int_rules(tok, condition_parser),
-    double_rules(tok, condition_parser)
+    const parse::condition_parser_rule& condition_parser,
+    const parse::value_ref_grammar<std::string>& string_grammar
+) :
+    int_rules(tok, condition_parser, string_grammar),
+    double_rules(tok, condition_parser, string_grammar)
 {
     namespace phoenix = boost::phoenix;
     namespace qi = boost::spirit::qi;
@@ -94,11 +95,12 @@ parse::castable_as_int_parser_rules::castable_as_int_parser_rules(
 
 parse::int_arithmetic_rules::int_arithmetic_rules(
     const parse::lexer& tok,
-    const parse::condition_parser_rule& condition_parser)
-    :
+    const parse::condition_parser_rule& condition_parser,
+    const parse::value_ref_grammar<std::string>& string_grammar
+) :
     arithmetic_rules("integer", condition_parser),
     simple_int_rules(tok),
-    int_complex_grammar(tok, *this)
+    int_complex_grammar(tok, *this, string_grammar)
 {
     const parse::value_ref_rule<int>& simple = simple_int_rules.simple;
 

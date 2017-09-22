@@ -11,13 +11,14 @@ namespace parse {
     effects_parser_grammar::effects_parser_grammar(
         const parse::lexer& tok,
         detail::Labeller& labeller,
-        const parse::condition_parser_rule& condition_parser
+        const parse::condition_parser_rule& condition_parser,
+        const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         effects_parser_grammar::base_type(start, "effects_parser_grammar"),
-        effect_parser_1(tok, labeller, condition_parser),
-        effect_parser_2(tok, labeller, condition_parser),
-        effect_parser_3(tok, labeller, condition_parser),
-        effect_parser_4(tok, *this, labeller, condition_parser),
+        effect_parser_1(tok, labeller, condition_parser, string_grammar),
+        effect_parser_2(tok, labeller, condition_parser, string_grammar),
+        effect_parser_3(tok, labeller, condition_parser, string_grammar),
+        effect_parser_4(tok, *this, labeller, condition_parser, string_grammar),
         effect_parser_5(*this, labeller, condition_parser)
     {
         start
@@ -33,10 +34,11 @@ namespace parse {
     effects_group_grammar::effects_group_grammar(
         const lexer& tok,
         detail::Labeller& labeller,
-        const parse::condition_parser_rule& condition_parser
+        const parse::condition_parser_rule& condition_parser,
+        const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         effects_group_grammar::base_type(start, "effects_group_grammar"),
-        effects_grammar(tok, labeller, condition_parser)
+        effects_grammar(tok, labeller, condition_parser, string_grammar)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;

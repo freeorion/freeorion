@@ -21,9 +21,11 @@ namespace std {
 
 namespace {
     struct condition_parser_rules_4 {
-        condition_parser_rules_4(const parse::lexer& tok, const parse::condition_parser_rule& condition_parser) :
-            int_rules(tok, condition_parser),
-            double_rules(tok, condition_parser)
+        condition_parser_rules_4(const parse::lexer& tok, const parse::condition_parser_rule& condition_parser,
+                                 const parse::value_ref_grammar<std::string>& string_grammar
+                                ) :
+            int_rules(tok, condition_parser, string_grammar),
+            double_rules(tok, condition_parser, string_grammar)
         {
             qi::_1_type _1;
             qi::_a_type _a;
@@ -47,7 +49,7 @@ namespace {
             ship_part_meter_value
                 =   (
                         tok.ShipPartMeter_
-                        >   parse::detail::label(Part_token)    >   parse::string_value_ref() [ _e = _1 ]
+                        >   parse::detail::label(Part_token)    >   string_grammar [ _e = _1 ]
                         >   parse::ship_part_meter_type_enum() [ _a = _1 ]
                         >  -(parse::detail::label(Low_token)    >   double_rules.expr [ _b = _1 ])
                         >  -(parse::detail::label(High_token)   >   double_rules.expr [ _c = _1 ])
@@ -129,16 +131,19 @@ namespace {
 
 namespace parse { namespace detail {
     const condition_parser_rule& condition_parser_4() {
-        static condition_parser_rules_4 retval(parse::lexer::instance(), parse::condition_parser());
+        static string_parser_grammar string_grammar(parse::lexer::instance(), parse::condition_parser());
+        static condition_parser_rules_4 retval(parse::lexer::instance(), parse::condition_parser(), string_grammar);
         return retval.start;
     }
 
-    condition_parser_rules_4::condition_parser_rules_4(const parse::lexer& tok,
-        const condition_parser_grammar& condition_parser)
-        :
+    condition_parser_rules_4::condition_parser_rules_4(
+        const parse::lexer& tok,
+        const condition_parser_grammar& condition_parser,
+        const parse::value_ref_grammar<std::string>& string_grammar
+    ) :
         condition_parser_rules_4::base_type(start, "condition_parser_rules_4"),
-        int_rules(tok, condition_parser),
-        double_rules(tok, condition_parser)
+        int_rules(tok, condition_parser, string_grammar),
+        double_rules(tok, condition_parser, string_grammar)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -162,7 +167,7 @@ namespace parse { namespace detail {
         ship_part_meter_value
             =   (
                 tok.ShipPartMeter_
-                >   parse::detail::label(Part_token)    >   parse::string_value_ref() [ _e = _1 ]
+                >   parse::detail::label(Part_token)    >   string_grammar [ _e = _1 ]
                 >   parse::ship_part_meter_type_enum() [ _a = _1 ]
                 >  -(parse::detail::label(Low_token)    >   double_rules.expr [ _b = _1 ])
                 >  -(parse::detail::label(High_token)   >   double_rules.expr [ _c = _1 ])

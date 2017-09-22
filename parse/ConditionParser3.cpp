@@ -13,10 +13,12 @@ namespace phoenix = boost::phoenix;
 
 namespace {
     struct condition_parser_rules_3 {
-        condition_parser_rules_3(const parse::lexer& tok, const parse::condition_parser_rule& condition_parser) :
-            int_rules(tok, condition_parser),
-            castable_int_rules(tok, condition_parser),
-            double_rules(tok, condition_parser)
+        condition_parser_rules_3(const parse::lexer& tok, const parse::condition_parser_rule& condition_parser,
+                                 const parse::value_ref_grammar<std::string>& string_grammar
+) :
+            int_rules(tok, condition_parser, string_grammar),
+            castable_int_rules(tok, condition_parser, string_grammar),
+            double_rules(tok, condition_parser, string_grammar)
         {
             qi::_1_type _1;
             qi::_a_type _a;
@@ -34,7 +36,7 @@ namespace {
 
             has_special_capacity
                 =   (   tok.HasSpecialCapacity_
-                >       parse::detail::label(Name_token) >  parse::string_value_ref() [ _c = _1 ]
+                >       parse::detail::label(Name_token) >  string_grammar [ _c = _1 ]
                 >     -(parse::detail::label(Low_token)  >  double_rules.expr [ _a = _1 ] )
                 >     -(parse::detail::label(High_token) >  double_rules.expr [ _b = _1 ] )
                     ) [ _val = new_<Condition::HasSpecial>(_c, _a, _b) ]
@@ -102,26 +104,26 @@ namespace {
 
             value_test_3
                 = ( '('
-                >> parse::string_value_ref() [ _c = _1 ]
+                >> string_grammar [ _c = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                  ) > parse::string_value_ref() // assuming the trinary (string) form already didn't parse, if already seen (string) (operator) can expect another (string)
+                  ) > string_grammar // assuming the trinary (string) form already didn't parse, if already seen (string) (operator) can expect another (string)
                 [ _val = new_<Condition::ValueTest>(_c, _d, _1) ]
                 >> ')'
                 ;
 
             value_test_4
                 = ( '('
-                >> parse::string_value_ref() [ _c = _1 ]
+                >> string_grammar [ _c = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                >> parse::string_value_ref() [ _f = _1 ]
+                >> string_grammar [ _f = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit("!=")   [ _e = Condition::NOT_EQUAL ])
-                ) >  parse::string_value_ref() // if already seen (string) (operator) (string) (operator) can expect to see another (string)
+                ) >  string_grammar // if already seen (string) (operator) (string) (operator) can expect to see another (string)
                 [ _val = new_<Condition::ValueTest>(_c, _d, _f, _e, _1) ]
                 >  ')'
                 ;
@@ -345,16 +347,20 @@ namespace {
 
 namespace parse { namespace detail {
     const condition_parser_rule& condition_parser_3() {
-        static condition_parser_rules_3 retval(parse::lexer::instance(), parse::condition_parser());
+        static string_parser_grammar string_grammar(parse::lexer::instance(), parse::condition_parser());
+        static condition_parser_rules_3 retval(parse::lexer::instance(), parse::condition_parser(), string_grammar);
         return retval.start;
     }
 
     condition_parser_rules_3::condition_parser_rules_3(
-        const parse::lexer& tok, const condition_parser_grammar& condition_parser) :
+        const parse::lexer& tok,
+        const condition_parser_grammar& condition_parser,
+        const parse::value_ref_grammar<std::string>& string_grammar
+    ) :
         condition_parser_rules_3::base_type(start, "condition_parser_rules_3"),
-        int_rules(tok, condition_parser),
-        castable_int_rules(tok, condition_parser),
-        double_rules(tok, condition_parser)
+        int_rules(tok, condition_parser, string_grammar),
+        castable_int_rules(tok, condition_parser, string_grammar),
+        double_rules(tok, condition_parser, string_grammar)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -372,7 +378,7 @@ namespace parse { namespace detail {
 
         has_special_capacity
             =   (   tok.HasSpecialCapacity_
-                    >       parse::detail::label(Name_token) >  parse::string_value_ref() [ _c = _1 ]
+                    >       parse::detail::label(Name_token) >  string_grammar [ _c = _1 ]
                     >     -(parse::detail::label(Low_token)  >  double_rules.expr [ _a = _1 ] )
                     >     -(parse::detail::label(High_token) >  double_rules.expr [ _b = _1 ] )
                 ) [ _val = new_<Condition::HasSpecial>(_c, _a, _b) ]
@@ -440,26 +446,26 @@ namespace parse { namespace detail {
 
             value_test_3
                 = ( '('
-                >> parse::string_value_ref() [ _c = _1 ]
+                >> string_grammar [ _c = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                  ) > parse::string_value_ref() // assuming the trinary (string) form already didn't parse, if already seen (string) (operator) can expect another (string)
+                  ) > string_grammar // assuming the trinary (string) form already didn't parse, if already seen (string) (operator) can expect another (string)
                 [ _val = new_<Condition::ValueTest>(_c, _d, _1) ]
                 >> ')'
                 ;
 
             value_test_4
                 = ( '('
-                >> parse::string_value_ref() [ _c = _1 ]
+                >> string_grammar [ _c = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                >> parse::string_value_ref() [ _f = _1 ]
+                >> string_grammar [ _f = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit("!=")   [ _e = Condition::NOT_EQUAL ])
-                ) >  parse::string_value_ref() // if already seen (string) (operator) (string) (operator) can expect to see another (string)
+                ) >  string_grammar // if already seen (string) (operator) (string) (operator) can expect to see another (string)
                 [ _val = new_<Condition::ValueTest>(_c, _d, _f, _e, _1) ]
                 >  ')'
                 ;

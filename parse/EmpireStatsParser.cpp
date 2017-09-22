@@ -22,7 +22,8 @@ namespace {
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
             condition_parser(parse::condition_parser()),
-            double_rules(tok, condition_parser)
+            string_grammar(tok, condition_parser),
+            double_rules(tok, condition_parser, string_grammar)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -68,6 +69,7 @@ namespace {
         > start_rule;
 
         parse::condition_parser_rule& condition_parser;
+        const parse::string_parser_grammar string_grammar;
         parse::double_parser_rules      double_rules;
         stat_rule   stat;
         start_rule  start;

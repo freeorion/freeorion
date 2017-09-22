@@ -16,11 +16,12 @@ namespace phoenix = boost::phoenix;
 namespace parse { namespace detail {
     effect_parser_rules_2::effect_parser_rules_2(
         const parse::lexer& tok, Labeller& labeller,
-        const parse::condition_parser_rule& condition_parser
+        const parse::condition_parser_rule& condition_parser,
+        const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         effect_parser_rules_2::base_type(start, "effect_parser_rules_2"),
-        int_rules(tok, condition_parser),
-        double_rules(tok, condition_parser)
+        int_rules(tok, condition_parser, string_grammar),
+        double_rules(tok, condition_parser, string_grammar)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -46,7 +47,7 @@ namespace parse { namespace detail {
             ;
 
         set_ship_part_meter
-            =    (parse::set_ship_part_meter_type_enum() [ _a = _1 ] >>   labeller.rule(PartName_token))   > parse::string_value_ref() [ _b = _1 ]
+            =    (parse::set_ship_part_meter_type_enum() [ _a = _1 ] >>   labeller.rule(PartName_token))   > string_grammar [ _b = _1 ]
             >    labeller.rule(Value_token)      > double_rules.expr [ _val = new_<Effect::SetShipPartMeter>(_a, _b, _1) ]
             ;
 
@@ -80,7 +81,7 @@ namespace parse { namespace detail {
 
         set_species
             =    tok.SetSpecies_
-            >    labeller.rule(Name_token) > parse::string_value_ref() [ _val = new_<Effect::SetSpecies>(_1) ]
+            >    labeller.rule(Name_token) > string_grammar [ _val = new_<Effect::SetSpecies>(_1) ]
             ;
 
         set_owner
@@ -90,13 +91,13 @@ namespace parse { namespace detail {
 
         set_species_opinion
             =    tok.SetSpeciesOpinion_
-            >    labeller.rule(Species_token) >   parse::string_value_ref() [ _a = _1 ]
+            >    labeller.rule(Species_token) >   string_grammar [ _a = _1 ]
             > (
                 (   labeller.rule(Empire_token) >  int_rules.expr [ _c = _1 ]
                     >  labeller.rule(Opinion_token) > double_rules.expr
                     [ _val = new_<Effect::SetSpeciesEmpireOpinion>(_a, _c, _1) ])
                 |
-                (   labeller.rule(Species_token) > parse::string_value_ref() [ _b = _1 ]
+                (   labeller.rule(Species_token) > string_grammar [ _b = _1 ]
                     >   labeller.rule(Opinion_token) > double_rules.expr
                     [ _val = new_<Effect::SetSpeciesSpeciesOpinion>(_a, _b, _1) ])
             )

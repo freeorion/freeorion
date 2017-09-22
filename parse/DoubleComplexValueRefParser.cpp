@@ -3,7 +3,9 @@
 
 namespace parse {
     double_complex_parser_grammar::double_complex_parser_grammar(
-        const parse::lexer& tok, const parse::condition_parser_rule& condition_parser) :
+        const parse::lexer& tok, const parse::condition_parser_rule& condition_parser,
+        const parse::value_ref_grammar<std::string>& string_grammar
+    ) :
         double_complex_parser_grammar::base_type(start, "double_complex_parser_grammar"),
         simple_int_rules(tok)
     {
@@ -35,7 +37,7 @@ namespace parse {
                 |   tok.HullSpeed_          [ _a = construct<std::string>(_1) ]
                 |   tok.PartCapacity_       [ _a = construct<std::string>(_1) ]
                 |   tok.PartSecondaryStat_  [ _a = construct<std::string>(_1) ]
-              ) >   detail::label(Name_token) > parse::string_value_ref() [ _d = _1 ]
+              ) >   detail::label(Name_token) > string_grammar [ _d = _1 ]
                 [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
@@ -69,7 +71,7 @@ namespace parse {
         species_empire_opinion
             = (
                 ((  tok.SpeciesOpinion_ [ _a = construct<std::string>(TOK_SPECIES_EMPIRE_OPINION) ]
-                   >  parse::detail::label(Species_token) > parse::string_value_ref() [ _d = _1 ]
+                   >  parse::detail::label(Species_token) > string_grammar [ _d = _1 ]
                  )
                 >> parse::detail::label(Empire_token)
                 )  >  simple_int [ _b = _1 ]
@@ -79,17 +81,17 @@ namespace parse {
         species_species_opinion
             = (
                 ((   tok.SpeciesOpinion_ [ _a = construct<std::string>(TOK_SPECIES_SPECIES_OPINION) ]
-                  >  parse::detail::label(Species_token) >  parse::string_value_ref() [ _d = _1 ]
+                  >  parse::detail::label(Species_token) >  string_grammar [ _d = _1 ]
                  )
                 >> parse::detail::label(Species_token)
-                ) >  parse::string_value_ref() [ _e = _1 ]
+                ) >  string_grammar [ _e = _1 ]
               )     [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         special_capacity
             = (
                 ((  tok.SpecialCapacity_ [ _a = construct<std::string>(_1) ]
-                   >  parse::detail::label(Name_token) > parse::string_value_ref() [ _d = _1 ]
+                   >  parse::detail::label(Name_token) > string_grammar [ _d = _1 ]
                  )
                 >> parse::detail::label(Object_token)
                 )  >  simple_int [ _b = _1 ]

@@ -4,8 +4,9 @@
 namespace parse {
     int_complex_parser_grammar::int_complex_parser_grammar(
         const parse::lexer& tok,
-        const parse::int_arithmetic_rules& _int_arith_rules)
-        :
+        const parse::int_arithmetic_rules& _int_arith_rules,
+        const parse::value_ref_grammar<std::string>& string_grammar
+    ) :
         int_complex_parser_grammar::base_type(start, "int_complex_parser_grammar"),
         int_rules(_int_arith_rules)
     {
@@ -26,7 +27,7 @@ namespace parse {
 
         game_rule
             =   tok.GameRule_ [ _a = construct<std::string>(_1) ]
-            >   detail::label(Name_token) >     parse::string_value_ref() [ _d = _1 ]
+            >   detail::label(Name_token) >     string_grammar [ _d = _1 ]
                 [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
          empire_name_ref
@@ -46,13 +47,13 @@ namespace parse {
                     |   tok.TurnTechResearched_     [ _a = construct<std::string>(_1) ]
                     )
                 >  -(   detail::label(Empire_token) >   int_rules.expr [ _b = _1 ] )
-                >  -(   detail::label(Name_token) >     parse::string_value_ref() [ _d = _1 ] )
+                >  -(   detail::label(Name_token) >     string_grammar [ _d = _1 ] )
                 ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         empire_ships_destroyed
             =   (
-                        tok.EmpireShipsDestroyed_ [ _a = construct<std::string>(_1) ]
+                    tok.EmpireShipsDestroyed_ [ _a = construct<std::string>(_1) ]
                     >-( detail::label(Empire_token) >   int_rules.expr [ _b = _1 ] )
                     >-( detail::label(Empire_token) >   int_rules.expr [ _c = _1 ] )
                 ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
@@ -60,7 +61,7 @@ namespace parse {
 
         jumps_between
             =   (
-                        tok.JumpsBetween_ [ _a = construct<std::string>(_1) ]
+                    tok.JumpsBetween_ [ _a = construct<std::string>(_1) ]
                     >   detail::label(Object_token) >   (int_rules.expr [ _b = _1 ] | int_rules.statistic_expr [ _b = _1 ])
                     >   detail::label(Object_token) >   (int_rules.expr [ _c = _1 ] | int_rules.statistic_expr [ _c = _1 ])
                 ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
@@ -77,17 +78,17 @@ namespace parse {
 
         outposts_owned
             =   (
-                        tok.OutpostsOwned_ [ _a = construct<std::string>(_1) ]
-                    >-( detail::label(Empire_token) >   int_rules.expr [ _b = _1 ] )
+                tok.OutpostsOwned_ [ _a = construct<std::string>(_1) ]
+                >-( detail::label(Empire_token) >   int_rules.expr [ _b = _1 ] )
                 ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         parts_in_ship_design
             =   (
-                        tok.PartsInShipDesign_[ _a = construct<std::string>(_1) ]
-                    >-( detail::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
-                    > ( detail::label(Design_token) >   int_rules.expr [ _b = _1 ] )
-                ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
+                tok.PartsInShipDesign_[ _a = construct<std::string>(_1) ]
+                >-( detail::label(Name_token)   >   string_grammar [ _d = _1 ] )
+                > ( detail::label(Design_token) >   int_rules.expr [ _b = _1 ] )
+            ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         part_class_in_ship_design
@@ -112,9 +113,9 @@ namespace parse {
 
         ship_parts_owned
             =   (
-                        tok.ShipPartsOwned_ [ _a = construct<std::string>(_1) ]
-                    >-( detail::label(Empire_token)          > int_rules.expr [ _b = _1 ] )
-                    >-(     ( detail::label(Name_token)      > parse::string_value_ref() [ _d = _1 ] )
+                tok.ShipPartsOwned_ [ _a = construct<std::string>(_1) ]
+                >-( detail::label(Empire_token)          > int_rules.expr [ _b = _1 ] )
+                >-(     ( detail::label(Name_token)      > string_grammar [ _d = _1 ] )
                         |   ( detail::label(Class_token)     >>
                               parse::ship_part_class_enum() [ _c = new_<ValueRef::Constant<int>>(_1) ]
                             )
@@ -131,29 +132,29 @@ namespace parse {
                     |   tok.ShipDesignsScrapped_  [ _a = construct<std::string>(_1) ]
                     )
                 >  -(   detail::label(Empire_token) > int_rules.expr [ _b = _1 ] )
-                >  -(   detail::label(Design_token) > parse::string_value_ref() [ _d = _1 ] )
+                >  -(   detail::label(Design_token) > string_grammar [ _d = _1 ] )
                 ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         slots_in_hull
             =   (
-                        tok.SlotsInHull_ [ _a = construct<std::string>(_1) ]
-                    >   detail::label(Name_token) >      parse::string_value_ref() [ _d = _1 ]
-                ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
+                tok.SlotsInHull_ [ _a = construct<std::string>(_1) ]
+                >   detail::label(Name_token) >      string_grammar [ _d = _1 ]
+            ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         slots_in_ship_design
             =   (
-                        tok.SlotsInShipDesign_ [ _a = construct<std::string>(_1) ]
-                    >   detail::label(Design_token) >    int_rules.expr [ _b = _1 ]
+                tok.SlotsInShipDesign_ [ _a = construct<std::string>(_1) ]
+                >   detail::label(Design_token) >    int_rules.expr [ _b = _1 ]
                 ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         special_added_on_turn
             =   (
-                        tok.SpecialAddedOnTurn_ [ _a = construct<std::string>(_1) ]
-                    >-( detail::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
-                    >-( detail::label(Object_token) >   int_rules.expr [ _b = _1 ] )
+                tok.SpecialAddedOnTurn_ [ _a = construct<std::string>(_1) ]
+                >-( detail::label(Name_token)   >   string_grammar [ _d = _1 ] )
+                >-( detail::label(Object_token) >   int_rules.expr [ _b = _1 ] )
                 ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
 

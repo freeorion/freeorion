@@ -144,7 +144,8 @@ namespace parse {
 
     struct int_complex_parser_grammar : public detail::complex_variable_grammar<int> {
         int_complex_parser_grammar(const lexer& tok,
-                                   const int_arithmetic_rules& _int_arith_rules);
+                                   const int_arithmetic_rules& _int_arith_rules,
+                                   const parse::value_ref_grammar<std::string>& string_grammar);
 
         const int_arithmetic_rules& int_rules;
         detail::complex_variable_rule<int> game_rule;
@@ -166,13 +167,16 @@ namespace parse {
     struct int_arithmetic_rules : public detail::arithmetic_rules<int> {
         int_arithmetic_rules(
             const lexer& tok,
-            const condition_parser_rule& condition_parser);
+            const condition_parser_rule& condition_parser,
+            const parse::value_ref_grammar<std::string>& string_grammar);
         detail::simple_int_parser_rules  simple_int_rules;
         int_complex_parser_grammar int_complex_grammar;
     };
 
     struct double_complex_parser_grammar : public detail::complex_variable_grammar<double> {
-        double_complex_parser_grammar(const lexer& tok, const condition_parser_rule& condition_parser);
+        double_complex_parser_grammar(const lexer& tok,
+                                      const condition_parser_rule& condition_parser,
+                                      const parse::value_ref_grammar<std::string>& string_grammar);
 
         detail::simple_int_parser_rules simple_int_rules;
         detail::complex_variable_rule<double> name_property_rule;
@@ -188,7 +192,8 @@ namespace parse {
     struct double_parser_rules : public detail::arithmetic_rules<double> {
         double_parser_rules(
             const parse::lexer& tok,
-            const parse::condition_parser_rule& condition_parser);
+            const parse::condition_parser_rule& condition_parser,
+            const parse::value_ref_grammar<std::string>& string_grammar);
 
         parse::int_arithmetic_rules        int_rules;
         detail::simple_int_parser_rules    simple_int_rules;
@@ -204,7 +209,8 @@ namespace parse {
 
     struct castable_as_int_parser_rules {
         castable_as_int_parser_rules(const parse::lexer& tok,
-                                     const parse::condition_parser_rule& condition_parser);
+                                     const parse::condition_parser_rule& condition_parser,
+                                     const parse::value_ref_grammar<std::string>& string_grammar);
 
         parse::int_arithmetic_rules     int_rules;
         parse::double_parser_rules      double_rules;
