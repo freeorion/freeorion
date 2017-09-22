@@ -14,12 +14,15 @@ namespace Condition {
 }
 
 namespace parse {
+    // TODO: Investigate refactoring ValueRef to use variant,
+    // for increased locality of reference.
     template <typename T>
-    using value_ref_rule = detail::rule<
-        // TODO: Investigate refactoring ValueRef to use variant,
-        // for increased locality of reference.
-        ValueRef::ValueRefBase<T>* ()
-            >;
+    using value_ref_signature = ValueRef::ValueRefBase<T>* ();
+    template <typename T>
+    using value_ref_rule = detail::rule<value_ref_signature<T>>;
+    template <typename T>
+    using value_ref_grammar = detail::grammar<value_ref_signature<T>>;
+
     typedef detail::rule<
         Condition::ConditionBase* ()
     > condition_parser_rule;
@@ -119,7 +122,23 @@ struct simple_double_parser_rules : public simple_variable_rules<double> {
 }}
 
 namespace parse {
-    value_ref_rule<std::string>& string_value_ref();
+    struct string_parser_grammar : public value_ref_grammar<std::string> {
+        string_parser_grammar(const parse::lexer& tok,
+                              const condition_parser_rule& condition_parser);
+
+        parse::detail::name_token_rule bound_variable_name;
+        parse::value_ref_rule<std::string> constant;
+        parse::value_ref_rule<std::string> free_variable;
+        parse::detail::variable_rule<std::string> bound_variable;
+        parse::value_ref_rule<std::string> statistic_sub_value_ref;
+        parse::detail::statistic_rule<std::string> statistic;
+        parse::detail::expression_rule<std::string> function_expr;
+        parse::detail::expression_rule<std::string> operated_expr;
+        parse::value_ref_rule<std::string> expr;
+        parse::value_ref_rule<std::string> primary_expr;
+        parse::detail::reference_token_rule variable_scope_rule;
+        parse::detail::name_token_rule container_type_rule;
+    };
 
     struct int_arithmetic_rules;
 
