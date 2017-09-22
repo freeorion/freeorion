@@ -56,7 +56,7 @@ namespace parse {
             const parse::value_ref_rule<int>& simple_int = int_simple();
 
             empire_object_visibility
-                =   tok.EmpireObjectVisiblity_ [ _a = construct<std::string>(_1) ]
+                =   tok.EmpireObjectVisibility_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token) >   simple_int [ _b = _1 ]
                 >   detail::label(Object_token) >   simple_int [ _c = _1 ]
                     [ _val = new_<ValueRef::ComplexVariable<Visibility>>(_a, _b, _c, _f, _d, _e) ]
