@@ -90,8 +90,7 @@ void initialize_bound_variable_parser(
 namespace parse { namespace detail {
 
 template <typename T>
-struct enum_value_ref_rules {
-    enum_value_ref_rules(const std::string& type_name) {
+enum_value_ref_rules<T>::enum_value_ref_rules(const std::string& type_name) {
         using boost::phoenix::new_;
         using boost::phoenix::push_back;
 
@@ -173,21 +172,6 @@ struct enum_value_ref_rules {
         primary_expr.name(type_name + " expression");
         expr.name(type_name + " expression");
     }
-
-    name_token_rule variable_name;
-    parse::enum_rule<T> enum_expr;
-    parse::value_ref_rule<T> constant_expr;
-    parse::value_ref_rule<T> free_variable_expr;
-    variable_rule<T> bound_variable_expr;
-    expression_rule<T> functional_expr;
-    parse::value_ref_rule<T> primary_expr;
-    parse::value_ref_rule<T> statistic_sub_value_ref;
-    statistic_rule<T> statistic_expr;
-    complex_variable_rule<T> complex_expr;
-    parse::value_ref_rule<T> expr;
-    reference_token_rule variable_scope_rule;
-    name_token_rule container_type_rule;
-};
 
 
 template <typename T>

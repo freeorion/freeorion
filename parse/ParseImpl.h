@@ -95,6 +95,9 @@ namespace parse { namespace detail {
     // TODO remove this version of label with the singleton rules
     label_rule& label(const char* name);
 
+    template <typename T>
+    using enum_rule = detail::rule<T ()>;
+
     typedef rule<
         void (std::set<std::string>&)
     > tags_rule;
