@@ -3,9 +3,9 @@
 
 namespace parse {
     struct double_complex_parser_rules {
-        double_complex_parser_rules(const parse::lexer& tok) :
+        double_complex_parser_rules(const parse::lexer& tok, const parse::condition_parser_rule& condition_parser) :
             simple_int_rules(tok),
-            castable_int_rules(tok)
+            castable_int_rules(tok, condition_parser)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -138,7 +138,7 @@ namespace parse {
     };
 
     namespace detail {
-    double_complex_parser_rules double_complex_parser(parse::lexer::instance());
+    double_complex_parser_rules double_complex_parser(parse::lexer::instance(), parse::detail::condition_parser);
     }
 }
 

@@ -14,9 +14,9 @@ namespace phoenix = boost::phoenix;
 namespace {
     struct condition_parser_rules_3 {
         condition_parser_rules_3(const parse::lexer& tok, const parse::condition_parser_rule& condition_parser) :
-            int_rules(tok),
-            castable_int_rules(tok),
-            double_rules(tok)
+            int_rules(tok, condition_parser),
+            castable_int_rules(tok, condition_parser),
+            double_rules(tok, condition_parser)
         {
             qi::_1_type _1;
             qi::_a_type _a;
@@ -352,9 +352,9 @@ namespace parse { namespace detail {
     condition_parser_rules_3::condition_parser_rules_3(
         const parse::lexer& tok, const condition_parser_grammar& condition_parser) :
         condition_parser_rules_3::base_type(start, "condition_parser_rules_3"),
-        int_rules(tok),
-        castable_int_rules(tok),
-        double_rules(tok)
+        int_rules(tok, condition_parser),
+        castable_int_rules(tok, condition_parser),
+        double_rules(tok, condition_parser)
     {
         qi::_1_type _1;
         qi::_a_type _a;

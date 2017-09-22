@@ -22,8 +22,8 @@ namespace std {
 namespace {
     struct condition_parser_rules_4 {
         condition_parser_rules_4(const parse::lexer& tok, const parse::condition_parser_rule& condition_parser) :
-            int_rules(tok),
-            double_rules(tok)
+            int_rules(tok, condition_parser),
+            double_rules(tok, condition_parser)
         {
             qi::_1_type _1;
             qi::_a_type _a;
@@ -137,8 +137,8 @@ namespace parse { namespace detail {
         const condition_parser_grammar& condition_parser)
         :
         condition_parser_rules_4::base_type(start, "condition_parser_rules_4"),
-        int_rules(tok),
-        double_rules(tok)
+        int_rules(tok, condition_parser),
+        double_rules(tok, condition_parser)
     {
         qi::_1_type _1;
         qi::_a_type _a;

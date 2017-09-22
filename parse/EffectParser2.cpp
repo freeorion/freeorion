@@ -19,8 +19,8 @@ namespace parse { namespace detail {
         const parse::condition_parser_rule& condition_parser
     ) :
         effect_parser_rules_2::base_type(start, "effect_parser_rules_2"),
-        int_rules(tok),
-        double_rules(tok)
+        int_rules(tok, condition_parser),
+        double_rules(tok, condition_parser)
     {
         qi::_1_type _1;
         qi::_a_type _a;

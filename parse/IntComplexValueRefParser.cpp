@@ -3,8 +3,8 @@
 
 namespace parse {
     struct int_complex_parser_rules {
-        int_complex_parser_rules(const parse::lexer& tok) :
-            int_rules(tok)
+        int_complex_parser_rules(const parse::lexer& tok, const parse::condition_parser_rule& condition_parser) :
+            int_rules(tok, condition_parser)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -220,7 +220,7 @@ namespace parse {
     };
 
     namespace detail {
-        int_complex_parser_rules int_complex_parser(parse::lexer::instance());
+    int_complex_parser_rules int_complex_parser(parse::lexer::instance(), parse::detail::condition_parser);
     }
 }
 

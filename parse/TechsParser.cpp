@@ -76,9 +76,9 @@ namespace {
               parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
-            castable_int_rules(parse::lexer::instance()),
-            double_rules(parse::lexer::instance()),
             condition_parser(parse::condition_parser()),
+            castable_int_rules(parse::lexer::instance(), condition_parser),
+            double_rules(parse::lexer::instance(), condition_parser),
             effects_group_grammar(tok, labeller, condition_parser)
         {
             namespace phoenix = boost::phoenix;
@@ -233,9 +233,9 @@ namespace {
             void (TechManager::TechContainer&)
         > start_rule;
 
+        parse::condition_parser_rule& condition_parser;
         parse::castable_as_int_parser_rules     castable_int_rules;
         parse::double_parser_rules  double_rules;
-        parse::condition_parser_rule& condition_parser;
         parse::effects_group_grammar effects_group_grammar;
         tech_info_name_desc_rule    tech_info_name_desc;
         tech_info_rule              tech_info;

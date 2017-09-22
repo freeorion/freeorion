@@ -24,6 +24,7 @@ namespace parse {
             debug(detail::condition_parser);
 #endif
         }
+
         return detail::condition_parser;
     }
 

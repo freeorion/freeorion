@@ -20,8 +20,8 @@ namespace parse { namespace detail {
     common_params_rules::common_params_rules(const parse::lexer& tok,
                                              parse::detail::Labeller& labeller,
                                              const parse::condition_parser_rule& condition_parser) :
-        castable_int_rules(tok),
-        double_rules(tok),
+        castable_int_rules(tok, condition_parser),
+        double_rules(tok, condition_parser),
         effects_group_grammar(tok, labeller, condition_parser)
     {
         namespace qi = boost::spirit::qi;
