@@ -9,6 +9,9 @@
 
 #include <boost/spirit/include/qi.hpp>
 
+namespace Condition {
+    struct ConditionBase;
+}
 
 namespace parse {
     template <typename T>
@@ -17,6 +20,9 @@ namespace parse {
         // for increased locality of reference.
         ValueRef::ValueRefBase<T>* ()
             >;
+    typedef detail::rule<
+        Condition::ConditionBase* ()
+    > condition_parser_rule;
 }
 
 namespace parse { namespace detail {
@@ -70,7 +76,8 @@ struct simple_variable_rules
 
     template <typename T>
     struct arithmetic_rules {
-        arithmetic_rules(const std::string& type_name);
+        arithmetic_rules(const std::string& type_name,
+                         const parse::condition_parser_rule& condition_parser);
 
         expression_rule<T> functional_expr;
         expression_rule<T> exponential_expr;
@@ -98,12 +105,16 @@ namespace parse {
     value_ref_rule<std::string>& string_value_ref();
 
     struct int_arithmetic_rules : public parse::detail::arithmetic_rules<int> {
-        int_arithmetic_rules(const parse::lexer& tok);
+        int_arithmetic_rules(
+            const parse::lexer& tok,
+            const parse::condition_parser_rule& condition_parser);
         detail::simple_int_parser_rules  simple_int_rules;
     };
 
     struct double_parser_rules : public detail::arithmetic_rules<double> {
-        double_parser_rules(const parse::lexer& tok);
+        double_parser_rules(
+            const parse::lexer& tok,
+            const parse::condition_parser_rule& condition_parser);
 
         parse::int_arithmetic_rules        int_rules;
         detail::simple_int_parser_rules    simple_int_rules;
@@ -116,7 +127,8 @@ namespace parse {
     };
 
     struct castable_as_int_parser_rules {
-        castable_as_int_parser_rules(const parse::lexer& tok);
+        castable_as_int_parser_rules(const parse::lexer& tok,
+                                     const parse::condition_parser_rule& condition_parser);
 
         parse::int_arithmetic_rules     int_rules;
         parse::double_parser_rules      double_rules;

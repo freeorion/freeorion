@@ -62,9 +62,12 @@ parse::detail::simple_double_parser_rules::simple_double_parser_rules(const pars
         ;
 }
 
-parse::double_parser_rules::double_parser_rules(const parse::lexer& tok) :
-    arithmetic_rules("real number"),
-    int_rules(tok),
+parse::double_parser_rules::double_parser_rules(
+    const parse::lexer& tok,
+    const parse::condition_parser_rule& condition_parser)
+    :
+    arithmetic_rules("real number", condition_parser),
+    int_rules(tok, condition_parser),
     simple_int_rules(tok),
     simple_double_rules(tok)
 {

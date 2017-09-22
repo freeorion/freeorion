@@ -241,7 +241,10 @@ simple_variable_rules<T>::simple_variable_rules(const std::string& type_name) {
 
 
 template <typename T>
-parse::detail::arithmetic_rules<T>::arithmetic_rules(const std::string& type_name) {
+parse::detail::arithmetic_rules<T>::arithmetic_rules(
+    const std::string& type_name,
+    const parse::condition_parser_rule& condition_parser)
+{
     using boost::phoenix::construct;
     using boost::phoenix::new_;
     using boost::phoenix::push_back;

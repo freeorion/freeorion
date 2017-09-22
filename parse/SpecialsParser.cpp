@@ -71,8 +71,8 @@ namespace {
               parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
-            double_rules(parse::lexer::instance()),
             condition_parser(parse::detail::condition_parser),
+            double_rules(parse::lexer::instance(), condition_parser),
             effects_group_grammar(tok, labeller, condition_parser)
         {
             namespace phoenix = boost::phoenix;
@@ -167,8 +167,8 @@ namespace {
         > start_rule;
 
 
-        parse::double_parser_rules      double_rules;
         parse::condition_parser_rule& condition_parser;
+        parse::double_parser_rules      double_rules;
         parse::effects_group_grammar effects_group_grammar;
         special_prefix_rule special_prefix;
         spawn_rule          spawn;
