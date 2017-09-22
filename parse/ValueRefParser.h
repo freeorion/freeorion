@@ -121,11 +121,35 @@ struct simple_double_parser_rules : public simple_variable_rules<double> {
 namespace parse {
     value_ref_rule<std::string>& string_value_ref();
 
-    struct int_arithmetic_rules : public parse::detail::arithmetic_rules<int> {
+    struct int_arithmetic_rules;
+
+    struct int_complex_parser_grammar : public detail::complex_variable_grammar<int> {
+        int_complex_parser_grammar(const lexer& tok,
+                                   const int_arithmetic_rules& _int_arith_rules);
+
+        const int_arithmetic_rules& int_rules;
+        detail::complex_variable_rule<int> game_rule;
+        detail::complex_variable_rule<int> empire_name_ref;
+        detail::complex_variable_rule<int> empire_ships_destroyed;
+        detail::complex_variable_rule<int> jumps_between;
+        //complex_variable_rule<int> jumps_between_by_empire_supply;
+        detail::complex_variable_rule<int> outposts_owned;
+        detail::complex_variable_rule<int> parts_in_ship_design;
+        detail::complex_variable_rule<int> part_class_in_ship_design;
+        detail::complex_variable_rule<int> ship_parts_owned;
+        detail::complex_variable_rule<int> empire_design_ref;
+        detail::complex_variable_rule<int> slots_in_hull;
+        detail::complex_variable_rule<int> slots_in_ship_design;
+        detail::complex_variable_rule<int> special_added_on_turn;
+        detail::complex_variable_rule<int> start;
+    };
+
+    struct int_arithmetic_rules : public detail::arithmetic_rules<int> {
         int_arithmetic_rules(
-            const parse::lexer& tok,
-            const parse::condition_parser_rule& condition_parser);
+            const lexer& tok,
+            const condition_parser_rule& condition_parser);
         detail::simple_int_parser_rules  simple_int_rules;
+        int_complex_parser_grammar int_complex_grammar;
     };
 
     struct double_complex_parser_grammar : public detail::complex_variable_grammar<double> {
@@ -150,6 +174,7 @@ namespace parse {
         parse::int_arithmetic_rules        int_rules;
         detail::simple_int_parser_rules    simple_int_rules;
         detail::simple_double_parser_rules simple_double_rules;
+        int_complex_parser_grammar int_complex_grammar;
         parse::double_complex_parser_grammar double_complex_grammar;
         parse::value_ref_rule<double> int_constant_cast;
         parse::value_ref_rule<double> int_bound_variable_cast;

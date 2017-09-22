@@ -70,6 +70,7 @@ parse::double_parser_rules::double_parser_rules(
     int_rules(tok, condition_parser),
     simple_int_rules(tok),
     simple_double_rules(tok),
+    int_complex_grammar(tok, int_rules),
     double_complex_grammar(tok, condition_parser)
 {
     namespace phoenix = boost::phoenix;
@@ -100,7 +101,7 @@ parse::double_parser_rules::double_parser_rules(
         ;
 
     int_complex_variable_cast
-        =   int_var_complex() [ _val = new_<ValueRef::StaticCast<int, double>>(_1) ]
+        =   int_complex_grammar [ _val = new_<ValueRef::StaticCast<int, double>>(_1) ]
         ;
 
     statistic_value_ref_expr

@@ -35,8 +35,6 @@ using complex_variable_rule = parse::detail::rule<
 const parse::detail::reference_token_rule                      variable_scope(const parse::lexer& tok);
 const parse::detail::name_token_rule                           container_type(const parse::lexer& tok);
 
-const complex_variable_rule<int>&               int_var_complex();
-
 const complex_variable_rule<std::string>&       string_var_complex();
 
 

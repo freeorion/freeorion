@@ -97,19 +97,20 @@ parse::int_arithmetic_rules::int_arithmetic_rules(
     const parse::condition_parser_rule& condition_parser)
     :
     arithmetic_rules("integer", condition_parser),
-    simple_int_rules(tok)
+    simple_int_rules(tok),
+    int_complex_grammar(tok, *this)
 {
     const parse::value_ref_rule<int>& simple = simple_int_rules.simple;
 
     statistic_value_ref_expr
         =   simple
-        |   int_var_complex()
+        |   int_complex_grammar
         ;
 
     primary_expr
         =   '(' >> expr >> ')'
         |   simple
         |   statistic_expr
-        |   int_var_complex()
+        |   int_complex_grammar
         ;
 }
