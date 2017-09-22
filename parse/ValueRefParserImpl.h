@@ -37,9 +37,7 @@ const parse::detail::name_token_rule                           container_type(co
 
 const complex_variable_rule<int>&               int_var_complex();
 
-const complex_variable_rule<double>&            double_var_complex();
-
-const complex_variable_rule<std::string>&   string_var_complex();
+const complex_variable_rule<std::string>&       string_var_complex();
 
 
 template <typename T>
@@ -236,9 +234,7 @@ simple_variable_rules<T>::simple_variable_rules(const std::string& type_name) {
         bound_variable.name(type_name + " bound variable");
         simple.name(type_name + " simple variable expression");
     }
-
 } }
-
 
 template <typename T>
 parse::detail::arithmetic_rules<T>::arithmetic_rules(
