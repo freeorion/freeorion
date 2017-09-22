@@ -218,8 +218,35 @@ namespace parse {
         parse::value_ref_rule<int> flexible_int;
     };
 
+    template <typename T>
+    using enum_rule = detail::rule<T ()>;
 
-    namespace detail {
+namespace detail {
+
+template <typename T>
+struct enum_value_ref_rules;
+template <typename T>
+struct enum_value_ref_rules {
+    enum_value_ref_rules(const std::string& type_name);
+
+    name_token_rule variable_name;
+    parse::enum_rule<T> enum_expr;
+    parse::value_ref_rule<T> constant_expr;
+    parse::value_ref_rule<T> free_variable_expr;
+    variable_rule<T> bound_variable_expr;
+    expression_rule<T> functional_expr;
+    parse::value_ref_rule<T> primary_expr;
+    parse::value_ref_rule<T> statistic_sub_value_ref;
+    statistic_rule<T> statistic_expr;
+    complex_variable_rule<T> complex_expr;
+    parse::value_ref_rule<T> expr;
+    reference_token_rule variable_scope_rule;
+    name_token_rule container_type_rule;
+};
+
+enum_value_ref_rules<PlanetEnvironment>& planet_environment_rules();
+
+enum_value_ref_rules<PlanetSize>& planet_size_rules();
 
     template <typename T>
     struct enum_value_ref_rules;
