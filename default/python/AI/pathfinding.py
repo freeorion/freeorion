@@ -82,12 +82,12 @@ def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0):
     queue = []
 
     # add starting system to queue
-    heappush(queue, (shortest_possible_path_distance, path_information(distance=0, fuel=start_fuel, path=(start,)),
-                     start))
+    heappush(queue, (shortest_possible_path_distance, path_information(distance=0, fuel=start_fuel, path=(start,))))
 
     while queue:
         # get next system u with path information
-        (_, path_info, current) = heappop(queue)
+        (_, path_info) = heappop(queue)
+        current = path_info.path[-1]
 
         # did we reach the target?
         if current == target:
@@ -126,8 +126,7 @@ def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0):
                 continue
 
             # All checks passed, consider this path for further pathfinding
-            heappush(queue, (predicted_distance, path_information(new_dist, new_fuel, path_info.path + (neighbor,)),
-                             neighbor))
+            heappush(queue, (predicted_distance, path_information(new_dist, new_fuel, path_info.path + (neighbor,))))
 
     # no path exists, not even if we refuel on the way
     return None
