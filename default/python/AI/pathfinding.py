@@ -8,7 +8,8 @@ from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 
-# TODO Allow short idling in system to refuel
+# TODO Allow short idling in system to use stationary refuel mechanics in unsupplied systems if we
+#      are very close the target system but can't reach it due to fuel constraints
 # TODO Consider additional optimizations:
 #    - Check if universe.shortestPath complies with fuel mechanics before running
 #      pathfinder (seemingly not worth it - we have exact heuristic in that case)
