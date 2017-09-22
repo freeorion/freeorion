@@ -253,7 +253,11 @@ enum_value_ref_rules<StarType>& star_type_rules();
         visibility_parser_rules(const parse::lexer& tok, Labeller& labeller);
     };
 
-enum_value_ref_rules<UniverseObjectType>& universe_object_type_rules();
+    struct universe_object_type_parser_rules :
+        public parse::detail::enum_value_ref_rules<UniverseObjectType>
+    {
+        universe_object_type_parser_rules(const parse::lexer& tok);
+    };
 
     }
 }

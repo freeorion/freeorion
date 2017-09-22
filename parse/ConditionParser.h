@@ -232,7 +232,8 @@ namespace parse { namespace detail {
     };
 
     struct condition_parser_rules_6 : public condition_parser_grammar {
-        condition_parser_rules_6(const parse::value_ref_grammar<std::string>& string_grammar);
+        condition_parser_rules_6(const parse::lexer& tok,
+                                 const parse::value_ref_grammar<std::string>& string_grammar);
 
         typedef parse::detail::rule<
             std::vector<ValueRef::ValueRefBase<std::string>*> ()
@@ -271,6 +272,7 @@ namespace parse { namespace detail {
         planet_environment_rule         planet_environment;
         parse::condition_parser_rule    object_type;
         parse::condition_parser_rule    start;
+        universe_object_type_parser_rules universe_object_type_rules;
     };
 
     struct condition_parser_rules_7 : public condition_parser_grammar {

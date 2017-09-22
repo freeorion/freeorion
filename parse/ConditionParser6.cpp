@@ -26,9 +26,12 @@ namespace std {
 
 namespace {
     struct condition_parser_rules_6 {
-        condition_parser_rules_6(const parse::value_ref_grammar<std::string>& string_grammar) {
-            const parse::lexer& tok = parse::lexer::instance();
-
+        condition_parser_rules_6(
+            const parse::lexer& tok,
+            const parse::value_ref_grammar<std::string>& string_grammar
+        ) :
+            universe_object_type_rules(tok)
+        {
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_b_type _b;
@@ -109,10 +112,10 @@ namespace {
                 ;
 
             object_type
-                =   parse::detail::universe_object_type_rules().enum_expr [ _val = new_<Condition::Type>(new_<ValueRef::Constant<UniverseObjectType>>(_1)) ]
+                =   universe_object_type_rules.enum_expr [ _val = new_<Condition::Type>(new_<ValueRef::Constant<UniverseObjectType>>(_1)) ]
                 |   (
                         tok.ObjectType_
-                    >   parse::detail::label(Type_token) > parse::detail::universe_object_type_rules().expr [ _val = new_<Condition::Type>(_1) ]
+                    >   parse::detail::label(Type_token) >universe_object_type_rules.expr [ _val = new_<Condition::Type>(_1) ]
                     )
                 ;
 
@@ -188,21 +191,24 @@ namespace {
         planet_environment_rule         planet_environment;
         parse::condition_parser_rule    object_type;
         parse::condition_parser_rule    start;
+        parse::detail::universe_object_type_parser_rules universe_object_type_rules;
     };
 }
 
 namespace parse { namespace detail {
     const condition_parser_rule& condition_parser_6() {
         static string_parser_grammar string_grammar(parse::lexer::instance(), parse::condition_parser());
-        static condition_parser_rules_6 retval(string_grammar);
+        static condition_parser_rules_6 retval(parse::lexer::instance(), string_grammar);
         return retval.start;
     }
 
-    condition_parser_rules_6::condition_parser_rules_6(const parse::value_ref_grammar<std::string>& string_grammar) :
-        condition_parser_rules_6::base_type(start, "condition_parser_rules_6")
+    condition_parser_rules_6::condition_parser_rules_6(
+        const parse::lexer& tok,
+        const parse::value_ref_grammar<std::string>& string_grammar
+    ) :
+        condition_parser_rules_6::base_type(start, "condition_parser_rules_6"),
+        universe_object_type_rules(tok)
     {
-        const parse::lexer& tok = parse::lexer::instance();
-
         qi::_1_type _1;
         qi::_a_type _a;
         qi::_b_type _b;
@@ -283,10 +289,10 @@ namespace parse { namespace detail {
             ;
 
         object_type
-            =   parse::detail::universe_object_type_rules().enum_expr [ _val = new_<Condition::Type>(new_<ValueRef::Constant<UniverseObjectType>>(_1)) ]
+            =   universe_object_type_rules.enum_expr [ _val = new_<Condition::Type>(new_<ValueRef::Constant<UniverseObjectType>>(_1)) ]
             |   (
                 tok.ObjectType_
-                >   parse::detail::label(Type_token) > parse::detail::universe_object_type_rules().expr [ _val = new_<Condition::Type>(_1) ]
+                >   parse::detail::label(Type_token) > universe_object_type_rules.expr [ _val = new_<Condition::Type>(_1) ]
             )
             ;
 
