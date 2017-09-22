@@ -2,6 +2,7 @@ from heapq import heappush, heappop
 from collections import namedtuple
 
 import freeOrionAIInterface as fo
+from AIDependencies import INVALID_ID
 from turn_state import state
 
 from common.configure_logging import convenience_function_references_for_logger
@@ -48,6 +49,10 @@ def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0):
     empire_id = fo.empireID()
     fleet = universe.getFleet(fleet_id)
     supplied_systems = set(fo.getEmpire().fleetSupplyableSystemIDs)
+
+    if start == INVALID_ID or target == INVALID_ID:
+        warn("Requested path between invalid systems.")
+        return None
 
     # make sure the target is connected to the start system
     shortest_possible_path_distance = universe.shortestPathDistance(start, target)
