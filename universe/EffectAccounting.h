@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+#include "../util/Export.h"
 
 class UniverseObject;
 
@@ -18,7 +19,7 @@ namespace Effect {
 
     /** Description of cause of an effect: the general cause type, and the
       * specific cause.  eg. Building and a particular BuildingType. */
-    struct EffectCause {
+    struct FO_COMMON_API EffectCause {
         EffectCause();
         EffectCause(EffectsCauseType cause_type_, const std::string& specific_cause_,
                     const std::string& custom_label_ = "");
@@ -29,8 +30,9 @@ namespace Effect {
 
     /** Accounting information about what the causes are and changes produced
       * by effects groups acting on meters of objects. */
-    struct AccountingInfo : public EffectCause {
+    struct FO_COMMON_API AccountingInfo : public EffectCause {
         AccountingInfo();
+        bool operator==(const AccountingInfo& rhs) const;
 
         int     source_id;          ///< source object of effect
         float   meter_change;       ///< net change on meter due to this effect, as best known by client's empire

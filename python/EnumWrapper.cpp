@@ -136,6 +136,18 @@ namespace FreeOrionPython {
             .value("destroy",       CR_DESTROY)
             .value("retain",        CR_RETAIN)
         ;
+        enum_<EffectsCauseType>("effectsCauseType")
+            .value("invalid",       INVALID_EFFECTS_GROUP_CAUSE_TYPE)
+            .value("unknown",       ECT_UNKNOWN_CAUSE)
+            .value("inherent",      ECT_INHERENT)
+            .value("tech",          ECT_TECH)
+            .value("building",      ECT_BUILDING)
+            .value("field",         ECT_FIELD)
+            .value("special",       ECT_SPECIAL)
+            .value("species",       ECT_SPECIES)
+            .value("shipPart",      ECT_SHIP_PART)
+            .value("shipHull",      ECT_SHIP_HULL)
+        ;
         enum_<ShipSlotType>("shipSlotType")
             .value("external",      SL_EXTERNAL)
             .value("internal",      SL_INTERNAL)

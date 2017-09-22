@@ -26,6 +26,16 @@ Effect::AccountingInfo::AccountingInfo() :
     running_meter_total(0.0)
 {}
 
+bool Effect::AccountingInfo::operator==(const Effect::AccountingInfo& rhs) const {
+    return
+        cause_type == rhs.cause_type &&
+        specific_cause == rhs.specific_cause &&
+        custom_label == rhs.custom_label &&
+        source_id == rhs.source_id &&
+        meter_change == rhs.meter_change &&
+        running_meter_total == rhs.running_meter_total;
+}
+
 Effect::TargetsAndCause::TargetsAndCause() :
     target_set(),
     effect_cause()
