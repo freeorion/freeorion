@@ -31,6 +31,7 @@ namespace Effect {
       * by effects groups acting on meters of objects. */
     struct AccountingInfo : public EffectCause {
         AccountingInfo();
+        bool operator==(const AccountingInfo& rhs) const;
 
         int     source_id;          ///< source object of effect
         float   meter_change;       ///< net change on meter due to this effect, as best known by client's empire

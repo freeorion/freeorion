@@ -13,6 +13,7 @@
 #include "../universe/Special.h"
 #include "../universe/Species.h"
 #include "../universe/Enums.h"
+#include "../universe/EffectAccounting.h"
 #include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
 
@@ -223,9 +224,9 @@ namespace {
     bool EnqueueLocationTest(const BuildingType& building_type, int empire_id, int loc_id)
     { return building_type.EnqueueLocation(empire_id, loc_id);}
 
-    bool                    RuleExistsAnyType(const GameRules& rules, const std::string& name)
+    bool RuleExistsAnyType(const GameRules& rules, const std::string& name)
     { return rules.RuleExists(name); }
-    bool                    RuleExistsWithType(const GameRules& rules, const std::string& name, GameRules::RuleType rule_type)
+    bool RuleExistsWithType(const GameRules& rules, const std::string& name, GameRules::RuleType rule_type)
     { return rules.RuleExists(name, rule_type); }
 }
 
@@ -272,7 +273,7 @@ namespace FreeOrionPython {
         class_<std::map<int, float>>("IntFltMap")
             .def(boost::python::map_indexing_suite<std::map<int, float>, true>())
         ;
-        class_<std::map<Visibility,int>>("VisibilityIntMap")
+        class_<std::map<Visibility, int>>("VisibilityIntMap")
             .def(boost::python::map_indexing_suite<std::map<Visibility, int>, true>())
         ;
         class_<std::vector<ShipSlotType>>("ShipSlotVec")
@@ -288,6 +289,32 @@ namespace FreeOrionPython {
         ;
         class_<Ship::PartMeterMap>("ShipPartMeterMap")
             .def(boost::python::map_indexing_suite<Ship::PartMeterMap>())
+        ;
+
+        ///////////////////////////
+        //   Effect Accounting   //
+        ///////////////////////////
+        class_<Effect::EffectCause>("EffectCause")
+            .add_property("causeType",          &Effect::AccountingInfo::cause_type)
+            .def_readonly("specificCause",      &Effect::AccountingInfo::specific_cause)
+            .def_readonly("customLabel",        &Effect::AccountingInfo::custom_label)
+        ;
+        class_<Effect::AccountingInfo, bases<Effect::EffectCause>>("AccountingInfo")
+            .add_property("sourceID",           &Effect::AccountingInfo::source_id)
+            .add_property("meterChange",        &Effect::AccountingInfo::meter_change)
+            .add_property("meterRunningTotal",  &Effect::AccountingInfo::running_meter_total)
+        ;
+        class_<std::vector<Effect::AccountingInfo>>("AccountingInfoVec")
+            .def(boost::python::vector_indexing_suite<
+                 std::vector<Effect::AccountingInfo>, true>())
+        ;
+        class_<std::map<Visibility, int>>("MeterTypeAccountingInfoVecMap")
+            .def(boost::python::map_indexing_suite<
+                 std::map<MeterType, std::vector<Effect::AccountingInfo>>, true>())
+        ;
+        class_<Effect::AccountingMap>("TargetIDAccountingMapMap")
+            .def(boost::python::map_indexing_suite<
+                 Effect::AccountingMap, true>())
         ;
 
         ///////////////
@@ -329,6 +356,8 @@ namespace FreeOrionPython {
                                                 ))
 
             .def("updateMeterEstimates",        &UpdateMetersWrapper)
+            .add_property("effectAccounting",   make_function(&Universe::GetEffectAccountingMap,
+                                                                                    return_value_policy<reference_existing_object>()))
 
             .def("linearDistance",              make_function(
                                                     LinearDistanceFunc,
