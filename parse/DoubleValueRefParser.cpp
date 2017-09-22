@@ -64,14 +64,15 @@ parse::detail::simple_double_parser_rules::simple_double_parser_rules(const pars
 
 parse::double_parser_rules::double_parser_rules(
     const parse::lexer& tok,
-    const parse::condition_parser_rule& condition_parser)
-    :
+    const parse::condition_parser_rule& condition_parser,
+    const parse::value_ref_grammar<std::string>& string_grammar
+) :
     arithmetic_rules("real number", condition_parser),
-    int_rules(tok, condition_parser),
+    int_rules(tok, condition_parser, string_grammar),
     simple_int_rules(tok),
     simple_double_rules(tok),
-    int_complex_grammar(tok, int_rules),
-    double_complex_grammar(tok, condition_parser)
+    int_complex_grammar(tok, int_rules, string_grammar),
+    double_complex_grammar(tok, condition_parser, string_grammar)
 {
     namespace phoenix = boost::phoenix;
     namespace qi = boost::spirit::qi;

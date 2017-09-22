@@ -77,9 +77,10 @@ namespace {
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
             condition_parser(parse::condition_parser()),
-            castable_int_rules(parse::lexer::instance(), condition_parser),
-            double_rules(parse::lexer::instance(), condition_parser),
-            effects_group_grammar(tok, labeller, condition_parser)
+            string_grammar(tok, condition_parser),
+            castable_int_rules(parse::lexer::instance(), condition_parser, string_grammar),
+            double_rules(parse::lexer::instance(), condition_parser, string_grammar),
+            effects_group_grammar(tok, labeller, condition_parser, string_grammar)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -234,6 +235,7 @@ namespace {
         > start_rule;
 
         parse::condition_parser_rule& condition_parser;
+        const parse::string_parser_grammar string_grammar;
         parse::castable_as_int_parser_rules     castable_int_rules;
         parse::double_parser_rules  double_rules;
         parse::effects_group_grammar effects_group_grammar;

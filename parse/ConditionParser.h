@@ -30,7 +30,9 @@ namespace parse { namespace detail {
 
     struct condition_parser_rules_1 : public condition_parser_grammar {
         condition_parser_rules_1(const parse::lexer& tok,
-                                 const condition_parser_grammar& condition_parser);
+                                 const condition_parser_grammar& condition_parser,
+                                 const parse::value_ref_grammar<std::string>& string_grammar
+);
 
         typedef parse::detail::rule<
             Condition::ConditionBase* (),
@@ -75,7 +77,8 @@ namespace parse { namespace detail {
 
     struct condition_parser_rules_2 : public condition_parser_grammar {
         condition_parser_rules_2(const parse::lexer& tok,
-                                 const condition_parser_grammar& condition_parser);
+                                 const condition_parser_grammar& condition_parser,
+                                 const parse::value_ref_grammar<std::string>& string_grammar);
 
         typedef parse::detail::rule<
             Condition::ConditionBase* (),
@@ -104,7 +107,8 @@ namespace parse { namespace detail {
 
     struct condition_parser_rules_3 : public condition_parser_grammar {
         condition_parser_rules_3(const parse::lexer& tok,
-                                 const condition_parser_grammar& condition_parser);
+                                 const condition_parser_grammar& condition_parser,
+                                 const parse::value_ref_grammar<std::string>& string_grammar);
 
         typedef parse::detail::rule<
             Condition::ConditionBase* (),
@@ -172,7 +176,8 @@ namespace parse { namespace detail {
 
     struct condition_parser_rules_4 : public condition_parser_grammar {
         condition_parser_rules_4(const parse::lexer& tok,
-                                 const condition_parser_grammar& condition_parser);
+                                 const condition_parser_grammar& condition_parser,
+                                 const parse::value_ref_grammar<std::string>& string_grammar);
 
         typedef parse::detail::rule<
             Condition::ConditionBase* (),
@@ -208,7 +213,8 @@ namespace parse { namespace detail {
 
     struct condition_parser_rules_5 : public condition_parser_grammar {
         condition_parser_rules_5(const parse::lexer& tok,
-                                 const condition_parser_grammar& condition_parser);
+                                 const condition_parser_grammar& condition_parser,
+                                 const parse::value_ref_grammar<std::string>& string_grammar);
 
         parse::int_arithmetic_rules     int_rules;
         parse::condition_parser_rule    has_special;
@@ -226,7 +232,7 @@ namespace parse { namespace detail {
     };
 
     struct condition_parser_rules_6 : public condition_parser_grammar {
-        condition_parser_rules_6();
+        condition_parser_rules_6(const parse::value_ref_grammar<std::string>& string_grammar);
 
         typedef parse::detail::rule<
             std::vector<ValueRef::ValueRefBase<std::string>*> ()
@@ -268,7 +274,8 @@ namespace parse { namespace detail {
     };
 
     struct condition_parser_rules_7 : public condition_parser_grammar {
-        condition_parser_rules_7(const condition_parser_grammar& condition_parser);
+        condition_parser_rules_7(const condition_parser_grammar& condition_parser,
+                                 const parse::value_ref_grammar<std::string>& string_grammar);
 
         typedef parse::detail::rule<
             Condition::ConditionBase* (),
@@ -297,7 +304,8 @@ namespace parse { namespace detail {
 
 namespace parse {
     struct conditions_parser_grammar : public detail::condition_parser_grammar {
-        conditions_parser_grammar(const parse::lexer& tok);
+        conditions_parser_grammar(const parse::lexer& tok,
+                                  const parse::value_ref_grammar<std::string>& string_grammar);
 
         detail::condition_parser_rules_1 condition_parser_1;
         detail::condition_parser_rules_2 condition_parser_2;

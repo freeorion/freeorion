@@ -43,7 +43,8 @@ namespace {
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
             condition_parser(parse::condition_parser()),
-            effects_group_grammar(tok, labeller, condition_parser)
+            string_grammar(tok, condition_parser),
+            effects_group_grammar(tok, labeller, condition_parser, string_grammar)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -101,6 +102,7 @@ namespace {
         > start_rule;
 
         const parse::condition_parser_rule& condition_parser;
+        const parse::string_parser_grammar string_grammar;
         parse::effects_group_grammar effects_group_grammar;
         field_rule          field;
         start_rule          start;

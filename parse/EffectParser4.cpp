@@ -12,13 +12,16 @@ namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
-    effect_parser_rules_4::effect_parser_rules_4(const parse::lexer& tok,
-                                                 const effect_parser_grammar& effect_parser,
-                                                 Labeller& labeller,
-                                                 const parse::condition_parser_rule& condition_parser) :
+    effect_parser_rules_4::effect_parser_rules_4(
+        const parse::lexer& tok,
+        const effect_parser_grammar& effect_parser,
+        Labeller& labeller,
+        const parse::condition_parser_rule& condition_parser,
+        const parse::value_ref_grammar<std::string>& string_grammar
+    ) :
         effect_parser_rules_4::base_type(start, "effect_parser_rules_4"),
-        int_rules(tok, condition_parser),
-        double_rules(tok, condition_parser)
+        int_rules(tok, condition_parser, string_grammar),
+        double_rules(tok, condition_parser, string_grammar)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -37,7 +40,7 @@ namespace parse { namespace detail {
             =   (       tok.CreatePlanet_
                         >   labeller.rule(Type_token)        >   parse::detail::planet_type_rules().expr [ _a = _1 ]
                         >   labeller.rule(PlanetSize_token)  >   parse::detail::planet_size_rules().expr [ _b = _1 ]
-                        > -(labeller.rule(Name_token)        >   parse::string_value_ref()      [ _c = _1 ])
+                        > -(labeller.rule(Name_token)        >   string_grammar      [ _c = _1 ])
                         > -(labeller.rule(Effects_token)
                             >   (
                                 ('[' > +effect_parser [ push_back(_d, _1) ] > ']')
@@ -49,8 +52,8 @@ namespace parse { namespace detail {
 
         create_building
             =   (       tok.CreateBuilding_
-                        >   labeller.rule(Type_token)        >   parse::string_value_ref() [ _a = _1 ]
-                        > -(labeller.rule(Name_token)        >   parse::string_value_ref() [ _b = _1 ])
+                        >   labeller.rule(Type_token)        >   string_grammar [ _a = _1 ]
+                        > -(labeller.rule(Name_token)        >   string_grammar [ _b = _1 ])
                         > -(labeller.rule(Effects_token)
                             >   (
                                 ('[' > +effect_parser [ push_back(_c, _1) ] > ']')
@@ -65,8 +68,8 @@ namespace parse { namespace detail {
                          >>  labeller.rule(DesignID_token)
                  )  >   int_rules.expr    [ _b = _1 ]
                  > -(labeller.rule(Empire_token)      >   int_rules.expr    [ _c = _1 ])
-                 > -(labeller.rule(Species_token)     >   parse::string_value_ref() [ _d = _1 ])
-                 > -(labeller.rule(Name_token)        >   parse::string_value_ref() [ _e = _1 ])
+                 > -(labeller.rule(Species_token)     >   string_grammar [ _d = _1 ])
+                 > -(labeller.rule(Name_token)        >   string_grammar [ _e = _1 ])
                  > -(labeller.rule(Effects_token)
                      >   (
                          ('[' > +effect_parser [ push_back(_f, _1) ] > ']')
@@ -78,11 +81,11 @@ namespace parse { namespace detail {
 
         create_ship_2
             =   ((       tok.CreateShip_
-                         >>  labeller.rule(DesignName_token)  >>  parse::string_value_ref() [ _a = _1 ]
+                         >>  labeller.rule(DesignName_token)  >>  string_grammar [ _a = _1 ]
                  )
                  > -(labeller.rule(Empire_token)      >   int_rules.expr    [ _c = _1 ])
-                 > -(labeller.rule(Species_token)     >   parse::string_value_ref() [ _d = _1 ])
-                 > -(labeller.rule(Name_token)        >   parse::string_value_ref() [ _e = _1 ])
+                 > -(labeller.rule(Species_token)     >   string_grammar [ _d = _1 ])
+                 > -(labeller.rule(Name_token)        >   string_grammar [ _e = _1 ])
                  > -(labeller.rule(Effects_token)
                      >   (
                          ('[' > +effect_parser [ push_back(_f, _1) ] > ']')
@@ -94,11 +97,11 @@ namespace parse { namespace detail {
 
         create_field_1
             =   ((       tok.CreateField_
-                         >>  labeller.rule(Type_token)    >>  parse::string_value_ref() [ _a = _1 ]
+                         >>  labeller.rule(Type_token)    >>  string_grammar [ _a = _1 ]
                          >>  labeller.rule(Size_token)
                  )
                  >   double_rules.expr [ _b = _1 ]
-                 > -(labeller.rule(Name_token)    >   parse::string_value_ref() [ _d = _1 ])
+                 > -(labeller.rule(Name_token)    >   string_grammar [ _d = _1 ])
                  > -(labeller.rule(Effects_token)
                      >
                      (
@@ -111,13 +114,13 @@ namespace parse { namespace detail {
 
         create_field_2
             =   ((       tok.CreateField_
-                         >>  labeller.rule(Type_token)    >>  parse::string_value_ref() [ _a = _1 ]
+                         >>  labeller.rule(Type_token)    >>  string_grammar [ _a = _1 ]
                          >>  labeller.rule(X_token)
                  )
                  >   double_rules.expr [ _b = _1 ]
                  >   labeller.rule(Y_token)       >   double_rules.expr [ _c = _1 ]
                  >   labeller.rule(Size_token)    >   double_rules.expr [ _e = _1 ]
-                 > -(labeller.rule(Name_token)    >   parse::string_value_ref() [ _d = _1 ])
+                 > -(labeller.rule(Name_token)    >   string_grammar [ _d = _1 ])
                  > -(labeller.rule(Effects_token)
                      >
                      (
@@ -135,7 +138,7 @@ namespace parse { namespace detail {
                  >   parse::detail::star_type_rules().expr [ _a = _1 ]
                  >   labeller.rule(X_token)       >   double_rules.expr    [ _b = _1 ]
                  >   labeller.rule(Y_token)       >   double_rules.expr    [ _c = _1 ]
-                 > -(labeller.rule(Name_token)    >   parse::string_value_ref()    [ _d = _1 ])
+                 > -(labeller.rule(Name_token)    >   string_grammar    [ _d = _1 ])
                  > -(labeller.rule(Effects_token)
                      >
                      (
@@ -152,7 +155,7 @@ namespace parse { namespace detail {
                  )
                  >   double_rules.expr [ _b = _1 ]
                  >   labeller.rule(Y_token)       >   double_rules.expr [ _c = _1 ]
-                 > -(labeller.rule(Name_token)    >   parse::string_value_ref() [ _d = _1 ])
+                 > -(labeller.rule(Name_token)    >   string_grammar [ _d = _1 ])
                  > -(labeller.rule(Effects_token)
                      >
                      (

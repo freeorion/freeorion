@@ -14,9 +14,13 @@ namespace phoenix = boost::phoenix;
 
 namespace {
     struct condition_parser_rules_2 {
-        condition_parser_rules_2(const parse::lexer& tok, const parse::condition_parser_rule& condition_parser) :
-            int_rules(tok, condition_parser),
-            castable_int_rules(tok, condition_parser)
+        condition_parser_rules_2(
+            const parse::lexer& tok,
+            const parse::condition_parser_rule& condition_parser,
+            const parse::value_ref_grammar<std::string>& string_grammar
+        ) :
+            int_rules(tok, condition_parser, string_grammar),
+            castable_int_rules(tok, condition_parser, string_grammar)
         {
             qi::_1_type _1;
             qi::_a_type _a; // intref
@@ -30,7 +34,7 @@ namespace {
 
             has_special_since_turn
                 =   (       tok.HasSpecialSinceTurn_
-                        >   parse::detail::label(Name_token) >  parse::string_value_ref() [ _e = _1 ]
+                        >   parse::detail::label(Name_token) >  string_grammar [ _e = _1 ]
                         > -(parse::detail::label(Low_token)  >  castable_int_rules.flexible_int [ _a = _1 ] )
                         > -(parse::detail::label(High_token) >  castable_int_rules.flexible_int [ _b = _1 ] )
                     ) [ _val = new_<Condition::HasSpecial>(_e, _a, _b) ]
@@ -46,7 +50,7 @@ namespace {
             enqueued1
                 =   (   (tok.Enqueued_
                         >>  parse::detail::label(Type_token)   >>   tok.Building_)
-                        > -(parse::detail::label(Name_token)   >    parse::string_value_ref() [ _e = _1 ])
+                        > -(parse::detail::label(Name_token)   >    string_grammar [ _e = _1 ])
                         > -(parse::detail::label(Empire_token) >    int_rules.expr [ _a = _1 ])
                         > -(parse::detail::label(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
                         > -(parse::detail::label(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
@@ -66,7 +70,7 @@ namespace {
             enqueued3
                 =   (   (tok.Enqueued_
                         >>  parse::detail::label(Type_token)   >>   tok.Ship_
-                        >>  parse::detail::label(Name_token)   ) >    parse::string_value_ref() [ _e = _1 ]
+                        >>  parse::detail::label(Name_token)   ) >    string_grammar [ _e = _1 ]
                         > -(parse::detail::label(Empire_token) >    int_rules.expr [ _a = _1 ])
                         > -(parse::detail::label(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
                         > -(parse::detail::label(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
@@ -85,7 +89,7 @@ namespace {
                 =   (   tok.DesignHasPart_
                         > -(parse::detail::label(Low_token)   > castable_int_rules.flexible_int [ _a = _1 ])
                         > -(parse::detail::label(High_token)  > castable_int_rules.flexible_int [ _b = _1 ])
-                    )   >   parse::detail::label(Name_token)  > parse::string_value_ref()
+                    )   >   parse::detail::label(Name_token)  > string_grammar
                     [ _val = new_<Condition::DesignHasPart>(_1, _a, _b) ]
                 ;
 
@@ -155,17 +159,19 @@ namespace {
 
 namespace parse { namespace detail {
     const condition_parser_rule& condition_parser_2() {
-        static condition_parser_rules_2 retval(parse::lexer::instance(), parse::condition_parser());
+        static string_parser_grammar string_grammar(parse::lexer::instance(), parse::condition_parser());
+        static condition_parser_rules_2 retval(parse::lexer::instance(), parse::condition_parser(), string_grammar);
         return retval.start;
     }
 
     condition_parser_rules_2::condition_parser_rules_2(
         const parse::lexer& tok,
-        const condition_parser_grammar& condition_parser)
-        :
+        const condition_parser_grammar& condition_parser,
+        const parse::value_ref_grammar<std::string>& string_grammar
+    ) :
         condition_parser_rules_2::base_type(start, "condition_parser_rules_2"),
-        int_rules(tok, condition_parser),
-        castable_int_rules(tok, condition_parser)
+        int_rules(tok, condition_parser, string_grammar),
+        castable_int_rules(tok, condition_parser, string_grammar)
     {
         qi::_1_type _1;
         qi::_a_type _a; // intref
@@ -179,7 +185,7 @@ namespace parse { namespace detail {
 
         has_special_since_turn
             =   (       tok.HasSpecialSinceTurn_
-                        >   parse::detail::label(Name_token) >  parse::string_value_ref() [ _e = _1 ]
+                        >   parse::detail::label(Name_token) >  string_grammar [ _e = _1 ]
                         > -(parse::detail::label(Low_token)  >  castable_int_rules.flexible_int [ _a = _1 ] )
                         > -(parse::detail::label(High_token) >  castable_int_rules.flexible_int [ _b = _1 ] )
                 ) [ _val = new_<Condition::HasSpecial>(_e, _a, _b) ]
@@ -195,7 +201,7 @@ namespace parse { namespace detail {
         enqueued1
             =   (   (tok.Enqueued_
                      >>  parse::detail::label(Type_token)   >>   tok.Building_)
-                    > -(parse::detail::label(Name_token)   >    parse::string_value_ref() [ _e = _1 ])
+                    > -(parse::detail::label(Name_token)   >    string_grammar [ _e = _1 ])
                     > -(parse::detail::label(Empire_token) >    int_rules.expr [ _a = _1 ])
                     > -(parse::detail::label(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
                     > -(parse::detail::label(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
@@ -215,7 +221,7 @@ namespace parse { namespace detail {
         enqueued3
             =   (   (tok.Enqueued_
                      >>  parse::detail::label(Type_token)   >>   tok.Ship_
-                     >>  parse::detail::label(Name_token)   ) >    parse::string_value_ref() [ _e = _1 ]
+                     >>  parse::detail::label(Name_token)   ) >    string_grammar [ _e = _1 ]
                     > -(parse::detail::label(Empire_token) >    int_rules.expr [ _a = _1 ])
                     > -(parse::detail::label(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
                     > -(parse::detail::label(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
@@ -234,7 +240,7 @@ namespace parse { namespace detail {
             =   (   tok.DesignHasPart_
                     > -(parse::detail::label(Low_token)   > castable_int_rules.flexible_int [ _a = _1 ])
                     > -(parse::detail::label(High_token)  > castable_int_rules.flexible_int [ _b = _1 ])
-                )   >   parse::detail::label(Name_token)  > parse::string_value_ref()
+                )   >   parse::detail::label(Name_token)  > string_grammar
             [ _val = new_<Condition::DesignHasPart>(_1, _a, _b) ]
             ;
 

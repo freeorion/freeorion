@@ -20,7 +20,8 @@ namespace std {
 
 namespace {
     struct condition_parser_rules_7 {
-        condition_parser_rules_7(const parse::condition_parser_rule& condition_parser) {
+        condition_parser_rules_7(const parse::condition_parser_rule& condition_parser,
+                                 const parse::value_ref_grammar<std::string>& string_grammar) {
             const parse::lexer& tok = parse::lexer::instance();
 
             qi::_1_type _1;
@@ -70,15 +71,15 @@ namespace {
                     |   tok.Special_    [ _a = Condition::CONTENT_SPECIAL ]
                     |   tok.Focus_      [ _a = Condition::CONTENT_FOCUS ]
                     )
-                >    parse::detail::label(Name_token)   > parse::string_value_ref() [ _b = _1 ]
-                >  -(parse::detail::label(Name_token)   > parse::string_value_ref() [ _c = _1 ]))
+                >    parse::detail::label(Name_token)   > string_grammar [ _b = _1 ]
+                >  -(parse::detail::label(Name_token)   > string_grammar [ _c = _1 ]))
                 [ _val = new_<Condition::Location>(_a, _b, _c) ]
                 ;
 
             owner_has_shippart_available
                 =   (tok.OwnerHasShipPartAvailable_
                     >>  (parse::detail::label(Name_token)
-                         > parse::string_value_ref() [ _val = new_<Condition::OwnerHasShipPartAvailable>(_1) ]
+                         > string_grammar [ _val = new_<Condition::OwnerHasShipPartAvailable>(_1) ]
                         )
                     )
                 ;
@@ -135,11 +136,15 @@ namespace {
 
 namespace parse { namespace detail {
     const condition_parser_rule& condition_parser_7() {
-        static condition_parser_rules_7 retval(parse::condition_parser());
+        static string_parser_grammar string_grammar(parse::lexer::instance(), parse::condition_parser());
+        static condition_parser_rules_7 retval(parse::condition_parser(), string_grammar);
         return retval.start;
     }
 
-    condition_parser_rules_7::condition_parser_rules_7(const condition_parser_grammar& condition_parser) :
+    condition_parser_rules_7::condition_parser_rules_7(
+        const condition_parser_grammar& condition_parser,
+        const parse::value_ref_grammar<std::string>& string_grammar
+    ) :
         condition_parser_rules_7::base_type(start, "condition_parser_rules_7")
     {
         const parse::lexer& tok = parse::lexer::instance();
@@ -191,15 +196,15 @@ namespace parse { namespace detail {
                      |   tok.Special_    [ _a = Condition::CONTENT_SPECIAL ]
                      |   tok.Focus_      [ _a = Condition::CONTENT_FOCUS ]
                  )
-                 >    parse::detail::label(Name_token)   > parse::string_value_ref() [ _b = _1 ]
-                 >  -(parse::detail::label(Name_token)   > parse::string_value_ref() [ _c = _1 ]))
+                 >    parse::detail::label(Name_token)   > string_grammar [ _b = _1 ]
+                 >  -(parse::detail::label(Name_token)   > string_grammar [ _c = _1 ]))
             [ _val = new_<Condition::Location>(_a, _b, _c) ]
             ;
 
         owner_has_shippart_available
             =   (tok.OwnerHasShipPartAvailable_
                  >>  (parse::detail::label(Name_token)
-                      > parse::string_value_ref() [ _val = new_<Condition::OwnerHasShipPartAvailable>(_1) ]
+                      > string_grammar [ _val = new_<Condition::OwnerHasShipPartAvailable>(_1) ]
                      )
                 )
             ;

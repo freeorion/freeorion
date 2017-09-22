@@ -26,7 +26,7 @@ namespace std {
 
 namespace {
     struct condition_parser_rules_6 {
-        condition_parser_rules_6() {
+        condition_parser_rules_6(const parse::value_ref_grammar<std::string>& string_grammar) {
             const parse::lexer& tok = parse::lexer::instance();
 
             qi::_1_type _1;
@@ -38,8 +38,8 @@ namespace {
             using phoenix::push_back;
 
             string_ref_vec
-                =   ('[' > +parse::string_value_ref() [ push_back(_val, _1) ] > ']')
-                |    parse::string_value_ref() [ push_back(_val, _1) ]
+                =   ('[' > +string_grammar [ push_back(_val, _1) ] > ']')
+                |    string_grammar [ push_back(_val, _1) ]
                 ;
 
             homeworld
@@ -104,7 +104,7 @@ namespace {
                         ('[' > +parse::detail::planet_environment_rules().expr [ push_back(_a, _1) ] > ']')
                     |    parse::detail::planet_environment_rules().expr [ push_back(_a, _1) ]
                     )
-                >  -(parse::detail::label(Species_token)        >  parse::string_value_ref() [_b = _1]))
+                >  -(parse::detail::label(Species_token)        >  string_grammar [_b = _1]))
                     [ _val = new_<Condition::PlanetEnvironment>(_a, _b) ]
                 ;
 
@@ -193,11 +193,12 @@ namespace {
 
 namespace parse { namespace detail {
     const condition_parser_rule& condition_parser_6() {
-        static condition_parser_rules_6 retval;
+        static string_parser_grammar string_grammar(parse::lexer::instance(), parse::condition_parser());
+        static condition_parser_rules_6 retval(string_grammar);
         return retval.start;
     }
 
-    condition_parser_rules_6::condition_parser_rules_6() :
+    condition_parser_rules_6::condition_parser_rules_6(const parse::value_ref_grammar<std::string>& string_grammar) :
         condition_parser_rules_6::base_type(start, "condition_parser_rules_6")
     {
         const parse::lexer& tok = parse::lexer::instance();
@@ -211,8 +212,8 @@ namespace parse { namespace detail {
         using phoenix::push_back;
 
         string_ref_vec
-            =   ('[' > +parse::string_value_ref() [ push_back(_val, _1) ] > ']')
-            |    parse::string_value_ref() [ push_back(_val, _1) ]
+            =   ('[' > +string_grammar [ push_back(_val, _1) ] > ']')
+            |    string_grammar [ push_back(_val, _1) ]
             ;
 
         homeworld
@@ -277,7 +278,7 @@ namespace parse { namespace detail {
                      ('[' > +parse::detail::planet_environment_rules().expr [ push_back(_a, _1) ] > ']')
                      |    parse::detail::planet_environment_rules().expr [ push_back(_a, _1) ]
                  )
-                 >  -(parse::detail::label(Species_token)        >  parse::string_value_ref() [_b = _1]))
+                 >  -(parse::detail::label(Species_token)        >  string_grammar [_b = _1]))
             [ _val = new_<Condition::PlanetEnvironment>(_a, _b) ]
             ;
 

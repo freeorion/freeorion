@@ -17,11 +17,12 @@ namespace parse { namespace detail {
     effect_parser_rules_1::effect_parser_rules_1(
         const parse::lexer& tok,
         Labeller& labeller,
-        const condition_parser_grammar& condition_parser)
-        :
+        const condition_parser_grammar& condition_parser,
+        const parse::value_ref_grammar<std::string>& string_grammar
+    ) :
         effect_parser_rules_1::base_type(start, "effect_parser_rules_1"),
-        int_rules(tok, condition_parser),
-        double_rules(tok, condition_parser)
+        int_rules(tok, condition_parser, string_grammar),
+        double_rules(tok, condition_parser, string_grammar)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -51,14 +52,14 @@ namespace parse { namespace detail {
 
         give_empire_tech
             =   (   tok.GiveEmpireTech_
-                    >   labeller.rule(Name_token) >      parse::string_value_ref() [ _d = _1 ]
+                    >   labeller.rule(Name_token) >      string_grammar [ _d = _1 ]
                     > -(labeller.rule(Empire_token) >    int_rules.expr    [ _b = _1 ])
                 ) [ _val = new_<Effect::GiveEmpireTech>(_d, _b) ]
             ;
 
         set_empire_tech_progress
             =    tok.SetEmpireTechProgress_
-            >    labeller.rule(Name_token)     >  parse::string_value_ref() [ _a = _1 ]
+            >    labeller.rule(Name_token)     >  string_grammar [ _a = _1 ]
             >    labeller.rule(Progress_token) >  double_rules.expr [ _b = _1 ]
             >    (
                 (labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b, _1) ])
@@ -122,7 +123,7 @@ namespace parse { namespace detail {
             >  ( int_rules.expr      [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<int>>(_1)) ]
                  | double_rules.expr   [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<double>>(_1)) ]
                  | tok.string         [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::Constant<std::string>>(_1)) ]
-                 | parse::string_value_ref()   [ _val = construct<string_and_string_ref_pair>(_a, _1) ]
+                 | string_grammar   [ _val = construct<string_and_string_ref_pair>(_a, _1) ]
                )
             ;
 

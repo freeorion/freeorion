@@ -13,8 +13,9 @@ namespace phoenix = boost::phoenix;
 
 namespace {
     struct condition_parser_rules_5 {
-        condition_parser_rules_5(const parse::lexer& tok, const parse::condition_parser_rule& condition_parser) :
-            int_rules(tok, condition_parser)
+        condition_parser_rules_5(const parse::lexer& tok, const parse::condition_parser_rule& condition_parser,
+            const parse::value_ref_grammar<std::string>& string_grammar) :
+            int_rules(tok, condition_parser, string_grammar)
         {
             qi::_1_type _1;
             qi::_val_type _val;
@@ -24,7 +25,7 @@ namespace {
             has_special
                 =   (   (tok.HasSpecial_
                         >>  parse::detail::label(Name_token)
-                        ) > parse::string_value_ref() [ _val = new_<Condition::HasSpecial>(_1) ]
+                        ) > string_grammar [ _val = new_<Condition::HasSpecial>(_1) ]
                     )
                 |   tok.HasSpecial_ [ _val = new_<Condition::HasSpecial>() ]
                 ;
@@ -32,25 +33,25 @@ namespace {
             has_tag
                 =   (   (tok.HasTag_
                         >>  parse::detail::label(Name_token)
-                        ) > parse::string_value_ref() [ _val = new_<Condition::HasTag>(_1) ]
+                        ) > string_grammar [ _val = new_<Condition::HasTag>(_1) ]
                     )
                 |   tok.HasTag_ [ _val = new_<Condition::HasTag>() ]
                 ;
 
             owner_has_tech
                 =   tok.OwnerHasTech_
-                >   parse::detail::label(Name_token) > parse::string_value_ref() [ _val = new_<Condition::OwnerHasTech>(_1) ]
+                >   parse::detail::label(Name_token) > string_grammar [ _val = new_<Condition::OwnerHasTech>(_1) ]
                 ;
 
             design_has_hull
                 =   tok.DesignHasHull_
-                >   parse::detail::label(Name_token) > parse::string_value_ref() [ _val = new_<Condition::DesignHasHull>(_1) ]
+                >   parse::detail::label(Name_token) > string_grammar [ _val = new_<Condition::DesignHasHull>(_1) ]
                 ;
 
             predefined_design
                 =   (tok.Design_
                     >>  parse::detail::label(Name_token)
-                    ) > parse::string_value_ref() [ _val = new_<Condition::PredefinedShipDesign>(_1) ]
+                    ) > string_grammar [ _val = new_<Condition::PredefinedShipDesign>(_1) ]
                 ;
 
             design_number
@@ -143,16 +144,18 @@ namespace {
 
 namespace parse { namespace detail {
     const condition_parser_rule& condition_parser_5() {
-        static condition_parser_rules_5 retval(parse::lexer::instance(), parse::condition_parser());
+        static string_parser_grammar string_grammar(parse::lexer::instance(), parse::condition_parser());
+        static condition_parser_rules_5 retval(parse::lexer::instance(), parse::condition_parser(), string_grammar);
         return retval.start;
     }
 
     condition_parser_rules_5::condition_parser_rules_5(
         const parse::lexer& tok,
-        const condition_parser_grammar& condition_parser)
-        :
+        const condition_parser_grammar& condition_parser,
+        const parse::value_ref_grammar<std::string>& string_grammar
+    ) :
         condition_parser_rules_5::base_type(start, "condition_parser_rules_5"),
-        int_rules(tok, condition_parser)
+        int_rules(tok, condition_parser, string_grammar)
     {
         qi::_1_type _1;
         qi::_val_type _val;
@@ -162,7 +165,7 @@ namespace parse { namespace detail {
         has_special
             =   (   (tok.HasSpecial_
                      >>  parse::detail::label(Name_token)
-                    ) > parse::string_value_ref() [ _val = new_<Condition::HasSpecial>(_1) ]
+                    ) > string_grammar [ _val = new_<Condition::HasSpecial>(_1) ]
                 )
             |   tok.HasSpecial_ [ _val = new_<Condition::HasSpecial>() ]
             ;
@@ -170,25 +173,25 @@ namespace parse { namespace detail {
         has_tag
             =   (   (tok.HasTag_
                      >>  parse::detail::label(Name_token)
-                    ) > parse::string_value_ref() [ _val = new_<Condition::HasTag>(_1) ]
+                    ) > string_grammar [ _val = new_<Condition::HasTag>(_1) ]
                 )
             |   tok.HasTag_ [ _val = new_<Condition::HasTag>() ]
             ;
 
         owner_has_tech
             =   tok.OwnerHasTech_
-            >   parse::detail::label(Name_token) > parse::string_value_ref() [ _val = new_<Condition::OwnerHasTech>(_1) ]
+            >   parse::detail::label(Name_token) > string_grammar [ _val = new_<Condition::OwnerHasTech>(_1) ]
             ;
 
         design_has_hull
             =   tok.DesignHasHull_
-            >   parse::detail::label(Name_token) > parse::string_value_ref() [ _val = new_<Condition::DesignHasHull>(_1) ]
+            >   parse::detail::label(Name_token) > string_grammar [ _val = new_<Condition::DesignHasHull>(_1) ]
             ;
 
         predefined_design
             =   (tok.Design_
                  >>  parse::detail::label(Name_token)
-                ) > parse::string_value_ref() [ _val = new_<Condition::PredefinedShipDesign>(_1) ]
+                ) > string_grammar [ _val = new_<Condition::PredefinedShipDesign>(_1) ]
             ;
 
         design_number

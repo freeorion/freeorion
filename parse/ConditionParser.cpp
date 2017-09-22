@@ -29,15 +29,17 @@ namespace parse {
     }
 
     conditions_parser_grammar::conditions_parser_grammar(
-        const parse::lexer& tok) :
+        const parse::lexer& tok,
+        const parse::value_ref_grammar<std::string>& string_grammar
+    ) :
         conditions_parser_grammar::base_type(start, "conditions_parser_grammar"),
-        condition_parser_1(tok, *this),
-        condition_parser_2(tok, *this),
-        condition_parser_3(tok, *this),
-        condition_parser_4(tok, *this),
-        condition_parser_5(tok, *this),
-        condition_parser_6(),
-        condition_parser_7(*this)
+        condition_parser_1(tok, *this, string_grammar),
+        condition_parser_2(tok, *this, string_grammar),
+        condition_parser_3(tok, *this, string_grammar),
+        condition_parser_4(tok, *this, string_grammar),
+        condition_parser_5(tok, *this, string_grammar),
+        condition_parser_6(string_grammar),
+        condition_parser_7(*this, string_grammar)
     {
         start
             = condition_parser_1
