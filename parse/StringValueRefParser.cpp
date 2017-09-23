@@ -107,7 +107,7 @@ namespace parse {
             =   operated_expr
             ;
 
-        initialize_nonnumeric_statistic_parser<std::string>(statistic, statistic_sub_value_ref);
+        initialize_nonnumeric_statistic_parser<std::string>(statistic, tok, condition_parser, statistic_sub_value_ref);
 
         primary_expr
             =   constant
