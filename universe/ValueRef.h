@@ -1409,7 +1409,7 @@ std::string ComplexVariable<T>::Description() const {
 
 template <class T>
 std::string ComplexVariable<T>::Dump() const
-{ return "ComplexVariable"; }
+{ return Variable<T>::Dump(); }
 
 template <class T>
 void ComplexVariable<T>::SetTopLevelContent(const std::string& content_name)
