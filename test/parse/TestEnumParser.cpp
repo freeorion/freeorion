@@ -242,29 +242,29 @@ BOOST_AUTO_TEST_CASE(PlanetEnvironmentParser) {
     // Literal is number of tests, not number of enums.
     BOOST_REQUIRE_MESSAGE(NUM_PLANET_ENVIRONMENTS == 5, "Untested enumeration value.");
 
-    BOOST_CHECK(parse("Uninhabitable", result, parse::detail::planet_environment_rules().enum_expr));
+    BOOST_CHECK(parse("Uninhabitable", result, planet_environment_rules.enum_expr));
     BOOST_CHECK(result == PE_UNINHABITABLE);
 
-    BOOST_CHECK(parse("Hostile", result, parse::detail::planet_environment_rules().enum_expr));
+    BOOST_CHECK(parse("Hostile", result, planet_environment_rules.enum_expr));
     BOOST_CHECK(result == PE_HOSTILE);
 
-    BOOST_CHECK(parse("Poor", result, parse::detail::planet_environment_rules().enum_expr));
+    BOOST_CHECK(parse("Poor", result, planet_environment_rules.enum_expr));
     BOOST_CHECK(result == PE_POOR);
 
-    BOOST_CHECK(parse("Adequate", result, parse::detail::planet_environment_rules().enum_expr));
+    BOOST_CHECK(parse("Adequate", result, planet_environment_rules.enum_expr));
     BOOST_CHECK(result == PE_ADEQUATE);
 
-    BOOST_CHECK(parse("Good", result, parse::detail::planet_environment_rules().enum_expr));
+    BOOST_CHECK(parse("Good", result, planet_environment_rules.enum_expr));
     BOOST_CHECK(result == PE_GOOD);
 
     // XXX: is not modifying result the correct behaviour?
     result = INVALID_PLANET_ENVIRONMENT;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::detail::planet_environment_rules().enum_expr));
+    BOOST_CHECK(!parse("DoesNotExist", result, planet_environment_rules.enum_expr));
     BOOST_CHECK(result == INVALID_PLANET_ENVIRONMENT);
 
     // XXX: is not modifying result the correct behaviour?
     result = NUM_PLANET_ENVIRONMENTS;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::detail::planet_environment_rules().enum_expr));
+    BOOST_CHECK(!parse("DoesNotExist", result, planet_environment_rules.enum_expr));
     BOOST_CHECK(result == NUM_PLANET_ENVIRONMENTS);
 }
 
