@@ -21,7 +21,8 @@ namespace parse { namespace detail {
         const parse::lexer& tok,
         parse::detail::Labeller& labeller,
         const condition_parser_grammar& condition_parser,
-        const parse::value_ref_grammar<std::string>& string_grammar
+        const parse::value_ref_grammar<std::string>& string_grammar,
+        const tags_grammar_type& tags_parser
     ) :
         castable_int_rules(tok, condition_parser, string_grammar),
         double_rules(tok, condition_parser, string_grammar),
@@ -87,7 +88,7 @@ namespace parse { namespace detail {
             (   labeller.rule(BuildCost_token)  > double_rules.expr [ _a = _1 ]
                 >   labeller.rule(BuildTime_token)  > castable_int_rules.flexible_int [ _b = _1 ]
                 >   producible                                          [ _c = _1 ]
-                >   parse::detail::tags_parser()(_d)
+                >   tags_parser(_d)
                 >   location(_e)
                 >   enqueue_location(_i)
                 >  -consumption(_g, _h)
