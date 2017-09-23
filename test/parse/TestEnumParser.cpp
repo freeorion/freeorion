@@ -313,47 +313,47 @@ BOOST_AUTO_TEST_CASE(PlanetTypeParser) {
     // Literal is number of tests, not number of enums.
     BOOST_REQUIRE_MESSAGE(NUM_PLANET_TYPES == 11, "Untested enumeration value.");
 
-    BOOST_CHECK(parse("Swamp", result, parse::detail::planet_type_rules().enum_expr));
+    BOOST_CHECK(parse("Swamp", result, planet_type_rules.enum_expr));
     BOOST_CHECK(result == PT_SWAMP);
 
-    BOOST_CHECK(parse("Toxic", result, parse::detail::planet_type_rules().enum_expr));
+    BOOST_CHECK(parse("Toxic", result, planet_type_rules.enum_expr));
     BOOST_CHECK(result == PT_TOXIC);
 
-    BOOST_CHECK(parse("Inferno", result, parse::detail::planet_type_rules().enum_expr));
+    BOOST_CHECK(parse("Inferno", result, planet_type_rules.enum_expr));
     BOOST_CHECK(result == PT_INFERNO);
 
-    BOOST_CHECK(parse("Radiated", result, parse::detail::planet_type_rules().enum_expr));
+    BOOST_CHECK(parse("Radiated", result, planet_type_rules.enum_expr));
     BOOST_CHECK(result == PT_RADIATED);
 
-    BOOST_CHECK(parse("Barren", result, parse::detail::planet_type_rules().enum_expr));
+    BOOST_CHECK(parse("Barren", result, planet_type_rules.enum_expr));
     BOOST_CHECK(result == PT_BARREN);
 
-    BOOST_CHECK(parse("Tundra", result, parse::detail::planet_type_rules().enum_expr));
+    BOOST_CHECK(parse("Tundra", result, planet_type_rules.enum_expr));
     BOOST_CHECK(result == PT_TUNDRA);
 
-    BOOST_CHECK(parse("Desert", result, parse::detail::planet_type_rules().enum_expr));
+    BOOST_CHECK(parse("Desert", result, planet_type_rules.enum_expr));
     BOOST_CHECK(result == PT_DESERT);
 
-    BOOST_CHECK(parse("Terran", result, parse::detail::planet_type_rules().enum_expr));
+    BOOST_CHECK(parse("Terran", result, planet_type_rules.enum_expr));
     BOOST_CHECK(result == PT_TERRAN);
 
-    BOOST_CHECK(parse("Ocean", result, parse::detail::planet_type_rules().enum_expr));
+    BOOST_CHECK(parse("Ocean", result, planet_type_rules.enum_expr));
     BOOST_CHECK(result == PT_OCEAN);
 
-    BOOST_CHECK(parse("Asteroids", result, parse::detail::planet_type_rules().enum_expr));
+    BOOST_CHECK(parse("Asteroids", result, planet_type_rules.enum_expr));
     BOOST_CHECK(result == PT_ASTEROIDS);
 
-    BOOST_CHECK(parse("GasGiant", result, parse::detail::planet_type_rules().enum_expr));
+    BOOST_CHECK(parse("GasGiant", result, planet_type_rules.enum_expr));
     BOOST_CHECK(result == PT_GASGIANT);
 
     // XXX: is not modifying result the correct behaviour?
     result = INVALID_PLANET_TYPE;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::detail::planet_type_rules().enum_expr));
+    BOOST_CHECK(!parse("DoesNotExist", result, planet_type_rules.enum_expr));
     BOOST_CHECK(result == INVALID_PLANET_TYPE);
 
     // XXX: is not modifying result the correct behaviour?
     result = NUM_PLANET_TYPES;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::detail::planet_type_rules().enum_expr));
+    BOOST_CHECK(!parse("DoesNotExist", result, planet_type_rules.enum_expr));
     BOOST_CHECK(result == NUM_PLANET_TYPES);
 }
 

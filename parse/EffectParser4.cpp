@@ -22,7 +22,8 @@ namespace parse { namespace detail {
         effect_parser_rules_4::base_type(start, "effect_parser_rules_4"),
         int_rules(tok, condition_parser, string_grammar),
         double_rules(tok, condition_parser, string_grammar),
-        star_type_rules(tok)
+        star_type_rules(tok),
+        planet_type_rules(tok)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -39,7 +40,7 @@ namespace parse { namespace detail {
 
         create_planet
             =   (       tok.CreatePlanet_
-                        >   labeller.rule(Type_token)        >   parse::detail::planet_type_rules().expr [ _a = _1 ]
+                        >   labeller.rule(Type_token)        >   planet_type_rules.expr [ _a = _1 ]
                         >   labeller.rule(PlanetSize_token)  >   parse::detail::planet_size_rules().expr [ _b = _1 ]
                         > -(labeller.rule(Name_token)        >   string_grammar      [ _c = _1 ])
                         > -(labeller.rule(Effects_token)

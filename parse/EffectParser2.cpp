@@ -22,7 +22,8 @@ namespace parse { namespace detail {
         effect_parser_rules_2::base_type(start, "effect_parser_rules_2"),
         int_rules(tok, condition_parser, string_grammar),
         double_rules(tok, condition_parser, string_grammar),
-        visibility_rules(tok, labeller)
+        visibility_rules(tok, labeller),
+        planet_type_rules(tok)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -72,7 +73,7 @@ namespace parse { namespace detail {
 
         set_planet_type
             =    tok.SetPlanetType_
-            >    labeller.rule(Type_token) > parse::detail::planet_type_rules().expr [ _val = new_<Effect::SetPlanetType>(_1) ]
+            >    labeller.rule(Type_token) > planet_type_rules.expr [ _val = new_<Effect::SetPlanetType>(_1) ]
             ;
 
         set_planet_size
