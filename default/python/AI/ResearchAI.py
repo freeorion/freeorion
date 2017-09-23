@@ -683,7 +683,7 @@ def generate_classic_research_orders():
                 tech_base.update(missing_prereqs + [tech])
         cum_cost = 0
         print "  Enqueued Tech: %20s \t\t %8s \t %s" % ("Name", "Cost", "CumulativeCost")
-        for name in techs_to_add:
+        for name in techs_to_add[:10]:
             try:
                 enqueue_res = fo.issueEnqueueTechOrder(name, -1)
                 if enqueue_res == 1:
