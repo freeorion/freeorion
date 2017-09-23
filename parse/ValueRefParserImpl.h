@@ -41,6 +41,8 @@ const complex_variable_rule<std::string>&       string_var_complex(const parse::
 template <typename T>
 void initialize_nonnumeric_statistic_parser(
     parse::detail::statistic_rule<T>& statistic,
+    const parse::lexer& tok,
+    const parse::condition_parser_rule& condition_parser,
     const typename parse::value_ref_rule<T>& value_ref)
 {
     using boost::phoenix::construct;
@@ -52,12 +54,10 @@ void initialize_nonnumeric_statistic_parser(
     boost::spirit::qi::_b_type _b;
     boost::spirit::qi::_val_type _val;
 
-    const parse::lexer& tok = parse::lexer::instance();
-
     statistic
         =   (tok.Statistic_ >>  tok.Mode_ [ _b = ValueRef::MODE ])
             >   parse::detail::label(Value_token)     >     value_ref [ _a = _1 ]
-            >   parse::detail::label(Condition_token) >     parse::detail::condition_parser
+            >   parse::detail::label(Condition_token) >     condition_parser
                 [ _val = new_<ValueRef::Statistic<T>>(_a, _b, _1) ]
         ;
 }
@@ -140,7 +140,7 @@ enum_value_ref_rules<T>::enum_value_ref_rules(const std::string& type_name,
             =   functional_expr
             ;
 
-        initialize_nonnumeric_statistic_parser<T>(statistic_expr, statistic_sub_value_ref);
+        initialize_nonnumeric_statistic_parser<T>(statistic_expr, tok, condition_parser, statistic_sub_value_ref);
 
         primary_expr
             =   constant_expr
