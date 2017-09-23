@@ -275,6 +275,7 @@ namespace parse { namespace detail {
         universe_object_type_parser_rules universe_object_type_rules;
         planet_type_parser_rules planet_type_rules;
         planet_size_parser_rules planet_size_rules;
+        planet_environment_parser_rules planet_environment_rules;
     };
 
     struct condition_parser_rules_7 : public condition_parser_grammar {

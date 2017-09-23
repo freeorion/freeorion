@@ -239,7 +239,11 @@ struct enum_value_ref_rules {
     name_token_rule container_type_rule;
 };
 
-enum_value_ref_rules<PlanetEnvironment>& planet_environment_rules();
+    struct planet_environment_parser_rules :
+        public parse::detail::enum_value_ref_rules<PlanetEnvironment>
+    {
+        planet_environment_parser_rules(const parse::lexer& tok);
+    };
 
     struct planet_size_parser_rules :
         public parse::detail::enum_value_ref_rules<PlanetSize>

@@ -57,7 +57,8 @@ namespace {
             condition_parser(parse::detail::condition_parser),
             string_grammar(tok, condition_parser),
             effects_group_grammar(tok, labeller, condition_parser, string_grammar),
-            planet_type_rules(tok)
+            planet_type_rules(tok),
+            planet_environment_rules(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -105,7 +106,7 @@ namespace {
 
             environment_map_element
                 =    labeller.rule(Type_token)        > planet_type_rules.enum_expr [ _a = _1 ]
-                >    labeller.rule(Environment_token) > parse::detail::planet_environment_rules().enum_expr
+                >    labeller.rule(Environment_token) > planet_environment_rules.enum_expr
                      [ _val = construct<std::pair<PlanetType, PlanetEnvironment>>(_a, _1) ]
                 ;
 
@@ -258,6 +259,7 @@ namespace {
         species_rule                    species;
         start_rule                      start;
         parse::detail::planet_type_parser_rules planet_type_rules;
+        parse::detail::planet_environment_parser_rules planet_environment_rules;
     };
 }
 
