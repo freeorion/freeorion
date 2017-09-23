@@ -157,6 +157,7 @@ struct enum_value_ref_rules {
         statistic_sub_value_ref
             =   constant_expr
             |   bound_variable_expr
+            |   free_variable_expr
             |   complex_expr
             ;
 
@@ -164,9 +165,9 @@ struct enum_value_ref_rules {
             =   (
                     (
                         (
-                            tok.OneOf_      [ _c = ValueRef::RANDOM_PICK ]
-                        |   tok.Min_        [ _c = ValueRef::MINIMUM ]
-                        |   tok.Max_        [ _c = ValueRef::MAXIMUM ]
+                            tok.OneOf_  [ _c = ValueRef::RANDOM_PICK ]
+                        |   tok.Min_    [ _c = ValueRef::MINIMUM ]
+                        |   tok.Max_    [ _c = ValueRef::MAXIMUM ]
                         )
                         >  '('  >   expr [ push_back(_d, _1) ]
                         >*(','  >   expr [ push_back(_d, _1) ] )
@@ -186,6 +187,7 @@ struct enum_value_ref_rules {
 
         primary_expr
             =   constant_expr
+            |   free_variable_expr
             |   bound_variable_expr
             |   statistic_expr
             |   complex_expr
@@ -195,6 +197,7 @@ struct enum_value_ref_rules {
         debug(variable_name);
         debug(enum_expr);
         debug(constant_expr);
+        debug(free_variable_expr);
         debug(bound_variable_expr);
         debug(statistic_value_ref_expr);
         debug(statistic_expr);
@@ -205,9 +208,10 @@ struct enum_value_ref_rules {
 
         variable_name.name(type_name + " variable name");
         enum_expr.name(type_name);
-        constant_expr.name(type_name);
+        constant_expr.name(type_name + " constant");
+        free_variable_expr.name(type_name + " free variable");
         bound_variable_expr.name(type_name + " variable");
-        statistic_sub_value_ref.name(type_name + " statistic value reference");
+        statistic_sub_value_ref.name(type_name + " statistic subvalue");
         statistic_expr.name(type_name + " statistic");
         primary_expr.name(type_name + " expression");
         expr.name(type_name + " expression");
@@ -216,6 +220,7 @@ struct enum_value_ref_rules {
     name_token_rule variable_name;
     parse::enum_rule<T> enum_expr;
     parse::value_ref_rule<T> constant_expr;
+    parse::value_ref_rule<T> free_variable_expr;
     variable_rule<T> bound_variable_expr;
     expression_rule<T> functional_expr;
     parse::value_ref_rule<T> primary_expr;

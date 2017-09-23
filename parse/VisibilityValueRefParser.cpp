@@ -14,7 +14,11 @@ namespace parse {
         visibility_parser_rules() :
             enum_value_ref_rules("Visibility")
         {
+            namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
+
+            using phoenix::new_;
+
             qi::_val_type _val;
 
             const parse::lexer& tok = parse::lexer::instance();
@@ -27,6 +31,10 @@ namespace parse {
                 |   tok.Basic_      [ _val = VIS_BASIC_VISIBILITY ]
                 |   tok.Partial_    [ _val = VIS_PARTIAL_VISIBILITY ]
                 |   tok.Full_       [ _val = VIS_FULL_VISIBILITY ]
+                ;
+
+            free_variable_expr
+                =   tok.Value_      [ _val = new_<ValueRef::Variable<Visibility>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
                 ;
 
             complex_expr
