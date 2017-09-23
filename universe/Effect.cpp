@@ -3524,7 +3524,8 @@ unsigned int GenerateSitRepMessage::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetOverlayTexture                                     //
 ///////////////////////////////////////////////////////////
-SetOverlayTexture::SetOverlayTexture(const std::string& texture, ValueRef::ValueRefBase<double>* size) :
+SetOverlayTexture::SetOverlayTexture(const std::string& texture,
+                                     ValueRef::ValueRefBase<double>* size) :
     m_texture(texture),
     m_size(size)
 {}

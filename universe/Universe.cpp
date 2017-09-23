@@ -1679,6 +1679,7 @@ void Universe::ApplyEffectDerivedVisibilities() {
     // copy newly determined visibility levels into actual gamestate, without
     // erasing visibilities that aren't affected by the effects
     for (auto vis_entry : new_empire_object_visibilities) {
+        // TODO: Implement This!
     }
 }
 
