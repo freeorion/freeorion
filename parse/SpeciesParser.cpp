@@ -54,7 +54,7 @@ namespace {
               parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
-            condition_parser(parse::detail::condition_parser),
+            condition_parser(tok),
             string_grammar(tok, condition_parser),
             effects_group_grammar(tok, labeller, condition_parser, string_grammar),
             planet_type_rules(tok, condition_parser),
@@ -245,7 +245,7 @@ namespace {
             void (std::map<std::string, std::unique_ptr<Species>>&)
         > start_rule;
 
-        parse::condition_parser_rule& condition_parser;
+        const parse::conditions_parser_grammar condition_parser;
         const parse::string_parser_grammar string_grammar;
         parse::effects_group_grammar effects_group_grammar;
         foci_rule                       foci;

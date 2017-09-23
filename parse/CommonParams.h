@@ -71,7 +71,7 @@ namespace parse { namespace detail {
 
         common_params_rules(const parse::lexer& tok,
                             parse::detail::Labeller& labeller,
-                            const parse::condition_parser_rule& condition_parser,
+                            const condition_parser_grammar& condition_parser,
                             const parse::value_ref_grammar<std::string>& string_grammar);
 
         parse::castable_as_int_parser_rules    castable_int_rules;

@@ -49,7 +49,7 @@ namespace {
               parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
-            condition_parser(parse::detail::condition_parser),
+            condition_parser(tok),
             string_grammar(tok, condition_parser),
             common_rules(tok, labeller, condition_parser, string_grammar)
         {
@@ -172,7 +172,7 @@ namespace {
             void (std::map<std::string, std::unique_ptr<HullType>>&)
         > start_rule;
 
-        parse::condition_parser_rule& condition_parser;
+        parse::conditions_parser_grammar condition_parser;
         const parse::string_parser_grammar string_grammar;
         parse::detail::common_params_rules common_rules;
         hull_stats_rule                             hull_stats;

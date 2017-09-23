@@ -14,15 +14,6 @@ namespace Condition {
     struct ConditionBase;
 }
 
-namespace parse {
-    typedef detail::rule<
-        Condition::ConditionBase* ()
-    > condition_parser_rule;
-
-    /** Returns a const reference to the Condition parser. */
-    condition_parser_rule& condition_parser();
-}
-
 namespace parse { namespace detail {
     using condition_signature      = Condition::ConditionBase* ();
     using condition_parser_rule    = rule<condition_signature>;
@@ -50,29 +41,29 @@ namespace parse { namespace detail {
         > described_rule;
 
         parse::int_arithmetic_rules     int_rules;
-        parse::condition_parser_rule    all;
-        parse::condition_parser_rule    none;
-        parse::condition_parser_rule    source;
-        parse::condition_parser_rule    root_candidate;
-        parse::condition_parser_rule    target;
-        parse::condition_parser_rule    stationary;
-        parse::condition_parser_rule    aggressive;
-        parse::condition_parser_rule    can_colonize;
-        parse::condition_parser_rule    can_produce_ships;
-        parse::condition_parser_rule    capital;
-        parse::condition_parser_rule    monster;
-        parse::condition_parser_rule    armed;
-        parse::condition_parser_rule    owned_by_1;
-        parse::condition_parser_rule    owned_by_2;
-        parse::condition_parser_rule    owned_by_3;
-        parse::condition_parser_rule    owned_by_4;
+        condition_parser_rule    all;
+        condition_parser_rule    none;
+        condition_parser_rule    source;
+        condition_parser_rule    root_candidate;
+        condition_parser_rule    target;
+        condition_parser_rule    stationary;
+        condition_parser_rule    aggressive;
+        condition_parser_rule    can_colonize;
+        condition_parser_rule    can_produce_ships;
+        condition_parser_rule    capital;
+        condition_parser_rule    monster;
+        condition_parser_rule    armed;
+        condition_parser_rule    owned_by_1;
+        condition_parser_rule    owned_by_2;
+        condition_parser_rule    owned_by_3;
+        condition_parser_rule    owned_by_4;
         owned_by_rule                   owned_by_5;
-        parse::condition_parser_rule    owned_by;
+        condition_parser_rule    owned_by;
         and_or_rule                     and_;
         and_or_rule                     or_;
-        parse::condition_parser_rule    not_;
+        condition_parser_rule    not_;
         described_rule                  described;
-        parse::condition_parser_rule    start;
+        condition_parser_rule    start;
     };
 
     struct condition_parser_rules_2 : public condition_parser_grammar {
@@ -102,7 +93,7 @@ namespace parse { namespace detail {
         common_rule                     design_has_part;
         common_rule                     design_has_part_class;
         common_rule                     in_system;
-        parse::condition_parser_rule    start;
+        condition_parser_rule    start;
     };
 
     struct condition_parser_rules_3 : public condition_parser_grammar {
@@ -167,11 +158,11 @@ namespace parse { namespace detail {
         int_ref_sorting_method_double_ref_rule  number_of;
         int_ref_sorting_method_double_ref_rule  number_of1;
         int_ref_sorting_method_double_ref_rule  number_of2;
-        parse::condition_parser_rule            random;
+        condition_parser_rule            random;
         resource_type_double_ref_rule           owner_stockpile;
         int_ref_int_ref_rule                    resource_supply_connected;
-        parse::condition_parser_rule            can_add_starlane;
-        parse::condition_parser_rule            start;
+        condition_parser_rule            can_add_starlane;
+        condition_parser_rule            start;
     };
 
     struct condition_parser_rules_4 : public condition_parser_grammar {
@@ -207,7 +198,7 @@ namespace parse { namespace detail {
         empire_meter_value_rule         empire_meter_value;
         empire_meter_value_rule         empire_meter_value1;
         empire_meter_value_rule         empire_meter_value2;
-        parse::condition_parser_rule    start;
+        condition_parser_rule    start;
     };
 
 
@@ -217,18 +208,18 @@ namespace parse { namespace detail {
                                  const parse::value_ref_grammar<std::string>& string_grammar);
 
         parse::int_arithmetic_rules     int_rules;
-        parse::condition_parser_rule    has_special;
-        parse::condition_parser_rule    has_tag;
-        parse::condition_parser_rule    owner_has_tech;
-        parse::condition_parser_rule    design_has_hull;
-        parse::condition_parser_rule    predefined_design;
-        parse::condition_parser_rule    design_number;
-        parse::condition_parser_rule    produced_by_empire;
-        parse::condition_parser_rule    visible_to_empire;
-        parse::condition_parser_rule    explored_by_empire;
-        parse::condition_parser_rule    resupplyable_by;
-        parse::condition_parser_rule    object_id;
-        parse::condition_parser_rule    start;
+        condition_parser_rule    has_special;
+        condition_parser_rule    has_tag;
+        condition_parser_rule    owner_has_tech;
+        condition_parser_rule    design_has_hull;
+        condition_parser_rule    predefined_design;
+        condition_parser_rule    design_number;
+        condition_parser_rule    produced_by_empire;
+        condition_parser_rule    visible_to_empire;
+        condition_parser_rule    explored_by_empire;
+        condition_parser_rule    resupplyable_by;
+        condition_parser_rule    object_id;
+        condition_parser_rule    start;
     };
 
     struct condition_parser_rules_6 : public condition_parser_grammar {
@@ -264,15 +255,15 @@ namespace parse { namespace detail {
         > planet_environment_rule;
 
         string_ref_vec_rule             string_ref_vec;
-        parse::condition_parser_rule    homeworld;
+        condition_parser_rule    homeworld;
         building_rule                   building;
-        parse::condition_parser_rule    species;
-        parse::condition_parser_rule    focus_type;
+        condition_parser_rule    species;
+        condition_parser_rule    focus_type;
         planet_type_rule                planet_type;
         planet_size_rule                planet_size;
         planet_environment_rule         planet_environment;
-        parse::condition_parser_rule    object_type;
-        parse::condition_parser_rule    start;
+        condition_parser_rule    object_type;
+        condition_parser_rule    start;
         universe_object_type_parser_rules universe_object_type_rules;
         planet_type_parser_rules planet_type_rules;
         planet_size_parser_rules planet_size_rules;
@@ -298,13 +289,13 @@ namespace parse { namespace detail {
             >
         > string_ref_rule;
 
-        parse::condition_parser_rule            ordered_bombarded_by;
-        parse::condition_parser_rule            contains;
-        parse::condition_parser_rule            contained_by;
+        condition_parser_rule            ordered_bombarded_by;
+        condition_parser_rule            contains;
+        condition_parser_rule            contained_by;
         star_type_vec_rule                      star_type;
         string_ref_rule                         location;
-        parse::condition_parser_rule            owner_has_shippart_available;
-        parse::condition_parser_rule            start;
+        condition_parser_rule            owner_has_shippart_available;
+        condition_parser_rule            start;
         star_type_parser_rules   star_type_rules;
     };
 
@@ -312,9 +303,9 @@ namespace parse { namespace detail {
 
 namespace parse {
     struct conditions_parser_grammar : public detail::condition_parser_grammar {
-        conditions_parser_grammar(const parse::lexer& tok,
-                                  const parse::value_ref_grammar<std::string>& string_grammar);
+        conditions_parser_grammar(const parse::lexer& tok);
 
+        const parse::string_parser_grammar string_grammar;
         detail::condition_parser_rules_1 condition_parser_1;
         detail::condition_parser_rules_2 condition_parser_2;
         detail::condition_parser_rules_3 condition_parser_3;
@@ -322,7 +313,7 @@ namespace parse {
         detail::condition_parser_rules_5 condition_parser_5;
         detail::condition_parser_rules_6 condition_parser_6;
         detail::condition_parser_rules_7 condition_parser_7;
-        condition_parser_rule start;
+        detail::condition_parser_rule start;
     };
 }
 

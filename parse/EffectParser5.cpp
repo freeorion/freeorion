@@ -12,7 +12,7 @@ namespace phoenix = boost::phoenix;
 namespace parse { namespace detail {
     effect_parser_rules_5::effect_parser_rules_5(const effect_parser_grammar& effect_parser,
                                                  Labeller& labeller,
-                                                 const parse::condition_parser_rule& condition_parser) :
+                                                 const condition_parser_grammar& condition_parser) :
         effect_parser_rules_5::base_type(start, "effect_parser_rules_5")
     {
         qi::_1_type _1;

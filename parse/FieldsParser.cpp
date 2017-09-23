@@ -42,7 +42,7 @@ namespace {
               parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
-            condition_parser(parse::condition_parser()),
+            condition_parser(tok),
             string_grammar(tok, condition_parser),
             effects_group_grammar(tok, labeller, condition_parser, string_grammar)
         {
@@ -101,7 +101,7 @@ namespace {
             void (std::map<std::string, std::unique_ptr<FieldType>>&)
         > start_rule;
 
-        const parse::condition_parser_rule& condition_parser;
+        const parse::conditions_parser_grammar condition_parser;
         const parse::string_parser_grammar string_grammar;
         parse::effects_group_grammar effects_group_grammar;
         field_rule          field;

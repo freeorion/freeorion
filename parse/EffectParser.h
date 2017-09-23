@@ -85,7 +85,7 @@ namespace parse { namespace detail {
     struct effect_parser_rules_2 : public effect_parser_grammar {
         effect_parser_rules_2(const parse::lexer& tok,
                               Labeller& labeller,
-                              const parse::condition_parser_rule& condition_parser,
+                              const condition_parser_grammar& condition_parser,
                               const parse::value_ref_grammar<std::string>& string_grammar);
 
         typedef parse::detail::rule<
@@ -139,7 +139,7 @@ namespace parse { namespace detail {
     struct effect_parser_rules_3 : public effect_parser_grammar {
         effect_parser_rules_3(const parse::lexer& tok,
                               Labeller& labeller,
-                              const parse::condition_parser_rule& condition_parser,
+                              const condition_parser_grammar& condition_parser,
                               const parse::value_ref_grammar<std::string>& string_grammar);
 
         typedef parse::detail::rule<
@@ -175,7 +175,7 @@ namespace parse { namespace detail {
         effect_parser_rules_4(const parse::lexer& tok,
                               const effect_parser_grammar& effect_parser,
                               Labeller& labeller,
-                              const parse::condition_parser_rule& condition_parser,
+                              const condition_parser_grammar& condition_parser,
                               const parse::value_ref_grammar<std::string>& string_grammar);
 
         typedef parse::detail::rule<
@@ -251,7 +251,7 @@ namespace parse { namespace detail {
     struct effect_parser_rules_5 : public effect_parser_grammar {
         effect_parser_rules_5(const effect_parser_grammar& effect_parser,
                               Labeller& labeller,
-                              const parse::condition_parser_rule& condition_parser);
+                              const condition_parser_grammar& condition_parser);
 
         typedef parse::detail::rule<
             Effect::EffectBase* (),
@@ -274,7 +274,7 @@ namespace parse {
     struct effects_parser_grammar : public detail::effect_parser_grammar {
         effects_parser_grammar(const lexer& tok,
                                detail::Labeller& labeller,
-                               const parse::condition_parser_rule& condition_parser,
+                               const detail::condition_parser_grammar& condition_parser,
                                const parse::value_ref_grammar<std::string>& string_grammar);
 
         detail::effect_parser_rules_1 effect_parser_1;
@@ -291,7 +291,7 @@ namespace parse {
     struct effects_group_grammar : public detail::grammar<effects_group_signature> {
         effects_group_grammar(const lexer& tok,
                               detail::Labeller& labeller,
-                              const parse::condition_parser_rule& condition_parser,
+                              const detail::condition_parser_grammar& condition_parser,
                               const parse::value_ref_grammar<std::string>& string_grammar);
 
         typedef parse::detail::rule<

@@ -174,8 +174,6 @@ namespace parse {
         debug(detail::int_);
         debug(detail::double_);
 #endif
-
-        condition_parser();
     }
 
     using namespace boost::xpressive;

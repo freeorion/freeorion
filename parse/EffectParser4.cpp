@@ -16,7 +16,7 @@ namespace parse { namespace detail {
         const parse::lexer& tok,
         const effect_parser_grammar& effect_parser,
         Labeller& labeller,
-        const parse::condition_parser_rule& condition_parser,
+        const condition_parser_grammar& condition_parser,
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         effect_parser_rules_4::base_type(start, "effect_parser_rules_4"),

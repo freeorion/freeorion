@@ -62,7 +62,7 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lex
 
 parse::castable_as_int_parser_rules::castable_as_int_parser_rules(
     const parse::lexer& tok,
-    const parse::condition_parser_rule& condition_parser,
+    const parse::detail::condition_parser_grammar& condition_parser,
     const parse::value_ref_grammar<std::string>& string_grammar
 ) :
     int_rules(tok, condition_parser, string_grammar),
@@ -95,7 +95,7 @@ parse::castable_as_int_parser_rules::castable_as_int_parser_rules(
 
 parse::int_arithmetic_rules::int_arithmetic_rules(
     const parse::lexer& tok,
-    const parse::condition_parser_rule& condition_parser,
+    const parse::detail::condition_parser_grammar& condition_parser,
     const parse::value_ref_grammar<std::string>& string_grammar
 ) :
     arithmetic_rules("integer", condition_parser),

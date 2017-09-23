@@ -3,7 +3,8 @@
 
 namespace parse {
     double_complex_parser_grammar::double_complex_parser_grammar(
-        const parse::lexer& tok, const parse::condition_parser_rule& condition_parser,
+        const parse::lexer& tok,
+        const detail::condition_parser_grammar& condition_parser,
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         double_complex_parser_grammar::base_type(start, "double_complex_parser_grammar"),

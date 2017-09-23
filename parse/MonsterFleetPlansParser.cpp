@@ -33,7 +33,9 @@ namespace {
         rules(const parse::lexer& tok,
               parse::detail::Labeller& labeller,
               const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+              const parse::text_iterator& first, const parse::text_iterator& last) :
+            condition_parser(tok),
+            string_grammar(tok, condition_parser)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -48,8 +50,6 @@ namespace {
             qi::_r1_type _r1;
             qi::_val_type _val;
             qi::eps_type eps;
-
-            auto& condition_parser = parse::detail::condition_parser;
 
             monster_fleet_plan_prefix
                 =    tok.MonsterFleet_
@@ -112,6 +112,8 @@ namespace {
             void (std::vector<MonsterFleetPlan*>&)
         > start_rule;
 
+        parse::conditions_parser_grammar condition_parser;
+        const parse::string_parser_grammar string_grammar;
         generic_rule            monster_fleet_plan_prefix;
         generic_rule            ships;
         generic_rule            spawns;

@@ -76,7 +76,7 @@ namespace {
               parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
-            condition_parser(parse::condition_parser()),
+            condition_parser(tok),
             string_grammar(tok, condition_parser),
             castable_int_rules(parse::lexer::instance(), condition_parser, string_grammar),
             double_rules(parse::lexer::instance(), condition_parser, string_grammar),
@@ -234,7 +234,7 @@ namespace {
             void (TechManager::TechContainer&)
         > start_rule;
 
-        parse::condition_parser_rule& condition_parser;
+        parse::conditions_parser_grammar condition_parser;
         const parse::string_parser_grammar string_grammar;
         parse::castable_as_int_parser_rules     castable_int_rules;
         parse::double_parser_rules  double_rules;
