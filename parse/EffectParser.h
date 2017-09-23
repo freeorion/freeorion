@@ -133,6 +133,7 @@ namespace parse { namespace detail {
         set_stockpile_or_vis_rule         set_visibility;
         parse::detail::effect_parser_rule start;
         planet_type_parser_rules planet_type_rules;
+        planet_size_parser_rules planet_size_rules;
     };
 
     struct effect_parser_rules_3 : public effect_parser_grammar {
@@ -244,6 +245,7 @@ namespace parse { namespace detail {
         parse::detail::effect_parser_rule       start;
         parse::detail::star_type_parser_rules   star_type_rules;
         parse::detail::planet_type_parser_rules planet_type_rules;
+        parse::detail::planet_size_parser_rules planet_size_rules;
     };
 
     struct effect_parser_rules_5 : public effect_parser_grammar {

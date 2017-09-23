@@ -31,7 +31,8 @@ namespace {
             const parse::value_ref_grammar<std::string>& string_grammar
         ) :
             universe_object_type_rules(tok),
-            planet_type_rules(tok)
+            planet_type_rules(tok),
+            planet_size_rules(tok)
         {
             qi::_1_type _1;
             qi::_a_type _a;
@@ -94,8 +95,8 @@ namespace {
                     >>  parse::detail::label(Size_token)
                     )
                 >   (
-                        ('[' > +parse::detail::planet_size_rules().expr [ push_back(_a, _1) ] > ']')
-                    |    parse::detail::planet_size_rules().expr [ push_back(_a, _1) ]
+                        ('[' > +planet_size_rules.expr [ push_back(_a, _1) ] > ']')
+                    |    planet_size_rules.expr [ push_back(_a, _1) ]
                     )
                     [ _val = new_<Condition::PlanetSize>(_a) ]
                 ;
@@ -194,6 +195,7 @@ namespace {
         parse::condition_parser_rule    start;
         parse::detail::universe_object_type_parser_rules universe_object_type_rules;
         parse::detail::planet_type_parser_rules planet_type_rules;
+        parse::detail::planet_size_parser_rules planet_size_rules;
     };
 }
 
@@ -210,7 +212,8 @@ namespace parse { namespace detail {
     ) :
         condition_parser_rules_6::base_type(start, "condition_parser_rules_6"),
         universe_object_type_rules(tok),
-        planet_type_rules(tok)
+        planet_type_rules(tok),
+        planet_size_rules(tok)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -273,8 +276,8 @@ namespace parse { namespace detail {
                  >>  parse::detail::label(Size_token)
                 )
             >   (
-                ('[' > +parse::detail::planet_size_rules().expr [ push_back(_a, _1) ] > ']')
-                |    parse::detail::planet_size_rules().expr [ push_back(_a, _1) ]
+                ('[' > +planet_size_rules.expr [ push_back(_a, _1) ] > ']')
+                |    planet_size_rules.expr [ push_back(_a, _1) ]
             )
             [ _val = new_<Condition::PlanetSize>(_a) ]
             ;

@@ -275,35 +275,35 @@ BOOST_AUTO_TEST_CASE(PlanetSizeParser) {
     // XXX: SZ_NOWORLD has no token, so no test, +1
     BOOST_REQUIRE_MESSAGE(NUM_PLANET_SIZES == 7 + 1, "Untested enumeration value.");
 
-    BOOST_CHECK(parse("Tiny", result, parse::detail::planet_size_rules().enum_expr));
+    BOOST_CHECK(parse("Tiny", result, planet_size_rules.enum_expr));
     BOOST_CHECK(result == SZ_TINY);
 
-    BOOST_CHECK(parse("Small", result, parse::detail::planet_size_rules().enum_expr));
+    BOOST_CHECK(parse("Small", result, planet_size_rules.enum_expr));
     BOOST_CHECK(result == SZ_SMALL);
 
-    BOOST_CHECK(parse("Medium", result, parse::detail::planet_size_rules().enum_expr));
+    BOOST_CHECK(parse("Medium", result, planet_size_rules.enum_expr));
     BOOST_CHECK(result == SZ_MEDIUM);
 
-    BOOST_CHECK(parse("Large", result, parse::detail::planet_size_rules().enum_expr));
+    BOOST_CHECK(parse("Large", result, planet_size_rules.enum_expr));
     BOOST_CHECK(result == SZ_LARGE);
 
-    BOOST_CHECK(parse("Huge", result, parse::detail::planet_size_rules().enum_expr));
+    BOOST_CHECK(parse("Huge", result, planet_size_rules.enum_expr));
     BOOST_CHECK(result == SZ_HUGE);
 
-    BOOST_CHECK(parse("Asteroids", result, parse::detail::planet_size_rules().enum_expr));
+    BOOST_CHECK(parse("Asteroids", result, planet_size_rules.enum_expr));
     BOOST_CHECK(result == SZ_ASTEROIDS);
 
-    BOOST_CHECK(parse("GasGiant", result, parse::detail::planet_size_rules().enum_expr));
+    BOOST_CHECK(parse("GasGiant", result, planet_size_rules.enum_expr));
     BOOST_CHECK(result == SZ_GASGIANT);
 
     // XXX: is not modifying result the correct behaviour?
     result = INVALID_PLANET_SIZE;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::detail::planet_size_rules().enum_expr));
+    BOOST_CHECK(!parse("DoesNotExist", result, planet_size_rules.enum_expr));
     BOOST_CHECK(result == INVALID_PLANET_SIZE);
 
     // XXX: is not modifying result the correct behaviour?
     result = NUM_PLANET_SIZES;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::detail::planet_size_rules().enum_expr));
+    BOOST_CHECK(!parse("DoesNotExist", result, planet_size_rules.enum_expr));
     BOOST_CHECK(result == NUM_PLANET_SIZES);
 }
 
