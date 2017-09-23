@@ -3710,10 +3710,8 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
 
 std::string SetVisibility::Dump() const {
     std::string retval = DumpIndent();
-    if (m_vis)
-        retval += "SetVisibility visibility = " + m_vis->Dump();
 
-    retval += DumpIndent() + "affiliation = ";
+    retval += DumpIndent() + "SetVisibility affiliation = ";
     switch (m_affiliation) {
     case AFFIL_SELF:    retval += "TheEmpire";  break;
     case AFFIL_ENEMY:   retval += "EnemyOf";    break;
@@ -3726,6 +3724,9 @@ std::string SetVisibility::Dump() const {
 
     if (m_empire_id)
         retval += " empire = " + m_empire_id->Dump();
+
+    if (m_vis)
+        retval += " visibility = " + m_vis->Dump();
 
     if (m_condition)
         retval += " condition = " + m_condition->Dump();

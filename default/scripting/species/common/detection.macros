@@ -44,5 +44,5 @@ COMMUNAL_VISION
                 Planet
                 Not Unowned
             ]
-            effects = SetVisibility visibility = Full empire = Source.Owner
+            effects = SetVisibility empire = Source.Owner visibility = Full 
 '''

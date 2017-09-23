@@ -101,8 +101,7 @@ namespace {
             set_visibility
                 =    tok.SetVisibility_
                 >   (
-                        parse::detail::label(Visibility_token) > parse::detail::visibility_rules().expr [ _c = _1 ]
-                    > (
+                      (
                         (   // empire id specified, optionally with an affiliation type:
                             // useful to specify a single recipient empire, or the allies
                             // or enemies of a single empire
@@ -120,6 +119,7 @@ namespace {
                             )
                         )
                      )
+                    >  parse::detail::label(Visibility_token) > parse::detail::visibility_rules().expr [ _c = _1 ]
                     >-(parse::detail::label(Condition_token) > parse::detail::condition_parser [ _e = _1 ])
                     ) [ _val = new_<Effect::SetVisibility>(_c, _d, _b, _e) ]
                 ;

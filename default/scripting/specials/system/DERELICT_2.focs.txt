@@ -23,7 +23,7 @@ Special
                 ]
             ]
             effects = [
-                SetVisibility visibility = Full empire = Target.Owner condition = And [
+                SetVisibility empire = Target.Owner visibility = Full condition = And [
                     Or [
                         System
                         Planet
