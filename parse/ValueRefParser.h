@@ -243,7 +243,11 @@ enum_value_ref_rules<PlanetEnvironment>& planet_environment_rules();
 
 enum_value_ref_rules<PlanetSize>& planet_size_rules();
 
-enum_value_ref_rules<PlanetType>& planet_type_rules();
+    struct planet_type_parser_rules :
+        public parse::detail::enum_value_ref_rules<PlanetType>
+    {
+        planet_type_parser_rules(const parse::lexer& tok);
+    };
 
     struct star_type_parser_rules :
         public enum_value_ref_rules<StarType>

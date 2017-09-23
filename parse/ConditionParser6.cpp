@@ -30,7 +30,8 @@ namespace {
             const parse::lexer& tok,
             const parse::value_ref_grammar<std::string>& string_grammar
         ) :
-            universe_object_type_rules(tok)
+            universe_object_type_rules(tok),
+            planet_type_rules(tok)
         {
             qi::_1_type _1;
             qi::_a_type _a;
@@ -82,8 +83,8 @@ namespace {
                     >>  parse::detail::label(Type_token)
                     )
                 >   (
-                        ('[' > +parse::detail::planet_type_rules().expr [ push_back(_a, _1) ] > ']')
-                    |    parse::detail::planet_type_rules().expr [ push_back(_a, _1) ]
+                        ('[' > +planet_type_rules.expr [ push_back(_a, _1) ] > ']')
+                    |    planet_type_rules.expr [ push_back(_a, _1) ]
                     )
                     [ _val = new_<Condition::PlanetType>(_a) ]
                 ;
@@ -192,6 +193,7 @@ namespace {
         parse::condition_parser_rule    object_type;
         parse::condition_parser_rule    start;
         parse::detail::universe_object_type_parser_rules universe_object_type_rules;
+        parse::detail::planet_type_parser_rules planet_type_rules;
     };
 }
 
@@ -207,7 +209,8 @@ namespace parse { namespace detail {
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_6::base_type(start, "condition_parser_rules_6"),
-        universe_object_type_rules(tok)
+        universe_object_type_rules(tok),
+        planet_type_rules(tok)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -259,8 +262,8 @@ namespace parse { namespace detail {
                  >>  parse::detail::label(Type_token)
                 )
             >   (
-                ('[' > +parse::detail::planet_type_rules().expr [ push_back(_a, _1) ] > ']')
-                |    parse::detail::planet_type_rules().expr [ push_back(_a, _1) ]
+                ('[' > +planet_type_rules.expr [ push_back(_a, _1) ] > ']')
+                |    planet_type_rules.expr [ push_back(_a, _1) ]
             )
             [ _val = new_<Condition::PlanetType>(_a) ]
             ;

@@ -273,6 +273,7 @@ namespace parse { namespace detail {
         parse::condition_parser_rule    object_type;
         parse::condition_parser_rule    start;
         universe_object_type_parser_rules universe_object_type_rules;
+        planet_type_parser_rules planet_type_rules;
     };
 
     struct condition_parser_rules_7 : public condition_parser_grammar {
