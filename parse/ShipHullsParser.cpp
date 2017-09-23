@@ -51,7 +51,8 @@ namespace {
               const parse::text_iterator& first, const parse::text_iterator& last) :
             condition_parser(tok),
             string_grammar(tok, condition_parser),
-            common_rules(tok, labeller, condition_parser, string_grammar)
+            tags_parser(tok, labeller),
+            common_rules(tok, labeller, condition_parser, string_grammar, tags_parser)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -174,6 +175,7 @@ namespace {
 
         parse::conditions_parser_grammar condition_parser;
         const parse::string_parser_grammar string_grammar;
+        parse::detail::tags_grammar tags_parser;
         parse::detail::common_params_rules common_rules;
         hull_stats_rule                             hull_stats;
         slot_rule                                   slot;

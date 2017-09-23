@@ -28,38 +28,6 @@ namespace std {
 #endif
 
 namespace {
-    struct tags_rules {
-        tags_rules() {
-            namespace phoenix = boost::phoenix;
-            namespace qi = boost::spirit::qi;
-
-            using phoenix::insert;
-
-            qi::_1_type _1;
-            qi::_r1_type _r1;
-
-            const parse::lexer& tok = parse::lexer::instance();
-
-            start
-                =  -(
-                        parse::detail::label(Tags_token)
-                    >>  (
-                            ('[' > +tok.string [ insert(_r1, _1) ] > ']')
-                            |   tok.string [ insert(_r1, _1) ]
-                        )
-                    )
-                ;
-
-            start.name("Tags");
-
-#if DEBUG_PARSERS
-            debug(start);
-#endif
-        }
-
-        parse::detail::tags_rule start;
-    };
-
     struct color_parser_rules {
         color_parser_rules() {
             namespace phoenix = boost::phoenix;
@@ -580,11 +548,6 @@ namespace parse {
         debug(start);
 #endif
     }
-
-        tags_rule& tags_parser() {
-            static tags_rules rules;
-            return rules.start;
-        }
 
         color_parser_rule& color_parser() {
             static color_parser_rules rules;
