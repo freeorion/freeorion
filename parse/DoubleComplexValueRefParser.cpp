@@ -4,6 +4,7 @@
 namespace parse {
     double_complex_parser_grammar::double_complex_parser_grammar(
         const parse::lexer& tok,
+        parse::detail::Labeller& labeller,
         const detail::condition_parser_grammar& condition_parser,
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :
@@ -38,43 +39,43 @@ namespace parse {
                 |   tok.HullSpeed_          [ _a = construct<std::string>(_1) ]
                 |   tok.PartCapacity_       [ _a = construct<std::string>(_1) ]
                 |   tok.PartSecondaryStat_  [ _a = construct<std::string>(_1) ]
-              ) >   detail::label(Name_token) > string_grammar [ _d = _1 ]
+              ) >   labeller.rule(Name_token) > string_grammar [ _d = _1 ]
                 [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         empire_meter_value
             = (     tok.EmpireMeterValue_ [ _a = construct<std::string>(_1)]
-                 >  parse::detail::label(Empire_token) > simple_int[ _b = _1]
-                 >  parse::detail::label(Meter_token) > tok.string[ _d = new_<ValueRef::Constant<std::string>>(_1)]
+                 >  labeller.rule(Empire_token) > simple_int[ _b = _1]
+                 >  labeller.rule(Meter_token) > tok.string[ _d = new_<ValueRef::Constant<std::string>>(_1)]
               )     [_val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e)]
             ;
 
         direct_distance
             = (     tok.DirectDistanceBetween_ [ _a = construct<std::string>(_1) ]
-                 >  parse::detail::label(Object_token) > simple_int [ _b = _1 ]
-                 >  parse::detail::label(Object_token) > simple_int [ _c = _1 ]
+                 >  labeller.rule(Object_token) > simple_int [ _b = _1 ]
+                 >  labeller.rule(Object_token) > simple_int [ _c = _1 ]
               )     [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         // in shortest_path would have liked to be able to use
-        //            >   parse::detail::label(Object_token) >   (simple_int [ _b = _1 ] | int_rules.statistic_expr [ _b = _1 ])
-        //            >   parse::detail::label(Object_token) >   (simple_int [ _c = _1 ] | int_rules.statistic_expr [ _c = _1 ])
+        //            >   labeller.rule(Object_token) >   (simple_int [ _b = _1 ] | int_rules.statistic_expr [ _b = _1 ])
+        //            >   labeller.rule(Object_token) >   (simple_int [ _c = _1 ] | int_rules.statistic_expr [ _c = _1 ])
         // but getting crashes upon program start, presumably due to initialization order problems
 
         shortest_path
             =   (
                         tok.ShortestPath_ [ _a = construct<std::string>(_1) ]
-                    >   parse::detail::label(Object_token) > simple_int [ _b = _1 ]
-                    >   parse::detail::label(Object_token) > simple_int [ _c = _1 ]
+                    >   labeller.rule(Object_token) > simple_int [ _b = _1 ]
+                    >   labeller.rule(Object_token) > simple_int [ _c = _1 ]
                 )       [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         species_empire_opinion
             = (
                 ((  tok.SpeciesOpinion_ [ _a = construct<std::string>(TOK_SPECIES_EMPIRE_OPINION) ]
-                   >  parse::detail::label(Species_token) > string_grammar [ _d = _1 ]
+                   >  labeller.rule(Species_token) > string_grammar [ _d = _1 ]
                  )
-                >> parse::detail::label(Empire_token)
+                >> labeller.rule(Empire_token)
                 )  >  simple_int [ _b = _1 ]
               )     [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
             ;
@@ -82,9 +83,9 @@ namespace parse {
         species_species_opinion
             = (
                 ((   tok.SpeciesOpinion_ [ _a = construct<std::string>(TOK_SPECIES_SPECIES_OPINION) ]
-                  >  parse::detail::label(Species_token) >  string_grammar [ _d = _1 ]
+                  >  labeller.rule(Species_token) >  string_grammar [ _d = _1 ]
                  )
-                >> parse::detail::label(Species_token)
+                >> labeller.rule(Species_token)
                 ) >  string_grammar [ _e = _1 ]
               )     [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
             ;
@@ -92,9 +93,9 @@ namespace parse {
         special_capacity
             = (
                 ((  tok.SpecialCapacity_ [ _a = construct<std::string>(_1) ]
-                   >  parse::detail::label(Name_token) > string_grammar [ _d = _1 ]
+                   >  labeller.rule(Name_token) > string_grammar [ _d = _1 ]
                  )
-                >> parse::detail::label(Object_token)
+                >> labeller.rule(Object_token)
                 )  >  simple_int [ _b = _1 ]
               )     [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
             ;

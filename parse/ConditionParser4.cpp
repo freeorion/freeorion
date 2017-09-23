@@ -20,12 +20,13 @@ namespace std {
 namespace parse { namespace detail {
     condition_parser_rules_4::condition_parser_rules_4(
         const parse::lexer& tok,
+        Labeller& labeller,
         const condition_parser_grammar& condition_parser,
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_4::base_type(start, "condition_parser_rules_4"),
-        int_rules(tok, condition_parser, string_grammar),
-        double_rules(tok, condition_parser, string_grammar)
+        int_rules(tok, labeller, condition_parser, string_grammar),
+        double_rules(tok, labeller, condition_parser, string_grammar)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -41,37 +42,37 @@ namespace parse { namespace detail {
         meter_value
             =   (
                 parse::non_ship_part_meter_type_enum() [ _a = _1 ]
-                >  -(parse::detail::label(Low_token)  > double_rules.expr [ _b = _1 ])
-                >  -(parse::detail::label(High_token) > double_rules.expr [ _c = _1 ])
+                >  -(labeller.rule(Low_token)  > double_rules.expr [ _b = _1 ])
+                >  -(labeller.rule(High_token) > double_rules.expr [ _c = _1 ])
             ) [ _val = new_<Condition::MeterValue>(_a, _b, _c) ]
             ;
 
         ship_part_meter_value
             =   (
                 tok.ShipPartMeter_
-                >   parse::detail::label(Part_token)    >   string_grammar [ _e = _1 ]
+                >   labeller.rule(Part_token)    >   string_grammar [ _e = _1 ]
                 >   parse::ship_part_meter_type_enum() [ _a = _1 ]
-                >  -(parse::detail::label(Low_token)    >   double_rules.expr [ _b = _1 ])
-                >  -(parse::detail::label(High_token)   >   double_rules.expr [ _c = _1 ])
+                >  -(labeller.rule(Low_token)    >   double_rules.expr [ _b = _1 ])
+                >  -(labeller.rule(High_token)   >   double_rules.expr [ _c = _1 ])
             ) [ _val = new_<Condition::ShipPartMeterValue>(_e, _a, _b, _c) ]
             ;
 
         empire_meter_value1
             =   (
                 (tok.EmpireMeter_
-                 >>  parse::detail::label(Empire_token))   >   int_rules.expr [ _b = _1 ]
-                >   parse::detail::label(Meter_token)    >   tok.string [ _a = _1 ]
-                >  -(parse::detail::label(Low_token)     >   double_rules.expr [ _c = _1 ])
-                >  -(parse::detail::label(High_token)    >   double_rules.expr [ _d = _1 ])
+                 >>  labeller.rule(Empire_token))   >   int_rules.expr [ _b = _1 ]
+                >   labeller.rule(Meter_token)    >   tok.string [ _a = _1 ]
+                >  -(labeller.rule(Low_token)     >   double_rules.expr [ _c = _1 ])
+                >  -(labeller.rule(High_token)    >   double_rules.expr [ _d = _1 ])
             ) [ _val = new_<Condition::EmpireMeterValue>(_b, _a, _c, _d) ]
             ;
 
         empire_meter_value2
             =   (
                 (tok.EmpireMeter_
-                 >>  parse::detail::label(Meter_token))    >   tok.string [ _a = _1 ]
-                >  -(parse::detail::label(Low_token)     >   double_rules.expr [ _c = _1 ])
-                >  -(parse::detail::label(High_token)    >   double_rules.expr [ _d = _1 ])
+                 >>  labeller.rule(Meter_token))    >   tok.string [ _a = _1 ]
+                >  -(labeller.rule(Low_token)     >   double_rules.expr [ _c = _1 ])
+                >  -(labeller.rule(High_token)    >   double_rules.expr [ _d = _1 ])
             ) [ _val = new_<Condition::EmpireMeterValue>(_a, _c, _d) ]
             ;
 

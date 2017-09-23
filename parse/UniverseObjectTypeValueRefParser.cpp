@@ -8,9 +8,10 @@
 namespace parse { namespace detail {
     universe_object_type_parser_rules::universe_object_type_parser_rules(
         const parse::lexer& tok,
+        Labeller& labeller,
         const condition_parser_grammar& condition_parser
 ) :
-        enum_value_ref_rules("ObjectType", tok, condition_parser)
+        enum_value_ref_rules("ObjectType", tok, labeller, condition_parser)
     {
         boost::spirit::qi::_val_type _val;
 

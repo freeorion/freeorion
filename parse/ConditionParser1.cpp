@@ -21,11 +21,12 @@ namespace std {
 namespace parse { namespace detail {
     condition_parser_rules_1::condition_parser_rules_1(
         const parse::lexer& tok,
+        parse::detail::Labeller& labeller,
         const condition_parser_grammar& condition_parser,
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_1::base_type(start, "condition_parser_rules_1"),
-        int_rules(tok, condition_parser, string_grammar)
+        int_rules(tok, labeller, condition_parser, string_grammar)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -87,14 +88,14 @@ namespace parse { namespace detail {
 
         owned_by_1
             =   (tok.OwnedBy_
-                 >>  parse::detail::label(Empire_token)
+                 >>  labeller.rule(Empire_token)
                 ) > int_rules.expr
             [ _val = new_<Condition::EmpireAffiliation>(_1) ]
             ;
 
         owned_by_2
             =   tok.OwnedBy_
-            >>  parse::detail::label(Affiliation_token) >> tok.AnyEmpire_
+            >>  labeller.rule(Affiliation_token) >> tok.AnyEmpire_
             [ _val = new_<Condition::EmpireAffiliation>( AFFIL_ANY ) ]
             ;
 
@@ -110,8 +111,8 @@ namespace parse { namespace detail {
 
         owned_by_5
             =   (tok.OwnedBy_
-                 >>  parse::detail::label(Affiliation_token) >> parse::empire_affiliation_type_enum() [ _a = _1 ]
-                 >>  parse::detail::label(Empire_token)    ) >  int_rules.expr
+                 >>  labeller.rule(Affiliation_token) >> parse::empire_affiliation_type_enum() [ _a = _1 ]
+                 >>  labeller.rule(Empire_token)    ) >  int_rules.expr
             [ _val = new_<Condition::EmpireAffiliation>(_1, _a) ]
             ;
 
@@ -142,8 +143,8 @@ namespace parse { namespace detail {
 
         described
             =   tok.Described_
-            >   parse::detail::label(Description_token) > tok.string [ _a = _1 ]
-            >   parse::detail::label(Condition_token) > condition_parser
+            >   labeller.rule(Description_token) > tok.string [ _a = _1 ]
+            >   labeller.rule(Condition_token) > condition_parser
             [ _val = new_<Condition::Described>(_1, _a) ]
             ;
 

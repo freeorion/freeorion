@@ -79,7 +79,7 @@ namespace parse { namespace detail {
     extern int_rule int_;
 
 
-    typedef detail::rule<> label_rule;
+    using label_rule = detail::rule<>;
     /** Store label_rules. */
     class Labeller {
         public:
@@ -91,9 +91,6 @@ namespace parse { namespace detail {
         const parse::lexer& m_tok;
         std::unordered_map<const char*, label_rule> m_rules;
     };
-
-    // TODO remove this version of label with the singleton rules
-    label_rule& label(const char* name);
 
     using tags_rule_type    = rule<void (std::set<std::string>&)>;
     using tags_grammar_type = grammar<void (std::set<std::string>&)>;

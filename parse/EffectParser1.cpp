@@ -21,8 +21,8 @@ namespace parse { namespace detail {
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         effect_parser_rules_1::base_type(start, "effect_parser_rules_1"),
-        int_rules(tok, condition_parser, string_grammar),
-        double_rules(tok, condition_parser, string_grammar)
+        int_rules(tok, labeller, condition_parser, string_grammar),
+        double_rules(tok, labeller, condition_parser, string_grammar)
     {
         qi::_1_type _1;
         qi::_a_type _a;

@@ -27,14 +27,15 @@ namespace std {
 namespace parse { namespace detail {
     condition_parser_rules_6::condition_parser_rules_6(
         const parse::lexer& tok,
+        Labeller& labeller,
         const parse::detail::condition_parser_grammar& condition_parser,
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_6::base_type(start, "condition_parser_rules_6"),
-        universe_object_type_rules(tok, condition_parser),
-        planet_type_rules(tok, condition_parser),
-        planet_size_rules(tok, condition_parser),
-        planet_environment_rules(tok, condition_parser)
+        universe_object_type_rules(tok, labeller, condition_parser),
+        planet_type_rules(tok, labeller, condition_parser),
+        planet_size_rules(tok, labeller, condition_parser),
+        planet_environment_rules(tok, labeller, condition_parser)
   {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -52,7 +53,7 @@ namespace parse { namespace detail {
         homeworld
             =   tok.Homeworld_
             >   (
-                (parse::detail::label(Name_token) > string_ref_vec [ _val = new_<Condition::Homeworld>(_1) ])
+                (labeller.rule(Name_token) > string_ref_vec [ _val = new_<Condition::Homeworld>(_1) ])
                 |    eps [ _val = new_<Condition::Homeworld>() ]
             )
             ;
@@ -60,7 +61,7 @@ namespace parse { namespace detail {
         building
             =   (
                 tok.Building_
-                >  -(parse::detail::label(Name_token) > string_ref_vec [ _a = _1 ])
+                >  -(labeller.rule(Name_token) > string_ref_vec [ _a = _1 ])
             )
             [ _val = new_<Condition::Building>(_a) ]
             ;
@@ -68,7 +69,7 @@ namespace parse { namespace detail {
         species
             =   tok.Species_
             >   (
-                (parse::detail::label(Name_token) > string_ref_vec [ _val = new_<Condition::Species>(_1) ])
+                (labeller.rule(Name_token) > string_ref_vec [ _val = new_<Condition::Species>(_1) ])
                 |    eps [ _val = new_<Condition::Species>() ]
             )
             ;
@@ -76,14 +77,14 @@ namespace parse { namespace detail {
         focus_type
             =   tok.Focus_
             >   (
-                (parse::detail::label(Type_token) > string_ref_vec [ _val = new_<Condition::FocusType>(_1) ])
+                (labeller.rule(Type_token) > string_ref_vec [ _val = new_<Condition::FocusType>(_1) ])
                 |        eps [ _val = new_<Condition::FocusType>(std::vector<ValueRef::ValueRefBase<std::string>*>()) ]
             )
             ;
 
         planet_type
             =   (tok.Planet_
-                 >>  parse::detail::label(Type_token)
+                 >>  labeller.rule(Type_token)
                 )
             >   (
                 ('[' > +planet_type_rules.expr [ push_back(_a, _1) ] > ']')
@@ -94,7 +95,7 @@ namespace parse { namespace detail {
 
         planet_size
             =   (tok.Planet_
-                 >>  parse::detail::label(Size_token)
+                 >>  labeller.rule(Size_token)
                 )
             >   (
                 ('[' > +planet_size_rules.expr [ push_back(_a, _1) ] > ']')
@@ -105,13 +106,13 @@ namespace parse { namespace detail {
 
         planet_environment
             =   ((tok.Planet_
-                  >>  parse::detail::label(Environment_token)
+                  >>  labeller.rule(Environment_token)
                  )
                  >   (
                      ('[' > +planet_environment_rules.expr [ push_back(_a, _1) ] > ']')
                      |    planet_environment_rules.expr [ push_back(_a, _1) ]
                  )
-                 >  -(parse::detail::label(Species_token)        >  string_grammar [_b = _1]))
+                 >  -(labeller.rule(Species_token)        >  string_grammar [_b = _1]))
             [ _val = new_<Condition::PlanetEnvironment>(_a, _b) ]
             ;
 
@@ -119,7 +120,7 @@ namespace parse { namespace detail {
             =   universe_object_type_rules.enum_expr [ _val = new_<Condition::Type>(new_<ValueRef::Constant<UniverseObjectType>>(_1)) ]
             |   (
                 tok.ObjectType_
-                >   parse::detail::label(Type_token) > universe_object_type_rules.expr [ _val = new_<Condition::Type>(_1) ]
+                >   labeller.rule(Type_token) > universe_object_type_rules.expr [ _val = new_<Condition::Type>(_1) ]
             )
             ;
 

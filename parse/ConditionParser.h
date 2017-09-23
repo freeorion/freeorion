@@ -21,6 +21,7 @@ namespace parse { namespace detail {
 
     struct condition_parser_rules_1 : public condition_parser_grammar {
         condition_parser_rules_1(const parse::lexer& tok,
+                                 Labeller& labeller,
                                  const condition_parser_grammar& condition_parser,
                                  const parse::value_ref_grammar<std::string>& string_grammar
 );
@@ -68,6 +69,7 @@ namespace parse { namespace detail {
 
     struct condition_parser_rules_2 : public condition_parser_grammar {
         condition_parser_rules_2(const parse::lexer& tok,
+                                 Labeller& labeller,
                                  const condition_parser_grammar& condition_parser,
                                  const parse::value_ref_grammar<std::string>& string_grammar);
 
@@ -98,6 +100,7 @@ namespace parse { namespace detail {
 
     struct condition_parser_rules_3 : public condition_parser_grammar {
         condition_parser_rules_3(const parse::lexer& tok,
+                                 Labeller& labeller,
                                  const condition_parser_grammar& condition_parser,
                                  const parse::value_ref_grammar<std::string>& string_grammar);
 
@@ -167,6 +170,7 @@ namespace parse { namespace detail {
 
     struct condition_parser_rules_4 : public condition_parser_grammar {
         condition_parser_rules_4(const parse::lexer& tok,
+                                 Labeller& labeller,
                                  const condition_parser_grammar& condition_parser,
                                  const parse::value_ref_grammar<std::string>& string_grammar);
 
@@ -204,6 +208,7 @@ namespace parse { namespace detail {
 
     struct condition_parser_rules_5 : public condition_parser_grammar {
         condition_parser_rules_5(const parse::lexer& tok,
+                                 Labeller& labeller,
                                  const condition_parser_grammar& condition_parser,
                                  const parse::value_ref_grammar<std::string>& string_grammar);
 
@@ -224,6 +229,7 @@ namespace parse { namespace detail {
 
     struct condition_parser_rules_6 : public condition_parser_grammar {
         condition_parser_rules_6(const parse::lexer& tok,
+                                 Labeller& labeller,
                                  const condition_parser_grammar& condition_parser,
                                  const parse::value_ref_grammar<std::string>& string_grammar);
 
@@ -272,6 +278,7 @@ namespace parse { namespace detail {
 
     struct condition_parser_rules_7 : public condition_parser_grammar {
         condition_parser_rules_7(const parse::lexer& tok,
+                                 Labeller& labeller,
                                  const condition_parser_grammar& condition_parser,
                                  const parse::value_ref_grammar<std::string>& string_grammar);
 

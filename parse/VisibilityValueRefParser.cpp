@@ -30,8 +30,8 @@ namespace parse { namespace detail {
 
         empire_object_visibility
             =   tok.EmpireObjectVisibility_ [ _a = construct<std::string>(_1) ]
-            >   detail::label(Empire_token) >   simple_int [ _b = _1 ]
-            >   detail::label(Object_token) >   simple_int [ _c = _1 ]
+            >   labeller.rule(Empire_token) >   simple_int [ _b = _1 ]
+            >   labeller.rule(Object_token) >   simple_int [ _c = _1 ]
             [ _val = new_<ValueRef::ComplexVariable<Visibility>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
@@ -52,7 +52,7 @@ namespace parse { namespace detail {
         Labeller& labeller,
         const condition_parser_grammar& condition_parser
     ) :
-        enum_value_ref_rules("Visibility", tok, condition_parser),
+        enum_value_ref_rules("Visibility", tok, labeller, condition_parser),
         visibility_var_complex_grammar(tok, labeller)
     {
         namespace phoenix = boost::phoenix;

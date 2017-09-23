@@ -23,7 +23,7 @@ namespace {
               const parse::text_iterator& first, const parse::text_iterator& last) :
             condition_parser(tok, labeller),
             string_grammar(tok, labeller, condition_parser),
-            double_rules(tok, condition_parser, string_grammar)
+            double_rules(tok, labeller, condition_parser, string_grammar)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;

@@ -12,11 +12,12 @@ namespace phoenix = boost::phoenix;
 namespace parse { namespace detail {
     condition_parser_rules_5::condition_parser_rules_5(
         const parse::lexer& tok,
+        parse::detail::Labeller& labeller,
         const condition_parser_grammar& condition_parser,
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_5::base_type(start, "condition_parser_rules_5"),
-        int_rules(tok, condition_parser, string_grammar)
+        int_rules(tok, labeller, condition_parser, string_grammar)
     {
         qi::_1_type _1;
         qi::_val_type _val;
@@ -25,7 +26,7 @@ namespace parse { namespace detail {
 
         has_special
             =   (   (tok.HasSpecial_
-                     >>  parse::detail::label(Name_token)
+                     >>  labeller.rule(Name_token)
                     ) > string_grammar [ _val = new_<Condition::HasSpecial>(_1) ]
                 )
             |   tok.HasSpecial_ [ _val = new_<Condition::HasSpecial>() ]
@@ -33,7 +34,7 @@ namespace parse { namespace detail {
 
         has_tag
             =   (   (tok.HasTag_
-                     >>  parse::detail::label(Name_token)
+                     >>  labeller.rule(Name_token)
                     ) > string_grammar [ _val = new_<Condition::HasTag>(_1) ]
                 )
             |   tok.HasTag_ [ _val = new_<Condition::HasTag>() ]
@@ -41,49 +42,49 @@ namespace parse { namespace detail {
 
         owner_has_tech
             =   tok.OwnerHasTech_
-            >   parse::detail::label(Name_token) > string_grammar [ _val = new_<Condition::OwnerHasTech>(_1) ]
+            >   labeller.rule(Name_token) > string_grammar [ _val = new_<Condition::OwnerHasTech>(_1) ]
             ;
 
         design_has_hull
             =   tok.DesignHasHull_
-            >   parse::detail::label(Name_token) > string_grammar [ _val = new_<Condition::DesignHasHull>(_1) ]
+            >   labeller.rule(Name_token) > string_grammar [ _val = new_<Condition::DesignHasHull>(_1) ]
             ;
 
         predefined_design
             =   (tok.Design_
-                 >>  parse::detail::label(Name_token)
+                 >>  labeller.rule(Name_token)
                 ) > string_grammar [ _val = new_<Condition::PredefinedShipDesign>(_1) ]
             ;
 
         design_number
             =   (tok.Design_
-                 >>  parse::detail::label(Design_token)
+                 >>  labeller.rule(Design_token)
                 ) > int_rules.expr [ _val = new_<Condition::NumberedShipDesign>(_1) ]
             ;
 
         produced_by_empire // TODO: Lose "empire" part.
             =   tok.ProducedByEmpire_
-            >   parse::detail::label(Empire_token) > int_rules.expr [ _val = new_<Condition::ProducedByEmpire>(_1) ]
+            >   labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Condition::ProducedByEmpire>(_1) ]
             ;
 
         visible_to_empire // TODO: Lose "empire" part.
             =   tok.VisibleToEmpire_
-            >   parse::detail::label(Empire_token) > int_rules.expr [ _val = new_<Condition::VisibleToEmpire>(_1) ]
+            >   labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Condition::VisibleToEmpire>(_1) ]
             ;
 
         explored_by_empire // TODO: Lose "empire" part.
             =    tok.ExploredByEmpire_
-            >    parse::detail::label(Empire_token) > int_rules.expr [ _val = new_<Condition::ExploredByEmpire>(_1) ]
+            >    labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Condition::ExploredByEmpire>(_1) ]
             ;
 
         resupplyable_by
             =   tok.ResupplyableBy_
-            >   parse::detail::label(Empire_token) > int_rules.expr [ _val = new_<Condition::FleetSupplyableByEmpire>(_1) ]
+            >   labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Condition::FleetSupplyableByEmpire>(_1) ]
             ;
 
         object_id
             =   tok.Object_
-            >   parse::detail::label(ID_token) > int_rules.expr [ _val = new_<Condition::ObjectID>(_1) ]
+            >   labeller.rule(ID_token) > int_rules.expr [ _val = new_<Condition::ObjectID>(_1) ]
             ;
 
         start

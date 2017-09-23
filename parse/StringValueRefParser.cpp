@@ -4,7 +4,7 @@
 namespace parse {
     string_parser_grammar::string_parser_grammar(
         const parse::lexer& tok,
-        parse::detail::Labeller& labeller,
+        detail::Labeller& labeller,
         const detail::condition_parser_grammar& condition_parser
     ) :
         string_parser_grammar::base_type(expr, "string_parser_grammar"),
@@ -109,7 +109,8 @@ namespace parse {
             =   operated_expr
             ;
 
-        initialize_nonnumeric_statistic_parser<std::string>(statistic, tok, condition_parser, statistic_sub_value_ref);
+        initialize_nonnumeric_statistic_parser<std::string>(
+            statistic, tok, labeller, condition_parser, statistic_sub_value_ref);
 
         primary_expr
             =   constant
