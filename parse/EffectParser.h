@@ -166,6 +166,7 @@ namespace parse { namespace detail {
         parse::detail::effect_parser_rule           set_star_type;
         parse::detail::effect_parser_rule           set_texture;
         parse::detail::effect_parser_rule           start;
+        parse::detail::star_type_parser_rules   star_type_rules;
     };
 
     struct effect_parser_rules_4 : public effect_parser_grammar {
@@ -240,6 +241,7 @@ namespace parse { namespace detail {
         create_system_rule              create_system_1;
         create_system_rule              create_system_2;
         parse::detail::effect_parser_rule       start;
+        parse::detail::star_type_parser_rules   star_type_rules;
     };
 
     struct effect_parser_rules_5 : public effect_parser_grammar {

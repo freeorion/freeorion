@@ -276,7 +276,8 @@ namespace parse { namespace detail {
     };
 
     struct condition_parser_rules_7 : public condition_parser_grammar {
-        condition_parser_rules_7(const condition_parser_grammar& condition_parser,
+        condition_parser_rules_7(const parse::lexer& tok,
+                                 const condition_parser_grammar& condition_parser,
                                  const parse::value_ref_grammar<std::string>& string_grammar);
 
         typedef parse::detail::rule<
@@ -300,6 +301,7 @@ namespace parse { namespace detail {
         string_ref_rule                         location;
         parse::condition_parser_rule            owner_has_shippart_available;
         parse::condition_parser_rule            start;
+        star_type_parser_rules   star_type_rules;
     };
 
 }}

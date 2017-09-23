@@ -20,10 +20,11 @@ namespace std {
 
 namespace {
     struct condition_parser_rules_7 {
-        condition_parser_rules_7(const parse::condition_parser_rule& condition_parser,
-                                 const parse::value_ref_grammar<std::string>& string_grammar) {
-            const parse::lexer& tok = parse::lexer::instance();
-
+        condition_parser_rules_7(const parse::lexer& tok,
+                                 const parse::condition_parser_rule& condition_parser,
+                                 const parse::value_ref_grammar<std::string>& string_grammar) :
+            star_type_rules(tok)
+        {
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_b_type _b;
@@ -54,8 +55,8 @@ namespace {
                 =    tok.Star_
                 >    parse::detail::label(Type_token)
                 >    (
-                            ('[' > +parse::detail::star_type_rules().expr [ push_back(_a, _1) ] > ']')
-                        |    parse::detail::star_type_rules().expr [ push_back(_a, _1) ]
+                            ('[' > +star_type_rules.expr [ push_back(_a, _1) ] > ']')
+                        |    star_type_rules.expr [ push_back(_a, _1) ]
                      )
                 [ _val = new_<Condition::StarType>(_a) ]
                 ;
@@ -131,24 +132,25 @@ namespace {
         string_ref_rule                         location;
         parse::condition_parser_rule            owner_has_shippart_available;
         parse::condition_parser_rule            start;
+        parse::detail::star_type_parser_rules   star_type_rules;
     };
 }
 
 namespace parse { namespace detail {
     const condition_parser_rule& condition_parser_7() {
         static string_parser_grammar string_grammar(parse::lexer::instance(), parse::condition_parser());
-        static condition_parser_rules_7 retval(parse::condition_parser(), string_grammar);
+        static condition_parser_rules_7 retval(parse::lexer::instance(), parse::condition_parser(), string_grammar);
         return retval.start;
     }
 
     condition_parser_rules_7::condition_parser_rules_7(
+        const parse::lexer& tok,
         const condition_parser_grammar& condition_parser,
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :
-        condition_parser_rules_7::base_type(start, "condition_parser_rules_7")
+        condition_parser_rules_7::base_type(start, "condition_parser_rules_7"),
+        star_type_rules(tok)
     {
-        const parse::lexer& tok = parse::lexer::instance();
-
         qi::_1_type _1;
         qi::_a_type _a;
         qi::_b_type _b;
@@ -179,8 +181,8 @@ namespace parse { namespace detail {
             =    tok.Star_
             >    parse::detail::label(Type_token)
             >    (
-                ('[' > +parse::detail::star_type_rules().expr [ push_back(_a, _1) ] > ']')
-                |    parse::detail::star_type_rules().expr [ push_back(_a, _1) ]
+                ('[' > +star_type_rules.expr [ push_back(_a, _1) ] > ']')
+                |    star_type_rules.expr [ push_back(_a, _1) ]
             )
             [ _val = new_<Condition::StarType>(_a) ]
             ;
