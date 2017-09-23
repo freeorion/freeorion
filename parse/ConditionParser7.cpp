@@ -21,11 +21,12 @@ namespace std {
 namespace parse { namespace detail {
     condition_parser_rules_7::condition_parser_rules_7(
         const parse::lexer& tok,
+        Labeller& labeller,
         const condition_parser_grammar& condition_parser,
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_7::base_type(start, "condition_parser_rules_7"),
-        star_type_rules(tok, condition_parser)
+        star_type_rules(tok, labeller, condition_parser)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -37,25 +38,25 @@ namespace parse { namespace detail {
 
         ordered_bombarded_by
             =    tok.OrderedBombardedBy_
-            >   -parse::detail::label(Condition_token) > condition_parser
+            >   -labeller.rule(Condition_token) > condition_parser
             [ _val = new_<Condition::OrderedBombarded>(_1) ]
             ;
 
         contains
             =    tok.Contains_
-            >   -parse::detail::label(Condition_token) > condition_parser
+            >   -labeller.rule(Condition_token) > condition_parser
             [ _val = new_<Condition::Contains>(_1) ]
             ;
 
         contained_by
             =    tok.ContainedBy_
-            >   -parse::detail::label(Condition_token) > condition_parser
+            >   -labeller.rule(Condition_token) > condition_parser
             [ _val = new_<Condition::ContainedBy>(_1) ]
             ;
 
         star_type
             =    tok.Star_
-            >    parse::detail::label(Type_token)
+            >    labeller.rule(Type_token)
             >    (
                 ('[' > +star_type_rules.expr [ push_back(_a, _1) ] > ']')
                 |    star_type_rules.expr [ push_back(_a, _1) ]
@@ -65,7 +66,7 @@ namespace parse { namespace detail {
 
         location
             =   (tok.Location_
-                 >    parse::detail::label(Type_token) >
+                 >    labeller.rule(Type_token) >
                  (
                      tok.Building_   [ _a = Condition::CONTENT_BUILDING ]
                      |   tok.Species_    [ _a = Condition::CONTENT_SPECIES ]
@@ -74,14 +75,14 @@ namespace parse { namespace detail {
                      |   tok.Special_    [ _a = Condition::CONTENT_SPECIAL ]
                      |   tok.Focus_      [ _a = Condition::CONTENT_FOCUS ]
                  )
-                 >    parse::detail::label(Name_token)   > string_grammar [ _b = _1 ]
-                 >  -(parse::detail::label(Name_token)   > string_grammar [ _c = _1 ]))
+                 >    labeller.rule(Name_token)   > string_grammar [ _b = _1 ]
+                 >  -(labeller.rule(Name_token)   > string_grammar [ _c = _1 ]))
             [ _val = new_<Condition::Location>(_a, _b, _c) ]
             ;
 
         owner_has_shippart_available
             =   (tok.OwnerHasShipPartAvailable_
-                 >>  (parse::detail::label(Name_token)
+                 >>  (labeller.rule(Name_token)
                       > string_grammar [ _val = new_<Condition::OwnerHasShipPartAvailable>(_1) ]
                      )
                 )

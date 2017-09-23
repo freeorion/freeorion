@@ -58,8 +58,8 @@ namespace {
             string_grammar(tok, labeller, condition_parser),
             tags_parser(tok, labeller),
             effects_group_grammar(tok, labeller, condition_parser, string_grammar),
-            planet_type_rules(tok, condition_parser),
-            planet_environment_rules(tok, condition_parser)
+            planet_type_rules(tok, labeller, condition_parser),
+            planet_environment_rules(tok, labeller, condition_parser)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;

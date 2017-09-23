@@ -73,7 +73,7 @@ namespace {
               const parse::text_iterator& first, const parse::text_iterator& last) :
             condition_parser(tok, labeller),
             string_grammar(tok, labeller, condition_parser),
-            double_rules(parse::lexer::instance(), condition_parser, string_grammar),
+            double_rules(tok, labeller, condition_parser, string_grammar),
             effects_group_grammar(tok, labeller, condition_parser, string_grammar)
         {
             namespace phoenix = boost::phoenix;

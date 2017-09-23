@@ -4,6 +4,7 @@
 namespace parse {
     int_complex_parser_grammar::int_complex_parser_grammar(
         const parse::lexer& tok,
+        detail::Labeller& labeller,
         const parse::int_arithmetic_rules& _int_arith_rules,
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :
@@ -27,7 +28,7 @@ namespace parse {
 
         game_rule
             =   tok.GameRule_ [ _a = construct<std::string>(_1) ]
-            >   detail::label(Name_token) >     string_grammar [ _d = _1 ]
+            >   labeller.rule(Name_token) >     string_grammar [ _d = _1 ]
                 [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
          empire_name_ref
@@ -46,59 +47,59 @@ namespace parse {
                     |   tok.SpeciesShipsScrapped_   [ _a = construct<std::string>(_1) ]
                     |   tok.TurnTechResearched_     [ _a = construct<std::string>(_1) ]
                     )
-                >  -(   detail::label(Empire_token) >   int_rules.expr [ _b = _1 ] )
-                >  -(   detail::label(Name_token) >     string_grammar [ _d = _1 ] )
+                >  -(   labeller.rule(Empire_token) >   int_rules.expr [ _b = _1 ] )
+                >  -(   labeller.rule(Name_token) >     string_grammar [ _d = _1 ] )
                 ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         empire_ships_destroyed
             =   (
                     tok.EmpireShipsDestroyed_ [ _a = construct<std::string>(_1) ]
-                    >-( detail::label(Empire_token) >   int_rules.expr [ _b = _1 ] )
-                    >-( detail::label(Empire_token) >   int_rules.expr [ _c = _1 ] )
+                    >-( labeller.rule(Empire_token) >   int_rules.expr [ _b = _1 ] )
+                    >-( labeller.rule(Empire_token) >   int_rules.expr [ _c = _1 ] )
                 ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         jumps_between
             =   (
                     tok.JumpsBetween_ [ _a = construct<std::string>(_1) ]
-                    >   detail::label(Object_token) >   (int_rules.expr [ _b = _1 ] | int_rules.statistic_expr [ _b = _1 ])
-                    >   detail::label(Object_token) >   (int_rules.expr [ _c = _1 ] | int_rules.statistic_expr [ _c = _1 ])
+                    >   labeller.rule(Object_token) >   (int_rules.expr [ _b = _1 ] | int_rules.statistic_expr [ _b = _1 ])
+                    >   labeller.rule(Object_token) >   (int_rules.expr [ _c = _1 ] | int_rules.statistic_expr [ _c = _1 ])
                 ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         //jumps_between_by_empire_supply
         //    =   (
         //                tok.JumpsBetweenByEmpireSupplyConnections_ [ _a = construct<std::string>(_1) ]
-        //            >   detail::label(Object_token) >>   int_rules.expr [ _b = _1 ]
-        //            >   detail::label(Object_token) >>   int_rules.expr [ _c = _1 ]
-        //            >   detail::label(Empire_token) >>   int_rules.expr [ _f = _1 ]
+        //            >   labeller.rule(Object_token) >>   int_rules.expr [ _b = _1 ]
+        //            >   labeller.rule(Object_token) >>   int_rules.expr [ _c = _1 ]
+        //            >   labeller.rule(Empire_token) >>   int_rules.expr [ _f = _1 ]
         //        ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
         //    ;
 
         outposts_owned
             =   (
                 tok.OutpostsOwned_ [ _a = construct<std::string>(_1) ]
-                >-( detail::label(Empire_token) >   int_rules.expr [ _b = _1 ] )
+                >-( labeller.rule(Empire_token) >   int_rules.expr [ _b = _1 ] )
                 ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         parts_in_ship_design
             =   (
                 tok.PartsInShipDesign_[ _a = construct<std::string>(_1) ]
-                >-( detail::label(Name_token)   >   string_grammar [ _d = _1 ] )
-                > ( detail::label(Design_token) >   int_rules.expr [ _b = _1 ] )
+                >-( labeller.rule(Name_token)   >   string_grammar [ _d = _1 ] )
+                > ( labeller.rule(Design_token) >   int_rules.expr [ _b = _1 ] )
             ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         part_class_in_ship_design
             =   (
                         tok.PartOfClassInShipDesign_  [ _a = construct<std::string>(_1) ]
-                    //> ( detail::label(Class_token) >>
+                    //> ( labeller.rule(Class_token) >>
                     //    as_string [ parse::ship_part_class_enum() ]
                     //    [ _d = new_<ValueRef::Constant<std::string>>(_1) ]
                     //  )
-                    > ( detail::label(Class_token) >
+                    > ( labeller.rule(Class_token) >
                         ( tok.ShortRange_       | tok.FighterBay_   | tok.FighterWeapon_
                         | tok.Shield_           | tok.Armour_
                         | tok.Troops_           | tok.Detection_    | tok.Stealth_
@@ -107,16 +108,16 @@ namespace parse {
                         | tok.Industry_         | tok.Trade_        | tok.ProductionLocation_
                         ) [ _d = new_<ValueRef::Constant<std::string>>(_1) ]
                       )
-                    > ( detail::label(Design_token) >   int_rules.expr [ _b = _1 ] )
+                    > ( labeller.rule(Design_token) >   int_rules.expr [ _b = _1 ] )
                 ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         ship_parts_owned
             =   (
                 tok.ShipPartsOwned_ [ _a = construct<std::string>(_1) ]
-                >-( detail::label(Empire_token)          > int_rules.expr [ _b = _1 ] )
-                >-(     ( detail::label(Name_token)      > string_grammar [ _d = _1 ] )
-                        |   ( detail::label(Class_token)     >>
+                >-( labeller.rule(Empire_token)          > int_rules.expr [ _b = _1 ] )
+                >-(     ( labeller.rule(Name_token)      > string_grammar [ _d = _1 ] )
+                        |   ( labeller.rule(Class_token)     >>
                               parse::ship_part_class_enum() [ _c = new_<ValueRef::Constant<int>>(_1) ]
                             )
                       )
@@ -131,30 +132,30 @@ namespace parse {
                     |   tok.ShipDesignsProduced_  [ _a = construct<std::string>(_1) ]
                     |   tok.ShipDesignsScrapped_  [ _a = construct<std::string>(_1) ]
                     )
-                >  -(   detail::label(Empire_token) > int_rules.expr [ _b = _1 ] )
-                >  -(   detail::label(Design_token) > string_grammar [ _d = _1 ] )
+                >  -(   labeller.rule(Empire_token) > int_rules.expr [ _b = _1 ] )
+                >  -(   labeller.rule(Design_token) > string_grammar [ _d = _1 ] )
                 ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         slots_in_hull
             =   (
                 tok.SlotsInHull_ [ _a = construct<std::string>(_1) ]
-                >   detail::label(Name_token) >      string_grammar [ _d = _1 ]
+                >   labeller.rule(Name_token) >      string_grammar [ _d = _1 ]
             ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         slots_in_ship_design
             =   (
                 tok.SlotsInShipDesign_ [ _a = construct<std::string>(_1) ]
-                >   detail::label(Design_token) >    int_rules.expr [ _b = _1 ]
+                >   labeller.rule(Design_token) >    int_rules.expr [ _b = _1 ]
                 ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         special_added_on_turn
             =   (
                 tok.SpecialAddedOnTurn_ [ _a = construct<std::string>(_1) ]
-                >-( detail::label(Name_token)   >   string_grammar [ _d = _1 ] )
-                >-( detail::label(Object_token) >   int_rules.expr [ _b = _1 ] )
+                >-( labeller.rule(Name_token)   >   string_grammar [ _d = _1 ] )
+                >-( labeller.rule(Object_token) >   int_rules.expr [ _b = _1 ] )
                 ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
 

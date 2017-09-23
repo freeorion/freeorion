@@ -24,8 +24,8 @@ namespace parse { namespace detail {
         const parse::value_ref_grammar<std::string>& string_grammar,
         const tags_grammar_type& tags_parser
     ) :
-        castable_int_rules(tok, condition_parser, string_grammar),
-        double_rules(tok, condition_parser, string_grammar),
+        castable_int_rules(tok, labeller, condition_parser, string_grammar),
+        double_rules(tok, labeller, condition_parser, string_grammar),
         effects_group_grammar(tok, labeller, condition_parser, string_grammar)
     {
         namespace qi = boost::spirit::qi;
