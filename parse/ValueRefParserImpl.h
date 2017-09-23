@@ -42,7 +42,7 @@ template <typename T>
 void initialize_nonnumeric_statistic_parser(
     parse::detail::statistic_rule<T>& statistic,
     const parse::lexer& tok,
-    const parse::condition_parser_rule& condition_parser,
+    const parse::detail::condition_parser_grammar& condition_parser,
     const typename parse::value_ref_rule<T>& value_ref)
 {
     using boost::phoenix::construct;
@@ -92,7 +92,7 @@ namespace parse { namespace detail {
 template <typename T>
 enum_value_ref_rules<T>::enum_value_ref_rules(const std::string& type_name,
                                               const parse::lexer& tok,
-                                              const parse::condition_parser_rule& condition_parser)
+                                              const condition_parser_grammar& condition_parser)
 {
         using boost::phoenix::new_;
         using boost::phoenix::push_back;
@@ -222,7 +222,7 @@ simple_variable_rules<T>::simple_variable_rules(const std::string& type_name) {
 template <typename T>
 parse::detail::arithmetic_rules<T>::arithmetic_rules(
     const std::string& type_name,
-    const parse::condition_parser_rule& condition_parser)
+    const parse::detail::condition_parser_grammar& condition_parser)
 {
     using boost::phoenix::construct;
     using boost::phoenix::new_;
@@ -357,14 +357,14 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
                     |   tok.If_     [ _b = ValueRef::IF ]
                 )
             )
-        >   parse::detail::label(Condition_token) >    parse::detail::condition_parser
+        >   parse::detail::label(Condition_token) >    condition_parser
         [ _val = new_<ValueRef::Statistic<T>>(_a, _b, _1) ]
         ;
 
     statistic_value_expr
         =   (tok.Statistic_ >>  parse::statistic_type_enum() [ _b = _1 ])
         >   parse::detail::label(Value_token)     >     statistic_value_ref_expr [ _a = _1 ]
-        >   parse::detail::label(Condition_token) >     parse::detail::condition_parser
+        >   parse::detail::label(Condition_token) >     condition_parser
         [ _val = new_<ValueRef::Statistic<T>>(_a, _b, _1) ]
         ;
 

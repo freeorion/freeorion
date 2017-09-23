@@ -21,7 +21,7 @@ namespace {
               parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
-            condition_parser(parse::condition_parser()),
+            condition_parser(tok),
             string_grammar(tok, condition_parser),
             double_rules(tok, condition_parser, string_grammar)
         {
@@ -68,7 +68,7 @@ namespace {
             void (std::map<std::string, ValueRef::ValueRefBase<double>*>&)
         > start_rule;
 
-        parse::condition_parser_rule& condition_parser;
+        parse::conditions_parser_grammar condition_parser;
         const parse::string_parser_grammar string_grammar;
         parse::double_parser_rules      double_rules;
         stat_rule   stat;

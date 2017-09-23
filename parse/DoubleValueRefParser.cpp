@@ -64,7 +64,7 @@ parse::detail::simple_double_parser_rules::simple_double_parser_rules(const pars
 
 parse::double_parser_rules::double_parser_rules(
     const parse::lexer& tok,
-    const parse::condition_parser_rule& condition_parser,
+    const parse::detail::condition_parser_grammar& condition_parser,
     const parse::value_ref_grammar<std::string>& string_grammar
 ) :
     arithmetic_rules("real number", condition_parser),

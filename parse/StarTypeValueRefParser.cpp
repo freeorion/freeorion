@@ -8,7 +8,7 @@
 namespace parse { namespace detail {
     star_type_parser_rules::star_type_parser_rules(
         const parse::lexer& tok,
-        const parse::condition_parser_rule& condition_parser
+        const condition_parser_grammar& condition_parser
     ) :
             enum_value_ref_rules("StarType", tok, condition_parser)
     {

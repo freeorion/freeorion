@@ -4,7 +4,7 @@
 namespace parse {
     string_parser_grammar::string_parser_grammar(
         const parse::lexer& tok,
-        const condition_parser_rule& condition_parser
+        const detail::condition_parser_grammar& condition_parser
     ) :
         string_parser_grammar::base_type(expr, "string_parser_grammar")
     {

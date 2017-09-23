@@ -22,13 +22,13 @@ namespace parse {
     using value_ref_rule = detail::rule<value_ref_signature<T>>;
     template <typename T>
     using value_ref_grammar = detail::grammar<value_ref_signature<T>>;
-
-    typedef detail::rule<
-        Condition::ConditionBase* ()
-    > condition_parser_rule;
 }
 
 namespace parse { namespace detail {
+
+    using condition_signature      = Condition::ConditionBase* ();
+    using condition_parser_rule    = rule<condition_signature>;
+    using condition_parser_grammar = grammar<condition_signature>;
 
 using name_token_rule = rule<const char* ()>;
 using reference_token_rule = rule<ValueRef::ReferenceType ()>;
@@ -80,7 +80,7 @@ struct simple_variable_rules
     template <typename T>
     struct arithmetic_rules {
         arithmetic_rules(const std::string& type_name,
-                         const parse::condition_parser_rule& condition_parser);
+                         const parse::detail::condition_parser_grammar& condition_parser);
 
         expression_rule<T> functional_expr;
         expression_rule<T> exponential_expr;
@@ -124,7 +124,7 @@ struct simple_double_parser_rules : public simple_variable_rules<double> {
 namespace parse {
     struct string_parser_grammar : public value_ref_grammar<std::string> {
         string_parser_grammar(const parse::lexer& tok,
-                              const condition_parser_rule& condition_parser);
+                              const detail::condition_parser_grammar& condition_parser);
 
         parse::detail::name_token_rule bound_variable_name;
         parse::value_ref_rule<std::string> constant;
@@ -167,7 +167,7 @@ namespace parse {
     struct int_arithmetic_rules : public detail::arithmetic_rules<int> {
         int_arithmetic_rules(
             const lexer& tok,
-            const condition_parser_rule& condition_parser,
+            const detail::condition_parser_grammar& condition_parser,
             const parse::value_ref_grammar<std::string>& string_grammar);
         detail::simple_int_parser_rules  simple_int_rules;
         int_complex_parser_grammar int_complex_grammar;
@@ -175,7 +175,7 @@ namespace parse {
 
     struct double_complex_parser_grammar : public detail::complex_variable_grammar<double> {
         double_complex_parser_grammar(const lexer& tok,
-                                      const condition_parser_rule& condition_parser,
+                                      const detail::condition_parser_grammar& condition_parser,
                                       const parse::value_ref_grammar<std::string>& string_grammar);
 
         detail::simple_int_parser_rules simple_int_rules;
@@ -192,7 +192,7 @@ namespace parse {
     struct double_parser_rules : public detail::arithmetic_rules<double> {
         double_parser_rules(
             const parse::lexer& tok,
-            const parse::condition_parser_rule& condition_parser,
+            const detail::condition_parser_grammar& condition_parser,
             const parse::value_ref_grammar<std::string>& string_grammar);
 
         parse::int_arithmetic_rules        int_rules;
@@ -209,7 +209,7 @@ namespace parse {
 
     struct castable_as_int_parser_rules {
         castable_as_int_parser_rules(const parse::lexer& tok,
-                                     const parse::condition_parser_rule& condition_parser,
+                                     const detail::condition_parser_grammar& condition_parser,
                                      const parse::value_ref_grammar<std::string>& string_grammar);
 
         parse::int_arithmetic_rules     int_rules;
@@ -224,7 +224,7 @@ template <typename T>
 struct enum_value_ref_rules {
     enum_value_ref_rules(const std::string& type_name,
                          const parse::lexer& tok,
-                         const parse::condition_parser_rule& condition_parser);
+                         const condition_parser_grammar& condition_parser);
 
     name_token_rule variable_name;
     parse::detail::enum_rule<T> enum_expr;
@@ -245,28 +245,28 @@ struct enum_value_ref_rules {
         public parse::detail::enum_value_ref_rules<PlanetEnvironment>
     {
         planet_environment_parser_rules(const parse::lexer& tok,
-                                        const parse::condition_parser_rule& condition_parser);
+                                        const condition_parser_grammar& condition_parser);
     };
 
     struct planet_size_parser_rules :
         public parse::detail::enum_value_ref_rules<PlanetSize>
     {
         planet_size_parser_rules(const parse::lexer& tok,
-                                 const parse::condition_parser_rule& condition_parser);
+                                 const condition_parser_grammar& condition_parser);
     };
 
     struct planet_type_parser_rules :
         public parse::detail::enum_value_ref_rules<PlanetType>
     {
         planet_type_parser_rules(const parse::lexer& tok,
-                                 const parse::condition_parser_rule& condition_parser);
+                                 const condition_parser_grammar& condition_parser);
     };
 
     struct star_type_parser_rules :
         public enum_value_ref_rules<StarType>
     {
         star_type_parser_rules(const parse::lexer& tok,
-                               const parse::condition_parser_rule& condition_parser);
+                               const condition_parser_grammar& condition_parser);
     };
 
     struct visibility_parser_rules :
@@ -281,7 +281,7 @@ struct enum_value_ref_rules {
         public enum_value_ref_rules<UniverseObjectType>
     {
         universe_object_type_parser_rules(const parse::lexer& tok,
-                                          const parse::condition_parser_rule& condition_parser);
+                                          const condition_parser_grammar& condition_parser);
     };
 
     }

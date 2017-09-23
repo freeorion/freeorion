@@ -92,13 +92,13 @@ namespace parse { namespace detail {
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
                     (labeller.rule(Affiliation_token) >>  tok.CanSee_)
-                    >   labeller.rule(Condition_token)   >   parse::detail::condition_parser
+                    >   labeller.rule(Condition_token)   >   condition_parser
                     [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_CAN_SEE, _1, _e, _f) ]
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
                     (labeller.rule(Affiliation_token) >>  tok.Human_)
-                    >   labeller.rule(Condition_token)   >   parse::detail::condition_parser
+                    >   labeller.rule(Condition_token)   >   condition_parser
                     [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_HUMAN, _1, _e, _f) ]
                 )
                 |   (   // no empire id or condition specified, with or without an
