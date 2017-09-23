@@ -3,10 +3,11 @@
 
 namespace parse {
     conditions_parser_grammar::conditions_parser_grammar(
-        const parse::lexer& tok
+        const parse::lexer& tok,
+        detail::Labeller& labeller
     ) :
         conditions_parser_grammar::base_type(start, "conditions_parser_grammar"),
-        string_grammar(tok, *this),
+        string_grammar(tok, labeller, *this),
         condition_parser_1(tok, *this, string_grammar),
         condition_parser_2(tok, *this, string_grammar),
         condition_parser_3(tok, *this, string_grammar),

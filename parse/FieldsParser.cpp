@@ -42,8 +42,8 @@ namespace {
               parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
-            condition_parser(tok),
-            string_grammar(tok, condition_parser),
+            condition_parser(tok, labeller),
+            string_grammar(tok, labeller, condition_parser),
             effects_group_grammar(tok, labeller, condition_parser, string_grammar),
             tags_parser(tok, labeller)
         {
