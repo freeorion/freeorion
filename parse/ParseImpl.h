@@ -114,13 +114,14 @@ namespace parse { namespace detail {
     > color_parser_rule;
     color_parser_rule& color_parser();
 
+    using item_spec_rule_type = rule<ItemSpec (), boost::spirit::qi::locals<UnlockableItemType>>;
+    using item_spec_grammar_type = grammar<ItemSpec (), boost::spirit::qi::locals<UnlockableItemType>>;
 
-    typedef rule<
-        ItemSpec (),
-        boost::spirit::qi::locals<UnlockableItemType>
-    > item_spec_parser_rule;
-    item_spec_parser_rule& item_spec_parser();
-
+    struct item_spec_grammar : public item_spec_grammar_type {
+        item_spec_grammar(const parse::lexer& tok,
+                          Labeller& labeller);
+        item_spec_rule_type start;
+    };
 
     void parse_file_common(const boost::filesystem::path& path,
                            const lexer& lexer,

@@ -20,7 +20,8 @@ namespace {
         rules(const parse::lexer& tok,
               parse::detail::Labeller& labeller,
               const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+              const parse::text_iterator& first, const parse::text_iterator& last) :
+            item_spec_parser(tok, labeller)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -34,7 +35,7 @@ namespace {
             qi::_r1_type _r1;
 
             start
-                =   +parse::detail::item_spec_parser() [ push_back(_r1, _1) ]
+                =   +item_spec_parser [ push_back(_r1, _1) ]
                 ;
 
             start.name("start");
@@ -46,6 +47,7 @@ namespace {
             void (std::vector<ItemSpec>&)
         > start_rule;
 
+        parse::detail::item_spec_grammar item_spec_parser;
         start_rule start;
     };
 }

@@ -81,7 +81,8 @@ namespace {
             castable_int_rules(parse::lexer::instance(), condition_parser, string_grammar),
             double_rules(parse::lexer::instance(), condition_parser, string_grammar),
             effects_group_grammar(tok, labeller, condition_parser, string_grammar),
-            tags_parser(tok, labeller)
+            tags_parser(tok, labeller),
+            item_spec_parser(tok, labeller)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -137,8 +138,8 @@ namespace {
 
             unlocks
                 =   labeller.rule(Unlock_token)
-                >  (    ('[' > +parse::detail::item_spec_parser() [ push_back(_r1, _1) ] > ']')
-                    |    parse::detail::item_spec_parser() [ push_back(_r1, _1) ]
+                >  (    ('[' > +item_spec_parser [ push_back(_r1, _1) ] > ']')
+                    |    item_spec_parser [ push_back(_r1, _1) ]
                    )
                 ;
 
@@ -241,6 +242,7 @@ namespace {
         parse::double_parser_rules  double_rules;
         parse::effects_group_grammar effects_group_grammar;
         parse::detail::tags_grammar tags_parser;
+        parse::detail::item_spec_grammar item_spec_parser;
         tech_info_name_desc_rule    tech_info_name_desc;
         tech_info_rule              tech_info;
         prerequisites_rule          prerequisites;

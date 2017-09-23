@@ -81,34 +81,6 @@ namespace {
         parse::detail::color_parser_rule start;
     };
 
-    struct item_spec_parser_rules {
-        item_spec_parser_rules() {
-            namespace phoenix = boost::phoenix;
-            namespace qi = boost::spirit::qi;
-
-            using phoenix::construct;
-
-            qi::_1_type _1;
-            qi::_a_type _a;
-            qi::_val_type _val;
-
-            const parse::lexer& tok = parse::lexer::instance();
-
-            start
-                =    tok.Item_
-                >    parse::detail::label(Type_token) > parse::unlockable_item_type_enum() [ _a = _1 ]
-                >    parse::detail::label(Name_token) > tok.string [ _val = construct<ItemSpec>(_a, _1) ]
-                ;
-
-            start.name("ItemSpec");
-
-#if DEBUG_PARSERS
-            debug(start);
-#endif
-        }
-
-        parse::detail::item_spec_parser_rule start;
-    };
 }
 
 namespace parse {
@@ -554,10 +526,34 @@ namespace parse {
             return rules.start;
         }
 
-        item_spec_parser_rule& item_spec_parser() {
-            static item_spec_parser_rules rules;
-            return rules.start;
-        }
+    item_spec_grammar::item_spec_grammar(
+        const parse::lexer& tok,
+        Labeller& labeller
+    ) :
+        item_spec_grammar::base_type(start, "item_spec_grammar")
+    {
+        namespace phoenix = boost::phoenix;
+        namespace qi = boost::spirit::qi;
+
+        using phoenix::construct;
+
+        qi::_1_type _1;
+        qi::_a_type _a;
+        qi::_val_type _val;
+
+        start
+            =    tok.Item_
+            >    labeller.rule(Type_token) > parse::unlockable_item_type_enum() [ _a = _1 ]
+            >    labeller.rule(Name_token) > tok.string [ _val = construct<ItemSpec>(_a, _1) ]
+            ;
+
+        start.name("ItemSpec");
+
+#if DEBUG_PARSERS
+        debug(start);
+#endif
+    }
+
 
         /** \brief Load and parse script file(s) from given path
          * 
