@@ -20,7 +20,8 @@ namespace parse { namespace detail {
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         effect_parser_rules_3::base_type(start, "effect_parser_rules_3"),
-        double_rules(tok, condition_parser, string_grammar)
+        double_rules(tok, condition_parser, string_grammar),
+        star_type_rules(tok)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -113,7 +114,7 @@ namespace parse { namespace detail {
 
         set_star_type
             =   tok.SetStarType_
-            >   labeller.rule(Type_token) > parse::detail::star_type_rules().expr [ _val = new_<Effect::SetStarType>(_1) ]
+            >   labeller.rule(Type_token) > star_type_rules.expr [ _val = new_<Effect::SetStarType>(_1) ]
             ;
 
         set_texture
