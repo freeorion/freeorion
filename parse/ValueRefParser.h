@@ -222,7 +222,9 @@ namespace detail {
 
 template <typename T>
 struct enum_value_ref_rules {
-    enum_value_ref_rules(const std::string& type_name);
+    enum_value_ref_rules(const std::string& type_name,
+                         const parse::lexer& tok,
+                         const parse::condition_parser_rule& condition_parser);
 
     name_token_rule variable_name;
     parse::detail::enum_rule<T> enum_expr;
@@ -242,37 +244,44 @@ struct enum_value_ref_rules {
     struct planet_environment_parser_rules :
         public parse::detail::enum_value_ref_rules<PlanetEnvironment>
     {
-        planet_environment_parser_rules(const parse::lexer& tok);
+        planet_environment_parser_rules(const parse::lexer& tok,
+                                        const parse::condition_parser_rule& condition_parser);
     };
 
     struct planet_size_parser_rules :
         public parse::detail::enum_value_ref_rules<PlanetSize>
     {
-        planet_size_parser_rules(const parse::lexer& tok);
+        planet_size_parser_rules(const parse::lexer& tok,
+                                 const parse::condition_parser_rule& condition_parser);
     };
 
     struct planet_type_parser_rules :
         public parse::detail::enum_value_ref_rules<PlanetType>
     {
-        planet_type_parser_rules(const parse::lexer& tok);
+        planet_type_parser_rules(const parse::lexer& tok,
+                                 const parse::condition_parser_rule& condition_parser);
     };
 
     struct star_type_parser_rules :
         public enum_value_ref_rules<StarType>
     {
-        star_type_parser_rules(const parse::lexer& tok);
+        star_type_parser_rules(const parse::lexer& tok,
+                               const parse::condition_parser_rule& condition_parser);
     };
 
     struct visibility_parser_rules :
         public parse::detail::enum_value_ref_rules<Visibility>
     {
-        visibility_parser_rules(const parse::lexer& tok, Labeller& labeller);
+        visibility_parser_rules(const parse::lexer& tok,
+                                Labeller& labeller,
+                                const parse::condition_parser_rule& condition_parser);
     };
 
     struct universe_object_type_parser_rules :
         public enum_value_ref_rules<UniverseObjectType>
     {
-        universe_object_type_parser_rules(const parse::lexer& tok);
+        universe_object_type_parser_rules(const parse::lexer& tok,
+                                          const parse::condition_parser_rule& condition_parser);
     };
 
     }

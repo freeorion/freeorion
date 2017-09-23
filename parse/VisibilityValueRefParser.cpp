@@ -59,9 +59,11 @@ namespace parse {
 
 namespace parse { namespace detail {
     visibility_parser_rules::visibility_parser_rules(
-        const parse::lexer& tok, Labeller& labeller
+        const parse::lexer& tok,
+        Labeller& labeller,
+        const parse::condition_parser_rule& condition_parser
     ) :
-        enum_value_ref_rules("Visibility")
+        enum_value_ref_rules("Visibility", tok, condition_parser)
     {
         namespace phoenix = boost::phoenix;
         namespace qi = boost::spirit::qi;

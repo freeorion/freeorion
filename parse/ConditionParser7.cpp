@@ -23,7 +23,7 @@ namespace {
         condition_parser_rules_7(const parse::lexer& tok,
                                  const parse::condition_parser_rule& condition_parser,
                                  const parse::value_ref_grammar<std::string>& string_grammar) :
-            star_type_rules(tok)
+            star_type_rules(tok, condition_parser)
         {
             qi::_1_type _1;
             qi::_a_type _a;
@@ -149,7 +149,7 @@ namespace parse { namespace detail {
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_7::base_type(start, "condition_parser_rules_7"),
-        star_type_rules(tok)
+        star_type_rules(tok, condition_parser)
     {
         qi::_1_type _1;
         qi::_a_type _a;

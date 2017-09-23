@@ -6,8 +6,11 @@
 
 
 namespace parse { namespace detail {
-    planet_size_parser_rules::planet_size_parser_rules(const parse::lexer& tok) :
-        enum_value_ref_rules("PlanetSize")
+    planet_size_parser_rules::planet_size_parser_rules(
+        const parse::lexer& tok,
+        const parse::condition_parser_rule& condition_parser
+    ) :
+        enum_value_ref_rules("PlanetSize", tok, condition_parser)
     {
         boost::spirit::qi::_val_type _val;
 
