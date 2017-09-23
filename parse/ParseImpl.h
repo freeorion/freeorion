@@ -103,6 +103,15 @@ namespace parse { namespace detail {
     > tags_rule;
     tags_rule& tags_parser();
 
+    using tags_rule_type    = rule<void (std::set<std::string>&)>;
+    using tags_grammar_type = grammar<void (std::set<std::string>&)>;
+
+    struct tags_grammar : public tags_grammar_type {
+        tags_grammar(const parse::lexer& tok,
+                     Labeller& labeller);
+        tags_rule_type start;
+    };
+
     typedef rule<
         GG::Clr (),
         boost::spirit::qi::locals<

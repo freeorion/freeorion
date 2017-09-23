@@ -552,6 +552,35 @@ namespace parse {
             }
         }
 
+    tags_grammar::tags_grammar(const parse::lexer& tok,
+                               Labeller& labeller) :
+        tags_grammar::base_type(start, "tags_grammar")
+    {
+        namespace phoenix = boost::phoenix;
+        namespace qi = boost::spirit::qi;
+
+        using phoenix::insert;
+
+        qi::_1_type _1;
+        qi::_r1_type _r1;
+
+        start
+            =  -(
+                labeller.rule(Tags_token)
+                >>  (
+                    ('[' > +tok.string [ insert(_r1, _1) ] > ']')
+                    |   tok.string [ insert(_r1, _1) ]
+                )
+            )
+            ;
+
+        start.name("Tags");
+
+#if DEBUG_PARSERS
+        debug(start);
+#endif
+    }
+
         tags_rule& tags_parser() {
             static tags_rules rules;
             return rules.start;
