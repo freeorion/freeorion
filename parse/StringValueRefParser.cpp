@@ -4,9 +4,11 @@
 namespace parse {
     string_parser_grammar::string_parser_grammar(
         const parse::lexer& tok,
+        parse::detail::Labeller& labeller,
         const detail::condition_parser_grammar& condition_parser
     ) :
-        string_parser_grammar::base_type(expr, "string_parser_grammar")
+        string_parser_grammar::base_type(expr, "string_parser_grammar"),
+        string_var_complex(tok, labeller, *this)
     {
         namespace phoenix = boost::phoenix;
         namespace qi = boost::spirit::qi;
@@ -22,7 +24,7 @@ namespace parse {
         qi::_val_type _val;
         qi::lit_type lit;
 
-        static const std::string TOK_CURRENT_CONTENT{"CurrentContent"};
+        const std::string TOK_CURRENT_CONTENT{"CurrentContent"};
 
         bound_variable_name
             %=   tok.Name_
@@ -59,7 +61,7 @@ namespace parse {
             =   constant
             |   bound_variable
             |   free_variable
-            |   string_var_complex(*this)
+            |   string_var_complex
             ;
 
         function_expr
@@ -114,7 +116,7 @@ namespace parse {
             |   free_variable
             |   bound_variable
             |   statistic
-            |   string_var_complex(*this)
+            |   string_var_complex
             ;
 
         bound_variable_name.name("string bound_variable name (e.g., Name)");

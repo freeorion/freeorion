@@ -45,11 +45,11 @@ namespace parse {
 #endif
         }
         parse::detail::simple_int_parser_rules  simple_int_rules;
-        complex_variable_rule<Visibility> empire_object_visibility;
-        complex_variable_rule<Visibility> start;
+        parse::detail::complex_variable_rule<Visibility> empire_object_visibility;
+        parse::detail::complex_variable_rule<Visibility> start;
     };
 
-        const complex_variable_rule<Visibility>& visibility_var_complex(const parse::lexer& tok)
+    const parse::detail::complex_variable_rule<Visibility>& visibility_var_complex(const parse::lexer& tok)
     {
         //TODO make into a grammar
         static visibility_complex_parser_rules visibility_complex_parser(tok);
@@ -61,7 +61,7 @@ namespace parse { namespace detail {
     visibility_parser_rules::visibility_parser_rules(
         const parse::lexer& tok,
         Labeller& labeller,
-        const parse::condition_parser_rule& condition_parser
+        const condition_parser_grammar& condition_parser
     ) :
         enum_value_ref_rules("Visibility", tok, condition_parser)
     {

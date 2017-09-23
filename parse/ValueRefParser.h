@@ -119,13 +119,29 @@ struct simple_double_parser_rules : public simple_variable_rules<double> {
     template <typename T>
     using complex_variable_grammar = parse::detail::grammar<complex_variable_signature<T>, complex_variable_locals>;
 
+    struct string_complex_parser_grammar : public complex_variable_grammar<std::string> {
+        string_complex_parser_grammar(const parse::lexer& tok,
+                                      parse::detail::Labeller& labeller,
+                                      const parse::value_ref_grammar<std::string>& string_grammar);
+
+        parse::detail::simple_int_parser_rules  simple_int_rules;
+        complex_variable_rule<std::string> game_rule;
+
+        complex_variable_rule<std::string> empire_ref;
+        complex_variable_rule<std::string> empire_empire_ref;
+
+        complex_variable_rule<std::string> start;
+    };
+
 }}
 
 namespace parse {
     struct string_parser_grammar : public value_ref_grammar<std::string> {
         string_parser_grammar(const parse::lexer& tok,
+                              parse::detail::Labeller& labeller,
                               const detail::condition_parser_grammar& condition_parser);
 
+        parse::detail::string_complex_parser_grammar string_var_complex;
         parse::detail::name_token_rule bound_variable_name;
         parse::value_ref_rule<std::string> constant;
         parse::value_ref_rule<std::string> free_variable;
@@ -274,7 +290,7 @@ struct enum_value_ref_rules {
     {
         visibility_parser_rules(const parse::lexer& tok,
                                 Labeller& labeller,
-                                const parse::condition_parser_rule& condition_parser);
+                                const condition_parser_grammar& condition_parser);
     };
 
     struct universe_object_type_parser_rules :

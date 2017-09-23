@@ -34,8 +34,8 @@ namespace {
               parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
-            condition_parser(tok),
-            string_grammar(tok, condition_parser)
+            condition_parser(tok, labeller),
+            string_grammar(tok, labeller, condition_parser)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;

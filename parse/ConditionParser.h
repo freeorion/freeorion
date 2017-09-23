@@ -303,7 +303,9 @@ namespace parse { namespace detail {
 
 namespace parse {
     struct conditions_parser_grammar : public detail::condition_parser_grammar {
-        conditions_parser_grammar(const parse::lexer& tok);
+        conditions_parser_grammar(
+            const parse::lexer& tok,
+            detail::Labeller& labeller);
 
         const parse::string_parser_grammar string_grammar;
         detail::condition_parser_rules_1 condition_parser_1;
