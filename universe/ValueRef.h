@@ -1468,6 +1468,18 @@ FO_COMMON_API int ComplexVariable<int>::Eval(const ScriptingContext& context) co
 template <>
 FO_COMMON_API std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) const;
 
+template <>
+FO_COMMON_API std::string ComplexVariable<Visibility>::Dump() const;
+
+template <>
+FO_COMMON_API std::string ComplexVariable<double>::Dump() const;
+
+template <>
+FO_COMMON_API std::string ComplexVariable<int>::Dump() const;
+
+template <>
+FO_COMMON_API std::string ComplexVariable<std::string>::Dump() const;
+
 template <class T>
 template <class Archive>
 void ComplexVariable<T>::serialize(Archive& ar, const unsigned int version)

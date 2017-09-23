@@ -2445,6 +2445,23 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
 
 #undef IF_CURRENT_VALUE
 
+template <>
+std::string ComplexVariable<Visibility>::Dump() const
+{ return Variable<Visibility>::Dump(); }
+
+template <>
+std::string ComplexVariable<double>::Dump() const
+{ return Variable<double>::Dump(); }
+
+template <>
+std::string ComplexVariable<int>::Dump() const
+{ return Variable<int>::Dump(); }
+
+template <>
+std::string ComplexVariable<std::string>::Dump() const
+{ return Variable<std::string>::Dump(); }
+
+
 ///////////////////////////////////////////////////////////
 // StringCast                                            //
 ///////////////////////////////////////////////////////////
