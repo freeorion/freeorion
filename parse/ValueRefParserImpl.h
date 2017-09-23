@@ -90,7 +90,10 @@ void initialize_bound_variable_parser(
 namespace parse { namespace detail {
 
 template <typename T>
-enum_value_ref_rules<T>::enum_value_ref_rules(const std::string& type_name) {
+enum_value_ref_rules<T>::enum_value_ref_rules(const std::string& type_name,
+                                              const parse::lexer& tok,
+                                              const parse::condition_parser_rule& condition_parser)
+{
         using boost::phoenix::new_;
         using boost::phoenix::push_back;
 
@@ -99,8 +102,6 @@ enum_value_ref_rules<T>::enum_value_ref_rules(const std::string& type_name) {
         boost::spirit::qi::_d_type _d;
         boost::spirit::qi::_val_type _val;
         boost::spirit::qi::lit_type lit;
-
-        const parse::lexer& tok = parse::lexer::instance();
 
         constant_expr
             =   enum_expr [ _val = new_<ValueRef::Constant<T>>(_1) ]

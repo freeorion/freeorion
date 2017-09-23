@@ -22,9 +22,9 @@ namespace parse { namespace detail {
         effect_parser_rules_2::base_type(start, "effect_parser_rules_2"),
         int_rules(tok, condition_parser, string_grammar),
         double_rules(tok, condition_parser, string_grammar),
-        visibility_rules(tok, labeller),
-        planet_type_rules(tok),
-        planet_size_rules(tok)
+        visibility_rules(tok, labeller, condition_parser),
+        planet_type_rules(tok, condition_parser),
+        planet_size_rules(tok, condition_parser)
     {
         qi::_1_type _1;
         qi::_a_type _a;

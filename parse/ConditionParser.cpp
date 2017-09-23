@@ -38,7 +38,7 @@ namespace parse {
         condition_parser_3(tok, *this, string_grammar),
         condition_parser_4(tok, *this, string_grammar),
         condition_parser_5(tok, *this, string_grammar),
-        condition_parser_6(tok, string_grammar),
+        condition_parser_6(tok, *this, string_grammar),
         condition_parser_7(tok, *this, string_grammar)
     {
         start

@@ -21,7 +21,7 @@ namespace parse { namespace detail {
     ) :
         effect_parser_rules_3::base_type(start, "effect_parser_rules_3"),
         double_rules(tok, condition_parser, string_grammar),
-        star_type_rules(tok)
+        star_type_rules(tok, condition_parser)
     {
         qi::_1_type _1;
         qi::_a_type _a;

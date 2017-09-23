@@ -233,6 +233,7 @@ namespace parse { namespace detail {
 
     struct condition_parser_rules_6 : public condition_parser_grammar {
         condition_parser_rules_6(const parse::lexer& tok,
+                                 const condition_parser_grammar& condition_parser,
                                  const parse::value_ref_grammar<std::string>& string_grammar);
 
         typedef parse::detail::rule<
