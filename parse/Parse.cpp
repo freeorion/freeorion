@@ -417,25 +417,6 @@ namespace parse {
             }
         }
 
-    // TODO remove this version of label with the singleton rules
-        label_rule& label(const char* name) {
-            static std::map<const char*, label_rule> rules;
-            std::map<const char*, label_rule>::iterator it = rules.find(name);
-            if (it == rules.end()) {
-                const lexer& lexer = lexer::instance();
-                label_rule& retval = rules[name];
-                if (PARSING_LABELS_OPTIONAL) {
-                    retval = -(lexer.name_token(name) >> '=');
-                } else {
-                    retval =  (lexer.name_token(name) >> '=');
-                }
-                retval.name(std::string(name) + " =");
-                return retval;
-            } else {
-                return it->second;
-            }
-        }
-
     tags_grammar::tags_grammar(const parse::lexer& tok,
                                Labeller& labeller) :
         tags_grammar::base_type(start, "tags_grammar")
