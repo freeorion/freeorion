@@ -73,9 +73,9 @@ namespace {
 
     struct rules {
         rules(const parse::lexer& tok,
-              parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
+            labeller(tok),
             condition_parser(tok, labeller),
             string_grammar(tok, labeller, condition_parser),
             castable_int_rules(tok, labeller, condition_parser, string_grammar),
@@ -237,6 +237,7 @@ namespace {
             void (TechManager::TechContainer&)
         > start_rule;
 
+        parse::detail::Labeller labeller;
         parse::conditions_parser_grammar condition_parser;
         const parse::string_parser_grammar string_grammar;
         parse::castable_as_int_parser_rules     castable_int_rules;

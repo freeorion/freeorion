@@ -67,9 +67,9 @@ namespace {
 
     struct rules {
         rules(const parse::lexer& tok,
-              parse::detail::Labeller& labeller,
               const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+              const parse::text_iterator& first, const parse::text_iterator& last) :
+            labeller(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -160,6 +160,7 @@ namespace {
             void (boost::optional<std::unique_ptr<ShipDesign>>&)
         >;
 
+        parse::detail::Labeller labeller;
         design_prefix_rule design_prefix;
         design_rule design;
         start_rule start;
@@ -167,9 +168,9 @@ namespace {
 
     struct manifest_rules {
         manifest_rules(const parse::lexer& tok,
-                       parse::detail::Labeller& labeller,
                        const std::string& filename,
-                       const parse::text_iterator& first, const parse::text_iterator& last)
+                       const parse::text_iterator& first, const parse::text_iterator& last) :
+            labeller(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -203,6 +204,7 @@ namespace {
         using manifest_rule = parse::detail::rule<void (std::vector<boost::uuids::uuid>&)>;
         using start_rule = parse::detail::rule<void (std::vector<boost::uuids::uuid>&)>;
 
+        parse::detail::Labeller labeller;
         manifest_rule design_manifest;
         start_rule start;
     };

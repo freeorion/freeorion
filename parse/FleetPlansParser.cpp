@@ -20,9 +20,9 @@ namespace std {
 namespace {
     struct rules {
         rules(const parse::lexer& tok,
-              parse::detail::Labeller& labeller,
               const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+              const parse::text_iterator& first, const parse::text_iterator& last) :
+            labeller(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -74,6 +74,7 @@ namespace {
             void (std::vector<FleetPlan*>&)
         > start_rule;
 
+        parse::detail::Labeller labeller;
         fleet_plan_rule fleet_plan;
         start_rule start;
     };

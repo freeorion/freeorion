@@ -76,9 +76,9 @@ namespace {
 
     struct rules {
         rules(const parse::lexer& tok,
-              parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last):
+            labeller(tok),
             double_rule(tok),
             int_rule(tok)
         {
@@ -216,6 +216,7 @@ namespace {
             void (GameRules&)
         > start_rule;
 
+        parse::detail::Labeller labeller;
         parse::detail::double_grammar double_rule;
         parse::detail::int_grammar int_rule;
         game_rule_rule  game_rule_bool;

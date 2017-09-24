@@ -19,9 +19,9 @@ namespace std {
 namespace {
     struct rules {
         rules(const parse::lexer& tok,
-              parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
+            labeller(tok),
             item_spec_parser(tok, labeller)
         {
             namespace phoenix = boost::phoenix;
@@ -48,6 +48,7 @@ namespace {
             void (std::vector<ItemSpec>&)
         > start_rule;
 
+        parse::detail::Labeller labeller;
         parse::detail::item_spec_grammar item_spec_parser;
         start_rule start;
     };

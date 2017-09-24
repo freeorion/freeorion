@@ -18,9 +18,9 @@ namespace std {
 namespace {
     struct rules {
         rules(const parse::lexer& tok,
-              parse::detail::Labeller& labeller,
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
+            labeller(tok),
             condition_parser(tok, labeller),
             string_grammar(tok, labeller, condition_parser),
             double_rules(tok, labeller, condition_parser, string_grammar)
@@ -68,6 +68,7 @@ namespace {
             void (std::map<std::string, ValueRef::ValueRefBase<double>*>&)
         > start_rule;
 
+        parse::detail::Labeller labeller;
         parse::conditions_parser_grammar condition_parser;
         const parse::string_parser_grammar string_grammar;
         parse::double_parser_rules      double_rules;

@@ -44,9 +44,9 @@ namespace {
 
     struct rules {
         rules(const parse::lexer& tok,
-              parse::detail::Labeller& labeller,
               const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+              const parse::text_iterator& first, const parse::text_iterator& last) :
+            labeller(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -103,6 +103,7 @@ namespace {
             void (NamedKeymaps&)
         > start_rule;
 
+        parse::detail::Labeller labeller;
         int_pair_rule   int_pair;
         keymap_rule     keymap;
         start_rule      start;

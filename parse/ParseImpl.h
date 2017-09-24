@@ -151,8 +151,7 @@ namespace parse { namespace detail {
 
         boost::spirit::qi::in_state_type in_state;
 
-        detail::Labeller labeller(lexer);
-        Rules rules(lexer, labeller, filename, first, last);
+        Rules rules(lexer, filename, first, last);
 
         bool success = boost::spirit::qi::phrase_parse(it, lexer.end(), rules.start(boost::phoenix::ref(arg1)), in_state("WS")[lexer.self]);
 
