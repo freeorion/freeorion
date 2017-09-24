@@ -45,7 +45,8 @@ namespace {
             condition_parser(tok, labeller),
             string_grammar(tok, labeller, condition_parser),
             effects_group_grammar(tok, labeller, condition_parser, string_grammar),
-            tags_parser(tok, labeller)
+            tags_parser(tok, labeller),
+            double_rule(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -67,7 +68,7 @@ namespace {
                 >   labeller.rule(Name_token)
                 >   tok.string        [ _pass = is_unique_(_r1, FieldType_token, _1), _a = _1 ]
                 >   labeller.rule(Description_token)         > tok.string [ _b = _1 ]
-                >   labeller.rule(Stealth_token)             > parse::detail::double_ [ _c = _1]
+                >   labeller.rule(Stealth_token)             > double_rule [ _c = _1]
                 >   tags_parser(_d)
                 > -(labeller.rule(EffectsGroups_token)       > effects_group_grammar [ _e = _1 ])
                 >   labeller.rule(Graphic_token)             > tok.string
@@ -106,6 +107,7 @@ namespace {
         const parse::string_parser_grammar string_grammar;
         parse::effects_group_grammar effects_group_grammar;
         parse::detail::tags_grammar tags_parser;
+        parse::detail::double_grammar double_rule;
         field_rule          field;
         start_rule          start;
     };

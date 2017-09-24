@@ -29,35 +29,6 @@ namespace std {
 
 namespace parse {
     void init() {
-        namespace phoenix = boost::phoenix;
-        namespace qi = boost::spirit::qi;
-
-        using phoenix::static_cast_;
-
-        qi::_1_type _1;
-        qi::_val_type _val;
-
-        const lexer& tok = lexer::instance();
-
-        detail::int_
-            =    '-' >> tok.int_ [ _val = -_1 ]
-            |    tok.int_ [ _val = _1 ]
-            ;
-
-        detail::double_
-            =    '-' >> tok.int_ [ _val = -static_cast_<double>(_1) ]
-            |    tok.int_ [ _val = static_cast_<double>(_1) ]
-            |    '-' >> tok.double_ [ _val = -_1 ]
-            |    tok.double_ [ _val = _1 ]
-            ;
-
-        detail::int_.name("integer");
-        detail::double_.name("real number");
-
-#if DEBUG_PARSERS
-        debug(detail::int_);
-        debug(detail::double_);
-#endif
     }
 
     using namespace boost::xpressive;
@@ -391,31 +362,78 @@ namespace parse {
     }
 
     namespace detail {
-        double_rule double_;
+    double_grammar::double_grammar(const parse::lexer& tok) :
+        double_grammar::base_type(double_, "double_grammar")
+    {
+        namespace phoenix = boost::phoenix;
+        namespace qi = boost::spirit::qi;
 
-        int_rule int_;
+        using phoenix::static_cast_;
 
-        Labeller::Labeller(const parse::lexer& tok_) :
-            m_tok(tok_),
-            m_rules()
-        {};
+        qi::_1_type _1;
+        qi::_val_type _val;
 
-        #define PARSING_LABELS_OPTIONAL false
-        label_rule& Labeller::rule(const char* name) {
-            auto it = m_rules.find(name);
-            if (it == m_rules.end()) {
-                label_rule& retval = m_rules[name];
-                if (PARSING_LABELS_OPTIONAL) {
-                    retval = -(m_tok.name_token(name) >> '=');
-                } else {
-                    retval =  (m_tok.name_token(name) >> '=');
-                }
-                retval.name(std::string(name) + " =");
-                return retval;
+        double_
+            =    '-' >> tok.int_ [ _val = -static_cast_<double>(_1) ]
+            |    tok.int_ [ _val = static_cast_<double>(_1) ]
+            |    '-' >> tok.double_ [ _val = -_1 ]
+            |    tok.double_ [ _val = _1 ]
+            ;
+
+        double_.name("real number");
+
+#if DEBUG_PARSERS
+        debug(double_);
+#endif
+
+    }
+
+    int_grammar::int_grammar(const parse::lexer& tok) :
+        int_grammar::base_type(int_, "int_grammar")
+    {
+
+        namespace phoenix = boost::phoenix;
+        namespace qi = boost::spirit::qi;
+
+        using phoenix::static_cast_;
+
+        qi::_1_type _1;
+        qi::_val_type _val;
+
+        int_
+            =    '-' >> tok.int_ [ _val = -_1 ]
+            |    tok.int_ [ _val = _1 ]
+            ;
+
+        int_.name("integer");
+
+#if DEBUG_PARSERS
+        debug(detail::int_);
+        debug(detail::double_);
+#endif
+    }
+
+    Labeller::Labeller(const parse::lexer& tok_) :
+        m_tok(tok_),
+        m_rules()
+    {};
+
+#define PARSING_LABELS_OPTIONAL false
+    label_rule& Labeller::rule(const char* name) {
+        auto it = m_rules.find(name);
+        if (it == m_rules.end()) {
+            label_rule& retval = m_rules[name];
+            if (PARSING_LABELS_OPTIONAL) {
+                retval = -(m_tok.name_token(name) >> '=');
             } else {
-                return it->second;
+                retval =  (m_tok.name_token(name) >> '=');
             }
+            retval.name(std::string(name) + " =");
+            return retval;
+        } else {
+            return it->second;
         }
+    }
 
     tags_grammar::tags_grammar(const parse::lexer& tok,
                                Labeller& labeller) :

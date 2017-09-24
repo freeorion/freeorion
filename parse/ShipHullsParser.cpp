@@ -53,7 +53,8 @@ namespace {
             string_grammar(tok, labeller, condition_parser),
             tags_parser(tok, labeller),
             common_rules(tok, labeller, condition_parser, string_grammar, tags_parser),
-            ship_slot_type_enum(tok)
+            ship_slot_type_enum(tok),
+            double_rule(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -78,10 +79,10 @@ namespace {
             qi::lit_type lit;
 
             hull_stats
-                =   labeller.rule(Speed_token)       >   parse::detail::double_ [ _a = _1 ]
-                >   labeller.rule(Fuel_token)        >   parse::detail::double_ [ _c = _1 ]
-                >   labeller.rule(Stealth_token)     >   parse::detail::double_ [ _d = _1 ]
-                >   labeller.rule(Structure_token)   >   parse::detail::double_
+                =   labeller.rule(Speed_token)       >   double_rule [ _a = _1 ]
+                >   labeller.rule(Fuel_token)        >   double_rule [ _c = _1 ]
+                >   labeller.rule(Stealth_token)     >   double_rule [ _d = _1 ]
+                >   labeller.rule(Structure_token)   >   double_rule
                     [ _val = construct<HullTypeStats>(_c, _a, _d, _1) ]
                 ;
 
@@ -89,7 +90,7 @@ namespace {
                 =   tok.Slot_
                 >   labeller.rule(Type_token) > ship_slot_type_enum [ _a = _1 ]
                 >   labeller.rule(Position_token)
-                >   '(' > parse::detail::double_ [ _b = _1 ] > ',' > parse::detail::double_ [ _c = _1 ] > lit(')')
+                >   '(' > double_rule [ _b = _1 ] > ',' > double_rule [ _c = _1 ] > lit(')')
                     [ _val = construct<HullType::Slot>(_a, _b, _c) ]
                 ;
 
@@ -179,6 +180,7 @@ namespace {
         parse::detail::tags_grammar tags_parser;
         parse::detail::common_params_rules common_rules;
         parse::ship_slot_enum_grammar ship_slot_type_enum;
+        parse::detail::double_grammar double_rule;
         hull_stats_rule                             hull_stats;
         slot_rule                                   slot;
         slots_rule                                  slots;

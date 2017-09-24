@@ -70,7 +70,9 @@ namespace {
             condition_parser(tok, labeller),
             string_grammar(tok, labeller, condition_parser),
             double_rules(tok, labeller, condition_parser, string_grammar),
-            effects_group_grammar(tok, labeller, condition_parser, string_grammar)
+            effects_group_grammar(tok, labeller, condition_parser, string_grammar),
+            double_rule(tok),
+            int_rule(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -101,10 +103,10 @@ namespace {
                 ;
 
             spawn
-                =    (      (labeller.rule(SpawnRate_token)   > parse::detail::double_ [ _r1 = _1 ])
+                =    (      (labeller.rule(SpawnRate_token)   > double_rule [ _r1 = _1 ])
                         |    eps [ _r1 = 1.0 ]
                      )
-                >    (      (labeller.rule(SpawnLimit_token)  > parse::detail::int_ [ _r2 = _1 ])
+                >    (      (labeller.rule(SpawnLimit_token)  > int_rule [ _r2 = _1 ])
                         |    eps [ _r2 = 9999 ]
                      )
                 ;
@@ -168,6 +170,8 @@ namespace {
         const parse::string_parser_grammar string_grammar;
         parse::double_parser_rules      double_rules;
         parse::effects_group_grammar effects_group_grammar;
+        parse::detail::double_grammar double_rule;
+        parse::detail::int_grammar int_rule;
         special_prefix_rule special_prefix;
         spawn_rule          spawn;
         special_rule        special;

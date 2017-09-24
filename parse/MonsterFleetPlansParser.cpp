@@ -35,7 +35,9 @@ namespace {
               const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last) :
             condition_parser(tok, labeller),
-            string_grammar(tok, labeller, condition_parser)
+            string_grammar(tok, labeller, condition_parser),
+            double_rule(tok),
+            int_rule(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -67,11 +69,11 @@ namespace {
 
             spawns
                 =    (
-                            (labeller.rule(SpawnRate_token) > parse::detail::double_ [ phoenix::ref(_c) = _1 ])
+                            (labeller.rule(SpawnRate_token) > double_rule [ phoenix::ref(_c) = _1 ])
                         |    eps [ phoenix::ref(_c) = 1.0 ]
                      )
                 >    (
-                            (labeller.rule(SpawnLimit_token) > parse::detail::int_ [ phoenix::ref(_d) = _1 ])
+                            (labeller.rule(SpawnLimit_token) > int_rule [ phoenix::ref(_d) = _1 ])
                         |    eps [ phoenix::ref(_d) = 9999 ]
                      )
                 ;
@@ -114,6 +116,8 @@ namespace {
 
         parse::conditions_parser_grammar condition_parser;
         const parse::string_parser_grammar string_grammar;
+        parse::detail::double_grammar double_rule;
+        parse::detail::int_grammar int_rule;
         generic_rule            monster_fleet_plan_prefix;
         generic_rule            ships;
         generic_rule            spawns;

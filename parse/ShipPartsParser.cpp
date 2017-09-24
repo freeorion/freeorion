@@ -56,7 +56,8 @@ namespace {
             tags_parser(tok, labeller),
             common_rules(tok, labeller, condition_parser, string_grammar, tags_parser),
             ship_slot_type_enum(tok),
-            ship_part_class_enum(tok)
+            ship_part_class_enum(tok),
+            double_rule(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -94,12 +95,12 @@ namespace {
                 >   common_rules.more_common
                     [_pass = is_unique_(_r1, PartType_token, phoenix::bind(&MoreCommonParams::name, _1)), _a = _1 ]
                 >   labeller.rule(Class_token)       > ship_part_class_enum [ _c = _1 ]
-                > (  (labeller.rule(Capacity_token)  > parse::detail::double_ [ _d = _1 ])
-                   | (labeller.rule(Damage_token)    > parse::detail::double_ [ _d = _1 ])
+                > (  (labeller.rule(Capacity_token)  > double_rule [ _d = _1 ])
+                   | (labeller.rule(Damage_token)    > double_rule [ _d = _1 ])
                    |  eps [ _d = 0.0 ]
                   )
-                > (  (labeller.rule(Damage_token)    > parse::detail::double_ [ _h = _1 ])   // damage is secondary for fighters
-                   | (labeller.rule(Shots_token)     > parse::detail::double_ [ _h = _1 ])   // shots is secondary for direct fire weapons
+                > (  (labeller.rule(Damage_token)    > double_rule [ _h = _1 ])   // damage is secondary for fighters
+                   | (labeller.rule(Shots_token)     > double_rule [ _h = _1 ])   // shots is secondary for direct fire weapons
                    |  eps [ _h = 1.0 ]
                   )
                 > (   tok.NoDefaultCapacityEffect_ [ _g = false ]
@@ -154,6 +155,7 @@ namespace {
         parse::detail::common_params_rules common_rules;
         parse::ship_slot_enum_grammar  ship_slot_type_enum;
         parse::ship_part_class_enum_grammar ship_part_class_enum;
+        parse::detail::double_grammar double_rule;
         slots_rule                         slots;
         part_type_rule                     part_type;
         start_rule                         start;

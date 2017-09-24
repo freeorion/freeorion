@@ -67,17 +67,16 @@ namespace parse { namespace detail {
         locals
     >;
 
-    using double_rule = detail::rule<
-        double ()
-    >;
-    extern double_rule double_;
 
+    struct double_grammar : public grammar<double()> {
+        double_grammar(const parse::lexer& tok);
+        rule<double()> double_;
+    };
 
-    using int_rule = detail::rule<
-        int ()
-    >;
-    extern int_rule int_;
-
+    struct int_grammar : public grammar<int()> {
+        int_grammar(const parse::lexer& tok);
+        rule<int()> int_;
+    };
 
     using label_rule = detail::rule<>;
     /** Store label_rules. */

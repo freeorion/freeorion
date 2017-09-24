@@ -78,7 +78,9 @@ namespace {
         rules(const parse::lexer& tok,
               parse::detail::Labeller& labeller,
               const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+              const parse::text_iterator& first, const parse::text_iterator& last):
+            double_rule(tok),
+            int_rule(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -127,9 +129,9 @@ namespace {
                     >> (labeller.rule(Category_token) >      tok.string [ _j = _1 ])
                     >>  labeller.rule(Type_token) >>         tok.Integer_
                     )
-                >   labeller.rule(Default_token) >       parse::detail::int_ [ _f = _1 ]
-                >   labeller.rule(Min_token) >           parse::detail::int_ [ _g = _1 ]
-                >   labeller.rule(Max_token) >           parse::detail::int_
+                >   labeller.rule(Default_token) >       int_rule [ _f = _1 ]
+                >   labeller.rule(Min_token) >           int_rule [ _g = _1 ]
+                >   labeller.rule(Max_token) >           int_rule
                     [ add_rule(_r1, _a, _b, _j, _f, _g, _1 ) ]
                 ;
 
@@ -140,9 +142,9 @@ namespace {
                     >> (labeller.rule(Category_token) >      tok.string [ _j = _1 ])
                     >>  labeller.rule(Type_token) >>         tok.Real_
                     )
-                >   labeller.rule(Default_token) >       parse::detail::double_ [ _c = _1 ]
-                >   labeller.rule(Min_token) >           parse::detail::double_ [ _d = _1 ]
-                >   labeller.rule(Max_token) >           parse::detail::double_
+                >   labeller.rule(Default_token) >       double_rule [ _c = _1 ]
+                >   labeller.rule(Min_token) >           double_rule [ _d = _1 ]
+                >   labeller.rule(Max_token) >           double_rule
                     [ add_rule(_r1, _a, _b, _j, _c, _d, _1 ) ]
                 ;
 
@@ -214,6 +216,8 @@ namespace {
             void (GameRules&)
         > start_rule;
 
+        parse::detail::double_grammar double_rule;
+        parse::detail::int_grammar int_rule;
         game_rule_rule  game_rule_bool;
         game_rule_rule  game_rule_int;
         game_rule_rule  game_rule_double;
