@@ -2,6 +2,7 @@
 #define _ParseImpl_h_
 
 #include "ReportParseError.h"
+#include "EnumParser.h"
 #include "../universe/Tech.h"
 #include "../util/Logger.h"
 
@@ -92,6 +93,11 @@ namespace parse { namespace detail {
         std::unordered_map<const char*, label_rule> m_rules;
     };
 
+    template <typename T>
+    using enum_rule = detail::rule<T ()>;
+    template <typename T>
+    using enum_grammar = detail::grammar<T ()>;
+
     using tags_rule_type    = rule<void (std::set<std::string>&)>;
     using tags_grammar_type = grammar<void (std::set<std::string>&)>;
 
@@ -117,6 +123,7 @@ namespace parse { namespace detail {
     struct item_spec_grammar : public item_spec_grammar_type {
         item_spec_grammar(const parse::lexer& tok,
                           Labeller& labeller);
+        parse::unlockable_item_enum_grammar unlockable_item_type_enum;
         item_spec_rule_type start;
     };
 

@@ -4,6 +4,7 @@
 #include "Lexer.h"
 #include "ParseImpl.h"
 #include "ValueRefParser.h"
+#include "EnumParser.h"
 
 #include <boost/spirit/include/qi.hpp>
 
@@ -42,6 +43,7 @@ namespace parse { namespace detail {
         > described_rule;
 
         parse::int_arithmetic_rules     int_rules;
+        parse::empire_affiliation_enum_grammar empire_affiliation_type_enum;
         condition_parser_rule    all;
         condition_parser_rule    none;
         condition_parser_rule    source;
@@ -86,6 +88,7 @@ namespace parse { namespace detail {
 
         parse::int_arithmetic_rules     int_rules;
         parse::castable_as_int_parser_rules    castable_int_rules;
+        parse::ship_part_class_enum_grammar ship_part_class_enum;
         common_rule                     has_special_since_turn;
         common_rule                     enqueued;
         common_rule                     enqueued1;
@@ -197,6 +200,8 @@ namespace parse { namespace detail {
 
         parse::int_arithmetic_rules     int_rules;
         parse::double_parser_rules      double_rules;
+        parse::non_ship_part_meter_enum_grammar non_ship_part_meter_type_enum;
+        parse::ship_part_meter_enum_grammar ship_part_meter_type_enum;
         meter_value_rule                meter_value;
         meter_value_rule                ship_part_meter_value;
         empire_meter_value_rule         empire_meter_value;

@@ -24,7 +24,10 @@ namespace parse { namespace detail {
         double_rules(tok, labeller, condition_parser, string_grammar),
         visibility_rules(tok, labeller, condition_parser),
         planet_type_rules(tok, labeller, condition_parser),
-        planet_size_rules(tok, labeller, condition_parser)
+        planet_size_rules(tok, labeller, condition_parser),
+        empire_affiliation_type_enum(tok),
+        set_non_ship_part_meter_type_enum(tok),
+        set_ship_part_meter_type_enum(tok)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -38,8 +41,8 @@ namespace parse { namespace detail {
 
         set_meter =
             (
-                /* has some overlap with parse::set_ship_part_meter_type_enum() so can't use '>' */
-                parse::set_non_ship_part_meter_type_enum() [ _a = _1 ]
+                /* has some overlap with set_ship_part_meter_type_enum so can't use '>' */
+                set_non_ship_part_meter_type_enum [ _a = _1 ]
                 >>  labeller.rule(Value_token)
             )
             >   double_rules.expr [ _c = _1 ]
@@ -50,7 +53,7 @@ namespace parse { namespace detail {
             ;
 
         set_ship_part_meter
-            =    (parse::set_ship_part_meter_type_enum() [ _a = _1 ] >>   labeller.rule(PartName_token))   > string_grammar [ _b = _1 ]
+            =    (set_ship_part_meter_type_enum [ _a = _1 ] >>   labeller.rule(PartName_token))   > string_grammar [ _b = _1 ]
             >    labeller.rule(Value_token)      > double_rules.expr [ _val = new_<Effect::SetShipPartMeter>(_a, _b, _1) ]
             ;
 
@@ -114,7 +117,7 @@ namespace parse { namespace detail {
                         // useful to specify a single recipient empire, or the allies
                         // or enemies of a single empire
                         (
-                            (   (labeller.rule(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
+                            (   (labeller.rule(Affiliation_token) > empire_affiliation_type_enum [ _d = _1 ])
                                 |    eps [ _d = AFFIL_SELF ]
                             )
                             >>  labeller.rule(Empire_token)
@@ -122,7 +125,7 @@ namespace parse { namespace detail {
                     )
                     |  (   // no empire id or condition specified, with or without an
                         // affiliation type: useful to specify no or all empires
-                        (   (labeller.rule(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
+                        (   (labeller.rule(Affiliation_token) > empire_affiliation_type_enum [ _d = _1 ])
                             |    eps [ _d = AFFIL_ANY ]
                         )
                     )

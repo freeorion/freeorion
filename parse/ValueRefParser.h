@@ -3,6 +3,7 @@
 
 #include "Lexer.h"
 #include "ParseImpl.h"
+#include "EnumParser.h"
 
 #include "../universe/ValueRefFwd.h"
 #include "../universe/EnumsFwd.h"
@@ -80,9 +81,11 @@ struct simple_variable_rules
     template <typename T>
     struct arithmetic_rules {
         arithmetic_rules(const std::string& type_name,
+                         const parse::lexer& tok,
                          Labeller& labeller,
                          const condition_parser_grammar& condition_parser);
 
+        parse::statistic_enum_grammar statistic_type_enum;
         expression_rule<T> functional_expr;
         expression_rule<T> exponential_expr;
         expression_rule<T> multiplicative_expr;
@@ -166,6 +169,7 @@ namespace parse {
                                    const parse::value_ref_grammar<std::string>& string_grammar);
 
         const int_arithmetic_rules& int_rules;
+        parse::ship_part_class_enum_grammar ship_part_class_enum;
         detail::complex_variable_rule<int> game_rule;
         detail::complex_variable_rule<int> empire_name_ref;
         detail::complex_variable_rule<int> empire_ships_destroyed;

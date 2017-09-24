@@ -54,7 +54,9 @@ namespace {
             condition_parser(tok, labeller),
             string_grammar(tok, labeller, condition_parser),
             tags_parser(tok, labeller),
-            common_rules(tok, labeller, condition_parser, string_grammar, tags_parser)
+            common_rules(tok, labeller, condition_parser, string_grammar, tags_parser),
+            ship_slot_type_enum(tok),
+            ship_part_class_enum(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -81,8 +83,8 @@ namespace {
                 =  -(
                         labeller.rule(MountableSlotTypes_token)
                     >   (
-                            ('[' > +parse::ship_slot_type_enum() [ push_back(_r1, _1) ] > ']')
-                        |    parse::ship_slot_type_enum() [ push_back(_r1, _1) ]
+                            ('[' > +ship_slot_type_enum [ push_back(_r1, _1) ] > ']')
+                        |    ship_slot_type_enum [ push_back(_r1, _1) ]
                         )
                      )
                 ;
@@ -91,7 +93,7 @@ namespace {
                 = ( tok.Part_
                 >   common_rules.more_common
                     [_pass = is_unique_(_r1, PartType_token, phoenix::bind(&MoreCommonParams::name, _1)), _a = _1 ]
-                >   labeller.rule(Class_token)       > parse::ship_part_class_enum() [ _c = _1 ]
+                >   labeller.rule(Class_token)       > ship_part_class_enum [ _c = _1 ]
                 > (  (labeller.rule(Capacity_token)  > parse::detail::double_ [ _d = _1 ])
                    | (labeller.rule(Damage_token)    > parse::detail::double_ [ _d = _1 ])
                    |  eps [ _d = 0.0 ]
@@ -150,6 +152,8 @@ namespace {
         const parse::string_parser_grammar string_grammar;
         parse::detail::tags_grammar tags_parser;
         parse::detail::common_params_rules common_rules;
+        parse::ship_slot_enum_grammar  ship_slot_type_enum;
+        parse::ship_part_class_enum_grammar ship_part_class_enum;
         slots_rule                         slots;
         part_type_rule                     part_type;
         start_rule                         start;
