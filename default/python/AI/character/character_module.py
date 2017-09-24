@@ -230,10 +230,6 @@ class Trait(object):
         """
         return 0.0
 
-    def may_dither_focus_to_gain_research(self):  # pylint: disable=no-self-use,unused-argument
-        """Return True if permitted to trade production at a loss for research"""
-        return True
-
     def may_research_heavily(self):  # pylint: disable=no-self-use,unused-argument
         """Return true if allowed to target research/industry > 1.5"""
         return True
@@ -372,9 +368,6 @@ class Aggression(Trait):
 
     def military_safety_factor(self):
         return [4.0, 3.0, 2.0, 1.5, 1.2, 1.0][self.aggression]
-
-    def may_dither_focus_to_gain_research(self):
-        return self.aggression < fo.aggression.aggressive
 
     def may_research_heavily(self):
         return self.aggression > fo.aggression.cautious
@@ -547,8 +540,7 @@ def _make_single_function_combiner(funcnamei, f_combo):
 
 # Create combiners for traits that all must be true
 for funcname in ["may_explore_system", "may_surge_industry", "may_maximize_research", "may_invade",
-                 "may-invade_with_bases", "may_build_building", "may_produce_troops",
-                 "may_dither_focus_to_gain_research", "may_research_heavily",
+                 "may-invade_with_bases", "may_build_building", "may_produce_troops", "may_research_heavily",
                  "may_travel_beyond_supply", "may_research_xeno_genetics_variances",
                  "prefer_research_defensive", "prefer_research_low_aggression", "may_research_tech",
                  "may_research_tech_classic"]:
