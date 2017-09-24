@@ -229,16 +229,16 @@ SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id,
     } else if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(obj)) {
         if (planet->Unowned())
             sitrep = SitRepEntry(
-                UserStringNop("SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM"),
+                UserStringNop("SITREP_UNOWNED_PLANET_ATTACKED_AT_SYSTEM"),
                 CurrentTurn() + 1,
                 "icons/sitrep/colony_bombarded.png",
-                UserStringNop("SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM_LABEL"), true);
+                UserStringNop("SITREP_UNOWNED_PLANET_ATTACKED_AT_SYSTEM_LABEL"), true);
         else
             sitrep = SitRepEntry(
-                UserStringNop("SITREP_PLANET_BOMBARDED_AT_SYSTEM"),
+                UserStringNop("SITREP_PLANET_ATTACKED_AT_SYSTEM"),
                 CurrentTurn() + 1,
                 "icons/sitrep/colony_bombarded.png",
-                UserStringNop("SITREP_PLANET_BOMBARDED_AT_SYSTEM_LABEL"), true);
+                UserStringNop("SITREP_PLANET_ATTACKED_AT_SYSTEM_LABEL"), true);
         sitrep.AddVariable(VarText::PLANET_ID_TAG,     std::to_string(object_id));
 
     } else {

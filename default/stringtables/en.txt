@@ -5971,17 +5971,17 @@ At %system%: a %shipdesign% was damaged.
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Unowned Ship Damaged
 
-SITREP_PLANET_BOMBARDED_AT_SYSTEM
-At %system%: the %empire% planet %planet% was bombarded.
+SITREP_PLANET_ATTACKED_AT_SYSTEM
+At %system%: the %empire% planet %planet% was attacked.
 
-SITREP_PLANET_BOMBARDED_AT_SYSTEM_LABEL
-Empire Planet Bombarded
+SITREP_PLANET_ATTACKED_AT_SYSTEM_LABEL
+Empire Planet Attacked
 
-SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
-At %system%: The planet %planet% was bombarded.
+SITREP_UNOWNED_PLANET_ATTACKED_AT_SYSTEM
+At %system%: The planet %planet% was attacked.
 
-SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM_LABEL
-Unowned Planet Bombarded
+SITREP_UNOWNED_PLANET_ATTACKED_AT_SYSTEM_LABEL
+Unowned Planet Attacked
 
 SITREP_GROUND_BATTLE
 On %planet%: there was a ground battle.
