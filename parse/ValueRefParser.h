@@ -44,7 +44,7 @@ using variable_rule = rule<
 template <typename T>
 struct simple_variable_rules
 {
-    simple_variable_rules(const std::string& type_name);
+    simple_variable_rules(const std::string& type_name, const parse::lexer& tok);
 
     name_token_rule bound_variable_name;
     name_token_rule free_variable_name;

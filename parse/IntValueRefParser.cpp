@@ -2,7 +2,7 @@
 
 
 parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lexer& tok) :
-    simple_variable_rules("integer")
+    simple_variable_rules("integer", tok)
 {
     namespace phoenix = boost::phoenix;
     namespace qi = boost::spirit::qi;

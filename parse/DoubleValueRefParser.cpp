@@ -2,7 +2,7 @@
 
 
 parse::detail::simple_double_parser_rules::simple_double_parser_rules(const parse::lexer& tok) :
-    simple_variable_rules("double")
+    simple_variable_rules("double", tok)
 {
     namespace phoenix = boost::phoenix;
     namespace qi = boost::spirit::qi;

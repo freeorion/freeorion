@@ -161,13 +161,13 @@ enum_value_ref_rules<T>::enum_value_ref_rules(const std::string& type_name,
 
 
 template <typename T>
-simple_variable_rules<T>::simple_variable_rules(const std::string& type_name) {
+simple_variable_rules<T>::simple_variable_rules(const std::string& type_name,
+                                                const parse::lexer& tok)
+{
         using boost::phoenix::new_;
 
         boost::spirit::qi::_1_type _1;
         boost::spirit::qi::_val_type _val;
-
-        const parse::lexer& tok = parse::lexer::instance();
 
         free_variable
             =   tok.Value_
