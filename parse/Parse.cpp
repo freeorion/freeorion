@@ -27,62 +27,6 @@ namespace std {
 }
 #endif
 
-namespace {
-    struct color_parser_rules {
-        color_parser_rules() {
-            namespace phoenix = boost::phoenix;
-            namespace qi = boost::spirit::qi;
-
-            using phoenix::construct;
-            using phoenix::if_;
-
-            qi::_1_type _1;
-            qi::_a_type _a;
-            qi::_b_type _b;
-            qi::_c_type _c;
-            qi::_pass_type _pass;
-            qi::_val_type _val;
-            qi::eps_type eps;
-            qi::uint_type uint_;
-
-            const parse::lexer& tok = parse::lexer::instance();
-
-            channel
-                =    tok.int_ [ _val = _1, _pass = 0 <= _1 && _1 <= 255 ]
-                ;
-
-            start
-                =    ('(' >> channel [ _a = _1 ])
-                >    (',' >> channel [ _b = _1 ])
-                >    (',' >> channel [ _c = _1 ])
-                >    (
-                        (
-                            ',' > channel [ _val = construct<GG::Clr>(_a, _b, _c, _1) ]
-                        )
-                        |         eps [ _val = construct<GG::Clr>(_a, _b, _c, phoenix::val(255)) ]
-                     )
-                >    ')'
-                ;
-
-            channel.name("colour channel (0 to 255)");
-            start.name("Colour");
-
-#if DEBUG_PARSERS
-            debug(channel);
-            debug(start);
-#endif
-        }
-
-        typedef parse::detail::rule<
-            unsigned int ()
-        > rule;
-
-        rule channel;
-        parse::detail::color_parser_rule start;
-    };
-
-}
-
 namespace parse {
     void init() {
         namespace phoenix = boost::phoenix;
@@ -521,10 +465,49 @@ namespace parse {
 #endif
     }
 
-        color_parser_rule& color_parser() {
-            static color_parser_rules rules;
-            return rules.start;
-        }
+    color_parser_grammar::color_parser_grammar(const parse::lexer& tok) :
+        color_parser_grammar::base_type(start, "color_parser_grammar")
+    {
+        namespace phoenix = boost::phoenix;
+        namespace qi = boost::spirit::qi;
+
+        using phoenix::construct;
+        using phoenix::if_;
+
+        qi::_1_type _1;
+        qi::_a_type _a;
+        qi::_b_type _b;
+        qi::_c_type _c;
+        qi::_pass_type _pass;
+        qi::_val_type _val;
+        qi::eps_type eps;
+        qi::uint_type uint_;
+
+        channel
+            =    tok.int_ [ _val = _1, _pass = 0 <= _1 && _1 <= 255 ]
+            ;
+
+        start
+            =    ('(' >> channel [ _a = _1 ])
+            >    (',' >> channel [ _b = _1 ])
+            >    (',' >> channel [ _c = _1 ])
+            >    (
+                (
+                    ',' > channel [ _val = construct<GG::Clr>(_a, _b, _c, _1) ]
+                )
+                |         eps [ _val = construct<GG::Clr>(_a, _b, _c, phoenix::val(255)) ]
+            )
+            >    ')'
+            ;
+
+        channel.name("colour channel (0 to 255)");
+        start.name("Colour");
+
+#if DEBUG_PARSERS
+        debug(channel);
+        debug(start);
+#endif
+    }
 
     item_spec_grammar::item_spec_grammar(
         const parse::lexer& tok,

@@ -82,7 +82,8 @@ namespace {
             double_rules(tok, labeller, condition_parser, string_grammar),
             effects_group_grammar(tok, labeller, condition_parser, string_grammar),
             tags_parser(tok, labeller),
-            item_spec_parser(tok, labeller)
+            item_spec_parser(tok, labeller),
+            color_parser(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -157,7 +158,7 @@ namespace {
                 =   tok.Category_
                 >   labeller.rule(Name_token)    > tok.string [ _pass = is_unique_(_r1, Category_token, _1), _a = _1 ]
                 >   labeller.rule(Graphic_token) > tok.string [ _b = _1 ]
-                >   labeller.rule(Colour_token)  > parse::detail::color_parser() [ insert_category_(_r1, _a, _b, _1) ]
+                >   labeller.rule(Colour_token)  > color_parser [ insert_category_(_r1, _a, _b, _1) ]
                 ;
 
             start
@@ -243,6 +244,7 @@ namespace {
         parse::effects_group_grammar effects_group_grammar;
         parse::detail::tags_grammar tags_parser;
         parse::detail::item_spec_grammar item_spec_parser;
+        parse::detail::color_parser_grammar color_parser;
         tech_info_name_desc_rule    tech_info_name_desc;
         tech_info_rule              tech_info;
         prerequisites_rule          prerequisites;

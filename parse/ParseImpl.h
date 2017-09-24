@@ -106,15 +106,24 @@ namespace parse { namespace detail {
         tags_rule_type start;
     };
 
-    typedef rule<
-        GG::Clr (),
-        boost::spirit::qi::locals<
-            unsigned int,
-            unsigned int,
-            unsigned int
-        >
-    > color_parser_rule;
-    color_parser_rule& color_parser();
+    using color_parser_signature = GG::Clr ();
+    using color_parser_locals = boost::spirit::qi::locals<
+        unsigned int,
+        unsigned int,
+        unsigned int
+        >;
+    using color_rule_type = rule<color_parser_signature, color_parser_locals>;
+    using color_grammar_type = grammar<color_parser_signature, color_parser_locals>;
+
+    struct color_parser_grammar : public color_grammar_type {
+        color_parser_grammar(const parse::lexer& tok);
+        typedef parse::detail::rule<
+            unsigned int ()
+            > rule;
+
+        rule channel;
+        color_rule_type start;
+    };
 
     void parse_file_common(const boost::filesystem::path& path,
                            const lexer& lexer,
