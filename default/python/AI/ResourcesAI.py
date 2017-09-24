@@ -28,8 +28,8 @@ resource_timer = AITimer('timer_bucket')
 INDUSTRY = FocusType.FOCUS_INDUSTRY
 RESEARCH = FocusType.FOCUS_RESEARCH
 GROWTH = FocusType.FOCUS_GROWTH
-PRODUCTION = FocusType.FOCUS_PROTECTION
-_focus_names = {INDUSTRY: "Industry", RESEARCH: "Research", GROWTH: "Growth", PRODUCTION: "Defense"}
+PROTECTION = FocusType.FOCUS_PROTECTION
+_focus_names = {INDUSTRY: "Industry", RESEARCH: "Research", GROWTH: "Growth", PROTECTION: "Defense"}
 
 # TODO use the priorityRatio to weight
 RESEARCH_WEIGHTING = 2.3
@@ -142,7 +142,7 @@ class PlanetFocusManager(object):
         universe.updateMeterEstimates(unbaked_pids)
         # Protection focus will give the same off-focus Industry and Research targets as Growth Focus
         for pid, pinfo, planet in planet_infos:
-            pinfo.possible_output[PRODUCTION] = pinfo.possible_output[GROWTH]
+            pinfo.possible_output[PROTECTION] = pinfo.possible_output[GROWTH]
 
 
 class Reporter(object):
@@ -319,27 +319,27 @@ def assess_protection_focus(pid, pinfo):
     print "Planet %s has regional+supply threat of %.1f" % ('P_%d<%s>' % (pid, this_planet.name), threat_from_supply)
     regional_threat = sys_status.get('regional_threat', 0) + threat_from_supply
     if not regional_threat:  # no need for protection
-        if pinfo.current_focus == PRODUCTION:
+        if pinfo.current_focus == PROTECTION:
             print "Advising dropping Protection Focus at %s due to no regional threat" % this_planet
         return False
     cur_prod_val = weighted_sum_output(pinfo.current_output)
     target_prod_val = max(map(weighted_sum_output, [pinfo.possible_output[INDUSTRY], pinfo.possible_output[RESEARCH]]))
-    prot_prod_val = weighted_sum_output(pinfo.possible_output[PRODUCTION])
+    prot_prod_val = weighted_sum_output(pinfo.possible_output[PROTECTION])
     local_production_diff = 0.8 * cur_prod_val + 0.2 * target_prod_val - prot_prod_val
     fleet_threat = sys_status.get('fleetThreat', 0)
     # TODO: relax the below rejection once the overall determination of PFocus is better tuned
     if not fleet_threat and local_production_diff > 8:
-        if pinfo.current_focus == PRODUCTION:
+        if pinfo.current_focus == PROTECTION:
             print "Advising dropping Protection Focus at %s due to excessive productivity loss" % this_planet
         return False
     local_p_defenses = sys_status.get('mydefenses', {}).get('overall', 0)
     # TODO have adjusted_p_defenses take other in-system planets into account
-    adjusted_p_defenses = local_p_defenses * (1.0 if pinfo.current_focus != PRODUCTION else 0.5)
+    adjusted_p_defenses = local_p_defenses * (1.0 if pinfo.current_focus != PROTECTION else 0.5)
     local_fleet_rating = sys_status.get('myFleetRating', 0)
     combined_local_defenses = sys_status.get('all_local_defenses', 0)
     my_neighbor_rating = sys_status.get('my_neighbor_rating', 0)
     neighbor_threat = sys_status.get('neighborThreat', 0)
-    safety_factor = 1.2 if pinfo.current_focus == PRODUCTION else 0.5
+    safety_factor = 1.2 if pinfo.current_focus == PROTECTION else 0.5
     cur_shield = this_planet.currentMeterValue(fo.meterType.shield)
     max_shield = this_planet.currentMeterValue(fo.meterType.maxShield)
     cur_troops = this_planet.currentMeterValue(fo.meterType.troops)
@@ -350,18 +350,18 @@ def assess_protection_focus(pid, pinfo):
     use_protection = True
     reason = ""
     if (fleet_threat and  # i.e., an enemy is sitting on us
-            (pinfo.current_focus != PRODUCTION or  # too late to start protection TODO: but maybe regen worth it
+            (pinfo.current_focus != PROTECTION or  # too late to start protection TODO: but maybe regen worth it
              # protection focus only useful here if it maintains an elevated level
              all([AIDependencies.PROT_FOCUS_MULTIPLIER * a <= b for a, b in def_meter_pairs]))):
         use_protection = False
         reason = "A"
-    elif ((pinfo.current_focus != PRODUCTION and cur_shield < max_shield - 2 and
+    elif ((pinfo.current_focus != PROTECTION and cur_shield < max_shield - 2 and
            not tech_is_complete(AIDependencies.PLANET_BARRIER_I_TECH)) and
           (cur_defense < max_defense - 2 and not tech_is_complete(AIDependencies.DEFENSE_REGEN_1_TECH)) and
           (cur_troops < max_troops - 2)):
         use_protection = False
         reason = "B1"
-    elif ((pinfo.current_focus == PRODUCTION and cur_shield * AIDependencies.PROT_FOCUS_MULTIPLIER < max_shield - 2 and
+    elif ((pinfo.current_focus == PROTECTION and cur_shield * AIDependencies.PROT_FOCUS_MULTIPLIER < max_shield - 2 and
            not tech_is_complete(AIDependencies.PLANET_BARRIER_I_TECH)) and
           (cur_defense * AIDependencies.PROT_FOCUS_MULTIPLIER < max_defense - 2 and
            not tech_is_complete(AIDependencies.DEFENSE_REGEN_1_TECH)) and
@@ -378,7 +378,7 @@ def assess_protection_focus(pid, pinfo):
         use_protection = False
         reason = "E"
     elif (safety_factor * regional_threat <= combined_local_defenses and
-          (pinfo.current_focus != PRODUCTION or
+          (pinfo.current_focus != PROTECTION or
            (0.5 * safety_factor * regional_threat <= local_fleet_rating and
             fleet_threat == 0 and neighbor_threat < combined_local_defenses and
             local_production_diff > 5))):
@@ -390,7 +390,7 @@ def assess_protection_focus(pid, pinfo):
           local_production_diff > 5):
         use_protection = False
         reason = "G"
-    if use_protection or pinfo.current_focus == PRODUCTION:
+    if use_protection or pinfo.current_focus == PROTECTION:
         print ("Advising %sProtection Focus (reason %s) for planet %s, with local_prod_diff of %.1f, comb. local"
                " defenses %.1f, local fleet rating %.1f and regional threat %.1f, threat sources: %s") % (
                    ["dropping ", ""][use_protection], reason, this_planet, local_production_diff, combined_local_defenses,
@@ -476,13 +476,13 @@ def set_planet_protection_foci(focus_manager):
     universe = fo.getUniverse()
     for pid, pinfo in focus_manager.raw_planet_info.items():
         planet = pinfo.planet
-        if PRODUCTION in planet.availableFoci and assess_protection_focus(pid, pinfo):
+        if PROTECTION in planet.availableFoci and assess_protection_focus(pid, pinfo):
             current_focus = planet.focus
-            if focus_manager.bake_future_focus(pid, PRODUCTION):
-                if current_focus != PRODUCTION:
+            if focus_manager.bake_future_focus(pid, PROTECTION):
+                if current_focus != PROTECTION:
                     print ("Tried setting %s for planet %s (%d) with species %s and current focus %s, got result %d and focus %s" %
                            (pinfo.future_focus, planet.name, pid, planet.speciesName, current_focus, True, planet.focus))
-                print "%s focus of planet %s (%d) at Protection(Defense) Focus" % (["set", "left"][current_focus == PRODUCTION], planet.name, pid)
+                print "%s focus of planet %s (%d) at Protection(Defense) Focus" % (["set", "left"][current_focus == PROTECTION], planet.name, pid)
                 continue
             else:
                 newplanet = universe.getPlanet(pid)
