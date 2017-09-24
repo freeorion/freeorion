@@ -817,67 +817,67 @@ bool BombardOrder::UndoImpl() const {
 }
 
 ////////////////////////////////////////////////
-// DestroyOrder
+// DestroyPlanetOrder
 ////////////////////////////////////////////////
-DestroyOrder::DestroyOrder() :
+DestroyPlanetOrder::DestroyPlanetOrder() :
     m_ship(INVALID_OBJECT_ID),
     m_planet(INVALID_OBJECT_ID)
 {}
 
-DestroyOrder::DestroyOrder(int empire, int ship, int planet) :
+DestroyPlanetOrder::DestroyPlanetOrder(int empire, int ship, int planet) :
     Order(empire),
     m_ship(ship),
     m_planet(planet)
 {}
 
-void DestroyOrder::ExecuteImpl() const {
+void DestroyPlanetOrder::ExecuteImpl() const {
     GetValidatedEmpire();
     int empire_id = EmpireID();
 
     auto ship = GetShip(m_ship);
     if (!ship) {
-        ErrorLogger() << "DestroyOrder::ExecuteImpl couldn't get ship with id " << m_ship;
+        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl couldn't get ship with id " << m_ship;
         return;
     }
-    if (!ship->CanDestroy()) {
-        ErrorLogger() << "DestroyOrder::ExecuteImpl got ship that can't destroy planets";
+    if (!ship->CanDestroyPlanet()) {
+        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl got ship that can't destroy planets";
         return;
     }
     if (!ship->OwnedBy(empire_id)) {
-        ErrorLogger() << "DestroyOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
+        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
         return;
     }
 
     auto planet = GetPlanet(m_planet);
     if (!planet) {
-        ErrorLogger() << "DestroyOrder::ExecuteImpl couldn't get planet with id " << m_planet;
+        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl couldn't get planet with id " << m_planet;
         return;
     }
     if (planet->OwnedBy(empire_id)) {
-        ErrorLogger() << "DestroyOrder::ExecuteImpl given planet that is already owned by the order-issuing empire";
+        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl given planet that is already owned by the order-issuing empire";
         return;
     }
     if (!planet->Unowned() && Empires().GetDiplomaticStatus(planet->Owner(), empire_id) != DIPLO_WAR) {
-        ErrorLogger() << "DestroyOrder::ExecuteImpl given planet owned by an empire not at war with order-issuing empire";
+        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl given planet owned by an empire not at war with order-issuing empire";
         return;
     }
     if (GetUniverse().GetObjectVisibilityByEmpire(m_planet, empire_id) < VIS_BASIC_VISIBILITY) {
-        ErrorLogger() << "DestroyOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
+        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
         //return;
     }
 
     int ship_system_id = ship->SystemID();
     if (ship_system_id == INVALID_OBJECT_ID) {
-        ErrorLogger() << "DestroyOrder::ExecuteImpl given id of ship not in a system";
+        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl given id of ship not in a system";
         return;
     }
     int planet_system_id = planet->SystemID();
     if (ship_system_id != planet_system_id) {
-        ErrorLogger() << "DestroyOrder::ExecuteImpl given ids of ship and planet not in the same system";
+        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl given ids of ship and planet not in the same system";
         return;
     }
 
-    DebugLogger() << "DestroyOrder::ExecuteImpl set for ship " << m_ship << " "
+    DebugLogger() << "DestroyPlanetOrder::ExecuteImpl set for ship " << m_ship << " "
         << ship->Name() << " to destroy planet " << m_planet << " "
         << planet->Name();
     planet->SetIsAboutToBeDestroyed(true);
@@ -887,20 +887,20 @@ void DestroyOrder::ExecuteImpl() const {
         fleet->StateChangedSignal();
 }
 
-bool DestroyOrder::UndoImpl() const {
+bool DestroyPlanetOrder::UndoImpl() const {
     auto planet = GetPlanet(m_planet);
     if (!planet) {
-        ErrorLogger() << "DestroyOrder::UndoImpl couldn't get planet with id " << m_planet;
+        ErrorLogger() << "DestroyPlanetOrder::UndoImpl couldn't get planet with id " << m_planet;
         return false;
     }
 
     auto ship = GetShip(m_ship);
     if (!ship) {
-        ErrorLogger() << "DestroyOrder::UndoImpl couldn't get ship with id " << m_ship;
+        ErrorLogger() << "DestroyPlanetOrder::UndoImpl couldn't get ship with id " << m_ship;
         return false;
     }
     if (ship->OrderedDestroyPlanet() != m_planet) {
-        ErrorLogger() << "DestroyOrder::UndoImpl ship is not about to destroy planet";
+        ErrorLogger() << "DestroyPlanetOrder::UndoImpl ship is not about to destroy planet";
         return false;
     }
 

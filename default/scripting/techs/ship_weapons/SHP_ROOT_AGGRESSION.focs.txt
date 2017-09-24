@@ -19,7 +19,6 @@ Tech
             activation = ((GameRule name = "RULE_ENABLE_DOOMSDAY_WEAPONS") > 0)
             effects = GiveEmpireTech name = "SHP_DOOMSDAY_WEAPON_UNLOCK"
     ]
-    ]
     graphic = "icons/tech/planetary_colonialism.png"
 
 #include "ship_weapons.macros"

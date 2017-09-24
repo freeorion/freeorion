@@ -443,15 +443,15 @@ private:
 
 
 /////////////////////////////////////////////////////
-// DestroyOrder
+// DestroyPlanetOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents a planet destruction action*/
-class FO_COMMON_API DestroyOrder : public Order {
+class FO_COMMON_API DestroyPlanetOrder : public Order {
 public:
     /** \name Structors */ //@{
-    DestroyOrder();
+    DestroyPlanetOrder();
 
-    DestroyOrder(int empire, int ship, int planet);
+    DestroyPlanetOrder(int empire, int ship, int planet);
     //@}
 
     /** \name Accessors */ //@{

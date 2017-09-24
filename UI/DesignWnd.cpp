@@ -115,7 +115,6 @@ namespace {
                 break;
             case PC_GENERAL:
             case PC_BOMBARD:
-            case PC_DESTROY:
             case PC_PRODUCTION_LOCATION:
             default:
                 return 0.0f;

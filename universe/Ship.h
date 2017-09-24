@@ -62,7 +62,7 @@ public:
     bool                        HasTroops() const;
     bool                        CanHaveTroops() const;
     bool                        CanBombard() const;
-    bool                        CanDestroy() const;
+    bool                        CanDestroyPlanet() const;
     const std::string&          SpeciesName() const         { return m_species_name; }
     float                       Speed() const;
     float                       ColonyCapacity() const;

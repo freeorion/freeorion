@@ -156,7 +156,7 @@ namespace FreeOrionPython {
         def("issueColonizeOrder",                   AIInterface::IssueColonizeOrder, "Orders the ship with ID shipID (int) to colonize the planet with ID planetID (int). Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated ship or planet, this client's player not owning the indicated ship, the planet already being colonized, or the planet and ship not being in the same system.");
         def("issueInvadeOrder",                     AIInterface::IssueInvadeOrder, "");
         def("issueBombardOrder",                    AIInterface::IssueBombardOrder, "");
-        def("issueDestroyOrder",                    AIInterface::IssueDestroyOrder, "");
+        def("IssueDestroyPlanetOrder",              AIInterface::IssueDestroyPlanetOrder, "");
         def("issueAggressionOrder",                 AIInterface::IssueAggressionOrder);
         def("issueGiveObjectToEmpireOrder",         AIInterface::IssueGiveObjectToEmpireOrder);
         def("issueChangeFocusOrder",                AIInterface::IssueChangeFocusOrder, "Orders the planet with ID planetID (int) to use focus setting focus (string). Returns 1 (int) on success or 0 (int) on failure if the planet can't be found or isn't owned by this player, or if the specified focus is not valid on the planet.");

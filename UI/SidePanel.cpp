@@ -463,13 +463,13 @@ namespace {
     }
 
     /** Returns map from planet ID to issued destruction orders affecting it. */
-    std::map<int, std::set<int>> PendingDestroyOrders() {
+    std::map<int, std::set<int>> PendingDestroyPlanetOrders() {
         std::map<int, std::set<int>> retval;
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
         for (const auto& id_and_order : app->Orders()) {
-            if (std::shared_ptr<DestroyOrder> order = std::dynamic_pointer_cast<DestroyOrder>(id_and_order.second)) {
+            if (std::shared_ptr<DestroyPlanetOrder> order = std::dynamic_pointer_cast<DestroyPlanetOrder>(id_and_order.second)) {
                 retval[order->PlanetID()].insert(id_and_order.first);
             }
         }
@@ -1228,7 +1228,7 @@ namespace {
         if (!fleet)
             return false;
         if (IsAvailable(ship, system_id, empire_id) &&
-            ship->CanDestroy() &&
+            ship->CanDestroyPlanet() &&
             ship->OrderedDestroyPlanet() == INVALID_OBJECT_ID)
         { return true; }
         return false;
@@ -1351,7 +1351,7 @@ namespace {
             std::shared_ptr<Ship> ship = GetShip(ship_id);
             if (!ship || ship->SystemID() != system_id)
                 continue;
-            if (!ship->CanDestroy() || !ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+            if (!ship->CanDestroyPlanet() || !ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
                 continue;
             retval.insert(ship);
         }
@@ -1563,7 +1563,7 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenBombardShips(int target
 /** Returns valid Ship%s capable of destroying a given Planet.
 * @param target_planet_id ID of Planet to potentially destroy
 */
-std::set<std::shared_ptr<const Ship>> AutomaticallyChosenDestroyShips(int target_planet_id) {  // change to one ship
+std::set<std::shared_ptr<const Ship>> AutomaticallyChosenDestroyShips(int target_planet_id) {
     std::set<std::shared_ptr<const Ship>> retval;
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -1583,13 +1583,13 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenDestroyShips(int target
         return retval;
 
     for (auto& ship : Objects().FindObjects<Ship>()) {
-        // owned ship is capable of bombarding a planet in this system
+        // owned ship is capable of destroying a planet in this system
         if (!AvailableToDestroy(ship, system_id, empire_id))
             continue;
 
         // Select ship if the planet contains a content tag specified by the ship, or ship is tagged to always be selected
-        for (const std::string& tag : BombardTagsForShip(ship)) {
-            if ((tag == TAG_BOMBARD_ALWAYS) || (target_planet->HasTag(tag))) {
+        for (const std::string& tag : DestroyTagsForShip(ship)) {
+            if ((tag == TAG_DESTROY_ALWAYS) || (target_planet->HasTag(tag))) {
                 retval.insert(ship);
                 break;
             }
@@ -2373,7 +2373,7 @@ namespace {
         // is selected ship ordered to destroy a planet?  If so, recind that order
         if (ship->OrderedDestroyPlanet() != INVALID_OBJECT_ID) {
             for (const auto& id_and_order : orders) {
-                if (std::shared_ptr<DestroyOrder> order = std::dynamic_pointer_cast<DestroyOrder>(id_and_order.second)) {
+                if (std::shared_ptr<DestroyPlanetOrder> order = std::dynamic_pointer_cast<DestroyPlanetOrder>(id_and_order.second)) {
                     if (order->ShipID() == ship->ID()) {
                         HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
@@ -2530,7 +2530,7 @@ void SidePanel::PlanetPanel::ClickDestroy() {
     if (empire_id == ALL_EMPIRES)
         return;
 
-    std::map<int, std::set<int>> pending_destroy_orders = PendingDestroyOrders();
+    std::map<int, std::set<int>> pending_destroy_orders = PendingDestroyPlanetOrders();
     std::map<int, std::set<int>>::const_iterator it = pending_destroy_orders.find(m_planet_id);
 
     if (it != pending_destroy_orders.end()) {
@@ -2555,7 +2555,7 @@ void SidePanel::PlanetPanel::ClickDestroy() {
             CancelColonizeInvadeBombardDestroyScrapShipOrders(ship);
 
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<DestroyOrder>(empire_id, ship->ID(), m_planet_id));
+                std::make_shared<DestroyPlanetOrder>(empire_id, ship->ID(), m_planet_id));
             break;
         }
     }

@@ -1,4 +1,4 @@
-﻿English
+English
 
 # This is the English String Table file for FreeOrion
 #
@@ -6428,11 +6428,14 @@ Our planet % planet is being targeted by a planet destroyer cannon!
 EFFECT_PLANET_DESTRUCTION
 We have destroyed the %empire% planet %planet%!
 
+EFFECT_PLANET_DESTRUCTION_LABEL
+Destruction of hostile planet
+
 EFFECT_PLANET_DESTRUCTION_OWN
 Our planet %planet% was destroyed by %empire%!
 
-EFFECT_PLANET_DESTRUCTION_LABEL
-Planet Destruction
+EFFECT_PLANET_DESTRUCTION_LABEL_OWN
+Destruction of own planet
 
 EFFECT_EVACUEES
 At %planet%: evacuees have settled.
@@ -11311,19 +11314,20 @@ SHP_PLANET_DESTROYER
 Planet Destroyer Cannon
 
 SHP_PLANET_DESTROYER_DESC
-The ultimate beam weapon, able to destroy a whole planet after a loadup time of 2 turns. Needs a Core [[encyclopedia SLOT_TITLE]] to install.
+'''The ultimate beam weapon, able to destroy a whole planet even if its shields are still up. It can only target planets and is too slow to aim at individual ships. The only way to save a planet targeted by this terrifying weapon is to destroy the ship carrying it before the ship can fire. Needs a Core [[encyclopedia SLOT_TITLE]] to install. 
+Due to high energy demand of this ship part, the speed of the ship it is installed on is reduced by 60. The unrefined cannon takes a charge-up time of 2 turns before it can fire.'''
 
 SHP_PLANET_DESTROYER_REF_1
 Planet Destroyer Cannon 2
 
 SHP_PLANET_DESTROYER_REF_1_DESC
-This refinement of the [[shippart SP_PLANET_DESTROYER]] only requires a loadup time of 1 turn before it can destroy a planet.
+This refinement of the [[shippart SP_PLANET_DESTROYER]] only requires a charge-up time of 1 turn before it can destroy a planet.
 
 SHP_PLANET_DESTROYER_REF_2
 Planet Destroyer Cannon 3
 
 SHP_PLANET_DESTROYER_REF_2_DESC
-This further refinement of the [[shippart SP_PLANET_DESTROYER]] can destroy a whole planet in a single turn.
+This further refinement of the [[shippart SP_PLANET_DESTROYER]] can destroy a whole planet in a single turn. No charge-up time is required.
 
 SHP_ROOT_ARMOR
 Armor Plating
@@ -12377,8 +12381,7 @@ SP_PLANET_DESTROYER
 Planet Destroyer Cannon
 
 SP_PLANET_DESTROYER_DESC
-'''The ultimate beam weapon, able to destroy a whole planet. It can only target planets and is too slow to aim at individual ships.
-This terrifying weapon can destroy a planet even if its shields are still up. The only way to save a planet is to destroy the ship carrying the weapon in battle.'''
+The ultimate beam weapon, able to destroy a whole planet.
 
 SR_JAWS
 Jaws

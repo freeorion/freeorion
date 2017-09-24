@@ -1,13 +1,18 @@
 Part
     name = "SP_PLANET_DESTROYER"
     description = "SP_PLANET_DESTROYER_DESC"
-    class = Destroy
+    class = General
     mountableSlotTypes = Core
     buildcost = 800 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 8
-    tags = [ "CTRL_ALWAYS_BOMBARD" ]
+    tags = [ "CTRL_ALWAYS_DESTROY" "PEDIA_PC_GENERAL" "PLANET_DESTROYER" ]
     location = All
-    effectsgroups = [    
+    effectsgroups = [
+
+        // pdc gives speed malus increasing with each refinement
+        EffectsGroup
+            scope = Source
+            effects = SetSpeed value = Value - 60
 
         // if pdc tech is lvl 0 and no countdown is set, start countdown at 2
         EffectsGroup
@@ -35,7 +40,7 @@ Part
                  [[PLANET_DESTRUCTION_WARNING_SITREP]]
              ]
 
-          // if a homeworld is destroyed, generate specific sitRep (need to do it here, otherwise owner info is lost)
+          // if a homeworld is destroyed, generate specific sitRep (need to do it here, later owner info is lost)
           EffectsGroup
               scope = And [ [[PDC_SCOPE]] ]
               activation = Or [

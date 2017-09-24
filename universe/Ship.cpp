@@ -280,9 +280,9 @@ bool Ship::CanBombard() const {
     return design && design->CanBombard();
 }
 
-bool Ship::CanDestroy() const {
+bool Ship::CanDestroyPlanet() const {
     const ShipDesign* design = Design();
-    return design && design->CanDestroy();
+    return design && design->CanDestroyPlanet();
 }
 
 float Ship::Speed() const

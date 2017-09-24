@@ -612,21 +612,21 @@ namespace AIInterface {
         return 1;
     }
 
-    int IssueDestroyOrder(int ship_id, int planet_id) {
+    int IssueDestroyPlanetOrder(int ship_id, int planet_id) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
 
         // make sure ship_id is a ship...
         auto ship = GetShip(ship_id);
         if (!ship) {
-            ErrorLogger() << "IssueDestroyOrder : passed an invalid ship_id";
+            ErrorLogger() << "IssueDestroyPlanetOrder : passed an invalid ship_id";
             return 0;
         }
-        if (!ship->CanDestroy()) {
-            ErrorLogger() << "IssueDestroyOrder : ship can't destroy planets";
+        if (!ship->CanDestroyPlanet()) {
+            ErrorLogger() << "IssueDestroyPlanetOrder : ship can't destroy planets";
             return 0;
         }
         if (!ship->OwnedBy(empire_id)) {
-            ErrorLogger() << "IssueDestroyOrder : ship isn't owned by the order-issuing empire";
+            ErrorLogger() << "IssueDestroyPlanetOrder : ship isn't owned by the order-issuing empire";
             return 0;
         }
 
@@ -634,35 +634,35 @@ namespace AIInterface {
         // verify that planet exists and is occupied by another empire
         auto planet = GetPlanet(planet_id);
         if (!planet) {
-            ErrorLogger() << "IssueDestroyOrder : no planet with passed planet_id";
+            ErrorLogger() << "IssueDestroyPlanetOrder : no planet with passed planet_id";
             return 0;
         }
         if (planet->OwnedBy(empire_id)) {
-            ErrorLogger() << "IssueDestroyOrder : planet is already owned by the order-issuing empire";
+            ErrorLogger() << "IssueDestroyPlanetOrder : planet is already owned by the order-issuing empire";
             return 0;
         }
         if (!planet->Unowned() && Empires().GetDiplomaticStatus(planet->Owner(), empire_id) != DIPLO_WAR) {
-            ErrorLogger() << "IssueDestroyOrder : planet owned by an empire not at war with order-issuing empire";
+            ErrorLogger() << "IssueDestroyPlanetOrder : planet owned by an empire not at war with order-issuing empire";
             return 0;
         }
         if (GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) < VIS_BASIC_VISIBILITY) {
-            ErrorLogger() << "IssueDestroyOrder : planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
+            ErrorLogger() << "IssueDestroyPlanetOrder : planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
             //return;
         }
 
 
         int ship_system_id = ship->SystemID();
         if (ship_system_id == INVALID_OBJECT_ID) {
-            ErrorLogger() << "IssueDestroyOrder : given id of ship not in a system";
+            ErrorLogger() << "IssueDestroyPlanetOrder : given id of ship not in a system";
             return 0;
         }
         int planet_system_id = planet->SystemID();
         if (ship_system_id != planet_system_id) {
-            ErrorLogger() << "IssueDestroyOrder : given ids of ship and planet not in the same system";
+            ErrorLogger() << "IssueDestroyPlanetOrder : given ids of ship and planet not in the same system";
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<DestroyOrder>(empire_id, ship_id, planet_id));
+        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<DestroyPlanetOrder>(empire_id, ship_id, planet_id));
 
         return 1;
     }
