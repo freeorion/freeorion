@@ -38,8 +38,6 @@ struct lexer :
     /** Ctor. */
     lexer();
 
-    static const lexer& instance();
-
     /** \name Comment tokens */ ///@{
     boost::spirit::lex::token_def<boost::spirit::lex::omit> inline_comment;
     boost::spirit::lex::token_def<boost::spirit::lex::omit> end_of_line_comment;
