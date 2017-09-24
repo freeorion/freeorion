@@ -9,7 +9,8 @@ namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
-    effect_parser_rules_5::effect_parser_rules_5(const effect_parser_grammar& effect_parser,
+    effect_parser_rules_5::effect_parser_rules_5(const parse::lexer& tok,
+                                                 const effect_parser_grammar& effect_parser,
                                                  Labeller& labeller,
                                                  const condition_parser_grammar& condition_parser) :
         effect_parser_rules_5::base_type(start, "effect_parser_rules_5")
@@ -22,8 +23,6 @@ namespace parse { namespace detail {
         qi::eps_type eps;
         using phoenix::new_;
         using phoenix::push_back;
-
-        const parse::lexer& tok =   parse::lexer::instance();
 
         conditional
             =   (       tok.If_

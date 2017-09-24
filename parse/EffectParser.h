@@ -247,7 +247,8 @@ namespace parse { namespace detail {
     };
 
     struct effect_parser_rules_5 : public effect_parser_grammar {
-        effect_parser_rules_5(const effect_parser_grammar& effect_parser,
+        effect_parser_rules_5(const parse::lexer& tok,
+                              const effect_parser_grammar& effect_parser,
                               Labeller& labeller,
                               const condition_parser_grammar& condition_parser);
 

@@ -16,7 +16,7 @@ namespace parse {
         effect_parser_2(tok, labeller, condition_parser, string_grammar),
         effect_parser_3(tok, labeller, condition_parser, string_grammar),
         effect_parser_4(tok, *this, labeller, condition_parser, string_grammar),
-        effect_parser_5(*this, labeller, condition_parser)
+        effect_parser_5(tok, *this, labeller, condition_parser)
     {
         start
             = effect_parser_1
