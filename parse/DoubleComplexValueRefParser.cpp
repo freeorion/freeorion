@@ -26,8 +26,8 @@ namespace parse {
         qi::_f_type _f;
         qi::_val_type _val;
 
-        static const std::string TOK_SPECIES_EMPIRE_OPINION{"SpeciesEmpireOpinion"};
-        static const std::string TOK_SPECIES_SPECIES_OPINION{"SpeciesSpeciesOpinion"};
+        const std::string TOK_SPECIES_EMPIRE_OPINION{"SpeciesEmpireOpinion"};
+        const std::string TOK_SPECIES_SPECIES_OPINION{"SpeciesSpeciesOpinion"};
 
         const parse::value_ref_rule<int>& simple_int = simple_int_rules.simple;
 
