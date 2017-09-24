@@ -52,8 +52,6 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 #ifndef FREEORION_CAMAIN_KEEP_STACKTRACE
     try {
 #endif
-        parse::init();
-
         AIClientApp g_app(args);
 
         g_app();

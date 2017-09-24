@@ -28,9 +28,6 @@ namespace std {
 #endif
 
 namespace parse {
-    void init() {
-    }
-
     using namespace boost::xpressive;
     const sregex MACRO_KEY = +_w;   // word character (alnum | _), one or more times, greedy
     const sregex MACRO_TEXT = -*_;  // any character, zero or more times, not greedy

@@ -73,8 +73,6 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
             return 0;   // quit without actually starting server
         }
 
-        parse::init();
-
         ServerApp g_app;
         g_app(); // Calls ServerApp::Run() to run app (intialization and main process loop)
 

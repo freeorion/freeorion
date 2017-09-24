@@ -25,8 +25,6 @@ struct EncyclopediaArticle;
 class GameRules;
 
 namespace parse {
-    FO_PARSE_API void init();
-
     FO_PARSE_API std::map<std::string, std::unique_ptr<BuildingType>> buildings();
 
     FO_PARSE_API std::map<std::string, std::unique_ptr<FieldType>> fields();
