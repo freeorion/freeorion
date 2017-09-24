@@ -320,13 +320,6 @@ def survey_universe():
                             empire_colonizers.setdefault(spec_name, []).extend(yard_here)
                     if "COMPUTRONIUM_SPECIAL" in planet.specials:  # only counting it if planet is populated
                         state.set_have_computronium()
-                else:
-                    # Logic says this should not happen, but it seems to happen some time for a single turm
-                    # TODO What causes this?
-                    warn("Found a planet we own that has pop > 0 but has no species")
-                    warn("Planet: %s" % universe.getPlanet(pid))
-                    warn("Species: %s(%s)" % (spec_name, this_spec))
-                    warn("Population: %f" % planet_population)
 
                 this_grade_facilities = facilities_by_species_grade.setdefault(weapons_grade, {})
                 for facility in ship_facilities:
