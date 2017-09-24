@@ -71,6 +71,7 @@ namespace parse { namespace detail {
 
         parse::int_arithmetic_rules         int_rules;
         parse::double_parser_rules          double_rules;
+        parse::empire_affiliation_enum_grammar empire_affiliation_type_enum;
         string_and_intref_and_intref_rule   set_empire_meter_1;
         string_and_intref_and_intref_rule   set_empire_meter_2;
         string_and_intref_and_intref_rule   give_empire_tech;
@@ -134,6 +135,9 @@ namespace parse { namespace detail {
         parse::detail::effect_parser_rule start;
         planet_type_parser_rules planet_type_rules;
         planet_size_parser_rules planet_size_rules;
+        parse::empire_affiliation_enum_grammar empire_affiliation_type_enum;
+        parse::set_non_ship_part_meter_enum_grammar set_non_ship_part_meter_type_enum;
+        parse::set_ship_part_meter_enum_grammar set_ship_part_meter_type_enum;
     };
 
     struct effect_parser_rules_3 : public effect_parser_grammar {

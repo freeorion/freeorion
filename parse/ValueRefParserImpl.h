@@ -209,8 +209,11 @@ simple_variable_rules<T>::simple_variable_rules(const std::string& type_name) {
 template <typename T>
 parse::detail::arithmetic_rules<T>::arithmetic_rules(
     const std::string& type_name,
+    const parse::lexer& tok,
     parse::detail::Labeller& labeller,
-    const parse::detail::condition_parser_grammar& condition_parser)
+    const parse::detail::condition_parser_grammar& condition_parser
+) :
+    statistic_type_enum(tok)
 {
     using boost::phoenix::construct;
     using boost::phoenix::new_;
@@ -223,8 +226,6 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
     boost::spirit::qi::_d_type _d;
     boost::spirit::qi::_val_type _val;
     boost::spirit::qi::lit_type lit;
-
-    const parse::lexer& tok = parse::lexer::instance();
 
     functional_expr
         =   (
@@ -350,7 +351,7 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
         ;
 
     statistic_value_expr
-        =   (tok.Statistic_ >>  parse::statistic_type_enum() [ _b = _1 ])
+        =   (tok.Statistic_ >>  statistic_type_enum [ _b = _1 ])
         >   labeller.rule(Value_token)     >     statistic_value_ref_expr [ _a = _1 ]
         >   labeller.rule(Condition_token) >     condition_parser
         [ _val = new_<ValueRef::Statistic<T>>(_a, _b, _1) ]

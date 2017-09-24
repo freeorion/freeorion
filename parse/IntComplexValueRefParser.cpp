@@ -9,7 +9,8 @@ namespace parse {
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         int_complex_parser_grammar::base_type(start, "int_complex_parser_grammar"),
-        int_rules(_int_arith_rules)
+        int_rules(_int_arith_rules),
+        ship_part_class_enum(tok)
     {
         namespace phoenix = boost::phoenix;
         namespace qi = boost::spirit::qi;
@@ -94,22 +95,22 @@ namespace parse {
 
         part_class_in_ship_design
             =   (
-                        tok.PartOfClassInShipDesign_  [ _a = construct<std::string>(_1) ]
-                    //> ( labeller.rule(Class_token) >>
-                    //    as_string [ parse::ship_part_class_enum() ]
-                    //    [ _d = new_<ValueRef::Constant<std::string>>(_1) ]
-                    //  )
-                    > ( labeller.rule(Class_token) >
-                        ( tok.ShortRange_       | tok.FighterBay_   | tok.FighterWeapon_
-                        | tok.Shield_           | tok.Armour_
-                        | tok.Troops_           | tok.Detection_    | tok.Stealth_
-                        | tok.Fuel_             | tok.Colony_       | tok.Speed_
-                        | tok.General_          | tok.Bombard_      | tok.Research_
-                        | tok.Industry_         | tok.Trade_        | tok.ProductionLocation_
-                        ) [ _d = new_<ValueRef::Constant<std::string>>(_1) ]
-                      )
-                    > ( labeller.rule(Design_token) >   int_rules.expr [ _b = _1 ] )
-                ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
+                tok.PartOfClassInShipDesign_  [ _a = construct<std::string>(_1) ]
+                //> ( labeller.rule(Class_token) >>
+                //    as_string [ ship_part_class_enum ]
+                //    [ _d = new_<ValueRef::Constant<std::string>>(_1) ]
+                //  )
+                > ( labeller.rule(Class_token) >
+                    ( tok.ShortRange_       | tok.FighterBay_   | tok.FighterWeapon_
+                      | tok.Shield_           | tok.Armour_
+                      | tok.Troops_           | tok.Detection_    | tok.Stealth_
+                      | tok.Fuel_             | tok.Colony_       | tok.Speed_
+                      | tok.General_          | tok.Bombard_      | tok.Research_
+                      | tok.Industry_         | tok.Trade_        | tok.ProductionLocation_
+                    ) [ _d = new_<ValueRef::Constant<std::string>>(_1) ]
+                  )
+                > ( labeller.rule(Design_token) >   int_rules.expr [ _b = _1 ] )
+            ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
             ;
 
         ship_parts_owned
@@ -118,7 +119,7 @@ namespace parse {
                 >-( labeller.rule(Empire_token)          > int_rules.expr [ _b = _1 ] )
                 >-(     ( labeller.rule(Name_token)      > string_grammar [ _d = _1 ] )
                         |   ( labeller.rule(Class_token)     >>
-                              parse::ship_part_class_enum() [ _c = new_<ValueRef::Constant<int>>(_1) ]
+                              ship_part_class_enum [ _c = new_<ValueRef::Constant<int>>(_1) ]
                             )
                       )
                 ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]

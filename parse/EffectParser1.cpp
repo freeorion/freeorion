@@ -22,7 +22,8 @@ namespace parse { namespace detail {
     ) :
         effect_parser_rules_1::base_type(start, "effect_parser_rules_1"),
         int_rules(tok, labeller, condition_parser, string_grammar),
-        double_rules(tok, labeller, condition_parser, string_grammar)
+        double_rules(tok, labeller, condition_parser, string_grammar),
+        empire_affiliation_type_enum(tok)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -82,7 +83,7 @@ namespace parse { namespace detail {
                 (   // empire id specified, optionally with an affiliation type:
                     // useful to specify a single recipient empire, or the allies
                     // or enemies of a single empire
-                    ((   (labeller.rule(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
+                    ((   (labeller.rule(Affiliation_token) > empire_affiliation_type_enum [ _d = _1 ])
                          |    eps [ _d = AFFIL_SELF ]
                      )
                      >>  labeller.rule(Empire_token)
@@ -103,7 +104,7 @@ namespace parse { namespace detail {
                 )
                 |   (   // no empire id or condition specified, with or without an
                     // affiliation type: useful to specify no or all empires
-                    (   (labeller.rule(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
+                    (   (labeller.rule(Affiliation_token) > empire_affiliation_type_enum [ _d = _1 ])
                         |    eps [ _d = AFFIL_ANY ]
                     )
                     [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _d, _e, _f) ]

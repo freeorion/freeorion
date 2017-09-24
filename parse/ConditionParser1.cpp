@@ -26,7 +26,8 @@ namespace parse { namespace detail {
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_1::base_type(start, "condition_parser_rules_1"),
-        int_rules(tok, labeller, condition_parser, string_grammar)
+        int_rules(tok, labeller, condition_parser, string_grammar),
+        empire_affiliation_type_enum(tok)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -111,7 +112,7 @@ namespace parse { namespace detail {
 
         owned_by_5
             =   (tok.OwnedBy_
-                 >>  labeller.rule(Affiliation_token) >> parse::empire_affiliation_type_enum() [ _a = _1 ]
+                 >>  labeller.rule(Affiliation_token) >> empire_affiliation_type_enum [ _a = _1 ]
                  >>  labeller.rule(Empire_token)    ) >  int_rules.expr
             [ _val = new_<Condition::EmpireAffiliation>(_1, _a) ]
             ;

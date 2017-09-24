@@ -530,7 +530,8 @@ namespace parse {
         const parse::lexer& tok,
         Labeller& labeller
     ) :
-        item_spec_grammar::base_type(start, "item_spec_grammar")
+        item_spec_grammar::base_type(start, "item_spec_grammar"),
+        unlockable_item_type_enum(tok)
     {
         namespace phoenix = boost::phoenix;
         namespace qi = boost::spirit::qi;
@@ -543,7 +544,7 @@ namespace parse {
 
         start
             =    tok.Item_
-            >    labeller.rule(Type_token) > parse::unlockable_item_type_enum() [ _a = _1 ]
+            >    labeller.rule(Type_token) > unlockable_item_type_enum [ _a = _1 ]
             >    labeller.rule(Name_token) > tok.string [ _val = construct<ItemSpec>(_a, _1) ]
             ;
 

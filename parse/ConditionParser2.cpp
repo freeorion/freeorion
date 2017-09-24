@@ -20,7 +20,8 @@ namespace parse { namespace detail {
     ) :
         condition_parser_rules_2::base_type(start, "condition_parser_rules_2"),
         int_rules(tok, labeller, condition_parser, string_grammar),
-        castable_int_rules(tok, labeller, condition_parser, string_grammar)
+        castable_int_rules(tok, labeller, condition_parser, string_grammar),
+        ship_part_class_enum(tok)
     {
         qi::_1_type _1;
         qi::_a_type _a; // intref
@@ -97,7 +98,7 @@ namespace parse { namespace detail {
             =   (   tok.DesignHasPartClass_
                     > -(labeller.rule(Low_token)   > castable_int_rules.flexible_int [ _a = _1 ])
                     > -(labeller.rule(High_token)  > castable_int_rules.flexible_int [ _b = _1 ])
-                )   >   labeller.rule(Class_token) > parse::ship_part_class_enum()
+                )   >   labeller.rule(Class_token) > ship_part_class_enum
             [ _val = new_<Condition::DesignHasPartClass>(_1, _a, _b) ]
             ;
 

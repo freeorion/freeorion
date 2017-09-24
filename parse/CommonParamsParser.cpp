@@ -26,7 +26,8 @@ namespace parse { namespace detail {
     ) :
         castable_int_rules(tok, labeller, condition_parser, string_grammar),
         double_rules(tok, labeller, condition_parser, string_grammar),
-        effects_group_grammar(tok, labeller, condition_parser, string_grammar)
+        effects_group_grammar(tok, labeller, condition_parser, string_grammar),
+        non_ship_part_meter_type_enum(tok)
     {
         namespace qi = boost::spirit::qi;
 
@@ -126,7 +127,7 @@ namespace parse { namespace detail {
         typedef std::map<MeterType, val_cond_pair>::value_type meter_consumable_map_value_type;
         consumable_meter
             = (
-                parse::non_ship_part_meter_type_enum() [ _a = _1 ]
+                non_ship_part_meter_type_enum [ _a = _1 ]
                 >   labeller.rule(Consumption_token) > double_rules.expr [ _c = _1 ]
                 > -(labeller.rule(Condition_token)   > condition_parser [ _d = _1 ])
             )

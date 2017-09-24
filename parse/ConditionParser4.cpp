@@ -26,7 +26,9 @@ namespace parse { namespace detail {
     ) :
         condition_parser_rules_4::base_type(start, "condition_parser_rules_4"),
         int_rules(tok, labeller, condition_parser, string_grammar),
-        double_rules(tok, labeller, condition_parser, string_grammar)
+        double_rules(tok, labeller, condition_parser, string_grammar),
+        non_ship_part_meter_type_enum(tok),
+        ship_part_meter_type_enum(tok)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -41,7 +43,7 @@ namespace parse { namespace detail {
 
         meter_value
             =   (
-                parse::non_ship_part_meter_type_enum() [ _a = _1 ]
+                non_ship_part_meter_type_enum [ _a = _1 ]
                 >  -(labeller.rule(Low_token)  > double_rules.expr [ _b = _1 ])
                 >  -(labeller.rule(High_token) > double_rules.expr [ _c = _1 ])
             ) [ _val = new_<Condition::MeterValue>(_a, _b, _c) ]
@@ -51,7 +53,7 @@ namespace parse { namespace detail {
             =   (
                 tok.ShipPartMeter_
                 >   labeller.rule(Part_token)    >   string_grammar [ _e = _1 ]
-                >   parse::ship_part_meter_type_enum() [ _a = _1 ]
+                >   ship_part_meter_type_enum [ _a = _1 ]
                 >  -(labeller.rule(Low_token)    >   double_rules.expr [ _b = _1 ])
                 >  -(labeller.rule(High_token)   >   double_rules.expr [ _c = _1 ])
             ) [ _val = new_<Condition::ShipPartMeterValue>(_e, _a, _b, _c) ]
