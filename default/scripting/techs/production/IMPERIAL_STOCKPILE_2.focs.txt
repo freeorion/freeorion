@@ -1,6 +1,6 @@
 Tech
     name = "PRO_IMPERIAL_STOCKPILE_2"
-    description = "IMPERIAL_STOCKPILE_2_DESC"
+    description = "PRO_IMPERIAL_STOCKPILE_2_DESC"
     short_description = "IMPERIAL_STOCKPILE_SHORT_DESC"
     category = "PRODUCTION_CATEGORY"
     researchcost = 20 * [[TECH_COST_MULTIPLIER]]
