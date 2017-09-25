@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <future>
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -187,7 +188,8 @@ private:
 /** Holds FreeOrion ship part types */
 class FO_COMMON_API PartTypeManager {
 public:
-    typedef std::map<std::string, std::unique_ptr<PartType>>::const_iterator iterator;
+    using PartTypeMap = std::map<std::string, std::unique_ptr<PartType>>;
+    using iterator = PartTypeMap::const_iterator;
 
     /** \name Accessors */ //@{
     /** returns the part type with the name \a name; you should use the free function GetPartType() instead */
@@ -200,7 +202,7 @@ public:
     iterator end() const;
 
     /** returns the instance of this singleton class; you should use the free function GetPartTypeManager() instead */
-    static const PartTypeManager& GetPartTypeManager();
+    static PartTypeManager& GetPartTypeManager();
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -211,16 +213,28 @@ public:
     unsigned int GetCheckSum() const;
     //@}
 
+    /** Sets part types to the future value of \p pending_part_types. */
+    FO_COMMON_API void SetPartTypes(std::future<PartTypeMap>&& pending_part_types);
+
 private:
     PartTypeManager();
 
-    std::map<std::string, std::unique_ptr<PartType>> m_parts;
+    /** Assigns any m_pending_part_types to m_bulding_types. */
+    void CheckPendingPartTypes() const;
+
+    /** Future part type being parsed by parser.  mutable so that it can
+        be assigned to m_part_types when completed.*/
+    mutable boost::optional<std::future<PartTypeMap>> m_pending_part_types = boost::none;
+
+    /** Set of part types.  mutable so that when the parse completes it can
+        be updated. */
+    mutable std::map<std::string, std::unique_ptr<PartType>>    m_parts;
     static PartTypeManager*             s_instance;
 };
 
 
 /** returns the singleton part type manager */
-FO_COMMON_API const PartTypeManager& GetPartTypeManager();
+FO_COMMON_API PartTypeManager& GetPartTypeManager();
 
 /** Returns the ship PartType specification object with name \a name.  If no
   * such PartType exists, 0 is returned instead. */

@@ -46,10 +46,11 @@ namespace {
 }
 
 void IApp::ParseUniverseObjectTypes() {
-    GetEncyclopedia().SetArticles(StartParsing(parse::encyclopedia_articles));
     GetBuildingTypeManager().SetBuildingTypes(StartParsing(parse::buildings));
+    GetEncyclopedia().SetArticles(StartParsing(parse::encyclopedia_articles));
     GetFieldTypeManager().SetFieldTypes(StartParsing(parse::fields));
     GetSpecialsManager().SetSpecialsTypes(StartParsing(parse::specials));
     GetSpeciesManager().SetSpeciesTypes(StartParsing(parse::species));
     GetTechManager().SetTechs(StartParsing(parse::techs));
+    GetPartTypeManager().SetPartTypes(StartParsing(parse::ship_parts));
 }

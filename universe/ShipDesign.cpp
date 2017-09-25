@@ -162,7 +162,7 @@ namespace CheckSums {
 ////////////////////////////////////////////////
 // Free Functions                             //
 ////////////////////////////////////////////////
-const PartTypeManager& GetPartTypeManager()
+PartTypeManager& GetPartTypeManager()
 { return PartTypeManager::GetPartTypeManager(); }
 
 const PartType* GetPartType(const std::string& name)
@@ -188,45 +188,33 @@ PartTypeManager::PartTypeManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one PartTypeManager.");
 
-    ScopedTimer timer("PartTypeManager Init", true, std::chrono::milliseconds(1));
-
-    try {
-        m_parts = parse::ship_parts();
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing ship parts: error: " << e.what();
-        throw;
-    }
-
-    TraceLogger() << [this]() {
-            std::string retval("Part Types:");
-            for (const auto& pair : m_parts) {
-                const auto& part = pair.second;
-                retval.append("\n\t" + part->Name() + " class: " + boost::lexical_cast<std::string>(part->Class()));
-            }
-            return retval;
-        }();
-
     // Only update the global pointer on sucessful construction.
     s_instance = this;
 }
 
 const PartType* PartTypeManager::GetPartType(const std::string& name) const {
+    CheckPendingPartTypes();
     auto it = m_parts.find(name);
     return it != m_parts.end() ? it->second.get() : nullptr;
 }
 
-const PartTypeManager& PartTypeManager::GetPartTypeManager() {
+PartTypeManager& PartTypeManager::GetPartTypeManager() {
     static PartTypeManager manager;
     return manager;
 }
 
-PartTypeManager::iterator PartTypeManager::begin() const
-{ return m_parts.begin(); }
+PartTypeManager::iterator PartTypeManager::begin() const {
+    CheckPendingPartTypes();
+    return m_parts.begin();
+}
 
-PartTypeManager::iterator PartTypeManager::end() const
-{ return m_parts.end(); }
+PartTypeManager::iterator PartTypeManager::end() const{
+    CheckPendingPartTypes();
+    return m_parts.end();
+}
 
 unsigned int PartTypeManager::GetCheckSum() const {
+    CheckPendingPartTypes();
     unsigned int retval{0};
     for (auto const& name_part_pair : m_parts)
         CheckSums::CheckSumCombine(retval, name_part_pair);
@@ -237,6 +225,38 @@ unsigned int PartTypeManager::GetCheckSum() const {
     return retval;
 }
 
+
+void PartTypeManager::SetPartTypes(std::future<PartTypeMap>&& pending_part_types)
+{ m_pending_part_types = std::move(pending_part_types); }
+
+void PartTypeManager::CheckPendingPartTypes() const {
+    if (!m_pending_part_types)
+        return;
+
+    // Only print waiting message if not immediately ready
+    while (m_pending_part_types->wait_for(std::chrono::seconds(1)) == std::future_status::timeout) {
+        DebugLogger() << "Waiting for Part types to parse.";
+    }
+
+    try {
+        auto x = std::move(m_pending_part_types->get());
+        std::swap(m_parts, x);
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Failed parsing parts: error: " << e.what();
+        throw e;
+    }
+
+    m_pending_part_types = boost::none;
+
+    TraceLogger() << [this]() {
+            std::string retval("Part Types:");
+            for (const auto& pair : m_parts) {
+                const auto& part = pair.second;
+                retval.append("\n\t" + part->Name() + " class: " + boost::lexical_cast<std::string>(part->Class()));
+            }
+            return retval;
+        }();
+}
 
 ////////////////////////////////////////////////
 // PartType
