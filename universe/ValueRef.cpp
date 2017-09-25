@@ -2054,7 +2054,6 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
     return 0.0;
 }
 
-
 namespace {
     std::vector<std::string> TechsResearchedByEmpire(int empire_id) {
         std::vector<std::string> retval;
@@ -2447,20 +2446,107 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
 
 template <>
 std::string ComplexVariable<Visibility>::Dump() const
-{ return Variable<Visibility>::Dump(); }
+{
+    const std::string& variable_name = m_property_name.back();
+    std::string retval = variable_name;
+
+    if (variable_name == "EmpireObjectVisiblity") {
+        if (m_int_ref1)
+            retval += " empire = " + m_int_ref1->Dump();
+        if (m_int_ref2)
+            retval += " object = " + m_int_ref2->Dump();
+    }
+
+    return retval;
+}
 
 template <>
 std::string ComplexVariable<double>::Dump() const
-{ return Variable<double>::Dump(); }
+{
+    const std::string& variable_name = m_property_name.back();
+    std::string retval = variable_name;
+
+    // empire properties indexed by integers
+    if (variable_name == "PropagatedSystemSupplyRange" ||
+        variable_name == "SystemSupplyRange" ||
+        variable_name == "PropagatedSystemSupplyDistance")
+    {
+        if (m_int_ref1)
+            retval += " empire = " + m_int_ref1->Dump();
+        if (m_int_ref2)
+            retval += " system = " + m_int_ref2->Dump();
+
+    }
+    else if (variable_name == "GameRule" ||
+             variable_name == "HullFuel" ||
+             variable_name == "HullStealth" ||
+             variable_name == "HullStructure" ||
+             variable_name == "HullSpeed" ||
+             variable_name == "PartCapacity" ||
+             variable_name == "PartSecondaryStat")
+    {
+        if (!m_string_ref1)
+            retval += " name = " + m_string_ref1->Dump();
+
+    }
+    else if (variable_name == "EmpireMeterValue") {
+        if (m_int_ref1)
+            retval += " empire = " + m_int_ref1->Dump();
+        if (m_string_ref1)
+            retval += " meter = " + m_string_ref1->Dump();
+
+    }
+    else if (variable_name == "DirectDistanceBetween" ||
+             variable_name == "ShortestPath")
+    {
+        if (m_int_ref1)
+            retval += " object = " + m_int_ref1->Dump();
+        if (m_int_ref2)
+            retval += " object = " + m_int_ref2->Dump();
+
+    }
+    else if (variable_name == "SpeciesEmpireOpinion") {
+        if (m_int_ref1)
+            retval += " empire = " + m_int_ref1->Dump();
+        if (m_string_ref1)
+            retval += " species = " + m_string_ref1->Dump();
+
+    }
+    else if (variable_name == "SpeciesSpeciesOpinion") {
+        if (m_string_ref1)
+            retval += " species = " + m_string_ref1->Dump();
+        if (m_string_ref2)
+            retval += " species = " + m_string_ref2->Dump();
+
+    }
+    else if (variable_name == "SpecialCapacity") {
+        if (m_string_ref1)
+            retval += " name = " + m_string_ref1->Dump();
+        if (m_int_ref1)
+            retval += " object = " + m_int_ref1->Dump();
+
+    }
+
+    return retval;
+}
 
 template <>
 std::string ComplexVariable<int>::Dump() const
-{ return Variable<int>::Dump(); }
+{
+    const std::string& variable_name = m_property_name.back();
+    std::string retval = variable_name;
+
+    return retval;
+}
 
 template <>
 std::string ComplexVariable<std::string>::Dump() const
-{ return Variable<std::string>::Dump(); }
+{
+    const std::string& variable_name = m_property_name.back();
+    std::string retval = variable_name;
 
+    return retval;
+}
 
 ///////////////////////////////////////////////////////////
 // StringCast                                            //
