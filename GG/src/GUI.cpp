@@ -1774,7 +1774,7 @@ void GUI::Render()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    if (m_impl->m_render_cursor && m_impl->m_cursor)
+    if (m_impl->m_render_cursor && m_impl->m_cursor && AppHasMouseFocus())
         m_impl->m_cursor->Render(m_impl->m_mouse_pos);
     Exit2DMode();
 }

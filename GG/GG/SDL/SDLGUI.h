@@ -119,6 +119,8 @@ public:
 
     void Run() override;
 
+    bool AppHasMouseFocus() const override;
+
     void            operator()();      ///< external interface to Run()
 
     void            SetWindowTitle(const std::string& title);
