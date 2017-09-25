@@ -65,10 +65,13 @@ namespace {
     // A lazy UUID parser
     BOOST_PHOENIX_ADAPT_FUNCTION(boost::uuids::uuid, parse_uuid_, parse_uuid, 1)
 
-    struct rules {
-        rules(const parse::lexer& tok,
-              const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last) :
+    using start_rule_signature = void (boost::optional<std::unique_ptr<ShipDesign>>&);
+
+    struct grammar : public parse::detail::grammar<start_rule_signature> {
+        grammar(const parse::lexer& tok,
+                const std::string& filename,
+                const parse::text_iterator& first, const parse::text_iterator& last) :
+            grammar::base_type(start),
             labeller(tok)
         {
             namespace phoenix = boost::phoenix;
@@ -156,9 +159,7 @@ namespace {
             >
         >;
 
-        using start_rule = parse::detail::rule<
-            void (boost::optional<std::unique_ptr<ShipDesign>>&)
-        >;
+        using start_rule = parse::detail::rule<start_rule_signature>;
 
         parse::detail::Labeller labeller;
         design_prefix_rule design_prefix;
@@ -166,10 +167,13 @@ namespace {
         start_rule start;
     };
 
-    struct manifest_rules {
-        manifest_rules(const parse::lexer& tok,
-                       const std::string& filename,
-                       const parse::text_iterator& first, const parse::text_iterator& last) :
+    using manifest_start_rule_signature = void (std::vector<boost::uuids::uuid>&);
+
+    struct manifest_grammar : public parse::detail::grammar<manifest_start_rule_signature> {
+        manifest_grammar(const parse::lexer& tok,
+                         const std::string& filename,
+                         const parse::text_iterator& first, const parse::text_iterator& last) :
+            manifest_grammar::base_type(start),
             labeller(tok)
         {
             namespace phoenix = boost::phoenix;
@@ -202,7 +206,7 @@ namespace {
         }
 
         using manifest_rule = parse::detail::rule<void (std::vector<boost::uuids::uuid>&)>;
-        using start_rule = parse::detail::rule<void (std::vector<boost::uuids::uuid>&)>;
+        using start_rule = parse::detail::rule<manifest_start_rule_signature>;
 
         parse::detail::Labeller labeller;
         manifest_rule design_manifest;
@@ -234,7 +238,9 @@ namespace parse {
 
             try {
                 boost::optional<std::unique_ptr<ShipDesign>> maybe_design;
-                auto partial_result = detail::parse_file<rules, boost::optional<std::unique_ptr<ShipDesign>>>(file, maybe_design);
+                auto partial_result = detail::parse_file<grammar, boost::optional<std::unique_ptr<ShipDesign>>>(
+                    file, maybe_design);
+
                 if (!partial_result || !maybe_design)
                     continue;
                 designs_and_paths.push_back({std::move(*maybe_design), file});
@@ -246,7 +252,9 @@ namespace parse {
 
         if (!manifest_file.empty()) {
             try {
-                /*auto success =*/ detail::parse_file<manifest_rules, std::vector<boost::uuids::uuid>>(manifest_file, ordering);
+                /*auto success =*/ detail::parse_file<manifest_grammar, std::vector<boost::uuids::uuid>>(
+                    manifest_file, ordering);
+
             } catch (const std::runtime_error& e) {
                 ErrorLogger() << "Failed to parse ship design manifest in " << manifest_file << " from " << path
                               << " because " << e.what();;

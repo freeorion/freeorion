@@ -44,10 +44,14 @@ namespace {
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_hulltype_, insert_hulltype, 7)
 
-    struct rules {
-        rules(const parse::lexer& tok,
-              const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last) :
+    using start_rule_payload = std::map<std::string, std::unique_ptr<HullType>>;
+    using start_rule_signature = void(start_rule_payload&);
+
+    struct grammar : public parse::detail::grammar<start_rule_signature> {
+        grammar(const parse::lexer& tok,
+                const std::string& filename,
+                const parse::text_iterator& first, const parse::text_iterator& last) :
+            grammar::base_type(start),
             labeller(tok),
             condition_parser(tok, labeller),
             string_grammar(tok, labeller, condition_parser),
@@ -171,9 +175,7 @@ namespace {
             >
         > hull_rule;
 
-        typedef parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<HullType>>&)
-        > start_rule;
+        using start_rule = parse::detail::rule<start_rule_signature>;
 
         parse::detail::Labeller labeller;
         parse::conditions_parser_grammar condition_parser;
@@ -191,11 +193,11 @@ namespace {
 }
 
 namespace parse {
-    std::map<std::string, std::unique_ptr<HullType>> ship_hulls() {
-        std::map<std::string, std::unique_ptr<HullType>> hulls;
+    start_rule_payload ship_hulls() {
+        start_rule_payload hulls;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/ship_hulls")) {
-            /*auto success =*/ detail::parse_file<rules, std::map<std::string, std::unique_ptr<HullType>>>(file, hulls);
+            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(file, hulls);
         }
 
         return hulls;

@@ -132,7 +132,7 @@ namespace parse { namespace detail {
                            text_iterator& last,
                            token_iterator& it);
 
-    template <typename Rules, typename Arg1>
+    template <typename Grammar, typename Arg1>
     bool parse_file(const boost::filesystem::path& path, Arg1& arg1)
     {
         std::string filename;
@@ -151,9 +151,10 @@ namespace parse { namespace detail {
 
         boost::spirit::qi::in_state_type in_state;
 
-        Rules rules(lexer, filename, first, last);
+        Grammar grammar(lexer, filename, first, last);
 
-        bool success = boost::spirit::qi::phrase_parse(it, lexer.end(), rules.start(boost::phoenix::ref(arg1)), in_state("WS")[lexer.self]);
+        bool success = boost::spirit::qi::phrase_parse(
+            it, lexer.end(), grammar(boost::phoenix::ref(arg1)), in_state("WS")[lexer.self]);
 
         TraceLogger() << "Parse: Elapsed time to parse " << path.string() << " = " << (timer.elapsed() * 1000.0);
 
@@ -165,6 +166,7 @@ namespace parse { namespace detail {
 
         return success /*&& parse_length_good*/;
     }
+
 } }
 
 #endif

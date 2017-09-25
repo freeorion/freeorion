@@ -74,10 +74,14 @@ namespace {
     };
     const boost::phoenix::function<insert_rule_> add_rule;
 
-    struct rules {
-        rules(const parse::lexer& tok,
-              const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last):
+    using start_rule_payload = GameRules;
+    using start_rule_signature = void(start_rule_payload&);
+
+    struct grammar : public parse::detail::grammar<start_rule_signature> {
+        grammar(const parse::lexer& tok,
+                const std::string& filename,
+                const parse::text_iterator& first, const parse::text_iterator& last):
+            grammar::base_type(start),
             labeller(tok),
             double_rule(tok),
             int_rule(tok)
@@ -212,9 +216,7 @@ namespace {
             >
         > game_rule_rule;
 
-        typedef parse::detail::rule<
-            void (GameRules&)
-        > start_rule;
+        using start_rule = parse::detail::rule<start_rule_signature>;
 
         parse::detail::Labeller labeller;
         parse::detail::double_grammar double_rule;
@@ -232,6 +234,6 @@ namespace {
 namespace parse {
     bool game_rules(GameRules& game_rules) {
         boost::filesystem::path path = GetResourceDir() / "scripting/game_rules.focs.txt";
-        return detail::parse_file<rules, GameRules>(path, game_rules);
+        return detail::parse_file<grammar, GameRules>(path, game_rules);
     }
 }

@@ -49,10 +49,14 @@ namespace {
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_species_, insert_species, 9)
 
 
-    struct rules {
-        rules(const parse::lexer& tok,
-              const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last) :
+    using start_rule_payload = std::map<std::string, std::unique_ptr<Species>>;
+    using start_rule_signature = void(start_rule_payload&);
+
+    struct grammar : public parse::detail::grammar<start_rule_signature> {
+        grammar(const parse::lexer& tok,
+                const std::string& filename,
+                const parse::text_iterator& first, const parse::text_iterator& last) :
+            grammar::base_type(start),
             labeller(tok),
             condition_parser(tok, labeller),
             string_grammar(tok, labeller, condition_parser),
@@ -221,7 +225,7 @@ namespace {
         > species_params_rule;
 
         typedef parse::detail::rule<
-            SpeciesStrings (const std::map<std::string, std::unique_ptr<Species>>&),
+            SpeciesStrings (const start_rule_payload&),
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
@@ -230,7 +234,7 @@ namespace {
         > species_strings_rule;
 
         typedef parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<Species>>&),
+            void (start_rule_payload&),
             boost::spirit::qi::locals<
                 SpeciesStrings,
                 SpeciesParams,
@@ -242,9 +246,7 @@ namespace {
             >
         > species_rule;
 
-        typedef parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<Species>>&)
-        > start_rule;
+        using start_rule = parse::detail::rule<start_rule_signature>;
 
         parse::detail::Labeller labeller;
         const parse::conditions_parser_grammar condition_parser;
@@ -267,11 +269,11 @@ namespace {
 }
 
 namespace parse {
-    std::map<std::string, std::unique_ptr<Species>> species() {
-        std::map<std::string, std::unique_ptr<Species>> species_;
+    start_rule_payload species() {
+        start_rule_payload species_;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/species")) {
-            /*auto success =*/ detail::parse_file<rules, std::map<std::string, std::unique_ptr<Species>>>(file, species_);
+            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(file, species_);
         }
 
         return species_;

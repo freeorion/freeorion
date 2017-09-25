@@ -27,10 +27,14 @@ namespace {
     };
     const boost::phoenix::function<insert_> insert;
 
-    struct rules {
-        rules(const parse::lexer& tok,
-              const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last) :
+    using start_rule_payload = ArticleMap;
+    using start_rule_signature = void(start_rule_payload&);
+
+    struct grammar : public parse::detail::grammar<start_rule_signature> {
+        grammar(const parse::lexer& tok,
+                const std::string& filename,
+                const parse::text_iterator& first, const parse::text_iterator& last) :
+            grammar::base_type(start),
             labeller(tok)
         {
             namespace phoenix = boost::phoenix;
@@ -81,10 +85,7 @@ namespace {
             >
         > strings_rule;
 
-        typedef parse::detail::rule<
-            void (ArticleMap&)
-        > start_rule;
-
+        using start_rule = parse::detail::rule<start_rule_signature>;
 
         parse::detail::Labeller labeller;
         strings_rule    article;
@@ -98,7 +99,7 @@ namespace parse {
 
         ArticleMap articles;
         for (const boost::filesystem::path& file : file_list) {
-            /*auto success =*/ detail::parse_file<rules, ArticleMap>(file, articles);
+            /*auto success =*/ detail::parse_file<grammar, ArticleMap>(file, articles);
         }
 
         return articles;

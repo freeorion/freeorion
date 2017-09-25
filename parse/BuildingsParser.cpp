@@ -40,10 +40,14 @@ namespace {
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_building_, insert_building, 6)
 
-    struct rules {
-        rules(const parse::lexer& tok,
-              const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last) :
+    using start_rule_payload = std::map<std::string, std::unique_ptr<BuildingType>>;
+    using start_rule_signature = void(start_rule_payload&);
+
+    struct grammar : public parse::detail::grammar<start_rule_signature> {
+        grammar(const parse::lexer& tok,
+                const std::string& filename,
+                const parse::text_iterator& first, const parse::text_iterator& last) :
+            grammar::base_type(start),
             labeller(tok),
             condition_parser(tok, labeller),
             string_grammar(tok, labeller, condition_parser),
@@ -102,9 +106,7 @@ namespace {
             >
         > building_type_rule;
 
-        typedef parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<BuildingType>>&)
-        > start_rule;
+        using start_rule = parse::detail::rule<start_rule_signature>;
 
         parse::detail::Labeller labeller;
         const parse::conditions_parser_grammar condition_parser;
@@ -118,10 +120,10 @@ namespace {
 }
 
 namespace parse {
-    std::map<std::string, std::unique_ptr<BuildingType>> buildings() {
-        std::map<std::string, std::unique_ptr<BuildingType>> building_types;
+    start_rule_payload buildings() {
+        start_rule_payload building_types;
         for (const boost::filesystem::path& file : ListScripts("scripting/buildings")) {
-            /*auto success =*/ detail::parse_file<rules, std::map<std::string, std::unique_ptr<BuildingType>>>(file, building_types);
+            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(file, building_types);
         }
 
         return building_types;

@@ -42,10 +42,14 @@ namespace {
     };
     const boost::phoenix::function<insert_key_map_> insert_key_map;
 
-    struct rules {
-        rules(const parse::lexer& tok,
-              const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last) :
+    using start_rule_payload = NamedKeymaps;
+    using start_rule_signature = void(start_rule_payload&);
+
+    struct grammar : public parse::detail::grammar<start_rule_signature> {
+        grammar(const parse::lexer& tok,
+                const std::string& filename,
+                const parse::text_iterator& first, const parse::text_iterator& last) :
+            grammar::base_type(start),
             labeller(tok)
         {
             namespace phoenix = boost::phoenix;
@@ -99,9 +103,7 @@ namespace {
             boost::spirit::qi::locals<std::string, Keymap>
         > keymap_rule;
 
-        typedef parse::detail::rule<
-            void (NamedKeymaps&)
-        > start_rule;
+        using start_rule = parse::detail::rule<start_rule_signature>;
 
         parse::detail::Labeller labeller;
         int_pair_rule   int_pair;
@@ -114,7 +116,7 @@ namespace parse {
     NamedKeymaps keymaps() {
         NamedKeymaps nkm;
         boost::filesystem::path path = GetResourceDir() / "scripting/keymaps.inf";
-        /*auto success =*/ detail::parse_file<rules, NamedKeymaps>(path, nkm);
+        /*auto success =*/ detail::parse_file<grammar, NamedKeymaps>(path, nkm);
         return nkm;
     }
 }

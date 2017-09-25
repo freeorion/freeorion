@@ -62,10 +62,14 @@ namespace {
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_special_, insert_special, 2)
 
-    struct rules {
-        rules(const parse::lexer& tok,
-              const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last) :
+    using start_rule_payload = std::map<std::string, std::unique_ptr<Special>>;
+    using start_rule_signature = void(start_rule_payload&);
+
+    struct grammar : public parse::detail::grammar<start_rule_signature> {
+        grammar(const parse::lexer& tok,
+                const std::string& filename,
+                const parse::text_iterator& first, const parse::text_iterator& last) :
+            grammar::base_type(start),
             labeller(tok),
             condition_parser(tok, labeller),
             string_grammar(tok, labeller, condition_parser),
@@ -140,7 +144,7 @@ namespace {
         }
 
         typedef parse::detail::rule<
-            void (const std::map<std::string, std::unique_ptr<Special>>&, std::string&, std::string&)
+            void (const start_rule_payload&, std::string&, std::string&)
         > special_prefix_rule;
 
         typedef parse::detail::rule<
@@ -148,7 +152,7 @@ namespace {
         > spawn_rule;
 
         typedef parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<Special>>&),
+            void (start_rule_payload&),
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
@@ -161,10 +165,7 @@ namespace {
             >
         > special_rule;
 
-        typedef parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<Special>>&)
-        > start_rule;
-
+        using start_rule = parse::detail::rule<start_rule_signature>;
 
         parse::detail::Labeller labeller;
         parse::conditions_parser_grammar condition_parser;
@@ -181,11 +182,11 @@ namespace {
 }
 
 namespace parse {
-    std::map<std::string, std::unique_ptr<Special>> specials() {
-        std::map<std::string, std::unique_ptr<Special>> specials_;
+    start_rule_payload specials() {
+        start_rule_payload specials_;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/specials")) {
-            /*auto success =*/ detail::parse_file<rules, std::map<std::string, std::unique_ptr<Special>>>(file, specials_);
+            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(file, specials_);
         }
 
         return specials_;

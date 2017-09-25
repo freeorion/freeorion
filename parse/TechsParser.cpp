@@ -71,10 +71,13 @@ namespace {
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_category_, insert_category, 4)
 
 
-    struct rules {
-        rules(const parse::lexer& tok,
-              const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last) :
+    using start_rule_signature = void(TechManager::TechContainer&);
+
+    struct grammar : public parse::detail::grammar<start_rule_signature> {
+        grammar(const parse::lexer& tok,
+                const std::string& filename,
+                const parse::text_iterator& first, const parse::text_iterator& last) :
+            grammar::base_type(start),
             labeller(tok),
             condition_parser(tok, labeller),
             string_grammar(tok, labeller, condition_parser),
@@ -269,10 +272,10 @@ namespace parse {
         g_categories_seen = &categories_seen;
         g_categories = &categories;
 
-        /*auto success =*/ detail::parse_file<rules, TechManager::TechContainer>(GetResourceDir() / "scripting/techs/Categories.inf", techs_);
+        /*auto success =*/ detail::parse_file<grammar, TechManager::TechContainer>(GetResourceDir() / "scripting/techs/Categories.inf", techs_);
 
         for (const boost::filesystem::path& file : ListScripts("scripting/techs")) {
-            /*auto success =*/ detail::parse_file<rules, TechManager::TechContainer>(file, techs_);
+            /*auto success =*/ detail::parse_file<grammar, TechManager::TechContainer>(file, techs_);
         }
 
         return std::make_tuple(std::move(techs_), std::move(categories), categories_seen);
