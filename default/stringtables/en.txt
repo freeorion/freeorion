@@ -10198,13 +10198,19 @@ Building [[building BLD_INTERSPECIES_ACADEMY]] on different planets ensures the 
 
 The imperial stockpile service uses the outcome to prepare goods which can be used by any citizen.'''
 
+IMPERIAL_STOCKPILE_SHORT_DESC
+Allows for Imperial Production Stockpiling
+
 PRO_IMPERIAL_STOCKPILE_1
 Predictive Stockpiling
 
-IMPERIAL_STOCKPILE_1_DESC
+PRO_IMPERIAL_STOCKPILE_1_DESC
 '''Knowing where demand for certain goods will be in future allows to stack the items up in time.
 The imperial stockpile service has a fleet for distributing raw materials to places where important projects are predicted to be started.
 This task is difficult as the service has to predict when demand happens, where it happens, what materials and goods are demanded and also who the users will be.
+
+A portion of unused PP be transferred to the Imperial Production Stockpile the other part going to waste.
+An item on the production queue can draw on the Imperial Stockpile if the item has been explicitly enabled for doing so.
 
 This is the basic technology for the imperial stockpile.
 The imperial stockpile service starts with 20% [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allows drawing 2 PP / turn from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
@@ -10212,7 +10218,7 @@ The imperial stockpile service starts with 20% [[metertype METER_IMPERIAL_PP_TRA
 PRO_IMPERIAL_STOCKPILE_2
 Generic Supplies
 
-IMPERIAL_STOCKPILE_2_DESC
+PRO_IMPERIAL_STOCKPILE_2_DESC
 '''By carefully choosing supply chains, materials, and designs, Generic Supplies are created which can easily be decomposited and reused for most industrial products.
 
 Generic Supplies can be created a long time before the demand occurs. Supply packages usually include bootstrap devices which reconstruct the facilities for reconstructing new products from the Generic Supplies.
@@ -10226,7 +10232,7 @@ It adds 20% to the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allow
 PRO_IMPERIAL_STOCKPILE_3
 Interstellar Entanglement Factory
 
-IMPERIAL_STOCKPILE_3_DESC
+PRO_IMPERIAL_STOCKPILE_3_DESC
 '''Quantum entanglement of factory control rooms allows to operate machines remotely from other star systems.
 Decoupling workforce and the means of production helps to produce just in time and increases efficiency of the imperial stockpile service.
 
@@ -10323,19 +10329,6 @@ Neutronium Extraction
 
 PRO_NEUTRONIUM_EXTRACTION_DESC
 The core of a [[STAR_NEUTRON]] star consists of degenerate neutron matter, compressed by gravity to a density far greater than the heaviest normal matter. This exotic material has numerous applications once extracted from the star, allowing production of otherwise impossible structures and ship parts.
-
-PRO_IMPERIAL_SUPPLY_1
-Imperial Supply Stockpiling
-
-IMPERIAL_STOCKPILE_SHORT_DESC
-Allows for a Imperial Production Stockpiling
-
-IMPERIAL_STOCKPILE_1_DESC
-'''A portion of unused PP be transferred to the Imperial Production Stockpile the other part going to waste. 
-An item on the production queue can draw on the Imperial Stockpile if the item has been explicitly enabled for doing so.
-
-The efficiency of transfer ratio and the maximum amount that may be used from the Imperial Stockpile, are governed by the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and [[metertype METER_IMPERIAL_PP_USE_LIMIT]] empire meters.
-'''
 
 CON_ARCH_PSYCH
 Architectural Psychology
