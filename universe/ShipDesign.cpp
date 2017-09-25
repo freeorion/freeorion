@@ -168,7 +168,7 @@ PartTypeManager& GetPartTypeManager()
 const PartType* GetPartType(const std::string& name)
 { return GetPartTypeManager().GetPartType(name); }
 
-const HullTypeManager& GetHullTypeManager()
+HullTypeManager& GetHullTypeManager()
 { return HullTypeManager::GetHullTypeManager(); }
 
 const HullType* GetHullType(const std::string& name)
@@ -649,14 +649,63 @@ HullTypeManager::HullTypeManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one HullTypeManager.");
 
-    ScopedTimer timer("HullTypeManager Init", true, std::chrono::milliseconds(1));
+    // Only update the global pointer on sucessful construction.
+    s_instance = this;
+}
+
+const HullType* HullTypeManager::GetHullType(const std::string& name) const {
+    CheckPendingHullTypes();
+    auto it = m_hulls.find(name);
+    return it != m_hulls.end() ? it->second.get() : nullptr;
+}
+
+HullTypeManager& HullTypeManager::GetHullTypeManager() {
+    static HullTypeManager manager;
+    return manager;
+}
+
+HullTypeManager::iterator HullTypeManager::begin() const {
+    CheckPendingHullTypes();
+    return m_hulls.begin();
+}
+
+HullTypeManager::iterator HullTypeManager::end() const {
+    CheckPendingHullTypes();
+    return m_hulls.end();
+}
+
+unsigned int HullTypeManager::GetCheckSum() const {
+    CheckPendingHullTypes();
+    unsigned int retval{0};
+    for (auto const& name_hull_pair : m_hulls)
+        CheckSums::CheckSumCombine(retval, name_hull_pair);
+    CheckSums::CheckSumCombine(retval, m_hulls.size());
+
+    DebugLogger() << "HullTypeManager checksum: " << retval;
+    return retval;
+}
+
+void HullTypeManager::SetHullTypes(std::future<HullTypeMap>&& pending_hull_types)
+{ m_pending_hull_types = std::move(pending_hull_types); }
+
+void HullTypeManager::CheckPendingHullTypes() const {
+    if (!m_pending_hull_types)
+        return;
+
+    // Only print waiting message if not immediately ready
+    while (m_pending_hull_types->wait_for(std::chrono::seconds(1)) == std::future_status::timeout) {
+        DebugLogger() << "Waiting for Hull types to parse.";
+    }
 
     try {
-        m_hulls = parse::ship_hulls();
+        auto x = std::move(m_pending_hull_types->get());
+        std::swap(m_hulls, x);
     } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing ship hulls: error: " << e.what();
-        throw;
+        ErrorLogger() << "Failed parsing hulls: error: " << e.what();
+        throw e;
     }
+
+    m_pending_hull_types = boost::none;
 
     TraceLogger() << [this]() {
             std::string retval("Hull Types:");
@@ -668,35 +717,6 @@ HullTypeManager::HullTypeManager() {
 
     if (m_hulls.empty())
         ErrorLogger() << "HullTypeManager expects at least one hull type.  All ship design construction will fail.";
-
-    // Only update the global pointer on sucessful construction.
-    s_instance = this;
-}
-
-const HullType* HullTypeManager::GetHullType(const std::string& name) const {
-    auto it = m_hulls.find(name);
-    return it != m_hulls.end() ? it->second.get() : nullptr;
-}
-
-const HullTypeManager& HullTypeManager::GetHullTypeManager() {
-    static HullTypeManager manager;
-    return manager;
-}
-
-HullTypeManager::iterator HullTypeManager::begin() const
-{ return m_hulls.begin(); }
-
-HullTypeManager::iterator HullTypeManager::end() const
-{ return m_hulls.end(); }
-
-unsigned int HullTypeManager::GetCheckSum() const {
-    unsigned int retval{0};
-    for (auto const& name_hull_pair : m_hulls)
-        CheckSums::CheckSumCombine(retval, name_hull_pair);
-    CheckSums::CheckSumCombine(retval, m_hulls.size());
-
-    DebugLogger() << "HullTypeManager checksum: " << retval;
-    return retval;
 }
 
 ////////////////////////////////////////////////

@@ -53,4 +53,5 @@ void IApp::ParseUniverseObjectTypes() {
     GetSpeciesManager().SetSpeciesTypes(StartParsing(parse::species));
     GetTechManager().SetTechs(StartParsing(parse::techs));
     GetPartTypeManager().SetPartTypes(StartParsing(parse::ship_parts));
+    GetHullTypeManager().SetHullTypes(StartParsing(parse::ship_hulls));
 }

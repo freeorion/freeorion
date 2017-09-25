@@ -428,7 +428,8 @@ namespace CheckSums {
 /** Holds FreeOrion hull types */
 class FO_COMMON_API HullTypeManager {
 public:
-    typedef std::map<std::string, std::unique_ptr<HullType>>::const_iterator iterator;
+    using HullTypeMap = std::map<std::string, std::unique_ptr<HullType>>;
+    using iterator = HullTypeMap::const_iterator;
 
     /** \name Accessors */ //@{
     /** returns the hull type with the name \a name; you should use the free function GetHullType() instead */
@@ -441,7 +442,7 @@ public:
     iterator end() const;
 
     /** returns the instance of this singleton class; you should use the free function GetHullTypeManager() instead */
-    static const HullTypeManager& GetHullTypeManager();
+    static HullTypeManager& GetHullTypeManager();
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -452,15 +453,29 @@ public:
     unsigned int GetCheckSum() const;
     //@}
 
+    /** Sets hull types to the future value of \p pending_hull_types. */
+    FO_COMMON_API void SetHullTypes(std::future<HullTypeMap>&& pending_hull_types);
+
 private:
     HullTypeManager();
 
-    std::map<std::string, std::unique_ptr<HullType>> m_hulls;
+
+    /** Assigns any m_pending_hull_types to m_bulding_types. */
+    void CheckPendingHullTypes() const;
+
+    /** Future hull type being parsed by parser.  mutable so that it can
+        be assigned to m_hull_types when completed.*/
+    mutable boost::optional<std::future<HullTypeMap>> m_pending_hull_types = boost::none;
+
+    /** Set of hull types.  mutable so that when the parse completes it can
+        be updated. */
+    mutable HullTypeMap m_hulls;
+
     static HullTypeManager* s_instance;
 };
 
 /** returns the singleton hull type manager */
-FO_COMMON_API const HullTypeManager& GetHullTypeManager();
+FO_COMMON_API HullTypeManager& GetHullTypeManager();
 
 /** Returns the ship HullType specification object with name \a name.  If no such HullType exists,
   * 0 is returned instead. */
