@@ -2247,9 +2247,11 @@ def get_part_type(partname):
 
     As the function in late game may be called some thousand times, the results are cached.
 
-    :param partname: string
-    :returns:        partType object
+    :type partname: str
+    :rtype: fo.partType
     """
+    if not partname:
+        return None
     if partname in Cache.part_by_partname:
         return Cache.part_by_partname[partname]
     else:
