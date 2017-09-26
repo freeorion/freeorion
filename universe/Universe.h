@@ -83,8 +83,11 @@ private:
     typedef std::map<int, ObjectVisibilityTurnMap>  EmpireObjectVisibilityTurnMap;  ///< Each empire's most recent turns on which object information was known; keyed by empire id
 
     typedef std::map<int, std::set<int>>            ObjectKnowledgeMap;             ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
-    typedef std::map<int, std::map<int, std::pair<int,                              ///< int is the ID of the source object for the context when evaluating the ValueRef
-        const ValueRef::ValueRefBase<Visibility>*>>>EmpireObjectVisValueRefMap;
+
+    typedef const ValueRef::ValueRefBase<Visibility>*   VisValRef;
+    typedef std::vector<std::pair<int, VisValRef>>      SrcVisValRefVec;
+    typedef std::map<int, SrcVisValRefVec>              ObjSrcVisValRefVecMap;
+    typedef std::map<int, ObjSrcVisValRefVecMap>        EmpireObjectVisValueRefMap;
 
 public:
     typedef std::map<int, Visibility>               ObjectVisibilityMap;            ///< map from object id to Visibility level for a particular empire

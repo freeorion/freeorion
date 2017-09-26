@@ -1650,7 +1650,7 @@ void Universe::SetEffectDerivedVisibility(int empire_id, int object_id, int sour
         return;
     if (!vis)
         return;
-    m_effect_specified_empire_object_visibilities[empire_id][object_id] = {source_id, vis};
+    m_effect_specified_empire_object_visibilities[empire_id][object_id].push_back({source_id, vis});
 }
 
 void Universe::ApplyEffectDerivedVisibilities() {
@@ -1662,17 +1662,33 @@ void Universe::ApplyEffectDerivedVisibilities() {
         for (const auto& object_entry : empire_entry.second) {
             if (object_entry.first <= INVALID_OBJECT_ID)
                 continue;   // can't set a non-object's visibility
-
-            // set up context for executing ValueRef to determine visibility to set
-            auto source = GetUniverseObject(object_entry.second.first);
             auto target = GetUniverseObject(object_entry.first);
+            if (!target)
+                continue;   // don't need to set a non-gettable object's visibility
+
+            // if already have an entry in new_empire_object_visibilities then
+            // use that as the target initial visibility for purposes of
+            // evaluating this ValueRef. If not, use the object's current
+            // in-universe Visibility for the specified empire
             Visibility target_initial_vis =
                 m_empire_object_visibility[empire_entry.first][object_entry.first];
-            ScriptingContext context(source, target, target_initial_vis);
+            auto neov_it = new_empire_object_visibilities[empire_entry.first].find(object_entry.first);
+            if (neov_it != new_empire_object_visibilities[empire_entry.first].end())
+                target_initial_vis = neov_it->second;
 
-            // execute and store actual new visibility level
-            Visibility vis = object_entry.second.second->Eval(context);
-            new_empire_object_visibilities[empire_entry.first][object_entry.first] = vis;
+            // evaluate valuerefs and and store visibility of object
+            for (auto& source_ref_entry : object_entry.second) {
+                // set up context for executing ValueRef to determine visibility to set
+                auto source = GetUniverseObject(source_ref_entry.first);
+                ScriptingContext context(source, target, target_initial_vis);
+
+                const auto val_ref = source_ref_entry.second;
+
+                // evaluate and store actual new visibility level
+                Visibility vis = val_ref->Eval(context);
+                target_initial_vis = vis;   // store for next iteration's context
+                new_empire_object_visibilities[empire_entry.first][object_entry.first] = vis;
+            }
         }
     }
 
