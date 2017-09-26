@@ -9,13 +9,17 @@ from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 
+_ACCEPTABLE_DETOUR_LENGTH = 2000
+
+
+# TODO Add a list of systems as parameter that are forbidden for search (e.g. blocked by monster)
 # TODO Allow short idling in system to use stationary refuel mechanics in unsupplied systems if we
-#      are very close the target system but can't reach it due to fuel constraints
+#      are very close to the target system but can't reach it due to fuel constraints
 # TODO Consider additional optimizations:
 #    - Check if universe.shortestPath complies with fuel mechanics before running
 #      pathfinder (seemingly not worth it - we have exact heuristic in that case)
 #    - Cut off branches that can't reach target due to supply distance
-#    - For large graphs, check existance on a simplified graph (use single node to represent supply clusters)
+#    - For large graphs, check existence of a path on a simplified graph (use single node to represent supply clusters)
 #    - For large graphs, check if there are any must-visit nodes (e.g. only possible resupplying system),
 #      then try to find the shortest path between those and start/target.
 def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0):
@@ -24,12 +28,10 @@ def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0):
      If the fleet can travel the shortest possible path between start and target system, then return that path.
      Otherwise, find the shortest possible detour including refueling.
 
-
      The core algorithm is a modified A* with the universe.shortestPathDistance as heuristic.
      While searching for a path, keep track of the fleet's fuel. Compared to standard A*/dijkstra,
-     nodes are locked only for a certain minimum level of fuel. If a longer path yields a higher fuel
-     level at a given system, then that path considered for pathfinding and added to the queue.
-
+     nodes are locked only for a certain minimum level of fuel - if a longer path yields a higher fuel
+     level at a given system, then that path is considered as possible detour for refueling and added to the queue.
 
     :param start: start system id
     :type start: int
@@ -40,18 +42,20 @@ def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0):
     :param minimum_fuel_at_target: optional - if specified, only accept paths that leave the
                                    fleet with at least this much fuel left at the target system
     :type minimum_fuel_at_target: int
-    :return: shortest possible path including resupply-deroutes in the form of system ids
+    :return: shortest possible path including resupply-detours in the form of system ids
              including both start and target system
     :rtype: tuple[int]
     """
-    path_information = namedtuple('path_information', ['distance', 'fuel', 'path'])
     universe = fo.getUniverse()
     empire_id = fo.empireID()
-    fleet = universe.getFleet(fleet_id)
-    supplied_systems = set(fo.getEmpire().fleetSupplyableSystemIDs)
 
     if start == INVALID_ID or target == INVALID_ID:
         warn("Requested path between invalid systems.")
+        return None
+
+    # make sure the minimum fuel at target is realistic
+    if minimum_fuel_at_target < 0:
+        error("Requested negative fuel at target.")
         return None
 
     # make sure the target is connected to the start system
@@ -61,13 +65,11 @@ def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0):
         return None
 
     # make sure the minimum fuel at target is realistic
-    if minimum_fuel_at_target < 0:
-        error("Requested negative fuel at target.")
-        return None
-
+    fleet = universe.getFleet(fleet_id)
     if fleet.maxFuel < minimum_fuel_at_target:
         return None
 
+    supplied_systems = set(fo.getEmpire().fleetSupplyableSystemIDs)
     start_fuel = fleet.maxFuel if start in supplied_systems else fleet.fuel
 
     # We have 1 free jump from supplied system into unsupplied systems.
@@ -88,10 +90,11 @@ def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0):
     queue = []
 
     # add starting system to queue
+    path_information = namedtuple('path_information', ['distance', 'fuel', 'path'])
     heappush(queue, (shortest_possible_path_distance, path_information(distance=0, fuel=start_fuel, path=(start,))))
 
     while queue:
-        # get next system u with path information
+        # get next system with path information
         (_, path_info) = heappop(queue)
         current = path_info.path[-1]
 
@@ -128,7 +131,8 @@ def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0):
             predicted_distance = new_dist + universe.shortestPathDistance(neighbor, target)
 
             # Ignore paths that are much longer than the shortest possible path
-            if predicted_distance > max(2*shortest_possible_path_distance, shortest_possible_path_distance+2000):
+            if predicted_distance > max(2*shortest_possible_path_distance,
+                                        shortest_possible_path_distance + _ACCEPTABLE_DETOUR_LENGTH):
                 continue
 
             # All checks passed, consider this path for further pathfinding
@@ -136,4 +140,3 @@ def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0):
 
     # no path exists, not even if we refuel on the way
     return None
-
