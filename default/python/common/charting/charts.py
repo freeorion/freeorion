@@ -75,7 +75,13 @@ def parse_file(file_name, ai=True):
 
 
 def main():
-    dataDir = (os.environ.get('HOME', "") + "/.freeorion") if os.name != 'posix' else (os.environ.get('XDG_DATA_HOME', os.environ.get('HOME', "") + "/.local/share") + "/freeorion")
+    if os.name == 'nt':
+        dataDir = os.path.expanduser('~') + '\\Appdata\\Roaming\\Freeorion'
+    elif os.name == 'posix':
+        dataDir = os.environ.get('XDG_DATA_HOME', os.environ.get('HOME', "") + "/.local/share") + "/freeorion"
+    else:
+        dataDir = os.environ.get('HOME', "") + "/.freeorion"
+
     graphDir = dataDir
 
     fileRoot = "game1"
