@@ -10,18 +10,14 @@ class ResourceBrowseWnd : public GG::BrowseInfoWnd {
 public:
     ResourceBrowseWnd(const std::string& title_text, const std::string& unit_label, float used, float output, float target_output);
     void CompleteConstruction() override;
-
     bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
-
     void Render() override;
-
-    void            DoLayout();
 
 private:
     virtual void  InitBuffer();
 
-    GG::GL2DVertexBuffer    m_buffer;
-    std::shared_ptr<GG::Label>              m_title_text;
+    GG::GL2DVertexBuffer        m_buffer;
+    std::shared_ptr<GG::Label>  m_title_text;
 
     std::shared_ptr<GG::Label>  m_used_points_label;
     std::shared_ptr<GG::Label>  m_used_points;

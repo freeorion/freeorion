@@ -326,7 +326,8 @@ namespace {
             DoLayout();
         }
 
-        typedef std::pair<std::shared_ptr<CUILabel>, std::shared_ptr<CUILabel>>         LabelValueType;
+        typedef std::pair<std::shared_ptr<CUILabel>,
+                          std::shared_ptr<CUILabel>> LabelValueType;
 
         bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override {
             assert(mode <= wnd->BrowseModes().size());
@@ -347,16 +348,17 @@ namespace {
             // summary text background
             GG::FlatRectangle(UL, GG::Pt(LR.x, row_height + offset), BORDER_CLR, BORDER_CLR);
 
-            // Seperation line between armed/unarmed and utility ships
+            // seperation line between armed/unarmed and utility ships
             GG::Y line_ht(UL.y + (row_height * 2) + (row_height * 5 / 4));
             GG::Pt line_ul(UL.x + (m_margin * 2), line_ht);
             GG::Pt line_lr(LR.x - (m_margin * 2), line_ht);
             GG::Line(line_ul, line_lr, BORDER_CLR);
 
-            // inset border for parts/slots
-            GG::Pt part_ul(UL.x + m_margin, LR.y - ((m_margin + row_height) * 2));
-            GG::Pt part_lr(LR.x - m_margin, LR.y - m_margin);
-            GG::BeveledRoundedRectangle(part_ul, part_lr, BG_CLR, BORDER_CLR, false);
+            // seperation line between ships and parts
+            line_ht = {UL.y + (row_height * 5) + (row_height * 6 / 4)};
+            line_ul = {UL.x + (m_margin * 2), line_ht};
+            line_lr = {LR.x - (m_margin * 2), line_ht};
+            GG::Line(line_ul, line_lr, BORDER_CLR);
         }
 
         void DoLayout() {
