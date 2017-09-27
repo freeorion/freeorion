@@ -3027,19 +3027,6 @@ void Universe::GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& e
         empire_object_visibility_turns[encoding_empire] = it->second;
 }
 
-//void Universe::GetEffectSpecifiedVisibilities(EmpireObjectVisibilityMap& effect_specified_empire_object_visibilities, int encoding_empire) const {
-//    if (encoding_empire == ALL_EMPIRES) {
-//        effect_specified_empire_object_visibilities = m_effect_specified_empire_object_visibilities;
-//        return;
-//    }
-//    
-//    // include just requested empire's visibility effects
-//    effect_specified_empire_object_visibilities.clear();
-//    auto it = m_effect_specified_empire_object_visibilities.find(encoding_empire);
-//    if (it != m_effect_specified_empire_object_visibilities.end())
-//        effect_specified_empire_object_visibilities[encoding_empire] = it->second;
-//}
-
 void Universe::GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids,
                                               int encoding_empire) const
 {
