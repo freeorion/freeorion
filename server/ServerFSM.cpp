@@ -2166,6 +2166,24 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg) {
     return transit<WaitingForSaveData>();
 }
 
+sc::result WaitingForTurnEndIdle::react(const HostlessSave& e) {
+    TraceLogger(FSM) << "(ServerFSM) WaitingForTurnEndIdle.HostlessSave";
+
+    ServerApp& server = Server();
+
+    boost::filesystem::path autosave_dir_path = GetServerSaveDir() / "auto";
+    const auto& extension = MP_SAVE_FILE_EXTENSION;
+    // Add timestamp to autosave generated files
+    std::string datetime_str = FilenameTimestamp();
+
+    std::string save_filename = boost::io::str(boost::format("FreeOrion_%04d_%s%s") % server.CurrentTurn() % datetime_str % extension);
+
+    boost::filesystem::path save_path(autosave_dir_path / save_filename);
+
+    context<WaitingForTurnEnd>().m_save_filename = save_path.string();
+    return transit<WaitingForSaveData>();
+}
+
 
 ////////////////////////////////////////////////////////////
 // WaitingForSaveData
@@ -2324,6 +2342,7 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
         }
     }
 
+    post_event(HostlessSave());
     return transit<WaitingForTurnEnd>();
 }
 
