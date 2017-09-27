@@ -586,14 +586,28 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
                     focus_manager.bake_future_focus(pid, RESEARCH, False)
                 continue
             if adj_round == 3:  # take research at planets where can do reasonable balance
-                if has_force or foAI.foAIstate.character.may_dither_focus_to_gain_research() or (target_rp >= priority_ratio * cumulative_pp):
+                # if this planet in range where temporary Research focus ("research dithering") can get some additional
+                # RP at a good PP cost, and still need some RP, then consider doing it.
+                # Won't really work if AI has researched Force Energy Structures (meters fall too fast)
+                #TODO: add similar decision points by which research-rich planets might possibly choose to dither for industry points
+                if any((has_force ,
+                        foAI.foAIstate.character.may_dither_focus_to_gain_research(),
+                        target_rp >= priority_ratio * cumulative_pp)):
                     continue
+
                 pop = planet.currentMeterValue(fo.meterType.population)
                 t_pop = planet.currentMeterValue(fo.meterType.targetPopulation)
-                # if AI is aggressive+, and this planet in range where temporary Research focus can get an additional RP at cost of 1 PP, and still need some RP, then do it
-                if pop < t_pop - 5:
+                # let pop stabilize before trying to dither
+                MAX_DITHER_POP_GAP = 5  # some smallish number
+                if pop < t_pop - MAX_DITHER_POP_GAP:
                     continue
-                if (ci > ii + 8) or (((rr > ii) or ((rr - cr) >= 1 + 2 * research_penalty)) and ((rr - tr) >= 3) and ((cr - tr + 1 - research_penalty) >= (ii - ci))):
+
+                # if gap between R-focus and I-focus target research levels is too narrow, no point in research dithering
+                # A gap of at least 3
+                if (rr - tr) < 3:
+                    continue
+
+                if (ci > ii + 8) or (((rr > ii) or ((rr - cr) >= 1 + 2 * research_penalty))  and ((cr - tr + 1 - research_penalty) >= (ii - ci))):
                     target_pp += ci - 1 - research_penalty
                     target_rp += cr + 1
                     focus_manager.bake_future_focus(pid, RESEARCH, False)
