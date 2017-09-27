@@ -607,7 +607,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
                 if (rr - tr) < 3:
                     continue
 
-                if (ci > ii + 8) or (((rr > ii) or ((rr - cr) >= 1 + 2 * research_penalty))  and ((cr - tr + 1 - research_penalty) >= (ii - ci))):
+                if ((rr - cr) >= 1 + 2 * research_penalty) and ((cr - tr + 1 - research_penalty) >= (ii - ci)):
                     target_pp += ci - 1 - research_penalty
                     target_rp += cr + 1
                     focus_manager.bake_future_focus(pid, RESEARCH, False)
