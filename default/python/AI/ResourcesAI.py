@@ -593,7 +593,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
                 # if AI is aggressive+, and this planet in range where temporary Research focus can get an additional RP at cost of 1 PP, and still need some RP, then do it
                 if pop < t_pop - 5:
                     continue
-                if (ci > ii + 8) or (((rr > ii) or ((rr - cr) >= 1 + 2 * research_penalty)) and ((rr - tr) >= 3) and ((cr - tr) >= 0.7 * ((ii - ci) * (1 + 0.1 * research_penalty)))):
+                if (ci > ii + 8) or (((rr > ii) or ((rr - cr) >= 1 + 2 * research_penalty)) and ((rr - tr) >= 3) and ((cr - tr + 1 - research_penalty) >= (ii - ci))):
                     target_pp += ci - 1 - research_penalty
                     target_rp += cr + 1
                     focus_manager.bake_future_focus(pid, RESEARCH, False)
