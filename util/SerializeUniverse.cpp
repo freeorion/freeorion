@@ -23,7 +23,7 @@ BOOST_CLASS_EXPORT(Planet)
 BOOST_CLASS_EXPORT(Building)
 BOOST_CLASS_EXPORT(Fleet)
 BOOST_CLASS_EXPORT(Ship)
-BOOST_CLASS_VERSION(Ship, 1)
+BOOST_CLASS_VERSION(Ship, 2)
 BOOST_CLASS_EXPORT(ShipDesign)
 BOOST_CLASS_VERSION(ShipDesign, 1)
 BOOST_CLASS_EXPORT(Universe)
@@ -272,6 +272,9 @@ void Ship::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_arrived_on_turn);
     if (version >= 1) {
         ar  & BOOST_SERIALIZATION_NVP(m_last_turn_active_in_combat);
+        if (version >= 2) {
+            ar  & BOOST_SERIALIZATION_NVP(m_last_resupplied_on_turn);
+        }
     }
 }
 

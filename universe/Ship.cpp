@@ -27,7 +27,8 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
     m_design_id(design_id),
     m_species_name(species_name),
     m_produced_by_empire_id(produced_by_empire_id),
-    m_arrived_on_turn(CurrentTurn())
+    m_arrived_on_turn(CurrentTurn()),
+    m_last_resupplied_on_turn(CurrentTurn())
 {
     if (!GetShipDesign(design_id))
         throw std::invalid_argument("Attempted to construct a Ship with an invalid design id");
@@ -132,6 +133,7 @@ void Ship::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_
             this->m_last_turn_active_in_combat= copied_ship->m_last_turn_active_in_combat;
             this->m_produced_by_empire_id =     copied_ship->m_produced_by_empire_id;
             this->m_arrived_on_turn =           copied_ship->m_arrived_on_turn;
+            this->m_last_resupplied_on_turn =   copied_ship->m_last_resupplied_on_turn;
 
             if (vis >= VIS_FULL_VISIBILITY) {
                 this->m_ordered_scrapped =          copied_ship->m_ordered_scrapped;
@@ -207,7 +209,8 @@ std::string Ship::Dump() const {
        << " fleet id: " << m_fleet_id
        << " species name: " << m_species_name
        << " produced by empire id: " << m_produced_by_empire_id
-       << " arrived on turn: " << m_arrived_on_turn;
+       << " arrived on turn: " << m_arrived_on_turn
+       << " last resupplied on turn: " << m_last_resupplied_on_turn;
     if (!m_part_meters.empty()) {
         os << " part meters: ";
         for (const auto& entry : m_part_meters) {
@@ -597,6 +600,8 @@ void Ship::BackPropagateMeters() {
 }
 
 void Ship::Resupply() {
+    m_last_resupplied_on_turn = CurrentTurn();
+
     Meter* fuel_meter = UniverseObject::GetMeter(METER_FUEL);
     const Meter* max_fuel_meter = UniverseObject::GetMeter(METER_MAX_FUEL);
     if (!fuel_meter || !max_fuel_meter) {

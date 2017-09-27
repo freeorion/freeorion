@@ -192,6 +192,7 @@
     (Large)                                     \
     (LastTurnBattleHere)                        \
     (LastTurnActiveInBattle)                    \
+    (LastTurnResupplied)                        \
     (LeastHappySpecies)                         \
     (LocalCandidate)                            \
     (Location)                                  \

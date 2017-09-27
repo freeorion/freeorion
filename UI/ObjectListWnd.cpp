@@ -184,6 +184,7 @@ namespace {
             col_types[{UserStringNop("SPECIES"),                    UserStringNop("FLEETS_SUBMENU")}] = UserStringValueRef("Species");
             col_types[{UserStringNop("DESIGN_WND_DESIGN_NAME"),     UserStringNop("FLEETS_SUBMENU")}] = DesignNameValueRef("DesignID");
             col_types[{UserStringNop("LAST_TURN_ACTIVE_IN_BATTLE"), UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<int>("LastTurnActiveInBattle");
+            col_types[{UserStringNop("LAST_TURN_RESUPPLIED"),       UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<int>("LastTurnResupplied");
             col_types[{UserStringNop("ARRIVED_ON_TURN"),            UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<int>("ArrivedOnTurn");
             col_types[{UserStringNop("ETA"),                        UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<int>("ETA");
             col_types[{UserStringNop("FINAL_DEST"),                 UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("FinalDestinationID");
@@ -1645,8 +1646,7 @@ private:
 
         std::string current_column_type = GetColumnName(column_id);
 
-        const std::map<std::pair<std::string, std::string>, ValueRef::ValueRefBase<std::string>*>&
-            available_column_types = AvailableColumnTypes();
+        const auto& available_column_types = AvailableColumnTypes();
 
         int index = 1;
 

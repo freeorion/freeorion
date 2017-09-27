@@ -41,6 +41,7 @@ namespace {
                 |   tok.NumStarlanes_
                 |   tok.LastTurnBattleHere_
                 |   tok.LastTurnActiveInBattle_
+                |   tok.LastTurnResupplied_
                 |   tok.Orbit_
                 |   tok.SpeciesID_
                 |   tok.TurnsSinceFocusChange_

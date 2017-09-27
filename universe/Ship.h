@@ -9,6 +9,7 @@
 FO_COMMON_API extern const int ALL_EMPIRES;
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
 FO_COMMON_API extern const int INVALID_GAME_TURN;
+FO_COMMON_API extern const int BEFORE_FIRST_TURN;
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
 class ShipDesign;
 
@@ -19,33 +20,24 @@ public:
 
     /** \name Accessors */ //@{
     std::set<std::string> Tags() const override;
-
     bool HasTag(const std::string& name) const override;
-
     UniverseObjectType ObjectType() const override;
-
     std::string Dump() const override;
 
     int ContainerObjectID() const override
     { return m_fleet_id; }
 
     bool ContainedBy(int object_id) const override;
-
     float NextTurnCurrentMeterValue(MeterType type) const override;
-
     const std::string& PublicName(int empire_id) const override;
-
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
     /** Back propagates part meters (which UniverseObject equivalent doesn't). */
     void BackPropagateMeters() override;
 
     void ResetTargetMaxUnpairedMeters() override;
-
     void ResetPairedActiveMeters() override;
-
     void ClampMeters() override;
-
     void PopGrowthProductionResearchPhase() override;
 
     /** Returns new copy of this Ship. */
@@ -60,6 +52,7 @@ public:
 
     int                         ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this ship
     int                         ArrivedOnTurn() const       { return m_arrived_on_turn; }       ///< returns the turn on which this ship arrived in its current system
+    int                         LastResuppliedOnTurn() const{ return m_last_resupplied_on_turn;}///< returns the turn on which this ship was last resupplied / upgraded
 
     bool                        IsMonster() const;
     bool                        IsArmed() const;
@@ -146,6 +139,7 @@ private:
     std::string     m_species_name;
     int             m_produced_by_empire_id = ALL_EMPIRES;
     int             m_arrived_on_turn = INVALID_GAME_TURN;
+    int             m_last_resupplied_on_turn = BEFORE_FIRST_TURN;
 
     friend class boost::serialization::access;
     template <class Archive>

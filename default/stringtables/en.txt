@@ -5658,6 +5658,9 @@ Last Turn Battle Here
 LAST_TURN_ACTIVE_IN_BATTLE
 Last Turn In Battle
 
+LAST_TURN_RESUPPLIED
+Last Turn Resupplied
+
 ARRIVED_ON_TURN
 Arrived on Turn
 

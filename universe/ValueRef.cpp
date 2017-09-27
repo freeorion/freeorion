@@ -786,22 +786,28 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
     if (property_name == "Owner") {
         return object->Owner();
-    } else if (property_name == "SupplyingEmpire") {
+    }
+    else if (property_name == "SupplyingEmpire") {
         return GetSupplyManager().EmpireThatCanSupplyAt(object->SystemID());
-    } else if (property_name == "ID") {
+    }
+    else if (property_name == "ID") {
         return object->ID();
-    } else if (property_name == "CreationTurn") {
+    }
+    else if (property_name == "CreationTurn") {
         return object->CreationTurn();
-    } else if (property_name == "Age") {
+    }
+    else if (property_name == "Age") {
         return object->AgeInTurns();
 
-    } else if (property_name == "TurnsSinceFocusChange") {
+    }
+    else if (property_name == "TurnsSinceFocusChange") {
         if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->TurnsSinceFocusChange();
         else
             return 0;
 
-    } else if (property_name == "ProducedByEmpireID") {
+    }
+    else if (property_name == "ProducedByEmpireID") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->ProducedByEmpireID();
         else if (std::shared_ptr<const Building> building = std::dynamic_pointer_cast<const Building>(object))
@@ -809,19 +815,22 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         else
             return ALL_EMPIRES;
 
-    } else if (property_name == "ArrivedOnTurn") {
+    }
+    else if (property_name == "ArrivedOnTurn") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->ArrivedOnTurn();
         else
             return INVALID_GAME_TURN;
 
-    } else if (property_name == "DesignID") {
+    }
+    else if (property_name == "DesignID") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->DesignID();
         else
             return INVALID_DESIGN_ID;
 
-    } else if (property_name == "SpeciesID") {
+    }
+    else if (property_name == "SpeciesID") {
         if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object))
             return GetSpeciesManager().GetSpeciesID(planet->SpeciesName());
         else if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
@@ -829,7 +838,8 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         else
             return -1;
 
-    } else if (property_name == "FleetID") {
+    }
+    else if (property_name == "FleetID") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->FleetID();
         else if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
@@ -837,7 +847,8 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         else
             return INVALID_OBJECT_ID;
 
-    } else if (property_name == "PlanetID") {
+    }
+    else if (property_name == "PlanetID") {
         if (std::shared_ptr<const Building> building = std::dynamic_pointer_cast<const Building>(object))
             return building->PlanetID();
         else if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object))
@@ -845,46 +856,54 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         else
             return INVALID_OBJECT_ID;
 
-    } else if (property_name == "SystemID") {
+    }
+    else if (property_name == "SystemID") {
         return object->SystemID();
 
-    } else if (property_name == "FinalDestinationID") {
+    }
+    else if (property_name == "FinalDestinationID") {
         if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->FinalDestinationID();
         else
             return INVALID_OBJECT_ID;
 
-    } else if (property_name == "NextSystemID") {
+    }
+    else if (property_name == "NextSystemID") {
         if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->NextSystemID();
         else
             return INVALID_OBJECT_ID;
 
-    } else if (property_name == "PreviousSystemID") {
+    }
+    else if (property_name == "PreviousSystemID") {
         if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->PreviousSystemID();
         else
             return INVALID_OBJECT_ID;
 
-    } else if (property_name == "NearestSystemID") {
+    }
+    else if (property_name == "NearestSystemID") {
         if (object->SystemID() != INVALID_OBJECT_ID)
             return object->SystemID();
 
         return GetPathfinder()->NearestSystemTo(object->X(), object->Y());
 
-    } else if (property_name == "NumShips") {
+    }
+    else if (property_name == "NumShips") {
         if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->NumShips();
         else
             return 0;
 
-    } else if (property_name == "NumStarlanes") {
+    }
+    else if (property_name == "NumStarlanes") {
         if (auto system = std::dynamic_pointer_cast<const System>(object))
             return system->NumStarlanes();
         else
             return 0;
 
-    } else if (property_name == "LastTurnBattleHere") {
+    }
+    else if (property_name == "LastTurnBattleHere") {
         if (auto system = std::dynamic_pointer_cast<const System>(object))
             return system->LastTurnBattleHere();
         else if (auto system = GetSystem(object->SystemID()))
@@ -892,24 +911,35 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         else
             return INVALID_GAME_TURN;
 
-    } else if (property_name == "LastTurnActiveInBattle") {
+    }
+    else if (property_name == "LastTurnActiveInBattle") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->LastTurnActiveInCombat();
         else
             return INVALID_GAME_TURN;
 
-    } else if (property_name == "Orbit") {
+    }
+    else if (property_name == "LastTurnResupplied") {
+        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
+            return ship->LastResuppliedOnTurn();
+        else
+            return INVALID_GAME_TURN;
+
+    }
+    else if (property_name == "Orbit") {
         if (auto system = GetSystem(object->SystemID()))
             return system->OrbitOfPlanet(object->ID());
         return -1;
 
-    } else if (property_name == "ETA") {
+    }
+    else if (property_name == "ETA") {
         if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->ETA().first;
         else
             return 0;
 
-    } else if (property_name == "NumSpecials") {
+    }
+    else if (property_name == "NumSpecials") {
         return object->Specials().size();
     }
 
