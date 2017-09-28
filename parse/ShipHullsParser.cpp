@@ -194,10 +194,11 @@ namespace {
 
 namespace parse {
     start_rule_payload ship_hulls() {
+        const parse::lexer lexer;
         start_rule_payload hulls;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/ship_hulls")) {
-            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(file, hulls);
+            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, hulls);
         }
 
         return hulls;

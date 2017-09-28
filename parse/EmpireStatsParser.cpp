@@ -81,10 +81,11 @@ namespace {
 
 namespace parse {
     start_rule_payload statistics() {
+        const parse::lexer lexer;
         start_rule_payload stats_;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/empire_statistics")) {
-            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(file, stats_);
+            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, stats_);
         }
 
         return stats_;

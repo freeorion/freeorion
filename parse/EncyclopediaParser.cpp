@@ -95,11 +95,12 @@ namespace {
 
 namespace parse {
     ArticleMap encyclopedia_articles() {
+        const parse::lexer lexer;
         std::vector<boost::filesystem::path> file_list = ListScripts("scripting/encyclopedia");
 
         ArticleMap articles;
         for (const boost::filesystem::path& file : file_list) {
-            /*auto success =*/ detail::parse_file<grammar, ArticleMap>(file, articles);
+            /*auto success =*/ detail::parse_file<grammar, ArticleMap>(lexer, file, articles);
         }
 
         return articles;

@@ -183,10 +183,11 @@ namespace {
 
 namespace parse {
     start_rule_payload specials() {
+        const parse::lexer lexer;
         start_rule_payload specials_;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/specials")) {
-            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(file, specials_);
+            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, specials_);
         }
 
         return specials_;

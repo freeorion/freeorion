@@ -168,10 +168,11 @@ namespace {
 
 namespace parse {
     start_rule_payload ship_parts() {
+        const parse::lexer lexer;
         start_rule_payload parts;
 
         for (const auto& file : ListScripts("scripting/ship_parts")) {
-            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(file, parts);
+            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, parts);
         }
 
         return parts;

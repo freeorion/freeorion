@@ -221,6 +221,7 @@ namespace parse {
         std::vector<boost::uuids::uuid> //ordering
         >
     ship_designs(const boost::filesystem::path& path) {
+        const parse::lexer lexer;
         std::vector<std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>> designs_and_paths;
         std::vector<boost::uuids::uuid> ordering;
 
@@ -239,7 +240,7 @@ namespace parse {
             try {
                 boost::optional<std::unique_ptr<ShipDesign>> maybe_design;
                 auto partial_result = detail::parse_file<grammar, boost::optional<std::unique_ptr<ShipDesign>>>(
-                    file, maybe_design);
+                    lexer, file, maybe_design);
 
                 if (!partial_result || !maybe_design)
                     continue;
@@ -253,7 +254,7 @@ namespace parse {
         if (!manifest_file.empty()) {
             try {
                 /*auto success =*/ detail::parse_file<manifest_grammar, std::vector<boost::uuids::uuid>>(
-                    manifest_file, ordering);
+                    lexer, manifest_file, ordering);
 
             } catch (const std::runtime_error& e) {
                 ErrorLogger() << "Failed to parse ship design manifest in " << manifest_file << " from " << path

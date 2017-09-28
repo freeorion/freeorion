@@ -270,10 +270,11 @@ namespace {
 
 namespace parse {
     start_rule_payload species() {
+        const parse::lexer lexer;
         start_rule_payload species_;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/species")) {
-            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(file, species_);
+            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, species_);
         }
 
         return species_;

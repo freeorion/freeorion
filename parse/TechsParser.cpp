@@ -265,6 +265,7 @@ namespace parse {
         std::map<std::string, std::unique_ptr<TechCategory>>, // tech_categories,
         std::set<std::string>> // categories_seen
     techs() {
+        const parse::lexer lexer;
         TechManager::TechContainer techs_;
         std::map<std::string, std::unique_ptr<TechCategory>> categories;
         std::set<std::string> categories_seen;
@@ -272,10 +273,10 @@ namespace parse {
         g_categories_seen = &categories_seen;
         g_categories = &categories;
 
-        /*auto success =*/ detail::parse_file<grammar, TechManager::TechContainer>(GetResourceDir() / "scripting/techs/Categories.inf", techs_);
+        /*auto success =*/ detail::parse_file<grammar, TechManager::TechContainer>(lexer, GetResourceDir() / "scripting/techs/Categories.inf", techs_);
 
         for (const boost::filesystem::path& file : ListScripts("scripting/techs")) {
-            /*auto success =*/ detail::parse_file<grammar, TechManager::TechContainer>(file, techs_);
+            /*auto success =*/ detail::parse_file<grammar, TechManager::TechContainer>(lexer, file, techs_);
         }
 
         return std::make_tuple(std::move(techs_), std::move(categories), categories_seen);

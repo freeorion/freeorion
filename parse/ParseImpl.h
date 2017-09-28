@@ -133,7 +133,7 @@ namespace parse { namespace detail {
                            token_iterator& it);
 
     template <typename Grammar, typename Arg1>
-    bool parse_file(const boost::filesystem::path& path, Arg1& arg1)
+    bool parse_file(const lexer& lexer, const boost::filesystem::path& path, Arg1& arg1)
     {
         std::string filename;
         std::string file_contents;
@@ -142,8 +142,6 @@ namespace parse { namespace detail {
         token_iterator it;
 
         boost::timer timer;
-
-        const lexer lexer;
 
         parse_file_common(path, lexer, filename, file_contents, first, last, it);
 

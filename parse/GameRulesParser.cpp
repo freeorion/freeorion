@@ -233,7 +233,8 @@ namespace {
 
 namespace parse {
     bool game_rules(GameRules& game_rules) {
+        const parse::lexer lexer;
         boost::filesystem::path path = GetResourceDir() / "scripting/game_rules.focs.txt";
-        return detail::parse_file<grammar, GameRules>(path, game_rules);
+        return detail::parse_file<grammar, GameRules>(lexer, path, game_rules);
     }
 }
