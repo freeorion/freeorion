@@ -265,34 +265,3 @@ namespace parse {
         return {std::move(designs_and_paths), ordering};
     }
 }
-namespace {
-    /** Remove the file paths from the returned ShipDesigns.*/
-    std::pair<
-        std::vector<std::unique_ptr<ShipDesign>>, // designs
-        std::vector<boost::uuids::uuid> // ordering
-        >
-    only_ship_designs(const boost::filesystem::path& path) {
-        auto design_paths_and_ordering = parse::ship_designs(path);
-
-        std::vector<std::unique_ptr<ShipDesign>> designs;
-        for (auto& design_and_path : design_paths_and_ordering.first)
-            designs.push_back(std::move(design_and_path.first));
-        return {std::move(designs), design_paths_and_ordering.second};
-    }
-}
-
-namespace parse {
-    std::pair<
-        std::vector<std::unique_ptr<ShipDesign>>, // designs
-        std::vector<boost::uuids::uuid> // ordering
-        >
-    ship_designs()
-    { return only_ship_designs("scripting/ship_designs"); }
-
-    std::pair<
-        std::vector<std::unique_ptr<ShipDesign>>, // designs
-        std::vector<boost::uuids::uuid> // ordering
-        >
-    monster_designs()
-    { return only_ship_designs("scripting/monster_designs"); }
-}
