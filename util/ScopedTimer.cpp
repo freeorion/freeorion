@@ -134,16 +134,18 @@ public:
             return;
 
         // No table so use basic ScopedTimer output.
-        if (!m_sections) {
-            std::stringstream ss;
-            ss << m_name << " time: ";
-            ScopedTimer::Impl::FormatDuration(ss, duration);
-            DebugLogger() << ss.str();
+        if (!m_sections)
             return;
-        }
 
         //Stop the final section.
         EnterSection("");
+
+        // Don't print the table if the only section is the default section
+        auto only_section_is_the_default =
+            (m_sections->m_section_names.size() == 1
+             && *m_sections->m_section_names.begin() == "");
+        if (only_section_is_the_default)
+            return;
 
         //Print the section times followed by the total time elapsed.
 
