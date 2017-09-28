@@ -7,6 +7,8 @@
 #include "../universe/Special.h"
 #include "../universe/Species.h"
 
+#include <boost/filesystem.hpp>
+
 #include <future>
 
 const int INVALID_GAME_TURN = -(2 << 15) + 1;
@@ -43,6 +45,13 @@ namespace {
     auto StartParsing(const ParserFunc& parser) -> std::future<decltype(parser())> {
         return std::async(std::launch::async, parser);
     }
+
+    template <typename ParserFunc>
+    auto StartParsing2(const ParserFunc& parser, const boost::filesystem::path& subdir)
+        -> std::future<decltype(parser(subdir))>
+    {
+        return std::async(std::launch::async, parser, subdir);
+    }
 }
 
 void IApp::ParseUniverseObjectTypes() {
@@ -54,4 +63,7 @@ void IApp::ParseUniverseObjectTypes() {
     GetTechManager().SetTechs(StartParsing(parse::techs));
     GetPartTypeManager().SetPartTypes(StartParsing(parse::ship_parts));
     GetHullTypeManager().SetHullTypes(StartParsing(parse::ship_hulls));
+    GetPredefinedShipDesignManager().SetShipDesignTypes(StartParsing2(parse::ship_designs, "scripting/ship_designs"));
+    GetPredefinedShipDesignManager().SetMonsterDesignTypes(StartParsing2(parse::ship_designs, "scripting/monster_designs"));
+
 }

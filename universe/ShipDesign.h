@@ -716,9 +716,13 @@ FO_COMMON_API bool operator ==(const ShipDesign& first, const ShipDesign& second
   * or isn't know to this client), 0 is returned instead. */
 FO_COMMON_API const ShipDesign* GetShipDesign(int ship_design_id);
 
-
 class FO_COMMON_API PredefinedShipDesignManager {
 public:
+    using ParsedShipDesignsType = std::pair<
+        std::vector<std::pair<std::unique_ptr<ParsedShipDesign>, boost::filesystem::path>>, // designs_and_paths,
+        std::vector<boost::uuids::uuid> // ordering
+    >;
+
     /** Return pointers the ShipDesigns in order.*/
     std::vector<const ShipDesign*> GetOrderedShipDesigns() const;
 
@@ -747,24 +751,41 @@ public:
       * ship design exists, 0 is returned instead. */
     static PredefinedShipDesignManager& GetPredefinedShipDesignManager();
 
+    /** Sets ship design types to the future value of \p pending_designs
+        found in \p subdir. */
+    FO_COMMON_API void SetShipDesignTypes(std::future<ParsedShipDesignsType>&& pending_designs);
+
+    /** Sets monster design types to the future value of \p
+        pending_design_types found in \p subdir. */
+    FO_COMMON_API void SetMonsterDesignTypes(std::future<ParsedShipDesignsType>&& pending_designs);
+
 private:
     PredefinedShipDesignManager();
 
-    std::unordered_map<boost::uuids::uuid, std::unique_ptr<ShipDesign>,
-                       boost::hash<boost::uuids::uuid>> m_designs;
+    /** Assigns any m_pending_designs. */
+    void CheckPendingDesignsTypes() const;
 
-    std::unordered_map<std::string, boost::uuids::uuid> m_name_to_ship_design;
-    std::unordered_map<std::string, boost::uuids::uuid> m_name_to_monster_design;
-    mutable std::unordered_map<std::string, int> m_design_generic_ids;  // ids of designs from this manager that have been added to the universe with no empire as the creator
+    /** Future ship design type being parsed by parser.  mutable so that it can
+        be assigned to m_ship design_types when completed.*/
+    mutable boost::optional<std::future<ParsedShipDesignsType>> m_pending_designs = boost::none;
+    mutable boost::optional<std::future<ParsedShipDesignsType>> m_pending_monsters = boost::none;
 
-    std::vector<boost::uuids::uuid> m_ship_ordering;
-    std::vector<boost::uuids::uuid> m_monster_ordering;
+    mutable std::unordered_map<boost::uuids::uuid, std::unique_ptr<ShipDesign>,
+                               boost::hash<boost::uuids::uuid>>  m_designs;
+
+    mutable std::unordered_map<std::string, boost::uuids::uuid> m_name_to_ship_design;
+    mutable std::unordered_map<std::string, boost::uuids::uuid> m_name_to_monster_design;
+    // ids of designs from this manager that have been added to the universe with no empire as the creator
+    mutable std::unordered_map<std::string, int> m_design_generic_ids;
+
+    mutable std::vector<boost::uuids::uuid> m_ship_ordering;
+    mutable std::vector<boost::uuids::uuid> m_monster_ordering;
 
     static PredefinedShipDesignManager* s_instance;
 };
 
 /** returns the singleton predefined ship design manager type manager */
-const FO_COMMON_API PredefinedShipDesignManager& GetPredefinedShipDesignManager();
+FO_COMMON_API PredefinedShipDesignManager& GetPredefinedShipDesignManager();
 
 /** Returns the predefined ShipDesign with the name \a name.  If no such
   * ship design exists, 0 is returned instead. */
@@ -817,8 +838,19 @@ void HullType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_icon);
 }
 
-/** Load all ship designs in \p dir and return a tuple is_error, the map from uuid to ship design and path and the
-    ship ordering from the manifest. */
+/** Load all ship designs in \p parsed and return a tuple is_error, the map
+    from uuid to ship design and path and the ship ordering from the
+    manifest. */
+FO_COMMON_API std::tuple<
+    bool,
+    std::unordered_map<boost::uuids::uuid,
+        std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>,
+        boost::hash<boost::uuids::uuid>>,
+    std::vector<boost::uuids::uuid>>
+LoadShipDesignsAndManifestOrderFromParseResults(PredefinedShipDesignManager::ParsedShipDesignsType& parsed);
+
+/** Load all ship designs in \p dir and return a tuple is_error, the map from
+    uuid to ship design and path and the ship ordering from the manifest. */
 FO_COMMON_API std::tuple<
     bool,
     std::unordered_map<boost::uuids::uuid,
