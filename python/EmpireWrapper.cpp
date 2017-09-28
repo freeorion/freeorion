@@ -33,21 +33,20 @@ namespace {
     const std::string&  TechFromResearchQueueElement(const ResearchQueue::Element& element)             { return element.name; }
 
     std::vector<std::string> (TechManager::*TechNamesVoid)(void) const =                                &TechManager::TechNames;
-    boost::function<std::vector<std::string>(const TechManager*)> TechNamesMemberFunc =                 TechNamesVoid;
+    auto TechNamesMemberFunc = TechNamesVoid;
 
     std::vector<std::string> (TechManager::*TechNamesCategory)(const std::string&) const =              &TechManager::TechNames;
-    boost::function<std::vector<std::string>(const TechManager*, const std::string&)>
-                                                                  TechNamesCategoryMemberFunc =         TechNamesCategory;
+    auto TechNamesCategoryMemberFunc = TechNamesCategory;
 
     std::vector<std::string>    TechRecursivePrereqs(const Tech& tech, int empire_id)
     { return GetTechManager().RecursivePrereqs(tech.Name(), empire_id); }
-    boost::function<std::vector<std::string>(const Tech& tech, int)> TechRecursivePrereqsFunc =         TechRecursivePrereqs;
+    auto TechRecursivePrereqsFunc = TechRecursivePrereqs;
 
     // Concatenate functions to create one that takes two parameters.  The first parameter is a ResearchQueue*, which
     // is passed directly to ResearchQueue::InQueue as the this pointer.  The second parameter is a
     // ResearchQueue::Element which is passed into TechFromResearchQueueElement, which returns a Tech*, which is
     // passed into ResearchQueue::InQueue as the second parameter.
-    boost::function<bool(const ResearchQueue*, const ResearchQueue::Element&)> InQueueFromResearchQueueElementFunc =
+    auto InQueueFromResearchQueueElementFunc =
         boost::bind(&ResearchQueue::InQueue, _1, boost::bind(TechFromResearchQueueElement, _2));
 
     // ProductionQueue::Element contains a ProductionItem which contains details of the item on the queue.  Need helper
@@ -69,7 +68,7 @@ namespace {
             return EMPTY_ENTRY;
         return *std::next(empire.SitRepBegin(), index);
     }
-    boost::function<const SitRepEntry&(const Empire&, int)> GetEmpireSitRepFunc =                       GetSitRep;
+    auto GetEmpireSitRepFunc = GetSitRep;
 
     template<class T1, class T2>
     struct PairToTupleConverter {
@@ -96,7 +95,7 @@ namespace {
         }
         return retval;
     }
-    boost::function<std::vector<IntPair>(const Empire&)> obstructedStarlanesFunc =              &obstructedStarlanesP;
+    auto obstructedStarlanesFunc = &obstructedStarlanesP;
 
     std::map<int, int> jumpsToSuppliedSystemP(const Empire& empire) {
         std::map<int, int> retval;
@@ -177,7 +176,7 @@ namespace {
         }
         return planets_with_available_pp;
     }
-    boost::function<std::map<std::set<int>, float>(const Empire& )> PlanetsWithAvailablePP_Func =   &PlanetsWithAvailablePP_P;
+    auto PlanetsWithAvailablePP_Func = &PlanetsWithAvailablePP_P;
 
     std::map<std::set<int>, float> PlanetsWithAllocatedPP_P(const Empire& empire) {
         const auto& prod_queue = empire.GetProductionQueue();
@@ -193,7 +192,7 @@ namespace {
         }
         return planets_with_allocated_pp;
     }
-    boost::function<std::map<std::set<int>, float>(const Empire& )> PlanetsWithAllocatedPP_Func =   &PlanetsWithAllocatedPP_P;
+    auto PlanetsWithAllocatedPP_Func = &PlanetsWithAllocatedPP_P;
 
     std::set<std::set<int>> PlanetsWithWastedPP_P(const Empire& empire) {
         const auto& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
@@ -210,7 +209,16 @@ namespace {
              }
              return planets_with_wasted_pp;
     }
-    boost::function<std::set<std::set<int>>(const Empire&)> PlanetsWithWastedPP_Func = &PlanetsWithWastedPP_P;
+    auto PlanetsWithWastedPP_Func = &PlanetsWithWastedPP_P;
+
+    std::set<std::string> ResearchedTechNames(const Empire& empire) {
+        std::set<std::string> retval;
+        for (const auto& entry : empire.ResearchedTechs())
+            retval.insert(entry.first);
+        return retval;
+    }
+    auto ResearchTechNamesFunc = &ResearchedTechNames;
+
 }
 
 namespace FreeOrionPython {
@@ -306,7 +314,11 @@ namespace FreeOrionPython {
                                                     ))
 
             .def("techResearched",                  &Empire::TechResearched)
-            .add_property("availableTechs",         make_function(&Empire::AvailableTechs,          return_internal_reference<>()))
+            .add_property("availableTechs",         make_function(
+                                                        ResearchTechNamesFunc,
+                                                        return_value_policy<return_by_value>(),
+                                                        boost::mpl::vector<const std::set<std::string>&, const Empire& >()
+                                                    ))
             .def("getTechStatus",                   &Empire::GetTechStatus)
             .def("researchProgress",                &Empire::ResearchProgress)
             .add_property("researchQueue",          make_function(&Empire::GetResearchQueue,        return_internal_reference<>()))
@@ -407,17 +419,16 @@ namespace FreeOrionPython {
             ;
         class_<ProductionQueue, noncopyable>("productionQueue", no_init)
             .def("__iter__",                        iterator<ProductionQueue>())  // ProductionQueue provides STL container-like interface to contained queue
-            .def("__getitem__",                     ProductionQueueOperatorSquareBrackets,          return_internal_reference<>())
+            .def("__getitem__",                     ProductionQueueOperatorSquareBrackets,              return_internal_reference<>())
             .def("__len__",                         &ProductionQueue::size)
             .add_property("size",                   &ProductionQueue::size)
             .add_property("empty",                  &ProductionQueue::empty)
             .add_property("totalSpent",             &ProductionQueue::TotalPPsSpent)
             .add_property("empireID",               &ProductionQueue::EmpireID)
-            .def("availablePP",                     make_function(&ProductionQueue::AvailablePP,          return_value_policy<return_by_value>()))
-            .add_property("allocatedPP",            make_function(&ProductionQueue::AllocatedPP,          return_internal_reference<>()))
-            .def("objectsWithWastedPP",             make_function(&ProductionQueue::ObjectsWithWastedPP,  return_value_policy<return_by_value>()))
+            .def("availablePP",                     make_function(&ProductionQueue::AvailablePP,        return_value_policy<return_by_value>()))
+            .add_property("allocatedPP",            make_function(&ProductionQueue::AllocatedPP,        return_internal_reference<>()))
+            .def("objectsWithWastedPP",             make_function(&ProductionQueue::ObjectsWithWastedPP,return_value_policy<return_by_value>()))
             ;
-
 
         //////////////////
         //     Tech     //

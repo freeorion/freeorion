@@ -1282,6 +1282,8 @@ namespace {
             return empire->SpeciesShipsScrapped();
         if (parsed_map_name == "ShipPartsOwned")
             return empire->ShipPartTypesOwned();
+        if (parsed_map_name == "TurnTechResearched")
+            return empire->ResearchedTechs();
 
         return EMPTY_STRING_INT_MAP;
     }
@@ -1519,7 +1521,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         variable_name == "SpeciesShipsLost" ||
         variable_name == "SpeciesShipsOwned" ||
         variable_name == "SpeciesShipsProduced" ||
-        variable_name == "SpeciesShipsScrapped")
+        variable_name == "SpeciesShipsScrapped" ||
+        variable_name == "TurnTechResearched")
     {
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1) {

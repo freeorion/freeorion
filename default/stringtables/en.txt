@@ -4283,6 +4283,18 @@ Empire ID
 EMPIRE_METERS
 Meters:
 
+RESEARCHED_TECHS
+Researched Techs: 
+
+BEFORE_FIRST_TURN
+Before First Turn
+
+TURN
+Turn
+
+NO_TECHS_RESEARCHED
+No Techs Researched
+
 OWNED_PLANETS
 '''Owned Planets: '''
 

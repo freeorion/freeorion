@@ -1410,7 +1410,7 @@ float Empire::ResearchProgress(const std::string& name) const {
     return it->second * tech_cost;
 }
 
-const std::set<std::string>& Empire::AvailableTechs() const
+const std::map<std::string, int>& Empire::ResearchedTechs() const
 { return m_techs; }
 
 bool Empire::TechResearched(const std::string& name) const
@@ -2473,7 +2473,7 @@ void Empire::AddTech(const std::string& name) {
         UnlockItem(item);  // potential infinite if a tech (in)directly unlocks itself?
 
     if (m_techs.find(name) == m_techs.end())
-        m_techs.insert(name);
+        m_techs[name] = CurrentTurn();
 }
 
 void Empire::UnlockItem(const ItemSpec& item) {

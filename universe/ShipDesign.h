@@ -704,11 +704,12 @@ public:
 private:
     PredefinedShipDesignManager();
 
-    std::unordered_map<boost::uuids::uuid, std::unique_ptr<ShipDesign>, boost::hash<boost::uuids::uuid>>  m_designs;
+    std::unordered_map<boost::uuids::uuid, std::unique_ptr<ShipDesign>,
+                       boost::hash<boost::uuids::uuid>> m_designs;
 
-    std::unordered_map<std::string, boost::uuids::uuid>  m_name_to_ship_design;
-    std::unordered_map<std::string, boost::uuids::uuid>  m_name_to_monster_design;
-    mutable std::unordered_map<std::string, int>  m_design_generic_ids;   // ids of designs from this manager that have been added to the universe with no empire as the creator
+    std::unordered_map<std::string, boost::uuids::uuid> m_name_to_ship_design;
+    std::unordered_map<std::string, boost::uuids::uuid> m_name_to_monster_design;
+    mutable std::unordered_map<std::string, int> m_design_generic_ids;  // ids of designs from this manager that have been added to the universe with no empire as the creator
 
     std::vector<boost::uuids::uuid> m_ship_ordering;
     std::vector<boost::uuids::uuid> m_monster_ordering;

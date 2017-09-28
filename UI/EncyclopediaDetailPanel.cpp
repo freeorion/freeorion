@@ -1604,7 +1604,7 @@ namespace {
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-        // Empires
+        // Capital
         name = empire->Name();
         auto capital = GetPlanet(empire->CapitalID());
         if (capital)
@@ -1627,6 +1627,25 @@ namespace {
                                      + "\n";
             }
         }
+
+        // Techs
+        auto techs = empire->ResearchedTechs();
+        if (!techs.empty()) {
+            detailed_description += "\n\n" + UserString("RESEARCHED_TECHS");
+            for (const auto& tech_entry : techs) {
+                detailed_description += "\n";
+                std::string turn_text;
+                if (tech_entry.second == BEFORE_FIRST_TURN)
+                    turn_text = UserString("BEFORE_FIRST_TURN");
+                else
+                    turn_text = UserString("TURN") + " " + std::to_string(tech_entry.second);
+                detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_entry.first)
+                                     + " : " + turn_text;
+            }
+        } else {
+            detailed_description += "\n\n" + UserString("NO_TECHS_RESEARCHED");
+        }
+
 
         // Planets
         auto empire_planets = Objects().FindObjects(OwnedVisitor<Planet>(empire_id));
@@ -2423,7 +2442,6 @@ namespace {
 
         std::set<std::string> species_names;
         std::map<std::string, std::pair<PlanetEnvironment, float>> population_counts;
-        const auto& empire_avialable_techs = empire->AvailableTechs();
 
         // Collect species colonizing/environment hospitality information
         // start by building roster-- any species tagged as 'ALWAYS_REPORT' plus any species
@@ -2440,9 +2458,9 @@ namespace {
             // Add extinct species if their tech is known
             // Extinct species and enabling tech should have an EXTINCT tag
             if (species_tags.find(TAG_EXTINCT) != species_tags.end()) {
-                for (const auto& avail_tech : empire_avialable_techs) {
+                for (const auto& tech : empire->ResearchedTechs()) {
                     // Check for presence of tags in tech
-                    const auto& tech_tags = GetTech(avail_tech)->Tags();
+                    const auto& tech_tags = GetTech(tech.first)->Tags();
                     if ((tech_tags.find(species_str) != tech_tags.end()) &&
                         (tech_tags.find(TAG_EXTINCT) != tech_tags.end()))
                     {
