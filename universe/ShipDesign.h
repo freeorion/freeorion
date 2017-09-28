@@ -481,6 +481,33 @@ FO_COMMON_API HullTypeManager& GetHullTypeManager();
   * 0 is returned instead. */
 FO_COMMON_API const HullType* GetHullType(const std::string& name);
 
+/** ParsedShipDesign holds the results of a parsed ship design which can be
+    converted to a ShipDesign. */
+struct FO_COMMON_API ParsedShipDesign {
+    ParsedShipDesign(const std::string& name, const std::string& description,
+                     int designed_on_turn, int designed_by_empire, const std::string& hull,
+                     const std::vector<std::string>& parts,
+                     const std::string& icon, const std::string& model,
+                     bool name_desc_in_stringtable = false, bool monster = false,
+                     const boost::uuids::uuid& uuid = boost::uuids::nil_uuid());
+
+    std::string                 m_name;
+    std::string                 m_description;
+    boost::uuids::uuid          m_uuid;
+
+    int                         m_designed_on_turn;
+    int                         m_designed_by_empire;
+
+    std::string                 m_hull;
+    std::vector<std::string>    m_parts;
+    bool                        m_is_monster;
+
+    std::string                 m_icon;
+    std::string                 m_3D_model;
+
+    bool                        m_name_desc_in_stringtable;
+};
+
 class FO_COMMON_API ShipDesign {
 public:
     /** \name Structors */ //@{
@@ -514,18 +541,10 @@ public:
                const std::vector<std::string>& parts,
                const std::string& icon, const std::string& model,
                bool name_desc_in_stringtable = false, bool monster = false,
-               const boost::uuids::uuid& uuid = boost::uuids::nil_uuid()
-              );
+               const boost::uuids::uuid& uuid = boost::uuids::nil_uuid());
 
-    /**  The public ShipDesign constructor will only construct valid ship
-         designs, as long as the HullTypeManager has at least one hull. */
-    ShipDesign(const std::string& name, const std::string& description,
-               int designed_on_turn, int designed_by_empire, const std::string& hull,
-               const std::vector<std::string>& parts,
-               const std::string& icon, const std::string& model,
-               bool name_desc_in_stringtable = false, bool monster = false,
-               const boost::uuids::uuid& uuid = boost::uuids::nil_uuid()
-              );
+    /** Convert a parsed ship design and do any required verification. */
+    ShipDesign(const ParsedShipDesign& design);
     //@}
 
     /** \name Accessors */ //@{

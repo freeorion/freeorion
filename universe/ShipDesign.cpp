@@ -719,6 +719,31 @@ void HullTypeManager::CheckPendingHullTypes() const {
         ErrorLogger() << "HullTypeManager expects at least one hull type.  All ship design construction will fail.";
 }
 
+/////////////////////////////////////
+// ParsedShipDesign     //
+/////////////////////////////////////
+ParsedShipDesign::ParsedShipDesign(
+    const std::string& name, const std::string& description,
+    int designed_on_turn, int designed_by_empire,
+    const std::string& hull,
+    const std::vector<std::string>& parts,
+    const std::string& icon, const std::string& model,
+    bool name_desc_in_stringtable, bool monster,
+    const boost::uuids::uuid& uuid /*= boost::uuids::nil_uuid()*/
+) :
+    m_name(name),
+    m_description(description),
+    m_uuid(uuid),
+    m_designed_on_turn(designed_on_turn),
+    m_designed_by_empire(designed_by_empire),
+    m_hull(hull),
+    m_parts(parts),
+    m_is_monster(monster),
+    m_icon(icon),
+    m_3D_model(model),
+    m_name_desc_in_stringtable(name_desc_in_stringtable)
+{}
+
 ////////////////////////////////////////////////
 // ShipDesign
 ////////////////////////////////////////////////
@@ -760,14 +785,12 @@ ShipDesign::ShipDesign(const boost::optional<std::invalid_argument>& should_thro
     BuildStatCaches();
 }
 
-ShipDesign::ShipDesign(const std::string& name, const std::string& description,
-                       int designed_on_turn, int designed_by_empire, const std::string& hull,
-                       const std::vector<std::string>& parts,
-                       const std::string& icon, const std::string& model,
-                       bool name_desc_in_stringtable, bool monster,
-                       const boost::uuids::uuid& uuid /*= boost::uuids::nil_uuid()*/) :
-    ShipDesign(boost::none, name, description, designed_on_turn, designed_by_empire, hull, parts,
-               icon, model, name_desc_in_stringtable, monster, uuid)
+ShipDesign::ShipDesign(const ParsedShipDesign& design) :
+    ShipDesign(boost::none, design.m_name, design.m_description,
+               design.m_designed_on_turn, design.m_designed_by_empire,
+               design.m_hull, design.m_parts,
+               design.m_icon, design.m_3D_model, design.m_name_desc_in_stringtable,
+               design.m_is_monster, design.m_uuid)
 {}
 
 const std::string& ShipDesign::Name(bool stringtable_lookup /* = true */) const {
@@ -1338,7 +1361,6 @@ bool operator ==(const ShipDesign& first, const ShipDesign& second) {
     return first_parts == second_parts;
 }
 
-
 /////////////////////////////////////
 // PredefinedShipDesignManager     //
 /////////////////////////////////////
@@ -1534,7 +1556,8 @@ LoadShipDesignsAndManifestOrderFromFileSystem(const boost::filesystem::path& dir
     auto& disk_ordering = designs_paths_and_ordering.second;
 
     for (auto&& design_and_path : designs_and_paths) {
-        auto& design = design_and_path.first;
+        // TODO change to make_unique when converting to C++14
+        auto design = std::unique_ptr<ShipDesign>(new ShipDesign(*design_and_path.first));
 
         // If the UUID is nil this is a legacy design that needs a new UUID
         if(design->UUID() == boost::uuids::uuid{{0}}) {
@@ -1554,12 +1577,12 @@ LoadShipDesignsAndManifestOrderFromFileSystem(const boost::filesystem::path& dir
         if (!saved_designs.count(design->UUID())) {
             TraceLogger() << "Added saved design UUID " << design->UUID()
                           << " with name " << design->Name();
-            saved_designs[design->UUID()] = std::move(design_and_path);
+            auto uuid = design->UUID();
+            saved_designs[uuid] = std::make_pair(std::move(design), design_and_path.second);
         } else {
             WarnLogger() << "Duplicate ship design UUID " << design->UUID()
                          << " found for ship design " << design->Name()
-                         << " and " << saved_designs[design->UUID()].first->Name()
-                         << " in " << dir;
+                         << " and " << saved_designs[design->UUID()].first->Name();
         }
     }
 

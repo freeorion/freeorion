@@ -18,7 +18,7 @@ class FleetPlan;
 class HullType;
 class MonsterFleetPlan;
 class PartType;
-class ShipDesign;
+struct ParsedShipDesign;
 class Special;
 class Species;
 struct EncyclopediaArticle;
@@ -47,7 +47,7 @@ namespace parse {
         design_and_path. If a file exists called ShipDesignOrdering.focs.txt, parse it and
         store the order in \p ordering. */
     using ship_designs_type = std::pair<
-        std::vector<std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>>, // designs_and_paths,
+        std::vector<std::pair<std::unique_ptr<ParsedShipDesign>, boost::filesystem::path>>, // designs_and_paths,
         std::vector<boost::uuids::uuid> // ordering
         >;
     FO_PARSE_API ship_designs_type ship_designs(const boost::filesystem::path& path);
