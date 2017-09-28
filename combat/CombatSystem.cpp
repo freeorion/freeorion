@@ -1488,9 +1488,10 @@ namespace {
 
         DebugLogger() << [&shuffled_attackers](){
             std::stringstream ss;
-            ss << "Attacker IDs:";
+            ss << "Attacker IDs: [";
             for (int attacker : shuffled_attackers)
-            { ss << attacker; }
+            { ss << attacker << " "; }
+            ss << "]";
             return ss.str();
         }();
 
