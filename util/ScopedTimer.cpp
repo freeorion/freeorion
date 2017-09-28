@@ -7,6 +7,10 @@
 #include <iomanip>
 #include <sstream>
 
+namespace {
+    DeclareThreadSafeLogger(timer);
+}
+
 class ScopedTimer::Impl {
 public:
     Impl(const std::string& timed_name, bool enable_output,
@@ -27,7 +31,7 @@ public:
         std::stringstream ss;
         ss << m_name << " time: ";
         FormatDuration(ss, duration);
-        DebugLogger() << ss.str();
+        DebugLogger(timer) << ss.str();
     }
 
     bool ShouldOutput(const std::chrono::nanoseconds& duration)
@@ -154,10 +158,11 @@ public:
         for (const std::string& section_name : m_sections->m_section_names)
         { longest_section_name = std::max(longest_section_name, section_name.size()); }
 
+
         for (const std::string& section_name : m_sections->m_section_names) {
             auto jt = m_sections->m_table.find(section_name);
             if (jt == m_sections->m_table.end()) {
-                ErrorLogger() << "Missing section " << section_name << " in section table.";
+                ErrorLogger(timer) << "Missing section " << section_name << " in section table.";
                 continue;
             }
 
@@ -171,7 +176,7 @@ public:
                    << std::setw(longest_section_name) << std::left << section_name
                    << std::right << " time: "
                    << tail.str();
-            DebugLogger() << header.str();
+            DebugLogger(timer) << header.str();
         }
 
         // Create a header with padding, so all times align.
@@ -181,7 +186,7 @@ public:
                << std::setw(longest_section_name + 3 + 7)
                << std::right << " time: "
                << tail.str();
-        DebugLogger() << header.str();
+        DebugLogger(timer) << header.str();
 
         // Prevent the base class from outputting a duplicate total time.
         m_enable_output = false;
