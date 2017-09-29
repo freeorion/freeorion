@@ -10,5 +10,5 @@ TELEPATHIC_DETECTION
                 WithinStarlaneJumps jumps = @1@ condition = Source
             ]
             activation = OwnedBy affiliation = AnyEmpire
-            effects = SetVisibility visibility = Basic empire = Source.Owner
+            effects = SetVisibility empire = Source.Owner visibility = max(Basic, Value)
 '''

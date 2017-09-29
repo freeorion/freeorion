@@ -26,7 +26,7 @@ namespace {
             qi::eps_type eps;
             using phoenix::new_;
 
-            const parse::lexer& tok =                                                       parse::lexer::instance();
+            const parse::lexer& tok = parse::lexer::instance();
 
             set_meter =
                 (
@@ -42,8 +42,8 @@ namespace {
                 ;
 
             set_ship_part_meter
-                =    (parse::set_ship_part_meter_type_enum() [ _a = _1 ] >>   parse::detail::label(PartName_token))   > parse::string_value_ref() [ _b = _1 ]
-                >    parse::detail::label(Value_token)      > parse::double_value_ref() [ _val = new_<Effect::SetShipPartMeter>(_a, _b, _1) ]
+                =    (parse::set_ship_part_meter_type_enum() [ _a = _1 ] >> parse::detail::label(PartName_token))   > parse::string_value_ref() [ _b = _1 ]
+                >    parse::detail::label(Value_token) >                    parse::double_value_ref() [ _val = new_<Effect::SetShipPartMeter>(_a, _b, _1) ]
                 ;
 
             set_empire_stockpile
@@ -86,7 +86,7 @@ namespace {
 
             set_species_opinion
                 =    tok.SetSpeciesOpinion_
-                >    parse::detail::label(Species_token) >   parse::string_value_ref() [ _a = _1 ]
+                >    parse::detail::label(Species_token) >    parse::string_value_ref() [ _a = _1 ]
                 > (
                     (   parse::detail::label(Empire_token) >  parse::int_value_ref() [ _c = _1 ]
                      >  parse::detail::label(Opinion_token) > parse::double_value_ref()
@@ -101,13 +101,7 @@ namespace {
             set_visibility
                 =    tok.SetVisibility_
                 >   (
-                        parse::detail::label(Visibility_token)
-                    > ( tok.Invisible_  [ _c = VIS_NO_VISIBILITY ]
-                    |   tok.Basic_      [ _c = VIS_BASIC_VISIBILITY ]
-                    |   tok.Partial_    [ _c = VIS_PARTIAL_VISIBILITY ]
-                    |   tok.Full_       [ _c = VIS_FULL_VISIBILITY ]
-                      )
-                    > (
+                      (
                         (   // empire id specified, optionally with an affiliation type:
                             // useful to specify a single recipient empire, or the allies
                             // or enemies of a single empire
@@ -125,6 +119,7 @@ namespace {
                             )
                         )
                      )
+                    >  parse::detail::label(Visibility_token) > parse::detail::visibility_rules().expr [ _c = _1 ]
                     >-(parse::detail::label(Condition_token) > parse::detail::condition_parser [ _e = _1 ])
                     ) [ _val = new_<Effect::SetVisibility>(_c, _d, _b, _e) ]
                 ;
@@ -183,7 +178,7 @@ namespace {
             qi::locals<
                 ResourceType,
                 ValueRef::ValueRefBase<int>*,
-                Visibility,
+                ValueRef::ValueRefBase<Visibility>*,
                 EmpireAffiliationType,
                 Condition::ConditionBase*
             >

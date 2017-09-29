@@ -70,19 +70,19 @@ using expression_rule = parse::detail::rule<
 >;
 
 
-const reference_token_rule&                     variable_scope();
-const name_token_rule&                          container_type();
+const reference_token_rule&                 variable_scope();
+const name_token_rule&                      container_type();
 
-const variable_rule<int>&                       int_bound_variable();
-const variable_rule<int>&                       int_free_variable();
-const statistic_rule<int>&                      int_var_statistic();
-const complex_variable_rule<int>&               int_var_complex();
-const parse::value_ref_rule<int>&               int_simple();
+const variable_rule<int>&                   int_bound_variable();
+const variable_rule<int>&                   int_free_variable();
+const statistic_rule<int>&                  int_var_statistic();
+const complex_variable_rule<int>&           int_var_complex();
+const parse::value_ref_rule<int>&           int_simple();
 
-const complex_variable_rule<double>&            double_var_complex();
-const parse::value_ref_rule<double>&            double_simple();
+const complex_variable_rule<double>&        double_var_complex();
+const parse::value_ref_rule<double>&        double_simple();
 
-const complex_variable_rule<std::string>&       string_var_complex();
+const complex_variable_rule<std::string>&   string_var_complex();
 
 
 template <typename T>
@@ -154,18 +154,20 @@ struct enum_value_ref_rules {
 
         initialize_bound_variable_parser<T>(bound_variable_expr, variable_name);
 
-        statistic_value_ref_expr
+        statistic_sub_value_ref
             =   constant_expr
             |   bound_variable_expr
+            |   free_variable_expr
+            |   complex_expr
             ;
 
         functional_expr
             =   (
                     (
                         (
-                            tok.OneOf_      [ _c = ValueRef::RANDOM_PICK ]
-                        |   tok.Min_        [ _c = ValueRef::MINIMUM ]
-                        |   tok.Max_        [ _c = ValueRef::MAXIMUM ]
+                            tok.OneOf_  [ _c = ValueRef::RANDOM_PICK ]
+                        |   tok.Min_    [ _c = ValueRef::MINIMUM ]
+                        |   tok.Max_    [ _c = ValueRef::MAXIMUM ]
                         )
                         >  '('  >   expr [ push_back(_d, _1) ]
                         >*(','  >   expr [ push_back(_d, _1) ] )
@@ -181,18 +183,21 @@ struct enum_value_ref_rules {
             =   functional_expr
             ;
 
-        initialize_nonnumeric_statistic_parser<T>(statistic_expr, statistic_value_ref_expr);
+        initialize_nonnumeric_statistic_parser<T>(statistic_expr, statistic_sub_value_ref);
 
         primary_expr
             =   constant_expr
+            |   free_variable_expr
             |   bound_variable_expr
             |   statistic_expr
+            |   complex_expr
             ;
 
 #if DEBUG_VALUEREF_PARSERS
         debug(variable_name);
         debug(enum_expr);
         debug(constant_expr);
+        debug(free_variable_expr);
         debug(bound_variable_expr);
         debug(statistic_value_ref_expr);
         debug(statistic_expr);
@@ -203,9 +208,10 @@ struct enum_value_ref_rules {
 
         variable_name.name(type_name + " variable name");
         enum_expr.name(type_name);
-        constant_expr.name(type_name);
+        constant_expr.name(type_name + " constant");
+        free_variable_expr.name(type_name + " free variable");
         bound_variable_expr.name(type_name + " variable");
-        statistic_value_ref_expr.name(type_name + " statistic value reference");
+        statistic_sub_value_ref.name(type_name + " statistic subvalue");
         statistic_expr.name(type_name + " statistic");
         primary_expr.name(type_name + " expression");
         expr.name(type_name + " expression");
@@ -214,11 +220,13 @@ struct enum_value_ref_rules {
     name_token_rule variable_name;
     parse::enum_rule<T> enum_expr;
     parse::value_ref_rule<T> constant_expr;
+    parse::value_ref_rule<T> free_variable_expr;
     variable_rule<T> bound_variable_expr;
     expression_rule<T> functional_expr;
     parse::value_ref_rule<T> primary_expr;
-    parse::value_ref_rule<T> statistic_value_ref_expr;
+    parse::value_ref_rule<T> statistic_sub_value_ref;
     statistic_rule<T> statistic_expr;
+    complex_variable_rule<T> complex_expr;
     parse::value_ref_rule<T> expr;
 };
 

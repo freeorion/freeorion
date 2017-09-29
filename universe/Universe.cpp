@@ -1641,29 +1641,65 @@ void Universe::CountDestructionInStats(int object_id, int source_object_id) {
     }
 }
 
-void Universe::SetEffectDerivedVisibility(int empire_id, int object_id, Visibility vis) {
+void Universe::SetEffectDerivedVisibility(int empire_id, int object_id, int source_id,
+                                          const ValueRef::ValueRefBase<Visibility>* vis)
+{
     if (empire_id == ALL_EMPIRES)
         return;
     if (object_id <= INVALID_OBJECT_ID)
         return;
-    if (vis == INVALID_VISIBILITY)
+    if (!vis)
         return;
-    m_effect_specified_empire_object_visibilities[empire_id][object_id] = vis;
+    m_effect_specified_empire_object_visibilities[empire_id][object_id].push_back({source_id, vis});
 }
 
 void Universe::ApplyEffectDerivedVisibilities() {
+    EmpireObjectVisibilityMap new_empire_object_visibilities;
     // for each empire with a visibility map
     for (auto& empire_entry : m_effect_specified_empire_object_visibilities) {
         if (empire_entry.first == ALL_EMPIRES)
             continue;   // can't set a non-empire's visibility
         for (const auto& object_entry : empire_entry.second) {
             if (object_entry.first <= INVALID_OBJECT_ID)
-                continue;
-            // TODO: If/when the parser for SetVisibility is expanded to allow ValueRefs like
-            // max(Target.visibility, Basic)
-            // then the folllowing should be reverted to a simple assignment.
-            m_empire_object_visibility[empire_entry.first][object_entry.first] = 
-                std::max(object_entry.second, m_empire_object_visibility[empire_entry.first][object_entry.first]);
+                continue;   // can't set a non-object's visibility
+            auto target = GetUniverseObject(object_entry.first);
+            if (!target)
+                continue;   // don't need to set a non-gettable object's visibility
+
+            // if already have an entry in new_empire_object_visibilities then
+            // use that as the target initial visibility for purposes of
+            // evaluating this ValueRef. If not, use the object's current
+            // in-universe Visibility for the specified empire
+            Visibility target_initial_vis =
+                m_empire_object_visibility[empire_entry.first][object_entry.first];
+            auto neov_it = new_empire_object_visibilities[empire_entry.first].find(object_entry.first);
+            if (neov_it != new_empire_object_visibilities[empire_entry.first].end())
+                target_initial_vis = neov_it->second;
+
+            // evaluate valuerefs and and store visibility of object
+            for (auto& source_ref_entry : object_entry.second) {
+                // set up context for executing ValueRef to determine visibility to set
+                auto source = GetUniverseObject(source_ref_entry.first);
+                ScriptingContext context(source, target, target_initial_vis);
+
+                const auto val_ref = source_ref_entry.second;
+
+                // evaluate and store actual new visibility level
+                Visibility vis = val_ref->Eval(context);
+                target_initial_vis = vis;   // store for next iteration's context
+                new_empire_object_visibilities[empire_entry.first][object_entry.first] = vis;
+            }
+        }
+    }
+
+    // copy newly determined visibility levels into actual gamestate, without
+    // erasing visibilities that aren't affected by the effects
+    for (auto empire_entry : new_empire_object_visibilities) {
+        int empire_id = empire_entry.first;
+        for (auto object_entry : empire_entry.second) {
+            int object_id = object_entry.first;
+            Visibility vis = object_entry.second;
+            m_empire_object_visibility[empire_id][object_id] = vis;
         }
     }
 }
@@ -2842,7 +2878,9 @@ void Universe::UpdateStatRecords() {
     }
 }
 
-void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, int encoding_empire) const {
+void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize,
+                                         int encoding_empire) const
+{
     if (encoding_empire == ALL_EMPIRES) {
         designs_to_serialize = m_ship_designs;
     } else {
@@ -2908,7 +2946,9 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
     }
 }
 
-void Universe::GetDestroyedObjectsToSerialize(std::set<int>& destroyed_object_ids, int encoding_empire) const {
+void Universe::GetDestroyedObjectsToSerialize(std::set<int>& destroyed_object_ids,
+                                              int encoding_empire) const
+{
     if (&destroyed_object_ids == &m_destroyed_object_ids)
         return;
 
@@ -2924,7 +2964,9 @@ void Universe::GetDestroyedObjectsToSerialize(std::set<int>& destroyed_object_id
     }
 }
 
-void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_known_objects, int encoding_empire) const {
+void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_known_objects,
+                                                int encoding_empire) const
+{
     if (&empire_latest_known_objects == &m_empire_latest_known_objects)
         return;
 
@@ -2950,7 +2992,9 @@ void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_k
     }
 }
 
-void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility, int encoding_empire) const {
+void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility,
+                                            int encoding_empire) const
+{
     if (encoding_empire == ALL_EMPIRES) {
         empire_object_visibility = m_empire_object_visibility;
         return;
@@ -2968,7 +3012,9 @@ void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_ob
     }
 }
 
-void Universe::GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& empire_object_visibility_turns, int encoding_empire) const {
+void Universe::GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& empire_object_visibility_turns,
+                                                int encoding_empire) const
+{
     if (encoding_empire == ALL_EMPIRES) {
         empire_object_visibility_turns = m_empire_object_visibility_turns;
         return;
@@ -2981,20 +3027,9 @@ void Universe::GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& e
         empire_object_visibility_turns[encoding_empire] = it->second;
 }
 
-void Universe::GetEffectSpecifiedVisibilities(EmpireObjectVisibilityMap& effect_specified_empire_object_visibilities, int encoding_empire) const {
-    if (encoding_empire == ALL_EMPIRES) {
-        effect_specified_empire_object_visibilities = m_effect_specified_empire_object_visibilities;
-        return;
-    }
-    
-    // include just requested empire's visibility effects
-    effect_specified_empire_object_visibilities.clear();
-    auto it = m_effect_specified_empire_object_visibilities.find(encoding_empire);
-    if (it != m_effect_specified_empire_object_visibilities.end())
-        effect_specified_empire_object_visibilities[encoding_empire] = it->second;
-}
-
-void Universe::GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids, int encoding_empire) const {
+void Universe::GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids,
+                                              int encoding_empire) const
+{
     if (&empire_known_destroyed_object_ids == &m_empire_known_destroyed_object_ids)
         return;
 
@@ -3011,7 +3046,9 @@ void Universe::GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_d
         empire_known_destroyed_object_ids[encoding_empire] = it->second;
 }
 
-void Universe::GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_knowledge_object_ids, int encoding_empire) const {
+void Universe::GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_knowledge_object_ids,
+                                              int encoding_empire) const
+{
     if (&empire_stale_knowledge_object_ids == &m_empire_stale_knowledge_object_ids)
         return;
 
@@ -3041,6 +3078,7 @@ void Universe::ResetUniverse() {
     m_effect_accounting_map.clear();
     m_effect_discrepancy_map.clear();
     m_marked_destroyed.clear();
+    m_effect_specified_empire_object_visibilities.clear();
     m_destroyed_object_ids.clear();
     m_ship_designs.clear();
     m_stat_records.clear();

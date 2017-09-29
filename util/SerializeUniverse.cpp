@@ -48,7 +48,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     EmpireObjectMap                 empire_latest_known_objects;
     EmpireObjectVisibilityMap       empire_object_visibility;
     EmpireObjectVisibilityTurnMap   empire_object_visibility_turns;
-    EmpireObjectVisibilityMap       effect_specified_visibilities;
+    //EmpireObjectVisibilityMap       effect_specified_visibilities;
     ObjectKnowledgeMap              empire_known_destroyed_object_ids;
     ObjectKnowledgeMap              empire_stale_knowledge_object_ids;
     ShipDesignMap                   ship_designs;
@@ -64,7 +64,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         GetEmpireKnownObjectsToSerialize(   empire_latest_known_objects,        m_encoding_empire);
         GetEmpireObjectVisibilityMap(       empire_object_visibility,           m_encoding_empire);
         GetEmpireObjectVisibilityTurnMap(   empire_object_visibility_turns,     m_encoding_empire);
-        GetEffectSpecifiedVisibilities(     effect_specified_visibilities,      m_encoding_empire);
+        //GetEffectSpecifiedVisibilities(     effect_specified_visibilities,      m_encoding_empire);
         GetEmpireKnownDestroyedObjects(     empire_known_destroyed_object_ids,  m_encoding_empire);
         GetEmpireStaleKnowledgeObjects(     empire_stale_knowledge_object_ids,  m_encoding_empire);
         GetShipDesignsToSerialize(          ship_designs,                       m_encoding_empire);
@@ -86,19 +86,19 @@ void Universe::serialize(Archive& ar, const unsigned int version)
 
     ar  & BOOST_SERIALIZATION_NVP(empire_object_visibility);
     ar  & BOOST_SERIALIZATION_NVP(empire_object_visibility_turns);
-    ar  & BOOST_SERIALIZATION_NVP(effect_specified_visibilities);
+    //ar  & BOOST_SERIALIZATION_NVP(effect_specified_visibilities);
     ar  & BOOST_SERIALIZATION_NVP(empire_known_destroyed_object_ids);
     ar  & BOOST_SERIALIZATION_NVP(empire_stale_knowledge_object_ids);
     DebugLogger() << "Universe::serialize : " << serializing_label
                   << " empire object visibility for " << empire_object_visibility.size() << ", "
                   << empire_object_visibility_turns.size() << ", "
-                  << effect_specified_visibilities.size() << ", "
+                  //<< effect_specified_visibilities.size() << ", "
                   << empire_known_destroyed_object_ids.size() << ", "
                   << empire_stale_knowledge_object_ids.size() <<  " empires";
     if (Archive::is_loading::value) {
         m_empire_object_visibility.swap(empire_object_visibility);
         m_empire_object_visibility_turns.swap(empire_object_visibility_turns);
-        m_effect_specified_empire_object_visibilities.swap(effect_specified_visibilities);
+        //m_effect_specified_empire_object_visibilities.swap(effect_specified_visibilities);
         m_empire_known_destroyed_object_ids.swap(empire_known_destroyed_object_ids);
         m_empire_stale_knowledge_object_ids.swap(empire_stale_knowledge_object_ids);
     }

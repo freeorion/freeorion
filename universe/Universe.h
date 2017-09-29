@@ -51,6 +51,10 @@ namespace Effect {
     typedef std::map<int, std::map<MeterType, double>> DiscrepancyMap;
 }
 
+namespace ValueRef {
+    template <class T> struct ValueRefBase;
+}
+
 #if defined(_MSC_VER)
 #  if (_MSC_VER == 1900)
 namespace boost {
@@ -79,6 +83,11 @@ private:
     typedef std::map<int, ObjectVisibilityTurnMap>  EmpireObjectVisibilityTurnMap;  ///< Each empire's most recent turns on which object information was known; keyed by empire id
 
     typedef std::map<int, std::set<int>>            ObjectKnowledgeMap;             ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
+
+    typedef const ValueRef::ValueRefBase<Visibility>*   VisValRef;
+    typedef std::vector<std::pair<int, VisValRef>>      SrcVisValRefVec;
+    typedef std::map<int, SrcVisValRefVec>              ObjSrcVisValRefVecMap;
+    typedef std::map<int, ObjSrcVisValRefVecMap>        EmpireObjectVisValueRefMap;
 
 public:
     typedef std::map<int, Visibility>               ObjectVisibilityMap;            ///< map from object id to Visibility level for a particular empire
@@ -257,7 +266,8 @@ public:
 
     /** Sets a special record of visibility that overrides the standard
       * empire-object visibility after the latter is processed. */
-    void            SetEffectDerivedVisibility(int empire_id, int object_id, Visibility vis);
+    void            SetEffectDerivedVisibility(int empire_id, int object_id, int source_id,
+                                               const ValueRef::ValueRefBase<Visibility>* vis);
 
     /** Applies empire-object visibilities set by effects. */
     void            ApplyEffectDerivedVisibilities();
@@ -462,7 +472,7 @@ private:
     EmpireObjectVisibilityMap       m_empire_object_visibility;         ///< map from empire id to (map from object id to visibility of that object for that empire)
     EmpireObjectVisibilityTurnMap   m_empire_object_visibility_turns;   ///< map from empire id to (map from object id to (map from Visibility rating to turn number on which the empire last saw the object at the indicated Visibility rating or higher)
 
-    EmpireObjectVisibilityMap       m_effect_specified_empire_object_visibilities;
+    EmpireObjectVisValueRefMap      m_effect_specified_empire_object_visibilities;
 
     EmpireObjectSpecialsMap         m_empire_object_visible_specials;   ///< map from empire id to (map from object id to (set of names of specials that empire can see are on that object) )
 
@@ -512,7 +522,7 @@ private:
     void    GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& empire_object_visibility_turns, int encoding_empire) const;
 
     /***/
-    void    GetEffectSpecifiedVisibilities(EmpireObjectVisibilityMap& effect_specified_empire_object_visibilities, int encoding_empire) const;
+    //void    GetEffectSpecifiedVisibilities(EmpireObjectVisibilityMap& effect_specified_empire_object_visibilities, int encoding_empire) const;
     
     /***/
     void    GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids, int encoding_empire) const;

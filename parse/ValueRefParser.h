@@ -19,30 +19,21 @@ namespace parse {
     >;
 
     value_ref_rule<int>& int_value_ref();
-
     value_ref_rule<int>& flexible_int_value_ref();
-
     value_ref_rule<double>& double_value_ref();
-
     value_ref_rule<std::string>& string_value_ref();
 
+    namespace detail {
+        template <typename T>
+        struct enum_value_ref_rules;
 
-namespace detail {
-
-template <typename T>
-struct enum_value_ref_rules;
-
-enum_value_ref_rules<PlanetEnvironment>& planet_environment_rules();
-
-enum_value_ref_rules<PlanetSize>& planet_size_rules();
-
-enum_value_ref_rules<PlanetType>& planet_type_rules();
-
-enum_value_ref_rules<StarType>& star_type_rules();
-
-enum_value_ref_rules<UniverseObjectType>& universe_object_type_rules();
-
-}
+        enum_value_ref_rules<PlanetEnvironment>& planet_environment_rules();
+        enum_value_ref_rules<PlanetSize>& planet_size_rules();
+        enum_value_ref_rules<PlanetType>& planet_type_rules();
+        enum_value_ref_rules<StarType>& star_type_rules();
+        enum_value_ref_rules<Visibility>& visibility_rules();
+        enum_value_ref_rules<UniverseObjectType>& universe_object_type_rules();
+    }
 }
 
 #endif

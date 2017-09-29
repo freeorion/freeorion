@@ -1212,7 +1212,8 @@ private:
   * visibility mechanics. */
 class FO_COMMON_API SetVisibility : public EffectBase {
 public:
-    SetVisibility(Visibility vis, EmpireAffiliationType affiliation,
+    SetVisibility(ValueRef::ValueRefBase<Visibility>* vis,
+                  EmpireAffiliationType affiliation,
                   ValueRef::ValueRefBase<int>* empire_id = nullptr,
                   Condition::ConditionBase* of_objects = nullptr);    // if not specified, acts on target. if specified, acts on all matching objects
 
@@ -1224,7 +1225,7 @@ public:
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    Visibility GetVisibility() const
+    ValueRef::ValueRefBase<Visibility>* GetVisibility() const
     { return m_vis; }
 
     ValueRef::ValueRefBase<int>* EmpireID() const
@@ -1239,7 +1240,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    Visibility m_vis;
+    ValueRef::ValueRefBase<Visibility>* m_vis;
     ValueRef::ValueRefBase<int>* m_empire_id;
     EmpireAffiliationType m_affiliation;
     Condition::ConditionBase* m_condition;

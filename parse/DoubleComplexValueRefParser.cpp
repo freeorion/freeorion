@@ -26,18 +26,16 @@ namespace parse {
 
             const parse::value_ref_rule<int>& simple_int = int_simple();
 
-            game_rule
-                =   tok.GameRule_ [ _a = construct<std::string>(_1) ]
-                >   detail::label(Name_token) >     parse::string_value_ref() [ _d = _1 ]
+            name_property_rule
+                = (     tok.GameRule_           [ _a = construct<std::string>(_1) ]
+                    |   tok.HullFuel_           [ _a = construct<std::string>(_1) ]
+                    |   tok.HullStructure_      [ _a = construct<std::string>(_1) ]
+                    |   tok.HullStealth_        [ _a = construct<std::string>(_1) ]
+                    |   tok.HullSpeed_          [ _a = construct<std::string>(_1) ]
+                    |   tok.PartCapacity_       [ _a = construct<std::string>(_1) ]
+                    |   tok.PartSecondaryStat_  [ _a = construct<std::string>(_1) ]
+                  ) >   detail::label(Name_token) > parse::string_value_ref() [ _d = _1 ]
                     [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
-                ;
-
-            part_capacity
-                = (
-                    (   tok.PartCapacity_
-                    |   tok.PartSecondaryStat_ ) [ _a = construct<std::string>(_1) ]
-                     >  parse::detail::label(Name_token) > tok.string [ _d = new_<ValueRef::Constant<std::string>>(_1) ]
-                  )     [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             empire_meter_value
@@ -98,8 +96,7 @@ namespace parse {
                 ;
 
             start
-                %=  game_rule
-                |   part_capacity
+                %=  name_property_rule
                 |   empire_meter_value
                 |   direct_distance
                 |   shortest_path
@@ -108,8 +105,7 @@ namespace parse {
                 |   special_capacity
                 ;
 
-            game_rule.name("GameRule");
-            part_capacity.name("PartCapacity");
+            name_property_rule.name("GameRule; Hull Fuel, Stealth, Structure, or Speed; or PartCapacity");
             empire_meter_value.name("EmpireMeterValue");
             direct_distance.name("DirectDistanceBetween");
             shortest_path.name("ShortestPathBetween");
@@ -118,9 +114,7 @@ namespace parse {
             special_capacity.name("SpecialCapacity");
 
 #if DEBUG_DOUBLE_COMPLEX_PARSERS
-            debug(part_capacity);
-            debug(game_rule);
-            debug(part_capacity);
+            debug(name_property_rule);
             debug(empire_meter_value);
             debug(direct_distance);
             debug(shortest_path);
@@ -130,8 +124,7 @@ namespace parse {
 #endif
         }
 
-        complex_variable_rule<double> game_rule;
-        complex_variable_rule<double> part_capacity;
+        complex_variable_rule<double> name_property_rule;
         complex_variable_rule<double> empire_meter_value;
         complex_variable_rule<double> direct_distance;
         complex_variable_rule<double> shortest_path;
