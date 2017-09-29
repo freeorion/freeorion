@@ -32,7 +32,7 @@ public:
     virtual Universe& GetUniverse() = 0;
 
     /** Start parsing universe object types on a separate thread. */
-    void ParseUniverseObjectTypes();
+    virtual void ParseUniverseObjectTypes();
 
     /** Returns the set of known Empires for this application. */
     virtual EmpireManager& Empires() = 0;
