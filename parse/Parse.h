@@ -62,7 +62,7 @@ namespace parse {
 
     FO_PARSE_API std::map<std::string, std::map<int, int>> keymaps();
 
-    FO_PARSE_API bool game_rules(GameRules& game_rules);
+    FO_PARSE_API GameRules game_rules();
 
     FO_PARSE_API bool read_file(const boost::filesystem::path& path, std::string& file_contents);
 

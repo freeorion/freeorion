@@ -6,6 +6,7 @@
 #include "../universe/Field.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"
+#include "../util/MultiplayerCommon.h"
 
 #include <boost/filesystem.hpp>
 
@@ -65,5 +66,5 @@ void IApp::ParseUniverseObjectTypes() {
     GetHullTypeManager().SetHullTypes(StartParsing(parse::ship_hulls));
     GetPredefinedShipDesignManager().SetShipDesignTypes(StartParsing2(parse::ship_designs, "scripting/ship_designs"));
     GetPredefinedShipDesignManager().SetMonsterDesignTypes(StartParsing2(parse::ship_designs, "scripting/monster_designs"));
-
+    GetGameRules().Add(StartParsing(parse::game_rules));
 }
