@@ -1159,12 +1159,13 @@ void Fleet::CalculateRouteTo(int target_system_id) {
 }
 
 bool Fleet::Blockaded() const {
-    /** returns true if fleet is in a system and is prevented from using at least
-        one starlane entry to leave its current system */
     auto system = GetSystem(this->SystemID());
 
     if (!system)
         return false;
+
+    if (m_next_system != INVALID_OBJECT_ID)
+        return BlockadedAtSystem(SystemID(), m_next_system);
 
     for (const auto& target_system : system->StarlanesWormholes()) {
         if (BlockadedAtSystem(this->SystemID(), target_system.first))
