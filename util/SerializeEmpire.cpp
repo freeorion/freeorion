@@ -9,6 +9,7 @@
 #include "../universe/Universe.h"
 
 #include "Serialize.ipp"
+#include <boost/serialization/version.hpp>
 
 
 template <class Archive>
@@ -101,9 +102,20 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_capital_id)
         & BOOST_SERIALIZATION_NVP(m_source_id)
         & BOOST_SERIALIZATION_NVP(m_eliminated)
-        & BOOST_SERIALIZATION_NVP(m_victories)
-        & BOOST_SERIALIZATION_NVP(m_techs)
-        & BOOST_SERIALIZATION_NVP(m_meters)
+        & BOOST_SERIALIZATION_NVP(m_victories);
+
+    if (Archive::is_loading::value && version < 1) {
+        // adapt set to map
+        std::set<std::string> temp_stringset;
+        ar  & boost::serialization::make_nvp("m_techs", temp_stringset);
+        m_techs.clear();
+        for (auto& entry : temp_stringset)
+            m_techs[entry] = BEFORE_FIRST_TURN;
+    } else {
+        ar  & BOOST_SERIALIZATION_NVP(m_techs);
+    }
+
+    ar  & BOOST_SERIALIZATION_NVP(m_meters)
         & BOOST_SERIALIZATION_NVP(m_research_queue)
         & BOOST_SERIALIZATION_NVP(m_research_progress)
         & BOOST_SERIALIZATION_NVP(m_production_queue)
@@ -153,6 +165,8 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             & BOOST_SERIALIZATION_NVP(m_building_types_scrapped);
     }
 }
+
+BOOST_CLASS_VERSION(Empire, 1)
 
 template void Empire::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 template void Empire::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
