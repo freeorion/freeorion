@@ -187,6 +187,11 @@ namespace {
 #include <stdlib.h>
 #endif
 
+void ServerApp::ParseUniverseObjectTypes() {
+    IApp::ParseUniverseObjectTypes();
+    DebugLogger() << "Server Parser";
+}
+
 void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int max_aggression) {
     DebugLogger() << "ServerApp::CreateAIClients: " << player_setup_data.size() << " player (maybe not all AIs) at max aggression: " << max_aggression;
     // check if AI clients are needed for given setup data

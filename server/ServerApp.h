@@ -134,6 +134,8 @@ public:
     /** \name Mutators */ //@{
     void    operator()();               ///< external interface to Run()
 
+    void ParseUniverseObjectTypes() override;
+
     /** Returns the galaxy setup data used for the current game */
     GalaxySetupData&    GetGalaxySetupData() { return m_galaxy_setup_data; }
 
