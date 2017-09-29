@@ -41,6 +41,7 @@ namespace parse {
                         |   tok.SpeciesShipsOwned_      [ _a = construct<std::string>(_1) ]
                         |   tok.SpeciesShipsProduced_   [ _a = construct<std::string>(_1) ]
                         |   tok.SpeciesShipsScrapped_   [ _a = construct<std::string>(_1) ]
+                        |   tok.TurnTechResearched_     [ _a = construct<std::string>(_1) ]
                         )
                     >  -(   detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
                     >  -(   detail::label(Name_token) >     parse::string_value_ref() [ _d = _1 ] )

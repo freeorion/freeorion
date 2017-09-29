@@ -514,6 +514,7 @@
     (Tundra)                                    \
     (Turn)                                      \
     (TurnsSinceFocusChange)                     \
+    (TurnTechResearched)                        \
     (Type)                                      \
     (Uninhabitable)                             \
     (UniverseCentreX)                           \
