@@ -138,7 +138,7 @@ namespace {
         static std::vector<std::string> dir_names {
             "ENC_INDEX",        "ENC_SHIP_PART",    "ENC_SHIP_HULL",    "ENC_TECH",
             "ENC_BUILDING_TYPE","ENC_SPECIAL",      "ENC_SPECIES",      "ENC_FIELD_TYPE",
-            "ENC_METER_TYPE",   "ENC_EMPIRE_UNIVERSE_DATA", "ENC_GAME_RULES"};
+            "ENC_METER_TYPE",   "ENC_EMPIRE_UNIVERSE_DATA"};
         return dir_names;
     }
 
@@ -156,7 +156,8 @@ namespace {
             "ENC_FIELD",
             "ENC_GRAPH",
             "ENC_GALAXY_SETUP",
-            "ENC_HOMEWORLDS"
+            "ENC_HOMEWORLDS",
+            "ENC_GAME_RULES"
         };
         return dir_names;
     }
