@@ -1,3 +1,5 @@
+// For long term changes - Do not modify this definition directly
+//                     Instead modify and execute col_bld_gen.py and use the result.
 BuildingType
     name = "BLD_COL_SUPER_TEST"
     description = "BLD_COL_SUPER_TEST_DESC"

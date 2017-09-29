@@ -1,3 +1,5 @@
+// For long term changes - Do not modify this definition directly
+//                     Instead modify and execute col_bld_gen.py and use the result.
 BuildingType
     name = "BLD_COL_BANFORO"
     description = "BLD_COL_BANFORO_DESC"
@@ -30,12 +32,12 @@ BuildingType
                  OwnerHasTech name = "SHP_ORG_HULL"
                  OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
              ])
-             + 20 * (Statistic If Condition = OwnerHasTech Name = "SHP_QUANT_ENRG_MAG")
-             + 10 * (Statistic If Condition = OwnerHasTech Name = "SHP_IMPROVED_ENGINE_COUPLINGS")
-             + 10 * (Statistic If Condition = OwnerHasTech Name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
-             + 10 * (Statistic If Condition = OwnerHasTech Name = "SHP_SINGULARITY_ENGINE_CORE")
-             + 10 * (Statistic If Condition = OwnerHasTech Name = "SHP_TRANSSPACE_DRIVE")
-             + 10 * (Statistic If Condition = OwnerHasTech Name = "SHP_INTSTEL_LOG")
+             + 20 * (Statistic If Condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
         )
     )
     tags = [ "SP_BANFORO" "CTRL_EXTINCT" ]
