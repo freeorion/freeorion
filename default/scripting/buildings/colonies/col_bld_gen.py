@@ -79,7 +79,9 @@ species_time_factor = {
 
 
 # Main template
-t_main = string.Template('''BuildingType
+t_main = string.Template('''// For long term changes - Do not modify this definition directly
+//                     Instead modify and execute col_bld_gen.py and use the result.
+BuildingType
     name = "BLD_COL_${name}"
     description = "BLD_COL_${name}_DESC"
     buildcost = ${cost} * [[COLONY_UPKEEP_MULTIPLICATOR]] * [[BUILDING_COST_MULTIPLIER]]
