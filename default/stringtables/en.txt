@@ -4257,7 +4257,7 @@ ENC_FIELD_TYPE
 Field Type
 
 ENC_SHIP_DESIGN
-Ship Design
+[Game - Ship Design]
 
 SHIPS_OF_DESIGN
 '''Ships of this Design: '''
@@ -4361,7 +4361,7 @@ ENC_MONSTER
 [Game - Monster]
 
 ENC_MONSTER_TYPE
-Monster Types
+[Game - Monster Types]
 
 ENC_FLEET
 [Game - Fleets]
