@@ -6,8 +6,10 @@ import fleet_orders
 import ColonisationAI
 import FleetUtilsAI
 import PlanetUtilsAI
+import pathfinding
 from freeorion_tools import ppstring
 from AIDependencies import INVALID_ID, DRYDOCK_HAPPINESS_THRESHOLD
+from turn_state import state
 
 from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
@@ -26,6 +28,9 @@ def create_move_orders_to_system(fleet, target):
     # TODO: use Graph Theory to construct move orders
     # TODO: add priority
     starting_system = fleet.get_system()  # current fleet location or current target system if on starlane
+    if starting_system == target:
+        # nothing to do here
+        return []
     # if the mission does not end at the targeted system, make sure we can actually return to supply after moving.
     ensure_return = target.id not in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs
                                          + AIstate.invasionTargetedSystemIDs)
@@ -36,94 +41,41 @@ def create_move_orders_to_system(fleet, target):
     return result
 
 
-def can_travel_to_system(fleet_id, from_system_target, to_system_target, ensure_return=False):
+def can_travel_to_system(fleet_id, start, target, ensure_return=False):
     """
     Return list systems to be visited.
 
     :param fleet_id:
     :type fleet_id: int
-    :param from_system_target:
-    :type from_system_target: universe_object.System
-    :param to_system_target:
-    :type to_system_target:  universe_object.System
+    :param start:
+    :type start: universe_object.System
+    :param target:
+    :type target:  universe_object.System
     :param ensure_return:
     :type ensure_return: bool
     :return:
     :rtype: list
     """
-    empire = fo.getEmpire()
-    empire_id = empire.empireID
-    fleet_supplyable_system_ids = set(empire.fleetSupplyableSystemIDs)
-    # get current fuel and max fuel
-    universe = fo.getUniverse()
-    fuel = int(FleetUtilsAI.get_fuel(fleet_id))  # round down to get actually number of jumps
-    if fuel < 1.0 or from_system_target.id == to_system_target.id:
+    if start == target:
+        return [universe_object.System(start.id)]
+
+    debug("Requesting path from %s to %s" % (start, target))
+    target_distance_from_supply = -min(state.get_system_supply(target.id), 0)
+
+    # low-aggression AIs may not travel far from supply
+    if not foAI.foAIstate.character.may_travel_beyond_supply(target_distance_from_supply):
+        debug("May not move %d out of supply" % target_distance_from_supply)
         return []
-    if True:  # TODO: sort out if shortestPath leaves off some intermediate destinations
-        path_func = universe.leastJumpsPath
-    else:
-        path_func = universe.shortestPath
-    start_sys_id = from_system_target.id
-    target_sys_id = to_system_target.id
-    if start_sys_id != INVALID_ID and target_sys_id != INVALID_ID:
-        short_path = list(path_func(start_sys_id, target_sys_id, empire_id))
-    else:
-        short_path = []
-    legs = zip(short_path[:-1], short_path[1:])
-    # suppliedStops = [ sid for sid in short_path if sid in fleet_supplyable_system_ids ]
-    # unsupplied_stops = [sid for sid in short_path if sid not in suppliedStops ]
-    unsupplied_stops = [sys_b for sys_a, sys_b in legs if ((sys_a not in fleet_supplyable_system_ids) and (sys_b not in fleet_supplyable_system_ids))]
-    # print "getting path from %s to %s "%(ppstring(PlanetUtilsAI.sys_name_ids([ start_sys_id ])), ppstring(PlanetUtilsAI.sys_name_ids([ target_sys_id ])) ),
-    # print " ::: found initial path %s having suppliedStops %s and unsupplied_stops %s ; tot fuel available is %.1f"%( ppstring(PlanetUtilsAI.sys_name_ids( short_path[:])), suppliedStops, unsupplied_stops, fuel)
-    if False:
-        if target_sys_id in fleet_supplyable_system_ids:
-            print "target has FleetSupply"
-        elif target_sys_id in ColonisationAI.annexable_ring1:
-            print "target in Ring 1"
-        elif target_sys_id in ColonisationAI.annexable_ring2 and foAI.foAIstate.character.may_travel_beyond_supply(2):
-            print "target in Ring 2, has enough aggression"
-        elif target_sys_id in ColonisationAI.annexable_ring3 and foAI.foAIstate.character.may_travel_beyond_supply(3):
-            print "target in Ring 2, has enough aggression"
-    if (not unsupplied_stops or not ensure_return or
-        target_sys_id in fleet_supplyable_system_ids and len(unsupplied_stops) <= fuel
-        or target_sys_id in ColonisationAI.annexable_ring1 and len(unsupplied_stops) < fuel
-        or target_sys_id in ColonisationAI.annexable_ring2 and foAI.foAIstate.character.may_travel_beyond_supply(2) and len(unsupplied_stops) < fuel - 1
-        or target_sys_id in ColonisationAI.annexable_ring3 and foAI.foAIstate.character.may_travel_beyond_supply(3) and len(unsupplied_stops) < fuel - 2):
-        return [universe_object.System(sid) for sid in short_path]
-    else:
-        # print " getting path from 'can_travel_to_system_and_return_to_resupply' ",
-        return can_travel_to_system_and_return_to_resupply(fleet_id, from_system_target, to_system_target)
 
+    min_fuel_at_target = target_distance_from_supply if ensure_return else 0
+    path_info = pathfinding.find_path_with_resupply(start.id, target.id, fleet_id,
+                                                    minimum_fuel_at_target=min_fuel_at_target)
+    if path_info is None:
+        debug("Found no valid path.")
+        return []
 
-def can_travel_to_system_and_return_to_resupply(fleet_id, from_system_target, to_system_target):
-    """
-    Filter systems where fleet can travel from starting system. # TODO rename function
-
-    :param fleet_id:
-    :type fleet_id: int
-    :param from_system_target:
-    :type from_system_target: universe_object.System
-    :param to_system_target:
-    :type to_system_target: universe_object.System
-    :return:
-    :rtype: list
-    """
-    system_targets = []
-    if not from_system_target.id == to_system_target.id:
-        fleet_supplyable_system_ids = fo.getEmpire().fleetSupplyableSystemIDs
-        fuel = int(FleetUtilsAI.get_fuel(fleet_id))  # int to get actual number of jumps
-        max_fuel = int(FleetUtilsAI.get_max_fuel(fleet_id))
-        # try to find path without going resupply first
-        supply_system_target = get_nearest_supplied_system(to_system_target.id)
-        system_targets = __find_path_with_fuel_to_system_with_possible_return(from_system_target, to_system_target, system_targets, fleet_supplyable_system_ids, max_fuel, fuel, supply_system_target)
-        # resupply in system first is required to find path
-        if from_system_target.id not in fleet_supplyable_system_ids and not system_targets:
-            # add supply system to visit
-            from_system_target = get_nearest_supplied_system(from_system_target.id)
-            system_targets.append(from_system_target)
-            # find path from supplied system to wanted system
-            system_targets = __find_path_with_fuel_to_system_with_possible_return(from_system_target, to_system_target, system_targets, fleet_supplyable_system_ids, max_fuel, max_fuel, supply_system_target)
-    return system_targets
+    debug("Found valid path: %s" % str(path_info))
+    return [universe_object.System(sys_id) for sys_id in path_info.path]
 
 
 def get_nearest_supplied_system(start_system_id):
@@ -221,73 +173,6 @@ def get_safe_path_leg_to_dest(fleet_id, start_id, dest_id):
     path_info = [PlanetUtilsAI.sys_name_ids([sys_id]) for sys_id in path_ids]
     print "Fleet %d requested safe path leg from %s to %s, found path %s" % (fleet_id, ppstring(start_info), ppstring(dest_info), ppstring(path_info))
     return path_ids[0]
-
-
-def __find_path_with_fuel_to_system_with_possible_return(from_system_target, to_system_target, result_system_targets, fleet_supplyable_system_ids, max_fuel, fuel, supply_system_target):
-    """
-    Return systems required to visit with fuel to nearest supplied system.
-
-    :param from_system_target:
-    :type from_system_target: universe_object.System
-    :param to_system_target:
-    :type to_system_target: universe_object.System
-    :param result_system_targets:
-    :type result_system_targets: list
-    :param fleet_supplyable_system_ids:
-    :type fleet_supplyable_system_ids: list
-    :param max_fuel:
-    :type max_fuel: int
-    :param fuel:
-    :type fuel: int
-    :param supply_system_target:
-    :type supply_system_target: universe_object.System
-    :return:
-    :rtype list:
-    """
-    empire_id = fo.empireID()
-    result = True
-    # try to find if there is possible path to wanted system from system
-    new_targets = result_system_targets[:]
-    if from_system_target and to_system_target and supply_system_target:
-        universe = fo.getUniverse()
-        if from_system_target.id != INVALID_ID and to_system_target.id != INVALID_ID:
-            least_jumps_path = universe.leastJumpsPath(from_system_target.id, to_system_target.id, empire_id)
-        else:
-            least_jumps_path = []
-            result = False
-        from_system_id = from_system_target.id
-        for system_id in least_jumps_path:
-            if from_system_id != system_id:
-                if from_system_id in fleet_supplyable_system_ids:
-                    # from supplied system fleet can travel without fuel consumption and also in this system refuels
-                    fuel = max_fuel
-                else:
-                    fuel -= 1
-
-                # leastJumpPath can differ from shortestPath
-                # TODO: use Graph Theory to optimize
-                if True or (system_id != to_system_target.id and system_id in fleet_supplyable_system_ids):  # TODO: restructure
-                    new_targets.append(universe_object.System(system_id))
-                if fuel < 0:
-                    result = False
-            from_system_id = system_id
-    else:
-        result = False
-
-    # if there is path to wanted system, then also if there is path back to supplyable system
-    if result:
-        # jump from A to B means least_jumps_path=[A,B], but min_jumps=1
-        min_jumps = len(universe.leastJumpsPath(to_system_target.id, supply_system_target.id, empire_id)) - 1
-
-        if min_jumps > fuel:
-            # print "fleetID:" + str(fleetID) + " fuel:" + str(fuel) + " required: " + str(min_jumps)
-            result = False
-        # else:
-        #     resultSystemAITargets.append(toSystemAITarget)
-
-    if not result:
-        return []
-    return new_targets
 
 
 def get_resupply_fleet_order(fleet_target, current_system_target):
