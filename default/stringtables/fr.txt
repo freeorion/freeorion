@@ -1474,8 +1474,8 @@ Chaque processus client, serveur, et IA dispose d'une source générale et peut 
 
 # This is a label to designate the logger as the general or default logger for a process
 # %1% is the name of a process logger, client, server or ai
-OPTIONS_DB_UI_LOGGER_PER_PROCESS_GENERAL
-Général %1%
+#OPTIONS_DB_UI_LOGGER_PER_PROCESS_GENERAL
+#%1% general
 
 OPTIONS_DB_KEYPRESS_REPEAT_DELAY
 Fixe le délai entre le maintien d'une touche et l'activation de la répétition de la même touche.
@@ -4283,6 +4283,18 @@ ID Empire
 EMPIRE_METERS
 Indicateurs :
 
+RESEARCHED_TECHS
+'''Technologies recherchées : '''
+
+BEFORE_FIRST_TURN
+Avant tour initial
+
+TURN
+Tour
+
+NO_TECHS_RESEARCHED
+Aucune technologie recherchée
+
 OWNED_PLANETS
 '''Planètes impériales : '''
 
@@ -5657,6 +5669,9 @@ Dern. Tour Bataille ici
 
 LAST_TURN_ACTIVE_IN_BATTLE
 Dern. Tour Bataille
+
+LAST_TURN_RESUPPLIED
+Dern. Tour Approvisionnement
 
 ARRIVED_ON_TURN
 Arrivé au Tour
