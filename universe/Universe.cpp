@@ -87,22 +87,6 @@ namespace boost {
 
 extern FO_COMMON_API const int ALL_EMPIRES            = -1;
 
-namespace EmpireStatistics {
-    const std::map<std::string, ValueRef::ValueRefBase<double>*>& GetEmpireStats() {
-        static std::map<std::string, ValueRef::ValueRefBase<double>*> s_stats;
-        if (s_stats.empty()) {
-            try {
-                s_stats = parse::statistics();
-            } catch (const std::exception& e) {
-                ErrorLogger() << "Failed parsing empire statistics: error: " << e.what();
-                throw e;
-            }
-        }
-        return s_stats;
-    }
-}
-
-
 /////////////////////////////////////////////
 // class Universe
 /////////////////////////////////////////////
@@ -249,6 +233,13 @@ void Universe::SetMonsterFleetPlans(std::future<std::vector<MonsterFleetPlan*>>&
 
 const std::vector<MonsterFleetPlan*>&  Universe::MonsterFleetPlans() const
 { return SwapPendingParsed(m_pending_monster_fleet_plans, m_monster_fleet_plans); }
+
+void Universe::SetEmpireStats(std::future<EmpireStatsMap> future)
+{ m_pending_empire_stats = std::move(future); }
+
+const Universe::EmpireStatsMap& Universe::EmpireStats() const
+{ return SwapPendingParsed(m_pending_empire_stats, m_empire_stats); }
+
 
 const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const {
     if (empire_id == ALL_EMPIRES)
@@ -2926,7 +2917,7 @@ void Universe::UpdateStatRecords() {
     }
 
     // process each stat
-    for (const auto& stat_entry : EmpireStatistics::GetEmpireStats()) {
+    for (const auto& stat_entry : EmpireStats()) {
         const std::string& stat_name = stat_entry.first;
 
         const ValueRef::ValueRefBase<double>* value_ref = stat_entry.second;

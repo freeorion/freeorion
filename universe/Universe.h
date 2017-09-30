@@ -3,6 +3,7 @@
 
 
 #include "EnumsFwd.h"
+#include "ValueRefFwd.h"
 #include "ObjectMap.h"
 #include "UniverseObject.h"
 
@@ -424,6 +425,14 @@ public:
     void SetMonsterFleetPlans(std::future<std::vector<MonsterFleetPlan*>>&& future);
     /** Items unlocked before turn 1.*/
     const std::vector<MonsterFleetPlan*>&  MonsterFleetPlans() const;
+
+    /** Set the empire stats from \p future. */
+    using EmpireStatsMap = std::map<std::string, ValueRef::ValueRefBase<double>*>;
+    void SetEmpireStats(std::future<EmpireStatsMap> future);
+private:
+    const EmpireStatsMap& EmpireStats() const;
+public:
+
     /** ObfuscateIDGenerator applies randomization to the IDAllocator to prevent clients from
         inferring too much information about other client's id generation activities. */
     void ObfuscateIDGenerator();
@@ -527,11 +536,13 @@ private:
     mutable boost::optional<std::future<std::vector<ItemSpec>>> m_pending_buildings = boost::none;
     mutable boost::optional<std::future<std::vector<FleetPlan*>>> m_pending_fleet_plans = boost::none;
     mutable boost::optional<std::future<std::vector<MonsterFleetPlan*>>> m_pending_monster_fleet_plans = boost::none;
+    mutable boost::optional<std::future<EmpireStatsMap>> m_pending_empire_stats = boost::none;
 
     mutable std::vector<ItemSpec> m_unlocked_items;
     mutable std::vector<ItemSpec> m_unlocked_buildings;
     mutable std::vector<FleetPlan*> m_unlocked_fleet_plans;
     mutable std::vector<MonsterFleetPlan*> m_monster_fleet_plans;
+    mutable EmpireStatsMap m_empire_stats;
     ///@}
 
     /** Fills \a designs_to_serialize with ShipDesigns known to the empire with
