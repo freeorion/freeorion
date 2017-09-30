@@ -168,7 +168,7 @@ namespace {
         Hotkey::AddHotkey("map.messages",             UserStringNop("HOTKEY_MAP_MESSAGES"),             GG::GGK_t,          GG::MOD_KEY_ALT);
         Hotkey::AddHotkey("map.empires",              UserStringNop("HOTKEY_MAP_EMPIRES"),              GG::GGK_e,          GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("map.pedia",                UserStringNop("HOTKEY_MAP_PEDIA"),                GG::GGK_F1);
-        Hotkey::AddHotkey("map.graphs",               UserStringNop("HOTKEY_MAP_GRAPHS"),               GG::GGK_NONE);
+        Hotkey::AddHotkey("map.graphs",               UserStringNop("HOTKEY_MAP_GRAPHS"),               GG::GGK_F2);
         Hotkey::AddHotkey("map.empire.universe-data", UserStringNop("HOTKEY_MAP_EMPIRE_UNIVERSE_DATA"), GG::GGK_F1,         GG::MOD_KEY_SHIFT);
         Hotkey::AddHotkey("map.menu",                 UserStringNop("HOTKEY_MAP_MENU"),                 GG::GGK_F10);
         Hotkey::AddHotkey("map.zoom_in",              UserStringNop("HOTKEY_MAP_ZOOM_IN"),              GG::GGK_z,          GG::MOD_KEY_CTRL);
