@@ -23,6 +23,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <future>
 
 #include "../util/Export.h"
 
@@ -34,6 +35,10 @@ class ShipDesign;
 class System;
 class Pathfinder;
 class IDAllocator;
+struct ItemSpec;
+class FleetPlan;
+class MonsterFleetPlan;
+
 
 namespace Condition {
     struct ConditionBase;
@@ -400,6 +405,25 @@ public:
     }
     //@}
 
+    /** Set items unlocked before turn 1 from \p future.*/
+    void SetInitiallyUnlockedItems(std::future<std::vector<ItemSpec>>&& future);
+    /** Items unlocked before turn 1.*/
+    const std::vector<ItemSpec>&  InitiallyUnlockedItems() const;
+
+    /** Set buildings unlocked before turn 1 from \p future.*/
+    void SetInitiallyUnlockedBuildings(std::future<std::vector<ItemSpec>>&& future);
+    /** Buildings unlocked before turn 1.*/
+    const std::vector<ItemSpec>&  InitiallyUnlockedBuildings() const;
+
+    /** Set fleets unlocked before turn 1 from \p future.*/
+    void SetInitiallyUnlockedFleetPlans(std::future<std::vector<FleetPlan*>>&& future);
+    /** Fleets unlocked before turn 1.*/
+    const std::vector<FleetPlan*>&  InitiallyUnlockedFleetPlans() const;
+
+    /** Set items unlocked before turn 1 from \p future..*/
+    void SetMonsterFleetPlans(std::future<std::vector<MonsterFleetPlan*>>&& future);
+    /** Items unlocked before turn 1.*/
+    const std::vector<MonsterFleetPlan*>&  MonsterFleetPlans() const;
     /** ObfuscateIDGenerator applies randomization to the IDAllocator to prevent clients from
         inferring too much information about other client's id generation activities. */
     void ObfuscateIDGenerator();
@@ -494,6 +518,21 @@ private:
 
     std::map<std::string, std::map<int, std::map<int, double>>>
                                     m_stat_records;                     ///< storage for statistics calculated for empires. Indexed by stat name (string), contains a map indexed by empire id, contains a map from turn number (int) to stat value (double).
+
+    /** @name Parsed items
+        Various unlocked items are kept as a std::future while being parsed and
+        then transfered.  They are mutable to allow processing in const accessors. */
+    ///@{
+    mutable boost::optional<std::future<std::vector<ItemSpec>>> m_pending_items = boost::none;
+    mutable boost::optional<std::future<std::vector<ItemSpec>>> m_pending_buildings = boost::none;
+    mutable boost::optional<std::future<std::vector<FleetPlan*>>> m_pending_fleet_plans = boost::none;
+    mutable boost::optional<std::future<std::vector<MonsterFleetPlan*>>> m_pending_monster_fleet_plans = boost::none;
+
+    mutable std::vector<ItemSpec> m_unlocked_items;
+    mutable std::vector<ItemSpec> m_unlocked_buildings;
+    mutable std::vector<FleetPlan*> m_unlocked_fleet_plans;
+    mutable std::vector<MonsterFleetPlan*> m_monster_fleet_plans;
+    ///@}
 
     /** Fills \a designs_to_serialize with ShipDesigns known to the empire with
       * the ID \a encoding empire.  If encoding_empire is ALL_EMPIRES, then all

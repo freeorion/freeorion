@@ -5,6 +5,7 @@
 #include "../combat/CombatSystem.h"
 #include "../combat/CombatEvents.h"
 #include "../combat/CombatLogManager.h"
+#include "../parse/Parse.h"
 #include "../universe/Building.h"
 #include "../universe/Effect.h"
 #include "../universe/Fleet.h"
@@ -187,9 +188,21 @@ namespace {
 #include <stdlib.h>
 #endif
 
+namespace {
+    template <typename ParserFunc>
+    auto StartParsing(const ParserFunc& parser) -> std::future<decltype(parser())> {
+        return std::async(std::launch::async, parser);
+    }
+
+}
+
 void ServerApp::ParseUniverseObjectTypes() {
     IApp::ParseUniverseObjectTypes();
     DebugLogger() << "Server Parser";
+    m_universe.SetInitiallyUnlockedItems(StartParsing(parse::items));
+    m_universe.SetInitiallyUnlockedBuildings(StartParsing(parse::starting_buildings));
+    m_universe.SetInitiallyUnlockedFleetPlans(StartParsing(parse::fleet_plans));
+    m_universe.SetMonsterFleetPlans(StartParsing(parse::monster_fleet_plans));
 }
 
 void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int max_aggression) {
