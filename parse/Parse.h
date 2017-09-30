@@ -25,23 +25,23 @@ struct EncyclopediaArticle;
 class GameRules;
 
 namespace parse {
-    FO_PARSE_API std::map<std::string, std::unique_ptr<BuildingType>> buildings();
+    FO_PARSE_API std::map<std::string, std::unique_ptr<BuildingType>> buildings(const boost::filesystem::path& path);
 
-    FO_PARSE_API std::map<std::string, std::unique_ptr<FieldType>> fields();
+    FO_PARSE_API std::map<std::string, std::unique_ptr<FieldType>> fields(const boost::filesystem::path& path);
 
-    FO_PARSE_API std::map<std::string, std::unique_ptr<Special>> specials();
+    FO_PARSE_API std::map<std::string, std::unique_ptr<Special>> specials(const boost::filesystem::path& path);
 
-    FO_PARSE_API std::map<std::string, std::unique_ptr<Species>> species();
+    FO_PARSE_API std::map<std::string, std::unique_ptr<Species>> species(const boost::filesystem::path& path);
 
-    FO_PARSE_API TechManager::TechParseTuple techs();
+    FO_PARSE_API TechManager::TechParseTuple techs(const boost::filesystem::path& path);
 
-    FO_PARSE_API std::vector<ItemSpec> items();
+    FO_PARSE_API std::vector<ItemSpec> items(const boost::filesystem::path& path);
 
-    FO_PARSE_API std::vector<ItemSpec> starting_buildings();
+    FO_PARSE_API std::vector<ItemSpec> starting_buildings(const boost::filesystem::path& path);
 
-    FO_PARSE_API std::map<std::string, std::unique_ptr<PartType>> ship_parts();
+    FO_PARSE_API std::map<std::string, std::unique_ptr<PartType>> ship_parts(const boost::filesystem::path& path);
 
-    FO_PARSE_API std::map<std::string, std::unique_ptr<HullType>> ship_hulls();
+    FO_PARSE_API std::map<std::string, std::unique_ptr<HullType>> ship_hulls(const boost::filesystem::path& path);
 
     /** Parse all ship designs in directory \p path, store them with their filename in \p
         design_and_path. If a file exists called ShipDesignOrdering.focs.txt, parse it and
@@ -52,17 +52,17 @@ namespace parse {
         >;
     FO_PARSE_API ship_designs_type ship_designs(const boost::filesystem::path& path);
 
-    FO_PARSE_API std::vector<FleetPlan*> fleet_plans();
+    FO_PARSE_API std::vector<FleetPlan*> fleet_plans(const boost::filesystem::path& path);
 
-    FO_PARSE_API std::vector<MonsterFleetPlan*> monster_fleet_plans();
+    FO_PARSE_API std::vector<MonsterFleetPlan*> monster_fleet_plans(const boost::filesystem::path& path);
 
-    FO_PARSE_API std::map<std::string, ValueRef::ValueRefBase<double>*> statistics();
+    FO_PARSE_API std::map<std::string, ValueRef::ValueRefBase<double>*> statistics(const boost::filesystem::path& path);
 
-    FO_PARSE_API std::map<std::string, std::vector<EncyclopediaArticle>> encyclopedia_articles();
+    FO_PARSE_API std::map<std::string, std::vector<EncyclopediaArticle>> encyclopedia_articles(const boost::filesystem::path& path);
 
-    FO_PARSE_API std::map<std::string, std::map<int, int>> keymaps();
+    FO_PARSE_API std::map<std::string, std::map<int, int>> keymaps(const boost::filesystem::path& path);
 
-    FO_PARSE_API GameRules game_rules();
+    FO_PARSE_API GameRules game_rules(const boost::filesystem::path& path);
 
     FO_PARSE_API bool read_file(const boost::filesystem::path& path, std::string& file_contents);
 

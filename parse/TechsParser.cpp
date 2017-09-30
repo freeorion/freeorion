@@ -260,7 +260,7 @@ namespace {
 }
 
 namespace parse {
-    TechManager::TechParseTuple techs() {
+    TechManager::TechParseTuple techs(const boost::filesystem::path& path) {
         const lexer lexer;
         TechManager::TechContainer techs_;
         std::map<std::string, std::unique_ptr<TechCategory>> categories;
@@ -269,9 +269,9 @@ namespace parse {
         g_categories_seen = &categories_seen;
         g_categories = &categories;
 
-        /*auto success =*/ detail::parse_file<grammar, TechManager::TechContainer>(lexer, GetResourceDir() / "scripting/techs/Categories.inf", techs_);
+        /*auto success =*/ detail::parse_file<grammar, TechManager::TechContainer>(lexer, path / "Categories.inf", techs_);
 
-        for (const boost::filesystem::path& file : ListScripts("scripting/techs")) {
+        for (const boost::filesystem::path& file : ListScripts(path)) {
             /*auto success =*/ detail::parse_file<grammar, TechManager::TechContainer>(lexer, file, techs_);
         }
 

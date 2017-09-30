@@ -6,6 +6,7 @@
 #include "../universe/Field.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"
+#include "../util/Directories.h"
 #include "../util/MultiplayerCommon.h"
 
 #include <boost/filesystem.hpp>
@@ -43,12 +44,7 @@ int IApp::MAX_AI_PLAYERS() {
 
 namespace {
     template <typename ParserFunc>
-    auto StartParsing(const ParserFunc& parser) -> std::future<decltype(parser())> {
-        return std::async(std::launch::async, parser);
-    }
-
-    template <typename ParserFunc>
-    auto StartParsing2(const ParserFunc& parser, const boost::filesystem::path& subdir)
+    auto StartParsing(const ParserFunc& parser, const boost::filesystem::path& subdir)
         -> std::future<decltype(parser(subdir))>
     {
         return std::async(std::launch::async, parser, subdir);
@@ -56,15 +52,16 @@ namespace {
 }
 
 void IApp::ParseUniverseObjectTypes() {
-    GetBuildingTypeManager().SetBuildingTypes(StartParsing(parse::buildings));
-    GetEncyclopedia().SetArticles(StartParsing(parse::encyclopedia_articles));
-    GetFieldTypeManager().SetFieldTypes(StartParsing(parse::fields));
-    GetSpecialsManager().SetSpecialsTypes(StartParsing(parse::specials));
-    GetSpeciesManager().SetSpeciesTypes(StartParsing(parse::species));
-    GetTechManager().SetTechs(StartParsing(parse::techs));
-    GetPartTypeManager().SetPartTypes(StartParsing(parse::ship_parts));
-    GetHullTypeManager().SetHullTypes(StartParsing(parse::ship_hulls));
-    GetPredefinedShipDesignManager().SetShipDesignTypes(StartParsing2(parse::ship_designs, "scripting/ship_designs"));
-    GetPredefinedShipDesignManager().SetMonsterDesignTypes(StartParsing2(parse::ship_designs, "scripting/monster_designs"));
-    GetGameRules().Add(StartParsing(parse::game_rules));
+    const auto& rdir = GetResourceDir();
+    GetBuildingTypeManager().SetBuildingTypes(StartParsing(parse::buildings, rdir / "scripting/buildings"));
+    GetEncyclopedia().SetArticles(StartParsing(parse::encyclopedia_articles, rdir / "scripting/encyclopedia"));
+    GetFieldTypeManager().SetFieldTypes(StartParsing(parse::fields, rdir / "scripting/fields"));
+    GetSpecialsManager().SetSpecialsTypes(StartParsing(parse::specials, rdir / "scripting/specials"));
+    GetSpeciesManager().SetSpeciesTypes(StartParsing(parse::species, rdir / "scripting/species"));
+    GetTechManager().SetTechs(StartParsing(parse::techs, rdir / "scripting/techs"));
+    GetPartTypeManager().SetPartTypes(StartParsing(parse::ship_parts, rdir / "scripting/ship_parts"));
+    GetHullTypeManager().SetHullTypes(StartParsing(parse::ship_hulls, rdir / "scripting/ship_hulls"));
+    GetPredefinedShipDesignManager().SetShipDesignTypes(StartParsing(parse::ship_designs, rdir / "scripting/ship_designs"));
+    GetPredefinedShipDesignManager().SetMonsterDesignTypes(StartParsing(parse::ship_designs, rdir / "scripting/monster_designs"));
+    GetGameRules().Add(StartParsing(parse::game_rules, rdir / "scripting/game_rules.focs.txt"));
 }

@@ -120,10 +120,10 @@ namespace {
 }
 
 namespace parse {
-    start_rule_payload buildings() {
+    start_rule_payload buildings(const boost::filesystem::path& path) {
         const lexer lexer;
         start_rule_payload building_types;
-        for (const boost::filesystem::path& file : ListScripts("scripting/buildings")) {
+        for (const boost::filesystem::path& file : ListScripts(path)) {
             /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, building_types);
         }
 

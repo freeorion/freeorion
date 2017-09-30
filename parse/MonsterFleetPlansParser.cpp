@@ -138,10 +138,9 @@ namespace {
 }
 
 namespace parse {
-    start_rule_payload monster_fleet_plans() {
+    start_rule_payload monster_fleet_plans(const boost::filesystem::path& path) {
         const lexer lexer;
         start_rule_payload monster_fleet_plans_;
-        boost::filesystem::path path = GetResourceDir() / "scripting/monster_fleets.inf";
         /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, path, monster_fleet_plans_);
         return monster_fleet_plans_;
     }

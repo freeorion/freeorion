@@ -190,20 +190,22 @@ namespace {
 
 namespace {
     template <typename ParserFunc>
-    auto StartParsing(const ParserFunc& parser) -> std::future<decltype(parser())> {
-        return std::async(std::launch::async, parser);
+    auto StartParsing(const ParserFunc& parser, const boost::filesystem::path& subdir)
+        -> std::future<decltype(parser(subdir))>
+    {
+        return std::async(std::launch::async, parser, subdir);
     }
-
 }
 
 void ServerApp::ParseUniverseObjectTypes() {
     IApp::ParseUniverseObjectTypes();
     DebugLogger() << "Server Parser";
-    m_universe.SetInitiallyUnlockedItems(StartParsing(parse::items));
-    m_universe.SetInitiallyUnlockedBuildings(StartParsing(parse::starting_buildings));
-    m_universe.SetInitiallyUnlockedFleetPlans(StartParsing(parse::fleet_plans));
-    m_universe.SetMonsterFleetPlans(StartParsing(parse::monster_fleet_plans));
-    m_universe.SetEmpireStats(StartParsing(parse::statistics));
+    const auto& rdir = GetResourceDir();
+    m_universe.SetInitiallyUnlockedItems(StartParsing(parse::items, rdir / "scripting/starting_unlocks/items.inf"));
+    m_universe.SetInitiallyUnlockedBuildings(StartParsing(parse::starting_buildings, rdir / "scripting/starting_unlocks/buildings.inf"));
+    m_universe.SetInitiallyUnlockedFleetPlans(StartParsing(parse::fleet_plans, rdir / "scripting/starting_unlocks/fleets.inf"));
+    m_universe.SetMonsterFleetPlans(StartParsing(parse::monster_fleet_plans, rdir / "scripting/monster_fleets.inf"));
+    m_universe.SetEmpireStats(StartParsing(parse::statistics, rdir / "scripting/empire_statistics"));
 }
 
 void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int max_aggression) {
