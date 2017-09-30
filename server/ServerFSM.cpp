@@ -1544,6 +1544,13 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
         }
 
     } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+        if (server.IsAuthRequired(player_name)) {
+            // send authentication request
+            player_connection->AwaitPlayer(client_type, client_version_string);
+            player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
+            return discard_event();
+        }
+
         // verify that there is room left for this player
         int already_connected_players = m_expected_ai_player_names.size() + server.m_networking.NumEstablishedPlayers();
         if (already_connected_players >= m_num_expected_players) {
@@ -1551,6 +1558,48 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
             ErrorLogger(FSM) << "WaitingForSPGameJoiners.JoinGame : A human player attempted to join the game but there was not enough room.  Terminating connection.";
             server.m_networking.Disconnect(player_connection);
         } else {
+
+            std::string original_player_name = player_name;
+
+            // Remove AI prefix to distinguish Human from AI.
+            std::string ai_prefix = UserString("AI_PLAYER") + "_";
+            if (client_type != Networking::CLIENT_TYPE_AI_PLAYER) {
+                while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
+                    player_name.erase(0, ai_prefix.size());
+            }
+            if(player_name.empty())
+                player_name = "_";
+
+            std::string new_player_name = player_name;
+
+            bool collision = true;
+            std::size_t t = 1;
+            while (t <= m_lobby_data->m_players.size() + 1 && collision) {
+                collision = false;
+                if (!server.IsAvailableName(new_player_name) || server.IsAuthRequired(new_player_name)) {
+                    collision = true;
+                } else {
+                    for (std::pair<int, PlayerSetupData>& plr : m_lobby_data->m_players) {
+                        if (plr.second.m_empire_name == new_player_name) {
+                            collision = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (collision)
+                    new_player_name = player_name + std::to_string(++t); // start alternative names from 2
+            }
+
+            if (collision) {
+                player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % original_player_name),
+                                                            true));
+                server.Networking().Disconnect(player_connection);
+                return discard_event();
+            }
+
+            player_name = new_player_name;
+
             // expected human player
             player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
             player_connection->SendMessage(JoinAckMessage(player_id));
@@ -1577,6 +1626,54 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
     std::string player_name;
     std::string auth;
     ExtractAuthResponseMessageData(message, player_name, auth);
+
+    if (!server.IsAuthSuccess(player_name, auth)) {
+        // wrong password
+        player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_WRONG_PASSWORD")) % player_name),
+                                                    true));
+        server.Networking().Disconnect(player_connection);
+        return discard_event();
+    }
+
+    player_connection->SetAuthenticated();
+    Networking::ClientType client_type = player_connection->GetClientType();
+
+    if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+        // drop other connection with same name
+        std::list<PlayerConnectionPtr> to_disconnect;
+        for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+             it != server.m_networking.established_end(); ++it)
+        {
+            if ((*it)->PlayerName() == player_name && player_connection != (*it)) {
+                (*it)->SendMessage(ErrorMessage(UserString("ERROR_CONNECTION_WAS_REPLACED"), true));
+                to_disconnect.push_back(*it);
+            }
+        }
+        for (const auto& conn : to_disconnect)
+        { server.Networking().Disconnect(conn); }
+
+        // verify that there is room left for this player
+        int already_connected_players = m_expected_ai_player_names.size() + server.m_networking.NumEstablishedPlayers();
+        if (already_connected_players >= m_num_expected_players) {
+            // too many human players
+            ErrorLogger(FSM) << "WaitingForSPGameJoiners.JoinGame : A human player attempted to join the game but there was not enough room.  Terminating connection.";
+            server.m_networking.Disconnect(player_connection);
+        } else {
+            // expected human player
+            int player_id = server.m_networking.NewPlayerID();
+            player_connection->EstablishPlayer(player_id, player_name, client_type, player_connection->ClientVersionString());
+            player_connection->SendMessage(JoinAckMessage(player_id));
+        }
+    } else {
+        // non-human player
+        ErrorLogger(FSM) << "WaitingForMPGameJoiners.AuthResponse : A non-human player attempted to join the game.";
+        server.m_networking.Disconnect(player_connection);
+    }
+
+    // force immediate check if all expected AIs are present, so that the FSM
+    // won't get stuck in this state waiting for JoinGame messages that will
+    // never come since no other AIs are left to join
+    post_event(CheckStartConditions());
 
     return discard_event();
 }
