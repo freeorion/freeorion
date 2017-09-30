@@ -340,6 +340,7 @@ namespace FreeOrionPython {
 
             .def("population",                      &Empire::Population)
 
+            .def("unrestrictedLaneTravel",          &Empire::UnrestrictedLaneTravel)
             .add_property("fleetSupplyableSystemIDs",   make_function(
                                                             empireFleetSupplyableSystemIDsFunc,
                                                             return_value_policy<copy_const_reference>(),
