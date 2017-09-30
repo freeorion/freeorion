@@ -920,6 +920,8 @@ void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, cons
             this->SetGraph(data);
         } else if (link_type == TextLinker::URL_TAG) {
             HumanClientApp::GetApp()->OpenURL(data);
+        } else if (link_type == TextLinker::BROWSE_PATH_TAG) {
+            HumanClientApp::GetApp()->BrowsePath(FilenameToPath(data));
         }
 
     } catch (const boost::bad_lexical_cast&) {

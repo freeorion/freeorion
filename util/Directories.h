@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Export.h"
+#include "../universe/EnumsFwd.h"
 
 /** This function must be called before any Get*Dir function is called. It
   * stores the current working directory as well as creating local
@@ -100,5 +101,12 @@ FO_COMMON_API bool IsValidUTF8(const std::string& in);
 /** Returns true iff the \p test_dir is in \p dir and both \p dir and test_dir
     are existing directories. */
 FO_COMMON_API bool IsInDir(const boost::filesystem::path& dir, const boost::filesystem::path& test_dir);
+
+/** Returns path currently defined for @p path_type */
+FO_COMMON_API boost::filesystem::path GetPath(PathType path_type);
+
+/** Returns path for path type cast from @p path_string */
+FO_COMMON_API boost::filesystem::path GetPath(const std::string& path_string);
+
 
 #endif

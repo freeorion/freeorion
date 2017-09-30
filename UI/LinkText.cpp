@@ -8,16 +8,92 @@
 #include "../util/Logger.h"
 #include "../util/VarText.h"
 #include "../util/i18n.h"
+#include "../util/Directories.h"
+#include "../universe/Enums.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/WndEvent.h>
 #include <GG/GUI.h>
+#include <boost/xpressive/xpressive.hpp>
+#include <boost/algorithm/string.hpp>
+
+// TextLinker static(s)
+const std::string TextLinker::ENCYCLOPEDIA_TAG("encyclopedia");
+const std::string TextLinker::GRAPH_TAG("graph");
+const std::string TextLinker::URL_TAG("url");
+const std::string TextLinker::BROWSE_PATH_TAG("browsepath");
 
 namespace {
     static const bool RENDER_DEBUGGING_LINK_RECTS = false;
 
     // closing format tag
     static const std::string LINK_FORMAT_CLOSE = "</rgba>";
+
+    std::string AllParamsAsString(const std::vector<GG::Font::Substring>& params) {
+        std::string retval;
+        for (const auto& param : params) {
+            if (!retval.empty())
+                retval.append(" ");
+            retval.append(param);
+        }
+        return retval;
+    }
+
+    std::string ResolveNestedPathTypes(const std::string& text) {
+        if (text.empty())
+            return text;
+        std::string new_text = text;
+        for (const auto& path_type : PathTypeStrings()) {
+            std::string path_string = PathToString(GetPath(path_type));
+            boost::replace_all(new_text, path_type, path_string);
+        }
+        return new_text;
+    }
+
+    namespace xpr = boost::xpressive;
+    const xpr::sregex REGEX_NON_BRACKET = *~(xpr::set= '<', '>');
+    const std::string BROWSEPATH_TAG_OPEN_PRE("<" + TextLinker::BROWSE_PATH_TAG);
+    const std::string BROWSEPATH_TAG_CLOSE("</" + TextLinker::BROWSE_PATH_TAG + ">");
+    const xpr::sregex BROWSEPATH_SEARCH = BROWSEPATH_TAG_OPEN_PRE >> xpr::_s >> (xpr::s1 = REGEX_NON_BRACKET) >> ">" >>
+                                          (xpr::s2 = REGEX_NON_BRACKET) >> BROWSEPATH_TAG_CLOSE;
+
+    /** Parses TextLinker::BROWSE_PATH_TAG%s within @p text, replacing string representation of PathType%s with
+     *  current path for that PathType.  If link label is empty, inserts resolved link argument as label */
+    std::string BrowsePathLinkText(const std::string& text) {
+        if (!boost::contains(text, BROWSEPATH_TAG_CLOSE))
+            return text;
+
+        std::string retval(text);
+        auto text_it = retval.begin();
+        xpr::smatch match;
+        auto invalid_path_str = PathTypeToString(PATH_INVALID);
+
+        while (true) {
+            if (!xpr::regex_search(text_it, retval.end(), match, BROWSEPATH_SEARCH, xpr::regex_constants::match_default))
+                break;
+
+            auto link_arg = ResolveNestedPathTypes(match[1]);
+            std::string link_label(match[2]);
+            if (link_label.empty())
+                link_label = link_arg;
+            else
+                link_label = ResolveNestedPathTypes(link_label);
+
+            // Only support argument containing at least one valid PathType
+            if (link_arg == match[1].str() || boost::contains(link_arg, invalid_path_str)) {
+                link_arg = invalid_path_str;
+                link_label = UserString("ERROR") + ": " + link_label;
+            }
+
+            auto resolved_link = BROWSEPATH_TAG_OPEN_PRE + " " + link_arg + ">" + link_label + BROWSEPATH_TAG_CLOSE;
+
+            retval.replace(text_it + match.position(), text_it + match.position() + match.length(), resolved_link);
+
+            text_it = retval.end() - match.suffix().length();
+        }
+
+        return retval;
+    }
 }
 
 ///////////////////////////////////////
@@ -142,6 +218,14 @@ std::string ColorByOwner::Decorate(const std::string& object_id_str, const std::
     return GG::RgbaTag(color) + content + "</rgba>";
 }
 
+std::string PathTypeDecorator::Decorate(const std::string& path_type, const std::string& content) const {
+    return LinkDecorator::Decorate(path_type, BrowsePathLinkText(content));
+}
+
+std::string PathTypeDecorator::DecorateRollover(const std::string& path_type, const std::string& content) const {
+    return LinkDecorator::DecorateRollover(path_type, BrowsePathLinkText(content));
+}
+
 
 ///////////////////////////////////////
 // TextLinker::Link
@@ -158,11 +242,6 @@ struct TextLinker::Link {
 ///////////////////////////////////////
 // TextLinker
 ///////////////////////////////////////
-// static(s)
-const std::string TextLinker::ENCYCLOPEDIA_TAG("encyclopedia");
-const std::string TextLinker::GRAPH_TAG("graph");
-const std::string TextLinker::URL_TAG("url");
-
 TextLinker::TextLinker() :
     m_links(),
     m_rollover_link(-1)
@@ -307,7 +386,8 @@ void TextLinker::FindLinks() {
                     tag->tag_name == VarText::METER_TYPE_TAG ||
                     tag->tag_name == TextLinker::ENCYCLOPEDIA_TAG ||
                     tag->tag_name == TextLinker::GRAPH_TAG ||
-                    tag->tag_name == TextLinker::URL_TAG)
+                    tag->tag_name == TextLinker::URL_TAG ||
+                    tag->tag_name == TextLinker::BROWSE_PATH_TAG)
                 {
                     link.type = tag->tag_name;
                     if (tag->close_tag) {
@@ -315,10 +395,22 @@ void TextLinker::FindLinks() {
                         m_links.push_back(link);
                         link = Link();
                     } else {
-                        if (!tag->params.empty())
-                            link.data = tag->params[0];
-                        else
+                        if (!tag->params.empty()) {
+                            if (tag->tag_name == TextLinker::BROWSE_PATH_TAG) {
+                                auto all_param_str(AllParamsAsString(tag->params));
+                                link.data = ResolveNestedPathTypes(all_param_str);
+                                // BROWSE_PATH_TAG requires a PathType within param
+                                if (link.data == all_param_str) {
+                                    ErrorLogger() << "Invalid param \"" << link.data << "\" for tag "
+                                                  << TextLinker::BROWSE_PATH_TAG;
+                                    link.data = PathTypeToString(PATH_INVALID);
+                                }
+                            } else {
+                                link.data = tag->params[0];
+                            }
+                        } else {
                             link.data.clear();
+                        }
                         link.text_posn.first = Value(curr_char.string_index);
                         for (auto& itag : curr_char.tags) {
                             link.text_posn.first -= Value(itag->StringSize());
@@ -499,4 +591,5 @@ void RegisterLinkTags() {
     GG::Font::RegisterKnownTag(TextLinker::ENCYCLOPEDIA_TAG);
     GG::Font::RegisterKnownTag(TextLinker::GRAPH_TAG);
     GG::Font::RegisterKnownTag(TextLinker::URL_TAG);
+    GG::Font::RegisterKnownTag(TextLinker::BROWSE_PATH_TAG);
 }

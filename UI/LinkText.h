@@ -47,6 +47,12 @@ public:
     std::string Decorate(const std::string& object_id_str, const std::string& content) const override;
 };
 
+class PathTypeDecorator : public LinkDecorator {
+public:
+    std::string Decorate(const std::string& path_type, const std::string& content) const override;
+    std::string DecorateRollover(const std::string& path_type, const std::string& content) const override;
+};
+
 class TextLinker {
 public:
     /** \name Structors */ //@{
@@ -67,6 +73,8 @@ public:
     static const std::string ENCYCLOPEDIA_TAG;
     static const std::string GRAPH_TAG;
     static const std::string URL_TAG;
+    /** Tag for clickable link to open users file manager at a specified directory */
+    static const std::string BROWSE_PATH_TAG;
 
 protected:
     void        Render_();
