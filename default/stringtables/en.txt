@@ -4200,7 +4200,7 @@ ENC_GRAPH
 Graphs
 
 ENC_GALAXY_SETUP
-Galaxy
+[Settings - Galaxy]
 
 # %1% seed value of the current galaxy.
 # %2% number of systems in the current galaxy.
@@ -4226,7 +4226,7 @@ AI Max Aggression: %10%
 '''
 
 ENC_GAME_RULES
-Game Rules
+[Settings - Game Rules]
 
 ENC_SHIP_PART
 Ship Part
