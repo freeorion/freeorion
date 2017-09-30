@@ -535,38 +535,21 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
     # smallest possible ratio of research to industry with an all industry focus
     maxi_ratio = cumulative_rp / max(0.01, cumulative_pp)
 
-    for adj_round in [2, 3, 4]:
-        for pid, pinfo in focus_manager.raw_planet_info.items():
-            ii, tr = pinfo.possible_output[INDUSTRY]
-            ri, rr = pinfo.possible_output[RESEARCH]
-            ci, cr = pinfo.current_output
-            research_penalty = (pinfo.current_focus != RESEARCH)
-            # calculate factor F at which ii + F * tr == ri + F * rr =====> F = ( ii-ri ) / (rr-tr)
-            factor = (ii - ri) / max(0.01, rr - tr)  # don't let denominator be zero for planets where focus doesn't change RP
-            planet = pinfo.planet
-            if adj_round == 2:  # take research at planets with very cheap research
-                if (maxi_ratio < priority_ratio) and (target_rp < priority_ratio * cumulative_pp) and (factor <= 1.0):
-                    target_pp += ri
-                    target_rp += rr
-                    focus_manager.bake_future_focus(pid, RESEARCH, False)
-                continue
-            if adj_round == 3:  # take research at planets where can do reasonable balance
-                if has_force or foAI.foAIstate.character.may_dither_focus_to_gain_research() or (target_rp >= priority_ratio * cumulative_pp):
-                    continue
-                pop = planet.currentMeterValue(fo.meterType.population)
-                t_pop = planet.currentMeterValue(fo.meterType.targetPopulation)
-                # if AI is aggressive+, and this planet in range where temporary Research focus can get an additional RP at cost of 1 PP, and still need some RP, then do it
-                if pop < t_pop - 5:
-                    continue
-                if (ci > ii + 8) or (((rr > ii) or ((rr - cr) >= 1 + 2 * research_penalty)) and ((rr - tr) >= 3) and ((cr - tr) >= 0.7 * ((ii - ci) * (1 + 0.1 * research_penalty)))):
-                    target_pp += ci - 1 - research_penalty
-                    target_rp += cr + 1
-                    focus_manager.bake_future_focus(pid, RESEARCH, False)
-                continue
-            if adj_round == 4:  # assume default IFocus
-                target_pp += ii  # icurTargets initially calculated by Industry focus, which will be our default focus
-                target_rp += tr
-                ratios.append((factor, pid, pinfo))
+    for pid, pinfo in focus_manager.raw_planet_info.items():
+        ii, tr = pinfo.possible_output[INDUSTRY]
+        ri, rr = pinfo.possible_output[RESEARCH]
+        # calculate factor F at which ii + F * tr == ri + F * rr =====> F = ( ii-ri ) / (rr-tr)
+        factor = (ii - ri) / max(0.01, rr - tr)
+        # take research focus if cheap, otherwise assume industry focus for now
+        if maxi_ratio < priority_ratio and target_rp < priority_ratio * cumulative_pp and factor <= 1.0:
+            target_pp += ri
+            target_rp += rr
+            print "Taking research focus at %s as it is cheap here." % pinfo.planet
+            focus_manager.bake_future_focus(pid, RESEARCH, False)
+        else:
+            target_pp += ii
+            target_rp += tr
+            ratios.append((factor, pid, pinfo))
 
     ratios.sort()
     printed_header = False
@@ -598,6 +581,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
             print "pID (%3d) %22s | c: %5.1f / %5.1f | cT: %5.1f / %5.1f |  cF: %8s | nF: %8s | cT: %5.1f / %5.1f | %.2f" % (pid, pinfo.planet.name, c_rp, c_pp, ot_rp, ot_pp, _focus_names.get(old_focus, 'unknown'), _focus_names[RESEARCH], nt_rp, nt_pp, ratio)
             continue  # RP is getting too expensive, but might be willing to still allocate from a planet with less PP to lose
         # if focus_manager.planet_map[pid].currentMeterValue(fo.meterType.targetPopulation) >0: #only set to research if pop won't die out
+        print "Taking research focus at %s despite being costly." % pinfo.planet
         focus_manager.bake_future_focus(pid, RESEARCH, False)
         target_rp += (rr - tr)
         target_pp -= (ii - ri)
