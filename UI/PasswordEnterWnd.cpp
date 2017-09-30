@@ -7,8 +7,8 @@
 #include "../client/human/HumanClientApp.h"
 
 namespace {
-    const GG::X WINDOW_WIDTH(400);
-    const GG::Y WINDOW_HEIGHT(535);
+    const GG::X WINDOW_WIDTH(300);
+    const GG::Y WINDOW_HEIGHT(250);
 }
 
 PasswordEnterWnd::PasswordEnterWnd() :
@@ -22,21 +22,20 @@ PasswordEnterWnd::PasswordEnterWnd() :
 {}
 
 void PasswordEnterWnd::CompleteConstruction() {
-    auto auth_desc_label = GG::Wnd::Create<CUILabel>(UserString("AUTHENTICATION_DESC"), GG::FORMAT_LEFT);
+    auto auth_desc_label = GG::Wnd::Create<CUILabel>(UserString("AUTHENTICATION_DESC"), GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK);
     auto player_name_label = GG::Wnd::Create<CUILabel>(UserString("PLAYER_NAME_LABEL"), GG::FORMAT_LEFT);
     m_player_name_edit = GG::Wnd::Create<CUIEdit>("");
     auto password_label = GG::Wnd::Create<CUILabel>(UserString("PASSWORD_LABEL"), GG::FORMAT_LEFT);
-    m_password_edit = GG::Wnd::Create<CUIEdit>("");
-    m_password_edit->SetTextColor(m_password_edit->InteriorColor());
-    m_password_edit->SetSelectedTextColor(m_password_edit->HiliteColor());
+    m_password_edit = GG::Wnd::Create<CensoredCUIEdit>("");
     m_ok_bn = Wnd::Create<CUIButton>(UserString("OK"));
     m_cancel_bn = Wnd::Create<CUIButton>(UserString("CANCEL"));
 
     const GG::X OK_CANCEL_BUTTON_WIDTH(100);
     const int CONTROL_MARGIN = 5;
 
-    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1, 8, 4, CONTROL_MARGIN);
-    layout->SetMinimumColumnWidth(0, auth_desc_label->MinUsableSize().x + CONTROL_MARGIN);
+    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1, 4, 4, CONTROL_MARGIN);
+    layout->SetMinimumColumnWidth(0, std::max(player_name_label->MinUsableSize().x,
+                                              password_label->MinUsableSize().x) + CONTROL_MARGIN);
     layout->SetColumnStretch(1, 1.0);
     layout->SetMinimumColumnWidth(2, OK_CANCEL_BUTTON_WIDTH + CONTROL_MARGIN);
     layout->SetMinimumColumnWidth(3, OK_CANCEL_BUTTON_WIDTH + CONTROL_MARGIN);

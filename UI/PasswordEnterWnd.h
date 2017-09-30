@@ -30,7 +30,7 @@ private:
     void CancelClicked();
 
     std::shared_ptr<CUIEdit>            m_player_name_edit;
-    std::shared_ptr<CUIEdit>            m_password_edit;
+    std::shared_ptr<CensoredCUIEdit>    m_password_edit;
     std::shared_ptr<CUIButton>          m_ok_bn;
     std::shared_ptr<CUIButton>          m_cancel_bn;
 };
