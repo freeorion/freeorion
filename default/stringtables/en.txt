@@ -922,6 +922,9 @@ Error when reading config.xml file. Using default options.
 UNABLE_TO_READ_PERSISTENT_CONFIG_XML
 Error when attempting to read the optional persistent_config.xml file (this is expected if it does not exist).
 
+UNABLE_TO_WRITE_PERSISTENT_CONFIG_XML
+Error when writing persistent_config.xml file.
+
 UNABLE_TO_WRITE_SAVE_FILE
 Error when writing save file.
 
@@ -2769,6 +2772,30 @@ Create Binary Save Files
 
 OPTIONS_USE_XML_ZLIB_SERIALIZATION
 Use Compression for XML Save Files 
+
+OPTIONS_CREATE_PERSISTENT_CONFIG
+Write Persistent Config File
+
+OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_TITLE
+Create Persistent Config (Advanced Feature)
+
+OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_DESC
+'''Saves the current config settings as persistent default settings.
+Such settings take priority over any settings in config.xml, but not the command line.
+Only stores settings that have been modified from default values.
+Any existing persistent config file is overwritten.
+
+Settings may not always be valid across versions.
+The settings from a previously stored window may not be retained if is has not been open this game session.
+
+See pedia article [[CONFIG_GUIDE_TITLE]] for more info.'''
+
+OPTIONS_CREATE_PERSISTENT_CONFIG_SUCCESS
+Successfully (re)created persistent_config.xml
+
+OPTIONS_CREATE_PERSISTENT_CONFIG_FAILURE
+Unable to create persistent_config.xml, check log file for details.
+
 
 
 ##
@@ -5484,6 +5511,50 @@ When the planet [[metertype METER_HAPPINESS]] is below 15, repairs at this facil
 Repairs are delayed for one turn for ships just entering the system. Ships need time to dock, and the drydock needs time to prepare both the necessary tooling and the ship itself.
 
 Any combat in the system will disrupt repairs for that turn.'''
+
+CONFIG_GUIDE_TITLE
+Configuration Guide
+
+CONFIG_GUIDE_TEXT
+'''Most configuration options for the game are stored and read from a single XML formatted file named config.xml.
+If this file does not exist (or is for a different build or version) it will be (re)created when the client starts. 
+The configuration file is typically updated after a stored option is changed, but may be deferred until a later action (such as clicking Done or Apply).
+Some of these options can be changed from the [[OPTIONS_TITLE]] menu, under the Main Menu.
+
+An option set in the persistent config file (if one exists) will override the value from config.xml.
+An option set from a command line argument will override the value from both files.
+config.xml will be changed to reflect any overridden values.
+
+
+Persistent Config File:
+
+A persistent configuration file is an optional XML file named persistent_config.xml.
+If this file exists, any settings it contains will override those from the main configuration file.
+This may be useful when a different build of the game is launched, such as after updating to a new version. To help retain compatibility, it is preferred to keep as few options in this file as needed.
+
+A persistent configuration file can be created or updated on the [[OPTIONS_TITLE]] menu [[OPTIONS_PAGE_MISC]] tab by clicking the [[OPTIONS_CREATE_PERSISTENT_CONFIG]] button.
+When using this button, there are a couple of known issues:
+Some options may be included even though they were not changed by the user, as they were adjusted after their default value. After updating to a new version, it may be required to manually remove these options from the file to update their default setting.
+Windows that have not been open in the current session may not have previously changed settings retained.  It is advised to have a game running and open all desired windows at least once to initialize the settings before using this button.
+
+The persistent configuration file may be manually created if desired, but should never contain the "version-string" option.
+
+
+Location of Config Files:
+
+Location in the filesystem is dependant on the OS definition of an environment variable.
+On Windows platforms the variable is denoted by wrapping in % - ( %var% ).
+On MacOSX and Linux platforms the variable is denoted by starting with ${ and ending with } - ( ${var} ).
+
+Windows: %APPDATA%\Roaming\FreeOrion
+    (e.g. C:\Users\username\AppData\Roaming\FreeOrion)
+
+MacOSX: ${HOME}/Library/Application Support/FreeOrion
+    (e.g. /Users/username/Library/Application Support/FreeOrion)
+
+Linux: ${XDG_CONFIG_HOME}/freeorion or if $XDG_CONFIG_HOME is not set: ${HOME}/.config/freeorion
+    (e.g. /home/username/.config/freeorion)
+'''
 
 
 ##
