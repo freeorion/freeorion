@@ -2841,10 +2841,10 @@ Design
 MAP_BTN_DESIGN_DESC
 ''''''
 
-MAP_BTN_GRAPH
-Graphs
+MAP_BTN_EMPIRE_UNIVERSE_DATA
+Game Data
 
-MAP_BTN_GRAPH_DESC
+MAP_BTN_EMPIRE_UNIVERSE_DATA_DESC
 ''''''
 
 MAP_BTN_PEDIA
@@ -4187,12 +4187,20 @@ ENC_SUITABILITY_REPORT_WHEEL_INTRO
 Suitability is determined by distance from the preferred type of [[encyclopedia ENVIRONMENT_TITLE]] in this wheel:
 '''
 
+ENC_EMPIRE_UNIVERSE_DATA
+[Current Game - Universe]
+
+ENC_EMPIRE_UNIVERSE_DATA_DESC
+'''Information about the current universe.
+
+Not all objects or types are listed here, only those known to the viewing empire.'''
+
 # types of things that can be shown in encyclopedia
 ENC_GRAPH
-[Game - Graphs]
+Graphs
 
 ENC_GALAXY_SETUP
-[Game - Galaxy]
+[Settings - Galaxy]
 
 # %1% seed value of the current galaxy.
 # %2% number of systems in the current galaxy.
@@ -4218,7 +4226,7 @@ AI Max Aggression: %10%
 '''
 
 ENC_GAME_RULES
-[Game - Rules]
+[Settings - Game Rules]
 
 ENC_SHIP_PART
 Ship Part
@@ -4257,7 +4265,7 @@ ENC_FIELD_TYPE
 Field Type
 
 ENC_SHIP_DESIGN
-Ship Design
+Ship Designs
 
 SHIPS_OF_DESIGN
 '''Ships of this Design: '''
@@ -4269,7 +4277,7 @@ ENC_INCOMPETE_SHIP_DESIGN
 Incomplete Ship Design
 
 ENC_EMPIRE
-[Game - Empires]
+Empires
 
 EMPIRE_CAPITAL
 '''Capital: '''
@@ -4355,31 +4363,31 @@ BUILDING_TYPES_SCRAPPED
 Building Types Scrapped
 
 ENC_SHIP
-[Game - Ships]
+Ships
 
 ENC_MONSTER
-[Game - Monster]
+Monsters
 
 ENC_MONSTER_TYPE
 Monster Types
 
 ENC_FLEET
-[Game - Fleets]
+Fleets
 
 ENC_PLANET
-[Game - Planets]
+Planets
 
 ENC_BUILDING
-[Game - Buildings]
+Buildings
 
 ENC_SYSTEM
-[Game - Systems]
+Systems
 
 ENC_FIELD
-[Game - Fields]
+Fields
 
 ENC_HOMEWORLDS
-[Game - Homeworlds]
+Homeworlds
 
 ENC_TEXTURES
 [Test - Textures]
@@ -14313,6 +14321,9 @@ Toggle pedia window
 
 HOTKEY_MAP_GRAPHS
 Show graphs list
+
+HOTKEY_MAP_EMPIRE_UNIVERSE_DATA
+Show [[MAP_BTN_EMPIRE_UNIVERSE_DATA]] article
 
 HOTKEY_MAP_PRODUCTION
 Toggle production panel

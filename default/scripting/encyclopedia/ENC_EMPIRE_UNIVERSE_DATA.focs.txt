@@ -1,0 +1,6 @@
+Article
+    name = "ENC_EMPIRE_UNIVERSE_DATA"
+    category = "ENC_EMPIRE_UNIVERSE_DATA"
+    short_description = ""
+    description = "ENC_EMPIRE_UNIVERSE_DATA_DESC"
+    icon = "icons/observer.png"

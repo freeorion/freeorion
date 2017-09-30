@@ -168,7 +168,8 @@ namespace {
         Hotkey::AddHotkey("map.messages",             UserStringNop("HOTKEY_MAP_MESSAGES"),             GG::GGK_t,          GG::MOD_KEY_ALT);
         Hotkey::AddHotkey("map.empires",              UserStringNop("HOTKEY_MAP_EMPIRES"),              GG::GGK_e,          GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("map.pedia",                UserStringNop("HOTKEY_MAP_PEDIA"),                GG::GGK_F1);
-        Hotkey::AddHotkey("map.graphs",               UserStringNop("HOTKEY_MAP_GRAPHS"),               GG::GGK_NONE);
+        Hotkey::AddHotkey("map.graphs",               UserStringNop("HOTKEY_MAP_GRAPHS"),               GG::GGK_F2);
+        Hotkey::AddHotkey("map.empire.universe-data", UserStringNop("HOTKEY_MAP_EMPIRE_UNIVERSE_DATA"), GG::GGK_F1,         GG::MOD_KEY_SHIFT);
         Hotkey::AddHotkey("map.menu",                 UserStringNop("HOTKEY_MAP_MENU"),                 GG::GGK_F10);
         Hotkey::AddHotkey("map.zoom_in",              UserStringNop("HOTKEY_MAP_ZOOM_IN"),              GG::GGK_z,          GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("map.zoom_in_alt",          UserStringNop("HOTKEY_MAP_ZOOM_IN_ALT"),          GG::GGK_KP_PLUS,    GG::MOD_KEY_CTRL);
@@ -959,7 +960,7 @@ MapWnd::MapWnd() :
     m_btn_production(nullptr),
     m_btn_design(nullptr),
     m_btn_pedia(nullptr),
-    m_btn_graphs(nullptr),
+    m_btn_empire_data(nullptr),
     m_btn_objects(nullptr),
     m_btn_menu(nullptr),
     m_FPS(nullptr),
@@ -1062,17 +1063,17 @@ void MapWnd::CompleteConstruction() {
                              boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
                     _2);
     // Graphs button
-    m_btn_graphs = Wnd::Create<SettableInWindowCUIButton>(
+    m_btn_empire_data = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_mouseover.png")),
         in_window_func);
-    m_btn_graphs->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    m_btn_graphs->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ShowGraphs, this));
-    m_btn_graphs->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_graphs->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
-        UserString("MAP_BTN_GRAPH"), UserString("MAP_BTN_GRAPH_DESC")));
+    m_btn_empire_data->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_empire_data->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::ShowEmpireUniverseData, this));
+    m_btn_empire_data->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_btn_empire_data->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
+        UserString("MAP_BTN_EMPIRE_UNIVERSE_DATA"), UserString("MAP_BTN_EMPIRE_UNIVERSE_DATA_DESC")));
 
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar.get()),
@@ -1369,9 +1370,9 @@ void MapWnd::CompleteConstruction() {
     layout->Add(m_btn_design,       0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     ++layout_column;
 
-    layout->SetMinimumColumnWidth(layout_column, m_btn_graphs->Width());
+    layout->SetMinimumColumnWidth(layout_column, m_btn_empire_data->Width());
     layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_btn_graphs,       0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_btn_empire_data,  0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetMinimumColumnWidth(layout_column, m_btn_pedia->Width());
@@ -6123,6 +6124,12 @@ bool MapWnd::ShowGraphs() {
     return true;
 }
 
+bool MapWnd::ShowEmpireUniverseData() {
+    ShowPedia();
+    m_pedia_panel->AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_EMPIRE_UNIVERSE_DATA");
+    return true;
+}
+
 void MapWnd::HideSidePanel() {
     m_sidepanel_open_before_showing_other = m_side_panel->Visible();   // a kludge, so the sidepanel will reappear after opening and closing a full screen wnd
     m_side_panel->Hide();
@@ -6796,6 +6803,8 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     hkm->Connect(boost::bind(&MapWnd::TogglePedia, this), "map.pedia",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ShowGraphs, this), "map.graphs",
+                 AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
+    hkm->Connect(boost::bind(&MapWnd::ShowEmpireUniverseData, this), "map.empire.universe-data",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ShowMenu, this), "map.menu",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));

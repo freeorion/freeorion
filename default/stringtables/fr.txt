@@ -2841,12 +2841,6 @@ Conception
 MAP_BTN_DESIGN_DESC
 ''''''
 
-MAP_BTN_GRAPH
-Graphiques
-
-MAP_BTN_GRAPH_DESC
-''''''
-
 MAP_BTN_PEDIA
 Encyclopédie
 

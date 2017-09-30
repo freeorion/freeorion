@@ -2565,9 +2565,6 @@ MAP_BTN_PRODUCTION
 MAP_BTN_DESIGN
 Дизайн
 
-MAP_BTN_GRAPH
-Графики
-
 MAP_BTN_PEDIA
 Энциклопедия
 
