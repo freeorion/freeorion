@@ -1,7 +1,9 @@
+// For long term changes - Do not modify this definition directly
+//                     Instead modify and execute col_bld_gen.py and use the result.
 BuildingType
     name = "BLD_COL_REPLICON"
     description = "BLD_COL_REPLICON_DESC"
-    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]] * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 1.0 * max(5.0, 1.0 +
         (Statistic Min Value = ShortestPath Object = Target.SystemID Object = LocalCandidate.SystemID
             Condition = And [
@@ -112,5 +114,5 @@ BuildingType
     icon = "icons/species/replicon.png"
 
 #include "/scripting/common/misc.macros"
-
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/common/base_prod.macros"
