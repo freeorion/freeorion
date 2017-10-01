@@ -32,11 +32,6 @@ namespace {
 
             DebugLogger() << "SpecialManager checksum: " << GetCheckSum();
         }
-        ~SpecialManager() {
-            for (auto& entry : m_specials) {
-                delete entry.second;
-            }
-        }
         std::vector<std::string> SpecialNames() const {
             std::vector<std::string> retval;
             for (const auto& entry : m_specials) {
@@ -46,7 +41,7 @@ namespace {
         }
         const Special* GetSpecial(const std::string& name) const {
             auto it = m_specials.find(name);
-            return it != m_specials.end() ? it->second : nullptr;
+            return it != m_specials.end() ? it->second.get() : nullptr;
         }
         unsigned int GetCheckSum() const {
             unsigned int retval{0};
@@ -56,7 +51,7 @@ namespace {
             return retval;
         }
     private:
-        std::map<std::string, Special*> m_specials;
+        std::map<std::string, std::unique_ptr<Special>> m_specials;
     };
     const SpecialManager& GetSpecialManager() {
         static SpecialManager special_manager;
