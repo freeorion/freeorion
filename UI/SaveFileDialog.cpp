@@ -740,6 +740,8 @@ void SaveFileDialog::Init() {
     }
 
     UpdatePreviewList();
+    SaveDefaultedOptions();
+    SaveOptions();
 }
 
 SaveFileDialog::~SaveFileDialog()

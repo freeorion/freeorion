@@ -598,6 +598,7 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     ResetDefaultPosition();
     SetMinSize(GG::Pt(LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT));
     DoLayout();
+    SaveDefaultedOptions();
 
     // default settings (new game)
     m_new_load_game_buttons->SetCheck(0);

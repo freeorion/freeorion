@@ -666,6 +666,7 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     SetChildClippingMode(ClipToWindow);
     DoLayout();
     MoveChildUp(m_graph);
+    SaveDefaultedOptions();
 
     AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX");
 }

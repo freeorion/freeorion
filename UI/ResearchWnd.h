@@ -51,7 +51,7 @@ public:
     //@}
 
 private:
-    void    DoLayout();
+    void    DoLayout(bool init = false);
     void    ResearchQueueChangedSlot();
     void    UpdateQueue();
     void    UpdateInfoPanel();     ///< Updates research summary at top left of production screen, and signals that the empire's minerals research pool has changed (propagates to the mapwnd to update indicator)

@@ -334,7 +334,7 @@ void IntroScreen::OnPedia() {
     auto enc_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(
         GG::MODAL | GG::INTERACTIVE | GG::DRAGABLE |
         GG::RESIZABLE | CLOSABLE | PINABLE, INTRO_PEDIA_WND_NAME);
-    enc_panel->SizeMove(GG::Pt(GG::X(100), GG::Y(100)), Size() - GG::Pt(GG::X(100), GG::Y(100)));
+    enc_panel->InitSizeMove(GG::Pt(GG::X(100), GG::Y(100)), Size() - GG::Pt(GG::X(100), GG::Y(100)));
     enc_panel->ClearItems();
     enc_panel->SetIndex();
     enc_panel->ValidatePosition();
@@ -490,5 +490,5 @@ void IntroScreen::PreRender() {
     GG::Pt lr(Width()  * GetOptionsDB().Get<double>("UI.main-menu.x") + mainmenu_width/2,
               Height() * GetOptionsDB().Get<double>("UI.main-menu.y") + mainmenu_height/2);
 
-    m_menu->SizeMove(ul, lr);
+    m_menu->InitSizeMove(ul, lr);
 }

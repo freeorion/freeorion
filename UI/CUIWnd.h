@@ -6,6 +6,7 @@
 #include <GG/Wnd.h>
 #include <GG/WndEvent.h>
 #include <GG/GLClientAndServerBuffer.h>
+#include <unordered_set>
 
 
 /** a simple minimize/restore button that toggles its appearance between the styles for minimize and restore*/
@@ -190,6 +191,10 @@ protected:
     void            ResetDefaultPosition();         //!< called via signal from the ClientUI, passes the value from CalculatePosition() to InitSizeMove()
 
     void SetParent(const std::shared_ptr<GG::Wnd>& wnd) override;
+    /** Flags options currently at their default values for later use in SaveDefaultedOptions */
+    void            SetDefaultedOptions();
+    /** Sets the default value any options previously determined from calls to SetDefaultedOptions to their current value */
+    void            SaveDefaultedOptions();
     //@}
 
     bool                    m_resizable;            //!< true if the window is able to be resized
@@ -210,6 +215,8 @@ protected:
     std::shared_ptr<GG::Button>             m_close_button = nullptr;     //!< the close button
     std::shared_ptr<CUI_MinRestoreButton>   m_minimize_button = nullptr;  //!< the minimize/restore button
     std::shared_ptr<CUI_PinButton>          m_pin_button = nullptr;       //!< the pin button
+
+    std::unordered_set<std::string> m_defaulted_options;
 
     GG::GL2DVertexBuffer                                m_vertex_buffer;
     std::vector<std::pair<std::size_t, std::size_t>>    m_buffer_indices;

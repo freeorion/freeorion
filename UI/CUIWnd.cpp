@@ -165,6 +165,7 @@ void CUIWnd::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
     Init();
     ValidatePosition();
+    SetDefaultedOptions();
 }
 
 void CUIWnd::Init() {
@@ -202,7 +203,11 @@ void CUIWnd::InitSizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             // this position to the window.
             if (db.Get<bool>("UI.windows." + m_config_name + ".initialized") ||
                 db.Get<int>("UI.windows." + m_config_name + ".left" + windowed) == INVALID_X)
-            { SizeMove(ul, lr); }
+            {
+                SetDefaultedOptions();
+                SizeMove(ul, lr);
+                SaveDefaultedOptions();
+            }
             db.Set<bool>("UI.windows."+m_config_name+".initialized", true);
         } else {
             ErrorLogger() << "CUIWnd::InitSizeMove() : attempted to check if window using name \"" << m_config_name
@@ -615,6 +620,66 @@ void CUIWnd::ResetDefaultPosition() {
 
 GG::Rect CUIWnd::CalculatePosition() const
 { return GG::Rect(INVALID_X, INVALID_Y, INVALID_X, INVALID_Y); }
+
+void CUIWnd::SetDefaultedOptions() {
+    OptionsDB& db = GetOptionsDB();
+    std::set<std::string> window_options;
+    db.FindOptions(window_options, "UI.windows." + m_config_name);
+    for (auto& option : window_options) {
+        if (db.IsDefaultValue(option))
+            m_defaulted_options.emplace(option);
+    }
+}
+
+void CUIWnd::SaveDefaultedOptions() {
+    OptionsDB& db = GetOptionsDB();
+    std::string config_prefix = "UI.windows." + m_config_name;
+    std::string windowed = "";
+    if (!db.Get<bool>("fullscreen"))
+        windowed = "-windowed";
+    GG::Pt size;
+    if (m_minimized)
+        size = m_original_size;
+    else
+        size = Size();
+
+    std::string config_name = config_prefix + ".left" + windowed;
+    int int_value = Value(RelativeUpperLeft().x);
+    if (m_defaulted_options.count(config_name))
+        db.SetDefault<int>(config_name, int_value);
+
+    config_name = config_prefix + ".top" + windowed;
+    int_value = Value(RelativeUpperLeft().y);
+    if (m_defaulted_options.count(config_name))
+        db.SetDefault<int>(config_name, int_value);
+
+    config_name = config_prefix + ".width" + windowed;
+    int_value = Value(size.x);
+    if (m_defaulted_options.count(config_name))
+        db.SetDefault<int>(config_name, int_value);
+
+    config_name = config_prefix + ".height" + windowed;
+    int_value = Value(size.y);
+    if (m_defaulted_options.count(config_name))
+        db.SetDefault<int>(config_name, int_value);
+
+    if (!Modal()) {
+        config_name = config_prefix + ".visible";
+        bool bool_value = Visible();
+        if (m_defaulted_options.count(config_name))
+            db.SetDefault<bool>(config_name, bool_value);
+
+        config_name = config_prefix + ".pinned";
+        bool_value = m_pinned;
+        if (m_defaulted_options.count(config_name))
+            db.SetDefault<bool>(config_name, bool_value);
+
+        config_name = config_prefix + ".minimized";
+        bool_value = m_minimized;
+        if (m_defaulted_options.count(config_name))
+            db.SetDefault<bool>(config_name, bool_value);
+    }
+}
 
 void CUIWnd::SaveOptions() const {
     OptionsDB& db = GetOptionsDB();

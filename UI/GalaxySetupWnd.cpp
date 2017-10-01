@@ -1046,6 +1046,7 @@ void GalaxySetupWnd::CompleteConstruction() {
 
     ResetDefaultPosition();
     DoLayout();
+    SaveDefaultedOptions();
 
     m_galaxy_setup_panel->ImageChangedSignal.connect(
         boost::bind(&GalaxySetupWnd::PreviewImageChanged, this, _1));

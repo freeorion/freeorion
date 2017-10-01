@@ -571,6 +571,7 @@ void BuildDesignatorWnd::BuildSelector::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     DoLayout();
+    SaveDefaultedOptions();
 }
 
 const std::set<BuildType>& BuildDesignatorWnd::BuildSelector::GetBuildTypesShown() const

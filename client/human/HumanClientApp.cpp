@@ -125,16 +125,21 @@ namespace {
     const int MIN_WIDTH = 800;
     const int MIN_HEIGHT = 600;
 
+    /** Sets the default and current values for the string option @p option_name to @p option_value if initially empty */
+    void SetEmptyStringDefaultOption(const std::string& option_name, const std::string& option_value) {
+        OptionsDB& db = GetOptionsDB();
+        if (db.Get<std::string>(option_name).empty()) {
+            db.SetDefault<std::string>(option_name, option_value);
+            db.Set(option_name, option_value);
+        }
+    }
+
     /* Sets the value of options that need language-dependent default values.*/
     void SetStringtableDependentOptionDefaults() {
-        if (GetOptionsDB().Get<std::string>("GameSetup.empire-name").empty())
-            GetOptionsDB().Set("GameSetup.empire-name", UserString("DEFAULT_EMPIRE_NAME"));
-
-        if (GetOptionsDB().Get<std::string>("GameSetup.player-name").empty())
-            GetOptionsDB().Set("GameSetup.player-name", UserString("DEFAULT_PLAYER_NAME"));
-
-        if (GetOptionsDB().Get<std::string>("multiplayersetup.player-name").empty())
-            GetOptionsDB().Set("multiplayersetup.player-name", UserString("DEFAULT_PLAYER_NAME"));
+        SetEmptyStringDefaultOption("GameSetup.empire-name", UserString("DEFAULT_EMPIRE_NAME"));
+        std::string player_name = UserString("DEFAULT_PLAYER_NAME");
+        SetEmptyStringDefaultOption("GameSetup.player-name", player_name);
+        SetEmptyStringDefaultOption("multiplayersetup.player-name", player_name);
     }
 
     std::string GetGLVersionString()

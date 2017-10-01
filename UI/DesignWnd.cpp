@@ -1394,6 +1394,7 @@ void DesignWnd::PartPalette::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     DoLayout();
+    SaveDefaultedOptions();
 }
 
 void DesignWnd::PartPalette::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -2809,6 +2810,7 @@ void DesignWnd::BaseSelector::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     DoLayout();
+    SaveDefaultedOptions();
 }
 
 void DesignWnd::BaseSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -3463,6 +3465,7 @@ void DesignWnd::MainPanel::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     DoLayout();
+    SaveDefaultedOptions();
 }
 
 boost::optional<const ShipDesign*> DesignWnd::MainPanel::EditingSavedDesign() const {
