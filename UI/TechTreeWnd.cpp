@@ -87,6 +87,30 @@ namespace {
 
     const double PI = 3.1415926535897932384626433;
 
+    // check recursively if one precursor is unresearchable and unresearched
+    bool    UnresearchableUnresearchedPrerequisite(const std::string& tech_name) {
+        const Tech* tech = GetTech(tech_name);
+        if (!tech)
+            return false;
+
+        const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
+        if (!empire)
+            return false;
+
+        // look if this tech is a candidate
+        if (!tech->Researchable() && !empire->TechResearched(tech_name))
+            return true;
+
+        // if not, repeat process for all prerequisites
+        for (auto& prerequisite : tech->Prerequisites()) {
+            if (UnresearchableUnresearchedPrerequisite(prerequisite))
+                return true;
+        }
+
+        // if no unresearchable & unresearched tech found, return false
+        return false;
+    }
+
     bool    TechVisible(const std::string& tech_name,
                         const std::set<std::string>& categories_shown,
                         const std::set<TechStatus>& statuses_shown)
@@ -97,6 +121,10 @@ namespace {
 
         // Unresearchable techs are never to be shown on tree
         if (!tech->Researchable())
+            return false;
+
+        // Hide techs if they have an unresearchable & unresearched prerequisite
+        if (UnresearchableUnresearchedPrerequisite(tech_name))
             return false;
 
         // check that category is visible
