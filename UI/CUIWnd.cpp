@@ -622,7 +622,6 @@ GG::Rect CUIWnd::CalculatePosition() const
 { return GG::Rect(INVALID_X, INVALID_Y, INVALID_X, INVALID_Y); }
 
 void CUIWnd::SetDefaultedOptions() {
-    std::unordered_set<std::string> retval;
     OptionsDB& db = GetOptionsDB();
     std::set<std::string> window_options;
     db.FindOptions(window_options, "UI.windows." + m_config_name);
