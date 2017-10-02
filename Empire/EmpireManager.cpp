@@ -7,8 +7,6 @@
 #include "../util/XMLDoc.h"
 #include "../universe/Enums.h"
 
-#include <boost/filesystem/fstream.hpp>
-
 namespace {
     // sorted pair, so order of empire IDs specified doesn't matter
     std::pair<int, int> DiploKey(int id1, int ind2)
@@ -365,36 +363,40 @@ void EmpireManager::GetDiplomaticMessagesToSerialize(std::map<std::pair<int, int
     }
 }
 
-const std::vector<GG::Clr>& EmpireColors() {
+std::vector<GG::Clr>& EmpireColorsNonConst() {
     static std::vector<GG::Clr> colors;
-    if (colors.empty()) {
-        XMLDoc doc;
+    return colors;
+}
 
-        std::string file_name = "empire_colors.xml";
+void InitEmpireColors(const boost::filesystem::path& path) {
+    auto& colors = EmpireColorsNonConst();
 
-        boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
-        if (ifs) {
-            doc.ReadDoc(ifs);
-            ifs.close();
-        } else {
-            ErrorLogger() << "Unable to open data file " << file_name;
-            return colors;
-        }
+    XMLDoc doc;
 
-        for (const XMLElement& elem : doc.root_node.children) {
-            try {
-                std::string hex_colour("#");
-                hex_colour.append(elem.attributes.at("hex"));
-                colors.push_back(GG::HexClr(hex_colour));
-            } catch(const std::exception& e) {
-                std::cerr << "empire_colors.xml: " << e.what() << std::endl;
-            }
+    boost::filesystem::ifstream ifs(path);
+    if (ifs) {
+        doc.ReadDoc(ifs);
+        ifs.close();
+    } else {
+        ErrorLogger() << "Unable to open data file " << path.filename();
+        return;
+    }
+
+    for (const XMLElement& elem : doc.root_node.children) {
+        try {
+            std::string hex_colour("#");
+            hex_colour.append(elem.attributes.at("hex"));
+            colors.push_back(GG::HexClr(hex_colour));
+        } catch(const std::exception& e) {
+            ErrorLogger() << "empire_colors.xml: " << e.what() << std::endl;
         }
     }
+}
+const std::vector<GG::Clr>& EmpireColors() {
+    auto& colors = EmpireColorsNonConst();
     if (colors.empty()) {
         colors = {  GG::Clr(  0, 255,   0, 255),    GG::Clr(  0,   0, 255, 255),    GG::Clr(255,   0,   0, 255),
                     GG::Clr(  0, 255, 255, 255),    GG::Clr(255, 255,   0, 255),    GG::Clr(255,   0, 255, 255)};
     }
     return colors;
 }
-

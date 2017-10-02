@@ -1,6 +1,7 @@
 #include "AppInterface.h"
 
 #include "../parse/Parse.h"
+#include "../Empire/EmpireManager.h"
 #include "../universe/Building.h"
 #include "../universe/Encyclopedia.h"
 #include "../universe/Field.h"
@@ -61,4 +62,6 @@ void IApp::ParseUniverseObjectTypes() {
         Pending::StartParsing(parse::ship_designs, rdir / "scripting/monster_designs"));
     GetGameRules().Add(Pending::StartParsing(parse::game_rules, rdir / "scripting/game_rules.focs.txt"));
     GetTechManager().SetTechs(Pending::StartParsing(parse::techs<TechManager::TechParseTuple>, rdir / "scripting/techs"));
+
+    InitEmpireColors(rdir / "empire_colors.xml");
 }
