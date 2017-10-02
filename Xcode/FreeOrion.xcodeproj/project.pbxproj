@@ -816,6 +816,7 @@
 		471D5D2F0A98A3F900DA9C21 /* OrderSet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OrderSet.h; sourceTree = "<group>"; };
 		471D5D300A98A3F900DA9C21 /* Process.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Process.cpp; sourceTree = "<group>"; };
 		471D5D310A98A3F900DA9C21 /* Process.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Process.h; sourceTree = "<group>"; };
+		471D5D310B98A3F900DA9C21 /* Pending.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Pending.h; sourceTree = "<group>"; };
 		471D5D320A98A3F900DA9C21 /* Random.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Random.cpp; sourceTree = "<group>"; };
 		471D5D330A98A3F900DA9C21 /* Random.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Random.h; sourceTree = "<group>"; };
 		471D5D350A98A3F900DA9C21 /* Serialize.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Serialize.h; sourceTree = "<group>"; };
@@ -1871,6 +1872,7 @@
 				471D5D2F0A98A3F900DA9C21 /* OrderSet.h */,
 				471D5D300A98A3F900DA9C21 /* Process.cpp */,
 				471D5D310A98A3F900DA9C21 /* Process.h */,
+				471D5D310B98A3F900DA9C21 /* Pending.h */,
 				471D5D320A98A3F900DA9C21 /* Random.cpp */,
 				471D5D330A98A3F900DA9C21 /* Random.h */,
 				82E68F61190ECB8400BB1AD9 /* SaveGamePreviewUtils.cpp */,
