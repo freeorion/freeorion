@@ -11,7 +11,6 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
-#include <future>
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -26,6 +25,7 @@
 #include "EnumsFwd.h"
 
 #include "../util/Export.h"
+#include "../util/Pending.h"
 
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
 namespace Condition {
@@ -214,7 +214,7 @@ public:
     //@}
 
     /** Sets part types to the future value of \p pending_part_types. */
-    FO_COMMON_API void SetPartTypes(std::future<PartTypeMap>&& pending_part_types);
+    FO_COMMON_API void SetPartTypes(Pending::Pending<PartTypeMap>&& pending_part_types);
 
 private:
     PartTypeManager();
@@ -224,7 +224,7 @@ private:
 
     /** Future part type being parsed by parser.  mutable so that it can
         be assigned to m_part_types when completed.*/
-    mutable boost::optional<std::future<PartTypeMap>> m_pending_part_types = boost::none;
+    mutable boost::optional<Pending::Pending<PartTypeMap>> m_pending_part_types = boost::none;
 
     /** Set of part types.  mutable so that when the parse completes it can
         be updated. */
@@ -454,7 +454,7 @@ public:
     //@}
 
     /** Sets hull types to the future value of \p pending_hull_types. */
-    FO_COMMON_API void SetHullTypes(std::future<HullTypeMap>&& pending_hull_types);
+    FO_COMMON_API void SetHullTypes(Pending::Pending<HullTypeMap>&& pending_hull_types);
 
 private:
     HullTypeManager();
@@ -465,7 +465,7 @@ private:
 
     /** Future hull type being parsed by parser.  mutable so that it can
         be assigned to m_hull_types when completed.*/
-    mutable boost::optional<std::future<HullTypeMap>> m_pending_hull_types = boost::none;
+    mutable boost::optional<Pending::Pending<HullTypeMap>> m_pending_hull_types = boost::none;
 
     /** Set of hull types.  mutable so that when the parse completes it can
         be updated. */
@@ -753,11 +753,11 @@ public:
 
     /** Sets ship design types to the future value of \p pending_designs
         found in \p subdir. */
-    FO_COMMON_API void SetShipDesignTypes(std::future<ParsedShipDesignsType>&& pending_designs);
+    FO_COMMON_API void SetShipDesignTypes(Pending::Pending<ParsedShipDesignsType>&& pending_designs);
 
     /** Sets monster design types to the future value of \p
         pending_design_types found in \p subdir. */
-    FO_COMMON_API void SetMonsterDesignTypes(std::future<ParsedShipDesignsType>&& pending_designs);
+    FO_COMMON_API void SetMonsterDesignTypes(Pending::Pending<ParsedShipDesignsType>&& pending_designs);
 
 private:
     PredefinedShipDesignManager();
@@ -767,8 +767,8 @@ private:
 
     /** Future ship design type being parsed by parser.  mutable so that it can
         be assigned to m_ship design_types when completed.*/
-    mutable boost::optional<std::future<ParsedShipDesignsType>> m_pending_designs = boost::none;
-    mutable boost::optional<std::future<ParsedShipDesignsType>> m_pending_monsters = boost::none;
+    mutable boost::optional<Pending::Pending<ParsedShipDesignsType>> m_pending_designs = boost::none;
+    mutable boost::optional<Pending::Pending<ParsedShipDesignsType>> m_pending_monsters = boost::none;
 
     mutable std::unordered_map<boost::uuids::uuid, std::unique_ptr<ShipDesign>,
                                boost::hash<boost::uuids::uuid>>  m_designs;

@@ -276,34 +276,11 @@ unsigned int FieldTypeManager::GetCheckSum() const {
     return retval;
 }
 
-void FieldTypeManager::SetFieldTypes(std::future<FieldTypeMap>&& future)
+void FieldTypeManager::SetFieldTypes(Pending::Pending<FieldTypeMap>&& future)
 { m_pending_types = std::move(future); }
 
-void FieldTypeManager::CheckPendingFieldTypes() const {
-    if (!m_pending_types)
-        return;
-
-    // Only print waiting message if not immediately ready
-    while (m_pending_types->wait_for(std::chrono::seconds(1)) == std::future_status::timeout) {
-        DebugLogger() << "Waiting for Field types to parse.";
-    }
-
-    try {
-        std::swap(m_field_types, m_pending_types->get());
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing fields: error: " << e.what();
-        throw e;
-    }
-
-    m_pending_types = boost::none;
-
-    TraceLogger() << [this]() {
-            std::string retval("Field Types:");
-            for (const auto& entry : *this)
-                retval.append("\n\t" + entry.first);
-            return retval;
-        }();
-}
+void FieldTypeManager::CheckPendingFieldTypes() const
+{ Pending::SwapPending(m_pending_types, m_field_types); }
 
 
 ///////////////////////////////////////////////////////////

@@ -36,33 +36,19 @@ unsigned int Encyclopedia::GetCheckSum() const {
     return retval;
 }
 
-void Encyclopedia::SetArticles(std::future<ArticleMap>&& future)
+void Encyclopedia::SetArticles(Pending::Pending<ArticleMap>&& future)
 { m_pending_articles = std::move(future); }
 
 const Encyclopedia::ArticleMap& Encyclopedia::Articles() const {
-    if (m_pending_articles != boost::none) {
-        // Only print waiting message if not immediately ready
-        while (m_pending_articles->wait_for(std::chrono::seconds(1)) == std::future_status::timeout) {
-            DebugLogger() << "Waiting for Articles to parse.";
+    if (auto parsed = WaitForPending(m_pending_articles)) {
+        std::swap(m_articles, *parsed);
+
+        TraceLogger() << "(Category) Encyclopedia Articles:";
+        for (const auto& entry : m_articles) {
+            const std::string& category = entry.first;
+            for (const EncyclopediaArticle& article : entry.second)
+            { TraceLogger() << "(" << category << ") : " << article.name; }
         }
-
-        try {
-            auto x = std::move(m_pending_articles->get());
-            std::swap(m_articles, x);
-
-            TraceLogger() << "(Category) Encyclopedia Articles:";
-            for (const auto& entry : m_articles) {
-                const std::string& category = entry.first;
-                for (const EncyclopediaArticle& article : entry.second)
-                { TraceLogger() << "(" << category << ") : " << article.name; }
-            }
-
-        } catch (const std::exception& e) {
-            ErrorLogger() << "Failed parsing articles: error: " << e.what();
-            throw e;
-        }
-
-        m_pending_articles = boost::none;
     }
 
     return m_articles;

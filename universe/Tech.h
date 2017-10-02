@@ -5,6 +5,7 @@
 
 #include "EnumsFwd.h"
 #include "../util/Export.h"
+#include "../util/Pending.h"
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/key_extractors.hpp>
@@ -16,7 +17,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <future>
 
 #include <GG/Clr.h>
 
@@ -307,7 +307,7 @@ public:
         std::set<std::string> // categories_seen
         >;
         /** Sets types to the value of \p future. */
-    FO_COMMON_API void SetTechs(std::future<TechParseTuple>&& future);
+    FO_COMMON_API void SetTechs(Pending::Pending<TechParseTuple>&& future);
 
 
     /** returns the instance of this singleton class; you should use the free function GetTechManager() instead */
@@ -335,7 +335,7 @@ private:
 
     /** Future types being parsed by parser.  mutable so that it can
         be assigned to m_species_types when completed.*/
-    mutable boost::optional<std::future<TechParseTuple>> m_pending_types = boost::none;
+    mutable boost::optional<Pending::Pending<TechParseTuple>> m_pending_types = boost::none;
 
     mutable TechCategoryMap                         m_categories;
     mutable TechContainer                           m_techs;

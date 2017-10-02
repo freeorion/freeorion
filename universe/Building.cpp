@@ -389,28 +389,11 @@ unsigned int BuildingTypeManager::GetCheckSum() const {
     return retval;
 }
 
-void BuildingTypeManager::SetBuildingTypes(std::future<BuildingTypeMap>&& pending_building_types)
+void BuildingTypeManager::SetBuildingTypes(Pending::Pending<BuildingTypeMap>&& pending_building_types)
 { m_pending_building_types = std::move(pending_building_types); }
 
-void BuildingTypeManager::CheckPendingBuildingTypes() const {
-    if (!m_pending_building_types)
-        return;
-
-    // Only print waiting message if not immediately ready
-    while (m_pending_building_types->wait_for(std::chrono::seconds(1)) == std::future_status::timeout) {
-        DebugLogger() << "Waiting for Building types to parse.";
-    }
-
-    try {
-        auto x = std::move(m_pending_building_types->get());
-        std::swap(m_building_types, x);
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing buildings: error: " << e.what();
-        throw e;
-    }
-
-    m_pending_building_types = boost::none;
-}
+void BuildingTypeManager::CheckPendingBuildingTypes() const
+{ Pending::SwapPending(m_pending_building_types, m_building_types); }
 
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //

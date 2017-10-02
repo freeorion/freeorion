@@ -3,8 +3,9 @@
 
 #include "../universe/EnumsFwd.h"
 #include "../network/Networking.h"
-#include "OptionsDB.h"
 #include "Export.h"
+#include "OptionsDB.h"
+#include "Pending.h"
 #include "Serialize.h"
 
 #include <GG/Clr.h>
@@ -13,7 +14,6 @@
 #include <set>
 #include <vector>
 #include <map>
-#include <future>
 #include <boost/serialization/access.hpp>
 
 
@@ -124,7 +124,7 @@ public:
     }
 
     /** Adds rules from the \p future. */
-    void Add(std::future<GameRules>&& future);
+    void Add(Pending::Pending<GameRules>&& future);
 
     template <typename T>
     void    Set(const std::string& name, const T& value)
@@ -152,7 +152,7 @@ private:
 
     /** Future rules being parsed by parser.  mutable so that it can
         be assigned to m_game_rules when completed.*/
-    mutable boost::optional<std::future<GameRules>> m_pending_rules = boost::none;
+    mutable boost::optional<Pending::Pending<GameRules>> m_pending_rules = boost::none;
 
     mutable GameRulesTypeMap m_game_rules;
 

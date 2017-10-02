@@ -6,10 +6,9 @@
 #include "ValueRefFwd.h"
 #include "ShipDesign.h"
 #include "../util/Export.h"
+#include "../util/Pending.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
-
-#include <future>
 
 class BuildingType;
 namespace Effect {
@@ -225,7 +224,7 @@ public:
     //@}
 
     /** Sets building types to the future value of \p pending_building_types. */
-    FO_COMMON_API void SetBuildingTypes(std::future<BuildingTypeMap>&& pending_building_types);
+    FO_COMMON_API void SetBuildingTypes(Pending::Pending<BuildingTypeMap>&& pending_building_types);
 
 private:
     BuildingTypeManager();
@@ -235,7 +234,7 @@ private:
 
     /** Future building type being parsed by parser.  mutable so that it can
         be assigned to m_building_types when completed.*/
-    mutable boost::optional<std::future<BuildingTypeMap>> m_pending_building_types = boost::none;
+    mutable boost::optional<Pending::Pending<BuildingTypeMap>> m_pending_building_types = boost::none;
 
     /** Set of building types.  mutable so that when the parse complete it can
         be updated. */

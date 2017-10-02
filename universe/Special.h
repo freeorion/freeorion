@@ -8,12 +8,12 @@
 #include <boost/optional/optional.hpp>
 
 #include "../util/Export.h"
+#include "../util/Pending.h"
 
 #include <memory>
 #include <string>
 #include <vector>
 #include <map>
-#include <future>
 
 
 namespace Effect {
@@ -134,7 +134,7 @@ class FO_COMMON_API SpecialsManager {
     unsigned int GetCheckSum() const;
 
     /** Sets types to the value of \p future. */
-    FO_COMMON_API void SetSpecialsTypes(std::future<SpecialsTypeMap>&& future);
+    FO_COMMON_API void SetSpecialsTypes(Pending::Pending<SpecialsTypeMap>&& future);
 
     private:
     /** Assigns any m_pending_types to m_specials. */
@@ -142,7 +142,7 @@ class FO_COMMON_API SpecialsManager {
 
     /** Future types being parsed by parser.  mutable so that it can
         be assigned to m_species_types when completed.*/
-    mutable boost::optional<std::future<SpecialsTypeMap>> m_pending_types = boost::none;
+    mutable boost::optional<Pending::Pending<SpecialsTypeMap>> m_pending_types = boost::none;
 
     mutable SpecialsTypeMap m_specials;
 };

@@ -44,27 +44,14 @@ unsigned int SpecialsManager::GetCheckSum() const {
     return retval;
 }
 
-void SpecialsManager::SetSpecialsTypes(std::future<SpecialsTypeMap>&& future)
+void SpecialsManager::SetSpecialsTypes(Pending::Pending<SpecialsTypeMap>&& future)
 { m_pending_types = std::move(future); }
 
 void SpecialsManager::CheckPendingSpecialsTypes() const {
     if (!m_pending_types)
         return;
 
-    // Only print waiting message if not immediately ready
-    while (m_pending_types->wait_for(std::chrono::seconds(1)) == std::future_status::timeout) {
-        DebugLogger() << "Waiting for Specials types to parse.";
-    }
-
-    try {
-        auto x = std::move(m_pending_types->get());
-        std::swap(m_specials, x);
-
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing specials: error: " << e.what();
-    }
-
-    m_pending_types = boost::none;
+    Pending::SwapPending(m_pending_types, m_specials);
 }
 
 SpecialsManager& GetSpecialsManager() {

@@ -168,78 +168,35 @@ void Universe::ResetAllIDAllocation(const std::vector<int>& empire_ids) {
                   << " and highest design id = " << highest_allocated_design_id;
 }
 
-namespace {
-    /** Wait for the \p pending parse to complete.  Return boost::none on errors.*/
-    template <typename T>
-    boost::optional<T> WaitForParse(boost::optional<std::future<T>>& pending) {
-        if (!pending)
-            return boost::none;
-
-        std::future_status status;
-        do {
-            status = pending->wait_for(std::chrono::seconds(1));
-            if (status == std::future_status::timeout)
-                DebugLogger() << "Waiting for parse to complete.";
-
-            if (status == std::future_status::deferred) {
-                ErrorLogger() << "Unable to handle deferred future.";
-                throw "deferred future not handled";
-            }
-
-        } while (status != std::future_status::ready);
-
-        try {
-            auto x = std::move(pending->get());
-            pending = boost::none;
-            return x;
-        } catch (const std::exception& e) {
-            ErrorLogger() << "Parsing failed with error: " << e.what();
-        }
-
-        return boost::none;
-    }
-
-    /** If there is a pending parse, wait for it and swap it with the stored
-        value.  Return the stored value.*/
-    template <typename T>
-    T& SwapPendingParsed(boost::optional<std::future<T>>& pending, T& stored) {
-        if (auto tt = WaitForParse(pending))
-            std::swap(*tt, stored);
-        return stored;
-    }
-}
-
-void Universe::SetInitiallyUnlockedItems(std::future<std::vector<ItemSpec>>&& future)
+void Universe::SetInitiallyUnlockedItems(Pending::Pending<std::vector<ItemSpec>>&& future)
 { m_pending_items = std::move(future); }
 
 const std::vector<ItemSpec>& Universe::InitiallyUnlockedItems() const
-{ return SwapPendingParsed(m_pending_items, m_unlocked_items); }
+{ return Pending::SwapPending(m_pending_items, m_unlocked_items); }
 
-void Universe::SetInitiallyUnlockedBuildings(std::future<std::vector<ItemSpec>>&& future)
+void Universe::SetInitiallyUnlockedBuildings(Pending::Pending<std::vector<ItemSpec>>&& future)
 { m_pending_buildings = std::move(future); }
 
 const std::vector<ItemSpec>& Universe::InitiallyUnlockedBuildings() const
-{ return SwapPendingParsed(m_pending_buildings, m_unlocked_buildings); }
+{ return Pending::SwapPending(m_pending_buildings, m_unlocked_buildings); }
 
-void Universe::SetInitiallyUnlockedFleetPlans(std::future<std::vector<FleetPlan*>>&& future)
-{ m_pending_fleet_plans = std::move(future);
-    DebugLogger() << "MXX fleet plans blanged";
-}
+void Universe::SetInitiallyUnlockedFleetPlans(Pending::Pending<std::vector<FleetPlan*>>&& future)
+{ m_pending_fleet_plans = std::move(future);}
 
 const std::vector<FleetPlan*>& Universe::InitiallyUnlockedFleetPlans() const
-{ return SwapPendingParsed(m_pending_fleet_plans, m_unlocked_fleet_plans); }
+{ return Pending::SwapPending(m_pending_fleet_plans, m_unlocked_fleet_plans); }
 
-void Universe::SetMonsterFleetPlans(std::future<std::vector<MonsterFleetPlan*>>&& future)
+void Universe::SetMonsterFleetPlans(Pending::Pending<std::vector<MonsterFleetPlan*>>&& future)
 { m_pending_monster_fleet_plans = std::move(future); }
 
 const std::vector<MonsterFleetPlan*>&  Universe::MonsterFleetPlans() const
-{ return SwapPendingParsed(m_pending_monster_fleet_plans, m_monster_fleet_plans); }
+{ return Pending::SwapPending(m_pending_monster_fleet_plans, m_monster_fleet_plans); }
 
-void Universe::SetEmpireStats(std::future<EmpireStatsMap> future)
+void Universe::SetEmpireStats(Pending::Pending<EmpireStatsMap> future)
 { m_pending_empire_stats = std::move(future); }
 
 const Universe::EmpireStatsMap& Universe::EmpireStats() const
-{ return SwapPendingParsed(m_pending_empire_stats, m_empire_stats); }
+{ return Pending::SwapPending(m_pending_empire_stats, m_empire_stats); }
 
 
 const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const {

@@ -176,7 +176,7 @@ std::vector<std::pair<std::string, std::string>> GameRules::GetRulesAsStrings() 
     return retval;
 }
 
-void GameRules::Add(std::future<GameRules>&& future)
+void GameRules::Add(Pending::Pending<GameRules>&& future)
 { m_pending_rules = std::move(future); }
 
 void GameRules::SetFromStrings(const std::vector<std::pair<std::string, std::string>>& names_values) {
@@ -210,28 +210,19 @@ void GameRules::CheckPendingGameRules() const {
     if (!m_pending_rules)
         return;
 
-    // Only print waiting message if not immediately ready
-    while (m_pending_rules->wait_for(std::chrono::seconds(1)) == std::future_status::timeout) {
-        DebugLogger() << "Waiting for Rules to parse.";
-    }
+    auto parsed = Pending::WaitForPending(m_pending_rules);
+    if (!parsed)
+        return;
 
-    DebugLogger() << "Adding parsed rules";
-    try {
-        auto new_rules = std::move(m_pending_rules->get());
-        for (const auto& rule : new_rules) {
-            const auto& name = rule.first;
-            if (m_game_rules.count(name)) {
-                ErrorLogger() << "GameRules::Add<>() : Rule " << name << " was added twice. Skipping ...";
-                continue;
-            }
-            m_game_rules[name] = rule.second;
+    auto new_rules = std::move(*parsed);
+    for (const auto& rule : new_rules) {
+        const auto& name = rule.first;
+        if (m_game_rules.count(name)) {
+            ErrorLogger() << "GameRules::Add<>() : Rule " << name << " was added twice. Skipping ...";
+            continue;
         }
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing rules: error: " << e.what();
-        throw;
+        m_game_rules[name] = rule.second;
     }
-
-    m_pending_rules = boost::none;
 
     DebugLogger() << "Registered and Parsed Game Rules:";
     for (const auto& entry : GetRulesAsStrings())

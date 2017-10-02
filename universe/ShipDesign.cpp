@@ -226,27 +226,14 @@ unsigned int PartTypeManager::GetCheckSum() const {
 }
 
 
-void PartTypeManager::SetPartTypes(std::future<PartTypeMap>&& pending_part_types)
+void PartTypeManager::SetPartTypes(Pending::Pending<PartTypeMap>&& pending_part_types)
 { m_pending_part_types = std::move(pending_part_types); }
 
 void PartTypeManager::CheckPendingPartTypes() const {
     if (!m_pending_part_types)
         return;
 
-    // Only print waiting message if not immediately ready
-    while (m_pending_part_types->wait_for(std::chrono::seconds(1)) == std::future_status::timeout) {
-        DebugLogger() << "Waiting for Part types to parse.";
-    }
-
-    try {
-        auto x = std::move(m_pending_part_types->get());
-        std::swap(m_parts, x);
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing parts: error: " << e.what();
-        throw e;
-    }
-
-    m_pending_part_types = boost::none;
+    Pending::SwapPending(m_pending_part_types, m_parts);
 
     TraceLogger() << [this]() {
             std::string retval("Part Types:");
@@ -685,27 +672,14 @@ unsigned int HullTypeManager::GetCheckSum() const {
     return retval;
 }
 
-void HullTypeManager::SetHullTypes(std::future<HullTypeMap>&& pending_hull_types)
+void HullTypeManager::SetHullTypes(Pending::Pending<HullTypeMap>&& pending_hull_types)
 { m_pending_hull_types = std::move(pending_hull_types); }
 
 void HullTypeManager::CheckPendingHullTypes() const {
     if (!m_pending_hull_types)
         return;
 
-    // Only print waiting message if not immediately ready
-    while (m_pending_hull_types->wait_for(std::chrono::seconds(1)) == std::future_status::timeout) {
-        DebugLogger() << "Waiting for Hull types to parse.";
-    }
-
-    try {
-        auto x = std::move(m_pending_hull_types->get());
-        std::swap(m_hulls, x);
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing hulls: error: " << e.what();
-        throw e;
-    }
-
-    m_pending_hull_types = boost::none;
+    Pending::SwapPending(m_pending_hull_types, m_hulls);
 
     TraceLogger() << [this]() {
             std::string retval("Hull Types:");
@@ -1481,11 +1455,11 @@ unsigned int PredefinedShipDesignManager::GetCheckSum() const {
 
 
 void PredefinedShipDesignManager::SetShipDesignTypes(
-    std::future<ParsedShipDesignsType>&& pending_designs)
+    Pending::Pending<ParsedShipDesignsType>&& pending_designs)
 { m_pending_designs = std::move(pending_designs); }
 
 void PredefinedShipDesignManager::SetMonsterDesignTypes(
-    std::future<ParsedShipDesignsType>&& pending_designs)
+    Pending::Pending<ParsedShipDesignsType>&& pending_designs)
 { m_pending_monsters = std::move(pending_designs); }
 
 namespace {
@@ -1527,32 +1501,22 @@ namespace {
         }
     }
 
-    template <typename Pending, typename Map1, typename Map2, typename Ordering>
+    template <typename PendingShips, typename Map1, typename Map2, typename Ordering>
     void CheckPendingAndFillDesignsOrderingAndNameTables(
-        Pending& pending, Map1& designs, Ordering& ordering, Map2& name_to_uuid, bool are_monsters)
+        PendingShips& pending, Map1& designs, Ordering& ordering, Map2& name_to_uuid, bool are_monsters)
     {
         if (!pending)
             return;
 
-        // Only print waiting message if not immediately ready
-        while (pending->wait_for(std::chrono::seconds(1)) == std::future_status::timeout) {
-            DebugLogger() << "Waiting for ShipDesigns to parse.";
-        }
+        auto parsed = Pending::WaitForPending(pending);
+        if (!parsed)
+            return;
 
         DebugLogger() << "Populating pre-defined ships with "
                       << (are_monsters ? "monster":"ship") << " designs.";
-        try {
-            auto parsed = std::move(pending->get());
 
-            FillDesignsOrderingAndNameTables(
-                parsed, designs, ordering, name_to_uuid);
-
-        } catch (const std::exception& e) {
-            ErrorLogger() << "Failed parsing designs: error: " << e.what();
-            throw;
-        }
-
-        pending = boost::none;
+        FillDesignsOrderingAndNameTables(
+            *parsed, designs, ordering, name_to_uuid);
 
         // Make the monsters monstrous
         if (are_monsters)

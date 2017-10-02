@@ -9,6 +9,7 @@
 #include "../universe/Tech.h"
 #include "../util/Directories.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/Pending.h"
 
 #include <boost/filesystem.hpp>
 
@@ -45,26 +46,19 @@ int IApp::MAX_AI_PLAYERS() {
     return max_number_AIs;
 }
 
-namespace {
-    template <typename ParserFunc>
-    auto StartParsing(const ParserFunc& parser, const boost::filesystem::path& subdir)
-        -> std::future<decltype(parser(subdir))>
-    {
-        return std::async(std::launch::async, parser, subdir);
-    }
-}
-
 void IApp::ParseUniverseObjectTypes() {
     const auto& rdir = GetResourceDir();
-    GetBuildingTypeManager().SetBuildingTypes(StartParsing(parse::buildings, rdir / "scripting/buildings"));
-    GetEncyclopedia().SetArticles(StartParsing(parse::encyclopedia_articles, rdir / "scripting/encyclopedia"));
-    GetFieldTypeManager().SetFieldTypes(StartParsing(parse::fields, rdir / "scripting/fields"));
-    GetSpecialsManager().SetSpecialsTypes(StartParsing(parse::specials, rdir / "scripting/specials"));
-    GetSpeciesManager().SetSpeciesTypes(StartParsing(parse::species, rdir / "scripting/species"));
-    GetPartTypeManager().SetPartTypes(StartParsing(parse::ship_parts, rdir / "scripting/ship_parts"));
-    GetHullTypeManager().SetHullTypes(StartParsing(parse::ship_hulls, rdir / "scripting/ship_hulls"));
-    GetPredefinedShipDesignManager().SetShipDesignTypes(StartParsing(parse::ship_designs, rdir / "scripting/ship_designs"));
-    GetPredefinedShipDesignManager().SetMonsterDesignTypes(StartParsing(parse::ship_designs, rdir / "scripting/monster_designs"));
-    GetGameRules().Add(StartParsing(parse::game_rules, rdir / "scripting/game_rules.focs.txt"));
-    GetTechManager().SetTechs(StartParsing(parse::techs<TechManager::TechParseTuple>, rdir / "scripting/techs"));
+    GetBuildingTypeManager().SetBuildingTypes(Pending::StartParsing(parse::buildings, rdir / "scripting/buildings"));
+    GetEncyclopedia().SetArticles(Pending::StartParsing(parse::encyclopedia_articles, rdir / "scripting/encyclopedia"));
+    GetFieldTypeManager().SetFieldTypes(Pending::StartParsing(parse::fields, rdir / "scripting/fields"));
+    GetSpecialsManager().SetSpecialsTypes(Pending::StartParsing(parse::specials, rdir / "scripting/specials"));
+    GetSpeciesManager().SetSpeciesTypes(Pending::StartParsing(parse::species, rdir / "scripting/species"));
+    GetPartTypeManager().SetPartTypes(Pending::StartParsing(parse::ship_parts, rdir / "scripting/ship_parts"));
+    GetHullTypeManager().SetHullTypes(Pending::StartParsing(parse::ship_hulls, rdir / "scripting/ship_hulls"));
+    GetPredefinedShipDesignManager().SetShipDesignTypes(
+        Pending::StartParsing(parse::ship_designs, rdir / "scripting/ship_designs"));
+    GetPredefinedShipDesignManager().SetMonsterDesignTypes(
+        Pending::StartParsing(parse::ship_designs, rdir / "scripting/monster_designs"));
+    GetGameRules().Add(Pending::StartParsing(parse::game_rules, rdir / "scripting/game_rules.focs.txt"));
+    GetTechManager().SetTechs(Pending::StartParsing(parse::techs<TechManager::TechParseTuple>, rdir / "scripting/techs"));
 }

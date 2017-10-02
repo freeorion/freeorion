@@ -385,51 +385,14 @@ SpeciesManager& SpeciesManager::GetSpeciesManager() {
     return manager;
 }
 
-void SpeciesManager::SetSpeciesTypes(std::future<SpeciesTypeMap>&& future)
+void SpeciesManager::SetSpeciesTypes(Pending::Pending<SpeciesTypeMap>&& future)
 { m_pending_types = std::move(future); }
 
 void SpeciesManager::CheckPendingSpeciesTypes() const {
     if (!m_pending_types && m_species.empty())
         throw;
 
-    if (!m_pending_types)
-        return;
-
-    // Only print waiting message if not immediately ready
-    while (m_pending_types->wait_for(std::chrono::seconds(1)) == std::future_status::timeout) {
-        DebugLogger() << "Waiting for Species types to parse.";
-    }
-
-    try {
-        auto x = std::move(m_pending_types->get());
-        std::swap(m_species, x);
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing species: error: " << e.what();
-        throw e;
-    }
-
-    m_pending_types = boost::none;
-
-    TraceLogger() << [this]() {
-        std::string retval("Species:");
-        for (const auto& pair : m_species) {
-            const auto& species = pair.second;
-            retval.append("\n\t" + species->Name() + "  \t");
-            retval.append(species->Playable() ?
-                          "Playable " :
-                          "         ");
-            retval.append(species->Native() ?
-                          "Native " :
-                          "       ");
-            retval.append(species->CanProduceShips() ?
-                          "CanProduceShips " :
-                          "                ");
-            retval.append(species->CanColonize() ?
-                          "CanColonize " :
-                          "            ");
-        }
-        return retval;
-    }();
+    Pending::SwapPending(m_pending_types, m_species);
 }
 
 SpeciesManager::iterator SpeciesManager::begin() const {

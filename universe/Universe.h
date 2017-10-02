@@ -6,6 +6,7 @@
 #include "ValueRefFwd.h"
 #include "ObjectMap.h"
 #include "UniverseObject.h"
+#include "../util/Pending.h"
 
 #include <boost/signals2/signal.hpp>
 // Fix for issue #1513 (boost ticket #12978)
@@ -24,7 +25,6 @@
 #include <set>
 #include <string>
 #include <vector>
-#include <future>
 
 #include "../util/Export.h"
 
@@ -68,7 +68,6 @@ namespace boost {
 }
 #  endif
 #endif
-
 
 /** The Universe class contains the majority of FreeOrion gamestate: All the
   * UniverseObjects in a game, and (of less importance) all ShipDesigns in a
@@ -407,28 +406,28 @@ public:
     //@}
 
     /** Set items unlocked before turn 1 from \p future.*/
-    void SetInitiallyUnlockedItems(std::future<std::vector<ItemSpec>>&& future);
+    void SetInitiallyUnlockedItems(Pending::Pending<std::vector<ItemSpec>>&& future);
     /** Items unlocked before turn 1.*/
     const std::vector<ItemSpec>&  InitiallyUnlockedItems() const;
 
     /** Set buildings unlocked before turn 1 from \p future.*/
-    void SetInitiallyUnlockedBuildings(std::future<std::vector<ItemSpec>>&& future);
+    void SetInitiallyUnlockedBuildings(Pending::Pending<std::vector<ItemSpec>>&& future);
     /** Buildings unlocked before turn 1.*/
     const std::vector<ItemSpec>&  InitiallyUnlockedBuildings() const;
 
     /** Set fleets unlocked before turn 1 from \p future.*/
-    void SetInitiallyUnlockedFleetPlans(std::future<std::vector<FleetPlan*>>&& future);
+    void SetInitiallyUnlockedFleetPlans(Pending::Pending<std::vector<FleetPlan*>>&& future);
     /** Fleets unlocked before turn 1.*/
     const std::vector<FleetPlan*>&  InitiallyUnlockedFleetPlans() const;
 
     /** Set items unlocked before turn 1 from \p future..*/
-    void SetMonsterFleetPlans(std::future<std::vector<MonsterFleetPlan*>>&& future);
+    void SetMonsterFleetPlans(Pending::Pending<std::vector<MonsterFleetPlan*>>&& future);
     /** Items unlocked before turn 1.*/
     const std::vector<MonsterFleetPlan*>&  MonsterFleetPlans() const;
 
     /** Set the empire stats from \p future. */
     using EmpireStatsMap = std::map<std::string, ValueRef::ValueRefBase<double>*>;
-    void SetEmpireStats(std::future<EmpireStatsMap> future);
+    void SetEmpireStats(Pending::Pending<EmpireStatsMap> future);
 private:
     const EmpireStatsMap& EmpireStats() const;
 public:
@@ -529,14 +528,14 @@ private:
                                     m_stat_records;                     ///< storage for statistics calculated for empires. Indexed by stat name (string), contains a map indexed by empire id, contains a map from turn number (int) to stat value (double).
 
     /** @name Parsed items
-        Various unlocked items are kept as a std::future while being parsed and
+        Various unlocked items are kept as a Pending::Pending while being parsed and
         then transfered.  They are mutable to allow processing in const accessors. */
     ///@{
-    mutable boost::optional<std::future<std::vector<ItemSpec>>> m_pending_items = boost::none;
-    mutable boost::optional<std::future<std::vector<ItemSpec>>> m_pending_buildings = boost::none;
-    mutable boost::optional<std::future<std::vector<FleetPlan*>>> m_pending_fleet_plans = boost::none;
-    mutable boost::optional<std::future<std::vector<MonsterFleetPlan*>>> m_pending_monster_fleet_plans = boost::none;
-    mutable boost::optional<std::future<EmpireStatsMap>> m_pending_empire_stats = boost::none;
+    mutable boost::optional<Pending::Pending<std::vector<ItemSpec>>> m_pending_items = boost::none;
+    mutable boost::optional<Pending::Pending<std::vector<ItemSpec>>> m_pending_buildings = boost::none;
+    mutable boost::optional<Pending::Pending<std::vector<FleetPlan*>>> m_pending_fleet_plans = boost::none;
+    mutable boost::optional<Pending::Pending<std::vector<MonsterFleetPlan*>>> m_pending_monster_fleet_plans = boost::none;
+    mutable boost::optional<Pending::Pending<EmpireStatsMap>> m_pending_empire_stats = boost::none;
 
     mutable std::vector<ItemSpec> m_unlocked_items;
     mutable std::vector<ItemSpec> m_unlocked_buildings;

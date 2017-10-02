@@ -375,32 +375,20 @@ TechManager::TechManager() {
     s_instance = this;
 }
 
-void TechManager::SetTechs(std::future<TechManager::TechParseTuple>&& future)
+void TechManager::SetTechs(Pending::Pending<TechManager::TechParseTuple>&& future)
 { m_pending_types = std::move(future); }
 
 void TechManager::CheckPendingTechs() const {
     if (!m_pending_types)
         return;
-    // Only print waiting message if not immediately ready
-    while (m_pending_types->wait_for(std::chrono::seconds(1)) == std::future_status::timeout) {
-        DebugLogger() << "Waiting for Techs to parse.";
-    }
+
+    auto parsed = WaitForPending(m_pending_types);
+    if (!parsed)
+        return;
 
     std::set<std::string> categories_seen_in_techs;
+    std::tie(m_techs, m_categories, categories_seen_in_techs) = std::move(*parsed);
 
-    auto copy_categories = m_categories;
-    auto copy_techs = m_techs;
-    try {
-        std::tie(m_techs, m_categories, categories_seen_in_techs) = std::move(m_pending_types->get());
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Parsing techs failed with error: " << e.what();
-        m_pending_types = boost::none;
-        m_categories = copy_categories;
-        m_techs = copy_techs;
-        return;
-    }
-
-    m_pending_types = boost::none;
 
     std::set<std::string> empty_defined_categories;
     for (const auto& map : m_categories) {

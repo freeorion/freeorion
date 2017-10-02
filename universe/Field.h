@@ -4,8 +4,7 @@
 #include "UniverseObject.h"
 
 #include "../util/Export.h"
-
-#include <future>
+#include "../util/Pending.h"
 
 namespace Effect {
     class EffectsGroup;
@@ -146,7 +145,7 @@ public:
     //@}
 
     /** Sets types to the value of \p future. */
-    FO_COMMON_API void SetFieldTypes(std::future<FieldTypeMap>&& future);
+    FO_COMMON_API void SetFieldTypes(Pending::Pending<FieldTypeMap>&& future);
 
 private:
     FieldTypeManager();
@@ -156,7 +155,7 @@ private:
 
     /** Future types being parsed by parser.  mutable so that it can
         be assigned to m_field_types when completed.*/
-    mutable boost::optional<std::future<FieldTypeMap>> m_pending_types = boost::none;
+    mutable boost::optional<Pending::Pending<FieldTypeMap>> m_pending_types = boost::none;
 
     mutable FieldTypeMap   m_field_types;
     static FieldTypeManager*            s_instance;

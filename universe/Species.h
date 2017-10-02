@@ -5,13 +5,13 @@
 #include "EnumsFwd.h"
 #include "../util/Export.h"
 #include "../util/Serialize.h"
+#include "../util/Pending.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/optional/optional.hpp>
 
-#include <future>
 #include <map>
 #include <memory>
 #include <set>
@@ -341,7 +341,7 @@ public:
     std::map<std::string, std::map<std::string, int>>&  SpeciesShipsDestroyed(int encoding_empire = ALL_EMPIRES);
 
     /** Sets species types to the value of \p future. */
-    FO_COMMON_API void SetSpeciesTypes(std::future<SpeciesTypeMap>&& future);
+    FO_COMMON_API void SetSpeciesTypes(Pending::Pending<SpeciesTypeMap>&& future);
 
     //@}
 
@@ -357,7 +357,7 @@ private:
 
     /** Future types being parsed by parser.  mutable so that it can
         be assigned to m_species_types when completed.*/
-    mutable boost::optional<std::future<SpeciesTypeMap>> m_pending_types = boost::none;
+    mutable boost::optional<Pending::Pending<SpeciesTypeMap>> m_pending_types = boost::none;
 
     mutable SpeciesTypeMap                              m_species;
     std::map<std::string, std::map<int, float>>         m_species_empire_opinions;
