@@ -104,8 +104,8 @@ namespace {
                true,    Validator<bool>());
         db.Add("save.auto.interval.turns",          UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),             1,      RangedValidator<int>(1, 50));
         db.Add("save.auto.file.limit",              UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),             10,     RangedValidator<int>(1, 100));
-        db.Add("autosave.galaxy-creation",      UserStringNop("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"),      true,   Validator<bool>());
-        db.Add("autosave.game-close",           UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),         true,   Validator<bool>());
+        db.Add("save.auto.initial.enabled",     UserStringNop("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"),      true,   Validator<bool>());
+        db.Add("save.auto.exit.enabled",        UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),         true,   Validator<bool>());
         db.Add("ui.input.mouse.button_swap.enabled", UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),      false);
         db.Add("ui.input.keyboard.repeat.delay", UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_DELAY"),     360,    RangedValidator<int>(0, 1000));
         db.Add("ui.input.keyboard.repeat.interval", UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"), 20,   RangedValidator<int>(0, 1000));
@@ -1290,8 +1290,8 @@ void HumanClientApp::Autosave() {
          && (is_single_player_enabled || is_multi_player_enabled));
 
     // is_initial_save is gated in HumanClientFSM for new game vs loaded game
-    bool is_initial_save = (GetOptionsDB().Get<bool>("autosave.galaxy-creation") && CurrentTurn() == 1);
-    bool is_final_save = (GetOptionsDB().Get<bool>("autosave.game-close") && !m_game_started);
+    bool is_initial_save = (GetOptionsDB().Get<bool>("save.auto.initial.enabled") && CurrentTurn() == 1);
+    bool is_final_save = (GetOptionsDB().Get<bool>("save.auto.exit.enabled") && !m_game_started);
 
     if (!(is_initial_save || is_valid_autosave || is_final_save))
         return;
@@ -1310,8 +1310,8 @@ void HumanClientApp::Autosave() {
          && GetOptionsDB().Get<bool>("save.auto.multiplayer.start.enabled"));
     int max_autosaves =
         (max_turns * (is_two_saves_per_turn ? 2 : 1)
-         + (GetOptionsDB().Get<bool>("autosave.galaxy-creation") ? 1 : 0)
-         + (GetOptionsDB().Get<bool>("autosave.game-close") ? 1 : 0));
+         + (GetOptionsDB().Get<bool>("save.auto.initial.enabled") ? 1 : 0)
+         + (GetOptionsDB().Get<bool>("save.auto.exit.enabled") ? 1 : 0));
     RemoveOldestFiles(max_autosaves, autosave_dir_path);
 
     // create new save
@@ -1398,7 +1398,7 @@ void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame) {
 
     // Only save if not exiting due to an error.
     if (!skip_savegame) {
-        if (was_playing && GetOptionsDB().Get<bool>("autosave.game-close"))
+        if (was_playing && GetOptionsDB().Get<bool>("save.auto.exit.enabled"))
             Autosave();
 
         if (!m_game_saves_in_progress.empty()) {
