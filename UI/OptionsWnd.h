@@ -17,7 +17,7 @@ class OptionsWnd : public CUIWnd {
 public:
     //! \name Structors
     //!@{
-    OptionsWnd();
+    OptionsWnd(bool is_game_running_);
     void CompleteConstruction() override;
 
     ~OptionsWnd();
@@ -82,17 +82,19 @@ private:
     void                VolumeOption(GG::ListBox* page, int indentation_level, const std::string& toggle_option_name,
                                      const std::string& volume_option_name, const std::string& text, bool toggle_value,
                                      SoundOptionsFeedback &fb);
-    void                FileOptionImpl(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string>>& filters, std::function<bool (const std::string&)> string_validator, bool directory, bool relative_path);
+    void                FileOptionImpl(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string>>& filters, std::function<bool (const std::string&)> string_validator, bool directory, bool relative_path, bool disabled);
     void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, std::function<bool (const std::string&)> string_validator = nullptr);
     void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::pair<std::string, std::string>& filter, std::function<bool (const std::string&)> string_validator = nullptr);
     void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string>>& filters, std::function<bool (const std::string&)> string_validator = nullptr);
-    void                DirectoryOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path);
+    void                DirectoryOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, bool disabled = false);
     void                SoundFileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text);
     void                ColorOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text);
     void                FontOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text);
     void                ResolutionOption(GG::ListBox* page, int indentation_level);
 
     void                DoneClicked();
+
+    bool is_game_running;
 
     std::shared_ptr<GG::TabWnd> m_tabs;
     std::shared_ptr<GG::Button> m_done_button;

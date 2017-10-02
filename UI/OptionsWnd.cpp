@@ -439,10 +439,11 @@ namespace {
     }
 }
 
-OptionsWnd::OptionsWnd():
+OptionsWnd::OptionsWnd(bool is_game_running_):
     CUIWnd(UserString("OPTIONS_TITLE"),
            GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE,
            OPTIONS_WND_NAME),
+    is_game_running(is_game_running_),
     m_tabs(nullptr),
     m_done_button(nullptr)
 {}
@@ -702,7 +703,7 @@ void OptionsWnd::CompleteConstruction() {
 
     // Directories tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_DIRECTORIES"));
-    DirectoryOption(current_page, 0, "resource-dir", UserString("OPTIONS_FOLDER_SETTINGS"), GetRootDataDir());  // GetRootDataDir() returns the default browse path when modifying this directory option.  the actual default directory (before modifying) is gotten from the specified option name "resource-dir"
+    DirectoryOption(current_page, 0, "resource-dir", UserString("OPTIONS_FOLDER_SETTINGS"), GetRootDataDir(), is_game_running);  // GetRootDataDir() returns the default browse path when modifying this directory option.  the actual default directory (before modifying) is gotten from the specified option name "resource-dir"
     DirectoryOption(current_page, 0, "save-dir", UserString("OPTIONS_FOLDER_SAVE"),     GetUserDataDir());
     DirectoryOption(current_page, 0, "server-save-dir", UserString("OPTIONS_SERVER_FOLDER_SAVE"),     GetUserDataDir());
     m_tabs->SetCurrentWnd(0);
@@ -1020,14 +1021,21 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     fb.SetEffectsButton(std::move(button));
 }
 
-void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const fs::path& path,
+void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const std::string& option_name,
+                                const std::string& text, const fs::path& path,
                                 const std::vector<std::pair<std::string, std::string>>& filters,
-                                std::function<bool (const std::string&)> string_validator, bool directory, bool relative_path)
+                                std::function<bool (const std::string&)> string_validator,
+                                bool directory, bool relative_path,
+                                bool disabled)
 {
     auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     auto edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>(option_name));
     edit->Resize(GG::Pt(50*SPIN_WIDTH, edit->Height())); // won't resize within layout bigger than its initial size, so giving a big initial size here
     auto button = Wnd::Create<CUIButton>("...");
+    if (disabled) {
+        edit->Disable();
+        button->Disable();
+    }
 
     auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, ROW_WIDTH, button->MinUsableSize().y,
                                               1, 3, 0, 5);
@@ -1077,18 +1085,18 @@ void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std:
 
 void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path,
                             const std::vector<std::pair<std::string, std::string>>& filters, std::function<bool (const std::string&)> string_validator/* = 0*/)
-{ FileOptionImpl(page, indentation_level, option_name, text, path, filters, string_validator, false, false); }
+{ FileOptionImpl(page, indentation_level, option_name, text, path, filters, string_validator, false, false, false); }
 
 void OptionsWnd::SoundFileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
     FileOption(page, indentation_level, option_name, text, ClientUI::SoundDir(), std::make_pair(UserString("OPTIONS_SOUND_FILE"),
                "*" + SOUND_FILE_SUFFIX), ValidSoundFile);
 }
 
-void OptionsWnd::DirectoryOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text,
-                                 const fs::path& path)
+void OptionsWnd::DirectoryOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
+                                 const std::string& text, const fs::path& path, bool disabled /*= false*/)
 {
     FileOptionImpl(page, indentation_level, option_name, text, path, std::vector<std::pair<std::string, std::string>>(),
-                   ValidDirectory, true, false);
+                   ValidDirectory, true, false, disabled);
 }
 
 void OptionsWnd::ColorOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
