@@ -710,7 +710,7 @@ void OptionsWnd::CompleteConstruction() {
      *  The actual default directory (before modifying) is gotten from the specified option name "dir.resource.path" */
     DirectoryOption(current_page, 0, "dir.resource.path", UserString("OPTIONS_FOLDER_SETTINGS"), GetRootDataDir(), is_game_running);
     DirectoryOption(current_page, 0, "dir.save.path", UserString("OPTIONS_FOLDER_SAVE"), GetUserDataDir());
-    DirectoryOption(current_page, 0, "server-save-dir", UserString("OPTIONS_SERVER_FOLDER_SAVE"),     GetUserDataDir());
+    DirectoryOption(current_page, 0, "dir.save.server.path", UserString("OPTIONS_SERVER_FOLDER_SAVE"), GetUserDataDir());
     m_tabs->SetCurrentWnd(0);
 
     // Logging page

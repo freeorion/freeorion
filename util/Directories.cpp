@@ -466,9 +466,9 @@ const fs::path GetSaveDir() {
 const fs::path GetServerSaveDir() {
     // if server save dir option has been set, use specified location.  otherwise,
     // use default location
-    std::string options_save_dir = GetOptionsDB().Get<std::string>("server-save-dir");
+    std::string options_save_dir = GetOptionsDB().Get<std::string>("dir.save.server.path");
     if (options_save_dir.empty())
-        options_save_dir = GetOptionsDB().GetDefault<std::string>("server-save-dir");
+        options_save_dir = GetOptionsDB().GetDefault<std::string>("dir.save.server.path");
     return FilenameToPath(options_save_dir);
 }
 
