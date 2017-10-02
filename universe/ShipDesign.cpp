@@ -1641,14 +1641,3 @@ LoadShipDesignsAndManifestOrderFromParseResults(
 
     return std::make_tuple(ship_manifest_inconsistent, std::move(saved_designs), ordering);
 }
-
-std::tuple<
-    bool,
-    std::unordered_map<boost::uuids::uuid,
-                       std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>,
-                       boost::hash<boost::uuids::uuid>>,
-    std::vector<boost::uuids::uuid>>
-LoadShipDesignsAndManifestOrderFromFileSystem(const boost::filesystem::path& dir) {
-    auto designs_paths_and_ordering = parse::ship_designs(dir);
-    return LoadShipDesignsAndManifestOrderFromParseResults(designs_paths_and_ordering);
-}

@@ -849,14 +849,4 @@ FO_COMMON_API std::tuple<
     std::vector<boost::uuids::uuid>>
 LoadShipDesignsAndManifestOrderFromParseResults(PredefinedShipDesignManager::ParsedShipDesignsType& parsed);
 
-/** Load all ship designs in \p dir and return a tuple is_error, the map from
-    uuid to ship design and path and the ship ordering from the manifest. */
-FO_COMMON_API std::tuple<
-    bool,
-    std::unordered_map<boost::uuids::uuid,
-        std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>,
-        boost::hash<boost::uuids::uuid>>,
-    std::vector<boost::uuids::uuid>>
-LoadShipDesignsAndManifestOrderFromFileSystem(const boost::filesystem::path& dir);
-
 #endif // _ShipDesign_h_
