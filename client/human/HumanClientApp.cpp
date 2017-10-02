@@ -353,6 +353,8 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     // Start parsing content
     ParseUniverseObjectTypes();
+    GetOptionsDB().OptionChangedSignal("resource-dir").connect(
+        boost::bind(&HumanClientApp::HandleResoureDirChange, this));
 }
 
 void HumanClientApp::ConnectKeyboardAcceleratorSignals() {
@@ -1429,6 +1431,15 @@ void HumanClientApp::UpdateFPSLimit() {
     } else {
         SetMaxFPS(0.0); // disable fps limit
         DebugLogger() << "Disabled FPS limit";
+    }
+}
+
+void HumanClientApp::HandleResoureDirChange() {
+    if (!m_game_started) {
+        DebugLogger() << "Resource directory changed.  Reparsing universe ...";
+        ParseUniverseObjectTypes();
+    } else {
+        WarnLogger() << "Resource directory changes will take effect on application restart.";
     }
 }
 
