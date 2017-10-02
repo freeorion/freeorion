@@ -403,8 +403,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const StartQuittingGame& e)
     return transit<QuittingGame>();
 }
 
-boost::statechart::result WaitingForMPJoinAck::react(const CancelMPGameClicked& a)
-{
+boost::statechart::result WaitingForMPJoinAck::react(const CancelMPGameClicked& a) {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForMPJoinAck.CancelMPGameClicked";
 
     // See reaction_transition_note.

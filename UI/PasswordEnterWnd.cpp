@@ -86,11 +86,12 @@ void PasswordEnterWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::F
 
 void PasswordEnterWnd::SetPlayerName(const std::string& player_name) {
     m_player_name_edit->SetText(player_name);
-    m_password_edit->SetText(std::string());
+    m_password_edit->SetText("");
 }
 
 void PasswordEnterWnd::OkClicked() {
-    HumanClientApp::GetApp()->Networking().SendMessage(AuthResponseMessage(*m_player_name_edit, *m_password_edit));
+    HumanClientApp::GetApp()->Networking().SendMessage(
+        AuthResponseMessage(*m_player_name_edit, m_password_edit->RawText()));
     // hide window
     HumanClientApp::GetApp()->Remove(shared_from_this());
 }
