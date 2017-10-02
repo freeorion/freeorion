@@ -16,6 +16,7 @@
 #include "../universe/System.h"
 #include "../universe/Universe.h"
 #include "../universe/Enums.h"
+#include "../universe/Tech.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/ValueRef.h"
 #include "ResourcePool.h"

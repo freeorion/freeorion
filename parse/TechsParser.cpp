@@ -6,6 +6,7 @@
 #include "ValueRefParser.h"
 
 #include "../universe/Species.h"
+#include "../universe/Tech.h"
 #include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -260,7 +261,8 @@ namespace {
 }
 
 namespace parse {
-    TechManager::TechParseTuple techs(const boost::filesystem::path& path) {
+    template <typename T>
+    T techs(const boost::filesystem::path& path) {
         const lexer lexer;
         TechManager::TechContainer techs_;
         std::map<std::string, std::unique_ptr<TechCategory>> categories;
@@ -278,3 +280,8 @@ namespace parse {
         return std::make_tuple(std::move(techs_), std::move(categories), categories_seen);
     }
 }
+
+// explicitly instantiate techs.
+// This allows Tech.h to only be included in this .cpp file and not Parse.h
+// which recompiles all parsers if Tech.h changes.
+template FO_PARSE_API TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const boost::filesystem::path& path);

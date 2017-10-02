@@ -24,6 +24,7 @@
 #include "Predicates.h"
 #include "Special.h"
 #include "Species.h"
+#include "Tech.h"
 #include "Condition.h"
 #include "ValueRef.h"
 #include "Enums.h"

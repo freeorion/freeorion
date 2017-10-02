@@ -6,12 +6,15 @@
 #include "../universe/Field.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"
+#include "../universe/Tech.h"
 #include "../util/Directories.h"
 #include "../util/MultiplayerCommon.h"
 
 #include <boost/filesystem.hpp>
 
 #include <future>
+
+extern template TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const boost::filesystem::path& path);
 
 const int INVALID_GAME_TURN = -(2 << 15) + 1;
 const int BEFORE_FIRST_TURN = -(2 << 14);
@@ -58,10 +61,10 @@ void IApp::ParseUniverseObjectTypes() {
     GetFieldTypeManager().SetFieldTypes(StartParsing(parse::fields, rdir / "scripting/fields"));
     GetSpecialsManager().SetSpecialsTypes(StartParsing(parse::specials, rdir / "scripting/specials"));
     GetSpeciesManager().SetSpeciesTypes(StartParsing(parse::species, rdir / "scripting/species"));
-    GetTechManager().SetTechs(StartParsing(parse::techs, rdir / "scripting/techs"));
     GetPartTypeManager().SetPartTypes(StartParsing(parse::ship_parts, rdir / "scripting/ship_parts"));
     GetHullTypeManager().SetHullTypes(StartParsing(parse::ship_hulls, rdir / "scripting/ship_hulls"));
     GetPredefinedShipDesignManager().SetShipDesignTypes(StartParsing(parse::ship_designs, rdir / "scripting/ship_designs"));
     GetPredefinedShipDesignManager().SetMonsterDesignTypes(StartParsing(parse::ship_designs, rdir / "scripting/monster_designs"));
     GetGameRules().Add(StartParsing(parse::game_rules, rdir / "scripting/game_rules.focs.txt"));
+    GetTechManager().SetTechs(StartParsing(parse::techs<TechManager::TechParseTuple>, rdir / "scripting/techs"));
 }

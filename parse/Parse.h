@@ -7,10 +7,14 @@
 #   define FO_PARSE_API
 #endif
 
-#include "../universe/Tech.h"
+#include "../universe/ValueRefFwd.h"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/uuid/uuid.hpp>
+
+#include <map>
+#include <set>
+#include <vector>
 
 class BuildingType;
 class FieldType;
@@ -23,6 +27,7 @@ class Special;
 class Species;
 struct EncyclopediaArticle;
 class GameRules;
+struct ItemSpec;
 
 namespace parse {
     FO_PARSE_API std::map<std::string, std::unique_ptr<BuildingType>> buildings(const boost::filesystem::path& path);
@@ -33,7 +38,10 @@ namespace parse {
 
     FO_PARSE_API std::map<std::string, std::unique_ptr<Species>> species(const boost::filesystem::path& path);
 
-    FO_PARSE_API TechManager::TechParseTuple techs(const boost::filesystem::path& path);
+    /* T in techs<T> can only be TechManager::TechParseTuple.  This decouples
+       Parse.h from Tech.h so that all parsers are not recompiled when Tech.h changes.*/
+    template <typename T>
+    FO_PARSE_API T techs(const boost::filesystem::path& path);
 
     FO_PARSE_API std::vector<ItemSpec> items(const boost::filesystem::path& path);
 
