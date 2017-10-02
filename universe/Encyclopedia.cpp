@@ -4,7 +4,6 @@
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/CheckSums.h"
-#include "../parse/Parse.h"
 
 
 Encyclopedia& GetEncyclopedia() {

@@ -23,7 +23,6 @@
 #include "../../util/i18n.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/SitRepEntry.h"
-#include "../../parse/Parse.h"
 
 #include "../../Empire/Empire.h"
 #include "../../Empire/EmpireManager.h"

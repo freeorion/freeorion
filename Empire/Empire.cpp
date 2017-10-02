@@ -1,6 +1,5 @@
 #include "Empire.h"
 
-#include "../parse/Parse.h"
 #include "../util/i18n.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/ScopedTimer.h"

@@ -7,7 +7,6 @@
 #include "Predicates.h"
 #include "Universe.h"
 #include "ValueRef.h"
-#include "../parse/Parse.h"
 #include "../util/AppInterface.h"
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"

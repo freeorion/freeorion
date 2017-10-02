@@ -4,7 +4,6 @@
 #include "Effect.h"
 #include "UniverseObject.h"
 #include "ValueRef.h"
-#include "../parse/Parse.h"
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"

@@ -9,7 +9,6 @@
 #include "ValueRef.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
-#include "../parse/Parse.h"
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
