@@ -6,10 +6,20 @@ redirect_logging_to_freeorion_logger()
 
 import sys
 
+import freeorion as fo
+
 class AuthProvider:
     def __init__(self):
-        self.logins = { 'test' : 'test' }
-        print >> sys.stdout, "Auth initialized"
+        self.logins = {}
+        try:
+            with open(fo.get_user_config_dir() + "/auth.txt") as f:
+                for line in f:
+                    l = line.rsplit(':', 1)
+                    self.logins[l[0]] = l[1]
+        except:
+            exctype, value = sys.exc_info()[:2]
+            warn("Cann't read auth file %s: %s %s" % (fo.get_user_config_dir() + "/auth.txt", exctype, value))
+        info("Auth initialized")
  
     def is_require_auth(self, player_name):
         return player_name in self.logins
