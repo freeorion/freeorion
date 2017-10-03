@@ -435,8 +435,9 @@ def set_planet_growth_specials(focus_manager):
             # the increased population on the planet using this growth focus
             # is mostly wasted, so ignore it for now.
             pop = planet.currentMeterValue(fo.meterType.population)
-            if pop > potential_pop_increase - 2 * planet.size:
-                _print_evaluation("would lose more population (%.1f) than total gain everywhere else." % pop)
+            pop_gain = potential_pop_increase - planet.size
+            if pop > pop_gain:
+                _print_evaluation("would lose more pop (%.1f) than gain everywhere else (%.1f)." % (pop, pop_gain))
                 continue
 
             # If we have a computronium special here, then research focus will have higher priority.
@@ -445,7 +446,7 @@ def set_planet_growth_specials(focus_manager):
                 continue
 
             _print_evaluation("considered (pop %.1f, growth gain %.1f, current focus %s)" % (
-                pop, potential_pop_increase - 2*planet.size, pinfo.current_focus))
+                pop, pop_gain, pinfo.current_focus))
 
             # add a bias to discourage switching out growth focus to avoid focus change penalties
             if pinfo.current_focus == GROWTH:
