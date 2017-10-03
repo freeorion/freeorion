@@ -120,6 +120,7 @@ namespace parse { namespace detail {
 
         parse::int_arithmetic_rules       int_rules;
         parse::double_parser_rules        double_rules;
+        visibility_parser_rules           visibility_rules;
         set_meter_rule                    set_meter;
         set_meter_rule                    set_ship_part_meter;
         set_stockpile_or_vis_rule         set_empire_stockpile;
