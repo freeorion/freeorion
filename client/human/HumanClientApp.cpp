@@ -427,8 +427,7 @@ namespace {
 }
 
 void HumanClientApp::StartServer() {
-    auto connected = m_networking->ConnectToLocalHostServer(std::chrono::milliseconds(100));
-    if (connected) {
+    if (m_networking->PingLocalHostServer(std::chrono::milliseconds(100))) {
         ErrorLogger() << "Can't start local server because a server is already connecting at 127.0.0.0.";
         throw LocalServerAlreadyRunningException();
     }
