@@ -21,7 +21,8 @@ namespace parse { namespace detail {
     ) :
         effect_parser_rules_2::base_type(start, "effect_parser_rules_2"),
         int_rules(tok, condition_parser, string_grammar),
-        double_rules(tok, condition_parser, string_grammar)
+        double_rules(tok, condition_parser, string_grammar),
+        visibility_rules(tok, labeller)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -124,7 +125,7 @@ namespace parse { namespace detail {
                         )
                     )
                 )
-                >  labeller.rule(Visibility_token) > parse::detail::visibility_rules().expr [ _c = _1 ]
+                >  labeller.rule(Visibility_token) > visibility_rules.expr [ _c = _1 ]
                 >-(labeller.rule(Condition_token) > condition_parser [ _e = _1 ])
             ) [ _val = new_<Effect::SetVisibility>(_c, _d, _b, _e) ]
             ;

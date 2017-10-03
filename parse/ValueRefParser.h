@@ -247,7 +247,11 @@ enum_value_ref_rules<PlanetType>& planet_type_rules();
 
 enum_value_ref_rules<StarType>& star_type_rules();
 
-enum_value_ref_rules<Visibility>& visibility_rules();
+    struct visibility_parser_rules :
+        public parse::detail::enum_value_ref_rules<Visibility>
+    {
+        visibility_parser_rules(const parse::lexer& tok, Labeller& labeller);
+    };
 
 enum_value_ref_rules<UniverseObjectType>& universe_object_type_rules();
 

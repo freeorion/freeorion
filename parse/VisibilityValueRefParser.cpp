@@ -4,45 +4,7 @@
 
 #include "../universe/Enums.h"
 
-
 namespace parse {
-    const complex_variable_rule<Visibility>& visibility_var_complex();
-
-    struct visibility_parser_rules :
-        public parse::detail::enum_value_ref_rules<Visibility>
-    {
-        visibility_parser_rules() :
-            enum_value_ref_rules("Visibility")
-        {
-            namespace phoenix = boost::phoenix;
-            namespace qi = boost::spirit::qi;
-
-            using phoenix::new_;
-
-            qi::_val_type _val;
-
-            const parse::lexer& tok = parse::lexer::instance();
-
-            // variable_name left empty, as no direct object properties are
-            // available that return a visibility
-
-            enum_expr
-                =   tok.Invisible_  [ _val = VIS_NO_VISIBILITY ]
-                |   tok.Basic_      [ _val = VIS_BASIC_VISIBILITY ]
-                |   tok.Partial_    [ _val = VIS_PARTIAL_VISIBILITY ]
-                |   tok.Full_       [ _val = VIS_FULL_VISIBILITY ]
-                ;
-
-            free_variable_expr
-                =   tok.Value_      [ _val = new_<ValueRef::Variable<Visibility>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
-                ;
-
-            complex_expr
-                =   visibility_var_complex()
-                ;
-        }
-    };
-
     struct visibility_complex_parser_rules {
         visibility_complex_parser_rules(const parse::lexer& tok) :
             simple_int_rules(tok)
@@ -87,16 +49,45 @@ namespace parse {
         complex_variable_rule<Visibility> start;
     };
 
-    const complex_variable_rule<Visibility>& visibility_var_complex()
+        const complex_variable_rule<Visibility>& visibility_var_complex(const parse::lexer& tok)
     {
-        static visibility_complex_parser_rules visibility_complex_parser(parse::lexer::instance());
+        //TODO make into a grammar
+        static visibility_complex_parser_rules visibility_complex_parser(tok);
         return visibility_complex_parser.start;
     }
+}
 
-    namespace detail {
-        enum_value_ref_rules<Visibility>& visibility_rules() {
-            static visibility_parser_rules retval;
-            return retval;
-        }
+namespace parse { namespace detail {
+    visibility_parser_rules::visibility_parser_rules(
+        const parse::lexer& tok, Labeller& labeller
+    ) :
+        enum_value_ref_rules("Visibility")
+    {
+        namespace phoenix = boost::phoenix;
+        namespace qi = boost::spirit::qi;
+
+        using phoenix::new_;
+
+        qi::_val_type _val;
+
+        // variable_name left empty, as no direct object properties are
+        // available that return a visibility
+
+        enum_expr
+            =   tok.Invisible_  [ _val = VIS_NO_VISIBILITY ]
+            |   tok.Basic_      [ _val = VIS_BASIC_VISIBILITY ]
+            |   tok.Partial_    [ _val = VIS_PARTIAL_VISIBILITY ]
+            |   tok.Full_       [ _val = VIS_FULL_VISIBILITY ]
+            ;
+
+        free_variable_expr
+            =   tok.Value_      [ _val = new_<ValueRef::Variable<Visibility>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
+            ;
+
+        complex_expr
+            =   visibility_var_complex(tok)
+            ;
+    }
+
     }
 }
