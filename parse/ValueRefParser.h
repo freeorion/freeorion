@@ -285,12 +285,22 @@ struct enum_value_ref_rules {
                                const condition_parser_grammar& condition_parser);
     };
 
+    struct visibility_complex_parser_grammar : public complex_variable_grammar<Visibility> {
+        visibility_complex_parser_grammar(const parse::lexer& tok, Labeller& labeller);
+
+        simple_int_parser_rules  simple_int_rules;
+        complex_variable_rule<Visibility> empire_object_visibility;
+        complex_variable_rule<Visibility> start;
+    };
+
     struct visibility_parser_rules :
         public parse::detail::enum_value_ref_rules<Visibility>
     {
         visibility_parser_rules(const parse::lexer& tok,
                                 Labeller& labeller,
                                 const condition_parser_grammar& condition_parser);
+
+        visibility_complex_parser_grammar visibility_var_complex_grammar;
     };
 
     struct universe_object_type_parser_rules :
