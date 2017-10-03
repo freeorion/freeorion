@@ -403,7 +403,7 @@ def set_planet_growth_specials(focus_manager):
     if not useGrowth:
         return
 
-    # TODO: also consider potential future benefit re currently unpopulated planets
+    # TODO Consider actual resource output of the candidate locations rather than only population
     for special, locations in ColonisationAI.available_growth_specials.iteritems():
         # Find which metabolism is boosted by this special
         metabolism = AIDependencies.metabolismBoosts.get(special)
