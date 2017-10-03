@@ -322,6 +322,7 @@
 		CE0ED5F91BCFE16E00375001 /* AIWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE0ED5F71BCFE16E00375001 /* AIWrapper.cpp */; };
 		CE13B48F1C8CB0CF0085A4DC /* CommonParamsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE13B48E1C8CB0CF0085A4DC /* CommonParamsParser.cpp */; };
 		CE1939C61F31AD4C0085A4DC /* IDAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE1939C41F31AD4C0085A4DC /* IDAllocator.cpp */; };
+		CE2341861F83FF630085A4DC /* VisibilityValueRefParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE2341851F83FF630085A4DC /* VisibilityValueRefParser.cpp */; };
 		CE2BAD8F1E3E43E40085A4DC /* Pathfinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE2BAD8D1E3E43E40085A4DC /* Pathfinder.cpp */; };
 		CE2C454D1C65036F0085A4DC /* ResourceBrowseWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE2C454B1C65036F0085A4DC /* ResourceBrowseWnd.cpp */; };
 		CE2C454E1C6503990085A4DC /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 822E325B19BEED6C00A7B707 /* libz.a */; };
@@ -1077,6 +1078,7 @@
 		CE1939C41F31AD4C0085A4DC /* IDAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDAllocator.cpp; sourceTree = "<group>"; };
 		CE1939C51F31AD4C0085A4DC /* IDAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDAllocator.h; sourceTree = "<group>"; };
 		CE2227D41EA971A10085A4DC /* EnumsFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumsFwd.h; sourceTree = "<group>"; };
+		CE2341851F83FF630085A4DC /* VisibilityValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisibilityValueRefParser.cpp; sourceTree = "<group>"; };
 		CE2BAD8D1E3E43E40085A4DC /* Pathfinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pathfinder.cpp; sourceTree = "<group>"; };
 		CE2BAD8E1E3E43E40085A4DC /* Pathfinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pathfinder.h; sourceTree = "<group>"; };
 		CE2C454B1C65036F0085A4DC /* ResourceBrowseWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceBrowseWnd.cpp; sourceTree = "<group>"; };
@@ -2008,6 +2010,7 @@
 				8259376B147E3B1C00B840A5 /* ValueRefParser.h */,
 				829BBB6117D09017009D3735 /* ValueRefParserImpl.cpp */,
 				8259376C147E3B1C00B840A5 /* ValueRefParserImpl.h */,
+				CE2341851F83FF630085A4DC /* VisibilityValueRefParser.cpp */,
 			);
 			path = parse;
 			sourceTree = "<group>";
@@ -2672,6 +2675,7 @@
 				829BBB6217D09017009D3735 /* ValueRefParserImpl.cpp in Sources */,
 				82C560D317D0CC2F00FE3B35 /* Tokens.cpp in Sources */,
 				829E16B11811181F00F7F52D /* EmpireStatsParser.cpp in Sources */,
+				CE2341861F83FF630085A4DC /* VisibilityValueRefParser.cpp in Sources */,
 				82D2D9A31838C8340011C212 /* ConditionParser5.cpp in Sources */,
 				82D2D9A41838C8340011C212 /* ConditionParser6.cpp in Sources */,
 				CE13B48F1C8CB0CF0085A4DC /* CommonParamsParser.cpp in Sources */,
