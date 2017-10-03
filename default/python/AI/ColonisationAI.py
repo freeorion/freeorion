@@ -318,7 +318,7 @@ def survey_universe():
                             yard_here = [pid]
                         if this_spec.canColonize and planet.currentMeterValue(fo.meterType.targetPopulation) >= 3:
                             empire_colonizers.setdefault(spec_name, []).extend(yard_here)
-                    if "COMPUTRONIUM_SPECIAL" in planet.specials:  # only counting it if planet is populated
+                    if AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials:  # only counting it if planet is populated
                         state.set_have_computronium()
 
                 this_grade_facilities = facilities_by_species_grade.setdefault(weapons_grade, {})
@@ -1149,14 +1149,14 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
             if "TEMPORAL_ANOMALY_SPECIAL" in planet.specials:
                 research_bonus += discount_multiplier * 2 * AIDependencies.RESEARCH_PER_POP * max_pop_size * 25
                 detail.append("Temporal Anomaly Research")
-            if "COMPUTRONIUM_SPECIAL" in planet.specials:
+            if AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials:
                 comp_bonus = (0.5 * AIDependencies.TECH_COST_MULTIPLIER * AIDependencies.RESEARCH_PER_POP *
                               AIDependencies.COMPUTRONIUM_RES_MULTIPLIER * empire_status['researchers'] *
                               discount_multiplier)
                 if state.have_computronium:
                     comp_bonus *= backup_factor
                 research_bonus += comp_bonus
-                detail.append("COMPUTRONIUM_SPECIAL")
+                detail.append(AIDependencies.COMPUTRONIUM_SPECIAL)
 
         retval += max(ind_val + asteroid_bonus + gas_giant_bonus, research_bonus,
                       growth_val) + fixed_ind + fixed_res + supply_val
