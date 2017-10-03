@@ -224,8 +224,6 @@ namespace parse {
 namespace detail {
 
 template <typename T>
-struct enum_value_ref_rules;
-template <typename T>
 struct enum_value_ref_rules {
     enum_value_ref_rules(const std::string& type_name);
 
@@ -248,15 +246,13 @@ enum_value_ref_rules<PlanetEnvironment>& planet_environment_rules();
 
 enum_value_ref_rules<PlanetSize>& planet_size_rules();
 
-    template <typename T>
-    struct enum_value_ref_rules;
+enum_value_ref_rules<PlanetType>& planet_type_rules();
 
-    enum_value_ref_rules<PlanetEnvironment>& planet_environment_rules();
-    enum_value_ref_rules<PlanetSize>& planet_size_rules();
-    enum_value_ref_rules<PlanetType>& planet_type_rules();
-    enum_value_ref_rules<StarType>& star_type_rules();
-    enum_value_ref_rules<Visibility>& visibility_rules();
-    enum_value_ref_rules<UniverseObjectType>& universe_object_type_rules();
+enum_value_ref_rules<StarType>& star_type_rules();
+
+enum_value_ref_rules<Visibility>& visibility_rules();
+
+enum_value_ref_rules<UniverseObjectType>& universe_object_type_rules();
 
     }
 }
