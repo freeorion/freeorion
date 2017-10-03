@@ -400,37 +400,73 @@ def assess_protection_focus(pid, pinfo):
 
 def set_planet_growth_specials(focus_manager):
     """set resource foci of planets with potentially useful growth factors. Remove planets from list of candidates."""
-    if useGrowth:
-        # TODO: also consider potential future benefit re currently unpopulated planets
-        for metab, metab_inc_pop in ColonisationAI.empire_metabolisms.items():
-            for special in [aspec for aspec in AIDependencies.metabolismBoostMap.get(metab, []) if aspec in ColonisationAI.available_growth_specials]:
-                ranked_planets = []
-                for pid in ColonisationAI.available_growth_specials[special]:
-                    pinfo = focus_manager.all_planet_info[pid]
-                    planet = pinfo.planet
-                    pop = planet.currentMeterValue(fo.meterType.population)
-                    if (pop > metab_inc_pop - 2 * planet.size) or (GROWTH not in planet.availableFoci):  # not enough benefit to lose local production, or can't put growth focus here
-                        continue
-                    for special2 in ["COMPUTRONIUM_SPECIAL"]:
-                        if special2 in planet.specials:
-                            break
-                    else:  # didn't have any specials that would override interest in growth special
-                        print "Considering Growth Focus for %s (%d) with special %s; planet has pop %.1f and %s metabolism incremental pop is %.1f" % (
-                            planet.name, pid, special, pop, metab, metab_inc_pop)
-                        if pinfo.current_focus == GROWTH:
-                            pop -= 4  # discourage changing current focus to minimize focus-changing penalties
-                        ranked_planets.append((pop, pid, pinfo.current_focus))
-                if not ranked_planets:
-                    continue
-                ranked_planets.sort()
-                print "Considering Growth Focus choice for special %s; possible planet pop, id pairs are %s" % (metab, ranked_planets)
-                for _spPop, spPID, cur_focus in ranked_planets:  # index 0 should be able to set focus, but just in case...
-                    planet = focus_manager.all_planet_info[spPID].planet
-                    if focus_manager.bake_future_focus(spPID, GROWTH):
-                        print "%s focus of planet %s (%d) at Growth Focus" % (["set", "left"][cur_focus == GROWTH], planet.name, spPID)
-                        break
-                    else:
-                        print "failed setting focus of planet %s (%d) at Growth Focus; focus left at %s" % (planet.name, spPID, planet.focus)
+    if not useGrowth:
+        return
+
+    # TODO Consider actual resource output of the candidate locations rather than only population
+    for special, locations in ColonisationAI.available_growth_specials.iteritems():
+        # Find which metabolism is boosted by this special
+        metabolism = AIDependencies.metabolismBoosts.get(special)
+        if not metabolism:
+            warn("Entry in available growth special not mapped to a metabolism")
+            continue
+
+        # Find the total population bonus we could get by using growth focus
+        potential_pop_increase = ColonisationAI.empire_metabolisms.get(metabolism, 0)
+        if not potential_pop_increase:
+            continue
+
+        debug("Considering setting growth focus for %s at locations %s for potential population bonus of %.1f" % (
+            special, locations, potential_pop_increase))
+
+        # Find the best suited planet to use growth special on, i.e. the planet where
+        # we will lose the least amount of resource generation when using growth focus.
+        def _print_evaluation(evaluation):
+            """Local helper function printing a formatted evaluation."""
+            debug("  - %s %s" % (planet, evaluation))
+        ranked_planets = []
+        for pid in locations:
+            pinfo = focus_manager.all_planet_info[pid]
+            planet = pinfo.planet
+            if GROWTH not in planet.availableFoci:
+                _print_evaluation("has no growth focus available.")
+                continue
+
+            # the increased population on the planet using this growth focus
+            # is mostly wasted, so ignore it for now.
+            pop = planet.currentMeterValue(fo.meterType.population)
+            pop_gain = potential_pop_increase - planet.size
+            if pop > pop_gain:
+                _print_evaluation("would lose more pop (%.1f) than gain everywhere else (%.1f)." % (pop, pop_gain))
+                continue
+
+            # If we have a computronium special here, then research focus will have higher priority.
+            if AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials and RESEARCH in planet.availableFoci:
+                _print_evaluation("has a usable %s" % AIDependencies.COMPUTRONIUM_SPECIAL)
+                continue
+
+            _print_evaluation("considered (pop %.1f, growth gain %.1f, current focus %s)" % (
+                pop, pop_gain, pinfo.current_focus))
+
+            # add a bias to discourage switching out growth focus to avoid focus change penalties
+            if pinfo.current_focus == GROWTH:
+                pop -= 4
+
+            ranked_planets.append((pop, pid, planet))
+
+        if not ranked_planets:
+            debug("  --> No suitable location found.")
+            continue
+
+        # sort possible locations by population in ascending order and set population
+        # bonus at the planet with lowest possible population loss.
+        ranked_planets.sort()
+        for pop, pid, planet in ranked_planets:
+            if focus_manager.bake_future_focus(pid, GROWTH):
+                debug("  --> Using growth focus at %s" % planet)
+                break
+        else:
+            warn("  --> Failed to set growth focus at all candidate locations.")
 
 
 def set_planet_production_and_research_specials(focus_manager):
@@ -447,7 +483,7 @@ def set_planet_production_and_research_specials(focus_manager):
     already_have_comp_moon = False
     for pid, pinfo in focus_manager.raw_planet_info.items():
         planet = pinfo.planet
-        if "COMPUTRONIUM_SPECIAL" in planet.specials and RESEARCH in planet.availableFoci and not already_have_comp_moon:
+        if AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials and RESEARCH in planet.availableFoci and not already_have_comp_moon:
             if focus_manager.bake_future_focus(pid, RESEARCH):
                 already_have_comp_moon = True
                 print "%s focus of planet %s (%d) (with Computronium Moon) at Research Focus" % (["set", "left"][pinfo.current_focus == RESEARCH], planet.name, pid)

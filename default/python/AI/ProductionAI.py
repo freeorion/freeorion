@@ -942,7 +942,7 @@ def generate_production_orders():
                     res = fo.issueScrapOrder(bldg)
                     print "Tried scrapping %s at planet %s, got result %d" % (building_name, planet.name, res)
         elif foAI.foAIstate.character.may_build_building(building_name) and can_build_camp and (t_pop >= 36):
-            if (planet.focus == FocusType.FOCUS_GROWTH) or ("COMPUTRONIUM_SPECIAL" in planet.specials) or (pid == capital_id):
+            if (planet.focus == FocusType.FOCUS_GROWTH) or (AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials) or (pid == capital_id):
                 continue
                 # pass  # now that focus setting takes these into account, probably works ok to have conc camp, but let's not push it
             queued_building_locs = [element.locationID for element in production_queue if (element.name == building_name)]

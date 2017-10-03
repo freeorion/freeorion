@@ -172,6 +172,7 @@ HONEYCOMB_IND_MULTIPLIER = 2.5
 # </editor-fold>
 
 # <editor-fold desc="Research related specials">
+COMPUTRONIUM_SPECIAL = "COMPUTRONIUM_SPECIAL"
 COMPUTRONIUM_RES_MULTIPLIER = 1.0
 # </editor-fold>
 
