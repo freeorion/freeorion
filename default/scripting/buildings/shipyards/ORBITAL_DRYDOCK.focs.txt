@@ -174,7 +174,7 @@ ORB_DRYDOCK_REPAIR_RATE
 ORB_DRYDOCK_REPAIR_VAL
 '''[[ORB_DRYDOCK_HAPPY_RATE]] * [[ORB_DRYDOCK_REPAIR_RATE(@1@)]]'''
 
-+// Planet in system with highest happiness that is owned and has a drydock
+// Planet in system with highest happiness that is owned and has a drydock
 PLANET_OWNED_DRYDOCK_HIGHEST_HAPPINESS
 '''MaximumNumberOf Number = 1 SortKey = LocalCandidate.Happiness Condition = And [
     Planet

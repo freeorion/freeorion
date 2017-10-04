@@ -31,7 +31,7 @@ ULTIMATE_DETECTION
             effects = SetDetection value = Value + 100
 '''
 
-# param 1: species
+// param 1: species
 COMMUNAL_VISION
 '''        EffectsGroup
             description = "COMMUNAL_VISION_DESC"
