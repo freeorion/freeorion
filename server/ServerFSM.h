@@ -84,6 +84,7 @@ struct MessageEventBase {
     (PlayerChat)                            \
     (Diplomacy)                             \
     (ModeratorAct)                          \
+    (AuthResponse)                          \
     (Error)
 
 
@@ -166,6 +167,7 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
     typedef boost::mpl::list<
         sc::custom_reaction<Disconnection>,
         sc::custom_reaction<JoinGame>,
+        sc::custom_reaction<AuthResponse>,
         sc::custom_reaction<LobbyUpdate>,
         sc::custom_reaction<PlayerChat>,
         sc::custom_reaction<StartMPGame>,
@@ -181,6 +183,7 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
 
     sc::result react(const Disconnection& d);
     sc::result react(const JoinGame& msg);
+    sc::result react(const AuthResponse& msg);
     sc::result react(const LobbyUpdate& msg);
     sc::result react(const PlayerChat& msg);
     sc::result react(const StartMPGame& msg);
@@ -194,6 +197,12 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
     std::vector<PlayerSaveGameData>         m_player_save_game_data;
     std::shared_ptr<ServerSaveGameData>     m_server_save_game_data;
     int                                     m_ai_next_index;
+
+private:
+    void EstablishPlayer(const PlayerConnectionPtr& player_connection,
+                         const std::string& player_name,
+                         Networking::ClientType client_type,
+                         const std::string& client_version_string);
 
     SERVER_ACCESSOR
 };
@@ -238,6 +247,7 @@ struct WaitingForMPGameJoiners : sc::state<WaitingForMPGameJoiners, ServerFSM> {
     typedef boost::mpl::list<
         sc::in_state_reaction<Disconnection, ServerFSM, &ServerFSM::HandleNonLobbyDisconnection>,
         sc::custom_reaction<JoinGame>,
+        sc::custom_reaction<AuthResponse>,
         sc::custom_reaction<CheckStartConditions>,
         sc::custom_reaction<ShutdownServer>,
         sc::custom_reaction<Hostless>,
@@ -248,6 +258,7 @@ struct WaitingForMPGameJoiners : sc::state<WaitingForMPGameJoiners, ServerFSM> {
     ~WaitingForMPGameJoiners();
 
     sc::result react(const JoinGame& msg);
+    sc::result react(const AuthResponse& msg);
     sc::result react(const CheckStartConditions& u);
     // unlike in SP game setup, no save file data needs to be loaded in this
     // state, as all the relevant info about AIs is provided by the lobby data.

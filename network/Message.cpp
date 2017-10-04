@@ -643,6 +643,26 @@ Message ContentCheckSumMessage() {
     return Message(Message::CHECKSUM, os.str());
 }
 
+Message AuthRequestMessage(const std::string& player_name, const std::string& auth) {
+    std::ostringstream os;
+    {
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(player_name)
+           << BOOST_SERIALIZATION_NVP(auth);
+    }
+    return Message(Message::AUTH_REQUEST, os.str());
+}
+
+Message AuthResponseMessage(const std::string& player_name, const std::string& auth) {
+    std::ostringstream os;
+    {
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(player_name)
+           << BOOST_SERIALIZATION_NVP(auth);
+    }
+    return Message(Message::AUTH_RESPONSE, os.str());
+}
+
 ////////////////////////////////////////////////
 // Message data extractors
 ////////////////////////////////////////////////
@@ -1169,6 +1189,36 @@ void ExtractContentCheckSumMessageData(
 
     } catch(const std::exception& err) {
         ErrorLogger() << "ExtractContentCheckSumMessageData(const Message& msg, std::string& save_filename, std::map<std::string, unsigned int>) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
+        throw err;
+    }
+}
+
+void ExtractAuthRequestMessageData(const Message& msg, std::string& player_name, std::string& auth) {
+    try {
+        std::istringstream is(msg.Text());
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(player_name)
+           >> BOOST_SERIALIZATION_NVP(auth);
+
+    } catch(const std::exception& err) {
+        ErrorLogger() << "ExtractAuthRequestMessageData(const Message& msg, std::string& player_name, std::string& auth) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
+        throw err;
+    }
+}
+
+void ExtractAuthResponseMessageData(const Message& msg, std::string& player_name, std::string& auth) {
+    try {
+        std::istringstream is(msg.Text());
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(player_name)
+           >> BOOST_SERIALIZATION_NVP(auth);
+
+    } catch(const std::exception& err) {
+        ErrorLogger() << "ExtractAuthResponeMessageData(const Message& msg, std::string& player_name, std::string& auth) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;

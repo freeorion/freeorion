@@ -13,6 +13,7 @@
 #include "../../UI/PlayerListWnd.h"
 #include "../../UI/IntroScreen.h"
 #include "../../UI/MultiplayerLobbyWnd.h"
+#include "../../UI/PasswordEnterWnd.h"
 #include "../../UI/MapWnd.h"
 
 #include <boost/format.hpp>
@@ -346,6 +347,20 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
     }
 }
 
+boost::statechart::result WaitingForMPJoinAck::react(const AuthRequest& msg) {
+    TraceLogger(FSM) << "(HumanClientFSM) WaitingForMPJoinAck.AuthRequest";
+
+    std::string player_name;
+    std::string auth;
+    ExtractAuthRequestMessageData(msg.m_message, player_name, auth);
+
+    auto password_dialog = Client().GetClientUI().GetPasswordEnterWnd();
+    password_dialog->SetPlayerName(player_name);
+    Client().Register(password_dialog);
+
+    return discard_event();
+}
+
 boost::statechart::result WaitingForMPJoinAck::react(const Disconnection& d) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.Disconnection";
 
@@ -388,6 +403,14 @@ boost::statechart::result WaitingForMPJoinAck::react(const StartQuittingGame& e)
     return transit<QuittingGame>();
 }
 
+boost::statechart::result WaitingForMPJoinAck::react(const CancelMPGameClicked& a) {
+    TraceLogger(FSM) << "(HumanClientFSM) WaitingForMPJoinAck.CancelMPGameClicked";
+
+    // See reaction_transition_note.
+    auto retval = discard_event();
+    Client().ResetToIntro(true);
+    return retval;
+}
 
 ////////////////////////////////////////////////////////////
 // MPLobby

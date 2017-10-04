@@ -8,6 +8,7 @@
 #include "ChatWnd.h"
 #include "PlayerListWnd.h"
 #include "MultiplayerLobbyWnd.h"
+#include "PasswordEnterWnd.h"
 #include "Sound.h"
 #include "Hotkeys.h"
 
@@ -606,6 +607,7 @@ ClientUI::ClientUI() :
     m_player_list_wnd(nullptr),
     m_intro_screen(nullptr),
     m_multiplayer_lobby_wnd(nullptr),
+    m_password_enter_wnd(nullptr),
     m_ship_designs(new ShipDesignManager())
 {
     s_the_UI = this;
@@ -621,6 +623,7 @@ ClientUI::ClientUI() :
 
     m_intro_screen = GG::Wnd::Create<IntroScreen>();
     m_multiplayer_lobby_wnd = GG::Wnd::Create<MultiPlayerLobbyWnd>();
+    m_password_enter_wnd = GG::Wnd::Create<PasswordEnterWnd>();
 
     GetOptionsDB().OptionChangedSignal("app-width").connect(
         boost::bind(&ClientUI::HandleSizeChange, this, true));
@@ -709,6 +712,9 @@ void ClientUI::ShowMultiPlayerLobbyWnd() {
 
 std::shared_ptr<MultiPlayerLobbyWnd> ClientUI::GetMultiPlayerLobbyWnd()
 { return m_multiplayer_lobby_wnd; }
+
+std::shared_ptr<PasswordEnterWnd> ClientUI::GetPasswordEnterWnd()
+{ return m_password_enter_wnd; }
 
 
 std::shared_ptr<SaveFileDialog> ClientUI::GetSaveFileDialog()

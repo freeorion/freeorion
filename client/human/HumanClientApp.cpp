@@ -951,8 +951,9 @@ void HumanClientApp::HandleMessage(Message& msg) {
     case Message::DIPLOMATIC_STATUS:        m_fsm->process_event(DiplomaticStatusUpdate(msg));  break;
     case Message::END_GAME:                 m_fsm->process_event(::EndGame(msg));               break;
 
-    case Message::DISPATCH_COMBAT_LOGS:     m_fsm->process_event(DispatchCombatLogs(msg));       break;
+    case Message::DISPATCH_COMBAT_LOGS:     m_fsm->process_event(DispatchCombatLogs(msg));      break;
     case Message::DISPATCH_SAVE_PREVIEWS:   HandleSaveGamePreviews(msg);                         break;
+    case Message::AUTH_REQUEST:             m_fsm->process_event(AuthRequest(msg));             break;
     default:
         ErrorLogger() << "HumanClientApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
     }

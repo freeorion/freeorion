@@ -9,6 +9,8 @@ an execute_turn_events() function returning a boolean (successful completion).
 
 * AI/  -  Python code which controls the computer players.  This is a
 sub-module of the resource directory and can be changed with the --ai-path flag.
+* auth/  -  Python code which manages auth information stored either in a file
+or in a database.
 * common/  -  Common files for code utilized by both the AI and the server.
 * handlers/  -  see handlers/README.md
 * turn_events/  -  Python scripts that run at the beginning of every turn, and

@@ -90,7 +90,53 @@ bool PythonServer::InitModules() {
     // import universe generator script file
     m_python_module_turn_events = import("turn_events");
 
+    // Confirm existence of the directory containing the auth Python scripts
+    // and add it to Pythons sys.path to make sure Python will find our scripts
+    if (!fs::exists(GetPythonAuthDir())) {
+        ErrorLogger() << "Can't find folder containing auth scripts";
+        return false;
+    }
+    AddToSysPath(GetPythonAuthDir());
+
+    // import auth script file
+    m_python_module_auth = import("auth");
+
+    // Save AuthProvider instance in auth module's namespace
+    m_python_module_auth.attr("__dict__")["auth_provider"] = m_python_module_auth.attr("AuthProvider")();
+
     DebugLogger() << "Server Python modules successfully initialized!";
+    return true;
+}
+
+bool PythonServer::IsRequireAuth(const std::string& player_name, bool &result) const {
+    boost::python::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
+    if (!auth_provider) {
+        ErrorLogger() << "Unable to get Python object auth_provider";
+        return false;
+    }
+    boost::python::object f = auth_provider.attr("is_require_auth");
+    if (!f) {
+        ErrorLogger() << "Unable to call Python method is_require_auth";
+        return false;
+    }
+    boost::python::object r = f(player_name);
+    result = boost::python::extract<bool>(r);
+    return true;
+}
+
+bool PythonServer::IsSuccessAuth(const std::string& player_name, const std::string& auth, bool &result) const {
+    boost::python::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
+    if (!auth_provider) {
+        ErrorLogger() << "Unable to get Python object auth_provider";
+        return false;
+    }
+    boost::python::object f = auth_provider.attr("is_success_auth");
+    if (!f) {
+        ErrorLogger() << "Unable to call Python method is_success_auth";
+        return false;
+    }
+    boost::python::object r = f(player_name, auth);
+    result = boost::python::extract<bool>(r);
     return true;
 }
 
@@ -128,3 +174,6 @@ const std::string GetPythonUniverseGeneratorDir()
 
 const std::string GetPythonTurnEventsDir()
 { return GetPythonDir() + "/turn_events"; }
+
+const std::string GetPythonAuthDir()
+{ return GetPythonDir() + "/auth"; }

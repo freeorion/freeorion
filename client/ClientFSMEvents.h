@@ -39,7 +39,8 @@ struct MessageEventBase {
     (Diplomacy)                                \
     (DiplomaticStatusUpdate)                   \
     (EndGame)                                  \
-    (CheckSum)
+    (CheckSum)                                 \
+    (AuthRequest)
 
 
 #define DECLARE_MESSAGE_EVENT(r, data, name)                            \

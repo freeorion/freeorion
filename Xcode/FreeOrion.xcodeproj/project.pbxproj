@@ -342,6 +342,7 @@
 		CE71ED7A1DADAB120085A4DC /* DependencyVersions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */; };
 		CE71ED7B1DADAB130085A4DC /* DependencyVersions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */; };
 		CE71ED7C1DADAB140085A4DC /* DependencyVersions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */; };
+		CE764D5F1F8153230085A4DC /* PasswordEnterWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE764D5D1F8153230085A4DC /* PasswordEnterWnd.cpp */; };
 		CE76B9CF1CBD7ACC0085A4DC /* ChangeLog.md in Resources */ = {isa = PBXBuildFile; fileRef = CE76B9CD1CBD7A990085A4DC /* ChangeLog.md */; };
 		CEC4ADC11BC13741000DFA9B /* AIFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADBF1BC13741000DFA9B /* AIFramework.cpp */; };
 		CED22D4D1EB8F15B0085A4DC /* libboost_log.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82714D761ADABE680071A329 /* libboost_log.a */; };
@@ -1109,6 +1110,8 @@
 		CE6183A51BB80D2E00952BEA /* ScrollPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollPanel.cpp; sourceTree = "<group>"; };
 		CE6183AC1BB80D4900952BEA /* CUILinkTextBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CUILinkTextBlock.cpp; sourceTree = "<group>"; };
 		CE6183AD1BB80D4900952BEA /* CUILinkTextBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CUILinkTextBlock.h; sourceTree = "<group>"; };
+		CE764D5D1F8153230085A4DC /* PasswordEnterWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PasswordEnterWnd.cpp; sourceTree = "<group>"; };
+		CE764D5E1F8153230085A4DC /* PasswordEnterWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasswordEnterWnd.h; sourceTree = "<group>"; };
 		CE76B9CD1CBD7A990085A4DC /* ChangeLog.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = ChangeLog.md; path = ../ChangeLog.md; sourceTree = "<group>"; };
 		CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DependencyVersions.cpp; sourceTree = "<group>"; };
 		CEC4ADBF1BC13741000DFA9B /* AIFramework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AIFramework.cpp; sourceTree = "<group>"; };
@@ -1695,6 +1698,8 @@
 				82132C2E15DA2BBC00F5B537 /* ObjectListWnd.h */,
 				471D5CCC0A98A3F900DA9C21 /* OptionsWnd.cpp */,
 				471D5CCD0A98A3F900DA9C21 /* OptionsWnd.h */,
+				CE764D5D1F8153230085A4DC /* PasswordEnterWnd.cpp */,
+				CE764D5E1F8153230085A4DC /* PasswordEnterWnd.h */,
 				2F60966312EEAD2200F58913 /* PlayerListWnd.cpp */,
 				2F60966412EEAD2200F58913 /* PlayerListWnd.h */,
 				8275F3ED1AD31381003568FF /* PopulationPanel.cpp */,
@@ -2711,6 +2716,7 @@
 				471D5E1E0A98A9AE00DA9C21 /* GalaxySetupWnd.cpp in Sources */,
 				8275F4041AD31381003568FF /* SpecialsPanel.cpp in Sources */,
 				8275F3FD1AD31381003568FF /* MeterBrowseWnd.cpp in Sources */,
+				CE764D5F1F8153230085A4DC /* PasswordEnterWnd.cpp in Sources */,
 				82B9AEA41AA71CCC00486B2A /* GraphicalSummary.cpp in Sources */,
 				82B9D447180C53FE0032F86D /* GraphControl.cpp in Sources */,
 				82B9AEA11AA71CCC00486B2A /* CombatLogWnd.cpp in Sources */,

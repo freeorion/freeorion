@@ -95,7 +95,9 @@ public:
         REQUEST_COMBAT_LOGS,    ///< sent by client to request combat logs
         DISPATCH_COMBAT_LOGS,   ///< sent by host to client to provide combat logs
         LOGGER_CONFIG,          ///< sent by host to server and server to ais to configure logging
-        CHECKSUM                ///< sent by host to clients to specify what the parsed content checksum values should be
+        CHECKSUM,               ///< sent by host to clients to specify what the parsed content checksum values should be
+        AUTH_REQUEST,           ///< sent by server to client if choosed player_name require authentiation
+        AUTH_RESPONSE           ///< sent by client to server to provide password or other credentials
     )
 
     GG_CLASS_ENUM(TurnProgressPhase,
@@ -335,6 +337,12 @@ FO_COMMON_API Message StartMPGameMessage();
 /** creates a CHECKSUM message containing checksums of parsed content. */
 FO_COMMON_API Message ContentCheckSumMessage();
 
+/** creates a AUTH_REQUEST message containing \a player_name to login and \a auth additional authentication data. */
+FO_COMMON_API Message AuthRequestMessage(const std::string& player_name, const std::string& auth);
+
+/** creates a AUTH_RESPONSE message containing \a player_name to login and \a auth credentials. */
+FO_COMMON_API Message AuthResponseMessage(const std::string& player_name, const std::string& auth);
+
 ////////////////////////////////////////////////
 // Message data extractors
 ////////////////////////////////////////////////
@@ -403,5 +411,9 @@ FO_COMMON_API void ExtractDispatchCombatLogsMessageData(const Message& msg, std:
 FO_COMMON_API void ExtractLoggerConfigMessageData(const Message& msg, std::set<std::tuple<std::string, std::string, LogLevel>>& options);
 
 FO_COMMON_API void ExtractContentCheckSumMessageData(const Message& msg, std::map<std::string, unsigned int>& checksums);
+
+FO_COMMON_API void ExtractAuthRequestMessageData(const Message& msg, std::string& player_name, std::string& auth);
+
+FO_COMMON_API void ExtractAuthResponseMessageData(const Message& msg, std::string& player_name, std::string& auth);
 
 #endif // _Message_h_

@@ -973,6 +973,12 @@ Python AI for %1% crashed.
 ERROR_PLAYER_NAME_ALREADY_USED
 Player name %1% already in use.
 
+ERROR_WRONG_PASSWORD
+Password wrong for player name %1%.
+
+ERROR_CONNECTION_WAS_REPLACED
+Your connection was replaced.
+
 ##
 ## Game Rules
 ##
@@ -1951,6 +1957,18 @@ Join a game
 REFRESH_LIST_BN
 Refresh list
 
+##
+## Password Dialog
+##
+
+AUTHENTICATION_WINDOW_TITLE
+Authentication
+
+AUTHENTICATION_DESC
+This player name requires authentication. Reminder! Password will be transfered plain-text.
+
+PASSWORD_LABEL
+Password
 
 ##
 ## Multiplayer lobby

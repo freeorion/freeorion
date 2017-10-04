@@ -455,11 +455,12 @@ void ServerApp::HandleLoggerConfig(const Message& msg, PlayerConnectionPtr playe
 
 void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection) {
     switch (msg.Type()) {
-    case Message::HOST_SP_GAME: m_fsm->process_event(HostSPGame(msg, player_connection));   break;
-    case Message::HOST_MP_GAME: m_fsm->process_event(HostMPGame(msg, player_connection));   break;
-    case Message::JOIN_GAME:    m_fsm->process_event(JoinGame(msg, player_connection));     break;
-    case Message::ERROR_MSG:    m_fsm->process_event(Error(msg, player_connection));        break;
-    case Message::DEBUG:        break;
+    case Message::HOST_SP_GAME:  m_fsm->process_event(HostSPGame(msg, player_connection));   break;
+    case Message::HOST_MP_GAME:  m_fsm->process_event(HostMPGame(msg, player_connection));   break;
+    case Message::JOIN_GAME:     m_fsm->process_event(JoinGame(msg, player_connection));     break;
+    case Message::AUTH_RESPONSE: m_fsm->process_event(AuthResponse(msg, player_connection)); break;
+    case Message::ERROR_MSG:     m_fsm->process_event(Error(msg, player_connection));        break;
+    case Message::DEBUG:         break;
     default:
         if ((m_networking.size() == 1) && (player_connection->IsLocalConnection()) && (msg.Type() == Message::SHUT_DOWN_SERVER)) {
             DebugLogger() << "ServerApp::HandleNonPlayerMessage received Message::SHUT_DOWN_SERVER from the sole "
@@ -1511,6 +1512,64 @@ bool ServerApp::IsAvailableName(const std::string& player_name) const {
             return false;
     }
     return true;
+}
+
+bool ServerApp::IsAuthRequired(const std::string& player_name) {
+    bool result = false;
+    bool success = false;
+    try {
+        m_python_server.SetCurrentDir(GetPythonAuthDir());
+        // Call the main Python turn events function
+        success = m_python_server.IsRequireAuth(player_name, result);
+    } catch (boost::python::error_already_set err) {
+        success = false;
+        m_python_server.HandleErrorAlreadySet();
+        if (!m_python_server.IsPythonRunning()) {
+            ErrorLogger() << "Python interpreter is no longer running.  Attempting to restart.";
+            if (m_python_server.Initialize()) {
+                ErrorLogger() << "Python interpreter successfully restarted.";
+            } else {
+                ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
+                m_fsm->process_event(ShutdownServer());
+            }
+        }
+    }
+
+    if (!success) {
+        ErrorLogger() << "Python scripted turn events failed.";
+        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
+                                                                      false));
+    }
+    return result;
+}
+
+bool ServerApp::IsAuthSuccess(const std::string& player_name, const std::string& auth) {
+    bool result = false;
+    bool success = false;
+    try {
+        m_python_server.SetCurrentDir(GetPythonAuthDir());
+        // Call the main Python turn events function
+        success = m_python_server.IsSuccessAuth(player_name, auth, result);
+    } catch (boost::python::error_already_set err) {
+        success = false;
+        m_python_server.HandleErrorAlreadySet();
+        if (!m_python_server.IsPythonRunning()) {
+            ErrorLogger() << "Python interpreter is no longer running.  Attempting to restart.";
+            if (m_python_server.Initialize()) {
+                ErrorLogger() << "Python interpreter successfully restarted.";
+            } else {
+                ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
+                m_fsm->process_event(ShutdownServer());
+            }
+        }
+    }
+
+    if (!success) {
+        ErrorLogger() << "Python scripted turn events failed.";
+        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
+                                                                      false));
+    }
+    return result;
 }
 
 bool ServerApp::IsHostless() const
