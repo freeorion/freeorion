@@ -5986,17 +5986,17 @@ Dans %system% : un %shipdesign% a été endommagé.
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Astronef libre endommagé
 
-SITREP_PLANET_BOMBARDED_AT_SYSTEM
-Dans %system% : la planète %planet% de %empire% a été bombardée.
+SITREP_PLANET_ATTACKED_AT_SYSTEM
+Dans %system% : la planète %planet% de %empire% a été attaquée.
 
-SITREP_PLANET_BOMBARDED_AT_SYSTEM_LABEL
-Planète impériale bombardée
+SITREP_PLANET_ATTACKED_AT_SYSTEM_LABEL
+Planète impériale attaquée
 
-SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
-Dans %system% : la planète %planet% a été bombardée.
+SITREP_UNOWNED_PLANET_ATTACKED_AT_SYSTEM
+Dans %system% : la planète %planet% a été attaquée.
 
-SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM_LABEL
-Planète libre bombardée
+SITREP_UNOWNED_PLANET_ATTACKED_AT_SYSTEM_LABEL
+Planète libre attaquée
 
 SITREP_GROUND_BATTLE
 Sur %planet% : une bataille terrestre a eu lieu.

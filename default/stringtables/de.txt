@@ -3329,17 +3329,17 @@ In %system%: Ein %shipdesign% wurde beschädigt.
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Fremdes Schiff beschädigt
 
-SITREP_PLANET_BOMBARDED_AT_SYSTEM
-Der Planet %planet% im System %system% vom Imperium %empire% ist bombardiert worden.
+SITREP_PLANET_ATTACKED_AT_SYSTEM
+Der Planet %planet% im System %system% vom Imperium %empire% ist angegriffen worden.
 
-SITREP_PLANET_BOMBARDED_AT_SYSTEM_LABEL
-Imperiumsplanet bombardiert
+SITREP_PLANET_ATTACKED_AT_SYSTEM_LABEL
+Imperiumsplanet angegriffen
 
-SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
-Der Planet %planet% von %system% ist bombardiert worden.
+SITREP_UNOWNED_PLANET_ATTACKED_AT_SYSTEM
+Der Planet %planet% von %system% ist angegriffen worden.
 
-SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM_LABEL
-Unbekannter Planet bombardiert
+SITREP_UNOWNED_PLANET_ATTACKED_AT_SYSTEM_LABEL
+Unbekannter Planet angegriffen
 
 SITREP_GROUND_BATTLE
 Ein Bodenangriff fand auf %planet% statt.
