@@ -4,6 +4,7 @@
 #include "ReportParseError.h"
 #include "../universe/Tech.h"
 #include "../util/Logger.h"
+#include "../util/ScopedTimer.h"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/spirit/include/qi.hpp>
@@ -133,13 +134,13 @@ namespace parse { namespace detail {
     template <typename Grammar, typename Arg1>
     bool parse_file(const lexer& lexer, const boost::filesystem::path& path, Arg1& arg1)
     {
+        SectionedScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::microseconds(100));
+
         std::string filename;
         std::string file_contents;
         text_iterator first;
         text_iterator last;
         token_iterator it;
-
-        boost::timer timer;
 
         parse_file_common(path, lexer, filename, file_contents, first, last, it);
 
@@ -151,8 +152,6 @@ namespace parse { namespace detail {
 
         bool success = boost::spirit::qi::phrase_parse(
             it, lexer.end(), grammar(boost::phoenix::ref(arg1)), in_state("WS")[lexer.self]);
-
-        TraceLogger() << "Parse: Elapsed time to parse " << path.string() << " = " << (timer.elapsed() * 1000.0);
 
         // s_end is global and static.  It is wrong when multiple files are concurrently or
         // recursively parsed.  This check is meaningless and was removed May 2017.
