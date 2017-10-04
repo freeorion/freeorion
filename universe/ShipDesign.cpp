@@ -33,7 +33,7 @@ using boost::io::str;
 namespace {
 
     /** @content_tag{PLANET_DESTROYER} This part has planet destruction capabilities **/
-    const std::string TAG_PLANET_DESTROYER = "PLANET_DESTROYER";
+    const std::string TAG_PLANET_DESTROYER = "CTRL_PLANET_DESTROYER";
 
     void AddRules(GameRules& rules) {
         // makes all ships cost 1 PP and take 1 turn to produce

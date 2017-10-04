@@ -33,6 +33,7 @@
 #include "../util/SitRepEntry.h"
 #include "../util/ScopedTimer.h"
 #include "../util/Version.h"
+//#include "../client/human/HumanClientApp.h"
 
 #include <boost/filesystem/exception.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -2845,7 +2846,7 @@ void ServerApp::PreCombatProcessTurns() {
     // clear bombardment and planet destruction state before executing orders,
     // so result after is only determined by what orders set.
     CleanUpBombardmentStateInfo();
-    CleanUpDestructionStateInfo();
+    // CleanUpDestructionStateInfo();
 
     // execute orders
     for (const auto& empire_orders : m_turn_sequence) {
@@ -3233,6 +3234,8 @@ void ServerApp::PostCombatProcessTurns() {
         entry.second->UpdateOwnedObjectCounters();
     GetSpeciesManager().UpdatePopulationCounter();
 
+    // refresh destruction & bombardement orders
+    RefreshPlanetDestructionOrders();
 
     // indicate that the clients are waiting for their new gamestate
     m_networking.SendMessageAll(TurnProgressMessage(Message::DOWNLOADING));
@@ -3282,6 +3285,53 @@ void ServerApp::CheckForEmpireElimination() {
 
     if (surviving_empires.size() == 1) // last man standing
         (*surviving_empires.begin())->Win(UserStringNop("VICTORY_ALL_ENEMIES_ELIMINATED"));
+}
+
+void ServerApp::RefreshPlanetDestructionOrders() {
+    // get all ships trying to destroy a planet
+    for (auto& ship : GetUniverse().Objects().FindObjects<Ship>()) {
+        if (ship->CanDestroyPlanet() && ship->OrderedDestroyPlanet() != INVALID_OBJECT_ID) {
+            DebugLogger() << "RPDO: (1) Found a destruction ship with a (possible) target.";
+            auto target_planet = GetPlanet(ship->OrderedDestroyPlanet());
+
+            // no planet found (so it was destroyed): reset ship
+            if (!target_planet) {
+                ship->ClearDestroyPlanet();
+                DebugLogger() << "RPDO: (1-a) But planet was already destroyed. Reset ship info.";
+                // update fleet wnd (?)
+
+            // ship + planet still alive and ship still in system: issue new destruction order
+            } else {
+                if (ship->SystemID() == target_planet->SystemID()) {
+                    DebugLogger() << "RPDO: (1-b) Ship and planet still in position. Refresh planet destruction order.";
+                    //HumanClientApp::GetApp()->Orders().IssueOrder(
+                    //    std::make_shared<DestroyPlanetOrder>(ship->Owner(), ship->ID(), target_planet->ID()));
+                } else {
+                    DebugLogger() << "RPDO: (1-c) Ship moved on. Reset destruction info.";
+                    ship->ClearDestroyPlanet();
+                    target_planet->ResetIsAboutToBeDestroyed();
+                }
+
+                // maybe update UI
+            }
+        }
+    }
+
+    // get all targeted planets, reset if ship was destroyed
+    for (auto& planet : GetUniverse().Objects().FindObjects<Planet>()) {
+        if (planet->IsAboutToBeDestroyed()) {
+            DebugLogger() << "RPDO: (2) Found a planet targeted by a destruction ship";
+            // get attacking ship
+            auto destroying_ship = GetShip(planet->BeingDestroyedBy());
+            if (!destroying_ship) {
+                DebugLogger() << "RPDO: (2-a) Found ship was destroyed. Reset planet info.";
+                // ship was destroyed before it could destroy the planet: reset planet status
+                planet->ResetIsAboutToBeDestroyed();
+                // update UI (?)
+            }
+        }
+    }
+
 }
 
 void ServerApp::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {

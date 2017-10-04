@@ -425,7 +425,7 @@ namespace {
         if (!app)
             return retval;
         for (const auto& id_and_order : app->Orders()) {
-            if (std::shared_ptr<ColonizeOrder> order = std::dynamic_pointer_cast<ColonizeOrder>(id_and_order.second)) {
+            if (auto order = std::dynamic_pointer_cast<ColonizeOrder>(id_and_order.second)) {
                 retval[order->PlanetID()] = id_and_order.first;
             }
         }
@@ -440,7 +440,7 @@ namespace {
         if (!app)
             return retval;
         for (const auto& id_and_order : app->Orders()) {
-            if (std::shared_ptr<InvadeOrder> order = std::dynamic_pointer_cast<InvadeOrder>(id_and_order.second)) {
+            if (auto order = std::dynamic_pointer_cast<InvadeOrder>(id_and_order.second)) {
                 retval[order->PlanetID()].insert(id_and_order.first);
             }
         }
@@ -455,7 +455,7 @@ namespace {
         if (!app)
             return retval;
         for (const auto& id_and_order : app->Orders()) {
-            if (std::shared_ptr<BombardOrder> order = std::dynamic_pointer_cast<BombardOrder>(id_and_order.second)) {
+            if (auto order = std::dynamic_pointer_cast<BombardOrder>(id_and_order.second)) {
                 retval[order->PlanetID()].insert(id_and_order.first);
             }
         }
@@ -701,7 +701,7 @@ public:
 
     void Refresh() {
         ScopedTimer timer("RotatingPlanetControl::Refresh", true);
-        std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
+        auto planet = GetPlanet(m_planet_id);
         if (!planet) return;
 
         // these values ensure that wierd GLUT-sphere artifacts do not show themselves
@@ -926,7 +926,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
 
     SetName(UserString("PLANET_PANEL"));
 
-    std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
+    auto planet = GetPlanet(m_planet_id);
     if (!planet) {
         ErrorLogger() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << m_planet_id;
         return;
@@ -1133,7 +1133,7 @@ void SidePanel::PlanetPanel::DoLayout() {
 }
 
 void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
-    std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
+    auto planet = GetPlanet(m_planet_id);
     if (!planet || !GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown"))
         return;
 
@@ -1489,7 +1489,7 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenInvasionShips(int targe
     if (empire_id == ALL_EMPIRES)
         return retval;
 
-    std::shared_ptr<const Planet> target_planet = GetPlanet(target_planet_id);
+    auto target_planet = GetPlanet(target_planet_id);
     if (!target_planet)
         return retval;
     int system_id = target_planet->SystemID();
@@ -1531,7 +1531,7 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenBombardShips(int target
     if (empire_id == ALL_EMPIRES)
         return retval;
 
-    std::shared_ptr<const Planet> target_planet = GetPlanet(target_planet_id);
+    auto target_planet = GetPlanet(target_planet_id);
     if (!target_planet)
         return retval;
     int system_id = target_planet->SystemID();
@@ -1570,7 +1570,7 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenDestroyShips(int target
     if (empire_id == ALL_EMPIRES)
         return retval;
 
-    std::shared_ptr<const Planet> target_planet = GetPlanet(target_planet_id);
+    auto target_planet = GetPlanet(target_planet_id);
     if (!target_planet)
         return retval;
     int system_id = target_planet->SystemID();
@@ -1689,21 +1689,21 @@ void SidePanel::PlanetPanel::Refresh() {
     if (!selected_colony_ship && FleetUIManager::GetFleetUIManager().SelectedShipIDs().empty())
         selected_colony_ship = GetShip(AutomaticallyChosenColonyShip(m_planet_id));
 
-    std::set<std::shared_ptr<const Ship>> invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
+    auto invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
     if (invasion_ships.empty()) {
-        std::set<std::shared_ptr<const Ship>> autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
+        auto autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
         invasion_ships.insert(autoselected_invasion_ships.begin(), autoselected_invasion_ships.end());
     }
 
-    std::set<std::shared_ptr<const Ship>> bombard_ships = ValidSelectedBombardShips(SidePanel::SystemID());
+    auto bombard_ships = ValidSelectedBombardShips(SidePanel::SystemID());
     if (bombard_ships.empty()) {
-        std::set<std::shared_ptr<const Ship>> autoselected_bombard_ships = AutomaticallyChosenBombardShips(m_planet_id);
+        auto autoselected_bombard_ships = AutomaticallyChosenBombardShips(m_planet_id);
         bombard_ships.insert(autoselected_bombard_ships.begin(), autoselected_bombard_ships.end());
     }
 
-    std::set<std::shared_ptr<const Ship>> destroy_ships = ValidSelectedDestroyShips(SidePanel::SystemID());
+    auto destroy_ships = ValidSelectedDestroyShips(SidePanel::SystemID());
     if (destroy_ships.empty()) {
-        std::set<std::shared_ptr<const Ship>> autoselected_destroy_ships = AutomaticallyChosenDestroyShips(m_planet_id);
+        auto autoselected_destroy_ships = AutomaticallyChosenDestroyShips(m_planet_id);
         destroy_ships.insert(autoselected_destroy_ships.begin(), autoselected_destroy_ships.end());
     }
 
@@ -2066,7 +2066,7 @@ void SidePanel::PlanetPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void SidePanel::PlanetPanel::SetFocus(const std::string& focus) {
-    std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
+    auto planet = GetPlanet(m_planet_id);
     if (!planet || !planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         return;
     colony_projections.clear();// in case new or old focus was Growth (important that be cleared BEFORE Order is issued)
@@ -2325,7 +2325,7 @@ namespace {
         // is selected ship already ordered to colonize?  If so, recind that order.
         if (ship->OrderedColonizePlanet() != INVALID_OBJECT_ID) {
             for (const auto& id_and_order : orders) {
-                if (std::shared_ptr<ColonizeOrder> order = std::dynamic_pointer_cast<ColonizeOrder>(id_and_order.second)) {
+                if (auto order = std::dynamic_pointer_cast<ColonizeOrder>(id_and_order.second)) {
                     if (order->ShipID() == ship->ID()) {
                         HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
@@ -2337,7 +2337,7 @@ namespace {
         // is selected ship ordered to invade?  If so, recind that order
         if (ship->OrderedInvadePlanet() != INVALID_OBJECT_ID) {
             for (const auto& id_and_order : orders) {
-               if (std::shared_ptr<InvadeOrder> order = std::dynamic_pointer_cast<InvadeOrder>(id_and_order.second)) {
+               if (auto order = std::dynamic_pointer_cast<InvadeOrder>(id_and_order.second)) {
                     if (order->ShipID() == ship->ID()) {
                         HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
@@ -2349,7 +2349,7 @@ namespace {
         // is selected ship ordered scrapped?  If so, recind that order
         if (ship->OrderedScrapped()) {
             for (const auto& id_and_order : orders) {
-                if (std::shared_ptr<ScrapOrder> order = std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second)) {
+                if (auto order = std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second)) {
                     if (order->ObjectID() == ship->ID()) {
                         HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
@@ -2361,7 +2361,7 @@ namespace {
         // is selected ship ordered to bombard?  If so, recind that order
         if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID) {
             for (const auto& id_and_order : orders) {
-               if (std::shared_ptr<BombardOrder> order = std::dynamic_pointer_cast<BombardOrder>(id_and_order.second)) {
+               if (auto order = std::dynamic_pointer_cast<BombardOrder>(id_and_order.second)) {
                     if (order->ShipID() == ship->ID()) {
                         HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
@@ -2373,7 +2373,7 @@ namespace {
         // is selected ship ordered to destroy a planet?  If so, recind that order
         if (ship->OrderedDestroyPlanet() != INVALID_OBJECT_ID) {
             for (const auto& id_and_order : orders) {
-                if (std::shared_ptr<DestroyPlanetOrder> order = std::dynamic_pointer_cast<DestroyPlanetOrder>(id_and_order.second)) {
+                if (auto order = std::dynamic_pointer_cast<DestroyPlanetOrder>(id_and_order.second)) {
                     if (order->ShipID() == ship->ID()) {
                         HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
@@ -2389,7 +2389,7 @@ void SidePanel::PlanetPanel::ClickColonize() {
     // order or cancel colonization, depending on whether it has previously
     // been ordered
 
-    std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
+    auto planet = GetPlanet(m_planet_id);
     if (!planet || planet->CurrentMeterValue(METER_POPULATION) != 0.0 || !m_order_issuing_enabled)
         return;
 
@@ -2397,8 +2397,8 @@ void SidePanel::PlanetPanel::ClickColonize() {
     if (empire_id == ALL_EMPIRES)
         return;
 
-    std::map<int, int> pending_colonization_orders = PendingColonizationOrders();
-    std::map<int, int>::const_iterator it = pending_colonization_orders.find(m_planet_id);
+    auto pending_colonization_orders = PendingColonizationOrders();
+    auto it = pending_colonization_orders.find(m_planet_id);
 
     if (it != pending_colonization_orders.end()) {
         // cancel previous colonization order for planet
@@ -2431,7 +2431,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
     // order or cancel invasion, depending on whether it has previously
     // been ordered
 
-    std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
+    auto planet = GetPlanet(m_planet_id);
     if (!planet ||
         !m_order_issuing_enabled ||
         (planet->CurrentMeterValue(METER_POPULATION) <= 0.0 && planet->Unowned()))
@@ -2441,21 +2441,21 @@ void SidePanel::PlanetPanel::ClickInvade() {
     if (empire_id == ALL_EMPIRES)
         return;
 
-    std::map<int, std::set<int>> pending_invade_orders = PendingInvadeOrders();
-    std::map<int, std::set<int>>::const_iterator it = pending_invade_orders.find(m_planet_id);
+    auto pending_invade_orders = PendingInvadeOrders();
+    auto it = pending_invade_orders.find(m_planet_id);
 
     if (it != pending_invade_orders.end()) {
-        const std::set<int>& planet_invade_orders = it->second;
+        auto& planet_invade_orders = it->second;
         // cancel previous invasion orders for this planet
         for (int order_id : planet_invade_orders)
         { HumanClientApp::GetApp()->Orders().RescindOrder(order_id); }
 
     } else {
         // order selected invasion ships to invade planet
-        std::set<std::shared_ptr<const Ship>> invasion_ships = ValidSelectedInvasionShips(planet->SystemID());
+        auto invasion_ships = ValidSelectedInvasionShips(planet->SystemID());
 
         if (invasion_ships.empty()) {
-            std::set<std::shared_ptr<const Ship>> autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
+            auto autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
             invasion_ships.insert(autoselected_invasion_ships.begin(), autoselected_invasion_ships.end());
         }
 
@@ -2476,7 +2476,7 @@ void SidePanel::PlanetPanel::ClickBombard() {
     // order or cancel bombard, depending on whether it has previously
     // been ordered
 
-    std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
+    auto planet = GetPlanet(m_planet_id);
     if (!planet ||
         !m_order_issuing_enabled ||
         (planet->CurrentMeterValue(METER_POPULATION) <= 0.0 && planet->Unowned()))
@@ -2486,21 +2486,21 @@ void SidePanel::PlanetPanel::ClickBombard() {
     if (empire_id == ALL_EMPIRES)
         return;
 
-    std::map<int, std::set<int>> pending_bombard_orders = PendingBombardOrders();
-    std::map<int, std::set<int>>::const_iterator it = pending_bombard_orders.find(m_planet_id);
+    auto pending_bombard_orders = PendingBombardOrders();
+    auto it = pending_bombard_orders.find(m_planet_id);
 
     if (it != pending_bombard_orders.end()) {
-        const std::set<int>& planet_bombard_orders = it->second;
+        auto& planet_bombard_orders = it->second;
         // cancel previous bombard orders for this planet
         for (int order_id : planet_bombard_orders)
         { HumanClientApp::GetApp()->Orders().RescindOrder(order_id); }
 
     } else {
         // order selected bombard ships to bombard planet
-        std::set<std::shared_ptr<const Ship>> bombard_ships = ValidSelectedBombardShips(planet->SystemID());
+        auto bombard_ships = ValidSelectedBombardShips(planet->SystemID());
 
         if (bombard_ships.empty()) {
-            std::set<std::shared_ptr<const Ship>> autoselected_bombard_ships = AutomaticallyChosenBombardShips(m_planet_id);
+            auto autoselected_bombard_ships = AutomaticallyChosenBombardShips(m_planet_id);
             bombard_ships.insert(autoselected_bombard_ships.begin(), autoselected_bombard_ships.end());
         }
 
@@ -2520,7 +2520,7 @@ void SidePanel::PlanetPanel::ClickBombard() {
 void SidePanel::PlanetPanel::ClickDestroy() {
     // order or cancel planet destruction, depending on whether it has previously
     // been ordered
-    std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
+    auto planet = GetPlanet(m_planet_id);
     if (!planet ||
         !m_order_issuing_enabled ||
         (planet->CurrentMeterValue(METER_POPULATION) <= 0.0 && planet->Unowned()))
@@ -2530,21 +2530,21 @@ void SidePanel::PlanetPanel::ClickDestroy() {
     if (empire_id == ALL_EMPIRES)
         return;
 
-    std::map<int, std::set<int>> pending_destroy_orders = PendingDestroyPlanetOrders();
-    std::map<int, std::set<int>>::const_iterator it = pending_destroy_orders.find(m_planet_id);
+    auto pending_destroy_orders = PendingDestroyPlanetOrders();
+    auto it = pending_destroy_orders.find(m_planet_id);
 
     if (it != pending_destroy_orders.end()) {
-        const std::set<int>& planet_destroy_orders = it->second;
+        auto& planet_destroy_orders = it->second;
         // cancel previous destroy orders for this planet
         for (int order_id : planet_destroy_orders)
         { HumanClientApp::GetApp()->Orders().RescindOrder(order_id); }
 
     } else {
         // order selected destroy ship to destroy planet
-        std::set<std::shared_ptr<const Ship>> destroy_ships = ValidSelectedDestroyShips(planet->SystemID());
+        auto destroy_ships = ValidSelectedDestroyShips(planet->SystemID());
 
         if (destroy_ships.empty()) {
-            std::set<std::shared_ptr<const Ship>> autoselected_destroy_ships = AutomaticallyChosenDestroyShips(m_planet_id);
+            auto autoselected_destroy_ships = AutomaticallyChosenDestroyShips(m_planet_id);
             destroy_ships.insert(autoselected_destroy_ships.begin(), autoselected_destroy_ships.end());
         }
 
@@ -2702,7 +2702,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
 
     std::multimap<int, int> orbits_planets;
     for (int planet_id : planet_ids) {
-        std::shared_ptr<const Planet> planet = GetPlanet(planet_id);
+        auto planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetPanelContainer::SetPlanets couldn't find planet with id " << planet_id;
             continue;
@@ -2881,7 +2881,7 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
         // find selectables
         for (auto& panel : m_planet_panels) {
             int             planet_id = panel->PlanetID();
-            std::shared_ptr<const Planet> planet = GetPlanet(planet_id);
+            auto planet = GetPlanet(planet_id);
 
             if (planet && planet->Accept(*m_valid_selection_predicate)) {
                 m_candidate_ids.insert(planet_id);

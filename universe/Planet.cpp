@@ -834,15 +834,14 @@ void Planet::SetIsAboutToBeBombarded(bool b) {
 void Planet::ResetIsAboutToBeBombarded()
 { SetIsAboutToBeBombarded(false); }
 
-void Planet::SetIsAboutToBeDestroyed(bool b) {
-    bool initial_status = m_is_about_to_be_destroyed;
-    if (b == initial_status) return;
+void Planet::SetIsAboutToBeDestroyed(bool b, int planet_destroyer_id) {
     m_is_about_to_be_destroyed = b;
+    m_planet_destroyer_id = planet_destroyer_id;
     StateChangedSignal();
 }
 
 void Planet::ResetIsAboutToBeDestroyed()
-{ SetIsAboutToBeDestroyed(false); }
+{ SetIsAboutToBeDestroyed(false, INVALID_OBJECT_ID); }
 
 
 void Planet::SetGiveToEmpire(int empire_id) {

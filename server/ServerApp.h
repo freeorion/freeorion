@@ -183,6 +183,11 @@ public:
       * are thereby victorious. */
     void    CheckForEmpireElimination();
 
+    /** Looks for ongoing planet destruction countdowns and automatically issues
+        a new PlanetDestructionOrder if planet destroyer and planet are still
+        present. */
+    void    RefreshPlanetDestructionOrders();
+
     /** Intializes single player game universe.*/
     void    NewSPGameInit(const SinglePlayerSetupData& single_player_setup_data);
 

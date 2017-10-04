@@ -5,7 +5,7 @@ Part
     mountableSlotTypes = Core
     buildcost = 800 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 8
-    tags = [ "CTRL_ALWAYS_DESTROY" "PEDIA_PC_GENERAL" "PLANET_DESTROYER" ]
+    tags = [ "CTRL_ALWAYS_DESTROY" "PEDIA_PC_GENERAL" "CTRL_PLANET_DESTROYER" ]
     location = All
     effectsgroups = [
 

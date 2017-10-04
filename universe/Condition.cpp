@@ -8484,9 +8484,7 @@ unsigned int OrderedBombarded::GetCheckSum() const {
 // OrderedDestroyed                                      //
 ///////////////////////////////////////////////////////////
 OrderedDestroyed::~OrderedDestroyed()
-{
-    delete m_by_object_condition;
-}
+{ delete m_by_object_condition; }
 
 bool OrderedDestroyed::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -8557,19 +8555,13 @@ void OrderedDestroyed::Eval(const ScriptingContext& parent_context,
 }
 
 bool OrderedDestroyed::RootCandidateInvariant() const
-{
-    return m_by_object_condition->RootCandidateInvariant();
-}
+{ return m_by_object_condition->RootCandidateInvariant(); }
 
 bool OrderedDestroyed::TargetInvariant() const
-{
-    return m_by_object_condition->TargetInvariant();
-}
+{ return m_by_object_condition->TargetInvariant(); }
 
 bool OrderedDestroyed::SourceInvariant() const
-{
-    return m_by_object_condition->SourceInvariant();
-}
+{ return m_by_object_condition->SourceInvariant(); }
 
 std::string OrderedDestroyed::Description(bool negated/* = false*/) const {
     std::string by_str;
@@ -8583,9 +8575,7 @@ std::string OrderedDestroyed::Description(bool negated/* = false*/) const {
 }
 
 std::string OrderedDestroyed::Dump() const
-{
-    return DumpIndent() + "OrderedDestroyed by_object = " + m_by_object_condition->Dump();
-}
+{ return DumpIndent() + "OrderedDestroyed by_object = " + m_by_object_condition->Dump(); }
 
 bool OrderedDestroyed::Match(const ScriptingContext& local_context) const {
     std::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;

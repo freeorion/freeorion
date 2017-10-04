@@ -6423,7 +6423,7 @@ EFFECT_BIOWEAPON_LABEL
 Bioweapon Attack
 
 EFFECT_PLANET_TARGETED
-Our planet % planet is being targeted by a planet destroyer cannon!
+At %planet%: our planet is being targeted by a planet destroyer cannon from the ship %ship%!
 
 EFFECT_PLANET_DESTRUCTION
 We have destroyed the %empire% planet %planet%!

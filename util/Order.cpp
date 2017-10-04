@@ -880,7 +880,7 @@ void DestroyPlanetOrder::ExecuteImpl() const {
     DebugLogger() << "DestroyPlanetOrder::ExecuteImpl set for ship " << m_ship << " "
         << ship->Name() << " to destroy planet " << m_planet << " "
         << planet->Name();
-    planet->SetIsAboutToBeDestroyed(true);
+    planet->SetIsAboutToBeDestroyed(true, ship->ID());
     ship->SetDestroyPlanet(m_planet);
 
     if (auto fleet = GetFleet(ship->FleetID()))
@@ -904,7 +904,7 @@ bool DestroyPlanetOrder::UndoImpl() const {
         return false;
     }
 
-    planet->SetIsAboutToBeDestroyed(false);
+    planet->ResetIsAboutToBeDestroyed();
     ship->ClearDestroyPlanet();
 
     if (auto fleet = GetFleet(ship->FleetID()))

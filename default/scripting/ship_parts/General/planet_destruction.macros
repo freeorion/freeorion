@@ -32,7 +32,7 @@ PLANET_DESTRUCTION_WARNING_SITREP
                     icon = "icons/meter/damage.png"
                     parameters = [
                         tag = "planet" data = Target.ID
-                        tag = "empire" data = Source.Owner
+                        tag = "ship" data = Source.ID
                     ]
                     empire = Target.Owner
 
