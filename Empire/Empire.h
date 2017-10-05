@@ -385,8 +385,9 @@ public:
       * exchange supply between themselves (even if not leaving the system). */
     const std::set<int>&                    SupplyUnobstructedSystems() const;
 
-    /** Returns true if the start system is known to this empire and travel to
-        the dest system is not restricted by blockade.  */
+    /** Returns true if the specified lane travel is preserved against being blockaded (i.e., the empire
+     * has in the start system at least one fleet that meets the requirements to preserve the lane (which
+     * is determined in Empire::UpdateSupplyUnobstructedSystems(). */
     const bool                              UnrestrictedLaneTravel(int start_system_id, int dest_system_id) const;
 
     const std::set<int>&                    ExploredSystems() const;    ///< returns set of ids of systems that this empire has explored
