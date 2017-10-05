@@ -197,11 +197,14 @@ PartTypeManager::PartTypeManager() {
         throw;
     }
 
-    TraceLogger() << "Part Types:";
-    for (const auto& entry : m_parts) {
-        const PartType* p = entry.second;
-        TraceLogger() << " ... " << p->Name() << " class: " << p->Class();
-    }
+    TraceLogger() << [&]() {
+            std::string retval("Part Types:");
+            for (const auto& pair : m_parts) {
+                const auto& part = pair.second;
+                retval.append("\n\t" + part->Name() + " class: " + boost::lexical_cast<std::string>(part->Class()));
+            }
+            return retval;
+        }();
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
@@ -209,15 +212,9 @@ PartTypeManager::PartTypeManager() {
     DebugLogger() << "PartTypeManager checksum: " << GetCheckSum();
 }
 
-PartTypeManager::~PartTypeManager() {
-    for (auto& entry : m_parts) {
-        delete entry.second;
-    }
-}
-
 const PartType* PartTypeManager::GetPartType(const std::string& name) const {
     auto it = m_parts.find(name);
-    return it != m_parts.end() ? it->second : nullptr;
+    return it != m_parts.end() ? it->second.get() : nullptr;
 }
 
 const PartTypeManager& PartTypeManager::GetPartTypeManager() {

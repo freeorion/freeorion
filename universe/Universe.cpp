@@ -1353,7 +1353,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     // enforce part types effects order
     for (const auto& entry : GetPartTypeManager()) {
         const std::string& part_type_name = entry.first;
-        const PartType* part_type = entry.second;
+        const auto& part_type = entry.second;
         auto ships_by_part_type_it = ships_by_part_type.find(part_type_name);
 
         if (ships_by_part_type_it == ships_by_part_type.end())
