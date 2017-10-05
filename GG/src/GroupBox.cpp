@@ -99,7 +99,7 @@ void GroupBox::Render()
         Value(ul.x), Value(lr.y),
         Value(lr.x), Value(lr.y),
         Value(lr.x), Value(ul.y),
-        vertices[0], Value(ul.y)
+        Value(ul.x) + FRAME_THICK + PIXEL_MARGIN - GAP_FROM_TEXT, Value(ul.y)
     };
     if (m_label) {
         vertices[0] = Value(m_label->TextUpperLeft().x - GAP_FROM_TEXT);

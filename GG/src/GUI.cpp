@@ -306,7 +306,7 @@ GUIImpl::GUIImpl() :
 {
     m_drag_wnds[0].reset();
     m_drag_wnds[1].reset();
-    m_drag_wnds[3].reset();
+    m_drag_wnds[2].reset();
     m_mouse_button_state[0] = m_mouse_button_state[1] = m_mouse_button_state[2] = false;
 }
 

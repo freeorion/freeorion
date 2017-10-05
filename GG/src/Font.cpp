@@ -1609,7 +1609,7 @@ void Font::ChangeTemplatedText(
     if (new_text.empty())
         return;
 
-    int change_of_len;
+    int change_of_len = 0;
 
     // Find the target text element.
     size_t curr_offset = 0;
@@ -2148,10 +2148,12 @@ X Font::StoreGlyph(const Pt& pt, const Glyph& glyph, const Font::RenderState* re
     }
 
     // render main text
-    StoreGlyphImpl(cache, render_state->CurrentColor(), pt, glyph, italic_top_offset, super_sub_offset);
-    if (render_state && render_state->draw_underline) {
-        StoreUnderlineImpl(cache, render_state->CurrentColor(), pt, glyph, m_descent,
-                           m_height, Y(m_underline_height), Y(m_underline_offset));
+    if (render_state) {
+        StoreGlyphImpl(cache, render_state->CurrentColor(), pt, glyph, italic_top_offset, super_sub_offset);
+        if (render_state->draw_underline) {
+            StoreUnderlineImpl(cache, render_state->CurrentColor(), pt, glyph, m_descent,
+                               m_height, Y(m_underline_height), Y(m_underline_offset));
+        }
     }
 
     return glyph.advance;
