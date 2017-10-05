@@ -8,28 +8,66 @@
 
 #include <boost/spirit/include/phoenix.hpp>
 
-
 #define DEBUG_PARSERS 0
 
 #if DEBUG_PARSERS
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::map<std::string, Special*>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::pair<const std::string, Special*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<Special>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<Special>&) { return os; }
 }
 #endif
 
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-    const boost::phoenix::function<parse::detail::insert> insert_;
+    struct special_pod {
+        special_pod(std::string name_,
+                    std::string description_,
+                    ValueRef::ValueRefBase<double>* stealth_,
+                    const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects_,
+                    double spawn_rate_,
+                    int spawn_limit_,
+                    ValueRef::ValueRefBase<double>* initial_capacity_,
+                    Condition::ConditionBase* location_,
+                    const std::string& graphic_) :
+            name(name_),
+            description(description_),
+            stealth(stealth_),
+            effects(effects_),
+            spawn_rate(spawn_rate_),
+            spawn_limit(spawn_limit_),
+            initial_capacity(initial_capacity_),
+            location(location_),
+            graphic(graphic_)
+        {}
+
+        std::string name;
+        std::string description;
+        ValueRef::ValueRefBase<double>* stealth;
+        const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects;
+        double spawn_rate;
+        int spawn_limit;
+        ValueRef::ValueRefBase<double>* initial_capacity;
+        Condition::ConditionBase* location;
+        const std::string& graphic;
+    };
+
+    void insert_special(std::map<std::string, std::unique_ptr<Special>>& specials, special_pod special_) {
+        // TODO use make_unique when converting to C++14
+        auto special_ptr = std::unique_ptr<Special>(
+            new Special(special_.name, special_.description, special_.stealth, special_.effects, special_.spawn_rate,
+                        special_.spawn_limit, special_.initial_capacity, special_.location, special_.graphic));
+
+        specials.insert(std::make_pair(special_ptr->Name(), std::move(special_ptr)));
+    }
+
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_special_, insert_special, 2)
 
     struct rules {
         rules() {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
-
-            using phoenix::new_;
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -75,7 +113,7 @@ namespace {
                 >  -(parse::detail::label(Location_token)           > parse::detail::condition_parser [ _e = _1 ])
                 >  -(parse::detail::label(EffectsGroups_token)      > parse::detail::effects_group_parser() [ _f = _1 ])
                 >    parse::detail::label(Graphic_token)            > tok.string
-                [ insert_(_r1, _a, new_<Special>(_a, _b, _g, _f, _c, _d, _h, _e, _1)) ]
+                [ insert_special_(_r1, phoenix::construct<special_pod>(_a, _b, _g, _f, _c, _d, _h, _e, _1)) ]
                 ;
 
             start
@@ -96,7 +134,7 @@ namespace {
         }
 
         typedef parse::detail::rule<
-            void (const std::map<std::string, Special*>&, std::string&, std::string&)
+            void (const std::map<std::string, std::unique_ptr<Special>>&, std::string&, std::string&)
         > special_prefix_rule;
 
         typedef parse::detail::rule<
@@ -104,7 +142,7 @@ namespace {
         > spawn_rule;
 
         typedef parse::detail::rule<
-            void (std::map<std::string, Special*>&),
+            void (std::map<std::string, std::unique_ptr<Special>>&),
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
@@ -118,7 +156,7 @@ namespace {
         > special_rule;
 
         typedef parse::detail::rule<
-            void (std::map<std::string, Special*>&)
+            void (std::map<std::string, std::unique_ptr<Special>>&)
         > start_rule;
 
 
@@ -130,11 +168,11 @@ namespace {
 }
 
 namespace parse {
-    bool specials(std::map<std::string, Special*>& specials_) {
+    bool specials(std::map<std::string, std::unique_ptr<Special>>& specials_) {
         bool result = true;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/specials")) {
-            result &= detail::parse_file<rules, std::map<std::string, Special*>>(file, specials_);
+            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<Special>>>(file, specials_);
         }
 
         return result;
