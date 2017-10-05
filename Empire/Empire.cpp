@@ -2021,6 +2021,8 @@ const std::set<int>& Empire::SupplyUnobstructedSystems() const
 { return m_supply_unobstructed_systems; }
 
 const bool Empire::UnrestrictedLaneTravel(int start_system_id, int dest_system_id) const {
+    if (m_supply_unobstructed_systems.find(start_system_id) != m_supply_unobstructed_systems.end())
+        return true;
     auto find_it = m_available_system_exit_lanes.find(start_system_id);
     if (find_it != m_available_system_exit_lanes.end() ) {
         if (find_it->second.find(dest_system_id) != find_it->second.end())
