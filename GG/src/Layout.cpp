@@ -244,7 +244,7 @@ void Layout::DoLayout(Pt ul, Pt lr)
         // only height-for-width Wnd type, doesn't get vertically squashed
         // down to 0-height cells.  Note that they can still get horizontally
         // squashed.
-        if (TextControl *text_control = dynamic_cast<TextControl*>(wnd_position.first)) {
+        if (TextControl* text_control = dynamic_cast<TextControl*>(wnd_position.first)) {
             min_space_needed.y = (text_control->MinUsableSize(Width()) + margin).y;
             min_usable_size.y = min_space_needed.y;
         }
@@ -462,7 +462,7 @@ void Layout::DoLayout(Pt ul, Pt lr)
             // only height-for-width Wnd type, doesn't get vertically squashed
             // down to 0-height cells.  Note that they can still get horizontally
             // squashed.
-            if (TextControl *text_control = dynamic_cast<TextControl*>(wnd_position.first)) {
+            if (TextControl* text_control = dynamic_cast<TextControl*>(wnd_position.first)) {
                 X text_width = (lr.x - ul.x);
                 min_usable_size = text_control->MinUsableSize(text_width);
                 min_size = min_usable_size;
