@@ -642,7 +642,7 @@ StarType Variable<StarType>::Eval(const ScriptingContext& context) const
 template <>
 Visibility Variable<Visibility>::Eval(const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.back();
+    // const std::string& property_name = m_property_name.back();
 
     IF_CURRENT_VALUE(Visibility)
 
