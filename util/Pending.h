@@ -59,7 +59,7 @@ namespace Pending {
         try {
             auto x = std::move(pending->pending->get());
             pending = boost::none;
-            return x;
+            return std::move(x);
         } catch (const std::exception& e) {
             ErrorLogger() << "Parsing of \"" << pending->filename << "\" failed with error: " << e.what();
         }
