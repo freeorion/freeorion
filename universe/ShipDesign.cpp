@@ -197,7 +197,7 @@ PartTypeManager::PartTypeManager() {
         throw;
     }
 
-    TraceLogger() << [&]() {
+    TraceLogger() << [this]() {
             std::string retval("Part Types:");
             for (const auto& pair : m_parts) {
                 const auto& part = pair.second;
