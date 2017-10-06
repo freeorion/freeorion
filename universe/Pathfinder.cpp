@@ -1232,7 +1232,6 @@ void Pathfinder::InitializeSystemGraph(const std::vector<int> system_ids, int fo
 }
 
 void Pathfinder::PathfinderImpl::InitializeSystemGraph(const std::vector<int> system_ids, int for_empire_id) {
-    typedef boost::graph_traits<GraphImpl::SystemGraph>::edge_descriptor EdgeDescriptor;
     auto new_graph_impl = std::make_shared<GraphImpl>();
     // std::vector<int> system_ids = ::EmpireKnownObjects(for_empire_id).FindObjectIDs<System>();
     // NOTE: this initialization of graph_changed prevents testing for edges between nonexistant vertices
