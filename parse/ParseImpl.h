@@ -2,7 +2,6 @@
 #define _ParseImpl_h_
 
 #include "ReportParseError.h"
-#include "EnumParser.h"
 #include "../universe/Tech.h"
 #include "../util/Logger.h"
 
@@ -116,16 +115,6 @@ namespace parse { namespace detail {
         >
     > color_parser_rule;
     color_parser_rule& color_parser();
-
-    using item_spec_rule_type = rule<ItemSpec (), boost::spirit::qi::locals<UnlockableItemType>>;
-    using item_spec_grammar_type = grammar<ItemSpec (), boost::spirit::qi::locals<UnlockableItemType>>;
-
-    struct item_spec_grammar : public item_spec_grammar_type {
-        item_spec_grammar(const parse::lexer& tok,
-                          Labeller& labeller);
-        parse::unlockable_item_enum_grammar unlockable_item_type_enum;
-        item_spec_rule_type start;
-    };
 
     void parse_file_common(const boost::filesystem::path& path,
                            const lexer& lexer,

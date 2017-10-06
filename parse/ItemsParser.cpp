@@ -1,6 +1,7 @@
 #include "Parse.h"
 
 #include "ParseImpl.h"
+#include "EnumParser.h"
 
 #include "../util/Directories.h"
 
