@@ -1040,8 +1040,7 @@ void CensoredCUIEdit::SetText(const std::string& str) {
     // generate censored text by appending one placeholder char per char in raw text
     std::string censored_text;
     for (const auto& curr_line : line_data)
-        for (const auto& curr_char : curr_line.char_data)
-            censored_text += m_placeholder;
+        censored_text += std::string(curr_line.char_data.size(), m_placeholder);
 
     CUIEdit::SetText(censored_text);
 }
