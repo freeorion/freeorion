@@ -650,7 +650,7 @@ HullTypeManager::HullTypeManager() {
         throw;
     }
 
-    TraceLogger() << [&]() {
+    TraceLogger() << [this]() {
             std::string retval("Hull Types:");
             for (const auto& entry : m_hulls) {
                 retval.append("\n\t" + entry.second->Name());
