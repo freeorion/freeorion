@@ -470,6 +470,7 @@ void HumanClientApp::StartServer() {
     }
     if (m_single_player_game) {
         args.push_back("--singleplayer");
+        args.push_back("--skip-checksum");
     }
     m_server_process = Process(SERVER_CLIENT_EXE, args);
 }
