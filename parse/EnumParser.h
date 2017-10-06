@@ -3,11 +3,13 @@
 
 #include "Lexer.h"
 
+#include "ParseImpl.h"
 #include "../universe/ValueRefFwd.h"
 #include "../universe/EnumsFwd.h"
 
 #include <boost/spirit/include/qi.hpp>
 
+struct ItemSpec;
 
 namespace parse {
     struct empire_affiliation_enum_grammar : public detail::enum_grammar<EmpireAffiliationType> {
@@ -60,6 +62,17 @@ namespace parse {
         detail::enum_rule<MeterType> rule;
     };
 
+    namespace detail {
+    using item_spec_rule_type = rule<ItemSpec (), boost::spirit::qi::locals<UnlockableItemType>>;
+    using item_spec_grammar_type = grammar<ItemSpec (), boost::spirit::qi::locals<UnlockableItemType>>;
+
+    struct item_spec_grammar : public item_spec_grammar_type {
+        item_spec_grammar(const parse::lexer& tok,
+                          Labeller& labeller);
+        parse::unlockable_item_enum_grammar unlockable_item_type_enum;
+        item_spec_rule_type start;
+    };
+    }
 }
 
 #endif

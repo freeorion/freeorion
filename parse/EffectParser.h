@@ -14,6 +14,7 @@ namespace Condition {
 
 namespace Effect {
     class EffectBase;
+    class EffectsGroup;
 }
 
 namespace parse { namespace detail {
