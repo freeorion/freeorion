@@ -1334,7 +1334,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     // enforce hull types effects order
     for (const auto& entry : GetHullTypeManager()) {
         const std::string& hull_type_name = entry.first;
-        const HullType* hull_type = entry.second;
+        const auto& hull_type = entry.second;
         auto ships_by_hull_type_it = ships_by_hull_type.find(hull_type_name);
 
         if (ships_by_hull_type_it == ships_by_hull_type.end())

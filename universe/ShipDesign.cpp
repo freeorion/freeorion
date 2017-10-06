@@ -638,11 +638,13 @@ HullTypeManager::HullTypeManager() {
         throw;
     }
 
-    TraceLogger() << "Hull Types:";
-    for (const auto& entry : m_hulls) {
-        const HullType* h = entry.second;
-        TraceLogger() << " ... " << h->Name();
-    }
+    TraceLogger() << [this]() {
+            std::string retval("Hull Types:");
+            for (const auto& entry : m_hulls) {
+                retval.append("\n\t" + entry.second->Name());
+            }
+            return retval;
+        }();
 
     if (m_hulls.empty())
         ErrorLogger() << "HullTypeManager expects at least one hull type.  All ship design construction will fail.";
@@ -653,15 +655,9 @@ HullTypeManager::HullTypeManager() {
     DebugLogger() << "HullTypeManager checksum: " << GetCheckSum();
 }
 
-HullTypeManager::~HullTypeManager() {
-    for (auto& entry : m_hulls) {
-        delete entry.second;
-    }
-}
-
 const HullType* HullTypeManager::GetHullType(const std::string& name) const {
     auto it = m_hulls.find(name);
-    return it != m_hulls.end() ? it->second : nullptr;
+    return it != m_hulls.end() ? it->second.get() : nullptr;
 }
 
 const HullTypeManager& HullTypeManager::GetHullTypeManager() {
@@ -1007,16 +1003,16 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
     auto parts = parts_in;
 
     // ensure hull type exists
-    const HullType* input_hull_type = GetHullTypeManager().GetHullType(hull);
-    HullType* fallback_hull_type;
-    if (!input_hull_type) {
+    const HullType* hull_type = GetHullTypeManager().GetHullType(hull);
+    if (!hull_type) {
         is_valid = false;
         if (produce_log)
             WarnLogger() << "Invalid ShipDesign hull not found: " << hull;
 
         const auto hull_it = GetHullTypeManager().begin();
         if (hull_it != GetHullTypeManager().end()) {
-            std::tie(hull, fallback_hull_type) = *hull_it;
+            hull = hull_it->first;
+            hull_type = hull_it->second.get();
             if (produce_log)
                 WarnLogger() << "Invalid ShipDesign hull falling back to: " << hull;
         } else {
@@ -1027,9 +1023,6 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
             return std::make_pair(hull, parts);
         }
     }
-
-    const auto hull_type = input_hull_type ? input_hull_type : fallback_hull_type;
-
 
     // ensure hull type has at least enough slots for passed parts
     if (parts.size() > hull_type->NumSlots()) {

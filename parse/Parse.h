@@ -46,7 +46,7 @@ namespace parse {
 
     FO_PARSE_API bool ship_parts(std::map<std::string, std::unique_ptr<PartType>>& parts);
 
-    FO_PARSE_API bool ship_hulls(std::map<std::string, HullType*>& hulls);
+    FO_PARSE_API bool ship_hulls(std::map<std::string, std::unique_ptr<HullType>>& hulls);
 
     /** Parse all ship designs in directory \p path, store them with their filename in \p
         design_and_path. If a file exists called ShipDesignOrdering.focs.txt, parse it and

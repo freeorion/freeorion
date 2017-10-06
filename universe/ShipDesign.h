@@ -414,7 +414,7 @@ namespace CheckSums {
 /** Holds FreeOrion hull types */
 class FO_COMMON_API HullTypeManager {
 public:
-    typedef std::map<std::string, HullType*>::const_iterator iterator;
+    typedef std::map<std::string, std::unique_ptr<HullType>>::const_iterator iterator;
 
     /** \name Accessors */ //@{
     /** returns the hull type with the name \a name; you should use the free function GetHullType() instead */
@@ -440,9 +440,8 @@ public:
 
 private:
     HullTypeManager();
-    ~HullTypeManager();
 
-    std::map<std::string, HullType*> m_hulls;
+    std::map<std::string, std::unique_ptr<HullType>> m_hulls;
     static HullTypeManager* s_instance;
 };
 
