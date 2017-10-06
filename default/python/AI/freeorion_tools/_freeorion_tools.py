@@ -158,6 +158,26 @@ def cache_by_session(function):
     return wrapper
 
 
+def cache_by_session_with_turnwise_update(function):
+    """
+    Cache a function value during session, updated each turn.
+    Wraps only functions with hashable arguments.
+    """
+    _cache = {}
+
+    @wraps(function)
+    def wrapper(*args, **kwargs):
+        key = (function , args, tuple(kwargs.items()))
+        this_turn = fo.currentTurn()
+        if key in _cache and _cache[key][0] == this_turn:
+            return _cache[key][1]
+        res = function(*args, **kwargs)
+        _cache[key] = (this_turn, res)
+        return res
+    wrapper._cache = _cache
+    return wrapper
+
+
 def cache_by_turn(function):
     """
     Cache a function value by turn, stored in foAIstate so also provides a history that may be analysed. The cache
