@@ -21,23 +21,36 @@
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<ShipSlotType>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::map<std::string, PartType*>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::pair<const std::string, PartType*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<PartType>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<PartType>>&) { return os; }
 }
 #endif
 
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-    const boost::phoenix::function<parse::detail::insert> insert_;
+    void insert_parttype(std::map<std::string, std::unique_ptr<PartType>>& part_types,
+                         ShipPartClass part_class, double capacity, double stat2,
+                         const CommonParams& common_params, const MoreCommonParams& more_common_params,
+                         std::vector<ShipSlotType> mountable_slot_types,
+                         const std::string& icon, bool add_standard_capacity_effect)
+    {
+        // TODO use make_unique when converting to C++14
+        auto part_type = std::unique_ptr<PartType>(
+            new PartType(part_class, capacity, stat2, common_params, more_common_params, mountable_slot_types, icon,
+                         add_standard_capacity_effect));
+
+        part_types.insert(std::make_pair(part_type->Name(), std::move(part_type)));
+    }
+
+
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_parttype_, insert_parttype, 9)
 
     struct rules {
         rules() {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
-            using phoenix::construct;
-            using phoenix::new_;
             using phoenix::push_back;
 
             qi::_1_type _1;
@@ -87,8 +100,7 @@ namespace {
                 >   slots(_f)
                 >   parse::detail::common_params_parser()           [ _e = _1 ]
                 >   parse::detail::label(Icon_token)        > tok.string    [ _b = _1 ]
-                  ) [ insert_(_r1, phoenix::bind(&MoreCommonParams::name, _a),
-                              new_<PartType>(_c, _d, _h, _e, _a, _f, _b, _g)) ]
+                  ) [ insert_parttype_(_r1, _c, _d, _h, _e, _a, _f, _b, _g) ]
                 ;
 
             start
@@ -111,7 +123,7 @@ namespace {
         > slots_rule;
 
         typedef parse::detail::rule<
-            void (std::map<std::string, PartType*>&),
+            void (std::map<std::string, std::unique_ptr<PartType>>&),
             boost::spirit::qi::locals<
                 MoreCommonParams,
                 std::string,
@@ -125,7 +137,7 @@ namespace {
         > part_type_rule;
 
         typedef parse::detail::rule<
-            void (std::map<std::string, PartType*>&)
+            void (std::map<std::string, std::unique_ptr<PartType>>&)
         > start_rule;
 
         slots_rule                                  slots;
@@ -136,11 +148,11 @@ namespace {
 }
 
 namespace parse {
-    bool ship_parts(std::map<std::string, PartType*>& parts) {
+    bool ship_parts(std::map<std::string, std::unique_ptr<PartType>>& parts) {
         bool result = true;
 
         for (const auto& file : ListScripts("scripting/ship_parts")) {
-            result &= detail::parse_file<rules, std::map<std::string, PartType*>>(file, parts);
+            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<PartType>>>(file, parts);
         }
 
         return result;

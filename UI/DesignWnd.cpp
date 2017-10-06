@@ -968,7 +968,7 @@ PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
     PartGroupsType part_groups;
     // loop through all possible parts
     for (const auto& entry : GetPartTypeManager()) {
-        const PartType* part = entry.second;
+        const auto& part = entry.second;
         if (!part->Producible())
             continue;
 
@@ -987,7 +987,7 @@ PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
         }
 
         for (ShipSlotType slot_type : part->MountableSlotTypes())
-        { part_groups[{part_class, slot_type}].push_back(part); }
+        { part_groups[{part_class, slot_type}].push_back(part.get()); }
     }
     return part_groups;
 }
@@ -1354,7 +1354,7 @@ void DesignWnd::PartPalette::CompleteConstruction() {
         // are there any parts of this class?
         bool part_of_this_class_exists = false;
         for (const auto& entry : part_manager) {
-            if (const PartType* part = entry.second) {
+            if (const auto& part = entry.second) {
                 if (part->Class() == part_class) {
                     part_of_this_class_exists = true;
                     break;
