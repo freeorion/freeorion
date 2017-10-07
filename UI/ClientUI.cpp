@@ -835,7 +835,7 @@ void ClientUI::ZoomToFleet(std::shared_ptr<const Fleet> fleet) {
 
 bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup/* = false*/) {
     if (reverse_lookup) {
-        for (const Tech* tech : GetTechManager()) {
+        for (const auto& tech : GetTechManager()) {
             if (boost::iequals(name, UserString(tech->Name())))
                 return ZoomToTech(tech->Name());
         }

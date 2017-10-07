@@ -1158,7 +1158,7 @@ namespace {
     std::vector<std::string> TechsThatUnlockItem(const ItemSpec& item) {
         std::vector<std::string> retval;
 
-        for (const Tech* tech : GetTechManager()) {
+        for (const auto& tech : GetTechManager()) {
             if (!tech) continue;
             const std::string& tech_name = tech->Name();
 

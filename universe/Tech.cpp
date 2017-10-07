@@ -32,12 +32,12 @@ namespace {
                    std::set<const Tech*>& checked_techs,
                    TechManager::iterator it, TechManager::iterator end_it)
     {
-        if (checked_techs.find(*it) != checked_techs.end())
+        if (checked_techs.find(it->get()) != checked_techs.end())
             return;
 
         if (known_techs.find((*it)->Name()) == known_techs.end() && it != end_it) {
             std::vector<const Tech*> stack;
-            stack.push_back(*it);
+            stack.push_back(it->get());
             while (!stack.empty()) {
                 const Tech* current_tech = stack.back();
                 unsigned int starting_stack_size = stack.size();
@@ -279,7 +279,7 @@ TechManager* TechManager::s_instance = nullptr;
 
 const Tech* TechManager::GetTech(const std::string& name) const {
     iterator it = m_techs.get<NameIndex>().find(name);
-    return it == m_techs.get<NameIndex>().end() ? nullptr : *it;
+    return it == m_techs.get<NameIndex>().end() ? nullptr : it->get();
 }
 
 const TechCategory* TechManager::GetTechCategory(const std::string& name) const {
@@ -410,7 +410,7 @@ TechManager::TechManager() {
     }
 
     // fill in the unlocked techs data for each loaded tech
-    for (const Tech* tech : m_techs) {
+    for (const auto& tech : m_techs) {
         for (const std::string& prereq : tech->Prerequisites()) {
             if (Tech* prereq_tech = const_cast<Tech*>(GetTech(prereq)))
                 prereq_tech->m_unlocked_techs.insert(tech->Name());
@@ -435,15 +435,10 @@ TechManager::TechManager() {
     DebugLogger() << "TechManager checksum: " << GetCheckSum();
 }
 
-TechManager::~TechManager() {
-    for (const Tech* tech : m_techs)
-        delete tech;
-}
-
 std::string TechManager::FindIllegalDependencies() {
     assert(!m_techs.empty());
     std::string retval;
-    for (const Tech* tech : m_techs) {
+    for (const auto& tech : m_techs) {
         if (!tech) {
             std::stringstream stream;
             stream << "ERROR: Missing tech referenced in other tech, for unknown reasons...";
@@ -467,12 +462,12 @@ std::string TechManager::FindFirstDependencyCycle() {
     static const std::set<std::string> EMPTY_STRING_SET;    // used in case an invalid tech is processed
 
     std::set<const Tech*> checked_techs; // the list of techs that are not part of any cycle
-    for (const Tech* tech : *this) {
-        if (checked_techs.find(tech) != checked_techs.end())
+    for (const auto& tech : *this) {
+        if (checked_techs.find(tech.get()) != checked_techs.end())
             continue;
 
         std::vector<const Tech*> stack;
-        stack.push_back(tech);
+        stack.push_back(tech.get());
         while (!stack.empty()) {
             // Examine the tech on top of the stack.  If the tech has no prerequisite techs, or if all
             // of its prerequisite techs have already been checked, pop it off the stack and mark it as
@@ -521,7 +516,7 @@ std::string TechManager::FindFirstDependencyCycle() {
 std::string TechManager::FindRedundantDependency() {
     assert(!m_techs.empty());
 
-    for (const Tech* tech : m_techs) {
+    for (const auto& tech : m_techs) {
         if (!tech) {
             std::stringstream stream;
             stream << "ERROR: Missing referenced tech for unknown reasons...";
