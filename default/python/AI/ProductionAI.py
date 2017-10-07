@@ -1023,7 +1023,7 @@ def generate_production_orders():
             dd_planet = universe.getPlanet(pid)
             if dd_planet:
                 queued_sys.add(dd_planet.systemID)
-        cur_drydoc_sys = set(ColonisationAI.empire_dry_docks.keys()).union(queued_sys)
+        cur_drydoc_sys = set(state.get_empire_drydocks().keys()).union(queued_sys)
         covered_drydoc_locs = set()
         for start_set, dest_set in [(cur_drydoc_sys, covered_drydoc_locs),
                                     (covered_drydoc_locs, covered_drydoc_locs)]:  # coverage of neighbors up to 2 jumps away from a drydock
@@ -1036,7 +1036,7 @@ def generate_production_orders():
         print "Considering building %s, found current and queued systems %s" % (building_name, ppstring(PlanetUtilsAI.sys_name_ids(cur_drydoc_sys.union(queued_sys))))
         for sys_id, pids in state.get_empire_planets_by_system(include_outposts=False).items():  # TODO: sort/prioritize in some fashion
             local_top_pilots = dict(top_pilot_systems.get(sys_id, []))
-            local_drydocks = ColonisationAI.empire_dry_docks.get(sys_id, [])
+            local_drydocks = state.get_empire_drydocks().get(sys_id, [])
             if len(queued_locs) >= max_dock_builds:
                 print "Drydock enqueing halted with %d of max %d" % (len(queued_locs), max_dock_builds)
                 break

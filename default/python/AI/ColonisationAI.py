@@ -26,7 +26,6 @@ colonization_timer = AITimer('getColonyFleets()')
 empire_colonizers = {}
 empire_ship_builders = {}
 empire_shipyards = {}
-empire_dry_docks = {}
 available_growth_specials = {}
 active_growth_specials = {}
 empire_metabolisms = {}
@@ -256,7 +255,6 @@ def survey_universe():
         empire_colonizers.clear()
         empire_ship_builders.clear()
         empire_shipyards.clear()
-        empire_dry_docks.clear()
         empire_metabolisms.clear()
         available_growth_specials.clear()
         active_growth_specials.clear()
@@ -342,8 +340,6 @@ def survey_universe():
                         available_growth_specials.setdefault(special, []).append(pid)
                         if planet.focus == FocusType.FOCUS_GROWTH:
                             active_growth_specials.setdefault(special, []).append(pid)
-                if "BLD_SHIPYARD_ORBITAL_DRYDOCK" in buildings_here:
-                    empire_dry_docks.setdefault(planet.systemID, []).append(pid)
             elif owner_id == -1:
                 if spec_name == "":
                     unowned_empty_planet_ids.add(pid)

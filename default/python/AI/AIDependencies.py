@@ -645,6 +645,7 @@ building_supply = {
 # </editor-fold>
 
 # <editor-fold desc="Shipyards">
+BLD_SHIPYARD_ORBITAL_DRYDOCK = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
 # ship facilities info, dict keyed by building name, value is (min_aggression, prereq_bldg, base_cost, time)
 # not currently determined dynamically because it is initially used in a location-independent fashion
 # note that BLD_SHIPYARD_BASE is not an absolute prereq for BLD_NEUTRONIUM_FORGE, but is a practical one

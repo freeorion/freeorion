@@ -2,6 +2,8 @@ from collections import namedtuple
 from freeorion_tools import ReadOnlyDict
 
 import freeOrionAIInterface as fo
+
+import AIDependencies
 from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
@@ -35,6 +37,9 @@ class State(object):
         self.__systems_by_jumps_to_supply = {}  # map from supply to list of system_ids
         self.__empire_planets_by_system = {}
 
+        # building info
+        self.__drydock_locations = ReadOnlyDict()  # map from system id to planet id where empire has a drydock
+
     def update(self):
         """
         Must be called at each turn (before first use) to update inner state.
@@ -42,6 +47,7 @@ class State(object):
         self.__init__()
         self.__update_planets()
         self.__update_supply()
+        self.__update_buildings()
 
     def __update_planets(self):
         """
@@ -51,6 +57,18 @@ class State(object):
         for pid in universe.planetIDs:
             planet = universe.getPlanet(pid)
             self.__planet_info[pid] = PlanetInfo(pid, planet.speciesName, planet.owner, planet.systemID)
+
+    def __update_buildings(self):
+        universe = fo.getUniverse()
+        empire_id = fo.empireID()
+        drydocks = {}
+        for building_id in universe.buildingIDs:
+            building = universe.getBuilding(building_id)
+            if not building:
+                continue
+            if building.buildingTypeName == AIDependencies.BLD_SHIPYARD_ORBITAL_DRYDOCK and building.ownedBy(empire_id):
+                drydocks.setdefault(building.systemID, []).append(building.planetID)
+        self.__drydock_locations = ReadOnlyDict({k: tuple(v) for k, v in drydocks.iteritems()})
 
     def __update_supply(self):
         """
@@ -162,6 +180,10 @@ class State(object):
 
     def get_number_of_colonies(self):
         return len(self.get_inhabited_planets())
+
+    def get_empire_drydocks(self):
+        """Return a map from system ids to planet ids where empire drydocks are located"""
+        return self.__drydock_locations
 
     @property
     def have_gas_giant(self):
