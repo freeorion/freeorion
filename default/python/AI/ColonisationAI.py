@@ -367,7 +367,7 @@ def survey_universe():
 
     _print_empire_species_roster()
 
-    if len(pilot_ratings) != 0:
+    if pilot_ratings:
         rating_list = sorted(pilot_ratings.values(), reverse=True)
         state.set_best_pilot_rating(rating_list[0])
         if len(pilot_ratings) == 1:
