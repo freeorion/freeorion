@@ -54,9 +54,13 @@ class State(object):
         Update information about planets.
         """
         universe = fo.getUniverse()
+        empire_id = fo.empireID()
         for pid in universe.planetIDs:
             planet = universe.getPlanet(pid)
             self.__planet_info[pid] = PlanetInfo(pid, planet.speciesName, planet.owner, planet.systemID)
+
+            if planet.ownedBy(empire_id) and AIDependencies.ANCIENT_RUINS_SPECIAL in planet.specials:
+                self.__have_ruins = True
 
     def __update_buildings(self):
         universe = fo.getUniverse()
@@ -202,9 +206,6 @@ class State(object):
     @property
     def have_ruins(self):
         return self.__have_ruins
-
-    def set_have_ruins(self):
-        self.__have_ruins = True
 
     @property
     def have_nest(self):

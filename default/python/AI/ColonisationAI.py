@@ -331,8 +331,6 @@ def survey_universe():
                     empire_status['industrialists'] += planet_population
                 elif planet.focus == FocusType.FOCUS_RESEARCH:
                     empire_status['researchers'] += planet_population
-                if "ANCIENT_RUINS_SPECIAL" in planet.specials:
-                    state.set_have_ruins()
                 for special in planet.specials:
                     if special in NEST_VAL_MAP:
                         state.set_have_nest()
