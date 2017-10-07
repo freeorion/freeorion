@@ -30,7 +30,7 @@ namespace parse {
     FO_PARSE_API bool buildings(std::map<std::string,
                                 std::unique_ptr<BuildingType>>& building_types);
 
-    FO_PARSE_API bool fields(std::map<std::string, FieldType*>& field_types);
+    FO_PARSE_API bool fields(std::map<std::string, std::unique_ptr<FieldType>>& field_types);
 
     FO_PARSE_API bool specials(std::map<std::string, std::unique_ptr<Special>>& specials_);
 

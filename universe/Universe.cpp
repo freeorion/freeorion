@@ -1393,7 +1393,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     // enforce field types effects order
     for (const auto& entry : GetFieldTypeManager()) {
         const std::string& field_type_name = entry.first;
-        const FieldType* field_type = entry.second;
+        const auto& field_type = entry.second;
         auto fields_by_type_it = fields_by_type.find(field_type_name);
 
         if (fields_by_type_it == fields_by_type.end())

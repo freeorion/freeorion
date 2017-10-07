@@ -116,7 +116,7 @@ private:
 
 class FieldTypeManager {
 public:
-    typedef std::map<std::string, FieldType*>::const_iterator iterator;
+    typedef std::map<std::string, std::unique_ptr<FieldType>>::const_iterator iterator;
 
     /** \name Accessors */ //@{
     /** returns the field type with the name \a name; you should use the
@@ -143,8 +143,8 @@ public:
     //@}
 private:
     FieldTypeManager();
-    ~FieldTypeManager();
-    std::map<std::string, FieldType*>   m_field_types;
+
+    std::map<std::string, std::unique_ptr<FieldType>> m_field_types;
     static FieldTypeManager*            s_instance;
 };
 
