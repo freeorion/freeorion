@@ -124,7 +124,7 @@ def get_best_drydock_system_id(start_system_id, fleet_id):
     universe = fo.getUniverse()
     start_system = universe_object.System(start_system_id)
     drydock_system_ids = set()
-    for sys_id, pids in ColonisationAI.empire_dry_docks.iteritems():
+    for sys_id, pids in state.get_empire_drydocks().iteritems():
         if sys_id == INVALID_ID:
             warn("get_best_drydock_system_id passed bad drydock sys_id.")
             continue

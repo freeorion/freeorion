@@ -369,7 +369,7 @@ def init():
         (Dep.UNRESEARCHABLE_TECHS, -1.0),
         (Dep.UNUSED_TECHS, ZERO),
         (Dep.THEORY_TECHS, ZERO),
-        (Dep.PRODUCTION_BOOST_TECHS, if_dict(ColonisationAI.empire_status, 'industrialists', 1.5, 0.6)),
+        (Dep.PRODUCTION_BOOST_TECHS, conditional_priority(1.5, 0.6, state.population_with_industry_focus())),
         (Dep.RESEARCH_BOOST_TECHS, if_tech_target(get_initial_research_target(), 2.1, 2.5)),
         (Dep.PRODUCTION_AND_RESEARCH_BOOST_TECHS, 2.5),
         (Dep.POPULATION_BOOST_TECHS, get_population_boost_priority),
@@ -1002,7 +1002,7 @@ def generate_classic_research_orders():
     #
     # check to accelerate quant net
     if False:  # disabled for now, otherwise just to help with cold-folding / organization
-        if foAI.foAIstate.character.may_research_tech_classic("LRN_QUANT_NET") and (ColonisationAI.empire_status.get('researchers', 0) >= 40):
+        if foAI.foAIstate.character.may_research_tech_classic("LRN_QUANT_NET") and (state.population_with_research_focus() >= 40):
             if not tech_is_complete("LRN_QUANT_NET"):
                 insert_idx = num_techs_accelerated  # TODO determine min target slot if reenabling
                 for qnTech in ["LRN_NDIM_SUBSPACE", "LRN_QUANT_NET"]:

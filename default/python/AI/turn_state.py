@@ -2,6 +2,10 @@ from collections import namedtuple
 from freeorion_tools import ReadOnlyDict
 
 import freeOrionAIInterface as fo
+
+import AIDependencies
+from AIDependencies import INVALID_ID
+from EnumsAI import FocusType
 from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
@@ -29,11 +33,16 @@ class State(object):
         self.__best_pilot_rating = 1e-8
         self.__medium_pilot_rating = 1e-8
         self.__planet_info = {}  # map from planet_id to PlanetInfo
+        self.__num_researchers = 0  # population with research focus
+        self.__num_industrialists = 0  # population with industry focus
 
         # supply info - negative values indicate jumps away from supply
         self.__system_supply = {}  # map from system_id to supply
         self.__systems_by_jumps_to_supply = {}  # map from supply to list of system_ids
         self.__empire_planets_by_system = {}
+
+        # building info
+        self.__drydock_locations = ReadOnlyDict()  # map from system id to planet id where empire has a drydock
 
     def update(self):
         """
@@ -42,15 +51,41 @@ class State(object):
         self.__init__()
         self.__update_planets()
         self.__update_supply()
+        self.__update_buildings()
 
     def __update_planets(self):
         """
         Update information about planets.
         """
         universe = fo.getUniverse()
+        empire_id = fo.empireID()
         for pid in universe.planetIDs:
             planet = universe.getPlanet(pid)
             self.__planet_info[pid] = PlanetInfo(pid, planet.speciesName, planet.owner, planet.systemID)
+
+            if planet.ownedBy(empire_id):
+                population = planet.currentMeterValue(fo.meterType.population)
+                if AIDependencies.ANCIENT_RUINS_SPECIAL in planet.specials:
+                    self.__have_ruins = True
+                if population > 0 and AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials:
+                        self.__have_computronium = True  # TODO: Check if species can set research focus
+
+                if planet.focus == FocusType.FOCUS_INDUSTRY:
+                    self.__num_industrialists += population
+                elif planet.focus == FocusType.FOCUS_RESEARCH:
+                    self.__num_researchers += population
+
+    def __update_buildings(self):
+        universe = fo.getUniverse()
+        empire_id = fo.empireID()
+        drydocks = {}
+        for building_id in universe.buildingIDs:
+            building = universe.getBuilding(building_id)
+            if not building:
+                continue
+            if building.buildingTypeName == AIDependencies.BLD_SHIPYARD_ORBITAL_DRYDOCK and building.ownedBy(empire_id):
+                drydocks.setdefault(building.systemID, []).append(building.planetID)
+        self.__drydock_locations = ReadOnlyDict({k: tuple(v) for k, v in drydocks.iteritems()})
 
     def __update_supply(self):
         """
@@ -160,8 +195,25 @@ class State(object):
             result.setdefault(x.species_name, []).append(x.pid)
         return result
 
+    def get_unowned_empty_planets(self):
+        """Return the set of planets that are not owned by any player and have no natives.
+
+        :rtype: set[int]
+        """
+        return {x.pid for x in self.__planet_info.itervalues() if x.owner == INVALID_ID and not x.species_name}
+
     def get_number_of_colonies(self):
         return len(self.get_inhabited_planets())
+
+    def population_with_research_focus(self):
+        return self.__num_researchers
+
+    def population_with_industry_focus(self):
+        return self.__num_industrialists
+
+    def get_empire_drydocks(self):
+        """Return a map from system ids to planet ids where empire drydocks are located"""
+        return self.__drydock_locations
 
     @property
     def have_gas_giant(self):
@@ -181,9 +233,6 @@ class State(object):
     def have_ruins(self):
         return self.__have_ruins
 
-    def set_have_ruins(self):
-        self.__have_ruins = True
-
     @property
     def have_nest(self):
         return self.__have_nest
@@ -194,9 +243,6 @@ class State(object):
     @property
     def have_computronium(self):
         return self.__have_computronium
-
-    def set_have_computronium(self):
-        self.__have_computronium = True
 
     @property
     def best_pilot_rating(self):

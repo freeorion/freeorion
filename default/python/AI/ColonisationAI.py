@@ -26,21 +26,15 @@ colonization_timer = AITimer('getColonyFleets()')
 empire_colonizers = {}
 empire_ship_builders = {}
 empire_shipyards = {}
-empire_dry_docks = {}
 available_growth_specials = {}
 active_growth_specials = {}
 empire_metabolisms = {}
 annexable_system_ids = set()
-annexable_ring1 = set()
-annexable_ring2 = set()
-annexable_ring3 = set()
 planet_supply_cache = {}  # includes system supply
 all_colony_opportunities = {}
 
 pilot_ratings = {}
 colony_status = {}
-empire_status = {'industrialists': 0, 'researchers': 0}
-unowned_empty_planet_ids = set()
 facilities_by_species_grade = {}
 system_facilities = {}
 
@@ -217,12 +211,6 @@ def check_supply():
 
     colonization_timer.start('Determining Annexable Systems')
     annexable_system_ids.clear()  # TODO: distinguish colony-annexable systems and outpost-annexable systems
-    annexable_ring1.clear()
-    annexable_ring2.clear()
-    annexable_ring3.clear()
-    annexable_ring1.update(state.get_systems_by_supply_tier(-1))
-    annexable_ring2.update(state.get_systems_by_supply_tier(-2))
-    annexable_ring3.update(state.get_systems_by_supply_tier(-3))
 
     supply_distance = get_supply_tech_range()
     # extra potential supply contributions:
@@ -250,13 +238,10 @@ def survey_universe():
     if True:
         colony_status['colonies_under_attack'] = []
         colony_status['colonies_under_threat'] = []
-        empire_status.clear()
-        empire_status.update({'industrialists': 0, 'researchers': 0})
         AIstate.empireStars.clear()
         empire_colonizers.clear()
         empire_ship_builders.clear()
         empire_shipyards.clear()
-        empire_dry_docks.clear()
         empire_metabolisms.clear()
         available_growth_specials.clear()
         active_growth_specials.clear()
@@ -266,7 +251,6 @@ def survey_universe():
             if tech_is_complete("TECH_COL_" + spec_name):
                 empire_colonizers["SP_" + spec_name] = []  # get it into colonizer list even if no colony yet
         pilot_ratings.clear()
-        unowned_empty_planet_ids.clear()
         facilities_by_species_grade.clear()
         system_facilities.clear()
 
@@ -318,8 +302,6 @@ def survey_universe():
                             yard_here = [pid]
                         if this_spec.canColonize and planet.currentMeterValue(fo.meterType.targetPopulation) >= 3:
                             empire_colonizers.setdefault(spec_name, []).extend(yard_here)
-                    if AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials:  # only counting it if planet is populated
-                        state.set_have_computronium()
 
                 this_grade_facilities = facilities_by_species_grade.setdefault(weapons_grade, {})
                 for facility in ship_facilities:
@@ -329,12 +311,6 @@ def survey_universe():
                         this_facility_dict.setdefault("systems", set()).add(sys_id)
                         this_facility_dict.setdefault("planets", set()).add(pid)
 
-                if planet.focus == FocusType.FOCUS_INDUSTRY:
-                    empire_status['industrialists'] += planet_population
-                elif planet.focus == FocusType.FOCUS_RESEARCH:
-                    empire_status['researchers'] += planet_population
-                if "ANCIENT_RUINS_SPECIAL" in planet.specials:
-                    state.set_have_ruins()
                 for special in planet.specials:
                     if special in NEST_VAL_MAP:
                         state.set_have_nest()
@@ -342,12 +318,7 @@ def survey_universe():
                         available_growth_specials.setdefault(special, []).append(pid)
                         if planet.focus == FocusType.FOCUS_GROWTH:
                             active_growth_specials.setdefault(special, []).append(pid)
-                if "BLD_SHIPYARD_ORBITAL_DRYDOCK" in buildings_here:
-                    empire_dry_docks.setdefault(planet.systemID, []).append(pid)
-            elif owner_id == -1:
-                if spec_name == "":
-                    unowned_empty_planet_ids.add(pid)
-            else:
+            elif owner_id != -1:
                 if get_partial_visibility_turn(pid) >= current_turn - 1:  # only interested in immediately recent data
                     foAI.foAIstate.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(pid)
 
@@ -442,7 +413,7 @@ def get_colony_fleets():
                 build_planet = universe.getPlanet(element.locationID)
                 queued_colony_bases.append(build_planet.systemID)
 
-    evaluated_colony_planet_ids = list(unowned_empty_planet_ids.union(state.get_empire_outposts()) - set(
+    evaluated_colony_planet_ids = list(state.get_unowned_empty_planets().union(state.get_empire_outposts()) - set(
         colony_targeted_planet_ids))  # places for possible colonyBase
 
     # don't want to lose the info by clearing, but #TODO: should double check if still own colonizer planet
@@ -478,7 +449,7 @@ def get_colony_fleets():
             if len(queued_outpost_bases) >= max_queued_outpost_bases:
                 print "Too many queued outpost bases to build any more now"
                 break
-            if pid not in unowned_empty_planet_ids:
+            if pid not in state.get_unowned_empty_planets():
                 continue
             if foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] != -1:
                 continue  # already building for here
@@ -518,9 +489,8 @@ def get_colony_fleets():
                 # res=fo.issueRequeueProductionOrder(production_queue.size -1, 0) # TODO: evaluate move to front
     colonization_timer.start('Evaluate Primary Colony Opportunities')
 
-    evaluated_outpost_planet_ids = list(
-        unowned_empty_planet_ids - set(outpost_targeted_planet_ids) - set(colony_targeted_planet_ids) - set(
-            reserved_outpost_base_targets))
+    evaluated_outpost_planet_ids = list(state.get_unowned_empty_planets() - set(outpost_targeted_planet_ids) - set(
+            colony_targeted_planet_ids) - set(reserved_outpost_base_targets))
 
     evaluated_colony_planets = assign_colonisation_values(evaluated_colony_planet_ids, MissionType.COLONISATION, None)
     colonization_timer.stop('Evaluate %d Primary Colony Opportunities' % (len(evaluated_colony_planet_ids)))
@@ -858,7 +828,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                 detail.append("Black Hole Backup %.1f" % (5 * discount_multiplier * backup_factor))
         if tech_is_complete(AIDependencies.PRO_SOL_ORB_GEN):  # start valuing as soon as PRO_SOL_ORB_GEN done
             if system.starType in [fo.starType.blackHole]:
-                this_val = 0.5 * max(empire_status.get('industrialists', 0),
+                this_val = 0.5 * max(state.get('industrialists', 0),
                                      20) * discount_multiplier  # pretty rare planets, good for generator
                 if not claimed_stars.get(fo.starType.blackHole, []):
                     star_bonus += this_val
@@ -918,7 +888,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                 detail.append("%s %.1f" % (special, fort_val))
             elif special == "HONEYCOMB_SPECIAL":
                 honey_val = 0.3 * (AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
-                                   empire_status['industrialists'] * discount_multiplier)
+                                   state.population_with_industry_focus() * discount_multiplier)
                 retval += honey_val
                 detail.append("%s %.1f" % (special, honey_val))
         if planet.size == fo.planetSize.asteroids:
@@ -1015,7 +985,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
             detail.append("Undepleted Ruins %.1f" % discount_multiplier * 50)
         if "HONEYCOMB_SPECIAL" in planet.specials:
             honey_val = (AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
-                         empire_status['industrialists'] * discount_multiplier)
+                         state.population_with_industry_focus() * discount_multiplier)
             if FocusType.FOCUS_INDUSTRY not in species_foci:
                 honey_val *= -0.3  # discourage settlement by colonizers not able to use Industry Focus
             retval += honey_val
@@ -1151,7 +1121,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                 detail.append("Temporal Anomaly Research")
             if AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials:
                 comp_bonus = (0.5 * AIDependencies.TECH_COST_MULTIPLIER * AIDependencies.RESEARCH_PER_POP *
-                              AIDependencies.COMPUTRONIUM_RES_MULTIPLIER * empire_status['researchers'] *
+                              AIDependencies.COMPUTRONIUM_RES_MULTIPLIER * state.population_with_research_focus() *
                               discount_multiplier)
                 if state.have_computronium:
                     comp_bonus *= backup_factor
