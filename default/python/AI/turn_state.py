@@ -4,6 +4,7 @@ from freeorion_tools import ReadOnlyDict
 import freeOrionAIInterface as fo
 
 import AIDependencies
+from AIDependencies import INVALID_ID
 from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
@@ -181,6 +182,13 @@ class State(object):
         for x in (x for x in self.__planet_info.itervalues() if x.owner == empire_id and x.species_name):
             result.setdefault(x.species_name, []).append(x.pid)
         return result
+
+    def get_unowned_empty_planets(self):
+        """Return the set of planets that are not owned by any player and have no natives.
+
+        :rtype: set[int]
+        """
+        return {x.pid for x in self.__planet_info.itervalues() if x.owner == INVALID_ID and not x.species_name}
 
     def get_number_of_colonies(self):
         return len(self.get_inhabited_planets())

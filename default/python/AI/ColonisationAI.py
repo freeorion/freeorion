@@ -39,7 +39,6 @@ all_colony_opportunities = {}
 pilot_ratings = {}
 colony_status = {}
 empire_status = {'industrialists': 0, 'researchers': 0}
-unowned_empty_planet_ids = set()
 facilities_by_species_grade = {}
 system_facilities = {}
 
@@ -264,7 +263,6 @@ def survey_universe():
             if tech_is_complete("TECH_COL_" + spec_name):
                 empire_colonizers["SP_" + spec_name] = []  # get it into colonizer list even if no colony yet
         pilot_ratings.clear()
-        unowned_empty_planet_ids.clear()
         facilities_by_species_grade.clear()
         system_facilities.clear()
 
@@ -338,10 +336,7 @@ def survey_universe():
                         available_growth_specials.setdefault(special, []).append(pid)
                         if planet.focus == FocusType.FOCUS_GROWTH:
                             active_growth_specials.setdefault(special, []).append(pid)
-            elif owner_id == -1:
-                if spec_name == "":
-                    unowned_empty_planet_ids.add(pid)
-            else:
+            elif owner_id != -1:
                 if get_partial_visibility_turn(pid) >= current_turn - 1:  # only interested in immediately recent data
                     foAI.foAIstate.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(pid)
 
@@ -436,7 +431,7 @@ def get_colony_fleets():
                 build_planet = universe.getPlanet(element.locationID)
                 queued_colony_bases.append(build_planet.systemID)
 
-    evaluated_colony_planet_ids = list(unowned_empty_planet_ids.union(state.get_empire_outposts()) - set(
+    evaluated_colony_planet_ids = list(state.get_unowned_empty_planets().union(state.get_empire_outposts()) - set(
         colony_targeted_planet_ids))  # places for possible colonyBase
 
     # don't want to lose the info by clearing, but #TODO: should double check if still own colonizer planet
@@ -472,7 +467,7 @@ def get_colony_fleets():
             if len(queued_outpost_bases) >= max_queued_outpost_bases:
                 print "Too many queued outpost bases to build any more now"
                 break
-            if pid not in unowned_empty_planet_ids:
+            if pid not in state.get_unowned_empty_planets():
                 continue
             if foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] != -1:
                 continue  # already building for here
@@ -512,9 +507,8 @@ def get_colony_fleets():
                 # res=fo.issueRequeueProductionOrder(production_queue.size -1, 0) # TODO: evaluate move to front
     colonization_timer.start('Evaluate Primary Colony Opportunities')
 
-    evaluated_outpost_planet_ids = list(
-        unowned_empty_planet_ids - set(outpost_targeted_planet_ids) - set(colony_targeted_planet_ids) - set(
-            reserved_outpost_base_targets))
+    evaluated_outpost_planet_ids = list(state.get_unowned_empty_planets() - set(outpost_targeted_planet_ids) - set(
+            colony_targeted_planet_ids) - set(reserved_outpost_base_targets))
 
     evaluated_colony_planets = assign_colonisation_values(evaluated_colony_planet_ids, MissionType.COLONISATION, None)
     colonization_timer.stop('Evaluate %d Primary Colony Opportunities' % (len(evaluated_colony_planet_ids)))
