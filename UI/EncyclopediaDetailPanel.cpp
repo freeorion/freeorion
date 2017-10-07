@@ -272,7 +272,7 @@ namespace {
             int client_empire_id = HumanClientApp::GetApp()->EmpireID();
             const SpeciesManager& species_manager = GetSpeciesManager();
             for (const auto& entry : species_manager) {
-                Species* species = entry.second;
+                const auto& species = entry.second;
                 std::set<int> known_homeworlds;
                 //std::string species_entry = UserString(entry.first) + ":  ";
                 std::string species_entry;
@@ -317,7 +317,7 @@ namespace {
             }
             sorted_entries_list.insert({"⃠ ", {"\n\n", "  "}});
             for (const auto& entry : species_manager) {
-                Species* species = entry.second;
+                const auto& species = entry.second;
                 if (species->Homeworlds().empty()) {
                     std::string species_entry = LinkTaggedText(VarText::SPECIES_TAG, entry.first) + ":  ";
                     species_entry += UserString("NO_HOMEWORLD");

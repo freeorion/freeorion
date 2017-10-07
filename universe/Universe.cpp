@@ -1170,7 +1170,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     // enforce species effects order
     for (const auto& entry : GetSpeciesManager()) {
         const std::string& species_name = entry.first;
-        const Species* species = entry.second;
+        const auto& species = entry.second;
         auto species_objects_it = species_objects.find(species_name);
 
         if (species_objects_it == species_objects.end())

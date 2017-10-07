@@ -1510,7 +1510,7 @@ void SidePanel::PlanetPanel::Refresh() {
 
     // need to check all species for homeworlds
     for (const auto& entry : GetSpeciesManager()) {
-        if (const Species* species = entry.second) {
+        if (const auto& species = entry.second) {
             const auto& homeworld_ids = species->Homeworlds();
             if (homeworld_ids.find(m_planet_id) != homeworld_ids.end()) {
                 homeworld = true;
