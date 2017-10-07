@@ -31,7 +31,6 @@ active_growth_specials = {}
 empire_metabolisms = {}
 annexable_system_ids = set()
 annexable_ring1 = set()
-annexable_ring2 = set()
 planet_supply_cache = {}  # includes system supply
 all_colony_opportunities = {}
 
@@ -215,9 +214,7 @@ def check_supply():
     colonization_timer.start('Determining Annexable Systems')
     annexable_system_ids.clear()  # TODO: distinguish colony-annexable systems and outpost-annexable systems
     annexable_ring1.clear()
-    annexable_ring2.clear()
     annexable_ring1.update(state.get_systems_by_supply_tier(-1))
-    annexable_ring2.update(state.get_systems_by_supply_tier(-2))
 
     supply_distance = get_supply_tech_range()
     # extra potential supply contributions:

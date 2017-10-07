@@ -438,7 +438,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
         supply_val = 100
     elif p_sys_id in ColonisationAI.annexable_ring1:
         supply_val = 200
-    elif p_sys_id in ColonisationAI.annexable_ring2:
+    elif p_sys_id in state.get_systems_by_supply_tier(-2):
         supply_val = 300
     elif p_sys_id in state.get_systems_by_supply_tier(-3):
         supply_val = 400
