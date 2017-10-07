@@ -328,8 +328,7 @@ def generate_production_orders():
                     res = fo.issueEnqueueBuildingProductionOrder("BLD_SHIPYARD_BASE", homeworld.id)
                     print "Enqueueing BLD_SHIPYARD_BASE, with result %d" % res
                 except:
-                    print >> sys.stderr, "Can't build shipyard at new capital, probably no population; we're hosed"
-                    print >> sys.stderr, "Exception triggered and caught: ", traceback.format_exc()
+                    warn("Can't build shipyard at new capital, probably no population; we're hosed")
 
             for building_name in ["BLD_SHIPYARD_ORG_ORB_INC"]:
                 if (building_name in possible_building_types) and (building_name not in (capital_buildings + queued_building_names)) and (building_expense < building_ratio * total_pp):
@@ -342,7 +341,7 @@ def generate_production_orders():
                             res = fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                             print "Requeueing %s to front of build queue, with result %d" % (building_name, res)
                     except:
-                        print >> sys.stderr, "Exception triggered and caught: ", traceback.format_exc()
+                        error("Exception triggered and caught: ", exc_info=True)
 
             if ("BLD_IMPERIAL_PALACE" in possible_building_types) and ("BLD_IMPERIAL_PALACE" not in (capital_buildings + queued_building_names)):
                 res = fo.issueEnqueueBuildingProductionOrder("BLD_IMPERIAL_PALACE", homeworld.id)
@@ -972,7 +971,7 @@ def generate_production_orders():
                         fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                     else:
                         # TODO: enable location condition reporting a la mapwnd BuildDesignatorWnd
-                        print >> sys.stderr, "Enqueing Conc Camp at %s despite building_type.canBeProduced(empire.empireID, pid) reporting " % planet.name, can_build_camp
+                       warn("Enqueing Conc Camp at %s despite building_type.canBeProduced(empire.empireID, pid) reporting %s" % (planet, can_build_camp))
         if verbose_camp:
             print "conc camp status at %s : checkedCamp: %s, built_camp: %s" % (planet.name, can_build_camp, built_camp)
 
@@ -1063,7 +1062,7 @@ def generate_production_orders():
                         print "Requeueing %s to front of build queue, with result %d" % (building_name, res)
                     break
                 else:
-                    print >> sys.stderr, "Failed enqueueing %s at planet %d (%s) , with result %d" % (building_name, pid, planet.name, res)
+                    warn("Failed enqueueing %s at %s, with result %d" % (building_name, planet, res))
 
     building_name = "BLD_XENORESURRECTION_LAB"
     queued_xeno_lab_locs = [element.locationID for element in production_queue if element.name == building_name]
@@ -1077,7 +1076,7 @@ def generate_production_orders():
             print "Requeueing %s to front of build queue, with result %d" % (building_name, res)
             break
         else:
-            print >> sys.stderr, "Failed enqueueing %s at planet %d (%s) , with result %d" % (building_name, pid, planet.name, res)
+            warn("Failed enqueueing %s at planet %s, got result %d" % (building_name, planet, res))
 
     queued_clny_bld_locs = [element.locationID for element in production_queue if element.name.startswith('BLD_COL_')]
     colony_bldg_entries = ([entry for entry in foAI.foAIstate.colonisablePlanetIDs.items() if entry[1][0] > 60 and
@@ -1097,7 +1096,7 @@ def generate_production_orders():
             print "Requeueing %s to front of build queue, with result %d" % (building_name, res)
             break
         else:
-            print >> sys.stderr, "Failed enqueueing %s at planet %d (%s) , with result %d" % (building_name, pid, planet.name, res)
+            warn("Failed enqueueing %s at planet %s, got result %d" % (building_name, planet, res))
 
     building_name = "BLD_EVACUATION"
     for pid in state.get_inhabited_planets():
@@ -1353,7 +1352,7 @@ def generate_production_orders():
                         break
                 loc, best_design_id, best_design = choice[1:4]
                 if best_design is None:
-                    print >> sys.stderr, "problem with mil_build_choices; with selector (%s) chose loc (%s), best_design_id (%s), best_design (None) from mil_build_choices: %s" % (selector, loc, best_design_id, mil_build_choices)
+                    warn("problem with mil_build_choices; with selector (%s) chose loc (%s), best_design_id (%s), best_design (None) from mil_build_choices: %s" % (selector, loc, best_design_id, mil_build_choices))
                     continue
             else:
                 loc = random.choice(build_choices)
