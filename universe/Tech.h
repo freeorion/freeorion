@@ -213,7 +213,7 @@ public:
     struct CategoryIndex {};
     struct NameIndex {};
     typedef boost::multi_index_container<
-        const Tech*,
+        std::unique_ptr<Tech>,
         boost::multi_index::indexed_by<
             boost::multi_index::ordered_non_unique<
                 boost::multi_index::tag<CategoryIndex>,
@@ -303,7 +303,6 @@ public:
 
 private:
     TechManager();
-    ~TechManager();
 
     /** returns an error string indicating the first instance of an illegal prerequisite relationship between
         two techs in m_techs, or an empty string if there are no illegal dependencies  */
@@ -319,7 +318,7 @@ private:
 
     void AllChildren(const Tech* tech, std::map<std::string, std::string>& children);
 
-    std::map<std::string, TechCategory*>    m_categories;
+    std::map<std::string, std::unique_ptr<TechCategory>> m_categories;
     TechContainer                           m_techs;
 
     static TechManager*                     s_instance;

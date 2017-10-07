@@ -1381,7 +1381,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
 
     // create a node for every tech
     TechManager& manager = GetTechManager();
-    for (const Tech* tech : manager) {
+    for (const auto& tech : manager) {
         if (!tech) continue;
         const std::string& tech_name = tech->Name();
         if (!TechVisible(tech_name, m_categories_shown, m_tech_statuses_shown)) continue;
@@ -1390,7 +1390,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     }
 
     // create an edge for every prerequisite
-    for (const Tech* tech : manager) {
+    for (const auto& tech : manager) {
         if (!tech) continue;
         const std::string& tech_name = tech->Name();
         if (!TechVisible(tech_name, m_categories_shown, m_tech_statuses_shown)) continue;
@@ -1412,7 +1412,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     std::set<std::string> visible_techs;
 
     // create new tech panels and new dependency arcs 
-    for (const Tech* tech : manager) {
+    for (const auto& tech : manager) {
         if (!tech) continue;
         const std::string& tech_name = tech->Name();
         if (!TechVisible(tech_name, m_categories_shown, m_tech_statuses_shown)) continue;
@@ -1459,7 +1459,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     } else {
         m_selected_tech_name.clear();
         // find a tech to centre view on
-        for (const Tech* tech : manager) {
+        for (const auto& tech : manager) {
             const std::string& tech_name = tech->Name();
             if (TechVisible(tech_name, m_categories_shown, m_tech_statuses_shown)) {
                 CenterOnTech(tech_name);
@@ -1932,7 +1932,7 @@ void TechTreeWnd::TechListBox::Populate(bool update /* = true*/) {
 
     // Skip lookup check when starting with empty cache
     bool new_cache = m_tech_row_cache.empty();
-    for (auto& tech : GetTechManager()) {
+    for (const auto& tech : GetTechManager()) {
         if (new_cache || !m_tech_row_cache.count(tech->Name()))
             m_tech_row_cache.emplace(tech->Name(), GG::Wnd::Create<TechRow>(row_width, tech->Name()));
     }

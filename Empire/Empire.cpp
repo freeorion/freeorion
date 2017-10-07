@@ -390,7 +390,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
         return;
 
     std::map<std::string, TechStatus> sim_tech_status_map;
-    for (const Tech* tech : GetTechManager()) {
+    for (const auto& tech : GetTechManager()) {
         const std::string& tech_name = tech->Name();
         sim_tech_status_map[tech_name] = empire->GetTechStatus(tech_name);
     }
@@ -2733,7 +2733,7 @@ void Empire::CheckResearchProgress() {
 
     // for all available and suitable techs, store ordered by cost to complete
     std::multimap<double, std::string> costs_to_complete_available_unpaused_techs;
-    for (const Tech* tech : GetTechManager()) {
+    for (const auto& tech : GetTechManager()) {
         const std::string& tech_name = tech->Name();
         if (techs_not_suitable_for_auto_allocation.count(tech_name) > 0)
             continue;
