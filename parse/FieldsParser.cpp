@@ -13,22 +13,33 @@
 #if DEBUG_PARSERS
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::map<std::string, FieldType*>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::pair<const std::string, FieldType*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<FieldType>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<FieldType>>&) { return os; }
 }
 #endif
 
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-    const boost::phoenix::function<parse::detail::insert> insert_;
+    void insert_fieldtype(std::map<std::string, std::unique_ptr<FieldType>>& fieldtypes,
+                          const std::string& name, const std::string& description,
+                          float stealth, const std::set<std::string>& tags,
+                          const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+                          const std::string& graphic)
+    {
+        // TODO use make_unique when converting to C++14
+        auto fieldtype_ptr = std::unique_ptr<FieldType>(
+            new FieldType(name, description, stealth, tags, effects, graphic));
+
+        fieldtypes.insert(std::make_pair(fieldtype_ptr->Name(), std::move(fieldtype_ptr)));
+    }
+
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_fieldtype_, insert_fieldtype, 7)
 
     struct rules {
         rules() {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
-
-            using phoenix::new_;
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -53,7 +64,7 @@ namespace {
                 >   parse::detail::tags_parser()(_d)
                 > -(parse::detail::label(EffectsGroups_token)       > parse::detail::effects_group_parser() [ _e = _1 ])
                 >   parse::detail::label(Graphic_token)             > tok.string
-                [ insert_(_r1, _a, new_<FieldType>(_a, _b, _c, _d, _e, _1)) ]
+                [ insert_fieldtype_(_r1, _a, _b, _c, _d, _e, _1) ]
                 ;
 
             start
@@ -70,7 +81,7 @@ namespace {
         }
 
         typedef parse::detail::rule<
-            void (std::map<std::string, FieldType*>&),
+            void (std::map<std::string, std::unique_ptr<FieldType>>&),
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
@@ -81,7 +92,7 @@ namespace {
         > field_rule;
 
         typedef parse::detail::rule<
-            void (std::map<std::string, FieldType*>&)
+            void (std::map<std::string, std::unique_ptr<FieldType>>&)
         > start_rule;
 
         field_rule          field;
@@ -90,11 +101,11 @@ namespace {
 }
 
 namespace parse {
-    bool fields(std::map<std::string, FieldType*>& field_types) {
+    bool fields(std::map<std::string, std::unique_ptr<FieldType>>& field_types) {
         bool result = true;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/fields")) {
-            result &= detail::parse_file<rules, std::map<std::string, FieldType*>>(file, field_types);
+            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<FieldType>>>(file, field_types);
         }
 
         return result;
