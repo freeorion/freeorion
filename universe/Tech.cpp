@@ -284,7 +284,7 @@ const Tech* TechManager::GetTech(const std::string& name) const {
 
 const TechCategory* TechManager::GetTechCategory(const std::string& name) const {
     auto it = m_categories.find(name);
-    return it == m_categories.end() ? nullptr : it->second;
+    return it == m_categories.end() ? nullptr : it->second.get();
 }
 
 std::vector<std::string> TechManager::CategoryNames() const {
@@ -436,8 +436,6 @@ TechManager::TechManager() {
 }
 
 TechManager::~TechManager() {
-    for (auto& entry : m_categories)
-        delete entry.second;
     for (const Tech* tech : m_techs)
         delete tech;
 }

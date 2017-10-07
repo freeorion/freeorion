@@ -319,7 +319,7 @@ private:
 
     void AllChildren(const Tech* tech, std::map<std::string, std::string>& children);
 
-    std::map<std::string, TechCategory*>    m_categories;
+    std::map<std::string, std::unique_ptr<TechCategory>> m_categories;
     TechContainer                           m_techs;
 
     static TechManager*                     s_instance;
