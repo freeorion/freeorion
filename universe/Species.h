@@ -228,12 +228,12 @@ private:
 class FO_COMMON_API SpeciesManager {
 private:
     struct FO_COMMON_API PlayableSpecies
-    { bool operator()(const std::map<std::string, Species*>::value_type& species_entry) const; };
+    { bool operator()(const std::map<std::string, std::unique_ptr<Species>>::value_type& species_entry) const; };
     struct FO_COMMON_API NativeSpecies
-    { bool operator()(const std::map<std::string, Species*>::value_type& species_entry) const; };
+    { bool operator()(const std::map<std::string, std::unique_ptr<Species>>::value_type& species_entry) const; };
 
 public:
-    typedef std::map<std::string, Species*>::const_iterator     iterator;
+    typedef std::map<std::string, std::unique_ptr<Species>>::const_iterator iterator;
     typedef boost::filter_iterator<PlayableSpecies, iterator>   playable_iterator;
     typedef boost::filter_iterator<NativeSpecies, iterator>     native_iterator;
 
@@ -340,13 +340,12 @@ public:
 
 private:
     SpeciesManager();
-    ~SpeciesManager();
 
     /** sets the homeworld ids of species in this SpeciesManager to those
       * specified in \a species_homeworld_ids */
     void    SetSpeciesHomeworlds(const std::map<std::string, std::set<int>>& species_homeworld_ids);
 
-    std::map<std::string, Species*>                     m_species;
+    std::map<std::string, std::unique_ptr<Species>>     m_species;
     std::map<std::string, std::map<int, float>>         m_species_empire_opinions;
     std::map<std::string, std::map<std::string, float>> m_species_species_opinions;
 

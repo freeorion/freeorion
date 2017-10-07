@@ -1484,7 +1484,7 @@ namespace {
             if (m_names.empty()) {
                 // match homeworlds for any species
                 for (auto species_it = manager.begin(); species_it != manager.end(); ++species_it) {
-                    if (auto species = species_it->second) {
+                    if (const auto& species = species_it->second) {
                         const auto& homeworld_ids = species->Homeworlds();
                         if (homeworld_ids.find(planet_id) != homeworld_ids.end())
                             return true;
@@ -1617,7 +1617,7 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
     if (m_names.empty()) {
         // match homeworlds for any species
         for (const auto& entry : manager) {
-            if (const auto species = entry.second) {
+            if (const auto& species = entry.second) {
                 const auto& homeworld_ids = species->Homeworlds();
                 if (homeworld_ids.find(planet_id) != homeworld_ids.end())   // is this planet the homeworld for this species?
                     return true;

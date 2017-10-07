@@ -345,11 +345,11 @@ unsigned int Species::GetCheckSum() const {
 SpeciesManager* SpeciesManager::s_instance = nullptr;
 
 bool SpeciesManager::PlayableSpecies::operator()(
-    const std::map<std::string, Species*>::value_type& species_entry) const
+    const std::map<std::string, std::unique_ptr<Species>>::value_type& species_entry) const
 { return species_entry.second->Playable(); }
 
 bool SpeciesManager::NativeSpecies::operator()(
-    const std::map<std::string, Species*>::value_type& species_entry) const
+    const std::map<std::string, std::unique_ptr<Species>>::value_type& species_entry) const
 { return species_entry.second->Native(); }
 
 SpeciesManager::SpeciesManager() {
@@ -365,15 +365,26 @@ SpeciesManager::SpeciesManager() {
         throw e;
     }
 
-    TraceLogger() << "Species:";
-    for (const auto& entry : m_species) {
-        const Species* s = entry.second;
-        TraceLogger() << " ... " << s->Name() << "  \t" <<
-            (s->Playable() ?        "Playable " : "         ") <<
-            (s->Native() ?          "Native " : "       ") <<
-            (s->CanProduceShips() ? "CanProduceShips " : "                ") <<
-            (s->CanColonize() ?     "CanColonize " : "            ");
-    }
+    TraceLogger() << [this]() {
+            std::string retval("Species:");
+            for (const auto& pair : m_species) {
+                const auto& species = pair.second;
+                retval.append("\n\t" + species->Name() + "  \t");
+                retval.append(species->Playable() ?
+                                 "Playable " :
+                                 "         ");
+                retval.append(species->Native() ?
+                                 "Native " :
+                                 "       ");
+                retval.append(species->CanProduceShips() ?
+                                 "CanProduceShips " :
+                                 "                ");
+                retval.append(species->CanColonize() ?
+                                 "CanColonize " :
+                                 "            ");
+            }
+            return retval;
+        }();
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
@@ -381,19 +392,14 @@ SpeciesManager::SpeciesManager() {
     DebugLogger() << "SpeciesManager checksum: " << GetCheckSum();
 }
 
-SpeciesManager::~SpeciesManager() {
-    for (auto& entry : m_species)
-        delete entry.second;
-}
-
 const Species* SpeciesManager::GetSpecies(const std::string& name) const {
     auto it = m_species.find(name);
-    return it != m_species.end() ? it->second : nullptr;
+    return it != m_species.end() ? it->second.get() : nullptr;
 }
 
 Species* SpeciesManager::GetSpecies(const std::string& name) {
     auto it = m_species.find(name);
-    return it != m_species.end() ? it->second : nullptr;
+    return it != m_species.end() ? it->second.get() : nullptr;
 }
 
 int SpeciesManager::GetSpeciesID(const std::string& name) const {
@@ -481,7 +487,7 @@ void SpeciesManager::SetSpeciesHomeworlds(const std::map<std::string, std::set<i
         Species* species = nullptr;
         auto species_it = m_species.find(species_name);
         if (species_it != m_species.end())
-            species = species_it->second;
+            species = species_it->second.get();
 
         if (species) {
             species->SetHomeworlds(homeworlds);
@@ -507,7 +513,7 @@ std::map<std::string, std::set<int>> SpeciesManager::GetSpeciesHomeworldsMap(int
     std::map<std::string, std::set<int>> retval;
     for (const auto& entry : m_species) {
         const std::string species_name = entry.first;
-        const Species* species = entry.second;
+        const Species* species = entry.second.get();
         if (!species) {
             ErrorLogger() << "SpeciesManager::GetSpeciesHomeworldsMap found a null species pointer in SpeciesManager?!";
             continue;

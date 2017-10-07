@@ -138,7 +138,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
         // is planet a homeworld? (for any species)
         if (!homeworld) {
             for (const auto& entry : species_manager) {
-                if (const Species* species = entry.second) {
+                if (const auto& species = entry.second) {
                     const auto& homeworld_ids = species->Homeworlds();
                     if (homeworld_ids.find(planet_id) != homeworld_ids.end()) {
                         homeworld = true;
