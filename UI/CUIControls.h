@@ -447,6 +447,7 @@ public:
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
+    bool            HasValueSet() { return m_values.size() > 0; }
     double          GetValue(int index = 0) const;
     GG::Pt          MinUsableSize() const override;
     //@}

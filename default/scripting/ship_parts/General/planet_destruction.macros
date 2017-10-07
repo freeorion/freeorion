@@ -4,15 +4,17 @@ PLANET_DESTRUCTION_EFFECT
                     label = "EFFECT_PLANET_DESTRUCTION_LABEL"
                     icon = "icons/specials_huge/planet_destroyed_blue.png"
                     parameters = [
+                        tag = "system" data = Target.SystemID
                         tag = "planet" data = Target.ID
                         tag = "empire" data = Target.Owner
                     ]
                     empire = Source.Owner
                 GenerateSitRepMessage  // sitrep for targeted empire
                     message = "EFFECT_PLANET_DESTRUCTION_OWN"
-                    label = "EFFECT_PLANET_DESTRUCTION_LABEL_OWN"
+                    label = "EFFECT_PLANET_DESTRUCTION_OWN_LABEL"
                     icon = "icons/specials_huge/planet_destroyed_blue.png"
                     parameters = [
+                        tag = "system" data = Target.SystemID
                         tag = "planet" data = Target.ID
                         tag = "empire" data = Source.Owner
                     ]

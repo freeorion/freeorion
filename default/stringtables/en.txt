@@ -6426,15 +6426,15 @@ EFFECT_PLANET_TARGETED
 At %planet%: our planet is being targeted by a planet destroyer cannon from the ship %ship%!
 
 EFFECT_PLANET_DESTRUCTION
-We have destroyed the %empire% planet %planet%!
+At %system%: we have destroyed the %empire% planet %planet%!
 
 EFFECT_PLANET_DESTRUCTION_LABEL
 Destruction of hostile planet
 
 EFFECT_PLANET_DESTRUCTION_OWN
-Our planet %planet% was destroyed by %empire%!
+At %system%: %planet% was destroyed by %empire%!
 
-EFFECT_PLANET_DESTRUCTION_LABEL_OWN
+EFFECT_PLANET_DESTRUCTION_OWN_LABEL
 Destruction of own planet
 
 EFFECT_EVACUEES
