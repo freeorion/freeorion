@@ -295,7 +295,7 @@ def assign_invasion_values(planet_ids):
                 planet2 = universe.getPlanet(pid2)
                 # TODO check for allies
                 if (planet2 and (planet2.owner != empire_id) and
-                        ((planet2.owner != -1) or (planet.currentMeterValue(fo.meterType.population) > 0))):
+                        ((planet2.owner != -1) or (planet2.currentMeterValue(fo.meterType.population) > 0))):
                     planet_values[pid][0] += (
                         industry_ratio *
                         neighbor_val_ratio *
