@@ -134,8 +134,9 @@ def chat_human(message):
     Log message cleared form tags.
     """
     human_id = [x for x in fo.allPlayerIDs() if fo.playerIsHost(x)][0]
+    message = str(message)
     fo.sendChatMessage(human_id, message)
-    print "\nChat Message to human: %s" % remove_tags(message)
+    print "Chat Message to human: %s" % remove_tags(message)
 
 
 def cache_by_session(function):
