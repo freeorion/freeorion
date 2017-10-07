@@ -1,3 +1,81 @@
+class AccountingInfoVec(object):
+    def __delitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def extend(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def __getitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: object
+        """
+        return object()
+
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
+    def __iter__(self):
+        """
+        :rtype: object
+        """
+        return object()
+
+    def __setitem__(self, obj1, obj2):
+        """
+        :param obj1:
+        :type obj1: object
+        :param obj2:
+        :type obj2: object
+        :rtype: None
+        """
+        return None
+
+    def append(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def __len__(self):
+        """
+        :rtype: int
+        """
+        return int()
+
+
+class EffectCause(object):
+    @property
+    def causeType(self):
+        pass
+
+    @property
+    def customLabel(self):
+        pass
+
+    @property
+    def specificCause(self):
+        pass
+
+
 class GGColor(object):
     @property
     def a(self):
@@ -56,6 +134,74 @@ class GalaxySetupData(object):
     @property
     def maxAIAggression(self):
         return aggression()
+
+
+class GameRules(object):
+    @property
+    def getRulesAsStrings(self):
+        pass
+
+    @property
+    def empty(self):
+        pass
+
+    def getDouble(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: float
+        """
+        return float()
+
+    def ruleExistsWithType(self, string, arg):
+        """
+        :param string:
+        :type string: str
+        :param arg:
+        :type arg: ruleType
+        :rtype: bool
+        """
+        return bool()
+
+    def getString(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: str
+        """
+        return str()
+
+    def getToggle(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: bool
+        """
+        return bool()
+
+    def getDescription(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: str
+        """
+        return str()
+
+    def getInt(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: int
+        """
+        return int()
+
+    def ruleExists(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: bool
+        """
+        return bool()
 
 
 class IntBoolMap(object):
@@ -536,6 +682,54 @@ class ItemSpecVec(object):
         return int()
 
 
+class MeterTypeAccountingInfoVecMap(object):
+    def __delitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def __getitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: object
+        """
+        return object()
+
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
+    def __iter__(self):
+        """
+        :rtype: object
+        """
+        return object()
+
+    def __setitem__(self, obj1, obj2):
+        """
+        :param obj1:
+        :type obj1: object
+        :param obj2:
+        :type obj2: object
+        :rtype: None
+        """
+        return None
+
+    def __len__(self):
+        """
+        :rtype: int
+        """
+        return int()
+
+
 class MeterTypeMeterMap(object):
     def __delitem__(self, obj):
         """
@@ -631,6 +825,80 @@ class PairIntInt_IntMap(object):
         :type obj1: object
         :param obj2:
         :type obj2: object
+        :rtype: None
+        """
+        return None
+
+    def __len__(self):
+        """
+        :rtype: int
+        """
+        return int()
+
+
+class RuleValueStringStringPair(object):
+    @property
+    def name(self):
+        pass
+
+    @property
+    def value(self):
+        pass
+
+
+class RuleValueStringsVec(object):
+    def __delitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def extend(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def __getitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: object
+        """
+        return object()
+
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
+    def __iter__(self):
+        """
+        :rtype: object
+        """
+        return object()
+
+    def __setitem__(self, obj1, obj2):
+        """
+        :param obj1:
+        :type obj1: object
+        :param obj2:
+        :type obj2: object
+        :rtype: None
+        """
+        return None
+
+    def append(self, obj):
+        """
+        :param obj:
+        :type obj: object
         :rtype: None
         """
         return None
@@ -831,9 +1099,9 @@ class StringVec(object):
 
     def __iter__(self):
         """
-        :rtype: iter
+        :rtype: object
         """
-        return iter()
+        return object()
 
     def __setitem__(self, obj1, obj2):
         """
@@ -849,6 +1117,54 @@ class StringVec(object):
         """
         :param obj:
         :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def __len__(self):
+        """
+        :rtype: int
+        """
+        return int()
+
+
+class TargetIDAccountingMapMap(object):
+    def __delitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def __getitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: object
+        """
+        return object()
+
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
+    def __iter__(self):
+        """
+        :rtype: object
+        """
+        return object()
+
+    def __setitem__(self, obj1, obj2):
+        """
+        :param obj1:
+        :type obj1: object
+        :param obj2:
+        :type obj2: object
         :rtype: None
         """
         return None
@@ -1147,6 +1463,16 @@ class empire(object):
         """
         :param number:
         :type number: int
+        :rtype: bool
+        """
+        return bool()
+
+    def unrestrictedLaneTravel(self, number1, number2):
+        """
+        :param number1:
+        :type number1: int
+        :param number2:
+        :type number2: int
         :rtype: bool
         """
         return bool()
@@ -1700,6 +2026,10 @@ class shipDesign(object):
         return float()
 
     @property
+    def hasFighters(self):
+        return bool()
+
+    @property
     def shields(self):
         return float()
 
@@ -1982,6 +2312,10 @@ class universe(object):
         return IntVec()
 
     @property
+    def effectAccounting(self):
+        return TargetIDAccountingMapMap()
+
+    @property
     def allObjectIDs(self):
         return IntVec()
 
@@ -1991,6 +2325,8 @@ class universe(object):
 
     def jumpDistance(self, number1, number2):
         """
+        If two system ids are passed or both objects are within a system, return the jump distance between the two systems. If one object (e.g. a fleet) is on a starlane, then calculate the jump distance from both ends of the starlane to the target system and return the smaller one.
+
         :param number1:
         :type number1: int
         :param number2:
@@ -2061,6 +2397,24 @@ class universe(object):
         """
         return dict()
 
+    def shortestPathDistance(self, number1, number2):
+        """
+        :param number1:
+        :type number1: int
+        :param number2:
+        :type number2: int
+        :rtype: float
+        """
+        return float()
+
+    def getFleet(self, number):
+        """
+        :param number:
+        :type number: int
+        :rtype: fleet
+        """
+        return fleet()
+
     def leastJumpsPath(self, number1, number2, number3):
         """
         :param number1:
@@ -2072,14 +2426,6 @@ class universe(object):
         :rtype: IntVec
         """
         return IntVec()
-
-    def getFleet(self, number):
-        """
-        :param number:
-        :type number: int
-        :rtype: fleet
-        """
-        return fleet()
 
     def getImmediateNeighbors(self, number1, number2):
         """
@@ -2326,6 +2672,20 @@ class universeObject(object):
         return bool()
 
 
+class AccountingInfo(EffectCause):
+    @property
+    def meterChange(self):
+        pass
+
+    @property
+    def sourceID(self):
+        pass
+
+    @property
+    def meterRunningTotal(self):
+        pass
+
+
 class building(universeObject):
     @property
     def buildingTypeName(self):
@@ -2504,26 +2864,6 @@ class planet(universeObject, popCenter, resourceCenter):
 
 class ship(universeObject):
     @property
-    def partMeters(self):
-        return ShipPartMeterMap()
-
-    @property
-    def speciesName(self):
-        return str()
-
-    @property
-    def orderedScrapped(self):
-        return bool()
-
-    @property
-    def isArmed(self):
-        return bool()
-
-    @property
-    def troopCapacity(self):
-        return float()
-
-    @property
     def canColonize(self):
         return bool()
 
@@ -2532,32 +2872,16 @@ class ship(universeObject):
         return bool()
 
     @property
-    def designID(self):
-        return int()
+    def troopCapacity(self):
+        return float()
 
     @property
     def producedByEmpireID(self):
         return int()
 
     @property
-    def isMonster(self):
-        return bool()
-
-    @property
     def design(self):
         return shipDesign()
-
-    @property
-    def orderedInvadePlanet(self):
-        return int()
-
-    @property
-    def colonyCapacity(self):
-        return float()
-
-    @property
-    def fleetID(self):
-        return int()
 
     @property
     def canBombard(self):
@@ -2571,7 +2895,59 @@ class ship(universeObject):
     def orderedColonizePlanet(self):
         return int()
 
-    def currentPartMeterValue(self, meter_type, string):
+    @property
+    def isMonster(self):
+        return bool()
+
+    @property
+    def fleetID(self):
+        return int()
+
+    @property
+    def arrivedOnTurn(self):
+        return int()
+
+    @property
+    def speciesName(self):
+        return str()
+
+    @property
+    def isArmed(self):
+        return bool()
+
+    @property
+    def hasFighters(self):
+        return bool()
+
+    @property
+    def colonyCapacity(self):
+        return float()
+
+    @property
+    def orderedInvadePlanet(self):
+        return int()
+
+    @property
+    def partMeters(self):
+        return ShipPartMeterMap()
+
+    @property
+    def lastResuppliedOnTurn(self):
+        return int()
+
+    @property
+    def orderedScrapped(self):
+        return bool()
+
+    @property
+    def lastTurnActiveInCombat(self):
+        return int()
+
+    @property
+    def designID(self):
+        return int()
+
+    def initialPartMeterValue(self, meter_type, string):
         """
         :param meter_type:
         :type meter_type: meterType
@@ -2581,7 +2957,7 @@ class ship(universeObject):
         """
         return float()
 
-    def initialPartMeterValue(self, meter_type, string):
+    def currentPartMeterValue(self, meter_type, string):
         """
         :param meter_type:
         :type meter_type: meterType
@@ -2713,15 +3089,23 @@ class diplomaticMessageType(Enum):
     noMessage = None  # diplomaticMessageType(-1, "noMessage")
     warDeclaration = None  # diplomaticMessageType(0, "warDeclaration")
     peaceProposal = None  # diplomaticMessageType(1, "peaceProposal")
-    acceptProposal = None  # diplomaticMessageType(2, "acceptProposal")
-    cancelProposal = None  # diplomaticMessageType(3, "cancelProposal")
+    acceptPeaceProposal = None  # diplomaticMessageType(2, "acceptPeaceProposal")
+    alliesProposal = None  # diplomaticMessageType(3, "alliesProposal")
+    acceptAlliesProposal = None  # diplomaticMessageType(4, "acceptAlliesProposal")
+    endAllies = None  # diplomaticMessageType(5, "endAllies")
+    cancelProposal = None  # diplomaticMessageType(6, "cancelProposal")
+    rejectProposal = None  # diplomaticMessageType(7, "rejectProposal")
 
 
 diplomaticMessageType.noMessage = diplomaticMessageType(-1, "noMessage")
 diplomaticMessageType.warDeclaration = diplomaticMessageType(0, "warDeclaration")
 diplomaticMessageType.peaceProposal = diplomaticMessageType(1, "peaceProposal")
-diplomaticMessageType.acceptProposal = diplomaticMessageType(2, "acceptProposal")
-diplomaticMessageType.cancelProposal = diplomaticMessageType(3, "cancelProposal")
+diplomaticMessageType.acceptPeaceProposal = diplomaticMessageType(2, "acceptPeaceProposal")
+diplomaticMessageType.alliesProposal = diplomaticMessageType(3, "alliesProposal")
+diplomaticMessageType.acceptAlliesProposal = diplomaticMessageType(4, "acceptAlliesProposal")
+diplomaticMessageType.endAllies = diplomaticMessageType(5, "endAllies")
+diplomaticMessageType.cancelProposal = diplomaticMessageType(6, "cancelProposal")
+diplomaticMessageType.rejectProposal = diplomaticMessageType(7, "rejectProposal")
 
 
 class diplomaticStatus(Enum):
@@ -2730,10 +3114,40 @@ class diplomaticStatus(Enum):
 
     war = None  # diplomaticStatus(0, "war")
     peace = None  # diplomaticStatus(1, "peace")
+    allied = None  # diplomaticStatus(2, "allied")
 
 
 diplomaticStatus.war = diplomaticStatus(0, "war")
 diplomaticStatus.peace = diplomaticStatus(1, "peace")
+diplomaticStatus.allied = diplomaticStatus(2, "allied")
+
+
+class effectsCauseType(Enum):
+    def __init__(self, numerator, name):
+        self.name = name
+
+    invalid = None  # effectsCauseType(-1, "invalid")
+    unknown = None  # effectsCauseType(0, "unknown")
+    inherent = None  # effectsCauseType(1, "inherent")
+    tech = None  # effectsCauseType(2, "tech")
+    building = None  # effectsCauseType(3, "building")
+    field = None  # effectsCauseType(4, "field")
+    special = None  # effectsCauseType(5, "special")
+    species = None  # effectsCauseType(6, "species")
+    shipPart = None  # effectsCauseType(7, "shipPart")
+    shipHull = None  # effectsCauseType(8, "shipHull")
+
+
+effectsCauseType.invalid = effectsCauseType(-1, "invalid")
+effectsCauseType.unknown = effectsCauseType(0, "unknown")
+effectsCauseType.inherent = effectsCauseType(1, "inherent")
+effectsCauseType.tech = effectsCauseType(2, "tech")
+effectsCauseType.building = effectsCauseType(3, "building")
+effectsCauseType.field = effectsCauseType(4, "field")
+effectsCauseType.special = effectsCauseType(5, "special")
+effectsCauseType.species = effectsCauseType(6, "species")
+effectsCauseType.shipPart = effectsCauseType(7, "shipPart")
+effectsCauseType.shipHull = effectsCauseType(8, "shipHull")
 
 
 class galaxySetupOption(Enum):
@@ -2948,6 +3362,24 @@ class resourceType(Enum):
 resourceType.industry = resourceType(0, "industry")
 resourceType.trade = resourceType(1, "trade")
 resourceType.research = resourceType(2, "research")
+
+
+class ruleType(Enum):
+    def __init__(self, numerator, name):
+        self.name = name
+
+    int = None  # ruleType(-1, "int")
+    toggle = None  # ruleType(0, "toggle")
+    None = None  # ruleType(1, "None")
+    double = None  # ruleType(2, "double")
+    string = None  # ruleType(3, "string")
+
+
+ruleType.int = ruleType(-1, "int")
+ruleType.toggle = ruleType(0, "toggle")
+ruleType.None = ruleType(1, "None")
+ruleType.double = ruleType(2, "double")
+ruleType.string = ruleType(3, "string")
 
 
 class shipPartClass(Enum):
@@ -3186,6 +3618,15 @@ def getGalaxySetupData():
     :rtype: GalaxySetupData
     """
     return GalaxySetupData()
+
+
+def getGameRules():
+    """
+    Returns the game rules manager, which can be used to look up the names (string) of rules are defined with what type (boolean / toggle, int, double, string), and what values the rules have in the current game.
+
+    :rtype: GameRules
+    """
+    return GameRules()
 
 
 def getHullType(string):
