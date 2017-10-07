@@ -5,6 +5,7 @@ import freeOrionAIInterface as fo
 
 import AIDependencies
 from AIDependencies import INVALID_ID
+from EnumsAI import FocusType
 from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
@@ -32,6 +33,8 @@ class State(object):
         self.__best_pilot_rating = 1e-8
         self.__medium_pilot_rating = 1e-8
         self.__planet_info = {}  # map from planet_id to PlanetInfo
+        self.__num_researchers = 0  # population with research focus
+        self.__num_industrialists = 0  # population with industry focus
 
         # supply info - negative values indicate jumps away from supply
         self.__system_supply = {}  # map from system_id to supply
@@ -61,11 +64,16 @@ class State(object):
             self.__planet_info[pid] = PlanetInfo(pid, planet.speciesName, planet.owner, planet.systemID)
 
             if planet.ownedBy(empire_id):
+                population = planet.currentMeterValue(fo.meterType.population)
                 if AIDependencies.ANCIENT_RUINS_SPECIAL in planet.specials:
                     self.__have_ruins = True
-                if AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials:
-                    if planet.currentMeterValue(fo.meterType.population):
+                if population > 0 and AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials:
                         self.__have_computronium = True  # TODO: Check if species can set research focus
+
+                if planet.focus == FocusType.FOCUS_INDUSTRY:
+                    self.__num_industrialists += population
+                elif planet.focus == FocusType.FOCUS_RESEARCH:
+                    self.__num_researchers += population
 
     def __update_buildings(self):
         universe = fo.getUniverse()
@@ -196,6 +204,12 @@ class State(object):
 
     def get_number_of_colonies(self):
         return len(self.get_inhabited_planets())
+
+    def population_with_research_focus(self):
+        return self.__num_researchers
+
+    def population_with_industry_focus(self):
+        return self.__num_industrialists
 
     def get_empire_drydocks(self):
         """Return a map from system ids to planet ids where empire drydocks are located"""

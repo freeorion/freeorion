@@ -315,7 +315,7 @@ def generate_production_orders():
                         cost, time = empire.productionCostAndTime(production_queue[production_queue.size - 1])
                         building_expense += cost / time
 
-            if (total_pp > 40 or ((current_turn > 40) and (ColonisationAI.empire_status.get('industrialists', 0) >= 20))) and ("BLD_INDUSTRY_CENTER" in possible_building_types) and ("BLD_INDUSTRY_CENTER" not in (capital_buildings+queued_building_names)) and (building_expense < building_ratio*total_pp):
+            if (total_pp > 40 or ((current_turn > 40) and (state.population_with_industry_focus() >= 20))) and ("BLD_INDUSTRY_CENTER" in possible_building_types) and ("BLD_INDUSTRY_CENTER" not in (capital_buildings+queued_building_names)) and (building_expense < building_ratio*total_pp):
                 res = fo.issueEnqueueBuildingProductionOrder("BLD_INDUSTRY_CENTER", homeworld.id)
                 print "Enqueueing BLD_INDUSTRY_CENTER, with result %d" % res
                 if res:

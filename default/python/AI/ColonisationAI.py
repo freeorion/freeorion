@@ -35,7 +35,6 @@ all_colony_opportunities = {}
 
 pilot_ratings = {}
 colony_status = {}
-empire_status = {'industrialists': 0, 'researchers': 0}
 facilities_by_species_grade = {}
 system_facilities = {}
 
@@ -239,8 +238,6 @@ def survey_universe():
     if True:
         colony_status['colonies_under_attack'] = []
         colony_status['colonies_under_threat'] = []
-        empire_status.clear()
-        empire_status.update({'industrialists': 0, 'researchers': 0})
         AIstate.empireStars.clear()
         empire_colonizers.clear()
         empire_ship_builders.clear()
@@ -314,10 +311,6 @@ def survey_universe():
                         this_facility_dict.setdefault("systems", set()).add(sys_id)
                         this_facility_dict.setdefault("planets", set()).add(pid)
 
-                if planet.focus == FocusType.FOCUS_INDUSTRY:
-                    empire_status['industrialists'] += planet_population
-                elif planet.focus == FocusType.FOCUS_RESEARCH:
-                    empire_status['researchers'] += planet_population
                 for special in planet.specials:
                     if special in NEST_VAL_MAP:
                         state.set_have_nest()
@@ -835,7 +828,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                 detail.append("Black Hole Backup %.1f" % (5 * discount_multiplier * backup_factor))
         if tech_is_complete(AIDependencies.PRO_SOL_ORB_GEN):  # start valuing as soon as PRO_SOL_ORB_GEN done
             if system.starType in [fo.starType.blackHole]:
-                this_val = 0.5 * max(empire_status.get('industrialists', 0),
+                this_val = 0.5 * max(state.get('industrialists', 0),
                                      20) * discount_multiplier  # pretty rare planets, good for generator
                 if not claimed_stars.get(fo.starType.blackHole, []):
                     star_bonus += this_val
@@ -895,7 +888,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                 detail.append("%s %.1f" % (special, fort_val))
             elif special == "HONEYCOMB_SPECIAL":
                 honey_val = 0.3 * (AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
-                                   empire_status['industrialists'] * discount_multiplier)
+                                   state.population_with_industry_focus() * discount_multiplier)
                 retval += honey_val
                 detail.append("%s %.1f" % (special, honey_val))
         if planet.size == fo.planetSize.asteroids:
@@ -992,7 +985,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
             detail.append("Undepleted Ruins %.1f" % discount_multiplier * 50)
         if "HONEYCOMB_SPECIAL" in planet.specials:
             honey_val = (AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
-                         empire_status['industrialists'] * discount_multiplier)
+                         state.population_with_industry_focus() * discount_multiplier)
             if FocusType.FOCUS_INDUSTRY not in species_foci:
                 honey_val *= -0.3  # discourage settlement by colonizers not able to use Industry Focus
             retval += honey_val
@@ -1128,7 +1121,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                 detail.append("Temporal Anomaly Research")
             if AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials:
                 comp_bonus = (0.5 * AIDependencies.TECH_COST_MULTIPLIER * AIDependencies.RESEARCH_PER_POP *
-                              AIDependencies.COMPUTRONIUM_RES_MULTIPLIER * empire_status['researchers'] *
+                              AIDependencies.COMPUTRONIUM_RES_MULTIPLIER * state.population_with_research_focus() *
                               discount_multiplier)
                 if state.have_computronium:
                     comp_bonus *= backup_factor
