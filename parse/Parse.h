@@ -37,7 +37,7 @@ namespace parse {
     FO_PARSE_API bool species(std::map<std::string, Species*>& species_);
 
     FO_PARSE_API bool techs(TechManager::TechContainer& techs_,
-                            std::map<std::string, TechCategory*>& tech_categories,
+                            std::map<std::string, std::unique_ptr<TechCategory>>& tech_categories,
                             std::set<std::string>& categories_seen);
 
     FO_PARSE_API bool items(std::vector<ItemSpec>& items_);

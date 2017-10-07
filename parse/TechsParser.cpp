@@ -18,7 +18,7 @@ namespace std {
     inline ostream& operator<<(ostream& os, const std::set<std::string>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
     inline ostream& operator<<(ostream& os, const Tech::TechInfo&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::pair<const std::string, TechCategory*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<TechCategory>>&) { return os; }
 }
 #endif
 
@@ -26,7 +26,7 @@ namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
     std::set<std::string>* g_categories_seen = nullptr;
-    std::map<std::string, TechCategory*>* g_categories = nullptr;
+    std::map<std::string, std::unique_ptr<TechCategory>>* g_categories = nullptr;
 
     /// Check if the tech will be unique.
     struct check_tech {
@@ -58,14 +58,14 @@ namespace {
     const boost::phoenix::function<check_tech> check_tech_;
     const boost::phoenix::function<insert_tech> insert_tech_;
 
-    struct insert_category {
-        typedef void result_type;
+    void insert_category(std::map<std::string, std::unique_ptr<TechCategory>>& categories,
+                         const std::string& name, const std::string& graphic, const GG::Clr& color)
+    {
+        auto category_ptr = std::unique_ptr<TechCategory>(new TechCategory(name, graphic, color));
+        categories.insert(std::make_pair(category_ptr->name, std::move(category_ptr)));
+    }
 
-        void operator()(std::map<std::string, TechCategory*>& categories, TechCategory* category) const {
-            categories.insert(std::make_pair(category->name, category));
-        }
-    };
-    const boost::phoenix::function<insert_category> insert_category_;
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_category_, insert_category, 4)
 
 
     struct rules {
@@ -147,7 +147,7 @@ namespace {
                 =   tok.Category_
                 >   parse::detail::label(Name_token)    > tok.string [ _pass = is_unique_(_r1, Category_token, _1), _a = _1 ]
                 >   parse::detail::label(Graphic_token) > tok.string [ _b = _1 ]
-                >   parse::detail::label(Colour_token)  > parse::detail::color_parser() [ insert_category_(_r1, new_<TechCategory>(_a, _b, _1)) ]
+                >   parse::detail::label(Colour_token)  > parse::detail::color_parser() [ insert_category_(_r1, _a, _b, _1) ]
                 ;
 
             start
@@ -215,7 +215,7 @@ namespace {
         > tech_rule;
 
         typedef parse::detail::rule<
-            void (std::map<std::string, TechCategory*>&),
+            void (std::map<std::string, std::unique_ptr<TechCategory>>&),
             boost::spirit::qi::locals<
                 std::string,
                 std::string
@@ -238,7 +238,7 @@ namespace {
 
 namespace parse {
     bool techs(TechManager::TechContainer& techs_,
-               std::map<std::string, TechCategory*>& categories,
+               std::map<std::string, std::unique_ptr<TechCategory>>& categories,
                std::set<std::string>& categories_seen)
     {
         bool result = true;
