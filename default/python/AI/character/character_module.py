@@ -238,6 +238,10 @@ class Trait(object):
         """Return true if allowed to target research/industry > 1.5"""
         return True
 
+    def may_use_growth_focus(self):
+        """Return True if permitted to use growth focus."""
+        return True
+
     def may_travel_beyond_supply(self, distance):  # pylint: disable=no-self-use,unused-argument
         """Return True if able to travel distance hops beyond empire supply"""
         # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDTrait.
@@ -378,6 +382,11 @@ class Aggression(Trait):
 
     def may_research_heavily(self):
         return self.aggression > fo.aggression.cautious
+
+    def may_use_growth_focus(self):
+        # For now, allow using growth focus for all aggression settings
+        # but leaving this here for easier modification.
+        return self.aggression >= fo.aggression.beginner
 
     def may_research_xeno_genetics_variances(self):
         return self.aggression >= fo.aggression.cautious
@@ -548,7 +557,7 @@ def _make_single_function_combiner(funcnamei, f_combo):
 # Create combiners for traits that all must be true
 for funcname in ["may_explore_system", "may_surge_industry", "may_maximize_research", "may_invade",
                  "may-invade_with_bases", "may_build_building", "may_produce_troops",
-                 "may_dither_focus_to_gain_research", "may_research_heavily",
+                 "may_dither_focus_to_gain_research", "may_research_heavily", "may_use_growth_focus",
                  "may_travel_beyond_supply", "may_research_xeno_genetics_variances",
                  "prefer_research_defensive", "prefer_research_low_aggression", "may_research_tech",
                  "may_research_tech_classic"]:

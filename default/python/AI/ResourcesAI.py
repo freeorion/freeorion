@@ -34,7 +34,6 @@ _focus_names = {INDUSTRY: "Industry", RESEARCH: "Research", GROWTH: "Growth", PR
 # TODO use the priorityRatio to weight
 RESEARCH_WEIGHTING = 2.3
 
-useGrowth = True
 limitAssessments = False
 
 lastFociCheck = [0]
@@ -400,7 +399,7 @@ def assess_protection_focus(pid, pinfo):
 
 def set_planet_growth_specials(focus_manager):
     """set resource foci of planets with potentially useful growth factors. Remove planets from list of candidates."""
-    if not useGrowth:
+    if not foAI.foAIstate.character.may_use_growth_focus():
         return
 
     # TODO Consider actual resource output of the candidate locations rather than only population
