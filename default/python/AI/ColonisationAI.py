@@ -314,8 +314,6 @@ def survey_universe():
                             yard_here = [pid]
                         if this_spec.canColonize and planet.currentMeterValue(fo.meterType.targetPopulation) >= 3:
                             empire_colonizers.setdefault(spec_name, []).extend(yard_here)
-                    if AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials:  # only counting it if planet is populated
-                        state.set_have_computronium()
 
                 this_grade_facilities = facilities_by_species_grade.setdefault(weapons_grade, {})
                 for facility in ship_facilities:

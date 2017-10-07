@@ -60,8 +60,12 @@ class State(object):
             planet = universe.getPlanet(pid)
             self.__planet_info[pid] = PlanetInfo(pid, planet.speciesName, planet.owner, planet.systemID)
 
-            if planet.ownedBy(empire_id) and AIDependencies.ANCIENT_RUINS_SPECIAL in planet.specials:
-                self.__have_ruins = True
+            if planet.ownedBy(empire_id):
+                if AIDependencies.ANCIENT_RUINS_SPECIAL in planet.specials:
+                    self.__have_ruins = True
+                if AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials:
+                    if planet.currentMeterValue(fo.meterType.population):
+                        self.__have_computronium = True  # TODO: Check if species can set research focus
 
     def __update_buildings(self):
         universe = fo.getUniverse()
@@ -225,9 +229,6 @@ class State(object):
     @property
     def have_computronium(self):
         return self.__have_computronium
-
-    def set_have_computronium(self):
-        self.__have_computronium = True
 
     @property
     def best_pilot_rating(self):
