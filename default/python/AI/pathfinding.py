@@ -1,38 +1,72 @@
 from heapq import heappush, heappop
 from collections import namedtuple
 
+import FreeOrionAI as foAI
 import freeOrionAIInterface as fo
+import universe_object
+
 from AIDependencies import INVALID_ID
+from EnumsAI import MissionType
 from turn_state import state
-
 from common.configure_logging import convenience_function_references_for_logger
+from freeorion_tools import cache_by_session_with_turnwise_update, chat_human, get_partial_visibility_turn
+
+
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
-
-
+_DEBUG_CHAT = False
 _ACCEPTABLE_DETOUR_LENGTH = 2000
+path_information = namedtuple('path_information', ['distance', 'fuel', 'path'])
 
 
-# TODO Add a list of systems as parameter that are forbidden for search (e.g. blocked by monster)
-# TODO Allow short idling in system to use stationary refuel mechanics in unsupplied systems if we
-#      are very close to the target system but can't reach it due to fuel constraints
-# TODO Consider additional optimizations:
-#    - Check if universe.shortestPath complies with fuel mechanics before running
-#      pathfinder (seemingly not worth it - we have exact heuristic in that case)
-#    - Cut off branches that can't reach target due to supply distance
-#    - For large graphs, check existence of a path on a simplified graph (use single node to represent supply clusters)
-#    - For large graphs, check if there are any must-visit nodes (e.g. only possible resupplying system),
-#      then try to find the shortest path between those and start/target.
-def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0):
-    """Find the shortest possible path between two systems that complies with FreeOrion fuel mechanics.
+# cache this so that boost python does not need to make a new copy every time this info is needed in a turn.
+@cache_by_session_with_turnwise_update
+def _get_unobstructed_systems():
+    return fo.getEmpire().supplyUnobstructedSystems
 
-     If the fleet can travel the shortest possible path between start and target system, then return that path.
-     Otherwise, find the shortest possible detour including refueling.
 
-     The core algorithm is a modified A* with the universe.shortestPathDistance as heuristic.
-     While searching for a path, keep track of the fleet's fuel. Compared to standard A*/dijkstra,
-     nodes are locked only for a certain minimum level of fuel - if a longer path yields a higher fuel
-     level at a given system, then that path is considered as possible detour for refueling and added to the queue.
+# TODO: remove this and instead use PlanetUtilsAI.sys_name_ids() once that is fixed to render greek chars
+def _info_string(path_info):
+    sequence_string = ", ".join([str(universe_object.System(sys_id)) for sys_id in path_info.path])
+    return "dist %.1f, path %s" % (path_info.distance, sequence_string)
 
+
+# Note that this can cover departure from uncontested systems as well as from contested systems where our forces
+# arrived first (and those forces may or may not be the forces for whom the pathfinding is being done)
+def _more_careful_travel_starlane_func(c, d):
+    return c in _get_unobstructed_systems()
+
+
+# In comparison to  _more_careful_travel_starlane_func, this can also allow passage through contested
+# systems where our forces already present there (which may or may not be the forces for whome the pathfinding
+# is being done) arrived second but are currently preserving travel along the starlane of interest.
+def _somewhat_careful_travel_starlane_func(c, d):
+    return any((c in _get_unobstructed_systems(),
+                fo.getEmpire().unrestrictedLaneTravel(c, d)))
+
+
+# For some activities like scouting, we may want to allow an extra bit of risk from routing through a system which
+# has all its exits necessarily marked as restricted simply because it has never been partially visible
+def _risky_travel_starlane_func(c, d):
+    return any((_somewhat_careful_travel_starlane_func(c, d),
+                get_partial_visibility_turn(c) <= 0))
+
+
+def _may_travel_anywhere(*args, **kwargs):
+    return True
+
+
+_STARLANE_TRAVEL_FUNC_MAP = {
+    MissionType.EXPLORATION: _risky_travel_starlane_func,
+    MissionType.OUTPOST: _more_careful_travel_starlane_func,
+    MissionType.COLONISATION: _more_careful_travel_starlane_func,
+    MissionType.INVASION: _somewhat_careful_travel_starlane_func,
+    MissionType.MILITARY: _may_travel_anywhere,
+    MissionType.SECURE: _may_travel_anywhere,
+}
+
+
+def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0, mission_type_override=None):
+    """
     :param start: start system id
     :type start: int
     :param target:  target system id
@@ -42,34 +76,20 @@ def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0):
     :param minimum_fuel_at_target: optional - if specified, only accept paths that leave the
                                    fleet with at least this much fuel left at the target system
     :type minimum_fuel_at_target: int
+    :param mission_type_override: optional - use the specified mission type, rather than the fleet's
+                                  current mission type, for pathfinding routing choices
+    :type mission_type_override: MissionType
     :return: shortest possible path including resupply-detours in the form of system ids
              including both start and target system
-    :rtype: tuple[int]
+    :rtype: path_information
     """
+
     universe = fo.getUniverse()
-    empire_id = fo.empireID()
-
-    if start == INVALID_ID or target == INVALID_ID:
-        warn("Requested path between invalid systems.")
-        return None
-
-    # make sure the minimum fuel at target is realistic
-    if minimum_fuel_at_target < 0:
-        error("Requested negative fuel at target.")
-        return None
-
-    # make sure the target is connected to the start system
-    shortest_possible_path_distance = universe.shortestPathDistance(start, target)
-    if shortest_possible_path_distance == -1:
-        warn("Requested path between disconnected systems, doing nothing.")
-        return None
-
-    # make sure the minimum fuel at target is realistic
     fleet = universe.getFleet(fleet_id)
-    if fleet.maxFuel < minimum_fuel_at_target:
+    if not fleet:
         return None
-
-    supplied_systems = set(fo.getEmpire().fleetSupplyableSystemIDs)
+    empire = fo.getEmpire()
+    supplied_systems = set(empire.fleetSupplyableSystemIDs)
     start_fuel = fleet.maxFuel if start in supplied_systems else fleet.fuel
 
     # We have 1 free jump from supplied system into unsupplied systems.
@@ -85,12 +105,121 @@ def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0):
         # can't possibly reach this system with the required fuel
         return None
 
+    mission_type = (mission_type_override if mission_type_override is not None else
+                    foAI.foAIstate.get_fleet_mission(fleet_id))
+    may_travel_starlane_func = _STARLANE_TRAVEL_FUNC_MAP.get(mission_type, _more_careful_travel_starlane_func)
+
+    path_info = find_path_with_resupply_generic(start, target, start_fuel, fleet.maxFuel,
+                                                lambda s: s in supplied_systems,
+                                                minimum_fuel_at_target,
+                                                may_travel_starlane_func=may_travel_starlane_func)
+
+    if not _DEBUG_CHAT:
+        return path_info
+
+    if may_travel_starlane_func != _may_travel_anywhere:
+        risky_path = find_path_with_resupply_generic(start, target, start_fuel, fleet.maxFuel,
+                                                     lambda s: s in supplied_systems,
+                                                     minimum_fuel_at_target)
+        if path_info and may_travel_starlane_func == _risky_travel_starlane_func:
+            safest_path = find_path_with_resupply_generic(start, target, start_fuel, fleet.maxFuel,
+                                                          lambda s: s in supplied_systems,
+                                                          minimum_fuel_at_target,
+                                                          may_travel_starlane_func=_more_careful_travel_starlane_func)
+            if safest_path and path_info.distance < safest_path.distance:
+                message = "(Scout?) Fleet %d chose somewhat risky path %s instead of safe path %s" % (
+                    fleet_id, _info_string(path_info), _info_string(risky_path))
+                chat_human(message)
+
+        if path_info and risky_path and risky_path.distance < path_info.distance:
+
+            message = "Fleet %d chose safer path %s instead of risky path %s" % (
+                fleet_id, _info_string(path_info), _info_string(risky_path))
+            chat_human(message)
+
+    return path_info
+
+
+# TODO Add a list of systems as parameter that are forbidden for search (e.g. blocked by monster)
+# TODO Allow short idling in system to use stationary refuel mechanics in unsupplied systems if we
+#      are very close to the target system but can't reach it due to fuel constraints
+# TODO Consider additional optimizations:
+#    - Check if universe.shortestPath complies with fuel mechanics before running
+#      pathfinder (seemingly not worth it - we have exact heuristic in that case)
+#    - Cut off branches that can't reach target due to supply distance
+#    - For large graphs, check existence of a path on a simplified graph (use single node to represent supply clusters)
+#    - For large graphs, check if there are any must-visit nodes (e.g. only possible resupplying system),
+#      then try to find the shortest path between those and start/target.
+def find_path_with_resupply_generic(start, target, start_fuel, max_fuel, system_suppliable_func,
+                                    minimum_fuel_at_target=0,
+                                    may_travel_system_func=None,
+                                    may_travel_starlane_func=None):
+    """Find the shortest possible path between two systems that complies with FreeOrion fuel mechanics.
+
+     If the fleet can travel the shortest possible path between start and target system, then return that path.
+     Otherwise, find the shortest possible detour including refueling.
+
+     The core algorithm is a modified A* with the universe.shortestPathDistance as heuristic.
+     While searching for a path, keep track of the fleet's fuel. Compared to standard A*/dijkstra,
+     nodes are locked only for a certain minimum level of fuel - if a longer path yields a higher fuel
+     level at a given system, then that path is considered as possible detour for refueling and added to the queue.
+
+    :param start: start system id
+    :type start: int
+    :param target:  target system id
+    :type target: int
+    :param start_fuel: starting fuel of the fleet
+    :type start_fuel: float
+    :param max_fuel: max fuel of the fleet
+    :type max_fuel: float
+    :param system_suppliable_func: boolean function with one int param s, specifying if a system s provides fleet supply
+    :type system_suppliable_func: (int) -> bool
+    :param minimum_fuel_at_target: optional - if specified, only accept paths that leave the
+                                   fleet with at least this much fuel left at the target system
+    :type minimum_fuel_at_target: int
+    :param may_travel_system_func: optional - boolean function with one int param, s, specifying if
+                                   a system s is OK to travel through
+    :type may_travel_system_func: (int) -> bool
+    :param may_travel_starlane_func: optional - boolean function with 2 int params c, d, specifying if
+                                     a starlane from c to d is OK to travel through
+    :type may_travel_starlane_func: (int, int) -> bool
+    :return: shortest possible path including resupply-detours in the form of system ids
+             including both start and target system
+    :rtype: path_information
+    """
+
+    universe = fo.getUniverse()
+    empire_id = fo.empireID()
+
+    if start == INVALID_ID or target == INVALID_ID:
+        warn("Requested path between invalid systems.")
+        return None
+
+    # make sure the minimum fuel at target is realistic
+    if minimum_fuel_at_target < 0:
+        error("Requested negative fuel at target.")
+        return None
+
+    # make sure the minimum fuel at target is realistic
+    if max_fuel < minimum_fuel_at_target:
+        return None
+
+    # make sure the target is connected to the start system
+    shortest_possible_path_distance = universe.shortestPathDistance(start, target)
+    if shortest_possible_path_distance == -1:
+        warn("Requested path between disconnected systems, doing nothing.")
+        return None
+
+    if may_travel_system_func is None:
+        may_travel_system_func = _may_travel_anywhere
+    if may_travel_starlane_func is None:
+        may_travel_starlane_func = _may_travel_anywhere
+
     # initialize data structures
     path_cache = {}
     queue = []
 
     # add starting system to queue
-    path_information = namedtuple('path_information', ['distance', 'fuel', 'path'])
     heappush(queue, (shortest_possible_path_distance, path_information(distance=0, fuel=start_fuel, path=(start,))))
 
     while queue:
@@ -103,7 +232,6 @@ def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0):
             # do we satisfy fuel constraints?
             if path_info.fuel < minimum_fuel_at_target:
                 continue
-
             return path_info
 
         # add information about how we reached here to the cache
@@ -117,8 +245,13 @@ def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0):
         # is either shorter or offers more fuel than the other paths
         # which we already found to those systems
         for neighbor in universe.getImmediateNeighbors(current, empire_id):
+            # A system we have never had partial vis for will count as fully blockaded for us, but perhaps if
+            # we are scouting we might want to be able to route a path through it anyway.
+            if any((not may_travel_starlane_func(current, neighbor),
+                    neighbor != target and not may_travel_system_func(neighbor))):
+                continue
             new_dist = path_info.distance + universe.linearDistance(current, neighbor)
-            new_fuel = (fleet.maxFuel if (neighbor in supplied_systems or current in supplied_systems) else
+            new_fuel = (max_fuel if (system_suppliable_func(neighbor) or system_suppliable_func(current)) else
                         path_info.fuel - 1)
 
             # check if the node is already closed, i.e. a path was already found which both is shorter and offers
