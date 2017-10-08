@@ -161,7 +161,7 @@ def prepareForSave():  # pylint: disable=invalid-name
 
     # serialize (convert to string) global state dictionary and send to AI client to be stored in save file
     try:
-        dump_string = pickle.dumps(foAIstate)
+        dump_string = pickle.dumps(foAIstate, protocol=2)
         print "foAIstate pickled to string, about to send to server"
         fo.setSaveStateString(dump_string)
     except:
