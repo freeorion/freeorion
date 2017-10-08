@@ -1,8 +1,6 @@
 #ifndef _ValueRefParser_h_
 #define _ValueRefParser_h_
 
-#include "Lexer.h"
-#include "ParseImpl.h"
 #include "EnumParser.h"
 
 #include "../universe/ValueRefFwd.h"
