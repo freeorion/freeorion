@@ -1,7 +1,5 @@
 #include "ConditionParserImpl.h"
 
-#include "ParseImpl.h"
-#include "ValueRefParser.h"
 #include "../universe/Condition.h"
 #include "../universe/Enums.h"
 

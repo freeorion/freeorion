@@ -1,7 +1,5 @@
 #include "ConditionParserImpl.h"
 
-#include "EnumParser.h"
-#include "ValueRefParser.h"
 #include "../universe/Condition.h"
 
 #include <boost/spirit/include/phoenix.hpp>

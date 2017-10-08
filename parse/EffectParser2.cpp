@@ -1,10 +1,6 @@
 #include "EffectParserImpl.h"
 
-#include "ParseImpl.h"
-#include "EnumParser.h"
-#include "ValueRefParser.h"
 #include "ValueRefParserImpl.h"
-#include "ConditionParserImpl.h"
 #include "../universe/Effect.h"
 #include "../universe/Enums.h"
 
