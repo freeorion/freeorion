@@ -13,7 +13,7 @@ MONSTER_NEST
                 OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
                 Random probability = @3@
             ]
-            stackinggroup = "@1@_NEST_STACK"
+            stackinggroup = "@1@_NEST_STACK"  // groups with BLD_NEST_ERADICATOR
             effects = [
                 CreateShip designname = "SM_@1@_1" empire = Source.Owner
                 GenerateSitRepMessage

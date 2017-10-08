@@ -1,0 +1,50 @@
+BuildingType
+    name = "BLD_NEST_ERADICATOR"
+    description = "BLD_NEST_ERADICATOR_DESC"
+    buildcost = 240
+    buildtime = 8
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Not Contains Building name = "BLD_NEST_ERADICATOR"
+	Or [
+            HasSpecial name = "JUGGERNAUT_NEST_SPECIAL"
+            HasSpecial name = "KRAKEN_NEST_SPECIAL"
+            HasSpecial name = "SNOWFLAKE_NEST_SPECIAL"
+	]
+    ]
+    EnqueueLocation = Not Enqueued type = Building name = "BLD_NEST_ERADICATOR"
+    effectsgroups = [
+        [[EG_NEST_REMOVAL(JUGGERNAUT)]]
+        [[EG_NEST_REMOVAL(KRAKEN)]]
+        [[EG_NEST_REMOVAL(SNOWFLAKE)]]
+
+        EffectsGroup
+            scope = Source
+            effects = Destroy
+    ]
+    icon = "icons/building/nest_eradicator.png"
+
+# @1@ Monster name
+EG_NEST_REMOVAL
+'''EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                HasSpecial name = "@1@_NEST_SPECIAL"
+            ]
+            stackinggroup = "@1@_NEST_STACK"  // groups with @1@_NEST_SPECIAL
+            priority = [[EARLY_PRIORITY]]
+            effects = [
+                RemoveSpecial name = "@1@_NEST_SPECIAL"
+                GenerateSitRepMessage
+                    message = "EFFECT_NEST_REMOVAL"
+                    label = "EFFECT_NEST_REMOVAL_LABEL"
+                    icon = "icons/building/nest_eradicator.png"
+                    parameters = tag = "planet" data = Target.ID
+                    empire = Source.Owner
+            ]
+'''
+
+#include "/scripting/common/base_prod.macros"
+#include "/scripting/common/priorities.macros"
