@@ -51,10 +51,10 @@ namespace {
     IncreaseMeter(MeterType meter_type,
                   std::unique_ptr<ValueRef::ValueRefBase<double>>&& increase_vr)
     {
-        typedef std::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
-        typedef std::vector<Effect::EffectBase*> Effects;
-        Condition::Source* scope = new Condition::Source;
-        Condition::Source* activation = new Condition::Source;
+        typedef std::vector<std::unique_ptr<Effect::EffectBase>> Effects;
+        // TODO: use std::make_unique when converting to C++14
+        auto scope = std::unique_ptr<Condition::Source>(new Condition::Source);
+        auto activation = std::unique_ptr<Condition::Source>(new Condition::Source);
 
         // TODO: use std::make_unique when converting to C++14
         auto vr =
@@ -65,9 +65,9 @@ namespace {
                         new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>())),
                     std::move(increase_vr)
                 ));
-        return EffectsGroupPtr(
-            new Effect::EffectsGroup(
-                scope, activation, Effects(1, new Effect::SetMeter(meter_type, std::move(vr)))));
+        auto effects = Effects();
+        effects.push_back(std::unique_ptr<Effect::EffectBase>(new Effect::SetMeter(meter_type, std::move(vr))));
+        return std::make_shared<Effect::EffectsGroup>(std::move(scope), std::move(activation), std::move(effects));
     }
 
     // create effectsgroup that increases the value of \a meter_type
@@ -115,10 +115,10 @@ namespace {
     IncreaseMeter(MeterType meter_type, const std::string& part_name,
                   float increase, bool allow_stacking = true)
     {
-        typedef std::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
-        typedef std::vector<Effect::EffectBase*> Effects;
-        Condition::Source* scope = new Condition::Source;
-        Condition::Source* activation = new Condition::Source;
+        typedef std::vector<std::unique_ptr<Effect::EffectBase>> Effects;
+        // TODO: use std::make_unique when converting to C++14
+        auto scope = std::unique_ptr<Condition::Source>(new Condition::Source);
+        auto activation = std::unique_ptr<Condition::Source>(new Condition::Source);
 
         // TODO: use std::make_unique when converting to C++14
         auto value_vr = std::unique_ptr<ValueRef::Operation<double>>(
@@ -137,11 +137,11 @@ namespace {
         std::string stacking_group = (allow_stacking ? "" :
             (part_name + "_" + boost::lexical_cast<std::string>(meter_type) + "_PartMeter"));
 
-        return EffectsGroupPtr(
-            new Effect::EffectsGroup(
-                scope, activation,
-                Effects(1, new Effect::SetShipPartMeter(meter_type, std::move(part_name_vr), std::move(value_vr))),
-                part_name, stacking_group));
+        auto effects = Effects();
+        effects.push_back(std::unique_ptr<Effect::EffectBase>(new Effect::SetShipPartMeter(meter_type, std::move(part_name_vr), std::move(value_vr))));
+
+        return std::make_shared<Effect::EffectsGroup>(
+            std::move(scope), std::move(activation), std::move(effects), part_name, stacking_group);
     }
 
     bool DesignsTheSame(const ShipDesign& one, const ShipDesign& two) {

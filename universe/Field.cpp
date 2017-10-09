@@ -19,10 +19,10 @@
 namespace {
     std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, double increase) {
-        typedef std::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
-        typedef std::vector<Effect::EffectBase*> Effects;
-        Condition::Source* scope = new Condition::Source;
-        Condition::Source* activation = nullptr;
+        typedef std::vector<std::unique_ptr<Effect::EffectBase>> Effects;
+        // TODO: use std::make_unique when converting to C++14
+        auto scope = std::unique_ptr<Condition::Source>(new Condition::Source);
+        std::unique_ptr<Condition::Source> activation = nullptr;
         // TODO: use std::make_unique when converting to C++14
         auto vr =
             std::unique_ptr<ValueRef::Operation<double>>(
@@ -32,9 +32,9 @@ namespace {
                         new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>())),
                     std::unique_ptr<ValueRef::Constant<double>>(new ValueRef::Constant<double>(increase))
                 ));
-        return EffectsGroupPtr(
-            new Effect::EffectsGroup(
-                scope, activation, Effects(1, new Effect::SetMeter(meter_type, std::move(vr)))));
+        auto effects = Effects();
+        effects.push_back(std::unique_ptr<Effect::EffectBase>(new Effect::SetMeter(meter_type, std::move(vr))));
+        return std::make_shared<Effect::EffectsGroup>(std::move(scope), std::move(activation), std::move(effects));
     }
 }
 
