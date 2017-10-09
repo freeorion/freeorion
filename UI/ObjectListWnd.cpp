@@ -60,86 +60,117 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    ValueRef::Variable<std::string>* StringValueRef(const std::string& token) {
-        return new ValueRef::Variable<std::string>(
-            ValueRef::SOURCE_REFERENCE, token);
-    }
-
-    ValueRef::Variable<std::string>* UserStringValueRef(const std::string& token) {
-        return new ValueRef::UserStringLookup<std::string>(
+    std::unique_ptr<ValueRef::Variable<std::string>> StringValueRef(const std::string& token) {
+        // TODO: use std::make_unique when converting to C++14
+        return std::unique_ptr<ValueRef::Variable<std::string>>(
             new ValueRef::Variable<std::string>(
                 ValueRef::SOURCE_REFERENCE, token));
     }
 
-    ValueRef::Variable<std::string>* UserStringVecValueRef(const std::string& token) {
-        return new ValueRef::UserStringLookup<std::vector<std::string>>(
-            new ValueRef::Variable<std::vector<std::string>>(
-                ValueRef::SOURCE_REFERENCE, token));
+    std::unique_ptr<ValueRef::Variable<std::string>> UserStringValueRef(const std::string& token) {
+        // TODO: use std::make_unique when converting to C++14
+        return std::unique_ptr<ValueRef::Variable<std::string>>(
+            new ValueRef::UserStringLookup<std::string>(
+                std::unique_ptr<ValueRef::Variable<std::string>>(
+                    new ValueRef::Variable<std::string>(
+                        ValueRef::SOURCE_REFERENCE, token))));
+    }
+
+    std::unique_ptr<ValueRef::Variable<std::string>> UserStringVecValueRef(const std::string& token) {
+        // TODO: use std::make_unique when converting to C++14
+        return std::unique_ptr<ValueRef::Variable<std::string>>(
+            new ValueRef::UserStringLookup<std::vector<std::string>>(
+                std::unique_ptr<ValueRef::Variable<std::vector<std::string>>>(
+                new ValueRef::Variable<std::vector<std::string>>(
+                    ValueRef::SOURCE_REFERENCE, token))));
     }
 
     template <typename T>
-    ValueRef::Variable<std::string>* StringCastedValueRef(const std::string& token) {
-        return new ValueRef::StringCast<T>(
-            new ValueRef::Variable<T>(
-                ValueRef::SOURCE_REFERENCE, token));
+    std::unique_ptr<ValueRef::Variable<std::string>> StringCastedValueRef(const std::string& token) {
+        // TODO: use std::make_unique when converting to C++14
+        return std::unique_ptr<ValueRef::Variable<std::string>>(
+            new ValueRef::StringCast<T>(
+            std::unique_ptr<ValueRef::Variable<T>>(
+                new ValueRef::Variable<T>(
+                    ValueRef::SOURCE_REFERENCE, token))));
     }
 
     template <typename T>
-    ValueRef::Variable<std::string>* StringCastedComplexValueRef(const std::string& token,
-                                                                 ValueRef::ValueRefBase<int>* int_ref1 = nullptr,
-                                                                 ValueRef::ValueRefBase<int>* int_ref2 = nullptr,
-                                                                 ValueRef::ValueRefBase<int>* int_ref3 = nullptr,
-                                                                 ValueRef::ValueRefBase<std::string>* string_ref1 = nullptr,
-                                                                 ValueRef::ValueRefBase<std::string>* string_ref2 = nullptr)
+    std::unique_ptr<ValueRef::Variable<std::string>> StringCastedComplexValueRef(
+        const std::string& token,
+        std::unique_ptr<ValueRef::ValueRefBase<int>>&& int_ref1 = nullptr,
+        std::unique_ptr<ValueRef::ValueRefBase<int>>&& int_ref2 = nullptr,
+        std::unique_ptr<ValueRef::ValueRefBase<int>>&& int_ref3 = nullptr,
+        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& string_ref1 = nullptr,
+        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& string_ref2 = nullptr)
     {
-        return new ValueRef::StringCast<T>(
-            new ValueRef::ComplexVariable<T>(token, int_ref1, int_ref2, int_ref3, string_ref1, string_ref2));
+        // TODO: use std::make_unique when converting to C++14
+        return std::unique_ptr<ValueRef::Variable<std::string>>(
+            new ValueRef::StringCast<T>(
+                std::unique_ptr<ValueRef::Variable<T>>(
+                    new ValueRef::ComplexVariable<T>(token, std::move(int_ref1), std::move(int_ref2), std::move(int_ref3), std::move(string_ref1), std::move(string_ref2)))));
     }
 
-    ValueRef::Variable<std::string>* SystemSupplyRangeValueRef(bool propagated = false) {
+    std::unique_ptr<ValueRef::Variable<std::string>> SystemSupplyRangeValueRef(bool propagated = false) {
+        // TODO: use std::make_unique when converting to C++14
         return StringCastedComplexValueRef<double>(
             propagated ? "PropagatedSystemSupplyRange" :"SystemSupplyRange",
             nullptr,
-            new ValueRef::Variable<int>(ValueRef::SOURCE_REFERENCE, "SystemID"));
+            std::unique_ptr<ValueRef::ValueRefBase<int>>(new ValueRef::Variable<int>(ValueRef::SOURCE_REFERENCE, "SystemID")));
     }
 
-    ValueRef::Variable<std::string>* SystemSupplyDistanceValueRef() {
-        return StringCastedComplexValueRef<double>("PropagatedSystemSupplyDistance",
+    std::unique_ptr<ValueRef::Variable<std::string>> SystemSupplyDistanceValueRef() {
+        // TODO: use std::make_unique when converting to C++14
+        return StringCastedComplexValueRef<double>(
+            "PropagatedSystemSupplyDistance",
             nullptr,
-            new ValueRef::Variable<int>(ValueRef::SOURCE_REFERENCE, "SystemID"));
+            std::unique_ptr<ValueRef::ValueRefBase<int>>(new ValueRef::Variable<int>(ValueRef::SOURCE_REFERENCE, "SystemID")));
     }
 
     template <typename T>
-    ValueRef::Variable<std::string>* UserStringCastedValueRef(const std::string& token) {
-        return new ValueRef::UserStringLookup<std::string>(
-            new ValueRef::StringCast<T>(
-                new ValueRef::Variable<T>(
-                    ValueRef::SOURCE_REFERENCE, token)));
+    std::unique_ptr<ValueRef::Variable<std::string>> UserStringCastedValueRef(const std::string& token) {
+        // TODO: use std::make_unique when converting to C++14
+        return std::unique_ptr<ValueRef::Variable<std::string>>(
+            new ValueRef::UserStringLookup<std::string>(
+                std::unique_ptr<ValueRef::Variable<std::string>>(
+                    new ValueRef::StringCast<T>(
+                        std::unique_ptr<ValueRef::Variable<T>>(
+                            new ValueRef::Variable<T>(
+                                ValueRef::SOURCE_REFERENCE, token))))));
     }
 
-    ValueRef::Variable<std::string>* ObjectNameValueRef(const std::string& token) {
-        return new ValueRef::NameLookup(
-            new ValueRef::Variable<int>(
-                ValueRef::SOURCE_REFERENCE, token),
-            ValueRef::NameLookup::OBJECT_NAME);
+    std::unique_ptr<ValueRef::Variable<std::string>> ObjectNameValueRef(const std::string& token) {
+        // TODO: use std::make_unique when converting to C++14
+        return std::unique_ptr<ValueRef::Variable<std::string>>(
+            new ValueRef::NameLookup(
+                std::unique_ptr<ValueRef::ValueRefBase<int>>(
+                    new ValueRef::Variable<int>(
+                        ValueRef::SOURCE_REFERENCE, token)),
+                ValueRef::NameLookup::OBJECT_NAME));
     }
 
-    ValueRef::Variable<std::string>* EmpireNameValueRef(const std::string& token) {
-        return new ValueRef::NameLookup(
-            new ValueRef::Variable<int>(
-                ValueRef::SOURCE_REFERENCE, token),
-            ValueRef::NameLookup::EMPIRE_NAME);
+    std::unique_ptr<ValueRef::Variable<std::string>> EmpireNameValueRef(const std::string& token) {
+        // TODO: use std::make_unique when converting to C++14
+        return std::unique_ptr<ValueRef::Variable<std::string>>(
+            new ValueRef::NameLookup(
+                std::unique_ptr<ValueRef::Variable<int>>(
+                    new ValueRef::Variable<int>(
+                        ValueRef::SOURCE_REFERENCE, token)),
+                ValueRef::NameLookup::EMPIRE_NAME));
     }
 
-    ValueRef::Variable<std::string>* DesignNameValueRef(const std::string& token) {
-        return new ValueRef::NameLookup(
-            new ValueRef::Variable<int>(
-                ValueRef::SOURCE_REFERENCE, token),
-            ValueRef::NameLookup::SHIP_DESIGN_NAME);
+    std::unique_ptr<ValueRef::Variable<std::string>> DesignNameValueRef(const std::string& token) {
+        // TODO: use std::make_unique when converting to C++14
+        return std::unique_ptr<ValueRef::Variable<std::string>>(
+            new ValueRef::NameLookup(
+            std::unique_ptr<ValueRef::Variable<int>>(
+                new ValueRef::Variable<int>(
+                    ValueRef::SOURCE_REFERENCE, token)),
+            ValueRef::NameLookup::SHIP_DESIGN_NAME));
     }
 
-    const std::map<std::pair<std::string, std::string>, ValueRef::ValueRefBase<std::string>*>& AvailableColumnTypes() {
-        static std::map<std::pair<std::string, std::string>, ValueRef::ValueRefBase<std::string>*> col_types;
+    const std::map<std::pair<std::string, std::string>, std::unique_ptr<ValueRef::ValueRefBase<std::string>>>& AvailableColumnTypes() {
+        static std::map<std::pair<std::string, std::string>, std::unique_ptr<ValueRef::ValueRefBase<std::string>>> col_types;
         if (col_types.empty()) {
             // General
             col_types[{UserStringNop("NAME"),                   ""}] =  StringValueRef("Name");
@@ -206,7 +237,7 @@ namespace {
     const ValueRef::ValueRefBase<std::string>* GetValueRefByName(const std::string& name) {
         for (const auto& entry : AvailableColumnTypes()) {
             if (entry.first.first == name)
-                return entry.second;
+                return entry.second.get();
         }
         return nullptr;
     }
@@ -293,11 +324,12 @@ namespace {
     const std::string FILTER_OPTIONS_WND_NAME = "object-list-filter";
 
     template <class enumT>
-    ValueRef::ValueRefBase<enumT>*  CopyEnumValueRef(const ValueRef::ValueRefBase<enumT>* const value_ref) {
+    std::unique_ptr<ValueRef::ValueRefBase<enumT>>  CopyEnumValueRef(const ValueRef::ValueRefBase<enumT>* const value_ref) {
+        // TODO: use std::make_unique when converting to C++14
         if (const ValueRef::Constant<enumT>* constant =
             dynamic_cast<const ValueRef::Constant<enumT>*>(value_ref))
-        { return new ValueRef::Constant<enumT>(constant->Value()); }
-        return new ValueRef::Constant<enumT>(enumT(-1));
+        { return std::unique_ptr<ValueRef::ValueRefBase<enumT>>(new ValueRef::Constant<enumT>(constant->Value())); }
+        return std::unique_ptr<ValueRef::ValueRefBase<enumT>>(new ValueRef::Constant<enumT>(enumT(-1)));
     }
 
     std::map<std::string, std::string> object_list_cond_description_map;
@@ -432,15 +464,17 @@ public:
                     break;
                 }
             }
-            return new Condition::EmpireAffiliation(new ValueRef::Constant<int>(empire_id), affil);
+            // TODO: use std::make_unique when converting to C++14
+            return new Condition::EmpireAffiliation(std::unique_ptr<ValueRef::Constant<int>>(new ValueRef::Constant<int>(empire_id)), affil);
 
         } else if (condition_key == HOMEWORLD_CONDITION) {
             const std::string& species_name = GetString();
             if (species_name.empty())
                 return new Condition::Homeworld();
-            std::vector<ValueRef::ValueRefBase<std::string>*> names;
-            names.push_back(new ValueRef::Constant<std::string>(species_name));
-            return new Condition::Homeworld(names);
+            std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>> names;
+            // TODO: use std::make_unique when converting to C++14
+            names.push_back(std::unique_ptr<ValueRef::ValueRefBase<std::string>>(new ValueRef::Constant<std::string>(species_name)));
+            return new Condition::Homeworld(std::move(names));
 
         } else if (condition_key == CANCOLONIZE_CONDITION) {
             return new Condition::CanColonize();
@@ -466,20 +500,23 @@ public:
 
         } else if (condition_key == ASTWITHPTYPE_CONDITION) { // And [Planet PlanetType PT_ASTEROIDS ContainedBy And [System Contains PlanetType X]]
             std::vector<Condition::ConditionBase*> operands1;
-            operands1.push_back(new Condition::Type(new ValueRef::Constant<UniverseObjectType>(OBJ_PLANET)));
+            // TODO: use std::make_unique when converting to C++14
+            operands1.push_back(new Condition::Type(std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>(new ValueRef::Constant<UniverseObjectType>(OBJ_PLANET))));
             const std::string& text = GetString();
             if (text == UserString("CONDITION_ANY")) {
-                std::vector<ValueRef::ValueRefBase<PlanetType>*> copytype;
-                copytype.push_back(new ValueRef::Constant<PlanetType>(PT_ASTEROIDS));
-                operands1.push_back(new Condition::Not(new Condition::PlanetType(copytype)));
+                std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>> copytype;
+                // TODO: use std::make_unique when converting to C++14
+                copytype.push_back(std::unique_ptr<ValueRef::Constant<PlanetType>>(new ValueRef::Constant<PlanetType>(PT_ASTEROIDS)));
+                operands1.push_back(new Condition::Not(new Condition::PlanetType(std::move(copytype))));
             } else {
                 operands1.push_back(new Condition::PlanetType(GetEnumValueRefVec< ::PlanetType>()));
             }
             std::vector<Condition::ConditionBase*> operands2;
-            operands2.push_back(new Condition::Type(new ValueRef::Constant<UniverseObjectType> (OBJ_SYSTEM)));
-            std::vector<ValueRef::ValueRefBase<PlanetType>*> maintype;
-            maintype.push_back(new ValueRef::Constant<PlanetType>(PT_ASTEROIDS));
-            operands2.push_back(new Condition::Contains(new Condition::PlanetType(maintype)));
+            // TODO: use std::make_unique when converting to C++14
+            operands2.push_back(new Condition::Type(std::unique_ptr<ValueRef::Constant<UniverseObjectType>>(new ValueRef::Constant<UniverseObjectType> (OBJ_SYSTEM))));
+            std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>> maintype;
+            maintype.push_back(std::unique_ptr<ValueRef::Constant<PlanetType>>(new ValueRef::Constant<PlanetType>(PT_ASTEROIDS)));
+            operands2.push_back(new Condition::Contains(new Condition::PlanetType(std::move(maintype))));
             operands1.push_back(new Condition::ContainedBy(new Condition::And(operands2)));
             Condition::And* this_cond =  new Condition::And(operands1);
             object_list_cond_description_map[this_cond->Description()] = ASTWITHPTYPE_CONDITION;
@@ -489,16 +526,17 @@ public:
             std::vector<Condition::ConditionBase*> operands1;
             const std::string& text = GetString();
             if (text == UserString("CONDITION_ANY")) {
-                std::vector<ValueRef::ValueRefBase<PlanetType>*> copytype;
-                copytype.push_back(new ValueRef::Constant<PlanetType>(PT_GASGIANT));
-                operands1.push_back(new Condition::Not(new Condition::PlanetType(copytype)));
+                std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>> copytype;
+                // TODO: use std::make_unique when converting to C++14
+                copytype.push_back(std::unique_ptr<ValueRef::Constant<PlanetType>>(new ValueRef::Constant<PlanetType>(PT_GASGIANT)));
+                operands1.push_back(new Condition::Not(new Condition::PlanetType(std::move(copytype))));
             } else
                 operands1.push_back(new Condition::PlanetType(GetEnumValueRefVec< ::PlanetType>()));
             std::vector<Condition::ConditionBase*> operands2;
-            operands2.push_back(new Condition::Type(new ValueRef::Constant<UniverseObjectType>(OBJ_SYSTEM)));
-            std::vector<ValueRef::ValueRefBase<PlanetType>*> maintype;
-            maintype.push_back(new ValueRef::Constant<PlanetType>(PT_GASGIANT));
-            operands2.push_back(new Condition::Contains(new Condition::PlanetType(maintype)));
+            operands2.push_back(new Condition::Type(std::unique_ptr<ValueRef::Constant<UniverseObjectType>>(new ValueRef::Constant<UniverseObjectType>(OBJ_SYSTEM))));
+            std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>> maintype;
+            maintype.push_back(std::unique_ptr<ValueRef::Constant<PlanetType>>(new ValueRef::Constant<PlanetType>(PT_GASGIANT)));
+            operands2.push_back(new Condition::Contains(new Condition::PlanetType(std::move(maintype))));
             operands1.push_back(new Condition::ContainedBy(new Condition::And(operands2)));
             Condition::And* this_cond =  new Condition::And(operands1);
             object_list_cond_description_map[this_cond->Description()] = GGWITHPTYPE_CONDITION;
@@ -602,12 +640,13 @@ private:
         return string_row->Text();
     }
 
-    ValueRef::ValueRefBase<std::string>*                    GetStringValueRef()
-    { return new ValueRef::Constant<std::string>(GetString()); }
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>                    GetStringValueRef()
+        // TODO: use std::make_unique when converting to C++14
+    { return std::unique_ptr<ValueRef::ValueRefBase<std::string>>(new ValueRef::Constant<std::string>(GetString())); }
 
-    std::vector<ValueRef::ValueRefBase<std::string>*> GetStringValueRefVec() {
-        std::vector<ValueRef::ValueRefBase<std::string>*> retval;
-        retval.push_back(GetStringValueRef());
+    std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>> GetStringValueRefVec() {
+        std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>> retval;
+        retval.push_back(std::move(GetStringValueRef()));
         return retval;
     }
 
@@ -618,8 +657,9 @@ private:
             return 0;
     }
 
-    ValueRef::ValueRefBase<int>*                            GetInt1ValueRef()
-    { return new ValueRef::Constant<int>(GetInt1()); }
+    std::unique_ptr<ValueRef::ValueRefBase<int>>                            GetInt1ValueRef()
+        // TODO: use std::make_unique when converting to C++14
+    { return std::unique_ptr<ValueRef::ValueRefBase<int>>(new ValueRef::Constant<int>(GetInt1())); }
 
     int                                                     GetInt2() {
         if (m_param_spin2)
@@ -628,8 +668,9 @@ private:
             return 0;
     }
 
-    ValueRef::ValueRefBase<int>*                            GetInt2ValueRef()
-    { return new ValueRef::Constant<int>(GetInt2()); }
+    std::unique_ptr<ValueRef::ValueRefBase<int>>                            GetInt2ValueRef()
+        // TODO: use std::make_unique when converting to C++14
+    { return std::unique_ptr<ValueRef::ValueRefBase<int>>(new ValueRef::Constant<int>(GetInt2())); }
 
     double                                                  GetDouble1() {
         if (m_param_spin1)
@@ -638,8 +679,9 @@ private:
             return 0;
     }
 
-    ValueRef::ValueRefBase<double>*                         GetDouble1ValueRef()
-    { return new ValueRef::Constant<double>(GetDouble1()); }
+    std::unique_ptr<ValueRef::ValueRefBase<double>>                         GetDouble1ValueRef()
+        // TODO: use std::make_unique when converting to C++14
+    { return std::unique_ptr<ValueRef::Constant<double>>(new ValueRef::Constant<double>(GetDouble1())); }
 
     double                                                  GetDouble2() {
         if (m_param_spin2)
@@ -648,8 +690,9 @@ private:
             return 0;
     }
 
-    ValueRef::ValueRefBase<double>*                         GetDouble2ValueRef()
-    { return new ValueRef::Constant<double>(GetDouble2()); }
+    std::unique_ptr<ValueRef::ValueRefBase<double>>                         GetDouble2ValueRef()
+        // TODO: use std::make_unique when converting to C++14
+    { return std::unique_ptr<ValueRef::Constant<double>>(new ValueRef::Constant<double>(GetDouble2())); }
 
     template <typename T>
     T                                                       GetEnum() {
@@ -664,14 +707,14 @@ private:
     }
 
     template <typename T>
-    ValueRef::ValueRefBase<T>*                              GetEnumValueRef()
-    { return new ValueRef::Constant<T>(GetEnum<T>()); }
+    std::unique_ptr<ValueRef::ValueRefBase<T>> GetEnumValueRef()
+        // TODO: use std::make_unique when converting to C++14
+    { return std::unique_ptr<ValueRef::Constant<T>>(new ValueRef::Constant<T>(GetEnum<T>())); }
 
     template <typename T>
-    std::vector<ValueRef::ValueRefBase<T>*>                 GetEnumValueRefVec()
-    {
-        std::vector<ValueRef::ValueRefBase<T>*> retval;
-        retval.push_back(GetEnumValueRef<T>());
+    std::vector<std::unique_ptr<ValueRef::ValueRefBase<T>>> GetEnumValueRefVec() {
+        std::vector<std::unique_ptr<ValueRef::ValueRefBase<T>>> retval;
+        retval.push_back(std::move(GetEnumValueRef<T>()));
         return retval;
     }
 
