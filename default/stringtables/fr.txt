@@ -922,8 +922,11 @@ Erreur de lecture du fichier config.xml. Les options par défaut seront utilisé
 UNABLE_TO_READ_PERSISTENT_CONFIG_XML
 Erreur de lecture du fichier optionnel persistent_config.xml (normal si ce dernier n'existe pas).
 
+UNABLE_TO_WRITE_PERSISTENT_CONFIG_XML
+Erreur lors de l'écriture du fichier persistent_config.xml.
+
 UNABLE_TO_WRITE_SAVE_FILE
-Erreur dans l'écriture du fichier de sauvegarde.
+Erreur lors de l'écriture du fichier de sauvegarde.
 
 UNABLE_TO_READ_SAVE_FILE
 Erreur de lecture du fichier de sauvegarde.
@@ -969,6 +972,12 @@ L'IA Python pour %1% a rencontré une erreur fatale.
 
 ERROR_PLAYER_NAME_ALREADY_USED
 %1% : nom de joueur déjà utilisé.
+
+ERROR_WRONG_PASSWORD
+Mot de passe erroné pour le joueur %1%.
+
+ERROR_CONNECTION_WAS_REPLACED
+Votre connection a été mise à jour.
 
 ##
 ## Game Rules
@@ -1948,6 +1957,18 @@ Rejoindre une partie
 REFRESH_LIST_BN
 Rafraîchir
 
+##
+## Password Dialog
+##
+
+AUTHENTICATION_WINDOW_TITLE
+Authentification
+
+AUTHENTICATION_DESC
+Ce nom de joueur requiert une authentification. Rappel! Le mot de passe sera transmis en simple format texte.
+
+PASSWORD_LABEL
+Mot de Passe
 
 ##
 ## Multiplayer lobby
@@ -2769,6 +2790,30 @@ Utiliser des fichiers de sauvegarde binaire
 
 OPTIONS_USE_XML_ZLIB_SERIALIZATION
 Compresser les fichiers de sauvegarde XML
+
+OPTIONS_CREATE_PERSISTENT_CONFIG
+Écrire Fichier de Configuration Persistante
+
+OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_TITLE
+Créer Configuration Persistante (Option Avancée)
+
+OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_DESC
+'''Sauvegarde les réglages actuels de configuration comme réglages persistants par défaut.
+Ces réglages sont prioritaires sur tout réglage du fichier config.xml, mais pas sur la ligne de commande.
+N'enregistre que les réglages dont la valeur par défaut a été modifiée.
+Tout fichier de configuration persistante déjà existant est remplacé.
+
+Les réglages peuvent ne plus être valides d'une version à l'autre de Freeorion.
+Les réglages définis pour une fenêtre du jeu peuvent ne pas être conservés si cette dernière n'a pas été ouverte lors de la session de jeu en cours.
+
+Se référer à l'article [[CONFIG_GUIDE_TITLE]] pour davantage d'informations.'''
+
+OPTIONS_CREATE_PERSISTENT_CONFIG_SUCCESS
+Fichier persistent_config.xml (re)créé avec succès.
+
+OPTIONS_CREATE_PERSISTENT_CONFIG_FAILURE
+Impossible de créer le fichier persistent_config.xml, consultez le fichier log pour plus de détails.
+
 
 
 ##
@@ -4257,7 +4302,7 @@ ENC_FIELD_TYPE
 Type de Régions
 
 ENC_SHIP_DESIGN
--[Modèle Astronef]
+[Partie - Modèle Astronef]
 
 SHIPS_OF_DESIGN
 '''Astronefs de ce modèle : '''
@@ -4361,7 +4406,7 @@ ENC_MONSTER
 [Partie - Monstres]
 
 ENC_MONSTER_TYPE
-Type de Monstres
+[Partie - Type de Monstres]
 
 ENC_FLEET
 [Partie - Flottes]
@@ -5402,7 +5447,6 @@ Salutations Noble Voyageur Cosmique, et Bienvenue dans l'Univers Freeorion!
 GREETINGS_GUIDE_REFERENCE
 Les nouveaux venus dans l'Univers Freeorion peuvent consulter le [[encyclopedia QUICK_START_GUIDE_TITLE]].
 
-
 GREETINGS_GUIDE_TEXT
 '''[[GREETINGS_INTRO]]
 
@@ -5484,6 +5528,50 @@ Lorsque que l'indicateur [[metertype METER_HAPPINESS]] d'une planète est infér
 Les réparations sont différées d'un tour pour les astronefs pénétrant tout juste dans un système. En effet, la manœuvre d'accostage d'un astronef ainsi que la préparation des outils et pièces nécessaires à la réparation nécessitent un certain temps.
 
 Tout combat au sein d'un système interrompt les réparations pour le tour en cours.'''
+
+CONFIG_GUIDE_TITLE
+Guide de Configuration
+
+CONFIG_GUIDE_TEXT
+'''La plupart des options de configuration du jeu sont conservées et lues à partir d'un unique fichier XML nommé config.xml.
+Si ce fichier n'existe pas (ou provient d'un build ou d'une version différente), il sera (re)créé lors du démarrage du serveur client. 
+Le fichier de configuration est mis à jour lors de la modification d'une option, mais cette dernière peut être différée dans l'attente d'une action ultérieure (comme cliquer sur Valider ou Appliquer).
+Certaines de ces options peuvent être modifiées depuis la page '[[OPTIONS_TITLE]]' du Menu Principal.
+
+Une option définie depuis le fichier de configuration persistante (persistent_config.xml, s'il existe) aura la priorité sur la valeur correspondante du fichier config.xml.
+Une option définie par un argument de ligne de commande aura la priorité sur la valeur correspondante des deux fichiers.
+Le fichier config.xml est automatiquement modifiée pour prendre en compte toute nouvelle valeur de configuration.
+
+
+Fichier de Configuration Persistante:
+
+Un fichier de configuration persistante est un fichier XML optionnel nommé persistent_config.xml.
+Si ce fichier existe, tout réglage y étant conservé sera prioritaire sur ceux du fichier principal de configuration.
+Cela s'avère utile lors du lancement d'un build différent du jeu ou suite à une mise à jour vers une nouvelle version. Afin de faciliter la compatibilité des options et de leurs valeurs, il est conseillé de conserver dans ce fichier les réglages des options essentielles (résolution d'affichage, taille des fenêtres, etc).
+
+Un fichier de configuration persistante peut être créé ou mis à jour depuis l'onglet '[[OPTIONS_PAGE_MISC]]' de la page '[[OPTIONS_TITLE]]', en cliquant sur le bouton '[[OPTIONS_CREATE_PERSISTENT_CONFIG]]'.
+Lors de l'usage de ce bouton, certains problèmes demeurent:
+Certaines options peuvent être incluses mêmes si ces dernières n'ont pas été modifiées par l'utilisateur. Après la mise à jour vers une nouvelle version, il peut être nécessaire d'effacer manuellement ces options du fichier afin d'actualiser leur valeur par défaut.
+Les fenêtres n'ayant pas été ouvertes durant la session de jeu en cours peuvent causer la non-conservation des réglages modifiés. Il est conseillé lors d'une session de jeu d'ouvrir au moins une fois toutes les fenêtres en question afin d'initialiser les réglages avant l'utilisation du bouton.
+
+Le fichier de configuration persistante peut être créé manuellement si désiré, mais ne doit jamais contenir l'option "version-string".
+
+
+Emplacement des Fichiers de Configuration:
+
+L'emplacement des fichiers est dépendant de l'OS et de la façon de déclarer une variable d'environnement.
+Pour Windows, la variable est entourée par le signe % - ( %var% ).
+Pour MacOSX et Linux, la variable débute par ${ et se termine par } - ( ${var} ).
+
+Windows: %APPDATA%\Roaming\FreeOrion
+    (e.g. C:\Users\username\AppData\Roaming\FreeOrion)
+
+MacOSX: ${HOME}/Library/Application Support/FreeOrion
+    (e.g. /Users/username/Library/Application Support/FreeOrion)
+
+Linux: ${XDG_CONFIG_HOME}/freeorion ou si $XDG_CONFIG_HOME n'est pas défini: ${HOME}/.config/freeorion
+    (e.g. /home/username/.config/freeorion)
+'''
 
 
 ##
@@ -6213,6 +6301,12 @@ La planète %planet% a été terraformée.
 
 EFFECT_TERRAFORM_LABEL
 Terraformation
+
+EFFECT_NEST_REMOVAL
+Sur %planet% : un nid de monstre a été éradiqué.
+
+EFFECT_NEST_REMOVAL_LABEL
+Éradication de Nid
 
 EFFECT_STARLANE_BORE
 Dans %system% : une nouvelle Voie spatiale a été ouverte vers un système proche.
@@ -8480,6 +8574,38 @@ Partielle
 VIS_FULL_VISIBILITY
 Complète
 
+# Path types
+PATH_BINARY
+''''''
+
+# Path types
+PATH_RESOURCE
+''''''
+
+# Path types
+PATH_PYTHON
+''''''
+
+# Path types
+PATH_DATA_ROOT
+''''''
+
+# Path types
+PATH_DATA_USER
+''''''
+
+# Path types
+PATH_CONFIG
+''''''
+
+# Path types
+PATH_SAVE
+''''''
+
+# Path types
+PATH_TEMP
+''''''
+
 # Ship hull categories
 
 HULL_LINE_GENERIC
@@ -10212,13 +10338,13 @@ SHP_MULTICELL_CAST_DESC
 Même lorsqu'il est inerte, un matériau organique est bien plus polyvalent que n'importe quel matériau standard. Un astronef multicellulaire non-vivant pourrait offrir certains avantages des matériaux organiques mais sans les inconvénients inhérents à la vie organique.
 
 SHP_DOMESTIC_MONSTER
-Domestication Méga-Faune
+Méga-Faune: Domestication
 
 SHP_DOMESTIC_MONSTER_DESC
 La pratique ancestrale de la domestication des autres espèces peut également s'appliquer aux monstres spatiaux peuplant les voies spatiales. Construire des Colonies et des Avant-Postes à proximité de leurs lieux de nidification rendrait possible la domestication de tels monstres.
 
 SHP_ENDOCRINE_SYSTEMS
-Endocrinologie Méga-Faune
+Méga-Faune: Endocrinologie
 
 SHP_ENDOCRINE_SYSTEMS_DESC
 L'étude des systèmes endocriniens d'organismes évoluant dans l'espace permet le développement des structures internes des astronefs à caractère organique.
@@ -10480,6 +10606,15 @@ En théorie, il est possible de prédire en totalité l'évolution écologique d
 
 GRO_GAIA_TRANS_SHORT_DESC
 Permet la Transformation Gaia
+
+GRO_MEGA_ECO
+Méga-Faune: Écologie
+
+GRO_MEGA_ECO_DESC
+L'étude des cycles de vie des organismes spatiaux permet de faire émerger des caractères communs pour une grande variété d'espèces. Il est donc possible d'exploiter ces connaissances afin de contrôler plus efficacement ces organismes, en ayant recours à la manipulation de leurs processus métaboliques et reproductifs.
+
+GRO_MEGA_ECO_SHORT_DESC
+Contrôle Nid de Monstre
 
 LRN_OBSERVATORY_I
 Observatoire
@@ -11618,6 +11753,12 @@ Terraformeur à Distance
 
 BLD_REMOTE_TERRAFORM_DESC
 Terraforme une planète en un type d'[[encyclopedia ENVIRONMENT_TITLE]] un palier plus proche de l'Environnement favori de l'espèce. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]].
+
+BLD_NEST_ERADICATOR
+Éradicateur de Nid
+
+BLD_NEST_ERADICATOR_DESC
+Éradique un [[encyclopedia KRAKEN_NEST_SPECIAL]], un [[encyclopedia SNOWFLAKE_NEST_SPECIAL]], ou un [[encyclopedia JUGGERNAUT_NEST_SPECIAL]] de la planète sur laquelle le dispositif est mis en place. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]].
 
 BLD_NEUTRONIUM_EXTRACTOR
 Extracteur Neutronium
