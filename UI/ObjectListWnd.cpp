@@ -415,9 +415,9 @@ public:
         m_param_spin2(nullptr)
     {
         if (!initial_condition) {
-            auto init_condition = new Condition::All();
-            Init(init_condition);
-            delete init_condition;
+            // TODO: use std::make_unique when converting to C++14
+            auto init_condition = std::unique_ptr<Condition::All>(std::unique_ptr<Condition::All>(new Condition::All()));
+            Init(init_condition.get());
         } else {
             Init(initial_condition);
         }
@@ -436,24 +436,28 @@ public:
     ~ConditionWidget()
     {}
 
-    Condition::ConditionBase*       GetCondition() {
+    std::unique_ptr<Condition::ConditionBase>       GetCondition() {
         GG::ListBox::iterator row_it = m_class_drop->CurrentItem();
         if (row_it == m_class_drop->end())
-            return new Condition::All();
+            // TODO: use std::make_unique when converting to C++14
+            return std::unique_ptr<Condition::All>(new Condition::All());
         ConditionRow* condition_row = dynamic_cast<ConditionRow*>(row_it->get());
         if (!condition_row)
-            return new Condition::All();
+            // TODO: use std::make_unique when converting to C++14
+            return std::unique_ptr<Condition::All>(new Condition::All());
         const std::string& condition_key = condition_row->GetKey();
 
         if (condition_key == ALL_CONDITION) {
-            return new Condition::All();
+            // TODO: use std::make_unique when converting to C++14
+            return std::unique_ptr<Condition::All>(new Condition::All());
 
         } else if (condition_key == EMPIREAFFILIATION_CONDITION) {
             EmpireAffiliationType affil = AFFIL_SELF;
 
             const std::string& empire_name = GetString();
             if (empire_name.empty()) {
-                return new Condition::EmpireAffiliation(affil);
+                // TODO: use std::make_unique when converting to C++14
+                return std::unique_ptr<Condition::EmpireAffiliation>(new Condition::EmpireAffiliation(affil));
             }
 
             // get id of empire matching name
@@ -465,118 +469,139 @@ public:
                 }
             }
             // TODO: use std::make_unique when converting to C++14
-            return new Condition::EmpireAffiliation(std::unique_ptr<ValueRef::Constant<int>>(new ValueRef::Constant<int>(empire_id)), affil);
+            return std::unique_ptr<Condition::EmpireAffiliation>(new Condition::EmpireAffiliation(std::unique_ptr<ValueRef::Constant<int>>(new ValueRef::Constant<int>(empire_id)), affil));
 
         } else if (condition_key == HOMEWORLD_CONDITION) {
             const std::string& species_name = GetString();
             if (species_name.empty())
-                return new Condition::Homeworld();
+                // TODO: use std::make_unique when converting to C++14
+                return std::unique_ptr<Condition::Homeworld>(new Condition::Homeworld());
             std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>> names;
             // TODO: use std::make_unique when converting to C++14
             names.push_back(std::unique_ptr<ValueRef::ValueRefBase<std::string>>(new ValueRef::Constant<std::string>(species_name)));
-            return new Condition::Homeworld(std::move(names));
+            // TODO: use std::make_unique when converting to C++14
+            return std::unique_ptr<Condition::Homeworld>(new Condition::Homeworld(std::move(names)));
 
         } else if (condition_key == CANCOLONIZE_CONDITION) {
-            return new Condition::CanColonize();
+            // TODO: use std::make_unique when converting to C++14
+            return std::unique_ptr<Condition::CanColonize>(new Condition::CanColonize());
 
         } else if (condition_key == CANPRODUCESHIPS_CONDITION) {
-            return new Condition::CanProduceShips();
+            // TODO: use std::make_unique when converting to C++14
+            return std::unique_ptr<Condition::CanProduceShips>(new Condition::CanProduceShips());
 
         } else if (condition_key == HASSPECIAL_CONDITION) {
-            return new Condition::HasSpecial(GetString());
+            // TODO: use std::make_unique when converting to C++14
+            return std::unique_ptr<Condition::HasSpecial>(new Condition::HasSpecial(GetString()));
 
         } else if (condition_key == HASGROWTHSPECIAL_CONDITION) {
-            std::vector<Condition::ConditionBase*> operands;
+            std::vector<std::unique_ptr<Condition::ConditionBase>> operands;
             // determine sitrep order
             std::istringstream template_stream(UserString("FUNCTIONAL_GROWTH_SPECIALS_LIST"));
             for (std::istream_iterator<std::string> stream_it = std::istream_iterator<std::string>(template_stream);
                  stream_it != std::istream_iterator<std::string>(); stream_it++)
             {
-                operands.push_back(new Condition::HasSpecial(*stream_it));
+                // TODO: use std::make_unique when converting to C++14
+                operands.push_back(std::unique_ptr<Condition::ConditionBase>(new Condition::HasSpecial(*stream_it)));
             }
-            Condition::Or* this_cond =  new Condition::Or(operands);
+            // TODO: use std::make_unique when converting to C++14
+            auto this_cond =  std::unique_ptr<Condition::ConditionBase>(new Condition::Or(std::move(operands)));
             object_list_cond_description_map[this_cond->Description()] = HASGROWTHSPECIAL_CONDITION;
             return this_cond;
 
         } else if (condition_key == ASTWITHPTYPE_CONDITION) { // And [Planet PlanetType PT_ASTEROIDS ContainedBy And [System Contains PlanetType X]]
-            std::vector<Condition::ConditionBase*> operands1;
+            std::vector<std::unique_ptr<Condition::ConditionBase>> operands1;
             // TODO: use std::make_unique when converting to C++14
-            operands1.push_back(new Condition::Type(std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>(new ValueRef::Constant<UniverseObjectType>(OBJ_PLANET))));
+            operands1.push_back(std::unique_ptr<Condition::ConditionBase>(new Condition::Type(std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>(new ValueRef::Constant<UniverseObjectType>(OBJ_PLANET)))));
             const std::string& text = GetString();
             if (text == UserString("CONDITION_ANY")) {
                 std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>> copytype;
                 // TODO: use std::make_unique when converting to C++14
                 copytype.push_back(std::unique_ptr<ValueRef::Constant<PlanetType>>(new ValueRef::Constant<PlanetType>(PT_ASTEROIDS)));
-                operands1.push_back(new Condition::Not(new Condition::PlanetType(std::move(copytype))));
+                operands1.push_back(std::unique_ptr<Condition::ConditionBase>(new Condition::Not(std::unique_ptr<Condition::ConditionBase>(new Condition::PlanetType(std::move(copytype))))));
             } else {
-                operands1.push_back(new Condition::PlanetType(GetEnumValueRefVec< ::PlanetType>()));
+                operands1.push_back(std::unique_ptr<Condition::ConditionBase>(new Condition::PlanetType(GetEnumValueRefVec< ::PlanetType>())));
             }
-            std::vector<Condition::ConditionBase*> operands2;
+            std::vector<std::unique_ptr<Condition::ConditionBase>> operands2;
             // TODO: use std::make_unique when converting to C++14
-            operands2.push_back(new Condition::Type(std::unique_ptr<ValueRef::Constant<UniverseObjectType>>(new ValueRef::Constant<UniverseObjectType> (OBJ_SYSTEM))));
+            operands2.push_back(std::unique_ptr<Condition::ConditionBase>(new Condition::Type(std::unique_ptr<ValueRef::Constant<UniverseObjectType>>(new ValueRef::Constant<UniverseObjectType> (OBJ_SYSTEM)))));
             std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>> maintype;
             maintype.push_back(std::unique_ptr<ValueRef::Constant<PlanetType>>(new ValueRef::Constant<PlanetType>(PT_ASTEROIDS)));
-            operands2.push_back(new Condition::Contains(new Condition::PlanetType(std::move(maintype))));
-            operands1.push_back(new Condition::ContainedBy(new Condition::And(operands2)));
-            Condition::And* this_cond =  new Condition::And(operands1);
+            // TODO: use std::make_unique when converting to C++14
+            operands2.push_back(std::unique_ptr<Condition::ConditionBase>(new Condition::Contains(std::unique_ptr<Condition::ConditionBase>(new Condition::PlanetType(std::move(maintype))))));
+            operands1.push_back(std::unique_ptr<Condition::ConditionBase>(new Condition::ContainedBy(std::unique_ptr<Condition::ConditionBase>(new Condition::And(std::move(operands2))))));
+            auto this_cond =  std::unique_ptr<Condition::ConditionBase>(new Condition::And(std::move(operands1)));
             object_list_cond_description_map[this_cond->Description()] = ASTWITHPTYPE_CONDITION;
             return this_cond;
 
         } else if (condition_key == GGWITHPTYPE_CONDITION) { // And [Planet PlanetType PT_GASGIANT ContainedBy And [System Contains PlanetType X]]
-            std::vector<Condition::ConditionBase*> operands1;
+            std::vector<std::unique_ptr<Condition::ConditionBase>> operands1;
             const std::string& text = GetString();
             if (text == UserString("CONDITION_ANY")) {
                 std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>> copytype;
                 // TODO: use std::make_unique when converting to C++14
                 copytype.push_back(std::unique_ptr<ValueRef::Constant<PlanetType>>(new ValueRef::Constant<PlanetType>(PT_GASGIANT)));
-                operands1.push_back(new Condition::Not(new Condition::PlanetType(std::move(copytype))));
+                operands1.push_back(std::unique_ptr<Condition::ConditionBase>(new Condition::Not(std::unique_ptr<Condition::ConditionBase>(new Condition::PlanetType(std::move(copytype))))));
             } else
-                operands1.push_back(new Condition::PlanetType(GetEnumValueRefVec< ::PlanetType>()));
-            std::vector<Condition::ConditionBase*> operands2;
-            operands2.push_back(new Condition::Type(std::unique_ptr<ValueRef::Constant<UniverseObjectType>>(new ValueRef::Constant<UniverseObjectType>(OBJ_SYSTEM))));
+                operands1.push_back(std::unique_ptr<Condition::ConditionBase>(new Condition::PlanetType(GetEnumValueRefVec< ::PlanetType>())));
+            std::vector<std::unique_ptr<Condition::ConditionBase>> operands2;
+            operands2.push_back(std::unique_ptr<Condition::ConditionBase>(new Condition::Type(std::unique_ptr<ValueRef::Constant<UniverseObjectType>>(new ValueRef::Constant<UniverseObjectType>(OBJ_SYSTEM)))));
             std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>> maintype;
             maintype.push_back(std::unique_ptr<ValueRef::Constant<PlanetType>>(new ValueRef::Constant<PlanetType>(PT_GASGIANT)));
-            operands2.push_back(new Condition::Contains(new Condition::PlanetType(std::move(maintype))));
-            operands1.push_back(new Condition::ContainedBy(new Condition::And(operands2)));
-            Condition::And* this_cond =  new Condition::And(operands1);
+            // TODO: use std::make_unique when converting to C++14
+            operands2.push_back(std::unique_ptr<Condition::ConditionBase>(new Condition::Contains(std::unique_ptr<Condition::ConditionBase>(new Condition::PlanetType(std::move(maintype))))));
+            operands1.push_back(std::unique_ptr<Condition::ConditionBase>(new Condition::ContainedBy(std::unique_ptr<Condition::ConditionBase>(new Condition::And(std::move(operands2))))));
+            auto this_cond =  std::unique_ptr<Condition::ConditionBase>(new Condition::And(std::move(operands1)));
             object_list_cond_description_map[this_cond->Description()] = GGWITHPTYPE_CONDITION;
             return this_cond;
 
         } else if (condition_key == HASTAG_CONDITION) {
-            return new Condition::HasTag(GetString());
+            // TODO: use std::make_unique when converting to C++14
+            return std::unique_ptr<Condition::ConditionBase>(new Condition::HasTag(GetString()));
 
         } else if (condition_key == MONSTER_CONDITION) {
-            return new Condition::Monster();
+            // TODO: use std::make_unique when converting to C++14
+            return std::unique_ptr<Condition::Monster>(new Condition::Monster());
 
         } else if (condition_key == CAPITAL_CONDITION) {
-            return new Condition::Capital();
+            // TODO: use std::make_unique when converting to C++14
+            return std::unique_ptr<Condition::Capital>(new Condition::Capital());
 
         } else if (condition_key == ARMED_CONDITION) {
-            return new Condition::Armed();
+            // TODO: use std::make_unique when converting to C++14
+            return std::unique_ptr<Condition::Armed>(new Condition::Armed());
 
         } else if (condition_key == STATIONARY_CONDITION) {
-            return new Condition::Stationary();
+            // TODO: use std::make_unique when converting to C++14
+            return std::unique_ptr<Condition::Stationary>(new Condition::Stationary());
 
         } else if (condition_key == SPECIES_CONDITION) {
-            return new Condition::Species(GetStringValueRefVec());
+            // TODO: use std::make_unique when converting to C++14
+            return std::unique_ptr<Condition::ConditionBase>(new Condition::Species(GetStringValueRefVec()));
 
         } else if (condition_key == PLANETSIZE_CONDITION) {
-            return new Condition::PlanetSize(GetEnumValueRefVec< ::PlanetSize>());
+            // TODO: use std::make_unique when converting to C++14
+            return std::unique_ptr<Condition::ConditionBase>(new Condition::PlanetSize(GetEnumValueRefVec< ::PlanetSize>()));
 
         } else if (condition_key == PLANETTYPE_CONDITION) {
-            return new Condition::PlanetType(GetEnumValueRefVec< ::PlanetType>());
+            // TODO: use std::make_unique when converting to C++14
+            return std::unique_ptr<Condition::ConditionBase>(new Condition::PlanetType(GetEnumValueRefVec< ::PlanetType>()));
 
         } else if (condition_key == FOCUSTYPE_CONDITION) {
-            return new Condition::FocusType(GetStringValueRefVec());
+            // TODO: use std::make_unique when converting to C++14
+            return std::unique_ptr<Condition::ConditionBase>(new Condition::FocusType(GetStringValueRefVec()));
 
         } else if (condition_key == STARTYPE_CONDITION) {
-            return new Condition::StarType(GetEnumValueRefVec< ::StarType>());
+            // TODO: use std::make_unique when converting to C++14
+            return std::unique_ptr<Condition::ConditionBase>(new Condition::StarType(GetEnumValueRefVec< ::StarType>()));
 
         } else if (condition_key == METERVALUE_CONDITION) {
-            return new Condition::MeterValue(GetEnum< ::MeterType>(), GetDouble1ValueRef(), GetDouble2ValueRef());
+            // TODO: use std::make_unique when converting to C++14
+            return std::unique_ptr<Condition::ConditionBase>(new Condition::MeterValue(GetEnum< ::MeterType>(), GetDouble1ValueRef(), GetDouble2ValueRef()));
         }
 
-        return new Condition::All();
+        // TODO: use std::make_unique when converting to C++14
+        return std::unique_ptr<Condition::All>(new Condition::All());
     }
 
     void Render() override
@@ -646,7 +671,7 @@ private:
 
     std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>> GetStringValueRefVec() {
         std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>> retval;
-        retval.push_back(std::move(GetStringValueRef()));
+        retval.push_back(GetStringValueRef());
         return retval;
     }
 
@@ -1028,8 +1053,7 @@ public:
 
     std::map<UniverseObjectType, std::set<VIS_DISPLAY>> GetVisibilityFilters() const;
 
-    // caller takes ownership of returned ConditionBase*
-    Condition::ConditionBase* GetConditionFilter();
+    std::unique_ptr<Condition::ConditionBase> GetConditionFilter();
 
 protected:
     GG::Rect CalculatePosition() const override;
@@ -1173,7 +1197,7 @@ bool FilterDialog::ChangesAccepted()
 std::map<UniverseObjectType, std::set<VIS_DISPLAY>> FilterDialog::GetVisibilityFilters() const
 { return m_vis_filters; }
 
-Condition::ConditionBase* FilterDialog::GetConditionFilter()
+std::unique_ptr<Condition::ConditionBase> FilterDialog::GetConditionFilter()
 { return m_condition_widget->GetCondition(); }
 
 GG::Rect FilterDialog::CalculatePosition() const
@@ -1851,7 +1875,8 @@ public:
 
         SetVScrollWheelIncrement(Value(ListRowHeight())*4);
 
-        m_filter_condition = new Condition::All();
+        // TODO: use std::make_unique when converting to C++14
+        m_filter_condition = std::unique_ptr<Condition::All>(new Condition::All());
 
         //m_visibilities[OBJ_BUILDING].insert(SHOW_VISIBLE);
         //m_visibilities[OBJ_BUILDING].insert(SHOW_PREVIOUSLY_VISIBLE);
@@ -1874,9 +1899,8 @@ public:
             boost::bind(&ObjectListBox::UniverseObjectDeleted, this, _1));
     }
 
-    virtual         ~ObjectListBox() {
-        delete m_filter_condition;
-    }
+    virtual         ~ObjectListBox()
+    {}
 
     void            SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         const GG::Pt old_size = Size();
@@ -1897,7 +1921,7 @@ public:
     { return GG::Y(ClientUI::Pts() * 2); }
 
     const Condition::ConditionBase* const                       FilterCondition() const
-    { return m_filter_condition; }
+    { return m_filter_condition.get(); }
 
     const std::map<UniverseObjectType, std::set<VIS_DISPLAY>>   Visibilities() const
     { return m_visibilities; }
@@ -1931,9 +1955,8 @@ public:
     bool            AnythingCollapsed() const
     { return !m_collapsed_objects.empty(); }
 
-    void            SetFilterCondition(Condition::ConditionBase* condition) {
-        delete m_filter_condition;
-        m_filter_condition = condition;
+    void            SetFilterCondition(std::unique_ptr<Condition::ConditionBase>&& condition) {
+        m_filter_condition = std::move(condition);
         Refresh();
     }
 
@@ -2320,7 +2343,7 @@ private:
 
     std::map<int, boost::signals2::connection>          m_object_change_connections;
     std::set<int>                                       m_collapsed_objects;
-    Condition::ConditionBase*                           m_filter_condition;
+    std::unique_ptr<Condition::ConditionBase>                           m_filter_condition;
     std::map<UniverseObjectType, std::set<VIS_DISPLAY>> m_visibilities;
     std::shared_ptr<ObjectHeaderRow>                                    m_header_row;
     boost::signals2::connection m_obj_deleted_connection;
