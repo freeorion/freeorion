@@ -46,5 +46,22 @@ bool OrderSet::RescindOrder(int order) {
     return retval;
 }
 
-void OrderSet::Reset()
-{ m_orders.clear(); }
+void OrderSet::Reset() {
+    for (auto& order : m_orders) {
+        if (!order.second->ShouldPersist()) {
+            auto it = m_orders.find(order.first);
+            m_orders.erase(it);
+        }
+        else {
+            order.second->ResetExecutionStatus();
+        }
+    }
+}
+
+void OrderSet::ExecutePersistentOrders() {
+    for (auto& order : m_orders) {
+        if (order.second->ShouldPersist()) {
+            order.second->Execute();
+        }
+    }
+}

@@ -118,12 +118,15 @@ void ClientApp::SetPlayerStatus(int player_id, Message::PlayerStatus status) {
 
 void ClientApp::StartTurn() {
     m_networking->SendMessage(TurnOrdersMessage(m_orders));
+
+    // execute persistent orders at start of turn to update UI
+    m_orders.ExecutePersistentOrders();
 }
 
 void ClientApp::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) {
     switch (phase_id) {
     case Message::WAITING_FOR_PLAYERS:
-        // Orders have been received by server, so clear the orders.
+        // Orders have been received by server, so clear non-persistent orders
         m_orders.Reset();
         break;
     case Message::FLEET_MOVEMENT:

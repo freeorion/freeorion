@@ -45,6 +45,9 @@ public:
     /** Returns the ID of the Empire issuing the order. */
     int EmpireID() const
     { return m_empire; }
+
+    /** Returns true iff an order should persist after it has been executed */
+    virtual bool ShouldPersist();
     //@}
 
     /** Executes the order on the Universe and Empires.
@@ -59,6 +62,9 @@ public:
      *   should be thrown if any precondition fails.
      */
     void Execute() const;
+
+    /** resets execution status so order can be executed again */
+    void ResetExecutionStatus() { m_executed = false; }
 
     /** If this function returns true, it reverts the game state to what it was
      *  before this order was executed, otherwise it returns false and has no
@@ -462,6 +468,9 @@ public:
     /** Returns ID of the ship which is destroying the planet. */
     int ShipID() const
     { return m_ship; }
+
+    /** Returns true iff an order should persist after it has been executed */
+    bool ShouldPersist();
     //@}
 
 private:

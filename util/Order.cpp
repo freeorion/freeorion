@@ -51,6 +51,9 @@ bool Order::Undo() const {
 bool Order::Executed() const
 { return m_executed; }
 
+bool Order::ShouldPersist()
+{ return false; }
+
 bool Order::UndoImpl() const
 { return false; }
 
@@ -877,6 +880,11 @@ void DestroyPlanetOrder::ExecuteImpl() const {
         return;
     }
 
+    if (planet->HasSpecial("PLANET_DESTRUCTION_SPECIAL")) {
+        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl given planet that was just destroyed";
+        return;
+    }
+
     DebugLogger() << "DestroyPlanetOrder::ExecuteImpl set for ship " << m_ship << " "
         << ship->Name() << " to destroy planet " << m_planet << " "
         << planet->Name();
@@ -909,6 +917,20 @@ bool DestroyPlanetOrder::UndoImpl() const {
 
     if (auto fleet = GetFleet(ship->FleetID()))
         fleet->StateChangedSignal();
+
+    return true;
+}
+
+bool DestroyPlanetOrder::ShouldPersist() {
+    auto ship = GetShip(m_ship);
+    auto planet = GetPlanet(m_planet);
+
+    if (!(ship && planet))
+        return false;
+    if (planet->HasSpecial("PLANET_DESTRUCTION_SPECIAL"))
+        return false;
+    if (!(ship->SystemID() == planet->SystemID()))
+        return false;
 
     return true;
 }
