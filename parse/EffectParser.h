@@ -1,16 +1,9 @@
 #ifndef _EffectParser_h_
 #define _EffectParser_h_
 
-#include "Lexer.h"
-#include "ParseImpl.h"
-#include "ValueRefParser.h"
 #include "ConditionParser.h"
 
 #include <boost/spirit/include/qi.hpp>
-
-namespace Condition {
-    struct ConditionBase;
-}
 
 namespace Effect {
     class EffectBase;
