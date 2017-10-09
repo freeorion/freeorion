@@ -187,12 +187,19 @@ std::string Species::GameplayDescription() const {
 const Condition::ConditionBase* Species::Location() const {
     if (!m_location) {
         // set up a Condition structure to match popcenters that have (not uninhabitable) environment for this species
-        std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*> environments_vec;
-        environments_vec.push_back(new ValueRef::Constant<PlanetEnvironment>( ::PE_UNINHABITABLE));
-        ValueRef::Constant<std::string>* this_species_name_ref = new ValueRef::Constant<std::string>(m_name);  // m_name specifies this species
-        Condition::ConditionBase* enviro_cond = new Condition::Not(new Condition::PlanetEnvironment(environments_vec, this_species_name_ref));
+        std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetEnvironment>>> environments_vec;
+        // TODO: use std::make_unique when converting to C++14
+        environments_vec.push_back(
+            std::unique_ptr<ValueRef::Constant<PlanetEnvironment>>(
+                new ValueRef::Constant<PlanetEnvironment>( ::PE_UNINHABITABLE)));
+        auto this_species_name_ref =
+            std::unique_ptr<ValueRef::Constant<std::string>>(
+                new ValueRef::Constant<std::string>(m_name));  // m_name specifies this species
+        Condition::ConditionBase* enviro_cond = new Condition::Not(new Condition::PlanetEnvironment(std::move(environments_vec), std::move(this_species_name_ref)));
 
-        Condition::ConditionBase* type_cond = new Condition::Type(new ValueRef::Constant<UniverseObjectType>( ::OBJ_POP_CENTER));
+        Condition::ConditionBase* type_cond = new Condition::Type(
+            std::unique_ptr<ValueRef::Constant<UniverseObjectType>>(
+                new ValueRef::Constant<UniverseObjectType>( ::OBJ_POP_CENTER)));
 
         std::vector<Condition::ConditionBase*> operands;
         operands.push_back(enviro_cond);

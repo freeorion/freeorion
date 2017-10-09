@@ -49,31 +49,35 @@ namespace {
     // by the result of evalulating \a increase_vr
     std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type,
-                  ValueRef::ValueRefBase<double>* increase_vr)
+                  std::unique_ptr<ValueRef::ValueRefBase<double>>&& increase_vr)
     {
         typedef std::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
         Condition::Source* activation = new Condition::Source;
 
-        ValueRef::ValueRefBase<double>* vr =
-            new ValueRef::Operation<double>(
-                ValueRef::PLUS,
-                new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
-                increase_vr
-            );
+        // TODO: use std::make_unique when converting to C++14
+        auto vr =
+            std::unique_ptr<ValueRef::Operation<double>>(
+                new ValueRef::Operation<double>(
+                    ValueRef::PLUS,
+                    std::unique_ptr<ValueRef::Variable<double>>(
+                        new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>())),
+                    std::move(increase_vr)
+                ));
         return EffectsGroupPtr(
             new Effect::EffectsGroup(
-                scope, activation, Effects(1, new Effect::SetMeter(meter_type, vr))));
+                scope, activation, Effects(1, new Effect::SetMeter(meter_type, std::move(vr)))));
     }
 
     // create effectsgroup that increases the value of \a meter_type
     // by the specified amount \a fixed_increase
     std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, float fixed_increase) {
-        ValueRef::ValueRefBase<double>* increase_vr =
-            new ValueRef::Constant<double>(fixed_increase);
-        return IncreaseMeter(meter_type, increase_vr);
+        // TODO: use std::make_unique when converting to C++14
+        auto increase_vr = std::unique_ptr<ValueRef::Constant<double>>(
+            new ValueRef::Constant<double>(fixed_increase));
+        return IncreaseMeter(meter_type, std::move(increase_vr));
     }
 
     // create effectsgroup that increases the value of \a meter_type
@@ -87,16 +91,21 @@ namespace {
         if (scaling_factor_rule_name.empty())
             return IncreaseMeter(meter_type, base_increase);
 
-        ValueRef::ValueRefBase<double>* increase_vr = new ValueRef::Operation<double>(
-            ValueRef::TIMES,
-            new ValueRef::Constant<double>(base_increase),
-            new ValueRef::ComplexVariable<double>(
-                "GameRule", nullptr, nullptr, nullptr,
-                new ValueRef::Constant<std::string>(scaling_factor_rule_name)
+        // TODO: use std::make_unique when converting to C++14
+        auto increase_vr = std::unique_ptr<ValueRef::Operation<double>>(
+            new ValueRef::Operation<double>(
+                ValueRef::TIMES,
+                std::unique_ptr<ValueRef::Constant<double>>(new ValueRef::Constant<double>(base_increase)),
+                std::unique_ptr<ValueRef::ComplexVariable<double>>(
+                    new ValueRef::ComplexVariable<double>(
+                        "GameRule", nullptr, nullptr, nullptr,
+                        std::unique_ptr<ValueRef::Constant<std::string>>(
+                            new ValueRef::Constant<std::string>(scaling_factor_rule_name))
+                    ))
             )
         );
 
-        return IncreaseMeter(meter_type, increase_vr);
+        return IncreaseMeter(meter_type, std::move(increase_vr));
     }
 
     // create effectsgroup that increases the value of the part meter
@@ -111,15 +120,19 @@ namespace {
         Condition::Source* scope = new Condition::Source;
         Condition::Source* activation = new Condition::Source;
 
-        ValueRef::ValueRefBase<double>* value_vr =
+        // TODO: use std::make_unique when converting to C++14
+        auto value_vr = std::unique_ptr<ValueRef::Operation<double>>(
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,
-                new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
-                new ValueRef::Constant<double>(increase)
-            );
+                std::unique_ptr<ValueRef::Variable<double>>(
+                    new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>())),
+                std::unique_ptr<ValueRef::Constant<double>>(new ValueRef::Constant<double>(increase))
+            ));
 
-        ValueRef::ValueRefBase<std::string>* part_name_vr =
-            new ValueRef::Constant<std::string>(part_name);
+        // TODO: use std::make_unique when converting to C++14
+        auto part_name_vr =
+            std::unique_ptr<ValueRef::Constant<std::string>>(
+                new ValueRef::Constant<std::string>(part_name));
 
         std::string stacking_group = (allow_stacking ? "" :
             (part_name + "_" + boost::lexical_cast<std::string>(meter_type) + "_PartMeter"));
@@ -127,7 +140,7 @@ namespace {
         return EffectsGroupPtr(
             new Effect::EffectsGroup(
                 scope, activation,
-                Effects(1, new Effect::SetShipPartMeter(meter_type, part_name_vr, value_vr)),
+                Effects(1, new Effect::SetShipPartMeter(meter_type, std::move(part_name_vr), std::move(value_vr))),
                 part_name, stacking_group));
     }
 

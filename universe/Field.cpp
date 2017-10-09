@@ -23,15 +23,18 @@ namespace {
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
         Condition::Source* activation = nullptr;
-        ValueRef::ValueRefBase<double>* vr =
-            new ValueRef::Operation<double>(
-                ValueRef::PLUS,
-                new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
-                new ValueRef::Constant<double>(increase)
-            );
+        // TODO: use std::make_unique when converting to C++14
+        auto vr =
+            std::unique_ptr<ValueRef::Operation<double>>(
+                new ValueRef::Operation<double>(
+                    ValueRef::PLUS,
+                    std::unique_ptr<ValueRef::Variable<double>>(
+                        new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>())),
+                    std::unique_ptr<ValueRef::Constant<double>>(new ValueRef::Constant<double>(increase))
+                ));
         return EffectsGroupPtr(
             new Effect::EffectsGroup(
-                scope, activation, Effects(1, new Effect::SetMeter(meter_type, vr))));
+                scope, activation, Effects(1, new Effect::SetMeter(meter_type, std::move(vr)))));
     }
 }
 
