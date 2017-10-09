@@ -2675,6 +2675,12 @@ std::string UserStringLookup<std::vector<std::string>>::Eval(const ScriptingCont
 /////////////////////////////////////////////////////
 // NameLookup                                      //
 /////////////////////////////////////////////////////
+NameLookup::NameLookup(std::unique_ptr<ValueRefBase<int>>&& value_ref, LookupType lookup_type) :
+    Variable<std::string>(NON_OBJECT_REFERENCE),
+    m_value_ref(std::move(value_ref)),
+    m_lookup_type(lookup_type)
+{}
+
 NameLookup::NameLookup(ValueRefBase<int>* value_ref, LookupType lookup_type) :
     Variable<std::string>(NON_OBJECT_REFERENCE),
     m_value_ref(value_ref),

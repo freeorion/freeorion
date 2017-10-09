@@ -871,7 +871,7 @@ Statistic<T>::Statistic(std::unique_ptr<ValueRefBase<T>>&& value_ref, StatisticT
     Variable<T>(NON_OBJECT_REFERENCE, ""),
     m_stat_type(stat_type),
     m_sampling_condition(sampling_condition),
-    m_value_ref(value_ref)
+    m_value_ref(std::move(value_ref))
 {}
 
 template <class T>
@@ -1271,11 +1271,11 @@ ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
                                     std::unique_ptr<ValueRefBase<std::string>>&& string_ref1,
                                     std::unique_ptr<ValueRefBase<std::string>>&& string_ref2) :
     Variable<T>(NON_OBJECT_REFERENCE, std::vector<std::string>(1, variable_name)),
-    m_int_ref1(int_ref1),
-    m_int_ref2(int_ref2),
-    m_int_ref3(int_ref3),
-    m_string_ref1(string_ref1),
-    m_string_ref2(string_ref2)
+    m_int_ref1(std::move(int_ref1)),
+    m_int_ref2(std::move(int_ref2)),
+    m_int_ref3(std::move(int_ref3)),
+    m_string_ref1(std::move(string_ref1)),
+    m_string_ref2(std::move(string_ref2))
 {
     //std::cout << "ComplexVariable: " << variable_name << ", "
     //          << int_ref1 << ", " << int_ref2 << ", "
@@ -1542,13 +1542,13 @@ void ComplexVariable<T>::serialize(Archive& ar, const unsigned int version)
 template <class FromType, class ToType>
 StaticCast<FromType, ToType>::StaticCast(std::unique_ptr<Variable<FromType>>&& value_ref) :
     Variable<ToType>(value_ref->GetReferenceType(), value_ref->PropertyName()),
-    m_value_ref(value_ref)
+    m_value_ref(std::move(value_ref))
 {}
 
 template <class FromType, class ToType>
 StaticCast<FromType, ToType>::StaticCast(std::unique_ptr<ValueRefBase<FromType>>&& value_ref) :
     Variable<ToType>(NON_OBJECT_REFERENCE),
-    m_value_ref(value_ref)
+    m_value_ref(std::move(value_ref))
 {}
 
 template <class FromType, class ToType>
@@ -1649,13 +1649,13 @@ void StaticCast<FromType, ToType>::serialize(Archive& ar, const unsigned int ver
 template <class FromType>
 StringCast<FromType>::StringCast(std::unique_ptr<Variable<FromType>>&& value_ref) :
     Variable<std::string>(value_ref->GetReferenceType(), value_ref->PropertyName()),
-    m_value_ref(value_ref)
+    m_value_ref(std::move(value_ref))
 {}
 
 template <class FromType>
 StringCast<FromType>::StringCast(std::unique_ptr<ValueRefBase<FromType>>&& value_ref) :
     Variable<std::string>(NON_OBJECT_REFERENCE),
-    m_value_ref(value_ref)
+    m_value_ref(std::move(value_ref))
 {}
 
 template <class FromType>
@@ -1773,13 +1773,13 @@ void StringCast<FromType>::serialize(Archive& ar, const unsigned int version)
 template <class FromType>
 UserStringLookup<FromType>::UserStringLookup(std::unique_ptr<Variable<FromType>>&& value_ref) :
     Variable<std::string>(value_ref->GetReferenceType(), value_ref->PropertyName()),
-    m_value_ref(value_ref)
+    m_value_ref(std::move(value_ref))
 {}
 
 template <class FromType>
 UserStringLookup<FromType>::UserStringLookup(std::unique_ptr<ValueRefBase<FromType>>&& value_ref) :
     Variable<std::string>(NON_OBJECT_REFERENCE),
-    m_value_ref(value_ref)
+    m_value_ref(std::move(value_ref))
 {}
 
 template <class FromType>
@@ -1941,7 +1941,7 @@ Operation<T>::Operation(OpType op_type, std::unique_ptr<ValueRefBase<T>>&& opera
 template <class T>
 Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRefBase<T>>>&& operands) :
     m_op_type(op_type),
-    m_operands(operands)
+    m_operands(std::move(operands))
 {
     DetermineIfConstantExpr();
     CacheConstValue();
