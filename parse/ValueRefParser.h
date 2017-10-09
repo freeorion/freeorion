@@ -218,9 +218,6 @@ namespace parse {
         parse::value_ref_rule<int> flexible_int;
     };
 
-    template <typename T>
-    using enum_rule = detail::rule<T ()>;
-
 namespace detail {
 
 template <typename T>
@@ -228,7 +225,7 @@ struct enum_value_ref_rules {
     enum_value_ref_rules(const std::string& type_name);
 
     name_token_rule variable_name;
-    parse::enum_rule<T> enum_expr;
+    parse::detail::enum_rule<T> enum_expr;
     parse::value_ref_rule<T> constant_expr;
     parse::value_ref_rule<T> free_variable_expr;
     variable_rule<T> bound_variable_expr;

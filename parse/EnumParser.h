@@ -11,30 +11,25 @@
 
 
 namespace parse {
-    template <typename E>
-    using enum_rule = detail::rule<
-        E ()
-    >;
+    detail::enum_rule<EmpireAffiliationType>& empire_affiliation_type_enum();
 
-    enum_rule<EmpireAffiliationType>& empire_affiliation_type_enum();
+    detail::enum_rule<UnlockableItemType>& unlockable_item_type_enum();
 
-    enum_rule<UnlockableItemType>& unlockable_item_type_enum();
+    detail::enum_rule<ShipSlotType>& ship_slot_type_enum();
 
-    enum_rule<ShipSlotType>& ship_slot_type_enum();
+    detail::enum_rule<ShipPartClass>& ship_part_class_enum();
 
-    enum_rule<ShipPartClass>& ship_part_class_enum();
+    detail::enum_rule<CaptureResult>& capture_result_enum();
 
-    enum_rule<CaptureResult>& capture_result_enum();
+    detail::enum_rule<ValueRef::StatisticType>& statistic_type_enum();
 
-    enum_rule<ValueRef::StatisticType>& statistic_type_enum();
+    detail::enum_rule<MeterType>& non_ship_part_meter_type_enum();
 
-    enum_rule<MeterType>& non_ship_part_meter_type_enum();
+    detail::enum_rule<MeterType>& ship_part_meter_type_enum();
 
-    enum_rule<MeterType>& ship_part_meter_type_enum();
+    detail::enum_rule<MeterType>& set_non_ship_part_meter_type_enum();
 
-    enum_rule<MeterType>& set_non_ship_part_meter_type_enum();
-
-    enum_rule<MeterType>& set_ship_part_meter_type_enum();
+    detail::enum_rule<MeterType>& set_ship_part_meter_type_enum();
 }
 
 #endif
