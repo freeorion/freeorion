@@ -124,26 +124,7 @@ public:
             const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
             const SpeciesParams& params,
             const std::set<std::string>& tags,
-            const std::string& graphic) :
-        m_name(strings.name),
-        m_description(strings.desc),
-        m_gameplay_description(strings.gameplay_desc),
-        m_foci(foci),
-        m_preferred_focus(preferred_focus),
-        m_planet_environments(planet_environments),
-        m_effects(effects),
-        m_location(nullptr),
-        m_playable(params.playable),
-        m_native(params.native),
-        m_can_colonize(params.can_colonize),
-        m_can_produce_ships(params.can_produce_ships),
-        m_tags(),
-        m_graphic(graphic)
-    {
-        Init();
-        for (const std::string& tag : tags)
-            m_tags.insert(boost::to_upper_copy<std::string>(tag));
-    }
+            const std::string& graphic);
 
     ~Species();
     //@}
@@ -215,7 +196,7 @@ private:
 
     std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
 
-    mutable Condition::ConditionBase*       m_location;
+    mutable std::unique_ptr<Condition::ConditionBase>       m_location;
 
     bool                                    m_playable;
     bool                                    m_native;
