@@ -16,6 +16,8 @@ class FO_COMMON_API Planet :
 {
 public:
     /** \name Accessors */ //@{
+    bool HostileToEmpire(int empire_id) const override;
+
     std::set<std::string> Tags() const override;
 
     bool HasTag(const std::string& name) const override;

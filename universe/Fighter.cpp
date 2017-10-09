@@ -2,6 +2,8 @@
 
 #include "Predicates.h"
 #include "Enums.h"
+#include "../Empire/EmpireManager.h"
+#include "../util/AppInterface.h"
 #include "../util/Logger.h"
 
 
@@ -20,6 +22,14 @@ Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species
 
 Fighter::~Fighter()
 {}
+
+bool Fighter::HostileToEmpire(int empire_id) const
+{
+    if (OwnedBy(empire_id))
+        return false;
+    return empire_id == ALL_EMPIRES || Unowned() ||
+           Empires().GetDiplomaticStatus(Owner(), empire_id) == DIPLO_WAR;
+}
 
 UniverseObjectType Fighter::ObjectType() const
 { return OBJ_FIGHTER; }

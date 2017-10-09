@@ -30,6 +30,8 @@ struct MovePathNode {
 class FO_COMMON_API Fleet : public UniverseObject {
 public:
     /** \name Accessors */ //@{
+    bool HostileToEmpire(int empire_id) const override;
+
     UniverseObjectType ObjectType() const override;
 
     std::string Dump() const override;

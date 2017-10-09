@@ -145,6 +145,14 @@ void Ship::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_
     }
 }
 
+bool Ship::HostileToEmpire(int empire_id) const
+{
+    if (OwnedBy(empire_id))
+        return false;
+    return empire_id == ALL_EMPIRES || Unowned() ||
+           Empires().GetDiplomaticStatus(Owner(), empire_id) == DIPLO_WAR;
+}
+
 std::set<std::string> Ship::Tags() const {
     std::set<std::string> retval;
 

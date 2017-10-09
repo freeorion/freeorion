@@ -135,6 +135,24 @@ void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
     }
 }
 
+bool Planet::HostileToEmpire(int empire_id) const
+{
+    if (OwnedBy(empire_id))
+        return false;
+
+    // Empire owned planets are hostile to ALL_EMPIRES
+    if (empire_id == ALL_EMPIRES)
+        return !Unowned();
+
+    // Unowned planets are only considered hostile if populated
+    auto pop_meter = GetMeter(METER_TARGET_POPULATION);
+    if (Unowned())
+        return pop_meter && (pop_meter->Current() != 0.0f);
+
+    // both empires are normal empires
+    return Empires().GetDiplomaticStatus(Owner(), empire_id) == DIPLO_WAR;
+}
+
 std::set<std::string> Planet::Tags() const {
     const Species* species = GetSpecies(SpeciesName());
     if (!species)
