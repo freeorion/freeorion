@@ -36,14 +36,14 @@ enum SearchDomain {
     MATCHES         ///< The Condition will only examine items in the matches set; those that do not match the Condition will be inserted into the nonmatches set.
 };
 
-enum SortingMethod {
+enum SortingMethod : int {
     SORT_MAX,       ///< Objects with the largest sort key will be selected
     SORT_MIN,       ///< Objects with the smallest sort key will be selected
     SORT_MODE,      ///< Objects with the most common sort key will be selected
     SORT_RANDOM     ///< Objects will be selected randomly, without consideration of property values
 };
 
-enum ComparisonType {
+enum ComparisonType : int {
     INVALID_COMPARISON = -1,
     EQUAL,
     GREATER_THAN,
@@ -53,7 +53,7 @@ enum ComparisonType {
     NOT_EQUAL
 };
 
-enum ContentType {
+enum ContentType : int {
     CONTENT_BUILDING,
     CONTENT_SPECIES,
     CONTENT_SHIP_HULL,

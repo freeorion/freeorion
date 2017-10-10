@@ -12,6 +12,14 @@
 #include <GG/Clr.h>
 
 
+namespace Condition {
+    struct ConditionBase;
+}
+
+namespace Effect {
+    class EffectBase;
+}
+
 namespace parse { namespace detail {
 
     /// A functor to determine if \p key will be unique in \p map of \p type, and log an error otherwise.
@@ -48,6 +56,16 @@ namespace parse { namespace detail {
         locals
     >;
 
+    template <
+        typename signature = boost::spirit::qi::unused_type,
+        typename locals = boost::spirit::qi::unused_type
+    >
+    using grammar = boost::spirit::qi::grammar<
+        parse::token_iterator,
+        parse::skipper_type,
+        signature,
+        locals
+    >;
 
     using double_rule = detail::rule<
         double ()
@@ -62,20 +80,25 @@ namespace parse { namespace detail {
 
 
     typedef detail::rule<> label_rule;
-    label_rule& label(const char* name);
+    /** Store label_rules. */
+    class Labeller {
+        public:
+        Labeller(const parse::lexer& tok_);
 
+        /** Retrieve or create a label rule for \p name.*/
+        label_rule& rule(const char* name);
+        private:
+        const parse::lexer& m_tok;
+        std::unordered_map<const char*, label_rule> m_rules;
+    };
+
+    // TODO remove this version of label with the singleton rules
+    label_rule& label(const char* name);
 
     typedef rule<
         void (std::set<std::string>&)
     > tags_rule;
     tags_rule& tags_parser();
-
-
-    typedef rule<
-        std::vector<std::shared_ptr<Effect::EffectsGroup>> ()
-    > effects_group_rule;
-    effects_group_rule& effects_group_parser();
-
 
     typedef rule<
         GG::Clr (),
@@ -122,7 +145,8 @@ namespace parse { namespace detail {
 
         boost::spirit::qi::in_state_type in_state;
 
-        Rules rules(filename, first, last);
+        detail::Labeller labeller(lexer);
+        Rules rules(lexer, labeller, filename, first, last);
 
         bool success = boost::spirit::qi::phrase_parse(it, lexer.end(), rules.start(boost::phoenix::ref(arg1)), in_state("WS")[lexer.self]);
 

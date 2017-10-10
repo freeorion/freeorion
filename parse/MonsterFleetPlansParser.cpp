@@ -30,7 +30,9 @@ namespace {
     const boost::phoenix::function<new_monster_fleet_plan_> new_monster_fleet_plan;
 
     struct rules {
-        rules(const std::string& filename,
+        rules(const parse::lexer& tok,
+              parse::detail::Labeller& labeller,
+              const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
             namespace phoenix = boost::phoenix;
@@ -47,15 +49,15 @@ namespace {
             qi::_val_type _val;
             qi::eps_type eps;
 
-            const parse::lexer& tok = parse::lexer::instance();
+            auto& condition_parser = parse::detail::condition_parser;
 
             monster_fleet_plan_prefix
                 =    tok.MonsterFleet_
-                >    parse::detail::label(Name_token) > tok.string [ phoenix::ref(_a) = _1 ]
+                >    labeller.rule(Name_token) > tok.string [ phoenix::ref(_a) = _1 ]
                 ;
 
             ships
-                =    parse::detail::label(Ships_token)
+                =    labeller.rule(Ships_token)
                 >    eps [ clear(phoenix::ref(_b)) ]
                 >    (
                             ('[' > +tok.string [ push_back(phoenix::ref(_b), _1) ] > ']')
@@ -65,11 +67,11 @@ namespace {
 
             spawns
                 =    (
-                            (parse::detail::label(SpawnRate_token) > parse::detail::double_ [ phoenix::ref(_c) = _1 ])
+                            (labeller.rule(SpawnRate_token) > parse::detail::double_ [ phoenix::ref(_c) = _1 ])
                         |    eps [ phoenix::ref(_c) = 1.0 ]
                      )
                 >    (
-                            (parse::detail::label(SpawnLimit_token) > parse::detail::int_ [ phoenix::ref(_d) = _1 ])
+                            (labeller.rule(SpawnLimit_token) > parse::detail::int_ [ phoenix::ref(_d) = _1 ])
                         |    eps [ phoenix::ref(_d) = 9999 ]
                      )
                 ;
@@ -79,7 +81,7 @@ namespace {
                             monster_fleet_plan_prefix
                         >   ships
                         >   spawns
-                        > -(parse::detail::label(Location_token) > parse::detail::condition_parser [ phoenix::ref(_e) = _1 ])
+                        > -(labeller.rule(Location_token) > condition_parser [ phoenix::ref(_e) = _1 ])
                      )
                 [ _val = new_monster_fleet_plan(phoenix::ref(_a), phoenix::ref(_b), phoenix::ref(_c), phoenix::ref(_d), phoenix::ref(_e)) ]
                 ;

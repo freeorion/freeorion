@@ -48,7 +48,10 @@ namespace {
                 |   tok.GalaxySeed_     [ _val = new_<ValueRef::Variable<std::string>>(ValueRef::NON_OBJECT_REFERENCE, _1) ]
                 ;
 
-            initialize_bound_variable_parser<std::string>(bound_variable, bound_variable_name);
+            variable_scope_rule = variable_scope(tok);
+            container_type_rule = container_type(tok);
+            initialize_bound_variable_parser<std::string>(bound_variable, bound_variable_name,
+                                                          variable_scope_rule, container_type_rule);
 
             statistic_sub_value_ref
                 =   constant
@@ -129,16 +132,18 @@ namespace {
 #endif
         }
 
-        name_token_rule bound_variable_name;
+        parse::detail::name_token_rule bound_variable_name;
         parse::value_ref_rule<std::string> constant;
         parse::value_ref_rule<std::string> free_variable;
-        variable_rule<std::string> bound_variable;
+        parse::detail::variable_rule<std::string> bound_variable;
         parse::value_ref_rule<std::string> statistic_sub_value_ref;
-        statistic_rule<std::string> statistic;
-        expression_rule<std::string> function_expr;
-        expression_rule<std::string> operated_expr;
+        parse::detail::statistic_rule<std::string> statistic;
+        parse::detail::expression_rule<std::string> function_expr;
+        parse::detail::expression_rule<std::string> operated_expr;
         parse::value_ref_rule<std::string> expr;
         parse::value_ref_rule<std::string> primary_expr;
+        parse::detail::reference_token_rule variable_scope_rule;
+        parse::detail::name_token_rule container_type_rule;
     };
 }
 
