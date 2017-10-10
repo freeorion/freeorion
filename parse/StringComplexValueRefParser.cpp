@@ -3,7 +3,10 @@
 
 namespace parse {
     struct string_complex_parser_rules {
-        string_complex_parser_rules() {
+        string_complex_parser_rules(const parse::lexer& tok,
+                                    const parse::value_ref_grammar<std::string>& string_grammar) :
+            simple_int_rules(tok)
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -19,13 +22,11 @@ namespace parse {
             qi::_f_type _f;
             qi::_val_type _val;
 
-            const parse::lexer& tok = parse::lexer::instance();
-            const parse::value_ref_rule<int>& simple_int = int_simple();
-
+            const parse::value_ref_rule<int>& simple_int = simple_int_rules.simple;
 
             game_rule
                 =   tok.GameRule_ [ _a = construct<std::string>(_1) ]
-                >   detail::label(Name_token) >     parse::string_value_ref() [ _d = _1 ]
+                >   detail::label(Name_token) >     string_grammar [ _d = _1 ]
                     [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
@@ -93,6 +94,7 @@ namespace parse {
 #endif
         }
 
+        parse::detail::simple_int_parser_rules  simple_int_rules;
         complex_variable_rule<std::string> game_rule;
 
         complex_variable_rule<std::string> empire_ref;
@@ -100,11 +102,10 @@ namespace parse {
 
         complex_variable_rule<std::string> start;
     };
-
-    namespace detail {
-        string_complex_parser_rules string_complex_parser;
-    }
 }
 
-const complex_variable_rule<std::string>& string_var_complex()
-{ return parse::detail::string_complex_parser.start; }
+const complex_variable_rule<std::string>& string_var_complex(const parse::string_parser_grammar& string_grammar) {
+    static parse::string_complex_parser_rules string_complex_parser(parse::lexer::instance(), string_grammar);
+
+    return string_complex_parser.start;
+}

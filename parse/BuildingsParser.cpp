@@ -41,8 +41,13 @@ namespace {
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_building_, insert_building, 6)
 
     struct rules {
-        rules(const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+        rules(const parse::lexer& tok,
+              parse::detail::Labeller& labeller,
+              const std::string& filename,
+              const parse::text_iterator& first, const parse::text_iterator& last) :
+            condition_parser(parse::detail::condition_parser),
+            string_grammar(tok, condition_parser),
+            common_rules(tok, labeller, condition_parser, string_grammar)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -59,18 +64,16 @@ namespace {
             qi::_r1_type _r1;
             qi::eps_type eps;
 
-            const parse::lexer& tok = parse::lexer::instance();
-
             building_type
                 =   tok.BuildingType_
-                >   parse::detail::label(Name_token)
+                >   labeller.rule(Name_token)
                 >   tok.string        [ _pass = is_unique_(_r1, BuildingType_token, _1), _a = _1 ]
-                >   parse::detail::label(Description_token)         > tok.string        [ _b = _1 ]
-                >   (   parse::detail::label(CaptureResult_token)   >> parse::capture_result_enum() [ _d = _1 ]
+                >   labeller.rule(Description_token)         > tok.string        [ _b = _1 ]
+                >   (   labeller.rule(CaptureResult_token)   >> parse::capture_result_enum() [ _d = _1 ]
                     |   eps [ _d = CR_CAPTURE ]
                     )
-                >   parse::detail::common_params_parser() [ _c = _1 ]
-                >   parse::detail::label(Icon_token)      > tok.string
+                >   common_rules.common [ _c = _1 ]
+                >   labeller.rule(Icon_token)      > tok.string
                 [ insert_building_(_r1, _a, _b, _c, _d, _1) ]
                 ;
 
@@ -101,6 +104,9 @@ namespace {
             void (std::map<std::string, std::unique_ptr<BuildingType>>&)
         > start_rule;
 
+        parse::condition_parser_rule& condition_parser;
+        const parse::string_parser_grammar string_grammar;
+        parse::detail::common_params_rules common_rules;
         building_type_rule          building_type;
         start_rule                  start;
     };

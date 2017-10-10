@@ -12,10 +12,10 @@ namespace {
 }
 
 namespace parse {
-    enum_rule<EmpireAffiliationType>& empire_affiliation_type_enum()
+    detail::enum_rule<EmpireAffiliationType>& empire_affiliation_type_enum()
     {
         const parse::lexer& tok = parse::lexer::instance();
-        static enum_rule<EmpireAffiliationType> retval
+        static detail::enum_rule<EmpireAffiliationType> retval
             =   tok.TheEmpire_  [ _val = AFFIL_SELF ]
             |   tok.EnemyOf_    [ _val = AFFIL_ENEMY ]
             |   tok.AllyOf_     [ _val = AFFIL_ALLY ]
@@ -35,10 +35,10 @@ namespace parse {
         return retval;
     }
 
-    enum_rule<UnlockableItemType>& unlockable_item_type_enum()
+    detail::enum_rule<UnlockableItemType>& unlockable_item_type_enum()
     {
         const parse::lexer& tok = parse::lexer::instance();
-        static enum_rule<UnlockableItemType> retval
+        static detail::enum_rule<UnlockableItemType> retval
             =   tok.Building_       [ _val = UIT_BUILDING ]
             |   tok.ShipPart_       [ _val = UIT_SHIP_PART ]
             |   tok.ShipHull_       [ _val = UIT_SHIP_HULL ]
@@ -56,10 +56,10 @@ namespace parse {
         return retval;
     }
 
-    enum_rule<ShipSlotType>& ship_slot_type_enum()
+    detail::enum_rule<ShipSlotType>& ship_slot_type_enum()
     {
         const parse::lexer& tok = parse::lexer::instance();
-        static enum_rule<ShipSlotType> retval
+        static detail::enum_rule<ShipSlotType> retval
             =   tok.External_   [ _val = SL_EXTERNAL ]
             |   tok.Internal_   [ _val = SL_INTERNAL ]
             |   tok.Core_       [ _val = SL_CORE ]
@@ -75,10 +75,10 @@ namespace parse {
         return retval;
     }
 
-    enum_rule<ShipPartClass>& ship_part_class_enum()
+    detail::enum_rule<ShipPartClass>& ship_part_class_enum()
     {
         const parse::lexer& tok = parse::lexer::instance();
-        static enum_rule<ShipPartClass> retval
+        static detail::enum_rule<ShipPartClass> retval
             =   tok.ShortRange_         [ _val = PC_DIRECT_WEAPON ]
             |   tok.FighterBay_         [ _val = PC_FIGHTER_BAY ]
             |   tok.FighterHangar_      [ _val = PC_FIGHTER_HANGAR ]
@@ -108,10 +108,10 @@ namespace parse {
         return retval;
     }
 
-    enum_rule<CaptureResult>& capture_result_enum()
+    detail::enum_rule<CaptureResult>& capture_result_enum()
     {
         const parse::lexer& tok = parse::lexer::instance();
-        static enum_rule<CaptureResult> retval
+        static detail::enum_rule<CaptureResult> retval
             =   tok.Capture_            [ _val = CR_CAPTURE ]
             |   tok.Retain_             [ _val = CR_RETAIN ]
             |   tok.Destroy_            [ _val = CR_DESTROY ]
@@ -127,10 +127,10 @@ namespace parse {
         return retval;
     }
 
-    enum_rule<ValueRef::StatisticType>& statistic_type_enum()
+    detail::enum_rule<ValueRef::StatisticType>& statistic_type_enum()
     {
         const parse::lexer& tok = parse::lexer::instance();
-        static enum_rule<ValueRef::StatisticType> retval
+        static detail::enum_rule<ValueRef::StatisticType> retval
             =   tok.CountUnique_    [ _val = ValueRef::UNIQUE_COUNT ]
             |   tok.Count_          [ _val = ValueRef::COUNT ]
             |   tok.If_             [ _val = ValueRef::IF ]
@@ -155,9 +155,9 @@ namespace parse {
         return retval;
     }
 
-    enum_rule<MeterType>& non_ship_part_meter_type_enum() {
+    detail::enum_rule<MeterType>& non_ship_part_meter_type_enum() {
         const parse::lexer& tok = parse::lexer::instance();
-        static enum_rule<MeterType> retval
+        static detail::enum_rule<MeterType> retval
             =   tok.TargetConstruction_     [ _val = METER_TARGET_CONSTRUCTION ]
             |   tok.TargetIndustry_         [ _val = METER_TARGET_INDUSTRY ]
             |   tok.TargetPopulation_       [ _val = METER_TARGET_POPULATION ]
@@ -204,9 +204,9 @@ namespace parse {
         return retval;
     }
 
-    enum_rule<MeterType>& ship_part_meter_type_enum() {
+    detail::enum_rule<MeterType>& ship_part_meter_type_enum() {
         const parse::lexer& tok = parse::lexer::instance();
-        static enum_rule<MeterType> retval
+        static detail::enum_rule<MeterType> retval
             =   tok.MaxCapacity_            [ _val = METER_MAX_CAPACITY ]
             |   tok.MaxDamage_              [ _val = METER_MAX_CAPACITY ]
             |   tok.Capacity_               [ _val = METER_CAPACITY ]
@@ -223,9 +223,9 @@ namespace parse {
         return retval;
     }
 
-    enum_rule<MeterType>& set_non_ship_part_meter_type_enum() {
+    detail::enum_rule<MeterType>& set_non_ship_part_meter_type_enum() {
         const parse::lexer& tok = parse::lexer::instance();
-        static enum_rule<MeterType> retval
+        static detail::enum_rule<MeterType> retval
             =   tok.SetTargetConstruction_  [ _val = METER_TARGET_CONSTRUCTION ]
             |   tok.SetTargetIndustry_      [ _val = METER_TARGET_INDUSTRY ]
             |   tok.SetTargetPopulation_    [ _val = METER_TARGET_POPULATION ]
@@ -272,10 +272,10 @@ namespace parse {
         return retval;
     }
 
-    enum_rule<MeterType>& set_ship_part_meter_type_enum()
+    detail::enum_rule<MeterType>& set_ship_part_meter_type_enum()
     {
         const parse::lexer& tok = parse::lexer::instance();
-        static enum_rule<MeterType> retval
+        static detail::enum_rule<MeterType> retval
             =   tok.SetMaxCapacity_         [ _val = METER_MAX_CAPACITY ]
             |   tok.SetMaxDamage_           [ _val = METER_MAX_CAPACITY ]
             |   tok.SetMaxSecondaryStat_    [ _val = METER_MAX_SECONDARY_STAT ]
