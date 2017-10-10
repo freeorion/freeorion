@@ -6904,15 +6904,50 @@ bool MapWnd::IsFleetExploring(const int fleet_id){
     return it != m_fleets_exploring.end();
 }
 
-namespace { //helper function for DispatchFleetsExploring
+namespace {
+    typedef std::unordered_set<int> SystemIDListType;
+    typedef std::unordered_set<int> FleetIDListType;
+    typedef std::vector<int> RouteListType;
+    typedef std::pair<double, RouteListType> OrderedRouteType;
+    typedef std::pair<int, RouteListType> FleetRouteType;
+    typedef std::pair<double, FleetRouteType> OrderedFleetRouteType;
+    typedef std::unordered_map<int, int> SystemFleetMap;
+
+    /** Increases the distance stored as priority for a route when the destination has been previously seen */
+    const double PRIORITY_DEFER_DISTANCE_MULTIPLIER = 10.0;
+
+    /** Arbitrary short-circuit for max routes per destination for each fleet */
+    const int MAX_ROUTES_PER_FLEET = 100;
+
+    /** Number of jumps in a given route */
+    int JumpsForRoute(const RouteListType& route) {
+        int count = static_cast<int>(route.size());
+        if (count > 0) // dont count source system
+            -- count;
+        return count;
+    }
+
+    /** If @p fleet can determine an eta for @p route */
+    bool FleetRouteInRange(const std::shared_ptr<Fleet>& fleet, const RouteListType& route) {
+        std::list<int> route_list;
+        std::copy(route.begin(), route.end(), std::back_inserter(route_list));
+
+        auto eta = fleet->ETA(fleet->MovePath(route_list));
+        if (eta.first == Fleet::ETA_NEVER || eta.first == Fleet::ETA_UNKNOWN || eta.first == Fleet::ETA_OUT_OF_RANGE)
+            return false;
+
+        return true;
+    }
+
+    //helper function for DispatchFleetsExploring
     //return the set of all systems ID with a starlane connecting them to a system in set
-    std::set<int> AddNeighboorsToSet(const Empire *empire, const std::set<int> system_ids){
-        std::set<int> retval;
+    SystemIDListType AddNeighboorsToSet(const Empire *empire, const SystemIDListType& system_ids){
+        SystemIDListType retval;
         auto starlanes = empire->KnownStarlanes();
-        for (int system_id : system_ids) {
+        for (auto system_id : system_ids) {
             auto new_neighboors_it = starlanes.find(system_id);
             if (new_neighboors_it != starlanes.end()){
-                for (int neighbor_id : new_neighboors_it->second) {
+                for (auto neighbor_id : new_neighboors_it->second) {
                     retval.insert(neighbor_id);
                 }
             }
@@ -6921,197 +6956,447 @@ namespace { //helper function for DispatchFleetsExploring
         return retval;
     }
 
-    //return the pair (systemID, dist) of the closest supply point.
-    std::pair<int, int> GetNearestSupplyPoint(const Empire* empire, int system_id) {
-        if (!empire)
-            return std::pair<int, int>(INVALID_OBJECT_ID, INT_MAX);
-
-        auto supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire->EmpireID(), true);
-        auto starlanes = empire->KnownStarlanes();
-        std::set<int> frontier;
-        frontier.insert(system_id);
-        int distance = 0;
-
-        while (distance < 50) { //assume 50 is an upperbound an the max fuel limit or the distance to a supply system. TODO : #define it
-            for (int frontier_sys_id : frontier) {
-                if (supplyable_systems.count(frontier_sys_id) > 0) {
-                    //we found a route to a supplyable system
-                    return std::pair<int, int>(frontier_sys_id, distance);
-                }
-             }
-             distance ++;
-             frontier = AddNeighboorsToSet(empire, frontier);
+    /** Get the shortest suitable route from @p start_id to @p destination_id as known to @p empire_id */
+    OrderedRouteType GetShortestRoute(int empire_id, int start_id, int destination_id) {
+        auto start_system = GetSystem(start_id);
+        auto dest_system = GetSystem(destination_id);
+        if (!start_system || !dest_system) {
+            WarnLogger() << "Invalid start or destination system";
+            return OrderedRouteType();
         }
 
-        return std::pair<int, int>(INVALID_OBJECT_ID, INT_MAX);
+        auto ignore_hostile = GetOptionsDB().Get<bool>("UI.fleet.explore.hostile.ignored");
+        auto fleet_pred = std::make_shared<HostileVisitor<Fleet>>(empire_id);
+        std::pair<std::list<int>, double> route_distance;
+
+        if (ignore_hostile)
+            route_distance = GetPathfinder()->ShortestPath(start_id, destination_id, empire_id);
+        else
+            route_distance = GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, fleet_pred);
+
+        if (!route_distance.first.empty() && route_distance.second > 0.0) {
+            RouteListType route(route_distance.first.begin(), route_distance.first.end());
+            return std::make_pair(route_distance.second, route);
+        }
+
+        return OrderedRouteType();
     }
+
+    /** Route from @p fleet current location to @p destination */
+    OrderedFleetRouteType GetOrderedFleetRoute(const std::shared_ptr<Fleet>& fleet,
+                                               const std::shared_ptr<System>& destination)
+    {
+        if (!fleet || !destination) {
+            WarnLogger() << "Invalid fleet or system";
+            return OrderedFleetRouteType();
+        }
+        if ((fleet->Fuel() < 1.0f) || !fleet->MovePath().empty()) {
+            WarnLogger() << "Fleet has no fuel or non-empty move path";
+            return OrderedFleetRouteType();
+        }
+
+        auto order_route = GetShortestRoute(fleet->Owner(), fleet->SystemID(), destination->ID());
+
+        if (order_route.first <= 0.0) {
+            TraceLogger() << "No suitable route from system " << fleet->SystemID() << " to " << destination->ID()
+                          << " (" << order_route.second.size() << ">" << order_route.first << ")";
+            return OrderedFleetRouteType();
+        }
+
+        if (!FleetRouteInRange(fleet, order_route.second)) {
+            TraceLogger() << "Fleet " << std::to_string(fleet->ID())
+                          << " has no eta for route to " << std::to_string(*order_route.second.rbegin());
+            return OrderedFleetRouteType();
+        }
+
+        // decrease priority of system if previously viewed but not yet explored
+        if (!destination->Name().empty()) {
+            order_route.first *= PRIORITY_DEFER_DISTANCE_MULTIPLIER;
+            TraceLogger() << "Deferred priority for system " << destination->Name() << " (" << destination->ID() << ")";
+        }
+
+        auto fleet_route = std::make_pair(fleet->ID(), order_route.second);
+        return std::make_pair(order_route.first, fleet_route);
+    }
+
+    /** Shortest route not exceeding @p max_jumps from @p dest_id to a system with supply as known to @p empire */
+    OrderedRouteType GetNearestSupplyRoute(const Empire* empire, int dest_id, int max_jumps = -1) {
+        OrderedRouteType retval;
+
+        if (!empire) {
+            WarnLogger() << "Invalid empire";
+            return retval;
+        }
+
+        auto supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire->EmpireID(), true);
+        if (!supplyable_systems.empty()) {
+            TraceLogger() << [supplyable_systems]() {
+                    std::string msg = "Supplyable systems:";
+                    for (auto sys : supplyable_systems)
+                        msg.append(" " + std::to_string(sys));
+                    return msg;
+                }();
+        }
+
+            OrderedRouteType shortest_route;
+
+        for (auto supply_system_id : supplyable_systems) {
+            shortest_route = GetShortestRoute(empire->EmpireID(), dest_id, supply_system_id);
+            TraceLogger() << [shortest_route, dest_id]() {
+                    std::string msg = "Checking supply route from " + std::to_string(dest_id) +
+                                      " dist:" + std::to_string(shortest_route.first) + " systems:";
+                    for (auto node : shortest_route.second)
+                        msg.append(" " + std::to_string(node));
+                    return msg;
+                }();
+
+            auto route_jumps = JumpsForRoute(shortest_route.second);
+            if (max_jumps > -1 && route_jumps > max_jumps) {
+                TraceLogger() << "Rejecting route to " << std::to_string(*shortest_route.second.rbegin())
+                              << " jumps " << std::to_string(route_jumps) << " exceed max " << std::to_string(max_jumps);
+                continue;
+            }
+
+            if (shortest_route.first <= 0.0 || shortest_route.second.empty()) {
+                TraceLogger() << "Invalid route";
+                continue;
+            }
+
+            if (retval.first <= 0.0 || shortest_route.first < retval.first) {
+                TraceLogger() << "Setting " << std::to_string(*shortest_route.second.rbegin()) << " as shortest route";
+                retval = shortest_route;
+            }
+        }
+
+        return retval;
+    }
+
+    /** If @p fleet would be able to reach a system with supply after completing @p route */
+    bool CanResupplyAfterDestination(const std::shared_ptr<Fleet>& fleet, const RouteListType& route) {
+        if (!fleet || route.empty()) {
+            WarnLogger() << "Invalid fleet or empty route";
+            return false;
+        }
+        auto empire = GetEmpire(fleet->Owner());
+        if (!empire) {
+            WarnLogger() << "Invalid empire";
+            return false;
+        }
+
+        int max_jumps = std::trunc(fleet->Fuel());
+        if (max_jumps < 1) {
+            TraceLogger() << "Not enough fuel " << std::to_string(max_jumps)
+                          << " to move fleet " << std::to_string(fleet->ID());
+            return false;
+        }
+
+        auto dest_nearest_supply = GetNearestSupplyRoute(empire, *route.rbegin(), max_jumps);
+        auto dest_nearest_supply_jumps = JumpsForRoute(dest_nearest_supply.second);
+        auto dest_jumps = JumpsForRoute(route);
+        int total_jumps = dest_jumps + dest_nearest_supply_jumps;
+
+        if (total_jumps > max_jumps) {
+            TraceLogger() << "Not enough fuel " << std::to_string(max_jumps)
+                          << " for fleet " << std::to_string(fleet->ID())
+                          << " to resupply after destination " << std::to_string(total_jumps);
+            return false;
+        }
+
+        return true;
+    }
+
+    /** Route from current system of @p fleet to nearest system with supply as determined by owning empire of @p fleet  */
+    OrderedRouteType ExploringFleetResupplyRoute(const std::shared_ptr<Fleet>& fleet) {
+        auto empire = GetEmpire(fleet->Owner());
+        if (!empire) {
+            WarnLogger() << "Invalid empire for id " << fleet->Owner();
+            return OrderedRouteType();
+        }
+
+        auto nearest_supply = GetNearestSupplyRoute(empire, fleet->SystemID(), std::trunc(fleet->Fuel()));
+        if (nearest_supply.first > 0.0 && FleetRouteInRange(fleet, nearest_supply.second)) {
+            return nearest_supply;
+        }
+
+        return OrderedRouteType();
+    }
+
+    /** Issue an order for @p fleet to move to nearest system with supply */
+    bool IssueFleetResupplyOrder(const std::shared_ptr<Fleet>& fleet) {
+        if (!fleet) {
+            WarnLogger() << "Invalid fleet";
+            return false;
+        }
+
+        auto route = ExploringFleetResupplyRoute(fleet);
+        // Attempt move order if route is not empty and fleet has enough fuel to reach it
+        if (route.second.empty()) {
+            TraceLogger() << "Empty route for resupply of exploring fleet " << fleet->ID();
+            return false;
+        }
+
+        auto num_jumps_resupply = JumpsForRoute(route.second);
+        int max_fleet_jumps = std::trunc(fleet->Fuel());
+        if (num_jumps_resupply <= max_fleet_jumps) {
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                    std::make_shared<FleetMoveOrder>(fleet->Owner(), fleet->ID(), route.second));
+        } else {
+            TraceLogger() << "Not enough fuel for fleet " << fleet->ID()
+                          << " to resupply at system " << *route.second.rbegin();
+            return false;
+        }
+
+        if (fleet->FinalDestinationID() == *route.second.rbegin()) {
+            TraceLogger() << "Sending fleet " << fleet->ID()
+                          << " to refuel at system " << *route.second.rbegin();
+            return true;
+        } else {
+            TraceLogger() << "Fleet move order failed fleet:" << fleet->ID() << " route:"
+                          << [route]() {
+                                 std::string retval = "";
+                                 for (auto node : route.second)
+                                     retval.append(" " + std::to_string(node));
+                                 return retval;
+                             }();
+        }
+
+        return false;
+    }
+
+    /** Issue order for @p fleet to move using @p route */
+    bool IssueFleetExploreOrder(const std::shared_ptr<Fleet>& fleet, const RouteListType& route) {
+        if (!fleet || route.empty()) {
+            WarnLogger() << "Invalid fleet or empty route";
+            return false;
+        }
+        if (!FleetRouteInRange(fleet, route)) {
+            TraceLogger() << "Fleet " << std::to_string(fleet->ID())
+                          << " has no eta for route to " << std::to_string(*route.rbegin());
+            return false;
+        }
+
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<FleetMoveOrder>(fleet->Owner(), fleet->ID(), route));
+        if (fleet->FinalDestinationID() == *route.rbegin()) {
+            TraceLogger() << "Sending fleet " << fleet->ID() << " to explore system " << *route.rbegin();
+            return true;
+        }
+
+        TraceLogger() << "Fleet move order failed fleet:" << fleet->ID() << " dest:" << *route.rbegin();
+        return false;
+    }
+
+    /** Determine and issue move order for fleet and route @p fleet_route */
+    void IssueExploringFleetOrders(FleetIDListType& idle_fleets,
+                                   SystemFleetMap& systems_being_explored,
+                                   const FleetRouteType& fleet_route)
+    {
+        auto route = fleet_route.second;
+        if (route.empty()) { // no route
+            WarnLogger() << "Attempted to issue move order with empty route";
+            return;
+        }
+
+        if (idle_fleets.empty()) { // no more fleets to issue orders to
+            TraceLogger() << "No idle fleets";
+            return;
+        }
+
+        if (systems_being_explored.find(*route.rbegin()) != systems_being_explored.end()) {
+            TraceLogger() << "System " << std::to_string(*route.rbegin()) << " already being explored";
+            return;
+        }
+
+        auto fleet_id = fleet_route.first;
+        auto idle_fleet_it = idle_fleets.find(fleet_id);
+        if (idle_fleet_it == idle_fleets.end()) { // fleet no longer idle
+            TraceLogger() << "Fleet " << std::to_string(fleet_id) << " not idle";
+            return;
+        }
+        auto fleet = GetFleet(fleet_id);
+        if (!fleet) {
+            ErrorLogger() << "No valid fleet with id " << fleet_id;
+            idle_fleets.erase(idle_fleet_it);
+            return;
+        }
+
+        if (std::trunc(fleet->Fuel()) < 1) {  // wait for fuel
+            TraceLogger() << "Not enough fuel to move fleet " << std::to_string(fleet->ID());
+            return;
+        }
+
+        // Determine if fleet should refuel
+        if (fleet->Fuel() < fleet->MaxFuel() &&
+            !CanResupplyAfterDestination(fleet, route))
+        {
+            if (IssueFleetResupplyOrder(fleet)) {
+                idle_fleets.erase(idle_fleet_it);
+                return;
+            }
+            TraceLogger() << "Fleet " << std::to_string(fleet->ID()) << " can not reach resupply";
+        }
+
+        if (IssueFleetExploreOrder(fleet, route)) {
+            idle_fleets.erase(idle_fleet_it);
+            systems_being_explored.emplace(*route.rbegin(), fleet->ID());
+        }
+    }
+
 };
 
 void MapWnd::DispatchFleetsExploring() {
     DebugLogger() << "MapWnd::DispatchFleetsExploring called";
+    SectionedScopedTimer timer("MapWnd::DispatchFleetsExploring", true);
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire *empire = HumanClientApp::GetApp()->GetEmpire(empire_id);
-    if (!empire) return;
+    if (!empire) {
+        WarnLogger() << "Invalid empire";
+        return;
+    }
     auto destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
 
-    std::set<int> fleet_idle;
-    std::set<int> systems_being_explored; //all systems ID for which an exploring fleet is in route
+    FleetIDListType idle_fleets;
+    /** all systems ID for which an exploring fleet is in route and the fleet assigned */
+    SystemFleetMap systems_being_explored;
 
     // clean the fleet list by removing non-existing fleet, and extract the
     // fleets waiting for orders
+    timer.EnterSection("idle fleets/systems being explored");
     for (auto it = m_fleets_exploring.begin(); it != m_fleets_exploring.end();) {
         auto fleet = GetFleet(*it);
         if (!fleet || destroyed_objects.find(fleet->ID()) != destroyed_objects.end()) {
             m_fleets_exploring.erase(it++); //this fleet can't explore anymore
         } else {
              if (fleet->MovePath().empty())
-                fleet_idle.insert(fleet->ID());
+                idle_fleets.insert(fleet->ID());
             else
-                systems_being_explored.insert(fleet->FinalDestinationID());
+                systems_being_explored.emplace(fleet->FinalDestinationID(), fleet->ID());
             ++it;
         }
     }
+    timer.EnterSection("");
 
-    if (fleet_idle.empty())
+    if (idle_fleets.empty())
         return;
 
-    DebugLogger() << "MapWnd::DispatchFleetsExploring There is " << fleet_idle.size() << "ships to dispatch";
+    TraceLogger() << [idle_fleets]() {
+            std::string retval = "MapWnd::DispatchFleetsExploring Idle Exploring Fleet IDs:";
+            for (auto fleet : idle_fleets)
+                retval.append(" " + std::to_string(fleet));
+            return retval;
+        }();
 
     //list all unexplored systems by taking the neighboors of explored systems because ObjectMap does not list them all.
-    std::set<int> candidates_unknown_systems;
-    const auto& explored_systems = empire->ExploredSystems();
+    timer.EnterSection("candidate unknown systems");
+    SystemIDListType candidates_unknown_systems;
+    const auto& empire_explored_systems = empire->ExploredSystems();
+    SystemIDListType explored_systems(empire_explored_systems.begin(), empire_explored_systems.end());
     candidates_unknown_systems = AddNeighboorsToSet(empire, explored_systems);
     auto neighboors = AddNeighboorsToSet(empire, candidates_unknown_systems);
     candidates_unknown_systems.insert(neighboors.begin(), neighboors.end());
 
-    // list all unknown systems with the distance to the nearest supply available
-    std::map<int, int> unknown_systems;
-    const auto& supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire_id, true);
+    // Populate list of unexplored systems
+    timer.EnterSection("unexplored systems");
+    SystemIDListType unexplored_systems;
     for (int system_id : candidates_unknown_systems) {
         auto system = GetSystem(system_id);
         if (!system)
             continue;
         if (!empire->HasExploredSystem(system->ID()) &&
             systems_being_explored.find(system_id) == systems_being_explored.end())
-        {
-            // compute the minimum distance to find a supplyable system
-            std::pair<int, int> pair = GetNearestSupplyPoint(empire, system->ID());
-            if (pair.first != INVALID_OBJECT_ID)
-                unknown_systems[system->ID()] = pair.second;
-        }
+        { unexplored_systems.insert(system->ID()); }
+    }
+    timer.EnterSection("");
+
+    if (unexplored_systems.empty()) {
+        TraceLogger() << "No unknown systems to explore";
+        return;
     }
 
-    DebugLogger() << "MapWnd::DispatchFleetsExploring There is " << unknown_systems.size() << "unknown systems";
+    TraceLogger() << [unexplored_systems]() {
+            std::string retval = "MapWnd::DispatchFleetsExploring Unknown System IDs:";
+            for (auto system : unexplored_systems)
+                retval.append(" " + std::to_string(system));
+            return retval;
+        }();
 
-    // send each ship to the nearest unexplored system where no other ship has
-    // been ordered so far
-    std::set<int> systems_order_sent; //list all systems ID for which a ship was sent this turn
-    int nbr_fleet_to_send = fleet_idle.size();
-    bool remaining_system_to_explore = true;
-    bool ignore_hostile_route = GetOptionsDB().Get<bool>("UI.fleet.explore.hostile.ignored");
-    auto fleet_pred = std::make_shared<HostileVisitor<Fleet>>(empire_id);
+    std::multimap<double, FleetRouteType> fleet_routes;  // priority, (fleet, route)
 
-    for (int i = 0; i < nbr_fleet_to_send; i++) { //at each iteration, send one ship on its way
+    // Determine fleet routes for each unexplored system
+    timer.EnterSection("fleet_routes");
+    std::unordered_map<int, int> fleet_route_count;
+    for (const auto& unexplored_system_id : unexplored_systems) {
+        auto unexplored_system = GetSystem(unexplored_system_id);
+        if (!unexplored_system) {
+            WarnLogger() << "Invalid system " << unexplored_system_id;
+            continue;
+        }
 
-        double min_dist = DBL_MAX;
-        int end_system_id = INVALID_OBJECT_ID;
-        int start_system_id = INVALID_OBJECT_ID;
-        int last_visibility = NUM_VISIBILITIES; // greater than max visibility
-        int better_fleet_id;
-
-        for (int fleet_id : fleet_idle) {
+        for (const auto& fleet_id : idle_fleets) {
+            if (fleet_route_count[fleet_id] > MAX_ROUTES_PER_FLEET)
+                continue;
             auto fleet = GetFleet(fleet_id);
-            if (!fleet || !fleet->MovePath().empty())
+            if (!fleet) {
+                WarnLogger() << "Invalid fleet " << fleet_id;
+                continue;
+            }
+            if (fleet->Fuel() < 1.0f)
                 continue;
 
-            double far_min_dist = DBL_MAX;
-            int far_system_id; //id of the closest unknown system without taking fuel into account
-
-            for (auto& system_supply : unknown_systems) {
-                if (systems_order_sent.find(system_supply.first) != systems_order_sent.end())
-                    continue; //someone already went there this turn
-
-                std::pair<std::list<int>, double> pair;
-                if (ignore_hostile_route)
-                    pair = GetPathfinder()->ShortestPath(fleet->SystemID(), system_supply.first, empire_id);
-                else
-                    pair = GetPathfinder()->ShortestPath(fleet->SystemID(), system_supply.first, empire_id, fleet_pred);
-
-                if (pair.second <= 0.0) {
-                    DebugLogger() << "MapWnd::DispatchFleetsExploring No suitable route from system " << fleet->SystemID()
-                                  << " to " << system_supply.first << " (" << pair.first.size() << ">" << pair.second << ")";
-                    continue;
-                }
-
-                //we check for the fuel.
-                bool is_doable_for_fuel = true;
-                std::list<int> route = pair.first;
-                double current_fuel = fleet->Fuel();
-                for (auto route_it = ++(route.begin()); route_it != route.end(); ++route_it) {
-                    if (supplyable_systems.count(*route_it) > 0) {
-                        if (fleet->Fuel() != fleet->MaxFuel()) {
-                            is_doable_for_fuel = false; //if we need to ressupply, do it the first time we enter the empire. If we are full, we can cross it.
-                        }
-                    } else {
-                        current_fuel --;
-                    }
-                    if (current_fuel < 0) {
-                        is_doable_for_fuel = false;
-                    }
-                }
-
-                if (current_fuel < system_supply.second)
-                    is_doable_for_fuel = false;
-
-                int vis = GetUniverse().GetObjectVisibilityByEmpire(system_supply.first, empire_id);
-                if (vis == VIS_NO_VISIBILITY) vis = VIS_BASIC_VISIBILITY; //those two levels of visibility appears to be identical for a system
-
-                if (((pair.second < min_dist && vis <= last_visibility) || vis < last_visibility) && is_doable_for_fuel) { //we can explore this system
-                    min_dist = pair.second;
-                    end_system_id = system_supply.first;
-                    last_visibility = vis;
-                    better_fleet_id = fleet->ID();
-                    start_system_id = fleet->SystemID();
-                }
-
-                if (pair.second < far_min_dist) { //we can explore this system
-                    far_min_dist = pair.second;
-                    far_system_id = system_supply.first;
-                }
-            }
-
-            if (!remaining_system_to_explore || min_dist == DBL_MAX) {
-                if (fleet->Fuel() == fleet->MaxFuel() && far_min_dist != DBL_MAX) {
-                    //we have full fuel and no unknown planet in range. We can go to a far system, but we will have to wait for resupply
-                    DebugLogger() << "MapWnd::DispatchFleetsExploring : Next system for fleet " << fleet->ID() << " is " << far_system_id << ". Not enough fuel for the round trip";
-                    systems_order_sent.insert(far_system_id);
-                    HumanClientApp::GetApp()->Orders().IssueOrder(
-                        std::make_shared<FleetMoveOrder>(empire_id, fleet->ID(),
-                                                         fleet->SystemID(), far_system_id));
-                } else {
-                    //no unknown planet in range. Let's try to get home to resupply
-                    auto pair = GetNearestSupplyPoint(empire, fleet->SystemID());
-                    DebugLogger() << "MapWnd::DispatchFleetsExploring : Fleet " << fleet->ID() << " going to resupply at " << pair.first;
-                    HumanClientApp::GetApp()->Orders().IssueOrder(
-                        std::make_shared<FleetMoveOrder>(empire_id, fleet->ID(),
-                                                         fleet->SystemID(), pair.first));
-                }
-                i = nbr_fleet_to_send; //stop the loop since every fleet will have order
+            auto route = GetOrderedFleetRoute(fleet, unexplored_system);
+            if (route.first > 0.0) {
+                ++fleet_route_count[fleet_id];
+                fleet_routes.emplace(route);
             }
         }
+    }
+    timer.EnterSection("");
 
-        if (min_dist != DBL_MAX) {
-            //there is an unexplored system rechable
-            DebugLogger() << "MapWnd::DispatchFleetsExploring : Next system for fleet " << better_fleet_id << " is " << end_system_id;
-            systems_order_sent.insert(end_system_id);
-            fleet_idle.erase(better_fleet_id);
-            HumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<FleetMoveOrder>(empire_id, better_fleet_id,
-                                                 start_system_id, end_system_id));
-        } else {
-            remaining_system_to_explore = false; //from now on, each ship will be sent to a supply depot or a far system
-        }
+    if (!fleet_routes.empty()) {
+        TraceLogger() << [fleet_routes]() {
+                std::string retval = "MapWnd::DispatchFleetsExploring Explorable Systems:\n\t Priority\tFleet\tDestination";
+                for (auto route : fleet_routes) {
+                    retval.append("\n\t" + std::to_string(route.first) + "\t" + std::to_string(route.second.first) +
+                                  "\t " + std::to_string(route.second.second.empty() ? -1 : *route.second.second.rbegin()));
+                }
+                return retval;
+            }();
+    }
+
+    // Issue fleet orders
+    timer.EnterSection("issue orders");
+    for (auto fleet_route : fleet_routes) {
+        IssueExploringFleetOrders(idle_fleets, systems_being_explored, fleet_route.second);
+    }
+    timer.EnterSection("");
+
+    // verify fleets have expected destination
+    for (SystemFleetMap::iterator system_fleet_it = systems_being_explored.begin();
+         system_fleet_it != systems_being_explored.end(); ++system_fleet_it)
+    {
+        auto fleet = GetFleet(system_fleet_it->second);
+        if (!fleet)
+            continue;
+
+        auto dest_id = fleet->FinalDestinationID();
+        if (dest_id == system_fleet_it->first)
+            continue;
+
+        WarnLogger() << "Non idle exploring fleet "<< system_fleet_it->second << " has differing destination:"
+                     << fleet->FinalDestinationID() << " expected:" << system_fleet_it->first;
+
+        idle_fleets.insert(system_fleet_it->second);
+        // systems_being_explored.erase(system_fleet_it);
+    }
+
+    if (!idle_fleets.empty()) {
+        DebugLogger() << [idle_fleets]() {
+                std::string retval = "MapWnd::DispatchFleetsExploring Idle exploring fleets after orders:";
+                for (auto fleet_id : idle_fleets)
+                    retval.append(" " + std::to_string(fleet_id));
+                return retval;
+            }();
     }
 }
 
