@@ -3,7 +3,10 @@
 
 namespace parse {
     struct double_complex_parser_rules {
-        double_complex_parser_rules() {
+        double_complex_parser_rules(const parse::lexer& tok) :
+            simple_int_rules(tok),
+            castable_int_rules(tok)
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -22,9 +25,7 @@ namespace parse {
             static const std::string TOK_SPECIES_EMPIRE_OPINION{"SpeciesEmpireOpinion"};
             static const std::string TOK_SPECIES_SPECIES_OPINION{"SpeciesSpeciesOpinion"};
 
-            const parse::lexer& tok = parse::lexer::instance();
-
-            const parse::value_ref_rule<int>& simple_int = int_simple();
+            const parse::value_ref_rule<int>& simple_int = simple_int_rules.simple;
 
             name_property_rule
                 = (     tok.GameRule_           [ _a = construct<std::string>(_1) ]
@@ -53,8 +54,8 @@ namespace parse {
                 ;
 
             // in shortest_path would have liked to be able to use 
-            //            >   parse::detail::label(Object_token) >   (simple_int [ _b = _1 ] | int_var_statistic() [ _b = _1 ])
-            //            >   parse::detail::label(Object_token) >   (simple_int [ _c = _1 ] | int_var_statistic() [ _c = _1 ])
+            //            >   parse::detail::label(Object_token) >   (simple_int [ _b = _1 ] | int_rules.statistic_expr [ _b = _1 ])
+            //            >   parse::detail::label(Object_token) >   (simple_int [ _c = _1 ] | int_rules.statistic_expr [ _c = _1 ])
             // but getting crashes upon program start, presumably due to initialization order problems
 
             shortest_path
@@ -124,6 +125,8 @@ namespace parse {
 #endif
         }
 
+        parse::detail::simple_int_parser_rules simple_int_rules;
+        parse::castable_as_int_parser_rules castable_int_rules;
         complex_variable_rule<double> name_property_rule;
         complex_variable_rule<double> empire_meter_value;
         complex_variable_rule<double> direct_distance;
@@ -135,7 +138,7 @@ namespace parse {
     };
 
     namespace detail {
-        double_complex_parser_rules double_complex_parser;
+    double_complex_parser_rules double_complex_parser(parse::lexer::instance());
     }
 }
 

@@ -13,9 +13,9 @@ namespace phoenix = boost::phoenix;
 
 namespace {
     struct condition_parser_rules_5 {
-        condition_parser_rules_5() {
-            const parse::lexer& tok = parse::lexer::instance();
-
+        condition_parser_rules_5(const parse::lexer& tok) :
+            int_rules(tok)
+        {
             qi::_1_type _1;
             qi::_val_type _val;
             qi::eps_type eps;
@@ -56,32 +56,32 @@ namespace {
             design_number
                 =   (tok.Design_
                     >>  parse::detail::label(Design_token)
-                    ) > parse::int_value_ref() [ _val = new_<Condition::NumberedShipDesign>(_1) ]
+                    ) > int_rules.expr [ _val = new_<Condition::NumberedShipDesign>(_1) ]
                 ;
 
             produced_by_empire // TODO: Lose "empire" part.
                 =   tok.ProducedByEmpire_
-                >   parse::detail::label(Empire_token) > parse::int_value_ref() [ _val = new_<Condition::ProducedByEmpire>(_1) ]
+                >   parse::detail::label(Empire_token) > int_rules.expr [ _val = new_<Condition::ProducedByEmpire>(_1) ]
                 ;
 
             visible_to_empire // TODO: Lose "empire" part.
                 =   tok.VisibleToEmpire_
-                >   parse::detail::label(Empire_token) > parse::int_value_ref() [ _val = new_<Condition::VisibleToEmpire>(_1) ]
+                >   parse::detail::label(Empire_token) > int_rules.expr [ _val = new_<Condition::VisibleToEmpire>(_1) ]
                 ;
 
             explored_by_empire // TODO: Lose "empire" part.
                 =    tok.ExploredByEmpire_
-                >    parse::detail::label(Empire_token) > parse::int_value_ref() [ _val = new_<Condition::ExploredByEmpire>(_1) ]
+                >    parse::detail::label(Empire_token) > int_rules.expr [ _val = new_<Condition::ExploredByEmpire>(_1) ]
                 ;
 
             resupplyable_by
                 =   tok.ResupplyableBy_
-                >   parse::detail::label(Empire_token) > parse::int_value_ref() [ _val = new_<Condition::FleetSupplyableByEmpire>(_1) ]
+                >   parse::detail::label(Empire_token) > int_rules.expr [ _val = new_<Condition::FleetSupplyableByEmpire>(_1) ]
                 ;
 
             object_id
                 =   tok.Object_
-                >   parse::detail::label(ID_token) > parse::int_value_ref() [ _val = new_<Condition::ObjectID>(_1) ]
+                >   parse::detail::label(ID_token) > int_rules.expr [ _val = new_<Condition::ObjectID>(_1) ]
                 ;
 
             start
@@ -125,6 +125,7 @@ namespace {
 #endif
         }
 
+        parse::int_arithmetic_rules     int_rules;
         parse::condition_parser_rule    has_special;
         parse::condition_parser_rule    has_tag;
         parse::condition_parser_rule    owner_has_tech;
@@ -142,7 +143,7 @@ namespace {
 
 namespace parse { namespace detail {
     const condition_parser_rule& condition_parser_5() {
-        static condition_parser_rules_5 retval;
+        static condition_parser_rules_5 retval(parse::lexer::instance());
         return retval.start;
     }
 } }

@@ -17,7 +17,9 @@ namespace std {
 
 namespace {
     struct rules {
-        rules(const std::string& filename,
+        rules(const parse::lexer& tok,
+              parse::detail::Labeller& labeller,
+              const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
             namespace phoenix = boost::phoenix;

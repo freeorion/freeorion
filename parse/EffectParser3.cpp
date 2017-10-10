@@ -14,15 +14,15 @@ namespace phoenix = boost::phoenix;
 
 namespace {
     struct effect_parser_rules_3 {
-        effect_parser_rules_3() {
+        effect_parser_rules_3(const parse::lexer& tok) :
+            double_rules(tok)
+        {
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_b_type _b;
             qi::_c_type _c;
             qi::_val_type _val;
             using phoenix::new_;
-
-            const parse::lexer& tok =                                                   parse::lexer::instance();
 
             move_to
                 =    tok.MoveTo_
@@ -31,26 +31,26 @@ namespace {
 
             move_in_orbit
                 =    tok.MoveInOrbit_
-                >    parse::detail::label(Speed_token) >  parse::double_value_ref() [ _a = _1 ]
+                >    parse::detail::label(Speed_token) >  double_rules.expr [ _a = _1 ]
                 >   (
                         (parse::detail::label(Focus_token) >  parse::detail::condition_parser [ _val = new_<Effect::MoveInOrbit>(_a, _1) ])
                     |
                         (
-                            parse::detail::label(X_token)     >  parse::double_value_ref() [ _b = _1 ]
-                        >   parse::detail::label(Y_token)     >  parse::double_value_ref() [ _val = new_<Effect::MoveInOrbit>(_a, _b, _1) ]
+                            parse::detail::label(X_token)     >  double_rules.expr [ _b = _1 ]
+                        >   parse::detail::label(Y_token)     >  double_rules.expr [ _val = new_<Effect::MoveInOrbit>(_a, _b, _1) ]
                         )
                     )
                 ;
 
             move_towards
                 =    tok.MoveTowards_
-                >    parse::detail::label(Speed_token) > parse::double_value_ref() [ _a = _1 ]
+                >    parse::detail::label(Speed_token) > double_rules.expr [ _a = _1 ]
                 >    (
                         (parse::detail::label(Target_token) >  parse::detail::condition_parser [ _val = new_<Effect::MoveTowards>(_a, _1) ])
                      |
                         (
-                            parse::detail::label(X_token)     > parse::double_value_ref() [ _b = _1 ]
-                        >   parse::detail::label(Y_token)     > parse::double_value_ref() [ _val = new_<Effect::MoveTowards>(_a, _b, _1) ]
+                            parse::detail::label(X_token)     > double_rules.expr [ _b = _1 ]
+                        >   parse::detail::label(Y_token)     > double_rules.expr [ _val = new_<Effect::MoveTowards>(_a, _b, _1) ]
                         )
                     )
                 ;
@@ -88,7 +88,7 @@ namespace {
                     >>  parse::detail::label(Name_token) >> parse::string_value_ref() [ _c = _1 ]
                     >> (parse::detail::label(Capacity_token) | parse::detail::label(Value_token))
                    )
-                >   parse::double_value_ref() [ _val = new_<Effect::AddSpecial>(_c, _1) ]
+                >   double_rules.expr [ _val = new_<Effect::AddSpecial>(_c, _1) ]
                 ;
 
             remove_special
@@ -178,6 +178,7 @@ namespace {
             >
         > doubles_string_rule;
 
+        parse::double_parser_rules          double_rules;
         parse::effect_parser_rule           move_to;
         doubles_string_rule                 move_in_orbit;
         doubles_string_rule                 move_towards;
@@ -199,7 +200,7 @@ namespace {
 
 namespace parse { namespace detail {
     const effect_parser_rule& effect_parser_3() {
-        static effect_parser_rules_3 retval;
+        static effect_parser_rules_3 retval(parse::lexer::instance());
         return retval.start;
     }
 } }

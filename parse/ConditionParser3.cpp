@@ -13,9 +13,11 @@ namespace phoenix = boost::phoenix;
 
 namespace {
     struct condition_parser_rules_3 {
-        condition_parser_rules_3() {
-            const parse::lexer& tok = parse::lexer::instance();
-
+        condition_parser_rules_3(const parse::lexer& tok) :
+            int_rules(tok),
+            castable_int_rules(tok),
+            double_rules(tok)
+        {
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_b_type _b;
@@ -33,36 +35,36 @@ namespace {
             has_special_capacity
                 =   (   tok.HasSpecialCapacity_
                 >       parse::detail::label(Name_token) >  parse::string_value_ref() [ _c = _1 ]
-                >     -(parse::detail::label(Low_token)  >  parse::double_value_ref() [ _a = _1 ] )
-                >     -(parse::detail::label(High_token) >  parse::double_value_ref() [ _b = _1 ] )
+                >     -(parse::detail::label(Low_token)  >  double_rules.expr [ _a = _1 ] )
+                >     -(parse::detail::label(High_token) >  double_rules.expr [ _b = _1 ] )
                     ) [ _val = new_<Condition::HasSpecial>(_c, _a, _b) ]
                 ;
 
             within_distance
                 =   tok.WithinDistance_
-                >   parse::detail::label(Distance_token)  > parse::double_value_ref() [ _a = _1 ]
+                >   parse::detail::label(Distance_token)  > double_rules.expr [ _a = _1 ]
                 >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::WithinDistance>(_a, _1) ]
                 ;
 
             within_starlane_jumps
                 =   tok.WithinStarlaneJumps_
-                >   parse::detail::label(Jumps_token)     > parse::flexible_int_value_ref() [ _a = _1 ]
+                >   parse::detail::label(Jumps_token)     > castable_int_rules.flexible_int [ _a = _1 ]
                 >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::WithinStarlaneJumps>(_a, _1) ]
                 ;
 
             number
                 =   tok.Number_
-                > -(parse::detail::label(Low_token)   >  parse::flexible_int_value_ref() [ _a = _1 ])
-                > -(parse::detail::label(High_token)  >  parse::flexible_int_value_ref() [ _b = _1 ])
+                > -(parse::detail::label(Low_token)   >  castable_int_rules.flexible_int [ _a = _1 ])
+                > -(parse::detail::label(High_token)  >  castable_int_rules.flexible_int [ _b = _1 ])
                 >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::Number>(_a, _b, _1) ]
                 ;
 
             value_test_1
                 = ('('
-                >> parse::double_value_ref() [ _a = _1 ]
+                >> double_rules.expr [ _a = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
@@ -70,14 +72,14 @@ namespace {
                       | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _d = Condition::LESS_THAN ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                  ) > parse::double_value_ref() // assuming the trinary form already didn't pass, can expect a (double) here, though it might be an (int) casted to (double). By matching the (int) cases first, can assume that at least one of the parameters here is not an (int) casted to double.
+                  ) > double_rules.expr // assuming the trinary form already didn't pass, can expect a (double) here, though it might be an (int) casted to (double). By matching the (int) cases first, can assume that at least one of the parameters here is not an (int) casted to double.
                 [ _val = new_<Condition::ValueTest>(_a, _d, _1) ]
                 >> ')'
                 ;
 
             value_test_2
                 = ('('
-                >> parse::double_value_ref() [ _a = _1 ]
+                >> double_rules.expr [ _a = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
@@ -85,7 +87,7 @@ namespace {
                       | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _d = Condition::LESS_THAN ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                >> parse::double_value_ref() [ _b = _1 ]
+                >> double_rules.expr [ _b = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit(">=")   [ _e = Condition::GREATER_THAN_OR_EQUAL ]
@@ -93,7 +95,7 @@ namespace {
                       | lit("<=")   [ _e = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _e = Condition::LESS_THAN ]
                       | lit("!=")   [ _e = Condition::NOT_EQUAL ])
-                  ) >  parse::double_value_ref()    // if already seen (double) (operator) (double) (operator) can expect to see another (double). Some of these (double) may be (int) casted to double, though not all of them can be, as in that case, the (int) parser should have matched.
+                  ) >  double_rules.expr    // if already seen (double) (operator) (double) (operator) can expect to see another (double). Some of these (double) may be (int) casted to double, though not all of them can be, as in that case, the (int) parser should have matched.
                 [ _val = new_<Condition::ValueTest>(_a, _d, _b, _e, _1) ]
                 >  ')'
                 ;
@@ -126,7 +128,7 @@ namespace {
 
             value_test_5
                 = '('
-                >> parse::int_value_ref() [ _g = _1 ]
+                >> int_rules.expr [ _g = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
@@ -134,14 +136,14 @@ namespace {
                       | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _d = Condition::LESS_THAN ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                >> parse::int_value_ref()   // can't expect an (int) here, as it could actually be a (double) comparision with the first (double) cased from an (int)
+                >> int_rules.expr   // can't expect an (int) here, as it could actually be a (double) comparision with the first (double) cased from an (int)
                 [ _val = new_<Condition::ValueTest>(_g, _d, _1) ]
                 >> ')'
                 ;
 
             value_test_6
                 = ('('
-                >> parse::int_value_ref() [ _g = _1 ]
+                >> int_rules.expr [ _g = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
@@ -149,7 +151,7 @@ namespace {
                       | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _d = Condition::LESS_THAN ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                >> parse::int_value_ref() [ _h = _1 ]
+                >> int_rules.expr [ _h = _1 ]
                 >> (    lit("==")   [ _d = Condition::EQUAL ]
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit(">=")   [ _e = Condition::GREATER_THAN_OR_EQUAL ]
@@ -157,28 +159,28 @@ namespace {
                       | lit("<=")   [ _e = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _e = Condition::LESS_THAN ]
                       | lit("!=")   [ _e = Condition::NOT_EQUAL ])
-                 >> parse::int_value_ref()   // only treat as trinary (int) comparison if all parameters are (int). otherwise fall back to (double) comparison, which allows some of the parameters to be (int) casted to (double)
+                 >> int_rules.expr   // only treat as trinary (int) comparison if all parameters are (int). otherwise fall back to (double) comparison, which allows some of the parameters to be (int) casted to (double)
                  [ _val = new_<Condition::ValueTest>(_g, _d, _h, _e, _1) ]
                   ) >  ')'
                 ;
 
             turn
                 =  (tok.Turn_
-                > -(parse::detail::label(Low_token)  > (parse::flexible_int_value_ref() [ _a = _1 ]))
-                > -(parse::detail::label(High_token) > (parse::flexible_int_value_ref() [ _b = _1 ])))
+                > -(parse::detail::label(Low_token)  > (castable_int_rules.flexible_int [ _a = _1 ]))
+                > -(parse::detail::label(High_token) > (castable_int_rules.flexible_int [ _b = _1 ])))
                 [ _val = new_<Condition::Turn>(_a, _b) ]
                 ;
 
             created_on_turn
                 =  (tok.CreatedOnTurn_
-                > -(parse::detail::label(Low_token)  > parse::flexible_int_value_ref() [ _a = _1 ])
-                > -(parse::detail::label(High_token) > parse::flexible_int_value_ref() [ _b = _1 ]))
+                > -(parse::detail::label(Low_token)  > castable_int_rules.flexible_int [ _a = _1 ])
+                > -(parse::detail::label(High_token) > castable_int_rules.flexible_int [ _b = _1 ]))
                 [ _val = new_<Condition::CreatedOnTurn>(_a, _b) ]
                 ;
 
             number_of1
                 =   tok.NumberOf_
-                >   parse::detail::label(Number_token)    > parse::flexible_int_value_ref() [ _a = _1 ]
+                >   parse::detail::label(Number_token)    > castable_int_rules.flexible_int [ _a = _1 ]
                 >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::SortedNumberOf>(_a, _1) ]
                 ;
@@ -188,8 +190,8 @@ namespace {
                     |   tok.MinimumNumberOf_ [ _b = Condition::SORT_MIN ]
                     |   tok.ModeNumberOf_    [ _b = Condition::SORT_MODE ]
                     )
-                >   parse::detail::label(Number_token)    > parse::flexible_int_value_ref() [ _a = _1 ]
-                >   parse::detail::label(SortKey_token)   > parse::double_value_ref() [ _c = _1 ]
+                >   parse::detail::label(Number_token)    > castable_int_rules.flexible_int [ _a = _1 ]
+                >   parse::detail::label(SortKey_token)   > double_rules.expr [ _c = _1 ]
                 >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::SortedNumberOf>(_a, _c, _b, _1) ]
                 ;
@@ -201,20 +203,20 @@ namespace {
 
             random
                 =   tok.Random_
-                >   parse::detail::label(Probability_token) > parse::double_value_ref()
+                >   parse::detail::label(Probability_token) > double_rules.expr
                 [ _val = new_<Condition::Chance>(_1) ]
                 ;
 
             owner_stockpile
                 =   tok.OwnerTradeStockpile_ [ _a = RE_TRADE ]
-                >   parse::detail::label(Low_token)  > parse::double_value_ref() [ _b = _1 ]
-                >   parse::detail::label(High_token) > parse::double_value_ref()
+                >   parse::detail::label(Low_token)  > double_rules.expr [ _b = _1 ]
+                >   parse::detail::label(High_token) > double_rules.expr
                 [ _val = new_<Condition::EmpireStockpileValue>(_a, _b, _1) ]
                 ;
 
             resource_supply_connected
                 =   tok.ResourceSupplyConnected_
-                >   parse::detail::label(Empire_token)    > parse::int_value_ref() [ _a = _1 ]
+                >   parse::detail::label(Empire_token)    > int_rules.expr [ _a = _1 ]
                 >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::ResourceSupplyConnectedByEmpire>(_a, _1) ]
                 ;
@@ -315,6 +317,9 @@ namespace {
             >
         > resource_type_double_ref_rule;
 
+        parse::int_arithmetic_rules             int_rules;
+        parse::castable_as_int_parser_rules     castable_int_rules;
+        parse::double_parser_rules              double_rules;
         double_ref_double_ref_rule              has_special_capacity;
         double_ref_double_ref_rule              within_distance;
         int_ref_int_ref_rule                    within_starlane_jumps;
@@ -340,7 +345,7 @@ namespace {
 
 namespace parse { namespace detail {
     const condition_parser_rule& condition_parser_3() {
-        static condition_parser_rules_3 retval;
+        static condition_parser_rules_3 retval(parse::lexer::instance());
         return retval.start;
     }
 } }

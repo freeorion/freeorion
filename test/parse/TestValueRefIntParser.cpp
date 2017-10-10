@@ -54,7 +54,7 @@ struct ValueRefIntFixture: boost::unit_test::test_observer {
 
         bool matched = boost::spirit::qi::phrase_parse(
             begin, end,
-            parse::int_value_ref()[boost::phoenix::ref(result) = _1] > eoi,
+            int_rules.expr[boost::phoenix::ref(result) = _1] > eoi,
             in_state("WS")[lexer.self]
         );
 

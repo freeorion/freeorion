@@ -75,7 +75,9 @@ namespace {
     const boost::phoenix::function<insert_rule_> add_rule;
 
     struct rules {
-        rules(const std::string& filename,
+        rules(const parse::lexer& tok,
+              parse::detail::Labeller& labeller,
+              const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
             namespace phoenix = boost::phoenix;
@@ -101,16 +103,14 @@ namespace {
             qi::_r1_type _r1;
             qi::eps_type eps;
 
-            const parse::lexer& tok = parse::lexer::instance();
-
             game_rule_bool
                 =   (tok.GameRule_
-                    >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
-                    >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
-                    >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
-                    >>  parse::detail::label(Type_token) >>         tok.Toggle_
+                    >> (labeller.rule(Name_token) >          tok.string [ _a = _1 ])
+                    >> (labeller.rule(Description_token) >   tok.string [ _b = _1 ])
+                    >> (labeller.rule(Category_token) >      tok.string [ _j = _1 ])
+                    >>  labeller.rule(Type_token) >>         tok.Toggle_
                     )
-                > ((parse::detail::label(Default_token)
+                > ((labeller.rule(Default_token)
                     >   (
                             tok.On_ [ _i = true ]
                         |   tok.Off_ [ _i = false ]
@@ -122,39 +122,39 @@ namespace {
 
             game_rule_int
                 =   (tok.GameRule_
-                    >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
-                    >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
-                    >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
-                    >>  parse::detail::label(Type_token) >>         tok.Integer_
+                    >> (labeller.rule(Name_token) >          tok.string [ _a = _1 ])
+                    >> (labeller.rule(Description_token) >   tok.string [ _b = _1 ])
+                    >> (labeller.rule(Category_token) >      tok.string [ _j = _1 ])
+                    >>  labeller.rule(Type_token) >>         tok.Integer_
                     )
-                >   parse::detail::label(Default_token) >       parse::detail::int_ [ _f = _1 ]
-                >   parse::detail::label(Min_token) >           parse::detail::int_ [ _g = _1 ]
-                >   parse::detail::label(Max_token) >           parse::detail::int_
+                >   labeller.rule(Default_token) >       parse::detail::int_ [ _f = _1 ]
+                >   labeller.rule(Min_token) >           parse::detail::int_ [ _g = _1 ]
+                >   labeller.rule(Max_token) >           parse::detail::int_
                     [ add_rule(_r1, _a, _b, _j, _f, _g, _1 ) ]
                 ;
 
             game_rule_double
                 =   (tok.GameRule_
-                    >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
-                    >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
-                    >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
-                    >>  parse::detail::label(Type_token) >>         tok.Real_
+                    >> (labeller.rule(Name_token) >          tok.string [ _a = _1 ])
+                    >> (labeller.rule(Description_token) >   tok.string [ _b = _1 ])
+                    >> (labeller.rule(Category_token) >      tok.string [ _j = _1 ])
+                    >>  labeller.rule(Type_token) >>         tok.Real_
                     )
-                >   parse::detail::label(Default_token) >       parse::detail::double_ [ _c = _1 ]
-                >   parse::detail::label(Min_token) >           parse::detail::double_ [ _d = _1 ]
-                >   parse::detail::label(Max_token) >           parse::detail::double_
+                >   labeller.rule(Default_token) >       parse::detail::double_ [ _c = _1 ]
+                >   labeller.rule(Min_token) >           parse::detail::double_ [ _d = _1 ]
+                >   labeller.rule(Max_token) >           parse::detail::double_
                     [ add_rule(_r1, _a, _b, _j, _c, _d, _1 ) ]
                 ;
 
             game_rule_string
                 =   (tok.GameRule_
-                    >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
-                    >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
-                    >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
-                    >>  parse::detail::label(Type_token) >>         tok.String_
+                    >> (labeller.rule(Name_token) >          tok.string [ _a = _1 ])
+                    >> (labeller.rule(Description_token) >   tok.string [ _b = _1 ])
+                    >> (labeller.rule(Category_token) >      tok.string [ _j = _1 ])
+                    >>  labeller.rule(Type_token) >>         tok.String_
                     )
-                >   parse::detail::label(Default_token) >       tok.string [ _e = _1 ]
-                >  -( (parse::detail::label(Allowed_token)
+                >   labeller.rule(Default_token) >       tok.string [ _e = _1 ]
+                >  -( (labeller.rule(Allowed_token)
                        > '['
                        > +tok.string [ insert(_h, _1) ]
                        > ']'

@@ -245,8 +245,6 @@ namespace parse {
         debug(detail::double_);
 #endif
 
-        int_value_ref();
-
         condition_parser();
     }
 
@@ -585,8 +583,30 @@ namespace parse {
 
         int_rule int_;
 
+        Labeller::Labeller(const parse::lexer& tok_) :
+            m_tok(tok_),
+            m_rules()
+        {};
+
+        #define PARSING_LABELS_OPTIONAL false
+        label_rule& Labeller::rule(const char* name) {
+            auto it = m_rules.find(name);
+            if (it == m_rules.end()) {
+                label_rule& retval = m_rules[name];
+                if (PARSING_LABELS_OPTIONAL) {
+                    retval = -(m_tok.name_token(name) >> '=');
+                } else {
+                    retval =  (m_tok.name_token(name) >> '=');
+                }
+                retval.name(std::string(name) + " =");
+                return retval;
+            } else {
+                return it->second;
+            }
+        }
+
+    // TODO remove this version of label with the singleton rules
         label_rule& label(const char* name) {
-            static const bool PARSING_LABELS_OPTIONAL = false;
             static std::map<const char*, label_rule> rules;
             std::map<const char*, label_rule>::iterator it = rules.find(name);
             if (it == rules.end()) {

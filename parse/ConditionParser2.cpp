@@ -14,9 +14,10 @@ namespace phoenix = boost::phoenix;
 
 namespace {
     struct condition_parser_rules_2 {
-        condition_parser_rules_2() {
-            const parse::lexer& tok = parse::lexer::instance();
-
+        condition_parser_rules_2(const parse::lexer& tok) :
+            int_rules(tok),
+            castable_int_rules(tok)
+        {
             qi::_1_type _1;
             qi::_a_type _a; // intref
             qi::_b_type _b; // intref
@@ -30,8 +31,8 @@ namespace {
             has_special_since_turn
                 =   (       tok.HasSpecialSinceTurn_
                         >   parse::detail::label(Name_token) >  parse::string_value_ref() [ _e = _1 ]
-                        > -(parse::detail::label(Low_token)  >  parse::flexible_int_value_ref() [ _a = _1 ] )
-                        > -(parse::detail::label(High_token) >  parse::flexible_int_value_ref() [ _b = _1 ] )
+                        > -(parse::detail::label(Low_token)  >  castable_int_rules.flexible_int [ _a = _1 ] )
+                        > -(parse::detail::label(High_token) >  castable_int_rules.flexible_int [ _b = _1 ] )
                     ) [ _val = new_<Condition::HasSpecial>(_e, _a, _b) ]
                 ;
 
@@ -46,19 +47,19 @@ namespace {
                 =   (   (tok.Enqueued_
                         >>  parse::detail::label(Type_token)   >>   tok.Building_)
                         > -(parse::detail::label(Name_token)   >    parse::string_value_ref() [ _e = _1 ])
-                        > -(parse::detail::label(Empire_token) >    parse::int_value_ref() [ _a = _1 ])
-                        > -(parse::detail::label(Low_token)    >    parse::flexible_int_value_ref() [ _b = _1 ])
-                        > -(parse::detail::label(High_token)   >    parse::flexible_int_value_ref() [ _c = _1 ])
+                        > -(parse::detail::label(Empire_token) >    int_rules.expr [ _a = _1 ])
+                        > -(parse::detail::label(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
+                        > -(parse::detail::label(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
                     ) [ _val = new_<Condition::Enqueued>(BT_BUILDING, _e, _a, _b, _c) ]
                 ;
 
             enqueued2
                 =   (   (tok.Enqueued_
                         >>  parse::detail::label(Type_token)   >>   tok.Ship_)
-                        > -(parse::detail::label(Design_token) >    parse::int_value_ref() [ _d = _1 ])
-                        > -(parse::detail::label(Empire_token) >    parse::int_value_ref() [ _a = _1 ])
-                        > -(parse::detail::label(Low_token)    >    parse::flexible_int_value_ref() [ _b = _1 ])
-                        > -(parse::detail::label(High_token)   >    parse::flexible_int_value_ref() [ _c = _1 ])
+                        > -(parse::detail::label(Design_token) >    int_rules.expr [ _d = _1 ])
+                        > -(parse::detail::label(Empire_token) >    int_rules.expr [ _a = _1 ])
+                        > -(parse::detail::label(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
+                        > -(parse::detail::label(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
                     ) [ _val = new_<Condition::Enqueued>(_d, _a, _b, _c) ]
                 ;
 
@@ -66,39 +67,39 @@ namespace {
                 =   (   (tok.Enqueued_
                         >>  parse::detail::label(Type_token)   >>   tok.Ship_
                         >>  parse::detail::label(Name_token)   ) >    parse::string_value_ref() [ _e = _1 ]
-                        > -(parse::detail::label(Empire_token) >    parse::int_value_ref() [ _a = _1 ])
-                        > -(parse::detail::label(Low_token)    >    parse::flexible_int_value_ref() [ _b = _1 ])
-                        > -(parse::detail::label(High_token)   >    parse::flexible_int_value_ref() [ _c = _1 ])
+                        > -(parse::detail::label(Empire_token) >    int_rules.expr [ _a = _1 ])
+                        > -(parse::detail::label(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
+                        > -(parse::detail::label(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
                     ) [ _val = new_<Condition::Enqueued>(BT_SHIP, _e, _a, _b, _c) ]
                 ;
 
             enqueued4
                 =   (   tok.Enqueued_
-                        > -(parse::detail::label(Empire_token) >    parse::int_value_ref() [ _a = _1 ])
-                        > -(parse::detail::label(Low_token)    >    parse::flexible_int_value_ref() [ _b = _1 ])
-                        > -(parse::detail::label(High_token)   >    parse::flexible_int_value_ref() [ _c = _1 ])
+                        > -(parse::detail::label(Empire_token) >    int_rules.expr [ _a = _1 ])
+                        > -(parse::detail::label(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
+                        > -(parse::detail::label(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
                     ) [ _val = new_<Condition::Enqueued>(INVALID_BUILD_TYPE, _e, _a, _b, _c) ]
                 ;
 
             design_has_part
                 =   (   tok.DesignHasPart_
-                        > -(parse::detail::label(Low_token)   > parse::flexible_int_value_ref() [ _a = _1 ])
-                        > -(parse::detail::label(High_token)  > parse::flexible_int_value_ref() [ _b = _1 ])
+                        > -(parse::detail::label(Low_token)   > castable_int_rules.flexible_int [ _a = _1 ])
+                        > -(parse::detail::label(High_token)  > castable_int_rules.flexible_int [ _b = _1 ])
                     )   >   parse::detail::label(Name_token)  > parse::string_value_ref()
                     [ _val = new_<Condition::DesignHasPart>(_1, _a, _b) ]
                 ;
 
             design_has_part_class
                 =   (   tok.DesignHasPartClass_
-                        > -(parse::detail::label(Low_token)   > parse::flexible_int_value_ref() [ _a = _1 ])
-                        > -(parse::detail::label(High_token)  > parse::flexible_int_value_ref() [ _b = _1 ])
+                        > -(parse::detail::label(Low_token)   > castable_int_rules.flexible_int [ _a = _1 ])
+                        > -(parse::detail::label(High_token)  > castable_int_rules.flexible_int [ _b = _1 ])
                     )   >   parse::detail::label(Class_token) > parse::ship_part_class_enum()
                     [ _val = new_<Condition::DesignHasPartClass>(_1, _a, _b) ]
                 ;
 
             in_system
                 =   (   tok.InSystem_
-                    >  -(parse::detail::label(ID_token)  > parse::int_value_ref() [ _a = _1 ])
+                    >  -(parse::detail::label(ID_token)  > int_rules.expr [ _a = _1 ])
                     )
                     [ _val = new_<Condition::InSystem>(_a) ]
                 ;
@@ -137,6 +138,8 @@ namespace {
             >
         > common_rule;
 
+        parse::int_arithmetic_rules     int_rules;
+        parse::castable_as_int_parser_rules    castable_int_rules;
         common_rule                     has_special_since_turn;
         common_rule                     enqueued;
         common_rule                     enqueued1;
@@ -152,7 +155,7 @@ namespace {
 
 namespace parse { namespace detail {
     const condition_parser_rule& condition_parser_2() {
-        static condition_parser_rules_2 retval;
+        static condition_parser_rules_2 retval(parse::lexer::instance());
         return retval.start;
     }
 } }

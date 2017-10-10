@@ -65,8 +65,11 @@ namespace {
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_special_, insert_special, 2)
 
     struct rules {
-        rules(const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+        rules(const parse::lexer& tok,
+              parse::detail::Labeller& labeller,
+              const std::string& filename,
+              const parse::text_iterator& first, const parse::text_iterator& last) :
+            double_rules(parse::lexer::instance())
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -89,32 +92,30 @@ namespace {
             qi::_r3_type _r3;
             qi::eps_type eps;
 
-            const parse::lexer& tok = parse::lexer::instance();
-
             special_prefix
                 =    tok.Special_
-                >    parse::detail::label(Name_token)
+                >    labeller.rule(Name_token)
                 >    tok.string        [ _pass = is_unique_(_r1, Special_token, _1), _r2 = _1 ]
-                >    parse::detail::label(Description_token)        > tok.string [ _r3 = _1 ]
+                >    labeller.rule(Description_token)        > tok.string [ _r3 = _1 ]
                 ;
 
             spawn
-                =    (      (parse::detail::label(SpawnRate_token)   > parse::detail::double_ [ _r1 = _1 ])
+                =    (      (labeller.rule(SpawnRate_token)   > parse::detail::double_ [ _r1 = _1 ])
                         |    eps [ _r1 = 1.0 ]
                      )
-                >    (      (parse::detail::label(SpawnLimit_token)  > parse::detail::int_ [ _r2 = _1 ])
+                >    (      (labeller.rule(SpawnLimit_token)  > parse::detail::int_ [ _r2 = _1 ])
                         |    eps [ _r2 = 9999 ]
                      )
                 ;
 
             special
                 =    special_prefix(_r1, _a, _b)
-                >  -(parse::detail::label(Stealth_token)            > parse::double_value_ref() [ _g = _1 ])
+                >  -(labeller.rule(Stealth_token)            > double_rules.expr [ _g = _1 ])
                 >    spawn(_c, _d)
-                >  -(parse::detail::label(Capacity_token)           > parse::double_value_ref() [ _h = _1 ])
-                >  -(parse::detail::label(Location_token)           > parse::detail::condition_parser [ _e = _1 ])
-                >  -(parse::detail::label(EffectsGroups_token)      > parse::detail::effects_group_parser() [ _f = _1 ])
-                >    parse::detail::label(Graphic_token)            > tok.string
+                >  -(labeller.rule(Capacity_token)           > double_rules.expr [ _h = _1 ])
+                >  -(labeller.rule(Location_token)           > parse::detail::condition_parser [ _e = _1 ])
+                >  -(labeller.rule(EffectsGroups_token)      > parse::detail::effects_group_parser() [ _f = _1 ])
+                >    labeller.rule(Graphic_token)            > tok.string
                 [ insert_special_(_r1, phoenix::construct<special_pod>(_a, _b, _g, _f, _c, _d, _h, _e, _1)) ]
                 ;
 
@@ -162,6 +163,7 @@ namespace {
         > start_rule;
 
 
+        parse::double_parser_rules      double_rules;
         special_prefix_rule special_prefix;
         spawn_rule          spawn;
         special_rule        special;

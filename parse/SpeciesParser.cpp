@@ -49,7 +49,9 @@ namespace {
 
 
     struct rules {
-        rules(const std::string& filename,
+        rules(const parse::lexer& tok,
+              parse::detail::Labeller& labeller,
+              const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
             namespace phoenix = boost::phoenix;
@@ -75,19 +77,17 @@ namespace {
             qi::_val_type _val;
             qi::eps_type eps;
 
-            const parse::lexer& tok = parse::lexer::instance();
-
             focus_type
                 =    tok.Focus_
-                >    parse::detail::label(Name_token)        > tok.string [ _a = _1 ]
-                >    parse::detail::label(Description_token) > tok.string [ _b = _1 ]
-                >    parse::detail::label(Location_token)    > parse::detail::condition_parser [ _c = _1 ]
-                >    parse::detail::label(Graphic_token)     > tok.string
+                >    labeller.rule(Name_token)        > tok.string [ _a = _1 ]
+                >    labeller.rule(Description_token) > tok.string [ _b = _1 ]
+                >    labeller.rule(Location_token)    > parse::detail::condition_parser [ _c = _1 ]
+                >    labeller.rule(Graphic_token)     > tok.string
                      [ _val = construct<FocusType>(_a, _b, _c, _1) ]
                 ;
 
             foci
-                =    parse::detail::label(Foci_token)
+                =    labeller.rule(Foci_token)
                 >    (
                             ('[' > +focus_type [ push_back(_r1, _1) ] > ']')
                         |    focus_type [ push_back(_r1, _1) ]
@@ -95,12 +95,12 @@ namespace {
                 ;
 
             effects
-                =    parse::detail::label(EffectsGroups_token) > parse::detail::effects_group_parser() [ _r1 = _1 ]
+                =    labeller.rule(EffectsGroups_token) > parse::detail::effects_group_parser() [ _r1 = _1 ]
                 ;
 
             environment_map_element
-                =    parse::detail::label(Type_token)        > parse::detail::planet_type_rules().enum_expr [ _a = _1 ]
-                >    parse::detail::label(Environment_token) > parse::detail::planet_environment_rules().enum_expr
+                =    labeller.rule(Type_token)        > parse::detail::planet_type_rules().enum_expr [ _a = _1 ]
+                >    labeller.rule(Environment_token) > parse::detail::planet_environment_rules().enum_expr
                      [ _val = construct<std::pair<PlanetType, PlanetEnvironment>>(_a, _1) ]
                 ;
 
@@ -110,7 +110,7 @@ namespace {
                 ;
 
             environments
-                =    parse::detail::label(Environments_token) > environment_map [ _r1 = _1 ]
+                =    labeller.rule(Environments_token) > environment_map [ _r1 = _1 ]
                 ;
 
             species_params
@@ -122,10 +122,10 @@ namespace {
                 ;
 
             species_strings
-                =    parse::detail::label(Name_token)                   > tok.string
+                =    labeller.rule(Name_token)                   > tok.string
                      [ _pass = is_unique_(_r1, Species_token, _1), _a = _1 ]
-                >    parse::detail::label(Description_token)            > tok.string [ _b = _1 ]
-                >    parse::detail::label(Gameplay_Description_token)   > tok.string [ _c = _1 ]
+                >    labeller.rule(Description_token)            > tok.string [ _b = _1 ]
+                >    labeller.rule(Gameplay_Description_token)   > tok.string [ _c = _1 ]
                     [ _val = construct<SpeciesStrings>(_a, _b, _c) ]
                 ;
 
@@ -135,10 +135,10 @@ namespace {
                 >    species_params [ _b = _1]
                 >    parse::detail::tags_parser()(_c)
                 >   -foci(_d)
-                >   -(parse::detail::label(PreferredFocus_token)        >> tok.string [ _g = _1 ])
+                >   -(labeller.rule(PreferredFocus_token)        >> tok.string [ _g = _1 ])
                 >   -effects(_e)
                 >   -environments(_f)
-                >    parse::detail::label(Graphic_token) > tok.string
+                >    labeller.rule(Graphic_token) > tok.string
                 [ insert_species_(_r1, _a, _d, _g, _f, _e, _b, _c, _1) ]
                 ;
 
