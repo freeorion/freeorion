@@ -91,12 +91,7 @@ namespace EmpireStatistics {
         static std::map<std::string, ValueRef::ValueRefBase<double>*> s_stats;
         if (s_stats.empty()) {
             try {
-                parse::statistics(s_stats);
-
-                unsigned int checksum{0};
-                CheckSums::CheckSumCombine(checksum, s_stats);
-                DebugLogger() << "Empire Statistics checksum: " << checksum;
-
+                s_stats = parse::statistics();
             } catch (const std::exception& e) {
                 ErrorLogger() << "Failed parsing empire statistics: error: " << e.what();
                 throw e;

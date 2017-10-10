@@ -97,26 +97,21 @@ void parse::detail::default_send_error_string(const std::string& str) {
     std::cout << str +"\n" << std::flush;
 }
 
-const char* parse::detail::s_filename = nullptr;
-parse::text_iterator* parse::detail::s_text_it = nullptr;
-parse::text_iterator parse::detail::s_begin;
-parse::text_iterator parse::detail::s_end;
-
 boost::function<void (const std::string&)> parse::report_error_::send_error_string =
     &detail::default_send_error_string;
 
 namespace {
-    std::vector<parse::text_iterator> LineStarts() {
+    std::vector<parse::text_iterator> LineStarts(const parse::text_iterator& begin, const parse::text_iterator& end) {
         //DebugLogger() << "line starts start";
         using namespace parse;
 
         std::vector<text_iterator> retval;
 
-        text_iterator it = detail::s_begin;
+        text_iterator it = begin;
         retval.push_back(it);   // first line
 
         // find subsequent lines
-        while (it != detail::s_end) {
+        while (it != end) {
             bool eol = false;
             text_iterator temp;
 
@@ -125,21 +120,21 @@ namespace {
                 eol = true;
                 temp = ++it;
             }
-            if (it != detail::s_end && *it == '\n') {
+            if (it != end && *it == '\n') {
                 eol = true;
                 temp = ++it;
             }
 
-            if (eol && temp != detail::s_end)
+            if (eol && temp != end)
                 retval.push_back(temp);
-            else if (it != detail::s_end)
+            else if (it != end)
                 ++it;
         }
 
         //DebugLogger() << "line starts end.  num lines: " << retval.size();
         //for (unsigned int i = 0; i < retval.size(); ++i) {
         //    text_iterator line_end = retval[i];
-        //    while (line_end != detail::s_end && *line_end != '\r' && *line_end != '\n')
+        //    while (line_end != end && *line_end != '\r' && *line_end != '\n')
         //        ++line_end;
         //    DebugLogger() << " line " << i+1 << ": " << std::string(retval[i], line_end);
         //}
@@ -147,12 +142,14 @@ namespace {
     }
 }
 
-std::pair<parse::text_iterator, unsigned int> parse::report_error_::line_start_and_line_number(text_iterator error_position) const {
+std::pair<parse::text_iterator, unsigned int> parse::report_error_::line_start_and_line_number(
+    const parse::text_iterator& begin, const parse::text_iterator& end, text_iterator error_position) const
+{
     //DebugLogger() << "line_start_and_line_number start ... looking for: " << std::string(error_position, error_position + 20);
-    if (error_position == detail::s_begin)
-        return std::make_pair(detail::s_begin, 1);
+    if (error_position == begin)
+        return std::make_pair(begin, 1);
 
-    std::vector<parse::text_iterator> line_starts = LineStarts();
+    std::vector<parse::text_iterator> line_starts = LineStarts(begin, end);
 
     // search for the first line where the iterator to the start of the line is
     // at or past the error position
@@ -165,20 +162,22 @@ std::pair<parse::text_iterator, unsigned int> parse::report_error_::line_start_a
     }
 
     //DebugLogger() << "line_start_and_line_number end";
-    return std::make_pair(detail::s_begin, 1);
+    return std::make_pair(begin, 1);
 }
 
-std::string parse::report_error_::get_line(text_iterator line_start) const {
+std::string parse::report_error_::get_line(const parse::text_iterator& end, text_iterator line_start) const {
     text_iterator line_end = line_start;
-    while (line_end != detail::s_end && *line_end != '\r' && *line_end != '\n')
+    while (line_end != end && *line_end != '\r' && *line_end != '\n')
         ++line_end;
     return std::string(line_start, line_end);
 }
 
-std::string parse::report_error_::get_lines_before(text_iterator line_start) const {
+std::string parse::report_error_::get_lines_before(
+    const parse::text_iterator& begin, const parse::text_iterator& end, text_iterator line_start) const
+{
     //DebugLogger() << "get_lines_before start";
 
-    std::vector<parse::text_iterator> all_line_starts = LineStarts();
+    std::vector<parse::text_iterator> all_line_starts = LineStarts(begin, end);
     unsigned int target_line = 1;
     for (unsigned int line_minus_one = 0; line_minus_one < all_line_starts.size(); ++line_minus_one) {
         if (std::distance(all_line_starts[line_minus_one], line_start) < 0) {
@@ -202,10 +201,12 @@ std::string parse::report_error_::get_lines_before(text_iterator line_start) con
     return std::string(all_line_starts[retval_first_line-1], all_line_starts[retval_last_line]);    // start of first line to start of line after first line
 }
 
-std::string parse::report_error_::get_lines_after(text_iterator line_start) const {
+std::string parse::report_error_::get_lines_after(
+    const parse::text_iterator& begin, const parse::text_iterator& end, text_iterator line_start) const
+{
     //DebugLogger() << "get_lines_after start";
 
-    std::vector<parse::text_iterator> all_line_starts = LineStarts();
+    std::vector<parse::text_iterator> all_line_starts = LineStarts(begin, end);
     unsigned int target_line = 1;
     for (unsigned int line_minus_one = 0; line_minus_one < all_line_starts.size(); ++line_minus_one) {
         if (std::distance(all_line_starts[line_minus_one], line_start) < 0) {
@@ -225,7 +226,7 @@ std::string parse::report_error_::get_lines_after(text_iterator line_start) cons
     if (retval_first_line + NUM_LINES < all_line_starts.size())
         retval_last_line = retval_first_line + NUM_LINES - 1;
 
-    text_iterator last_it = detail::s_end;
+    text_iterator last_it = end;
     if (retval_last_line < all_line_starts.size())
         last_it = all_line_starts[retval_last_line];
 
@@ -233,7 +234,9 @@ std::string parse::report_error_::get_lines_after(text_iterator line_start) cons
     return std::string(all_line_starts[retval_first_line-1], last_it);
 }
 
-void parse::report_error_::generate_error_string(const token_iterator& first,
+void parse::report_error_::generate_error_string(const std::string& filename,
+                                                 const text_iterator& begin, const text_iterator& end,
+                                                 const token_iterator& first,
                                                  const token_iterator& it,
                                                  const boost::spirit::info& rule_name,
                                                  std::string& str) const
@@ -245,25 +248,25 @@ void parse::report_error_::generate_error_string(const token_iterator& first,
     unsigned int line_number;
     text_iterator text_it = it->matched().begin();
     if (it->matched().begin() == it->matched().end()) {
-        text_it = *detail::s_text_it;
-        if (text_it != detail::s_end)
+        text_it = begin;
+        if (text_it != end)
             ++text_it;
     }
 
     {
         text_iterator text_it_copy = text_it;
-        while (text_it_copy != detail::s_end && boost::algorithm::is_space()(*text_it_copy)) {
+        while (text_it_copy != end && boost::algorithm::is_space()(*text_it_copy)) {
             ++text_it_copy;
         }
-        if (text_it_copy != detail::s_end)
+        if (text_it_copy != end)
             text_it = text_it_copy;
     }
 
-    std::tie(line_start, line_number) = line_start_and_line_number(text_it);
+    std::tie(line_start, line_number) = line_start_and_line_number(begin, end, text_it);
     std::size_t column_number = std::distance(line_start, text_it);
     //DebugLogger() << "generate_error_string found line number: " << line_number << " column number: " << column_number;
 
-    is << detail::s_filename << ":" << line_number << ":" << column_number << ": "
+    is << filename << ":" << line_number << ":" << column_number << ": "
        << "Parse error.  Expected";
 
     {
@@ -274,14 +277,14 @@ void parse::report_error_::generate_error_string(const token_iterator& first,
         is << regex_replace(os.str(), regex, "$&, ...");
     }
 
-    if (text_it == detail::s_end) {
+    if (text_it == end) {
         is << " before end of input.\n";
     } else {
         is << " here:\n";
-        is << get_lines_before(line_start);
-        is << get_line(line_start) << "\n";
+        is << get_lines_before(begin, end, line_start);
+        is << get_line(end, line_start) << "\n";
         is << std::string(column_number, ' ') << '^' << std::endl;
-        is << get_lines_after(line_start);
+        is << get_lines_after(begin, end, line_start);
     }
 
     str = is.str();

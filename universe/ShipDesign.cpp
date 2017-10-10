@@ -191,7 +191,7 @@ PartTypeManager::PartTypeManager() {
     ScopedTimer timer("PartTypeManager Init", true, std::chrono::milliseconds(1));
 
     try {
-        parse::ship_parts(m_parts);
+        m_parts = parse::ship_parts();
     } catch (const std::exception& e) {
         ErrorLogger() << "Failed parsing ship parts: error: " << e.what();
         throw;
@@ -208,8 +208,6 @@ PartTypeManager::PartTypeManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
-
-    DebugLogger() << "PartTypeManager checksum: " << GetCheckSum();
 }
 
 const PartType* PartTypeManager::GetPartType(const std::string& name) const {
@@ -234,6 +232,8 @@ unsigned int PartTypeManager::GetCheckSum() const {
         CheckSums::CheckSumCombine(retval, name_part_pair);
     CheckSums::CheckSumCombine(retval, m_parts.size());
 
+
+    DebugLogger() << "PartTypeManager checksum: " << retval;
     return retval;
 }
 
@@ -632,7 +632,7 @@ HullTypeManager::HullTypeManager() {
     ScopedTimer timer("HullTypeManager Init", true, std::chrono::milliseconds(1));
 
     try {
-        parse::ship_hulls(m_hulls);
+        m_hulls = parse::ship_hulls();
     } catch (const std::exception& e) {
         ErrorLogger() << "Failed parsing ship hulls: error: " << e.what();
         throw;
@@ -651,8 +651,6 @@ HullTypeManager::HullTypeManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
-
-    DebugLogger() << "HullTypeManager checksum: " << GetCheckSum();
 }
 
 const HullType* HullTypeManager::GetHullType(const std::string& name) const {
@@ -677,6 +675,7 @@ unsigned int HullTypeManager::GetCheckSum() const {
         CheckSums::CheckSumCombine(retval, name_hull_pair);
     CheckSums::CheckSumCombine(retval, m_hulls.size());
 
+    DebugLogger() << "HullTypeManager checksum: " << retval;
     return retval;
 }
 
@@ -1367,8 +1366,6 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
-
-    DebugLogger() << "PredefinedShipDesignManager checksum: " << GetCheckSum();
 }
 
 namespace {
@@ -1466,6 +1463,7 @@ unsigned int PredefinedShipDesignManager::GetCheckSum() const {
     build_checksum(m_ship_ordering);
     build_checksum(m_monster_ordering);
 
+    DebugLogger() << "PredefinedShipDesignManager checksum: " << retval;
     return retval;
 }
 
@@ -1490,10 +1488,10 @@ LoadShipDesignsAndManifestOrderFromFileSystem(const boost::filesystem::path& dir
                        std::pair<std::unique_ptr<ShipDesign>,
                                  boost::filesystem::path>,
                        boost::hash<boost::uuids::uuid>>  saved_designs;
-    std::vector<boost::uuids::uuid> disk_ordering;
 
-    std::vector<std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>> designs_and_paths;
-    parse::ship_designs(dir, designs_and_paths, disk_ordering);
+    auto designs_paths_and_ordering = parse::ship_designs(dir);
+    auto& designs_and_paths = designs_paths_and_ordering.first;
+    auto& disk_ordering = designs_paths_and_ordering.second;
 
     for (auto&& design_and_path : designs_and_paths) {
         auto& design = design_and_path.first;

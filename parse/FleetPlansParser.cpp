@@ -19,7 +19,9 @@ namespace std {
 
 namespace {
     struct rules {
-        rules() {
+        rules(const std::string& filename,
+              const parse::text_iterator& first, const parse::text_iterator& last)
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -57,7 +59,7 @@ namespace {
             debug(fleet_plan);
 #endif
 
-            qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
+            qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
         typedef parse::detail::rule<
@@ -78,8 +80,10 @@ namespace {
 }
 
 namespace parse {
-    bool fleet_plans(std::vector<FleetPlan*>& fleet_plans_) {
+    std::vector<FleetPlan*> fleet_plans() {
+        std::vector<FleetPlan*> fleet_plans_;
         const boost::filesystem::path& path = GetResourceDir() / "scripting/starting_unlocks/fleets.inf";
-        return detail::parse_file<rules, std::vector<FleetPlan*>>(path, fleet_plans_);
+        /*auto success =*/ detail::parse_file<rules, std::vector<FleetPlan*>>(path, fleet_plans_);
+        return fleet_plans_;
     }
 }

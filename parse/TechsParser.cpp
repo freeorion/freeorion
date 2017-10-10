@@ -71,7 +71,9 @@ namespace {
 
 
     struct rules {
-        rules() {
+        rules(const std::string& filename,
+              const parse::text_iterator& first, const parse::text_iterator& last)
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -173,7 +175,7 @@ namespace {
             debug(category);
 #endif
 
-            qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
+            qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
         typedef parse::detail::rule<
@@ -237,21 +239,24 @@ namespace {
 }
 
 namespace parse {
-    bool techs(TechManager::TechContainer& techs_,
-               std::map<std::string, std::unique_ptr<TechCategory>>& categories,
-               std::set<std::string>& categories_seen)
-    {
-        bool result = true;
+    std::tuple<
+        TechManager::TechContainer, // techs_
+        std::map<std::string, std::unique_ptr<TechCategory>>, // tech_categories,
+        std::set<std::string>> // categories_seen
+    techs() {
+        TechManager::TechContainer techs_;
+        std::map<std::string, std::unique_ptr<TechCategory>> categories;
+        std::set<std::string> categories_seen;
 
         g_categories_seen = &categories_seen;
         g_categories = &categories;
 
-        result &= detail::parse_file<rules, TechManager::TechContainer>(GetResourceDir() / "scripting/techs/Categories.inf", techs_);
+        /*auto success =*/ detail::parse_file<rules, TechManager::TechContainer>(GetResourceDir() / "scripting/techs/Categories.inf", techs_);
 
         for (const boost::filesystem::path& file : ListScripts("scripting/techs")) {
-            result &= detail::parse_file<rules, TechManager::TechContainer>(file, techs_);
+            /*auto success =*/ detail::parse_file<rules, TechManager::TechContainer>(file, techs_);
         }
 
-        return result;
+        return std::make_tuple(std::move(techs_), std::move(categories), categories_seen);
     }
 }

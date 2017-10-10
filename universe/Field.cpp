@@ -227,6 +227,7 @@ unsigned int FieldType::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_effects);
     CheckSums::CheckSumCombine(retval, m_graphic);
 
+    DebugLogger() << "FieldTypeManager checksum: " << retval;
     return retval;
 }
 
@@ -243,7 +244,7 @@ FieldTypeManager::FieldTypeManager() {
     ScopedTimer timer("FieldTypeManager Init", true, std::chrono::milliseconds(1));
 
     try {
-        parse::fields(m_field_types);
+        m_field_types = parse::fields();
     } catch (const std::exception& e) {
         ErrorLogger() << "Failed parsing fields: error: " << e.what();
         throw e;
@@ -258,8 +259,6 @@ FieldTypeManager::FieldTypeManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
-
-    DebugLogger() << "FieldTypeManager checksum: " << GetCheckSum();
 }
 
 const FieldType* FieldTypeManager::GetFieldType(const std::string& name) const {

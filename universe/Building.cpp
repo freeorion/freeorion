@@ -355,7 +355,7 @@ BuildingTypeManager::BuildingTypeManager() {
     TraceLogger() << "BuildingTypeManager::BuildingTypeManager() about to parse buildings.";
 
     try {
-        parse::buildings(m_building_types);
+        m_building_types = parse::buildings();
     } catch (const std::exception& e) {
         ErrorLogger() << "Failed parsing buildings: error: " << e.what();
         throw e;
@@ -368,8 +368,6 @@ BuildingTypeManager::BuildingTypeManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
-
-    DebugLogger() << "BuildingTypeManager checksum: " << GetCheckSum();
 }
 
 const BuildingType* BuildingTypeManager::GetBuildingType(const std::string& name) const {
@@ -388,6 +386,8 @@ unsigned int BuildingTypeManager::GetCheckSum() const {
         CheckSums::CheckSumCombine(retval, name_type_pair);
     CheckSums::CheckSumCombine(retval, m_building_types.size());
 
+
+    DebugLogger() << "BuildingTypeManager checksum: " << retval;
     return retval;
 }
 

@@ -349,8 +349,7 @@ namespace {
     // Wrapper for preunlocked items
     list LoadItemSpecList() {
         list py_items;
-        std::vector<ItemSpec> items;
-        parse::items(items);
+        auto items = parse::items();
         for (const auto& item : items) {
             py_items.append(object(item));
         }
@@ -360,8 +359,7 @@ namespace {
     // Wrapper for starting buildings
     list LoadStartingBuildings() {
         list py_items;
-        std::vector<ItemSpec> buildings;
-        parse::starting_buildings(buildings);
+        auto buildings = parse::starting_buildings();
         for (auto building : buildings) {
             if (GetBuildingType(building.name))
                 py_items.append(object(building));
@@ -474,8 +472,7 @@ namespace {
 
     list LoadFleetPlanList() {
         list py_fleet_plans;
-        std::vector<FleetPlan*> fleet_plans;
-        parse::fleet_plans(fleet_plans);
+        auto fleet_plans = parse::fleet_plans();
         for (FleetPlan* fleet_plan : fleet_plans) {
             py_fleet_plans.append(new FleetPlanWrapper(fleet_plan));
         }
@@ -536,8 +533,7 @@ namespace {
 
     list LoadMonsterFleetPlanList() {
         list py_monster_fleet_plans;
-        std::vector<MonsterFleetPlan*> monster_fleet_plans;
-        parse::monster_fleet_plans(monster_fleet_plans);
+        auto monster_fleet_plans = parse::monster_fleet_plans();
         for (auto* fleet_plan : monster_fleet_plans) {
             py_monster_fleet_plans.append(new MonsterFleetPlanWrapper(fleet_plan));
         }

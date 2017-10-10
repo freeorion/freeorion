@@ -47,7 +47,9 @@ namespace {
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_parttype_, insert_parttype, 9)
 
     struct rules {
-        rules() {
+        rules(const std::string& filename,
+              const parse::text_iterator& first, const parse::text_iterator& last)
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -115,7 +117,7 @@ namespace {
             debug(part_type);
 #endif
 
-            qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
+            qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
         typedef parse::detail::rule<
@@ -148,13 +150,13 @@ namespace {
 }
 
 namespace parse {
-    bool ship_parts(std::map<std::string, std::unique_ptr<PartType>>& parts) {
-        bool result = true;
+    std::map<std::string, std::unique_ptr<PartType>> ship_parts() {
+        std::map<std::string, std::unique_ptr<PartType>> parts;
 
         for (const auto& file : ListScripts("scripting/ship_parts")) {
-            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<PartType>>>(file, parts);
+            /*auto success =*/ detail::parse_file<rules, std::map<std::string, std::unique_ptr<PartType>>>(file, parts);
         }
 
-        return result;
+        return parts;
     }
 }

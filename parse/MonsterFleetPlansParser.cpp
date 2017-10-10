@@ -30,7 +30,9 @@ namespace {
     const boost::phoenix::function<new_monster_fleet_plan_> new_monster_fleet_plan;
 
     struct rules {
-        rules() {
+        rules(const std::string& filename,
+              const parse::text_iterator& first, const parse::text_iterator& last)
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -95,7 +97,7 @@ namespace {
             debug(monster_fleet_plan);
 #endif
 
-            qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
+            qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
         typedef parse::detail::rule<> generic_rule;
@@ -125,8 +127,10 @@ namespace {
 }
 
 namespace parse {
-    bool monster_fleet_plans(std::vector<MonsterFleetPlan*>& monster_fleet_plans_) {
+    std::vector<MonsterFleetPlan*> monster_fleet_plans() {
+        std::vector<MonsterFleetPlan*> monster_fleet_plans_;
         boost::filesystem::path path = GetResourceDir() / "scripting/monster_fleets.inf";
-        return detail::parse_file<rules, std::vector<MonsterFleetPlan*>>(path, monster_fleet_plans_);
+        /*auto success =*/ detail::parse_file<rules, std::vector<MonsterFleetPlan*>>(path, monster_fleet_plans_);
+        return monster_fleet_plans_;
     }
 }

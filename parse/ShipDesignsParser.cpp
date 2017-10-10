@@ -66,7 +66,9 @@ namespace {
     BOOST_PHOENIX_ADAPT_FUNCTION(boost::uuids::uuid, parse_uuid_, parse_uuid, 1)
 
     struct rules {
-        rules() {
+        rules(const std::string& filename,
+              const parse::text_iterator& first, const parse::text_iterator& last)
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -135,7 +137,7 @@ namespace {
             debug(design);
 #endif
 
-            qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
+            qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
         using design_prefix_rule = parse::detail::rule<
@@ -164,7 +166,9 @@ namespace {
     };
 
     struct manifest_rules {
-        manifest_rules() {
+        manifest_rules(const std::string& filename,
+              const parse::text_iterator& first, const parse::text_iterator& last)
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -193,7 +197,7 @@ namespace {
             debug(design_manifest);
 #endif
 
-            qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
+            qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
         using manifest_rule = parse::detail::rule<void (std::vector<boost::uuids::uuid>&)>;
@@ -206,16 +210,19 @@ namespace {
 }
 
 namespace parse {
-    bool ship_designs(const boost::filesystem::path& path,
-                      std::vector<std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>>& designs_and_paths,
-                      std::vector<boost::uuids::uuid>& ordering)
-    {
+    std::pair<
+        std::vector<std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>>, // designs_and_paths
+        std::vector<boost::uuids::uuid> //ordering
+        >
+    ship_designs(const boost::filesystem::path& path) {
+        std::vector<std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>> designs_and_paths;
+        std::vector<boost::uuids::uuid> ordering;
+
         boost::filesystem::path manifest_file;
 
         // Allow files with any suffix in order to convert legacy ShipDesign files.
         bool permissive_mode = true;
         const auto& scripts = ListScripts(path, permissive_mode);
-        bool result = true;
 
         for (const auto& file : scripts) {
             if (file.filename() == "ShipDesignOrdering.focs.txt" ) {
@@ -226,48 +233,55 @@ namespace parse {
             try {
                 boost::optional<std::unique_ptr<ShipDesign>> maybe_design;
                 auto partial_result = detail::parse_file<rules, boost::optional<std::unique_ptr<ShipDesign>>>(file, maybe_design);
-                result &= partial_result;
                 if (!partial_result || !maybe_design)
                     continue;
                 designs_and_paths.push_back({std::move(*maybe_design), file});
 
             } catch (const std::runtime_error& e) {
-                result = false;
                 ErrorLogger() << "Failed to parse ship design in " << file << " from " << path << " because " << e.what();;
             }
         }
 
         if (!manifest_file.empty()) {
             try {
-                result &= detail::parse_file<manifest_rules, std::vector<boost::uuids::uuid>>(manifest_file, ordering);
+                /*auto success =*/ detail::parse_file<manifest_rules, std::vector<boost::uuids::uuid>>(manifest_file, ordering);
             } catch (const std::runtime_error& e) {
-                result = false;
                 ErrorLogger() << "Failed to parse ship design manifest in " << manifest_file << " from " << path
                               << " because " << e.what();;
             }
         }
 
-        return result;
+        return {std::move(designs_and_paths), ordering};
     }
 }
 namespace {
     /** Remove the file paths from the returned ShipDesigns.*/
-    bool only_ship_designs(const boost::filesystem::path& path,
-                           std::vector<std::unique_ptr<ShipDesign>>& designs,
-                           std::vector<boost::uuids::uuid>& ordering)
-    {
-        std::vector<std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>> designs_and_paths;
-        auto result = parse::ship_designs(path,  designs_and_paths, ordering);
-        for (auto& design_and_path : designs_and_paths)
+    std::pair<
+        std::vector<std::unique_ptr<ShipDesign>>, // designs
+        std::vector<boost::uuids::uuid> // ordering
+        >
+    only_ship_designs(const boost::filesystem::path& path) {
+        auto design_paths_and_ordering = parse::ship_designs(path);
+
+        std::vector<std::unique_ptr<ShipDesign>> designs;
+        for (auto& design_and_path : design_paths_and_ordering.first)
             designs.push_back(std::move(design_and_path.first));
-        return result;
+        return {std::move(designs), design_paths_and_ordering.second};
     }
 }
 
 namespace parse {
-    bool ship_designs(std::vector<std::unique_ptr<ShipDesign>>& designs, std::vector<boost::uuids::uuid>& ordering)
-    { return only_ship_designs("scripting/ship_designs",  designs, ordering); }
+    std::pair<
+        std::vector<std::unique_ptr<ShipDesign>>, // designs
+        std::vector<boost::uuids::uuid> // ordering
+        >
+    ship_designs()
+    { return only_ship_designs("scripting/ship_designs"); }
 
-    bool monster_designs(std::vector<std::unique_ptr<ShipDesign>>& designs, std::vector<boost::uuids::uuid>& ordering)
-    { return only_ship_designs("scripting/monster_designs", designs, ordering); }
+    std::pair<
+        std::vector<std::unique_ptr<ShipDesign>>, // designs
+        std::vector<boost::uuids::uuid> // ordering
+        >
+    monster_designs()
+    { return only_ship_designs("scripting/monster_designs"); }
 }

@@ -45,7 +45,9 @@ namespace {
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_hulltype_, insert_hulltype, 7)
 
     struct rules {
-        rules() {
+        rules(const std::string& filename,
+              const parse::text_iterator& first, const parse::text_iterator& last)
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -125,7 +127,7 @@ namespace {
             debug(hull);
 #endif
 
-            qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
+            qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
         typedef parse::detail::rule<
@@ -176,13 +178,13 @@ namespace {
 }
 
 namespace parse {
-    bool ship_hulls(std::map<std::string, std::unique_ptr<HullType>>& hulls) {
-        bool result = true;
+    std::map<std::string, std::unique_ptr<HullType>> ship_hulls() {
+        std::map<std::string, std::unique_ptr<HullType>> hulls;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/ship_hulls")) {
-            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<HullType>>>(file, hulls);
+            /*auto success =*/ detail::parse_file<rules, std::map<std::string, std::unique_ptr<HullType>>>(file, hulls);
         }
 
-        return result;
+        return hulls;
     }
 }

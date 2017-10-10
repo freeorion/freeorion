@@ -359,7 +359,7 @@ TechManager::TechManager() {
     std::set<std::string> categories_seen_in_techs;
 
     try {
-        parse::techs(m_techs, m_categories, categories_seen_in_techs);
+        std::tie(m_techs, m_categories, categories_seen_in_techs) = parse::techs();
     } catch (const std::exception& e) {
         ErrorLogger() << "Failed parsing techs: error: " << e.what();
         throw e;
@@ -431,8 +431,6 @@ TechManager::TechManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
-
-    DebugLogger() << "TechManager checksum: " << GetCheckSum();
 }
 
 std::string TechManager::FindIllegalDependencies() {
@@ -620,6 +618,7 @@ unsigned int TechManager::GetCheckSum() const {
         CheckSums::CheckSumCombine(retval, tech);
     CheckSums::CheckSumCombine(retval, m_techs.size());
 
+    DebugLogger() << "TechManager checksum: " << retval;
     return retval;
 }
 

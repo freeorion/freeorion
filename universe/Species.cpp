@@ -359,7 +359,7 @@ SpeciesManager::SpeciesManager() {
     ScopedTimer timer("SpeciesManager Init", true, std::chrono::milliseconds(1));
 
     try {
-        parse::species(m_species);
+        m_species = parse::species();
     } catch (const std::exception& e) {
         ErrorLogger() << "Failed parsing species: error: " << e.what();
         throw e;
@@ -388,8 +388,6 @@ SpeciesManager::SpeciesManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
-
-    DebugLogger() << "SpeciesManager checksum: " << GetCheckSum();
 }
 
 const Species* SpeciesManager::GetSpecies(const std::string& name) const {
@@ -593,6 +591,7 @@ unsigned int SpeciesManager::GetCheckSum() const {
         CheckSums::CheckSumCombine(retval, name_type_pair);
     CheckSums::CheckSumCombine(retval, m_species.size());
 
+    DebugLogger() << "SpeciesManager checksum: " << retval;
     return retval;
 }
 

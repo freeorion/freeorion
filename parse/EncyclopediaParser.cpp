@@ -17,16 +17,20 @@ namespace std {
 #endif
 
 namespace {
+    using ArticleMap = std::map<std::string, std::vector<EncyclopediaArticle>>;
+
     struct insert_ {
         typedef void result_type;
 
-        void operator()(Encyclopedia& enc, const EncyclopediaArticle& article) const
-        { enc.articles[article.category].push_back(article); }
+        void operator()(ArticleMap& articles, const EncyclopediaArticle& article) const
+        { articles[article.category].push_back(article); }
     };
     const boost::phoenix::function<insert_> insert;
 
     struct rules {
-        rules() {
+        rules(const std::string& filename,
+              const parse::text_iterator& first, const parse::text_iterator& last)
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -64,11 +68,11 @@ namespace {
             debug(article);
 #endif
 
-            qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
+            qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
         typedef parse::detail::rule<
-            void (Encyclopedia&),
+            void (ArticleMap&),
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
@@ -78,7 +82,7 @@ namespace {
         > strings_rule;
 
         typedef parse::detail::rule<
-            void (Encyclopedia&)
+            void (ArticleMap&)
         > start_rule;
 
 
@@ -88,15 +92,14 @@ namespace {
 }
 
 namespace parse {
-    bool encyclopedia_articles(Encyclopedia& enc) {
-        bool result = true;
-
+    ArticleMap encyclopedia_articles() {
         std::vector<boost::filesystem::path> file_list = ListScripts("scripting/encyclopedia");
 
+        ArticleMap articles;
         for (const boost::filesystem::path& file : file_list) {
-            result &= detail::parse_file<rules, Encyclopedia>(file, enc);
+            /*auto success =*/ detail::parse_file<rules, ArticleMap>(file, articles);
         }
 
-        return result;
+        return articles;
     }
 }

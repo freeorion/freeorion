@@ -17,7 +17,9 @@ namespace std {
 
 namespace {
     struct rules {
-        rules() {
+        rules(const std::string& filename,
+              const parse::text_iterator& first, const parse::text_iterator& last)
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -35,7 +37,7 @@ namespace {
 
             start.name("start");
 
-            qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
+            qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
         typedef parse::detail::rule<
@@ -47,13 +49,17 @@ namespace {
 }
 
 namespace parse {
-    bool items(std::vector<ItemSpec>& items_) {
+    std::vector<ItemSpec> items() {
+        std::vector<ItemSpec> items_;
         const boost::filesystem::path& path = GetResourceDir() / "scripting/starting_unlocks/items.inf";
-        return detail::parse_file<rules, std::vector<ItemSpec>>(path, items_);
+        /*auto success =*/ detail::parse_file<rules, std::vector<ItemSpec>>(path, items_);
+        return items_;
     }
 
-    bool starting_buildings(std::vector<ItemSpec>& starting_buildings_) {
+    std::vector<ItemSpec> starting_buildings() {
+        std::vector<ItemSpec> starting_buildings_;
         const boost::filesystem::path& path = GetResourceDir() / "scripting/starting_unlocks/buildings.inf";
-        return detail::parse_file<rules, std::vector<ItemSpec> >(path, starting_buildings_);
+        /*auto success =*/ detail::parse_file<rules, std::vector<ItemSpec> >(path, starting_buildings_);
+        return starting_buildings_;
     }
 }

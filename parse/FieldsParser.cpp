@@ -37,7 +37,9 @@ namespace {
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_fieldtype_, insert_fieldtype, 7)
 
     struct rules {
-        rules() {
+        rules(const std::string& filename,
+              const parse::text_iterator& first, const parse::text_iterator& last)
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -77,7 +79,7 @@ namespace {
             debug(field);
 #endif
 
-            qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
+            qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
         typedef parse::detail::rule<
@@ -101,13 +103,13 @@ namespace {
 }
 
 namespace parse {
-    bool fields(std::map<std::string, std::unique_ptr<FieldType>>& field_types) {
-        bool result = true;
+    std::map<std::string, std::unique_ptr<FieldType>> fields() {
+        std::map<std::string, std::unique_ptr<FieldType>> field_types;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/fields")) {
-            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<FieldType>>>(file, field_types);
+            /*auto success =*/ detail::parse_file<rules, std::map<std::string, std::unique_ptr<FieldType>>>(file, field_types);
         }
 
-        return result;
+        return field_types;
     }
 }
