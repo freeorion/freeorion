@@ -3370,14 +3370,14 @@ class ruleType(Enum):
 
     int = None  # ruleType(-1, "int")
     toggle = None  # ruleType(0, "toggle")
-    None = None  # ruleType(1, "None")
+    none = None  # ruleType(1, "None")
     double = None  # ruleType(2, "double")
     string = None  # ruleType(3, "string")
 
 
 ruleType.int = ruleType(-1, "int")
 ruleType.toggle = ruleType(0, "toggle")
-ruleType.None = ruleType(1, "None")
+ruleType.none = ruleType(1, "None")
 ruleType.double = ruleType(2, "double")
 ruleType.string = ruleType(3, "string")
 
