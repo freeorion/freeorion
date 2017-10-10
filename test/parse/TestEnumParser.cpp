@@ -5,11 +5,48 @@
 #include "parse/ValueRefParserImpl.h"
 #include "universe/Enums.h"
 
+#include <type_traits>
+
+namespace {
+    // File scope lexer since: 1) initializing the lexer deterministic finite
+    // automaton (DFA) is slow; 2) the tests are single threaded and
+    // non-concurrent.
+    const parse::lexer lexer;
+}
 
 struct EnumParserFixture {
-    template <class Type>
-    bool parse(std::string phrase, Type& result, parse::enum_rule<Type>& rule) {
-        const parse::lexer& lexer = lexer.instance();
+    template <typename Grammar>
+    Grammar& make_grammar(
+        const parse::lexer& lexer,
+        typename std::enable_if<std::is_constructible<Grammar, const parse::lexer&>::value, std::nullptr_t>::type = nullptr)
+    {
+        static Grammar grammar(lexer);
+        return grammar;
+    }
+
+    template <typename Grammar>
+    Grammar& make_grammar(
+        const parse::lexer& lexer,
+        typename std::enable_if<std::is_constructible<Grammar, const parse::lexer&, parse::detail::Labeller&>::value, std::nullptr_t>::type = nullptr)
+    {
+        parse::detail::Labeller labeller(lexer);
+        static Grammar grammar(lexer, labeller);
+        return grammar;
+    }
+
+    template <typename Grammar>
+    Grammar& make_grammar(
+        const parse::lexer& lexer,
+        typename std::enable_if<std::is_constructible<Grammar, const parse::lexer&, parse::detail::Labeller&, const parse::detail::condition_parser_grammar&>::value, std::nullptr_t>::type = nullptr)
+    {
+        parse::detail::Labeller labeller(lexer);
+        parse::conditions_parser_grammar cond(lexer, labeller);
+        static Grammar grammar(lexer, labeller, cond);
+        return grammar;
+    }
+
+    template <typename Type, typename Grammar>
+    bool parse_core(std::string phrase, Type& result, const parse::lexer& lexer, Grammar& grammar) {
         boost::spirit::qi::in_state_type in_state;
         boost::spirit::qi::eoi_type eoi;
         boost::spirit::qi::_1_type _1;
@@ -22,634 +59,296 @@ struct EnumParserFixture {
 
         bool matched = boost::spirit::qi::phrase_parse(
             begin, end,
-            rule[boost::phoenix::ref(result) = _1] > eoi,
+            grammar[boost::phoenix::ref(result) = _1] > eoi,
             in_state("WS")[lexer.self]
         );
 
         return matched && begin == end;
     }
+
+    template <typename Type, typename Grammar>
+    bool parse(std::string phrase, Type& result) {
+        Grammar& grammar = make_grammar<Grammar>(lexer);
+        return parse_core(phrase, result, lexer, grammar);
+    }
+
+    template <typename Type, typename Rules>
+    bool parse_enum_expr(std::string phrase, Type& result) {
+        Rules& rules = make_grammar<Rules>(lexer);
+        return parse_core(phrase, result, lexer, rules.enum_expr);
+    }
 };
 
 BOOST_FIXTURE_TEST_SUITE(TestEnumParser, EnumParserFixture)
 
+#define CHECK_ENUM_AND_RESULT(string, expected, result_type, grammar_type) \
+    {                                                                   \
+        result_type result;                                             \
+        auto pass = parse<result_type, grammar_type>(string, result);   \
+        BOOST_CHECK(pass);                                              \
+        BOOST_CHECK(result == expected);                                \
+    }
+
+#define CHECK_ENUM_EXPR_AND_RESULT(string, expected, result_type, grammar_type) \
+    {                                                                   \
+        result_type result;                                             \
+        auto pass = parse_enum_expr<result_type, grammar_type>(string, result); \
+        BOOST_CHECK(pass);                                              \
+        BOOST_CHECK(result == expected);                                \
+    }
+
+#define CHECK_FAILED_ENUM(result_type, grammar_type)                    \
+    {                                                                   \
+        result_type result;                                             \
+        auto pass = parse<result_type, grammar_type>("ThisEnumerationDoesNotExist", result); \
+        BOOST_CHECK(!pass);                                             \
+    }
+
+#define CHECK_FAILED_ENUM_EXPR(result_type, grammar_type)               \
+    {                                                                   \
+        result_type result;                                             \
+        auto pass = parse_enum_expr<result_type, grammar_type>("ThisEnumerationDoesNotExist", result); \
+        BOOST_CHECK(!pass);                                             \
+    }
+
 BOOST_AUTO_TEST_CASE(CaptureResultParser) {
-    CaptureResult result;
-
     // XXX: No enum number value to validate enum coverage.
-
-    BOOST_CHECK(parse("Capture", result, parse::capture_result_enum()));
-    BOOST_CHECK(result == CR_CAPTURE);
-
-    BOOST_CHECK(parse("Destroy", result, parse::capture_result_enum()));
-    BOOST_CHECK(result == CR_DESTROY);
-
-    BOOST_CHECK(parse("Retain", result, parse::capture_result_enum()));
-    BOOST_CHECK(result == CR_RETAIN);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = INVALID_CAPTURE_RESULT;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::capture_result_enum()));
-    BOOST_CHECK(result == INVALID_CAPTURE_RESULT);
+    CHECK_ENUM_AND_RESULT("Capture", CR_CAPTURE, CaptureResult, parse::capture_result_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Destroy", CR_DESTROY, CaptureResult, parse::capture_result_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Retain", CR_RETAIN, CaptureResult, parse::capture_result_enum_grammar);
+    CHECK_FAILED_ENUM(CaptureResult, parse::capture_result_enum_grammar);
 }
 
 BOOST_AUTO_TEST_CASE(EmpireAffiliationTypeParser) {
-    EmpireAffiliationType result;
-
     // Literal is number of tests, not number of enums.
     BOOST_REQUIRE_MESSAGE(NUM_AFFIL_TYPES == 7, "Untested enumeration value.");
 
-    BOOST_CHECK(parse("TheEmpire", result, parse::empire_affiliation_type_enum()));
-    BOOST_CHECK(result == AFFIL_SELF);
-
-    BOOST_CHECK(parse("EnemyOf", result, parse::empire_affiliation_type_enum()));
-    BOOST_CHECK(result == AFFIL_ENEMY);
-
-    BOOST_CHECK(parse("AllyOf", result, parse::empire_affiliation_type_enum()));
-    BOOST_CHECK(result == AFFIL_ALLY);
-
-    BOOST_CHECK(parse("AnyEmpire", result, parse::empire_affiliation_type_enum()));
-    BOOST_CHECK(result == AFFIL_ANY);
-
-    BOOST_CHECK(parse("None", result, parse::empire_affiliation_type_enum()));
-    BOOST_CHECK(result == AFFIL_NONE);
-
-    BOOST_CHECK(parse("CanSee", result, parse::empire_affiliation_type_enum()));
-    BOOST_CHECK(result == AFFIL_CAN_SEE);
-
-    BOOST_CHECK(parse("HUMAN", result, parse::empire_affiliation_type_enum()));
-    BOOST_CHECK(result == AFFIL_HUMAN);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = INVALID_EMPIRE_AFFIL_TYPE;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::empire_affiliation_type_enum()));
-    BOOST_CHECK(result == INVALID_EMPIRE_AFFIL_TYPE);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = NUM_AFFIL_TYPES;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::empire_affiliation_type_enum()));
-    BOOST_CHECK(result == NUM_AFFIL_TYPES);
+    CHECK_ENUM_AND_RESULT("TheEmpire", AFFIL_SELF, EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
+    CHECK_ENUM_AND_RESULT("EnemyOf", AFFIL_ENEMY, EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
+    CHECK_ENUM_AND_RESULT("AllyOf", AFFIL_ALLY, EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
+    CHECK_ENUM_AND_RESULT("AnyEmpire", AFFIL_ANY, EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
+    CHECK_ENUM_AND_RESULT("None", AFFIL_NONE, EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
+    CHECK_ENUM_AND_RESULT("CanSee", AFFIL_CAN_SEE, EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
+    CHECK_ENUM_AND_RESULT("HUMAN", AFFIL_HUMAN, EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
+    CHECK_FAILED_ENUM(EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
 }
 
 BOOST_AUTO_TEST_CASE(NonShipPartMeterTypeParser) {
-    MeterType result;
-
     // XXX: METER_SIZE not handled, still used?
     // XXX: HAPPINESS meters not handled, still used?
     // XXX: REBEL_TROOPS meters not handled, still used?
     // XXX: No enum number value to validate enum coverage.
     //      Maybe the Meter enum should be split.
 
-    BOOST_CHECK(parse("TargetPopulation", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_TARGET_POPULATION);
-    BOOST_CHECK(parse("SetTargetPopulation", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_TARGET_POPULATION);
+    CHECK_ENUM_AND_RESULT("TargetPopulation", METER_TARGET_POPULATION, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetTargetPopulation", METER_TARGET_POPULATION, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("TargetIndustry", METER_TARGET_INDUSTRY, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetTargetIndustry", METER_TARGET_INDUSTRY, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("TargetResearch", METER_TARGET_RESEARCH, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetTargetResearch", METER_TARGET_RESEARCH, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("TargetTrade", METER_TARGET_TRADE, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetTargetTrade", METER_TARGET_TRADE, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("TargetConstruction", METER_TARGET_CONSTRUCTION, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetTargetConstruction", METER_TARGET_CONSTRUCTION, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("MaxFuel", METER_MAX_FUEL, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetMaxFuel", METER_MAX_FUEL, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("MaxShield", METER_MAX_SHIELD, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetMaxShield", METER_MAX_SHIELD, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("MaxStructure", METER_MAX_STRUCTURE, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetMaxStructure", METER_MAX_STRUCTURE, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("MaxDefense", METER_MAX_DEFENSE, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetMaxDefense", METER_MAX_DEFENSE, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("MaxTroops", METER_MAX_TROOPS, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetMaxTroops", METER_MAX_TROOPS, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Population", METER_POPULATION, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetPopulation", METER_POPULATION, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Industry", METER_INDUSTRY, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetIndustry", METER_INDUSTRY, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Research", METER_RESEARCH, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetResearch", METER_RESEARCH, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Trade", METER_TRADE, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetTrade", METER_TRADE, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Construction", METER_CONSTRUCTION, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetConstruction", METER_CONSTRUCTION, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Fuel", METER_FUEL, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetFuel", METER_FUEL, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Shield", METER_SHIELD, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetShield", METER_SHIELD, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Structure", METER_STRUCTURE, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetStructure", METER_STRUCTURE, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Defense", METER_DEFENSE, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetDefense", METER_DEFENSE, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Troops", METER_TROOPS, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetTroops", METER_TROOPS, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Supply", METER_SUPPLY, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetSupply", METER_SUPPLY, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Stealth", METER_STEALTH, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetStealth", METER_STEALTH, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Detection", METER_DETECTION, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetDetection", METER_DETECTION, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Speed", METER_SPEED, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetSpeed", METER_SPEED, MeterType, parse::set_non_ship_part_meter_enum_grammar);
 
-    BOOST_CHECK(parse("TargetIndustry", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_TARGET_INDUSTRY);
-    BOOST_CHECK(parse("SetTargetIndustry", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_TARGET_INDUSTRY);
-
-    BOOST_CHECK(parse("TargetResearch", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_TARGET_RESEARCH);
-    BOOST_CHECK(parse("SetTargetResearch", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_TARGET_RESEARCH);
-
-    BOOST_CHECK(parse("TargetTrade", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_TARGET_TRADE);
-    BOOST_CHECK(parse("SetTargetTrade", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_TARGET_TRADE);
-
-    BOOST_CHECK(parse("TargetConstruction", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_TARGET_CONSTRUCTION);
-    BOOST_CHECK(parse("SetTargetConstruction", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_TARGET_CONSTRUCTION);
-
-    BOOST_CHECK(parse("MaxFuel", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_MAX_FUEL);
-    BOOST_CHECK(parse("SetMaxFuel", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_MAX_FUEL);
-
-    BOOST_CHECK(parse("MaxShield", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_MAX_SHIELD);
-    BOOST_CHECK(parse("SetMaxShield", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_MAX_SHIELD);
-
-    BOOST_CHECK(parse("MaxStructure", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_MAX_STRUCTURE);
-    BOOST_CHECK(parse("SetMaxStructure", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_MAX_STRUCTURE);
-
-    BOOST_CHECK(parse("MaxDefense", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_MAX_DEFENSE);
-    BOOST_CHECK(parse("SetMaxDefense", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_MAX_DEFENSE);
-
-    BOOST_CHECK(parse("MaxTroops", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_MAX_TROOPS);
-    BOOST_CHECK(parse("SetMaxTroops", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_MAX_TROOPS);
-
-    BOOST_CHECK(parse("Population", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_POPULATION);
-    BOOST_CHECK(parse("SetPopulation", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_POPULATION);
-
-    BOOST_CHECK(parse("Industry", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_INDUSTRY);
-    BOOST_CHECK(parse("SetIndustry", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_INDUSTRY);
-
-    BOOST_CHECK(parse("Research", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_RESEARCH);
-    BOOST_CHECK(parse("SetResearch", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_RESEARCH);
-
-    BOOST_CHECK(parse("Trade", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_TRADE);
-    BOOST_CHECK(parse("SetTrade", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_TRADE);
-
-    BOOST_CHECK(parse("Construction", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_CONSTRUCTION);
-    BOOST_CHECK(parse("SetConstruction", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_CONSTRUCTION);
-
-    BOOST_CHECK(parse("Fuel", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_FUEL);
-    BOOST_CHECK(parse("SetFuel", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_FUEL);
-
-    BOOST_CHECK(parse("Shield", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_SHIELD);
-    BOOST_CHECK(parse("SetShield", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_SHIELD);
-
-    BOOST_CHECK(parse("Structure", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_STRUCTURE);
-    BOOST_CHECK(parse("SetStructure", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_STRUCTURE);
-
-    BOOST_CHECK(parse("Defense", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_DEFENSE);
-    BOOST_CHECK(parse("SetDefense", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_DEFENSE);
-
-    BOOST_CHECK(parse("Troops", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_TROOPS);
-    BOOST_CHECK(parse("SetTroops", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_TROOPS);
-
-    BOOST_CHECK(parse("Supply", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_SUPPLY);
-    BOOST_CHECK(parse("SetSupply", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_SUPPLY);
-
-    BOOST_CHECK(parse("Stealth", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_STEALTH);
-    BOOST_CHECK(parse("SetStealth", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_STEALTH);
-
-    BOOST_CHECK(parse("Detection", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_DETECTION);
-    BOOST_CHECK(parse("SetDetection", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_DETECTION);
-
-    BOOST_CHECK(parse("Speed", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_SPEED);
-    BOOST_CHECK(parse("SetSpeed", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_SPEED);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = INVALID_METER_TYPE;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == INVALID_METER_TYPE);
-    result = INVALID_METER_TYPE;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == INVALID_METER_TYPE);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = NUM_METER_TYPES;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == NUM_METER_TYPES);
-    result = NUM_METER_TYPES;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::set_non_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == NUM_METER_TYPES);
+    CHECK_FAILED_ENUM(MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_FAILED_ENUM(MeterType, parse::set_non_ship_part_meter_enum_grammar);
 }
 
-BOOST_AUTO_TEST_CASE(PlanetEnvironmentParser) {
-    PlanetEnvironment result;
-
+BOOST_AUTO_TEST_CASE(PlanetEnvironmentEnumParser) {
     // Literal is number of tests, not number of enums.
     BOOST_REQUIRE_MESSAGE(NUM_PLANET_ENVIRONMENTS == 5, "Untested enumeration value.");
 
-    BOOST_CHECK(parse("Uninhabitable", result, parse::detail::planet_environment_rules().enum_expr));
-    BOOST_CHECK(result == PE_UNINHABITABLE);
-
-    BOOST_CHECK(parse("Hostile", result, parse::detail::planet_environment_rules().enum_expr));
-    BOOST_CHECK(result == PE_HOSTILE);
-
-    BOOST_CHECK(parse("Poor", result, parse::detail::planet_environment_rules().enum_expr));
-    BOOST_CHECK(result == PE_POOR);
-
-    BOOST_CHECK(parse("Adequate", result, parse::detail::planet_environment_rules().enum_expr));
-    BOOST_CHECK(result == PE_ADEQUATE);
-
-    BOOST_CHECK(parse("Good", result, parse::detail::planet_environment_rules().enum_expr));
-    BOOST_CHECK(result == PE_GOOD);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = INVALID_PLANET_ENVIRONMENT;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::detail::planet_environment_rules().enum_expr));
-    BOOST_CHECK(result == INVALID_PLANET_ENVIRONMENT);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = NUM_PLANET_ENVIRONMENTS;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::detail::planet_environment_rules().enum_expr));
-    BOOST_CHECK(result == NUM_PLANET_ENVIRONMENTS);
+    CHECK_ENUM_EXPR_AND_RESULT("Uninhabitable", PE_UNINHABITABLE, PlanetEnvironment, parse::detail::planet_environment_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Hostile", PE_HOSTILE, PlanetEnvironment, parse::detail::planet_environment_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Poor", PE_POOR, PlanetEnvironment, parse::detail::planet_environment_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Adequate", PE_ADEQUATE, PlanetEnvironment, parse::detail::planet_environment_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Good", PE_GOOD, PlanetEnvironment, parse::detail::planet_environment_parser_rules);
+    CHECK_FAILED_ENUM_EXPR(PlanetEnvironment, parse::detail::planet_environment_parser_rules);
 }
 
 BOOST_AUTO_TEST_CASE(PlanetSizeParser) {
-    PlanetSize result;
-
     // Literal is number of tests, not number of enums.
     // XXX: SZ_NOWORLD has no token, so no test, +1
     BOOST_REQUIRE_MESSAGE(NUM_PLANET_SIZES == 7 + 1, "Untested enumeration value.");
 
-    BOOST_CHECK(parse("Tiny", result, parse::detail::planet_size_rules().enum_expr));
-    BOOST_CHECK(result == SZ_TINY);
-
-    BOOST_CHECK(parse("Small", result, parse::detail::planet_size_rules().enum_expr));
-    BOOST_CHECK(result == SZ_SMALL);
-
-    BOOST_CHECK(parse("Medium", result, parse::detail::planet_size_rules().enum_expr));
-    BOOST_CHECK(result == SZ_MEDIUM);
-
-    BOOST_CHECK(parse("Large", result, parse::detail::planet_size_rules().enum_expr));
-    BOOST_CHECK(result == SZ_LARGE);
-
-    BOOST_CHECK(parse("Huge", result, parse::detail::planet_size_rules().enum_expr));
-    BOOST_CHECK(result == SZ_HUGE);
-
-    BOOST_CHECK(parse("Asteroids", result, parse::detail::planet_size_rules().enum_expr));
-    BOOST_CHECK(result == SZ_ASTEROIDS);
-
-    BOOST_CHECK(parse("GasGiant", result, parse::detail::planet_size_rules().enum_expr));
-    BOOST_CHECK(result == SZ_GASGIANT);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = INVALID_PLANET_SIZE;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::detail::planet_size_rules().enum_expr));
-    BOOST_CHECK(result == INVALID_PLANET_SIZE);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = NUM_PLANET_SIZES;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::detail::planet_size_rules().enum_expr));
-    BOOST_CHECK(result == NUM_PLANET_SIZES);
+    CHECK_ENUM_EXPR_AND_RESULT("Tiny", SZ_TINY, PlanetSize, parse::detail::planet_size_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Small", SZ_SMALL, PlanetSize, parse::detail::planet_size_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Medium", SZ_MEDIUM, PlanetSize, parse::detail::planet_size_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Large", SZ_LARGE, PlanetSize, parse::detail::planet_size_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Huge", SZ_HUGE, PlanetSize, parse::detail::planet_size_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Asteroids", SZ_ASTEROIDS, PlanetSize, parse::detail::planet_size_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("GasGiant", SZ_GASGIANT, PlanetSize, parse::detail::planet_size_parser_rules);
+    CHECK_FAILED_ENUM_EXPR(PlanetSize, parse::detail::planet_size_parser_rules);
 }
 
 BOOST_AUTO_TEST_CASE(PlanetTypeParser) {
-    PlanetType result;
-
     // Literal is number of tests, not number of enums.
     BOOST_REQUIRE_MESSAGE(NUM_PLANET_TYPES == 11, "Untested enumeration value.");
 
-    BOOST_CHECK(parse("Swamp", result, parse::detail::planet_type_rules().enum_expr));
-    BOOST_CHECK(result == PT_SWAMP);
-
-    BOOST_CHECK(parse("Toxic", result, parse::detail::planet_type_rules().enum_expr));
-    BOOST_CHECK(result == PT_TOXIC);
-
-    BOOST_CHECK(parse("Inferno", result, parse::detail::planet_type_rules().enum_expr));
-    BOOST_CHECK(result == PT_INFERNO);
-
-    BOOST_CHECK(parse("Radiated", result, parse::detail::planet_type_rules().enum_expr));
-    BOOST_CHECK(result == PT_RADIATED);
-
-    BOOST_CHECK(parse("Barren", result, parse::detail::planet_type_rules().enum_expr));
-    BOOST_CHECK(result == PT_BARREN);
-
-    BOOST_CHECK(parse("Tundra", result, parse::detail::planet_type_rules().enum_expr));
-    BOOST_CHECK(result == PT_TUNDRA);
-
-    BOOST_CHECK(parse("Desert", result, parse::detail::planet_type_rules().enum_expr));
-    BOOST_CHECK(result == PT_DESERT);
-
-    BOOST_CHECK(parse("Terran", result, parse::detail::planet_type_rules().enum_expr));
-    BOOST_CHECK(result == PT_TERRAN);
-
-    BOOST_CHECK(parse("Ocean", result, parse::detail::planet_type_rules().enum_expr));
-    BOOST_CHECK(result == PT_OCEAN);
-
-    BOOST_CHECK(parse("Asteroids", result, parse::detail::planet_type_rules().enum_expr));
-    BOOST_CHECK(result == PT_ASTEROIDS);
-
-    BOOST_CHECK(parse("GasGiant", result, parse::detail::planet_type_rules().enum_expr));
-    BOOST_CHECK(result == PT_GASGIANT);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = INVALID_PLANET_TYPE;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::detail::planet_type_rules().enum_expr));
-    BOOST_CHECK(result == INVALID_PLANET_TYPE);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = NUM_PLANET_TYPES;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::detail::planet_type_rules().enum_expr));
-    BOOST_CHECK(result == NUM_PLANET_TYPES);
+    CHECK_ENUM_EXPR_AND_RESULT("Swamp", PT_SWAMP, PlanetType, parse::detail::planet_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Toxic", PT_TOXIC, PlanetType, parse::detail::planet_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Inferno", PT_INFERNO, PlanetType, parse::detail::planet_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Radiated", PT_RADIATED, PlanetType, parse::detail::planet_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Barren", PT_BARREN, PlanetType, parse::detail::planet_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Tundra", PT_TUNDRA, PlanetType, parse::detail::planet_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Desert", PT_DESERT, PlanetType, parse::detail::planet_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Terran", PT_TERRAN, PlanetType, parse::detail::planet_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Ocean", PT_OCEAN, PlanetType, parse::detail::planet_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Asteroids", PT_ASTEROIDS, PlanetType, parse::detail::planet_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("GasGiant", PT_GASGIANT, PlanetType, parse::detail::planet_type_parser_rules);
+    CHECK_FAILED_ENUM_EXPR(PlanetType, parse::detail::planet_type_parser_rules);
 }
 
 BOOST_AUTO_TEST_CASE(ShipPartsClassParser) {
-    ShipPartClass result;
-
     // Literal is number of tests, not number of enums.
     BOOST_REQUIRE_MESSAGE(NUM_SHIP_PART_CLASSES == 17, "Untested enumeration value.");
 
-    BOOST_CHECK(parse("ShortRange", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == PC_DIRECT_WEAPON);
-
-    BOOST_CHECK(parse("FighterBay", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == PC_FIGHTER_BAY);
-
-    BOOST_CHECK(parse("FighterHangar", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == PC_FIGHTER_HANGAR);
-
-    BOOST_CHECK(parse("Shield", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == PC_SHIELD);
-
-    BOOST_CHECK(parse("Armour", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == PC_ARMOUR);
-
-    BOOST_CHECK(parse("Troops", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == PC_TROOPS);
-
-    BOOST_CHECK(parse("Detection", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == PC_DETECTION);
-
-    BOOST_CHECK(parse("Stealth", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == PC_STEALTH);
-
-    BOOST_CHECK(parse("Fuel", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == PC_FUEL);
-
-    BOOST_CHECK(parse("Colony", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == PC_COLONY);
-
-    BOOST_CHECK(parse("Speed", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == PC_SPEED);
-
-    BOOST_CHECK(parse("General", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == PC_GENERAL);
-
-    BOOST_CHECK(parse("Bombard", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == PC_BOMBARD);
-
-    BOOST_CHECK(parse("Industry", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == PC_INDUSTRY);
-
-    BOOST_CHECK(parse("Research", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == PC_RESEARCH);
-
-    BOOST_CHECK(parse("Trade", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == PC_TRADE);
-
-    BOOST_CHECK(parse("ProductionLocation", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == PC_PRODUCTION_LOCATION);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = INVALID_SHIP_PART_CLASS;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == INVALID_SHIP_PART_CLASS);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = NUM_SHIP_PART_CLASSES;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::ship_part_class_enum()));
-    BOOST_CHECK(result == NUM_SHIP_PART_CLASSES);
+    CHECK_ENUM_AND_RESULT("ShortRange", PC_DIRECT_WEAPON, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_ENUM_AND_RESULT("FighterBay", PC_FIGHTER_BAY, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_ENUM_AND_RESULT("FighterHangar", PC_FIGHTER_HANGAR, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Shield", PC_SHIELD, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Armour", PC_ARMOUR, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Troops", PC_TROOPS, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Detection", PC_DETECTION, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Stealth", PC_STEALTH, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Fuel", PC_FUEL, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Colony", PC_COLONY, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Speed", PC_SPEED, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_ENUM_AND_RESULT("General", PC_GENERAL, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Bombard", PC_BOMBARD, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Industry", PC_INDUSTRY, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Research", PC_RESEARCH, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Trade", PC_TRADE, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_ENUM_AND_RESULT("ProductionLocation", PC_PRODUCTION_LOCATION, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_FAILED_ENUM(ShipPartClass, parse::ship_part_class_enum_grammar);
 }
 
 BOOST_AUTO_TEST_CASE(ShipPartMeterTypeParser) {
-    MeterType result;
-
     // XXX: No enum number value to validate enum coverage.
     //      Maybe the Meter enum should be split.
 
-    BOOST_CHECK(parse("Damage", result, parse::ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_CAPACITY);
-    BOOST_CHECK(parse("SetDamage", result, parse::set_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_CAPACITY);
-
-    BOOST_CHECK(parse("Capacity", result, parse::ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_CAPACITY);
-    BOOST_CHECK(parse("SetCapacity", result, parse::set_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_CAPACITY);
-
-    BOOST_CHECK(parse("MaxDamage", result, parse::ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_MAX_CAPACITY);
-    BOOST_CHECK(parse("SetMaxDamage", result, parse::set_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_MAX_CAPACITY);
-
-    BOOST_CHECK(parse("MaxCapacity", result, parse::ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_MAX_CAPACITY);
-    BOOST_CHECK(parse("SetMaxCapacity", result, parse::set_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_MAX_CAPACITY);
-
-    BOOST_CHECK(parse("SetSecondaryStat", result, parse::set_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_SECONDARY_STAT);
-
-    BOOST_CHECK(parse("SetMaxSecondaryStat", result, parse::set_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == METER_MAX_SECONDARY_STAT);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = INVALID_METER_TYPE;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::set_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == INVALID_METER_TYPE);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = NUM_METER_TYPES;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::set_ship_part_meter_type_enum()));
-    BOOST_CHECK(result == NUM_METER_TYPES);
+    CHECK_ENUM_AND_RESULT("Damage", METER_CAPACITY, MeterType, parse::ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetDamage", METER_CAPACITY, MeterType, parse::set_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Capacity", METER_CAPACITY, MeterType, parse::ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetCapacity", METER_CAPACITY, MeterType, parse::set_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("MaxDamage", METER_MAX_CAPACITY, MeterType, parse::ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetMaxDamage", METER_MAX_CAPACITY, MeterType, parse::set_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("MaxCapacity", METER_MAX_CAPACITY, MeterType, parse::ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetMaxCapacity", METER_MAX_CAPACITY, MeterType, parse::set_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetSecondaryStat", METER_SECONDARY_STAT, MeterType, parse::set_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetMaxSecondaryStat", METER_MAX_SECONDARY_STAT, MeterType, parse::set_ship_part_meter_enum_grammar);
+    CHECK_FAILED_ENUM(MeterType, parse::ship_part_meter_enum_grammar);
+    CHECK_FAILED_ENUM(MeterType, parse::set_ship_part_meter_enum_grammar);
 }
 
 BOOST_AUTO_TEST_CASE(ShipSlotTypeParser) {
-    ShipSlotType result;
-
     // Literal is number of tests, not number of enums.
     BOOST_REQUIRE_MESSAGE(NUM_SHIP_SLOT_TYPES == 3, "Untested enumeration value.");
 
-    BOOST_CHECK(parse("External", result, parse::ship_slot_type_enum()));
-    BOOST_CHECK(result == SL_EXTERNAL);
-
-    BOOST_CHECK(parse("Internal", result, parse::ship_slot_type_enum()));
-    BOOST_CHECK(result == SL_INTERNAL);
-
-    BOOST_CHECK(parse("Core", result, parse::ship_slot_type_enum()));
-    BOOST_CHECK(result == SL_CORE);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = INVALID_SHIP_SLOT_TYPE;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::ship_slot_type_enum()));
-    BOOST_CHECK(result == INVALID_SHIP_SLOT_TYPE);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = NUM_SHIP_SLOT_TYPES;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::ship_slot_type_enum()));
-    BOOST_CHECK(result == NUM_SHIP_SLOT_TYPES);
+    CHECK_ENUM_AND_RESULT("External", SL_EXTERNAL, ShipSlotType, parse::ship_slot_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Internal", SL_INTERNAL, ShipSlotType, parse::ship_slot_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Core", SL_CORE, ShipSlotType, parse::ship_slot_enum_grammar);
+    CHECK_FAILED_ENUM(ShipSlotType, parse::ship_slot_enum_grammar);
 }
 
 BOOST_AUTO_TEST_CASE(StatisticTypeParser) {
-    ValueRef::StatisticType result;
-
     // XXX: No enum number value to validate enum coverage.
 
-    BOOST_CHECK(parse("Count", result, parse::statistic_type_enum()));
-    BOOST_CHECK(result == ValueRef::COUNT);
-
-    BOOST_CHECK(parse("Sum", result, parse::statistic_type_enum()));
-    BOOST_CHECK(result == ValueRef::SUM);
-
-    BOOST_CHECK(parse("Mean", result, parse::statistic_type_enum()));
-    BOOST_CHECK(result == ValueRef::MEAN);
-
-    BOOST_CHECK(parse("Rms", result, parse::statistic_type_enum()));
-    BOOST_CHECK(result == ValueRef::RMS);
-
-    BOOST_CHECK(parse("Mode", result, parse::statistic_type_enum()));
-    BOOST_CHECK(result == ValueRef::MODE);
-
-    BOOST_CHECK(parse("Max", result, parse::statistic_type_enum()));
-    BOOST_CHECK(result == ValueRef::MAX);
-
-    BOOST_CHECK(parse("Min", result, parse::statistic_type_enum()));
-    BOOST_CHECK(result == ValueRef::MIN);
-
-    BOOST_CHECK(parse("Spread", result, parse::statistic_type_enum()));
-    BOOST_CHECK(result == ValueRef::SPREAD);
-
-    BOOST_CHECK(parse("StDev", result, parse::statistic_type_enum()));
-    BOOST_CHECK(result == ValueRef::STDEV);
-
-    BOOST_CHECK(parse("Product", result, parse::statistic_type_enum()));
-    BOOST_CHECK(result == ValueRef::PRODUCT);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = ValueRef::INVALID_STATISTIC_TYPE;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::statistic_type_enum()));
-    BOOST_CHECK(result == ValueRef::INVALID_STATISTIC_TYPE);
+    CHECK_ENUM_AND_RESULT("Count", ValueRef::COUNT, ValueRef::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Sum", ValueRef::SUM, ValueRef::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Mean", ValueRef::MEAN, ValueRef::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Rms", ValueRef::RMS, ValueRef::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Mode", ValueRef::MODE, ValueRef::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Max", ValueRef::MAX, ValueRef::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Min", ValueRef::MIN, ValueRef::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Spread", ValueRef::SPREAD, ValueRef::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("StDev", ValueRef::STDEV, ValueRef::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Product", ValueRef::PRODUCT, ValueRef::StatisticType, parse::statistic_enum_grammar);
+    CHECK_FAILED_ENUM(ValueRef::StatisticType, parse::statistic_enum_grammar);
 }
 
 BOOST_AUTO_TEST_CASE(StarTypeParser) {
-    StarType result;
-
     // Literal is number of tests, not number of enums.
     BOOST_REQUIRE_MESSAGE(NUM_STAR_TYPES == 8, "Untested enumeration value.");
 
-    BOOST_CHECK(parse("Blue", result, parse::detail::star_type_rules().enum_expr));
-    BOOST_CHECK(result == STAR_BLUE);
-
-    BOOST_CHECK(parse("White", result, parse::detail::star_type_rules().enum_expr));
-    BOOST_CHECK(result == STAR_WHITE);
-
-    BOOST_CHECK(parse("Yellow", result, parse::detail::star_type_rules().enum_expr));
-    BOOST_CHECK(result == STAR_YELLOW);
-
-    BOOST_CHECK(parse("Orange", result, parse::detail::star_type_rules().enum_expr));
-    BOOST_CHECK(result == STAR_ORANGE);
-
-    BOOST_CHECK(parse("Red", result, parse::detail::star_type_rules().enum_expr));
-    BOOST_CHECK(result == STAR_RED);
-
-    BOOST_CHECK(parse("Neutron", result, parse::detail::star_type_rules().enum_expr));
-    BOOST_CHECK(result == STAR_NEUTRON);
-
-    BOOST_CHECK(parse("BlackHole", result, parse::detail::star_type_rules().enum_expr));
-    BOOST_CHECK(result == STAR_BLACK);
-
-    BOOST_CHECK(parse("NoStar", result, parse::detail::star_type_rules().enum_expr));
-    BOOST_CHECK(result == STAR_NONE);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = INVALID_STAR_TYPE;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::detail::star_type_rules().enum_expr));
-    BOOST_CHECK(result == INVALID_STAR_TYPE);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = NUM_STAR_TYPES;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::detail::star_type_rules().enum_expr));
-    BOOST_CHECK(result == NUM_STAR_TYPES);
+    CHECK_ENUM_EXPR_AND_RESULT("Blue", STAR_BLUE, StarType, parse::detail::star_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("White", STAR_WHITE, StarType, parse::detail::star_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Yellow", STAR_YELLOW, StarType, parse::detail::star_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Orange", STAR_ORANGE, StarType, parse::detail::star_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Red", STAR_RED, StarType, parse::detail::star_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Neutron", STAR_NEUTRON, StarType, parse::detail::star_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("BlackHole", STAR_BLACK, StarType, parse::detail::star_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("NoStar", STAR_NONE, StarType, parse::detail::star_type_parser_rules);
+    CHECK_FAILED_ENUM_EXPR(StarType, parse::detail::star_type_parser_rules);
 }
 
 BOOST_AUTO_TEST_CASE(UnlockableItemTypeParser)
 {
-    UnlockableItemType result;
-
     // Literal is number of tests, not number of enums.
     BOOST_REQUIRE_MESSAGE(NUM_UNLOCKABLE_ITEM_TYPES == 5, "Untested enumeration value.");
 
-    BOOST_CHECK(parse("Building", result, parse::unlockable_item_type_enum()));
-    BOOST_CHECK(result == UIT_BUILDING);
-
-    BOOST_CHECK(parse("ShipPart", result, parse::unlockable_item_type_enum()));
-    BOOST_CHECK(result == UIT_SHIP_PART);
-
-    BOOST_CHECK(parse("ShipHull", result, parse::unlockable_item_type_enum()));
-    BOOST_CHECK(result == UIT_SHIP_HULL);
-
-    BOOST_CHECK(parse("ShipDesign", result, parse::unlockable_item_type_enum()));
-    BOOST_CHECK(result == UIT_SHIP_DESIGN);
-
-    BOOST_CHECK(parse("Tech", result, parse::unlockable_item_type_enum()));
-    BOOST_CHECK(result == UIT_TECH);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = INVALID_UNLOCKABLE_ITEM_TYPE;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::unlockable_item_type_enum()));
-    BOOST_CHECK(result == INVALID_UNLOCKABLE_ITEM_TYPE);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = NUM_UNLOCKABLE_ITEM_TYPES;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::unlockable_item_type_enum()));
-    BOOST_CHECK(result == NUM_UNLOCKABLE_ITEM_TYPES);
+    CHECK_ENUM_AND_RESULT("Building", UIT_BUILDING, UnlockableItemType, parse::unlockable_item_enum_grammar);
+    CHECK_ENUM_AND_RESULT("ShipPart", UIT_SHIP_PART, UnlockableItemType, parse::unlockable_item_enum_grammar);
+    CHECK_ENUM_AND_RESULT("ShipHull", UIT_SHIP_HULL, UnlockableItemType, parse::unlockable_item_enum_grammar);
+    CHECK_ENUM_AND_RESULT("ShipDesign", UIT_SHIP_DESIGN, UnlockableItemType, parse::unlockable_item_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Tech", UIT_TECH, UnlockableItemType, parse::unlockable_item_enum_grammar);
+    CHECK_FAILED_ENUM(UnlockableItemType, parse::unlockable_item_enum_grammar);
 }
 
 BOOST_AUTO_TEST_CASE(UniverseObjectTypeParser)
 {
-    UniverseObjectType result;
-
     // Literal is number of tests, not number of enums.
     // XXX: OBJ_FIGHTER has no token, so no test, +1
     BOOST_REQUIRE_MESSAGE(NUM_OBJ_TYPES == 8 + 1, "Untested enumeration value.");
 
-    BOOST_CHECK(parse("Building", result, parse::detail::universe_object_type_rules().enum_expr));
-    BOOST_CHECK(result == OBJ_BUILDING);
-
-    BOOST_CHECK(parse("Ship", result, parse::detail::universe_object_type_rules().enum_expr));
-    BOOST_CHECK(result == OBJ_SHIP);
-
-    BOOST_CHECK(parse("Fleet ", result, parse::detail::universe_object_type_rules().enum_expr));
-    BOOST_CHECK(result == OBJ_FLEET );
-
-    BOOST_CHECK(parse("Planet", result, parse::detail::universe_object_type_rules().enum_expr));
-    BOOST_CHECK(result == OBJ_PLANET);
-
-    BOOST_CHECK(parse("PopulationCenter", result, parse::detail::universe_object_type_rules().enum_expr));
-    BOOST_CHECK(result == OBJ_POP_CENTER);
-
-    BOOST_CHECK(parse("ProductionCenter", result, parse::detail::universe_object_type_rules().enum_expr));
-    BOOST_CHECK(result == OBJ_PROD_CENTER);
-
-    BOOST_CHECK(parse("System", result, parse::detail::universe_object_type_rules().enum_expr));
-    BOOST_CHECK(result == OBJ_SYSTEM);
-
-    BOOST_CHECK(parse("Field", result, parse::detail::universe_object_type_rules().enum_expr));
-    BOOST_CHECK(result == OBJ_FIELD);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = INVALID_UNIVERSE_OBJECT_TYPE;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::detail::universe_object_type_rules().enum_expr));
-    BOOST_CHECK(result == INVALID_UNIVERSE_OBJECT_TYPE);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = NUM_OBJ_TYPES;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::detail::universe_object_type_rules().enum_expr));
-    BOOST_CHECK(result == NUM_OBJ_TYPES);
+    CHECK_ENUM_EXPR_AND_RESULT("Building", OBJ_BUILDING, UniverseObjectType, parse::detail::universe_object_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Ship", OBJ_SHIP, UniverseObjectType, parse::detail::universe_object_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Fleet ", OBJ_FLEET , UniverseObjectType, parse::detail::universe_object_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Planet", OBJ_PLANET, UniverseObjectType, parse::detail::universe_object_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("PopulationCenter", OBJ_POP_CENTER, UniverseObjectType, parse::detail::universe_object_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("ProductionCenter", OBJ_PROD_CENTER, UniverseObjectType, parse::detail::universe_object_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("System", OBJ_SYSTEM, UniverseObjectType, parse::detail::universe_object_type_parser_rules);
+    CHECK_ENUM_EXPR_AND_RESULT("Field", OBJ_FIELD, UniverseObjectType, parse::detail::universe_object_type_parser_rules);
+    CHECK_FAILED_ENUM_EXPR(UniverseObjectType, parse::detail::universe_object_type_parser_rules);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

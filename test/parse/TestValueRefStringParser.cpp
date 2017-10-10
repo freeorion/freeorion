@@ -30,7 +30,7 @@ struct ValueRefStringFixture {
 
         bool matched = boost::spirit::qi::phrase_parse(
             begin, end,
-            parse::string_value_ref()[boost::phoenix::ref(result) = _1] > eoi,
+            string_grammar[boost::phoenix::ref(result) = _1] > eoi,
             in_state("WS")[lexer.self]
         );
 

@@ -28,7 +28,9 @@ namespace {
     const boost::phoenix::function<insert_> insert;
 
     struct rules {
-        rules(const std::string& filename,
+        rules(const parse::lexer& tok,
+              parse::detail::Labeller& labeller,
+              const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
             namespace phoenix = boost::phoenix;
@@ -46,15 +48,13 @@ namespace {
             qi::_d_type _d;
             qi::_r1_type _r1;
 
-            const parse::lexer& tok = parse::lexer::instance();
-
             article
                 =    tok.Article_
-                >    parse::detail::label(Name_token)                > tok.string [ _a = _1 ]
-                >    parse::detail::label(Category_token)            > tok.string [ _b = _1 ]
-                >    parse::detail::label(Short_Description_token)   > tok.string [ _c = _1 ]
-                >    parse::detail::label(Description_token)         > tok.string [ _d = _1 ]
-                >    parse::detail::label(Icon_token)                > tok.string
+                >    labeller.rule(Name_token)                > tok.string [ _a = _1 ]
+                >    labeller.rule(Category_token)            > tok.string [ _b = _1 ]
+                >    labeller.rule(Short_Description_token)   > tok.string [ _c = _1 ]
+                >    labeller.rule(Description_token)         > tok.string [ _d = _1 ]
+                >    labeller.rule(Icon_token)                > tok.string
                     [ insert(_r1, construct<EncyclopediaArticle>(_a, _b, _c, _d, _1)) ]
                 ;
 

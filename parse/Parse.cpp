@@ -28,108 +28,6 @@ namespace std {
 #endif
 
 namespace {
-    struct tags_rules {
-        tags_rules() {
-            namespace phoenix = boost::phoenix;
-            namespace qi = boost::spirit::qi;
-
-            using phoenix::insert;
-
-            qi::_1_type _1;
-            qi::_r1_type _r1;
-
-            const parse::lexer& tok = parse::lexer::instance();
-
-            start
-                =  -(
-                        parse::detail::label(Tags_token)
-                    >>  (
-                            ('[' > +tok.string [ insert(_r1, _1) ] > ']')
-                            |   tok.string [ insert(_r1, _1) ]
-                        )
-                    )
-                ;
-
-            start.name("Tags");
-
-#if DEBUG_PARSERS
-            debug(start);
-#endif
-        }
-
-        parse::detail::tags_rule start;
-    };
-
-    struct effects_group_rules {
-        effects_group_rules() {
-            namespace phoenix = boost::phoenix;
-            namespace qi = boost::spirit::qi;
-
-            using phoenix::construct;
-            using phoenix::new_;
-            using phoenix::push_back;
-
-            qi::_1_type _1;
-            qi::_a_type _a;
-            qi::_b_type _b;
-            qi::_c_type _c;
-            qi::_d_type _d;
-            qi::_e_type _e;
-            qi::_f_type _f;
-            qi::_g_type _g;
-            qi::_val_type _val;
-            qi::lit_type lit;
-            qi::eps_type eps;
-
-            const parse::lexer& tok = parse::lexer::instance();
-
-            effects_group
-                =   tok.EffectsGroup_
-                > -(parse::detail::label(Description_token)      > tok.string [ _g = _1 ])
-                >   parse::detail::label(Scope_token)            > parse::detail::condition_parser [ _a = _1 ]
-                > -(parse::detail::label(Activation_token)       > parse::detail::condition_parser [ _b = _1 ])
-                > -(parse::detail::label(StackingGroup_token)    > tok.string [ _c = _1 ])
-                > -(parse::detail::label(AccountingLabel_token)  > tok.string [ _e = _1 ])
-                > ((parse::detail::label(Priority_token)         > tok.int_ [ _f = _1 ]) | eps [ _f = 100 ])
-                >   parse::detail::label(Effects_token)
-                >   (
-                            ('[' > +parse::effect_parser() [ push_back(_d, _1) ] > ']')
-                        |    parse::effect_parser() [ push_back(_d, _1) ]
-                    )
-                    [ _val = new_<Effect::EffectsGroup>(_a, _b, _d, _e, _c, _f, _g) ]
-                ;
-
-            start
-                =    ('[' > +effects_group [ push_back(_val, construct<std::shared_ptr<Effect::EffectsGroup>>(_1)) ] > ']')
-                |     effects_group [ push_back(_val, construct<std::shared_ptr<Effect::EffectsGroup>>(_1)) ]
-                ;
-
-            effects_group.name("EffectsGroup");
-            start.name("EffectsGroups");
-
-#if DEBUG_PARSERS
-            debug(effects_group);
-            debug(start);
-#endif
-        }
-
-        typedef parse::detail::rule<
-            Effect::EffectsGroup* (),
-            boost::spirit::qi::locals<
-                Condition::ConditionBase*,
-                Condition::ConditionBase*,
-                std::string,
-                std::vector<Effect::EffectBase*>,
-                std::string,
-                int,
-                std::string
-            >
-        > effects_group_rule;
-
-        effects_group_rule effects_group;
-        parse::detail::effects_group_rule start;
-    };
-
     struct color_parser_rules {
         color_parser_rules() {
             namespace phoenix = boost::phoenix;
@@ -183,34 +81,6 @@ namespace {
         parse::detail::color_parser_rule start;
     };
 
-    struct item_spec_parser_rules {
-        item_spec_parser_rules() {
-            namespace phoenix = boost::phoenix;
-            namespace qi = boost::spirit::qi;
-
-            using phoenix::construct;
-
-            qi::_1_type _1;
-            qi::_a_type _a;
-            qi::_val_type _val;
-
-            const parse::lexer& tok = parse::lexer::instance();
-
-            start
-                =    tok.Item_
-                >    parse::detail::label(Type_token) > parse::unlockable_item_type_enum() [ _a = _1 ]
-                >    parse::detail::label(Name_token) > tok.string [ _val = construct<ItemSpec>(_a, _1) ]
-                ;
-
-            start.name("ItemSpec");
-
-#if DEBUG_PARSERS
-            debug(start);
-#endif
-        }
-
-        parse::detail::item_spec_parser_rule start;
-    };
 }
 
 namespace parse {
@@ -244,10 +114,6 @@ namespace parse {
         debug(detail::int_);
         debug(detail::double_);
 #endif
-
-        int_value_ref();
-
-        condition_parser();
     }
 
     using namespace boost::xpressive;
@@ -585,8 +451,30 @@ namespace parse {
 
         int_rule int_;
 
+        Labeller::Labeller(const parse::lexer& tok_) :
+            m_tok(tok_),
+            m_rules()
+        {};
+
+        #define PARSING_LABELS_OPTIONAL false
+        label_rule& Labeller::rule(const char* name) {
+            auto it = m_rules.find(name);
+            if (it == m_rules.end()) {
+                label_rule& retval = m_rules[name];
+                if (PARSING_LABELS_OPTIONAL) {
+                    retval = -(m_tok.name_token(name) >> '=');
+                } else {
+                    retval =  (m_tok.name_token(name) >> '=');
+                }
+                retval.name(std::string(name) + " =");
+                return retval;
+            } else {
+                return it->second;
+            }
+        }
+
+    // TODO remove this version of label with the singleton rules
         label_rule& label(const char* name) {
-            static const bool PARSING_LABELS_OPTIONAL = false;
             static std::map<const char*, label_rule> rules;
             std::map<const char*, label_rule>::iterator it = rules.find(name);
             if (it == rules.end()) {
@@ -604,25 +492,69 @@ namespace parse {
             }
         }
 
-        tags_rule& tags_parser() {
-            static tags_rules rules;
-            return rules.start;
-        }
+    tags_grammar::tags_grammar(const parse::lexer& tok,
+                               Labeller& labeller) :
+        tags_grammar::base_type(start, "tags_grammar")
+    {
+        namespace phoenix = boost::phoenix;
+        namespace qi = boost::spirit::qi;
 
-        effects_group_rule& effects_group_parser() {
-            static effects_group_rules rules;
-            return rules.start;
-        }
+        using phoenix::insert;
+
+        qi::_1_type _1;
+        qi::_r1_type _r1;
+
+        start
+            =  -(
+                labeller.rule(Tags_token)
+                >>  (
+                    ('[' > +tok.string [ insert(_r1, _1) ] > ']')
+                    |   tok.string [ insert(_r1, _1) ]
+                )
+            )
+            ;
+
+        start.name("Tags");
+
+#if DEBUG_PARSERS
+        debug(start);
+#endif
+    }
 
         color_parser_rule& color_parser() {
             static color_parser_rules rules;
             return rules.start;
         }
 
-        item_spec_parser_rule& item_spec_parser() {
-            static item_spec_parser_rules rules;
-            return rules.start;
-        }
+    item_spec_grammar::item_spec_grammar(
+        const parse::lexer& tok,
+        Labeller& labeller
+    ) :
+        item_spec_grammar::base_type(start, "item_spec_grammar"),
+        unlockable_item_type_enum(tok)
+    {
+        namespace phoenix = boost::phoenix;
+        namespace qi = boost::spirit::qi;
+
+        using phoenix::construct;
+
+        qi::_1_type _1;
+        qi::_a_type _a;
+        qi::_val_type _val;
+
+        start
+            =    tok.Item_
+            >    labeller.rule(Type_token) > unlockable_item_type_enum [ _a = _1 ]
+            >    labeller.rule(Name_token) > tok.string [ _val = construct<ItemSpec>(_a, _1) ]
+            ;
+
+        start.name("ItemSpec");
+
+#if DEBUG_PARSERS
+        debug(start);
+#endif
+    }
+
 
         /** \brief Load and parse script file(s) from given path
          * 

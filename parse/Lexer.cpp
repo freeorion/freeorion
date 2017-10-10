@@ -139,7 +139,7 @@ const lexer& lexer::instance() {
 }
 
 const boost::spirit::lex::token_def<const char*>& lexer::name_token(const char* name) const {
-    std::map<const char*, boost::spirit::lex::token_def<const char*>*>::const_iterator it = m_name_tokens.find(name);
+    auto it = m_name_tokens.find(name);
     assert(it != m_name_tokens.end());
     return *it->second;
 }

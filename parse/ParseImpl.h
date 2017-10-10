@@ -12,6 +12,14 @@
 #include <GG/Clr.h>
 
 
+namespace Condition {
+    struct ConditionBase;
+}
+
+namespace Effect {
+    class EffectBase;
+}
+
 namespace parse { namespace detail {
 
     /// A functor to determine if \p key will be unique in \p map of \p type, and log an error otherwise.
@@ -48,6 +56,16 @@ namespace parse { namespace detail {
         locals
     >;
 
+    template <
+        typename signature = boost::spirit::qi::unused_type,
+        typename locals = boost::spirit::qi::unused_type
+    >
+    using grammar = boost::spirit::qi::grammar<
+        parse::token_iterator,
+        parse::skipper_type,
+        signature,
+        locals
+    >;
 
     using double_rule = detail::rule<
         double ()
@@ -61,21 +79,32 @@ namespace parse { namespace detail {
     extern int_rule int_;
 
 
-    typedef detail::rule<> label_rule;
-    label_rule& label(const char* name);
+    using label_rule = detail::rule<>;
+    /** Store label_rules. */
+    class Labeller {
+        public:
+        Labeller(const parse::lexer& tok_);
 
+        /** Retrieve or create a label rule for \p name.*/
+        label_rule& rule(const char* name);
+        private:
+        const parse::lexer& m_tok;
+        std::unordered_map<const char*, label_rule> m_rules;
+    };
 
-    typedef rule<
-        void (std::set<std::string>&)
-    > tags_rule;
-    tags_rule& tags_parser();
+    template <typename T>
+    using enum_rule = detail::rule<T ()>;
+    template <typename T>
+    using enum_grammar = detail::grammar<T ()>;
 
+    using tags_rule_type    = rule<void (std::set<std::string>&)>;
+    using tags_grammar_type = grammar<void (std::set<std::string>&)>;
 
-    typedef rule<
-        std::vector<std::shared_ptr<Effect::EffectsGroup>> ()
-    > effects_group_rule;
-    effects_group_rule& effects_group_parser();
-
+    struct tags_grammar : public tags_grammar_type {
+        tags_grammar(const parse::lexer& tok,
+                     Labeller& labeller);
+        tags_rule_type start;
+    };
 
     typedef rule<
         GG::Clr (),
@@ -86,14 +115,6 @@ namespace parse { namespace detail {
         >
     > color_parser_rule;
     color_parser_rule& color_parser();
-
-
-    typedef rule<
-        ItemSpec (),
-        boost::spirit::qi::locals<UnlockableItemType>
-    > item_spec_parser_rule;
-    item_spec_parser_rule& item_spec_parser();
-
 
     void parse_file_common(const boost::filesystem::path& path,
                            const lexer& lexer,
@@ -122,7 +143,8 @@ namespace parse { namespace detail {
 
         boost::spirit::qi::in_state_type in_state;
 
-        Rules rules(filename, first, last);
+        detail::Labeller labeller(lexer);
+        Rules rules(lexer, labeller, filename, first, last);
 
         bool success = boost::spirit::qi::phrase_parse(it, lexer.end(), rules.start(boost::phoenix::ref(arg1)), in_state("WS")[lexer.self]);
 

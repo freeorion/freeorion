@@ -43,7 +43,9 @@ namespace {
     const boost::phoenix::function<insert_key_map_> insert_key_map;
 
     struct rules {
-        rules(const std::string& filename,
+        rules(const parse::lexer& tok,
+              parse::detail::Labeller& labeller,
+              const std::string& filename,
               const parse::text_iterator& first, const parse::text_iterator& last)
         {
             namespace phoenix = boost::phoenix;
@@ -59,8 +61,6 @@ namespace {
             qi::_b_type _b;
             qi::_r1_type _r1;
 
-            const parse::lexer& tok = parse::lexer::instance();
-
             int_pair
                 =   tok.int_ [ _a = _1 ] >> tok.int_ [ _b = _1 ]
                     [ insert_key_pair(_r1, construct<Keymap::value_type>(_a, _b)) ]
@@ -68,8 +68,8 @@ namespace {
 
             keymap
                 =   tok.Keymap_
-                >   parse::detail::label(Name_token) > tok.string [ _a = _1 ]
-                >   parse::detail::label(Keys_token)
+                >   labeller.rule(Name_token) > tok.string [ _a = _1 ]
+                >   labeller.rule(Keys_token)
                 >   ( '[' > *(int_pair(_b)) > ']' )
                     [ insert_key_map(_r1, construct<NamedKeymaps::value_type>(_a, _b)) ]
                 ;
