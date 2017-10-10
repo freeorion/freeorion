@@ -211,7 +211,7 @@ namespace FreeOrionPython {
             .value("random",        RANDOM)
         ;
         enum_<GameRules::RuleType>("ruleType")
-            .value("invalid",       GameRules::INVALID_RULE_TYPE);
+            .value("invalid",       GameRules::INVALID_RULE_TYPE)
             .value("toggle",        GameRules::TOGGLE)
             .value("int",           GameRules::INT)
             .value("double",        GameRules::DOUBLE)
