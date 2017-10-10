@@ -11794,7 +11794,7 @@ Concentration Camps
 BLD_CONC_CAMP_DESC
 '''Decreases the planet's population at a rate of 3 per turn, increases target [[metertype METER_INDUSTRY]] by 5 times the planet's population and sets the target [[metertype METER_HAPPINESS]] to 0.
 
-Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
+Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently.'''
 
 BLD_CONC_CAMP_REMNANT
 Concentration Camp Remnants
