@@ -11596,7 +11596,7 @@ Bioterror Projection Base
 BLD_BIOTERROR_PROJECTOR_DESC
 '''Gives the planet on which it is built the Bioterror focus, which decreases Population on enemy planets within 4 starlane jumps at a rate of 2 per turn, provided the enemy empire does not contain a Genome Bank.
 
-This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity. Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon. Ineffective if there is a [[buildingtype BLD_GENOME_BANK]] building in the enemy empire. This building can also be built at an [[encyclopedia OUTPOSTS_TITLE]], provided it has a [[special RESONANT_MOON_SPECIAL]].'''
+This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity. Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon. Ineffective if there is a [[buildingtype BLD_GENOME_BANK]] building in the enemy empire. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], provided it has a [[special RESONANT_MOON_SPECIAL]].'''
 
 BLD_LIGHTHOUSE
 Interstellar Lighthouse
@@ -11758,7 +11758,7 @@ BLD_NEST_ERADICATOR
 Nest Eradicator
 
 BLD_NEST_ERADICATOR_DESC
-Eradicates a [[encyclopedia KRAKEN_NEST_SPECIAL]], [[encyclopedia SNOWFLAKE_NEST_SPECIAL]], or [[encyclopedia JUGGERNAUT_NEST_SPECIAL]] from the planet it is built on. It may be built at an [[encyclopedia OUTPOSTS_TITLE]].
+Eradicates a [[encyclopedia KRAKEN_NEST_SPECIAL]], [[encyclopedia SNOWFLAKE_NEST_SPECIAL]], or [[encyclopedia JUGGERNAUT_NEST_SPECIAL]] from the planet it is built on. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].
 
 BLD_NEUTRONIUM_EXTRACTOR
 Neutronium Extractor
@@ -11790,7 +11790,7 @@ Concentration Camps
 BLD_CONC_CAMP_DESC
 '''Decreases the planet's population at a rate of 3 per turn, increases target [[metertype METER_INDUSTRY]] by 5 times the planet's population and sets the target [[metertype METER_HAPPINESS]] to 0.
 
-Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently. This building can be built on an [[encyclopedia OUTPOSTS_TITLE]].'''
+Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
 
 BLD_CONC_CAMP_REMNANT
 Concentration Camp Remnants
