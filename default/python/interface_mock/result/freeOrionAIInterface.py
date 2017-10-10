@@ -3368,16 +3368,16 @@ class ruleType(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    int = None  # ruleType(-1, "int")
+    invalid = None  # ruleType(-1, "invalid")
     toggle = None  # ruleType(0, "toggle")
-    None = None  # ruleType(1, "None")
+    int = None  # ruleType(1, "int")
     double = None  # ruleType(2, "double")
     string = None  # ruleType(3, "string")
 
 
-ruleType.int = ruleType(-1, "int")
+ruleType.invalid = ruleType(-1, "invalid")
 ruleType.toggle = ruleType(0, "toggle")
-ruleType.None = ruleType(1, "None")
+ruleType.int = ruleType(1, "int")
 ruleType.double = ruleType(2, "double")
 ruleType.string = ruleType(3, "string")
 
