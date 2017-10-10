@@ -267,6 +267,7 @@ Balance
 CONTENT
 Content
 
+
 ##
 ## Major errors
 ##
@@ -979,6 +980,7 @@ Password wrong for player name %1%.
 ERROR_CONNECTION_WAS_REPLACED
 Your connection was replaced.
 
+
 ##
 ## Game Rules
 ##
@@ -1078,6 +1080,7 @@ Starlanes Everywhere
 
 RULE_STARLANES_EVERYWHERE_DESC
 Starlanes are generated between every pair of systems, regardless of geometry. Lanes may still be removed during a game, however. Lanes are also not rendered on the galaxy map.
+
 
 ##
 ## Command-line and options database entries
@@ -1957,6 +1960,7 @@ Join a game
 REFRESH_LIST_BN
 Refresh list
 
+
 ##
 ## Password Dialog
 ##
@@ -1969,6 +1973,7 @@ This player name requires authentication. Reminder! Password will be transfered 
 
 PASSWORD_LABEL
 Password
+
 
 ##
 ## Multiplayer lobby
@@ -2815,7 +2820,6 @@ OPTIONS_CREATE_PERSISTENT_CONFIG_FAILURE
 Unable to create persistent_config.xml, check log file for details.
 
 
-
 ##
 ## Main map window
 ##
@@ -3522,6 +3526,7 @@ Give Planet To...
 ORDER_CANCEL_GIVE_PLANET
 Cancel Giving Planet
 
+
 ##
 ## Fleet Button
 ##
@@ -3534,6 +3539,7 @@ This fleet is currently being blockaded by a hostile fleet. It is unable to move
 
 FB_TOOLTIP_BLOCKADE_MONSTER
 This monster fleet is blockaded by an empire fleet. When monsters are blockaded by empire fleets, they are prevented from moving.
+
 
 ##
 ## Moderator
@@ -4135,6 +4141,7 @@ Select an existing Finished design, right click and select "[[DESIGN_SAVE]]" to 
 ERROR_UNABLE_TO_WRITE_FILE
 Unable to write file:\n"%1%"
 
+
 ##
 ## Statistics
 ##
@@ -4616,7 +4623,6 @@ pierced
 # %2% name of the unit attacked.
 ENC_COMBAT_ATTACK_SIMPLE_STR
 %1% attacks %2%
-
 
 # %1% number of repeated events.
 # %2% link to the attacking unit or empire.
@@ -5372,7 +5378,7 @@ There are four sub windows:  [[DESIGN_WND_STARTS]], [[DESIGN_WND_PART_PALETTE_TI
 
 [[DESIGN_WND_FINISHED_DESIGNS]] designs appear in the same order as on the Production Window.  The right click context menu provides several options.  Obsolete/unobsolete designs with "[[DESIGN_WND_OBSOLETE_DESIGN]]".  Ctrl click also obsoletes/unobsoletes designs.  Delete designs with "[[DESIGN_WND_DELETE_DESIGN]]".  Deleted designs can't be recovered. Ships already queued for production will continue to be built with the old obsolete/deleted design.  Rename designs with "[[DESIGN_RENAME]]".  Save designs to disk for future games with "[[DESIGN_SAVE]]".  Toggle the "[[DESIGN_WND_ADD_ALL_DEFAULT_START]]" option to use/not use the default designs in new games.
 
-Use the [[DESIGN_WND_SAVED_DESIGNS]] designs right click context menu to copy a single or all saved designs to the [[DESIGN_WND_FINISHED_DESIGNS]] designs. Ctrl click also copies a single design to the [[DESIGN_WND_FINISHED_DESIGNS]] designs.  Permanently remove a saved design with "[[DESIGN_WND_DELETE_SAVED]]".  Check "[[OPTIONS_ADD_SAVED_DESIGNS]]" to automaitcally import all the [[DESIGN_WND_SAVED_DESIGNS]] designs at the start of a new game.
+Use the [[DESIGN_WND_SAVED_DESIGNS]] designs right click context menu to copy a single or all saved designs to the [[DESIGN_WND_FINISHED_DESIGNS]] designs. Ctrl click also copies a single design to the [[DESIGN_WND_FINISHED_DESIGNS]] designs.  Permanently remove a saved design with "[[DESIGN_WND_DELETE_SAVED]]".  Check "[[OPTIONS_ADD_SAVED_DESIGNS]]" to automatically import all the [[DESIGN_WND_SAVED_DESIGNS]] designs at the start of a new game.
 
 
 [[DESIGN_WND_PART_PALETTE_TITLE]] displays parts. Parts whose associated technology has been researched may be used in current designs.  Other parts can not be used because either the associated technology has not been researched or the part is only available to monsters.
@@ -5534,7 +5540,7 @@ Configuration Guide
 
 CONFIG_GUIDE_TEXT
 '''Most configuration options for the game are stored and read from a single XML formatted file named config.xml.
-If this file does not exist (or is for a different build or version) it will be (re)created when the client starts. 
+If this file does not exist (or is for a different build or version), it will be (re)created when the client starts. 
 The configuration file is typically updated after a stored option is changed, but may be deferred until a later action (such as clicking Done or Apply).
 Some of these options can be changed from the [[OPTIONS_TITLE]] menu, under the Main Menu.
 
@@ -7060,12 +7066,11 @@ SP_REPLICON_DESC
 The Replicons look like a 3m tall robotic spider with wings. The wings are actually highly efficient solar panels that fold out to a relatively large area, the 'abdomen' is actually the 'industrial processing center' where replacement parts and new Replicons are forged.
 
 Social Structure:
-Replicons have a relatively primitive social structure. They have a planetary government, because a few feudal lords discovered space travel as a convenient way of attacking people really far away. Their government is effectively feudal, due to some unusual effects that allowed them to reach space flight before achieving the nationstate/industrial revolution stage of development. Because of the wide variety of self-replicating machines on Cisarruj, most needs that are met by industry on other worlds are met by 'agriculture' or 'breeding' by Replicons. They end up without any actual 'Industrial Base' or even much of an understanding of technology other than what verious 'natural' parts and products can be used for. This means that their society is highly illiterate, most people passing on knowledge that their pappies taught them on how to skin a "creature's" titanium coat, just enough so that it could grow it back or how much uranium ore to feed a reprocessing reactor if it was giving bad aluminum. Most things that normal 'developed' societies would expect are only present in the lord's estates, the remainder of society looks like something out of a post-apocalyptic novel. 
+Replicons have a relatively primitive social structure. They have a planetary government, because a few feudal lords discovered space travel as a convenient way of attacking people really far away. Their government is effectively feudal, due to some unusual effects that allowed them to reach space flight before achieving the nationstate/industrial revolution stage of development. Because of the wide variety of self-replicating machines on Cisarruj, most needs that are met by industry on other worlds are met by 'agriculture' or 'breeding' by Replicons. They end up without any actual 'Industrial Base' or even much of an understanding of technology other than what various 'natural' parts and products can be used for. This means that their society is highly illiterate, most people passing on knowledge that their pappies taught them on how to skin a "creature's" titanium coat, just enough so that it could grow it back or how much uranium ore to feed a reprocessing reactor if it was giving bad aluminum. Most things that normal 'developed' societies would expect are only present in the lord's estates, the remainder of society looks like something out of a post-apocalyptic novel. 
 
 Homeworld:
 Cisarruj is a heavily irradiated planet with a profound mystery about it. The planet is dominated by a wide variety of autonomous self replicating machines. There are recorded histories of who went to war with who when, and this is actually significant when dealing with the formation of the Cisarruj Empire. However, most simply reads like any other world's pre industrial history periods of powers large and small waxing and waning. The Mystery of the Replicons, however is in their prehistory. Did a sentient race assemble them as an experiment maybe, or were they some type of accident (an industrial development project left unsupervised) did their creators simply leave and forget about them, or did their creators meet a worse fate possibly at the hands of those beings they created.
 '''
-
 
 SP_EGASSEM
 Egassem
@@ -10991,7 +10996,6 @@ Death Ray 4
 SHP_WEAPON_4_4_DESC
 Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 30.
 
-
 SHP_ION_CANNON
 Ion Cannon
 
@@ -12245,8 +12249,7 @@ SR_WEAPON_2_1_DESC
 
 Upgrading the weapon technology will increase the shot damage.
 
-The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each laser weapon on a ship built by a species with the piloting trait will do an additional 2 damage per piloting level (-2 for Bad Pilots). Laser weapon damage can also be enhanced on [[shiphull SH_ORGANIC]] ships with a [[shippart SP_SOLAR_CONCENTRATOR]].
-'''
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each laser weapon on a ship built by a species with the piloting trait will do an additional 2 damage per piloting level (-2 for Bad Pilots). Laser weapon damage can also be enhanced on [[shiphull SH_ORGANIC]] ships with a [[shippart SP_SOLAR_CONCENTRATOR]].'''
 
 SR_WEAPON_3_1
 Plasma Cannons
@@ -13026,7 +13029,7 @@ Endosymbiotic Hull
 
 SH_ENDOSYMBIOTIC_DESC
 '''This living mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles.
-It has four external slots and three internal slots.4
+It has four external slots and three internal slots.
 
 The base hull is born with 5 [[metertype METER_STRUCTURE]], but grows an additional 15 structure over 30 turns.
 
