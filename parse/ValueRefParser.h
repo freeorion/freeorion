@@ -29,32 +29,32 @@ namespace parse { namespace detail {
     using condition_parser_rule    = rule<condition_signature>;
     using condition_parser_grammar = grammar<condition_signature>;
 
-using name_token_rule = rule<const char* ()>;
-using reference_token_rule = rule<ValueRef::ReferenceType ()>;
+    using name_token_rule = rule<const char* ()>;
+    using reference_token_rule = rule<ValueRef::ReferenceType ()>;
 
-template <typename T>
-using variable_rule = rule<
-    ValueRef::Variable<T>* (),
-    boost::spirit::qi::locals<
-        std::vector<std::string>,
-        ValueRef::ReferenceType
-    >
->;
+    template <typename T>
+    using variable_rule = rule<
+        ValueRef::Variable<T>* (),
+        boost::spirit::qi::locals<
+            std::vector<std::string>,
+            ValueRef::ReferenceType
+            >
+        >;
 
-template <typename T>
-struct simple_variable_rules
-{
-    simple_variable_rules(const std::string& type_name, const parse::lexer& tok);
+    template <typename T>
+    struct simple_variable_rules
+    {
+        simple_variable_rules(const std::string& type_name, const parse::lexer& tok);
 
-    name_token_rule bound_variable_name;
-    name_token_rule free_variable_name;
-    parse::value_ref_rule<T> constant;
-    variable_rule<T> free_variable;
-    variable_rule<T> bound_variable;
-    parse::value_ref_rule<T> simple;
-    reference_token_rule variable_scope_rule;
-    name_token_rule container_type_rule;
-};
+        name_token_rule bound_variable_name;
+        name_token_rule free_variable_name;
+        parse::value_ref_rule<T> constant;
+        variable_rule<T> free_variable;
+        variable_rule<T> bound_variable;
+        parse::value_ref_rule<T> simple;
+        reference_token_rule variable_scope_rule;
+        name_token_rule container_type_rule;
+    };
 
     template <typename T>
     using statistic_rule = rule<
@@ -96,13 +96,13 @@ struct simple_variable_rules
         parse::value_ref_rule<T> expr;
     };
 
-struct simple_int_parser_rules : public simple_variable_rules<int> {
-    simple_int_parser_rules(const parse::lexer& tok);
-};
+    struct simple_int_parser_rules : public simple_variable_rules<int> {
+        simple_int_parser_rules(const parse::lexer& tok);
+    };
 
-struct simple_double_parser_rules : public simple_variable_rules<double> {
-    simple_double_parser_rules(const parse::lexer& tok);
-};
+    struct simple_double_parser_rules : public simple_variable_rules<double> {
+        simple_double_parser_rules(const parse::lexer& tok);
+    };
 
     template <typename T>
     using complex_variable_signature = ValueRef::ComplexVariable<T>* ();
@@ -242,29 +242,29 @@ namespace parse {
         value_ref_rule<int> flexible_int;
     };
 
-namespace detail {
+    namespace detail {
 
-template <typename T>
-struct enum_value_ref_rules {
-    enum_value_ref_rules(const std::string& type_name,
-                         const lexer& tok,
-                         Labeller& labeller,
-                         const condition_parser_grammar& condition_parser);
+    template <typename T>
+    struct enum_value_ref_rules {
+        enum_value_ref_rules(const std::string& type_name,
+                             const lexer& tok,
+                             Labeller& labeller,
+                             const condition_parser_grammar& condition_parser);
 
-    name_token_rule variable_name;
-    detail::enum_rule<T> enum_expr;
-    value_ref_rule<T> constant_expr;
-    value_ref_rule<T> free_variable_expr;
-    variable_rule<T> bound_variable_expr;
-    expression_rule<T> functional_expr;
-    value_ref_rule<T> primary_expr;
-    value_ref_rule<T> statistic_sub_value_ref;
-    statistic_rule<T> statistic_expr;
-    complex_variable_rule<T> complex_expr;
-    value_ref_rule<T> expr;
-    reference_token_rule variable_scope_rule;
-    name_token_rule container_type_rule;
-};
+        name_token_rule variable_name;
+        detail::enum_rule<T> enum_expr;
+        value_ref_rule<T> constant_expr;
+        value_ref_rule<T> free_variable_expr;
+        variable_rule<T> bound_variable_expr;
+        expression_rule<T> functional_expr;
+        value_ref_rule<T> primary_expr;
+        value_ref_rule<T> statistic_sub_value_ref;
+        statistic_rule<T> statistic_expr;
+        complex_variable_rule<T> complex_expr;
+        value_ref_rule<T> expr;
+        reference_token_rule variable_scope_rule;
+        name_token_rule container_type_rule;
+    };
 
     struct planet_environment_parser_rules :
         public detail::enum_value_ref_rules<PlanetEnvironment>
