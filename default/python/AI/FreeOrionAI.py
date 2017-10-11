@@ -6,7 +6,6 @@ from common.configure_logging import redirect_logging_to_freeorion_logger, conve
 redirect_logging_to_freeorion_logger()
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger()
 
-import pickle  # Python object serialization library
 import sys
 import random
 
@@ -126,10 +125,11 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
         foAIstate = AIstate.AIstate(fo.aggression.aggressive)
         foAIstate.session_start_cleanup()
     else:
+        import SaveGameManager
         try:
             # loading saved state
             # pre load code
-            foAIstate = pickle.loads(saved_state_string)
+            foAIstate = SaveGameManager.load_savegame_string(saved_state_string)
         except Exception as e:
             # assigning new state
             foAIstate = AIstate.AIstate(fo.aggression.aggressive)
@@ -160,8 +160,12 @@ def prepareForSave():  # pylint: disable=invalid-name
     info("Preparing for game save by serializing state")
 
     # serialize (convert to string) global state dictionary and send to AI client to be stored in save file
+    import SaveGameManager
+    import pickle
+    from freeorion_tools import chat_human
     try:
-        dump_string = pickle.dumps(foAIstate)
+        dump_string = SaveGameManager.build_savegame_string()
+        chat_human("New-style: %d, Old-style: %d" % (len(dump_string), len(pickle.dumps(foAIstate))))
         print "foAIstate pickled to string, about to send to server"
         fo.setSaveStateString(dump_string)
     except:
