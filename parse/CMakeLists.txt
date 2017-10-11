@@ -6,6 +6,11 @@ target_sources(freeorionparseobj
         ${CMAKE_CURRENT_LIST_DIR}/ConditionParser.h
         ${CMAKE_CURRENT_LIST_DIR}/ConditionParserImpl.h
         ${CMAKE_CURRENT_LIST_DIR}/EffectParser.h
+        ${CMAKE_CURRENT_LIST_DIR}/EffectParser1.h
+        ${CMAKE_CURRENT_LIST_DIR}/EffectParser2.h
+        ${CMAKE_CURRENT_LIST_DIR}/EffectParser3.h
+        ${CMAKE_CURRENT_LIST_DIR}/EffectParser4.h
+        ${CMAKE_CURRENT_LIST_DIR}/EffectParser5.h
         ${CMAKE_CURRENT_LIST_DIR}/EffectParserImpl.h
         ${CMAKE_CURRENT_LIST_DIR}/EnumParser.h
         ${CMAKE_CURRENT_LIST_DIR}/Lexer.h

@@ -871,6 +871,11 @@
 		825936E1147E3B1B00B840A5 /* DoubleValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DoubleValueRefParser.cpp; sourceTree = "<group>"; };
 		825936E2147E3B1B00B840A5 /* EffectParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectParser.cpp; sourceTree = "<group>"; };
 		825936E3147E3B1B00B840A5 /* EffectParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectParser.h; sourceTree = "<group>"; };
+		825936E3147E3B1B01B840A5 /* EffectParser1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectParser1.h; sourceTree = "<group>"; };
+		825936E3147E3B1B02B840A5 /* EffectParser2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectParser2.h; sourceTree = "<group>"; };
+		825936E3147E3B1B03B840A5 /* EffectParser3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectParser3.h; sourceTree = "<group>"; };
+		825936E3147E3B1B04B840A5 /* EffectParser4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectParser4.h; sourceTree = "<group>"; };
+		825936E3147E3B1B05B840A5 /* EffectParser5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectParser5.h; sourceTree = "<group>"; };
 		825936E4147E3B1B00B840A5 /* EnumParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnumParser.cpp; sourceTree = "<group>"; };
 		825936E5147E3B1B00B840A5 /* EnumParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumParser.h; sourceTree = "<group>"; };
 		825936E6147E3B1B00B840A5 /* FleetPlansParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FleetPlansParser.cpp; sourceTree = "<group>"; };
@@ -1971,6 +1976,11 @@
 				825936E1147E3B1B00B840A5 /* DoubleValueRefParser.cpp */,
 				825936E2147E3B1B00B840A5 /* EffectParser.cpp */,
 				825936E3147E3B1B00B840A5 /* EffectParser.h */,
+				825936E3147E3B1B01B840A5 /* EffectParser1.h */,
+				825936E3147E3B1B02B840A5 /* EffectParser2.h */,
+				825936E3147E3B1B03B840A5 /* EffectParser3.h */,
+				825936E3147E3B1B04B840A5 /* EffectParser4.h */,
+				825936E3147E3B1B05B840A5 /* EffectParser5.h */,
 				8201E5F215E2C0770037D453 /* EffectParser1.cpp */,
 				8201E5F315E2C0770037D453 /* EffectParser2.cpp */,
 				822B16B51642A6F8000ADE58 /* EffectParser3.cpp */,
