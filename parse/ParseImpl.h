@@ -78,7 +78,7 @@ namespace parse { namespace detail {
         rule<int()> int_;
     };
 
-    using label_rule = detail::rule<>;
+    using label_rule = rule<>;
     /** Store label_rules. */
     class Labeller {
         public:
@@ -92,9 +92,9 @@ namespace parse { namespace detail {
     };
 
     template <typename T>
-    using enum_rule = detail::rule<T ()>;
+    using enum_rule = rule<T ()>;
     template <typename T>
-    using enum_grammar = detail::grammar<T ()>;
+    using enum_grammar = grammar<T ()>;
 
     using tags_rule_type    = rule<void (std::set<std::string>&)>;
     using tags_grammar_type = grammar<void (std::set<std::string>&)>;
@@ -116,11 +116,9 @@ namespace parse { namespace detail {
 
     struct color_parser_grammar : public color_grammar_type {
         color_parser_grammar(const parse::lexer& tok);
-        typedef parse::detail::rule<
-            unsigned int ()
-            > rule;
+        using channel_rule = rule<unsigned int ()>;
 
-        rule channel;
+        channel_rule channel;
         color_rule_type start;
     };
 

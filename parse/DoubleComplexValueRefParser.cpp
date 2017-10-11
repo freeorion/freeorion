@@ -3,10 +3,10 @@
 
 namespace parse {
     double_complex_parser_grammar::double_complex_parser_grammar(
-        const parse::lexer& tok,
-        parse::detail::Labeller& labeller,
+        const lexer& tok,
+        detail::Labeller& labeller,
         const detail::condition_parser_grammar& condition_parser,
-        const parse::value_ref_grammar<std::string>& string_grammar
+        const value_ref_grammar<std::string>& string_grammar
     ) :
         double_complex_parser_grammar::base_type(start, "double_complex_parser_grammar"),
         simple_int_rules(tok)
@@ -29,7 +29,7 @@ namespace parse {
         const std::string TOK_SPECIES_EMPIRE_OPINION{"SpeciesEmpireOpinion"};
         const std::string TOK_SPECIES_SPECIES_OPINION{"SpeciesSpeciesOpinion"};
 
-        const parse::value_ref_rule<int>& simple_int = simple_int_rules.simple;
+        const value_ref_rule<int>& simple_int = simple_int_rules.simple;
 
         name_property_rule
             = (     tok.GameRule_           [ _a = construct<std::string>(_1) ]

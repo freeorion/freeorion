@@ -19,7 +19,7 @@ namespace phoenix = boost::phoenix;
 namespace parse { namespace detail {
     common_params_rules::common_params_rules(
         const parse::lexer& tok,
-        parse::detail::Labeller& labeller,
+        Labeller& labeller,
         const condition_parser_grammar& condition_parser,
         const parse::value_ref_grammar<std::string>& string_grammar,
         const tags_grammar_type& tags_parser

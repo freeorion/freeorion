@@ -4,7 +4,7 @@
 namespace parse { namespace detail {
     string_complex_parser_grammar::string_complex_parser_grammar(
         const parse::lexer& tok,
-        parse::detail::Labeller& labeller,
+        Labeller& labeller,
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         string_complex_parser_grammar::base_type(start, "string_complex_parser_grammar"),

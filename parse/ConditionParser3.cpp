@@ -11,7 +11,7 @@ namespace phoenix = boost::phoenix;
 namespace parse { namespace detail {
     condition_parser_rules_3::condition_parser_rules_3(
         const parse::lexer& tok,
-        parse::detail::Labeller& labeller,
+        Labeller& labeller,
         const condition_parser_grammar& condition_parser,
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :

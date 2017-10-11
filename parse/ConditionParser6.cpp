@@ -26,7 +26,7 @@ namespace parse { namespace detail {
     condition_parser_rules_6::condition_parser_rules_6(
         const parse::lexer& tok,
         Labeller& labeller,
-        const parse::detail::condition_parser_grammar& condition_parser,
+        const condition_parser_grammar& condition_parser,
         const parse::value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_6::base_type(start, "condition_parser_rules_6"),
