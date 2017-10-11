@@ -84,7 +84,7 @@ namespace {
 
 namespace parse {
     start_rule_payload fleet_plans() {
-        const parse::lexer lexer;
+        const lexer lexer;
         start_rule_payload fleet_plans_;
         const boost::filesystem::path& path = GetResourceDir() / "scripting/starting_unlocks/fleets.inf";
         /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, path, fleet_plans_);

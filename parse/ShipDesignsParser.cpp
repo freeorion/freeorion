@@ -221,7 +221,7 @@ namespace parse {
         std::vector<boost::uuids::uuid> //ordering
         >
     ship_designs(const boost::filesystem::path& path) {
-        const parse::lexer lexer;
+        const lexer lexer;
         std::vector<std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>> designs_and_paths;
         std::vector<boost::uuids::uuid> ordering;
 

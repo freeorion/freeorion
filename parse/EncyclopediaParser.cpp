@@ -95,7 +95,7 @@ namespace {
 
 namespace parse {
     ArticleMap encyclopedia_articles() {
-        const parse::lexer lexer;
+        const lexer lexer;
         std::vector<boost::filesystem::path> file_list = ListScripts("scripting/encyclopedia");
 
         ArticleMap articles;

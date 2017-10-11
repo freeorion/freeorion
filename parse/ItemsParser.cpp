@@ -58,7 +58,7 @@ namespace {
 
 namespace parse {
     start_rule_payload items() {
-        const parse::lexer lexer;
+        const lexer lexer;
         start_rule_payload items_;
         const boost::filesystem::path& path = GetResourceDir() / "scripting/starting_unlocks/items.inf";
         /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, path, items_);
@@ -66,7 +66,7 @@ namespace parse {
     }
 
     start_rule_payload starting_buildings() {
-        const parse::lexer lexer;
+        const lexer lexer;
         start_rule_payload starting_buildings_;
         const boost::filesystem::path& path = GetResourceDir() / "scripting/starting_unlocks/buildings.inf";
         /*auto success =*/ detail::parse_file<grammar, start_rule_payload >(lexer, path, starting_buildings_);

@@ -114,7 +114,7 @@ namespace {
 
 namespace parse {
     NamedKeymaps keymaps() {
-        const parse::lexer lexer;
+        const lexer lexer;
         NamedKeymaps nkm;
         boost::filesystem::path path = GetResourceDir() / "scripting/keymaps.inf";
         /*auto success =*/ detail::parse_file<grammar, NamedKeymaps>(lexer, path, nkm);

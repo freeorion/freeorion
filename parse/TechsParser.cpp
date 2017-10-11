@@ -265,7 +265,7 @@ namespace parse {
         std::map<std::string, std::unique_ptr<TechCategory>>, // tech_categories,
         std::set<std::string>> // categories_seen
     techs() {
-        const parse::lexer lexer;
+        const lexer lexer;
         TechManager::TechContainer techs_;
         std::map<std::string, std::unique_ptr<TechCategory>> categories;
         std::set<std::string> categories_seen;

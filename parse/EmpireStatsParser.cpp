@@ -81,7 +81,7 @@ namespace {
 
 namespace parse {
     start_rule_payload statistics() {
-        const parse::lexer lexer;
+        const lexer lexer;
         start_rule_payload stats_;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/empire_statistics")) {
