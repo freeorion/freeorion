@@ -12,9 +12,6 @@ class EnumItem(int):
         super(EnumItem, self).__init__(number)
         self.name = name
 
-    def __str__(self):
-        return self.name
-
 
 class EnumMeta(type):
     @staticmethod
