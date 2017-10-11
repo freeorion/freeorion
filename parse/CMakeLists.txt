@@ -4,6 +4,13 @@ target_sources(freeorionparseobj
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/CommonParams.h
         ${CMAKE_CURRENT_LIST_DIR}/ConditionParser.h
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionParser1.h
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionParser2.h
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionParser3.h
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionParser4.h
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionParser5.h
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionParser6.h
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionParser7.h
         ${CMAKE_CURRENT_LIST_DIR}/ConditionParserImpl.h
         ${CMAKE_CURRENT_LIST_DIR}/EffectParser.h
         ${CMAKE_CURRENT_LIST_DIR}/EffectParser1.h

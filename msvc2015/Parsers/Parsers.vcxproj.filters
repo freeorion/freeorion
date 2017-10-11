@@ -166,6 +166,27 @@
     <ClInclude Include="..\..\parse\ConditionParser.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\parse\ConditionParser1.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ConditionParser2.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ConditionParser3.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ConditionParser4.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ConditionParser5.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ConditionParser6.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ConditionParser7.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\parse\ValueRefParserImpl.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
