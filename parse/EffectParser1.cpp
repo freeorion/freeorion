@@ -5,9 +5,26 @@
 #include "../universe/Enums.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix/function/adapt_function.hpp>
 
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
+
+namespace {
+    template <typename T, typename U>
+    void transform_T_and_U_ptr_vector_to_unique_ptr(
+        std::vector<std::pair<T, std::unique_ptr<U>>>& out,
+        const std::vector<std::pair<T, U*>>& in
+    ) {
+        for (const auto& elem : in) {
+            out.emplace_back(elem.first, std::unique_ptr<U>(elem.second));
+        }
+    };
+    BOOST_PHOENIX_ADAPT_FUNCTION(void,
+                                 transform_T_and_U_ptr_vector_to_unique_ptr_,
+                                 transform_T_and_U_ptr_vector_to_unique_ptr,
+                                 2)
+}
 
 namespace parse { namespace detail {
     effect_parser_rules_1::effect_parser_rules_1(
@@ -74,7 +91,7 @@ namespace parse { namespace detail {
                 | eps [ _f = true ]
             )
             >  -(labeller.rule(Icon_token)       >  tok.string [ _b = _1 ] )
-            >  -(labeller.rule(Parameters_token) >  string_and_string_ref_vector [ _c = _1 ] )
+            >  -(labeller.rule(Parameters_token) >  string_and_string_ref_vector [transform_T_and_U_ptr_vector_to_unique_ptr_(_c, _1)] )
             >   (
                 (   // empire id specified, optionally with an affiliation type:
                     // useful to specify a single recipient empire, or the allies

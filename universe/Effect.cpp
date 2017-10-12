@@ -3534,7 +3534,7 @@ unsigned int GiveEmpireTech::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
-                                             std::vector<std::pair<std::string, std::unique_ptr<ValueRef::ValueRefBase<std::string>>>>&& message_parameters,
+                                             PassedMessageParams& message_parameters,
                                              std::unique_ptr<ValueRef::ValueRefBase<int>>&& recipient_empire_id,
                                              EmpireAffiliationType affiliation,
                                              const std::string label,
@@ -3551,7 +3551,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
-                                             std::vector<std::pair<std::string, std::unique_ptr<ValueRef::ValueRefBase<std::string>>>>&& message_parameters,
+                                             PassedMessageParams& message_parameters,
                                              EmpireAffiliationType affiliation,
                                              std::unique_ptr<Condition::ConditionBase>&& condition,
                                              const std::string label,
@@ -3567,8 +3567,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
 {}
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
-                                             std::vector<std::pair<std::string, std::unique_ptr<ValueRef::ValueRefBase<std::string>>>>&& message_parameters,
-
+                                             PassedMessageParams& message_parameters,
                                              EmpireAffiliationType affiliation,
                                              const std::string& label,
                                              bool stringtable_lookup):
@@ -3584,67 +3583,37 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, 
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
-                                             const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>& message_parameters,
+                                             PassedMessageParams& message_parameters,
                                              ValueRef::ValueRefBase<int>* recipient_empire_id,
                                              EmpireAffiliationType affiliation,
                                              const std::string label,
                                              bool stringtable_lookup) :
     m_message_string(message_string),
     m_icon(icon),
-    m_message_parameters(),
+    m_message_parameters(std::move(message_parameters)),
     m_recipient_empire_id(recipient_empire_id),
     m_condition(nullptr),
     m_affiliation(affiliation),
     m_label(label),
     m_stringtable_lookup(stringtable_lookup)
-{
-    for (auto& message_parameter : message_parameters)
-        m_message_parameters.emplace_back(
-            message_parameter.first,
-            std::unique_ptr<ValueRef::ValueRefBase<std::string>>(message_parameter.second));
-}
+{}
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
-                                             const MessageParams& message_parameters,
+                                             PassedMessageParams& message_parameters,
                                              EmpireAffiliationType affiliation,
                                              Condition::ConditionBase* condition,
                                              const std::string label,
                                              bool stringtable_lookup) :
     m_message_string(message_string),
     m_icon(icon),
-    m_message_parameters(),
+    m_message_parameters(std::move(message_parameters)),
     m_recipient_empire_id(nullptr),
     m_condition(condition),
     m_affiliation(affiliation),
     m_label(label),
     m_stringtable_lookup(stringtable_lookup)
-{
-    for (auto& message_parameter : message_parameters)
-        m_message_parameters.emplace_back(
-            message_parameter.first,
-            std::unique_ptr<ValueRef::ValueRefBase<std::string>>(message_parameter.second));
-}
-
-GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
-                                             const MessageParams& message_parameters,
-                                             EmpireAffiliationType affiliation,
-                                             const std::string& label,
-                                             bool stringtable_lookup):
-    m_message_string(message_string),
-    m_icon(icon),
-    m_message_parameters(),
-    m_recipient_empire_id(nullptr),
-    m_condition(),
-    m_affiliation(affiliation),
-    m_label(label),
-    m_stringtable_lookup(stringtable_lookup)
-{
-    for (auto& message_parameter : message_parameters)
-        m_message_parameters.emplace_back(
-            message_parameter.first,
-            std::unique_ptr<ValueRef::ValueRefBase<std::string>>(message_parameter.second));
-}
+{}
 
 GenerateSitRepMessage::~GenerateSitRepMessage()
 {}

@@ -34,7 +34,7 @@ namespace parse { namespace detail {
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
-                std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>,
+                std::vector<std::pair<std::string, std::unique_ptr<ValueRef::ValueRefBase<std::string>>>>,
                 EmpireAffiliationType,
                 std::string,
                 bool
