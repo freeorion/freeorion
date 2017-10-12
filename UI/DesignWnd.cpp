@@ -596,8 +596,13 @@ namespace {
     //////////////////////////////////////////////////
 
     std::vector<int> CurrentShipDesignManager::OrderedIDs() const {
-        std::vector<int> retval;
+        // Make sure that saved designs are included.
+        // Only OrderedIDs is part of the Designs base class and
+        // accessible outside this file.
+        GetSavedDesignsManager().CheckPendingDesigns();
+
         // Remove all obsolete ids from the list
+        std::vector<int> retval;
         std::copy_if(m_ordered_ids.begin(), m_ordered_ids.end(), std::back_inserter(retval),
                      [this](const int id){
                          const auto it = m_id_to_obsolete_and_loc.find(id);
