@@ -18,6 +18,7 @@ Tech
                 VisibleToEmpire empire = Source.Owner
                 Random probability = 0.1
                 Not Monster
+                /// @content_tag{TELEPATHIC} For ships with this tag, prevents chance of ownership loss to suitable planet
                 Not HasTag name = "TELEPATHIC"
                 Not OwnerHasTech name = "LRN_PSY_DOM"
                 ContainedBy And [
@@ -25,6 +26,7 @@ Tech
                     Contains And [
                         Planet
                         OwnedBy empire = Source.Owner
+                        /// @content_tag{TELEPATHIC} On owned planet with focus FOCUS_DOMINATION and this tag, chance of taking ownership of suitable ships
                         HasTag name = "TELEPATHIC"
                         Focus type = "FOCUS_DOMINATION"
                     ]
