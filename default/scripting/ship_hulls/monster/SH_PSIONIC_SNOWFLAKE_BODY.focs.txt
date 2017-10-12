@@ -26,6 +26,7 @@ Hull
             scope = NumberOf number = 4 condition = And [
                 Ship
                 WithinStarlaneJumps jumps = 1 condition = Source
+                /// @content_tag{ORGANIC} Can lose ownership of ships with tag to ships with this hull within 1 starlane jump
                 HasTag name = "ORGANIC"
             ]
             activation = Random probability = 0.2
@@ -36,6 +37,7 @@ Hull
                 Ship
                 WithinStarlaneJumps jumps = 1 condition = Source
                 HasTag name = "ORGANIC"
+                /// @content_tag{TELEPATHIC} Prevents increased chance of ownership loss of ships with ORGANIC tag to ships with this hull
                 Not HasTag name = "TELEPATHIC"
                 Not OwnerHasTech name = "LRN_PSY_DOM"
             ]
