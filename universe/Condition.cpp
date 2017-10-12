@@ -8522,7 +8522,7 @@ namespace {
                 auto ship = std::dynamic_pointer_cast<const Ship>(obj);
                 if (!ship)
                     continue;
-                if (ship->OrderedDestroyPlanet() == planet_id)
+                if (ship->CanDestroyPlanet() && ship->OrderedBombardPlanet() == planet_id)
                     return true;
             }
             return false;

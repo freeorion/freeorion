@@ -2795,19 +2795,6 @@ namespace {
         }
     }
 
-    /** Removes planet destruction state info from objects. Actual effects of
-    * planet destruction are handled during effect processing */
-    void CleanUpDestructionStateInfo() {
-        for (auto& ship : GetUniverse().Objects().FindObjects<Ship>())
-        { ship->ClearDestroyPlanet(); }
-        for (auto& planet : GetUniverse().Objects().FindObjects<Planet>()) {
-            if (planet->IsAboutToBeDestroyed()) {
-                //DebugLogger() << "CleanUpDestructionStateInfo: " << planet->Name() << " was about to be destroyed";
-                planet->ResetIsAboutToBeDestroyed();
-            }
-        }
-    }
-
     /** Causes ResourceCenters (Planets) to update their focus records */
     void UpdateResourceCenterFocusHistoryInfo() {
         for (auto& planet : GetUniverse().Objects().FindObjects<Planet>()) {
@@ -2842,10 +2829,9 @@ void ServerApp::PreCombatProcessTurns() {
     // inform players of order execution
     m_networking.SendMessageAll(TurnProgressMessage(Message::PROCESSING_ORDERS));
 
-    // clear bombardment and planet destruction state before executing orders,
+    // clear bombardment state before executing orders,
     // so result after is only determined by what orders set.
     CleanUpBombardmentStateInfo();
-    CleanUpDestructionStateInfo();
 
     // execute orders
     for (const auto& empire_orders : m_turn_sequence) {

@@ -688,7 +688,6 @@ private:
     bool    m_is_armed = false;
     bool    m_has_fighters = false;
     bool    m_can_bombard = false;
-    bool    m_can_destroy = false;
     float   m_detection = 0.0f;
     float   m_colony_capacity = 0.0f;
     float   m_troop_capacity = 0.0f;

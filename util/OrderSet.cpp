@@ -62,6 +62,7 @@ void OrderSet::ExecutePersistentOrders() {
     for (auto& order : m_orders) {
         if (order.second->ShouldPersist()) {
             order.second->Execute();
+            DebugLogger() << "Executed persistent order " << order.first;
         }
     }
 }

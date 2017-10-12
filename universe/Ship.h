@@ -72,7 +72,6 @@ public:
     int                         OrderedColonizePlanet() const   { return m_ordered_colonize_planet_id; }///< returns the ID of the planet this ship has been ordered to colonize, or INVALID_OBJECT_ID if this ship hasn't been ordered to colonize a planet
     int                         OrderedInvadePlanet() const     { return m_ordered_invade_planet_id; }  ///< returns the ID of the planet this ship has been ordered to invade with ground troops, or INVALID_OBJECT_ID if this ship hasn't been ordered to invade a planet
     int                         OrderedBombardPlanet() const    { return m_ordered_bombard_planet_id; } ///< returns the ID of the planet this ship has been ordered to bombard, or INVALID_OBJECT_ID if this ship hasn't been ordered to bombard a planet
-    int                         OrderedDestroyPlanet() const    { return m_ordered_destroy_planet_id; } ///< returns the ID of the planet this ship has been ordered to destroy, or INVALID_OBJECT_ID if this ship hasn't been ordered to destroy a planet
     int                         LastTurnActiveInCombat() const  { return m_last_turn_active_in_combat; }///< returns the last turn this ship has been actively involved in combat
 
     const PartMeterMap&         PartMeters() const { return m_part_meters; }                                ///< returns this Ship's part meters
@@ -105,8 +104,6 @@ public:
     void            ClearInvadePlanet();                                        ///< marks ship to invade no planets
     void            SetBombardPlanet(int planet_id);                            ///< marks ship to bombard the indicated planet
     void            ClearBombardPlanet();                                       ///< marks ship to bombard no planets
-    void            SetDestroyPlanet(int planet_id);                            ///< marks ship to destroy the indicated planet
-    void            ClearDestroyPlanet();                                       ///< marks ship to destroy no planets
 
     void            SetLastTurnActiveInCombat(int turn) { m_last_turn_active_in_combat = turn; } ///< sets the last turn this ship was actively involved in combat
 
@@ -139,7 +136,6 @@ private:
     int             m_ordered_colonize_planet_id = INVALID_OBJECT_ID;
     int             m_ordered_invade_planet_id = INVALID_OBJECT_ID;
     int             m_ordered_bombard_planet_id = INVALID_OBJECT_ID;
-    int             m_ordered_destroy_planet_id = INVALID_OBJECT_ID;
     int             m_last_turn_active_in_combat = INVALID_GAME_TURN;
     PartMeterMap    m_part_meters;
     std::string     m_species_name;

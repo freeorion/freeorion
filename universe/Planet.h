@@ -88,10 +88,8 @@ public:
     bool                        IsAboutToBeColonized() const    { return m_is_about_to_be_colonized; }
     bool                        IsAboutToBeInvaded() const      { return m_is_about_to_be_invaded; }
     bool                        IsAboutToBeBombarded() const    { return m_is_about_to_be_bombarded; }
-    bool                        IsAboutToBeDestroyed() const    { return m_is_about_to_be_destroyed; }
     int                         OrderedGivenToEmpire() const    { return m_ordered_given_to_empire_id; }
     int                         LastTurnAttackedByShip() const  { return m_last_turn_attacked_by_ship; }
-    int                         BeingDestroyedBy() const        { return m_planet_destroyer_id; }
 
     const std::string&          SurfaceTexture() const          { return m_surface_texture; }
     std::string                 CardinalSuffix() const;     ///< returns a roman number representing this planets orbit in relation to other planets
@@ -116,9 +114,6 @@ public:
     void            ResetIsAboutToBeInvaded();          ///< Marks planet as not being invaded
     void            SetIsAboutToBeBombarded(bool b);    ///< Marks planet as being bombarded or not, depending on whether \a b is true or false
     void            ResetIsAboutToBeBombarded();        ///< Marks planet as not being bombarded
-    void            SetIsAboutToBeDestroyed(bool b,     ///< Marks planet as being destroyed or not, depending on whether \a b is true or false
-                        int planet_destroyer_id);
-    void            ResetIsAboutToBeDestroyed();        ///< Marks planet as not being destroyed
     void            SetGiveToEmpire(int empire_id);     ///< Marks planet to be given to empire
     void            ClearGiveToEmpire();                ///< Marks planet not to be given to any empire
 
@@ -180,10 +175,8 @@ private:
     bool            m_is_about_to_be_colonized = false;
     bool            m_is_about_to_be_invaded = false;
     bool            m_is_about_to_be_bombarded = false;
-    bool            m_is_about_to_be_destroyed = false;
     int             m_ordered_given_to_empire_id = ALL_EMPIRES;
     int             m_last_turn_attacked_by_ship = -1;
-    int             m_planet_destroyer_id;
 
     std::string     m_surface_texture;  // intentionally not serialized; set by local effects
 

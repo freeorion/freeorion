@@ -15,7 +15,5 @@ Special
     ]
     graphic = "icons/specials_huge/planet_destroyed_blue.png"
 
-
-
-
 #include "/scripting/ship_parts/General/planet_destruction.macros"
+

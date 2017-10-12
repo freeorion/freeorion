@@ -744,8 +744,8 @@ void BombardOrder::ExecuteImpl() const {
         ErrorLogger() << "BombardOrder::ExecuteImpl couldn't get ship with id " << m_ship;
         return;
     }
-    if (!ship->CanBombard()) {
-        ErrorLogger() << "BombardOrder::ExecuteImpl got ship that can't bombard";
+    if (!ship->CanBombard() && !ship->CanDestroyPlanet()) {
+        ErrorLogger() << "BombardOrder::ExecuteImpl got ship that can't bombard or destroy a planet";
         return;
     }
     if (!ship->OwnedBy(empire_id)) {
@@ -783,9 +783,15 @@ void BombardOrder::ExecuteImpl() const {
     }
 
     // note: multiple ships, from same or different empires, can invade the same planet on the same turn
-    DebugLogger() << "BombardOrder::ExecuteImpl set for ship " << m_ship << " "
-                  << ship->Name() << " to bombard planet " << m_planet << " "
-                  << planet->Name();
+    if (!ship->CanDestroyPlanet())
+        DebugLogger() << "BombardOrder::ExecuteImpl set for ship " << m_ship << " "
+                      << ship->Name() << " to bombard planet " << m_planet << " "
+                      << planet->Name();
+    else
+        DebugLogger() << "BombardOrder::ExecuteImpl set for ship " << m_ship << " "
+                      << ship->Name() << " to destroy planet " << m_planet << " "
+                      << planet->Name();
+
     planet->SetIsAboutToBeBombarded(true);
     ship->SetBombardPlanet(m_planet);
 
@@ -810,7 +816,7 @@ bool BombardOrder::UndoImpl() const {
         return false;
     }
 
-    planet->SetIsAboutToBeBombarded(false);
+    planet->ResetIsAboutToBeBombarded();
     ship->ClearBombardPlanet();
 
     if (auto fleet = GetFleet(ship->FleetID()))
@@ -819,110 +825,9 @@ bool BombardOrder::UndoImpl() const {
     return true;
 }
 
-////////////////////////////////////////////////
-// DestroyPlanetOrder
-////////////////////////////////////////////////
-DestroyPlanetOrder::DestroyPlanetOrder() :
-    m_ship(INVALID_OBJECT_ID),
-    m_planet(INVALID_OBJECT_ID)
-{}
-
-DestroyPlanetOrder::DestroyPlanetOrder(int empire, int ship, int planet) :
-    Order(empire),
-    m_ship(ship),
-    m_planet(planet)
-{}
-
-void DestroyPlanetOrder::ExecuteImpl() const {
-    GetValidatedEmpire();
-    int empire_id = EmpireID();
-
-    auto ship = GetShip(m_ship);
-    if (!ship) {
-        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl couldn't get ship with id " << m_ship;
-        return;
-    }
-    if (!ship->CanDestroyPlanet()) {
-        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl got ship that can't destroy planets";
-        return;
-    }
-    if (!ship->OwnedBy(empire_id)) {
-        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
-        return;
-    }
-
-    auto planet = GetPlanet(m_planet);
-    if (!planet) {
-        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl couldn't get planet with id " << m_planet;
-        return;
-    }
-    if (planet->OwnedBy(empire_id)) {
-        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl given planet that is already owned by the order-issuing empire";
-        return;
-    }
-    if (!planet->Unowned() && Empires().GetDiplomaticStatus(planet->Owner(), empire_id) != DIPLO_WAR) {
-        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl given planet owned by an empire not at war with order-issuing empire";
-        return;
-    }
-    if (GetUniverse().GetObjectVisibilityByEmpire(m_planet, empire_id) < VIS_BASIC_VISIBILITY) {
-        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
-        //return;
-    }
-
-    int ship_system_id = ship->SystemID();
-    if (ship_system_id == INVALID_OBJECT_ID) {
-        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl given id of ship not in a system";
-        return;
-    }
-    int planet_system_id = planet->SystemID();
-    if (ship_system_id != planet_system_id) {
-        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl given ids of ship and planet not in the same system";
-        return;
-    }
-
-    if (planet->HasSpecial("PLANET_DESTRUCTION_SPECIAL")) {
-        ErrorLogger() << "DestroyPlanetOrder::ExecuteImpl given planet that was just destroyed";
-        return;
-    }
-
-    DebugLogger() << "DestroyPlanetOrder::ExecuteImpl set for ship " << m_ship << " "
-        << ship->Name() << " to destroy planet " << m_planet << " "
-        << planet->Name();
-    planet->SetIsAboutToBeDestroyed(true, ship->ID());
-    ship->SetDestroyPlanet(m_planet);
-
-    if (auto fleet = GetFleet(ship->FleetID()))
-        fleet->StateChangedSignal();
-}
-
-bool DestroyPlanetOrder::UndoImpl() const {
-    auto planet = GetPlanet(m_planet);
-    if (!planet) {
-        ErrorLogger() << "DestroyPlanetOrder::UndoImpl couldn't get planet with id " << m_planet;
-        return false;
-    }
-
-    auto ship = GetShip(m_ship);
-    if (!ship) {
-        ErrorLogger() << "DestroyPlanetOrder::UndoImpl couldn't get ship with id " << m_ship;
-        return false;
-    }
-    if (ship->OrderedDestroyPlanet() != m_planet) {
-        ErrorLogger() << "DestroyPlanetOrder::UndoImpl ship is not about to destroy planet";
-        return false;
-    }
-
-    planet->ResetIsAboutToBeDestroyed();
-    ship->ClearDestroyPlanet();
-
-    if (auto fleet = GetFleet(ship->FleetID()))
-        fleet->StateChangedSignal();
-
-    return true;
-}
-
-bool DestroyPlanetOrder::ShouldPersist() {
-    auto ship = GetShip(m_ship);
+bool BombardOrder::ShouldPersist() {
+    /**
+        auto ship = GetShip(m_ship);
     auto planet = GetPlanet(m_planet);
 
     if (!(ship && planet))
@@ -932,8 +837,11 @@ bool DestroyPlanetOrder::ShouldPersist() {
     if (!(ship->SystemID() == planet->SystemID()))
         return false;
 
-    return true;
+    return true;*/
+
+    return false;
 }
+
 
 ////////////////////////////////////////////////
 // ChangeFocusOrder

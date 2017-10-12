@@ -423,6 +423,9 @@ public:
     /** Returns ID of the ship which is bombarding the planet. */
     int ShipID() const
     { return m_ship; }
+
+    /** Returns true iff an order should persist after it has been executed */
+    bool ShouldPersist();
     //@}
 
 private:
@@ -435,54 +438,6 @@ private:
      *      - The ship with ID m_ship will be marked to bombard the planet with
      *        id m_planet during the next turn processing.
      */
-    void ExecuteImpl() const override;
-
-    bool UndoImpl() const override;
-
-    int m_ship;
-    int m_planet;
-
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
-
-/////////////////////////////////////////////////////
-// DestroyPlanetOrder
-/////////////////////////////////////////////////////
-/** the Order subclass that represents a planet destruction action*/
-class FO_COMMON_API DestroyPlanetOrder : public Order {
-public:
-    /** \name Structors */ //@{
-    DestroyPlanetOrder();
-
-    DestroyPlanetOrder(int empire, int ship, int planet);
-    //@}
-
-    /** \name Accessors */ //@{
-    /** Returns ID of the planet to be destroyed. */
-    int PlanetID() const
-    { return m_planet; }
-
-    /** Returns ID of the ship which is destroying the planet. */
-    int ShipID() const
-    { return m_ship; }
-
-    /** Returns true iff an order should persist after it has been executed */
-    bool ShouldPersist();
-    //@}
-
-private:
-    /**
-    *  Preconditions:
-    *     - m_planet must be the ID of a planet
-    *     - m_ship must be the the ID of a ship owned by the issuing empire
-    *
-    *  Postconditions:
-    *      - The ship with ID m_ship will be marked to destroy the planet with
-    *        id m_planet during the next turn processing.
-    */
     void ExecuteImpl() const override;
 
     bool UndoImpl() const override;

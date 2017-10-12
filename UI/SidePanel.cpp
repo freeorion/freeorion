@@ -462,14 +462,17 @@ namespace {
         return retval;
     }
 
-    /** Returns map from planet ID to issued destruction orders affecting it. */
+    /** Returns map from planet ID to issued planet destruction orders affecting it. */
     std::map<int, std::set<int>> PendingDestroyPlanetOrders() {
         std::map<int, std::set<int>> retval;
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
         for (const auto& id_and_order : app->Orders()) {
-            if (std::shared_ptr<DestroyPlanetOrder> order = std::dynamic_pointer_cast<DestroyPlanetOrder>(id_and_order.second)) {
+            auto order = std::dynamic_pointer_cast<BombardOrder>(id_and_order.second);
+            if (!order) continue;
+            auto ship = GetShip(order->ShipID());
+            if (ship && ship->CanDestroyPlanet()) {
                 retval[order->PlanetID()].insert(id_and_order.first);
             }
         }
@@ -553,7 +556,7 @@ private:
     void                    ClickColonize();                    ///< called if colonize button is pressed
     void                    ClickInvade();                      ///< called if invade button is pressed
     void                    ClickBombard();                     ///< called if bombard button is pressed
-    void                    ClickDestroy();               ///< called if destroy button is pressed
+    void                    ClickDestroyPlanet();               ///< called if destroy button is pressed
 
     void                    FocusDropListSelectionChangedSlot(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
     /** Called when focus drop list opens/closes to inform that it now \p is_open. */
@@ -1033,7 +1036,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
 
     m_destroy_button = Wnd::Create<CUIButton>(UserString("PL_BOMBARD"));
     m_destroy_button->LeftClickedSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::ClickDestroy, this));
+        boost::bind(&SidePanel::PlanetPanel::ClickDestroyPlanet, this));
 
     SetChildClippingMode(ClipToWindow);
 
@@ -1229,7 +1232,7 @@ namespace {
             return false;
         if (IsAvailable(ship, system_id, empire_id) &&
             ship->CanDestroyPlanet() &&
-            ship->OrderedDestroyPlanet() == INVALID_OBJECT_ID)
+            ship->OrderedBombardPlanet() == INVALID_OBJECT_ID)
         { return true; }
         return false;
     };
@@ -1339,7 +1342,7 @@ namespace {
         return retval;
     }
 
-    std::set<std::shared_ptr<const Ship>> ValidSelectedDestroyShips(int system_id) {
+    std::set<std::shared_ptr<const Ship>> ValidSelectedPlanetDestructionShips(int system_id) {
         std::set<std::shared_ptr<const Ship>> retval;
 
         // if not looking in a valid system, no valid destroy ship can be available
@@ -1563,7 +1566,7 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenBombardShips(int target
 /** Returns valid Ship%s capable of destroying a given Planet.
 * @param target_planet_id ID of Planet to potentially destroy
 */
-std::set<std::shared_ptr<const Ship>> AutomaticallyChosenDestroyShips(int target_planet_id) {
+std::set<std::shared_ptr<const Ship>> AutomaticallyChosenPlanetDestructionShips(int target_planet_id) {
     std::set<std::shared_ptr<const Ship>> retval;
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -1701,9 +1704,9 @@ void SidePanel::PlanetPanel::Refresh() {
         bombard_ships.insert(autoselected_bombard_ships.begin(), autoselected_bombard_ships.end());
     }
 
-    auto destroy_ships = ValidSelectedDestroyShips(SidePanel::SystemID());
+    auto destroy_ships = ValidSelectedPlanetDestructionShips(SidePanel::SystemID());
     if (destroy_ships.empty()) {
-        auto autoselected_destroy_ships = AutomaticallyChosenDestroyShips(m_planet_id);
+        auto autoselected_destroy_ships = AutomaticallyChosenPlanetDestructionShips(m_planet_id);
         destroy_ships.insert(autoselected_destroy_ships.begin(), autoselected_destroy_ships.end());
     }
 
@@ -1718,6 +1721,16 @@ void SidePanel::PlanetPanel::Refresh() {
     if (colony_ship_species)
         planet_env_for_colony_species = colony_ship_species->GetPlanetEnvironment(planet->Type());
 
+
+    bool planet_is_destruction_target = false;
+    for (auto& ship : Objects().FindObjects<Ship>()) {
+        if (ship->CanDestroyPlanet() && ship->OrderedBombardPlanet() == m_planet_id) {
+            planet_is_destruction_target = true;
+            ErrorLogger() << "Turn " << CurrentTurn();
+            ErrorLogger() << "Found ship " << ship->ID() << " ready to destroy planet " << m_planet_id;
+            break;
+        }
+    }
 
     // calculate truth tables for planet colonization and invasion
     bool has_owner =        !planet->Unowned();
@@ -1737,13 +1750,13 @@ void SidePanel::PlanetPanel::Refresh() {
     bool at_war_with_me =   !mine && (populated || (has_owner && Empires().GetDiplomaticStatus(client_empire_id, planet->Owner()) == DIPLO_WAR));
 
     bool being_invaded =    planet->IsAboutToBeInvaded();
-    bool invadable =        at_war_with_me && !shielded && visible && !being_invaded && !invasion_ships.empty();
+    bool invadable =        at_war_with_me && !shielded && visible && !being_invaded && !invasion_ships.empty(); 
 
-    bool being_bombarded =  planet->IsAboutToBeBombarded();
-    bool bombardable =      at_war_with_me && visible && !being_bombarded && !bombard_ships.empty();
-
-    bool being_destroyed =  planet->IsAboutToBeDestroyed();
+    bool being_destroyed =  planet->IsAboutToBeBombarded() && planet_is_destruction_target;
     bool destroyable =      at_war_with_me && visible && !being_destroyed && !destroy_ships.empty();
+
+    bool being_bombarded =  planet->IsAboutToBeBombarded() && !planet_is_destruction_target;
+    bool bombardable =      at_war_with_me && visible && !being_bombarded && !bombard_ships.empty() && !being_destroyed;
 
     if (populated || SHOW_ALL_PLANET_PANELS) {
         AttachChild(m_population_panel);
@@ -2369,19 +2382,6 @@ namespace {
                 }
             }
         }
-
-        // is selected ship ordered to destroy a planet?  If so, recind that order
-        if (ship->OrderedDestroyPlanet() != INVALID_OBJECT_ID) {
-            for (const auto& id_and_order : orders) {
-                if (auto order = std::dynamic_pointer_cast<DestroyPlanetOrder>(id_and_order.second)) {
-                    if (order->ShipID() == ship->ID()) {
-                        HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
-                        // could break here, but won't to ensure there are no problems with doubled orders
-                    }
-                }
-            }
-        }
-
     }
 }
 
@@ -2517,9 +2517,10 @@ void SidePanel::PlanetPanel::ClickBombard() {
     OrderButtonChangedSignal(m_planet_id);
 }
 
-void SidePanel::PlanetPanel::ClickDestroy() {
+void SidePanel::PlanetPanel::ClickDestroyPlanet() {
     // order or cancel planet destruction, depending on whether it has previously
     // been ordered
+    DebugLogger() << "ClickDestroyPlanet";
     auto planet = GetPlanet(m_planet_id);
     if (!planet ||
         !m_order_issuing_enabled ||
@@ -2530,32 +2531,35 @@ void SidePanel::PlanetPanel::ClickDestroy() {
     if (empire_id == ALL_EMPIRES)
         return;
 
-    auto pending_destroy_orders = PendingDestroyPlanetOrders();
-    auto it = pending_destroy_orders.find(m_planet_id);
+    auto pending_planet_destruction_orders = PendingDestroyPlanetOrders();
+    auto it = pending_planet_destruction_orders.find(m_planet_id);
 
-    if (it != pending_destroy_orders.end()) {
-        auto& planet_destroy_orders = it->second;
+    if (it != pending_planet_destruction_orders.end()) {
         // cancel previous destroy orders for this planet
-        for (int order_id : planet_destroy_orders)
+        DebugLogger() << "Found destruction orders. Cancelling.";
+        auto& planet_destruction_orders = it->second;
+
+        for (int order_id : planet_destruction_orders)
         { HumanClientApp::GetApp()->Orders().RescindOrder(order_id); }
 
     } else {
-        // order selected destroy ship to destroy planet
-        auto destroy_ships = ValidSelectedDestroyShips(planet->SystemID());
+        DebugLogger() << "Trying to make a destruction order.";
+        // order selected planet destruction ship to destroy planet
+        auto destruction_ships = ValidSelectedPlanetDestructionShips(planet->SystemID());
 
-        if (destroy_ships.empty()) {
-            auto autoselected_destroy_ships = AutomaticallyChosenDestroyShips(m_planet_id);
-            destroy_ships.insert(autoselected_destroy_ships.begin(), autoselected_destroy_ships.end());
+        if (destruction_ships.empty()) {
+            auto autoselected_destruction_ships = AutomaticallyChosenPlanetDestructionShips(m_planet_id);
+            destruction_ships.insert(autoselected_destruction_ships.begin(), autoselected_destruction_ships.end());
         }
 
-        for (auto& ship : destroy_ships) {
+        for (auto& ship : destruction_ships) {
             if (!ship)
                 continue;
 
             CancelColonizeInvadeBombardDestroyScrapShipOrders(ship);
 
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<DestroyPlanetOrder>(empire_id, ship->ID(), m_planet_id));
+                std::make_shared<BombardOrder>(empire_id, ship->ID(), m_planet_id));
             break;
         }
     }
