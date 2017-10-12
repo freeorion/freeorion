@@ -19,6 +19,7 @@ Part
                     Unowned
                 ]
                 VisibleToEmpire empire = Source.Owner
+                /// @content_tag{PHOTOTROPHIC} When bombarding in-system enemy with this part, reduces population on visible populated Planet with tag
                 HasTag name = "PHOTOTROPHIC"
             ]
             effects = [
@@ -41,6 +42,7 @@ Part
                 InSystem id = Source.SystemID
                 OwnedBy affiliation = AnyEmpire
                 Stealth high = Source.Detection
+                /// @content_tag{PHOTOTROPHIC} Each part owned by Unowned in system will reduce population on one visible populated empire Planet with tag
                 HasTag name = "PHOTOTROPHIC"
             ]
             activation = And [
