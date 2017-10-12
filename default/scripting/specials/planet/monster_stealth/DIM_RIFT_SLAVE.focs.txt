@@ -1,3 +1,4 @@
+// @content_tag{ORBITAL} Prevents stealth bonus from DIM_RIFT_SLAVE_SPECIAL
 Special
     name = "DIM_RIFT_SLAVE_SPECIAL"
     description = "DIM_RIFT_SLAVE_SPECIAL_DESC"
