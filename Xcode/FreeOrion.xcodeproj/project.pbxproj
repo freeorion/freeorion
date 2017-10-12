@@ -864,6 +864,13 @@
 		825936D7147E3B1B00B840A5 /* BuildingsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuildingsParser.cpp; sourceTree = "<group>"; };
 		825936D9147E3B1B00B840A5 /* ConditionParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser.cpp; sourceTree = "<group>"; };
 		825936DA147E3B1B00B840A5 /* ConditionParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConditionParser.h; sourceTree = "<group>"; };
+		825936DA147E3B1B01B840A5 /* ConditionParser1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConditionParser1.h; sourceTree = "<group>"; };
+		825936DA147E3B1B02B840A5 /* ConditionParser2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConditionParser2.h; sourceTree = "<group>"; };
+		825936DA147E3B1B03B840A5 /* ConditionParser3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConditionParser3.h; sourceTree = "<group>"; };
+		825936DA147E3B1B04B840A5 /* ConditionParser4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConditionParser4.h; sourceTree = "<group>"; };
+		825936DA147E3B1B05B840A5 /* ConditionParser5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConditionParser5.h; sourceTree = "<group>"; };
+		825936DA147E3B1B06B840A5 /* ConditionParser6.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConditionParser6.h; sourceTree = "<group>"; };
+		825936DA147E3B1B07B840A5 /* ConditionParser7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConditionParser7.h; sourceTree = "<group>"; };
 		825936DB147E3B1B00B840A5 /* ConditionParser1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser1.cpp; sourceTree = "<group>"; };
 		825936DC147E3B1B00B840A5 /* ConditionParser2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser2.cpp; sourceTree = "<group>"; };
 		825936DD147E3B1B00B840A5 /* ConditionParser3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser3.cpp; sourceTree = "<group>"; };
@@ -871,6 +878,11 @@
 		825936E1147E3B1B00B840A5 /* DoubleValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DoubleValueRefParser.cpp; sourceTree = "<group>"; };
 		825936E2147E3B1B00B840A5 /* EffectParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectParser.cpp; sourceTree = "<group>"; };
 		825936E3147E3B1B00B840A5 /* EffectParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectParser.h; sourceTree = "<group>"; };
+		825936E3147E3B1B01B840A5 /* EffectParser1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectParser1.h; sourceTree = "<group>"; };
+		825936E3147E3B1B02B840A5 /* EffectParser2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectParser2.h; sourceTree = "<group>"; };
+		825936E3147E3B1B03B840A5 /* EffectParser3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectParser3.h; sourceTree = "<group>"; };
+		825936E3147E3B1B04B840A5 /* EffectParser4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectParser4.h; sourceTree = "<group>"; };
+		825936E3147E3B1B05B840A5 /* EffectParser5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectParser5.h; sourceTree = "<group>"; };
 		825936E4147E3B1B00B840A5 /* EnumParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnumParser.cpp; sourceTree = "<group>"; };
 		825936E5147E3B1B00B840A5 /* EnumParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumParser.h; sourceTree = "<group>"; };
 		825936E6147E3B1B00B840A5 /* FleetPlansParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FleetPlansParser.cpp; sourceTree = "<group>"; };
@@ -1959,6 +1971,13 @@
 				CE13B48E1C8CB0CF0085A4DC /* CommonParamsParser.cpp */,
 				825936D9147E3B1B00B840A5 /* ConditionParser.cpp */,
 				825936DA147E3B1B00B840A5 /* ConditionParser.h */,
+				825936DA147E3B1B01B840A5 /* ConditionParser1.h */,
+				825936DA147E3B1B02B840A5 /* ConditionParser2.h */,
+				825936DA147E3B1B03B840A5 /* ConditionParser3.h */,
+				825936DA147E3B1B04B840A5 /* ConditionParser4.h */,
+				825936DA147E3B1B05B840A5 /* ConditionParser5.h */,
+				825936DA147E3B1B06B840A5 /* ConditionParser6.h */,
+				825936DA147E3B1B07B840A5 /* ConditionParser7.h */,
 				825936DB147E3B1B00B840A5 /* ConditionParser1.cpp */,
 				825936DC147E3B1B00B840A5 /* ConditionParser2.cpp */,
 				825936DD147E3B1B00B840A5 /* ConditionParser3.cpp */,
@@ -1971,6 +1990,11 @@
 				825936E1147E3B1B00B840A5 /* DoubleValueRefParser.cpp */,
 				825936E2147E3B1B00B840A5 /* EffectParser.cpp */,
 				825936E3147E3B1B00B840A5 /* EffectParser.h */,
+				825936E3147E3B1B01B840A5 /* EffectParser1.h */,
+				825936E3147E3B1B02B840A5 /* EffectParser2.h */,
+				825936E3147E3B1B03B840A5 /* EffectParser3.h */,
+				825936E3147E3B1B04B840A5 /* EffectParser4.h */,
+				825936E3147E3B1B05B840A5 /* EffectParser5.h */,
 				8201E5F215E2C0770037D453 /* EffectParser1.cpp */,
 				8201E5F315E2C0770037D453 /* EffectParser2.cpp */,
 				822B16B51642A6F8000ADE58 /* EffectParser3.cpp */,

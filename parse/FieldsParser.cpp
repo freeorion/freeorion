@@ -1,6 +1,7 @@
 #include "Parse.h"
 
 #include "ParseImpl.h"
+#include "EffectParser.h"
 
 #include "../universe/Condition.h"
 #include "../universe/Field.h"
@@ -36,9 +37,20 @@ namespace {
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_fieldtype_, insert_fieldtype, 7)
 
-    struct rules {
-        rules(const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+    using start_rule_payload = std::map<std::string, std::unique_ptr<FieldType>>;
+    using start_rule_signature = void(start_rule_payload&);
+
+    struct grammar : public parse::detail::grammar<start_rule_signature> {
+        grammar(const parse::lexer& tok,
+                const std::string& filename,
+                const parse::text_iterator& first, const parse::text_iterator& last) :
+            grammar::base_type(start),
+            labeller(tok),
+            condition_parser(tok, labeller),
+            string_grammar(tok, labeller, condition_parser),
+            effects_group_grammar(tok, labeller, condition_parser, string_grammar),
+            tags_parser(tok, labeller),
+            double_rule(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -55,17 +67,15 @@ namespace {
             qi::_pass_type _pass;
             qi::_r1_type _r1;
 
-            const parse::lexer& tok = parse::lexer::instance();
-
             field
                 =   tok.FieldType_
-                >   parse::detail::label(Name_token)
+                >   labeller.rule(Name_token)
                 >   tok.string        [ _pass = is_unique_(_r1, FieldType_token, _1), _a = _1 ]
-                >   parse::detail::label(Description_token)         > tok.string [ _b = _1 ]
-                >   parse::detail::label(Stealth_token)             > parse::detail::double_ [ _c = _1]
-                >   parse::detail::tags_parser()(_d)
-                > -(parse::detail::label(EffectsGroups_token)       > parse::detail::effects_group_parser() [ _e = _1 ])
-                >   parse::detail::label(Graphic_token)             > tok.string
+                >   labeller.rule(Description_token)         > tok.string [ _b = _1 ]
+                >   labeller.rule(Stealth_token)             > double_rule [ _c = _1]
+                >   tags_parser(_d)
+                > -(labeller.rule(EffectsGroups_token)       > effects_group_grammar [ _e = _1 ])
+                >   labeller.rule(Graphic_token)             > tok.string
                 [ insert_fieldtype_(_r1, _a, _b, _c, _d, _e, _1) ]
                 ;
 
@@ -93,21 +103,26 @@ namespace {
             >
         > field_rule;
 
-        typedef parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<FieldType>>&)
-        > start_rule;
+        using start_rule = parse::detail::rule<start_rule_signature>;
 
+        parse::detail::Labeller labeller;
+        const parse::conditions_parser_grammar condition_parser;
+        const parse::string_parser_grammar string_grammar;
+        parse::effects_group_grammar effects_group_grammar;
+        parse::detail::tags_grammar tags_parser;
+        parse::detail::double_grammar double_rule;
         field_rule          field;
         start_rule          start;
     };
 }
 
 namespace parse {
-    std::map<std::string, std::unique_ptr<FieldType>> fields() {
-        std::map<std::string, std::unique_ptr<FieldType>> field_types;
+    start_rule_payload fields() {
+        const lexer lexer;
+        start_rule_payload field_types;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/fields")) {
-            /*auto success =*/ detail::parse_file<rules, std::map<std::string, std::unique_ptr<FieldType>>>(file, field_types);
+            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, field_types);
         }
 
         return field_types;

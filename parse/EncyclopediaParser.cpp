@@ -27,9 +27,15 @@ namespace {
     };
     const boost::phoenix::function<insert_> insert;
 
-    struct rules {
-        rules(const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+    using start_rule_payload = ArticleMap;
+    using start_rule_signature = void(start_rule_payload&);
+
+    struct grammar : public parse::detail::grammar<start_rule_signature> {
+        grammar(const parse::lexer& tok,
+                const std::string& filename,
+                const parse::text_iterator& first, const parse::text_iterator& last) :
+            grammar::base_type(start),
+            labeller(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -46,15 +52,13 @@ namespace {
             qi::_d_type _d;
             qi::_r1_type _r1;
 
-            const parse::lexer& tok = parse::lexer::instance();
-
             article
                 =    tok.Article_
-                >    parse::detail::label(Name_token)                > tok.string [ _a = _1 ]
-                >    parse::detail::label(Category_token)            > tok.string [ _b = _1 ]
-                >    parse::detail::label(Short_Description_token)   > tok.string [ _c = _1 ]
-                >    parse::detail::label(Description_token)         > tok.string [ _d = _1 ]
-                >    parse::detail::label(Icon_token)                > tok.string
+                >    labeller.rule(Name_token)                > tok.string [ _a = _1 ]
+                >    labeller.rule(Category_token)            > tok.string [ _b = _1 ]
+                >    labeller.rule(Short_Description_token)   > tok.string [ _c = _1 ]
+                >    labeller.rule(Description_token)         > tok.string [ _d = _1 ]
+                >    labeller.rule(Icon_token)                > tok.string
                     [ insert(_r1, construct<EncyclopediaArticle>(_a, _b, _c, _d, _1)) ]
                 ;
 
@@ -81,11 +85,9 @@ namespace {
             >
         > strings_rule;
 
-        typedef parse::detail::rule<
-            void (ArticleMap&)
-        > start_rule;
+        using start_rule = parse::detail::rule<start_rule_signature>;
 
-
+        parse::detail::Labeller labeller;
         strings_rule    article;
         start_rule      start;
     };
@@ -93,11 +95,12 @@ namespace {
 
 namespace parse {
     ArticleMap encyclopedia_articles() {
+        const lexer lexer;
         std::vector<boost::filesystem::path> file_list = ListScripts("scripting/encyclopedia");
 
         ArticleMap articles;
         for (const boost::filesystem::path& file : file_list) {
-            /*auto success =*/ detail::parse_file<rules, ArticleMap>(file, articles);
+            /*auto success =*/ detail::parse_file<grammar, ArticleMap>(lexer, file, articles);
         }
 
         return articles;

@@ -46,9 +46,22 @@ namespace {
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_parttype_, insert_parttype, 9)
 
-    struct rules {
-        rules(const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+    using start_rule_payload = std::map<std::string, std::unique_ptr<PartType>>;
+    using start_rule_signature = void(start_rule_payload&);
+
+    struct grammar : public parse::detail::grammar<start_rule_signature> {
+        grammar(const parse::lexer& tok,
+                const std::string& filename,
+                const parse::text_iterator& first, const parse::text_iterator& last) :
+            grammar::base_type(start),
+            labeller(tok),
+            condition_parser(tok, labeller),
+            string_grammar(tok, labeller, condition_parser),
+            tags_parser(tok, labeller),
+            common_rules(tok, labeller, condition_parser, string_grammar, tags_parser),
+            ship_slot_type_enum(tok),
+            ship_part_class_enum(tok),
+            double_rule(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -71,37 +84,35 @@ namespace {
             qi::_r1_type _r1;
             qi::eps_type eps;
 
-            const parse::lexer& tok = parse::lexer::instance();
-
             slots
                 =  -(
-                        parse::detail::label(MountableSlotTypes_token)
+                        labeller.rule(MountableSlotTypes_token)
                     >   (
-                            ('[' > +parse::ship_slot_type_enum() [ push_back(_r1, _1) ] > ']')
-                        |    parse::ship_slot_type_enum() [ push_back(_r1, _1) ]
+                            ('[' > +ship_slot_type_enum [ push_back(_r1, _1) ] > ']')
+                        |    ship_slot_type_enum [ push_back(_r1, _1) ]
                         )
                      )
                 ;
 
             part_type
                 = ( tok.Part_
-                >   parse::detail::more_common_params_parser()
+                >   common_rules.more_common
                     [_pass = is_unique_(_r1, PartType_token, phoenix::bind(&MoreCommonParams::name, _1)), _a = _1 ]
-                >   parse::detail::label(Class_token)       > parse::ship_part_class_enum() [ _c = _1 ]
-                > (  (parse::detail::label(Capacity_token)  > parse::detail::double_ [ _d = _1 ])
-                   | (parse::detail::label(Damage_token)    > parse::detail::double_ [ _d = _1 ])
+                >   labeller.rule(Class_token)       > ship_part_class_enum [ _c = _1 ]
+                > (  (labeller.rule(Capacity_token)  > double_rule [ _d = _1 ])
+                   | (labeller.rule(Damage_token)    > double_rule [ _d = _1 ])
                    |  eps [ _d = 0.0 ]
                   )
-                > (  (parse::detail::label(Damage_token)    > parse::detail::double_ [ _h = _1 ])   // damage is secondary for fighters
-                   | (parse::detail::label(Shots_token)     > parse::detail::double_ [ _h = _1 ])   // shots is secondary for direct fire weapons
+                > (  (labeller.rule(Damage_token)    > double_rule [ _h = _1 ])   // damage is secondary for fighters
+                   | (labeller.rule(Shots_token)     > double_rule [ _h = _1 ])   // shots is secondary for direct fire weapons
                    |  eps [ _h = 1.0 ]
                   )
                 > (   tok.NoDefaultCapacityEffect_ [ _g = false ]
                    |  eps [ _g = true ]
                   )
                 >   slots(_f)
-                >   parse::detail::common_params_parser()           [ _e = _1 ]
-                >   parse::detail::label(Icon_token)        > tok.string    [ _b = _1 ]
+                >   common_rules.common           [ _e = _1 ]
+                >   labeller.rule(Icon_token)        > tok.string    [ _b = _1 ]
                   ) [ insert_parttype_(_r1, _c, _d, _h, _e, _a, _f, _b, _g) ]
                 ;
 
@@ -125,7 +136,7 @@ namespace {
         > slots_rule;
 
         typedef parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<PartType>>&),
+            void (start_rule_payload&),
             boost::spirit::qi::locals<
                 MoreCommonParams,
                 std::string,
@@ -138,23 +149,30 @@ namespace {
             >
         > part_type_rule;
 
-        typedef parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<PartType>>&)
-        > start_rule;
+        using start_rule = parse::detail::rule<start_rule_signature>;
 
-        slots_rule                                  slots;
-        part_type_rule                              part_type;
-        start_rule                                  start;
+        parse::detail::Labeller labeller;
+        const parse::conditions_parser_grammar condition_parser;
+        const parse::string_parser_grammar string_grammar;
+        parse::detail::tags_grammar tags_parser;
+        parse::detail::common_params_rules common_rules;
+        parse::ship_slot_enum_grammar  ship_slot_type_enum;
+        parse::ship_part_class_enum_grammar ship_part_class_enum;
+        parse::detail::double_grammar double_rule;
+        slots_rule                         slots;
+        part_type_rule                     part_type;
+        start_rule                         start;
     };
 
 }
 
 namespace parse {
-    std::map<std::string, std::unique_ptr<PartType>> ship_parts() {
-        std::map<std::string, std::unique_ptr<PartType>> parts;
+    start_rule_payload ship_parts() {
+        const lexer lexer;
+        start_rule_payload parts;
 
         for (const auto& file : ListScripts("scripting/ship_parts")) {
-            /*auto success =*/ detail::parse_file<rules, std::map<std::string, std::unique_ptr<PartType>>>(file, parts);
+            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, parts);
         }
 
         return parts;

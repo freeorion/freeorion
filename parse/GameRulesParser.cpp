@@ -74,9 +74,17 @@ namespace {
     };
     const boost::phoenix::function<insert_rule_> add_rule;
 
-    struct rules {
-        rules(const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+    using start_rule_payload = GameRules;
+    using start_rule_signature = void(start_rule_payload&);
+
+    struct grammar : public parse::detail::grammar<start_rule_signature> {
+        grammar(const parse::lexer& tok,
+                const std::string& filename,
+                const parse::text_iterator& first, const parse::text_iterator& last) :
+            grammar::base_type(start),
+            labeller(tok),
+            double_rule(tok),
+            int_rule(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -101,16 +109,14 @@ namespace {
             qi::_r1_type _r1;
             qi::eps_type eps;
 
-            const parse::lexer& tok = parse::lexer::instance();
-
             game_rule_bool
                 =   (tok.GameRule_
-                    >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
-                    >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
-                    >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
-                    >>  parse::detail::label(Type_token) >>         tok.Toggle_
+                    >> (labeller.rule(Name_token) >          tok.string [ _a = _1 ])
+                    >> (labeller.rule(Description_token) >   tok.string [ _b = _1 ])
+                    >> (labeller.rule(Category_token) >      tok.string [ _j = _1 ])
+                    >>  labeller.rule(Type_token) >>         tok.Toggle_
                     )
-                > ((parse::detail::label(Default_token)
+                > ((labeller.rule(Default_token)
                     >   (
                             tok.On_ [ _i = true ]
                         |   tok.Off_ [ _i = false ]
@@ -122,39 +128,39 @@ namespace {
 
             game_rule_int
                 =   (tok.GameRule_
-                    >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
-                    >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
-                    >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
-                    >>  parse::detail::label(Type_token) >>         tok.Integer_
+                    >> (labeller.rule(Name_token) >          tok.string [ _a = _1 ])
+                    >> (labeller.rule(Description_token) >   tok.string [ _b = _1 ])
+                    >> (labeller.rule(Category_token) >      tok.string [ _j = _1 ])
+                    >>  labeller.rule(Type_token) >>         tok.Integer_
                     )
-                >   parse::detail::label(Default_token) >       parse::detail::int_ [ _f = _1 ]
-                >   parse::detail::label(Min_token) >           parse::detail::int_ [ _g = _1 ]
-                >   parse::detail::label(Max_token) >           parse::detail::int_
+                >   labeller.rule(Default_token) >       int_rule [ _f = _1 ]
+                >   labeller.rule(Min_token) >           int_rule [ _g = _1 ]
+                >   labeller.rule(Max_token) >           int_rule
                     [ add_rule(_r1, _a, _b, _j, _f, _g, _1 ) ]
                 ;
 
             game_rule_double
                 =   (tok.GameRule_
-                    >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
-                    >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
-                    >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
-                    >>  parse::detail::label(Type_token) >>         tok.Real_
+                    >> (labeller.rule(Name_token) >          tok.string [ _a = _1 ])
+                    >> (labeller.rule(Description_token) >   tok.string [ _b = _1 ])
+                    >> (labeller.rule(Category_token) >      tok.string [ _j = _1 ])
+                    >>  labeller.rule(Type_token) >>         tok.Real_
                     )
-                >   parse::detail::label(Default_token) >       parse::detail::double_ [ _c = _1 ]
-                >   parse::detail::label(Min_token) >           parse::detail::double_ [ _d = _1 ]
-                >   parse::detail::label(Max_token) >           parse::detail::double_
+                >   labeller.rule(Default_token) >       double_rule [ _c = _1 ]
+                >   labeller.rule(Min_token) >           double_rule [ _d = _1 ]
+                >   labeller.rule(Max_token) >           double_rule
                     [ add_rule(_r1, _a, _b, _j, _c, _d, _1 ) ]
                 ;
 
             game_rule_string
                 =   (tok.GameRule_
-                    >> (parse::detail::label(Name_token) >          tok.string [ _a = _1 ])
-                    >> (parse::detail::label(Description_token) >   tok.string [ _b = _1 ])
-                    >> (parse::detail::label(Category_token) >      tok.string [ _j = _1 ])
-                    >>  parse::detail::label(Type_token) >>         tok.String_
+                    >> (labeller.rule(Name_token) >          tok.string [ _a = _1 ])
+                    >> (labeller.rule(Description_token) >   tok.string [ _b = _1 ])
+                    >> (labeller.rule(Category_token) >      tok.string [ _j = _1 ])
+                    >>  labeller.rule(Type_token) >>         tok.String_
                     )
-                >   parse::detail::label(Default_token) >       tok.string [ _e = _1 ]
-                >  -( (parse::detail::label(Allowed_token)
+                >   labeller.rule(Default_token) >       tok.string [ _e = _1 ]
+                >  -( (labeller.rule(Allowed_token)
                        > '['
                        > +tok.string [ insert(_h, _1) ]
                        > ']'
@@ -210,10 +216,11 @@ namespace {
             >
         > game_rule_rule;
 
-        typedef parse::detail::rule<
-            void (GameRules&)
-        > start_rule;
+        using start_rule = parse::detail::rule<start_rule_signature>;
 
+        parse::detail::Labeller labeller;
+        parse::detail::double_grammar double_rule;
+        parse::detail::int_grammar int_rule;
         game_rule_rule  game_rule_bool;
         game_rule_rule  game_rule_int;
         game_rule_rule  game_rule_double;
@@ -226,7 +233,8 @@ namespace {
 
 namespace parse {
     bool game_rules(GameRules& game_rules) {
+        const lexer lexer;
         boost::filesystem::path path = GetResourceDir() / "scripting/game_rules.focs.txt";
-        return detail::parse_file<rules, GameRules>(path, game_rules);
+        return detail::parse_file<grammar, GameRules>(lexer, path, game_rules);
     }
 }

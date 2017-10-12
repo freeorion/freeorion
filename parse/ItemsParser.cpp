@@ -1,6 +1,7 @@
 #include "Parse.h"
 
 #include "ParseImpl.h"
+#include "EnumParser.h"
 
 #include "../util/Directories.h"
 
@@ -16,9 +17,16 @@ namespace std {
 #endif
 
 namespace {
-    struct rules {
-        rules(const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+    using start_rule_payload = std::vector<ItemSpec>;
+    using start_rule_signature = void(start_rule_payload&);
+
+    struct grammar : public parse::detail::grammar<start_rule_signature> {
+        grammar(const parse::lexer& tok,
+                const std::string& filename,
+                const parse::text_iterator& first, const parse::text_iterator& last) :
+            grammar::base_type(start),
+            labeller(tok),
+            item_spec_parser(tok, labeller)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -32,7 +40,7 @@ namespace {
             qi::_r1_type _r1;
 
             start
-                =   +parse::detail::item_spec_parser() [ push_back(_r1, _1) ]
+                =   +item_spec_parser [ push_back(_r1, _1) ]
                 ;
 
             start.name("start");
@@ -40,26 +48,28 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
-        typedef parse::detail::rule<
-            void (std::vector<ItemSpec>&)
-        > start_rule;
+        using start_rule = parse::detail::rule<start_rule_signature>;
 
+        parse::detail::Labeller labeller;
+        parse::detail::item_spec_grammar item_spec_parser;
         start_rule start;
     };
 }
 
 namespace parse {
-    std::vector<ItemSpec> items() {
-        std::vector<ItemSpec> items_;
+    start_rule_payload items() {
+        const lexer lexer;
+        start_rule_payload items_;
         const boost::filesystem::path& path = GetResourceDir() / "scripting/starting_unlocks/items.inf";
-        /*auto success =*/ detail::parse_file<rules, std::vector<ItemSpec>>(path, items_);
+        /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, path, items_);
         return items_;
     }
 
-    std::vector<ItemSpec> starting_buildings() {
-        std::vector<ItemSpec> starting_buildings_;
+    start_rule_payload starting_buildings() {
+        const lexer lexer;
+        start_rule_payload starting_buildings_;
         const boost::filesystem::path& path = GetResourceDir() / "scripting/starting_unlocks/buildings.inf";
-        /*auto success =*/ detail::parse_file<rules, std::vector<ItemSpec> >(path, starting_buildings_);
+        /*auto success =*/ detail::parse_file<grammar, start_rule_payload >(lexer, path, starting_buildings_);
         return starting_buildings_;
     }
 }

@@ -4,6 +4,7 @@
 #include "ReportParseError.h"
 #include "../universe/Tech.h"
 #include "../util/Logger.h"
+#include "../util/ScopedTimer.h"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/spirit/include/qi.hpp>
@@ -11,6 +12,14 @@
 
 #include <GG/Clr.h>
 
+
+namespace Condition {
+    struct ConditionBase;
+}
+
+namespace Effect {
+    class EffectBase;
+}
 
 namespace parse { namespace detail {
 
@@ -48,52 +57,71 @@ namespace parse { namespace detail {
         locals
     >;
 
-
-    using double_rule = detail::rule<
-        double ()
+    template <
+        typename signature = boost::spirit::qi::unused_type,
+        typename locals = boost::spirit::qi::unused_type
+    >
+    using grammar = boost::spirit::qi::grammar<
+        parse::token_iterator,
+        parse::skipper_type,
+        signature,
+        locals
     >;
-    extern double_rule double_;
 
 
-    using int_rule = detail::rule<
-        int ()
-    >;
-    extern int_rule int_;
+    struct double_grammar : public grammar<double()> {
+        double_grammar(const parse::lexer& tok);
+        rule<double()> double_;
+    };
 
+    struct int_grammar : public grammar<int()> {
+        int_grammar(const parse::lexer& tok);
+        rule<int()> int_;
+    };
 
-    typedef detail::rule<> label_rule;
-    label_rule& label(const char* name);
+    using label_rule = rule<>;
+    /** Store label_rules. */
+    class Labeller {
+    public:
+        Labeller(const parse::lexer& tok_);
 
+        /** Retrieve or create a label rule for \p name.*/
+        label_rule& rule(const char* name);
+    private:
+        const parse::lexer& m_tok;
+        std::unordered_map<const char*, label_rule> m_rules;
+    };
 
-    typedef rule<
-        void (std::set<std::string>&)
-    > tags_rule;
-    tags_rule& tags_parser();
+    template <typename T>
+    using enum_rule = rule<T ()>;
+    template <typename T>
+    using enum_grammar = grammar<T ()>;
 
+    using tags_rule_type    = rule<void (std::set<std::string>&)>;
+    using tags_grammar_type = grammar<void (std::set<std::string>&)>;
 
-    typedef rule<
-        std::vector<std::shared_ptr<Effect::EffectsGroup>> ()
-    > effects_group_rule;
-    effects_group_rule& effects_group_parser();
+    struct tags_grammar : public tags_grammar_type {
+        tags_grammar(const parse::lexer& tok,
+                     Labeller& labeller);
+        tags_rule_type start;
+    };
 
+    using color_parser_signature = GG::Clr ();
+    using color_parser_locals = boost::spirit::qi::locals<
+        unsigned int,
+        unsigned int,
+        unsigned int
+        >;
+    using color_rule_type = rule<color_parser_signature, color_parser_locals>;
+    using color_grammar_type = grammar<color_parser_signature, color_parser_locals>;
 
-    typedef rule<
-        GG::Clr (),
-        boost::spirit::qi::locals<
-            unsigned int,
-            unsigned int,
-            unsigned int
-        >
-    > color_parser_rule;
-    color_parser_rule& color_parser();
+    struct color_parser_grammar : public color_grammar_type {
+        color_parser_grammar(const parse::lexer& tok);
+        using channel_rule = rule<unsigned int ()>;
 
-
-    typedef rule<
-        ItemSpec (),
-        boost::spirit::qi::locals<UnlockableItemType>
-    > item_spec_parser_rule;
-    item_spec_parser_rule& item_spec_parser();
-
+        channel_rule channel;
+        color_rule_type start;
+    };
 
     void parse_file_common(const boost::filesystem::path& path,
                            const lexer& lexer,
@@ -103,18 +131,16 @@ namespace parse { namespace detail {
                            text_iterator& last,
                            token_iterator& it);
 
-    template <typename Rules, typename Arg1>
-    bool parse_file(const boost::filesystem::path& path, Arg1& arg1)
+    template <typename Grammar, typename Arg1>
+    bool parse_file(const lexer& lexer, const boost::filesystem::path& path, Arg1& arg1)
     {
+        SectionedScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::microseconds(100));
+
         std::string filename;
         std::string file_contents;
         text_iterator first;
         text_iterator last;
         token_iterator it;
-
-        boost::timer timer;
-
-        const lexer& lexer = lexer::instance();
 
         parse_file_common(path, lexer, filename, file_contents, first, last, it);
 
@@ -122,20 +148,32 @@ namespace parse { namespace detail {
 
         boost::spirit::qi::in_state_type in_state;
 
-        Rules rules(filename, first, last);
+        Grammar grammar(lexer, filename, first, last);
 
-        bool success = boost::spirit::qi::phrase_parse(it, lexer.end(), rules.start(boost::phoenix::ref(arg1)), in_state("WS")[lexer.self]);
+        bool success = boost::spirit::qi::phrase_parse(
+            it, lexer.end(), grammar(boost::phoenix::ref(arg1)), in_state("WS")[lexer.self]);
 
-        TraceLogger() << "Parse: Elapsed time to parse " << path.string() << " = " << (timer.elapsed() * 1000.0);
+        if (!success)
+            WarnLogger() << "A parser failed while parsing " << path;
 
-        // s_end is global and static.  It is wrong when multiple files are concurrently or
-        // recursively parsed.  This check is meaningless and was removed May 2017.
-        /* std::ptrdiff_t length_of_unparsed_file = std::distance(first, parse::detail::s_end); */
-        /* bool parse_length_good = ((length_of_unparsed_file == 0) */
-        /*                           || (length_of_unparsed_file == 1 && *first == '\n')); */
+        auto length_of_unparsed_file = std::distance(first, last);
+        bool parse_length_good = ((length_of_unparsed_file == 0)
+                                  || (length_of_unparsed_file == 1 && *first == '\n'));
 
-        return success /*&& parse_length_good*/;
+        if (!parse_length_good
+            && length_of_unparsed_file > 0
+            && static_cast<std::string::size_type>(length_of_unparsed_file) <= file_contents.size())
+        {
+            auto unparsed_section = file_contents.substr(file_contents.size() - std::abs(length_of_unparsed_file));
+            std::copy(first, last, std::back_inserter(unparsed_section));
+            WarnLogger() << "File \"" << path << "\" was incompletely parsed. " << std::endl
+                         << "Unparsed section of file, " << length_of_unparsed_file <<" characters:" << std::endl
+                         << unparsed_section;
+        }
+
+        return success && parse_length_good;
     }
+
 } }
 
 #endif

@@ -1,159 +1,120 @@
 #include "ValueRefParserImpl.h"
 
 
-namespace {
-    struct simple_int_parser_rules :
-        public parse::detail::simple_variable_rules<int>
-    {
-        simple_int_parser_rules() :
-            simple_variable_rules("integer")
-        {
-            namespace phoenix = boost::phoenix;
-            namespace qi = boost::spirit::qi;
+parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lexer& tok) :
+    simple_variable_rules("integer", tok)
+{
+    namespace phoenix = boost::phoenix;
+    namespace qi = boost::spirit::qi;
 
-            using phoenix::new_;
+    using phoenix::new_;
 
-            qi::_1_type _1;
-            qi::_val_type _val;
+    qi::_1_type _1;
+    qi::_val_type _val;
 
-            const parse::lexer& tok = parse::lexer::instance();
+    // TODO: Should we apply elements of this list only to certain
+    // objects? For example, if one writes "Source.Planet.",
+    // "NumShips" should not follow.
+    bound_variable_name
+        =   tok.Owner_
+        |   tok.SupplyingEmpire_
+        |   tok.ID_
+        |   tok.CreationTurn_
+        |   tok.Age_
+        |   tok.ProducedByEmpireID_
+        |   tok.ArrivedOnTurn_
+        |   tok.DesignID_
+        |   tok.FleetID_
+        |   tok.PlanetID_
+        |   tok.SystemID_
+        |   tok.FinalDestinationID_
+        |   tok.NextSystemID_
+        |   tok.NearestSystemID_
+        |   tok.PreviousSystemID_
+        |   tok.NumShips_
+        |   tok.NumStarlanes_
+        |   tok.LastTurnBattleHere_
+        |   tok.LastTurnActiveInBattle_
+        |   tok.LastTurnResupplied_
+        |   tok.Orbit_
+        |   tok.SpeciesID_
+        |   tok.TurnsSinceFocusChange_
+        |   tok.ETA_
+        ;
 
-            // TODO: Should we apply elements of this list only to certain
-            // objects? For example, if one writes "Source.Planet.",
-            // "NumShips" should not follow.
-            bound_variable_name
-                =   tok.Owner_
-                |   tok.SupplyingEmpire_
-                |   tok.ID_
-                |   tok.CreationTurn_
-                |   tok.Age_
-                |   tok.ProducedByEmpireID_
-                |   tok.ArrivedOnTurn_
-                |   tok.DesignID_
-                |   tok.FleetID_
-                |   tok.PlanetID_
-                |   tok.SystemID_
-                |   tok.FinalDestinationID_
-                |   tok.NextSystemID_
-                |   tok.NearestSystemID_
-                |   tok.PreviousSystemID_
-                |   tok.NumShips_
-                |   tok.NumStarlanes_
-                |   tok.LastTurnBattleHere_
-                |   tok.LastTurnActiveInBattle_
-                |   tok.LastTurnResupplied_
-                |   tok.Orbit_
-                |   tok.SpeciesID_
-                |   tok.TurnsSinceFocusChange_
-                |   tok.ETA_
-                ;
+    free_variable_name
+        =   tok.CurrentTurn_
+        |   tok.GalaxyAge_
+        |   tok.GalaxyMaxAIAggression_
+        |   tok.GalaxyMonsterFrequency_
+        |   tok.GalaxyNativeFrequency_
+        |   tok.GalaxyPlanetDensity_
+        |   tok.GalaxyShape_
+        |   tok.GalaxySize_
+        |   tok.GalaxySpecialFrequency_
+        |   tok.GalaxyStarlaneFrequency_
+        ;
 
-            free_variable_name
-                =   tok.CurrentTurn_
-                |   tok.GalaxyAge_
-                |   tok.GalaxyMaxAIAggression_
-                |   tok.GalaxyMonsterFrequency_
-                |   tok.GalaxyNativeFrequency_
-                |   tok.GalaxyPlanetDensity_
-                |   tok.GalaxyShape_
-                |   tok.GalaxySize_
-                |   tok.GalaxySpecialFrequency_
-                |   tok.GalaxyStarlaneFrequency_
-                ;
-
-            constant
-                =   tok.int_    [ _val = new_<ValueRef::Constant<int>>(_1) ]
-                ;
-        }
-    };
-
-
-    simple_int_parser_rules& get_simple_int_parser_rules() {
-        static simple_int_parser_rules retval;
-        return retval;
-    }
-
-
-    struct int_arithmetic_rules : public arithmetic_rules<int> {
-        int_arithmetic_rules() :
-            arithmetic_rules("integer")
-        {
-            const parse::value_ref_rule<int>& simple = int_simple();
-
-            statistic_value_ref_expr
-                =   simple
-                |   int_var_complex()
-            ;
-
-            primary_expr
-                =   '(' >> expr >> ')'
-                |   simple
-                |   statistic_expr
-                |   int_var_complex()
-                ;
-        }
-    };
-
-    int_arithmetic_rules& get_int_arithmetic_rules() {
-        static int_arithmetic_rules retval;
-        return retval;
-    }
-
-    struct castable_as_int_parser_rules {
-        castable_as_int_parser_rules() {
-            namespace phoenix = boost::phoenix;
-            namespace qi = boost::spirit::qi;
-
-            using phoenix::new_;
-
-            qi::_1_type _1;
-            qi::_val_type _val;
-
-            castable_expr
-                = parse::double_value_ref() [ _val = new_<ValueRef::StaticCast<double, int>>(_1) ]
-                ;
-
-            flexible_int
-                = parse::int_value_ref()
-                | castable_expr
-                ;
-
-            castable_expr.name("castable as integer expression");
-            flexible_int.name("integer or castable as integer");
-
-#if DEBUG_VALUEREF_PARSERS
-            debug(castable_expr);
-#endif
-        }
-
-        parse::value_ref_rule<int> castable_expr;
-        parse::value_ref_rule<int> flexible_int;
-    };
-
-    castable_as_int_parser_rules& get_castable_as_int_parser_rules() {
-        static castable_as_int_parser_rules retval;
-        return retval;
-    }
+    constant
+        =   tok.int_    [ _val = new_<ValueRef::Constant<int>>(_1) ]
+        ;
 }
 
+parse::castable_as_int_parser_rules::castable_as_int_parser_rules(
+    const parse::lexer& tok,
+    parse::detail::Labeller& labeller,
+    const parse::detail::condition_parser_grammar& condition_parser,
+    const parse::value_ref_grammar<std::string>& string_grammar
+) :
+    int_rules(tok, labeller, condition_parser, string_grammar),
+    double_rules(tok, labeller, condition_parser, string_grammar)
+{
+    namespace phoenix = boost::phoenix;
+    namespace qi = boost::spirit::qi;
 
-const variable_rule<int>& int_bound_variable()
-{ return get_simple_int_parser_rules().bound_variable; }
+    using phoenix::new_;
 
-const variable_rule<int>& int_free_variable()
-{ return get_simple_int_parser_rules().free_variable; }
+    qi::_1_type _1;
+    qi::_val_type _val;
 
-const parse::value_ref_rule<int>& int_simple()
-{ return get_simple_int_parser_rules().simple; }
+    castable_expr
+        = double_rules.expr [ _val = new_<ValueRef::StaticCast<double, int>>(_1) ]
+        ;
 
-const statistic_rule<int>& int_var_statistic()
-{ return get_int_arithmetic_rules().statistic_expr; }
+    flexible_int
+        = int_rules.expr
+        | castable_expr
+        ;
 
+    castable_expr.name("castable as integer expression");
+    flexible_int.name("integer or castable as integer");
 
-namespace parse {
-    value_ref_rule<int>& int_value_ref()
-    { return get_int_arithmetic_rules().expr; }
+#if DEBUG_VALUEREF_PARSERS
+    debug(castable_expr);
+#endif
+}
 
-    value_ref_rule<int>& flexible_int_value_ref()
-    { return get_castable_as_int_parser_rules().flexible_int; }
+parse::int_arithmetic_rules::int_arithmetic_rules(
+    const parse::lexer& tok,
+    parse::detail::Labeller& labeller,
+    const parse::detail::condition_parser_grammar& condition_parser,
+    const parse::value_ref_grammar<std::string>& string_grammar
+) :
+    arithmetic_rules("integer", tok, labeller, condition_parser),
+    simple_int_rules(tok),
+    int_complex_grammar(tok, labeller, *this, string_grammar)
+{
+    const parse::value_ref_rule<int>& simple = simple_int_rules.simple;
+
+    statistic_value_ref_expr
+        =   simple
+        |   int_complex_grammar
+        ;
+
+    primary_expr
+        =   '(' >> expr >> ')'
+        |   simple
+        |   statistic_expr
+        |   int_complex_grammar
+        ;
 }

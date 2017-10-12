@@ -232,8 +232,6 @@ int mainSetupAndRun() {
 #  endif
 #endif
 
-        parse::init();
-
         HumanClientApp app(width, height, true, "FreeOrion " + FreeOrionVersionString(),
                            left, top, fullscreen, fake_mode_change);
 

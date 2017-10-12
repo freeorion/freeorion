@@ -1,9 +1,15 @@
 #include "ValueRefParserImpl.h"
 
 
-namespace parse {
-    struct string_complex_parser_rules {
-        string_complex_parser_rules() {
+namespace parse { namespace detail {
+    string_complex_parser_grammar::string_complex_parser_grammar(
+        const parse::lexer& tok,
+        Labeller& labeller,
+        const parse::value_ref_grammar<std::string>& string_grammar
+    ) :
+        string_complex_parser_grammar::base_type(start, "string_complex_parser_grammar"),
+        simple_int_rules(tok)
+    {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -19,13 +25,11 @@ namespace parse {
             qi::_f_type _f;
             qi::_val_type _val;
 
-            const parse::lexer& tok = parse::lexer::instance();
-            const parse::value_ref_rule<int>& simple_int = int_simple();
-
+            const parse::value_ref_rule<int>& simple_int = simple_int_rules.simple;
 
             game_rule
                 =   tok.GameRule_ [ _a = construct<std::string>(_1) ]
-                >   detail::label(Name_token) >     parse::string_value_ref() [ _d = _1 ]
+                >   labeller.rule(Name_token) >     string_grammar [ _d = _1 ]
                     [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
@@ -49,7 +53,7 @@ namespace parse {
                         |   tok.RandomControlledSpecies_        [ _a = construct<std::string>(_1) ]
                         )
                     )
-                >   detail::label(Empire_token) > simple_int [ _b = _1 ]
+                >   labeller.rule(Empire_token) > simple_int [ _b = _1 ]
                     [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
@@ -62,8 +66,8 @@ namespace parse {
                         |   tok.RandomTransferrableTech_        [ _a = construct<std::string>(_1) ]
                         )
                     )
-                >   detail::label(Empire_token) > simple_int [ _b = _1 ]
-                >   detail::label(Empire_token) > simple_int [ _c = _1 ]
+                >   labeller.rule(Empire_token) > simple_int [ _b = _1 ]
+                >   labeller.rule(Empire_token) > simple_int [ _c = _1 ]
                     [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
@@ -85,26 +89,11 @@ namespace parse {
                                    "RandomTransferrableTech");
 
 #if DEBUG_DOUBLE_COMPLEX_PARSERS
-            debug(game_rule);
+        debug(game_rule);
 
-            debug(empire_ref);
-            debug(empire_empire_ref);
-
+        debug(empire_ref);
+        debug(empire_empire_ref);
 #endif
-        }
-
-        complex_variable_rule<std::string> game_rule;
-
-        complex_variable_rule<std::string> empire_ref;
-        complex_variable_rule<std::string> empire_empire_ref;
-
-        complex_variable_rule<std::string> start;
-    };
-
-    namespace detail {
-        string_complex_parser_rules string_complex_parser;
     }
-}
 
-const complex_variable_rule<std::string>& string_var_complex()
-{ return parse::detail::string_complex_parser.start; }
+    }}

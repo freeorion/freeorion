@@ -29,9 +29,19 @@ namespace {
     };
     const boost::phoenix::function<new_monster_fleet_plan_> new_monster_fleet_plan;
 
-    struct rules {
-        rules(const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+    using start_rule_payload = std::vector<MonsterFleetPlan*>;
+    using start_rule_signature = void(start_rule_payload&);
+
+    struct grammar : public parse::detail::grammar<start_rule_signature> {
+        grammar(const parse::lexer& tok,
+                const std::string& filename,
+                const parse::text_iterator& first, const parse::text_iterator& last) :
+            grammar::base_type(start),
+            labeller(tok),
+            condition_parser(tok, labeller),
+            string_grammar(tok, labeller, condition_parser),
+            double_rule(tok),
+            int_rule(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -47,15 +57,13 @@ namespace {
             qi::_val_type _val;
             qi::eps_type eps;
 
-            const parse::lexer& tok = parse::lexer::instance();
-
             monster_fleet_plan_prefix
                 =    tok.MonsterFleet_
-                >    parse::detail::label(Name_token) > tok.string [ phoenix::ref(_a) = _1 ]
+                >    labeller.rule(Name_token) > tok.string [ phoenix::ref(_a) = _1 ]
                 ;
 
             ships
-                =    parse::detail::label(Ships_token)
+                =    labeller.rule(Ships_token)
                 >    eps [ clear(phoenix::ref(_b)) ]
                 >    (
                             ('[' > +tok.string [ push_back(phoenix::ref(_b), _1) ] > ']')
@@ -65,11 +73,11 @@ namespace {
 
             spawns
                 =    (
-                            (parse::detail::label(SpawnRate_token) > parse::detail::double_ [ phoenix::ref(_c) = _1 ])
+                            (labeller.rule(SpawnRate_token) > double_rule [ phoenix::ref(_c) = _1 ])
                         |    eps [ phoenix::ref(_c) = 1.0 ]
                      )
                 >    (
-                            (parse::detail::label(SpawnLimit_token) > parse::detail::int_ [ phoenix::ref(_d) = _1 ])
+                            (labeller.rule(SpawnLimit_token) > int_rule [ phoenix::ref(_d) = _1 ])
                         |    eps [ phoenix::ref(_d) = 9999 ]
                      )
                 ;
@@ -79,7 +87,7 @@ namespace {
                             monster_fleet_plan_prefix
                         >   ships
                         >   spawns
-                        > -(parse::detail::label(Location_token) > parse::detail::condition_parser [ phoenix::ref(_e) = _1 ])
+                        > -(labeller.rule(Location_token) > condition_parser [ phoenix::ref(_e) = _1 ])
                      )
                 [ _val = new_monster_fleet_plan(phoenix::ref(_a), phoenix::ref(_b), phoenix::ref(_c), phoenix::ref(_d), phoenix::ref(_e)) ]
                 ;
@@ -106,10 +114,13 @@ namespace {
             MonsterFleetPlan* ()
         > monster_fleet_plan_rule;
 
-        typedef parse::detail::rule<
-            void (std::vector<MonsterFleetPlan*>&)
-        > start_rule;
+        using start_rule = parse::detail::rule<start_rule_signature>;
 
+        parse::detail::Labeller labeller;
+        parse::conditions_parser_grammar condition_parser;
+        const parse::string_parser_grammar string_grammar;
+        parse::detail::double_grammar double_rule;
+        parse::detail::int_grammar int_rule;
         generic_rule            monster_fleet_plan_prefix;
         generic_rule            ships;
         generic_rule            spawns;
@@ -127,10 +138,11 @@ namespace {
 }
 
 namespace parse {
-    std::vector<MonsterFleetPlan*> monster_fleet_plans() {
-        std::vector<MonsterFleetPlan*> monster_fleet_plans_;
+    start_rule_payload monster_fleet_plans() {
+        const lexer lexer;
+        start_rule_payload monster_fleet_plans_;
         boost::filesystem::path path = GetResourceDir() / "scripting/monster_fleets.inf";
-        /*auto success =*/ detail::parse_file<rules, std::vector<MonsterFleetPlan*>>(path, monster_fleet_plans_);
+        /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, path, monster_fleet_plans_);
         return monster_fleet_plans_;
     }
 }

@@ -2,6 +2,7 @@
 
 #include "ParseImpl.h"
 #include "ValueRefParser.h"
+#include "ConditionParserImpl.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -15,9 +16,18 @@ namespace std {
 #endif
 
 namespace {
-    struct rules {
-        rules(const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+    using start_rule_payload = std::map<std::string, ValueRef::ValueRefBase<double>*>;
+    using start_rule_signature = void(start_rule_payload&);
+
+    struct grammar : public parse::detail::grammar<start_rule_signature> {
+        grammar(const parse::lexer& tok,
+                const std::string& filename,
+                const parse::text_iterator& first, const parse::text_iterator& last) :
+            grammar::base_type(start),
+            labeller(tok),
+            condition_parser(tok, labeller),
+            string_grammar(tok, labeller, condition_parser),
+            double_rules(tok, labeller, condition_parser, string_grammar)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -33,12 +43,10 @@ namespace {
             qi::_r1_type _r1;
             qi::_val_type _val;
 
-            const parse::lexer& tok = parse::lexer::instance();
-
             stat
                 =   tok.Statistic_
-                >   parse::detail::label(Name_token)    > tok.string [ _a = _1 ]
-                >   parse::detail::label(Value_token)   > parse::double_value_ref()
+                >   labeller.rule(Name_token)    > tok.string [ _a = _1 ]
+                >   labeller.rule(Value_token)   > double_rules.expr
                 [ _val = construct<std::pair<std::string, ValueRef::ValueRefBase<double>*>>(_a, _1) ]
                 ;
 
@@ -60,21 +68,24 @@ namespace {
             boost::spirit::qi::locals<std::string>
         > stat_rule;
 
-        typedef parse::detail::rule<
-            void (std::map<std::string, ValueRef::ValueRefBase<double>*>&)
-        > start_rule;
+        using start_rule = parse::detail::rule<start_rule_signature>;
 
+        parse::detail::Labeller labeller;
+        parse::conditions_parser_grammar condition_parser;
+        const parse::string_parser_grammar string_grammar;
+        parse::double_parser_rules      double_rules;
         stat_rule   stat;
         start_rule  start;
     };
 }
 
 namespace parse {
-    std::map<std::string, ValueRef::ValueRefBase<double>*> statistics() {
-        std::map<std::string, ValueRef::ValueRefBase<double>*> stats_;
+    start_rule_payload statistics() {
+        const lexer lexer;
+        start_rule_payload stats_;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/empire_statistics")) {
-            /*auto success =*/ detail::parse_file<rules, std::map<std::string, ValueRef::ValueRefBase<double>*>>(file, stats_);
+            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, stats_);
         }
 
         return stats_;

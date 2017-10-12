@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
@@ -166,6 +166,27 @@
     <ClInclude Include="..\..\parse\ConditionParser.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\parse\ConditionParser1.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ConditionParser2.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ConditionParser3.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ConditionParser4.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ConditionParser5.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ConditionParser6.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ConditionParser7.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\parse\ValueRefParserImpl.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
@@ -173,6 +194,21 @@
       <Filter>Header Files\parse</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\EffectParser.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\EffectParser1.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\EffectParser2.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\EffectParser3.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\EffectParser4.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\EffectParser5.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\EnumParser.h">

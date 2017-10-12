@@ -44,9 +44,21 @@ namespace {
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_hulltype_, insert_hulltype, 7)
 
-    struct rules {
-        rules(const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last)
+    using start_rule_payload = std::map<std::string, std::unique_ptr<HullType>>;
+    using start_rule_signature = void(start_rule_payload&);
+
+    struct grammar : public parse::detail::grammar<start_rule_signature> {
+        grammar(const parse::lexer& tok,
+                const std::string& filename,
+                const parse::text_iterator& first, const parse::text_iterator& last) :
+            grammar::base_type(start),
+            labeller(tok),
+            condition_parser(tok, labeller),
+            string_grammar(tok, labeller, condition_parser),
+            tags_parser(tok, labeller),
+            common_rules(tok, labeller, condition_parser, string_grammar, tags_parser),
+            ship_slot_type_enum(tok),
+            double_rule(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -70,27 +82,25 @@ namespace {
             qi::eps_type eps;
             qi::lit_type lit;
 
-            const parse::lexer& tok = parse::lexer::instance();
-
             hull_stats
-                =   parse::detail::label(Speed_token)       >   parse::detail::double_ [ _a = _1 ]
-                >   parse::detail::label(Fuel_token)        >   parse::detail::double_ [ _c = _1 ]
-                >   parse::detail::label(Stealth_token)     >   parse::detail::double_ [ _d = _1 ]
-                >   parse::detail::label(Structure_token)   >   parse::detail::double_
+                =   labeller.rule(Speed_token)       >   double_rule [ _a = _1 ]
+                >   labeller.rule(Fuel_token)        >   double_rule [ _c = _1 ]
+                >   labeller.rule(Stealth_token)     >   double_rule [ _d = _1 ]
+                >   labeller.rule(Structure_token)   >   double_rule
                     [ _val = construct<HullTypeStats>(_c, _a, _d, _1) ]
                 ;
 
             slot
                 =   tok.Slot_
-                >   parse::detail::label(Type_token) > parse::ship_slot_type_enum() [ _a = _1 ]
-                >   parse::detail::label(Position_token)
-                >   '(' > parse::detail::double_ [ _b = _1 ] > ',' > parse::detail::double_ [ _c = _1 ] > lit(')')
+                >   labeller.rule(Type_token) > ship_slot_type_enum [ _a = _1 ]
+                >   labeller.rule(Position_token)
+                >   '(' > double_rule [ _b = _1 ] > ',' > double_rule [ _c = _1 ] > lit(')')
                     [ _val = construct<HullType::Slot>(_a, _b, _c) ]
                 ;
 
             slots
                 =  -(
-                        parse::detail::label(Slots_token)
+                        labeller.rule(Slots_token)
                     >   (
                                 ('[' > +slot [ push_back(_r1, _1) ] > ']')
                             |    slot [ push_back(_r1, _1) ]
@@ -100,13 +110,13 @@ namespace {
 
             hull
                 =   tok.Hull_
-                >   parse::detail::more_common_params_parser()
+                >   common_rules.more_common
                     [_pass = is_unique_(_r1, HullType_token, phoenix::bind(&MoreCommonParams::name, _1)), _a = _1 ]
                 >   hull_stats                                  [ _c = _1 ]
                 >  -slots(_e)
-                >   parse::detail::common_params_parser()       [ _d = _1 ]
-                >   parse::detail::label(Icon_token)    > tok.string    [ _f = _1 ]
-                >   parse::detail::label(Graphic_token) > tok.string
+                >   common_rules.common       [ _d = _1 ]
+                >   labeller.rule(Icon_token)    > tok.string    [ _f = _1 ]
+                >   labeller.rule(Graphic_token) > tok.string
                 [ insert_hulltype_(_r1, _c, _d, _a, _e, _f, _1) ]
                 ;
 
@@ -165,10 +175,15 @@ namespace {
             >
         > hull_rule;
 
-        typedef parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<HullType>>&)
-        > start_rule;
+        using start_rule = parse::detail::rule<start_rule_signature>;
 
+        parse::detail::Labeller labeller;
+        parse::conditions_parser_grammar condition_parser;
+        const parse::string_parser_grammar string_grammar;
+        parse::detail::tags_grammar tags_parser;
+        parse::detail::common_params_rules common_rules;
+        parse::ship_slot_enum_grammar ship_slot_type_enum;
+        parse::detail::double_grammar double_rule;
         hull_stats_rule                             hull_stats;
         slot_rule                                   slot;
         slots_rule                                  slots;
@@ -178,11 +193,12 @@ namespace {
 }
 
 namespace parse {
-    std::map<std::string, std::unique_ptr<HullType>> ship_hulls() {
-        std::map<std::string, std::unique_ptr<HullType>> hulls;
+    start_rule_payload ship_hulls() {
+        const lexer lexer;
+        start_rule_payload hulls;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/ship_hulls")) {
-            /*auto success =*/ detail::parse_file<rules, std::map<std::string, std::unique_ptr<HullType>>>(file, hulls);
+            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, hulls);
         }
 
         return hulls;
