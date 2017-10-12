@@ -8,6 +8,7 @@ Part
     tags = [ "PEDIA_PC_GENERAL" ]
     location = OwnedBy empire = Source.Owner
     effectsgroups = [
+        /// @content_tag{ORGANIC_HULL} Ships with this part contribute towards increased weapon damage of other Ships with this part within 0 starlane jumps
         EffectsGroup
             scope = Source
             activation = Star type = [ Red ]
