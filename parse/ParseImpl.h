@@ -82,12 +82,12 @@ namespace parse { namespace detail {
     using label_rule = rule<>;
     /** Store label_rules. */
     class Labeller {
-        public:
+    public:
         Labeller(const parse::lexer& tok_);
 
         /** Retrieve or create a label rule for \p name.*/
         label_rule& rule(const char* name);
-        private:
+    private:
         const parse::lexer& m_tok;
         std::unordered_map<const char*, label_rule> m_rules;
     };

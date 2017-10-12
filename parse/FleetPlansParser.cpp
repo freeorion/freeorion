@@ -23,8 +23,8 @@ namespace {
 
     struct grammar : public parse::detail::grammar<start_rule_signature> {
         grammar(const parse::lexer& tok,
-              const std::string& filename,
-              const parse::text_iterator& first, const parse::text_iterator& last) :
+                const std::string& filename,
+                const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
             labeller(tok)
         {
