@@ -9,6 +9,7 @@ Part
     tags = [ "PEDIA_PC_TROOPS" ]
     location = And [
         OwnedBy empire = Source.Owner
+        /// @content_tag{NO_ATTACKTROOPS} Prevents production of ships with this part in their design at locations with this tag
         Not HasTag name = "NO_ATTACKTROOPS"
         Troops low = 4
     ]
