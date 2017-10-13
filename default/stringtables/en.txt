@@ -5521,7 +5521,7 @@ ORBITAL_DRYDOCK_REPAIR_TITLE
 Orbital Drydock Repair
 
 ORBITAL_DRYDOCK_REPAIR_TEXT
-'''The [[building BLD_SHIPYARD_ORBITAL_DRYDOCK]] is considered the best repair facility available, able to restore a ship to pristine condition.
+'''The [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] is considered the best repair facility available, able to restore a ship to pristine condition.
 
 When the planet [[metertype METER_HAPPINESS]] is below 15, repairs at this facility are not as efficient.  If the planet drops below 5 happiness, the drydock is not able to perform any repairs that turn.
 
