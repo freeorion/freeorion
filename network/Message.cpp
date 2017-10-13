@@ -24,6 +24,7 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/weak_ptr.hpp>
 #include <boost/timer.hpp>
+#include <boost/date_time/posix_time/time_serialize.hpp>
 
 #include <zlib.h>
 
@@ -603,11 +604,15 @@ Message PlayerChatMessage(const std::string& data, int receiver) {
     return Message(Message::PLAYER_CHAT, os.str());
 }
 
-Message ServerPlayerChatMessage(int sender, const std::string& data) {
+Message ServerPlayerChatMessage(int sender,
+                                const boost::posix_time::ptime& timestamp,
+                                const std::string& data)
+{
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(sender)
+           << BOOST_SERIALIZATION_NVP(timestamp)
            << BOOST_SERIALIZATION_NVP(data);
     }
     return Message(Message::PLAYER_CHAT, os.str());
@@ -710,11 +715,16 @@ void ExtractPlayerChatMessageData(const Message& msg, int& receiver, std::string
     }
 }
 
-void ExtractServerPlayerChatMessageData(const Message& msg, int& sender, std::string& data) {
+void ExtractServerPlayerChatMessageData(const Message& msg,
+                                        int& sender,
+                                        boost::posix_time::ptime& timestamp,
+                                        std::string& data)
+{
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(sender)
+           >> BOOST_SERIALIZATION_NVP(timestamp)
            >> BOOST_SERIALIZATION_NVP(data);
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractServerPlayerChatMessageData(const Message& msg, int& sender, std::string& data) failed! Message:\n"

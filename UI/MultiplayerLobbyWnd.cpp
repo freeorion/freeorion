@@ -729,7 +729,7 @@ void MultiPlayerLobbyWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG
     }
 }
 
-void MultiPlayerLobbyWnd::ChatMessage(int player_id, const std::string& msg) {
+void MultiPlayerLobbyWnd::ChatMessage(int player_id, const boost::posix_time::ptime& timestamp, const std::string& msg) {
     // look up player name by ID
     std::string player_name;
     for (std::pair<int, PlayerSetupData>& entry : m_lobby_data.m_players) {

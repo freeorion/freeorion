@@ -459,10 +459,11 @@ boost::statechart::result MPLobby::react(const PlayerChat& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) MPLobby.PlayerChat";
 
     int player_id;
+    boost::posix_time::ptime timestamp;
     std::string data;
-    ExtractServerPlayerChatMessageData(msg.m_message, player_id, data);
+    ExtractServerPlayerChatMessageData(msg.m_message, player_id, timestamp, data);
 
-    Client().GetClientUI().GetMultiPlayerLobbyWnd()->ChatMessage(player_id, data);
+    Client().GetClientUI().GetMultiPlayerLobbyWnd()->ChatMessage(player_id, timestamp, data);
     return discard_event();
 }
 
@@ -576,9 +577,10 @@ boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.PlayerChat: " << msg.m_message.Text();
     std::string text;
     int sending_player_id;
-    ExtractPlayerChatMessageData(msg.m_message, sending_player_id, text);
+    boost::posix_time::ptime timestamp;
+    ExtractServerPlayerChatMessageData(msg.m_message, sending_player_id, timestamp, text);
 
-    Client().GetClientUI().GetMessageWnd()->HandlePlayerChatMessage(text, sending_player_id, Client().PlayerID());
+    Client().GetClientUI().GetMessageWnd()->HandlePlayerChatMessage(text, sending_player_id, timestamp, Client().PlayerID());
 
     return discard_event();
 }

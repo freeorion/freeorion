@@ -375,7 +375,11 @@ void MessageWnd::PreRender() {
     DoLayout();
 }
 
-void MessageWnd::HandlePlayerChatMessage(const std::string& text, int sender_player_id, int recipient_player_id) {
+void MessageWnd::HandlePlayerChatMessage(const std::string& text,
+                                         int sender_player_id,
+                                         const boost::posix_time::ptime& timestamp,
+                                         int recipient_player_id)
+{
     const ClientApp* app = ClientApp::GetApp();
     if (!app) {
         ErrorLogger() << "MessageWnd::HandlePlayerChatMessage couldn't get client app!";

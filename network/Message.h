@@ -6,6 +6,7 @@
 #include <GG/Enum.h>
 
 #include <boost/shared_array.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 
 #if defined(_MSC_VER) && defined(int64_t)
 #undef int64_t
@@ -327,9 +328,11 @@ FO_COMMON_API Message ServerLobbyUpdateMessage(const MultiplayerLobbyData& lobby
     receiver is Networking::INVALID_PLAYER_ID. Note that the receiver of this message is always the server.*/
 FO_COMMON_API Message PlayerChatMessage(const std::string& text, int receiver = Networking::INVALID_PLAYER_ID);
 
-/** creates an PLAYER_CHAT message containing a chat string from \a sender to be displayed in chat.
+/** creates an PLAYER_CHAT message containing a chat string from \a sender at \a timestamp to be displayed in chat.
     This message should only be sent by the server.*/
-FO_COMMON_API Message ServerPlayerChatMessage(int sender, const std::string& text);
+FO_COMMON_API Message ServerPlayerChatMessage(int sender,
+                                              const boost::posix_time::ptime& timestamp,
+                                              const std::string& text);
 
 /** creates a START_MP_GAME used to finalize the multiplayer lobby setup.*/
 FO_COMMON_API Message StartMPGameMessage();
@@ -356,7 +359,10 @@ FO_COMMON_API void ExtractLobbyUpdateMessageData(const Message& msg, Multiplayer
 
 FO_COMMON_API void ExtractPlayerChatMessageData(const Message& msg, int& receiver, std::string& data);
 
-FO_COMMON_API void ExtractServerPlayerChatMessageData(const Message& msg, int& sender, std::string& data);
+FO_COMMON_API void ExtractServerPlayerChatMessageData(const Message& msg,
+                                                      int& sender,
+                                                      boost::posix_time::ptime& timestamp,
+                                                      std::string& data);
 
 FO_COMMON_API void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, int& empire_id,
                                                int& current_turn, EmpireManager& empires, Universe& universe,

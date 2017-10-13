@@ -369,7 +369,8 @@ void AIClientApp::HandleMessage(const Message& msg) {
     case Message::PLAYER_CHAT: {
         std::string data;
         int player_id;
-        ExtractServerPlayerChatMessageData(msg, player_id, data);
+        boost::posix_time::ptime timestamp;
+        ExtractServerPlayerChatMessageData(msg, player_id, timestamp, data);
         m_AI->HandleChatMessage(player_id, data);
         break;
     }

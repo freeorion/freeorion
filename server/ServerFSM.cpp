@@ -1122,15 +1122,17 @@ sc::result MPLobby::react(const PlayerChat& msg) {
     int receiver;
     ExtractPlayerChatMessageData(message, receiver, data);
 
+    boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
+
     if (receiver == Networking::INVALID_PLAYER_ID) { // the receiver is everyone (except the sender)
         for (auto it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
             if ((*it)->PlayerID() != sender->PlayerID())
-                (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), data));
+                (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), timestamp, data));
         }
     } else {
         auto it = server.m_networking.GetPlayer(receiver);
         if (it != server.m_networking.established_end())
-            (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), data));
+            (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), timestamp, data));
     }
 
     return discard_event();
@@ -1748,6 +1750,8 @@ sc::result PlayingGame::react(const PlayerChat& msg) {
     int receiver;
     ExtractPlayerChatMessageData(message, receiver, data);
 
+    boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
+
     for (auto it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
     {
@@ -1755,6 +1759,7 @@ sc::result PlayingGame::react(const PlayerChat& msg) {
             receiver == (*it)->PlayerID())
         {
             (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(),
+                                                       timestamp,
                                                        data));
         }
     }
