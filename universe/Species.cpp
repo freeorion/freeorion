@@ -362,21 +362,21 @@ SpeciesManager::SpeciesManager() {
 const Species* SpeciesManager::GetSpecies(const std::string& name) const {
     CheckPendingSpeciesTypes();
     auto it = m_species.find(name);
-    return it != end() ? it->second.get() : nullptr;
+    return it != m_species.end() ? it->second.get() : nullptr;
 }
 
 Species* SpeciesManager::GetSpecies(const std::string& name) {
     CheckPendingSpeciesTypes();
     auto it = m_species.find(name);
-    return it != end() ? it->second.get() : nullptr;
+    return it != m_species.end() ? it->second.get() : nullptr;
 }
 
 int SpeciesManager::GetSpeciesID(const std::string& name) const {
     CheckPendingSpeciesTypes();
-    iterator it = m_species.find(name);
-    if (it == end())
+    auto it = m_species.find(name);
+    if (it == m_species.end())
         return -1;
-    return std::distance(begin(), it);
+    return std::distance(m_species.begin(), it);
 }
 
 SpeciesManager& SpeciesManager::GetSpeciesManager() {
