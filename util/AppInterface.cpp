@@ -47,7 +47,7 @@ int IApp::MAX_AI_PLAYERS() {
     return max_number_AIs;
 }
 
-void IApp::ParseUniverseObjectTypes() {
+void IApp::StartBackgroundParsing() {
     const auto& rdir = GetResourceDir();
     GetBuildingTypeManager().SetBuildingTypes(Pending::StartParsing(parse::buildings, rdir / "scripting/buildings"));
     GetEncyclopedia().SetArticles(Pending::StartParsing(parse::encyclopedia_articles, rdir / "scripting/encyclopedia"));

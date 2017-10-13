@@ -352,7 +352,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     m_fsm->initiate();
 
     // Start parsing content
-    ParseUniverseObjectTypes();
+    StartBackgroundParsing();
     GetOptionsDB().OptionChangedSignal("resource-dir").connect(
         boost::bind(&HumanClientApp::HandleResoureDirChange, this));
 }
@@ -1437,7 +1437,7 @@ void HumanClientApp::UpdateFPSLimit() {
 void HumanClientApp::HandleResoureDirChange() {
     if (!m_game_started) {
         DebugLogger() << "Resource directory changed.  Reparsing universe ...";
-        ParseUniverseObjectTypes();
+        StartBackgroundParsing();
     } else {
         WarnLogger() << "Resource directory changes will take effect on application restart.";
     }

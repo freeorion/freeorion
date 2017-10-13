@@ -148,7 +148,7 @@ ServerApp::ServerApp() :
     m_fsm->initiate();
 
     // Start parsing content
-    ParseUniverseObjectTypes();
+    StartBackgroundParsing();
 
     Empires().DiplomaticStatusChangedSignal.connect(
         boost::bind(&ServerApp::HandleDiplomaticStatusChange, this, _1, _2));
@@ -190,8 +190,8 @@ namespace {
 #include <stdlib.h>
 #endif
 
-void ServerApp::ParseUniverseObjectTypes() {
-    IApp::ParseUniverseObjectTypes();
+void ServerApp::StartBackgroundParsing() {
+    IApp::StartBackgroundParsing();
     const auto& rdir = GetResourceDir();
     m_universe.SetInitiallyUnlockedItems(
         Pending::StartParsing(parse::items, rdir / "scripting/starting_unlocks/items.inf"));

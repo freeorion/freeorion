@@ -143,7 +143,7 @@ void AIClientApp::Run() {
         Networking().SendMessage(JoinGameMessage(PlayerName(), Networking::CLIENT_TYPE_AI_PLAYER));
 
         // Start parsing content
-        ParseUniverseObjectTypes();
+        StartBackgroundParsing();
 
         // respond to messages until disconnected
         while (1) {
