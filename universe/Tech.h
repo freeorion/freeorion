@@ -306,7 +306,7 @@ public:
         std::map<std::string, std::unique_ptr<TechCategory>>, // tech_categories,
         std::set<std::string> // categories_seen
         >;
-        /** Sets types to the value of \p future. */
+    /** Sets types to the value of \p future. */
     FO_COMMON_API void SetTechs(Pending::Pending<TechParseTuple>&& future);
 
 

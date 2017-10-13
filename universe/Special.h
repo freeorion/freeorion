@@ -123,7 +123,7 @@ void Special::serialize(Archive& ar, const unsigned int version)
 
 /** Look up table for specials.*/
 class FO_COMMON_API SpecialsManager {
-    public:
+public:
     using SpecialsTypeMap = std::map<std::string, std::unique_ptr<Special>>;
 
     SpecialsManager();
@@ -136,7 +136,7 @@ class FO_COMMON_API SpecialsManager {
     /** Sets types to the value of \p future. */
     FO_COMMON_API void SetSpecialsTypes(Pending::Pending<SpecialsTypeMap>&& future);
 
-    private:
+private:
     /** Assigns any m_pending_types to m_specials. */
     void CheckPendingSpecialsTypes() const;
 

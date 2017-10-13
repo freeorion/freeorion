@@ -188,7 +188,7 @@ const std::vector<FleetPlan*>& Universe::InitiallyUnlockedFleetPlans() const
 void Universe::SetMonsterFleetPlans(Pending::Pending<std::vector<MonsterFleetPlan*>>&& future)
 { m_pending_monster_fleet_plans = std::move(future); }
 
-const std::vector<MonsterFleetPlan*>&  Universe::MonsterFleetPlans() const
+const std::vector<MonsterFleetPlan*>& Universe::MonsterFleetPlans() const
 { return Pending::SwapPending(m_pending_monster_fleet_plans, m_monster_fleet_plans); }
 
 void Universe::SetEmpireStats(Pending::Pending<EmpireStatsMap> future)

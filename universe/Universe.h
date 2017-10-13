@@ -408,22 +408,22 @@ public:
     /** Set items unlocked before turn 1 from \p future.*/
     void SetInitiallyUnlockedItems(Pending::Pending<std::vector<ItemSpec>>&& future);
     /** Items unlocked before turn 1.*/
-    const std::vector<ItemSpec>&  InitiallyUnlockedItems() const;
+    const std::vector<ItemSpec>& InitiallyUnlockedItems() const;
 
     /** Set buildings unlocked before turn 1 from \p future.*/
     void SetInitiallyUnlockedBuildings(Pending::Pending<std::vector<ItemSpec>>&& future);
     /** Buildings unlocked before turn 1.*/
-    const std::vector<ItemSpec>&  InitiallyUnlockedBuildings() const;
+    const std::vector<ItemSpec>& InitiallyUnlockedBuildings() const;
 
     /** Set fleets unlocked before turn 1 from \p future.*/
     void SetInitiallyUnlockedFleetPlans(Pending::Pending<std::vector<FleetPlan*>>&& future);
     /** Fleets unlocked before turn 1.*/
-    const std::vector<FleetPlan*>&  InitiallyUnlockedFleetPlans() const;
+    const std::vector<FleetPlan*>& InitiallyUnlockedFleetPlans() const;
 
     /** Set items unlocked before turn 1 from \p future..*/
     void SetMonsterFleetPlans(Pending::Pending<std::vector<MonsterFleetPlan*>>&& future);
     /** Items unlocked before turn 1.*/
-    const std::vector<MonsterFleetPlan*>&  MonsterFleetPlans() const;
+    const std::vector<MonsterFleetPlan*>& MonsterFleetPlans() const;
 
     /** Set the empire stats from \p future. */
     using EmpireStatsMap = std::map<std::string, ValueRef::ValueRefBase<double>*>;
