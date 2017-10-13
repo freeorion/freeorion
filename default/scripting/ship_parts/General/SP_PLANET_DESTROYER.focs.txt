@@ -1,6 +1,8 @@
 Part
     name = "SP_PLANET_DESTROYER"
     description = "SP_PLANET_DESTROYER_DESC"
+    exclusions = [ "SP_BIOTERM" "SP_CHAOS_WAVE" "SP_DARK_RAY" "SP_DEATH_SPORE" "SP_EMO"
+                   "SP_EMP" "SP_GRV" "SP_SONIC" "SP_VOID_SHADOW" ]
     class = General
     mountableSlotTypes = Core
     buildcost = 800 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
@@ -9,7 +11,7 @@ Part
     location = All
     effectsgroups = [
 
-        // pdc gives speed malus increasing with each refinement
+        // pdc gives speed malus
         EffectsGroup
             scope = Source
             effects = SetSpeed value = Value - 60
@@ -42,7 +44,10 @@ Part
 
           // if a homeworld is destroyed, generate specific sitRep (need to do it here, later owner info is lost)
           EffectsGroup
-              scope = And [ [[PDC_SCOPE]] ]
+              scope = And [
+                  [[PDC_SCOPE]]
+                  Homeworld
+              ]      
               activation = Or [
                   [[PDC_LVL2]]
                   Number low = 1 condition = HasSpecialCapacity name = "DESTRUCTION_COUNTDOWN_SPECIAL" high = 1

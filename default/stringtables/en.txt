@@ -3096,10 +3096,10 @@ Bombard
 PL_CANCEL_BOMBARD
 Cancel Bombarding
 
-PL_DESTROY
+PL_DESTROY_PLANET
 Destroy Planet
 
-PL_CANCEL_DESTROY
+PL_CANCEL_DESTROY_PLANET
 Cancel Destruction
 
 # %1% the planet size as text (small, medium, large, ...).
@@ -8592,13 +8592,6 @@ PC_BOMBARD_DESC
 The majority of bombardment parts only affect one [[encyclopedia METABOLISM_TITLE]].'''
 
 # Ship part classes
-PC_DESTROY
-Planet Destruction
-
-PC_DESTROY_DESC
-'''Weapons which allow the destruction of entire planets.'''
-
-# Ship part classes
 PC_INDUSTRY
 Industry
 
@@ -11315,7 +11308,7 @@ Planet Destroyer Cannon
 
 SHP_PLANET_DESTROYER_DESC
 '''The ultimate beam weapon, able to destroy a whole planet even if its shields are still up. It can only target planets and is too slow to aim at individual ships. The only way to save a planet targeted by this terrifying weapon is to destroy the ship carrying it before the ship can fire. Needs a Core [[encyclopedia SLOT_TITLE]] to install. 
-Due to high energy demand of this ship part, the speed of the ship it is installed on is reduced by 60. The unrefined cannon takes a charge-up time of 2 turns before it can fire.'''
+Due to high energy demand of this ship part, the [[metertype METER_SPEED]] of the ship it is installed on is reduced by 60. The unrefined cannon takes a charge-up time of 2 turns before it can fire.'''
 
 SHP_PLANET_DESTROYER_REF_1
 Planet Destroyer Cannon 2

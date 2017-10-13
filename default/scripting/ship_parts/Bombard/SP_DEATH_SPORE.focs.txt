@@ -1,6 +1,7 @@
 Part
     name = "SP_DEATH_SPORE"
     description = "SP_DEATH_SPORE_DESC"
+    exclusions = [ "SP_PLANET_DESTROYER" ]
     class = Bombard
     capacity = 0.5
     mountableSlotTypes = External

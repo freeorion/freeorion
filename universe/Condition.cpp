@@ -8496,7 +8496,7 @@ bool OrderedDestroyed::operator==(const ConditionBase& rhs) const {
 
     CHECK_COND_VREF_MEMBER(m_by_object_condition)
 
-        return true;
+    return true;
 }
 
 namespace {

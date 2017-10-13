@@ -82,11 +82,14 @@ public:
         set.  Return true if \p order exists and was successfully removed. */
     bool           RescindOrder(int order);
 
-    /** clears all orders except for the ones that should persist; allows persisting
-        orders to be executed again; should be called at the beginning of a new turn */
+    /** Resets all orders, irrespective of persistance */
     void           Reset();
 
-    /** executes all persisting orders to update the UI on the new turn */
+    /** Clears all orders except for the ones that should persist; allows persisting
+        orders to be executed again. */
+    void           ResetNonPersistentOrders();
+
+    /** Executes all persisting orders to update the UI on the new turn */
     void           ExecutePersistentOrders();
     //@}
 

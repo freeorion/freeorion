@@ -30,6 +30,7 @@
 #include "../../util/Directories.h"
 #include "../../util/Version.h"
 #include "../../universe/Planet.h"
+#include "../../universe/Ship.h"
 #include "../../universe/Species.h"
 #include "../../universe/Enums.h"
 #include "../../Empire/Empire.h"
@@ -184,6 +185,13 @@ namespace {
             GetOptionsDB().Set<bool>("UI.galaxy-starfields",            false);
             GetOptionsDB().Set<bool>("UI.system-fog-of-war",            false);
         }
+    }
+
+    void ResetBombardmentStateInfo() {
+        for (auto& ship : GetUniverse().Objects().FindObjects<Ship>())
+        { ship->ClearBombardPlanet(); }
+        for (auto& planet : GetUniverse().Objects().FindObjects<Planet>())
+        { planet->ResetIsAboutToBeBombarded(); }
     }
 }
 
@@ -1116,8 +1124,13 @@ void HumanClientApp::StartGame(bool is_new_game) {
     UpdateCombatLogManager();
 }
 
-void HumanClientApp::HandleTurnUpdate()
-{ UpdateCombatLogManager(); }
+void HumanClientApp::HandleTurnUpdate() {
+    UpdateCombatLogManager();
+    ResetBombardmentStateInfo();
+
+    m_orders.ResetNonPersistentOrders();
+    m_orders.ExecutePersistentOrders();
+}
 
 void HumanClientApp::UpdateCombatLogManager() {
     boost::optional<std::vector<int>> incomplete_ids = GetCombatLogManager().IncompleteLogIDs();

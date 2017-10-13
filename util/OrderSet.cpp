@@ -46,14 +46,15 @@ bool OrderSet::RescindOrder(int order) {
     return retval;
 }
 
-void OrderSet::Reset() {
+void OrderSet::Reset()
+{ m_orders.clear(); }
+
+void OrderSet::ResetNonPersistentOrders() {
     for (auto& order : m_orders) {
         if (!order.second->ShouldPersist()) {
             auto it = m_orders.find(order.first);
-            m_orders.erase(it);
-        }
-        else {
-            order.second->ResetExecutionStatus();
+            if (it != m_orders.end())
+                m_orders.erase(it);
         }
     }
 }
@@ -61,8 +62,8 @@ void OrderSet::Reset() {
 void OrderSet::ExecutePersistentOrders() {
     for (auto& order : m_orders) {
         if (order.second->ShouldPersist()) {
+            order.second->ResetExecutionStatus();
             order.second->Execute();
-            DebugLogger() << "Executed persistent order " << order.first;
         }
     }
 }

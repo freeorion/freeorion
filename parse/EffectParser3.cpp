@@ -135,8 +135,8 @@ namespace parse { namespace detail {
             |   destroy
             |   noop
             |   victory
-            |   add_special_2
             |   add_special_1
+            |   add_special_2
             |   remove_all_buildings
             |   remove_all_specials
             |   remove_special

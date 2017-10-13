@@ -1,6 +1,7 @@
 Part
     name = "SP_DARK_RAY"
     description = "SP_DARK_RAY_DESC"
+    exclusions = [ "SP_PLANET_DESTROYER" ]
     class = Bombard
     capacity = 0.5
     mountableSlotTypes = External

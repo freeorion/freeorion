@@ -42,11 +42,11 @@ namespace parse { namespace detail {
             [ _val = new_<Condition::OrderedBombarded>(_1) ]
             ;
 
-            ordered_destroyed_by
-                =    tok.OrderedDestroyedBy_
-                >   -parse::detail::label(Condition_token) > parse::detail::condition_parser
-                     [ _val = new_<Condition::OrderedDestroyed>(_1) ]
-                ;
+        ordered_destroyed_by
+            =    tok.OrderedDestroyedBy_
+            >   -labeller.rule(Condition_token) > condition_parser
+            [ _val = new_<Condition::OrderedDestroyed>(_1) ]
+            ;
 
         contains
             =    tok.Contains_

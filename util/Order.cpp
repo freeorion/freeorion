@@ -819,6 +819,8 @@ bool BombardOrder::UndoImpl() const {
     planet->ResetIsAboutToBeBombarded();
     ship->ClearBombardPlanet();
 
+    DebugLogger() << "Rescinded order to bombard " << planet->Name() << " from ship " << ship->ID();
+
     if (auto fleet = GetFleet(ship->FleetID()))
         fleet->StateChangedSignal();
 
@@ -826,8 +828,7 @@ bool BombardOrder::UndoImpl() const {
 }
 
 bool BombardOrder::ShouldPersist() {
-    /**
-        auto ship = GetShip(m_ship);
+    auto ship = GetShip(m_ship);
     auto planet = GetPlanet(m_planet);
 
     if (!(ship && planet))
@@ -836,10 +837,14 @@ bool BombardOrder::ShouldPersist() {
         return false;
     if (!(ship->SystemID() == planet->SystemID()))
         return false;
+    // don't continue bombing/destroying if planet has been conquered
+    if (planet->Owner() == ship->Owner())
+        return false;
+    // don't continue bombing if planet has been depopulated
+    if (!(ship->CanDestroyPlanet()) && planet->CurrentMeterValue(METER_POPULATION) <= 0)
+        return false;
 
-    return true;*/
-
-    return false;
+    return true;
 }
 
 

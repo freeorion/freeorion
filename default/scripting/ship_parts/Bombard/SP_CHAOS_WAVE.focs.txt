@@ -1,6 +1,7 @@
 Part
     name = "SP_CHAOS_WAVE"
     description = "SP_CHAOS_WAVE_DESC"
+    exclusions = [ "SP_PLANET_DESTROYER" ]
     class = Bombard
     capacity = 2.0
     mountableSlotTypes = External

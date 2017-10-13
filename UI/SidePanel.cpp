@@ -568,7 +568,7 @@ private:
     std::shared_ptr<GG::Button>             m_colonize_button;          ///< btn which can be pressed to colonize this planet;
     std::shared_ptr<GG::Button>             m_invade_button;            ///< btn which can be pressed to invade this planet;
     std::shared_ptr<GG::Button>             m_bombard_button;           ///< btn which can be pressed to bombard this planet;
-    std::shared_ptr<GG::Button>             m_destroy_button;           ///< btn which can be pressed to destroy this planet;
+    std::shared_ptr<GG::Button>             m_planet_destruction_button;///< btn which can be pressed to destroy this planet;
     std::shared_ptr<GG::DynamicGraphic>     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids;
     std::shared_ptr<RotatingPlanetControl>  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
     bool                    m_selected;                 ///< is this planet panel selected
@@ -909,7 +909,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_colonize_button(nullptr),
     m_invade_button(nullptr),
     m_bombard_button(nullptr),
-    m_destroy_button(nullptr),
+    m_planet_destruction_button(nullptr),
     m_planet_graphic(nullptr),
     m_rotating_planet_graphic(nullptr),
     m_selected(false),
@@ -1034,8 +1034,8 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     m_bombard_button->LeftClickedSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::ClickBombard, this));
 
-    m_destroy_button = Wnd::Create<CUIButton>(UserString("PL_BOMBARD"));
-    m_destroy_button->LeftClickedSignal.connect(
+    m_planet_destruction_button = Wnd::Create<CUIButton>(UserString("PL_DESTROY_PLANET"));
+    m_planet_destruction_button->LeftClickedSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::ClickDestroyPlanet, this));
 
     SetChildClippingMode(ClipToWindow);
@@ -1083,10 +1083,10 @@ void SidePanel::PlanetPanel::DoLayout() {
         m_bombard_button->Resize(GG::Pt(GG::X(ClientUI::Pts()*15), m_bombard_button->MinUsableSize().y));
         y += m_bombard_button->Height() + EDGE_PAD;
     }
-    if (m_destroy_button && m_destroy_button->Parent().get() == this) {
-        m_destroy_button->MoveTo(GG::Pt(left, y));
-        m_destroy_button->Resize(GG::Pt(GG::X(ClientUI::Pts() * 15), m_destroy_button->MinUsableSize().y));
-        y += m_destroy_button->Height() + EDGE_PAD;
+    if (m_planet_destruction_button && m_planet_destruction_button->Parent().get() == this) {
+        m_planet_destruction_button->MoveTo(GG::Pt(left, y));
+        m_planet_destruction_button->Resize(GG::Pt(GG::X(ClientUI::Pts() * 15), m_planet_destruction_button->MinUsableSize().y));
+        y += m_planet_destruction_button->Height() + EDGE_PAD;
     }
 
 
@@ -1224,7 +1224,7 @@ namespace {
         return false;
     };
 
-    bool AvailableToDestroy(std::shared_ptr<const Ship> ship, int system_id, int empire_id) {
+    bool AvailableToDestroyPlanet(std::shared_ptr<const Ship> ship, int system_id, int empire_id) {
         if (!ship)
             return false;
         auto fleet = GetFleet(ship->FleetID());
@@ -1258,7 +1258,7 @@ namespace {
     }
 
     /** As above for planet destruction */
-    std::vector<std::string> DestroyTagsForShip(std::shared_ptr<const Ship> ship) {
+    std::vector<std::string> DestroyPlanetTagsForShip(std::shared_ptr<const Ship> ship) {
         std::vector<std::string> retval;
         if (!ship)
             return retval;
@@ -1587,11 +1587,11 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenPlanetDestructionShips(
 
     for (auto& ship : Objects().FindObjects<Ship>()) {
         // owned ship is capable of destroying a planet in this system
-        if (!AvailableToDestroy(ship, system_id, empire_id))
+        if (!AvailableToDestroyPlanet(ship, system_id, empire_id))
             continue;
 
         // Select ship if the planet contains a content tag specified by the ship, or ship is tagged to always be selected
-        for (const std::string& tag : DestroyTagsForShip(ship)) {
+        for (const std::string& tag : DestroyPlanetTagsForShip(ship)) {
             if ((tag == TAG_DESTROY_ALWAYS) || (target_planet->HasTag(tag))) {
                 retval.insert(ship);
                 break;
@@ -1620,7 +1620,7 @@ void SidePanel::PlanetPanel::Refresh() {
         DetachChildAndReset(m_colonize_button);
         DetachChildAndReset(m_invade_button);
         DetachChildAndReset(m_bombard_button);
-        DetachChildAndReset(m_destroy_button);
+        DetachChildAndReset(m_planet_destruction_button);
         DetachChildAndReset(m_specials_panel);
 
         RequirePreRender();
@@ -1704,10 +1704,10 @@ void SidePanel::PlanetPanel::Refresh() {
         bombard_ships.insert(autoselected_bombard_ships.begin(), autoselected_bombard_ships.end());
     }
 
-    auto destroy_ships = ValidSelectedPlanetDestructionShips(SidePanel::SystemID());
-    if (destroy_ships.empty()) {
-        auto autoselected_destroy_ships = AutomaticallyChosenPlanetDestructionShips(m_planet_id);
-        destroy_ships.insert(autoselected_destroy_ships.begin(), autoselected_destroy_ships.end());
+    auto planet_destruction_ships = ValidSelectedPlanetDestructionShips(SidePanel::SystemID());
+    if (planet_destruction_ships.empty()) {
+        auto autoselected_pd_ships = AutomaticallyChosenPlanetDestructionShips(m_planet_id);
+        planet_destruction_ships.insert(autoselected_pd_ships.begin(), autoselected_pd_ships.end());
     }
 
     std::string colony_ship_species_name;
@@ -1721,13 +1721,10 @@ void SidePanel::PlanetPanel::Refresh() {
     if (colony_ship_species)
         planet_env_for_colony_species = colony_ship_species->GetPlanetEnvironment(planet->Type());
 
-
     bool planet_is_destruction_target = false;
     for (auto& ship : Objects().FindObjects<Ship>()) {
         if (ship->CanDestroyPlanet() && ship->OrderedBombardPlanet() == m_planet_id) {
             planet_is_destruction_target = true;
-            ErrorLogger() << "Turn " << CurrentTurn();
-            ErrorLogger() << "Found ship " << ship->ID() << " ready to destroy planet " << m_planet_id;
             break;
         }
     }
@@ -1753,7 +1750,7 @@ void SidePanel::PlanetPanel::Refresh() {
     bool invadable =        at_war_with_me && !shielded && visible && !being_invaded && !invasion_ships.empty(); 
 
     bool being_destroyed =  planet->IsAboutToBeBombarded() && planet_is_destruction_target;
-    bool destroyable =      at_war_with_me && visible && !being_destroyed && !destroy_ships.empty();
+    bool destroyable =      at_war_with_me && visible && !being_destroyed && !planet_destruction_ships.empty();
 
     bool being_bombarded =  planet->IsAboutToBeBombarded() && !planet_is_destruction_target;
     bool bombardable =      at_war_with_me && visible && !being_bombarded && !bombard_ships.empty() && !being_destroyed;
@@ -1786,7 +1783,7 @@ void SidePanel::PlanetPanel::Refresh() {
     DetachChild(m_invade_button);
     DetachChild(m_colonize_button);
     DetachChild(m_bombard_button);
-    DetachChild(m_destroy_button);
+    DetachChild(m_planet_destruction_button);
     DetachChild(m_focus_drop);
 
     std::string species_name;
@@ -1923,16 +1920,16 @@ void SidePanel::PlanetPanel::Refresh() {
     }
 
     if (destroyable) {
-        // show destroy button
-        AttachChild(m_destroy_button);
-        if (m_destroy_button)
-            m_destroy_button->SetText(UserString("PL_DESTROY"));
+        // show planet destruction button
+        AttachChild(m_planet_destruction_button);
+        if (m_planet_destruction_button)
+            m_planet_destruction_button->SetText(UserString("PL_DESTROY_PLANET"));
 
     } else if (being_destroyed) {
-        // show destroy cancel button
-        AttachChild(m_destroy_button);
-        if (m_destroy_button)
-            m_destroy_button->SetText(UserString("PL_CANCEL_DESTROY"));
+        // show planet destruction cancel button
+        AttachChild(m_planet_destruction_button);
+        if (m_planet_destruction_button)
+            m_planet_destruction_button->SetText(UserString("PL_CANCEL_DESTROY_PLANET"));
     };
 
     m_env_size->SetText(env_size_text);
@@ -2326,7 +2323,7 @@ void SidePanel::PlanetPanel::Select(bool selected) {
 }
 
 namespace {
-    void CancelColonizeInvadeBombardDestroyScrapShipOrders(std::shared_ptr<const Ship> ship) {
+    void CancelColonizeInvadeBombardDestructionScrapShipOrders(std::shared_ptr<const Ship> ship) {
         if (!ship)
             return;
 
@@ -2419,7 +2416,7 @@ void SidePanel::PlanetPanel::ClickColonize() {
             return;
         }
 
-        CancelColonizeInvadeBombardDestroyScrapShipOrders(ship);
+        CancelColonizeInvadeBombardDestructionScrapShipOrders(ship);
 
         HumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ColonizeOrder>(empire_id, ship->ID(), m_planet_id));
@@ -2463,7 +2460,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
             if (!ship)
                 continue;
 
-            CancelColonizeInvadeBombardDestroyScrapShipOrders(ship);
+            CancelColonizeInvadeBombardDestructionScrapShipOrders(ship);
 
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<InvadeOrder>(empire_id, ship->ID(), m_planet_id));
@@ -2508,7 +2505,7 @@ void SidePanel::PlanetPanel::ClickBombard() {
             if (!ship)
                 continue;
 
-            CancelColonizeInvadeBombardDestroyScrapShipOrders(ship);
+            CancelColonizeInvadeBombardDestructionScrapShipOrders(ship);
 
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<BombardOrder>(empire_id, ship->ID(), m_planet_id));
@@ -2536,31 +2533,27 @@ void SidePanel::PlanetPanel::ClickDestroyPlanet() {
 
     if (it != pending_planet_destruction_orders.end()) {
         // cancel previous destroy orders for this planet
-        DebugLogger() << "Found destruction orders. Cancelling.";
         auto& planet_destruction_orders = it->second;
 
         for (int order_id : planet_destruction_orders)
         { HumanClientApp::GetApp()->Orders().RescindOrder(order_id); }
 
     } else {
-        DebugLogger() << "Trying to make a destruction order.";
         // order selected planet destruction ship to destroy planet
-        auto destruction_ships = ValidSelectedPlanetDestructionShips(planet->SystemID());
+        auto planet_destruction_ships = ValidSelectedPlanetDestructionShips(planet->SystemID());
 
-        if (destruction_ships.empty()) {
+        if (planet_destruction_ships.empty()) {
             auto autoselected_destruction_ships = AutomaticallyChosenPlanetDestructionShips(m_planet_id);
-            destruction_ships.insert(autoselected_destruction_ships.begin(), autoselected_destruction_ships.end());
+            planet_destruction_ships.insert(autoselected_destruction_ships.begin(), autoselected_destruction_ships.end());
         }
 
-        for (auto& ship : destruction_ships) {
+        for (auto& ship : planet_destruction_ships) {
             if (!ship)
                 continue;
-
-            CancelColonizeInvadeBombardDestroyScrapShipOrders(ship);
-
+            CancelColonizeInvadeBombardDestructionScrapShipOrders(ship);
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<BombardOrder>(empire_id, ship->ID(), m_planet_id));
-            break;
+            break; // only one ship needs to fire
         }
     }
     OrderButtonChangedSignal(m_planet_id);
@@ -2608,7 +2601,7 @@ void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable/* = true*/) {
     m_colonize_button->Disable(!enable);
     m_invade_button->Disable(!enable);
     m_bombard_button->Disable(!enable);
-    m_destroy_button->Disable(!enable);
+    m_planet_destruction_button->Disable(!enable);
 
     m_buildings_panel->EnableOrderIssuing(enable);
 
