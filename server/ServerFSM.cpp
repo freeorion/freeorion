@@ -1124,10 +1124,9 @@ sc::result MPLobby::react(const PlayerChat& msg) {
 
     boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
 
-    if (receiver == Networking::INVALID_PLAYER_ID) { // the receiver is everyone (except the sender)
+    if (receiver == Networking::INVALID_PLAYER_ID) { // the receiver is everyone
         for (auto it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-            if ((*it)->PlayerID() != sender->PlayerID())
-                (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), timestamp, data));
+            (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), timestamp, data));
         }
     } else {
         auto it = server.m_networking.GetPlayer(receiver);

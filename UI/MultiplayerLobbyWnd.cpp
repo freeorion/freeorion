@@ -16,6 +16,8 @@
 
 #include <boost/cast.hpp>
 #include <boost/serialization/vector.hpp>
+#include <boost/date_time/posix_time/posix_time_io.hpp>
+#include <boost/date_time/c_local_time_adjustor.hpp>
 
 
 namespace {
@@ -709,19 +711,6 @@ void MultiPlayerLobbyWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG
         std::string text = m_chat_input_edit->Text();   // copy, so subsequent clearing doesn't affect typed message that is used later...
         HumanClientApp::GetApp()->Networking().SendMessage(PlayerChatMessage(text));
         m_chat_input_edit->SetText("");
-
-        // look up this client's player name by ID
-        std::string player_name;
-        for (std::pair<int, PlayerSetupData>& entry : m_lobby_data.m_players) {
-            if (entry.first == HumanClientApp::GetApp()->PlayerID() && entry.first != Networking::INVALID_PLAYER_ID) {
-                player_name = entry.second.m_player_name;
-                break;
-            }
-        }
-
-        // put message just sent in chat box (local echo)
-        *m_chat_box += player_name + ": " + text + "\n";
-
     } else if (m_ready_bn && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) {
         m_ready_bn->LeftClickedSignal();
     } else if (key == GG::GGK_ESCAPE) {
@@ -739,8 +728,16 @@ void MultiPlayerLobbyWnd::ChatMessage(int player_id, const boost::posix_time::pt
         }
     }
 
+    // print local time
+    boost::posix_time::ptime local_timestamp = boost::date_time::c_local_adjustor<boost::posix_time::ptime>::utc_to_local(timestamp);
+    boost::posix_time::time_facet* facet = new boost::posix_time::time_facet();
+    facet->format("[%d %b %H:%M:%S]");
+    std::stringstream stream;
+    stream.imbue(std::locale(std::locale(""), facet));
+    stream << local_timestamp;
+
     // show message with player name in chat box
-    *m_chat_box += player_name + ": " + msg + '\n';
+    *m_chat_box += stream.str() + player_name + ": " + msg + '\n';
 }
 
 namespace {
