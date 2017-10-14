@@ -102,19 +102,19 @@ namespace parse { namespace detail {
                      )
                      >>  labeller.rule(Empire_token)
                     ) > int_rules.expr
-                    [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _1, _d, _e, _f) ]
+                    [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1), _d, _e, _f) ]
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
                     (labeller.rule(Affiliation_token) >>  tok.CanSee_)
                     >   labeller.rule(Condition_token)   >   condition_parser
-                    [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_CAN_SEE, _1, _e, _f) ]
+                    [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_CAN_SEE, construct<std::unique_ptr<Condition::ConditionBase>>(_1), _e, _f) ]
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
                     (labeller.rule(Affiliation_token) >>  tok.Human_)
                     >   labeller.rule(Condition_token)   >   condition_parser
-                    [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_HUMAN, _1, _e, _f) ]
+                    [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_HUMAN, construct<std::unique_ptr<Condition::ConditionBase>>(_1), _e, _f) ]
                 )
                 |   (   // no empire id or condition specified, with or without an
                     // affiliation type: useful to specify no or all empires

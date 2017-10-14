@@ -3593,48 +3593,6 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, 
     }
 }
 
-GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
-                                             const std::string& icon,
-                                             PassedMessageParams& message_parameters,
-                                             ValueRef::ValueRefBase<int>* recipient_empire_id,
-                                             EmpireAffiliationType affiliation,
-                                             const std::string label,
-                                             bool stringtable_lookup) :
-    m_message_string(message_string),
-    m_icon(icon),
-    m_message_parameters(),
-    m_recipient_empire_id(recipient_empire_id),
-    m_condition(nullptr),
-    m_affiliation(affiliation),
-    m_label(label),
-    m_stringtable_lookup(stringtable_lookup)
-{
-    for (auto&& name_and_value : message_parameters) {
-        m_message_parameters.emplace_back(name_and_value.first, name_and_value.second.OpenEnvelope());
-    }
-}
-
-GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
-                                             const std::string& icon,
-                                             PassedMessageParams& message_parameters,
-                                             EmpireAffiliationType affiliation,
-                                             Condition::ConditionBase* condition,
-                                             const std::string label,
-                                             bool stringtable_lookup) :
-    m_message_string(message_string),
-    m_icon(icon),
-    m_message_parameters(),
-    m_recipient_empire_id(nullptr),
-    m_condition(condition),
-    m_affiliation(affiliation),
-    m_label(label),
-    m_stringtable_lookup(stringtable_lookup)
-{
-    for (auto&& name_and_value : message_parameters) {
-        m_message_parameters.emplace_back(name_and_value.first, name_and_value.second.OpenEnvelope());
-    }
-}
-
 GenerateSitRepMessage::~GenerateSitRepMessage()
 {}
 
