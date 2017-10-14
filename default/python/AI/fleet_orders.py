@@ -87,6 +87,21 @@ class AIFleetOrder(object):
         self.executed = False
         self.order_issued = False
 
+    def __setstate__(self, state):
+        assert type(state) == dict
+        assert len(state) == 4
+
+        def assert_content(key, expected_type, may_be_none=True):
+            assert key in state
+            value = state[key]
+            assert (value is None and may_be_none) or type(value) is expected_type
+
+        assert_content("fleet", Fleet, may_be_none=False)
+        assert_content("target", self.TARGET_TYPE)
+        assert_content("executed", bool)
+        assert_content("order_issued", bool)
+        self.__dict__ = state
+
     def ship_in_fleet(self):
         universe = fo.getUniverse()
         fleet = universe.getFleet(self.fleet.id)
