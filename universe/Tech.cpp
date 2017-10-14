@@ -3,7 +3,6 @@
 #include "Effect.h"
 #include "UniverseObject.h"
 #include "ObjectMap.h"
-#include "../parse/Parse.h"
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
@@ -278,16 +277,19 @@ bool operator!=(const ItemSpec& lhs, const ItemSpec& rhs)
 TechManager* TechManager::s_instance = nullptr;
 
 const Tech* TechManager::GetTech(const std::string& name) const {
+    CheckPendingTechs();
     iterator it = m_techs.get<NameIndex>().find(name);
     return it == m_techs.get<NameIndex>().end() ? nullptr : it->get();
 }
 
 const TechCategory* TechManager::GetTechCategory(const std::string& name) const {
+    CheckPendingTechs();
     auto it = m_categories.find(name);
     return it == m_categories.end() ? nullptr : it->second.get();
 }
 
 std::vector<std::string> TechManager::CategoryNames() const {
+    CheckPendingTechs();
     std::vector<std::string> retval;
     for (const auto& entry : m_categories)
         retval.push_back(entry.first);
@@ -295,6 +297,7 @@ std::vector<std::string> TechManager::CategoryNames() const {
 }
 
 std::vector<std::string> TechManager::TechNames() const {
+    CheckPendingTechs();
     std::vector<std::string> retval;
     for (const auto& tech : m_techs.get<NameIndex>())
         retval.push_back(tech->Name());
@@ -302,6 +305,7 @@ std::vector<std::string> TechManager::TechNames() const {
 }
 
 std::vector<std::string> TechManager::TechNames(const std::string& name) const {
+    CheckPendingTechs();
     std::vector<std::string> retval;
     for (TechManager::category_iterator it = category_begin(name); it != category_end(name); ++it) {
         retval.push_back((*it)->Name());
@@ -310,6 +314,7 @@ std::vector<std::string> TechManager::TechNames(const std::string& name) const {
 }
 
 std::vector<const Tech*> TechManager::AllNextTechs(const std::set<std::string>& known_techs) {
+    CheckPendingTechs();
     std::vector<const Tech*> retval;
     std::set<const Tech*> checked_techs;
     iterator end_it = m_techs.get<NameIndex>().end();
@@ -319,13 +324,16 @@ std::vector<const Tech*> TechManager::AllNextTechs(const std::set<std::string>& 
     return retval;
 }
 
-const Tech* TechManager::CheapestNextTech(const std::set<std::string>& known_techs, int empire_id)
-{ return Cheapest(AllNextTechs(known_techs), empire_id); }
+const Tech* TechManager::CheapestNextTech(const std::set<std::string>& known_techs, int empire_id) {
+    CheckPendingTechs();
+    return Cheapest(AllNextTechs(known_techs), empire_id);
+}
 
 std::vector<const Tech*> TechManager::NextTechsTowards(const std::set<std::string>& known_techs,
                                                        const std::string& desired_tech,
                                                        int empire_id)
 {
+    CheckPendingTechs();
     std::vector<const Tech*> retval;
     std::set<const Tech*> checked_techs;
     NextTechs(retval, known_techs, checked_techs, m_techs.get<NameIndex>().find(desired_tech),
@@ -338,32 +346,48 @@ const Tech* TechManager::CheapestNextTechTowards(const std::set<std::string>& kn
                                                  int empire_id)
 { return Cheapest(NextTechsTowards(known_techs, desired_tech, empire_id), empire_id); }
 
-TechManager::iterator TechManager::begin() const
-{ return m_techs.get<NameIndex>().begin(); }
+TechManager::iterator TechManager::begin() const {
+    CheckPendingTechs();
+    return m_techs.get<NameIndex>().begin();
+}
 
-TechManager::iterator TechManager::end() const
-{ return m_techs.get<NameIndex>().end(); }
+TechManager::iterator TechManager::end() const {
+    CheckPendingTechs();
+    return m_techs.get<NameIndex>().end();
+}
 
-TechManager::category_iterator TechManager::category_begin(const std::string& name) const
-{ return m_techs.get<CategoryIndex>().lower_bound(name); }
+TechManager::category_iterator TechManager::category_begin(const std::string& name) const {
+    CheckPendingTechs();
+    return m_techs.get<CategoryIndex>().lower_bound(name);
+}
 
-TechManager::category_iterator TechManager::category_end(const std::string& name) const
-{ return m_techs.get<CategoryIndex>().upper_bound(name); }
+TechManager::category_iterator TechManager::category_end(const std::string& name) const {
+    CheckPendingTechs();
+    return m_techs.get<CategoryIndex>().upper_bound(name);
+}
 
 TechManager::TechManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one TechManager.");
 
-    ScopedTimer timer("TechManager Init", true, std::chrono::milliseconds(1));
+    // Only update the global pointer on sucessful construction.
+    s_instance = this;
+}
+
+void TechManager::SetTechs(Pending::Pending<TechManager::TechParseTuple>&& future)
+{ m_pending_types = std::move(future); }
+
+void TechManager::CheckPendingTechs() const {
+    if (!m_pending_types)
+        return;
+
+    auto parsed = WaitForPending(m_pending_types);
+    if (!parsed)
+        return;
 
     std::set<std::string> categories_seen_in_techs;
+    std::tie(m_techs, m_categories, categories_seen_in_techs) = std::move(*parsed);
 
-    try {
-        std::tie(m_techs, m_categories, categories_seen_in_techs) = parse::techs();
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing techs: error: " << e.what();
-        throw e;
-    }
 
     std::set<std::string> empty_defined_categories;
     for (const auto& map : m_categories) {
@@ -423,17 +447,15 @@ TechManager::TechManager() {
 
 #ifdef OUTPUT_TECH_LIST
     for (const Tech* tech : m_techs.get<NameIndex>()) {
-        std::cerr << UserString(tech->Name()) << " (" 
+        std::cerr << UserString(tech->Name()) << " ("
                   << UserString(tech->Category()) << ") - "
                   << tech->Graphic() << std::endl;
     }
 #endif
-
-    // Only update the global pointer on sucessful construction.
-    s_instance = this;
 }
 
-std::string TechManager::FindIllegalDependencies() {
+std::string TechManager::FindIllegalDependencies() const {
+    CheckPendingTechs();
     assert(!m_techs.empty());
     std::string retval;
     for (const auto& tech : m_techs) {
@@ -455,7 +477,8 @@ std::string TechManager::FindIllegalDependencies() {
     return retval;
 }
 
-std::string TechManager::FindFirstDependencyCycle() {
+std::string TechManager::FindFirstDependencyCycle() const {
+    CheckPendingTechs();
     assert(!m_techs.empty());
     static const std::set<std::string> EMPTY_STRING_SET;    // used in case an invalid tech is processed
 
@@ -511,7 +534,8 @@ std::string TechManager::FindFirstDependencyCycle() {
     return "";
 }
 
-std::string TechManager::FindRedundantDependency() {
+std::string TechManager::FindRedundantDependency() const {
+    CheckPendingTechs();
     assert(!m_techs.empty());
 
     for (const auto& tech : m_techs) {
@@ -547,7 +571,7 @@ std::string TechManager::FindRedundantDependency() {
     return "";
 }
 
-void TechManager::AllChildren(const Tech* tech, std::map<std::string, std::string>& children) {
+void TechManager::AllChildren(const Tech* tech, std::map<std::string, std::string>& children) const {
     for (const std::string& unlocked_tech : tech->UnlockedTechs()) {
         if (unlocked_tech == tech->Name()) {
             // infinite loop
@@ -609,6 +633,7 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
 }
 
 unsigned int TechManager::GetCheckSum() const {
+    CheckPendingTechs();
     unsigned int retval{0};
     for (auto const& name_type_pair : m_categories)
         CheckSums::CheckSumCombine(retval, name_type_pair);

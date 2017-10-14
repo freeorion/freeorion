@@ -152,6 +152,10 @@ private:
 
     void            UpdateFPSLimit();                   ///< polls options database to find if FPS should be limited, and if so, to what rate
 
+    /** If a game is not running re-parse the universe otherwise inform the
+        player changes will effect new games. */
+    void            HandleResoureDirChange();
+
     void            DisconnectedFromServer();           ///< called by ClientNetworking when the TCP connection to the server is lost
 
     /** Either reset to IntroMenu (\p reset is true), or exit the

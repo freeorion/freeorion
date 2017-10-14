@@ -6,6 +6,7 @@
 #include "ValueRefFwd.h"
 #include "ShipDesign.h"
 #include "../util/Export.h"
+#include "../util/Pending.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 
@@ -195,7 +196,8 @@ private:
 /** Holds all FreeOrion building types.  Types may be looked up by name. */
 class BuildingTypeManager {
 public:
-    typedef std::map<std::string, std::unique_ptr<BuildingType>>::const_iterator iterator;
+    using BuildingTypeMap = std::map<std::string, std::unique_ptr<BuildingType>>;
+    using iterator = BuildingTypeMap::const_iterator;
 
     /** \name Accessors */ //@{
     /** returns the building type with the name \a name; you should use the
@@ -203,10 +205,10 @@ public:
     const BuildingType*         GetBuildingType(const std::string& name) const;
 
     /** iterator to the first building type */
-    iterator                    begin() const   { return m_building_types.begin(); }
+    FO_COMMON_API iterator                    begin() const;
 
     /** iterator to the last + 1th building type */
-    iterator                    end() const     { return m_building_types.end(); }
+    FO_COMMON_API iterator                    end() const;
 
     /** returns the instance of this singleton class; you should use the free
       * function GetBuildingTypeManager() instead */
@@ -221,10 +223,22 @@ public:
     unsigned int                GetCheckSum() const;
     //@}
 
+    /** Sets building types to the future value of \p pending_building_types. */
+    FO_COMMON_API void SetBuildingTypes(Pending::Pending<BuildingTypeMap>&& pending_building_types);
+
 private:
     BuildingTypeManager();
 
-    std::map<std::string, std::unique_ptr<BuildingType>> m_building_types;
+    /** Assigns any m_pending_building_types to m_bulding_types. */
+    void CheckPendingBuildingTypes() const;
+
+    /** Future building type being parsed by parser.  mutable so that it can
+        be assigned to m_building_types when completed.*/
+    mutable boost::optional<Pending::Pending<BuildingTypeMap>> m_pending_building_types = boost::none;
+
+    /** Set of building types.  mutable so that when the parse complete it can
+        be updated. */
+    mutable BuildingTypeMap m_building_types;
 
     static BuildingTypeManager* s_instance;
 };

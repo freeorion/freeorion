@@ -23,7 +23,6 @@
 #include "../../util/i18n.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/SitRepEntry.h"
-#include "../../parse/Parse.h"
 
 #include "../../Empire/Empire.h"
 #include "../../Empire/EmpireManager.h"
@@ -349,7 +348,7 @@ namespace {
     // Wrapper for preunlocked items
     list LoadItemSpecList() {
         list py_items;
-        auto items = parse::items();
+        auto& items = GetUniverse().InitiallyUnlockedItems();
         for (const auto& item : items) {
             py_items.append(object(item));
         }
@@ -359,7 +358,7 @@ namespace {
     // Wrapper for starting buildings
     list LoadStartingBuildings() {
         list py_items;
-        auto buildings = parse::starting_buildings();
+        auto& buildings = GetUniverse().InitiallyUnlockedBuildings();
         for (auto building : buildings) {
             if (GetBuildingType(building.name))
                 py_items.append(object(building));
@@ -436,8 +435,9 @@ namespace {
     class FleetPlanWrapper {
     public:
         // name ctors
-        FleetPlanWrapper(FleetPlan* fleet_plan)
-        { m_fleet_plan = fleet_plan; }
+        FleetPlanWrapper(FleetPlan* fleet_plan) :
+            m_fleet_plan(std::make_shared<FleetPlan>(*fleet_plan))
+        {}
 
         FleetPlanWrapper(const std::string& fleet_name, const list& py_designs)
         {
@@ -445,11 +445,8 @@ namespace {
             for (int i = 0; i < len(py_designs); i++) {
                 designs.push_back(extract<std::string>(py_designs[i]));
             }
-            m_fleet_plan = new FleetPlan(fleet_name, designs, false);
+            m_fleet_plan = std::make_shared<FleetPlan>(fleet_name, designs, false);
         }
-
-        virtual ~FleetPlanWrapper()
-        { delete m_fleet_plan; }
 
         // name accessors
         object Name()
@@ -467,12 +464,13 @@ namespace {
         { return *m_fleet_plan; }
 
     private:
-        FleetPlan* m_fleet_plan;
+        // Use shared_ptr insead of unique_ptr because boost::python requires a deleter
+        std::shared_ptr<FleetPlan> m_fleet_plan;
     };
 
     list LoadFleetPlanList() {
         list py_fleet_plans;
-        auto fleet_plans = parse::fleet_plans();
+        auto& fleet_plans = GetUniverse().InitiallyUnlockedFleetPlans();
         for (FleetPlan* fleet_plan : fleet_plans) {
             py_fleet_plans.append(new FleetPlanWrapper(fleet_plan));
         }
@@ -483,9 +481,9 @@ namespace {
     class MonsterFleetPlanWrapper {
     public:
         // name ctors
-        MonsterFleetPlanWrapper(MonsterFleetPlan* monster_fleet_plan) {
-            m_monster_fleet_plan = monster_fleet_plan;
-        }
+        MonsterFleetPlanWrapper(MonsterFleetPlan* monster_fleet_plan) :
+            m_monster_fleet_plan(std::make_shared<MonsterFleetPlan>(*monster_fleet_plan))
+        {}
 
         MonsterFleetPlanWrapper(const std::string& fleet_name, const list& py_designs,
                                 double spawn_rate, int spawn_limit)
@@ -495,12 +493,9 @@ namespace {
                 designs.push_back(extract<std::string>(py_designs[i]));
             }
             m_monster_fleet_plan =
-            new MonsterFleetPlan(fleet_name, designs, spawn_rate,
-                                 spawn_limit, 0, false);
+                std::make_shared<MonsterFleetPlan>(fleet_name, designs, spawn_rate,
+                                                   spawn_limit, nullptr, false);
         }
-
-        virtual ~MonsterFleetPlanWrapper()
-        { delete m_monster_fleet_plan; }
 
         // name accessors
         object Name()
@@ -528,12 +523,13 @@ namespace {
         { return *m_monster_fleet_plan; }
 
     private:
-        MonsterFleetPlan* m_monster_fleet_plan;
+        // Use shared_ptr insead of unique_ptr because boost::python requires a deleter
+        std::shared_ptr<MonsterFleetPlan> m_monster_fleet_plan;
     };
 
     list LoadMonsterFleetPlanList() {
         list py_monster_fleet_plans;
-        auto monster_fleet_plans = parse::monster_fleet_plans();
+        auto& monster_fleet_plans = GetUniverse().MonsterFleetPlans();
         for (auto* fleet_plan : monster_fleet_plans) {
             py_monster_fleet_plans.append(new MonsterFleetPlanWrapper(fleet_plan));
         }

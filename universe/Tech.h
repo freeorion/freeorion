@@ -5,11 +5,13 @@
 
 #include "EnumsFwd.h"
 #include "../util/Export.h"
+#include "../util/Pending.h"
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/key_extractors.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/optional/optional.hpp>
 
 #include <set>
 #include <string>
@@ -22,7 +24,6 @@ namespace Effect
 { class EffectsGroup; }
 class TechManager;
 struct ItemSpec;
-
 
 /** encasulates the data for a single FreeOrion technology */
 class FO_COMMON_API Tech {
@@ -234,6 +235,8 @@ public:
         >
     > TechContainer;
 
+    using TechCategoryMap = std::map<std::string, std::unique_ptr<TechCategory>>;
+
     /** iterator that runs over techs within a category */
     typedef TechContainer::index<CategoryIndex>::type::const_iterator category_iterator;
 
@@ -298,28 +301,44 @@ public:
     unsigned int                    GetCheckSum() const;
     //@}
 
+    using TechParseTuple = std::tuple<
+        TechManager::TechContainer, // techs_
+        std::map<std::string, std::unique_ptr<TechCategory>>, // tech_categories,
+        std::set<std::string> // categories_seen
+        >;
+    /** Sets types to the value of \p future. */
+    FO_COMMON_API void SetTechs(Pending::Pending<TechParseTuple>&& future);
+
+
     /** returns the instance of this singleton class; you should use the free function GetTechManager() instead */
     static TechManager& GetTechManager();
 
 private:
     TechManager();
 
+    /** Assigns any m_pending_types to m_specials. */
+    void CheckPendingTechs() const;
+
     /** returns an error string indicating the first instance of an illegal prerequisite relationship between
         two techs in m_techs, or an empty string if there are no illegal dependencies  */
-    std::string FindIllegalDependencies();
+    std::string FindIllegalDependencies() const;
 
     /** returns an error string indicating the first prerequisite dependency cycle found in m_techs, or an
         empty string if there are no dependency cycles */
-    std::string FindFirstDependencyCycle();
+    std::string FindFirstDependencyCycle() const;
 
     /** returns an error string indicating the first instance of a redundant dependency, or an empty string if there
         are no redundant dependencies.  An example of a redundant dependency is A --> C, if A --> B and B --> C. */
-    std::string FindRedundantDependency();
+    std::string FindRedundantDependency() const;
 
-    void AllChildren(const Tech* tech, std::map<std::string, std::string>& children);
+    void AllChildren(const Tech* tech, std::map<std::string, std::string>& children) const;
 
-    std::map<std::string, std::unique_ptr<TechCategory>> m_categories;
-    TechContainer                           m_techs;
+    /** Future types being parsed by parser.  mutable so that it can
+        be assigned to m_species_types when completed.*/
+    mutable boost::optional<Pending::Pending<TechParseTuple>> m_pending_types = boost::none;
+
+    mutable TechCategoryMap                         m_categories;
+    mutable TechContainer                           m_techs;
 
     static TechManager*                     s_instance;
 };

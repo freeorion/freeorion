@@ -14,6 +14,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/OptionValidators.h
         ${CMAKE_CURRENT_LIST_DIR}/Order.h
         ${CMAKE_CURRENT_LIST_DIR}/OrderSet.h
+        ${CMAKE_CURRENT_LIST_DIR}/Pending.h
         ${CMAKE_CURRENT_LIST_DIR}/Process.h
         ${CMAKE_CURRENT_LIST_DIR}/Random.h
         ${CMAKE_CURRENT_LIST_DIR}/SaveGamePreviewUtils.h

@@ -117,11 +117,11 @@ namespace {
 }
 
 namespace parse {
-    start_rule_payload fields() {
+    start_rule_payload fields(const boost::filesystem::path& path) {
         const lexer lexer;
         start_rule_payload field_types;
 
-        for (const boost::filesystem::path& file : ListScripts("scripting/fields")) {
+        for (const boost::filesystem::path& file : ListScripts(path)) {
             /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, field_types);
         }
 

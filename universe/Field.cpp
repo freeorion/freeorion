@@ -7,7 +7,6 @@
 #include "Predicates.h"
 #include "Universe.h"
 #include "ValueRef.h"
-#include "../parse/Parse.h"
 #include "../util/AppInterface.h"
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
@@ -241,29 +240,24 @@ FieldTypeManager::FieldTypeManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one FieldTypeManager.");
 
-    ScopedTimer timer("FieldTypeManager Init", true, std::chrono::milliseconds(1));
-
-    try {
-        m_field_types = parse::fields();
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing fields: error: " << e.what();
-        throw e;
-    }
-
-    TraceLogger() << [this]() {
-            std::string retval("Field Types:");
-            for (const auto& entry : *this)
-                retval.append("\n\t" + entry.first);
-            return retval;
-        }();
-
     // Only update the global pointer on sucessful construction.
     s_instance = this;
 }
 
 const FieldType* FieldTypeManager::GetFieldType(const std::string& name) const {
+    CheckPendingFieldTypes();
     auto it = m_field_types.find(name);
     return it != m_field_types.end() ? it->second.get() : nullptr;
+}
+
+FieldTypeManager::iterator FieldTypeManager::begin() const {
+    CheckPendingFieldTypes();
+    return m_field_types.begin();
+}
+
+FieldTypeManager::iterator FieldTypeManager::end() const {
+    CheckPendingFieldTypes();
+    return m_field_types.end();
 }
 
 FieldTypeManager& FieldTypeManager::GetFieldTypeManager() {
@@ -272,6 +266,7 @@ FieldTypeManager& FieldTypeManager::GetFieldTypeManager() {
 }
 
 unsigned int FieldTypeManager::GetCheckSum() const {
+    CheckPendingFieldTypes();
     unsigned int retval{0};
     for (auto const& name_type_pair : m_field_types)
         CheckSums::CheckSumCombine(retval, name_type_pair);
@@ -279,6 +274,12 @@ unsigned int FieldTypeManager::GetCheckSum() const {
 
     return retval;
 }
+
+void FieldTypeManager::SetFieldTypes(Pending::Pending<FieldTypeMap>&& future)
+{ m_pending_types = std::move(future); }
+
+void FieldTypeManager::CheckPendingFieldTypes() const
+{ Pending::SwapPending(m_pending_types, m_field_types); }
 
 
 ///////////////////////////////////////////////////////////

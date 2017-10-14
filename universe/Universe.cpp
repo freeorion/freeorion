@@ -8,7 +8,6 @@
 #include "../util/ScopedTimer.h"
 #include "../util/CheckSums.h"
 #include "../util/MultiplayerCommon.h"
-#include "../parse/Parse.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "IDAllocator.h"
@@ -19,10 +18,12 @@
 #include "System.h"
 #include "Field.h"
 #include "UniverseObject.h"
+#include "UniverseGenerator.h"
 #include "Effect.h"
 #include "Predicates.h"
 #include "Special.h"
 #include "Species.h"
+#include "Tech.h"
 #include "Condition.h"
 #include "ValueRef.h"
 #include "Enums.h"
@@ -86,22 +87,6 @@ namespace boost {
 
 extern FO_COMMON_API const int ALL_EMPIRES            = -1;
 
-namespace EmpireStatistics {
-    const std::map<std::string, ValueRef::ValueRefBase<double>*>& GetEmpireStats() {
-        static std::map<std::string, ValueRef::ValueRefBase<double>*> s_stats;
-        if (s_stats.empty()) {
-            try {
-                s_stats = parse::statistics();
-            } catch (const std::exception& e) {
-                ErrorLogger() << "Failed parsing empire statistics: error: " << e.what();
-                throw e;
-            }
-        }
-        return s_stats;
-    }
-}
-
-
 /////////////////////////////////////////////
 // class Universe
 /////////////////////////////////////////////
@@ -119,6 +104,13 @@ Universe::Universe() :
 
 Universe::~Universe() {
     Clear();
+
+    for (auto& fleet : m_unlocked_fleet_plans)
+        delete fleet;
+    for (auto& fleet : m_monster_fleet_plans)
+        delete fleet;
+    for (auto& stat : m_empire_stats)
+        delete stat.second;
 }
 
 void Universe::Clear() {
@@ -174,6 +166,37 @@ void Universe::ResetAllIDAllocation(const std::vector<int>& empire_ids) {
     DebugLogger() << "Reset id allocators with highest object id = " << highest_allocated_id
                   << " and highest design id = " << highest_allocated_design_id;
 }
+
+void Universe::SetInitiallyUnlockedItems(Pending::Pending<std::vector<ItemSpec>>&& future)
+{ m_pending_items = std::move(future); }
+
+const std::vector<ItemSpec>& Universe::InitiallyUnlockedItems() const
+{ return Pending::SwapPending(m_pending_items, m_unlocked_items); }
+
+void Universe::SetInitiallyUnlockedBuildings(Pending::Pending<std::vector<ItemSpec>>&& future)
+{ m_pending_buildings = std::move(future); }
+
+const std::vector<ItemSpec>& Universe::InitiallyUnlockedBuildings() const
+{ return Pending::SwapPending(m_pending_buildings, m_unlocked_buildings); }
+
+void Universe::SetInitiallyUnlockedFleetPlans(Pending::Pending<std::vector<FleetPlan*>>&& future)
+{ m_pending_fleet_plans = std::move(future);}
+
+const std::vector<FleetPlan*>& Universe::InitiallyUnlockedFleetPlans() const
+{ return Pending::SwapPending(m_pending_fleet_plans, m_unlocked_fleet_plans); }
+
+void Universe::SetMonsterFleetPlans(Pending::Pending<std::vector<MonsterFleetPlan*>>&& future)
+{ m_pending_monster_fleet_plans = std::move(future); }
+
+const std::vector<MonsterFleetPlan*>& Universe::MonsterFleetPlans() const
+{ return Pending::SwapPending(m_pending_monster_fleet_plans, m_monster_fleet_plans); }
+
+void Universe::SetEmpireStats(Pending::Pending<EmpireStatsMap> future)
+{ m_pending_empire_stats = std::move(future); }
+
+const Universe::EmpireStatsMap& Universe::EmpireStats() const
+{ return Pending::SwapPending(m_pending_empire_stats, m_empire_stats); }
+
 
 const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const {
     if (empire_id == ALL_EMPIRES)
@@ -2851,7 +2874,7 @@ void Universe::UpdateStatRecords() {
     }
 
     // process each stat
-    for (const auto& stat_entry : EmpireStatistics::GetEmpireStats()) {
+    for (const auto& stat_entry : EmpireStats()) {
         const std::string& stat_name = stat_entry.first;
 
         const ValueRef::ValueRefBase<double>* value_ref = stat_entry.second;

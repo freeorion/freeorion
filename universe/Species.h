@@ -5,10 +5,12 @@
 #include "EnumsFwd.h"
 #include "../util/Export.h"
 #include "../util/Serialize.h"
+#include "../util/Pending.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/iterator/filter_iterator.hpp>
+#include <boost/optional/optional.hpp>
 
 #include <map>
 #include <memory>
@@ -233,7 +235,8 @@ private:
     { bool operator()(const std::map<std::string, std::unique_ptr<Species>>::value_type& species_entry) const; };
 
 public:
-    typedef std::map<std::string, std::unique_ptr<Species>>::const_iterator iterator;
+    using SpeciesTypeMap = std::map<std::string, std::unique_ptr<Species>>;
+    using iterator = SpeciesTypeMap::const_iterator;
     typedef boost::filter_iterator<PlayableSpecies, iterator>   playable_iterator;
     typedef boost::filter_iterator<NativeSpecies, iterator>     native_iterator;
 
@@ -336,6 +339,10 @@ public:
 
     std::map<std::string, std::map<int, float>>&        SpeciesObjectPopulations(int encoding_empire = ALL_EMPIRES);
     std::map<std::string, std::map<std::string, int>>&  SpeciesShipsDestroyed(int encoding_empire = ALL_EMPIRES);
+
+    /** Sets species types to the value of \p future. */
+    FO_COMMON_API void SetSpeciesTypes(Pending::Pending<SpeciesTypeMap>&& future);
+
     //@}
 
 private:
@@ -345,7 +352,14 @@ private:
       * specified in \a species_homeworld_ids */
     void    SetSpeciesHomeworlds(const std::map<std::string, std::set<int>>& species_homeworld_ids);
 
-    std::map<std::string, std::unique_ptr<Species>>     m_species;
+    /** Assigns any m_pending_types to m_species. */
+    void CheckPendingSpeciesTypes() const;
+
+    /** Future types being parsed by parser.  mutable so that it can
+        be assigned to m_species_types when completed.*/
+    mutable boost::optional<Pending::Pending<SpeciesTypeMap>> m_pending_types = boost::none;
+
+    mutable SpeciesTypeMap                              m_species;
     std::map<std::string, std::map<int, float>>         m_species_empire_opinions;
     std::map<std::string, std::map<std::string, float>> m_species_species_opinions;
 

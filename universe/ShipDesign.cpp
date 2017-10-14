@@ -5,8 +5,6 @@
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/CheckSums.h"
-#include "../util/ScopedTimer.h"
-#include "../parse/Parse.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "Condition.h"
@@ -162,13 +160,13 @@ namespace CheckSums {
 ////////////////////////////////////////////////
 // Free Functions                             //
 ////////////////////////////////////////////////
-const PartTypeManager& GetPartTypeManager()
+PartTypeManager& GetPartTypeManager()
 { return PartTypeManager::GetPartTypeManager(); }
 
 const PartType* GetPartType(const std::string& name)
 { return GetPartTypeManager().GetPartType(name); }
 
-const HullTypeManager& GetHullTypeManager()
+HullTypeManager& GetHullTypeManager()
 { return HullTypeManager::GetHullTypeManager(); }
 
 const HullType* GetHullType(const std::string& name)
@@ -188,45 +186,33 @@ PartTypeManager::PartTypeManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one PartTypeManager.");
 
-    ScopedTimer timer("PartTypeManager Init", true, std::chrono::milliseconds(1));
-
-    try {
-        m_parts = parse::ship_parts();
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing ship parts: error: " << e.what();
-        throw;
-    }
-
-    TraceLogger() << [this]() {
-            std::string retval("Part Types:");
-            for (const auto& pair : m_parts) {
-                const auto& part = pair.second;
-                retval.append("\n\t" + part->Name() + " class: " + boost::lexical_cast<std::string>(part->Class()));
-            }
-            return retval;
-        }();
-
     // Only update the global pointer on sucessful construction.
     s_instance = this;
 }
 
 const PartType* PartTypeManager::GetPartType(const std::string& name) const {
+    CheckPendingPartTypes();
     auto it = m_parts.find(name);
     return it != m_parts.end() ? it->second.get() : nullptr;
 }
 
-const PartTypeManager& PartTypeManager::GetPartTypeManager() {
+PartTypeManager& PartTypeManager::GetPartTypeManager() {
     static PartTypeManager manager;
     return manager;
 }
 
-PartTypeManager::iterator PartTypeManager::begin() const
-{ return m_parts.begin(); }
+PartTypeManager::iterator PartTypeManager::begin() const {
+    CheckPendingPartTypes();
+    return m_parts.begin();
+}
 
-PartTypeManager::iterator PartTypeManager::end() const
-{ return m_parts.end(); }
+PartTypeManager::iterator PartTypeManager::end() const{
+    CheckPendingPartTypes();
+    return m_parts.end();
+}
 
 unsigned int PartTypeManager::GetCheckSum() const {
+    CheckPendingPartTypes();
     unsigned int retval{0};
     for (auto const& name_part_pair : m_parts)
         CheckSums::CheckSumCombine(retval, name_part_pair);
@@ -237,6 +223,25 @@ unsigned int PartTypeManager::GetCheckSum() const {
     return retval;
 }
 
+
+void PartTypeManager::SetPartTypes(Pending::Pending<PartTypeMap>&& pending_part_types)
+{ m_pending_part_types = std::move(pending_part_types); }
+
+void PartTypeManager::CheckPendingPartTypes() const {
+    if (!m_pending_part_types)
+        return;
+
+    Pending::SwapPending(m_pending_part_types, m_parts);
+
+    TraceLogger() << [this]() {
+            std::string retval("Part Types:");
+            for (const auto& pair : m_parts) {
+                const auto& part = pair.second;
+                retval.append("\n\t" + part->Name() + " class: " + boost::lexical_cast<std::string>(part->Class()));
+            }
+            return retval;
+        }();
+}
 
 ////////////////////////////////////////////////
 // PartType
@@ -629,14 +634,50 @@ HullTypeManager::HullTypeManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one HullTypeManager.");
 
-    ScopedTimer timer("HullTypeManager Init", true, std::chrono::milliseconds(1));
+    // Only update the global pointer on sucessful construction.
+    s_instance = this;
+}
 
-    try {
-        m_hulls = parse::ship_hulls();
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing ship hulls: error: " << e.what();
-        throw;
-    }
+const HullType* HullTypeManager::GetHullType(const std::string& name) const {
+    CheckPendingHullTypes();
+    auto it = m_hulls.find(name);
+    return it != m_hulls.end() ? it->second.get() : nullptr;
+}
+
+HullTypeManager& HullTypeManager::GetHullTypeManager() {
+    static HullTypeManager manager;
+    return manager;
+}
+
+HullTypeManager::iterator HullTypeManager::begin() const {
+    CheckPendingHullTypes();
+    return m_hulls.begin();
+}
+
+HullTypeManager::iterator HullTypeManager::end() const {
+    CheckPendingHullTypes();
+    return m_hulls.end();
+}
+
+unsigned int HullTypeManager::GetCheckSum() const {
+    CheckPendingHullTypes();
+    unsigned int retval{0};
+    for (auto const& name_hull_pair : m_hulls)
+        CheckSums::CheckSumCombine(retval, name_hull_pair);
+    CheckSums::CheckSumCombine(retval, m_hulls.size());
+
+    DebugLogger() << "HullTypeManager checksum: " << retval;
+    return retval;
+}
+
+void HullTypeManager::SetHullTypes(Pending::Pending<HullTypeMap>&& pending_hull_types)
+{ m_pending_hull_types = std::move(pending_hull_types); }
+
+void HullTypeManager::CheckPendingHullTypes() const {
+    if (!m_pending_hull_types)
+        return;
+
+    Pending::SwapPending(m_pending_hull_types, m_hulls);
 
     TraceLogger() << [this]() {
             std::string retval("Hull Types:");
@@ -648,36 +689,32 @@ HullTypeManager::HullTypeManager() {
 
     if (m_hulls.empty())
         ErrorLogger() << "HullTypeManager expects at least one hull type.  All ship design construction will fail.";
-
-    // Only update the global pointer on sucessful construction.
-    s_instance = this;
 }
 
-const HullType* HullTypeManager::GetHullType(const std::string& name) const {
-    auto it = m_hulls.find(name);
-    return it != m_hulls.end() ? it->second.get() : nullptr;
-}
-
-const HullTypeManager& HullTypeManager::GetHullTypeManager() {
-    static HullTypeManager manager;
-    return manager;
-}
-
-HullTypeManager::iterator HullTypeManager::begin() const
-{ return m_hulls.begin(); }
-
-HullTypeManager::iterator HullTypeManager::end() const
-{ return m_hulls.end(); }
-
-unsigned int HullTypeManager::GetCheckSum() const {
-    unsigned int retval{0};
-    for (auto const& name_hull_pair : m_hulls)
-        CheckSums::CheckSumCombine(retval, name_hull_pair);
-    CheckSums::CheckSumCombine(retval, m_hulls.size());
-
-    DebugLogger() << "HullTypeManager checksum: " << retval;
-    return retval;
-}
+/////////////////////////////////////
+// ParsedShipDesign     //
+/////////////////////////////////////
+ParsedShipDesign::ParsedShipDesign(
+    const std::string& name, const std::string& description,
+    int designed_on_turn, int designed_by_empire,
+    const std::string& hull,
+    const std::vector<std::string>& parts,
+    const std::string& icon, const std::string& model,
+    bool name_desc_in_stringtable, bool monster,
+    const boost::uuids::uuid& uuid /*= boost::uuids::nil_uuid()*/
+) :
+    m_name(name),
+    m_description(description),
+    m_uuid(uuid),
+    m_designed_on_turn(designed_on_turn),
+    m_designed_by_empire(designed_by_empire),
+    m_hull(hull),
+    m_parts(parts),
+    m_is_monster(monster),
+    m_icon(icon),
+    m_3D_model(model),
+    m_name_desc_in_stringtable(name_desc_in_stringtable)
+{}
 
 ////////////////////////////////////////////////
 // ShipDesign
@@ -720,14 +757,12 @@ ShipDesign::ShipDesign(const boost::optional<std::invalid_argument>& should_thro
     BuildStatCaches();
 }
 
-ShipDesign::ShipDesign(const std::string& name, const std::string& description,
-                       int designed_on_turn, int designed_by_empire, const std::string& hull,
-                       const std::vector<std::string>& parts,
-                       const std::string& icon, const std::string& model,
-                       bool name_desc_in_stringtable, bool monster,
-                       const boost::uuids::uuid& uuid /*= boost::uuids::nil_uuid()*/) :
-    ShipDesign(boost::none, name, description, designed_on_turn, designed_by_empire, hull, parts,
-               icon, model, name_desc_in_stringtable, monster, uuid)
+ShipDesign::ShipDesign(const ParsedShipDesign& design) :
+    ShipDesign(boost::none, design.m_name, design.m_description,
+               design.m_designed_on_turn, design.m_designed_by_empire,
+               design.m_hull, design.m_parts,
+               design.m_icon, design.m_3D_model, design.m_name_desc_in_stringtable,
+               design.m_is_monster, design.m_uuid)
 {}
 
 const std::string& ShipDesign::Name(bool stringtable_lookup /* = true */) const {
@@ -1298,71 +1333,15 @@ bool operator ==(const ShipDesign& first, const ShipDesign& second) {
     return first_parts == second_parts;
 }
 
-
 /////////////////////////////////////
 // PredefinedShipDesignManager     //
 /////////////////////////////////////
 // static(s)
 PredefinedShipDesignManager* PredefinedShipDesignManager::s_instance = nullptr;
 
-namespace {
-    template <typename Map1, typename Map2, typename Ordering>
-    void FillDesignsOrderingAndNameTables(const boost::filesystem::path& path,
-                                          Map1& designs, Ordering& ordering, Map2& name_to_uuid)
-    {
-        name_to_uuid.clear();
-
-        auto inconsistent_and_map_and_order_ships =
-            LoadShipDesignsAndManifestOrderFromFileSystem(path);
-
-        ordering = std::get<2>(inconsistent_and_map_and_order_ships);
-
-        auto& disk_designs = std::get<1>(inconsistent_and_map_and_order_ships);
-
-        for (auto& uuid_and_design : disk_designs) {
-            auto& design = uuid_and_design.second.first;
-
-            if (designs.count(design->UUID())) {
-                ErrorLogger() << design->Name() << " ship design does not have a unique UUID for "
-                              << "its type monster or pre-defined. "
-                              << designs[design->UUID()]->Name() << " has the same UUID.";
-                continue;
-            }
-
-            if (name_to_uuid.count(design->Name())) {
-                ErrorLogger() << design->Name() << " ship design does not have a unique name for "
-                              << "its type monster or pre-defined.";
-                continue;
-            }
-
-            name_to_uuid.insert(std::make_pair(design->Name(), design->UUID()));
-            designs[design->UUID()] = std::move(design);
-        }
-    }
-}
-
 PredefinedShipDesignManager::PredefinedShipDesignManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one PredefinedShipDesignManager.");
-
-    ScopedTimer timer("PredefinedShipDesignManager Init", true, std::chrono::milliseconds(1));
-
-    DebugLogger() << "Initializing PredefinedShipDesignManager";
-
-    m_designs.clear();
-
-    FillDesignsOrderingAndNameTables(
-        "scripting/ship_designs", m_designs, m_ship_ordering, m_name_to_ship_design);
-    FillDesignsOrderingAndNameTables(
-        "scripting/monster_designs", m_designs, m_monster_ordering, m_name_to_monster_design);
-
-    // Make the monsters monstrous
-    for (const auto& uuid : m_monster_ordering)
-        m_designs[uuid]->SetMonster(true);
-
-    TraceLogger() << "Predefined Ship Designs:";
-    for (const auto& entry : m_designs)
-        TraceLogger() << " ... " << entry.second->Name();
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
@@ -1412,6 +1391,7 @@ namespace {
 }
 
 void PredefinedShipDesignManager::AddShipDesignsToUniverse() const {
+    CheckPendingDesignsTypes();
     m_design_generic_ids.clear();
 
     for (const auto& uuid : m_ship_ordering)
@@ -1428,6 +1408,7 @@ PredefinedShipDesignManager& PredefinedShipDesignManager::GetPredefinedShipDesig
 
 
 std::vector<const ShipDesign*> PredefinedShipDesignManager::GetOrderedShipDesigns() const {
+    CheckPendingDesignsTypes();
     std::vector<const ShipDesign*> retval;
     for (const auto& uuid : m_ship_ordering)
         retval.push_back(m_designs.at(uuid).get());
@@ -1435,6 +1416,7 @@ std::vector<const ShipDesign*> PredefinedShipDesignManager::GetOrderedShipDesign
 }
 
 std::vector<const ShipDesign*> PredefinedShipDesignManager::GetOrderedMonsterDesigns() const {
+    CheckPendingDesignsTypes();
     std::vector<const ShipDesign*> retval;
     for (const auto& uuid : m_monster_ordering)
         retval.push_back(m_designs.at(uuid).get());
@@ -1442,6 +1424,7 @@ std::vector<const ShipDesign*> PredefinedShipDesignManager::GetOrderedMonsterDes
 }
 
 int PredefinedShipDesignManager::GetDesignID(const std::string& name) const {
+    CheckPendingDesignsTypes();
     const auto& it = m_design_generic_ids.find(name);
     if (it == m_design_generic_ids.end())
         return INVALID_DESIGN_ID;
@@ -1449,6 +1432,7 @@ int PredefinedShipDesignManager::GetDesignID(const std::string& name) const {
 }
 
 unsigned int PredefinedShipDesignManager::GetCheckSum() const {
+    CheckPendingDesignsTypes();
     unsigned int retval{0};
 
     auto build_checksum = [&retval, this](const std::vector<boost::uuids::uuid>& ordering){
@@ -1468,10 +1452,98 @@ unsigned int PredefinedShipDesignManager::GetCheckSum() const {
 }
 
 
+void PredefinedShipDesignManager::SetShipDesignTypes(
+    Pending::Pending<ParsedShipDesignsType>&& pending_designs)
+{ m_pending_designs = std::move(pending_designs); }
+
+void PredefinedShipDesignManager::SetMonsterDesignTypes(
+    Pending::Pending<ParsedShipDesignsType>&& pending_designs)
+{ m_pending_monsters = std::move(pending_designs); }
+
+namespace {
+    template <typename Map1, typename Map2, typename Ordering>
+    void FillDesignsOrderingAndNameTables(
+        PredefinedShipDesignManager::ParsedShipDesignsType& parsed_designs,
+        Map1& designs, Ordering& ordering, Map2& name_to_uuid)
+    {
+        // Remove the old designs
+        for (const auto& name_and_uuid: name_to_uuid)
+            designs.erase(name_and_uuid.second);
+        name_to_uuid.clear();
+
+        auto inconsistent_and_map_and_order_ships =
+            LoadShipDesignsAndManifestOrderFromParseResults(parsed_designs);
+
+        ordering = std::get<2>(inconsistent_and_map_and_order_ships);
+
+        auto& disk_designs = std::get<1>(inconsistent_and_map_and_order_ships);
+
+        for (auto& uuid_and_design : disk_designs) {
+            auto& design = uuid_and_design.second.first;
+
+            if (designs.count(design->UUID())) {
+                ErrorLogger() << design->Name() << " ship design does not have a unique UUID for "
+                              << "its type monster or pre-defined. "
+                              << designs[design->UUID()]->Name() << " has the same UUID.";
+                continue;
+            }
+
+            if (name_to_uuid.count(design->Name())) {
+                ErrorLogger() << design->Name() << " ship design does not have a unique name for "
+                              << "its type monster or pre-defined.";
+                continue;
+            }
+
+            name_to_uuid.insert(std::make_pair(design->Name(), design->UUID()));
+            designs[design->UUID()] = std::move(design);
+        }
+    }
+
+    template <typename PendingShips, typename Map1, typename Map2, typename Ordering>
+    void CheckPendingAndFillDesignsOrderingAndNameTables(
+        PendingShips& pending, Map1& designs, Ordering& ordering, Map2& name_to_uuid, bool are_monsters)
+    {
+        if (!pending)
+            return;
+
+        auto parsed = Pending::WaitForPending(pending);
+        if (!parsed)
+            return;
+
+        DebugLogger() << "Populating pre-defined ships with "
+                      << (are_monsters ? "monster":"ship") << " designs.";
+
+        FillDesignsOrderingAndNameTables(
+            *parsed, designs, ordering, name_to_uuid);
+
+        // Make the monsters monstrous
+        if (are_monsters)
+            for (const auto& uuid : ordering)
+                designs[uuid]->SetMonster(true);
+
+        TraceLogger() << [&designs, name_to_uuid]() {
+            std::stringstream ss;
+            ss << "Predefined Ship Designs:";
+            for (const auto& entry : name_to_uuid)
+                ss << " ... " << designs[entry.second]->Name();
+            return ss.str();
+        }();
+    }
+}
+
+void PredefinedShipDesignManager::CheckPendingDesignsTypes() const {
+
+    CheckPendingAndFillDesignsOrderingAndNameTables(
+        m_pending_designs, m_designs, m_ship_ordering, m_name_to_ship_design, false);
+
+    CheckPendingAndFillDesignsOrderingAndNameTables(
+        m_pending_monsters, m_designs, m_monster_ordering, m_name_to_monster_design, true);
+ }
+
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //
 ///////////////////////////////////////////////////////////
-const PredefinedShipDesignManager& GetPredefinedShipDesignManager()
+PredefinedShipDesignManager& GetPredefinedShipDesignManager()
 { return PredefinedShipDesignManager::GetPredefinedShipDesignManager(); }
 
 const ShipDesign* GetPredefinedShipDesign(const std::string& name)
@@ -1483,18 +1555,20 @@ std::tuple<
                        std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>,
                        boost::hash<boost::uuids::uuid>>,
     std::vector<boost::uuids::uuid>>
-LoadShipDesignsAndManifestOrderFromFileSystem(const boost::filesystem::path& dir) {
+LoadShipDesignsAndManifestOrderFromParseResults(
+    PredefinedShipDesignManager::ParsedShipDesignsType& designs_paths_and_ordering)
+{
     std::unordered_map<boost::uuids::uuid,
                        std::pair<std::unique_ptr<ShipDesign>,
                                  boost::filesystem::path>,
                        boost::hash<boost::uuids::uuid>>  saved_designs;
 
-    auto designs_paths_and_ordering = parse::ship_designs(dir);
     auto& designs_and_paths = designs_paths_and_ordering.first;
     auto& disk_ordering = designs_paths_and_ordering.second;
 
     for (auto&& design_and_path : designs_and_paths) {
-        auto& design = design_and_path.first;
+        // TODO change to make_unique when converting to C++14
+        auto design = std::unique_ptr<ShipDesign>(new ShipDesign(*design_and_path.first));
 
         // If the UUID is nil this is a legacy design that needs a new UUID
         if(design->UUID() == boost::uuids::uuid{{0}}) {
@@ -1514,12 +1588,12 @@ LoadShipDesignsAndManifestOrderFromFileSystem(const boost::filesystem::path& dir
         if (!saved_designs.count(design->UUID())) {
             TraceLogger() << "Added saved design UUID " << design->UUID()
                           << " with name " << design->Name();
-            saved_designs[design->UUID()] = std::move(design_and_path);
+            auto uuid = design->UUID();
+            saved_designs[uuid] = std::make_pair(std::move(design), design_and_path.second);
         } else {
             WarnLogger() << "Duplicate ship design UUID " << design->UUID()
                          << " found for ship design " << design->Name()
-                         << " and " << saved_designs[design->UUID()].first->Name()
-                         << " in " << dir;
+                         << " and " << saved_designs[design->UUID()].first->Name();
         }
     }
 

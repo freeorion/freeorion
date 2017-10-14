@@ -1,6 +1,5 @@
 #include "Empire.h"
 
-#include "../parse/Parse.h"
 #include "../util/i18n.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/ScopedTimer.h"
@@ -16,6 +15,7 @@
 #include "../universe/System.h"
 #include "../universe/Universe.h"
 #include "../universe/Enums.h"
+#include "../universe/Tech.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/ValueRef.h"
 #include "ResourcePool.h"

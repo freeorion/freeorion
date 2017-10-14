@@ -5,12 +5,15 @@
 #include "ValueRefFwd.h"
 
 #include <boost/serialization/nvp.hpp>
+#include <boost/optional/optional.hpp>
 
 #include "../util/Export.h"
+#include "../util/Pending.h"
 
 #include <memory>
 #include <string>
 #include <vector>
+#include <map>
 
 
 namespace Effect {
@@ -117,5 +120,33 @@ void Special::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_graphic);
 }
+
+/** Look up table for specials.*/
+class FO_COMMON_API SpecialsManager {
+public:
+    using SpecialsTypeMap = std::map<std::string, std::unique_ptr<Special>>;
+
+    SpecialsManager();
+    ~SpecialsManager();
+
+    std::vector<std::string> SpecialNames() const;
+    const Special* GetSpecial(const std::string& name) const;
+    unsigned int GetCheckSum() const;
+
+    /** Sets types to the value of \p future. */
+    FO_COMMON_API void SetSpecialsTypes(Pending::Pending<SpecialsTypeMap>&& future);
+
+private:
+    /** Assigns any m_pending_types to m_specials. */
+    void CheckPendingSpecialsTypes() const;
+
+    /** Future types being parsed by parser.  mutable so that it can
+        be assigned to m_species_types when completed.*/
+    mutable boost::optional<Pending::Pending<SpecialsTypeMap>> m_pending_types = boost::none;
+
+    mutable SpecialsTypeMap m_specials;
+};
+
+FO_COMMON_API SpecialsManager& GetSpecialsManager();
 
 #endif // _Special_h_

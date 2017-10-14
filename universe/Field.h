@@ -4,6 +4,7 @@
 #include "UniverseObject.h"
 
 #include "../util/Export.h"
+#include "../util/Pending.h"
 
 namespace Effect {
     class EffectsGroup;
@@ -116,7 +117,8 @@ private:
 
 class FieldTypeManager {
 public:
-    typedef std::map<std::string, std::unique_ptr<FieldType>>::const_iterator iterator;
+    using FieldTypeMap = std::map<std::string, std::unique_ptr<FieldType>>;
+    using iterator = FieldTypeMap::const_iterator;
 
     /** \name Accessors */ //@{
     /** returns the field type with the name \a name; you should use the
@@ -124,10 +126,10 @@ public:
     const FieldType*            GetFieldType(const std::string& name) const;
 
     /** iterator to the first field type */
-    iterator                    begin() const   { return m_field_types.begin(); }
+    FO_COMMON_API iterator      begin() const;
 
     /** iterator to the last + 1th field type */
-    iterator                    end() const     { return m_field_types.end(); }
+    FO_COMMON_API iterator      end() const;
 
     /** returns the instance of this singleton class; you should use the free
       * function GetFieldTypeManager() instead */
@@ -141,10 +143,21 @@ public:
       * clients and server. */
     unsigned int                GetCheckSum() const;
     //@}
+
+    /** Sets types to the value of \p future. */
+    FO_COMMON_API void SetFieldTypes(Pending::Pending<FieldTypeMap>&& future);
+
 private:
     FieldTypeManager();
 
-    std::map<std::string, std::unique_ptr<FieldType>> m_field_types;
+    /** Assigns any m_pending_types to m_field_types. */
+    void CheckPendingFieldTypes() const;
+
+    /** Future types being parsed by parser.  mutable so that it can
+        be assigned to m_field_types when completed.*/
+    mutable boost::optional<Pending::Pending<FieldTypeMap>> m_pending_types = boost::none;
+
+    mutable FieldTypeMap   m_field_types;
     static FieldTypeManager*            s_instance;
 };
 

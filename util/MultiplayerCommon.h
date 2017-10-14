@@ -3,8 +3,9 @@
 
 #include "../universe/EnumsFwd.h"
 #include "../network/Networking.h"
-#include "OptionsDB.h"
 #include "Export.h"
+#include "OptionsDB.h"
+#include "Pending.h"
 #include "Serialize.h"
 
 #include <GG/Clr.h>
@@ -26,7 +27,7 @@ class GameRules;
 /////////////////////////////////////////////
 // Free Functions
 /////////////////////////////////////////////
-typedef void (*GameRulesFn)(GameRules&); ///< the function signature for functions that add Rules to the GameRules (void (GameRules&))
+using GameRulesFn = void (*) (GameRules&); ///< the function signature for functions that add Rules to the GameRules (void (GameRules&))
 
 /** adds \a function to a vector of pointers to functions that add Rules to
   * the GameRules.  This function returns a boolean so that it can be used to
@@ -70,16 +71,16 @@ public:
         std::string category = "";
     };
 
-    /** \name Accessors */ //@{
-    bool Empty() const
-    { return m_game_rules.empty(); }
-    std::unordered_map<std::string, Rule>::const_iterator begin() const
-    { return m_game_rules.begin(); }
-    std::unordered_map<std::string, Rule>::const_iterator end() const
-    { return m_game_rules.end(); }
+    using GameRulesTypeMap = std::unordered_map<std::string, Rule>;
 
-    bool RuleExists(const std::string& name) const
-    { return m_game_rules.find(name) != m_game_rules.end(); }
+    GameRules();
+
+    /** \name Accessors */ //@{
+    bool Empty() const;
+    std::unordered_map<std::string, Rule>::const_iterator begin() const;
+    std::unordered_map<std::string, Rule>::const_iterator end() const;
+
+    bool RuleExists(const std::string& name) const;
     bool RuleExists(const std::string& name, RuleType rule_type) const;
     RuleType GetRuleType(const std::string& name) const;
     bool RuleIsInternal(const std::string& name) const;
@@ -98,6 +99,7 @@ public:
     template <typename T>
     T       Get(const std::string& name) const
     {
+        CheckPendingGameRules();
         auto it = m_game_rules.find(name);
         if (it == m_game_rules.end())
             throw std::runtime_error("GameRules::Get<>() : Attempted to get nonexistent rule \"" + name + "\".");
@@ -112,6 +114,7 @@ public:
                 const std::string& category, T default_value,
                 bool engine_interal, const ValidatorBase& validator = Validator<T>())
     {
+        CheckPendingGameRules();
         auto it = m_game_rules.find(name);
         if (it != m_game_rules.end())
             throw std::runtime_error("GameRules::Add<>() : Rule " + name + " was added twice.");
@@ -120,9 +123,13 @@ public:
         DebugLogger() << "Added game rule named " << name << " with default value " << default_value;
     }
 
+    /** Adds rules from the \p future. */
+    void Add(Pending::Pending<GameRules>&& future);
+
     template <typename T>
     void    Set(const std::string& name, const T& value)
     {
+        CheckPendingGameRules();
         auto it = m_game_rules.find(name);
         if (it == m_game_rules.end())
             throw std::runtime_error("GameRules::Set<>() : Attempted to set nonexistent rule \"" + name + "\".");
@@ -140,9 +147,14 @@ public:
     //@}
 
 private:
-    GameRules();
+    /** Assigns any m_pending_rules to m_game_rules. */
+    void CheckPendingGameRules() const;
 
-    std::unordered_map<std::string, Rule> m_game_rules;
+    /** Future rules being parsed by parser.  mutable so that it can
+        be assigned to m_game_rules when completed.*/
+    mutable boost::optional<Pending::Pending<GameRules>> m_pending_rules = boost::none;
+
+    mutable GameRulesTypeMap m_game_rules;
 
     friend FO_COMMON_API GameRules& GetGameRules();
 };

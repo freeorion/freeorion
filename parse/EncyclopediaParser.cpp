@@ -17,7 +17,7 @@ namespace std {
 #endif
 
 namespace {
-    using ArticleMap = std::map<std::string, std::vector<EncyclopediaArticle>>;
+    using ArticleMap = Encyclopedia::ArticleMap;
 
     struct insert_ {
         typedef void result_type;
@@ -94,9 +94,9 @@ namespace {
 }
 
 namespace parse {
-    ArticleMap encyclopedia_articles() {
+    ArticleMap encyclopedia_articles(const boost::filesystem::path& path) {
         const lexer lexer;
-        std::vector<boost::filesystem::path> file_list = ListScripts("scripting/encyclopedia");
+        std::vector<boost::filesystem::path> file_list = ListScripts(path);
 
         ArticleMap articles;
         for (const boost::filesystem::path& file : file_list) {

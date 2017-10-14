@@ -185,7 +185,7 @@ void InGameMenu::Load() {
 }
 
 void InGameMenu::Options() {
-    auto options_wnd = GG::Wnd::Create<OptionsWnd>();
+    auto options_wnd = GG::Wnd::Create<OptionsWnd>(true);
     options_wnd->Run();
 }
 

@@ -4,7 +4,6 @@
 #include "Effect.h"
 #include "UniverseObject.h"
 #include "ValueRef.h"
-#include "../parse/Parse.h"
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
@@ -13,49 +12,50 @@
 
 #include <boost/filesystem/fstream.hpp>
 
-namespace {
-    class SpecialManager {
-    public:
-        SpecialManager() {
-            ScopedTimer timer("SpecialManager Init", true, std::chrono::milliseconds(1));
+SpecialsManager::SpecialsManager()
+{}
 
-            try {
-                m_specials = parse::specials();
-            } catch (const std::exception& e) {
-                ErrorLogger() << "Failed parsing specials: error: " << e.what();
-                throw e;
-            }
+SpecialsManager::~SpecialsManager()
+{}
 
-            TraceLogger() << "Specials:";
-            for (const auto& entry : m_specials)
-                TraceLogger() << " ... " << entry.first;
-        }
-        std::vector<std::string> SpecialNames() const {
-            std::vector<std::string> retval;
-            for (const auto& entry : m_specials) {
-                retval.push_back(entry.first);
-            }
-            return retval;
-        }
-        const Special* GetSpecial(const std::string& name) const {
-            auto it = m_specials.find(name);
-            return it != m_specials.end() ? it->second.get() : nullptr;
-        }
-        unsigned int GetCheckSum() const {
-            unsigned int retval{0};
-            for (auto const& name_type_pair : m_specials)
-                CheckSums::CheckSumCombine(retval, name_type_pair);
-            CheckSums::CheckSumCombine(retval, m_specials.size());
-            DebugLogger() << "SpecialManager checksum: " << retval;
-            return retval;
-        }
-    private:
-        std::map<std::string, std::unique_ptr<Special>> m_specials;
-    };
-    const SpecialManager& GetSpecialManager() {
-        static SpecialManager special_manager;
-        return special_manager;
+std::vector<std::string> SpecialsManager::SpecialNames() const {
+    CheckPendingSpecialsTypes();
+    std::vector<std::string> retval;
+    for (const auto& entry : m_specials) {
+        retval.push_back(entry.first);
     }
+    return retval;
+}
+
+const Special* SpecialsManager::GetSpecial(const std::string& name) const {
+    CheckPendingSpecialsTypes();
+    auto it = m_specials.find(name);
+    return it != m_specials.end() ? it->second.get() : nullptr;
+}
+
+unsigned int SpecialsManager::GetCheckSum() const {
+    CheckPendingSpecialsTypes();
+    unsigned int retval{0};
+    for (auto const& name_type_pair : m_specials)
+        CheckSums::CheckSumCombine(retval, name_type_pair);
+    CheckSums::CheckSumCombine(retval, m_specials.size());
+    DebugLogger() << "SpecialsManager checksum: " << retval;
+    return retval;
+}
+
+void SpecialsManager::SetSpecialsTypes(Pending::Pending<SpecialsTypeMap>&& future)
+{ m_pending_types = std::move(future); }
+
+void SpecialsManager::CheckPendingSpecialsTypes() const {
+    if (!m_pending_types)
+        return;
+
+    Pending::SwapPending(m_pending_types, m_specials);
+}
+
+SpecialsManager& GetSpecialsManager() {
+    static SpecialsManager special_manager;
+    return special_manager;
 }
 
 /////////////////////////////////////////////////
@@ -170,7 +170,7 @@ unsigned int Special::GetCheckSum() const {
 }
 
 const Special* GetSpecial(const std::string& name)
-{ return GetSpecialManager().GetSpecial(name); }
+{ return GetSpecialsManager().GetSpecial(name); }
 
 std::vector<std::string> SpecialNames()
-{ return GetSpecialManager().SpecialNames(); }
+{ return GetSpecialsManager().SpecialNames(); }

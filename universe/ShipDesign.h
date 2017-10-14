@@ -25,6 +25,7 @@
 #include "EnumsFwd.h"
 
 #include "../util/Export.h"
+#include "../util/Pending.h"
 
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
 namespace Condition {
@@ -187,7 +188,8 @@ private:
 /** Holds FreeOrion ship part types */
 class FO_COMMON_API PartTypeManager {
 public:
-    typedef std::map<std::string, std::unique_ptr<PartType>>::const_iterator iterator;
+    using PartTypeMap = std::map<std::string, std::unique_ptr<PartType>>;
+    using iterator = PartTypeMap::const_iterator;
 
     /** \name Accessors */ //@{
     /** returns the part type with the name \a name; you should use the free function GetPartType() instead */
@@ -200,7 +202,7 @@ public:
     iterator end() const;
 
     /** returns the instance of this singleton class; you should use the free function GetPartTypeManager() instead */
-    static const PartTypeManager& GetPartTypeManager();
+    static PartTypeManager& GetPartTypeManager();
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -211,16 +213,28 @@ public:
     unsigned int GetCheckSum() const;
     //@}
 
+    /** Sets part types to the future value of \p pending_part_types. */
+    FO_COMMON_API void SetPartTypes(Pending::Pending<PartTypeMap>&& pending_part_types);
+
 private:
     PartTypeManager();
 
-    std::map<std::string, std::unique_ptr<PartType>> m_parts;
+    /** Assigns any m_pending_part_types to m_bulding_types. */
+    void CheckPendingPartTypes() const;
+
+    /** Future part type being parsed by parser.  mutable so that it can
+        be assigned to m_part_types when completed.*/
+    mutable boost::optional<Pending::Pending<PartTypeMap>> m_pending_part_types = boost::none;
+
+    /** Set of part types.  mutable so that when the parse completes it can
+        be updated. */
+    mutable std::map<std::string, std::unique_ptr<PartType>>    m_parts;
     static PartTypeManager*             s_instance;
 };
 
 
 /** returns the singleton part type manager */
-FO_COMMON_API const PartTypeManager& GetPartTypeManager();
+FO_COMMON_API PartTypeManager& GetPartTypeManager();
 
 /** Returns the ship PartType specification object with name \a name.  If no
   * such PartType exists, 0 is returned instead. */
@@ -414,7 +428,8 @@ namespace CheckSums {
 /** Holds FreeOrion hull types */
 class FO_COMMON_API HullTypeManager {
 public:
-    typedef std::map<std::string, std::unique_ptr<HullType>>::const_iterator iterator;
+    using HullTypeMap = std::map<std::string, std::unique_ptr<HullType>>;
+    using iterator = HullTypeMap::const_iterator;
 
     /** \name Accessors */ //@{
     /** returns the hull type with the name \a name; you should use the free function GetHullType() instead */
@@ -427,7 +442,7 @@ public:
     iterator end() const;
 
     /** returns the instance of this singleton class; you should use the free function GetHullTypeManager() instead */
-    static const HullTypeManager& GetHullTypeManager();
+    static HullTypeManager& GetHullTypeManager();
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -438,19 +453,60 @@ public:
     unsigned int GetCheckSum() const;
     //@}
 
+    /** Sets hull types to the future value of \p pending_hull_types. */
+    FO_COMMON_API void SetHullTypes(Pending::Pending<HullTypeMap>&& pending_hull_types);
+
 private:
     HullTypeManager();
 
-    std::map<std::string, std::unique_ptr<HullType>> m_hulls;
+
+    /** Assigns any m_pending_hull_types to m_bulding_types. */
+    void CheckPendingHullTypes() const;
+
+    /** Future hull type being parsed by parser.  mutable so that it can
+        be assigned to m_hull_types when completed.*/
+    mutable boost::optional<Pending::Pending<HullTypeMap>> m_pending_hull_types = boost::none;
+
+    /** Set of hull types.  mutable so that when the parse completes it can
+        be updated. */
+    mutable HullTypeMap m_hulls;
+
     static HullTypeManager* s_instance;
 };
 
 /** returns the singleton hull type manager */
-FO_COMMON_API const HullTypeManager& GetHullTypeManager();
+FO_COMMON_API HullTypeManager& GetHullTypeManager();
 
 /** Returns the ship HullType specification object with name \a name.  If no such HullType exists,
   * 0 is returned instead. */
 FO_COMMON_API const HullType* GetHullType(const std::string& name);
+
+/** ParsedShipDesign holds the results of a parsed ship design which can be
+    converted to a ShipDesign. */
+struct FO_COMMON_API ParsedShipDesign {
+    ParsedShipDesign(const std::string& name, const std::string& description,
+                     int designed_on_turn, int designed_by_empire, const std::string& hull,
+                     const std::vector<std::string>& parts,
+                     const std::string& icon, const std::string& model,
+                     bool name_desc_in_stringtable = false, bool monster = false,
+                     const boost::uuids::uuid& uuid = boost::uuids::nil_uuid());
+
+    std::string                 m_name;
+    std::string                 m_description;
+    boost::uuids::uuid          m_uuid;
+
+    int                         m_designed_on_turn;
+    int                         m_designed_by_empire;
+
+    std::string                 m_hull;
+    std::vector<std::string>    m_parts;
+    bool                        m_is_monster;
+
+    std::string                 m_icon;
+    std::string                 m_3D_model;
+
+    bool                        m_name_desc_in_stringtable;
+};
 
 class FO_COMMON_API ShipDesign {
 public:
@@ -485,18 +541,10 @@ public:
                const std::vector<std::string>& parts,
                const std::string& icon, const std::string& model,
                bool name_desc_in_stringtable = false, bool monster = false,
-               const boost::uuids::uuid& uuid = boost::uuids::nil_uuid()
-              );
+               const boost::uuids::uuid& uuid = boost::uuids::nil_uuid());
 
-    /**  The public ShipDesign constructor will only construct valid ship
-         designs, as long as the HullTypeManager has at least one hull. */
-    ShipDesign(const std::string& name, const std::string& description,
-               int designed_on_turn, int designed_by_empire, const std::string& hull,
-               const std::vector<std::string>& parts,
-               const std::string& icon, const std::string& model,
-               bool name_desc_in_stringtable = false, bool monster = false,
-               const boost::uuids::uuid& uuid = boost::uuids::nil_uuid()
-              );
+    /** Convert a parsed ship design and do any required verification. */
+    ShipDesign(const ParsedShipDesign& design);
     //@}
 
     /** \name Accessors */ //@{
@@ -668,9 +716,13 @@ FO_COMMON_API bool operator ==(const ShipDesign& first, const ShipDesign& second
   * or isn't know to this client), 0 is returned instead. */
 FO_COMMON_API const ShipDesign* GetShipDesign(int ship_design_id);
 
-
 class FO_COMMON_API PredefinedShipDesignManager {
 public:
+    using ParsedShipDesignsType = std::pair<
+        std::vector<std::pair<std::unique_ptr<ParsedShipDesign>, boost::filesystem::path>>, // designs_and_paths,
+        std::vector<boost::uuids::uuid> // ordering
+    >;
+
     /** Return pointers the ShipDesigns in order.*/
     std::vector<const ShipDesign*> GetOrderedShipDesigns() const;
 
@@ -699,24 +751,41 @@ public:
       * ship design exists, 0 is returned instead. */
     static PredefinedShipDesignManager& GetPredefinedShipDesignManager();
 
+    /** Sets ship design types to the future value of \p pending_designs
+        found in \p subdir. */
+    FO_COMMON_API void SetShipDesignTypes(Pending::Pending<ParsedShipDesignsType>&& pending_designs);
+
+    /** Sets monster design types to the future value of \p
+        pending_design_types found in \p subdir. */
+    FO_COMMON_API void SetMonsterDesignTypes(Pending::Pending<ParsedShipDesignsType>&& pending_designs);
+
 private:
     PredefinedShipDesignManager();
 
-    std::unordered_map<boost::uuids::uuid, std::unique_ptr<ShipDesign>,
-                       boost::hash<boost::uuids::uuid>> m_designs;
+    /** Assigns any m_pending_designs. */
+    void CheckPendingDesignsTypes() const;
 
-    std::unordered_map<std::string, boost::uuids::uuid> m_name_to_ship_design;
-    std::unordered_map<std::string, boost::uuids::uuid> m_name_to_monster_design;
-    mutable std::unordered_map<std::string, int> m_design_generic_ids;  // ids of designs from this manager that have been added to the universe with no empire as the creator
+    /** Future ship design type being parsed by parser.  mutable so that it can
+        be assigned to m_ship design_types when completed.*/
+    mutable boost::optional<Pending::Pending<ParsedShipDesignsType>> m_pending_designs = boost::none;
+    mutable boost::optional<Pending::Pending<ParsedShipDesignsType>> m_pending_monsters = boost::none;
 
-    std::vector<boost::uuids::uuid> m_ship_ordering;
-    std::vector<boost::uuids::uuid> m_monster_ordering;
+    mutable std::unordered_map<boost::uuids::uuid, std::unique_ptr<ShipDesign>,
+                               boost::hash<boost::uuids::uuid>>  m_designs;
+
+    mutable std::unordered_map<std::string, boost::uuids::uuid> m_name_to_ship_design;
+    mutable std::unordered_map<std::string, boost::uuids::uuid> m_name_to_monster_design;
+    // ids of designs from this manager that have been added to the universe with no empire as the creator
+    mutable std::unordered_map<std::string, int> m_design_generic_ids;
+
+    mutable std::vector<boost::uuids::uuid> m_ship_ordering;
+    mutable std::vector<boost::uuids::uuid> m_monster_ordering;
 
     static PredefinedShipDesignManager* s_instance;
 };
 
 /** returns the singleton predefined ship design manager type manager */
-const FO_COMMON_API PredefinedShipDesignManager& GetPredefinedShipDesignManager();
+FO_COMMON_API PredefinedShipDesignManager& GetPredefinedShipDesignManager();
 
 /** Returns the predefined ShipDesign with the name \a name.  If no such
   * ship design exists, 0 is returned instead. */
@@ -769,14 +838,15 @@ void HullType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_icon);
 }
 
-/** Load all ship designs in \p dir and return a tuple is_error, the map from uuid to ship design and path and the
-    ship ordering from the manifest. */
+/** Load all ship designs in \p parsed and return a tuple is_error, the map
+    from uuid to ship design and path and the ship ordering from the
+    manifest. */
 FO_COMMON_API std::tuple<
     bool,
     std::unordered_map<boost::uuids::uuid,
         std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>,
         boost::hash<boost::uuids::uuid>>,
     std::vector<boost::uuids::uuid>>
-LoadShipDesignsAndManifestOrderFromFileSystem(const boost::filesystem::path& dir);
+LoadShipDesignsAndManifestOrderFromParseResults(PredefinedShipDesignManager::ParsedShipDesignsType& parsed);
 
 #endif // _ShipDesign_h_

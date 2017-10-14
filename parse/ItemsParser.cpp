@@ -57,18 +57,16 @@ namespace {
 }
 
 namespace parse {
-    start_rule_payload items() {
+    start_rule_payload items(const boost::filesystem::path& path) {
         const lexer lexer;
         start_rule_payload items_;
-        const boost::filesystem::path& path = GetResourceDir() / "scripting/starting_unlocks/items.inf";
         /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, path, items_);
         return items_;
     }
 
-    start_rule_payload starting_buildings() {
+    start_rule_payload starting_buildings(const boost::filesystem::path& path) {
         const lexer lexer;
         start_rule_payload starting_buildings_;
-        const boost::filesystem::path& path = GetResourceDir() / "scripting/starting_unlocks/buildings.inf";
         /*auto success =*/ detail::parse_file<grammar, start_rule_payload >(lexer, path, starting_buildings_);
         return starting_buildings_;
     }

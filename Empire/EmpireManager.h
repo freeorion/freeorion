@@ -8,6 +8,7 @@
 
 #include <GG/Clr.h>
 
+#include <boost/filesystem.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/signals2/signal.hpp>
 
@@ -124,5 +125,8 @@ extern template FO_COMMON_API void EmpireManager::serialize<freeorion_xml_iarchi
 
 /** The colors that are available for use for empires in the game. */
 FO_COMMON_API const std::vector<GG::Clr>& EmpireColors();
+
+/** Initialize empire colors from \p path */
+FO_COMMON_API void InitEmpireColors(const boost::filesystem::path& path);
 
 #endif // _EmpireManager_h_

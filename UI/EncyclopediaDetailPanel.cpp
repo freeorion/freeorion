@@ -34,7 +34,6 @@
 #include "../util/ScopedTimer.h"
 #include "../client/human/HumanClientApp.h"
 #include "../combat/CombatLogManager.h"
-#include "../parse/Parse.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/GUI.h>
@@ -150,7 +149,7 @@ namespace {
      * @param[in] name name entry of the article
      */
     const EncyclopediaArticle& GetPediaArticle(const std::string& name) {
-        const auto& articles = GetEncyclopedia().articles;
+        const auto& articles = GetEncyclopedia().Articles();
         for (const auto& entry : articles) {
             for (const EncyclopediaArticle& article : entry.second) {
                 if (article.name == name) {
@@ -193,7 +192,7 @@ namespace {
                                              str}});
             }
 
-            for (const auto& entry : encyclopedia.articles) {
+            for (const auto& entry : encyclopedia.Articles()) {
                 // Do not add sub-categories
                 const EncyclopediaArticle& article = GetPediaArticle(entry.first);
                 // No article found or specifically a top-level category
@@ -507,8 +506,9 @@ namespace {
         }
 
         // Add any defined entries for this directory
-        auto category_it = encyclopedia.articles.find(dir_name);
-        if (category_it != encyclopedia.articles.end()) {
+        const auto& articles = encyclopedia.Articles();
+        auto category_it = articles.find(dir_name);
+        if (category_it != articles.end()) {
             for (const EncyclopediaArticle& article : category_it->second) {
                 // Prevent duplicate addition of hard-coded directories that also have a content definition
                 if (article.name == dir_name)
@@ -1226,7 +1226,7 @@ namespace {
         }
 
         // search for article in custom pedia entries.
-        for (const auto& entry : GetEncyclopedia().articles) {
+        for (const auto& entry : GetEncyclopedia().Articles()) {
             for (const EncyclopediaArticle& article : entry.second) {
                 if (article.name != item_name)
                     continue;

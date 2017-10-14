@@ -318,7 +318,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     this->SetMouseLRSwapped(GetOptionsDB().Get<bool>("UI.swap-mouse-lr"));
 
-    auto named_key_maps = parse::keymaps();
+    auto named_key_maps = parse::keymaps(GetResourceDir() / "scripting/keymaps.inf");
     TraceLogger() << "Keymaps:";
     for (auto& km : named_key_maps) {
         TraceLogger() << "Keymap name = \"" << km.first << "\"";
@@ -350,6 +350,11 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     RegisterLinkTags();
 
     m_fsm->initiate();
+
+    // Start parsing content
+    StartBackgroundParsing();
+    GetOptionsDB().OptionChangedSignal("resource-dir").connect(
+        boost::bind(&HumanClientApp::HandleResoureDirChange, this));
 }
 
 void HumanClientApp::ConnectKeyboardAcceleratorSignals() {
@@ -1426,6 +1431,15 @@ void HumanClientApp::UpdateFPSLimit() {
     } else {
         SetMaxFPS(0.0); // disable fps limit
         DebugLogger() << "Disabled FPS limit";
+    }
+}
+
+void HumanClientApp::HandleResoureDirChange() {
+    if (!m_game_started) {
+        DebugLogger() << "Resource directory changed.  Reparsing universe ...";
+        StartBackgroundParsing();
+    } else {
+        WarnLogger() << "Resource directory changes will take effect on application restart.";
     }
 }
 

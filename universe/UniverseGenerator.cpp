@@ -4,7 +4,6 @@
 #include "../util/Random.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
-#include "../parse/Parse.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 

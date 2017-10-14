@@ -1,6 +1,10 @@
 #ifndef _Encyclopedia_h_
 #define _Encyclopedia_h_
 
+#include "../util/Pending.h"
+
+#include <boost/optional/optional.hpp>
+
 #include <string>
 #include <map>
 #include <vector>
@@ -31,13 +35,26 @@ struct FO_COMMON_API EncyclopediaArticle {
     std::string icon;
 };
 
-struct FO_COMMON_API Encyclopedia {
+class FO_COMMON_API Encyclopedia {
+public:
+    using ArticleMap = std::map<std::string, std::vector<EncyclopediaArticle>>;
+
     Encyclopedia();
     unsigned int GetCheckSum() const;
-    std::map<std::string, std::vector<EncyclopediaArticle>> articles;
+
+    /** Sets articles to the value of \p future. */
+    FO_COMMON_API void SetArticles(Pending::Pending<ArticleMap>&& future);
+
+    FO_COMMON_API const ArticleMap& Articles() const;
+
     const EncyclopediaArticle                               empty_article;
+private:
+    mutable ArticleMap m_articles;
+
+    /** Future articles.  mutable so that it can be assigned to m_articles when completed.*/
+    mutable boost::optional<Pending::Pending<ArticleMap>> m_pending_articles = boost::none;
 };
 
-FO_COMMON_API const Encyclopedia& GetEncyclopedia();
+FO_COMMON_API Encyclopedia& GetEncyclopedia();
 
 #endif

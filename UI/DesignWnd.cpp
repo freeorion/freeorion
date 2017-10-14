@@ -8,6 +8,7 @@
 #include "IconTextBrowseWnd.h"
 #include "Sound.h"
 #include "TextBrowseWnd.h"
+#include "../parse/Parse.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/Order.h"
@@ -213,12 +214,12 @@ namespace {
         SavedDesignsManager()
         {}
 
-        const std::list<boost::uuids::uuid>& OrderedDesignUUIDs() const
-        { return m_ordered_uuids; }
+        const std::list<boost::uuids::uuid>& OrderedDesignUUIDs() const;
 
         std::vector<int> OrderedIDs() const override;
 
-        void LoadDesignsFromFileSystem();
+        void StartParsingDesignsFromFileSystem(bool is_new_game);
+        void CheckPendingDesigns() const;
 
         const ShipDesign* GetDesign(const boost::uuids::uuid& uuid) const;
 
@@ -235,14 +236,29 @@ namespace {
         /** Save the design with the original filename or throw out_of_range. */
         void SaveDesign(const boost::uuids::uuid &uuid);
 
+        /** SaveDesignConst allows CheckPendingDesigns to correct the designs
+            in the saved directory.*/
+        void SaveDesignConst(const boost::uuids::uuid &uuid) const;
+
         void SaveDesign(int design_id);
 
-        std::list<boost::uuids::uuid> m_ordered_uuids;
+        /** A const version of SaveManifest to allow CheckPendingDesigns to
+            correct and save the loaded designs. */
+        void SaveManifestConst() const;
+
+        /** Future ship design type being parsed by parser.  mutable so that it can
+        be assigned to m_saved_designs when completed.*/
+        mutable boost::optional<std::future<PredefinedShipDesignManager::ParsedShipDesignsType>>
+        m_pending_designs = boost::none;
+
+        mutable std::list<boost::uuids::uuid> m_ordered_uuids;
         /// Saved designs with filename
-        std::unordered_map<boost::uuids::uuid,
+        mutable std::unordered_map<boost::uuids::uuid,
                            std::pair<std::unique_ptr<ShipDesign>,
                                      boost::filesystem::path>,
                            boost::hash<boost::uuids::uuid>>  m_saved_designs;
+
+        mutable bool m_is_new_game = false;
     };
 
 
@@ -358,7 +374,13 @@ namespace {
     // SavedDesignsManager implementations          
     //////////////////////////////////////////////////
 
+    const std::list<boost::uuids::uuid>& SavedDesignsManager::OrderedDesignUUIDs() const {
+        CheckPendingDesigns();
+        return m_ordered_uuids;
+    }
+
     std::vector<int> SavedDesignsManager::OrderedIDs() const {
+        CheckPendingDesigns();
         std::vector<int> retval;
         for (const auto uuid: m_ordered_uuids) {
             const auto& it = m_saved_designs.find(uuid);
@@ -369,23 +391,52 @@ namespace {
         return retval;
     }
 
-    void SavedDesignsManager::LoadDesignsFromFileSystem() {
+    void SavedDesignsManager::StartParsingDesignsFromFileSystem(bool is_new_game) {
         auto saved_designs_dir = SavedDesignsDir();
         if (!exists(saved_designs_dir))
             return;
 
+        m_is_new_game = is_new_game;
+
+        TraceLogger() << "Start parsing saved designs from directory";
+        m_pending_designs = std::async(std::launch::async, parse::ship_designs, saved_designs_dir);
+    }
+
+    void SavedDesignsManager::CheckPendingDesigns() const {
+        if (!m_pending_designs)
+            return;
+
+        TraceLogger() << "Waiting for pending saved designs";
+
+        // Only print waiting message if not immediately ready
+        while (m_pending_designs->wait_for(std::chrono::seconds(1)) == std::future_status::timeout) {
+            DebugLogger() << "Waiting for saved ShipDesigns to parse.";
+        }
+
         bool inconsistent;
         std::vector<boost::uuids::uuid> ordering;
 
-        std::tie(inconsistent, m_saved_designs, ordering) =
-            LoadShipDesignsAndManifestOrderFromFileSystem(saved_designs_dir);
+        try {
+            TraceLogger() << "Receive parsed saved designs.";
+
+            auto parsed_designs = m_pending_designs->get();
+
+            std::tie(inconsistent, m_saved_designs, ordering) =
+                LoadShipDesignsAndManifestOrderFromParseResults(parsed_designs);
+
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Failed parsing designs: error: " << e.what();
+            throw;
+        }
+
+        m_pending_designs = boost::none;
 
         m_ordered_uuids = std::list<boost::uuids::uuid>(ordering.begin(), ordering.end());
 
         // Write any corrected ordering back to disk.
         if (inconsistent) {
             WarnLogger() << "Writing corrected ship designs back to saved designs.";
-            SaveManifest();
+            SaveManifestConst();
 
             // Correct file name extension
             // Nothing fancy, just convert '.txt' to '.txt.focs.txt' which the scripting system is
@@ -405,18 +456,37 @@ namespace {
 
 
             for (auto& uuid: m_ordered_uuids)
-                SaveDesign(uuid);
+                SaveDesignConst(uuid);
         }
+
+        if (!m_is_new_game)
+            return;
+
+        m_is_new_game = false;
+
+        // If requested on the first turn copy all of the saved designs to the client empire.
+        if (GetOptionsDB().Get<bool>("auto-add-saved-designs")) {
+            const auto empire_id = HumanClientApp::GetApp()->EmpireID();
+            TraceLogger() << "Adding saved designs to empire.";
+            for (const auto& uuid : m_ordered_uuids)
+                AddSavedDesignToCurrentDesigns(uuid, empire_id, false);
+        }
+
     }
 
     const ShipDesign* SavedDesignsManager::GetDesign(const boost::uuids::uuid& uuid) const {
+        CheckPendingDesigns();
         const auto& it = m_saved_designs.find(uuid);
         if (it == m_saved_designs.end())
             return nullptr;
         return it->second.first.get();
     }
 
-    void SavedDesignsManager::SaveManifest() {
+    void SavedDesignsManager::SaveManifest()
+    { SaveManifestConst(); }
+
+    void SavedDesignsManager::SaveManifestConst() const {
+        CheckPendingDesigns();
         boost::filesystem::path designs_dir_path = GetDesignsDir();
 
         std::string file_name = DESIGN_MANIFEST_PREFIX + DESIGN_FILENAME_EXTENSION;
@@ -440,6 +510,7 @@ namespace {
             return next;
         }
 
+        CheckPendingDesigns();
         if (m_saved_designs.count(design.UUID())) {
             // UUID already exists so this is a move.  Remove the old UUID location
             const auto existing_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), design.UUID());
@@ -468,6 +539,7 @@ namespace {
         if (moved_uuid == next_uuid)
             return false;
 
+        CheckPendingDesigns();
         if (!m_saved_designs.count(moved_uuid)) {
             ErrorLogger() << "Unable to move saved design because moved design is missing.";
             return false;
@@ -495,6 +567,7 @@ namespace {
     }
 
     void SavedDesignsManager::Erase(const boost::uuids::uuid& erased_uuid) {
+        CheckPendingDesigns();
         const auto& saved_design_it = m_saved_designs.find(erased_uuid);
         if (saved_design_it != m_saved_designs.end()) {
             const auto& file = saved_design_it->second.second;
@@ -506,8 +579,12 @@ namespace {
         m_ordered_uuids.erase(uuid_it);
     }
 
+    void SavedDesignsManager::SaveDesign(const boost::uuids::uuid &uuid)
+    { SaveDesignConst(uuid); }
+
     /** Save the design with the original filename or throw out_of_range..*/
-    void SavedDesignsManager::SaveDesign(const boost::uuids::uuid &uuid) {
+    void SavedDesignsManager::SaveDesignConst(const boost::uuids::uuid &uuid) const {
+        CheckPendingDesigns();
         const auto& design_and_filename = m_saved_designs.at(uuid);
 
         WriteToFile(design_and_filename.second, design_and_filename.first->Dump());
@@ -519,8 +596,13 @@ namespace {
     //////////////////////////////////////////////////
 
     std::vector<int> CurrentShipDesignManager::OrderedIDs() const {
-        std::vector<int> retval;
+        // Make sure that saved designs are included.
+        // Only OrderedIDs is part of the Designs base class and
+        // accessible outside this file.
+        GetSavedDesignsManager().CheckPendingDesigns();
+
         // Remove all obsolete ids from the list
+        std::vector<int> retval;
         std::copy_if(m_ordered_ids.begin(), m_ordered_ids.end(), std::back_inserter(retval),
                      [this](const int id){
                          const auto it = m_id_to_obsolete_and_loc.find(id);
@@ -669,7 +751,7 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
 
     m_saved_designs.reset(new SavedDesignsManager());
     auto saved_designs = dynamic_cast<SavedDesignsManager*>(m_saved_designs.get());
-    saved_designs->LoadDesignsFromFileSystem();
+    saved_designs->StartParsingDesignsFromFileSystem(is_new_game);
 
     // Only setup saved and current designs for new games
     if (!is_new_game)
@@ -696,15 +778,6 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
                 std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
         }
     }
-
-    // If requested on the first turn copy all of the saved designs to the client empire.
-    if (GetOptionsDB().Get<bool>("auto-add-saved-designs")) {
-
-        DebugLogger() << "Adding saved designs to empire.";
-        for (const auto& uuid : saved_designs->OrderedDesignUUIDs())
-            AddSavedDesignToCurrentDesigns(uuid, empire_id, false);
-    }
-
 }
 
 void ShipDesignManager::Save(SaveGameUIData& data) const {

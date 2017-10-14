@@ -5,6 +5,7 @@
 #include "../combat/CombatSystem.h"
 #include "../combat/CombatEvents.h"
 #include "../combat/CombatLogManager.h"
+#include "../parse/Parse.h"
 #include "../universe/Building.h"
 #include "../universe/Effect.h"
 #include "../universe/Fleet.h"
@@ -15,6 +16,7 @@
 #include "../universe/Special.h"
 #include "../universe/System.h"
 #include "../universe/Species.h"
+#include "../universe/Tech.h"
 #include "../universe/UniverseGenerator.h"
 #include "../universe/Enums.h"
 #include "../Empire/Empire.h"
@@ -26,6 +28,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Order.h"
 #include "../util/OrderSet.h"
+#include "../util/Pending.h"
 #include "../util/SaveGamePreviewUtils.h"
 #include "../util/SitRepEntry.h"
 #include "../util/ScopedTimer.h"
@@ -144,6 +147,9 @@ ServerApp::ServerApp() :
 
     m_fsm->initiate();
 
+    // Start parsing content
+    StartBackgroundParsing();
+
     Empires().DiplomaticStatusChangedSignal.connect(
         boost::bind(&ServerApp::HandleDiplomaticStatusChange, this, _1, _2));
     Empires().DiplomaticMessageChangedSignal.connect(
@@ -183,6 +189,21 @@ namespace {
 #ifdef FREEORION_MACOSX
 #include <stdlib.h>
 #endif
+
+void ServerApp::StartBackgroundParsing() {
+    IApp::StartBackgroundParsing();
+    const auto& rdir = GetResourceDir();
+    m_universe.SetInitiallyUnlockedItems(
+        Pending::StartParsing(parse::items, rdir / "scripting/starting_unlocks/items.inf"));
+    m_universe.SetInitiallyUnlockedBuildings(
+        Pending::StartParsing(parse::starting_buildings, rdir / "scripting/starting_unlocks/buildings.inf"));
+    m_universe.SetInitiallyUnlockedFleetPlans(
+        Pending::StartParsing(parse::fleet_plans, rdir / "scripting/starting_unlocks/fleets.inf"));
+    m_universe.SetMonsterFleetPlans(
+        Pending::StartParsing(parse::monster_fleet_plans, rdir / "scripting/monster_fleets.inf"));
+    m_universe.SetEmpireStats(
+        Pending::StartParsing(parse::statistics, rdir / "scripting/empire_statistics"));
+}
 
 void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int max_aggression) {
     DebugLogger() << "ServerApp::CreateAIClients: " << player_setup_data.size() << " player (maybe not all AIs) at max aggression: " << max_aggression;
