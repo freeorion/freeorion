@@ -237,7 +237,7 @@ class FreeOrionAISaveGameDecoder(json.JSONDecoder):
 
         # encode a unicode str according to systems standard encoding
         if isinstance(x, unicode):
-            x = str(x)
+            x = x.encode('utf-8')
 
         # if it is a string, check if it encodes another data type
         if isinstance(x, str):
