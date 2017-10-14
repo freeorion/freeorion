@@ -585,9 +585,9 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
 
     // establish player with requested client type and acknowldge via connection
     player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
+    player_connection->SendMessage(JoinAckMessage(player_id));
     if (!GetOptionsDB().Get<bool>("skip-checksum"))
         player_connection->SendMessage(ContentCheckSumMessage());
-    player_connection->SendMessage(JoinAckMessage(player_id));
 
     // inform player of host
     player_connection->SendMessage(HostIDMessage(server.m_networking.HostPlayerID()));
@@ -1376,9 +1376,9 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
             // expected player
             // let the networking system know what socket this player is on
             player_connection->EstablishPlayer(expected_it->second, player_name, client_type, client_version_string);
+            player_connection->SendMessage(JoinAckMessage(expected_it->second));
             if (!GetOptionsDB().Get<bool>("skip-checksum"))
                 player_connection->SendMessage(ContentCheckSumMessage());
-            player_connection->SendMessage(JoinAckMessage(expected_it->second));
 
             // Inform AI of logging configuration.
             player_connection->SendMessage(
@@ -1401,9 +1401,9 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
             // unexpected but welcome human player
             int host_id = server.Networking().HostPlayerID();
             player_connection->EstablishPlayer(host_id, player_name, client_type, client_version_string);
+            player_connection->SendMessage(JoinAckMessage(host_id));
             if (!GetOptionsDB().Get<bool>("skip-checksum"))
                 player_connection->SendMessage(ContentCheckSumMessage());
-            player_connection->SendMessage(JoinAckMessage(host_id));
 
             DebugLogger(FSM) << "Initializing new SP game...";
             server.NewSPGameInit(*m_single_player_setup_data);
