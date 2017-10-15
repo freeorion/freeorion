@@ -9,8 +9,10 @@ arguments = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHel
                                                 ' and a doxygen suitable listing of the parse results.',
                                     epilog='%(prog)s Parses FILES in the MATCH directory for TAGs.'
                                            'The TEMPLATE file is then read into the OUTPUT file, replacing any'
-                                           ' comment (#) lines with a match for TEMPLATE_VAR with the results of the'
-                                           ' parsed files. The results are formatted for a doxygen ".dox" file.')
+                                           ' comment lines with a match for TEMPLATE_VAR with the results of the'
+                                           ' parsed files. The comment lines may be in either # or /// form in a file,'
+                                           ' but only one form throughout a file.  The results of the parse are'
+                                           ' formatted for a doxygen ".dox" file.')
 arguments.add_argument('--template', required=True,
                        help='Full path to an input template.')
 arguments.add_argument('--match', default='./',
@@ -49,23 +51,40 @@ def parse_file(_parse_file, _tags):
     with open(_parse_file, 'r') as f:
         match_line = 0
         content = []
+        special_comments_this_file = None
         # Documentation may span multiple lines for a content tag.
         # Matched lines are only stored in _tags once an end condition is met.
         # End conditions are: a line not starting a comment, a new content tag, end of file
-        for parse_line in enumerate(f):
-            # only check lines that start as a comment (#)
-            if parse_line[1].lstrip().startswith("#"):
-                if tag_open in parse_line[1]:
+        for raw_line in enumerate(f):
+            if raw_line[1].lstrip().startswith("#") and special_comments_this_file is not True:
+                if special_comments_this_file is None:
+                    special_comments_this_file = False
+                if tag_open in raw_line[1]:
                     if match_line:
                         # in event focs scripts decide to stack one documentation on top of another
                         add_doc_source(_parse_file, match_line, content, _tags)
                     # store content and line for later addition
-                    content = ''.join(parse_line[1].split(tag_open, 1)[1]).split(tag_close, 1)
+                    content = ''.join(raw_line[1].split(tag_open, 1)[1]).split(tag_close, 1)
                     content[1] = content[1].strip()
-                    match_line = parse_line[0] + 1
+                    match_line = raw_line[0] + 1
                 elif match_line:
                     # not a new content tag, append to previous line description
-                    content[1] += ' ' + parse_line[1].lstrip('# ')
+                    content[1] += ' ' + raw_line[1].lstrip('# ')
+            elif raw_line[1].lstrip().startswith("/// ") and special_comments_this_file is not False:
+                if special_comments_this_file is None:
+                    special_comments_this_file = True
+                    content = ['# ']
+                if tag_open in raw_line[1]:
+                    if match_line:
+                        # in event focs scripts decide to stack one documentation on top of another
+                        add_doc_source(_parse_file, match_line, content, _tags)
+                    # store content and line for later addition
+                    content = ''.join(raw_line[1].split(tag_open, 1)[1]).split(tag_close, 1)
+                    content[1] = content[1].strip()
+                    match_line = raw_line[0] + 1
+                elif match_line:
+                    # not a new content tag, append to previous line description
+                    content[1] += ' ' + raw_line[1].lstrip('/// ')
             elif match_line:
                 # end of description, add a node for this source
                 add_doc_source(_parse_file, match_line, content, _tags)
