@@ -6,9 +6,37 @@
 #include "EffectParser4.h"
 #include "EffectParser5.h"
 
+#include "../universe/Condition.h"
 #include "../universe/Effect.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+
+namespace {
+    /** This constructor avoids phoenix actors return by valur which makes
+        difficulties for move only types. */
+    Effect::EffectsGroup* new_EffectsGroup(
+        Condition::ConditionBase* scope,
+        Condition::ConditionBase* activation,
+        std::vector<Effect::EffectBase*>& effects_,
+        const std::string& accounting_label,
+        const std::string& stacking_group,
+        int priority,
+        const std::string& description)
+    {
+        std::vector<std::unique_ptr<Effect::EffectBase>> effects;
+        for (auto&& effect_ : effects_)
+            effects.emplace_back(effect_);
+
+        return new Effect::EffectsGroup(
+            std::unique_ptr<Condition::ConditionBase>(scope),
+            std::unique_ptr<Condition::ConditionBase>(activation),
+            std::move(effects),
+            accounting_label, stacking_group, priority, description);
+    }
+
+    BOOST_PHOENIX_ADAPT_FUNCTION(Effect::EffectsGroup*, new_EffectsGroup_, new_EffectsGroup, 7)
+
+}
 
 namespace parse {
 
@@ -95,10 +123,10 @@ namespace parse {
             > ((labeller.rule(Priority_token)         > tok.int_ [ _f = _1 ]) | eps [ _f = 100 ])
             >   labeller.rule(Effects_token)
             >   (
-                        ('[' > +effects_grammar [ push_back(_d, _1) ] > ']')
-                    |    effects_grammar [ push_back(_d, _1) ]
+                ('[' > +effects_grammar [ push_back(_d, _1) ] > ']')
+                |    effects_grammar [ push_back(_d, _1) ]
                 )
-                [ _val = new_<Effect::EffectsGroup>(_a, _b, _d, _e, _c, _f, _g) ]
+            [ _val = new_EffectsGroup_(_a, _b, _d, _e, _c, _f, _g) ]
             ;
 
         start

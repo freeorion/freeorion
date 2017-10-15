@@ -176,7 +176,7 @@ EffectsGroup::EffectsGroup(std::unique_ptr<Condition::ConditionBase>&& scope,
                            std::vector<std::unique_ptr<EffectBase>>&& effects,
                            const std::string& accounting_label,
                            const std::string& stacking_group, int priority,
-                           std::string description) :
+                           const std::string& description) :
     m_scope(std::move(scope)),
     m_activation(std::move(activation)),
     m_stacking_group(stacking_group),
@@ -185,22 +185,6 @@ EffectsGroup::EffectsGroup(std::unique_ptr<Condition::ConditionBase>&& scope,
     m_priority(priority),
     m_description(description)
 {}
-
-EffectsGroup::EffectsGroup(Condition::ConditionBase* scope, Condition::ConditionBase* activation,
-                           const std::vector<EffectBase*>& effects, const std::string& accounting_label,
-                           const std::string& stacking_group, int priority,
-                           std::string description) :
-    m_scope(scope),
-    m_activation(activation),
-    m_stacking_group(stacking_group),
-    m_effects(),
-    m_accounting_label(accounting_label),
-    m_priority(priority),
-    m_description(description)
-{
-    for (auto& effect : effects)
-        m_effects.emplace_back(effect);
-}
 
 EffectsGroup::~EffectsGroup()
 {}

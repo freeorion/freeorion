@@ -45,11 +45,7 @@ public:
                  std::vector<std::unique_ptr<EffectBase>>&& effects,
                  const std::string& accounting_label = "",
                  const std::string& stacking_group = "", int priority = 0,
-                 std::string description = "");
-    EffectsGroup(Condition::ConditionBase* scope, Condition::ConditionBase* activation,
-                 const std::vector<EffectBase*>& effects, const std::string& accounting_label = "",
-                 const std::string& stacking_group = "", int priority = 0,
-                 std::string description = "");
+                 const std::string& description = "");
     virtual ~EffectsGroup();
 
     /** execute all effects in group */
