@@ -25,7 +25,7 @@ BuildingType
     ]
     icon = "icons/building/nest_eradicator.png"
 
-# @1@ Monster name
+// @1@ Monster name
 EG_NEST_REMOVAL
 '''EffectsGroup
             scope = And [
