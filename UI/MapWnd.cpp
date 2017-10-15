@@ -120,6 +120,8 @@ namespace {
         db.Add("UI.fleet-supply-line-dot-spacing",  UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING"),      20,         RangedStepValidator<int>(1, 3, 40));
         db.Add("UI.fleet-supply-line-dot-rate",     UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE"),         0.02,       RangedStepValidator<double>(0.01, 0.01, 0.1));
         db.Add("UI.fleet.explore.hostile.ignored",  UserStringNop("OPTIONS_DB_FLEET_EXPLORE_IGNORE_HOSTILE"),       false,      Validator<bool>());
+        db.Add("UI.fleet.explore.system.route.limit", UserStringNop("OPTIONS_DB_FLEET_EXPLORE_SYSTEM_ROUTE_LIMIT"), 25,         StepValidator<int>(1, -1));
+        db.Add("UI.fleet.explore.system.known.multiplier", UserStringNop("OPTIONS_DB_FLEET_EXPLORE_KNOWN_SYSTEM_MULTIPLIER"), 10.0f, Validator<float>());
         db.Add("UI.unowned-starlane-colour",        UserStringNop("OPTIONS_DB_UNOWNED_STARLANE_COLOUR"),            GG::Clr(72,  72,  72,  255),    Validator<GG::Clr>());
 
         db.Add("UI.show-detection-range",           UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE"),         true,       Validator<bool>());
@@ -6913,12 +6915,6 @@ namespace {
     typedef std::pair<double, FleetRouteType> OrderedFleetRouteType;
     typedef std::unordered_map<int, int> SystemFleetMap;
 
-    /** Increases the distance stored as priority for a route when the destination has been previously seen */
-    const double PRIORITY_DEFER_DISTANCE_MULTIPLIER = 10.0;
-
-    /** Arbitrary short-circuit for max routes per destination for each fleet */
-    const int MAX_ROUTES_PER_FLEET = 100;
-
     /** Number of jumps in a given route */
     int JumpsForRoute(const RouteListType& route) {
         int count = static_cast<int>(route.size());
@@ -7011,7 +7007,7 @@ namespace {
 
         // decrease priority of system if previously viewed but not yet explored
         if (!destination->Name().empty()) {
-            order_route.first *= PRIORITY_DEFER_DISTANCE_MULTIPLIER;
+            order_route.first *= GetOptionsDB().Get<float>("UI.fleet.explore.system.known.multiplier");
             TraceLogger() << "Deferred priority for system " << destination->Name() << " (" << destination->ID() << ")";
         }
 
@@ -7254,6 +7250,7 @@ void MapWnd::DispatchFleetsExploring() {
         WarnLogger() << "Invalid empire";
         return;
     }
+    int max_routes_per_system = GetOptionsDB().Get<int>("UI.fleet.explore.system.route.limit");
     auto destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
 
     FleetIDListType idle_fleets;
@@ -7334,8 +7331,10 @@ void MapWnd::DispatchFleetsExploring() {
         }
 
         for (const auto& fleet_id : idle_fleets) {
-            if (fleet_route_count[fleet_id] > MAX_ROUTES_PER_FLEET)
-                continue;
+            if (max_routes_per_system > 0 &&
+                fleet_route_count[unexplored_system_id] > max_routes_per_system)
+            { break; }
+
             auto fleet = GetFleet(fleet_id);
             if (!fleet) {
                 WarnLogger() << "Invalid fleet " << fleet_id;
@@ -7346,7 +7345,7 @@ void MapWnd::DispatchFleetsExploring() {
 
             auto route = GetOrderedFleetRoute(fleet, unexplored_system);
             if (route.first > 0.0) {
-                ++fleet_route_count[fleet_id];
+                ++fleet_route_count[unexplored_system_id];
                 fleet_routes.emplace(route);
             }
         }
