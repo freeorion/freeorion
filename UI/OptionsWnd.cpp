@@ -432,8 +432,8 @@ namespace {
             [option_name, drop_list](const GG::ListBox::const_iterator& it) {
                 if (it == drop_list->end())
                     return;
-                const auto row = dynamic_cast<CUISimpleDropDownListRow* const>(it->get());
-                const auto& option_value = row->Name();
+                const auto dropdown_row = dynamic_cast<CUISimpleDropDownListRow* const>(it->get());
+                const auto& option_value = dropdown_row->Name();
                 HumanClientApp::GetApp()->ChangeLoggerThreshold(option_name, to_LogLevel(option_value));
             });
     }
