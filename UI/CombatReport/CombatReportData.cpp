@@ -27,9 +27,9 @@ ParticipantSummary::ParticipantSummary() :
     max_health(0.0f)
 {}
 
-ParticipantSummary::ParticipantSummary(int object_id, int empire_id, const CombatParticipantState& state) :
-    object_id(object_id),
-    empire_id(empire_id),
+ParticipantSummary::ParticipantSummary(int object_id_, int empire_id_, const CombatParticipantState& state) :
+    object_id(object_id_),
+    empire_id(empire_id_),
     current_health(0.0f),
     max_health(0.0f)
 {
