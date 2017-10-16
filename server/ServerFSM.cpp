@@ -344,7 +344,6 @@ sc::result Idle::react(const HostSPGame& msg) {
     try {
         host_player_name = GetHostNameFromSinglePlayerSetupData(*single_player_setup_data);
     } catch (const std::exception& e) {
-        const PlayerConnectionPtr& player_connection = msg.m_player_connection;
         player_connection->SendMessage(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
         return discard_event();
     }
