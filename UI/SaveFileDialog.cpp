@@ -1022,13 +1022,13 @@ std::string SaveFileDialog::GetDirPath() const {
     return retval;
 }
 
-void SaveFileDialog::SetDirPath(const string& path) {
-    std::string dirname = path;
+void SaveFileDialog::SetDirPath(const string& dir_path) {
+    std::string dirname = dir_path;
     if (m_server_previews) {
         // Indicate that the path is on the server
-        if (path.find("./") == 0) {
+        if (dir_path.find("./") == 0) {
             dirname = SERVER_LABEL + dirname.substr(1);
-        } else if (path.find(SERVER_LABEL) == 0) {
+        } else if (dir_path.find(SERVER_LABEL) == 0) {
             // Already has label. No need to change
         } else {
             dirname = SERVER_LABEL + "/" + dirname;
