@@ -96,11 +96,24 @@ class AIFleetOrder(object):
             value = state[key]
             assert (value is None and may_be_none) or type(value) is expected_type
 
-        assert_content("fleet", Fleet, may_be_none=False)
+        assert_content("fleet", int, may_be_none=False)
         assert_content("target", self.TARGET_TYPE)
         assert_content("executed", bool)
         assert_content("order_issued", bool)
+
+        # construct the universe objects from stored ids
+        state["fleet"] = Fleet(state["fleet"])
+        if state["target"] is not None:
+            state["target"] = self.TARGET_TYPE(state["target"])
         self.__dict__ = state
+
+    def __getstate__(self):
+        retval = dict(self.__dict__)
+        # do not store the universe object but only the fleet id
+        retval['fleet'] = self.fleet.id
+        if self.target is not None:
+            retval["target"] = self.target.id
+        return retval
 
     def ship_in_fleet(self):
         universe = fo.getUniverse()

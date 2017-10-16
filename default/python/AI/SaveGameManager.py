@@ -27,7 +27,6 @@ from freeorion_tools import profile
 
 # a list of trusted modules - classes from other modules will not be loaded
 _trusted_modules = [
-    "universe_object",
     "AIFleetMission",
     "fleet_orders",
     "character.character_module",
@@ -35,9 +34,6 @@ _trusted_modules = [
 ]
 
 _trusted_classes = [
-    "universe_object.Fleet",
-    "universe_object.System",
-    "universe_object.Planet",
     "AIFleetMission.AIFleetMission",
     "fleet_orders.AIFleetOrder",
     "fleet_orders.OrderMove",

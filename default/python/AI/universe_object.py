@@ -15,13 +15,6 @@ class UniverseObject(object):
         if not self:
             warn("Target is invalid %s" % self)
 
-    def __setstate__(self, state):
-        assert type(state) == dict
-        assert len(state) == 1
-        assert "id" in state
-        assert type(state["id"]) == int
-        self.__dict__ = state
-
     def __cmp__(self, other):
         return type(self) == type(other) and cmp(self.id, other.id)
 
