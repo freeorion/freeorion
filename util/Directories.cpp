@@ -622,9 +622,9 @@ fs::path GetPath(const std::string& path_string) {
     } catch (const boost::bad_lexical_cast& ec) {
         // try partial match
         std::string retval = path_string;
-        for (const auto& path_type : PathTypeStrings()) {
-            std::string path_type_string = PathToString(GetPath(path_type));
-            boost::replace_all(retval, path_type, path_type_string);
+        for (const auto& path_type_str : PathTypeStrings()) {
+            std::string path_type_string = PathToString(GetPath(path_type_str));
+            boost::replace_all(retval, path_type_str, path_type_string);
         }
         if (path_string != retval) {
             return FilenameToPath(retval);
