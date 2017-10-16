@@ -1083,9 +1083,9 @@ namespace {
         typedef std::set<int>::const_iterator const_id_iterator;
 
         // Populate lists of things that can attack and be attacked. List attackers also by empire.
-        void PopulateAttackersAndTargets(const CombatInfo& combat_info) {
-            for (auto it = combat_info.objects.const_begin();
-                 it != combat_info.objects.const_end(); ++it)
+        void PopulateAttackersAndTargets(const CombatInfo& combat_info_) {
+            for (auto it = combat_info_.objects.const_begin();
+                 it != combat_info_.objects.const_end(); ++it)
             {
                 auto obj = *it;
                 bool can_attack{ObjectCanAttack(obj)};
