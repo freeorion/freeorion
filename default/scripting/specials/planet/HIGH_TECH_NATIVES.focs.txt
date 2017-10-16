@@ -8,6 +8,7 @@ Special
         Planet
         Unowned
         Species
+        /// @content_tag{PRIMITIVE} Prevents this special at a location with tag
         Not HasTag name = "PRIMITIVE"
         Not HasSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"
     ]

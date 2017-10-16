@@ -9,13 +9,17 @@ Part
     tags = [ "PEDIA_PC_SHIELD" ]
     location = And [
         OwnedBy empire = Source.Owner
+        /// @content_tag{ROBOTIC} Allows a location to produce this PartType
         HasTag name = "ROBOTIC"
     ]
     effectsgroups =
+        /// @content_tag{ROBOTIC} Ships with this part and ROBOTIC_HULL tag contribute towards increased shields of other ships with this part within 0 starlane jumps
+        /// @content_tag{ROBOTIC_HULL} Ships with this part and ROBOTIC tag contribute towards increased shields of other ships with this part within 0 starlane jumps
         EffectsGroup
             scope = And [
                 Source
                 HasTag name = "ROBOTIC"
+                /// @content_tag{ROBOTIC_HULL} Combined with ROBOTIC tag, allows shield increase from this PartType
                 HasTag name = "ROBOTIC_HULL"
             ]
             activation = ([[ROBOTIC_SHIELD_EFFECT]] >= [[BEST_SHIELD_EFFECT]])

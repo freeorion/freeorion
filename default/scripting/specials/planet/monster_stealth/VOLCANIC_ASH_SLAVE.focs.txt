@@ -1,3 +1,4 @@
+// @content_tag{ORBITAL} Prevents stealth bonus from VOLCANIC_ASH_SLAVE_SPECIAL
 Special
     name = "VOLCANIC_ASH_SLAVE_SPECIAL"
     description = "VOLCANIC_ASH_SLAVE_SPECIAL_DESC"

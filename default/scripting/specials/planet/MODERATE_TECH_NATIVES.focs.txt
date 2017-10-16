@@ -8,6 +8,7 @@ Special
         Planet
         Unowned
         Species
+        /// @content_tag{PRIMITIVE} Prevents this special from being added to a location with this tag during universe generation
         Not HasTag name = "PRIMITIVE"
         Not HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL"
     ]

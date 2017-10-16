@@ -1,3 +1,4 @@
+// @content_tag{ORBITAL} Prevents stealth bonus from CLOUD_COVER_SLAVE_SPECIAL
 Special
     name = "CLOUD_COVER_SLAVE_SPECIAL"
     description = "CLOUD_COVER_SLAVE_SPECIAL_DESC"

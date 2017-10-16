@@ -1,3 +1,4 @@
+// @content_tag{ORBITAL} Prevents stealth bonus from VOID_SLAVE_SPECIAL
 Special
     name = "VOID_SLAVE_SPECIAL"
     description = "VOID_SLAVE_SPECIAL_DESC"

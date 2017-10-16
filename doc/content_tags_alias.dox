@@ -12,17 +12,21 @@ tags.
 Some example code fragments:
 
 C++ :
+Any c style comment that supports Doxygen special commands
+
 @verbatim // File: Sample1.h
 /** @content_tag{CTRL_SAMPLE1} Sample 1 **/
 int SomeFunction(std::string tag = "CTRL_SAMPLE1");
 @endverbatim
 
 FOCS :
-@verbatim # File: Sample2.focs.txt
+Use the special c style form of triple slashes ///
+
+@verbatim // File: Sample2.focs.txt
 EffectsGroup
     scope = And [
         Ship
-        # @content_tag{CTRL_SAMPLE2} Sample 2
+        /// @content_tag{CTRL_SAMPLE2} Sample 2
         Not HasTag name = "CTRL_SAMPLE2"
         WithinDistance distance = Source.Size condition = Source
     ]
@@ -30,7 +34,7 @@ EffectsGroup
 @endverbatim
 
 Python :
-With Python, docstring comments do not support special commands.
+With Python, docstring comments do not support special commands, instead use the hash form #
 
 @verbatim # File: Sample3.py
 def AnotherFunc(some_object):
