@@ -45,7 +45,7 @@ MenuItem::MenuItem() :
     MenuItem("", false, false)
 {}
 
-MenuItem::MenuItem(bool separator) :
+MenuItem::MenuItem(bool separator_) :
     disabled(true),
     checked(false),
     separator(true),
