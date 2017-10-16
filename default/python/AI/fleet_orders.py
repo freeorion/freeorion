@@ -91,19 +91,11 @@ class AIFleetOrder(object):
         assert type(state) == dict
         assert len(state) == 5
 
-        def assert_content(key, expected_type, may_be_none=True):
-            assert key in state
-            value = state[key]
-            from freeorion_tools import chat_human
-            chat_human(key)
-            chat_human(value)
-            chat_human(expected_type)
-            assert (value is None and may_be_none) or type(value) is expected_type
-
-        assert_content("fleet", int, may_be_none=False)
-        assert_content("target", int)
-        assert_content("executed", bool)
-        assert_content("order_issued", bool)
+        from SaveGameManager import assert_content
+        assert_content(state, "fleet", int, may_be_none=False)
+        assert_content(state, "target", int)
+        assert_content(state, "executed", bool)
+        assert_content(state, "order_issued", bool)
 
         # construct the universe objects from stored ids
         state["fleet"] = Fleet(state["fleet"])

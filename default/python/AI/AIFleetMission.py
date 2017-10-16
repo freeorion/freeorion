@@ -63,23 +63,24 @@ class AIFleetMission(object):
         self.target = None
 
     def __setstate__(self, state):
-        import fleet_orders
+        assert type(state) == dict
         assert len(state) == 5
-        assert "orders" in state
-        assert "fleet" in state
-        assert "type" in state
-        assert "target" in state
 
-        assert type(state["orders"]) == list
+        from SaveGameManager import assert_content
+        assert_content(state, "orders", list, may_be_none=False)
+        assert_content(state, "fleet", int, may_be_none=False)
+        assert_content(state, "type", MissionType, may_be_none=True)
+        assert_content(state, "target", int, may_be_none=True)
+        assert_content(state, "target_type", str, may_be_none=True)
+
         assert len(state["orders"]) < 1000
+
+        import fleet_orders
         for item in state["orders"]:
             assert isinstance(item, fleet_orders.AIFleetOrder)
 
-        assert state["type"] is None or isinstance(state["type"], MissionType)
-        assert state["target"] is None or isinstance(state["target"], int)
         target_type = state.pop("target_type")
         if state["target"] is not None:
-            assert type(state["target"]) == int
             object_map = {Planet.object_name: Planet, System.object_name: System, Fleet.object_name: Fleet}
             state["target"] = object_map[target_type](state["target"])
 
