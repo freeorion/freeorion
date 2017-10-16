@@ -2718,13 +2718,13 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
         m_fleet_ids.insert(fleet_id);
 
     // verify that the selected fleet id is valid.
-    // TODO this appears to do nothing with selected_fleet_id after the verification.
     if (selected_fleet_id != INVALID_OBJECT_ID &&
         m_fleet_ids.find(selected_fleet_id) == m_fleet_ids.end())
     {
         ErrorLogger() << "FleetWnd::FleetWnd couldn't find requested selected fleet with id " << selected_fleet_id;
         selected_fleet_id = INVALID_OBJECT_ID;
     }
+    m_fleet_detail_panel = GG::Wnd::Create<FleetDetailPanel>(GG::X1, GG::Y1, selected_fleet_id, m_order_issuing_enabled);
 }
 
 void FleetWnd::CompleteConstruction() {
@@ -2767,7 +2767,6 @@ void FleetWnd::CompleteConstruction() {
     m_fleets_lb->AllowDropType(FLEET_DROP_TYPE_STRING);
 
     // create fleet detail panel
-    m_fleet_detail_panel = GG::Wnd::Create<FleetDetailPanel>(GG::X1, GG::Y1, INVALID_OBJECT_ID, m_order_issuing_enabled);
     m_fleet_detail_panel->SelectedShipsChangedSignal.connect(
         boost::bind(&FleetWnd::ShipSelectionChanged, this, _1));
     m_fleet_detail_panel->ShipRightClickedSignal.connect(
