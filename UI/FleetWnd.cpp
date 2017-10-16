@@ -2429,6 +2429,8 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
 }
 
 void FleetDetailPanel::CompleteConstruction() {
+    GG::Wnd::CompleteConstruction();
+
     AttachChild(m_ships_lb);
     DoLayout();
 }
