@@ -2567,8 +2567,8 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             auto produce_building_action = [this, entry, app, cur_empire, &focus_ship_building_common_action]() {
                 std::string bld = entry.first;
                 bool needs_queue_update(false);
-                for (const auto& entry : m_list_box->Selections()) {
-                    ObjectRow *row = dynamic_cast<ObjectRow *>(entry->get());
+                for (const auto& selection : m_list_box->Selections()) {
+                    ObjectRow *row = dynamic_cast<ObjectRow *>(selection->get());
                     if (!row)
                         continue;
                     std::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());
