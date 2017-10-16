@@ -21,38 +21,38 @@ Classes are trusted based on their module. Non-recognized modules will not be im
 """
 
 import json
-import importlib
 
 import EnumsAI
 from freeorion_tools import profile
 
 # a list of trusted modules - classes from other modules will not be loaded
-_trusted_modules = [
-    "AIFleetMission",
-    "fleet_orders",
-    "character.character_module",
-    "AIstate",
-]
-
-_trusted_classes = [
-    "AIFleetMission.AIFleetMission",
-    "fleet_orders.AIFleetOrder",
-    "fleet_orders.OrderMove",
-    "fleet_orders.OrderResupply",
-    "fleet_orders.OrderSplitFleet",
-    "fleet_orders.OrderOutpost",
-    "fleet_orders.OrderColonize",
-    "fleet_orders.OrderAttack",
-    "fleet_orders.OrderDefend",
-    "fleet_orders.OrderInvade",
-    "fleet_orders.OrderMilitary",
-    "fleet_orders.OrderRepair",
-    "character.character_module.Trait",
-    "character.character_module.Aggression",
-    "character.character_module.EmpireIDTrait",
-    "character.character_module.Character",
-    "AIstate.AIstate",
-]
+try:
+    import AIFleetMission
+    import fleet_orders
+    import character.character_module
+    import AIstate
+    _trusted_classes = {"%s.%s" % (cls.__module__, cls.__name__): cls for cls in [
+        AIFleetMission.AIFleetMission,
+        fleet_orders.AIFleetOrder,
+        fleet_orders.OrderMilitary,
+        fleet_orders.OrderAttack,
+        fleet_orders.OrderDefend,
+        fleet_orders.OrderColonize,
+        fleet_orders.OrderOutpost,
+        fleet_orders.OrderInvade,
+        fleet_orders.OrderMove,
+        fleet_orders.OrderRepair,
+        fleet_orders.OrderResupply,
+        fleet_orders.OrderSplitFleet,
+        character.character_module.Trait,
+        character.character_module.Aggression,
+        character.character_module.EmpireIDTrait,
+        character.character_module.Character,
+        AIstate.AIstate,
+    ]}
+except RuntimeError:
+    # unit test throws this at the moment  TODO handle cleaner
+    _trusted_classes = {}
 
 # prefixes to encode types not supported by json
 # or not fully supported as dictionary key
@@ -123,8 +123,9 @@ class FreeOrionAISaveGameEncoder(object):
     def _object_encoder(self, obj):
         """Get a string representation of state of an object which is not handled by a specialized encoder."""
         try:
-            if obj.__class__.__module__ not in _trusted_modules:
-                raise CanNotSaveGameException("Module %s is not trusted" % obj.__class__.__module__)
+            class_name = "%s.%s" % (obj.__class__.__module__, obj.__class__.__name__)
+            if class_name not in _trusted_classes:
+                raise CanNotSaveGameException("Class %s is not trusted" % class_name)
         except AttributeError:
             # obj does not have a class or class has no module
             raise CanNotSaveGameException("Encountered unsupported object %s (%s)" % (obj, type(obj)))
@@ -192,19 +193,11 @@ class FreeOrionAISaveGameDecoder(json.JSONDecoder):
             raise InvalidSaveGameException("Incorrect class encoding: Content not a dict.")
         parsed_content = self.__interpret_dict(value)
 
-        # get the module and class name and check if we can trust them
+        # get the class if in list of trusted classes, otherwise do not load.
         full_name = key[len(CLASS_PREFIX):]
-        module_name, class_name = full_name.rsplit('.', 1)
-        if module_name not in _trusted_modules:
-            raise InvalidSaveGameException("DANGER DANGER - %s not trusted" % module_name)
-        # TODO - do classes need to be checked as well or can we trust our modules as source?
-        if full_name not in _trusted_classes:
-            print "DANGER DANGER - %s not trusted" % full_name
-            raise InvalidSaveGameException()
-
-        # import the relevant module and get the class definition from there
-        module = importlib.import_module(module_name)
-        cls = getattr(module, class_name)
+        cls = _trusted_classes.get(full_name)
+        if cls is None:
+            raise InvalidSaveGameException("DANGER DANGER - %s not trusted" % full_name)
 
         # create a new instance without calling the actual __new__ or __init__ function of the class.
         new_instance = object.__new__(cls)
