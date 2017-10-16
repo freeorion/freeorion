@@ -331,12 +331,12 @@ namespace {
     const GG::Y Y_MARGIN = GG::Y(MARGIN);
 
     struct QueueRow : GG::ListBox::Row {
-        QueueRow(GG::X w, const ProductionQueue::Element& elem, int queue_index_) :
+        QueueRow(GG::X w, const ProductionQueue::Element& elem_, int queue_index_) :
             GG::ListBox::Row(w, QueueProductionItemPanel::DefaultHeight(),
                              BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE),
             panel(nullptr),
             queue_index(queue_index_),
-            elem(elem)
+            elem(elem_)
         {
             const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
             float total_cost(1.0f);
