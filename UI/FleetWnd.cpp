@@ -623,6 +623,405 @@ namespace {
     }
 
     ////////////////////////////////////////////////
+    // ShipDataPanel
+    ////////////////////////////////////////////////
+    /** Shows info about a single ship. */
+    class ShipDataPanel : public GG::Control {
+        public:
+        /** \name Structors */ //@{
+        ShipDataPanel(GG::X w, GG::Y h, int ship_id);
+        ~ShipDataPanel();
+        //@}
+
+        //! \name Accessors //@{
+        /** Excludes border from the client area. */
+        GG::Pt ClientUpperLeft() const override;
+        /** Excludes border from the client area. */
+        GG::Pt ClientLowerRight() const override;
+        //@}
+
+        //! \name Mutators //@{
+        /** Renders black panel background, border with color depending on the
+         *current state and a background for the ship's name text. */
+        void Render() override;
+
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+        void            Select(bool b);
+        //@}
+
+        private:
+        double          StatValue(MeterType stat_name) const;
+
+        void            SetShipIcon();
+        void            Refresh();
+        void            DoLayout();
+
+        void            Init();
+
+        bool                        m_initialized;
+
+        int                         m_ship_id;
+        std::shared_ptr<GG::StaticGraphic>          m_ship_icon;
+        std::shared_ptr<GG::StaticGraphic>          m_scrap_indicator;
+        std::shared_ptr<GG::StaticGraphic>          m_colonize_indicator;
+        std::shared_ptr<GG::StaticGraphic>          m_invade_indicator;
+        std::shared_ptr<GG::StaticGraphic>          m_bombard_indicator;
+        std::shared_ptr<ScanlineControl>            m_scanline_control;
+        std::shared_ptr<GG::Label>                  m_ship_name_text;
+        std::shared_ptr<GG::Label>                  m_design_name_text;
+
+        std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>> m_stat_icons;   // statistic icons and associated meter types
+
+        bool                        m_selected;
+        boost::signals2::connection m_ship_connection;
+        boost::signals2::connection m_fleet_connection;
+    };
+
+    ShipDataPanel::ShipDataPanel(GG::X w, GG::Y h, int ship_id) :
+        Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
+        m_initialized(false),
+        m_ship_id(ship_id),
+        m_ship_icon(nullptr),
+        m_scrap_indicator(nullptr),
+        m_colonize_indicator(nullptr),
+        m_invade_indicator(nullptr),
+        m_bombard_indicator(nullptr),
+        m_scanline_control(nullptr),
+        m_ship_name_text(nullptr),
+        m_design_name_text(nullptr),
+        m_stat_icons(),
+        m_selected(false)
+    {
+        SetChildClippingMode(ClipToClient);
+    }
+
+    ShipDataPanel::~ShipDataPanel() {
+        m_ship_connection.disconnect();
+        m_fleet_connection.disconnect();
+    }
+
+    GG::Pt ShipDataPanel::ClientUpperLeft() const
+    { return UpperLeft() + GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); }
+
+    GG::Pt ShipDataPanel::ClientLowerRight() const
+    { return LowerRight() - GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER));  }
+
+    void ShipDataPanel::Render() {
+        if (!m_initialized)
+            Init();
+
+        // main background position and colour
+        const GG::Clr& background_colour = ClientUI::WndColor();
+        const GG::Pt ul = UpperLeft(), lr = LowerRight(), cul = ClientUpperLeft();
+
+        // title background colour and position
+        const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
+        const GG::Clr& selected_colour = ClientUI::WndInnerBorderColor();
+        GG::Clr border_colour = m_selected ? selected_colour : unselected_colour;
+        if (Disabled())
+            border_colour = DisabledColor(border_colour);
+        const GG::Pt text_ul = cul + GG::Pt(DataPanelIconSpace().x, GG::Y0);
+        const GG::Pt text_lr = cul + GG::Pt(ClientWidth(),           LabelHeight());
+
+        // render
+        GG::FlatRectangle(ul,       lr,         background_colour,  border_colour, DATA_PANEL_BORDER);  // background and border
+        GG::FlatRectangle(text_ul,  text_lr,    border_colour,      GG::CLR_ZERO,  0);                  // title background box
+    }
+
+    void ShipDataPanel::Select(bool b) {
+        if (m_selected == b)
+            return;
+        m_selected = b;
+
+        const GG::Clr& unselected_text_color = ClientUI::TextColor();
+        const GG::Clr& selected_text_color = GG::CLR_BLACK;
+
+        GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;
+
+        if (Disabled())
+            text_color_to_use = DisabledColor(text_color_to_use);
+
+        if (m_ship_name_text)
+            m_ship_name_text->SetTextColor(text_color_to_use);
+        if (m_design_name_text)
+            m_design_name_text->SetTextColor(text_color_to_use);
+    }
+
+    void ShipDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        const GG::Pt old_size = Size();
+        GG::Control::SizeMove(ul, lr);
+        //std::cout << "ShipDataPanel::SizeMove new size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
+        if (old_size != Size())
+            DoLayout();
+    }
+
+    void ShipDataPanel::SetShipIcon() {
+        DetachChildAndReset(m_ship_icon);
+        DetachChildAndReset(m_scrap_indicator);
+        DetachChildAndReset(m_colonize_indicator);
+        DetachChildAndReset(m_invade_indicator);
+        DetachChildAndReset(m_bombard_indicator);
+        DetachChildAndReset(m_scanline_control);
+
+        auto ship = GetShip(m_ship_id);
+        if (!ship)
+            return;
+
+        std::shared_ptr<GG::Texture> icon;
+
+        if (const ShipDesign* design = ship->Design())
+            icon = ClientUI::ShipDesignIcon(design->ID());
+        else
+            icon = ClientUI::ShipDesignIcon(INVALID_OBJECT_ID);  // default icon
+
+        m_ship_icon = GG::Wnd::Create<GG::StaticGraphic>(icon, DataPanelIconStyle());
+        m_ship_icon->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+        AttachChild(m_ship_icon);
+
+        if (ship->OrderedScrapped()) {
+            std::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
+            m_scrap_indicator = GG::Wnd::Create<GG::StaticGraphic>(scrap_texture, DataPanelIconStyle());
+            m_scrap_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+            AttachChild(m_scrap_indicator);
+        }
+        if (ship->OrderedColonizePlanet() != INVALID_OBJECT_ID) {
+            std::shared_ptr<GG::Texture> colonize_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "colonizing.png", true);
+            m_colonize_indicator = GG::Wnd::Create<GG::StaticGraphic>(colonize_texture, DataPanelIconStyle());
+            m_colonize_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+            AttachChild(m_colonize_indicator);
+        }
+        if (ship->OrderedInvadePlanet() != INVALID_OBJECT_ID) {
+            std::shared_ptr<GG::Texture> invade_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "invading.png", true);
+            m_invade_indicator = GG::Wnd::Create<GG::StaticGraphic>(invade_texture, DataPanelIconStyle());
+            m_invade_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+            AttachChild(m_invade_indicator);
+        }
+        if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID) {
+            std::shared_ptr<GG::Texture> bombard_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "bombarding.png", true);
+            m_bombard_indicator = GG::Wnd::Create<GG::StaticGraphic>(bombard_texture, DataPanelIconStyle());
+            m_bombard_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+            AttachChild(m_bombard_indicator);
+        }
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        if ((ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
+            && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+        {
+            m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, m_ship_icon->Width(), m_ship_icon->Height(), true,
+                                                                  GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
+            AttachChild(m_scanline_control);
+        }
+    }
+
+    void ShipDataPanel::Refresh() {
+        SetShipIcon();
+
+        auto ship = GetShip(m_ship_id);
+        if (!ship) {
+            // blank text and delete icons
+            m_ship_name_text->SetText("");
+            DetachChildAndReset(m_design_name_text);
+            for (auto& type_and_icon: m_stat_icons)
+                DetachChild(type_and_icon.second);
+            m_stat_icons.clear();
+            return;
+        }
+
+
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+
+
+        // name and design name update
+        const std::string& ship_name = ship->PublicName(empire_id);
+        std::string id_name_part;
+        if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+            id_name_part = " (" + std::to_string(m_ship_id) + ")";
+        }
+        if (!ship->Unowned() && ship_name == UserString("FW_FOREIGN_SHIP")) {
+            const Empire* ship_owner_empire = GetEmpire(ship->Owner());
+            const std::string& owner_name = (ship_owner_empire ? ship_owner_empire->Name() : UserString("FW_FOREIGN"));
+            m_ship_name_text->SetText(boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_SHIP")) % owner_name) + id_name_part);
+        } else {
+            m_ship_name_text->SetText(ship_name + id_name_part);
+        }
+
+        if (m_design_name_text) {
+            std::string design_name = UserString("FW_UNKNOWN_DESIGN_NAME");
+            if (const ShipDesign* design = ship->Design())
+                design_name = design->Name();
+            const std::string& species_name = ship->SpeciesName();
+            if (!species_name.empty()) {
+                m_design_name_text->SetText(boost::io::str(FlexibleFormat(UserString("FW_SPECIES_SHIP_DESIGN_LABEL")) %
+                                                           design_name %
+                                                           UserString(species_name)));
+            } else {
+                m_design_name_text->SetText(design_name);
+            }
+        }
+
+        // update stat icon values and browse wnds
+        for (auto& entry : m_stat_icons) {
+            entry.second->SetValue(StatValue(entry.first));
+
+            entry.second->ClearBrowseInfoWnd();
+            if (entry.first == METER_CAPACITY) {  // refers to damage
+                entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipDamageBrowseWnd>(
+                                                   m_ship_id, entry.first));
+
+            } else if (entry.first == METER_TROOPS) {
+                entry.second->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
+                                                   TroopIcon(), UserString("SHIP_TROOPS_TITLE"),
+                                                   UserString("SHIP_TROOPS_STAT")));
+
+            } else if (entry.first == METER_SECONDARY_STAT) {
+                entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipFightersBrowseWnd>(
+                                                   m_ship_id, entry.first));
+                entry.second->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip.extended-delay"), 1);
+                entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipFightersBrowseWnd>(
+                                                   m_ship_id, entry.first, true), 1);
+
+            } else if (entry.first == METER_POPULATION) {
+                entry.second->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
+                                                   ColonyIcon(), UserString("SHIP_COLONY_TITLE"),
+                                                   UserString("SHIP_COLONY_STAT")));
+
+            } else {
+                entry.second->SetBrowseInfoWnd(GG::Wnd::Create<MeterBrowseWnd>(
+                                                   m_ship_id, entry.first, AssociatedMeterType(entry.first)));
+            }
+        }
+
+        DoLayout();
+    }
+
+    double ShipDataPanel::StatValue(MeterType stat_name) const {
+        if (auto ship = GetShip(m_ship_id)) {
+            if (stat_name == METER_CAPACITY)
+                return ship->TotalWeaponsDamage(0.0f, false);
+            else if (stat_name == METER_TROOPS)
+                return ship->TroopCapacity();
+            else if (stat_name == METER_SECONDARY_STAT)
+                return ship->FighterCount();
+            else if (stat_name == METER_POPULATION)
+                return ship->ColonyCapacity();
+            else if (ship->UniverseObject::GetMeter(stat_name))
+                return ship->InitialMeterValue(stat_name);
+
+            ErrorLogger() << "ShipDataPanel::StatValue couldn't get stat of name: " << boost::lexical_cast<std::string>(stat_name);
+        }
+        return 0.0;
+    }
+
+    void ShipDataPanel::DoLayout() {
+        // resize ship and scrap indicator icons, they can fit and position themselves in the space provided
+        // client height should never be less than the height of the space resereved for the icon
+        if (m_ship_icon)
+            m_ship_icon->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+        if (m_scrap_indicator)
+            m_scrap_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+        if (m_colonize_indicator)
+            m_colonize_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+        if (m_invade_indicator)
+            m_invade_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+        if (m_bombard_indicator)
+            m_bombard_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+        if (m_scanline_control)
+            m_scanline_control->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+
+        // position ship name text at the top to the right of icons
+        const GG::Pt name_ul = GG::Pt(DataPanelIconSpace().x + DATA_PANEL_TEXT_PAD, GG::Y0);
+        const GG::Pt name_lr = GG::Pt(ClientWidth() - DATA_PANEL_TEXT_PAD,           LabelHeight());
+        if (m_ship_name_text)
+            m_ship_name_text->SizeMove(name_ul, name_lr);
+        if (m_design_name_text)
+            m_design_name_text->SizeMove(name_ul, name_lr);
+
+        if (ClientWidth() < 250)
+            DetachChild(m_ship_name_text);
+        else
+            AttachChild(m_ship_name_text);
+
+        // position ship statistic icons one after another horizontally and centered vertically
+        GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
+        for (auto& entry : m_stat_icons) {
+            entry.second->SizeMove(icon_ul, icon_ul + StatIconSize());
+            icon_ul.x += StatIconSize().x;
+        }
+    }
+
+    void ShipDataPanel::Init() {
+        if (m_initialized)
+            return;
+        m_initialized = true;
+
+        // ship name text.  blank if no ship.
+        auto ship = GetShip(m_ship_id);
+        std::string ship_name;
+        if (ship)
+            ship_name = ship->Name();
+
+        if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+            ship_name = ship_name + " (" + std::to_string(m_ship_id) + ")";
+        }
+
+        m_ship_name_text = GG::Wnd::Create<CUILabel>(ship_name, GG::FORMAT_LEFT);
+        AttachChild(m_ship_name_text);
+
+
+        // design name and statistic icons
+        if (!ship)
+            return;
+
+        if (const ShipDesign* design = ship->Design()) {
+            m_design_name_text = GG::Wnd::Create<CUILabel>(design->Name(), GG::FORMAT_RIGHT);
+            AttachChild(m_design_name_text);
+        }
+
+
+        int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+
+        std::vector<std::pair<MeterType, std::shared_ptr<GG::Texture>>> meters_icons;
+        meters_icons.push_back({METER_STRUCTURE,          ClientUI::MeterIcon(METER_STRUCTURE)});
+        if (ship->IsArmed())
+            meters_icons.push_back({METER_CAPACITY,       DamageIcon()});
+        if (ship->HasFighters())
+            meters_icons.push_back({METER_SECONDARY_STAT, FightersIcon()});
+        if (ship->HasTroops())
+            meters_icons.push_back({METER_TROOPS,         TroopIcon()});
+        if (ship->CanColonize())
+            meters_icons.push_back({METER_POPULATION,     ColonyIcon()});
+        if (ship->CurrentMeterValue(METER_INDUSTRY) > 0.0f)
+            meters_icons.push_back({METER_INDUSTRY,       IndustryIcon()});
+        if (ship->CurrentMeterValue(METER_RESEARCH) > 0.0f)
+            meters_icons.push_back({METER_RESEARCH,       ResearchIcon()});
+        if (ship->CurrentMeterValue(METER_TRADE) > 0.0f)
+            meters_icons.push_back({METER_TRADE,          TradeIcon()});
+
+        meters_icons.push_back({METER_SHIELD,     ClientUI::MeterIcon(METER_SHIELD)});
+        meters_icons.push_back({METER_FUEL,       ClientUI::MeterIcon(METER_FUEL)});
+        meters_icons.push_back({METER_DETECTION,  ClientUI::MeterIcon(METER_DETECTION)});
+        meters_icons.push_back({METER_STEALTH,    ClientUI::MeterIcon(METER_STEALTH)});
+        meters_icons.push_back({METER_SPEED,      ClientUI::MeterIcon(METER_SPEED)});
+
+        for (auto& entry : meters_icons) {
+            auto icon = GG::Wnd::Create<StatisticIcon>(entry.second, 0, 0, false, StatIconSize().x, StatIconSize().y);
+            m_stat_icons.push_back({entry.first, icon});
+            AttachChild(icon);
+            icon->SetBrowseModeTime(tooltip_delay);
+        }
+
+        // bookkeeping
+        m_ship_connection = ship->StateChangedSignal.connect(
+            boost::bind(&ShipDataPanel::Refresh, this));
+
+        if (auto fleet = GetFleet(ship->FleetID()))
+            m_fleet_connection = fleet->StateChangedSignal.connect(
+                boost::bind(&ShipDataPanel::Refresh, this));
+
+        Refresh();
+    }
+
+    ////////////////////////////////////////////////
     // ShipRow
     ////////////////////////////////////////////////
     /** A ListBox::Row subclass used to represent ships in ShipListBoxes. */
@@ -659,352 +1058,6 @@ namespace {
         int             m_ship_id;
         std::shared_ptr<ShipDataPanel>  m_panel;
     };
-}
-
-////////////////////////////////////////////////
-// ShipDataPanel
-////////////////////////////////////////////////
-ShipDataPanel::ShipDataPanel(GG::X w, GG::Y h, int ship_id) :
-    Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
-    m_initialized(false),
-    m_ship_id(ship_id),
-    m_ship_icon(nullptr),
-    m_scrap_indicator(nullptr),
-    m_colonize_indicator(nullptr),
-    m_invade_indicator(nullptr),
-    m_bombard_indicator(nullptr),
-    m_scanline_control(nullptr),
-    m_ship_name_text(nullptr),
-    m_design_name_text(nullptr),
-    m_stat_icons(),
-    m_selected(false)
-{
-    SetChildClippingMode(ClipToClient);
-}
-
-ShipDataPanel::~ShipDataPanel() {
-    m_ship_connection.disconnect();
-    m_fleet_connection.disconnect();
-}
-
-GG::Pt ShipDataPanel::ClientUpperLeft() const
-{ return UpperLeft() + GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); }
-
-GG::Pt ShipDataPanel::ClientLowerRight() const
-{ return LowerRight() - GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER));  }
-
-void ShipDataPanel::Render() {
-    if (!m_initialized)
-        Init();
-
-    // main background position and colour
-    const GG::Clr& background_colour = ClientUI::WndColor();
-    const GG::Pt ul = UpperLeft(), lr = LowerRight(), cul = ClientUpperLeft();
-
-    // title background colour and position
-    const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
-    const GG::Clr& selected_colour = ClientUI::WndInnerBorderColor();
-    GG::Clr border_colour = m_selected ? selected_colour : unselected_colour;
-    if (Disabled())
-        border_colour = DisabledColor(border_colour);
-    const GG::Pt text_ul = cul + GG::Pt(DataPanelIconSpace().x, GG::Y0);
-    const GG::Pt text_lr = cul + GG::Pt(ClientWidth(),           LabelHeight());
-
-    // render
-    GG::FlatRectangle(ul,       lr,         background_colour,  border_colour, DATA_PANEL_BORDER);  // background and border
-    GG::FlatRectangle(text_ul,  text_lr,    border_colour,      GG::CLR_ZERO,  0);                  // title background box
-}
-
-void ShipDataPanel::Select(bool b) {
-    if (m_selected == b)
-        return;
-    m_selected = b;
-
-    const GG::Clr& unselected_text_color = ClientUI::TextColor();
-    const GG::Clr& selected_text_color = GG::CLR_BLACK;
-
-    GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;
-
-    if (Disabled())
-        text_color_to_use = DisabledColor(text_color_to_use);
-
-    if (m_ship_name_text)
-        m_ship_name_text->SetTextColor(text_color_to_use);
-    if (m_design_name_text)
-        m_design_name_text->SetTextColor(text_color_to_use);
-}
-
-void ShipDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    const GG::Pt old_size = Size();
-    GG::Control::SizeMove(ul, lr);
-    //std::cout << "ShipDataPanel::SizeMove new size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
-    if (old_size != Size())
-        DoLayout();
-}
-
-void ShipDataPanel::SetShipIcon() {
-    DetachChildAndReset(m_ship_icon);
-    DetachChildAndReset(m_scrap_indicator);
-    DetachChildAndReset(m_colonize_indicator);
-    DetachChildAndReset(m_invade_indicator);
-    DetachChildAndReset(m_bombard_indicator);
-    DetachChildAndReset(m_scanline_control);
-
-    auto ship = GetShip(m_ship_id);
-    if (!ship)
-        return;
-
-    std::shared_ptr<GG::Texture> icon;
-
-    if (const ShipDesign* design = ship->Design())
-        icon = ClientUI::ShipDesignIcon(design->ID());
-    else
-        icon = ClientUI::ShipDesignIcon(INVALID_OBJECT_ID);  // default icon
-
-    m_ship_icon = GG::Wnd::Create<GG::StaticGraphic>(icon, DataPanelIconStyle());
-    m_ship_icon->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-    AttachChild(m_ship_icon);
-
-    if (ship->OrderedScrapped()) {
-        std::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
-        m_scrap_indicator = GG::Wnd::Create<GG::StaticGraphic>(scrap_texture, DataPanelIconStyle());
-        m_scrap_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-        AttachChild(m_scrap_indicator);
-    }
-    if (ship->OrderedColonizePlanet() != INVALID_OBJECT_ID) {
-        std::shared_ptr<GG::Texture> colonize_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "colonizing.png", true);
-        m_colonize_indicator = GG::Wnd::Create<GG::StaticGraphic>(colonize_texture, DataPanelIconStyle());
-        m_colonize_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-        AttachChild(m_colonize_indicator);
-    }
-    if (ship->OrderedInvadePlanet() != INVALID_OBJECT_ID) {
-        std::shared_ptr<GG::Texture> invade_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "invading.png", true);
-        m_invade_indicator = GG::Wnd::Create<GG::StaticGraphic>(invade_texture, DataPanelIconStyle());
-        m_invade_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-        AttachChild(m_invade_indicator);
-    }
-    if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID) {
-        std::shared_ptr<GG::Texture> bombard_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "bombarding.png", true);
-        m_bombard_indicator = GG::Wnd::Create<GG::StaticGraphic>(bombard_texture, DataPanelIconStyle());
-        m_bombard_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-        AttachChild(m_bombard_indicator);
-    }
-    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    if ((ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
-        && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
-    {
-        m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, m_ship_icon->Width(), m_ship_icon->Height(), true,
-                                                              GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
-        AttachChild(m_scanline_control);
-    }
-}
-
-void ShipDataPanel::Refresh() {
-    SetShipIcon();
-
-    auto ship = GetShip(m_ship_id);
-    if (!ship) {
-        // blank text and delete icons
-        m_ship_name_text->SetText("");
-        DetachChildAndReset(m_design_name_text);
-        for (auto& type_and_icon: m_stat_icons)
-            DetachChild(type_and_icon.second);
-        m_stat_icons.clear();
-        return;
-    }
-
-
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
-
-
-    // name and design name update
-    const std::string& ship_name = ship->PublicName(empire_id);
-    std::string id_name_part;
-    if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
-        id_name_part = " (" + std::to_string(m_ship_id) + ")";
-    }
-    if (!ship->Unowned() && ship_name == UserString("FW_FOREIGN_SHIP")) {
-        const Empire* ship_owner_empire = GetEmpire(ship->Owner());
-        const std::string& owner_name = (ship_owner_empire ? ship_owner_empire->Name() : UserString("FW_FOREIGN"));
-        m_ship_name_text->SetText(boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_SHIP")) % owner_name) + id_name_part);
-    } else {
-        m_ship_name_text->SetText(ship_name + id_name_part);
-    }
-
-    if (m_design_name_text) {
-        std::string design_name = UserString("FW_UNKNOWN_DESIGN_NAME");
-        if (const ShipDesign* design = ship->Design())
-            design_name = design->Name();
-        const std::string& species_name = ship->SpeciesName();
-        if (!species_name.empty()) {
-            m_design_name_text->SetText(boost::io::str(FlexibleFormat(UserString("FW_SPECIES_SHIP_DESIGN_LABEL")) %
-                                                       design_name %
-                                                       UserString(species_name)));
-        } else {
-            m_design_name_text->SetText(design_name);
-        }
-    }
-
-    // update stat icon values and browse wnds
-    for (auto& entry : m_stat_icons) {
-        entry.second->SetValue(StatValue(entry.first));
-
-        entry.second->ClearBrowseInfoWnd();
-        if (entry.first == METER_CAPACITY) {  // refers to damage
-            entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipDamageBrowseWnd>(
-                m_ship_id, entry.first));
-
-        } else if (entry.first == METER_TROOPS) {
-            entry.second->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
-                TroopIcon(), UserString("SHIP_TROOPS_TITLE"),
-                UserString("SHIP_TROOPS_STAT")));
-
-        } else if (entry.first == METER_SECONDARY_STAT) {
-            entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipFightersBrowseWnd>(
-                m_ship_id, entry.first));
-            entry.second->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip.extended-delay"), 1);
-            entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipFightersBrowseWnd>(
-                m_ship_id, entry.first, true), 1);
-
-        } else if (entry.first == METER_POPULATION) {
-            entry.second->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
-                ColonyIcon(), UserString("SHIP_COLONY_TITLE"),
-                UserString("SHIP_COLONY_STAT")));
-
-        } else {
-            entry.second->SetBrowseInfoWnd(GG::Wnd::Create<MeterBrowseWnd>(
-                m_ship_id, entry.first, AssociatedMeterType(entry.first)));
-        }
-    }
-
-    DoLayout();
-}
-
-double ShipDataPanel::StatValue(MeterType stat_name) const {
-    if (auto ship = GetShip(m_ship_id)) {
-        if (stat_name == METER_CAPACITY)
-            return ship->TotalWeaponsDamage(0.0f, false);
-        else if (stat_name == METER_TROOPS)
-            return ship->TroopCapacity();
-        else if (stat_name == METER_SECONDARY_STAT)
-            return ship->FighterCount();
-        else if (stat_name == METER_POPULATION)
-            return ship->ColonyCapacity();
-        else if (ship->UniverseObject::GetMeter(stat_name))
-            return ship->InitialMeterValue(stat_name);
-
-        ErrorLogger() << "ShipDataPanel::StatValue couldn't get stat of name: " << boost::lexical_cast<std::string>(stat_name);
-    }
-    return 0.0;
-}
-
-void ShipDataPanel::DoLayout() {
-    // resize ship and scrap indicator icons, they can fit and position themselves in the space provided
-    // client height should never be less than the height of the space resereved for the icon
-    if (m_ship_icon)
-        m_ship_icon->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-    if (m_scrap_indicator)
-        m_scrap_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-    if (m_colonize_indicator)
-        m_colonize_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-    if (m_invade_indicator)
-        m_invade_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-    if (m_bombard_indicator)
-        m_bombard_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-    if (m_scanline_control)
-        m_scanline_control->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-
-    // position ship name text at the top to the right of icons
-    const GG::Pt name_ul = GG::Pt(DataPanelIconSpace().x + DATA_PANEL_TEXT_PAD, GG::Y0);
-    const GG::Pt name_lr = GG::Pt(ClientWidth() - DATA_PANEL_TEXT_PAD,           LabelHeight());
-    if (m_ship_name_text)
-        m_ship_name_text->SizeMove(name_ul, name_lr);
-    if (m_design_name_text)
-        m_design_name_text->SizeMove(name_ul, name_lr);
-
-    if (ClientWidth() < 250)
-        DetachChild(m_ship_name_text);
-    else
-        AttachChild(m_ship_name_text);
-
-    // position ship statistic icons one after another horizontally and centered vertically
-    GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
-    for (auto& entry : m_stat_icons) {
-        entry.second->SizeMove(icon_ul, icon_ul + StatIconSize());
-        icon_ul.x += StatIconSize().x;
-    }
-}
-
-void ShipDataPanel::Init() {
-    if (m_initialized)
-        return;
-    m_initialized = true;
-
-    // ship name text.  blank if no ship.
-    auto ship = GetShip(m_ship_id);
-    std::string ship_name;
-    if (ship)
-        ship_name = ship->Name();
-
-    if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
-        ship_name = ship_name + " (" + std::to_string(m_ship_id) + ")";
-    }
-
-    m_ship_name_text = GG::Wnd::Create<CUILabel>(ship_name, GG::FORMAT_LEFT);
-    AttachChild(m_ship_name_text);
-
-
-    // design name and statistic icons
-    if (!ship)
-        return;
-
-    if (const ShipDesign* design = ship->Design()) {
-        m_design_name_text = GG::Wnd::Create<CUILabel>(design->Name(), GG::FORMAT_RIGHT);
-        AttachChild(m_design_name_text);
-    }
-
-
-    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
-
-    std::vector<std::pair<MeterType, std::shared_ptr<GG::Texture>>> meters_icons;
-    meters_icons.push_back({METER_STRUCTURE,          ClientUI::MeterIcon(METER_STRUCTURE)});
-    if (ship->IsArmed())
-        meters_icons.push_back({METER_CAPACITY,       DamageIcon()});
-    if (ship->HasFighters())
-        meters_icons.push_back({METER_SECONDARY_STAT, FightersIcon()});
-    if (ship->HasTroops())
-        meters_icons.push_back({METER_TROOPS,         TroopIcon()});
-    if (ship->CanColonize())
-        meters_icons.push_back({METER_POPULATION,     ColonyIcon()});
-    if (ship->CurrentMeterValue(METER_INDUSTRY) > 0.0f)
-        meters_icons.push_back({METER_INDUSTRY,       IndustryIcon()});
-    if (ship->CurrentMeterValue(METER_RESEARCH) > 0.0f)
-        meters_icons.push_back({METER_RESEARCH,       ResearchIcon()});
-    if (ship->CurrentMeterValue(METER_TRADE) > 0.0f)
-        meters_icons.push_back({METER_TRADE,          TradeIcon()});
-
-    meters_icons.push_back({METER_SHIELD,     ClientUI::MeterIcon(METER_SHIELD)});
-    meters_icons.push_back({METER_FUEL,       ClientUI::MeterIcon(METER_FUEL)});
-    meters_icons.push_back({METER_DETECTION,  ClientUI::MeterIcon(METER_DETECTION)});
-    meters_icons.push_back({METER_STEALTH,    ClientUI::MeterIcon(METER_STEALTH)});
-    meters_icons.push_back({METER_SPEED,      ClientUI::MeterIcon(METER_SPEED)});
-
-    for (auto& entry : meters_icons) {
-        auto icon = GG::Wnd::Create<StatisticIcon>(entry.second, 0, 0, false, StatIconSize().x, StatIconSize().y);
-        m_stat_icons.push_back({entry.first, icon});
-        AttachChild(icon);
-        icon->SetBrowseModeTime(tooltip_delay);
-    }
-
-    // bookkeeping
-    m_ship_connection = ship->StateChangedSignal.connect(
-        boost::bind(&ShipDataPanel::Refresh, this));
-
-    if (auto fleet = GetFleet(ship->FleetID()))
-        m_fleet_connection = fleet->StateChangedSignal.connect(
-            boost::bind(&ShipDataPanel::Refresh, this));
-
-    Refresh();
 }
 
 ////////////////////////////////////////////////
