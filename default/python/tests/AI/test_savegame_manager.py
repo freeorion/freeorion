@@ -23,17 +23,17 @@ class TrustedScope(object):
 
     def __enter__(self):
         reload(SaveGameManager)  # just to be sure
-        SaveGameManager._trusted_classes.update({
+        SaveGameManager._definitions.trusted_classes.update({
             __name__ + ".DummyTestClass": DummyTestClass,
             __name__ + ".GetStateTester": GetStateTester,
             __name__ + ".SetStateTester": SetStateTester,
         })
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        SaveGameManager._trusted_classes.clear()
+        SaveGameManager._definitions.trusted_classes.clear()
 
     def __del__(self):
-        SaveGameManager._trusted_classes.clear()
+        SaveGameManager._definitions.trusted_classes.clear()
 
 
 class Success(Exception):
