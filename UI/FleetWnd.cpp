@@ -2547,9 +2547,9 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
         auto unscrap_action = [ship]() {
             // find order to scrap this ship, and recind it
             auto pending_scrap_orders = PendingScrapOrders();
-            auto it = pending_scrap_orders.find(ship->ID());
-            if (it != pending_scrap_orders.end())
-                HumanClientApp::GetApp()->Orders().RescindOrder(it->second);
+            auto pending_order_it = pending_scrap_orders.find(ship->ID());
+            if (pending_order_it != pending_scrap_orders.end())
+                HumanClientApp::GetApp()->Orders().RescindOrder(pending_order_it->second);
         };
         // create popup menu with "Cancel Scrap" option
         popup->AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_SHIP_SCRAP"), false, false, unscrap_action));
