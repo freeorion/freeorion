@@ -1038,18 +1038,18 @@ namespace {
         }
 
         /**Report for each empire the stealth objects in the combat. */
-        InitialStealthEvent::StealthInvisbleMap ReportInvisibleObjects(const CombatInfo& combat_info) const {
+        InitialStealthEvent::StealthInvisbleMap ReportInvisibleObjects(const CombatInfo& combat_info_) const {
             DebugLogger(combat) << "Reporting Invisible Objects";
             InitialStealthEvent::StealthInvisbleMap report;
             for (int object_id : valid_target_object_ids) {
-                auto obj = combat_info.objects.Object(object_id);
+                auto obj = combat_info_.objects.Object(object_id);
 
                 // for all empires, can they attack this object?
-                for (int attacking_empire_id : combat_info.empire_ids) {
+                for (int attacking_empire_id : combat_info_.empire_ids) {
                     Visibility visibility = VIS_NO_VISIBILITY;
                     DebugLogger(combat) << "Target " << obj->Name() << " by empire = "<< attacking_empire_id;
-                    auto target_visible_it = combat_info.empire_object_visibility.find(obj->Owner());
-                    if (target_visible_it != combat_info.empire_object_visibility.end()) {
+                    auto target_visible_it = combat_info_.empire_object_visibility.find(obj->Owner());
+                    if (target_visible_it != combat_info_.empire_object_visibility.end()) {
                         auto target_attacker_visibility_it = target_visible_it->second.find(obj->ID());
                         if (target_attacker_visibility_it != target_visible_it->second.end()) {
                             visibility = target_attacker_visibility_it->second;
