@@ -62,6 +62,40 @@ class AIFleetMission(object):
         self.type = None
         self.target = None
 
+    def __setstate__(self, state):
+        import fleet_orders
+        assert len(state) == 5
+        assert "orders" in state
+        assert "fleet" in state
+        assert "type" in state
+        assert "target" in state
+
+        assert type(state["orders"]) == list
+        assert len(state["orders"]) < 1000
+        for item in state["orders"]:
+            assert isinstance(item, fleet_orders.AIFleetOrder)
+
+        assert state["type"] is None or isinstance(state["type"], MissionType)
+        assert state["target"] is None or isinstance(state["target"], int)
+        target_type = state.pop("target_type")
+        if state["target"] is not None:
+            assert type(state["target"]) == int
+            object_map = {Planet.object_name: Planet, System.object_name: System, Fleet.object_name: Fleet}
+            state["target"] = object_map[target_type](state["target"])
+
+        state["fleet"] = Fleet(state["fleet"])
+        self.__dict__ = state
+
+    def __getstate__(self):
+        retval = dict(self.__dict__)
+        retval["fleet"] = self.fleet.id
+        if self.target is not None:
+            retval["target_type"] = self.target.object_name
+            retval["target"] = self.target.id
+        else:
+            retval["target_type"] = None
+        return retval
+
     def set_target(self, mission_type, target):
         """
         Set mission and target for this fleet.

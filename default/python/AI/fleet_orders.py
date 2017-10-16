@@ -89,21 +89,27 @@ class AIFleetOrder(object):
 
     def __setstate__(self, state):
         assert type(state) == dict
-        assert len(state) == 4
+        assert len(state) == 5
 
         def assert_content(key, expected_type, may_be_none=True):
             assert key in state
             value = state[key]
+            from freeorion_tools import chat_human
+            chat_human(key)
+            chat_human(value)
+            chat_human(expected_type)
             assert (value is None and may_be_none) or type(value) is expected_type
 
         assert_content("fleet", int, may_be_none=False)
-        assert_content("target", self.TARGET_TYPE)
+        assert_content("target", int)
         assert_content("executed", bool)
         assert_content("order_issued", bool)
 
         # construct the universe objects from stored ids
         state["fleet"] = Fleet(state["fleet"])
+        target_type = state.pop("target_type")
         if state["target"] is not None:
+            assert self.TARGET_TYPE.object_name == target_type
             state["target"] = self.TARGET_TYPE(state["target"])
         self.__dict__ = state
 
@@ -113,6 +119,9 @@ class AIFleetOrder(object):
         retval['fleet'] = self.fleet.id
         if self.target is not None:
             retval["target"] = self.target.id
+            retval["target_type"] = self.target.object_name
+        else:
+            retval["target_type"] = None
         return retval
 
     def ship_in_fleet(self):
