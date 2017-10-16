@@ -3691,8 +3691,8 @@ namespace {
                                               GG::GL2DVertexBuffer& starlane_vertices,
                                               GG::GLRGBAColorBuffer& starlane_colors)
     {
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
+        auto this_empire = GetEmpire(empire_id);
+        if (!this_empire)
             return;
 
         const auto& this_client_known_destroyed_objects =
