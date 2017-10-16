@@ -1597,10 +1597,6 @@ namespace {
     static const std::string EMPTY_STRING;
 
     const std::string& GetSpeciesFromObject(std::shared_ptr<const UniverseObject> obj) {
-        std::shared_ptr<const Fleet> obj_fleet;
-        std::shared_ptr<const Ship> obj_ship;
-        std::shared_ptr<const Building> obj_building;
-
         switch (obj->ObjectType()) {
         case OBJ_PLANET: {
             auto obj_planet = std::static_pointer_cast<const Planet>(obj);
