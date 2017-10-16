@@ -135,3 +135,9 @@ def test_setstate_call():
             pass
 
 
+def test_enums():
+    import EnumsAI
+
+    test_obj = {EnumsAI.MissionType.COLONISATION: EnumsAI.MissionType.INVASION}
+    restored_obj = SaveGameManager.decode(SaveGameManager.encode(test_obj))
+    assert test_obj == restored_obj

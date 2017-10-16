@@ -23,6 +23,7 @@ Classes are trusted based on their module. Non-recognized modules will not be im
 import json
 import importlib
 
+import EnumsAI
 from freeorion_tools import profile
 
 # a list of trusted modules - classes from other modules will not be loaded
@@ -55,6 +56,7 @@ _trusted_classes = [
 
 # prefixes to encode types not supported by json
 # or not fully supported as dictionary key
+ENUM_PREFIX = '__ENUM__'
 CLASS_PREFIX = '__foAI__'
 INT_PREFIX = '__INT__'
 FLOAT_PREFIX = '__FLOAT__'
@@ -98,6 +100,8 @@ class FreeOrionAISaveGameEncoder(object):
             o = TRUE
         elif o is False:
             o = FALSE
+        elif isinstance(o, EnumsAI.EnumItem):
+            o = "%s%s" % (ENUM_PREFIX, str(o))
         elif isinstance(o, (int, long)):
             o = "%s%d" % (INT_PREFIX, o)
         elif isinstance(o, float):
@@ -261,6 +265,21 @@ class FreeOrionAISaveGameDecoder(json.JSONDecoder):
                 content = _replace_quote_placeholders(content)
                 result = self.decode(content)
                 return set(result)
+
+            # does it encode an enum?
+            if x.startswith(ENUM_PREFIX):
+                full_name = x[len(ENUM_PREFIX):]
+                partial_names = full_name.split('.')
+                if not len(partial_names) == 2:
+                    raise InvalidSaveGameException("Could not decode Enum %s" % x)
+                enum_name = partial_names[0]
+                enum = getattr(EnumsAI, enum_name, None)
+                if enum is None:
+                    raise InvalidSaveGameException("Could not find enum %s in EnumsAI" % enum_name)
+                retval = getattr(enum, partial_names[1], None)
+                if retval is None:
+                    raise InvalidSaveGameException("Could not find enum value %s in EnumsAI" % full_name)
+                return retval
 
             if x == TRUE:
                 return True

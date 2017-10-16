@@ -67,11 +67,14 @@ class AIFleetMission(object):
         assert len(state) == 5
 
         from SaveGameManager import assert_content
+        from EnumsAI import EnumItem
         assert_content(state, "orders", list, may_be_none=False)
         assert_content(state, "fleet", int, may_be_none=False)
-        assert_content(state, "type", MissionType, may_be_none=True)
+        assert_content(state, "type", EnumItem, may_be_none=True)
         assert_content(state, "target", int, may_be_none=True)
         assert_content(state, "target_type", str, may_be_none=True)
+
+        assert state["type"] is None or MissionType.has_item(state["type"])
 
         assert len(state["orders"]) < 1000
 
