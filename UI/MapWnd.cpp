@@ -2051,12 +2051,12 @@ void MapWnd::RenderSystems() {
                     }
 
                     // draw outer circle in color of supplying empire
-                    int empire_id = GetSupplyManager().EmpireThatCanSupplyAt(system_icon.first);
-                    if (empire_id != ALL_EMPIRES) {
-                        if (const Empire* empire = GetEmpire(empire_id))
+                    int supply_empire_id = GetSupplyManager().EmpireThatCanSupplyAt(system_icon.first);
+                    if (supply_empire_id != ALL_EMPIRES) {
+                        if (const Empire* empire = GetEmpire(supply_empire_id))
                             glColor(empire->Color());
                         else
-                            ErrorLogger() << "MapWnd::RenderSystems(): could not load empire with id " << empire_id;
+                            ErrorLogger() << "MapWnd::RenderSystems(): could not load empire with id " << supply_empire_id;
                     } else
                         glColor(GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour"));
 
