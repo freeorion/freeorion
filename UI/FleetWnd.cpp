@@ -3383,8 +3383,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         && fleet->OwnedBy(client_empire_id))
     {
         auto scrap_action = [fleet, client_empire_id]() {
-            std::set<int> ship_ids_set = fleet->ShipIDs();
-            for (int ship_id : ship_ids_set) {
+            std::set<int> ship_ids = fleet->ShipIDs();
+            for (int ship_id : ship_ids) {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
                     std::make_shared<ScrapOrder>(client_empire_id, ship_id));
             }
