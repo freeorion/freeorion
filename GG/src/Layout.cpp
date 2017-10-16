@@ -433,10 +433,12 @@ void Layout::DoLayout(Pt ul, Pt lr)
     // resize cells and their contents
     m_ignore_child_resize = true;
     for (auto& wnd_position : m_wnd_positions) {
-        Pt ul(X(m_column_params[wnd_position.second.first_column].current_origin),
-              Y(m_row_params[wnd_position.second.first_row].current_origin));
-        Pt lr(X(m_column_params[wnd_position.second.last_column - 1].current_origin + m_column_params[wnd_position.second.last_column - 1].current_width),
-              Y(m_row_params[wnd_position.second.last_row - 1].current_origin + m_row_params[wnd_position.second.last_row - 1].current_width));
+        Pt wnd_ul(X(m_column_params[wnd_position.second.first_column].current_origin),
+                  Y(m_row_params[wnd_position.second.first_row].current_origin));
+        Pt wnd_lr(X(m_column_params[wnd_position.second.last_column - 1].current_origin +
+                    m_column_params[wnd_position.second.last_column - 1].current_width),
+                  Y(m_row_params[wnd_position.second.last_row - 1].current_origin +
+                    m_row_params[wnd_position.second.last_row - 1].current_width));
         Pt ul_margin(X0, Y0);
         Pt lr_margin(X0, Y0);
         if (0 < wnd_position.second.first_row)
@@ -448,13 +450,13 @@ void Layout::DoLayout(Pt ul, Pt lr)
         if (wnd_position.second.last_column < m_column_params.size())
             lr_margin.x += static_cast<int>(m_cell_margin / 2.0 + 0.5);
 
-        ul += ul_margin;
-        lr -= lr_margin;
+        wnd_ul += ul_margin;
+        wnd_lr -= lr_margin;
 
         if (wnd_position.second.alignment == ALIGN_NONE) { // expand to fill available space
-            wnd_position.first->SizeMove(ul, lr);
+            wnd_position.first->SizeMove(wnd_ul, wnd_lr);
         } else { // align as appropriate
-            Pt available_space = lr - ul;
+            Pt available_space = wnd_lr - wnd_ul;
             Pt min_usable_size = wnd_position.first->MinUsableSize();
             Pt min_size = wnd_position.first->MinSize();
 
@@ -463,7 +465,7 @@ void Layout::DoLayout(Pt ul, Pt lr)
             // down to 0-height cells.  Note that they can still get horizontally
             // squashed.
             if (TextControl* text_control = dynamic_cast<TextControl*>(wnd_position.first)) {
-                X text_width = (lr.x - ul.x);
+                X text_width = (wnd_lr.x - wnd_ul.x);
                 min_usable_size = text_control->MinUsableSize(text_width);
                 min_size = min_usable_size;
             }
@@ -472,30 +474,30 @@ void Layout::DoLayout(Pt ul, Pt lr)
                            std::min(available_space.y, std::max(wnd_position.second.original_size.y, std::max(min_size.y, min_usable_size.y))));
             Pt resize_ul, resize_lr;
             if (wnd_position.second.alignment & ALIGN_LEFT) {
-                resize_ul.x = ul.x;
+                resize_ul.x = wnd_ul.x;
                 resize_lr.x = resize_ul.x + window_size.x;
             } else if (wnd_position.second.alignment & ALIGN_CENTER) {
-                resize_ul.x = ul.x + (available_space.x - window_size.x) / 2;
+                resize_ul.x = wnd_ul.x + (available_space.x - window_size.x) / 2;
                 resize_lr.x = resize_ul.x + window_size.x;
             } else if (wnd_position.second.alignment & ALIGN_RIGHT) {
-                resize_lr.x = lr.x;
+                resize_lr.x = wnd_lr.x;
                 resize_ul.x = resize_lr.x - window_size.x;
             } else {
-                resize_ul.x = ul.x;
-                resize_lr.x = lr.x;
+                resize_ul.x = wnd_ul.x;
+                resize_lr.x = wnd_lr.x;
             }
             if (wnd_position.second.alignment & ALIGN_TOP) {
-                resize_ul.y = ul.y;
+                resize_ul.y = wnd_ul.y;
                 resize_lr.y = resize_ul.y + window_size.y;
             } else if (wnd_position.second.alignment & ALIGN_VCENTER) {
-                resize_ul.y = ul.y + (available_space.y - window_size.y) / 2;
+                resize_ul.y = wnd_ul.y + (available_space.y - window_size.y) / 2;
                 resize_lr.y = resize_ul.y + window_size.y;
             } else if (wnd_position.second.alignment & ALIGN_BOTTOM) {
-                resize_lr.y = lr.y;
+                resize_lr.y = wnd_lr.y;
                 resize_ul.y = resize_lr.y - window_size.y;
             } else {
-                resize_ul.y = ul.y;
-                resize_lr.y = lr.y;
+                resize_ul.y = wnd_ul.y;
+                resize_lr.y = wnd_lr.y;
             }
             wnd_position.first->SizeMove(resize_ul, resize_lr);
         }
