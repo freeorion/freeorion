@@ -106,15 +106,15 @@ namespace {
 
         /** \name Structors */
         QuantitySelector(const ProductionQueue::Element &build, GG::X xoffset, GG::Y yoffset,
-                         GG::Y h, bool inProgress, GG::X nwidth, bool amBlockType) :
+                         GG::Y h_, bool inProgress, GG::X nwidth, bool amBlockType_) :
             CUIDropDownList(12),
             quantity(build.remaining),
             prevQuant(build.remaining),
             blocksize(build.blocksize),
             prevBlocksize(build.blocksize),
-            amBlockType(amBlockType),
+            amBlockType(amBlockType_),
             amOn(false),
-            h(h)
+            h(h_)
         {
             MoveTo(GG::Pt(xoffset, yoffset));
             Resize(GG::Pt(nwidth, h - GG::Y(2)));
