@@ -2526,13 +2526,13 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             popup->AddMenuItem(std::move(focusMenuItem));
 
         GG::MenuItem ship_menu_item(UserString("MENUITEM_ENQUEUE_SHIPDESIGN"), false, false);
-        for (auto it = avail_designs.begin();
-             it != avail_designs.end() && ship_menuitem_id < MENUITEM_SET_BUILDING_BASE; ++it)
+        for (auto design_it = avail_designs.begin();
+             design_it != avail_designs.end() && ship_menuitem_id < MENUITEM_SET_BUILDING_BASE; ++design_it)
         {
             ship_menuitem_id++;
 
-            auto produce_ship_action = [this, it, app, cur_empire, &focus_ship_building_common_action]() {
-                int ship_design = it->first;
+            auto produce_ship_action = [this, design_it, app, cur_empire, &focus_ship_building_common_action]() {
+                int ship_design = design_it->first;
                 bool needs_queue_update(false);
                 for (const auto& entry : m_list_box->Selections()) {
                     ObjectRow* row = dynamic_cast<ObjectRow*>(entry->get());
@@ -2553,7 +2553,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             };
 
             std::stringstream out;
-            out << GetShipDesign(it->first)->Name() << " (" << it->second << ")";
+            out << GetShipDesign(design_it->first)->Name() << " (" << design_it->second << ")";
             ship_menu_item.next_level.push_back(GG::MenuItem(out.str(), false, false, produce_ship_action));
         }
 
