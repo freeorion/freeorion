@@ -145,7 +145,7 @@ class FreeOrionAISaveGameEncoder(object):
 
     def _list_encoder(self, o):
         """Get a string representation of a list with its encoded content."""
-        return "[%s]" % (', '.join(self.encode(v) for v in o))
+        return "[%s]" % (', '.join([self.encode(v) for v in o]))
 
     def _tuple_encoder(self, o):
         """Get a string representation of a tuple with its encoded content."""
@@ -159,7 +159,7 @@ class FreeOrionAISaveGameEncoder(object):
 
     def _dict_encoder(self, o):
         """Get a string representation of a dict with its encoded content."""
-        return "{%s}" % (', '.join('%s: %s' % (self.encode(k), self.encode(v)) for k, v in o.iteritems()))
+        return "{%s}" % (', '.join(['%s: %s' % (self.encode(k), self.encode(v)) for k, v in o.items()]))
 
 
 class FreeOrionAISaveGameDecoder(json.JSONDecoder):
