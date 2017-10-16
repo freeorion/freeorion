@@ -1254,13 +1254,13 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
         [drop_list](GG::ListBox::iterator it) {
             if (it == drop_list->end())
                 return;
-            const auto& row = *it;
-            if (!row)
+            const auto& drop_list_row = *it;
+            if (!drop_list_row)
                 return;
             int w, h;
             using namespace boost::spirit::classic;
             rule<> resolution_p = int_p[assign_a(w)] >> str_p(" x ") >> int_p[assign_a(h)];
-            parse(row->Name().c_str(), resolution_p);
+            parse(drop_list_row->Name().c_str(), resolution_p);
             GetOptionsDB().Set<int>("app-width", w);
             GetOptionsDB().Set<int>("app-height", h);
         }
