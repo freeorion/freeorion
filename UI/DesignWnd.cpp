@@ -4348,10 +4348,10 @@ void DesignWnd::MainPanel::ReplaceDesign() {
         // Update the replaced design on the bench
         SetDesign(manager.GetDesign(new_uuid));
 
-    } else if (const auto replaced_design = EditingCurrentDesign()) {
+    } else if (const auto current_maybe_design = EditingCurrentDesign()) {
         auto& manager = GetCurrentDesignsManager();
         int empire_id = HumanClientApp::GetApp()->EmpireID();
-        int replaced_id = (*replaced_design)->ID();
+        int replaced_id = (*current_maybe_design)->ID();
 
         if (new_design_id == INVALID_DESIGN_ID) return;
 
