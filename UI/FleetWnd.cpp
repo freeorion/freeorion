@@ -3320,8 +3320,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         auto split_action = [this, &ship_ids_set]() {
             ScopedTimer split_fleet_timer("FleetWnd::SplitFleet", true);
             // remove first ship from set, so it stays in its existing fleet
-            auto it = ship_ids_set.begin();
-            ship_ids_set.erase(it);
+            auto ship_id_it = ship_ids_set.begin();
+            ship_ids_set.erase(ship_id_it);
 
             // assemble container of containers of ids of fleets to create.
             // one ship id per vector
