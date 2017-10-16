@@ -161,12 +161,8 @@ def prepareForSave():  # pylint: disable=invalid-name
 
     # serialize (convert to string) global state dictionary and send to AI client to be stored in save file
     import SaveGameManager
-    import pickle
-    from freeorion_tools import chat_human
     try:
         dump_string = SaveGameManager.build_savegame_string()
-        chat_human("New-style: %d, Old-style: %d" % (len(dump_string), len(pickle.dumps(foAIstate))))
-        print "foAIstate pickled to string, about to send to server"
         fo.setSaveStateString(dump_string)
     except:
         error("foAIstate unable to pickle save-state string; "
