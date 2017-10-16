@@ -1896,9 +1896,8 @@ namespace {
             // being detectable by an empire requires the object to have
             // low enough stealth (0 or below the empire's detection strength)
             for (const auto& empire_entry : empire_detection_strengths) {
-                int empire_id = empire_entry.first;
-                if (object_stealth <= empire_entry.second || object_stealth == 0.0f || obj->OwnedBy(empire_id))
-                    retval[empire_id][object_pos].push_back(object_id);
+                if (object_stealth <= empire_entry.second || object_stealth == 0.0f || obj->OwnedBy(empire_entry.first))
+                    retval[empire_entry.first][object_pos].push_back(object_id);
             }
         }
         return retval;
