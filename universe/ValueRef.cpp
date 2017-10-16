@@ -932,8 +932,8 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
     }
     else if (property_name == "LastTurnBattleHere") {
-        if (auto system = std::dynamic_pointer_cast<const System>(object))
-            return system->LastTurnBattleHere();
+        if (auto const_system = std::dynamic_pointer_cast<const System>(object))
+            return const_system->LastTurnBattleHere();
         else if (auto system = GetSystem(object->SystemID()))
             return system->LastTurnBattleHere();
         else
