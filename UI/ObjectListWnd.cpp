@@ -736,10 +736,10 @@ private:
         DetachChildAndReset(m_param_spin2);
 
         // determine which condition is selected
-        GG::ListBox::iterator row_it = m_class_drop->CurrentItem();
-        if (row_it == m_class_drop->end())
+        auto class_row_it = m_class_drop->CurrentItem();
+        if (class_row_it == m_class_drop->end())
             return;
-        ConditionRow* condition_row = dynamic_cast<ConditionRow*>(row_it->get());
+        ConditionRow* condition_row = dynamic_cast<ConditionRow*>(class_row_it->get());
         if (!condition_row)
             return;
         const std::string& condition_key = condition_row->GetKey();
