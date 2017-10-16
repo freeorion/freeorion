@@ -206,12 +206,10 @@ void PopupMenu::Render()
 
                 if (!menu.next_level[j].separator) {
                     // TODO cache line data v expensive calculation
-                    std::vector<std::shared_ptr<Font::TextElement>> text_elements =
-                        m_font->ExpensiveParseFromTextToTextElements(menu.next_level[j].label, fmt);
-                    std::vector<Font::LineData> lines =
-                        m_font->DetermineLines(menu.next_level[j].label, fmt, X0, text_elements);
+                    auto element_data = m_font->ExpensiveParseFromTextToTextElements(menu.next_level[j].label, fmt);
+                    auto line_data = m_font->DetermineLines(menu.next_level[j].label, fmt, X0, element_data);
 
-                    m_font->RenderText(line_rect.ul, line_rect.lr, menu.next_level[j].label, fmt, lines);
+                    m_font->RenderText(line_rect.ul, line_rect.lr, menu.next_level[j].label, fmt, line_data);
 
                 } else {
                     Line(line_rect.ul.x + HORIZONTAL_MARGIN, line_rect.ul.y + INDICATOR_HEIGHT/2 + INDICATOR_VERTICAL_MARGIN,
