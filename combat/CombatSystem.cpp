@@ -1123,7 +1123,7 @@ namespace {
         }
 
         // Return a log report of attackability of \p obj
-        std::string ReportAttackabilityOfTarget(const CombatInfo& combat_info,
+        std::string ReportAttackabilityOfTarget(const CombatInfo& combat_info_,
                                                 const std::shared_ptr<const UniverseObject>& obj)
         {
             std::stringstream ss;
@@ -1132,7 +1132,7 @@ namespace {
                << " attackable by ";
 
             bool no_one{true};
-            for (int attacking_empire_id : combat_info.empire_ids) {
+            for (int attacking_empire_id : combat_info_.empire_ids) {
                 if (attacking_empire_id == ALL_EMPIRES) {
                     if (ObjectAttackableByMonsters(obj, monster_detection)) {
                         ss << "monsters and ";
