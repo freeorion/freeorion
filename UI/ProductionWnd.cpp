@@ -135,15 +135,15 @@ namespace {
             else
                 myQuantSet.insert(quantity);
 
-            for (int quantity : myQuantSet) {
-                auto row =  GG::Wnd::Create<QuantRow>(quantity, build.item.design_id, nwidth, h, inProgress, amBlockType);
+            for (int droplist_quantity : myQuantSet) {
+                auto row =  GG::Wnd::Create<QuantRow>(droplist_quantity, build.item.design_id, nwidth, h, inProgress, amBlockType);
                 GG::DropDownList::iterator latest_it = Insert(row);
 
                 if (amBlockType) {
-                    if (build.blocksize == quantity)
+                    if (build.blocksize == droplist_quantity)
                         Select(latest_it);
                 } else {
-                    if (build.remaining == quantity)
+                    if (build.remaining == droplist_quantity)
                         Select(latest_it);
                 }
             }
