@@ -2221,6 +2221,11 @@ public:
         m_order_issuing_enabled(order_issuing_enabled)
     {}
 
+    void CompleteConstruction() {
+        CUIListBox::CompleteConstruction();
+        Refresh();
+    }
+
     void            Refresh() {
         ScopedTimer timer("ShipsListBox::Refresh");
 
@@ -2403,12 +2408,10 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
     m_order_issuing_enabled(order_issuing_enabled),
     m_ships_lb(nullptr)
 {
-    GG::Wnd::CompleteConstruction();
-
     SetName("FleetDetailPanel");
     SetChildClippingMode(ClipToClient);
 
-    m_ships_lb = GG::Wnd::Create<ShipsListBox>(INVALID_OBJECT_ID, order_issuing_enabled);
+    m_ships_lb = GG::Wnd::Create<ShipsListBox>(m_fleet_id, order_issuing_enabled);
     m_ships_lb->SetHiliteColor(GG::CLR_ZERO);
 
     SetFleet(fleet_id);
