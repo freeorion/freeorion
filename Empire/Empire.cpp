@@ -3166,23 +3166,24 @@ void Empire::CheckProductionProgress() {
                     ship->SetFleetID(fleet->ID());
                 }
 
-                for (auto& fleet : fleets) {
+                for (auto& next_fleet : fleets) {
                     // rename fleet, given its id and the ship that is in it
-                    fleet->Rename(fleet->GenerateFleetName());
-                    fleet->SetAggressive(fleet->HasArmedShips() || fleet->HasFighterShips());
+                    next_fleet->Rename(next_fleet->GenerateFleetName());
+                    next_fleet->SetAggressive(next_fleet->HasArmedShips() || next_fleet->HasFighterShips());
 
                     if (rally_point_id != INVALID_OBJECT_ID) {
                         if (GetSystem(rally_point_id)) {
-                            fleet->CalculateRouteTo(rally_point_id);
+                            next_fleet->CalculateRouteTo(rally_point_id);
                         } else if (auto rally_obj = GetUniverseObject(rally_point_id)) {
                             if (GetSystem(rally_obj->SystemID()))
-                                fleet->CalculateRouteTo(rally_obj->SystemID());
+                                next_fleet->CalculateRouteTo(rally_obj->SystemID());
                         } else {
                             ErrorLogger() << "Unable to find system to route to with rally point id: " << rally_point_id;
                         }
                     }
 
-                    DebugLogger() << "New Fleet \"" + fleet->Name() + "\" created on turn: " << fleet->CreationTurn();
+                    DebugLogger() << "New Fleet \"" << next_fleet->Name()
+                                  <<"\" created on turn: " << next_fleet->CreationTurn();
                 }
             }
         }
