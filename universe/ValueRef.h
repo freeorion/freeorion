@@ -69,13 +69,13 @@ struct ScriptingContext {
       * there is no root candidate in the parent context, then the input object
       * becomes the root candidate. */
     ScriptingContext(const ScriptingContext& parent_context,
-                     std::shared_ptr<const UniverseObject> condition_local_candidate) :
+                     std::shared_ptr<const UniverseObject> condition_local_candidate_) :
         source(                     parent_context.source),
         effect_target(              parent_context.effect_target),
         condition_root_candidate(   parent_context.condition_root_candidate ?
                                         parent_context.condition_root_candidate :
-                                        condition_local_candidate),                 // if parent context doesn't already have a root candidate, the new local candidate is the root
-        condition_local_candidate(  condition_local_candidate),                     // new local candidate
+                                        condition_local_candidate_),                 // if parent context doesn't already have a root candidate, the new local candidate is the root
+        condition_local_candidate(  condition_local_candidate_),                     // new local candidate
         current_value(              parent_context.current_value)
     {}
 
