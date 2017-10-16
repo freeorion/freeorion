@@ -644,10 +644,14 @@ namespace {
         /** Renders black panel background, border with color depending on the
          *current state and a background for the ship's name text. */
         void Render() override;
+        void PreRender() override;
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
-        void            Select(bool b);
+        void Select(bool b);
+
+        /** Indicate ship data has changed and needs refresh. */
+        void RequireRefresh();
         //@}
 
         private:
@@ -659,7 +663,8 @@ namespace {
 
         void            Init();
 
-        bool                        m_initialized;
+        bool                        m_initialized  = false;;
+        bool                        m_needs_refresh = true;
 
         int                         m_ship_id;
         std::shared_ptr<GG::StaticGraphic>          m_ship_icon;
@@ -694,6 +699,7 @@ namespace {
         m_selected(false)
     {
         SetChildClippingMode(ClipToClient);
+        RequireRefresh();
     }
 
     ShipDataPanel::~ShipDataPanel() {
@@ -707,10 +713,23 @@ namespace {
     GG::Pt ShipDataPanel::ClientLowerRight() const
     { return LowerRight() - GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER));  }
 
-    void ShipDataPanel::Render() {
+    void ShipDataPanel::RequireRefresh() {
+        m_needs_refresh = true;
+        RequirePreRender();
+    }
+
+    void ShipDataPanel::PreRender() {
         if (!m_initialized)
             Init();
 
+        GG::Control::PreRender();
+        if (m_needs_refresh)
+            Refresh();
+
+        DoLayout();
+    }
+
+    void ShipDataPanel::Render() {
         // main background position and colour
         const GG::Clr& background_colour = ClientUI::WndColor();
         const GG::Pt ul = UpperLeft(), lr = LowerRight(), cul = ClientUpperLeft();
@@ -753,7 +772,7 @@ namespace {
         GG::Control::SizeMove(ul, lr);
         //std::cout << "ShipDataPanel::SizeMove new size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
         if (old_size != Size())
-            DoLayout();
+            RequirePreRender();
     }
 
     void ShipDataPanel::SetShipIcon() {
@@ -814,6 +833,8 @@ namespace {
     }
 
     void ShipDataPanel::Refresh() {
+        m_needs_refresh = false;
+
         SetShipIcon();
 
         auto ship = GetShip(m_ship_id);
@@ -890,8 +911,6 @@ namespace {
                                                    m_ship_id, entry.first, AssociatedMeterType(entry.first)));
             }
         }
-
-        DoLayout();
     }
 
     double ShipDataPanel::StatValue(MeterType stat_name) const {
@@ -1012,13 +1031,11 @@ namespace {
 
         // bookkeeping
         m_ship_connection = ship->StateChangedSignal.connect(
-            boost::bind(&ShipDataPanel::Refresh, this));
+            boost::bind(&ShipDataPanel::RequireRefresh, this));
 
         if (auto fleet = GetFleet(ship->FleetID()))
             m_fleet_connection = fleet->StateChangedSignal.connect(
-                boost::bind(&ShipDataPanel::Refresh, this));
-
-        Refresh();
+                boost::bind(&ShipDataPanel::RequireRefresh, this));
     }
 
     ////////////////////////////////////////////////
