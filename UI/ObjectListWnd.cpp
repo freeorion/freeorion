@@ -1043,7 +1043,7 @@ void FilterDialog::CompleteConstruction() {
     GG::X button_width = GG::X(ClientUI::Pts()*8);
     std::shared_ptr<GG::Button> label;
 
-    int row = 1;
+    int vis_row = 1;
 
     for (const auto entry : {
             std::make_tuple(SHOW_VISIBLE, UserStringNop("VISIBLE")),
@@ -1056,11 +1056,11 @@ void FilterDialog::CompleteConstruction() {
 
         label = Wnd::Create<CUIButton>(UserString(label_key));
         label->Resize(GG::Pt(button_width, label->MinUsableSize().y));
-        m_filters_layout->Add(label, row, 0, GG::ALIGN_CENTER);
+        m_filters_layout->Add(label, vis_row, 0, GG::ALIGN_CENTER);
         label->LeftClickedSignal.connect(
             boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, visibility));
 
-        ++row;
+        ++vis_row;
     }
 
     m_filters_layout->SetMinimumRowHeight(0, label->MinUsableSize().y);
