@@ -2006,17 +2006,17 @@ protected:
             return;
 
         // extract drop target fleet from row under drop point
-        const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(row->get());
+        const FleetRow* target_fleet_row = boost::polymorphic_downcast<const FleetRow*>(row->get());
         std::shared_ptr<const Fleet> target_fleet;
-        if (fleet_row)
-            target_fleet = GetFleet(fleet_row->FleetID());
+        if (target_fleet_row)
+            target_fleet = GetFleet(target_fleet_row->FleetID());
 
         // loop through dropped Wnds, checking if each is a valid ship or fleet.  this doesn't
         // consider whether there is a mixture of fleets and ships, as each row is considered
         // independently.  actual drops will probably only accept one or the other, not a mixture
         // of fleets and ships being dropped simultaneously.
         for (DropsAcceptableIter it = first; it != last; ++it) {
-            if (it->first == fleet_row)
+            if (it->first == target_fleet_row)
                 continue;   // can't drop onto self
 
             // for either of fleet or ship being dropped, check if merge or transfer is valid.
