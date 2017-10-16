@@ -1372,8 +1372,8 @@ void FleetDataPanel::Refresh() {
     } else if (auto fleet = GetFleet(m_fleet_id)) {
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         // set fleet name and destination text
-        std::string fleet_name = fleet->PublicName(client_empire_id);
-        if (!fleet->Unowned() && fleet_name == UserString("FW_FOREIGN_FLEET")) {
+        std::string public_fleet_name = fleet->PublicName(client_empire_id);
+        if (!fleet->Unowned() && public_fleet_name == UserString("FW_FOREIGN_FLEET")) {
             const Empire* ship_owner_empire = GetEmpire(fleet->Owner());
             const std::string& owner_name = (ship_owner_empire ? ship_owner_empire->Name() : UserString("FW_FOREIGN"));
             std::string fleet_name = boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEET")) % owner_name);
@@ -1383,9 +1383,9 @@ void FleetDataPanel::Refresh() {
             m_fleet_name_text->SetText(fleet_name);
         } else {
             if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
-                fleet_name = fleet_name + " (" + std::to_string(m_fleet_id) + ")";
+                public_fleet_name = public_fleet_name + " (" + std::to_string(m_fleet_id) + ")";
             }
-            m_fleet_name_text->SetText(fleet_name);
+            m_fleet_name_text->SetText(public_fleet_name);
         }
         m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id));
 
