@@ -4254,17 +4254,17 @@ void DesignWnd::MainPanel::AcceptDrops(const GG::Pt& pt, std::vector<std::shared
     if (!wnd)
         return;
 
-    if (const auto control = dynamic_cast<const BasesListBox::CompletedDesignListBoxRow*>(wnd.get())) {
-        SetDesign(GetShipDesign(control->DesignID()));
+    if (const auto completed_design_row = dynamic_cast<const BasesListBox::CompletedDesignListBoxRow*>(wnd.get())) {
+        SetDesign(GetShipDesign(completed_design_row->DesignID()));
     }
-    else if (const auto control = dynamic_cast<const BasesListBox::HullAndPartsListBoxRow*>(wnd.get())) {
-        const std::string& hull = control->Hull();
-        const std::vector<std::string>& parts = control->Parts();
+    else if (const auto hullandparts_row = dynamic_cast<const BasesListBox::HullAndPartsListBoxRow*>(wnd.get())) {
+        const std::string& hull = hullandparts_row->Hull();
+        const std::vector<std::string>& parts = hullandparts_row->Parts();
 
         SetDesignComponents(hull, parts);
     }
-    else if (const auto control = dynamic_cast<const SavedDesignsListBox::SavedDesignListBoxRow*>(wnd.get())) {
-        const auto& uuid = control->DesignUUID();
+    else if (const auto saved_design_row = dynamic_cast<const SavedDesignsListBox::SavedDesignListBoxRow*>(wnd.get())) {
+        const auto& uuid = saved_design_row->DesignUUID();
         SetDesign(GetSavedDesignsManager().GetDesign(uuid));
     }
 }
