@@ -1106,10 +1106,10 @@ namespace {
 
         // Get a map from empire to set of IDs of objects that empire's objects
         // could potentially target.
-        void PopulateEmpireTargets(const CombatInfo& combat_info) {
+        void PopulateEmpireTargets(const CombatInfo& combat_info_) {
             for (int object_id : valid_target_object_ids) {
-                auto obj = combat_info.objects.Object(object_id);
-                for (int attacking_empire_id : combat_info.empire_ids) {
+                auto obj = combat_info_.objects.Object(object_id);
+                for (int attacking_empire_id : combat_info_.empire_ids) {
                     if (attacking_empire_id == ALL_EMPIRES) {
                         if (ObjectAttackableByMonsters(obj, monster_detection))
                             empire_infos[ALL_EMPIRES].target_ids.insert(object_id);
@@ -1118,7 +1118,7 @@ namespace {
                     }
                 }
 
-                DebugLogger(combat) << ReportAttackabilityOfTarget(combat_info, obj);
+                DebugLogger(combat) << ReportAttackabilityOfTarget(combat_info_, obj);
             }
         }
 
