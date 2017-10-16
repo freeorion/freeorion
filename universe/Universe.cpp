@@ -238,8 +238,8 @@ std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id/* = ALL_EMPIRES*/) 
     // if an empire has visibility of it
     for (auto obj_it = m_objects.const_begin(); obj_it != m_objects.const_end(); ++obj_it) {
         int id = obj_it->ID();
-        for (int empire_id : empire_ids) {
-            Visibility vis = GetObjectVisibilityByEmpire(id, empire_id);
+        for (int detector_empire_id : empire_ids) {
+            Visibility vis = GetObjectVisibilityByEmpire(id, detector_empire_id);
             if (vis >= VIS_BASIC_VISIBILITY) {
                 retval.insert(id);
                 break;
