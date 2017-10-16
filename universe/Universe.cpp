@@ -2721,8 +2721,8 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
         Destroy(object_id);
         retval.insert(object_id);
 
-    } else if (auto fleet = std::dynamic_pointer_cast<Fleet>(obj)) {
-        for (int ship_id : fleet->ShipIDs()) {
+    } else if (auto obj_fleet = std::dynamic_pointer_cast<Fleet>(obj)) {
+        for (int ship_id : obj_fleet->ShipIDs()) {
             if (system)
                 system->Remove(ship_id);
             Destroy(ship_id);
