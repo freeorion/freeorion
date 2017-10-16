@@ -3122,9 +3122,9 @@ void Empire::CheckProductionProgress() {
         // ship design
         // Do not group unarmed ships with no troops (i.e. scouts and
         // colony ships).
-        for (auto& entry : new_ships_by_rally_point_id_and_design_id) {
-            int rally_point_id = entry.first;
-            auto& new_ships_by_design = entry.second;
+        for (auto& rally_ships : new_ships_by_rally_point_id_and_design_id) {
+            int rally_point_id = rally_ships.first;
+            auto& new_ships_by_design = rally_ships.second;
 
             for (auto& ships_by_design : new_ships_by_design) {
                 std::vector<int> ship_ids;
