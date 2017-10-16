@@ -3982,9 +3982,9 @@ void DesignWnd::MainPanel::DoLayout() {
     GG::Rect background_rect = GG::Rect(ul, ClientLowerRight());
 
     if (m_background_image) {
-        GG::Pt ul = background_rect.UpperLeft();
-        GG::Pt lr = ClientSize();
-        m_background_image->SizeMove(ul, lr);
+        GG::Pt bg_ul = background_rect.UpperLeft();
+        GG::Pt bg_lr = ClientSize();
+        m_background_image->SizeMove(bg_ul, bg_lr);
         background_rect = m_background_image->RenderedArea();
     }
 
