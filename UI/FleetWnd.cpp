@@ -1115,6 +1115,9 @@ public:
     void                Select(bool b);
     void                SetSystemID(int id);
 
+    /** Indicate fleet data has changed and needs refresh. */
+    void RequireRefresh();
+
     mutable boost::signals2::signal<void (const std::vector<int>&)> NewFleetFromShipsSignal;
 
 protected:
@@ -1138,6 +1141,8 @@ private:
     const bool          m_is_new_fleet_drop_target;
     NewFleetAggression  m_new_fleet_aggression;
 
+    bool                m_needs_refresh = true;
+
     boost::signals2::connection  m_fleet_connection;
 
     std::shared_ptr<GG::Control>        m_fleet_icon = nullptr;
@@ -1160,7 +1165,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
     m_is_new_fleet_drop_target(false),
     m_new_fleet_aggression(NewFleetsAggressiveOptionSetting())
 {
-    RequirePreRender();
+    RequireRefresh();
     SetChildClippingMode(ClipToClient);
 }
 
@@ -1190,12 +1195,19 @@ bool FleetDataPanel::Selected() const
 NewFleetAggression FleetDataPanel::GetNewFleetAggression() const
 { return m_new_fleet_aggression; }
 
+void FleetDataPanel::RequireRefresh() {
+    m_needs_refresh = true;
+    RequirePreRender();
+}
+
 void FleetDataPanel::PreRender() {
     if (!m_initialized)
         Init();
 
     GG::Wnd::PreRender();
-    Refresh();
+    if (m_needs_refresh)
+        Refresh();
+    DoLayout();
 }
 
 void FleetDataPanel::Render() {
@@ -1427,6 +1439,8 @@ void FleetDataPanel::ToggleAggression() {
 }
 
 void FleetDataPanel::Refresh() {
+    m_needs_refresh = false;
+
     DetachChildAndReset(m_fleet_icon);
     DetachChildAndReset(m_scanline_control);
     DetachChildAndReset(m_gift_indicator);
@@ -1498,7 +1512,6 @@ void FleetDataPanel::Refresh() {
     }
 
     UpdateAggressionToggle();
-    DoLayout();
 }
 
 void FleetDataPanel::SetStatIconValues() {
