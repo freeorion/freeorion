@@ -925,7 +925,7 @@ GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, c
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     spin->ValueChangedSignal.connect(
-        [option_name](const int& value){ GetOptionsDB().Set(option_name, value); });
+        [option_name](const int& new_value){ GetOptionsDB().Set(option_name, new_value); });
     return spin.get();
 }
 
