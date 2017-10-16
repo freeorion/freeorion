@@ -2733,8 +2733,8 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
         Destroy(object_id);
         retval.insert(object_id);
 
-    } else if (auto planet = std::dynamic_pointer_cast<Planet>(obj)) {
-        for (int building_id : planet->BuildingIDs()) {
+    } else if (auto obj_planet = std::dynamic_pointer_cast<Planet>(obj)) {
+        for (int building_id : obj_planet->BuildingIDs()) {
             if (system)
                 system->Remove(building_id);
             Destroy(building_id);
