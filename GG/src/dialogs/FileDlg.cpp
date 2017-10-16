@@ -536,10 +536,12 @@ void FileDlg::UpdateList()
     // define file filters based on the filter strings in the filter drop list
     std::vector<rule<>> file_filters;
 
-    DropDownList::iterator it = m_filter_list->CurrentItem();
-    if (it != m_filter_list->end()) {
+    auto filter_it = m_filter_list->CurrentItem();
+    if (filter_it != m_filter_list->end()) {
         std::vector<std::string> filter_specs; // the filter specifications (e.g. "*.png")
-        parse(m_file_filters[std::distance(m_filter_list->begin(), it)].second.c_str(), *(!ch_p(',') >> (+(anychar_p - ','))[append(filter_specs)]), space_p);
+        parse(m_file_filters[std::distance(m_filter_list->begin(), filter_it)].second.c_str(),
+              *(!ch_p(',') >> (+(anychar_p - ','))[append(filter_specs)]),
+              space_p);
         file_filters.resize(filter_specs.size());
         for (std::size_t i = 0; i < filter_specs.size(); ++i) {
             auto non_wildcards = std::make_shared<std::vector<std::string>>(); // the parts of the filter spec that are not wildcards
