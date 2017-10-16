@@ -1580,13 +1580,13 @@ void Font::FillTemplatedText(
         std::shared_ptr<TextElement> elem = (*te_it);
 
         // For each character in the TextElement.
-        auto it = elem->text.begin();
+        auto text_it = elem->text.begin();
         auto end_it = elem->text.end();
-        while (it != end_it) {
+        while (text_it != end_it) {
 
             // Find and set the width of the character glyph.
             elem->widths.push_back(X0);
-            std::uint32_t c = utf8::next(it, end_it);
+            std::uint32_t c = utf8::next(text_it, end_it);
             if (c != WIDE_NEWLINE) {
                 auto it = m_glyphs.find(c);
                 // use a space when an unrendered glyph is requested (the
