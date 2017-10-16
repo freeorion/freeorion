@@ -268,7 +268,6 @@ namespace {
             }
 
         } else if (dir_name == "ENC_HOMEWORLDS") {
-            int client_empire_id = HumanClientApp::GetApp()->EmpireID();
             const SpeciesManager& species_manager = GetSpeciesManager();
             for (const auto& entry : species_manager) {
                 const auto& species = entry.second;
