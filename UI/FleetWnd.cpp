@@ -2428,7 +2428,7 @@ void FleetDetailPanel::SetFleet(int fleet_id) {
     int old_fleet_id = m_fleet_id;
     m_fleet_id = fleet_id;
 
-    // if set fleet changed, or if current fleet is no fleet, disconnect any 
+    // if set fleet changed, or if current fleet is no fleet, disconnect any
     // signals related to that fleet
     if (m_fleet_id != old_fleet_id || m_fleet_id == INVALID_OBJECT_ID)
         m_fleet_connection.disconnect();
@@ -2446,7 +2446,7 @@ void FleetDetailPanel::SetFleet(int fleet_id) {
             m_fleet_connection = fleet->StateChangedSignal.connect(
                 boost::bind(&FleetDetailPanel::Refresh, this), boost::signals2::at_front);
         } else {
-            DebugLogger() << "FleetDetailPanel::SetFleet ignoring set to missing or empty fleet id (" << fleet_id << ")";
+            ErrorLogger() << "FleetDetailPanel::SetFleet ignoring set to missing or empty fleet id (" << fleet_id << ")";
         }
     }
 }
