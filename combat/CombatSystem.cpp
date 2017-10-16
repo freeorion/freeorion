@@ -811,12 +811,12 @@ namespace {
         CombatInfo&                     combat_info;                // a reference to the combat info
         int                             next_fighter_id;
 
-        AutoresolveInfo(CombatInfo& combat_info) :
+        AutoresolveInfo(CombatInfo& combat_info_) :
             valid_target_object_ids(),
             valid_attacker_object_ids(),
             empire_infos(),
             monster_detection(0.0f),
-            combat_info(combat_info),
+            combat_info(combat_info_),
             next_fighter_id(-10001) // give fighters negative ids so as to avoid clashes with any positiv-id of persistent UniverseObjects
         {
             monster_detection = GetMonsterDetection(combat_info);
