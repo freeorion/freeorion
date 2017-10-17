@@ -98,6 +98,58 @@ namespace CheckSums {
 ///////////////////////////////////////////////////////////
 // Tech                                                  //
 ///////////////////////////////////////////////////////////
+Tech::Tech(const std::string& name, const std::string& description, const std::string& short_description,
+           const std::string& category,
+           ValueRef::ValueRefBase<double>* research_cost,
+           ValueRef::ValueRefBase<int>* research_turns,
+           bool researchable,
+           const std::set<std::string>& tags,
+           const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+           const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
+           const std::string& graphic) :
+    m_name(name),
+    m_description(description),
+    m_short_description(short_description),
+    m_category(category),
+    m_research_cost(research_cost),
+    m_research_turns(research_turns),
+    m_researchable(researchable),
+    m_tags(),
+    m_effects(effects),
+    m_prerequisites(prerequisites),
+    m_unlocked_items(unlocked_items),
+    m_graphic(graphic)
+{
+    for (const std::string& tag : tags)
+        m_tags.insert(boost::to_upper_copy<std::string>(tag));
+    Init();
+}
+
+Tech::Tech(const TechInfo& tech_info,
+           const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+           const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
+           const std::string& graphic) :
+    m_name(tech_info.name),
+    m_description(tech_info.description),
+    m_short_description(tech_info.short_description),
+    m_category(tech_info.category),
+    m_research_cost(tech_info.research_cost),
+    m_research_turns(tech_info.research_turns),
+    m_researchable(tech_info.researchable),
+    m_tags(),
+    m_effects(effects),
+    m_prerequisites(prerequisites),
+    m_unlocked_items(unlocked_items),
+    m_graphic(graphic)
+{
+    for (const std::string& tag : tech_info.tags)
+        m_tags.insert(boost::to_upper_copy<std::string>(tag));
+    Init();
+}
+
+Tech::~Tech()
+{}
+
 void Tech::Init() {
     if (m_research_cost)
         m_research_cost->SetTopLevelContent(m_name);
