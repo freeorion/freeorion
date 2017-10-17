@@ -668,10 +668,8 @@ namespace {
 
         int                                m_ship_id;
         std::shared_ptr<GG::StaticGraphic> m_ship_icon;
-        std::shared_ptr<GG::StaticGraphic> m_scrap_indicator;
-        std::shared_ptr<GG::StaticGraphic> m_colonize_indicator;
-        std::shared_ptr<GG::StaticGraphic> m_invade_indicator;
-        std::shared_ptr<GG::StaticGraphic> m_bombard_indicator;
+        /// An overlay for orders like scrap, colonize, invade, bomard destroy etc.
+        std::shared_ptr<GG::StaticGraphic> m_ship_icon_overlay = nullptr;
         std::shared_ptr<ScanlineControl>   m_scanline_control;
         std::shared_ptr<GG::Label>         m_ship_name_text;
         std::shared_ptr<GG::Label>         m_design_name_text;
@@ -689,10 +687,6 @@ namespace {
         m_initialized(false),
         m_ship_id(ship_id),
         m_ship_icon(nullptr),
-        m_scrap_indicator(nullptr),
-        m_colonize_indicator(nullptr),
-        m_invade_indicator(nullptr),
-        m_bombard_indicator(nullptr),
         m_scanline_control(nullptr),
         m_ship_name_text(nullptr),
         m_design_name_text(nullptr),
@@ -778,10 +772,7 @@ namespace {
 
     void ShipDataPanel::SetShipIcon() {
         DetachChildAndReset(m_ship_icon);
-        DetachChildAndReset(m_scrap_indicator);
-        DetachChildAndReset(m_colonize_indicator);
-        DetachChildAndReset(m_invade_indicator);
-        DetachChildAndReset(m_bombard_indicator);
+        DetachChildAndReset(m_ship_icon_overlay);
         DetachChildAndReset(m_scanline_control);
 
         auto ship = GetShip(m_ship_id);
@@ -799,30 +790,27 @@ namespace {
         m_ship_icon->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
         AttachChild(m_ship_icon);
 
+        // Add the overlay
+        std::shared_ptr<GG::Texture> overlay_texture;
         if (ship->OrderedScrapped()) {
-            std::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
-            m_scrap_indicator = GG::Wnd::Create<GG::StaticGraphic>(scrap_texture, DataPanelIconStyle());
-            m_scrap_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-            AttachChild(m_scrap_indicator);
+            overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
         }
-        if (ship->OrderedColonizePlanet() != INVALID_OBJECT_ID) {
-            std::shared_ptr<GG::Texture> colonize_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "colonizing.png", true);
-            m_colonize_indicator = GG::Wnd::Create<GG::StaticGraphic>(colonize_texture, DataPanelIconStyle());
-            m_colonize_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-            AttachChild(m_colonize_indicator);
+        else if (ship->OrderedColonizePlanet() != INVALID_OBJECT_ID) {
+            overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "colonizing.png", true);
         }
-        if (ship->OrderedInvadePlanet() != INVALID_OBJECT_ID) {
-            std::shared_ptr<GG::Texture> invade_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "invading.png", true);
-            m_invade_indicator = GG::Wnd::Create<GG::StaticGraphic>(invade_texture, DataPanelIconStyle());
-            m_invade_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-            AttachChild(m_invade_indicator);
+        else if (ship->OrderedInvadePlanet() != INVALID_OBJECT_ID) {
+            overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "invading.png", true);
         }
-        if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID) {
-            std::shared_ptr<GG::Texture> bombard_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "bombarding.png", true);
-            m_bombard_indicator = GG::Wnd::Create<GG::StaticGraphic>(bombard_texture, DataPanelIconStyle());
-            m_bombard_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-            AttachChild(m_bombard_indicator);
+        else if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID) {
+            overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "bombarding.png", true);
         }
+
+        if (overlay_texture) {
+            m_ship_icon_overlay = GG::Wnd::Create<GG::StaticGraphic>(overlay_texture, DataPanelIconStyle());
+            m_ship_icon_overlay->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+            AttachChild(m_ship_icon_overlay);
+        }
+
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         if ((ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
             && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
@@ -937,16 +925,8 @@ namespace {
         // client height should never be less than the height of the space resereved for the icon
         if (m_ship_icon)
             m_ship_icon->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-        if (m_scrap_indicator)
-            m_scrap_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-        if (m_colonize_indicator)
-            m_colonize_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-        if (m_invade_indicator)
-            m_invade_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-        if (m_bombard_indicator)
-            m_bombard_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-        if (m_scanline_control)
-            m_scanline_control->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+        if (m_ship_icon_overlay)
+            m_ship_icon_overlay->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
 
         // position ship name text at the top to the right of icons
         const GG::Pt name_ul = GG::Pt(DataPanelIconSpace().x + DATA_PANEL_TEXT_PAD, GG::Y0);
