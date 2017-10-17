@@ -148,9 +148,8 @@ void PopupMenu::Render()
                     needs_indicator = true;
             }
             Flags<TextFormat> fmt = FORMAT_LEFT | FORMAT_TOP;
-            std::vector<std::shared_ptr<Font::TextElement>> text_elements
-                = m_font->ExpensiveParseFromTextToTextElements(str, fmt);
-            std::vector<Font::LineData> lines = m_font->DetermineLines(str, fmt, X0, text_elements);
+            auto text_elements = m_font->ExpensiveParseFromTextToTextElements(str, fmt);
+            auto lines = m_font->DetermineLines(str, fmt, X0, text_elements);
             Pt menu_sz = m_font->TextExtent(lines); // get dimensions of text in menu
             menu_sz.x += 2 * HORIZONTAL_MARGIN;
             if (needs_indicator)

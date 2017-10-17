@@ -103,7 +103,7 @@ namespace {
             preview.number_of_human_players = humans;
 
             // Find the empire of the player, if it has one
-            std::map<int, SaveGameEmpireData>::const_iterator empire = empire_save_game_data.find(player->m_empire_id);
+            auto empire = empire_save_game_data.find(player->m_empire_id);
             if (empire != empire_save_game_data.end()) {
                 preview.main_player_empire_name = empire->second.m_empire_name;
                 preview.main_player_empire_colour = empire->second.m_color;

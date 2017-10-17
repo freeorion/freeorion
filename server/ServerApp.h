@@ -22,11 +22,12 @@ struct ServerFSM;
 struct PlayerSaveHeaderData {
     PlayerSaveHeaderData();
 
-    PlayerSaveHeaderData(const std::string& name, int empire_id, Networking::ClientType client_type);
+    PlayerSaveHeaderData(const std::string& name, int empire_id,
+                         Networking::ClientType client_type);
 
-    std::string                         m_name;
-    int                                 m_empire_id;
-    Networking::ClientType              m_client_type;
+    std::string             m_name;
+    int                     m_empire_id;
+    Networking::ClientType  m_client_type;
 
 private:
     friend class boost::serialization::access;
@@ -38,13 +39,15 @@ private:
 struct PlayerSaveGameData : public PlayerSaveHeaderData {
     PlayerSaveGameData();
 
-    PlayerSaveGameData(const std::string& name, int empire_id, const std::shared_ptr<OrderSet>& orders,
-                       const std::shared_ptr<SaveGameUIData>& ui_data, const std::string& save_state_string,
+    PlayerSaveGameData(const std::string& name, int empire_id,
+                       const std::shared_ptr<OrderSet>& orders,
+                       const std::shared_ptr<SaveGameUIData>& ui_data,
+                       const std::string& save_state_string,
                        Networking::ClientType client_type);
 
-    std::shared_ptr<OrderSet> m_orders;
+    std::shared_ptr<OrderSet>       m_orders;
     std::shared_ptr<SaveGameUIData> m_ui_data;
-    std::string                         m_save_state_string;
+    std::string                     m_save_state_string;
 
 private:
     friend class boost::serialization::access;
@@ -56,10 +59,9 @@ private:
   * game that isn't player data or the universe */
 struct ServerSaveGameData {
     ServerSaveGameData();
-
     ServerSaveGameData(int current_turn);
 
-    int                                     m_current_turn;
+    int m_current_turn;
 
 private:
     friend class boost::serialization::access;
@@ -72,7 +74,6 @@ class ServerApp : public IApp {
 public:
     /** \name Structors */ //@{
     ServerApp();
-
     ~ServerApp();
     //@}
 
@@ -80,13 +81,9 @@ public:
 
     /** Returns a ClientApp pointer to the singleton instance of the app. */
     static ServerApp* GetApp();
-
     Universe& GetUniverse() override;
-
     EmpireManager& Empires() override;
-
     Empire* GetEmpire(int id) override;
-
     SupplyManager& GetSupplyManager() override;
 
     std::shared_ptr<UniverseObject> GetUniverseObject(int object_id) override;

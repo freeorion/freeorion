@@ -409,12 +409,13 @@ std::ostream& GG::operator<<(std::ostream& os, const Font::Substring& substr)
     return os;
 }
 
-CPSize GG::CodePointIndexOf(std::size_t line, CPSize index, const std::vector<Font::LineData>& line_data)
+CPSize GG::CodePointIndexOf(std::size_t line, CPSize index,
+                            const std::vector<Font::LineData>& line_data)
 {
     CPSize retval(0);
     if (line_data.size() <= line) {
-        std::vector<Font::LineData>::const_reverse_iterator it = line_data.rbegin();
-        std::vector<Font::LineData>::const_reverse_iterator end_it = line_data.rend();
+        auto it = line_data.rbegin();
+        auto end_it = line_data.rend();
         while (it != end_it) {
             if (!it->char_data.empty()) {
                 retval = it->char_data.back().code_point_index + 1;
@@ -425,9 +426,8 @@ CPSize GG::CodePointIndexOf(std::size_t line, CPSize index, const std::vector<Fo
     } else if (index < line_data[line].char_data.size()) {
         retval = line_data[line].char_data[Value(index)].code_point_index;
     } else {
-        std::vector<Font::LineData>::const_reverse_iterator it =
-            line_data.rbegin() + (line_data.size() - 1 - line);
-        std::vector<Font::LineData>::const_reverse_iterator end_it = line_data.rend();
+        auto it = line_data.rbegin() + (line_data.size() - 1 - line);
+        auto end_it = line_data.rend();
         while (it != end_it) {
             if (!it->char_data.empty()) {
                 retval = it->char_data.back().code_point_index + 1;
@@ -439,12 +439,13 @@ CPSize GG::CodePointIndexOf(std::size_t line, CPSize index, const std::vector<Fo
     return retval;
 }
 
-StrSize GG::StringIndexOf(std::size_t line, CPSize index, const std::vector<Font::LineData>& line_data)
+StrSize GG::StringIndexOf(std::size_t line, CPSize index,
+                          const std::vector<Font::LineData>& line_data)
 {
     StrSize retval(0);
     if (line_data.size() <= line) {
-        std::vector<Font::LineData>::const_reverse_iterator it = line_data.rbegin();
-        std::vector<Font::LineData>::const_reverse_iterator end_it = line_data.rend();
+        auto it = line_data.rbegin();
+        auto end_it = line_data.rend();
         while (it != end_it) {
             if (!it->char_data.empty()) {
                 retval = it->char_data.back().string_index + it->char_data.back().string_size;
@@ -455,9 +456,8 @@ StrSize GG::StringIndexOf(std::size_t line, CPSize index, const std::vector<Font
     } else if (index < line_data[line].char_data.size()) {
         retval = line_data[line].char_data[Value(index)].string_index;
     } else {
-        std::vector<Font::LineData>::const_reverse_iterator it =
-            line_data.rbegin() + (line_data.size() - 1 - line);
-        std::vector<Font::LineData>::const_reverse_iterator end_it = line_data.rend();
+        auto it = line_data.rbegin() + (line_data.size() - 1 - line);
+        auto end_it = line_data.rend();
         while (it != end_it) {
             if (!it->char_data.empty()) {
                 retval = it->char_data.back().string_index + it->char_data.back().string_size;
@@ -469,11 +469,13 @@ StrSize GG::StringIndexOf(std::size_t line, CPSize index, const std::vector<Font
     return retval;
 }
 
-std::pair<std::size_t, CPSize> GG::LinePositionOf(CPSize index, const std::vector<Font::LineData>& line_data)
+std::pair<std::size_t, CPSize> GG::LinePositionOf(
+    CPSize index, const std::vector<Font::LineData>& line_data)
 {
-    std::pair<std::size_t, CPSize> retval(std::numeric_limits<std::size_t>::max(), INVALID_CP_SIZE);
+    std::pair<std::size_t, CPSize> retval(std::numeric_limits<std::size_t>::max(),
+                                          INVALID_CP_SIZE);
     for (std::size_t i = 0; i < line_data.size(); ++i) {
-        const std::vector<Font::LineData::CharData>& char_data = line_data[i].char_data;
+        const auto& char_data = line_data[i].char_data;
         if (!char_data.empty() &&
             char_data.front().code_point_index <= index &&
             index <= char_data.back().code_point_index)
@@ -495,7 +497,8 @@ namespace {
         regular expression.*/
     class CompiledRegex {
     public:
-        CompiledRegex(const std::unordered_set<std::string>& known_tags, bool strip_unpaired_tags) :
+        CompiledRegex(const std::unordered_set<std::string>& known_tags,
+                      bool strip_unpaired_tags) :
             m_text(nullptr),
             m_known_tags(&known_tags),
             m_ignore_tags(false),
@@ -999,7 +1002,7 @@ void Font::RenderState::PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a)
 void Font::RenderState::PopColor()
 {
     // Never remove the initial color from the stack
-    if(color_index_stack.size() > 1)
+    if (color_index_stack.size() > 1)
         color_index_stack.pop();
 }
 
@@ -1387,7 +1390,7 @@ namespace DebugOutput {
     void PrintParseResults(const std::vector<std::shared_ptr<Font::TextElement>>& text_elements) {
         std::cout << "results of parse:\n";
         for (auto& elem : text_elements) {
-            if (std::shared_ptr<Font::FormattingTag> tag_elem = std::dynamic_pointer_cast<Font::FormattingTag>(elem)) {
+            if (auto tag_elem = std::dynamic_pointer_cast<Font::FormattingTag>(elem)) {
                 std::cout << "FormattingTag\n    text=\"" << tag_elem->text << "\" (@ "
                           << static_cast<const void*>(&*tag_elem->text.begin()) << ")\n    widths=";
                 for (const X& width : tag_elem->widths) {
@@ -1424,19 +1427,19 @@ namespace DebugOutput {
         std::cout << "Line breakdown:\n";
         for (std::size_t i = 0; i < line_data.size(); ++i) {
             std::cout << "Line " << i << ":\n    extents=";
-            for (const Font::LineData::CharData& character : line_data[i].char_data) {
+            for (const auto& character : line_data[i].char_data) {
                 std::cout << character.extent << " ";
             }
             std::cout << "\n    string indices=";
-            for (const Font::LineData::CharData& character : line_data[i].char_data) {
+            for (const auto& character : line_data[i].char_data) {
                 std::cout << character.string_index << " ";
             }
             std::cout << "\n    code point indices=";
-            for (const Font::LineData::CharData& character : line_data[i].char_data) {
+            for (const auto& character : line_data[i].char_data) {
                 std::cout << character.code_point_index << " ";
             }
             std::cout << "\n    chars on line: \"";
-            for (const Font::LineData::CharData& character : line_data[i].char_data) {
+            for (const auto& character : line_data[i].char_data) {
                 std::cout << text[Value(character.string_index)];
             }
             std::cout << "\"" << std::endl;
@@ -1449,7 +1452,7 @@ namespace DebugOutput {
                         }
                         std::cout << "\n    whitespace=" << tag_elem->whitespace
                                   << "\n    newline=" << tag_elem->newline << "\n    params=\n";
-                        for (const Font::Substring& param : tag_elem->params) {
+                        for (const auto& param : tag_elem->params) {
                             std::cout << "        \"" << param << "\"\n";
                         }
                         std::cout << "    tag_name=\"" << tag_elem->tag_name << "\"\n    close_tag="
@@ -1658,8 +1661,9 @@ void Font::ChangeTemplatedText(
     FillTemplatedText(text, text_elements, start_of_reflow);
 }
 
-std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
-                                                 const std::vector<std::shared_ptr<TextElement>>& text_elements) const
+std::vector<Font::LineData> Font::DetermineLines(
+    const std::string& text, Flags<TextFormat>& format, X box_width,
+    const std::vector<std::shared_ptr<TextElement>>& text_elements) const
 {
     ValidateFormat(format);
 

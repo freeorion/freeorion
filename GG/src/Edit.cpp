@@ -305,11 +305,11 @@ CPSize Edit::LastVisibleChar() const
     X first_char_offset = FirstCharOffset();
     CPSize retval = m_first_char_shown;
 
-    const std::vector<Font::LineData>& line_data = GetLineData();
+    const auto& line_data = GetLineData();
     if (line_data.empty())
         return CP0;
-    const Font::LineData& first_line_data = line_data.at(0);
-    const std::vector<Font::LineData::CharData>& char_data = first_line_data.char_data;
+    const auto& first_line_data = line_data.at(0);
+    const auto& char_data = first_line_data.char_data;
 
     CPSize line_limit = std::min(Length(), CPSize(char_data.size()));
     X client_size_x = ClientSize().x;
@@ -320,7 +320,7 @@ CPSize Edit::LastVisibleChar() const
                 break;
         } else {
             size_t retval_minus_1 = Value(retval - 1);
-            Font::LineData::CharData retval_minus_1_char_data = char_data.at(retval_minus_1);
+            auto retval_minus_1_char_data = char_data.at(retval_minus_1);
             if (client_size_x <= retval_minus_1_char_data.extent - first_char_offset)
                 break;
         }
@@ -338,7 +338,8 @@ std::pair<CPSize, CPSize> Edit::DoubleButtonDownCursorPos() const
 { return m_double_click_cursor_pos; }
 
 std::vector<GG::Font::LineData>::size_type Edit::NumLines() const {
-    return std::max(std::vector<GG::Font::LineData>::size_type(0), GetLineData().size() - 1);
+    return std::max(std::vector<GG::Font::LineData>::size_type(0),
+                    GetLineData().size() - 1);
 }
 
 void Edit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
@@ -351,7 +352,7 @@ void Edit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
     //std::cout << "Edit::LButtonDown got idx: " << idx << std::endl;
     m_cursor_pos = {idx, idx};
 
-    std::pair<CPSize, CPSize> word_indices = GetDoubleButtonDownWordIndices(idx);
+    auto word_indices = GetDoubleButtonDownWordIndices(idx);
     //std::cout << "Edit::LButtonDown got word indices: " << word_indices.first << ", " << word_indices.second << std::endl;
     if (word_indices.first != word_indices.second)
         m_cursor_pos = word_indices;
@@ -367,7 +368,7 @@ void Edit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
     //std::cout << "CharIndexOf mouse x-pos: " << xpos << std::endl << std::flush;
 
     if (m_in_double_click_mode) {
-        std::pair<CPSize, CPSize> word_indices = GetDoubleButtonDownDragWordIndices(idx);
+        auto word_indices = GetDoubleButtonDownDragWordIndices(idx);
 
         if (word_indices.first == word_indices.second) {
             if (idx < m_double_click_cursor_pos.first) {

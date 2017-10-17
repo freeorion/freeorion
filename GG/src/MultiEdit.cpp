@@ -35,7 +35,8 @@
 using namespace GG;
 
 namespace {
-    bool LineEndsWithEndlineCharacter(const std::vector<Font::LineData>& lines, std::size_t line,
+    bool LineEndsWithEndlineCharacter(const std::vector<Font::LineData>& lines,
+                                      std::size_t line,
                                       const std::string& original_string)
     {
         assert(line < lines.size());
@@ -169,7 +170,7 @@ void MultiEdit::Render()
     std::size_t first_visible_row = FirstVisibleRow();
     std::size_t last_visible_row = LastVisibleRow();
     Flags<TextFormat> text_format = (TextFormat() & ~(FORMAT_TOP | FORMAT_BOTTOM)) | FORMAT_VCENTER;
-    const std::vector<Font::LineData>& lines = GetLineData();
+    const auto& lines = GetLineData();
     GetFont()->ProcessTagsBefore(lines, state, first_visible_row, CP0);
 
     for (std::size_t row = first_visible_row; row <= last_visible_row && row < lines.size(); ++row) {
@@ -185,8 +186,8 @@ void MultiEdit::Render()
         if (!line.Empty()) {
             // if one or more chars of this row are selected, highlight, then
             // draw the range in the selected-text color
-            std::pair<std::size_t, CPSize> low_cursor_pos  = LowCursorPos();
-            std::pair<std::size_t, CPSize> high_cursor_pos = HighCursorPos();
+            auto low_cursor_pos  = LowCursorPos();
+            auto high_cursor_pos = HighCursorPos();
 
             if (low_cursor_pos.first <= row && row <= high_cursor_pos.first && MultiSelected()) {
                 // idx0 to idx1 is unhilited, idx1 to idx2 is hilited, and
@@ -301,9 +302,8 @@ void MultiEdit::SetText(const std::string& str)
         if (m_max_lines_history == ALL_LINES) {
             TextControl::SetText(str);
         } else {
-            std::vector<std::shared_ptr<Font::TextElement>> text_elements
-                = GetFont()->ExpensiveParseFromTextToTextElements(str, format);
-            std::vector<Font::LineData> lines = GetFont()->DetermineLines(str, format, cl_sz.x, text_elements);
+            auto text_elements = GetFont()->ExpensiveParseFromTextToTextElements(str, format);
+            auto lines = GetFont()->DetermineLines(str, format, cl_sz.x, text_elements);
             if (m_max_lines_history < lines.size()) {
                 std::size_t first_line = 0;
                 std::size_t last_line = m_max_lines_history - 1;
@@ -474,7 +474,7 @@ std::pair<std::size_t, CPSize> MultiEdit::CharAt(const Pt& pt) const
 
 std::pair<std::size_t, CPSize> MultiEdit::CharAt(CPSize idx) const
 {
-    const std::vector<Font::LineData>& lines = GetLineData();
+    const auto& lines = GetLineData();
 
     std::pair<std::size_t, CPSize> retval(0, CP0);
     if (lines.empty() || idx > Text().size())
@@ -503,7 +503,7 @@ Pt MultiEdit::ScrollPosition() const
 CPSize MultiEdit::CharIndexOf(std::size_t row, CPSize char_idx,
                               const std::vector<Font::LineData>* line_data) const
 {
-    const std::vector<Font::LineData>& lines = line_data ? *line_data : GetLineData();
+    const auto& lines = line_data ? *line_data : GetLineData();
 
     if (lines.empty())
         return CP0; // no text
@@ -527,7 +527,7 @@ CPSize MultiEdit::CharIndexOf(std::size_t row, CPSize char_idx,
     // "rewind" the first position to encompass all tag text that is
     // associated with that position
     CPSize retval = line.char_data[Value(char_idx)].code_point_index;
-    for (const std::shared_ptr<Font::FormattingTag>& tag : line.char_data[Value(char_idx)].tags)
+    for (const auto& tag : line.char_data[Value(char_idx)].tags)
         retval -= tag->CodePointSize();
 
     return retval;

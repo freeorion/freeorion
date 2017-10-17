@@ -421,8 +421,8 @@ void TextControl::Insert(std::size_t line, CPSize pos, const std::string& s)
 
 void TextControl::Erase(std::size_t line, CPSize pos, CPSize num/* = CP1*/)
 {
-    std::string::iterator it = m_text.begin() + Value(StringIndexOf(line, pos, m_line_data));
-    std::string::iterator end_it = m_text.begin() + Value(StringIndexOf(line, pos + num, m_line_data));
+    auto it = m_text.begin() + Value(StringIndexOf(line, pos, m_line_data));
+    auto end_it = m_text.begin() + Value(StringIndexOf(line, pos + num, m_line_data));
     if (it == end_it)
         return;
     m_text.erase(it, end_it);
@@ -438,8 +438,8 @@ void TextControl::Erase(std::size_t line1, CPSize pos1, std::size_t line2, CPSiz
     if (offset1 == offset2)
         return;
     //std::cout << "TextControl::Erase offsets: " << offset1 << " // " << offset2 << std::endl;
-    std::string::iterator it = m_text.begin() + std::min(offset1, offset2);
-    std::string::iterator end_it = m_text.begin() + std::max(offset1, offset2);
+    auto it = m_text.begin() + std::min(offset1, offset2);
+    auto end_it = m_text.begin() + std::max(offset1, offset2);
     m_text.erase(it, end_it);
     SetText(m_text);
 }

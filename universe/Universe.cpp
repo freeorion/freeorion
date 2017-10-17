@@ -2704,7 +2704,7 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
 
     auto system = GetSystem(obj->SystemID());
 
-    if (std::shared_ptr<Ship> ship = std::dynamic_pointer_cast<Ship>(obj)) {
+    if (auto ship = std::dynamic_pointer_cast<Ship>(obj)) {
         // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
         auto fleet = GetFleet(ship->FleetID());
         if (fleet) {
@@ -2745,7 +2745,7 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
         Destroy(object_id);
         retval.insert(object_id);
 
-    } else if (std::shared_ptr<System> obj_system = std::dynamic_pointer_cast<System>(obj)) {
+    } else if (auto obj_system = std::dynamic_pointer_cast<System>(obj)) {
         // destroy all objects in system
         for (int system_id : obj_system->ObjectIDs()) {
             Destroy(system_id);
@@ -2772,7 +2772,7 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
         // don't need to bother with removing things from system, fleets, or
         // ships, since everything in system is being destroyed
 
-    } else if (std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(obj)) {
+    } else if (auto building = std::dynamic_pointer_cast<Building>(obj)) {
         auto planet = GetPlanet(building->PlanetID());
         if (planet)
             planet->RemoveBuilding(object_id);
@@ -2820,7 +2820,7 @@ void Universe::EffectDestroy(int object_id, int source_object_id) {
 }
 
 void Universe::InitializeSystemGraph(int for_empire_id) {
-    std::vector<int> system_ids = ::EmpireKnownObjects(for_empire_id).FindObjectIDs<System>();
+    auto system_ids = ::EmpireKnownObjects(for_empire_id).FindObjectIDs<System>();
     std::vector<std::shared_ptr<const System>> systems;
     for (size_t system1_index = 0; system1_index < system_ids.size(); ++system1_index) {
         int system1_id = system_ids[system1_index];

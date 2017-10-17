@@ -3033,9 +3033,9 @@ void SidePanel::RefreshInPreRender() {
 }
 
 void SidePanel::RefreshSystemNames() {
-    auto selected_system = GetSystem(s_system_id);
-    if (!selected_system)
-        return;
+    //auto system = GetSystem(s_system_id);
+    //if (!system)
+    //    return;
 
     // Repopulate the system with all of the names of known systems, if it is closed.
     // If it is open do not change the system names because it runs in a seperate ModalEventPump
