@@ -1758,7 +1758,7 @@ void FleetDataPanel::Init() {
         }
 
         m_fleet_connection = fleet->StateChangedSignal.connect(
-            boost::bind(&FleetDataPanel::RequirePreRender, this));
+            boost::bind(&FleetDataPanel::RequireRefresh, this));
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         if (fleet->OwnedBy(client_empire_id) || fleet->GetVisibility(client_empire_id) >= VIS_FULL_VISIBILITY) {
@@ -2826,7 +2826,9 @@ FleetWnd::~FleetWnd() {
 
 void FleetWnd::PreRender() {
     MapWndPopup::PreRender();
-    Refresh();
+
+    if (m_needs_refresh)
+        Refresh();
 }
 
 GG::Rect FleetWnd::CalculatePosition() const {
@@ -2895,10 +2897,28 @@ void FleetWnd::RefreshStateChangedSignals() {
     m_system_connection.disconnect();
     if (auto system = GetSystem(m_system_id))
         m_system_connection = system->StateChangedSignal.connect(
-            boost::bind(&FleetWnd::RequirePreRender, this), boost::signals2::at_front);
+            boost::bind(&FleetWnd::RequireRefresh, this), boost::signals2::at_front);
+
+    for (auto& fleet_connection : m_fleet_connections)
+        fleet_connection.disconnect();
+    m_fleet_connections.clear();
+
+    for (auto fleet_id : m_fleet_ids) {
+        if (auto fleet = GetFleet(fleet_id))
+            m_fleet_connections.push_back(
+                fleet->StateChangedSignal.connect(
+                    boost::bind(&FleetWnd::RequireRefresh, this)));
+    }
+}
+
+void FleetWnd::RequireRefresh() {
+    m_needs_refresh = true;
+    RequirePreRender();
 }
 
 void FleetWnd::Refresh() {
+    m_needs_refresh = false;
+
     int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
     const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);

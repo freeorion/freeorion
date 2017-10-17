@@ -145,6 +145,7 @@ protected:
     //@}
 
 private:
+    void            RequireRefresh();
     void            Refresh();                          ///< regenerates contents
     void            RefreshStateChangedSignals();
 
@@ -166,13 +167,15 @@ private:
     void            SetStatIconValues();          ///< sets values for multi-fleet aggregate stat icons at top of FleetWnd
     mutable boost::signals2::signal<void (FleetWnd*)> ClosingSignal;
 
-    boost::signals2::connection  m_system_connection;
+    boost::signals2::connection              m_system_connection;
+    std::vector<boost::signals2::connection> m_fleet_connections;
 
     std::set<int>       m_fleet_ids;        ///< IDs of fleets shown in this wnd (always.  set when creating wnd, either by being passed in directly, or found by checking indicated system for indicated empire's fleets.  If set directly, never updates.  If set by checking system, updates when the system has a fleet added or removed.
     int                 m_empire_id;        ///< ID of empire whose fleets are shown in this wnd.  May be ALL_EMPIRES if this FleetWnd wasn't set to shown a particular empire's fleets.
     int                 m_system_id;        ///< ID of system whose fleets are shown in this wnd.  May be INVALID_OBJECT_ID if this FleetWnd wasn't set to show a system's fleets.
 
     bool                m_order_issuing_enabled;
+    bool                m_needs_refresh = false;
 
     std::shared_ptr<FleetsListBox>      m_fleets_lb;
     std::shared_ptr<FleetDataPanel>     m_new_fleet_drop_target;
