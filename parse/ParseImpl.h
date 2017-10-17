@@ -162,6 +162,29 @@ namespace parse { namespace detail {
 
         return parse_file_end_of_file_warnings(path, success, file_contents, first, last);
     }
+
+    template <typename Grammar, typename Arg1, typename Arg2>
+    bool parse_file(const lexer& lexer, const boost::filesystem::path& path, Arg1& arg1, Arg2& arg2) {
+        SectionedScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::microseconds(1000));
+
+        std::string filename;
+        std::string file_contents;
+        text_iterator first;
+        text_iterator last;
+        token_iterator it;
+
+        parse_file_common(path, lexer, filename, file_contents, first, last, it);
+
+        //TraceLogger() << "Parse: parsed contents for " << path.string() << " : \n" << file_contents;
+
+        boost::spirit::qi::in_state_type in_state;
+
+        Grammar grammar(lexer, filename, first, last);
+
+        bool success = boost::spirit::qi::phrase_parse(
+            it, lexer.end(), grammar(boost::phoenix::ref(arg1), boost::phoenix::ref(arg2)), in_state("WS")[lexer.self]);
+
+        return parse_file_end_of_file_warnings(path, success, file_contents, first, last);
     }
 
 } }
