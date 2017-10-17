@@ -56,6 +56,16 @@ class InvalidSaveGameException(Exception):
 
 
 def assert_content(state, key, expected_type, may_be_none=True):
+    """Assert that the state has a key with content of specified type.
+
+    Raises an InvalidSaveGameException if assertion failed.
+
+    :type state: dict
+    :type key: str
+    :type expected_type: type
+    :param may_be_none: If true, content may be either None or of expected type
+    :type may_be_none: bool
+    """
     if key not in state:
         raise InvalidSaveGameException("Expected key '%s' was not found in savegame state." % key)
     value = state[key]
