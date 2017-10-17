@@ -190,6 +190,9 @@ public:
 
     void ClearProjectedFleetMovementLines();     //!< removes all projected fleet movement lines
 
+    /** Forget object with \p id.  Used for sensor ghosts. */
+    void ForgetObject(int id);
+
     void ResetEmpireShown();                     //!< auto-resets the shown empire in any contained Wnds, to the current client's empire (if any)
 
     void RegisterPopup(const std::shared_ptr<MapWndPopup>& popup);              //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
