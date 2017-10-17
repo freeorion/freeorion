@@ -5563,9 +5563,7 @@ void MapWnd::FleetButtonRightClicked(const FleetButton* fleet_btn) {
 
         auto forget_fleet_actions = [this, empire_id, sensor_ghosts]() {
             for (auto fleet_id : sensor_ghosts) {
-                HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ForgetOrder>(empire_id, fleet_id));
-                GetUniverse().ForgetKnownObject(ALL_EMPIRES, fleet_id);
-                ClientUI::GetClientUI()->GetMapWnd()->RemoveFleet(fleet_id);
+                ForgetObject(fleet_id);
             }
         };
 
