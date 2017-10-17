@@ -132,9 +132,8 @@ namespace parse { namespace detail {
                            token_iterator& it);
 
     template <typename Grammar, typename Arg1>
-    bool parse_file(const lexer& lexer, const boost::filesystem::path& path, Arg1& arg1)
-    {
-        SectionedScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::microseconds(100));
+    bool parse_file(const lexer& lexer, const boost::filesystem::path& path, Arg1& arg1) {
+        SectionedScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::microseconds(1000));
 
         std::string filename;
         std::string file_contents;
