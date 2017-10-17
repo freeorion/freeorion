@@ -494,8 +494,8 @@ namespace {
             for (auto& entry : empires)
                 sr_empires.insert(entry.second);
         }
-        for (Empire* empire : sr_empires) {
-            for (Empire::SitRepItr sitrep_it = empire->SitRepBegin(); sitrep_it != empire->SitRepEnd(); ++sitrep_it) {
+        for (auto sitrep_empire : sr_empires) {
+            for (Empire::SitRepItr sitrep_it = sitrep_empire->SitRepBegin(); sitrep_it != sitrep_empire->SitRepEnd(); ++sitrep_it) {
                 if (!verbose_sitrep) {
                     if (!sitrep_it->Validate())
                         continue;

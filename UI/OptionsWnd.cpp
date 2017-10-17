@@ -432,8 +432,8 @@ namespace {
             [option_name, drop_list](const GG::ListBox::const_iterator& it) {
                 if (it == drop_list->end())
                     return;
-                const auto row = dynamic_cast<CUISimpleDropDownListRow* const>(it->get());
-                const auto& option_value = row->Name();
+                const auto dropdown_row = dynamic_cast<CUISimpleDropDownListRow* const>(it->get());
+                const auto& option_value = dropdown_row->Name();
                 HumanClientApp::GetApp()->ChangeLoggerThreshold(option_name, to_LogLevel(option_value));
             });
     }
@@ -925,7 +925,7 @@ GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, c
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     spin->ValueChangedSignal.connect(
-        [option_name](const int& value){ GetOptionsDB().Set(option_name, value); });
+        [option_name](const int& new_value){ GetOptionsDB().Set(option_name, new_value); });
     return spin.get();
 }
 
@@ -962,7 +962,7 @@ GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_le
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     spin->ValueChangedSignal.connect(
-        [option_name](const double& value){ GetOptionsDB().Set(option_name, value); });
+        [option_name](const double& new_value){ GetOptionsDB().Set(option_name, new_value); });
     return spin.get();
 }
 
@@ -1254,13 +1254,13 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
         [drop_list](GG::ListBox::iterator it) {
             if (it == drop_list->end())
                 return;
-            const auto& row = *it;
-            if (!row)
+            const auto& drop_list_row = *it;
+            if (!drop_list_row)
                 return;
             int w, h;
             using namespace boost::spirit::classic;
             rule<> resolution_p = int_p[assign_a(w)] >> str_p(" x ") >> int_p[assign_a(h)];
-            parse(row->Name().c_str(), resolution_p);
+            parse(drop_list_row->Name().c_str(), resolution_p);
             GetOptionsDB().Set<int>("app-width", w);
             GetOptionsDB().Set<int>("app-height", h);
         }

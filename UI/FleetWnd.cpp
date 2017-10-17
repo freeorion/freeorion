@@ -1372,8 +1372,8 @@ void FleetDataPanel::Refresh() {
     } else if (auto fleet = GetFleet(m_fleet_id)) {
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         // set fleet name and destination text
-        std::string fleet_name = fleet->PublicName(client_empire_id);
-        if (!fleet->Unowned() && fleet_name == UserString("FW_FOREIGN_FLEET")) {
+        std::string public_fleet_name = fleet->PublicName(client_empire_id);
+        if (!fleet->Unowned() && public_fleet_name == UserString("FW_FOREIGN_FLEET")) {
             const Empire* ship_owner_empire = GetEmpire(fleet->Owner());
             const std::string& owner_name = (ship_owner_empire ? ship_owner_empire->Name() : UserString("FW_FOREIGN"));
             std::string fleet_name = boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEET")) % owner_name);
@@ -1383,9 +1383,9 @@ void FleetDataPanel::Refresh() {
             m_fleet_name_text->SetText(fleet_name);
         } else {
             if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
-                fleet_name = fleet_name + " (" + std::to_string(m_fleet_id) + ")";
+                public_fleet_name = public_fleet_name + " (" + std::to_string(m_fleet_id) + ")";
             }
-            m_fleet_name_text->SetText(fleet_name);
+            m_fleet_name_text->SetText(public_fleet_name);
         }
         m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id));
 
@@ -2006,17 +2006,17 @@ protected:
             return;
 
         // extract drop target fleet from row under drop point
-        const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(row->get());
+        const FleetRow* target_fleet_row = boost::polymorphic_downcast<const FleetRow*>(row->get());
         std::shared_ptr<const Fleet> target_fleet;
-        if (fleet_row)
-            target_fleet = GetFleet(fleet_row->FleetID());
+        if (target_fleet_row)
+            target_fleet = GetFleet(target_fleet_row->FleetID());
 
         // loop through dropped Wnds, checking if each is a valid ship or fleet.  this doesn't
         // consider whether there is a mixture of fleets and ships, as each row is considered
         // independently.  actual drops will probably only accept one or the other, not a mixture
         // of fleets and ships being dropped simultaneously.
         for (DropsAcceptableIter it = first; it != last; ++it) {
-            if (it->first == fleet_row)
+            if (it->first == target_fleet_row)
                 continue;   // can't drop onto self
 
             // for either of fleet or ship being dropped, check if merge or transfer is valid.
@@ -2547,9 +2547,9 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
         auto unscrap_action = [ship]() {
             // find order to scrap this ship, and recind it
             auto pending_scrap_orders = PendingScrapOrders();
-            auto it = pending_scrap_orders.find(ship->ID());
-            if (it != pending_scrap_orders.end())
-                HumanClientApp::GetApp()->Orders().RescindOrder(it->second);
+            auto pending_order_it = pending_scrap_orders.find(ship->ID());
+            if (pending_order_it != pending_scrap_orders.end())
+                HumanClientApp::GetApp()->Orders().RescindOrder(pending_order_it->second);
         };
         // create popup menu with "Cancel Scrap" option
         popup->AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_SHIP_SCRAP"), false, false, unscrap_action));
@@ -3320,8 +3320,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         auto split_action = [this, &ship_ids_set]() {
             ScopedTimer split_fleet_timer("FleetWnd::SplitFleet", true);
             // remove first ship from set, so it stays in its existing fleet
-            auto it = ship_ids_set.begin();
-            ship_ids_set.erase(it);
+            auto ship_id_it = ship_ids_set.begin();
+            ship_ids_set.erase(ship_id_it);
 
             // assemble container of containers of ids of fleets to create.
             // one ship id per vector
@@ -3383,8 +3383,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         && fleet->OwnedBy(client_empire_id))
     {
         auto scrap_action = [fleet, client_empire_id]() {
-            std::set<int> ship_ids_set = fleet->ShipIDs();
-            for (int ship_id : ship_ids_set) {
+            std::set<int> ship_ids = fleet->ShipIDs();
+            for (int ship_id : ship_ids) {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
                     std::make_shared<ScrapOrder>(client_empire_id, ship_id));
             }

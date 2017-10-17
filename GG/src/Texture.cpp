@@ -441,9 +441,9 @@ void Texture::InitFromRawData(X width, Y height, const unsigned char* image, GLe
             image_copy.reset(GetRawBytes());
         unsigned char* image_to_use = image_copy ? image_copy.get() : const_cast<unsigned char*>(image);
         gluBuild2DMipmaps(GL_PROXY_TEXTURE_2D, format, Value(GL_texture_width), Value(GL_texture_height), format, type, image_to_use);
-        GLint checked_format;
-        glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &checked_format);
-        if (!checked_format)
+        GLint mipmap_checked_format;
+        glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &mipmap_checked_format);
+        if (!mipmap_checked_format)
             throw InsufficientResources("Insufficient resources to create requested mipmapped OpenGL texture");
         gluBuild2DMipmaps(GL_TEXTURE_2D, format, Value(GL_texture_width), Value(GL_texture_height), format, type, image_to_use);
     } else {

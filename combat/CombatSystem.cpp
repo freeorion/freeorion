@@ -811,12 +811,12 @@ namespace {
         CombatInfo&                     combat_info;                // a reference to the combat info
         int                             next_fighter_id;
 
-        AutoresolveInfo(CombatInfo& combat_info) :
+        AutoresolveInfo(CombatInfo& combat_info_) :
             valid_target_object_ids(),
             valid_attacker_object_ids(),
             empire_infos(),
             monster_detection(0.0f),
-            combat_info(combat_info),
+            combat_info(combat_info_),
             next_fighter_id(-10001) // give fighters negative ids so as to avoid clashes with any positiv-id of persistent UniverseObjects
         {
             monster_detection = GetMonsterDetection(combat_info);
@@ -1038,18 +1038,18 @@ namespace {
         }
 
         /**Report for each empire the stealth objects in the combat. */
-        InitialStealthEvent::StealthInvisbleMap ReportInvisibleObjects(const CombatInfo& combat_info) const {
+        InitialStealthEvent::StealthInvisbleMap ReportInvisibleObjects(const CombatInfo& combat_info_) const {
             DebugLogger(combat) << "Reporting Invisible Objects";
             InitialStealthEvent::StealthInvisbleMap report;
             for (int object_id : valid_target_object_ids) {
-                auto obj = combat_info.objects.Object(object_id);
+                auto obj = combat_info_.objects.Object(object_id);
 
                 // for all empires, can they attack this object?
-                for (int attacking_empire_id : combat_info.empire_ids) {
+                for (int attacking_empire_id : combat_info_.empire_ids) {
                     Visibility visibility = VIS_NO_VISIBILITY;
                     DebugLogger(combat) << "Target " << obj->Name() << " by empire = "<< attacking_empire_id;
-                    auto target_visible_it = combat_info.empire_object_visibility.find(obj->Owner());
-                    if (target_visible_it != combat_info.empire_object_visibility.end()) {
+                    auto target_visible_it = combat_info_.empire_object_visibility.find(obj->Owner());
+                    if (target_visible_it != combat_info_.empire_object_visibility.end()) {
                         auto target_attacker_visibility_it = target_visible_it->second.find(obj->ID());
                         if (target_attacker_visibility_it != target_visible_it->second.end()) {
                             visibility = target_attacker_visibility_it->second;
@@ -1083,9 +1083,9 @@ namespace {
         typedef std::set<int>::const_iterator const_id_iterator;
 
         // Populate lists of things that can attack and be attacked. List attackers also by empire.
-        void PopulateAttackersAndTargets(const CombatInfo& combat_info) {
-            for (auto it = combat_info.objects.const_begin();
-                 it != combat_info.objects.const_end(); ++it)
+        void PopulateAttackersAndTargets(const CombatInfo& combat_info_) {
+            for (auto it = combat_info_.objects.const_begin();
+                 it != combat_info_.objects.const_end(); ++it)
             {
                 auto obj = *it;
                 bool can_attack{ObjectCanAttack(obj)};
@@ -1106,10 +1106,10 @@ namespace {
 
         // Get a map from empire to set of IDs of objects that empire's objects
         // could potentially target.
-        void PopulateEmpireTargets(const CombatInfo& combat_info) {
+        void PopulateEmpireTargets(const CombatInfo& combat_info_) {
             for (int object_id : valid_target_object_ids) {
-                auto obj = combat_info.objects.Object(object_id);
-                for (int attacking_empire_id : combat_info.empire_ids) {
+                auto obj = combat_info_.objects.Object(object_id);
+                for (int attacking_empire_id : combat_info_.empire_ids) {
                     if (attacking_empire_id == ALL_EMPIRES) {
                         if (ObjectAttackableByMonsters(obj, monster_detection))
                             empire_infos[ALL_EMPIRES].target_ids.insert(object_id);
@@ -1118,12 +1118,12 @@ namespace {
                     }
                 }
 
-                DebugLogger(combat) << ReportAttackabilityOfTarget(combat_info, obj);
+                DebugLogger(combat) << ReportAttackabilityOfTarget(combat_info_, obj);
             }
         }
 
         // Return a log report of attackability of \p obj
-        std::string ReportAttackabilityOfTarget(const CombatInfo& combat_info,
+        std::string ReportAttackabilityOfTarget(const CombatInfo& combat_info_,
                                                 const std::shared_ptr<const UniverseObject>& obj)
         {
             std::stringstream ss;
@@ -1132,7 +1132,7 @@ namespace {
                << " attackable by ";
 
             bool no_one{true};
-            for (int attacking_empire_id : combat_info.empire_ids) {
+            for (int attacking_empire_id : combat_info_.empire_ids) {
                 if (attacking_empire_id == ALL_EMPIRES) {
                     if (ObjectAttackableByMonsters(obj, monster_detection)) {
                         ss << "monsters and ";

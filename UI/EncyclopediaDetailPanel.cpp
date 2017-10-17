@@ -268,7 +268,6 @@ namespace {
             }
 
         } else if (dir_name == "ENC_HOMEWORLDS") {
-            int client_empire_id = HumanClientApp::GetApp()->EmpireID();
             const SpeciesManager& species_manager = GetSpeciesManager();
             for (const auto& entry : species_manager) {
                 const auto& species = entry.second;
@@ -2751,17 +2750,16 @@ void EncyclopediaDetailPanel::RefreshImpl() {
             m_graph->Clear();
 
             // add lines for each empire
-            for (const auto& entry : empire_lines) {
-                int empire_id = entry.first;
+            for (const auto& empire_linemap : empire_lines) {
+                int empire_id = empire_linemap.first;
 
                 GG::Clr empire_clr = GG::CLR_WHITE;
                 if (const Empire* empire = GetEmpire(empire_id))
                     empire_clr = empire->Color();
 
-                const std::map<int, double>& empire_line = entry.second;
                 // convert formats...
                 std::vector<std::pair<double, double>> line_data_pts;
-                for (const auto& entry : empire_line)
+                for (const auto& entry : empire_linemap.second)
                 { line_data_pts.push_back({entry.first, entry.second}); }
 
                 m_graph->AddSeries(line_data_pts, empire_clr);

@@ -135,20 +135,20 @@ namespace {
         auto first = property_name.begin();
         auto last = property_name.end();
         while (first != last) {
-            std::string property_name = *first;
-            retval += " " + property_name + " ";
-            if (property_name == "Planet") {
+            std::string property_name_part = *first;
+            retval += " " + property_name_part + " ";
+            if (property_name_part == "Planet") {
                 if (auto b = std::dynamic_pointer_cast<const Building>(obj)) {
                     retval += "(" + std::to_string(b->PlanetID()) + "): ";
                     obj = GetPlanet(b->PlanetID());
                 } else
                     obj = nullptr;
-            } else if (property_name == "System") {
+            } else if (property_name_part == "System") {
                 if (obj) {
                     retval += "(" + std::to_string(obj->SystemID()) + "): ";
                     obj = GetSystem(obj->SystemID());
                 }
-            } else if (property_name == "Fleet") {
+            } else if (property_name_part == "Fleet") {
                 if (auto s = std::dynamic_pointer_cast<const Ship>(obj))  {
                     retval += "(" + std::to_string(s->FleetID()) + "): ";
                     obj = GetFleet(s->FleetID());
@@ -932,8 +932,8 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
     }
     else if (property_name == "LastTurnBattleHere") {
-        if (auto system = std::dynamic_pointer_cast<const System>(object))
-            return system->LastTurnBattleHere();
+        if (auto const_system = std::dynamic_pointer_cast<const System>(object))
+            return const_system->LastTurnBattleHere();
         else if (auto system = GetSystem(object->SystemID()))
             return system->LastTurnBattleHere();
         else

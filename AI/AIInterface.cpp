@@ -669,8 +669,8 @@ namespace AIInterface {
         // can only give to empires with something present to receive the gift
         bool recipient_has_something_here = false;
         auto system_objects = Objects().FindObjects<const UniverseObject>(system->ObjectIDs());
-        for (auto& obj : system_objects) {
-            if (obj->Owner() == recipient_id) {
+        for (auto& system_object : system_objects) {
+            if (system_object->Owner() == recipient_id) {
                 recipient_has_something_here = true;
                 break;
             }

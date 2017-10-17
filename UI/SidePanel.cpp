@@ -696,11 +696,11 @@ public:
         const std::string texture_filename;
         const auto& planet_data = GetRotatingPlanetData();
 
-        auto it = planet_data.find(planet->Type());
+        auto planet_data_it = planet_data.find(planet->Type());
         int num_planets_of_type;
-        if (it != planet_data.end() && (num_planets_of_type = planet_data.find(planet->Type())->second.size())) {
+        if (planet_data_it != planet_data.end() && (num_planets_of_type = planet_data.find(planet->Type())->second.size())) {
             unsigned int hash_value = static_cast<int>(m_planet_id);
-            const RotatingPlanetData& rpd = it->second[hash_value % num_planets_of_type];
+            const RotatingPlanetData& rpd = planet_data_it->second[hash_value % num_planets_of_type];
             m_surface_texture = ClientUI::GetTexture(ClientUI::ArtDir() / rpd.filename, true);
             m_shininess = rpd.shininess;
 
@@ -3033,8 +3033,8 @@ void SidePanel::RefreshInPreRender() {
 }
 
 void SidePanel::RefreshSystemNames() {
-    auto system = GetSystem(s_system_id);
-    if (!system)
+    auto selected_system = GetSystem(s_system_id);
+    if (!selected_system)
         return;
 
     // Repopulate the system with all of the names of known systems, if it is closed.

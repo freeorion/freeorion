@@ -30,10 +30,10 @@
 
 namespace GG {
 
-    RichTextTag::RichTextTag(const std::string& tag,
+    RichTextTag::RichTextTag(const std::string& tag_,
                              const std::string& params_string,
-                             const std::string& content)
-    : tag(tag), tag_params(params_string), content(content)
+                             const std::string& content_)
+    : tag(tag_), tag_params(params_string), content(content_)
     {
     }
 

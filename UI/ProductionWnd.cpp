@@ -106,15 +106,15 @@ namespace {
 
         /** \name Structors */
         QuantitySelector(const ProductionQueue::Element &build, GG::X xoffset, GG::Y yoffset,
-                         GG::Y h, bool inProgress, GG::X nwidth, bool amBlockType) :
+                         GG::Y h_, bool inProgress, GG::X nwidth, bool amBlockType_) :
             CUIDropDownList(12),
             quantity(build.remaining),
             prevQuant(build.remaining),
             blocksize(build.blocksize),
             prevBlocksize(build.blocksize),
-            amBlockType(amBlockType),
+            amBlockType(amBlockType_),
             amOn(false),
-            h(h)
+            h(h_)
         {
             MoveTo(GG::Pt(xoffset, yoffset));
             Resize(GG::Pt(nwidth, h - GG::Y(2)));
@@ -135,15 +135,15 @@ namespace {
             else
                 myQuantSet.insert(quantity);
 
-            for (int quantity : myQuantSet) {
-                auto row =  GG::Wnd::Create<QuantRow>(quantity, build.item.design_id, nwidth, h, inProgress, amBlockType);
+            for (int droplist_quantity : myQuantSet) {
+                auto row =  GG::Wnd::Create<QuantRow>(droplist_quantity, build.item.design_id, nwidth, h, inProgress, amBlockType);
                 GG::DropDownList::iterator latest_it = Insert(row);
 
                 if (amBlockType) {
-                    if (build.blocksize == quantity)
+                    if (build.blocksize == droplist_quantity)
                         Select(latest_it);
                 } else {
-                    if (build.remaining == quantity)
+                    if (build.remaining == droplist_quantity)
                         Select(latest_it);
                 }
             }
@@ -331,12 +331,12 @@ namespace {
     const GG::Y Y_MARGIN = GG::Y(MARGIN);
 
     struct QueueRow : GG::ListBox::Row {
-        QueueRow(GG::X w, const ProductionQueue::Element& elem, int queue_index_) :
+        QueueRow(GG::X w, const ProductionQueue::Element& elem_, int queue_index_) :
             GG::ListBox::Row(w, QueueProductionItemPanel::DefaultHeight(),
                              BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE),
             panel(nullptr),
             queue_index(queue_index_),
-            elem(elem)
+            elem(elem_)
         {
             const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
             float total_cost(1.0f);

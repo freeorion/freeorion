@@ -252,8 +252,8 @@ void NewFleetOrder::ExecuteImpl() const {
         if (!modified_fleet->Empty())
             modified_fleet->StateChangedSignal();
         else {
-            if (auto system = GetSystem(modified_fleet->SystemID()))
-                system->Remove(modified_fleet->ID());
+            if (auto modified_fleet_system = GetSystem(modified_fleet->SystemID()))
+                modified_fleet_system->Remove(modified_fleet->ID());
 
             GetUniverse().Destroy(modified_fleet->ID());
         }

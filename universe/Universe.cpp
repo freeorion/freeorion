@@ -238,8 +238,8 @@ std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id/* = ALL_EMPIRES*/) 
     // if an empire has visibility of it
     for (auto obj_it = m_objects.const_begin(); obj_it != m_objects.const_end(); ++obj_it) {
         int id = obj_it->ID();
-        for (int empire_id : empire_ids) {
-            Visibility vis = GetObjectVisibilityByEmpire(id, empire_id);
+        for (int detector_empire_id : empire_ids) {
+            Visibility vis = GetObjectVisibilityByEmpire(id, detector_empire_id);
             if (vis >= VIS_BASIC_VISIBILITY) {
                 retval.insert(id);
                 break;
@@ -1597,10 +1597,6 @@ namespace {
     static const std::string EMPTY_STRING;
 
     const std::string& GetSpeciesFromObject(std::shared_ptr<const UniverseObject> obj) {
-        std::shared_ptr<const Fleet> obj_fleet;
-        std::shared_ptr<const Ship> obj_ship;
-        std::shared_ptr<const Building> obj_building;
-
         switch (obj->ObjectType()) {
         case OBJ_PLANET: {
             auto obj_planet = std::static_pointer_cast<const Planet>(obj);
@@ -1900,9 +1896,8 @@ namespace {
             // being detectable by an empire requires the object to have
             // low enough stealth (0 or below the empire's detection strength)
             for (const auto& empire_entry : empire_detection_strengths) {
-                int empire_id = empire_entry.first;
-                if (object_stealth <= empire_entry.second || object_stealth == 0.0f || obj->OwnedBy(empire_id))
-                    retval[empire_id][object_pos].push_back(object_id);
+                if (object_stealth <= empire_entry.second || object_stealth == 0.0f || obj->OwnedBy(empire_entry.first))
+                    retval[empire_entry.first][object_pos].push_back(object_id);
             }
         }
         return retval;
@@ -2726,8 +2721,8 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
         Destroy(object_id);
         retval.insert(object_id);
 
-    } else if (auto fleet = std::dynamic_pointer_cast<Fleet>(obj)) {
-        for (int ship_id : fleet->ShipIDs()) {
+    } else if (auto obj_fleet = std::dynamic_pointer_cast<Fleet>(obj)) {
+        for (int ship_id : obj_fleet->ShipIDs()) {
             if (system)
                 system->Remove(ship_id);
             Destroy(ship_id);
@@ -2738,8 +2733,8 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
         Destroy(object_id);
         retval.insert(object_id);
 
-    } else if (auto planet = std::dynamic_pointer_cast<Planet>(obj)) {
-        for (int building_id : planet->BuildingIDs()) {
+    } else if (auto obj_planet = std::dynamic_pointer_cast<Planet>(obj)) {
+        for (int building_id : obj_planet->BuildingIDs()) {
             if (system)
                 system->Remove(building_id);
             Destroy(building_id);

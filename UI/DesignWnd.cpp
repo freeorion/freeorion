@@ -3982,9 +3982,9 @@ void DesignWnd::MainPanel::DoLayout() {
     GG::Rect background_rect = GG::Rect(ul, ClientLowerRight());
 
     if (m_background_image) {
-        GG::Pt ul = background_rect.UpperLeft();
-        GG::Pt lr = ClientSize();
-        m_background_image->SizeMove(ul, lr);
+        GG::Pt bg_ul = background_rect.UpperLeft();
+        GG::Pt bg_lr = ClientSize();
+        m_background_image->SizeMove(bg_ul, bg_lr);
         background_rect = m_background_image->RenderedArea();
     }
 
@@ -4254,17 +4254,17 @@ void DesignWnd::MainPanel::AcceptDrops(const GG::Pt& pt, std::vector<std::shared
     if (!wnd)
         return;
 
-    if (const auto control = dynamic_cast<const BasesListBox::CompletedDesignListBoxRow*>(wnd.get())) {
-        SetDesign(GetShipDesign(control->DesignID()));
+    if (const auto completed_design_row = dynamic_cast<const BasesListBox::CompletedDesignListBoxRow*>(wnd.get())) {
+        SetDesign(GetShipDesign(completed_design_row->DesignID()));
     }
-    else if (const auto control = dynamic_cast<const BasesListBox::HullAndPartsListBoxRow*>(wnd.get())) {
-        const std::string& hull = control->Hull();
-        const std::vector<std::string>& parts = control->Parts();
+    else if (const auto hullandparts_row = dynamic_cast<const BasesListBox::HullAndPartsListBoxRow*>(wnd.get())) {
+        const std::string& hull = hullandparts_row->Hull();
+        const std::vector<std::string>& parts = hullandparts_row->Parts();
 
         SetDesignComponents(hull, parts);
     }
-    else if (const auto control = dynamic_cast<const SavedDesignsListBox::SavedDesignListBoxRow*>(wnd.get())) {
-        const auto& uuid = control->DesignUUID();
+    else if (const auto saved_design_row = dynamic_cast<const SavedDesignsListBox::SavedDesignListBoxRow*>(wnd.get())) {
+        const auto& uuid = saved_design_row->DesignUUID();
         SetDesign(GetSavedDesignsManager().GetDesign(uuid));
     }
 }
@@ -4348,10 +4348,10 @@ void DesignWnd::MainPanel::ReplaceDesign() {
         // Update the replaced design on the bench
         SetDesign(manager.GetDesign(new_uuid));
 
-    } else if (const auto replaced_design = EditingCurrentDesign()) {
+    } else if (const auto current_maybe_design = EditingCurrentDesign()) {
         auto& manager = GetCurrentDesignsManager();
         int empire_id = HumanClientApp::GetApp()->EmpireID();
-        int replaced_id = (*replaced_design)->ID();
+        int replaced_id = (*current_maybe_design)->ID();
 
         if (new_design_id == INVALID_DESIGN_ID) return;
 

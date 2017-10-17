@@ -641,21 +641,21 @@ private:
         bool GetValue() const
         { return (**sizer).Get(option_key); }
 
-        ToggleData(const std::string& label_true, const std::string& label_false,
-                   const std::string& tip_true, const std::string& tip_false,
-                   std::string option_key,
-                   std::unique_ptr<BarSizer>* sizer, std::shared_ptr<OptionsBar> parent) :
-            label_true(label_true),
-            label_false(label_false),
-            tip_true(tip_true),
-            tip_false(tip_false),
-            option_key(option_key),
-            sizer(sizer),
-            parent(std::forward<std::shared_ptr<OptionsBar>>(parent)),
+        ToggleData(const std::string& label_true_, const std::string& label_false_,
+                   const std::string& tip_true_, const std::string& tip_false_,
+                   std::string option_key_,
+                   std::unique_ptr<BarSizer>* sizer_, std::shared_ptr<OptionsBar> parent_) :
+            label_true(label_true_),
+            label_false(label_false_),
+            tip_true(tip_true_),
+            tip_false(tip_false_),
+            option_key(option_key_),
+            sizer(sizer_),
+            parent(std::forward<std::shared_ptr<OptionsBar>>(parent_)),
             button(nullptr)
         {
             button = Wnd::Create<CUIButton>("-");
-            parent->AttachChild(button);
+            parent_->AttachChild(button);
             button->LeftClickedSignal.connect(
                 boost::bind(&ToggleData::Toggle, this));
             SetValue(GetValue());

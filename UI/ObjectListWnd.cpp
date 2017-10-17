@@ -736,10 +736,10 @@ private:
         DetachChildAndReset(m_param_spin2);
 
         // determine which condition is selected
-        GG::ListBox::iterator row_it = m_class_drop->CurrentItem();
-        if (row_it == m_class_drop->end())
+        auto class_row_it = m_class_drop->CurrentItem();
+        if (class_row_it == m_class_drop->end())
             return;
-        ConditionRow* condition_row = dynamic_cast<ConditionRow*>(row_it->get());
+        ConditionRow* condition_row = dynamic_cast<ConditionRow*>(class_row_it->get());
         if (!condition_row)
             return;
         const std::string& condition_key = condition_row->GetKey();
@@ -1043,7 +1043,7 @@ void FilterDialog::CompleteConstruction() {
     GG::X button_width = GG::X(ClientUI::Pts()*8);
     std::shared_ptr<GG::Button> label;
 
-    int row = 1;
+    int vis_row = 1;
 
     for (const auto entry : {
             std::make_tuple(SHOW_VISIBLE, UserStringNop("VISIBLE")),
@@ -1056,11 +1056,11 @@ void FilterDialog::CompleteConstruction() {
 
         label = Wnd::Create<CUIButton>(UserString(label_key));
         label->Resize(GG::Pt(button_width, label->MinUsableSize().y));
-        m_filters_layout->Add(label, row, 0, GG::ALIGN_CENTER);
+        m_filters_layout->Add(label, vis_row, 0, GG::ALIGN_CENTER);
         label->LeftClickedSignal.connect(
             boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, visibility));
 
-        ++row;
+        ++vis_row;
     }
 
     m_filters_layout->SetMinimumRowHeight(0, label->MinUsableSize().y);
@@ -2526,13 +2526,13 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             popup->AddMenuItem(std::move(focusMenuItem));
 
         GG::MenuItem ship_menu_item(UserString("MENUITEM_ENQUEUE_SHIPDESIGN"), false, false);
-        for (auto it = avail_designs.begin();
-             it != avail_designs.end() && ship_menuitem_id < MENUITEM_SET_BUILDING_BASE; ++it)
+        for (auto design_it = avail_designs.begin();
+             design_it != avail_designs.end() && ship_menuitem_id < MENUITEM_SET_BUILDING_BASE; ++design_it)
         {
             ship_menuitem_id++;
 
-            auto produce_ship_action = [this, it, app, cur_empire, &focus_ship_building_common_action]() {
-                int ship_design = it->first;
+            auto produce_ship_action = [this, design_it, app, cur_empire, &focus_ship_building_common_action]() {
+                int ship_design = design_it->first;
                 bool needs_queue_update(false);
                 for (const auto& entry : m_list_box->Selections()) {
                     ObjectRow* row = dynamic_cast<ObjectRow*>(entry->get());
@@ -2553,7 +2553,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             };
 
             std::stringstream out;
-            out << GetShipDesign(it->first)->Name() << " (" << it->second << ")";
+            out << GetShipDesign(design_it->first)->Name() << " (" << design_it->second << ")";
             ship_menu_item.next_level.push_back(GG::MenuItem(out.str(), false, false, produce_ship_action));
         }
 
@@ -2567,8 +2567,8 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             auto produce_building_action = [this, entry, app, cur_empire, &focus_ship_building_common_action]() {
                 std::string bld = entry.first;
                 bool needs_queue_update(false);
-                for (const auto& entry : m_list_box->Selections()) {
-                    ObjectRow *row = dynamic_cast<ObjectRow *>(entry->get());
+                for (const auto& selection : m_list_box->Selections()) {
+                    ObjectRow *row = dynamic_cast<ObjectRow *>(selection->get());
                     if (!row)
                         continue;
                     std::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());

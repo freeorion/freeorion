@@ -390,7 +390,6 @@ namespace {
         typedef std::pair<double, double> VectTypeQQ;
         typedef std::pair<VectTypeQQ, double> VectAndMagTypeQQ;
 
-        std::map<int, VectAndMagTypeQQ> laneVectsMap;  // componenets of vectors of lanes of current system, indexed by destination system number
         std::set<std::pair<int, int>> lanesToRemoveSet;  // start and end stars of lanes to be removed in final step...
 
         // make sure data is consistent
@@ -415,6 +414,7 @@ namespace {
             auto startY = entry.second->Y();
             auto cur_sys_id = entry.first;
 
+            /** componenets of vectors of lanes of current system, indexed by destination system number */
             std::map<int, VectAndMagTypeQQ> laneVectsMap;
 
             // get unit vectors for all lanes of this system

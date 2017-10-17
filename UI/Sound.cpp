@@ -392,7 +392,7 @@ void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops /* = 
     ALenum m_openal_error;
     std::string filename = PathToString(path);
     FILE* m_f = nullptr;
-    vorbis_info* vorbis_info;
+    vorbis_info* vorbis_info_ptr;
     m_music_loops = 0;
 
 #ifdef FREEORION_WIN32
@@ -424,12 +424,12 @@ void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops /* = 
             {
                 ov_test_open(&m_ogg_file); // it is, now fully open the file
                 /* now we need to take some info we will need later */
-                vorbis_info = ov_info(&m_ogg_file, -1);
-                if (vorbis_info->channels == 1)
+                vorbis_info_ptr = ov_info(&m_ogg_file, -1);
+                if (vorbis_info_ptr->channels == 1)
                     m_ogg_format = AL_FORMAT_MONO16;
                 else
                     m_ogg_format = AL_FORMAT_STEREO16;
-                m_ogg_freq = vorbis_info->rate;
+                m_ogg_freq = vorbis_info_ptr->rate;
                 m_music_loops = loops;
                 /* fill up the buffers and queue them up for the first time */
                 if (!RefillBuffer(&m_ogg_file, m_ogg_format, m_ogg_freq, m_music_buffers[0], BUFFER_SIZE, m_music_loops))
@@ -535,7 +535,7 @@ void Sound::Impl::PlaySound(const boost::filesystem::path& path, bool is_ui_soun
         } else {
             if ((file = fopen(filename.c_str(), "rb")) != nullptr) { // make sure we CAN open it
                 OggVorbis_File ogg_file;
-                vorbis_info *vorbis_info;
+                vorbis_info * vorbis_info_ptr;
                 ALenum ogg_format;
 #ifdef FREEORION_WIN32
                 if (!(ov_test_callbacks(file, &ogg_file, nullptr, 0, callbacks))) // check if it's a proper ogg
@@ -545,13 +545,13 @@ void Sound::Impl::PlaySound(const boost::filesystem::path& path, bool is_ui_soun
                 {
                     ov_test_open(&ogg_file); // it is, now fully open the file
                     /* now we need to take some info we will need later */
-                    vorbis_info = ov_info(&ogg_file, -1);
-                    if (vorbis_info->channels == 1)
+                    vorbis_info_ptr = ov_info(&ogg_file, -1);
+                    if (vorbis_info_ptr->channels == 1)
                         ogg_format = AL_FORMAT_MONO16;
                     else
                         ogg_format = AL_FORMAT_STEREO16;
-                    ogg_freq = vorbis_info->rate;
-                    ogg_int64_t byte_size = ov_pcm_total(&ogg_file, -1) * vorbis_info->channels * 2;
+                    ogg_freq = vorbis_info_ptr->rate;
+                    ogg_int64_t byte_size = ov_pcm_total(&ogg_file, -1) * vorbis_info_ptr->channels * 2;
                     if (byte_size <= 1024 * 1024 * 1024) {
                         /* fill up the buffers and queue them up for the first time */
                         ALuint sound_handle;

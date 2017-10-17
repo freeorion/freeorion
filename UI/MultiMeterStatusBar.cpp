@@ -162,8 +162,6 @@ void MultiMeterStatusBar::Render() {
         const GG::Y INITIAL_TOP(BAR_TOP);
         if (SHOW_INITIAL) {
             // initial value
-            const GG::X INITIAL_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_initial_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE);
-            const GG::Y INITIAL_TOP(BAR_TOP);
             glColor(m_bar_colours[i]);
             m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, INITIAL_TOP), GG::Pt(INITIAL_RIGHT, BAR_BOTTOM));
             // black border

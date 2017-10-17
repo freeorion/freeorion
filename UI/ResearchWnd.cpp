@@ -277,8 +277,6 @@ namespace {
     }
 
     GG::Y QueueTechPanel::DefaultHeight() {
-        const int MARGIN = 2;
-
         const int FONT_PTS = ClientUI::Pts();
         const GG::Y METER_HEIGHT(FONT_PTS);
 
