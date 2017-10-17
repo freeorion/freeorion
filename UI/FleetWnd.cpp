@@ -1130,7 +1130,7 @@ private:
     std::shared_ptr<GG::Label>          m_fleet_name_text = nullptr;
     std::shared_ptr<GG::Label>          m_fleet_destination_text = nullptr;
     std::shared_ptr<GG::Button>         m_aggression_toggle = nullptr;
-    std::shared_ptr<GG::StaticGraphic>  m_gift_indicator = nullptr;
+    std::shared_ptr<GG::StaticGraphic>  m_fleet_icon_overlay = nullptr;
     std::shared_ptr<ScanlineControl>    m_scanline_control = nullptr;
 
     std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>>   m_stat_icons;   // statistic icons and associated meter types
@@ -1424,7 +1424,7 @@ void FleetDataPanel::Refresh() {
 
     DetachChildAndReset(m_fleet_icon);
     DetachChildAndReset(m_scanline_control);
-    DetachChildAndReset(m_gift_indicator);
+    DetachChildAndReset(m_fleet_icon_overlay);
 
     if (m_is_new_fleet_drop_target) {
         m_fleet_name_text->SetText(UserString("FW_NEW_FLEET_LABEL"));
@@ -1475,10 +1475,46 @@ void FleetDataPanel::Refresh() {
         else if (fleet->Unowned() && fleet->HasMonsters())
             m_fleet_icon->SetColor(GG::CLR_RED);
 
-        if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES) {
-            std::shared_ptr<GG::Texture> gift_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "gifting.png", true);
-            m_gift_indicator = GG::Wnd::Create<GG::StaticGraphic>(gift_texture, DataPanelIconStyle());
-            AttachChild(m_gift_indicator);
+        auto all_ships = [fleet](const std::function<bool(const std::shared_ptr<const Ship>&)>& pred) {
+            // Searching for each Ship one at a time is faster than
+            // FindObjects(ship_ids), because an early exit avoids searching the
+            // remaining ids.
+            return std::all_of(
+                fleet->ShipIDs().begin(), fleet->ShipIDs().end(),
+                [&pred](const int ship_id) {
+                    const auto& ship = Objects().Object<const Ship>(ship_id);
+                    if (!ship) {
+                        WarnLogger() << "Object map is missing ship with expected id " << ship_id;
+                        return false;
+                    }
+                    return pred(ship);
+                });
+        };
+
+        // Add overlays for all ships colonizing, invading etc.
+        std::shared_ptr<GG::Texture> overlay_texture;
+        if (all_ships([](const std::shared_ptr<const Ship>& ship) { return ship->OrderedScrapped(); })) {
+            overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
+        } else if (all_ships([](const std::shared_ptr<const Ship>& ship) {
+                    return ship->OrderedColonizePlanet() != INVALID_OBJECT_ID; }))
+        {
+            overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "colonizing.png", true);
+        } else if (all_ships([](const std::shared_ptr<const Ship>& ship) {
+                    return ship->OrderedInvadePlanet() != INVALID_OBJECT_ID; }))
+        {
+            overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "invading.png", true);
+        } else if (all_ships([](const std::shared_ptr<const Ship>& ship) {
+                    return ship->OrderedBombardPlanet() != INVALID_OBJECT_ID; }))
+        {
+            overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "bombarding.png", true);
+        } else if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES) {
+            overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "gifting.png", true);
+        }
+
+        if (overlay_texture) {
+            m_fleet_icon_overlay = GG::Wnd::Create<GG::StaticGraphic>(overlay_texture, DataPanelIconStyle());
+            m_fleet_icon_overlay->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+            AttachChild(m_fleet_icon_overlay);
         }
 
         if ((fleet->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
@@ -1660,8 +1696,8 @@ void FleetDataPanel::DoLayout() {
     }
     if (m_scanline_control)
         m_scanline_control->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-    if (m_gift_indicator)
-        m_gift_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+    if (m_fleet_icon_overlay)
+        m_fleet_icon_overlay->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
 
     // position fleet name and destination texts
     const GG::Pt name_ul = GG::Pt(DataPanelIconSpace().x + DATA_PANEL_TEXT_PAD, GG::Y0);
