@@ -1751,8 +1751,11 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
                 system->Remove(object_id);
             else if (auto planet = std::dynamic_pointer_cast<Planet>(container))
                 planet->RemoveBuilding(object_id);
-            else if (auto fleet = std::dynamic_pointer_cast<Fleet>(container))
+            else if (auto fleet = std::dynamic_pointer_cast<Fleet>(container)) {
                 fleet->RemoveShip(object_id);
+                if (fleet->Empty())
+                    objects.Remove(fleet->ID());
+            }
         }
     }
 
