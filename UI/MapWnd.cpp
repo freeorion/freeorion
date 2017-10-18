@@ -559,7 +559,9 @@ public:
         glColor(GG::CLR_WHITE);
         glLineWidth(2.0);
 
+        glPushAttrib(GL_ENABLE_BIT | GL_LINE_WIDTH);
         glDisable(GL_TEXTURE_2D);
+
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_COLOR_ARRAY);
@@ -569,10 +571,7 @@ public:
         glDrawArrays(GL_LINES, 0, verts.size());
 
         glPopClientAttrib();
-
-        glEnable(GL_TEXTURE_2D);
-
-        glLineWidth(1.0);
+        glPopAttrib();
     }
 
     GG::X GetLength() const

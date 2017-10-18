@@ -603,7 +603,7 @@ namespace GG {
     void BeginScissorClipping(Pt ul, Pt lr)
     {
         if (g_scissor_clipping_rects.empty()) {
-            glPushAttrib(GL_SCISSOR_BIT);
+            glPushAttrib(GL_SCISSOR_BIT | GL_ENABLE_BIT);
             glEnable(GL_SCISSOR_TEST);
             if (g_stencil_bit)
                 glDisable(GL_STENCIL_TEST);
@@ -624,9 +624,9 @@ namespace GG {
         assert(!g_scissor_clipping_rects.empty());
         g_scissor_clipping_rects.pop_back();
         if (g_scissor_clipping_rects.empty()) {
-            glPopAttrib();
             if (g_stencil_bit)
                 glEnable(GL_STENCIL_TEST);
+            glPopAttrib();
         } else {
             const Rect& r = g_scissor_clipping_rects.back();
             glScissor(Value(r.Left()), Value(GUI::GetGUI()->AppHeight() - r.Bottom()),
@@ -637,7 +637,7 @@ namespace GG {
     void BeginStencilClipping(Pt inner_ul, Pt inner_lr, Pt outer_ul, Pt outer_lr)
     {
         if (!g_stencil_bit) {
-            glPushAttrib(GL_STENCIL_BUFFER_BIT);
+            glPushAttrib(GL_STENCIL_BUFFER_BIT | GL_ENABLE_BIT);
             glClearStencil(0);
             glClear(GL_STENCIL_BUFFER_BIT);
             glEnable(GL_STENCIL_TEST);
@@ -697,9 +697,9 @@ namespace GG {
         assert(g_stencil_bit);
         --g_stencil_bit;
         if (!g_stencil_bit) {
-            glPopAttrib();
             if (!g_scissor_clipping_rects.empty())
                 glEnable(GL_SCISSOR_TEST);
+            glPopAttrib();
         }
     }
 
@@ -781,11 +781,17 @@ namespace GG {
         glEnable(GL_TEXTURE_2D);
     }
 
-    void FlatRectangle(Pt ul, Pt lr, Clr color, Clr border_color, unsigned int border_thick/* = 2*/)
-    { Rectangle(ul, lr, color, border_color, border_color, border_thick, true, true, true, true); }
+    void FlatRectangle(Pt ul, Pt lr, Clr color, Clr border_color,
+                       unsigned int border_thick/* = 2*/)
+    {
+        Rectangle(ul, lr, color, border_color, border_color, border_thick,
+                  true, true, true, true);
+    }
 
-    void BeveledRectangle(Pt ul, Pt lr, Clr color, Clr border_color, bool up, unsigned int bevel_thick/* = 2*/,
-                          bool bevel_left/* = true*/, bool bevel_top/* = true*/, bool bevel_right/* = true*/, bool bevel_bottom/* = true*/)
+    void BeveledRectangle(Pt ul, Pt lr, Clr color, Clr border_color, bool up,
+                          unsigned int bevel_thick/* = 2*/, bool bevel_left/* = true*/,
+                          bool bevel_top/* = true*/, bool bevel_right/* = true*/,
+                          bool bevel_bottom/* = true*/)
     {
         Rectangle(ul, lr, color,
                   (up ? LightColor(border_color) : DarkColor(border_color)),
@@ -793,10 +799,17 @@ namespace GG {
                   bevel_thick, bevel_left, bevel_top, bevel_right, bevel_bottom);
     }
 
-    void FlatRoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color, unsigned int corner_radius/* = 5*/, unsigned int border_thick/* = 2*/)
-    { RoundedRectangle(ul, lr, color, border_color, border_color, corner_radius, border_thick); }
+    void FlatRoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color,
+                              unsigned int corner_radius/* = 5*/,
+                              unsigned int border_thick/* = 2*/)
+    {
+        RoundedRectangle(ul, lr, color, border_color, border_color,
+                         corner_radius, border_thick);
+    }
 
-    void BeveledRoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color, bool up, unsigned int corner_radius/* = 5*/, unsigned int bevel_thick/* = 2*/)
+    void BeveledRoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color, bool up,
+                                 unsigned int corner_radius/* = 5*/,
+                                 unsigned int bevel_thick/* = 2*/)
     {
         RoundedRectangle(ul, lr, color,
                          (up ? LightColor(border_color) : DarkColor(border_color)),
