@@ -1740,10 +1740,10 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
         return;
     }
 
-    for (int child_id : obj->VisibleContainedObjectIDs(empire_id)) {
-        if (std::shared_ptr<UniverseObject> child = objects.Object(child_id))
-            ForgetKnownObject(empire_id, child->ID());
-    }
+    // Remove all contain objects to avoid breaking fleet+ship, system+planet invariants
+    auto contained_ids = obj->ContainedObjectIDs();
+    for (int child_id : contained_ids)
+        ForgetKnownObject(empire_id, child_id);
 
     if (int container_id = obj->ContainerObjectID() != INVALID_OBJECT_ID) {
         if (std::shared_ptr<UniverseObject> container = objects.Object(container_id)) {
