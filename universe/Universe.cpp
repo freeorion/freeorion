@@ -1746,7 +1746,7 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
         ForgetKnownObject(empire_id, child_id);
 
     if (int container_id = obj->ContainerObjectID() != INVALID_OBJECT_ID) {
-        if (std::shared_ptr<UniverseObject> container = objects.Object(container_id)) {
+        if (auto container = objects.Object(container_id)) {
             if (auto system = std::dynamic_pointer_cast<System>(container))
                 system->Remove(object_id);
             else if (auto planet = std::dynamic_pointer_cast<Planet>(container))
