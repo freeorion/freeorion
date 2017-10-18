@@ -390,7 +390,8 @@ private:
   * (if \a exclusive == true) by an empire that has affilitation type
   * \a affilitation with Empire \a empire_id. */
 struct FO_COMMON_API EmpireAffiliation : public ConditionBase {
-    EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation) :
+    EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id,
+                      EmpireAffiliationType affiliation) :
         m_empire_id(empire_id),
         m_affiliation(affiliation)
     {}

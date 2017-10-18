@@ -324,13 +324,17 @@ void BufferStoreIsoscelesTriangle(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul
     buffer.store(x3_,   y3_);
 }
 
-bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation) {
+bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr,
+                         ShapeOrientation orientation)
+{
     double x1_, y1_, x2_, y2_, x3_, y3_;
     FindIsoscelesTriangleVertices(ul, lr, orientation, x1_, y1_, x2_, y2_, x3_, y3_);
     return InTriangle(pt, x1_, y1_, x2_, y2_, x3_, y3_);
 }
 
-void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2, bool filled_shape) {
+void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2,
+               bool filled_shape)
+{
     //std::cout << "CircleArc ul: " << ul << "  lr: " << lr << "  theta1: " << theta1 << "  theta2: " << theta2 << "  filled: " << filled_shape << std::flush << std::endl;
     GG::GL2DVertexBuffer vert_buf;
     vert_buf.reserve(50);   // max number that BufferStoreCircleArcVertices might add
@@ -354,13 +358,15 @@ void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2,
     //glEnable(GL_TEXTURE_2D);
 }
 
-void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius, bool ur_round, bool ul_round,
+void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius,
+                       bool ur_round, bool ul_round,
                        bool ll_round, bool lr_round, bool fill)
 {
     GG::GL2DVertexBuffer vert_buf;
     vert_buf.reserve(210);  // should be enough for 4 corners with 50 verts each, plus a bit extra to be safe
 
-    BufferStorePartlyRoundedRectVertices(vert_buf, ul, lr, radius, ur_round, lr_round, ll_round, lr_round);
+    BufferStorePartlyRoundedRectVertices(vert_buf, ul, lr, radius, ur_round,
+                                         lr_round, ll_round, lr_round);
 
     //glDisable(GL_TEXTURE_2D);
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
@@ -379,30 +385,36 @@ void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius, bool ur_r
     //glEnable(GL_TEXTURE_2D);
 }
 
-void BufferStorePartlyRoundedRectVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr,
-                                          int radius, bool ur_round, bool ul_round, bool ll_round, bool lr_round)
+void BufferStorePartlyRoundedRectVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul,
+                                          const GG::Pt& lr, int radius, bool ur_round,
+                                          bool ul_round, bool ll_round, bool lr_round)
 {
     const double PI = 3.141594;
 
     buffer.store(lr.x, ul.y + radius);
 
     if (ur_round)
-        BufferStoreCircleArcVertices(buffer, GG::Pt(lr.x - 2 * radius, ul.y), GG::Pt(lr.x, ul.y + 2 * radius), 0.0, PI / 2.0, false);
+        BufferStoreCircleArcVertices(buffer, GG::Pt(lr.x - 2 * radius, ul.y),
+                                     GG::Pt(lr.x, ul.y + 2 * radius), 0.0, PI / 2.0, false);
     else
         buffer.store(lr.x, ul.y);
 
     if (ul_round)
-        BufferStoreCircleArcVertices(buffer, ul, GG::Pt(ul.x + 2 * radius, ul.y + 2 * radius), PI / 2.0, PI, false);
+        BufferStoreCircleArcVertices(buffer, ul, GG::Pt(ul.x + 2 * radius, ul.y + 2 * radius),
+                                     PI / 2.0, PI, false);
     else
         buffer.store(ul.x, ul.y);
 
     if (ll_round)
-        BufferStoreCircleArcVertices(buffer, GG::Pt(ul.x, lr.y - 2 * radius), GG::Pt(ul.x + 2 * radius, lr.y), PI, 3.0 * PI / 2.0, false);
+        BufferStoreCircleArcVertices(buffer, GG::Pt(ul.x, lr.y - 2 * radius),
+                                     GG::Pt(ul.x + 2 * radius, lr.y),
+                                     PI, 3.0 * PI / 2.0, false);
     else
         buffer.store(ul.x, lr.y);
 
     if (lr_round)
-        BufferStoreCircleArcVertices(buffer, GG::Pt(lr.x - 2 * radius, lr.y - 2 * radius), lr, 3.0 * PI / 2.0, 0.0, false);
+        BufferStoreCircleArcVertices(buffer, GG::Pt(lr.x - 2 * radius, lr.y - 2 * radius),
+                                     lr, 3.0 * PI / 2.0, 0.0, false);
     else
         buffer.store(lr.x, lr.y);
 
