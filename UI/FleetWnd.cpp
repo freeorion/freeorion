@@ -627,7 +627,7 @@ namespace {
     ////////////////////////////////////////////////
     /** Shows info about a single ship. */
     class ShipDataPanel : public GG::Control {
-        public:
+    public:
         /** \name Structors */ //@{
         ShipDataPanel(GG::X w, GG::Y h, int ship_id);
         ~ShipDataPanel();
@@ -654,29 +654,30 @@ namespace {
         void RequireRefresh();
         //@}
 
-        private:
-        double          StatValue(MeterType stat_name) const;
+    private:
+        double StatValue(MeterType stat_name) const;
 
-        void            SetShipIcon();
-        void            Refresh();
-        void            DoLayout();
+        void SetShipIcon();
+        void Refresh();
+        void DoLayout();
 
-        void            Init();
+        void Init();
 
-        bool                        m_initialized  = false;;
-        bool                        m_needs_refresh = true;
+        bool m_initialized   = false;;
+        bool m_needs_refresh = true;
 
-        int                         m_ship_id;
-        std::shared_ptr<GG::StaticGraphic>          m_ship_icon;
-        std::shared_ptr<GG::StaticGraphic>          m_scrap_indicator;
-        std::shared_ptr<GG::StaticGraphic>          m_colonize_indicator;
-        std::shared_ptr<GG::StaticGraphic>          m_invade_indicator;
-        std::shared_ptr<GG::StaticGraphic>          m_bombard_indicator;
-        std::shared_ptr<ScanlineControl>            m_scanline_control;
-        std::shared_ptr<GG::Label>                  m_ship_name_text;
-        std::shared_ptr<GG::Label>                  m_design_name_text;
+        int                                m_ship_id;
+        std::shared_ptr<GG::StaticGraphic> m_ship_icon;
+        std::shared_ptr<GG::StaticGraphic> m_scrap_indicator;
+        std::shared_ptr<GG::StaticGraphic> m_colonize_indicator;
+        std::shared_ptr<GG::StaticGraphic> m_invade_indicator;
+        std::shared_ptr<GG::StaticGraphic> m_bombard_indicator;
+        std::shared_ptr<ScanlineControl>   m_scanline_control;
+        std::shared_ptr<GG::Label>         m_ship_name_text;
+        std::shared_ptr<GG::Label>         m_design_name_text;
 
-        std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>> m_stat_icons;   // statistic icons and associated meter types
+        /// statistic icons and associated meter types
+        std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>> m_stat_icons;
 
         bool                        m_selected;
         boost::signals2::connection m_ship_connection;
