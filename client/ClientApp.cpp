@@ -167,3 +167,24 @@ void ClientApp::SetEmpireID(int empire_id)
 
 void ClientApp::SetCurrentTurn(int turn)
 { m_current_turn = turn; }
+
+void ClientApp::VerifyCheckSum(const Message& msg) {
+    std::map<std::string, unsigned int> server_checksums;
+    ExtractContentCheckSumMessageData(msg, server_checksums);
+
+    auto client_checksums = CheckSumContent();
+
+    if (server_checksums == client_checksums) {
+        InfoLogger() << "Checksum received from server matches client checksum.";
+    } else {
+        WarnLogger() << "Checksum received from server does not match client checksum.";
+        for (const auto& name_and_checksum : server_checksums) {
+            const auto& name = name_and_checksum.first;
+            const auto client_checksum = client_checksums[name];
+            if (client_checksum != name_and_checksum.second)
+                WarnLogger() << "Checksum for " << name << " on server "
+                             << name_and_checksum.second << " != client "
+                             << client_checksum;
+        }
+    }
+}

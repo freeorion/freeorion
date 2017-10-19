@@ -229,32 +229,9 @@ boost::statechart::result WaitingForSPHostAck::react(const StartQuittingGame& e)
     return transit<QuittingGame>();
 }
 
-namespace {
-    void VerifyCheckSum(const CheckSum& e) {
-        std::map<std::string, unsigned int> checksums_server;
-        ExtractContentCheckSumMessageData(e.m_message, checksums_server);
-
-        auto checksums_client = CheckSumContent();
-
-        if (checksums_server == checksums_client) {
-            InfoLogger() << "Checksum received from server matches client checksum.";
-        } else {
-            WarnLogger() << "Checksum received from server does not match client checksum.";
-            for (const auto& name_and_checksum : checksums_server) {
-                const auto& name = name_and_checksum.first;
-                const auto client_checksum = checksums_client[name];
-                if (client_checksum != name_and_checksum.second)
-                    WarnLogger() << "Checksum for " << name << " on server "
-                                 << name_and_checksum.second << " != client "
-                                 << client_checksum;
-            }
-        }
-    }
-}
-
 boost::statechart::result WaitingForSPHostAck::react(const CheckSum& e) {
     TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
-    VerifyCheckSum(e);
+    Client().VerifyCheckSum(e.m_message);
     return discard_event();
 }
 
@@ -331,7 +308,7 @@ boost::statechart::result WaitingForMPHostAck::react(const StartQuittingGame& e)
 
 boost::statechart::result WaitingForMPHostAck::react(const CheckSum& e) {
     TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
-    VerifyCheckSum(e);
+    Client().VerifyCheckSum(e.m_message);
     return discard_event();
 }
 
@@ -552,7 +529,7 @@ boost::statechart::result MPLobby::react(const StartQuittingGame& e) {
 
 boost::statechart::result MPLobby::react(const CheckSum& e) {
     TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
-    VerifyCheckSum(e);
+    Client().VerifyCheckSum(e.m_message);
     return discard_event();
 }
 
