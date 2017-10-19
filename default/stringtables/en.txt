@@ -267,6 +267,7 @@ Balance
 CONTENT
 Content
 
+
 ##
 ## Major errors
 ##
@@ -608,13 +609,13 @@ SM_TREE
 Dyson Forest
 
 SM_TREE_DESC
-A "forest" made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to eradicate.  If not destroyed, they will periodically send out a seed through the starlanes to colonize other star systems.  A [[SM_TREE]] seed is known as a [[predefinedshipdesign SM_FLOATER]], and may be difficult to detect.
+A "forest" made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to eradicate. If not destroyed, they will periodically send out a seed through the starlanes to colonize other star systems. A [[SM_TREE]] seed is known as a [[predefinedshipdesign SM_FLOATER]], and may be difficult to detect.
 
 SM_FLOATER
 Floater
 
 SM_FLOATER_DESC
-A gas-filled bulbous sac drifting through space, sent as a seed by a [[predefinedshipdesign SM_TREE]] to found a new forest around other stars.  It is generally advisable to destroy [[SM_FLOATER]]s as soon as possible.  However, they are small and difficult to detect; it will generally require the [[tech SPY_DETECT_2]] technology to do so.
+A gas-filled bulbous sac drifting through space, sent as a seed by a [[predefinedshipdesign SM_TREE]] to found a new forest around other stars. It is generally advisable to destroy [[SM_FLOATER]]s as soon as possible. However, they are small and difficult to detect; it will generally require the [[tech SPY_DETECT_2]] technology to do so.
 
 SM_DRAGON
 Vacuum Dragon
@@ -894,7 +895,7 @@ SERVER_LOST
 The connection to the server has been lost.
 
 LOCAL_SERVER_ALREADY_RUNNING_ERROR
-Can't start server.  A local server is already running.
+Can't start server. A local server is already running.
 
 PLAYER_DISCONNECTED
 Player %1% no longer has a connection to the server.
@@ -978,6 +979,7 @@ Password wrong for player name %1%.
 
 ERROR_CONNECTION_WAS_REPLACED
 Your connection was replaced.
+
 
 ##
 ## Game Rules
@@ -1078,6 +1080,7 @@ Starlanes Everywhere
 
 RULE_STARLANES_EVERYWHERE_DESC
 Starlanes are generated between every pair of systems, regardless of geometry. Lanes may still be removed during a game, however. Lanes are also not rendered on the galaxy map.
+
 
 ##
 ## Command-line and options database entries
@@ -1656,22 +1659,22 @@ OPTIONS_DB_STRINGTABLE_FILENAME
 Sets the language-specific string table filename.
 
 OPTIONS_DB_AI_FOLDER_PATH
-Sets the path for the directory containing the AI script files, for current execution only, relative to the Resource Directory; default is "AI".  Intended to facilitate AI testing.
+Sets the path for the directory containing the AI script files, for current execution only, relative to the Resource Directory; default is "AI". Intended to facilitate AI testing.
 
 OPTIONS_DB_AI_CONFIG
-Is available to the AI via the freeorioninterface, is set for current execution only.  Current expected use is to name an optional AI config file within the AI script folder; default is the empty string.  Intended to facilitate AI testing.
+Is available to the AI via the freeorioninterface, is set for current execution only. Current expected use is to name an optional AI config file within the AI script folder; default is the empty string. Intended to facilitate AI testing.
 
 OPTIONS_DB_AI_CONFIG_TRAIT_AGGRESSION_FORCED
 Boolean for AI testing which indicates if all AIs are forced to have the same Aggression Trait.
 
 OPTIONS_DB_AI_CONFIG_TRAIT_AGGRESSION_FORCED_VALUE
-Forced value of the Aggression Trait.  A value from 0 to 5.
+Forced value of the Aggression Trait. A value from 0 to 5.
 
 OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED
 Boolean for AI testing which indicates if all AIs are forced to have the same EmpireID Trait.
 
 OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED_VALUE
-Forced value of the EmpireID Trait.  A value from 0 to 39.
+Forced value of the EmpireID Trait. A value from 0 to 39.
 
 OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START
 Enable single-player autosaves at turn start.
@@ -1969,6 +1972,7 @@ Join a game
 REFRESH_LIST_BN
 Refresh list
 
+
 ##
 ## Password Dialog
 ##
@@ -1981,6 +1985,7 @@ This player name requires authentication. Reminder! Password will be transfered 
 
 PASSWORD_LABEL
 Password
+
 
 ##
 ## Multiplayer lobby
@@ -2827,7 +2832,6 @@ OPTIONS_CREATE_PERSISTENT_CONFIG_FAILURE
 Unable to create persistent_config.xml, check log file for details.
 
 
-
 ##
 ## Main map window
 ##
@@ -3534,6 +3538,7 @@ Give Planet To...
 ORDER_CANCEL_GIVE_PLANET
 Cancel Giving Planet
 
+
 ##
 ## Fleet Button
 ##
@@ -3546,6 +3551,7 @@ This fleet is currently being blockaded by a hostile fleet. It is unable to move
 
 FB_TOOLTIP_BLOCKADE_MONSTER
 This monster fleet is blockaded by an empire fleet. When monsters are blockaded by empire fleets, they are prevented from moving.
+
 
 ##
 ## Moderator
@@ -3819,7 +3825,7 @@ It also allows for some interaction with the [[encyclopedia MAP_WINDOW_ARTICLE_T
 (default position: top left)
 The Production Summary panel shows available Production Points.
 Total Available Points relates to the PP available across your entire empire.
-Points Available Here are the maximum available for the selected system.  This may be less than the total available when all of your empire's systems are not [[metertype METER_SUPPLY]] connected.
+Points Available Here are the maximum available for the selected system. This may be less than the total available when all of your empire's systems are not [[metertype METER_SUPPLY]] connected.
 Wasted Points will be lost, if not allocated before ending the turn.
 
 
@@ -3844,7 +3850,7 @@ These orders may be rearranged in the queue by dragging and dropping to a new po
 Right clicking on an order will show a menu for moving, removing, or pausing an order (as well as other possible actions, such as <i>Show in Pedia</i> ).
 When removing an order any previous progress on it is lost, there is no credit returned or given to other orders.
 Pausing an order prevents any progress on it until the order is resumed.
-For ships, an additional menu item is available to Rally to a system.  Once the order completes, the ship(s) will have a waypoint assigned for the system rallied to.  To set or change a Rally destination, select the desired system on the map, right click the Production Order, and select <i>Rally to </i>... (where ... is the system name).
+For ships, an additional menu item is available to Rally to a system. Once the order completes, the ship(s) will have a waypoint assigned for the system rallied to. To set or change a Rally destination, select the desired system on the map, right click the Production Order, and select <i>Rally to </i>... (where ... is the system name).
 
 
 <u>Production Order</u>
@@ -3867,7 +3873,7 @@ A Survey Ship costs 36 PP with a minimum of 3 turns (max 12 PP/turn).
                 You queue another order for Survey Ship with a repetition of 2. (order #2)
                 You queue another order for Survey Ship and set the quantity to 2.
 
--Turn  2: Order #1 has completed 10 PP, 26 PP remain.  10 PP is projected for next turn.
+-Turn  2: Order #1 has completed 10 PP, 26 PP remain. 10 PP is projected for next turn.
 
     (Completed PP / Remaining PP to complete -> Projected next turn)
 
@@ -4146,6 +4152,7 @@ Select an existing Finished design, right click and select "[[DESIGN_SAVE]]" to 
 # %1% File path of unwritable file
 ERROR_UNABLE_TO_WRITE_FILE
 Unable to write file:\n"%1%"
+
 
 ##
 ## Statistics
@@ -4629,7 +4636,6 @@ pierced
 ENC_COMBAT_ATTACK_SIMPLE_STR
 %1% attacks %2%
 
-
 # %1% number of repeated events.
 # %2% link to the attacking unit or empire.
 # %3% link to the attacking unit or empire.
@@ -4922,7 +4928,7 @@ SYSTEM_BLOCKADE_TITLE
 System Blockade
 
 SYSTEM_BLOCKADE_TEXT
-'''When an armed fleet set to aggressive mode arrives at a system, it will establish a system blockade against all empires it is at war with and that currently do not blockade the system. When a blockade is established, [[metertype METER_SUPPLY]] propagation is interrupted for the blockaded empire. Also, if the blockaded empire posesses colonies within the system, the production generated by these colonies can only be used on the planet it is generated on. If a combat is initiated concomitantly, effects that only work if no combat has occurred, such as orbital drydock repair and troop meter growth, are suspended for that turn.
+'''When an armed fleet set to aggressive mode arrives at a system, it will establish a system blockade against all empires it is at war with and that currently do not blockade the system. When a blockade is established, [[metertype METER_SUPPLY]] propagation is interrupted for the blockaded empire. Also, if the blockaded empire posesses colonies within the system, the production generated by these colonies can only be used on the planet it is generated on. If a combat is initiated concomitantly, effects that only work if no combat has occurred, such as [[encyclopedia ORBITAL_DRYDOCK_REPAIR_TITLE]] and [[metertype METER_TROOPS]] meter growth, are suspended for that turn.
 After a system blockade has been set up, all starlane entries in the blockaded system will be guarded by the blockading force, so if hostile forces enter the system, they can exit only through the starlane entry from which they arrived. However, if more fleets from the blockaded empire arrive by different starlane entries than the first one, these entries will become available as an exit as well. If all armed fleets owned by the blockaded empire are destroyed or leave the system before new fleets from this empire arrive, the previously opened exits will become closed again.
 Allied fleets do not have a direct impact on supply blocks and starlane availability apart from helping with eliminating the blockading empire's forces.
 If fleets from two or more hostile empires arrive at an unblockaded system at the same time, neither such empire will establish a system blockade over each other, although they will establish a blockade against all other hostile empires that arrive at a later time.
@@ -5061,7 +5067,7 @@ METER_HAPPINESS_VALUE_LABEL
 Happiness
 
 METER_HAPPINESS_VALUE_DESC
-The Happiness of a colony's population starts out low after initial colonization or after invasion, and may also be affected by other factors.  A minimum Happiness of 5 is necessary for a colony to act as a source of settlers for colonizing other planets.
+The Happiness of a colony's population starts out low after initial colonization or after invasion, and may also be affected by other factors. A minimum Happiness of 5 is necessary for a colony to act as a source of settlers for colonizing other planets.
 
 METER_CAPACITY_VALUE_LABEL
 Stat - Primary
@@ -5086,7 +5092,7 @@ METER_SHIELD_VALUE_LABEL
 Shields
 
 METER_SHIELD_VALUE_DESC
-'''The term Shields combines all kinds of protective force-fields. They are usually the first barrier incoming attacks have to overcome. There are two main types of shields: ship shields and planetary barrier shields, and both ships and planets have a Shields meter.  The main difference between them is simply how they recharge -- ship shields are able to recharge instantly after every single shot fired at them, whereas planetary barrier shields take more time to recharge.  The result of that seemingly small difference makes a very noticeable difference in combat, however.
+'''The term Shields combines all kinds of protective force-fields. They are usually the first barrier incoming attacks have to overcome. There are two main types of shields: ship shields and planetary barrier shields, and both ships and planets have a Shields meter. The main difference between them is simply how they recharge -- ship shields are able to recharge instantly after every single shot fired at them, whereas planetary barrier shields take more time to recharge. The result of that seemingly small difference makes a very noticeable difference in combat, however.
 
 Ship shields: Reduce the [[encyclopedia DAMAGE_TITLE]] sustained by each hit by the strength rating of the shield part. A weapon can only penetrate a shield if its damage value is higher than the shield's strength. However, ship shields do not negate shot damage coming from [[encyclopedia FIGHTER_TECHS]], as fighters fire from within the shields.
 
@@ -5115,7 +5121,7 @@ METER_SUPPLY_VALUE_DESC
 
 Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines form a 'Resource Group' and can share physical resources. Production Points created on one planet can be used on any connected planet to build ships or structures.
 
-A set of core supply starlanes for an empire (the set of least-jump starlanes connecting the resource-producing systems of each Resource Group) will have greater thickness than the non-core starlanes.  If PP is currently being wasted within a Resource Group, the outer bands of the core starlanes will be a contrasting color.
+A set of core supply starlanes for an empire (the set of least-jump starlanes connecting the resource-producing systems of each Resource Group) will have greater thickness than the non-core starlanes. If PP is currently being wasted within a Resource Group, the outer bands of the core starlanes will be a contrasting color.
 
 Supply lines can also be used to refill the [[metertype METER_FUEL]] supply of ships.'''
 
@@ -5125,7 +5131,7 @@ Troops
 METER_TROOPS_VALUE_DESC
 '''The term Troops combines all kinds of military forces capable of operating on a planet's surface.
 
-The Troop meter on a planet represents the power of the defending ground forces. The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.  Ships must be built with special parts for carrying troops, and such troops cannot invade if the defending planet has active [[metertype METER_SHIELD]].'''
+The Troop meter on a planet represents the power of the defending ground forces. The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet. Ships must be built with special parts for carrying troops, and such troops cannot invade if the defending planet has active [[metertype METER_SHIELD]].'''
 
 METER_REBEL_TROOPS_VALUE_LABEL
 Rebel Troops
@@ -5153,9 +5159,9 @@ Detection Range
 METER_DETECTION_VALUE_DESC
 '''The Detection Range represents the distance in uu that sensors can reach. An empire can only see objects that have a [[metertype METER_STEALTH]] value lower than or equal to its [[encyclopedia DETECTION_TITLE]] and are within Detection Range of a controlled space ship or planet.
 
-Space ships and planets have a Detection Range meter. There is the option to display Detection Range circles (in uu) in the Galaxy Map section of the Options menu.  To facilitate predictions of what would be within a Detection Range, there are also options to display a standard 'Map Scale Line' as well as a 'Map Scale Circle' centered on the currently selected system and indicating the same distance as the Map Scale Line.  They are both responsive to the the map zoom level and can be toggled via hotkeys.
+Space ships and planets have a Detection Range meter. There is the option to display Detection Range circles (in uu) in the Galaxy Map section of the Options menu. To facilitate predictions of what would be within a Detection Range, there are also options to display a standard 'Map Scale Line' as well as a 'Map Scale Circle' centered on the currently selected system and indicating the same distance as the Map Scale Line. They are both responsive to the the map zoom level and can be toggled via hotkeys.
 
-Some objects or abilities may allow vision of certain areas outside of this range.  Some examples are from species abilities of [[species SP_TRITH]] or [[species SP_GEORGE]], or from the effects from a [[buildingtype BLD_SCRYING_SPHERE]].'''
+Some objects or abilities may allow vision of certain areas outside of this range. Some examples are from species abilities of [[species SP_TRITH]] or [[species SP_GEORGE]], or from the effects from a [[buildingtype BLD_SCRYING_SPHERE]].'''
 
 METER_SPEED_VALUE_LABEL
 Speed
@@ -5225,7 +5231,7 @@ SLOT_TITLE
 Slot
 
 SLOT_TEXT
-A slot is a type of ship mount on a [[encyclopedia ENC_SHIP_HULL]], which can hold certain types of [[encyclopedia ENC_SHIP_PART]]s, like weapons, shields, armor plating, engines and various other devices. There are three slot types: external, internal, and core slots. [[encyclopedia ENC_SHIP_PART]] descriptions will state what kind of slots they are compatible with; some are compatble with multiple slot types.  This information is also shown graphically in the [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]], where each type of slot in a hull is shown with a shape specific to its type. The [[encyclopedia ENC_SHIP_PART]]s in the Design Window are also shown with shapes that indicate which slots they are compatible with. In most cases a part shape will clearly match a particular slot-type shape.  Parts that can fit into multiple slot types will have shapes that are visibly compatible with the shapes of those slot types.  Larger (and expensive) hulls often have more slots available to be filled with parts.
+A slot is a type of ship mount on a [[encyclopedia ENC_SHIP_HULL]], which can hold certain types of [[encyclopedia ENC_SHIP_PART]]s, like weapons, shields, armor plating, engines and various other devices. There are three slot types: external, internal, and core slots. [[encyclopedia ENC_SHIP_PART]] descriptions will state what kind of slots they are compatible with; some are compatble with multiple slot types. This information is also shown graphically in the [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]], where each type of slot in a hull is shown with a shape specific to its type. The [[encyclopedia ENC_SHIP_PART]]s in the Design Window are also shown with shapes that indicate which slots they are compatible with. In most cases a part shape will clearly match a particular slot-type shape. Parts that can fit into multiple slot types will have shapes that are visibly compatible with the shapes of those slot types. Larger (and expensive) hulls often have more slots available to be filled with parts.
 
 DETECTION_TITLE
 Detection Strength
@@ -5353,7 +5359,7 @@ DAMAGE_TITLE
 Damage
 
 DAMAGE_TEXT
-'''Defines the base amount that a weapon will reduce the [[metertype METER_STRUCTURE]] of another ship (or the [[metertype METER_SHIELD]], [[metertype METER_DEFENSE]] and [[metertype METER_CONSTRUCTION]] of a planet), in one combat round (of which there are three in each turn of battle).  If a target ship is equipped with [[metertype METER_SHIELD]], the actual damage caused by each hit will be the base damage reduced by the strength rating of the ship's [[metertype METER_SHIELD]].
+'''Defines the base amount that a weapon will reduce the [[metertype METER_STRUCTURE]] of another ship (or the [[metertype METER_SHIELD]], [[metertype METER_DEFENSE]] and [[metertype METER_CONSTRUCTION]] of a planet), in one combat round (of which there are three in each turn of battle). If a target ship is equipped with [[metertype METER_SHIELD]], the actual damage caused by each hit will be the base damage reduced by the strength rating of the ship's [[metertype METER_SHIELD]].
 
 Note: [[encyclopedia FIGHTER_TECHS]] inflict damage ignoring [[metertype METER_SHIELD]] on ships, as fighters fire from within the enemy shields.'''
 
@@ -5375,19 +5381,19 @@ Design Window
 DESIGN_WINDOW_ARTICLE_TEXT
 '''The [[DESIGN_WINDOW_ARTICLE_TITLE]] is for viewing or altering the designs of monsters or ships.
 
-Designs and ship parts can be [[PRODUCTION_WND_AVAILABILITY_AVAILABLE]], [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] or [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]].  [[PRODUCTION_WND_AVAILABILITY_AVAILABLE]] designs and parts are unrestricted for use by the empire.  [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] designs and parts are restricted in some way. Some unavailable designs and parts may be unlocked by researching associated [[encyclopedia ENC_TECH]]. [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] designs are obsoleted/unobsoleted at will by the empire.  [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] designs will not appear in the Production Window and only appear in [[DESIGN_WINDOW_ARTICLE_TITLE]] when the "[[PRODUCTION_WND_AVAILABILITY_OBSOLETE]]" filter is toggled to display them.  Ship parts can not be obsoleted.
+Designs and ship parts can be [[PRODUCTION_WND_AVAILABILITY_AVAILABLE]], [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] or [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]]. [[PRODUCTION_WND_AVAILABILITY_AVAILABLE]] designs and parts are unrestricted for use by the empire. [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] designs and parts are restricted in some way. Some unavailable designs and parts may be unlocked by researching associated [[encyclopedia ENC_TECH]]. [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] designs are obsoleted/unobsoleted at will by the empire. [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] designs will not appear in the [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]] and only appear in [[DESIGN_WINDOW_ARTICLE_TITLE]] when the "[[PRODUCTION_WND_AVAILABILITY_OBSOLETE]]" filter is toggled to display them. Ship parts can not be obsoleted.
 
 There are four sub windows:  [[DESIGN_WND_STARTS]], [[DESIGN_WND_PART_PALETTE_TITLE]], [[DESIGN_WND_MAIN_PANEL_TITLE]] and the [[MAP_BTN_PEDIA]].
 
 
-[[DESIGN_WND_STARTS]] has four tabs: empty [[DESIGN_WND_HULLS]], [[DESIGN_WND_FINISHED_DESIGNS]] designs, [[DESIGN_WND_SAVED_DESIGNS]] designs from previous games and [[DESIGN_WND_MONSTERS]] designs for inspection.  Drag or double click hulls, designs or monsters to edit/examine them on the workbench.  Designs can be drag-and-dropped within the list to change their order.  
+[[DESIGN_WND_STARTS]] has four tabs: empty [[DESIGN_WND_HULLS]], [[DESIGN_WND_FINISHED_DESIGNS]] designs, [[DESIGN_WND_SAVED_DESIGNS]] designs from previous games and [[DESIGN_WND_MONSTERS]] designs for inspection. Drag or double click hulls, designs or monsters to edit/examine them on the workbench. Designs can be drag-and-dropped within the list to change their order.
 
-[[DESIGN_WND_FINISHED_DESIGNS]] designs appear in the same order as on the Production Window.  The right click context menu provides several options.  Obsolete/unobsolete designs with "[[DESIGN_WND_OBSOLETE_DESIGN]]".  Ctrl click also obsoletes/unobsoletes designs.  Delete designs with "[[DESIGN_WND_DELETE_DESIGN]]".  Deleted designs can't be recovered. Ships already queued for production will continue to be built with the old obsolete/deleted design.  Rename designs with "[[DESIGN_RENAME]]".  Save designs to disk for future games with "[[DESIGN_SAVE]]".  Toggle the "[[DESIGN_WND_ADD_ALL_DEFAULT_START]]" option to use/not use the default designs in new games.
+[[DESIGN_WND_FINISHED_DESIGNS]] designs appear in the same order as on the Production Window. The right click context menu provides several options. Obsolete/unobsolete designs with "[[DESIGN_WND_OBSOLETE_DESIGN]]". Ctrl click also obsoletes/unobsoletes designs. Delete designs with "[[DESIGN_WND_DELETE_DESIGN]]". Deleted designs can't be recovered. Ships already queued for production will continue to be built with the old obsolete/deleted design. Rename designs with "[[DESIGN_RENAME]]". Save designs to disk for future games with "[[DESIGN_SAVE]]". Toggle the "[[DESIGN_WND_ADD_ALL_DEFAULT_START]]" option to use/not use the default designs in new games.
 
-Use the [[DESIGN_WND_SAVED_DESIGNS]] designs right click context menu to copy a single or all saved designs to the [[DESIGN_WND_FINISHED_DESIGNS]] designs. Ctrl click also copies a single design to the [[DESIGN_WND_FINISHED_DESIGNS]] designs.  Permanently remove a saved design with "[[DESIGN_WND_DELETE_SAVED]]".  Check "[[OPTIONS_ADD_SAVED_DESIGNS]]" to automaitcally import all the [[DESIGN_WND_SAVED_DESIGNS]] designs at the start of a new game.
+Use the [[DESIGN_WND_SAVED_DESIGNS]] designs right click context menu to copy a single or all saved designs to the [[DESIGN_WND_FINISHED_DESIGNS]] designs. Ctrl click also copies a single design to the [[DESIGN_WND_FINISHED_DESIGNS]] designs. Permanently remove a saved design with "[[DESIGN_WND_DELETE_SAVED]]". Check "[[OPTIONS_ADD_SAVED_DESIGNS]]" to automatically import all the [[DESIGN_WND_SAVED_DESIGNS]] designs at the start of a new game.
 
 
-[[DESIGN_WND_PART_PALETTE_TITLE]] displays parts. Parts whose associated technology has been researched may be used in current designs.  Other parts can not be used because either the associated technology has not been researched or the part is only available to monsters.
+[[DESIGN_WND_PART_PALETTE_TITLE]] displays parts. Parts whose associated technology has been researched may be used in current designs. Other parts can not be used because either the associated technology has not been researched or the part is only available to monsters.
 
 The "[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]", "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" and "[[PRODUCTION_WND_AVAILABILITY_OBSOLETE]]" filters on [[DESIGN_WND_STARTS]] and [[DESIGN_WND_PART_PALETTE_TITLE]] toggle the display of parts that the empire can currently use, that are restricted or that the empire has chosen to hide.
 
@@ -5396,13 +5402,13 @@ The [[DESIGN_WND_PART_PALETTE_TITLE]] window has filters to display/hide entire 
 
 [[DESIGN_WND_MAIN_PANEL_TITLE]] is the workbench for the current design.
 
-The current design may have internal, external and/or core [[encyclopedia SLOT_TITLE]]s.  Drag and drop or double click parts from [[DESIGN_WND_PART_PALETTE_TITLE]] to add/remove them to/from the current design.
+The current design may have internal, external and/or core [[encyclopedia SLOT_TITLE]]s. Drag and drop or double click parts from [[DESIGN_WND_PART_PALETTE_TITLE]] to add/remove them to/from the current design.
 
 Add a name and optionally a description to the design.
 
 Click "[[DESIGN_WND_ADD_FINISHED]]" or "[[DESIGN_WND_ADD_SAVED]]" to add the design to the beginning of the list of designs.
 
-Click "[[DESIGN_WND_UPDATE_FINISHED]]" or "[[DESIGN_WND_UPDATE_SAVED]]" to replace the most recently selected [[DESIGN_WND_FINISHED_DESIGNS]] or [[DESIGN_WND_SAVED_DESIGNS]] design with a new design.  "[[DESIGN_WND_UPDATE_FINISHED]]" or "[[DESIGN_WND_UPDATE_SAVED]]" is only active if this design was started from a design in the [[DESIGN_WND_FINISHED_DESIGNS]] or [[DESIGN_WND_SAVED_DESIGNS]] list respectively.  "[[DESIGN_WND_UPDATE_FINISHED]]" only changes the design, any ships already queued for production or already produced will continue to use the old design.
+Click "[[DESIGN_WND_UPDATE_FINISHED]]" or "[[DESIGN_WND_UPDATE_SAVED]]" to replace the most recently selected [[DESIGN_WND_FINISHED_DESIGNS]] or [[DESIGN_WND_SAVED_DESIGNS]] design with a new design. "[[DESIGN_WND_UPDATE_FINISHED]]" or "[[DESIGN_WND_UPDATE_SAVED]]" is only active if this design was started from a design in the [[DESIGN_WND_FINISHED_DESIGNS]] or [[DESIGN_WND_SAVED_DESIGNS]] list respectively. "[[DESIGN_WND_UPDATE_FINISHED]]" only changes the design, any ships already queued for production or already produced will continue to use the old design.
 '''
 
 FLEET_MOVEMENT_ARTICLE_TITLE
@@ -5423,7 +5429,7 @@ HIDDEN_SETTINGS_ARTICLE_TITLE
 Hidden Settings
 
 HIDDEN_SETTINGS__ARTICLE_TEXT
-'''There are a number of User Interface (UI) settings and other game settings that can be changed by the user via the Options Menu; there are also a number of UI settings which do not appear in the Options pages, but which can be changed by the user by directly editing the config.xml file, located in the logging directory.  Directions for identifying the location of this file on the various different platforms is available at the FreeOrion Wiki.
+'''There are a number of User Interface (UI) settings and other game settings that can be changed by the user via the Options Menu; there are also a number of UI settings which do not appear in the Options pages, but which can be changed by the user by directly editing the config.xml file, located in the logging directory. Directions for identifying the location of this file on the various different platforms is available at the FreeOrion Wiki.
 
 In addition to a great many entries for the size/location of various UI elements, these 'Hidden Settings' include:
 
@@ -5437,7 +5443,7 @@ FIELDS_TITLE
 Interstellar Fields
 
 FIELDS_TEXT
-There are several Field Types, each having a distinctive, somewhat diffuse, appearance.  Right-clicking on them in the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] brings up a small popup menu identifying their type and providing an option to look up their details.
+There are several Field Types, each having a distinctive, somewhat diffuse, appearance. Right-clicking on them in the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] brings up a small popup menu identifying their type and providing an option to look up their details.
 
 
 ##
@@ -5448,7 +5454,7 @@ GENERAL_PEDIA_REFERENCE
 Information such as this is accessible via the "Pedia" [[encyclopedia ENC_INDEX]].
 
 DETAILED_PEDIA_REFERENCE
-[[GENERAL_PEDIA_REFERENCE]]  The Pedia can be opened and closed via the purple icon bearing a question mark, in the upper right portion of the main [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]].  The Pedia can be navigated via hotlinks and via the arrows in the lower right corner of the Pedia window.
+[[GENERAL_PEDIA_REFERENCE]]  The Pedia can be opened and closed via the purple icon bearing a question mark, in the upper right portion of the main [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]]. The Pedia can be navigated via hotlinks and via the arrows in the lower right corner of the Pedia window.
 
 GREETINGS_GUIDE_TITLE
 **Greetings**
@@ -5474,7 +5480,7 @@ QUICK_START_GUIDE_TITLE
 **Quick Start Guide**
 
 QUICK_START_GUIDE_TEXT
-'''This is a brief introduction to FreeOrion gameplay.  This guide was just born recently, and is currently quite tiny but growing rapidly.  A somewhat less brief Quick Play Guide is available at freeorion.org (current URL: <url  http://freeorion.org/index.php/V0.4_Quick_Play_Guide>freeorion.org/index.php/V0.4_Quick_Play_Guide</url> ).
+'''This is a brief introduction to FreeOrion gameplay. This guide was just born recently, and is currently quite tiny but growing rapidly. A somewhat less brief Quick Play Guide is available at freeorion.org (current URL: <url  http://freeorion.org/index.php/V0.4_Quick_Play_Guide>freeorion.org/index.php/V0.4_Quick_Play_Guide</url> ).
 
 [[DETAILED_PEDIA_REFERENCE]]
 Important sections include [[encyclopedia CATEGORY_GAME_CONCEPTS]], [[encyclopedia CATEGORY_GUIDES]], and the [[encyclopedia ENC_METER_TYPE]] list.
@@ -5535,7 +5541,7 @@ Orbital Drydock Repair
 ORBITAL_DRYDOCK_REPAIR_TEXT
 '''The [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] is considered the best repair facility available, able to restore a ship to pristine condition.
 
-When the planet [[metertype METER_HAPPINESS]] is below 15, repairs at this facility are not as efficient.  If the planet drops below 5 happiness, the drydock is not able to perform any repairs that turn.
+When the planet [[metertype METER_HAPPINESS]] is below 15, repairs at this facility are not as efficient. If the planet drops below 5 happiness, the drydock is not able to perform any repairs that turn.
 
 Repairs are delayed for one turn for ships just entering the system. Ships need time to dock, and the drydock needs time to prepare both the necessary tooling and the ship itself.
 
@@ -5546,7 +5552,7 @@ Configuration Guide
 
 CONFIG_GUIDE_TEXT
 '''Most configuration options for the game are stored and read from a single XML formatted file named config.xml.
-If this file does not exist (or is for a different build or version) it will be (re)created when the client starts. 
+If this file does not exist (or is for a different build or version), it will be (re)created when the client starts. 
 The configuration file is typically updated after a stored option is changed, but may be deferred until a later action (such as clicking Done or Apply).
 Some of these options can be changed from the [[OPTIONS_TITLE]] menu, under the Main Menu.
 
@@ -5564,7 +5570,7 @@ This may be useful when a different build of the game is launched, such as after
 A persistent configuration file can be created or updated on the [[OPTIONS_TITLE]] menu [[OPTIONS_PAGE_MISC]] tab by clicking the [[OPTIONS_CREATE_PERSISTENT_CONFIG]] button.
 When using this button, there are a couple of known issues:
 Some options may be included even though they were not changed by the user, as they were adjusted after their default value. After updating to a new version, it may be required to manually remove these options from the file to update their default setting.
-Windows that have not been open in the current session may not have previously changed settings retained.  It is advised to have a game running and open all desired windows at least once to initialize the settings before using this button.
+Windows that have not been open in the current session may not have previously changed settings retained. It is advised to have a game running and open all desired windows at least once to initialize the settings before using this button.
 
 The persistent configuration file may be manually created if desired, but should never contain the "version-string" option.
 
@@ -6477,7 +6483,7 @@ HEAD_ON_A_SPIKE_MESSAGE_LABEL
 Empire Capital Captured
 
 CUSTOM_SITREP_INTRODUCTION
-Welcome to the initial Situation Report Briefing.  Pursuant to the %tech% Directive, all the busy empire servants endeavor to collect important information and send it back to %system%, where it is compiled into Situation Reports, such as this, providing notice of important events and other reminders selected by the empire leadership.
+Welcome to the initial Situation Report Briefing. Pursuant to the %tech% Directive, all the busy empire servants endeavor to collect important information and send it back to %system%, where it is compiled into Situation Reports, such as this, providing notice of important events and other reminders selected by the empire leadership.
 
 # This message value must contain no spaces. Use underlines instead.
 CUSTOM_1
@@ -6585,7 +6591,7 @@ BEGINNER_HINT_02
 2: Each species has its own planetary [[encyclopedia ENVIRONMENT_TITLE]] preference. If you can conquer a planet with a different species, you can colonize other planets with them as well, allowing you to secure a system faster. Keep in mind that not all species can colonize and that some can not build ships.
 
 BEGINNER_HINT_03
-3: Ships can be repaired at a system that has a friendly [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] if there was no combat in the system last turn, and the planet has a [[metertype METER_HAPPINESS]] score of 5 or more.  Ships will need to wait one turn in the system before repairs can begin.
+3: Ships can be repaired at a system that has a friendly [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] if there was no combat in the system last turn, and the planet has a [[metertype METER_HAPPINESS]] score of 5 or more. Ships will need to wait one turn in the system before repairs can begin.
 
 BEGINNER_HINT_04
 4: Systems that are connected by thick lines are [[metertype METER_SUPPLY]] line linked and they share [[metertype METER_INDUSTRY]] Production Points (PP).
@@ -7072,12 +7078,11 @@ SP_REPLICON_DESC
 The Replicons look like a 3m tall robotic spider with wings. The wings are actually highly efficient solar panels that fold out to a relatively large area, the 'abdomen' is actually the 'industrial processing center' where replacement parts and new Replicons are forged.
 
 Social Structure:
-Replicons have a relatively primitive social structure. They have a planetary government, because a few feudal lords discovered space travel as a convenient way of attacking people really far away. Their government is effectively feudal, due to some unusual effects that allowed them to reach space flight before achieving the nationstate/industrial revolution stage of development. Because of the wide variety of self-replicating machines on Cisarruj, most needs that are met by industry on other worlds are met by 'agriculture' or 'breeding' by Replicons. They end up without any actual 'Industrial Base' or even much of an understanding of technology other than what verious 'natural' parts and products can be used for. This means that their society is highly illiterate, most people passing on knowledge that their pappies taught them on how to skin a "creature's" titanium coat, just enough so that it could grow it back or how much uranium ore to feed a reprocessing reactor if it was giving bad aluminum. Most things that normal 'developed' societies would expect are only present in the lord's estates, the remainder of society looks like something out of a post-apocalyptic novel. 
+Replicons have a relatively primitive social structure. They have a planetary government, because a few feudal lords discovered space travel as a convenient way of attacking people really far away. Their government is effectively feudal, due to some unusual effects that allowed them to reach space flight before achieving the nationstate/industrial revolution stage of development. Because of the wide variety of self-replicating machines on Cisarruj, most needs that are met by industry on other worlds are met by 'agriculture' or 'breeding' by Replicons. They end up without any actual 'Industrial Base' or even much of an understanding of technology other than what various 'natural' parts and products can be used for. This means that their society is highly illiterate, most people passing on knowledge that their pappies taught them on how to skin a "creature's" titanium coat, just enough so that it could grow it back or how much uranium ore to feed a reprocessing reactor if it was giving bad aluminum. Most things that normal 'developed' societies would expect are only present in the lord's estates, the remainder of society looks like something out of a post-apocalyptic novel. 
 
 Homeworld:
 Cisarruj is a heavily irradiated planet with a profound mystery about it. The planet is dominated by a wide variety of autonomous self replicating machines. There are recorded histories of who went to war with who when, and this is actually significant when dealing with the formation of the Cisarruj Empire. However, most simply reads like any other world's pre industrial history periods of powers large and small waxing and waning. The Mystery of the Replicons, however is in their prehistory. Did a sentient race assemble them as an experiment maybe, or were they some type of accident (an industrial development project left unsupervised) did their creators simply leave and forget about them, or did their creators meet a worse fate possibly at the hands of those beings they created.
 '''
-
 
 SP_EGASSEM
 Egassem
@@ -7661,7 +7666,7 @@ TIDAL_LOCK_SPECIAL_DESC
 • [[SZ_LARGE]] (-4)
 • [[SZ_HUGE]] (-5)
 
-This planet is tidally locked with the star it orbits.  Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night. Population growth is hampered, though industrial capacity benefits from the locally stable surface conditions.'''
+This planet is tidally locked with the star it orbits. Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night. Population growth is hampered, though industrial capacity benefits from the locally stable surface conditions.'''
 
 TEMPORAL_ANOMALY_SPECIAL
 Temporal Anomaly
@@ -7731,7 +7736,7 @@ JUGGERNAUT_NEST_SPECIAL
 Juggernaut Nest
 
 JUGGERNAUT_NEST_SPECIAL_DESC
-At some point young juggernauts will rise from this place.  With knowledge of [[tech SHP_DOMESTIC_MONSTER]], these mega-fauna could be domesticated.
+At some point young juggernauts will rise from this place. With knowledge of [[tech SHP_DOMESTIC_MONSTER]], these mega-fauna could be domesticated.
 
 KRAKEN_IN_THE_ICE_SPECIAL
 Kraken in the Ice
@@ -8461,7 +8466,7 @@ PC_ARMOUR
 Armor
 
 PC_ARMOUR_DESC
-Armor parts increase the [[metertype METER_STRUCTURE]] of a ship, allowing a ship to sustain more damage before being destroyed.
+Armor parts increase the [[metertype METER_STRUCTURE]] of a ship, allowing a ship to sustain more [[encyclopedia DAMAGE_TITLE]] before being destroyed.
 
 # Ship part classes
 PC_TROOPS
@@ -8513,7 +8518,7 @@ These parts may also increase the [[metertype METER_POPULATION]] on a ship.
 When colonizing a planet with a populated colony ship, a colony for the [[encyclopedia ENC_SPECIES]] is established, starting with the same population that was aboard the ship.
 
 A ship with no population will still have enough personnel to establish an [[encyclopedia OUTPOSTS_TITLE]].
-Outposts may construct a colony for any species in the empire within supply range, provided the source meets other criteria.
+Outposts may construct a colony for any species in the empire within [[metertype METER_SUPPLY]] range, provided the source meets other criteria.
 The combination of outpost ship and local construction of a colony is cheaper than producing a populated colony ship.
 
 When a ship colonizes a planet, it is consumed in the process and can not be used again. Any weapons or other parts on the ship will be decommissioned as well.'''
@@ -8537,7 +8542,7 @@ PC_BOMBARD
 Bombardment
 
 PC_BOMBARD_DESC
-'''Bombardment parts allow a ship to bombard an enemy planet, typically reducing the population on the planet by the capacity value of any applicable bombardment parts on board.
+'''Bombardment parts allow a ship to bombard an enemy planet, typically reducing the [[metertype METER_POPULATION]] on the planet by the capacity value of any applicable bombardment parts on board.
 
 The majority of bombardment parts only affect one [[encyclopedia METABOLISM_TITLE]].'''
 
@@ -11003,7 +11008,6 @@ Death Ray 4
 SHP_WEAPON_4_4_DESC
 Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 30.
 
-
 SHP_ION_CANNON
 Ion Cannon
 
@@ -11170,12 +11174,12 @@ SPY_CUSTOM_ADVISORIES
 Empire Intelligence Agency
 
 SPY_CUSTOM_ADVISORIES_DESC
-'''The Empire Intelligence Agency gathers and organizes information from many sources, including spies, common informers, and official chains of command reporting.  The most important items of information are presented each turn as Situation Reports (SitReps).  If a SitRep is repeated from turn to turn more often than you really need for remembering the information, you can ignore the SitRep for the current turn by double-clicking its icon, or for multiple turns via right-click menu on the SitRep's icon.
+'''The Empire Intelligence Agency gathers and organizes information from many sources, including spies, common informers, and official chains of command reporting. The most important items of information are presented each turn as Situation Reports (SitReps). If a SitRep is repeated from turn to turn more often than you really need for remembering the information, you can ignore the SitRep for the current turn by double-clicking its icon, or for multiple turns via right-click menu on the SitRep's icon.
 
 Many of the SitReps are determined automatically, but additional custom SitReps can be specified by editing the file default/customizations/custom_sitreps.txt
 (Note: in a multiplayer game, the content files of the Server are the ones which determine what SitReps are sent to empires.)
 More particulars on the FreeOrion scripting language, such as for these custom SitReps, can be found at our wiki:  http://www.freeorion.org/index.php/Free_Orion_Content_Script_(FOCS)
-There are four preset (possibly translated) labels for use with custom sitreps, so that they get placement at the top of the SitRep window.  More information on how to use the labels can be found on the wiki, and in the custom_sitreps.txt.
+There are four preset (possibly translated) labels for use with custom sitreps, so that they get placement at the top of the SitRep window. More information on how to use the labels can be found on the wiki, and in the custom_sitreps.txt.
 These four labels are
 "[[CUSTOM_1]]"
 "[[CUSTOM_2]]"
@@ -11608,7 +11612,7 @@ Bioterror Projection Base
 BLD_BIOTERROR_PROJECTOR_DESC
 '''Gives the planet on which it is built the Bioterror focus, which decreases Population on enemy planets within 4 starlane jumps at a rate of 2 per turn, provided the enemy empire does not contain a Genome Bank.
 
-This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity. Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon. Ineffective if there is a [[buildingtype BLD_GENOME_BANK]] building in the enemy empire. This building can also be built at an [[encyclopedia OUTPOSTS_TITLE]], provided it has a [[special RESONANT_MOON_SPECIAL]].'''
+This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity. Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon. Ineffective if there is a [[buildingtype BLD_GENOME_BANK]] building in the enemy empire. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], provided it has a [[special RESONANT_MOON_SPECIAL]].'''
 
 BLD_LIGHTHOUSE
 Interstellar Lighthouse
@@ -11770,13 +11774,13 @@ BLD_NEST_ERADICATOR
 Nest Eradicator
 
 BLD_NEST_ERADICATOR_DESC
-Eradicates a [[encyclopedia KRAKEN_NEST_SPECIAL]], [[encyclopedia SNOWFLAKE_NEST_SPECIAL]], or [[encyclopedia JUGGERNAUT_NEST_SPECIAL]] from the planet it is built on. It may be built at an [[encyclopedia OUTPOSTS_TITLE]].
+Eradicates a [[encyclopedia KRAKEN_NEST_SPECIAL]], [[encyclopedia SNOWFLAKE_NEST_SPECIAL]], or [[encyclopedia JUGGERNAUT_NEST_SPECIAL]] from the planet it is built on. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].
 
 BLD_NEUTRONIUM_EXTRACTOR
 Neutronium Extractor
 
 BLD_NEUTRONIUM_EXTRACTOR_DESC
-'''Makes Neutronium available to the owning empire.  Neutronium may be used at a [[buildingtype BLD_NEUTRONIUM_FORGE]] to enable construction of ships with Neutronium ship parts, like the [[shippart AR_NEUTRONIUM_PLATE]].
+'''Makes Neutronium available to the owning empire. Neutronium may be used at a [[buildingtype BLD_NEUTRONIUM_FORGE]] to enable construction of ships with Neutronium ship parts, like the [[shippart AR_NEUTRONIUM_PLATE]].
 
 Before parts can be built using Neutronium, it must be extracted from a [[STAR_NEUTRON]] star. Neutronium extracted at this facility is transported to Neutronium Forges throughout the empire. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
 
@@ -11802,7 +11806,7 @@ Concentration Camps
 BLD_CONC_CAMP_DESC
 '''Decreases the planet's population at a rate of 3 per turn, increases target [[metertype METER_INDUSTRY]] by 5 times the planet's population and sets the target [[metertype METER_HAPPINESS]] to 0.
 
-Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently. This building can be built on an [[encyclopedia OUTPOSTS_TITLE]].'''
+Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently.'''
 
 BLD_CONC_CAMP_REMNANT
 Concentration Camp Remnants
@@ -12257,8 +12261,7 @@ SR_WEAPON_2_1_DESC
 
 Upgrading the weapon technology will increase the shot damage.
 
-The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each laser weapon on a ship built by a species with the piloting trait will do an additional 2 damage per piloting level (-2 for Bad Pilots). Laser weapon damage can also be enhanced on [[shiphull SH_ORGANIC]] ships with a [[shippart SP_SOLAR_CONCENTRATOR]].
-'''
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each laser weapon on a ship built by a species with the piloting trait will do an additional 2 damage per piloting level (-2 for Bad Pilots). Laser weapon damage can also be enhanced on [[shiphull SH_ORGANIC]] ships with a [[shippart SP_SOLAR_CONCENTRATOR]].'''
 
 SR_WEAPON_3_1
 Plasma Cannons
@@ -12734,7 +12737,7 @@ SP_CHAOS_WAVE
 Chaos Wave
 
 SP_CHAOS_WAVE_DESC
-A powerful weapon [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ANY_POP]].  WARNING: Also kills [[special GAIA_SPECIAL]] specials.
+A powerful weapon [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ANY_POP]]. WARNING: Also kills [[special GAIA_SPECIAL]] specials.
 
 SP_NOVA_BOMB
 Nova Bomb
@@ -12746,7 +12749,7 @@ SP_KRILL_SPAWNER
 Krill Spawner
 
 SP_KRILL_SPAWNER_DESC
-Spawns [[predefinedshipdesign SM_KRILL_1]] in systems with unowned [[PT_ASTEROIDS]] which do not already contain a krill monster.  When carried on an unarmed ship, the [[SP_KRILL_SPAWNER]] also provides substantial [[metertype METER_STEALTH]] (but will not stack with any other [[metertype METER_STEALTH]] - causing  parts).
+Spawns [[predefinedshipdesign SM_KRILL_1]] in systems with unowned [[PT_ASTEROIDS]] which do not already contain a krill monster. When carried on an unarmed ship, the [[SP_KRILL_SPAWNER]] also provides substantial [[metertype METER_STEALTH]] (but will not stack with any other [[metertype METER_STEALTH]] - causing  parts).
 
 SP_SOLAR_CONCENTRATOR
 Solar Concentrator
@@ -13038,7 +13041,7 @@ Endosymbiotic Hull
 
 SH_ENDOSYMBIOTIC_DESC
 '''This living mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles.
-It has four external slots and three internal slots.4
+It has four external slots and three internal slots.
 
 The base hull is born with 5 [[metertype METER_STRUCTURE]], but grows an additional 15 structure over 30 turns.
 
@@ -14255,7 +14258,7 @@ Oh, not another pathetic sob story, please!
 # Newline separated list of polite positive peace proposal acknowlegements.
 AI_PEACE_PROPOSAL_RESPONSES_YES_MILD_LIST
 '''We will be happy to trust your good intentions.
-Whatever you say, Boss.  Everyone says you are very trustworthy.
+Whatever you say, Boss. Everyone says you are very trustworthy.
 '''
 
 # Newline separated list of polite negative peace proposal acknowlegements.
@@ -14266,7 +14269,7 @@ We regret to inform you that we are unable to comply with that request.
 
 # Newline separated list of harsh positive peace proposal acknowlegements.
 AI_PEACE_PROPOSAL_RESPONSES_YES_HARSH_LIST
-'''Out of pity, we will agree to not attack you.  For now.
+'''Out of pity, we will agree to not attack you. For now.
 Feeble Beings!  There would be little honor in vanquishing you.
 '''
 
@@ -14290,7 +14293,7 @@ You fools did not believe this peace would last, did you?
 
 # Newline separated pre-game acknowledgements.
 AI_PREGAME_ACKNOWLEDGEMENTS__LIST
-'''I am meditating, awaiting instructions from God.  Call again later.
+'''I am meditating, awaiting instructions from God. Call again later.
 Whispers from the Void?  How can that be?
 '''
 
