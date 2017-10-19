@@ -2169,6 +2169,21 @@ class universe(object):
         """
         return IntVec()
 
+    def shortestNonHostilePath(self, number1, number2, number3):
+        """
+        Shortest sequence of System ids and distance from System (number1) to System (number2) with no hostile Fleets
+        as determined by visibility of Empire (number3).  (number3) must be a valid empire.
+
+        :param number1:
+        :type number1: int
+        :param number2:
+        :type number2: int
+        :param number3:
+        :type number3: int
+        :rtype: IntVec
+        """
+        return IntVec()
+
     def updateMeterEstimates(self, item_list):
         """
         :param item_list:

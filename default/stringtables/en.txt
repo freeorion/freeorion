@@ -1187,6 +1187,15 @@ Sets how far apart to render dots for fleet supply lines.
 OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE
 Sets how fast to render dots for fleet supply lines.
 
+OPTIONS_DB_FLEET_EXPLORE_IGNORE_HOSTILE
+Ignore hostile ships when a fleet is set to explore
+
+OPTIONS_DB_FLEET_EXPLORE_SYSTEM_ROUTE_LIMIT
+Max number of fleet routes used to determine favored route to an unexplored system. A value of 0 or less indicates no limit.
+
+OPTIONS_DB_FLEET_EXPLORE_SYSTEM_KNOWN_MULTIPLIER
+Multiplier to priority value of unexplored systems which have been previously seen by the empire. A value less than 1.0 will prefer known systems over unknown systems.
+
 OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE
 Toggles whether to show circles around objects to indicate their detection range on the galaxy map.
 

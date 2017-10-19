@@ -168,6 +168,14 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
     }
 }
 
+bool Fleet::HostileToEmpire(int empire_id) const
+{
+    if (OwnedBy(empire_id))
+        return false;
+    return empire_id == ALL_EMPIRES || Unowned() ||
+           Empires().GetDiplomaticStatus(Owner(), empire_id) == DIPLO_WAR;
+}
+
 UniverseObjectType Fleet::ObjectType() const
 { return OBJ_FLEET; }
 

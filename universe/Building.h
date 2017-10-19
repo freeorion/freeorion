@@ -22,6 +22,7 @@ namespace Condition {
 class FO_COMMON_API Building : public UniverseObject {
 public:
     /** \name Accessors */ //@{
+    bool HostileToEmpire(int empire_id) const override;
     std::set<std::string> Tags() const override;
 
     bool HasTag(const std::string& name) const override;

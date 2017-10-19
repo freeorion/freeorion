@@ -278,6 +278,9 @@ bool UniverseObject::Unowned() const
 bool UniverseObject::OwnedBy(int empire) const
 { return empire != ALL_EMPIRES && empire == Owner(); }
 
+bool UniverseObject::HostileToEmpire(int empire_id) const
+{ return false; }
+
 Visibility UniverseObject::GetVisibility(int empire_id) const
 { return GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id); }
 
