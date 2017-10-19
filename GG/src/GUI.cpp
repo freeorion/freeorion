@@ -1615,47 +1615,45 @@ void GUI::RenderWindow(const std::shared_ptr<Wnd>& wnd)
 
 void GUI::RenderWindow(Wnd* wnd)
 {
-    if (!wnd)
+    if (!wnd || !wnd->Visible())
         return;
 
-    if (wnd->Visible()) {
-        wnd->Render();
+    wnd->Render();
 
-        Wnd::ChildClippingMode clip_mode = wnd->GetChildClippingMode();
+    Wnd::ChildClippingMode clip_mode = wnd->GetChildClippingMode();
 
-        if (clip_mode != Wnd::ClipToClientAndWindowSeparately) {
-            bool clip = clip_mode != Wnd::DontClip;
-            if (clip)
-                wnd->BeginClipping();
-            for (auto& child_wnd : wnd->m_children) {
-                if (child_wnd && child_wnd->Visible())
-                    RenderWindow(child_wnd.get());
+    if (clip_mode != Wnd::ClipToClientAndWindowSeparately) {
+        bool clip = clip_mode != Wnd::DontClip;
+        if (clip)
+            wnd->BeginClipping();
+        for (auto& child_wnd : wnd->m_children) {
+            if (child_wnd && child_wnd->Visible())
+                RenderWindow(child_wnd.get());
+        }
+        if (clip)
+            wnd->EndClipping();
+    } else {
+        std::vector<std::shared_ptr<Wnd>> children_copy{wnd->m_children.begin(), wnd->m_children.end()};
+        const auto& client_child_begin =
+            std::partition(children_copy.begin(), children_copy.end(),
+                           boost::bind(&Wnd::NonClientChild, _1));
+
+        if (children_copy.begin() != client_child_begin) {
+            wnd->BeginNonclientClipping();
+            for (auto it = children_copy.begin(); it != client_child_begin; ++it) {
+                if ((*it) && (*it)->Visible())
+                    RenderWindow(it->get());
             }
-            if (clip)
-                wnd->EndClipping();
-        } else {
-            std::vector<std::shared_ptr<Wnd>> children_copy{wnd->m_children.begin(), wnd->m_children.end()};
-            const auto& client_child_begin =
-                std::partition(children_copy.begin(), children_copy.end(),
-                               boost::bind(&Wnd::NonClientChild, _1));
+            wnd->EndNonclientClipping();
+        }
 
-            if (children_copy.begin() != client_child_begin) {
-                wnd->BeginNonclientClipping();
-                for (auto it = children_copy.begin(); it != client_child_begin; ++it) {
-                    if ((*it) && (*it)->Visible())
-                        RenderWindow(it->get());
-                }
-                wnd->EndNonclientClipping();
+        if (client_child_begin != children_copy.end()) {
+            wnd->BeginClipping();
+            for (auto it = client_child_begin; it != children_copy.end(); ++it) {
+                if ((*it) && (*it)->Visible())
+                    RenderWindow(it->get());
             }
-
-            if (client_child_begin != children_copy.end()) {
-                wnd->BeginClipping();
-                for (auto it = client_child_begin; it != children_copy.end(); ++it) {
-                    if ((*it) && (*it)->Visible())
-                        RenderWindow(it->get());
-                }
-                wnd->EndClipping();
-            }
+            wnd->EndClipping();
         }
     }
 
