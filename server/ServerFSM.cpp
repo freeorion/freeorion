@@ -316,7 +316,8 @@ sc::result Idle::react(const HostMPGame& msg) {
     player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::CLIENT_TYPE_HUMAN_PLAYER, client_version_string);
     server.m_networking.SetHostPlayerID(host_player_id);
 
-    player_connection->SendMessage(ContentCheckSumMessage());
+    if (!GetOptionsDB().Get<bool>("skip-checksum"))
+        player_connection->SendMessage(ContentCheckSumMessage());
 
     DebugLogger(FSM) << "Idle::react(HostMPGame) about to send acknowledgement to host";
     player_connection->SendMessage(HostMPAckMessage(host_player_id));
@@ -357,7 +358,8 @@ sc::result Idle::react(const HostSPGame& msg) {
     int host_player_id = server.m_networking.NewPlayerID();
     player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::CLIENT_TYPE_HUMAN_PLAYER, client_version_string);
     server.m_networking.SetHostPlayerID(host_player_id);
-    player_connection->SendMessage(ContentCheckSumMessage());
+    if (!GetOptionsDB().Get<bool>("skip-checksum"))
+        player_connection->SendMessage(ContentCheckSumMessage());
     player_connection->SendMessage(HostSPAckMessage(host_player_id));
 
     server.m_single_player_game = true;
@@ -582,8 +584,9 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
 
     // establish player with requested client type and acknowldge via connection
     player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
-    player_connection->SendMessage(ContentCheckSumMessage());
     player_connection->SendMessage(JoinAckMessage(player_id));
+    if (!GetOptionsDB().Get<bool>("skip-checksum"))
+        player_connection->SendMessage(ContentCheckSumMessage());
 
     // inform player of host
     player_connection->SendMessage(HostIDMessage(server.m_networking.HostPlayerID()));
@@ -1372,8 +1375,9 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
             // expected player
             // let the networking system know what socket this player is on
             player_connection->EstablishPlayer(expected_it->second, player_name, client_type, client_version_string);
-            player_connection->SendMessage(ContentCheckSumMessage());
             player_connection->SendMessage(JoinAckMessage(expected_it->second));
+            if (!GetOptionsDB().Get<bool>("skip-checksum"))
+                player_connection->SendMessage(ContentCheckSumMessage());
 
             // Inform AI of logging configuration.
             player_connection->SendMessage(
@@ -1396,8 +1400,9 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
             // unexpected but welcome human player
             int host_id = server.Networking().HostPlayerID();
             player_connection->EstablishPlayer(host_id, player_name, client_type, client_version_string);
-            player_connection->SendMessage(ContentCheckSumMessage());
             player_connection->SendMessage(JoinAckMessage(host_id));
+            if (!GetOptionsDB().Get<bool>("skip-checksum"))
+                player_connection->SendMessage(ContentCheckSumMessage());
 
             DebugLogger(FSM) << "Initializing new SP game...";
             server.NewSPGameInit(*m_single_player_setup_data);

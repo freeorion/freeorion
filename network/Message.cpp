@@ -8,14 +8,8 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/ModeratorAction.h"
 #include "../util/SaveGamePreviewUtils.h"
-#include "../universe/Meter.h"
-#include "../universe/System.h"
-#include "../universe/Universe.h"
 #include "../universe/Species.h"
-#include "../universe/Building.h"
-#include "../universe/Field.h"
-#include "../universe/Encyclopedia.h"
-#include "../universe/Tech.h"
+#include "../universe/Universe.h"
 #include "../util/OptionsDB.h"
 #include "../util/Serialize.h"
 #include "../util/ScopedTimer.h"
@@ -623,17 +617,7 @@ Message StartMPGameMessage()
 { return Message(Message::START_MP_GAME, DUMMY_EMPTY_MESSAGE); }
 
 Message ContentCheckSumMessage() {
-    std::map<std::string, unsigned int> checksums;
-
-    // add entries for various content managers...
-    checksums["BuildingTypeManager"] = GetBuildingTypeManager().GetCheckSum();
-    checksums["Encyclopedia"] = GetEncyclopedia().GetCheckSum();
-    checksums["FieldTypeManager"] = GetFieldTypeManager().GetCheckSum();
-    checksums["HullTypeManager"] = GetHullTypeManager().GetCheckSum();
-    checksums["PartTypeManager"] = GetPartTypeManager().GetCheckSum();
-    checksums["PredefinedShipDesignManager"] = GetPredefinedShipDesignManager().GetCheckSum();
-    checksums["SpeciesManager"] = GetSpeciesManager().GetCheckSum();
-    checksums["TechManager"] = GetTechManager().GetCheckSum();
+    auto checksums = CheckSumContent();
 
     std::ostringstream os;
     {

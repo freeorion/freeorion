@@ -590,5 +590,8 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Compute a checksum for each of the universe's content managers. Each value will be of the form
+    ("BuildingManager", <checksum>) */
+FO_COMMON_API std::map<std::string, unsigned int> CheckSumContent();
 
 #endif // _Universe_h_

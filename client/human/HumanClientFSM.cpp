@@ -4,6 +4,7 @@
 #include "../../Empire/Empire.h"
 #include "../../universe/System.h"
 #include "../../universe/Species.h"
+#include "../../universe/Universe.h"
 #include "../../network/Networking.h"
 #include "../../network/ClientNetworking.h"
 #include "../../util/i18n.h"
@@ -230,12 +231,7 @@ boost::statechart::result WaitingForSPHostAck::react(const StartQuittingGame& e)
 
 boost::statechart::result WaitingForSPHostAck::react(const CheckSum& e) {
     TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
-
-    std::map<std::string, unsigned int> checksums;
-    ExtractContentCheckSumMessageData(e.m_message, checksums);
-    InfoLogger() << "Got checksum message from server:";
-    for (const auto& c : checksums)
-        InfoLogger() << c.first << " : " << c.second;
+    Client().VerifyCheckSum(e.m_message);
     return discard_event();
 }
 
@@ -312,12 +308,7 @@ boost::statechart::result WaitingForMPHostAck::react(const StartQuittingGame& e)
 
 boost::statechart::result WaitingForMPHostAck::react(const CheckSum& e) {
     TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
-
-    std::map<std::string, unsigned int> checksums;
-    ExtractContentCheckSumMessageData(e.m_message, checksums);
-    InfoLogger() << "Got checksum message from server:";
-    for (const auto& c : checksums)
-        InfoLogger() << c.first << " : " << c.second;
+    Client().VerifyCheckSum(e.m_message);
     return discard_event();
 }
 
@@ -538,12 +529,7 @@ boost::statechart::result MPLobby::react(const StartQuittingGame& e) {
 
 boost::statechart::result MPLobby::react(const CheckSum& e) {
     TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
-
-    std::map<std::string, unsigned int> checksums;
-    ExtractContentCheckSumMessageData(e.m_message, checksums);
-    InfoLogger() << "Got checksum message from server:";
-    for (const auto& c : checksums)
-        InfoLogger() << c.first << " : " << c.second;
+    Client().VerifyCheckSum(e.m_message);
     return discard_event();
 }
 

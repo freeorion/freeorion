@@ -51,6 +51,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         GetOptionsDB().AddFlag('v', "version",      UserStringNop("OPTIONS_DB_VERSION"),      false);
         GetOptionsDB().AddFlag('s', "singleplayer", UserStringNop("OPTIONS_DB_SINGLEPLAYER"), false);
         GetOptionsDB().AddFlag("hostless",          UserStringNop("OPTIONS_DB_HOSTLESS"),     false);
+        GetOptionsDB().AddFlag("skip-checksum",     UserStringNop("OPTIONS_DB_SKIP_CHECKSUM"), false);
 
         // if config.xml and persistent_config.xml are present, read and set options entries
         GetOptionsDB().SetFromFile(GetConfigPath(), FreeOrionVersionString());

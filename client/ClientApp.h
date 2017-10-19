@@ -237,6 +237,9 @@ public:
      */
     static ClientApp* GetApp();
 
+    /** Compare content checksum from server with client content checksum. */
+    void VerifyCheckSum(const Message& msg);
+
 protected:
     Universe                    m_universe;
     GalaxySetupData             m_galaxy_setup_data;
