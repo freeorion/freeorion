@@ -552,12 +552,7 @@ boost::statechart::result MPLobby::react(const StartQuittingGame& e) {
 
 boost::statechart::result MPLobby::react(const CheckSum& e) {
     TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
-
-    std::map<std::string, unsigned int> checksums;
-    ExtractContentCheckSumMessageData(e.m_message, checksums);
-    InfoLogger() << "Got checksum message from server:";
-    for (const auto& c : checksums)
-        InfoLogger() << c.first << " : " << c.second;
+    VerifyCheckSum(e);
     return discard_event();
 }
 
