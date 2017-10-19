@@ -1111,6 +1111,8 @@ private:
     void                ToggleAggression();
 
     void                Refresh();
+    void                RefreshStateChangedSignals();
+
     void                SetStatIconValues();
     void                UpdateAggressionToggle();
     void                DoLayout();
@@ -1124,7 +1126,8 @@ private:
 
     bool                m_needs_refresh = true;
 
-    boost::signals2::connection  m_fleet_connection;
+    boost::signals2::connection              m_fleet_connection;
+    std::vector<boost::signals2::connection> m_ship_connections;
 
     std::shared_ptr<GG::Control>        m_fleet_icon = nullptr;
     std::shared_ptr<GG::Label>          m_fleet_name_text = nullptr;
@@ -1526,10 +1529,32 @@ void FleetDataPanel::Refresh() {
         }
 
         SetStatIconValues();
+
+        RefreshStateChangedSignals();
     }
 
     UpdateAggressionToggle();
 }
+
+void FleetDataPanel::RefreshStateChangedSignals() {
+    m_fleet_connection.disconnect();
+    for (auto& connection : m_ship_connections)
+        connection.disconnect();
+
+    auto fleet = GetFleet(m_fleet_id);
+    if (!fleet)
+        return;
+
+    m_fleet_connection = fleet->StateChangedSignal.connect(
+        boost::bind(&FleetDataPanel::RequireRefresh, this));
+
+    for (auto& ship : Objects().FindObjects<const Ship>(fleet->ShipIDs()))
+        m_ship_connections.push_back(
+            ship->StateChangedSignal.connect(
+                boost::bind(&FleetDataPanel::RequireRefresh, this)));
+}
+
+
 
 void FleetDataPanel::SetStatIconValues() {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -1772,9 +1797,6 @@ void FleetDataPanel::Init() {
             AttachChild(icon);
             icon->SetBrowseModeTime(tooltip_delay);
         }
-
-        m_fleet_connection = fleet->StateChangedSignal.connect(
-            boost::bind(&FleetDataPanel::RequireRefresh, this));
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         if (fleet->OwnedBy(client_empire_id) || fleet->GetVisibility(client_empire_id) >= VIS_FULL_VISIBILITY) {
