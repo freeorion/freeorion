@@ -2929,10 +2929,18 @@ MAP_PROD_WASTED_TITLE
 Unused Production
 
 # %1% number of production points generated.
-# %2% number of production points currently not used for production.
+# %2% number of production points currently neither used for production nor for stockpile.
+# %3% stockpile yield of excess production (the other part is wasted)
+# %4% number of production points transferred to the imperial stockpile.
+# %5% number of production points currently neither used for production nor for stockpile.
 MAP_PROD_WASTED_TEXT
-'''Total Production : %1%
-Wasted Production : %2%
+'''Production Capacity : %1% PP
+Excess Production : %2% PP
+
+Stockpile Efficiency : %3%%%
+Excess to Stockpile : %4% PP
+
+Wasted Capacity : %5% PP
 
 Click here to open the production menu'''
 
@@ -2944,6 +2952,10 @@ Current Output
 
 RESOURCE_TT_TARGET_OUTPUT
 Target Output
+
+MAP_STOCKPILE_TITLE
+Imperial Stockpile
+
 
 MAP_RESEARCH_TITLE
 Research
@@ -3701,7 +3713,7 @@ Description
 # %2% name of the location where the resource is produced.
 # %3% name of the empire which owns this resource produced.
 PRODUCTION_INFO_AT_LOCATION_TITLE
-%3% %1% at %2%
+%3% %1% .. at %2%
 
 # %1% type of resource (Research, Production, ...).
 # %2% name of the empire which owns this resource produced.
@@ -3709,14 +3721,34 @@ PRODUCTION_INFO_EMPIRE
 %2% %1%
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
-Total Available Points
+Available Points
 
 PRODUCTION_INFO_WASTED_PS_LABEL
-Wasted Points
+Excess
 
-PRODUCTION_INFO_LOCAL_PS_LABEL
-Points Available Here
+PRODUCTION_INFO_LOCAL_LABEL
+..
 
+PRODUCTION_INFO_STOCKPILE_PS_LABEL
+Stockpiled Points
+
+PRODUCTION_INFO_LOCAL_STOCKPILE_USE_PS_LABEL
+..
+
+PRODUCTION_INFO_STOCKPILE_USE_MAX_LABEL
+Maximum Use
+
+PRODUCTION_INFO_STOCKPILE_USE_PS_LABEL
+Stockpile Use
+
+STOCKPILE_LABEL
+Stockpile
+
+STOCKPILE_USE_LABEL
+Stockpile Use
+
+STOCKPILE_CHANGE_LABEL
+Next Turn Stockpile
 
 ##
 ## Research window
@@ -3818,9 +3850,10 @@ It also allows for some interaction with the [[encyclopedia MAP_WINDOW_ARTICLE_T
 
 (default position: top left)
 The Production Summary panel shows available Production Points.
-Total Available Points relates to the PP available across your entire empire.
-Points Available Here are the maximum available for the selected system.  This may be less than the total available when all of your empire's systems are not [[metertype METER_SUPPLY]] connected.
-Wasted Points will be lost, if not allocated before ending the turn.
+If a system is selected there are two columns shown else only one. The (left) column shows production points across your entire empire. The right column gives production points for the selected system.
+Available Points relates to the PP available for production. The right value are the maximum available production points for the selected system. This may be less than the total available when all of your empire's systems are not [[metertype METER_SUPPLY]] connected.
+Stockpile relates to the PP available for production using the imperial stockpile. Production items specifically need to be enabled to draw from the stockpile. 
+Most of excess PP will be wasted and lost. A part of the excess gets stored in the imperial stockpile.
 
 
 <u>Producible Items panel</u>
@@ -3948,6 +3981,18 @@ Can be produced here
 
 PRODUCTION_LOCATION_INVALID
 CANNOT be produced here
+
+IMPERIAL_STOCKPILE
+Imperial Stockpile
+
+PRODUCTION_QUEUE_ITEM_STOCKPILE_ENABLED
+(Use of [[IMPERIAL_STOCKPILE]] is Enabled for this Item)
+
+ALLOW_IMPERIAL_PP_STOCKPILE_USE
+Enable drawing from [[IMPERIAL_STOCKPILE]] for this item
+
+DISALLOW_IMPERIAL_PP_STOCKPILE_USE
+Disable drawing from [[IMPERIAL_STOCKPILE]] for this item
 
 # %1% name of the system this item production should be relocated to.
 PRODUCTION_QUEUE_RALLIED_TO
@@ -5033,6 +5078,29 @@ The Industry of a planet can be used for any production projects of [[metertype 
 
 For information on the interface, see [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
 '''
+
+METER_IMPERIAL_PP_TRANSFER_EFFICIENCY_VALUE_LABEL
+Industry to Stockpile PP Transfer Ratio
+
+METER_IMPERIAL_PP_TRANSFER_EFFICIENCY_VALUE_DESC
+'''The transfer ratio represents the efficiency of stockpiling items in the [[IMPERIAL_STOCKPILE]] and having them available for production in anywhere in your empire.
+
+You start with [[tech PRO_IMPERIAL_STOCKPILE_1]] and a 0.2 ratio (i.e. 20% of your excess PP are added to the [[IMPERIAL_STOCKPILE]]).
+Technologies [[tech PRO_IMPERIAL_STOCKPILE_2]] and [[tech PRO_IMPERIAL_STOCKPILE_3]] each add 0.2 .
+[[tech CON_TRANS_DESIGN]] adds up to 0.3.  As such your ratio can be between 20% to 90% efficiency.''' 
+
+METER_IMPERIAL_PP_USE_LIMIT_VALUE_LABEL
+Imperial Stockpile Use Limit
+
+METER_IMPERIAL_PP_USE_LIMIT_VALUE
+'''The Imperial Stockpile Use Limit represents the readyness of the imperial stockpile service to supply projects with production points.
+It gives the number of production points which may be taken per turn from the imperial stockpile to produce. 
+
+You start with [[tech PRO_IMPERIAL_STOCKPILE_1]] and may use two points per turn.
+[[tech PRO_IMPERIAL_STOCKPILE_2]] allows to use three more per turn. 
+[[tech PRO_IMPERIAL_STOCKPILE_3]] allows to use five more per turn. 
+Maxed out, [[tech CON_TRANS_DESIGN]] allows to use twelve more PP per turn.  
+As such your use limit ranges between two and twenty-two PP per turn.''' 
 
 METER_RESEARCH_VALUE_LABEL
 Research
@@ -6337,6 +6405,24 @@ EFFECT_ART_PLANET
 
 EFFECT_ART_PLANET_LABEL
 Black Hole
+
+INTERSPECIES_ACADEMY_LABEL
+Species InterDesign Academy
+
+CONDITION_INTERSPECIES_ACADEMY_SPECIES_ALREADY_EXISTS
+Academies of this planet's species already exist in the empire
+
+EFFECT_INTERSPECIES_ACADEMY
+Additional effect by the %species% on %planet% joining the InterDesign design academy. Each design academy adds 0.05 to %rawtext%.
+
+EFFECT_INTERSPECIES_ACADEMY_LABEL
+New InterDesign Academy
+
+EFFECT_INTERSPECIES_ACADEMY_DESTROY
+Destroying fake duplicate design academy %planet%.
+
+EFFECT_INTERSPECIES_ACADEMY_DESTROY_LABEL
+Duplicate Academy Destroyed
 
 EFFECT_TAME_MONSTER_HATCHED
 At %planet%: a tamed %predefinedshipdesign% is ready for service.
@@ -8225,6 +8311,14 @@ METER_INDUSTRY
 Industry
 
 # Meter types
+METER_IMPERIAL_PP_TRANSFER_EFFICIENCY
+Production to Stockpile Ratio
+
+# Meter types
+METER_IMPERIAL_PP_USE_LIMIT
+Imperial Stockpile Use Limit
+
+# Meter types
 METER_RESEARCH
 Research
 
@@ -10076,6 +10170,56 @@ While transforming an entire population into beings of pure energy would be impr
 
 The ultimate stage of physical development is to transcend the physical altogether. Without bodies, individuals and society may move, grow and exist freely, unhindered by unnecessary physical limitations and inefficient metabolic processes that waste energy supporting homeostasis.'''
 
+CON_TRANS_DESIGN
+Transcendent Design
+
+CON_TRANS_DESIGN_DESC
+'''Transcending the limitations of the designing species, the most creative and effective from the different species in the empire start to work together to build universally usable goods.
+Building [[building BLD_INTERSPECIES_ACADEMY]] on different planets ensures the practice spreads in the empire.
+
+The imperial stockpile service uses the outcome to prepare goods which can be used by any citizen.'''
+
+IMPERIAL_STOCKPILE_SHORT_DESC
+Allows for Imperial Production Stockpiling
+
+PRO_IMPERIAL_STOCKPILE_1
+Predictive Stockpiling
+
+PRO_IMPERIAL_STOCKPILE_1_DESC
+'''Knowing where demand for certain goods will be in future allows to stack the items up in time.
+The imperial stockpile service has a fleet for distributing raw materials to places where important projects are predicted to be started.
+This task is difficult as the service has to predict when demand happens, where it happens, what materials and goods are demanded and also who the users will be.
+
+A portion of unused PP be transferred to the Imperial Production Stockpile the other part going to waste.
+An item on the production queue can draw on the Imperial Stockpile if the item has been explicitly enabled for doing so.
+
+This is the basic technology for the imperial stockpile.
+The imperial stockpile service starts with 20% [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allows drawing 2 PP / turn from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
+
+PRO_IMPERIAL_STOCKPILE_2
+Generic Supplies
+
+PRO_IMPERIAL_STOCKPILE_2_DESC
+'''By carefully choosing supply chains, materials, and designs, Generic Supplies are created which can easily be decomposited and reused for most industrial products.
+
+Generic Supplies can be created a long time before the demand occurs. Supply packages usually include bootstrap devices which reconstruct the facilities for reconstructing new products from the Generic Supplies.
+Reaching this state of sophistication, Generic Supplies can be used to construct new technology products which were not available at the time the supplies were produced.
+
+This frees the imperial stockpile service from having to know which goods will be demanded exactly. Predicting the location is enough.
+
+This is an upgrade technology for the imperial stockpile.
+It adds 20% to the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allows drawing 3 PP / turn extra from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
+
+PRO_IMPERIAL_STOCKPILE_3
+Interstellar Entanglement Factory
+
+PRO_IMPERIAL_STOCKPILE_3_DESC
+'''Quantum entanglement of factory control rooms allows to operate machines remotely from other star systems.
+Decoupling workforce and the means of production helps to produce just in time and increases efficiency of the imperial stockpile service.
+
+This is an upgrade technology for the imperial stockpile.
+It adds 20% to the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allows drawing 5 PP / turn extra from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
+
 PRO_MICROGRAV_MAN
 Microgravity Industry
 
@@ -11634,6 +11778,19 @@ BLD_INDUSTRY_CENTER_DESC
 [[tech PRO_INDUSTRY_CENTER_II]] refinement doubles the bonus.
 
 [[tech PRO_INDUSTRY_CENTER_III]] refinement further increases the bonus to triple the base bonus.'''
+
+BLD_INTERSPECIES_ACADEMY
+Species InterDesign Academy
+
+BLD_INTERSPECIES_ACADEMY_DESC
+'''The Species InterDesign Academy.
+
+Learning to design devices so that different species can use is crucial for developing universally usable tools.
+
+Each empire may contain an academy on up to six planets with different species.
+To be able build such an academy the population must be very happy and at least three starlane jumps away from the next academy.
+Each InterDesign Academy improves the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] by 5% and the allows to draw 2PP/turn more (See [[METER_IMPERIAL_PP_USE_LIMIT]]).
+'''
 
 BLD_MEGALITH
 Megalith

@@ -1,0 +1,20 @@
+Tech
+    name = "PRO_IMPERIAL_STOCKPILE_1"
+    description = "PRO_IMPERIAL_STOCKPILE_1_DESC"
+    short_description = "IMPERIAL_STOCKPILE_SHORT_DESC"
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+
+    effectsgroups = [
+        // Set initial meters
+        EffectsGroup
+            scope = Source
+            priority = [[VERY_EARLY_PRIORITY]]
+            effects = [
+                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_USE_LIMIT"           value = Value + 2
+                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_TRANSFER_EFFICIENCY" value = Value + 0.2
+            ]
+    ]
+
+#include "/scripting/common/priorities.macros"

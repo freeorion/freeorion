@@ -1,0 +1,21 @@
+Tech
+    name = "PRO_IMPERIAL_STOCKPILE_3"
+    description = "PRO_IMPERIAL_STOCKPILE_3_DESC"
+    short_description = "IMPERIAL_STOCKPILE_SHORT_DESC"
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 100 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = [
+        "PRO_SENTIENT_AUTOMATION"
+        "LRN_GRAVITONICS"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            effects = [
+                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_USE_LIMIT"           value = Value + 5
+                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_TRANSFER_EFFICIENCY" value = Value + 0.2
+            ]
+    ]
+
+#include "/scripting/common/base_prod.macros"

@@ -603,7 +603,8 @@ public:
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void            SetTotalPointsCost(float total_points, float total_cost);
-    void            SetLocalPointsCost(float local_points, float local_cost, const std::string& location_name);
+    void            SetStockpileCost(float stockpile, float stockpile_use, float stockpile_use_max);
+    void            SetLocalPointsCost(float local_points, float local_cost, float local_stockpile_use, float local_stockpile_use_max, const std::string& location_name);
     void            SetEmpireID(int empire_id);
     void            ClearLocalInfo();
     void            Clear();
@@ -618,6 +619,18 @@ private:
     std::shared_ptr<GG::Label>  m_total_points_label;
     std::shared_ptr<GG::Label>  m_total_points;
     std::shared_ptr<GG::Label>  m_total_points_P_label;
+    std::shared_ptr<GG::Label>  m_stockpile_points_label;
+    std::shared_ptr<GG::Label>  m_stockpile_points;
+    std::shared_ptr<GG::Label>  m_stockpile_points_P_label;
+    std::shared_ptr<GG::Label>  m_stockpile_use_label;
+    std::shared_ptr<GG::Label>  m_stockpile_use;
+    std::shared_ptr<GG::Label>  m_stockpile_use_P_label;
+    std::shared_ptr<GG::Label>  m_local_stockpile_use_label;
+    std::shared_ptr<GG::Label>  m_local_stockpile_use;
+    std::shared_ptr<GG::Label>  m_local_stockpile_use_P_label;
+    std::shared_ptr<GG::Label>  m_stockpile_max_use_label;
+    std::shared_ptr<GG::Label>  m_stockpile_max_use;
+    std::shared_ptr<GG::Label>  m_stockpile_max_use_P_label;
     std::shared_ptr<GG::Label>  m_wasted_points_label;
     std::shared_ptr<GG::Label>  m_wasted_points;
     std::shared_ptr<GG::Label>  m_wasted_points_P_label;
