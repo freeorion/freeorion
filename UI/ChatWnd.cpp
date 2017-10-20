@@ -23,8 +23,7 @@
 #include <GG/GUI.h>
 
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/date_time/posix_time/posix_time_io.hpp>
-#include <boost/date_time/c_local_time_adjustor.hpp>
+
 
 // boost::spirit::classic pulls in windows.h which in turn defines the macros
 // SendMessage. Undefining those should avoid name collisions with FreeOrion
@@ -402,17 +401,8 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
     if (const Empire* sender_empire = GetEmpire(sender_empire_id))
         sender_colour = sender_empire->Color();
 
-    std::stringstream stream;
-    if (ClientUI::DisplayTimestamp()) {
-        boost::posix_time::ptime local_timestamp = boost::date_time::c_local_adjustor<boost::posix_time::ptime>::utc_to_local(timestamp);
-        boost::posix_time::time_facet* facet = new boost::posix_time::time_facet();
-        facet->format("[%d %b %H:%M:%S]");
-        stream.imbue(std::locale(std::locale(""), facet));
-        stream << local_timestamp;
-    }
-
     std::string filtered_message = StringtableTextSubstitute(text);
-    std::string wrapped_text = RgbaTag(sender_colour) + stream.str() + sender_name + ": " + filtered_message + "</rgba>";
+    std::string wrapped_text = RgbaTag(sender_colour) + ClientUI::FormatTimestamp(timestamp) + sender_name + ": " + filtered_message + "</rgba>";
 
     *m_display += wrapped_text + "\n";
     m_display_show_time = GG::GUI::GetGUI()->Ticks();

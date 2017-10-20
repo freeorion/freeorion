@@ -5,6 +5,7 @@
 #include <GG/GGFwd.h>
 
 #include <boost/filesystem/path.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "SaveFileDialog.h"
 #include "../universe/EnumsFwd.h"
@@ -147,6 +148,9 @@ public:
       * "UI.title-font" option setting as the font filename, and provides
       * Unicode character sets based on the contents of the stringtable in use. */
     static std::shared_ptr<GG::Font> GetTitleFont(int pts = TitlePts());
+
+    /** Returns formatted POSIX UTC-time in local timezone. */
+    static std::string FormatTimestamp(boost::posix_time::ptime timestamp);
 
     //!@{
     static boost::filesystem::path ArtDir();    //!< directory holding artwork
