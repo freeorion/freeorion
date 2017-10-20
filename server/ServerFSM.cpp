@@ -469,18 +469,20 @@ MPLobby::MPLobby(my_context c) :
 
                 m_lobby_data->m_players.push_back(std::make_pair(player_id, player_setup_data));
             } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
-                PlayerSetupData player_setup_data;
-                player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
-                player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
-                player_setup_data.m_client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
-                player_setup_data.m_empire_name =   GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
-                player_setup_data.m_empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
-                if (m_lobby_data->m_seed != "")
-                    player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
-                else
-                    player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
+                if (m_ai_next_index <= GetOptionsDB().Get<int>("mplobby-max-ai") || GetOptionsDB().Get<int>("mplobby-max-ai") < 0) {
+                    PlayerSetupData player_setup_data;
+                    player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
+                    player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
+                    player_setup_data.m_client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
+                    player_setup_data.m_empire_name =   GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
+                    player_setup_data.m_empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
+                    if (m_lobby_data->m_seed != "")
+                        player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
+                    else
+                        player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
 
-                m_lobby_data->m_players.push_back(std::make_pair(Networking::INVALID_PLAYER_ID, player_setup_data));
+                    m_lobby_data->m_players.push_back(std::make_pair(Networking::INVALID_PLAYER_ID, player_setup_data));
+                }
                 // disconnect AI
                 to_disconnect.push_back(player_connection);
             }
@@ -891,7 +893,29 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
             // directly configurable lobby data
             m_lobby_data->m_new_game       = incoming_lobby_data.m_new_game;
-            m_lobby_data->m_players        = incoming_lobby_data.m_players;
+
+            int ai_count = 0;
+            int human_count = 0;
+            for (const auto& plr : incoming_lobby_data.m_players) {
+                switch (plr.second.m_client_type) {
+                case Networking::CLIENT_TYPE_AI_PLAYER:
+                    ai_count++;
+                    break;
+                case Networking::CLIENT_TYPE_HUMAN_PLAYER:
+                    human_count++;
+                    break;
+                }
+            }
+
+            // restrict count of AI
+            if (ai_count <= GetOptionsDB().Get<int>("mplobby-max-ai") || GetOptionsDB().Get<int>("mplobby-max-ai") < 0) {
+                m_lobby_data->m_players    = incoming_lobby_data.m_players;
+            } else {
+                has_important_changes = true;
+            }
+            if (human_count < GetOptionsDB().Get<int>("mplobby-min-human")) {
+                has_important_changes = true;
+            }
 
             LogPlayerSetupData(m_lobby_data->m_players);
 
