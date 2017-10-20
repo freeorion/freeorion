@@ -1513,18 +1513,24 @@ void FleetDataPanel::Refresh() {
         std::shared_ptr<GG::Texture> overlay_texture;
         if (all_ships([](const std::shared_ptr<const Ship>& ship) { return ship->OrderedScrapped(); }))
             add_overlay("scrapped.png");
-        if (all_ships([](const std::shared_ptr<const Ship>& ship) {
-                    return ship->OrderedColonizePlanet() != INVALID_OBJECT_ID; }))
+        if (all_ships(
+                [](const std::shared_ptr<const Ship>& ship)
+                {return ship->OrderedColonizePlanet() != INVALID_OBJECT_ID; })
+           )
         {
             add_overlay("colonizing.png");
         }
-        if (all_ships([](const std::shared_ptr<const Ship>& ship) {
-                    return ship->OrderedInvadePlanet() != INVALID_OBJECT_ID; }))
+        if (all_ships(
+                [](const std::shared_ptr<const Ship>& ship)
+                { return ship->OrderedInvadePlanet() != INVALID_OBJECT_ID; })
+           )
         {
             add_overlay("invading.png");
         }
-        if (all_ships([](const std::shared_ptr<const Ship>& ship) {
-                    return ship->OrderedBombardPlanet() != INVALID_OBJECT_ID; }))
+        if (all_ships(
+                [](const std::shared_ptr<const Ship>& ship)
+                { return ship->OrderedBombardPlanet() != INVALID_OBJECT_ID; })
+           )
         {
             add_overlay("bombarding.png");
         }
@@ -1732,7 +1738,7 @@ void FleetDataPanel::DoLayout() {
     }
     if (m_scanline_control)
         m_scanline_control->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-    for (auto& overlay :m_fleet_icon_overlays)
+    for (auto& overlay : m_fleet_icon_overlays)
         overlay->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
 
     // position fleet name and destination texts
