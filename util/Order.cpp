@@ -819,8 +819,6 @@ bool BombardOrder::UndoImpl() const {
     planet->ResetIsAboutToBeBombarded();
     ship->ClearBombardPlanet();
 
-    DebugLogger() << "Rescinded order to bombard " << planet->Name() << " from ship " << ship->ID();
-
     if (auto fleet = GetFleet(ship->FleetID()))
         fleet->StateChangedSignal();
 
@@ -831,7 +829,7 @@ bool BombardOrder::ShouldPersist() {
     auto ship = GetShip(m_ship);
     auto planet = GetPlanet(m_planet);
 
-    if (!(ship && planet))
+    if (!ship || !planet)
         return false;
     if (planet->HasSpecial("PLANET_DESTRUCTION_SPECIAL"))
         return false;

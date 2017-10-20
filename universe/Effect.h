@@ -787,30 +787,10 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Removes all specials from the target object. */
-class FO_COMMON_API RemoveAllSpecials : public EffectBase {
-public:
-    RemoveAllSpecials();
-
-    ~RemoveAllSpecials();
-
-    void Execute(const ScriptingContext& context) const override;
-
-    std::string Dump() const override;
-
-    void SetTopLevelContent(const std::string& content_name) override
-    {}
-
-    unsigned int GetCheckSum() const override;
-
-private:
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
 
 /** Removes the Special with the name \a name to the target object.  This has
-  * no effect if no such Special was already attached to the target object. */
+  * no effect if no such Special was already attached to the target object.
+  * If a null-ptr is passed, all Specials are removed from the target object. */
 class FO_COMMON_API RemoveSpecial : public EffectBase {
 public:
     explicit RemoveSpecial(const std::string& name);
@@ -1505,12 +1485,6 @@ void AddSpecial::serialize(Archive& ar, const unsigned int version)
 
 template <class Archive>
 void RemoveAllBuildings::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase);
-}
-
-template <class Archive>
-void RemoveAllSpecials::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase);
 }

@@ -161,6 +161,7 @@ public:
     void                    SetSystem(int sys);                     ///< assigns this object to a System.  does not actually move object in universe
     virtual void            AddSpecial(const std::string& name, float capacity = 0.0f); ///< adds the Special \a name to this object, if it is not already present
     virtual void            RemoveSpecial(const std::string& name); ///< removes the Special \a name from this object, if it is already present
+    void                    RemoveAllSpecials();                    ///< removes all specials from this object
     void                    SetSpecialCapacity(const std::string& name, float capacity);
 
     /** Performs the movement that this object is responsible for this object's

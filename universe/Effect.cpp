@@ -2195,44 +2195,6 @@ unsigned int RemoveAllBuildings::GetCheckSum() const {
 
 
 ///////////////////////////////////////////////////////////
-// RemoveAllSpecials                                     //
-///////////////////////////////////////////////////////////
-RemoveAllSpecials::RemoveAllSpecials()
-{}
-
-RemoveAllSpecials::~RemoveAllSpecials()
-{}
-
-void RemoveAllSpecials::Execute(const ScriptingContext& context) const {
-    if (!context.effect_target) {
-        ErrorLogger() << "RemoveAllSpecials::Execute passed no target object";
-        return;
-    }
-
-    std::vector<std::string> special_names;
-
-    for (auto& special : context.effect_target->Specials())
-        special_names.push_back(special.first);
-
-    for (auto& special_name : special_names)
-        context.effect_target->RemoveSpecial(special_name);
-}
-
-std::string RemoveAllSpecials::Dump() const {
-    return DumpIndent();
-}
-
-unsigned int RemoveAllSpecials::GetCheckSum() const {
-    unsigned int retval{ 0 };
-
-    CheckSums::CheckSumCombine(retval, "RemoveAllSpecials");
-
-    TraceLogger() << "GetCheckSum(RemoveAllSpecials): retval: " << retval;
-    return retval;
-}
-
-
-///////////////////////////////////////////////////////////
 // RemoveSpecial                                         //
 ///////////////////////////////////////////////////////////
 RemoveSpecial::RemoveSpecial(const std::string& name) :
@@ -2250,6 +2212,11 @@ void RemoveSpecial::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         ErrorLogger() << "RemoveSpecial::Execute passed no target object";
         return;
+    }
+
+    if (!m_name) {
+        // if a nullpointer was passed instead of a special name, remove all specials
+        context.effect_target->RemoveAllSpecials();
     }
 
     std::string name = (m_name ? m_name->Eval(context) : "");

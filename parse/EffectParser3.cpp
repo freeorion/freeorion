@@ -98,7 +98,7 @@ namespace parse { namespace detail {
             ;
 
         remove_all_specials
-            =   tok.RemoveAllSpecials_ [ _val = new_<Effect::RemoveAllSpecials>() ]
+            =   tok.RemoveAllSpecials_ [ _val = new_<Effect::RemoveSpecial>(nullptr) ]
             ;
 
         remove_special
