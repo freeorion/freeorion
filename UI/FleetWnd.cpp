@@ -668,8 +668,8 @@ namespace {
 
         int                                m_ship_id;
         std::shared_ptr<GG::StaticGraphic> m_ship_icon;
-        /// An overlay for orders like scrap, colonize, invade, bomard destroy etc.
-        std::shared_ptr<GG::StaticGraphic> m_ship_icon_overlay = nullptr;
+        /// An overlays for orders like scrap, colonize, invade, bombard destroy etc.
+        std::vector<std::shared_ptr<GG::StaticGraphic>> m_ship_icon_overlays;
         std::shared_ptr<ScanlineControl>   m_scanline_control;
         std::shared_ptr<GG::Label>         m_ship_name_text;
         std::shared_ptr<GG::Label>         m_design_name_text;
@@ -687,6 +687,7 @@ namespace {
         m_initialized(false),
         m_ship_id(ship_id),
         m_ship_icon(nullptr),
+        m_ship_icon_overlays(),
         m_scanline_control(nullptr),
         m_ship_name_text(nullptr),
         m_design_name_text(nullptr),
@@ -772,7 +773,9 @@ namespace {
 
     void ShipDataPanel::SetShipIcon() {
         DetachChildAndReset(m_ship_icon);
-        DetachChildAndReset(m_ship_icon_overlay);
+        for (auto& overlay : m_ship_icon_overlays)
+            DetachChildAndReset(overlay);
+        m_ship_icon_overlays.clear();
         DetachChildAndReset(m_scanline_control);
 
         auto ship = GetShip(m_ship_id);
@@ -791,25 +794,23 @@ namespace {
         AttachChild(m_ship_icon);
 
         // Add the overlay
-        std::shared_ptr<GG::Texture> overlay_texture;
-        if (ship->OrderedScrapped()) {
-            overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
-        }
-        else if (ship->OrderedColonizePlanet() != INVALID_OBJECT_ID) {
-            overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "colonizing.png", true);
-        }
-        else if (ship->OrderedInvadePlanet() != INVALID_OBJECT_ID) {
-            overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "invading.png", true);
-        }
-        else if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID) {
-            overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "bombarding.png", true);
-        }
+        auto add_overlay = [this](const std::string& file) {
+            if (auto overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / file, true)) {
+                auto overlay = GG::Wnd::Create<GG::StaticGraphic>(overlay_texture, DataPanelIconStyle());
+                overlay->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+                AttachChild(overlay);
+                m_ship_icon_overlays.push_back(overlay);
+            }
+        };
 
-        if (overlay_texture) {
-            m_ship_icon_overlay = GG::Wnd::Create<GG::StaticGraphic>(overlay_texture, DataPanelIconStyle());
-            m_ship_icon_overlay->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-            AttachChild(m_ship_icon_overlay);
-        }
+        if (ship->OrderedScrapped())
+            add_overlay("scrapped.png");
+        if (ship->OrderedColonizePlanet() != INVALID_OBJECT_ID)
+            add_overlay("colonizing.png");
+        if (ship->OrderedInvadePlanet() != INVALID_OBJECT_ID)
+            add_overlay("invading.png");
+        if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID)
+            add_overlay("bombarding.png");
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         if ((ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
@@ -925,8 +926,8 @@ namespace {
         // client height should never be less than the height of the space resereved for the icon
         if (m_ship_icon)
             m_ship_icon->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-        if (m_ship_icon_overlay)
-            m_ship_icon_overlay->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+        for (auto& overlay :m_ship_icon_overlays)
+            overlay->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
 
         // position ship name text at the top to the right of icons
         const GG::Pt name_ul = GG::Pt(DataPanelIconSpace().x + DATA_PANEL_TEXT_PAD, GG::Y0);
