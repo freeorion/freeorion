@@ -1134,7 +1134,7 @@ private:
     std::shared_ptr<GG::Label>          m_fleet_name_text = nullptr;
     std::shared_ptr<GG::Label>          m_fleet_destination_text = nullptr;
     std::shared_ptr<GG::Button>         m_aggression_toggle = nullptr;
-    std::shared_ptr<GG::StaticGraphic>  m_fleet_icon_overlay = nullptr;
+    std::vector<std::shared_ptr<GG::StaticGraphic>>  m_fleet_icon_overlays;
     std::shared_ptr<ScanlineControl>    m_scanline_control = nullptr;
 
     std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>>   m_stat_icons;   // statistic icons and associated meter types
@@ -1148,7 +1148,8 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
     m_fleet_id(fleet_id),
     m_system_id(INVALID_OBJECT_ID),
     m_is_new_fleet_drop_target(false),
-    m_new_fleet_aggression(NewFleetsAggressiveOptionSetting())
+    m_new_fleet_aggression(NewFleetsAggressiveOptionSetting()),
+    m_fleet_icon_overlays()
 {
     RequireRefresh();
     SetChildClippingMode(ClipToClient);
@@ -1159,7 +1160,8 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     m_fleet_id(INVALID_OBJECT_ID),
     m_system_id(system_id),
     m_is_new_fleet_drop_target(new_fleet_drop_target),
-    m_new_fleet_aggression(NewFleetsAggressiveOptionSetting())
+    m_new_fleet_aggression(NewFleetsAggressiveOptionSetting()),
+    m_fleet_icon_overlays()
 {
     RequirePreRender();
     SetChildClippingMode(ClipToClient);
@@ -1428,7 +1430,9 @@ void FleetDataPanel::Refresh() {
 
     DetachChildAndReset(m_fleet_icon);
     DetachChildAndReset(m_scanline_control);
-    DetachChildAndReset(m_fleet_icon_overlay);
+    for (auto& overlay : m_fleet_icon_overlays)
+        DetachChildAndReset(overlay);
+    m_fleet_icon_overlays.clear();
 
     if (m_is_new_fleet_drop_target) {
         m_fleet_name_text->SetText(UserString("FW_NEW_FLEET_LABEL"));
@@ -1495,31 +1499,37 @@ void FleetDataPanel::Refresh() {
                 });
         };
 
+        // Add the overlay
+        auto add_overlay = [this](const std::string& file) {
+            if (auto overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / file, true)) {
+                auto overlay = GG::Wnd::Create<GG::StaticGraphic>(overlay_texture, DataPanelIconStyle());
+                overlay->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+                AttachChild(overlay);
+                m_fleet_icon_overlays.push_back(overlay);
+            }
+        };
+
         // Add overlays for all ships colonizing, invading etc.
         std::shared_ptr<GG::Texture> overlay_texture;
-        if (all_ships([](const std::shared_ptr<const Ship>& ship) { return ship->OrderedScrapped(); })) {
-            overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
-        } else if (all_ships([](const std::shared_ptr<const Ship>& ship) {
+        if (all_ships([](const std::shared_ptr<const Ship>& ship) { return ship->OrderedScrapped(); }))
+            add_overlay("scrapped.png");
+        if (all_ships([](const std::shared_ptr<const Ship>& ship) {
                     return ship->OrderedColonizePlanet() != INVALID_OBJECT_ID; }))
         {
-            overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "colonizing.png", true);
-        } else if (all_ships([](const std::shared_ptr<const Ship>& ship) {
+            add_overlay("colonizing.png");
+        }
+        if (all_ships([](const std::shared_ptr<const Ship>& ship) {
                     return ship->OrderedInvadePlanet() != INVALID_OBJECT_ID; }))
         {
-            overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "invading.png", true);
-        } else if (all_ships([](const std::shared_ptr<const Ship>& ship) {
+            add_overlay("invading.png");
+        }
+        if (all_ships([](const std::shared_ptr<const Ship>& ship) {
                     return ship->OrderedBombardPlanet() != INVALID_OBJECT_ID; }))
         {
-            overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "bombarding.png", true);
-        } else if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES) {
-            overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "gifting.png", true);
+            add_overlay("bombarding.png");
         }
-
-        if (overlay_texture) {
-            m_fleet_icon_overlay = GG::Wnd::Create<GG::StaticGraphic>(overlay_texture, DataPanelIconStyle());
-            m_fleet_icon_overlay->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-            AttachChild(m_fleet_icon_overlay);
-        }
+        if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES)
+            add_overlay("gifting.png");
 
         if ((fleet->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
             && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
@@ -1722,8 +1732,8 @@ void FleetDataPanel::DoLayout() {
     }
     if (m_scanline_control)
         m_scanline_control->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
-    if (m_fleet_icon_overlay)
-        m_fleet_icon_overlay->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
+    for (auto& overlay :m_fleet_icon_overlays)
+        overlay->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
 
     // position fleet name and destination texts
     const GG::Pt name_ul = GG::Pt(DataPanelIconSpace().x + DATA_PANEL_TEXT_PAD, GG::Y0);
