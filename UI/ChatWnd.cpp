@@ -402,12 +402,14 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
     if (const Empire* sender_empire = GetEmpire(sender_empire_id))
         sender_colour = sender_empire->Color();
 
-    boost::posix_time::ptime local_timestamp = boost::date_time::c_local_adjustor<boost::posix_time::ptime>::utc_to_local(timestamp);
-    boost::posix_time::time_facet* facet = new boost::posix_time::time_facet();
-    facet->format("[%d %b %H:%M:%S]");
     std::stringstream stream;
-    stream.imbue(std::locale(std::locale(""), facet));
-    stream << local_timestamp;
+    if (ClientUI::DisplayTimestamp()) {
+        boost::posix_time::ptime local_timestamp = boost::date_time::c_local_adjustor<boost::posix_time::ptime>::utc_to_local(timestamp);
+        boost::posix_time::time_facet* facet = new boost::posix_time::time_facet();
+        facet->format("[%d %b %H:%M:%S]");
+        stream.imbue(std::locale(std::locale(""), facet));
+        stream << local_timestamp;
+    }
 
     std::string filtered_message = StringtableTextSubstitute(text);
     std::string wrapped_text = RgbaTag(sender_colour) + stream.str() + sender_name + ": " + filtered_message + "</rgba>";

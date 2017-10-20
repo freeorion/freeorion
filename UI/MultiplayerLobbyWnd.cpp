@@ -729,12 +729,14 @@ void MultiPlayerLobbyWnd::ChatMessage(int player_id, const boost::posix_time::pt
     }
 
     // print local time
-    boost::posix_time::ptime local_timestamp = boost::date_time::c_local_adjustor<boost::posix_time::ptime>::utc_to_local(timestamp);
-    boost::posix_time::time_facet* facet = new boost::posix_time::time_facet();
-    facet->format("[%d %b %H:%M:%S]");
     std::stringstream stream;
-    stream.imbue(std::locale(std::locale(""), facet));
-    stream << local_timestamp;
+    if (ClientUI::DisplayTimestamp()) {
+        boost::posix_time::ptime local_timestamp = boost::date_time::c_local_adjustor<boost::posix_time::ptime>::utc_to_local(timestamp);
+        boost::posix_time::time_facet* facet = new boost::posix_time::time_facet();
+        facet->format("[%d %b %H:%M:%S]");
+        stream.imbue(std::locale(std::locale(""), facet));
+        stream << local_timestamp;
+    }
 
     // show message with player name in chat box
     *m_chat_box += stream.str() + player_name + ": " + msg + '\n';

@@ -118,6 +118,7 @@ double      ClientUI::TinyFleetButtonZoomThreshold()    { return GetOptionsDB().
 double      ClientUI::SmallFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("UI.small-fleet-button-minimum-zoom"); }
 double      ClientUI::MediumFleetButtonZoomThreshold()  { return GetOptionsDB().Get<double>("UI.medium-fleet-button-minimum-zoom"); }
 
+bool        ClientUI::DisplayTimestamp()                { return GetOptionsDB().Get<bool>("UI.display-timestamp"); }
 
 // content texture getters
 std::shared_ptr<GG::Texture> ClientUI::PlanetIcon(PlanetType planet_type) {
