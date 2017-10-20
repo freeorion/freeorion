@@ -58,7 +58,7 @@ namespace {
 
     void    AddOptions(OptionsDB& db) {
         db.Add("UI.dump-effects-descriptions", UserStringNop("OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC"),  false,  Validator<bool>());
-        db.Add("UI.encyclopedia.search.articles", UserStringNop("OPTIONS_DB_ENC_SEARCH_ARTICLE"),     true,   Validator<bool>());
+        db.Add("UI.encyclopedia.search.articles", UserStringNop("OPTIONS_DB_UI_ENC_SEARCH_ARTICLE"),  true,   Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
