@@ -1194,7 +1194,7 @@ OPTIONS_DB_FLEET_EXPLORE_IGNORE_HOSTILE
 Ignore hostile ships when a fleet is set to explore
 
 OPTIONS_DB_FLEET_EXPLORE_SYSTEM_ROUTE_LIMIT
-Max number of fleet routes used to determine favored route to an unexplored system. A value of 0 or less indicates no limit.
+Limits the number of fleets that test for a route to each system for fleets set to automatically explore. Lower limits may be faster but may produce less-optimized routing. A limit of -1 disables the limit.
 
 OPTIONS_DB_FLEET_EXPLORE_SYSTEM_KNOWN_MULTIPLIER
 Multiplier to priority value of unexplored systems which have been previously seen by the empire. A value less than 1.0 will prefer known systems over unknown systems.
