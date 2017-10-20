@@ -1758,7 +1758,7 @@ void FleetDataPanel::Init() {
         }
 
         m_fleet_connection = fleet->StateChangedSignal.connect(
-            boost::bind(&FleetDataPanel::RequirePreRender, this));
+            boost::bind(&FleetDataPanel::RequireRefresh, this));
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         if (fleet->OwnedBy(client_empire_id) || fleet->GetVisibility(client_empire_id) >= VIS_FULL_VISIBILITY) {
@@ -2680,6 +2680,23 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
         popup->AddMenuItem(     GG::MenuItem(UserString("FW_SPLIT_SHIPS_ALL_DESIGNS"), false, false, split_all_designs_action));
     }
 
+    // Allow dismissal of stale visibility information
+    if (!ship->OwnedBy(client_empire_id) && fleet) {
+        auto forget_ship_action = [ship]() {
+            ClientUI::GetClientUI()->GetMapWnd()->ForgetObject(ship->ID());
+        };
+
+        auto visibility_turn_map =
+            GetUniverse().GetObjectVisibilityTurnMapByEmpire(ship->ID(), client_empire_id);
+
+        auto last_turn_visible_it = visibility_turn_map.find(VIS_BASIC_VISIBILITY);
+        if (last_turn_visible_it != visibility_turn_map.end()
+            && last_turn_visible_it->second < CurrentTurn())
+        {
+            popup->AddMenuItem(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"), false, false, forget_ship_action));
+        }
+    }
+
     popup->Run();
 }
 
@@ -2809,7 +2826,9 @@ FleetWnd::~FleetWnd() {
 
 void FleetWnd::PreRender() {
     MapWndPopup::PreRender();
-    Refresh();
+
+    if (m_needs_refresh)
+        Refresh();
 }
 
 GG::Rect FleetWnd::CalculatePosition() const {
@@ -2878,10 +2897,28 @@ void FleetWnd::RefreshStateChangedSignals() {
     m_system_connection.disconnect();
     if (auto system = GetSystem(m_system_id))
         m_system_connection = system->StateChangedSignal.connect(
-            boost::bind(&FleetWnd::RequirePreRender, this), boost::signals2::at_front);
+            boost::bind(&FleetWnd::RequireRefresh, this), boost::signals2::at_front);
+
+    for (auto& fleet_connection : m_fleet_connections)
+        fleet_connection.disconnect();
+    m_fleet_connections.clear();
+
+    for (auto fleet_id : m_fleet_ids) {
+        if (auto fleet = GetFleet(fleet_id))
+            m_fleet_connections.push_back(
+                fleet->StateChangedSignal.connect(
+                    boost::bind(&FleetWnd::RequireRefresh, this)));
+    }
+}
+
+void FleetWnd::RequireRefresh() {
+    m_needs_refresh = true;
+    RequirePreRender();
 }
 
 void FleetWnd::Refresh() {
+    m_needs_refresh = false;
+
     int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
     const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
@@ -3547,23 +3584,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
 
     // Allow dismissal of stale visibility information
     if (!fleet->OwnedBy(client_empire_id)) {
-        auto forget_fleet_action = [this, client_empire_id, fleet]() {
-            // Remove visibility information for this fleet from
-            // the empire's visibility table.
-            // Server changes for permanent effect
-            // Tell the server to change what the empire wants to know
-            // in future so that the server doesn't keep resending this
-            // fleet information.
-            HumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ForgetOrder>(client_empire_id, fleet->ID())
-            );
-            // Client changes for immediate effect
-            // Force the client to change immediately.
-            GetUniverse().ForgetKnownObject(ALL_EMPIRES, fleet->ID());
-
-            // Force a redraw
-            RequirePreRender();
-            ClientUI::GetClientUI()->GetMapWnd()->RemoveFleet(fleet->ID());
+        auto forget_fleet_action = [fleet]() {
+            ClientUI::GetClientUI()->GetMapWnd()->ForgetObject(fleet->ID());
         };
         auto visibility_turn_map =
             GetUniverse().GetObjectVisibilityTurnMapByEmpire(fleet->ID(), client_empire_id);

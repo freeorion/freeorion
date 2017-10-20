@@ -4623,6 +4623,50 @@ void MapWnd::SetProjectedFleetMovementLines(const std::vector<int>& fleet_ids,
 void MapWnd::ClearProjectedFleetMovementLines()
 { m_projected_fleet_lines.clear(); }
 
+void MapWnd::ForgetObject(int id) {
+    // Remove visibility information for this object from
+    // the empire's visibility table.
+    // The object is usually a ghost ship or fleet.
+    // Server changes cause a permanent effect
+    // Tell the server to change what the empire wants to know
+    // in future so that the server doesn't keep resending this
+    // object information.
+    auto obj = GetUniverseObject(id);
+    if (!obj)
+        return;
+
+    // If there is only 1 ship in a fleet, forget the fleet
+    auto ship = std::dynamic_pointer_cast<const Ship>(obj);
+    if (ship) {
+        if (auto ship_s_fleet = GetUniverse().Objects().Object<const Fleet>(ship->FleetID())) {
+            bool only_ship_in_fleet = ship_s_fleet->NumShips() == 1;
+            if (only_ship_in_fleet)
+                return ForgetObject(ship->FleetID());
+        }
+    }
+
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+
+    HumanClientApp::GetApp()->Orders().IssueOrder(
+        std::make_shared<ForgetOrder>(client_empire_id, obj->ID()));
+
+    // Client changes for immediate effect
+    // Force the client to change immediately.
+    GetUniverse().ForgetKnownObject(ALL_EMPIRES, obj->ID());
+
+    // Force a refresh
+    RequirePreRender();
+
+    // Update fleet wnd if needed
+    if (auto fleet = std::dynamic_pointer_cast<const Fleet>(obj)) {
+        RemoveFleet(fleet->ID());
+        fleet->StateChangedSignal();
+    }
+
+    if (ship)
+        ship->StateChangedSignal();
+}
+
 void MapWnd::DoSystemIconsLayout() {
     // position and resize system icons and gaseous substance
     const int SYSTEM_ICON_SIZE = SystemIconSize();
@@ -5522,9 +5566,7 @@ void MapWnd::FleetButtonRightClicked(const FleetButton* fleet_btn) {
 
         auto forget_fleet_actions = [this, empire_id, sensor_ghosts]() {
             for (auto fleet_id : sensor_ghosts) {
-                HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ForgetOrder>(empire_id, fleet_id));
-                GetUniverse().ForgetKnownObject(ALL_EMPIRES, fleet_id);
-                ClientUI::GetClientUI()->GetMapWnd()->RemoveFleet(fleet_id);
+                ForgetObject(fleet_id);
             }
         };
 
