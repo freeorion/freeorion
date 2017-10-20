@@ -1740,7 +1740,7 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
         return;
     }
 
-    // Remove all contain objects to avoid breaking fleet+ship, system+planet invariants
+    // Remove all contained objects to avoid breaking fleet+ship, system+planet invariants
     auto contained_ids = obj->ContainedObjectIDs();
     for (int child_id : contained_ids)
         ForgetKnownObject(empire_id, child_id);
