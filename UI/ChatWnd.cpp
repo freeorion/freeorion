@@ -72,14 +72,14 @@ namespace {
         std::string retval;
 
         // set up parser
-        using namespace boost::spirit::classic;
-        rule<> token = *(anychar_p - space_p - CLOSE_TAG.c_str());
-        rule<> var = OPEN_TAG.c_str() >> token[UserStringSubstituteAndAppend(retval)] >> CLOSE_TAG.c_str();
-        rule<> non_var = anychar_p - OPEN_TAG.c_str();
+        namespace classic = boost::spirit::classic;
+        classic::rule<> token = *(classic::anychar_p - classic::space_p - CLOSE_TAG.c_str());
+        classic::rule<> var = OPEN_TAG.c_str() >> token[UserStringSubstituteAndAppend(retval)] >> CLOSE_TAG.c_str();
+        classic::rule<> non_var = classic::anychar_p - OPEN_TAG.c_str();
 
         // parse and substitute variables
         try {
-            parse(input.c_str(), *(non_var[StringAppend(retval)] | var));
+            classic::parse(input.c_str(), *(non_var[StringAppend(retval)] | var));
         } catch (const std::exception&) {
             ErrorLogger() << "StringtableTextSubstitute caught exception when parsing input: " << input;
         }
