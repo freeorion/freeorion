@@ -3852,16 +3852,6 @@ SetVisibility::SetVisibility(std::unique_ptr<ValueRef::ValueRefBase<Visibility>>
     m_condition(std::move(of_objects))
 {}
 
-SetVisibility::SetVisibility(ValueRef::ValueRefBase<Visibility>* vis,
-                             EmpireAffiliationType affiliation,
-                             ValueRef::ValueRefBase<int>* empire_id,
-                             Condition::ConditionBase* of_objects) :
-    m_vis(vis),
-    m_empire_id(empire_id),
-    m_affiliation(affiliation),
-    m_condition(of_objects)
-{}
-
 SetVisibility::~SetVisibility()
 {}
 

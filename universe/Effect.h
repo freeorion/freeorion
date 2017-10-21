@@ -1311,11 +1311,6 @@ public:
                   EmpireAffiliationType affiliation,
                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr,
                   std::unique_ptr<Condition::ConditionBase>&& of_objects = nullptr);    // if not specified, acts on target. if specified, acts on all matching objects
-
-    SetVisibility(ValueRef::ValueRefBase<Visibility>* vis,
-                  EmpireAffiliationType affiliation,
-                  ValueRef::ValueRefBase<int>* empire_id = nullptr,
-                  Condition::ConditionBase* of_objects = nullptr);    // if not specified, acts on target. if specified, acts on all matching objects
     virtual ~SetVisibility();
 
     void Execute(const ScriptingContext& context) const override;

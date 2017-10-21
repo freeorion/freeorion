@@ -34,6 +34,7 @@ namespace parse { namespace detail {
         qi::_val_type _val;
         qi::eps_type eps;
         using phoenix::new_;
+        using phoenix::construct;
 
         set_meter =
             (
@@ -128,7 +129,10 @@ namespace parse { namespace detail {
                 )
                 >  labeller.rule(Visibility_token) > visibility_rules.expr [ _c = _1 ]
                 >-(labeller.rule(Condition_token) > condition_parser [ _e = _1 ])
-            ) [ _val = new_<Effect::SetVisibility>(_c, _d, _b, _e) ]
+            ) [ _val = new_<Effect::SetVisibility>(construct<std::unique_ptr<ValueRef::ValueRefBase<Visibility>>>(_c),
+                                                   _d,
+                                                   construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
+                                                   construct<std::unique_ptr<Condition::ConditionBase>>(_e)) ]
             ;
 
         start
