@@ -1426,7 +1426,7 @@ unsigned int SetSpeciesSpeciesOpinion::GetCheckSum() const {
 CreatePlanet::CreatePlanet(std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>&& type,
                            std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>&& size,
                            std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
-                           std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after) :
+                           std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after) :
     m_type(std::move(type)),
     m_size(std::move(size)),
     m_name(std::move(name)),
@@ -1553,7 +1553,7 @@ unsigned int CreatePlanet::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 CreateBuilding::CreateBuilding(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& building_type_name,
                                std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
-                               std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after) :
+                               std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after) :
     m_building_type_name(std::move(building_type_name)),
     m_name(std::move(name)),
     m_effects_to_apply_after(std::move(effects_to_apply_after))
@@ -1672,7 +1672,7 @@ CreateShip::CreateShip(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& pr
                        std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
                        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
                        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_name,
-                       std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after) :
+                       std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after) :
     m_design_name(std::move(predefined_ship_design_name)),
     m_design_id(nullptr),
     m_empire_id(std::move(empire_id)),
@@ -1685,7 +1685,7 @@ CreateShip::CreateShip(std::unique_ptr<ValueRef::ValueRefBase<int>>&& ship_desig
                        std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
                        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
                        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_name,
-                       std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after) :
+                       std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after) :
     m_design_name(nullptr),
     m_design_id(std::move(ship_design_id)),
     m_empire_id(std::move(empire_id)),
@@ -1886,7 +1886,7 @@ unsigned int CreateShip::GetCheckSum() const {
 CreateField::CreateField(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& field_type_name,
                          std::unique_ptr<ValueRef::ValueRefBase<double>>&& size,
                          std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
-                         std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after) :
+                         std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after) :
     m_field_type_name(std::move(field_type_name)),
     m_x(nullptr),
     m_y(nullptr),
@@ -1900,7 +1900,7 @@ CreateField::CreateField(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& 
                          std::unique_ptr<ValueRef::ValueRefBase<double>>&& y,
                          std::unique_ptr<ValueRef::ValueRefBase<double>>&& size,
                          std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
-                         std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after) :
+                         std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after) :
     m_field_type_name(std::move(field_type_name)),
     m_x(std::move(x)),
     m_y(std::move(y)),
@@ -2072,7 +2072,7 @@ CreateSystem::CreateSystem(std::unique_ptr<ValueRef::ValueRefBase< ::StarType>>&
                            std::unique_ptr<ValueRef::ValueRefBase<double>>&& x,
                            std::unique_ptr<ValueRef::ValueRefBase<double>>&& y,
                            std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
-                           std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after) :
+                           std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after) :
     m_type(std::move(type)),
     m_x(std::move(x)),
     m_y(std::move(y)),
@@ -2083,7 +2083,7 @@ CreateSystem::CreateSystem(std::unique_ptr<ValueRef::ValueRefBase< ::StarType>>&
 CreateSystem::CreateSystem(std::unique_ptr<ValueRef::ValueRefBase<double>>&& x,
                            std::unique_ptr<ValueRef::ValueRefBase<double>>&& y,
                            std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
-                           std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after) :
+                           std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after) :
     m_type(nullptr),
     m_x(std::move(x)),
     m_y(std::move(y)),

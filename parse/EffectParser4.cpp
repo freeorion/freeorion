@@ -8,6 +8,15 @@
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
+namespace {
+    template <typename T, typename U>
+    void emplace_back_1(std::vector<T>& vect, U&& item) {
+        return vect.emplace_back(std::forward<U>(item));
+    }
+
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, emplace_back_1_, emplace_back_1, 2)
+}
+
 namespace parse { namespace detail {
     effect_parser_rules_4::effect_parser_rules_4(
         const parse::lexer& tok,
@@ -43,11 +52,15 @@ namespace parse { namespace detail {
                         > -(labeller.rule(Name_token)        >   string_grammar      [ _c = _1 ])
                         > -(labeller.rule(Effects_token)
                             >   (
-                                ('[' > +effect_parser [ push_back(_d, _1) ] > ']')
-                                |    effect_parser [ push_back(_d, _1) ]
+                                ('[' > +effect_parser [ emplace_back_1_(_d, _1) ] > ']')
+                                |    effect_parser [ emplace_back_1_(_d, _1) ]
                             )
                            )
-                ) [ _val = new_<Effect::CreatePlanet>(_a, _b, _c, _d) ]
+                ) [ _val = new_<Effect::CreatePlanet>(
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>>(_a),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>>(_b),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_c),
+                    _d) ]
             ;
 
         create_building
@@ -56,11 +69,14 @@ namespace parse { namespace detail {
                         > -(labeller.rule(Name_token)        >   string_grammar [ _b = _1 ])
                         > -(labeller.rule(Effects_token)
                             >   (
-                                ('[' > +effect_parser [ push_back(_c, _1) ] > ']')
-                                |    effect_parser [ push_back(_c, _1) ]
+                                ('[' > +effect_parser [ emplace_back_1_(_c, _1) ] > ']')
+                                |    effect_parser [ emplace_back_1_(_c, _1) ]
                             )
                            )
-                ) [ _val = new_<Effect::CreateBuilding>(_a, _b, _c) ]
+                ) [ _val = new_<Effect::CreateBuilding>(
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_b),
+                    _c) ]
             ;
 
         create_ship_1
@@ -72,11 +88,15 @@ namespace parse { namespace detail {
                  > -(labeller.rule(Name_token)        >   string_grammar [ _e = _1 ])
                  > -(labeller.rule(Effects_token)
                      >   (
-                         ('[' > +effect_parser [ push_back(_f, _1) ] > ']')
-                         |    effect_parser [ push_back(_f, _1) ]
+                         ('[' > +effect_parser [ emplace_back_1_(_f, _1) ] > ']')
+                         |    effect_parser [ emplace_back_1_(_f, _1) ]
                      )
                     )
-                ) [ _val = new_<Effect::CreateShip>(_b, _c, _d, _e, _f) ]
+                ) [ _val = new_<Effect::CreateShip>(
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_c),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_e), _f) ]
             ;
 
         create_ship_2
@@ -88,11 +108,15 @@ namespace parse { namespace detail {
                  > -(labeller.rule(Name_token)        >   string_grammar [ _e = _1 ])
                  > -(labeller.rule(Effects_token)
                      >   (
-                         ('[' > +effect_parser [ push_back(_f, _1) ] > ']')
-                         |    effect_parser [ push_back(_f, _1) ]
+                         ('[' > +effect_parser [ emplace_back_1_(_f, _1) ] > ']')
+                         |    effect_parser [ emplace_back_1_(_f, _1) ]
                      )
                     )
-                ) [ _val = new_<Effect::CreateShip>(_a, _c, _d, _e, _f) ]
+                ) [ _val = new_<Effect::CreateShip>(
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_c),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_e), _f) ]
             ;
 
         create_field_1
@@ -105,11 +129,14 @@ namespace parse { namespace detail {
                  > -(labeller.rule(Effects_token)
                      >
                      (
-                         ('[' > +effect_parser [ push_back(_f, _1) ] > ']')
-                         |    effect_parser [ push_back(_f, _1) ]
+                         ('[' > +effect_parser [ emplace_back_1_(_f, _1) ] > ']')
+                         |    effect_parser [ emplace_back_1_(_f, _1) ]
                      )
                     )
-                ) [ _val = new_<Effect::CreateField>(_a, _b, _d, _f) ]
+                ) [ _val = new_<Effect::CreateField>(
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d), _f) ]
             ;
 
         create_field_2
@@ -124,11 +151,16 @@ namespace parse { namespace detail {
                  > -(labeller.rule(Effects_token)
                      >
                      (
-                         ('[' > +effect_parser [ push_back(_f, _1) ] > ']')
-                         |    effect_parser [ push_back(_f, _1) ]
+                         ('[' > +effect_parser [ emplace_back_1_(_f, _1) ] > ']')
+                         |    effect_parser [ emplace_back_1_(_f, _1) ]
                      )
                     )
-                ) [ _val = new_<Effect::CreateField>(_a, _b, _c, _e, _d, _f) ]
+                ) [ _val = new_<Effect::CreateField>(
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_e),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d), _f) ]
             ;
 
         create_system_1
@@ -142,11 +174,15 @@ namespace parse { namespace detail {
                  > -(labeller.rule(Effects_token)
                      >
                      (
-                         ('[' > +effect_parser [ push_back(_e, _1) ] > ']')
-                         |    effect_parser [ push_back(_e, _1) ]
+                         ('[' > +effect_parser [ emplace_back_1_(_e, _1) ] > ']')
+                         |    effect_parser [ emplace_back_1_(_e, _1) ]
                      )
                     )
-                ) [ _val = new_<Effect::CreateSystem>(_a, _b, _c, _d, _e) ]
+                ) [ _val = new_<Effect::CreateSystem>(
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<StarType>>>(_a),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d), _e) ]
             ;
 
         create_system_2
@@ -159,11 +195,15 @@ namespace parse { namespace detail {
                  > -(labeller.rule(Effects_token)
                      >
                      (
-                         ('[' > +effect_parser [ push_back(_e, _1) ] > ']')
-                         |    effect_parser [ push_back(_e, _1) ]
+                         ('[' > +effect_parser [ emplace_back_1_(_e, _1) ] > ']')
+                         |    effect_parser [ emplace_back_1_(_e, _1) ]
                      )
                     )
-                ) [ _val = new_<Effect::CreateSystem>(_b, _c, _d, _e) ]
+                ) [ _val = new_<Effect::CreateSystem>(
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
+                    _e) ]
             ;
 
         start

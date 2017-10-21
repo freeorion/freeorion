@@ -17,7 +17,7 @@ namespace parse { namespace detail {
                 ValueRef::ValueRefBase< ::PlanetType>*,
                 ValueRef::ValueRefBase< ::PlanetSize>*,
                 ValueRef::ValueRefBase<std::string>*,
-                std::vector<Effect::EffectBase*>
+                std::vector<std::unique_ptr<Effect::EffectBase>>
             >
         > create_planet_rule;
 
@@ -26,7 +26,7 @@ namespace parse { namespace detail {
             boost::spirit::qi::locals<
                 ValueRef::ValueRefBase<std::string>*,
                 ValueRef::ValueRefBase<std::string>*,
-                std::vector<Effect::EffectBase*>
+                std::vector<std::unique_ptr<Effect::EffectBase>>
             >
         > create_building_rule;
 
@@ -37,7 +37,7 @@ namespace parse { namespace detail {
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<std::string>*,
-                std::vector<Effect::EffectBase*>
+                std::vector<std::unique_ptr<Effect::EffectBase>>
             >
         > create_system_rule;
 
@@ -49,7 +49,7 @@ namespace parse { namespace detail {
                 ValueRef::ValueRefBase<int>*,
                 ValueRef::ValueRefBase<std::string>*,
                 ValueRef::ValueRefBase<std::string>*,
-                std::vector<Effect::EffectBase*>
+                std::vector<std::unique_ptr<Effect::EffectBase>>
             >
         > create_ship_rule;
 
@@ -61,7 +61,7 @@ namespace parse { namespace detail {
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<std::string>*,
                 ValueRef::ValueRefBase<double>*,
-                std::vector<Effect::EffectBase*>
+                std::vector<std::unique_ptr<Effect::EffectBase>>
             >
         > create_field_rule;
 

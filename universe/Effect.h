@@ -561,8 +561,8 @@ class FO_COMMON_API CreatePlanet : public EffectBase {
 public:
     CreatePlanet(std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>&& type,
                  std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>&& size,
-                 std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name = nullptr,
-                 std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after = std::vector<std::unique_ptr<EffectBase>>());
+                 std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+                 std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
     CreatePlanet(ValueRef::ValueRefBase<PlanetType>* type,
                  ValueRef::ValueRefBase<PlanetSize>* size,
                  ValueRef::ValueRefBase<std::string>* name = nullptr,
@@ -593,8 +593,8 @@ private:
 class FO_COMMON_API CreateBuilding : public EffectBase {
 public:
     explicit CreateBuilding(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& building_type_name,
-                            std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name = nullptr,
-                            std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after = std::vector<std::unique_ptr<EffectBase>>());
+                            std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+                            std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
     explicit CreateBuilding(ValueRef::ValueRefBase<std::string>* building_type_name,
                             ValueRef::ValueRefBase<std::string>* name = nullptr,
                             const std::vector<EffectBase*>& effects_to_apply_after = std::vector<EffectBase*>());
@@ -625,16 +625,16 @@ private:
 class FO_COMMON_API CreateShip : public EffectBase {
 public:
     explicit CreateShip(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& predefined_ship_design_name,
-                        std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr,
-                        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name = nullptr,
-                        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_name = nullptr,
-                        std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after = std::vector<std::unique_ptr<EffectBase>>());
+                        std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
+                        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
+                        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_name,
+                        std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
 
     explicit CreateShip(std::unique_ptr<ValueRef::ValueRefBase<int>>&& ship_design_id,
-                        std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr,
-                        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name = nullptr,
-                        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_name = nullptr,
-                        std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after = std::vector<std::unique_ptr<EffectBase>>());
+                        std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
+                        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
+                        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_name,
+                        std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
 
     explicit CreateShip(ValueRef::ValueRefBase<std::string>* predefined_ship_design_name,
                         ValueRef::ValueRefBase<int>* empire_id = nullptr,
@@ -676,9 +676,9 @@ private:
 class FO_COMMON_API CreateField : public EffectBase {
 public:
     explicit CreateField(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& field_type_name,
-                         std::unique_ptr<ValueRef::ValueRefBase<double>>&& size = nullptr,
-                         std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name = nullptr,
-                         std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after = std::vector<std::unique_ptr<EffectBase>>());
+                         std::unique_ptr<ValueRef::ValueRefBase<double>>&& size,
+                         std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+                         std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
     explicit CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
                          ValueRef::ValueRefBase<double>* size = nullptr,
                          ValueRef::ValueRefBase<std::string>* name = nullptr,
@@ -687,9 +687,9 @@ public:
     CreateField(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& field_type_name,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& x,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& y,
-                std::unique_ptr<ValueRef::ValueRefBase<double>>&& size = nullptr,
-                std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name = nullptr,
-                std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after = std::vector<std::unique_ptr<EffectBase>>());
+                std::unique_ptr<ValueRef::ValueRefBase<double>>&& size,
+                std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+                std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
 
     CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
                 ValueRef::ValueRefBase<double>* x,
@@ -728,13 +728,13 @@ public:
     CreateSystem(std::unique_ptr<ValueRef::ValueRefBase< ::StarType>>&& type,
                  std::unique_ptr<ValueRef::ValueRefBase<double>>&& x,
                  std::unique_ptr<ValueRef::ValueRefBase<double>>&& y,
-                 std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name = nullptr,
-                 std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after = std::vector<std::unique_ptr<EffectBase>>());
+                 std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+                 std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
 
     CreateSystem(std::unique_ptr<ValueRef::ValueRefBase<double>>&& x,
                  std::unique_ptr<ValueRef::ValueRefBase<double>>&& y,
-                 std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name = nullptr,
-                 std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after = std::vector<std::unique_ptr<EffectBase>>());
+                 std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+                 std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
     CreateSystem(ValueRef::ValueRefBase< ::StarType>* type,
                  ValueRef::ValueRefBase<double>* x,
                  ValueRef::ValueRefBase<double>* y,
