@@ -127,20 +127,27 @@ namespace parse { namespace detail {
             =    (tok.SetEmpireMeter_ >>   labeller.rule(Empire_token))
             >    int_rules.expr [ _b = _1 ]
             >    labeller.rule(Meter_token)  >  tok.string [ _a = _1 ]
-            >    labeller.rule(Value_token)  >  double_rules.expr [ _val = new_<Effect::SetEmpireMeter>(_b, _a, _1) ]
+            >    labeller.rule(Value_token)  >  double_rules.expr [ _val = new_<Effect::SetEmpireMeter>(
+                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
+                _a,
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ]
             ;
 
         set_empire_meter_2
             =    (tok.SetEmpireMeter_ >>   labeller.rule(Meter_token))
             >    tok.string [ _a = _1 ]
-            >    labeller.rule(Value_token) >  double_rules.expr [ _val = new_<Effect::SetEmpireMeter>(_a, _1) ]
+            >    labeller.rule(Value_token) >  double_rules.expr [ _val = new_<Effect::SetEmpireMeter>(
+                _a,
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ]
             ;
 
         give_empire_tech
             =   (   tok.GiveEmpireTech_
                     >   labeller.rule(Name_token) >      string_grammar [ _d = _1 ]
                     > -(labeller.rule(Empire_token) >    int_rules.expr    [ _b = _1 ])
-                ) [ _val = new_<Effect::GiveEmpireTech>(_d, _b) ]
+                ) [ _val = new_<Effect::GiveEmpireTech>(
+                construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
+                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b)) ]
             ;
 
         set_empire_tech_progress
@@ -148,8 +155,13 @@ namespace parse { namespace detail {
             >    labeller.rule(Name_token)     >  string_grammar [ _a = _1 ]
             >    labeller.rule(Progress_token) >  double_rules.expr [ _b = _1 ]
             >    (
-                (labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b, _1) ])
-                |  eps [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b) ]
+                (labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Effect::SetEmpireTechProgress>(
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1)) ])
+                |  eps [ _val = new_<Effect::SetEmpireTechProgress>(
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b)) ]
             )
             ;
 
@@ -215,7 +227,9 @@ namespace parse { namespace detail {
         set_overlay_texture
             =    tok.SetOverlayTexture_
             >    labeller.rule(Name_token)    > tok.string [ _a = _1 ]
-            >    labeller.rule(Size_token)    > double_rules.expr [ _val = new_<Effect::SetOverlayTexture>(_a, _1) ]
+            >    labeller.rule(Size_token)    > double_rules.expr [ _val = new_<Effect::SetOverlayTexture>(
+                _a,
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ]
             ;
 
         string_and_string_ref
