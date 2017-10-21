@@ -904,15 +904,18 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 case Networking::CLIENT_TYPE_HUMAN_PLAYER:
                     human_count++;
                     break;
+                default: // do nothing
+                    break;
                 }
             }
 
-            // restrict count of AI
+            // limit count of AI
             if (ai_count <= GetOptionsDB().Get<int>("mplobby-max-ai") || GetOptionsDB().Get<int>("mplobby-max-ai") < 0) {
                 m_lobby_data->m_players    = incoming_lobby_data.m_players;
             } else {
                 has_important_changes = true;
             }
+            // restrict minimun of human
             if (human_count < GetOptionsDB().Get<int>("mplobby-min-human")) {
                 has_important_changes = true;
             }
