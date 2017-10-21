@@ -1111,7 +1111,7 @@ OPTIONS_DB_MPLOBBY_MAX_AI
 Limit the number of AIs allowed in a multiplayer game. Set to -1 for unlimited.
 
 OPTIONS_DB_MPLOBBY_MIN_HUMAN
-Restrict lower bound for number of human players could start the game.
+Set the minimum number of human players required to start a multiplayer game.
 
 OPTIONS_DB_GENERATE_CONFIG_XML
 Uses default settings, settings from any existing config.xml file, and settings given on the command line to generate a config.xml file. This will overwrite the current config.xml file, if it exists.
