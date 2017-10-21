@@ -416,18 +416,6 @@ SetMeter::SetMeter(MeterType meter,
     m_accounting_label(accounting_label)
 {}
 
-SetMeter::SetMeter(MeterType meter, ValueRef::ValueRefBase<double>* value) :
-    m_meter(meter),
-    m_value(value),
-    m_accounting_label()
-{}
-
-SetMeter::SetMeter(MeterType meter, ValueRef::ValueRefBase<double>* value, const std::string& accounting_label) :
-    m_meter(meter),
-    m_value(value),
-    m_accounting_label(accounting_label)
-{}
-
 SetMeter::~SetMeter()
 {}
 
@@ -629,14 +617,6 @@ SetShipPartMeter::SetShipPartMeter(MeterType meter,
     m_value(std::move(value))
 {}
 
-SetShipPartMeter::SetShipPartMeter(MeterType meter,
-                                   ValueRef::ValueRefBase<std::string>* part_name,
-                                   ValueRef::ValueRefBase<double>* value) :
-    m_part_name(part_name),
-    m_meter(meter),
-    m_value(value)
-{}
-
 SetShipPartMeter::~SetShipPartMeter() {}
 
 void SetShipPartMeter::Execute(const ScriptingContext& context) const {
@@ -819,19 +799,6 @@ SetEmpireMeter::SetEmpireMeter(std::unique_ptr<ValueRef::ValueRefBase<int>>&& em
     m_value(std::move(value))
 {}
 
-SetEmpireMeter::SetEmpireMeter(const std::string& meter, ValueRef::ValueRefBase<double>* value) :
-    m_empire_id(boost::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner"))),
-    m_meter(meter),
-    m_value(value)
-{}
-
-SetEmpireMeter::SetEmpireMeter(ValueRef::ValueRefBase<int>* empire_id, const std::string& meter,
-                               ValueRef::ValueRefBase<double>* value) :
-    m_empire_id(empire_id),
-    m_meter(meter),
-    m_value(value)
-{}
-
 SetEmpireMeter::~SetEmpireMeter()
 {}
 
@@ -942,21 +909,6 @@ SetEmpireStockpile::SetEmpireStockpile(std::unique_ptr<ValueRef::ValueRefBase<in
     m_value(std::move(value))
 {}
 
-SetEmpireStockpile::SetEmpireStockpile(ResourceType stockpile,
-                                       ValueRef::ValueRefBase<double>* value) :
-    m_empire_id(boost::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner"))),
-    m_stockpile(stockpile),
-    m_value(value)
-{}
-
-SetEmpireStockpile::SetEmpireStockpile(ValueRef::ValueRefBase<int>* empire_id,
-                                       ResourceType stockpile,
-                                       ValueRef::ValueRefBase<double>* value) :
-    m_empire_id(empire_id),
-    m_stockpile(stockpile),
-    m_value(value)
-{}
-
 SetEmpireStockpile::~SetEmpireStockpile()
 {}
 
@@ -1014,10 +966,6 @@ SetEmpireCapital::SetEmpireCapital(std::unique_ptr<ValueRef::ValueRefBase<int>>&
     m_empire_id(std::move(empire_id))
 {}
 
-SetEmpireCapital::SetEmpireCapital(ValueRef::ValueRefBase<int>* empire_id) :
-    m_empire_id(empire_id)
-{}
-
 SetEmpireCapital::~SetEmpireCapital()
 {}
 
@@ -1059,10 +1007,6 @@ unsigned int SetEmpireCapital::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 SetPlanetType::SetPlanetType(std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>&& type) :
     m_type(std::move(type))
-{}
-
-SetPlanetType::SetPlanetType(ValueRef::ValueRefBase<PlanetType>* type) :
-    m_type(type)
 {}
 
 SetPlanetType::~SetPlanetType()
@@ -1109,10 +1053,6 @@ SetPlanetSize::SetPlanetSize(std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>
     m_size(std::move(size))
 {}
 
-SetPlanetSize::SetPlanetSize(ValueRef::ValueRefBase<PlanetSize>* size) :
-    m_size(size)
-{}
-
 SetPlanetSize::~SetPlanetSize()
 {}
 
@@ -1153,10 +1093,6 @@ unsigned int SetPlanetSize::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 SetSpecies::SetSpecies(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species) :
     m_species_name(std::move(species))
-{}
-
-SetSpecies::SetSpecies(ValueRef::ValueRefBase<std::string>* species) :
-    m_species_name(species)
 {}
 
 SetSpecies::~SetSpecies()
@@ -1233,10 +1169,6 @@ unsigned int SetSpecies::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 SetOwner::SetOwner(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id) :
     m_empire_id(std::move(empire_id))
-{}
-
-SetOwner::SetOwner(ValueRef::ValueRefBase<int>* empire_id) :
-    m_empire_id(empire_id)
 {}
 
 SetOwner::~SetOwner()
@@ -1433,19 +1365,6 @@ CreatePlanet::CreatePlanet(std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>&&
     m_effects_to_apply_after(std::move(effects_to_apply_after))
 {}
 
-CreatePlanet::CreatePlanet(ValueRef::ValueRefBase<PlanetType>* type,
-                           ValueRef::ValueRefBase<PlanetSize>* size,
-                           ValueRef::ValueRefBase<std::string>* name,
-                           const std::vector<EffectBase*>& effects_to_apply_after) :
-    m_type(type),
-    m_size(size),
-    m_name(name),
-    m_effects_to_apply_after()
-{
-    for (auto& effect : effects_to_apply_after)
-        m_effects_to_apply_after.emplace_back(effect);
-}
-
 CreatePlanet::~CreatePlanet()
 {}
 
@@ -1558,17 +1477,6 @@ CreateBuilding::CreateBuilding(std::unique_ptr<ValueRef::ValueRefBase<std::strin
     m_name(std::move(name)),
     m_effects_to_apply_after(std::move(effects_to_apply_after))
 {}
-
-CreateBuilding::CreateBuilding(ValueRef::ValueRefBase<std::string>* building_type_name,
-                               ValueRef::ValueRefBase<std::string>* name,
-                               const std::vector<EffectBase*>& effects_to_apply_after) :
-    m_building_type_name(building_type_name),
-    m_name(name),
-    m_effects_to_apply_after()
-{
-    for (auto& effect : effects_to_apply_after)
-        m_effects_to_apply_after.emplace_back(effect);
-}
 
 CreateBuilding::~CreateBuilding()
 {}
@@ -1693,38 +1601,6 @@ CreateShip::CreateShip(std::unique_ptr<ValueRef::ValueRefBase<int>>&& ship_desig
     m_name(std::move(ship_name)),
     m_effects_to_apply_after(std::move(effects_to_apply_after))
 {}
-
-CreateShip::CreateShip(ValueRef::ValueRefBase<std::string>* predefined_ship_design_name,
-                       ValueRef::ValueRefBase<int>* empire_id,
-                       ValueRef::ValueRefBase<std::string>* species_name,
-                       ValueRef::ValueRefBase<std::string>* ship_name,
-                       const std::vector<EffectBase*>& effects_to_apply_after) :
-    m_design_name(predefined_ship_design_name),
-    m_design_id(nullptr),
-    m_empire_id(empire_id),
-    m_species_name(species_name),
-    m_name(ship_name),
-    m_effects_to_apply_after()
-{
-    for (auto& effect : effects_to_apply_after)
-        m_effects_to_apply_after.emplace_back(effect);
-}
-
-CreateShip::CreateShip(ValueRef::ValueRefBase<int>* ship_design_id,
-                       ValueRef::ValueRefBase<int>* empire_id,
-                       ValueRef::ValueRefBase<std::string>* species_name,
-                       ValueRef::ValueRefBase<std::string>* ship_name,
-                       const std::vector<EffectBase*>& effects_to_apply_after) :
-    m_design_name(nullptr),
-    m_design_id(ship_design_id),
-    m_empire_id(empire_id),
-    m_species_name(species_name),
-    m_name(ship_name),
-    m_effects_to_apply_after()
-{
-    for (auto& effect : effects_to_apply_after)
-        m_effects_to_apply_after.emplace_back(effect);
-}
 
 CreateShip::~CreateShip()
 {}
@@ -1909,38 +1785,6 @@ CreateField::CreateField(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& 
     m_effects_to_apply_after(std::move(effects_to_apply_after))
 {}
 
-CreateField::CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
-                         ValueRef::ValueRefBase<double>* size,
-                         ValueRef::ValueRefBase<std::string>* name,
-                         const std::vector<EffectBase*>& effects_to_apply_after) :
-    m_field_type_name(field_type_name),
-    m_x(nullptr),
-    m_y(nullptr),
-    m_size(size),
-    m_name(name),
-    m_effects_to_apply_after()
-{
-    for (auto& effect : effects_to_apply_after)
-        m_effects_to_apply_after.emplace_back(effect);
-}
-
-CreateField::CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
-                         ValueRef::ValueRefBase<double>* x,
-                         ValueRef::ValueRefBase<double>* y,
-                         ValueRef::ValueRefBase<double>* size,
-                         ValueRef::ValueRefBase<std::string>* name,
-                         const std::vector<EffectBase*>& effects_to_apply_after) :
-    m_field_type_name(field_type_name),
-    m_x(x),
-    m_y(y),
-    m_size(size),
-    m_name(name),
-    m_effects_to_apply_after()
-{
-    for (auto& effect : effects_to_apply_after)
-        m_effects_to_apply_after.emplace_back(effect);
-}
-
 CreateField::~CreateField()
 {}
 
@@ -2091,35 +1935,6 @@ CreateSystem::CreateSystem(std::unique_ptr<ValueRef::ValueRefBase<double>>&& x,
     m_effects_to_apply_after(std::move(effects_to_apply_after))
 {}
 
-CreateSystem::CreateSystem(ValueRef::ValueRefBase< ::StarType>* type,
-                           ValueRef::ValueRefBase<double>* x,
-                           ValueRef::ValueRefBase<double>* y,
-                           ValueRef::ValueRefBase<std::string>* name,
-                           const std::vector<EffectBase*>& effects_to_apply_after) :
-    m_type(type),
-    m_x(x),
-    m_y(y),
-    m_name(name),
-    m_effects_to_apply_after()
-{
-    for (auto& effect : effects_to_apply_after)
-        m_effects_to_apply_after.emplace_back(effect);
-}
-
-CreateSystem::CreateSystem(ValueRef::ValueRefBase<double>* x,
-                           ValueRef::ValueRefBase<double>* y,
-                           ValueRef::ValueRefBase<std::string>* name,
-                           const std::vector<EffectBase*>& effects_to_apply_after) :
-    m_type(nullptr),
-    m_x(x),
-    m_y(y),
-    m_name(name),
-    m_effects_to_apply_after()
-{
-    for (auto& effect : effects_to_apply_after)
-        m_effects_to_apply_after.emplace_back(effect);
-}
-
 CreateSystem::~CreateSystem()
 {}
 
@@ -2258,12 +2073,6 @@ AddSpecial::AddSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& na
     m_capacity(std::move(capacity))
 {}
 
-AddSpecial::AddSpecial(ValueRef::ValueRefBase<std::string>* name,
-                       ValueRef::ValueRefBase<double>* capacity) :
-    m_name(name),
-    m_capacity(capacity)
-{}
-
 AddSpecial::~AddSpecial()
 {}
 
@@ -2316,10 +2125,6 @@ RemoveSpecial::RemoveSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>
     m_name(std::move(name))
 {}
 
-RemoveSpecial::RemoveSpecial(ValueRef::ValueRefBase<std::string>* name) :
-    m_name(name)
-{}
-
 RemoveSpecial::~RemoveSpecial()
 {}
 
@@ -2358,10 +2163,6 @@ unsigned int RemoveSpecial::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 AddStarlanes::AddStarlanes(std::unique_ptr<Condition::ConditionBase>&& other_lane_endpoint_condition) :
     m_other_lane_endpoint_condition(std::move(other_lane_endpoint_condition))
-{}
-
-AddStarlanes::AddStarlanes(Condition::ConditionBase* other_lane_endpoint_condition) :
-    m_other_lane_endpoint_condition(other_lane_endpoint_condition)
 {}
 
 AddStarlanes::~AddStarlanes()
@@ -2431,10 +2232,6 @@ unsigned int AddStarlanes::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 RemoveStarlanes::RemoveStarlanes(std::unique_ptr<Condition::ConditionBase>&& other_lane_endpoint_condition) :
     m_other_lane_endpoint_condition(std::move(other_lane_endpoint_condition))
-{}
-
-RemoveStarlanes::RemoveStarlanes(Condition::ConditionBase* other_lane_endpoint_condition) :
-    m_other_lane_endpoint_condition(other_lane_endpoint_condition)
 {}
 
 RemoveStarlanes::~RemoveStarlanes()
@@ -2508,10 +2305,6 @@ SetStarType::SetStarType(std::unique_ptr<ValueRef::ValueRefBase<StarType>>&& typ
     m_type(std::move(type))
 {}
 
-SetStarType::SetStarType(ValueRef::ValueRefBase<StarType>* type) :
-    m_type(type)
-{}
-
 SetStarType::~SetStarType()
 {}
 
@@ -2550,10 +2343,6 @@ unsigned int SetStarType::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 MoveTo::MoveTo(std::unique_ptr<Condition::ConditionBase>&& location_condition) :
     m_location_condition(std::move(location_condition))
-{}
-
-MoveTo::MoveTo(Condition::ConditionBase* location_condition) :
-    m_location_condition(location_condition)
 {}
 
 MoveTo::~MoveTo()
@@ -2863,23 +2652,6 @@ MoveInOrbit::MoveInOrbit(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed
     m_focus_y(std::move(focus_y))
 {}
 
-MoveInOrbit::MoveInOrbit(ValueRef::ValueRefBase<double>* speed,
-                         Condition::ConditionBase* focal_point_condition) :
-    m_speed(speed),
-    m_focal_point_condition(focal_point_condition),
-    m_focus_x(nullptr),
-    m_focus_y(nullptr)
-{}
-
-MoveInOrbit::MoveInOrbit(ValueRef::ValueRefBase<double>* speed,
-                         ValueRef::ValueRefBase<double>* focus_x/* = 0*/,
-                         ValueRef::ValueRefBase<double>* focus_y/* = 0*/) :
-    m_speed(speed),
-    m_focal_point_condition(nullptr),
-    m_focus_x(focus_x),
-    m_focus_y(focus_y)
-{}
-
 MoveInOrbit::~MoveInOrbit()
 {}
 
@@ -3030,23 +2802,6 @@ MoveTowards::MoveTowards(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed
     m_dest_y(std::move(dest_y))
 {}
 
-MoveTowards::MoveTowards(ValueRef::ValueRefBase<double>* speed,
-                         Condition::ConditionBase* dest_condition) :
-    m_speed(speed),
-    m_dest_condition(dest_condition),
-    m_dest_x(nullptr),
-    m_dest_y(nullptr)
-{}
-
-MoveTowards::MoveTowards(ValueRef::ValueRefBase<double>* speed,
-                         ValueRef::ValueRefBase<double>* dest_x/* = 0*/,
-                         ValueRef::ValueRefBase<double>* dest_y/* = 0*/) :
-    m_speed(speed),
-    m_dest_condition(nullptr),
-    m_dest_x(dest_x),
-    m_dest_y(dest_y)
-{}
-
 MoveTowards::~MoveTowards()
 {}
 
@@ -3192,10 +2947,6 @@ unsigned int MoveTowards::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 SetDestination::SetDestination(std::unique_ptr<Condition::ConditionBase>&& location_condition) :
     m_location_condition(std::move(location_condition))
-{}
-
-SetDestination::SetDestination(Condition::ConditionBase* location_condition) :
-    m_location_condition(location_condition)
 {}
 
 SetDestination::~SetDestination()
@@ -3363,21 +3114,6 @@ SetEmpireTechProgress::SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRefB
     m_empire_id(std::move(empire_id))
 {}
 
-SetEmpireTechProgress::SetEmpireTechProgress(ValueRef::ValueRefBase<std::string>* tech_name,
-                                             ValueRef::ValueRefBase<double>* research_progress) :
-    m_tech_name(tech_name),
-    m_research_progress(research_progress),
-    m_empire_id(boost::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")))
-{}
-
-SetEmpireTechProgress::SetEmpireTechProgress(ValueRef::ValueRefBase<std::string>* tech_name,
-                                             ValueRef::ValueRefBase<double>* research_progress,
-                                             ValueRef::ValueRefBase<int>* empire_id) :
-    m_tech_name(tech_name),
-    m_research_progress(research_progress),
-    m_empire_id(empire_id)
-{}
-
 SetEmpireTechProgress::~SetEmpireTechProgress()
 {}
 
@@ -3445,15 +3181,6 @@ GiveEmpireTech::GiveEmpireTech(std::unique_ptr<ValueRef::ValueRefBase<std::strin
                                std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id) :
     m_tech_name(std::move(tech_name)),
     m_empire_id(std::move(empire_id))
-{
-    if (!m_empire_id)
-        m_empire_id.reset(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")));
-}
-
-GiveEmpireTech::GiveEmpireTech(ValueRef::ValueRefBase<std::string>* tech_name,
-                               ValueRef::ValueRefBase<int>* empire_id) :
-    m_tech_name(tech_name),
-    m_empire_id(empire_id)
 {
     if (!m_empire_id)
         m_empire_id.reset(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")));
@@ -4008,19 +3735,6 @@ Conditional::Conditional(std::unique_ptr<Condition::ConditionBase>&& target_cond
     m_true_effects(std::move(true_effects)),
     m_false_effects(std::move(false_effects))
 {}
-
-Conditional::Conditional(Condition::ConditionBase* target_condition,
-                         const std::vector<EffectBase*>& true_effects,
-                         const std::vector<EffectBase*>& false_effects) :
-    m_target_condition(target_condition),
-    m_true_effects(),
-    m_false_effects()
-{
-    for (auto& effect : true_effects)
-        m_true_effects.emplace_back(effect);
-    for (auto& effect : false_effects)
-        m_false_effects.emplace_back(effect);
-}
 
 void Conditional::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)

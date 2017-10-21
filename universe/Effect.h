@@ -175,9 +175,6 @@ public:
 
     SetMeter(MeterType meter, std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
     SetMeter(MeterType meter, std::unique_ptr<ValueRef::ValueRefBase<double>>&& value, const std::string& accounting_label);
-    SetMeter(MeterType meter, ValueRef::ValueRefBase<double>* value);
-    SetMeter(MeterType meter, ValueRef::ValueRefBase<double>* value,
-             const std::string& accounting_label);
 
     virtual ~SetMeter();
 
@@ -232,9 +229,6 @@ public:
     SetShipPartMeter(MeterType meter_type,
                      std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& part_name,
                      std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
-    SetShipPartMeter(MeterType meter_type,
-                     ValueRef::ValueRefBase<std::string>* part_name,
-                     ValueRef::ValueRefBase<double>* value);
 
     virtual ~SetShipPartMeter();
 
@@ -286,11 +280,6 @@ public:
     SetEmpireMeter(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id, const std::string& meter,
                    std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
 
-    SetEmpireMeter(const std::string& meter, ValueRef::ValueRefBase<double>* value);
-
-    SetEmpireMeter(ValueRef::ValueRefBase<int>* empire_id, const std::string& meter,
-                   ValueRef::ValueRefBase<double>* value);
-
     virtual ~SetEmpireMeter();
 
     void Execute(const ScriptingContext& context) const override;
@@ -339,13 +328,6 @@ public:
                        ResourceType stockpile,
                        std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
 
-    SetEmpireStockpile(ResourceType stockpile,
-                       ValueRef::ValueRefBase<double>* value);
-
-    SetEmpireStockpile(ValueRef::ValueRefBase<int>* empire_id,
-                       ResourceType stockpile,
-                       ValueRef::ValueRefBase<double>* value);
-
     virtual ~SetEmpireStockpile();
 
     void Execute(const ScriptingContext& context) const override;
@@ -374,7 +356,6 @@ public:
     explicit SetEmpireCapital();
 
     explicit SetEmpireCapital(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
-    explicit SetEmpireCapital(ValueRef::ValueRefBase<int>* empire_id);
 
     virtual ~SetEmpireCapital();
 
@@ -401,7 +382,6 @@ private:
 class FO_COMMON_API SetPlanetType : public EffectBase {
 public:
     explicit SetPlanetType(std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>&& type);
-    explicit SetPlanetType(ValueRef::ValueRefBase<PlanetType>* type);
 
     virtual ~SetPlanetType();
 
@@ -429,7 +409,6 @@ private:
 class FO_COMMON_API SetPlanetSize : public EffectBase {
 public:
     explicit SetPlanetSize(std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>&& size);
-    explicit SetPlanetSize(ValueRef::ValueRefBase<PlanetSize>* size);
 
     virtual ~SetPlanetSize();
 
@@ -454,7 +433,6 @@ private:
 class FO_COMMON_API SetSpecies : public EffectBase {
 public:
     explicit SetSpecies(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species);
-    explicit SetSpecies(ValueRef::ValueRefBase<std::string>* species);
 
     virtual ~SetSpecies();
 
@@ -479,7 +457,6 @@ private:
 class FO_COMMON_API SetOwner : public EffectBase {
 public:
     explicit SetOwner(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
-    explicit SetOwner(ValueRef::ValueRefBase<int>* empire_id);
 
     virtual ~SetOwner();
 
@@ -563,10 +540,6 @@ public:
                  std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>&& size,
                  std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                  std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
-    CreatePlanet(ValueRef::ValueRefBase<PlanetType>* type,
-                 ValueRef::ValueRefBase<PlanetSize>* size,
-                 ValueRef::ValueRefBase<std::string>* name = nullptr,
-                 const std::vector<EffectBase*>& effects_to_apply_after = std::vector<EffectBase*>());
 
     virtual ~CreatePlanet();
 
@@ -592,12 +565,9 @@ private:
 /** Creates a new Building with specified \a type on the \a target Planet. */
 class FO_COMMON_API CreateBuilding : public EffectBase {
 public:
-    explicit CreateBuilding(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& building_type_name,
-                            std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
-                            std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
-    explicit CreateBuilding(ValueRef::ValueRefBase<std::string>* building_type_name,
-                            ValueRef::ValueRefBase<std::string>* name = nullptr,
-                            const std::vector<EffectBase*>& effects_to_apply_after = std::vector<EffectBase*>());
+    CreateBuilding(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& building_type_name,
+                   std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+                   std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
 
     virtual ~CreateBuilding();
 
@@ -624,29 +594,17 @@ private:
   * empire with the specified \a empire_id */
 class FO_COMMON_API CreateShip : public EffectBase {
 public:
-    explicit CreateShip(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& predefined_ship_design_name,
-                        std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
-                        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
-                        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_name,
-                        std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
+    CreateShip(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& predefined_ship_design_name,
+               std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
+               std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
+               std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_name,
+               std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
 
-    explicit CreateShip(std::unique_ptr<ValueRef::ValueRefBase<int>>&& ship_design_id,
-                        std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
-                        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
-                        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_name,
-                        std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
-
-    explicit CreateShip(ValueRef::ValueRefBase<std::string>* predefined_ship_design_name,
-                        ValueRef::ValueRefBase<int>* empire_id = nullptr,
-                        ValueRef::ValueRefBase<std::string>* species_name = nullptr,
-                        ValueRef::ValueRefBase<std::string>* ship_name = nullptr,
-                        const std::vector<EffectBase*>& effects_to_apply_after = std::vector<EffectBase*>());
-
-    explicit CreateShip(ValueRef::ValueRefBase<int>* ship_design_id,
-                        ValueRef::ValueRefBase<int>* empire_id = nullptr,
-                        ValueRef::ValueRefBase<std::string>* species_name = nullptr,
-                        ValueRef::ValueRefBase<std::string>* ship_name = nullptr,
-                        const std::vector<EffectBase*>& effects_to_apply_after = std::vector<EffectBase*>());
+    CreateShip(std::unique_ptr<ValueRef::ValueRefBase<int>>&& ship_design_id,
+               std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
+               std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
+               std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_name,
+               std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
 
     virtual ~CreateShip();
 
@@ -675,14 +633,10 @@ private:
   * of the specified \a size. */
 class FO_COMMON_API CreateField : public EffectBase {
 public:
-    explicit CreateField(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& field_type_name,
+    CreateField(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& field_type_name,
                          std::unique_ptr<ValueRef::ValueRefBase<double>>&& size,
                          std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                          std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
-    explicit CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
-                         ValueRef::ValueRefBase<double>* size = nullptr,
-                         ValueRef::ValueRefBase<std::string>* name = nullptr,
-                         const std::vector<EffectBase*>& effects_to_apply_after = std::vector<EffectBase*>());
 
     CreateField(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& field_type_name,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& x,
@@ -690,13 +644,6 @@ public:
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& size,
                 std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                 std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
-
-    CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
-                ValueRef::ValueRefBase<double>* x,
-                ValueRef::ValueRefBase<double>* y,
-                ValueRef::ValueRefBase<double>* size = nullptr,
-                ValueRef::ValueRefBase<std::string>* name = nullptr,
-                const std::vector<EffectBase*>& effects_to_apply_after = std::vector<EffectBase*>());
 
     virtual ~CreateField();
 
@@ -735,16 +682,6 @@ public:
                  std::unique_ptr<ValueRef::ValueRefBase<double>>&& y,
                  std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                  std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
-    CreateSystem(ValueRef::ValueRefBase< ::StarType>* type,
-                 ValueRef::ValueRefBase<double>* x,
-                 ValueRef::ValueRefBase<double>* y,
-                 ValueRef::ValueRefBase<std::string>* name = nullptr,
-                 const std::vector<EffectBase*>& effects_to_apply_after = std::vector<EffectBase*>());
-
-    CreateSystem(ValueRef::ValueRefBase<double>* x,
-                 ValueRef::ValueRefBase<double>* y,
-                 ValueRef::ValueRefBase<std::string>* name = nullptr,
-                 const std::vector<EffectBase*>& effects_to_apply_after = std::vector<EffectBase*>());
 
     virtual ~CreateSystem();
 
@@ -799,8 +736,6 @@ public:
 
     explicit AddSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                         std::unique_ptr<ValueRef::ValueRefBase<double>>&& capacity = nullptr);
-    explicit AddSpecial(ValueRef::ValueRefBase<std::string>* name,
-                        ValueRef::ValueRefBase<double>* capacity = nullptr);
 
     ~AddSpecial();
 
@@ -831,7 +766,6 @@ public:
     explicit RemoveSpecial(const std::string& name);
 
     explicit RemoveSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
-    explicit RemoveSpecial(ValueRef::ValueRefBase<std::string>* name);
 
     ~RemoveSpecial();
 
@@ -856,7 +790,6 @@ private:
 class FO_COMMON_API AddStarlanes : public EffectBase {
 public:
     explicit AddStarlanes(std::unique_ptr<Condition::ConditionBase>&& other_lane_endpoint_condition);
-    explicit AddStarlanes(Condition::ConditionBase* other_lane_endpoint_condition);
 
     virtual ~AddStarlanes();
 
@@ -881,7 +814,6 @@ private:
 class FO_COMMON_API RemoveStarlanes : public EffectBase {
 public:
     explicit RemoveStarlanes(std::unique_ptr<Condition::ConditionBase>&& other_lane_endpoint_condition);
-    explicit RemoveStarlanes(Condition::ConditionBase* other_lane_endpoint_condition);
 
     virtual ~RemoveStarlanes();
 
@@ -906,7 +838,6 @@ private:
 class FO_COMMON_API SetStarType : public EffectBase {
 public:
     explicit SetStarType(std::unique_ptr<ValueRef::ValueRefBase<StarType>>&& type);
-    explicit SetStarType(ValueRef::ValueRefBase<StarType>* type);
 
     virtual ~SetStarType();
 
@@ -933,7 +864,6 @@ private:
 class FO_COMMON_API MoveTo : public EffectBase {
 public:
     explicit MoveTo(std::unique_ptr<Condition::ConditionBase>&& location_condition);
-    explicit MoveTo(Condition::ConditionBase* location_condition);
 
     virtual ~MoveTo();
 
@@ -964,13 +894,6 @@ public:
     MoveInOrbit(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& focus_x = nullptr,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& focus_y = nullptr);
-
-    MoveInOrbit(ValueRef::ValueRefBase<double>* speed,
-                Condition::ConditionBase* focal_point_condition);
-
-    MoveInOrbit(ValueRef::ValueRefBase<double>* speed,
-                ValueRef::ValueRefBase<double>* focus_x = nullptr,
-                ValueRef::ValueRefBase<double>* focus_y = nullptr);
 
     virtual ~MoveInOrbit();
 
@@ -1004,13 +927,6 @@ public:
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& dest_x = nullptr,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& dest_y = nullptr);
 
-    MoveTowards(ValueRef::ValueRefBase<double>* speed,
-                Condition::ConditionBase* dest_condition);
-
-    MoveTowards(ValueRef::ValueRefBase<double>* speed,
-                ValueRef::ValueRefBase<double>* dest_x = nullptr,
-                ValueRef::ValueRefBase<double>* dest_y = nullptr);
-
     virtual ~MoveTowards();
 
     void Execute(const ScriptingContext& context) const override;
@@ -1039,7 +955,6 @@ private:
 class FO_COMMON_API SetDestination : public EffectBase {
 public:
     explicit SetDestination(std::unique_ptr<Condition::ConditionBase>&& location_condition);
-    explicit SetDestination(Condition::ConditionBase* location_condition);
 
     virtual ~SetDestination();
 
@@ -1115,13 +1030,6 @@ public:
                           std::unique_ptr<ValueRef::ValueRefBase<double>>&& research_progress,
                           std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
 
-    SetEmpireTechProgress(ValueRef::ValueRefBase<std::string>* tech_name,
-                          ValueRef::ValueRefBase<double>* research_progress);
-
-    SetEmpireTechProgress(ValueRef::ValueRefBase<std::string>* tech_name,
-                          ValueRef::ValueRefBase<double>* research_progress,
-                          ValueRef::ValueRefBase<int>* empire_id);
-
     virtual ~SetEmpireTechProgress();
 
     void Execute(const ScriptingContext& context) const override;
@@ -1146,8 +1054,6 @@ class FO_COMMON_API GiveEmpireTech : public EffectBase {
 public:
     explicit GiveEmpireTech(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& tech_name,
                             std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr);
-    explicit GiveEmpireTech(ValueRef::ValueRefBase<std::string>* tech_name,
-                            ValueRef::ValueRefBase<int>* empire_id = nullptr);
 
     virtual ~GiveEmpireTech();
 
@@ -1345,9 +1251,6 @@ public:
     Conditional(std::unique_ptr<Condition::ConditionBase>&& target_condition,
                 std::vector<std::unique_ptr<EffectBase>>& true_effects,
                 std::vector<std::unique_ptr<EffectBase>>& false_effects);
-    Conditional(Condition::ConditionBase* target_condition,
-                const std::vector<EffectBase*>& true_effects,
-                const std::vector<EffectBase*>& false_effects);
 
     void Execute(const ScriptingContext& context) const override;
     /** Note: executes all of the true or all of the false effects on each
