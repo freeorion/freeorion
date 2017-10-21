@@ -1301,20 +1301,14 @@ unsigned int SetOwner::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetSpeciesEmpireOpinion                               //
 ///////////////////////////////////////////////////////////
-SetSpeciesEmpireOpinion::SetSpeciesEmpireOpinion(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
-                                                 std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
-                                                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& opinion) :
+SetSpeciesEmpireOpinion::SetSpeciesEmpireOpinion(
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
+    std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
+    std::unique_ptr<ValueRef::ValueRefBase<double>>&& opinion
+) :
     m_species_name(std::move(species_name)),
     m_empire_id(std::move(empire_id)),
     m_opinion(std::move(opinion))
-{}
-
-SetSpeciesEmpireOpinion::SetSpeciesEmpireOpinion(ValueRef::ValueRefBase<std::string>* species_name,
-                                                 ValueRef::ValueRefBase<int>* empire_id,
-                                                 ValueRef::ValueRefBase<double>* opinion) :
-    m_species_name(species_name),
-    m_empire_id(empire_id),
-    m_opinion(opinion)
 {}
 
 SetSpeciesEmpireOpinion::~SetSpeciesEmpireOpinion()
@@ -1368,12 +1362,14 @@ unsigned int SetSpeciesEmpireOpinion::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetSpeciesSpeciesOpinion                              //
 ///////////////////////////////////////////////////////////
-SetSpeciesSpeciesOpinion::SetSpeciesSpeciesOpinion(ValueRef::ValueRefBase<std::string>* opinionated_species_name,
-                                                   ValueRef::ValueRefBase<std::string>* rated_species_name,
-                                                   ValueRef::ValueRefBase<double>* opinion) :
-    m_opinionated_species_name(opinionated_species_name),
-    m_rated_species_name(rated_species_name),
-    m_opinion(opinion)
+SetSpeciesSpeciesOpinion::SetSpeciesSpeciesOpinion(
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& opinionated_species_name,
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& rated_species_name,
+    std::unique_ptr<ValueRef::ValueRefBase<double>>&& opinion
+) :
+    m_opinionated_species_name(std::move(opinionated_species_name)),
+    m_rated_species_name(std::move(rated_species_name)),
+    m_opinion(std::move(opinion))
 {}
 
 SetSpeciesSpeciesOpinion::~SetSpeciesSpeciesOpinion()

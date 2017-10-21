@@ -506,9 +506,6 @@ public:
     SetSpeciesEmpireOpinion(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
                             std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
                             std::unique_ptr<ValueRef::ValueRefBase<double>>&& opinion);
-    SetSpeciesEmpireOpinion(ValueRef::ValueRefBase<std::string>* species_name,
-                            ValueRef::ValueRefBase<int>* empire_id,
-                            ValueRef::ValueRefBase<double>* opinion);
 
     virtual ~SetSpeciesEmpireOpinion();
 
@@ -537,9 +534,6 @@ public:
     SetSpeciesSpeciesOpinion(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& opinionated_species_name,
                              std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& rated_species_name,
                              std::unique_ptr<ValueRef::ValueRefBase<double>>&& opinion);
-    SetSpeciesSpeciesOpinion(ValueRef::ValueRefBase<std::string>* opinionated_species_name,
-                             ValueRef::ValueRefBase<std::string>* rated_species_name,
-                             ValueRef::ValueRefBase<double>* opinion);
 
     virtual ~SetSpeciesSpeciesOpinion();
 

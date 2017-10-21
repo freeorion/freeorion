@@ -98,11 +98,17 @@ namespace parse { namespace detail {
             > (
                 (   labeller.rule(Empire_token) >  int_rules.expr [ _c = _1 ]
                     >  labeller.rule(Opinion_token) > double_rules.expr
-                    [ _val = new_<Effect::SetSpeciesEmpireOpinion>(_a, _c, _1) ])
+                    [ _val = new_<Effect::SetSpeciesEmpireOpinion>(
+                            construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
+                            construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_c),
+                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ])
                 |
                 (   labeller.rule(Species_token) > string_grammar [ _b = _1 ]
                     >   labeller.rule(Opinion_token) > double_rules.expr
-                    [ _val = new_<Effect::SetSpeciesSpeciesOpinion>(_a, _b, _1) ])
+                    [ _val = new_<Effect::SetSpeciesSpeciesOpinion>(
+                            construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
+                            construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_b),
+                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ])
             )
             ;
 
