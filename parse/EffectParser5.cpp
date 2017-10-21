@@ -2,6 +2,7 @@
 
 #include "ConditionParserImpl.h"
 #include "../universe/Effect.h"
+#include "../universe/Condition.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -22,23 +23,24 @@ namespace parse { namespace detail {
         qi::_val_type _val;
         qi::eps_type eps;
         using phoenix::new_;
-        using phoenix::push_back;
+        using phoenix::construct;
 
         conditional
             =   (       tok.If_
                         >   labeller.rule(Condition_token)   >   condition_parser [ _a = _1 ]
                         >   labeller.rule(Effects_token)
                         >   (
-                            ('[' > +effect_parser [ push_back(_b, _1) ] > ']')
-                            |    effect_parser [ push_back(_b, _1) ]
+                            ('[' > +effect_parser [ emplace_back_1_(_b, _1) ] > ']')
+                            |    effect_parser [ emplace_back_1_(_b, _1) ]
                         )
                         > -(labeller.rule(Else_token)
                             >   (
-                                ('[' > +effect_parser [ push_back(_c, _1) ] > ']')
-                                |    effect_parser [ push_back(_c, _1) ]
+                                ('[' > +effect_parser [ emplace_back_1_(_c, _1) ] > ']')
+                                |    effect_parser [ emplace_back_1_(_c, _1) ]
                             )
                            )
-                ) [ _val = new_<Effect::Conditional>(_a, _b, _c) ]
+                ) [ _val = new_<Effect::Conditional>(
+                    construct<std::unique_ptr<Condition::ConditionBase>>(_a), _b, _c) ]
             ;
 
         start

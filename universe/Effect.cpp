@@ -4002,8 +4002,8 @@ unsigned int SetVisibility::GetCheckSum() const {
 // Conditional                                           //
 ///////////////////////////////////////////////////////////
 Conditional::Conditional(std::unique_ptr<Condition::ConditionBase>&& target_condition,
-                         std::vector<std::unique_ptr<EffectBase>>&& true_effects,
-                         std::vector<std::unique_ptr<EffectBase>>&& false_effects) :
+                         std::vector<std::unique_ptr<EffectBase>>& true_effects,
+                         std::vector<std::unique_ptr<EffectBase>>& false_effects) :
     m_target_condition(std::move(target_condition)),
     m_true_effects(std::move(true_effects)),
     m_false_effects(std::move(false_effects))

@@ -1343,8 +1343,8 @@ private:
 class FO_COMMON_API Conditional : public EffectBase {
 public:
     Conditional(std::unique_ptr<Condition::ConditionBase>&& target_condition,
-                std::vector<std::unique_ptr<EffectBase>>&& true_effects,
-                std::vector<std::unique_ptr<EffectBase>>&& false_effects);
+                std::vector<std::unique_ptr<EffectBase>>& true_effects,
+                std::vector<std::unique_ptr<EffectBase>>& false_effects);
     Conditional(Condition::ConditionBase* target_condition,
                 const std::vector<EffectBase*>& true_effects,
                 const std::vector<EffectBase*>& false_effects);

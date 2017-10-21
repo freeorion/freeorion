@@ -14,8 +14,8 @@
             effect_signature,
             boost::spirit::qi::locals<
                 Condition::ConditionBase*,
-                std::vector<Effect::EffectBase*>,
-                std::vector<Effect::EffectBase*>
+                std::vector<std::unique_ptr<Effect::EffectBase>>,
+                std::vector<std::unique_ptr<Effect::EffectBase>>
                 >
             > conditional_rule;
 
