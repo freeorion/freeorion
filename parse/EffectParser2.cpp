@@ -44,52 +44,70 @@ namespace parse { namespace detail {
             )
             >   double_rules.expr [ _c = _1 ]
             >   (
-                (labeller.rule(AccountingLabel_token) > tok.string [ _val = new_<Effect::SetMeter>(_a, _c, _1) ] )
-                |    eps [ _val = new_<Effect::SetMeter>(_a, _c) ]
+                (labeller.rule(AccountingLabel_token) > tok.string [ _val = new_<Effect::SetMeter>(
+                        _a,
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
+                        _1) ] )
+                |    eps [ _val = new_<Effect::SetMeter>(
+                        _a,
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c)) ]
             )
             ;
 
         set_ship_part_meter
             =    (set_ship_part_meter_type_enum [ _a = _1 ] >>   labeller.rule(PartName_token))   > string_grammar [ _b = _1 ]
-            >    labeller.rule(Value_token)      > double_rules.expr [ _val = new_<Effect::SetShipPartMeter>(_a, _b, _1) ]
+            >    labeller.rule(Value_token)      > double_rules.expr [ _val = new_<Effect::SetShipPartMeter>(
+                _a,
+                construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_b),
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ]
             ;
 
         set_empire_stockpile
             =   tok.SetEmpireTradeStockpile_ [ _a = RE_TRADE ]
             >   (
                 (   labeller.rule(Empire_token) > int_rules.expr [ _b = _1 ]
-                    >   labeller.rule(Value_token)  > double_rules.expr [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
+                    >   labeller.rule(Value_token)  > double_rules.expr [ _val = new_<Effect::SetEmpireStockpile>(
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
+                        _a,
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ]
                 )
-                |  (labeller.rule(Value_token)  > double_rules.expr [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ])
+                |  (labeller.rule(Value_token)  > double_rules.expr [ _val = new_<Effect::SetEmpireStockpile>(
+                            _a,
+                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ])
             )
             ;
 
         set_empire_capital
             =    tok.SetEmpireCapital_
             >   (
-                (labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Effect::SetEmpireCapital>(_1) ])
+                (labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Effect::SetEmpireCapital>(
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1)) ])
                 |    eps [ _val = new_<Effect::SetEmpireCapital>() ]
             )
             ;
 
         set_planet_type
             =    tok.SetPlanetType_
-            >    labeller.rule(Type_token) > planet_type_rules.expr [ _val = new_<Effect::SetPlanetType>(_1) ]
+            >    labeller.rule(Type_token) > planet_type_rules.expr [ _val = new_<Effect::SetPlanetType>(
+                construct<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>>(_1)) ]
             ;
 
         set_planet_size
             =    tok.SetPlanetSize_
-            >    labeller.rule(PlanetSize_token) > planet_size_rules.expr [ _val = new_<Effect::SetPlanetSize>(_1) ]
+            >    labeller.rule(PlanetSize_token) > planet_size_rules.expr [ _val = new_<Effect::SetPlanetSize>(
+                construct<std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>>(_1)) ]
             ;
 
         set_species
             =    tok.SetSpecies_
-            >    labeller.rule(Name_token) > string_grammar [ _val = new_<Effect::SetSpecies>(_1) ]
+            >    labeller.rule(Name_token) > string_grammar [ _val = new_<Effect::SetSpecies>(
+                construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1)) ]
             ;
 
         set_owner
             =    tok.SetOwner_
-            >    labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Effect::SetOwner>(_1) ]
+            >    labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Effect::SetOwner>(
+                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1)) ]
             ;
 
         set_species_opinion
