@@ -8,15 +8,6 @@
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
-namespace {
-    template <typename T, typename U>
-    void emplace_back_1(std::vector<T>& vect, U&& item) {
-        return vect.emplace_back(std::forward<U>(item));
-    }
-
-    BOOST_PHOENIX_ADAPT_FUNCTION(void, emplace_back_1_, emplace_back_1, 2)
-}
-
 namespace parse { namespace detail {
     effect_parser_rules_4::effect_parser_rules_4(
         const parse::lexer& tok,

@@ -46,6 +46,13 @@ namespace parse { namespace detail {
         { map.insert(std::make_pair(key, value)); }
     };
 
+    template <typename T, typename U>
+    void emplace_back_1(std::vector<T>& vect, U&& item) {
+        return vect.emplace_back(std::forward<U>(item));
+    }
+
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, emplace_back_1_, emplace_back_1, 2)
+
     template <
         typename signature = boost::spirit::qi::unused_type,
         typename locals = boost::spirit::qi::unused_type
