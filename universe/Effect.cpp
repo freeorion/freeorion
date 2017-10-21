@@ -2429,6 +2429,10 @@ unsigned int AddStarlanes::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // RemoveStarlanes                                       //
 ///////////////////////////////////////////////////////////
+RemoveStarlanes::RemoveStarlanes(std::unique_ptr<Condition::ConditionBase>&& other_lane_endpoint_condition) :
+    m_other_lane_endpoint_condition(std::move(other_lane_endpoint_condition))
+{}
+
 RemoveStarlanes::RemoveStarlanes(Condition::ConditionBase* other_lane_endpoint_condition) :
     m_other_lane_endpoint_condition(other_lane_endpoint_condition)
 {}
