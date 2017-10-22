@@ -36,14 +36,17 @@ namespace parse { namespace detail {
         qi::_val_type _val;
         qi::eps_type eps;
         using phoenix::new_;
-        using phoenix::push_back;
+        using phoenix::construct;
 
         meter_value
             =   (
                 non_ship_part_meter_type_enum [ _a = _1 ]
                 >  -(labeller.rule(Low_token)  > double_rules.expr [ _b = _1 ])
                 >  -(labeller.rule(High_token) > double_rules.expr [ _c = _1 ])
-            ) [ _val = new_<Condition::MeterValue>(_a, _b, _c) ]
+            ) [ _val = new_<Condition::MeterValue>(
+                _a,
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c)) ]
             ;
 
         ship_part_meter_value
@@ -53,7 +56,11 @@ namespace parse { namespace detail {
                 >   ship_part_meter_type_enum [ _a = _1 ]
                 >  -(labeller.rule(Low_token)    >   double_rules.expr [ _b = _1 ])
                 >  -(labeller.rule(High_token)   >   double_rules.expr [ _c = _1 ])
-            ) [ _val = new_<Condition::ShipPartMeterValue>(_e, _a, _b, _c) ]
+            ) [ _val = new_<Condition::ShipPartMeterValue>(
+                construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_e),
+                _a,
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c)) ]
             ;
 
         empire_meter_value1
@@ -63,7 +70,11 @@ namespace parse { namespace detail {
                 >   labeller.rule(Meter_token)    >   tok.string [ _a = _1 ]
                 >  -(labeller.rule(Low_token)     >   double_rules.expr [ _c = _1 ])
                 >  -(labeller.rule(High_token)    >   double_rules.expr [ _d = _1 ])
-            ) [ _val = new_<Condition::EmpireMeterValue>(_b, _a, _c, _d) ]
+            ) [ _val = new_<Condition::EmpireMeterValue>(
+                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
+                _a,
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_d)) ]
             ;
 
         empire_meter_value2
@@ -72,7 +83,10 @@ namespace parse { namespace detail {
                  >>  labeller.rule(Meter_token))    >   tok.string [ _a = _1 ]
                 >  -(labeller.rule(Low_token)     >   double_rules.expr [ _c = _1 ])
                 >  -(labeller.rule(High_token)    >   double_rules.expr [ _d = _1 ])
-            ) [ _val = new_<Condition::EmpireMeterValue>(_a, _c, _d) ]
+            ) [ _val = new_<Condition::EmpireMeterValue>(
+                _a,
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_d)) ]
             ;
 
         empire_meter_value
