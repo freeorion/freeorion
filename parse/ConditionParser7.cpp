@@ -32,35 +32,41 @@ namespace parse { namespace detail {
         qi::_b_type _b;
         qi::_c_type _c;
         qi::_val_type _val;
+        const boost::phoenix::function<parse::detail::lazy_move> lazy_move_;
+
         using phoenix::new_;
         using phoenix::push_back;
+        using phoenix::construct;
 
         ordered_bombarded_by
             =    tok.OrderedBombardedBy_
             >   -labeller.rule(Condition_token) > condition_parser
-            [ _val = new_<Condition::OrderedBombarded>(_1) ]
+            [ _val = new_<Condition::OrderedBombarded>(
+                    construct<std::unique_ptr<Condition::ConditionBase>>(_1)) ]
             ;
 
         contains
             =    tok.Contains_
             >   -labeller.rule(Condition_token) > condition_parser
-            [ _val = new_<Condition::Contains>(_1) ]
+            [ _val = new_<Condition::Contains>(
+                    construct<std::unique_ptr<Condition::ConditionBase>>(_1)) ]
             ;
 
         contained_by
             =    tok.ContainedBy_
             >   -labeller.rule(Condition_token) > condition_parser
-            [ _val = new_<Condition::ContainedBy>(_1) ]
+            [ _val = new_<Condition::ContainedBy>(
+                    construct<std::unique_ptr<Condition::ConditionBase>>(_1)) ]
             ;
 
         star_type
             =    tok.Star_
             >    labeller.rule(Type_token)
             >    (
-                ('[' > +star_type_rules.expr [ push_back(_a, _1) ] > ']')
-                |    star_type_rules.expr [ push_back(_a, _1) ]
+                ('[' > +star_type_rules.expr [ emplace_back_1_(_a, _1) ] > ']')
+                |    star_type_rules.expr [ emplace_back_1_(_a, _1) ]
             )
-            [ _val = new_<Condition::StarType>(_a) ]
+            [ _val = new_<Condition::StarType>(lazy_move_(_a)) ]
             ;
 
         location
@@ -76,13 +82,17 @@ namespace parse { namespace detail {
                  )
                  >    labeller.rule(Name_token)   > string_grammar [ _b = _1 ]
                  >  -(labeller.rule(Name_token)   > string_grammar [ _c = _1 ]))
-            [ _val = new_<Condition::Location>(_a, _b, _c) ]
+            [ _val = new_<Condition::Location>(
+                    _a,
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_b),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_c)) ]
             ;
 
         owner_has_shippart_available
             =   (tok.OwnerHasShipPartAvailable_
                  >>  (labeller.rule(Name_token)
-                      > string_grammar [ _val = new_<Condition::OwnerHasShipPartAvailable>(_1) ]
+                      > string_grammar [ _val = new_<Condition::OwnerHasShipPartAvailable>(
+                              construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1)) ]
                      )
                 )
             ;
