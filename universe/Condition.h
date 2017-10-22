@@ -174,8 +174,6 @@ struct FO_COMMON_API Number : public ConditionBase {
     Number(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
            std::unique_ptr<ValueRef::ValueRefBase<int>>&& high,
            std::unique_ptr<ConditionBase>&& condition);
-    Number(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high,
-           ConditionBase* condition);
     virtual ~Number();
 
     bool operator==(const ConditionBase& rhs) const override;
@@ -213,7 +211,6 @@ private:
 struct FO_COMMON_API Turn : public ConditionBase {
     explicit Turn(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& high = nullptr);
-    explicit Turn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high = nullptr);
 
     virtual ~Turn();
 
@@ -259,8 +256,6 @@ struct FO_COMMON_API SortedNumberOf : public ConditionBase {
     /** Sorts randomly, without considering a sort key. */
     SortedNumberOf(std::unique_ptr<ValueRef::ValueRefBase<int>>&& number,
                    std::unique_ptr<ConditionBase>&& condition);
-    SortedNumberOf(ValueRef::ValueRefBase<int>* number,
-                   ConditionBase* condition);
 
     /** Sorts according to the specified method, based on the key values
       * evaluated for each object. */
@@ -268,10 +263,6 @@ struct FO_COMMON_API SortedNumberOf : public ConditionBase {
                    std::unique_ptr<ValueRef::ValueRefBase<double>>&& sort_key_ref,
                    SortingMethod sorting_method,
                    std::unique_ptr<ConditionBase>&& condition);
-    SortedNumberOf(ValueRef::ValueRefBase<int>* number,
-                   ValueRef::ValueRefBase<double>* sort_key_ref,
-                   SortingMethod sorting_method,
-                   ConditionBase* condition);
 
     virtual ~SortedNumberOf();
 
@@ -384,10 +375,8 @@ private:
   * \a affilitation with Empire \a empire_id. */
 struct FO_COMMON_API EmpireAffiliation : public ConditionBase {
     EmpireAffiliation(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id, EmpireAffiliationType affiliation);
-    EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation);
 
     explicit EmpireAffiliation(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
-    explicit EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id);
 
     explicit EmpireAffiliation(EmpireAffiliationType affiliation);
 
@@ -535,7 +524,6 @@ struct FO_COMMON_API Homeworld : public ConditionBase {
     Homeworld();
 
     explicit Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names);
-    explicit Homeworld(const std::vector<ValueRef::ValueRefBase<std::string>*>& names);
 
     virtual ~Homeworld();
 
@@ -676,7 +664,6 @@ private:
 /** Matches all objects that are of UniverseObjectType \a type. */
 struct FO_COMMON_API Type : public ConditionBase {
     explicit Type(std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>&& type);
-    explicit Type(ValueRef::ValueRefBase<UniverseObjectType>* type);
 
     virtual ~Type();
 
@@ -716,7 +703,6 @@ private:
   * in \a names. */
 struct FO_COMMON_API Building : public ConditionBase {
     explicit Building(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names);
-    explicit Building(const std::vector<ValueRef::ValueRefBase<std::string>*>& names);
 
     virtual ~Building();
 
@@ -768,13 +754,6 @@ struct FO_COMMON_API HasSpecial : public ConditionBase {
                std::unique_ptr<ValueRef::ValueRefBase<double>>&& capacity_low,
                std::unique_ptr<ValueRef::ValueRefBase<double>>&& capacity_high = nullptr);
 
-    HasSpecial(ValueRef::ValueRefBase<std::string>* name,
-               ValueRef::ValueRefBase<int>* since_turn_low,
-               ValueRef::ValueRefBase<int>* since_turn_high = nullptr);
-
-    HasSpecial(ValueRef::ValueRefBase<std::string>* name,
-               ValueRef::ValueRefBase<double>* capacity_low,
-               ValueRef::ValueRefBase<double>* capacity_high = nullptr);
     virtual ~HasSpecial();
 
     bool operator==(const ConditionBase& rhs) const override;
@@ -816,7 +795,6 @@ struct FO_COMMON_API HasTag : public ConditionBase {
     explicit HasTag(const std::string& name);
 
     explicit HasTag(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
-    explicit HasTag(ValueRef::ValueRefBase<std::string>* name);
 
     virtual ~HasTag();
 
@@ -853,7 +831,6 @@ private:
 struct FO_COMMON_API CreatedOnTurn : public ConditionBase {
     CreatedOnTurn(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& high);
-    CreatedOnTurn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high);
 
     virtual ~CreatedOnTurn();
 
@@ -894,11 +871,6 @@ struct FO_COMMON_API Contains : public ConditionBase {
     Contains(std::unique_ptr<ConditionBase>&& condition) :
         ConditionBase(),
         m_condition(std::move(condition))
-    {}
-
-    Contains(ConditionBase* condition) :
-        ConditionBase(),
-        m_condition(condition)
     {}
 
     virtual ~Contains();
@@ -944,11 +916,6 @@ struct FO_COMMON_API ContainedBy : public ConditionBase {
         m_condition(std::move(condition))
     {}
 
-    ContainedBy(ConditionBase* condition) :
-        ConditionBase(),
-        m_condition(condition)
-    {}
-
     virtual ~ContainedBy();
 
     bool operator==(const ConditionBase& rhs) const override;
@@ -986,7 +953,6 @@ private:
 /** Matches all objects that are in the system with the indicated \a system_id */
 struct FO_COMMON_API InSystem : public ConditionBase {
     InSystem(std::unique_ptr<ValueRef::ValueRefBase<int>>&& system_id);
-    InSystem(ValueRef::ValueRefBase<int>* system_id);
 
     virtual ~InSystem();
 
@@ -1025,7 +991,6 @@ private:
 /** Matches the object with the id \a object_id */
 struct FO_COMMON_API ObjectID : public ConditionBase {
     ObjectID(std::unique_ptr<ValueRef::ValueRefBase<int>>&& object_id);
-    ObjectID(ValueRef::ValueRefBase<int>* object_id);
 
     virtual ~ObjectID();
 
@@ -1066,7 +1031,6 @@ private:
   * matched. */
 struct FO_COMMON_API PlanetType : public ConditionBase {
     PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetType>>>&& types);
-    PlanetType(const std::vector<ValueRef::ValueRefBase< ::PlanetType>*>& types);
 
     virtual ~PlanetType();
 
@@ -1107,7 +1071,6 @@ private:
   * matched. */
 struct FO_COMMON_API PlanetSize : public ConditionBase {
     PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetSize>>>&& sizes);
-    PlanetSize(const std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>& sizes);
 
     virtual ~PlanetSize();
 
@@ -1149,8 +1112,6 @@ private:
 struct FO_COMMON_API PlanetEnvironment : public ConditionBase {
     PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetEnvironment>>>&& environments,
                       std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name_ref = nullptr);
-    PlanetEnvironment(const std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments,
-                      ValueRef::ValueRefBase<std::string>* species_name_ref = nullptr);
     virtual ~PlanetEnvironment();
 
     bool operator==(const ConditionBase& rhs) const override;
@@ -1190,8 +1151,7 @@ private:
   * Note that all Building object which are on matching planets are also
   * matched. */
 struct FO_COMMON_API Species : public ConditionBase {
-    Species(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names);
-    Species(const std::vector<ValueRef::ValueRefBase<std::string>*>& names);
+    explicit Species(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names);
 
     Species();
 
@@ -1243,17 +1203,6 @@ struct FO_COMMON_API Enqueued : public ConditionBase {
                       std::unique_ptr<ValueRef::ValueRefBase<int>>&& low = nullptr,
                       std::unique_ptr<ValueRef::ValueRefBase<int>>&& high = nullptr);
 
-    Enqueued(BuildType build_type,
-             ValueRef::ValueRefBase<std::string>* name,
-             ValueRef::ValueRefBase<int>* empire_id = nullptr,
-             ValueRef::ValueRefBase<int>* low = nullptr,
-             ValueRef::ValueRefBase<int>* high = nullptr);
-
-    explicit Enqueued(ValueRef::ValueRefBase<int>* design_id,
-             ValueRef::ValueRefBase<int>* empire_id = nullptr,
-             ValueRef::ValueRefBase<int>* low = nullptr,
-             ValueRef::ValueRefBase<int>* high = nullptr);
-
     Enqueued();
 
     virtual ~Enqueued();
@@ -1298,7 +1247,6 @@ private:
 /** Matches all ProdCenter objects that have one of the FocusTypes in \a foci. */
 struct FO_COMMON_API FocusType : public ConditionBase {
     FocusType(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names);
-    FocusType(const std::vector<ValueRef::ValueRefBase<std::string>*>& names);
     virtual ~FocusType();
 
     bool operator==(const ConditionBase& rhs) const override;
@@ -1337,7 +1285,6 @@ private:
     in matching Systems are also matched (Ships, Fleets, Buildings, Planets, etc.). */
 struct FO_COMMON_API StarType : public ConditionBase {
     StarType(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::StarType>>>&& types);
-    StarType(const std::vector<ValueRef::ValueRefBase< ::StarType>*>& types);
 
     virtual ~StarType();
 
@@ -1373,7 +1320,6 @@ private:
 /** Matches all ships whose ShipDesign has the hull specified by \a name. */
 struct FO_COMMON_API DesignHasHull : public ConditionBase {
     explicit DesignHasHull(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
-    explicit DesignHasHull(ValueRef::ValueRefBase<std::string>* name);
 
     virtual ~DesignHasHull();
 
@@ -1415,8 +1361,6 @@ struct FO_COMMON_API DesignHasPart : public ConditionBase {
     DesignHasPart(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& low = nullptr,
                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& high = nullptr);
-    DesignHasPart(ValueRef::ValueRefBase<std::string>* name, ValueRef::ValueRefBase<int>* low = nullptr,
-                  ValueRef::ValueRefBase<int>* high = nullptr);
 
     virtual ~DesignHasPart();
 
@@ -1460,8 +1404,6 @@ struct FO_COMMON_API DesignHasPartClass : public ConditionBase {
     DesignHasPartClass(ShipPartClass part_class,
                        std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
                        std::unique_ptr<ValueRef::ValueRefBase<int>>&& high);
-    DesignHasPartClass(ShipPartClass part_class, ValueRef::ValueRefBase<int>* low,
-                       ValueRef::ValueRefBase<int>* high);
 
     virtual ~DesignHasPartClass();
 
@@ -1539,7 +1481,6 @@ private:
 /** Matches ships whose design id \a id. */
 struct FO_COMMON_API NumberedShipDesign : public ConditionBase {
     NumberedShipDesign(std::unique_ptr<ValueRef::ValueRefBase<int>>&& design_id);
-    NumberedShipDesign(ValueRef::ValueRefBase<int>* design_id);
 
     virtual ~NumberedShipDesign();
 
@@ -1575,7 +1516,6 @@ private:
 /** Matches ships or buildings produced by the empire with id \a empire_id.*/
 struct FO_COMMON_API ProducedByEmpire : public ConditionBase {
     ProducedByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
-    ProducedByEmpire(ValueRef::ValueRefBase<int>* empire_id);
 
     virtual ~ProducedByEmpire();
 
@@ -1611,7 +1551,6 @@ private:
 /** Matches a given object with a linearly distributed probability of \a chance. */
 struct FO_COMMON_API Chance : public ConditionBase {
     Chance(std::unique_ptr<ValueRef::ValueRefBase<double>>&& chance);
-    Chance(ValueRef::ValueRefBase<double>* chance);
 
     virtual ~Chance();
 
@@ -1650,8 +1589,6 @@ struct FO_COMMON_API MeterValue : public ConditionBase {
     MeterValue(MeterType meter,
                std::unique_ptr< ValueRef::ValueRefBase<double>>&& low,
                std::unique_ptr<ValueRef::ValueRefBase<double>>&& high);
-    MeterValue(MeterType meter, ValueRef::ValueRefBase<double>* low,
-               ValueRef::ValueRefBase<double>* high);
 
     virtual ~MeterValue();
 
@@ -1693,11 +1630,6 @@ struct FO_COMMON_API ShipPartMeterValue : public ConditionBase {
                        MeterType meter,
                        std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
                        std::unique_ptr<ValueRef::ValueRefBase<double>>&& high);
-
-    ShipPartMeterValue(ValueRef::ValueRefBase<std::string>* ship_part_name,
-                       MeterType meter,
-                       ValueRef::ValueRefBase<double>* low,
-                       ValueRef::ValueRefBase<double>* high);
 
     virtual ~ShipPartMeterValue();
 
@@ -1741,15 +1673,6 @@ struct FO_COMMON_API EmpireMeterValue : public ConditionBase {
                      std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
                      std::unique_ptr<ValueRef::ValueRefBase<double>>&& high);
 
-    EmpireMeterValue(const std::string& meter,
-                     ValueRef::ValueRefBase<double>* low,
-                     ValueRef::ValueRefBase<double>* high);
-
-    EmpireMeterValue(ValueRef::ValueRefBase<int>* empire_id,
-                     const std::string& meter,
-                     ValueRef::ValueRefBase<double>* low,
-                     ValueRef::ValueRefBase<double>* high);
-
     virtual ~EmpireMeterValue();
 
     bool operator==(const ConditionBase& rhs) const override;
@@ -1786,8 +1709,6 @@ struct FO_COMMON_API EmpireStockpileValue : public ConditionBase {
     EmpireStockpileValue(ResourceType stockpile,
                          std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
                          std::unique_ptr<ValueRef::ValueRefBase<double>>&& high);
-    EmpireStockpileValue(ResourceType stockpile, ValueRef::ValueRefBase<double>* low,
-                         ValueRef::ValueRefBase<double>* high);
 
     virtual ~EmpireStockpileValue();
 
@@ -1825,7 +1746,6 @@ private:
 /** Matches all objects whose owner who has tech \a name. */
 struct FO_COMMON_API OwnerHasTech : public ConditionBase {
     explicit OwnerHasTech(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
-    explicit OwnerHasTech(ValueRef::ValueRefBase<std::string>* name);
 
     virtual ~OwnerHasTech();
 
@@ -1863,7 +1783,6 @@ struct FO_COMMON_API OwnerHasBuildingTypeAvailable : public ConditionBase {
     explicit OwnerHasBuildingTypeAvailable(const std::string& name);
 
     explicit OwnerHasBuildingTypeAvailable(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
-    explicit OwnerHasBuildingTypeAvailable(ValueRef::ValueRefBase<std::string>* name);
 
     virtual ~OwnerHasBuildingTypeAvailable();
 
@@ -1901,7 +1820,6 @@ struct FO_COMMON_API OwnerHasShipDesignAvailable : public ConditionBase {
     explicit OwnerHasShipDesignAvailable(int id);
 
     explicit OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRefBase<int>>&& id);
-    explicit OwnerHasShipDesignAvailable(ValueRef::ValueRefBase<int>* id);
 
     virtual ~OwnerHasShipDesignAvailable();
 
@@ -1939,7 +1857,6 @@ struct FO_COMMON_API OwnerHasShipPartAvailable : public ConditionBase {
     explicit OwnerHasShipPartAvailable(const std::string& name);
 
     explicit OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
-    explicit OwnerHasShipPartAvailable(ValueRef::ValueRefBase<std::string>* name);
 
     virtual ~OwnerHasShipPartAvailable();
 
@@ -1975,7 +1892,6 @@ private:
 /** Matches all objects that are visible to at least one Empire in \a empire_ids. */
 struct FO_COMMON_API VisibleToEmpire : public ConditionBase {
     explicit VisibleToEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
-    explicit VisibleToEmpire(ValueRef::ValueRefBase<int>* empire_id);
 
     virtual ~VisibleToEmpire();
 
@@ -2015,7 +1931,6 @@ private:
 struct FO_COMMON_API WithinDistance : public ConditionBase {
     WithinDistance(std::unique_ptr<ValueRef::ValueRefBase<double>>&& distance,
                    std::unique_ptr<ConditionBase>&& condition);
-    WithinDistance(ValueRef::ValueRefBase<double>* distance, ConditionBase* condition);
 
     virtual ~WithinDistance();
 
@@ -2056,7 +1971,6 @@ private:
 struct FO_COMMON_API WithinStarlaneJumps : public ConditionBase {
     WithinStarlaneJumps(std::unique_ptr<ValueRef::ValueRefBase<int>>&& jumps,
                         std::unique_ptr<ConditionBase>&& condition);
-    WithinStarlaneJumps(ValueRef::ValueRefBase<int>* jumps, ConditionBase* condition);
 
     virtual ~WithinStarlaneJumps();
 
@@ -2102,11 +2016,6 @@ struct FO_COMMON_API CanAddStarlaneConnection :  ConditionBase {
         m_condition(std::move(condition))
     {}
 
-    explicit CanAddStarlaneConnection(ConditionBase* condition) :
-        ConditionBase(),
-        m_condition(condition)
-    {}
-
     virtual ~CanAddStarlaneConnection();
 
     bool operator==(const ConditionBase& rhs) const override;
@@ -2142,7 +2051,6 @@ private:
   * in \a empire_ids. */
 struct FO_COMMON_API ExploredByEmpire : public ConditionBase {
     explicit ExploredByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
-    explicit ExploredByEmpire(ValueRef::ValueRefBase<int>* empire_id);
 
     virtual ~ExploredByEmpire();
 
@@ -2257,7 +2165,6 @@ private:
   * empire with id \a empire_id */
 struct FO_COMMON_API FleetSupplyableByEmpire : public ConditionBase {
     explicit FleetSupplyableByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
-    explicit FleetSupplyableByEmpire(ValueRef::ValueRefBase<int>* empire_id);
 
     virtual ~FleetSupplyableByEmpire();
 
@@ -2296,7 +2203,6 @@ private:
 struct FO_COMMON_API ResourceSupplyConnectedByEmpire : public ConditionBase {
     ResourceSupplyConnectedByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
                                     std::unique_ptr<ConditionBase>&& condition);
-    ResourceSupplyConnectedByEmpire(ValueRef::ValueRefBase<int>* empire_id, ConditionBase* condition);
 
     virtual ~ResourceSupplyConnectedByEmpire();
 
@@ -2398,7 +2304,6 @@ private:
   * object that matches \a m_by_object_condition. */
 struct FO_COMMON_API OrderedBombarded : public ConditionBase {
     OrderedBombarded(std::unique_ptr<ConditionBase>&& by_object_condition);
-    OrderedBombarded(ConditionBase* by_object_condition);
 
     virtual ~OrderedBombarded();
 
@@ -2452,24 +2357,6 @@ struct FO_COMMON_API ValueTest : public ConditionBase {
               ComparisonType comp2 = INVALID_COMPARISON,
               std::unique_ptr<ValueRef::ValueRefBase<int>>&& value_ref3 = nullptr);
 
-    ValueTest(ValueRef::ValueRefBase<double>* value_ref1,
-              ComparisonType comp1,
-              ValueRef::ValueRefBase<double>* value_ref2,
-              ComparisonType comp2 = INVALID_COMPARISON,
-              ValueRef::ValueRefBase<double>* value_ref3 = nullptr);
-
-    ValueTest(ValueRef::ValueRefBase<std::string>* value_ref1,
-              ComparisonType comp1,
-              ValueRef::ValueRefBase<std::string>* value_ref2,
-              ComparisonType comp2 = INVALID_COMPARISON,
-              ValueRef::ValueRefBase<std::string>* value_ref3 = nullptr);
-
-    ValueTest(ValueRef::ValueRefBase<int>* value_ref1,
-              ComparisonType comp1,
-              ValueRef::ValueRefBase<int>* value_ref2,
-              ComparisonType comp2 = INVALID_COMPARISON,
-              ValueRef::ValueRefBase<int>* value_ref3 = nullptr);
-
     virtual ~ValueTest();
 
     bool operator==(const ConditionBase& rhs) const override;
@@ -2519,8 +2406,6 @@ public:
     Location(ContentType content_type,
              std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name1,
              std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name2 = nullptr);
-    Location(ContentType content_type, ValueRef::ValueRefBase<std::string>* name1,
-             ValueRef::ValueRefBase<std::string>* name2 = nullptr);
 
     virtual ~Location();
 
@@ -2558,7 +2443,6 @@ private:
 /** Matches all objects that match every Condition in \a operands. */
 struct FO_COMMON_API And : public ConditionBase {
     And(std::vector<std::unique_ptr<ConditionBase>>&& operands);
-    And(const std::vector<ConditionBase*>& operands);
 
     virtual ~And();
 
@@ -2597,7 +2481,6 @@ private:
 /** Matches all objects that match at least one Condition in \a operands. */
 struct FO_COMMON_API Or : public ConditionBase {
     Or(std::vector<std::unique_ptr<ConditionBase>>&& operands);
-    Or(const std::vector<ConditionBase*>& operands);
 
     virtual ~Or();
 
@@ -2631,7 +2514,6 @@ private:
 /** Matches all objects that do not match the Condition \a operand. */
 struct FO_COMMON_API Not : public ConditionBase {
     Not(std::unique_ptr<ConditionBase>&& operand);
-    Not(ConditionBase* operand);
 
     virtual ~Not();
 
@@ -2668,12 +2550,6 @@ struct FO_COMMON_API Described : public ConditionBase {
     Described(std::unique_ptr<ConditionBase>&& condition, const std::string& desc_stringtable_key) :
         ConditionBase(),
             m_condition(std::move(condition)),
-        m_desc_stringtable_key(desc_stringtable_key)
-    {}
-
-    Described(ConditionBase* condition, const std::string& desc_stringtable_key) :
-        ConditionBase(),
-        m_condition(condition),
         m_desc_stringtable_key(desc_stringtable_key)
     {}
 

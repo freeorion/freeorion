@@ -320,13 +320,6 @@ Number::Number(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
     m_condition(std::move(condition))
 {}
 
-Number::Number(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high,
-               ConditionBase* condition) :
-    m_low(low),
-    m_high(high),
-    m_condition(condition)
-{}
-
 Number::~Number()
 {}
 
@@ -502,11 +495,6 @@ Turn::Turn(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
     m_high(std::move(high))
 {}
 
-Turn::Turn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high) :
-    m_low(low),
-    m_high(high)
-{}
-
 Turn::~Turn() {}
 
 bool Turn::operator==(const ConditionBase& rhs) const {
@@ -669,24 +657,6 @@ SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRefBase<int>>&& nu
     m_sort_key(std::move(sort_key_ref)),
     m_sorting_method(sorting_method),
     m_condition(std::move(condition))
-{}
-
-SortedNumberOf::SortedNumberOf(ValueRef::ValueRefBase<int>* number,
-                               ConditionBase* condition) :
-    m_number(number),
-    m_sort_key(nullptr),
-    m_sorting_method(SORT_RANDOM),
-    m_condition(condition)
-{}
-
-SortedNumberOf::SortedNumberOf(ValueRef::ValueRefBase<int>* number,
-                               ValueRef::ValueRefBase<double>* sort_key_ref,
-                               SortingMethod sorting_method,
-                               ConditionBase* condition) :
-    m_number(number),
-    m_sort_key(sort_key_ref),
-    m_sorting_method(sorting_method),
-    m_condition(condition)
 {}
 
 SortedNumberOf::~SortedNumberOf()
@@ -1172,16 +1142,6 @@ EmpireAffiliation::EmpireAffiliation(std::unique_ptr<ValueRef::ValueRefBase<int>
     m_affiliation(AFFIL_SELF)
 {}
 
-EmpireAffiliation::EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation) :
-    m_empire_id(empire_id),
-    m_affiliation(affiliation)
-{}
-
-EmpireAffiliation::EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id) :
-    m_empire_id(empire_id),
-    m_affiliation(AFFIL_SELF)
-{}
-
 EmpireAffiliation::EmpireAffiliation(EmpireAffiliationType affiliation) :
     m_empire_id(nullptr),
     m_affiliation(affiliation)
@@ -1518,14 +1478,6 @@ Homeworld::Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::str
     ConditionBase(),
     m_names(std::move(names))
 {}
-
-Homeworld::Homeworld(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
-    ConditionBase(),
-    m_names()
-{
-    for (auto& name : names)
-        m_names.emplace_back(name);
-}
 
 Homeworld::~Homeworld() {}
 
@@ -1879,11 +1831,6 @@ Type::Type(std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>&& type) :
     m_type(std::move(type))
 {}
 
-Type::Type(ValueRef::ValueRefBase<UniverseObjectType>* type) :
-    ConditionBase(),
-    m_type(type)
-{}
-
 Type::~Type()
 {}
 
@@ -2071,14 +2018,6 @@ Building::Building(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::strin
     ConditionBase(),
     m_names(std::move(names))
 {}
-
-Building::Building(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
-    ConditionBase(),
-    m_names()
-{
-    for (auto& name : names)
-        m_names.emplace_back(name);
-}
 
 Building::~Building() {}
 
@@ -2296,37 +2235,6 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& na
     m_name(std::move(name)),
     m_capacity_low(std::move(capacity_low)),
     m_capacity_high(std::move(capacity_high)),
-    m_since_turn_low(nullptr),
-    m_since_turn_high(nullptr)
-{}
-
-HasSpecial::HasSpecial(ValueRef::ValueRefBase<std::string>* name) :
-    ConditionBase(),
-    m_name(name),
-    m_capacity_low(nullptr),
-    m_capacity_high(nullptr),
-    m_since_turn_low(),
-    m_since_turn_high()
-{}
-
-HasSpecial::HasSpecial(ValueRef::ValueRefBase<std::string>* name,
-                       ValueRef::ValueRefBase<int>* since_turn_low,
-                       ValueRef::ValueRefBase<int>* since_turn_high) :
-    ConditionBase(),
-    m_name(name),
-    m_capacity_low(nullptr),
-    m_capacity_high(nullptr),
-    m_since_turn_low(since_turn_low),
-    m_since_turn_high(since_turn_high)
-{}
-
-HasSpecial::HasSpecial(ValueRef::ValueRefBase<std::string>* name,
-                       ValueRef::ValueRefBase<double>* capacity_low,
-                       ValueRef::ValueRefBase<double>* capacity_high) :
-    ConditionBase(),
-    m_name(name),
-    m_capacity_low(capacity_low),
-    m_capacity_high(capacity_high),
     m_since_turn_low(nullptr),
     m_since_turn_high(nullptr)
 {}
@@ -2574,11 +2482,6 @@ HasTag::HasTag(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
     m_name(std::move(name))
 {}
 
-HasTag::HasTag(ValueRef::ValueRefBase<std::string>* name) :
-    ConditionBase(),
-    m_name(name)
-{}
-
 HasTag::~HasTag()
 {}
 
@@ -2711,12 +2614,6 @@ CreatedOnTurn::CreatedOnTurn(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
     ConditionBase(),
     m_low(std::move(low)),
     m_high(std::move(high))
-{}
-
-CreatedOnTurn::CreatedOnTurn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high) :
-    ConditionBase(),
-    m_low(low),
-    m_high(high)
 {}
 
 CreatedOnTurn::~CreatedOnTurn() {}
@@ -3274,11 +3171,6 @@ InSystem::InSystem(std::unique_ptr<ValueRef::ValueRefBase<int>>&& system_id) :
     m_system_id(std::move(system_id))
 {}
 
-InSystem::InSystem(ValueRef::ValueRefBase<int>* system_id) :
-    ConditionBase(),
-    m_system_id(system_id)
-{}
-
 InSystem::~InSystem()
 {}
 
@@ -3441,11 +3333,6 @@ ObjectID::ObjectID(std::unique_ptr<ValueRef::ValueRefBase<int>>&& object_id) :
     m_object_id(std::move(object_id))
 {}
 
-ObjectID::ObjectID(ValueRef::ValueRefBase<int>* object_id) :
-    ConditionBase(),
-    m_object_id(object_id)
-{}
-
 ObjectID::~ObjectID()
 {}
 
@@ -3584,14 +3471,6 @@ PlanetType::PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::Pla
     ConditionBase(),
     m_types(std::move(types))
 {}
-
-PlanetType::PlanetType(const std::vector<ValueRef::ValueRefBase< ::PlanetType>*>& types) :
-    ConditionBase(),
-    m_types()
-{
-    for (auto& type : types)
-        m_types.emplace_back(type);
-}
 
 PlanetType::~PlanetType() {}
 
@@ -3778,14 +3657,6 @@ PlanetSize::PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::Pla
     ConditionBase(),
     m_sizes(std::move(sizes))
 {}
-
-PlanetSize::PlanetSize(const std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>& sizes) :
-    ConditionBase(),
-    m_sizes()
-{
-    for (auto& size : sizes)
-        m_sizes.emplace_back(size);
-}
 
 PlanetSize::~PlanetSize() {}
 
@@ -3977,16 +3848,6 @@ PlanetEnvironment::PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::Value
     m_environments(std::move(environments)),
     m_species_name(std::move(species_name_ref))
 {}
-
-PlanetEnvironment::PlanetEnvironment(const std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments,
-                                     ValueRef::ValueRefBase<std::string>* species_name_ref) :
-    ConditionBase(),
-    m_environments(),
-    m_species_name(species_name_ref)
-{
-    for (auto& environment : environments)
-        m_environments.emplace_back(environment);
-}
 
 PlanetEnvironment::~PlanetEnvironment() {}
 
@@ -4213,14 +4074,6 @@ Species::Species(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>
     ConditionBase(),
     m_names(std::move(names))
 {}
-
-Species::Species(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
-    ConditionBase(),
-    m_names()
-{
-    for (auto& name : names)
-        m_names.emplace_back(name);
-}
 
 Species::Species() :
     ConditionBase(),
@@ -4454,17 +4307,6 @@ Enqueued::Enqueued(std::unique_ptr<ValueRef::ValueRefBase<int>>&& design_id,
     m_high(std::move(high))
 {}
 
-Enqueued::Enqueued(ValueRef::ValueRefBase<int>* design_id, ValueRef::ValueRefBase<int>* empire_id,
-                   ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high) :
-    ConditionBase(),
-    m_build_type(BT_SHIP),
-    m_name(),
-    m_design_id(design_id),
-    m_empire_id(empire_id),
-    m_low(low),
-    m_high(high)
-{}
-
 Enqueued::Enqueued() :
     ConditionBase(),
     m_build_type(BT_NOT_BUILDING),
@@ -4487,20 +4329,6 @@ Enqueued::Enqueued(BuildType build_type,
     m_empire_id(std::move(empire_id)),
     m_low(std::move(low)),
     m_high(std::move(high))
-{}
-
-Enqueued::Enqueued(BuildType build_type,
-                   ValueRef::ValueRefBase<std::string>* name,
-                   ValueRef::ValueRefBase<int>* empire_id,
-                   ValueRef::ValueRefBase<int>* low,
-                   ValueRef::ValueRefBase<int>* high) :
-    ConditionBase(),
-    m_build_type(build_type),
-    m_name(name),
-    m_design_id(nullptr),
-    m_empire_id(empire_id),
-    m_low(low),
-    m_high(high)
 {}
 
 Enqueued::~Enqueued() {}
@@ -4802,14 +4630,6 @@ FocusType::FocusType(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::str
     m_names(std::move(names))
 {}
 
-FocusType::FocusType(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
-    ConditionBase(),
-    m_names()
-{
-    for (auto& name : names)
-        m_names.emplace_back(name);
-}
-
 FocusType::~FocusType() {}
 
 bool FocusType::operator==(const ConditionBase& rhs) const {
@@ -4999,14 +4819,6 @@ StarType::StarType(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::StarTyp
     m_types(std::move(types))
 {}
 
-StarType::StarType(const std::vector<ValueRef::ValueRefBase< ::StarType>*>& types) :
-    ConditionBase(),
-    m_types()
-{
-    for (auto& type : types)
-        m_types.emplace_back(type);
-}
-
 StarType::~StarType() {}
 
 bool StarType::operator==(const ConditionBase& rhs) const {
@@ -5175,11 +4987,6 @@ DesignHasHull::DesignHasHull(std::unique_ptr<ValueRef::ValueRefBase<std::string>
     m_name(std::move(name))
 {}
 
-DesignHasHull::DesignHasHull(ValueRef::ValueRefBase<std::string>* name) :
-    ConditionBase(),
-    m_name(name)
-{}
-
 DesignHasHull::~DesignHasHull()
 {}
 
@@ -5313,14 +5120,6 @@ DesignHasPart::DesignHasPart(std::unique_ptr<ValueRef::ValueRefBase<std::string>
     m_low(std::move(low)),
     m_high(std::move(high)),
     m_name(std::move(name))
-{}
-
-DesignHasPart::DesignHasPart(ValueRef::ValueRefBase<std::string>* name, ValueRef::ValueRefBase<int>* low,
-                             ValueRef::ValueRefBase<int>* high) :
-    ConditionBase(),
-    m_low(low),
-    m_high(high),
-    m_name(name)
 {}
 
 DesignHasPart::~DesignHasPart() {}
@@ -5504,14 +5303,6 @@ DesignHasPartClass::DesignHasPartClass(ShipPartClass part_class,
     m_low(std::move(low)),
     m_high(std::move(high)),
     m_class(std::move(part_class))
-{}
-
-DesignHasPartClass::DesignHasPartClass(ShipPartClass part_class, ValueRef::ValueRefBase<int>* low,
-                                       ValueRef::ValueRefBase<int>* high) :
-    ConditionBase(),
-    m_low(low),
-    m_high(high),
-    m_class(part_class)
 {}
 
 DesignHasPartClass::~DesignHasPartClass() {}
@@ -5825,11 +5616,6 @@ NumberedShipDesign::NumberedShipDesign(std::unique_ptr<ValueRef::ValueRefBase<in
     m_design_id(std::move(design_id))
 {}
 
-NumberedShipDesign::NumberedShipDesign(ValueRef::ValueRefBase<int>* design_id) :
-    ConditionBase(),
-    m_design_id(design_id)
-{}
-
 NumberedShipDesign::~NumberedShipDesign()
 {}
 
@@ -5938,11 +5724,6 @@ unsigned int NumberedShipDesign::GetCheckSum() const {
 ProducedByEmpire::ProducedByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id) :
     ConditionBase(),
     m_empire_id(std::move(empire_id))
-{}
-
-ProducedByEmpire::ProducedByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
-    ConditionBase(),
-    m_empire_id(empire_id)
 {}
 
 ProducedByEmpire::~ProducedByEmpire()
@@ -6063,11 +5844,6 @@ Chance::Chance(std::unique_ptr<ValueRef::ValueRefBase<double>>&& chance) :
     m_chance(std::move(chance))
 {}
 
-Chance::Chance(ValueRef::ValueRefBase<double>* chance) :
-    ConditionBase(),
-    m_chance(chance)
-{}
-
 Chance::~Chance()
 {}
 
@@ -6172,14 +5948,6 @@ MeterValue::MeterValue(MeterType meter,
     m_meter(meter),
     m_low(std::move(low)),
     m_high(std::move(high))
-{}
-
-MeterValue::MeterValue(MeterType meter, ValueRef::ValueRefBase<double>* low,
-                       ValueRef::ValueRefBase<double>* high) :
-    ConditionBase(),
-    m_meter(meter),
-    m_low(low),
-    m_high(high)
 {}
 
 MeterValue::~MeterValue() {}
@@ -6373,17 +6141,6 @@ ShipPartMeterValue::ShipPartMeterValue(std::unique_ptr<ValueRef::ValueRefBase<st
     m_high(std::move(high))
 {}
 
-ShipPartMeterValue::ShipPartMeterValue(ValueRef::ValueRefBase<std::string>* ship_part_name,
-                                       MeterType meter,
-                                       ValueRef::ValueRefBase<double>* low,
-                                       ValueRef::ValueRefBase<double>* high) :
-    ConditionBase(),
-    m_part_name(ship_part_name),
-    m_meter(meter),
-    m_low(low),
-    m_high(high)
-{}
-
 ShipPartMeterValue::~ShipPartMeterValue() {}
 
 bool ShipPartMeterValue::operator==(const ConditionBase& rhs) const {
@@ -6574,27 +6331,6 @@ EmpireMeterValue::EmpireMeterValue(std::unique_ptr<ValueRef::ValueRefBase<int>>&
     m_high(std::move(high))
 {}
 
-EmpireMeterValue::EmpireMeterValue(const std::string& meter,
-                                   ValueRef::ValueRefBase<double>* low,
-                                   ValueRef::ValueRefBase<double>* high) :
-    ConditionBase(),
-    m_empire_id(nullptr),
-    m_meter(meter),
-    m_low(low),
-    m_high(high)
-{}
-
-EmpireMeterValue::EmpireMeterValue(ValueRef::ValueRefBase<int>* empire_id,
-                                   const std::string& meter,
-                                   ValueRef::ValueRefBase<double>* low,
-                                   ValueRef::ValueRefBase<double>* high) :
-    ConditionBase(),
-    m_empire_id(empire_id),
-    m_meter(meter),
-    m_low(low),
-    m_high(high)
-{}
-
 EmpireMeterValue::~EmpireMeterValue() {}
 
 bool EmpireMeterValue::operator==(const ConditionBase& rhs) const {
@@ -6775,14 +6511,6 @@ EmpireStockpileValue::EmpireStockpileValue(ResourceType stockpile,
     m_high(std::move(high))
 {}
 
-EmpireStockpileValue::EmpireStockpileValue(ResourceType stockpile, ValueRef::ValueRefBase<double>* low,
-                                           ValueRef::ValueRefBase<double>* high) :
-    ConditionBase(),
-    m_stockpile(stockpile),
-    m_low(low),
-    m_high(high)
-{}
-
 EmpireStockpileValue::~EmpireStockpileValue() {}
 
 bool EmpireStockpileValue::operator==(const ConditionBase& rhs) const {
@@ -6929,11 +6657,6 @@ OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&
     m_name(std::move(name))
 {}
 
-OwnerHasTech::OwnerHasTech(ValueRef::ValueRefBase<std::string>* name) :
-    ConditionBase(),
-    m_name(name)
-{}
-
 OwnerHasTech::~OwnerHasTech()
 {}
 
@@ -7061,11 +6784,6 @@ OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(std::unique_ptr<Val
     m_name(std::move(name))
 {}
 
-OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(ValueRef::ValueRefBase<std::string>* name) :
-    ConditionBase(),
-    m_name(name)
-{}
-
 OwnerHasBuildingTypeAvailable::~OwnerHasBuildingTypeAvailable()
 {}
 
@@ -7186,11 +6904,6 @@ OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(int id) :
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRefBase<int>>&& id) :
     ConditionBase(),
     m_id(std::move(id))
-{}
-
-OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(ValueRef::ValueRefBase<int>* id) :
-    ConditionBase(),
-    m_id(id)
 {}
 
 OwnerHasShipDesignAvailable::~OwnerHasShipDesignAvailable()
@@ -7315,11 +7028,6 @@ OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::V
     m_name(std::move(name))
 {}
 
-OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(ValueRef::ValueRefBase<std::string>* name) :
-    ConditionBase(),
-    m_name(name)
-{}
-
 OwnerHasShipPartAvailable::~OwnerHasShipPartAvailable()
 {}
 
@@ -7437,11 +7145,6 @@ VisibleToEmpire::VisibleToEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& 
     m_empire_id(std::move(empire_id))
 {}
 
-VisibleToEmpire::VisibleToEmpire(ValueRef::ValueRefBase<int>* empire_id) :
-    ConditionBase(),
-    m_empire_id(empire_id)
-{}
-
 VisibleToEmpire::~VisibleToEmpire()
 {}
 
@@ -7555,12 +7258,6 @@ WithinDistance::WithinDistance(std::unique_ptr<ValueRef::ValueRefBase<double>>&&
     ConditionBase(),
     m_distance(std::move(distance)),
     m_condition(std::move(condition))
-{}
-
-WithinDistance::WithinDistance(ValueRef::ValueRefBase<double>* distance, ConditionBase* condition) :
-    ConditionBase(),
-    m_distance(distance),
-    m_condition(condition)
 {}
 
 WithinDistance::~WithinDistance() {}
@@ -7701,12 +7398,6 @@ WithinStarlaneJumps::WithinStarlaneJumps(std::unique_ptr<ValueRef::ValueRefBase<
     ConditionBase(),
     m_jumps(std::move(jumps)),
     m_condition(std::move(condition))
-{}
-
-WithinStarlaneJumps::WithinStarlaneJumps(ValueRef::ValueRefBase<int>* jumps, ConditionBase* condition) :
-    ConditionBase(),
-    m_jumps(jumps),
-    m_condition(condition)
 {}
 
 WithinStarlaneJumps::~WithinStarlaneJumps() {}
@@ -8275,11 +7966,6 @@ ExploredByEmpire::ExploredByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&
     m_empire_id(std::move(empire_id))
 {}
 
-ExploredByEmpire::ExploredByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
-    ConditionBase(),
-    m_empire_id(empire_id)
-{}
-
 ExploredByEmpire::~ExploredByEmpire()
 {}
 
@@ -8501,11 +8187,6 @@ FleetSupplyableByEmpire::FleetSupplyableByEmpire(std::unique_ptr<ValueRef::Value
     m_empire_id(std::move(empire_id))
 {}
 
-FleetSupplyableByEmpire::FleetSupplyableByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
-    ConditionBase(),
-    m_empire_id(empire_id)
-{}
-
 FleetSupplyableByEmpire::~FleetSupplyableByEmpire()
 {}
 
@@ -8632,13 +8313,6 @@ ResourceSupplyConnectedByEmpire::ResourceSupplyConnectedByEmpire(
     ConditionBase(),
     m_empire_id(std::move(empire_id)),
     m_condition(std::move(condition))
-{}
-
-ResourceSupplyConnectedByEmpire::ResourceSupplyConnectedByEmpire(
-    ValueRef::ValueRefBase<int>* empire_id, ConditionBase* condition) :
-    ConditionBase(),
-    m_empire_id(empire_id),
-    m_condition(condition)
 {}
 
 ResourceSupplyConnectedByEmpire::~ResourceSupplyConnectedByEmpire() {}
@@ -8946,11 +8620,6 @@ OrderedBombarded::OrderedBombarded(std::unique_ptr<ConditionBase>&& by_object_co
     m_by_object_condition(std::move(by_object_condition))
 {}
 
-OrderedBombarded::OrderedBombarded(ConditionBase* by_object_condition) :
-    ConditionBase(),
-    m_by_object_condition(by_object_condition)
-{}
-
 OrderedBombarded::~OrderedBombarded()
 {}
 
@@ -9153,53 +8822,6 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRefBase<int>>&& value_ref1,
     m_int_value_ref1(std::move(value_ref1)),
     m_int_value_ref2(std::move(value_ref2)),
     m_int_value_ref3(std::move(value_ref3)),
-    m_compare_type1(comp1),
-    m_compare_type2(comp2)
-{
-    //DebugLogger() << "ValueTest(double)";
-}
-
-ValueTest::ValueTest(ValueRef::ValueRefBase<double>* value_ref1,
-                     ComparisonType comp1,
-                     ValueRef::ValueRefBase<double>* value_ref2,
-                     ComparisonType comp2,
-                     ValueRef::ValueRefBase<double>* value_ref3) :
-    ConditionBase(),
-    m_value_ref1(value_ref1),
-    m_value_ref2(value_ref2),
-    m_value_ref3(value_ref3),
-    m_compare_type1(comp1),
-    m_compare_type2(comp2)
-{
-    //DebugLogger() << "ValueTest(double)";
-}
-
-ValueTest::ValueTest(ValueRef::ValueRefBase<std::string>* value_ref1,
-                     ComparisonType comp1,
-                     ValueRef::ValueRefBase<std::string>* value_ref2,
-                     ComparisonType comp2,
-                     ValueRef::ValueRefBase<std::string>* value_ref3) :
-    ConditionBase(),
-    m_string_value_ref1(value_ref1),
-    m_string_value_ref2(value_ref2),
-    m_string_value_ref3(value_ref3),
-    m_compare_type1(comp1),
-    m_compare_type2(comp2)
-{
-    /*DebugLogger() << "String ValueTest(" << value_ref1->Dump() << " "
-                                         << CompareTypeString(comp1) << " "
-                                         << value_ref2->Dump() << ")";*/
-}
-
-ValueTest::ValueTest(ValueRef::ValueRefBase<int>* value_ref1,
-                     ComparisonType comp1,
-                     ValueRef::ValueRefBase<int>* value_ref2,
-                     ComparisonType comp2,
-                     ValueRef::ValueRefBase<int>* value_ref3) :
-    ConditionBase(),
-    m_int_value_ref1(value_ref1),
-    m_int_value_ref2(value_ref2),
-    m_int_value_ref3(value_ref3),
     m_compare_type1(comp1),
     m_compare_type2(comp2)
 {
@@ -9584,14 +9206,6 @@ Location::Location(ContentType content_type,
     m_content_type(content_type)
 {}
 
-Location::Location(ContentType content_type, ValueRef::ValueRefBase<std::string>* name1,
-                   ValueRef::ValueRefBase<std::string>* name2) :
-    ConditionBase(),
-    m_name1(name1),
-    m_name2(name2),
-    m_content_type(content_type)
-{}
-
 Location::~Location() {}
 
 bool Location::operator==(const ConditionBase& rhs) const {
@@ -9747,14 +9361,6 @@ And::And(std::vector<std::unique_ptr<ConditionBase>>&& operands) :
     ConditionBase(),
     m_operands(std::move(operands))
 {}
-
-And::And(const std::vector<ConditionBase*>& operands) :
-    ConditionBase(),
-    m_operands()
-{
-    for (auto& operand : operands)
-        m_operands.emplace_back(operand);
-}
 
 And::~And() {}
 
@@ -9934,14 +9540,6 @@ Or::Or(std::vector<std::unique_ptr<ConditionBase>>&& operands) :
     m_operands(std::move(operands))
 {}
 
-Or::Or(const std::vector<ConditionBase*>& operands) :
-    ConditionBase(),
-    m_operands()
-{
-    for (auto& operand : operands)
-        m_operands.emplace_back(operand);
-}
-
 Or::~Or() {}
 
 bool Or::operator==(const ConditionBase& rhs) const {
@@ -10105,11 +9703,6 @@ unsigned int Or::GetCheckSum() const {
 Not::Not(std::unique_ptr<ConditionBase>&& operand) :
     ConditionBase(),
     m_operand(std::move(operand))
-{}
-
-Not::Not(ConditionBase* operand) :
-    ConditionBase(),
-    m_operand(operand)
 {}
 
 Not::~Not()
