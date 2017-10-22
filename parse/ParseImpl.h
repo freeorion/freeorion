@@ -23,6 +23,16 @@ namespace Effect {
 
 namespace parse { namespace detail {
 
+    /// A functor to allow moving lazy actors
+    struct lazy_move {
+        template <typename T>
+        using result_type = T&&;
+
+        template <typename T>
+        result_type<T> operator() (T& item) const
+        { return std::move(item); }
+    };
+
     /// A functor to determine if \p key will be unique in \p map of \p type, and log an error otherwise.
     struct is_unique {
         typedef bool result_type;
