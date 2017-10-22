@@ -18,7 +18,7 @@ namespace parse { namespace detail {
 
         typedef rule<
             condition_signature,
-            boost::spirit::qi::locals<std::vector<Condition::ConditionBase*>>
+            boost::spirit::qi::locals<std::vector<std::unique_ptr<Condition::ConditionBase>>>
         > and_or_rule;
 
         typedef rule<

@@ -31,8 +31,10 @@ namespace parse { namespace detail {
         qi::_val_type _val;
         qi::eps_type eps;
         qi::lit_type lit;
+        const boost::phoenix::function<parse::detail::lazy_move> lazy_move_;
+
         using phoenix::new_;
-        using phoenix::push_back;
+        using phoenix::construct;
 
         all
             =   tok.All_ [ _val = new_<Condition::All>() ]
@@ -88,7 +90,7 @@ namespace parse { namespace detail {
             =   (tok.OwnedBy_
                  >>  labeller.rule(Empire_token)
                 ) > int_rules.expr
-            [ _val = new_<Condition::EmpireAffiliation>(_1) ]
+            [ _val = new_<Condition::EmpireAffiliation>(construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1)) ]
             ;
 
         owned_by_2
@@ -111,7 +113,7 @@ namespace parse { namespace detail {
             =   (tok.OwnedBy_
                  >>  labeller.rule(Affiliation_token) >> empire_affiliation_type_enum [ _a = _1 ]
                  >>  labeller.rule(Empire_token)    ) >  int_rules.expr
-            [ _val = new_<Condition::EmpireAffiliation>(_1, _a) ]
+            [ _val = new_<Condition::EmpireAffiliation>(construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1), _a) ]
             ;
 
         owned_by
@@ -124,26 +126,26 @@ namespace parse { namespace detail {
 
         and_
             =   tok.And_
-            >   '[' > +condition_parser [ push_back(_a, _1) ] > lit(']')
-            [ _val = new_<Condition::And>(_a) ]
+            >   '[' > +condition_parser [ emplace_back_1_(_a, _1) ] > lit(']')
+            [ _val = new_<Condition::And>(lazy_move_(_a)) ]
             ;
 
         or_
             =   tok.Or_
-            >   '[' > +condition_parser [ push_back(_a, _1) ] > lit(']')
-            [ _val = new_<Condition::Or>(_a) ]
+            >   '[' > +condition_parser [ emplace_back_1_(_a, _1) ] > lit(']')
+            [ _val = new_<Condition::Or>(lazy_move_(_a)) ]
             ;
 
         not_
             =   tok.Not_
-            >   condition_parser [ _val = new_<Condition::Not>(_1) ]
+            >   condition_parser [ _val = new_<Condition::Not>(construct<std::unique_ptr<Condition::ConditionBase>>(_1)) ]
             ;
 
         described
             =   tok.Described_
             >   labeller.rule(Description_token) > tok.string [ _a = _1 ]
             >   labeller.rule(Condition_token) > condition_parser
-            [ _val = new_<Condition::Described>(_1, _a) ]
+            [ _val = new_<Condition::Described>(construct<std::unique_ptr<Condition::ConditionBase>>(_1), lazy_move_(_a)) ]
             ;
 
         start
