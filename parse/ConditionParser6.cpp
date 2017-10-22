@@ -38,20 +38,24 @@ namespace parse { namespace detail {
         qi::_1_type _1;
         qi::_a_type _a;
         qi::_b_type _b;
+        qi::_r1_type _r1;
         qi::_val_type _val;
         qi::eps_type eps;
+        const boost::phoenix::function<parse::detail::lazy_move> lazy_move_;
+
         using phoenix::new_;
         using phoenix::push_back;
+        using phoenix::construct;
 
         string_ref_vec
-            =   ('[' > +string_grammar [ push_back(_val, _1) ] > ']')
-            |    string_grammar [ push_back(_val, _1) ]
+            =   ('[' > +string_grammar [ emplace_back_1_(_r1, _1) ] > ']')
+            |    string_grammar [ emplace_back_1_(_r1, _1) ]
             ;
 
         homeworld
             =   tok.Homeworld_
             >   (
-                (labeller.rule(Name_token) > string_ref_vec [ _val = new_<Condition::Homeworld>(_1) ])
+                (labeller.rule(Name_token) > string_ref_vec(_a) [ _val = new_<Condition::Homeworld>(lazy_move_(_a)) ])
                 |    eps [ _val = new_<Condition::Homeworld>() ]
             )
             ;
@@ -59,15 +63,15 @@ namespace parse { namespace detail {
         building
             =   (
                 tok.Building_
-                >  -(labeller.rule(Name_token) > string_ref_vec [ _a = _1 ])
+                >  -(labeller.rule(Name_token) > string_ref_vec(_a))
             )
-            [ _val = new_<Condition::Building>(_a) ]
+            [ _val = new_<Condition::Building>(lazy_move_(_a)) ]
             ;
 
         species
             =   tok.Species_
             >   (
-                (labeller.rule(Name_token) > string_ref_vec [ _val = new_<Condition::Species>(_1) ])
+                (labeller.rule(Name_token) > string_ref_vec(_a) [ _val = new_<Condition::Species>(lazy_move_(_a)) ])
                 |    eps [ _val = new_<Condition::Species>() ]
             )
             ;
@@ -75,8 +79,8 @@ namespace parse { namespace detail {
         focus_type
             =   tok.Focus_
             >   (
-                (labeller.rule(Type_token) > string_ref_vec [ _val = new_<Condition::FocusType>(_1) ])
-                |        eps [ _val = new_<Condition::FocusType>(std::vector<ValueRef::ValueRefBase<std::string>*>()) ]
+                (labeller.rule(Type_token) > string_ref_vec(_a) [ _val = new_<Condition::FocusType>(lazy_move_(_a)) ])
+                | eps [ _val = new_<Condition::FocusType>(lazy_move_(_a)) ]
             )
             ;
 
@@ -85,10 +89,10 @@ namespace parse { namespace detail {
                  >>  labeller.rule(Type_token)
                 )
             >   (
-                ('[' > +planet_type_rules.expr [ push_back(_a, _1) ] > ']')
-                |    planet_type_rules.expr [ push_back(_a, _1) ]
+                ('[' > +planet_type_rules.expr [ emplace_back_1_(_a, _1) ] > ']')
+                |    planet_type_rules.expr [ emplace_back_1_(_a, _1) ]
             )
-            [ _val = new_<Condition::PlanetType>(_a) ]
+            [ _val = new_<Condition::PlanetType>(lazy_move_(_a)) ]
             ;
 
         planet_size
@@ -96,10 +100,10 @@ namespace parse { namespace detail {
                  >>  labeller.rule(Size_token)
                 )
             >   (
-                ('[' > +planet_size_rules.expr [ push_back(_a, _1) ] > ']')
-                |    planet_size_rules.expr [ push_back(_a, _1) ]
+                ('[' > +planet_size_rules.expr [ emplace_back_1_(_a, _1) ] > ']')
+                |    planet_size_rules.expr [ emplace_back_1_(_a, _1) ]
             )
-            [ _val = new_<Condition::PlanetSize>(_a) ]
+            [ _val = new_<Condition::PlanetSize>(lazy_move_(_a)) ]
             ;
 
         planet_environment
@@ -107,18 +111,23 @@ namespace parse { namespace detail {
                   >>  labeller.rule(Environment_token)
                  )
                  >   (
-                     ('[' > +planet_environment_rules.expr [ push_back(_a, _1) ] > ']')
-                     |    planet_environment_rules.expr [ push_back(_a, _1) ]
+                     ('[' > +planet_environment_rules.expr [ emplace_back_1_(_a, _1) ] > ']')
+                     |    planet_environment_rules.expr [ emplace_back_1_(_a, _1) ]
                  )
                  >  -(labeller.rule(Species_token)        >  string_grammar [_b = _1]))
-            [ _val = new_<Condition::PlanetEnvironment>(_a, _b) ]
+            [ _val = new_<Condition::PlanetEnvironment>(
+                    lazy_move_(_a),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_b)) ]
             ;
 
         object_type
-            =   universe_object_type_rules.enum_expr [ _val = new_<Condition::Type>(new_<ValueRef::Constant<UniverseObjectType>>(_1)) ]
+            =   universe_object_type_rules.enum_expr [ _val = new_<Condition::Type>(
+                construct<std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>>(
+                    new_<ValueRef::Constant<UniverseObjectType>>(_1))) ]
             |   (
                 tok.ObjectType_
-                >   labeller.rule(Type_token) > universe_object_type_rules.expr [ _val = new_<Condition::Type>(_1) ]
+                >   labeller.rule(Type_token) > universe_object_type_rules.expr [ _val = new_<Condition::Type>(
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>>(_1)) ]
             )
             ;
 

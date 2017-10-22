@@ -11,37 +11,37 @@ namespace parse { namespace detail {
                                  const parse::value_ref_grammar<std::string>& string_grammar);
 
         typedef rule<
-            std::vector<ValueRef::ValueRefBase<std::string>*> ()
+            void (std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&)
         > string_ref_vec_rule;
 
         typedef rule<
             condition_signature,
-            boost::spirit::qi::locals<std::vector<ValueRef::ValueRefBase<std::string>*>>
-        > building_rule;
+            boost::spirit::qi::locals<std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>>
+        > building_focus_species_rule;
 
         typedef rule<
             condition_signature,
-            boost::spirit::qi::locals<std::vector<ValueRef::ValueRefBase<PlanetType>*>>
+            boost::spirit::qi::locals<std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>>>
         > planet_type_rule;
 
         typedef rule<
             condition_signature,
-            boost::spirit::qi::locals<std::vector<ValueRef::ValueRefBase<PlanetSize>*>>
+            boost::spirit::qi::locals<std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>>>
         > planet_size_rule;
 
         typedef rule<
             condition_signature,
             boost::spirit::qi::locals<
-                std::vector<ValueRef::ValueRefBase<PlanetEnvironment>*>,
+                std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetEnvironment>>>,
                 ValueRef::ValueRefBase<std::string>*
             >
         > planet_environment_rule;
 
         string_ref_vec_rule               string_ref_vec;
-        condition_parser_rule             homeworld;
-        building_rule                     building;
-        condition_parser_rule             species;
-        condition_parser_rule             focus_type;
+        building_focus_species_rule       homeworld;
+        building_focus_species_rule       building;
+        building_focus_species_rule       species;
+        building_focus_species_rule       focus_type;
         planet_type_rule                  planet_type;
         planet_size_rule                  planet_size;
         planet_environment_rule           planet_environment;
