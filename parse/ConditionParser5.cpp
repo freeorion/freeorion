@@ -1,6 +1,7 @@
 #include "ConditionParser5.h"
 
 #include "../universe/Condition.h"
+#include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -21,11 +22,13 @@ namespace parse { namespace detail {
         qi::_val_type _val;
         qi::eps_type eps;
         using phoenix::new_;
+        using phoenix::construct;
 
         has_special
             =   (   (tok.HasSpecial_
                      >>  labeller.rule(Name_token)
-                    ) > string_grammar [ _val = new_<Condition::HasSpecial>(_1) ]
+                    ) > string_grammar [ _val = new_<Condition::HasSpecial>(
+                            construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1)) ]
                 )
             |   tok.HasSpecial_ [ _val = new_<Condition::HasSpecial>() ]
             ;
@@ -33,56 +36,66 @@ namespace parse { namespace detail {
         has_tag
             =   (   (tok.HasTag_
                      >>  labeller.rule(Name_token)
-                    ) > string_grammar [ _val = new_<Condition::HasTag>(_1) ]
+                    ) > string_grammar [ _val = new_<Condition::HasTag>(
+                            construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1)) ]
                 )
             |   tok.HasTag_ [ _val = new_<Condition::HasTag>() ]
             ;
 
         owner_has_tech
             =   tok.OwnerHasTech_
-            >   labeller.rule(Name_token) > string_grammar [ _val = new_<Condition::OwnerHasTech>(_1) ]
+            >   labeller.rule(Name_token) > string_grammar [ _val = new_<Condition::OwnerHasTech>(
+                construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1)) ]
             ;
 
         design_has_hull
             =   tok.DesignHasHull_
-            >   labeller.rule(Name_token) > string_grammar [ _val = new_<Condition::DesignHasHull>(_1) ]
+            >   labeller.rule(Name_token) > string_grammar [ _val = new_<Condition::DesignHasHull>(
+                construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1)) ]
             ;
 
         predefined_design
             =   (tok.Design_
                  >>  labeller.rule(Name_token)
-                ) > string_grammar [ _val = new_<Condition::PredefinedShipDesign>(_1) ]
+                ) > string_grammar [ _val = new_<Condition::PredefinedShipDesign>(
+                construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1)) ]
             ;
 
         design_number
             =   (tok.Design_
                  >>  labeller.rule(Design_token)
-                ) > int_rules.expr [ _val = new_<Condition::NumberedShipDesign>(_1) ]
+                ) > int_rules.expr [ _val = new_<Condition::NumberedShipDesign>(
+                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1)) ]
             ;
 
         produced_by_empire // TODO: Lose "empire" part.
             =   tok.ProducedByEmpire_
-            >   labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Condition::ProducedByEmpire>(_1) ]
+            >   labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Condition::ProducedByEmpire>(
+                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1)) ]
             ;
 
         visible_to_empire // TODO: Lose "empire" part.
             =   tok.VisibleToEmpire_
-            >   labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Condition::VisibleToEmpire>(_1) ]
+            >   labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Condition::VisibleToEmpire>(
+                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1)) ]
             ;
 
         explored_by_empire // TODO: Lose "empire" part.
             =    tok.ExploredByEmpire_
-            >    labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Condition::ExploredByEmpire>(_1) ]
+            >    labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Condition::ExploredByEmpire>(
+                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1)) ]
             ;
 
         resupplyable_by
             =   tok.ResupplyableBy_
-            >   labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Condition::FleetSupplyableByEmpire>(_1) ]
+            >   labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Condition::FleetSupplyableByEmpire>(
+                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1)) ]
             ;
 
         object_id
             =   tok.Object_
-            >   labeller.rule(ID_token) > int_rules.expr [ _val = new_<Condition::ObjectID>(_1) ]
+            >   labeller.rule(ID_token) > int_rules.expr [ _val = new_<Condition::ObjectID>(
+                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1)) ]
             ;
 
         start
