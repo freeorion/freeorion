@@ -22,6 +22,8 @@ namespace parse { namespace detail {
         qi::_c_type _c;
         qi::_val_type _val;
         qi::eps_type eps;
+        const boost::phoenix::function<parse::detail::lazy_move> lazy_move_;
+
         using phoenix::new_;
         using phoenix::construct;
 
@@ -40,7 +42,9 @@ namespace parse { namespace detail {
                             )
                            )
                 ) [ _val = new_<Effect::Conditional>(
-                    construct<std::unique_ptr<Condition::ConditionBase>>(_a), _b, _c) ]
+                    construct<std::unique_ptr<Condition::ConditionBase>>(_a),
+                    lazy_move_(_b),
+                    lazy_move_(_c)) ]
             ;
 
         start
