@@ -539,7 +539,7 @@ public:
     CreatePlanet(std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>&& type,
                  std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>&& size,
                  std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
-                 std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
+                 std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
     virtual ~CreatePlanet();
 
@@ -567,7 +567,7 @@ class FO_COMMON_API CreateBuilding : public EffectBase {
 public:
     CreateBuilding(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& building_type_name,
                    std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
-                   std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
+                   std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
     virtual ~CreateBuilding();
 
@@ -598,13 +598,13 @@ public:
                std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
                std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
                std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_name,
-               std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
+               std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
     CreateShip(std::unique_ptr<ValueRef::ValueRefBase<int>>&& ship_design_id,
                std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
                std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
                std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_name,
-               std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
+               std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
     virtual ~CreateShip();
 
@@ -636,14 +636,14 @@ public:
     CreateField(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& field_type_name,
                          std::unique_ptr<ValueRef::ValueRefBase<double>>&& size,
                          std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
-                         std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
+                         std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
     CreateField(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& field_type_name,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& x,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& y,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& size,
                 std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
-                std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
+                std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
     virtual ~CreateField();
 
@@ -676,12 +676,12 @@ public:
                  std::unique_ptr<ValueRef::ValueRefBase<double>>&& x,
                  std::unique_ptr<ValueRef::ValueRefBase<double>>&& y,
                  std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
-                 std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
+                 std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
     CreateSystem(std::unique_ptr<ValueRef::ValueRefBase<double>>&& x,
                  std::unique_ptr<ValueRef::ValueRefBase<double>>&& y,
                  std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
-                 std::vector<std::unique_ptr<EffectBase>>& effects_to_apply_after);
+                 std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
     virtual ~CreateSystem();
 
@@ -1249,8 +1249,8 @@ private:
 class FO_COMMON_API Conditional : public EffectBase {
 public:
     Conditional(std::unique_ptr<Condition::ConditionBase>&& target_condition,
-                std::vector<std::unique_ptr<EffectBase>>& true_effects,
-                std::vector<std::unique_ptr<EffectBase>>& false_effects);
+                std::vector<std::unique_ptr<EffectBase>>&& true_effects,
+                std::vector<std::unique_ptr<EffectBase>>&& false_effects);
 
     void Execute(const ScriptingContext& context) const override;
     /** Note: executes all of the true or all of the false effects on each
