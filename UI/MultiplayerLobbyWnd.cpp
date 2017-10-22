@@ -493,14 +493,14 @@ namespace {
         }
     };
 
-    const GG::X     LOBBY_WND_WIDTH(860);
+    const GG::X     LOBBY_WND_WIDTH(960);
     const GG::Y     LOBBY_WND_HEIGHT(720);
     const int       CONTROL_MARGIN = 5; // gap to leave between controls in the window
     const GG::X     GALAXY_SETUP_PANEL_WIDTH(250);
     const GG::Y     GALAXY_SETUP_PANEL_HEIGHT(340);
     const GG::Y     SAVED_GAMES_LIST_ROW_HEIGHT(22);
     const GG::Y     SAVED_GAMES_LIST_DROP_HEIGHT(10 * SAVED_GAMES_LIST_ROW_HEIGHT);
-    const GG::X     CHAT_WIDTH(250);
+    const GG::X     CHAT_WIDTH(350);
     GG::Pt          g_preview_ul;
     const GG::Pt    PREVIEW_SZ(GG::X(248), GG::Y(186));
     const int       PREVIEW_MARGIN = 3;
