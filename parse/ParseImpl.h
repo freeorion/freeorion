@@ -22,6 +22,19 @@ namespace Effect {
 }
 
 namespace parse { namespace detail {
+    template <typename T>
+    void move_back(std::vector<T>& vect, T& item) {
+        return vect.push_back(std::move(item));
+    }
+
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, move_back_, move_back, 2)
+
+    template <typename T, typename U>
+    void emplace_back_1(std::vector<T>& vect, U&& item) {
+        return vect.emplace_back(std::forward<U>(item));
+    }
+
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, emplace_back_1_, emplace_back_1, 2)
 
     /// A functor to allow moving lazy actors
     struct lazy_move {
@@ -31,6 +44,15 @@ namespace parse { namespace detail {
         template <typename T>
         result_type<T> operator() (T& item) const
         { return std::move(item); }
+    };
+
+    /// A functor to lazily reset unique_ptr
+    struct lazy_reset {
+        using result_type = void;
+
+        template <typename T>
+        result_type operator() (std::unique_ptr<T>& old, typename std::unique_ptr<T>::pointer ptr) const
+        { old.reset(ptr); }
     };
 
     /// A functor to determine if \p key will be unique in \p map of \p type, and log an error otherwise.
@@ -55,13 +77,6 @@ namespace parse { namespace detail {
         result_type operator() (Map& map, const std::string& key, Value* value) const
         { map.insert(std::make_pair(key, value)); }
     };
-
-    template <typename T, typename U>
-    void emplace_back_1(std::vector<T>& vect, U&& item) {
-        return vect.emplace_back(std::forward<U>(item));
-    }
-
-    BOOST_PHOENIX_ADAPT_FUNCTION(void, emplace_back_1_, emplace_back_1, 2)
 
     template <
         typename signature = boost::spirit::qi::unused_type,
