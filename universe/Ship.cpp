@@ -71,7 +71,11 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
                 m_part_meters[std::make_pair(METER_CAPACITY, part->Name())];
                 break;
             }
-            case PC_DIRECT_WEAPON:      // capacity is damage, secondary stat is shots per attack
+            case PC_DIRECT_WEAPON: {    // capacity is damage, secondary stat is shots per attack, tertiary stat is noisiness of attack
+                m_part_meters[std::make_pair(METER_TERTIARY_STAT,       part->Name())];
+                m_part_meters[std::make_pair(METER_MAX_TERTIARY_STAT,   part->Name())];
+                // intentinally no break; here
+            }
             case PC_FIGHTER_HANGAR: {   // capacity is how many fighters contained, secondary stat is damage per fighter attack
                 m_part_meters[std::make_pair(METER_SECONDARY_STAT,      part->Name())];
                 m_part_meters[std::make_pair(METER_MAX_SECONDARY_STAT,  part->Name())];
@@ -223,13 +227,11 @@ std::string Ship::Dump(unsigned short ntabs) const {
     if (!m_part_meters.empty()) {
         os << " part meters: ";
         for (const auto& entry : m_part_meters) {
-        const std::string part_name = entry.first.second;
-        MeterType meter_type = entry.first.first;
-        const Meter& meter = entry.second;
-        os << part_name << " "
-           << meter_type
-           << ": " << meter.Current() << "  ";
-    }
+            const std::string part_name = entry.first.second;
+            MeterType meter_type = entry.first.first;
+            const Meter& meter = entry.second;
+            os << part_name << " " << meter_type << ": " << meter.Current() << "  ";
+        }
     }
     return os.str();
 }
