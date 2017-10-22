@@ -9127,6 +9127,38 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRefBase<double>>&& value_ref
     m_compare_type2(comp2)
 {}
 
+ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& value_ref1,
+                     ComparisonType comp1,
+                     std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& value_ref2,
+                     ComparisonType comp2,
+                     std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& value_ref3) :
+    ConditionBase(),
+    m_string_value_ref1(std::move(value_ref1)),
+    m_string_value_ref2(std::move(value_ref2)),
+    m_string_value_ref3(std::move(value_ref3)),
+    m_compare_type1(comp1),
+    m_compare_type2(comp2)
+{
+    /*DebugLogger() << "String ValueTest(" << value_ref1->Dump() << " "
+                                         << CompareTypeString(comp1) << " "
+                                         << value_ref2->Dump() << ")";*/
+}
+
+ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRefBase<int>>&& value_ref1,
+                     ComparisonType comp1,
+                     std::unique_ptr<ValueRef::ValueRefBase<int>>&& value_ref2,
+                     ComparisonType comp2,
+                     std::unique_ptr<ValueRef::ValueRefBase<int>>&& value_ref3) :
+    ConditionBase(),
+    m_int_value_ref1(std::move(value_ref1)),
+    m_int_value_ref2(std::move(value_ref2)),
+    m_int_value_ref3(std::move(value_ref3)),
+    m_compare_type1(comp1),
+    m_compare_type2(comp2)
+{
+    //DebugLogger() << "ValueTest(double)";
+}
+
 ValueTest::ValueTest(ValueRef::ValueRefBase<double>* value_ref1,
                      ComparisonType comp1,
                      ValueRef::ValueRefBase<double>* value_ref2,

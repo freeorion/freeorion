@@ -2440,6 +2440,18 @@ struct FO_COMMON_API ValueTest : public ConditionBase {
               ComparisonType comp2 = INVALID_COMPARISON,
               std::unique_ptr<ValueRef::ValueRefBase<double>>&& value_ref3 = nullptr);
 
+    ValueTest(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& value_ref1,
+              ComparisonType comp1,
+              std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& value_ref2,
+              ComparisonType comp2 = INVALID_COMPARISON,
+              std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& value_ref3 = nullptr);
+
+    ValueTest(std::unique_ptr<ValueRef::ValueRefBase<int>>&& value_ref1,
+              ComparisonType comp1,
+              std::unique_ptr<ValueRef::ValueRefBase<int>>&& value_ref2,
+              ComparisonType comp2 = INVALID_COMPARISON,
+              std::unique_ptr<ValueRef::ValueRefBase<int>>&& value_ref3 = nullptr);
+
     ValueTest(ValueRef::ValueRefBase<double>* value_ref1,
               ComparisonType comp1,
               ValueRef::ValueRefBase<double>* value_ref2,
