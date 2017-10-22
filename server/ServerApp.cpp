@@ -127,7 +127,8 @@ ServerApp::ServerApp() :
                  boost::bind(&ServerApp::PlayerDisconnected, this, _1)),
     m_fsm(new ServerFSM(*this)),
     m_current_turn(INVALID_GAME_TURN),
-    m_single_player_game(false)
+    m_single_player_game(false),
+    m_chat_history(10)
 {
     // Force the log file if requested.
     if (GetOptionsDB().Get<std::string>("log-file").empty()) {
@@ -980,6 +981,17 @@ void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_
     player_connection->SendMessage(DispatchCombatLogsMessage(logs));
 }
 
+void ServerApp::PushChatMessage(const boost::posix_time::ptime& timestamp,
+                                const std::string& player_name,
+                                const std::string& msg)
+{
+    ChatHistoryEntity chat;
+    chat.m_timestamp = timestamp;
+    chat.m_player_name = player_name;
+    chat.m_text = msg;
+    m_chat_history.push_back(chat);
+}
+
 namespace {
     /** Verifies that a human player is connected with the indicated \a id. */
     bool HumanPlayerWithIdConnected(const ServerNetworking& sn, int id) {
@@ -1595,6 +1607,9 @@ bool ServerApp::IsAuthSuccess(const std::string& player_name, const std::string&
 
 bool ServerApp::IsHostless() const
 { return GetOptionsDB().Get<bool>("hostless"); }
+
+const boost::circular_buffer<ChatHistoryEntity>& ServerApp::GetChatHistory() const
+{ return m_chat_history; }
 
 Networking::ClientType ServerApp::GetEmpireClientType(int empire_id) const
 { return GetPlayerClientType(ServerApp::EmpirePlayerID(empire_id)); }

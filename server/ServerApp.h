@@ -13,6 +13,8 @@
 #include <set>
 #include <vector>
 
+#include <boost/circular_buffer.hpp>
+
 class OrderSet;
 struct GalaxySetupData;
 struct SaveGameUIData;
@@ -125,6 +127,9 @@ public:
 
     /** Checks if server runs in a hostless mode. */
     bool IsHostless() const;
+
+    /** Returns chat history buffer. */
+    const boost::circular_buffer<ChatHistoryEntity>& GetChatHistory() const;
     //@}
 
 
@@ -216,6 +221,10 @@ public:
 
     /** Send the requested combat logs to the client.*/
     void UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_connection);
+
+    void PushChatMessage(const boost::posix_time::ptime& timestamp,
+                         const std::string& player_name,
+                         const std::string& msg);
 
     ServerNetworking&           Networking();     ///< returns the networking object for the server
 
@@ -319,6 +328,7 @@ private:
     std::vector<Process>    m_ai_client_processes;  ///< AI client child processes
     bool                    m_single_player_game;   ///< true when the game being played is single-player
     GalaxySetupData         m_galaxy_setup_data;    ///< stored setup data for the game currently being played
+    boost::circular_buffer<ChatHistoryEntity> m_chat_history; ///< Stored last chat messages.
 
     /** Turn sequence map is used for turn processing. Each empire is added at
       * the start of a game or reload and then the map maintains OrderSets for

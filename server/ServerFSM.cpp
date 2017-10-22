@@ -639,19 +639,19 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
          it != server.m_networking.established_end(); ++it)
     { (*it)->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data)); }
 
-    // test chat message sending
-    ChatHistoryEntity chat;
-    chat.m_timestamp = boost::posix_time::second_clock::universal_time();
-    chat.m_player_name = "test";
-    chat.m_text = "test message";
-    ChatHistoryEntity chat2;
-    chat2.m_timestamp = boost::posix_time::second_clock::universal_time();
-    chat2.m_player_name = "test2";
-    chat2.m_text = "test2 message";
-    std::vector<std::reference_wrapper<const ChatHistoryEntity>> chat_history;
-    chat_history.push_back(std::cref(chat));
-    chat_history.push_back(std::cref(chat2));
-    player_connection->SendMessage(ChatHistoryMessage(chat_history));
+    // send chat history
+    if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR ||
+        client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+        client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+    {
+        std::vector<std::reference_wrapper<const ChatHistoryEntity>> chat_history;
+        for (const auto& elem : server.GetChatHistory()) {
+            chat_history.push_back(std::cref(elem));
+        }
+        if (chat_history.size() > 0) {
+            player_connection->SendMessage(ChatHistoryMessage(chat_history));
+        }
+    }
 }
 
 sc::result MPLobby::react(const JoinGame& msg) {
@@ -1137,6 +1137,8 @@ sc::result MPLobby::react(const PlayerChat& msg) {
     ExtractPlayerChatMessageData(message, receiver, data);
 
     boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
+
+    server.PushChatMessage(timestamp, sender->PlayerName(), data);
 
     if (receiver == Networking::INVALID_PLAYER_ID) { // the receiver is everyone
         for (auto it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
@@ -1764,6 +1766,8 @@ sc::result PlayingGame::react(const PlayerChat& msg) {
     ExtractPlayerChatMessageData(message, receiver, data);
 
     boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
+
+    server.PushChatMessage(timestamp, sender->PlayerName(), data);
 
     for (auto it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
