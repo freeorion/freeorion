@@ -15,6 +15,7 @@
 #include <vector>
 #include <map>
 #include <boost/serialization/access.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 
 
 FO_COMMON_API extern const std::string MP_SAVE_FILE_EXTENSION;
@@ -357,6 +358,23 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
 
     std::string                                 m_save_game;            //< File name of a save file
     std::map<int, SaveGameEmpireData>           m_save_game_empire_data;// indexed by empire_id
+
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** The data structure stores information about latest chat massages. */
+struct FO_COMMON_API ChatHistoryEntity {
+    /** \name Structors */ //@{
+    ChatHistoryEntity()
+    {}
+    //@}
+
+    boost::posix_time::ptime m_timestamp;
+    std::string m_player_name;
+    std::string m_text;
 
 private:
     friend class boost::serialization::access;

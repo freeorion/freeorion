@@ -27,6 +27,7 @@ struct CombatLog;
 class CombatLogManager;
 class Message;
 struct MultiplayerLobbyData;
+struct ChatHistoryEntity;
 class OrderSet;
 struct PlayerInfo;
 struct SaveGameUIData;
@@ -98,7 +99,8 @@ public:
         LOGGER_CONFIG,          ///< sent by host to server and server to ais to configure logging
         CHECKSUM,               ///< sent by host to clients to specify what the parsed content checksum values should be
         AUTH_REQUEST,           ///< sent by server to client if choosed player_name require authentiation
-        AUTH_RESPONSE           ///< sent by client to server to provide password or other credentials
+        AUTH_RESPONSE,          ///< sent by client to server to provide password or other credentials
+        CHAT_HISTORY            ///< sent by server to client to show previous messages
     )
 
     GG_CLASS_ENUM(TurnProgressPhase,
@@ -324,6 +326,10 @@ FO_COMMON_API Message LobbyUpdateMessage(const MultiplayerLobbyData& lobby_data)
     This message should only be sent by the server.*/
 FO_COMMON_API Message ServerLobbyUpdateMessage(const MultiplayerLobbyData& lobby_data);
 
+/** creates an CHAT_HISTORY message containing latest chat messages.
+    This message should only be sent by the server.*/
+FO_COMMON_API Message ChatHistoryMessage(const std::vector<std::reference_wrapper<const ChatHistoryEntity>>& chat_history);
+
 /** creates an PLAYER_CHAT message containing a chat string to be broadcast to player \a receiver, or all players if \a
     receiver is Networking::INVALID_PLAYER_ID. Note that the receiver of this message is always the server.*/
 FO_COMMON_API Message PlayerChatMessage(const std::string& text, int receiver = Networking::INVALID_PLAYER_ID);
@@ -356,6 +362,8 @@ FO_COMMON_API void ExtractHostMPGameMessageData(const Message& msg, std::string&
                                                 std::string& client_version_string);
 
 FO_COMMON_API void ExtractLobbyUpdateMessageData(const Message& msg, MultiplayerLobbyData& lobby_data);
+
+FO_COMMON_API void ExtractChatHistoryMessage(const Message& msg, std::vector<ChatHistoryEntity>& chat_history);
 
 FO_COMMON_API void ExtractPlayerChatMessageData(const Message& msg, int& receiver, std::string& data);
 

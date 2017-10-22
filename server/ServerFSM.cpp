@@ -638,6 +638,20 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
     for (auto it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
     { (*it)->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data)); }
+
+    // test chat message sending
+    ChatHistoryEntity chat;
+    chat.m_timestamp = boost::posix_time::second_clock::universal_time();
+    chat.m_player_name = "test";
+    chat.m_text = "test message";
+    ChatHistoryEntity chat2;
+    chat2.m_timestamp = boost::posix_time::second_clock::universal_time();
+    chat2.m_player_name = "test2";
+    chat2.m_text = "test2 message";
+    std::vector<std::reference_wrapper<const ChatHistoryEntity>> chat_history;
+    chat_history.push_back(std::cref(chat));
+    chat_history.push_back(std::cref(chat2));
+    player_connection->SendMessage(ChatHistoryMessage(chat_history));
 }
 
 sc::result MPLobby::react(const JoinGame& msg) {

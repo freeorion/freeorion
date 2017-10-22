@@ -534,6 +534,20 @@ boost::statechart::result MPLobby::react(const CheckSum& e) {
     return discard_event();
 }
 
+boost::statechart::result MPLobby::react(const ChatHistory& msg) {
+    InfoLogger(FSM) << "(HumanClientFSM) ChatHistory.";
+
+    std::vector<ChatHistoryEntity> chat_history;
+    ExtractChatHistoryMessage(msg.m_message, chat_history);
+
+    InfoLogger(FSM) << " chat size " << chat_history.size();
+    for (const auto& elem : chat_history) {
+        InfoLogger(FSM) << " " << elem.m_player_name << ": " << elem.m_text;
+    }
+
+    return discard_event();
+}
+
 
 ////////////////////////////////////////////////////////////
 // PlayingGame

@@ -40,7 +40,8 @@ struct MessageEventBase {
     (DiplomaticStatusUpdate)                   \
     (EndGame)                                  \
     (CheckSum)                                 \
-    (AuthRequest)
+    (AuthRequest)                              \
+    (ChatHistory)
 
 
 #define DECLARE_MESSAGE_EVENT(r, data, name)                            \
