@@ -915,7 +915,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             } else {
                 has_important_changes = true;
             }
-            // restrict minimun of human
+            // restrict minimun number of human players
             if (human_count < GetOptionsDB().Get<int>("mplobby-min-human")) {
                 has_important_changes = true;
             }
