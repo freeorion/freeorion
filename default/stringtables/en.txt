@@ -1513,6 +1513,9 @@ Sets delay between holding a mouse button and repeat clicks being generated
 OPTIONS_DB_MOUSE_REPEAT_INTERVAL
 Sets delay between repeat clicks while holding a moues button
 
+OPTIONS_DB_DISPLAY_TIMESTAMP
+Enables messages' timestamp in the chat windows.
+
 OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
 If true, clicks on multiple fleet buttons will open multiple fleet windows at the same time. Otherwise, opening a fleet window will close any currently-open fleet window.
 
@@ -2339,6 +2342,9 @@ Show side panel planets
 
 OPTIONS_AUTO_REPOSITION_WINDOWS
 Automatically reposition windows
+
+OPTIONS_DISPLAY_TIMESTAMP
+Show chat timestamp
 
 OPTIONS_MISC_UI
 Miscellaneous UI Settings

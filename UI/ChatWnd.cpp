@@ -24,6 +24,7 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 
+
 // boost::spirit::classic pulls in windows.h which in turn defines the macros
 // SendMessage. Undefining those should avoid name collisions with FreeOrion
 // function names
@@ -375,7 +376,11 @@ void MessageWnd::PreRender() {
     DoLayout();
 }
 
-void MessageWnd::HandlePlayerChatMessage(const std::string& text, int sender_player_id, int recipient_player_id) {
+void MessageWnd::HandlePlayerChatMessage(const std::string& text,
+                                         int sender_player_id,
+                                         const boost::posix_time::ptime& timestamp,
+                                         int recipient_player_id)
+{
     const ClientApp* app = ClientApp::GetApp();
     if (!app) {
         ErrorLogger() << "MessageWnd::HandlePlayerChatMessage couldn't get client app!";
@@ -397,7 +402,7 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text, int sender_pla
         sender_colour = sender_empire->Color();
 
     std::string filtered_message = StringtableTextSubstitute(text);
-    std::string wrapped_text = RgbaTag(sender_colour) + sender_name + ": " + filtered_message + "</rgba>";
+    std::string wrapped_text = RgbaTag(sender_colour) + ClientUI::FormatTimestamp(timestamp) + sender_name + ": " + filtered_message + "</rgba>";
 
     *m_display += wrapped_text + "\n";
     m_display_show_time = GG::GUI::GetGUI()->Ticks();

@@ -522,6 +522,7 @@ void OptionsWnd::CompleteConstruction() {
     BoolOption(current_page, 0, "UI.window-quickclose",          UserString("OPTIONS_QUICK_CLOSE_WNDS"));
     BoolOption(current_page, 0, "UI.sidepanel-planet-shown",     UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"));
     BoolOption(current_page, 0, "UI.auto-reposition-windows",    UserString("OPTIONS_AUTO_REPOSITION_WINDOWS"));
+    BoolOption(current_page, 0, "UI.display-timestamp",          UserString("OPTIONS_DISPLAY_TIMESTAMP"));
 
     // manual reposition windows button
     auto window_reset_button = Wnd::Create<CUIButton>(UserString("OPTIONS_WINDOW_RESET"));
@@ -1230,14 +1231,14 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     BoolOption(page, indentation_level, "show-fps", UserString("OPTIONS_SHOW_FPS"));
 
     //GG::StateButton* limit_FPS_button = BoolOption(page, indentation_level, "limit-fps", UserString("OPTIONS_LIMIT_FPS"));
-    //GG::Spin<double>* max_fps_spin = 
+    //GG::Spin<double>* max_fps_spin =
     DoubleOption(page, indentation_level,  "max-fps",          UserString("OPTIONS_MAX_FPS"));
     //limit_FPS_button->CheckedSignal, [max_fps_spin](bool checked) { max_fps_spin->Disable(!checked); });
     //limit_FPS_button->SetCheck(GetOptionsDB().Get<bool>("limit-fps"));
     //limit_FPS_button->CheckedSignal(limit_FPS_button->Checked());
 
     //GG::StateButton* limit_FPS_nofocus_button = BoolOption(page, indentation_level, "limit-fps-no-focus", UserString("OPTIONS_LIMIT_FPS_NO_FOCUS"));
-    //GG::Spin<double>* max_fps_nofocus_spin = 
+    //GG::Spin<double>* max_fps_nofocus_spin =
     DoubleOption(page, indentation_level,  "max-fps-no_focus", UserString("OPTIONS_MAX_FPS_NO_FOCUS"));
     //limit_FPS_nofocus_button->SetCheck(GetOptionsDB().Get<bool>("limit-fps-no-focus"));
 

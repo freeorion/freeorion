@@ -5,6 +5,7 @@
 #include <GG/GGFwd.h>
 
 #include <boost/filesystem/path.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "SaveFileDialog.h"
 #include "../universe/EnumsFwd.h"
@@ -148,6 +149,9 @@ public:
       * Unicode character sets based on the contents of the stringtable in use. */
     static std::shared_ptr<GG::Font> GetTitleFont(int pts = TitlePts());
 
+    /** Returns formatted POSIX UTC-time in local timezone. */
+    static std::string FormatTimestamp(boost::posix_time::ptime timestamp);
+
     //!@{
     static boost::filesystem::path ArtDir();    //!< directory holding artwork
     static boost::filesystem::path SoundDir();  //!< directory holding sound and music
@@ -192,6 +196,7 @@ public:
     static double       TinyFleetButtonZoomThreshold();     //!< the minimum zoom level of the map at which to show tiny (any) fleet icons
     static double       SmallFleetButtonZoomThreshold();    //!< the minimum zoom level of the map at which to show small fleet icons
     static double       MediumFleetButtonZoomThreshold();   //!< the minimum zoom level of the map at which to show medium fleet icons
+    static bool         DisplayTimestamp();                 //!< Will be timestamp shown in the chats.
 
     // Content Texture Getters
     static std::shared_ptr<GG::Texture> PlanetIcon(PlanetType planet_type);

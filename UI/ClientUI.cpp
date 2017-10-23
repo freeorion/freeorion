@@ -52,6 +52,8 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/system/system_error.hpp>
+#include <boost/date_time/posix_time/posix_time_io.hpp>
+#include <boost/date_time/c_local_time_adjustor.hpp>
 
 #include <string>
 #include <algorithm>
@@ -118,6 +120,7 @@ double      ClientUI::TinyFleetButtonZoomThreshold()    { return GetOptionsDB().
 double      ClientUI::SmallFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("UI.small-fleet-button-minimum-zoom"); }
 double      ClientUI::MediumFleetButtonZoomThreshold()  { return GetOptionsDB().Get<double>("UI.medium-fleet-button-minimum-zoom"); }
 
+bool        ClientUI::DisplayTimestamp()                { return GetOptionsDB().Get<bool>("UI.display-timestamp"); }
 
 // content texture getters
 std::shared_ptr<GG::Texture> ClientUI::PlanetIcon(PlanetType planet_type) {
@@ -742,6 +745,24 @@ std::string ClientUI::GetFilenameWithSaveFileDialog(
 void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const {
     GetMapWndConst()->GetSaveGameUIData(data);
     m_ship_designs->Save(data);
+}
+
+std::string ClientUI::FormatTimestamp(boost::posix_time::ptime timestamp) {
+    if (DisplayTimestamp()) {
+        std::stringstream date_format_sstream;
+        // Set facet to format timestamp in chat.
+        boost::posix_time::time_facet* facet = new boost::posix_time::time_facet();
+        facet->format("[%d %b %H:%M:%S] ");
+        date_format_sstream.imbue(std::locale(std::locale(""), facet));
+
+
+        date_format_sstream.str("");
+        date_format_sstream.clear();
+        boost::posix_time::ptime local_timestamp = boost::date_time::c_local_adjustor<boost::posix_time::ptime>::utc_to_local(timestamp);
+        date_format_sstream << local_timestamp;
+        return date_format_sstream.str();
+    }
+    return "";
 }
 
 bool ClientUI::ZoomToObject(const std::string& name) {
