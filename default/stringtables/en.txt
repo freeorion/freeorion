@@ -2343,6 +2343,9 @@ Show side panel planets
 OPTIONS_AUTO_REPOSITION_WINDOWS
 Automatically reposition windows
 
+OPTIONS_DISPLAY_TIMESTAMP
+Show chat timestamp.
+
 OPTIONS_MISC_UI
 Miscellaneous UI Settings
 
