@@ -5557,7 +5557,6 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
 }
 
 void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
-    //std::cout << "MapWnd::FleetButtonLeftClicked" << std::endl;
     if (!fleet_btn)
         return;
 
@@ -5581,7 +5580,6 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
     const auto& wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleet(first_fleet);
     int already_selected_fleet_id = INVALID_OBJECT_ID;
     if (wnd_for_button) {
-        //std::cout << "FleetButtonLeftClicked found open fleetwnd for fleet" << std::endl;
         // there is already FleetWnd for this button open.
 
         // check which fleet(s) is/are selected in the button's FleetWnd
@@ -5591,8 +5589,6 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
         // INVALID_OBJECT_ID to indicate that no single fleet is selected
         if (selected_fleet_ids.size() == 1)
             already_selected_fleet_id = *(selected_fleet_ids.begin());
-    } else {
-        //std::cout << "FleetButtonLeftClicked did not find open fleetwnd for fleet" << std::endl;
     }
 
 
