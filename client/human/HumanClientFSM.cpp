@@ -411,7 +411,9 @@ MPLobby::MPLobby(my_context ctx) :
 {
     TraceLogger(FSM) << "(HumanClientFSM) MPLobby";
 
-    Client().Register(Client().GetClientUI().GetMultiPlayerLobbyWnd());
+    const auto& wnd = Client().GetClientUI().GetMultiPlayerLobbyWnd();
+    Client().Register(wnd);
+    wnd->CleanupChat();
 }
 
 MPLobby::~MPLobby() {

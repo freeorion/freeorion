@@ -40,6 +40,7 @@ public:
                                 const std::string& msg);
     void            LobbyUpdate(const MultiplayerLobbyData& lobby_data);
     void            Refresh();
+    void            CleanupChat();
     //@}
 
 protected:

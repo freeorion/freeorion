@@ -785,6 +785,9 @@ void MultiPlayerLobbyWnd::Refresh() {
     }
 }
 
+void MultiPlayerLobbyWnd::CleanupChat()
+{ m_chat_box->SetText(""); }
+
 GG::Pt MultiPlayerLobbyWnd::MinUsableSize() const
 { return GG::Pt(LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT); }
 
