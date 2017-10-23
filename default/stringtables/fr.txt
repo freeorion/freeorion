@@ -267,6 +267,7 @@ BALANCE
 CONTENT
 Contenu
 
+
 ##
 ## Major errors
 ##
@@ -979,6 +980,7 @@ Mot de passe erroné pour le joueur %1%.
 ERROR_CONNECTION_WAS_REPLACED
 Votre connection a été mise à jour.
 
+
 ##
 ## Game Rules
 ##
@@ -1079,6 +1081,7 @@ Voies Spatiales Systématiques
 RULE_STARLANES_EVERYWHERE_DESC
 Les Voies spatiales sont générées entre chaque paire de systèmes, indépendamment de toute géométrie. Toutefois, ces Voies peuvent toujours être supprimées durant une partie. Dans ce mode, les Voies ne sont pas affichées sur la carte galactique.
 
+
 ##
 ## Command-line and options database entries
 ##
@@ -1100,6 +1103,9 @@ Démarre le serveur en mode hébergement d'une partie solo. Seuls les clients du
 
 OPTIONS_DB_HOSTLESS
 Démarre le serveur en mode sans hôte. Le serveur accepte les joueurs dans le salon multijoueur, et retourne au salon lorsque la session de jeu est terminée.
+
+OPTIONS_DB_SKIP_CHECKSUM
+Ignore le contrôle du dossier de ressources. Ceci permet un démarrage plus rapide lorsque le client et le serveur se trouve sur la même machine, utilisant le même dossier de ressources.
 
 OPTIONS_DB_GENERATE_CONFIG_XML
 Génère un fichier config.xml à partir des réglages contenus dans les fichiers config.xml existants et donnés dans la ligne de commande. Ceci écrasera le fichier config.xml actuel, s'il existe.
@@ -1183,6 +1189,15 @@ Fixe l'espacement des points indiquant la trajectoire des flottes.
 
 OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE
 Fixe la vitesse de défilement des points indiquant la trajectoire des flottes.
+
+OPTIONS_DB_FLEET_EXPLORE_IGNORE_HOSTILE
+Ignorer les astronefs hostiles lorsqu'une flotte est en mode exploration
+
+OPTIONS_DB_FLEET_EXPLORE_SYSTEM_ROUTE_LIMIT
+Limite le nombre de flottes évaluant la meilleure route vers chaque système, pour les flottes réglées en exploration automatique. Une limite basse permet un calcul plus rapide mais peut causer un routage moins optimal. Une valeur de -1 désactive la limite.
+
+OPTIONS_DB_FLEET_EXPLORE_SYSTEM_KNOWN_MULTIPLIER
+Multiplicateur de la valeur de priorité des systèmes inexplorés ayant été déjà vus par l'empire. Une valeur inférieure à 1.0 donnera la priorité aux systèmes connus sur ceux inconnus.
 
 OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE
 Afficher/Cacher, sur la carte galactique, les zones circulaires autour des objets figurant leur Champ de Détection.
@@ -1647,7 +1662,7 @@ OPTIONS_DB_AI_FOLDER_PATH
 Définit le chemin du dossier contenant les fichiers de script de l'IA, pour l'exécution en cours uniquement, par rapport au dossier principal; par défaut "AI". A pour but de faciliter le test de l'IA.
 
 OPTIONS_DB_AI_CONFIG
-Est disponible pour l'IA via l'interface freeorion, et utilisé pour l'éxécution en cours uniquement.  Permet de nommer un fichier de configuration optionnel de l'IA à l'intérieur du dossier de scripts de l'IA; par défaut une valeur nulle. A pour but de faciliter le test de l'IA.
+Est disponible pour l'IA via l'interface freeorion, et utilisé pour l'éxécution en cours uniquement. Permet de nommer un fichier de configuration optionnel de l'IA à l'intérieur du dossier de scripts de l'IA; par défaut une valeur nulle. A pour but de faciliter le test de l'IA.
 
 OPTIONS_DB_AI_CONFIG_TRAIT_AGGRESSION_FORCED
 Valeur boléenne pour test d'IA indiquant si toutes les IAs ont forcément le même Niveau d'Agressivité.
@@ -1957,6 +1972,7 @@ Rejoindre une partie
 REFRESH_LIST_BN
 Rafraîchir
 
+
 ##
 ## Password Dialog
 ##
@@ -1969,6 +1985,7 @@ Ce nom de joueur requiert une authentification. Rappel! Le mot de passe sera tra
 
 PASSWORD_LABEL
 Mot de Passe
+
 
 ##
 ## Multiplayer lobby
@@ -2815,7 +2832,6 @@ OPTIONS_CREATE_PERSISTENT_CONFIG_FAILURE
 Impossible de créer le fichier persistent_config.xml, consultez le fichier log pour plus de détails.
 
 
-
 ##
 ## Main map window
 ##
@@ -3522,6 +3538,7 @@ Offrir la planète à...
 ORDER_CANCEL_GIVE_PLANET
 Annuler l'offre de la planète
 
+
 ##
 ## Fleet Button
 ##
@@ -3534,6 +3551,7 @@ Cette flotte est actuellement soumise au blocus d'une flotte hostile, et ne peut
 
 FB_TOOLTIP_BLOCKADE_MONSTER
 Cette flotte de monstres est soumise au blocus d'une flotte de l'empire. Les monstres bloqués par des flottes impériales ne peuvent plus se déplacer.
+
 
 ##
 ## Moderator
@@ -3855,7 +3873,7 @@ Un Astronef Furtif coûte 36 PP avec un minimum de 3 tours (max 12 PP/tour).
                 Vous lancez une autre commande d'un Astronef Furtif avec une répétition de 2. (commande #2)
                 Vous lancez une autre commande d'un Astronef Furtif et réglez la quantité sur 2.
 
--Tour  2: Commande #1 progresse de 10 PP, 26 PP restants.  10 PP sont prévus pour le tour suivant.
+-Tour  2: Commande #1 progresse de 10 PP, 26 PP restants. 10 PP sont prévus pour le tour suivant.
 
     (PP complétés / PP restants -> Prévus tour suivant)
 
@@ -4134,6 +4152,7 @@ Sélectionnez un Modèle Finalisé existant, clic-droit puis cliquez sur "[[DESI
 # %1% File path of unwritable file
 ERROR_UNABLE_TO_WRITE_FILE
 Impossible de créer le fichier:\n"%1%"
+
 
 ##
 ## Statistics
@@ -4616,7 +4635,6 @@ percés
 # %2% name of the unit attacked.
 ENC_COMBAT_ATTACK_SIMPLE_STR
 %1% attaque %2%
-
 
 # %1% number of repeated events.
 # %2% link to the attacking unit or empire.
@@ -5141,7 +5159,7 @@ Champ de Détection
 METER_DETECTION_VALUE_DESC
 '''L'indicateur 'Champ de Détection' indique, en nombre d'uus, la portée des capteurs. Un empire ne peut voir que les objets ayant une [[metertype METER_STEALTH]] inférieure ou égale à sa [[encyclopedia DETECTION_TITLE]], et qui se trouvent dans le Champ de Détection d'un astronef ou d'une planète qu'il contrôle.
 
-Les astronefs et les planètes ont un indicateur 'Champ de Détection'. Dans le Menu d'Options, le réglage 'Cercles de détection' permet d'afficher sur la carte galactique les zones circulaires (en uu) figurant les Champs de Détection.  Afin de faciliter la mesure de ce qui se trouve à l'intérieur d'un Champ de Détection, le réglage 'Barre d'échelle des distances' permet d'afficher l'échelle de la carte (en uu) tandis que le réglage 'Cercle d'échelle des distances' permet de figurer la même distance que la barre d'échelle lorsqu'un système stellaire est sélectionné. Ces deux indicateurs d'échelle s'adaptent au niveau de zoom sur la carte et peuvent être activés/désactivés via des raccourcis claviers.
+Les astronefs et les planètes ont un indicateur 'Champ de Détection'. Dans le Menu d'Options, le réglage 'Cercles de détection' permet d'afficher sur la carte galactique les zones circulaires (en uu) figurant les Champs de Détection. Afin de faciliter la mesure de ce qui se trouve à l'intérieur d'un Champ de Détection, le réglage 'Barre d'échelle des distances' permet d'afficher l'échelle de la carte (en uu) tandis que le réglage 'Cercle d'échelle des distances' permet de figurer la même distance que la barre d'échelle lorsqu'un système stellaire est sélectionné. Ces deux indicateurs d'échelle s'adaptent au niveau de zoom sur la carte et peuvent être activés/désactivés via des raccourcis claviers.
 
 Certains objets ou aptitudes permettent la vision de zones situées en dehors du Champ de Détection, telles les compétences spéciales des espèces [[species SP_TRITH]] ou [[species SP_GEORGE]], ou en raison des effets induits par la structure [[buildingtype BLD_SCRYING_SPHERE]].'''
 
@@ -5349,7 +5367,7 @@ MAP_WINDOW_ARTICLE_TITLE
 Fenêtre Carte
 
 MAP_WINDOW_ARTICLE_TEXT
-'''La Fenêtre Carte peut être considérée comme l'écran de jeu 'principal' de FreeOrion. Ce dernier affiche la carte de la galaxie et permet d'accéder à toutes les autres fenêtres ou menus du jeu.  La barre supérieure réunit les éléments principaux de contrôle.
+'''La Fenêtre Carte peut être considérée comme l'écran de jeu 'principal' de FreeOrion. Ce dernier affiche la carte de la galaxie et permet d'accéder à toutes les autres fenêtres ou menus du jeu. La barre supérieure réunit les éléments principaux de contrôle.
 
 Dans le coin supérieur gauche se trouve le Bouton Tour, indiquant "Tour n" (n étant le numéro du tour en cours); un clic-gauche sur le Bouton Tour permet de faire avancer la partie d'un tour. Immédiatement à droite se trouve le bouton d'Avance Automatique; lorsque ce dernier affiche une icône double flèche, la partie n'avancera pas automatiquement; un clic modifie l'icône en flèches circulaires et la partie avancera automatiquement au tour suivant une fois que tous les empires auront donné leurs ordres pour le tour en cours.
 
@@ -5521,7 +5539,7 @@ ORBITAL_DRYDOCK_REPAIR_TITLE
 Réparation en Cale Sèche
 
 ORBITAL_DRYDOCK_REPAIR_TEXT
-'''La [[building BLD_SHIPYARD_ORBITAL_DRYDOCK]] est considérée comme la meilleure structure de réparation, capable de remettre à neuf tout astronef endommagé.
+'''La [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] est considérée comme la meilleure structure de réparation, capable de remettre à neuf tout astronef endommagé.
 
 Lorsque que l'indicateur [[metertype METER_HAPPINESS]] d'une planète est inférieur à 15, les réparations effectuées via une Cale Sèche Orbitale seront moins efficaces. Si l'indicateur Bonheur chute au-dessous de 5, aucune réparation ne pourra y être entreprise pour le tour en cours.
 
@@ -5540,7 +5558,7 @@ Certaines de ces options peuvent être modifiées depuis la page '[[OPTIONS_TITL
 
 Une option définie depuis le fichier de configuration persistante (persistent_config.xml, s'il existe) aura la priorité sur la valeur correspondante du fichier config.xml.
 Une option définie par un argument de ligne de commande aura la priorité sur la valeur correspondante des deux fichiers.
-Le fichier config.xml est automatiquement modifiée pour prendre en compte toute nouvelle valeur de configuration.
+Le fichier config.xml est automatiquement modifié pour prendre en compte toute nouvelle valeur de configuration.
 
 
 Fichier de Configuration Persistante:
@@ -7065,7 +7083,6 @@ Les Replicons ont une structure sociale relativement primitive. Ils sont dirigé
 Planète natale:
 Cisarruj est une planète fortement irradiée, dominée par une grande variété de machines autonomes auto-réplicantes, et entourée d'un grand mystère. Il existe bien quelques rares archives historiques sur les protagonistes de la guerre ayant mené à la naissance de l'Empire Cisarruj. Cependant, la plupart de ces écrits ne relatent que les faits classiques d'une ère pré-industrielle, parsemée de périodes d'essor ou de déclin. Le Grand Mystère des Replicons quant à lui, reste entier. Une race supérieure a-t-elle conçu les Replicons au terme de nombreuses expériences, ou sont-ils le résultat d'un accident industriel poussant leurs infortunés créateurs à abandonner la planète? Ou bien ont-ils subi un destin encore plus funeste de la main-même des créatures qu'ils ont engendrées...
 '''
-
 
 SP_EGASSEM  # translated
 Egassem
@@ -10991,7 +11008,6 @@ Rayon Gamma 4
 SHP_WEAPON_4_4_DESC
 Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 30 une fois l'équipement amélioré.
 
-
 SHP_ION_CANNON
 Canon Ionique
 
@@ -11596,7 +11612,7 @@ Base Bioterroriste
 BLD_BIOTERROR_PROJECTOR_DESC
 '''Donne accès au Focus Bioterrorisme à la planète sur laquelle est construite la Base Bioterroriste. Cela a pour effet de réduire de 2 par tour la Population des planètes ennemies, seulement si ces dernières sont distantes de quatre Voies spatiales ou moins et si l'empire ennemi ne dispose pas d'une [[buildingtype BLD_GENOME_BANK]].
 
-Cette base clandestine d'armements biologiques provoque des ravages sur les planètes ennemies à proximité, en réduisant progressivement la Population de ces dernières jusqu'à extermination totale. Cependant, de telles activités n'étant pas approuvées par les lois galactiques, cette structure ne peut être construite que sur une planète autour de laquelle orbite une [[special RESONANT_MOON_SPECIAL]], et s'avère sans effets si l'empire ennemi dispose d'une Banque du Génome. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]], si une Lune Synchrone orbite également autour de ce dernier.'''
+Cette base clandestine d'armements biologiques provoque des ravages sur les planètes ennemies à proximité, en réduisant progressivement la Population de ces dernières jusqu'à extermination totale. Cependant, de telles activités n'étant pas approuvées par les lois galactiques, cette structure ne peut être construite que sur une planète autour de laquelle orbite une [[special RESONANT_MOON_SPECIAL]], et s'avère sans effets si l'empire ennemi dispose d'une Banque du Génome. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], si une Lune Synchrone orbite également autour de ce dernier.'''
 
 BLD_LIGHTHOUSE
 Phare Interstellaire
@@ -11758,7 +11774,7 @@ BLD_NEST_ERADICATOR
 Éradicateur de Nid
 
 BLD_NEST_ERADICATOR_DESC
-Éradique un [[encyclopedia KRAKEN_NEST_SPECIAL]], un [[encyclopedia SNOWFLAKE_NEST_SPECIAL]], ou un [[encyclopedia JUGGERNAUT_NEST_SPECIAL]] de la planète sur laquelle le dispositif est mis en place. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]].
+Éradique un [[encyclopedia KRAKEN_NEST_SPECIAL]], un [[encyclopedia SNOWFLAKE_NEST_SPECIAL]], ou un [[encyclopedia JUGGERNAUT_NEST_SPECIAL]] de la planète sur laquelle le dispositif est mis en place. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].
 
 BLD_NEUTRONIUM_EXTRACTOR
 Extracteur Neutronium
@@ -11790,7 +11806,7 @@ Camps de Concentration
 BLD_CONC_CAMP_DESC
 '''Réduit la Population d'une planète de 3 par tour, et augmente l'[[metertype METER_INDUSTRY]] Optimale de 5 fois la population planétaire. Le [[metertype METER_HAPPINESS]] Optimal est réduit à 0.
 
-Purger une planète d'une espèce indésirable permet l'introduction d'une espèce plus adaptée. En créant un réseau planétaire de camps de concentration conçus pour abattre les internés à la tâche, il est possible d'atteindre rapidement et efficacement le but fixé. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]].'''
+Purger une planète d'une espèce indésirable permet l'introduction d'une espèce plus adaptée. En créant un réseau planétaire de camps de concentration conçus pour abattre les internés à la tâche, il est possible d'atteindre rapidement et efficacement le but fixé.'''
 
 BLD_CONC_CAMP_REMNANT
 Vestiges de Camps de Concentration
@@ -12245,8 +12261,7 @@ SR_WEAPON_2_1_DESC
 
 Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
 
-Les [[encyclopedia DAMAGE_TITLE]] d'un armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Laser monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 2 par rang de Pilotes (-2 pour "Mauvais Pilotes"). Les dommages du Canon Laser peuvent également être améliorés sur les astronefs dotés d'une [[shiphull SH_ORGANIC]] couplée à un [[shippart SP_SOLAR_CONCENTRATOR]].
-'''
+Les [[encyclopedia DAMAGE_TITLE]] d'un armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Laser monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 2 par rang de Pilotes (-2 pour "Mauvais Pilotes"). Les dommages du Canon Laser peuvent également être améliorés sur les astronefs dotés d'une [[shiphull SH_ORGANIC]] couplée à un [[shippart SP_SOLAR_CONCENTRATOR]].'''
 
 SR_WEAPON_3_1
 Canon Plasma
@@ -14243,7 +14258,7 @@ Oh, pas une nouvelle pleurnicherie pathétique, de grâce!
 # Newline separated list of polite positive peace proposal acknowlegements.
 AI_PEACE_PROPOSAL_RESPONSES_YES_MILD_LIST
 '''Nous serons ravis de croire en vos bonnes intentions.
-Tout le plaisir est pour nous, Sire.  Chacun s'accorde à dire que vous êtes digne de confiance.
+Tout le plaisir est pour nous, Sire. Chacun s'accorde à dire que vous êtes digne de confiance.
 '''
 
 # Newline separated list of polite negative peace proposal acknowlegements.
@@ -14254,7 +14269,7 @@ Nous sommes dans le regret de vous informer que nous ne pouvons accéder à votr
 
 # Newline separated list of harsh positive peace proposal acknowlegements.
 AI_PEACE_PROPOSAL_RESPONSES_YES_HARSH_LIST
-'''Par grande miséricorde, nous acceptons de ne pas vous attaquer.  Pour le moment.
+'''Par grande miséricorde, nous acceptons de ne pas vous attaquer. Pour le moment.
 Insignifiantes créatures!  Il n'y aurait que bien peu d'honneur à vous terrasser.
 '''
 
@@ -14278,7 +14293,7 @@ Sombres idiots, vous ne pensiez pas que cette paix allait durer, n'est-ce pas?
 
 # Newline separated pre-game acknowledgements.
 AI_PREGAME_ACKNOWLEDGEMENTS__LIST
-'''Je médite, en attente des directives suprêmes de Dieu.  Veuillez rappeler plus tard.
+'''Je médite, en attente des directives suprêmes de Dieu. Veuillez rappeler plus tard.
 Des murmures émanant du Vide?  Cela se peut-il?
 '''
 
