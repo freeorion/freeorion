@@ -29,7 +29,7 @@ from _definitions import *  # prefixes, trusted classes and exceptions
 
 
 @profile
-def build_savegame_string():
+def build_savegame_string(use_compression=True):
     """Encode the AIstate and compress the resulting string with zlib.
 
     To decode the string, first call zlib.decompress() on it.
@@ -37,9 +37,12 @@ def build_savegame_string():
     :return: compressed savegame string
     :rtype: str
     """
-    import zlib
     import FreeOrionAI as foAI
-    return zlib.compress(encode(foAI.foAIstate))
+    savegame_string = encode(foAI.foAIstate)
+    if use_compression:
+        import zlib
+        savegame_string = zlib.compress(savegame_string)
+    return savegame_string
 
 
 def encode(o):

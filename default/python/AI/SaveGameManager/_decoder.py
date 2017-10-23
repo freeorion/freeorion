@@ -26,7 +26,10 @@ from _definitions import *
 @profile
 def load_savegame_string(string):
     import zlib
-    string = zlib.decompress(string)
+    try:
+        string = zlib.decompress(string)
+    except zlib.error:
+        pass  # probably an uncompressed string
     return decode(string)
 
 
