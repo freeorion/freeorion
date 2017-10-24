@@ -84,3 +84,9 @@ contents.xcworkspacedata
 # KDevelop4
 *.kdev4
 *.db
+
+# git mergetool
+*.orig
+
+# vim
+.*.sw?
