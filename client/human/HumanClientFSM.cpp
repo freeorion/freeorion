@@ -411,7 +411,9 @@ MPLobby::MPLobby(my_context ctx) :
 {
     TraceLogger(FSM) << "(HumanClientFSM) MPLobby";
 
-    Client().Register(Client().GetClientUI().GetMultiPlayerLobbyWnd());
+    const auto& wnd = Client().GetClientUI().GetMultiPlayerLobbyWnd();
+    Client().Register(wnd);
+    wnd->CleanupChat();
 }
 
 MPLobby::~MPLobby() {
@@ -531,6 +533,20 @@ boost::statechart::result MPLobby::react(const StartQuittingGame& e) {
 boost::statechart::result MPLobby::react(const CheckSum& e) {
     TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
     Client().VerifyCheckSum(e.m_message);
+    return discard_event();
+}
+
+boost::statechart::result MPLobby::react(const ChatHistory& msg) {
+    TraceLogger(FSM) << "(HumanClientFSM) ChatHistory.";
+
+    std::vector<ChatHistoryEntity> chat_history;
+    ExtractChatHistoryMessage(msg.m_message, chat_history);
+
+    const auto& wnd = Client().GetClientUI().GetMultiPlayerLobbyWnd();
+    for (const auto& elem : chat_history) {
+        wnd->ChatMessage(elem.m_player_name, elem.m_timestamp, elem.m_text);
+    }
+
     return discard_event();
 }
 

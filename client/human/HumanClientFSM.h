@@ -216,7 +216,8 @@ struct MPLobby : boost::statechart::state<MPLobby, HumanClientFSM> {
         boost::statechart::custom_reaction<GameStart>,
         boost::statechart::custom_reaction<StartQuittingGame>,
         boost::statechart::custom_reaction<Error>,
-        boost::statechart::custom_reaction<CheckSum>
+        boost::statechart::custom_reaction<CheckSum>,
+        boost::statechart::custom_reaction<ChatHistory>
     > reactions;
 
     MPLobby(my_context ctx);
@@ -232,6 +233,7 @@ struct MPLobby : boost::statechart::state<MPLobby, HumanClientFSM> {
     boost::statechart::result react(const StartQuittingGame& msg);
     boost::statechart::result react(const Error& msg);
     boost::statechart::result react(const CheckSum& msg);
+    boost::statechart::result react(const ChatHistory& msg);
 
     CLIENT_ACCESSOR
 };

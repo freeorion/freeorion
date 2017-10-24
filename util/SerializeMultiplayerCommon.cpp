@@ -5,6 +5,8 @@
 
 #include "Serialize.ipp"
 
+#include <boost/date_time/posix_time/time_serialize.hpp>
+
 template <class Archive>
 void GalaxySetupData::serialize(Archive& ar, const unsigned int version)
 {
@@ -106,6 +108,19 @@ template void MultiplayerLobbyData::serialize<freeorion_bin_oarchive>(freeorion_
 template void MultiplayerLobbyData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
 template void MultiplayerLobbyData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void MultiplayerLobbyData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+
+template <class Archive>
+void ChatHistoryEntity::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_timestamp)
+        & BOOST_SERIALIZATION_NVP(m_player_name)
+        & BOOST_SERIALIZATION_NVP(m_text);
+}
+
+template void ChatHistoryEntity::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+template void ChatHistoryEntity::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+template void ChatHistoryEntity::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+template void ChatHistoryEntity::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 template <class Archive>
 void PlayerInfo::serialize(Archive& ar, const unsigned int version)

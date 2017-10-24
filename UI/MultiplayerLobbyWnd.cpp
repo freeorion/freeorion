@@ -726,6 +726,13 @@ void MultiPlayerLobbyWnd::ChatMessage(int player_id, const boost::posix_time::pt
         }
     }
 
+    ChatMessage(player_name, timestamp, msg);
+}
+
+void MultiPlayerLobbyWnd::ChatMessage(const std::string& player_name,
+                                      const boost::posix_time::ptime& timestamp,
+                                      const std::string& msg)
+{
     // show message with player name in chat box
     *m_chat_box += ClientUI::FormatTimestamp(timestamp) + player_name + ": " + msg + '\n';
 }
@@ -777,6 +784,9 @@ void MultiPlayerLobbyWnd::Refresh() {
         m_browse_saves_btn->Disable();
     }
 }
+
+void MultiPlayerLobbyWnd::CleanupChat()
+{ m_chat_box->SetText(""); }
 
 GG::Pt MultiPlayerLobbyWnd::MinUsableSize() const
 { return GG::Pt(LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT); }
