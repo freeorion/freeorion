@@ -1751,8 +1751,9 @@ void SidePanel::PlanetPanel::Refresh() {
 
     bool being_destroyed =  planet->IsAboutToBeBombarded() && planet_is_destruction_target;
     bool destroyable =      at_war_with_me && visible && !being_destroyed && !planet_destruction_ships.empty();
+    if (being_destroyed) DebugLogger() << "Being destroyed"; else DebugLogger() << "NOT being destroyed";
 
-    bool being_bombarded =  planet->IsAboutToBeBombarded() && !planet_is_destruction_target;
+    bool being_bombarded =  planet->IsAboutToBeBombarded() && !planet_is_destruction_target; 
     bool bombardable =      at_war_with_me && visible && !being_bombarded && !bombard_ships.empty() && !being_destroyed;
 
     if (populated || SHOW_ALL_PLANET_PANELS) {
@@ -2470,8 +2471,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
 }
 
 void SidePanel::PlanetPanel::ClickBombard() {
-    // order or cancel bombard, depending on whether it has previously
-    // been ordered
+    // order or cancel bombard, depending on whether it has previously ordered
 
     auto planet = GetPlanet(m_planet_id);
     if (!planet ||

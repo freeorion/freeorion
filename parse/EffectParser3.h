@@ -30,7 +30,6 @@ namespace parse { namespace detail {
         effect_parser_rule           victory;
         effect_parser_rule           add_special_1;
         doubles_string_rule          add_special_2;
-        effect_parser_rule           remove_all_buildings;
         effect_parser_rule           remove_all_specials;
         effect_parser_rule           remove_special;
         effect_parser_rule           add_starlanes;

@@ -186,13 +186,6 @@ namespace {
             GetOptionsDB().Set<bool>("UI.system-fog-of-war",            false);
         }
     }
-
-    void ResetBombardmentStateInfo() {
-        for (auto& ship : GetUniverse().Objects().FindObjects<Ship>())
-        { ship->ClearBombardPlanet(); }
-        for (auto& planet : GetUniverse().Objects().FindObjects<Planet>())
-        { planet->ResetIsAboutToBeBombarded(); }
-    }
 }
 
 void HumanClientApp::AddWindowSizeOptionsAfterMainStart(OptionsDB& db) {
@@ -1126,10 +1119,7 @@ void HumanClientApp::StartGame(bool is_new_game) {
 
 void HumanClientApp::HandleTurnUpdate() {
     UpdateCombatLogManager();
-    ResetBombardmentStateInfo();
-
-    m_orders.ResetNonPersistentOrders();
-    m_orders.ExecutePersistentOrders();
+    // m_orders.ExecutePersistentOrders();
 }
 
 void HumanClientApp::UpdateCombatLogManager() {

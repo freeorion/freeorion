@@ -337,7 +337,6 @@
     (RebelTroops)                               \
     (Red)                                       \
     (Refinement)                                \
-    (RemoveAllBuildings)                        \
     (RemoveAllSpecials)                         \
     (RemoveSpecial)                             \
     (RemoveStarlanes)                           \

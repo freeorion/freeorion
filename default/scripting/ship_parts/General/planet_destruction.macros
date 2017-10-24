@@ -20,7 +20,7 @@ PLANET_DESTRUCTION_EFFECT
                     ]
                     empire = Target.Owner
                 RemoveAllSpecials
-                RemoveAllBuildings
+                // buildings removed in SP_PLANET_DESTROYER.focs.txt
                 SetOwner empire = -1
                 SetSpecies name = ""
                 SetPlanetType type = Asteroids

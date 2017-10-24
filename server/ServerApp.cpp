@@ -1620,9 +1620,9 @@ void ServerApp::RemoveEmpireTurn(int empire_id)
 { m_turn_sequence.erase(empire_id); }
 
 void ServerApp::ClearEmpireTurnOrders() {
-    for (auto& order : m_turn_sequence) {
-        if (order.second) {
-            order.second.reset(nullptr);
+    for (auto& orderset : m_turn_sequence) {
+        if (orderset.second) {
+            orderset.second.reset();
         }
     }
 }
@@ -2789,7 +2789,7 @@ namespace {
         { ship->ClearBombardPlanet(); }
         for (auto& planet : GetUniverse().Objects().FindObjects<Planet>()) {
             if (planet->IsAboutToBeBombarded()) {
-                //DebugLogger() << "CleanUpBombardmentStateInfo: " << planet->Name() << " was about to be bombarded";
+                DebugLogger() << "CleanUpBombardmentStateInfo: " << planet->Name() << " was about to be bombarded";
                 planet->ResetIsAboutToBeBombarded();
             }
         }
@@ -2831,7 +2831,7 @@ void ServerApp::PreCombatProcessTurns() {
 
     // clear bombardment state before executing orders,
     // so result after is only determined by what orders set.
-    CleanUpBombardmentStateInfo();
+    CleanUpBombardmentStateInfo();     // state is cleaned up!
 
     // execute orders
     for (const auto& empire_orders : m_turn_sequence) {
@@ -2840,8 +2840,7 @@ void ServerApp::PreCombatProcessTurns() {
             DebugLogger() << "No OrderSet for empire " << empire_orders.first;
             continue;
         }
-        for (const auto& id_and_order : *order_set)
-            id_and_order.second->Execute();
+        order_set->ApplyOrders();   // bombard order is not re-applied
     }
 
     // clean up orders, which are no longer needed
@@ -3212,6 +3211,8 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.UpdateEmpireObjectVisibilities();
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
+    // clean up bombardment state (should be after obj->PopGrowthProductionResearchPhase())
+    CleanUpBombardmentStateInfo();
 
     // misc. other updates and records
     m_universe.UpdateStatRecords();

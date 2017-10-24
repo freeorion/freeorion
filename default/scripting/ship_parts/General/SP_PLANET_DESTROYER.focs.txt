@@ -62,6 +62,14 @@ Part
 
           // if pdc tech is lvl 2, destroy planet instantly
           EffectsGroup
+              scope = And [
+                  Building
+                  ContainedBy condition = And [ [[PDC_SCOPE]] ]
+              ]                       
+              activation = [[PDC_LVL2]]
+              effects = Destroy
+
+          EffectsGroup
               scope = And [ [[PDC_SCOPE]] ]
               activation = [[PDC_LVL2]]
               effects = [
@@ -70,6 +78,16 @@ Part
               ]
 
           // if countdown ends, destroy planet
+          EffectsGroup
+              scope = And [
+                  Building
+                  ContainedBy condition = And [
+                      [[PDC_SCOPE]]
+                      HasSpecialCapacity name = "DESTRUCTION_COUNTDOWN_SPECIAL" high = 1
+                  ]
+              ]                       
+              effects = Destroy
+
           EffectsGroup
               scope = And [
                   [[PDC_SCOPE]]

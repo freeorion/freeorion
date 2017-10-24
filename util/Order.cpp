@@ -831,15 +831,18 @@ bool BombardOrder::ShouldPersist() {
 
     if (!ship || !planet)
         return false;
+    if (!(ship->SystemID() == planet->SystemID()))
+        return false;
+    // don't continue if planet was destroyed
     if (planet->HasSpecial("PLANET_DESTRUCTION_SPECIAL"))
         return false;
-    if (!(ship->SystemID() == planet->SystemID()))
+    if (planet->SpeciesName() == "")
         return false;
     // don't continue bombing/destroying if planet has been conquered
     if (planet->Owner() == ship->Owner())
         return false;
     // don't continue bombing if planet has been depopulated
-    if (!(ship->CanDestroyPlanet()) && planet->CurrentMeterValue(METER_POPULATION) <= 0)
+    if (!ship->CanDestroyPlanet() && planet->CurrentMeterValue(METER_POPULATION) <= 0)
         return false;
 
     return true;

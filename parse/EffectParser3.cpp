@@ -93,10 +93,6 @@ namespace parse { namespace detail {
             >   double_rules.expr [ _val = new_<Effect::AddSpecial>(_c, _1) ]
             ;
 
-        remove_all_buildings
-            =   tok.RemoveAllBuildings_ [ _val = new_<Effect::RemoveAllBuildings>() ]
-            ;
-
         remove_all_specials
             =   tok.RemoveAllSpecials_ [ _val = new_<Effect::RemoveSpecial>(nullptr) ]
             ;
@@ -137,7 +133,6 @@ namespace parse { namespace detail {
             |   victory
             |   add_special_1
             |   add_special_2
-            |   remove_all_buildings
             |   remove_all_specials
             |   remove_special
             |   add_starlanes
@@ -156,7 +151,6 @@ namespace parse { namespace detail {
         victory.name("Victory");
         add_special_1.name("AddSpecial");
         add_special_2.name("AddSpecial");
-        remove_all_buildings.name("RemoveAllBuildings");
         remove_all_specials.name("RemoveAllSpecials");
         remove_special.name("RemoveSpecial");
         add_starlanes.name("AddStarlanes");
@@ -175,7 +169,6 @@ namespace parse { namespace detail {
         debug(victory);
         debug(add_special_1);
         debug(add_special_2);
-        debug(remove_all_buildings);
         debug(remove_all_specials);
         debug(remove_special);
         debug(add_starlanes);
