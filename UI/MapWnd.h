@@ -11,7 +11,9 @@
 #include "FleetButton.h"
 
 #include <boost/unordered_map.hpp>
+#include <boost/functional/hash.hpp>
 
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -257,11 +259,11 @@ private:
     /** Use the vectors of fleet ids from \p fleets_map to create fleet buttons
       * in \p type_fleet_buttons and record the fleet buttons in
       * \p m_fleet_buttons.*/
-    template <typename K>
-    void CreateFleetButtonsOfType(
-        boost::unordered_map<K, std::unordered_set<std::shared_ptr<FleetButton>>>& type_fleet_buttons,
-        const boost::unordered_map<std::pair<K, int>, std::vector<int>> &fleets_map,
-        const FleetButton::SizeType& fleet_button_size);
+    template <typename FleetButtonMap, typename FleetsMap>
+    void CreateFleetButtonsOfType (
+        FleetButtonMap& type_fleet_buttons,
+        const FleetsMap &fleets_map,
+        const FleetButton::SizeType & fleet_button_size);
 
     /** Delete all fleet buttons.*/
     void DeleteFleetButtons();
@@ -467,18 +469,19 @@ private:
 
     /** Icons representing fleets at a system that are not departing, indexed
         by system. */
-    boost::unordered_map<int, std::unordered_set<std::shared_ptr<FleetButton>>>
+    std::unordered_map<int, std::unordered_set<std::shared_ptr<FleetButton>>>
         m_stationary_fleet_buttons;
 
     /** Icons representing fleets at a system that are departing, indexed by
         system. */
-    boost::unordered_map<int, std::unordered_set<std::shared_ptr<FleetButton>>>
+    std::unordered_map<int, std::unordered_set<std::shared_ptr<FleetButton>>>
         m_departing_fleet_buttons;
 
     /** Icons representing fleets not at a system. */
-    boost::unordered_map<std::pair<double, double>,
-        std::unordered_set<std::shared_ptr<FleetButton>>>
-            m_moving_fleet_buttons;
+    std::unordered_map<std::pair<double, double>,
+                       std::unordered_set<std::shared_ptr<FleetButton>>,
+                       boost::hash<std::pair<double, double>>>
+        m_moving_fleet_buttons;
 
     boost::unordered_map<int, std::shared_ptr<FleetButton>>
         m_fleet_buttons;                        //!< fleet icons, index by fleet

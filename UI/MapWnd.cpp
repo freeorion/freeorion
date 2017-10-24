@@ -4920,8 +4920,10 @@ boost::optional<std::pair<double, double>> MapWnd::MovingFleetMapPositionOnLane(
 }
 
 namespace {
-    typedef boost::unordered_map<std::pair<int, int>, std::vector<int>> SystemXEmpireToFleetsMap;
-    typedef boost::unordered_map<std::pair<std::pair<double, double>, int>, std::vector<int>> LocationXEmpireToFleetsMap;
+    template <typename Key>
+    using KeyToFleetsMap = std::unordered_map<Key, std::vector<int>, boost::hash<Key>>;
+    using SystemXEmpireToFleetsMap = KeyToFleetsMap<std::pair<int, int>>;
+    using LocationXEmpireToFleetsMap = KeyToFleetsMap<std::pair<std::pair<double, double>, int>>;
 
     /** Return fleet if \p obj is not destroyed, not stale, a fleet and not empty.*/
     std::shared_ptr<const Fleet> IsQualifiedFleet(const std::shared_ptr<const UniverseObject>& obj,
@@ -5057,14 +5059,14 @@ void MapWnd::DeferredRefreshFleetButtons() {
         SetFleetMovementLine(fleet_button.first);
 }
 
-template <typename K>
-void MapWnd::CreateFleetButtonsOfType(
-    boost::unordered_map<K, std::unordered_set<std::shared_ptr<FleetButton>>>& type_fleet_buttons,
-    const boost::unordered_map<std::pair<K, int>, std::vector<int>> &fleets_map,
+template <typename FleetButtonMap, typename FleetsMap>
+void MapWnd::CreateFleetButtonsOfType (
+    FleetButtonMap& type_fleet_buttons,
+    const FleetsMap &fleets_map,
     const FleetButton::SizeType & fleet_button_size)
 {
     for (const auto& fleets : fleets_map) {
-        const K& key = fleets.first.first;
+        const typename FleetButtonMap::key_type& key = fleets.first.first;
 
         // buttons need fleet IDs
         const auto& fleet_IDs = fleets.second;
