@@ -247,14 +247,14 @@ namespace {
      * objects on the lane is compressed into the space between the apparent
      * ends of the lane, but is proportional to the distance of the actual
      * position along the lane. */
-    boost::optional<std::pair<double, double>> ScreenPosOnStarane(double X, double Y, int lane_start_sys_id, int lane_end_sys_id, const LaneEndpoints& screen_lane_endpoints) {
+    boost::optional<std::pair<double, double>> ScreenPosOnStarlane(double X, double Y, int lane_start_sys_id, int lane_end_sys_id, const LaneEndpoints& screen_lane_endpoints) {
         // get endpoints of lane in universe.  may be different because on-
         // screen lanes are drawn between system circles, not system centres
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         auto prev = GetEmpireKnownObject(lane_start_sys_id, empire_id);
         auto next = GetEmpireKnownObject(lane_end_sys_id, empire_id);
         if (!next || !prev) {
-            ErrorLogger() << "ScreenPosOnStarane couldn't find next system " << lane_start_sys_id << " or prev system " << lane_end_sys_id;
+            ErrorLogger() << "ScreenPosOnStarlane couldn't find next system " << lane_start_sys_id << " or prev system " << lane_end_sys_id;
             return boost::none;
         }
 
@@ -931,8 +931,8 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
         const LaneEndpoints& lane_endpoints = ends_it->second;
 
         // get on-screen positions of nodes shifted to fit on starlane
-        auto start_xy = ScreenPosOnStarane(prev_node_x, prev_node_y, prev_sys_id, next_sys_id, lane_endpoints);
-        auto end_xy =   ScreenPosOnStarane(node.x,      node.y,      prev_sys_id, next_sys_id, lane_endpoints);
+        auto start_xy = ScreenPosOnStarlane(prev_node_x, prev_node_y, prev_sys_id, next_sys_id, lane_endpoints);
+        auto end_xy =   ScreenPosOnStarlane(node.x,      node.y,      prev_sys_id, next_sys_id, lane_endpoints);
 
         if (!start_xy) {
             ErrorLogger() << "System " << prev_sys_id << " has invalid screen coordinates.";
@@ -4915,7 +4915,7 @@ boost::optional<std::pair<double, double>> MapWnd::MovingFleetMapPositionOnLane(
 
     // return apparent position of fleet on starlane
     const LaneEndpoints& screen_lane_endpoints = endpoints_it->second;
-    return ScreenPosOnStarane(fleet->X(), fleet->Y(), sys1_id, sys2_id,
+    return ScreenPosOnStarlane(fleet->X(), fleet->Y(), sys1_id, sys2_id,
                               screen_lane_endpoints);
 }
 
