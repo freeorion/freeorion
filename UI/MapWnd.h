@@ -288,8 +288,9 @@ private:
     /** Returns position on map where a moving fleet should be displayed.  This
         is different from the fleet's actual universe position due to the
         squishing of fleets moving along a lane into the space between the
-        system circles at the ends of the lane. */
-    std::pair<double, double> MovingFleetMapPositionOnLane(std::shared_ptr<const Fleet> fleet) const;
+        system circles at the ends of the lane.  Return boost::none if the
+        fleet has no valid screen position. */
+    boost::optional<std::pair<double, double>> MovingFleetMapPositionOnLane(std::shared_ptr<const Fleet> fleet) const;
 
     void DoSystemIconsLayout();          //!< does layout of system icons
     void DoFieldIconsLayout();           //!< does layout of field icons
