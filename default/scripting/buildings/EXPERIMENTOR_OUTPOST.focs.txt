@@ -78,7 +78,7 @@ BuildingType
                 Not OwnedBy affiliation = AnyEmpire
             ]
             activation = Or [
-                Turn high = [[EXPERIMENTOR_SPAWN_START_TURN]]      // always remove lanes before spawn start turn
+                Turn high = ([[EXPERIMENTOR_SPAWN_START_TURN]])      // always remove lanes before spawn start turn
                 Not ContainedBy Contains And [ Monster Unowned Not Design name = "SM_EXP_OUTPOST"]
             ]
             effects = RemoveStarlanes endpoint = WithinStarlaneJumps jumps = 1 condition = Source
@@ -86,7 +86,7 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = And [
-                Turn low = [[EXPERIMENTOR_SPAWN_START_TURN]]  high = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 35)
+                Turn low = ([[EXPERIMENTOR_SPAWN_START_TURN]])  high = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 35)
                 Random probability = (0.2 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
             ]
             effects = [
@@ -254,12 +254,12 @@ EXPERIMENTOR_SPAWN_AI_AGGRESSION_CHECK
 // the following intermediate value is turn 200 for Manaical Max AI Aggression, and 50 turns later for each aggression tier less,
 // for AI aggressions above Typical, otherwise adding 1000 turns
 EXPERIMENTOR_SPAWN_CALC_A
-'''( [[EXPERIMENTOR_SPAWN_BASE_TURN]] + (50 * (5 - GalaxyMaxAIAggression)) + (1000 * [[EXPERIMENTOR_SPAWN_AI_AGGRESSION_CHECK]]))'''
+'''( [[EXPERIMENTOR_SPAWN_BASE_TURN]] + 50 * (5 - GalaxyMaxAIAggression) + 1000 * [[EXPERIMENTOR_SPAWN_AI_AGGRESSION_CHECK]])'''
 
 // the following modifies Experimentor spawn start by a factor of 0.1 up for low planet density, and 0.1 down for high planet density
 // for galaxy sizes above 200 increases it somewhat as the galaxy size grows
 EXPERIMENTOR_SPAWN_START_TURN
-'''( [[EXPERIMENTOR_SPAWN_CALC_A]] * ((1.2 - ( GalaxyPlanetDensity / 10 ))) * ((Max(1, GalaxySize / 200))^0.4))'''
+'''[[EXPERIMENTOR_SPAWN_CALC_A]] * (1.2 - ( GalaxyPlanetDensity / 10 )) * ((Max(1, GalaxySize / 200))^0.4)'''
 
 EXPERIMENTOR_ADD_STARLANE
 '''AddStarlanes endpoint = NumberOf number = 1 
