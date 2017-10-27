@@ -492,6 +492,8 @@ MPLobby::MPLobby(my_context c) :
             server.Networking().Disconnect(player_connection);
         }
 
+        TestHumanPlayers();
+
         server.Networking().SendMessageAll(ServerLobbyUpdateMessage(*m_lobby_data));
     } else {
         int host_id = server.m_networking.HostPlayerID();
@@ -515,6 +517,24 @@ MPLobby::MPLobby(my_context c) :
 
 MPLobby::~MPLobby()
 { TraceLogger(FSM) << "(ServerFSM) ~MPLobby"; }
+
+void MPLobby::TestHumanPlayers() {
+    int human_count = 0;
+    for (const auto& plr : m_lobby_data->m_players) {
+        if (plr.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+            human_count++;
+        }
+    }
+
+    // restrict minimun number of human players
+    if (human_count < GetOptionsDB().Get<int>("mplobby-min-human")) {
+        m_lobby_data->m_start_locked = true;
+        m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_NOT_ENOUGH_HUMAN_PLAYERS");
+    } else {
+        m_lobby_data->m_start_locked = false;
+        m_lobby_data->m_start_lock_cause.clear();
+    }
+}
 
 sc::result MPLobby::react(const Disconnection& d) {
     TraceLogger(FSM) << "(ServerFSM) MPLobby.Disconnection";
@@ -562,6 +582,8 @@ sc::result MPLobby::react(const Disconnection& d) {
         DebugLogger(FSM) << "MPLobby.Disconnection : Disconnecting player (" << id << ") was not in lobby";
         return discard_event();
     }
+
+    TestHumanPlayers();
 
     // send updated lobby data to players after disconnection-related changes
     for (auto it = server.m_networking.established_begin();
@@ -636,6 +658,8 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         for (const auto& conn : to_disconnect)
         { server.Networking().Disconnect(conn); }
     }
+
+    TestHumanPlayers();
 
     for (auto it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
@@ -895,17 +919,9 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             m_lobby_data->m_new_game       = incoming_lobby_data.m_new_game;
 
             int ai_count = 0;
-            int human_count = 0;
             for (const auto& plr : incoming_lobby_data.m_players) {
-                switch (plr.second.m_client_type) {
-                case Networking::CLIENT_TYPE_AI_PLAYER:
+                if (plr.second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
                     ai_count++;
-                    break;
-                case Networking::CLIENT_TYPE_HUMAN_PLAYER:
-                    human_count++;
-                    break;
-                default: // do nothing
-                    break;
                 }
             }
 
@@ -913,10 +929,6 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             if (ai_count <= GetOptionsDB().Get<int>("mplobby-max-ai") || GetOptionsDB().Get<int>("mplobby-max-ai") < 0) {
                 m_lobby_data->m_players    = incoming_lobby_data.m_players;
             } else {
-                has_important_changes = true;
-            }
-            // restrict minimun number of human players
-            if (human_count < GetOptionsDB().Get<int>("mplobby-min-human")) {
                 has_important_changes = true;
             }
 
@@ -1031,6 +1043,11 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             }
             break;
         }
+    }
+
+    TestHumanPlayers();
+    if(m_lobby_data->m_start_locked) {
+        has_important_changes = true;
     }
 
     // to determine if a new save file was selected, check if the selected file
