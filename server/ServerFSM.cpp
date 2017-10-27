@@ -23,6 +23,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/asio/high_resolution_timer.hpp>
 #include <boost/functional/hash.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 #include <iterator>
 
@@ -1933,7 +1935,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     const Message& message = msg.m_message;
     const PlayerConnectionPtr& sender = msg.m_player_connection;
 
-    auto order_set = std::unique_ptr<OrderSet>(new OrderSet);
+    auto order_set = boost::make_unique<OrderSet>();
     ExtractTurnOrdersMessageData(message, *order_set);
 
     int player_id = sender->PlayerID();

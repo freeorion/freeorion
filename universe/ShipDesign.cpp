@@ -25,6 +25,8 @@
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/lexical_cast.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 extern FO_COMMON_API const int INVALID_DESIGN_ID = -1;
 
@@ -52,21 +54,18 @@ namespace {
                   std::unique_ptr<ValueRef::ValueRefBase<double>>&& increase_vr)
     {
         typedef std::vector<std::unique_ptr<Effect::EffectBase>> Effects;
-        // TODO: use std::make_unique when converting to C++14
-        auto scope = std::unique_ptr<Condition::Source>(new Condition::Source);
-        auto activation = std::unique_ptr<Condition::Source>(new Condition::Source);
+        auto scope = boost::make_unique<Condition::Source>();
+        auto activation = boost::make_unique<Condition::Source>();
 
-        // TODO: use std::make_unique when converting to C++14
         auto vr =
-            std::unique_ptr<ValueRef::Operation<double>>(
-                new ValueRef::Operation<double>(
-                    ValueRef::PLUS,
-                    std::unique_ptr<ValueRef::Variable<double>>(
-                        new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>())),
-                    std::move(increase_vr)
-                ));
+            boost::make_unique<ValueRef::Operation<double>>(
+                ValueRef::PLUS,
+                boost::make_unique<ValueRef::Variable<double>>(
+                    ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
+                std::move(increase_vr)
+            );
         auto effects = Effects();
-        effects.push_back(std::unique_ptr<Effect::EffectBase>(new Effect::SetMeter(meter_type, std::move(vr))));
+        effects.push_back(boost::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
         return std::make_shared<Effect::EffectsGroup>(std::move(scope), std::move(activation), std::move(effects));
     }
 
@@ -74,9 +73,7 @@ namespace {
     // by the specified amount \a fixed_increase
     std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, float fixed_increase) {
-        // TODO: use std::make_unique when converting to C++14
-        auto increase_vr = std::unique_ptr<ValueRef::Constant<double>>(
-            new ValueRef::Constant<double>(fixed_increase));
+        auto increase_vr = boost::make_unique<ValueRef::Constant<double>>(fixed_increase);
         return IncreaseMeter(meter_type, std::move(increase_vr));
     }
 
@@ -91,17 +88,12 @@ namespace {
         if (scaling_factor_rule_name.empty())
             return IncreaseMeter(meter_type, base_increase);
 
-        // TODO: use std::make_unique when converting to C++14
-        auto increase_vr = std::unique_ptr<ValueRef::Operation<double>>(
-            new ValueRef::Operation<double>(
-                ValueRef::TIMES,
-                std::unique_ptr<ValueRef::Constant<double>>(new ValueRef::Constant<double>(base_increase)),
-                std::unique_ptr<ValueRef::ComplexVariable<double>>(
-                    new ValueRef::ComplexVariable<double>(
-                        "GameRule", nullptr, nullptr, nullptr,
-                        std::unique_ptr<ValueRef::Constant<std::string>>(
-                            new ValueRef::Constant<std::string>(scaling_factor_rule_name))
-                    ))
+        auto increase_vr = boost::make_unique<ValueRef::Operation<double>>(
+            ValueRef::TIMES,
+            boost::make_unique<ValueRef::Constant<double>>(base_increase),
+            boost::make_unique<ValueRef::ComplexVariable<double>>(
+                "GameRule", nullptr, nullptr, nullptr,
+                boost::make_unique<ValueRef::Constant<std::string>>(scaling_factor_rule_name)
             )
         );
 
@@ -116,29 +108,25 @@ namespace {
                   float increase, bool allow_stacking = true)
     {
         typedef std::vector<std::unique_ptr<Effect::EffectBase>> Effects;
-        // TODO: use std::make_unique when converting to C++14
-        auto scope = std::unique_ptr<Condition::Source>(new Condition::Source);
-        auto activation = std::unique_ptr<Condition::Source>(new Condition::Source);
+        auto scope = boost::make_unique<Condition::Source>();
+        auto activation = boost::make_unique<Condition::Source>();
 
-        // TODO: use std::make_unique when converting to C++14
-        auto value_vr = std::unique_ptr<ValueRef::Operation<double>>(
-            new ValueRef::Operation<double>(
-                ValueRef::PLUS,
-                std::unique_ptr<ValueRef::Variable<double>>(
-                    new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>())),
-                std::unique_ptr<ValueRef::Constant<double>>(new ValueRef::Constant<double>(increase))
-            ));
+        auto value_vr = boost::make_unique<ValueRef::Operation<double>>(
+            ValueRef::PLUS,
+            boost::make_unique<ValueRef::Variable<double>>(
+                ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
+            boost::make_unique<ValueRef::Constant<double>>(increase)
+        );
 
-        // TODO: use std::make_unique when converting to C++14
         auto part_name_vr =
-            std::unique_ptr<ValueRef::Constant<std::string>>(
-                new ValueRef::Constant<std::string>(part_name));
+            boost::make_unique<ValueRef::Constant<std::string>>(part_name);
 
         std::string stacking_group = (allow_stacking ? "" :
             (part_name + "_" + boost::lexical_cast<std::string>(meter_type) + "_PartMeter"));
 
         auto effects = Effects();
-        effects.push_back(std::unique_ptr<Effect::EffectBase>(new Effect::SetShipPartMeter(meter_type, std::move(part_name_vr), std::move(value_vr))));
+        effects.push_back(boost::make_unique<Effect::SetShipPartMeter>(
+                              meter_type, std::move(part_name_vr), std::move(value_vr)));
 
         return std::make_shared<Effect::EffectsGroup>(
             std::move(scope), std::move(activation), std::move(effects), part_name, stacking_group);
@@ -1580,8 +1568,7 @@ LoadShipDesignsAndManifestOrderFromParseResults(
     auto& disk_ordering = designs_paths_and_ordering.second;
 
     for (auto&& design_and_path : designs_and_paths) {
-        // TODO change to make_unique when converting to C++14
-        auto design = std::unique_ptr<ShipDesign>(new ShipDesign(*design_and_path.first));
+        auto design = boost::make_unique<ShipDesign>(*design_and_path.first);
 
         // If the UUID is nil this is a legacy design that needs a new UUID
         if(design->UUID() == boost::uuids::uuid{{0}}) {

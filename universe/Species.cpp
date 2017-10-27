@@ -15,6 +15,8 @@
 #include "../util/ScopedTimer.h"
 
 #include <boost/filesystem/fstream.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 #include <iterator>
 
@@ -216,28 +218,24 @@ const Condition::ConditionBase* Species::Location() const {
     if (!m_location) {
         // set up a Condition structure to match popcenters that have (not uninhabitable) environment for this species
         std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetEnvironment>>> environments_vec;
-        // TODO: use std::make_unique when converting to C++14
         environments_vec.push_back(
-            std::unique_ptr<ValueRef::Constant<PlanetEnvironment>>(
-                new ValueRef::Constant<PlanetEnvironment>( ::PE_UNINHABITABLE)));
+            boost::make_unique<ValueRef::Constant<PlanetEnvironment>>( ::PE_UNINHABITABLE));
         auto this_species_name_ref =
-            std::unique_ptr<ValueRef::Constant<std::string>>(
-                new ValueRef::Constant<std::string>(m_name));  // m_name specifies this species
+            boost::make_unique<ValueRef::Constant<std::string>>(m_name);  // m_name specifies this species
         auto enviro_cond = std::unique_ptr<Condition::ConditionBase>(
-            new Condition::Not(
+            boost::make_unique<Condition::Not>(
                 std::unique_ptr<Condition::ConditionBase>(
-                    new Condition::PlanetEnvironment(
+                    boost::make_unique<Condition::PlanetEnvironment>(
                         std::move(environments_vec), std::move(this_species_name_ref)))));
 
-        auto type_cond = std::unique_ptr<Condition::ConditionBase>(new Condition::Type(
-            std::unique_ptr<ValueRef::Constant<UniverseObjectType>>(
-                new ValueRef::Constant<UniverseObjectType>( ::OBJ_POP_CENTER))));
+        auto type_cond = std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::Type>(
+            boost::make_unique<ValueRef::Constant<UniverseObjectType>>( ::OBJ_POP_CENTER)));
 
         std::vector<std::unique_ptr<Condition::ConditionBase>> operands;
         operands.push_back(std::move(enviro_cond));
         operands.push_back(std::move(type_cond));
 
-        m_location = std::unique_ptr<Condition::ConditionBase>(new Condition::And(std::move(operands)));
+        m_location = std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::And>(std::move(operands)));
     }
     return m_location.get();
 }

@@ -10,6 +10,8 @@
 #include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 
 #define DEBUG_PARSERS 0
@@ -65,7 +67,7 @@ namespace {
     void insert_category(std::map<std::string, std::unique_ptr<TechCategory>>& categories,
                          const std::string& name, const std::string& graphic, const GG::Clr& color)
     {
-        auto category_ptr = std::unique_ptr<TechCategory>(new TechCategory(name, graphic, color));
+        auto category_ptr = boost::make_unique<TechCategory>(name, graphic, color);
         categories.insert(std::make_pair(category_ptr->name, std::move(category_ptr)));
     }
 
