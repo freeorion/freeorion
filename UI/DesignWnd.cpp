@@ -4223,11 +4223,12 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
     if (hull.empty())
         return;
     try {
-        m_incomplete_design.reset(new ShipDesign(std::invalid_argument(""),
-                                                 name.StoredString(), description.StoredString(),
-                                                 CurrentTurn(), ClientApp::GetApp()->EmpireID(),
-                                                 hull, parts, icon, "", name.IsInStringtable(),
-                                                 false, uuid));
+        m_incomplete_design = std::make_shared<ShipDesign>(
+            std::invalid_argument(""),
+            name.StoredString(), description.StoredString(),
+            CurrentTurn(), ClientApp::GetApp()->EmpireID(),
+            hull, parts, icon, "", name.IsInStringtable(),
+            false, uuid);
     } catch (const std::invalid_argument& e) {
         ErrorLogger() << "DesignWnd::MainPanel::RefreshIncompleteDesign " << e.what();
     }
