@@ -3541,13 +3541,17 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              bool stringtable_lookup) :
     m_message_string(message_string),
     m_icon(icon),
-    m_message_parameters(std::move(message_parameters)),
+    m_message_parameters(),
     m_recipient_empire_id(std::move(recipient_empire_id)),
     m_condition(nullptr),
     m_affiliation(affiliation),
     m_label(label),
     m_stringtable_lookup(stringtable_lookup)
-{}
+{
+    for (auto&& name_and_value : message_parameters) {
+        m_message_parameters.emplace_back(name_and_value.first, name_and_value.second.OpenEnvelope());
+    }
+}
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
@@ -3558,13 +3562,17 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              bool stringtable_lookup) :
     m_message_string(message_string),
     m_icon(icon),
-    m_message_parameters(std::move(message_parameters)),
+    m_message_parameters(),
     m_recipient_empire_id(nullptr),
     m_condition(std::move(condition)),
     m_affiliation(affiliation),
     m_label(label),
     m_stringtable_lookup(stringtable_lookup)
-{}
+{
+    for (auto&& name_and_value : message_parameters) {
+        m_message_parameters.emplace_back(name_and_value.first, name_and_value.second.OpenEnvelope());
+    }
+}
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
                                              PassedMessageParams& message_parameters,
@@ -3573,13 +3581,17 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, 
                                              bool stringtable_lookup):
     m_message_string(message_string),
     m_icon(icon),
-    m_message_parameters(std::move(message_parameters)),
+    m_message_parameters(),
     m_recipient_empire_id(nullptr),
     m_condition(),
     m_affiliation(affiliation),
     m_label(label),
     m_stringtable_lookup(stringtable_lookup)
-{}
+{
+    for (auto&& name_and_value : message_parameters) {
+        m_message_parameters.emplace_back(name_and_value.first, name_and_value.second.OpenEnvelope());
+    }
+}
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
@@ -3590,13 +3602,17 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              bool stringtable_lookup) :
     m_message_string(message_string),
     m_icon(icon),
-    m_message_parameters(std::move(message_parameters)),
+    m_message_parameters(),
     m_recipient_empire_id(recipient_empire_id),
     m_condition(nullptr),
     m_affiliation(affiliation),
     m_label(label),
     m_stringtable_lookup(stringtable_lookup)
-{}
+{
+    for (auto&& name_and_value : message_parameters) {
+        m_message_parameters.emplace_back(name_and_value.first, name_and_value.second.OpenEnvelope());
+    }
+}
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
@@ -3607,13 +3623,17 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              bool stringtable_lookup) :
     m_message_string(message_string),
     m_icon(icon),
-    m_message_parameters(std::move(message_parameters)),
+    m_message_parameters(),
     m_recipient_empire_id(nullptr),
     m_condition(condition),
     m_affiliation(affiliation),
     m_label(label),
     m_stringtable_lookup(stringtable_lookup)
-{}
+{
+    for (auto&& name_and_value : message_parameters) {
+        m_message_parameters.emplace_back(name_and_value.first, name_and_value.second.OpenEnvelope());
+    }
+}
 
 GenerateSitRepMessage::~GenerateSitRepMessage()
 {}

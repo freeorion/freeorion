@@ -13,11 +13,11 @@ namespace phoenix = boost::phoenix;
 namespace {
     template <typename T, typename U>
     void transform_T_and_U_ptr_vector_to_unique_ptr(
-        std::vector<std::pair<T, std::unique_ptr<U>>>& out,
+        std::vector<std::pair<T, MovableEnvelope<U>>>& out,
         const std::vector<std::pair<T, U*>>& in
     ) {
         for (const auto& elem : in) {
-            out.emplace_back(elem.first, std::unique_ptr<U>(elem.second));
+            out.emplace_back(elem.first, MovableEnvelope<U>(std::unique_ptr<U>(elem.second)));
         }
     };
     BOOST_PHOENIX_ADAPT_FUNCTION(void,
@@ -91,7 +91,8 @@ namespace parse { namespace detail {
                 | eps [ _f = true ]
             )
             >  -(labeller.rule(Icon_token)       >  tok.string [ _b = _1 ] )
-            >  -(labeller.rule(Parameters_token) >  string_and_string_ref_vector [transform_T_and_U_ptr_vector_to_unique_ptr_(_c, _1)] )
+            // >  -(labeller.rule(Parameters_token) >  string_and_string_ref_vector [transform_T_and_U_ptr_vector_to_unique_ptr_(_c, _1)] )
+            >  -(labeller.rule(Parameters_token) >  string_and_string_ref_vector [_c = _1] )
             >   (
                 (   // empire id specified, optionally with an affiliation type:
                     // useful to specify a single recipient empire, or the allies
@@ -134,7 +135,7 @@ namespace parse { namespace detail {
         string_and_string_ref
             =    labeller.rule(Tag_token)  >  tok.string [ _a = _1 ]
             >    labeller.rule(Data_token)
-            >  ( int_rules.expr      [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<int>>(_1)) ]
+            >  ( int_rules.expr      [_val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<int>>(_1)) ]
                  | double_rules.expr   [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<double>>(_1)) ]
                  | tok.string         [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::Constant<std::string>>(_1)) ]
                  | string_grammar   [ _val = construct<string_and_string_ref_pair>(_a, _1) ]

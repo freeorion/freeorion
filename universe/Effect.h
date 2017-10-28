@@ -4,6 +4,7 @@
 #include "EffectAccounting.h"
 
 #include "../util/Export.h"
+#include "../parse/MovableEnvelope.h"
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -1189,7 +1190,7 @@ public:
     using MessageParams =  std::vector<std::pair<
         std::string, ValueRef::ValueRefBase<std::string>*>>;
     using PassedMessageParams =  std::vector<std::pair<
-        std::string, std::unique_ptr<ValueRef::ValueRefBase<std::string>>>>;
+        std::string, parse::MovableEnvelope<ValueRef::ValueRefBase<std::string>>>>;
 
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
                           PassedMessageParams& message_parameters,
