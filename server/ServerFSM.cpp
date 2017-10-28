@@ -469,18 +469,20 @@ MPLobby::MPLobby(my_context c) :
 
                 m_lobby_data->m_players.push_back(std::make_pair(player_id, player_setup_data));
             } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
-                PlayerSetupData player_setup_data;
-                player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
-                player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
-                player_setup_data.m_client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
-                player_setup_data.m_empire_name =   GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
-                player_setup_data.m_empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
-                if (m_lobby_data->m_seed != "")
-                    player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
-                else
-                    player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
+                if (m_ai_next_index <= GetOptionsDB().Get<int>("mplobby-max-ai") || GetOptionsDB().Get<int>("mplobby-max-ai") < 0) {
+                    PlayerSetupData player_setup_data;
+                    player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
+                    player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
+                    player_setup_data.m_client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
+                    player_setup_data.m_empire_name =   GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
+                    player_setup_data.m_empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
+                    if (m_lobby_data->m_seed != "")
+                        player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
+                    else
+                        player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
 
-                m_lobby_data->m_players.push_back(std::make_pair(Networking::INVALID_PLAYER_ID, player_setup_data));
+                    m_lobby_data->m_players.push_back(std::make_pair(Networking::INVALID_PLAYER_ID, player_setup_data));
+                }
                 // disconnect AI
                 to_disconnect.push_back(player_connection);
             }
@@ -489,6 +491,8 @@ MPLobby::MPLobby(my_context c) :
         for (const auto& player_connection : to_disconnect) {
             server.Networking().Disconnect(player_connection);
         }
+
+        TestHumanPlayers();
 
         server.Networking().SendMessageAll(ServerLobbyUpdateMessage(*m_lobby_data));
     } else {
@@ -513,6 +517,24 @@ MPLobby::MPLobby(my_context c) :
 
 MPLobby::~MPLobby()
 { TraceLogger(FSM) << "(ServerFSM) ~MPLobby"; }
+
+void MPLobby::TestHumanPlayers() {
+    int human_count = 0;
+    for (const auto& plr : m_lobby_data->m_players) {
+        if (plr.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+            human_count++;
+        }
+    }
+
+    // restrict minimun number of human players
+    if (human_count < GetOptionsDB().Get<int>("mplobby-min-human")) {
+        m_lobby_data->m_start_locked = true;
+        m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_NOT_ENOUGH_HUMAN_PLAYERS");
+    } else {
+        m_lobby_data->m_start_locked = false;
+        m_lobby_data->m_start_lock_cause.clear();
+    }
+}
 
 sc::result MPLobby::react(const Disconnection& d) {
     TraceLogger(FSM) << "(ServerFSM) MPLobby.Disconnection";
@@ -560,6 +582,8 @@ sc::result MPLobby::react(const Disconnection& d) {
         DebugLogger(FSM) << "MPLobby.Disconnection : Disconnecting player (" << id << ") was not in lobby";
         return discard_event();
     }
+
+    TestHumanPlayers();
 
     // send updated lobby data to players after disconnection-related changes
     for (auto it = server.m_networking.established_begin();
@@ -634,6 +658,8 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         for (const auto& conn : to_disconnect)
         { server.Networking().Disconnect(conn); }
     }
+
+    TestHumanPlayers();
 
     for (auto it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
@@ -905,7 +931,20 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
             // directly configurable lobby data
             m_lobby_data->m_new_game       = incoming_lobby_data.m_new_game;
-            m_lobby_data->m_players        = incoming_lobby_data.m_players;
+
+            int ai_count = 0;
+            for (const auto& plr : incoming_lobby_data.m_players) {
+                if (plr.second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+                    ai_count++;
+                }
+            }
+
+            // limit count of AI
+            if (ai_count <= GetOptionsDB().Get<int>("mplobby-max-ai") || GetOptionsDB().Get<int>("mplobby-max-ai") < 0) {
+                m_lobby_data->m_players    = incoming_lobby_data.m_players;
+            } else {
+                has_important_changes = true;
+            }
 
             LogPlayerSetupData(m_lobby_data->m_players);
 
@@ -1018,6 +1057,11 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             }
             break;
         }
+    }
+
+    TestHumanPlayers();
+    if(m_lobby_data->m_start_locked) {
+        has_important_changes = true;
     }
 
     // to determine if a new save file was selected, check if the selected file

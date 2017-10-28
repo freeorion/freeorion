@@ -47,11 +47,13 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 #ifndef FREEORION_DMAIN_KEEP_STACKTRACE
     try {
 #endif
-        GetOptionsDB().AddFlag('h', "help",         UserStringNop("OPTIONS_DB_HELP"),         false);
-        GetOptionsDB().AddFlag('v', "version",      UserStringNop("OPTIONS_DB_VERSION"),      false);
-        GetOptionsDB().AddFlag('s', "singleplayer", UserStringNop("OPTIONS_DB_SINGLEPLAYER"), false);
-        GetOptionsDB().AddFlag("hostless",          UserStringNop("OPTIONS_DB_HOSTLESS"),     false);
-        GetOptionsDB().AddFlag("skip-checksum",     UserStringNop("OPTIONS_DB_SKIP_CHECKSUM"), false);
+        GetOptionsDB().AddFlag('h', "help",          UserStringNop("OPTIONS_DB_HELP"),              false);
+        GetOptionsDB().AddFlag('v', "version",       UserStringNop("OPTIONS_DB_VERSION"),           false);
+        GetOptionsDB().AddFlag('s', "singleplayer",  UserStringNop("OPTIONS_DB_SINGLEPLAYER"),      false);
+        GetOptionsDB().AddFlag("hostless",           UserStringNop("OPTIONS_DB_HOSTLESS"),          false);
+        GetOptionsDB().AddFlag("skip-checksum",      UserStringNop("OPTIONS_DB_SKIP_CHECKSUM"),     false);
+        GetOptionsDB().Add<int>("mplobby-max-ai",    UserStringNop("OPTIONS_DB_MPLOBBY_MAX_AI"),   -1, Validator<int>());
+        GetOptionsDB().Add<int>("mplobby-min-human", UserStringNop("OPTIONS_DB_MPLOBBY_MIN_HUMAN"), 0, Validator<int>());
 
         // if config.xml and persistent_config.xml are present, read and set options entries
         GetOptionsDB().SetFromFile(GetConfigPath(), FreeOrionVersionString());
