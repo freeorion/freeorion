@@ -13,11 +13,11 @@ namespace phoenix = boost::phoenix;
 namespace {
     template <typename T, typename U>
     void transform_T_and_U_ptr_vector_to_unique_ptr(
-        std::vector<std::pair<T, MovableEnvelope<U>>>& out,
+        std::vector<std::pair<T, parse::MovableEnvelope<U>>>& out,
         const std::vector<std::pair<T, U*>>& in
     ) {
         for (const auto& elem : in) {
-            out.emplace_back(elem.first, MovableEnvelope<U>(std::unique_ptr<U>(elem.second)));
+            out.emplace_back(elem.first, parse::MovableEnvelope<U>(std::unique_ptr<U>(elem.second)));
         }
     };
     BOOST_PHOENIX_ADAPT_FUNCTION(void,
@@ -50,6 +50,7 @@ namespace parse { namespace detail {
         using phoenix::new_;
         using phoenix::construct;
         using phoenix::push_back;
+        const boost::phoenix::function<parse::construct_movable> construct_movable_;
 
         set_empire_meter_1
             =    (tok.SetEmpireMeter_ >>   labeller.rule(Empire_token))
@@ -102,19 +103,20 @@ namespace parse { namespace detail {
                      )
                      >>  labeller.rule(Empire_token)
                     ) > int_rules.expr
-                    [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1), _d, _e, _f) ]
+
+                    [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, construct_movable_(_1), _d, _e, _f) ]
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
                     (labeller.rule(Affiliation_token) >>  tok.CanSee_)
                     >   labeller.rule(Condition_token)   >   condition_parser
-                    [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_CAN_SEE, construct<std::unique_ptr<Condition::ConditionBase>>(_1), _e, _f) ]
+                    [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_CAN_SEE, construct_movable_(_1), _e, _f) ]
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
                     (labeller.rule(Affiliation_token) >>  tok.Human_)
                     >   labeller.rule(Condition_token)   >   condition_parser
-                    [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_HUMAN, construct<std::unique_ptr<Condition::ConditionBase>>(_1), _e, _f) ]
+                    [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_HUMAN, construct_movable_(_1), _e, _f) ]
                 )
                 |   (   // no empire id or condition specified, with or without an
                     // affiliation type: useful to specify no or all empires
@@ -123,6 +125,7 @@ namespace parse { namespace detail {
                     )
                     [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _d, _e, _f) ]
                 )
+
             )
             ;
 

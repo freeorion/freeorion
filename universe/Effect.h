@@ -1190,7 +1190,7 @@ public:
 
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
                           PassedMessageParams& message_parameters,
-                          std::unique_ptr<ValueRef::ValueRefBase<int>>&& recipient_empire_id,
+                          const parse::MovableEnvelope<ValueRef::ValueRefBase<int>>& recipient_empire_id,
                           EmpireAffiliationType affiliation,
                           const std::string label = "",
                           bool stringtable_lookup = true);
@@ -1198,7 +1198,7 @@ public:
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
                           PassedMessageParams& message_parameters,
                           EmpireAffiliationType affiliation,
-                          std::unique_ptr<Condition::ConditionBase>&& condition = nullptr,
+                          const parse::MovableEnvelope<Condition::ConditionBase>& condition,
                           const std::string label = "",
                           bool stringtable_lookup = true);
 

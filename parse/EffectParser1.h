@@ -2,7 +2,7 @@
 #define _EffectParser1_h_
 
 #include "EffectParserImpl.h"
-#include "../universe/Effect.h"
+#include "MovableEnvelope.h"
 
 namespace parse { namespace detail {
     struct effect_parser_rules_1 : public effect_parser_grammar {
@@ -35,14 +35,16 @@ namespace parse { namespace detail {
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
-                std::vector<std::pair<std::string, MovableEnvelope<ValueRef::ValueRefBase<std::string>>>>,
+                std::vector<std::pair<std::string, parse::MovableEnvelope<ValueRef::ValueRefBase<std::string>>>>,
                 EmpireAffiliationType,
                 std::string,
-                bool
+                bool,
+                parse::MovableEnvelope<ValueRef::ValueRefBase<int>>,
+                parse::MovableEnvelope<Condition::ConditionBase>
                 >
             > generate_sitrep_message_rule;
 
-        typedef std::pair<std::string, MovableEnvelope<ValueRef::ValueRefBase<std::string>>> string_and_string_ref_pair;
+        typedef std::pair<std::string, parse::MovableEnvelope<ValueRef::ValueRefBase<std::string>>> string_and_string_ref_pair;
 
         typedef rule<
             string_and_string_ref_pair (),
