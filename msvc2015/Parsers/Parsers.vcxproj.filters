@@ -217,6 +217,9 @@
     <ClInclude Include="..\..\parse\Lexer.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\parse\MovableEnvelope.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\parse\Parse.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
