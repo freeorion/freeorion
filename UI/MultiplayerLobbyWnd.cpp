@@ -1010,11 +1010,10 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
     // set ready button state
     if (m_lobby_data.m_start_locked) {
         m_ready_bn->Disable(true);
-        m_ready_bn->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_ready_bn->SetBrowseText(m_lobby_data.m_start_lock_cause);
+        m_start_conditions_text->SetText(UserString(m_lobby_data.m_start_lock_cause));
     } else {
         m_ready_bn->Disable(false);
-        m_ready_bn->SetBrowseText("");
+        m_start_conditions_text->SetText(UserString("MULTIPLAYER_GAME_START_CONDITIONS"));
     }
 
     Refresh();
