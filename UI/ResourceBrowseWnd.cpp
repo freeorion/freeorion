@@ -12,10 +12,15 @@ namespace {
 }
 
 
-ResourceBrowseWnd::ResourceBrowseWnd(const std::string& title_text, const std::string& unit_label,
-                                     float used, float output, float target_output, bool show_stockpile /*=false*/,
-                                     float stockpile_use /*=0.0f*/, float stockpile /*=0.0f*/,
-                                     float stockpile_change /*=0.0f*/):
+ResourceBrowseWnd::ResourceBrowseWnd(const std::string& title_text,
+                                     const std::string& unit_label,
+                                     float used,
+                                     float output,
+                                     float target_output,
+                                     bool show_stockpile /*=false*/,
+                                     float stockpile_use /*=0.0f*/,
+                                     float stockpile /*=0.0f*/,
+                                     float stockpile_change /*=0.0f*/) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, BrowseTextWidth(), GG::Y1),
     m_title_text(GG::Wnd::Create<CUILabel>(title_text, GG::FORMAT_CENTER)),
     m_show_points(used>= 0.0f),
@@ -129,7 +134,7 @@ void ResourceBrowseWnd::CompleteConstruction() {
     AttachChild(m_stockpile_change_points_label);
     AttachChild(m_stockpile_change_points);
     AttachChild(m_stockpile_change_points_P_label);
-    
+
     if (m_show_stockpile) {
         m_stockpile_used_points_label->MoveTo(GG::Pt(top_left.x + LEFT_TEXT_X, top_left.y));
         m_stockpile_used_points_label->Resize(LABEL_TEXT_SIZE);
