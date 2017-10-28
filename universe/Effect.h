@@ -46,6 +46,12 @@ public:
                  const std::string& accounting_label = "",
                  const std::string& stacking_group = "", int priority = 0,
                  const std::string& description = "");
+    EffectsGroup(const parse::MovableEnvelope<Condition::ConditionBase>& scope,
+                 const parse::MovableEnvelope<Condition::ConditionBase>& activation,
+                 const std::vector<parse::MovableEnvelope<EffectBase>>& effects,
+                 const std::string& accounting_label = "",
+                 const std::string& stacking_group = "", int priority = 0,
+                 const std::string& description = "");
     virtual ~EffectsGroup();
 
     /** execute all effects in group */

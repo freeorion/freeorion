@@ -11,33 +11,6 @@
 
 #include <boost/spirit/include/phoenix.hpp>
 
-namespace {
-    /** This constructor avoids phoenix actors return by valur which makes
-        difficulties for move only types. */
-    Effect::EffectsGroup* new_EffectsGroup(
-        Condition::ConditionBase* scope,
-        Condition::ConditionBase* activation,
-        std::vector<Effect::EffectBase*>& effects_,
-        const std::string& accounting_label,
-        const std::string& stacking_group,
-        int priority,
-        const std::string& description)
-    {
-        std::vector<std::unique_ptr<Effect::EffectBase>> effects;
-        for (auto&& effect_ : effects_)
-            effects.emplace_back(effect_);
-
-        return new Effect::EffectsGroup(
-            std::unique_ptr<Condition::ConditionBase>(scope),
-            std::unique_ptr<Condition::ConditionBase>(activation),
-            std::move(effects),
-            accounting_label, stacking_group, priority, description);
-    }
-
-    BOOST_PHOENIX_ADAPT_FUNCTION(Effect::EffectsGroup*, new_EffectsGroup_, new_EffectsGroup, 7)
-
-}
-
 namespace parse {
 
     /** effects_parser_grammar::Impl holds the rules for
@@ -112,26 +85,28 @@ namespace parse {
         qi::_val_type _val;
         qi::lit_type lit;
         qi::eps_type eps;
+        const boost::phoenix::function<parse::construct_movable> construct_movable_;
 
         effects_group
             =   tok.EffectsGroup_
             > -(labeller.rule(Description_token)      > tok.string [ _g = _1 ])
-            >   labeller.rule(Scope_token)            > condition_parser [ _a = _1 ]
-            > -(labeller.rule(Activation_token)       > condition_parser [ _b = _1 ])
+            >   labeller.rule(Scope_token)            > condition_parser [ _a = construct_movable_(_1) ]
+            > -(labeller.rule(Activation_token)       > condition_parser [ _b = construct_movable_(_1) ])
             > -(labeller.rule(StackingGroup_token)    > tok.string [ _c = _1 ])
             > -(labeller.rule(AccountingLabel_token)  > tok.string [ _e = _1 ])
             > ((labeller.rule(Priority_token)         > tok.int_ [ _f = _1 ]) | eps [ _f = 100 ])
             >   labeller.rule(Effects_token)
             >   (
-                ('[' > +effects_grammar [ push_back(_d, _1) ] > ']')
-                |    effects_grammar [ push_back(_d, _1) ]
+                ('[' > +effects_grammar [ push_back(_d, construct_movable_(_1)) ] > ']')
+                |    effects_grammar [ push_back(_d, construct_movable_(_1)) ]
                 )
-            [ _val = new_EffectsGroup_(_a, _b, _d, _e, _c, _f, _g) ]
+            [ _val = construct<std::shared_ptr<Effect::EffectsGroup>>(
+                    new_<Effect::EffectsGroup>(_a, _b, _d, _e, _c, _f, _g)) ]
             ;
 
         start
-            =    ('[' > +effects_group [ push_back(_val, construct<std::shared_ptr<Effect::EffectsGroup>>(_1)) ] > ']')
-            |     effects_group [ push_back(_val, construct<std::shared_ptr<Effect::EffectsGroup>>(_1)) ]
+            =    ('[' > +effects_group [ push_back(_val, _1) ] > ']')
+            |     effects_group [ push_back(_val, _1) ]
             ;
 
         effects_group.name("EffectsGroup");

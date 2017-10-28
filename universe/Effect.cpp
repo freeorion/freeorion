@@ -186,6 +186,25 @@ EffectsGroup::EffectsGroup(std::unique_ptr<Condition::ConditionBase>&& scope,
     m_description(description)
 {}
 
+EffectsGroup::EffectsGroup(const parse::MovableEnvelope<Condition::ConditionBase>& scope,
+                           const parse::MovableEnvelope<Condition::ConditionBase>& activation,
+                           const std::vector<parse::MovableEnvelope<EffectBase>>& effects,
+                           const std::string& accounting_label,
+                           const std::string& stacking_group, int priority,
+                           const std::string& description) :
+    m_scope(scope.OpenEnvelope()),
+    m_activation(activation.OpenEnvelope()),
+    m_stacking_group(stacking_group),
+    m_effects(),
+    m_accounting_label(accounting_label),
+    m_priority(priority),
+    m_description(description)
+{
+    for (auto&& effect : effects) {
+        m_effects.push_back(effect.OpenEnvelope());
+    }
+}
+
 EffectsGroup::~EffectsGroup()
 {}
 

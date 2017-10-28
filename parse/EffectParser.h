@@ -2,6 +2,7 @@
 #define _EffectParser_h_
 
 #include "ConditionParser.h"
+#include "MovableEnvelope.h"
 
 #include <boost/spirit/include/qi.hpp>
 
@@ -43,12 +44,12 @@ namespace parse {
                               const value_ref_grammar<std::string>& string_grammar);
 
         typedef detail::rule<
-            Effect::EffectsGroup* (),
+            std::shared_ptr<Effect::EffectsGroup> (),
             boost::spirit::qi::locals<
-                Condition::ConditionBase*,
-                Condition::ConditionBase*,
+                parse::MovableEnvelope<Condition::ConditionBase>,
+                parse::MovableEnvelope<Condition::ConditionBase>,
                 std::string,
-                std::vector<Effect::EffectBase*>,
+                std::vector<parse::MovableEnvelope<Effect::EffectBase>>,
                 std::string,
                 int,
                 std::string
