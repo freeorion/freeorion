@@ -99,7 +99,7 @@ void RenameOrder::ExecuteImpl() const {
     }
 
     // disallow the name "", since that denotes an unknown object
-    if (m_name == "") {
+    if (m_name.empty()) {
         ErrorLogger() << "Name \"\" specified in rename order is invalid.";
         return;
     }

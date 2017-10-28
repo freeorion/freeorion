@@ -975,9 +975,9 @@ GG::FontManager::GetFontImpl(const std::string& font_filename, unsigned int pts,
                              CharSetIter first, CharSetIter last)
 {
     FontKey key(font_filename, pts);
-    std::map<FontKey, std::shared_ptr<Font>>::iterator it = m_rendered_fonts.find(key);
+    auto it = m_rendered_fonts.find(key);
     if (it == m_rendered_fonts.end()) { // if no such font has been created, create it now
-        if (font_filename == "") {
+        if (font_filename.empty()) {
             // keeps this function from throwing; "" is the only invalid font
             // filename that shouldn't throw
             return EMPTY_FONT;

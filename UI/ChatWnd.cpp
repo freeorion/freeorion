@@ -236,15 +236,15 @@ void MessageWndEdit::AutoComplete() {
     else {
         bool exact_match = false;
 
-        std::pair<GG::CPSize, GG::CPSize> cursor_pos = this->CursorPosn();
+        auto cursor_pos = this->CursorPosn();
         if (cursor_pos.first == cursor_pos.second && 0 < cursor_pos.first && cursor_pos.first <= full_line.size()) {
-            std::string::size_type word_start = full_line.substr(0, Value(cursor_pos.first)).find_last_of(" :");
+            auto word_start = full_line.substr(0, Value(cursor_pos.first)).find_last_of(" :");
             if (word_start == std::string::npos)
                 word_start = 0;
             else
                 ++word_start;
             std::string partial_word = full_line.substr(word_start, Value(cursor_pos.first - word_start));
-            if (partial_word == "")
+            if (partial_word.empty())
                 return;
 
             // Find game words to try an autocomplete

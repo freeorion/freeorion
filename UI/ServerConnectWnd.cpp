@@ -138,10 +138,14 @@ GG::Rect ServerConnectWnd::CalculatePosition() const {
     return GG::Rect(new_ul, new_ul + new_sz);
 }
 
-void ServerConnectWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
-    if (!m_ok_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) { // Same behaviour as if "OK" was pressed
+void ServerConnectWnd::KeyPress(GG::Key key, std::uint32_t key_code_point,
+                                GG::Flags<GG::ModKey> mod_keys)
+{
+    if (!m_ok_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) {
+        // Same behaviour as if "OK" was pressed
         OkClicked();
-    } else if (key == GG::GGK_ESCAPE) { // Same behaviour as if "Cancel" was pressed
+    } else if (key == GG::GGK_ESCAPE) {
+        // Same behaviour as if "Cancel" was pressed
         CancelClicked();
     }
 }
@@ -149,8 +153,7 @@ void ServerConnectWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::F
 const std::pair<std::string, std::string>& ServerConnectWnd::Result() const
 { return m_result; }
 
-void ServerConnectWnd::PopulateServerList()
-{
+void ServerConnectWnd::PopulateServerList() {
     m_servers_lb->Clear();
     const auto server_names = HumanClientApp::GetApp()->Networking().DiscoverLANServerNames();
     for (const auto& server : server_names) {
@@ -160,24 +163,21 @@ void ServerConnectWnd::PopulateServerList()
     }
 }
 
-void ServerConnectWnd::ServerSelected(const GG::ListBox::SelectionSet& selections)
-{
+void ServerConnectWnd::ServerSelected(const GG::ListBox::SelectionSet& selections) {
     if (!selections.empty())
         *m_IP_address_edit << "";
     EnableDisableControls();
 }
 
-void ServerConnectWnd::IPAddressEdited(const std::string& str)
-{
-    if (str != "") {
+void ServerConnectWnd::IPAddressEdited(const std::string& str) {
+    if (!str.empty()) {
         m_servers_lb->DeselectAll();
         ServerSelected(m_servers_lb->Selections());
     }
     EnableDisableControls();
 }
 
-void ServerConnectWnd::OkClicked()
-{
+void ServerConnectWnd::OkClicked() {
     // record selected galaxy setup options as new defaults
     GetOptionsDB().Set("multiplayersetup.player-name",  m_player_name_edit->Text());
     GetOptionsDB().Set("multiplayersetup.host-address", m_IP_address_edit->Text());
@@ -188,16 +188,15 @@ void ServerConnectWnd::OkClicked()
         m_result.second = "HOST GAME SELECTED";
     } else {
         m_result.second = *m_IP_address_edit;
-        if (m_result.second == "" && !(***m_servers_lb->Selections().begin()).empty()) {
-            m_result.second =
-                boost::polymorphic_downcast<GG::Label*>((***m_servers_lb->Selections().begin()).at(0))->Text() ;
+        if (m_result.second.empty() && !(***m_servers_lb->Selections().begin()).empty()) {
+            m_result.second = boost::polymorphic_downcast<GG::Label*>(
+                (***m_servers_lb->Selections().begin()).at(0))->Text() ;
         }
     }
     CUIWnd::CloseClicked();
 }
 
-void ServerConnectWnd::EnableDisableControls()
-{
+void ServerConnectWnd::EnableDisableControls() {
     bool host_selected = m_host_or_join_radio_group->CheckedButton() == 0;
     m_LAN_game_label->Disable(host_selected);
     m_servers_lb->Disable(host_selected);
