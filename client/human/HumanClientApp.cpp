@@ -140,7 +140,7 @@ namespace {
 
     /* Sets the value of options that need language-dependent default values.*/
     void SetStringtableDependentOptionDefaults() {
-        SetEmptyStringDefaultOption("GameSetup.empire-name", UserString("DEFAULT_EMPIRE_NAME"));
+        SetEmptyStringDefaultOption("setup.empire.name", UserString("DEFAULT_EMPIRE_NAME"));
         std::string player_name = UserString("DEFAULT_PLAYER_NAME");
         SetEmptyStringDefaultOption("setup.player.name", player_name);
         SetEmptyStringDefaultOption("setup.multiplayer.player.name", player_name);
@@ -553,7 +553,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         // Human player setup data
         PlayerSetupData human_player_setup_data;
         human_player_setup_data.m_player_name = GetOptionsDB().Get<std::string>("setup.player.name");
-        human_player_setup_data.m_empire_name = GetOptionsDB().Get<std::string>("GameSetup.empire-name");
+        human_player_setup_data.m_empire_name = GetOptionsDB().Get<std::string>("setup.empire.name");
 
         // DB stores index into array of available colours, so need to get that array to look up value of index.
         // if stored value is invalid, use a default colour

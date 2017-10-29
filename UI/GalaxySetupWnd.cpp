@@ -975,8 +975,8 @@ void GalaxySetupWnd::CompleteConstruction() {
     // empire name
     m_empire_name_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_EMPIRE_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_empire_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-    m_empire_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.empire-name")));
-    m_empire_name_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("GameSetup.empire-name"));
+    m_empire_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.empire.name")));
+    m_empire_name_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("setup.empire.name"));
 
     // empire color
     m_empire_color_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_EMPIRE_COLOR"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
@@ -1199,7 +1199,7 @@ void GalaxySetupWnd::OkClicked() {
     GetOptionsDB().Set("setup.native.frequency", m_galaxy_setup_panel->GetNativeFrequency());
     GetOptionsDB().Set("setup.ai.aggression", m_galaxy_setup_panel->GetAIAggression());
     GetOptionsDB().Set("setup.player.name", m_player_name_edit->Text());
-    GetOptionsDB().Set("GameSetup.empire-name",         EmpireName());
+    GetOptionsDB().Set("setup.empire.name", EmpireName());
     GetOptionsDB().Set("setup.empire.color", static_cast<int>(m_empire_color_selector->CurrentItemIndex()));
     GetOptionsDB().Set("setup.initial.species", m_starting_secies_selector->CurrentSpeciesName());
     GetOptionsDB().Set("setup.ai.player.count", m_number_ais_spin->Value());
