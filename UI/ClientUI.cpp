@@ -120,7 +120,7 @@ double      ClientUI::TinyFleetButtonZoomThreshold()    { return GetOptionsDB().
 double      ClientUI::SmallFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("map.fleet.button.small.zoom_threshold"); }
 double      ClientUI::MediumFleetButtonZoomThreshold()  { return GetOptionsDB().Get<double>("map.fleet.button.medium.zoom_threshold"); }
 
-bool        ClientUI::DisplayTimestamp()                { return GetOptionsDB().Get<bool>("UI.display-timestamp"); }
+bool        ClientUI::DisplayTimestamp()                { return GetOptionsDB().Get<bool>("ui.chat.timestamp.shown"); }
 
 // content texture getters
 std::shared_ptr<GG::Texture> ClientUI::PlanetIcon(PlanetType planet_type) {

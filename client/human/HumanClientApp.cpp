@@ -111,7 +111,7 @@ namespace {
         db.Add("ui.input.keyboard.repeat.interval", UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"), 20,   RangedValidator<int>(0, 1000));
         db.Add("ui.input.mouse.button.repeat.delay", UserStringNop("OPTIONS_DB_MOUSE_REPEAT_DELAY"),    360,    RangedValidator<int>(0, 1000));
         db.Add("ui.input.mouse.button.repeat.interval", UserStringNop("OPTIONS_DB_MOUSE_REPEAT_INTERVAL"), 15, RangedValidator<int>(0, 1000));
-        db.Add("UI.display-timestamp",          UserStringNop("OPTIONS_DB_DISPLAY_TIMESTAMP"),          true,   Validator<bool>());
+        db.Add("ui.chat.timestamp.shown",       UserStringNop("OPTIONS_DB_DISPLAY_TIMESTAMP"),          true,   Validator<bool>());
 
         Hotkey::AddHotkey("exit",       UserStringNop("HOTKEY_EXIT"),       GG::GGK_NONE,   GG::MOD_KEY_NONE);
         Hotkey::AddHotkey("quit",       UserStringNop("HOTKEY_QUIT"),       GG::GGK_NONE,   GG::MOD_KEY_NONE);

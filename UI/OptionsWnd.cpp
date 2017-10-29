@@ -521,7 +521,7 @@ void OptionsWnd::CompleteConstruction() {
     BoolOption(current_page, 0, "ui.window.quickclose.enabled", UserString("OPTIONS_QUICK_CLOSE_WNDS"));
     BoolOption(current_page, 0, "ui.window.sidepanel.planet.shown", UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"));
     BoolOption(current_page, 0, "ui.window.reposition.enabled",  UserString("OPTIONS_AUTO_REPOSITION_WINDOWS"));
-    BoolOption(current_page, 0, "UI.display-timestamp",          UserString("OPTIONS_DISPLAY_TIMESTAMP"));
+    BoolOption(current_page, 0, "ui.chat.timestamp.shown",       UserString("OPTIONS_DISPLAY_TIMESTAMP"));
 
     // manual reposition windows button
     auto window_reset_button = Wnd::Create<CUIButton>(UserString("OPTIONS_WINDOW_RESET"));
