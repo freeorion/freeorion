@@ -119,9 +119,9 @@ namespace {
         db.Add("map.fleet.supply_line.width",       UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH"),            3.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
         db.Add("map.fleet.supply_line.dot.spacing", UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING"),      20,         RangedStepValidator<int>(1, 3, 40));
         db.Add("map.fleet.supply_line.dot.rate",    UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE"),         0.02,       RangedStepValidator<double>(0.01, 0.01, 0.1));
-        db.Add("UI.fleet.explore.hostile.ignored",  UserStringNop("OPTIONS_DB_FLEET_EXPLORE_IGNORE_HOSTILE"),       false,      Validator<bool>());
-        db.Add("UI.fleet.explore.system.route.limit", UserStringNop("OPTIONS_DB_FLEET_EXPLORE_SYSTEM_ROUTE_LIMIT"), 25,         StepValidator<int>(1, -1));
-        db.Add("UI.fleet.explore.system.known.multiplier", UserStringNop("OPTIONS_DB_FLEET_EXPLORE_SYSTEM_KNOWN_MULTIPLIER"), 10.0f, Validator<float>());
+        db.Add("ui.fleet.explore.hostile.ignored",  UserStringNop("OPTIONS_DB_FLEET_EXPLORE_IGNORE_HOSTILE"),       false,      Validator<bool>());
+        db.Add("ui.fleet.explore.system.route.limit", UserStringNop("OPTIONS_DB_FLEET_EXPLORE_SYSTEM_ROUTE_LIMIT"), 25,         StepValidator<int>(1, -1));
+        db.Add("ui.fleet.explore.system.known.multiplier", UserStringNop("OPTIONS_DB_FLEET_EXPLORE_SYSTEM_KNOWN_MULTIPLIER"), 10.0f, Validator<float>());
         db.Add("map.starlane.color",                UserStringNop("OPTIONS_DB_UNOWNED_STARLANE_COLOUR"),            GG::Clr(72,  72,  72,  255),    Validator<GG::Clr>());
 
         db.Add("map.detection_range.shown",         UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE"),         true,       Validator<bool>());
@@ -7006,7 +7006,7 @@ namespace {
             return OrderedRouteType();
         }
 
-        auto ignore_hostile = GetOptionsDB().Get<bool>("UI.fleet.explore.hostile.ignored");
+        auto ignore_hostile = GetOptionsDB().Get<bool>("ui.fleet.explore.hostile.ignored");
         auto fleet_pred = std::make_shared<HostileVisitor<Fleet>>(empire_id);
         std::pair<std::list<int>, double> route_distance;
 
@@ -7052,7 +7052,7 @@ namespace {
 
         // decrease priority of system if previously viewed but not yet explored
         if (!destination->Name().empty()) {
-            order_route.first *= GetOptionsDB().Get<float>("UI.fleet.explore.system.known.multiplier");
+            order_route.first *= GetOptionsDB().Get<float>("ui.fleet.explore.system.known.multiplier");
             TraceLogger() << "Deferred priority for system " << destination->Name() << " (" << destination->ID() << ")";
         }
 
@@ -7295,7 +7295,7 @@ void MapWnd::DispatchFleetsExploring() {
         WarnLogger() << "Invalid empire";
         return;
     }
-    int max_routes_per_system = GetOptionsDB().Get<int>("UI.fleet.explore.system.route.limit");
+    int max_routes_per_system = GetOptionsDB().Get<int>("ui.fleet.explore.system.route.limit");
     auto destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
 
     FleetIDListType idle_fleets;
