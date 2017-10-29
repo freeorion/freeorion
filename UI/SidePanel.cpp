@@ -673,7 +673,7 @@ public:
         }
 
         // render fog of war over planet if it's not visible to this client's player
-        if ((m_visibility <= VIS_BASIC_VISIBILITY) && GetOptionsDB().Get<bool>("map.scanlines.shown")) {
+        if ((m_visibility <= VIS_BASIC_VISIBILITY) && GetOptionsDB().Get<bool>("ui.window.map.scanlines.shown")) {
             s_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("ui.window.sidepanel.planet.scanlane.color"));
             s_scanline_shader.RenderCircle(ul, lr);
         }

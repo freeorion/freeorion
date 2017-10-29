@@ -31,7 +31,7 @@ namespace {
     bool PlaySounds() {
         return GetOptionsDB().Get<bool>("audio.effects.enabled");
     }
-    void PlaySystemIconRolloverSound()  { if (PlaySounds()) Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("map.system.icon.rollover.sound.path")); }
+    void PlaySystemIconRolloverSound()  { if (PlaySounds()) Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.window.map.system.icon.rollover.sound.path")); }
 
     // Wrap content int an rgba tag with color color. Opacity ignored.
     std::string ColorTag(const std::string& content, GG::Clr color){
@@ -440,12 +440,12 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(unsigned int button_number, bool movi
 }
 
 int SystemIcon::EnclosingCircleDiameter() const
-{ return static_cast<const int>(Value(Width()) * GetOptionsDB().Get<double>("map.system.circle.size")) + 1; }
+{ return static_cast<const int>(Value(Width()) * GetOptionsDB().Get<double>("ui.window.map.system.circle.size")) + 1; }
 
 void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     Wnd::SizeMove(ul, lr);
 
-    const bool USE_TINY_GRAPHICS = Value(Width()) < GetOptionsDB().Get<int>("map.system.icon.size.tiny_threshold");
+    const bool USE_TINY_GRAPHICS = Value(Width()) < GetOptionsDB().Get<int>("ui.window.map.system.icon.size.tiny_threshold");
     GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
 
     // tiny graphic?
@@ -586,7 +586,7 @@ void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         Empire* this_empire = GetEmpire(client_empire_id);
         bool explored = !this_empire || (this_empire && this_empire->HasExploredSystem(m_system_id)) ||
                 !m_mouseover_unexplored_indicator;
-        if (explored || !GetOptionsDB().Get<bool>("map.system.unexplored.rollover.enabled")) {
+        if (explored || !GetOptionsDB().Get<bool>("ui.window.map.system.unexplored.rollover.enabled")) {
             AttachChild(m_mouseover_indicator);
             MoveChildUp(m_mouseover_indicator);
         } else {

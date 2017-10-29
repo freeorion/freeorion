@@ -108,17 +108,17 @@ GG::Clr     ClientUI::StatDecrColor()           { return GetOptionsDB().Get<GG::
 
 GG::Clr     ClientUI::StateButtonColor()        { return GetOptionsDB().Get<GG::Clr>("ui.control.button.state.color"); }
 
-int         ClientUI::SystemIconSize()                  { return GetOptionsDB().Get<int>("map.system.icon.size"); }
-int         ClientUI::SystemTinyIconSizeThreshold()     { return GetOptionsDB().Get<int>("map.system.icon.size.tiny_threshold"); }
-int         ClientUI::SystemCircleSize()                { return static_cast<int>(SystemIconSize() * GetOptionsDB().Get<double>("map.system.circle.size")); }
-int         ClientUI::SystemSelectionIndicatorSize()    { return static_cast<int>(SystemIconSize() * GetOptionsDB().Get<double>("map.system.selection_indicator.size")); }
-int         ClientUI::SystemSelectionIndicatorRPM()     { return GetOptionsDB().Get<int>("map.system.selection_indicator.rpm"); }
+int         ClientUI::SystemIconSize()                  { return GetOptionsDB().Get<int>("ui.window.map.system.icon.size"); }
+int         ClientUI::SystemTinyIconSizeThreshold()     { return GetOptionsDB().Get<int>("ui.window.map.system.icon.size.tiny_threshold"); }
+int         ClientUI::SystemCircleSize()                { return static_cast<int>(SystemIconSize() * GetOptionsDB().Get<double>("ui.window.map.system.circle.size")); }
+int         ClientUI::SystemSelectionIndicatorSize()    { return static_cast<int>(SystemIconSize() * GetOptionsDB().Get<double>("ui.window.map.system.selection_indicator.size")); }
+int         ClientUI::SystemSelectionIndicatorRPM()     { return GetOptionsDB().Get<int>("ui.window.map.system.selection_indicator.rpm"); }
 
-GG::Clr     ClientUI::SystemNameTextColor()             { return GetOptionsDB().Get<GG::Clr>("map.system.unowned.name.color"); }
+GG::Clr     ClientUI::SystemNameTextColor()             { return GetOptionsDB().Get<GG::Clr>("ui.window.map.system.unowned.name.color"); }
 
-double      ClientUI::TinyFleetButtonZoomThreshold()    { return GetOptionsDB().Get<double>("map.fleet.button.tiny.zoom_threshold"); }
-double      ClientUI::SmallFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("map.fleet.button.small.zoom_threshold"); }
-double      ClientUI::MediumFleetButtonZoomThreshold()  { return GetOptionsDB().Get<double>("map.fleet.button.medium.zoom_threshold"); }
+double      ClientUI::TinyFleetButtonZoomThreshold()    { return GetOptionsDB().Get<double>("ui.window.map.fleet.button.tiny.zoom_threshold"); }
+double      ClientUI::SmallFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("ui.window.map.fleet.button.small.zoom_threshold"); }
+double      ClientUI::MediumFleetButtonZoomThreshold()  { return GetOptionsDB().Get<double>("ui.window.map.fleet.button.medium.zoom_threshold"); }
 
 bool        ClientUI::DisplayTimestamp()                { return GetOptionsDB().Get<bool>("ui.chat.timestamp.shown"); }
 
@@ -497,9 +497,9 @@ namespace {
         db.Add<std::string>("ui.window.maximize.sound.path",    UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE"),          (GetRootDataDir() / "default" / "data" / "sound" / "window_minimize.ogg").string());
         db.Add<std::string>("ui.window.close.sound.path",       UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_CLOSE"),             (GetRootDataDir() / "default" / "data" / "sound" / "window_close.ogg").string());
         db.Add<std::string>("audio.effects.alert.path",         UserStringNop("OPTIONS_DB_UI_SOUND_ALERT"),                    (GetRootDataDir() / "default/data/sound/alert.ogg").string());
-        db.Add<std::string>("map.fleet.button.rollover.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER"), (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg").string());
-        db.Add<std::string>("map.fleet.button.click.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK"),      (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_click.ogg").string());
-        db.Add<std::string>("map.system.icon.rollover.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER"),  (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg").string());
+        db.Add<std::string>("ui.window.map.fleet.button.rollover.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER"), (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg").string());
+        db.Add<std::string>("ui.window.map.fleet.button.click.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK"),       (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_click.ogg").string());
+        db.Add<std::string>("ui.window.map.system.icon.rollover.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER"),   (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg").string());
         db.Add<std::string>("ui.window.sidepanel.open.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN"),        (GetRootDataDir() / "default" / "data" / "sound" / "sidepanel_open.ogg").string());
         db.Add("audio.effects.new_turn.enabled",                UserStringNop("OPTIONS_DB_UI_SOUND_NEWTURN_TOGGLE"),           false);
         db.Add<std::string>("audio.effects.new_turn.path",      UserStringNop("OPTIONS_DB_UI_SOUND_NEWTURN_FILE"),             (GetRootDataDir() / "default" / "data" / "sound" / "newturn.ogg").string());
@@ -577,7 +577,7 @@ namespace {
     const GG::X PLAYER_LIST_PANEL_WIDTH(445);
 
     const std::string MESSAGE_WND_NAME = "map.messages";
-    const std::string PLAYER_LIST_WND_NAME = "map.player-list";
+    const std::string PLAYER_LIST_WND_NAME = "map.player_list";
 
     template <class OptionType, class PredicateType>
     void ConditionalForward(const std::string& option_name,

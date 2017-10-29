@@ -506,9 +506,9 @@ void OptionsWnd::CompleteConstruction() {
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_BUTTON"));
     SoundFileOption(current_page, 1, "ui.control.button.click.sound.path", UserString("OPTIONS_SOUND_CLICK"));
     SoundFileOption(current_page, 1, "ui.control.button.rollover.sound.path", UserString("OPTIONS_SOUND_ROLLOVER"));
-    SoundFileOption(current_page, 1, "map.fleet.button.click.sound.path", UserString("OPTIONS_SOUND_FLEET_CLICK"));
-    SoundFileOption(current_page, 1, "map.fleet.button.rollover.sound.path", UserString("OPTIONS_SOUND_FLEET_ROLLOVER"));
-    SoundFileOption(current_page, 1, "map.system.icon.rollover.sound.path", UserString("OPTIONS_SOUND_SYSTEM_ROLLOVER"));
+    SoundFileOption(current_page, 1, "ui.window.map.fleet.button.click.sound.path", UserString("OPTIONS_SOUND_FLEET_CLICK"));
+    SoundFileOption(current_page, 1, "ui.window.map.fleet.button.rollover.sound.path", UserString("OPTIONS_SOUND_FLEET_ROLLOVER"));
+    SoundFileOption(current_page, 1, "ui.window.map.system.icon.rollover.sound.path", UserString("OPTIONS_SOUND_SYSTEM_ROLLOVER"));
     SoundFileOption(current_page, 1, "ui.control.button.turn.click.sound.path", UserString("OPTIONS_SOUND_TURN"));
 
     m_tabs->SetCurrentWnd(0);
@@ -577,7 +577,7 @@ void OptionsWnd::CompleteConstruction() {
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_DESCRIPTIONS"));
     BoolOption(current_page,   0, "ui.description.effects.shown",          UserString("OPTIONS_DUMP_EFFECTS_GROUPS_DESC"));
-    BoolOption(current_page,   0, "ui.window.sitrep.invalid.shown",        UserString("OPTIONS_VERBOSE_SITREP_DESC"));
+    BoolOption(current_page,   0, "ui.window.map.sitrep.invalid.shown",    UserString("OPTIONS_VERBOSE_SITREP_DESC"));
     BoolOption(current_page,   0, "ui.name.id.shown",                      UserString("OPTIONS_SHOW_IDS_AFTER_NAMES"));
 
     m_tabs->SetCurrentWnd(0);
@@ -585,42 +585,42 @@ void OptionsWnd::CompleteConstruction() {
     // Galaxy Map Page
     current_page = CreatePage(UserString("OPTIONS_GALAXY_MAP"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_SYSTEM_ICONS"));
-    IntOption(current_page,    0, "map.system.icon.size",                  UserString("OPTIONS_UI_SYSTEM_ICON_SIZE"));
-    BoolOption(current_page,   0, "map.system.circle.shown",               UserString("OPTIONS_UI_SYSTEM_CIRCLES"));
-    DoubleOption(current_page, 0, "map.system.circle.size",                UserString("OPTIONS_UI_SYSTEM_CIRCLE_SIZE"));
-    DoubleOption(current_page, 0, "map.system.selection_indicator.size",   UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));
-    IntOption(current_page,    0, "map.system.selection_indicator.rpm",    UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS"));
-    IntOption(current_page,    0, "map.system.icon.size.tiny_threshold",   UserString("OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"));
-    ColorOption(current_page,  0, "map.system.unowned.name.color",         UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
-    BoolOption(current_page,   0, "map.scanlines.shown",                   UserString("OPTIONS_UI_SYSTEM_FOG"));
-    DoubleOption(current_page, 0, "map.system.scanlines.spacing",          UserString("OPTIONS_UI_SYSTEM_FOG_SPACING"));
+    IntOption(current_page,    0, "ui.window.map.system.icon.size",                     UserString("OPTIONS_UI_SYSTEM_ICON_SIZE"));
+    BoolOption(current_page,   0, "ui.window.map.system.circle.shown",                  UserString("OPTIONS_UI_SYSTEM_CIRCLES"));
+    DoubleOption(current_page, 0, "ui.window.map.system.circle.size",                   UserString("OPTIONS_UI_SYSTEM_CIRCLE_SIZE"));
+    DoubleOption(current_page, 0, "ui.window.map.system.selection_indicator.size",      UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));
+    IntOption(current_page,    0, "ui.window.map.system.selection_indicator.rpm",       UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS"));
+    IntOption(current_page,    0, "ui.window.map.system.icon.size.tiny_threshold",      UserString("OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"));
+    ColorOption(current_page,  0, "ui.window.map.system.unowned.name.color",            UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
+    BoolOption(current_page,   0, "ui.window.map.scanlines.shown",                      UserString("OPTIONS_UI_SYSTEM_FOG"));
+    DoubleOption(current_page, 0, "ui.window.map.system.scanlines.spacing",             UserString("OPTIONS_UI_SYSTEM_FOG_SPACING"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_FLEET_ICONS"));
-    DoubleOption(current_page, 0, "map.fleet.button.tiny.zoom_threshold",  UserString("OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM"));
-    DoubleOption(current_page, 0, "map.fleet.button.small.zoom_threshold", UserString("OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"));
-    DoubleOption(current_page, 0, "map.fleet.button.medium.zoom_threshold", UserString("OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"));
-    DoubleOption(current_page, 0, "map.fleet.selection_indicator.size",    UserString("OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE"));
+    DoubleOption(current_page, 0, "ui.window.map.fleet.button.tiny.zoom_threshold",     UserString("OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM"));
+    DoubleOption(current_page, 0, "ui.window.map.fleet.button.small.zoom_threshold",    UserString("OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"));
+    DoubleOption(current_page, 0, "ui.window.map.fleet.button.medium.zoom_threshold",   UserString("OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"));
+    DoubleOption(current_page, 0, "ui.window.map.fleet.selection_indicator.size",       UserString("OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_STARLANES"));
-    DoubleOption(current_page, 0, "map.starlane.thickness",                UserString("OPTIONS_STARLANE_THICKNESS"));
-    BoolOption(current_page,   0, "map.starlane.empire.color.shown",       UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"));
-    DoubleOption(current_page, 0, "map.starlane.thickness.core_multiplier", UserString("OPTIONS_DB_STARLANE_CORE"));
-    BoolOption(current_page,   0, "map.fleet.supply_line.shown",           UserString("OPTIONS_FLEET_SUPPLY_LINES"));
-    DoubleOption(current_page, 0, "map.fleet.supply_line.width",           UserString("OPTIONS_FLEET_SUPPLY_LINE_WIDTH"));
-    IntOption(current_page,    0, "map.fleet.supply_line.dot.spacing",     UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING"));
-    DoubleOption(current_page, 0, "map.fleet.supply_line.dot.rate",        UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE"));
-    ColorOption(current_page,  0, "map.starlane.color",                    UserString("OPTIONS_UNOWNED_STARLANE_COLOUR"));
+    DoubleOption(current_page, 0, "ui.window.map.starlane.thickness",                   UserString("OPTIONS_STARLANE_THICKNESS"));
+    BoolOption(current_page,   0, "ui.window.map.starlane.empire.color.shown",          UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"));
+    DoubleOption(current_page, 0, "ui.window.map.starlane.thickness.core_multiplier",   UserString("OPTIONS_DB_STARLANE_CORE"));
+    BoolOption(current_page,   0, "ui.window.map.fleet.supply_line.shown",              UserString("OPTIONS_FLEET_SUPPLY_LINES"));
+    DoubleOption(current_page, 0, "ui.window.map.fleet.supply_line.width",              UserString("OPTIONS_FLEET_SUPPLY_LINE_WIDTH"));
+    IntOption(current_page,    0, "ui.window.map.fleet.supply_line.dot.spacing",        UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING"));
+    DoubleOption(current_page, 0, "ui.window.map.fleet.supply_line.dot.rate",           UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE"));
+    ColorOption(current_page,  0, "ui.window.map.starlane.color",                       UserString("OPTIONS_UNOWNED_STARLANE_COLOUR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_GALAXY_MAP_GENERAL"));
-    BoolOption(current_page,   0, "map.system.background.gas.shown",       UserString("OPTIONS_GALAXY_MAP_GAS"));
-    BoolOption(current_page,   0, "map.system.background.starfields.shown", UserString("OPTIONS_GALAXY_MAP_STARFIELDS"));
-    BoolOption(current_page,   0, "map.scale.legend.shown",                UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"));
-    BoolOption(current_page,   0, "map.scale.circle.shown",                UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"));
-    BoolOption(current_page,   0, "map.zoom.slider.shown",                 UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"));
-    BoolOption(current_page,   0, "map.detection_range.shown",             UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"));
-    IntOption(current_page,    0, "map.detection_range.opacity",           UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY"));
-    BoolOption(current_page,   0, "map.popup_menu.enabled",                UserString("OPTIONS_GALAXY_MAP_POPUP"));
-    BoolOption(current_page,   0, "map.system.unexplored.rollover.enabled", UserString("OPTIONS_UI_SYSTEM_UNEXPLORED_OVERLAY"));
+    BoolOption(current_page,   0, "ui.window.map.system.background.gas.shown",          UserString("OPTIONS_GALAXY_MAP_GAS"));
+    BoolOption(current_page,   0, "ui.window.map.system.background.starfields.shown",   UserString("OPTIONS_GALAXY_MAP_STARFIELDS"));
+    BoolOption(current_page,   0, "ui.window.map.scale.legend.shown",                   UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"));
+    BoolOption(current_page,   0, "ui.window.map.scale.circle.shown",                   UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"));
+    BoolOption(current_page,   0, "ui.window.map.zoom.slider.shown",                    UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"));
+    BoolOption(current_page,   0, "ui.window.map.detection_range.shown",                UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"));
+    IntOption(current_page,    0, "ui.window.map.detection_range.opacity",              UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY"));
+    BoolOption(current_page,   0, "ui.window.map.popup_menu.enabled",                   UserString("OPTIONS_GALAXY_MAP_POPUP"));
+    BoolOption(current_page,   0, "ui.window.map.system.unexplored.rollover.enabled",   UserString("OPTIONS_UI_SYSTEM_UNEXPLORED_OVERLAY"));
     BoolOption(current_page,   0, "ui.window.production.other_panels.removed", UserString("OPTIONS_UI_HIDE_MAP_PANELS"));
 
     m_tabs->SetCurrentWnd(0);
@@ -742,7 +742,7 @@ void OptionsWnd::CompleteConstruction() {
     BoolOption(current_page, 0, "content.shipdesign.default.enabled",  UserString("OPTIONS_ADD_DEFAULT_DESIGNS"));
     BoolOption(current_page, 0, "save.serialization.binary.enabled",   UserString("OPTIONS_USE_BINARY_SERIALIZATION"));
     BoolOption(current_page, 0, "save.serialization.compression.enabled", UserString("OPTIONS_USE_XML_ZLIB_SERIALIZATION"));
-    BoolOption(current_page, 0, "ui.window.sitrep.invalid.shown", UserString("OPTIONS_VERBOSE_SITREP_DESC"));
+    BoolOption(current_page, 0, "ui.window.map.sitrep.invalid.shown", UserString("OPTIONS_VERBOSE_SITREP_DESC"));
     BoolOption(current_page, 0, "effects.accounting.enabled", UserString("OPTIONS_EFFECT_ACCOUNTING"));
 
     // Create persistent config button

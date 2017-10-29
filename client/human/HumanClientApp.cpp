@@ -184,9 +184,9 @@ namespace {
         // if GL version is too low, set various map rendering options to
         // disabled, to hopefully improve frame rate.
         if (version_number < 2.0) {
-            GetOptionsDB().Set<bool>("map.system.background.gas.shown", false);
-            GetOptionsDB().Set<bool>("map.system.background.starfields.shown", false);
-            GetOptionsDB().Set<bool>("map.scanlines.shown", false);
+            GetOptionsDB().Set<bool>("ui.window.map.system.background.gas.shown", false);
+            GetOptionsDB().Set<bool>("ui.window.map.system.background.starfields.shown", false);
+            GetOptionsDB().Set<bool>("ui.window.map.scanlines.shown", false);
         }
     }
 }
