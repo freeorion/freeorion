@@ -149,7 +149,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
 
         CompleteXDGMigration();
 
-        // Handle the case where the dir.resource.path does not exist anymore
+        // Handle the case where the content.path does not exist anymore
         // gracefully by resetting it to the standard path into the
         // application bundle.  This may happen if a previous installed
         // version of FreeOrion was residing in a different directory.
@@ -159,7 +159,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         {
             DebugLogger() << "Resources directory from config.xml missing or does not contain expected files. Resetting to default.";
 
-            GetOptionsDB().Set<std::string>("dir.resource.path", "");
+            GetOptionsDB().Set<std::string>("content.path", "");
 
             // double-check that resetting actually fixed things...
             if (!boost::filesystem::exists(GetResourceDir()) ||

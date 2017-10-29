@@ -357,7 +357,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     // Start parsing content
     StartBackgroundParsing();
-    GetOptionsDB().OptionChangedSignal("dir.resource.path").connect(
+    GetOptionsDB().OptionChangedSignal("content.path").connect(
         boost::bind(&HumanClientApp::HandleResoureDirChange, this));
 }
 
@@ -456,8 +456,8 @@ void HumanClientApp::StartServer() {
     std::string ai_config = GetOptionsDB().Get<std::string>("ai-config");
     std::string ai_path = GetOptionsDB().Get<std::string>("ai-path");
     args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
-    args.push_back("--dir.resource.path");
-    args.push_back("\"" + GetOptionsDB().Get<std::string>("dir.resource.path") + "\"");
+    args.push_back("--content.path");
+    args.push_back("\"" + GetOptionsDB().Get<std::string>("content.path") + "\"");
 
     auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
     if (!force_log_level.empty()) {
