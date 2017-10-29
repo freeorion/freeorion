@@ -344,14 +344,14 @@ std::shared_ptr<GG::Texture> ClientUI::ShipDesignIcon(int design_id) {
 
 
 // tech screen
-GG::Clr     ClientUI::KnownTechFillColor()                   { return GetOptionsDB().Get<GG::Clr>("research.completed.background.color"); }
-GG::Clr     ClientUI::KnownTechTextAndBorderColor()          { return GetOptionsDB().Get<GG::Clr>("research.completed.border.color"); }
-GG::Clr     ClientUI::ResearchableTechFillColor()            { return GetOptionsDB().Get<GG::Clr>("research.background.color"); }
-GG::Clr     ClientUI::ResearchableTechTextAndBorderColor()   { return GetOptionsDB().Get<GG::Clr>("research.border.color"); }
-GG::Clr     ClientUI::UnresearchableTechFillColor()          { return GetOptionsDB().Get<GG::Clr>("research.unresearchable.background.color"); }
-GG::Clr     ClientUI::UnresearchableTechTextAndBorderColor() { return GetOptionsDB().Get<GG::Clr>("research.unresearchable.border.color"); }
-GG::Clr     ClientUI::TechWndProgressBarBackgroundColor()    { return GetOptionsDB().Get<GG::Clr>("research.incomplete.background.color"); }
-GG::Clr     ClientUI::TechWndProgressBarColor()              { return GetOptionsDB().Get<GG::Clr>("research.incomplete.progress.color"); }
+GG::Clr     ClientUI::KnownTechFillColor()                   { return GetOptionsDB().Get<GG::Clr>("ui.window.research.completed.background.color"); }
+GG::Clr     ClientUI::KnownTechTextAndBorderColor()          { return GetOptionsDB().Get<GG::Clr>("ui.window.research.completed.border.color"); }
+GG::Clr     ClientUI::ResearchableTechFillColor()            { return GetOptionsDB().Get<GG::Clr>("ui.window.research.background.color"); }
+GG::Clr     ClientUI::ResearchableTechTextAndBorderColor()   { return GetOptionsDB().Get<GG::Clr>("ui.window.research.border.color"); }
+GG::Clr     ClientUI::UnresearchableTechFillColor()          { return GetOptionsDB().Get<GG::Clr>("ui.window.research.unresearchable.background.color"); }
+GG::Clr     ClientUI::UnresearchableTechTextAndBorderColor() { return GetOptionsDB().Get<GG::Clr>("ui.window.research.unresearchable.border.color"); }
+GG::Clr     ClientUI::TechWndProgressBarBackgroundColor()    { return GetOptionsDB().Get<GG::Clr>("ui.window.research.incomplete.background.color"); }
+GG::Clr     ClientUI::TechWndProgressBarColor()              { return GetOptionsDB().Get<GG::Clr>("ui.window.research.incomplete.progress.color"); }
 
 GG::Clr     ClientUI::CategoryColor(const std::string& category_name) {
     const TechCategory* category = GetTechCategory(category_name);
@@ -540,14 +540,14 @@ namespace {
         db.Add("ui.font.link.color",            UserStringNop("OPTIONS_DB_UI_DEFAULT_LINK_COLOR"),         GG::Clr(80, 255, 128, 255),  Validator<GG::Clr>());
         db.Add("ui.font.link.rollover.color",   UserStringNop("OPTIONS_DB_UI_ROLLOVER_LINK_COLOR"),        GG::Clr(192, 80, 255, 255),  Validator<GG::Clr>());
 
-        db.Add("research.completed.background.color", UserStringNop("OPTIONS_DB_UI_KNOWN_TECH"),           GG::Clr(72, 72, 72, 255),    Validator<GG::Clr>());
-        db.Add("research.completed.border.color", UserStringNop("OPTIONS_DB_UI_KNOWN_TECH_BORDER"),        GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());
-        db.Add("research.background.color",     UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH"),          GG::Clr(48, 48, 48, 255),    Validator<GG::Clr>());
-        db.Add("research.border.color",         UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER"),   GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());
-        db.Add("research.unresearchable.background.color", UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH"), GG::Clr(30, 30, 30, 255), Validator<GG::Clr>());
-        db.Add("research.unresearchable.border.color", UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER"), GG::Clr(86, 86, 86, 255), Validator<GG::Clr>());
-        db.Add("research.incomplete.background.color", UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND"), GG::Clr(72, 72, 72, 255), Validator<GG::Clr>());
-        db.Add("research.incomplete.progress.color", UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS"),         GG::Clr(40, 40, 40, 255),    Validator<GG::Clr>());
+        db.Add("ui.window.research.completed.background.color", UserStringNop("OPTIONS_DB_UI_KNOWN_TECH"), GG::Clr(72, 72, 72, 255), Validator<GG::Clr>());
+        db.Add("ui.window.research.completed.border.color", UserStringNop("OPTIONS_DB_UI_KNOWN_TECH_BORDER"), GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());
+        db.Add("ui.window.research.background.color", UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH"), GG::Clr(48, 48, 48, 255), Validator<GG::Clr>());
+        db.Add("ui.window.research.border.color", UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER"), GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());
+        db.Add("ui.window.research.unresearchable.background.color", UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH"), GG::Clr(30, 30, 30, 255), Validator<GG::Clr>());
+        db.Add("ui.window.research.unresearchable.border.color", UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER"), GG::Clr(86, 86, 86, 255), Validator<GG::Clr>());
+        db.Add("ui.window.research.incomplete.background.color", UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND"), GG::Clr(72, 72, 72, 255), Validator<GG::Clr>());
+        db.Add("ui.window.research.incomplete.progress.color", UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS"), GG::Clr(40, 40, 40, 255), Validator<GG::Clr>());
 
         // misc
         db.Add("ui.control.scroll.width",       UserStringNop("OPTIONS_DB_UI_SCROLL_WIDTH"),               14,         RangedValidator<int>(8, 30));

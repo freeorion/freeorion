@@ -671,20 +671,20 @@ void OptionsWnd::CompleteConstruction() {
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_TECH_COLORS"));
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_KNOWN_TECH_COLORS"));
-    ColorOption(current_page, 1, "research.completed.background.color", UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 1, "research.completed.border.color", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    ColorOption(current_page, 1, "ui.window.research.completed.background.color", UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 1, "ui.window.research.completed.border.color", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_RESEARCHABLE_TECH_COLORS"));
-    ColorOption(current_page, 1, "research.background.color",   UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 1, "research.border.color",       UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    ColorOption(current_page, 1, "ui.window.research.background.color", UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 1, "ui.window.research.border.color", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_UNRESEARCHABLE_TECH_COLORS"));
-    ColorOption(current_page, 1, "research.unresearchable.background.color", UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 1, "research.unresearchable.border.color", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    ColorOption(current_page, 1, "ui.window.research.unresearchable.background.color", UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 1, "ui.window.research.unresearchable.border.color", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_TECH_PROGRESS_COLORS"));
-    ColorOption(current_page, 1, "research.incomplete.progress.color", UserString("OPTIONS_PROGRESS_BAR_COLOR"));
-    ColorOption(current_page, 1, "research.incomplete.background.color", UserString("OPTIONS_PROGRESS_BACKGROUND_COLOR"));
+    ColorOption(current_page, 1, "ui.window.research.incomplete.progress.color", UserString("OPTIONS_PROGRESS_BAR_COLOR"));
+    ColorOption(current_page, 1, "ui.window.research.incomplete.background.color", UserString("OPTIONS_PROGRESS_BACKGROUND_COLOR"));
     m_tabs->SetCurrentWnd(0);
 
     // Ausosave settings tab
