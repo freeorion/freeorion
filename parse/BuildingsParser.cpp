@@ -8,6 +8,7 @@
 
 #include "../universe/Building.h"
 #include "../universe/Enums.h"
+#include "../universe/ValueRef.h"
 
 
 #define DEBUG_PARSERS 0

@@ -166,18 +166,21 @@ BuildingType::BuildingType(const std::string& name,
                            const std::string& icon) :
     m_name(name),
     m_description(description),
-    m_production_cost(common_params.production_cost),
-    m_production_time(common_params.production_time),
+    m_production_cost(common_params.production_cost.OpenEnvelope().release()),
+    m_production_time(common_params.production_time.OpenEnvelope().release()),
     m_producible(common_params.producible),
     m_capture_result(capture_result),
     m_tags(),
-    m_production_meter_consumption(common_params.production_meter_consumption),
-    m_production_special_consumption(common_params.production_special_consumption),
-    m_location(common_params.location),
-    m_enqueue_location(common_params.enqueue_location),
+    m_production_meter_consumption(),
+    m_production_special_consumption(),
+    m_location(common_params.location.OpenEnvelope().release()),
+    m_enqueue_location(common_params.enqueue_location.OpenEnvelope().release()),
     m_effects(common_params.effects),
     m_icon(icon)
 {
+    m_production_meter_consumption = UnpackageConsumptionMap(common_params.production_meter_consumption);
+    m_production_special_consumption = UnpackageConsumptionMap(common_params.production_special_consumption);
+
     Init();
     for (const std::string& tag : common_params.tags)
         m_tags.insert(boost::to_upper_copy<std::string>(tag));

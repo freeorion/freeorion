@@ -9,6 +9,7 @@
 #include "ValueRefParser.h"
 #include "CommonParams.h"
 
+#include "../universe/ValueRef.h"
 #include "../universe/Condition.h"
 #include "../universe/ShipDesign.h"
 

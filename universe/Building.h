@@ -119,9 +119,9 @@ public:
 
     bool                            Producible() const      { return m_producible; }        ///< returns whether this building type is producible by players and appears on the production screen
 
-    const std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>&
+    const CommonParams::ConsumptionMap<MeterType>&
                                     ProductionMeterConsumption() const  { return m_production_meter_consumption; }
-    const std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>&
+    const CommonParams::ConsumptionMap<std::string>&
                                     ProductionSpecialConsumption() const{ return m_production_special_consumption; }
 
     const std::set<std::string>&    Tags() const            { return m_tags; }
@@ -166,10 +166,8 @@ private:
     bool                                                    m_producible;
     CaptureResult                                           m_capture_result;
     std::set<std::string>                                   m_tags;
-    std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
-                                                            m_production_meter_consumption;
-    std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
-                                                            m_production_special_consumption;
+    CommonParams::ConsumptionMap<MeterType> m_production_meter_consumption;
+    CommonParams::ConsumptionMap<std::string> m_production_special_consumption;
     Condition::ConditionBase*                               m_location;
     Condition::ConditionBase*                               m_enqueue_location;
     std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;

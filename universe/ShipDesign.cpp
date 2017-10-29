@@ -177,6 +177,56 @@ const ShipDesign* GetShipDesign(int ship_design_id)
 { return GetUniverse().GetShipDesign(ship_design_id); }
 
 
+////////////////////////////////////////////////
+// CommonParams
+////////////////////////////////////////////////
+CommonParams::CommonParams() :
+    production_cost(nullptr),
+    production_time(nullptr),
+    producible(false),
+    tags(),
+    production_meter_consumption(),
+    production_special_consumption(),
+    location(nullptr),
+    enqueue_location(nullptr),
+    effects()
+{}
+
+CommonParams::CommonParams(const parse::MovableEnvelope<ValueRef::ValueRefBase<double>>& production_cost_,
+                           const parse::MovableEnvelope<ValueRef::ValueRefBase<int>>& production_time_,
+                           bool producible_,
+                           const std::set<std::string>& tags_,
+                           const parse::MovableEnvelope<Condition::ConditionBase>& location_,
+                           const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects_,
+                           const ConsumptionMapPackaged<MeterType>& production_meter_consumption_,
+                           const ConsumptionMapPackaged<std::string>& production_special_consumption_,
+                           const parse::MovableEnvelope<Condition::ConditionBase>& enqueue_location_) :
+    production_cost(production_cost_),
+    production_time(production_time_),
+    producible(producible_),
+    tags(),
+    production_meter_consumption(production_meter_consumption_),
+    production_special_consumption(production_special_consumption_),
+    location(location_),
+    enqueue_location(enqueue_location_),
+    effects(effects_)
+{
+    for (const std::string& tag : tags_)
+        tags.insert(boost::to_upper_copy<std::string>(tag));
+}
+
+CommonParams::~CommonParams()
+{}
+
+template <typename T>
+CommonParams::ConsumptionMap<T> UnpackageConsumptionMap(const CommonParams::ConsumptionMapPackaged<T>& in) {
+    CommonParams::ConsumptionMap<T> retval;
+    for (auto&& name_and_values : in)
+        retval[name_and_values.first] = {name_and_values.second.first.OpenEnvelope(),
+                                         name_and_values.second.second.OpenEnvelope()};
+    return retval;
+}
+
 /////////////////////////////////////
 // PartTypeManager                 //
 /////////////////////////////////////
@@ -254,14 +304,14 @@ PartType::PartType() :
     m_class(INVALID_SHIP_PART_CLASS),
     m_capacity(0.0f),
     m_secondary_stat(1.0f),
-    m_production_cost(0),
-    m_production_time(0),
+    m_production_cost(),
+    m_production_time(),
     m_producible(false),
     m_mountable_slot_types(),
     m_tags(),
     m_production_meter_consumption(),
     m_production_special_consumption(),
-    m_location(0),
+    m_location(),
     m_exclusions(),
     m_effects(),
     m_icon(),
@@ -277,21 +327,29 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
     m_class(part_class),
     m_capacity(capacity),
     m_secondary_stat(stat2),
-    m_production_cost(common_params.production_cost),
-    m_production_time(common_params.production_time),
+    m_production_cost(common_params.production_cost.OpenEnvelope()),
+    m_production_time(common_params.production_time.OpenEnvelope()),
     m_producible(common_params.producible),
     m_mountable_slot_types(mountable_slot_types),
     m_tags(),
-    m_production_meter_consumption(common_params.production_meter_consumption),
-    m_production_special_consumption(common_params.production_special_consumption),
-    m_location(common_params.location),
+    m_production_meter_consumption(),
+    m_production_special_consumption(),
+    m_location(common_params.location.OpenEnvelope()),
     m_exclusions(more_common_params.exclusions),
     m_effects(),
     m_icon(icon),
     m_add_standard_capacity_effect(add_standard_capacity_effect)
 {
     //TraceLogger() << "part type: " << m_name << " producible: " << m_producible << std::endl;
+    // std::vector<std::unique_ptr<Effect::EffectsGroup>>& effects;
+    // for (auto&& effect : common_params.effects)
+    //     effects.push_back(effect.OpenEnvelope());
+    // Init(effects);
     Init(common_params.effects);
+
+    m_production_meter_consumption = UnpackageConsumptionMap(common_params.production_meter_consumption);
+    m_production_special_consumption = UnpackageConsumptionMap(common_params.production_special_consumption);
+
     for (const std::string& tag : common_params.tags)
         m_tags.insert(boost::to_upper_copy<std::string>(tag));
 }
@@ -353,7 +411,7 @@ void PartType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& ef
 }
 
 PartType::~PartType()
-{ delete m_location; }
+{}
 
 float PartType::Capacity() const {
     switch (m_class) {
@@ -499,8 +557,68 @@ unsigned int PartType::GetCheckSum() const {
 ////////////////////////////////////////////////
 // HullType
 ////////////////////////////////////////////////
+HullType::HullType() :
+    m_name("generic hull type"),
+    m_description("indescribable"),
+    m_speed(1.0f),
+    m_fuel(0.0f),
+    m_stealth(0.0f),
+    m_structure(0.0f),
+    m_production_cost(nullptr),
+    m_production_time(nullptr),
+    m_producible(false),
+    m_slots(),
+    m_tags(),
+    m_production_meter_consumption(),
+    m_production_special_consumption(),
+    m_location(nullptr),
+    m_effects(),
+    m_graphic(),
+    m_icon()
+{}
+
+HullType::HullType(const HullTypeStats& stats, const CommonParams& common_params,
+         const MoreCommonParams& more_common_params,
+         const std::vector<Slot>& slots,
+         const std::string& icon, const std::string& graphic) :
+    m_name(more_common_params.name),
+    m_description(more_common_params.description),
+    m_speed(stats.speed),
+    m_fuel(stats.fuel),
+    m_stealth(stats.stealth),
+    m_structure(stats.structure),
+    m_production_cost(common_params.production_cost.OpenEnvelope()),
+    m_production_time(common_params.production_time.OpenEnvelope()),
+    m_producible(common_params.producible),
+    m_slots(slots),
+    m_tags(),
+    m_production_meter_consumption(),
+    m_production_special_consumption(),
+    m_location(common_params.location.OpenEnvelope()),
+    m_exclusions(more_common_params.exclusions),
+    m_effects(),
+    m_graphic(graphic),
+    m_icon(icon)
+{
+    //TraceLogger() << "hull type: " << m_name << " producible: " << m_producible << std::endl;
+    // std::vector<std::unique_ptr<Effect::EffectsGroup>>& effects;
+    // for (auto&& effect : common_params.effects)
+    //     effects.push_back(effect.OpenEnvelope());
+    // Init(effects);
+    Init(common_params.effects);
+
+    m_production_meter_consumption = UnpackageConsumptionMap(common_params.production_meter_consumption);
+    m_production_special_consumption = UnpackageConsumptionMap(common_params.production_special_consumption);
+
+    for (const std::string& tag : common_params.tags)
+        m_tags.insert(boost::to_upper_copy<std::string>(tag));
+}
+
 HullType::Slot::Slot() :
     type(INVALID_SHIP_SLOT_TYPE), x(0.5), y(0.5)
+{}
+
+HullType::~HullType()
 {}
 
 void HullType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects) {
@@ -518,9 +636,6 @@ void HullType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& ef
         m_effects.push_back(effect);
     }
 }
-
-HullType::~HullType()
-{ delete m_location; }
 
 float HullType::Speed() const
 { return m_speed * GetGameRules().Get<double>("RULE_SHIP_SPEED_FACTOR"); }
