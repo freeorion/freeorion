@@ -2941,54 +2941,50 @@ Messages
 MAP_BTN_MESSAGES_DESC
 ''''''
 
+
 MAP_PRODUCTION_TITLE
 Production
 
-MAP_PROD_WASTED_TITLE
-Unused Production
+MAP_PRODUCTION_WASTED_TITLE
+Wasted Production
 
-# %1% number of production points generated.
-# %2% number of production points currently neither used for production nor for stockpile.
-# %3% stockpile yield of excess production (the other part is wasted)
-# %4% number of production points transferred to the imperial stockpile.
-# %5% number of production points currently neither used for production nor for stockpile.
-MAP_PROD_WASTED_TEXT
-'''Production Capacity : %1% PP
-Excess Production : %2% PP
-
-Stockpile Efficiency : %3%%%
-Excess to Stockpile : %4% PP
-
-Wasted Capacity : %5% PP
-
+MAP_PROD_CLICK_TO_OPEN
+'''
 Click here to open the production menu'''
-
-RESOURCE_TT_USED
-Used
-
-RESOURCE_TT_OUTPUT
-Current Output
-
-RESOURCE_TT_TARGET_OUTPUT
-Target Output
-
-MAP_STOCKPILE_TITLE
-Imperial Stockpile
-
 
 MAP_RESEARCH_TITLE
 Research
 
-MAP_RES_WASTED_TITLE
-Unused Research
+MAP_RESEARCH_WASTED_TITLE
+Wasted Research
 
-# %1% number of research points generated.
-# %2% number of research points currently not used for research.
-MAP_RES_WASTED_TEXT
-'''Total Research : %1%
-Wasted Research : %2%
-
+MAP_RES_CLICK_TO_OPEN
+'''
 Click here to open the research menu'''
+
+MAP_STOCKPILE_TITLE
+Imperial Stockpile
+
+RESOURCE_TT_OUTPUT
+Output
+
+RESOURCE_TT_TARGET_OUTPUT
+Target Output
+
+RESOURCE_TT_USED
+Used
+
+RESOURCE_TT_EXCESS
+Excess
+
+RESOURCE_TT_STOCKPILE_EFFIC
+Stockpile Efficiency
+
+RESOURCE_TT_TO_STOCKPILE
+To Stockpile
+
+RESOURCE_TT_WASTED
+Wasted
 
 MAP_POPULATION_DISTRIBUTION
 Census

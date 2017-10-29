@@ -6414,10 +6414,10 @@ void MapWnd::RefreshResearchResourceIndicator() {
     m_research->ClearBrowseInfoWnd();
     m_research->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
-    double total_RP_spent = empire->GetResearchQueue().TotalRPsSpent();
-    double total_RP_output = empire->GetResourcePool(RE_RESEARCH)->TotalOutput();
-    double total_RP_wasted = total_RP_output - total_RP_spent;
-    double total_RP_target_output = empire->GetResourcePool(RE_RESEARCH)->TargetOutput();
+    float total_RP_spent = empire->GetResearchQueue().TotalRPsSpent();
+    float total_RP_output = empire->GetResourcePool(RE_RESEARCH)->TotalOutput();
+    float total_RP_wasted = total_RP_output - total_RP_spent;
+    float total_RP_target_output = empire->GetResourcePool(RE_RESEARCH)->TargetOutput();
 
     m_research->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
         UserString("MAP_RESEARCH_TITLE"), UserString("RESEARCH_INFO_RP"),
@@ -6430,11 +6430,12 @@ void MapWnd::RefreshResearchResourceIndicator() {
         m_research_wasted->Show();
         m_research_wasted->ClearBrowseInfoWnd();
         m_research_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_research_wasted->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
-            UserString("MAP_RES_WASTED_TITLE"),
-            boost::io::str(FlexibleFormat(UserString("MAP_RES_WASTED_TEXT"))
-                           % DoubleToString(total_RP_output, 3, false)
-                           % DoubleToString(total_RP_wasted, 3, false))));
+
+        m_research_wasted->SetBrowseInfoWnd(GG::Wnd::Create<WastedStockpiledResourceBrowseWnd>(
+            UserString("MAP_RESEARCH_WASTED_TITLE"), UserString("RESEARCH_INFO_RP"),
+            total_RP_output, total_RP_wasted, false, 0.0f, 0.0f, total_RP_wasted,
+            UserString("MAP_RES_CLICK_TO_OPEN")));
+
     } else {
         m_research_wasted->Hide();
     }
@@ -6486,7 +6487,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     m_stockpile->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_stockpile->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
         UserString("MAP_STOCKPILE_TITLE"), UserString("PRODUCTION_INFO_PP"),
-        -1.0f, -1.0f, -1.0f, 
+        -1.0f, -1.0f, -1.0f,
         true, stockpile_used, stockpile, expected_stockpile));
 
     if (total_PP_wasted > 0.05) {
@@ -6495,15 +6496,12 @@ void MapWnd::RefreshIndustryResourceIndicator() {
         m_industry_wasted->Show();
         m_industry_wasted->ClearBrowseInfoWnd();
         m_industry_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_industry_wasted->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
-            UserString("MAP_PROD_WASTED_TITLE"),
-            boost::io::str(FlexibleFormat(UserString("MAP_PROD_WASTED_TEXT"))
-                           % DoubleToString(total_PP_output, 3, false)
-                           % DoubleToString(total_PP_excess, 3, false)
-                           % DoubleToString(PP_to_stockpile_yield * 100, 1, false)
-                           % DoubleToString(total_PP_to_stockpile, 3, false)
-                           % DoubleToString(total_PP_wasted, 3, false)),
-            GG::X(240)));
+        m_industry_wasted->SetBrowseInfoWnd(GG::Wnd::Create<WastedStockpiledResourceBrowseWnd>(
+            UserString("MAP_PRODUCTION_WASTED_TITLE"), UserString("PRODUCTION_INFO_PP"),
+            total_PP_output, total_PP_excess,
+            true, PP_to_stockpile_yield, total_PP_to_stockpile, total_PP_wasted,
+            UserString("MAP_PROD_CLICK_TO_OPEN")));
+
     } else {
         m_industry_wasted->Hide();
     }
