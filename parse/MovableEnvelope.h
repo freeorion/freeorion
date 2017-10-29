@@ -1,6 +1,9 @@
 #ifndef _MovableEnvelope_h_
 #define _MovableEnvelope_h_
 
+#include <memory>
+#include <type_traits>
+
 namespace parse {
     /** \p MovableEnvelope enables the boost::spirit parser to handle a
         \p T with move semantics.
@@ -27,18 +30,14 @@ namespace parse {
     template <typename T>
     class MovableEnvelope {
     public:
-        MovableEnvelope() : obj() {}
 
-        explicit MovableEnvelope(std::unique_ptr<T>&& obj_) :
-            obj(std::move(obj_)),
-            original_obj(obj.get())
-        {}
+        /** \name Rule of Five constructors and operators.
+            MovableEnvelope satisfies the rule of five with the following
+            constructors and operator=().
+         */ //@{
 
-        // This take ownership of obj_
-        explicit MovableEnvelope(T* obj_) :
-            obj(obj_),
-            original_obj(obj.get())
-        {}
+        // Default constructor
+        MovableEnvelope() {}
 
         // Copy constructor
         // This leaves \p other in an emptied state
@@ -50,8 +49,6 @@ namespace parse {
         MovableEnvelope(MovableEnvelope&& other) :
             MovableEnvelope(std::move(other.obj))
         {}
-
-        ~MovableEnvelope() {};
 
         // Move operator
         MovableEnvelope& operator= (MovableEnvelope&& other) {
@@ -69,6 +66,74 @@ namespace parse {
             // Intentionally leave other.original_obj != other.obj.get()
             return *this;
         }
+        //@}
+
+        virtual ~MovableEnvelope() {};
+
+        /** \name Converting constructors and operators.
+            MovableEnvelope allows conversion between compatible types with the following
+            constructors and operators.
+         */ //@{
+
+        // nullptr constructor
+        MovableEnvelope(std::nullptr_t) {}
+
+        template <typename U,
+                  typename std::enable_if<std::is_convertible<std::unique_ptr<U>,
+                                                              std::unique_ptr<T>>::value>::type* = nullptr>
+        explicit MovableEnvelope(std::unique_ptr<U>&& obj_) :
+            obj(std::move(obj_)),
+            original_obj(obj.get())
+        {}
+
+        // This takes ownership of obj_
+        template <typename U,
+                  typename std::enable_if<std::is_convertible<std::unique_ptr<U>,
+                                                              std::unique_ptr<T>>::value>::type* = nullptr>
+        explicit MovableEnvelope(U* obj_) :
+            obj(obj_),
+            original_obj(obj.get())
+        {}
+
+        // Converting copy constructor
+        // This leaves \p other in an emptied state
+        template <typename U,
+                  typename std::enable_if<std::is_convertible<std::unique_ptr<U>,
+                                                              std::unique_ptr<T>>::value>::type* = nullptr>
+        MovableEnvelope(const MovableEnvelope<U>& other) :
+            MovableEnvelope(std::move(other.obj))
+        {}
+
+        // Converting move constructor
+        template <typename U,
+                  typename std::enable_if<std::is_convertible<std::unique_ptr<U>,
+                                                              std::unique_ptr<T>>::value>::type* = nullptr>
+        MovableEnvelope(MovableEnvelope<U>&& other) :
+            MovableEnvelope(std::move(other.obj))
+        {}
+
+        template <typename U,
+                  typename std::enable_if<std::is_convertible<std::unique_ptr<U>,
+                                                              std::unique_ptr<T>>::value>::type* = nullptr>
+        MovableEnvelope& operator= (MovableEnvelope<U>&& other) {
+            obj = std::move(other.obj);
+            original_obj = other.original_obj;
+            // Intentionally leave other.original_obj != other.obj.get()
+            return *this;
+        }
+
+        // Copy operator
+        // This leaves \p other in an emptied state
+        template <typename U,
+                  typename std::enable_if<std::is_convertible<std::unique_ptr<U>,
+                                                              std::unique_ptr<T>>::value>::type* = nullptr>
+        MovableEnvelope& operator= (const MovableEnvelope<U>& other) {
+            obj = std::move(other.obj);
+            original_obj = other.original_obj;
+            // Intentionally leave other.original_obj != other.obj.get()
+            return *this;
+        }
+        //@}
 
         // Return false if the original \p obj has been moved away from this
         // MovableEnvelope.
@@ -91,6 +156,9 @@ namespace parse {
         }
 
     private:
+        template <typename U>
+        friend class MovableEnvelope;
+
         mutable std::unique_ptr<T> obj = nullptr;
 
         mutable T* original_obj = nullptr;
