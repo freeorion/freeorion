@@ -1149,10 +1149,10 @@ OPTIONS_DB_UI_SAVE_DIALOG_COLUMNS
 Colonnes valides: time, turn, player, empire, systems, seed, galaxy_age, galaxy_shape, planet_freq, native_freq, specials_freq, starlane_freq'''
 
 OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_WIDE_AS
-Si UI.save-file-dialog.[name].wide-as est activé, la colonne sera toujours assez large pour contenir tout le texte.
+Si ui.window.save_load.columns.[name].width.chars est activé, la colonne sera toujours assez large pour contenir tout le texte.
 
 OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH
-Si UI.save-file-dialog.[name].stretch est activé, la colonne permettra ce facteur d'agrandissement si visible.
+Si ui.window.save_load.columns.[name].stretch est activé, la colonne permettra ce facteur d'agrandissement si visible.
 
 OPTIONS_DB_GALAXY_MAP_GAS
 Rendu de la densité gazeuse qui donne sa forme à la galaxie. Peut ralentir l'affichage sur les machines les plus anciennes.
@@ -1728,7 +1728,7 @@ OPTIONS_DB_AUTO_N_TURNS
 Clique le bouton "Tour" automatiquement pour les N premiers tours (jusqu'à 400 tours, valeur défaut à zéro); utile pour le débogage notamment avec --quickstart ou --load, et éventuellement --auto-quit.
 
 OPTIONS_DB_CHECKED_GL_VERSION
-Indique si la version d'OpenGL du système a été vérifiée. Si non, diverses options de rendu (selon la version d'OpenGL effectivement présente) peuvent être modifiées, afin de provoquer cette vérification.
+Indique si la version d'OpenGL du système a non été vérifiée. Si vrai, diverses options de rendu (selon la version d'OpenGL effectivement présente) peuvent être modifiées, afin de provoquer cette vérification.
 
 OPTIONS_DB_RESET_FSSIZE
 Enregistre ou réinitialise la résolution en plein écran. Si non, la valeur enregistrée est utilisée. Si oui, la valeur est réinitialisée à la résolution maximale que le système peut afficher.
@@ -5448,7 +5448,7 @@ HIDDEN_SETTINGS__ARTICLE_TEXT
 
 Parmi les nombreux réglages disponibles permettant de définir l'emplacement/taille des divers éléments de l'UI, ces 'Réglages Cachés' intègrent:
 
-UI.design-pedia-dynamic : Active/Désactive la mise à jour dynamique de l'article de l'Encyclopédie concernant un modèle d'astronef si le nom de ce modèle a été modifié dans la [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]] (peut engendrer des ralentissements)
+ui.window.design.pedia.title.dynamic.enabled : Active/Désactive la mise à jour dynamique de l'article de l'Encyclopédie concernant un modèle d'astronef si le nom de ce modèle a été modifié dans la [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]] (peut engendrer des ralentissements)
 
 show-fleet-eta : Active/Désactive l'Estimation du Temps d'Arrivée d'une flotte (Estimated Time of Arrival soit ETA), en nombre de tours à partir du tour actuel, dans le Panneau de la flotte se trouvant dans la Fenêtre Flottes.
 

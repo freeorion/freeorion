@@ -49,10 +49,12 @@ namespace {
             default_columns_widths.push_back({"", 8*12});   // arbitrary default width
 
         for (unsigned int i = 0; i < default_columns_widths.size(); ++i) {
-            db.Add<std::string>("UI.objects-list-info-col-" + std::to_string(i),
+            db.Add<std::string>("ui.window.objects.columns.c" +
+                                std::to_string(i) + ".stringkey",
                                 UserStringNop("OPTIONS_DB_OBJECTS_LIST_COLUMN_INFO"),
                                 default_columns_widths[i].first);
-            db.Add<int>("UI.objects-list-width-col-" + std::to_string(i),
+            db.Add<int>("ui.window.objects.columns.c" +
+                        std::to_string(i) + ".width",
                         UserStringNop("OPTIONS_DB_OBJECTS_LIST_COLUMN_WIDTH"),
                         default_columns_widths[i].second,
                         RangedValidator<int>(1, 200));
@@ -214,7 +216,8 @@ namespace {
     int GetColumnWidth(int column) {
         if (column < 0)
             return ClientUI::Pts()*4;   // size for first (non-reference) column
-        std::string option_name = "UI.objects-list-width-col-" + std::to_string(column);
+        std::string option_name = "ui.window.objects.columns.c" +
+                                  std::to_string(column) + ".width";
         if (GetOptionsDB().OptionExists(option_name))
             return GetOptionsDB().Get<int>(option_name);
         return ClientUI::Pts()*10;
@@ -224,7 +227,8 @@ namespace {
     void SetColumnWidth(int column, int width) {
         if (column < 0)
             return;
-        std::string option_name = "UI.objects-list-width-col-" + std::to_string(column);
+        std::string option_name = "ui.window.objects.columns.c" +
+                                  std::to_string(column) + ".width";
         if (GetOptionsDB().OptionExists(option_name))
             GetOptionsDB().Set(option_name, width);
     }
@@ -233,7 +237,8 @@ namespace {
     std::string GetColumnName(int column) {
         if (column < 0)
             return "";
-        std::string option_name = "UI.objects-list-info-col-" + std::to_string(column);
+        std::string option_name = "ui.window.objects.columns.c" +
+                                  std::to_string(column) + ".stringkey";
         if (GetOptionsDB().OptionExists(option_name))
             return GetOptionsDB().Get<std::string>(option_name);
         return "";
@@ -242,7 +247,8 @@ namespace {
     void SetColumnName(int column, const std::string& name) {
         if (column < 0)
             return;
-        std::string option_name = "UI.objects-list-info-col-" + std::to_string(column);
+        std::string option_name = "ui.window.objects.columns.c" +
+                                  std::to_string(column) + ".stringkey";
         if (GetOptionsDB().OptionExists(option_name))
             GetOptionsDB().Set(option_name, name);
     }
@@ -250,7 +256,8 @@ namespace {
     const ValueRef::ValueRefBase<std::string>* GetColumnValueRef(int column) {
         if (column < 0)
             return nullptr;
-        std::string option_name = "UI.objects-list-info-col-" + std::to_string(column);
+        std::string option_name = "ui.window.objects.columns.c" +
+                                  std::to_string(column) + ".stringkey";
         if (!GetOptionsDB().OptionExists(option_name))
             return nullptr;
         std::string column_ref_name = GetOptionsDB().Get<std::string>(option_name);

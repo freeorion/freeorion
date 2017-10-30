@@ -465,7 +465,7 @@ namespace {
         m_is_new_game = false;
 
         // If requested on the first turn copy all of the saved designs to the client empire.
-        if (GetOptionsDB().Get<bool>("auto-add-saved-designs")) {
+        if (GetOptionsDB().Get<bool>("content.shipdesign.saved.enabled")) {
             const auto empire_id = HumanClientApp::GetApp()->EmpireID();
             TraceLogger() << "Adding saved designs to empire.";
             for (const auto& uuid : m_ordered_uuids)
@@ -758,7 +758,7 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
         return;
 
     // If requested initialize the current designs to all designs known by the empire
-    if(GetOptionsDB().Get<bool>("auto-add-default-designs")) {
+    if(GetOptionsDB().Get<bool>("content.shipdesign.default.enabled")) {
 
         // Assume that on new game start the server assigns the ids in an order
         // that makes sense for the UI.
@@ -878,7 +878,7 @@ void PartControl::CompleteConstruction() {
     SetDragDropDataType(PART_CONTROL_DROP_TYPE_STRING);
 
     //DebugLogger() << "PartControl::PartControl part name: " << m_part->Name();
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
         ClientUI::PartIcon(m_part->Name()),
         UserString(m_part->Name()),
@@ -1887,7 +1887,7 @@ BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h, const std::stri
 
     m_hull_panel = GG::Wnd::Create<HullAndNamePanel>(w, h, hull, name);
 
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 }
 
 void BasesListBox::BasesListBoxRow::CompleteConstruction() {
@@ -2577,9 +2577,9 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     };
 
     // toggle the option to add all saved designs at game start.
-    const auto add_defaults = GetOptionsDB().Get<bool>("auto-add-default-designs");
+    const auto add_defaults = GetOptionsDB().Get<bool>("content.shipdesign.default.enabled");
     auto toggle_add_default_designs_at_game_start_action = [add_defaults]() {
-        GetOptionsDB().Set<bool>("auto-add-default-designs", !add_defaults);
+        GetOptionsDB().Set<bool>("content.shipdesign.default.enabled", !add_defaults);
     };
 
     // create popup menu with a commands in it
@@ -2649,9 +2649,9 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
     };
 
     // toggle the option to add all saved designs at game start.
-    const auto add_all = GetOptionsDB().Get<bool>("auto-add-saved-designs");
+    const auto add_all = GetOptionsDB().Get<bool>("content.shipdesign.saved.enabled");
     auto toggle_add_all_saved_game_start_action = [add_all]() {
-        GetOptionsDB().Set<bool>("auto-add-saved-designs", !add_all);
+        GetOptionsDB().Set<bool>("content.shipdesign.saved.enabled", !add_all);
     };
 
     
@@ -3077,7 +3077,7 @@ void SlotControl::CompleteConstruction() {
     m_background->Show();
     AttachChild(m_background);
 
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     // set up empty slot tool tip
     std::string title_text;
@@ -3251,7 +3251,7 @@ void SlotControl::SetPart(const PartType* part_type) {
         // double click clears slot
         m_part_control->DoubleClickedSignal.connect(
             [this](const PartType*){ this->SlotContentsAlteredSignal(nullptr); });
-        SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
         // set part occupying slot's tool tip to say slot type
         std::string title_text;
@@ -3512,8 +3512,8 @@ void DesignWnd::MainPanel::CompleteConstruction() {
     m_confirm_button = Wnd::Create<CUIButton>(UserString("DESIGN_WND_ADD_FINISHED"));
     m_clear_button = Wnd::Create<CUIButton>(UserString("DESIGN_WND_CLEAR"));
 
-    m_replace_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_confirm_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_replace_button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_confirm_button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     AttachChild(m_design_name_label);
     AttachChild(m_design_name);
@@ -4177,7 +4177,7 @@ void DesignWnd::MainPanel::DesignChanged() {
 void DesignWnd::MainPanel::DesignNameChanged() {
     if (m_disabled_by_name || (!IsDesignNameValid() && !m_confirm_button->Disabled()))
         DesignChangedSignal();
-    else if (GetOptionsDB().Get<bool>("UI.design-pedia-dynamic"))
+    else if (GetOptionsDB().Get<bool>("ui.window.design.pedia.title.dynamic.enabled"))
         DesignNameChangedSignal();
     else
         RefreshIncompleteDesign();

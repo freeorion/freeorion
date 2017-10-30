@@ -641,21 +641,21 @@ def create_character(aggression=fo.aggression.maniacal, empire_id=0):
 def get_trait_bypass_value(name, default, sentinel):
     """Fetch a bypassed trait value or return the default from OptionsDB.
 
-    In OptionsDB a section AI.config.trait can contain default trait
+    In OptionsDB a section ai.config.trait can contain default trait
     values for all of the AIs or specific AIs which will override the
     default value passed into this function.
 
     If there is an XML element in config.xml/persistent_config.xml
-    AI.config.trait.<name of trait here>.force
+    ai.trait.<name of trait here>.force.enabled
     with a non zero value
 
-    ,then the value of AI.config.trait.<name of trait here>.<AI ID number here>
+    ,then the value of ai.trait.<name of trait here>.ai_<AI ID number here>
 
     will be checked.  If it is not the sentinel value (typically -1) the it
     will be returned as the trait's value.
 
     Otherwise the value of
-    AI.config.trait.<name of trait here>.all
+    ai.trait.<name of trait here>.default
     is checked.  Again if it is not the sentinel value it will ovverride
     the returned value for trait.
 
@@ -665,31 +665,33 @@ def get_trait_bypass_value(name, default, sentinel):
     Here is an example section providing override values aggression and the
     empire-id trait.
 
-    <mAI>
-      <config>
-        <trait>
-          <aggression>
-            <force>1</force>
-            <all>4</all>
-            <AI_0>5</AI_0>
-            <AI_1>4</AI_1>
-            <AI_2>3</AI_2>
-            <AI_3>2</AI_3>
-            <AI_4>1</AI_4>
-            <AI_5>0</AI_5>
-          </aggression>
-          <empire-id>
-            <force>1</force>
-            <AI_0>5</AI_0>
-            <AI_1>4</AI_1>
-            <AI_2>3</AI_2>
-            <AI_3>2</AI_3>
-            <AI_4>1</AI_4>
-            <AI_5>0</AI_5>
-          </empire-id>
-        </trait>
-      </config>
-    </mAI>
+    <ai>
+      <trait>
+        <aggression>
+          <force>
+            <enabled>1</enabled>
+          </force>
+          <default>4</default>
+          <ai_0>5</ai_0>
+          <ai_1>4</ai_1>
+          <ai_2>3</ai_2>
+          <ai_3>2</ai_3>
+          <ai_4>1</ai_4>
+          <ai_5>0</ai_5>
+        </aggression>
+        <empire-id>
+          <force>
+            <enabled>1</enabled>
+          </force>
+          <ai_0>5</ai_0>
+          <ai_1>4</ai_1>
+          <ai_2>3</ai_2>
+          <ai_3>2</ai_3>
+          <ai_4>1</ai_4>
+          <ai_5>0</ai_5>
+        </empire-id>
+      </trait>
+    </ai>
 
     :param name: Name of the trait.
     :type name: string
@@ -702,12 +704,12 @@ def get_trait_bypass_value(name, default, sentinel):
 
     """
 
-    force_option = "AI.config.trait.%s.force" % (name,)
+    force_option = "ai.trait.%s.force.enabled" % (name.lower(),)
     if not fo.getOptionsDBOptionBool(force_option):
         return default
 
-    per_id_option = "AI.config.trait.%s.%s" % (name, fo.playerName())
-    all_id_option = "AI.config.trait.%s.all" % (name,)
+    per_id_option = "ai.trait.%s.%s" % (name.lower(), fo.playerName().lower())
+    all_id_option = "ai.trait.%s.default" % (name.lower(),)
 
     trait = fo.getOptionsDBOptionInt(per_id_option)
     if trait is None or trait == sentinel:

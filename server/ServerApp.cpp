@@ -247,8 +247,8 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
     std::stringstream max_aggr_str;
     max_aggr_str << max_aggression;
     args.push_back(max_aggr_str.str());
-    args.push_back("--resource-dir");
-    args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
+    args.push_back("--content.path");
+    args.push_back("\"" + GetOptionsDB().Get<std::string>("content.path") + "\"");
 
     auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
     if (!force_log_level.empty()) {
@@ -1626,7 +1626,7 @@ Networking::ClientType ServerApp::GetPlayerClientType(int player_id) const {
 }
 
 int ServerApp::EffectsProcessingThreads() const
-{ return GetOptionsDB().Get<int>("effects-threads-server"); }
+{ return GetOptionsDB().Get<int>("effects.server.threads"); }
 
 void ServerApp::AddEmpireTurn(int empire_id)
 { m_turn_sequence[empire_id].reset(nullptr); }
