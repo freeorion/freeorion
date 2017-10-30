@@ -977,6 +977,9 @@ ERROR_PLAYER_NAME_ALREADY_USED
 ERROR_WRONG_PASSWORD
 Mot de passe erroné pour le joueur %1%.
 
+ERROR_NOT_ENOUGH_HUMAN_PLAYERS
+Pas assez de joueurs humains.
+
 ERROR_CONNECTION_WAS_REPLACED
 Votre connection a été mise à jour.
 
@@ -1106,6 +1109,12 @@ Démarre le serveur en mode sans hôte. Le serveur accepte les joueurs dans le s
 
 OPTIONS_DB_SKIP_CHECKSUM
 Ignore le contrôle du dossier de ressources. Ceci permet un démarrage plus rapide lorsque le client et le serveur se trouve sur la même machine, utilisant le même dossier de ressources.
+
+OPTIONS_DB_MPLOBBY_MAX_AI
+Limite le nombre d'IAs dans une partie multijoueurs. Une valeur de -1 correspond à un nombre illimité.
+
+OPTIONS_DB_MPLOBBY_MIN_HUMAN
+Définit le nombre minimum de joueurs humains requis pour démarrer une partie multijoueurs.
 
 OPTIONS_DB_GENERATE_CONFIG_XML
 Génère un fichier config.xml à partir des réglages contenus dans les fichiers config.xml existants et donnés dans la ligne de commande. Ceci écrasera le fichier config.xml actuel, s'il existe.
@@ -1512,6 +1521,9 @@ Fixe le délai entre le maintien d'un bouton de la souris et l'activation de la 
 
 OPTIONS_DB_MOUSE_REPEAT_INTERVAL
 Fixe le délai de répétition de clics quand un bouton de la souris est maintenu.
+
+OPTIONS_DB_DISPLAY_TIMESTAMP
+Active l'horodatage des messages dans la fenêtre de messagerie.
 
 OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
 Si activé, cliquer sur plusieurs boutons de flotte ouvrent plusieurs Fenêtres Flottes en même temps. Si désactivé, toute ouverture d'une Fenêtre Flottes ferme celle précédemment affichée.
@@ -2339,6 +2351,9 @@ Affichage des planètes dans le panneau latéral
 
 OPTIONS_AUTO_REPOSITION_WINDOWS
 Repositionnement automatique des fenêtres
+
+OPTIONS_DISPLAY_TIMESTAMP
+Afficher horodatage messagerie
 
 OPTIONS_MISC_UI
 Options diverses de l'interface utilisateur
