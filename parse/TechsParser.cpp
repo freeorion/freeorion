@@ -5,6 +5,7 @@
 #include "EffectParser.h"
 #include "ValueRefParser.h"
 
+#include "../universe/Effect.h"
 #include "../universe/Species.h"
 #include "../universe/Tech.h"
 #include "../util/Directories.h"
@@ -20,7 +21,7 @@
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<ItemSpec>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::set<std::string>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
     inline ostream& operator<<(ostream& os, const Tech::TechInfo&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<TechCategory>>&) { return os; }
 }
@@ -48,7 +49,7 @@ namespace {
 
     void insert_tech(TechManager::TechContainer& techs,
                      const Tech::TechInfo& tech_info,
-                     const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+                     const parse::effects_group_payload& effects,
                      const std::set<std::string>& prerequisites,
                      const std::vector<ItemSpec>& unlocked_items,
                      const std::string& graphic)
@@ -225,7 +226,7 @@ namespace {
                 Tech::TechInfo,
                 std::set<std::string>,
                 std::vector<ItemSpec>,
-                std::vector<std::shared_ptr<Effect::EffectsGroup>>,
+                parse::effects_group_payload,
                 std::string,
                 Tech*
             >

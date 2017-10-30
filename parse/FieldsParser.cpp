@@ -4,6 +4,7 @@
 #include "EffectParser.h"
 
 #include "../universe/Condition.h"
+#include "../universe/Effect.h"
 #include "../universe/Field.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -13,7 +14,7 @@
 
 #if DEBUG_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
     inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<FieldType>>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<FieldType>>&) { return os; }
 }
@@ -25,7 +26,7 @@ namespace {
     void insert_fieldtype(std::map<std::string, std::unique_ptr<FieldType>>& fieldtypes,
                           const std::string& name, const std::string& description,
                           float stealth, const std::set<std::string>& tags,
-                          const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+                          const parse::effects_group_payload& effects,
                           const std::string& graphic)
     {
         // TODO use make_unique when converting to C++14
@@ -99,7 +100,7 @@ namespace {
                 std::string,
                 float,
                 std::set<std::string>,
-                std::vector<std::shared_ptr<Effect::EffectsGroup>>
+                parse::effects_group_payload
             >
         > field_rule;
 

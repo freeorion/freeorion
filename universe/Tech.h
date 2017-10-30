@@ -4,6 +4,7 @@
 #include "ValueRefFwd.h"
 
 #include "EnumsFwd.h"
+#include "../parse/MovableEnvelope.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
@@ -71,7 +72,7 @@ public:
     /** basic ctor taking helper struct to reduce number of direct parameters
       * in order to making parsing work. */
     Tech(const TechInfo& tech_info,
-         const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+         const std::vector<parse::MovableEnvelope<Effect::EffectsGroup>>& effects,
          const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
          const std::string& graphic);
 

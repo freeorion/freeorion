@@ -175,11 +175,13 @@ BuildingType::BuildingType(const std::string& name,
     m_production_special_consumption(),
     m_location(common_params.location.OpenEnvelope().release()),
     m_enqueue_location(common_params.enqueue_location.OpenEnvelope().release()),
-    m_effects(common_params.effects),
+    m_effects(),
     m_icon(icon)
 {
     m_production_meter_consumption = UnpackageConsumptionMap(common_params.production_meter_consumption);
     m_production_special_consumption = UnpackageConsumptionMap(common_params.production_special_consumption);
+    for (auto&& effect : common_params.effects)
+        m_effects.emplace_back(effect.OpenEnvelope());
 
     Init();
     for (const std::string& tag : common_params.tags)

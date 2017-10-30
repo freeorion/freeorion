@@ -34,7 +34,7 @@ namespace parse { namespace detail {
                 bool,
                 std::set<std::string>,
                 parse::MovableEnvelope<Condition::ConditionBase>,
-                std::vector<std::shared_ptr<Effect::EffectsGroup>>,
+                std::vector<parse::MovableEnvelope<Effect::EffectsGroup>>,
                 CommonParams::ConsumptionMapPackaged<MeterType>,
                 CommonParams::ConsumptionMapPackaged<std::string>,
                 parse::MovableEnvelope<Condition::ConditionBase>

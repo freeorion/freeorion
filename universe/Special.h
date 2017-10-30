@@ -7,6 +7,7 @@
 #include <boost/serialization/nvp.hpp>
 #include <boost/optional/optional.hpp>
 
+#include "../parse/MovableEnvelope.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
@@ -33,7 +34,7 @@ public:
     /** \name Structors */ //@{
     Special(const std::string& name, const std::string& description,
             ValueRef::ValueRefBase<double>* stealth,
-            const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+            const std::vector<parse::MovableEnvelope<Effect::EffectsGroup>>& effects,
             double spawn_rate = 1.0, int spawn_limit = 99999,
             ValueRef::ValueRefBase<double>* initial_capaicty = nullptr,
             Condition::ConditionBase* location = nullptr,

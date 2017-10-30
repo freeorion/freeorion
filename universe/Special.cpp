@@ -63,7 +63,7 @@ SpecialsManager& GetSpecialsManager() {
 /////////////////////////////////////////////////
 Special::Special(const std::string& name, const std::string& description,
                  ValueRef::ValueRefBase<double>* stealth,
-                 const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+                 const std::vector<parse::MovableEnvelope<Effect::EffectsGroup>>& effects,
                  double spawn_rate /*= 1.0*/, int spawn_limit /*= 99999*/,
                  ValueRef::ValueRefBase<double>* initial_capaicty /*= nullptr*/,
                  Condition::ConditionBase* location /*= nullptr*/,
@@ -71,13 +71,18 @@ Special::Special(const std::string& name, const std::string& description,
     m_name(name),
     m_description(description),
     m_stealth(stealth),
-    m_effects(effects),
+    m_effects(),
     m_spawn_rate(spawn_rate),
     m_spawn_limit(spawn_limit),
     m_initial_capacity(initial_capaicty),
     m_location(location),
     m_graphic(graphic)
-{ Init(); }
+{
+    for (auto&& effect : effects)
+        m_effects.push_back(effect.OpenEnvelope());
+
+    Init();
+}
 
 Special::~Special() {
     delete m_stealth;

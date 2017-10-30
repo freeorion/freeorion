@@ -52,7 +52,7 @@ struct FO_COMMON_API CommonParams {
                  bool producible_,
                  const std::set<std::string>& tags_,
                  const parse::MovableEnvelope<Condition::ConditionBase>& location_,
-                 const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects_,
+                 const std::vector<parse::MovableEnvelope<Effect::EffectsGroup>>& effects_,
                  const ConsumptionMapPackaged<MeterType>& production_meter_consumption_,
                  const ConsumptionMapPackaged<std::string>& production_special_consumption_,
                  const parse::MovableEnvelope<Condition::ConditionBase>& enqueue_location_);
@@ -66,11 +66,17 @@ struct FO_COMMON_API CommonParams {
     ConsumptionMapPackaged<std::string>                      production_special_consumption;
     parse::MovableEnvelope<Condition::ConditionBase> location;
     parse::MovableEnvelope<Condition::ConditionBase> enqueue_location;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>> effects;
+    std::vector<parse::MovableEnvelope<Effect::EffectsGroup>> effects;
 };
 
+/** Open parsed envelopes of consumption pairs. Return a map of unique_ptr. */
 template <typename T>
 FO_COMMON_API CommonParams::ConsumptionMap<T> UnpackageConsumptionMap(const CommonParams::ConsumptionMapPackaged<T>& in);
+
+/** Open parsed envelopes of T. Return a vector of unique_ptr. */
+template <typename T>
+FO_COMMON_API std::vector<std::unique_ptr<T>> UnpackageMovableVector(
+    const std::vector<parse::MovableEnvelope<T>>& in);
 
 struct MoreCommonParams {
     MoreCommonParams() :
@@ -144,7 +150,7 @@ public:
     //@}
 
 private:
-    void Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects);
+    void Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects);
 
     std::string                     m_name;
     std::string                     m_description;
@@ -336,7 +342,7 @@ public:
     //@}
 
 private:
-    void Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects);
+    void Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects);
 
     std::string                                             m_name;
     std::string                                             m_description;

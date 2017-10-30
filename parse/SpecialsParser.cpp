@@ -2,6 +2,7 @@
 
 #include "EffectParser.h"
 
+#include "../universe/Effect.h"
 #include "../universe/Special.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -10,7 +11,7 @@
 
 #if DEBUG_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
     inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<Special>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<Special>&) { return os; }
 }
@@ -23,7 +24,7 @@ namespace {
         special_pod(std::string name_,
                     std::string description_,
                     ValueRef::ValueRefBase<double>* stealth_,
-                    const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects_,
+                    const parse::effects_group_payload& effects_,
                     double spawn_rate_,
                     int spawn_limit_,
                     ValueRef::ValueRefBase<double>* initial_capacity_,
@@ -43,7 +44,7 @@ namespace {
         std::string name;
         std::string description;
         ValueRef::ValueRefBase<double>* stealth;
-        const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects;
+        const parse::effects_group_payload& effects;
         double spawn_rate;
         int spawn_limit;
         ValueRef::ValueRefBase<double>* initial_capacity;
@@ -159,7 +160,7 @@ namespace {
                 double,
                 int,
                 Condition::ConditionBase*,
-                std::vector<std::shared_ptr<Effect::EffectsGroup>>,
+                parse::effects_group_payload,
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<double>*
             >

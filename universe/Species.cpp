@@ -93,7 +93,7 @@ Species::Species(const SpeciesStrings& strings,
                  const std::vector<FocusType>& foci,
                  const std::string& preferred_focus,
                  const std::map<PlanetType, PlanetEnvironment>& planet_environments,
-                 const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+                 const std::vector<parse::MovableEnvelope<Effect::EffectsGroup>>& effects,
                  const SpeciesParams& params,
                  const std::set<std::string>& tags,
                  const std::string& graphic) :
@@ -103,7 +103,7 @@ Species::Species(const SpeciesStrings& strings,
     m_foci(foci),
     m_preferred_focus(preferred_focus),
     m_planet_environments(planet_environments),
-    m_effects(effects),
+    m_effects(),
     m_location(),
     m_playable(params.playable),
     m_native(params.native),
@@ -112,6 +112,9 @@ Species::Species(const SpeciesStrings& strings,
     m_tags(),
     m_graphic(graphic)
 {
+    for (auto&& effect : effects)
+        m_effects.push_back(effect.OpenEnvelope());
+
     Init();
     for (const std::string& tag : tags)
         m_tags.insert(boost::to_upper_copy<std::string>(tag));

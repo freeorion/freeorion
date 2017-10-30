@@ -34,7 +34,8 @@ namespace parse {
         std::unique_ptr<Impl> m_impl;
     };
 
-    using effects_group_signature = std::vector<std::shared_ptr<Effect::EffectsGroup>> ();
+    using effects_group_payload = std::vector<parse::MovableEnvelope<Effect::EffectsGroup>>;
+    using effects_group_signature = effects_group_payload ();
     using effects_group_rule = detail::rule<effects_group_signature>;
 
     struct effects_group_grammar : public detail::grammar<effects_group_signature> {
@@ -44,7 +45,7 @@ namespace parse {
                               const value_ref_grammar<std::string>& string_grammar);
 
         typedef detail::rule<
-            std::shared_ptr<Effect::EffectsGroup> (),
+            parse::MovableEnvelope<Effect::EffectsGroup> (),
             boost::spirit::qi::locals<
                 parse::MovableEnvelope<Condition::ConditionBase>,
                 parse::MovableEnvelope<Condition::ConditionBase>,

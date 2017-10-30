@@ -100,8 +100,7 @@ namespace parse {
                 ('[' > +effects_grammar [ push_back(_d, construct_movable_(_1)) ] > ']')
                 |    effects_grammar [ push_back(_d, construct_movable_(_1)) ]
                 )
-            [ _val = construct<std::shared_ptr<Effect::EffectsGroup>>(
-                    new_<Effect::EffectsGroup>(_a, _b, _d, _e, _c, _f, _g)) ]
+            [ _val = construct_movable_(new_<Effect::EffectsGroup>(_a, _b, _d, _e, _c, _f, _g)) ]
             ;
 
         start

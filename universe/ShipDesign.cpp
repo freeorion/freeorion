@@ -197,7 +197,7 @@ CommonParams::CommonParams(const parse::MovableEnvelope<ValueRef::ValueRefBase<d
                            bool producible_,
                            const std::set<std::string>& tags_,
                            const parse::MovableEnvelope<Condition::ConditionBase>& location_,
-                           const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects_,
+                           const std::vector<parse::MovableEnvelope<Effect::EffectsGroup>>& effects_,
                            const ConsumptionMapPackaged<MeterType>& production_meter_consumption_,
                            const ConsumptionMapPackaged<std::string>& production_special_consumption_,
                            const parse::MovableEnvelope<Condition::ConditionBase>& enqueue_location_) :
@@ -224,6 +224,14 @@ CommonParams::ConsumptionMap<T> UnpackageConsumptionMap(const CommonParams::Cons
     for (auto&& name_and_values : in)
         retval[name_and_values.first] = {name_and_values.second.first.OpenEnvelope(),
                                          name_and_values.second.second.OpenEnvelope()};
+    return retval;
+}
+
+template <typename T>
+std::vector<std::unique_ptr<T>> UnpackageMovableVector(const std::vector<parse::MovableEnvelope<T>>& in) {
+    std::vector<std::unique_ptr<T>> retval;
+    for (auto&& val : in)
+        retval.push_back(val.OpenEnvelope());
     return retval;
 }
 
@@ -341,12 +349,7 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
     m_add_standard_capacity_effect(add_standard_capacity_effect)
 {
     //TraceLogger() << "part type: " << m_name << " producible: " << m_producible << std::endl;
-    // std::vector<std::unique_ptr<Effect::EffectsGroup>>& effects;
-    // for (auto&& effect : common_params.effects)
-    //     effects.push_back(effect.OpenEnvelope());
-    // Init(effects);
-    Init(common_params.effects);
-
+    Init(UnpackageMovableVector(common_params.effects));
     m_production_meter_consumption = UnpackageConsumptionMap(common_params.production_meter_consumption);
     m_production_special_consumption = UnpackageConsumptionMap(common_params.production_special_consumption);
 
@@ -354,7 +357,7 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
         m_tags.insert(boost::to_upper_copy<std::string>(tag));
 }
 
-void PartType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects) {
+void PartType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects) {
     if ((m_capacity != 0 || m_secondary_stat != 0) && m_add_standard_capacity_effect) {
         switch (m_class) {
         case PC_COLONY:
@@ -404,9 +407,9 @@ void PartType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& ef
         }
     }
 
-    for (auto& effect : effects) {
+    for (auto&& effect : effects) {
         effect->SetTopLevelContent(m_name);
-        m_effects.push_back(effect);
+        m_effects.emplace_back(std::move(effect));
     }
 }
 
@@ -601,11 +604,7 @@ HullType::HullType(const HullTypeStats& stats, const CommonParams& common_params
     m_icon(icon)
 {
     //TraceLogger() << "hull type: " << m_name << " producible: " << m_producible << std::endl;
-    // std::vector<std::unique_ptr<Effect::EffectsGroup>>& effects;
-    // for (auto&& effect : common_params.effects)
-    //     effects.push_back(effect.OpenEnvelope());
-    // Init(effects);
-    Init(common_params.effects);
+    Init(UnpackageMovableVector(common_params.effects));
 
     m_production_meter_consumption = UnpackageConsumptionMap(common_params.production_meter_consumption);
     m_production_special_consumption = UnpackageConsumptionMap(common_params.production_special_consumption);
@@ -621,7 +620,7 @@ HullType::Slot::Slot() :
 HullType::~HullType()
 {}
 
-void HullType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects) {
+void HullType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects) {
     if (m_fuel != 0)
         m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_fuel));
     if (m_stealth != 0)
@@ -631,9 +630,9 @@ void HullType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& ef
     if (m_speed != 0)
         m_effects.push_back(IncreaseMeter(METER_SPEED,          m_speed,        "RULE_SHIP_SPEED_FACTOR"));
 
-    for (auto& effect : effects) {
+    for (auto&& effect : effects) {
         effect->SetTopLevelContent(m_name);
-        m_effects.push_back(effect);
+        m_effects.emplace_back(std::move(effect));
     }
 }
 

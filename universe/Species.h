@@ -3,6 +3,7 @@
 
 
 #include "EnumsFwd.h"
+#include "../parse/MovableEnvelope.h"
 #include "../util/Export.h"
 #include "../util/Serialize.h"
 #include "../util/Pending.h"
@@ -121,7 +122,7 @@ public:
             const std::vector<FocusType>& foci,
             const std::string& preferred_focus,
             const std::map<PlanetType, PlanetEnvironment>& planet_environments,
-            const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+            const std::vector<parse::MovableEnvelope<Effect::EffectsGroup>>& effects,
             const SpeciesParams& params,
             const std::set<std::string>& tags,
             const std::string& graphic);

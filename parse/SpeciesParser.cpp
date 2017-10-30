@@ -6,6 +6,7 @@
 #include "EffectParser.h"
 #include "ConditionParserImpl.h"
 
+#include "../universe/Effect.h"
 #include "../universe/Species.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -17,7 +18,7 @@
 namespace std {
     inline ostream& operator<<(ostream& os, const FocusType&) { return os; }
     inline ostream& operator<<(ostream& os, const std::vector<FocusType>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<PlanetType, PlanetEnvironment>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const PlanetType, PlanetEnvironment>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::map<PlanetType, PlanetEnvironment>&) { return os; }
@@ -34,7 +35,7 @@ namespace {
                         const std::vector<FocusType>& foci,
                         const std::string& preferred_focus,
                         const std::map<PlanetType, PlanetEnvironment>& planet_environments,
-                        const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+                        const parse::effects_group_payload& effects,
                         const SpeciesParams& params,
                         const std::set<std::string>& tags,
                         const std::string& graphic)
@@ -198,7 +199,7 @@ namespace {
         > foci_rule;
 
         typedef parse::detail::rule<
-            void (std::vector<std::shared_ptr<Effect::EffectsGroup>>&)
+            void (parse::effects_group_payload&)
         > effects_rule;
 
         typedef parse::detail::rule<
@@ -240,7 +241,7 @@ namespace {
                 SpeciesParams,
                 std::set<std::string>,  // tags
                 std::vector<FocusType>,
-                std::vector<std::shared_ptr<Effect::EffectsGroup>>,
+                parse::effects_group_payload,
                 std::map<PlanetType, PlanetEnvironment>,
                 std::string             // graphic
             >

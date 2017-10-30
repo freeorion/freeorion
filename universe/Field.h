@@ -3,6 +3,7 @@
 
 #include "UniverseObject.h"
 
+#include "../parse/MovableEnvelope.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
@@ -77,7 +78,7 @@ public:
     /** \name Structors */ //@{
     FieldType(const std::string& name, const std::string& description,
               float stealth, const std::set<std::string>& tags,
-              const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+              const std::vector<parse::MovableEnvelope<Effect::EffectsGroup>>& effects,
               const std::string& graphic);
     ~FieldType();
     //@}
