@@ -54,8 +54,8 @@ namespace {
                      const std::vector<ItemSpec>& unlocked_items,
                      const std::string& graphic)
     {
-        auto tech_ptr = std::unique_ptr<Tech>(
-            new Tech(tech_info, effects, prerequisites, unlocked_items, graphic));
+        auto tech_ptr = boost::make_unique<Tech>(
+            tech_info, effects, prerequisites, unlocked_items, graphic);
 
         if (check_tech(techs, tech_ptr)) {
             g_categories_seen->insert(tech_ptr->Category());

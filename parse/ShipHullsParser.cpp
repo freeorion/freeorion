@@ -14,7 +14,8 @@
 #include "../universe/ShipDesign.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 #define DEBUG_PARSERS 0
 
@@ -38,8 +39,8 @@ namespace {
                          const std::vector<HullType::Slot>& slots,
                          const std::string& icon, const std::string& graphic)
     {
-        auto hulltype = std::unique_ptr<HullType>(
-            new HullType(stats, common_params, more_common_params, slots, icon, graphic));
+        auto hulltype = boost::make_unique<HullType>(
+            stats, common_params, more_common_params, slots, icon, graphic);
         hulltypes.emplace(hulltype->Name(), std::move(hulltype));
     }
 

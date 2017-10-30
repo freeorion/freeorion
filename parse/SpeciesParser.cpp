@@ -10,6 +10,8 @@
 #include "../universe/Species.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 
 #define DEBUG_PARSERS 0
@@ -40,9 +42,8 @@ namespace {
                         const std::set<std::string>& tags,
                         const std::string& graphic)
     {
-        // TODO use make_unique when converting to C++14
-        auto species_ptr = std::unique_ptr<Species>(
-            new Species(strings, foci, preferred_focus, planet_environments, effects, params, tags, graphic));
+        auto species_ptr = boost::make_unique<Species>(
+            strings, foci, preferred_focus, planet_environments, effects, params, tags, graphic);
 
         species.insert(std::make_pair(species_ptr->Name(), std::move(species_ptr)));
     }

@@ -10,6 +10,8 @@
 #include "../universe/Enums.h"
 #include "../universe/ValueRef.h"
 
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 #define DEBUG_PARSERS 0
 
@@ -31,9 +33,8 @@ namespace {
                          CaptureResult& capture_result,
                          const std::string& icon)
     {
-        // TODO use make_unique when converting to C++14
-        auto building_type = std::unique_ptr<BuildingType>(
-            new BuildingType(name, description, common_params, capture_result, icon));
+        auto building_type = boost::make_unique<BuildingType>(
+            name, description, common_params, capture_result, icon);
 
         building_types.insert(std::make_pair(building_type->Name(), std::move(building_type)));
     }

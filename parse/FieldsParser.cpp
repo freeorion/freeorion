@@ -8,6 +8,8 @@
 #include "../universe/Field.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 
 #define DEBUG_PARSERS 0
@@ -29,9 +31,8 @@ namespace {
                           const parse::effects_group_payload& effects,
                           const std::string& graphic)
     {
-        // TODO use make_unique when converting to C++14
-        auto fieldtype_ptr = std::unique_ptr<FieldType>(
-            new FieldType(name, description, stealth, tags, effects, graphic));
+        auto fieldtype_ptr = boost::make_unique<FieldType>(
+            name, description, stealth, tags, effects, graphic);
 
         fieldtypes.insert(std::make_pair(fieldtype_ptr->Name(), std::move(fieldtype_ptr)));
     }

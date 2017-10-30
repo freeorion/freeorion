@@ -14,6 +14,8 @@
 #include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 
 #define DEBUG_PARSERS 0
@@ -36,10 +38,9 @@ namespace {
                          std::vector<ShipSlotType> mountable_slot_types,
                          const std::string& icon, bool add_standard_capacity_effect)
     {
-        // TODO use make_unique when converting to C++14
-        auto part_type = std::unique_ptr<PartType>(
-            new PartType(part_class, capacity, stat2, common_params, more_common_params, mountable_slot_types, icon,
-                         add_standard_capacity_effect));
+        auto part_type = boost::make_unique<PartType>(
+            part_class, capacity, stat2, common_params, more_common_params, mountable_slot_types, icon,
+            add_standard_capacity_effect);
 
         part_types.insert(std::make_pair(part_type->Name(), std::move(part_type)));
     }

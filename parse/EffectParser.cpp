@@ -10,6 +10,8 @@
 #include "../universe/Effect.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 namespace parse {
 
@@ -43,7 +45,7 @@ namespace parse {
         const value_ref_grammar<std::string>& string_grammar
     ) :
         effects_parser_grammar::base_type(start, "effects_parser_grammar"),
-        m_impl(new effects_parser_grammar::Impl(*this, tok, labeller, condition_parser, string_grammar))
+        m_impl(boost::make_unique<effects_parser_grammar::Impl>(*this, tok, labeller, condition_parser, string_grammar))
     {
         start
             = m_impl->effect_parser_1

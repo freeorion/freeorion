@@ -6,6 +6,8 @@
 #include "../universe/Special.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 #define DEBUG_PARSERS 0
 
@@ -53,10 +55,9 @@ namespace {
     };
 
     void insert_special(std::map<std::string, std::unique_ptr<Special>>& specials, special_pod special_) {
-        // TODO use make_unique when converting to C++14
-        auto special_ptr = std::unique_ptr<Special>(
-            new Special(special_.name, special_.description, special_.stealth, special_.effects, special_.spawn_rate,
-                        special_.spawn_limit, special_.initial_capacity, special_.location, special_.graphic));
+        auto special_ptr = boost::make_unique<Special>(
+            special_.name, special_.description, special_.stealth, special_.effects, special_.spawn_rate,
+            special_.spawn_limit, special_.initial_capacity, special_.location, special_.graphic);
 
         specials.insert(std::make_pair(special_ptr->Name(), std::move(special_ptr)));
     }
