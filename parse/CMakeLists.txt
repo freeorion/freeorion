@@ -76,8 +76,3 @@ target_sources(freeorionparseobj
         ${CMAKE_CURRENT_LIST_DIR}/ValueRefParserImpl.cpp
         ${CMAKE_CURRENT_LIST_DIR}/VisibilityValueRefParser.cpp
 )
-
-target_sources(freeorioncommon
-     PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/MovableEnvelope.h
-)

@@ -13,11 +13,11 @@ namespace phoenix = boost::phoenix;
 namespace {
     template <typename T, typename U>
     void transform_T_and_U_ptr_vector_to_unique_ptr(
-        std::vector<std::pair<T, parse::MovableEnvelope<U>>>& out,
+        std::vector<std::pair<T, parse::detail::MovableEnvelope<U>>>& out,
         const std::vector<std::pair<T, U*>>& in
     ) {
         for (const auto& elem : in) {
-            out.emplace_back(elem.first, parse::MovableEnvelope<U>(std::unique_ptr<U>(elem.second)));
+            out.emplace_back(elem.first, parse::detail::MovableEnvelope<U>(std::unique_ptr<U>(elem.second)));
         }
     };
     BOOST_PHOENIX_ADAPT_FUNCTION(void,
@@ -27,6 +27,77 @@ namespace {
 }
 
 namespace parse { namespace detail {
+    using PassedMessageParams =  std::vector<std::pair<std::string,
+                                                       MovableEnvelope<ValueRef::ValueRefBase<std::string>>>>;
+
+    /** Open parsed envelopes of sit rep message params. */
+    Effect::GenerateSitRepMessage::MessageParams OpenEnvelopes(const PassedMessageParams& in) {
+        Effect::GenerateSitRepMessage::MessageParams retval;
+        for (auto&& name_and_value : in)
+            retval.emplace_back(name_and_value.first, name_and_value.second.OpenEnvelope());
+        return retval;
+    }
+
+    Effect::GenerateSitRepMessage* construct_GenerateSitRepMessage1(
+        const std::string& message_string, const std::string& icon,
+        const PassedMessageParams& message_parameters,
+        const parse::detail::MovableEnvelope<ValueRef::ValueRefBase<int>>& recipient_empire_id,
+        EmpireAffiliationType affiliation,
+        const std::string label = "",
+        bool stringtable_lookup = true)
+    {
+        return new Effect::GenerateSitRepMessage(
+            message_string,
+            icon,
+            OpenEnvelopes(message_parameters),
+            recipient_empire_id.OpenEnvelope(),
+            affiliation,
+            label,
+            stringtable_lookup
+        );
+    }
+
+    Effect::GenerateSitRepMessage* construct_GenerateSitRepMessage2(
+        const std::string& message_string, const std::string& icon,
+        const PassedMessageParams& message_parameters,
+        EmpireAffiliationType affiliation,
+        const parse::detail::MovableEnvelope<Condition::ConditionBase>& condition,
+        const std::string label = "",
+        bool stringtable_lookup = true)
+    {
+        return new Effect::GenerateSitRepMessage(
+            message_string,
+            icon,
+            OpenEnvelopes(message_parameters),
+            affiliation,
+            condition.OpenEnvelope(),
+            label,
+            stringtable_lookup
+        );
+    }
+
+    Effect::GenerateSitRepMessage* construct_GenerateSitRepMessage3(
+        const std::string& message_string, const std::string& icon,
+        const PassedMessageParams& message_parameters,
+        EmpireAffiliationType affiliation,
+        const std::string& label = "",
+        bool stringtable_lookup = true)
+    {
+        return new Effect::GenerateSitRepMessage(
+            message_string,
+            icon,
+            OpenEnvelopes(message_parameters),
+            affiliation,
+            label,
+            stringtable_lookup
+        );
+    }
+
+    BOOST_PHOENIX_ADAPT_FUNCTION(Effect::GenerateSitRepMessage*, construct_GenerateSitRepMessage1_, construct_GenerateSitRepMessage1, 7)
+    BOOST_PHOENIX_ADAPT_FUNCTION(Effect::GenerateSitRepMessage*, construct_GenerateSitRepMessage2_, construct_GenerateSitRepMessage2, 7)
+    BOOST_PHOENIX_ADAPT_FUNCTION(Effect::GenerateSitRepMessage*, construct_GenerateSitRepMessage3_, construct_GenerateSitRepMessage3, 6)
+
+
     effect_parser_rules_1::effect_parser_rules_1(
         const parse::lexer& tok,
         Labeller& labeller,
@@ -50,7 +121,7 @@ namespace parse { namespace detail {
         using phoenix::new_;
         using phoenix::construct;
         using phoenix::push_back;
-        const boost::phoenix::function<parse::construct_movable> construct_movable_;
+        const boost::phoenix::function<construct_movable> construct_movable_;
 
         set_empire_meter_1
             =    (tok.SetEmpireMeter_ >>   labeller.rule(Empire_token))
@@ -104,26 +175,38 @@ namespace parse { namespace detail {
                      >>  labeller.rule(Empire_token)
                     ) > int_rules.expr
 
-                    [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, construct_movable_(_1), _d, _e, _f) ]
+                    [ _val = construct_GenerateSitRepMessage1_(
+                            _a, _b, _c, construct_movable_(_1),
+                            _d, _e, _f) ]
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
                     (labeller.rule(Affiliation_token) >>  tok.CanSee_)
                     >   labeller.rule(Condition_token)   >   condition_parser
-                    [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_CAN_SEE, construct_movable_(_1), _e, _f) ]
+                    [ _val = construct_GenerateSitRepMessage2_(
+                            _a, _b, _c,
+                            AFFIL_CAN_SEE,
+                            construct_movable_(_1),
+                            _e, _f) ]
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
                     (labeller.rule(Affiliation_token) >>  tok.Human_)
                     >   labeller.rule(Condition_token)   >   condition_parser
-                    [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_HUMAN, construct_movable_(_1), _e, _f) ]
+                    [ _val = construct_GenerateSitRepMessage2_(
+                            _a, _b, _c,
+                            AFFIL_HUMAN,
+                            construct_movable_(_1),
+                            _e, _f) ]
                 )
                 |   (   // no empire id or condition specified, with or without an
                     // affiliation type: useful to specify no or all empires
                     (   (labeller.rule(Affiliation_token) > empire_affiliation_type_enum [ _d = _1 ])
                         |    eps [ _d = AFFIL_ANY ]
                     )
-                    [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _d, _e, _f) ]
+                    [ _val = construct_GenerateSitRepMessage3_(
+                            _a, _b, _c,
+                            _d, _e, _f) ]
                 )
 
             )

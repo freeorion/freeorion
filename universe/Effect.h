@@ -4,7 +4,6 @@
 #include "EffectAccounting.h"
 
 #include "../util/Export.h"
-#include "../parse/MovableEnvelope.h"
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -43,12 +42,6 @@ public:
     EffectsGroup(std::unique_ptr<Condition::ConditionBase>&& scope,
                  std::unique_ptr<Condition::ConditionBase>&& activation,
                  std::vector<std::unique_ptr<EffectBase>>&& effects,
-                 const std::string& accounting_label = "",
-                 const std::string& stacking_group = "", int priority = 0,
-                 const std::string& description = "");
-    EffectsGroup(const parse::MovableEnvelope<Condition::ConditionBase>& scope,
-                 const parse::MovableEnvelope<Condition::ConditionBase>& activation,
-                 const std::vector<parse::MovableEnvelope<EffectBase>>& effects,
                  const std::string& accounting_label = "",
                  const std::string& stacking_group = "", int priority = 0,
                  const std::string& description = "");
@@ -1190,26 +1183,24 @@ private:
 class FO_COMMON_API GenerateSitRepMessage : public EffectBase {
 public:
     using MessageParams =  std::vector<std::pair<
-        std::string, ValueRef::ValueRefBase<std::string>*>>;
-    using PassedMessageParams =  std::vector<std::pair<
-        std::string, parse::MovableEnvelope<ValueRef::ValueRefBase<std::string>>>>;
+        std::string, std::unique_ptr<ValueRef::ValueRefBase<std::string>>>>;
 
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
-                          PassedMessageParams& message_parameters,
-                          const parse::MovableEnvelope<ValueRef::ValueRefBase<int>>& recipient_empire_id,
+                          MessageParams&& message_parameters,
+                          std::unique_ptr<ValueRef::ValueRefBase<int>>&& recipient_empire_id,
                           EmpireAffiliationType affiliation,
                           const std::string label = "",
                           bool stringtable_lookup = true);
 
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
-                          PassedMessageParams& message_parameters,
+                          MessageParams&& message_parameters,
                           EmpireAffiliationType affiliation,
-                          const parse::MovableEnvelope<Condition::ConditionBase>& condition,
+                          std::unique_ptr<Condition::ConditionBase>&& condition,
                           const std::string label = "",
                           bool stringtable_lookup = true);
 
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
-                          PassedMessageParams& message_parameters,
+                          MessageParams&& message_parameters,
                           EmpireAffiliationType affiliation,
                           const std::string& label = "",
                           bool stringtable_lookup = true);
@@ -1231,7 +1222,7 @@ public:
     const std::string& Icon() const
     { return m_icon; }
 
-    MessageParams MessageParameters() const;
+    std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>* >> MessageParameters() const;
 
     ValueRef::ValueRefBase<int>* RecipientID() const
     { return m_recipient_empire_id.get(); }

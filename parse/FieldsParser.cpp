@@ -32,7 +32,7 @@ namespace {
                           const std::string& graphic)
     {
         auto fieldtype_ptr = boost::make_unique<FieldType>(
-            name, description, stealth, tags, effects, graphic);
+            name, description, stealth, tags, OpenEnvelopes(effects), graphic);
 
         fieldtypes.insert(std::make_pair(fieldtype_ptr->Name(), std::move(fieldtype_ptr)));
     }

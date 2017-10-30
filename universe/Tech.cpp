@@ -126,7 +126,7 @@ Tech::Tech(const std::string& name, const std::string& description, const std::s
 }
 
 Tech::Tech(const TechInfo& tech_info,
-           const std::vector<parse::MovableEnvelope<Effect::EffectsGroup>>& effects,
+           std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
            const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
            const std::string& graphic) :
     m_name(tech_info.name),
@@ -143,7 +143,7 @@ Tech::Tech(const TechInfo& tech_info,
     m_graphic(graphic)
 {
     for (auto&& effect : effects)
-        m_effects.push_back(effect.OpenEnvelope());
+        m_effects.emplace_back(std::move(effect));
     for (const std::string& tag : tech_info.tags)
         m_tags.insert(boost::to_upper_copy<std::string>(tag));
     Init();

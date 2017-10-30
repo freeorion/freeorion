@@ -15,6 +15,28 @@
 
 namespace parse {
 
+    detail::MovableEnvelope<Effect::EffectsGroup> construct_EffectsGroup(
+        const detail::MovableEnvelope<Condition::ConditionBase>& scope,
+        const detail::MovableEnvelope<Condition::ConditionBase>& activation,
+        const std::vector<detail::MovableEnvelope<Effect::EffectBase>>& effects,
+        const std::string& accounting_label = "",
+        const std::string& stacking_group = "", int priority = 0,
+        const std::string& description = "")
+    {
+        return detail::MovableEnvelope<Effect::EffectsGroup>(
+            boost::make_unique<Effect::EffectsGroup>(
+                scope.OpenEnvelope(),
+                activation.OpenEnvelope(),
+                OpenEnvelopes(effects),
+                accounting_label,
+                stacking_group,
+                priority,
+                description
+            ));
+    }
+    BOOST_PHOENIX_ADAPT_FUNCTION(detail::MovableEnvelope<Effect::EffectsGroup>,
+                                 construct_EffectsGroup_, construct_EffectsGroup, 7)
+
     /** effects_parser_grammar::Impl holds the rules for
         effects_parser_grammar. */
     struct effects_parser_grammar::Impl {
@@ -87,7 +109,7 @@ namespace parse {
         qi::_val_type _val;
         qi::lit_type lit;
         qi::eps_type eps;
-        const boost::phoenix::function<parse::construct_movable> construct_movable_;
+        const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
 
         effects_group
             =   tok.EffectsGroup_
@@ -102,7 +124,7 @@ namespace parse {
                 ('[' > +effects_grammar [ push_back(_d, construct_movable_(_1)) ] > ']')
                 |    effects_grammar [ push_back(_d, construct_movable_(_1)) ]
                 )
-            [ _val = construct_movable_(new_<Effect::EffectsGroup>(_a, _b, _d, _e, _c, _f, _g)) ]
+            [ _val = construct_EffectsGroup_(_a, _b, _d, _e, _c, _f, _g) ]
             ;
 
         start

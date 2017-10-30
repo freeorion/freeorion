@@ -18,26 +18,29 @@
 namespace parse { namespace detail {
 
     struct common_params_rules {
+        template <typename T>
+        using ConsumptionMapPackaged = std::map<T, std::pair<MovableEnvelope<ValueRef::ValueRefBase<double>>,
+                                                             MovableEnvelope<Condition::ConditionBase>>>;
         typedef rule<
             bool ()
             > producible_rule;
 
         typedef rule<
-            parse::MovableEnvelope<Condition::ConditionBase> ()
+            MovableEnvelope<Condition::ConditionBase> ()
             > location_rule;
 
         typedef rule<
-            CommonParams (),
+            MovableEnvelope<CommonParams> (),
             boost::spirit::qi::locals<
-                parse::MovableEnvelope<ValueRef::ValueRefBase<double>>,
-                parse::MovableEnvelope<ValueRef::ValueRefBase<int>>,
+                MovableEnvelope<ValueRef::ValueRefBase<double>>,
+                MovableEnvelope<ValueRef::ValueRefBase<int>>,
                 bool,
                 std::set<std::string>,
-                parse::MovableEnvelope<Condition::ConditionBase>,
-                std::vector<parse::MovableEnvelope<Effect::EffectsGroup>>,
-                CommonParams::ConsumptionMapPackaged<MeterType>,
-                CommonParams::ConsumptionMapPackaged<std::string>,
-                parse::MovableEnvelope<Condition::ConditionBase>
+                MovableEnvelope<Condition::ConditionBase>,
+                std::vector<MovableEnvelope<Effect::EffectsGroup>>,
+                ConsumptionMapPackaged<MeterType>,
+                ConsumptionMapPackaged<std::string>,
+                MovableEnvelope<Condition::ConditionBase>
                 >
             > common_params_rule;
 
@@ -51,16 +54,16 @@ namespace parse { namespace detail {
             > more_common_params_rule;
 
         typedef rule<
-            void (CommonParams::ConsumptionMapPackaged<MeterType>&, CommonParams::ConsumptionMapPackaged<std::string>&)
+            void (ConsumptionMapPackaged<MeterType>&, ConsumptionMapPackaged<std::string>&)
             > consumption_rule;
 
         template <typename T>
         using consumable_rule = rule<
-            void (CommonParams::ConsumptionMapPackaged<T>&),
+            void (ConsumptionMapPackaged<T>&),
             boost::spirit::qi::locals<
                 T,
-                parse::MovableEnvelope<ValueRef::ValueRefBase<double>>,
-                parse::MovableEnvelope<Condition::ConditionBase>
+                MovableEnvelope<ValueRef::ValueRefBase<double>>,
+                MovableEnvelope<Condition::ConditionBase>
                 >
             >;
 

@@ -29,16 +29,15 @@ namespace {
     void insert_building(std::map<std::string, std::unique_ptr<BuildingType>>& building_types,
                          const std::string& name,
                          const std::string& description,
-                         const CommonParams& common_params,
+                         const parse::detail::MovableEnvelope<CommonParams>& common_params,
                          CaptureResult& capture_result,
                          const std::string& icon)
     {
         auto building_type = boost::make_unique<BuildingType>(
-            name, description, common_params, capture_result, icon);
+            name, description, *common_params.OpenEnvelope(), capture_result, icon);
 
         building_types.insert(std::make_pair(building_type->Name(), std::move(building_type)));
     }
-
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_building_, insert_building, 6)
 
@@ -103,7 +102,7 @@ namespace {
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
-                CommonParams,
+                parse::detail::MovableEnvelope<CommonParams>,
                 CaptureResult
             >
         > building_type_rule;

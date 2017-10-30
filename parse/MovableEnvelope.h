@@ -4,10 +4,9 @@
 #include <memory>
 #include <type_traits>
 
-namespace parse {
+namespace parse { namespace detail {
     /** \p MovableEnvelope enables the boost::spirit parser to handle a
         \p T with move semantics.
-
 
         boost::spirit is designed only work with value semantics. The
         boost::phoenix actors only handle value semantics.  Types with move
@@ -189,6 +188,17 @@ namespace parse {
         result_type<T> operator() (const MovableEnvelope<T>& obj) const
         { return MovableEnvelope<T>(obj); }
     };
+
+    /** Free functions converting containers of MovableEnvlope to unique_ptrs. */
+    template <typename T>
+    std::vector<std::unique_ptr<T>> OpenEnvelopes(const std::vector<MovableEnvelope<T>>& envelopes) {
+        std::vector<std::unique_ptr<T>> retval;
+        for (auto&& envelope : envelopes)
+            retval.push_back(envelope.OpenEnvelope());
+        return retval;
+    }
+
+    }
 }
 
 #endif // _MovableEnvelope_h_

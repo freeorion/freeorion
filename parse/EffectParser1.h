@@ -35,16 +35,16 @@ namespace parse { namespace detail {
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
-                std::vector<std::pair<std::string, parse::MovableEnvelope<ValueRef::ValueRefBase<std::string>>>>,
+                std::vector<std::pair<std::string, parse::detail::MovableEnvelope<ValueRef::ValueRefBase<std::string>>>>,
                 EmpireAffiliationType,
                 std::string,
                 bool,
-                parse::MovableEnvelope<ValueRef::ValueRefBase<int>>,
-                parse::MovableEnvelope<Condition::ConditionBase>
+                parse::detail::MovableEnvelope<ValueRef::ValueRefBase<int>>,
+                parse::detail::MovableEnvelope<Condition::ConditionBase>
                 >
             > generate_sitrep_message_rule;
 
-        typedef std::pair<std::string, parse::MovableEnvelope<ValueRef::ValueRefBase<std::string>>> string_and_string_ref_pair;
+        typedef std::pair<std::string, parse::detail::MovableEnvelope<ValueRef::ValueRefBase<std::string>>> string_and_string_ref_pair;
 
         typedef rule<
             string_and_string_ref_pair (),

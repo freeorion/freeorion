@@ -55,7 +55,7 @@ namespace {
                      const std::string& graphic)
     {
         auto tech_ptr = boost::make_unique<Tech>(
-            tech_info, effects, prerequisites, unlocked_items, graphic);
+            tech_info, parse::detail::OpenEnvelopes(effects), prerequisites, unlocked_items, graphic);
 
         if (check_tech(techs, tech_ptr)) {
             g_categories_seen->insert(tech_ptr->Category());

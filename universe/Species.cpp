@@ -93,7 +93,7 @@ Species::Species(const SpeciesStrings& strings,
                  const std::vector<FocusType>& foci,
                  const std::string& preferred_focus,
                  const std::map<PlanetType, PlanetEnvironment>& planet_environments,
-                 const std::vector<parse::MovableEnvelope<Effect::EffectsGroup>>& effects,
+                 std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
                  const SpeciesParams& params,
                  const std::set<std::string>& tags,
                  const std::string& graphic) :
@@ -113,7 +113,7 @@ Species::Species(const SpeciesStrings& strings,
     m_graphic(graphic)
 {
     for (auto&& effect : effects)
-        m_effects.push_back(effect.OpenEnvelope());
+        m_effects.emplace_back(std::move(effect));
 
     Init();
     for (const std::string& tag : tags)

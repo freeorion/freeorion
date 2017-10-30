@@ -17,7 +17,6 @@
 //TODO: replace with std::make_unique when transitioning to C++14
 #include <boost/smart_ptr/make_unique.hpp>
 
-
 #define DEBUG_PARSERS 0
 
 #if DEBUG_PARSERS
@@ -34,17 +33,17 @@ namespace {
 
     void insert_parttype(std::map<std::string, std::unique_ptr<PartType>>& part_types,
                          ShipPartClass part_class, double capacity, double stat2,
-                         const CommonParams& common_params, const MoreCommonParams& more_common_params,
+                         const parse::detail::MovableEnvelope<CommonParams>& common_params,
+                         const MoreCommonParams& more_common_params,
                          std::vector<ShipSlotType> mountable_slot_types,
                          const std::string& icon, bool add_standard_capacity_effect)
     {
         auto part_type = boost::make_unique<PartType>(
-            part_class, capacity, stat2, common_params, more_common_params, mountable_slot_types, icon,
+            part_class, capacity, stat2, *common_params.OpenEnvelope(), more_common_params, mountable_slot_types, icon,
             add_standard_capacity_effect);
 
         part_types.insert(std::make_pair(part_type->Name(), std::move(part_type)));
     }
-
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_parttype_, insert_parttype, 9)
 
@@ -115,7 +114,10 @@ namespace {
                 >   slots(_f)
                 >   common_rules.common           [ _e = _1 ]
                 >   labeller.rule(Icon_token)        > tok.string    [ _b = _1 ]
-                  ) [ insert_parttype_(_r1, _c, _d, _h, _e, _a, _f, _b, _g) ]
+                  ) [ insert_parttype_(_r1, _c, _d, _h,
+                                       // phoenix::bind(&parse::detail::MovableEnvelope<CommonParams>::OpenEnvelope, _e),
+                                       _e,
+                                       _a, _f, _b, _g) ]
                 ;
 
             start
@@ -144,7 +146,7 @@ namespace {
                 std::string,
                 ShipPartClass,
                 double,
-                CommonParams,
+                parse::detail::MovableEnvelope<CommonParams>,
                 std::vector<ShipSlotType>,
                 bool,
                 double

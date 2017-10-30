@@ -56,8 +56,10 @@ namespace {
 
     void insert_special(std::map<std::string, std::unique_ptr<Special>>& specials, special_pod special_) {
         auto special_ptr = boost::make_unique<Special>(
-            special_.name, special_.description, special_.stealth, special_.effects, special_.spawn_rate,
-            special_.spawn_limit, special_.initial_capacity, special_.location, special_.graphic);
+            special_.name, special_.description, special_.stealth,
+            OpenEnvelopes(special_.effects),
+            special_.spawn_rate, special_.spawn_limit, special_.initial_capacity,
+            special_.location, special_.graphic);
 
         specials.insert(std::make_pair(special_ptr->Name(), std::move(special_ptr)));
     }

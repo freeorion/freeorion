@@ -97,7 +97,7 @@ public:
     /** \name Structors */ //@{
     BuildingType(const std::string& name,
                  const std::string& description,
-                 const CommonParams& common_params,
+                 CommonParams& common_params,
                  CaptureResult capture_result,
                  const std::string& icon);
 
@@ -114,8 +114,8 @@ public:
     float                           PerTurnCost(int empire_id, int location_id) const;      ///< returns the maximum number of production points per turn that can be spend on this building
     int                             ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to build this building at this location by this empire
 
-    const ValueRef::ValueRefBase<double>* Cost() const      { return m_production_cost; }   ///< returns the ValueRef that determines ProductionCost()
-    const ValueRef::ValueRefBase<int>*    Time() const      { return m_production_time; }   ///< returns the ValueRef that determines ProductionTime()
+    const ValueRef::ValueRefBase<double>* Cost() const      { return m_production_cost.get(); }   ///< returns the ValueRef that determines ProductionCost()
+    const ValueRef::ValueRefBase<int>*    Time() const      { return m_production_time.get(); }   ///< returns the ValueRef that determines ProductionTime()
 
     bool                            Producible() const      { return m_producible; }        ///< returns whether this building type is producible by players and appears on the production screen
 
@@ -125,8 +125,8 @@ public:
                                     ProductionSpecialConsumption() const{ return m_production_special_consumption; }
 
     const std::set<std::string>&    Tags() const            { return m_tags; }
-    const Condition::ConditionBase* Location() const        { return m_location; }          ///< returns the condition that determines the locations where this building can be produced
-    const Condition::ConditionBase* EnqueueLocation() const { return m_enqueue_location; }  ///< returns the condition that determines the locations where this building can be enqueued (ie. put onto the production queue)
+    const Condition::ConditionBase* Location() const        { return m_location.get(); }          ///< returns the condition that determines the locations where this building can be produced
+    const Condition::ConditionBase* EnqueueLocation() const { return m_enqueue_location.get(); }  ///< returns the condition that determines the locations where this building can be enqueued (ie. put onto the production queue)
 
     /** Returns the EffectsGroups that encapsulate the effects that buildings ofi
         this type have when operational. */
@@ -161,16 +161,16 @@ private:
 
     std::string                                             m_name;
     std::string                                             m_description;
-    ValueRef::ValueRefBase<double>*                         m_production_cost;
-    ValueRef::ValueRefBase<int>*                            m_production_time;
+    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_production_cost;
+    std::unique_ptr<ValueRef::ValueRefBase<int>>            m_production_time;
     bool                                                    m_producible;
     CaptureResult                                           m_capture_result;
     std::set<std::string>                                   m_tags;
     CommonParams::ConsumptionMap<MeterType> m_production_meter_consumption;
     CommonParams::ConsumptionMap<std::string> m_production_special_consumption;
-    Condition::ConditionBase*                               m_location;
-    Condition::ConditionBase*                               m_enqueue_location;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
+    std::unique_ptr<Condition::ConditionBase>               m_location;
+    std::unique_ptr<Condition::ConditionBase>               m_enqueue_location;
+    std::vector<std::shared_ptr<Effect::EffectsGroup>>      m_effects;
     std::string                                             m_icon;
 };
 

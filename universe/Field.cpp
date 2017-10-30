@@ -167,7 +167,7 @@ void Field::ClampMeters() {
 /////////////////////////////////////////////////
 FieldType::FieldType(const std::string& name, const std::string& description,
                      float stealth, const std::set<std::string>& tags,
-                     const std::vector<parse::MovableEnvelope<Effect::EffectsGroup>>& effects,
+                     std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
                      const std::string& graphic) :
     m_name(name),
     m_description(description),
@@ -180,7 +180,7 @@ FieldType::FieldType(const std::string& name, const std::string& description,
         m_tags.insert(boost::to_upper_copy<std::string>(tag));
 
     for (auto&& effect : effects)
-        m_effects.push_back(effect.OpenEnvelope());
+        m_effects.emplace_back(std::move(effect));
 
     if (m_stealth != 0.0f)
         m_effects.push_back(IncreaseMeter(METER_STEALTH,    m_stealth));

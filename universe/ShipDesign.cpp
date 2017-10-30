@@ -192,24 +192,24 @@ CommonParams::CommonParams() :
     effects()
 {}
 
-CommonParams::CommonParams(const parse::MovableEnvelope<ValueRef::ValueRefBase<double>>& production_cost_,
-                           const parse::MovableEnvelope<ValueRef::ValueRefBase<int>>& production_time_,
+CommonParams::CommonParams(std::unique_ptr<ValueRef::ValueRefBase<double>>&& production_cost_,
+                           std::unique_ptr<ValueRef::ValueRefBase<int>>&& production_time_,
                            bool producible_,
                            const std::set<std::string>& tags_,
-                           const parse::MovableEnvelope<Condition::ConditionBase>& location_,
-                           const std::vector<parse::MovableEnvelope<Effect::EffectsGroup>>& effects_,
-                           const ConsumptionMapPackaged<MeterType>& production_meter_consumption_,
-                           const ConsumptionMapPackaged<std::string>& production_special_consumption_,
-                           const parse::MovableEnvelope<Condition::ConditionBase>& enqueue_location_) :
-    production_cost(production_cost_),
-    production_time(production_time_),
+                           std::unique_ptr<Condition::ConditionBase>&& location_,
+                           std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects_,
+                           ConsumptionMap<MeterType>&& production_meter_consumption_,
+                           ConsumptionMap<std::string>&& production_special_consumption_,
+                           std::unique_ptr<Condition::ConditionBase>&& enqueue_location_) :
+    production_cost(std::move(production_cost_)),
+    production_time(std::move(production_time_)),
     producible(producible_),
     tags(),
-    production_meter_consumption(production_meter_consumption_),
-    production_special_consumption(production_special_consumption_),
-    location(location_),
-    enqueue_location(enqueue_location_),
-    effects(effects_)
+    production_meter_consumption(std::move(production_meter_consumption_)),
+    production_special_consumption(std::move(production_special_consumption_)),
+    location(std::move(location_)),
+    enqueue_location(std::move(enqueue_location_)),
+    effects(std::move(effects_))
 {
     for (const std::string& tag : tags_)
         tags.insert(boost::to_upper_copy<std::string>(tag));
@@ -217,23 +217,6 @@ CommonParams::CommonParams(const parse::MovableEnvelope<ValueRef::ValueRefBase<d
 
 CommonParams::~CommonParams()
 {}
-
-template <typename T>
-CommonParams::ConsumptionMap<T> UnpackageConsumptionMap(const CommonParams::ConsumptionMapPackaged<T>& in) {
-    CommonParams::ConsumptionMap<T> retval;
-    for (auto&& name_and_values : in)
-        retval[name_and_values.first] = {name_and_values.second.first.OpenEnvelope(),
-                                         name_and_values.second.second.OpenEnvelope()};
-    return retval;
-}
-
-template <typename T>
-std::vector<std::unique_ptr<T>> UnpackageMovableVector(const std::vector<parse::MovableEnvelope<T>>& in) {
-    std::vector<std::unique_ptr<T>> retval;
-    for (auto&& val : in)
-        retval.push_back(val.OpenEnvelope());
-    return retval;
-}
 
 /////////////////////////////////////
 // PartTypeManager                 //
@@ -327,7 +310,7 @@ PartType::PartType() :
 {}
 
 PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
-                   const CommonParams& common_params, const MoreCommonParams& more_common_params,
+                   CommonParams& common_params, const MoreCommonParams& more_common_params,
                    std::vector<ShipSlotType> mountable_slot_types,
                    const std::string& icon, bool add_standard_capacity_effect) :
     m_name(more_common_params.name),
@@ -335,23 +318,21 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
     m_class(part_class),
     m_capacity(capacity),
     m_secondary_stat(stat2),
-    m_production_cost(common_params.production_cost.OpenEnvelope()),
-    m_production_time(common_params.production_time.OpenEnvelope()),
+    m_production_cost(std::move(common_params.production_cost)),
+    m_production_time(std::move(common_params.production_time)),
     m_producible(common_params.producible),
     m_mountable_slot_types(mountable_slot_types),
     m_tags(),
-    m_production_meter_consumption(),
-    m_production_special_consumption(),
-    m_location(common_params.location.OpenEnvelope()),
+    m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
+    m_production_special_consumption(std::move(common_params.production_special_consumption)),
+    m_location(std::move(common_params.location)),
     m_exclusions(more_common_params.exclusions),
     m_effects(),
     m_icon(icon),
     m_add_standard_capacity_effect(add_standard_capacity_effect)
 {
     //TraceLogger() << "part type: " << m_name << " producible: " << m_producible << std::endl;
-    Init(UnpackageMovableVector(common_params.effects));
-    m_production_meter_consumption = UnpackageConsumptionMap(common_params.production_meter_consumption);
-    m_production_special_consumption = UnpackageConsumptionMap(common_params.production_special_consumption);
+    Init(std::move(common_params.effects));
 
     for (const std::string& tag : common_params.tags)
         m_tags.insert(boost::to_upper_copy<std::string>(tag));
@@ -580,34 +561,32 @@ HullType::HullType() :
     m_icon()
 {}
 
-HullType::HullType(const HullTypeStats& stats, const CommonParams& common_params,
-         const MoreCommonParams& more_common_params,
-         const std::vector<Slot>& slots,
-         const std::string& icon, const std::string& graphic) :
+HullType::HullType(const HullTypeStats& stats,
+                   CommonParams&& common_params,
+                   const MoreCommonParams& more_common_params,
+                   const std::vector<Slot>& slots,
+                   const std::string& icon, const std::string& graphic) :
     m_name(more_common_params.name),
     m_description(more_common_params.description),
     m_speed(stats.speed),
     m_fuel(stats.fuel),
     m_stealth(stats.stealth),
     m_structure(stats.structure),
-    m_production_cost(common_params.production_cost.OpenEnvelope()),
-    m_production_time(common_params.production_time.OpenEnvelope()),
+    m_production_cost(std::move(common_params.production_cost)),
+    m_production_time(std::move(common_params.production_time)),
     m_producible(common_params.producible),
     m_slots(slots),
     m_tags(),
-    m_production_meter_consumption(),
-    m_production_special_consumption(),
-    m_location(common_params.location.OpenEnvelope()),
+    m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
+    m_production_special_consumption(std::move(common_params.production_special_consumption)),
+    m_location(std::move(common_params.location)),
     m_exclusions(more_common_params.exclusions),
     m_effects(),
     m_graphic(graphic),
     m_icon(icon)
 {
     //TraceLogger() << "hull type: " << m_name << " producible: " << m_producible << std::endl;
-    Init(UnpackageMovableVector(common_params.effects));
-
-    m_production_meter_consumption = UnpackageConsumptionMap(common_params.production_meter_consumption);
-    m_production_special_consumption = UnpackageConsumptionMap(common_params.production_special_consumption);
+    Init(std::move(common_params.effects));
 
     for (const std::string& tag : common_params.tags)
         m_tags.insert(boost::to_upper_copy<std::string>(tag));

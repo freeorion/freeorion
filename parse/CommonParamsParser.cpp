@@ -13,11 +13,51 @@
 #include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
+    /** Open parsed envelopes of consumption pairs. Return a map of unique_ptr. */
+    template <typename T>
+    CommonParams::ConsumptionMap<T> OpenEnvelopes(
+        const common_params_rules::ConsumptionMapPackaged<T>& in)
+    {
+        CommonParams::ConsumptionMap<T> retval;
+        for (auto&& name_and_values : in)
+            retval[name_and_values.first] = {name_and_values.second.first.OpenEnvelope(),
+                                             name_and_values.second.second.OpenEnvelope()};
+        return retval;
+    }
+
+    MovableEnvelope<CommonParams> construct_CommonParams(
+        const MovableEnvelope<ValueRef::ValueRefBase<double>>& production_cost_,
+        const MovableEnvelope<ValueRef::ValueRefBase<int>>& production_time_,
+        bool producible_,
+        const std::set<std::string>& tags_,
+        const MovableEnvelope<Condition::ConditionBase>& location_,
+        const std::vector<MovableEnvelope<Effect::EffectsGroup>>& effects_,
+        const common_params_rules::ConsumptionMapPackaged<MeterType>& production_meter_consumption_,
+        const common_params_rules::ConsumptionMapPackaged<std::string>& production_special_consumption_,
+        const MovableEnvelope<Condition::ConditionBase>& enqueue_location_)
+    {
+        return MovableEnvelope<CommonParams>(
+            boost::make_unique<CommonParams>(
+                production_cost_.OpenEnvelope(),
+                production_time_.OpenEnvelope(),
+                producible_,
+                tags_,
+                location_.OpenEnvelope(),
+                OpenEnvelopes(effects_),
+                OpenEnvelopes(production_meter_consumption_),
+                OpenEnvelopes(production_special_consumption_),
+                enqueue_location_.OpenEnvelope()
+            ));
+    }
+
+    BOOST_PHOENIX_ADAPT_FUNCTION(MovableEnvelope<CommonParams>, construct_CommonParams_, construct_CommonParams, 9)
+
     common_params_rules::common_params_rules(
         const parse::lexer& tok,
         Labeller& labeller,
@@ -50,7 +90,7 @@ namespace parse { namespace detail {
         qi::_r2_type _r2;
         qi::_val_type _val;
         qi::eps_type eps;
-        const boost::phoenix::function<parse::construct_movable> construct_movable_;
+        const boost::phoenix::function<construct_movable> construct_movable_;
 
         producible
             =   tok.Unproducible_ [ _val = false ]
@@ -96,7 +136,7 @@ namespace parse { namespace detail {
                 >   enqueue_location [_i = _1]
                 >  -consumption(_g, _h)
                 > -(labeller.rule(EffectsGroups_token)> effects_group_grammar [ _f = _1 ])
-            ) [ _val = construct<CommonParams>(_a, _b, _c, _d, _e, _f, _g, _h, _i) ]
+            ) [ _val = construct_CommonParams_(_a, _b, _c, _d, _e, _f, _g, _h, _i) ]
             ;
 
         consumption
@@ -122,7 +162,7 @@ namespace parse { namespace detail {
                 >   labeller.rule(Consumption_token) > double_rules.expr [ _b = construct_movable_(_1) ]
                 > -(labeller.rule(Condition_token)   > condition_parser [ _c = construct_movable_(_1) ])
             )
-            [ insert(_r1, construct<CommonParams::ConsumptionMapPackaged<std::string>::value_type>(_a, construct<CommonParams::ConsumptionMapPackaged<std::string>::mapped_type>(_b, _c))) ]
+            [ insert(_r1, construct<ConsumptionMapPackaged<std::string>::value_type>(_a, construct<ConsumptionMapPackaged<std::string>::mapped_type>(_b, _c))) ]
             ;
 
         consumable_meter
@@ -131,7 +171,7 @@ namespace parse { namespace detail {
                 >   labeller.rule(Consumption_token) > double_rules.expr [ _b = construct_movable_(_1) ]
                 > -(labeller.rule(Condition_token)   > condition_parser [ _c = construct_movable_(_1) ])
             )
-            [ insert(_r1, construct<CommonParams::ConsumptionMapPackaged<MeterType>::value_type>(_a, construct<CommonParams::ConsumptionMapPackaged<MeterType>::mapped_type>(_b, _c))) ]
+            [ insert(_r1, construct<ConsumptionMapPackaged<MeterType>::value_type>(_a, construct<ConsumptionMapPackaged<MeterType>::mapped_type>(_b, _c))) ]
             ;
 
         producible.name("Producible or Unproducible");

@@ -3,7 +3,6 @@
 
 
 #include "ValueRefFwd.h"
-#include "../parse/MovableEnvelope.h"
 
 #include <map>
 #include <memory>
@@ -41,42 +40,30 @@ class Empire;
   * storage for parsing to reduce number of sub-items parsed per item. */
 struct FO_COMMON_API CommonParams {
     template <typename T>
-    using ConsumptionMapPackaged = std::map<T, std::pair<parse::MovableEnvelope<ValueRef::ValueRefBase<double>>,
-                                                        parse::MovableEnvelope<Condition::ConditionBase>>>;
-    template <typename T>
     using ConsumptionMap = std::map<T, std::pair<std::unique_ptr<ValueRef::ValueRefBase<double>>,
-                                                    std::unique_ptr<Condition::ConditionBase>>>;
+                                                 std::unique_ptr<Condition::ConditionBase>>>;
     CommonParams();
-    CommonParams(const parse::MovableEnvelope<ValueRef::ValueRefBase<double>>& production_cost_,
-                 const parse::MovableEnvelope<ValueRef::ValueRefBase<int>>& production_time_,
+    CommonParams(std::unique_ptr<ValueRef::ValueRefBase<double>>&& production_cost_,
+                 std::unique_ptr<ValueRef::ValueRefBase<int>>&& production_time_,
                  bool producible_,
                  const std::set<std::string>& tags_,
-                 const parse::MovableEnvelope<Condition::ConditionBase>& location_,
-                 const std::vector<parse::MovableEnvelope<Effect::EffectsGroup>>& effects_,
-                 const ConsumptionMapPackaged<MeterType>& production_meter_consumption_,
-                 const ConsumptionMapPackaged<std::string>& production_special_consumption_,
-                 const parse::MovableEnvelope<Condition::ConditionBase>& enqueue_location_);
+                 std::unique_ptr<Condition::ConditionBase>&& location_,
+                 std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects_,
+                 ConsumptionMap<MeterType>&& production_meter_consumption_,
+                 ConsumptionMap<std::string>&& production_special_consumption_,
+                 std::unique_ptr<Condition::ConditionBase>&& enqueue_location_);
     ~CommonParams();
 
-    parse::MovableEnvelope<ValueRef::ValueRefBase<double>> production_cost;
-    parse::MovableEnvelope<ValueRef::ValueRefBase<int>>    production_time;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> production_cost;
+    std::unique_ptr<ValueRef::ValueRefBase<int>>    production_time;
     bool                                             producible;
     std::set<std::string>                            tags;
-    ConsumptionMapPackaged<MeterType>                        production_meter_consumption;
-    ConsumptionMapPackaged<std::string>                      production_special_consumption;
-    parse::MovableEnvelope<Condition::ConditionBase> location;
-    parse::MovableEnvelope<Condition::ConditionBase> enqueue_location;
-    std::vector<parse::MovableEnvelope<Effect::EffectsGroup>> effects;
+    ConsumptionMap<MeterType>                        production_meter_consumption;
+    ConsumptionMap<std::string>                      production_special_consumption;
+    std::unique_ptr<Condition::ConditionBase> location;
+    std::unique_ptr<Condition::ConditionBase> enqueue_location;
+    std::vector<std::unique_ptr<Effect::EffectsGroup>> effects;
 };
-
-/** Open parsed envelopes of consumption pairs. Return a map of unique_ptr. */
-template <typename T>
-FO_COMMON_API CommonParams::ConsumptionMap<T> UnpackageConsumptionMap(const CommonParams::ConsumptionMapPackaged<T>& in);
-
-/** Open parsed envelopes of T. Return a vector of unique_ptr. */
-template <typename T>
-FO_COMMON_API std::vector<std::unique_ptr<T>> UnpackageMovableVector(
-    const std::vector<parse::MovableEnvelope<T>>& in);
 
 struct MoreCommonParams {
     MoreCommonParams() :
@@ -101,7 +88,7 @@ public:
     /** \name Structors */ //@{
     PartType();
     PartType(ShipPartClass part_class, double capacity, double stat2,
-             const CommonParams& common_params, const MoreCommonParams& more_common_params,
+             CommonParams& common_params, const MoreCommonParams& more_common_params,
              std::vector<ShipSlotType> mountable_slot_types,
              const std::string& icon, bool add_standard_capacity_effect = true);
 
@@ -282,7 +269,8 @@ public:
 
     /** \name Structors */ //@{
     HullType();
-    HullType(const HullTypeStats& stats, const CommonParams& common_params,
+    HullType(const HullTypeStats& stats,
+             CommonParams&& common_params,
              const MoreCommonParams& more_common_params,
              const std::vector<Slot>& slots,
              const std::string& icon, const std::string& graphic);

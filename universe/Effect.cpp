@@ -186,25 +186,6 @@ EffectsGroup::EffectsGroup(std::unique_ptr<Condition::ConditionBase>&& scope,
     m_description(description)
 {}
 
-EffectsGroup::EffectsGroup(const parse::MovableEnvelope<Condition::ConditionBase>& scope,
-                           const parse::MovableEnvelope<Condition::ConditionBase>& activation,
-                           const std::vector<parse::MovableEnvelope<EffectBase>>& effects,
-                           const std::string& accounting_label,
-                           const std::string& stacking_group, int priority,
-                           const std::string& description) :
-    m_scope(scope.OpenEnvelope()),
-    m_activation(activation.OpenEnvelope()),
-    m_stacking_group(stacking_group),
-    m_effects(),
-    m_accounting_label(accounting_label),
-    m_priority(priority),
-    m_description(description)
-{
-    for (auto&& effect : effects) {
-        m_effects.push_back(effect.OpenEnvelope());
-    }
-}
-
 EffectsGroup::~EffectsGroup()
 {}
 
@@ -3537,64 +3518,52 @@ unsigned int GiveEmpireTech::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
-                                             PassedMessageParams& message_parameters,
-                                             const parse::MovableEnvelope<ValueRef::ValueRefBase<int>>& recipient_empire_id,
+                                             MessageParams&& message_parameters,
+                                             std::unique_ptr<ValueRef::ValueRefBase<int>>&& recipient_empire_id,
                                              EmpireAffiliationType affiliation,
                                              const std::string label,
                                              bool stringtable_lookup) :
     m_message_string(message_string),
     m_icon(icon),
-    m_message_parameters(),
-    m_recipient_empire_id(recipient_empire_id.OpenEnvelope()),
+    m_message_parameters(std::move(message_parameters)),
+    m_recipient_empire_id(std::move(recipient_empire_id)),
     m_condition(nullptr),
     m_affiliation(affiliation),
     m_label(label),
     m_stringtable_lookup(stringtable_lookup)
-{
-    for (auto&& name_and_value : message_parameters) {
-        m_message_parameters.emplace_back(name_and_value.first, name_and_value.second.OpenEnvelope());
-    }
-}
+{}
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
-                                             PassedMessageParams& message_parameters,
+                                             MessageParams&& message_parameters,
                                              EmpireAffiliationType affiliation,
-                                             const parse::MovableEnvelope<Condition::ConditionBase>& condition,
+                                             std::unique_ptr<Condition::ConditionBase>&& condition,
                                              const std::string label,
                                              bool stringtable_lookup) :
     m_message_string(message_string),
     m_icon(icon),
-    m_message_parameters(),
+    m_message_parameters(std::move(message_parameters)),
     m_recipient_empire_id(nullptr),
-    m_condition(condition.OpenEnvelope()),
+    m_condition(std::move(condition)),
     m_affiliation(affiliation),
     m_label(label),
     m_stringtable_lookup(stringtable_lookup)
-{
-    for (auto&& name_and_value : message_parameters) {
-        m_message_parameters.emplace_back(name_and_value.first, name_and_value.second.OpenEnvelope());
-    }
-}
+{}
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
-                                             PassedMessageParams& message_parameters,
+                                             MessageParams&& message_parameters,
                                              EmpireAffiliationType affiliation,
                                              const std::string& label,
                                              bool stringtable_lookup):
     m_message_string(message_string),
     m_icon(icon),
-    m_message_parameters(),
+    m_message_parameters(std::move(message_parameters)),
     m_recipient_empire_id(nullptr),
     m_condition(),
     m_affiliation(affiliation),
     m_label(label),
     m_stringtable_lookup(stringtable_lookup)
-{
-    for (auto&& name_and_value : message_parameters) {
-        m_message_parameters.emplace_back(name_and_value.first, name_and_value.second.OpenEnvelope());
-    }
-}
+{}
 
 GenerateSitRepMessage::~GenerateSitRepMessage()
 {}
@@ -3779,7 +3748,8 @@ unsigned int GenerateSitRepMessage::GetCheckSum() const {
     return retval;
 }
 
-Effect::GenerateSitRepMessage::MessageParams GenerateSitRepMessage::MessageParameters() const {
+std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>
+GenerateSitRepMessage::MessageParameters() const {
     std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>> retval(m_message_parameters.size());
     std::transform(m_message_parameters.begin(), m_message_parameters.end(), retval.begin(),
                    [](const std::pair<std::string, std::unique_ptr<ValueRef::ValueRefBase<std::string>>>& xx) {

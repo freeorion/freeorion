@@ -43,7 +43,7 @@ namespace {
                         const std::string& graphic)
     {
         auto species_ptr = boost::make_unique<Species>(
-            strings, foci, preferred_focus, planet_environments, effects, params, tags, graphic);
+            strings, foci, preferred_focus, planet_environments, OpenEnvelopes(effects), params, tags, graphic);
 
         species.insert(std::make_pair(species_ptr->Name(), std::move(species_ptr)));
     }
