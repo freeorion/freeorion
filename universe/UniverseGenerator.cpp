@@ -170,7 +170,7 @@ namespace Delauney {
         triangle_list.push_front({num_points_in_vec - 1, num_points_in_vec - 2,
                                   num_points_in_vec - 3, points_vec});
 
-        if (points_vec.size() > std::numeric_limits<int>::max()) {
+        if (points_vec.size() > static_cast<size_t>(std::numeric_limits<int>::max())) {
             ErrorLogger() << "Attempted to run Delauney Triangulation on " << points_vec.size()
                           << " points.  The limit is " << std::numeric_limits<int>::max();
             return std::list<Delauney::DTTriangle>();
