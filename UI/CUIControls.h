@@ -587,14 +587,14 @@ private:
     const std::vector<std::pair<std::string, std::string>> m_init_file_filters;
 };
 
-/** Despite the name, this is actually used to display info in both the Research
-    and Production screens. */
-class ProductionInfoPanel : public CUIWnd {
+/** Displays resource and stockpile info on the Researach and Production
+    screens. */
+class ResourceInfoPanel : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    ProductionInfoPanel(const std::string& title, const std::string& point_units_str,
-                        const GG::X x, const GG::Y y, const GG::X w, const GG::Y h,
-                        const std::string& config_name);
+    ResourceInfoPanel(const std::string& title, const std::string& point_units_str,
+                      const GG::X x, const GG::Y y, const GG::X w, const GG::Y h,
+                      const std::string& config_name);
     //@}
     void    CompleteConstruction() override;
 

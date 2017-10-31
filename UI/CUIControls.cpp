@@ -1825,15 +1825,15 @@ void FileDlg::CompleteConstruction() {
 
 
 //////////////////////////////////////////////////
-// ProductionInfoPanel
+// ResourceInfoPanel
 //////////////////////////////////////////////////
 namespace {
     GG::Y VERTICAL_SECTION_GAP(4);
 }
 
-ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::string& point_units_str,
-                                         const GG::X x, const GG::Y y, const GG::X w, const GG::Y h,
-                                         const std::string& config_name) :
+ResourceInfoPanel::ResourceInfoPanel(const std::string& title, const std::string& point_units_str,
+                                     const GG::X x, const GG::Y y, const GG::X w, const GG::Y h,
+                                     const std::string& config_name) :
     CUIWnd(title, x, y, w, h,
            GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
            config_name, false),
@@ -1865,7 +1865,7 @@ ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::st
     m_local_wasted_points_P_label(GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT))
 {}
 
-void ProductionInfoPanel::CompleteConstruction() {
+void ResourceInfoPanel::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     AttachChild(m_empire_column_label);
@@ -1875,41 +1875,20 @@ void ProductionInfoPanel::CompleteConstruction() {
     AttachChild(m_total_points);
     AttachChild(m_total_points_P_label);
 
-    //AttachChild(m_stockpile_points_label);
-    //AttachChild(m_stockpile_points);
-    //AttachChild(m_stockpile_points_P_label);
-
-    //AttachChild(m_stockpile_use_label);
-    //AttachChild(m_stockpile_use);
-    //AttachChild(m_stockpile_use_P_label);
-
-    //AttachChild(m_stockpile_max_use_label);
-    //AttachChild(m_stockpile_max_use);
-    //AttachChild(m_stockpile_max_use_P_label);
-
     AttachChild(m_wasted_points_label);
     AttachChild(m_wasted_points);
     AttachChild(m_wasted_points_P_label);
 
-    //AttachChild(m_local_points);
-    //AttachChild(m_local_points_P_label);
-
-    //AttachChild(m_local_wasted_points);
-    //AttachChild(m_local_wasted_points_P_label);
-
-    //AttachChild(m_local_stockpile_use);
-    //AttachChild(m_local_stockpile_use_P_label);
-
     DoLayout();
 }
 
-GG::Pt ProductionInfoPanel::MinUsableSize() const {
+GG::Pt ResourceInfoPanel::MinUsableSize() const {
     GG::X min_x = this->LeftBorder() + this->RightBorder() + 20*ClientUI::Pts();
     GG::Y min_y = this->TopBorder() + this->BottomBorder() + 4*ClientUI::Pts();
     return GG::Pt(min_x, min_y);
 }
 
-void ProductionInfoPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void ResourceInfoPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     CUIWnd::SizeMove(ul, lr);
@@ -1918,7 +1897,7 @@ void ProductionInfoPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         DoLayout();
 }
 
-void ProductionInfoPanel::SetTotalPointsCost(float total_points, float total_cost) {
+void ResourceInfoPanel::SetTotalPointsCost(float total_points, float total_cost) {
     AttachChild(m_total_points_label);
     AttachChild(m_total_points);
     AttachChild(m_total_points_P_label);
@@ -1943,8 +1922,8 @@ void ProductionInfoPanel::SetTotalPointsCost(float total_points, float total_cos
     SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % empire_name));
 }
 
-void ProductionInfoPanel::SetStockpileCost(float stockpile, float stockpile_use,
-                                           float stockpile_use_max)
+void ResourceInfoPanel::SetStockpileCost(float stockpile, float stockpile_use,
+                                         float stockpile_use_max)
 {
     AttachChild(m_stockpile_points_label);
     AttachChild(m_stockpile_points);
@@ -1975,8 +1954,8 @@ void ProductionInfoPanel::SetStockpileCost(float stockpile, float stockpile_use,
     TraceLogger() << "SetStockpileCost:  done.";
 }
 
-void ProductionInfoPanel::SetLocalPointsCost(float local_points, float local_cost, float local_stockpile_use,
-                                             float local_stockpile_use_max, const std::string& location_name)
+void ResourceInfoPanel::SetLocalPointsCost(float local_points, float local_cost, float local_stockpile_use,
+                                           float local_stockpile_use_max, const std::string& location_name)
 {
     AttachChild(m_local_points);
     AttachChild(m_local_points_P_label);
@@ -2008,7 +1987,7 @@ void ProductionInfoPanel::SetLocalPointsCost(float local_points, float local_cos
         UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location_name));
 }
 
-void ProductionInfoPanel::SetEmpireID(int empire_id) {
+void ResourceInfoPanel::SetEmpireID(int empire_id) {
     int old_empire_id = m_empire_id;
     m_empire_id = empire_id;
     if (old_empire_id != m_empire_id) {
@@ -2022,7 +2001,7 @@ void ProductionInfoPanel::SetEmpireID(int empire_id) {
     }
 }
 
-void ProductionInfoPanel::ClearLocalInfo() {
+void ResourceInfoPanel::ClearLocalInfo() {
     DetachChild(m_local_points);
     DetachChild(m_local_points_P_label);
     DetachChild(m_local_wasted_points);
@@ -2040,7 +2019,7 @@ void ProductionInfoPanel::ClearLocalInfo() {
     m_local_column_label->SetText("");
 }
 
-void ProductionInfoPanel::Clear() {
+void ResourceInfoPanel::Clear() {
     DetachChild(m_total_points_label);
     DetachChild(m_total_points);
     DetachChild(m_total_points_P_label);
@@ -2062,7 +2041,7 @@ void ProductionInfoPanel::Clear() {
     SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % ""));
 }
 
-void ProductionInfoPanel::DoLayout() {
+void ResourceInfoPanel::DoLayout() {
     const int STAT_TEXT_PTS = ClientUI::Pts();
     const int CENTERLINE_GAP = 4;
     const GG::X LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 7 / 16 ;
