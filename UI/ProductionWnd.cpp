@@ -1091,43 +1091,49 @@ void ProductionWnd::UpdateInfoPanel() {
     // find if there is a local location
     int prod_loc_id = this->SelectedPlanetID();
     auto loc_obj = GetUniverseObject(prod_loc_id);
-    if (loc_obj) {
-        // extract available and allocated PP at production location
-        auto available_pp = queue.AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
-        const auto& allocated_pp = queue.AllocatedPP();
-
-        float available_pp_at_loc = 0.0f, allocated_pp_at_loc = 0.0f;   // for the resource sharing group containing the selected production location
-
-        for (const auto& map : available_pp) {
-            if (map.first.find(prod_loc_id) != map.first.end()) {
-                available_pp_at_loc = map.second;
-                break;
-            }
-        }
-
-        for (const auto& map : allocated_pp) {
-            if (map.first.find(prod_loc_id) != map.first.end()) {
-                allocated_pp_at_loc = map.second;
-                break;
-            }
-        }
-
-        float stockpile_local_use = 0.0f;
-
-        for (const auto& map : empire->GetProductionQueue().AllocatedStockpilePP()) {
-            if (map.first.find(prod_loc_id) != map.first.end()) {
-                stockpile_local_use = map.second;
-                break;
-            }
-        }
-
-        float stockpile_local_use_max = stockpile_use_max;
-        m_production_info_panel->SetLocalPointsCost(
-            available_pp_at_loc, allocated_pp_at_loc, stockpile_local_use, stockpile_local_use_max, loc_obj->Name());
-    } else {
-        // else clear local info...
+    if (!loc_obj) {
+        // clear local info...
         m_production_info_panel->ClearLocalInfo();
+        return;
     }
+
+    // show location-specific information about supply group
+    // resource availability
+
+    // find available and allocated PP at selected production location
+    auto available_pp = queue.AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
+    const auto& allocated_pp = queue.AllocatedPP();
+
+    float available_pp_at_loc = 0.0f;
+    float allocated_pp_at_loc = 0.0f;
+    for (const auto& map : available_pp) {
+        if (map.first.find(prod_loc_id) != map.first.end()) {
+            available_pp_at_loc = map.second;
+            break;
+        }
+    }
+
+    for (const auto& map : allocated_pp) {
+        if (map.first.find(prod_loc_id) != map.first.end()) {
+            allocated_pp_at_loc = map.second;
+            break;
+        }
+    }
+
+
+    // find use of stockpile at selected production location
+    float stockpile_local_use = 0.0f;
+
+    for (const auto& map : empire->GetProductionQueue().AllocatedStockpilePP()) {
+        if (map.first.find(prod_loc_id) != map.first.end()) {
+            stockpile_local_use = map.second;
+            break;
+        }
+    }
+
+    m_production_info_panel->SetLocalPointsCost(available_pp_at_loc, allocated_pp_at_loc,
+                                                stockpile_local_use, stockpile_use_max,
+                                                loc_obj->Name());
 }
 
 void ProductionWnd::AddBuildToQueueSlot(const ProductionQueue::ProductionItem& item,
