@@ -246,7 +246,7 @@ namespace {
 
         //DebugLogger() << "queue size: " << queue.size();
         int i = 0;
-        for (ProductionQueue::Element& queue_element : queue) {
+        for (auto& queue_element : queue) {
             if (queue_element.paused) {
                 queue_element.allocated_pp = 0.0f;
                 ++i;
@@ -254,8 +254,8 @@ namespace {
             }
 
             // get resource sharing group and amount of resource available to build this item
-            const std::set<int>& group = queue_element_resource_sharing_object_groups[i];
-            std::map<std::set<int>, float>::iterator available_pp_it = available_pp.find(group);
+            const auto& group = queue_element_resource_sharing_object_groups[i];
+            auto available_pp_it = available_pp.find(group);
             float& group_pp_available = (available_pp_it != available_pp.end()) ? 
                         available_pp_it->second : dummy_pp_source;
 
@@ -1002,7 +1002,7 @@ void ProductionQueue::Update() {
     ScopedTimer update_timer("ProductionQueue::Update");
 
     auto industry_resource_pool = empire->GetResourcePool(RE_INDUSTRY);
-    std::map<std::set<int>, float> available_pp = AvailablePP(industry_resource_pool);
+    auto available_pp = AvailablePP(industry_resource_pool);
     int stockpile_location_id = industry_resource_pool->StockpileObjectID();
     float pp_in_stockpile = industry_resource_pool->Stockpile();
     TraceLogger() << "========= pp_in_stockpile:     " << pp_in_stockpile << " ========";
