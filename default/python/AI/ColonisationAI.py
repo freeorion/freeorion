@@ -828,8 +828,8 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                 detail.append("Black Hole Backup %.1f" % (5 * discount_multiplier * backup_factor))
         if tech_is_complete(AIDependencies.PRO_SOL_ORB_GEN):  # start valuing as soon as PRO_SOL_ORB_GEN done
             if system.starType in [fo.starType.blackHole]:
-                this_val = 0.5 * max(state.get('industrialists', 0),
-                                     20) * discount_multiplier  # pretty rare planets, good for generator
+                # pretty rare planets, good for generator
+                this_val = 0.5 * max(state.population_with_industry_focus(), 20) * discount_multiplier
                 if not claimed_stars.get(fo.starType.blackHole, []):
                     star_bonus += this_val
                     detail.append("PRO_SINGULAR_GEN %.1f" % this_val)
