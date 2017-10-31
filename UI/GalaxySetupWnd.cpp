@@ -248,8 +248,11 @@ void GameRulesPanel::DoLayout() {
     m_tabs->SizeMove(MARGINS, ClientSize() - MARGINS);
 }
 
-void GameRulesPanel::Render()
-{ /*GG::FlatRectangle(UpperLeft(), LowerRight(), GG::CLR_CYAN, GG::CLR_GREEN, 1);*/ }
+void GameRulesPanel::Render() {
+    GG::FlatRectangle(m_tabs->CurrentWnd()->UpperLeft() - GG::Pt(GG::X(2), GG::Y0),
+                      m_tabs->CurrentWnd()->LowerRight() + GG::Pt(GG::X(2), GG::Y(2)),
+                      GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
+}
 
 void GameRulesPanel::SettingChanged() {
     Sound::TempUISoundDisabler sound_disabler;
