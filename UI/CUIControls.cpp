@@ -2070,6 +2070,7 @@ void ProductionInfoPanel::DoLayout() {
     const int CENTERLINE_GAP = 4;
     const GG::X LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 7 / 16 ;
     const GG::X VALUE_TEXT_WIDTH = ((Width() - 4 - CENTERLINE_GAP) - LABEL_TEXT_WIDTH) / 2;
+
     // global           ..local
     // label  value  PP ..value  PP
     const GG::X LEFT_TEXT_X(0);
@@ -2078,8 +2079,6 @@ void ProductionInfoPanel::DoLayout() {
     const GG::X P_LABEL_X = RIGHT_TEXT_X + 40;
     const GG::X DOUBLE_LEFT_TEXT_X = P_LABEL_X + 30 + 4;
     const GG::X DOUBLE_P_LABEL_X = DOUBLE_LEFT_TEXT_X + 40;
-    
-    
 
     std::pair<int, int> m_center_gap(Value(LABEL_TEXT_WIDTH + 2), Value(LABEL_TEXT_WIDTH + 2 + CENTERLINE_GAP));
 
@@ -2171,7 +2170,6 @@ void ProductionInfoPanel::DoLayout() {
         m_local_stockpile_use_P_label->MoveTo(GG::Pt(DOUBLE_P_LABEL_X, row_offset));
         m_local_stockpile_use_P_label->Resize(P_LABEL_SIZE);
     }
-
 }
 
 
