@@ -322,7 +322,7 @@ namespace {
             allocated_pp[group] += group_drawdown;  // relies on default initial mapped value of 0.0f
             group_pp_available -= group_drawdown;
 
-            float stockpile_drawdown = allocation == group_drawdown ?  0.0f : (allocation - group_drawdown);
+            float stockpile_drawdown = allocation >= group_drawdown ?  0.0f : (allocation - group_drawdown);
                                        // 0.0f : (allocation - group_drawdown) / stockpile_conversion_rate;
             TraceLogger() << "allocation " << group_pp_available
                           << " group_drawdown " << group_drawdown
