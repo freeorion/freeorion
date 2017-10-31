@@ -1918,7 +1918,7 @@ void ProductionInfoPanel::SetTotalPointsCost(float total_points, float total_cos
 
 void ProductionInfoPanel::SetStockpileCost(float stockpile, float stockpile_use, float stockpile_use_max) {
     if (!m_stockpile_points_label) {
-        DebugLogger() << "SetStockpileCost:  create";
+        TraceLogger() << "SetStockpileCost:  create";
         m_stockpile_points_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_STOCKPILE_PS_LABEL"), GG::FORMAT_RIGHT);
         m_stockpile_points = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
         m_stockpile_points_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
@@ -1947,21 +1947,21 @@ void ProductionInfoPanel::SetStockpileCost(float stockpile, float stockpile_use,
     }
 
     
-    DebugLogger() << "SetStockpileCost:  update values";
+    TraceLogger() << "SetStockpileCost:  update values";
     *m_stockpile_points << DoubleToString(stockpile, 3, false);
 
     *m_stockpile_use << DoubleToString(stockpile_use, 3, false);
 
     *m_stockpile_max_use << DoubleToString(stockpile_use_max, 3, false);
 
-    DebugLogger() << "SetStockpileCost:  set name";
+    TraceLogger() << "SetStockpileCost:  set name";
     const Empire* empire = GetEmpire(m_empire_id);
     std::string empire_name;
     if (empire)
         empire_name = empire->Name();
 
     SetName(boost::io::str(FlexibleFormat(UserString("STOCKPILE_INFO_EMPIRE")) % m_title_str % empire_name));
-    DebugLogger() << "SetStockpileCost:  done.";
+    TraceLogger() << "SetStockpileCost:  done.";
 }
 
 void ProductionInfoPanel::SetLocalPointsCost(float local_points, float local_cost, float local_stockpile_use, float local_stockpile_use_max, const std::string& location_name) {
