@@ -172,10 +172,6 @@ namespace {
 ////////////////////////////////////////////////
 // GameRulesPanel
 ////////////////////////////////////////////////
-const GG::X GameRulesPanel::DefaultWidth() {
-    return GG::X(FontBasedUpscale(305));
-}
-
 GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS)
 {}
