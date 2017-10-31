@@ -1946,7 +1946,6 @@ void ProductionInfoPanel::SetStockpileCost(float stockpile, float stockpile_use,
         DoLayout();
     }
 
-    
     TraceLogger() << "SetStockpileCost:  update values";
     *m_stockpile_points << DoubleToString(stockpile, 3, false);
 
