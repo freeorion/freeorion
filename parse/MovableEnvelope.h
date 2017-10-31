@@ -150,7 +150,9 @@ namespace parse { namespace detail {
 
         std::unique_ptr<T> OpenEnvelope() const {
             if (IsEmptiedEnvelope())
-                throw std::runtime_error("A MovableEnvelope was opened after its obj was moved to another envelope.");
+                throw std::runtime_error(
+                    "The parser attempted to extract the unique_ptr from a MovableEnvelope more than once.  \n"
+                    "Until boost::spirit supports move semantics MovableEnvelope requires that unique_ptr be used once");
             return std::move(obj);
         }
 
@@ -163,7 +165,7 @@ namespace parse { namespace detail {
         mutable T* original_obj = nullptr;
     };
 
-    /** \p construct_movable is a function that constructs MovableEnvleopes<T> */
+    /** \p construct_movable is a functor that constructs a MovableEnvleope<T> */
     struct construct_movable {
         template <typename T>
         using result_type = MovableEnvelope<T>;
@@ -198,7 +200,21 @@ namespace parse { namespace detail {
         return retval;
     }
 
-    }
-}
+    /** \p deconstruct_movable is a functor that extracts the unique_ptr from a
+        MovableEnvleope<T>.  This is a one time operation that empties the
+        MovableEnvelop<T>.  It is typically done while calling the constructor
+        from outside of boost::spirit that expects a unique_ptr<T>*/
+    struct deconstruct_movable {
+        template <typename T>
+        std::unique_ptr<T> operator() (const MovableEnvelope<T>& obj) const
+        { return obj.OpenEnvelope(); }
+
+        template <typename T>
+        std::vector<std::unique_ptr<T>> operator() (const std::vector<MovableEnvelope<T>>& objs) const
+        { return OpenEnvelopes(objs); }
+    };
+
+    } // end namespace detail
+} // end namespace parse
 
 #endif // _MovableEnvelope_h_
