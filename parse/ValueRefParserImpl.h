@@ -1,6 +1,7 @@
 #include "ValueRefParser.h"
 
 #include "ConditionParserImpl.h"
+#include "MovableEnvelope.h"
 #include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -36,12 +37,13 @@ void initialize_nonnumeric_statistic_parser(
     boost::spirit::qi::_a_type _a;
     boost::spirit::qi::_b_type _b;
     boost::spirit::qi::_val_type _val;
+    const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
     statistic
         =   (tok.Statistic_ >>  tok.Mode_ [ _b = ValueRef::MODE ])
             >   labeller.rule(Value_token)     >     value_ref [ _a = _1 ]
             >   labeller.rule(Condition_token) >     condition_parser
-                [ _val = new_<ValueRef::Statistic<T>>(_a, _b, _1) ]
+        [ _val = new_<ValueRef::Statistic<T>>(construct<std::unique_ptr<ValueRef::ValueRefBase<T>>>(_a), _b, deconstruct_movable_(_1)) ]
         ;
 }
 
@@ -224,6 +226,7 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
     boost::spirit::qi::_d_type _d;
     boost::spirit::qi::_val_type _val;
     boost::spirit::qi::lit_type lit;
+    const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
 
     functional_expr
         =   (
@@ -345,14 +348,14 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
                 )
             )
         >   labeller.rule(Condition_token) >    condition_parser
-        [ _val = new_<ValueRef::Statistic<T>>(_a, _b, _1) ]
+        [ _val = new_<ValueRef::Statistic<T>>(construct<std::unique_ptr<ValueRef::ValueRefBase<T>>>(_a), _b, deconstruct_movable_(_1)) ]
         ;
 
     statistic_value_expr
         =   (tok.Statistic_ >>  statistic_type_enum [ _b = _1 ])
         >   labeller.rule(Value_token)     >     statistic_value_ref_expr [ _a = _1 ]
         >   labeller.rule(Condition_token) >     condition_parser
-        [ _val = new_<ValueRef::Statistic<T>>(_a, _b, _1) ]
+        [ _val = new_<ValueRef::Statistic<T>>(construct<std::unique_ptr<ValueRef::ValueRefBase<T>>>(_a), _b, deconstruct_movable_(_1)) ]
         ;
 
     statistic_expr

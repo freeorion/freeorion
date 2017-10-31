@@ -29,6 +29,8 @@ namespace parse { namespace detail {
         qi::_e_type _e; // string
         qi::_val_type _val;
         qi::eps_type eps;
+        const boost::phoenix::function<construct_movable> construct_movable_;
+        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
         using phoenix::new_;
         using phoenix::construct;
 
@@ -37,10 +39,10 @@ namespace parse { namespace detail {
                         >   labeller.rule(Name_token) >  string_grammar [ _e = _1 ]
                         > -(labeller.rule(Low_token)  >  castable_int_rules.flexible_int [ _a = _1 ] )
                         > -(labeller.rule(High_token) >  castable_int_rules.flexible_int [ _b = _1 ] )
-                ) [ _val = new_<Condition::HasSpecial>(
+                ) [ _val = construct_movable_(new_<Condition::HasSpecial>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_e),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b)) ]
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b))) ]
             ;
 
         enqueued
@@ -57,12 +59,12 @@ namespace parse { namespace detail {
                     > -(labeller.rule(Empire_token) >    int_rules.expr [ _a = _1 ])
                     > -(labeller.rule(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
                     > -(labeller.rule(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
-                ) [ _val = new_<Condition::Enqueued>(
+                ) [ _val = construct_movable_(new_<Condition::Enqueued>(
                     BT_BUILDING,
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_e),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_c)) ]
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_c))) ]
             ;
 
         enqueued2
@@ -72,11 +74,11 @@ namespace parse { namespace detail {
                     > -(labeller.rule(Empire_token) >    int_rules.expr [ _a = _1 ])
                     > -(labeller.rule(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
                     > -(labeller.rule(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
-                ) [ _val = new_<Condition::Enqueued>(
+                ) [ _val = construct_movable_(new_<Condition::Enqueued>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_d),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_c)) ]
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_c))) ]
             ;
 
         enqueued3
@@ -86,12 +88,12 @@ namespace parse { namespace detail {
                     > -(labeller.rule(Empire_token) >    int_rules.expr [ _a = _1 ])
                     > -(labeller.rule(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
                     > -(labeller.rule(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
-                ) [ _val = new_<Condition::Enqueued>(
+                ) [ _val = construct_movable_(new_<Condition::Enqueued>(
                     BT_SHIP,
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_e),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_c)) ]
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_c))) ]
             ;
 
         enqueued4
@@ -99,12 +101,12 @@ namespace parse { namespace detail {
                     > -(labeller.rule(Empire_token) >    int_rules.expr [ _a = _1 ])
                     > -(labeller.rule(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
                     > -(labeller.rule(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
-                ) [ _val = new_<Condition::Enqueued>(
+                ) [ _val = construct_movable_(new_<Condition::Enqueued>(
                     INVALID_BUILD_TYPE,
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_e),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_c)) ]
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_c))) ]
             ;
 
         design_has_part
@@ -112,10 +114,10 @@ namespace parse { namespace detail {
                     > -(labeller.rule(Low_token)   > castable_int_rules.flexible_int [ _a = _1 ])
                     > -(labeller.rule(High_token)  > castable_int_rules.flexible_int [ _b = _1 ])
                 )   >   labeller.rule(Name_token)  > string_grammar
-            [ _val = new_<Condition::DesignHasPart>(
+            [ _val = construct_movable_(new_<Condition::DesignHasPart>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b)) ]
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b))) ]
             ;
 
         design_has_part_class
@@ -123,17 +125,17 @@ namespace parse { namespace detail {
                     > -(labeller.rule(Low_token)   > castable_int_rules.flexible_int [ _a = _1 ])
                     > -(labeller.rule(High_token)  > castable_int_rules.flexible_int [ _b = _1 ])
                 )   >   labeller.rule(Class_token) > ship_part_class_enum
-            [ _val = new_<Condition::DesignHasPartClass>(
+            [ _val = construct_movable_(new_<Condition::DesignHasPartClass>(
                     _1,
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b)) ]
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b))) ]
             ;
 
         in_system
             =   (   tok.InSystem_
                     >  -(labeller.rule(ID_token)  > int_rules.expr [ _a = _1 ])
                 )
-            [ _val = new_<Condition::InSystem>(construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a)) ]
+            [ _val = construct_movable_(new_<Condition::InSystem>(construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a))) ]
             ;
 
         start

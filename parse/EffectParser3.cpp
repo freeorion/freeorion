@@ -27,11 +27,12 @@ namespace parse { namespace detail {
         using phoenix::new_;
         using phoenix::construct;
         const boost::phoenix::function<construct_movable> construct_movable_;
+        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
 
         move_to
             =    tok.MoveTo_
             >    labeller.rule(Destination_token) > condition_parser
-            [ _val = construct_movable_(new_<Effect::MoveTo>(construct<std::unique_ptr<Condition::ConditionBase>>(_1))) ]
+            [ _val = construct_movable_(new_<Effect::MoveTo>(deconstruct_movable_(_1))) ]
             ;
 
         move_in_orbit
@@ -40,7 +41,7 @@ namespace parse { namespace detail {
             >   (
                 (labeller.rule(Focus_token) >  condition_parser [ _val = construct_movable_(new_<Effect::MoveInOrbit>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_a),
-                        construct<std::unique_ptr<Condition::ConditionBase>>(_1))) ])
+                        deconstruct_movable_(_1))) ])
                 |
                 (
                     labeller.rule(X_token)     >  double_rules.expr [ _b = _1 ]
@@ -58,7 +59,7 @@ namespace parse { namespace detail {
             >    (
                 (labeller.rule(Target_token) >  condition_parser [ _val = construct_movable_(new_<Effect::MoveTowards>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_a),
-                        construct<std::unique_ptr<Condition::ConditionBase>>(_1))) ])
+                        deconstruct_movable_(_1))) ])
                 |
                 (
                     labeller.rule(X_token)     > double_rules.expr [ _b = _1 ]
@@ -73,8 +74,7 @@ namespace parse { namespace detail {
         set_destination
             =    tok.SetDestination_
             >    labeller.rule(Destination_token) > condition_parser [
-                _val = construct_movable_(
-                    new_<Effect::SetDestination>(construct<std::unique_ptr<Condition::ConditionBase>>(_1))) ]
+                _val = construct_movable_(new_<Effect::SetDestination>(deconstruct_movable_(_1))) ]
             ;
 
         set_aggression
@@ -121,15 +121,13 @@ namespace parse { namespace detail {
         add_starlanes
             =   tok.AddStarlanes_
             >   labeller.rule(Endpoint_token) > condition_parser [
-                _val = construct_movable_(
-                    new_<Effect::AddStarlanes>(construct<std::unique_ptr<Condition::ConditionBase>>(_1))) ]
+                _val = construct_movable_(new_<Effect::AddStarlanes>(deconstruct_movable_(_1))) ]
             ;
 
         remove_starlanes
             =   tok.RemoveStarlanes_
             >   labeller.rule(Endpoint_token) > condition_parser [
-                _val = construct_movable_(
-                    new_<Effect::RemoveStarlanes>(construct<std::unique_ptr<Condition::ConditionBase>>(_1))) ]
+                _val = construct_movable_(new_<Effect::RemoveStarlanes>(deconstruct_movable_(_1))) ]
             ;
 
         set_star_type

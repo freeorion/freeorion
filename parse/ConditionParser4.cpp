@@ -10,7 +10,7 @@ namespace phoenix = boost::phoenix;
 
 #if DEBUG_CONDITION_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<Condition::ConditionBase*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<condition_payload>&) { return os; }
 }
 #endif
 
@@ -35,6 +35,7 @@ namespace parse { namespace detail {
         qi::_e_type _e;
         qi::_val_type _val;
         qi::eps_type eps;
+        const boost::phoenix::function<construct_movable> construct_movable_;
         using phoenix::new_;
         using phoenix::construct;
 
@@ -43,10 +44,10 @@ namespace parse { namespace detail {
                 non_ship_part_meter_type_enum [ _a = _1 ]
                 >  -(labeller.rule(Low_token)  > double_rules.expr [ _b = _1 ])
                 >  -(labeller.rule(High_token) > double_rules.expr [ _c = _1 ])
-            ) [ _val = new_<Condition::MeterValue>(
+            ) [ _val = construct_movable_(new_<Condition::MeterValue>(
                 _a,
                 construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c)) ]
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c))) ]
             ;
 
         ship_part_meter_value
@@ -56,11 +57,11 @@ namespace parse { namespace detail {
                 >   ship_part_meter_type_enum [ _a = _1 ]
                 >  -(labeller.rule(Low_token)    >   double_rules.expr [ _b = _1 ])
                 >  -(labeller.rule(High_token)   >   double_rules.expr [ _c = _1 ])
-            ) [ _val = new_<Condition::ShipPartMeterValue>(
+            ) [ _val = construct_movable_(new_<Condition::ShipPartMeterValue>(
                 construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_e),
                 _a,
                 construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c)) ]
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c))) ]
             ;
 
         empire_meter_value1
@@ -70,11 +71,11 @@ namespace parse { namespace detail {
                 >   labeller.rule(Meter_token)    >   tok.string [ _a = _1 ]
                 >  -(labeller.rule(Low_token)     >   double_rules.expr [ _c = _1 ])
                 >  -(labeller.rule(High_token)    >   double_rules.expr [ _d = _1 ])
-            ) [ _val = new_<Condition::EmpireMeterValue>(
+            ) [ _val = construct_movable_(new_<Condition::EmpireMeterValue>(
                 construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
                 _a,
                 construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_d)) ]
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_d))) ]
             ;
 
         empire_meter_value2
@@ -83,10 +84,10 @@ namespace parse { namespace detail {
                  >>  labeller.rule(Meter_token))    >   tok.string [ _a = _1 ]
                 >  -(labeller.rule(Low_token)     >   double_rules.expr [ _c = _1 ])
                 >  -(labeller.rule(High_token)    >   double_rules.expr [ _d = _1 ])
-            ) [ _val = new_<Condition::EmpireMeterValue>(
+            ) [ _val = construct_movable_(new_<Condition::EmpireMeterValue>(
                 _a,
                 construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_d)) ]
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_d))) ]
             ;
 
         empire_meter_value

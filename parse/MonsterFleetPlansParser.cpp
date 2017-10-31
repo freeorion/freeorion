@@ -24,8 +24,9 @@ namespace {
         typedef MonsterFleetPlan* result_type;
 
         MonsterFleetPlan* operator()(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
-                                     double spawn_rate, int spawn_limit, Condition::ConditionBase* location) const
-        { return new MonsterFleetPlan(fleet_name, ship_design_names, spawn_rate, spawn_limit, std::unique_ptr<Condition::ConditionBase>(location)); }
+                                     double spawn_rate, int spawn_limit,
+                                     const parse::detail::condition_payload& location) const
+        { return new MonsterFleetPlan(fleet_name, ship_design_names, spawn_rate, spawn_limit, location.OpenEnvelope()); }
     };
     const boost::phoenix::function<new_monster_fleet_plan_> new_monster_fleet_plan;
 
@@ -132,7 +133,7 @@ namespace {
         std::vector<std::string>    _b;
         double                      _c;
         int                         _d;
-        Condition::ConditionBase*   _e;
+        parse::detail::condition_payload   _e;
     };
 
 }

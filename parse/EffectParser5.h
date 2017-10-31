@@ -13,7 +13,7 @@
         typedef rule<
             effect_signature,
             boost::spirit::qi::locals<
-                Condition::ConditionBase*,
+                condition_payload,
                 std::vector<effect_payload>,
                 std::vector<effect_payload>
                 >

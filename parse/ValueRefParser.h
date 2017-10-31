@@ -2,6 +2,7 @@
 #define _ValueRefParser_h_
 
 #include "EnumParser.h"
+#include "MovableEnvelope.h"
 
 #include "../universe/ValueRefFwd.h"
 #include "../universe/EnumsFwd.h"
@@ -24,9 +25,8 @@ namespace parse {
 }
 
 namespace parse { namespace detail {
-
-    using condition_signature      = Condition::ConditionBase* ();
-    using condition_parser_rule    = rule<condition_signature>;
+    using condition_payload        = MovableEnvelope<Condition::ConditionBase>;
+    using condition_signature      = condition_payload ();
     using condition_parser_grammar = grammar<condition_signature>;
 
     using name_token_rule = rule<const char* ()>;

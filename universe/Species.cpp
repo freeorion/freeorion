@@ -25,11 +25,14 @@
 // FocusType                                   //
 /////////////////////////////////////////////////
 FocusType::FocusType(const std::string& name, const std::string& description,
-                     const Condition::ConditionBase* location, const std::string& graphic) :
+                     std::unique_ptr<Condition::ConditionBase>&& location, const std::string& graphic) :
     m_name(name),
     m_description(description),
-    m_location(location),
+    m_location(std::move(location)),
     m_graphic(graphic)
+{}
+
+FocusType::~FocusType()
 {}
 
 std::string FocusType::Dump() const {

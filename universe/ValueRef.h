@@ -250,11 +250,7 @@ struct FO_COMMON_API Statistic : public Variable<T>
 {
     Statistic(std::unique_ptr<ValueRefBase<T>>&& value_ref,
               StatisticType stat_type,
-              Condition::ConditionBase* sampling_condition);
-
-    Statistic(ValueRefBase<T>* value_ref,
-              StatisticType stat_type,
-              Condition::ConditionBase* sampling_condition);
+              std::unique_ptr<Condition::ConditionBase>&& sampling_condition);
 
     ~Statistic();
 
@@ -867,20 +863,11 @@ void Variable<T>::serialize(Archive& ar, const unsigned int version)
 ///////////////////////////////////////////////////////////
 template <class T>
 Statistic<T>::Statistic(std::unique_ptr<ValueRefBase<T>>&& value_ref, StatisticType stat_type,
-                        Condition::ConditionBase* sampling_condition) :
+                        std::unique_ptr<Condition::ConditionBase>&& sampling_condition) :
     Variable<T>(NON_OBJECT_REFERENCE, ""),
     m_stat_type(stat_type),
-    m_sampling_condition(sampling_condition),
+    m_sampling_condition(std::move(sampling_condition)),
     m_value_ref(std::move(value_ref))
-{}
-
-template <class T>
-Statistic<T>::Statistic(ValueRefBase<T>* value_ref, StatisticType stat_type,
-                        Condition::ConditionBase* sampling_condition) :
-    Variable<T>(NON_OBJECT_REFERENCE, ""),
-    m_stat_type(stat_type),
-    m_sampling_condition(sampling_condition),
-    m_value_ref(value_ref)
 {}
 
 template <class T>

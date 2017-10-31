@@ -32,6 +32,8 @@ namespace parse { namespace detail {
         qi::_h_type _h;
         qi::_val_type _val;
         qi::lit_type lit;
+        const boost::phoenix::function<construct_movable> construct_movable_;
+        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
         using phoenix::new_;
         using phoenix::construct;
 
@@ -40,28 +42,28 @@ namespace parse { namespace detail {
                     >       labeller.rule(Name_token) >  string_grammar [ _c = _1 ]
                     >     -(labeller.rule(Low_token)  >  double_rules.expr [ _a = _1 ] )
                     >     -(labeller.rule(High_token) >  double_rules.expr [ _b = _1 ] )
-                ) [ _val = new_<Condition::HasSpecial>(
+                ) [ _val = construct_movable_(new_<Condition::HasSpecial>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_c),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_a),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b)) ]
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b))) ]
             ;
 
         within_distance
             =   tok.WithinDistance_
             >   labeller.rule(Distance_token)  > double_rules.expr [ _a = _1 ]
             >   labeller.rule(Condition_token) > condition_parser
-            [ _val = new_<Condition::WithinDistance>(
+            [ _val = construct_movable_(new_<Condition::WithinDistance>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_a),
-                    construct<std::unique_ptr<Condition::ConditionBase>>(_1)) ]
+                    deconstruct_movable_(_1))) ]
             ;
 
         within_starlane_jumps
             =   tok.WithinStarlaneJumps_
             >   labeller.rule(Jumps_token)     > castable_int_rules.flexible_int [ _a = _1 ]
             >   labeller.rule(Condition_token) > condition_parser
-            [ _val = new_<Condition::WithinStarlaneJumps>(
+            [ _val = construct_movable_(new_<Condition::WithinStarlaneJumps>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
-                    construct<std::unique_ptr<Condition::ConditionBase>>(_1)) ]
+                    deconstruct_movable_(_1))) ]
             ;
 
         number
@@ -69,10 +71,10 @@ namespace parse { namespace detail {
             > -(labeller.rule(Low_token)   >  castable_int_rules.flexible_int [ _a = _1 ])
             > -(labeller.rule(High_token)  >  castable_int_rules.flexible_int [ _b = _1 ])
             >   labeller.rule(Condition_token) > condition_parser
-            [ _val = new_<Condition::Number>(
+            [ _val = construct_movable_(new_<Condition::Number>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
-                    construct<std::unique_ptr<Condition::ConditionBase>>(_1)) ]
+                    deconstruct_movable_(_1))) ]
             ;
 
         value_test_1
@@ -86,10 +88,10 @@ namespace parse { namespace detail {
                       | lit('<')    [ _d = Condition::LESS_THAN ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
                   ) > double_rules.expr // assuming the trinary form already didn't pass, can expect a (double) here, though it might be an (int) casted to (double). By matching the (int) cases first, can assume that at least one of the parameters here is not an (int) casted to double.
-                [ _val = new_<Condition::ValueTest>(
+                [ _val = construct_movable_(new_<Condition::ValueTest>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_a),
                         _d,
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ]
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ]
                 >> ')'
                 ;
 
@@ -112,12 +114,12 @@ namespace parse { namespace detail {
                       | lit('<')    [ _e = Condition::LESS_THAN ]
                       | lit("!=")   [ _e = Condition::NOT_EQUAL ])
                   ) >  double_rules.expr    // if already seen (double) (operator) (double) (operator) can expect to see another (double). Some of these (double) may be (int) casted to double, though not all of them can be, as in that case, the (int) parser should have matched.
-                [ _val = new_<Condition::ValueTest>(
+                [ _val = construct_movable_(new_<Condition::ValueTest>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_a),
                         _d,
                         construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
                         _e,
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ]
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ]
                 >  ')'
                 ;
 
@@ -128,10 +130,10 @@ namespace parse { namespace detail {
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
                   ) > string_grammar // assuming the trinary (string) form already didn't parse, if already seen (string) (operator) can expect another (string)
-                [ _val = new_<Condition::ValueTest>(
+                [ _val = construct_movable_(new_<Condition::ValueTest>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_c),
                         _d,
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1)) ]
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1))) ]
                 >> ')'
                 ;
 
@@ -146,12 +148,12 @@ namespace parse { namespace detail {
                       | lit('=')    [ _d = Condition::EQUAL ]
                       | lit("!=")   [ _e = Condition::NOT_EQUAL ])
                 ) >  string_grammar // if already seen (string) (operator) (string) (operator) can expect to see another (string)
-                [ _val = new_<Condition::ValueTest>(
+                [ _val = construct_movable_(new_<Condition::ValueTest>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_c),
                         _d,
                         construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_f),
                         _e,
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1)) ]
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1))) ]
                 >  ')'
                 ;
 
@@ -166,10 +168,10 @@ namespace parse { namespace detail {
                       | lit('<')    [ _d = Condition::LESS_THAN ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
                 >> int_rules.expr   // can't expect an (int) here, as it could actually be a (double) comparision with the first (double) cased from an (int)
-                [ _val = new_<Condition::ValueTest>(
+                [ _val = construct_movable_(new_<Condition::ValueTest>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_g),
                         _d,
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1)) ]
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1))) ]
                 >> ')'
                 ;
 
@@ -192,12 +194,12 @@ namespace parse { namespace detail {
                       | lit('<')    [ _e = Condition::LESS_THAN ]
                       | lit("!=")   [ _e = Condition::NOT_EQUAL ])
                  >> int_rules.expr   // only treat as trinary (int) comparison if all parameters are (int). otherwise fall back to (double) comparison, which allows some of the parameters to be (int) casted to (double)
-                 [ _val = new_<Condition::ValueTest>(
+                 [ _val = construct_movable_(new_<Condition::ValueTest>(
                          construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_g),
                          _d,
                          construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_h),
                          _e,
-                         construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1)) ]
+                         construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1))) ]
                   ) >  ')'
                 ;
 
@@ -205,27 +207,27 @@ namespace parse { namespace detail {
                 =  (tok.Turn_
                 > -(labeller.rule(Low_token)  > (castable_int_rules.flexible_int [ _a = _1 ]))
                 > -(labeller.rule(High_token) > (castable_int_rules.flexible_int [ _b = _1 ])))
-                [ _val = new_<Condition::Turn>(
+                [ _val = construct_movable_(new_<Condition::Turn>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b)) ]
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b))) ]
                 ;
 
             created_on_turn
                 =  (tok.CreatedOnTurn_
                 > -(labeller.rule(Low_token)  > castable_int_rules.flexible_int [ _a = _1 ])
                 > -(labeller.rule(High_token) > castable_int_rules.flexible_int [ _b = _1 ]))
-                [ _val = new_<Condition::CreatedOnTurn>(
+                [ _val = construct_movable_(new_<Condition::CreatedOnTurn>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b)) ]
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b))) ]
                 ;
 
             number_of1
                 =   tok.NumberOf_
                 >   labeller.rule(Number_token)    > castable_int_rules.flexible_int [ _a = _1 ]
                 >   labeller.rule(Condition_token) > condition_parser
-                [ _val = new_<Condition::SortedNumberOf>(
+                [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
-                        construct<std::unique_ptr<Condition::ConditionBase>>(_1)) ]
+                        deconstruct_movable_(_1))) ]
                 ;
 
             number_of2
@@ -236,11 +238,11 @@ namespace parse { namespace detail {
                 >   labeller.rule(Number_token)    > castable_int_rules.flexible_int [ _a = _1 ]
                 >   labeller.rule(SortKey_token)   > double_rules.expr [ _c = _1 ]
                 >   labeller.rule(Condition_token) > condition_parser
-                [ _val = new_<Condition::SortedNumberOf>(
+                [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
                         construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
                         _b,
-                        construct<std::unique_ptr<Condition::ConditionBase>>(_1)) ]
+                        deconstruct_movable_(_1))) ]
                 ;
 
             number_of
@@ -251,33 +253,33 @@ namespace parse { namespace detail {
             random
                 =   tok.Random_
                 >   labeller.rule(Probability_token) > double_rules.expr
-                [ _val = new_<Condition::Chance>(construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ]
+                [ _val = construct_movable_(new_<Condition::Chance>(construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ]
                 ;
 
             owner_stockpile
                 =   tok.OwnerTradeStockpile_ [ _a = RE_TRADE ]
                 >   labeller.rule(Low_token)  > double_rules.expr [ _b = _1 ]
                 >   labeller.rule(High_token) > double_rules.expr
-                [ _val = new_<Condition::EmpireStockpileValue>(
+                [ _val = construct_movable_(new_<Condition::EmpireStockpileValue>(
                         _a,
                         construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ]
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ]
                 ;
 
             resource_supply_connected
                 =   tok.ResourceSupplyConnected_
                 >   labeller.rule(Empire_token)    > int_rules.expr [ _a = _1 ]
                 >   labeller.rule(Condition_token) > condition_parser
-                [ _val = new_<Condition::ResourceSupplyConnectedByEmpire>(
+                [ _val = construct_movable_(new_<Condition::ResourceSupplyConnectedByEmpire>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
-                        construct<std::unique_ptr<Condition::ConditionBase>>(_1)) ]
+                        deconstruct_movable_(_1))) ]
                 ;
 
             can_add_starlane
                 =   tok.CanAddStarlanesTo_
                 >   labeller.rule(Condition_token) > condition_parser
-                [ _val = new_<Condition::CanAddStarlaneConnection>(
-                        construct<std::unique_ptr<Condition::ConditionBase>>(_1)) ]
+                [ _val = construct_movable_(new_<Condition::CanAddStarlaneConnection>(
+                        deconstruct_movable_(_1))) ]
                 ;
 
             start

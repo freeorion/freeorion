@@ -63,7 +63,7 @@ namespace parse { namespace detail {
         const std::string& message_string, const std::string& icon,
         const PassedMessageParams& message_parameters,
         EmpireAffiliationType affiliation,
-        const parse::detail::MovableEnvelope<Condition::ConditionBase>& condition,
+        const parse::detail::condition_payload& condition,
         const std::string label = "",
         bool stringtable_lookup = true)
     {

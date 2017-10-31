@@ -48,8 +48,8 @@ namespace parse {
         typedef detail::rule<
             parse::detail::MovableEnvelope<Effect::EffectsGroup> (),
             boost::spirit::qi::locals<
-                parse::detail::MovableEnvelope<Condition::ConditionBase>,
-                parse::detail::MovableEnvelope<Condition::ConditionBase>,
+                parse::detail::condition_payload,
+                parse::detail::condition_payload,
                 std::string,
                 std::vector<detail::effect_payload>,
                 std::string,

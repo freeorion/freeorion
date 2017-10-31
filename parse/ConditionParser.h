@@ -5,6 +5,7 @@
 #include "ParseImpl.h"
 #include "ValueRefParser.h"
 #include "EnumParser.h"
+#include "MovableEnvelope.h"
 
 #include <boost/spirit/include/qi.hpp>
 
@@ -16,7 +17,8 @@ namespace Condition {
 }
 
 namespace parse { namespace detail {
-    using condition_signature      = Condition::ConditionBase* ();
+    using condition_payload        = MovableEnvelope<Condition::ConditionBase>;
+    using condition_signature      = condition_payload ();
     using condition_parser_rule    = rule<condition_signature>;
     using condition_parser_grammar = grammar<condition_signature>;
 }}

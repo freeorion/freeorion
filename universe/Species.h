@@ -45,7 +45,9 @@ public:
     {}
 
     FocusType(const std::string& name, const std::string& description,
-              const Condition::ConditionBase* location, const std::string& graphic);
+              std::unique_ptr<Condition::ConditionBase>&& location, const std::string& graphic);
+
+    ~FocusType();
     //@}
 
     /** \name Accessors */ //@{

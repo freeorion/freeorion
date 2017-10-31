@@ -2,6 +2,7 @@
 
 #include "EffectParser.h"
 
+#include "../universe/Condition.h"
 #include "../universe/Effect.h"
 #include "../universe/Special.h"
 
@@ -30,7 +31,7 @@ namespace {
                     double spawn_rate_,
                     int spawn_limit_,
                     ValueRef::ValueRefBase<double>* initial_capacity_,
-                    Condition::ConditionBase* location_,
+                    const parse::detail::condition_payload& location_,
                     const std::string& graphic_) :
             name(name_),
             description(description_),
@@ -50,7 +51,7 @@ namespace {
         double spawn_rate;
         int spawn_limit;
         ValueRef::ValueRefBase<double>* initial_capacity;
-        Condition::ConditionBase* location;
+        parse::detail::condition_payload location;
         const std::string& graphic;
     };
 
@@ -59,7 +60,7 @@ namespace {
             special_.name, special_.description, special_.stealth,
             OpenEnvelopes(special_.effects),
             special_.spawn_rate, special_.spawn_limit, special_.initial_capacity,
-            special_.location, special_.graphic);
+            special_.location.OpenEnvelope(), special_.graphic);
 
         specials.insert(std::make_pair(special_ptr->Name(), std::move(special_ptr)));
     }
@@ -162,7 +163,7 @@ namespace {
                 std::string,
                 double,
                 int,
-                Condition::ConditionBase*,
+                parse::detail::condition_payload,
                 parse::effects_group_payload,
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<double>*

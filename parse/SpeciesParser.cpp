@@ -5,7 +5,9 @@
 #include "ValueRefParserImpl.h"
 #include "EffectParser.h"
 #include "ConditionParserImpl.h"
+#include "MovableEnvelope.h"
 
+#include "../universe/Condition.h"
 #include "../universe/Effect.h"
 #include "../universe/Species.h"
 
@@ -89,6 +91,7 @@ namespace {
             qi::_r1_type _r1;
             qi::_val_type _val;
             qi::eps_type eps;
+            const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             focus_type
                 =    tok.Focus_
@@ -96,7 +99,7 @@ namespace {
                 >    labeller.rule(Description_token) > tok.string [ _b = _1 ]
                 >    labeller.rule(Location_token)    > condition_parser [ _c = _1 ]
                 >    labeller.rule(Graphic_token)     > tok.string
-                     [ _val = construct<FocusType>(_a, _b, _c, _1) ]
+                [ _val = construct<FocusType>(_a, _b, deconstruct_movable_(_c), _1) ]
                 ;
 
             foci
@@ -191,7 +194,7 @@ namespace {
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
-                Condition::ConditionBase*
+                parse::detail::condition_payload
             >
         > focus_type_rule;
 

@@ -36,6 +36,7 @@ namespace parse { namespace detail {
         using phoenix::new_;
         using phoenix::construct;
         const boost::phoenix::function<construct_movable> construct_movable_;
+        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
 
         set_meter =
             (
@@ -162,7 +163,7 @@ namespace parse { namespace detail {
                 new_<Effect::SetVisibility>(construct<std::unique_ptr<ValueRef::ValueRefBase<Visibility>>>(_c),
                                             _d,
                                             construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
-                                            construct<std::unique_ptr<Condition::ConditionBase>>(_e))) ]
+                                            deconstruct_movable_(_e))) ]
             ;
 
         start

@@ -27,7 +27,7 @@ namespace parse { namespace detail {
                 ValueRef::ValueRefBase<int>*,
                 ValueRef::ValueRefBase<Visibility>*,
                 EmpireAffiliationType,
-                Condition::ConditionBase*
+                condition_payload
             >
         > set_stockpile_or_vis_rule;
 
