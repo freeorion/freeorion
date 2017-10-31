@@ -33,7 +33,7 @@ namespace {
     { return GG::X(345 + FontBasedUpscale(300)); }
     const GG::Y GalSetupWndHeight()
     { return GG::Y(FontBasedUpscale(29) + (PANEL_CONTROL_SPACING * 6) + GAL_SETUP_PANEL_HT); }
-    const GG::Pt PREVIEW_SZ(GG::X(248), GG::Y(186));
+    const GG::Pt PREVIEW_SZ(GG::X(300), GG::Y(222));
     const bool ALLOW_NO_STARLANES = false;
 
     class RowContentsWnd : public GG::Control {
