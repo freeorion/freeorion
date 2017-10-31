@@ -12,7 +12,8 @@ namespace Effect {
 }
 
 namespace parse { namespace detail {
-    using effect_signature      = Effect::EffectBase* ();
+    using effect_payload        = MovableEnvelope<Effect::EffectBase>;
+    using effect_signature      = effect_payload ();
     using effect_parser_rule    = rule<effect_signature>;
     using effect_parser_grammar = grammar<effect_signature>;
 
@@ -50,7 +51,7 @@ namespace parse {
                 parse::detail::MovableEnvelope<Condition::ConditionBase>,
                 parse::detail::MovableEnvelope<Condition::ConditionBase>,
                 std::string,
-                std::vector<parse::detail::MovableEnvelope<Effect::EffectBase>>,
+                std::vector<detail::effect_payload>,
                 std::string,
                 int,
                 std::string

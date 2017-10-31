@@ -26,27 +26,28 @@ namespace parse { namespace detail {
         qi::_val_type _val;
         using phoenix::new_;
         using phoenix::construct;
+        const boost::phoenix::function<construct_movable> construct_movable_;
 
         move_to
             =    tok.MoveTo_
             >    labeller.rule(Destination_token) > condition_parser
-            [ _val = new_<Effect::MoveTo>(construct<std::unique_ptr<Condition::ConditionBase>>(_1)) ]
+            [ _val = construct_movable_(new_<Effect::MoveTo>(construct<std::unique_ptr<Condition::ConditionBase>>(_1))) ]
             ;
 
         move_in_orbit
             =    tok.MoveInOrbit_
             >    labeller.rule(Speed_token) >  double_rules.expr [ _a = _1 ]
             >   (
-                (labeller.rule(Focus_token) >  condition_parser [ _val = new_<Effect::MoveInOrbit>(
+                (labeller.rule(Focus_token) >  condition_parser [ _val = construct_movable_(new_<Effect::MoveInOrbit>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_a),
-                        construct<std::unique_ptr<Condition::ConditionBase>>(_1)) ])
+                        construct<std::unique_ptr<Condition::ConditionBase>>(_1))) ])
                 |
                 (
                     labeller.rule(X_token)     >  double_rules.expr [ _b = _1 ]
-                    >   labeller.rule(Y_token)     >  double_rules.expr [ _val = new_<Effect::MoveInOrbit>(
+                    >   labeller.rule(Y_token)     >  double_rules.expr [ _val = construct_movable_(new_<Effect::MoveInOrbit>(
                             construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_a),
                             construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
-                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ]
+                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ]
                 )
             )
             ;
@@ -55,48 +56,50 @@ namespace parse { namespace detail {
             =    tok.MoveTowards_
             >    labeller.rule(Speed_token) > double_rules.expr [ _a = _1 ]
             >    (
-                (labeller.rule(Target_token) >  condition_parser [ _val = new_<Effect::MoveTowards>(
+                (labeller.rule(Target_token) >  condition_parser [ _val = construct_movable_(new_<Effect::MoveTowards>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_a),
-                        construct<std::unique_ptr<Condition::ConditionBase>>(_1)) ])
+                        construct<std::unique_ptr<Condition::ConditionBase>>(_1))) ])
                 |
                 (
                     labeller.rule(X_token)     > double_rules.expr [ _b = _1 ]
-                    >   labeller.rule(Y_token)     > double_rules.expr [ _val = new_<Effect::MoveTowards>(
+                    >   labeller.rule(Y_token)     > double_rules.expr [ _val = construct_movable_(new_<Effect::MoveTowards>(
                             construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_a),
                             construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
-                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ]
+                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ]
                 )
             )
             ;
 
         set_destination
             =    tok.SetDestination_
-            >    labeller.rule(Destination_token) > condition_parser [ _val = new_<Effect::SetDestination>(
-                construct<std::unique_ptr<Condition::ConditionBase>>(_1)) ]
+            >    labeller.rule(Destination_token) > condition_parser [
+                _val = construct_movable_(
+                    new_<Effect::SetDestination>(construct<std::unique_ptr<Condition::ConditionBase>>(_1))) ]
             ;
 
         set_aggression
-            =   tok.SetAggressive_  [ _val = new_<Effect::SetAggression>(true) ]
-            |   tok.SetPassive_     [ _val = new_<Effect::SetAggression>(false) ]
+            =   tok.SetAggressive_  [ _val = construct_movable_(new_<Effect::SetAggression>(true)) ]
+            |   tok.SetPassive_     [ _val = construct_movable_(new_<Effect::SetAggression>(false)) ]
             ;
 
         destroy
-            =    tok.Destroy_ [ _val = new_<Effect::Destroy>() ]
+            =    tok.Destroy_ [ _val = construct_movable_(new_<Effect::Destroy>()) ]
             ;
 
         noop
-            =    tok.NoOp_ [ _val = new_<Effect::NoOp>() ]
+            =    tok.NoOp_ [ _val = construct_movable_(new_<Effect::NoOp>()) ]
             ;
 
         victory
             =    tok.Victory_
-            >    labeller.rule(Reason_token) > tok.string [ _val = new_<Effect::Victory>(_1) ]
+            >    labeller.rule(Reason_token) > tok.string [ _val = construct_movable_(new_<Effect::Victory>(_1)) ]
             ;
 
         add_special_1
             =   tok.AddSpecial_
-            >   labeller.rule(Name_token) > string_grammar [ _val = new_<Effect::AddSpecial>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1)) ]
+            >   labeller.rule(Name_token) > string_grammar [
+                _val = construct_movable_(
+                    new_<Effect::AddSpecial>(construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1))) ]
             ;
 
         add_special_2
@@ -104,38 +107,41 @@ namespace parse { namespace detail {
                 >>  labeller.rule(Name_token) >> string_grammar [ _c = _1 ]
                 >> (labeller.rule(Capacity_token) | labeller.rule(Value_token))
                )
-            >   double_rules.expr [ _val = new_<Effect::AddSpecial>(
+            >   double_rules.expr [ _val = construct_movable_(new_<Effect::AddSpecial>(
                 construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_c),
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ]
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ]
             ;
 
         remove_special
             =   tok.RemoveSpecial_
-            >   labeller.rule(Name_token) > string_grammar [ _val = new_<Effect::RemoveSpecial>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1)) ]
+            >   labeller.rule(Name_token) > string_grammar [ _val = construct_movable_(new_<Effect::RemoveSpecial>(
+                                                                                           construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1))) ]
             ;
 
         add_starlanes
             =   tok.AddStarlanes_
-            >   labeller.rule(Endpoint_token) > condition_parser [ _val = new_<Effect::AddStarlanes>(
-                construct<std::unique_ptr<Condition::ConditionBase>>(_1)) ]
+            >   labeller.rule(Endpoint_token) > condition_parser [
+                _val = construct_movable_(
+                    new_<Effect::AddStarlanes>(construct<std::unique_ptr<Condition::ConditionBase>>(_1))) ]
             ;
 
         remove_starlanes
             =   tok.RemoveStarlanes_
-            >   labeller.rule(Endpoint_token) > condition_parser [ _val = new_<Effect::RemoveStarlanes>(
-                construct<std::unique_ptr<Condition::ConditionBase>>(_1)) ]
+            >   labeller.rule(Endpoint_token) > condition_parser [
+                _val = construct_movable_(
+                    new_<Effect::RemoveStarlanes>(construct<std::unique_ptr<Condition::ConditionBase>>(_1))) ]
             ;
 
         set_star_type
             =   tok.SetStarType_
-            >   labeller.rule(Type_token) > star_type_rules.expr [ _val = new_<Effect::SetStarType>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<StarType>>>(_1)) ]
+            >   labeller.rule(Type_token) > star_type_rules.expr [
+                _val = construct_movable_(
+                    new_<Effect::SetStarType>(construct<std::unique_ptr<ValueRef::ValueRefBase<StarType>>>(_1))) ]
             ;
 
         set_texture
             =   tok.SetTexture_
-            >   labeller.rule(Name_token) > tok.string [ _val = new_<Effect::SetTexture>(_1) ]
+            >   labeller.rule(Name_token) > tok.string [ _val = construct_movable_(new_<Effect::SetTexture>(_1)) ]
             ;
 
         start

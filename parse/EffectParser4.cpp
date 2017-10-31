@@ -32,7 +32,7 @@ namespace parse { namespace detail {
         qi::_f_type _f;
         qi::_val_type _val;
         qi::eps_type eps;
-        const boost::phoenix::function<parse::detail::lazy_move> lazy_move_;
+        const boost::phoenix::function<construct_movable> construct_movable_;
 
         using phoenix::new_;
         using phoenix::construct;
@@ -49,11 +49,11 @@ namespace parse { namespace detail {
                                 |    effect_parser [ emplace_back_1_(_d, _1) ]
                             )
                            )
-                ) [ _val = new_<Effect::CreatePlanet>(
+                ) [ _val = construct_movable_(construct_movable_(new_<Effect::CreatePlanet>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>>(_a),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>>(_b),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_c),
-                    lazy_move_(_d)) ]
+                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _d)))) ]
             ;
 
         create_building
@@ -66,10 +66,10 @@ namespace parse { namespace detail {
                                 |    effect_parser [ emplace_back_1_(_c, _1) ]
                             )
                            )
-                ) [ _val = new_<Effect::CreateBuilding>(
+                ) [ _val = construct_movable_(new_<Effect::CreateBuilding>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_b),
-                    lazy_move_(_c)) ]
+                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _c))) ]
             ;
 
         create_ship_1
@@ -85,12 +85,12 @@ namespace parse { namespace detail {
                          |    effect_parser [ emplace_back_1_(_f, _1) ]
                      )
                     )
-                ) [ _val = new_<Effect::CreateShip>(
+                ) [ _val = construct_movable_(new_<Effect::CreateShip>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_c),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_e),
-                    lazy_move_(_f)) ]
+                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _f))) ]
             ;
 
         create_ship_2
@@ -106,12 +106,12 @@ namespace parse { namespace detail {
                          |    effect_parser [ emplace_back_1_(_f, _1) ]
                      )
                     )
-                ) [ _val = new_<Effect::CreateShip>(
+                ) [ _val = construct_movable_(new_<Effect::CreateShip>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_c),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_e),
-                    lazy_move_(_f)) ]
+                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _f))) ]
             ;
 
         create_field_1
@@ -128,11 +128,11 @@ namespace parse { namespace detail {
                          |    effect_parser [ emplace_back_1_(_f, _1) ]
                      )
                     )
-                ) [ _val = new_<Effect::CreateField>(
+                ) [ _val = construct_movable_(new_<Effect::CreateField>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
-                    lazy_move_(_f)) ]
+                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _f))) ]
             ;
 
         create_field_2
@@ -151,13 +151,13 @@ namespace parse { namespace detail {
                          |    effect_parser [ emplace_back_1_(_f, _1) ]
                      )
                     )
-                ) [ _val = new_<Effect::CreateField>(
+                ) [ _val = construct_movable_(new_<Effect::CreateField>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_e),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
-                    lazy_move_(_f)) ]
+                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _f))) ]
             ;
 
         create_system_1
@@ -175,12 +175,12 @@ namespace parse { namespace detail {
                          |    effect_parser [ emplace_back_1_(_e, _1) ]
                      )
                     )
-                ) [ _val = new_<Effect::CreateSystem>(
+                ) [ _val = construct_movable_(new_<Effect::CreateSystem>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<StarType>>>(_a),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
-                    lazy_move_(_e)) ]
+                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _e))) ]
             ;
 
         create_system_2
@@ -197,11 +197,11 @@ namespace parse { namespace detail {
                          |    effect_parser [ emplace_back_1_(_e, _1) ]
                      )
                     )
-                ) [ _val = new_<Effect::CreateSystem>(
+                ) [ _val = construct_movable_(new_<Effect::CreateSystem>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
-                    lazy_move_(_e)) ]
+                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _e))) ]
             ;
 
         start

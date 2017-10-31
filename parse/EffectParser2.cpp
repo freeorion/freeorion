@@ -35,6 +35,7 @@ namespace parse { namespace detail {
         qi::eps_type eps;
         using phoenix::new_;
         using phoenix::construct;
+        const boost::phoenix::function<construct_movable> construct_movable_;
 
         set_meter =
             (
@@ -44,70 +45,74 @@ namespace parse { namespace detail {
             )
             >   double_rules.expr [ _c = _1 ]
             >   (
-                (labeller.rule(AccountingLabel_token) > tok.string [ _val = new_<Effect::SetMeter>(
+                (labeller.rule(AccountingLabel_token) > tok.string [ _val = construct_movable_(new_<Effect::SetMeter>(
                         _a,
                         construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
-                        _1) ] )
-                |    eps [ _val = new_<Effect::SetMeter>(
+                        _1)) ] )
+                |    eps [ _val = construct_movable_(new_<Effect::SetMeter>(
                         _a,
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c)) ]
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c))) ]
             )
             ;
 
         set_ship_part_meter
             =    (set_ship_part_meter_type_enum [ _a = _1 ] >>   labeller.rule(PartName_token))   > string_grammar [ _b = _1 ]
-            >    labeller.rule(Value_token)      > double_rules.expr [ _val = new_<Effect::SetShipPartMeter>(
+            >    labeller.rule(Value_token)      > double_rules.expr [ _val = construct_movable_(new_<Effect::SetShipPartMeter>(
                 _a,
                 construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_b),
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ]
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ]
             ;
 
         set_empire_stockpile
             =   tok.SetEmpireTradeStockpile_ [ _a = RE_TRADE ]
             >   (
                 (   labeller.rule(Empire_token) > int_rules.expr [ _b = _1 ]
-                    >   labeller.rule(Value_token)  > double_rules.expr [ _val = new_<Effect::SetEmpireStockpile>(
+                    >   labeller.rule(Value_token)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
                         _a,
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ]
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ]
                 )
-                |  (labeller.rule(Value_token)  > double_rules.expr [ _val = new_<Effect::SetEmpireStockpile>(
+                |  (labeller.rule(Value_token)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
                             _a,
-                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ])
+                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ])
             )
             ;
 
         set_empire_capital
             =    tok.SetEmpireCapital_
             >   (
-                (labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Effect::SetEmpireCapital>(
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1)) ])
-                |    eps [ _val = new_<Effect::SetEmpireCapital>() ]
+                (labeller.rule(Empire_token) > int_rules.expr [ _val = construct_movable_(
+                        new_<Effect::SetEmpireCapital>(
+                            construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1))) ])
+                |    eps [ _val = construct_movable_(new_<Effect::SetEmpireCapital>()) ]
             )
             ;
 
         set_planet_type
             =    tok.SetPlanetType_
-            >    labeller.rule(Type_token) > planet_type_rules.expr [ _val = new_<Effect::SetPlanetType>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>>(_1)) ]
+            >    labeller.rule(Type_token) > planet_type_rules.expr [ _val = construct_movable_(
+                new_<Effect::SetPlanetType>(
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>>(_1))) ]
             ;
 
         set_planet_size
             =    tok.SetPlanetSize_
-            >    labeller.rule(PlanetSize_token) > planet_size_rules.expr [ _val = new_<Effect::SetPlanetSize>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>>(_1)) ]
+            >    labeller.rule(PlanetSize_token) > planet_size_rules.expr [
+                _val = construct_movable_(
+                    new_<Effect::SetPlanetSize>(construct<std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>>(_1))) ]
             ;
 
         set_species
             =    tok.SetSpecies_
-            >    labeller.rule(Name_token) > string_grammar [ _val = new_<Effect::SetSpecies>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1)) ]
+            >    labeller.rule(Name_token) > string_grammar [
+                _val = construct_movable_(
+                    new_<Effect::SetSpecies>(construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1))) ]
             ;
 
         set_owner
             =    tok.SetOwner_
-            >    labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Effect::SetOwner>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1)) ]
+            >    labeller.rule(Empire_token) > int_rules.expr [
+                _val = construct_movable_(new_<Effect::SetOwner>(construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1))) ]
             ;
 
         set_species_opinion
@@ -116,17 +121,17 @@ namespace parse { namespace detail {
             > (
                 (   labeller.rule(Empire_token) >  int_rules.expr [ _c = _1 ]
                     >  labeller.rule(Opinion_token) > double_rules.expr
-                    [ _val = new_<Effect::SetSpeciesEmpireOpinion>(
+                    [ _val = construct_movable_(new_<Effect::SetSpeciesEmpireOpinion>(
                             construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
                             construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_c),
-                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ])
+                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ])
                 |
                 (   labeller.rule(Species_token) > string_grammar [ _b = _1 ]
                     >   labeller.rule(Opinion_token) > double_rules.expr
-                    [ _val = new_<Effect::SetSpeciesSpeciesOpinion>(
+                    [ _val = construct_movable_(new_<Effect::SetSpeciesSpeciesOpinion>(
                             construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
                             construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_b),
-                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ])
+                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ])
             )
             ;
 
@@ -153,10 +158,11 @@ namespace parse { namespace detail {
                 )
                 >  labeller.rule(Visibility_token) > visibility_rules.expr [ _c = _1 ]
                 >-(labeller.rule(Condition_token) > condition_parser [ _e = _1 ])
-            ) [ _val = new_<Effect::SetVisibility>(construct<std::unique_ptr<ValueRef::ValueRefBase<Visibility>>>(_c),
-                                                   _d,
-                                                   construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
-                                                   construct<std::unique_ptr<Condition::ConditionBase>>(_e)) ]
+            ) [ _val = construct_movable_(
+                new_<Effect::SetVisibility>(construct<std::unique_ptr<ValueRef::ValueRefBase<Visibility>>>(_c),
+                                            _d,
+                                            construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
+                                            construct<std::unique_ptr<Condition::ConditionBase>>(_e))) ]
             ;
 
         start

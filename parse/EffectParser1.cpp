@@ -38,26 +38,28 @@ namespace parse { namespace detail {
         return retval;
     }
 
-    Effect::GenerateSitRepMessage* construct_GenerateSitRepMessage1(
+    effect_payload construct_GenerateSitRepMessage1(
         const std::string& message_string, const std::string& icon,
         const PassedMessageParams& message_parameters,
-        const parse::detail::MovableEnvelope<ValueRef::ValueRefBase<int>>& recipient_empire_id,
+        const MovableEnvelope<ValueRef::ValueRefBase<int>>& recipient_empire_id,
         EmpireAffiliationType affiliation,
         const std::string label = "",
         bool stringtable_lookup = true)
     {
-        return new Effect::GenerateSitRepMessage(
-            message_string,
-            icon,
-            OpenEnvelopes(message_parameters),
-            recipient_empire_id.OpenEnvelope(),
-            affiliation,
-            label,
-            stringtable_lookup
+        return effect_payload(
+            new Effect::GenerateSitRepMessage(
+                message_string,
+                icon,
+                OpenEnvelopes(message_parameters),
+                recipient_empire_id.OpenEnvelope(),
+                affiliation,
+                label,
+                stringtable_lookup
+            )
         );
     }
 
-    Effect::GenerateSitRepMessage* construct_GenerateSitRepMessage2(
+    effect_payload construct_GenerateSitRepMessage2(
         const std::string& message_string, const std::string& icon,
         const PassedMessageParams& message_parameters,
         EmpireAffiliationType affiliation,
@@ -65,37 +67,41 @@ namespace parse { namespace detail {
         const std::string label = "",
         bool stringtable_lookup = true)
     {
-        return new Effect::GenerateSitRepMessage(
-            message_string,
-            icon,
-            OpenEnvelopes(message_parameters),
-            affiliation,
-            condition.OpenEnvelope(),
-            label,
-            stringtable_lookup
+        return effect_payload(
+            new Effect::GenerateSitRepMessage(
+                message_string,
+                icon,
+                OpenEnvelopes(message_parameters),
+                affiliation,
+                condition.OpenEnvelope(),
+                label,
+                stringtable_lookup
+            )
         );
     }
 
-    Effect::GenerateSitRepMessage* construct_GenerateSitRepMessage3(
+    effect_payload construct_GenerateSitRepMessage3(
         const std::string& message_string, const std::string& icon,
         const PassedMessageParams& message_parameters,
         EmpireAffiliationType affiliation,
         const std::string& label = "",
         bool stringtable_lookup = true)
     {
-        return new Effect::GenerateSitRepMessage(
-            message_string,
-            icon,
-            OpenEnvelopes(message_parameters),
-            affiliation,
-            label,
-            stringtable_lookup
+        return effect_payload(
+            new Effect::GenerateSitRepMessage(
+                message_string,
+                icon,
+                OpenEnvelopes(message_parameters),
+                affiliation,
+                label,
+                stringtable_lookup
+            )
         );
     }
 
-    BOOST_PHOENIX_ADAPT_FUNCTION(Effect::GenerateSitRepMessage*, construct_GenerateSitRepMessage1_, construct_GenerateSitRepMessage1, 7)
-    BOOST_PHOENIX_ADAPT_FUNCTION(Effect::GenerateSitRepMessage*, construct_GenerateSitRepMessage2_, construct_GenerateSitRepMessage2, 7)
-    BOOST_PHOENIX_ADAPT_FUNCTION(Effect::GenerateSitRepMessage*, construct_GenerateSitRepMessage3_, construct_GenerateSitRepMessage3, 6)
+    BOOST_PHOENIX_ADAPT_FUNCTION(effect_payload, construct_GenerateSitRepMessage1_, construct_GenerateSitRepMessage1, 7)
+    BOOST_PHOENIX_ADAPT_FUNCTION(effect_payload, construct_GenerateSitRepMessage2_, construct_GenerateSitRepMessage2, 7)
+    BOOST_PHOENIX_ADAPT_FUNCTION(effect_payload, construct_GenerateSitRepMessage3_, construct_GenerateSitRepMessage3, 6)
 
 
     effect_parser_rules_1::effect_parser_rules_1(
@@ -127,27 +133,28 @@ namespace parse { namespace detail {
             =    (tok.SetEmpireMeter_ >>   labeller.rule(Empire_token))
             >    int_rules.expr [ _b = _1 ]
             >    labeller.rule(Meter_token)  >  tok.string [ _a = _1 ]
-            >    labeller.rule(Value_token)  >  double_rules.expr [ _val = new_<Effect::SetEmpireMeter>(
+            >    labeller.rule(Value_token)  >  double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireMeter>(
                 construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
                 _a,
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ]
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ]
             ;
 
         set_empire_meter_2
             =    (tok.SetEmpireMeter_ >>   labeller.rule(Meter_token))
             >    tok.string [ _a = _1 ]
-            >    labeller.rule(Value_token) >  double_rules.expr [ _val = new_<Effect::SetEmpireMeter>(
+            >    labeller.rule(Value_token) >  double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireMeter>(
                 _a,
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ]
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ]
             ;
 
         give_empire_tech
             =   (   tok.GiveEmpireTech_
                     >   labeller.rule(Name_token) >      string_grammar [ _d = _1 ]
                     > -(labeller.rule(Empire_token) >    int_rules.expr    [ _b = _1 ])
-                ) [ _val = new_<Effect::GiveEmpireTech>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
-                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b)) ]
+                ) [ _val = construct_movable_(
+                new_<Effect::GiveEmpireTech>(
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
+                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b))) ]
             ;
 
         set_empire_tech_progress
@@ -155,13 +162,13 @@ namespace parse { namespace detail {
             >    labeller.rule(Name_token)     >  string_grammar [ _a = _1 ]
             >    labeller.rule(Progress_token) >  double_rules.expr [ _b = _1 ]
             >    (
-                (labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Effect::SetEmpireTechProgress>(
+                (labeller.rule(Empire_token) > int_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireTechProgress>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
                         construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1)) ])
-                |  eps [ _val = new_<Effect::SetEmpireTechProgress>(
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1))) ])
+                |  eps [ _val = construct_movable_(new_<Effect::SetEmpireTechProgress>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b)) ]
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b))) ]
             )
             ;
 
@@ -227,9 +234,9 @@ namespace parse { namespace detail {
         set_overlay_texture
             =    tok.SetOverlayTexture_
             >    labeller.rule(Name_token)    > tok.string [ _a = _1 ]
-            >    labeller.rule(Size_token)    > double_rules.expr [ _val = new_<Effect::SetOverlayTexture>(
+            >    labeller.rule(Size_token)    > double_rules.expr [ _val = construct_movable_(new_<Effect::SetOverlayTexture>(
                 _a,
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1)) ]
+                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ]
             ;
 
         string_and_string_ref
