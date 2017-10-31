@@ -823,7 +823,7 @@ void ProductionWnd::CompleteConstruction() {
     GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
     GG::Y info_height(ClientUI::Pts()*10);
 
-    m_production_info_panel = GG::Wnd::Create<ProductionInfoPanel>(
+    m_production_info_panel = GG::Wnd::Create<ResourceInfoPanel>(
         UserString("PRODUCTION_WND_TITLE"), UserString("PRODUCTION_INFO_PP"),
         GG::X0, GG::Y0, queue_width, info_height, "production.InfoPanel");
     m_queue_wnd = GG::Wnd::Create<ProductionQueueWnd>(GG::X0, info_height, queue_width,
@@ -869,6 +869,9 @@ ProductionWnd::~ProductionWnd()
 
 int ProductionWnd::SelectedPlanetID() const
 { return m_build_designator_wnd->SelectedPlanetID(); }
+
+int ProductionWnd::ShownEmpireID() const
+{ return m_empire_shown_id; }
 
 bool ProductionWnd::InWindow(const GG::Pt& pt) const
 { return m_production_info_panel->InWindow(pt) || m_queue_wnd->InWindow(pt) || m_build_designator_wnd->InWindow(pt); }
