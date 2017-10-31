@@ -133,11 +133,11 @@ namespace {
                 continue;
             // Transfer excess to stockpile
             new_contributions += excess_here * stockpile_transfer_efficiency;
-            DebugLogger() << "allocated_here " << allocated_here;
-            DebugLogger() << "excess_here  " << excess_here;
-            DebugLogger() << "new_contributions " << new_contributions;
+            TraceLogger() << "allocated_here " << allocated_here
+                          << " excess_here " << excess_here
+                          << " new_contributions " << new_contributions;
         }
-        DebugLogger() << "stockpile_used " << stockpile_used;
+        TraceLogger() << "stockpile_used " << stockpile_used;
         return starting_stockpile + new_contributions - stockpile_used;
     }
                                          
@@ -327,16 +327,16 @@ namespace {
             float stockpile_drawdown = allocation == group_drawdown ? 
                         0.0f : (allocation - group_drawdown);
 //XXX                        0.0f : (allocation - group_drawdown) / stockpile_conversion_rate;
-            DebugLogger() << "allocation " << group_pp_available;
-            DebugLogger() << "group_drawdown " << group_drawdown;
-            DebugLogger() << "stockpile_drawdown" << stockpile_drawdown;
+            TraceLogger() << "allocation " << group_pp_available
+                          << " group_drawdown " << group_drawdown
+                          << " stockpile_drawdown" << stockpile_drawdown;
 
             // record allocation from stockpile
             // protect against any slight mismatch that might possible happen from multiplying
             // and dividing by a very very small stockpile_conversion_rate
             stockpile_drawdown = std::min(stockpile_drawdown, available_stockpile);
             if (stockpile_drawdown) {
-                DebugLogger() << "allocated " << stockpile_drawdown << " imperial PP";
+                TraceLogger() << "allocated " << stockpile_drawdown << " imperial PP";
                 allocated_stockpile_pp[group] += stockpile_drawdown;
                 available_stockpile -= stockpile_drawdown;
             }
@@ -1008,10 +1008,10 @@ void ProductionQueue::Update() {
     std::map<std::set<int>, float> available_pp = AvailablePP(industry_resource_pool);
     int stockpile_location_id = industry_resource_pool->StockpileObjectID();
     float pp_in_stockpile = industry_resource_pool->Stockpile();
-    DebugLogger() << "========= pp_in_stockpile:     " << pp_in_stockpile << " ========";
+    TraceLogger() << "========= pp_in_stockpile:     " << pp_in_stockpile << " ========";
     const Meter* pp_use_limit = empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT");
     float available_stockpile = pp_use_limit? std::min(pp_in_stockpile, pp_use_limit->Current()) : pp_in_stockpile;
-    DebugLogger() << "========= available_stockpile: " << pp_in_stockpile << " ========";
+    TraceLogger() << "========= available_stockpile: " << pp_in_stockpile << " ========";
 
     // determine which resource sharing group each queue item is located in
     std::vector<std::set<int>> queue_element_groups;
