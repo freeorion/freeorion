@@ -13,7 +13,7 @@ namespace parse { namespace detail {
     effect_parser_rules_2::effect_parser_rules_2(
         const parse::lexer& tok, Labeller& labeller,
         const condition_parser_grammar& condition_parser,
-        const parse::value_ref_grammar<std::string>& string_grammar
+        const value_ref_grammar<std::string>& string_grammar
     ) :
         effect_parser_rules_2::base_type(start, "effect_parser_rules_2"),
         int_rules(tok, labeller, condition_parser, string_grammar),

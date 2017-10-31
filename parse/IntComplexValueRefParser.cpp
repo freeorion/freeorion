@@ -5,8 +5,8 @@ namespace parse {
     int_complex_parser_grammar::int_complex_parser_grammar(
         const parse::lexer& tok,
         detail::Labeller& labeller,
-        const parse::int_arithmetic_rules& _int_arith_rules,
-        const parse::value_ref_grammar<std::string>& string_grammar
+        const int_arithmetic_rules& _int_arith_rules,
+        const detail::value_ref_grammar<std::string>& string_grammar
     ) :
         int_complex_parser_grammar::base_type(start, "int_complex_parser_grammar"),
         int_rules(_int_arith_rules),

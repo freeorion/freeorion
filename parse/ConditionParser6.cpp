@@ -27,7 +27,7 @@ namespace parse { namespace detail {
         const parse::lexer& tok,
         Labeller& labeller,
         const condition_parser_grammar& condition_parser,
-        const parse::value_ref_grammar<std::string>& string_grammar
+        const value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_6::base_type(start, "condition_parser_rules_6"),
         universe_object_type_rules(tok, labeller, condition_parser),

@@ -9,7 +9,7 @@ namespace parse { namespace detail {
                               const effect_parser_grammar& effect_parser,
                               Labeller& labeller,
                               const condition_parser_grammar& condition_parser,
-                              const parse::value_ref_grammar<std::string>& string_grammar);
+                              const value_ref_grammar<std::string>& string_grammar);
 
         typedef rule<
             effect_signature,

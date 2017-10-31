@@ -5,7 +5,7 @@ namespace parse { namespace detail {
     string_complex_parser_grammar::string_complex_parser_grammar(
         const parse::lexer& tok,
         Labeller& labeller,
-        const parse::value_ref_grammar<std::string>& string_grammar
+        const value_ref_grammar<std::string>& string_grammar
     ) :
         string_complex_parser_grammar::base_type(start, "string_complex_parser_grammar"),
         simple_int_rules(tok)
@@ -25,7 +25,7 @@ namespace parse { namespace detail {
             qi::_f_type _f;
             qi::_val_type _val;
 
-            const parse::value_ref_rule<int>& simple_int = simple_int_rules.simple;
+            const value_ref_rule<int>& simple_int = simple_int_rules.simple;
 
             game_rule
                 =   tok.GameRule_ [ _a = construct<std::string>(_1) ]

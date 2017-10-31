@@ -26,7 +26,7 @@ namespace parse { namespace detail {
         qi::_f_type _f;
         qi::_val_type _val;
 
-        const parse::value_ref_rule<int>& simple_int = simple_int_rules.simple;
+        const value_ref_rule<int>& simple_int = simple_int_rules.simple;
 
         empire_object_visibility
             =   tok.EmpireObjectVisibility_ [ _a = construct<std::string>(_1) ]

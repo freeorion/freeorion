@@ -27,7 +27,7 @@ void initialize_nonnumeric_statistic_parser(
     const parse::lexer& tok,
     parse::detail::Labeller& labeller,
     const parse::detail::condition_parser_grammar& condition_parser,
-    const typename parse::value_ref_rule<T>& value_ref)
+    const typename parse::detail::value_ref_rule<T>& value_ref)
 {
     using boost::phoenix::construct;
     using boost::phoenix::new_;

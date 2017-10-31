@@ -44,7 +44,7 @@ namespace parse {
             const lexer& tok,
             detail::Labeller& labeller,
             const detail::condition_parser_grammar& condition_parser,
-            const value_ref_grammar<std::string>& string_grammar
+            const detail::value_ref_grammar<std::string>& string_grammar
         ) :
             effect_parser_1(tok, labeller, condition_parser, string_grammar),
             effect_parser_2(tok, labeller, condition_parser, string_grammar),
@@ -64,7 +64,7 @@ namespace parse {
         const lexer& tok,
         detail::Labeller& labeller,
         const detail::condition_parser_grammar& condition_parser,
-        const value_ref_grammar<std::string>& string_grammar
+        const detail::value_ref_grammar<std::string>& string_grammar
     ) :
         effects_parser_grammar::base_type(start, "effects_parser_grammar"),
         m_impl(boost::make_unique<effects_parser_grammar::Impl>(*this, tok, labeller, condition_parser, string_grammar))
@@ -86,7 +86,7 @@ namespace parse {
         const lexer& tok,
         detail::Labeller& labeller,
         const detail::condition_parser_grammar& condition_parser,
-        const parse::value_ref_grammar<std::string>& string_grammar
+        const detail::value_ref_grammar<std::string>& string_grammar
     ) :
         effects_group_grammar::base_type(start, "effects_group_grammar"),
         effects_grammar(tok, labeller, condition_parser, string_grammar)

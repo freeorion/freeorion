@@ -137,16 +137,16 @@ namespace parse {
 #endif
     }
 
-    parse::detail::name_token_rule bound_variable_name;
-    parse::value_ref_rule<std::string> constant;
-    parse::value_ref_rule<std::string> free_variable;
-    parse::detail::variable_rule<std::string> bound_variable;
-    parse::value_ref_rule<std::string> statistic_sub_value_ref;
-    parse::detail::statistic_rule<std::string> statistic;
-    parse::detail::expression_rule<std::string> function_expr;
-    parse::detail::expression_rule<std::string> operated_expr;
-    parse::value_ref_rule<std::string> expr;
-    parse::value_ref_rule<std::string> primary_expr;
-    parse::detail::reference_token_rule variable_scope_rule;
-    parse::detail::name_token_rule container_type_rule;
+    detail::name_token_rule bound_variable_name;
+    detail::value_ref_rule<std::string> constant;
+    detail::value_ref_rule<std::string> free_variable;
+    detail::variable_rule<std::string> bound_variable;
+    detail::value_ref_rule<std::string> statistic_sub_value_ref;
+    detail::statistic_rule<std::string> statistic;
+    detail::expression_rule<std::string> function_expr;
+    detail::expression_rule<std::string> operated_expr;
+    detail::value_ref_rule<std::string> expr;
+    detail::value_ref_rule<std::string> primary_expr;
+    detail::reference_token_rule variable_scope_rule;
+    detail::name_token_rule container_type_rule;
 };

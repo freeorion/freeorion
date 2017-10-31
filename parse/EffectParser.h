@@ -25,7 +25,7 @@ namespace parse {
         effects_parser_grammar(const lexer& tok,
                                detail::Labeller& labeller,
                                const detail::condition_parser_grammar& condition_parser,
-                               const value_ref_grammar<std::string>& string_grammar);
+                               const detail::value_ref_grammar<std::string>& string_grammar);
         ~effects_parser_grammar();
 
         detail::effect_parser_rule start;
@@ -43,7 +43,7 @@ namespace parse {
         effects_group_grammar(const lexer& tok,
                               detail::Labeller& labeller,
                               const detail::condition_parser_grammar& condition_parser,
-                              const value_ref_grammar<std::string>& string_grammar);
+                              const detail::value_ref_grammar<std::string>& string_grammar);
 
         typedef detail::rule<
             parse::detail::MovableEnvelope<Effect::EffectsGroup> (),

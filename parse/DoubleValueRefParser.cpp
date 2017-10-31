@@ -66,7 +66,7 @@ parse::double_parser_rules::double_parser_rules(
     const parse::lexer& tok,
     parse::detail::Labeller& labeller,
     const parse::detail::condition_parser_grammar& condition_parser,
-    const parse::value_ref_grammar<std::string>& string_grammar
+    const parse::detail::value_ref_grammar<std::string>& string_grammar
 ) :
     arithmetic_rules("real number", tok, labeller, condition_parser),
     int_rules(tok, labeller, condition_parser, string_grammar),
@@ -84,7 +84,7 @@ parse::double_parser_rules::double_parser_rules(
     qi::_1_type _1;
     qi::_val_type _val;
 
-    const parse::value_ref_rule<double>& simple = simple_double_rules.simple;
+    const parse::detail::value_ref_rule<double>& simple = simple_double_rules.simple;
 
     int_constant_cast
         =   tok.int_ [ _val = new_<ValueRef::Constant<double>>(static_cast_<double>(_1)) ]
