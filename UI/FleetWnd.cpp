@@ -2277,7 +2277,7 @@ public:
         m_order_issuing_enabled(order_issuing_enabled)
     {}
 
-    void CompleteConstruction() {
+    void CompleteConstruction() override {
         CUIListBox::CompleteConstruction();
         Refresh();
     }
