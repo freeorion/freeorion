@@ -3730,7 +3730,7 @@ Description
 # %2% name of the location where the resource is produced.
 # %3% name of the empire which owns this resource produced.
 PRODUCTION_INFO_AT_LOCATION_TITLE
-%3% %1% .. at %2%
+%3% %1% at %2%
 
 # %1% type of resource (Research, Production, ...).
 # %2% name of the empire which owns this resource produced.

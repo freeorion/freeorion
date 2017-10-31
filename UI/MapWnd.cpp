@@ -6239,10 +6239,6 @@ void MapWnd::ShowProduction() {
         GG::GUI::GetGUI()->Remove(ClientUI::GetClientUI()->GetPlayerListWnd());
     }
 
-    // show the production window
-    m_production_wnd->Update();
-    m_production_wnd->Show();
-
     // hide pedia again if it is supposed to be hidden persistently
     if (GetOptionsDB().Get<bool>("UI.windows.production.pedia.persistently-hidden"))
         m_production_wnd->TogglePedia();
@@ -6267,6 +6263,7 @@ void MapWnd::ShowProduction() {
         m_production_wnd->SelectDefaultPlanet();
     }
     m_production_wnd->Update();
+    m_production_wnd->Show();
 }
 
 void MapWnd::HideProduction() {

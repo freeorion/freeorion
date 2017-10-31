@@ -821,12 +821,13 @@ void ProductionWnd::CompleteConstruction() {
     //              << " ; windowed width: " << GetOptionsDB().Get<int>("app-width-windowed");
 
     GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
-    GG::Y info_height(ClientUI::Pts()*8);
+    GG::Y info_height(ClientUI::Pts()*10);
 
-    m_production_info_panel = GG::Wnd::Create<ProductionInfoPanel>(UserString("PRODUCTION_WND_TITLE"), UserString("PRODUCTION_INFO_PP"),
-                                                      GG::X0, GG::Y0, queue_width, info_height,
-                                                      "production.InfoPanel");
-    m_queue_wnd = GG::Wnd::Create<ProductionQueueWnd>(GG::X0, info_height, queue_width, ClientSize().y - info_height);
+    m_production_info_panel = GG::Wnd::Create<ProductionInfoPanel>(
+        UserString("PRODUCTION_WND_TITLE"), UserString("PRODUCTION_INFO_PP"),
+        GG::X0, GG::Y0, queue_width, info_height, "production.InfoPanel");
+    m_queue_wnd = GG::Wnd::Create<ProductionQueueWnd>(GG::X0, info_height, queue_width,
+                                                      ClientSize().y - info_height);
     m_build_designator_wnd = GG::Wnd::Create<BuildDesignatorWnd>(ClientSize().x, ClientSize().y);
 
     SetChildClippingMode(ClipToClient);
@@ -884,7 +885,7 @@ void ProductionWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void ProductionWnd::DoLayout() {
     GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
-    GG::Y info_height(ClientUI::Pts()*6 + 34);
+    GG::Y info_height(ClientUI::Pts()*8 + 34);
 
     m_production_info_panel->MoveTo(GG::Pt(GG::X0, GG::Y0));
     m_production_info_panel->Resize(GG::Pt(queue_width, info_height));
