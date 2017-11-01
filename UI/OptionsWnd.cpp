@@ -485,7 +485,7 @@ void OptionsWnd::CompleteConstruction() {
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_SOUNDS"));
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_UI_SOUNDS"));
-    SoundFileOption(current_page, 1, "UI.sound.alert",       UserString("OPTIONS_SOUND_ALERT"));
+    SoundFileOption(current_page, 1, "ui.alert.sound.path", UserString("OPTIONS_SOUND_ALERT"));
     SoundFileOption(current_page, 1, "ui.input.keyboard.sound.path", UserString("OPTIONS_SOUND_TYPING"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_NEWTURN"));
@@ -493,10 +493,10 @@ void OptionsWnd::CompleteConstruction() {
     SoundFileOption(current_page, 1, "ui.turn.start.sound.path", UserString("OPTIONS_SOUND_NEWTURN_FILE"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_WINDOW"));
-    SoundFileOption(current_page, 1, "UI.sound.window-close",    UserString("OPTIONS_SOUND_CLOSE"));
-    SoundFileOption(current_page, 1, "UI.sound.window-maximize", UserString("OPTIONS_SOUND_MAXIMIZE"));
-    SoundFileOption(current_page, 1, "UI.sound.window-minimize", UserString("OPTIONS_SOUND_MINIMIZE"));
-    SoundFileOption(current_page, 1, "UI.sound.sidepanel-open",  UserString("OPTIONS_SOUND_SIDEPANEL"));
+    SoundFileOption(current_page, 1, "ui.window.close.sound.path", UserString("OPTIONS_SOUND_CLOSE"));
+    SoundFileOption(current_page, 1, "ui.window.maximize.sound.path", UserString("OPTIONS_SOUND_MAXIMIZE"));
+    SoundFileOption(current_page, 1, "ui.window.minimize.sound.path", UserString("OPTIONS_SOUND_MINIMIZE"));
+    SoundFileOption(current_page, 1, "ui.map.sidepanel.open.sound.path", UserString("OPTIONS_SOUND_SIDEPANEL"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_LIST"));
     SoundFileOption(current_page, 1, "ui.listbox.drop.sound.path", UserString("OPTIONS_SOUND_DROP"));
@@ -517,12 +517,12 @@ void OptionsWnd::CompleteConstruction() {
     // UI settings tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_UI"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_MISC_UI"));
-    BoolOption(current_page, 0, "ui.input.mouse.button_swap.enabled", UserString("OPTIONS_SWAP_MOUSE_LR"));
-    BoolOption(current_page, 0, "UI.multiple-fleet-windows",     UserString("OPTIONS_MULTIPLE_FLEET_WNDS"));
-    BoolOption(current_page, 0, "UI.window-quickclose",          UserString("OPTIONS_QUICK_CLOSE_WNDS"));
-    BoolOption(current_page, 0, "UI.sidepanel-planet-shown",     UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"));
-    BoolOption(current_page, 0, "UI.auto-reposition-windows",    UserString("OPTIONS_AUTO_REPOSITION_WINDOWS"));
-    BoolOption(current_page, 0, "UI.display-timestamp",          UserString("OPTIONS_DISPLAY_TIMESTAMP"));
+    BoolOption(current_page, 0, "ui.input.mouse.button.swap.enabled", UserString("OPTIONS_SWAP_MOUSE_LR"));
+    BoolOption(current_page, 0, "ui.fleet.multiple.enabled", UserString("OPTIONS_MULTIPLE_FLEET_WNDS"));
+    BoolOption(current_page, 0, "ui.quickclose.enabled", UserString("OPTIONS_QUICK_CLOSE_WNDS"));
+    BoolOption(current_page, 0, "ui.map.sidepanel.planet.shown", UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"));
+    BoolOption(current_page, 0, "ui.reposition.auto.enabled", UserString("OPTIONS_AUTO_REPOSITION_WINDOWS"));
+    BoolOption(current_page, 0, "ui.map.messages.timestamp.shown", UserString("OPTIONS_DISPLAY_TIMESTAMP"));
 
     // manual reposition windows button
     auto window_reset_button = Wnd::Create<CUIButton>(UserString("OPTIONS_WINDOW_RESET"));
@@ -567,18 +567,18 @@ void OptionsWnd::CompleteConstruction() {
     IntOption(current_page,    0, "UI.title-font-size",                    UserString("OPTIONS_FONT_TITLE"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_RESEARCH_WND"));
-    DoubleOption(current_page, 0, "UI.tech-layout-horz-spacing",           UserString("OPTIONS_TECH_SPACING_HORIZONTAL"));
-    DoubleOption(current_page, 0, "UI.tech-layout-vert-spacing",           UserString("OPTIONS_TECH_SPACING_VERTICAL"));
-    DoubleOption(current_page, 0, "UI.tech-layout-zoom-scale",             UserString("OPTIONS_TECH_LAYOUT_ZOOM"));
-    DoubleOption(current_page, 0, "UI.tech-controls-graphic-size",         UserString("OPTIONS_TECH_CTRL_ICON_SIZE"));
+    DoubleOption(current_page, 0, "ui.research.tree.spacing.horizontal", UserString("OPTIONS_TECH_SPACING_HORIZONTAL"));
+    DoubleOption(current_page, 0, "ui.research.tree.spacing.vertical", UserString("OPTIONS_TECH_SPACING_VERTICAL"));
+    DoubleOption(current_page, 0, "ui.research.tree.zoom.scale", UserString("OPTIONS_TECH_LAYOUT_ZOOM"));
+    DoubleOption(current_page, 0, "ui.research.control.graphic.size", UserString("OPTIONS_TECH_CTRL_ICON_SIZE"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_QUEUES"));
-    IntOption(current_page,    0, "UI.queue-width",                        UserString("OPTIONS_UI_QUEUE_WIDTH"));
-    BoolOption(current_page,   0, "UI.show-production-location-on-queue",  UserString("OPTIONS_UI_PROD_QUEUE_LOCATION"));
+    IntOption(current_page,    0, "ui.queue.width", UserString("OPTIONS_UI_QUEUE_WIDTH"));
+    BoolOption(current_page,   0, "ui.queue.production_location.shown", UserString("OPTIONS_UI_PROD_QUEUE_LOCATION"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_DESCRIPTIONS"));
     BoolOption(current_page,   0, "resource.effects.description.shown",    UserString("OPTIONS_DUMP_EFFECTS_GROUPS_DESC"));
-    BoolOption(current_page,   0, "verbose-sitrep",                        UserString("OPTIONS_VERBOSE_SITREP_DESC"));
+    BoolOption(current_page,   0, "ui.map.sitrep.invalid.shown",           UserString("OPTIONS_VERBOSE_SITREP_DESC"));
     BoolOption(current_page,   0, "UI.show-id-after-names",                UserString("OPTIONS_SHOW_IDS_AFTER_NAMES"));
 
     m_tabs->SetCurrentWnd(0);
@@ -586,43 +586,43 @@ void OptionsWnd::CompleteConstruction() {
     // Galaxy Map Page
     current_page = CreatePage(UserString("OPTIONS_GALAXY_MAP"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_SYSTEM_ICONS"));
-    IntOption(current_page,    0, "UI.system-icon-size",                   UserString("OPTIONS_UI_SYSTEM_ICON_SIZE"));
-    BoolOption(current_page,   0, "UI.system-circles",                     UserString("OPTIONS_UI_SYSTEM_CIRCLES"));
-    DoubleOption(current_page, 0, "UI.system-circle-size",                 UserString("OPTIONS_UI_SYSTEM_CIRCLE_SIZE"));
-    DoubleOption(current_page, 0, "UI.system-selection-indicator-size",    UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));
-    IntOption(current_page,    0, "UI.system-selection-indicator-rpm",     UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS"));
-    IntOption(current_page,    0, "UI.system-tiny-icon-size-threshold",    UserString("OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"));
-    ColorOption(current_page,  0, "UI.system-name-unowned-color",          UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
-    BoolOption(current_page,   0, "UI.system-fog-of-war",                  UserString("OPTIONS_UI_SYSTEM_FOG"));
-    DoubleOption(current_page, 0, "UI.system-fog-of-war-spacing",          UserString("OPTIONS_UI_SYSTEM_FOG_SPACING"));
+    IntOption(current_page,    0, "ui.map.system.icon.size",                    UserString("OPTIONS_UI_SYSTEM_ICON_SIZE"));
+    BoolOption(current_page,   0, "ui.map.system.circle.shown",                 UserString("OPTIONS_UI_SYSTEM_CIRCLES"));
+    DoubleOption(current_page, 0, "ui.map.system.circle.size",                  UserString("OPTIONS_UI_SYSTEM_CIRCLE_SIZE"));
+    DoubleOption(current_page, 0, "ui.map.system.select.indicator.size",     UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));
+    IntOption(current_page,    0, "ui.map.system.select.indicator.rpm",      UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS"));
+    IntOption(current_page,    0, "ui.map.system.icon.tiny.threshold",     UserString("OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"));
+    ColorOption(current_page,  0, "ui.map.system.unowned.name.color",           UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
+    BoolOption(current_page,   0, "ui.map.scanlines.shown",                     UserString("OPTIONS_UI_SYSTEM_FOG"));
+    DoubleOption(current_page, 0, "ui.map.system.scanlines.spacing",            UserString("OPTIONS_UI_SYSTEM_FOG_SPACING"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_FLEET_ICONS"));
-    DoubleOption(current_page, 0, "UI.tiny-fleet-button-minimum-zoom",     UserString("OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM"));
-    DoubleOption(current_page, 0, "UI.small-fleet-button-minimum-zoom",    UserString("OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"));
-    DoubleOption(current_page, 0, "UI.medium-fleet-button-minimum-zoom",   UserString("OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"));
-    DoubleOption(current_page, 0, "UI.fleet-selection-indicator-size",     UserString("OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE"));
+    DoubleOption(current_page, 0, "ui.map.fleet.button.tiny.zoom.threshold",    UserString("OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM"));
+    DoubleOption(current_page, 0, "ui.map.fleet.button.small.zoom.threshold",   UserString("OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"));
+    DoubleOption(current_page, 0, "ui.map.fleet.button.medium.zoom.threshold",  UserString("OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"));
+    DoubleOption(current_page, 0, "ui.map.fleet.select.indicator.size",      UserString("OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_STARLANES"));
-    DoubleOption(current_page, 0, "UI.starlane-thickness",                 UserString("OPTIONS_STARLANE_THICKNESS"));
-    BoolOption(current_page,   0, "UI.resource-starlane-colouring",        UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"));
-    DoubleOption(current_page, 0, "UI.starlane-core-multiplier",           UserString("OPTIONS_DB_STARLANE_CORE"));
-    BoolOption(current_page,   0, "UI.fleet-supply-lines",                 UserString("OPTIONS_FLEET_SUPPLY_LINES"));
-    DoubleOption(current_page, 0, "UI.fleet-supply-line-width",            UserString("OPTIONS_FLEET_SUPPLY_LINE_WIDTH"));
-    IntOption(current_page,    0, "UI.fleet-supply-line-dot-spacing",      UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING"));
-    DoubleOption(current_page, 0, "UI.fleet-supply-line-dot-rate",         UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE"));
-    ColorOption(current_page,  0, "UI.unowned-starlane-colour",            UserString("OPTIONS_UNOWNED_STARLANE_COLOUR"));
+    DoubleOption(current_page, 0, "ui.map.starlane.thickness",                  UserString("OPTIONS_STARLANE_THICKNESS"));
+    BoolOption(current_page,   0, "ui.map.starlane.empire.color.shown",         UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"));
+    DoubleOption(current_page, 0, "ui.map.starlane.thickness.factor",  UserString("OPTIONS_DB_STARLANE_CORE"));
+    BoolOption(current_page,   0, "ui.map.fleet.supply.shown",             UserString("OPTIONS_FLEET_SUPPLY_LINES"));
+    DoubleOption(current_page, 0, "ui.map.fleet.supply.width",             UserString("OPTIONS_FLEET_SUPPLY_LINE_WIDTH"));
+    IntOption(current_page,    0, "ui.map.fleet.supply.dot.spacing",       UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING"));
+    DoubleOption(current_page, 0, "ui.map.fleet.supply.dot.rate",          UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE"));
+    ColorOption(current_page,  0, "ui.map.starlane.color",                      UserString("OPTIONS_UNOWNED_STARLANE_COLOUR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_GALAXY_MAP_GENERAL"));
-    BoolOption(current_page,   0, "UI.galaxy-gas-background",              UserString("OPTIONS_GALAXY_MAP_GAS"));
-    BoolOption(current_page,   0, "UI.galaxy-starfields",                  UserString("OPTIONS_GALAXY_MAP_STARFIELDS"));
-    BoolOption(current_page,   0, "UI.show-galaxy-map-scale",              UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"));
-    BoolOption(current_page,   0, "UI.show-galaxy-map-scale-circle",       UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"));
-    BoolOption(current_page,   0, "UI.show-galaxy-map-zoom-slider",        UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"));
-    BoolOption(current_page,   0, "UI.show-detection-range",               UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"));
-    IntOption(current_page,    0, "UI.detection-range-opacity",            UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY"));
-    BoolOption(current_page,   0, "UI.map-right-click-popup-menu",         UserString("OPTIONS_GALAXY_MAP_POPUP"));
-    BoolOption(current_page,   0, "UI.show-unexplored_system_overlay",     UserString("OPTIONS_UI_SYSTEM_UNEXPLORED_OVERLAY"));
-    BoolOption(current_page,   0, "UI.hide-map-panels",                    UserString("OPTIONS_UI_HIDE_MAP_PANELS"));
+    BoolOption(current_page,   0, "ui.map.background.gas.shown",                UserString("OPTIONS_GALAXY_MAP_GAS"));
+    BoolOption(current_page,   0, "ui.map.background.starfields.shown",         UserString("OPTIONS_GALAXY_MAP_STARFIELDS"));
+    BoolOption(current_page,   0, "ui.map.scale.legend.shown",                  UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"));
+    BoolOption(current_page,   0, "ui.map.scale.circle.shown",                  UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"));
+    BoolOption(current_page,   0, "ui.map.zoom.slider.shown",                   UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"));
+    BoolOption(current_page,   0, "ui.map.detection.range.shown",               UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"));
+    IntOption(current_page,    0, "ui.map.detection.range.opacity",             UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY"));
+    BoolOption(current_page,   0, "ui.map.menu.enabled",                  UserString("OPTIONS_GALAXY_MAP_POPUP"));
+    BoolOption(current_page,   0, "ui.map.system.unexplored.rollover.enabled",  UserString("OPTIONS_UI_SYSTEM_UNEXPLORED_OVERLAY"));
+    BoolOption(current_page,   0, "ui.production.mappanels.removed",         UserString("OPTIONS_UI_HIDE_MAP_PANELS"));
 
     m_tabs->SetCurrentWnd(0);
 
@@ -630,10 +630,10 @@ void OptionsWnd::CompleteConstruction() {
     current_page = CreatePage(UserString("OPTIONS_PAGE_OBJECTS_WINDOW"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_COLUMNS"));
     for (unsigned int i = 0; i < 12u; ++i) {
-        std::string col_width_opt_name = "UI.objects-list-width-col-" + std::to_string(i);
+        std::string col_width_opt_name = "ui.objects.columns.c" + std::to_string(i) + ".width";
         if (!GetOptionsDB().OptionExists(col_width_opt_name))
             break;
-        std::string col_opt_name = "UI.objects-list-info-col-" + std::to_string(i);
+        std::string col_opt_name = "ui.objects.columns.c" + std::to_string(i) + ".stringkey";
         if (!GetOptionsDB().OptionExists(col_opt_name))
             break;
         std::string col_contents = GetOptionsDB().GetValueString(col_opt_name);
@@ -652,9 +652,9 @@ void OptionsWnd::CompleteConstruction() {
     ColorOption(current_page, 0, "UI.rollover-link-color", UserString("OPTIONS_ROLLOVER_LINK_COLOR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_WINDOW_COLORS"));
-    ColorOption(current_page, 0, "UI.wnd-color",              UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 0, "UI.wnd-inner-border-color", UserString("OPTIONS_INNER_BORDER_COLOR"));
-    ColorOption(current_page, 0, "UI.wnd-outer-border-color", UserString("OPTIONS_OUTER_BORDER_COLOR"));
+    ColorOption(current_page, 0, "ui.window.background.color", UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 0, "ui.window.border.inner.color", UserString("OPTIONS_INNER_BORDER_COLOR"));
+    ColorOption(current_page, 0, "ui.window.border.outer.color", UserString("OPTIONS_OUTER_BORDER_COLOR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_CONTROL_COLORS"));
     ColorOption(current_page, 0, "ui.control.background.color", UserString("OPTIONS_FILL_COLOR"));
@@ -666,26 +666,26 @@ void OptionsWnd::CompleteConstruction() {
     ColorOption(current_page, 0, "UI.stat-decrease-color",      UserString("OPTIONS_STAT_DECREASE_COLOR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_COMBAT_COLORS"));
-    ColorOption(current_page, 0, "UI.combat.summary.dead-color", UserString("OPTIONS_COMBAT_SUMMARY_DEAD_COLOR"));
-    ColorOption(current_page, 0, "UI.combat.summary.wound-color", UserString("OPTIONS_COMBAT_SUMMARY_WOUND_COLOR"));
-    ColorOption(current_page, 0, "UI.combat.summary.health-color", UserString("OPTIONS_COMBAT_SUMMARY_HEALTH_COLOR"));
+    ColorOption(current_page, 0, "ui.combat.summary.dead.color", UserString("OPTIONS_COMBAT_SUMMARY_DEAD_COLOR"));
+    ColorOption(current_page, 0, "ui.combat.summary.damaged.color", UserString("OPTIONS_COMBAT_SUMMARY_WOUND_COLOR"));
+    ColorOption(current_page, 0, "ui.combat.summary.undamaged.color", UserString("OPTIONS_COMBAT_SUMMARY_HEALTH_COLOR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_TECH_COLORS"));
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_KNOWN_TECH_COLORS"));
-    ColorOption(current_page, 1, "UI.known-tech",        UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 1, "UI.known-tech-border", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.completed.background.color", UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.completed.border.color", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_RESEARCHABLE_TECH_COLORS"));
-    ColorOption(current_page, 1, "UI.researchable-tech",        UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 1, "UI.researchable-tech-border", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.researchable.background.color", UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.researchable.border.color", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_UNRESEARCHABLE_TECH_COLORS"));
-    ColorOption(current_page, 1, "UI.unresearchable-tech",        UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 1, "UI.unresearchable-tech-border", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.unresearchable.background.color", UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.unresearchable.border.color", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_TECH_PROGRESS_COLORS"));
-    ColorOption(current_page, 1, "UI.tech-progress",            UserString("OPTIONS_PROGRESS_BAR_COLOR"));
-    ColorOption(current_page, 1, "UI.tech-progress-background", UserString("OPTIONS_PROGRESS_BACKGROUND_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.progress.color", UserString("OPTIONS_PROGRESS_BAR_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.progress.background.color", UserString("OPTIONS_PROGRESS_BACKGROUND_COLOR"));
     m_tabs->SetCurrentWnd(0);
 
     // Ausosave settings tab
@@ -740,7 +740,7 @@ void OptionsWnd::CompleteConstruction() {
     BoolOption(current_page, 0, "resource.shipdesign.default.enabled",  UserString("OPTIONS_ADD_DEFAULT_DESIGNS"));
     BoolOption(current_page, 0, "save.format.binary.enabled",    UserString("OPTIONS_USE_BINARY_SERIALIZATION"));
     BoolOption(current_page, 0, "save.format.xml.zlib.enabled", UserString("OPTIONS_USE_XML_ZLIB_SERIALIZATION"));
-    BoolOption(current_page, 0, "verbose-sitrep",           UserString("OPTIONS_VERBOSE_SITREP_DESC"));
+    BoolOption(current_page, 0, "ui.map.sitrep.invalid.shown", UserString("OPTIONS_VERBOSE_SITREP_DESC"));
     BoolOption(current_page, 0, "effect-accounting",        UserString("OPTIONS_EFFECT_ACCOUNTING"));
 
     // Create persistent config button
@@ -1146,10 +1146,10 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
             GetOptionsDB().GetValidator("video.windowed.height"));
     std::shared_ptr<const RangedValidator<int>> windowed_left_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
-            GetOptionsDB().GetValidator("video.windowed.left_edge"));
+            GetOptionsDB().GetValidator("video.windowed.left"));
     std::shared_ptr<const RangedValidator<int>> windowed_top_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
-            GetOptionsDB().GetValidator("video.windowed.top_edge"));
+            GetOptionsDB().GetValidator("video.windowed.top"));
 
     // compile list of resolutions available on this system
 
@@ -1226,8 +1226,8 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
 
     IntOption(page, indentation_level, "video.windowed.width",  UserString("OPTIONS_APP_WIDTH_WINDOWED"));
     IntOption(page, indentation_level, "video.windowed.height", UserString("OPTIONS_APP_HEIGHT_WINDOWED"));
-    IntOption(page, indentation_level, "video.windowed.left_edge", UserString("OPTIONS_APP_LEFT_WINDOWED"));
-    IntOption(page, indentation_level, "video.windowed.top_edge", UserString("OPTIONS_APP_TOP_WINDOWED"));
+    IntOption(page, indentation_level, "video.windowed.left", UserString("OPTIONS_APP_LEFT_WINDOWED"));
+    IntOption(page, indentation_level, "video.windowed.top", UserString("OPTIONS_APP_TOP_WINDOWED"));
 
     // fps
     BoolOption(page, indentation_level, "video.fps.shown", UserString("OPTIONS_SHOW_FPS"));

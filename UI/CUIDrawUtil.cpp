@@ -453,7 +453,7 @@ public:
             }
         }
 
-        float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
+        float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("ui.map.system.scanlines.spacing"));
         m_scanline_shader->Use();
         m_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
         m_scanline_shader->Bind("line_color", m_color.r * (1.f / 255.f), m_color.g * (1.f / 255.f), m_color.b * (1.f / 255.f), m_color.a * (1.f / 255.f));

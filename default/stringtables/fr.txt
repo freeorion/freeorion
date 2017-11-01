@@ -5517,7 +5517,7 @@ HIDDEN_SETTINGS__ARTICLE_TEXT
 
 Parmi les nombreux réglages disponibles permettant de définir l'emplacement/taille des divers éléments de l'UI, ces 'Réglages Cachés' intègrent:
 
-UI.design-pedia-dynamic : Active/Désactive la mise à jour dynamique de l'article de l'Encyclopédie concernant un modèle d'astronef si le nom de ce modèle a été modifié dans la [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]] (peut engendrer des ralentissements)
+ui.window.design.pedia.title.dynamic.enabled : Active/Désactive la mise à jour dynamique de l'article de l'Encyclopédie concernant un modèle d'astronef si le nom de ce modèle a été modifié dans la [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]] (peut engendrer des ralentissements)
 
 show-fleet-eta : Active/Désactive l'Estimation du Temps d'Arrivée d'une flotte (Estimated Time of Arrival soit ETA), en nombre de tours à partir du tour actuel, dans le Panneau de la flotte se trouvant dans la Fenêtre Flottes.
 

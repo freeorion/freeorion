@@ -53,9 +53,9 @@ namespace {
     const std::string   SAVED_DESIGN_ROW_DROP_STRING = "Saved Design Row";
     const std::string   EMPTY_STRING = "";
     const std::string   DES_PEDIA_WND_NAME = "design.pedia";
-    const std::string   DES_MAIN_WND_NAME = "design.main-panel";
-    const std::string   DES_BASE_SELECTOR_WND_NAME = "design.base-selector";
-    const std::string   DES_PART_PALETTE_WND_NAME = "design.part-palette";
+    const std::string   DES_MAIN_WND_NAME = "design.edit";
+    const std::string   DES_BASE_SELECTOR_WND_NAME = "design.selector";
+    const std::string   DES_PART_PALETTE_WND_NAME = "design.parts";
     const GG::Y         BASES_LIST_BOX_ROW_HEIGHT(100);
     const GG::X         PART_CONTROL_WIDTH(54);
     const GG::Y         PART_CONTROL_HEIGHT(54);
@@ -4185,7 +4185,7 @@ void DesignWnd::MainPanel::DesignChanged() {
 void DesignWnd::MainPanel::DesignNameChanged() {
     if (m_disabled_by_name || (!IsDesignNameValid() && !m_confirm_button->Disabled()))
         DesignChangedSignal();
-    else if (GetOptionsDB().Get<bool>("UI.design-pedia-dynamic"))
+    else if (GetOptionsDB().Get<bool>("ui.design.pedia.title.dynamic.enabled"))
         DesignNameChangedSignal();
     else
         RefreshIncompleteDesign();

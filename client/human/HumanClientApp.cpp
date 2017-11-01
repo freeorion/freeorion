@@ -103,12 +103,12 @@ namespace {
         db.Add("save.auto.file.limit",              UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),             10,     RangedValidator<int>(1, 10000));
         db.Add("save.auto.initial.enabled",     UserStringNop("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"),      true,   Validator<bool>());
         db.Add("save.auto.exit.enabled",        UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),         true,   Validator<bool>());
-        db.Add("ui.input.mouse.button_swap.enabled", UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),      false);
+        db.Add("ui.input.mouse.button.swap.enabled", UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),      false);
         db.Add("ui.input.keyboard.repeat.delay", UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_DELAY"),     360,    RangedValidator<int>(0, 1000));
         db.Add("ui.input.keyboard.repeat.interval", UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"), 20,   RangedValidator<int>(0, 1000));
         db.Add("ui.input.mouse.button.repeat.delay", UserStringNop("OPTIONS_DB_MOUSE_REPEAT_DELAY"),    360,    RangedValidator<int>(0, 1000));
         db.Add("ui.input.mouse.button.repeat.interval", UserStringNop("OPTIONS_DB_MOUSE_REPEAT_INTERVAL"), 15, RangedValidator<int>(0, 1000));
-        db.Add("UI.display-timestamp",          UserStringNop("OPTIONS_DB_DISPLAY_TIMESTAMP"),          true,   Validator<bool>());
+        db.Add("ui.map.messages.timestamp.shown",   UserStringNop("OPTIONS_DB_DISPLAY_TIMESTAMP"),          true,   Validator<bool>());
 
         Hotkey::AddHotkey("exit",       UserStringNop("HOTKEY_EXIT"),       GG::GGK_NONE,   GG::MOD_KEY_NONE);
         Hotkey::AddHotkey("quit",       UserStringNop("HOTKEY_QUIT"),       GG::GGK_NONE,   GG::MOD_KEY_NONE);
@@ -181,9 +181,9 @@ namespace {
         // if GL version is too low, set various map rendering options to
         // disabled, to hopefully improve frame rate.
         if (version_number < 2.0) {
-            GetOptionsDB().Set<bool>("UI.galaxy-gas-background",        false);
-            GetOptionsDB().Set<bool>("UI.galaxy-starfields",            false);
-            GetOptionsDB().Set<bool>("UI.system-fog-of-war",            false);
+            GetOptionsDB().Set<bool>("ui.map.background.gas.shown", false);
+            GetOptionsDB().Set<bool>("ui.map.background.starfields.shown", false);
+            GetOptionsDB().Set<bool>("ui.map.scanlines.shown", false);
         }
     }
 }
@@ -196,8 +196,8 @@ void HumanClientApp::AddWindowSizeOptionsAfterMainStart(OptionsDB& db) {
     db.Add("video.fullscreen.height", UserStringNop("OPTIONS_DB_APP_HEIGHT"),          DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
     db.Add("video.windowed.width",  UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),    DEFAULT_WIDTH,       RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
     db.Add("video.windowed.height", UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
-    db.Add("video.windowed.left_edge", UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),  DEFAULT_LEFT,        OrValidator<int>( RangedValidator<int>(-max_width_plus_one, max_width_plus_one), DiscreteValidator<int>(DEFAULT_LEFT) ));
-    db.Add("video.windowed.top_edge", UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),    DEFAULT_TOP,         RangedValidator<int>(-max_height_plus_one, max_height_plus_one));
+    db.Add("video.windowed.left", UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),  DEFAULT_LEFT,        OrValidator<int>( RangedValidator<int>(-max_width_plus_one, max_width_plus_one), DiscreteValidator<int>(DEFAULT_LEFT) ));
+    db.Add("video.windowed.top", UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),    DEFAULT_TOP,         RangedValidator<int>(-max_height_plus_one, max_height_plus_one));
 }
 
 HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const std::string& name,
@@ -317,7 +317,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     SetStringtableDependentOptionDefaults();
     SetGLVersionDependentOptionDefaults();
 
-    this->SetMouseLRSwapped(GetOptionsDB().Get<bool>("ui.input.mouse.button_swap.enabled"));
+    this->SetMouseLRSwapped(GetOptionsDB().Get<bool>("ui.input.mouse.button.swap.enabled"));
 
     auto named_key_maps = parse::keymaps(GetResourceDir() / "scripting/keymaps.inf");
     TraceLogger() << "Keymaps:";
@@ -807,8 +807,8 @@ void HumanClientApp::RequestSavePreviews(const std::string& relative_directory) 
 std::pair<int, int> HumanClientApp::GetWindowLeftTop() {
     int left(0), top(0);
 
-    left = GetOptionsDB().Get<int>("video.windowed.left_edge");
-    top = GetOptionsDB().Get<int>("video.windowed.top_edge");
+    left = GetOptionsDB().Get<int>("video.windowed.left");
+    top = GetOptionsDB().Get<int>("video.windowed.top");
 
     // clamp to edges to avoid weird bug with maximizing windows setting their
     // left and top to -9 which lead to weird issues when attmepting to recreate
@@ -860,7 +860,7 @@ void HumanClientApp::Reinitialize() {
         FullscreenSwitchSignal(fullscreen); // after video mode is changed but before DoLayout() calls
     } else if (fullscreen &&
                (old_width != size.first || old_height != size.second) &&
-               GetOptionsDB().Get<bool>("UI.auto-reposition-windows"))
+               GetOptionsDB().Get<bool>("ui.reposition.auto.enabled"))
     {
         // Reposition windows if in fullscreen mode... handled here instead of
         // HandleWindowResize() because the prev. fullscreen resolution is only
@@ -1018,8 +1018,8 @@ void HumanClientApp::SendLoggingConfigToServer() {
 
 void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
     if (!Fullscreen()) {
-        GetOptionsDB().Set<int>("video.windowed.left_edge", Value(w));
-        GetOptionsDB().Set<int>("video.windowed.top_edge", Value(h));
+        GetOptionsDB().Set<int>("video.windowed.left", Value(w));
+        GetOptionsDB().Set<int>("video.windowed.top", Value(h));
         GetOptionsDB().Commit();
     }
 }
@@ -1036,7 +1036,7 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
          (GetOptionsDB().Get<int>("video.windowed.width") != w ||
           GetOptionsDB().Get<int>("video.windowed.height") != h))
     {
-        if (GetOptionsDB().Get<bool>("UI.auto-reposition-windows")) {
+        if (GetOptionsDB().Get<bool>("ui.reposition.auto.enabled")) {
             // Reposition windows if in windowed mode.
             RepositionWindowsSignal();
         }

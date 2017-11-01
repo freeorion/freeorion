@@ -85,7 +85,7 @@ namespace {
     const std::string MAP_PEDIA_WND_NAME = "map.pedia";
     const std::string OBJECT_WND_NAME = "map.object-list";
     const std::string MODERATOR_WND_NAME = "map.moderator";
-    const std::string COMBAT_REPORT_WND_NAME = "map.combat-report";
+    const std::string COMBAT_REPORT_WND_NAME = "combat.summary";
     const std::string MAP_SIDEPANEL_WND_NAME = "map.sidepanel";
 
     const GG::Y     ZOOM_SLIDER_HEIGHT(200);
@@ -109,57 +109,65 @@ namespace {
     }
 
     void AddOptions(OptionsDB& db) {
-        db.Add("UI.galaxy-gas-background",          UserStringNop("OPTIONS_DB_GALAXY_MAP_GAS"),                     true,       Validator<bool>());
-        db.Add("UI.galaxy-starfields",              UserStringNop("OPTIONS_DB_GALAXY_MAP_STARFIELDS"),              true,       Validator<bool>());
-        db.Add("UI.show-galaxy-map-scale",          UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_LINE"),              true,       Validator<bool>());
-        db.Add("UI.show-galaxy-map-scale-circle",   UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_CIRCLE"),            false,      Validator<bool>());
-        db.Add("UI.show-galaxy-map-zoom-slider",    UserStringNop("OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER"),             false,      Validator<bool>());
-        db.Add("UI.starlane-thickness",             UserStringNop("OPTIONS_DB_STARLANE_THICKNESS"),                 2.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
-        db.Add("UI.starlane-core-multiplier",       UserStringNop("OPTIONS_DB_STARLANE_CORE"),                      2.0,        RangedStepValidator<double>(1.0, 1.0, 10.0));
-        db.Add("UI.resource-starlane-colouring",    UserStringNop("OPTIONS_DB_RESOURCE_STARLANE_COLOURING"),        true,       Validator<bool>());
-        db.Add("UI.fleet-supply-lines",             UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINES"),                 true,       Validator<bool>());
-        db.Add("UI.fleet-supply-line-width",        UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH"),            3.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
-        db.Add("UI.fleet-supply-line-dot-spacing",  UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING"),      20,         RangedStepValidator<int>(1, 3, 40));
-        db.Add("UI.fleet-supply-line-dot-rate",     UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE"),         0.02,       RangedStepValidator<double>(0.01, 0.01, 0.1));
-        db.Add("UI.fleet.explore.hostile.ignored",  UserStringNop("OPTIONS_DB_FLEET_EXPLORE_IGNORE_HOSTILE"),       false,      Validator<bool>());
-        db.Add("UI.fleet.explore.system.route.limit", UserStringNop("OPTIONS_DB_FLEET_EXPLORE_SYSTEM_ROUTE_LIMIT"), 25,         StepValidator<int>(1, -1));
-        db.Add("UI.fleet.explore.system.known.multiplier", UserStringNop("OPTIONS_DB_FLEET_EXPLORE_SYSTEM_KNOWN_MULTIPLIER"), 10.0f, Validator<float>());
-        db.Add("UI.unowned-starlane-colour",        UserStringNop("OPTIONS_DB_UNOWNED_STARLANE_COLOUR"),            GG::Clr(72,  72,  72,  255),    Validator<GG::Clr>());
+        db.Add("ui.map.background.gas.shown",               UserStringNop("OPTIONS_DB_GALAXY_MAP_GAS"),                         true,                           Validator<bool>());
+        db.Add("ui.map.background.starfields.shown",        UserStringNop("OPTIONS_DB_GALAXY_MAP_STARFIELDS"),                  true,                           Validator<bool>());
 
-        db.Add("UI.show-detection-range",           UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE"),         true,       Validator<bool>());
+        db.Add("ui.map.scale.legend.shown",                 UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_LINE"),                  true,                           Validator<bool>());
+        db.Add("ui.map.scale.circle.shown",                 UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_CIRCLE"),                false,                          Validator<bool>());
 
-        db.Add("UI.system-fog-of-war",              UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG"),                      true,       Validator<bool>());
-        db.Add("UI.system-fog-of-war-spacing",      UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_SPACING"),              4.0,        RangedStepValidator<double>(0.25, 1.5, 8.0));
-        db.Add("UI.system-fog-of-war-clr",          UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_CLR"),                  GG::Clr(36, 36, 36, 192),       Validator<GG::Clr>());
-        db.Add("UI.field-fog-of-war-clr",           UserStringNop("OPTIONS_DB_UI_FIELD_FOG_CLR"),                   GG::Clr(0, 0, 0, 64),           Validator<GG::Clr>());
+        db.Add("ui.map.zoom.slider.shown",                  UserStringNop("OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER"),                 false,                          Validator<bool>());
 
-        db.Add("UI.system-icon-size",               UserStringNop("OPTIONS_DB_UI_SYSTEM_ICON_SIZE"),                14,         RangedValidator<int>(8, 50));
+        db.Add("ui.map.starlane.thickness",                 UserStringNop("OPTIONS_DB_STARLANE_THICKNESS"),                     2.0,                            RangedStepValidator<double>(0.25, 0.25, 10.0));
+        db.Add("ui.map.starlane.thickness.factor", UserStringNop("OPTIONS_DB_STARLANE_CORE"),                          2.0,                            RangedStepValidator<double>(1.0, 1.0, 10.0));
+        db.Add("ui.map.starlane.empire.color.shown",        UserStringNop("OPTIONS_DB_RESOURCE_STARLANE_COLOURING"),            true,                           Validator<bool>());
 
-        db.Add("UI.system-circles",                 UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLES"),                  true,       Validator<bool>());
-        db.Add("UI.system-circle-size",             UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE"),              1.5,        RangedStepValidator<double>(0.125, 1.0, 2.5));
-        db.Add("UI.system-inner-circle-width",      UserStringNop("OPTIONS_DB_UI_SYSTEM_INNER_CIRCLE_WIDTH"),       2.0,        RangedStepValidator<double>(0.5, 1.0, 8.0));
-        db.Add("UI.system-outer-circle-width",      UserStringNop("OPTIONS_DB_UI_SYSTEM_OUTER_CIRCLE_WIDTH"),       2.0,        RangedStepValidator<double>(0.5, 1.0, 8.0));
-        db.Add("UI.system-inner-circle-max-width",  UserStringNop("OPTIONS_DB_UI_SYSTEM_INNER_CIRCLE_MAX_WIDTH"),   5.0,        RangedStepValidator<double>(0.5, 1.0, 12.0));
-        db.Add("UI.system-circle-distance",         UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLE_DISTANCE"),          2.0,        RangedStepValidator<double>(0.5, 1.0, 8.0));
-        db.Add("UI.show-unexplored_system_overlay", UserStringNop("OPTIONS_DB_UI_SYSTEM_UNEXPLORED_OVERLAY"),       true,       Validator<bool>());
+        db.Add("ui.map.fleet.supply.shown",            UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINES"),                     true,                           Validator<bool>());
+        db.Add("ui.map.fleet.supply.width",            UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH"),                3.0,                            RangedStepValidator<double>(0.25, 0.25, 10.0));
+        db.Add("ui.map.fleet.supply.dot.spacing",      UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING"),          20,                             RangedStepValidator<int>(1, 3, 40));
+        db.Add("ui.map.fleet.supply.dot.rate",         UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE"),             0.02,                           RangedStepValidator<double>(0.01, 0.01, 0.1));
 
-        db.Add("UI.system-tiny-icon-size-threshold",UserStringNop("OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"), 10,         RangedValidator<int>(1, 16));
-        db.Add("UI.system-selection-indicator-size",UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE"), 1.625,      RangedStepValidator<double>(0.125, 0.5, 5));
-        db.Add("UI.system-selection-indicator-rpm", UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS"),  12,         RangedValidator<int>(1, 60));
+        db.Add("ui.fleet.explore.hostile.ignored",          UserStringNop("OPTIONS_DB_FLEET_EXPLORE_IGNORE_HOSTILE"),           false,                          Validator<bool>());
+        db.Add("ui.fleet.explore.system.route.limit",       UserStringNop("OPTIONS_DB_FLEET_EXPLORE_SYSTEM_ROUTE_LIMIT"),       25,                             StepValidator<int>(1, -1));
+        db.Add("ui.fleet.explore.system.known.multiplier",  UserStringNop("OPTIONS_DB_FLEET_EXPLORE_SYSTEM_KNOWN_MULTIPLIER"),  10.0f,                          Validator<float>());
 
-        db.Add("UI.system-name-unowned-color",      UserStringNop("OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR"),       GG::Clr(160, 160, 160, 255),    Validator<GG::Clr>());
+        db.Add("ui.map.starlane.color",                     UserStringNop("OPTIONS_DB_UNOWNED_STARLANE_COLOUR"),                GG::Clr(72,  72,  72,  255),    Validator<GG::Clr>());
 
-        db.Add("UI.tiny-fleet-button-minimum-zoom", UserStringNop("OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM"),      0.75,       RangedStepValidator<double>(0.125, 0.125, 4.0));
-        db.Add("UI.small-fleet-button-minimum-zoom",UserStringNop("OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"),     1.50,       RangedStepValidator<double>(0.125, 0.125, 4.0));
-        db.Add("UI.medium-fleet-button-minimum-zoom",UserStringNop("OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"),   4.00,       RangedStepValidator<double>(0.125, 0.125, 4.0));
+        db.Add("ui.map.detection.range.shown",              UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE"),             true,                           Validator<bool>());
 
-        db.Add("UI.detection-range-opacity",        UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_OPACITY"), 3,          RangedValidator<int>(0, 8));
+        db.Add("ui.map.scanlines.shown",                    UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG"),                          true,                           Validator<bool>());
+        db.Add("ui.map.system.scanlines.spacing",           UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_SPACING"),                  4.0,                            RangedStepValidator<double>(0.25, 1.5, 8.0));
+        db.Add("ui.map.system.scanlines.color",             UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_CLR"),                      GG::Clr(36, 36, 36, 192),       Validator<GG::Clr>());
+        db.Add("ui.map.field.scanlines.color",              UserStringNop("OPTIONS_DB_UI_FIELD_FOG_CLR"),                       GG::Clr(0, 0, 0, 64),           Validator<GG::Clr>());
 
-        db.Add("UI.map-right-click-popup-menu",     UserStringNop("OPTIONS_DB_UI_GALAXY_MAP_POPUP"),                false,      Validator<bool>());
+        db.Add("ui.map.system.icon.size",                   UserStringNop("OPTIONS_DB_UI_SYSTEM_ICON_SIZE"),                    14,                             RangedValidator<int>(8, 50));
 
-        db.Add("UI.hide-map-panels",                UserStringNop("OPTIONS_DB_UI_HIDE_MAP_PANELS"),                 false,      Validator<bool>());
+        db.Add("ui.map.system.circle.shown",                UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLES"),                      true,                           Validator<bool>());
+        db.Add("ui.map.system.circle.size",                 UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE"),                  1.5,                            RangedStepValidator<double>(0.125, 1.0, 2.5));
+        db.Add("ui.map.system.circle.inner.width",          UserStringNop("OPTIONS_DB_UI_SYSTEM_INNER_CIRCLE_WIDTH"),           2.0,                            RangedStepValidator<double>(0.5, 1.0, 8.0));
+        db.Add("ui.map.system.circle.outer.width",          UserStringNop("OPTIONS_DB_UI_SYSTEM_OUTER_CIRCLE_WIDTH"),           2.0,                            RangedStepValidator<double>(0.5, 1.0, 8.0));
+        db.Add("ui.map.system.circle.inner.max.width",      UserStringNop("OPTIONS_DB_UI_SYSTEM_INNER_CIRCLE_MAX_WIDTH"),       5.0,                            RangedStepValidator<double>(0.5, 1.0, 12.0));
+        db.Add("ui.map.system.circle.distance",             UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLE_DISTANCE"),              2.0,                            RangedStepValidator<double>(0.5, 1.0, 8.0));
 
-        db.Add("UI.sidepanel-width",                UserStringNop("OPTIONS_DB_UI_SIDEPANEL_WIDTH"),                 512,        Validator<int>());
+        db.Add("ui.map.system.unexplored.rollover.enabled", UserStringNop("OPTIONS_DB_UI_SYSTEM_UNEXPLORED_OVERLAY"),           true,                           Validator<bool>());
+
+        db.Add("ui.map.system.icon.tiny.threshold",    UserStringNop("OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"),     10,                             RangedValidator<int>(1, 16));
+
+        db.Add("ui.map.system.select.indicator.size",    UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE"),     1.625,                          RangedStepValidator<double>(0.125, 0.5, 5));
+        db.Add("ui.map.system.select.indicator.rpm",     UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS"),      12,                             RangedValidator<int>(1, 60));
+
+        db.Add("ui.map.system.unowned.name.color",          UserStringNop("OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR"),           GG::Clr(160, 160, 160, 255),    Validator<GG::Clr>());
+
+        db.Add("ui.map.fleet.button.tiny.zoom.threshold",   UserStringNop("OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM"),          0.75,                           RangedStepValidator<double>(0.125, 0.125, 4.0));
+        db.Add("ui.map.fleet.button.small.zoom.threshold",  UserStringNop("OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"),         1.50,                           RangedStepValidator<double>(0.125, 0.125, 4.0));
+        db.Add("ui.map.fleet.button.medium.zoom.threshold", UserStringNop("OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"),        4.00,                           RangedStepValidator<double>(0.125, 0.125, 4.0));
+
+        db.Add("ui.map.detection.range.opacity",            UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_OPACITY"),     3,                              RangedValidator<int>(0, 8));
+
+        db.Add("ui.map.menu.enabled",                 UserStringNop("OPTIONS_DB_UI_GALAXY_MAP_POPUP"),                    false,                          Validator<bool>());
+
+        db.Add("ui.production.mappanels.removed",        UserStringNop("OPTIONS_DB_UI_HIDE_MAP_PANELS"),                     false,                          Validator<bool>());
+
+        db.Add("ui.map.sidepanel.width",                    UserStringNop("OPTIONS_DB_UI_SIDEPANEL_WIDTH"),                     512,                            Validator<int>());
 
         // Register hotkey names/default values for the context "map".
         Hotkey::AddHotkey("map.return_to_map",        UserStringNop("HOTKEY_MAP_RETURN_TO_MAP"),        GG::GGK_ESCAPE);
@@ -599,7 +607,7 @@ public:
         AttachChild(m_label);
         std::set<int> dummy = std::set<int>();
         Update(1.0, dummy, INVALID_OBJECT_ID);
-        GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-scale").connect(
+        GetOptionsDB().OptionChangedSignal("ui.map.scale.legend.shown").connect(
             boost::bind(&MapScaleLine::UpdateEnabled, this));
         UpdateEnabled();
     }
@@ -757,7 +765,7 @@ public:
 
 private:
     void UpdateEnabled() {
-        m_enabled = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale");
+        m_enabled = GetOptionsDB().Get<bool>("ui.map.scale.legend.shown");
         if (m_enabled)
             AttachChild(m_label);
         else
@@ -1499,7 +1507,7 @@ void MapWnd::CompleteConstruction() {
     m_zoom_slider->Hide();
     m_zoom_slider->SlidSignal.connect(
         boost::bind(&MapWnd::SetZoom, this, _1, false));
-    GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-zoom-slider").connect(
+    GetOptionsDB().OptionChangedSignal("ui.map.zoom.slider.shown").connect(
         boost::bind(&MapWnd::RefreshSliders, this));
 
     ///////////////////
@@ -1687,7 +1695,7 @@ void MapWnd::DoLayout() {
 }
 
 void MapWnd::InitializeWindows() {
-    const GG::X SIDEPANEL_WIDTH(GetOptionsDB().Get<int>("UI.sidepanel-width"));
+    const GG::X SIDEPANEL_WIDTH(GetOptionsDB().Get<int>("ui.map.sidepanel.width"));
 
     // system-view side panel
     const GG::Pt sidepanel_ul(AppWidth() - SIDEPANEL_WIDTH, m_toolbar->Bottom());
@@ -1816,7 +1824,7 @@ void MapWnd::Render() {
 }
 
 void MapWnd::RenderStarfields() {
-    if (!GetOptionsDB().Get<bool>("UI.galaxy-starfields"))
+    if (!GetOptionsDB().Get<bool>("ui.map.background.starfields.shown"))
         return;
 
     double starfield_width = GetUniverse().UniverseWidth();
@@ -1942,14 +1950,14 @@ void MapWnd::RenderFields() {
     // if any, render scanlines over not-visible fields
     if (!m_field_scanline_circles.empty()
         && HumanClientApp::GetApp()->EmpireID() != ALL_EMPIRES
-        && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+        && GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
     {
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         m_field_scanline_circles.activate();
         glBindTexture(GL_TEXTURE_2D, 0);
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-        m_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("UI.field-fog-of-war-clr"));
+        m_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("ui.map.field.scanlines.color"));
         m_scanline_shader.StartUsing();
 
         glDrawArrays(GL_TRIANGLES, 0, m_field_scanline_circles.size());
@@ -1990,7 +1998,7 @@ namespace {
 }
 
 void MapWnd::RenderGalaxyGas() {
-    if (!GetOptionsDB().Get<bool>("UI.galaxy-gas-background"))
+    if (!GetOptionsDB().Get<bool>("ui.map.background.gas.shown"))
         return;
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -2063,11 +2071,11 @@ void MapWnd::RenderSystems() {
     }
 
     // circles around system icons and fog over unexplored systems
-    bool circles = GetOptionsDB().Get<bool>("UI.system-circles");
+    bool circles = GetOptionsDB().Get<bool>("ui.map.system.circle.shown");
     bool fog_scanlines = false;
     Universe& universe = GetUniverse();
 
-    if (empire_id != ALL_EMPIRES && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+    if (empire_id != ALL_EMPIRES && GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
         fog_scanlines = true;
 
     RenderScaleCircle();
@@ -2078,10 +2086,14 @@ void MapWnd::RenderSystems() {
         glDisable(GL_TEXTURE_2D);
         glEnable(GL_LINE_SMOOTH);
 
-        const double circle_distance = GetOptionsDB().Get<double>("UI.system-circle-distance");               // distance between inner and outer system circle
-        const double outer_circle_width = GetOptionsDB().Get<double>("UI.system-outer-circle-width");         // width of outer...
-        const double inner_circle_width = GetOptionsDB().Get<double>("UI.system-inner-circle-width");         // ... and inner circle line at close zoom
-        const double max_inner_circle_width = GetOptionsDB().Get<double>("UI.system-inner-circle-max-width"); // width of inner circle line when map is zoomed out
+        // distance between inner and outer system circle
+        const double circle_distance = GetOptionsDB().Get<double>("ui.map.system.circle.distance");
+        // width of outer...
+        const double outer_circle_width = GetOptionsDB().Get<double>("ui.map.system.circle.outer.width");
+        // ... and inner circle line at close zoom
+        const double inner_circle_width = GetOptionsDB().Get<double>("ui.map.system.circle.inner.width");
+        // width of inner circle line when map is zoomed out
+        const double max_inner_circle_width = GetOptionsDB().Get<double>("ui.map.system.circle.inner.max.width");
 
         for (const auto& system_icon : m_system_icons) {
             const auto& icon = system_icon.second;
@@ -2103,7 +2115,7 @@ void MapWnd::RenderSystems() {
             if (fog_scanlines
                 && (universe.GetObjectVisibilityByEmpire(system_icon.first, empire_id) <= VIS_BASIC_VISIBILITY))
             {
-                m_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("UI.system-fog-of-war-clr"));
+                m_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("ui.map.system.scanlines.color"));
                 m_scanline_shader.RenderCircle(circle_ul, circle_lr);
             }
 
@@ -2152,7 +2164,7 @@ void MapWnd::RenderSystems() {
                         else
                             ErrorLogger() << "MapWnd::RenderSystems(): could not load empire with id " << supply_empire_id;
                     } else
-                        glColor(GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour"));
+                        glColor(GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color"));
 
                     glLineWidth(outer_circle_width);
                     CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
@@ -2209,8 +2221,8 @@ void MapWnd::RenderStarlanes() {
     if (GetGameRules().Get<bool>("RULE_STARLANES_EVERYWHERE"))
         return;
 
-    bool coloured = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
-    float core_multiplier = static_cast<float>(GetOptionsDB().Get<double>("UI.starlane-core-multiplier"));
+    bool coloured = GetOptionsDB().Get<bool>("ui.map.starlane.empire.color.shown");
+    float core_multiplier = static_cast<float>(GetOptionsDB().Get<double>("ui.map.starlane.thickness.factor"));
     RenderStarlanes(m_RC_starlane_vertices, m_RC_starlane_colors, core_multiplier * ZoomFactor(), coloured, false);
     RenderStarlanes(m_starlane_vertices, m_starlane_colors, 1.0, coloured, true);
 }
@@ -2219,12 +2231,12 @@ void MapWnd::RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuff
                              double thickness, bool coloured, bool do_base_render) {
     if (vertices.size() && (colours.size() || !coloured) && (coloured || do_base_render)) {
         // render starlanes with vertex buffer (and possibly colour buffer)
-        const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
+        const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color");
 
         glDisable(GL_TEXTURE_2D);
         glEnable(GL_LINE_SMOOTH);
 
-        glLineWidth(static_cast<GLfloat>(thickness * GetOptionsDB().Get<double>("UI.starlane-thickness")));
+        glLineWidth(static_cast<GLfloat>(thickness * GetOptionsDB().Get<double>("ui.map.starlane.thickness")));
 
         glPushAttrib(GL_COLOR_BUFFER_BIT);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
@@ -2270,8 +2282,8 @@ void MapWnd::RenderFleetMovementLines() {
         return;
 
     // determine animation shift for move lines
-    int dot_spacing = GetOptionsDB().Get<int>("UI.fleet-supply-line-dot-spacing");
-    float rate = static_cast<float>(GetOptionsDB().Get<double>("UI.fleet-supply-line-dot-rate"));
+    int dot_spacing = GetOptionsDB().Get<int>("ui.map.fleet.supply.dot.spacing");
+    float rate = static_cast<float>(GetOptionsDB().Get<double>("ui.map.fleet.supply.dot.rate"));
     int ticks = GG::GUI::GetGUI()->Ticks();
     /* Updated each frame to shift rendered posistion of dots that are drawn to
      * show fleet move lines. */
@@ -2495,7 +2507,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 }
 
 void MapWnd::RenderVisibilityRadii() {
-    if (!GetOptionsDB().Get<bool>("UI.show-detection-range"))
+    if (!GetOptionsDB().Get<bool>("ui.map.detection.range.shown"))
         return;
 
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
@@ -2541,9 +2553,8 @@ void MapWnd::RenderVisibilityRadii() {
 void MapWnd::RenderScaleCircle() {
     if (SidePanel::SystemID() == INVALID_OBJECT_ID)
         return;
-    if (!GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale") ||
-        !GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale-circle"))
-    { return; }
+    if (!GetOptionsDB().Get<bool>("ui.map.scale.legend.shown") || !GetOptionsDB().Get<bool>("ui.map.scale.circle.shown"))
+        return;
     if (m_scale_circle_vertices.empty())
         InitScaleCircleRenderingBuffer();
 
@@ -2635,7 +2646,7 @@ void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
     m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
     const auto fleet_wnd = manager.ActiveFleetWnd();
-    bool quick_close_wnds = GetOptionsDB().Get<bool>("UI.window-quickclose");
+    bool quick_close_wnds = GetOptionsDB().Get<bool>("ui.quickclose.enabled");
 
     // if a fleet window is visible, hide it and deselect fleet; if not, hide sidepanel
     if (!m_dragged && !m_in_production_view_mode && fleet_wnd && quick_close_wnds) {
@@ -2661,31 +2672,31 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         }
     }
 
-    if (GetOptionsDB().Get<bool>("UI.map-right-click-popup-menu")) {
+    if (GetOptionsDB().Get<bool>("ui.map.menu.enabled")) {
         // create popup menu with map options in it.
         bool fps            = GetOptionsDB().Get<bool>("video.fps.shown");
-        bool showPlanets    = GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown");
-        bool systemCircles  = GetOptionsDB().Get<bool>("UI.system-circles");
-        bool resourceColor  = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
-        bool fleetSupply    = GetOptionsDB().Get<bool>("UI.fleet-supply-lines");
-        bool gas            = GetOptionsDB().Get<bool>("UI.galaxy-gas-background");
-        bool starfields     = GetOptionsDB().Get<bool>("UI.galaxy-starfields");
-        bool scale          = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale");
-        bool scaleCircle    = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale-circle");
-        bool zoomSlider     = GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider");
-        bool detectionRange = GetOptionsDB().Get<bool>("UI.show-detection-range");
+        bool showPlanets    = GetOptionsDB().Get<bool>("ui.map.sidepanel.planet.shown");
+        bool systemCircles  = GetOptionsDB().Get<bool>("ui.map.system.circle.shown");
+        bool resourceColor  = GetOptionsDB().Get<bool>("ui.map.starlane.empire.color.shown");
+        bool fleetSupply    = GetOptionsDB().Get<bool>("ui.map.fleet.supply.shown");
+        bool gas            = GetOptionsDB().Get<bool>("ui.map.background.gas.shown");
+        bool starfields     = GetOptionsDB().Get<bool>("ui.map.background.starfields.shown");
+        bool scale          = GetOptionsDB().Get<bool>("ui.map.scale.legend.shown");
+        bool scaleCircle    = GetOptionsDB().Get<bool>("ui.map.scale.circle.shown");
+        bool zoomSlider     = GetOptionsDB().Get<bool>("ui.map.zoom.slider.shown");
+        bool detectionRange = GetOptionsDB().Get<bool>("ui.map.detection.range.shown");
 
         auto show_fps_action        = [&fps]()            { GetOptionsDB().Set<bool>("video.fps.shown",                !fps);         };
-        auto show_planets_action    = [&showPlanets]()    { GetOptionsDB().Set<bool>("UI.sidepanel-planet-shown",      !showPlanets);  };
-        auto system_circles_action  = [&systemCircles]()  { GetOptionsDB().Set<bool>("UI.system-circles",              !systemCircles); };
-        auto resource_color_action  = [&resourceColor]()  { GetOptionsDB().Set<bool>("UI.resource-starlane-colouring", !resourceColor);  };
-        auto fleet_supply_action    = [&fleetSupply]()    { GetOptionsDB().Set<bool>("UI.fleet-supply-lines",          !fleetSupply);     };
-        auto gas_action             = [&gas]()            { GetOptionsDB().Set<bool>("UI.galaxy-gas-background",       !gas);        };
-        auto starfield_action       = [&starfields]()     { GetOptionsDB().Set<bool>("UI.galaxy-starfields",           !starfields);  };
-        auto map_scale_action       = [&scale]()          { GetOptionsDB().Set<bool>("UI.show-galaxy-map-scale",       !scale);        };
-        auto scale_circle_action    = [&scaleCircle]()    { GetOptionsDB().Set<bool>("UI.show-galaxy-map-scale-circle",!scaleCircle);   };
-        auto zoom_slider_action     = [&zoomSlider]()     { GetOptionsDB().Set<bool>("UI.show-galaxy-map-zoom-slider",!zoomSlider);      };
-        auto detection_range_action = [&detectionRange]() { GetOptionsDB().Set<bool>("UI.show-detection-range",       !detectionRange);   };
+        auto show_planets_action    = [&showPlanets]()    { GetOptionsDB().Set<bool>("ui.map.sidepanel.planet.shown",       !showPlanets);      };
+        auto system_circles_action  = [&systemCircles]()  { GetOptionsDB().Set<bool>("ui.map.system.circle.shown",          !systemCircles);    };
+        auto resource_color_action  = [&resourceColor]()  { GetOptionsDB().Set<bool>("ui.map.starlane.empire.color.shown",  !resourceColor);    };
+        auto fleet_supply_action    = [&fleetSupply]()    { GetOptionsDB().Set<bool>("ui.map.fleet.supply.shown",      !fleetSupply);      };
+        auto gas_action             = [&gas]()            { GetOptionsDB().Set<bool>("ui.map.background.gas.shown",         !gas);              };
+        auto starfield_action       = [&starfields]()     { GetOptionsDB().Set<bool>("ui.map.background.starfields.shown",  !starfields); };
+        auto map_scale_action       = [&scale]()          { GetOptionsDB().Set<bool>("ui.map.scale.legend.shown",           !scale);            };
+        auto scale_circle_action    = [&scaleCircle]()    { GetOptionsDB().Set<bool>("ui.map.scale.circle.shown",           !scaleCircle);      };
+        auto zoom_slider_action     = [&zoomSlider]()     { GetOptionsDB().Set<bool>("ui.map.zoom.slider.shown",            !zoomSlider);       };
+        auto detection_range_action = [&detectionRange]() { GetOptionsDB().Set<bool>("ui.map.detection.range.shown",        !detectionRange);   };
 
         auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
         popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_SHOW_FPS"),                     false, fps,            show_fps_action));
@@ -3602,7 +3613,7 @@ namespace {
     {
         const auto& this_client_known_destroyed_objects =
             GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
-        const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
+        const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color");
 
         std::set<std::pair<int, int>> already_rendered_full_lanes;
 
@@ -3706,7 +3717,7 @@ namespace {
 
         const std::set<int>& this_client_known_destroyed_objects =
             GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
-        //unused variable const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
+        //unused variable const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color");
 
 
         for (const auto& id_icon : sys_icons) {
@@ -4143,7 +4154,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
             continue;
 
         GG::Clr circle_colour = empire->Color();
-        circle_colour.a = 8*GetOptionsDB().Get<int>("UI.detection-range-opacity");
+        circle_colour.a = 8*GetOptionsDB().Get<int>("ui.map.detection.range.opacity");
 
         GG::Pt circle_centre = GG::Pt(GG::X(detection_circle.first.second.first), GG::Y(detection_circle.first.second.second));
         GG::Pt ul = circle_centre - GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
@@ -5137,7 +5148,7 @@ void MapWnd::RefreshFleetSignals() {
 
 void MapWnd::RefreshSliders() {
     if (m_zoom_slider) {
-        if (GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider") && Visible())
+        if (GetOptionsDB().Get<bool>("ui.map.zoom.slider.shown") && Visible())
             m_zoom_slider->Show();
         else
             m_zoom_slider->Hide();
@@ -6311,7 +6322,7 @@ void MapWnd::ShowResearch() {
     PushWndStack(m_research_wnd);
 
     // hide pedia again if it is supposed to be hidden persistently
-    if (GetOptionsDB().Get<bool>("UI.windows.research.pedia.persistently-hidden"))
+    if (GetOptionsDB().Get<bool>("ui.research.pedia.hidden.enabled"))
         m_research_wnd->HidePedia();
 
     // indicate selection on button
@@ -6344,7 +6355,7 @@ void MapWnd::ShowProduction() {
     HideDesign();
     HideSidePanel();
     HidePedia();
-    if (GetOptionsDB().Get<bool>("UI.hide-map-panels")) {
+    if (GetOptionsDB().Get<bool>("ui.production.mappanels.removed")) {
         RemoveWindows();
         GG::GUI::GetGUI()->Remove(ClientUI::GetClientUI()->GetMessageWnd());
         GG::GUI::GetGUI()->Remove(ClientUI::GetClientUI()->GetPlayerListWnd());
@@ -6374,7 +6385,7 @@ void MapWnd::ShowProduction() {
     m_production_wnd->Show();
 
     // hide pedia again if it is supposed to be hidden persistently
-    if (GetOptionsDB().Get<bool>("UI.windows.production.pedia.persistently-hidden"))
+    if (GetOptionsDB().Get<bool>("ui.production.pedia.hidden.enabled"))
         m_production_wnd->TogglePedia();
 }
 
@@ -6385,8 +6396,8 @@ void MapWnd::HideProduction() {
     m_btn_production->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production.png")));
     m_btn_production->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_mouseover.png")));
 
-    // Don't check UI.hide-map-panels to avoid a situation where the option is
-    // changed and the panels aren't re-registered.
+    // Don't check ui.production.mappanels.removed to avoid a
+    // situation where the option is changed and the panels aren't re-registered.
     RegisterWindows();
     GG::GUI::GetGUI()->Register(ClientUI::GetClientUI()->GetMessageWnd());
     GG::GUI::GetGUI()->Register(ClientUI::GetClientUI()->GetPlayerListWnd());
@@ -7026,9 +7037,9 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     hkm->Connect(boost::bind(&MapWnd::PanY, this, GG::Y(-50)),  "map.pan_up",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
 
-    hkm->Connect(boost::bind(&ToggleBoolOption, "UI.show-galaxy-map-scale"), "map.toggle_scale_line",
+    hkm->Connect(boost::bind(&ToggleBoolOption, "ui.map.scale.legend.shown"), "map.toggle_scale_line",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&ToggleBoolOption, "UI.show-galaxy-map-scale-circle"), "map.toggle_scale_circle",
+    hkm->Connect(boost::bind(&ToggleBoolOption, "ui.map.scale.circle.shown"), "map.toggle_scale_circle",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
 
 
@@ -7144,7 +7155,7 @@ namespace {
             return OrderedRouteType();
         }
 
-        auto ignore_hostile = GetOptionsDB().Get<bool>("UI.fleet.explore.hostile.ignored");
+        auto ignore_hostile = GetOptionsDB().Get<bool>("ui.fleet.explore.hostile.ignored");
         auto fleet_pred = std::make_shared<HostileVisitor<Fleet>>(empire_id);
         std::pair<std::list<int>, double> route_distance;
 
@@ -7190,7 +7201,7 @@ namespace {
 
         // decrease priority of system if previously viewed but not yet explored
         if (!destination->Name().empty()) {
-            order_route.first *= GetOptionsDB().Get<float>("UI.fleet.explore.system.known.multiplier");
+            order_route.first *= GetOptionsDB().Get<float>("ui.fleet.explore.system.known.multiplier");
             TraceLogger() << "Deferred priority for system " << destination->Name() << " (" << destination->ID() << ")";
         }
 
@@ -7433,7 +7444,7 @@ void MapWnd::DispatchFleetsExploring() {
         WarnLogger() << "Invalid empire";
         return;
     }
-    int max_routes_per_system = GetOptionsDB().Get<int>("UI.fleet.explore.system.route.limit");
+    int max_routes_per_system = GetOptionsDB().Get<int>("ui.fleet.explore.system.route.limit");
     auto destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
 
     FleetIDListType idle_fleets;

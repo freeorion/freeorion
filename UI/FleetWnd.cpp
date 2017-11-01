@@ -141,7 +141,7 @@ namespace {
             else {
                 // "FW_FLEET_MOVING_TO" userstring is currently truncated to drop ETA info
                 // so as to fit better in a small fleet window
-                std::string moving_key = GetOptionsDB().Get<bool>("UI.show-fleet-eta")
+                std::string moving_key = GetOptionsDB().Get<bool>("ui.map.fleet.eta.shown")
                     ? UserString("FW_FLEET_MOVING_TO_ETA")
                     : UserString("FW_FLEET_MOVING_TO");
                 retval = boost::io::str(FlexibleFormat(moving_key) %
@@ -386,16 +386,16 @@ namespace {
     }
 
     void AddOptions(OptionsDB& db) {
-        db.Add("UI.fleet-wnd-aggression",   UserStringNop("OPTIONS_DB_FLEET_WND_AGGRESSION"),       INVALID_FLEET_AGGRESSION,   Validator<NewFleetAggression>());
-        db.Add("UI.fleet-wnd-scanline-clr", UserStringNop("OPTIONS_DB_UI_FLEET_WND_SCANLINE_CLR"),  GG::Clr(24, 24, 24, 192),   Validator<GG::Clr>());
+        db.Add("ui.fleet.aggression", UserStringNop("OPTIONS_DB_FLEET_WND_AGGRESSION"), INVALID_FLEET_AGGRESSION, Validator<NewFleetAggression>());
+        db.Add("ui.fleet.scanline.color", UserStringNop("OPTIONS_DB_UI_FLEET_WND_SCANLINE_CLR"), GG::Clr(24, 24, 24, 192), Validator<GG::Clr>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
     NewFleetAggression NewFleetsAggressiveOptionSetting()
-    { return GetOptionsDB().Get<NewFleetAggression>("UI.fleet-wnd-aggression"); }
+    { return GetOptionsDB().Get<NewFleetAggression>("ui.fleet.aggression"); }
 
     void SetNewFleetAggressiveOptionSetting(NewFleetAggression aggression)
-    { GetOptionsDB().Set<NewFleetAggression>("UI.fleet-wnd-aggression", aggression); }
+    { GetOptionsDB().Set<NewFleetAggression>("ui.fleet.aggression", aggression); }
 
     std::shared_ptr<GG::Texture> FleetAggressiveIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_aggressive.png"); }
@@ -468,7 +468,7 @@ std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(const std::vector<int>& fl
                                       GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE*/)
 {
     std::string config_name = "";
-    if (!GetOptionsDB().Get<bool>("UI.multiple-fleet-windows")) {
+    if (!GetOptionsDB().Get<bool>("ui.fleet.multiple.enabled")) {
         CloseAll();
         // Only write to OptionsDB if in single fleet window mode.
         config_name = FLEET_WND_NAME;
@@ -814,10 +814,10 @@ namespace {
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         if ((ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
-            && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+            && GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
         {
             m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, m_ship_icon->Width(), m_ship_icon->Height(), true,
-                                                                  GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
+                                                                  GetOptionsDB().Get<GG::Clr>("ui.fleet.scanline.color"));
             AttachChild(m_scanline_control);
         }
     }
@@ -1538,10 +1538,10 @@ void FleetDataPanel::Refresh() {
             add_overlay("gifting.png");
 
         if ((fleet->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
-            && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+            && GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
         {
             m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, DataPanelIconSpace().x, ClientHeight(), true,
-                                                                  GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
+                                                                  GetOptionsDB().Get<GG::Clr>("ui.fleet.scanline.color"));
             AttachChild(m_scanline_control);
         }
 

@@ -78,9 +78,9 @@ GG::Clr     ClientUI::DefaultLinkColor()        { return GetOptionsDB().Get<GG::
 GG::Clr     ClientUI::RolloverLinkColor()       { return GetOptionsDB().Get<GG::Clr>("UI.rollover-link-color"); }
 
 // windows
-GG::Clr     ClientUI::WndColor()                { return GetOptionsDB().Get<GG::Clr>("UI.wnd-color"); }
-GG::Clr     ClientUI::WndOuterBorderColor()     { return GetOptionsDB().Get<GG::Clr>("UI.wnd-outer-border-color"); }
-GG::Clr     ClientUI::WndInnerBorderColor()     { return GetOptionsDB().Get<GG::Clr>("UI.wnd-inner-border-color"); }
+GG::Clr     ClientUI::WndColor()                { return GetOptionsDB().Get<GG::Clr>("ui.window.background.color"); }
+GG::Clr     ClientUI::WndOuterBorderColor()     { return GetOptionsDB().Get<GG::Clr>("ui.window.border.outer.color"); }
+GG::Clr     ClientUI::WndInnerBorderColor()     { return GetOptionsDB().Get<GG::Clr>("ui.window.border.inner.color"); }
 
 // controls
 GG::Clr     ClientUI::CtrlColor()               { return GetOptionsDB().Get<GG::Clr>("ui.control.background.color"); }
@@ -108,19 +108,19 @@ GG::Clr     ClientUI::StatDecrColor()           { return GetOptionsDB().Get<GG::
 
 GG::Clr     ClientUI::StateButtonColor()        { return GetOptionsDB().Get<GG::Clr>("ui.button.state.color"); }
 
-int         ClientUI::SystemIconSize()                  { return GetOptionsDB().Get<int>("UI.system-icon-size"); }
-int         ClientUI::SystemTinyIconSizeThreshold()     { return GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold"); }
-int         ClientUI::SystemCircleSize()                { return static_cast<int>(SystemIconSize() * GetOptionsDB().Get<double>("UI.system-circle-size")); }
-int         ClientUI::SystemSelectionIndicatorSize()    { return static_cast<int>(SystemIconSize() * GetOptionsDB().Get<double>("UI.system-selection-indicator-size")); }
-int         ClientUI::SystemSelectionIndicatorRPM()     { return GetOptionsDB().Get<int>("UI.system-selection-indicator-rpm"); }
+int         ClientUI::SystemIconSize()                  { return GetOptionsDB().Get<int>("ui.map.system.icon.size"); }
+int         ClientUI::SystemTinyIconSizeThreshold()     { return GetOptionsDB().Get<int>("ui.map.system.icon.tiny.threshold"); }
+int         ClientUI::SystemCircleSize()                { return static_cast<int>(SystemIconSize() * GetOptionsDB().Get<double>("ui.map.system.circle.size")); }
+int         ClientUI::SystemSelectionIndicatorSize()    { return static_cast<int>(SystemIconSize() * GetOptionsDB().Get<double>("ui.map.system.select.indicator.size")); }
+int         ClientUI::SystemSelectionIndicatorRPM()     { return GetOptionsDB().Get<int>("ui.map.system.select.indicator.rpm"); }
 
-GG::Clr     ClientUI::SystemNameTextColor()             { return GetOptionsDB().Get<GG::Clr>("UI.system-name-unowned-color"); }
+GG::Clr     ClientUI::SystemNameTextColor()             { return GetOptionsDB().Get<GG::Clr>("ui.map.system.unowned.name.color"); }
 
-double      ClientUI::TinyFleetButtonZoomThreshold()    { return GetOptionsDB().Get<double>("UI.tiny-fleet-button-minimum-zoom"); }
-double      ClientUI::SmallFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("UI.small-fleet-button-minimum-zoom"); }
-double      ClientUI::MediumFleetButtonZoomThreshold()  { return GetOptionsDB().Get<double>("UI.medium-fleet-button-minimum-zoom"); }
+double      ClientUI::TinyFleetButtonZoomThreshold()    { return GetOptionsDB().Get<double>("ui.map.fleet.button.tiny.zoom.threshold"); }
+double      ClientUI::SmallFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("ui.map.fleet.button.small.zoom.threshold"); }
+double      ClientUI::MediumFleetButtonZoomThreshold()  { return GetOptionsDB().Get<double>("ui.map.fleet.button.medium.zoom.threshold"); }
 
-bool        ClientUI::DisplayTimestamp()                { return GetOptionsDB().Get<bool>("UI.display-timestamp"); }
+bool        ClientUI::DisplayTimestamp()                { return GetOptionsDB().Get<bool>("ui.map.messages.timestamp.shown"); }
 
 // content texture getters
 std::shared_ptr<GG::Texture> ClientUI::PlanetIcon(PlanetType planet_type) {
@@ -346,14 +346,14 @@ std::shared_ptr<GG::Texture> ClientUI::ShipDesignIcon(int design_id) {
 
 
 // tech screen
-GG::Clr     ClientUI::KnownTechFillColor()                   { return GetOptionsDB().Get<GG::Clr>("UI.known-tech"); }
-GG::Clr     ClientUI::KnownTechTextAndBorderColor()          { return GetOptionsDB().Get<GG::Clr>("UI.known-tech-border"); }
-GG::Clr     ClientUI::ResearchableTechFillColor()            { return GetOptionsDB().Get<GG::Clr>("UI.researchable-tech"); }
-GG::Clr     ClientUI::ResearchableTechTextAndBorderColor()   { return GetOptionsDB().Get<GG::Clr>("UI.researchable-tech-border"); }
-GG::Clr     ClientUI::UnresearchableTechFillColor()          { return GetOptionsDB().Get<GG::Clr>("UI.unresearchable-tech"); }
-GG::Clr     ClientUI::UnresearchableTechTextAndBorderColor() { return GetOptionsDB().Get<GG::Clr>("UI.unresearchable-tech-border"); }
-GG::Clr     ClientUI::TechWndProgressBarBackgroundColor()    { return GetOptionsDB().Get<GG::Clr>("UI.tech-progress-background"); }
-GG::Clr     ClientUI::TechWndProgressBarColor()              { return GetOptionsDB().Get<GG::Clr>("UI.tech-progress"); }
+GG::Clr     ClientUI::KnownTechFillColor()                   { return GetOptionsDB().Get<GG::Clr>("ui.research.status.completed.background.color"); }
+GG::Clr     ClientUI::KnownTechTextAndBorderColor()          { return GetOptionsDB().Get<GG::Clr>("ui.research.status.completed.border.color"); }
+GG::Clr     ClientUI::ResearchableTechFillColor()            { return GetOptionsDB().Get<GG::Clr>("ui.research.status.researchable.background.color"); }
+GG::Clr     ClientUI::ResearchableTechTextAndBorderColor()   { return GetOptionsDB().Get<GG::Clr>("ui.research.status.researchable.border.color"); }
+GG::Clr     ClientUI::UnresearchableTechFillColor()          { return GetOptionsDB().Get<GG::Clr>("ui.research.status.unresearchable.background.color"); }
+GG::Clr     ClientUI::UnresearchableTechTextAndBorderColor() { return GetOptionsDB().Get<GG::Clr>("ui.research.status.unresearchable.border.color"); }
+GG::Clr     ClientUI::TechWndProgressBarBackgroundColor()    { return GetOptionsDB().Get<GG::Clr>("ui.research.status.progress.background.color"); }
+GG::Clr     ClientUI::TechWndProgressBarColor()              { return GetOptionsDB().Get<GG::Clr>("ui.research.status.progress.color"); }
 
 GG::Clr     ClientUI::CategoryColor(const std::string& category_name) {
     const TechCategory* category = GetTechCategory(category_name);
@@ -498,7 +498,7 @@ namespace {
         db.Add<std::string>("ui.window.minimize.sound.path",    UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_MAXIMIZE"),          (GetRootDataDir() / "default" / "data" / "sound" / "window_maximize.ogg").string());
         db.Add<std::string>("ui.window.maximize.sound.path",    UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE"),          (GetRootDataDir() / "default" / "data" / "sound" / "window_minimize.ogg").string());
         db.Add<std::string>("ui.window.close.sound.path",       UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_CLOSE"),             (GetRootDataDir() / "default" / "data" / "sound" / "window_close.ogg").string());
-        db.Add<std::string>("ui.messagebox.sound.path",  UserStringNop("OPTIONS_DB_UI_SOUND_ALERT"),                    (GetRootDataDir() / "default" / "data" / "sound" / "alert.ogg").string());
+        db.Add<std::string>("ui.alert.sound.path",              UserStringNop("OPTIONS_DB_UI_SOUND_ALERT"),                    (GetRootDataDir() / "default" / "data" / "sound" / "alert.ogg").string());
         db.Add<std::string>("UI.sound.planet-button-click",     UserStringNop("OPTIONS_DB_UI_SOUND_PLANET_BUTTON_CLICK"),      (GetRootDataDir() / "default" / "data" / "sound" / "button_click.ogg").string());
         db.Add<std::string>("ui.map.fleet.button.rollover.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER"), (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg").string());
         db.Add<std::string>("ui.map.fleet.button.press.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK"),       (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_click.ogg").string());
@@ -523,9 +523,9 @@ namespace {
 #endif
 
         // colors
-        db.Add("UI.wnd-color",                  UserStringNop("OPTIONS_DB_UI_WND_COLOR"),                  GG::Clr(35, 35, 35, 240),    Validator<GG::Clr>());
-        db.Add("UI.wnd-outer-border-color",     UserStringNop("OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR"),     GG::Clr(64, 64, 64, 255),    Validator<GG::Clr>());
-        db.Add("UI.wnd-inner-border-color",     UserStringNop("OPTIONS_DB_UI_WND_INNER_BORDER_COLOR"),     GG::Clr(192, 192, 192, 255), Validator<GG::Clr>());
+        db.Add("ui.window.background.color",    UserStringNop("OPTIONS_DB_UI_WND_COLOR"),                  GG::Clr(35, 35, 35, 240),    Validator<GG::Clr>());
+        db.Add("ui.window.border.outer.color",  UserStringNop("OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR"),     GG::Clr(64, 64, 64, 255),    Validator<GG::Clr>());
+        db.Add("ui.window.border.inner.color",  UserStringNop("OPTIONS_DB_UI_WND_INNER_BORDER_COLOR"),     GG::Clr(192, 192, 192, 255), Validator<GG::Clr>());
 
         db.Add("ui.control.background.color",   UserStringNop("OPTIONS_DB_UI_CTRL_COLOR"),                 GG::Clr(15, 15, 15, 255),    Validator<GG::Clr>());
         db.Add("ui.control.border.color",       UserStringNop("OPTIONS_DB_UI_CTRL_BORDER_COLOR"),          GG::Clr(124, 124, 124, 255), Validator<GG::Clr>());
@@ -543,14 +543,14 @@ namespace {
         db.Add("UI.default-link-color",         UserStringNop("OPTIONS_DB_UI_DEFAULT_LINK_COLOR"),         GG::Clr(80, 255, 128, 255),  Validator<GG::Clr>());
         db.Add("UI.rollover-link-color",        UserStringNop("OPTIONS_DB_UI_ROLLOVER_LINK_COLOR"),        GG::Clr(192, 80, 255, 255),  Validator<GG::Clr>());
 
-        db.Add("UI.known-tech",                 UserStringNop("OPTIONS_DB_UI_KNOWN_TECH"),                 GG::Clr(72, 72, 72, 255),    Validator<GG::Clr>());
-        db.Add("UI.known-tech-border",          UserStringNop("OPTIONS_DB_UI_KNOWN_TECH_BORDER"),          GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());
-        db.Add("UI.researchable-tech",          UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH"),          GG::Clr(48, 48, 48, 255),    Validator<GG::Clr>());
-        db.Add("UI.researchable-tech-border",   UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER"),   GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());
-        db.Add("UI.unresearchable-tech",        UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH"),        GG::Clr(30, 30, 30, 255),    Validator<GG::Clr>());
-        db.Add("UI.unresearchable-tech-border", UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER"), GG::Clr(86, 86, 86, 255),    Validator<GG::Clr>());
-        db.Add("UI.tech-progress-background",   UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND"),   GG::Clr(72, 72, 72, 255),    Validator<GG::Clr>());
-        db.Add("UI.tech-progress",              UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS"),              GG::Clr(40, 40, 40, 255),    Validator<GG::Clr>());
+        db.Add("ui.research.status.completed.background.color", UserStringNop("OPTIONS_DB_UI_KNOWN_TECH"), GG::Clr(72, 72, 72, 255), Validator<GG::Clr>());
+        db.Add("ui.research.status.completed.border.color", UserStringNop("OPTIONS_DB_UI_KNOWN_TECH_BORDER"), GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());
+        db.Add("ui.research.status.researchable.background.color", UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH"), GG::Clr(48, 48, 48, 255), Validator<GG::Clr>());
+        db.Add("ui.research.status.researchable.border.color", UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER"), GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());
+        db.Add("ui.research.status.unresearchable.background.color", UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH"), GG::Clr(30, 30, 30, 255), Validator<GG::Clr>());
+        db.Add("ui.research.status.unresearchable.border.color", UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER"), GG::Clr(86, 86, 86, 255), Validator<GG::Clr>());
+        db.Add("ui.research.status.progress.background.color", UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND"), GG::Clr(72, 72, 72, 255), Validator<GG::Clr>());
+        db.Add("ui.research.status.progress.color", UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS"), GG::Clr(40, 40, 40, 255), Validator<GG::Clr>());
 
         // misc
         db.Add("ui.scroll.width",               UserStringNop("OPTIONS_DB_UI_SCROLL_WIDTH"),                14,         RangedValidator<int>(8, 30));
@@ -558,14 +558,14 @@ namespace {
         // UI behavior
         db.Add("UI.tooltip-delay",              UserStringNop("OPTIONS_DB_UI_TOOLTIP_DELAY"),              500,        RangedValidator<int>(0, 3000));
         db.Add("UI.tooltip.extended-delay",     UserStringNop("OPTIONS_DB_UI_TOOLTIP_LONG_DELAY"),         3500,       RangedValidator<int>(0, 30000));
-        db.Add("UI.multiple-fleet-windows",     UserStringNop("OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS"),     false);
-        db.Add("UI.window-quickclose",          UserStringNop("OPTIONS_DB_UI_WINDOW_QUICKCLOSE"),          true);
-        db.Add("UI.auto-reposition-windows",    UserStringNop("OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS"),    true);
+        db.Add("ui.fleet.multiple.enabled", UserStringNop("OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS"),         false);
+        db.Add("ui.quickclose.enabled",  UserStringNop("OPTIONS_DB_UI_WINDOW_QUICKCLOSE"),                 true);
+        db.Add("ui.reposition.auto.enabled",  UserStringNop("OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS"),      true);
 
         // UI behavior, hidden options
         // currently lacking an options page widget, so can only be user-adjusted by manually editing config file or specifying on command line
-        db.Add("UI.design-pedia-dynamic",       UserStringNop("OPTIONS_DB_DESIGN_PEDIA_DYNAMIC"),          false);
-        db.Add("UI.show-fleet-eta",             UserStringNop("OPTIONS_DB_SHOW_FLEET_ETA"),                true);
+        db.Add("ui.design.pedia.title.dynamic.enabled", UserStringNop("OPTIONS_DB_DESIGN_PEDIA_DYNAMIC"),  false);
+        db.Add("ui.map.fleet.eta.shown",        UserStringNop("OPTIONS_DB_SHOW_FLEET_ETA"),                true);
         db.Add("UI.show-id-after-names",        UserStringNop("OPTIONS_DB_SHOW_IDS_AFTER_NAMES"),          false);
 
         // Other
@@ -580,7 +580,7 @@ namespace {
     const GG::X PLAYER_LIST_PANEL_WIDTH(445);
 
     const std::string MESSAGE_WND_NAME = "map.messages";
-    const std::string PLAYER_LIST_WND_NAME = "map.player-list";
+    const std::string PLAYER_LIST_WND_NAME = "map.empires";
 
     template <class OptionType, class PredicateType>
     void ConditionalForward(const std::string& option_name,
@@ -652,7 +652,7 @@ ClientUI::ClientUI() :
         boost::bind(&ClientUI::HandleFullscreenSwitch, this),
         boost::signals2::at_front);
 
-    ConditionalConnectOption("UI.auto-reposition-windows",
+    ConditionalConnectOption("ui.reposition.auto.enabled",
                              HumanClientApp::GetApp()->RepositionWindowsSignal,
                              true, std::equal_to<bool>());
 
@@ -994,24 +994,20 @@ void ClientUI::InitializeWindows() {
 void ClientUI::HandleSizeChange(bool fullscreen) const {
     OptionsDB& db = GetOptionsDB();
 
-    if (db.Get<bool>("UI.auto-reposition-windows")) {
-        std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
-        if (!fullscreen)
-            windowed = "-windowed";
+    if (db.Get<bool>("ui.reposition.auto.enabled")) {
+        std::string window_mode = fullscreen ? ".fullscreen" : ".windowed";
+        std::string option_name = "ui." + MESSAGE_WND_NAME + window_mode + ".left";
 
         // Invalidate the message window position so that we know to
         // recalculate positions on the next resize or fullscreen switch...
-        db.Set<int>("UI.windows."+MESSAGE_WND_NAME+".left"+windowed,
-                    db.GetDefault<int>("UI.windows."+MESSAGE_WND_NAME+".left"+windowed));
+        db.Set<int>(option_name, db.GetDefault<int>(option_name));
     }
 }
 
 void ClientUI::HandleFullscreenSwitch() const {
     OptionsDB& db = GetOptionsDB();
 
-    std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
-    if (!db.Get<bool>("video.fullscreen.enabled"))
-        windowed = "-windowed";
+    std::string window_mode = db.Get<bool>("video.fullscreen.enabled") ? ".fullscreen" : ".windowed";
 
     // Check if the message window position has been invalidated as a stand-in
     // for actually checking if all windows have been given valid positions for
@@ -1019,9 +1015,8 @@ void ClientUI::HandleFullscreenSwitch() const {
     // std::numeric_limits<GG::X::value_type>::min(), defined in UI/CUIWnd.cpp).
     // This relies on the message window not supplying a default position to
     // the CUIWnd constructor...
-    if (db.Get<int>("UI.windows."+MESSAGE_WND_NAME+".left"+windowed) ==
-        db.GetDefault<int>("UI.windows."+MESSAGE_WND_NAME+".left"+windowed))
-    {
+    std::string option_name = "ui." + MESSAGE_WND_NAME + window_mode + ".left";
+    if (db.Get<int>(option_name) == db.GetDefault<int>(option_name)) {
         HumanClientApp::GetApp()->RepositionWindowsSignal();
     }
 }
@@ -1063,7 +1058,7 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = 
                                                    WndColor(), WndOuterBorderColor(), CtrlColor(), TextColor(), 1,
                                                    UserString("OK"));
     if (play_alert_sound)
-        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.alert"), true);
+        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.alert.sound.path"), true);
     dlg->Run();
 }
 
