@@ -2434,7 +2434,7 @@ namespace {
         fs::directory_iterator end_it;
         for (fs::directory_iterator it(ClientUI::ArtDir() / "encyclopedia" / "planet_environments"); it != end_it; ++it) {
             try {
-                if (fs::exists(*it) && !fs::is_directory(*it)) {
+                if (fs::exists(*it) && fs::is_regular_file(it->status())) {
                     auto filename = it->path().filename().string();
                     if (boost::algorithm::starts_with(filename, planet_type)) {
                         filenames.push_back(filename);
