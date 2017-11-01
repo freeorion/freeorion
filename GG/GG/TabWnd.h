@@ -278,6 +278,9 @@ private:
     void RightClicked();
     void BringTabIntoView(std::size_t index);
 
+    /** Shows or hides the left-right buttons based on whether they are currently needed. */
+    void RecalcLeftRightButton();
+
     std::shared_ptr<RadioButtonGroup>         m_tabs;
     std::vector<std::shared_ptr<StateButton>> m_tab_buttons;
     std::shared_ptr<Font> m_font;

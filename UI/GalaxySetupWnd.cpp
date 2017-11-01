@@ -33,7 +33,7 @@ namespace {
     { return GG::X(345 + FontBasedUpscale(300)); }
     const GG::Y GalSetupWndHeight()
     { return GG::Y(FontBasedUpscale(29) + (PANEL_CONTROL_SPACING * 6) + GAL_SETUP_PANEL_HT); }
-    const GG::Pt PREVIEW_SZ(GG::X(248), GG::Y(186));
+    const GG::Pt PREVIEW_SZ(GG::X(300), GG::Y(222));
     const bool ALLOW_NO_STARLANES = false;
 
     class RowContentsWnd : public GG::Control {
@@ -172,10 +172,6 @@ namespace {
 ////////////////////////////////////////////////
 // GameRulesPanel
 ////////////////////////////////////////////////
-const GG::X GameRulesPanel::DefaultWidth() {
-    return GG::X(FontBasedUpscale(305));
-}
-
 GameRulesPanel::GameRulesPanel(GG::X w, GG::Y h) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS)
 {}
@@ -248,8 +244,11 @@ void GameRulesPanel::DoLayout() {
     m_tabs->SizeMove(MARGINS, ClientSize() - MARGINS);
 }
 
-void GameRulesPanel::Render()
-{ /*GG::FlatRectangle(UpperLeft(), LowerRight(), GG::CLR_CYAN, GG::CLR_GREEN, 1);*/ }
+void GameRulesPanel::Render() {
+    GG::FlatRectangle(m_tabs->CurrentWnd()->UpperLeft() - GG::Pt(GG::X(2), GG::Y0),
+                      m_tabs->CurrentWnd()->LowerRight() + GG::Pt(GG::X(2), GG::Y(2)),
+                      GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
+}
 
 void GameRulesPanel::SettingChanged() {
     Sound::TempUISoundDisabler sound_disabler;

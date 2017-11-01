@@ -16,8 +16,6 @@ struct GalaxySetupData;
 /** Displays game rules options */
 class GameRulesPanel : public GG::Control {
 public:
-    static const GG::X DefaultWidth();
-
     /** \name Structors*/ //!@{
     GameRulesPanel(GG::X w = GG::X(FontBasedUpscale(305)), GG::Y h = GG::Y(330));
     //!@}
