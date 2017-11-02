@@ -32,6 +32,7 @@ namespace parse { namespace detail {
         qi::_h_type _h;
         qi::_val_type _val;
         qi::lit_type lit;
+        qi::_pass_type _pass;
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
         using phoenix::new_;
@@ -54,7 +55,7 @@ namespace parse { namespace detail {
             >   labeller.rule(Condition_token) > condition_parser
             [ _val = construct_movable_(new_<Condition::WithinDistance>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_a),
-                    deconstruct_movable_(_1))) ]
+                    deconstruct_movable_(_1, _pass))) ]
             ;
 
         within_starlane_jumps
@@ -63,7 +64,7 @@ namespace parse { namespace detail {
             >   labeller.rule(Condition_token) > condition_parser
             [ _val = construct_movable_(new_<Condition::WithinStarlaneJumps>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
-                    deconstruct_movable_(_1))) ]
+                    deconstruct_movable_(_1, _pass))) ]
             ;
 
         number
@@ -74,7 +75,7 @@ namespace parse { namespace detail {
             [ _val = construct_movable_(new_<Condition::Number>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
-                    deconstruct_movable_(_1))) ]
+                    deconstruct_movable_(_1, _pass))) ]
             ;
 
         value_test_1
@@ -227,7 +228,7 @@ namespace parse { namespace detail {
                 >   labeller.rule(Condition_token) > condition_parser
                 [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
-                        deconstruct_movable_(_1))) ]
+                        deconstruct_movable_(_1, _pass))) ]
                 ;
 
             number_of2
@@ -242,7 +243,7 @@ namespace parse { namespace detail {
                         construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
                         construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
                         _b,
-                        deconstruct_movable_(_1))) ]
+                        deconstruct_movable_(_1, _pass))) ]
                 ;
 
             number_of
@@ -272,14 +273,14 @@ namespace parse { namespace detail {
                 >   labeller.rule(Condition_token) > condition_parser
                 [ _val = construct_movable_(new_<Condition::ResourceSupplyConnectedByEmpire>(
                         construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_a),
-                        deconstruct_movable_(_1))) ]
+                        deconstruct_movable_(_1, _pass))) ]
                 ;
 
             can_add_starlane
                 =   tok.CanAddStarlanesTo_
                 >   labeller.rule(Condition_token) > condition_parser
                 [ _val = construct_movable_(new_<Condition::CanAddStarlaneConnection>(
-                        deconstruct_movable_(_1))) ]
+                        deconstruct_movable_(_1, _pass))) ]
                 ;
 
             start

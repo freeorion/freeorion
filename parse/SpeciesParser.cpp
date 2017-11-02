@@ -99,7 +99,7 @@ namespace {
                 >    labeller.rule(Description_token) > tok.string [ _b = _1 ]
                 >    labeller.rule(Location_token)    > condition_parser [ _c = _1 ]
                 >    labeller.rule(Graphic_token)     > tok.string
-                [ _val = construct<FocusType>(_a, _b, deconstruct_movable_(_c), _1) ]
+                [ _val = construct<FocusType>(_a, _b, deconstruct_movable_(_c, _pass), _1) ]
                 ;
 
             foci

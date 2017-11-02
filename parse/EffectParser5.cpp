@@ -22,6 +22,7 @@ namespace parse { namespace detail {
         qi::_c_type _c;
         qi::_val_type _val;
         qi::eps_type eps;
+        qi::_pass_type _pass;
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
 
@@ -43,7 +44,7 @@ namespace parse { namespace detail {
                             )
                            )
                 ) [ _val = construct_movable_(new_<Effect::Conditional>(
-                    deconstruct_movable_(_a),
+                    deconstruct_movable_(_a, _pass),
                     phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _b),
                     phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _c))) ]
             ;

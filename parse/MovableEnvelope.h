@@ -1,6 +1,10 @@
 #ifndef _MovableEnvelope_h_
 #define _MovableEnvelope_h_
 
+#include "../util/Logger.h"
+
+#include <boost/spirit/include/support_argument.hpp>
+
 #include <memory>
 #include <type_traits>
 
@@ -29,6 +33,17 @@ namespace parse { namespace detail {
     template <typename T>
     class MovableEnvelope {
     public:
+        using enveloped_type = T;
+
+        /// An exception to indicate that the pointer has been removed twice.
+        struct OpenedMoreThanOnce : public std::runtime_error {
+            OpenedMoreThanOnce() :
+                std::runtime_error(
+                    "The parser attempted to extract the unique_ptr from a MovableEnvelope more than once. "
+                    "Until boost::spirit supports move semantics MovableEnvelope requires that unique_ptr be used only once. "
+                    "Check that set, map or vector parses are not repeatedly extracting the same unique_ptr<T>.")
+            {}
+        };
 
         /** \name Rule of Five constructors and operators.
             MovableEnvelope satisfies the rule of five with the following
@@ -149,10 +164,11 @@ namespace parse { namespace detail {
         */
 
         std::unique_ptr<T> OpenEnvelope() const {
-            if (IsEmptiedEnvelope())
-                throw std::runtime_error(
-                    "The parser attempted to extract the unique_ptr from a MovableEnvelope more than once.  \n"
-                    "Until boost::spirit supports move semantics MovableEnvelope requires that unique_ptr be used once");
+            if (IsEmptiedEnvelope()) {
+                auto err = OpenedMoreThanOnce();
+                ErrorLogger() << err.what();
+                throw err;
+            }
             return std::move(obj);
         }
 
@@ -165,7 +181,7 @@ namespace parse { namespace detail {
         mutable T* original_obj = nullptr;
     };
 
-    /** \p construct_movable is a functor that constructs a MovableEnvleope<T> */
+    /** \p construct_movable is a functor that constructs a MovableEnvelope<T> */
     struct construct_movable {
         template <typename T>
         using result_type = MovableEnvelope<T>;
@@ -191,7 +207,7 @@ namespace parse { namespace detail {
         { return MovableEnvelope<T>(obj); }
     };
 
-    /** Free functions converting containers of MovableEnvlope to unique_ptrs. */
+    /** Free functions converting containers of MovableEnvelope to unique_ptrs. */
     template <typename T>
     std::vector<std::unique_ptr<T>> OpenEnvelopes(const std::vector<MovableEnvelope<T>>& envelopes) {
         std::vector<std::unique_ptr<T>> retval;
@@ -219,17 +235,44 @@ namespace parse { namespace detail {
     }
 
     /** \p deconstruct_movable is a functor that extracts the unique_ptr from a
-        MovableEnvleope<T>.  This is a one time operation that empties the
-        MovableEnvelop<T>.  It is typically done while calling the constructor
+        MovableEnvelope<T>.  This is a one time operation that empties the
+        MovableEnvelope<T>.  It is typically done while calling the constructor
         from outside of boost::spirit that expects a unique_ptr<T>*/
-    struct deconstruct_movable {
+    class deconstruct_movable {
+    public:
         template <typename T>
-        std::unique_ptr<T> operator() (const MovableEnvelope<T>& obj) const
-        { return obj.OpenEnvelope(); }
+        std::unique_ptr<T> operator() (const MovableEnvelope<T>& obj, bool& pass) const
+        {
+            try {
+                return obj.OpenEnvelope();
+            } catch (const typename MovableEnvelope<T>::OpenedMoreThanOnce& e) {
+                pass = false;
+                return nullptr;
+            }
+        }
 
         template <typename T>
-        std::vector<std::unique_ptr<T>> operator() (const std::vector<MovableEnvelope<T>>& objs) const
-        { return OpenEnvelopes(objs); }
+        std::vector<std::unique_ptr<T>> operator() (const std::vector<MovableEnvelope<T>>& objs, bool& pass) const
+        {
+            try {
+                return OpenEnvelopes(objs);
+            } catch (const typename MovableEnvelope<T>::OpenedMoreThanOnce& e) {
+                pass = false;
+                return std::vector<std::unique_ptr<T>>();
+            }
+        }
+
+        template <typename T>
+        std::vector<std::pair<std::string, std::unique_ptr<T>>> operator() (
+            const std::vector<std::pair<std::string, MovableEnvelope<T>>>& objs, bool& pass)
+        {
+            try {
+                return OpenEnvelopes(objs);
+            } catch (const typename MovableEnvelope<T>::OpenedMoreThanOnce& e) {
+                pass = false;
+                return std::vector<std::pair<std::string, std::unique_ptr<T>>>();
+            }
+        }
     };
 
     } // end namespace detail

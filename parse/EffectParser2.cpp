@@ -33,6 +33,7 @@ namespace parse { namespace detail {
         qi::_e_type _e;
         qi::_val_type _val;
         qi::eps_type eps;
+        qi::_pass_type _pass;
         using phoenix::new_;
         using phoenix::construct;
         const boost::phoenix::function<construct_movable> construct_movable_;
@@ -163,7 +164,7 @@ namespace parse { namespace detail {
                 new_<Effect::SetVisibility>(construct<std::unique_ptr<ValueRef::ValueRefBase<Visibility>>>(_c),
                                             _d,
                                             construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
-                                            deconstruct_movable_(_e))) ]
+                                            deconstruct_movable_(_e, _pass))) ]
             ;
 
         start

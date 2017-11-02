@@ -31,6 +31,7 @@ namespace parse { namespace detail {
         qi::_val_type _val;
         qi::eps_type eps;
         qi::lit_type lit;
+        qi::_pass_type _pass;
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
 
@@ -128,25 +129,25 @@ namespace parse { namespace detail {
         and_
             =   tok.And_
             >   '[' > +condition_parser [ emplace_back_1_(_a, _1) ] > lit(']')
-            [ _val = construct_movable_(new_<Condition::And>(deconstruct_movable_(_a))) ]
+            [ _val = construct_movable_(new_<Condition::And>(deconstruct_movable_(_a, _pass))) ]
             ;
 
         or_
             =   tok.Or_
             >   '[' > +condition_parser [ emplace_back_1_(_a, _1) ] > lit(']')
-            [ _val = construct_movable_(new_<Condition::Or>(deconstruct_movable_(_a))) ]
+            [ _val = construct_movable_(new_<Condition::Or>(deconstruct_movable_(_a, _pass))) ]
             ;
 
         not_
             =   tok.Not_
-            >   condition_parser [ _val = construct_movable_(new_<Condition::Not>(deconstruct_movable_(_1))) ]
+            >   condition_parser [ _val = construct_movable_(new_<Condition::Not>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         described
             =   tok.Described_
             >   labeller.rule(Description_token) > tok.string [ _a = _1 ]
             >   labeller.rule(Condition_token) > condition_parser
-            [ _val = construct_movable_( new_<Condition::Described>(deconstruct_movable_(_1), _a)) ]
+            [ _val = construct_movable_( new_<Condition::Described>(deconstruct_movable_(_1, _pass), _a)) ]
             ;
 
         start

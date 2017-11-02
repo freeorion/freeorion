@@ -32,6 +32,7 @@ namespace parse { namespace detail {
         qi::_b_type _b;
         qi::_c_type _c;
         qi::_val_type _val;
+        qi::_pass_type _pass;
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
         const boost::phoenix::function<parse::detail::lazy_move> lazy_move_;
@@ -43,19 +44,19 @@ namespace parse { namespace detail {
         ordered_bombarded_by
             =    tok.OrderedBombardedBy_
             >   -labeller.rule(Condition_token) > condition_parser
-            [ _val = construct_movable_(new_<Condition::OrderedBombarded>(deconstruct_movable_(_1))) ]
+            [ _val = construct_movable_(new_<Condition::OrderedBombarded>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         contains
             =    tok.Contains_
             >   -labeller.rule(Condition_token) > condition_parser
-            [ _val = construct_movable_(new_<Condition::Contains>(deconstruct_movable_(_1))) ]
+            [ _val = construct_movable_(new_<Condition::Contains>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         contained_by
             =    tok.ContainedBy_
             >   -labeller.rule(Condition_token) > condition_parser
-            [ _val = construct_movable_(new_<Condition::ContainedBy>(deconstruct_movable_(_1))) ]
+            [ _val = construct_movable_(new_<Condition::ContainedBy>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         star_type
