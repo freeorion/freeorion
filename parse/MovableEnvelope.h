@@ -200,6 +200,24 @@ namespace parse { namespace detail {
         return retval;
     }
 
+    template <typename T>
+    std::vector<std::pair<std::string, std::unique_ptr<T>>> OpenEnvelopes(
+        const std::vector<std::pair<std::string, MovableEnvelope<T>>>& in)
+    {
+        std::vector<std::pair<std::string, std::unique_ptr<T>>> retval;
+        for (auto&& name_and_value : in)
+            retval.emplace_back(name_and_value.first, name_and_value.second.OpenEnvelope());
+        return retval;
+    }
+
+    template <typename K, typename V>
+    std::map<K, std::unique_ptr<V>> OpenEnvelopes(const std::map<K, MovableEnvelope<V>>& in) {
+        std::map<K, std::unique_ptr<V>> retval;
+        for (auto&& name_and_value : in)
+            retval.insert(std::make_pair(name_and_value.first, name_and_value.second.OpenEnvelope()));
+        return std::move(retval);
+    }
+
     /** \p deconstruct_movable is a functor that extracts the unique_ptr from a
         MovableEnvleope<T>.  This is a one time operation that empties the
         MovableEnvelop<T>.  It is typically done while calling the constructor
