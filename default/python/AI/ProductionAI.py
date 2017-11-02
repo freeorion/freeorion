@@ -228,7 +228,7 @@ def generate_production_orders():
                 continue
             claimed_stars.setdefault(t_sys.starType, []).append(sys_id)
 
-    if current_turn == 1 and len(AIstate.opponentPlanetIDs) == 0:
+    if current_turn == 1 and len(AIstate.opponentPlanetIDs) == 0 and len(production_queue) == 0:
         best_design_id, _, build_choices = get_best_ship_info(PriorityType.PRODUCTION_EXPLORATION)
         if best_design_id is not None:
             for _ in range(3):
