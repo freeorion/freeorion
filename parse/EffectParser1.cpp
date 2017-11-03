@@ -148,8 +148,7 @@ namespace parse { namespace detail {
             =   (   tok.GiveEmpireTech_
                     >   labeller.rule(Name_token) >      string_grammar [ _d = _1 ]
                     > -(labeller.rule(Empire_token) >    int_rules.expr    [ _b = _1 ])
-                ) [ _val = construct_movable_(
-                new_<Effect::GiveEmpireTech>(
+                ) [ _val = construct_movable_(new_<Effect::GiveEmpireTech>(
                     deconstruct_movable_(_d, _pass),
                     deconstruct_movable_(_b, _pass))) ]
             ;
@@ -191,29 +190,19 @@ namespace parse { namespace detail {
                      >>  labeller.rule(Empire_token)
                     ) > int_rules.expr
 
-                    [ _val = construct_GenerateSitRepMessage1_(
-                            _a, _b, _c, construct_movable_(_1),
-                            _d, _e, _f, _pass) ]
+                    [ _val = construct_GenerateSitRepMessage1_(_a, _b, _c, _1, _d, _e, _f, _pass) ]
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
                     (labeller.rule(Affiliation_token) >>  tok.CanSee_)
                     >   labeller.rule(Condition_token)   >   condition_parser
-                    [ _val = construct_GenerateSitRepMessage2_(
-                            _a, _b, _c,
-                            AFFIL_CAN_SEE,
-                            construct_movable_(_1),
-                            _e, _f, _pass) ]
+                    [ _val = construct_GenerateSitRepMessage2_(_a, _b, _c, AFFIL_CAN_SEE, _1, _e, _f, _pass) ]
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
                     (labeller.rule(Affiliation_token) >>  tok.Human_)
                     >   labeller.rule(Condition_token)   >   condition_parser
-                    [ _val = construct_GenerateSitRepMessage2_(
-                            _a, _b, _c,
-                            AFFIL_HUMAN,
-                            construct_movable_(_1),
-                            _e, _f, _pass) ]
+                    [ _val = construct_GenerateSitRepMessage2_(_a, _b, _c, AFFIL_HUMAN, _1, _e, _f, _pass) ]
                 )
                 |   (   // no empire id or condition specified, with or without an
                     // affiliation type: useful to specify no or all empires

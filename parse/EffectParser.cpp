@@ -117,15 +117,15 @@ namespace parse {
         effects_group
             =   tok.EffectsGroup_
             > -(labeller.rule(Description_token)      > tok.string [ _g = _1 ])
-            >   labeller.rule(Scope_token)            > condition_parser [ _a = construct_movable_(_1) ]
-            > -(labeller.rule(Activation_token)       > condition_parser [ _b = construct_movable_(_1) ])
+            >   labeller.rule(Scope_token)            > condition_parser [ _a = _1 ]
+            > -(labeller.rule(Activation_token)       > condition_parser [ _b = _1 ])
             > -(labeller.rule(StackingGroup_token)    > tok.string [ _c = _1 ])
             > -(labeller.rule(AccountingLabel_token)  > tok.string [ _e = _1 ])
             > ((labeller.rule(Priority_token)         > tok.int_ [ _f = _1 ]) | eps [ _f = 100 ])
             >   labeller.rule(Effects_token)
             >   (
-                ('[' > +effects_grammar [ push_back(_d, construct_movable_(_1)) ] > ']')
-                |    effects_grammar [ push_back(_d, construct_movable_(_1)) ]
+                ('[' > +effects_grammar [ push_back(_d, _1) ] > ']')
+                |    effects_grammar [ push_back(_d, _1) ]
                 )
             [ _val = construct_EffectsGroup_(_a, _b, _d, _e, _c, _f, _g, _pass) ]
             ;

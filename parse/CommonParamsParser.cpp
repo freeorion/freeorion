@@ -74,12 +74,12 @@ namespace parse { namespace detail {
             ;
 
         location
-            =    (labeller.rule(Location_token) > condition_parser [ _val = construct_movable_(_1) ])
+            =    (labeller.rule(Location_token) > condition_parser [ _val = _1 ])
             |     eps [ _val = construct_movable_(new_<Condition::All>()) ]
             ;
 
         enqueue_location
-            =    (labeller.rule(EnqueueLocation_token) > condition_parser [ _val = construct_movable_(_1) ])
+            =    (labeller.rule(EnqueueLocation_token) > condition_parser [ _val = _1 ])
             |     eps [ _val = construct_movable_(new_<Condition::All>()) ]
             ;
 
@@ -103,8 +103,8 @@ namespace parse { namespace detail {
 
         common
             =
-            (   labeller.rule(BuildCost_token)  > double_rules.expr [ _a = construct_movable_(_1) ]
-                >   labeller.rule(BuildTime_token)  > castable_int_rules.flexible_int [ _b = construct_movable_(_1) ]
+            (   labeller.rule(BuildCost_token)  > double_rules.expr [ _a = _1 ]
+                >   labeller.rule(BuildTime_token)  > castable_int_rules.flexible_int [ _b = _1 ]
                 >   producible                                          [ _c = _1 ]
                 >   tags_parser(_d)
                 >   location [_e = _1]
@@ -143,8 +143,8 @@ namespace parse { namespace detail {
             =   tok.Special_
             > (
                 labeller.rule(Name_token)        > tok.string [ _a = _1 ]
-                >   labeller.rule(Consumption_token) > double_rules.expr [ _b = construct_movable_(_1) ]
-                > -(labeller.rule(Condition_token)   > condition_parser [ _c = construct_movable_(_1) ])
+                >   labeller.rule(Consumption_token) > double_rules.expr [ _b = _1 ]
+                > -(labeller.rule(Condition_token)   > condition_parser [ _c = _1 ])
             )
             [ insert(_r1, construct<ConsumptionMapPackaged<std::string>::value_type>(_a, construct<ConsumptionMapPackaged<std::string>::mapped_type>(_b, _c))) ]
             ;
@@ -152,8 +152,8 @@ namespace parse { namespace detail {
         consumable_meter
             = (
                 non_ship_part_meter_type_enum [ _a = _1 ]
-                >   labeller.rule(Consumption_token) > double_rules.expr [ _b = construct_movable_(_1) ]
-                > -(labeller.rule(Condition_token)   > condition_parser [ _c = construct_movable_(_1) ])
+                >   labeller.rule(Consumption_token) > double_rules.expr [ _b = _1 ]
+                > -(labeller.rule(Condition_token)   > condition_parser [ _c = _1 ])
             )
             [ insert(_r1, construct<ConsumptionMapPackaged<MeterType>::value_type>(_a, construct<ConsumptionMapPackaged<MeterType>::mapped_type>(_b, _c))) ]
             ;

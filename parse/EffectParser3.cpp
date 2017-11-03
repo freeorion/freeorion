@@ -99,8 +99,7 @@ namespace parse { namespace detail {
         add_special_1
             =   tok.AddSpecial_
             >   labeller.rule(Name_token) > string_grammar [
-                _val = construct_movable_(
-                    new_<Effect::AddSpecial>(deconstruct_movable_(_1, _pass))) ]
+                _val = construct_movable_(new_<Effect::AddSpecial>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         add_special_2
@@ -134,8 +133,7 @@ namespace parse { namespace detail {
         set_star_type
             =   tok.SetStarType_
             >   labeller.rule(Type_token) > star_type_rules.expr [
-                _val = construct_movable_(
-                    new_<Effect::SetStarType>(deconstruct_movable_(_1, _pass))) ]
+                _val = construct_movable_(new_<Effect::SetStarType>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         set_texture
