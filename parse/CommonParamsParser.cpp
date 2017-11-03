@@ -21,42 +21,15 @@ namespace phoenix = boost::phoenix;
 namespace parse { namespace detail {
     /** Open parsed envelopes of consumption pairs. Return a map of unique_ptr. */
     template <typename T>
-    CommonParams::ConsumptionMap<T> OpenEnvelopes(
-        const common_params_rules::ConsumptionMapPackaged<T>& in)
+    CommonParams::ConsumptionMap<T> OpenConsumptionEnvelopes(
+        const common_params_rules::ConsumptionMapPackaged<T>& in, bool& pass)
     {
         CommonParams::ConsumptionMap<T> retval;
         for (auto&& name_and_values : in)
-            retval[name_and_values.first] = {name_and_values.second.first.OpenEnvelope(),
-                                             name_and_values.second.second.OpenEnvelope()};
+            retval[name_and_values.first] = {name_and_values.second.first.OpenEnvelope(pass),
+                                             name_and_values.second.second.OpenEnvelope(pass)};
         return retval;
     }
-
-    MovableEnvelope<CommonParams> construct_CommonParams(
-        const MovableEnvelope<ValueRef::ValueRefBase<double>>& production_cost_,
-        const MovableEnvelope<ValueRef::ValueRefBase<int>>& production_time_,
-        bool producible_,
-        const std::set<std::string>& tags_,
-        const MovableEnvelope<Condition::ConditionBase>& location_,
-        const std::vector<MovableEnvelope<Effect::EffectsGroup>>& effects_,
-        const common_params_rules::ConsumptionMapPackaged<MeterType>& production_meter_consumption_,
-        const common_params_rules::ConsumptionMapPackaged<std::string>& production_special_consumption_,
-        const MovableEnvelope<Condition::ConditionBase>& enqueue_location_)
-    {
-        return MovableEnvelope<CommonParams>(
-            boost::make_unique<CommonParams>(
-                production_cost_.OpenEnvelope(),
-                production_time_.OpenEnvelope(),
-                producible_,
-                tags_,
-                location_.OpenEnvelope(),
-                OpenEnvelopes(effects_),
-                OpenEnvelopes(production_meter_consumption_),
-                OpenEnvelopes(production_special_consumption_),
-                enqueue_location_.OpenEnvelope()
-            ));
-    }
-
-    BOOST_PHOENIX_ADAPT_FUNCTION(MovableEnvelope<CommonParams>, construct_CommonParams_, construct_CommonParams, 9)
 
     common_params_rules::common_params_rules(
         const parse::lexer& tok,
@@ -90,7 +63,9 @@ namespace parse { namespace detail {
         qi::_r2_type _r2;
         qi::_val_type _val;
         qi::eps_type eps;
+        qi::_pass_type _pass;
         const boost::phoenix::function<construct_movable> construct_movable_;
+        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
 
         producible
             =   tok.Unproducible_ [ _val = false ]
@@ -136,7 +111,16 @@ namespace parse { namespace detail {
                 >   enqueue_location [_i = _1]
                 >  -consumption(_g, _h)
                 > -(labeller.rule(EffectsGroups_token)> effects_group_grammar [ _f = _1 ])
-            ) [ _val = construct_CommonParams_(_a, _b, _c, _d, _e, _f, _g, _h, _i) ]
+            ) [ _val = construct_movable_(
+                new_<CommonParams>(
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass),
+                    _c, _d,
+                    deconstruct_movable_(_e, _pass),
+                    deconstruct_movable_(_f, _pass),
+                    phoenix::bind(&parse::detail::OpenConsumptionEnvelopes<MeterType>, _g, _pass),
+                    phoenix::bind(&parse::detail::OpenConsumptionEnvelopes<std::string>, _h, _pass),
+                    deconstruct_movable_(_i, _pass))) ]
             ;
 
         consumption

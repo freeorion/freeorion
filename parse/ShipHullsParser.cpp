@@ -84,6 +84,7 @@ namespace {
             qi::_val_type _val;
             qi::eps_type eps;
             qi::lit_type lit;
+            const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             hull_stats
                 =   labeller.rule(Speed_token)       >   double_rule [ _a = _1 ]
@@ -121,7 +122,7 @@ namespace {
                 >   labeller.rule(Icon_token)    > tok.string    [ _f = _1 ]
                 >   labeller.rule(Graphic_token) > tok.string
                 [ insert_hulltype_(_r1, _c,
-                                   phoenix::bind(&parse::detail::MovableEnvelope<CommonParams>::OpenEnvelope, _d),
+                                   deconstruct_movable_(_d, _pass),
                                    _a, _e, _f, _1) ]
                 ;
 

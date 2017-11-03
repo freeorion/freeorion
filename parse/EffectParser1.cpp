@@ -31,10 +31,10 @@ namespace parse { namespace detail {
                                                        MovableEnvelope<ValueRef::ValueRefBase<std::string>>>>;
 
     /** Open parsed envelopes of sit rep message params. */
-    Effect::GenerateSitRepMessage::MessageParams OpenEnvelopes(const PassedMessageParams& in) {
+    Effect::GenerateSitRepMessage::MessageParams OpenEnvelopes(const PassedMessageParams& in, bool& pass) {
         Effect::GenerateSitRepMessage::MessageParams retval;
         for (auto&& name_and_value : in)
-            retval.emplace_back(name_and_value.first, name_and_value.second.OpenEnvelope());
+            retval.emplace_back(name_and_value.first, name_and_value.second.OpenEnvelope(pass));
         return retval;
     }
 
@@ -43,15 +43,16 @@ namespace parse { namespace detail {
         const PassedMessageParams& message_parameters,
         const MovableEnvelope<ValueRef::ValueRefBase<int>>& recipient_empire_id,
         EmpireAffiliationType affiliation,
-        const std::string label = "",
-        bool stringtable_lookup = true)
+        const std::string label,
+        bool stringtable_lookup,
+        bool& pass)
     {
         return effect_payload(
             new Effect::GenerateSitRepMessage(
                 message_string,
                 icon,
-                OpenEnvelopes(message_parameters),
-                recipient_empire_id.OpenEnvelope(),
+                OpenEnvelopes(message_parameters, pass),
+                recipient_empire_id.OpenEnvelope(pass),
                 affiliation,
                 label,
                 stringtable_lookup
@@ -64,16 +65,17 @@ namespace parse { namespace detail {
         const PassedMessageParams& message_parameters,
         EmpireAffiliationType affiliation,
         const parse::detail::condition_payload& condition,
-        const std::string label = "",
-        bool stringtable_lookup = true)
+        const std::string label,
+        bool stringtable_lookup,
+        bool& pass)
     {
         return effect_payload(
             new Effect::GenerateSitRepMessage(
                 message_string,
                 icon,
-                OpenEnvelopes(message_parameters),
+                OpenEnvelopes(message_parameters, pass),
                 affiliation,
-                condition.OpenEnvelope(),
+                condition.OpenEnvelope(pass),
                 label,
                 stringtable_lookup
             )
@@ -84,14 +86,15 @@ namespace parse { namespace detail {
         const std::string& message_string, const std::string& icon,
         const PassedMessageParams& message_parameters,
         EmpireAffiliationType affiliation,
-        const std::string& label = "",
-        bool stringtable_lookup = true)
+        const std::string& label,
+        bool stringtable_lookup,
+        bool& pass)
     {
         return effect_payload(
             new Effect::GenerateSitRepMessage(
                 message_string,
                 icon,
-                OpenEnvelopes(message_parameters),
+                OpenEnvelopes(message_parameters, pass),
                 affiliation,
                 label,
                 stringtable_lookup
@@ -99,9 +102,9 @@ namespace parse { namespace detail {
         );
     }
 
-    BOOST_PHOENIX_ADAPT_FUNCTION(effect_payload, construct_GenerateSitRepMessage1_, construct_GenerateSitRepMessage1, 7)
-    BOOST_PHOENIX_ADAPT_FUNCTION(effect_payload, construct_GenerateSitRepMessage2_, construct_GenerateSitRepMessage2, 7)
-    BOOST_PHOENIX_ADAPT_FUNCTION(effect_payload, construct_GenerateSitRepMessage3_, construct_GenerateSitRepMessage3, 6)
+    BOOST_PHOENIX_ADAPT_FUNCTION(effect_payload, construct_GenerateSitRepMessage1_, construct_GenerateSitRepMessage1, 8)
+    BOOST_PHOENIX_ADAPT_FUNCTION(effect_payload, construct_GenerateSitRepMessage2_, construct_GenerateSitRepMessage2, 8)
+    BOOST_PHOENIX_ADAPT_FUNCTION(effect_payload, construct_GenerateSitRepMessage3_, construct_GenerateSitRepMessage3, 7)
 
 
     effect_parser_rules_1::effect_parser_rules_1(
@@ -124,6 +127,7 @@ namespace parse { namespace detail {
         qi::_f_type _f;
         qi::_val_type _val;
         qi::eps_type eps;
+        qi::_pass_type _pass;
         using phoenix::new_;
         using phoenix::construct;
         using phoenix::push_back;
@@ -196,7 +200,7 @@ namespace parse { namespace detail {
 
                     [ _val = construct_GenerateSitRepMessage1_(
                             _a, _b, _c, construct_movable_(_1),
-                            _d, _e, _f) ]
+                            _d, _e, _f, _pass) ]
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
@@ -206,7 +210,7 @@ namespace parse { namespace detail {
                             _a, _b, _c,
                             AFFIL_CAN_SEE,
                             construct_movable_(_1),
-                            _e, _f) ]
+                            _e, _f, _pass) ]
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
@@ -216,7 +220,7 @@ namespace parse { namespace detail {
                             _a, _b, _c,
                             AFFIL_HUMAN,
                             construct_movable_(_1),
-                            _e, _f) ]
+                            _e, _f, _pass) ]
                 )
                 |   (   // no empire id or condition specified, with or without an
                     // affiliation type: useful to specify no or all empires
@@ -225,7 +229,7 @@ namespace parse { namespace detail {
                     )
                     [ _val = construct_GenerateSitRepMessage3_(
                             _a, _b, _c,
-                            _d, _e, _f) ]
+                            _d, _e, _f, _pass) ]
                 )
 
             )

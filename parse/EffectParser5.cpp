@@ -45,8 +45,8 @@ namespace parse { namespace detail {
                            )
                 ) [ _val = construct_movable_(new_<Effect::Conditional>(
                     deconstruct_movable_(_a, _pass),
-                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _b),
-                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _c))) ]
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_c, _pass))) ]
             ;
 
         start

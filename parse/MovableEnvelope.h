@@ -161,12 +161,15 @@ namespace parse { namespace detail {
 
             \p OpenEnvelope is a one-shot.  Calling OpenEnvelope a second time
             will throw, since the obj has already been removed.
+
+            \p pass should refer to qi::_pass_type to allow graceful failure.
         */
 
-        std::unique_ptr<T> OpenEnvelope() const {
+        std::unique_ptr<T> OpenEnvelope(bool& pass) const {
             if (IsEmptiedEnvelope()) {
                 auto err = OpenedMoreThanOnce();
                 ErrorLogger() << err.what();
+                pass = false;
                 throw err;
             }
             return std::move(obj);
@@ -209,28 +212,28 @@ namespace parse { namespace detail {
 
     /** Free functions converting containers of MovableEnvelope to unique_ptrs. */
     template <typename T>
-    std::vector<std::unique_ptr<T>> OpenEnvelopes(const std::vector<MovableEnvelope<T>>& envelopes) {
+    std::vector<std::unique_ptr<T>> OpenEnvelopes(const std::vector<MovableEnvelope<T>>& envelopes, bool& pass) {
         std::vector<std::unique_ptr<T>> retval;
         for (auto&& envelope : envelopes)
-            retval.push_back(envelope.OpenEnvelope());
+            retval.push_back(envelope.OpenEnvelope(pass));
         return retval;
     }
 
     template <typename T>
     std::vector<std::pair<std::string, std::unique_ptr<T>>> OpenEnvelopes(
-        const std::vector<std::pair<std::string, MovableEnvelope<T>>>& in)
+        const std::vector<std::pair<std::string, MovableEnvelope<T>>>& in, bool& pass)
     {
         std::vector<std::pair<std::string, std::unique_ptr<T>>> retval;
         for (auto&& name_and_value : in)
-            retval.emplace_back(name_and_value.first, name_and_value.second.OpenEnvelope());
+            retval.emplace_back(name_and_value.first, name_and_value.second.OpenEnvelope(pass));
         return retval;
     }
 
     template <typename K, typename V>
-    std::map<K, std::unique_ptr<V>> OpenEnvelopes(const std::map<K, MovableEnvelope<V>>& in) {
+    std::map<K, std::unique_ptr<V>> OpenEnvelopes(const std::map<K, MovableEnvelope<V>>& in, bool& pass) {
         std::map<K, std::unique_ptr<V>> retval;
         for (auto&& name_and_value : in)
-            retval.insert(std::make_pair(name_and_value.first, name_and_value.second.OpenEnvelope()));
+            retval.insert(std::make_pair(name_and_value.first, name_and_value.second.OpenEnvelope(pass)));
         return std::move(retval);
     }
 
@@ -242,37 +245,16 @@ namespace parse { namespace detail {
     public:
         template <typename T>
         std::unique_ptr<T> operator() (const MovableEnvelope<T>& obj, bool& pass) const
-        {
-            try {
-                return obj.OpenEnvelope();
-            } catch (const typename MovableEnvelope<T>::OpenedMoreThanOnce& e) {
-                pass = false;
-                return nullptr;
-            }
-        }
+        { return obj.OpenEnvelope(pass); }
 
         template <typename T>
         std::vector<std::unique_ptr<T>> operator() (const std::vector<MovableEnvelope<T>>& objs, bool& pass) const
-        {
-            try {
-                return OpenEnvelopes(objs);
-            } catch (const typename MovableEnvelope<T>::OpenedMoreThanOnce& e) {
-                pass = false;
-                return std::vector<std::unique_ptr<T>>();
-            }
-        }
+        { return OpenEnvelopes(objs, pass); }
 
         template <typename T>
         std::vector<std::pair<std::string, std::unique_ptr<T>>> operator() (
             const std::vector<std::pair<std::string, MovableEnvelope<T>>>& objs, bool& pass)
-        {
-            try {
-                return OpenEnvelopes(objs);
-            } catch (const typename MovableEnvelope<T>::OpenedMoreThanOnce& e) {
-                pass = false;
-                return std::vector<std::pair<std::string, std::unique_ptr<T>>>();
-            }
-        }
+        { return OpenEnvelopes(objs, pass); }
     };
 
     } // end namespace detail

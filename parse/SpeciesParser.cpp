@@ -41,11 +41,13 @@ namespace {
                         const std::map<PlanetType, PlanetEnvironment>& planet_environments,
                         const parse::effects_group_payload& effects,
                         const SpeciesParams& params,
-                        const std::set<std::string>& tags,
-                        const std::string& graphic)
+                        std::pair<std::set<std::string>, std::string>& tags_and_graphic,
+                        bool& pass)
     {
         auto species_ptr = boost::make_unique<Species>(
-            strings, foci, preferred_focus, planet_environments, OpenEnvelopes(effects), params, tags, graphic);
+            strings, foci, preferred_focus, planet_environments,
+            OpenEnvelopes(effects, pass), params,
+            tags_and_graphic.first, tags_and_graphic.second);
 
         species.insert(std::make_pair(species_ptr->Name(), std::move(species_ptr)));
     }
@@ -87,6 +89,7 @@ namespace {
             qi::_e_type _e;
             qi::_f_type _f;
             qi::_g_type _g;
+            qi::_h_type _h;
             qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::_val_type _val;
@@ -155,7 +158,8 @@ namespace {
                 >   -effects(_e)
                 >   -environments(_f)
                 >    labeller.rule(Graphic_token) > tok.string
-                [ insert_species_(_r1, _a, _d, _g, _f, _e, _b, _c, _1) ]
+                [ _h = construct<std::pair<std::set<std::string>, std::string>>(_c, _1),
+                  insert_species_(_r1, _a, _d, _g, _f, _e, _b, _h, _pass) ]
                 ;
 
             start
@@ -247,8 +251,9 @@ namespace {
                 std::vector<FocusType>,
                 parse::effects_group_payload,
                 std::map<PlanetType, PlanetEnvironment>,
-                std::string             // graphic
-            >
+                std::string,             // graphic
+                std::pair<std::set<std::string>, std::string>
+                >
         > species_rule;
 
         using start_rule = parse::detail::rule<start_rule_signature>;

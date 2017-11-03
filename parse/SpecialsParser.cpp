@@ -55,17 +55,17 @@ namespace {
         const std::string& graphic;
     };
 
-    void insert_special(std::map<std::string, std::unique_ptr<Special>>& specials, special_pod special_) {
+    void insert_special(std::map<std::string, std::unique_ptr<Special>>& specials, special_pod special_, bool& pass) {
         auto special_ptr = boost::make_unique<Special>(
             special_.name, special_.description, special_.stealth,
-            OpenEnvelopes(special_.effects),
+            OpenEnvelopes(special_.effects, pass),
             special_.spawn_rate, special_.spawn_limit, special_.initial_capacity,
-            special_.location.OpenEnvelope(), special_.graphic);
+            special_.location.OpenEnvelope(pass), special_.graphic);
 
         specials.insert(std::make_pair(special_ptr->Name(), std::move(special_ptr)));
     }
 
-    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_special_, insert_special, 2)
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_special_, insert_special, 3)
 
     using start_rule_payload = std::map<std::string, std::unique_ptr<Special>>;
     using start_rule_signature = void(start_rule_payload&);
@@ -128,7 +128,7 @@ namespace {
                 >  -(labeller.rule(Location_token)           > condition_parser [ _e = _1 ])
                 >  -(labeller.rule(EffectsGroups_token)      > effects_group_grammar [ _f = _1 ])
                 >    labeller.rule(Graphic_token)            > tok.string
-                [ insert_special_(_r1, phoenix::construct<special_pod>(_a, _b, _g, _f, _c, _d, _h, _e, _1)) ]
+                [ insert_special_(_r1, phoenix::construct<special_pod>(_a, _b, _g, _f, _c, _d, _h, _e, _1), _pass) ]
                 ;
 
             start

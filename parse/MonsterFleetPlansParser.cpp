@@ -25,8 +25,8 @@ namespace {
 
         MonsterFleetPlan* operator()(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
                                      double spawn_rate, int spawn_limit,
-                                     const parse::detail::condition_payload& location) const
-        { return new MonsterFleetPlan(fleet_name, ship_design_names, spawn_rate, spawn_limit, location.OpenEnvelope()); }
+                                     const parse::detail::condition_payload& location, bool& pass) const
+        { return new MonsterFleetPlan(fleet_name, ship_design_names, spawn_rate, spawn_limit, location.OpenEnvelope(pass)); }
     };
     const boost::phoenix::function<new_monster_fleet_plan_> new_monster_fleet_plan;
 
@@ -57,6 +57,7 @@ namespace {
             qi::_r1_type _r1;
             qi::_val_type _val;
             qi::eps_type eps;
+            qi::_pass_type _pass;
 
             monster_fleet_plan_prefix
                 =    tok.MonsterFleet_
@@ -90,7 +91,7 @@ namespace {
                         >   spawns
                         > -(labeller.rule(Location_token) > condition_parser [ phoenix::ref(_e) = _1 ])
                      )
-                [ _val = new_monster_fleet_plan(phoenix::ref(_a), phoenix::ref(_b), phoenix::ref(_c), phoenix::ref(_d), phoenix::ref(_e)) ]
+                [ _val = new_monster_fleet_plan(phoenix::ref(_a), phoenix::ref(_b), phoenix::ref(_c), phoenix::ref(_d), phoenix::ref(_e), _pass) ]
                 ;
 
             start

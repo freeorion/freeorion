@@ -52,10 +52,11 @@ namespace {
                      const parse::effects_group_payload& effects,
                      const std::set<std::string>& prerequisites,
                      const std::vector<ItemSpec>& unlocked_items,
-                     const std::string& graphic)
+                     const std::string& graphic,
+                     bool& pass)
     {
         auto tech_ptr = boost::make_unique<Tech>(
-            tech_info, parse::detail::OpenEnvelopes(effects), prerequisites, unlocked_items, graphic);
+            tech_info, parse::detail::OpenEnvelopes(effects, pass), prerequisites, unlocked_items, graphic);
 
         if (check_tech(techs, tech_ptr)) {
             g_categories_seen->insert(tech_ptr->Category());
@@ -63,7 +64,7 @@ namespace {
         }
     }
 
-    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_tech_, insert_tech, 6)
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_tech_, insert_tech, 7)
 
     void insert_category(std::map<std::string, std::unique_ptr<TechCategory>>& categories,
                          const std::string& name, const std::string& graphic, const GG::Clr& color)
@@ -158,7 +159,7 @@ namespace {
                 >  -unlocks(_c)
                 > -(labeller.rule(EffectsGroups_token) > effects_group_grammar [ _d = _1 ])
                 > -(labeller.rule(Graphic_token) > tok.string [ _e = _1 ])
-                   ) [ insert_tech_(_r1, _a, _d, _b, _c, _e) ]
+                   ) [ insert_tech_(_r1, _a, _d, _b, _c, _e, _pass) ]
                 ;
 
             category

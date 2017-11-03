@@ -32,6 +32,7 @@ namespace parse { namespace detail {
         qi::_f_type _f;
         qi::_val_type _val;
         qi::eps_type eps;
+        qi::_pass_type _pass;
         const boost::phoenix::function<construct_movable> construct_movable_;
 
         using phoenix::new_;
@@ -53,7 +54,7 @@ namespace parse { namespace detail {
                     construct<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>>(_a),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>>(_b),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_c),
-                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _d)))) ]
+                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _d, _pass)))) ]
             ;
 
         create_building
@@ -69,7 +70,7 @@ namespace parse { namespace detail {
                 ) [ _val = construct_movable_(new_<Effect::CreateBuilding>(
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_b),
-                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _c))) ]
+                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _c, _pass))) ]
             ;
 
         create_ship_1
@@ -90,7 +91,7 @@ namespace parse { namespace detail {
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_c),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_e),
-                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _f))) ]
+                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _f, _pass))) ]
             ;
 
         create_ship_2
@@ -111,7 +112,7 @@ namespace parse { namespace detail {
                     construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_c),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_e),
-                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _f))) ]
+                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _f, _pass))) ]
             ;
 
         create_field_1
@@ -132,7 +133,7 @@ namespace parse { namespace detail {
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
-                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _f))) ]
+                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _f, _pass))) ]
             ;
 
         create_field_2
@@ -157,7 +158,7 @@ namespace parse { namespace detail {
                     construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_e),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
-                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _f))) ]
+                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _f, _pass))) ]
             ;
 
         create_system_1
@@ -180,7 +181,7 @@ namespace parse { namespace detail {
                     construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
-                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _e))) ]
+                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _e, _pass))) ]
             ;
 
         create_system_2
@@ -201,7 +202,7 @@ namespace parse { namespace detail {
                     construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
                     construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
-                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _e))) ]
+                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _e, _pass))) ]
             ;
 
         start

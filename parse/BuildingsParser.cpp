@@ -31,15 +31,16 @@ namespace {
                          const std::string& description,
                          const parse::detail::MovableEnvelope<CommonParams>& common_params,
                          CaptureResult& capture_result,
-                         const std::string& icon)
+                         const std::string& icon,
+                         bool& pass)
     {
         auto building_type = boost::make_unique<BuildingType>(
-            name, description, *common_params.OpenEnvelope(), capture_result, icon);
+            name, description, *common_params.OpenEnvelope(pass), capture_result, icon);
 
         building_types.insert(std::make_pair(building_type->Name(), std::move(building_type)));
     }
 
-    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_building_, insert_building, 6)
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_building_, insert_building, 7)
 
     using start_rule_payload = std::map<std::string, std::unique_ptr<BuildingType>>;
     using start_rule_signature = void(start_rule_payload&);
@@ -81,7 +82,7 @@ namespace {
                     )
                 >   common_rules.common [ _c = _1 ]
                 >   labeller.rule(Icon_token)      > tok.string
-                [ insert_building_(_r1, _a, _b, _c, _d, _1) ]
+                [ insert_building_(_r1, _a, _b, _c, _d, _1, _pass) ]
                 ;
 
             start
