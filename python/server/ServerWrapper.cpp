@@ -470,7 +470,7 @@ namespace {
 
     list LoadFleetPlanList() {
         list py_fleet_plans;
-        auto& fleet_plans = GetUniverse().InitiallyUnlockedFleetPlans();
+        auto&& fleet_plans = GetUniverse().InitiallyUnlockedFleetPlans();
         for (FleetPlan* fleet_plan : fleet_plans) {
             py_fleet_plans.append(new FleetPlanWrapper(fleet_plan));
         }
@@ -529,7 +529,7 @@ namespace {
 
     list LoadMonsterFleetPlanList() {
         list py_monster_fleet_plans;
-        auto& monster_fleet_plans = GetUniverse().MonsterFleetPlans();
+        auto&& monster_fleet_plans = GetUniverse().MonsterFleetPlans();
         for (auto* fleet_plan : monster_fleet_plans) {
             py_monster_fleet_plans.append(new MonsterFleetPlanWrapper(fleet_plan));
         }

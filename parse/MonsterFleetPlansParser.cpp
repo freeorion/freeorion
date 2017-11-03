@@ -1,6 +1,7 @@
 #include "Parse.h"
 
 #include "ParseImpl.h"
+#include "MovableEnvelope.h"
 #include "ConditionParserImpl.h"
 
 #include "../universe/Universe.h"
@@ -9,12 +10,11 @@
 
 #include <boost/spirit/include/phoenix.hpp>
 
-
 #define DEBUG_PARSERS 0
 
 #if DEBUG_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<MonsterFleetPlan*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<parse::detail::MovableEnvelope<MonsterFleetPlan>>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::vector<std::string>&) { return os; }
 }
 #endif
@@ -30,10 +30,16 @@ namespace {
     };
     const boost::phoenix::function<new_monster_fleet_plan_> new_monster_fleet_plan;
 
-    using start_rule_payload = std::vector<MonsterFleetPlan*>;
+    using start_rule_payload = std::vector<std::unique_ptr<MonsterFleetPlan>>;
     using start_rule_signature = void(start_rule_payload&);
 
-    struct grammar : public parse::detail::grammar<start_rule_signature> {
+    struct grammar : public parse::detail::grammar<
+        start_rule_signature,
+        boost::spirit::qi::locals<
+            std::vector<parse::detail::MovableEnvelope<MonsterFleetPlan>>
+            >
+        >
+    {
         grammar(const parse::lexer& tok,
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
@@ -58,6 +64,8 @@ namespace {
             qi::_val_type _val;
             qi::eps_type eps;
             qi::_pass_type _pass;
+            const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
+            const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             monster_fleet_plan_prefix
                 =    tok.MonsterFleet_
@@ -91,11 +99,16 @@ namespace {
                         >   spawns
                         > -(labeller.rule(Location_token) > condition_parser [ phoenix::ref(_e) = _1 ])
                      )
-                [ _val = new_monster_fleet_plan(phoenix::ref(_a), phoenix::ref(_b), phoenix::ref(_c), phoenix::ref(_d), phoenix::ref(_e), _pass) ]
+                [ _val = construct_movable_(new_monster_fleet_plan(
+                         phoenix::ref(_a),
+                         phoenix::ref(_b),
+                         phoenix::ref(_c),
+                         phoenix::ref(_d),
+                         phoenix::ref(_e), _pass)) ]
                 ;
 
             start
-                =   (+monster_fleet_plan) [ _r1 = _1 ]
+                =   (+monster_fleet_plan) [ _r1 = deconstruct_movable_(_1, _pass) ]
                 ;
 
             monster_fleet_plan_prefix.name("MonsterFleet");
@@ -113,10 +126,15 @@ namespace {
         typedef parse::detail::rule<> generic_rule;
 
         typedef parse::detail::rule<
-            MonsterFleetPlan* ()
+            parse::detail::MovableEnvelope<MonsterFleetPlan> ()
         > monster_fleet_plan_rule;
 
-        using start_rule = parse::detail::rule<start_rule_signature>;
+        using start_rule = parse::detail::rule<
+            start_rule_signature,
+            boost::spirit::qi::locals<
+                std::vector<parse::detail::MovableEnvelope<MonsterFleetPlan>>
+                >
+            >;
 
         parse::detail::Labeller labeller;
         parse::conditions_parser_grammar condition_parser;
