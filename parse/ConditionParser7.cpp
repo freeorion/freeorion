@@ -35,7 +35,6 @@ namespace parse { namespace detail {
         qi::_pass_type _pass;
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
-        const boost::phoenix::function<parse::detail::lazy_move> lazy_move_;
 
         using phoenix::new_;
         using phoenix::push_back;
