@@ -35,16 +35,6 @@ namespace parse { namespace detail {
     public:
         using enveloped_type = T;
 
-        /// An exception to indicate that the pointer has been removed twice.
-        struct OpenedMoreThanOnce : public std::runtime_error {
-            OpenedMoreThanOnce() :
-                std::runtime_error(
-                    "The parser attempted to extract the unique_ptr from a MovableEnvelope more than once. "
-                    "Until boost::spirit supports move semantics MovableEnvelope requires that unique_ptr be used only once. "
-                    "Check that set, map or vector parses are not repeatedly extracting the same unique_ptr<T>.")
-            {}
-        };
-
         /** \name Rule of Five constructors and operators.
             MovableEnvelope satisfies the rule of five with the following
             constructors and operator=().
@@ -154,23 +144,26 @@ namespace parse { namespace detail {
         bool IsEmptiedEnvelope() const
         { return (original_obj != obj.get());}
 
-        /** OpenEnvelope returns the enclosed \p obj and throws
-            std::runtime_error if \p safety does not equal the wrapped \p obj,
-            which indicates that the wrapped pointer was move out of this \p
+        /** OpenEnvelope returns the enclosed \p obj and throws an expectation
+            exception if the wrapped pointer was already moved out of this \p
             MovableEnvelope.
 
             \p OpenEnvelope is a one-shot.  Calling OpenEnvelope a second time
             will throw, since the obj has already been removed.
 
-            \p pass should refer to qi::_pass_type to allow graceful failure.
+            \p pass should refer to qi::_pass_type to facilitate the
+            expectation exception.
         */
 
         std::unique_ptr<T> OpenEnvelope(bool& pass) const {
             if (IsEmptiedEnvelope()) {
-                auto err = OpenedMoreThanOnce();
-                ErrorLogger() << err.what();
+                ErrorLogger() <<
+                    "The parser attempted to extract the unique_ptr from a MovableEnvelope more than once. "
+                    "Until boost::spirit supports move semantics MovableEnvelope requires that unique_ptr be used only once. "
+                    "Check that a parser is not back tracking over an actor containing an opened MovableEnvelope. "
+                    "Check that set, map or vector parses are not repeatedly extracting the same unique_ptr<T>.";
+
                 pass = false;
-                // throw err;
             }
             return std::move(obj);
         }
