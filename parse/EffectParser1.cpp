@@ -30,14 +30,6 @@ namespace parse { namespace detail {
     using PassedMessageParams =  std::vector<std::pair<std::string,
                                                        MovableEnvelope<ValueRef::ValueRefBase<std::string>>>>;
 
-    /** Open parsed envelopes of sit rep message params. */
-    Effect::GenerateSitRepMessage::MessageParams OpenEnvelopes(const PassedMessageParams& in, bool& pass) {
-        Effect::GenerateSitRepMessage::MessageParams retval;
-        for (auto&& name_and_value : in)
-            retval.emplace_back(name_and_value.first, name_and_value.second.OpenEnvelope(pass));
-        return retval;
-    }
-
     effect_payload construct_GenerateSitRepMessage1(
         const std::string& message_string, const std::string& icon,
         const PassedMessageParams& message_parameters,
@@ -132,15 +124,16 @@ namespace parse { namespace detail {
         using phoenix::construct;
         using phoenix::push_back;
         const boost::phoenix::function<construct_movable> construct_movable_;
+        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
 
         set_empire_meter_1
             =    (tok.SetEmpireMeter_ >>   labeller.rule(Empire_token))
             >    int_rules.expr [ _b = _1 ]
             >    labeller.rule(Meter_token)  >  tok.string [ _a = _1 ]
             >    labeller.rule(Value_token)  >  double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireMeter>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
+                deconstruct_movable_(_b, _pass),
                 _a,
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ]
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         set_empire_meter_2
@@ -148,7 +141,7 @@ namespace parse { namespace detail {
             >    tok.string [ _a = _1 ]
             >    labeller.rule(Value_token) >  double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireMeter>(
                 _a,
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ]
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         give_empire_tech
@@ -157,8 +150,8 @@ namespace parse { namespace detail {
                     > -(labeller.rule(Empire_token) >    int_rules.expr    [ _b = _1 ])
                 ) [ _val = construct_movable_(
                 new_<Effect::GiveEmpireTech>(
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b))) ]
+                    deconstruct_movable_(_d, _pass),
+                    deconstruct_movable_(_b, _pass))) ]
             ;
 
         set_empire_tech_progress
@@ -167,12 +160,12 @@ namespace parse { namespace detail {
             >    labeller.rule(Progress_token) >  double_rules.expr [ _b = _1 ]
             >    (
                 (labeller.rule(Empire_token) > int_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireTechProgress>(
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1))) ])
+                        deconstruct_movable_(_a, _pass),
+                        deconstruct_movable_(_b, _pass),
+                        deconstruct_movable_(_1, _pass))) ])
                 |  eps [ _val = construct_movable_(new_<Effect::SetEmpireTechProgress>(
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b))) ]
+                        deconstruct_movable_(_a, _pass),
+                        deconstruct_movable_(_b, _pass))) ]
             )
             ;
 
@@ -240,17 +233,21 @@ namespace parse { namespace detail {
             >    labeller.rule(Name_token)    > tok.string [ _a = _1 ]
             >    labeller.rule(Size_token)    > double_rules.expr [ _val = construct_movable_(new_<Effect::SetOverlayTexture>(
                 _a,
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ]
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         string_and_string_ref
-            =    labeller.rule(Tag_token)  >  tok.string [ _a = _1 ]
-            >    labeller.rule(Data_token)
-            >  ( int_rules.expr      [_val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<int>>(_1)) ]
-                 | double_rules.expr   [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<double>>(_1)) ]
-                 | tok.string         [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::Constant<std::string>>(_1)) ]
-                 | string_grammar   [ _val = construct<string_and_string_ref_pair>(_a, _1) ]
-               )
+            =
+            (
+                labeller.rule(Tag_token)  >  tok.string [ _a = _1 ] >
+                labeller.rule(Data_token)
+                >  ( int_rules.expr      [ _b = construct_movable_(new_<ValueRef::StringCast<int>>(deconstruct_movable_(_1, _pass))) ]
+                     | double_rules.expr [ _b = construct_movable_(new_<ValueRef::StringCast<double>>(deconstruct_movable_(_1, _pass))) ]
+                     | tok.string        [ _b = construct_movable_(new_<ValueRef::Constant<std::string>>(_1)) ]
+                     | string_grammar    [ _b = _1 ]
+                   )
+            )
+            [_val = construct<string_and_string_ref_pair>(_a, _b)]
             ;
 
         string_and_string_ref_vector

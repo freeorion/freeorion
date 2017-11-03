@@ -12,15 +12,15 @@ namespace parse { namespace detail {
 
         typedef rule<
             condition_signature,
-            boost::spirit::qi::locals<std::vector<std::unique_ptr<ValueRef::ValueRefBase<StarType>>>>
+            boost::spirit::qi::locals<std::vector<value_ref_payload<StarType>>>
         > star_type_vec_rule;
 
         typedef rule<
             condition_signature,
             boost::spirit::qi::locals<
                 Condition::ContentType,
-                ValueRef::ValueRefBase<std::string>*,
-                ValueRef::ValueRefBase<std::string>*
+                value_ref_payload<std::string>,
+                value_ref_payload<std::string>
             >
         > string_ref_rule;
 

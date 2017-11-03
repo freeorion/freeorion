@@ -2,6 +2,7 @@
 
 #include "EffectParser.h"
 
+#include "../universe/ValueRef.h"
 #include "../universe/Condition.h"
 #include "../universe/Effect.h"
 #include "../universe/Special.h"
@@ -26,11 +27,11 @@ namespace {
     struct special_pod {
         special_pod(std::string name_,
                     std::string description_,
-                    ValueRef::ValueRefBase<double>* stealth_,
+                    const parse::detail::value_ref_payload<double>& stealth_,
                     const parse::effects_group_payload& effects_,
                     double spawn_rate_,
                     int spawn_limit_,
-                    ValueRef::ValueRefBase<double>* initial_capacity_,
+                    const parse::detail::value_ref_payload<double>& initial_capacity_,
                     const parse::detail::condition_payload& location_,
                     const std::string& graphic_) :
             name(name_),
@@ -46,20 +47,20 @@ namespace {
 
         std::string name;
         std::string description;
-        ValueRef::ValueRefBase<double>* stealth;
+        const parse::detail::value_ref_payload<double> stealth;
         const parse::effects_group_payload& effects;
         double spawn_rate;
         int spawn_limit;
-        ValueRef::ValueRefBase<double>* initial_capacity;
+        const parse::detail::value_ref_payload<double> initial_capacity;
         parse::detail::condition_payload location;
         const std::string& graphic;
     };
 
     void insert_special(std::map<std::string, std::unique_ptr<Special>>& specials, special_pod special_, bool& pass) {
         auto special_ptr = boost::make_unique<Special>(
-            special_.name, special_.description, special_.stealth,
+            special_.name, special_.description, special_.stealth.OpenEnvelope(pass),
             OpenEnvelopes(special_.effects, pass),
-            special_.spawn_rate, special_.spawn_limit, special_.initial_capacity,
+            special_.spawn_rate, special_.spawn_limit, special_.initial_capacity.OpenEnvelope(pass),
             special_.location.OpenEnvelope(pass), special_.graphic);
 
         specials.insert(std::make_pair(special_ptr->Name(), std::move(special_ptr)));
@@ -103,6 +104,7 @@ namespace {
             qi::_r2_type _r2;
             qi::_r3_type _r3;
             qi::eps_type eps;
+            const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             special_prefix
                 =    tok.Special_
@@ -165,8 +167,8 @@ namespace {
                 int,
                 parse::detail::condition_payload,
                 parse::effects_group_payload,
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<double>*
+                parse::detail::value_ref_payload<double>,
+                parse::detail::value_ref_payload<double>
             >
         > special_rule;
 

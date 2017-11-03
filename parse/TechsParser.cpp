@@ -4,7 +4,9 @@
 #include "EnumParser.h"
 #include "EffectParser.h"
 #include "ValueRefParser.h"
+#include "MovableEnvelope.h"
 
+#include "../universe/ValueRef.h"
 #include "../universe/Effect.h"
 #include "../universe/Species.h"
 #include "../universe/Tech.h"
@@ -48,7 +50,7 @@ namespace {
     }
 
     void insert_tech(TechManager::TechContainer& techs,
-                     const Tech::TechInfo& tech_info,
+                     const parse::detail::MovableEnvelope<Tech::TechInfo>& tech_info,
                      const parse::effects_group_payload& effects,
                      const std::set<std::string>& prerequisites,
                      const std::vector<ItemSpec>& unlocked_items,
@@ -56,7 +58,7 @@ namespace {
                      bool& pass)
     {
         auto tech_ptr = boost::make_unique<Tech>(
-            tech_info, parse::detail::OpenEnvelopes(effects, pass), prerequisites, unlocked_items, graphic);
+            *tech_info.OpenEnvelope(pass), parse::detail::OpenEnvelopes(effects, pass), prerequisites, unlocked_items, graphic);
 
         if (check_tech(techs, tech_ptr)) {
             g_categories_seen->insert(tech_ptr->Category());
@@ -96,6 +98,7 @@ namespace {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
+            using phoenix::new_;
             using phoenix::construct;
             using phoenix::insert;
             using phoenix::push_back;
@@ -118,6 +121,8 @@ namespace {
             qi::_r3_type _r3;
             qi::_val_type _val;
             qi::eps_type eps;
+            const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
+            const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             tech_info_name_desc
                 =   labeller.rule(Name_token)              > tok.string [ _r1 = _1 ]
@@ -135,7 +140,7 @@ namespace {
                     |   eps [ _h = true ]
                    )
                 >   tags_parser(_d)
-                [ _val = construct<Tech::TechInfo>(_a, _b, _c, _e, _f, _g, _h, _d) ]
+                [ _val = construct_movable_(new_<Tech::TechInfo>(_a, _b, _c, _e, deconstruct_movable_(_f, _pass), deconstruct_movable_(_g, _pass), _h, _d)) ]
                 ;
 
             prerequisites
@@ -196,40 +201,39 @@ namespace {
         }
 
         typedef parse::detail::rule<
-            Tech::TechInfo (std::string&, std::string&, std::string&)
+            parse::detail::MovableEnvelope<Tech::TechInfo> (std::string&, std::string&, std::string&)
         > tech_info_name_desc_rule;
 
         typedef parse::detail::rule<
-            Tech::TechInfo (),
+            parse::detail::MovableEnvelope<Tech::TechInfo> (),
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
                 std::string,
                 std::set<std::string>,
                 std::string,
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<int>*,
+                parse::detail::value_ref_payload<double>,
+                parse::detail::value_ref_payload<int>,
                 bool
             >
         > tech_info_rule;
 
         typedef parse::detail::rule<
-            Tech::TechInfo (std::set<std::string>&)
+            parse::detail::MovableEnvelope<Tech::TechInfo> (std::set<std::string>&)
         > prerequisites_rule;
 
         typedef parse::detail::rule<
-            Tech::TechInfo (std::vector<ItemSpec>&)
+            parse::detail::MovableEnvelope<Tech::TechInfo> (std::vector<ItemSpec>&)
         > unlocks_rule;
 
         typedef parse::detail::rule<
             void (TechManager::TechContainer&),
             boost::spirit::qi::locals<
-                Tech::TechInfo,
+                parse::detail::MovableEnvelope<Tech::TechInfo>,
                 std::set<std::string>,
                 std::vector<ItemSpec>,
                 parse::effects_group_payload,
-                std::string,
-                Tech*
+                std::string
             >
         > tech_rule;
 

@@ -35,7 +35,9 @@ namespace parse { namespace detail {
         qi::_e_type _e;
         qi::_val_type _val;
         qi::eps_type eps;
+        qi::_pass_type _pass;
         const boost::phoenix::function<construct_movable> construct_movable_;
+        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
         using phoenix::new_;
         using phoenix::construct;
 
@@ -46,8 +48,8 @@ namespace parse { namespace detail {
                 >  -(labeller.rule(High_token) > double_rules.expr [ _c = _1 ])
             ) [ _val = construct_movable_(new_<Condition::MeterValue>(
                 _a,
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c))) ]
+                deconstruct_movable_(_b, _pass),
+                deconstruct_movable_(_c, _pass))) ]
             ;
 
         ship_part_meter_value
@@ -58,10 +60,10 @@ namespace parse { namespace detail {
                 >  -(labeller.rule(Low_token)    >   double_rules.expr [ _b = _1 ])
                 >  -(labeller.rule(High_token)   >   double_rules.expr [ _c = _1 ])
             ) [ _val = construct_movable_(new_<Condition::ShipPartMeterValue>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_e),
+                deconstruct_movable_(_e, _pass),
                 _a,
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c))) ]
+                deconstruct_movable_(_b, _pass),
+                deconstruct_movable_(_c, _pass))) ]
             ;
 
         empire_meter_value1
@@ -72,10 +74,10 @@ namespace parse { namespace detail {
                 >  -(labeller.rule(Low_token)     >   double_rules.expr [ _c = _1 ])
                 >  -(labeller.rule(High_token)    >   double_rules.expr [ _d = _1 ])
             ) [ _val = construct_movable_(new_<Condition::EmpireMeterValue>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
+                deconstruct_movable_(_b, _pass),
                 _a,
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_d))) ]
+                deconstruct_movable_(_c, _pass),
+                deconstruct_movable_(_d, _pass))) ]
             ;
 
         empire_meter_value2
@@ -86,8 +88,8 @@ namespace parse { namespace detail {
                 >  -(labeller.rule(High_token)    >   double_rules.expr [ _d = _1 ])
             ) [ _val = construct_movable_(new_<Condition::EmpireMeterValue>(
                 _a,
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_d))) ]
+                deconstruct_movable_(_c, _pass),
+                deconstruct_movable_(_d, _pass))) ]
             ;
 
         empire_meter_value

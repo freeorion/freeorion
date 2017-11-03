@@ -19,28 +19,23 @@ namespace parse { namespace detail {
 
     struct common_params_rules {
         template <typename T>
-        using ConsumptionMapPackaged = std::map<T, std::pair<MovableEnvelope<ValueRef::ValueRefBase<double>>,
-                                                             MovableEnvelope<Condition::ConditionBase>>>;
+        using ConsumptionMapPackaged = std::map<T, std::pair<value_ref_payload<double>, condition_payload>>;
         typedef rule<
             bool ()
             > producible_rule;
 
         typedef rule<
-            MovableEnvelope<Condition::ConditionBase> ()
-            > location_rule;
-
-        typedef rule<
             MovableEnvelope<CommonParams> (),
             boost::spirit::qi::locals<
-                MovableEnvelope<ValueRef::ValueRefBase<double>>,
-                MovableEnvelope<ValueRef::ValueRefBase<int>>,
+                value_ref_payload<double>,
+                value_ref_payload<int>,
                 bool,
                 std::set<std::string>,
-                MovableEnvelope<Condition::ConditionBase>,
+                condition_payload,
                 std::vector<MovableEnvelope<Effect::EffectsGroup>>,
                 ConsumptionMapPackaged<MeterType>,
                 ConsumptionMapPackaged<std::string>,
-                MovableEnvelope<Condition::ConditionBase>
+                condition_payload
                 >
             > common_params_rule;
 
@@ -62,8 +57,8 @@ namespace parse { namespace detail {
             void (ConsumptionMapPackaged<T>&),
             boost::spirit::qi::locals<
                 T,
-                MovableEnvelope<ValueRef::ValueRefBase<double>>,
-                MovableEnvelope<Condition::ConditionBase>
+                value_ref_payload<double>,
+                condition_payload
                 >
             >;
 
@@ -82,8 +77,8 @@ namespace parse { namespace detail {
         parse::effects_group_grammar            effects_group_grammar;
         parse::non_ship_part_meter_enum_grammar non_ship_part_meter_type_enum;
         producible_rule                         producible;
-        location_rule                           location;
-        location_rule                           enqueue_location;
+        condition_parser_rule                   location;
+        condition_parser_rule                   enqueue_location;
         exclusions_rule                         exclusions;
         more_common_params_rule                 more_common;
         common_params_rule                      common;

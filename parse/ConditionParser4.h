@@ -14,10 +14,10 @@ namespace parse { namespace detail {
             condition_signature,
             boost::spirit::qi::locals<
                 MeterType,
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<double>*,
+                value_ref_payload<double>,
+                value_ref_payload<double>,
                 std::string,
-                ValueRef::ValueRefBase<std::string>*
+                value_ref_payload<std::string>
             >
         > meter_value_rule;
 
@@ -25,9 +25,9 @@ namespace parse { namespace detail {
             condition_signature,
             boost::spirit::qi::locals<
                 std::string,
-                ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<double>*
+                value_ref_payload<int>,
+                value_ref_payload<double>,
+                value_ref_payload<double>
             >
         > empire_meter_value_rule;
 

@@ -41,7 +41,9 @@ namespace parse { namespace detail {
         qi::_r1_type _r1;
         qi::_val_type _val;
         qi::eps_type eps;
+        qi::_pass_type _pass;
         const boost::phoenix::function<construct_movable> construct_movable_;
+        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
         const boost::phoenix::function<parse::detail::lazy_move> lazy_move_;
 
         using phoenix::new_;
@@ -56,7 +58,7 @@ namespace parse { namespace detail {
         homeworld
             =   tok.Homeworld_
             >   (
-                (labeller.rule(Name_token) > string_ref_vec(_a) [ _val = construct_movable_(new_<Condition::Homeworld>(lazy_move_(_a))) ])
+                (labeller.rule(Name_token) > string_ref_vec(_a) [ _val = construct_movable_(new_<Condition::Homeworld>(deconstruct_movable_(_a, _pass))) ])
                 |    eps [ _val = construct_movable_(new_<Condition::Homeworld>()) ]
             )
             ;
@@ -66,13 +68,13 @@ namespace parse { namespace detail {
                 tok.Building_
                 >  -(labeller.rule(Name_token) > string_ref_vec(_a))
             )
-            [ _val = construct_movable_(new_<Condition::Building>(lazy_move_(_a))) ]
+            [ _val = construct_movable_(new_<Condition::Building>(deconstruct_movable_(_a, _pass))) ]
             ;
 
         species
             =   tok.Species_
             >   (
-                (labeller.rule(Name_token) > string_ref_vec(_a) [ _val = construct_movable_(new_<Condition::Species>(lazy_move_(_a))) ])
+                (labeller.rule(Name_token) > string_ref_vec(_a) [ _val = construct_movable_(new_<Condition::Species>(deconstruct_movable_(_a, _pass))) ])
                 |    eps [ _val = construct_movable_(new_<Condition::Species>()) ]
             )
             ;
@@ -80,8 +82,8 @@ namespace parse { namespace detail {
         focus_type
             =   tok.Focus_
             >   (
-                (labeller.rule(Type_token) > string_ref_vec(_a) [ _val = construct_movable_(new_<Condition::FocusType>(lazy_move_(_a))) ])
-                | eps [ _val = construct_movable_(new_<Condition::FocusType>(lazy_move_(_a))) ]
+                (labeller.rule(Type_token) > string_ref_vec(_a) [ _val = construct_movable_(new_<Condition::FocusType>(deconstruct_movable_(_a, _pass))) ])
+                | eps [ _val = construct_movable_(new_<Condition::FocusType>(deconstruct_movable_(_a, _pass))) ]
             )
             ;
 
@@ -93,7 +95,7 @@ namespace parse { namespace detail {
                 ('[' > +planet_type_rules.expr [ emplace_back_1_(_a, _1) ] > ']')
                 |    planet_type_rules.expr [ emplace_back_1_(_a, _1) ]
             )
-            [ _val = construct_movable_(new_<Condition::PlanetType>(lazy_move_(_a))) ]
+            [ _val = construct_movable_(new_<Condition::PlanetType>(deconstruct_movable_(_a, _pass))) ]
             ;
 
         planet_size
@@ -104,7 +106,7 @@ namespace parse { namespace detail {
                 ('[' > +planet_size_rules.expr [ emplace_back_1_(_a, _1) ] > ']')
                 |    planet_size_rules.expr [ emplace_back_1_(_a, _1) ]
             )
-            [ _val = construct_movable_(new_<Condition::PlanetSize>(lazy_move_(_a))) ]
+            [ _val = construct_movable_(new_<Condition::PlanetSize>(deconstruct_movable_(_a, _pass))) ]
             ;
 
         planet_environment
@@ -117,18 +119,20 @@ namespace parse { namespace detail {
                  )
                  >  -(labeller.rule(Species_token)        >  string_grammar [_b = _1]))
             [ _val = construct_movable_(new_<Condition::PlanetEnvironment>(
-                    lazy_move_(_a),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_b))) ]
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass))) ]
             ;
 
         object_type
-            =   universe_object_type_rules.enum_expr [ _val = construct_movable_(new_<Condition::Type>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>>(
-                    new_<ValueRef::Constant<UniverseObjectType>>(_1)))) ]
+            =   universe_object_type_rules.enum_expr [
+                _val = construct_movable_(
+                    new_<Condition::Type>(
+                        construct<std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>>(
+                            new_<ValueRef::Constant<UniverseObjectType>>(_1)))) ]
             |   (
                 tok.ObjectType_
-                >   labeller.rule(Type_token) > universe_object_type_rules.expr [ _val = construct_movable_(new_<Condition::Type>(
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>>(_1))) ]
+                >   labeller.rule(Type_token) > universe_object_type_rules.expr [
+                    _val = construct_movable_(new_<Condition::Type>(deconstruct_movable_(_1, _pass))) ]
             )
             ;
 

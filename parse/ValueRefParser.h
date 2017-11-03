@@ -17,7 +17,7 @@ namespace parse { namespace detail {
     // TODO: Investigate refactoring ValueRef to use variant,
     // for increased locality of reference.
     template <typename T>
-    using value_ref_payload = ValueRef::ValueRefBase<T>*;
+    using value_ref_payload = MovableEnvelope<ValueRef::ValueRefBase<T>>;
     template <typename T>
     using value_ref_signature = value_ref_payload<T> ();
     template <typename T>
@@ -33,8 +33,12 @@ namespace parse { namespace detail {
     using reference_token_rule = rule<ValueRef::ReferenceType ()>;
 
     template <typename T>
+    using variable_payload = MovableEnvelope<ValueRef::Variable<T>>;
+    template <typename T>
+    using variable_signature = variable_payload<T> ();
+    template <typename T>
     using variable_rule = rule<
-        ValueRef::Variable<T>* (),
+        variable_signature<T>,
         boost::spirit::qi::locals<
             std::vector<std::string>,
             ValueRef::ReferenceType
@@ -57,22 +61,26 @@ namespace parse { namespace detail {
     };
 
     template <typename T>
+    using statistic_payload = MovableEnvelope<ValueRef::Statistic<T>>;
+    template <typename T>
+    using statistic_signature = statistic_payload<T> ();
+    template <typename T>
     using statistic_rule = rule<
-        ValueRef::Statistic<T>* (),
+        statistic_signature<T>,
         boost::spirit::qi::locals<
-            ValueRef::ValueRefBase<T>*,
+            value_ref_payload<T>,
             ValueRef::StatisticType
             >
         >;
 
     template <typename T>
     using expression_rule = rule<
-        ValueRef::ValueRefBase<T>* (),
+        value_ref_payload<T> (),
         boost::spirit::qi::locals<
-            ValueRef::ValueRefBase<T>*,
-            ValueRef::ValueRefBase<T>*,
+            value_ref_payload<T>,
+            value_ref_payload<T>,
             ValueRef::OpType,
-            std::vector<ValueRef::ValueRefBase<T>*>
+            std::vector<value_ref_payload<T>>
             >
         >;
 
@@ -105,15 +113,17 @@ namespace parse { namespace detail {
     };
 
     template <typename T>
-    using complex_variable_signature = ValueRef::ComplexVariable<T>* ();
+    using complex_variable_payload = MovableEnvelope<ValueRef::ComplexVariable<T>>;
+    template <typename T>
+    using complex_variable_signature = complex_variable_payload<T> ();
     using complex_variable_locals =
         boost::spirit::qi::locals<
         std::string,
-        ValueRef::ValueRefBase<int>*,
-        ValueRef::ValueRefBase<int>*,
-        ValueRef::ValueRefBase<std::string>*,
-        ValueRef::ValueRefBase<std::string>*,
-        ValueRef::ValueRefBase<int>*
+        value_ref_payload<int>,
+        value_ref_payload<int>,
+        value_ref_payload<std::string>,
+        value_ref_payload<std::string>,
+        value_ref_payload<int>
         >;
 
     template <typename T>

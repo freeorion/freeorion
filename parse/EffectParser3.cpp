@@ -41,15 +41,15 @@ namespace parse { namespace detail {
             >    labeller.rule(Speed_token) >  double_rules.expr [ _a = _1 ]
             >   (
                 (labeller.rule(Focus_token) >  condition_parser [ _val = construct_movable_(new_<Effect::MoveInOrbit>(
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_a),
+                        deconstruct_movable_(_a, _pass),
                         deconstruct_movable_(_1, _pass))) ])
                 |
                 (
                     labeller.rule(X_token)     >  double_rules.expr [ _b = _1 ]
                     >   labeller.rule(Y_token)     >  double_rules.expr [ _val = construct_movable_(new_<Effect::MoveInOrbit>(
-                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_a),
-                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
-                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ]
+                            deconstruct_movable_(_a, _pass),
+                            deconstruct_movable_(_b, _pass),
+                            deconstruct_movable_(_1, _pass))) ]
                 )
             )
             ;
@@ -59,15 +59,15 @@ namespace parse { namespace detail {
             >    labeller.rule(Speed_token) > double_rules.expr [ _a = _1 ]
             >    (
                 (labeller.rule(Target_token) >  condition_parser [ _val = construct_movable_(new_<Effect::MoveTowards>(
-                        construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_a),
+                        deconstruct_movable_(_a, _pass),
                         deconstruct_movable_(_1, _pass))) ])
                 |
                 (
                     labeller.rule(X_token)     > double_rules.expr [ _b = _1 ]
                     >   labeller.rule(Y_token)     > double_rules.expr [ _val = construct_movable_(new_<Effect::MoveTowards>(
-                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_a),
-                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
-                            construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ]
+                            deconstruct_movable_(_a, _pass),
+                            deconstruct_movable_(_b, _pass),
+                            deconstruct_movable_(_1, _pass))) ]
                 )
             )
             ;
@@ -100,7 +100,7 @@ namespace parse { namespace detail {
             =   tok.AddSpecial_
             >   labeller.rule(Name_token) > string_grammar [
                 _val = construct_movable_(
-                    new_<Effect::AddSpecial>(construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1))) ]
+                    new_<Effect::AddSpecial>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         add_special_2
@@ -109,14 +109,14 @@ namespace parse { namespace detail {
                 >> (labeller.rule(Capacity_token) | labeller.rule(Value_token))
                )
             >   double_rules.expr [ _val = construct_movable_(new_<Effect::AddSpecial>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_c),
-                construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_1))) ]
+                deconstruct_movable_(_c, _pass),
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         remove_special
             =   tok.RemoveSpecial_
-            >   labeller.rule(Name_token) > string_grammar [ _val = construct_movable_(new_<Effect::RemoveSpecial>(
-                                                                                           construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1))) ]
+            >   labeller.rule(Name_token) > string_grammar [
+                _val = construct_movable_(new_<Effect::RemoveSpecial>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         add_starlanes
@@ -135,7 +135,7 @@ namespace parse { namespace detail {
             =   tok.SetStarType_
             >   labeller.rule(Type_token) > star_type_rules.expr [
                 _val = construct_movable_(
-                    new_<Effect::SetStarType>(construct<std::unique_ptr<ValueRef::ValueRefBase<StarType>>>(_1))) ]
+                    new_<Effect::SetStarType>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         set_texture

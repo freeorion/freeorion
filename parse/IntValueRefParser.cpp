@@ -11,6 +11,7 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lex
 
     qi::_1_type _1;
     qi::_val_type _val;
+    const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
 
     // TODO: Should we apply elements of this list only to certain
     // objects? For example, if one writes "Source.Planet.",
@@ -56,7 +57,7 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lex
         ;
 
     constant
-        =   tok.int_    [ _val = new_<ValueRef::Constant<int>>(_1) ]
+        =   tok.int_    [ _val = construct_movable_(new_<ValueRef::Constant<int>>(_1)) ]
         ;
 }
 
@@ -76,9 +77,12 @@ parse::castable_as_int_parser_rules::castable_as_int_parser_rules(
 
     qi::_1_type _1;
     qi::_val_type _val;
+    qi::_pass_type _pass;
+    const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
+    const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
     castable_expr
-        = double_rules.expr [ _val = new_<ValueRef::StaticCast<double, int>>(_1) ]
+        = double_rules.expr [ _val = construct_movable_(new_<ValueRef::StaticCast<double, int>>(deconstruct_movable_(_1, _pass))) ]
         ;
 
     flexible_int

@@ -11,29 +11,29 @@ namespace parse { namespace detail {
                                  const value_ref_grammar<std::string>& string_grammar);
 
         typedef rule<
-            void (std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&)
+            void (std::vector<value_ref_payload<std::string>>&)
         > string_ref_vec_rule;
 
         typedef rule<
             condition_signature,
-            boost::spirit::qi::locals<std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>>
+            boost::spirit::qi::locals<std::vector<value_ref_payload<std::string>>>
         > building_focus_species_rule;
 
         typedef rule<
             condition_signature,
-            boost::spirit::qi::locals<std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>>>
+            boost::spirit::qi::locals<std::vector<value_ref_payload<PlanetType>>>
         > planet_type_rule;
 
         typedef rule<
             condition_signature,
-            boost::spirit::qi::locals<std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>>>
+            boost::spirit::qi::locals<std::vector<value_ref_payload<PlanetSize>>>
         > planet_size_rule;
 
         typedef rule<
             condition_signature,
             boost::spirit::qi::locals<
-                std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetEnvironment>>>,
-                ValueRef::ValueRefBase<std::string>*
+                std::vector<value_ref_payload<PlanetEnvironment>>,
+                value_ref_payload<std::string>
             >
         > planet_environment_rule;
 

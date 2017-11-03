@@ -13,11 +13,11 @@ namespace parse { namespace detail {
         typedef rule<
             condition_signature,
             boost::spirit::qi::locals<
-                ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<std::string>*
+                value_ref_payload<int>,
+                value_ref_payload<int>,
+                value_ref_payload<int>,
+                value_ref_payload<int>,
+                value_ref_payload<std::string>
             >
         > common_rule;
 

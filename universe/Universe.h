@@ -426,7 +426,7 @@ public:
     const std::vector<MonsterFleetPlan*>& MonsterFleetPlans() const;
 
     /** Set the empire stats from \p future. */
-    using EmpireStatsMap = std::map<std::string, ValueRef::ValueRefBase<double>*>;
+    using EmpireStatsMap = std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase<double>>>;
     void SetEmpireStats(Pending::Pending<EmpireStatsMap> future);
 private:
     const EmpireStatsMap& EmpireStats() const;

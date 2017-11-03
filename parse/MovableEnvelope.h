@@ -170,7 +170,7 @@ namespace parse { namespace detail {
                 auto err = OpenedMoreThanOnce();
                 ErrorLogger() << err.what();
                 pass = false;
-                throw err;
+                // throw err;
             }
             return std::move(obj);
         }

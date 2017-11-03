@@ -13,8 +13,8 @@
 #if DEBUG_VALUEREF_PARSERS
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<const char*>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<boost::variant<ValueRef::OpType, ValueRef::ValueRefBase<int>*>>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<boost::variant<ValueRef::OpType, ValueRef::ValueRefBase<double>*>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<boost::variant<ValueRef::OpType, value_ref_payload<int>>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<boost::variant<ValueRef::OpType, value_ref_payload<double>>>&) { return os; }
 }
 #endif
 
@@ -38,13 +38,14 @@ void initialize_nonnumeric_statistic_parser(
     boost::spirit::qi::_b_type _b;
     boost::spirit::qi::_val_type _val;
     boost::spirit::qi::_pass_type _pass;
+    const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
     const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
     statistic
         =   (tok.Statistic_ >>  tok.Mode_ [ _b = ValueRef::MODE ])
             >   labeller.rule(Value_token)     >     value_ref [ _a = _1 ]
             >   labeller.rule(Condition_token) >     condition_parser
-        [ _val = new_<ValueRef::Statistic<T>>(construct<std::unique_ptr<ValueRef::ValueRefBase<T>>>(_a), _b, deconstruct_movable_(_1, _pass)) ]
+        [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
         ;
 }
 
@@ -64,11 +65,13 @@ void initialize_bound_variable_parser(
     boost::spirit::qi::_a_type _a;
     boost::spirit::qi::_b_type _b;
     boost::spirit::qi::_val_type _val;
+    const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
 
     bound_variable
-        =   variable_scope_rule [ _b = _1 ] >> '.'
-        >>-(container_type_rule [ push_back(_a, construct<std::string>(_1)) ] > '.')
-        >>  variable_name    [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::Variable<T>>(_b, _a) ]
+        =   variable_scope_rule [ _b = _1 ] >>
+        '.' >>-(container_type_rule [ push_back(_a, construct<std::string>(_1)) ] > '.')
+            >>  variable_name
+        [ push_back(_a, construct<std::string>(_1)), _val = construct_movable_(new_<ValueRef::Variable<T>>(_b, _a)) ]
         ;
 }
 
@@ -88,10 +91,13 @@ enum_value_ref_rules<T>::enum_value_ref_rules(const std::string& type_name,
         boost::spirit::qi::_c_type _c;
         boost::spirit::qi::_d_type _d;
         boost::spirit::qi::_val_type _val;
+        boost::spirit::qi::_pass_type _pass;
         boost::spirit::qi::lit_type lit;
+        const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
+        const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
         constant_expr
-            =   enum_expr [ _val = new_<ValueRef::Constant<T>>(_1) ]
+            =   enum_expr [ _val = construct_movable_(new_<ValueRef::Constant<T>>(_1)) ]
             ;
 
         variable_scope_rule = variable_scope(tok);
@@ -110,12 +116,16 @@ enum_value_ref_rules<T>::enum_value_ref_rules(const std::string& type_name,
                     (
                         (
                             tok.OneOf_  [ _c = ValueRef::RANDOM_PICK ]
-                        |   tok.Min_    [ _c = ValueRef::MINIMUM ]
-                        |   tok.Max_    [ _c = ValueRef::MAXIMUM ]
+                            |   tok.Min_    [ _c = ValueRef::MINIMUM ]
+                            |   tok.Max_    [ _c = ValueRef::MAXIMUM ]
                         )
-                        >  '('  >   expr [ push_back(_d, _1) ]
-                        >*(','  >   expr [ push_back(_d, _1) ] )
-                        [ _val = new_<ValueRef::Operation<T>>(_c, _d) ] >   ')'
+                        >
+                        ( '('
+                          >   expr [ push_back(_d, _1) ]
+                          > *(','  >   expr [ push_back(_d, _1) ] )
+                        > ')'
+                        )
+                        [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_d, _pass))) ]
                     )
                 |   (
                         primary_expr [ _val = _1 ]
@@ -171,12 +181,13 @@ simple_variable_rules<T>::simple_variable_rules(const std::string& type_name,
 
         boost::spirit::qi::_1_type _1;
         boost::spirit::qi::_val_type _val;
+        const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
 
         free_variable
             =   tok.Value_
-                [ _val = new_<ValueRef::Variable<T>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
+            [ _val = construct_movable_(new_<ValueRef::Variable<T>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE)) ]
             |   free_variable_name
-                [ _val = new_<ValueRef::Variable<T>>(ValueRef::NON_OBJECT_REFERENCE, _1) ]
+            [ _val = construct_movable_(new_<ValueRef::Variable<T>>(ValueRef::NON_OBJECT_REFERENCE, _1)) ]
             ;
 
         simple
@@ -221,6 +232,7 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
     using boost::phoenix::push_back;
 
     boost::spirit::qi::_1_type _1;
+    boost::spirit::qi::_2_type _2;
     boost::spirit::qi::_a_type _a;
     boost::spirit::qi::_b_type _b;
     boost::spirit::qi::_c_type _c;
@@ -228,6 +240,7 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
     boost::spirit::qi::_val_type _val;
     boost::spirit::qi::lit_type lit;
     boost::spirit::qi::_pass_type _pass;
+    const boost::phoenix::function<construct_movable> construct_movable_;
     const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
 
     functional_expr
@@ -239,12 +252,12 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
                     |   tok.Log_    [ _c = ValueRef::LOGARITHM ]
                     |   tok.Abs_    [ _c = ValueRef::ABS ]
                 )
-                >> '(' >> expr [ _val = new_<ValueRef::Operation<T>>(_c, _1) ] >> ')'
+                >> ('(' > expr > ')') [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_1, _pass))) ]
             )
             |   (
                 tok.RandomNumber_   [ _c = ValueRef::RANDOM_UNIFORM ]   // random number requires a min and max value
-                >  '(' >    expr [ _a = _1 ]
-                >  ',' >    expr [ _val = new_<ValueRef::Operation<T>>(_c, _a, _1) ] >> ')'
+                >  ( '(' > expr >  ',' > expr > ')' ) [ _val = construct_movable_(
+                        new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_1, _pass), deconstruct_movable_(_2, _pass))) ]
             )
             |   (
                 (
@@ -252,9 +265,9 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
                     |   tok.Min_    [ _c = ValueRef::MINIMUM ]
                     |   tok.Max_    [ _c = ValueRef::MAXIMUM ]
                 )
-                >>  '(' >>  expr [ push_back(_d, _1) ]
-                >>(*(',' >  expr [ push_back(_d, _1) ] ))
-                [ _val = new_<ValueRef::Operation<T>>(_c, _d) ] >> ')'
+                >>  ( '(' >>  expr [ push_back(_d, _1) ]
+                >>(*(',' >  expr [ push_back(_d, _1) ] )) >> ')' )
+                [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_d, _pass))) ]
             )
             |   (
                 lit('(') >> expr [ push_back(_d, _1) ]
@@ -278,11 +291,14 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
                             |  ( lit(':') > expr [ push_back(_d, _1) ] > ')' )
                         )
                     )
-                ) [ _val = new_<ValueRef::Operation<T>>(_c, _d) ]
+                ) [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_d, _pass))) ]
             )
             |   (
-                lit('-') >> functional_expr // single parameter math function with a function expression rather than any arbitrary expression as parameter, because negating more general expressions can be ambiguous
-                [ _val = new_<ValueRef::Operation<T>>(ValueRef::NEGATE, _1) ]
+                lit('-') >> functional_expr
+                // single parameter math function with a function expression
+                // rather than any arbitrary expression as parameter, because
+                // negating more general expressions can be ambiguous
+                [ _val = construct_movable_(new_<ValueRef::Operation<T>>(ValueRef::NEGATE, deconstruct_movable_(_1, _pass))) ]
             )
             |   (
                 primary_expr [ _val = _1 ]
@@ -294,7 +310,8 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
         =   (
             functional_expr [ _a = _1 ]
             >> '^' >> functional_expr
-            [ _val = new_<ValueRef::Operation<T>>( ValueRef::EXPONENTIATE, _a, _1 ) ]
+            [ _val = construct_movable_(
+                new_<ValueRef::Operation<T>>( ValueRef::EXPONENTIATE, deconstruct_movable_(_a, _pass), deconstruct_movable_(_1, _pass) )) ]
         )
         |   functional_expr [ _val = _1 ]
         ;
@@ -309,7 +326,8 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
                             lit('*') [ _c = ValueRef::TIMES ]
                             |   lit('/') [ _c = ValueRef::DIVIDE ]
                         )
-                        >>   exponential_expr [ _b = new_<ValueRef::Operation<T>>(_c, _a, _1) ]
+                        >>   exponential_expr [
+                            _b = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_a, _pass), deconstruct_movable_(_1, _pass))) ]
                     ) [ _a = _b ]
                 )
             )
@@ -330,7 +348,7 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
                                     lit('+') [ _c = ValueRef::PLUS ]
                                     |   lit('-') [ _c = ValueRef::MINUS ]
                                 )
-                                >>   multiplicative_expr [ _b = new_<ValueRef::Operation<T>>(_c, _a, _1) ]
+                                >>   multiplicative_expr [ _b = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_a, _pass), deconstruct_movable_(_1, _pass))) ]
                             ) [ _a = _b ]
                         )
                     )
@@ -350,14 +368,14 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
                 )
             )
         >   labeller.rule(Condition_token) >    condition_parser
-        [ _val = new_<ValueRef::Statistic<T>>(construct<std::unique_ptr<ValueRef::ValueRefBase<T>>>(_a), _b, deconstruct_movable_(_1, _pass)) ]
+        [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
         ;
 
     statistic_value_expr
         =   (tok.Statistic_ >>  statistic_type_enum [ _b = _1 ])
         >   labeller.rule(Value_token)     >     statistic_value_ref_expr [ _a = _1 ]
         >   labeller.rule(Condition_token) >     condition_parser
-        [ _val = new_<ValueRef::Statistic<T>>(construct<std::unique_ptr<ValueRef::ValueRefBase<T>>>(_a), _b, deconstruct_movable_(_1, _pass)) ]
+        [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
         ;
 
     statistic_expr

@@ -63,10 +63,10 @@ namespace parse { namespace detail {
             =    tok.Star_
             >    labeller.rule(Type_token)
             >    (
-                ('[' > +star_type_rules.expr [ emplace_back_1_(_a, _1) ] > ']')
-                |    star_type_rules.expr [ emplace_back_1_(_a, _1) ]
+                ('[' > +star_type_rules.expr [ push_back(_a, _1) ] > ']')
+                |    star_type_rules.expr [ push_back(_a, _1) ]
             )
-            [ _val = construct_movable_(new_<Condition::StarType>(lazy_move_(_a))) ]
+            [ _val = construct_movable_(new_<Condition::StarType>(deconstruct_movable_(_a, _pass))) ]
             ;
 
         location
@@ -84,15 +84,15 @@ namespace parse { namespace detail {
                  >  -(labeller.rule(Name_token)   > string_grammar [ _c = _1 ]))
             [ _val = construct_movable_(new_<Condition::Location>(
                     _a,
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_b),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_c))) ]
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_c, _pass))) ]
             ;
 
         owner_has_shippart_available
             =   (tok.OwnerHasShipPartAvailable_
                  >>  (labeller.rule(Name_token)
                       > string_grammar [ _val = construct_movable_(new_<Condition::OwnerHasShipPartAvailable>(
-                              construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1))) ]
+                              deconstruct_movable_(_1, _pass))) ]
                      )
                 )
             ;

@@ -13,9 +13,9 @@ namespace parse { namespace detail {
         typedef rule<
             effect_signature,
             boost::spirit::qi::locals<
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<std::string>*
+                value_ref_payload<double>,
+                value_ref_payload<double>,
+                value_ref_payload<std::string>
             >
         > doubles_string_rule;
 

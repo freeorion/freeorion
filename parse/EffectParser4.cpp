@@ -34,6 +34,7 @@ namespace parse { namespace detail {
         qi::eps_type eps;
         qi::_pass_type _pass;
         const boost::phoenix::function<construct_movable> construct_movable_;
+        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
 
         using phoenix::new_;
         using phoenix::construct;
@@ -50,11 +51,11 @@ namespace parse { namespace detail {
                                 |    effect_parser [ emplace_back_1_(_d, _1) ]
                             )
                            )
-                ) [ _val = construct_movable_(construct_movable_(new_<Effect::CreatePlanet>(
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>>(_a),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>>(_b),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_c),
-                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _d, _pass)))) ]
+                ) [ _val = construct_movable_(new_<Effect::CreatePlanet>(
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_c, _pass),
+                    deconstruct_movable_(_d, _pass))) ]
             ;
 
         create_building
@@ -68,9 +69,9 @@ namespace parse { namespace detail {
                             )
                            )
                 ) [ _val = construct_movable_(new_<Effect::CreateBuilding>(
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_b),
-                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _c, _pass))) ]
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_c, _pass))) ]
             ;
 
         create_ship_1
@@ -87,11 +88,11 @@ namespace parse { namespace detail {
                      )
                     )
                 ) [ _val = construct_movable_(new_<Effect::CreateShip>(
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_b),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_c),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_e),
-                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _f, _pass))) ]
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_c, _pass),
+                    deconstruct_movable_(_d, _pass),
+                    deconstruct_movable_(_e, _pass),
+                    deconstruct_movable_(_f, _pass))) ]
             ;
 
         create_ship_2
@@ -108,11 +109,11 @@ namespace parse { namespace detail {
                      )
                     )
                 ) [ _val = construct_movable_(new_<Effect::CreateShip>(
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_c),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_e),
-                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _f, _pass))) ]
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_c, _pass),
+                    deconstruct_movable_(_d, _pass),
+                    deconstruct_movable_(_e, _pass),
+                    deconstruct_movable_(_f, _pass))) ]
             ;
 
         create_field_1
@@ -130,10 +131,10 @@ namespace parse { namespace detail {
                      )
                     )
                 ) [ _val = construct_movable_(new_<Effect::CreateField>(
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
-                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _f, _pass))) ]
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_d, _pass),
+                    deconstruct_movable_(_f, _pass))) ]
             ;
 
         create_field_2
@@ -153,12 +154,12 @@ namespace parse { namespace detail {
                      )
                     )
                 ) [ _val = construct_movable_(new_<Effect::CreateField>(
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_a),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_e),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
-                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _f, _pass))) ]
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_c, _pass),
+                    deconstruct_movable_(_e, _pass),
+                    deconstruct_movable_(_d, _pass),
+                    deconstruct_movable_(_f, _pass))) ]
             ;
 
         create_system_1
@@ -177,11 +178,11 @@ namespace parse { namespace detail {
                      )
                     )
                 ) [ _val = construct_movable_(new_<Effect::CreateSystem>(
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<StarType>>>(_a),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
-                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _e, _pass))) ]
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_c, _pass),
+                    deconstruct_movable_(_d, _pass),
+                    deconstruct_movable_(_e, _pass))) ]
             ;
 
         create_system_2
@@ -199,10 +200,10 @@ namespace parse { namespace detail {
                      )
                     )
                 ) [ _val = construct_movable_(new_<Effect::CreateSystem>(
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_b),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<double>>>(_c),
-                    construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_d),
-                    phoenix::bind(&parse::detail::OpenEnvelopes<Effect::EffectBase>, _e, _pass))) ]
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_c, _pass),
+                    deconstruct_movable_(_d, _pass),
+                    deconstruct_movable_(_e, _pass))) ]
             ;
 
         start

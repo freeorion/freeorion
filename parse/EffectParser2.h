@@ -14,8 +14,8 @@ namespace parse { namespace detail {
             effect_signature,
             boost::spirit::qi::locals<
                 MeterType,
-                ValueRef::ValueRefBase<std::string>*,
-                ValueRef::ValueRefBase<double>*,
+                value_ref_payload<std::string>,
+                value_ref_payload<double>,
                 std::string
             >
         > set_meter_rule;
@@ -24,8 +24,8 @@ namespace parse { namespace detail {
             effect_signature,
             boost::spirit::qi::locals<
                 ResourceType,
-                ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<Visibility>*,
+                value_ref_payload<int>,
+                value_ref_payload<Visibility>,
                 EmpireAffiliationType,
                 condition_payload
             >
@@ -34,9 +34,9 @@ namespace parse { namespace detail {
         typedef rule<
             effect_signature,
             boost::spirit::qi::locals<
-                ValueRef::ValueRefBase<std::string>*,
-                ValueRef::ValueRefBase<std::string>*,
-                ValueRef::ValueRefBase<int>*
+                value_ref_payload<std::string>,
+                value_ref_payload<std::string>,
+                value_ref_payload<int>
             >
         > string_string_int_rule;
 

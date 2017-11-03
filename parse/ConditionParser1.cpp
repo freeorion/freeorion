@@ -37,6 +37,7 @@ namespace parse { namespace detail {
 
         using phoenix::new_;
         using phoenix::construct;
+        using phoenix::push_back;
 
         all
             =   tok.All_ [ _val = construct_movable_(new_<Condition::All>()) ]
@@ -92,7 +93,7 @@ namespace parse { namespace detail {
             =   (tok.OwnedBy_
                  >>  labeller.rule(Empire_token)
                 ) > int_rules.expr
-            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>(construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1))) ]
+            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         owned_by_2
@@ -115,7 +116,7 @@ namespace parse { namespace detail {
             =   (tok.OwnedBy_
                  >>  labeller.rule(Affiliation_token) >> empire_affiliation_type_enum [ _a = _1 ]
                  >>  labeller.rule(Empire_token)    ) >  int_rules.expr
-            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>(construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1), _a)) ]
+            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>(deconstruct_movable_(_1, _pass), _a)) ]
             ;
 
         owned_by
@@ -128,13 +129,13 @@ namespace parse { namespace detail {
 
         and_
             =   tok.And_
-            >   '[' > +condition_parser [ emplace_back_1_(_a, _1) ] > lit(']')
+            >   '[' > +condition_parser [ push_back(_a, _1) ] > lit(']')
             [ _val = construct_movable_(new_<Condition::And>(deconstruct_movable_(_a, _pass))) ]
             ;
 
         or_
             =   tok.Or_
-            >   '[' > +condition_parser [ emplace_back_1_(_a, _1) ] > lit(']')
+            >   '[' > +condition_parser [ push_back(_a, _1) ] > lit(']')
             [ _val = construct_movable_(new_<Condition::Or>(deconstruct_movable_(_a, _pass))) ]
             ;
 

@@ -2,7 +2,6 @@
 #define _ParseImpl_h_
 
 #include "ReportParseError.h"
-#include "../universe/Tech.h"
 #include "../util/Logger.h"
 #include "../util/ScopedTimer.h"
 

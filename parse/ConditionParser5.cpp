@@ -21,7 +21,9 @@ namespace parse { namespace detail {
         qi::_1_type _1;
         qi::_val_type _val;
         qi::eps_type eps;
+        qi::_pass_type _pass;
         const boost::phoenix::function<construct_movable> construct_movable_;
+        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
         using phoenix::new_;
         using phoenix::construct;
 
@@ -29,7 +31,7 @@ namespace parse { namespace detail {
             =   (   (tok.HasSpecial_
                      >>  labeller.rule(Name_token)
                     ) > string_grammar [ _val = construct_movable_(new_<Condition::HasSpecial>(
-                            construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1))) ]
+                            deconstruct_movable_(_1, _pass))) ]
                 )
             |   tok.HasSpecial_ [ _val = construct_movable_(new_<Condition::HasSpecial>()) ]
             ;
@@ -38,7 +40,7 @@ namespace parse { namespace detail {
             =   (   (tok.HasTag_
                      >>  labeller.rule(Name_token)
                     ) > string_grammar [ _val = construct_movable_(new_<Condition::HasTag>(
-                            construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1))) ]
+                            deconstruct_movable_(_1, _pass))) ]
                 )
             |   tok.HasTag_ [ _val = construct_movable_(new_<Condition::HasTag>()) ]
             ;
@@ -46,57 +48,57 @@ namespace parse { namespace detail {
         owner_has_tech
             =   tok.OwnerHasTech_
             >   labeller.rule(Name_token) > string_grammar [ _val = construct_movable_(new_<Condition::OwnerHasTech>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1))) ]
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         design_has_hull
             =   tok.DesignHasHull_
             >   labeller.rule(Name_token) > string_grammar [ _val = construct_movable_(new_<Condition::DesignHasHull>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1))) ]
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         predefined_design
             =   (tok.Design_
                  >>  labeller.rule(Name_token)
                 ) > string_grammar [ _val = construct_movable_(new_<Condition::PredefinedShipDesign>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>(_1))) ]
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         design_number
             =   (tok.Design_
                  >>  labeller.rule(Design_token)
                 ) > int_rules.expr [ _val = construct_movable_(new_<Condition::NumberedShipDesign>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1))) ]
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         produced_by_empire // TODO: Lose "empire" part.
             =   tok.ProducedByEmpire_
             >   labeller.rule(Empire_token) > int_rules.expr [ _val = construct_movable_(new_<Condition::ProducedByEmpire>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1))) ]
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         visible_to_empire // TODO: Lose "empire" part.
             =   tok.VisibleToEmpire_
             >   labeller.rule(Empire_token) > int_rules.expr [ _val = construct_movable_(new_<Condition::VisibleToEmpire>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1))) ]
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         explored_by_empire // TODO: Lose "empire" part.
             =    tok.ExploredByEmpire_
             >    labeller.rule(Empire_token) > int_rules.expr [ _val = construct_movable_(new_<Condition::ExploredByEmpire>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1))) ]
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         resupplyable_by
             =   tok.ResupplyableBy_
             >   labeller.rule(Empire_token) > int_rules.expr [ _val = construct_movable_(new_<Condition::FleetSupplyableByEmpire>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1))) ]
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         object_id
             =   tok.Object_
             >   labeller.rule(ID_token) > int_rules.expr [ _val = construct_movable_(new_<Condition::ObjectID>(
-                construct<std::unique_ptr<ValueRef::ValueRefBase<int>>>(_1))) ]
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         start

@@ -377,13 +377,19 @@ private:
 template <class FromType, class ToType>
 struct FO_COMMON_API StaticCast : public Variable<ToType>
 {
-    StaticCast(std::unique_ptr<Variable<FromType>>&& value_ref);
+    template <typename T>
+    StaticCast(T&& value_ref,
+               typename std::enable_if<std::is_convertible<T, std::unique_ptr<Variable<FromType>>>::value>::type* = nullptr);
 
-    StaticCast(std::unique_ptr<ValueRefBase<FromType>>&& value_ref);
+    template <typename T>
+    StaticCast(T&& value_ref,
+               typename std::enable_if<
+               std::is_convertible<T, std::unique_ptr<ValueRefBase<FromType>>>::value
+               && !std::is_convertible<T, std::unique_ptr<Variable<FromType>>>::value>::type* = nullptr);
 
-    StaticCast(Variable<FromType>* value_ref);
+    // StaticCast(Variable<FromType>* value_ref);
 
-    StaticCast(ValueRefBase<FromType>* value_ref);
+    // StaticCast(ValueRefBase<FromType>* value_ref);
 
     ~StaticCast();
 
@@ -406,7 +412,7 @@ struct FO_COMMON_API StaticCast : public Variable<ToType>
     void SetTopLevelContent(const std::string& content_name) override;
 
     const ValueRefBase<FromType>* GetValueRef() const
-    { return m_value_ref; }
+    { return m_value_ref.get(); }
 
     unsigned int GetCheckSum() const override;
 
@@ -1526,29 +1532,46 @@ void ComplexVariable<T>::serialize(Archive& ar, const unsigned int version)
 ///////////////////////////////////////////////////////////
 // StaticCast                                            //
 ///////////////////////////////////////////////////////////
+    // template <typename T>
+    // StaticCast(T&& value_ref,
+    //            typename std::enable_if<std::is_convertible<T, std::unique_ptr<Variable<FromType>>>:value>:type* = nullptr);
+
+    // template <typename T>
+    // StaticCast(T&& value_ref,
+    //            typename std::enable_if<
+    //            std::is_convertible<T, std::unique_ptr<ValueRefBase<FromType>>>::value
+    //            && !std::is_convertible<T, std::unique_ptr<Variable<FromType>>>:value>:type* = nullptr);
 template <class FromType, class ToType>
-StaticCast<FromType, ToType>::StaticCast(std::unique_ptr<Variable<FromType>>&& value_ref) :
+template <typename T>
+StaticCast<FromType, ToType>::StaticCast(
+    T&& value_ref,
+    typename std::enable_if<std::is_convertible<T, std::unique_ptr<Variable<FromType>>>::value>::type*) :
     Variable<ToType>(value_ref->GetReferenceType(), value_ref->PropertyName()),
     m_value_ref(std::move(value_ref))
 {}
 
 template <class FromType, class ToType>
-StaticCast<FromType, ToType>::StaticCast(std::unique_ptr<ValueRefBase<FromType>>&& value_ref) :
+template <typename T>
+StaticCast<FromType, ToType>::StaticCast(
+    T&& value_ref,
+    typename std::enable_if<
+    std::is_convertible<T, std::unique_ptr<ValueRefBase<FromType>>>::value
+    && !std::is_convertible<T, std::unique_ptr<Variable<FromType>>>::value>::type*) :
     Variable<ToType>(NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
 {}
 
-template <class FromType, class ToType>
-StaticCast<FromType, ToType>::StaticCast(Variable<FromType>* value_ref) :
-    Variable<ToType>(value_ref->GetReferenceType(), value_ref->PropertyName()),
-    m_value_ref(value_ref)
-{}
+// template <class FromType, class ToType>
+// StaticCast<FromType, ToType>::StaticCast(Variable<FromType>* value_ref) :
+//     Variable<ToType>(value_ref->GetReferenceType(), value_ref->PropertyName()),
+//     m_value_ref(value_ref)
+// {}
 
-template <class FromType, class ToType>
-StaticCast<FromType, ToType>::StaticCast(ValueRefBase<FromType>* value_ref) :
-    Variable<ToType>(NON_OBJECT_REFERENCE),
-    m_value_ref(value_ref)
-{}
+// template <class FromType, class ToType>
+// StaticCast<FromType, ToType>::StaticCast(ValueRefBase<FromType>* value_ref) :
+//     Variable<ToType>(NON_OBJECT_REFERENCE),
+//     m_value_ref(value_ref)
+// {}
 
 template <class FromType, class ToType>
 StaticCast<FromType, ToType>::~StaticCast()

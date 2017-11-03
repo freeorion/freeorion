@@ -1922,7 +1922,9 @@ CreateSystem::CreateSystem(std::unique_ptr<ValueRef::ValueRefBase< ::StarType>>&
     m_y(std::move(y)),
     m_name(std::move(name)),
     m_effects_to_apply_after(std::move(effects_to_apply_after))
-{}
+{
+    DebugLogger() << "Effect System created 1";
+}
 
 CreateSystem::CreateSystem(std::unique_ptr<ValueRef::ValueRefBase<double>>&& x,
                            std::unique_ptr<ValueRef::ValueRefBase<double>>&& y,
@@ -1933,7 +1935,9 @@ CreateSystem::CreateSystem(std::unique_ptr<ValueRef::ValueRefBase<double>>&& x,
     m_y(std::move(y)),
     m_name(std::move(name)),
     m_effects_to_apply_after(std::move(effects_to_apply_after))
-{}
+{
+    DebugLogger() << "Effect System created 2";
+}
 
 CreateSystem::~CreateSystem()
 {}
@@ -2303,7 +2307,9 @@ unsigned int RemoveStarlanes::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 SetStarType::SetStarType(std::unique_ptr<ValueRef::ValueRefBase<StarType>>&& type) :
     m_type(std::move(type))
-{}
+{
+    DebugLogger() << "Effect SetStarType created 1";
+}
 
 SetStarType::~SetStarType()
 {}

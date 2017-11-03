@@ -110,8 +110,6 @@ Universe::~Universe() {
         delete fleet;
     for (auto& fleet : m_monster_fleet_plans)
         delete fleet;
-    for (auto& stat : m_empire_stats)
-        delete stat.second;
 }
 
 void Universe::Clear() {
@@ -2876,7 +2874,7 @@ void Universe::UpdateStatRecords() {
     for (const auto& stat_entry : EmpireStats()) {
         const std::string& stat_name = stat_entry.first;
 
-        const ValueRef::ValueRefBase<double>* value_ref = stat_entry.second;
+        const auto& value_ref = stat_entry.second;
         if (!value_ref)
             continue;
 
