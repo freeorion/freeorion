@@ -4224,6 +4224,9 @@ Own Planets Depopulated
 PLANETS_INVADED
 Planets Invaded
 
+TOTAL_POPULATION_STAT
+Population
+
 STATISTICS_TEST_1
 Statistics Test 1
 
