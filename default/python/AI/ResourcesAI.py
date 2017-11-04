@@ -590,8 +590,8 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
                 # RP at a good PP cost, and still need some RP, then consider doing it.
                 # Won't really work if AI has researched Force Energy Structures (meters fall too fast)
                 #TODO: add similar decision points by which research-rich planets might possibly choose to dither for industry points
-                if any((has_force ,
-                        foAI.foAIstate.character.may_dither_focus_to_gain_research(),
+                if any((has_force,
+                        not foAI.foAIstate.character.may_dither_focus_to_gain_research(),
                         target_rp >= priority_ratio * cumulative_pp)):
                     continue
 

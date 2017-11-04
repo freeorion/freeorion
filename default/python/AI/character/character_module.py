@@ -378,7 +378,7 @@ class Aggression(Trait):
         return [4.0, 3.0, 2.0, 1.5, 1.2, 1.0][self.aggression]
 
     def may_dither_focus_to_gain_research(self):
-        return self.aggression < fo.aggression.aggressive
+        return self.aggression >= fo.aggression.aggressive
 
     def may_research_heavily(self):
         return self.aggression > fo.aggression.cautious
