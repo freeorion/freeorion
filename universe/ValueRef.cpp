@@ -2681,12 +2681,6 @@ NameLookup::NameLookup(std::unique_ptr<ValueRefBase<int>>&& value_ref, LookupTyp
     m_lookup_type(lookup_type)
 {}
 
-NameLookup::NameLookup(ValueRefBase<int>* value_ref, LookupType lookup_type) :
-    Variable<std::string>(NON_OBJECT_REFERENCE),
-    m_value_ref(value_ref),
-    m_lookup_type(lookup_type)
-{}
-
 NameLookup::~NameLookup()
 {}
 

@@ -319,13 +319,6 @@ struct FO_COMMON_API ComplexVariable : public Variable<T>
                              std::unique_ptr<ValueRefBase<std::string>>&& string_ref1 = nullptr,
                              std::unique_ptr<ValueRefBase<std::string>>&& string_ref2 = nullptr);
 
-    explicit ComplexVariable(const std::string& variable_name,
-                             ValueRefBase<int>* int_ref1 = nullptr,
-                             ValueRefBase<int>* int_ref2 = nullptr,
-                             ValueRefBase<int>* int_ref3 = nullptr,
-                             ValueRefBase<std::string>* string_ref1 = nullptr,
-                             ValueRefBase<std::string>* string_ref2 = nullptr);
-
     ~ComplexVariable();
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
@@ -386,10 +379,6 @@ struct FO_COMMON_API StaticCast : public Variable<ToType>
                typename std::enable_if<
                std::is_convertible<T, std::unique_ptr<ValueRefBase<FromType>>>::value
                && !std::is_convertible<T, std::unique_ptr<Variable<FromType>>>::value>::type* = nullptr);
-
-    // StaticCast(Variable<FromType>* value_ref);
-
-    // StaticCast(ValueRefBase<FromType>* value_ref);
 
     ~StaticCast();
 
@@ -473,8 +462,6 @@ template <class FromType>
 struct FO_COMMON_API UserStringLookup : public Variable<std::string> {
     explicit UserStringLookup(std::unique_ptr<Variable<FromType>>&& value_ref);
     explicit UserStringLookup(std::unique_ptr<ValueRefBase<FromType>>&& value_ref);
-    explicit UserStringLookup(Variable<FromType>* value_ref);
-    explicit UserStringLookup(ValueRefBase<FromType>* value_ref);
     ~UserStringLookup();
 
     bool operator==(const ValueRefBase<std::string>& rhs) const override;
@@ -518,7 +505,6 @@ struct FO_COMMON_API NameLookup : public Variable<std::string> {
     };
 
     NameLookup(std::unique_ptr<ValueRefBase<int>>&& value_ref, LookupType lookup_type);
-    NameLookup(ValueRefBase<int>* value_ref, LookupType lookup_type);
     ~NameLookup();
 
     bool operator==(const ValueRefBase<std::string>& rhs) const override;
@@ -566,16 +552,11 @@ struct FO_COMMON_API Operation : public ValueRefBase<T>
     Operation(OpType op_type, std::unique_ptr<ValueRefBase<T>>&& operand1,
               std::unique_ptr<ValueRefBase<T>>&& operand2);
 
-    Operation(OpType op_type, ValueRefBase<T>* operand1,
-              ValueRefBase<T>* operand2);
-
     /** Unary operation ctor. */
     Operation(OpType op_type, std::unique_ptr<ValueRefBase<T>>&& operand);
 
-    Operation(OpType op_type, ValueRefBase<T>* operand);
     /* N-ary operation ctor. */
     Operation(OpType op_type, std::vector<std::unique_ptr<ValueRefBase<T>>>&& operands);
-    Operation(OpType op_type, const std::vector<ValueRefBase<T>*>& operands);
 
     ~Operation();
 
@@ -1276,21 +1257,6 @@ ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
 }
 
 template <class T>
-ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
-                                              ValueRefBase<int>* int_ref1,
-                                              ValueRefBase<int>* int_ref2,
-                                              ValueRefBase<int>* int_ref3,
-                                              ValueRefBase<std::string>* string_ref1,
-                                              ValueRefBase<std::string>* string_ref2) :
-    Variable<T>(NON_OBJECT_REFERENCE, std::vector<std::string>(1, variable_name)),
-    m_int_ref1(int_ref1),
-    m_int_ref2(int_ref2),
-    m_int_ref3(int_ref3),
-    m_string_ref1(string_ref1),
-    m_string_ref2(string_ref2)
-{}
-
-template <class T>
 ComplexVariable<T>::~ComplexVariable()
 {}
 
@@ -1532,15 +1498,6 @@ void ComplexVariable<T>::serialize(Archive& ar, const unsigned int version)
 ///////////////////////////////////////////////////////////
 // StaticCast                                            //
 ///////////////////////////////////////////////////////////
-    // template <typename T>
-    // StaticCast(T&& value_ref,
-    //            typename std::enable_if<std::is_convertible<T, std::unique_ptr<Variable<FromType>>>:value>:type* = nullptr);
-
-    // template <typename T>
-    // StaticCast(T&& value_ref,
-    //            typename std::enable_if<
-    //            std::is_convertible<T, std::unique_ptr<ValueRefBase<FromType>>>::value
-    //            && !std::is_convertible<T, std::unique_ptr<Variable<FromType>>>:value>:type* = nullptr);
 template <class FromType, class ToType>
 template <typename T>
 StaticCast<FromType, ToType>::StaticCast(
@@ -1560,18 +1517,6 @@ StaticCast<FromType, ToType>::StaticCast(
     Variable<ToType>(NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
 {}
-
-// template <class FromType, class ToType>
-// StaticCast<FromType, ToType>::StaticCast(Variable<FromType>* value_ref) :
-//     Variable<ToType>(value_ref->GetReferenceType(), value_ref->PropertyName()),
-//     m_value_ref(value_ref)
-// {}
-
-// template <class FromType, class ToType>
-// StaticCast<FromType, ToType>::StaticCast(ValueRefBase<FromType>* value_ref) :
-//     Variable<ToType>(NON_OBJECT_REFERENCE),
-//     m_value_ref(value_ref)
-// {}
 
 template <class FromType, class ToType>
 StaticCast<FromType, ToType>::~StaticCast()
@@ -1666,18 +1611,6 @@ template <class FromType>
 StringCast<FromType>::StringCast(std::unique_ptr<ValueRefBase<FromType>>&& value_ref) :
     Variable<std::string>(NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
-{}
-
-template <class FromType>
-StringCast<FromType>::StringCast(Variable<FromType>* value_ref) :
-    Variable<std::string>(value_ref->GetReferenceType(), value_ref->PropertyName()),
-    m_value_ref(value_ref)
-{}
-
-template <class FromType>
-StringCast<FromType>::StringCast(ValueRefBase<FromType>* value_ref) :
-    Variable<std::string>(NON_OBJECT_REFERENCE),
-    m_value_ref(value_ref)
 {}
 
 template <class FromType>
@@ -1790,18 +1723,6 @@ template <class FromType>
 UserStringLookup<FromType>::UserStringLookup(std::unique_ptr<ValueRefBase<FromType>>&& value_ref) :
     Variable<std::string>(NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
-{}
-
-template <class FromType>
-UserStringLookup<FromType>::UserStringLookup(Variable<FromType>* value_ref) :
-    Variable<std::string>(value_ref->GetReferenceType(), value_ref->PropertyName()),
-    m_value_ref(value_ref)
-{}
-
-template <class FromType>
-UserStringLookup<FromType>::UserStringLookup(ValueRefBase<FromType>* value_ref) :
-    Variable<std::string>(NON_OBJECT_REFERENCE),
-    m_value_ref(value_ref)
 {}
 
 template <class FromType>
@@ -1953,44 +1874,6 @@ Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRefBase
     m_op_type(op_type),
     m_operands(std::move(operands))
 {
-    DetermineIfConstantExpr();
-    CacheConstValue();
-}
-
-template <class T>
-Operation<T>::Operation(OpType op_type, ValueRefBase<T>* operand1, ValueRefBase<T>* operand2) :
-    m_op_type(op_type),
-    m_operands(),
-    m_cached_const_value(T())  // overritten below if operation is constant, not used if operation is not constant
-{
-    if (operand1)
-        m_operands.push_back(std::unique_ptr<ValueRefBase<T>>(operand1));
-    if (operand2)
-        m_operands.push_back(std::unique_ptr<ValueRefBase<T>>(operand2));
-    DetermineIfConstantExpr();
-    CacheConstValue();
-}
-
-template <class T>
-Operation<T>::Operation(OpType op_type, ValueRefBase<T>* operand) :
-    m_op_type(op_type),
-    m_operands(),
-    m_cached_const_value(T())  // overritten below if operation is constant, not used if operation is not constant
-{
-    if (operand)
-        m_operands.push_back(std::unique_ptr<ValueRefBase<T>>(operand));
-    DetermineIfConstantExpr();
-    CacheConstValue();
-}
-
-template <class T>
-Operation<T>::Operation(OpType op_type, const std::vector<ValueRefBase<T>*>& operands) :
-    m_op_type(op_type),
-    m_operands(),
-    m_cached_const_value(T())  // overritten below if operation is constant, not used if operation is not constant
-{
-    for (auto& op: operands)
-        m_operands.push_back(std::unique_ptr<ValueRefBase<T>>(op));
     DetermineIfConstantExpr();
     CacheConstValue();
 }
