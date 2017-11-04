@@ -575,7 +575,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
             ii, tr = pinfo.possible_output[INDUSTRY]
             ri, rr = pinfo.possible_output[RESEARCH]
             ci, cr = pinfo.current_output
-            research_penalty = (pinfo.current_focus != RESEARCH)
+            research_penalty = AIDependencies.FOCUS_CHANGE_PENALTY if (pinfo.current_focus != RESEARCH) else 0
             # calculate factor F at which ii + F * tr == ri + F * rr =====> F = ( ii-ri ) / (rr-tr)
             factor = (ii - ri) / max(0.01, rr - tr)  # don't let denominator be zero for planets where focus doesn't change RP
             planet = pinfo.planet
@@ -597,17 +597,38 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
 
                 pop = planet.currentMeterValue(fo.meterType.population)
                 t_pop = planet.currentMeterValue(fo.meterType.targetPopulation)
-                # let pop stabilize before trying to dither
+                # let pop stabilize before trying to dither; the calculations that determine whether dithering will be
+                # advantageous assume a stable population, so a larger gap means a less reliable decision
                 MAX_DITHER_POP_GAP = 5  # some smallish number
                 if pop < t_pop - MAX_DITHER_POP_GAP:
                     continue
 
-                # if gap between R-focus and I-focus target research levels is too narrow, no point in research dithering
-                # A gap of at least 3
-                if (rr - tr) < 3:
+                # if gap between R-focus and I-focus target research levels is too narrow, don't research dither.
+                # A gap of 1 would provide a single point of RP, at a cost of 3 PP; a gap of 2 the cost is 2.7 PP/RP;
+                # a gap of 3 at 2.1 PP/RP; a gap of 4, 1.8 PP/RP; a gap of 5, 1.7 PP/RP.  The bigger the gap, the
+                # better; a gap of 10 would provide RP at a cost of 1.3 PP/RP (or even less if the target PP gap
+                # were smaller).
+                MIN_DITHER_TARGET_RESEARCH_GAP = 3
+                if (rr - tr) < MIN_DITHER_TARGET_RESEARCH_GAP:
                     continue
 
-                if ((rr - cr) >= 1 + 2 * research_penalty) and ((cr - tr + 1 - research_penalty) >= (ii - ci)):
+                # could double check that planet even has Industry Focus available, but no harm even if not
+
+                # So at this point we have determined the planet has research targets compatible with employing focus
+                # dither.  The research focus phase will last until current research reaches the Research-Focus
+                # research target, determined by the 'research_capped' indicator, at which point the focus is
+                # changed to Industry (currently left to be handled by standard focus code later).  The research_capped
+                # indicator, though, is a spot indicator whose value under normal dither operation would revert on the
+                # next turn, so we need another indicator to maintain the focus change until the Industry meter has
+                # recovered to its max target level; the indicator to keep the research phase turned off needs to have
+                # some type of hysteresis component or otherwise be sensitive to the direction of meter change; in the
+                # indicator below this is accomplished primarily by comparing a difference of changes on both the
+                # research and industry side, the 'research_penalty' adjustment in the industry_recovery_phase
+                # calculation prevents the indicator from stopping recovery mode one turn too early.
+                research_capped = (rr - cr) <= 0.5
+                industry_recovery_phase = (ii - ci) - (cr - tr) > AIDependencies.FOCUS_CHANGE_PENALTY - research_penalty
+
+                if not (research_capped or industry_recovery_phase):
                     target_pp += ci - 1 - research_penalty
                     target_rp += cr + 1
                     focus_manager.bake_future_focus(pid, RESEARCH, False)
