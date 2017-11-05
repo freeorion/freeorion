@@ -137,7 +137,8 @@ namespace {
                           << " excess_here " << excess_here
                           << " new_contributions " << new_contributions;
         }
-        TraceLogger() << "stockpile_used " << stockpile_used;
+        TraceLogger() << "starting_stockpile " << starting_stockpile 
+                      << "  stockpile_used " << stockpile_used;
         return starting_stockpile + new_contributions - stockpile_used;
     }
 
@@ -1121,7 +1122,7 @@ void ProductionQueue::Update() {
     sim_time_start = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
     std::map<std::set<int>, float>  allocated_pp;
     float sim_available_stockpile = available_stockpile;
-    float sim_pp_in_stockpile = available_stockpile;
+    float sim_pp_in_stockpile = pp_in_stockpile;
     std::map<std::set<int>, float>  allocated_stockpile_pp;
     int dummy_int = 0;
 
