@@ -7,6 +7,8 @@
 #include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 #define DEBUG_PARSERS 0
 
@@ -18,16 +20,21 @@ namespace std {
 #endif
 
 namespace {
+    void insert_fleet_plan(
+        std::vector<std::unique_ptr<FleetPlan>>& plans,
+        const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
+        bool lookup_names)
+    {
+        plans.push_back(
+            boost::make_unique<FleetPlan>(
+                fleet_name, ship_design_names, lookup_names));
+    }
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_fleet_plan_, insert_fleet_plan, 4)
+
     using start_rule_payload = std::vector<std::unique_ptr<FleetPlan>>;
     using start_rule_signature = void(start_rule_payload&);
 
-    struct grammar : public parse::detail::grammar<
-        start_rule_signature,
-        boost::spirit::qi::locals<
-            std::vector<parse::detail::MovableEnvelope<FleetPlan>>
-            >
-        >
-    {
+    struct grammar : public parse::detail::grammar<start_rule_signature> {
         grammar(const parse::lexer& tok,
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
@@ -47,9 +54,6 @@ namespace {
             qi::_a_type _a;
             qi::_b_type _b;
             qi::_r1_type _r1;
-            qi::_pass_type _pass;
-            const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
-            const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             fleet_plan
                 =    tok.Fleet_
@@ -59,11 +63,11 @@ namespace {
                             ('[' > +tok.string [ push_back(_b, _1) ] > ']')
                         |    tok.string [ push_back(_b, _1) ]
                      )
-                [ push_back(_r1, construct_movable_(new_<FleetPlan>(_a, _b, phoenix::val(true)))) ]
+                [ insert_fleet_plan_(_r1, _a, _b, phoenix::val(true)) ]
                 ;
 
             start
-                =   (+fleet_plan(_a)) [_r1 = deconstruct_movable_(_a, _pass)];
+            =   (+fleet_plan(_r1));
 
             fleet_plan.name("Fleet");
 
@@ -74,20 +78,15 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
-        typedef parse::detail::rule<
-            void (std::vector<parse::detail::MovableEnvelope<FleetPlan>>&),
+        using  fleet_plan_rule = parse::detail::rule<
+            start_rule_signature,
             boost::spirit::qi::locals<
                 std::string,
                 std::vector<std::string>
-            >
-        > fleet_plan_rule;
-
-        using start_rule = parse::detail::rule<
-            start_rule_signature,
-            boost::spirit::qi::locals<
-                std::vector<parse::detail::MovableEnvelope<FleetPlan>>
                 >
             >;
+
+        using start_rule = parse::detail::rule<start_rule_signature>;
 
         parse::detail::Labeller labeller;
         fleet_plan_rule fleet_plan;
