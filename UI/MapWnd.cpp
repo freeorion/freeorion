@@ -239,7 +239,7 @@ namespace {
      * objects on the lane is compressed into the space between the apparent
      * ends of the lane, but is proportional to the distance of the actual
      * position along the lane. */
-    std::pair<double, double> ScreenPosOnStarane(double X, double Y, int lane_start_sys_id, int lane_end_sys_id, const LaneEndpoints& screen_lane_endpoints) {
+    boost::optional<std::pair<double, double>> ScreenPosOnStarane(double X, double Y, int lane_start_sys_id, int lane_end_sys_id, const LaneEndpoints& screen_lane_endpoints) {
         // get endpoints of lane in universe.  may be different because on-
         // screen lanes are drawn between system circles, not system centres
         int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -247,7 +247,7 @@ namespace {
         auto next = GetEmpireKnownObject(lane_end_sys_id, empire_id);
         if (!next || !prev) {
             ErrorLogger() << "ScreenPosOnStarane couldn't find next system " << lane_start_sys_id << " or prev system " << lane_end_sys_id;
-            return {UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION};
+            return boost::none;
         }
 
         // get fractional distance along lane that fleet's universe position is
@@ -860,13 +860,21 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
         auto start_xy = ScreenPosOnStarane(prev_node_x, prev_node_y, prev_sys_id, next_sys_id, lane_endpoints);
         auto end_xy =   ScreenPosOnStarane(node.x,      node.y,      prev_sys_id, next_sys_id, lane_endpoints);
 
+        if (!start_xy) {
+            ErrorLogger() << "System " << prev_sys_id << " has invalid screen coordinates.";
+            continue;
+        }
+        if (!end_xy) {
+            ErrorLogger() << "System " << next_sys_id << " has invalid screen coordinates.";
+            continue;
+        }
 
         // 3) Add points for line segment to list of Vertices
         bool b_flag = node.post_blockade;
         s_flag = s_flag || (calc_s_flag &&
             ((node.object_id != INVALID_OBJECT_ID) && unobstructed.find(node.object_id)==unobstructed.end()));
-        vertices.push_back(Vertex(start_xy.first,   start_xy.second,    prev_eta,   false,          b_flag, s_flag));
-        vertices.push_back(Vertex(end_xy.first,     end_xy.second,      node.eta,   node.turn_end,  b_flag, s_flag));
+        vertices.push_back(Vertex(start_xy->first,   start_xy->second,    prev_eta,   false,          b_flag, s_flag));
+        vertices.push_back(Vertex(end_xy->first,     end_xy->second,      node.eta,   node.turn_end,  b_flag, s_flag));
 
 
         // 4) prep for next iteration
@@ -4775,22 +4783,21 @@ void MapWnd::DoFleetButtonsLayout() {
             }
 
             auto button_pos = MovingFleetMapPositionOnLane(fleet);
-            if (button_pos == std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION))
-                continue;   // skip positioning flees for which problems occurred...
+            if (!button_pos)
+                continue;
 
             // position button
-            GG::Pt button_ul(button_pos.first  * ZoomFactor() - FLEET_BUTTON_SIZE.x / 2.0,
-                             button_pos.second * ZoomFactor() - FLEET_BUTTON_SIZE.y / 2.0);
+            GG::Pt button_ul(button_pos->first  * ZoomFactor() - FLEET_BUTTON_SIZE.x / 2.0,
+                             button_pos->second * ZoomFactor() - FLEET_BUTTON_SIZE.y / 2.0);
 
             fb->MoveTo(button_ul);
         }
     }
 }
 
-std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(std::shared_ptr<const Fleet> fleet) const {
-    if (!fleet) {
-        return {UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION};
-    }
+boost::optional<std::pair<double, double>> MapWnd::MovingFleetMapPositionOnLane(std::shared_ptr<const Fleet> fleet) const {
+    if (!fleet)
+        return boost::none;
 
     // get endpoints of lane on screen
     int sys1_id = fleet->PreviousSystemID();
@@ -4802,7 +4809,7 @@ std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(std::shared_ptr<c
         // couldn't find an entry for the lane this fleet is one, so just
         // return actual position of fleet on starlane - ignore the distance
         // away from the star centre at which starlane endpoints should appear
-        return {fleet->X(), fleet->Y()};
+        return std::make_pair(fleet->X(), fleet->Y());
     }
 
     // return apparent position of fleet on starlane
