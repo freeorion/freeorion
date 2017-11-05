@@ -28,7 +28,7 @@ install:
     fi
   - >
     if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      wget --output-document=FreeOrionSDK.dmg https://github.com/freeorion/freeorion-sdk/releases/download/v7/FreeOrionSDK_7_Clang-MacOSX-10.7-i386.dmg
+      wget --output-document=FreeOrionSDK.dmg https://github.com/freeorion/freeorion-sdk/releases/download/v8/FreeOrionSDK_8_Clang-MacOSX-10.9-x86_64.dmg
       hdiutil attach FreeOrionSDK.dmg
       tar -xjf /Volumes/FreeOrionSDK/dep.tar.bz2 -C Xcode
       hdiutil detach /Volumes/FreeOrionSDK
