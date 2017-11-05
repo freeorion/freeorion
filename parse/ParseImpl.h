@@ -42,15 +42,6 @@ namespace parse { namespace detail {
         }
     };
 
-    /// A functor to insert a \p value with key \p key into \p map.
-    struct insert {
-        typedef void result_type;
-
-        template <typename Map, typename Value>
-        result_type operator() (Map& map, const std::string& key, Value* value) const
-        { map.insert(std::make_pair(key, value)); }
-    };
-
     template <
         typename signature = boost::spirit::qi::unused_type,
         typename locals = boost::spirit::qi::unused_type
