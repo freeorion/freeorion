@@ -568,7 +568,7 @@
 		34ACA40C0FFFABE600500F40 /* main.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = main.xib; sourceTree = "<group>"; };
 		34ACA4BE0FFFD2DB00500F40 /* chmain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = chmain.mm; sourceTree = "<group>"; };
 		34ACA4C50FFFD50100500F40 /* chmain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chmain.h; sourceTree = "<group>"; };
-		34B9EBEE0F5E1F7F005BF6A4 /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Config.h; path = dep/include/GG/Config.h; sourceTree = "<group>"; };
+		34B9EBEE0F5E1F7F005BF6A4 /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
 		34BAB0BE0FC5CD7300EF792E /* DefaultFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultFont.h; sourceTree = "<group>"; };
 		34BAB0C20FC5CDC400EF792E /* FontFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontFwd.h; sourceTree = "<group>"; };
 		34BAB0C30FC5CDC400EF792E /* MultiEditFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiEditFwd.h; sourceTree = "<group>"; };
@@ -1255,7 +1255,6 @@
 			isa = PBXGroup;
 			children = (
 				471D59B00A988A2A00DA9C21 /* FreeOrion */,
-				34B9EBEE0F5E1F7F005BF6A4 /* Config.h */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -1334,6 +1333,7 @@
 		4710233E0CEF3AAB00A7DF2B /* GG */ = {
 			isa = PBXGroup;
 			children = (
+				34B9EBEE0F5E1F7F005BF6A4 /* Config.h */,
 				4710233F0CEF3AAB00A7DF2B /* AlignmentFlags.h */,
 				471023400CEF3AAB00A7DF2B /* Base.h */,
 				471023410CEF3AAB00A7DF2B /* BrowseInfoWnd.h */,
