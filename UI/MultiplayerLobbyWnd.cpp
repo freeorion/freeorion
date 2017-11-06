@@ -159,19 +159,40 @@ namespace {
                     Select(0);
                 } else {
                     // For human players on host, have "Player", "Observer", and "Drop" options.  TODO: have "Ban" option.
-                    Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::CLIENT_TYPE_HUMAN_PLAYER));   // "Human" display / option
-                    Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::CLIENT_TYPE_HUMAN_OBSERVER)); // "Observer" display / option
-                    Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::CLIENT_TYPE_HUMAN_MODERATOR));// "Moderator" display / option
+                    int row_player_type = -1;
+                    int row_observer_type = -1;
+                    int row_moderator_type = -1;
+                    int row_number = 0;
+                    if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
+                        ClientApp::GetApp()->Networking().HasAuthRole(Networking::ROLE_PLAYER))
+                    {
+                        Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::CLIENT_TYPE_HUMAN_PLAYER));   // "Human" display / option
+                        row_player_type = (row_number++);
+                    }
+
+                    if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+                        ClientApp::GetApp()->Networking().HasAuthRole(Networking::ROLE_OBSERVER))
+                    {
+                        Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::CLIENT_TYPE_HUMAN_OBSERVER)); // "Observer" display / option
+                        row_observer_type = (row_number++);
+                    }
+
+                    if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR ||
+                        ClientApp::GetApp()->Networking().HasAuthRole(Networking::ROLE_MODERATOR))
+                    {
+                        Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::CLIENT_TYPE_HUMAN_MODERATOR));// "Moderator" display / option
+                        row_moderator_type = (row_number++);
+                    }
                     Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::INVALID_CLIENT_TYPE, true));  // "Drop" option
 
                     if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
-                        Select(0);
+                        Select(row_player_type);
                     else if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
-                        Select(1);
+                        Select(row_observer_type);
                     else if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
-                        Select(2);
+                        Select(row_moderator_type);
                     else
-                        Select(3);
+                        Select(row_number);
                 }
             } else {
                 if (disabled) {
