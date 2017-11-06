@@ -14,6 +14,8 @@ class Message;
 
 namespace Networking {
     class AuthRoles;
+
+    enum RoleType : size_t;
 }
 
 /** Encapsulates the networking facilities of the client.  The client must
@@ -62,6 +64,9 @@ public:
 
     /** Returns whether the indicated player ID is the host. */
     bool PlayerIsHost(int player_id) const;
+
+    /** Checks if the client has some authorization \a role. */
+    bool HasAuthRole(Networking::RoleType role) const;
     //@}
 
     /** \name Mutators */ //@{

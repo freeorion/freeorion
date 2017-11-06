@@ -164,6 +164,9 @@ public:
 
     /** Returns whether the indicated player ID is the host. */
     bool PlayerIsHost(int player_id) const;
+
+    /** Checks if the client has some authorization \a role. */
+    bool HasAuthRole(Networking::RoleType role) const;
     //@}
 
     /** \name Mutators */ //@{
@@ -287,6 +290,10 @@ bool ClientNetworking::Impl::PlayerIsHost(int player_id) const {
     if (player_id == Networking::INVALID_PLAYER_ID)
         return false;
     return player_id == m_host_player_id;
+}
+
+bool ClientNetworking::Impl::HasAuthRole(Networking::RoleType role) const {
+    return m_roles.HasRole(role);
 }
 
 ClientNetworking::ServerNames ClientNetworking::Impl::DiscoverLANServerNames() {
@@ -660,6 +667,9 @@ int ClientNetworking::HostPlayerID() const
 
 bool ClientNetworking::PlayerIsHost(int player_id) const
 { return m_impl->PlayerIsHost(player_id); }
+
+bool ClientNetworking::HasAuthRole(Networking::RoleType role) const
+{ return m_impl->HasAuthRole(role); }
 
 ClientNetworking::ServerNames ClientNetworking::DiscoverLANServerNames()
 { return m_impl->DiscoverLANServerNames(); }

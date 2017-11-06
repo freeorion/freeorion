@@ -68,7 +68,7 @@ private:
     void            SendUpdate();
     bool            PlayerDataAcceptable() const;
     bool            CanStart() const;
-    bool            ThisClientIsHost() const;
+    bool            HasAuthRole(Networking::RoleType role) const;
     void            ReadyClicked();
     void            CancelClicked();
     void            AnyCanEdit(bool checked);
