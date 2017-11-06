@@ -24,3 +24,11 @@ Statistic name = "PLANETS_DEPOPULATED" value =
 
 Statistic name = "PLANETS_INVADED" value =
     SpeciesPlanetsInvaded empire = Source.Owner
+
+Statistic name = "TOTAL_POPULATION_STAT"
+    value = Statistic Sum
+        value = LocalCandidate.Population
+    condition = And [
+        PopulationCenter
+        OwnedBy empire = Source.Owner
+    ]
