@@ -12,6 +12,10 @@
 
 class Message;
 
+namespace Networking {
+    class AuthRoles;
+}
+
 /** Encapsulates the networking facilities of the client.  The client must
     execute its networking code in a separate thread from its main processing
     thread, for UI and networking responsiveness.
@@ -100,6 +104,9 @@ public:
 
     /** Sets Host player ID. */
     void SetHostPlayerID(int host_player_id);
+
+    /** Access to client's authorization roles */
+    Networking::AuthRoles& AuthorizationRoles();
     //@}
 
 private:

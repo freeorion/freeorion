@@ -100,7 +100,8 @@ public:
         CHECKSUM,               ///< sent by host to clients to specify what the parsed content checksum values should be
         AUTH_REQUEST,           ///< sent by server to client if choosed player_name require authentiation
         AUTH_RESPONSE,          ///< sent by client to server to provide password or other credentials
-        CHAT_HISTORY            ///< sent by server to client to show previous messages
+        CHAT_HISTORY,           ///< sent by server to client to show previous messages
+        SET_AUTH_ROLES          ///< sent by server to client to set authorization roles
     )
 
     GG_CLASS_ENUM(TurnProgressPhase,
@@ -352,6 +353,9 @@ FO_COMMON_API Message AuthRequestMessage(const std::string& player_name, const s
 /** creates a AUTH_RESPONSE message containing \a player_name to login and \a auth credentials. */
 FO_COMMON_API Message AuthResponseMessage(const std::string& player_name, const std::string& auth);
 
+/** notifies client about changes in his authorization \a roles. */
+FO_COMMON_API Message SetAuthorizationRolesMessage(const Networking::AuthRoles& roles);
+
 ////////////////////////////////////////////////
 // Message data extractors
 ////////////////////////////////////////////////
@@ -429,5 +433,7 @@ FO_COMMON_API void ExtractContentCheckSumMessageData(const Message& msg, std::ma
 FO_COMMON_API void ExtractAuthRequestMessageData(const Message& msg, std::string& player_name, std::string& auth);
 
 FO_COMMON_API void ExtractAuthResponseMessageData(const Message& msg, std::string& player_name, std::string& auth);
+
+FO_COMMON_API void ExtractSetAuthorizationRolesMessage(const Message &msg, Networking::AuthRoles& roles);
 
 #endif // _Message_h_

@@ -322,6 +322,13 @@ sc::result Idle::react(const HostMPGame& msg) {
         player_connection->SendMessage(ContentCheckSumMessage());
 
     DebugLogger(FSM) << "Idle::react(HostMPGame) about to send acknowledgement to host";
+    player_connection->SetAuthRoles({
+                    Networking::ROLE_HOST,
+                    Networking::ROLE_MODERATOR,
+                    Networking::ROLE_PLAYER,
+                    Networking::ROLE_OBSERVER,
+                    Networking::ROLE_GALAXY_SETUP
+                    });
     player_connection->SendMessage(HostMPAckMessage(host_player_id));
 
     server.m_single_player_game = false;
@@ -362,6 +369,13 @@ sc::result Idle::react(const HostSPGame& msg) {
     server.m_networking.SetHostPlayerID(host_player_id);
     if (!GetOptionsDB().Get<bool>("skip-checksum"))
         player_connection->SendMessage(ContentCheckSumMessage());
+    player_connection->SetAuthRoles({
+                    Networking::ROLE_HOST,
+                    Networking::ROLE_MODERATOR,
+                    Networking::ROLE_PLAYER,
+                    Networking::ROLE_OBSERVER,
+                    Networking::ROLE_GALAXY_SETUP
+                    });
     player_connection->SendMessage(HostSPAckMessage(host_player_id));
 
     server.m_single_player_game = true;
@@ -468,6 +482,13 @@ MPLobby::MPLobby(my_context c) :
                     player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
 
                 m_lobby_data->m_players.push_back(std::make_pair(player_id, player_setup_data));
+
+                player_connection->SetAuthRoles({
+                                Networking::ROLE_MODERATOR,
+                                Networking::ROLE_PLAYER,
+                                Networking::ROLE_OBSERVER,
+                                Networking::ROLE_GALAXY_SETUP
+                                });
             } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
                 if (m_ai_next_index <= GetOptionsDB().Get<int>("mplobby-max-ai") || GetOptionsDB().Get<int>("mplobby-max-ai") < 0) {
                     PlayerSetupData player_setup_data;
@@ -661,6 +682,16 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
 
     TestHumanPlayers();
 
+    player_connection->SetAuthRoles({
+                    Networking::ROLE_MODERATOR,
+                    Networking::ROLE_PLAYER,
+                    Networking::ROLE_OBSERVER
+                    });
+
+    if (m_lobby_data->m_any_can_edit) {
+        player_connection->SetAuthRole(Networking::ROLE_GALAXY_SETUP);
+    }
+
     for (auto it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
     { (*it)->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data)); }
@@ -794,14 +825,22 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     // save files, save game empire data from the save file, player data)
     // during this copying and is updated below from the save file(s)
 
-    if (server.m_networking.PlayerIsHost(sender->PlayerID())) {
+    if (sender->HasAuthRole(Networking::ROLE_HOST)) {
         if (m_lobby_data->m_any_can_edit != incoming_lobby_data.m_any_can_edit) {
             has_important_changes = true;
             m_lobby_data->m_any_can_edit = incoming_lobby_data.m_any_can_edit;
+
+            // change role ROLE_GALAXY_SETUP for all non-host players
+            for (const auto& player_connection : server.Networking()) {
+                if (!player_connection->HasAuthRole(Networking::ROLE_HOST)) {
+                    player_connection->SetAuthRole(Networking::ROLE_GALAXY_SETUP,
+                                                   m_lobby_data->m_any_can_edit);
+                }
+            }
         }
     }
 
-    if (server.m_networking.PlayerIsHost(sender->PlayerID()) || m_lobby_data->m_any_can_edit) {
+    if (sender->HasAuthRole(Networking::ROLE_GALAXY_SETUP)) {
 
         DebugLogger(FSM) << "Get message from host or allowed player.";
 

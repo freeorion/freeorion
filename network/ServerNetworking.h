@@ -194,6 +194,9 @@ public:
 
     /** Checks if the player was authenticated. */
     bool IsAuthenticated() const;
+
+    /** Checks if the player has a some role */
+    bool HasAuthRole(Networking::RoleType role) const;
     //@}
 
     /** \name Mutators */ //@{
@@ -218,6 +221,12 @@ public:
 
     /** Sets authenticated status for connection. */
     void SetAuthenticated();
+
+    /** Sets authorization roles and send message to client. */
+    void SetAuthRoles(const std::initializer_list<Networking::RoleType>& roles);
+
+    /** Sets or unset authorizaion role and send message to client. */
+    void SetAuthRole(Networking::RoleType role, bool value = true);
     //@}
 
     mutable boost::signals2::signal<void (const NullaryFn&)> EventSignal;
@@ -247,6 +256,7 @@ private:
     Networking::ClientType          m_client_type;
     std::string                     m_client_version_string;
     bool                            m_authenticated;
+    Networking::AuthRoles           m_roles;
 
     MessageAndConnectionFn          m_nonplayer_message_callback;
     MessageAndConnectionFn          m_player_message_callback;

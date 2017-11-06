@@ -203,6 +203,9 @@ public:
 
     /** Sets Host player ID. */
     void SetHostPlayerID(int host_player_id);
+
+    /** Get authorization roles access. */
+    Networking::AuthRoles& AuthorizationRoles();
     //@}
 
 private:
@@ -223,6 +226,7 @@ private:
 
     int                             m_player_id;
     int                             m_host_player_id;
+    Networking::AuthRoles           m_roles;
 
     boost::asio::io_service         m_io_service;
     boost::asio::ip::tcp::socket    m_socket;
@@ -426,6 +430,9 @@ void ClientNetworking::Impl::SetPlayerID(int player_id) {
 
 void ClientNetworking::Impl::SetHostPlayerID(int host_player_id)
 { m_host_player_id = host_player_id; }
+
+Networking::AuthRoles& ClientNetworking::Impl::AuthorizationRoles()
+{ return m_roles; }
 
 void ClientNetworking::Impl::SendMessage(const Message& message) {
     if (!IsTxConnected()) {
@@ -683,6 +690,9 @@ void ClientNetworking::SetPlayerID(int player_id)
 
 void ClientNetworking::SetHostPlayerID(int host_player_id)
 { return m_impl->SetHostPlayerID(host_player_id); }
+
+Networking::AuthRoles& ClientNetworking::AuthorizationRoles()
+{ return m_impl->AuthorizationRoles(); }
 
 void ClientNetworking::SendMessage(const Message& message)
 { return m_impl->SendMessage(message); }

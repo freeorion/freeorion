@@ -665,6 +665,10 @@ Message AuthResponseMessage(const std::string& player_name, const std::string& a
     return Message(Message::AUTH_RESPONSE, os.str());
 }
 
+Message SetAuthorizationRolesMessage(const Networking::AuthRoles& roles) {
+    return Message(Message::SET_AUTH_ROLES, roles.Text());
+}
+
 ////////////////////////////////////////////////
 // Message data extractors
 ////////////////////////////////////////////////
@@ -1251,4 +1255,8 @@ void ExtractAuthResponseMessageData(const Message& msg, std::string& player_name
                       << "Error: " << err.what();
         throw err;
     }
+}
+
+void ExtractSetAuthorizationRolesMessage(const Message &msg, Networking::AuthRoles& roles) {
+    roles.SetText(msg.Text());
 }
