@@ -27,7 +27,7 @@ Statistic name = "PLANETS_INVADED" value =
 
 Statistic name = "TOTAL_POPULATION_STAT"
     value = Statistic Sum
-        value = Source.Population
+        value = LocalCandidate.Population
     condition = And [
         PopulationCenter
         OwnedBy empire = Source.Owner
