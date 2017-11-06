@@ -2432,7 +2432,7 @@ namespace {
 
         namespace fs = boost::filesystem;
         // Cache searches through the planet_environments directory
-        static std::unordered_map<PlanetType, std::vector<std::string>> filenames_by_type;
+        static std::unordered_map<int, std::vector<std::string>> filenames_by_type;
         // Only search once per execution
         if (!filenames_by_type.count(type)) {
             fs::directory_iterator end_it;
