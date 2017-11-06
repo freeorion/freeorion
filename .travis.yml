@@ -38,8 +38,7 @@ install:
     fi
   - >
     if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      cmake --version
-      brew unlink cmake
+      brew update # Circumvent Ruby runtime error ; see travis-ci/travis-ci#8552
       brew install cmake
       wget --output-document=FreeOrionSDK.dmg https://github.com/freeorion/freeorion-sdk/releases/download/v8/FreeOrionSDK_8_Clang-MacOSX-10.9-x86_64.dmg
       hdiutil attach FreeOrionSDK.dmg
