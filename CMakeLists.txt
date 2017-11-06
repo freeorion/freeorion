@@ -32,7 +32,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(BUILD_SHARED_LIBS "Build project as shared libraries." ON)
 option(BUILD_TESTING "Build the testing tree." OFF)
-option(FO_LINK_STATIC_BOOST_LIBS "Link static boost libraries." ${APPLE})
 option(BUILD_HEADLESS "Build only headless components: server and AI." OFF)
 
 if(BUILD_TESTING)
@@ -211,10 +210,9 @@ set_property(DIRECTORY APPEND
         # http://www.boost.org/doc/libs/1_59_0/boost/iostreams/detail/config/zlib.hpp
         $<$<PLATFORM_ID:Windows>:BOOST_ZLIB_BINARY=zlib.lib>
 
-        # Link all boost libraries dynamically unless the user requests
-        # otherwise.
+        # Link all boost libraries dynamically
         # http://www.boost.org/doc/libs/1_59_0/libs/config/doc/html/index.html#boost_config.configuring_boost_for_your_platform.user_settable_options
-        $<$<NOT:$<BOOL:${FO_LINK_STATIC_BOOST_LIBS}>>:BOOST_ALL_DYN_LINK>
+        BOOST_ALL_DYN_LINK
 
         # with boost 1.61 some boost::optional internals were changed. However
         # boost::spirit relies on some API the old implementation provided.
