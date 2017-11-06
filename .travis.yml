@@ -38,6 +38,7 @@ install:
     fi
   - >
     if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      cmake --version
       brew update # Circumvent Ruby runtime error ; see travis-ci/travis-ci#8552
       brew unlink cmake
       brew install cmake
