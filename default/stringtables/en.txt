@@ -7592,7 +7592,7 @@ World Tree
 WORLDTREE_SPECIAL_DESC
 '''Increases [[metertype METER_SUPPLY]] by +1, [[metertype METER_DETECTION]] by +10, max Population by +1, and [[metertype METER_HAPPINESS]] on the planet that has the special by +5. Increases [[metertype METER_HAPPINESS]] on all other planets owned by the same empire by +1.
 
-A gigantic tree has grown so large that its crown has left the atmosphere of the planet. Scientists suspect that it has been planted by the Caretakers in ancient times.'''
+A gigantic tree has grown so large that its crown has left the atmosphere of the planet. Scientists suspect that it was planted by the Caretakers in ancient times.'''
 
 ANCIENT_RUINS_DEPLETED_SPECIAL
 Ancient Ruins (Excavated)
@@ -10272,7 +10272,7 @@ N-Dimensional Structures
 CON_NDIM_STRC_DESC
 '''Increases Population capacity by planet size on all habitable planets: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
 
-Also increases target [[metertype METER_CONSTRUCTION]] by 10 on populated.
+Also increases target [[metertype METER_CONSTRUCTION]] by 10 on populated planets.
 
 The primary limiting factors on a planets population capacity are environmental desirability and space. By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.
 
