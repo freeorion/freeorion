@@ -35,6 +35,7 @@ namespace parse { namespace detail {
         qi::_pass_type _pass;
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
+        const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
 
         using phoenix::new_;
         using phoenix::construct;
@@ -55,7 +56,7 @@ namespace parse { namespace detail {
                     deconstruct_movable_(_a, _pass),
                     deconstruct_movable_(_b, _pass),
                     deconstruct_movable_(_c, _pass),
-                    deconstruct_movable_(_d, _pass))) ]
+                    deconstruct_movable_vector_(_d, _pass))) ]
             ;
 
         create_building
@@ -71,7 +72,7 @@ namespace parse { namespace detail {
                 ) [ _val = construct_movable_(new_<Effect::CreateBuilding>(
                     deconstruct_movable_(_a, _pass),
                     deconstruct_movable_(_b, _pass),
-                    deconstruct_movable_(_c, _pass))) ]
+                    deconstruct_movable_vector_(_c, _pass))) ]
             ;
 
         create_ship_1
@@ -92,7 +93,7 @@ namespace parse { namespace detail {
                     deconstruct_movable_(_c, _pass),
                     deconstruct_movable_(_d, _pass),
                     deconstruct_movable_(_e, _pass),
-                    deconstruct_movable_(_f, _pass))) ]
+                    deconstruct_movable_vector_(_f, _pass))) ]
             ;
 
         create_ship_2
@@ -113,7 +114,7 @@ namespace parse { namespace detail {
                     deconstruct_movable_(_c, _pass),
                     deconstruct_movable_(_d, _pass),
                     deconstruct_movable_(_e, _pass),
-                    deconstruct_movable_(_f, _pass))) ]
+                    deconstruct_movable_vector_(_f, _pass))) ]
             ;
 
         create_field_1
@@ -134,7 +135,7 @@ namespace parse { namespace detail {
                     deconstruct_movable_(_a, _pass),
                     deconstruct_movable_(_b, _pass),
                     deconstruct_movable_(_d, _pass),
-                    deconstruct_movable_(_f, _pass))) ]
+                    deconstruct_movable_vector_(_f, _pass))) ]
             ;
 
         create_field_2
@@ -159,7 +160,7 @@ namespace parse { namespace detail {
                     deconstruct_movable_(_c, _pass),
                     deconstruct_movable_(_e, _pass),
                     deconstruct_movable_(_d, _pass),
-                    deconstruct_movable_(_f, _pass))) ]
+                    deconstruct_movable_vector_(_f, _pass))) ]
             ;
 
         create_system_1
@@ -182,7 +183,7 @@ namespace parse { namespace detail {
                     deconstruct_movable_(_b, _pass),
                     deconstruct_movable_(_c, _pass),
                     deconstruct_movable_(_d, _pass),
-                    deconstruct_movable_(_e, _pass))) ]
+                    deconstruct_movable_vector_(_e, _pass))) ]
             ;
 
         create_system_2
@@ -203,7 +204,7 @@ namespace parse { namespace detail {
                     deconstruct_movable_(_b, _pass),
                     deconstruct_movable_(_c, _pass),
                     deconstruct_movable_(_d, _pass),
-                    deconstruct_movable_(_e, _pass))) ]
+                    deconstruct_movable_vector_(_e, _pass))) ]
             ;
 
         start

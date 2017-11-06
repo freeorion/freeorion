@@ -27,6 +27,7 @@ namespace parse {
         qi::_pass_type _pass;
         const boost::phoenix::function<detail::construct_movable> construct_movable_;
         const boost::phoenix::function<detail::deconstruct_movable> deconstruct_movable_;
+        const boost::phoenix::function<parse::detail::deconstruct_movable_vector> deconstruct_movable_vector_;
 
         const std::string TOK_CURRENT_CONTENT{"CurrentContent"};
 
@@ -78,7 +79,7 @@ namespace parse {
                     )
                     > ( '('  >   expr [ push_back(_d, _1) ]
                         > *(','  >   expr [ push_back(_d, _1) ] ) > ')' )
-                    [ _val = construct_movable_(new_<ValueRef::Operation<std::string>>(_c, deconstruct_movable_(_d, _pass))) ]
+                    [ _val = construct_movable_(new_<ValueRef::Operation<std::string>>(_c, deconstruct_movable_vector_(_d, _pass))) ]
                 )
                 |   (
                     tok.UserString_ >   ('(' > expr > ')')
@@ -102,7 +103,7 @@ namespace parse {
                 |   (
                     function_expr [ push_back(_d, _1) ]     // template string
                     >>+('%' >   function_expr [ push_back(_d, _1) ] )   // must have at least one sub-string
-                    [ _val = construct_movable_(new_<ValueRef::Operation<std::string>>(ValueRef::SUBSTITUTION, deconstruct_movable_(_d, _pass))) ]
+                    [ _val = construct_movable_(new_<ValueRef::Operation<std::string>>(ValueRef::SUBSTITUTION, deconstruct_movable_vector_(_d, _pass))) ]
                 )
                 |   (
                     function_expr [ _val = _1 ]

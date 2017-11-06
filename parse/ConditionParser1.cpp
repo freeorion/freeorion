@@ -34,6 +34,7 @@ namespace parse { namespace detail {
         qi::_pass_type _pass;
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
+        const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
 
         using phoenix::new_;
         using phoenix::construct;
@@ -130,13 +131,13 @@ namespace parse { namespace detail {
         and_
             =   tok.And_
             >   '[' > +condition_parser [ push_back(_a, _1) ] > lit(']')
-            [ _val = construct_movable_(new_<Condition::And>(deconstruct_movable_(_a, _pass))) ]
+            [ _val = construct_movable_(new_<Condition::And>(deconstruct_movable_vector_(_a, _pass))) ]
             ;
 
         or_
             =   tok.Or_
             >   '[' > +condition_parser [ push_back(_a, _1) ] > lit(']')
-            [ _val = construct_movable_(new_<Condition::Or>(deconstruct_movable_(_a, _pass))) ]
+            [ _val = construct_movable_(new_<Condition::Or>(deconstruct_movable_vector_(_a, _pass))) ]
             ;
 
         not_

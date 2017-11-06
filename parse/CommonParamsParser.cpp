@@ -66,6 +66,7 @@ namespace parse { namespace detail {
         qi::_pass_type _pass;
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
+        const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
 
         producible
             =   tok.Unproducible_ [ _val = false ]
@@ -117,7 +118,7 @@ namespace parse { namespace detail {
                     deconstruct_movable_(_b, _pass),
                     _c, _d,
                     deconstruct_movable_(_e, _pass),
-                    deconstruct_movable_(_f, _pass),
+                    deconstruct_movable_vector_(_f, _pass),
                     phoenix::bind(&parse::detail::OpenConsumptionEnvelopes<MeterType>, _g, _pass),
                     phoenix::bind(&parse::detail::OpenConsumptionEnvelopes<std::string>, _h, _pass),
                     deconstruct_movable_(_i, _pass))) ]

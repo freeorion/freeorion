@@ -35,6 +35,7 @@ namespace parse { namespace detail {
         qi::_pass_type _pass;
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
+        const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
 
         using phoenix::new_;
         using phoenix::push_back;
@@ -65,7 +66,7 @@ namespace parse { namespace detail {
                 ('[' > +star_type_rules.expr [ push_back(_a, _1) ] > ']')
                 |    star_type_rules.expr [ push_back(_a, _1) ]
             )
-            [ _val = construct_movable_(new_<Condition::StarType>(deconstruct_movable_(_a, _pass))) ]
+            [ _val = construct_movable_(new_<Condition::StarType>(deconstruct_movable_vector_(_a, _pass))) ]
             ;
 
         location

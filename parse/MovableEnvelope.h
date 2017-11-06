@@ -1,13 +1,6 @@
 #ifndef _MovableEnvelope_h_
 #define _MovableEnvelope_h_
 
-// defining BOOST_RESULT_OF_USE_TR1 1 forces compilers with full decltype
-// support to use boost::result_of<T> for deconstruct_movable in order to
-// ensure all compilers use the boost::result_of<T>.  All of the
-// boost::result_of<T> framework can be removed when all supported compilers
-// provide full decltype support.
-#define  BOOST_RESULT_OF_USE_TR1_WITH_DECLTYPE_FALLBACK 1
-
 #include "../util/Logger.h"
 
 #include <boost/spirit/include/support_argument.hpp>
@@ -237,43 +230,44 @@ namespace parse { namespace detail {
         return std::move(retval);
     }
 
-    /* deconstructed_type is only used to workaround compilers without robust
-       decltype support. */
-    template <typename T> struct deconstructed_type;
 
-    template <typename T>
-    struct deconstructed_type<MovableEnvelope<T>> {
-        using type = std::unique_ptr<T>;
-    };
-    template <typename T>
-    struct deconstructed_type<std::vector<MovableEnvelope<T>>> {
-        using type = std::vector<std::unique_ptr<T>>;
-    };
-    template <typename T>
-    struct deconstructed_type<std::vector<std::pair<std::string, MovableEnvelope<T>>>> {
-        using type = std::vector<std::pair<std::string, std::unique_ptr<T>>>;
-    };
+    /**
+       Note: This simpler to use version of deconstruct_movable works with clang
+       version 4.0.1 and gcc version 7.2.1 with boost 1.63. It does not work
+       with clang 3.6.0 or gcc 4.8.4 or MSVC2015, with boost 1.58 on the
+       continuous integration servers.  It is because of improved support for
+       decltype in the newer compilers.
 
-    /** \p deconstruct_movable is a functor that extracts the unique_ptr from a
+       When the project moves the required versions past these versions this
+       simpler, more uniform code could be adopted.
+
+    / ** \p deconstruct_movable is a functor that extracts the unique_ptr from a
         MovableEnvelope<T>.  This is a one time operation that empties the
         MovableEnvelope<T>.  It is typically done while calling the constructor
-        from outside of boost::spirit that expects a unique_ptr<T>*/
+        from outside of boost::spirit that expects a unique_ptr<T> */
+    class deconstruct_movable_simple_version_that_works_gcc7p2p1_and_clang4p0p1 {
+    public:
+        template <typename T>
+        std::unique_ptr<T> operator() (const MovableEnvelope<T>& obj, bool& pass) const
+        { return obj.OpenEnvelope(pass); }
+
+        template <typename T>
+        std::vector<std::unique_ptr<T>> operator() (const std::vector<MovableEnvelope<T>>& objs, bool& pass) const
+        { return OpenEnvelopes(objs, pass); }
+
+        template <typename T>
+        std::vector<std::pair<std::string, std::unique_ptr<T>>> operator() (
+            const std::vector<std::pair<std::string, MovableEnvelope<T>>>& objs, bool& pass)
+        { return OpenEnvelopes(objs, pass); }
+    };
+
     class deconstruct_movable {
     public:
-        /** Note: The definition of result and the dependent definitions
-           satisfy the boost::result_of framework for compilers with less
-           robust decltype support.  Once all supported compilers provide full
-           decltype support, it can be removed. leaving only the operator() members. */
         template <typename> struct result;
 
-        template <typename F, typename MovableEnvelope_T, typename Pass>
-        struct result<F(MovableEnvelope_T&, Pass&)> {
-            using type = typename deconstructed_type<typename std::decay<MovableEnvelope_T>::type>::type;
-        };
-
-        template <typename F, typename MovableEnvelope_T, typename Pass>
-        struct result<const F(MovableEnvelope_T&, Pass&)> {
-            using type = typename deconstructed_type<typename std::decay<MovableEnvelope_T>::type>::type;
+        template <typename F, typename MovableEnvelope_T, typename Bool>
+        struct result<F(MovableEnvelope_T, Bool)> {
+            using type = std::unique_ptr<typename std::decay<MovableEnvelope_T>::type::enveloped_type>;
         };
 
         template <typename T>
@@ -285,6 +279,27 @@ namespace parse { namespace detail {
 
         template <typename T>
         typename result<const deconstruct_movable(
+            const MovableEnvelope<T>&,     bool&)>::type operator()
+        (
+            const MovableEnvelope<T>& obj, const bool& pass) const
+        {
+            // Note: this ignores the constness of pass because older compilers
+            // pass the incorrect constness.
+            return obj.OpenEnvelope(pass);
+        }
+    };
+
+    class deconstruct_movable_vector {
+    public:
+        template <typename> struct result;
+
+        template <typename F, typename MovableEnvelope_T, typename Bool>
+        struct result<F(MovableEnvelope_T, Bool)> {
+            using type = std::vector<std::unique_ptr<typename std::decay<MovableEnvelope_T>::type::value_type::enveloped_type>>;
+        };
+
+        template <typename T>
+        typename result<const deconstruct_movable(
             const std::vector<MovableEnvelope<T>>&,      bool&)>::type operator()
         (
             const std::vector<MovableEnvelope<T>>& objs, bool& pass) const
@@ -292,10 +307,45 @@ namespace parse { namespace detail {
 
         template <typename T>
         typename result<const deconstruct_movable(
+            const std::vector<MovableEnvelope<T>>&,            bool&)>::type operator()
+        (
+            const std::vector<MovableEnvelope<T>>& objs, const bool& pass) const
+        {
+            // Note: this ignores the constness of pass because older compilers
+            // pass the incorrect constness.
+            return OpenEnvelopes(objs, pass);
+        }
+    };
+
+
+    class deconstruct_movable_vector_pair {
+    public:
+        template <typename> struct result;
+
+        template <typename F, typename MovableEnvelope_T, typename Bool>
+        struct result<F(MovableEnvelope_T, Bool)> {
+            using type = std::vector<
+                std::pair<std::string,
+                          std::unique_ptr<typename std::decay<MovableEnvelope_T>::type::value_type::second_type::enveloped_type>>>;
+        };
+
+        template <typename T>
+        typename result<const deconstruct_movable(
             const std::vector<std::pair<std::string, MovableEnvelope<T>>>&,      bool&)>::type operator()
         (
             const std::vector<std::pair<std::string, MovableEnvelope<T>>>& objs, bool& pass) const
         { return OpenEnvelopes(objs, pass); }
+
+        template <typename T>
+        typename result<const deconstruct_movable(
+            const std::vector<std::pair<std::string, MovableEnvelope<T>>>&,            bool&)>::type operator()
+        (
+            const std::vector<std::pair<std::string, MovableEnvelope<T>>>& objs, const bool& pass) const
+        {
+            // Note: this ignores the constness of pass because older compilers
+            // pass the incorrect constness.
+            return OpenEnvelopes(objs, pass);
+        }
     };
 
     } // end namespace detail

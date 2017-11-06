@@ -25,6 +25,7 @@ namespace parse { namespace detail {
         qi::_pass_type _pass;
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
+        const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
 
         using phoenix::new_;
         using phoenix::construct;
@@ -45,8 +46,8 @@ namespace parse { namespace detail {
                            )
                 ) [ _val = construct_movable_(new_<Effect::Conditional>(
                     deconstruct_movable_(_a, _pass),
-                    deconstruct_movable_(_b, _pass),
-                    deconstruct_movable_(_c, _pass))) ]
+                    deconstruct_movable_vector_(_b, _pass),
+                    deconstruct_movable_vector_(_c, _pass))) ]
             ;
 
         start

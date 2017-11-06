@@ -95,6 +95,7 @@ enum_value_ref_rules<T>::enum_value_ref_rules(const std::string& type_name,
         boost::spirit::qi::lit_type lit;
         const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
         const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
+        const boost::phoenix::function<parse::detail::deconstruct_movable_vector> deconstruct_movable_vector_;
 
         constant_expr
             =   enum_expr [ _val = construct_movable_(new_<ValueRef::Constant<T>>(_1)) ]
@@ -125,7 +126,7 @@ enum_value_ref_rules<T>::enum_value_ref_rules(const std::string& type_name,
                           > *(','  >   expr [ push_back(_d, _1) ] )
                         > ')'
                         )
-                        [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_d, _pass))) ]
+                        [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_vector_(_d, _pass))) ]
                     )
                 |   (
                         primary_expr [ _val = _1 ]
@@ -242,6 +243,7 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
     boost::spirit::qi::_pass_type _pass;
     const boost::phoenix::function<construct_movable> construct_movable_;
     const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
+    const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
 
     functional_expr
         =   (
@@ -267,7 +269,7 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
                 )
                 >>  ( '(' >>  expr [ push_back(_d, _1) ]
                 >>(*(',' >  expr [ push_back(_d, _1) ] )) >> ')' )
-                [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_d, _pass))) ]
+                [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_vector_(_d, _pass))) ]
             )
             |   (
                 lit('(') >> expr [ push_back(_d, _1) ]
@@ -291,7 +293,7 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
                             |  ( lit(':') > expr [ push_back(_d, _1) ] > ')' )
                         )
                     )
-                ) [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_d, _pass))) ]
+                ) [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_vector_(_d, _pass))) ]
             )
             |   (
                 lit('-') >> functional_expr
