@@ -311,57 +311,57 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
     exponential_expr
         =   (
             functional_expr [ _a = _1 ]
-            >> '^' >> functional_expr
-            [ _val = construct_movable_(
-                new_<ValueRef::Operation<T>>( ValueRef::EXPONENTIATE, deconstruct_movable_(_a, _pass), deconstruct_movable_(_1, _pass) )) ]
-        )
-        |   functional_expr [ _val = _1 ]
+            >>
+            -( '^'
+                  >> functional_expr [
+                      _b = construct_movable_(new_<ValueRef::Operation<T>>(
+                          ValueRef::EXPONENTIATE,
+                          deconstruct_movable_(_a, _pass),
+                          deconstruct_movable_(_1, _pass) )) ,
+                      _a = _b]
+            )
+        ) [ _val = _a ]
         ;
 
     multiplicative_expr
         =   (
             exponential_expr [ _a = _1 ]
-            >>   (
-                *(
+            >>
+            *(
+                (
                     (
-                        (
-                            lit('*') [ _c = ValueRef::TIMES ]
-                            |   lit('/') [ _c = ValueRef::DIVIDE ]
-                        )
-                        >>   exponential_expr [
-                            _b = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_a, _pass), deconstruct_movable_(_1, _pass))) ]
-                    ) [ _a = _b ]
-                )
+                        lit('*') [ _c = ValueRef::TIMES ]
+                        |   lit('/') [ _c = ValueRef::DIVIDE ]
+                    )
+                    >>  exponential_expr [
+                        _b = construct_movable_(new_<ValueRef::Operation<T>>(
+                            _c,
+                            deconstruct_movable_(_a, _pass),
+                            deconstruct_movable_(_1, _pass))) ]
+                ) [ _a = _b ]
             )
-        )
-        [ _val = _a ]
+            ) [ _val = _a ]
         ;
 
     additive_expr
-        =
-        (
-            (
+        =   (
+            multiplicative_expr [ _a = _1 ]
+            >>
+            *(
                 (
-                    multiplicative_expr [ _a = _1 ]
-                    >>  (
-                        *(
-                            (
-                                (
-                                    lit('+') [ _c = ValueRef::PLUS ]
-                                    |   lit('-') [ _c = ValueRef::MINUS ]
-                                )
-                                >>   multiplicative_expr [ _b = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_a, _pass), deconstruct_movable_(_1, _pass))) ]
-                            ) [ _a = _b ]
-                        )
+                    (
+                        lit('+') [ _c = ValueRef::PLUS ]
+                        |   lit('-') [ _c = ValueRef::MINUS ]
                     )
-                )
-                [ _val = _a ]
+                    >>   multiplicative_expr [
+                        _b = construct_movable_(new_<ValueRef::Operation<T>>(
+                            _c,
+                            deconstruct_movable_(_a, _pass),
+                            deconstruct_movable_(_1, _pass))) ]
+                ) [ _a = _b ]
             )
-            |   (
-                multiplicative_expr [ _val = _1 ]
-            )
-        )
-        ;
+        ) [ _val = _a ]
+      ;
 
     statistic_collection_expr
         =   (tok.Statistic_
