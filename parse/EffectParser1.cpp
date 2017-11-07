@@ -10,22 +10,6 @@
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
-namespace {
-    template <typename T, typename U>
-    void transform_T_and_U_ptr_vector_to_unique_ptr(
-        std::vector<std::pair<T, parse::detail::MovableEnvelope<U>>>& out,
-        const std::vector<std::pair<T, U*>>& in
-    ) {
-        for (const auto& elem : in) {
-            out.emplace_back(elem.first, parse::detail::MovableEnvelope<U>(std::unique_ptr<U>(elem.second)));
-        }
-    };
-    BOOST_PHOENIX_ADAPT_FUNCTION(void,
-                                 transform_T_and_U_ptr_vector_to_unique_ptr_,
-                                 transform_T_and_U_ptr_vector_to_unique_ptr,
-                                 2)
-}
-
 namespace parse { namespace detail {
     using PassedMessageParams =  std::vector<std::pair<std::string,
                                                        MovableEnvelope<ValueRef::ValueRefBase<std::string>>>>;
@@ -178,7 +162,6 @@ namespace parse { namespace detail {
                 | eps [ _f = true ]
             )
             >  -(labeller.rule(Icon_token)       >  tok.string [ _b = _1 ] )
-            // >  -(labeller.rule(Parameters_token) >  string_and_string_ref_vector [transform_T_and_U_ptr_vector_to_unique_ptr_(_c, _1)] )
             >  -(labeller.rule(Parameters_token) >  string_and_string_ref_vector [_c = _1] )
             >   (
                 (   // empire id specified, optionally with an affiliation type:
