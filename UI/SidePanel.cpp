@@ -3145,23 +3145,52 @@ void SidePanel::RefreshImpl() {
 
     // populate system resource summary
 
-    // get just planets owned by player's empire
+    // for getting just the planets owned by player's empire
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    std::vector<int> owned_planets;
+    // If all planets are owned by the same empire, then we show the Shields/Defense/Troops/Supply;
+    // on top of that, if there are any planets owned by the player in the system, we show
+    // Production/Research/Trade.
+    int all_owner_id = ALL_EMPIRES;
+    bool all_planets_share_owner = true;
+    std::vector<int> all_planets, player_planets;
     for (auto& planet : Objects().FindObjects<const Planet>(planet_ids)) {
-        if (planet->OwnedBy(empire_id))
-            owned_planets.push_back(planet->ID());
+        // If it is neither owned nor populated with natives, it can be ignored.
+        if (planet->Unowned() && planet->SpeciesName().empty())
+            continue;
+
+        int owner = planet->Owner();
+        // If all planets have the same owner as each other, then they must have the same owner
+        // as the first planet, so store its owner here when finding the first planet.
+        if (all_planets.empty())
+            all_owner_id = owner;
+        if (owner != all_owner_id)
+            all_planets_share_owner = false;
+
+        all_planets.push_back(planet->ID());
+        if (owner == empire_id)
+            player_planets.push_back(planet->ID());
     }
 
     // specify which meter types to include in resource summary.  Oddly enough, these are the resource meters.
-    std::vector<std::pair<MeterType, MeterType>> meter_types =
-        {{METER_INDUSTRY,   METER_TARGET_INDUSTRY},
-         {METER_RESEARCH,   METER_TARGET_RESEARCH},
-         {METER_TRADE,      METER_TARGET_TRADE}};
+    std::vector<std::pair<MeterType, MeterType>> meter_types;
+    if (!player_planets.empty()) {
+        meter_types.emplace_back(METER_INDUSTRY, METER_TARGET_INDUSTRY);
+        meter_types.emplace_back(METER_RESEARCH, METER_TARGET_RESEARCH);
+        meter_types.emplace_back(METER_TRADE,    METER_TARGET_TRADE);
+    }
+    // Also show the other important meters.
+    if (all_planets_share_owner) {
+        meter_types.emplace_back(METER_SHIELD, METER_MAX_SHIELD);
+        meter_types.emplace_back(METER_DEFENSE, METER_MAX_DEFENSE);
+        meter_types.emplace_back(METER_TROOPS, METER_MAX_TROOPS);
+        meter_types.emplace_back(METER_SUPPLY, METER_MAX_SUPPLY);
+    }
 
     // refresh the system resource summary.
     m_system_resource_summary = GG::Wnd::Create<MultiIconValueIndicator>(
-        Width() - MaxPlanetDiameter() - 8, owned_planets, meter_types);
+        Width() - MaxPlanetDiameter() - 8,
+        all_planets_share_owner ? all_planets : player_planets,
+        meter_types);
     m_system_resource_summary->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + 4),
                                              140 - m_system_resource_summary->Height()));
     AttachChild(m_system_resource_summary);
@@ -3174,9 +3203,12 @@ void SidePanel::RefreshImpl() {
         // add tooltips to the system resource summary
         for (const auto& entry : meter_types) {
             MeterType type = entry.first;
+            ResourceType resource = MeterToResource(type);
+            if (resource == INVALID_RESOURCE_TYPE)
+                continue;
             // add tooltip for each meter type
             auto browse_wnd = GG::Wnd::Create<SystemResourceSummaryBrowseWnd>(
-                MeterToResource(type), s_system_id, HumanClientApp::GetApp()->EmpireID());
+                resource, s_system_id, empire_id);
             m_system_resource_summary->SetToolTip(type, browse_wnd);
         }
 
