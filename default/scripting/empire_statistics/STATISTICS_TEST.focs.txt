@@ -17,7 +17,8 @@ Statistic name = "STATISTICS_TEST_2" value =
                                         ]
 */
 
-// The following currently causes a crash upon parsing
+// The following is not correctly parsed, and generates a warning in the log file
+/*
 Statistic name = "STATISTICS_TEST_3" value =
     1.0 + MAX value =
         JumpsBetween
@@ -27,3 +28,4 @@ Statistic name = "STATISTICS_TEST_3" value =
                 Planet
                 OwnedBy empire = Source.Owner
             ]
+*/
