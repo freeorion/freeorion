@@ -13,6 +13,7 @@ Part
             scope = Source
             activation = Stationary
             stackinggroup = "RAMSCOOP_STACK"
+            // Update ship_hulls.macros if this number changes
             effects = SetFuel value = Value + 0.1
     icon = "icons/ship_parts/antimatter_tank.png"
 

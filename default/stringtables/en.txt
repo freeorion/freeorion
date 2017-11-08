@@ -6503,6 +6503,13 @@ At %planet%: [[tech LRN_SPATIAL_DISTORT_GEN]] moved %fleet% back into %system%. 
 EFFECT_FLEET_MOVED_TO_LABEL
 Fleet Moved Into
 
+EFFECT_SHIP_REFUELED
+At %system%: ship %ship% has sufficient fuel to resume starlane travel.
+
+EFFECT_SHIP_REFUELED_LABEL
+Ship Refueled
+
+
 HEAD_ON_A_SPIKE_MESSAGE
 The capital of the %empire% empire has fallen.
 

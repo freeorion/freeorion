@@ -119,6 +119,34 @@ UNOWNED_MOVE
             ]
 '''
 
+// macro to tell player when a ship regenerates its fuel
+// arg1: base regen rate
+REFUEL_MESSAGE
+'''
+   EffectsGroup
+    scope = Source
+    activation = And [
+        Stationary
+        (Source.Fuel < 1)
+        (Source.Fuel
+         + @1@ * (Statistic If Condition = Turn low = Source.ArrivedOnTurn + 1)
+         + 0.1 * (Statistic If Condition = DesignHasPart name = "FU_RAMSCOOP")
+         >= 1
+        )
+    ]
+    effects = [
+        GenerateSitrepMessage
+         message = "EFFECT_SHIP_REFUELED"
+         label = "EFFECT_SHIP_REFUELED_LABEL"
+         icon = "icons/meter/fuel.png"
+         parameters = [
+            tag = "system" data = Source.SystemID
+            tag = "ship" data = Source.ID
+         ]
+         empire = Source.Owner
+    ]
+'''
+
 AVERAGE_BASE_FUEL_REGEN
 '''EffectsGroup
     description = "AVERAGE_BASE_FUEL_REGEN_DESC"
@@ -132,6 +160,8 @@ AVERAGE_BASE_FUEL_REGEN
     accountinglabel = "BASE_FUEL_REGEN_LABEL"
     priority = [[VERY_LATE_PRIORITY]]
     effects = SetFuel value = min(Target.MaxFuel, Value + 0.1001)
+
+   [[REFUEL_MESSAGE(0.1001)]]
 '''
 
 #include "/scripting/common/priorities.macros"
