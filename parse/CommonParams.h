@@ -6,6 +6,7 @@
 #include "ValueRefParser.h"
 #include "EffectParser.h"
 #include "EnumParser.h"
+#include "MovableEnvelope.h"
 #include "../universe/EnumsFwd.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Condition.h"
@@ -17,28 +18,24 @@
 namespace parse { namespace detail {
 
     struct common_params_rules {
-        typedef std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> val_cond_pair;
-
+        template <typename T>
+        using ConsumptionMapPackaged = std::map<T, std::pair<value_ref_payload<double>, condition_payload>>;
         typedef rule<
             bool ()
             > producible_rule;
 
         typedef rule<
-            void (Condition::ConditionBase*&)
-            > location_rule;
-
-        typedef rule<
-            CommonParams (),
+            MovableEnvelope<CommonParams> (),
             boost::spirit::qi::locals<
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<int>*,
+                value_ref_payload<double>,
+                value_ref_payload<int>,
                 bool,
                 std::set<std::string>,
-                Condition::ConditionBase*,
-                std::vector<std::shared_ptr<Effect::EffectsGroup>>,
-                std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>,
-                std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>,
-                Condition::ConditionBase*
+                condition_payload,
+                std::vector<MovableEnvelope<Effect::EffectsGroup>>,
+                ConsumptionMapPackaged<MeterType>,
+                ConsumptionMapPackaged<std::string>,
+                condition_payload
                 >
             > common_params_rule;
 
@@ -52,19 +49,18 @@ namespace parse { namespace detail {
             > more_common_params_rule;
 
         typedef rule<
-            void (std::map<MeterType, val_cond_pair>&,
-                  std::map<std::string, val_cond_pair>&)
-        > consumption_rule;
+            void (ConsumptionMapPackaged<MeterType>&, ConsumptionMapPackaged<std::string>&)
+            > consumption_rule;
 
-        typedef rule<
-            void (std::map<MeterType, val_cond_pair>&, std::map<std::string, val_cond_pair>&),
+        template <typename T>
+        using consumable_rule = rule<
+            void (ConsumptionMapPackaged<T>&),
             boost::spirit::qi::locals<
-                MeterType,
-                std::string,
-                ValueRef::ValueRefBase<double>*,
-                Condition::ConditionBase*
-            >
-        > consumable_rule;
+                T,
+                value_ref_payload<double>,
+                condition_payload
+                >
+            >;
 
         typedef rule<
             void (std::set<std::string>&)
@@ -73,22 +69,22 @@ namespace parse { namespace detail {
         common_params_rules(const parse::lexer& tok,
                             Labeller& labeller,
                             const condition_parser_grammar& condition_parser,
-                            const parse::value_ref_grammar<std::string>& string_grammar,
+                            const value_ref_grammar<std::string>& string_grammar,
                             const tags_grammar_type& tags_parser);
 
-        parse::castable_as_int_parser_rules    castable_int_rules;
-        parse::double_parser_rules     double_rules;
-        parse::effects_group_grammar effects_group_grammar;
+        parse::castable_as_int_parser_rules     castable_int_rules;
+        parse::double_parser_rules              double_rules;
+        parse::effects_group_grammar            effects_group_grammar;
         parse::non_ship_part_meter_enum_grammar non_ship_part_meter_type_enum;
-        producible_rule         producible;
-        location_rule           location;
-        location_rule           enqueue_location;
-        exclusions_rule         exclusions;
-        more_common_params_rule more_common;
-        common_params_rule      common;
-        consumption_rule        consumption;
-        consumable_rule         consumable_special;
-        consumable_rule         consumable_meter;
+        producible_rule                         producible;
+        condition_parser_rule                   location;
+        condition_parser_rule                   enqueue_location;
+        exclusions_rule                         exclusions;
+        more_common_params_rule                 more_common;
+        common_params_rule                      common;
+        consumption_rule                        consumption;
+        consumable_rule<std::string>            consumable_special;
+        consumable_rule<MeterType>              consumable_meter;
     };
 
 } }

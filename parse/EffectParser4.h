@@ -9,59 +9,59 @@ namespace parse { namespace detail {
                               const effect_parser_grammar& effect_parser,
                               Labeller& labeller,
                               const condition_parser_grammar& condition_parser,
-                              const parse::value_ref_grammar<std::string>& string_grammar);
+                              const value_ref_grammar<std::string>& string_grammar);
 
         typedef rule<
             effect_signature,
             boost::spirit::qi::locals<
-                ValueRef::ValueRefBase< ::PlanetType>*,
-                ValueRef::ValueRefBase< ::PlanetSize>*,
-                ValueRef::ValueRefBase<std::string>*,
-                std::vector<Effect::EffectBase*>
+                value_ref_payload< ::PlanetType>,
+                value_ref_payload< ::PlanetSize>,
+                value_ref_payload<std::string>,
+                std::vector<effect_payload>
             >
         > create_planet_rule;
 
         typedef rule<
             effect_signature,
             boost::spirit::qi::locals<
-                ValueRef::ValueRefBase<std::string>*,
-                ValueRef::ValueRefBase<std::string>*,
-                std::vector<Effect::EffectBase*>
+                value_ref_payload<std::string>,
+                value_ref_payload<std::string>,
+                std::vector<effect_payload>
             >
         > create_building_rule;
 
         typedef rule<
             effect_signature,
             boost::spirit::qi::locals<
-                ValueRef::ValueRefBase< ::StarType>*,
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<std::string>*,
-                std::vector<Effect::EffectBase*>
+                value_ref_payload< ::StarType>,
+                value_ref_payload<double>,
+                value_ref_payload<double>,
+                value_ref_payload<std::string>,
+                std::vector<effect_payload>
             >
         > create_system_rule;
 
         typedef rule<
             effect_signature,
             boost::spirit::qi::locals<
-                ValueRef::ValueRefBase<std::string>*,
-                ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<std::string>*,
-                ValueRef::ValueRefBase<std::string>*,
-                std::vector<Effect::EffectBase*>
+                value_ref_payload<std::string>,
+                value_ref_payload<int>,
+                value_ref_payload<int>,
+                value_ref_payload<std::string>,
+                value_ref_payload<std::string>,
+                std::vector<effect_payload>
             >
         > create_ship_rule;
 
         typedef rule<
             effect_signature,
             boost::spirit::qi::locals<
-                ValueRef::ValueRefBase<std::string>*,
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<std::string>*,
-                ValueRef::ValueRefBase<double>*,
-                std::vector<Effect::EffectBase*>
+                value_ref_payload<std::string>,
+                value_ref_payload<double>,
+                value_ref_payload<double>,
+                value_ref_payload<std::string>,
+                value_ref_payload<double>,
+                std::vector<effect_payload>
             >
         > create_field_rule;
 

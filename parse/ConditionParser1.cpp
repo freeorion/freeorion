@@ -11,7 +11,7 @@ namespace phoenix = boost::phoenix;
 
 #if DEBUG_CONDITION_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<Condition::ConditionBase*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<condition_payload>&) { return os; }
 }
 #endif
 
@@ -20,7 +20,7 @@ namespace parse { namespace detail {
         const parse::lexer& tok,
         Labeller& labeller,
         const condition_parser_grammar& condition_parser,
-        const parse::value_ref_grammar<std::string>& string_grammar
+        const value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_1::base_type(start, "condition_parser_rules_1"),
         int_rules(tok, labeller, condition_parser, string_grammar),
@@ -31,87 +31,93 @@ namespace parse { namespace detail {
         qi::_val_type _val;
         qi::eps_type eps;
         qi::lit_type lit;
+        qi::_pass_type _pass;
+        const boost::phoenix::function<construct_movable> construct_movable_;
+        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
+        const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
+
         using phoenix::new_;
+        using phoenix::construct;
         using phoenix::push_back;
 
         all
-            =   tok.All_ [ _val = new_<Condition::All>() ]
+            =   tok.All_ [ _val = construct_movable_(new_<Condition::All>()) ]
             ;
 
         none
-            =   tok.None_ [ _val = new_<Condition::None>() ]
+            =   tok.None_ [ _val = construct_movable_(new_<Condition::None>()) ]
             ;
 
         source
-            =   tok.Source_ [ _val = new_<Condition::Source>() ]
+            =   tok.Source_ [ _val = construct_movable_(new_<Condition::Source>()) ]
             ;
 
         root_candidate
-            =   tok.RootCandidate_ [ _val = new_<Condition::RootCandidate>() ]
+            =   tok.RootCandidate_ [ _val = construct_movable_(new_<Condition::RootCandidate>()) ]
             ;
 
         target
-            =   tok.Target_ [ _val = new_<Condition::Target>() ]
+            =   tok.Target_ [ _val = construct_movable_(new_<Condition::Target>()) ]
             ;
 
         stationary
-            =   tok.Stationary_ [ _val = new_<Condition::Stationary>() ]
+            =   tok.Stationary_ [ _val = construct_movable_(new_<Condition::Stationary>()) ]
             ;
 
         aggressive
-            = ((tok.Aggressive_ [ _val = new_<Condition::Aggressive>(true) ])
-               |(tok.Passive_ [ _val = new_<Condition::Aggressive>(false) ])
+            = ((tok.Aggressive_ [ _val = construct_movable_(new_<Condition::Aggressive>(true)) ])
+               |(tok.Passive_ [ _val = construct_movable_(new_<Condition::Aggressive>(false)) ])
               )
             ;
 
         can_colonize
-            =   tok.CanColonize_ [ _val = new_<Condition::CanColonize>() ]
+            =   tok.CanColonize_ [ _val = construct_movable_(new_<Condition::CanColonize>()) ]
             ;
 
         can_produce_ships
-            =   tok.CanProduceShips_ [ _val = new_<Condition::CanProduceShips>() ]
+            =   tok.CanProduceShips_ [ _val = construct_movable_(new_<Condition::CanProduceShips>()) ]
             ;
 
         capital
-            =   tok.Capital_ [ _val = new_<Condition::Capital>() ]
+            =   tok.Capital_ [ _val = construct_movable_(new_<Condition::Capital>()) ]
             ;
 
         monster
-            =   tok.Monster_ [ _val = new_<Condition::Monster>() ]
+            =   tok.Monster_ [ _val = construct_movable_(new_<Condition::Monster>()) ]
             ;
 
         armed
-            =   tok.Armed_ [ _val = new_<Condition::Armed>() ]
+            =   tok.Armed_ [ _val = construct_movable_(new_<Condition::Armed>()) ]
             ;
 
         owned_by_1
             =   (tok.OwnedBy_
                  >>  labeller.rule(Empire_token)
                 ) > int_rules.expr
-            [ _val = new_<Condition::EmpireAffiliation>(_1) ]
+            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         owned_by_2
             =   tok.OwnedBy_
             >>  labeller.rule(Affiliation_token) >> tok.AnyEmpire_
-            [ _val = new_<Condition::EmpireAffiliation>( AFFIL_ANY ) ]
+            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>( AFFIL_ANY )) ]
             ;
 
         owned_by_3
             =   tok.Unowned_
-            [ _val = new_<Condition::EmpireAffiliation>( AFFIL_NONE ) ]
+            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>( AFFIL_NONE )) ]
             ;
 
         owned_by_4
             =   tok.Human_
-            [ _val = new_<Condition::EmpireAffiliation>( AFFIL_HUMAN ) ]
+            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>( AFFIL_HUMAN )) ]
             ;
 
         owned_by_5
             =   (tok.OwnedBy_
                  >>  labeller.rule(Affiliation_token) >> empire_affiliation_type_enum [ _a = _1 ]
                  >>  labeller.rule(Empire_token)    ) >  int_rules.expr
-            [ _val = new_<Condition::EmpireAffiliation>(_1, _a) ]
+            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>(deconstruct_movable_(_1, _pass), _a)) ]
             ;
 
         owned_by
@@ -125,25 +131,25 @@ namespace parse { namespace detail {
         and_
             =   tok.And_
             >   '[' > +condition_parser [ push_back(_a, _1) ] > lit(']')
-            [ _val = new_<Condition::And>(_a) ]
+            [ _val = construct_movable_(new_<Condition::And>(deconstruct_movable_vector_(_a, _pass))) ]
             ;
 
         or_
             =   tok.Or_
             >   '[' > +condition_parser [ push_back(_a, _1) ] > lit(']')
-            [ _val = new_<Condition::Or>(_a) ]
+            [ _val = construct_movable_(new_<Condition::Or>(deconstruct_movable_vector_(_a, _pass))) ]
             ;
 
         not_
             =   tok.Not_
-            >   condition_parser [ _val = new_<Condition::Not>(_1) ]
+            >   condition_parser [ _val = construct_movable_(new_<Condition::Not>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         described
             =   tok.Described_
             >   labeller.rule(Description_token) > tok.string [ _a = _1 ]
             >   labeller.rule(Condition_token) > condition_parser
-            [ _val = new_<Condition::Described>(_1, _a) ]
+            [ _val = construct_movable_( new_<Condition::Described>(deconstruct_movable_(_1, _pass), _a)) ]
             ;
 
         start

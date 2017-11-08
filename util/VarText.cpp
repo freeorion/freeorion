@@ -341,14 +341,14 @@ void VarText::GenerateVarText() const {
     std::string template_str = m_stringtable_lookup_flag ? UserString(m_template_string) : m_template_string;
 
     // set up parser
-    using namespace boost::spirit::classic;
-    rule<> token = *(anychar_p - space_p - END_VAR.c_str());
-    rule<> var = START_VAR.c_str() >> token[SubstituteAndAppend(m_variables, m_text, m_validated)] >> END_VAR.c_str();
-    rule<> non_var = anychar_p - START_VAR.c_str();
+    namespace classic = boost::spirit::classic;
+    classic::rule<> token = *(classic::anychar_p - classic::space_p - END_VAR.c_str());
+    classic::rule<> var = START_VAR.c_str() >> token[SubstituteAndAppend(m_variables, m_text, m_validated)] >> END_VAR.c_str();
+    classic::rule<> non_var = classic::anychar_p - START_VAR.c_str();
 
     // parse and substitute variables
     try {
-        parse(template_str.c_str(), *(non_var[StringAppend(m_text)] | var));
+        classic::parse(template_str.c_str(), *(non_var[StringAppend(m_text)] | var));
     } catch (const std::exception&) {
         ErrorLogger() << "VarText::GenerateVartText caught exception when parsing template string: " << m_template_string;
     }

@@ -9,7 +9,7 @@ namespace parse { namespace detail {
         condition_parser_rules_1(const parse::lexer& tok,
                                  Labeller& labeller,
                                  const condition_parser_grammar& condition_parser,
-                                 const parse::value_ref_grammar<std::string>& string_grammar);
+                                 const value_ref_grammar<std::string>& string_grammar);
 
         typedef rule<
             condition_signature,
@@ -18,7 +18,7 @@ namespace parse { namespace detail {
 
         typedef rule<
             condition_signature,
-            boost::spirit::qi::locals<std::vector<Condition::ConditionBase*>>
+            boost::spirit::qi::locals<std::vector<condition_payload>>
         > and_or_rule;
 
         typedef rule<

@@ -38,52 +38,31 @@ class Empire;
 
 /** Common parameters for PartType and HullType constructors.  Used as temporary
   * storage for parsing to reduce number of sub-items parsed per item. */
-struct CommonParams {
-    CommonParams() :
-        production_cost(nullptr),
-        production_time(nullptr),
-        producible(false),
-        tags(),
-        production_meter_consumption(),
-        production_special_consumption(),
-        location(nullptr),
-        enqueue_location(nullptr),
-        effects()
-    {}
-    CommonParams(ValueRef::ValueRefBase<double>* production_cost_,
-                 ValueRef::ValueRefBase<int>* production_time_,
+struct FO_COMMON_API CommonParams {
+    template <typename T>
+    using ConsumptionMap = std::map<T, std::pair<std::unique_ptr<ValueRef::ValueRefBase<double>>,
+                                                 std::unique_ptr<Condition::ConditionBase>>>;
+    CommonParams();
+    CommonParams(std::unique_ptr<ValueRef::ValueRefBase<double>>&& production_cost_,
+                 std::unique_ptr<ValueRef::ValueRefBase<int>>&& production_time_,
                  bool producible_,
                  const std::set<std::string>& tags_,
-                 Condition::ConditionBase* location_,
-                 const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects_,
-                 std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>> production_meter_consumption_,
-                 std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>> production_special_consumption_,
-                 Condition::ConditionBase* enqueue_location_) :
-        production_cost(production_cost_),
-        production_time(production_time_),
-        producible(producible_),
-        tags(),
-        production_meter_consumption(production_meter_consumption_),
-        production_special_consumption(production_special_consumption_),
-        location(location_),
-        enqueue_location(enqueue_location_),
-        effects(effects_)
-    {
-        for (const std::string& tag : tags_)
-            tags.insert(boost::to_upper_copy<std::string>(tag));
-    }
+                 std::unique_ptr<Condition::ConditionBase>&& location_,
+                 std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects_,
+                 ConsumptionMap<MeterType>&& production_meter_consumption_,
+                 ConsumptionMap<std::string>&& production_special_consumption_,
+                 std::unique_ptr<Condition::ConditionBase>&& enqueue_location_);
+    ~CommonParams();
 
-    ValueRef::ValueRefBase<double>*                         production_cost;
-    ValueRef::ValueRefBase<int>*                            production_time;
-    bool                                                    producible;
-    std::set<std::string>                                   tags;
-    std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
-                                                            production_meter_consumption;
-    std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
-                                                            production_special_consumption;
-    Condition::ConditionBase*                               location;
-    Condition::ConditionBase*                               enqueue_location;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>> effects;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> production_cost;
+    std::unique_ptr<ValueRef::ValueRefBase<int>>    production_time;
+    bool                                             producible;
+    std::set<std::string>                            tags;
+    ConsumptionMap<MeterType>                        production_meter_consumption;
+    ConsumptionMap<std::string>                      production_special_consumption;
+    std::unique_ptr<Condition::ConditionBase> location;
+    std::unique_ptr<Condition::ConditionBase> enqueue_location;
+    std::vector<std::unique_ptr<Effect::EffectsGroup>> effects;
 };
 
 struct MoreCommonParams {
@@ -109,7 +88,7 @@ public:
     /** \name Structors */ //@{
     PartType();
     PartType(ShipPartClass part_class, double capacity, double stat2,
-             const CommonParams& common_params, const MoreCommonParams& more_common_params,
+             CommonParams& common_params, const MoreCommonParams& more_common_params,
              std::vector<ShipSlotType> mountable_slot_types,
              const std::string& icon, bool add_standard_capacity_effect = true);
 
@@ -133,13 +112,13 @@ public:
     int                     ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to produce this part
     bool                    Producible() const      { return m_producible; }        ///< returns whether this part type is producible by players and appears on the design screen
 
-    const std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>&
+    const CommonParams::ConsumptionMap<MeterType>&
                             ProductionMeterConsumption() const  { return m_production_meter_consumption; }
-    const std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>&
+    const CommonParams::ConsumptionMap<std::string>&
                             ProductionSpecialConsumption() const{ return m_production_special_consumption; }
 
     const std::set<std::string>& Tags() const       { return m_tags; }
-    const Condition::ConditionBase* Location() const{ return m_location; }          ///< returns the condition that determines the locations where ShipDesign containing part can be produced
+    const Condition::ConditionBase* Location() const{ return m_location.get(); }          ///< returns the condition that determines the locations where ShipDesign containing part can be produced
     const std::set<std::string>& Exclusions() const { return m_exclusions; }        ///< returns the names of other content that cannot be used in the same ship design as this part
 
     /** Returns the EffectsGroups that encapsulate the effects this part has. */
@@ -158,23 +137,23 @@ public:
     //@}
 
 private:
-    void Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects);
+    void Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects);
 
     std::string                     m_name;
     std::string                     m_description;
     ShipPartClass                   m_class;
     float                           m_capacity;
     float                           m_secondary_stat;   // damage for a hangar bay, shots per turn for a weapon, etc.
-    ValueRef::ValueRefBase<double>* m_production_cost;
-    ValueRef::ValueRefBase<int>*    m_production_time;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_production_cost;
+    std::unique_ptr<ValueRef::ValueRefBase<int>>    m_production_time;
     bool                            m_producible;
     std::vector<ShipSlotType>       m_mountable_slot_types;
     std::set<std::string>           m_tags;
-    std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
+    CommonParams::ConsumptionMap<MeterType>
                                     m_production_meter_consumption;
-    std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
+    CommonParams::ConsumptionMap<std::string>
                                     m_production_special_consumption;
-    Condition::ConditionBase*       m_location;
+    std::unique_ptr<Condition::ConditionBase>       m_location;
     std::set<std::string>           m_exclusions;
     std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
     std::string                     m_icon;
@@ -289,54 +268,12 @@ public:
     };
 
     /** \name Structors */ //@{
-    HullType() :
-        m_name("generic hull type"),
-        m_description("indescribable"),
-        m_speed(1.0f),
-        m_fuel(0.0f),
-        m_stealth(0.0f),
-        m_structure(0.0f),
-        m_production_cost(nullptr),
-        m_production_time(nullptr),
-        m_producible(false),
-        m_slots(),
-        m_tags(),
-        m_production_meter_consumption(),
-        m_production_special_consumption(),
-        m_location(nullptr),
-        m_effects(),
-        m_graphic(),
-        m_icon()
-    {}
-
-    HullType(const HullTypeStats& stats, const CommonParams& common_params,
+    HullType();
+    HullType(const HullTypeStats& stats,
+             CommonParams&& common_params,
              const MoreCommonParams& more_common_params,
              const std::vector<Slot>& slots,
-             const std::string& icon, const std::string& graphic) :
-        m_name(more_common_params.name),
-        m_description(more_common_params.description),
-        m_speed(stats.speed),
-        m_fuel(stats.fuel),
-        m_stealth(stats.stealth),
-        m_structure(stats.structure),
-        m_production_cost(common_params.production_cost),
-        m_production_time(common_params.production_time),
-        m_producible(common_params.producible),
-        m_slots(slots),
-        m_tags(),
-        m_production_meter_consumption(common_params.production_meter_consumption),
-        m_production_special_consumption(common_params.production_special_consumption),
-        m_location(common_params.location),
-        m_exclusions(more_common_params.exclusions),
-        m_effects(),
-        m_graphic(graphic),
-        m_icon(icon)
-    {
-        //TraceLogger() << "hull type: " << m_name << " producible: " << m_producible << std::endl;
-        Init(common_params.effects);
-        for (const std::string& tag : common_params.tags)
-            m_tags.insert(boost::to_upper_copy<std::string>(tag));
-    }
+             const std::string& icon, const std::string& graphic);
 
     ~HullType();
     //@}
@@ -359,9 +296,9 @@ public:
     int                 ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to produce this hull
     bool                Producible() const      { return m_producible; }        ///< returns whether this hull type is producible by players and appears on the design screen
 
-    const std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>&
+    const CommonParams::ConsumptionMap<MeterType>&
                         ProductionMeterConsumption() const  { return m_production_meter_consumption; }
-    const std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>&
+    const CommonParams::ConsumptionMap<std::string>&
                         ProductionSpecialConsumption() const{ return m_production_special_consumption; }
 
     unsigned int        NumSlots() const        { return m_slots.size(); }      ///< returns total number of of slots in hull
@@ -372,7 +309,7 @@ public:
 
     bool HasTag(const std::string& tag) const   { return m_tags.count(tag) != 0; }
 
-    const Condition::ConditionBase* Location() const{ return m_location; }      ///< returns the condition that determines the locations where ShipDesign containing hull can be produced
+    const Condition::ConditionBase* Location() const{ return m_location.get(); }      ///< returns the condition that determines the locations where ShipDesign containing hull can be produced
     const std::set<std::string>& Exclusions() const { return m_exclusions; }    ///< returns the names of other content that cannot be used in the same ship design as this part
 
     /** Returns the EffectsGroups that encapsulate the effects this part hull
@@ -393,7 +330,7 @@ public:
     //@}
 
 private:
-    void Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects);
+    void Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects);
 
     std::string                                             m_name;
     std::string                                             m_description;
@@ -401,16 +338,16 @@ private:
     float                                                   m_fuel;
     float                                                   m_stealth;
     float                                                   m_structure;
-    ValueRef::ValueRefBase<double>*                         m_production_cost;
-    ValueRef::ValueRefBase<int>*                            m_production_time;
+    std::unique_ptr<ValueRef::ValueRefBase<double>>                         m_production_cost;
+    std::unique_ptr<ValueRef::ValueRefBase<int>>                            m_production_time;
     bool                                                    m_producible;
     std::vector<Slot>                                       m_slots;
     std::set<std::string>                                   m_tags;
-    std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
+    CommonParams::ConsumptionMap<MeterType>
                                                             m_production_meter_consumption;
-    std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
+    CommonParams::ConsumptionMap<std::string>
                                                             m_production_special_consumption;
-    Condition::ConditionBase*                               m_location;
+    std::unique_ptr<Condition::ConditionBase>                               m_location;
     std::set<std::string>                                   m_exclusions;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>      m_effects;
     std::string                                             m_graphic;

@@ -97,27 +97,9 @@ public:
     /** \name Structors */ //@{
     BuildingType(const std::string& name,
                  const std::string& description,
-                 const CommonParams& common_params,
+                 CommonParams& common_params,
                  CaptureResult capture_result,
-                 const std::string& icon) :
-        m_name(name),
-        m_description(description),
-        m_production_cost(common_params.production_cost),
-        m_production_time(common_params.production_time),
-        m_producible(common_params.producible),
-        m_capture_result(capture_result),
-        m_tags(),
-        m_production_meter_consumption(common_params.production_meter_consumption),
-        m_production_special_consumption(common_params.production_special_consumption),
-        m_location(common_params.location),
-        m_enqueue_location(common_params.enqueue_location),
-        m_effects(common_params.effects),
-        m_icon(icon)
-    {
-        Init();
-        for (const std::string& tag : common_params.tags)
-            m_tags.insert(boost::to_upper_copy<std::string>(tag));
-    }
+                 const std::string& icon);
 
     ~BuildingType();
     //@}
@@ -132,19 +114,19 @@ public:
     float                           PerTurnCost(int empire_id, int location_id) const;      ///< returns the maximum number of production points per turn that can be spend on this building
     int                             ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to build this building at this location by this empire
 
-    const ValueRef::ValueRefBase<double>* Cost() const      { return m_production_cost; }   ///< returns the ValueRef that determines ProductionCost()
-    const ValueRef::ValueRefBase<int>*    Time() const      { return m_production_time; }   ///< returns the ValueRef that determines ProductionTime()
+    const ValueRef::ValueRefBase<double>* Cost() const      { return m_production_cost.get(); }   ///< returns the ValueRef that determines ProductionCost()
+    const ValueRef::ValueRefBase<int>*    Time() const      { return m_production_time.get(); }   ///< returns the ValueRef that determines ProductionTime()
 
     bool                            Producible() const      { return m_producible; }        ///< returns whether this building type is producible by players and appears on the production screen
 
-    const std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>&
+    const CommonParams::ConsumptionMap<MeterType>&
                                     ProductionMeterConsumption() const  { return m_production_meter_consumption; }
-    const std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>&
+    const CommonParams::ConsumptionMap<std::string>&
                                     ProductionSpecialConsumption() const{ return m_production_special_consumption; }
 
     const std::set<std::string>&    Tags() const            { return m_tags; }
-    const Condition::ConditionBase* Location() const        { return m_location; }          ///< returns the condition that determines the locations where this building can be produced
-    const Condition::ConditionBase* EnqueueLocation() const { return m_enqueue_location; }  ///< returns the condition that determines the locations where this building can be enqueued (ie. put onto the production queue)
+    const Condition::ConditionBase* Location() const        { return m_location.get(); }          ///< returns the condition that determines the locations where this building can be produced
+    const Condition::ConditionBase* EnqueueLocation() const { return m_enqueue_location.get(); }  ///< returns the condition that determines the locations where this building can be enqueued (ie. put onto the production queue)
 
     /** Returns the EffectsGroups that encapsulate the effects that buildings ofi
         this type have when operational. */
@@ -179,18 +161,16 @@ private:
 
     std::string                                             m_name;
     std::string                                             m_description;
-    ValueRef::ValueRefBase<double>*                         m_production_cost;
-    ValueRef::ValueRefBase<int>*                            m_production_time;
+    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_production_cost;
+    std::unique_ptr<ValueRef::ValueRefBase<int>>            m_production_time;
     bool                                                    m_producible;
     CaptureResult                                           m_capture_result;
     std::set<std::string>                                   m_tags;
-    std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
-                                                            m_production_meter_consumption;
-    std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
-                                                            m_production_special_consumption;
-    Condition::ConditionBase*                               m_location;
-    Condition::ConditionBase*                               m_enqueue_location;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
+    CommonParams::ConsumptionMap<MeterType> m_production_meter_consumption;
+    CommonParams::ConsumptionMap<std::string> m_production_special_consumption;
+    std::unique_ptr<Condition::ConditionBase>               m_location;
+    std::unique_ptr<Condition::ConditionBase>               m_enqueue_location;
+    std::vector<std::shared_ptr<Effect::EffectsGroup>>      m_effects;
     std::string                                             m_icon;
 };
 

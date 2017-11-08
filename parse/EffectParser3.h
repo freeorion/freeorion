@@ -8,14 +8,14 @@ namespace parse { namespace detail {
         effect_parser_rules_3(const parse::lexer& tok,
                               Labeller& labeller,
                               const condition_parser_grammar& condition_parser,
-                              const parse::value_ref_grammar<std::string>& string_grammar);
+                              const value_ref_grammar<std::string>& string_grammar);
 
         typedef rule<
             effect_signature,
             boost::spirit::qi::locals<
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<std::string>*
+                value_ref_payload<double>,
+                value_ref_payload<double>,
+                value_ref_payload<std::string>
             >
         > doubles_string_rule;
 

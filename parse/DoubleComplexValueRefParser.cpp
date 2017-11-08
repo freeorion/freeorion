@@ -1,4 +1,5 @@
 #include "ValueRefParserImpl.h"
+#include "MovableEnvelope.h"
 
 
 namespace parse {
@@ -6,7 +7,7 @@ namespace parse {
         const lexer& tok,
         detail::Labeller& labeller,
         const detail::condition_parser_grammar& condition_parser,
-        const value_ref_grammar<std::string>& string_grammar
+        const detail::value_ref_grammar<std::string>& string_grammar
     ) :
         double_complex_parser_grammar::base_type(start, "double_complex_parser_grammar"),
         simple_int_rules(tok)
@@ -25,11 +26,14 @@ namespace parse {
         qi::_e_type _e;
         qi::_f_type _f;
         qi::_val_type _val;
+        qi::_pass_type _pass;
+        const boost::phoenix::function<detail::construct_movable> construct_movable_;
+        const boost::phoenix::function<detail::deconstruct_movable> deconstruct_movable_;
 
         const std::string TOK_SPECIES_EMPIRE_OPINION{"SpeciesEmpireOpinion"};
         const std::string TOK_SPECIES_SPECIES_OPINION{"SpeciesSpeciesOpinion"};
 
-        const value_ref_rule<int>& simple_int = simple_int_rules.simple;
+        const detail::value_ref_rule<int>& simple_int = simple_int_rules.simple;
 
         name_property_rule
             = (     tok.GameRule_           [ _a = construct<std::string>(_1) ]
@@ -40,21 +44,40 @@ namespace parse {
                 |   tok.PartCapacity_       [ _a = construct<std::string>(_1) ]
                 |   tok.PartSecondaryStat_  [ _a = construct<std::string>(_1) ]
               ) >   labeller.rule(Name_token) > string_grammar [ _d = _1 ]
-                [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
+                [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                        _a,
+                        deconstruct_movable_(_b, _pass),
+                        deconstruct_movable_(_c, _pass),
+                        deconstruct_movable_(_f, _pass),
+                        deconstruct_movable_(_d, _pass),
+                        deconstruct_movable_(_e, _pass))) ]
             ;
 
         empire_meter_value
             = (     tok.EmpireMeterValue_ [ _a = construct<std::string>(_1)]
                  >  labeller.rule(Empire_token) > simple_int[ _b = _1]
-                 >  labeller.rule(Meter_token) > tok.string[ _d = new_<ValueRef::Constant<std::string>>(_1)]
-              )     [_val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e)]
+                    >  labeller.rule(Meter_token) > tok.string[
+                        _d = construct_movable_(new_<ValueRef::Constant<std::string>>(_1))]
+              )     [_val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                _a,
+                deconstruct_movable_(_b, _pass),
+                deconstruct_movable_(_c, _pass),
+                deconstruct_movable_(_f, _pass),
+                deconstruct_movable_(_d, _pass),
+                deconstruct_movable_(_e, _pass))) ]
             ;
 
         direct_distance
             = (     tok.DirectDistanceBetween_ [ _a = construct<std::string>(_1) ]
                  >  labeller.rule(Object_token) > simple_int [ _b = _1 ]
                  >  labeller.rule(Object_token) > simple_int [ _c = _1 ]
-              )     [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
+              )     [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                _a,
+                deconstruct_movable_(_b, _pass),
+                deconstruct_movable_(_c, _pass),
+                deconstruct_movable_(_f, _pass),
+                deconstruct_movable_(_d, _pass),
+                deconstruct_movable_(_e, _pass))) ]
             ;
 
         // in shortest_path would have liked to be able to use
@@ -67,7 +90,13 @@ namespace parse {
                         tok.ShortestPath_ [ _a = construct<std::string>(_1) ]
                     >   labeller.rule(Object_token) > simple_int [ _b = _1 ]
                     >   labeller.rule(Object_token) > simple_int [ _c = _1 ]
-                )       [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
+                )       [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                _a,
+                deconstruct_movable_(_b, _pass),
+                deconstruct_movable_(_c, _pass),
+                deconstruct_movable_(_f, _pass),
+                deconstruct_movable_(_d, _pass),
+                deconstruct_movable_(_e, _pass))) ]
             ;
 
         species_empire_opinion
@@ -77,7 +106,13 @@ namespace parse {
                  )
                 >> labeller.rule(Empire_token)
                 )  >  simple_int [ _b = _1 ]
-              )     [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
+              )     [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                _a,
+                deconstruct_movable_(_b, _pass),
+                deconstruct_movable_(_c, _pass),
+                deconstruct_movable_(_f, _pass),
+                deconstruct_movable_(_d, _pass),
+                deconstruct_movable_(_e, _pass))) ]
             ;
 
         species_species_opinion
@@ -87,7 +122,13 @@ namespace parse {
                  )
                 >> labeller.rule(Species_token)
                 ) >  string_grammar [ _e = _1 ]
-              )     [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
+              )     [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                _a,
+                deconstruct_movable_(_b, _pass),
+                deconstruct_movable_(_c, _pass),
+                deconstruct_movable_(_f, _pass),
+                deconstruct_movable_(_d, _pass),
+                deconstruct_movable_(_e, _pass))) ]
             ;
 
         special_capacity
@@ -97,7 +138,13 @@ namespace parse {
                  )
                 >> labeller.rule(Object_token)
                 )  >  simple_int [ _b = _1 ]
-              )     [ _val = new_<ValueRef::ComplexVariable<double>>(_a, _b, _c, _f, _d, _e) ]
+              )     [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                _a,
+                deconstruct_movable_(_b, _pass),
+                deconstruct_movable_(_c, _pass),
+                deconstruct_movable_(_f, _pass),
+                deconstruct_movable_(_d, _pass),
+                deconstruct_movable_(_e, _pass))) ]
             ;
 
         start

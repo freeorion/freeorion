@@ -13,7 +13,7 @@ namespace parse { namespace detail {
     effect_parser_rules_2::effect_parser_rules_2(
         const parse::lexer& tok, Labeller& labeller,
         const condition_parser_grammar& condition_parser,
-        const parse::value_ref_grammar<std::string>& string_grammar
+        const value_ref_grammar<std::string>& string_grammar
     ) :
         effect_parser_rules_2::base_type(start, "effect_parser_rules_2"),
         int_rules(tok, labeller, condition_parser, string_grammar),
@@ -33,7 +33,11 @@ namespace parse { namespace detail {
         qi::_e_type _e;
         qi::_val_type _val;
         qi::eps_type eps;
+        qi::_pass_type _pass;
         using phoenix::new_;
+        using phoenix::construct;
+        const boost::phoenix::function<construct_movable> construct_movable_;
+        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
 
         set_meter =
             (
@@ -43,52 +47,70 @@ namespace parse { namespace detail {
             )
             >   double_rules.expr [ _c = _1 ]
             >   (
-                (labeller.rule(AccountingLabel_token) > tok.string [ _val = new_<Effect::SetMeter>(_a, _c, _1) ] )
-                |    eps [ _val = new_<Effect::SetMeter>(_a, _c) ]
+                (labeller.rule(AccountingLabel_token) > tok.string [ _val = construct_movable_(new_<Effect::SetMeter>(
+                        _a,
+                        deconstruct_movable_(_c, _pass),
+                        _1)) ] )
+                |    eps [ _val = construct_movable_(new_<Effect::SetMeter>(
+                        _a,
+                        deconstruct_movable_(_c, _pass))) ]
             )
             ;
 
         set_ship_part_meter
             =    (set_ship_part_meter_type_enum [ _a = _1 ] >>   labeller.rule(PartName_token))   > string_grammar [ _b = _1 ]
-            >    labeller.rule(Value_token)      > double_rules.expr [ _val = new_<Effect::SetShipPartMeter>(_a, _b, _1) ]
+            >    labeller.rule(Value_token)      > double_rules.expr [ _val = construct_movable_(new_<Effect::SetShipPartMeter>(
+                _a,
+                deconstruct_movable_(_b, _pass),
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         set_empire_stockpile
             =   tok.SetEmpireTradeStockpile_ [ _a = RE_TRADE ]
             >   (
                 (   labeller.rule(Empire_token) > int_rules.expr [ _b = _1 ]
-                    >   labeller.rule(Value_token)  > double_rules.expr [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
+                    >   labeller.rule(Value_token)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
+                        deconstruct_movable_(_b, _pass),
+                        _a,
+                        deconstruct_movable_(_1, _pass))) ]
                 )
-                |  (labeller.rule(Value_token)  > double_rules.expr [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ])
+                |  (labeller.rule(Value_token)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
+                            _a,
+                            deconstruct_movable_(_1, _pass))) ])
             )
             ;
 
         set_empire_capital
             =    tok.SetEmpireCapital_
             >   (
-                (labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Effect::SetEmpireCapital>(_1) ])
-                |    eps [ _val = new_<Effect::SetEmpireCapital>() ]
+                (labeller.rule(Empire_token) > int_rules.expr [ _val = construct_movable_(
+                        new_<Effect::SetEmpireCapital>(deconstruct_movable_(_1, _pass))) ])
+                |    eps [ _val = construct_movable_(new_<Effect::SetEmpireCapital>()) ]
             )
             ;
 
         set_planet_type
             =    tok.SetPlanetType_
-            >    labeller.rule(Type_token) > planet_type_rules.expr [ _val = new_<Effect::SetPlanetType>(_1) ]
+            >    labeller.rule(Type_token) > planet_type_rules.expr [ _val = construct_movable_(
+                new_<Effect::SetPlanetType>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         set_planet_size
             =    tok.SetPlanetSize_
-            >    labeller.rule(PlanetSize_token) > planet_size_rules.expr [ _val = new_<Effect::SetPlanetSize>(_1) ]
+            >    labeller.rule(PlanetSize_token) > planet_size_rules.expr [
+                _val = construct_movable_(new_<Effect::SetPlanetSize>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         set_species
             =    tok.SetSpecies_
-            >    labeller.rule(Name_token) > string_grammar [ _val = new_<Effect::SetSpecies>(_1) ]
+            >    labeller.rule(Name_token) > string_grammar [
+                _val = construct_movable_(new_<Effect::SetSpecies>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         set_owner
             =    tok.SetOwner_
-            >    labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Effect::SetOwner>(_1) ]
+            >    labeller.rule(Empire_token) > int_rules.expr [
+                _val = construct_movable_(new_<Effect::SetOwner>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         set_species_opinion
@@ -97,11 +119,17 @@ namespace parse { namespace detail {
             > (
                 (   labeller.rule(Empire_token) >  int_rules.expr [ _c = _1 ]
                     >  labeller.rule(Opinion_token) > double_rules.expr
-                    [ _val = new_<Effect::SetSpeciesEmpireOpinion>(_a, _c, _1) ])
+                    [ _val = construct_movable_(new_<Effect::SetSpeciesEmpireOpinion>(
+                            deconstruct_movable_(_a, _pass),
+                            deconstruct_movable_(_c, _pass),
+                            deconstruct_movable_(_1, _pass))) ])
                 |
                 (   labeller.rule(Species_token) > string_grammar [ _b = _1 ]
                     >   labeller.rule(Opinion_token) > double_rules.expr
-                    [ _val = new_<Effect::SetSpeciesSpeciesOpinion>(_a, _b, _1) ])
+                    [ _val = construct_movable_(new_<Effect::SetSpeciesSpeciesOpinion>(
+                            deconstruct_movable_(_a, _pass),
+                            deconstruct_movable_(_b, _pass),
+                            deconstruct_movable_(_1, _pass))) ])
             )
             ;
 
@@ -128,7 +156,11 @@ namespace parse { namespace detail {
                 )
                 >  labeller.rule(Visibility_token) > visibility_rules.expr [ _c = _1 ]
                 >-(labeller.rule(Condition_token) > condition_parser [ _e = _1 ])
-            ) [ _val = new_<Effect::SetVisibility>(_c, _d, _b, _e) ]
+            ) [ _val = construct_movable_(
+                new_<Effect::SetVisibility>(deconstruct_movable_(_c, _pass),
+                                            _d,
+                                            deconstruct_movable_(_b, _pass),
+                                            deconstruct_movable_(_e, _pass))) ]
             ;
 
         start

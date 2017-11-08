@@ -25,6 +25,8 @@
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/lexical_cast.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 extern FO_COMMON_API const int INVALID_DESIGN_ID = -1;
 
@@ -49,31 +51,30 @@ namespace {
     // by the result of evalulating \a increase_vr
     std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type,
-                  ValueRef::ValueRefBase<double>* increase_vr)
+                  std::unique_ptr<ValueRef::ValueRefBase<double>>&& increase_vr)
     {
-        typedef std::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
-        typedef std::vector<Effect::EffectBase*> Effects;
-        Condition::Source* scope = new Condition::Source;
-        Condition::Source* activation = new Condition::Source;
+        typedef std::vector<std::unique_ptr<Effect::EffectBase>> Effects;
+        auto scope = boost::make_unique<Condition::Source>();
+        auto activation = boost::make_unique<Condition::Source>();
 
-        ValueRef::ValueRefBase<double>* vr =
-            new ValueRef::Operation<double>(
+        auto vr =
+            boost::make_unique<ValueRef::Operation<double>>(
                 ValueRef::PLUS,
-                new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
-                increase_vr
+                boost::make_unique<ValueRef::Variable<double>>(
+                    ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
+                std::move(increase_vr)
             );
-        return EffectsGroupPtr(
-            new Effect::EffectsGroup(
-                scope, activation, Effects(1, new Effect::SetMeter(meter_type, vr))));
+        auto effects = Effects();
+        effects.push_back(boost::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
+        return std::make_shared<Effect::EffectsGroup>(std::move(scope), std::move(activation), std::move(effects));
     }
 
     // create effectsgroup that increases the value of \a meter_type
     // by the specified amount \a fixed_increase
     std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, float fixed_increase) {
-        ValueRef::ValueRefBase<double>* increase_vr =
-            new ValueRef::Constant<double>(fixed_increase);
-        return IncreaseMeter(meter_type, increase_vr);
+        auto increase_vr = boost::make_unique<ValueRef::Constant<double>>(fixed_increase);
+        return IncreaseMeter(meter_type, std::move(increase_vr));
     }
 
     // create effectsgroup that increases the value of \a meter_type
@@ -87,16 +88,16 @@ namespace {
         if (scaling_factor_rule_name.empty())
             return IncreaseMeter(meter_type, base_increase);
 
-        ValueRef::ValueRefBase<double>* increase_vr = new ValueRef::Operation<double>(
+        auto increase_vr = boost::make_unique<ValueRef::Operation<double>>(
             ValueRef::TIMES,
-            new ValueRef::Constant<double>(base_increase),
-            new ValueRef::ComplexVariable<double>(
+            boost::make_unique<ValueRef::Constant<double>>(base_increase),
+            boost::make_unique<ValueRef::ComplexVariable<double>>(
                 "GameRule", nullptr, nullptr, nullptr,
-                new ValueRef::Constant<std::string>(scaling_factor_rule_name)
+                boost::make_unique<ValueRef::Constant<std::string>>(scaling_factor_rule_name)
             )
         );
 
-        return IncreaseMeter(meter_type, increase_vr);
+        return IncreaseMeter(meter_type, std::move(increase_vr));
     }
 
     // create effectsgroup that increases the value of the part meter
@@ -106,29 +107,29 @@ namespace {
     IncreaseMeter(MeterType meter_type, const std::string& part_name,
                   float increase, bool allow_stacking = true)
     {
-        typedef std::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
-        typedef std::vector<Effect::EffectBase*> Effects;
-        Condition::Source* scope = new Condition::Source;
-        Condition::Source* activation = new Condition::Source;
+        typedef std::vector<std::unique_ptr<Effect::EffectBase>> Effects;
+        auto scope = boost::make_unique<Condition::Source>();
+        auto activation = boost::make_unique<Condition::Source>();
 
-        ValueRef::ValueRefBase<double>* value_vr =
-            new ValueRef::Operation<double>(
-                ValueRef::PLUS,
-                new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
-                new ValueRef::Constant<double>(increase)
-            );
+        auto value_vr = boost::make_unique<ValueRef::Operation<double>>(
+            ValueRef::PLUS,
+            boost::make_unique<ValueRef::Variable<double>>(
+                ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
+            boost::make_unique<ValueRef::Constant<double>>(increase)
+        );
 
-        ValueRef::ValueRefBase<std::string>* part_name_vr =
-            new ValueRef::Constant<std::string>(part_name);
+        auto part_name_vr =
+            boost::make_unique<ValueRef::Constant<std::string>>(part_name);
 
         std::string stacking_group = (allow_stacking ? "" :
             (part_name + "_" + boost::lexical_cast<std::string>(meter_type) + "_PartMeter"));
 
-        return EffectsGroupPtr(
-            new Effect::EffectsGroup(
-                scope, activation,
-                Effects(1, new Effect::SetShipPartMeter(meter_type, part_name_vr, value_vr)),
-                part_name, stacking_group));
+        auto effects = Effects();
+        effects.push_back(boost::make_unique<Effect::SetShipPartMeter>(
+                              meter_type, std::move(part_name_vr), std::move(value_vr)));
+
+        return std::make_shared<Effect::EffectsGroup>(
+            std::move(scope), std::move(activation), std::move(effects), part_name, stacking_group);
     }
 
     bool DesignsTheSame(const ShipDesign& one, const ShipDesign& two) {
@@ -175,6 +176,47 @@ const HullType* GetHullType(const std::string& name)
 const ShipDesign* GetShipDesign(int ship_design_id)
 { return GetUniverse().GetShipDesign(ship_design_id); }
 
+
+////////////////////////////////////////////////
+// CommonParams
+////////////////////////////////////////////////
+CommonParams::CommonParams() :
+    production_cost(nullptr),
+    production_time(nullptr),
+    producible(false),
+    tags(),
+    production_meter_consumption(),
+    production_special_consumption(),
+    location(nullptr),
+    enqueue_location(nullptr),
+    effects()
+{}
+
+CommonParams::CommonParams(std::unique_ptr<ValueRef::ValueRefBase<double>>&& production_cost_,
+                           std::unique_ptr<ValueRef::ValueRefBase<int>>&& production_time_,
+                           bool producible_,
+                           const std::set<std::string>& tags_,
+                           std::unique_ptr<Condition::ConditionBase>&& location_,
+                           std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects_,
+                           ConsumptionMap<MeterType>&& production_meter_consumption_,
+                           ConsumptionMap<std::string>&& production_special_consumption_,
+                           std::unique_ptr<Condition::ConditionBase>&& enqueue_location_) :
+    production_cost(std::move(production_cost_)),
+    production_time(std::move(production_time_)),
+    producible(producible_),
+    tags(),
+    production_meter_consumption(std::move(production_meter_consumption_)),
+    production_special_consumption(std::move(production_special_consumption_)),
+    location(std::move(location_)),
+    enqueue_location(std::move(enqueue_location_)),
+    effects(std::move(effects_))
+{
+    for (const std::string& tag : tags_)
+        tags.insert(boost::to_upper_copy<std::string>(tag));
+}
+
+CommonParams::~CommonParams()
+{}
 
 /////////////////////////////////////
 // PartTypeManager                 //
@@ -253,14 +295,14 @@ PartType::PartType() :
     m_class(INVALID_SHIP_PART_CLASS),
     m_capacity(0.0f),
     m_secondary_stat(1.0f),
-    m_production_cost(0),
-    m_production_time(0),
+    m_production_cost(),
+    m_production_time(),
     m_producible(false),
     m_mountable_slot_types(),
     m_tags(),
     m_production_meter_consumption(),
     m_production_special_consumption(),
-    m_location(0),
+    m_location(),
     m_exclusions(),
     m_effects(),
     m_icon(),
@@ -268,7 +310,7 @@ PartType::PartType() :
 {}
 
 PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
-                   const CommonParams& common_params, const MoreCommonParams& more_common_params,
+                   CommonParams& common_params, const MoreCommonParams& more_common_params,
                    std::vector<ShipSlotType> mountable_slot_types,
                    const std::string& icon, bool add_standard_capacity_effect) :
     m_name(more_common_params.name),
@@ -276,26 +318,27 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
     m_class(part_class),
     m_capacity(capacity),
     m_secondary_stat(stat2),
-    m_production_cost(common_params.production_cost),
-    m_production_time(common_params.production_time),
+    m_production_cost(std::move(common_params.production_cost)),
+    m_production_time(std::move(common_params.production_time)),
     m_producible(common_params.producible),
     m_mountable_slot_types(mountable_slot_types),
     m_tags(),
-    m_production_meter_consumption(common_params.production_meter_consumption),
-    m_production_special_consumption(common_params.production_special_consumption),
-    m_location(common_params.location),
+    m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
+    m_production_special_consumption(std::move(common_params.production_special_consumption)),
+    m_location(std::move(common_params.location)),
     m_exclusions(more_common_params.exclusions),
     m_effects(),
     m_icon(icon),
     m_add_standard_capacity_effect(add_standard_capacity_effect)
 {
     //TraceLogger() << "part type: " << m_name << " producible: " << m_producible << std::endl;
-    Init(common_params.effects);
+    Init(std::move(common_params.effects));
+
     for (const std::string& tag : common_params.tags)
         m_tags.insert(boost::to_upper_copy<std::string>(tag));
 }
 
-void PartType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects) {
+void PartType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects) {
     if ((m_capacity != 0 || m_secondary_stat != 0) && m_add_standard_capacity_effect) {
         switch (m_class) {
         case PC_COLONY:
@@ -345,14 +388,14 @@ void PartType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& ef
         }
     }
 
-    for (auto& effect : effects) {
+    for (auto&& effect : effects) {
         effect->SetTopLevelContent(m_name);
-        m_effects.push_back(effect);
+        m_effects.emplace_back(std::move(effect));
     }
 }
 
 PartType::~PartType()
-{ delete m_location; }
+{}
 
 float PartType::Capacity() const {
     switch (m_class) {
@@ -498,11 +541,65 @@ unsigned int PartType::GetCheckSum() const {
 ////////////////////////////////////////////////
 // HullType
 ////////////////////////////////////////////////
+HullType::HullType() :
+    m_name("generic hull type"),
+    m_description("indescribable"),
+    m_speed(1.0f),
+    m_fuel(0.0f),
+    m_stealth(0.0f),
+    m_structure(0.0f),
+    m_production_cost(nullptr),
+    m_production_time(nullptr),
+    m_producible(false),
+    m_slots(),
+    m_tags(),
+    m_production_meter_consumption(),
+    m_production_special_consumption(),
+    m_location(nullptr),
+    m_effects(),
+    m_graphic(),
+    m_icon()
+{}
+
+HullType::HullType(const HullTypeStats& stats,
+                   CommonParams&& common_params,
+                   const MoreCommonParams& more_common_params,
+                   const std::vector<Slot>& slots,
+                   const std::string& icon, const std::string& graphic) :
+    m_name(more_common_params.name),
+    m_description(more_common_params.description),
+    m_speed(stats.speed),
+    m_fuel(stats.fuel),
+    m_stealth(stats.stealth),
+    m_structure(stats.structure),
+    m_production_cost(std::move(common_params.production_cost)),
+    m_production_time(std::move(common_params.production_time)),
+    m_producible(common_params.producible),
+    m_slots(slots),
+    m_tags(),
+    m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
+    m_production_special_consumption(std::move(common_params.production_special_consumption)),
+    m_location(std::move(common_params.location)),
+    m_exclusions(more_common_params.exclusions),
+    m_effects(),
+    m_graphic(graphic),
+    m_icon(icon)
+{
+    //TraceLogger() << "hull type: " << m_name << " producible: " << m_producible << std::endl;
+    Init(std::move(common_params.effects));
+
+    for (const std::string& tag : common_params.tags)
+        m_tags.insert(boost::to_upper_copy<std::string>(tag));
+}
+
 HullType::Slot::Slot() :
     type(INVALID_SHIP_SLOT_TYPE), x(0.5), y(0.5)
 {}
 
-void HullType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects) {
+HullType::~HullType()
+{}
+
+void HullType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects) {
     if (m_fuel != 0)
         m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_fuel));
     if (m_stealth != 0)
@@ -512,14 +609,11 @@ void HullType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& ef
     if (m_speed != 0)
         m_effects.push_back(IncreaseMeter(METER_SPEED,          m_speed,        "RULE_SHIP_SPEED_FACTOR"));
 
-    for (auto& effect : effects) {
+    for (auto&& effect : effects) {
         effect->SetTopLevelContent(m_name);
-        m_effects.push_back(effect);
+        m_effects.emplace_back(std::move(effect));
     }
 }
-
-HullType::~HullType()
-{ delete m_location; }
 
 float HullType::Speed() const
 { return m_speed * GetGameRules().Get<double>("RULE_SHIP_SPEED_FACTOR"); }
@@ -1567,8 +1661,7 @@ LoadShipDesignsAndManifestOrderFromParseResults(
     auto& disk_ordering = designs_paths_and_ordering.second;
 
     for (auto&& design_and_path : designs_and_paths) {
-        // TODO change to make_unique when converting to C++14
-        auto design = std::unique_ptr<ShipDesign>(new ShipDesign(*design_and_path.first));
+        auto design = boost::make_unique<ShipDesign>(*design_and_path.first);
 
         // If the UUID is nil this is a legacy design that needs a new UUID
         if(design->UUID() == boost::uuids::uuid{{0}}) {

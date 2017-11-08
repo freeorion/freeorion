@@ -925,6 +925,7 @@
 		825936EB147E3B1B00B840A5 /* ItemsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ItemsParser.cpp; sourceTree = "<group>"; };
 		825936EE147E3B1B00B840A5 /* Lexer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Lexer.cpp; sourceTree = "<group>"; };
 		825936EF147E3B1B00B840A5 /* Lexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lexer.h; sourceTree = "<group>"; };
+		825936EF147E3B1B00C840A5 /* MovableEnvelope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovableEnvelope.h; sourceTree = "<group>"; };
 		825936F0147E3B1B00B840A5 /* MonsterFleetPlansParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MonsterFleetPlansParser.cpp; sourceTree = "<group>"; };
 		825936F1147E3B1B00B840A5 /* Parse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parse.cpp; sourceTree = "<group>"; };
 		825936F2147E3B1B00B840A5 /* Parse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parse.h; sourceTree = "<group>"; };
@@ -2058,6 +2059,7 @@
 				82D68C6C15F4F720006B772D /* KeymapParser.cpp */,
 				825936EE147E3B1B00B840A5 /* Lexer.cpp */,
 				825936EF147E3B1B00B840A5 /* Lexer.h */,
+				825936EF147E3B1B00C840A5 /* MovableEnvelope.h */,
 				825936F0147E3B1B00B840A5 /* MonsterFleetPlansParser.cpp */,
 				825936F1147E3B1B00B840A5 /* Parse.cpp */,
 				825936F2147E3B1B00B840A5 /* Parse.h */,

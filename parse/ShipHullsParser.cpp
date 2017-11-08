@@ -9,18 +9,20 @@
 #include "ValueRefParser.h"
 #include "CommonParams.h"
 
+#include "../universe/ValueRef.h"
 #include "../universe/Condition.h"
 #include "../universe/ShipDesign.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 #define DEBUG_PARSERS 0
 
 #if DEBUG_PARSERS
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<HullType::Slot>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
     inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<HullType>>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<HullType>>&) { return os; }
     inline ostream& operator<<(ostream& os, const HullType::Slot&) { return os; }
@@ -32,13 +34,14 @@ namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
     void insert_hulltype(std::map<std::string, std::unique_ptr<HullType>>& hulltypes,
-                         const HullTypeStats& stats, const CommonParams& common_params,
+                         const HullTypeStats& stats,
+                         const std::unique_ptr<CommonParams>& common_params,
                          const MoreCommonParams& more_common_params,
                          const std::vector<HullType::Slot>& slots,
                          const std::string& icon, const std::string& graphic)
     {
-        auto hulltype = std::unique_ptr<HullType>(
-            new HullType(stats, common_params, more_common_params, slots, icon, graphic));
+        auto hulltype = boost::make_unique<HullType>(
+            stats, std::move(*common_params), more_common_params, slots, icon, graphic);
         hulltypes.emplace(hulltype->Name(), std::move(hulltype));
     }
 
@@ -81,6 +84,7 @@ namespace {
             qi::_val_type _val;
             qi::eps_type eps;
             qi::lit_type lit;
+            const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             hull_stats
                 =   labeller.rule(Speed_token)       >   double_rule [ _a = _1 ]
@@ -117,7 +121,9 @@ namespace {
                 >   common_rules.common       [ _d = _1 ]
                 >   labeller.rule(Icon_token)    > tok.string    [ _f = _1 ]
                 >   labeller.rule(Graphic_token) > tok.string
-                [ insert_hulltype_(_r1, _c, _d, _a, _e, _f, _1) ]
+                [ insert_hulltype_(_r1, _c,
+                                   deconstruct_movable_(_d, _pass),
+                                   _a, _e, _f, _1) ]
                 ;
 
             start
@@ -169,7 +175,7 @@ namespace {
                 MoreCommonParams,
                 std::string,    // dummy
                 HullTypeStats,
-                CommonParams,
+                parse::detail::MovableEnvelope<CommonParams>,
                 std::vector<HullType::Slot>,
                 std::string
             >

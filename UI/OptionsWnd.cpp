@@ -1259,9 +1259,9 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
             if (!drop_list_row)
                 return;
             int w, h;
-            using namespace boost::spirit::classic;
-            rule<> resolution_p = int_p[assign_a(w)] >> str_p(" x ") >> int_p[assign_a(h)];
-            parse(drop_list_row->Name().c_str(), resolution_p);
+            namespace classic = boost::spirit::classic;
+            classic::rule<> resolution_p = classic::int_p[classic::assign_a(w)] >> classic::str_p(" x ") >> classic::int_p[classic::assign_a(h)];
+            classic::parse(drop_list_row->Name().c_str(), resolution_p);
             GetOptionsDB().Set<int>("app-width", w);
             GetOptionsDB().Set<int>("app-height", h);
         }

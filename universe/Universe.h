@@ -416,17 +416,17 @@ public:
     const std::vector<ItemSpec>& InitiallyUnlockedBuildings() const;
 
     /** Set fleets unlocked before turn 1 from \p future.*/
-    void SetInitiallyUnlockedFleetPlans(Pending::Pending<std::vector<FleetPlan*>>&& future);
+    void SetInitiallyUnlockedFleetPlans(Pending::Pending<std::vector<std::unique_ptr<FleetPlan>>>&& future);
     /** Fleets unlocked before turn 1.*/
-    const std::vector<FleetPlan*>& InitiallyUnlockedFleetPlans() const;
+    const std::vector<FleetPlan*> InitiallyUnlockedFleetPlans() const;
 
     /** Set items unlocked before turn 1 from \p future..*/
-    void SetMonsterFleetPlans(Pending::Pending<std::vector<MonsterFleetPlan*>>&& future);
+    void SetMonsterFleetPlans(Pending::Pending<std::vector<std::unique_ptr<MonsterFleetPlan>>>&& future);
     /** Items unlocked before turn 1.*/
-    const std::vector<MonsterFleetPlan*>& MonsterFleetPlans() const;
+    const std::vector<MonsterFleetPlan*> MonsterFleetPlans() const;
 
     /** Set the empire stats from \p future. */
-    using EmpireStatsMap = std::map<std::string, ValueRef::ValueRefBase<double>*>;
+    using EmpireStatsMap = std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase<double>>>;
     void SetEmpireStats(Pending::Pending<EmpireStatsMap> future);
 private:
     const EmpireStatsMap& EmpireStats() const;
@@ -533,14 +533,14 @@ private:
     ///@{
     mutable boost::optional<Pending::Pending<std::vector<ItemSpec>>> m_pending_items = boost::none;
     mutable boost::optional<Pending::Pending<std::vector<ItemSpec>>> m_pending_buildings = boost::none;
-    mutable boost::optional<Pending::Pending<std::vector<FleetPlan*>>> m_pending_fleet_plans = boost::none;
-    mutable boost::optional<Pending::Pending<std::vector<MonsterFleetPlan*>>> m_pending_monster_fleet_plans = boost::none;
+    mutable boost::optional<Pending::Pending<std::vector<std::unique_ptr<FleetPlan>>>> m_pending_fleet_plans = boost::none;
+    mutable boost::optional<Pending::Pending<std::vector<std::unique_ptr<MonsterFleetPlan>>>> m_pending_monster_fleet_plans = boost::none;
     mutable boost::optional<Pending::Pending<EmpireStatsMap>> m_pending_empire_stats = boost::none;
 
     mutable std::vector<ItemSpec> m_unlocked_items;
     mutable std::vector<ItemSpec> m_unlocked_buildings;
-    mutable std::vector<FleetPlan*> m_unlocked_fleet_plans;
-    mutable std::vector<MonsterFleetPlan*> m_monster_fleet_plans;
+    mutable std::vector<std::unique_ptr<FleetPlan>> m_unlocked_fleet_plans;
+    mutable std::vector<std::unique_ptr<MonsterFleetPlan>> m_monster_fleet_plans;
     mutable EmpireStatsMap m_empire_stats;
     ///@}
 

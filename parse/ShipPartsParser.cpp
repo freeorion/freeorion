@@ -11,16 +11,18 @@
 
 #include "../universe/ShipDesign.h"
 #include "../universe/Condition.h"
+#include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 #define DEBUG_PARSERS 0
 
 #if DEBUG_PARSERS
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<ShipSlotType>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
     inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<PartType>>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<PartType>>&) { return os; }
 }
@@ -30,19 +32,22 @@ namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
     void insert_parttype(std::map<std::string, std::unique_ptr<PartType>>& part_types,
-                         ShipPartClass part_class, double capacity, double stat2,
-                         const CommonParams& common_params, const MoreCommonParams& more_common_params,
+                         ShipPartClass part_class,
+                         std::pair<double, double> capacity_and_stat2,
+                         const parse::detail::MovableEnvelope<CommonParams>& common_params,
+                         const MoreCommonParams& more_common_params,
                          std::vector<ShipSlotType> mountable_slot_types,
-                         const std::string& icon, bool add_standard_capacity_effect)
+                         const std::string& icon,
+                         bool add_standard_capacity_effect,
+                         bool& pass)
     {
-        // TODO use make_unique when converting to C++14
-        auto part_type = std::unique_ptr<PartType>(
-            new PartType(part_class, capacity, stat2, common_params, more_common_params, mountable_slot_types, icon,
-                         add_standard_capacity_effect));
+        auto part_type = boost::make_unique<PartType>(
+            part_class, capacity_and_stat2.first, capacity_and_stat2.second,
+            *common_params.OpenEnvelope(pass), more_common_params, mountable_slot_types, icon,
+            add_standard_capacity_effect);
 
         part_types.insert(std::make_pair(part_type->Name(), std::move(part_type)));
     }
-
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_parttype_, insert_parttype, 9)
 
@@ -67,6 +72,7 @@ namespace {
             namespace qi = boost::spirit::qi;
 
             using phoenix::push_back;
+            using phoenix::construct;
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -80,6 +86,7 @@ namespace {
             qi::_f_type _f;
             qi::_g_type _g;
             qi::_h_type _h;
+            qi::_i_type _i;
             qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::eps_type eps;
@@ -113,7 +120,8 @@ namespace {
                 >   slots(_f)
                 >   common_rules.common           [ _e = _1 ]
                 >   labeller.rule(Icon_token)        > tok.string    [ _b = _1 ]
-                  ) [ insert_parttype_(_r1, _c, _d, _h, _e, _a, _f, _b, _g) ]
+                  ) [ _i = construct<std::pair<double, double>>(_d, _h),
+                      insert_parttype_(_r1, _c, _i, _e, _a, _f, _b, _g, _pass) ]
                 ;
 
             start
@@ -142,10 +150,11 @@ namespace {
                 std::string,
                 ShipPartClass,
                 double,
-                CommonParams,
+                parse::detail::MovableEnvelope<CommonParams>,
                 std::vector<ShipSlotType>,
                 bool,
-                double
+                double,
+                std::pair<double, double>
             >
         > part_type_rule;
 

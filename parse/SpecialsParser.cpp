@@ -2,15 +2,20 @@
 
 #include "EffectParser.h"
 
+#include "../universe/ValueRef.h"
+#include "../universe/Condition.h"
+#include "../universe/Effect.h"
 #include "../universe/Special.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 #define DEBUG_PARSERS 0
 
 #if DEBUG_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
     inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<Special>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<Special>&) { return os; }
 }
@@ -22,12 +27,12 @@ namespace {
     struct special_pod {
         special_pod(std::string name_,
                     std::string description_,
-                    ValueRef::ValueRefBase<double>* stealth_,
-                    const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects_,
+                    const parse::detail::value_ref_payload<double>& stealth_,
+                    const parse::effects_group_payload& effects_,
                     double spawn_rate_,
                     int spawn_limit_,
-                    ValueRef::ValueRefBase<double>* initial_capacity_,
-                    Condition::ConditionBase* location_,
+                    const parse::detail::value_ref_payload<double>& initial_capacity_,
+                    const parse::detail::condition_payload& location_,
                     const std::string& graphic_) :
             name(name_),
             description(description_),
@@ -42,25 +47,26 @@ namespace {
 
         std::string name;
         std::string description;
-        ValueRef::ValueRefBase<double>* stealth;
-        const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects;
+        const parse::detail::value_ref_payload<double> stealth;
+        const parse::effects_group_payload& effects;
         double spawn_rate;
         int spawn_limit;
-        ValueRef::ValueRefBase<double>* initial_capacity;
-        Condition::ConditionBase* location;
+        const parse::detail::value_ref_payload<double> initial_capacity;
+        parse::detail::condition_payload location;
         const std::string& graphic;
     };
 
-    void insert_special(std::map<std::string, std::unique_ptr<Special>>& specials, special_pod special_) {
-        // TODO use make_unique when converting to C++14
-        auto special_ptr = std::unique_ptr<Special>(
-            new Special(special_.name, special_.description, special_.stealth, special_.effects, special_.spawn_rate,
-                        special_.spawn_limit, special_.initial_capacity, special_.location, special_.graphic));
+    void insert_special(std::map<std::string, std::unique_ptr<Special>>& specials, special_pod special_, bool& pass) {
+        auto special_ptr = boost::make_unique<Special>(
+            special_.name, special_.description, special_.stealth.OpenEnvelope(pass),
+            OpenEnvelopes(special_.effects, pass),
+            special_.spawn_rate, special_.spawn_limit, special_.initial_capacity.OpenEnvelope(pass),
+            special_.location.OpenEnvelope(pass), special_.graphic);
 
         specials.insert(std::make_pair(special_ptr->Name(), std::move(special_ptr)));
     }
 
-    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_special_, insert_special, 2)
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_special_, insert_special, 3)
 
     using start_rule_payload = std::map<std::string, std::unique_ptr<Special>>;
     using start_rule_signature = void(start_rule_payload&);
@@ -98,6 +104,7 @@ namespace {
             qi::_r2_type _r2;
             qi::_r3_type _r3;
             qi::eps_type eps;
+            const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             special_prefix
                 =    tok.Special_
@@ -123,7 +130,7 @@ namespace {
                 >  -(labeller.rule(Location_token)           > condition_parser [ _e = _1 ])
                 >  -(labeller.rule(EffectsGroups_token)      > effects_group_grammar [ _f = _1 ])
                 >    labeller.rule(Graphic_token)            > tok.string
-                [ insert_special_(_r1, phoenix::construct<special_pod>(_a, _b, _g, _f, _c, _d, _h, _e, _1)) ]
+                [ insert_special_(_r1, phoenix::construct<special_pod>(_a, _b, _g, _f, _c, _d, _h, _e, _1), _pass) ]
                 ;
 
             start
@@ -158,10 +165,10 @@ namespace {
                 std::string,
                 double,
                 int,
-                Condition::ConditionBase*,
-                std::vector<std::shared_ptr<Effect::EffectsGroup>>,
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<double>*
+                parse::detail::condition_payload,
+                parse::effects_group_payload,
+                parse::detail::value_ref_payload<double>,
+                parse::detail::value_ref_payload<double>
             >
         > special_rule;
 

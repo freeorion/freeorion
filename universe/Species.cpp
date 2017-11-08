@@ -15,6 +15,8 @@
 #include "../util/ScopedTimer.h"
 
 #include <boost/filesystem/fstream.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 #include <iterator>
 
@@ -23,11 +25,14 @@
 // FocusType                                   //
 /////////////////////////////////////////////////
 FocusType::FocusType(const std::string& name, const std::string& description,
-                     const Condition::ConditionBase* location, const std::string& graphic) :
+                     std::unique_ptr<Condition::ConditionBase>&& location, const std::string& graphic) :
     m_name(name),
     m_description(description),
-    m_location(location),
+    m_location(std::move(location)),
     m_graphic(graphic)
+{}
+
+FocusType::~FocusType()
 {}
 
 std::string FocusType::Dump() const {
@@ -87,8 +92,39 @@ namespace {
     }
 }
 
+Species::Species(const SpeciesStrings& strings,
+                 const std::vector<FocusType>& foci,
+                 const std::string& preferred_focus,
+                 const std::map<PlanetType, PlanetEnvironment>& planet_environments,
+                 std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+                 const SpeciesParams& params,
+                 const std::set<std::string>& tags,
+                 const std::string& graphic) :
+    m_name(strings.name),
+    m_description(strings.desc),
+    m_gameplay_description(strings.gameplay_desc),
+    m_foci(foci),
+    m_preferred_focus(preferred_focus),
+    m_planet_environments(planet_environments),
+    m_effects(),
+    m_location(),
+    m_playable(params.playable),
+    m_native(params.native),
+    m_can_colonize(params.can_colonize),
+    m_can_produce_ships(params.can_produce_ships),
+    m_tags(),
+    m_graphic(graphic)
+{
+    for (auto&& effect : effects)
+        m_effects.emplace_back(std::move(effect));
+
+    Init();
+    for (const std::string& tag : tags)
+        m_tags.insert(boost::to_upper_copy<std::string>(tag));
+}
+
 Species::~Species()
-{ delete m_location; }
+{}
 
 void Species::Init() {
     if (m_location)
@@ -187,20 +223,27 @@ std::string Species::GameplayDescription() const {
 const Condition::ConditionBase* Species::Location() const {
     if (!m_location) {
         // set up a Condition structure to match popcenters that have (not uninhabitable) environment for this species
-        std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*> environments_vec;
-        environments_vec.push_back(new ValueRef::Constant<PlanetEnvironment>( ::PE_UNINHABITABLE));
-        ValueRef::Constant<std::string>* this_species_name_ref = new ValueRef::Constant<std::string>(m_name);  // m_name specifies this species
-        Condition::ConditionBase* enviro_cond = new Condition::Not(new Condition::PlanetEnvironment(environments_vec, this_species_name_ref));
+        std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetEnvironment>>> environments_vec;
+        environments_vec.push_back(
+            boost::make_unique<ValueRef::Constant<PlanetEnvironment>>( ::PE_UNINHABITABLE));
+        auto this_species_name_ref =
+            boost::make_unique<ValueRef::Constant<std::string>>(m_name);  // m_name specifies this species
+        auto enviro_cond = std::unique_ptr<Condition::ConditionBase>(
+            boost::make_unique<Condition::Not>(
+                std::unique_ptr<Condition::ConditionBase>(
+                    boost::make_unique<Condition::PlanetEnvironment>(
+                        std::move(environments_vec), std::move(this_species_name_ref)))));
 
-        Condition::ConditionBase* type_cond = new Condition::Type(new ValueRef::Constant<UniverseObjectType>( ::OBJ_POP_CENTER));
+        auto type_cond = std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::Type>(
+            boost::make_unique<ValueRef::Constant<UniverseObjectType>>( ::OBJ_POP_CENTER)));
 
-        std::vector<Condition::ConditionBase*> operands;
-        operands.push_back(enviro_cond);
-        operands.push_back(type_cond);
+        std::vector<std::unique_ptr<Condition::ConditionBase>> operands;
+        operands.push_back(std::move(enviro_cond));
+        operands.push_back(std::move(type_cond));
 
-        m_location = new Condition::And(operands);
+        m_location = std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::And>(std::move(operands)));
     }
-    return m_location;
+    return m_location.get();
 }
 
 PlanetEnvironment Species::GetPlanetEnvironment(PlanetType planet_type) const {

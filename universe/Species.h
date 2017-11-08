@@ -45,7 +45,9 @@ public:
     {}
 
     FocusType(const std::string& name, const std::string& description,
-              const Condition::ConditionBase* location, const std::string& graphic);
+              std::unique_ptr<Condition::ConditionBase>&& location, const std::string& graphic);
+
+    ~FocusType();
     //@}
 
     /** \name Accessors */ //@{
@@ -121,29 +123,10 @@ public:
             const std::vector<FocusType>& foci,
             const std::string& preferred_focus,
             const std::map<PlanetType, PlanetEnvironment>& planet_environments,
-            const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+            std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
             const SpeciesParams& params,
             const std::set<std::string>& tags,
-            const std::string& graphic) :
-        m_name(strings.name),
-        m_description(strings.desc),
-        m_gameplay_description(strings.gameplay_desc),
-        m_foci(foci),
-        m_preferred_focus(preferred_focus),
-        m_planet_environments(planet_environments),
-        m_effects(effects),
-        m_location(nullptr),
-        m_playable(params.playable),
-        m_native(params.native),
-        m_can_colonize(params.can_colonize),
-        m_can_produce_ships(params.can_produce_ships),
-        m_tags(),
-        m_graphic(graphic)
-    {
-        Init();
-        for (const std::string& tag : tags)
-            m_tags.insert(boost::to_upper_copy<std::string>(tag));
-    }
+            const std::string& graphic);
 
     ~Species();
     //@}
@@ -215,7 +198,7 @@ private:
 
     std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
 
-    mutable Condition::ConditionBase*       m_location;
+    mutable std::unique_ptr<Condition::ConditionBase>       m_location;
 
     bool                                    m_playable;
     bool                                    m_native;

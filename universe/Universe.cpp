@@ -103,16 +103,8 @@ Universe::Universe() :
                                           TEMPORARY_OBJECT_ID, INVALID_DESIGN_ID))
 {}
 
-Universe::~Universe() {
-    Clear();
-
-    for (auto& fleet : m_unlocked_fleet_plans)
-        delete fleet;
-    for (auto& fleet : m_monster_fleet_plans)
-        delete fleet;
-    for (auto& stat : m_empire_stats)
-        delete stat.second;
-}
+Universe::~Universe()
+{ Clear(); }
 
 void Universe::Clear() {
     // empty object maps
@@ -180,17 +172,27 @@ void Universe::SetInitiallyUnlockedBuildings(Pending::Pending<std::vector<ItemSp
 const std::vector<ItemSpec>& Universe::InitiallyUnlockedBuildings() const
 { return Pending::SwapPending(m_pending_buildings, m_unlocked_buildings); }
 
-void Universe::SetInitiallyUnlockedFleetPlans(Pending::Pending<std::vector<FleetPlan*>>&& future)
+void Universe::SetInitiallyUnlockedFleetPlans(Pending::Pending<std::vector<std::unique_ptr<FleetPlan>>>&& future)
 { m_pending_fleet_plans = std::move(future);}
 
-const std::vector<FleetPlan*>& Universe::InitiallyUnlockedFleetPlans() const
-{ return Pending::SwapPending(m_pending_fleet_plans, m_unlocked_fleet_plans); }
+const std::vector<FleetPlan*> Universe::InitiallyUnlockedFleetPlans() const {
+    Pending::SwapPending(m_pending_fleet_plans, m_unlocked_fleet_plans);
+    std::vector<FleetPlan*> retval;
+    for (const auto& plan : m_unlocked_fleet_plans)
+        retval.push_back(plan.get());
+    return retval;
+}
 
-void Universe::SetMonsterFleetPlans(Pending::Pending<std::vector<MonsterFleetPlan*>>&& future)
+void Universe::SetMonsterFleetPlans(Pending::Pending<std::vector<std::unique_ptr<MonsterFleetPlan>>>&& future)
 { m_pending_monster_fleet_plans = std::move(future); }
 
-const std::vector<MonsterFleetPlan*>& Universe::MonsterFleetPlans() const
-{ return Pending::SwapPending(m_pending_monster_fleet_plans, m_monster_fleet_plans); }
+const std::vector<MonsterFleetPlan*> Universe::MonsterFleetPlans() const {
+    Pending::SwapPending(m_pending_monster_fleet_plans, m_monster_fleet_plans);
+    std::vector<MonsterFleetPlan*> retval;
+    for (const auto& plan : m_monster_fleet_plans)
+        retval.push_back(plan.get());
+    return retval;
+}
 
 void Universe::SetEmpireStats(Pending::Pending<EmpireStatsMap> future)
 { m_pending_empire_stats = std::move(future); }
@@ -2876,7 +2878,7 @@ void Universe::UpdateStatRecords() {
     for (const auto& stat_entry : EmpireStats()) {
         const std::string& stat_name = stat_entry.first;
 
-        const ValueRef::ValueRefBase<double>* value_ref = stat_entry.second;
+        const auto& value_ref = stat_entry.second;
         if (!value_ref)
             continue;
 

@@ -8,19 +8,19 @@ namespace parse { namespace detail {
         condition_parser_rules_7(const parse::lexer& tok,
                                  Labeller& labeller,
                                  const condition_parser_grammar& condition_parser,
-                                 const parse::value_ref_grammar<std::string>& string_grammar);
+                                 const value_ref_grammar<std::string>& string_grammar);
 
         typedef rule<
             condition_signature,
-            boost::spirit::qi::locals<std::vector<ValueRef::ValueRefBase<StarType>*>>
+            boost::spirit::qi::locals<std::vector<value_ref_payload<StarType>>>
         > star_type_vec_rule;
 
         typedef rule<
             condition_signature,
             boost::spirit::qi::locals<
                 Condition::ContentType,
-                ValueRef::ValueRefBase<std::string>*,
-                ValueRef::ValueRefBase<std::string>*
+                value_ref_payload<std::string>,
+                value_ref_payload<std::string>
             >
         > string_ref_rule;
 

@@ -14,7 +14,7 @@ namespace parse { namespace detail {
         const effect_parser_grammar& effect_parser,
         Labeller& labeller,
         const condition_parser_grammar& condition_parser,
-        const parse::value_ref_grammar<std::string>& string_grammar
+        const value_ref_grammar<std::string>& string_grammar
     ) :
         effect_parser_rules_4::base_type(start, "effect_parser_rules_4"),
         int_rules(tok, labeller, condition_parser, string_grammar),
@@ -32,6 +32,11 @@ namespace parse { namespace detail {
         qi::_f_type _f;
         qi::_val_type _val;
         qi::eps_type eps;
+        qi::_pass_type _pass;
+        const boost::phoenix::function<construct_movable> construct_movable_;
+        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
+        const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
+
         using phoenix::new_;
         using phoenix::construct;
         using phoenix::push_back;
@@ -43,11 +48,15 @@ namespace parse { namespace detail {
                         > -(labeller.rule(Name_token)        >   string_grammar      [ _c = _1 ])
                         > -(labeller.rule(Effects_token)
                             >   (
-                                ('[' > +effect_parser [ push_back(_d, _1) ] > ']')
-                                |    effect_parser [ push_back(_d, _1) ]
+                                ('[' > +effect_parser [ emplace_back_1_(_d, _1) ] > ']')
+                                |    effect_parser [ emplace_back_1_(_d, _1) ]
                             )
                            )
-                ) [ _val = new_<Effect::CreatePlanet>(_a, _b, _c, _d) ]
+                ) [ _val = construct_movable_(new_<Effect::CreatePlanet>(
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_c, _pass),
+                    deconstruct_movable_vector_(_d, _pass))) ]
             ;
 
         create_building
@@ -56,11 +65,14 @@ namespace parse { namespace detail {
                         > -(labeller.rule(Name_token)        >   string_grammar [ _b = _1 ])
                         > -(labeller.rule(Effects_token)
                             >   (
-                                ('[' > +effect_parser [ push_back(_c, _1) ] > ']')
-                                |    effect_parser [ push_back(_c, _1) ]
+                                ('[' > +effect_parser [ emplace_back_1_(_c, _1) ] > ']')
+                                |    effect_parser [ emplace_back_1_(_c, _1) ]
                             )
                            )
-                ) [ _val = new_<Effect::CreateBuilding>(_a, _b, _c) ]
+                ) [ _val = construct_movable_(new_<Effect::CreateBuilding>(
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_vector_(_c, _pass))) ]
             ;
 
         create_ship_1
@@ -72,11 +84,16 @@ namespace parse { namespace detail {
                  > -(labeller.rule(Name_token)        >   string_grammar [ _e = _1 ])
                  > -(labeller.rule(Effects_token)
                      >   (
-                         ('[' > +effect_parser [ push_back(_f, _1) ] > ']')
-                         |    effect_parser [ push_back(_f, _1) ]
+                         ('[' > +effect_parser [ emplace_back_1_(_f, _1) ] > ']')
+                         |    effect_parser [ emplace_back_1_(_f, _1) ]
                      )
                     )
-                ) [ _val = new_<Effect::CreateShip>(_b, _c, _d, _e, _f) ]
+                ) [ _val = construct_movable_(new_<Effect::CreateShip>(
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_c, _pass),
+                    deconstruct_movable_(_d, _pass),
+                    deconstruct_movable_(_e, _pass),
+                    deconstruct_movable_vector_(_f, _pass))) ]
             ;
 
         create_ship_2
@@ -88,11 +105,16 @@ namespace parse { namespace detail {
                  > -(labeller.rule(Name_token)        >   string_grammar [ _e = _1 ])
                  > -(labeller.rule(Effects_token)
                      >   (
-                         ('[' > +effect_parser [ push_back(_f, _1) ] > ']')
-                         |    effect_parser [ push_back(_f, _1) ]
+                         ('[' > +effect_parser [ emplace_back_1_(_f, _1) ] > ']')
+                         |    effect_parser [ emplace_back_1_(_f, _1) ]
                      )
                     )
-                ) [ _val = new_<Effect::CreateShip>(_a, _c, _d, _e, _f) ]
+                ) [ _val = construct_movable_(new_<Effect::CreateShip>(
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_c, _pass),
+                    deconstruct_movable_(_d, _pass),
+                    deconstruct_movable_(_e, _pass),
+                    deconstruct_movable_vector_(_f, _pass))) ]
             ;
 
         create_field_1
@@ -105,11 +127,15 @@ namespace parse { namespace detail {
                  > -(labeller.rule(Effects_token)
                      >
                      (
-                         ('[' > +effect_parser [ push_back(_f, _1) ] > ']')
-                         |    effect_parser [ push_back(_f, _1) ]
+                         ('[' > +effect_parser [ emplace_back_1_(_f, _1) ] > ']')
+                         |    effect_parser [ emplace_back_1_(_f, _1) ]
                      )
                     )
-                ) [ _val = new_<Effect::CreateField>(_a, _b, _d, _f) ]
+                ) [ _val = construct_movable_(new_<Effect::CreateField>(
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_d, _pass),
+                    deconstruct_movable_vector_(_f, _pass))) ]
             ;
 
         create_field_2
@@ -124,11 +150,17 @@ namespace parse { namespace detail {
                  > -(labeller.rule(Effects_token)
                      >
                      (
-                         ('[' > +effect_parser [ push_back(_f, _1) ] > ']')
-                         |    effect_parser [ push_back(_f, _1) ]
+                         ('[' > +effect_parser [ emplace_back_1_(_f, _1) ] > ']')
+                         |    effect_parser [ emplace_back_1_(_f, _1) ]
                      )
                     )
-                ) [ _val = new_<Effect::CreateField>(_a, _b, _c, _e, _d, _f) ]
+                ) [ _val = construct_movable_(new_<Effect::CreateField>(
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_c, _pass),
+                    deconstruct_movable_(_e, _pass),
+                    deconstruct_movable_(_d, _pass),
+                    deconstruct_movable_vector_(_f, _pass))) ]
             ;
 
         create_system_1
@@ -142,11 +174,16 @@ namespace parse { namespace detail {
                  > -(labeller.rule(Effects_token)
                      >
                      (
-                         ('[' > +effect_parser [ push_back(_e, _1) ] > ']')
-                         |    effect_parser [ push_back(_e, _1) ]
+                         ('[' > +effect_parser [ emplace_back_1_(_e, _1) ] > ']')
+                         |    effect_parser [ emplace_back_1_(_e, _1) ]
                      )
                     )
-                ) [ _val = new_<Effect::CreateSystem>(_a, _b, _c, _d, _e) ]
+                ) [ _val = construct_movable_(new_<Effect::CreateSystem>(
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_c, _pass),
+                    deconstruct_movable_(_d, _pass),
+                    deconstruct_movable_vector_(_e, _pass))) ]
             ;
 
         create_system_2
@@ -159,11 +196,15 @@ namespace parse { namespace detail {
                  > -(labeller.rule(Effects_token)
                      >
                      (
-                         ('[' > +effect_parser [ push_back(_e, _1) ] > ']')
-                         |    effect_parser [ push_back(_e, _1) ]
+                         ('[' > +effect_parser [ emplace_back_1_(_e, _1) ] > ']')
+                         |    effect_parser [ emplace_back_1_(_e, _1) ]
                      )
                     )
-                ) [ _val = new_<Effect::CreateSystem>(_b, _c, _d, _e) ]
+                ) [ _val = construct_movable_(new_<Effect::CreateSystem>(
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_c, _pass),
+                    deconstruct_movable_(_d, _pass),
+                    deconstruct_movable_vector_(_e, _pass))) ]
             ;
 
         start

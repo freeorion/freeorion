@@ -2,30 +2,31 @@
 #define _EffectParser1_h_
 
 #include "EffectParserImpl.h"
+#include "MovableEnvelope.h"
 
 namespace parse { namespace detail {
     struct effect_parser_rules_1 : public effect_parser_grammar {
         effect_parser_rules_1(const parse::lexer& tok,
                               Labeller& labeller,
                               const condition_parser_grammar& condition_parser,
-                              const parse::value_ref_grammar<std::string>& string_grammar);
+                              const value_ref_grammar<std::string>& string_grammar);
 
         typedef rule<
             effect_signature,
             boost::spirit::qi::locals<
                 std::string,
-                ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<std::string>*
+                value_ref_payload<int>,
+                value_ref_payload<int>,
+                value_ref_payload<std::string>
                 >
             > string_and_intref_and_intref_rule;
 
         typedef rule<
             effect_signature,
             boost::spirit::qi::locals<
-                ValueRef::ValueRefBase<std::string>*,
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<double>*
+                value_ref_payload<std::string>,
+                value_ref_payload<double>,
+                value_ref_payload<double>
                 >
             > stringref_and_doubleref_rule;
 
@@ -34,18 +35,22 @@ namespace parse { namespace detail {
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
-                std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>,
+                std::vector<std::pair<std::string, value_ref_payload<std::string>>>,
                 EmpireAffiliationType,
                 std::string,
-                bool
+                bool,
+                value_ref_payload<int>,
+                parse::detail::MovableEnvelope<Condition::ConditionBase>
                 >
             > generate_sitrep_message_rule;
 
-        typedef std::pair<std::string, ValueRef::ValueRefBase<std::string>*> string_and_string_ref_pair;
+        typedef std::pair<std::string, value_ref_payload<std::string>> string_and_string_ref_pair;
 
         typedef rule<
             string_and_string_ref_pair (),
-            boost::spirit::qi::locals<std::string>
+            boost::spirit::qi::locals<
+                std::string,
+                value_ref_payload<std::string>>
             > string_and_string_ref_rule;
 
         typedef rule<

@@ -29,6 +29,8 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/locale.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 #include <iterator>
 #include <sstream>
@@ -60,86 +62,95 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    ValueRef::Variable<std::string>* StringValueRef(const std::string& token) {
-        return new ValueRef::Variable<std::string>(
+    std::unique_ptr<ValueRef::Variable<std::string>> StringValueRef(const std::string& token) {
+        return boost::make_unique<ValueRef::Variable<std::string>>(
             ValueRef::SOURCE_REFERENCE, token);
     }
 
-    ValueRef::Variable<std::string>* UserStringValueRef(const std::string& token) {
-        return new ValueRef::UserStringLookup<std::string>(
-            new ValueRef::Variable<std::string>(
+    std::unique_ptr<ValueRef::Variable<std::string>> UserStringValueRef(const std::string& token) {
+        return boost::make_unique<ValueRef::UserStringLookup<std::string>>(
+            boost::make_unique<ValueRef::Variable<std::string>>(
                 ValueRef::SOURCE_REFERENCE, token));
     }
 
-    ValueRef::Variable<std::string>* UserStringVecValueRef(const std::string& token) {
-        return new ValueRef::UserStringLookup<std::vector<std::string>>(
-            new ValueRef::Variable<std::vector<std::string>>(
-                ValueRef::SOURCE_REFERENCE, token));
-    }
-
-    template <typename T>
-    ValueRef::Variable<std::string>* StringCastedValueRef(const std::string& token) {
-        return new ValueRef::StringCast<T>(
-            new ValueRef::Variable<T>(
+    std::unique_ptr<ValueRef::Variable<std::string>> UserStringVecValueRef(const std::string& token) {
+        return boost::make_unique<ValueRef::UserStringLookup<std::vector<std::string>>>(
+            boost::make_unique<ValueRef::Variable<std::vector<std::string>>>(
                 ValueRef::SOURCE_REFERENCE, token));
     }
 
     template <typename T>
-    ValueRef::Variable<std::string>* StringCastedComplexValueRef(const std::string& token,
-                                                                 ValueRef::ValueRefBase<int>* int_ref1 = nullptr,
-                                                                 ValueRef::ValueRefBase<int>* int_ref2 = nullptr,
-                                                                 ValueRef::ValueRefBase<int>* int_ref3 = nullptr,
-                                                                 ValueRef::ValueRefBase<std::string>* string_ref1 = nullptr,
-                                                                 ValueRef::ValueRefBase<std::string>* string_ref2 = nullptr)
+    std::unique_ptr<ValueRef::Variable<std::string>> StringCastedValueRef(const std::string& token) {
+        return boost::make_unique<ValueRef::StringCast<T>>(
+            boost::make_unique<ValueRef::Variable<T>>(
+                ValueRef::SOURCE_REFERENCE, token));
+    }
+
+    template <typename T>
+    std::unique_ptr<ValueRef::Variable<std::string>> StringCastedComplexValueRef(
+        const std::string& token,
+        std::unique_ptr<ValueRef::ValueRefBase<int>>&& int_ref1 = nullptr,
+        std::unique_ptr<ValueRef::ValueRefBase<int>>&& int_ref2 = nullptr,
+        std::unique_ptr<ValueRef::ValueRefBase<int>>&& int_ref3 = nullptr,
+        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& string_ref1 = nullptr,
+        std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& string_ref2 = nullptr)
     {
-        return new ValueRef::StringCast<T>(
-            new ValueRef::ComplexVariable<T>(token, int_ref1, int_ref2, int_ref3, string_ref1, string_ref2));
+        return boost::make_unique<ValueRef::StringCast<T>>(
+            std::unique_ptr<ValueRef::Variable<T>>(
+                boost::make_unique<ValueRef::ComplexVariable<T>>(
+                    token, std::move(int_ref1), std::move(int_ref2),
+                    std::move(int_ref3), std::move(string_ref1), std::move(string_ref2)))
+            )
+    ;
     }
 
-    ValueRef::Variable<std::string>* SystemSupplyRangeValueRef(bool propagated = false) {
+    std::unique_ptr<ValueRef::Variable<std::string>> SystemSupplyRangeValueRef(bool propagated = false) {
         return StringCastedComplexValueRef<double>(
             propagated ? "PropagatedSystemSupplyRange" :"SystemSupplyRange",
             nullptr,
-            new ValueRef::Variable<int>(ValueRef::SOURCE_REFERENCE, "SystemID"));
+            boost::make_unique<ValueRef::Variable<int>>(ValueRef::SOURCE_REFERENCE, "SystemID"))
+            ;
     }
 
-    ValueRef::Variable<std::string>* SystemSupplyDistanceValueRef() {
-        return StringCastedComplexValueRef<double>("PropagatedSystemSupplyDistance",
+    std::unique_ptr<ValueRef::Variable<std::string>> SystemSupplyDistanceValueRef() {
+        return StringCastedComplexValueRef<double>(
+            "PropagatedSystemSupplyDistance",
             nullptr,
-            new ValueRef::Variable<int>(ValueRef::SOURCE_REFERENCE, "SystemID"));
+            boost::make_unique<ValueRef::Variable<int>>(ValueRef::SOURCE_REFERENCE, "SystemID"));
     }
 
     template <typename T>
-    ValueRef::Variable<std::string>* UserStringCastedValueRef(const std::string& token) {
-        return new ValueRef::UserStringLookup<std::string>(
-            new ValueRef::StringCast<T>(
-                new ValueRef::Variable<T>(
-                    ValueRef::SOURCE_REFERENCE, token)));
+    std::unique_ptr<ValueRef::Variable<std::string>> UserStringCastedValueRef(const std::string& token) {
+        return boost::make_unique<ValueRef::UserStringLookup<std::string>>(
+            std::unique_ptr<ValueRef::Variable<std::string>>(
+                boost::make_unique<ValueRef::StringCast<T>>(
+                    boost::make_unique<ValueRef::Variable<T>>(
+                        ValueRef::SOURCE_REFERENCE, token))));
     }
 
-    ValueRef::Variable<std::string>* ObjectNameValueRef(const std::string& token) {
-        return new ValueRef::NameLookup(
-            new ValueRef::Variable<int>(
+    std::unique_ptr<ValueRef::Variable<std::string>> ObjectNameValueRef(const std::string& token) {
+        return boost::make_unique<ValueRef::NameLookup>(
+            boost::make_unique<ValueRef::Variable<int>>(
                 ValueRef::SOURCE_REFERENCE, token),
             ValueRef::NameLookup::OBJECT_NAME);
     }
 
-    ValueRef::Variable<std::string>* EmpireNameValueRef(const std::string& token) {
-        return new ValueRef::NameLookup(
-            new ValueRef::Variable<int>(
+    std::unique_ptr<ValueRef::Variable<std::string>> EmpireNameValueRef(const std::string& token) {
+        return boost::make_unique<ValueRef::NameLookup>(
+            boost::make_unique<ValueRef::Variable<int>>(
                 ValueRef::SOURCE_REFERENCE, token),
             ValueRef::NameLookup::EMPIRE_NAME);
     }
 
-    ValueRef::Variable<std::string>* DesignNameValueRef(const std::string& token) {
-        return new ValueRef::NameLookup(
-            new ValueRef::Variable<int>(
+    std::unique_ptr<ValueRef::Variable<std::string>> DesignNameValueRef(const std::string& token) {
+        return boost::make_unique<ValueRef::NameLookup>(
+            boost::make_unique<ValueRef::Variable<int>>(
                 ValueRef::SOURCE_REFERENCE, token),
             ValueRef::NameLookup::SHIP_DESIGN_NAME);
     }
 
-    const std::map<std::pair<std::string, std::string>, ValueRef::ValueRefBase<std::string>*>& AvailableColumnTypes() {
-        static std::map<std::pair<std::string, std::string>, ValueRef::ValueRefBase<std::string>*> col_types;
+    const std::map<std::pair<std::string, std::string>, std::unique_ptr<ValueRef::ValueRefBase<std::string>>>& AvailableColumnTypes() {
+        static std::map<std::pair<std::string, std::string>, std::unique_ptr<ValueRef::ValueRefBase<std::string>>> col_types;
         if (col_types.empty()) {
             // General
             col_types[{UserStringNop("NAME"),                   ""}] =  StringValueRef("Name");
@@ -206,7 +217,7 @@ namespace {
     const ValueRef::ValueRefBase<std::string>* GetValueRefByName(const std::string& name) {
         for (const auto& entry : AvailableColumnTypes()) {
             if (entry.first.first == name)
-                return entry.second;
+                return entry.second.get();
         }
         return nullptr;
     }
@@ -293,11 +304,11 @@ namespace {
     const std::string FILTER_OPTIONS_WND_NAME = "object-list-filter";
 
     template <class enumT>
-    ValueRef::ValueRefBase<enumT>*  CopyEnumValueRef(const ValueRef::ValueRefBase<enumT>* const value_ref) {
+    std::unique_ptr<ValueRef::ValueRefBase<enumT>>  CopyEnumValueRef(const ValueRef::ValueRefBase<enumT>* const value_ref) {
         if (const ValueRef::Constant<enumT>* constant =
             dynamic_cast<const ValueRef::Constant<enumT>*>(value_ref))
-        { return new ValueRef::Constant<enumT>(constant->Value()); }
-        return new ValueRef::Constant<enumT>(enumT(-1));
+        { return boost::make_unique<ValueRef::Constant<enumT>>(constant->Value()); }
+        return boost::make_unique<ValueRef::Constant<enumT>>(enumT(-1));
     }
 
     std::map<std::string, std::string> object_list_cond_description_map;
@@ -383,9 +394,8 @@ public:
         m_param_spin2(nullptr)
     {
         if (!initial_condition) {
-            auto init_condition = new Condition::All();
-            Init(init_condition);
-            delete init_condition;
+            auto init_condition = boost::make_unique<Condition::All>();
+            Init(init_condition.get());
         } else {
             Init(initial_condition);
         }
@@ -404,24 +414,24 @@ public:
     ~ConditionWidget()
     {}
 
-    Condition::ConditionBase*       GetCondition() {
+    std::unique_ptr<Condition::ConditionBase>       GetCondition() {
         GG::ListBox::iterator row_it = m_class_drop->CurrentItem();
         if (row_it == m_class_drop->end())
-            return new Condition::All();
+            return boost::make_unique<Condition::All>();
         ConditionRow* condition_row = dynamic_cast<ConditionRow*>(row_it->get());
         if (!condition_row)
-            return new Condition::All();
+            return boost::make_unique<Condition::All>();
         const std::string& condition_key = condition_row->GetKey();
 
         if (condition_key == ALL_CONDITION) {
-            return new Condition::All();
+            return boost::make_unique<Condition::All>();
 
         } else if (condition_key == EMPIREAFFILIATION_CONDITION) {
             EmpireAffiliationType affil = AFFIL_SELF;
 
             const std::string& empire_name = GetString();
             if (empire_name.empty()) {
-                return new Condition::EmpireAffiliation(affil);
+                return boost::make_unique<Condition::EmpireAffiliation>(affil);
             }
 
             // get id of empire matching name
@@ -432,113 +442,114 @@ public:
                     break;
                 }
             }
-            return new Condition::EmpireAffiliation(new ValueRef::Constant<int>(empire_id), affil);
+            return boost::make_unique<Condition::EmpireAffiliation>(
+                boost::make_unique<ValueRef::Constant<int>>(empire_id), affil);
 
         } else if (condition_key == HOMEWORLD_CONDITION) {
             const std::string& species_name = GetString();
             if (species_name.empty())
-                return new Condition::Homeworld();
-            std::vector<ValueRef::ValueRefBase<std::string>*> names;
-            names.push_back(new ValueRef::Constant<std::string>(species_name));
-            return new Condition::Homeworld(names);
+                return boost::make_unique<Condition::Homeworld>();
+            std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>> names;
+            names.push_back(std::unique_ptr<ValueRef::ValueRefBase<std::string>>(boost::make_unique<ValueRef::Constant<std::string>>(species_name)));
+            return boost::make_unique<Condition::Homeworld>(std::move(names));
 
         } else if (condition_key == CANCOLONIZE_CONDITION) {
-            return new Condition::CanColonize();
+            return boost::make_unique<Condition::CanColonize>();
 
         } else if (condition_key == CANPRODUCESHIPS_CONDITION) {
-            return new Condition::CanProduceShips();
+            return boost::make_unique<Condition::CanProduceShips>();
 
         } else if (condition_key == HASSPECIAL_CONDITION) {
-            return new Condition::HasSpecial(GetString());
+            return boost::make_unique<Condition::HasSpecial>(GetString());
 
         } else if (condition_key == HASGROWTHSPECIAL_CONDITION) {
-            std::vector<Condition::ConditionBase*> operands;
+            std::vector<std::unique_ptr<Condition::ConditionBase>> operands;
             // determine sitrep order
             std::istringstream template_stream(UserString("FUNCTIONAL_GROWTH_SPECIALS_LIST"));
             for (std::istream_iterator<std::string> stream_it = std::istream_iterator<std::string>(template_stream);
                  stream_it != std::istream_iterator<std::string>(); stream_it++)
             {
-                operands.push_back(new Condition::HasSpecial(*stream_it));
+                operands.push_back(std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::HasSpecial>(*stream_it)));
             }
-            Condition::Or* this_cond =  new Condition::Or(operands);
+            auto this_cond =  std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::Or>(std::move(operands)));
             object_list_cond_description_map[this_cond->Description()] = HASGROWTHSPECIAL_CONDITION;
             return this_cond;
 
         } else if (condition_key == ASTWITHPTYPE_CONDITION) { // And [Planet PlanetType PT_ASTEROIDS ContainedBy And [System Contains PlanetType X]]
-            std::vector<Condition::ConditionBase*> operands1;
-            operands1.push_back(new Condition::Type(new ValueRef::Constant<UniverseObjectType>(OBJ_PLANET)));
+            std::vector<std::unique_ptr<Condition::ConditionBase>> operands1;
+            operands1.push_back(std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::Type>(boost::make_unique<ValueRef::Constant<UniverseObjectType>>(OBJ_PLANET))));
             const std::string& text = GetString();
             if (text == UserString("CONDITION_ANY")) {
-                std::vector<ValueRef::ValueRefBase<PlanetType>*> copytype;
-                copytype.push_back(new ValueRef::Constant<PlanetType>(PT_ASTEROIDS));
-                operands1.push_back(new Condition::Not(new Condition::PlanetType(copytype)));
+                std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>> copytype;
+                copytype.push_back(boost::make_unique<ValueRef::Constant<PlanetType>>(PT_ASTEROIDS));
+                operands1.push_back(std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::Not>(std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::PlanetType>(std::move(copytype))))));
             } else {
-                operands1.push_back(new Condition::PlanetType(GetEnumValueRefVec< ::PlanetType>()));
+                operands1.push_back(std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::PlanetType>(GetEnumValueRefVec< ::PlanetType>())));
             }
-            std::vector<Condition::ConditionBase*> operands2;
-            operands2.push_back(new Condition::Type(new ValueRef::Constant<UniverseObjectType> (OBJ_SYSTEM)));
-            std::vector<ValueRef::ValueRefBase<PlanetType>*> maintype;
-            maintype.push_back(new ValueRef::Constant<PlanetType>(PT_ASTEROIDS));
-            operands2.push_back(new Condition::Contains(new Condition::PlanetType(maintype)));
-            operands1.push_back(new Condition::ContainedBy(new Condition::And(operands2)));
-            Condition::And* this_cond =  new Condition::And(operands1);
+            std::vector<std::unique_ptr<Condition::ConditionBase>> operands2;
+            operands2.push_back(boost::make_unique<Condition::Type>(boost::make_unique<ValueRef::Constant<UniverseObjectType>>(OBJ_SYSTEM)));
+            std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>> maintype;
+            maintype.push_back(boost::make_unique<ValueRef::Constant<PlanetType>>(PT_ASTEROIDS));
+            operands2.push_back(std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::Contains>(std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::PlanetType>(std::move(maintype))))));
+            operands1.push_back(std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::ContainedBy>(std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::And>(std::move(operands2))))));
+            auto this_cond =  std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::And>(std::move(operands1)));
             object_list_cond_description_map[this_cond->Description()] = ASTWITHPTYPE_CONDITION;
             return this_cond;
 
         } else if (condition_key == GGWITHPTYPE_CONDITION) { // And [Planet PlanetType PT_GASGIANT ContainedBy And [System Contains PlanetType X]]
-            std::vector<Condition::ConditionBase*> operands1;
+            std::vector<std::unique_ptr<Condition::ConditionBase>> operands1;
             const std::string& text = GetString();
             if (text == UserString("CONDITION_ANY")) {
-                std::vector<ValueRef::ValueRefBase<PlanetType>*> copytype;
-                copytype.push_back(new ValueRef::Constant<PlanetType>(PT_GASGIANT));
-                operands1.push_back(new Condition::Not(new Condition::PlanetType(copytype)));
+                std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>> copytype;
+                    copytype.push_back(boost::make_unique<ValueRef::Constant<PlanetType>>(PT_GASGIANT));
+                    operands1.push_back(std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::Not>(std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::PlanetType>(std::move(copytype))))));
             } else
-                operands1.push_back(new Condition::PlanetType(GetEnumValueRefVec< ::PlanetType>()));
-            std::vector<Condition::ConditionBase*> operands2;
-            operands2.push_back(new Condition::Type(new ValueRef::Constant<UniverseObjectType>(OBJ_SYSTEM)));
-            std::vector<ValueRef::ValueRefBase<PlanetType>*> maintype;
-            maintype.push_back(new ValueRef::Constant<PlanetType>(PT_GASGIANT));
-            operands2.push_back(new Condition::Contains(new Condition::PlanetType(maintype)));
-            operands1.push_back(new Condition::ContainedBy(new Condition::And(operands2)));
-            Condition::And* this_cond =  new Condition::And(operands1);
+                operands1.push_back(std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::PlanetType>(GetEnumValueRefVec< ::PlanetType>())));
+            std::vector<std::unique_ptr<Condition::ConditionBase>> operands2;
+            operands2.push_back(std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::Type>(boost::make_unique<ValueRef::Constant<UniverseObjectType>>(OBJ_SYSTEM))));
+            std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>> maintype;
+            maintype.push_back(boost::make_unique<ValueRef::Constant<PlanetType>>(PT_GASGIANT));
+            operands2.push_back(std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::Contains>(std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::PlanetType>(std::move(maintype))))));
+            operands1.push_back(std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::ContainedBy>(std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::And>(std::move(operands2))))));
+            auto this_cond =  std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::And>(std::move(operands1)));
             object_list_cond_description_map[this_cond->Description()] = GGWITHPTYPE_CONDITION;
             return this_cond;
 
         } else if (condition_key == HASTAG_CONDITION) {
-            return new Condition::HasTag(GetString());
+            return std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::HasTag>(GetString()));
 
         } else if (condition_key == MONSTER_CONDITION) {
-            return new Condition::Monster();
+            return boost::make_unique<Condition::Monster>();
 
         } else if (condition_key == CAPITAL_CONDITION) {
-            return new Condition::Capital();
+            return boost::make_unique<Condition::Capital>();
 
         } else if (condition_key == ARMED_CONDITION) {
-            return new Condition::Armed();
+            return boost::make_unique<Condition::Armed>();
 
         } else if (condition_key == STATIONARY_CONDITION) {
-            return new Condition::Stationary();
+            return boost::make_unique<Condition::Stationary>();
 
         } else if (condition_key == SPECIES_CONDITION) {
-            return new Condition::Species(GetStringValueRefVec());
+            return std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::Species>(GetStringValueRefVec()));
 
         } else if (condition_key == PLANETSIZE_CONDITION) {
-            return new Condition::PlanetSize(GetEnumValueRefVec< ::PlanetSize>());
+            return std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::PlanetSize>(GetEnumValueRefVec< ::PlanetSize>()));
 
         } else if (condition_key == PLANETTYPE_CONDITION) {
-            return new Condition::PlanetType(GetEnumValueRefVec< ::PlanetType>());
+            return std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::PlanetType>(GetEnumValueRefVec< ::PlanetType>()));
 
         } else if (condition_key == FOCUSTYPE_CONDITION) {
-            return new Condition::FocusType(GetStringValueRefVec());
+            return std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::FocusType>(GetStringValueRefVec()));
 
         } else if (condition_key == STARTYPE_CONDITION) {
-            return new Condition::StarType(GetEnumValueRefVec< ::StarType>());
+            return std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::StarType>(GetEnumValueRefVec< ::StarType>()));
 
         } else if (condition_key == METERVALUE_CONDITION) {
-            return new Condition::MeterValue(GetEnum< ::MeterType>(), GetDouble1ValueRef(), GetDouble2ValueRef());
+            return std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::MeterValue>(GetEnum< ::MeterType>(), GetDouble1ValueRef(), GetDouble2ValueRef()));
         }
 
-        return new Condition::All();
+        return boost::make_unique<Condition::All>();
     }
 
     void Render() override
@@ -602,11 +613,11 @@ private:
         return string_row->Text();
     }
 
-    ValueRef::ValueRefBase<std::string>*                    GetStringValueRef()
-    { return new ValueRef::Constant<std::string>(GetString()); }
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>                    GetStringValueRef()
+    { return boost::make_unique<ValueRef::Constant<std::string>>(GetString()); }
 
-    std::vector<ValueRef::ValueRefBase<std::string>*> GetStringValueRefVec() {
-        std::vector<ValueRef::ValueRefBase<std::string>*> retval;
+    std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>> GetStringValueRefVec() {
+        std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>> retval;
         retval.push_back(GetStringValueRef());
         return retval;
     }
@@ -618,8 +629,8 @@ private:
             return 0;
     }
 
-    ValueRef::ValueRefBase<int>*                            GetInt1ValueRef()
-    { return new ValueRef::Constant<int>(GetInt1()); }
+    std::unique_ptr<ValueRef::ValueRefBase<int>>                            GetInt1ValueRef()
+    { return boost::make_unique<ValueRef::Constant<int>>(GetInt1()); }
 
     int                                                     GetInt2() {
         if (m_param_spin2)
@@ -628,8 +639,8 @@ private:
             return 0;
     }
 
-    ValueRef::ValueRefBase<int>*                            GetInt2ValueRef()
-    { return new ValueRef::Constant<int>(GetInt2()); }
+    std::unique_ptr<ValueRef::ValueRefBase<int>>                            GetInt2ValueRef()
+    { return boost::make_unique<ValueRef::Constant<int>>(GetInt2()); }
 
     double                                                  GetDouble1() {
         if (m_param_spin1)
@@ -638,8 +649,8 @@ private:
             return 0;
     }
 
-    ValueRef::ValueRefBase<double>*                         GetDouble1ValueRef()
-    { return new ValueRef::Constant<double>(GetDouble1()); }
+    std::unique_ptr<ValueRef::ValueRefBase<double>>                         GetDouble1ValueRef()
+    { return boost::make_unique<ValueRef::Constant<double>>(GetDouble1()); }
 
     double                                                  GetDouble2() {
         if (m_param_spin2)
@@ -648,8 +659,8 @@ private:
             return 0;
     }
 
-    ValueRef::ValueRefBase<double>*                         GetDouble2ValueRef()
-    { return new ValueRef::Constant<double>(GetDouble2()); }
+    std::unique_ptr<ValueRef::ValueRefBase<double>>                         GetDouble2ValueRef()
+    { return boost::make_unique<ValueRef::Constant<double>>(GetDouble2()); }
 
     template <typename T>
     T                                                       GetEnum() {
@@ -664,14 +675,13 @@ private:
     }
 
     template <typename T>
-    ValueRef::ValueRefBase<T>*                              GetEnumValueRef()
-    { return new ValueRef::Constant<T>(GetEnum<T>()); }
+    std::unique_ptr<ValueRef::ValueRefBase<T>> GetEnumValueRef()
+    { return boost::make_unique<ValueRef::Constant<T>>(GetEnum<T>()); }
 
     template <typename T>
-    std::vector<ValueRef::ValueRefBase<T>*>                 GetEnumValueRefVec()
-    {
-        std::vector<ValueRef::ValueRefBase<T>*> retval;
-        retval.push_back(GetEnumValueRef<T>());
+    std::vector<std::unique_ptr<ValueRef::ValueRefBase<T>>> GetEnumValueRefVec() {
+        std::vector<std::unique_ptr<ValueRef::ValueRefBase<T>>> retval;
+        retval.push_back(std::move(GetEnumValueRef<T>()));
         return retval;
     }
 
@@ -985,8 +995,7 @@ public:
 
     std::map<UniverseObjectType, std::set<VIS_DISPLAY>> GetVisibilityFilters() const;
 
-    // caller takes ownership of returned ConditionBase*
-    Condition::ConditionBase* GetConditionFilter();
+    std::unique_ptr<Condition::ConditionBase> GetConditionFilter();
 
 protected:
     GG::Rect CalculatePosition() const override;
@@ -1130,7 +1139,7 @@ bool FilterDialog::ChangesAccepted()
 std::map<UniverseObjectType, std::set<VIS_DISPLAY>> FilterDialog::GetVisibilityFilters() const
 { return m_vis_filters; }
 
-Condition::ConditionBase* FilterDialog::GetConditionFilter()
+std::unique_ptr<Condition::ConditionBase> FilterDialog::GetConditionFilter()
 { return m_condition_widget->GetCondition(); }
 
 GG::Rect FilterDialog::CalculatePosition() const
@@ -1808,7 +1817,7 @@ public:
 
         SetVScrollWheelIncrement(Value(ListRowHeight())*4);
 
-        m_filter_condition = new Condition::All();
+        m_filter_condition = boost::make_unique<Condition::All>();
 
         //m_visibilities[OBJ_BUILDING].insert(SHOW_VISIBLE);
         //m_visibilities[OBJ_BUILDING].insert(SHOW_PREVIOUSLY_VISIBLE);
@@ -1831,9 +1840,8 @@ public:
             boost::bind(&ObjectListBox::UniverseObjectDeleted, this, _1));
     }
 
-    virtual         ~ObjectListBox() {
-        delete m_filter_condition;
-    }
+    virtual         ~ObjectListBox()
+    {}
 
     void            SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         const GG::Pt old_size = Size();
@@ -1854,7 +1862,7 @@ public:
     { return GG::Y(ClientUI::Pts() * 2); }
 
     const Condition::ConditionBase* const                       FilterCondition() const
-    { return m_filter_condition; }
+    { return m_filter_condition.get(); }
 
     const std::map<UniverseObjectType, std::set<VIS_DISPLAY>>   Visibilities() const
     { return m_visibilities; }
@@ -1888,9 +1896,8 @@ public:
     bool            AnythingCollapsed() const
     { return !m_collapsed_objects.empty(); }
 
-    void            SetFilterCondition(Condition::ConditionBase* condition) {
-        delete m_filter_condition;
-        m_filter_condition = condition;
+    void            SetFilterCondition(std::unique_ptr<Condition::ConditionBase>&& condition) {
+        m_filter_condition = std::move(condition);
         Refresh();
     }
 
@@ -2277,7 +2284,7 @@ private:
 
     std::map<int, boost::signals2::connection>          m_object_change_connections;
     std::set<int>                                       m_collapsed_objects;
-    Condition::ConditionBase*                           m_filter_condition;
+    std::unique_ptr<Condition::ConditionBase>                           m_filter_condition;
     std::map<UniverseObjectType, std::set<VIS_DISPLAY>> m_visibilities;
     std::shared_ptr<ObjectHeaderRow>                                    m_header_row;
     boost::signals2::connection m_obj_deleted_connection;

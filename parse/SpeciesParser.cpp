@@ -5,10 +5,15 @@
 #include "ValueRefParserImpl.h"
 #include "EffectParser.h"
 #include "ConditionParserImpl.h"
+#include "MovableEnvelope.h"
 
+#include "../universe/Condition.h"
+#include "../universe/Effect.h"
 #include "../universe/Species.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 
 #define DEBUG_PARSERS 0
@@ -17,7 +22,7 @@
 namespace std {
     inline ostream& operator<<(ostream& os, const FocusType&) { return os; }
     inline ostream& operator<<(ostream& os, const std::vector<FocusType>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<PlanetType, PlanetEnvironment>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const PlanetType, PlanetEnvironment>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::map<PlanetType, PlanetEnvironment>&) { return os; }
@@ -34,14 +39,15 @@ namespace {
                         const std::vector<FocusType>& foci,
                         const std::string& preferred_focus,
                         const std::map<PlanetType, PlanetEnvironment>& planet_environments,
-                        const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+                        const parse::effects_group_payload& effects,
                         const SpeciesParams& params,
-                        const std::set<std::string>& tags,
-                        const std::string& graphic)
+                        std::pair<std::set<std::string>, std::string>& tags_and_graphic,
+                        bool& pass)
     {
-        // TODO use make_unique when converting to C++14
-        auto species_ptr = std::unique_ptr<Species>(
-            new Species(strings, foci, preferred_focus, planet_environments, effects, params, tags, graphic));
+        auto species_ptr = boost::make_unique<Species>(
+            strings, foci, preferred_focus, planet_environments,
+            OpenEnvelopes(effects, pass), params,
+            tags_and_graphic.first, tags_and_graphic.second);
 
         species.insert(std::make_pair(species_ptr->Name(), std::move(species_ptr)));
     }
@@ -83,10 +89,12 @@ namespace {
             qi::_e_type _e;
             qi::_f_type _f;
             qi::_g_type _g;
+            qi::_h_type _h;
             qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::_val_type _val;
             qi::eps_type eps;
+            const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             focus_type
                 =    tok.Focus_
@@ -94,7 +102,7 @@ namespace {
                 >    labeller.rule(Description_token) > tok.string [ _b = _1 ]
                 >    labeller.rule(Location_token)    > condition_parser [ _c = _1 ]
                 >    labeller.rule(Graphic_token)     > tok.string
-                     [ _val = construct<FocusType>(_a, _b, _c, _1) ]
+                [ _val = construct<FocusType>(_a, _b, deconstruct_movable_(_c, _pass), _1) ]
                 ;
 
             foci
@@ -150,7 +158,8 @@ namespace {
                 >   -effects(_e)
                 >   -environments(_f)
                 >    labeller.rule(Graphic_token) > tok.string
-                [ insert_species_(_r1, _a, _d, _g, _f, _e, _b, _c, _1) ]
+                [ _h = construct<std::pair<std::set<std::string>, std::string>>(_c, _1),
+                  insert_species_(_r1, _a, _d, _g, _f, _e, _b, _h, _pass) ]
                 ;
 
             start
@@ -189,7 +198,7 @@ namespace {
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
-                Condition::ConditionBase*
+                parse::detail::condition_payload
             >
         > focus_type_rule;
 
@@ -198,7 +207,7 @@ namespace {
         > foci_rule;
 
         typedef parse::detail::rule<
-            void (std::vector<std::shared_ptr<Effect::EffectsGroup>>&)
+            void (parse::effects_group_payload&)
         > effects_rule;
 
         typedef parse::detail::rule<
@@ -240,10 +249,11 @@ namespace {
                 SpeciesParams,
                 std::set<std::string>,  // tags
                 std::vector<FocusType>,
-                std::vector<std::shared_ptr<Effect::EffectsGroup>>,
+                parse::effects_group_payload,
                 std::map<PlanetType, PlanetEnvironment>,
-                std::string             // graphic
-            >
+                std::string,             // graphic
+                std::pair<std::set<std::string>, std::string>
+                >
         > species_rule;
 
         using start_rule = parse::detail::rule<start_rule_signature>;

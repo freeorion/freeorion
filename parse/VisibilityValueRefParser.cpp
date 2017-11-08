@@ -3,6 +3,7 @@
 #include "EnumParser.h"
 
 #include "../universe/Enums.h"
+#include "../universe/ValueRef.h"
 
 namespace parse { namespace detail {
     visibility_complex_parser_grammar::visibility_complex_parser_grammar(
@@ -25,14 +26,17 @@ namespace parse { namespace detail {
         qi::_e_type _e;
         qi::_f_type _f;
         qi::_val_type _val;
+        qi::_pass_type _pass;
+        const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
+        const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
-        const parse::value_ref_rule<int>& simple_int = simple_int_rules.simple;
+        const value_ref_rule<int>& simple_int = simple_int_rules.simple;
 
         empire_object_visibility
             =   tok.EmpireObjectVisibility_ [ _a = construct<std::string>(_1) ]
             >   labeller.rule(Empire_token) >   simple_int [ _b = _1 ]
             >   labeller.rule(Object_token) >   simple_int [ _c = _1 ]
-            [ _val = new_<ValueRef::ComplexVariable<Visibility>>(_a, _b, _c, _f, _d, _e) ]
+            [ _val = construct_movable_(new_<ValueRef::ComplexVariable<Visibility>>(_a, deconstruct_movable_(_b, _pass), deconstruct_movable_(_c, _pass), deconstruct_movable_(_f, _pass), deconstruct_movable_(_d, _pass), deconstruct_movable_(_e, _pass))) ]
             ;
 
         start
@@ -61,6 +65,8 @@ namespace parse { namespace detail {
         using phoenix::new_;
 
         qi::_val_type _val;
+        const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
+        const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
         // variable_name left empty, as no direct object properties are
         // available that return a visibility
@@ -73,7 +79,7 @@ namespace parse { namespace detail {
             ;
 
         free_variable_expr
-            =   tok.Value_      [ _val = new_<ValueRef::Variable<Visibility>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
+        =   tok.Value_      [ _val = construct_movable_(new_<ValueRef::Variable<Visibility>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE)) ]
             ;
 
         complex_expr = visibility_var_complex_grammar;

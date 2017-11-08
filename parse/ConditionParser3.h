@@ -8,36 +8,36 @@ namespace parse { namespace detail {
         condition_parser_rules_3(const parse::lexer& tok,
                                  Labeller& labeller,
                                  const condition_parser_grammar& condition_parser,
-                                 const parse::value_ref_grammar<std::string>& string_grammar);
+                                 const value_ref_grammar<std::string>& string_grammar);
 
         typedef rule<
             condition_signature,
             boost::spirit::qi::locals<
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<std::string>*,
+                value_ref_payload<double>,
+                value_ref_payload<double>,
+                value_ref_payload<std::string>,
                 Condition::ComparisonType,
                 Condition::ComparisonType,
-                ValueRef::ValueRefBase<std::string>*,
-                ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<int>*
+                value_ref_payload<std::string>,
+                value_ref_payload<int>,
+                value_ref_payload<int>
             >
         > double_ref_double_ref_rule;
 
         typedef rule<
             condition_signature,
             boost::spirit::qi::locals<
-                ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<int>*
+                value_ref_payload<int>,
+                value_ref_payload<int>
             >
         > int_ref_int_ref_rule;
 
         typedef rule<
             condition_signature,
             boost::spirit::qi::locals<
-                ValueRef::ValueRefBase<int>*,
+                value_ref_payload<int>,
                 Condition::SortingMethod,
-                ValueRef::ValueRefBase<double>*
+                value_ref_payload<double>
             >
         > int_ref_sorting_method_double_ref_rule;
 
@@ -45,7 +45,7 @@ namespace parse { namespace detail {
             condition_signature,
             boost::spirit::qi::locals<
                 ResourceType,
-                ValueRef::ValueRefBase<double>*
+                value_ref_payload<double>
             >
         > resource_type_double_ref_rule;
 
@@ -56,7 +56,12 @@ namespace parse { namespace detail {
         double_ref_double_ref_rule             within_distance;
         int_ref_int_ref_rule                   within_starlane_jumps;
         int_ref_int_ref_rule                   number;
-        double_ref_double_ref_rule             value_test_1;
+        double_ref_double_ref_rule             comparison_binary_double;
+        double_ref_double_ref_rule             comparison_trinary_double;
+        double_ref_double_ref_rule             comparison_binary_int;
+        double_ref_double_ref_rule             comparison_trinary_int;
+        double_ref_double_ref_rule             comparison_binary_string;
+        double_ref_double_ref_rule             comparison_trinary_string;
         double_ref_double_ref_rule             value_test_2;
         double_ref_double_ref_rule             value_test_3;
         double_ref_double_ref_rule             value_test_4;

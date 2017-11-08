@@ -15,23 +15,25 @@
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/fstream.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 namespace {
     std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, double increase) {
-        typedef std::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
-        typedef std::vector<Effect::EffectBase*> Effects;
-        Condition::Source* scope = new Condition::Source;
-        Condition::Source* activation = nullptr;
-        ValueRef::ValueRefBase<double>* vr =
-            new ValueRef::Operation<double>(
+        typedef std::vector<std::unique_ptr<Effect::EffectBase>> Effects;
+        auto scope = boost::make_unique<Condition::Source>();
+        std::unique_ptr<Condition::Source> activation = nullptr;
+        auto vr =
+            boost::make_unique<ValueRef::Operation<double>>(
                 ValueRef::PLUS,
-                new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
-                new ValueRef::Constant<double>(increase)
+                boost::make_unique<ValueRef::Variable<double>>(
+                    ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
+                boost::make_unique<ValueRef::Constant<double>>(increase)
             );
-        return EffectsGroupPtr(
-            new Effect::EffectsGroup(
-                scope, activation, Effects(1, new Effect::SetMeter(meter_type, vr))));
+        auto effects = Effects();
+        effects.push_back(boost::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
+        return std::make_shared<Effect::EffectsGroup>(std::move(scope), std::move(activation), std::move(effects));
     }
 }
 
@@ -165,17 +167,20 @@ void Field::ClampMeters() {
 /////////////////////////////////////////////////
 FieldType::FieldType(const std::string& name, const std::string& description,
                      float stealth, const std::set<std::string>& tags,
-                     const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+                     std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
                      const std::string& graphic) :
     m_name(name),
     m_description(description),
     m_stealth(stealth),
     m_tags(),
-    m_effects(effects),
+    m_effects(),
     m_graphic(graphic)
 {
     for (const std::string& tag : tags)
         m_tags.insert(boost::to_upper_copy<std::string>(tag));
+
+    for (auto&& effect : effects)
+        m_effects.emplace_back(std::move(effect));
 
     if (m_stealth != 0.0f)
         m_effects.push_back(IncreaseMeter(METER_STEALTH,    m_stealth));

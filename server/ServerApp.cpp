@@ -18,6 +18,7 @@
 #include "../universe/Species.h"
 #include "../universe/Tech.h"
 #include "../universe/UniverseGenerator.h"
+#include "../universe/ValueRef.h"
 #include "../universe/Enums.h"
 #include "../Empire/Empire.h"
 #include "../util/Directories.h"

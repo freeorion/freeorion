@@ -1,6 +1,7 @@
 #include "ConditionParser2.h"
 
 #include "../universe/Condition.h"
+#include "../universe/ValueRef.h"
 #include "../universe/Enums.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -13,7 +14,7 @@ namespace parse { namespace detail {
         const parse::lexer& tok,
         Labeller& labeller,
         const condition_parser_grammar& condition_parser,
-        const parse::value_ref_grammar<std::string>& string_grammar
+        const value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_2::base_type(start, "condition_parser_rules_2"),
         int_rules(tok, labeller, condition_parser, string_grammar),
@@ -28,14 +29,21 @@ namespace parse { namespace detail {
         qi::_e_type _e; // string
         qi::_val_type _val;
         qi::eps_type eps;
+        qi::_pass_type _pass;
+        const boost::phoenix::function<construct_movable> construct_movable_;
+        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
         using phoenix::new_;
+        using phoenix::construct;
 
         has_special_since_turn
             =   (       tok.HasSpecialSinceTurn_
                         >   labeller.rule(Name_token) >  string_grammar [ _e = _1 ]
                         > -(labeller.rule(Low_token)  >  castable_int_rules.flexible_int [ _a = _1 ] )
                         > -(labeller.rule(High_token) >  castable_int_rules.flexible_int [ _b = _1 ] )
-                ) [ _val = new_<Condition::HasSpecial>(_e, _a, _b) ]
+                ) [ _val = construct_movable_(new_<Condition::HasSpecial>(
+                    deconstruct_movable_(_e, _pass),
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass))) ]
             ;
 
         enqueued
@@ -52,7 +60,12 @@ namespace parse { namespace detail {
                     > -(labeller.rule(Empire_token) >    int_rules.expr [ _a = _1 ])
                     > -(labeller.rule(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
                     > -(labeller.rule(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
-                ) [ _val = new_<Condition::Enqueued>(BT_BUILDING, _e, _a, _b, _c) ]
+                ) [ _val = construct_movable_(new_<Condition::Enqueued>(
+                    BT_BUILDING,
+                    deconstruct_movable_(_e, _pass),
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_c, _pass))) ]
             ;
 
         enqueued2
@@ -62,7 +75,11 @@ namespace parse { namespace detail {
                     > -(labeller.rule(Empire_token) >    int_rules.expr [ _a = _1 ])
                     > -(labeller.rule(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
                     > -(labeller.rule(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
-                ) [ _val = new_<Condition::Enqueued>(_d, _a, _b, _c) ]
+                ) [ _val = construct_movable_(new_<Condition::Enqueued>(
+                    deconstruct_movable_(_d, _pass),
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_c, _pass))) ]
             ;
 
         enqueued3
@@ -72,7 +89,12 @@ namespace parse { namespace detail {
                     > -(labeller.rule(Empire_token) >    int_rules.expr [ _a = _1 ])
                     > -(labeller.rule(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
                     > -(labeller.rule(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
-                ) [ _val = new_<Condition::Enqueued>(BT_SHIP, _e, _a, _b, _c) ]
+                ) [ _val = construct_movable_(new_<Condition::Enqueued>(
+                    BT_SHIP,
+                    deconstruct_movable_(_e, _pass),
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_c, _pass))) ]
             ;
 
         enqueued4
@@ -80,7 +102,12 @@ namespace parse { namespace detail {
                     > -(labeller.rule(Empire_token) >    int_rules.expr [ _a = _1 ])
                     > -(labeller.rule(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
                     > -(labeller.rule(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
-                ) [ _val = new_<Condition::Enqueued>(INVALID_BUILD_TYPE, _e, _a, _b, _c) ]
+                ) [ _val = construct_movable_(new_<Condition::Enqueued>(
+                    INVALID_BUILD_TYPE,
+                    deconstruct_movable_(_e, _pass),
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_c, _pass))) ]
             ;
 
         design_has_part
@@ -88,7 +115,10 @@ namespace parse { namespace detail {
                     > -(labeller.rule(Low_token)   > castable_int_rules.flexible_int [ _a = _1 ])
                     > -(labeller.rule(High_token)  > castable_int_rules.flexible_int [ _b = _1 ])
                 )   >   labeller.rule(Name_token)  > string_grammar
-            [ _val = new_<Condition::DesignHasPart>(_1, _a, _b) ]
+            [ _val = construct_movable_(new_<Condition::DesignHasPart>(
+                    deconstruct_movable_(_1, _pass),
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass))) ]
             ;
 
         design_has_part_class
@@ -96,14 +126,17 @@ namespace parse { namespace detail {
                     > -(labeller.rule(Low_token)   > castable_int_rules.flexible_int [ _a = _1 ])
                     > -(labeller.rule(High_token)  > castable_int_rules.flexible_int [ _b = _1 ])
                 )   >   labeller.rule(Class_token) > ship_part_class_enum
-            [ _val = new_<Condition::DesignHasPartClass>(_1, _a, _b) ]
+            [ _val = construct_movable_(new_<Condition::DesignHasPartClass>(
+                    _1,
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass))) ]
             ;
 
         in_system
             =   (   tok.InSystem_
                     >  -(labeller.rule(ID_token)  > int_rules.expr [ _a = _1 ])
                 )
-            [ _val = new_<Condition::InSystem>(_a) ]
+            [ _val = construct_movable_(new_<Condition::InSystem>(deconstruct_movable_(_a, _pass))) ]
             ;
 
         start

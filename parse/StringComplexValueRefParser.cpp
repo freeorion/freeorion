@@ -5,7 +5,7 @@ namespace parse { namespace detail {
     string_complex_parser_grammar::string_complex_parser_grammar(
         const parse::lexer& tok,
         Labeller& labeller,
-        const parse::value_ref_grammar<std::string>& string_grammar
+        const value_ref_grammar<std::string>& string_grammar
     ) :
         string_complex_parser_grammar::base_type(start, "string_complex_parser_grammar"),
         simple_int_rules(tok)
@@ -24,13 +24,16 @@ namespace parse { namespace detail {
             qi::_e_type _e;
             qi::_f_type _f;
             qi::_val_type _val;
+            qi::_pass_type _pass;
+            const boost::phoenix::function<detail::construct_movable> construct_movable_;
+            const boost::phoenix::function<detail::deconstruct_movable> deconstruct_movable_;
 
-            const parse::value_ref_rule<int>& simple_int = simple_int_rules.simple;
+            const value_ref_rule<int>& simple_int = simple_int_rules.simple;
 
             game_rule
                 =   tok.GameRule_ [ _a = construct<std::string>(_1) ]
                 >   labeller.rule(Name_token) >     string_grammar [ _d = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = construct_movable_(new_<ValueRef::ComplexVariable<std::string>>(_a, deconstruct_movable_(_b, _pass), deconstruct_movable_(_c, _pass), deconstruct_movable_(_f, _pass), deconstruct_movable_(_d, _pass), deconstruct_movable_(_e, _pass))) ]
                 ;
 
             empire_ref
@@ -54,7 +57,7 @@ namespace parse { namespace detail {
                         )
                     )
                 >   labeller.rule(Empire_token) > simple_int [ _b = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = construct_movable_(new_<ValueRef::ComplexVariable<std::string>>(_a, deconstruct_movable_(_b, _pass), deconstruct_movable_(_c, _pass), deconstruct_movable_(_f, _pass), deconstruct_movable_(_d, _pass), deconstruct_movable_(_e, _pass))) ]
                 ;
 
             empire_empire_ref
@@ -68,7 +71,7 @@ namespace parse { namespace detail {
                     )
                 >   labeller.rule(Empire_token) > simple_int [ _b = _1 ]
                 >   labeller.rule(Empire_token) > simple_int [ _c = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = construct_movable_(new_<ValueRef::ComplexVariable<std::string>>(_a, deconstruct_movable_(_b, _pass), deconstruct_movable_(_c, _pass), deconstruct_movable_(_f, _pass), deconstruct_movable_(_d, _pass), deconstruct_movable_(_e, _pass))) ]
                 ;
 
             start

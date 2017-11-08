@@ -312,11 +312,16 @@ bool ConditionBase::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // Number                                                //
 ///////////////////////////////////////////////////////////
-Number::~Number() {
-    delete m_low;
-    delete m_high;
-    delete m_condition;
-}
+Number::Number(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
+               std::unique_ptr<ValueRef::ValueRefBase<int>>&& high,
+               std::unique_ptr<ConditionBase>&& condition) :
+    m_low(std::move(low)),
+    m_high(std::move(high)),
+    m_condition(std::move(condition))
+{}
+
+Number::~Number()
+{}
 
 bool Number::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -484,10 +489,13 @@ unsigned int Number::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Turn                                                  //
 ///////////////////////////////////////////////////////////
-Turn::~Turn() {
-    delete m_low;
-    delete m_high;
-}
+Turn::Turn(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
+           std::unique_ptr<ValueRef::ValueRefBase<int>>&& high) :
+    m_low(std::move(low)),
+    m_high(std::move(high))
+{}
+
+Turn::~Turn() {}
 
 bool Turn::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -633,11 +641,26 @@ unsigned int Turn::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SortedNumberOf                                        //
 ///////////////////////////////////////////////////////////
-SortedNumberOf::~SortedNumberOf() {
-    delete m_number;
-    delete m_sort_key;
-    delete m_condition;
-}
+SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRefBase<int>>&& number,
+                               std::unique_ptr<ConditionBase>&& condition) :
+    m_number(std::move(number)),
+    m_sort_key(nullptr),
+    m_sorting_method(SORT_RANDOM),
+    m_condition(std::move(condition))
+{}
+
+SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRefBase<int>>&& number,
+                               std::unique_ptr<ValueRef::ValueRefBase<double>>&& sort_key_ref,
+                               SortingMethod sorting_method,
+                               std::unique_ptr<ConditionBase>&& condition) :
+    m_number(std::move(number)),
+    m_sort_key(std::move(sort_key_ref)),
+    m_sorting_method(sorting_method),
+    m_condition(std::move(condition))
+{}
+
+SortedNumberOf::~SortedNumberOf()
+{}
 
 bool SortedNumberOf::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -862,7 +885,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
     // matches, or those left in matches while the rest are moved into non_matches
     ObjectSet matched_objects;
     matched_objects.reserve(number);
-    TransferSortedObjects(number, m_sort_key, local_context, m_sorting_method, all_subcondition_matches, matched_objects);
+    TransferSortedObjects(number, m_sort_key.get(), local_context, m_sorting_method, all_subcondition_matches, matched_objects);
 
     // put objects back into matches and non_target sets as output...
 
@@ -1108,15 +1131,24 @@ unsigned int None::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // EmpireAffiliation                                     //
 ///////////////////////////////////////////////////////////
-EmpireAffiliation::EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id) :
-    m_empire_id(empire_id),
+EmpireAffiliation::EmpireAffiliation(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
+                                     EmpireAffiliationType affiliation) :
+    m_empire_id(std::move(empire_id)),
+    m_affiliation(affiliation)
+{}
+
+EmpireAffiliation::EmpireAffiliation(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id) :
+    m_empire_id(std::move(empire_id)),
     m_affiliation(AFFIL_SELF)
 {}
 
-EmpireAffiliation::~EmpireAffiliation() {
-    if (m_empire_id)
-        delete m_empire_id;
-}
+EmpireAffiliation::EmpireAffiliation(EmpireAffiliationType affiliation) :
+    m_empire_id(nullptr),
+    m_affiliation(affiliation)
+{}
+
+EmpireAffiliation::~EmpireAffiliation()
+{}
 
 bool EmpireAffiliation::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -1437,10 +1469,17 @@ unsigned int Target::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Homeworld                                             //
 ///////////////////////////////////////////////////////////
-Homeworld::~Homeworld() {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names)
-        delete name;
-}
+Homeworld::Homeworld() :
+    ConditionBase(),
+    m_names()
+{}
+
+Homeworld::Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names) :
+    ConditionBase(),
+    m_names(std::move(names))
+{}
+
+Homeworld::~Homeworld() {}
 
 bool Homeworld::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -1516,7 +1555,7 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             if (!name->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -1527,7 +1566,7 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
         // get all names from valuerefs
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             names.push_back(name->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, HomeworldSimpleMatch(names));
@@ -1538,7 +1577,7 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
 }
 
 bool Homeworld::RootCandidateInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->RootCandidateInvariant())
             return false;
     }
@@ -1546,7 +1585,7 @@ bool Homeworld::RootCandidateInvariant() const {
 }
 
 bool Homeworld::TargetInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->TargetInvariant())
             return false;
     }
@@ -1554,7 +1593,7 @@ bool Homeworld::TargetInvariant() const {
 }
 
 bool Homeworld::SourceInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->SourceInvariant())
             return false;
     }
@@ -1587,7 +1626,7 @@ std::string Homeworld::Dump() const {
         retval += " name = " + m_names[0]->Dump();
     } else if (!m_names.empty()) {
         retval += " name = [ ";
-        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        for (auto& name : m_names) {
             retval += name->Dump() + " ";
         }
         retval += "]";
@@ -1626,7 +1665,7 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
 
     } else {
         // match any of the species specified
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             const auto& species_name = name->Eval(local_context);
             if (const auto species = manager.GetSpecies(species_name)) {
                 const auto& homeworld_ids = species->Homeworlds();
@@ -1644,7 +1683,7 @@ void Homeworld::GetDefaultInitialCandidateObjects(const ScriptingContext& parent
 { AddPlanetSet(condition_non_targets); }
 
 void Homeworld::SetTopLevelContent(const std::string& content_name) {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (name)
             name->SetTopLevelContent(content_name);
     }
@@ -1787,8 +1826,13 @@ unsigned int Armed::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Type                                                  //
 ///////////////////////////////////////////////////////////
+Type::Type(std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>&& type) :
+    ConditionBase(),
+    m_type(std::move(type))
+{}
+
 Type::~Type()
-{ delete m_type; }
+{}
 
 bool Type::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -1875,7 +1919,7 @@ std::string Type::Description(bool negated/* = false*/) const {
 
 std::string Type::Dump() const {
     std::string retval = DumpIndent();
-    if (dynamic_cast<ValueRef::Constant<UniverseObjectType>*>(m_type)) {
+    if (dynamic_cast<ValueRef::Constant<UniverseObjectType>*>(m_type.get())) {
         switch (m_type->Eval()) {
         case OBJ_BUILDING:    retval += "Building\n"; break;
         case OBJ_SHIP:        retval += "Ship\n"; break;
@@ -1970,11 +2014,12 @@ unsigned int Type::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Building                                              //
 ///////////////////////////////////////////////////////////
-Building::~Building() {
-    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
-        delete name;
-    }
-}
+Building::Building(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names) :
+    ConditionBase(),
+    m_names(std::move(names))
+{}
+
+Building::~Building() {}
 
 bool Building::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -2027,7 +2072,7 @@ void Building::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        for (auto& name : m_names) {
             if (!name->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -2038,7 +2083,7 @@ void Building::Eval(const ScriptingContext& parent_context,
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
         // get all names from valuerefs
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             names.push_back(name->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, BuildingSimpleMatch(names));
@@ -2049,7 +2094,7 @@ void Building::Eval(const ScriptingContext& parent_context,
 }
 
 bool Building::RootCandidateInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->RootCandidateInvariant())
             return false;
     }
@@ -2057,7 +2102,7 @@ bool Building::RootCandidateInvariant() const {
 }
 
 bool Building::TargetInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->TargetInvariant())
             return false;
     }
@@ -2065,7 +2110,7 @@ bool Building::TargetInvariant() const {
 }
 
 bool Building::SourceInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->SourceInvariant())
             return false;
     }
@@ -2098,7 +2143,7 @@ std::string Building::Dump() const {
         retval += m_names[0]->Dump() + "\n";
     } else {
         retval += "[ ";
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             retval += name->Dump() + " ";
         }
         retval += "]\n";
@@ -2125,7 +2170,7 @@ bool Building::Match(const ScriptingContext& local_context) const {
             return true;
 
         // match one of the specified building types
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             if (name->Eval(local_context) == building->BuildingTypeName())
                 return true;
         }
@@ -2135,7 +2180,7 @@ bool Building::Match(const ScriptingContext& local_context) const {
 }
 
 void Building::SetTopLevelContent(const std::string& content_name) {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (name)
             name->SetTopLevelContent(content_name);
     }
@@ -2154,8 +2199,49 @@ unsigned int Building::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // HasSpecial                                            //
 ///////////////////////////////////////////////////////////
+HasSpecial::HasSpecial() :
+    ConditionBase(),
+    m_name(nullptr),
+    m_capacity_low(nullptr),
+    m_capacity_high(nullptr),
+    m_since_turn_low(),
+    m_since_turn_high()
+{}
+
+HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
+    ConditionBase(),
+    m_name(std::move(name)),
+    m_capacity_low(nullptr),
+    m_capacity_high(nullptr),
+    m_since_turn_low(),
+    m_since_turn_high()
+{}
+
+HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+                       std::unique_ptr<ValueRef::ValueRefBase<int>>&& since_turn_low,
+                       std::unique_ptr<ValueRef::ValueRefBase<int>>&& since_turn_high) :
+    ConditionBase(),
+    m_name(std::move(name)),
+    m_capacity_low(nullptr),
+    m_capacity_high(nullptr),
+    m_since_turn_low(std::move(since_turn_low)),
+    m_since_turn_high(std::move(since_turn_high))
+{}
+
+HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+                       std::unique_ptr<ValueRef::ValueRefBase<double>>&& capacity_low,
+                       std::unique_ptr<ValueRef::ValueRefBase<double>>&& capacity_high) :
+    ConditionBase(),
+    m_name(std::move(name)),
+    m_capacity_low(std::move(capacity_low)),
+    m_capacity_high(std::move(capacity_high)),
+    m_since_turn_low(nullptr),
+    m_since_turn_high(nullptr)
+{}
+
 HasSpecial::HasSpecial(const std::string& name) :
     ConditionBase(),
+    // TODO: Use std::make_unique when adopting C++14
     m_name(new ValueRef::Constant<std::string>(name)),
     m_capacity_low(nullptr),
     m_capacity_high(nullptr),
@@ -2163,13 +2249,8 @@ HasSpecial::HasSpecial(const std::string& name) :
     m_since_turn_high(nullptr)
 {}
 
-HasSpecial::~HasSpecial() {
-    delete m_name;
-    delete m_capacity_low;
-    delete m_capacity_high;
-    delete m_since_turn_low;
-    delete m_since_turn_high;
-}
+HasSpecial::~HasSpecial()
+{}
 
 bool HasSpecial::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -2385,13 +2466,24 @@ unsigned int HasSpecial::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // HasTag                                                //
 ///////////////////////////////////////////////////////////
+HasTag::HasTag() :
+    ConditionBase(),
+    m_name()
+{}
+
 HasTag::HasTag(const std::string& name) :
     ConditionBase(),
+    // TODO: Use std::make_unique when adopting C++14
     m_name(new ValueRef::Constant<std::string>(name))
 {}
 
+HasTag::HasTag(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
+    ConditionBase(),
+    m_name(std::move(name))
+{}
+
 HasTag::~HasTag()
-{ delete m_name; }
+{}
 
 bool HasTag::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -2517,10 +2609,14 @@ unsigned int HasTag::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // CreatedOnTurn                                         //
 ///////////////////////////////////////////////////////////
-CreatedOnTurn::~CreatedOnTurn() {
-    delete m_low;
-    delete m_high;
-}
+CreatedOnTurn::CreatedOnTurn(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
+                             std::unique_ptr<ValueRef::ValueRefBase<int>>&& high) :
+    ConditionBase(),
+    m_low(std::move(low)),
+    m_high(std::move(high))
+{}
+
+CreatedOnTurn::~CreatedOnTurn() {}
 
 bool CreatedOnTurn::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -2642,7 +2738,7 @@ unsigned int CreatedOnTurn::GetCheckSum() const {
 // Contains                                              //
 ///////////////////////////////////////////////////////////
 Contains::~Contains()
-{ delete m_condition; }
+{}
 
 bool Contains::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -2847,7 +2943,7 @@ unsigned int Contains::GetCheckSum() const {
 // ContainedBy                                           //
 ///////////////////////////////////////////////////////////
 ContainedBy::~ContainedBy()
-{ delete m_condition; }
+{}
 
 bool ContainedBy::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -3070,8 +3166,13 @@ unsigned int ContainedBy::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // InSystem                                              //
 ///////////////////////////////////////////////////////////
+InSystem::InSystem(std::unique_ptr<ValueRef::ValueRefBase<int>>&& system_id) :
+    ConditionBase(),
+    m_system_id(std::move(system_id))
+{}
+
 InSystem::~InSystem()
-{ delete m_system_id; }
+{}
 
 bool InSystem::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -3227,8 +3328,13 @@ unsigned int InSystem::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ObjectID                                              //
 ///////////////////////////////////////////////////////////
+ObjectID::ObjectID(std::unique_ptr<ValueRef::ValueRefBase<int>>&& object_id) :
+    ConditionBase(),
+    m_object_id(std::move(object_id))
+{}
+
 ObjectID::~ObjectID()
-{ delete m_object_id; }
+{}
 
 bool ObjectID::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -3361,11 +3467,12 @@ unsigned int ObjectID::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // PlanetType                                            //
 ///////////////////////////////////////////////////////////
-PlanetType::~PlanetType() {
-    for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
-        delete type;
-    }
-}
+PlanetType::PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetType>>>&& types) :
+    ConditionBase(),
+    m_types(std::move(types))
+{}
+
+PlanetType::~PlanetType() {}
 
 bool PlanetType::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -3419,7 +3526,7 @@ void PlanetType::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (auto type : m_types) {
+        for (auto& type : m_types) {
             if (!type->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -3430,7 +3537,7 @@ void PlanetType::Eval(const ScriptingContext& parent_context,
         // evaluate types once, and use to check all candidate objects
         std::vector< ::PlanetType> types;
         // get all types from valuerefs
-        for (auto type : m_types) {
+        for (auto& type : m_types) {
             types.push_back(type->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, PlanetTypeSimpleMatch(types));
@@ -3441,7 +3548,7 @@ void PlanetType::Eval(const ScriptingContext& parent_context,
 }
 
 bool PlanetType::RootCandidateInvariant() const {
-    for (auto type : m_types) {
+    for (auto& type : m_types) {
         if (!type->RootCandidateInvariant())
             return false;
     }
@@ -3449,7 +3556,7 @@ bool PlanetType::RootCandidateInvariant() const {
 }
 
 bool PlanetType::TargetInvariant() const {
-    for (auto type : m_types) {
+    for (auto& type : m_types) {
         if (!type->TargetInvariant())
             return false;
     }
@@ -3457,7 +3564,7 @@ bool PlanetType::TargetInvariant() const {
 }
 
 bool PlanetType::SourceInvariant() const {
-    for (auto type : m_types) {
+    for (auto& type : m_types) {
         if (!type->SourceInvariant())
             return false;
     }
@@ -3490,7 +3597,7 @@ std::string PlanetType::Dump() const {
         retval += m_types[0]->Dump() + "\n";
     } else {
         retval += "[ ";
-        for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
+        for (auto& type : m_types) {
             retval += type->Dump() + " ";
         }
         retval += "]\n";
@@ -3518,7 +3625,7 @@ bool PlanetType::Match(const ScriptingContext& local_context) const {
         planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
-        for (auto type : m_types) {
+        for (auto& type : m_types) {
             if (type->Eval(ScriptingContext(local_context)) == planet->Type())
                 return true;
         }
@@ -3527,7 +3634,7 @@ bool PlanetType::Match(const ScriptingContext& local_context) const {
 }
 
 void PlanetType::SetTopLevelContent(const std::string& content_name) {
-    for (auto type : m_types) {
+    for (auto& type : m_types) {
         if (type)
             type->SetTopLevelContent(content_name);
     }
@@ -3546,11 +3653,12 @@ unsigned int PlanetType::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // PlanetSize                                            //
 ///////////////////////////////////////////////////////////
-PlanetSize::~PlanetSize() {
-    for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
-        delete size;
-    }
-}
+PlanetSize::PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetSize>>>&& sizes) :
+    ConditionBase(),
+    m_sizes(std::move(sizes))
+{}
+
+PlanetSize::~PlanetSize() {}
 
 bool PlanetSize::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -3607,7 +3715,7 @@ void PlanetSize::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (auto size : m_sizes) {
+        for (auto& size : m_sizes) {
             if (!size->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -3618,7 +3726,7 @@ void PlanetSize::Eval(const ScriptingContext& parent_context,
         // evaluate types once, and use to check all candidate objects
         std::vector< ::PlanetSize> sizes;
         // get all types from valuerefs
-        for (auto size : m_sizes) {
+        for (auto& size : m_sizes) {
             sizes.push_back(size->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, PlanetSizeSimpleMatch(sizes));
@@ -3629,7 +3737,7 @@ void PlanetSize::Eval(const ScriptingContext& parent_context,
 }
 
 bool PlanetSize::RootCandidateInvariant() const {
-    for (auto size : m_sizes) {
+    for (auto& size : m_sizes) {
         if (!size->RootCandidateInvariant())
             return false;
     }
@@ -3637,7 +3745,7 @@ bool PlanetSize::RootCandidateInvariant() const {
 }
 
 bool PlanetSize::TargetInvariant() const {
-    for (auto size : m_sizes) {
+    for (auto& size : m_sizes) {
         if (!size->TargetInvariant())
             return false;
     }
@@ -3645,7 +3753,7 @@ bool PlanetSize::TargetInvariant() const {
 }
 
 bool PlanetSize::SourceInvariant() const {
-    for (auto size : m_sizes) {
+    for (auto& size : m_sizes) {
         if (!size->SourceInvariant())
             return false;
     }
@@ -3678,7 +3786,7 @@ std::string PlanetSize::Dump() const {
         retval += m_sizes[0]->Dump() + "\n";
     } else {
         retval += "[ ";
-        for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
+        for (auto& size : m_sizes) {
             retval += size->Dump() + " ";
         }
         retval += "]\n";
@@ -3706,7 +3814,7 @@ bool PlanetSize::Match(const ScriptingContext& local_context) const {
         planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
-        for (auto size : m_sizes) {
+        for (auto& size : m_sizes) {
             if (size->Eval(local_context) == planet->Size())
                 return true;
         }
@@ -3715,7 +3823,7 @@ bool PlanetSize::Match(const ScriptingContext& local_context) const {
 }
 
 void PlanetSize::SetTopLevelContent(const std::string& content_name) {
-    for (auto size : m_sizes) {
+    for (auto& size : m_sizes) {
         if (size)
             size->SetTopLevelContent(content_name);
     }
@@ -3734,12 +3842,14 @@ unsigned int PlanetSize::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // PlanetEnvironment                                     //
 ///////////////////////////////////////////////////////////
-PlanetEnvironment::~PlanetEnvironment() {
-    for (auto environment : m_environments) {
-        delete environment;
-    }
-    delete m_species_name;
-}
+PlanetEnvironment::PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetEnvironment>>>&& environments,
+                                     std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name_ref) :
+    ConditionBase(),
+    m_environments(std::move(environments)),
+    m_species_name(std::move(species_name_ref))
+{}
+
+PlanetEnvironment::~PlanetEnvironment() {}
 
 bool PlanetEnvironment::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -3802,7 +3912,7 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (auto environment : m_environments) {
+        for (auto& environment : m_environments) {
             if (!environment->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -3813,7 +3923,7 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
         // evaluate types once, and use to check all candidate objects
         std::vector< ::PlanetEnvironment> environments;
         // get all types from valuerefs
-        for (auto environment : m_environments) {
+        for (auto& environment : m_environments) {
             environments.push_back(environment->Eval(parent_context));
         }
         std::string species_name;
@@ -3829,7 +3939,7 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
 bool PlanetEnvironment::RootCandidateInvariant() const {
     if (m_species_name && !m_species_name->RootCandidateInvariant())
         return false;
-    for (auto environment : m_environments) {
+    for (auto& environment : m_environments) {
         if (!environment->RootCandidateInvariant())
             return false;
     }
@@ -3839,7 +3949,7 @@ bool PlanetEnvironment::RootCandidateInvariant() const {
 bool PlanetEnvironment::TargetInvariant() const {
     if (m_species_name && !m_species_name->TargetInvariant())
         return false;
-    for (auto environment : m_environments) {
+    for (auto& environment : m_environments) {
         if (!environment->TargetInvariant())
             return false;
     }
@@ -3849,7 +3959,7 @@ bool PlanetEnvironment::TargetInvariant() const {
 bool PlanetEnvironment::SourceInvariant() const {
     if (m_species_name && !m_species_name->SourceInvariant())
         return false;
-    for (auto environment : m_environments) {
+    for (auto& environment : m_environments) {
         if (!environment->SourceInvariant())
             return false;
     }
@@ -3891,7 +4001,7 @@ std::string PlanetEnvironment::Dump() const {
         retval += m_environments[0]->Dump();
     } else {
         retval += "[ ";
-        for (auto environment : m_environments) {
+        for (auto& environment : m_environments) {
             retval += environment->Dump() + " ";
         }
         retval += "]";
@@ -3930,7 +4040,7 @@ bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
         species_name = m_species_name->Eval(local_context);
 
     auto env_for_planets_species = planet->EnvironmentForSpecies(species_name);
-    for (auto environment : m_environments) {
+    for (auto& environment : m_environments) {
         if (environment->Eval(local_context) == env_for_planets_species)
             return true;
     }
@@ -3940,7 +4050,7 @@ bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
 void PlanetEnvironment::SetTopLevelContent(const std::string& content_name) {
     if (m_species_name)
         m_species_name->SetTopLevelContent(content_name);
-    for (auto environment : m_environments) {
+    for (auto& environment : m_environments) {
         if (environment)
             environment->SetTopLevelContent(content_name);
     }
@@ -3960,10 +4070,17 @@ unsigned int PlanetEnvironment::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Species                                              //
 ///////////////////////////////////////////////////////////
-Species::~Species() {
-    for (auto name : m_names)
-        delete name;
-}
+Species::Species(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names) :
+    ConditionBase(),
+    m_names(std::move(names))
+{}
+
+Species::Species() :
+    ConditionBase(),
+    m_names()
+{}
+
+Species::~Species() {}
 
 bool Species::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -4026,7 +4143,7 @@ void Species::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             if (!name->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -4037,7 +4154,7 @@ void Species::Eval(const ScriptingContext& parent_context,
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
         // get all names from valuerefs
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             names.push_back(name->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, SpeciesSimpleMatch(names));
@@ -4048,7 +4165,7 @@ void Species::Eval(const ScriptingContext& parent_context,
 }
 
 bool Species::RootCandidateInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->RootCandidateInvariant())
             return false;
     }
@@ -4056,7 +4173,7 @@ bool Species::RootCandidateInvariant() const {
 }
 
 bool Species::TargetInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->TargetInvariant())
             return false;
     }
@@ -4064,7 +4181,7 @@ bool Species::TargetInvariant() const {
 }
 
 bool Species::SourceInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->SourceInvariant())
             return false;
     }
@@ -4101,7 +4218,7 @@ std::string Species::Dump() const {
         retval += " name = " + m_names[0]->Dump() + "\n";
     } else {
         retval += " name = [ ";
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             retval += name->Dump() + " ";
         }
         retval += "]\n";
@@ -4135,7 +4252,7 @@ bool Species::Match(const ScriptingContext& local_context) const {
             return !planet->SpeciesName().empty();  // match any species name
         } else {
             // match only specified species names
-            for (auto name : m_names) {
+            for (auto& name : m_names) {
                 if (name->Eval(local_context) == planet->SpeciesName())
                     return true;
             }
@@ -4148,7 +4265,7 @@ bool Species::Match(const ScriptingContext& local_context) const {
             return !ship->SpeciesName().empty();    // match any species name
         } else {
             // match only specified species names
-            for (auto name : m_names) {
+            for (auto& name : m_names) {
                 if (name->Eval(local_context) == ship->SpeciesName())
                     return true;
             }
@@ -4158,7 +4275,7 @@ bool Species::Match(const ScriptingContext& local_context) const {
 }
 
 void Species::SetTopLevelContent(const std::string& content_name) {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (name)
             name->SetTopLevelContent(content_name);
     }
@@ -4177,33 +4294,44 @@ unsigned int Species::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Enqueued                                              //
 ///////////////////////////////////////////////////////////
-Enqueued::Enqueued(ValueRef::ValueRefBase<int>* design_id, ValueRef::ValueRefBase<int>* empire_id,
-                   ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high) :
+Enqueued::Enqueued(std::unique_ptr<ValueRef::ValueRefBase<int>>&& design_id,
+                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
+                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
+                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& high) :
     ConditionBase(),
     m_build_type(BT_SHIP),
     m_name(),
-    m_design_id(design_id),
-    m_empire_id(empire_id),
-    m_low(low),
-    m_high(high)
+    m_design_id(std::move(design_id)),
+    m_empire_id(std::move(empire_id)),
+    m_low(std::move(low)),
+    m_high(std::move(high))
 {}
 
 Enqueued::Enqueued() :
     ConditionBase(),
     m_build_type(BT_NOT_BUILDING),
     m_name(),
-    m_design_id(0),
-    m_empire_id(0),
-    m_low(0),
-    m_high(0)
+    m_design_id(nullptr),
+    m_empire_id(nullptr),
+    m_low(nullptr),
+    m_high(nullptr)
 {}
 
-Enqueued::~Enqueued() {
-    delete m_name;
-    delete m_design_id;
-    delete m_low;
-    delete m_high;
-}
+Enqueued::Enqueued(BuildType build_type,
+                   std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
+                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
+                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& high) :
+    ConditionBase(),
+    m_build_type(build_type),
+    m_name(std::move(name)),
+    m_design_id(nullptr),
+    m_empire_id(std::move(empire_id)),
+    m_low(std::move(low)),
+    m_high(std::move(high))
+{}
+
+Enqueued::~Enqueued() {}
 
 bool Enqueued::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -4497,11 +4625,12 @@ unsigned int Enqueued::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // FocusType                                             //
 ///////////////////////////////////////////////////////////
-FocusType::~FocusType() {
-    for (auto name : m_names) {
-        delete name;
-    }
-}
+FocusType::FocusType(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names) :
+    ConditionBase(),
+    m_names(std::move(names))
+{}
+
+FocusType::~FocusType() {}
 
 bool FocusType::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -4556,7 +4685,7 @@ void FocusType::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             if (!name->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -4567,7 +4696,7 @@ void FocusType::Eval(const ScriptingContext& parent_context,
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
         // get all names from valuerefs
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             names.push_back(name->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, FocusTypeSimpleMatch(names));
@@ -4578,7 +4707,7 @@ void FocusType::Eval(const ScriptingContext& parent_context,
 }
 
 bool FocusType::RootCandidateInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->RootCandidateInvariant())
             return false;
     }
@@ -4586,7 +4715,7 @@ bool FocusType::RootCandidateInvariant() const {
 }
 
 bool FocusType::TargetInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->TargetInvariant())
             return false;
     }
@@ -4594,7 +4723,7 @@ bool FocusType::TargetInvariant() const {
 }
 
 bool FocusType::SourceInvariant() const {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (!name->SourceInvariant())
             return false;
     }
@@ -4627,7 +4756,7 @@ std::string FocusType::Dump() const {
         retval += m_names[0]->Dump() + "\n";
     } else {
         retval += "[ ";
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             retval += name->Dump() + " ";
         }
         retval += "]\n";
@@ -4650,7 +4779,7 @@ bool FocusType::Match(const ScriptingContext& local_context) const {
             res_center = std::dynamic_pointer_cast<const ResourceCenter>(planet);
     }
     if (res_center) {
-        for (auto name : m_names) {
+        for (auto& name : m_names) {
             if (name->Eval(local_context) == res_center->Focus())
                 return true;
         }
@@ -4666,7 +4795,7 @@ void FocusType::GetDefaultInitialCandidateObjects(const ScriptingContext& parent
 }
 
 void FocusType::SetTopLevelContent(const std::string& content_name) {
-    for (auto name : m_names) {
+    for (auto& name : m_names) {
         if (name)
             name->SetTopLevelContent(content_name);
     }
@@ -4685,11 +4814,12 @@ unsigned int FocusType::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // StarType                                              //
 ///////////////////////////////////////////////////////////
-StarType::~StarType() {
-    for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
-        delete type;
-    }
-}
+StarType::StarType(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::StarType>>>&& types) :
+    ConditionBase(),
+    m_types(std::move(types))
+{}
+
+StarType::~StarType() {}
 
 bool StarType::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -4736,7 +4866,7 @@ void StarType::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (auto type : m_types) {
+        for (auto& type : m_types) {
             if (!type->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
@@ -4747,7 +4877,7 @@ void StarType::Eval(const ScriptingContext& parent_context,
         // evaluate types once, and use to check all candidate objects
         std::vector< ::StarType> types;
         // get all types from valuerefs
-        for (auto type : m_types) {
+        for (auto& type : m_types) {
             types.push_back(type->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, StarTypeSimpleMatch(types));
@@ -4758,7 +4888,7 @@ void StarType::Eval(const ScriptingContext& parent_context,
 }
 
 bool StarType::RootCandidateInvariant() const {
-    for (auto type : m_types) {
+    for (auto& type : m_types) {
         if (!type->RootCandidateInvariant())
             return false;
     }
@@ -4766,7 +4896,7 @@ bool StarType::RootCandidateInvariant() const {
 }
 
 bool StarType::TargetInvariant() const {
-    for (auto type : m_types) {
+    for (auto& type : m_types) {
         if (!type->TargetInvariant())
             return false;
     }
@@ -4774,7 +4904,7 @@ bool StarType::TargetInvariant() const {
 }
 
 bool StarType::SourceInvariant() const {
-    for (auto type : m_types) {
+    for (auto& type : m_types) {
         if (!type->SourceInvariant())
             return false;
     }
@@ -4807,7 +4937,7 @@ std::string StarType::Dump() const {
         retval += m_types[0]->Dump() + "\n";
     } else {
         retval += "[ ";
-        for (auto type : m_types) {
+        for (auto& type : m_types) {
             retval += type->Dump() + " ";
         }
         retval += "]\n";
@@ -4824,7 +4954,7 @@ bool StarType::Match(const ScriptingContext& local_context) const {
 
     std::shared_ptr<const System> system = GetSystem(candidate->SystemID());
     if (system || (system = std::dynamic_pointer_cast<const System>(candidate))) {
-        for (auto type : m_types) {
+        for (auto& type : m_types) {
             if (type->Eval(local_context) == system->GetStarType())
                 return true;
         }
@@ -4833,7 +4963,7 @@ bool StarType::Match(const ScriptingContext& local_context) const {
 }
 
 void StarType::SetTopLevelContent(const std::string& content_name) {
-    for (auto type : m_types) {
+    for (auto& type : m_types) {
         if (type)
             (type)->SetTopLevelContent(content_name);
     }
@@ -4852,8 +4982,13 @@ unsigned int StarType::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // DesignHasHull                                         //
 ///////////////////////////////////////////////////////////
+DesignHasHull::DesignHasHull(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
+    ConditionBase(),
+    m_name(std::move(name))
+{}
+
 DesignHasHull::~DesignHasHull()
-{ delete m_name; }
+{}
 
 bool DesignHasHull::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -4978,11 +5113,16 @@ unsigned int DesignHasHull::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // DesignHasPart                                         //
 ///////////////////////////////////////////////////////////
-DesignHasPart::~DesignHasPart() {
-    delete m_name;
-    delete m_low;
-    delete m_high;
-}
+DesignHasPart::DesignHasPart(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+                             std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
+                             std::unique_ptr<ValueRef::ValueRefBase<int>>&& high) :
+    ConditionBase(),
+    m_low(std::move(low)),
+    m_high(std::move(high)),
+    m_name(std::move(name))
+{}
+
+DesignHasPart::~DesignHasPart() {}
 
 bool DesignHasPart::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -5156,10 +5296,16 @@ unsigned int DesignHasPart::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // DesignHasPartClass                                    //
 ///////////////////////////////////////////////////////////
-DesignHasPartClass::~DesignHasPartClass() {
-    delete m_low;
-    delete m_high;
-}
+DesignHasPartClass::DesignHasPartClass(ShipPartClass part_class,
+                                       std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
+                                       std::unique_ptr<ValueRef::ValueRefBase<int>>&& high) :
+    ConditionBase(),
+    m_low(std::move(low)),
+    m_high(std::move(high)),
+    m_class(std::move(part_class))
+{}
+
+DesignHasPartClass::~DesignHasPartClass() {}
 
 bool DesignHasPartClass::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -5318,8 +5464,18 @@ unsigned int DesignHasPartClass::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // PredefinedShipDesign                                  //
 ///////////////////////////////////////////////////////////
+PredefinedShipDesign::PredefinedShipDesign(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
+    ConditionBase(),
+    m_name(std::move(name))
+{}
+
+PredefinedShipDesign::PredefinedShipDesign(ValueRef::ValueRefBase<std::string>* name) :
+    ConditionBase(),
+    m_name(name)
+{}
+
 PredefinedShipDesign::~PredefinedShipDesign()
-{ delete m_name; }
+{}
 
 bool PredefinedShipDesign::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -5455,8 +5611,13 @@ unsigned int PredefinedShipDesign::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // NumberedShipDesign                                    //
 ///////////////////////////////////////////////////////////
+NumberedShipDesign::NumberedShipDesign(std::unique_ptr<ValueRef::ValueRefBase<int>>&& design_id) :
+    ConditionBase(),
+    m_design_id(std::move(design_id))
+{}
+
 NumberedShipDesign::~NumberedShipDesign()
-{ delete m_design_id; }
+{}
 
 bool NumberedShipDesign::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -5560,8 +5721,13 @@ unsigned int NumberedShipDesign::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ProducedByEmpire                                      //
 ///////////////////////////////////////////////////////////
+ProducedByEmpire::ProducedByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id) :
+    ConditionBase(),
+    m_empire_id(std::move(empire_id))
+{}
+
 ProducedByEmpire::~ProducedByEmpire()
-{ delete m_empire_id; }
+{}
 
 bool ProducedByEmpire::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -5673,8 +5839,13 @@ unsigned int ProducedByEmpire::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Chance                                                //
 ///////////////////////////////////////////////////////////
+Chance::Chance(std::unique_ptr<ValueRef::ValueRefBase<double>>&& chance) :
+    ConditionBase(),
+    m_chance(std::move(chance))
+{}
+
 Chance::~Chance()
-{ delete m_chance; }
+{}
 
 bool Chance::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -5770,10 +5941,16 @@ unsigned int Chance::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // MeterValue                                            //
 ///////////////////////////////////////////////////////////
-MeterValue::~MeterValue() {
-    delete m_low;
-    delete m_high;
-}
+MeterValue::MeterValue(MeterType meter,
+                       std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
+                       std::unique_ptr<ValueRef::ValueRefBase<double>>&& high) :
+    ConditionBase(),
+    m_meter(meter),
+    m_low(std::move(low)),
+    m_high(std::move(high))
+{}
+
+MeterValue::~MeterValue() {}
 
 bool MeterValue::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -5953,11 +6130,18 @@ unsigned int MeterValue::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ShipPartMeterValue                                    //
 ///////////////////////////////////////////////////////////
-ShipPartMeterValue::~ShipPartMeterValue() {
-    delete m_part_name;
-    delete m_low;
-    delete m_high;
-}
+ShipPartMeterValue::ShipPartMeterValue(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_part_name,
+                                       MeterType meter,
+                                       std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
+                                       std::unique_ptr<ValueRef::ValueRefBase<double>>&& high) :
+    ConditionBase(),
+    m_part_name(std::move(ship_part_name)),
+    m_meter(meter),
+    m_low(std::move(low)),
+    m_high(std::move(high))
+{}
+
+ShipPartMeterValue::~ShipPartMeterValue() {}
 
 bool ShipPartMeterValue::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -6126,11 +6310,28 @@ unsigned int ShipPartMeterValue::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // EmpireMeterValue                                      //
 ///////////////////////////////////////////////////////////
-EmpireMeterValue::~EmpireMeterValue() {
-    delete m_empire_id;
-    delete m_low;
-    delete m_high;
-}
+EmpireMeterValue::EmpireMeterValue(const std::string& meter,
+                                   std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
+                                   std::unique_ptr<ValueRef::ValueRefBase<double>>&& high) :
+    ConditionBase(),
+    m_empire_id(nullptr),
+    m_meter(meter),
+    m_low(std::move(low)),
+    m_high(std::move(high))
+{}
+
+EmpireMeterValue::EmpireMeterValue(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
+                                   const std::string& meter,
+                                   std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
+                                   std::unique_ptr<ValueRef::ValueRefBase<double>>&& high) :
+    ConditionBase(),
+    m_empire_id(std::move(empire_id)),
+    m_meter(meter),
+    m_low(std::move(low)),
+    m_high(std::move(high))
+{}
+
+EmpireMeterValue::~EmpireMeterValue() {}
 
 bool EmpireMeterValue::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -6301,10 +6502,16 @@ unsigned int EmpireMeterValue::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // EmpireStockpileValue                                  //
 ///////////////////////////////////////////////////////////
-EmpireStockpileValue::~EmpireStockpileValue() {
-    delete m_low;
-    delete m_high;
-}
+EmpireStockpileValue::EmpireStockpileValue(ResourceType stockpile,
+                                           std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
+                                           std::unique_ptr<ValueRef::ValueRefBase<double>>&& high) :
+    ConditionBase(),
+    m_stockpile(stockpile),
+    m_low(std::move(low)),
+    m_high(std::move(high))
+{}
+
+EmpireStockpileValue::~EmpireStockpileValue() {}
 
 bool EmpireStockpileValue::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -6445,8 +6652,13 @@ unsigned int EmpireStockpileValue::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // OwnerHasTech                                          //
 ///////////////////////////////////////////////////////////
+OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
+    ConditionBase(),
+    m_name(std::move(name))
+{}
+
 OwnerHasTech::~OwnerHasTech()
-{ delete m_name; }
+{}
 
 bool OwnerHasTech::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -6563,11 +6775,17 @@ unsigned int OwnerHasTech::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(const std::string& name) :
     ConditionBase(),
+    // TODO: Use std::make_unique when adopting C++14
     m_name(new ValueRef::Constant<std::string>(name))
 {}
 
+OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
+    ConditionBase(),
+    m_name(std::move(name))
+{}
+
 OwnerHasBuildingTypeAvailable::~OwnerHasBuildingTypeAvailable()
-{ delete m_name; }
+{}
 
 bool OwnerHasBuildingTypeAvailable::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -6679,11 +6897,17 @@ unsigned int OwnerHasBuildingTypeAvailable::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(int id) :
     ConditionBase(),
+    // TODO: Use std::make_unique when adopting C++14
     m_id(new ValueRef::Constant<int>(id))
 {}
 
+OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRefBase<int>>&& id) :
+    ConditionBase(),
+    m_id(std::move(id))
+{}
+
 OwnerHasShipDesignAvailable::~OwnerHasShipDesignAvailable()
-{ delete m_id; }
+{}
 
 bool OwnerHasShipDesignAvailable::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -6795,11 +7019,17 @@ unsigned int OwnerHasShipDesignAvailable::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(const std::string& name) :
     ConditionBase(),
+    // TODO: Use std::make_unique when adopting C++14
     m_name(new ValueRef::Constant<std::string>(name))
 {}
 
+OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
+    ConditionBase(),
+    m_name(std::move(name))
+{}
+
 OwnerHasShipPartAvailable::~OwnerHasShipPartAvailable()
-{ delete m_name; }
+{}
 
 bool OwnerHasShipPartAvailable::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -6910,8 +7140,13 @@ unsigned int OwnerHasShipPartAvailable::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // VisibleToEmpire                                       //
 ///////////////////////////////////////////////////////////
+VisibleToEmpire::VisibleToEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id) :
+    ConditionBase(),
+    m_empire_id(std::move(empire_id))
+{}
+
 VisibleToEmpire::~VisibleToEmpire()
-{ delete m_empire_id; }
+{}
 
 bool VisibleToEmpire::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -7018,10 +7253,14 @@ unsigned int VisibleToEmpire::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // WithinDistance                                        //
 ///////////////////////////////////////////////////////////
-WithinDistance::~WithinDistance() {
-    delete m_distance;
-    delete m_condition;
-}
+WithinDistance::WithinDistance(std::unique_ptr<ValueRef::ValueRefBase<double>>&& distance,
+                               std::unique_ptr<ConditionBase>&& condition) :
+    ConditionBase(),
+    m_distance(std::move(distance)),
+    m_condition(std::move(condition))
+{}
+
+WithinDistance::~WithinDistance() {}
 
 bool WithinDistance::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -7154,10 +7393,14 @@ unsigned int WithinDistance::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // WithinStarlaneJumps                                   //
 ///////////////////////////////////////////////////////////
-WithinStarlaneJumps::~WithinStarlaneJumps() {
-    delete m_jumps;
-    delete m_condition;
-}
+WithinStarlaneJumps::WithinStarlaneJumps(std::unique_ptr<ValueRef::ValueRefBase<int>>&& jumps,
+                                         std::unique_ptr<ConditionBase>&& condition) :
+    ConditionBase(),
+    m_jumps(std::move(jumps)),
+    m_condition(std::move(condition))
+{}
+
+WithinStarlaneJumps::~WithinStarlaneJumps() {}
 
 bool WithinStarlaneJumps::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -7273,7 +7516,7 @@ unsigned int WithinStarlaneJumps::GetCheckSum() const {
 // CanAddStarlaneConnection                              //
 ///////////////////////////////////////////////////////////
 CanAddStarlaneConnection::~CanAddStarlaneConnection()
-{ delete m_condition; }
+{}
 
 bool CanAddStarlaneConnection::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -7718,8 +7961,13 @@ unsigned int CanAddStarlaneConnection::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ExploredByEmpire                                      //
 ///////////////////////////////////////////////////////////
+ExploredByEmpire::ExploredByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id) :
+    ConditionBase(),
+    m_empire_id(std::move(empire_id))
+{}
+
 ExploredByEmpire::~ExploredByEmpire()
-{ delete m_empire_id; }
+{}
 
 bool ExploredByEmpire::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -7934,8 +8182,13 @@ unsigned int Aggressive::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // FleetSupplyableByEmpire                               //
 ///////////////////////////////////////////////////////////
+FleetSupplyableByEmpire::FleetSupplyableByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id) :
+    ConditionBase(),
+    m_empire_id(std::move(empire_id))
+{}
+
 FleetSupplyableByEmpire::~FleetSupplyableByEmpire()
-{ delete m_empire_id; }
+{}
 
 bool FleetSupplyableByEmpire::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -8054,10 +8307,15 @@ unsigned int FleetSupplyableByEmpire::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ResourceSupplyConnectedByEmpire                       //
 ///////////////////////////////////////////////////////////
-ResourceSupplyConnectedByEmpire::~ResourceSupplyConnectedByEmpire() {
-    delete m_empire_id;
-    delete m_condition;
-}
+ResourceSupplyConnectedByEmpire::ResourceSupplyConnectedByEmpire(
+    std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
+    std::unique_ptr<ConditionBase>&& condition) :
+    ConditionBase(),
+    m_empire_id(std::move(empire_id)),
+    m_condition(std::move(condition))
+{}
+
+ResourceSupplyConnectedByEmpire::~ResourceSupplyConnectedByEmpire() {}
 
 bool ResourceSupplyConnectedByEmpire::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -8357,8 +8615,13 @@ unsigned int CanProduceShips::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // OrderedBombarded                                      //
 ///////////////////////////////////////////////////////////
+OrderedBombarded::OrderedBombarded(std::unique_ptr<ConditionBase>&& by_object_condition) :
+    ConditionBase(),
+    m_by_object_condition(std::move(by_object_condition))
+{}
+
 OrderedBombarded::~OrderedBombarded()
-{ delete m_by_object_condition; }
+{}
 
 bool OrderedBombarded::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -8520,30 +8783,28 @@ namespace {
     }
 }
 
-ValueTest::ValueTest(ValueRef::ValueRefBase<double>* value_ref1,
+ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRefBase<double>>&& value_ref1,
                      ComparisonType comp1,
-                     ValueRef::ValueRefBase<double>* value_ref2,
+                     std::unique_ptr<ValueRef::ValueRefBase<double>>&& value_ref2,
                      ComparisonType comp2,
-                     ValueRef::ValueRefBase<double>* value_ref3) :
+                     std::unique_ptr<ValueRef::ValueRefBase<double>>&& value_ref3) :
     ConditionBase(),
-    m_value_ref1(value_ref1),
-    m_value_ref2(value_ref2),
-    m_value_ref3(value_ref3),
+    m_value_ref1(std::move(value_ref1)),
+    m_value_ref2(std::move(value_ref2)),
+    m_value_ref3(std::move(value_ref3)),
     m_compare_type1(comp1),
     m_compare_type2(comp2)
-{
-    //DebugLogger() << "ValueTest(double)";
-}
+{}
 
-ValueTest::ValueTest(ValueRef::ValueRefBase<std::string>* value_ref1,
+ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& value_ref1,
                      ComparisonType comp1,
-                     ValueRef::ValueRefBase<std::string>* value_ref2,
+                     std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& value_ref2,
                      ComparisonType comp2,
-                     ValueRef::ValueRefBase<std::string>* value_ref3) :
+                     std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& value_ref3) :
     ConditionBase(),
-    m_string_value_ref1(value_ref1),
-    m_string_value_ref2(value_ref2),
-    m_string_value_ref3(value_ref3),
+    m_string_value_ref1(std::move(value_ref1)),
+    m_string_value_ref2(std::move(value_ref2)),
+    m_string_value_ref3(std::move(value_ref3)),
     m_compare_type1(comp1),
     m_compare_type2(comp2)
 {
@@ -8552,32 +8813,23 @@ ValueTest::ValueTest(ValueRef::ValueRefBase<std::string>* value_ref1,
                                          << value_ref2->Dump() << ")";*/
 }
 
-ValueTest::ValueTest(ValueRef::ValueRefBase<int>* value_ref1,
+ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRefBase<int>>&& value_ref1,
                      ComparisonType comp1,
-                     ValueRef::ValueRefBase<int>* value_ref2,
+                     std::unique_ptr<ValueRef::ValueRefBase<int>>&& value_ref2,
                      ComparisonType comp2,
-                     ValueRef::ValueRefBase<int>* value_ref3) :
+                     std::unique_ptr<ValueRef::ValueRefBase<int>>&& value_ref3) :
     ConditionBase(),
-    m_int_value_ref1(value_ref1),
-    m_int_value_ref2(value_ref2),
-    m_int_value_ref3(value_ref3),
+    m_int_value_ref1(std::move(value_ref1)),
+    m_int_value_ref2(std::move(value_ref2)),
+    m_int_value_ref3(std::move(value_ref3)),
     m_compare_type1(comp1),
     m_compare_type2(comp2)
 {
     //DebugLogger() << "ValueTest(double)";
 }
 
-ValueTest::~ValueTest() {
-    delete m_value_ref1;
-    delete m_value_ref2;
-    delete m_value_ref3;
-    delete m_string_value_ref1;
-    delete m_string_value_ref2;
-    delete m_string_value_ref3;
-    delete m_int_value_ref1;
-    delete m_int_value_ref2;
-    delete m_int_value_ref3;
-}
+ValueTest::~ValueTest()
+{}
 
 bool ValueTest::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -8628,7 +8880,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
 
         if (m_value_ref1) {
             float val1, val2, val3;
-            passed = /*m_value_ref1 &&*/ m_value_ref2;
+            passed = /*m_value_ref1 &&*/ m_value_ref2.get();
             if (passed) {
                 val1 = m_value_ref1->Eval(local_context);
                 val2 = m_value_ref2->Eval(local_context);
@@ -8641,7 +8893,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
 
         } else if (m_string_value_ref1) {
             std::string val1, val2, val3;
-            passed = /*m_string_value_ref1 &&*/ m_string_value_ref2;
+            passed = /*m_string_value_ref1 &&*/ m_string_value_ref2.get();
             if (passed) {
                 val1 = m_string_value_ref1->Eval(local_context);
                 val2 = m_string_value_ref2->Eval(local_context);
@@ -8654,7 +8906,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
 
         } else if (m_int_value_ref1) {
             int val1, val2, val3;
-            passed = /*m_int_value_ref1 &&*/ m_int_value_ref2;
+            passed = /*m_int_value_ref1 &&*/ m_int_value_ref2.get();
             if (passed) {
                 val1 = m_int_value_ref1->Eval(local_context);
                 val2 = m_int_value_ref2->Eval(local_context);
@@ -8945,10 +9197,16 @@ namespace {
     }
 }
 
-Location::~Location() {
-    delete m_name1;
-    delete m_name2;
-}
+Location::Location(ContentType content_type,
+                   std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name1,
+                   std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name2) :
+    ConditionBase(),
+    m_name1(std::move(name1)),
+    m_name2(std::move(name2)),
+    m_content_type(content_type)
+{}
+
+Location::~Location() {}
 
 bool Location::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -9099,10 +9357,12 @@ unsigned int Location::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // And                                                   //
 ///////////////////////////////////////////////////////////
-And::~And() {
-    for (auto operand : m_operands)
-        delete operand;
-}
+And::And(std::vector<std::unique_ptr<ConditionBase>>&& operands) :
+    ConditionBase(),
+    m_operands(std::move(operands))
+{}
+
+And::~And() {}
 
 bool And::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -9131,7 +9391,7 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         ErrorLogger() << "And::Eval given no operands!";
         return;
     }
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (!operand) {
             ErrorLogger() << "And::Eval given null operand!";
             return;
@@ -9162,7 +9422,7 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         // check all operand conditions on all objects in the matches set, moving those
         // that don't pass a condition to the non-matches set
 
-        for (auto operand : m_operands) {
+        for (auto& operand : m_operands) {
             if (matches.empty()) break;
             operand->Eval(local_context, matches, non_matches, MATCHES);
         }
@@ -9176,7 +9436,7 @@ bool And::RootCandidateInvariant() const {
     if (m_root_candidate_invariant != UNKNOWN_INVARIANCE)
         return m_root_candidate_invariant == INVARIANT;
 
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (!operand->RootCandidateInvariant()) {
             m_root_candidate_invariant = VARIANT;
             return false;
@@ -9190,7 +9450,7 @@ bool And::TargetInvariant() const {
     if (m_target_invariant != UNKNOWN_INVARIANCE)
         return m_target_invariant == INVARIANT;
 
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (!operand->TargetInvariant()) {
             m_target_invariant = VARIANT;
             return false;
@@ -9204,7 +9464,7 @@ bool And::SourceInvariant() const {
     if (m_source_invariant != UNKNOWN_INVARIANCE)
         return m_source_invariant == INVARIANT;
 
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (!operand->SourceInvariant()) {
             m_source_invariant = VARIANT;
             return false;
@@ -9233,7 +9493,7 @@ std::string And::Description(bool negated/* = false*/) const {
 std::string And::Dump() const {
     std::string retval = DumpIndent() + "And [\n";
     ++g_indent;
-    for (ConditionBase* operand : m_operands) {
+    for (auto& operand : m_operands) {
         retval += operand->Dump();
     }
     --g_indent;
@@ -9250,7 +9510,7 @@ void And::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_conte
 }
 
 void And::SetTopLevelContent(const std::string& content_name) {
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         operand->SetTopLevelContent(content_name);
     }
 }
@@ -9265,13 +9525,22 @@ unsigned int And::GetCheckSum() const {
     return retval;
 }
 
+const std::vector<ConditionBase*> And::Operands() const {
+    std::vector<ConditionBase*> retval(m_operands.size());
+    std::transform(m_operands.begin(), m_operands.end(), retval.begin(),
+                   [](const std::unique_ptr<ConditionBase>& xx) {return xx.get();});
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // Or                                                    //
 ///////////////////////////////////////////////////////////
-Or::~Or() {
-    for (auto operand : m_operands)
-        delete operand;
-}
+Or::Or(std::vector<std::unique_ptr<ConditionBase>>&& operands) :
+    ConditionBase(),
+    m_operands(std::move(operands))
+{}
+
+Or::~Or() {}
 
 bool Or::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -9300,7 +9569,7 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         ErrorLogger() << "Or::Eval given no operands!";
         return;
     }
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (!operand) {
             ErrorLogger() << "Or::Eval given null operand!";
             return;
@@ -9312,7 +9581,7 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         // if a non-candidate item matches an operand condition, move the item to the
         // matches set.
 
-        for (auto operand : m_operands) {
+        for (auto& operand : m_operands) {
             if (non_matches.empty()) break;
             operand->Eval(local_context, matches, non_matches, NON_MATCHES);
         }
@@ -9329,7 +9598,7 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         m_operands[0]->Eval(local_context, matches, partly_checked_matches, MATCHES);
 
         // move items that pass any of the other conditions back into matches
-        for (auto operand : m_operands) {
+        for (auto& operand : m_operands) {
             if (partly_checked_matches.empty()) break;
             operand->Eval(local_context, matches, partly_checked_matches, NON_MATCHES);
         }
@@ -9347,7 +9616,7 @@ bool Or::RootCandidateInvariant() const {
     if (m_root_candidate_invariant != UNKNOWN_INVARIANCE)
         return m_root_candidate_invariant == INVARIANT;
 
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (!operand->RootCandidateInvariant()) {
             m_root_candidate_invariant = VARIANT;
             return false;
@@ -9361,7 +9630,7 @@ bool Or::TargetInvariant() const {
     if (m_target_invariant != UNKNOWN_INVARIANCE)
         return m_target_invariant == INVARIANT;
 
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (!operand->TargetInvariant()) {
             m_target_invariant = VARIANT;
             return false;
@@ -9375,7 +9644,7 @@ bool Or::SourceInvariant() const {
     if (m_source_invariant != UNKNOWN_INVARIANCE)
         return m_source_invariant == INVARIANT;
 
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (!operand->SourceInvariant()) {
             m_source_invariant = VARIANT;
             return false;
@@ -9404,7 +9673,7 @@ std::string Or::Description(bool negated/* = false*/) const {
 std::string Or::Dump() const {
     std::string retval = DumpIndent() + "Or [\n";
     ++g_indent;
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         retval += operand->Dump();
     }
     --g_indent;
@@ -9413,7 +9682,7 @@ std::string Or::Dump() const {
 }
 
 void Or::SetTopLevelContent(const std::string& content_name) {
-    for (auto operand : m_operands) {
+    for (auto& operand : m_operands) {
         operand->SetTopLevelContent(content_name);
     }
 }
@@ -9431,8 +9700,13 @@ unsigned int Or::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Not                                                   //
 ///////////////////////////////////////////////////////////
+Not::Not(std::unique_ptr<ConditionBase>&& operand) :
+    ConditionBase(),
+    m_operand(std::move(operand))
+{}
+
 Not::~Not()
-{ delete m_operand; }
+{}
 
 bool Not::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -9520,7 +9794,7 @@ unsigned int Not::GetCheckSum() const {
 // Described                                             //
 ///////////////////////////////////////////////////////////
 Described::~Described()
-{ delete m_condition; }
+{}
 
 bool Described::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)

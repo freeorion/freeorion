@@ -15,12 +15,13 @@ class ShaderProgram {
 private:
     ShaderProgram();    // default ctor forbidden, makes no sense
 
-protected:
-    ShaderProgram(const std::string& vertex_shader, const std::string& fragment_shader); // ctor protected use factory to get instance
-
 public:
+    // Use shaderProgramFactory() to construct.
+    ShaderProgram(const std::string& vertex_shader, const std::string& fragment_shader);
+
     // shader factory -- will return nullptr if OpenGL version is too low
-    static std::unique_ptr<ShaderProgram> shaderProgramFactory(const std::string& vertex_shader, const std::string& fragment_shader);
+    static std::unique_ptr<ShaderProgram> shaderProgramFactory(
+        const std::string& vertex_shader, const std::string& fragment_shader);
 
     ~ShaderProgram();
 

@@ -10,7 +10,7 @@ namespace phoenix = boost::phoenix;
 
 #if DEBUG_CONDITION_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<Condition::ConditionBase*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<condition_payload>&) { return os; }
 }
 #endif
 
@@ -19,7 +19,7 @@ namespace parse { namespace detail {
         const parse::lexer& tok,
         Labeller& labeller,
         const condition_parser_grammar& condition_parser,
-        const parse::value_ref_grammar<std::string>& string_grammar
+        const value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_4::base_type(start, "condition_parser_rules_4"),
         int_rules(tok, labeller, condition_parser, string_grammar),
@@ -35,15 +35,21 @@ namespace parse { namespace detail {
         qi::_e_type _e;
         qi::_val_type _val;
         qi::eps_type eps;
+        qi::_pass_type _pass;
+        const boost::phoenix::function<construct_movable> construct_movable_;
+        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
         using phoenix::new_;
-        using phoenix::push_back;
+        using phoenix::construct;
 
         meter_value
             =   (
                 non_ship_part_meter_type_enum [ _a = _1 ]
                 >  -(labeller.rule(Low_token)  > double_rules.expr [ _b = _1 ])
                 >  -(labeller.rule(High_token) > double_rules.expr [ _c = _1 ])
-            ) [ _val = new_<Condition::MeterValue>(_a, _b, _c) ]
+            ) [ _val = construct_movable_(new_<Condition::MeterValue>(
+                _a,
+                deconstruct_movable_(_b, _pass),
+                deconstruct_movable_(_c, _pass))) ]
             ;
 
         ship_part_meter_value
@@ -53,7 +59,11 @@ namespace parse { namespace detail {
                 >   ship_part_meter_type_enum [ _a = _1 ]
                 >  -(labeller.rule(Low_token)    >   double_rules.expr [ _b = _1 ])
                 >  -(labeller.rule(High_token)   >   double_rules.expr [ _c = _1 ])
-            ) [ _val = new_<Condition::ShipPartMeterValue>(_e, _a, _b, _c) ]
+            ) [ _val = construct_movable_(new_<Condition::ShipPartMeterValue>(
+                deconstruct_movable_(_e, _pass),
+                _a,
+                deconstruct_movable_(_b, _pass),
+                deconstruct_movable_(_c, _pass))) ]
             ;
 
         empire_meter_value1
@@ -63,7 +73,11 @@ namespace parse { namespace detail {
                 >   labeller.rule(Meter_token)    >   tok.string [ _a = _1 ]
                 >  -(labeller.rule(Low_token)     >   double_rules.expr [ _c = _1 ])
                 >  -(labeller.rule(High_token)    >   double_rules.expr [ _d = _1 ])
-            ) [ _val = new_<Condition::EmpireMeterValue>(_b, _a, _c, _d) ]
+            ) [ _val = construct_movable_(new_<Condition::EmpireMeterValue>(
+                deconstruct_movable_(_b, _pass),
+                _a,
+                deconstruct_movable_(_c, _pass),
+                deconstruct_movable_(_d, _pass))) ]
             ;
 
         empire_meter_value2
@@ -72,7 +86,10 @@ namespace parse { namespace detail {
                  >>  labeller.rule(Meter_token))    >   tok.string [ _a = _1 ]
                 >  -(labeller.rule(Low_token)     >   double_rules.expr [ _c = _1 ])
                 >  -(labeller.rule(High_token)    >   double_rules.expr [ _d = _1 ])
-            ) [ _val = new_<Condition::EmpireMeterValue>(_a, _c, _d) ]
+            ) [ _val = construct_movable_(new_<Condition::EmpireMeterValue>(
+                _a,
+                deconstruct_movable_(_c, _pass),
+                deconstruct_movable_(_d, _pass))) ]
             ;
 
         empire_meter_value

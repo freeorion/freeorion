@@ -6,6 +6,7 @@
 #include "EnumParser.h"
 #include "ValueRefParser.h"
 
+#include "../universe/Tech.h"
 #include "../universe/Effect.h"
 #include "../util/Logger.h"
 #include "../util/Directories.h"
@@ -567,5 +568,35 @@ namespace parse {
 
             it = lexer.begin(first, last);
         }
+
+
+        bool parse_file_end_of_file_warnings(const boost::filesystem::path& path,
+                                             bool parser_success,
+                                             std::string& file_contents,
+                                             text_iterator& first,
+                                             text_iterator& last)
+        {
+            if (!parser_success)
+                WarnLogger() << "A parser failed while parsing " << path;
+
+            auto length_of_unparsed_file = std::distance(first, last);
+            bool parse_length_good = ((length_of_unparsed_file == 0)
+                                      || (length_of_unparsed_file == 1 && *first == '\n'));
+
+            if (!parse_length_good
+                && length_of_unparsed_file > 0
+                && static_cast<std::string::size_type>(length_of_unparsed_file) <= file_contents.size())
+            {
+                auto unparsed_section = file_contents.substr(file_contents.size() - std::abs(length_of_unparsed_file));
+                std::copy(first, last, std::back_inserter(unparsed_section));
+                WarnLogger() << "File \"" << path << "\" was incompletely parsed. " << std::endl
+                             << "Unparsed section of file, " << length_of_unparsed_file <<" characters:" << std::endl
+                             << unparsed_section;
+            }
+
+            return parser_success && parse_length_good;
+
+        }
+
     }
 }

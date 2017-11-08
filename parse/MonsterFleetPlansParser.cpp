@@ -1,6 +1,7 @@
 #include "Parse.h"
 
 #include "ParseImpl.h"
+#include "MovableEnvelope.h"
 #include "ConditionParserImpl.h"
 
 #include "../universe/Universe.h"
@@ -8,28 +9,32 @@
 #include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 #define DEBUG_PARSERS 0
 
 #if DEBUG_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<MonsterFleetPlan*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<parse::detail::MovableEnvelope<MonsterFleetPlan>>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::vector<std::string>&) { return os; }
 }
 #endif
 
 namespace {
-    struct new_monster_fleet_plan_ {
-        typedef MonsterFleetPlan* result_type;
-
-        MonsterFleetPlan* operator()(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
-                                     double spawn_rate, int spawn_limit, Condition::ConditionBase* location) const
-        { return new MonsterFleetPlan(fleet_name, ship_design_names, spawn_rate, spawn_limit, location); }
+    void insert_monster_fleet_plan(
+        std::vector<std::unique_ptr<MonsterFleetPlan>>& plans,
+        const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
+        double spawn_rate, int spawn_limit,
+        const parse::detail::condition_payload& location, bool& pass)
+    {
+        plans.push_back(
+            boost::make_unique<MonsterFleetPlan>(
+                fleet_name, ship_design_names, spawn_rate, spawn_limit, location.OpenEnvelope(pass)));
     };
-    const boost::phoenix::function<new_monster_fleet_plan_> new_monster_fleet_plan;
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_monster_fleet_plan_, insert_monster_fleet_plan, 7)
 
-    using start_rule_payload = std::vector<MonsterFleetPlan*>;
+    using start_rule_payload = std::vector<std::unique_ptr<MonsterFleetPlan>>;
     using start_rule_signature = void(start_rule_payload&);
 
     struct grammar : public parse::detail::grammar<start_rule_signature> {
@@ -54,8 +59,10 @@ namespace {
             qi::_3_type _3;
             qi::_4_type _4;
             qi::_r1_type _r1;
-            qi::_val_type _val;
             qi::eps_type eps;
+            qi::_pass_type _pass;
+            const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
+            const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             monster_fleet_plan_prefix
                 =    tok.MonsterFleet_
@@ -89,12 +96,17 @@ namespace {
                         >   spawns
                         > -(labeller.rule(Location_token) > condition_parser [ phoenix::ref(_e) = _1 ])
                      )
-                [ _val = new_monster_fleet_plan(phoenix::ref(_a), phoenix::ref(_b), phoenix::ref(_c), phoenix::ref(_d), phoenix::ref(_e)) ]
+                [ insert_monster_fleet_plan_(
+                        _r1,
+                        phoenix::ref(_a),
+                        phoenix::ref(_b),
+                        phoenix::ref(_c),
+                        phoenix::ref(_d),
+                        phoenix::ref(_e),
+                        _pass) ]
                 ;
 
-            start
-                =   (+monster_fleet_plan) [ _r1 = _1 ]
-                ;
+            start = (+monster_fleet_plan(_r1));
 
             monster_fleet_plan_prefix.name("MonsterFleet");
             ships.name("Ships");
@@ -108,11 +120,9 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
-        typedef parse::detail::rule<> generic_rule;
+        using generic_rule = parse::detail::rule<>;
 
-        typedef parse::detail::rule<
-            MonsterFleetPlan* ()
-        > monster_fleet_plan_rule;
+        using monster_fleet_plan_rule = parse::detail::rule<start_rule_signature>;
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
@@ -132,7 +142,7 @@ namespace {
         std::vector<std::string>    _b;
         double                      _c;
         int                         _d;
-        Condition::ConditionBase*   _e;
+        parse::detail::condition_payload   _e;
     };
 
 }

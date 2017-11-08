@@ -4,16 +4,19 @@
 #include "EffectParser.h"
 
 #include "../universe/Condition.h"
+#include "../universe/Effect.h"
 #include "../universe/Field.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 
 #define DEBUG_PARSERS 0
 
 #if DEBUG_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
     inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<FieldType>>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<FieldType>>&) { return os; }
 }
@@ -25,17 +28,17 @@ namespace {
     void insert_fieldtype(std::map<std::string, std::unique_ptr<FieldType>>& fieldtypes,
                           const std::string& name, const std::string& description,
                           float stealth, const std::set<std::string>& tags,
-                          const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
-                          const std::string& graphic)
+                          const parse::effects_group_payload& effects,
+                          const std::string& graphic,
+                          bool& pass)
     {
-        // TODO use make_unique when converting to C++14
-        auto fieldtype_ptr = std::unique_ptr<FieldType>(
-            new FieldType(name, description, stealth, tags, effects, graphic));
+        auto fieldtype_ptr = boost::make_unique<FieldType>(
+            name, description, stealth, tags, OpenEnvelopes(effects, pass), graphic);
 
         fieldtypes.insert(std::make_pair(fieldtype_ptr->Name(), std::move(fieldtype_ptr)));
     }
 
-    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_fieldtype_, insert_fieldtype, 7)
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_fieldtype_, insert_fieldtype, 8)
 
     using start_rule_payload = std::map<std::string, std::unique_ptr<FieldType>>;
     using start_rule_signature = void(start_rule_payload&);
@@ -76,7 +79,7 @@ namespace {
                 >   tags_parser(_d)
                 > -(labeller.rule(EffectsGroups_token)       > effects_group_grammar [ _e = _1 ])
                 >   labeller.rule(Graphic_token)             > tok.string
-                [ insert_fieldtype_(_r1, _a, _b, _c, _d, _e, _1) ]
+                [ insert_fieldtype_(_r1, _a, _b, _c, _d, _e, _1, _pass) ]
                 ;
 
             start
@@ -99,7 +102,7 @@ namespace {
                 std::string,
                 float,
                 std::set<std::string>,
-                std::vector<std::shared_ptr<Effect::EffectsGroup>>
+                parse::effects_group_payload
             >
         > field_rule;
 

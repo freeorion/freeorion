@@ -8,16 +8,16 @@ namespace parse { namespace detail {
         condition_parser_rules_2(const parse::lexer& tok,
                                  Labeller& labeller,
                                  const condition_parser_grammar& condition_parser,
-                                 const parse::value_ref_grammar<std::string>& string_grammar);
+                                 const value_ref_grammar<std::string>& string_grammar);
 
         typedef rule<
             condition_signature,
             boost::spirit::qi::locals<
-                ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<std::string>*
+                value_ref_payload<int>,
+                value_ref_payload<int>,
+                value_ref_payload<int>,
+                value_ref_payload<int>,
+                value_ref_payload<std::string>
             >
         > common_rule;
 

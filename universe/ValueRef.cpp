@@ -1172,7 +1172,7 @@ template <>
 double Statistic<double>::Eval(const ScriptingContext& context) const
 {
     Condition::ObjectSet condition_matches;
-    GetConditionMatches(context, condition_matches, m_sampling_condition);
+    GetConditionMatches(context, condition_matches, m_sampling_condition.get());
 
     // these two statistic types don't depend on the object property values,
     // so can be evaluated without getting those values.
@@ -1192,7 +1192,7 @@ template <>
 int Statistic<int>::Eval(const ScriptingContext& context) const
 {
     Condition::ObjectSet condition_matches;
-    GetConditionMatches(context, condition_matches, m_sampling_condition);
+    GetConditionMatches(context, condition_matches, m_sampling_condition.get());
 
     // these two statistic types don't depend on the object property values,
     // so can be evaluated without getting those values.
@@ -1217,7 +1217,7 @@ std::string Statistic<std::string>::Eval(const ScriptingContext& context) const
         throw std::runtime_error("ValueRef evaluated with an invalid StatisticType for the return type (string).");
 
     Condition::ObjectSet condition_matches;
-    GetConditionMatches(context, condition_matches, m_sampling_condition);
+    GetConditionMatches(context, condition_matches, m_sampling_condition.get());
 
     if (condition_matches.empty())
         return "";
@@ -2592,7 +2592,7 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const
     double temp = m_value_ref->Eval(context);
 
     // special case for a few sub-value-refs to help with UI representation
-    if (Variable<double>* int_var = dynamic_cast<Variable<double>*>(m_value_ref)) {
+    if (Variable<double>* int_var = dynamic_cast<Variable<double>*>(m_value_ref.get())) {
         if (int_var->PropertyName().back() == "X" || int_var->PropertyName().back() == "Y") {
             if (temp == UniverseObject::INVALID_POSITION)
                 return UserString("INVALID_POSITION");
@@ -2614,7 +2614,7 @@ std::string StringCast<int>::Eval(const ScriptingContext& context) const
     int temp = m_value_ref->Eval(context);
 
     // special case for a few sub-value-refs to help with UI representation
-    if (Variable<int>* int_var = dynamic_cast<Variable<int>*>(m_value_ref)) {
+    if (Variable<int>* int_var = dynamic_cast<Variable<int>*>(m_value_ref.get())) {
         if (int_var->PropertyName().back() == "ETA") {
             if (temp == Fleet::ETA_UNKNOWN) {
                 return UserString("FW_FLEET_ETA_UNKNOWN");
@@ -2675,14 +2675,14 @@ std::string UserStringLookup<std::vector<std::string>>::Eval(const ScriptingCont
 /////////////////////////////////////////////////////
 // NameLookup                                      //
 /////////////////////////////////////////////////////
-NameLookup::NameLookup(ValueRefBase<int>* value_ref, LookupType lookup_type) :
+NameLookup::NameLookup(std::unique_ptr<ValueRefBase<int>>&& value_ref, LookupType lookup_type) :
     Variable<std::string>(NON_OBJECT_REFERENCE),
-    m_value_ref(value_ref),
+    m_value_ref(std::move(value_ref)),
     m_lookup_type(lookup_type)
 {}
 
 NameLookup::~NameLookup()
-{ delete m_value_ref; }
+{}
 
 bool NameLookup::operator==(const ValueRefBase<std::string>& rhs) const {
     if (&rhs == this)
@@ -2780,7 +2780,7 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
     } else if (m_op_type == MINIMUM || m_op_type == MAXIMUM) {
         // evaluate all operands, return sorted first/last
         std::set<std::string> vals;
-        for (ValueRefBase<std::string>* vr : m_operands) {
+        for (auto& vr : m_operands) {
             if (vr)
                 vals.insert(vr->Eval(context));
         }
@@ -2794,7 +2794,7 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
         if (m_operands.empty())
             return "";
         unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
-        ValueRefBase<std::string>* vr = *std::next(m_operands.begin(), idx);
+        auto& vr = *std::next(m_operands.begin(), idx);
         if (!vr)
             return "";
         return vr->Eval(context);
@@ -2803,14 +2803,14 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
         // insert string into other string in place of %1% or similar placeholder
         if (m_operands.empty())
             return "";
-        ValueRefBase<std::string>* template_op = *(m_operands.begin());
+        auto& template_op = *(m_operands.begin());
         if (!template_op)
             return "";
         std::string template_str = template_op->Eval(context);
 
         boost::format formatter = FlexibleFormat(template_str);
 
-        for (ValueRefBase<std::string>* op : m_operands) {
+        for (auto& op : m_operands) {
             if (!op) {
                 formatter % "";
                 continue;
@@ -2903,7 +2903,7 @@ double      Operation<double>::EvalImpl(const ScriptingContext& context) const
         case MINIMUM:
         case MAXIMUM: {
             std::set<double> vals;
-            for (ValueRefBase<double>* vr : m_operands) {
+            for (auto& vr : m_operands) {
                 if (vr)
                     vals.insert(vr->Eval(context));
             }
@@ -2928,7 +2928,7 @@ double      Operation<double>::EvalImpl(const ScriptingContext& context) const
             if (m_operands.empty())
                 return 0.0;
             unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
-            ValueRefBase<double>* vr = *std::next(m_operands.begin(), idx);
+            auto& vr = *std::next(m_operands.begin(), idx);
             if (!vr)
                 return 0.0;
             return vr->Eval(context);
@@ -3034,7 +3034,7 @@ int         Operation<int>::EvalImpl(const ScriptingContext& context) const
         case MINIMUM:
         case MAXIMUM: {
             std::set<int> vals;
-            for (ValueRefBase<int>* vr : m_operands) {
+            for (auto& vr : m_operands) {
                 if (vr)
                     vals.insert(vr->Eval(context));
             }
@@ -3059,7 +3059,7 @@ int         Operation<int>::EvalImpl(const ScriptingContext& context) const
             if (m_operands.empty())
                 return 0;
             unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
-            ValueRefBase<int>* vr = *std::next(m_operands.begin(), idx);
+            auto& vr = *std::next(m_operands.begin(), idx);
             if (!vr)
                 return 0;
             return vr->Eval(context);

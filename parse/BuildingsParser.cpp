@@ -8,13 +8,16 @@
 
 #include "../universe/Building.h"
 #include "../universe/Enums.h"
+#include "../universe/ValueRef.h"
 
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 #define DEBUG_PARSERS 0
 
 #if DEBUG_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
     inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<BuildingType>>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<BuildingType>>&) { return os; }
 }
@@ -26,19 +29,18 @@ namespace {
     void insert_building(std::map<std::string, std::unique_ptr<BuildingType>>& building_types,
                          const std::string& name,
                          const std::string& description,
-                         const CommonParams& common_params,
+                         const parse::detail::MovableEnvelope<CommonParams>& common_params,
                          CaptureResult& capture_result,
-                         const std::string& icon)
+                         const std::string& icon,
+                         bool& pass)
     {
-        // TODO use make_unique when converting to C++14
-        auto building_type = std::unique_ptr<BuildingType>(
-            new BuildingType(name, description, common_params, capture_result, icon));
+        auto building_type = boost::make_unique<BuildingType>(
+            name, description, *common_params.OpenEnvelope(pass), capture_result, icon);
 
         building_types.insert(std::make_pair(building_type->Name(), std::move(building_type)));
     }
 
-
-    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_building_, insert_building, 6)
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_building_, insert_building, 7)
 
     using start_rule_payload = std::map<std::string, std::unique_ptr<BuildingType>>;
     using start_rule_signature = void(start_rule_payload&);
@@ -80,7 +82,7 @@ namespace {
                     )
                 >   common_rules.common [ _c = _1 ]
                 >   labeller.rule(Icon_token)      > tok.string
-                [ insert_building_(_r1, _a, _b, _c, _d, _1) ]
+                [ insert_building_(_r1, _a, _b, _c, _d, _1, _pass) ]
                 ;
 
             start
@@ -101,7 +103,7 @@ namespace {
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
-                CommonParams,
+                parse::detail::MovableEnvelope<CommonParams>,
                 CaptureResult
             >
         > building_type_rule;

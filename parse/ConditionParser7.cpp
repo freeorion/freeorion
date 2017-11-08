@@ -22,7 +22,7 @@ namespace parse { namespace detail {
         const parse::lexer& tok,
         Labeller& labeller,
         const condition_parser_grammar& condition_parser,
-        const parse::value_ref_grammar<std::string>& string_grammar
+        const value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_7::base_type(start, "condition_parser_rules_7"),
         star_type_rules(tok, labeller, condition_parser)
@@ -32,25 +32,31 @@ namespace parse { namespace detail {
         qi::_b_type _b;
         qi::_c_type _c;
         qi::_val_type _val;
+        qi::_pass_type _pass;
+        const boost::phoenix::function<construct_movable> construct_movable_;
+        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
+        const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
+
         using phoenix::new_;
         using phoenix::push_back;
+        using phoenix::construct;
 
         ordered_bombarded_by
             =    tok.OrderedBombardedBy_
             >   -labeller.rule(Condition_token) > condition_parser
-            [ _val = new_<Condition::OrderedBombarded>(_1) ]
+            [ _val = construct_movable_(new_<Condition::OrderedBombarded>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         contains
             =    tok.Contains_
             >   -labeller.rule(Condition_token) > condition_parser
-            [ _val = new_<Condition::Contains>(_1) ]
+            [ _val = construct_movable_(new_<Condition::Contains>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         contained_by
             =    tok.ContainedBy_
             >   -labeller.rule(Condition_token) > condition_parser
-            [ _val = new_<Condition::ContainedBy>(_1) ]
+            [ _val = construct_movable_(new_<Condition::ContainedBy>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         star_type
@@ -60,7 +66,7 @@ namespace parse { namespace detail {
                 ('[' > +star_type_rules.expr [ push_back(_a, _1) ] > ']')
                 |    star_type_rules.expr [ push_back(_a, _1) ]
             )
-            [ _val = new_<Condition::StarType>(_a) ]
+            [ _val = construct_movable_(new_<Condition::StarType>(deconstruct_movable_vector_(_a, _pass))) ]
             ;
 
         location
@@ -76,13 +82,17 @@ namespace parse { namespace detail {
                  )
                  >    labeller.rule(Name_token)   > string_grammar [ _b = _1 ]
                  >  -(labeller.rule(Name_token)   > string_grammar [ _c = _1 ]))
-            [ _val = new_<Condition::Location>(_a, _b, _c) ]
+            [ _val = construct_movable_(new_<Condition::Location>(
+                    _a,
+                    deconstruct_movable_(_b, _pass),
+                    deconstruct_movable_(_c, _pass))) ]
             ;
 
         owner_has_shippart_available
             =   (tok.OwnerHasShipPartAvailable_
                  >>  (labeller.rule(Name_token)
-                      > string_grammar [ _val = new_<Condition::OwnerHasShipPartAvailable>(_1) ]
+                      > string_grammar [ _val = construct_movable_(new_<Condition::OwnerHasShipPartAvailable>(
+                              deconstruct_movable_(_1, _pass))) ]
                      )
                 )
             ;

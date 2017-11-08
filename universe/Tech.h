@@ -30,29 +30,21 @@ class FO_COMMON_API Tech {
 public:
     /** Helper struct for parsing tech definitions */
     struct TechInfo {
-        TechInfo()
-        {}
+        TechInfo();
         TechInfo(const std::string& name_, const std::string& description_, const std::string& short_description_,
                  const std::string& category_,
-                 ValueRef::ValueRefBase<double>* research_cost_,
-                 ValueRef::ValueRefBase<int>* research_turns_,
+                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& research_cost_,
+                 std::unique_ptr<ValueRef::ValueRefBase<int>>&& research_turns_,
                  bool researchable_,
-                 const std::set<std::string>& tags_) :
-            name(name_),
-            description(description_),
-            short_description(short_description_),
-            category(category_),
-            research_cost(research_cost_),
-            research_turns(research_turns_),
-            researchable(researchable_),
-            tags(tags_)
-        {}
+                 const std::set<std::string>& tags_);
+        ~TechInfo();
+
         std::string                     name;
         std::string                     description;
         std::string                     short_description;
         std::string                     category;
-        ValueRef::ValueRefBase<double>* research_cost;
-        ValueRef::ValueRefBase<int>*    research_turns;
+        std::unique_ptr<ValueRef::ValueRefBase<double>> research_cost;
+        std::unique_ptr<ValueRef::ValueRefBase<int>>    research_turns;
         bool                            researchable;
         std::set<std::string>           tags;
     };
@@ -60,54 +52,22 @@ public:
     /** \name Structors */ //@{
     Tech(const std::string& name, const std::string& description, const std::string& short_description,
          const std::string& category,
-         ValueRef::ValueRefBase<double>* research_cost,
-         ValueRef::ValueRefBase<int>* research_turns,
+         std::unique_ptr<ValueRef::ValueRefBase<double>>&& research_cost,
+         std::unique_ptr<ValueRef::ValueRefBase<int>>&& research_turns,
          bool researchable,
          const std::set<std::string>& tags,
          const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
          const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
-         const std::string& graphic) :
-        m_name(name),
-        m_description(description),
-        m_short_description(short_description),
-        m_category(category),
-        m_research_cost(research_cost),
-        m_research_turns(research_turns),
-        m_researchable(researchable),
-        m_tags(),
-        m_effects(effects),
-        m_prerequisites(prerequisites),
-        m_unlocked_items(unlocked_items),
-        m_graphic(graphic)
-    {
-        for (const std::string& tag : tags)
-            m_tags.insert(boost::to_upper_copy<std::string>(tag));
-        Init();
-    }
+         const std::string& graphic);
 
     /** basic ctor taking helper struct to reduce number of direct parameters
       * in order to making parsing work. */
-    Tech(const TechInfo& tech_info,
-         const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+    Tech(TechInfo& tech_info,
+         std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
          const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
-         const std::string& graphic) :
-        m_name(tech_info.name),
-        m_description(tech_info.description),
-        m_short_description(tech_info.short_description),
-        m_category(tech_info.category),
-        m_research_cost(tech_info.research_cost),
-        m_research_turns(tech_info.research_turns),
-        m_researchable(tech_info.researchable),
-        m_tags(),
-        m_effects(effects),
-        m_prerequisites(prerequisites),
-        m_unlocked_items(unlocked_items),
-        m_graphic(graphic)
-    {
-        for (const std::string& tag : tech_info.tags)
-            m_tags.insert(boost::to_upper_copy<std::string>(tag));
-        Init();
-    }
+         const std::string& graphic);
+
+    ~Tech();
     //@}
 
     /** \name Accessors */ //@{
@@ -152,8 +112,8 @@ private:
     std::string                     m_description;
     std::string                     m_short_description;
     std::string                     m_category;
-    ValueRef::ValueRefBase<double>* m_research_cost;
-    ValueRef::ValueRefBase<int>*    m_research_turns;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_research_cost;
+    std::unique_ptr<ValueRef::ValueRefBase<int>>    m_research_turns;
     bool                            m_researchable;
     std::set<std::string>           m_tags;
     std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;

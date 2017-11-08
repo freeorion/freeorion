@@ -61,11 +61,31 @@ SpecialsManager& GetSpecialsManager() {
 /////////////////////////////////////////////////
 // Special                                     //
 /////////////////////////////////////////////////
-Special::~Special() {
-    delete m_stealth;
-    delete m_initial_capacity;
-    delete m_location;
+Special::Special(const std::string& name, const std::string& description,
+                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& stealth,
+                 std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+                 double spawn_rate /*= 1.0*/, int spawn_limit /*= 99999*/,
+                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& initial_capaicty /*= nullptr*/,
+                 std::unique_ptr<Condition::ConditionBase>&& location /*= nullptr*/,
+                 const std::string& graphic /*= ""*/) :
+    m_name(name),
+    m_description(description),
+    m_stealth(std::move(stealth)),
+    m_effects(),
+    m_spawn_rate(spawn_rate),
+    m_spawn_limit(spawn_limit),
+    m_initial_capacity(std::move(initial_capaicty)),
+    m_location(std::move(location)),
+    m_graphic(graphic)
+{
+    for (auto&& effect : effects)
+        m_effects.emplace_back(std::move(effect));
+
+    Init();
 }
+
+Special::~Special()
+{}
 
 std::string Special::Description() const {
     std::stringstream result;

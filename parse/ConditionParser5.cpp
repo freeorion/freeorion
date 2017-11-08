@@ -1,6 +1,7 @@
 #include "ConditionParser5.h"
 
 #include "../universe/Condition.h"
+#include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -12,7 +13,7 @@ namespace parse { namespace detail {
         const parse::lexer& tok,
         Labeller& labeller,
         const condition_parser_grammar& condition_parser,
-        const parse::value_ref_grammar<std::string>& string_grammar
+        const value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_5::base_type(start, "condition_parser_rules_5"),
         int_rules(tok, labeller, condition_parser, string_grammar)
@@ -20,69 +21,84 @@ namespace parse { namespace detail {
         qi::_1_type _1;
         qi::_val_type _val;
         qi::eps_type eps;
+        qi::_pass_type _pass;
+        const boost::phoenix::function<construct_movable> construct_movable_;
+        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
         using phoenix::new_;
+        using phoenix::construct;
 
         has_special
             =   (   (tok.HasSpecial_
                      >>  labeller.rule(Name_token)
-                    ) > string_grammar [ _val = new_<Condition::HasSpecial>(_1) ]
+                    ) > string_grammar [ _val = construct_movable_(new_<Condition::HasSpecial>(
+                            deconstruct_movable_(_1, _pass))) ]
                 )
-            |   tok.HasSpecial_ [ _val = new_<Condition::HasSpecial>() ]
+            |   tok.HasSpecial_ [ _val = construct_movable_(new_<Condition::HasSpecial>()) ]
             ;
 
         has_tag
             =   (   (tok.HasTag_
                      >>  labeller.rule(Name_token)
-                    ) > string_grammar [ _val = new_<Condition::HasTag>(_1) ]
+                    ) > string_grammar [ _val = construct_movable_(new_<Condition::HasTag>(
+                            deconstruct_movable_(_1, _pass))) ]
                 )
-            |   tok.HasTag_ [ _val = new_<Condition::HasTag>() ]
+            |   tok.HasTag_ [ _val = construct_movable_(new_<Condition::HasTag>()) ]
             ;
 
         owner_has_tech
             =   tok.OwnerHasTech_
-            >   labeller.rule(Name_token) > string_grammar [ _val = new_<Condition::OwnerHasTech>(_1) ]
+            >   labeller.rule(Name_token) > string_grammar [ _val = construct_movable_(new_<Condition::OwnerHasTech>(
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         design_has_hull
             =   tok.DesignHasHull_
-            >   labeller.rule(Name_token) > string_grammar [ _val = new_<Condition::DesignHasHull>(_1) ]
+            >   labeller.rule(Name_token) > string_grammar [ _val = construct_movable_(new_<Condition::DesignHasHull>(
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         predefined_design
             =   (tok.Design_
                  >>  labeller.rule(Name_token)
-                ) > string_grammar [ _val = new_<Condition::PredefinedShipDesign>(_1) ]
+                ) > string_grammar [ _val = construct_movable_(new_<Condition::PredefinedShipDesign>(
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         design_number
             =   (tok.Design_
                  >>  labeller.rule(Design_token)
-                ) > int_rules.expr [ _val = new_<Condition::NumberedShipDesign>(_1) ]
+                ) > int_rules.expr [ _val = construct_movable_(new_<Condition::NumberedShipDesign>(
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         produced_by_empire // TODO: Lose "empire" part.
             =   tok.ProducedByEmpire_
-            >   labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Condition::ProducedByEmpire>(_1) ]
+            >   labeller.rule(Empire_token) > int_rules.expr [ _val = construct_movable_(new_<Condition::ProducedByEmpire>(
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         visible_to_empire // TODO: Lose "empire" part.
             =   tok.VisibleToEmpire_
-            >   labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Condition::VisibleToEmpire>(_1) ]
+            >   labeller.rule(Empire_token) > int_rules.expr [ _val = construct_movable_(new_<Condition::VisibleToEmpire>(
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         explored_by_empire // TODO: Lose "empire" part.
             =    tok.ExploredByEmpire_
-            >    labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Condition::ExploredByEmpire>(_1) ]
+            >    labeller.rule(Empire_token) > int_rules.expr [ _val = construct_movable_(new_<Condition::ExploredByEmpire>(
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         resupplyable_by
             =   tok.ResupplyableBy_
-            >   labeller.rule(Empire_token) > int_rules.expr [ _val = new_<Condition::FleetSupplyableByEmpire>(_1) ]
+            >   labeller.rule(Empire_token) > int_rules.expr [ _val = construct_movable_(new_<Condition::FleetSupplyableByEmpire>(
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         object_id
             =   tok.Object_
-            >   labeller.rule(ID_token) > int_rules.expr [ _val = new_<Condition::ObjectID>(_1) ]
+            >   labeller.rule(ID_token) > int_rules.expr [ _val = construct_movable_(new_<Condition::ObjectID>(
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         start

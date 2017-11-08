@@ -4,12 +4,17 @@
 #include "EnumParser.h"
 #include "EffectParser.h"
 #include "ValueRefParser.h"
+#include "MovableEnvelope.h"
 
+#include "../universe/ValueRef.h"
+#include "../universe/Effect.h"
 #include "../universe/Species.h"
 #include "../universe/Tech.h"
 #include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 
 #define DEBUG_PARSERS 0
@@ -18,7 +23,7 @@
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<ItemSpec>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::set<std::string>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
     inline ostream& operator<<(ostream& os, const Tech::TechInfo&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<TechCategory>>&) { return os; }
 }
@@ -45,14 +50,15 @@ namespace {
     }
 
     void insert_tech(TechManager::TechContainer& techs,
-                     const Tech::TechInfo& tech_info,
-                     const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+                     const parse::detail::MovableEnvelope<Tech::TechInfo>& tech_info,
+                     const parse::effects_group_payload& effects,
                      const std::set<std::string>& prerequisites,
                      const std::vector<ItemSpec>& unlocked_items,
-                     const std::string& graphic)
+                     const std::string& graphic,
+                     bool& pass)
     {
-        auto tech_ptr = std::unique_ptr<Tech>(
-            new Tech(tech_info, effects, prerequisites, unlocked_items, graphic));
+        auto tech_ptr = boost::make_unique<Tech>(
+            *tech_info.OpenEnvelope(pass), parse::detail::OpenEnvelopes(effects, pass), prerequisites, unlocked_items, graphic);
 
         if (check_tech(techs, tech_ptr)) {
             g_categories_seen->insert(tech_ptr->Category());
@@ -60,12 +66,12 @@ namespace {
         }
     }
 
-    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_tech_, insert_tech, 6)
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_tech_, insert_tech, 7)
 
     void insert_category(std::map<std::string, std::unique_ptr<TechCategory>>& categories,
                          const std::string& name, const std::string& graphic, const GG::Clr& color)
     {
-        auto category_ptr = std::unique_ptr<TechCategory>(new TechCategory(name, graphic, color));
+        auto category_ptr = boost::make_unique<TechCategory>(name, graphic, color);
         categories.insert(std::make_pair(category_ptr->name, std::move(category_ptr)));
     }
 
@@ -92,6 +98,7 @@ namespace {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
+            using phoenix::new_;
             using phoenix::construct;
             using phoenix::insert;
             using phoenix::push_back;
@@ -114,6 +121,8 @@ namespace {
             qi::_r3_type _r3;
             qi::_val_type _val;
             qi::eps_type eps;
+            const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
+            const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             tech_info_name_desc
                 =   labeller.rule(Name_token)              > tok.string [ _r1 = _1 ]
@@ -131,7 +140,7 @@ namespace {
                     |   eps [ _h = true ]
                    )
                 >   tags_parser(_d)
-                [ _val = construct<Tech::TechInfo>(_a, _b, _c, _e, _f, _g, _h, _d) ]
+                [ _val = construct_movable_(new_<Tech::TechInfo>(_a, _b, _c, _e, deconstruct_movable_(_f, _pass), deconstruct_movable_(_g, _pass), _h, _d)) ]
                 ;
 
             prerequisites
@@ -155,7 +164,7 @@ namespace {
                 >  -unlocks(_c)
                 > -(labeller.rule(EffectsGroups_token) > effects_group_grammar [ _d = _1 ])
                 > -(labeller.rule(Graphic_token) > tok.string [ _e = _1 ])
-                   ) [ insert_tech_(_r1, _a, _d, _b, _c, _e) ]
+                   ) [ insert_tech_(_r1, _a, _d, _b, _c, _e, _pass) ]
                 ;
 
             category
@@ -192,40 +201,39 @@ namespace {
         }
 
         typedef parse::detail::rule<
-            Tech::TechInfo (std::string&, std::string&, std::string&)
+            parse::detail::MovableEnvelope<Tech::TechInfo> (std::string&, std::string&, std::string&)
         > tech_info_name_desc_rule;
 
         typedef parse::detail::rule<
-            Tech::TechInfo (),
+            parse::detail::MovableEnvelope<Tech::TechInfo> (),
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
                 std::string,
                 std::set<std::string>,
                 std::string,
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<int>*,
+                parse::detail::value_ref_payload<double>,
+                parse::detail::value_ref_payload<int>,
                 bool
             >
         > tech_info_rule;
 
         typedef parse::detail::rule<
-            Tech::TechInfo (std::set<std::string>&)
+            parse::detail::MovableEnvelope<Tech::TechInfo> (std::set<std::string>&)
         > prerequisites_rule;
 
         typedef parse::detail::rule<
-            Tech::TechInfo (std::vector<ItemSpec>&)
+            parse::detail::MovableEnvelope<Tech::TechInfo> (std::vector<ItemSpec>&)
         > unlocks_rule;
 
         typedef parse::detail::rule<
             void (TechManager::TechContainer&),
             boost::spirit::qi::locals<
-                Tech::TechInfo,
+                parse::detail::MovableEnvelope<Tech::TechInfo>,
                 std::set<std::string>,
                 std::vector<ItemSpec>,
-                std::vector<std::shared_ptr<Effect::EffectsGroup>>,
-                std::string,
-                Tech*
+                parse::effects_group_payload,
+                std::string
             >
         > tech_rule;
 

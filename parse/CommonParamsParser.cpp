@@ -10,18 +10,32 @@
 #include "ValueRefParser.h"
 
 #include "../universe/Condition.h"
+#include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
+    /** Open parsed envelopes of consumption pairs. Return a map of unique_ptr. */
+    template <typename T>
+    CommonParams::ConsumptionMap<T> OpenConsumptionEnvelopes(
+        const common_params_rules::ConsumptionMapPackaged<T>& in, bool& pass)
+    {
+        CommonParams::ConsumptionMap<T> retval;
+        for (auto&& name_and_values : in)
+            retval[name_and_values.first] = {name_and_values.second.first.OpenEnvelope(pass),
+                                             name_and_values.second.second.OpenEnvelope(pass)};
+        return retval;
+    }
+
     common_params_rules::common_params_rules(
         const parse::lexer& tok,
         Labeller& labeller,
         const condition_parser_grammar& condition_parser,
-        const parse::value_ref_grammar<std::string>& string_grammar,
+        const value_ref_grammar<std::string>& string_grammar,
         const tags_grammar_type& tags_parser
     ) :
         castable_int_rules(tok, labeller, condition_parser, string_grammar),
@@ -49,6 +63,10 @@ namespace parse { namespace detail {
         qi::_r2_type _r2;
         qi::_val_type _val;
         qi::eps_type eps;
+        qi::_pass_type _pass;
+        const boost::phoenix::function<construct_movable> construct_movable_;
+        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
+        const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
 
         producible
             =   tok.Unproducible_ [ _val = false ]
@@ -57,13 +75,13 @@ namespace parse { namespace detail {
             ;
 
         location
-            =    (labeller.rule(Location_token) > condition_parser [ _r1 = _1 ])
-            |     eps [ _r1 = new_<Condition::All>() ]
+            =    (labeller.rule(Location_token) > condition_parser [ _val = _1 ])
+            |     eps [ _val = construct_movable_(new_<Condition::All>()) ]
             ;
 
         enqueue_location
-            =    (labeller.rule(EnqueueLocation_token) > condition_parser [ _r1 = _1 ])
-            |     eps [ _r1 = new_<Condition::All>() ]
+            =    (labeller.rule(EnqueueLocation_token) > condition_parser [ _val = _1 ])
+            |     eps [ _val = construct_movable_(new_<Condition::All>()) ]
             ;
 
         exclusions
@@ -90,22 +108,31 @@ namespace parse { namespace detail {
                 >   labeller.rule(BuildTime_token)  > castable_int_rules.flexible_int [ _b = _1 ]
                 >   producible                                          [ _c = _1 ]
                 >   tags_parser(_d)
-                >   location(_e)
-                >   enqueue_location(_i)
+                >   location [_e = _1]
+                >   enqueue_location [_i = _1]
                 >  -consumption(_g, _h)
                 > -(labeller.rule(EffectsGroups_token)> effects_group_grammar [ _f = _1 ])
-            ) [ _val = construct<CommonParams>(_a, _b, _c, _d, _e, _f, _g, _h, _i) ]
+            ) [ _val = construct_movable_(
+                new_<CommonParams>(
+                    deconstruct_movable_(_a, _pass),
+                    deconstruct_movable_(_b, _pass),
+                    _c, _d,
+                    deconstruct_movable_(_e, _pass),
+                    deconstruct_movable_vector_(_f, _pass),
+                    phoenix::bind(&parse::detail::OpenConsumptionEnvelopes<MeterType>, _g, _pass),
+                    phoenix::bind(&parse::detail::OpenConsumptionEnvelopes<std::string>, _h, _pass),
+                    deconstruct_movable_(_i, _pass))) ]
             ;
 
         consumption
             =   labeller.rule(Consumption_token) >
-            (   consumable_meter(_r1, _r2)
-                | consumable_special(_r1, _r2)
+            (   consumable_meter(_r1)
+                | consumable_special(_r2)
                 |
                 (
                     (   '[' >> *
-                        (    consumable_meter(_r1, _r2)
-                             | consumable_special(_r1, _r2)
+                        (    consumable_meter(_r1)
+                             | consumable_special(_r2)
                         )
                     )
                     >   ']'
@@ -113,25 +140,23 @@ namespace parse { namespace detail {
             )
             ;
 
-        typedef std::map<std::string, val_cond_pair>::value_type special_consumable_map_value_type;
         consumable_special
             =   tok.Special_
             > (
-                labeller.rule(Name_token)        > tok.string [ _b = _1 ]
-                >   labeller.rule(Consumption_token) > double_rules.expr [ _c = _1 ]
-                > -(labeller.rule(Condition_token)   > condition_parser [ _d = _1 ])
+                labeller.rule(Name_token)        > tok.string [ _a = _1 ]
+                >   labeller.rule(Consumption_token) > double_rules.expr [ _b = _1 ]
+                > -(labeller.rule(Condition_token)   > condition_parser [ _c = _1 ])
             )
-            [ insert(_r2, construct<special_consumable_map_value_type>(_b, construct<val_cond_pair>(_c, _d))) ]
+            [ insert(_r1, construct<ConsumptionMapPackaged<std::string>::value_type>(_a, construct<ConsumptionMapPackaged<std::string>::mapped_type>(_b, _c))) ]
             ;
 
-        typedef std::map<MeterType, val_cond_pair>::value_type meter_consumable_map_value_type;
         consumable_meter
             = (
                 non_ship_part_meter_type_enum [ _a = _1 ]
-                >   labeller.rule(Consumption_token) > double_rules.expr [ _c = _1 ]
-                > -(labeller.rule(Condition_token)   > condition_parser [ _d = _1 ])
+                >   labeller.rule(Consumption_token) > double_rules.expr [ _b = _1 ]
+                > -(labeller.rule(Condition_token)   > condition_parser [ _c = _1 ])
             )
-            [ insert(_r1, construct<meter_consumable_map_value_type>(_a, construct<val_cond_pair>(_c, _d))) ]
+            [ insert(_r1, construct<ConsumptionMapPackaged<MeterType>::value_type>(_a, construct<ConsumptionMapPackaged<MeterType>::mapped_type>(_b, _c))) ]
             ;
 
         producible.name("Producible or Unproducible");

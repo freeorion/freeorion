@@ -60,11 +60,11 @@ namespace parse {
         >;
     FO_PARSE_API ship_designs_type ship_designs(const boost::filesystem::path& path);
 
-    FO_PARSE_API std::vector<FleetPlan*> fleet_plans(const boost::filesystem::path& path);
+    FO_PARSE_API std::vector<std::unique_ptr<FleetPlan>> fleet_plans(const boost::filesystem::path& path);
 
-    FO_PARSE_API std::vector<MonsterFleetPlan*> monster_fleet_plans(const boost::filesystem::path& path);
+    FO_PARSE_API std::vector<std::unique_ptr<MonsterFleetPlan>> monster_fleet_plans(const boost::filesystem::path& path);
 
-    FO_PARSE_API std::map<std::string, ValueRef::ValueRefBase<double>*> statistics(const boost::filesystem::path& path);
+    FO_PARSE_API std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase<double>>> statistics(const boost::filesystem::path& path);
 
     FO_PARSE_API std::map<std::string, std::vector<EncyclopediaArticle>> encyclopedia_articles(const boost::filesystem::path& path);
 

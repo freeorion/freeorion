@@ -2,7 +2,6 @@
 #define _ParseImpl_h_
 
 #include "ReportParseError.h"
-#include "../universe/Tech.h"
 #include "../util/Logger.h"
 #include "../util/ScopedTimer.h"
 
@@ -22,6 +21,12 @@ namespace Effect {
 }
 
 namespace parse { namespace detail {
+    template <typename T, typename U>
+    void emplace_back_1(std::vector<T>& vect, U&& item) {
+        return vect.emplace_back(std::forward<U>(item));
+    }
+
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, emplace_back_1_, emplace_back_1, 2)
 
     /// A functor to determine if \p key will be unique in \p map of \p type, and log an error otherwise.
     struct is_unique {
@@ -35,15 +40,6 @@ namespace parse { namespace detail {
                 ErrorLogger() << "More than one " <<  type << " has the same name, " << key << ".";
             return will_be_unique;
         }
-    };
-
-    /// A functor to insert a \p value with key \p key into \p map.
-    struct insert {
-        typedef void result_type;
-
-        template <typename Map, typename Value>
-        result_type operator() (Map& map, const std::string& key, Value* value) const
-        { map.insert(std::make_pair(key, value)); }
     };
 
     template <
@@ -131,10 +127,17 @@ namespace parse { namespace detail {
                            text_iterator& last,
                            token_iterator& it);
 
+    /** Report warnings about unparsed end of file and return true for a good
+        parse. */
+    bool parse_file_end_of_file_warnings(const boost::filesystem::path& path,
+                                         bool parser_success,
+                                         std::string& file_contents,
+                                         text_iterator& first,
+                                         text_iterator& last);
+
     template <typename Grammar, typename Arg1>
-    bool parse_file(const lexer& lexer, const boost::filesystem::path& path, Arg1& arg1)
-    {
-        SectionedScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::microseconds(100));
+    bool parse_file(const lexer& lexer, const boost::filesystem::path& path, Arg1& arg1) {
+        SectionedScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::microseconds(1000));
 
         std::string filename;
         std::string file_contents;
@@ -153,25 +156,31 @@ namespace parse { namespace detail {
         bool success = boost::spirit::qi::phrase_parse(
             it, lexer.end(), grammar(boost::phoenix::ref(arg1)), in_state("WS")[lexer.self]);
 
-        if (!success)
-            WarnLogger() << "A parser failed while parsing " << path;
+        return parse_file_end_of_file_warnings(path, success, file_contents, first, last);
+    }
 
-        auto length_of_unparsed_file = std::distance(first, last);
-        bool parse_length_good = ((length_of_unparsed_file == 0)
-                                  || (length_of_unparsed_file == 1 && *first == '\n'));
+    template <typename Grammar, typename Arg1, typename Arg2>
+    bool parse_file(const lexer& lexer, const boost::filesystem::path& path, Arg1& arg1, Arg2& arg2) {
+        SectionedScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::microseconds(1000));
 
-        if (!parse_length_good
-            && length_of_unparsed_file > 0
-            && static_cast<std::string::size_type>(length_of_unparsed_file) <= file_contents.size())
-        {
-            auto unparsed_section = file_contents.substr(file_contents.size() - std::abs(length_of_unparsed_file));
-            std::copy(first, last, std::back_inserter(unparsed_section));
-            WarnLogger() << "File \"" << path << "\" was incompletely parsed. " << std::endl
-                         << "Unparsed section of file, " << length_of_unparsed_file <<" characters:" << std::endl
-                         << unparsed_section;
-        }
+        std::string filename;
+        std::string file_contents;
+        text_iterator first;
+        text_iterator last;
+        token_iterator it;
 
-        return success && parse_length_good;
+        parse_file_common(path, lexer, filename, file_contents, first, last, it);
+
+        //TraceLogger() << "Parse: parsed contents for " << path.string() << " : \n" << file_contents;
+
+        boost::spirit::qi::in_state_type in_state;
+
+        Grammar grammar(lexer, filename, first, last);
+
+        bool success = boost::spirit::qi::phrase_parse(
+            it, lexer.end(), grammar(boost::phoenix::ref(arg1), boost::phoenix::ref(arg2)), in_state("WS")[lexer.self]);
+
+        return parse_file_end_of_file_warnings(path, success, file_contents, first, last);
     }
 
 } }
