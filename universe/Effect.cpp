@@ -2307,9 +2307,7 @@ unsigned int RemoveStarlanes::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 SetStarType::SetStarType(std::unique_ptr<ValueRef::ValueRefBase<StarType>>&& type) :
     m_type(std::move(type))
-{
-    DebugLogger() << "Effect SetStarType created 1";
-}
+{}
 
 SetStarType::~SetStarType()
 {}
