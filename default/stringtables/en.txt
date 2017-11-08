@@ -4870,6 +4870,9 @@ Growth
 OUTPOSTS_ARTICLE_SHORT_DESC
 Outpost
 
+HOMEWORLDS_ARTICLE_SHORT_DESC
+Homeworld
+
 PRODUCTION_ARTICLE_SHORT_DESC
 Production
 
@@ -5064,8 +5067,8 @@ Research
 METER_RESEARCH_VALUE_DESC
 '''The Research (or RP "Research Points") of all planets in the empire is combined to discover new [[encyclopedia ENC_TECH]].
 
-Any Research that cannot be spent on a tech is lost each turn. Each tech has a minimum number of turns required to research it. For example, if a tech that cost 15 RPs, and had a minimum time of 3 turns, 5 RPs is the maximum that could be put towards its completion per turn.
-The tech at the top of the queue is given RPs first. Any remaining RP are then given to the next tech in the queue, and if there is still more remaining to the next-- and so on. You can re-prioritize the items in the queue by dragging the most important items closer to the top.
+Each tech has a minimum number of turns required to research it. For example, if a tech costs 15 RP and has a minimum time of 3 turns, only 5 RP may be allocated to the tech per turn.
+The tech at the top of the queue is given RP first. Any remaining RP are then given to the next tech in the queue, and if there is still more remaining to the next-- and so on. Items can be re-prioritized in the queue by dragging the most important items closer to the top. If any RP are left over after giving to all techs in the queue, they are automatically allocated to the unlocked tech(s) with the fewest remaining RP to completion.
 
 Research does not require [[metertype METER_SUPPLY]] line connections to be used.'''
 
@@ -5204,6 +5207,12 @@ Outpost
 
 OUTPOSTS_TEXT
 Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no population, and normally produce no resources. But they create [[metertype METER_SUPPLY]] (with the right tech) and provide vision. Colonies can be founded on planets that already have an Outpost. To build an Outpost, you need to put an [[shippart CO_OUTPOST_POD]] on a ship. Outposts are also formed when the population of a colony drops to zero for any reason.
+
+HOMEWORLDS_TITLE
+Homeworld
+
+HOMEWORLDS_TEXT
+Homeworlds are the planets where species are situated when the game starts (note that a single species may have multiple homeworlds). The [[tech SPY_CUSTOM_ADVISORIES]] reveals their existence and number, but not their locations. Being a homeworld gives a planet several advantages, as long as it is still inhabited by the original species: the [[metertype METER_TARGET_POPULATION]], [[metertype METER_MAX_TROOPS]], and [[metertype METER_TARGET_HAPPINESS]] are all increased, and the [[encyclopedia GROWTH_FOCUS_TITLE]] is enabled (unless the species is [[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]]) and increases [[metertype METER_TARGET_POPULATION]] of other colonies with the same species.
 
 FOCUS_TITLE
 Focus
@@ -7592,7 +7601,7 @@ World Tree
 WORLDTREE_SPECIAL_DESC
 '''Increases [[metertype METER_SUPPLY]] by +1, [[metertype METER_DETECTION]] by +10, max Population by +1, and [[metertype METER_HAPPINESS]] on the planet that has the special by +5. Increases [[metertype METER_HAPPINESS]] on all other planets owned by the same empire by +1.
 
-A gigantic tree has grown so large that its crown has left the atmosphere of the planet. Scientists suspect that it has been planted by the Caretakers in ancient times.'''
+A gigantic tree has grown so large that its crown has left the atmosphere of the planet. Scientists suspect that it was planted by the Caretakers in ancient times.'''
 
 ANCIENT_RUINS_DEPLETED_SPECIAL
 Ancient Ruins (Excavated)
@@ -10272,7 +10281,7 @@ N-Dimensional Structures
 CON_NDIM_STRC_DESC
 '''Increases Population capacity by planet size on all habitable planets: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
 
-Also increases target [[metertype METER_CONSTRUCTION]] by 10 on populated.
+Also increases target [[metertype METER_CONSTRUCTION]] by 10 on populated planets.
 
 The primary limiting factors on a planets population capacity are environmental desirability and space. By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.
 
