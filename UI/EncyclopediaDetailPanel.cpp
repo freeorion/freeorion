@@ -2426,9 +2426,36 @@ namespace {
         auto planet = GetPlanet(planet_id);
 
         // show image of planet environment at the top of the suitability report
-        std::string planet_type = boost::lexical_cast<std::string>(planet->Type());
+        const auto type = planet->Type();
+        std::string planet_type = boost::lexical_cast<std::string>(type);
         boost::algorithm::to_lower(planet_type);
-        detailed_description += "<img src=\"encyclopedia/planet_environments/" + planet_type + ".png\"></img>";
+
+        namespace fs = boost::filesystem;
+        // Cache searches through the planet_environments directory
+        static std::unordered_map<int, std::vector<std::string>> filenames_by_type;
+        // Only search once per execution
+        if (!filenames_by_type.count(type)) {
+            fs::directory_iterator end_it;
+            for (fs::directory_iterator it(ClientUI::ArtDir() / "encyclopedia" / "planet_environments"); it != end_it; ++it) {
+                try {
+                    if (fs::exists(*it) && fs::is_regular_file(it->status())) {
+                        auto filename = it->path().filename().string();
+                        if (boost::algorithm::starts_with(filename, planet_type)) {
+                            filenames_by_type[type].push_back(filename);
+                        }
+                    }
+                }
+                catch (const fs::filesystem_error& e) {
+                    // ignore files for which permission is denied, and rethrow other exceptions
+                    if (e.code() != boost::system::posix_error::permission_denied)
+                        throw;
+                }
+            }
+        }
+        if (filenames_by_type.count(type)) {
+            const auto& filenames = filenames_by_type[type];
+            detailed_description += "<img src=\"encyclopedia/planet_environments/" + filenames[planet_id % filenames.size()] + "\"></img>";
+        }
 
         std::string original_planet_species = planet->SpeciesName();
         int original_owner_id = planet->Owner();
