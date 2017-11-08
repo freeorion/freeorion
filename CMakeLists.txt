@@ -495,7 +495,7 @@ if(NOT BUILD_HEADLESS)
             ${Boost_INCLUDE_DIRS}
             ${OPENGL_INCLUDE_DIR}
             ${GLEW_INCLUDE_DIRS}
-            ${SDL_INCLUDE_DIRS}
+            ${SDL_INCLUDE_DIR}
             ${OPENAL_INCLUDE_DIR}
             ${OGG_INCLUDE_DIRS}
             ${VORBIS_INCLUDE_DIRS}

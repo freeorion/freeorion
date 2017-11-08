@@ -184,7 +184,7 @@ target_include_directories(GiGiSDL SYSTEM
         ${Boost_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
         ${GLEW_INCLUDE_DIRS}
-        ${SDL_INCLUDE_DIRS}
+        ${SDL_INCLUDE_DIR}
 )
 
 target_link_libraries(GiGiSDL
