@@ -65,6 +65,7 @@ namespace Pending {
             return std::move(x);
         } catch (const std::exception& e) {
             ErrorLogger() << "Parsing of \"" << pending->filename << "\" failed with error: " << e.what();
+            pending = boost::none;
         }
 
         return boost::none;
