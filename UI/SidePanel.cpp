@@ -2741,6 +2741,80 @@ void SidePanel::PlanetPanelContainer::EnableOrderIssuing(bool enable/* = true*/)
     }
 }
 
+namespace {
+    GG::X LabelWidth()
+    { return GG::X(ClientUI::Pts() * 9); }
+
+    GG::X ValueWidth()
+    { return GG::X(ClientUI::Pts() * 4); }
+
+    class SystemMeterBrowseWnd : public GG::BrowseInfoWnd {
+    public:
+        SystemMeterBrowseWnd(MeterType meter_type, int system_id) :
+            GG::BrowseInfoWnd(GG::X0, GG::Y0, LabelWidth() + ValueWidth(), GG::Y1),
+            m_meter_type(meter_type),
+            m_system_id(system_id)
+        {}
+
+        bool WndHasBrowseInfo(const GG::Wnd* wnd, std::size_t mode) const override {
+            assert(mode <= wnd->BrowseModes().size());
+            return true;
+        }
+
+        void Render() override {
+            // main background
+            GG::FlatRectangle(UpperLeft(), LowerRight(), OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);
+        }
+
+        void UpdateImpl(std::size_t mode, const GG::Wnd* target) override {
+            const GG::Y row_height(ClientUI::Pts() * 3 / 2);
+            const GG::X TOTAL_WIDTH(LabelWidth() + ValueWidth());
+
+            GG::Y top = GG::Y0;
+
+            for (const auto& label_pair : m_labels_and_amounts) {
+                DetachChild(label_pair.first);
+                DetachChild(label_pair.second);
+            }
+            m_labels_and_amounts.clear();
+
+            auto system = GetSystem(m_system_id);
+            if (!system)
+                return;
+            // add label-value pair for each resource-producing object in system to indicate amount of resource produced
+            auto objects = Objects().FindObjects<const Planet>(system->ContainedObjectIDs());
+
+            for (const auto& planet : objects) {
+                // Ignore empty planets
+                if (planet->Unowned() && planet->SpeciesName().empty())
+                    continue;
+
+                const auto name = planet->Name();
+                const auto amount_text = DoubleToString(planet->InitialMeterValue(m_meter_type), 3, false);
+
+                auto label = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_RIGHT);
+                label->MoveTo(GG::Pt(GG::X0, top));
+                label->Resize(GG::Pt(LabelWidth(), row_height));
+                AttachChild(label);
+
+                auto value = GG::Wnd::Create<CUILabel>(amount_text);
+                value->MoveTo(GG::Pt(LabelWidth(), top));
+                value->Resize(GG::Pt(ValueWidth(), row_height));
+                AttachChild(value);
+
+                m_labels_and_amounts.emplace_back(label, value);
+
+                top += row_height;
+            }
+            Resize(GG::Pt(LabelWidth() + ValueWidth(), top));
+        }
+    private:
+        MeterType m_meter_type;
+        int m_system_id;
+        std::vector<std::pair<std::shared_ptr<GG::Label>, std::shared_ptr<GG::Label>>> m_labels_and_amounts;
+    };
+}
+
 ////////////////////////////////////////////////
 // SidePanel
 ////////////////////////////////////////////////
@@ -3148,7 +3222,7 @@ void SidePanel::RefreshImpl() {
     // for getting just the planets owned by player's empire
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     // If all planets are owned by the same empire, then we show the Shields/Defense/Troops/Supply;
-    // on top of that, if there are any planets owned by the player in the system, we show
+    // regardless, if there are any planets owned by the player in the system, we show
     // Production/Research/Trade.
     int all_owner_id = ALL_EMPIRES;
     bool all_planets_share_owner = true;
@@ -3200,15 +3274,18 @@ void SidePanel::RefreshImpl() {
     if (m_system_resource_summary->Empty()) {
         DetachChild(m_system_resource_summary);
     } else {
-        // add tooltips to the system resource summary
+        // add tooltips to the system resource/meter summary
         for (const auto& entry : meter_types) {
             MeterType type = entry.first;
             ResourceType resource = MeterToResource(type);
-            if (resource == INVALID_RESOURCE_TYPE)
-                continue;
             // add tooltip for each meter type
-            auto browse_wnd = GG::Wnd::Create<SystemResourceSummaryBrowseWnd>(
-                resource, s_system_id, empire_id);
+            std::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
+            if (resource == INVALID_RESOURCE_TYPE) {
+                browse_wnd = GG::Wnd::Create<SystemMeterBrowseWnd>(type, s_system_id);
+            } else {
+                browse_wnd = GG::Wnd::Create<SystemResourceSummaryBrowseWnd>(
+                    resource, s_system_id, empire_id);
+            }
             m_system_resource_summary->SetToolTip(type, browse_wnd);
         }
 
