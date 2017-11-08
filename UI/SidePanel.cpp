@@ -3245,19 +3245,23 @@ void SidePanel::RefreshImpl() {
             player_planets.push_back(planet->ID());
     }
 
-    // specify which meter types to include in resource summary.  Oddly enough, these are the resource meters.
+    // Resource meters; show only for player planets
+    const std::vector<std::pair<MeterType, MeterType>> resource_meters =
+       {{METER_INDUSTRY, METER_TARGET_INDUSTRY},
+        {METER_RESEARCH, METER_TARGET_RESEARCH},
+        {METER_TRADE,    METER_TARGET_TRADE}};
+    // general meters; show only if all planets are owned by same empire
+    const std::vector<std::pair<MeterType, MeterType>> general_meters =
+       {{METER_SHIELD,  METER_MAX_SHIELD},
+        {METER_DEFENSE, METER_MAX_DEFENSE},
+        {METER_TROOPS,  METER_MAX_TROOPS},
+        {METER_SUPPLY,  METER_MAX_SUPPLY}};
     std::vector<std::pair<MeterType, MeterType>> meter_types;
     if (!player_planets.empty()) {
-        meter_types.emplace_back(METER_INDUSTRY, METER_TARGET_INDUSTRY);
-        meter_types.emplace_back(METER_RESEARCH, METER_TARGET_RESEARCH);
-        meter_types.emplace_back(METER_TRADE,    METER_TARGET_TRADE);
+        meter_types.insert(meter_types.end(), resource_meters.begin(), resource_meters.end());
     }
-    // Also show the other important meters.
     if (all_planets_share_owner) {
-        meter_types.emplace_back(METER_SHIELD, METER_MAX_SHIELD);
-        meter_types.emplace_back(METER_DEFENSE, METER_MAX_DEFENSE);
-        meter_types.emplace_back(METER_TROOPS, METER_MAX_TROOPS);
-        meter_types.emplace_back(METER_SUPPLY, METER_MAX_SUPPLY);
+        meter_types.insert(meter_types.end(), general_meters.begin(), general_meters.end());
     }
 
     // refresh the system resource summary.
@@ -3274,19 +3278,18 @@ void SidePanel::RefreshImpl() {
     if (m_system_resource_summary->Empty()) {
         DetachChild(m_system_resource_summary);
     } else {
-        // add tooltips to the system resource/meter summary
-        for (const auto& entry : meter_types) {
+        // add tooltips to the system resource summary
+        for (const auto& entry : resource_meters) {
             MeterType type = entry.first;
-            ResourceType resource = MeterToResource(type);
-            // add tooltip for each meter type
-            std::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
-            if (resource == INVALID_RESOURCE_TYPE) {
-                browse_wnd = GG::Wnd::Create<SystemMeterBrowseWnd>(type, s_system_id);
-            } else {
-                browse_wnd = GG::Wnd::Create<SystemResourceSummaryBrowseWnd>(
-                    resource, s_system_id, empire_id);
-            }
-            m_system_resource_summary->SetToolTip(type, browse_wnd);
+            m_system_resource_summary->SetToolTip(type,
+                GG::Wnd::Create<SystemResourceSummaryBrowseWnd>(
+                    MeterToResource(type), s_system_id, empire_id));
+        }
+        // and the other meters
+        for (const auto& entry : general_meters) {
+            MeterType type = entry.first;
+            m_system_resource_summary->SetToolTip(type,
+                GG::Wnd::Create<SystemMeterBrowseWnd>(type, s_system_id));
         }
 
         AttachChild(m_system_resource_summary);
