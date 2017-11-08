@@ -292,9 +292,8 @@ bool ClientNetworking::Impl::PlayerIsHost(int player_id) const {
     return player_id == m_host_player_id;
 }
 
-bool ClientNetworking::Impl::HasAuthRole(Networking::RoleType role) const {
-    return m_roles.HasRole(role);
-}
+bool ClientNetworking::Impl::HasAuthRole(Networking::RoleType role) const
+{ return m_roles.HasRole(role); }
 
 ClientNetworking::ServerNames ClientNetworking::Impl::DiscoverLANServerNames() {
     if (!IsConnected())

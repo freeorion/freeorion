@@ -371,9 +371,7 @@ sc::result Idle::react(const HostSPGame& msg) {
         player_connection->SendMessage(ContentCheckSumMessage());
     player_connection->SetAuthRoles({
                     Networking::ROLE_HOST,
-                    Networking::ROLE_MODERATOR,
                     Networking::ROLE_PLAYER,
-                    Networking::ROLE_OBSERVER,
                     Networking::ROLE_GALAXY_SETUP
                     });
     player_connection->SendMessage(HostSPAckMessage(host_player_id));
