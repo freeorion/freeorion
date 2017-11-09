@@ -59,6 +59,7 @@ DerivedData
 /util/Version.cpp
 /Installer/FreeOrion_Install_Script.nsi
 /doc/apidoc-commit-message
+/xcode_dummy.cpp
 
 # FreeOrion Xcode project
 /Xcode/dep/
