@@ -144,8 +144,11 @@ protected:
 
     /** \name Structors */ //@{
     Fleet() {}
+
+public:
     Fleet(const std::string& name, double x, double y, int owner);      ///< general ctor taking name, position and owner id
 
+protected:
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
 public:

@@ -133,12 +133,14 @@ protected:
     /** \name Structors */ //@{
     System();
 
+public:
     /** general ctor.  \throw std::invalid_arugment May throw
       * std::invalid_arugment if \a star is out of the range of StarType,
       * \a orbits is negative, or either x or y coordinate is outside the map
       * area.*/
     System(StarType star, const std::string& name, double x, double y);
 
+protected:
     /** general ctor.  \throw std::invalid_arugment May throw
       * std::invalid_arugment if \a star is out of the range of StarType,
       * \a orbits is negative, or either x or y coordinate is outside the map
