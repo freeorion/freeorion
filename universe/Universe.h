@@ -455,7 +455,7 @@ private:
     /** Inserts object \p obj into the universe with the given \p id. */
     template <typename T, typename... Args>
     std::shared_ptr<T> InsertID(int id, Args&&... args) {
-        auto obj = std::shared_ptr<T>(new T(std::forward<Args>(args)...));
+        auto obj = std::make_shared<T>(std::forward<Args>(args)...);
         auto uobj = std::dynamic_pointer_cast<UniverseObject>(obj);
         if (!uobj)
             return std::shared_ptr<T>();
