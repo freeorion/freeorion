@@ -8,7 +8,11 @@
 #include <boost/version.hpp>
 
 #if defined(FREEORION_BUILD_SERVER) || defined(FREEORION_BUILD_AI)
-#   include <python2.7/patchlevel.h>
+#   if defined(FREEORION_MACOSX)
+#      include<patchlevel.h>
+#   else
+#      include <python2.7/patchlevel.h>
+#   endif
 #endif
 
 #if defined(FREEORION_BUILD_HUMAN)
