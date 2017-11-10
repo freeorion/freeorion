@@ -2,7 +2,7 @@ target_sources(freeorionparseobj
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/Parse.h
     PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/CommonParams.h
+        ${CMAKE_CURRENT_LIST_DIR}/CommonParamsParser.h
         ${CMAKE_CURRENT_LIST_DIR}/ConditionParser.h
         ${CMAKE_CURRENT_LIST_DIR}/ConditionParser1.h
         ${CMAKE_CURRENT_LIST_DIR}/ConditionParser2.h

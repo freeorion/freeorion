@@ -193,7 +193,7 @@
     <ClCompile Include="..\..\parse\VisibilityValueRefParser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\parse\CommonParams.h" />
+    <ClInclude Include="..\..\parse\CommonParamsParser.h" />
     <ClInclude Include="..\..\parse\ConditionParser.h" />
     <ClInclude Include="..\..\parse\ConditionParser1.h" />
     <ClInclude Include="..\..\parse\ConditionParser2.h" />

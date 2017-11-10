@@ -238,7 +238,7 @@
     <ClInclude Include="..\..\parse\Tokens.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\parse\CommonParams.h">
+    <ClInclude Include="..\..\parse\CommonParamsParser.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
   </ItemGroup>

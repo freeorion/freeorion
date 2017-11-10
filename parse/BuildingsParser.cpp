@@ -4,7 +4,7 @@
 #include "EnumParser.h"
 #include "ConditionParserImpl.h"
 #include "ValueRefParser.h"
-#include "CommonParams.h"
+#include "CommonParamsParser.h"
 
 #include "../universe/Building.h"
 #include "../universe/Enums.h"
