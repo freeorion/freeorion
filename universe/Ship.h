@@ -117,11 +117,13 @@ protected:
     /** \name Structors */ //@{
     Ship();
 
+public:
     /** Create a ship from an @p empire_id, @p design_id, @p species_name and
         @p production_by_empire_id. */
     Ship(int empire_id, int design_id, const std::string& species_name,
          int produced_by_empire_id = ALL_EMPIRES);
 
+protected:
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
 public:
