@@ -639,7 +639,9 @@ if(APPLE)
         COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_THREAD_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
-            ${CMAKE_COMMAND} -E copy_directory "${CMAKE_FRAMEWORK_PATH}" "$<TARGET_FILE_DIR:freeorion>/../Frameworks"
+           ${CMAKE_COMMAND} -E remove_directory "$<TARGET_FILE_DIR:freeorion>/../Frameworks"
+        COMMAND
+           cp -R "${CMAKE_FRAMEWORK_PATH}" "$<TARGET_FILE_DIR:freeorion>/.."
     )
 endif()
 
