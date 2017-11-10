@@ -10,7 +10,11 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTO
 set(CMAKE_OSX_DEPLOYMENT_TARGET 10.9 CACHE STRING "Set the minimum OSX deployment target version")
 set(CMAKE_OSX_ARCHITECTURES x86_64 CACHE STRING "Set the architecture the universal binaries for OSX should be built for")
 
-set(CMAKE_CONFIGURATION_TYPES Debug Release)
+IF(CMAKE_GENERATOR STREQUAL "Xcode")
+  set(CMAKE_CONFIGURATION_TYPES Release)
+ELSE()
+  set(CMAKE_CONFIGURATION_TYPES Debug Release)
+ENDIF()
 IF(NOT CMAKE_BUILD_TYPE)
   MESSAGE(STATUS "Setting build type to 'Release' as none was specified.")
   SET(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
