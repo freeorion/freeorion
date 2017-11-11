@@ -39,7 +39,8 @@ namespace {
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
-            labeller(tok)
+            labeller(tok),
+            one_or_more_string_tokens(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -52,18 +53,14 @@ namespace {
             qi::_3_type _3;
             qi::_4_type _4;
             qi::_a_type _a;
-            qi::_b_type _b;
             qi::_r1_type _r1;
 
             fleet_plan
                 =    tok.Fleet_
                 >    labeller.rule(Name_token) > tok.string [ _a = _1 ]
                 >    labeller.rule(Ships_token)
-                >    (
-                            ('[' > +tok.string [ push_back(_b, _1) ] > ']')
-                        |    tok.string [ push_back(_b, _1) ]
-                     )
-                [ insert_fleet_plan_(_r1, _a, _b, phoenix::val(true)) ]
+                >    one_or_more_string_tokens
+                [ insert_fleet_plan_(_r1, _a, _1, phoenix::val(true)) ]
                 ;
 
             start
@@ -81,14 +78,14 @@ namespace {
         using  fleet_plan_rule = parse::detail::rule<
             start_rule_signature,
             boost::spirit::qi::locals<
-                std::string,
-                std::vector<std::string>
+                std::string
                 >
             >;
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
         parse::detail::Labeller labeller;
+        parse::detail::single_or_repeated_string<std::vector<std::string>> one_or_more_string_tokens;
         fleet_plan_rule fleet_plan;
         start_rule start;
     };

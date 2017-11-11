@@ -91,7 +91,9 @@ namespace parse {
         const detail::value_ref_grammar<std::string>& string_grammar
     ) :
         effects_group_grammar::base_type(start, "effects_group_grammar"),
-        effects_grammar(tok, labeller, condition_parser, string_grammar)
+        effects_grammar(tok, labeller, condition_parser, string_grammar),
+        one_or_more_effects(effects_grammar),
+        one_or_more_groups(effects_group)
     {
         namespace phoenix = boost::phoenix;
         namespace qi = boost::spirit::qi;
@@ -107,7 +109,6 @@ namespace parse {
         qi::_d_type _d;
         qi::_e_type _e;
         qi::_f_type _f;
-        qi::_g_type _g;
         qi::_val_type _val;
         qi::lit_type lit;
         qi::eps_type eps;
@@ -116,24 +117,18 @@ namespace parse {
 
         effects_group
             =   tok.EffectsGroup_
-            > -(labeller.rule(Description_token)      > tok.string [ _g = _1 ])
+            > -(labeller.rule(Description_token)      > tok.string [ _f = _1 ])
             >   labeller.rule(Scope_token)            > condition_parser [ _a = _1 ]
             > -(labeller.rule(Activation_token)       > condition_parser [ _b = _1 ])
             > -(labeller.rule(StackingGroup_token)    > tok.string [ _c = _1 ])
-            > -(labeller.rule(AccountingLabel_token)  > tok.string [ _e = _1 ])
-            > ((labeller.rule(Priority_token)         > tok.int_ [ _f = _1 ]) | eps [ _f = 100 ])
+            > -(labeller.rule(AccountingLabel_token)  > tok.string [ _d = _1 ])
+            > ((labeller.rule(Priority_token)         > tok.int_ [ _e = _1 ]) | eps [ _e = 100 ])
             >   labeller.rule(Effects_token)
-            >   (
-                ('[' > +effects_grammar [ push_back(_d, _1) ] > ']')
-                |    effects_grammar [ push_back(_d, _1) ]
-                )
-            [ _val = construct_EffectsGroup_(_a, _b, _d, _e, _c, _f, _g, _pass) ]
+            >   one_or_more_effects
+            [ _val = construct_EffectsGroup_(_a, _b, _1, _d, _c, _e, _f, _pass) ]
             ;
 
-        start
-            =    ('[' > +effects_group [ push_back(_val, _1) ] > ']')
-            |     effects_group [ push_back(_val, _1) ]
-            ;
+        start %=  one_or_more_groups;
 
         effects_group.name("EffectsGroup");
         start.name("EffectsGroups");

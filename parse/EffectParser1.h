@@ -67,7 +67,7 @@ namespace parse { namespace detail {
         generate_sitrep_message_rule        generate_sitrep_message;
         string_and_intref_and_intref_rule   set_overlay_texture;
         string_and_string_ref_rule          string_and_string_ref;
-        string_and_string_ref_vector_rule   string_and_string_ref_vector;
+        single_or_bracketed_repeat<string_and_string_ref_rule> one_or_more_string_and_string_ref_pair;
         effect_parser_rule   start;
     };
 

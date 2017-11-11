@@ -14,7 +14,8 @@ namespace parse { namespace detail {
                                                  const effect_parser_grammar& effect_parser,
                                                  Labeller& labeller,
                                                  const condition_parser_grammar& condition_parser) :
-        effect_parser_rules_5::base_type(start, "effect_parser_rules_5")
+        effect_parser_rules_5::base_type(start, "effect_parser_rules_5"),
+        one_or_more_effects(effect_parser)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -31,19 +32,10 @@ namespace parse { namespace detail {
         using phoenix::construct;
 
         conditional
-            =   (       tok.If_
-                        >   labeller.rule(Condition_token)   >   condition_parser [ _a = _1 ]
-                        >   labeller.rule(Effects_token)
-                        >   (
-                            ('[' > +effect_parser [ emplace_back_1_(_b, _1) ] > ']')
-                            |    effect_parser [ emplace_back_1_(_b, _1) ]
-                        )
-                        > -(labeller.rule(Else_token)
-                            >   (
-                                ('[' > +effect_parser [ emplace_back_1_(_c, _1) ] > ']')
-                                |    effect_parser [ emplace_back_1_(_c, _1) ]
-                            )
-                           )
+            =   ( tok.If_
+                  >   labeller.rule(Condition_token)   >   condition_parser [ _a = _1 ]
+                  >   labeller.rule(Effects_token) > one_or_more_effects [ _b = _1 ]
+                  >   -(labeller.rule(Else_token)  > one_or_more_effects [ _c = _1 ])
                 ) [ _val = construct_movable_(new_<Effect::Conditional>(
                     deconstruct_movable_(_a, _pass),
                     deconstruct_movable_vector_(_b, _pass),

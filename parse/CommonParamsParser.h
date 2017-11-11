@@ -79,6 +79,7 @@ namespace parse { namespace detail {
         producible_rule                         producible;
         condition_parser_rule                   location;
         condition_parser_rule                   enqueue_location;
+        single_or_repeated_string<std::set<std::string>> repeated_string;
         exclusions_rule                         exclusions;
         more_common_params_rule                 more_common;
         common_params_rule                      common;
