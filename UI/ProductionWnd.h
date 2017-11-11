@@ -7,7 +7,7 @@
 
 #include <GG/ListBox.h>
 
-class ProductionInfoPanel;
+class ResourceInfoPanel;
 class BuildDesignatorWnd;
 class ProductionQueueWnd;
 
@@ -22,82 +22,80 @@ public:
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
-    int             SelectedPlanetID() const;
-    int             ShownEmpireID() const;
+    int SelectedPlanetID() const;
+    int ShownEmpireID() const;
     //@}
 
     /** \name Mutators */ //@{
     bool InWindow(const GG::Pt& pt) const override;
-
     bool InClient(const GG::Pt& pt) const override;
-
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void Render() override;
 
-    void            SetEmpireShown(int empire_id);
+    void SetEmpireShown(int empire_id);
 
-    void            Refresh();
-    void            Reset();
-    void            Update();
+    void Refresh();
+    void Reset();
+    void Update();
 
     /** Shows \a building_type in production encyclopedia window */
-    void            ShowBuildingTypeInEncyclopedia(const std::string& building_type);
+    void ShowBuildingTypeInEncyclopedia(const std::string& building_type);
 
     /** Shows ShipDesign with id \a design_id in production encyclopedia window */
-    void            ShowShipDesignInEncyclopedia(int design_id);
+    void ShowShipDesignInEncyclopedia(int design_id);
 
     /** Shows \a planet in production encyclopedia window */
-    void            ShowPlanetInEncyclopedia(int planet_id);
+    void ShowPlanetInEncyclopedia(int planet_id);
 
     /** Shows \a tech in production encyclopedia window */
-    void            ShowTechInEncyclopedia(const std::string& tech_name);
+    void ShowTechInEncyclopedia(const std::string& tech_name);
 
     /** Shows \a ship_part in production encyclopedia window */
-    void            ShowPartTypeInEncyclopedia(const std::string& part_type_name);
+    void ShowPartTypeInEncyclopedia(const std::string& part_type_name);
 
     /** Shows \a species in production encyclopedia window */
-    void            ShowSpeciesInEncyclopedia(const std::string& species_name);
+    void ShowSpeciesInEncyclopedia(const std::string& species_name);
 
     /** Shows \a empire in production encyclopedia window */
-    void            ShowEmpireInEncyclopedia(int empire_id);
+    void ShowEmpireInEncyclopedia(int empire_id);
 
     /** Shows \a special in production encyclopedia window */
-    void            ShowSpecialInEncyclopedia(const std::string& special_name);
+    void ShowSpecialInEncyclopedia(const std::string& special_name);
 
     /** Shows \a field_type in production encyclopedia window */
-    void            ShowFieldTypeInEncyclopedia(const std::string& field_type_name);
+    void ShowFieldTypeInEncyclopedia(const std::string& field_type_name);
 
     /** Change visibility of production encyclopdia panel */
-    void            ShowPedia();
-    void            HidePedia();
-    void            TogglePedia();
+    void ShowPedia();
+    void HidePedia();
+    void TogglePedia();
 
     /** Returns true if pedia is visible */
-    bool            PediaVisible();
+    bool PediaVisible();
 
 
     /** Centres map wnd on location of item on queue with index \a queue_idx
       * and displays info about that item in encyclopedia window.
       * If \a open is true, the location is set as the selected planet. */
-    void            CenterOnBuild(int queue_idx, bool open = false);
+    void CenterOnBuild(int queue_idx, bool open = false);
 
     /** Programatically sets this Wnd's selected system.
       * Does not emit a SystemSelectedSignal. */
-    void            SelectSystem(int system_id);
+    void SelectSystem(int system_id);
 
     /** Programatically sets this Wnd's selected planet.
       * Does not emit a PlanetSelectedSignal. */
-    void            SelectPlanet(int planet_id);
+    void SelectPlanet(int planet_id);
 
     /** Attempts to find a planet to select, and if successful, selects that
       * planet */
-    void            SelectDefaultPlanet();
+    void SelectDefaultPlanet();
 
-    void            Sanitize();
+    void Sanitize();
 
     /** Enables, or disables if \a enable is false, issuing orders via this ProductionWnd. */
-    void            EnableOrderIssuing(bool enable = true);
+    void EnableOrderIssuing(bool enable = true);
     //@}
 
     /** emitted when the user changes the selected system in the
@@ -129,12 +127,13 @@ private:
     void    QueueItemPaused(GG::ListBox::iterator it, bool pause);
     void    QueueItemDuped(GG::ListBox::iterator it);
     void    QueueItemSplit(GG::ListBox::iterator it);
+    void    QueueItemUseImperialPP(GG::ListBox::iterator it, bool allow);
 
-    std::shared_ptr<ProductionInfoPanel>    m_production_info_panel;
-    std::shared_ptr<ProductionQueueWnd>     m_queue_wnd;
-    std::shared_ptr<BuildDesignatorWnd>     m_build_designator_wnd;
-    bool                    m_order_issuing_enabled;
+    std::shared_ptr<ResourceInfoPanel>  m_production_info_panel;
+    std::shared_ptr<ProductionQueueWnd> m_queue_wnd;
+    std::shared_ptr<BuildDesignatorWnd> m_build_designator_wnd;
 
+    bool                        m_order_issuing_enabled;
     int                         m_empire_shown_id;
     boost::signals2::connection m_empire_connection;
 };

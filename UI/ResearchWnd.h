@@ -6,7 +6,7 @@
 #include <GG/ListBox.h>
 
 class TechTreeWnd;
-class ProductionInfoPanel;
+class ResourceInfoPanel;
 class ResearchQueueWnd;
 
 /** Contains a TechTreeWnd, some stats on the empire-wide research queue, and the queue itself. */
@@ -61,11 +61,11 @@ private:
     void    QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    QueueItemPaused(GG::ListBox::iterator it, bool pause);
 
-    std::shared_ptr<ProductionInfoPanel>        m_research_info_panel;
-    std::shared_ptr<ResearchQueueWnd>           m_queue_wnd;
-    std::shared_ptr<TechTreeWnd>                m_tech_tree_wnd;
-    bool                        m_enabled;
+    std::shared_ptr<ResourceInfoPanel>  m_research_info_panel;
+    std::shared_ptr<ResearchQueueWnd>   m_queue_wnd;
+    std::shared_ptr<TechTreeWnd>        m_tech_tree_wnd;
 
+    bool                        m_enabled;
     int                         m_empire_shown_id;
     boost::signals2::connection m_empire_connection;
 };

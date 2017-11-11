@@ -1,0 +1,111 @@
+BuildingType
+    name = "BLD_INTERSPECIES_ACADEMY"
+    description = "BLD_INTERSPECIES_ACADEMY_DESC"
+    buildcost = 30
+    buildtime = 5
+    location = AND [
+        // Homeworld
+        Species
+        Not Contains Building name = "BLD_INTERSPECIES_ACADEMY"
+        OwnedBy empire = Source.Owner
+        Happiness low = 15
+        // For species with preferred focus its the happiness bonus helps only a bit
+        Not And [
+            Focus type = Source.PreferredFocus
+            Happiness high = 19
+        ]
+        Not WithinStarlaneJumps jumps = 3 condition = And [
+            System
+            Contains And [
+                Building name = "BLD_INTERSPECIES_ACADEMY"
+                OwnedBy empire = Source.Owner
+            ]
+        ]
+        Number low = 0 high = 0 condition = And [
+            Building name = "BLD_INTERSPECIES_ACADEMY"
+            Species name = RootCandidate.Species
+            OwnedBy empire = RootCandidate.Owner
+        ]
+        Number low = 0 high = 0 condition = Described description = "CONDITION_INTERSPECIES_ACADEMY_SPECIES_ALREADY_EXISTS" condition = And [
+            Planet
+            Enqueued type = Building name = "BLD_INTERSPECIES_ACADEMY"
+            Species name = RootCandidate.Species
+            OwnedBy empire = RootCandidate.Owner
+            Not Object id = RootCandidate.PlanetID
+        ]
+        Number low = 0 high = 6 condition = And [
+            Building name = "BLD_INTERSPECIES_ACADEMY"
+            OwnedBy empire = Source.Owner
+        ]
+        
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        // Destroy superfluous academies
+        EffectsGroup 
+            scope = NumberOf number = 1 condition = And [
+                Building name = "BLD_INTERSPECIES_ACADEMY"
+                OwnedBy empire = Source.Owner
+                Not Object id = Source.ID
+                Species name = Source.Planet.Species
+            ]
+            activation = And [
+                Source
+                Random probability = 0.3
+            ]
+            effects = [
+                GenerateSitRepMessage
+                    message = "EFFECT_INTERSPECIES_ACADEMY_DESTROY"
+                    label = "EFFECT_INTERSPECIES_ACADEMY_DESTROY_LABEL"
+                    icon = "icons/building/blackhole.png"
+                    parameters = [
+                        tag = "planet" data = Target.PlanetID
+                    ]
+                    empire = Source.Owner
+                Destroy
+            ]
+        
+        // Apply stockpile effects
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                OwnedBy empire = Source.Owner
+                Species
+            ]
+            activation = Source
+            accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
+            priority = [[LATE_PRIORITY]]
+            effects = [
+                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_TRANSFER_EFFICIENCY" value = min(1.0, Value + 0.05)
+                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_USE_LIMIT"           value = Value + 2
+            ]
+        // Once per academy tell the user.
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                OwnedBy empire = Source.Owner
+                Species
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            priority = [[LATE_PRIORITY]]
+            effects = [
+               GenerateSitRepMessage
+                    message = "EFFECT_INTERSPECIES_ACADEMY"
+                    label = "EFFECT_INTERSPECIES_ACADEMY_LABEL"
+                    icon = "icons/building/blackhole.png"
+                    parameters = [
+                        tag = "planet" data = Source.PlanetID
+                        tag = "species" data = Source.Planet.Species
+                        tag = "rawtext" data = EmpireMeterValue empire = Source.Owner meter = "METER_IMPERIAL_PP_TRANSFER_EFFICIENCY"
+                    ]
+                    empire = Source.Owner
+            ]
+    ]
+    icon = "icons/building/science-institute.png"
+
+#include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/enqueue.macros"
+#include "/scripting/common/priorities.macros"

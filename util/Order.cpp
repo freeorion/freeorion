@@ -954,6 +954,12 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index, float dummy1, 
     m_dupe(index)
 {}
 
+ProductionQueueOrder::ProductionQueueOrder(int empire, int index, bool allow_use_imperial_pp, float dummy, float dummy2) :
+    Order(empire),
+    m_index(index),
+    m_use_imperial_pp(allow_use_imperial_pp ? USE_IMPERIAL_PP : DONT_USE_IMPERIAL_PP)
+{}
+
 void ProductionQueueOrder::ExecuteImpl() const {
     auto empire = GetValidatedEmpire();
 
@@ -994,6 +1000,14 @@ void ProductionQueueOrder::ExecuteImpl() const {
             } else if (m_pause == RESUME) {
                 DebugLogger() << "ProductionQueueOrder: unpausing production";
                 empire->ResumeProduction(m_index);
+
+            } else if (m_use_imperial_pp == USE_IMPERIAL_PP) {
+                DebugLogger() << "ProductionQueueOrder: allow use of imperial PP stockpile";
+                empire->AllowUseImperialPP(m_index, true); 
+
+            } else if (m_use_imperial_pp == DONT_USE_IMPERIAL_PP) {
+                DebugLogger() << "ProductionQueueOrder: disallow use of imperial PP stockpile";
+                empire->AllowUseImperialPP(m_index, false);
 
             } else /*if (m_pause == INVALID_PAUSE_RESUME)*/ {
                 DebugLogger() << "ProductionQueueOrder: removing item from index " << m_index;

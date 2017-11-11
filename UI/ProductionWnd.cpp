@@ -22,6 +22,8 @@
 #include <GG/StaticGraphic.h>
 
 #include <boost/cast.hpp>
+#include <boost/range/numeric.hpp>
+#include <boost/range/adaptor/map.hpp>
 
 #include <cmath>
 #include <iterator>
@@ -309,6 +311,9 @@ namespace {
                         % DoubleToString(total_cost, 3, false)
                         % DoubleToString(allocation, 3, false)
                         % DoubleToString(max_allocation, 3, false)) + "\n";
+                        
+        if (elem.allowed_imperial_stockpile_use)
+            main_text += UserString("PRODUCTION_QUEUE_ITEM_STOCKPILE_ENABLED") + "\n";
 
         int ETA = elem.turns_left_to_completion;
         if (ETA != -1)
@@ -660,6 +665,7 @@ namespace {
         boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemPausedSignal;
         boost::signals2::signal<void (GG::ListBox::iterator)>       QueueItemDupedSignal;
         boost::signals2::signal<void (GG::ListBox::iterator)>       QueueItemSplitSignal;
+        boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemUseImperialPPSignal;
 
     protected:
         void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override {
@@ -672,6 +678,8 @@ namespace {
             };
             auto resume_action = [&it, this]() { this->QueueItemPausedSignal(it, false); };
             auto pause_action = [&it, this]() { this->QueueItemPausedSignal(it, true); };
+            auto disallow_stockpile_action = [&it, this]() { this->QueueItemUseImperialPPSignal(it, false); };
+            auto allow_stockpile_action = [&it, this]() { this->QueueItemUseImperialPPSignal(it, true); };
 
             auto dupe_action = [&it, this]() { this->QueueItemDupedSignal(it); };
             auto split_action = [&it, this]() { this->QueueItemSplitSignal(it); };
@@ -715,6 +723,11 @@ namespace {
                 popup->AddMenuItem(GG::MenuItem(UserString("PAUSE"),            false, false, pause_action));
             }
 
+            if (queue_row && queue_row->elem.allowed_imperial_stockpile_use) {
+                popup->AddMenuItem(GG::MenuItem(UserString("DISALLOW_IMPERIAL_PP_STOCKPILE_USE"), false, false, disallow_stockpile_action));
+            } else {
+                popup->AddMenuItem(GG::MenuItem(UserString("ALLOW_IMPERIAL_PP_STOCKPILE_USE"), false, false, allow_stockpile_action));
+            }
             // pedia lookup
             std::string item_name = "";
             if (build_type == BT_BUILDING) {
@@ -808,12 +821,13 @@ void ProductionWnd::CompleteConstruction() {
     //              << " ; windowed width: " << GetOptionsDB().Get<int>("app-width-windowed");
 
     GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
-    GG::Y info_height(ClientUI::Pts()*8);
+    GG::Y info_height(ClientUI::Pts()*10);
 
-    m_production_info_panel = GG::Wnd::Create<ProductionInfoPanel>(UserString("PRODUCTION_WND_TITLE"), UserString("PRODUCTION_INFO_PP"),
-                                                      GG::X0, GG::Y0, queue_width, info_height,
-                                                      "production.InfoPanel");
-    m_queue_wnd = GG::Wnd::Create<ProductionQueueWnd>(GG::X0, info_height, queue_width, ClientSize().y - info_height);
+    m_production_info_panel = GG::Wnd::Create<ResourceInfoPanel>(
+        UserString("PRODUCTION_WND_TITLE"), UserString("PRODUCTION_INFO_PP"),
+        GG::X0, GG::Y0, queue_width, info_height, "production.InfoPanel");
+    m_queue_wnd = GG::Wnd::Create<ProductionQueueWnd>(GG::X0, info_height, queue_width,
+                                                      ClientSize().y - info_height);
     m_build_designator_wnd = GG::Wnd::Create<BuildDesignatorWnd>(ClientSize().x, ClientSize().y);
 
     SetChildClippingMode(ClipToClient);
@@ -842,6 +856,8 @@ void ProductionWnd::CompleteConstruction() {
         boost::bind(&ProductionWnd::ShowPedia, this));
     m_queue_wnd->GetQueueListBox()->QueueItemPausedSignal.connect(
         boost::bind(&ProductionWnd::QueueItemPaused, this, _1, _2));
+    m_queue_wnd->GetQueueListBox()->QueueItemUseImperialPPSignal.connect(
+        boost::bind(&ProductionWnd::QueueItemUseImperialPP, this, _1, _2));
 
     AttachChild(m_production_info_panel);
     AttachChild(m_queue_wnd);
@@ -853,6 +869,9 @@ ProductionWnd::~ProductionWnd()
 
 int ProductionWnd::SelectedPlanetID() const
 { return m_build_designator_wnd->SelectedPlanetID(); }
+
+int ProductionWnd::ShownEmpireID() const
+{ return m_empire_shown_id; }
 
 bool ProductionWnd::InWindow(const GG::Pt& pt) const
 { return m_production_info_panel->InWindow(pt) || m_queue_wnd->InWindow(pt) || m_build_designator_wnd->InWindow(pt); }
@@ -869,7 +888,7 @@ void ProductionWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void ProductionWnd::DoLayout() {
     GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
-    GG::Y info_height(ClientUI::Pts()*6 + 34);
+    GG::Y info_height(ClientUI::Pts()*8 + 34);
 
     m_production_info_panel->MoveTo(GG::Pt(GG::X0, GG::Y0));
     m_production_info_panel->Resize(GG::Pt(queue_width, info_height));
@@ -1067,38 +1086,58 @@ void ProductionWnd::UpdateInfoPanel() {
     const ProductionQueue& queue = empire->GetProductionQueue();
     float PPs = empire->ProductionPoints();
     float total_queue_cost = queue.TotalPPsSpent();
+    float stockpile = empire->GetResourcePool(RE_INDUSTRY)->Stockpile();
+    float stockpile_use = boost::accumulate(empire->GetProductionQueue().AllocatedStockpilePP() | boost::adaptors::map_values, 0.0f);
+    float stockpile_use_max = empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT")->Current();
     m_production_info_panel->SetTotalPointsCost(PPs, total_queue_cost);
+    m_production_info_panel->SetStockpileCost(stockpile, stockpile_use, stockpile_use_max);
 
     // find if there is a local location
     int prod_loc_id = this->SelectedPlanetID();
     auto loc_obj = GetUniverseObject(prod_loc_id);
-    if (loc_obj) {
-        // extract available and allocated PP at production location
-        auto available_pp = queue.AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
-        const auto& allocated_pp = queue.AllocatedPP();
-
-        float available_pp_at_loc = 0.0f, allocated_pp_at_loc = 0.0f;   // for the resource sharing group containing the selected production location
-
-        for (const auto& map : available_pp) {
-            if (map.first.find(prod_loc_id) != map.first.end()) {
-                available_pp_at_loc = map.second;
-                break;
-            }
-        }
-
-        for (const auto& map : allocated_pp) {
-            if (map.first.find(prod_loc_id) != map.first.end()) {
-                allocated_pp_at_loc = map.second;
-                break;
-            }
-        }
-
-        m_production_info_panel->SetLocalPointsCost(
-            available_pp_at_loc, allocated_pp_at_loc, loc_obj->Name());
-    } else {
-        // else clear local info...
+    if (!loc_obj) {
+        // clear local info...
         m_production_info_panel->ClearLocalInfo();
+        return;
     }
+
+    // show location-specific information about supply group
+    // resource availability
+
+    // find available and allocated PP at selected production location
+    auto available_pp = queue.AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
+    const auto& allocated_pp = queue.AllocatedPP();
+
+    float available_pp_at_loc = 0.0f;
+    float allocated_pp_at_loc = 0.0f;
+    for (const auto& map : available_pp) {
+        if (map.first.find(prod_loc_id) != map.first.end()) {
+            available_pp_at_loc = map.second;
+            break;
+        }
+    }
+
+    for (const auto& map : allocated_pp) {
+        if (map.first.find(prod_loc_id) != map.first.end()) {
+            allocated_pp_at_loc = map.second;
+            break;
+        }
+    }
+
+
+    // find use of stockpile at selected production location
+    float stockpile_local_use = 0.0f;
+
+    for (const auto& map : empire->GetProductionQueue().AllocatedStockpilePP()) {
+        if (map.first.find(prod_loc_id) != map.first.end()) {
+            stockpile_local_use = map.second;
+            break;
+        }
+    }
+
+    m_production_info_panel->SetLocalPointsCost(available_pp_at_loc, allocated_pp_at_loc,
+                                                stockpile_local_use, stockpile_use_max,
+                                                loc_obj->Name());
 }
 
 void ProductionWnd::AddBuildToQueueSlot(const ProductionQueue::ProductionItem& item,
@@ -1239,6 +1278,21 @@ void ProductionWnd::QueueItemSplit(GG::ListBox::iterator it) {
     HumanClientApp::GetApp()->Orders().IssueOrder(
         std::make_shared<ProductionQueueOrder>(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
                                                -1.0f));
+
+    empire->UpdateProductionQueue();
+}
+
+void ProductionWnd::QueueItemUseImperialPP(GG::ListBox::iterator it, bool allow) {
+    if (!m_order_issuing_enabled)
+        return;
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    Empire* empire = GetEmpire(client_empire_id);
+    if (!empire)
+        return;
+
+    HumanClientApp::GetApp()->Orders().IssueOrder(
+        OrderPtr(new ProductionQueueOrder(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
+                                          allow, -1.0f, -1.0f)));
 
     empire->UpdateProductionQueue();
 }

@@ -546,6 +546,8 @@ public:
     ProductionQueueOrder(int empire, int index, float dummy1);
 
     ProductionQueueOrder(int empire, int index, float dummy1, float dummy2);
+
+    ProductionQueueOrder(int empire, int index, bool allow_use_imperial_pp, float dummy, float dummy2);
     //@}
 
 private:
@@ -562,6 +564,7 @@ private:
     int m_pause = INVALID_PAUSE_RESUME;
     int m_split_incomplete = INVALID_SPLIT_INCOMPLETE;
     int m_dupe = INVALID_SPLIT_INCOMPLETE;
+    int m_use_imperial_pp = INVALID_USE_IMPERIAL_PP;
 
     static const int INVALID_INDEX = -500;
     static const int INVALID_QUANTITY = -1000;
@@ -569,6 +572,9 @@ private:
     static const int RESUME = 2;
     static const int INVALID_PAUSE_RESUME = -1;
     static const int INVALID_SPLIT_INCOMPLETE = -1;
+    static const int USE_IMPERIAL_PP = 4;
+    static const int DONT_USE_IMPERIAL_PP = 8;
+    static const int INVALID_USE_IMPERIAL_PP = -4;
 
     friend class boost::serialization::access;
     template <class Archive>

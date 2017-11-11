@@ -587,45 +587,61 @@ private:
     const std::vector<std::pair<std::string, std::string>> m_init_file_filters;
 };
 
-/** Despite the name, this is actually used to display info in both the Research and Production screens. */
-class ProductionInfoPanel : public CUIWnd {
+/** Displays resource and stockpile info on the Researach and Production
+    screens. */
+class ResourceInfoPanel : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    ProductionInfoPanel(const std::string& title, const std::string& point_units_str, const GG::X x, const GG::Y y,
-                        const GG::X w, const GG::Y h, const std::string& config_name);
+    ResourceInfoPanel(const std::string& title, const std::string& point_units_str,
+                      const GG::X x, const GG::Y y, const GG::X w, const GG::Y h,
+                      const std::string& config_name);
     //@}
+    void    CompleteConstruction() override;
 
     /** \name Accessors */ //@{
-    GG::Pt MinUsableSize() const override;
+    GG::Pt  MinUsableSize() const override;
     //@}
 
     /** \name Mutators */ //@{
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
-    void            SetTotalPointsCost(float total_points, float total_cost);
-    void            SetLocalPointsCost(float local_points, float local_cost, const std::string& location_name);
-    void            SetEmpireID(int empire_id);
-    void            ClearLocalInfo();
-    void            Clear();
+    void    SetTotalPointsCost(float total_points, float total_cost);
+    void    SetStockpileCost(float stockpile, float stockpile_use, float stockpile_use_max);
+    void    SetLocalPointsCost(float local_points, float local_cost, float local_stockpile_use,
+                               float local_stockpile_use_max, const std::string& location_name);
+    void    SetEmpireID(int empire_id);
+    void    ClearLocalInfo();
+    void    Clear();
     //@}
 
 private:
-    void DoLayout();
+    void    DoLayout();
+
     std::string m_units_str;
     std::string m_title_str;
     int         m_empire_id;
 
+    std::shared_ptr<GG::Label>  m_empire_column_label;
+    std::shared_ptr<GG::Label>  m_local_column_label;
     std::shared_ptr<GG::Label>  m_total_points_label;
     std::shared_ptr<GG::Label>  m_total_points;
     std::shared_ptr<GG::Label>  m_total_points_P_label;
+    std::shared_ptr<GG::Label>  m_stockpile_points_label;
+    std::shared_ptr<GG::Label>  m_stockpile_points;
+    std::shared_ptr<GG::Label>  m_stockpile_points_P_label;
+    std::shared_ptr<GG::Label>  m_stockpile_use_label;
+    std::shared_ptr<GG::Label>  m_stockpile_use;
+    std::shared_ptr<GG::Label>  m_stockpile_use_P_label;
+    std::shared_ptr<GG::Label>  m_local_stockpile_use;
+    std::shared_ptr<GG::Label>  m_local_stockpile_use_P_label;
+    std::shared_ptr<GG::Label>  m_stockpile_max_use_label;
+    std::shared_ptr<GG::Label>  m_stockpile_max_use;
+    std::shared_ptr<GG::Label>  m_stockpile_max_use_P_label;
     std::shared_ptr<GG::Label>  m_wasted_points_label;
     std::shared_ptr<GG::Label>  m_wasted_points;
     std::shared_ptr<GG::Label>  m_wasted_points_P_label;
-
-    std::shared_ptr<GG::Label>  m_local_points_label;
     std::shared_ptr<GG::Label>  m_local_points;
     std::shared_ptr<GG::Label>  m_local_points_P_label;
-    std::shared_ptr<GG::Label>  m_local_wasted_points_label;
     std::shared_ptr<GG::Label>  m_local_wasted_points;
     std::shared_ptr<GG::Label>  m_local_wasted_points_P_label;
 };

@@ -55,6 +55,8 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/optional/optional.hpp>
+#include <boost/range/numeric.hpp>
+#include <boost/range/adaptor/map.hpp>
 #include <boost/locale.hpp>
 
 #include <GG/DrawUtil.h>
@@ -957,6 +959,7 @@ MapWnd::MapWnd() :
     m_population(nullptr),
     m_research(nullptr),
     m_industry(nullptr),
+    m_stockpile(nullptr),
     m_detection(nullptr),
     m_fleet(nullptr),
     m_industry_wasted(nullptr),
@@ -993,7 +996,7 @@ void MapWnd::CompleteConstruction() {
 
     auto layout = GG::Wnd::Create<GG::Layout>(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
                                               m_toolbar->ClientWidth(),       m_toolbar->ClientHeight(),
-                                              1, 21);
+                                              1, 22);
     layout->SetName("Toolbar Layout");
     m_toolbar->SetLayout(layout);
 
@@ -1234,6 +1237,10 @@ void MapWnd::CompleteConstruction() {
     m_industry->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleProduction, this));
 
+    m_stockpile = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_IMPERIAL_PP_TRANSFER_EFFICIENCY), 0, 3, false,
+                                                 ICON_DUAL_WIDTH, m_btn_turn->Height());
+    m_stockpile->SetName("Stockpile StatisticIcon");
+
     m_research = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false,
                                                 ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_research->SetName("Research StatisticIcon");
@@ -1315,7 +1322,11 @@ void MapWnd::CompleteConstruction() {
     ++layout_column;
 
     layout->SetColumnStretch(layout_column, 1.0);
-    layout->Add(m_industry,         0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
+    layout->Add(m_industry, 0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetColumnStretch(layout_column, 1.2);
+    layout->Add(m_stockpile, 0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetMinimumColumnWidth(layout_column, ICON_WIDTH);
@@ -3416,8 +3427,7 @@ namespace {
 
         const ProductionQueue& queue = empire->GetProductionQueue();
         const auto& allocated_pp(queue.AllocatedPP());
-        const auto available_pp(empire->GetResourcePool(RE_INDUSTRY)->Available());
-
+        const auto available_pp(empire->GetResourcePool(RE_INDUSTRY)->Output());
         // For each industry set,
         // add all planet's systems to res_pool_systems[industry set]
         for (const auto& available_pp_group : available_pp) {
@@ -6236,10 +6246,6 @@ void MapWnd::ShowProduction() {
         GG::GUI::GetGUI()->Remove(ClientUI::GetClientUI()->GetPlayerListWnd());
     }
 
-    // show the production window
-    m_production_wnd->Update();
-    m_production_wnd->Show();
-
     // hide pedia again if it is supposed to be hidden persistently
     if (GetOptionsDB().Get<bool>("UI.windows.production.pedia.persistently-hidden"))
         m_production_wnd->TogglePedia();
@@ -6264,6 +6270,7 @@ void MapWnd::ShowProduction() {
         m_production_wnd->SelectDefaultPlanet();
     }
     m_production_wnd->Update();
+    m_production_wnd->Show();
 }
 
 void MapWnd::HideProduction() {
@@ -6411,10 +6418,10 @@ void MapWnd::RefreshResearchResourceIndicator() {
     m_research->ClearBrowseInfoWnd();
     m_research->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
-    double total_RP_spent = empire->GetResearchQueue().TotalRPsSpent();
-    double total_RP_output = empire->GetResourcePool(RE_RESEARCH)->Output();
-    double total_RP_wasted = total_RP_output - total_RP_spent;
-    double total_RP_target_output = empire->GetResourcePool(RE_RESEARCH)->TargetOutput();
+    float total_RP_spent = empire->GetResearchQueue().TotalRPsSpent();
+    float total_RP_output = empire->GetResourcePool(RE_RESEARCH)->TotalOutput();
+    float total_RP_wasted = total_RP_output - total_RP_spent;
+    float total_RP_target_output = empire->GetResourcePool(RE_RESEARCH)->TargetOutput();
 
     m_research->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
         UserString("MAP_RESEARCH_TITLE"), UserString("RESEARCH_INFO_RP"),
@@ -6427,11 +6434,12 @@ void MapWnd::RefreshResearchResourceIndicator() {
         m_research_wasted->Show();
         m_research_wasted->ClearBrowseInfoWnd();
         m_research_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_research_wasted->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
-            UserString("MAP_RES_WASTED_TITLE"),
-            boost::io::str(FlexibleFormat(UserString("MAP_RES_WASTED_TEXT"))
-                           % DoubleToString(total_RP_output, 3, false)
-                           % DoubleToString(total_RP_wasted, 3, false))));
+
+        m_research_wasted->SetBrowseInfoWnd(GG::Wnd::Create<WastedStockpiledResourceBrowseWnd>(
+            UserString("MAP_RESEARCH_WASTED_TITLE"), UserString("RESEARCH_INFO_RP"),
+            total_RP_output, total_RP_wasted, false, 0.0f, 0.0f, total_RP_wasted,
+            UserString("MAP_RES_CLICK_TO_OPEN")));
+
     } else {
         m_research_wasted->Hide();
     }
@@ -6453,6 +6461,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     if (!empire) {
         m_industry->SetValue(0.0);
         m_industry_wasted->Hide();
+        m_stockpile->SetValue(0.0);
         return;
     }
     m_industry->SetValue(empire->ResourceOutput(RE_INDUSTRY));
@@ -6460,13 +6469,30 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     m_industry->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
     double total_PP_spent = empire->GetProductionQueue().TotalPPsSpent();
-    double total_PP_output = empire->GetResourcePool(RE_INDUSTRY)->Output();
-    double total_PP_wasted = total_PP_output - total_PP_spent;
+    double total_PP_output = empire->GetResourcePool(RE_INDUSTRY)->TotalOutput();
     double total_PP_target_output = empire->GetResourcePool(RE_INDUSTRY)->TargetOutput();
+    float  stockpile = empire->GetResourcePool(RE_INDUSTRY)->Stockpile();
+    float  stockpile_used = boost::accumulate(empire->GetProductionQueue().AllocatedStockpilePP() | boost::adaptors::map_values, 0.0f);
+    float  expected_stockpile = empire->GetProductionQueue().ExpectedNewStockpileAmount();
+    float  PP_to_stockpile_yield = empire->GetMeter("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")->Current();
+    float  stockpile_plusminus_next_turn = expected_stockpile - stockpile;
+    double total_PP_to_stockpile = expected_stockpile - stockpile + stockpile_used;
+    double total_PP_excess = total_PP_output - total_PP_spent;
+    double total_PP_wasted = total_PP_output - total_PP_spent - total_PP_to_stockpile;
 
     m_industry->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
         UserString("MAP_PRODUCTION_TITLE"), UserString("PRODUCTION_INFO_PP"),
-        total_PP_spent, total_PP_output, total_PP_target_output));
+        total_PP_spent, total_PP_output, total_PP_target_output,
+        true, stockpile_used, stockpile, expected_stockpile));
+
+    m_stockpile->SetValue(stockpile);
+    m_stockpile->SetValue(stockpile_plusminus_next_turn, 1);
+    m_stockpile->ClearBrowseInfoWnd();
+    m_stockpile->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_stockpile->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
+        UserString("MAP_STOCKPILE_TITLE"), UserString("PRODUCTION_INFO_PP"),
+        -1.0f, -1.0f, -1.0f,
+        true, stockpile_used, stockpile, expected_stockpile));
 
     if (total_PP_wasted > 0.05) {
         DebugLogger()  << "MapWnd::RefreshIndustryResourceIndicator: Showing Industry Wasted Icon with Industry spent: "
@@ -6474,11 +6500,12 @@ void MapWnd::RefreshIndustryResourceIndicator() {
         m_industry_wasted->Show();
         m_industry_wasted->ClearBrowseInfoWnd();
         m_industry_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_industry_wasted->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
-            UserString("MAP_PROD_WASTED_TITLE"),
-            boost::io::str(FlexibleFormat(UserString("MAP_PROD_WASTED_TEXT"))
-                           % DoubleToString(total_PP_output, 3, false)
-                           % DoubleToString(total_PP_wasted, 3, false))));
+        m_industry_wasted->SetBrowseInfoWnd(GG::Wnd::Create<WastedStockpiledResourceBrowseWnd>(
+            UserString("MAP_PRODUCTION_WASTED_TITLE"), UserString("PRODUCTION_INFO_PP"),
+            total_PP_output, total_PP_excess,
+            true, PP_to_stockpile_yield, total_PP_to_stockpile, total_PP_wasted,
+            UserString("MAP_PROD_CLICK_TO_OPEN")));
+
     } else {
         m_industry_wasted->Hide();
     }

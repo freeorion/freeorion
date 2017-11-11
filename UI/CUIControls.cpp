@@ -1825,40 +1825,70 @@ void FileDlg::CompleteConstruction() {
 
 
 //////////////////////////////////////////////////
-// ProductionInfoPanel
+// ResourceInfoPanel
 //////////////////////////////////////////////////
 namespace {
     GG::Y VERTICAL_SECTION_GAP(4);
 }
 
-ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::string& point_units_str,
-                                         const GG::X x, const GG::Y y, const GG::X w, const GG::Y h,
-                                         const std::string& config_name) :
-    CUIWnd(title, x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE, config_name, false),
+ResourceInfoPanel::ResourceInfoPanel(const std::string& title, const std::string& point_units_str,
+                                     const GG::X x, const GG::Y y, const GG::X w, const GG::Y h,
+                                     const std::string& config_name) :
+    CUIWnd(title, x, y, w, h,
+           GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
+           config_name, false),
     m_units_str(point_units_str),
     m_title_str(title),
     m_empire_id(ALL_EMPIRES),
-    m_total_points_label(nullptr),
-    m_total_points(nullptr),
-    m_total_points_P_label(nullptr),
-    m_wasted_points_label(nullptr),
-    m_wasted_points(nullptr),
-    m_wasted_points_P_label(nullptr),
-    m_local_points_label(nullptr),
-    m_local_points(nullptr),
-    m_local_points_P_label(nullptr),
-    m_local_wasted_points_label(nullptr),
-    m_local_wasted_points(nullptr),
-    m_local_wasted_points_P_label(nullptr)
+    m_empire_column_label(GG::Wnd::Create<CUILabel>(UserString("EMPIRE"), GG::FORMAT_LEFT)),
+    m_local_column_label(GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT)),
+    m_total_points_label(GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), GG::FORMAT_RIGHT)),
+    m_total_points(GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT)),
+    m_total_points_P_label(GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT)),
+    m_stockpile_points_label(GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_STOCKPILE_PS_LABEL"), GG::FORMAT_RIGHT)),
+    m_stockpile_points(GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT)),
+    m_stockpile_points_P_label(GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT)),
+    m_stockpile_use_label(GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_STOCKPILE_USE_PS_LABEL"), GG::FORMAT_RIGHT)),
+    m_stockpile_use(GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT)),
+    m_stockpile_use_P_label(GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT)),
+    m_local_stockpile_use(GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT)),
+    m_local_stockpile_use_P_label(GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT)),
+    m_stockpile_max_use_label(GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_STOCKPILE_USE_MAX_LABEL"), GG::FORMAT_RIGHT)),
+    m_stockpile_max_use(GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT)),
+    m_stockpile_max_use_P_label(GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT)),
+    m_wasted_points_label(GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::FORMAT_RIGHT)),
+    m_wasted_points(GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT)),
+    m_wasted_points_P_label(GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT)),
+    m_local_points(GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT)),
+    m_local_points_P_label(GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT)),
+    m_local_wasted_points(GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT)),
+    m_local_wasted_points_P_label(GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT))
 {}
 
-GG::Pt ProductionInfoPanel::MinUsableSize() const {
+void ResourceInfoPanel::CompleteConstruction() {
+    CUIWnd::CompleteConstruction();
+
+    AttachChild(m_empire_column_label);
+    AttachChild(m_local_column_label);
+
+    AttachChild(m_total_points_label);
+    AttachChild(m_total_points);
+    AttachChild(m_total_points_P_label);
+
+    AttachChild(m_wasted_points_label);
+    AttachChild(m_wasted_points);
+    AttachChild(m_wasted_points_P_label);
+
+    DoLayout();
+}
+
+GG::Pt ResourceInfoPanel::MinUsableSize() const {
     GG::X min_x = this->LeftBorder() + this->RightBorder() + 20*ClientUI::Pts();
-    GG::Y min_y = this->TopBorder() + this->BottomBorder() + 6*ClientUI::Pts();
+    GG::Y min_y = this->TopBorder() + this->BottomBorder() + 4*ClientUI::Pts();
     return GG::Pt(min_x, min_y);
 }
 
-void ProductionInfoPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void ResourceInfoPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     CUIWnd::SizeMove(ul, lr);
@@ -1867,26 +1897,14 @@ void ProductionInfoPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         DoLayout();
 }
 
-void ProductionInfoPanel::SetTotalPointsCost(float total_points, float total_cost) {
-    if (!m_total_points_label) {
-        m_total_points_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), GG::FORMAT_RIGHT);
-        m_total_points = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
-        m_total_points_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
+void ResourceInfoPanel::SetTotalPointsCost(float total_points, float total_cost) {
+    AttachChild(m_total_points_label);
+    AttachChild(m_total_points);
+    AttachChild(m_total_points_P_label);
 
-        m_wasted_points_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::FORMAT_RIGHT);
-        m_wasted_points = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
-        m_wasted_points_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
-
-        AttachChild(m_total_points_label);
-        AttachChild(m_total_points);
-        AttachChild(m_total_points_P_label);
-
-        AttachChild(m_wasted_points_label);
-        AttachChild(m_wasted_points);
-        AttachChild(m_wasted_points_P_label);
-
-        DoLayout();
-    }
+    AttachChild(m_wasted_points_label);
+    AttachChild(m_wasted_points);
+    AttachChild(m_wasted_points_P_label);
 
     float wasted_points = std::max(0.0f, total_points - total_cost);
     *m_total_points << DoubleToString(total_points, 3, false);
@@ -1904,30 +1922,54 @@ void ProductionInfoPanel::SetTotalPointsCost(float total_points, float total_cos
     SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % empire_name));
 }
 
-void ProductionInfoPanel::SetLocalPointsCost(float local_points, float local_cost, const std::string& location_name) {
-    if (!m_local_points_label) {
-        m_local_points_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_LOCAL_PS_LABEL"), GG::FORMAT_RIGHT);
-        m_local_points = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
-        m_local_points_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
+void ResourceInfoPanel::SetStockpileCost(float stockpile, float stockpile_use,
+                                         float stockpile_use_max)
+{
+    AttachChild(m_stockpile_points_label);
+    AttachChild(m_stockpile_points);
+    AttachChild(m_stockpile_points_P_label);
 
-        m_local_wasted_points_label = GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::FORMAT_RIGHT);
-        m_local_wasted_points = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
-        m_local_wasted_points_P_label = GG::Wnd::Create<CUILabel>(m_units_str, GG::FORMAT_LEFT);
+    AttachChild(m_stockpile_use_label);
+    AttachChild(m_stockpile_use);
+    AttachChild(m_stockpile_use_P_label);
 
-        AttachChild(m_local_points_label);
-        AttachChild(m_local_points);
-        AttachChild(m_local_points_P_label);
+    AttachChild(m_stockpile_max_use_label);
+    AttachChild(m_stockpile_max_use);
+    AttachChild(m_stockpile_max_use_P_label);
 
-        AttachChild(m_local_wasted_points_label);
-        AttachChild(m_local_wasted_points);
-        AttachChild(m_local_wasted_points_P_label);
+    TraceLogger() << "SetStockpileCost:  update values";
+    *m_stockpile_points << DoubleToString(stockpile, 3, false);
 
-        DoLayout();
-    }
+    *m_stockpile_use << DoubleToString(stockpile_use, 3, false);
+
+    *m_stockpile_max_use << DoubleToString(stockpile_use_max, 3, false);
+
+    TraceLogger() << "SetStockpileCost:  set name";
+    const Empire* empire = GetEmpire(m_empire_id);
+    std::string empire_name;
+    if (empire)
+        empire_name = empire->Name();
+
+    SetName(boost::io::str(FlexibleFormat(UserString("STOCKPILE_INFO_EMPIRE")) % m_title_str % empire_name));
+    TraceLogger() << "SetStockpileCost:  done.";
+}
+
+void ResourceInfoPanel::SetLocalPointsCost(float local_points, float local_cost, float local_stockpile_use,
+                                           float local_stockpile_use_max, const std::string& location_name)
+{
+    AttachChild(m_local_points);
+    AttachChild(m_local_points_P_label);
+
+    AttachChild(m_local_wasted_points);
+    AttachChild(m_local_wasted_points_P_label);
+
+    AttachChild(m_local_stockpile_use);
+    AttachChild(m_local_stockpile_use_P_label);
 
     float wasted_points = std::max(0.0f, local_points - local_cost);
     *m_local_points << DoubleToString(local_points, 3, false);
     *m_local_wasted_points << DoubleToString(wasted_points, 3, false);
+    *m_local_stockpile_use << DoubleToString(local_stockpile_use, 3, false);
     if (wasted_points > 0.01f)
         m_local_wasted_points->SetTextColor(ClientUI::StatDecrColor());
     else
@@ -1938,10 +1980,14 @@ void ProductionInfoPanel::SetLocalPointsCost(float local_points, float local_cos
     if (empire)
         empire_name = empire->Name();
 
-    SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_AT_LOCATION_TITLE")) % m_title_str % location_name % empire_name));
+    SetName(boost::io::str(FlexibleFormat(
+        UserString("PRODUCTION_INFO_AT_LOCATION_TITLE")) % m_title_str % location_name % empire_name));
+
+    m_local_column_label->SetText(boost::io::str(FlexibleFormat(
+        UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location_name));
 }
 
-void ProductionInfoPanel::SetEmpireID(int empire_id) {
+void ResourceInfoPanel::SetEmpireID(int empire_id) {
     int old_empire_id = m_empire_id;
     m_empire_id = empire_id;
     if (old_empire_id != m_empire_id) {
@@ -1955,13 +2001,13 @@ void ProductionInfoPanel::SetEmpireID(int empire_id) {
     }
 }
 
-void ProductionInfoPanel::ClearLocalInfo() {
-    DetachChildAndReset(m_local_points_label);
-    DetachChildAndReset(m_local_points);
-    DetachChildAndReset(m_local_points_P_label);
-    DetachChildAndReset(m_local_wasted_points_label);
-    DetachChildAndReset(m_local_wasted_points);
-    DetachChildAndReset(m_local_wasted_points_P_label);
+void ResourceInfoPanel::ClearLocalInfo() {
+    DetachChild(m_local_points);
+    DetachChild(m_local_points_P_label);
+    DetachChild(m_local_wasted_points);
+    DetachChild(m_local_wasted_points_P_label);
+    DetachChild(m_local_stockpile_use);
+    DetachChild(m_local_stockpile_use_P_label);
 
     const Empire* empire = GetEmpire(m_empire_id);
     std::string empire_name;
@@ -1969,79 +2015,130 @@ void ProductionInfoPanel::ClearLocalInfo() {
         empire_name = empire->Name();
 
     SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % empire_name));
+
+    m_local_column_label->SetText("");
 }
 
-void ProductionInfoPanel::Clear() {
-    DetachChildAndReset(m_total_points_label);
-    DetachChildAndReset(m_total_points);
-    DetachChildAndReset(m_total_points_P_label);
-    DetachChildAndReset(m_wasted_points_label);
-    DetachChildAndReset(m_wasted_points);
-    DetachChildAndReset(m_wasted_points_P_label);
+void ResourceInfoPanel::Clear() {
+    DetachChild(m_total_points_label);
+    DetachChild(m_total_points);
+    DetachChild(m_total_points_P_label);
+    DetachChild(m_stockpile_points_label);
+    DetachChild(m_stockpile_points);
+    DetachChild(m_stockpile_points_P_label);
+    DetachChild(m_stockpile_use_label);
+    DetachChild(m_stockpile_use);
+    DetachChild(m_stockpile_use_P_label);
+    DetachChild(m_stockpile_max_use_label);
+    DetachChild(m_stockpile_max_use);
+    DetachChild(m_stockpile_max_use_P_label);
+    DetachChild(m_wasted_points_label);
+    DetachChild(m_wasted_points);
+    DetachChild(m_wasted_points_P_label);
     m_empire_id = ALL_EMPIRES;
 
     ClearLocalInfo();
     SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % ""));
 }
 
-void ProductionInfoPanel::DoLayout() {
+void ResourceInfoPanel::DoLayout() {
     const int STAT_TEXT_PTS = ClientUI::Pts();
     const int CENTERLINE_GAP = 4;
-    const GG::X LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 2 / 3;
-    const GG::X VALUE_TEXT_WIDTH = Width() - 4 - CENTERLINE_GAP - LABEL_TEXT_WIDTH;
+    const GG::X LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 7 / 16 ;
+    const GG::X VALUE_TEXT_WIDTH = ((Width() - 4 - CENTERLINE_GAP) - LABEL_TEXT_WIDTH) / 2;
+
     const GG::X LEFT_TEXT_X(0);
+    const GG::X DOUBLE_RIGHT_TEXT_X = LEFT_TEXT_X + LABEL_TEXT_WIDTH + CENTERLINE_GAP;
     const GG::X RIGHT_TEXT_X = LEFT_TEXT_X + LABEL_TEXT_WIDTH + 8 + CENTERLINE_GAP;
     const GG::X P_LABEL_X = RIGHT_TEXT_X + 40;
+    const GG::X DOUBLE_LEFT_TEXT_X = P_LABEL_X + 30 + 4;
+    const GG::X DOUBLE_P_LABEL_X = DOUBLE_LEFT_TEXT_X + 40;
 
     std::pair<int, int> m_center_gap(Value(LABEL_TEXT_WIDTH + 2), Value(LABEL_TEXT_WIDTH + 2 + CENTERLINE_GAP));
 
     const GG::Pt LABEL_TEXT_SIZE(LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4));
     const GG::Pt VALUE_TEXT_SIZE(VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4));
-    const GG::Pt P_LABEL_SIZE(Width() - 2 - 5 - P_LABEL_X, GG::Y(STAT_TEXT_PTS + 4));
+    const GG::Pt P_LABEL_SIZE(Width() - 7 - DOUBLE_P_LABEL_X, GG::Y(STAT_TEXT_PTS + 4));
 
     GG::Y row_offset(4);
 
-    if (m_total_points_label) {
-        m_total_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
-        m_total_points_label->Resize(LABEL_TEXT_SIZE);
-        m_total_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
-        m_total_points->Resize(VALUE_TEXT_SIZE);
-        m_total_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
-        m_total_points_P_label->Resize(P_LABEL_SIZE);
+    // first row: column labels
+    m_empire_column_label->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
+    m_empire_column_label->Resize(VALUE_TEXT_SIZE);
+    m_local_column_label->MoveTo(GG::Pt(DOUBLE_LEFT_TEXT_X, row_offset));
+    m_local_column_label->Resize(VALUE_TEXT_SIZE);
 
-        row_offset += m_total_points_label->Height();
-    }
+    row_offset += m_empire_column_label->Height();
 
-    if (m_wasted_points_label) {
-        m_wasted_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
-        m_wasted_points_label->Resize(LABEL_TEXT_SIZE);
-        m_wasted_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
-        m_wasted_points->Resize(VALUE_TEXT_SIZE);
-        m_wasted_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
-        m_wasted_points_P_label->Resize(P_LABEL_SIZE);
 
-        row_offset += m_wasted_points_label->Height();
-    }
+    // second row: total / local points
+    // total points to left
+    m_total_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
+    m_total_points_label->Resize(LABEL_TEXT_SIZE);
+    m_total_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
+    m_total_points->Resize(VALUE_TEXT_SIZE);
+    m_total_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
+    m_total_points_P_label->Resize(P_LABEL_SIZE);
 
-    if (m_local_points_label) {
-        m_local_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
-        m_local_points_label->Resize(LABEL_TEXT_SIZE);
-        m_local_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
-        m_local_points->Resize(VALUE_TEXT_SIZE);
-        m_local_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
-        m_local_points_P_label->Resize(P_LABEL_SIZE);
+    // local points to right of total points
+    m_local_points->MoveTo(GG::Pt(DOUBLE_LEFT_TEXT_X, row_offset));
+    m_local_points->Resize(VALUE_TEXT_SIZE);
+    m_local_points_P_label->MoveTo(GG::Pt(DOUBLE_P_LABEL_X, row_offset));
+    m_local_points_P_label->Resize(P_LABEL_SIZE);
 
-        row_offset += m_local_points_label->Height();
-    }
+    row_offset += m_total_points_label->Height();
 
-    if (m_local_wasted_points_label) {
-        m_local_wasted_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
-        m_local_wasted_points_label->Resize(LABEL_TEXT_SIZE);
-        m_local_wasted_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
-        m_local_wasted_points->Resize(VALUE_TEXT_SIZE);
-        m_local_wasted_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
-        m_local_wasted_points_P_label->Resize(P_LABEL_SIZE);
-    }
+
+    // third row: wasted points
+    m_wasted_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
+    m_wasted_points_label->Resize(LABEL_TEXT_SIZE);
+    m_wasted_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
+    m_wasted_points->Resize(VALUE_TEXT_SIZE);
+    m_wasted_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
+    m_wasted_points_P_label->Resize(P_LABEL_SIZE);
+
+    m_local_wasted_points->MoveTo(GG::Pt(DOUBLE_LEFT_TEXT_X, row_offset));
+    m_local_wasted_points->Resize(VALUE_TEXT_SIZE);
+    m_local_wasted_points_P_label->MoveTo(GG::Pt(DOUBLE_P_LABEL_X, row_offset));
+    m_local_wasted_points_P_label->Resize(P_LABEL_SIZE);
+
+    row_offset += m_wasted_points_label->Height();
+
+
+    // fourth row: stockpile points contents
+    m_stockpile_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
+    m_stockpile_points_label->Resize(LABEL_TEXT_SIZE);
+    m_stockpile_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
+    m_stockpile_points->Resize(VALUE_TEXT_SIZE);
+    m_stockpile_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
+    m_stockpile_points_P_label->Resize(P_LABEL_SIZE);
+
+    row_offset += m_stockpile_points_label->Height();
+
+
+    // fifth row: stockpile max use
+    m_stockpile_max_use_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
+    m_stockpile_max_use_label->Resize(LABEL_TEXT_SIZE);
+    m_stockpile_max_use->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
+    m_stockpile_max_use->Resize(VALUE_TEXT_SIZE);
+    m_stockpile_max_use_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
+    m_stockpile_max_use_P_label->Resize(P_LABEL_SIZE);
+
+    row_offset += m_stockpile_points_label->Height();
+
+
+    // sixth row: stockpile use
+    m_stockpile_use_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
+    m_stockpile_use_label->Resize(LABEL_TEXT_SIZE);
+    m_stockpile_use->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
+    m_stockpile_use->Resize(VALUE_TEXT_SIZE);
+    m_stockpile_use_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
+    m_stockpile_use_P_label->Resize(P_LABEL_SIZE);
+
+    m_local_stockpile_use->MoveTo(GG::Pt(DOUBLE_LEFT_TEXT_X, row_offset));
+    m_local_stockpile_use->Resize(VALUE_TEXT_SIZE);
+    m_local_stockpile_use_P_label->MoveTo(GG::Pt(DOUBLE_P_LABEL_X, row_offset));
+    m_local_stockpile_use_P_label->Resize(P_LABEL_SIZE);
 }
 
 

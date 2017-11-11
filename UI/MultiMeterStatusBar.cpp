@@ -26,6 +26,7 @@ namespace {
         case METER_TARGET_RESEARCH:
             return GG::Clr(0, 255, 255, 255);
             break;
+        case METER_IMPERIAL_PP_TRANSFER_EFFICIENCY:
         case METER_TRADE:
         case METER_TARGET_TRADE:
             return GG::Clr(255, 200, 0, 255);
@@ -52,6 +53,7 @@ namespace {
         case METER_HAPPINESS:
         case METER_TARGET_HAPPINESS:
             return GG::Clr(255, 255, 0, 255);
+        case METER_IMPERIAL_PP_USE_LIMIT:
         case METER_SUPPLY:
         case METER_MAX_SUPPLY:
         case METER_CONSTRUCTION:

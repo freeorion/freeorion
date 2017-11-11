@@ -541,7 +541,7 @@ private:
     bool                            m_sidepanel_open_before_showing_other;  //!< was the sidepanel open before switching to production, research or design screens?  If so, it should be restored when leaving them.
 
     std::shared_ptr<CUIToolBar>     m_toolbar;
-    std::shared_ptr<StatisticIcon>  m_trade, m_population, m_research, m_industry, m_detection, m_fleet;
+    std::shared_ptr<StatisticIcon>  m_trade, m_population, m_research, m_industry, m_stockpile, m_detection, m_fleet;
     std::shared_ptr<GG::Button>     m_industry_wasted, m_research_wasted;
     std::shared_ptr<GG::Button>     m_btn_moderator, m_btn_messages, m_btn_empires,
                                     m_btn_siterep, m_btn_research, m_btn_production,
