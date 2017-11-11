@@ -38,7 +38,7 @@ namespace parse { namespace detail {
             >
         > planet_environment_rule;
 
-        string_ref_vec_rule               string_ref_vec;
+        single_or_bracketed_repeat<value_ref_grammar<std::string>> one_or_more_string_values;
         building_focus_species_rule       homeworld;
         building_focus_species_rule       building;
         building_focus_species_rule       species;
@@ -52,6 +52,9 @@ namespace parse { namespace detail {
         planet_type_parser_rules          planet_type_rules;
         planet_size_parser_rules          planet_size_rules;
         planet_environment_parser_rules   planet_environment_rules;
+        single_or_bracketed_repeat<value_ref_rule<PlanetType>> one_or_more_planet_types;
+        single_or_bracketed_repeat<value_ref_rule<PlanetSize>> one_or_more_planet_sizes;
+        single_or_bracketed_repeat<value_ref_rule<PlanetEnvironment>> one_or_more_planet_environments;
     };
 
     }

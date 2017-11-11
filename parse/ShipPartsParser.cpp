@@ -66,12 +66,12 @@ namespace {
             common_rules(tok, labeller, condition_parser, string_grammar, tags_parser),
             ship_slot_type_enum(tok),
             ship_part_class_enum(tok),
-            double_rule(tok)
+            double_rule(tok),
+            one_or_more_slots(ship_slot_type_enum)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
-            using phoenix::push_back;
             using phoenix::construct;
 
             qi::_1_type _1;
@@ -94,11 +94,8 @@ namespace {
             slots
                 =  -(
                         labeller.rule(MountableSlotTypes_token)
-                    >   (
-                            ('[' > +ship_slot_type_enum [ push_back(_r1, _1) ] > ']')
-                        |    ship_slot_type_enum [ push_back(_r1, _1) ]
-                        )
-                     )
+                    >   one_or_more_slots [ _r1 = _1 ]
+                    )
                 ;
 
             part_type
@@ -169,6 +166,7 @@ namespace {
         parse::ship_part_class_enum_grammar ship_part_class_enum;
         parse::detail::double_grammar double_rule;
         slots_rule                         slots;
+        parse::detail::single_or_bracketed_repeat<parse::ship_slot_enum_grammar> one_or_more_slots;
         part_type_rule                     part_type;
         start_rule                         start;
     };

@@ -76,7 +76,7 @@ namespace {
                 >   tok.string        [ _pass = is_unique_(_r1, FieldType_token, _1), _a = _1 ]
                 >   labeller.rule(Description_token)         > tok.string [ _b = _1 ]
                 >   labeller.rule(Stealth_token)             > double_rule [ _c = _1]
-                >   tags_parser(_d)
+                >   tags_parser [ _d = _1]
                 > -(labeller.rule(EffectsGroups_token)       > effects_group_grammar [ _e = _1 ])
                 >   labeller.rule(Graphic_token)             > tok.string
                 [ insert_fieldtype_(_r1, _a, _b, _c, _d, _e, _1, _pass) ]

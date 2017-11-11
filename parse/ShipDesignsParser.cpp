@@ -73,7 +73,8 @@ namespace {
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
-            labeller(tok)
+            labeller(tok),
+            one_or_more_string_tokens(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -118,10 +119,7 @@ namespace {
             design
                 =    design_prefix(_a, _b, _c, _f, _g)
                 >    labeller.rule(Parts_token)
-                >    (
-                            ('[' > +tok.string [ push_back(_d, _1) ] > ']')
-                        |    tok.string [ push_back(_d, _1) ]
-                     )
+                >    one_or_more_string_tokens [ _d = _1 ]
                 >   -(
                         labeller.rule(Icon_token)     > tok.string [ _e = _1 ]
                      )
@@ -163,6 +161,7 @@ namespace {
         using start_rule = parse::detail::rule<start_rule_signature>;
 
         parse::detail::Labeller labeller;
+        parse::detail::single_or_repeated_string<> one_or_more_string_tokens;
         design_prefix_rule design_prefix;
         design_rule design;
         start_rule start;

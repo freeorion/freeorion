@@ -11,10 +11,7 @@ namespace parse { namespace detail {
                                  const condition_parser_grammar& condition_parser,
                                  const value_ref_grammar<std::string>& string_grammar);
 
-        typedef rule<
-            condition_signature,
-            boost::spirit::qi::locals<std::vector<value_ref_payload<StarType>>>
-        > star_type_vec_rule;
+        using star_type_vec_rule = rule<condition_signature>;
 
         typedef rule<
             condition_signature,
@@ -33,6 +30,7 @@ namespace parse { namespace detail {
         condition_parser_rule  owner_has_shippart_available;
         condition_parser_rule  start;
         star_type_parser_rules star_type_rules;
+        single_or_bracketed_repeat<value_ref_rule<StarType>> one_or_more_star_types;
     };
 
     }

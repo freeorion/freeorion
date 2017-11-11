@@ -46,13 +46,11 @@ namespace {
             condition_parser(tok, labeller),
             string_grammar(tok, labeller, condition_parser),
             double_rule(tok),
-            int_rule(tok)
+            int_rule(tok),
+            one_or_more_string_tokens(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
-
-            using phoenix::clear;
-            using phoenix::push_back;
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -70,12 +68,7 @@ namespace {
                 ;
 
             ships
-                =    labeller.rule(Ships_token)
-                >    eps [ clear(phoenix::ref(_b)) ]
-                >    (
-                            ('[' > +tok.string [ push_back(phoenix::ref(_b), _1) ] > ']')
-                        |    tok.string [ push_back(phoenix::ref(_b), _1) ]
-                     )
+                =    labeller.rule(Ships_token) > one_or_more_string_tokens [ phoenix::ref(_b) = _1]
                 ;
 
             spawns
@@ -131,6 +124,7 @@ namespace {
         const parse::string_parser_grammar string_grammar;
         parse::detail::double_grammar double_rule;
         parse::detail::int_grammar int_rule;
+        parse::detail::single_or_repeated_string<std::vector<std::string>> one_or_more_string_tokens;
         generic_rule            monster_fleet_plan_prefix;
         generic_rule            ships;
         generic_rule            spawns;

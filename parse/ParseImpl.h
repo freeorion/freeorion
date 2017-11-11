@@ -137,13 +137,14 @@ namespace parse { namespace detail {
     template <typename T>
     using enum_grammar = grammar<T ()>;
 
-    using tags_rule_type    = rule<void (std::set<std::string>&)>;
-    using tags_grammar_type = grammar<void (std::set<std::string>&)>;
+    using tags_rule_type    = rule<std::set<std::string> ()>;
+    using tags_grammar_type = grammar<std::set<std::string> ()>;
 
     struct tags_grammar : public tags_grammar_type {
         tags_grammar(const parse::lexer& tok,
                      Labeller& labeller);
         tags_rule_type start;
+        single_or_repeated_string<std::set<std::string>> one_or_more_string_tokens;
     };
 
     using color_parser_signature = GG::Clr ();
