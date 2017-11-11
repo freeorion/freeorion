@@ -79,6 +79,7 @@ namespace parse { namespace detail {
         star_type_parser_rules   star_type_rules;
         planet_type_parser_rules planet_type_rules;
         planet_size_parser_rules planet_size_rules;
+        single_or_bracketed_repeat<effect_parser_grammar> one_or_more_effects;
     };
     }
 }

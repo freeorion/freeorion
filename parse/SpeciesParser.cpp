@@ -68,6 +68,7 @@ namespace {
             string_grammar(tok, labeller, condition_parser),
             tags_parser(tok, labeller),
             effects_group_grammar(tok, labeller, condition_parser, string_grammar),
+            one_or_more_foci(focus_type),
             planet_type_rules(tok, labeller, condition_parser),
             planet_environment_rules(tok, labeller, condition_parser)
         {
@@ -107,10 +108,7 @@ namespace {
 
             foci
                 =    labeller.rule(Foci_token)
-                >    (
-                            ('[' > +focus_type [ push_back(_r1, _1) ] > ']')
-                        |    focus_type [ push_back(_r1, _1) ]
-                     )
+                >    one_or_more_foci
                 ;
 
             effects
@@ -152,8 +150,8 @@ namespace {
                 =    tok.Species_
                 >    species_strings(_r1) [ _a = _1 ]
                 >    species_params [ _b = _1]
-                >    tags_parser(_c)
-                >   -foci(_d)
+                >    tags_parser [ _c= _1]
+                >   -foci [_d = _1]
                 >   -(labeller.rule(PreferredFocus_token)        >> tok.string [ _g = _1 ])
                 >   -effects(_e)
                 >   -environments(_f)
@@ -203,7 +201,7 @@ namespace {
         > focus_type_rule;
 
         typedef parse::detail::rule<
-            void (std::vector<FocusType>&)
+            std::vector<FocusType> ()
         > foci_rule;
 
         typedef parse::detail::rule<
@@ -265,6 +263,7 @@ namespace {
         parse::effects_group_grammar effects_group_grammar;
         foci_rule                       foci;
         focus_type_rule                 focus_type;
+        parse::detail::single_or_bracketed_repeat<focus_type_rule> one_or_more_foci;
         effects_rule                    effects;
         environment_map_element_rule    environment_map_element;
         environment_map_rule            environment_map;

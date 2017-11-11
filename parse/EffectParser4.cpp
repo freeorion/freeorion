@@ -21,7 +21,8 @@ namespace parse { namespace detail {
         double_rules(tok, labeller, condition_parser, string_grammar),
         star_type_rules(tok, labeller, condition_parser),
         planet_type_rules(tok, labeller, condition_parser),
-        planet_size_rules(tok, labeller, condition_parser)
+        planet_size_rules(tok, labeller, condition_parser),
+        one_or_more_effects(effect_parser)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -46,12 +47,7 @@ namespace parse { namespace detail {
                         >   labeller.rule(Type_token)        >   planet_type_rules.expr [ _a = _1 ]
                         >   labeller.rule(PlanetSize_token)  >   planet_size_rules.expr [ _b = _1 ]
                         > -(labeller.rule(Name_token)        >   string_grammar      [ _c = _1 ])
-                        > -(labeller.rule(Effects_token)
-                            >   (
-                                ('[' > +effect_parser [ emplace_back_1_(_d, _1) ] > ']')
-                                |    effect_parser [ emplace_back_1_(_d, _1) ]
-                            )
-                           )
+                        > -(labeller.rule(Effects_token) > one_or_more_effects [ _d = _1 ])
                 ) [ _val = construct_movable_(new_<Effect::CreatePlanet>(
                     deconstruct_movable_(_a, _pass),
                     deconstruct_movable_(_b, _pass),
@@ -63,12 +59,7 @@ namespace parse { namespace detail {
             =   (       tok.CreateBuilding_
                         >   labeller.rule(Type_token)        >   string_grammar [ _a = _1 ]
                         > -(labeller.rule(Name_token)        >   string_grammar [ _b = _1 ])
-                        > -(labeller.rule(Effects_token)
-                            >   (
-                                ('[' > +effect_parser [ emplace_back_1_(_c, _1) ] > ']')
-                                |    effect_parser [ emplace_back_1_(_c, _1) ]
-                            )
-                           )
+                        > -(labeller.rule(Effects_token) > one_or_more_effects [ _c = _1 ])
                 ) [ _val = construct_movable_(new_<Effect::CreateBuilding>(
                     deconstruct_movable_(_a, _pass),
                     deconstruct_movable_(_b, _pass),
@@ -82,12 +73,7 @@ namespace parse { namespace detail {
                  > -(labeller.rule(Empire_token)      >   int_rules.expr    [ _c = _1 ])
                  > -(labeller.rule(Species_token)     >   string_grammar [ _d = _1 ])
                  > -(labeller.rule(Name_token)        >   string_grammar [ _e = _1 ])
-                 > -(labeller.rule(Effects_token)
-                     >   (
-                         ('[' > +effect_parser [ emplace_back_1_(_f, _1) ] > ']')
-                         |    effect_parser [ emplace_back_1_(_f, _1) ]
-                     )
-                    )
+                 > -(labeller.rule(Effects_token)     >   one_or_more_effects [ _f = _1 ])
                 ) [ _val = construct_movable_(new_<Effect::CreateShip>(
                     deconstruct_movable_(_b, _pass),
                     deconstruct_movable_(_c, _pass),
@@ -103,12 +89,7 @@ namespace parse { namespace detail {
                  > -(labeller.rule(Empire_token)      >   int_rules.expr    [ _c = _1 ])
                  > -(labeller.rule(Species_token)     >   string_grammar [ _d = _1 ])
                  > -(labeller.rule(Name_token)        >   string_grammar [ _e = _1 ])
-                 > -(labeller.rule(Effects_token)
-                     >   (
-                         ('[' > +effect_parser [ emplace_back_1_(_f, _1) ] > ']')
-                         |    effect_parser [ emplace_back_1_(_f, _1) ]
-                     )
-                    )
+                 > -(labeller.rule(Effects_token)     >   one_or_more_effects [ _f = _1 ])
                 ) [ _val = construct_movable_(new_<Effect::CreateShip>(
                     deconstruct_movable_(_a, _pass),
                     deconstruct_movable_(_c, _pass),
@@ -124,13 +105,7 @@ namespace parse { namespace detail {
                  )
                  >   double_rules.expr [ _b = _1 ]
                  > -(labeller.rule(Name_token)    >   string_grammar [ _d = _1 ])
-                 > -(labeller.rule(Effects_token)
-                     >
-                     (
-                         ('[' > +effect_parser [ emplace_back_1_(_f, _1) ] > ']')
-                         |    effect_parser [ emplace_back_1_(_f, _1) ]
-                     )
-                    )
+                 > -(labeller.rule(Effects_token) > one_or_more_effects [ _f = _1 ])
                 ) [ _val = construct_movable_(new_<Effect::CreateField>(
                     deconstruct_movable_(_a, _pass),
                     deconstruct_movable_(_b, _pass),
@@ -147,13 +122,7 @@ namespace parse { namespace detail {
                  >   labeller.rule(Y_token)       >   double_rules.expr [ _c = _1 ]
                  >   labeller.rule(Size_token)    >   double_rules.expr [ _e = _1 ]
                  > -(labeller.rule(Name_token)    >   string_grammar [ _d = _1 ])
-                 > -(labeller.rule(Effects_token)
-                     >
-                     (
-                         ('[' > +effect_parser [ emplace_back_1_(_f, _1) ] > ']')
-                         |    effect_parser [ emplace_back_1_(_f, _1) ]
-                     )
-                    )
+                 > -(labeller.rule(Effects_token) > one_or_more_effects [ _f = _1 ])
                 ) [ _val = construct_movable_(new_<Effect::CreateField>(
                     deconstruct_movable_(_a, _pass),
                     deconstruct_movable_(_b, _pass),
@@ -171,13 +140,7 @@ namespace parse { namespace detail {
                  >   labeller.rule(X_token)       >   double_rules.expr    [ _b = _1 ]
                  >   labeller.rule(Y_token)       >   double_rules.expr    [ _c = _1 ]
                  > -(labeller.rule(Name_token)    >   string_grammar    [ _d = _1 ])
-                 > -(labeller.rule(Effects_token)
-                     >
-                     (
-                         ('[' > +effect_parser [ emplace_back_1_(_e, _1) ] > ']')
-                         |    effect_parser [ emplace_back_1_(_e, _1) ]
-                     )
-                    )
+                 > -(labeller.rule(Effects_token) > one_or_more_effects [ _e = _1 ])
                 ) [ _val = construct_movable_(new_<Effect::CreateSystem>(
                     deconstruct_movable_(_a, _pass),
                     deconstruct_movable_(_b, _pass),
@@ -193,13 +156,7 @@ namespace parse { namespace detail {
                  >   double_rules.expr [ _b = _1 ]
                  >   labeller.rule(Y_token)       >   double_rules.expr [ _c = _1 ]
                  > -(labeller.rule(Name_token)    >   string_grammar [ _d = _1 ])
-                 > -(labeller.rule(Effects_token)
-                     >
-                     (
-                         ('[' > +effect_parser [ emplace_back_1_(_e, _1) ] > ']')
-                         |    effect_parser [ emplace_back_1_(_e, _1) ]
-                     )
-                    )
+                 > -(labeller.rule(Effects_token) > one_or_more_effects [ _e = _1 ])
                 ) [ _val = construct_movable_(new_<Effect::CreateSystem>(
                     deconstruct_movable_(_b, _pass),
                     deconstruct_movable_(_c, _pass),

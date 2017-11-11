@@ -25,7 +25,8 @@ namespace parse { namespace detail {
         const value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_7::base_type(start, "condition_parser_rules_7"),
-        star_type_rules(tok, labeller, condition_parser)
+        star_type_rules(tok, labeller, condition_parser),
+        one_or_more_star_types(star_type_rules.expr)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -62,11 +63,8 @@ namespace parse { namespace detail {
         star_type
             =    tok.Star_
             >    labeller.rule(Type_token)
-            >    (
-                ('[' > +star_type_rules.expr [ push_back(_a, _1) ] > ']')
-                |    star_type_rules.expr [ push_back(_a, _1) ]
-            )
-            [ _val = construct_movable_(new_<Condition::StarType>(deconstruct_movable_vector_(_a, _pass))) ]
+            >    one_or_more_star_types
+            [ _val = construct_movable_(new_<Condition::StarType>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         location
