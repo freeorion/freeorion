@@ -118,10 +118,6 @@ void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
             if (vis >= VIS_FULL_VISIBILITY) {
-                this->m_is_about_to_be_colonized =  copied_planet->m_is_about_to_be_colonized;
-                this->m_is_about_to_be_invaded   =  copied_planet->m_is_about_to_be_invaded;
-                this->m_is_about_to_be_bombarded =  copied_planet->m_is_about_to_be_bombarded;
-                this->m_ordered_given_to_empire_id =copied_planet->m_ordered_given_to_empire_id;
                 this->m_last_turn_attacked_by_ship= copied_planet->m_last_turn_attacked_by_ship;
             } else {
                 // copy system name if at partial visibility, as it won't be copied

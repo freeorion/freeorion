@@ -2789,7 +2789,7 @@ namespace {
         { ship->ClearBombardPlanet(); }
         for (auto& planet : GetUniverse().Objects().FindObjects<Planet>()) {
             if (planet->IsAboutToBeBombarded()) {
-                DebugLogger() << "CleanUpBombardmentStateInfo: " << planet->Name() << " was about to be bombarded";
+                //DebugLogger() << "CleanUpBombardmentStateInfo: " << planet->Name() << " was about to be bombarded";
                 planet->ResetIsAboutToBeBombarded();
             }
         }
@@ -2829,9 +2829,8 @@ void ServerApp::PreCombatProcessTurns() {
     // inform players of order execution
     m_networking.SendMessageAll(TurnProgressMessage(Message::PROCESSING_ORDERS));
 
-    // clear bombardment state before executing orders,
-    // so result after is only determined by what orders set.
-    CleanUpBombardmentStateInfo();     // state is cleaned up!
+    // clean up bombardment state of planets and ships
+    CleanUpBombardmentStateInfo();
 
     // execute orders
     for (const auto& empire_orders : m_turn_sequence) {
@@ -2840,7 +2839,7 @@ void ServerApp::PreCombatProcessTurns() {
             DebugLogger() << "No OrderSet for empire " << empire_orders.first;
             continue;
         }
-        order_set->ApplyOrders();   // bombard order is not re-applied
+        order_set->ApplyOrders();
     }
 
     // clean up orders, which are no longer needed
@@ -3167,7 +3166,6 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.BackPropagateObjectMeters();
     empires.BackPropagateMeters();
 
-
     // check for loss of empire capitals
     for (auto& entry : empires) {
         int capital_id = entry.second->CapitalID();
@@ -3210,9 +3208,6 @@ void ServerApp::PostCombatProcessTurns() {
     // new turn visibility update
     m_universe.UpdateEmpireObjectVisibilities();
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
-
-    // clean up bombardment state (should be after obj->PopGrowthProductionResearchPhase())
-    CleanUpBombardmentStateInfo();
 
     // misc. other updates and records
     m_universe.UpdateStatRecords();

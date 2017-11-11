@@ -1119,7 +1119,10 @@ void HumanClientApp::StartGame(bool is_new_game) {
 
 void HumanClientApp::HandleTurnUpdate() {
     UpdateCombatLogManager();
-    // m_orders.ExecutePersistentOrders();
+
+    // client universe was updated; should some orders persist?
+    m_orders.ResetNonPersistentOrders();
+    m_orders.ExecutePersistentOrders();
 }
 
 void HumanClientApp::UpdateCombatLogManager() {

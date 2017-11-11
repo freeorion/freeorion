@@ -85,8 +85,7 @@ public:
     /** Resets all orders, irrespective of persistance */
     void           Reset();
 
-    /** Clears all orders except for the ones that should persist; allows persisting
-        orders to be executed again. */
+    /** Clears all orders except for the ones that should persist */
     void           ResetNonPersistentOrders();
 
     /** Executes all persisting orders to update the UI on the new turn */

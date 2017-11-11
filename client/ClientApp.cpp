@@ -118,7 +118,6 @@ void ClientApp::SetPlayerStatus(int player_id, Message::PlayerStatus status) {
 
 void ClientApp::StartTurn() {
     m_networking->SendMessage(TurnOrdersMessage(m_orders));
-    m_orders.Reset(); // TODO: NonPersistentOrders();
 }
 
 void ClientApp::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) {

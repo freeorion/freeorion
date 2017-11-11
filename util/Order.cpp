@@ -782,7 +782,6 @@ void BombardOrder::ExecuteImpl() const {
         return;
     }
 
-    // note: multiple ships, from same or different empires, can invade the same planet on the same turn
     if (!ship->CanDestroyPlanet())
         DebugLogger() << "BombardOrder::ExecuteImpl set for ship " << m_ship << " "
                       << ship->Name() << " to bombard planet " << m_planet << " "
@@ -836,8 +835,6 @@ bool BombardOrder::ShouldPersist() {
     // don't continue if planet was destroyed
     if (planet->HasSpecial("PLANET_DESTRUCTION_SPECIAL"))
         return false;
-    if (planet->SpeciesName() == "")
-        return false;
     // don't continue bombing/destroying if planet has been conquered
     if (planet->Owner() == ship->Owner())
         return false;
@@ -845,6 +842,7 @@ bool BombardOrder::ShouldPersist() {
     if (!ship->CanDestroyPlanet() && planet->CurrentMeterValue(METER_POPULATION) <= 0)
         return false;
 
+    //DebugLogger() << "BombardOrder::ShouldPersist(): Persisting bombard order.";
     return true;
 }
 

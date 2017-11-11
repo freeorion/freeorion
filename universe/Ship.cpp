@@ -136,10 +136,7 @@ void Ship::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_
             this->m_last_resupplied_on_turn =   copied_ship->m_last_resupplied_on_turn;
 
             if (vis >= VIS_FULL_VISIBILITY) {
-                this->m_ordered_scrapped =          copied_ship->m_ordered_scrapped;
-                this->m_ordered_colonize_planet_id= copied_ship->m_ordered_colonize_planet_id;
-                this->m_ordered_invade_planet_id  = copied_ship->m_ordered_invade_planet_id;
-                this->m_ordered_bombard_planet_id = copied_ship->m_ordered_bombard_planet_id;
+                // nothing for now
             }
         }
     }

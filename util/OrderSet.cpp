@@ -61,7 +61,7 @@ void OrderSet::ResetNonPersistentOrders() {
                 m_orders.erase(it);
         }
     }
-    // DebugLogger() << "OrderSet::ResetNonPersistentOrders(): Persisting orders: " << m_orders.size();   // persisting orders is not source of bug
+    //DebugLogger() << "OrderSet::ResetNonPersistentOrders(): Persisting orders: " << m_orders.size();
 }
 
 void OrderSet::ExecutePersistentOrders() {
@@ -69,7 +69,7 @@ void OrderSet::ExecutePersistentOrders() {
         if (order.second->ShouldPersist()) {
             order.second->ResetExecutionStatus();
             order.second->Execute();
-            // DebugLogger() << "OrderSet::ExecutePersistentOrders(): Executing persisting order." << m_orders.size();
+            //DebugLogger() << "OrderSet::ExecutePersistentOrders(): executed persistent order " << order.first;
         }
     }
 }
