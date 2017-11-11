@@ -45,7 +45,8 @@ namespace {
     };
 
     void insert_parttype(std::map<std::string, std::unique_ptr<PartType>>& part_types,
-                         ShipPartClass part_class, const Stats& stats,
+                         ShipPartClass part_class,
+                         const Stats& stats,
                          const parse::detail::MovableEnvelope<CommonParams>& common_params,
                          const MoreCommonParams& more_common_params,
                          std::vector<ShipSlotType> mountable_slot_types,
@@ -61,7 +62,7 @@ namespace {
         part_types.insert(std::make_pair(part_type->Name(), std::move(part_type)));
     }
 
-    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_parttype_, insert_parttype, 8)
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_parttype_, insert_parttype, 9)
 
     using start_rule_payload = std::map<std::string, std::unique_ptr<PartType>>;
     using start_rule_signature = void(start_rule_payload&);
@@ -98,7 +99,6 @@ namespace {
             qi::_g_type _g;
             qi::_h_type _h;
             qi::_i_type _i;
-            qi::_j_type _j;
             qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::eps_type eps;
@@ -136,8 +136,7 @@ namespace {
                 >   slots(_f)
                 >   common_rules.common [ _e = _1 ]
                 >   labeller.rule(Icon_token)        > tok.string    [ _b = _1 ]
-                  ) [ _j = construct<Stats>(_d, _h, _i),
-                      insert_parttype_(_r1, _c, _j, _e, _a, _f, _b, _g, _pass) ]
+                  ) [ insert_parttype_(_r1, _c, _i, _e, _a, _f, _b, _g, _pass) ]
                 ;
 
             start
@@ -166,12 +165,11 @@ namespace {
                 std::string,                // _b_type
                 ShipPartClass,              // _c_type
                 double,                     // _d_type
-                CommonParams,               // _e_type
+                parse::detail::MovableEnvelope<CommonParams>,   // _e_type
                 std::vector<ShipSlotType>,  // _f_type
                 bool,                       // _g_type
                 double,                     // _h_type
-                double,                     // _i_type
-                Stats                       // _j_type
+                Stats                       // _i_type
             >
         > part_type_rule;
 
