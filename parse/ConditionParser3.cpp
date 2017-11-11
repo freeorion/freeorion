@@ -24,11 +24,11 @@ namespace parse { namespace detail {
         qi::_1_type _1;
         qi::_2_type _2;
         qi::_3_type _3;
+        qi::_4_type _4;
+        qi::_5_type _5;
         qi::_a_type _a;
         qi::_b_type _b;
         qi::_c_type _c;
-        qi::_d_type _d;
-        qi::_e_type _e;
         qi::_val_type _val;
         qi::lit_type lit;
         qi::_pass_type _pass;
@@ -77,133 +77,112 @@ namespace parse { namespace detail {
                     deconstruct_movable_(_1, _pass))) ]
             ;
 
+        comparison_operator =
+            lit  ("==")   [ _val = Condition::EQUAL ]
+            | lit('=')    [ _val = Condition::EQUAL ]
+            | lit(">=")   [ _val = Condition::GREATER_THAN_OR_EQUAL ]
+            | lit('>')    [ _val = Condition::GREATER_THAN ]
+            | lit("<=")   [ _val = Condition::LESS_THAN_OR_EQUAL ]
+            | lit('<')    [ _val = Condition::LESS_THAN ]
+            | lit("!=")   [ _val = Condition::NOT_EQUAL ]
+            ;
+
+        string_comparison_operator =
+            lit  ("==")   [ _val = Condition::EQUAL ]
+            | lit('=')    [ _val = Condition::EQUAL ]
+            | lit("!=")   [ _val = Condition::NOT_EQUAL ]
+            ;
+
         comparison_binary_double
             = ('('
                >> double_rules.expr
-               >> (    lit("==")   [ _d = Condition::EQUAL ]
-                      | lit('=')    [ _d = Condition::EQUAL ]
-                      | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
-                      | lit('>')    [ _d = Condition::GREATER_THAN ]
-                      | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
-                      | lit('<')    [ _d = Condition::LESS_THAN ]
-                      | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-               > double_rules.expr // assuming the trinary form already didn't pass, can expect a (double) here, though it might be an (int) casted to (double). By matching the (int) cases first, can assume that at least one of the parameters here is not an (int) casted to double.
+               >> comparison_operator
+               >> double_rules.expr // assuming the trinary form already didn't pass, can expect a (double) here, though it might be an (int) casted to (double). By matching the (int) cases first, can assume that at least one of the parameters here is not an (int) casted to double.
                > ')'
-              )
-            [ _val = construct_movable_(new_<Condition::ValueTest>(
-                        deconstruct_movable_(_1, _pass),
-                        _d,
-                        deconstruct_movable_(_2, _pass))) ]
-                ;
-
-            comparison_trinary_double
-                = ('('
-                   >> double_rules.expr
-                   >> (    lit("==")   [ _d = Condition::EQUAL ]
-                           | lit('=')    [ _d = Condition::EQUAL ]
-                           | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
-                           | lit('>')    [ _d = Condition::GREATER_THAN ]
-                           | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
-                           | lit('<')    [ _d = Condition::LESS_THAN ]
-                           | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                   >> double_rules.expr
-                   >> (    lit("==")   [ _d = Condition::EQUAL ] // TODO check should _d be _e
-                           | lit('=')    [ _d = Condition::EQUAL ] // TODO check should _d be _e
-                           | lit(">=")   [ _e = Condition::GREATER_THAN_OR_EQUAL ]
-                           | lit('>')    [ _e = Condition::GREATER_THAN ]
-                           | lit("<=")   [ _e = Condition::LESS_THAN_OR_EQUAL ]
-                           | lit('<')    [ _e = Condition::LESS_THAN ]
-                           | lit("!=")   [ _e = Condition::NOT_EQUAL ])
-                   >>  double_rules.expr    // if already seen (double) (operator) (double) (operator) can expect to see another (double). Some of these (double) may be (int) casted to double, though not all of them can be, as in that case, the (int) parser should have matched.
-                   >>  ')' )
-                [ _val = construct_movable_(new_<Condition::ValueTest>(
+              ) [ _val = construct_movable_(
+                new_<Condition::ValueTest>(
                     deconstruct_movable_(_1, _pass),
-                    _d,
-                    deconstruct_movable_(_2, _pass),
-                    _e,
+                    _2,
                     deconstruct_movable_(_3, _pass))) ]
-                ;
+            ;
 
-            comparison_binary_string
-                = ( '('
+        comparison_trinary_double
+            = ('('
+               >> double_rules.expr
+               >> comparison_operator
+               >> double_rules.expr
+               >> comparison_operator
+               >> double_rules.expr    // if already seen (double) (operator) (double) (operator) can expect to see another (double). Some of these (double) may be (int) casted to double, though not all of them can be, as in that case, the (int) parser should have matched.
+               >  ')'
+              ) [ _val = construct_movable_(
+                new_<Condition::ValueTest>(
+                    deconstruct_movable_(_1, _pass),
+                    _2,
+                    deconstruct_movable_(_3, _pass),
+                    _4,
+                    deconstruct_movable_(_5, _pass))) ]
+            ;
+
+        comparison_binary_string
+            = ( '('
                 >> string_grammar
-                >> (    lit("==")   [ _d = Condition::EQUAL ]
-                      | lit('=')    [ _d = Condition::EQUAL ]
-                      | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                   > string_grammar // assuming the trinary (string) form already didn't parse, if already seen (string) (operator) can expect another (string)
-                   > ')'
-                  ) [ _val = construct_movable_(new_<Condition::ValueTest>(
-                        deconstruct_movable_(_1, _pass),
-                        _d,
-                        deconstruct_movable_(_2, _pass))) ]
-                ;
-
-            comparison_trinary_string
-                =
-                ( '('
-                  >> string_grammar
-                  >> (    lit("==")   [ _d = Condition::EQUAL ]
-                          | lit('=')    [ _d = Condition::EQUAL ]
-                          | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                  >> string_grammar
-                  >> (    lit("==")   [ _d = Condition::EQUAL ] // TODO check should _d be _e
-                          | lit('=')    [ _d = Condition::EQUAL ] // TODO check should _d be _e
-                          | lit("!=")   [ _e = Condition::NOT_EQUAL ])
-                  >>  string_grammar // if already seen (string) (operator) (string) (operator) can expect to see another (string)
-                  >>  ')' )
-                [ _val = construct_movable_(new_<Condition::ValueTest>(
+                >> string_comparison_operator
+                >> string_grammar // assuming the trinary (string) form already didn't parse, if already seen (string) (operator) can expect another (string)
+                > ')'
+              ) [ _val = construct_movable_(
+                new_<Condition::ValueTest>(
                     deconstruct_movable_(_1, _pass),
-                    _d,
-                    deconstruct_movable_(_2, _pass),
-                    _e,
+                    _2,
                     deconstruct_movable_(_3, _pass))) ]
-                ;
+            ;
 
-            comparison_binary_int
-                = ( '('
+        comparison_trinary_string
+            =
+            ( '('
+              >> string_grammar
+              >> string_comparison_operator
+              >> string_grammar
+              >> string_comparison_operator
+              >>  string_grammar // if already seen (string) (operator) (string) (operator) can expect to see another (string)
+              >  ')'
+            ) [ _val = construct_movable_(
+                new_<Condition::ValueTest>(
+                    deconstruct_movable_(_1, _pass),
+                    _2,
+                    deconstruct_movable_(_3, _pass),
+                    _4,
+                    deconstruct_movable_(_5, _pass))) ]
+            ;
+
+        comparison_binary_int
+            = ( '('
                 >> int_rules.expr
-                >> (    lit("==")   [ _d = Condition::EQUAL ]
-                      | lit('=')    [ _d = Condition::EQUAL ]
-                      | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
-                      | lit('>')    [ _d = Condition::GREATER_THAN ]
-                      | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
-                      | lit('<')    [ _d = Condition::LESS_THAN ]
-                      | lit("!=")   [ _d = Condition::NOT_EQUAL ])
+                >> comparison_operator
                 >> int_rules.expr   // can't expect an (int) here, as it could actually be a (double) comparision with the first (double) cased from an (int)
-                    > ')'
-                  ) [ _val = construct_movable_(new_<Condition::ValueTest>(
-                        deconstruct_movable_(_1, _pass),
-                        _d,
-                        deconstruct_movable_(_2, _pass))) ]
-                ;
+                > ')'
+              ) [ _val = construct_movable_(
+                new_<Condition::ValueTest>(
+                    deconstruct_movable_(_1, _pass),
+                    _2,
+                    deconstruct_movable_(_3, _pass))) ]
+            ;
 
-            comparison_trinary_int
-                = ('('
-                >> int_rules.expr
-                >> (    lit("==")   [ _d = Condition::EQUAL ]
-                      | lit('=')    [ _d = Condition::EQUAL ]
-                      | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
-                      | lit('>')    [ _d = Condition::GREATER_THAN ]
-                      | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
-                      | lit('<')    [ _d = Condition::LESS_THAN ]
-                      | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                >> int_rules.expr
-                >> (    lit("==")   [ _d = Condition::EQUAL ] // TODO check should _d be _e
-                      | lit('=')    [ _d = Condition::EQUAL ] // TODO check should _d be _e
-                      | lit(">=")   [ _e = Condition::GREATER_THAN_OR_EQUAL ]
-                      | lit('>')    [ _e = Condition::GREATER_THAN ]
-                      | lit("<=")   [ _e = Condition::LESS_THAN_OR_EQUAL ]
-                      | lit('<')    [ _e = Condition::LESS_THAN ]
-                      | lit("!=")   [ _e = Condition::NOT_EQUAL ])
-                 >> int_rules.expr   // only treat as trinary (int) comparison if all parameters are (int). otherwise fall back to (double) comparison, which allows some of the parameters to be (int) casted to (double)
-                 >>  ')' )
-                [ _val = construct_movable_(new_<Condition::ValueTest>(
-                         deconstruct_movable_(_1, _pass),
-                         _d,
-                         deconstruct_movable_(_2, _pass),
-                         _e,
-                         deconstruct_movable_(_3, _pass))) ]
-                ;
+        comparison_trinary_int
+            = ('('
+               >> int_rules.expr
+               >> comparison_operator
+               >> int_rules.expr
+               >> comparison_operator
+               >> int_rules.expr   // only treat as trinary (int) comparison if all parameters are (int). otherwise fall back to (double) comparison, which allows some of the parameters to be (int) casted to (double)
+               >  ')'
+              ) [ _val = construct_movable_(
+                new_<Condition::ValueTest>(
+                    deconstruct_movable_(_1, _pass),
+                    _2,
+                    deconstruct_movable_(_3, _pass),
+                    _4,
+                    deconstruct_movable_(_5, _pass))) ]
+            ;
 
             turn
                 =  (tok.Turn_

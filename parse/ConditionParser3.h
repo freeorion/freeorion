@@ -10,6 +10,8 @@ namespace parse { namespace detail {
                                  const condition_parser_grammar& condition_parser,
                                  const value_ref_grammar<std::string>& string_grammar);
 
+        using comparison_operator_rule = rule<Condition::ComparisonType ()>;
+
         typedef rule<
             condition_signature,
             boost::spirit::qi::locals<
@@ -56,12 +58,14 @@ namespace parse { namespace detail {
         double_ref_double_ref_rule             within_distance;
         int_ref_int_ref_rule                   within_starlane_jumps;
         int_ref_int_ref_rule                   number;
-        double_ref_double_ref_rule             comparison_binary_double;
-        double_ref_double_ref_rule             comparison_trinary_double;
-        double_ref_double_ref_rule             comparison_binary_int;
-        double_ref_double_ref_rule             comparison_trinary_int;
-        double_ref_double_ref_rule             comparison_binary_string;
-        double_ref_double_ref_rule             comparison_trinary_string;
+        comparison_operator_rule               comparison_operator;
+        comparison_operator_rule               string_comparison_operator;
+        condition_parser_rule                  comparison_binary_double;
+        condition_parser_rule                  comparison_trinary_double;
+        condition_parser_rule                  comparison_binary_int;
+        condition_parser_rule                  comparison_trinary_int;
+        condition_parser_rule                  comparison_binary_string;
+        condition_parser_rule                  comparison_trinary_string;
         double_ref_double_ref_rule             value_test_2;
         double_ref_double_ref_rule             value_test_3;
         double_ref_double_ref_rule             value_test_4;
