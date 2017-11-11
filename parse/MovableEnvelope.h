@@ -287,6 +287,32 @@ namespace parse { namespace detail {
             // pass the incorrect constness.
             return obj.OpenEnvelope(pass);
         }
+
+        /// Unwrap ::optional<MovablelEnvelope<T>> to return
+        /// unique_ptr(nullptr) for none
+        template <typename T>
+        typename result<const deconstruct_movable(
+            const MovableEnvelope<T>&,     bool&)>::type operator()
+        (
+            const boost::optional<MovableEnvelope<T>>& obj, bool& pass) const
+        {
+            if (obj == boost::none)
+                return nullptr;
+            return obj->OpenEnvelope(pass);
+        }
+
+        template <typename T>
+        typename result<const deconstruct_movable(
+            const MovableEnvelope<T>&,     bool&)>::type operator()
+        (
+            const boost::optional<MovableEnvelope<T>>& obj, const bool& pass) const
+        {
+            // Note: this ignores the constness of pass because older compilers
+            // pass the incorrect constness.
+            if (obj == boost::none)
+                return nullptr;
+            return obj->OpenEnvelope(pass);
+        }
     };
 
     class deconstruct_movable_vector {
