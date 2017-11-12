@@ -96,6 +96,8 @@ namespace parse { namespace detail {
         one_or_more_string_and_string_ref_pair(string_and_string_ref)
     {
         qi::_1_type _1;
+        qi::_2_type _2;
+        qi::_3_type _3;
         qi::_a_type _a;
         qi::_b_type _b;
         qi::_c_type _c;
@@ -105,52 +107,52 @@ namespace parse { namespace detail {
         qi::_val_type _val;
         qi::eps_type eps;
         qi::_pass_type _pass;
+        qi::omit_type omit_;
         using phoenix::new_;
         using phoenix::construct;
         using phoenix::push_back;
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
 
-        set_empire_meter_1
-            =    (tok.SetEmpireMeter_ >>   labeller.rule(Empire_token))
-            >    int_rules.expr [ _b = _1 ]
-            >    labeller.rule(Meter_token)  >  tok.string [ _a = _1 ]
-            >    labeller.rule(Value_token)  >  double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireMeter>(
-                deconstruct_movable_(_b, _pass),
-                _a,
-                deconstruct_movable_(_1, _pass))) ]
+        set_empire_meter_1 =
+            ((   omit_[tok.SetEmpireMeter_] >>   labeller.rule(Empire_token))
+              > int_rules.expr
+              > labeller.rule(Meter_token)  >  tok.string
+              > labeller.rule(Value_token)  >  double_rules.expr
+            ) [ _val = construct_movable_(
+                new_<Effect::SetEmpireMeter>(
+                    deconstruct_movable_(_1, _pass),
+                    _2,
+                    deconstruct_movable_(_3, _pass))) ]
             ;
 
         set_empire_meter_2
-            =    (tok.SetEmpireMeter_ >>   labeller.rule(Meter_token))
-            >    tok.string [ _a = _1 ]
-            >    labeller.rule(Value_token) >  double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireMeter>(
-                _a,
-                deconstruct_movable_(_1, _pass))) ]
+            = (( omit_[tok.SetEmpireMeter_] >>   labeller.rule(Meter_token))
+               > tok.string
+               > labeller.rule(Value_token) >  double_rules.expr
+              ) [ _val = construct_movable_(new_<Effect::SetEmpireMeter>(
+                   _1,
+                   deconstruct_movable_(_2, _pass))) ]
             ;
 
         give_empire_tech
-            =   (   tok.GiveEmpireTech_
-                    >   labeller.rule(Name_token) >      string_grammar [ _d = _1 ]
-                    > -(labeller.rule(Empire_token) >    int_rules.expr    [ _b = _1 ])
+            =   (   omit_[tok.GiveEmpireTech_]
+                    >   labeller.rule(Name_token) >      string_grammar
+                    > -(labeller.rule(Empire_token) >    int_rules.expr    )
                 ) [ _val = construct_movable_(new_<Effect::GiveEmpireTech>(
-                    deconstruct_movable_(_d, _pass),
-                    deconstruct_movable_(_b, _pass))) ]
+                    deconstruct_movable_(_1, _pass),
+                    deconstruct_movable_(_2, _pass))) ]
             ;
 
         set_empire_tech_progress
-            =    tok.SetEmpireTechProgress_
-            >    labeller.rule(Name_token)     >  string_grammar [ _a = _1 ]
-            >    labeller.rule(Progress_token) >  double_rules.expr [ _b = _1 ]
-            >    (
-                (labeller.rule(Empire_token) > int_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireTechProgress>(
-                        deconstruct_movable_(_a, _pass),
-                        deconstruct_movable_(_b, _pass),
-                        deconstruct_movable_(_1, _pass))) ])
-                |  eps [ _val = construct_movable_(new_<Effect::SetEmpireTechProgress>(
-                        deconstruct_movable_(_a, _pass),
-                        deconstruct_movable_(_b, _pass))) ]
-            )
+            = (   omit_[tok.SetEmpireTechProgress_]
+                > labeller.rule(Name_token)     >  string_grammar
+                > labeller.rule(Progress_token) >  double_rules.expr
+                > -(labeller.rule(Empire_token) > int_rules.expr)
+              ) [ _val = construct_movable_(new_<Effect::SetEmpireTechProgress>(
+                        deconstruct_movable_(_1, _pass),
+                        deconstruct_movable_(_2, _pass),
+                        deconstruct_movable_(_3, _pass))) ]
             ;
 
         // Note: the NoStringtableLookup flag controls the lookup both of template in Vartext and of the label in SitrepPanel.
@@ -202,11 +204,12 @@ namespace parse { namespace detail {
             ;
 
         set_overlay_texture
-            =    tok.SetOverlayTexture_
-            >    labeller.rule(Name_token)    > tok.string [ _a = _1 ]
-            >    labeller.rule(Size_token)    > double_rules.expr [ _val = construct_movable_(new_<Effect::SetOverlayTexture>(
-                _a,
-                deconstruct_movable_(_1, _pass))) ]
+            = ( omit_[tok.SetOverlayTexture_]
+                > labeller.rule(Name_token)    > tok.string
+                > labeller.rule(Size_token)    > double_rules.expr
+              ) [ _val = construct_movable_(new_<Effect::SetOverlayTexture>(
+                  _1,
+                  deconstruct_movable_(_2, _pass))) ]
             ;
 
         string_and_string_ref
@@ -224,7 +227,7 @@ namespace parse { namespace detail {
             ;
 
         start
-            =    set_empire_meter_1
+            %=    set_empire_meter_1
             |    set_empire_meter_2
             |    give_empire_tech
             |    set_empire_tech_progress

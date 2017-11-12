@@ -3097,18 +3097,14 @@ unsigned int Victory::GetCheckSum() const {
 // SetEmpireTechProgress                                 //
 ///////////////////////////////////////////////////////////
 SetEmpireTechProgress::SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& tech_name,
-                                             std::unique_ptr<ValueRef::ValueRefBase<double>>&& research_progress) :
-    m_tech_name(std::move(tech_name)),
-    m_research_progress(std::move(research_progress)),
-    m_empire_id(boost::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")))
-{}
-
-SetEmpireTechProgress::SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& tech_name,
                                              std::unique_ptr<ValueRef::ValueRefBase<double>>&& research_progress,
-                                             std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id) :
+                                             std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id /*= nullptr*/) :
     m_tech_name(std::move(tech_name)),
     m_research_progress(std::move(research_progress)),
-    m_empire_id(std::move(empire_id))
+    m_empire_id(
+        empire_id
+        ? std::move(empire_id)
+        : boost::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")))
 {}
 
 SetEmpireTechProgress::~SetEmpireTechProgress()

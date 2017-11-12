@@ -1024,11 +1024,8 @@ private:
 class FO_COMMON_API SetEmpireTechProgress : public EffectBase {
 public:
     SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& tech_name,
-                          std::unique_ptr<ValueRef::ValueRefBase<double>>&& research_progress);
-
-    SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& tech_name,
                           std::unique_ptr<ValueRef::ValueRefBase<double>>&& research_progress,
-                          std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
+                          std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr);
 
     virtual ~SetEmpireTechProgress();
 
