@@ -11,22 +11,12 @@ namespace parse { namespace detail {
                                  const condition_parser_grammar& condition_parser,
                                  const value_ref_grammar<std::string>& string_grammar);
 
-        using star_type_vec_rule = rule<condition_signature>;
-
-        typedef rule<
-            condition_signature,
-            boost::spirit::qi::locals<
-                Condition::ContentType,
-                value_ref_payload<std::string>,
-                value_ref_payload<std::string>
-            >
-        > string_ref_rule;
-
         condition_parser_rule  ordered_bombarded_by;
         condition_parser_rule  contains;
         condition_parser_rule  contained_by;
-        star_type_vec_rule     star_type;
-        string_ref_rule        location;
+        condition_parser_rule  star_type;
+        rule<Condition::ContentType ()> building_type;
+        condition_parser_rule  location;
         condition_parser_rule  owner_has_shippart_available;
         condition_parser_rule  start;
         star_type_parser_rules star_type_rules;

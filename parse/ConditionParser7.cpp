@@ -30,11 +30,11 @@ namespace parse { namespace detail {
         one_or_more_star_types(star_type_rules.expr)
     {
         qi::_1_type _1;
-        qi::_a_type _a;
-        qi::_b_type _b;
-        qi::_c_type _c;
+        qi::_2_type _2;
+        qi::_3_type _3;
         qi::_val_type _val;
         qi::_pass_type _pass;
+        qi::omit_type omit_;
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
         const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
@@ -68,23 +68,24 @@ namespace parse { namespace detail {
             [ _val = construct_movable_(new_<Condition::StarType>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
+        building_type =
+            tok.Building_   [ _val = Condition::CONTENT_BUILDING ]
+            |   tok.Species_    [ _val = Condition::CONTENT_SPECIES ]
+            |   tok.Hull_       [ _val = Condition::CONTENT_SHIP_HULL ]
+            |   tok.Part_       [ _val = Condition::CONTENT_SHIP_PART ]
+            |   tok.Special_    [ _val = Condition::CONTENT_SPECIAL ]
+            |   tok.Focus_      [ _val = Condition::CONTENT_FOCUS ];
+
+
         location
-            =   (tok.Location_
-                 >    labeller.rule(Type_token) >
-                 (
-                     tok.Building_   [ _a = Condition::CONTENT_BUILDING ]
-                     |   tok.Species_    [ _a = Condition::CONTENT_SPECIES ]
-                     |   tok.Hull_       [ _a = Condition::CONTENT_SHIP_HULL ]
-                     |   tok.Part_       [ _a = Condition::CONTENT_SHIP_PART ]
-                     |   tok.Special_    [ _a = Condition::CONTENT_SPECIAL ]
-                     |   tok.Focus_      [ _a = Condition::CONTENT_FOCUS ]
-                 )
-                 >    labeller.rule(Name_token)   > string_grammar [ _b = _1 ]
-                 >  -(labeller.rule(Name_token)   > string_grammar [ _c = _1 ]))
+            =   (omit_[tok.Location_]
+                 >    labeller.rule(Type_token) > building_type
+                 >    labeller.rule(Name_token)   > string_grammar
+                 >  -(labeller.rule(Name_token)   > string_grammar))
             [ _val = construct_movable_(new_<Condition::Location>(
-                    _a,
-                    deconstruct_movable_(_b, _pass),
-                    deconstruct_movable_(_c, _pass))) ]
+                    _1,
+                    deconstruct_movable_(_2, _pass),
+                    deconstruct_movable_(_3, _pass))) ]
             ;
 
         owner_has_shippart_available
