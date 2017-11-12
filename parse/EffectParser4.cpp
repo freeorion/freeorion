@@ -1,6 +1,6 @@
 #include "EffectParser4.h"
 
-#include "ValueRefParserImpl.h"
+#include "ValueRefParser.h"
 #include "../universe/Effect.h"
 #include "../universe/ValueRef.h"
 
