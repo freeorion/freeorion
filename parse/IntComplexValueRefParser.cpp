@@ -1,5 +1,8 @@
 #include "ValueRefParserImpl.h"
 
+#include "MovableEnvelope.h"
+#include "../universe/ValueRef.h"
+#include <boost/spirit/include/phoenix.hpp>
 
 namespace parse {
     int_complex_parser_grammar::int_complex_parser_grammar(
