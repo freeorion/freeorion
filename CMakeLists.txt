@@ -671,6 +671,16 @@ add_subdirectory(doc)
 ## Install targets and package project.
 ##
 
+if(UNIX AND NOT BUILD_HEADLESS)
+    install(
+        TARGETS
+	    freeorion
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        BUNDLE DESTINATION .
+        RESOURCE
+    )
+endif()
+
 if(UNIX AND NOT APPLE)
     install(
         TARGETS
@@ -689,14 +699,6 @@ if(UNIX AND NOT APPLE)
     )
 
     if(NOT BUILD_HEADLESS)
-        install(
-            TARGETS
-                freeorion
-            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-            BUNDLE DESTINATION .
-            RESOURCE
-        )
-
         install(
             FILES
             ${CMAKE_SOURCE_DIR}/freeorion.desktop
