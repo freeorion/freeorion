@@ -288,15 +288,15 @@ namespace parse { namespace detail {
             return obj.OpenEnvelope(pass);
         }
 
-        /// Unwrap ::optional<MovablelEnvelope<T>> to return
-        /// unique_ptr(nullptr) for none
+        // Unwrap ::optional<MovablelEnvelope<T>> to return
+        // unique_ptr(nullptr) for none
         template <typename T>
         typename result<const deconstruct_movable(
             const MovableEnvelope<T>&,     bool&)>::type operator()
         (
             const boost::optional<MovableEnvelope<T>>& obj, bool& pass) const
         {
-            if (obj == boost::none)
+            if (!obj)
                 return nullptr;
             return obj->OpenEnvelope(pass);
         }
@@ -309,7 +309,7 @@ namespace parse { namespace detail {
         {
             // Note: this ignores the constness of pass because older compilers
             // pass the incorrect constness.
-            if (obj == boost::none)
+            if (!obj)
                 return nullptr;
             return obj->OpenEnvelope(pass);
         }
@@ -340,6 +340,34 @@ namespace parse { namespace detail {
             // Note: this ignores the constness of pass because older compilers
             // pass the incorrect constness.
             return OpenEnvelopes(objs, pass);
+        }
+
+        // Unwrap ::optional<vector<MovablelEnvelope<T>>> and return
+        // an empty vector for none
+        template <typename T>
+        typename result<const deconstruct_movable(
+            const std::vector<MovableEnvelope<T>>&,      bool&)>::type operator()
+        (
+            const boost::optional<std::vector<MovableEnvelope<T>>>& objs, bool& pass) const
+        {
+            if (!objs)
+                return typename result<const deconstruct_movable(
+                    const std::vector<MovableEnvelope<T>>&,      bool&)>::type();
+            return OpenEnvelopes(*std::move(objs), pass);
+        }
+
+        template <typename T>
+        typename result<const deconstruct_movable(
+            const std::vector<MovableEnvelope<T>>&,            bool&)>::type operator()
+        (
+            const boost::optional<std::vector<MovableEnvelope<T>>>& objs, const bool& pass) const
+        {
+            // Note: this ignores the constness of pass because older compilers
+            // pass the incorrect constness.
+            if (!objs)
+                return typename result<const deconstruct_movable(
+                    const std::vector<MovableEnvelope<T>>&,      bool&)>::type();
+            return OpenEnvelopes(*std::move(objs), pass);
         }
     };
 
