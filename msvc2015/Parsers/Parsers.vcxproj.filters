@@ -125,7 +125,7 @@
     <ClCompile Include="..\..\parse\Tokens.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\parse\ValueRefParserImpl.cpp">
+    <ClCompile Include="..\..\parse\ValueRefParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
     <ClCompile Include="..\..\parse\EmpireStatsParser.cpp">
@@ -185,9 +185,6 @@
       <Filter>Header Files\parse</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\ConditionParser7.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\parse\ValueRefParserImpl.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\ConditionParserImpl.h">
