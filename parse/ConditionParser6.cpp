@@ -40,11 +40,11 @@ namespace parse { namespace detail {
         one_or_more_planet_environments(planet_environment_rules.expr)
   {
         qi::_1_type _1;
-        qi::_a_type _a;
-        qi::_b_type _b;
+        qi::_2_type _2;
         qi::_val_type _val;
         qi::eps_type eps;
         qi::_pass_type _pass;
+        qi::omit_type omit_;
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
         const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
@@ -56,33 +56,28 @@ namespace parse { namespace detail {
         homeworld
             =   tok.Homeworld_
             >   (
-                (labeller.rule(Name_token) > one_or_more_string_values [ _a = _1, _val = construct_movable_(new_<Condition::Homeworld>(deconstruct_movable_vector_(_a, _pass))) ])
+                (labeller.rule(Name_token) > one_or_more_string_values
+                 [ _val = construct_movable_(new_<Condition::Homeworld>(deconstruct_movable_vector_(_1, _pass))) ])
                 |    eps [ _val = construct_movable_(new_<Condition::Homeworld>()) ]
             )
             ;
 
         building
-            =   (
-                tok.Building_
-                >  -(labeller.rule(Name_token) > one_or_more_string_values [ _a = _1 ])
-            )
-            [ _val = construct_movable_(new_<Condition::Building>(deconstruct_movable_vector_(_a, _pass))) ]
+            =   ( omit_[tok.Building_]
+                > -(labeller.rule(Name_token) > one_or_more_string_values)
+                ) [ _val = construct_movable_(new_<Condition::Building>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         species
-            =   tok.Species_
-            >   (
-                (labeller.rule(Name_token) > one_or_more_string_values [ _a = _1, _val = construct_movable_(new_<Condition::Species>(deconstruct_movable_vector_(_a, _pass))) ])
-                |    eps [ _val = construct_movable_(new_<Condition::Species>()) ]
-            )
+            = ( omit_[tok.Species_]
+                > -(labeller.rule(Name_token) > one_or_more_string_values)
+              ) [ _val = construct_movable_(new_<Condition::Species>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         focus_type
             =   tok.Focus_
-            >   (
-                (labeller.rule(Type_token) > one_or_more_string_values [ _a = _1, _val = construct_movable_(new_<Condition::FocusType>(deconstruct_movable_vector_(_a, _pass))) ])
-                | eps [ _val = construct_movable_(new_<Condition::FocusType>(deconstruct_movable_vector_(_a, _pass))) ]
-            )
+            > -(labeller.rule(Type_token) > one_or_more_string_values)
+            [ _val = construct_movable_(new_<Condition::FocusType>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         planet_type
@@ -102,14 +97,14 @@ namespace parse { namespace detail {
             ;
 
         planet_environment
-            =   ((tok.Planet_
+            =   ((omit_[tok.Planet_]
                   >>  labeller.rule(Environment_token)
                  )
-                 >   one_or_more_planet_environments [ _a = _1 ]
-                 >  -(labeller.rule(Species_token)        >  string_grammar [_b = _1]))
+                 >   one_or_more_planet_environments
+                 >  -(labeller.rule(Species_token)        >  string_grammar))
             [ _val = construct_movable_(new_<Condition::PlanetEnvironment>(
-                    deconstruct_movable_vector_(_a, _pass),
-                    deconstruct_movable_(_b, _pass))) ]
+                    deconstruct_movable_vector_(_1, _pass),
+                    deconstruct_movable_(_2, _pass))) ]
             ;
 
         object_type
