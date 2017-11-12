@@ -904,6 +904,22 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 psd_names.emplace(player.second.m_empire_name);
                 psd_names.emplace(player.second.m_player_name);
             }
+
+            // check for roles and client types
+            const auto& player_it = server.Networking().GetPlayer(player.first);
+            if (player_it != server.Networking().established_end()) {
+
+                if ((player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
+                    !(*player_it)->HasAuthRole(Networking::ROLE_PLAYER)) ||
+                    (player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR &&
+                    !(*player_it)->HasAuthRole(Networking::ROLE_MODERATOR)) ||
+                    (player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
+                    !(*player_it)->HasAuthRole(Networking::ROLE_OBSERVER)))
+                {
+                    has_collision = true;
+                    break;
+                }
+            }
         }
 
         if (has_collision) {
@@ -1077,10 +1093,17 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     psd_names.emplace(k_player.second.m_player_name);
                 }
 
-                // if we have collision unset ready flag and ignore changes
+                // if we have collision or unallowed client type
+                // unset ready flag and ignore changes
                 if (psd_colors.count(j_player.second.m_empire_color) ||
                     psd_names.count(j_player.second.m_empire_name) ||
-                    psd_names.count(j_player.second.m_player_name))
+                    psd_names.count(j_player.second.m_player_name) ||
+                    (j_player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
+                        !sender->HasAuthRole(Networking::ROLE_PLAYER)) ||
+                    (j_player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR &&
+                        !sender->HasAuthRole(Networking::ROLE_MODERATOR)) ||
+                    (j_player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
+                        !sender->HasAuthRole(Networking::ROLE_OBSERVER)))
                 {
                     i_player.second.m_player_ready = false;
                     player_setup_data_changed = true;
