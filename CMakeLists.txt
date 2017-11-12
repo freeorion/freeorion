@@ -671,7 +671,9 @@ add_subdirectory(doc)
 ## Install targets and package project.
 ##
 
-if(UNIX AND NOT APPLE)
+if(APPLE)
+    install(TARGETS freeorion BUNDLE DESTINATION .)
+elseif(UNIX)
     install(
         TARGETS
             freeorioncommon
