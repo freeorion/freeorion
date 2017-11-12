@@ -24,6 +24,8 @@ LIVING_HULL_BASE_FUEL_REGEN
     accountinglabel = "BASE_FUEL_REGEN_LABEL"
     priority = [[LATE_PRIORITY]]
     effects = SetFuel value = min(Target.MaxFuel, Value + 0.3001)
+
+   [[REFUEL_MESSAGE(0.3001)]]
 '''
 
 #include "/scripting/common/priorities.macros"
