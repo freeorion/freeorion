@@ -31,6 +31,9 @@ namespace parse { namespace detail {
 
     using name_token_rule = rule<const char* ()>;
     using reference_token_rule = rule<ValueRef::ReferenceType ()>;
+    const parse::detail::reference_token_rule variable_scope(const parse::lexer& tok);
+    const parse::detail::name_token_rule container_type(const parse::lexer& tok);
+
 
     template <typename T>
     using variable_payload = MovableEnvelope<ValueRef::Variable<T>>;
@@ -145,6 +148,21 @@ namespace parse { namespace detail {
         complex_variable_rule<std::string> start;
     };
 
+    template <typename T>
+    void initialize_nonnumeric_statistic_parser(
+        parse::detail::statistic_rule<T>& statistic,
+        const parse::lexer& tok,
+        parse::detail::Labeller& labeller,
+        const parse::detail::condition_parser_grammar& condition_parser,
+        const typename parse::detail::value_ref_rule<T>& value_ref);
+
+    template <typename T>
+    void initialize_bound_variable_parser(
+        variable_rule<T>& bound_variable,
+        const name_token_rule& variable_name,
+        const reference_token_rule& variable_scope_rule,
+        const name_token_rule& container_type_rule,
+        const parse::lexer& tok);
 }}
 
 namespace parse {
