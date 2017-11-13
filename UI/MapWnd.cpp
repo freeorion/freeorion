@@ -326,6 +326,7 @@ namespace {
             NewLabelValue(FLEET_DETAIL_TROOP_COUNT);
 
             UpdateLabels();
+            ResetShipDesignLabels();
             DoLayout();
         }
 
@@ -362,6 +363,12 @@ namespace {
             line_ul = {UL.x + (m_margin * 2), line_ht};
             line_lr = {LR.x - (m_margin * 2), line_ht};
             GG::Line(line_ul, line_lr, BORDER_CLR);
+
+            // seperation line between parts and designs
+            line_ht = { UL.y + (row_height * 7) + (row_height * 7 / 4) };
+            line_ul = { UL.x + (m_margin * 2), line_ht };
+            line_lr = { LR.x - (m_margin * 2), line_ht };
+            GG::Line(line_ul, line_lr, BORDER_CLR);
         }
 
         void DoLayout() {
@@ -393,7 +400,13 @@ namespace {
             LayoutRow(FLEET_DETAIL_PART_COUNT,
                       descr_ul, descr_lr, value_ul, value_lr, next_row);
             LayoutRow(FLEET_DETAIL_SLOT_COUNT,
-                      descr_ul, descr_lr, value_ul, value_lr, GG::Pt(GG::X0, GG::Y0));
+                      descr_ul, descr_lr, value_ul, value_lr,
+                      m_ship_design_labels.empty() ? GG::Pt(GG::X0, GG::Y0) : space_row);
+
+            for (auto it = m_ship_design_labels.begin(); it != m_ship_design_labels.end(); ++it) {
+                LayoutRow(*it, descr_ul, descr_lr, value_ul, value_lr,
+                          std::next(it) == m_ship_design_labels.end()? GG::Pt(GG::X0, GG::Y0) : next_row);
+            }
 
             Resize(GG::Pt(value_lr.x + (m_margin * 3), value_lr.y + (m_margin * 3)));
         }
@@ -443,6 +456,7 @@ namespace {
         void UpdateValues() {
             m_values.clear();
             m_values[FLEET_DETAIL_SHIP_COUNT] = 0;
+            m_ship_design_counts.clear();
             if (m_empire_id == ALL_EMPIRES)
                 return;
 
@@ -469,6 +483,7 @@ namespace {
                 const ShipDesign* design = ship->Design();
                 if (!design)
                     continue;
+                m_ship_design_counts[design->ID()]++;
                 for (const std::string& part : design->Parts()) {
                     m_values[FLEET_DETAIL_SLOT_COUNT] ++;
                     if (!part.empty())
@@ -490,22 +505,73 @@ namespace {
                 return;
             }
 
-            m_labels.at(descr).first->SizeMove(descr_ul, descr_lr);
-            m_labels.at(descr).second->SizeMove(value_ul, value_lr);
+            LayoutRow(m_labels.at(descr), descr_ul, descr_lr, value_ul, value_lr, row_advance);
+        }
+
+        void LayoutRow(LabelValueType& row,
+            GG::Pt& descr_ul, GG::Pt& descr_lr,
+            GG::Pt& value_ul, GG::Pt& value_lr,
+            const GG::Pt& row_advance)
+        {
+            row.first->SizeMove(descr_ul, descr_lr);
+            if (row.second) {
+                row.second->SizeMove(value_ul, value_lr);
+            }
             descr_ul += row_advance;
             descr_lr += row_advance;
             value_ul += row_advance;
             value_lr += row_advance;
         }
 
-    private:
-        void UpdateImpl(size_t mode, const Wnd* target) override { UpdateLabels(); }
+        /** Remove the old labels for ship design counts, and add the new ones.
+        /*  The stats thesmelves are updated in UpdateValues. */
+        void ResetShipDesignLabels() {
+            for (auto& labels : m_ship_design_labels) {
+                DetachChild(labels.first);
+                DetachChild(labels.second);
+            }
+            m_ship_design_labels.clear();
+            for (const auto& entry : m_ship_design_counts) {
+                GG::Y height{ ClientUI::Pts() };
+                // center format for title label
+                m_ship_design_labels.emplace_back(
+                    GG::Wnd::Create<CUILabel>(GetShipDesign(entry.first)->Name(),
+                        GG::FORMAT_RIGHT,
+                        GG::NO_WND_FLAGS, GG::X0, GG::Y0,
+                        m_col_widths.at(0) - (m_margin * 2), height
+                        ),
+                    GG::Wnd::Create<CUILabel>(std::to_string(entry.second),
+                        GG::FORMAT_RIGHT,
+                        GG::NO_WND_FLAGS, GG::X0, GG::Y0,
+                        m_col_widths.at(1) - (m_margin * 2), height
+                        )
+                );
+            }
+            std::sort(m_ship_design_labels.begin(), m_ship_design_labels.end(),
+                [](LabelValueType a, LabelValueType b) {
+                    return a.first->Text() < b.first->Text();
+                }
+            );
+            for (auto& labels : m_ship_design_labels) {
+                AttachChild(labels.first);
+                AttachChild(labels.second);
+            }
+        }
 
-        std::unordered_map<std::string, int>                    m_values;       ///< Internal value for display with a description
-        std::unordered_map<std::string, LabelValueType>         m_labels;       ///< Label controls mapped to the description key
-        int                                                     m_empire_id;    ///< ID of the viewing empire
-        std::vector<GG::X>                                      m_col_widths;   ///< widths of each column
-        int                                                     m_margin;       ///< margin between controls
+    private:
+        void UpdateImpl(size_t mode, const Wnd* target) override {
+            UpdateLabels();
+            ResetShipDesignLabels();
+            DoLayout();
+        }
+
+        std::unordered_map<std::string, int>            m_values;             ///< Internal value for display with a description
+        std::unordered_map<std::string, LabelValueType> m_labels;             ///< Label controls mapped to the description key
+        std::unordered_map<int, int>                    m_ship_design_counts; ///< Map of ship design ids to the number of ships with that id
+        std::vector<LabelValueType>                     m_ship_design_labels; ///< Label controls for ship designs, sorted by disply name
+        int                                             m_empire_id;          ///< ID of the viewing empire
+        std::vector<GG::X>                              m_col_widths;         ///< widths of each column
+        int                                             m_margin;             ///< margin between controls
     };
 }
 
