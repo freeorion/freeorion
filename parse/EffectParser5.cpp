@@ -18,12 +18,12 @@ namespace parse { namespace detail {
         one_or_more_effects(effect_parser)
     {
         qi::_1_type _1;
-        qi::_a_type _a;
-        qi::_b_type _b;
-        qi::_c_type _c;
+        qi::_2_type _2;
+        qi::_3_type _3;
         qi::_val_type _val;
         qi::eps_type eps;
         qi::_pass_type _pass;
+        qi::omit_type omit_;
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
         const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
@@ -32,14 +32,14 @@ namespace parse { namespace detail {
         using phoenix::construct;
 
         conditional
-            =   ( tok.If_
-                  >   labeller.rule(Condition_token)   >   condition_parser [ _a = _1 ]
-                  >   labeller.rule(Effects_token) > one_or_more_effects [ _b = _1 ]
-                  >   -(labeller.rule(Else_token)  > one_or_more_effects [ _c = _1 ])
+            =   ( omit_[tok.If_]
+                  >   labeller.rule(Condition_token)   >   condition_parser
+                  >   labeller.rule(Effects_token) > one_or_more_effects
+                  >   -(labeller.rule(Else_token)  > one_or_more_effects)
                 ) [ _val = construct_movable_(new_<Effect::Conditional>(
-                    deconstruct_movable_(_a, _pass),
-                    deconstruct_movable_vector_(_b, _pass),
-                    deconstruct_movable_vector_(_c, _pass))) ]
+                    deconstruct_movable_(_1, _pass),
+                    deconstruct_movable_vector_(_2, _pass),
+                    deconstruct_movable_vector_(_3, _pass))) ]
             ;
 
         start
