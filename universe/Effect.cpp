@@ -392,18 +392,12 @@ unsigned int NoOp::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetMeter                                              //
 ///////////////////////////////////////////////////////////
-SetMeter::SetMeter(MeterType meter, std::unique_ptr<ValueRef::ValueRefBase<double>>&& value) :
-    m_meter(meter),
-    m_value(std::move(value)),
-    m_accounting_label()
-{}
-
 SetMeter::SetMeter(MeterType meter,
                    std::unique_ptr<ValueRef::ValueRefBase<double>>&& value,
-                   const std::string& accounting_label) :
+                   const boost::optional<std::string>& accounting_label) :
     m_meter(meter),
     m_value(std::move(value)),
-    m_accounting_label(accounting_label)
+    m_accounting_label(accounting_label ? *accounting_label : std::string())
 {}
 
 SetMeter::~SetMeter()
