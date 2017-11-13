@@ -2941,42 +2941,50 @@ Messages
 MAP_BTN_MESSAGES_DESC
 ''''''
 
+
 MAP_PRODUCTION_TITLE  # translated
 Production
 
-MAP_PROD_WASTED_TITLE
-Production inutilisée
+MAP_PRODUCTION_WASTED_TITLE
+Production gaspillée
 
-# %1% number of production points generated.
-# %2% number of production points currently not used for production.
-MAP_PROD_WASTED_TEXT
-'''Production totale : %1%
-Production gaspillée : %2%
-
-Cliquer pour ouvrir le menu de production'''
-
-RESOURCE_TT_USED
-Utilisée
-
-RESOURCE_TT_OUTPUT
-Capacité actuelle
-
-RESOURCE_TT_TARGET_OUTPUT
-Capacité prévue
+MAP_PROD_CLICK_TO_OPEN
+'''
+Cliquez ici pour ouvrir le menu de Production'''
 
 MAP_RESEARCH_TITLE
 Recherche
 
-MAP_RES_WASTED_TITLE
-Recherche inutilisée
+MAP_RESEARCH_WASTED_TITLE
+Recherche gaspillée
 
-# %1% number of research points generated.
-# %2% number of research points currently not used for research.
-MAP_RES_WASTED_TEXT
-'''Recherche totale : %1%
-Recherche gaspillée : %2%
+MAP_RES_CLICK_TO_OPEN
+'''
+Cliquez ici pour ouvrir le menu de Recherche'''
 
-Cliquer pour ouvrir le menu de recherche'''
+MAP_STOCKPILE_TITLE
+Stock Impérial
+
+RESOURCE_TT_OUTPUT
+Capacité
+
+RESOURCE_TT_TARGET_OUTPUT
+Capacité prévue
+
+RESOURCE_TT_USED
+Utilisée
+
+RESOURCE_TT_EXCESS
+Excédent
+
+RESOURCE_TT_STOCKPILE_EFFIC
+Efficience Stock
+
+RESOURCE_TT_TO_STOCKPILE
+Vers Stock
+
+RESOURCE_TT_WASTED
+Gaspillée
 
 MAP_POPULATION_DISTRIBUTION
 Population
@@ -3730,14 +3738,28 @@ PRODUCTION_INFO_EMPIRE
 %1% %2%
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
-Total Points disponibles
+Points disponibles
 
 PRODUCTION_INFO_WASTED_PS_LABEL
-Points gaspillés
+Excédent
 
-PRODUCTION_INFO_LOCAL_PS_LABEL
-Points disponibles ici
+PRODUCTION_INFO_STOCKPILE_PS_LABEL
+Points stockés
 
+PRODUCTION_INFO_STOCKPILE_USE_MAX_LABEL
+Usage maximum
+
+PRODUCTION_INFO_STOCKPILE_USE_PS_LABEL
+Usage Stock
+
+STOCKPILE_LABEL
+Stock
+
+STOCKPILE_USE_LABEL
+Usage Stock
+
+STOCKPILE_CHANGE_LABEL
+Stock prochain tour
 
 ##
 ## Research window
@@ -3839,10 +3861,10 @@ La Fenêtre Production permet d'interagir directement avec la carte de la  [[enc
 
 (position par défaut: en haut à gauche)
 Le panneau "Récapitulation de Production" affiche les Points de Production disponibles.
-"Total Points disponibles" fait référence aux PP disponibles à travers tout l'empire.
-"Points disponibles ici" concerne le maximum de points disponibles pour le système sélectionné. Cette valeur peut être inférieure au total des points disponibles lorsque tous les systèmes de votre empire ne sont pas reliés par lignes d'[[metertype METER_SUPPLY]].
-"Points gaspillés" indique le nombre de points qui seront perdus si ceux-ci ne sont pas alloués avant la fin du tour.
-
+Si un système est sélectionné, deux colonnes sont visibles. La colonne de gauche correspond aux points de production à travers tout l'empire. La colonne de droite affiche les points de production pour le système sélectionné (absente si aucun système n'est sélectionné).
+"Points disponibles" fait référence aux PP disponibles pour la Production. La valeur de droite correspond au maximum de points disponibles pour le système sélectionné. Cette valeur peut être inférieure au total disponible lorsque tous les systèmes de votre empire ne sont pas reliés par lignes d'[[metertype METER_SUPPLY]].
+Le Stock correspond aux PP disponibles pour la Production, et provenant du Stock Impérial. Les Projets de Production doivent être individuellement autorisés à puiser dans le stock de PP.
+D'une manière générale, la plupart des PP en excédent seront gaspillés et perdus, mais une partie de cette excédent sera transférée dans le Stock Impérial.
 
 <u>Panneau Projets de Production</u>
 
@@ -3969,6 +3991,18 @@ Peut être construit ici
 
 PRODUCTION_LOCATION_INVALID
 NE PEUT PAS être construit ici
+
+IMPERIAL_STOCKPILE
+Stock Impérial
+
+PRODUCTION_QUEUE_ITEM_STOCKPILE_ENABLED
+(l'usage du [[IMPERIAL_STOCKPILE]] est Autorisé pour ce Projet)
+
+ALLOW_IMPERIAL_PP_STOCKPILE_USE
+Autoriser l'usage du [[IMPERIAL_STOCKPILE]] pour ce projet
+
+DISALLOW_IMPERIAL_PP_STOCKPILE_USE
+Bloquer l'usage du [[IMPERIAL_STOCKPILE]] pour ce projet
 
 # %1% name of the system this item production should be relocated to.
 PRODUCTION_QUEUE_RALLIED_TO
@@ -4223,6 +4257,9 @@ Planètes impériales dépeuplées
 
 PLANETS_INVADED
 Planètes envahies
+
+TOTAL_POPULATION_STAT  # translated
+Population
 
 #STATISTICS_TEST_1
 #Statistics Test 1
@@ -4867,6 +4904,9 @@ Croissance
 OUTPOSTS_ARTICLE_SHORT_DESC
 Avant-Poste
 
+HOMEWORLDS_ARTICLE_SHORT_DESC
+Planète Natale
+
 PRODUCTION_ARTICLE_SHORT_DESC  # translated
 Production
 
@@ -5055,14 +5095,37 @@ L'Industrie d'une planète peut participer à tout projet lancé sur les planèt
 Pour davantage d'informations sur l'interface de Production, consultez l'article [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
 '''
 
+METER_IMPERIAL_PP_TRANSFER_EFFICIENCY_VALUE_LABEL
+Ratio Transfert Industrie vers Stock de PP
+
+METER_IMPERIAL_PP_TRANSFER_EFFICIENCY_VALUE_DESC
+'''Le ratio de transfert représente l'efficience de mise en stock de points vers le [[IMPERIAL_STOCKPILE]], les rendant disponibles pour toute production à travers tout l'empire.
+
+Vous démarrez avec la technologie [[tech PRO_IMPERIAL_STOCKPILE_1]] et un ratio de 0.2 (i.e. 20% des PP en excédent sont transférés au [[IMPERIAL_STOCKPILE]]).
+Les technologies [[tech PRO_IMPERIAL_STOCKPILE_2]] et [[tech PRO_IMPERIAL_STOCKPILE_3]] ajoutent chacune 0.2 de ratio.
+La technologie [[tech CON_TRANS_DESIGN]] ajoute jusqu'à 0.3 de ratio. Par conséquent, le ratio peut atteindre une efficience comprise entre 20% et 90%.''' 
+
+METER_IMPERIAL_PP_USE_LIMIT_VALUE_LABEL
+Limite d'usage du Stock Impérial
+
+METER_IMPERIAL_PP_USE_LIMIT_VALUE
+'''La Limite d'usage du Stock Impérial représente la compétence quantitative du Stock Impérial à approvisionner les projets avec des points de production.
+Sa valeur correspond au nombre de PP pouvant être puisés à chaque tour dans le Stock Impérial et alloués à la production. 
+
+Vous démarrez avec la technologie [[tech PRO_IMPERIAL_STOCKPILE_1]] et un usage de 2 points par tour.
+La technologie [[tech PRO_IMPERIAL_STOCKPILE_2]] autorise l'usage de 3 points supplémentaires par tour.
+La technologie [[tech PRO_IMPERIAL_STOCKPILE_3]] autorise l'usage de 5 points supplémentaires par tour.
+Pleinement exploitée, la technologie [[tech CON_TRANS_DESIGN]] autorise l'usage de 12 points supplémentaires par tour.
+Par conséquent, la limite d'usage s'étale entre 2 et 22 PP par tour.''' 
+
 METER_RESEARCH_VALUE_LABEL
 Recherche
 
 METER_RESEARCH_VALUE_DESC
 '''La Recherche, mesurée en Points de Recherche (PR), est utilisée par toutes les planètes de l'empire pour la découverte de nouvelles [[encyclopedia ENC_TECH]].
 
-La Recherche qui n'est allouée à aucune technologie durant un tour est perdue (recherche gaspillée). L'assimilation complète de chaque technologie nécessite un nombre minimal de tours. Par exemple, si une technologie consomme 20 PR et requiert 5 tours, un maximum de 4 PR seulement par tour peut lui être consacré.
-Les PR sont affectés aux technologies à acquérir selon leur position dans la file d'attente : la technologie en tête de file est prioritaire. Les PR restants sont alloués au projet suivant dans la file et ainsi de suite, jusqu'à épuisement des points disponibles. L'ordre des technologies dans la file d'attente peut être modifié : les technologies que vous jugez prioritaires peuvent ainsi être déplacées en tête de file.
+L'assimilation complète de chaque technologie nécessite un nombre minimal de tours. Par exemple, si une technologie coûte 15 PR et requiert un minimum de 3 tours, seulement 5 PR par tour peuvent lui être alloués.
+Les PR sont affectés aux technologies à assimiler selon leur position dans la file d'attente : la technologie en tête de file est prioritaire. Les PR restants sont alloués au projet suivant dans la file et ainsi de suite, jusqu'à épuisement des points disponibles. L'ordre des technologies dans la file d'attente peut être modifié : les technologies que vous jugez prioritaires peuvent ainsi être déplacées en tête de file. Si des PR restent non-alloués après que chaque technologie ait reçu son maximum autorisé de PR, ces PR en excédent sont automatiquement attribués à une ou plusieurs technologies déverrouillées et présentant le moins de PR nécessaires ou restants avant assimilation.
 
 À l'inverse de l'Industrie, la Recherche n'impose pas d'échanges matériels entre planètes et n'est donc pas dépendante des lignes d'[[metertype METER_SUPPLY]] de l'empire.'''
 
@@ -5201,6 +5264,12 @@ Avant-Poste
 
 OUTPOSTS_TEXT
 Les Avant-Postes sont des stations inhabitées pouvant être implantées en des lieux trop hostiles pour la survie d'une colonie. Ils n'ont pas de population et ne produisent en principe aucune ressource, mais peuvent cependant contribuer aux lignes d'[[metertype METER_SUPPLY]] de l'empire (à l'aide de la technologie appropriée) et augmenter sa zone de détection. Des colonies peuvent être fondées sur les planètes déjà pourvues d'un Avant-Poste. Pour construire un Avant-Poste, il suffit de placer un [[shippart CO_OUTPOST_POD]] sur un astronef. Des Avant-Postes sont également créés lorsque la population d'une colonie tombe à zéro, quelle qu'en soit la raison.
+
+HOMEWORLDS_TITLE
+Planète Natale
+
+HOMEWORLDS_TEXT
+Les Planètes Natales sont les mondes d'origine où se trouvent les espèces au démarrage d'une partie (à noter qu'une espèce peut avoir plusieurs Planètes Natales). La technologie [[tech SPY_CUSTOM_ADVISORIES]] révèle leur existence et leur nombre, mais pas leur localisation. Une Planète Natale dispose de plusieurs avantages, tant que celle-ci est toujours habitée par l'espèce d'origine: les indicateurs [[metertype METER_TARGET_POPULATION]], [[metertype METER_MAX_TROOPS]], et [[metertype METER_TARGET_HAPPINESS]] sont accrus, et le [[encyclopedia GROWTH_FOCUS_TITLE]] est activé (à moins que l'espèce soit de type [[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]]), augmentant ainsi la [[metertype METER_TARGET_POPULATION]] des autres colonies habitées par la même espèce.
 
 FOCUS_TITLE
 Focus
@@ -6359,6 +6428,24 @@ La planète %planet% a été transformée en planète artificielle.
 EFFECT_ART_PLANET_LABEL
 Trou Noir
 
+INTERSPECIES_ACADEMY_LABEL
+Académie InterDesign d'Espèce
+
+CONDITION_INTERSPECIES_ACADEMY_SPECIES_ALREADY_EXISTS
+Des académies pour l'espèce de cette planète existent déjà dans l'empire
+
+EFFECT_INTERSPECIES_ACADEMY
+Effet additionnel pour l'espèce %species% sur la planète %planet% rejoignant l'Académie InterDesign. Chaque académie de design ajoute 0.05 à %rawtext%.
+
+EFFECT_INTERSPECIES_ACADEMY_LABEL
+Nouvelle Académie InterDesign
+
+EFFECT_INTERSPECIES_ACADEMY_DESTROY
+Destruction du doublon d'académie de design sur la planète %planet%.
+
+EFFECT_INTERSPECIES_ACADEMY_DESTROY_LABEL
+Doublon d'académie détruit
+
 EFFECT_TAME_MONSTER_HATCHED
 Un %predefinedshipdesign% apprivoisé est disponible sur la planète %planet%.
 
@@ -6490,6 +6577,13 @@ Sur %planet% : la [[tech LRN_SPATIAL_DISTORT_GEN]] a renvoyé la flotte %fleet% 
 
 EFFECT_FLEET_MOVED_TO_LABEL
 Flotte renvoyée dans
+
+EFFECT_SHIP_REFUELED
+Dans %system% : l'astronef %ship% a suffisamment de carburant pour reprendre son voyage spatial.
+
+EFFECT_SHIP_REFUELED_LABEL
+Astronef ravitaillé
+
 
 HEAD_ON_A_SPIKE_MESSAGE
 La capitale de l'empire %empire% est tombée.
@@ -8243,6 +8337,14 @@ Population
 # Meter types
 METER_INDUSTRY
 Industrie
+
+# Meter types
+METER_IMPERIAL_PP_TRANSFER_EFFICIENCY
+Ratio Production vers Stock
+
+# Meter types
+METER_IMPERIAL_PP_USE_LIMIT
+Limite usage Stock Impérial
 
 # Meter types
 METER_RESEARCH
@@ -10096,6 +10198,56 @@ Tandis que la transformation d'une population entière en êtres de pure énergi
 
 Le stade ultime du développement physique est justement de transcender le caractère physique des choses. Sans corps, les individus et les sociétés pourraient migrer, croître et exister librement, sans être entravés par des limitations physiques inutiles et des processus métaboliques improductifs, gaspillant l'énergie afin d'assurer l'homéostasie.'''
 
+CON_TRANS_DESIGN
+Design Transcendant
+
+CON_TRANS_DESIGN_DESC
+'''Transcendant les limitations de créativité des espèces, les représentants les plus inventifs et innovants des différentes espèces peuplant l'empire, entreprennent d'œuvrer collectivement à la conception de biens universellement utilisables.
+Bâtir la structure [[building BLD_INTERSPECIES_ACADEMY]] sur différentes planètes garantit que ce procédé soit diffusé à travers tout l'empire.
+
+Le service de Stock Impérial utilise le résultat de cette expérience pour produire des biens pouvant être utilisés par tout citoyen.'''
+
+IMPERIAL_STOCKPILE_SHORT_DESC
+Autorise le Stockage Impérial de Production
+
+PRO_IMPERIAL_STOCKPILE_1
+Stockage Anticipatif
+
+PRO_IMPERIAL_STOCKPILE_1_DESC
+'''Connaître où la demande future de certains biens augmentera, permet de stocker ceux-ci en prévision.
+Le service de Stock Impérial dispose d'une flotte acheminant les matériaux bruts vers des lieux où l'on prévoit que d'importants projets puissent être entrepris.
+Cette tâche s'avère difficile étant donné que le service doit présager du moment où la demande sera stipulée, à quel endroit, quels matériaux et biens seront requis et quels en seront les utilisateurs.
+
+Une partie des PP inutilisés sont transférés au Stock Impérial de Production, tandis que l'autre partie est gaspillée.
+Un projet de la file d'attente de Production peut puiser dans le Stock Impérial seulement si ce projet y a été explicitement autorisé.
+
+Il s'agit donc de la technologie de base concernant le Stock Impérial.
+Le Stock Impérial débute avec un [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] de 20% et permet de puiser 2 PP / tour dans le Stock (cf. [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
+
+PRO_IMPERIAL_STOCKPILE_2
+Stocks Génériques
+
+PRO_IMPERIAL_STOCKPILE_2_DESC
+'''En choisissant avec précaution les chaînes d'approvisionnement, les matériaux, et les modèles de conception, des Stocks Génériques sont constitués, pouvant être facilement dissociés et réutilisés selon les besoins dans la plupart des productions industrielles.
+
+Les Stocks Génériques peuvent être constitués bien avant que la demande ne se fasse sentir. Les packages d'approvisionnement intègrent habituellement des dispositifs de mise en place d'infrastructures permettant de redéfinir la production de nouveaux biens à partir des Stocks Génériques.
+En atteignant ce degré de sophistication, les Stocks Génériques peuvent être utilisés pour concevoir de nouveaux produits technologiques qui n'étaient même pas envisagés au moment de la constitution des stocks.
+
+Cela exempte le service du Stock Impérial de connaître à l'avance quels biens seront exactement demandés. Prévoir le lieu de la demande s'avère désormais suffisant.
+
+Il s'agit donc d'une technologie améliorant le Stock Impérial.
+Elle ajoute 20% au [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] et permet de puiser un supplément de 3 PP / tour dans le Stock (cf. [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
+
+PRO_IMPERIAL_STOCKPILE_3
+Complexe d'Intrication Interstellaire
+
+PRO_IMPERIAL_STOCKPILE_3_DESC
+'''L'intrication quantique des salles de contrôle permet de manœuvrer des machines industrielles à distance à partir d'autres systèmes stellaires.
+Dissocier le personnel et les moyens de production favorise un procédé optimal de conception et augmente l'efficience du service de Stock Impérial.
+
+Il s'agit donc d'une technologie améliorant le Stock Impérial.
+Elle ajoute 20% au [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] et permet de puiser un supplément de 5 PP / tour dans le Stock (cf. [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
+
 PRO_MICROGRAV_MAN
 Production en Microgravité
 
@@ -10269,7 +10421,7 @@ Structures Multidimensionnelles
 CON_NDIM_STRC_DESC
 '''Accroît la Population max de toutes les planètes habitables selon leur taille : ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
 
-Augmente également de 10 l'[[metertype METER_CONSTRUCTION]] Optimale de la planète hôte si celle-ci est habitée.
+Augmente également de 10 l'[[metertype METER_CONSTRUCTION]] Optimale des planètes habitées.
 
 Les facteurs principaux limitant la capacité de population d'une planète ne sont autres que les milieux environnementaux et l'espace disponible. En répartissant le développement des infrastructures de base sur de multiples dimensions, les limitations spatiales disparaissent, et dans des conditions environnementales idéales, le maximum de population d'une planète peut être considérablement accru.
 
@@ -11654,6 +11806,19 @@ L'amélioration [[tech PRO_INDUSTRY_CENTER_II]] double le bonus de base.
 
 L'amélioration [[tech PRO_INDUSTRY_CENTER_III]] triple le bonus de base.'''
 
+BLD_INTERSPECIES_ACADEMY
+Académie InterDesign d'Espèce
+
+BLD_INTERSPECIES_ACADEMY_DESC
+'''Académie InterDesign d'Espèce.
+
+Concevoir des dispositifs de production dans l'optique que différentes espèces puissent les utiliser, s'avère crucial dans le développement d'outils universellement utilisables.
+
+Chaque empire peut abriter une académie sur une à six planètes peuplées par différentes espèces.
+Afin de pouvoir bâtir une académie, le Bonheur de la Population doit être très élevé et cette dernière doit se trouver à au moins trois Voies spatiales d'une autre académie.
+Chaque Académie InterDesign améliore le [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] de 5% et permet de puiser un supplément de 2PP / tour dans le Stock (Voir l'article [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).
+'''
+
 BLD_MEGALITH
 Mégalithe
 
@@ -11696,7 +11861,7 @@ BLD_COLLECTIVE_NET
 Réseau de Pensée Collective
 
 BLD_COLLECTIVE_NET_DESC
-'''Augmente l'[[metertype METER_INDUSTRY]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Industrie, et la [[metertype METER_RESEARCH]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Recherche. Tout trajet sur Voies spatiales dans un périmètre de 200 uu affaiblira l'efficacité de cette structure et supprimera tout bonus.
+'''Augmente l'[[metertype METER_INDUSTRY]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Industrie, et la [[metertype METER_RESEARCH]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Recherche. Tout voyage sur Voies spatiales dans un périmètre de 200 uu affaiblira l'efficacité de cette structure et supprimera tout bonus.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 En transférant l'esprit dans le cyberespace, des milliers d'esprits peuvent agir comme un seul, résolvant des problèmes et faisant des découvertes qui s'avéreraient hors de portée pour un unique esprit, aussi brillant soit-il.'''
