@@ -6463,7 +6463,7 @@ void MapWnd::RefreshFleetResourceIndicator() {
     m_fleet->ClearBrowseInfoWnd();
     m_fleet->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_fleet->SetBrowseInfoWnd(GG::Wnd::Create<FleetDetailBrowseWnd>(
-        empire_id, GG::X(FontBasedUpscale(200))));
+        empire_id, GG::X(FontBasedUpscale(250))));
 }
 
 void MapWnd::RefreshResearchResourceIndicator() {
