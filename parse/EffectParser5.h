@@ -10,17 +10,8 @@
                               Labeller& labeller,
                               const condition_parser_grammar& condition_parser);
 
-        using conditional_rule = rule<
-            effect_signature,
-            boost::spirit::qi::locals<
-                condition_payload,
-                std::vector<effect_payload>,
-                std::vector<effect_payload>
-                >
-            >;
-
         single_or_bracketed_repeat<effect_parser_grammar> one_or_more_effects;
-        conditional_rule conditional;
+        effect_parser_rule conditional;
         effect_parser_rule start;
     };
     }
