@@ -15,9 +15,8 @@ namespace parse { namespace detail {
             effect_signature,
             boost::spirit::qi::locals<
                 MeterType,
-                value_ref_payload<std::string>,
                 value_ref_payload<double>,
-                std::string
+                boost::optional<std::string>
             >
         > set_meter_rule;
 
@@ -45,7 +44,7 @@ namespace parse { namespace detail {
         parse::double_parser_rules                  double_rules;
         visibility_parser_rules                     visibility_rules;
         set_meter_rule                              set_meter;
-        set_meter_rule                              set_ship_part_meter;
+        effect_parser_rule                          set_ship_part_meter;
         set_stockpile_or_vis_rule                   set_empire_stockpile;
         effect_parser_rule                          set_empire_capital;
         effect_parser_rule                          set_planet_type;
