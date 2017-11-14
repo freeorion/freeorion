@@ -92,7 +92,7 @@ void MultiIconValueIndicator::Update() {
 
     for (std::size_t i = 0; i < m_icons.size(); ++i) {
         assert(m_icons[i]);
-        double sum = 0.0;
+        double total = 0.0;
         for (int object_id : m_object_ids) {
             auto obj = GetUniverseObject(object_id);
             if (!obj) {
@@ -101,9 +101,15 @@ void MultiIconValueIndicator::Update() {
             }
             //DebugLogger() << "MultiIconValueIndicator::Update object:";
             //DebugLogger() << obj->Dump();
-            sum += obj->InitialMeterValue(m_meter_types[i].first);
+            auto type = m_meter_types[i].first;
+            double value = obj->InitialMeterValue(type);
+            // Supply is a special case: the only thing that matters is the highest value.
+            if (type == METER_SUPPLY)
+                total = std::max(total, value);
+            else
+                total += value;
         }
-        m_icons[i]->SetValue(sum);
+        m_icons[i]->SetValue(total);
     }
 }
 

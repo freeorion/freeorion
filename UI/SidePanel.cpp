@@ -2741,6 +2741,106 @@ void SidePanel::PlanetPanelContainer::EnableOrderIssuing(bool enable/* = true*/)
     }
 }
 
+namespace {
+    GG::X LabelWidth()
+    { return GG::X(ClientUI::Pts() * 9); }
+
+    GG::X ValueWidth()
+    { return GG::X(ClientUI::Pts() * 4); }
+
+    GG::Y RowHeight()
+    { return GG::Y(ClientUI::Pts() * 3 / 2); }
+
+    class SystemMeterBrowseWnd : public GG::BrowseInfoWnd {
+    public:
+        SystemMeterBrowseWnd(MeterType meter_type, int system_id) :
+            GG::BrowseInfoWnd(GG::X0, GG::Y0, LabelWidth() + ValueWidth(), GG::Y1),
+            m_meter_type(meter_type),
+            m_system_id(system_id)
+        {}
+
+        bool WndHasBrowseInfo(const GG::Wnd* wnd, std::size_t mode) const override {
+            assert(mode <= wnd->BrowseModes().size());
+            return true;
+        }
+
+        void Render() override {
+            const GG::Pt ul(UpperLeft());
+            const GG::Pt lr(LowerRight());
+            // main background
+            GG::FlatRectangle(ul, lr, OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);
+            // title bar background
+            GG::FlatRectangle(ul, GG::Pt(lr.x, ul.y + RowHeight()),
+                ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);
+        }
+
+        void UpdateImpl(std::size_t mode, const GG::Wnd* target) override {
+            const GG::Y row_height(RowHeight());
+            for (const auto& label_pair : m_labels_and_amounts) {
+                DetachChild(label_pair.first);
+                DetachChild(label_pair.second);
+            }
+            m_labels_and_amounts.clear();
+
+            auto system = GetSystem(m_system_id);
+            if (!system)
+                return;
+
+            auto total_meter_value = 0.0f;
+
+            auto title_label = GG::Wnd::Create<CUILabel>(UserString(boost::lexical_cast<std::string>(m_meter_type)), GG::FORMAT_RIGHT);
+            title_label->MoveTo(GG::Pt(GG::X0, GG::Y0));
+            title_label->Resize(GG::Pt(LabelWidth(), row_height));
+            title_label->SetFont(ClientUI::GetBoldFont());
+            AttachChild(title_label);
+
+            GG::Y top = row_height;
+            // add label-value pair for each resource-producing object in system to indicate amount of resource produced
+            auto objects = Objects().FindObjects<const Planet>(system->ContainedObjectIDs());
+            for (const auto& planet : objects) {
+                // Ignore empty planets
+                if (planet->Unowned() && planet->SpeciesName().empty())
+                    continue;
+
+                const auto name = planet->Name();
+                auto label = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_RIGHT);
+                label->MoveTo(GG::Pt(GG::X0, top));
+                label->Resize(GG::Pt(LabelWidth(), row_height));
+                AttachChild(label);
+
+                const auto meter_value = planet->InitialMeterValue(m_meter_type);
+                if (m_meter_type == METER_SUPPLY) {
+                    total_meter_value = std::max(total_meter_value, meter_value);
+                }
+                else {
+                    total_meter_value += meter_value;
+                }
+                auto value = GG::Wnd::Create<CUILabel>(DoubleToString(meter_value, 3, false));
+                value->MoveTo(GG::Pt(LabelWidth(), top));
+                value->Resize(GG::Pt(ValueWidth(), row_height));
+                AttachChild(value);
+
+                m_labels_and_amounts.emplace_back(label, value);
+
+                top += row_height;
+            }
+
+            auto title_value = GG::Wnd::Create<CUILabel>(DoubleToString(total_meter_value, 3, false));
+            title_value->MoveTo(GG::Pt(LabelWidth(), GG::Y0));
+            title_value->Resize(GG::Pt(ValueWidth(), row_height));
+            title_value->SetFont(ClientUI::GetBoldFont());
+            AttachChild(title_value);
+            m_labels_and_amounts.emplace_back(title_label, title_value);
+
+            Resize(GG::Pt(LabelWidth() + ValueWidth(), top));
+        }
+    private:
+        MeterType m_meter_type;
+        int m_system_id;
+        std::vector<std::pair<std::shared_ptr<GG::Label>, std::shared_ptr<GG::Label>>> m_labels_and_amounts;
+    };
+}
+
 ////////////////////////////////////////////////
 // SidePanel
 ////////////////////////////////////////////////
@@ -3145,23 +3245,56 @@ void SidePanel::RefreshImpl() {
 
     // populate system resource summary
 
-    // get just planets owned by player's empire
+    // for getting just the planets owned by player's empire
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    std::vector<int> owned_planets;
+    // If all planets are owned by the same empire, then we show the Shields/Defense/Troops/Supply;
+    // regardless, if there are any planets owned by the player in the system, we show
+    // Production/Research/Trade.
+    int all_owner_id = ALL_EMPIRES;
+    bool all_planets_share_owner = true;
+    std::vector<int> all_planets, player_planets;
     for (auto& planet : Objects().FindObjects<const Planet>(planet_ids)) {
-        if (planet->OwnedBy(empire_id))
-            owned_planets.push_back(planet->ID());
+        // If it is neither owned nor populated with natives, it can be ignored.
+        if (planet->Unowned() && planet->SpeciesName().empty())
+            continue;
+
+        int owner = planet->Owner();
+        // If all planets have the same owner as each other, then they must have the same owner
+        // as the first planet, so store its owner here when finding the first planet.
+        if (all_planets.empty())
+            all_owner_id = owner;
+        if (owner != all_owner_id)
+            all_planets_share_owner = false;
+
+        all_planets.push_back(planet->ID());
+        if (owner == empire_id)
+            player_planets.push_back(planet->ID());
     }
 
-    // specify which meter types to include in resource summary.  Oddly enough, these are the resource meters.
-    std::vector<std::pair<MeterType, MeterType>> meter_types =
-        {{METER_INDUSTRY,   METER_TARGET_INDUSTRY},
-         {METER_RESEARCH,   METER_TARGET_RESEARCH},
-         {METER_TRADE,      METER_TARGET_TRADE}};
+    // Resource meters; show only for player planets
+    const std::vector<std::pair<MeterType, MeterType>> resource_meters =
+       {{METER_INDUSTRY, METER_TARGET_INDUSTRY},
+        {METER_RESEARCH, METER_TARGET_RESEARCH},
+        {METER_TRADE,    METER_TARGET_TRADE}};
+    // general meters; show only if all planets are owned by same empire
+    const std::vector<std::pair<MeterType, MeterType>> general_meters =
+       {{METER_SHIELD,  METER_MAX_SHIELD},
+        {METER_DEFENSE, METER_MAX_DEFENSE},
+        {METER_TROOPS,  METER_MAX_TROOPS},
+        {METER_SUPPLY,  METER_MAX_SUPPLY}};
+    std::vector<std::pair<MeterType, MeterType>> meter_types;
+    if (!player_planets.empty()) {
+        meter_types.insert(meter_types.end(), resource_meters.begin(), resource_meters.end());
+    }
+    if (all_planets_share_owner) {
+        meter_types.insert(meter_types.end(), general_meters.begin(), general_meters.end());
+    }
 
     // refresh the system resource summary.
     m_system_resource_summary = GG::Wnd::Create<MultiIconValueIndicator>(
-        Width() - MaxPlanetDiameter() - 8, owned_planets, meter_types);
+        Width() - MaxPlanetDiameter() - 8,
+        all_planets_share_owner ? all_planets : player_planets,
+        meter_types);
     m_system_resource_summary->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + 4),
                                              140 - m_system_resource_summary->Height()));
     AttachChild(m_system_resource_summary);
@@ -3172,12 +3305,17 @@ void SidePanel::RefreshImpl() {
         DetachChild(m_system_resource_summary);
     } else {
         // add tooltips to the system resource summary
-        for (const auto& entry : meter_types) {
+        for (const auto& entry : resource_meters) {
             MeterType type = entry.first;
-            // add tooltip for each meter type
-            auto browse_wnd = GG::Wnd::Create<SystemResourceSummaryBrowseWnd>(
-                MeterToResource(type), s_system_id, HumanClientApp::GetApp()->EmpireID());
-            m_system_resource_summary->SetToolTip(type, browse_wnd);
+            m_system_resource_summary->SetToolTip(type,
+                GG::Wnd::Create<SystemResourceSummaryBrowseWnd>(
+                    MeterToResource(type), s_system_id, empire_id));
+        }
+        // and the other meters
+        for (const auto& entry : general_meters) {
+            MeterType type = entry.first;
+            m_system_resource_summary->SetToolTip(type,
+                GG::Wnd::Create<SystemMeterBrowseWnd>(type, s_system_id));
         }
 
         AttachChild(m_system_resource_summary);
