@@ -37,11 +37,13 @@ namespace {
                          const HullTypeStats& stats,
                          const std::unique_ptr<CommonParams>& common_params,
                          const MoreCommonParams& more_common_params,
-                         const std::vector<HullType::Slot>& slots,
+                         const boost::optional<std::vector<HullType::Slot>>& slots,
                          const std::string& icon, const std::string& graphic)
     {
         auto hulltype = boost::make_unique<HullType>(
-            stats, std::move(*common_params), more_common_params, slots, icon, graphic);
+            stats, std::move(*common_params), more_common_params,
+            (slots ? *slots : std::vector<HullType::Slot>()),
+            icon, graphic);
         hulltypes.emplace(hulltype->Name(), std::move(hulltype));
     }
 
@@ -73,51 +75,44 @@ namespace {
             qi::_2_type _2;
             qi::_3_type _3;
             qi::_4_type _4;
-            qi::_a_type _a;
-            qi::_b_type _b;
-            qi::_c_type _c;
-            qi::_d_type _d;
-            qi::_e_type _e;
-            qi::_f_type _f;
+            qi::_5_type _5;
+            qi::_6_type _6;
             qi::_r1_type _r1;
             qi::_pass_type _pass;
             qi::_val_type _val;
             qi::eps_type eps;
             qi::lit_type lit;
+            qi::omit_type omit_;
             const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             hull_stats
-                =   labeller.rule(Speed_token)       >   double_rule [ _a = _1 ]
-                >   labeller.rule(Fuel_token)        >   double_rule [ _c = _1 ]
-                >   labeller.rule(Stealth_token)     >   double_rule [ _d = _1 ]
-                >   labeller.rule(Structure_token)   >   double_rule
-                    [ _val = construct<HullTypeStats>(_c, _a, _d, _1) ]
+                =  (labeller.rule(Speed_token)       >   double_rule
+                >   labeller.rule(Fuel_token)        >   double_rule
+                >   labeller.rule(Stealth_token)     >   double_rule
+                >   labeller.rule(Structure_token)   >   double_rule)
+                    [ _val = construct<HullTypeStats>(_2, _1, _3, _4) ]
                 ;
 
             slot
-                =   tok.Slot_
-                >   labeller.rule(Type_token) > ship_slot_type_enum [ _a = _1 ]
+                =  (omit_[tok.Slot_]
+                >   labeller.rule(Type_token) > ship_slot_type_enum
                 >   labeller.rule(Position_token)
-                >   '(' > double_rule [ _b = _1 ] > ',' > double_rule [ _c = _1 ] > lit(')')
-                    [ _val = construct<HullType::Slot>(_a, _b, _c) ]
-                ;
-
-            slots
-                =  -(labeller.rule(Slots_token) > one_or_more_slots [_r1 = _1 ])
+                >   '(' > double_rule > ',' > double_rule > lit(')'))
+                    [ _val = construct<HullType::Slot>(_1, _2, _3) ]
                 ;
 
             hull
-                =   tok.Hull_
+                =   (omit_[tok.Hull_]
                 >   common_rules.more_common
-                    [_pass = is_unique_(_r1, HullType_token, phoenix::bind(&MoreCommonParams::name, _1)), _a = _1 ]
-                >   hull_stats                                  [ _c = _1 ]
-                >  -slots(_e)
-                >   common_rules.common       [ _d = _1 ]
-                >   labeller.rule(Icon_token)    > tok.string    [ _f = _1 ]
-                >   labeller.rule(Graphic_token) > tok.string
-                [ insert_hulltype_(_r1, _c,
-                                   deconstruct_movable_(_d, _pass),
-                                   _a, _e, _f, _1) ]
+                    [_pass = is_unique_(_r1, HullType_token, phoenix::bind(&MoreCommonParams::name, _1))]
+                >   hull_stats
+                >  -(labeller.rule(Slots_token) > one_or_more_slots)
+                >   common_rules.common
+                >   labeller.rule(Icon_token)    > tok.string
+                >   labeller.rule(Graphic_token) > tok.string)
+                [ insert_hulltype_(_r1, _2,
+                                   deconstruct_movable_(_4, _pass),
+                                   _1, _3, _5, _6) ]
                 ;
 
             start
@@ -126,54 +121,25 @@ namespace {
 
             hull_stats.name("Hull stats");
             slot.name("Slot");
-            slots.name("Slots");
             hull.name("Hull");
 
 #if DEBUG_PARSERS
             debug(cost);
             debug(hull_stats);
             debug(slot);
-            debug(slots);
             debug(hull);
 #endif
 
             qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
-        typedef parse::detail::rule<
-            HullTypeStats (),
-            boost::spirit::qi::locals<
-                double,
-                double,
-                double,
-                double
-            >
-        > hull_stats_rule;
+        using hull_stats_rule = parse::detail::rule<HullTypeStats ()>;
 
-        typedef parse::detail::rule<
-            HullType::Slot (),
-            boost::spirit::qi::locals<
-                ShipSlotType,
-                double,
-                double
-            >
-        > slot_rule;
+        using slot_rule =  parse::detail::rule<HullType::Slot ()>;
 
-        typedef parse::detail::rule<
-            void (std::vector<HullType::Slot>&)
-        > slots_rule;
-
-        typedef parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<HullType>>&),
-            boost::spirit::qi::locals<
-                MoreCommonParams,
-                std::string,    // dummy
-                HullTypeStats,
-                parse::detail::MovableEnvelope<CommonParams>,
-                std::vector<HullType::Slot>,
-                std::string
-            >
-        > hull_rule;
+        using hull_rule = parse::detail::rule<
+            void (std::map<std::string, std::unique_ptr<HullType>>&)
+        >;
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
@@ -187,7 +153,6 @@ namespace {
         hull_stats_rule                             hull_stats;
         slot_rule                                   slot;
         parse::detail::single_or_bracketed_repeat<slot_rule> one_or_more_slots;
-        slots_rule                                  slots;
         hull_rule                                   hull;
         start_rule                                  start;
     };
