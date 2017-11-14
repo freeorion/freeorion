@@ -2748,6 +2748,9 @@ namespace {
     GG::X ValueWidth()
     { return GG::X(ClientUI::Pts() * 4); }
 
+    GG::Y RowHeight()
+    { return GG::Y(ClientUI::Pts() * 3 / 2); }
+
     class SystemMeterBrowseWnd : public GG::BrowseInfoWnd {
     public:
         SystemMeterBrowseWnd(MeterType meter_type, int system_id) :
@@ -2762,16 +2765,17 @@ namespace {
         }
 
         void Render() override {
+            const GG::Pt ul(UpperLeft());
+            const GG::Pt lr(LowerRight());
             // main background
-            GG::FlatRectangle(UpperLeft(), LowerRight(), OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);
+            GG::FlatRectangle(ul, lr, OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);
+            // title bar background
+            GG::FlatRectangle(ul, GG::Pt(lr.x, ul.y + RowHeight()),
+                ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);
         }
 
         void UpdateImpl(std::size_t mode, const GG::Wnd* target) override {
-            const GG::Y row_height(ClientUI::Pts() * 3 / 2);
-            const GG::X TOTAL_WIDTH(LabelWidth() + ValueWidth());
-
-            GG::Y top = GG::Y0;
-
+            const GG::Y row_height(RowHeight());
             for (const auto& label_pair : m_labels_and_amounts) {
                 DetachChild(label_pair.first);
                 DetachChild(label_pair.second);
@@ -2781,23 +2785,37 @@ namespace {
             auto system = GetSystem(m_system_id);
             if (!system)
                 return;
+
+            auto total_meter_value = 0.0f;
+
+            auto title_label = GG::Wnd::Create<CUILabel>(UserString(boost::lexical_cast<std::string>(m_meter_type)), GG::FORMAT_RIGHT);
+            title_label->MoveTo(GG::Pt(GG::X0, GG::Y0));
+            title_label->Resize(GG::Pt(LabelWidth(), row_height));
+            title_label->SetFont(ClientUI::GetBoldFont());
+            AttachChild(title_label);
+
+            GG::Y top = row_height;
             // add label-value pair for each resource-producing object in system to indicate amount of resource produced
             auto objects = Objects().FindObjects<const Planet>(system->ContainedObjectIDs());
-
             for (const auto& planet : objects) {
                 // Ignore empty planets
                 if (planet->Unowned() && planet->SpeciesName().empty())
                     continue;
 
                 const auto name = planet->Name();
-                const auto amount_text = DoubleToString(planet->InitialMeterValue(m_meter_type), 3, false);
-
                 auto label = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_RIGHT);
                 label->MoveTo(GG::Pt(GG::X0, top));
                 label->Resize(GG::Pt(LabelWidth(), row_height));
                 AttachChild(label);
 
-                auto value = GG::Wnd::Create<CUILabel>(amount_text);
+                const auto meter_value = planet->InitialMeterValue(m_meter_type);
+                if (m_meter_type == METER_SUPPLY) {
+                    total_meter_value = std::max(total_meter_value, meter_value);
+                }
+                else {
+                    total_meter_value += meter_value;
+                }
+                auto value = GG::Wnd::Create<CUILabel>(DoubleToString(meter_value, 3, false));
                 value->MoveTo(GG::Pt(LabelWidth(), top));
                 value->Resize(GG::Pt(ValueWidth(), row_height));
                 AttachChild(value);
@@ -2806,6 +2824,14 @@ namespace {
 
                 top += row_height;
             }
+
+            auto title_value = GG::Wnd::Create<CUILabel>(DoubleToString(total_meter_value, 3, false));
+            title_value->MoveTo(GG::Pt(LabelWidth(), GG::Y0));
+            title_value->Resize(GG::Pt(ValueWidth(), row_height));
+            title_value->SetFont(ClientUI::GetBoldFont());
+            AttachChild(title_value);
+            m_labels_and_amounts.emplace_back(title_label, title_value);
+
             Resize(GG::Pt(LabelWidth() + ValueWidth(), top));
         }
     private:
