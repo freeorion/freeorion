@@ -1460,6 +1460,7 @@ void MapWnd::CompleteConstruction() {
     m_sitrep_panel->ClosingSignal.connect(
         boost::bind(&MapWnd::HideSitRep, this));
     if (m_sitrep_panel->Visible()) {
+        PushWndStack(m_sitrep_panel);
         m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
         m_btn_siterep->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep.png")));
     }
@@ -1470,6 +1471,7 @@ void MapWnd::CompleteConstruction() {
     m_pedia_panel->ClosingSignal.connect(
         boost::bind(&MapWnd::HidePedia, this));
     if (m_pedia_panel->Visible()) {
+        PushWndStack(m_pedia_panel);
         m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
         m_btn_pedia->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia.png")));
     }
@@ -1482,6 +1484,7 @@ void MapWnd::CompleteConstruction() {
     m_object_list_wnd->ObjectDumpSignal.connect(
         boost::bind(&ClientUI::DumpObject, ClientUI::GetClientUI(), _1));
     if (m_object_list_wnd->Visible()) {
+        PushWndStack(m_object_list_wnd);
         m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
         m_btn_objects->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
     }
@@ -1491,6 +1494,7 @@ void MapWnd::CompleteConstruction() {
     m_moderator_wnd->ClosingSignal.connect(
         boost::bind(&MapWnd::HideModeratorActions, this));
     if (m_moderator_wnd->Visible()) {
+        PushWndStack(m_moderator_wnd);
         m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
         m_btn_moderator->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
     }
@@ -1508,8 +1512,9 @@ void MapWnd::CompleteConstruction() {
             msg_wnd->ClosingSignal.connect(
                 boost::bind(&MapWnd::HideMessages, this));
             if (msg_wnd->Visible()) {
-                    m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
-                    m_btn_messages->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
+                PushWndStack(msg_wnd);
+                m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
+                m_btn_messages->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
             }
         }
         if (const auto& plr_wnd = cui->GetPlayerListWnd()) {
@@ -1517,6 +1522,7 @@ void MapWnd::CompleteConstruction() {
             plr_wnd->ClosingSignal.connect(
                 boost::bind(&MapWnd::HideEmpires, this));
             if (plr_wnd->Visible()) {
+                PushWndStack(plr_wnd);
                 m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
                 m_btn_empires->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
             }
