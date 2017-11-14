@@ -52,15 +52,15 @@ namespace {
             qi::_2_type _2;
             qi::_3_type _3;
             qi::_4_type _4;
-            qi::_a_type _a;
             qi::_r1_type _r1;
+            qi::omit_type omit_;
 
             fleet_plan
-                =    tok.Fleet_
-                >    labeller.rule(Name_token) > tok.string [ _a = _1 ]
+                =  ( omit_[tok.Fleet_]
+                >    labeller.rule(Name_token) > tok.string
                 >    labeller.rule(Ships_token)
-                >    one_or_more_string_tokens
-                [ insert_fleet_plan_(_r1, _a, _1, phoenix::val(true)) ]
+                >    one_or_more_string_tokens )
+                [ insert_fleet_plan_(_r1, _1, _2, phoenix::val(true)) ]
                 ;
 
             start
@@ -75,18 +75,11 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
-        using  fleet_plan_rule = parse::detail::rule<
-            start_rule_signature,
-            boost::spirit::qi::locals<
-                std::string
-                >
-            >;
-
         using start_rule = parse::detail::rule<start_rule_signature>;
 
         parse::detail::Labeller labeller;
         parse::detail::single_or_repeated_string<std::vector<std::string>> one_or_more_string_tokens;
-        fleet_plan_rule fleet_plan;
+        start_rule fleet_plan;
         start_rule start;
     };
 }

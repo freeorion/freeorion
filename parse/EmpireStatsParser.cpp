@@ -51,13 +51,14 @@ namespace {
             qi::_r1_type _r1;
             qi::_val_type _val;
             qi::_pass_type _pass;
+            qi::omit_type omit_;
             const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             stat
-                = tok.Statistic_
-                >   labeller.rule(Name_token)    > tok.string[_a = _1]
+                = ( omit_[tok.Statistic_]
+                >   labeller.rule(Name_token)    > tok.string
                 >   labeller.rule(Value_token)   > double_rules.expr
-                [ _val = construct<std::pair<std::string, parse::detail::value_ref_payload<double>>>(_a, _1) ]
+                  ) [ _val = construct<std::pair<std::string, parse::detail::value_ref_payload<double>>>(_1, _2) ]
                 ;
 
             start
@@ -75,8 +76,7 @@ namespace {
         }
 
         using stat_rule = parse::detail::rule<
-            std::pair<std::string, parse::detail::value_ref_payload<double>> (),
-            boost::spirit::qi::locals<std::string>
+            std::pair<std::string, parse::detail::value_ref_payload<double>> ()
             >;
 
         using start_rule = parse::detail::rule<
