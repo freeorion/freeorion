@@ -30,16 +30,16 @@ namespace {
 
     // How much space to leave for the y axis
     GG::X AXIS_WIDTH(10);
-    // How much space to leave for the axis
-    // at the bottom of a SideBar
+    // How much space to leave for the x axis
+    // at the top of a SideBar
     GG::Y AXIS_HEIGHT(10);
 
-    // Space arounf the labels of the axes
+    // Space around the labels of the axes
     GG::X Y_AXIS_LABEL_MARGIN(3);
     GG::Y X_AXIS_LABEL_MARGIN(8);
 
-    // Margin between participant bars and whatever is above the side bars top
-    GG::Y PARTICIPANT_BAR_UP_MARGIN(5);
+    // Margin between x-axis label and whatever is above the side bars top
+    GG::Y SIDE_BAR_UP_MARGIN(5);
 
     // Space between side boxes
     GG::Y SIDE_BOX_MARGIN(8);
@@ -52,7 +52,7 @@ namespace {
     int MIN_PARTICIPANT_BAR_HEIGHT = MIN_SIDE_BAR_HEIGHT -
                                      Value(AXIS_HEIGHT) -
                                      Value(X_AXIS_LABEL_MARGIN) -
-                                     Value(PARTICIPANT_BAR_UP_MARGIN);
+                                     Value(SIDE_BAR_UP_MARGIN);
 
     const float EPSILON = 0.00001f;
 
@@ -94,7 +94,7 @@ namespace {
     GG::Pt AdjustForAxes(const GG::Pt& size) {
         GG::Pt adjusted(size);
         adjusted.x = std::max( GG::X0, size.x - AXIS_WIDTH - Y_AXIS_LABEL_MARGIN);
-        adjusted.y = std::max( GG::Y0, size.y - AXIS_HEIGHT - X_AXIS_LABEL_MARGIN - PARTICIPANT_BAR_UP_MARGIN);
+        adjusted.y = std::max( GG::Y0, size.y - 2 * (SIDE_BAR_UP_MARGIN + AXIS_HEIGHT + X_AXIS_LABEL_MARGIN));
         return adjusted;
     }
 
@@ -201,7 +201,7 @@ public:
         m_available_participant_bar_height =
             std::max( GG::Y0,
                       m_available_side_bar_space.y -
-                          (AXIS_HEIGHT + X_AXIS_LABEL_MARGIN + PARTICIPANT_BAR_UP_MARGIN) *
+                          (AXIS_HEIGHT + X_AXIS_LABEL_MARGIN + SIDE_BAR_UP_MARGIN) *
                           static_cast<int>(m_summaries.size()) );
     }
 
@@ -224,7 +224,7 @@ public:
             reqd_available_client_height = GG::Y(static_cast<int>(m_summaries.size()) * MIN_PARTICIPANT_BAR_HEIGHT);
         }
 
-        GG::Y reqd_available_total_height(reqd_available_client_height + (SIDE_BOX_MARGIN + AXIS_HEIGHT + X_AXIS_LABEL_MARGIN + PARTICIPANT_BAR_UP_MARGIN) * static_cast<int>(m_summaries.size()) + SIDE_BOX_MARGIN);
+        GG::Y reqd_available_total_height(reqd_available_client_height + (SIDE_BOX_MARGIN + AXIS_HEIGHT + X_AXIS_LABEL_MARGIN + SIDE_BAR_UP_MARGIN) * static_cast<int>(m_summaries.size()) + SIDE_BOX_MARGIN);
 
         return GG::Pt(GG::X(MIN_SIDE_BAR_WIDTH), reqd_available_total_height);
     }
@@ -256,7 +256,7 @@ private:
         // total width and the calculated client height (which is converted to
         // the total height here).
         return GG::Pt( std::max(GG::X(MIN_SIDE_BAR_WIDTH), m_available_side_bar_space.x),
-                       std::max(GG::Y(MIN_SIDE_BAR_HEIGHT), calculated_height + (AXIS_HEIGHT + X_AXIS_LABEL_MARGIN + PARTICIPANT_BAR_UP_MARGIN)) );
+                       std::max(GG::Y(MIN_SIDE_BAR_HEIGHT), calculated_height + (AXIS_HEIGHT + X_AXIS_LABEL_MARGIN + SIDE_BAR_UP_MARGIN)) );
     }
 };
 
@@ -390,8 +390,10 @@ public:
             Resize(bar_size);
         }
 
-        GG::Pt alive_ll = GG::Pt(GG::X0, GG::Y0);
-        alive_ll.y += ClientHeight();
+        m_x_axis_label->MoveTo(GG::Pt(GG::X0, SIDE_BAR_UP_MARGIN));
+        m_dead_label->MoveTo(GG::Pt(ClientWidth() - m_dead_label->Width(), SIDE_BAR_UP_MARGIN));
+
+        GG::Pt alive_ll = GG::Pt(GG::X0, ClientHeight());
         GG::Pt dead_lr = ClientSize();
 
         for (auto& bar : m_participant_bars) {
@@ -405,9 +407,7 @@ public:
             }
         }
 
-        m_x_axis_label->MoveTo(GG::Pt(GG::X0, Height() - m_x_axis_label->Height()));
         m_y_axis_label->MoveTo(GG::Pt(-m_y_axis_label->MinUsableSize().x / 2 - AXIS_WIDTH, Height()/2 - m_y_axis_label->Height()/2));
-        m_dead_label->MoveTo(GG::Pt(ClientWidth() -  m_dead_label->Width(), Height() - m_dead_label->Height()));
     }
 
     void DrawArrow(GG::Pt begin, GG::Pt end) {
@@ -501,20 +501,14 @@ public:
     }
 
     GG::Pt RelativeClientUpperLeft() const {
-        GG::Pt ul(AXIS_WIDTH + m_y_axis_label->MinUsableSize().x + Y_AXIS_LABEL_MARGIN, GG::Y0);
+        GG::Pt ul{ GG::X0, GG::Y0 };
+        ul.x += AXIS_WIDTH + m_y_axis_label->MinUsableSize().x + Y_AXIS_LABEL_MARGIN;
+        ul.y += SIDE_BAR_UP_MARGIN + AXIS_HEIGHT + X_AXIS_LABEL_MARGIN;
         return ul;
     }
 
     GG::Pt ClientUpperLeft() const override
-    { return  GG::Wnd::UpperLeft() + RelativeClientUpperLeft(); }
-
-    GG::Pt ClientLowerRight() const override {
-        // The axes are considered to be outside the client area.
-        GG::Pt lr = GG::Wnd::ClientLowerRight();
-        lr.y -= AXIS_HEIGHT;
-        lr.y -= m_x_axis_label->Height() + X_AXIS_LABEL_MARGIN;
-        return lr;
-    }
+    { return GG::Wnd::UpperLeft() + RelativeClientUpperLeft(); }
 
 private:
     const CombatSummary&            m_side_summary;
