@@ -225,7 +225,8 @@ namespace parse {
         detail::complex_variable_rule<int> outposts_owned;
         detail::complex_variable_rule<int> parts_in_ship_design;
         detail::complex_variable_rule<int> part_class_in_ship_design;
-        detail::complex_variable_rule<int> ship_parts_owned;
+        detail::complex_variable_rule<int> ship_parts_owned_by_name;
+        detail::complex_variable_rule<int> ship_parts_owned_by_class;
         detail::complex_variable_rule<int> empire_design_ref;
         detail::complex_variable_rule<int> slots_in_hull;
         detail::complex_variable_rule<int> slots_in_ship_design;
@@ -254,6 +255,7 @@ namespace parse {
         detail::complex_variable_rule<double> empire_meter_value;
         detail::complex_variable_rule<double> direct_distance;
         detail::complex_variable_rule<double> shortest_path;
+        detail::rule<detail::value_ref_payload<std::string>()> species_opinion;
         detail::complex_variable_rule<double> species_empire_opinion;
         detail::complex_variable_rule<double> species_species_opinion;
         detail::complex_variable_rule<double> special_capacity;
