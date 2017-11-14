@@ -26,11 +26,13 @@ namespace {
         std::vector<std::unique_ptr<MonsterFleetPlan>>& plans,
         const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
         double spawn_rate, int spawn_limit,
-        const parse::detail::condition_payload& location, bool& pass)
+        const boost::optional<parse::detail::condition_payload>& location, bool& pass)
     {
         plans.push_back(
             boost::make_unique<MonsterFleetPlan>(
-                fleet_name, ship_design_names, spawn_rate, spawn_limit, location.OpenEnvelope(pass)));
+                fleet_name, ship_design_names, spawn_rate, spawn_limit,
+                (location ? location->OpenEnvelope(pass) : nullptr)
+            ));
     };
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_monster_fleet_plan_, insert_monster_fleet_plan, 7)
 
@@ -56,54 +58,44 @@ namespace {
             qi::_2_type _2;
             qi::_3_type _3;
             qi::_4_type _4;
+            qi::_5_type _5;
             qi::_r1_type _r1;
             qi::eps_type eps;
             qi::_pass_type _pass;
+            qi::_val_type _val;
+            qi::omit_type omit_;
             const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
             const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
-            monster_fleet_plan_prefix
-                =    tok.MonsterFleet_
-                >    labeller.rule(Name_token) > tok.string [ phoenix::ref(_a) = _1 ]
-                ;
-
             ships
-                =    labeller.rule(Ships_token) > one_or_more_string_tokens [ phoenix::ref(_b) = _1]
+                =    labeller.rule(Ships_token) > one_or_more_string_tokens
                 ;
 
-            spawns
-                =    (
-                            (labeller.rule(SpawnRate_token) > double_rule [ phoenix::ref(_c) = _1 ])
-                        |    eps [ phoenix::ref(_c) = 1.0 ]
-                     )
-                >    (
-                            (labeller.rule(SpawnLimit_token) > int_rule [ phoenix::ref(_d) = _1 ])
-                        |    eps [ phoenix::ref(_d) = 9999 ]
-                     )
+            spawn_rate =
+                (labeller.rule(SpawnRate_token) > double_rule [ _val = _1 ])
+                |    eps [ _val = 1.0 ]
+                ;
+
+            spawn_limit =
+                (labeller.rule(SpawnLimit_token) > int_rule [ _val = _1 ])
+                |    eps [ _val = 9999 ]
                 ;
 
             monster_fleet_plan
-                =    (
-                            monster_fleet_plan_prefix
-                        >   ships
-                        >   spawns
-                        > -(labeller.rule(Location_token) > condition_parser [ phoenix::ref(_e) = _1 ])
-                     )
-                [ insert_monster_fleet_plan_(
-                        _r1,
-                        phoenix::ref(_a),
-                        phoenix::ref(_b),
-                        phoenix::ref(_c),
-                        phoenix::ref(_d),
-                        phoenix::ref(_e),
-                        _pass) ]
+                = ( omit_[tok.MonsterFleet_]
+                    > labeller.rule(Name_token) > tok.string
+                    > ships
+                    > spawn_rate
+                    > spawn_limit
+                    > -(labeller.rule(Location_token) > condition_parser)
+                ) [ insert_monster_fleet_plan_(_r1, _1, _2, _3, _4, _5, _pass) ]
                 ;
 
             start = (+monster_fleet_plan(_r1));
 
-            monster_fleet_plan_prefix.name("MonsterFleet");
             ships.name("Ships");
-            spawns.name("spawn rate and spawn limit");
+            spawn_rate.name("spawn rate");
+            spawn_limit.name("spawn limit");
             monster_fleet_plan.name("MonsterFleet");
 
 #if DEBUG_PARSERS
@@ -113,30 +105,21 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
-        using generic_rule = parse::detail::rule<>;
-
         using monster_fleet_plan_rule = parse::detail::rule<start_rule_signature>;
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller labeller;
-        parse::conditions_parser_grammar condition_parser;
+        parse::detail::Labeller            labeller;
+        parse::conditions_parser_grammar   condition_parser;
         const parse::string_parser_grammar string_grammar;
-        parse::detail::double_grammar double_rule;
-        parse::detail::int_grammar int_rule;
+        parse::detail::double_grammar      double_rule;
+        parse::detail::int_grammar         int_rule;
         parse::detail::single_or_repeated_string<std::vector<std::string>> one_or_more_string_tokens;
-        generic_rule            monster_fleet_plan_prefix;
-        generic_rule            ships;
-        generic_rule            spawns;
-        monster_fleet_plan_rule monster_fleet_plan;
-        start_rule              start;
-
-        // locals
-        std::string                 _a;
-        std::vector<std::string>    _b;
-        double                      _c;
-        int                         _d;
-        parse::detail::condition_payload   _e;
+        parse::detail::rule<std::vector<std::string>> ships;
+        parse::detail::rule<double>        spawn_rate;
+        parse::detail::rule<int>           spawn_limit;
+        monster_fleet_plan_rule            monster_fleet_plan;
+        start_rule                         start;
     };
 
 }
