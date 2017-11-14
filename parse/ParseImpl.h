@@ -148,19 +148,15 @@ namespace parse { namespace detail {
     };
 
     using color_parser_signature = GG::Clr ();
-    using color_parser_locals = boost::spirit::qi::locals<
-        unsigned int,
-        unsigned int,
-        unsigned int
-        >;
-    using color_rule_type = rule<color_parser_signature, color_parser_locals>;
-    using color_grammar_type = grammar<color_parser_signature, color_parser_locals>;
+    using color_rule_type = rule<color_parser_signature>;
+    using color_grammar_type = grammar<color_parser_signature>;
 
     struct color_parser_grammar : public color_grammar_type {
         color_parser_grammar(const parse::lexer& tok);
         using channel_rule = rule<unsigned int ()>;
 
         channel_rule channel;
+        channel_rule alpha;
         color_rule_type start;
     };
 

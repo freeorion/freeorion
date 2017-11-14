@@ -63,8 +63,8 @@ namespace parse {
     };
 
     namespace detail {
-    using item_spec_rule_type = rule<ItemSpec (), boost::spirit::qi::locals<UnlockableItemType>>;
-    using item_spec_grammar_type = grammar<ItemSpec (), boost::spirit::qi::locals<UnlockableItemType>>;
+    using item_spec_rule_type = rule<ItemSpec ()>;
+    using item_spec_grammar_type = grammar<ItemSpec ()>;
 
     struct item_spec_grammar : public item_spec_grammar_type {
         item_spec_grammar(const parse::lexer& tok,
