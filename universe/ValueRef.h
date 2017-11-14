@@ -204,6 +204,10 @@ struct FO_COMMON_API Variable : public ValueRefBase<T>
                       bool return_immediate_value = false);
     Variable(ReferenceType ref_type, const std::vector<std::string>& property_name,
              bool return_immediate_value = false);
+    Variable(ReferenceType ref_type,
+             const boost::optional<std::string>& container_name,
+             const std::string& property_name,
+             bool return_immediate_value = false);
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
     T Eval(const ScriptingContext& context) const override;
@@ -668,6 +672,21 @@ Variable<T>::Variable(ReferenceType ref_type, const std::string& property_name,
     m_property_name(),
     m_return_immediate_value(return_immediate_value)
 {
+    m_property_name.push_back(property_name);
+}
+
+template <class T>
+Variable<T>::Variable(ReferenceType ref_type,
+                      const boost::optional<std::string>& container_name,
+                      const std::string& property_name,
+                      bool return_immediate_value) :
+    m_ref_type(ref_type),
+    m_property_name(),
+    m_return_immediate_value(return_immediate_value)
+{
+    if (container_name)
+        m_property_name.push_back(*container_name);
+
     m_property_name.push_back(property_name);
 }
 

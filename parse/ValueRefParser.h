@@ -152,26 +152,23 @@ namespace parse { namespace detail {
         using boost::phoenix::push_back;
 
         boost::spirit::qi::_1_type _1;
-        boost::spirit::qi::_a_type _a;
-        boost::spirit::qi::_b_type _b;
+        boost::spirit::qi::_2_type _2;
+        boost::spirit::qi::_3_type _3;
         boost::spirit::qi::lit_type lit;
         boost::spirit::qi::_val_type _val;
+        boost::spirit::qi::omit_type omit_;
         const boost::phoenix::function<construct_movable> construct_movable_;
 
         bound_variable
-            = (
-                    tok.Value_ >> '('
-                >>  variable_scope_rule [ _b = _1 ]
-                >>  '.' >>-(container_type_rule [ push_back(_a, construct<std::string>(_1)) ] > '.')
-                >> ( variable_name >> ')' )
-                [ push_back(_a, construct<std::string>(_1)), _val = construct_movable_(new_<ValueRef::Variable<T>>(_b, _a, true)) ]
-              )
-            | (
-                variable_scope_rule [ _b = _1 ] >>
-                '.' >>-(container_type_rule [ push_back(_a, construct<std::string>(_1)) ] > '.')
-                    >>  variable_name
-                [ push_back(_a, construct<std::string>(_1)), _val = construct_movable_(new_<ValueRef::Variable<T>>(_b, _a, false)) ]
-              )
+            = (( omit_[tok.Value_] >> '('
+                 >> variable_scope_rule >> '.'
+                 >> -(container_type_rule > '.')
+                 >>  variable_name >> ')'
+              ) [ _val = construct_movable_(new_<ValueRef::Variable<T>>(_1, construct<boost::optional<std::string>>(_2), construct<std::string>(_3))) ])
+            | (( variable_scope_rule >> '.'
+                >> -(container_type_rule > '.')
+                >>  variable_name
+               ) [ _val = construct_movable_(new_<ValueRef::Variable<T>>(_1, construct<boost::optional<std::string>>(_2), construct<std::string>(_3))) ])
             ;
     }
 }}
