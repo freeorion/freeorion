@@ -120,20 +120,10 @@ namespace parse { namespace detail {
     using complex_variable_payload = MovableEnvelope<ValueRef::ComplexVariable<T>>;
     template <typename T>
     using complex_variable_signature = complex_variable_payload<T> ();
-    using complex_variable_locals =
-        boost::spirit::qi::locals<
-        std::string,
-        value_ref_payload<int>,
-        value_ref_payload<int>,
-        value_ref_payload<std::string>,
-        value_ref_payload<std::string>,
-        value_ref_payload<int>
-        >;
-
     template <typename T>
-    using complex_variable_rule = rule<complex_variable_signature<T>, complex_variable_locals>;
+    using complex_variable_rule = rule<complex_variable_signature<T>>;
     template <typename T>
-    using complex_variable_grammar = grammar<complex_variable_signature<T>, complex_variable_locals>;
+    using complex_variable_grammar = grammar<complex_variable_signature<T>>;
 
     struct string_complex_parser_grammar : public complex_variable_grammar<std::string> {
         string_complex_parser_grammar(const parse::lexer& tok,
