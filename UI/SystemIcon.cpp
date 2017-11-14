@@ -89,7 +89,8 @@ namespace {
 ////////////////////////////////////////////////
 // OwnerColoredSystemName
 ////////////////////////////////////////////////
-OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, bool blank_unexplored_and_none) :
+OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
+                                               bool blank_unexplored_and_none) :
     Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS)
 {
     // TODO: Have this make a single call per color.
@@ -208,12 +209,18 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     }
 
     m_text = GG::Wnd::Create<GG::TextControl>(
-        GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + wrapped_system_name + "</s>", font, text_color);
+        GG::X0, GG::Y0, GG::X1, GG::Y1,
+        "<s>" + wrapped_system_name + "</s>",
+        font, text_color);
 }
 
 void OwnerColoredSystemName::CompleteConstruction() {
     GG::Control::CompleteConstruction();
 
+    if (!m_text) {
+        ErrorLogger() << "OwnerColoredSystemName::CompleteConstruction had empty m_text";
+        return;
+    }
     AttachChild(m_text);
     GG::Pt text_size(m_text->TextLowerRight() - m_text->TextUpperLeft());
     m_text->SizeMove(GG::Pt(GG::X0, GG::Y0), text_size);
@@ -223,8 +230,7 @@ void OwnerColoredSystemName::CompleteConstruction() {
 void OwnerColoredSystemName::Render()
 {}
 
-void OwnerColoredSystemName::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
-{
+void OwnerColoredSystemName::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Control::SizeMove(ul, lr);
 
     // Center text
