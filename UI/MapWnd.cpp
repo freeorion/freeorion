@@ -5837,9 +5837,8 @@ void MapWnd::Sanitize() {
 }
 
 void MapWnd::PushWndStack(std::shared_ptr<GG::Wnd> wnd) {
-    if (!wnd) {
+    if (!wnd)
         return;
-    }
     // First remove it from its current location in the stack (if any), to prevent it from being 
     // present in two locations at once.
     RemoveFromWndStack(wnd);
@@ -5855,8 +5854,11 @@ void MapWnd::RemoveFromWndStack(std::shared_ptr<GG::Wnd> wnd) {
 
 bool MapWnd::ReturnToMap() {
     std::shared_ptr<GG::Wnd> wnd;
-    // Find the top non-null Wnd in the stack (check if it's visible, in case it was somehow closed
-    // without being removed from the stack).
+    // Pop the top Wnd from the stack, and repeat until we find a non-null and visible one (or
+    // until the stack runs out).
+    // Need to check that it's visible, in case it was closed without being removed from the stack;
+    // if we didn't reject such a Wnd, we might close no window, or even open a window.
+    // Either way, the Wnd is removed from the stack, since it is no longer of any use.
     while (!m_wnd_stack.empty() && !(wnd && wnd->Visible())) {
         wnd = m_wnd_stack.back();
         m_wnd_stack.pop_back();
