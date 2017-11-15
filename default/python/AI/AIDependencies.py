@@ -501,6 +501,7 @@ DAMAGE_CONTROL_TECHS = (
     "SHP_DAMAGE_CONTROL",
     "SHP_FIELD_REPAIR",
     "SHP_DAMAGE_CONTROL_ADV",
+    "SHP_FIELD_REPAIR_ADV",
 )
 
 WEAPON_PREFIX = "SHP_WEAPON"
@@ -707,8 +708,9 @@ TECH_EFFECTS = {
     # "TECHNAME": { Token1: Value1, Token2: Value2, ...}
     "SHP_REINFORCED_HULL": {STRUCTURE: 5},
     "SHP_DAMAGE_CONTROL": {REPAIR_PER_TURN: 1},
-    "SHP_FIELD_REPAIR": {REPAIR_PER_TURN: (STRUCTURE, 0.1)},  # 10% of max structure
-    "SHP_DAMAGE_CONTROL_ADV": {REPAIR_PER_TURN: (STRUCTURE, 0.1)},  # 10% of max structure
+    "SHP_FIELD_REPAIR": {REPAIR_PER_TURN: (STRUCTURE, 0.15)},  # TODO 15% of current structure, min 1
+    "SHP_DAMAGE_CONTROL_ADV": {REPAIR_PER_TURN: (STRUCTURE, 0.1)},  # TODO 10% of current structure, min 3
+    "SHP_FIELD_REPAIR_ADV": {REPAIR_PER_TURN: (STRUCTURE, 0.25)},  # TODO 25% of current structure, min 5
     "SHP_INTSTEL_LOG": {SPEED: 20},  # technically not correct, but as approximation good enough...
     "GRO_ENERGY_META": {FUEL: 2},
 }

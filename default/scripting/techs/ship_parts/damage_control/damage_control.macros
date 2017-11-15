@@ -1,0 +1,13 @@
+// Repairs based on current ship structure, with a specified minimum repair amount and not exceeding max structure
+// @1@ Float - Min repair amount per turn, regardless of current structure
+// @2@ Float - Percentage of current structure to repair when structure is at 50% of max, amount decreases proportional to distance from 50% structure
+EFFECT_SHIP_SELF_REPAIR
+'''SetStructure value = min(Target.MaxStructure, Value + max(@1@, min(Value * @2@, (Target.MaxStructure - Value) * @2@)))'''
+
+// Repairs based on current ship structure, with a specified minimum repair amount and not exceeding a percentage of max structure
+// NOTE: Expects to only be applied when MaxStructure is not more than MaxStructure * @2@
+// @1@ Float - Percentage of max structure to limit repairs
+// @2@ Float - Min repair amount per turn
+// @3@ Float - Percentage of current structure repaired per turn (when greater than @2@)
+EFFECT_SHIP_DAMAGE_CONTROL
+'''SetStructure value = min(Target.MaxStructure * @1@, Value + max(@2@, Value * @3@))'''

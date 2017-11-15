@@ -6,7 +6,7 @@ Tech
     researchcost = 40 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
     tags = [ "PEDIA_DAMAGE_CONTROL_PART_TECHS" ]
-    prerequisites = "SHP_MIL_ROBO_CONT"
+    prerequisites = "CON_ASYMP_MATS"
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -21,6 +21,13 @@ Tech
                 ]
                 Structure high = LocalCandidate.MaxStructure - 0.001
             ]
-            effects = SetStructure value = Value + 1
+            activation = Structure high = Source.MaxStructure * 0.35
+            stackinggroup = "SHIP_DAMAGE_CONTROL"
+            priority = [[LATE_PRIORITY]]
+            effects = [[EFFECT_SHIP_DAMAGE_CONTROL(0.35, 1, 0.0001)]]
+
+#include "damage_control.macros"
 
 #include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/priorities.macros"

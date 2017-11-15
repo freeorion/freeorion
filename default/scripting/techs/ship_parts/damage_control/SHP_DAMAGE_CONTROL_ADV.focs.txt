@@ -3,21 +3,31 @@ Tech
     description = "SHP_DAMAGE_CONTROL_ADV_DESC"
     short_description = "STRUCTURE_SHORT_DESC"
     category = "SHIP_PARTS_CATEGORY"
-    researchcost = 100 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 65 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     tags = [ "PEDIA_DAMAGE_CONTROL_PART_TECHS" ]
     prerequisites = [
-        "SHP_FIELD_REPAIR"
-        "CON_GAL_INFRA"
-        ]
+        "SHP_DAMAGE_CONTROL"
+        "SHP_REINFORCED_HULL"
+    ]
     effectsgroups =
         EffectsGroup
             scope = And [
                 Ship
                 OwnedBy empire = Source.Owner
-                Stationary
-                Turn low = LocalCandidate.System.LastTurnBattleHere + 1
+                Or [
+                    Not InSystem
+                    And [
+                        InSystem
+                        Turn low = LocalCandidate.System.LastTurnBattleHere + 1
+                    ]
+                ]
+                Structure high = LocalCandidate.MaxStructure - 0.001
             ]
-            effects = SetStructure value = Value + (Target.MaxStructure/10)
+            activation = Structure high = Source.MaxStructure * 0.45
+            stackinggroup = "SHIP_DAMAGE_CONTROL"
+            effects = [[EFFECT_SHIP_DAMAGE_CONTROL(0.45, 3, 0.1)]]
+
+#include "damage_control.macros"
 
 #include "/scripting/common/base_prod.macros"

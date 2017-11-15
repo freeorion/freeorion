@@ -1,12 +1,15 @@
 Tech
-    name = "SHP_FIELD_REPAIR"
-    description = "SHP_FIELD_REPAIR_DESC"
-    short_description = "SHIP_REPAIR_DESC"
+    name = "SHP_FIELD_REPAIR_ADV"
+    description = "SHP_FIELD_REPAIR_ADV_DESC"
+    short_description = "STRUCTURE_SHORT_DESC"
     category = "SHIP_PARTS_CATEGORY"
-    researchcost = 80 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 10
+    researchcost = 100 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
     tags = [ "PEDIA_DAMAGE_CONTROL_PART_TECHS" ]
-    prerequisites = "SHP_INTSTEL_LOG"
+    prerequisites = [
+        "SHP_FIELD_REPAIR"
+        "CON_CONTGRAV_ARCH"
+    ]
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -19,8 +22,8 @@ Tech
                 ResupplyableBy empire = Source.Owner
             ]
             stackinggroup = "SHIP_REPAIR"
-            priority = 116
-            effects = [[EFFECT_SHIP_SELF_REPAIR(1, 0.15)]]
+            priority = 115
+            effects = [[EFFECT_SHIP_SELF_REPAIR(5, 0.25)]]
 
 #include "damage_control.macros"
 

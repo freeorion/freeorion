@@ -11022,7 +11022,24 @@ SHP_FIELD_REPAIR
 Fleet Field Repair
 
 SHP_FIELD_REPAIR_DESC
-Repairs damaged ships by 10% of [[metertype METER_STRUCTURE]] per turn if they are within [[metertype METER_SUPPLY]], stationary and have not been in combat that turn. This is cumulative with [[tech SHP_DAMAGE_CONTROL]].
+'''Repairs damaged ships at a rate of 15% of current [[metertype METER_STRUCTURE]], with a minimum of 1 structure per turn if they are within [[metertype METER_SUPPLY]], stationary, and have not been in combat that turn.
+
+Not cumulative with repairs from [[building BLD_SHIPYARD_ORBITAL_DRYDOCK]].
+
+[[SHP_FIELD_REPAIR_PEAK]]'''
+
+SHP_FIELD_REPAIR_ADV
+Advanced Field Repair
+
+SHP_FIELD_REPAIR_ADV_DESC
+'''Repairs damaged ships at a rate of 25% of current [[metertype METER_STRUCTURE]], with a minimum of 5 structure per turn if they are within [[metertype METER_SUPPLY]], stationary, and have not been in combat that turn.
+
+Replaces effect of [[tech SHP_FIELD_REPAIR]]. Not cumulative with repairs from [[building BLD_SHIPYARD_ORBITAL_DRYDOCK]].
+
+[[SHP_FIELD_REPAIR_PEAK]]'''
+
+SHP_FIELD_REPAIR_PEAK
+Repair rate peaks at 50% of maximum [[metertype METER_STRUCTURE]]. Ships with heavy damage have less material to work with, and ships with less damage have fewer opportunities for repairs.
 
 SHP_REINFORCED_HULL
 Reinforced Hull
@@ -11036,13 +11053,17 @@ SHP_DAMAGE_CONTROL
 Basic Damage Control
 
 SHP_DAMAGE_CONTROL_DESC
-Gradually repairs damaged ships. Current [[metertype METER_STRUCTURE]] of all ships is replenished at a rate of 1 per turn every turn they are not engaged in combat.
+'''Repairs ships not engaged in combat and with no more than 35% target [[metertype METER_STRUCTURE]] at a rate of 1 per turn.
+
+Cumulative with other ship repair effects.'''
 
 SHP_DAMAGE_CONTROL_ADV
 Advanced Damage Control
 
 SHP_DAMAGE_CONTROL_ADV_DESC
-Repairs damaged ships by 10% of [[metertype METER_STRUCTURE]] per turn if they are stationary and have not been in combat that turn. This is cumulative with [[tech SHP_DAMAGE_CONTROL]] and [[tech SHP_FIELD_REPAIR]] and works even out of [[metertype METER_SUPPLY]].
+'''Repairs ships not engaged in combat and with no more than 45% target [[metertype METER_STRUCTURE]] at a rate of 10% of current [[metertype METER_STRUCTURE]] per turn, with a minimum repair of 3.
+
+Replaces effect from [[tech SHP_DAMAGE_CONTROL]]. Cumulative with other ship repair effects.'''
 
 SHP_ROOT_AGGRESSION
 Aggression
