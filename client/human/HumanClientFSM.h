@@ -39,10 +39,13 @@ struct AdvanceTurn : boost::statechart::event<AdvanceTurn> {};
 /** The set of events used by the QuittingGame state. */
 class Process;
 struct StartQuittingGame : boost::statechart::event<StartQuittingGame> {
-    StartQuittingGame(bool _r, Process& _s) : m_reset_to_intro(_r), m_server(_s) {}
+    StartQuittingGame(bool _r, Process& _s, int _exit_code) :
+        m_reset_to_intro(_r), m_server(_s), m_exit_code(_exit_code)
+    {}
 
     bool m_reset_to_intro;  ///< Determines if on completion it resets to intro (true) or exits app (false).
     Process& m_server;
+    int m_exit_code;
 };
 
 struct ShutdownServer : boost::statechart::event<ShutdownServer> {};
@@ -376,6 +379,7 @@ struct QuittingGame : boost::statechart::state<QuittingGame, HumanClientFSM> {
     // exits the app.
     bool m_reset_to_intro;
     Process* m_server_process;
+    int m_exit_code;
 
     CLIENT_ACCESSOR
 };

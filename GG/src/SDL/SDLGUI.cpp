@@ -359,13 +359,10 @@ namespace {
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 
-    struct QuitSignal : public std::exception {
+    struct QuitSignal {
         QuitSignal(int exit_code_) :
-            std::exception(), exit_code(exit_code_)
+            exit_code(exit_code_)
         {}
-
-        const char* what() const noexcept override
-        { return  exit_code ? "Quitting SDLGUI with error." : "Quitting SDLGUI normally."; }
 
         int exit_code;
     };
@@ -880,7 +877,7 @@ void SDLGUI::Run()
         Initialize();
         ModalEventPump pump(m_done);
         pump();
-    } catch (QuitSignal& e) {
+    } catch (const QuitSignal& e) {
         if (e.exit_code != 0)
             throw;
 

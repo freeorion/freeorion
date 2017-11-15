@@ -22,8 +22,6 @@ class HumanClientApp :
     public GG::SDLGUI
 {
 public:
-    class CleanQuit : public std::exception {};
-
     typedef boost::signals2::signal<void (bool)> FullscreenSwitchSignalType;
     typedef boost::signals2::signal<void ()>     RepositionWindowsSignalType;
 
@@ -72,7 +70,12 @@ public:
     void                ChangeLoggerThreshold(const std::string& option_name, LogLevel option_value);
 
     void                ResetToIntro(bool skip_savegame);
-    void                ExitApp();
+
+    /** Exit the App with \p exit_code. */
+    void                Exit(int exit_code) override;
+    /** Exit SDL. (Called by FSM) */
+    void                ExitSDL(int exit_code);
+
     void                ResetClientData(bool save_connection = false);
     void                LoadSinglePlayerGame(std::string filename = "");
     /** Requests the savegame previews from the server in \p relative_directory
@@ -159,8 +162,9 @@ private:
     void            DisconnectedFromServer();           ///< called by ClientNetworking when the TCP connection to the server is lost
 
     /** Either reset to IntroMenu (\p reset is true), or exit the
-        application.  If \p skip_savegame is true abort in progress save games.*/
-    void            ResetOrExitApp(bool reset, bool skip_savegame);
+        application.  If \p skip_savegame is true abort in progress save
+        games. \p exit_code is the exit code. */
+    void            ResetOrExitApp(bool reset, bool skip_savegame, int exit_code = 0);
 
     std::unique_ptr<HumanClientFSM> m_fsm;
 

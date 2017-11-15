@@ -939,7 +939,7 @@ boost::statechart::result PlayingTurn::react(const SaveGameComplete& msg) {
         && GetOptionsDB().Get<bool>("auto-quit"))
     {
         DebugLogger(FSM) << "auto-quit save completed, ending game.";
-        Client().ExitApp();
+        Client().Exit(0);
     }
 
     return discard_event();
@@ -1041,6 +1041,7 @@ boost::statechart::result QuittingGame::react(const StartQuittingGame& u) {
 
     m_reset_to_intro = u.m_reset_to_intro;
     m_server_process = &u.m_server;
+    m_exit_code = u.m_exit_code;
 
     post_event(ShutdownServer());
     return discard_event();
@@ -1129,8 +1130,12 @@ boost::statechart::result QuittingGame::react(const TerminateServer& u) {
         Client().ResetClientData();
         return transit<IntroMenu>();
     } else {
-        TraceLogger(FSM) << "QuittingGame throwing CleanQuit.";
-        throw HumanClientApp::CleanQuit();
+        TraceLogger(FSM) << "QuittingGame quitting";
+        // This line throws to exit the GUI
+        Client().ExitSDL(m_exit_code);
+
+        // This line will never be reached
+        return transit<IntroMenu>();
     }
 }
 
