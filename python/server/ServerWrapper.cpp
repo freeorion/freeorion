@@ -472,9 +472,9 @@ namespace {
         list py_fleet_plans;
         auto&& fleet_plans = GetUniverse().InitiallyUnlockedFleetPlans();
         for (FleetPlan* fleet_plan : fleet_plans) {
-            py_fleet_plans.append(new FleetPlanWrapper(fleet_plan));
+            py_fleet_plans.append(FleetPlanWrapper(fleet_plan));
         }
-        return list(py_fleet_plans);
+        return py_fleet_plans;
     }
 
     // Wrappers for starting monster fleet plans
@@ -531,9 +531,9 @@ namespace {
         list py_monster_fleet_plans;
         auto&& monster_fleet_plans = GetUniverse().MonsterFleetPlans();
         for (auto* fleet_plan : monster_fleet_plans) {
-            py_monster_fleet_plans.append(new MonsterFleetPlanWrapper(fleet_plan));
+            py_monster_fleet_plans.append(MonsterFleetPlanWrapper(fleet_plan));
         }
-        return list(py_monster_fleet_plans);
+        return py_monster_fleet_plans;
     }
 
     // Wrappers for the various universe object classes member funtions
