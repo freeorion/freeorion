@@ -978,6 +978,7 @@ MapWnd::MapWnd() :
     m_object_list_wnd(nullptr),
     m_moderator_wnd(nullptr),
     m_combat_report_wnd(nullptr),
+    m_wnd_stack(),
     m_starlane_endpoints(),
     m_stationary_fleet_buttons(),
     m_departing_fleet_buttons(),
@@ -1536,6 +1537,7 @@ void MapWnd::CompleteConstruction() {
     m_sitrep_panel->ClosingSignal.connect(
         boost::bind(&MapWnd::HideSitRep, this));
     if (m_sitrep_panel->Visible()) {
+        PushWndStack(m_sitrep_panel);
         m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
         m_btn_siterep->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep.png")));
     }
@@ -1546,6 +1548,7 @@ void MapWnd::CompleteConstruction() {
     m_pedia_panel->ClosingSignal.connect(
         boost::bind(&MapWnd::HidePedia, this));
     if (m_pedia_panel->Visible()) {
+        PushWndStack(m_pedia_panel);
         m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
         m_btn_pedia->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia.png")));
     }
@@ -1558,6 +1561,7 @@ void MapWnd::CompleteConstruction() {
     m_object_list_wnd->ObjectDumpSignal.connect(
         boost::bind(&ClientUI::DumpObject, ClientUI::GetClientUI(), _1));
     if (m_object_list_wnd->Visible()) {
+        PushWndStack(m_object_list_wnd);
         m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
         m_btn_objects->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
     }
@@ -1567,6 +1571,7 @@ void MapWnd::CompleteConstruction() {
     m_moderator_wnd->ClosingSignal.connect(
         boost::bind(&MapWnd::HideModeratorActions, this));
     if (m_moderator_wnd->Visible()) {
+        PushWndStack(m_moderator_wnd);
         m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
         m_btn_moderator->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
     }
@@ -1584,8 +1589,9 @@ void MapWnd::CompleteConstruction() {
             msg_wnd->ClosingSignal.connect(
                 boost::bind(&MapWnd::HideMessages, this));
             if (msg_wnd->Visible()) {
-                    m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
-                    m_btn_messages->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
+                PushWndStack(msg_wnd);
+                m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
+                m_btn_messages->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
             }
         }
         if (const auto& plr_wnd = cui->GetPlayerListWnd()) {
@@ -1593,6 +1599,7 @@ void MapWnd::CompleteConstruction() {
             plr_wnd->ClosingSignal.connect(
                 boost::bind(&MapWnd::HideEmpires, this));
             if (plr_wnd->Visible()) {
+                PushWndStack(plr_wnd);
                 m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
                 m_btn_empires->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
             }
@@ -4301,6 +4308,7 @@ void MapWnd::ShowCombatLog(int log_id) {
     m_combat_report_wnd->SetLog( log_id );
     m_combat_report_wnd->Show();
     GG::GUI::GetGUI()->MoveUp(m_combat_report_wnd);
+    PushWndStack(m_combat_report_wnd);
 }
 
 void MapWnd::ShowTech(const std::string& tech_name) {
@@ -4484,9 +4492,11 @@ void MapWnd::SelectSystem(int system_id) {
     if (SidePanel::SystemID() == INVALID_OBJECT_ID) {
         // no selected system.  hide sidepanel.
         m_side_panel->Hide();
+        RemoveFromWndStack(m_side_panel);
     } else {
         // selected a valid system, show sidepanel
         m_side_panel->Show();
+        PushWndStack(m_side_panel);
     }
 }
 
@@ -4583,6 +4593,8 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
     // make sure selected fleet's FleetWnd is active
     manager.SetActiveFleetWnd(fleet_wnd);
     GG::GUI::GetGUI()->MoveUp(fleet_wnd);
+    PushWndStack(fleet_wnd);
+
 
 
     // select fleet in FleetWnd.  this deselects all other fleets in the FleetWnd.
@@ -5900,69 +5912,69 @@ void MapWnd::Sanitize() {
     DetachChildren();
 }
 
+void MapWnd::PushWndStack(std::shared_ptr<GG::Wnd> wnd) {
+    if (!wnd)
+        return;
+    // First remove it from its current location in the stack (if any), to prevent it from being 
+    // present in two locations at once.
+    RemoveFromWndStack(wnd);
+    m_wnd_stack.push_back(wnd);
+}
+
+void MapWnd::RemoveFromWndStack(std::shared_ptr<GG::Wnd> wnd) {
+    auto it = std::find(m_wnd_stack.begin(), m_wnd_stack.end(), wnd);
+    if (it != m_wnd_stack.end()) {
+        m_wnd_stack.erase(it);
+    }
+}
+
 bool MapWnd::ReturnToMap() {
-    bool some_subscreen_was_visible = false;
+    std::shared_ptr<GG::Wnd> wnd;
+    // Pop the top Wnd from the stack, and repeat until we find a non-null and visible one (or
+    // until the stack runs out).
+    // Need to check that it's visible, in case it was closed without being removed from the stack;
+    // if we didn't reject such a Wnd, we might close no window, or even open a window.
+    // Either way, the Wnd is removed from the stack, since it is no longer of any use.
+    while (!m_wnd_stack.empty() && !(wnd && wnd->Visible())) {
+        wnd = m_wnd_stack.back();
+        m_wnd_stack.pop_back();
+    }
+    // If no non-null and visible Wnd was found, then there's nothing to do.
+    if (!(wnd && wnd->Visible())) {
+        return true;
+    }
 
-    if (m_sitrep_panel->Visible()) {
+    // prepare to close fleets window if open
+    auto& fm = FleetUIManager::GetFleetUIManager();
+    auto cui = ClientUI::GetClientUI();
+
+    if (wnd == m_sitrep_panel) {
         ToggleSitRep();
-        some_subscreen_was_visible = true;
-    }
-
-    if (m_research_wnd->Visible()) {
+    } else if (wnd == m_research_wnd) {
         ToggleResearch();
-        some_subscreen_was_visible = true;
-    }
-
-    if (m_design_wnd->Visible()) {
+    } else if (wnd == m_design_wnd) {
         ToggleDesign();
-        some_subscreen_was_visible = true;
-    }
-
-    if (m_production_wnd->Visible()) {
+    } else if (wnd == m_production_wnd) {
         ToggleProduction();
-        some_subscreen_was_visible = true;
-    }
-
-    if (some_subscreen_was_visible)
-        return true;
-
-    if (m_combat_report_wnd->Visible()) {
-        m_combat_report_wnd->Hide();
-        return true;
-    }
-
-    if (m_pedia_panel->Visible()) {
+    } else if (wnd == m_pedia_panel) {
         TogglePedia();
-        return true;
-    }
-
-    if (m_object_list_wnd->Visible()) {
+    } else if (wnd == m_object_list_wnd) {
         ToggleObjects();
-        return true;
-    }
-
-    if (m_moderator_wnd->Visible()) {
+    } else if (wnd == m_moderator_wnd) {
         ToggleModeratorActions();
-        return true;
-    }
-
-    // close fleets window if open
-    FleetUIManager& fm = FleetUIManager::GetFleetUIManager();
-    GG::Wnd* active_fleet_wnd = fm.ActiveFleetWnd();
-    if (active_fleet_wnd) {
+    } else if (wnd == m_combat_report_wnd) {
+        m_combat_report_wnd->Hide();
+    } else if (wnd == m_side_panel) {
+        SelectSystem(INVALID_OBJECT_ID);
+    } else if (wnd.get() == fm.ActiveFleetWnd()) {
         fm.CloseAll();
-        return true;
+    } else if (cui && wnd == cui->GetPlayerListWnd()) {
+        HideEmpires();
+    } else if (cui && wnd == cui->GetMessageWnd()) {
+        HideMessages();
+    } else {
+        ErrorLogger() << "Unknown GG::Wnd " << wnd->Name() << " found in MapWnd::m_wnd_stack";
     }
-
-    // close sidepanel if open
-    if (SidePanel::SystemID() != INVALID_OBJECT_ID) {
-       SelectSystem(INVALID_OBJECT_ID);
-       return true;
-    }
-
-    // close empire/player list and messages windows if nothing else was open...
-    HideEmpires();
-    HideMessages();
 
     return true;
 }
@@ -6013,6 +6025,7 @@ void MapWnd::ShowModeratorActions() {
     // show the moderator window
     m_moderator_wnd->Show();
     GG::GUI::GetGUI()->MoveUp(m_moderator_wnd);
+    PushWndStack(m_moderator_wnd);
 
     m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
     m_btn_moderator->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
@@ -6020,6 +6033,7 @@ void MapWnd::ShowModeratorActions() {
 
 void MapWnd::HideModeratorActions() {
     m_moderator_wnd->Hide();
+    RemoveFromWndStack(m_moderator_wnd);
     m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
     m_btn_moderator->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
 }
@@ -6047,6 +6061,7 @@ void MapWnd::ShowObjects() {
     // show the objects window
     m_object_list_wnd->Show();
     GG::GUI::GetGUI()->MoveUp(m_object_list_wnd);
+    PushWndStack(m_object_list_wnd);
 
     // indicate selection on button
     m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
@@ -6055,6 +6070,7 @@ void MapWnd::ShowObjects() {
 
 void MapWnd::HideObjects() {
     m_object_list_wnd->Hide(); // necessary so it won't be visible when next toggled
+    RemoveFromWndStack(m_object_list_wnd);
     m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
     m_btn_objects->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
 }
@@ -6079,6 +6095,7 @@ void MapWnd::ShowSitRep() {
     // show the sitrep window
     m_sitrep_panel->Show();
     GG::GUI::GetGUI()->MoveUp(m_sitrep_panel);
+    PushWndStack(m_sitrep_panel);
 
     // indicate selection on button
     m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
@@ -6087,6 +6104,7 @@ void MapWnd::ShowSitRep() {
 
 void MapWnd::HideSitRep() {
     m_sitrep_panel->Hide(); // necessary so it won't be visible when next toggled
+    RemoveFromWndStack(m_sitrep_panel);
     m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep.png")));
     m_btn_siterep->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
 }
@@ -6118,6 +6136,7 @@ void MapWnd::ShowMessages() {
     msg_wnd->Show();
     msg_wnd->OpenForInput();
     gui->MoveUp(msg_wnd);
+    PushWndStack(msg_wnd);
 
     // indicate selection on button
     m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
@@ -6130,8 +6149,10 @@ bool MapWnd::OpenMessages() {
 }
 
 void MapWnd::HideMessages() {
-    if (ClientUI* cui = ClientUI::GetClientUI())
+    if (ClientUI* cui = ClientUI::GetClientUI()) {
         cui->GetMessageWnd()->Hide();
+        RemoveFromWndStack(cui->GetMessageWnd());
+    }
     m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
     m_btn_messages->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
 }
@@ -6168,6 +6189,7 @@ void MapWnd::ShowEmpires() {
         return;
     plr_wnd->Show();
     gui->MoveUp(plr_wnd);
+    PushWndStack(plr_wnd);
 
     // indicate selection on button
     m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
@@ -6175,8 +6197,10 @@ void MapWnd::ShowEmpires() {
 }
 
 void MapWnd::HideEmpires() {
-    if (ClientUI* cui = ClientUI::GetClientUI())
+    if (ClientUI* cui = ClientUI::GetClientUI()) {
         cui->GetPlayerListWnd()->Hide();
+        RemoveFromWndStack(cui->GetPlayerListWnd());
+    }
     m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
     m_btn_empires->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
 }
@@ -6224,6 +6248,7 @@ void MapWnd::ShowPedia() {
     // show the pedia window
     m_pedia_panel->Show();
     GG::GUI::GetGUI()->MoveUp(m_pedia_panel);
+    PushWndStack(m_pedia_panel);
 
     // indicate selection on button
     m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
@@ -6232,6 +6257,7 @@ void MapWnd::ShowPedia() {
 
 void MapWnd::HidePedia() {
     m_pedia_panel->Hide();
+    RemoveFromWndStack(m_pedia_panel);
     m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia.png")));
     m_btn_pedia->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
 }
@@ -6272,6 +6298,7 @@ void MapWnd::ShowResearch() {
     // show the research window
     m_research_wnd->Show();
     GG::GUI::GetGUI()->MoveUp(m_research_wnd);
+    PushWndStack(m_research_wnd);
 
     // hide pedia again if it is supposed to be hidden persistently
     if (GetOptionsDB().Get<bool>("UI.windows.research.pedia.persistently-hidden"))
@@ -6284,6 +6311,7 @@ void MapWnd::ShowResearch() {
 
 void MapWnd::HideResearch() {
     m_research_wnd->Hide();
+    RemoveFromWndStack(m_research_wnd);
     m_btn_research->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research.png")));
     m_btn_research->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research_mouseover.png")));
 
@@ -6319,6 +6347,7 @@ void MapWnd::ShowProduction() {
     m_in_production_view_mode = true;
     HideAllPopups();
     GG::GUI::GetGUI()->MoveUp(m_production_wnd);
+    PushWndStack(m_production_wnd);
 
     // indicate selection on button
     m_btn_production->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_mouseover.png")));
@@ -6341,6 +6370,7 @@ void MapWnd::ShowProduction() {
 
 void MapWnd::HideProduction() {
     m_production_wnd->Hide();
+    RemoveFromWndStack(m_production_wnd);
     m_in_production_view_mode = false;
     m_btn_production->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production.png")));
     m_btn_production->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_mouseover.png")));
@@ -6378,6 +6408,7 @@ void MapWnd::ShowDesign() {
     // show the design window
     m_design_wnd->Show();
     GG::GUI::GetGUI()->MoveUp(m_design_wnd);
+    PushWndStack(m_design_wnd);
     m_design_wnd->Reset();
 
     // indicate selection on button
@@ -6387,6 +6418,7 @@ void MapWnd::ShowDesign() {
 
 void MapWnd::HideDesign() {
     m_design_wnd->Hide();
+    RemoveFromWndStack(m_design_wnd);
     m_btn_design->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design.png")));
     m_btn_design->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_mouseover.png")));
 
