@@ -24,14 +24,16 @@ const int       UniverseObject::INVALID_OBJECT_AGE = -(1 << 30) - 1;  // using b
 const int       UniverseObject::SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;
 
 UniverseObject::UniverseObject() :
-    StateChangedSignal(blocking_combiner<boost::signals2::optional_last_value<void>>(GetUniverse().UniverseObjectSignalsInhibited())),
+    StateChangedSignal(blocking_combiner<boost::signals2::optional_last_value<void>>(
+        GetUniverse().UniverseObjectSignalsInhibited())),
     m_x(INVALID_POSITION),
     m_y(INVALID_POSITION),
     m_created_on_turn(CurrentTurn() )
 {}
 
 UniverseObject::UniverseObject(const std::string name, double x, double y) :
-    StateChangedSignal(blocking_combiner<boost::signals2::optional_last_value<void>>(GetUniverse().UniverseObjectSignalsInhibited())),
+    StateChangedSignal(blocking_combiner<boost::signals2::optional_last_value<void>>(
+        GetUniverse().UniverseObjectSignalsInhibited())),
     m_name(name),
     m_x(x),
     m_y(y),
@@ -41,8 +43,8 @@ UniverseObject::UniverseObject(const std::string name, double x, double y) :
 UniverseObject::~UniverseObject()
 {}
 
-void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object, Visibility vis,
-                          const std::set<std::string>& visible_specials)
+void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
+                          Visibility vis, const std::set<std::string>& visible_specials)
 {
     if (copied_object.get() == this)
         return;
@@ -51,7 +53,7 @@ void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object, V
         return;
     }
 
-    std::map<MeterType, Meter> censored_meters = copied_object->CensoredMeters(vis);
+    auto censored_meters = copied_object->CensoredMeters(vis);
     for (const auto& entry : copied_object->m_meters) {
         MeterType type = entry.first;
 

@@ -131,7 +131,7 @@ std::vector<std::shared_ptr<UniverseObject>> ObjectMap::FindObjects(const std::s
 
 std::vector<std::shared_ptr<const UniverseObject>> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) const {
     std::vector<std::shared_ptr<const UniverseObject>> result;
-    for (const_iterator<> it = const_begin(); it != const_end(); ++it) {
+    for (auto it = const_begin(); it != const_end(); ++it) {
         if (auto obj = it->Accept(visitor))
             result.push_back(Object(obj->ID()));
     }
@@ -149,16 +149,15 @@ std::vector<std::shared_ptr<UniverseObject>> ObjectMap::FindObjects(const Univer
 
 std::vector<int> ObjectMap::FindObjectIDs(const UniverseObjectVisitor& visitor) const {
     std::vector<int> result;
-    for (const_iterator<> it = const_begin(); it != const_end(); ++it) {
+    for (auto it = const_begin(); it != const_end(); ++it) {
         if (it->Accept(visitor))
             result.push_back(it->ID());
     }
     return result;
 }
 
-std::vector<int> ObjectMap::FindObjectIDs() const {
-    return FindObjectIDs<UniverseObject>();
-}
+std::vector<int> ObjectMap::FindObjectIDs() const
+{ return FindObjectIDs<UniverseObject>(); }
 
 ObjectMap::iterator<> ObjectMap::begin()
 { return begin<UniverseObject>(); }
@@ -178,7 +177,7 @@ void ObjectMap::InsertCore(std::shared_ptr<UniverseObject> item, int empire_id/*
         GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).find(item->ID()) ==
             GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).end())
     {
-        std::shared_ptr<UniverseObject> this_item = this->Object(item->ID());
+        auto this_item = this->Object(item->ID());
         m_existing_objects[item->ID()] = this_item;
         switch (item->ObjectType()) {
             case OBJ_BUILDING:
@@ -215,12 +214,12 @@ void ObjectMap::InsertCore(std::shared_ptr<UniverseObject> item, int empire_id/*
 
 std::shared_ptr<UniverseObject> ObjectMap::Remove(int id) {
     // search for object in objects map
-    std::map<int, std::shared_ptr<UniverseObject>>::iterator it = m_objects.find(id);
+    auto it = m_objects.find(id);
     if (it == m_objects.end())
         return nullptr;
     //DebugLogger() << "Object was removed: " << it->second->Dump();
     // object found, so store pointer for later...
-    std::shared_ptr<UniverseObject> result = it->second;
+    auto result = it->second;
     // and erase from pointer maps
     m_objects.erase(it);
     FOR_EACH_SPECIALIZED_MAP(EraseFromMap, id);
@@ -236,13 +235,11 @@ std::shared_ptr<UniverseObject> ObjectMap::Remove(int id) {
     return result;
 }
 
-void ObjectMap::Clear() {
-    FOR_EACH_MAP(ClearMap);
-}
+void ObjectMap::Clear()
+{ FOR_EACH_MAP(ClearMap); }
 
-void ObjectMap::swap(ObjectMap& rhs) {
-    FOR_EACH_MAP(SwapMap, rhs);
-}
+void ObjectMap::swap(ObjectMap& rhs)
+{ FOR_EACH_MAP(SwapMap, rhs); }
 
 std::vector<int> ObjectMap::FindExistingObjectIDs() const {
     std::vector<int> result;
@@ -374,7 +371,7 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
 
 void ObjectMap::CopyObjectsToSpecializedMaps() {
     FOR_EACH_SPECIALIZED_MAP(ClearMap);
-    for (std::map<int, std::shared_ptr<UniverseObject>>::iterator it = Map<UniverseObject>().begin();
+    for (auto it = Map<UniverseObject>().begin();
          it != Map<UniverseObject>().end(); ++it)
     { FOR_EACH_SPECIALIZED_MAP(TryInsertIntoMap, it->second); }
 }
@@ -389,7 +386,7 @@ std::string ObjectMap::Dump() const {
 }
 
 std::shared_ptr<UniverseObject> ObjectMap::ExistingObject(int id) {
-    std::map<int, std::shared_ptr<UniverseObject>>::iterator it = m_existing_objects.find(id);
+    auto it = m_existing_objects.find(id);
     if (it != m_existing_objects.end())
         return it->second;
     return nullptr;
@@ -410,7 +407,9 @@ void ObjectMap::SwapMap(std::map<int, std::shared_ptr<T>>& map, ObjectMap& rhs)
 { map.swap(rhs.Map<T>()); }
 
 template <class T>
-void ObjectMap::TryInsertIntoMap(std::map<int, std::shared_ptr<T>>& map, std::shared_ptr<UniverseObject> item) {
+void ObjectMap::TryInsertIntoMap(std::map<int, std::shared_ptr<T>>& map,
+                                 std::shared_ptr<UniverseObject> item)
+{
     if (dynamic_cast<T*>(item.get()))
         map[item->ID()] = std::dynamic_pointer_cast<T, UniverseObject>(item);
 }
