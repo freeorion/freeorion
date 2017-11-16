@@ -3115,16 +3115,16 @@ SHP_REINFORCED_HULL_DESC
 
 Incrementa la estructura máxima de todas las naves por 5.'''
 
-SHP_BASIC_DAM_CONT
+SHP_DAMAGE_CONTROL
 Control de Daño Básico
 
-SHP_BASIC_DAM_CONT_DESC
+SHP_DAMAGE_CONTROL_DESC
 Incrementa gradualmente la salud de naves dañadas.  La estructura actual de todas las naves aumenta a un ritmo de 1 por turno.
 
-SHP_ADV_DAM_CONT
+SHP_DAMAGE_CONTROL_ADV
 Control Avanzado de Daño
 
-SHP_ADV_DAM_CONT_DESC
+SHP_DAMAGE_CONTROL_ADV_DESC
 Restaura la salud de naves dañadas entre batallas.
 
 SHP_ION_CANNON

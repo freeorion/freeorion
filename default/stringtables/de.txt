@@ -5515,10 +5515,10 @@ Planetare Schutzbrigaden
 DEF_GARRISON_4_DESC
 Erhöht das Maximum der [[metertype METER_TROOPS]] auf allen Planeten um 20.
 
-SHP_FLEET_REPAIR_DESC
+SHP_FIELD_REPAIR_DESC
 Allows ships within [[metertype METER_SUPPLY]] line range to repair damage at a rate of 1 per turn. Does not function immediately after battles.
 
-SHP_ADV_DAM_CONT_DESC
+SHP_DAMAGE_CONTROL_ADV_DESC
 Repairs damaged ships by 25% of structure per turn-- not during battles.
 
 SHP_ROOT_AGGRESSION_DESC

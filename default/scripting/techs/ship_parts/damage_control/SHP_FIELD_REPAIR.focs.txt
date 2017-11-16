@@ -1,6 +1,6 @@
 Tech
-    name = "SHP_FLEET_REPAIR"
-    description = "SHP_FLEET_REPAIR_DESC"
+    name = "SHP_FIELD_REPAIR"
+    description = "SHP_FIELD_REPAIR_DESC"
     short_description = "SHIP_REPAIR_DESC"
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 80 * [[TECH_COST_MULTIPLIER]]
@@ -8,7 +8,7 @@ Tech
     tags = [ "PEDIA_DAMAGE_CONTROL_PART_TECHS" ]
     prerequisites = [
         "SHP_INTSTEL_LOG"
-        "SHP_BASIC_DAM_CONT"
+        "SHP_DAMAGE_CONTROL"
             ]
     effectsgroups =
         EffectsGroup

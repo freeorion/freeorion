@@ -11018,11 +11018,11 @@ Camouflage Planétaire
 DEF_PLANET_CLOAK_DESC
 En synchronisant les différentes parties d'une planète dans différentes dimensions de l'espace-temps, sa [[metertype METER_STEALTH]] peut être considérablement accrue.
 
-SHP_FLEET_REPAIR
+SHP_FIELD_REPAIR
 Réparation Spatiale
 
-SHP_FLEET_REPAIR_DESC
-Répare les astronefs endommagés d'une valeur de 10% de leur [[metertype METER_STRUCTURE]] à chaque tour, s'ils se trouvent dans une zone d'[[metertype METER_SUPPLY]], sont stationnaires et n'ont pas engagé de combat durant ce tour. Cumulable avec le [[tech SHP_BASIC_DAM_CONT]].
+SHP_FIELD_REPAIR_DESC
+Répare les astronefs endommagés d'une valeur de 10% de leur [[metertype METER_STRUCTURE]] à chaque tour, s'ils se trouvent dans une zone d'[[metertype METER_SUPPLY]], sont stationnaires et n'ont pas engagé de combat durant ce tour. Cumulable avec le [[tech SHP_DAMAGE_CONTROL]].
 
 SHP_REINFORCED_HULL
 Coques Renforcées
@@ -11032,17 +11032,17 @@ SHP_REINFORCED_HULL_DESC
 
 Les coques standards d'astronef sont conçues à l'aide de techniques avancées d'architecture en microgravité et fabriquées à partir de matériaux hautement résistants. Cependant, les contraintes inhérentes de la matière physique limitent la résistance maximale des coques. En modifiant l'intégrité structurelle d'une coque à l'aide de champs moléculaires améliorés, une augmentation considérable de sa résistance peut être obtenue.'''
 
-SHP_BASIC_DAM_CONT
+SHP_DAMAGE_CONTROL
 Contrôle Basique des Dégâts
 
-SHP_BASIC_DAM_CONT_DESC
+SHP_DAMAGE_CONTROL_DESC
 Répare progressivement les astronefs endommagés. La valeur de [[metertype METER_STRUCTURE]] de tous les astronefs est restaurée au rythme d'1 point par tour, si pour chaque tour les astronefs n'ont engagé aucun combat.
 
-SHP_ADV_DAM_CONT
+SHP_DAMAGE_CONTROL_ADV
 Contrôle Avancé des Dégâts
 
-SHP_ADV_DAM_CONT_DESC
-Répare les astronefs endommagés d'une valeur de 10% de leur [[metertype METER_STRUCTURE]] à chaque tour, s'ils sont stationnaires et n'ont pas engagé de combat durant ce tour. Cumulable avec le [[tech SHP_BASIC_DAM_CONT]] ainsi que la [[tech SHP_FLEET_REPAIR]] et opère également en dehors des lignes d'[[metertype METER_SUPPLY]] de l'empire.
+SHP_DAMAGE_CONTROL_ADV_DESC
+Répare les astronefs endommagés d'une valeur de 10% de leur [[metertype METER_STRUCTURE]] à chaque tour, s'ils sont stationnaires et n'ont pas engagé de combat durant ce tour. Cumulable avec le [[tech SHP_DAMAGE_CONTROL]] ainsi que la [[tech SHP_FIELD_REPAIR]] et opère également en dehors des lignes d'[[metertype METER_SUPPLY]] de l'empire.
 
 SHP_ROOT_AGGRESSION  # translated
 Agression

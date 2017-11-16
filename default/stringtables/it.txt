@@ -3474,13 +3474,13 @@ Presidio Planetario 4
 DEF_GARRISON_4_DESC
 Incrementa il numero massimo delle [[metertype METER_TROOPS]] su tutti i pianeti di 20.
 
-SHP_FLEET_REPAIR_DESC
+SHP_FIELD_REPAIR_DESC
 Permette le navi all'interno [[metertype METER_SUPPLY]] Linee per riparare i danni ad una velocità di 1 per turno. Non funziona immediatamente dopo le battaglie.
 
-SHP_ADV_DAM_CONT
+SHP_DAMAGE_CONTROL_ADV
 Controllo Avanzato dei Danni
 
-SHP_ADV_DAM_CONT_DESC
+SHP_DAMAGE_CONTROL_ADV_DESC
 Riparazione del 25% per turno della struttura delle navi danneggiate -- non durante le battaglie.
 
 SHP_ROOT_AGGRESSION

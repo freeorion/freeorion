@@ -498,9 +498,9 @@ HULL_TECHS = tuple(hull for hulls in (ROBOTIC_HULL_TECHS,
                                       MISC_HULL_TECHS) for hull in hulls)
 
 DAMAGE_CONTROL_TECHS = (
-    "SHP_BASIC_DAM_CONT",
-    "SHP_FLEET_REPAIR",
-    "SHP_ADV_DAM_CONT",
+    "SHP_DAMAGE_CONTROL",
+    "SHP_FIELD_REPAIR",
+    "SHP_DAMAGE_CONTROL_ADV",
 )
 
 WEAPON_PREFIX = "SHP_WEAPON"
@@ -706,9 +706,9 @@ BASE_DETECTION = 25
 TECH_EFFECTS = {
     # "TECHNAME": { Token1: Value1, Token2: Value2, ...}
     "SHP_REINFORCED_HULL": {STRUCTURE: 5},
-    "SHP_BASIC_DAM_CONT": {REPAIR_PER_TURN: 1},
-    "SHP_FLEET_REPAIR": {REPAIR_PER_TURN: (STRUCTURE, 0.1)},  # 10% of max structure
-    "SHP_ADV_DAM_CONT": {REPAIR_PER_TURN: (STRUCTURE, 0.1)},  # 10% of max structure
+    "SHP_DAMAGE_CONTROL": {REPAIR_PER_TURN: 1},
+    "SHP_FIELD_REPAIR": {REPAIR_PER_TURN: (STRUCTURE, 0.1)},  # 10% of max structure
+    "SHP_DAMAGE_CONTROL_ADV": {REPAIR_PER_TURN: (STRUCTURE, 0.1)},  # 10% of max structure
     "SHP_INTSTEL_LOG": {SPEED: 20},  # technically not correct, but as approximation good enough...
     "GRO_ENERGY_META": {FUEL: 2},
 }

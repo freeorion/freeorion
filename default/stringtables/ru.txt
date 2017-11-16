@@ -9951,11 +9951,11 @@ DEF_PLANET_CLOAK
 DEF_PLANET_CLOAK_DESC
 Путем фазирования пространственно-временного континуума частей планеты, ее [[metertype METER_STEALTH]] усиливается значительно
 
-SHP_FLEET_REPAIR
+SHP_FIELD_REPAIR
 Ремонтная площака флота
 
-SHP_FLEET_REPAIR_DESC
-Позволяет кораблям в радиусе [[metertype METER_SUPPLY]] ремонтировать повреждения в размере 10% от [[metertype METER_STRUCTURE]] за ход. Суммируется с [[tech SHP_BASIC_DAM_CONT]]. Не работает сразу после сражения только через ход
+SHP_FIELD_REPAIR_DESC
+Позволяет кораблям в радиусе [[metertype METER_SUPPLY]] ремонтировать повреждения в размере 10% от [[metertype METER_STRUCTURE]] за ход. Суммируется с [[tech SHP_DAMAGE_CONTROL]]. Не работает сразу после сражения только через ход
 
 SHP_REINFORCED_HULL
 Усиленный корпус
@@ -9965,17 +9965,17 @@ SHP_REINFORCED_HULL_DESC
 
 Стандартные корпуса корабля спроектированы и построены с помощью передовых микрогравитационных архитектурных методов и высокопрочных материалов. Однако, ограничения физической материи накладывают жесткие ограничения на прочность корпусов. Увеличивая поле структурной целостности корабля, можно получить значительное увеличение прочности'''
 
-SHP_BASIC_DAM_CONT
+SHP_DAMAGE_CONTROL
 Базовый контроль урона
 
-SHP_BASIC_DAM_CONT_DESC
+SHP_DAMAGE_CONTROL_DESC
 Постепенно ремонтирует поврежденные корабли. Текущая структура всех кораблей восполняется со скоростью 1 за ход
 
-SHP_ADV_DAM_CONT
+SHP_DAMAGE_CONTROL_ADV
 Усовершенствованный контроль урона
 
-SHP_ADV_DAM_CONT_DESC
-Ремонтирует поврежденные корабли в размере 10% от [[metertype METER_STRUCTURE]] за ход. Суммируется с [[tech SHP_BASIC_DAM_CONT]] и [[tech SHP_FLEET_REPAIR]]. Не работает сразу после сражения только через ход
+SHP_DAMAGE_CONTROL_ADV_DESC
+Ремонтирует поврежденные корабли в размере 10% от [[metertype METER_STRUCTURE]] за ход. Суммируется с [[tech SHP_DAMAGE_CONTROL]] и [[tech SHP_FIELD_REPAIR]]. Не работает сразу после сражения только через ход
 
 SHP_ROOT_AGGRESSION
 Нападение
