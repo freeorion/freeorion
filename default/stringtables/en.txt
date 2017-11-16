@@ -11053,7 +11053,7 @@ SHP_DAMAGE_CONTROL
 Basic Damage Control
 
 SHP_DAMAGE_CONTROL_DESC
-'''Repairs ships not engaged in combat and with no more than 35% target [[metertype METER_STRUCTURE]] at a rate of 1 per turn.
+'''Repairs ships not engaged in combat at a rate of 1 [[metertype METER_STRUCTURE]] per turn.
 
 Cumulative with other ship repair effects.'''
 
@@ -11061,7 +11061,7 @@ SHP_DAMAGE_CONTROL_ADV
 Advanced Damage Control
 
 SHP_DAMAGE_CONTROL_ADV_DESC
-'''Repairs ships not engaged in combat and with no more than 45% target [[metertype METER_STRUCTURE]] at a rate of 10% of current [[metertype METER_STRUCTURE]] per turn, with a minimum repair of 3.
+'''Repairs ships not engaged in combat at a rate of 10% of current [[metertype METER_STRUCTURE]] per turn, with a minimum repair of 3.
 
 Replaces effect from [[tech SHP_DAMAGE_CONTROL]]. Cumulative with other ship repair effects.'''
 

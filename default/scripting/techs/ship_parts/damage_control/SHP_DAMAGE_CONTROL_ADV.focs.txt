@@ -24,9 +24,8 @@ Tech
                 ]
                 Structure high = LocalCandidate.MaxStructure - 0.001
             ]
-            activation = Structure high = Source.MaxStructure * 0.45
             stackinggroup = "SHIP_DAMAGE_CONTROL"
-            effects = [[EFFECT_SHIP_DAMAGE_CONTROL(0.45, 3, 0.1)]]
+            effects = [[EFFECT_SHIP_DAMAGE_CONTROL(3, 0.1)]]
 
 #include "damage_control.macros"
 
