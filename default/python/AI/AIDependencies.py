@@ -48,6 +48,7 @@ TROOPS_PER_POP = 0.2
 
 PROT_FOCUS_MULTIPLIER = 2.0
 TECH_COST_MULTIPLIER = 2.0
+FOCUS_CHANGE_PENALTY = 1
 
 # Colonization details
 COLONY_POD_COST = 120  # TODO Query directly from part
