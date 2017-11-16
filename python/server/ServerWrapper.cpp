@@ -265,7 +265,7 @@ namespace {
         return special->SpawnLimit();
     }
 
-    list SpecialLocations(const std::string special_name, list object_ids) {
+    list SpecialLocations(const std::string special_name, const list& object_ids) {
         // get special and check if it exists
         const Special* special = GetSpecial(special_name);
         if (!special) {
@@ -940,7 +940,7 @@ namespace {
     }
 
     // Return a list of system ids of universe objects with @p obj_ids.
-    list ObjectsGetSystems(list obj_ids) {
+    list ObjectsGetSystems(const list& obj_ids) {
         list py_systems;
         boost::python::stl_input_iterator<int> end;
         for (boost::python::stl_input_iterator<int> id(obj_ids);
@@ -956,7 +956,7 @@ namespace {
     }
 
     // Return all systems within \p jumps of \p sys_ids
-    list SystemsWithinJumps(size_t jumps, list sys_ids) {
+    list SystemsWithinJumps(size_t jumps, const list& sys_ids) {
         list py_systems;
         boost::python::stl_input_iterator<int> end;
 

@@ -91,7 +91,7 @@ namespace {
         return retval;
     }
 
-    void                    UpdateMetersWrapper(const Universe& universe, boost::python::list objList) {
+    void                    UpdateMetersWrapper(const Universe& universe, const boost::python::list& objList) {
         std::vector<int> objvec;
         int const numObjects = boost::python::len(objList);
         for (int i = 0; i < numObjects; i++)
