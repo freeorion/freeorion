@@ -108,5 +108,8 @@ FO_COMMON_API boost::filesystem::path GetPath(PathType path_type);
 /** Returns path for path type cast from @p path_string */
 FO_COMMON_API boost::filesystem::path GetPath(const std::string& path_string);
 
+/** Returns if path exists and is a regular file */
+FO_COMMON_API bool IsExistingFile(const boost::filesystem::path& path);
+
 
 #endif
