@@ -5,11 +5,57 @@
 #include "OptionsDB.h"
 #include "StringTable.h"
 
+#include <boost/locale/generator.hpp>
+#include <boost/locale/info.hpp>
+#include <boost/locale/conversion.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
+
 namespace {
     std::string GetDefaultStringTableFileName()
     { return PathToString(GetResourceDir() / "stringtables" / "en.txt"); }
 
+
+    /** Determines stringtable to use from users locale when stringtable filename is at default setting */
+    void InitStringtableFileName() {
+        // Only check on the first call
+        static bool stringtable_filename_init { false };
+        if (stringtable_filename_init)
+            return;
+
+        stringtable_filename_init = true;
+
+        if (!GetOptionsDB().IsDefaultValue("stringtable-filename"))
+            return;
+
+        boost::locale::generator gen;
+        std::locale user_locale { gen("") };
+        std::string lang {};
+        try {
+            lang = std::use_facet<boost::locale::info>(user_locale).language();
+        } catch(std::bad_cast) {
+            lang.clear();
+        }
+
+        boost::algorithm::to_lower(lang);
+
+        // early return when determined language is empty or C locale
+        if (lang.empty() || lang == "c" || lang == "posix") {
+            WarnLogger() << "Unable to determine locale for stringtable " << lang;
+            return;
+        }
+
+        boost::filesystem::path lang_filename { lang + ".txt" };
+        boost::filesystem::path stringtable_file { GetResourceDir() / "stringtables" / lang_filename };
+
+        if (IsExistingFile(stringtable_file)) {
+            GetOptionsDB().Set("stringtable-filename", PathToString(stringtable_file));
+            DebugLogger() << "Set stringtable based off of system locale : " << lang;
+        }
+    }
+
     std::string GetStringTableFileName() {
+        InitStringtableFileName();
+
         std::string option_filename = GetOptionsDB().Get<std::string>("stringtable-filename");
         if (option_filename.empty())
             return GetDefaultStringTableFileName();
