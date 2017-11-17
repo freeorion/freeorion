@@ -149,9 +149,4 @@ namespace boost { namespace spirit { namespace traits {
         boost::algorithm::to_lower(str);
         attr = str.c_str();
     }
-
-    void assign_to_attribute_from_iterators<bool, parse::text_iterator, void>::
-    call(const parse::text_iterator& first, const parse::text_iterator& last, bool& attr)
-    { attr = *first == 't' || *first == 'T' ? true : false; }
-
 } } }
