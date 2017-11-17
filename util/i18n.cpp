@@ -24,7 +24,13 @@ namespace {
 
         stringtable_filename_init = true;
 
+        bool was_specified = false;
         if (!GetOptionsDB().IsDefaultValue("stringtable-filename"))
+            was_specified = true;
+
+        // Set the english stingtable as the default option
+        GetOptionsDB().SetDefault("stringtable-filename", PathToString(GetResourceDir() / "stringtables/en.txt"));
+        if (was_specified)
             return;
 
         boost::locale::generator gen;
