@@ -388,11 +388,9 @@ sc::result Idle::react(const Hostless&) {
     return transit<MPLobby>();
 }
 
-
 ////////////////////////////////////////////////////////////
 // MPLobby
 ////////////////////////////////////////////////////////////
-
 namespace {
     GG::Clr GetUnusedEmpireColour(const std::list<std::pair<int, PlayerSetupData>>& psd) {
         //DebugLogger(FSM) << "finding colours for empire of player " << player_name;
@@ -1303,7 +1301,6 @@ sc::result MPLobby::react(const Error& msg) {
     return discard_event();
 }
 
-
 ////////////////////////////////////////////////////////////
 // WaitingForSPGameJoiners
 ////////////////////////////////////////////////////////////
@@ -1496,7 +1493,7 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
         if (m_single_player_setup_data->m_new_game) {
             DebugLogger(FSM) << "Verify AIs SP game...";
             if (server.VerifySPGameAIs(*m_single_player_setup_data))
-                server. SendNewGameStartMessages();
+                server.SendNewGameStartMessages();
 
         } else {
             DebugLogger(FSM) << "Loading SP game save file: " << m_single_player_setup_data->m_filename;

@@ -1571,8 +1571,6 @@ void FleetDataPanel::RefreshStateChangedSignals() {
                 boost::bind(&FleetDataPanel::RequireRefresh, this)));
 }
 
-
-
 void FleetDataPanel::SetStatIconValues() {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
