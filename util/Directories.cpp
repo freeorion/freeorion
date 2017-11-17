@@ -635,3 +635,14 @@ fs::path GetPath(const std::string& path_string) {
     }
     return GetPath(path_type);
 }
+
+bool IsExistingFile(const fs::path& path) {
+    try {
+        auto stat = fs::status(path);
+        return fs::exists(stat) && fs::is_regular_file(stat);
+    } catch(boost::filesystem::filesystem_error& ec) {
+        ErrorLogger() << "Filesystem error during stat of " << PathToString(path) << " : " << ec.what();
+    }
+
+    return false;
+}
