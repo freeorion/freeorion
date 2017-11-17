@@ -2634,12 +2634,22 @@ void MapWnd::LButtonUp(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
 void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
     m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
+    const auto fleet_wnd = manager.ActiveFleetWnd();
     bool quick_close_wnds = GetOptionsDB().Get<bool>("UI.window-quickclose");
 
     // if a fleet window is visible, hide it and deselect fleet; if not, hide sidepanel
-    if (!m_dragged && !m_in_production_view_mode && manager.ActiveFleetWnd() && quick_close_wnds) {
-        manager.CloseAll(); }
-    else if (!m_dragged && !m_in_production_view_mode) {
+    if (!m_dragged && !m_in_production_view_mode && fleet_wnd && quick_close_wnds) {
+        // Remove the reference to the active fleet window from the stack, to avoid it keeping the window
+        // alive for longer than it is supposed to.
+        auto it = std::find_if(m_wnd_stack.begin(), m_wnd_stack.end(),
+            [=](std::shared_ptr<GG::Wnd> wnd) {
+                return wnd.get() == fleet_wnd;
+            });
+        if (it != m_wnd_stack.end()) {
+            m_wnd_stack.erase(it);
+        }
+        manager.CloseAll();
+    } else if (!m_dragged && !m_in_production_view_mode) {
         SelectSystem(INVALID_OBJECT_ID);
         m_side_panel->Hide();
     }
