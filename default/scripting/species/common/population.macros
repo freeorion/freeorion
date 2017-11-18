@@ -154,7 +154,6 @@ PHOTOTROPHIC_BONUS
                 Planet
                 HasTag name = "PHOTOTROPHIC"
                 Star type = [Blue]
-                TargetPopulation low = 0
             ]
             accountinglabel = "VERY_BRIGHT_STAR"
             priority = [[LATEST_GROWTH_PRIORITY]]
@@ -166,7 +165,6 @@ PHOTOTROPHIC_BONUS
                 Planet
                 HasTag name = "PHOTOTROPHIC"
                 Star type = [White]
-                TargetPopulation low = 0
             ]
             accountinglabel = "BRIGHT_STAR"
             priority = [[LATEST_GROWTH_PRIORITY]]
