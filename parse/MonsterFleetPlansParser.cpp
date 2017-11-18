@@ -115,9 +115,9 @@ namespace {
         parse::detail::double_grammar      double_rule;
         parse::detail::int_grammar         int_rule;
         parse::detail::single_or_repeated_string<std::vector<std::string>> one_or_more_string_tokens;
-        parse::detail::rule<std::vector<std::string>> ships;
-        parse::detail::rule<double>        spawn_rate;
-        parse::detail::rule<int>           spawn_limit;
+        parse::detail::rule<std::vector<std::string>()> ships;
+        parse::detail::rule<double()>      spawn_rate;
+        parse::detail::rule<int()>         spawn_limit;
         monster_fleet_plan_rule            monster_fleet_plan;
         start_rule                         start;
     };
