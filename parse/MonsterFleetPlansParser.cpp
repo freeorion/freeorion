@@ -25,12 +25,15 @@ namespace {
     void insert_monster_fleet_plan(
         std::vector<std::unique_ptr<MonsterFleetPlan>>& plans,
         const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
-        double spawn_rate, int spawn_limit,
+        const boost::optional<double>& spawn_rate,
+        const boost::optional<int>& spawn_limit,
         const boost::optional<parse::detail::condition_payload>& location, bool& pass)
     {
         plans.push_back(
             boost::make_unique<MonsterFleetPlan>(
-                fleet_name, ship_design_names, spawn_rate, spawn_limit,
+                fleet_name, ship_design_names,
+                (spawn_rate ? *spawn_rate : 1.0),
+                (spawn_limit ? *spawn_limit : 9999),
                 (location ? location->OpenEnvelope(pass) : nullptr)
             ));
     };
@@ -62,7 +65,6 @@ namespace {
             qi::_r1_type _r1;
             qi::eps_type eps;
             qi::_pass_type _pass;
-            qi::_val_type _val;
             qi::omit_type omit_;
             const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
             const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
@@ -72,21 +74,19 @@ namespace {
                 ;
 
             spawn_rate =
-                (labeller.rule(SpawnRate_token) > double_rule [ _val = _1 ])
-                |    eps [ _val = 1.0 ]
+                labeller.rule(SpawnRate_token) > double_rule
                 ;
 
             spawn_limit =
-                (labeller.rule(SpawnLimit_token) > int_rule [ _val = _1 ])
-                |    eps [ _val = 9999 ]
+                labeller.rule(SpawnLimit_token) > int_rule
                 ;
 
             monster_fleet_plan
                 = ( omit_[tok.MonsterFleet_]
                     > labeller.rule(Name_token) > tok.string
                     > ships
-                    > spawn_rate
-                    > spawn_limit
+                    > -spawn_rate
+                    > -spawn_limit
                     > -(labeller.rule(Location_token) > condition_parser)
                 ) [ insert_monster_fleet_plan_(_r1, _1, _2, _3, _4, _5, _pass) ]
                 ;
