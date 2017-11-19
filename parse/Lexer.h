@@ -112,13 +112,6 @@ namespace boost { namespace spirit { namespace traits {
     template <>
     struct assign_to_attribute_from_iterators<const char*, parse::text_iterator, void>
     { static void call(const parse::text_iterator& first, const parse::text_iterator& last, const char*& attr); };
-
-    // HACK! This is only necessary because of a bug in Spirit in Boost
-    // versions <= 1.45.
-    template <>
-    struct assign_to_attribute_from_iterators<bool, parse::text_iterator, void>
-    { static void call(const parse::text_iterator& first, const parse::text_iterator& last, bool& attr); };
-
 } } }
 
 #endif
