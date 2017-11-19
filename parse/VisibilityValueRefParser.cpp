@@ -1,6 +1,7 @@
 #include "ValueRefParser.h"
 
 #include "EnumParser.h"
+#include "EnumValueRefRules.h"
 
 #include "../universe/Enums.h"
 #include "../universe/ValueRef.h"

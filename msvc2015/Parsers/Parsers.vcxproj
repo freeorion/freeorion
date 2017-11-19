@@ -162,6 +162,7 @@
     <ClCompile Include="..\..\parse\EmpireStatsParser.cpp" />
     <ClCompile Include="..\..\parse\EncyclopediaParser.cpp" />
     <ClCompile Include="..\..\parse\EnumParser.cpp" />
+    <ClCompile Include="..\..\parse\EnumValueRefRules.cpp" />
     <ClCompile Include="..\..\parse\FieldsParser.cpp" />
     <ClCompile Include="..\..\parse\FleetPlansParser.cpp" />
     <ClCompile Include="..\..\parse\GameRulesParser.cpp" />
@@ -211,6 +212,7 @@
     <ClInclude Include="..\..\parse\EffectParser5.h" />
     <ClInclude Include="..\..\parse\EffectParserImpl.h" />
     <ClInclude Include="..\..\parse\EnumParser.h" />
+    <ClInclude Include="..\..\parse\EnumValueRefRules.h" />
     <ClInclude Include="..\..\parse\Lexer.h" />
     <ClInclude Include="..\..\parse\MovableEnvelope.h" />
     <ClInclude Include="..\..\parse\Parse.h" />

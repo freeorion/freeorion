@@ -1,6 +1,7 @@
 #include "EffectParser4.h"
 
 #include "ValueRefParser.h"
+#include "EnumValueRefRules.h"
 #include "../universe/Effect.h"
 #include "../universe/ValueRef.h"
 

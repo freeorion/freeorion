@@ -2,6 +2,7 @@
 #define _ConditionParser7_h_
 
 #include "ConditionParserImpl.h"
+#include "EnumValueRefRules.h"
 
 namespace parse { namespace detail {
     struct condition_parser_rules_7 : public condition_parser_grammar {

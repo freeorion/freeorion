@@ -2,6 +2,7 @@
 
 #include "parse/EnumParser.h"
 #include "parse/ValueRefParser.h"
+#include "parse/EnumValueRefRules.h"
 #include "parse/ConditionParserImpl.h"
 #include "universe/Enums.h"
 
