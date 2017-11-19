@@ -154,7 +154,7 @@ def calc_max_pop(planet, species, detail):
         base_pop = base_pop_not_modified_by_species + base_pop_modified_by_species + species_effect
         return planet_size * base_pop + pop_const_mod
 
-    if "PHOTOTROPHIC" in tag_list and max_pop_size() > 0:
+    if "PHOTOTROPHIC" in tag_list:
         star_type = fo.getUniverse().getSystem(planet.systemID).starType
         star_pop_mod = AIDependencies.POP_MOD_PHOTOTROPHIC_STAR_MAP.get(star_type, 0)
         base_pop_not_modified_by_species += star_pop_mod
