@@ -20,6 +20,7 @@ target_sources(freeorionparseobj
         ${CMAKE_CURRENT_LIST_DIR}/EffectParser5.h
         ${CMAKE_CURRENT_LIST_DIR}/EffectParserImpl.h
         ${CMAKE_CURRENT_LIST_DIR}/EnumParser.h
+        ${CMAKE_CURRENT_LIST_DIR}/EnumValueRefRules.h
         ${CMAKE_CURRENT_LIST_DIR}/Lexer.h
         ${CMAKE_CURRENT_LIST_DIR}/MovableEnvelope.h
         ${CMAKE_CURRENT_LIST_DIR}/ParseImpl.h
@@ -47,6 +48,7 @@ target_sources(freeorionparseobj
         ${CMAKE_CURRENT_LIST_DIR}/EmpireStatsParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/EncyclopediaParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/EnumParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/EnumValueRefRules.cpp
         ${CMAKE_CURRENT_LIST_DIR}/FieldsParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/FleetPlansParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/GameRulesParser.cpp
