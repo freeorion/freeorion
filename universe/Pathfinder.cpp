@@ -839,7 +839,7 @@ namespace {
         if (fleet)
             return std::make_pair(fleet->PreviousSystemID(), fleet->NextSystemID());
 
-        if (auto field = std::dynamic_pointer_cast<const Field>(obj))
+        if (std::dynamic_pointer_cast<const Field>(obj))
             return nullptr;
 
         // Don't generate an error message for temporary objects.
