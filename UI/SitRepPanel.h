@@ -44,7 +44,8 @@ private:
     void            DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& mod);
     void            DoLayout();
 
-    int             GetNextNonEmptySitrepsTurn(const std::map<int, std::list<SitRepEntry>>& turns,
+    bool            IsSitRepInvalid(SitRepEntry& sitrep) const;
+    int             GetNextNonEmptySitrepsTurn(std::map<int, std::list<SitRepEntry>>& turns,
                                                int turn, bool forward) const;   ///< Return next turn with sitreps
 
     std::shared_ptr<GG::ListBox>            m_sitreps_lb;
