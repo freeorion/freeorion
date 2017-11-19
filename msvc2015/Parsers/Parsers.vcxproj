@@ -139,6 +139,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\parse\ArithmeticRules.cpp" />
     <ClCompile Include="..\..\parse\BuildingsParser.cpp" />
     <ClCompile Include="..\..\parse\CommonParamsParser.cpp" />
     <ClCompile Include="..\..\parse\ConditionParser.cpp" />

@@ -27,6 +27,7 @@ target_sources(freeorionparseobj
         ${CMAKE_CURRENT_LIST_DIR}/ReportParseError.h
         ${CMAKE_CURRENT_LIST_DIR}/Tokens.h
         ${CMAKE_CURRENT_LIST_DIR}/ValueRefParser.h
+        ${CMAKE_CURRENT_LIST_DIR}/ArithmeticRules.cpp
         ${CMAKE_CURRENT_LIST_DIR}/BuildingsParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/CommonParamsParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ConditionParser1.cpp
