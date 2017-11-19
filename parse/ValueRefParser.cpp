@@ -18,10 +18,13 @@ namespace std {
 }
 #endif
 
+namespace qi = boost::spirit::qi;
+namespace phoenix = boost::phoenix;
+
 namespace parse { namespace detail {
 
     const reference_token_rule variable_scope(const parse::lexer& tok) {
-        boost::spirit::qi::_val_type _val;
+        qi::_val_type _val;
 
         reference_token_rule variable_scope;
         variable_scope
@@ -53,12 +56,12 @@ namespace parse { namespace detail {
     simple_variable_rules<T>::simple_variable_rules(
         const std::string& type_name, const parse::lexer& tok)
     {
-        using boost::phoenix::new_;
+        using phoenix::new_;
 
-        boost::spirit::qi::_1_type _1;
-        boost::spirit::qi::_val_type _val;
-        boost::spirit::qi::lit_type lit;
-        const boost::phoenix::function<construct_movable> construct_movable_;
+        qi::_1_type _1;
+        qi::_val_type _val;
+        qi::lit_type lit;
+        const phoenix::function<construct_movable> construct_movable_;
 
         free_variable
             =  (tok.Value_ >> !lit('('))
@@ -109,22 +112,22 @@ namespace parse { namespace detail {
     ) :
         statistic_type_enum(tok)
     {
-        using boost::phoenix::construct;
-        using boost::phoenix::new_;
-        using boost::phoenix::push_back;
+        using phoenix::construct;
+        using phoenix::new_;
+        using phoenix::push_back;
 
-        boost::spirit::qi::_1_type _1;
-        boost::spirit::qi::_2_type _2;
-        boost::spirit::qi::_a_type _a;
-        boost::spirit::qi::_b_type _b;
-        boost::spirit::qi::_c_type _c;
-        boost::spirit::qi::_d_type _d;
-        boost::spirit::qi::_val_type _val;
-        boost::spirit::qi::lit_type lit;
-        boost::spirit::qi::_pass_type _pass;
-        const boost::phoenix::function<construct_movable> construct_movable_;
-        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
-        const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
+        qi::_1_type _1;
+        qi::_2_type _2;
+        qi::_a_type _a;
+        qi::_b_type _b;
+        qi::_c_type _c;
+        qi::_d_type _d;
+        qi::_val_type _val;
+        qi::lit_type lit;
+        qi::_pass_type _pass;
+        const phoenix::function<construct_movable> construct_movable_;
+        const phoenix::function<deconstruct_movable> deconstruct_movable_;
+        const phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
 
         functional_expr
             =   (
