@@ -3,6 +3,7 @@
 #include "../util/Logger.h"
 #include "../util/ScopedTimer.h"
 #include "../Empire/EmpireManager.h"
+#include "Field.h"
 #include "Fleet.h"
 #include "Ship.h"
 #include "System.h"
@@ -837,6 +838,13 @@ namespace {
         auto fleet = FleetFromObject(obj);
         if (fleet)
             return std::make_pair(fleet->PreviousSystemID(), fleet->NextSystemID());
+
+        if (std::dynamic_pointer_cast<const Field>(obj))
+            return nullptr;
+
+        // Don't generate an error message for temporary objects.
+        if (obj->ID() == TEMPORARY_OBJECT_ID)
+            return nullptr;
 
         ErrorLogger() << "GeneralizedLocationType unable to locate " << obj->Name() << "(" << obj->ID() << ")";
         return nullptr;
