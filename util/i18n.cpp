@@ -30,8 +30,10 @@ namespace {
 
         // Set the english stingtable as the default option
         GetOptionsDB().SetDefault("stringtable-filename", PathToString(GetResourceDir() / "stringtables/en.txt"));
-        if (was_specified)
+        if (was_specified) {
+            DebugLogger() << "Detected language: Previously specified " << GetOptionsDB().Get<std::string>("stringtable-filename");
             return;
+        }
 
         boost::locale::generator gen;
         std::locale user_locale { gen("") };
@@ -39,24 +41,28 @@ namespace {
         try {
             lang = std::use_facet<boost::locale::info>(user_locale).language();
         } catch(std::bad_cast) {
-            lang.clear();
+            WarnLogger() << "Detected language: Bad cast, falling back to default";
+            return;
         }
 
         boost::algorithm::to_lower(lang);
 
         // early return when determined language is empty or C locale
         if (lang.empty() || lang == "c" || lang == "posix") {
-            WarnLogger() << "Unable to determine locale for stringtable " << lang;
+            WarnLogger() << "Detected lanuage: Not detected, falling back to default";
             return;
         }
+
+        DebugLogger() << "Detected language: " << lang;
 
         boost::filesystem::path lang_filename { lang + ".txt" };
         boost::filesystem::path stringtable_file { GetResourceDir() / "stringtables" / lang_filename };
 
-        if (IsExistingFile(stringtable_file)) {
+        if (IsExistingFile(stringtable_file))
             GetOptionsDB().Set("stringtable-filename", PathToString(stringtable_file));
-            DebugLogger() << "Set stringtable based off of system locale : " << lang;
-        }
+        else
+            WarnLogger() << "Stringtable file " << PathToString(stringtable_file)
+                         << " not found, falling back to default";
     }
 
     std::string GetStringTableFileName() {
