@@ -514,7 +514,8 @@ bool SitRepPanel::IsSitRepInvalid(SitRepEntry& sitrep) const {
     // Validation is time consuming because all variables are substituted
     bool validated = sitrep.Validate();
 
-    // verbose-sitrep will hide all sitreps that do not validate
+    // having verbose-sitrep off / disabled will hide sitreps that do not
+    // validate
     bool verbose_sitrep = GetOptionsDB().Get<bool>("verbose-sitrep");
     if (!verbose_sitrep && !validated)
         return true;
