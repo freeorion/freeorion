@@ -5923,14 +5923,20 @@ void MapWnd::PushWndStack(std::shared_ptr<GG::Wnd> wnd) {
 }
 
 void MapWnd::RemoveFromWndStack(std::shared_ptr<GG::Wnd> wnd) {
-    auto it = std::find_if(m_wnd_stack.begin(), m_wnd_stack.end(),
-        [&wnd](std::weak_ptr<GG::Wnd> weak_wnd) {
-            return weak_wnd.lock() == wnd;
+    // Recreate the stack, but without the Wnd to be removed or any null/expired weak_ptrs
+    std::vector<std::weak_ptr<GG::Wnd>> new_stack;
+    for (auto& weak_wnd : m_wnd_stack) {
+        // skip adding to the new stack if it's null/expired
+        if (auto shared_wnd = weak_wnd.lock()) {
+            // skip adding to the new stack if it's the one to be removed
+            if (shared_wnd != wnd) {
+                // Swap them to avoid another reference count check
+                new_stack.emplace_back();
+                new_stack.back().swap(weak_wnd);
+            }
         }
-    );
-    if (it != m_wnd_stack.end()) {
-        m_wnd_stack.erase(it);
     }
+    m_wnd_stack.swap(new_stack);
 }
 
 bool MapWnd::ReturnToMap() {
