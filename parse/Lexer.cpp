@@ -103,7 +103,6 @@ lexer::lexer() :
     {                                                                 \
         const char* n(BOOST_PP_CAT(name, _token));                    \
         self += BOOST_PP_CAT(name, _) [ _val = n ];                   \
-        m_name_tokens[n] = &BOOST_PP_CAT(name, _);                    \
     }
     BOOST_PP_SEQ_FOR_EACH(REGISTER_TOKEN, _, TOKEN_SEQ_1)
     BOOST_PP_SEQ_FOR_EACH(REGISTER_TOKEN, _, TOKEN_SEQ_2)
@@ -133,12 +132,6 @@ lexer::lexer() :
         |    inline_comment
         |    end_of_line_comment
         ;
-}
-
-const lexer::char_ptr_token_def& lexer::name_token(const char* name) const {
-    auto it = m_name_tokens.find(name);
-    assert(it != m_name_tokens.end());
-    return *it->second;
 }
 
 namespace boost { namespace spirit { namespace traits {

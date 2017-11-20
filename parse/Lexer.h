@@ -81,16 +81,12 @@ struct lexer :
     boost::spirit::lex::token_def<boost::spirit::lex::omit> error_token;
     //@}
 
-    /** Returns the token_def<const char*> associated with \a name. */
-    const char_ptr_token_def& name_token(const char* name) const;
-
     static const char* bool_regex;
     static const char* int_regex;
     static const char* double_regex;
     static const char* string_regex;
 
 private:
-    std::unordered_map<const char*, char_ptr_token_def*> m_name_tokens;
 };
 
 /** The type of iterator passed to the script file parser by the script file
