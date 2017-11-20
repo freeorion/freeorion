@@ -39,7 +39,7 @@ namespace parse { namespace detail {
             >;
 
         common_params_rules(const parse::lexer& tok,
-                            Labeller& labeller,
+                            Labeller& label,
                             const condition_parser_grammar& condition_parser,
                             const value_ref_grammar<std::string>& string_grammar,
                             const tags_grammar_type& tags_parser);

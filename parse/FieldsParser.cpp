@@ -50,11 +50,10 @@ namespace {
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
-            labeller(tok),
-            condition_parser(tok, labeller),
-            string_grammar(tok, labeller, condition_parser),
-            effects_group_grammar(tok, labeller, condition_parser, string_grammar),
-            tags_parser(tok, labeller),
+            condition_parser(tok, label),
+            string_grammar(tok, label, condition_parser),
+            effects_group_grammar(tok, label, condition_parser, string_grammar),
+            tags_parser(tok, label),
             double_rule(tok)
         {
             namespace phoenix = boost::phoenix;
@@ -72,13 +71,13 @@ namespace {
 
             field
                 = ( omit_[tok.FieldType_]
-                >   labeller(tok.Name_)
+                >   label(tok.Name_)
                 >   tok.string        [ _pass = is_unique_(_r1, FieldType_token, _1) ]
-                >   labeller(tok.Description_)         > tok.string
-                >   labeller(tok.Stealth_)             > double_rule
+                >   label(tok.Description_)         > tok.string
+                >   label(tok.Stealth_)             > double_rule
                 >   tags_parser
-                > -(labeller(tok.EffectsGroups_)       > effects_group_grammar )
-                >   labeller(tok.Graphic_)             > tok.string )
+                > -(label(tok.EffectsGroups_)       > effects_group_grammar )
+                >   label(tok.Graphic_)             > tok.string )
                 [ insert_fieldtype_(_r1, _1, _2, _3, _4, _5, _6, _pass) ]
                 ;
 
@@ -101,7 +100,7 @@ namespace {
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller labeller;
+        parse::detail::Labeller label;
         const parse::conditions_parser_grammar condition_parser;
         const parse::string_parser_grammar string_grammar;
         parse::effects_group_grammar effects_group_grammar;

@@ -8,7 +8,7 @@
 namespace parse { namespace detail {
     string_complex_parser_grammar::string_complex_parser_grammar(
         const parse::lexer& tok,
-        Labeller& labeller,
+        Labeller& label,
         const value_ref_grammar<std::string>& string_grammar
     ) :
         string_complex_parser_grammar::base_type(start, "string_complex_parser_grammar"),
@@ -32,7 +32,7 @@ namespace parse { namespace detail {
 
         game_rule
             = ( tok.GameRule_
-                >   labeller(tok.Name_) >     string_grammar
+                >   label(tok.Name_) >     string_grammar
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<std::string>>(_1, nullptr, nullptr, nullptr, deconstruct_movable_(_2, _pass), nullptr)) ]
             ;
 
@@ -55,7 +55,7 @@ namespace parse { namespace detail {
                     |   tok.RandomColonizableSpecies_
                     |   tok.RandomControlledSpecies_
                 )
-                >   labeller(tok.Empire_) > simple_int
+                >   label(tok.Empire_) > simple_int
             ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<std::string>>(_1, deconstruct_movable_(_2, _pass), nullptr, nullptr, nullptr, nullptr)) ]
             ;
 
@@ -67,8 +67,8 @@ namespace parse { namespace detail {
                     |   tok.MostSpentTransferrableTech_
                     |   tok.RandomTransferrableTech_
                 )
-                >   labeller(tok.Empire_) > simple_int
-                >   labeller(tok.Empire_) > simple_int
+                >   label(tok.Empire_) > simple_int
+                >   label(tok.Empire_) > simple_int
             ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<std::string>>(_1, deconstruct_movable_(_2, _pass), deconstruct_movable_(_3, _pass), nullptr, nullptr, nullptr)) ]
             ;
 

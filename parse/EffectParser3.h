@@ -7,7 +7,7 @@
 namespace parse { namespace detail {
     struct effect_parser_rules_3 : public effect_parser_grammar {
         effect_parser_rules_3(const parse::lexer& tok,
-                              Labeller& labeller,
+                              Labeller& label,
                               const condition_parser_grammar& condition_parser,
                               const value_ref_grammar<std::string>& string_grammar);
 

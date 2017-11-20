@@ -50,11 +50,10 @@ namespace {
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
-            labeller(tok),
-            condition_parser(tok, labeller),
-            string_grammar(tok, labeller, condition_parser),
-            tags_parser(tok, labeller),
-            common_rules(tok, labeller, condition_parser, string_grammar, tags_parser),
+            condition_parser(tok, label),
+            string_grammar(tok, label, condition_parser),
+            tags_parser(tok, label),
+            common_rules(tok, label, condition_parser, string_grammar, tags_parser),
             capture_result_enum(tok)
         {
             namespace phoenix = boost::phoenix;
@@ -72,18 +71,18 @@ namespace {
             qi::omit_type omit_;
 
             capture %=
-                (labeller(tok.CaptureResult_) >> capture_result_enum)
+                (label(tok.CaptureResult_) >> capture_result_enum)
                 | eps [ _val = CR_CAPTURE ]
                 ;
 
             building_type
                 = ( omit_[tok.BuildingType_]
-                >   labeller(tok.Name_)
+                >   label(tok.Name_)
                 >   tok.string        [ _pass = is_unique_(_r1, BuildingType_token, _1)]
-                >   labeller(tok.Description_)         > tok.string
+                >   label(tok.Description_)         > tok.string
                 >   capture
                 >   common_rules.common
-                >   labeller(tok.Icon_)      > tok.string)
+                >   label(tok.Icon_)      > tok.string)
                 [ insert_building_(_r1, _1, _2, _4, _3, _5, _pass) ]
                 ;
 
@@ -105,7 +104,7 @@ namespace {
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller labeller;
+        parse::detail::Labeller label;
         const parse::conditions_parser_grammar condition_parser;
         const parse::string_parser_grammar string_grammar;
         parse::detail::tags_grammar tags_parser;

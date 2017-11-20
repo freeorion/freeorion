@@ -411,28 +411,7 @@ namespace parse {
 #endif
     }
 
-    Labeller::Labeller(const parse::lexer& tok_) :
-        m_tok(tok_),
-        m_rules()
-    {};
-
 #define PARSING_LABELS_OPTIONAL false
-    label_rule& Labeller::rule(const char* name) {
-        auto it = m_old_rules.find(name);
-        if (it == m_old_rules.end()) {
-            label_rule& retval = m_old_rules[name];
-            if (PARSING_LABELS_OPTIONAL) {
-                retval = -(m_tok.name_token(name) >> '=');
-            } else {
-                retval =  (m_tok.name_token(name) >> '=');
-            }
-            retval.name(std::string(name) + " =");
-            return retval;
-        } else {
-            return it->second;
-        }
-    }
-
     label_rule& Labeller::operator()(const parse::lexer::char_ptr_token_def& token) {
         auto it = m_rules.find(&token);
         if (it != m_rules.end())
@@ -448,7 +427,7 @@ namespace parse {
     }
 
     tags_grammar::tags_grammar(const parse::lexer& tok,
-                               Labeller& labeller) :
+                               Labeller& label) :
         tags_grammar::base_type(start, "tags_grammar"),
         one_or_more_string_tokens(tok)
     {
@@ -459,7 +438,7 @@ namespace parse {
 
         start %=
             -(
-                labeller(tok.Tags_)
+                label(tok.Tags_)
                 >>  one_or_more_string_tokens
             )
             ;
@@ -511,7 +490,7 @@ namespace parse {
 
     item_spec_grammar::item_spec_grammar(
         const parse::lexer& tok,
-        Labeller& labeller
+        Labeller& label
     ) :
         item_spec_grammar::base_type(start, "item_spec_grammar"),
         unlockable_item_type_enum(tok)
@@ -528,8 +507,8 @@ namespace parse {
 
         start
             =  ( omit_[tok.Item_]
-            >    labeller(tok.Type_) > unlockable_item_type_enum
-            >    labeller(tok.Name_) > tok.string
+            >    label(tok.Type_) > unlockable_item_type_enum
+            >    label(tok.Name_) > tok.string
                ) [ _val = construct<ItemSpec>(_1, _2) ]
             ;
 

@@ -90,15 +90,14 @@ namespace {
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
-            labeller(tok),
             one_or_more_string_tokens(tok),
-            condition_parser(tok, labeller),
-            string_grammar(tok, labeller, condition_parser),
-            castable_int_rules(tok, labeller, condition_parser, string_grammar),
-            double_rules(tok, labeller, condition_parser, string_grammar),
-            effects_group_grammar(tok, labeller, condition_parser, string_grammar),
-            tags_parser(tok, labeller),
-            item_spec_parser(tok, labeller),
+            condition_parser(tok, label),
+            string_grammar(tok, label, condition_parser),
+            castable_int_rules(tok, label, condition_parser, string_grammar),
+            double_rules(tok, label, condition_parser, string_grammar),
+            effects_group_grammar(tok, label, condition_parser, string_grammar),
+            tags_parser(tok, label),
+            item_spec_parser(tok, label),
             one_or_more_item_specs(item_spec_parser),
             color_parser(tok)
         {
@@ -134,24 +133,24 @@ namespace {
                 ;
 
             tech_info
-                = ( labeller(tok.Name_)              > tok.string
-                >   labeller(tok.Description_)       > tok.string
-                >   labeller(tok.Short_Description_) > tok.string  // TODO: Get rid of underscore.
-                >   labeller(tok.Category_)      > tok.string
-                >   labeller(tok.ResearchCost_)  > double_rules.expr
-                >   labeller(tok.ResearchTurns_) > castable_int_rules.flexible_int
+                = ( label(tok.Name_)              > tok.string
+                >   label(tok.Description_)       > tok.string
+                >   label(tok.Short_Description_) > tok.string  // TODO: Get rid of underscore.
+                >   label(tok.Category_)      > tok.string
+                >   label(tok.ResearchCost_)  > double_rules.expr
+                >   label(tok.ResearchTurns_) > castable_int_rules.flexible_int
                 >   researchable
                 >   tags_parser
                 ) [ _val = construct_movable_(new_<Tech::TechInfo>(_1, _2, _3, _4, deconstruct_movable_(_5, _pass), deconstruct_movable_(_6, _pass), _7, _8)) ]
                 ;
 
             prerequisites
-                %=   labeller(tok.Prerequisites_)
+                %=   label(tok.Prerequisites_)
                 >  one_or_more_string_tokens
                 ;
 
             unlocks
-                %=   labeller(tok.Unlock_)
+                %=   label(tok.Unlock_)
                 >  one_or_more_item_specs
                 ;
 
@@ -160,16 +159,16 @@ namespace {
                 >   tech_info
                 >  -prerequisites
                 >  -unlocks
-                >  -(labeller(tok.EffectsGroups_) > effects_group_grammar)
-                >  -as_string_[(labeller(tok.Graphic_) > tok.string)]
+                >  -(label(tok.EffectsGroups_) > effects_group_grammar)
+                >  -as_string_[(label(tok.Graphic_) > tok.string)]
                   ) [ insert_tech_(_r1, _1, _4, _2, _3, _5, _pass) ]
                 ;
 
             category
                 = ( omit_[tok.Category_]
-                    >   labeller(tok.Name_)    > tok.string [ _pass = is_unique_(_r1, Category_token, _1) ]
-                    >   labeller(tok.Graphic_) > tok.string
-                    >   labeller(tok.Colour_)  > color_parser
+                    >   label(tok.Name_)    > tok.string [ _pass = is_unique_(_r1, Category_token, _1) ]
+                    >   label(tok.Graphic_) > tok.string
+                    >   label(tok.Colour_)  > color_parser
                   ) [ insert_category_(_r1, _1, _2, _3) ]
                 ;
 
@@ -211,7 +210,7 @@ namespace {
 
         using start_rule = parse::detail::rule<void (TechManager::TechContainer&)>;
 
-        parse::detail::Labeller labeller;
+        parse::detail::Labeller label;
         parse::detail::single_or_repeated_string<std::set<std::string>> one_or_more_string_tokens;
         parse::conditions_parser_grammar condition_parser;
         const parse::string_parser_grammar string_grammar;

@@ -25,16 +25,16 @@ namespace std {
 namespace parse { namespace detail {
     condition_parser_rules_6::condition_parser_rules_6(
         const parse::lexer& tok,
-        Labeller& labeller,
+        Labeller& label,
         const condition_parser_grammar& condition_parser,
         const value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_6::base_type(start, "condition_parser_rules_6"),
         one_or_more_string_values(string_grammar),
-        universe_object_type_rules(tok, labeller, condition_parser),
-        planet_type_rules(tok, labeller, condition_parser),
-        planet_size_rules(tok, labeller, condition_parser),
-        planet_environment_rules(tok, labeller, condition_parser),
+        universe_object_type_rules(tok, label, condition_parser),
+        planet_type_rules(tok, label, condition_parser),
+        planet_size_rules(tok, label, condition_parser),
+        planet_environment_rules(tok, label, condition_parser),
         one_or_more_planet_types(planet_type_rules.expr),
         one_or_more_planet_sizes(planet_size_rules.expr),
         one_or_more_planet_environments(planet_environment_rules.expr)
@@ -56,7 +56,7 @@ namespace parse { namespace detail {
         homeworld
             =   tok.Homeworld_
             >   (
-                (labeller(tok.Name_) > one_or_more_string_values
+                (label(tok.Name_) > one_or_more_string_values
                  [ _val = construct_movable_(new_<Condition::Homeworld>(deconstruct_movable_vector_(_1, _pass))) ])
                 |    eps [ _val = construct_movable_(new_<Condition::Homeworld>()) ]
             )
@@ -64,25 +64,25 @@ namespace parse { namespace detail {
 
         building
             =   ( omit_[tok.Building_]
-                > -(labeller(tok.Name_) > one_or_more_string_values)
+                > -(label(tok.Name_) > one_or_more_string_values)
                 ) [ _val = construct_movable_(new_<Condition::Building>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         species
             = ( omit_[tok.Species_]
-                > -(labeller(tok.Name_) > one_or_more_string_values)
+                > -(label(tok.Name_) > one_or_more_string_values)
               ) [ _val = construct_movable_(new_<Condition::Species>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         focus_type
             =   tok.Focus_
-            > -(labeller(tok.Type_) > one_or_more_string_values)
+            > -(label(tok.Type_) > one_or_more_string_values)
             [ _val = construct_movable_(new_<Condition::FocusType>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         planet_type
             =   (tok.Planet_
-                 >>  labeller(tok.Type_)
+                 >>  label(tok.Type_)
                 )
             >   one_or_more_planet_types
             [ _val = construct_movable_(new_<Condition::PlanetType>(deconstruct_movable_vector_(_1, _pass))) ]
@@ -90,7 +90,7 @@ namespace parse { namespace detail {
 
         planet_size
             =   (tok.Planet_
-                 >>  labeller(tok.Size_)
+                 >>  label(tok.Size_)
                 )
             >   one_or_more_planet_sizes
             [ _val = construct_movable_(new_<Condition::PlanetSize>(deconstruct_movable_vector_(_1, _pass))) ]
@@ -98,10 +98,10 @@ namespace parse { namespace detail {
 
         planet_environment
             =   ((omit_[tok.Planet_]
-                  >>  labeller(tok.Environment_)
+                  >>  label(tok.Environment_)
                  )
                  >   one_or_more_planet_environments
-                 >  -(labeller(tok.Species_)        >  string_grammar))
+                 >  -(label(tok.Species_)        >  string_grammar))
             [ _val = construct_movable_(new_<Condition::PlanetEnvironment>(
                     deconstruct_movable_vector_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
@@ -115,7 +115,7 @@ namespace parse { namespace detail {
                             new_<ValueRef::Constant<UniverseObjectType>>(_1)))) ]
             |   (
                 tok.ObjectType_
-                >   labeller(tok.Type_) > universe_object_type_rules.expr [
+                >   label(tok.Type_) > universe_object_type_rules.expr [
                     _val = construct_movable_(new_<Condition::Type>(deconstruct_movable_(_1, _pass))) ]
             )
             ;

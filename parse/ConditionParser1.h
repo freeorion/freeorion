@@ -7,7 +7,7 @@ namespace parse { namespace detail {
 
     struct condition_parser_rules_1 : public condition_parser_grammar {
         condition_parser_rules_1(const parse::lexer& tok,
-                                 Labeller& labeller,
+                                 Labeller& label,
                                  const condition_parser_grammar& condition_parser,
                                  const value_ref_grammar<std::string>& string_grammar);
 

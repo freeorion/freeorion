@@ -68,7 +68,7 @@ namespace parse {
 
     struct item_spec_grammar : public item_spec_grammar_type {
         item_spec_grammar(const parse::lexer& tok,
-                          Labeller& labeller);
+                          Labeller& label);
         parse::unlockable_item_enum_grammar unlockable_item_type_enum;
         item_spec_rule_type start;
     };

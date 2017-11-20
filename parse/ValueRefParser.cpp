@@ -110,7 +110,7 @@ namespace parse { namespace detail {
     arithmetic_rules<T>::arithmetic_rules(
         const std::string& type_name,
         const parse::lexer& tok,
-        parse::detail::Labeller& labeller,
+        parse::detail::Labeller& label,
         const parse::detail::condition_parser_grammar& condition_parser
     ) :
         statistic_type_enum(tok)
@@ -256,14 +256,14 @@ namespace parse { namespace detail {
                         |   tok.If_     [ _b = ValueRef::IF ]
                     )
                 )
-            >   labeller(tok.Condition_) >    condition_parser
+            >   label(tok.Condition_) >    condition_parser
             [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
             ;
 
         statistic_value_expr
             =   (tok.Statistic_ >>  statistic_type_enum [ _b = _1 ])
-            >   labeller(tok.Value_)     >     statistic_value_ref_expr [ _a = _1 ]
-            >   labeller(tok.Condition_) >     condition_parser
+            >   label(tok.Value_)     >     statistic_value_ref_expr [ _a = _1 ]
+            >   label(tok.Condition_) >     condition_parser
             [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
             ;
 
@@ -303,9 +303,9 @@ namespace parse { namespace detail {
 
     // Explicit instantiation to prevent costly recompilation in multiple units
     template arithmetic_rules<double>::arithmetic_rules(
-        const std::string& type_name, const parse::lexer& tok, parse::detail::Labeller& labeller,
+        const std::string& type_name, const parse::lexer& tok, parse::detail::Labeller& label,
         const parse::detail::condition_parser_grammar& condition_parser);
     template arithmetic_rules<int>::arithmetic_rules(
-        const std::string& type_name, const parse::lexer& tok, parse::detail::Labeller& labeller,
+        const std::string& type_name, const parse::lexer& tok, parse::detail::Labeller& label,
         const parse::detail::condition_parser_grammar& condition_parser);
 } }

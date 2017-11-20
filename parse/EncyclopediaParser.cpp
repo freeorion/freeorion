@@ -34,8 +34,7 @@ namespace {
         grammar(const parse::lexer& tok,
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
-            grammar::base_type(start),
-            labeller(tok)
+            grammar::base_type(start)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -52,11 +51,11 @@ namespace {
 
             article
                 =  ( omit_[tok.Article_]
-                >    labeller(tok.Name_)                > tok.string
-                >    labeller(tok.Category_)            > tok.string
-                >    labeller(tok.Short_Description_)   > tok.string
-                >    labeller(tok.Description_)         > tok.string
-                >    labeller(tok.Icon_)                > tok.string )
+                >    label(tok.Name_)                > tok.string
+                >    label(tok.Category_)            > tok.string
+                >    label(tok.Short_Description_)   > tok.string
+                >    label(tok.Description_)         > tok.string
+                >    label(tok.Icon_)                > tok.string )
                     [ insert(_r1, construct<EncyclopediaArticle>(_1, _2, _3, _4, _5)) ]
                 ;
 
@@ -77,7 +76,7 @@ namespace {
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller labeller;
+        parse::detail::Labeller label;
         strings_rule    article;
         start_rule      start;
     };

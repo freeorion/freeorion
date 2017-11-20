@@ -44,15 +44,15 @@ namespace parse {
     struct effects_parser_grammar::Impl {
         Impl (const effects_parser_grammar& effects_parser_grammar,
             const lexer& tok,
-            detail::Labeller& labeller,
+            detail::Labeller& label,
             const detail::condition_parser_grammar& condition_parser,
             const detail::value_ref_grammar<std::string>& string_grammar
         ) :
-            effect_parser_1(tok, labeller, condition_parser, string_grammar),
-            effect_parser_2(tok, labeller, condition_parser, string_grammar),
-            effect_parser_3(tok, labeller, condition_parser, string_grammar),
-            effect_parser_4(tok, effects_parser_grammar, labeller, condition_parser, string_grammar),
-            effect_parser_5(tok, effects_parser_grammar, labeller, condition_parser)
+            effect_parser_1(tok, label, condition_parser, string_grammar),
+            effect_parser_2(tok, label, condition_parser, string_grammar),
+            effect_parser_3(tok, label, condition_parser, string_grammar),
+            effect_parser_4(tok, effects_parser_grammar, label, condition_parser, string_grammar),
+            effect_parser_5(tok, effects_parser_grammar, label, condition_parser)
         {}
 
         detail::effect_parser_rules_1 effect_parser_1;
@@ -64,12 +64,12 @@ namespace parse {
 
     effects_parser_grammar::effects_parser_grammar(
         const lexer& tok,
-        detail::Labeller& labeller,
+        detail::Labeller& label,
         const detail::condition_parser_grammar& condition_parser,
         const detail::value_ref_grammar<std::string>& string_grammar
     ) :
         effects_parser_grammar::base_type(start, "effects_parser_grammar"),
-        m_impl(boost::make_unique<effects_parser_grammar::Impl>(*this, tok, labeller, condition_parser, string_grammar))
+        m_impl(boost::make_unique<effects_parser_grammar::Impl>(*this, tok, label, condition_parser, string_grammar))
     {
         start
             = m_impl->effect_parser_1
@@ -86,12 +86,12 @@ namespace parse {
 
     effects_group_grammar::effects_group_grammar(
         const lexer& tok,
-        detail::Labeller& labeller,
+        detail::Labeller& label,
         const detail::condition_parser_grammar& condition_parser,
         const detail::value_ref_grammar<std::string>& string_grammar
     ) :
         effects_group_grammar::base_type(start, "effects_group_grammar"),
-        effects_grammar(tok, labeller, condition_parser, string_grammar),
+        effects_grammar(tok, label, condition_parser, string_grammar),
         one_or_more_effects(effects_grammar),
         one_or_more_groups(effects_group)
     {
@@ -117,13 +117,13 @@ namespace parse {
 
         effects_group
             =   tok.EffectsGroup_
-            > -(labeller(tok.Description_)      > tok.string [ _f = _1 ])
-            >   labeller(tok.Scope_)            > condition_parser [ _a = _1 ]
-            > -(labeller(tok.Activation_)       > condition_parser [ _b = _1 ])
-            > -(labeller(tok.StackingGroup_)    > tok.string [ _c = _1 ])
-            > -(labeller(tok.AccountingLabel_)  > tok.string [ _d = _1 ])
-            > ((labeller(tok.Priority_)         > tok.int_ [ _e = _1 ]) | eps [ _e = 100 ])
-            >   labeller(tok.Effects_)
+            > -(label(tok.Description_)      > tok.string [ _f = _1 ])
+            >   label(tok.Scope_)            > condition_parser [ _a = _1 ]
+            > -(label(tok.Activation_)       > condition_parser [ _b = _1 ])
+            > -(label(tok.StackingGroup_)    > tok.string [ _c = _1 ])
+            > -(label(tok.AccountingLabel_)  > tok.string [ _d = _1 ])
+            > ((label(tok.Priority_)         > tok.int_ [ _e = _1 ]) | eps [ _e = 100 ])
+            >   label(tok.Effects_)
             >   one_or_more_effects
             [ _val = construct_EffectsGroup_(_a, _b, _1, _d, _c, _e, _f, _pass) ]
             ;

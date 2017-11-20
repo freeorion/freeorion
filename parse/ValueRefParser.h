@@ -93,7 +93,7 @@ namespace parse { namespace detail {
     struct arithmetic_rules {
         arithmetic_rules(const std::string& type_name,
                          const parse::lexer& tok,
-                         Labeller& labeller,
+                         Labeller& label,
                          const condition_parser_grammar& condition_parser);
 
         parse::statistic_enum_grammar statistic_type_enum;
@@ -128,7 +128,7 @@ namespace parse { namespace detail {
 
     struct string_complex_parser_grammar : public complex_variable_grammar<std::string> {
         string_complex_parser_grammar(const parse::lexer& tok,
-                                      Labeller& labeller,
+                                      Labeller& label,
                                       const value_ref_grammar<std::string>& string_grammar);
 
         simple_int_parser_rules  simple_int_rules;
@@ -178,7 +178,7 @@ namespace parse { namespace detail {
 namespace parse {
     struct string_parser_grammar : public detail::value_ref_grammar<std::string> {
         string_parser_grammar(const lexer& tok,
-                              detail::Labeller& labeller,
+                              detail::Labeller& label,
                               const detail::condition_parser_grammar& condition_parser);
 
         detail::string_complex_parser_grammar string_var_complex;
@@ -201,7 +201,7 @@ namespace parse {
 
     struct int_complex_parser_grammar : public detail::complex_variable_grammar<int> {
         int_complex_parser_grammar(const lexer& tok,
-                                   detail::Labeller& labeller,
+                                   detail::Labeller& label,
                                    const int_arithmetic_rules& _int_arith_rules,
                                    const detail::value_ref_grammar<std::string>& string_grammar);
 
@@ -227,7 +227,7 @@ namespace parse {
     struct int_arithmetic_rules : public detail::arithmetic_rules<int> {
         int_arithmetic_rules(
             const lexer& tok,
-            detail::Labeller& labeller,
+            detail::Labeller& label,
             const detail::condition_parser_grammar& condition_parser,
             const detail::value_ref_grammar<std::string>& string_grammar);
         detail::simple_int_parser_rules  simple_int_rules;
@@ -236,7 +236,7 @@ namespace parse {
 
     struct double_complex_parser_grammar : public detail::complex_variable_grammar<double> {
         double_complex_parser_grammar(const lexer& tok,
-                                      detail::Labeller& labeller,
+                                      detail::Labeller& label,
                                       const detail::condition_parser_grammar& condition_parser,
                                       const detail::value_ref_grammar<std::string>& string_grammar);
 
@@ -255,7 +255,7 @@ namespace parse {
     struct double_parser_rules : public detail::arithmetic_rules<double> {
         double_parser_rules(
             const lexer& tok,
-            detail::Labeller& labeller,
+            detail::Labeller& label,
             const detail::condition_parser_grammar& condition_parser,
             const detail::value_ref_grammar<std::string>& string_grammar);
 
@@ -273,7 +273,7 @@ namespace parse {
 
     struct castable_as_int_parser_rules {
         castable_as_int_parser_rules(const lexer& tok,
-                                     detail::Labeller& labeller,
+                                     detail::Labeller& label,
                                      const detail::condition_parser_grammar& condition_parser,
                                      const detail::value_ref_grammar<std::string>& string_grammar);
 

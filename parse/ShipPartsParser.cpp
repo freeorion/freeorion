@@ -63,11 +63,10 @@ namespace {
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
-            labeller(tok),
-            condition_parser(tok, labeller),
-            string_grammar(tok, labeller, condition_parser),
-            tags_parser(tok, labeller),
-            common_rules(tok, labeller, condition_parser, string_grammar, tags_parser),
+            condition_parser(tok, label),
+            string_grammar(tok, label, condition_parser),
+            tags_parser(tok, label),
+            common_rules(tok, label, condition_parser, string_grammar, tags_parser),
             ship_slot_type_enum(tok),
             ship_part_class_enum(tok),
             double_rule(tok),
@@ -94,17 +93,17 @@ namespace {
                 = ( omit_[tok.Part_]
                 >   common_rules.more_common
                     [_pass = is_unique_(_r1, PartType_token, phoenix::bind(&MoreCommonParams::name, _1)) ]
-                >   labeller(tok.Class_)       > ship_part_class_enum
-                > -(  (labeller(tok.Capacity_)  > double_rule)
-                   | (labeller(tok.Damage_)    > double_rule)
+                >   label(tok.Class_)       > ship_part_class_enum
+                > -(  (label(tok.Capacity_)  > double_rule)
+                   | (label(tok.Damage_)    > double_rule)
                    )
-                > -(  (labeller(tok.Damage_)    > double_rule )   // damage is secondary for fighters
-                   | (labeller(tok.Shots_)     > double_rule )   // shots is secondary for direct fire weapons
+                > -(  (label(tok.Damage_)    > double_rule )   // damage is secondary for fighters
+                   | (label(tok.Shots_)     > double_rule )   // shots is secondary for direct fire weapons
                    )
                 > -tok.NoDefaultCapacityEffect_
-                > -(labeller(tok.MountableSlotTypes_) > one_or_more_slots)
+                > -(label(tok.MountableSlotTypes_) > one_or_more_slots)
                 >   common_rules.common
-                >   labeller(tok.Icon_)        > tok.string
+                >   label(tok.Icon_)        > tok.string
                   ) [ insert_parttype_(_r1, _2,
                                        construct<std::pair<boost::optional<double>, boost::optional<double>>>(_3, _4)
                                        , _7, _1, _6, _8, _5, _pass) ]
@@ -127,7 +126,7 @@ namespace {
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller labeller;
+        parse::detail::Labeller label;
         const parse::conditions_parser_grammar condition_parser;
         const parse::string_parser_grammar string_grammar;
         parse::detail::tags_grammar tags_parser;

@@ -27,7 +27,7 @@ namespace parse {
     struct conditions_parser_grammar : public detail::condition_parser_grammar {
         conditions_parser_grammar(
             const parse::lexer& tok,
-            detail::Labeller& labeller);
+            detail::Labeller& label);
         ~conditions_parser_grammar();
 
         detail::condition_parser_rule start;

@@ -12,13 +12,13 @@ namespace phoenix = boost::phoenix;
 namespace parse { namespace detail {
     condition_parser_rules_2::condition_parser_rules_2(
         const parse::lexer& tok,
-        Labeller& labeller,
+        Labeller& label,
         const condition_parser_grammar& condition_parser,
         const value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_2::base_type(start, "condition_parser_rules_2"),
-        int_rules(tok, labeller, condition_parser, string_grammar),
-        castable_int_rules(tok, labeller, condition_parser, string_grammar),
+        int_rules(tok, label, condition_parser, string_grammar),
+        castable_int_rules(tok, label, condition_parser, string_grammar),
         ship_part_class_enum(tok)
     {
         qi::_1_type _1;
@@ -36,9 +36,9 @@ namespace parse { namespace detail {
 
         has_special_since_turn
             =   (       omit_[tok.HasSpecialSinceTurn_]
-                        >   labeller(tok.Name_) >  string_grammar
-                        > -(labeller(tok.Low_)  >  castable_int_rules.flexible_int )
-                        > -(labeller(tok.High_) >  castable_int_rules.flexible_int )
+                        >   label(tok.Name_) >  string_grammar
+                        > -(label(tok.Low_)  >  castable_int_rules.flexible_int )
+                        > -(label(tok.High_) >  castable_int_rules.flexible_int )
                 ) [ _val = construct_movable_(new_<Condition::HasSpecial>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
@@ -54,11 +54,11 @@ namespace parse { namespace detail {
 
         enqueued1
             =   (   (omit_[tok.Enqueued_]
-                     >>  labeller(tok.Type_)   >>   omit_[tok.Building_])
-                    > -(labeller(tok.Name_)   >    string_grammar)
-                    > -(labeller(tok.Empire_) >    int_rules.expr)
-                    > -(labeller(tok.Low_)    >    castable_int_rules.flexible_int)
-                    > -(labeller(tok.High_)   >    castable_int_rules.flexible_int)
+                     >>  label(tok.Type_)   >>   omit_[tok.Building_])
+                    > -(label(tok.Name_)   >    string_grammar)
+                    > -(label(tok.Empire_) >    int_rules.expr)
+                    > -(label(tok.Low_)    >    castable_int_rules.flexible_int)
+                    > -(label(tok.High_)   >    castable_int_rules.flexible_int)
                 ) [ _val = construct_movable_(new_<Condition::Enqueued>(
                     BT_BUILDING,
                     deconstruct_movable_(_1, _pass),
@@ -69,11 +69,11 @@ namespace parse { namespace detail {
 
         enqueued2
             =   (   (omit_[tok.Enqueued_]
-                     >>  labeller(tok.Type_)   >>   omit_[tok.Ship_])
-                    > -(labeller(tok.Design_) >    int_rules.expr)
-                    > -(labeller(tok.Empire_) >    int_rules.expr)
-                    > -(labeller(tok.Low_)    >    castable_int_rules.flexible_int)
-                    > -(labeller(tok.High_)   >    castable_int_rules.flexible_int)
+                     >>  label(tok.Type_)   >>   omit_[tok.Ship_])
+                    > -(label(tok.Design_) >    int_rules.expr)
+                    > -(label(tok.Empire_) >    int_rules.expr)
+                    > -(label(tok.Low_)    >    castable_int_rules.flexible_int)
+                    > -(label(tok.High_)   >    castable_int_rules.flexible_int)
                 ) [ _val = construct_movable_(new_<Condition::Enqueued>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
@@ -83,11 +83,11 @@ namespace parse { namespace detail {
 
         enqueued3
             =   (   (omit_[tok.Enqueued_]
-                     >>  labeller(tok.Type_)   >>   omit_[tok.Ship_]
-                     >>  labeller(tok.Name_)   ) >    string_grammar
-                    > -(labeller(tok.Empire_) >    int_rules.expr)
-                    > -(labeller(tok.Low_)    >    castable_int_rules.flexible_int)
-                    > -(labeller(tok.High_)   >    castable_int_rules.flexible_int)
+                     >>  label(tok.Type_)   >>   omit_[tok.Ship_]
+                     >>  label(tok.Name_)   ) >    string_grammar
+                    > -(label(tok.Empire_) >    int_rules.expr)
+                    > -(label(tok.Low_)    >    castable_int_rules.flexible_int)
+                    > -(label(tok.High_)   >    castable_int_rules.flexible_int)
                 ) [ _val = construct_movable_(new_<Condition::Enqueued>(
                     BT_SHIP,
                     deconstruct_movable_(_1, _pass),
@@ -98,9 +98,9 @@ namespace parse { namespace detail {
 
         enqueued4
             =   (   omit_[tok.Enqueued_]
-                    > -(labeller(tok.Empire_) >    int_rules.expr)
-                    > -(labeller(tok.Low_)    >    castable_int_rules.flexible_int)
-                    > -(labeller(tok.High_)   >    castable_int_rules.flexible_int)
+                    > -(label(tok.Empire_) >    int_rules.expr)
+                    > -(label(tok.Low_)    >    castable_int_rules.flexible_int)
+                    > -(label(tok.High_)   >    castable_int_rules.flexible_int)
                 ) [ _val = construct_movable_(new_<Condition::Enqueued>(
                     INVALID_BUILD_TYPE,
                     nullptr,
@@ -111,9 +111,9 @@ namespace parse { namespace detail {
 
         design_has_part
             =   (   omit_[tok.DesignHasPart_]
-                    > -(labeller(tok.Low_)   > castable_int_rules.flexible_int)
-                    > -(labeller(tok.High_)  > castable_int_rules.flexible_int)
-                   >   labeller(tok.Name_)  > string_grammar
+                    > -(label(tok.Low_)   > castable_int_rules.flexible_int)
+                    > -(label(tok.High_)  > castable_int_rules.flexible_int)
+                   >   label(tok.Name_)  > string_grammar
                 ) [ _val = construct_movable_(new_<Condition::DesignHasPart>(
                     deconstruct_movable_(_3, _pass),
                     deconstruct_movable_(_1, _pass),
@@ -122,9 +122,9 @@ namespace parse { namespace detail {
 
         design_has_part_class
             =   (   omit_[tok.DesignHasPartClass_]
-                    > -(labeller(tok.Low_)   > castable_int_rules.flexible_int)
-                    > -(labeller(tok.High_)  > castable_int_rules.flexible_int)
-                   >   labeller(tok.Class_)  > ship_part_class_enum
+                    > -(label(tok.Low_)   > castable_int_rules.flexible_int)
+                    > -(label(tok.High_)  > castable_int_rules.flexible_int)
+                   >   label(tok.Class_)  > ship_part_class_enum
                 ) [ _val = construct_movable_(new_<Condition::DesignHasPartClass>(
                     _3,
                     deconstruct_movable_(_1, _pass),
@@ -133,7 +133,7 @@ namespace parse { namespace detail {
 
         in_system
             =   (   omit_[tok.InSystem_]
-                    >  -(labeller(tok.ID_)  > int_rules.expr)
+                    >  -(label(tok.ID_)  > int_rules.expr)
                 ) [ _val = construct_movable_(new_<Condition::InSystem>(deconstruct_movable_(_1, _pass))) ]
             ;
 

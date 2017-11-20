@@ -47,9 +47,8 @@ namespace {
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
-            labeller(tok),
-            condition_parser(tok, labeller),
-            string_grammar(tok, labeller, condition_parser),
+            condition_parser(tok, label),
+            string_grammar(tok, label, condition_parser),
             double_rule(tok),
             int_rule(tok),
             one_or_more_string_tokens(tok)
@@ -70,24 +69,24 @@ namespace {
             const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             ships
-                =    labeller(tok.Ships_) > one_or_more_string_tokens
+                =    label(tok.Ships_) > one_or_more_string_tokens
                 ;
 
             spawn_rate =
-                labeller(tok.SpawnRate_) > double_rule
+                label(tok.SpawnRate_) > double_rule
                 ;
 
             spawn_limit =
-                labeller(tok.SpawnLimit_) > int_rule
+                label(tok.SpawnLimit_) > int_rule
                 ;
 
             monster_fleet_plan
                 = ( omit_[tok.MonsterFleet_]
-                    > labeller(tok.Name_) > tok.string
+                    > label(tok.Name_) > tok.string
                     > ships
                     > -spawn_rate
                     > -spawn_limit
-                    > -(labeller(tok.Location_) > condition_parser)
+                    > -(label(tok.Location_) > condition_parser)
                 ) [ insert_monster_fleet_plan_(_r1, _1, _2, _3, _4, _5, _pass) ]
                 ;
 
@@ -109,7 +108,7 @@ namespace {
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller            labeller;
+        parse::detail::Labeller            label;
         parse::conditions_parser_grammar   condition_parser;
         const parse::string_parser_grammar string_grammar;
         parse::detail::double_grammar      double_rule;

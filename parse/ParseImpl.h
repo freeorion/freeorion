@@ -123,15 +123,9 @@ namespace parse { namespace detail {
     /** Store label_rules. */
     class Labeller {
     public:
-        Labeller(const parse::lexer& tok_);
-
         /** Retrieve or create a label rule for \p name.*/
         label_rule& operator()(const parse::lexer::char_ptr_token_def& token);
-        /** Retrieve or create a label rule for \p name.*/
-        label_rule& rule(const char* name);
     private:
-        const parse::lexer& m_tok;
-        std::unordered_map<const char*, label_rule> m_old_rules;
         std::unordered_map<const parse::lexer::char_ptr_token_def*, label_rule> m_rules;
     };
 
@@ -145,7 +139,7 @@ namespace parse { namespace detail {
 
     struct tags_grammar : public tags_grammar_type {
         tags_grammar(const parse::lexer& tok,
-                     Labeller& labeller);
+                     Labeller& label);
         tags_rule_type start;
         single_or_repeated_string<std::set<std::string>> one_or_more_string_tokens;
     };

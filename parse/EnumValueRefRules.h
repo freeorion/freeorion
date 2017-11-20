@@ -11,7 +11,7 @@ namespace parse {
     void initialize_nonnumeric_statistic_parser(
         parse::detail::statistic_rule<T>& statistic,
         const parse::lexer& tok,
-        parse::detail::Labeller& labeller,
+        parse::detail::Labeller& label,
         const parse::detail::condition_parser_grammar& condition_parser,
         const typename parse::detail::value_ref_rule<T>& value_ref);
 
@@ -19,7 +19,7 @@ namespace parse {
     struct enum_value_ref_rules {
         enum_value_ref_rules(const std::string& type_name,
                              const lexer& tok,
-                             Labeller& labeller,
+                             Labeller& label,
                              const condition_parser_grammar& condition_parser);
 
         rule<ValueRef::OpType ()> selection_operator;
@@ -44,7 +44,7 @@ namespace parse {
     void initialize_nonnumeric_statistic_parser(
         statistic_rule<T>& statistic,
         const parse::lexer& tok,
-        Labeller& labeller,
+        Labeller& label,
         const condition_parser_grammar& condition_parser,
         const value_ref_rule<T>& value_ref)
     {
@@ -62,8 +62,8 @@ namespace parse {
 
         statistic
             =  ( (omit_[tok.Statistic_] >>  omit_[tok.Mode_])
-                 >   labeller(tok.Value_)     >     value_ref
-                 >   labeller(tok.Condition_) >     condition_parser)
+                 >   label(tok.Value_)     >     value_ref
+                 >   label(tok.Condition_) >     condition_parser)
             [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(
                 deconstruct_movable_(_1, _pass),
                 ValueRef::MODE,
@@ -75,7 +75,7 @@ namespace parse {
     enum_value_ref_rules<T>::enum_value_ref_rules(
         const std::string& type_name,
         const parse::lexer& tok,
-        Labeller& labeller,
+        Labeller& label,
         const condition_parser_grammar& condition_parser)
     {
         using boost::phoenix::new_;
@@ -123,7 +123,7 @@ namespace parse {
             ;
 
         initialize_nonnumeric_statistic_parser<T>(
-            statistic_expr, tok, labeller, condition_parser, statistic_sub_value_ref);
+            statistic_expr, tok, label, condition_parser, statistic_sub_value_ref);
 
         primary_expr
             =   constant_expr
@@ -165,7 +165,7 @@ namespace parse {
         public enum_value_ref_rules<PlanetEnvironment>
     {
         planet_environment_parser_rules(const lexer& tok,
-                                        Labeller& labeller,
+                                        Labeller& label,
                                         const condition_parser_grammar& condition_parser);
     };
 
@@ -173,7 +173,7 @@ namespace parse {
         public enum_value_ref_rules<PlanetSize>
     {
         planet_size_parser_rules(const lexer& tok,
-                                 Labeller& labeller,
+                                 Labeller& label,
                                  const condition_parser_grammar& condition_parser);
     };
 
@@ -181,7 +181,7 @@ namespace parse {
         public enum_value_ref_rules<PlanetType>
     {
         planet_type_parser_rules(const lexer& tok,
-                                 Labeller& labeller,
+                                 Labeller& label,
                                  const condition_parser_grammar& condition_parser);
     };
 
@@ -189,12 +189,12 @@ namespace parse {
         public enum_value_ref_rules<StarType>
     {
         star_type_parser_rules(const lexer& tok,
-                               Labeller& labeller,
+                               Labeller& label,
                                const condition_parser_grammar& condition_parser);
     };
 
     struct visibility_complex_parser_grammar : public complex_variable_grammar<Visibility> {
-        visibility_complex_parser_grammar(const lexer& tok, Labeller& labeller);
+        visibility_complex_parser_grammar(const lexer& tok, Labeller& label);
 
         simple_int_parser_rules  simple_int_rules;
         complex_variable_rule<Visibility> empire_object_visibility;
@@ -205,7 +205,7 @@ namespace parse {
         public enum_value_ref_rules<Visibility>
     {
         visibility_parser_rules(const lexer& tok,
-                                Labeller& labeller,
+                                Labeller& label,
                                 const condition_parser_grammar& condition_parser);
 
         visibility_complex_parser_grammar visibility_var_complex_grammar;
@@ -215,7 +215,7 @@ namespace parse {
         public enum_value_ref_rules<UniverseObjectType>
     {
         universe_object_type_parser_rules(const lexer& tok,
-                                          Labeller& labeller,
+                                          Labeller& label,
                                           const condition_parser_grammar& condition_parser);
     };
 

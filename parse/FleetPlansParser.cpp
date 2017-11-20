@@ -39,7 +39,6 @@ namespace {
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
-            labeller(tok),
             one_or_more_string_tokens(tok)
         {
             namespace phoenix = boost::phoenix;
@@ -57,8 +56,8 @@ namespace {
 
             fleet_plan
                 =  ( omit_[tok.Fleet_]
-                >    labeller(tok.Name_) > tok.string
-                >    labeller(tok.Ships_)
+                >    label(tok.Name_) > tok.string
+                >    label(tok.Ships_)
                 >    one_or_more_string_tokens )
                 [ insert_fleet_plan_(_r1, _1, _2, phoenix::val(true)) ]
                 ;
@@ -77,7 +76,7 @@ namespace {
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller labeller;
+        parse::detail::Labeller label;
         parse::detail::single_or_repeated_string<std::vector<std::string>> one_or_more_string_tokens;
         start_rule fleet_plan;
         start_rule start;

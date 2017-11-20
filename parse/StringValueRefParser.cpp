@@ -9,11 +9,11 @@
 namespace parse {
     string_parser_grammar::string_parser_grammar(
         const parse::lexer& tok,
-        detail::Labeller& labeller,
+        detail::Labeller& label,
         const detail::condition_parser_grammar& condition_parser
     ) :
         string_parser_grammar::base_type(expr, "string_parser_grammar"),
-        string_var_complex(tok, labeller, *this)
+        string_var_complex(tok, label, *this)
     {
         namespace phoenix = boost::phoenix;
         namespace qi = boost::spirit::qi;
@@ -122,7 +122,7 @@ namespace parse {
             ;
 
         detail::initialize_nonnumeric_statistic_parser<std::string>(
-            statistic, tok, labeller, condition_parser, statistic_sub_value_ref);
+            statistic, tok, label, condition_parser, statistic_sub_value_ref);
 
         primary_expr
             =   constant

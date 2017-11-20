@@ -34,14 +34,14 @@ namespace parse { namespace detail {
 
     common_params_rules::common_params_rules(
         const parse::lexer& tok,
-        Labeller& labeller,
+        Labeller& label,
         const condition_parser_grammar& condition_parser,
         const value_ref_grammar<std::string>& string_grammar,
         const tags_grammar_type& tags_parser
     ) :
-        castable_int_rules(tok, labeller, condition_parser, string_grammar),
-        double_rules(tok, labeller, condition_parser, string_grammar),
-        effects_group_grammar(tok, labeller, condition_parser, string_grammar),
+        castable_int_rules(tok, label, condition_parser, string_grammar),
+        double_rules(tok, label, condition_parser, string_grammar),
+        effects_group_grammar(tok, label, condition_parser, string_grammar),
         non_ship_part_meter_type_enum(tok),
         repeated_string(tok)
     {
@@ -76,38 +76,38 @@ namespace parse { namespace detail {
             ;
 
         location
-            %=    (labeller(tok.Location_) > condition_parser)
+            %=    (label(tok.Location_) > condition_parser)
             |     eps [ _val = construct_movable_(new_<Condition::All>()) ]
             ;
 
         enqueue_location
-            %=    (labeller(tok.EnqueueLocation_) > condition_parser)
+            %=    (label(tok.EnqueueLocation_) > condition_parser)
             |     eps [ _val = construct_movable_(new_<Condition::All>()) ]
             ;
 
         exclusions
             =
-            -(labeller(tok.Exclusions_) >> repeated_string)
+            -(label(tok.Exclusions_) >> repeated_string)
             ;
 
         more_common
             =
-            (   labeller(tok.Name_)        > tok.string
-                >   labeller(tok.Description_) > tok.string
+            (   label(tok.Name_)        > tok.string
+                >   label(tok.Description_) > tok.string
                 >   exclusions
             ) [ _val = construct<MoreCommonParams>(_1, _2, _3) ]
             ;
 
         common
             =
-            (   labeller(tok.BuildCost_)  > double_rules.expr
-                >   labeller(tok.BuildTime_)  > castable_int_rules.flexible_int
+            (   label(tok.BuildCost_)  > double_rules.expr
+                >   label(tok.BuildTime_)  > castable_int_rules.flexible_int
                 >   producible
                 >   tags_parser 
                 >   location
                 >   enqueue_location
                 >  -consumption(_a, _b)
-                > -(labeller(tok.EffectsGroups_)> effects_group_grammar )
+                > -(label(tok.EffectsGroups_)> effects_group_grammar )
             ) [ _val = construct_movable_(
                 new_<CommonParams>(
                     deconstruct_movable_(_1, _pass),
@@ -121,7 +121,7 @@ namespace parse { namespace detail {
             ;
 
         consumption
-            =   labeller(tok.Consumption_) >
+            =   label(tok.Consumption_) >
             (   consumable_meter(_r1)
                 | consumable_special(_r2)
                 |
@@ -139,9 +139,9 @@ namespace parse { namespace detail {
         consumable_special
             =   tok.Special_
             > (
-                labeller(tok.Name_)        > tok.string
-                >   labeller(tok.Consumption_) > double_rules.expr
-                > -(labeller(tok.Condition_)   > condition_parser )
+                label(tok.Name_)        > tok.string
+                >   label(tok.Consumption_) > double_rules.expr
+                > -(label(tok.Condition_)   > condition_parser )
             )
             [ insert(_r1, construct<ConsumptionMapPackaged<std::string>::value_type>(_1, construct<ConsumptionMapPackaged<std::string>::mapped_type>(_2, _3))) ]
             ;
@@ -149,8 +149,8 @@ namespace parse { namespace detail {
         consumable_meter
             = (
                 non_ship_part_meter_type_enum
-                >   labeller(tok.Consumption_) > double_rules.expr
-                > -(labeller(tok.Condition_)   > condition_parser )
+                >   label(tok.Consumption_) > double_rules.expr
+                > -(label(tok.Condition_)   > condition_parser )
             )
             [ insert(_r1, construct<ConsumptionMapPackaged<MeterType>::value_type>(_1, construct<ConsumptionMapPackaged<MeterType>::mapped_type>(_2, _3))) ]
             ;

@@ -30,8 +30,8 @@ struct EnumParserFixture {
         const parse::lexer& lexer,
         typename std::enable_if<std::is_constructible<Grammar, const parse::lexer&, parse::detail::Labeller&>::value, std::nullptr_t>::type = nullptr)
     {
-        parse::detail::Labeller labeller(lexer);
-        static Grammar grammar(lexer, labeller);
+        parse::detail::Labeller label;
+        static Grammar grammar(lexer, label);
         return grammar;
     }
 
@@ -40,9 +40,9 @@ struct EnumParserFixture {
         const parse::lexer& lexer,
         typename std::enable_if<std::is_constructible<Grammar, const parse::lexer&, parse::detail::Labeller&, const parse::detail::condition_parser_grammar&>::value, std::nullptr_t>::type = nullptr)
     {
-        parse::detail::Labeller labeller(lexer);
-        parse::conditions_parser_grammar cond(lexer, labeller);
-        static Grammar grammar(lexer, labeller, cond);
+        parse::detail::Labeller label;
+        parse::conditions_parser_grammar cond(lexer, label);
+        static Grammar grammar(lexer, label, cond);
         return grammar;
     }
 

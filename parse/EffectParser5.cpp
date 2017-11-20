@@ -12,7 +12,7 @@ namespace phoenix = boost::phoenix;
 namespace parse { namespace detail {
     effect_parser_rules_5::effect_parser_rules_5(const parse::lexer& tok,
                                                  const effect_parser_grammar& effect_parser,
-                                                 Labeller& labeller,
+                                                 Labeller& label,
                                                  const condition_parser_grammar& condition_parser) :
         effect_parser_rules_5::base_type(start, "effect_parser_rules_5"),
         one_or_more_effects(effect_parser)
@@ -33,9 +33,9 @@ namespace parse { namespace detail {
 
         conditional
             =   ( omit_[tok.If_]
-                  >   labeller(tok.Condition_)   >   condition_parser
-                  >   labeller(tok.Effects_) > one_or_more_effects
-                  >   -(labeller(tok.Else_)  > one_or_more_effects)
+                  >   label(tok.Condition_)   >   condition_parser
+                  >   label(tok.Effects_) > one_or_more_effects
+                  >   -(label(tok.Else_)  > one_or_more_effects)
                 ) [ _val = construct_movable_(new_<Effect::Conditional>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_vector_(_2, _pass),

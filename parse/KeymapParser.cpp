@@ -49,8 +49,7 @@ namespace {
         grammar(const parse::lexer& tok,
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
-            grammar::base_type(start),
-            labeller(tok)
+            grammar::base_type(start)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -72,8 +71,8 @@ namespace {
 
             keymap
                 = ( omit_[tok.Keymap_]
-                >   labeller(tok.Name_) > tok.string
-                >   labeller(tok.Keys_)
+                >   label(tok.Name_) > tok.string
+                >   label(tok.Keys_)
                 >   ( '[' > *(int_pair(_a)) > ']' )
                   ) [ insert_key_map(_r1, construct<NamedKeymaps::value_type>(_1, _a)) ]
                 ;
@@ -102,7 +101,7 @@ namespace {
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller labeller;
+        parse::detail::Labeller label;
         int_pair_rule   int_pair;
         keymap_rule     keymap;
         start_rule      start;

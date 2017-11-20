@@ -80,11 +80,10 @@ namespace {
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
-            labeller(tok),
-            condition_parser(tok, labeller),
-            string_grammar(tok, labeller, condition_parser),
-            double_rules(tok, labeller, condition_parser, string_grammar),
-            effects_group_grammar(tok, labeller, condition_parser, string_grammar),
+            condition_parser(tok, label),
+            string_grammar(tok, label, condition_parser),
+            double_rules(tok, label, condition_parser, string_grammar),
+            effects_group_grammar(tok, label, condition_parser, string_grammar),
             double_rule(tok),
             int_rule(tok)
         {
@@ -108,16 +107,16 @@ namespace {
 
             special
                 = (  omit_[tok.Special_]
-                >    labeller(tok.Name_)
+                >    label(tok.Name_)
                 >    tok.string [ _pass = is_unique_(_r1, Special_token, _1)]
-                >    labeller(tok.Description_)    > tok.string
-                >  -(labeller(tok.Stealth_)        > double_rules.expr)
-                >  -(labeller(tok.SpawnRate_)      > double_rule)
-                >  -(labeller(tok.SpawnLimit_)     > int_rule)
-                >  -(labeller(tok.Capacity_)       > double_rules.expr)
-                >  -(labeller(tok.Location_)       > condition_parser)
-                >  -(labeller(tok.EffectsGroups_)  > effects_group_grammar)
-                >    labeller(tok.Graphic_)        > tok.string)
+                >    label(tok.Description_)    > tok.string
+                >  -(label(tok.Stealth_)        > double_rules.expr)
+                >  -(label(tok.SpawnRate_)      > double_rule)
+                >  -(label(tok.SpawnLimit_)     > int_rule)
+                >  -(label(tok.Capacity_)       > double_rules.expr)
+                >  -(label(tok.Location_)       > condition_parser)
+                >  -(label(tok.EffectsGroups_)  > effects_group_grammar)
+                >    label(tok.Graphic_)        > tok.string)
                 [ insert_special_(_r1, phoenix::construct<special_pod>(_1, _2, _3, _8, _4, _5, _6, _7, _9), _pass) ]
                 ;
 
@@ -138,7 +137,7 @@ namespace {
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller labeller;
+        parse::detail::Labeller label;
         parse::conditions_parser_grammar condition_parser;
         const parse::string_parser_grammar string_grammar;
         parse::double_parser_rules      double_rules;

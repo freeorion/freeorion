@@ -57,11 +57,10 @@ namespace {
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
-            labeller(tok),
-            condition_parser(tok, labeller),
-            string_grammar(tok, labeller, condition_parser),
-            tags_parser(tok, labeller),
-            common_rules(tok, labeller, condition_parser, string_grammar, tags_parser),
+            condition_parser(tok, label),
+            string_grammar(tok, label, condition_parser),
+            tags_parser(tok, label),
+            common_rules(tok, label, condition_parser, string_grammar, tags_parser),
             ship_slot_type_enum(tok),
             double_rule(tok),
             one_or_more_slots(slot)
@@ -86,17 +85,17 @@ namespace {
             const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             hull_stats
-                =  (labeller(tok.Speed_)       >   double_rule
-                >   labeller(tok.Fuel_)        >   double_rule
-                >   labeller(tok.Stealth_)     >   double_rule
-                >   labeller(tok.Structure_)   >   double_rule)
+                =  (label(tok.Speed_)       >   double_rule
+                >   label(tok.Fuel_)        >   double_rule
+                >   label(tok.Stealth_)     >   double_rule
+                >   label(tok.Structure_)   >   double_rule)
                     [ _val = construct<HullTypeStats>(_2, _1, _3, _4) ]
                 ;
 
             slot
                 =  (omit_[tok.Slot_]
-                >   labeller(tok.Type_) > ship_slot_type_enum
-                >   labeller(tok.Position_)
+                >   label(tok.Type_) > ship_slot_type_enum
+                >   label(tok.Position_)
                 >   '(' > double_rule > ',' > double_rule > lit(')'))
                     [ _val = construct<HullType::Slot>(_1, _2, _3) ]
                 ;
@@ -106,10 +105,10 @@ namespace {
                 >   common_rules.more_common
                     [_pass = is_unique_(_r1, HullType_token, phoenix::bind(&MoreCommonParams::name, _1))]
                 >   hull_stats
-                >  -(labeller(tok.Slots_) > one_or_more_slots)
+                >  -(label(tok.Slots_) > one_or_more_slots)
                 >   common_rules.common
-                >   labeller(tok.Icon_)    > tok.string
-                >   labeller(tok.Graphic_) > tok.string)
+                >   label(tok.Icon_)    > tok.string
+                >   label(tok.Graphic_) > tok.string)
                 [ insert_hulltype_(_r1, _2,
                                    deconstruct_movable_(_4, _pass),
                                    _1, _3, _5, _6) ]
@@ -143,7 +142,7 @@ namespace {
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller labeller;
+        parse::detail::Labeller label;
         parse::conditions_parser_grammar condition_parser;
         const parse::string_parser_grammar string_grammar;
         parse::detail::tags_grammar tags_parser;

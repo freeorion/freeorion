@@ -18,12 +18,12 @@ namespace std {
 namespace parse { namespace detail {
     condition_parser_rules_1::condition_parser_rules_1(
         const parse::lexer& tok,
-        Labeller& labeller,
+        Labeller& label,
         const condition_parser_grammar& condition_parser,
         const value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_1::base_type(start, "condition_parser_rules_1"),
-        int_rules(tok, labeller, condition_parser, string_grammar),
+        int_rules(tok, label, condition_parser, string_grammar),
         empire_affiliation_type_enum(tok)
     {
         qi::_1_type _1;
@@ -93,14 +93,14 @@ namespace parse { namespace detail {
 
         owned_by_1
             =   (tok.OwnedBy_
-                 >>  labeller(tok.Empire_)
+                 >>  label(tok.Empire_)
                 ) > int_rules.expr
             [ _val = construct_movable_(new_<Condition::EmpireAffiliation>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         owned_by_2
             =   tok.OwnedBy_
-            >>  labeller(tok.Affiliation_) >> tok.AnyEmpire_
+            >>  label(tok.Affiliation_) >> tok.AnyEmpire_
             [ _val = construct_movable_(new_<Condition::EmpireAffiliation>( AFFIL_ANY )) ]
             ;
 
@@ -116,8 +116,8 @@ namespace parse { namespace detail {
 
         owned_by_5
             =  ((omit_[tok.OwnedBy_]
-                 >>  labeller(tok.Affiliation_) >> empire_affiliation_type_enum
-                 >>  labeller(tok.Empire_)    ) >  int_rules.expr)
+                 >>  label(tok.Affiliation_) >> empire_affiliation_type_enum
+                 >>  label(tok.Empire_)    ) >  int_rules.expr)
             [ _val = construct_movable_(new_<Condition::EmpireAffiliation>(deconstruct_movable_(_2, _pass), _1)) ]
             ;
 
@@ -146,8 +146,8 @@ namespace parse { namespace detail {
 
         described
             = ( omit_[tok.Described_]
-                > labeller(tok.Description_) > tok.string
-                > labeller(tok.Condition_) > condition_parser)
+                > label(tok.Description_) > tok.string
+                > label(tok.Condition_) > condition_parser)
             [ _val = construct_movable_( new_<Condition::Described>(deconstruct_movable_(_2, _pass), _1)) ]
             ;
 

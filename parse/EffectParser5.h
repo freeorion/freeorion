@@ -7,7 +7,7 @@
     struct effect_parser_rules_5 : public effect_parser_grammar {
         effect_parser_rules_5(const parse::lexer& tok,
                               const effect_parser_grammar& effect_parser,
-                              Labeller& labeller,
+                              Labeller& label,
                               const condition_parser_grammar& condition_parser);
 
         single_or_bracketed_repeat<effect_parser_grammar> one_or_more_effects;

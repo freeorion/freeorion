@@ -71,14 +71,13 @@ namespace {
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
-            labeller(tok),
-            condition_parser(tok, labeller),
-            string_grammar(tok, labeller, condition_parser),
-            tags_parser(tok, labeller),
-            effects_group_grammar(tok, labeller, condition_parser, string_grammar),
+            condition_parser(tok, label),
+            string_grammar(tok, label, condition_parser),
+            tags_parser(tok, label),
+            effects_group_grammar(tok, label, condition_parser, string_grammar),
             one_or_more_foci(focus_type),
-            planet_type_rules(tok, labeller, condition_parser),
-            planet_environment_rules(tok, labeller, condition_parser)
+            planet_type_rules(tok, label, condition_parser),
+            planet_environment_rules(tok, label, condition_parser)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -106,21 +105,21 @@ namespace {
 
             focus_type
                 =  ( omit_[tok.Focus_]
-                >    labeller(tok.Name_)        > tok.string
-                >    labeller(tok.Description_) > tok.string
-                >    labeller(tok.Location_)    > condition_parser
-                >    labeller(tok.Graphic_)     > tok.string
+                >    label(tok.Name_)        > tok.string
+                >    label(tok.Description_) > tok.string
+                >    label(tok.Location_)    > condition_parser
+                >    label(tok.Graphic_)     > tok.string
                 ) [ _val = construct<FocusType>(_1, _2, deconstruct_movable_(_3, _pass), _4) ]
                 ;
 
             foci
-                =    labeller(tok.Foci_)
+                =    label(tok.Foci_)
                 >    one_or_more_foci
                 ;
 
             environment_map_element
-                =  ( labeller(tok.Type_)        > planet_type_rules.enum_expr
-                >    labeller(tok.Environment_) > planet_environment_rules.enum_expr
+                =  ( label(tok.Type_)        > planet_type_rules.enum_expr
+                >    label(tok.Environment_) > planet_environment_rules.enum_expr
                 ) [ _val = construct<std::pair<PlanetType, PlanetEnvironment>>(_1, _2) ]
                 ;
 
@@ -138,10 +137,10 @@ namespace {
                 ;
 
             species_strings
-                =  ( labeller(tok.Name_)                   > tok.string
+                =  ( label(tok.Name_)                   > tok.string
                      [ _pass = is_unique_(_r1, Species_token, _1) ]
-                >    labeller(tok.Description_)            > tok.string
-                >    labeller(tok.Gameplay_Description_)   > tok.string
+                >    label(tok.Description_)            > tok.string
+                >    label(tok.Gameplay_Description_)   > tok.string
                    ) [ _val = construct<SpeciesStrings>(_1, _2, _3) ]
                 ;
 
@@ -151,10 +150,10 @@ namespace {
                 >    species_params
                 >    tags_parser
                 >   -foci
-                >   -as_string_[(labeller(tok.PreferredFocus_)        >> tok.string )]
-                >   -(labeller(tok.EffectsGroups_) > effects_group_grammar)
-                >   -(labeller(tok.Environments_)  > environment_map)
-                >    labeller(tok.Graphic_) > tok.string
+                >   -as_string_[(label(tok.PreferredFocus_)        >> tok.string )]
+                >   -(label(tok.EffectsGroups_) > effects_group_grammar)
+                >   -(label(tok.Environments_)  > environment_map)
+                >    label(tok.Graphic_) > tok.string
                    ) [ insert_species_(_r1, _1, _4, _5, _7, _6, _2,
                                        construct<std::pair<std::set<std::string>, std::string>>(_3, _8), _pass) ]
                 ;
@@ -202,7 +201,7 @@ namespace {
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller                                    labeller;
+        parse::detail::Labeller                                    label;
         const parse::conditions_parser_grammar                     condition_parser;
         const parse::string_parser_grammar                         string_grammar;
         parse::detail::tags_grammar                                tags_parser;
