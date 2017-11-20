@@ -73,8 +73,6 @@ public:
 
     /** Exit the App with \p exit_code. */
     void                ExitApp(int exit_code = 0) override;
-    /** Exit SDL. (Called by FSM) */
-    void                ExitSDL(int exit_code);
 
     void                ResetClientData(bool save_connection = false);
     void                LoadSinglePlayerGame(std::string filename = "");
@@ -160,6 +158,9 @@ private:
     void            HandleResoureDirChange();
 
     void            DisconnectedFromServer();           ///< called by ClientNetworking when the TCP connection to the server is lost
+
+    /** ExitSDL is bound by ResetOrExitApp() to exit the application. */
+    void            ExitSDL(int exit_code);
 
     /** Either reset to IntroMenu (\p reset is true), or exit the
         application.  If \p skip_savegame is true abort in progress save

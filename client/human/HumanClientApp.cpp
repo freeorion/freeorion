@@ -1408,7 +1408,15 @@ void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_cod
         }
     }
 
-    m_fsm->process_event(StartQuittingGame(reset, m_server_process, exit_code));
+    // Create an action to reset to intro or quit the app as appropriate.
+    std::function<void()> after_server_shutdown_action;
+    if (reset)
+        after_server_shutdown_action = std::bind(&HumanClientApp::ResetClientData, this, false);
+    else
+        // This throws to exit the GUI
+        after_server_shutdown_action = std::bind(&HumanClientApp::ExitSDL, this, exit_code);
+
+    m_fsm->process_event(StartQuittingGame(m_server_process, std::move(after_server_shutdown_action)));
 }
 
 void HumanClientApp::InitAutoTurns(int auto_turns) {
