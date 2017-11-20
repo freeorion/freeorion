@@ -526,7 +526,7 @@ namespace {
         }
 
         /** Remove the old labels for ship design counts, and add the new ones.
-        /*  The stats thesmelves are updated in UpdateValues. */
+            The stats themselves are updated in UpdateValues. */
         void ResetShipDesignLabels() {
             for (auto& labels : m_ship_design_labels) {
                 DetachChild(labels.first);
