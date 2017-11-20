@@ -526,7 +526,7 @@ std::string SDLGUI::ClipboardText() const {
 void SDLGUI::operator()()
 { GUI::operator()(); }
 
-void SDLGUI::Exit(int code)
+void SDLGUI::ExitApp(int code)
 { throw QuitSignal(code); }
 
 void SDLGUI::SetWindowTitle(const std::string& title)
@@ -651,7 +651,7 @@ void SDLGUI::SDLInit()
         SDL_ShowSimpleMessageBox(
             SDL_MESSAGEBOX_ERROR, "OpenGL initialization error", msg.c_str(), nullptr);
         std::cerr << msg << std::endl;
-        Exit(1);
+        ExitApp(1);
     }
 
     SDL_ShowWindow(m_window);
@@ -882,7 +882,7 @@ void SDLGUI::Run()
             throw;
 
         // This is the normal exit path from Run()
-        // Do not put exit(0) or Exit(0) here.
+        // Do not put exit(0) or ExitApp(0) here.
         return;
     }
 }

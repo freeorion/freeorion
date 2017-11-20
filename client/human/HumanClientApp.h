@@ -72,7 +72,7 @@ public:
     void                ResetToIntro(bool skip_savegame);
 
     /** Exit the App with \p exit_code. */
-    void                Exit(int exit_code) override;
+    void                ExitApp(int exit_code = 0) override;
     /** Exit SDL. (Called by FSM) */
     void                ExitSDL(int exit_code);
 

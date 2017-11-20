@@ -20,7 +20,7 @@ public:
 
     /** \name Mutators */ //@{
     void                operator()();   ///< external interface to Run()
-    void                Exit(int code); ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
+    void                ExitApp(int code = 0); ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
     void                SetPlayerName(const std::string& player_name) { m_player_name = player_name; }
     //@}
 

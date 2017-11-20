@@ -81,7 +81,7 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
 {
     if (args.size() < 2) {
         std::cerr << "The AI client should not be executed directly!  Run freeorion to start the game.";
-        Exit(1);
+        ExitApp(1);
     }
 
     // read command line args
@@ -117,7 +117,7 @@ AIClientApp::~AIClientApp() {
 void AIClientApp::operator()()
 { Run(); }
 
-void AIClientApp::Exit(int code) {
+void AIClientApp::ExitApp(int code) {
     DebugLogger() << "Initiating Exit (code " << code << " - " << (code ? "error" : "normal") << " termination)";
     if (code)
         exit(code);
@@ -175,7 +175,7 @@ void AIClientApp::Run() {
 
 void AIClientApp::ConnectToServer() {
     if (!Networking().ConnectToLocalHostServer())
-        Exit(1);
+        ExitApp(1);
 }
 
 void AIClientApp::StartPythonAI() {
@@ -362,7 +362,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
         DebugLogger() << "Message::END_GAME : Exiting";
         DebugLogger() << "Acknowledge server shutdown message.";
         Networking().SendMessage(AIEndGameAcknowledgeMessage());
-        Exit(0);
+        ExitApp(0);
         break;
     }
 

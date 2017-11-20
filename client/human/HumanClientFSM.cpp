@@ -939,7 +939,7 @@ boost::statechart::result PlayingTurn::react(const SaveGameComplete& msg) {
         && GetOptionsDB().Get<bool>("auto-quit"))
     {
         DebugLogger(FSM) << "auto-quit save completed, ending game.";
-        Client().Exit(0);
+        Client().ExitApp(0);
     }
 
     return discard_event();

@@ -21,7 +21,7 @@ public:
     GG::Y AppHeight() const override
     { return GG::Y(600); }
 
-    void Exit(int code) override
+    void ExitApp(int code = 0) override
     {}
 
     void Enter2DMode() override

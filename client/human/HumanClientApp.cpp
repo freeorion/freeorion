@@ -1084,7 +1084,7 @@ void HumanClientApp::HandleFocusChange(bool gained_focus) {
 
 void HumanClientApp::HandleAppQuitting() {
     DebugLogger() << "HumanClientApp::HandleAppQuitting()";
-    Exit(0);
+    ExitApp(0);
 }
 
 bool HumanClientApp::HandleHotkeyResetGame() {
@@ -1384,11 +1384,11 @@ namespace {
 void HumanClientApp::ResetToIntro(bool skip_savegame)
 { ResetOrExitApp(true, skip_savegame); }
 
-void HumanClientApp::Exit(int exit_code)
+void HumanClientApp::ExitApp(int exit_code)
 { ResetOrExitApp(false, false, exit_code); }
 
 void HumanClientApp::ExitSDL(int exit_code)
-{ SDLGUI::Exit(exit_code); }
+{ SDLGUI::ExitApp(exit_code); }
 
 void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_code /* = 0*/) {
     DebugLogger() << (reset ? "HumanClientApp::ResetToIntro" : "HumanClientApp::ExitApp");
