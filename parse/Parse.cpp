@@ -418,9 +418,9 @@ namespace parse {
 
 #define PARSING_LABELS_OPTIONAL false
     label_rule& Labeller::rule(const char* name) {
-        auto it = m_rules.find(name);
-        if (it == m_rules.end()) {
-            label_rule& retval = m_rules[name];
+        auto it = m_old_rules.find(name);
+        if (it == m_old_rules.end()) {
+            label_rule& retval = m_old_rules[name];
             if (PARSING_LABELS_OPTIONAL) {
                 retval = -(m_tok.name_token(name) >> '=');
             } else {
@@ -431,6 +431,20 @@ namespace parse {
         } else {
             return it->second;
         }
+    }
+
+    label_rule& Labeller::operator()(const parse::lexer::char_ptr_token_def& token) {
+        auto it = m_rules.find(&token);
+        if (it != m_rules.end())
+            return it->second;
+
+        label_rule& retval = m_rules[&token];
+        if (PARSING_LABELS_OPTIONAL) {
+            retval = -(token >> '=');
+        } else {
+            retval =  (token >> '=');
+        }
+        return retval;
     }
 
     tags_grammar::tags_grammar(const parse::lexer& tok,

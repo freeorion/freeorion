@@ -43,6 +43,9 @@ struct lexer :
     boost::spirit::lex::token_def<boost::spirit::lex::omit> end_of_line_comment;
     //@}
 
+    using char_ptr_token_def = boost::spirit::lex::token_def<const char*>;
+    using string_token_def = boost::spirit::lex::token_def<std::string>;
+
     /** \name Tokens for common C++ types and builtins. */ ///@{
     boost::spirit::lex::token_def<bool> bool_;
     boost::spirit::lex::token_def<int> int_;
@@ -53,7 +56,7 @@ struct lexer :
     /** \name Keyword tokens.  These should be kept in lexicographically
         sorted order, so that finding, adding, and removing tokens is a bit
         easier.  See the note above the Enum tokens section. */ ///@{
-#define DECLARE_TOKEN(r, _, name) boost::spirit::lex::token_def<const char*> BOOST_PP_CAT(name, _);
+#define DECLARE_TOKEN(r, _, name) char_ptr_token_def BOOST_PP_CAT(name, _);
     BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_1)
     BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_2)
     BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_3)
@@ -79,7 +82,7 @@ struct lexer :
     //@}
 
     /** Returns the token_def<const char*> associated with \a name. */
-    const boost::spirit::lex::token_def<const char*>& name_token(const char* name) const;
+    const char_ptr_token_def& name_token(const char* name) const;
 
     static const char* bool_regex;
     static const char* int_regex;
@@ -87,7 +90,7 @@ struct lexer :
     static const char* string_regex;
 
 private:
-    std::unordered_map<const char*, boost::spirit::lex::token_def<const char*>*> m_name_tokens;
+    std::unordered_map<const char*, char_ptr_token_def*> m_name_tokens;
 };
 
 /** The type of iterator passed to the script file parser by the script file

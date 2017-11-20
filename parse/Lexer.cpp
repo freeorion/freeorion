@@ -135,7 +135,7 @@ lexer::lexer() :
         ;
 }
 
-const boost::spirit::lex::token_def<const char*>& lexer::name_token(const char* name) const {
+const lexer::char_ptr_token_def& lexer::name_token(const char* name) const {
     auto it = m_name_tokens.find(name);
     assert(it != m_name_tokens.end());
     return *it->second;
