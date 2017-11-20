@@ -37,9 +37,9 @@ namespace parse { namespace detail {
 
         has_special_capacity
             = (omit_[tok.HasSpecialCapacity_]
-               >   labeller.rule(Name_token) >  string_grammar
-               > -(labeller.rule(Low_token)  >  double_rules.expr)
-               > -(labeller.rule(High_token) >  double_rules.expr)
+               >   labeller(tok.Name_) >  string_grammar
+               > -(labeller(tok.Low_)  >  double_rules.expr)
+               > -(labeller(tok.High_) >  double_rules.expr)
               ) [ _val = construct_movable_(new_<Condition::HasSpecial>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
@@ -48,8 +48,8 @@ namespace parse { namespace detail {
 
         within_distance
             = (omit_[tok.WithinDistance_]
-               > labeller.rule(Distance_token)  > double_rules.expr
-               > labeller.rule(Condition_token) > condition_parser
+               > labeller(tok.Distance_)  > double_rules.expr
+               > labeller(tok.Condition_) > condition_parser
               ) [ _val = construct_movable_(new_<Condition::WithinDistance>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
@@ -57,8 +57,8 @@ namespace parse { namespace detail {
 
         within_starlane_jumps
             = (omit_[tok.WithinStarlaneJumps_]
-               > labeller.rule(Jumps_token)     > castable_int_rules.flexible_int
-               > labeller.rule(Condition_token) > condition_parser
+               > labeller(tok.Jumps_)     > castable_int_rules.flexible_int
+               > labeller(tok.Condition_) > condition_parser
               ) [ _val = construct_movable_(new_<Condition::WithinStarlaneJumps>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
@@ -66,9 +66,9 @@ namespace parse { namespace detail {
 
         number
             = (omit_[tok.Number_]
-               > -(labeller.rule(Low_token)   >  castable_int_rules.flexible_int)
-               > -(labeller.rule(High_token)  >  castable_int_rules.flexible_int)
-               >   labeller.rule(Condition_token) > condition_parser
+               > -(labeller(tok.Low_)   >  castable_int_rules.flexible_int)
+               > -(labeller(tok.High_)  >  castable_int_rules.flexible_int)
+               >   labeller(tok.Condition_) > condition_parser
               ) [ _val = construct_movable_(new_<Condition::Number>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
@@ -184,8 +184,8 @@ namespace parse { namespace detail {
 
             turn
                 = ( omit_[tok.Turn_]
-                    > -(labeller.rule(Low_token)  > (castable_int_rules.flexible_int ))
-                    > -(labeller.rule(High_token) > (castable_int_rules.flexible_int )))
+                    > -(labeller(tok.Low_)  > (castable_int_rules.flexible_int ))
+                    > -(labeller(tok.High_) > (castable_int_rules.flexible_int )))
                 [ _val = construct_movable_(new_<Condition::Turn>(
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass))) ]
@@ -193,8 +193,8 @@ namespace parse { namespace detail {
 
             created_on_turn
                 = ( omit_[tok.CreatedOnTurn_]
-                    > -(labeller.rule(Low_token)  > castable_int_rules.flexible_int )
-                    > -(labeller.rule(High_token) > castable_int_rules.flexible_int ))
+                    > -(labeller(tok.Low_)  > castable_int_rules.flexible_int )
+                    > -(labeller(tok.High_) > castable_int_rules.flexible_int ))
                 [ _val = construct_movable_(new_<Condition::CreatedOnTurn>(
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass))) ]
@@ -207,8 +207,8 @@ namespace parse { namespace detail {
 
             number_of1
                 = ( omit_[tok.NumberOf_]
-                    > labeller.rule(Number_token)    > castable_int_rules.flexible_int
-                    > labeller.rule(Condition_token) > condition_parser)
+                    > labeller(tok.Number_)    > castable_int_rules.flexible_int
+                    > labeller(tok.Condition_) > condition_parser)
                 [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass))) ]
@@ -216,9 +216,9 @@ namespace parse { namespace detail {
 
             number_of2
                 =  (sorting_operator
-                >   labeller.rule(Number_token)    > castable_int_rules.flexible_int
-                >   labeller.rule(SortKey_token)   > double_rules.expr
-                >   labeller.rule(Condition_token) > condition_parser)
+                >   labeller(tok.Number_)    > castable_int_rules.flexible_int
+                >   labeller(tok.SortKey_)   > double_rules.expr
+                >   labeller(tok.Condition_) > condition_parser)
                 [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
                         deconstruct_movable_(_2, _pass),
                         deconstruct_movable_(_3, _pass),
@@ -233,14 +233,14 @@ namespace parse { namespace detail {
 
             random
                 =   tok.Random_
-                >   labeller.rule(Probability_token) > double_rules.expr
+                >   labeller(tok.Probability_) > double_rules.expr
                 [ _val = construct_movable_(new_<Condition::Chance>(deconstruct_movable_(_1, _pass))) ]
                 ;
 
             owner_stockpile
                 = ( omit_[tok.OwnerTradeStockpile_]
-                >   labeller.rule(Low_token)  > double_rules.expr
-                >   labeller.rule(High_token) > double_rules.expr)
+                >   labeller(tok.Low_)  > double_rules.expr
+                >   labeller(tok.High_) > double_rules.expr)
                 [ _val = construct_movable_(new_<Condition::EmpireStockpileValue>(
                         RE_TRADE,
                         deconstruct_movable_(_1, _pass),
@@ -249,8 +249,8 @@ namespace parse { namespace detail {
 
             resource_supply_connected
                 = ( omit_[tok.ResourceSupplyConnected_]
-                    > labeller.rule(Empire_token)    > int_rules.expr
-                    > labeller.rule(Condition_token) > condition_parser)
+                    > labeller(tok.Empire_)    > int_rules.expr
+                    > labeller(tok.Condition_) > condition_parser)
                 [ _val = construct_movable_(new_<Condition::ResourceSupplyConnectedByEmpire>(
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass))) ]
@@ -258,7 +258,7 @@ namespace parse { namespace detail {
 
             can_add_starlane
                 =  ( omit_[tok.CanAddStarlanesTo_]
-                     > labeller.rule(Condition_token) > condition_parser)
+                     > labeller(tok.Condition_) > condition_parser)
                 [ _val = construct_movable_(new_<Condition::CanAddStarlaneConnection>(
                         deconstruct_movable_(_1, _pass))) ]
                 ;

@@ -134,24 +134,24 @@ namespace {
                 ;
 
             tech_info
-                = ( labeller.rule(Name_token)              > tok.string
-                >   labeller.rule(Description_token)       > tok.string
-                >   labeller.rule(Short_Description_token) > tok.string  // TODO: Get rid of underscore.
-                >   labeller.rule(Category_token)      > tok.string
-                >   labeller.rule(ResearchCost_token)  > double_rules.expr
-                >   labeller.rule(ResearchTurns_token) > castable_int_rules.flexible_int
+                = ( labeller(tok.Name_)              > tok.string
+                >   labeller(tok.Description_)       > tok.string
+                >   labeller(tok.Short_Description_) > tok.string  // TODO: Get rid of underscore.
+                >   labeller(tok.Category_)      > tok.string
+                >   labeller(tok.ResearchCost_)  > double_rules.expr
+                >   labeller(tok.ResearchTurns_) > castable_int_rules.flexible_int
                 >   researchable
                 >   tags_parser
                 ) [ _val = construct_movable_(new_<Tech::TechInfo>(_1, _2, _3, _4, deconstruct_movable_(_5, _pass), deconstruct_movable_(_6, _pass), _7, _8)) ]
                 ;
 
             prerequisites
-                %=   labeller.rule(Prerequisites_token)
+                %=   labeller(tok.Prerequisites_)
                 >  one_or_more_string_tokens
                 ;
 
             unlocks
-                %=   labeller.rule(Unlock_token)
+                %=   labeller(tok.Unlock_)
                 >  one_or_more_item_specs
                 ;
 
@@ -160,16 +160,16 @@ namespace {
                 >   tech_info
                 >  -prerequisites
                 >  -unlocks
-                >  -(labeller.rule(EffectsGroups_token) > effects_group_grammar)
-                >  -as_string_[(labeller.rule(Graphic_token) > tok.string)]
+                >  -(labeller(tok.EffectsGroups_) > effects_group_grammar)
+                >  -as_string_[(labeller(tok.Graphic_) > tok.string)]
                   ) [ insert_tech_(_r1, _1, _4, _2, _3, _5, _pass) ]
                 ;
 
             category
                 = ( omit_[tok.Category_]
-                    >   labeller.rule(Name_token)    > tok.string [ _pass = is_unique_(_r1, Category_token, _1) ]
-                    >   labeller.rule(Graphic_token) > tok.string
-                    >   labeller.rule(Colour_token)  > color_parser
+                    >   labeller(tok.Name_)    > tok.string [ _pass = is_unique_(_r1, Category_token, _1) ]
+                    >   labeller(tok.Graphic_) > tok.string
+                    >   labeller(tok.Colour_)  > color_parser
                   ) [ insert_category_(_r1, _1, _2, _3) ]
                 ;
 

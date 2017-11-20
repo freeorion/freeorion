@@ -103,27 +103,27 @@ namespace {
 
             design_prefix
                 =    tok.ShipDesign_
-                >    labeller.rule(Name_token) > tok.string [ _r1 = _1 ]
-                >    ((labeller.rule(UUID_token)
+                >    labeller(tok.Name_) > tok.string [ _r1 = _1 ]
+                >    ((labeller(tok.UUID_)
                        > tok.string [_pass = is_valid_uuid_(_1),  _r5 = parse_uuid_(_1) ])
                       | eps [ _r5 = boost::uuids::nil_generator()() ]
                      )
-                >    labeller.rule(Description_token) > tok.string [ _r2 = _1 ]
+                >    labeller(tok.Description_) > tok.string [ _r2 = _1 ]
                 > (
                      tok.NoStringtableLookup_ [ _r4 = false ]
                     | eps [ _r4 = true ]
                   )
-                >    labeller.rule(Hull_token)        > tok.string [ _r3 = _1 ]
+                >    labeller(tok.Hull_)        > tok.string [ _r3 = _1 ]
                 ;
 
             design
                 =    design_prefix(_a, _b, _c, _f, _g)
-                >    labeller.rule(Parts_token)
+                >    labeller(tok.Parts_)
                 >    one_or_more_string_tokens [ _d = _1 ]
                 >   -(
-                        labeller.rule(Icon_token)     > tok.string [ _e = _1 ]
+                        labeller(tok.Icon_)     > tok.string [ _e = _1 ]
                      )
-                >    labeller.rule(Model_token)       > tok.string
+                >    labeller(tok.Model_)       > tok.string
                 [ insert_ship_design_(_r1, _a, _b, _c, _d, _e, _1, _f, _g) ]
                 ;
 
@@ -189,7 +189,7 @@ namespace {
 
             design_manifest
                 =    tok.ShipDesignOrdering_
-                >    *(labeller.rule(UUID_token)       > tok.string [ push_back(_r1, parse_uuid_(_1)) ])
+                >    *(labeller(tok.UUID_)       > tok.string [ push_back(_r1, parse_uuid_(_1)) ])
                 ;
 
             start

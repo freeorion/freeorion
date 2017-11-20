@@ -106,21 +106,21 @@ namespace {
 
             focus_type
                 =  ( omit_[tok.Focus_]
-                >    labeller.rule(Name_token)        > tok.string
-                >    labeller.rule(Description_token) > tok.string
-                >    labeller.rule(Location_token)    > condition_parser
-                >    labeller.rule(Graphic_token)     > tok.string
+                >    labeller(tok.Name_)        > tok.string
+                >    labeller(tok.Description_) > tok.string
+                >    labeller(tok.Location_)    > condition_parser
+                >    labeller(tok.Graphic_)     > tok.string
                 ) [ _val = construct<FocusType>(_1, _2, deconstruct_movable_(_3, _pass), _4) ]
                 ;
 
             foci
-                =    labeller.rule(Foci_token)
+                =    labeller(tok.Foci_)
                 >    one_or_more_foci
                 ;
 
             environment_map_element
-                =  ( labeller.rule(Type_token)        > planet_type_rules.enum_expr
-                >    labeller.rule(Environment_token) > planet_environment_rules.enum_expr
+                =  ( labeller(tok.Type_)        > planet_type_rules.enum_expr
+                >    labeller(tok.Environment_) > planet_environment_rules.enum_expr
                 ) [ _val = construct<std::pair<PlanetType, PlanetEnvironment>>(_1, _2) ]
                 ;
 
@@ -138,10 +138,10 @@ namespace {
                 ;
 
             species_strings
-                =  ( labeller.rule(Name_token)                   > tok.string
+                =  ( labeller(tok.Name_)                   > tok.string
                      [ _pass = is_unique_(_r1, Species_token, _1) ]
-                >    labeller.rule(Description_token)            > tok.string
-                >    labeller.rule(Gameplay_Description_token)   > tok.string
+                >    labeller(tok.Description_)            > tok.string
+                >    labeller(tok.Gameplay_Description_)   > tok.string
                    ) [ _val = construct<SpeciesStrings>(_1, _2, _3) ]
                 ;
 
@@ -151,10 +151,10 @@ namespace {
                 >    species_params
                 >    tags_parser
                 >   -foci
-                >   -as_string_[(labeller.rule(PreferredFocus_token)        >> tok.string )]
-                >   -(labeller.rule(EffectsGroups_token) > effects_group_grammar)
-                >   -(labeller.rule(Environments_token)  > environment_map)
-                >    labeller.rule(Graphic_token) > tok.string
+                >   -as_string_[(labeller(tok.PreferredFocus_)        >> tok.string )]
+                >   -(labeller(tok.EffectsGroups_) > effects_group_grammar)
+                >   -(labeller(tok.Environments_)  > environment_map)
+                >    labeller(tok.Graphic_) > tok.string
                    ) [ insert_species_(_r1, _1, _4, _5, _7, _6, _2,
                                        construct<std::pair<std::set<std::string>, std::string>>(_3, _8), _pass) ]
                 ;

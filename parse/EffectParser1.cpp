@@ -115,10 +115,10 @@ namespace parse { namespace detail {
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
 
         set_empire_meter_1 =
-            ((   omit_[tok.SetEmpireMeter_] >>   labeller.rule(Empire_token))
+            ((   omit_[tok.SetEmpireMeter_] >>   labeller(tok.Empire_))
               > int_rules.expr
-              > labeller.rule(Meter_token)  >  tok.string
-              > labeller.rule(Value_token)  >  double_rules.expr
+              > labeller(tok.Meter_)  >  tok.string
+              > labeller(tok.Value_)  >  double_rules.expr
             ) [ _val = construct_movable_(
                 new_<Effect::SetEmpireMeter>(
                     deconstruct_movable_(_1, _pass),
@@ -127,9 +127,9 @@ namespace parse { namespace detail {
             ;
 
         set_empire_meter_2
-            = (( omit_[tok.SetEmpireMeter_] >>   labeller.rule(Meter_token))
+            = (( omit_[tok.SetEmpireMeter_] >>   labeller(tok.Meter_))
                > tok.string
-               > labeller.rule(Value_token) >  double_rules.expr
+               > labeller(tok.Value_) >  double_rules.expr
               ) [ _val = construct_movable_(new_<Effect::SetEmpireMeter>(
                    _1,
                    deconstruct_movable_(_2, _pass))) ]
@@ -137,8 +137,8 @@ namespace parse { namespace detail {
 
         give_empire_tech
             =   (   omit_[tok.GiveEmpireTech_]
-                    >   labeller.rule(Name_token) >      string_grammar
-                    > -(labeller.rule(Empire_token) >    int_rules.expr    )
+                    >   labeller(tok.Name_) >      string_grammar
+                    > -(labeller(tok.Empire_) >    int_rules.expr    )
                 ) [ _val = construct_movable_(new_<Effect::GiveEmpireTech>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
@@ -146,9 +146,9 @@ namespace parse { namespace detail {
 
         set_empire_tech_progress
             = (   omit_[tok.SetEmpireTechProgress_]
-                > labeller.rule(Name_token)     >  string_grammar
-                > labeller.rule(Progress_token) >  double_rules.expr
-                > -(labeller.rule(Empire_token) > int_rules.expr)
+                > labeller(tok.Name_)     >  string_grammar
+                > labeller(tok.Progress_) >  double_rules.expr
+                > -(labeller(tok.Empire_) > int_rules.expr)
               ) [ _val = construct_movable_(new_<Effect::SetEmpireTechProgress>(
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass),
@@ -158,41 +158,41 @@ namespace parse { namespace detail {
         // Note: the NoStringtableLookup flag controls the lookup both of template in Vartext and of the label in SitrepPanel.
         generate_sitrep_message
             =    tok.GenerateSitrepMessage_
-            >    labeller.rule(Message_token)    >  tok.string [ _a = _1 ]
-            >    labeller.rule(Label_token)      >  tok.string [ _e = _1 ]
+            >    labeller(tok.Message_)    >  tok.string [ _a = _1 ]
+            >    labeller(tok.Label_)      >  tok.string [ _e = _1 ]
             >   (
                 tok.NoStringtableLookup_ [ _f = false ]
                 | eps [ _f = true ]
             )
-            >  -(labeller.rule(Icon_token)       >  tok.string [ _b = _1 ] )
-            >  -(labeller.rule(Parameters_token) >  one_or_more_string_and_string_ref_pair [_c = _1] )
+            >  -(labeller(tok.Icon_)       >  tok.string [ _b = _1 ] )
+            >  -(labeller(tok.Parameters_) >  one_or_more_string_and_string_ref_pair [_c = _1] )
             >   (
                 (   // empire id specified, optionally with an affiliation type:
                     // useful to specify a single recipient empire, or the allies
                     // or enemies of a single empire
-                    ((   (labeller.rule(Affiliation_token) > empire_affiliation_type_enum [ _d = _1 ])
+                    ((   (labeller(tok.Affiliation_) > empire_affiliation_type_enum [ _d = _1 ])
                          |    eps [ _d = AFFIL_SELF ]
                      )
-                     >>  labeller.rule(Empire_token)
+                     >>  labeller(tok.Empire_)
                     ) > int_rules.expr
 
                     [ _val = construct_GenerateSitRepMessage1_(_a, _b, _c, _1, _d, _e, _f, _pass) ]
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
-                    (labeller.rule(Affiliation_token) >>  tok.CanSee_)
-                    >   labeller.rule(Condition_token)   >   condition_parser
+                    (labeller(tok.Affiliation_) >>  tok.CanSee_)
+                    >   labeller(tok.Condition_)   >   condition_parser
                     [ _val = construct_GenerateSitRepMessage2_(_a, _b, _c, AFFIL_CAN_SEE, _1, _e, _f, _pass) ]
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
-                    (labeller.rule(Affiliation_token) >>  tok.Human_)
-                    >   labeller.rule(Condition_token)   >   condition_parser
+                    (labeller(tok.Affiliation_) >>  tok.Human_)
+                    >   labeller(tok.Condition_)   >   condition_parser
                     [ _val = construct_GenerateSitRepMessage2_(_a, _b, _c, AFFIL_HUMAN, _1, _e, _f, _pass) ]
                 )
                 |   (   // no empire id or condition specified, with or without an
                     // affiliation type: useful to specify no or all empires
-                    (   (labeller.rule(Affiliation_token) > empire_affiliation_type_enum [ _d = _1 ])
+                    (   (labeller(tok.Affiliation_) > empire_affiliation_type_enum [ _d = _1 ])
                         |    eps [ _d = AFFIL_ANY ]
                     )
                     [ _val = construct_GenerateSitRepMessage3_(
@@ -205,8 +205,8 @@ namespace parse { namespace detail {
 
         set_overlay_texture
             = ( omit_[tok.SetOverlayTexture_]
-                > labeller.rule(Name_token)    > tok.string
-                > labeller.rule(Size_token)    > double_rules.expr
+                > labeller(tok.Name_)    > tok.string
+                > labeller(tok.Size_)    > double_rules.expr
               ) [ _val = construct_movable_(new_<Effect::SetOverlayTexture>(
                   _1,
                   deconstruct_movable_(_2, _pass))) ]
@@ -215,8 +215,8 @@ namespace parse { namespace detail {
         string_and_string_ref
             =
             (
-                labeller.rule(Tag_token)  >  tok.string [ _a = _1 ] >
-                labeller.rule(Data_token)
+                labeller(tok.Tag_)  >  tok.string [ _a = _1 ] >
+                labeller(tok.Data_)
                 >  ( int_rules.expr      [ _b = construct_movable_(new_<ValueRef::StringCast<int>>(deconstruct_movable_(_1, _pass))) ]
                      | double_rules.expr [ _b = construct_movable_(new_<ValueRef::StringCast<double>>(deconstruct_movable_(_1, _pass))) ]
                      | tok.string        [ _b = construct_movable_(new_<ValueRef::Constant<std::string>>(_1)) ]

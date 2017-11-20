@@ -93,14 +93,14 @@ namespace parse { namespace detail {
 
         owned_by_1
             =   (tok.OwnedBy_
-                 >>  labeller.rule(Empire_token)
+                 >>  labeller(tok.Empire_)
                 ) > int_rules.expr
             [ _val = construct_movable_(new_<Condition::EmpireAffiliation>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         owned_by_2
             =   tok.OwnedBy_
-            >>  labeller.rule(Affiliation_token) >> tok.AnyEmpire_
+            >>  labeller(tok.Affiliation_) >> tok.AnyEmpire_
             [ _val = construct_movable_(new_<Condition::EmpireAffiliation>( AFFIL_ANY )) ]
             ;
 
@@ -116,8 +116,8 @@ namespace parse { namespace detail {
 
         owned_by_5
             =  ((omit_[tok.OwnedBy_]
-                 >>  labeller.rule(Affiliation_token) >> empire_affiliation_type_enum
-                 >>  labeller.rule(Empire_token)    ) >  int_rules.expr)
+                 >>  labeller(tok.Affiliation_) >> empire_affiliation_type_enum
+                 >>  labeller(tok.Empire_)    ) >  int_rules.expr)
             [ _val = construct_movable_(new_<Condition::EmpireAffiliation>(deconstruct_movable_(_2, _pass), _1)) ]
             ;
 
@@ -146,8 +146,8 @@ namespace parse { namespace detail {
 
         described
             = ( omit_[tok.Described_]
-                > labeller.rule(Description_token) > tok.string
-                > labeller.rule(Condition_token) > condition_parser)
+                > labeller(tok.Description_) > tok.string
+                > labeller(tok.Condition_) > condition_parser)
             [ _val = construct_movable_( new_<Condition::Described>(deconstruct_movable_(_2, _pass), _1)) ]
             ;
 

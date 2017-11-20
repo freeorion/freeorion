@@ -94,17 +94,17 @@ namespace {
                 = ( omit_[tok.Part_]
                 >   common_rules.more_common
                     [_pass = is_unique_(_r1, PartType_token, phoenix::bind(&MoreCommonParams::name, _1)) ]
-                >   labeller.rule(Class_token)       > ship_part_class_enum
-                > -(  (labeller.rule(Capacity_token)  > double_rule)
-                   | (labeller.rule(Damage_token)    > double_rule)
+                >   labeller(tok.Class_)       > ship_part_class_enum
+                > -(  (labeller(tok.Capacity_)  > double_rule)
+                   | (labeller(tok.Damage_)    > double_rule)
                    )
-                > -(  (labeller.rule(Damage_token)    > double_rule )   // damage is secondary for fighters
-                   | (labeller.rule(Shots_token)     > double_rule )   // shots is secondary for direct fire weapons
+                > -(  (labeller(tok.Damage_)    > double_rule )   // damage is secondary for fighters
+                   | (labeller(tok.Shots_)     > double_rule )   // shots is secondary for direct fire weapons
                    )
                 > -tok.NoDefaultCapacityEffect_
-                > -(labeller.rule(MountableSlotTypes_token) > one_or_more_slots)
+                > -(labeller(tok.MountableSlotTypes_) > one_or_more_slots)
                 >   common_rules.common
-                >   labeller.rule(Icon_token)        > tok.string
+                >   labeller(tok.Icon_)        > tok.string
                   ) [ insert_parttype_(_r1, _2,
                                        construct<std::pair<boost::optional<double>, boost::optional<double>>>(_3, _4)
                                        , _7, _1, _6, _8, _5, _pass) ]

@@ -72,13 +72,13 @@ namespace {
 
             field
                 = ( omit_[tok.FieldType_]
-                >   labeller.rule(Name_token)
+                >   labeller(tok.Name_)
                 >   tok.string        [ _pass = is_unique_(_r1, FieldType_token, _1) ]
-                >   labeller.rule(Description_token)         > tok.string
-                >   labeller.rule(Stealth_token)             > double_rule
+                >   labeller(tok.Description_)         > tok.string
+                >   labeller(tok.Stealth_)             > double_rule
                 >   tags_parser
-                > -(labeller.rule(EffectsGroups_token)       > effects_group_grammar )
-                >   labeller.rule(Graphic_token)             > tok.string )
+                > -(labeller(tok.EffectsGroups_)       > effects_group_grammar )
+                >   labeller(tok.Graphic_)             > tok.string )
                 [ insert_fieldtype_(_r1, _1, _2, _3, _4, _5, _6, _pass) ]
                 ;
 

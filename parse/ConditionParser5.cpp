@@ -29,7 +29,7 @@ namespace parse { namespace detail {
 
         has_special
             =   (   (tok.HasSpecial_
-                     >>  labeller.rule(Name_token)
+                     >>  labeller(tok.Name_)
                     ) > string_grammar [ _val = construct_movable_(new_<Condition::HasSpecial>(
                             deconstruct_movable_(_1, _pass))) ]
                 )
@@ -38,7 +38,7 @@ namespace parse { namespace detail {
 
         has_tag
             =   (   (tok.HasTag_
-                     >>  labeller.rule(Name_token)
+                     >>  labeller(tok.Name_)
                     ) > string_grammar [ _val = construct_movable_(new_<Condition::HasTag>(
                             deconstruct_movable_(_1, _pass))) ]
                 )
@@ -47,57 +47,57 @@ namespace parse { namespace detail {
 
         owner_has_tech
             =   tok.OwnerHasTech_
-            >   labeller.rule(Name_token) > string_grammar [ _val = construct_movable_(new_<Condition::OwnerHasTech>(
+            >   labeller(tok.Name_) > string_grammar [ _val = construct_movable_(new_<Condition::OwnerHasTech>(
                 deconstruct_movable_(_1, _pass))) ]
             ;
 
         design_has_hull
             =   tok.DesignHasHull_
-            >   labeller.rule(Name_token) > string_grammar [ _val = construct_movable_(new_<Condition::DesignHasHull>(
+            >   labeller(tok.Name_) > string_grammar [ _val = construct_movable_(new_<Condition::DesignHasHull>(
                 deconstruct_movable_(_1, _pass))) ]
             ;
 
         predefined_design
             =   (tok.Design_
-                 >>  labeller.rule(Name_token)
+                 >>  labeller(tok.Name_)
                 ) > string_grammar [ _val = construct_movable_(new_<Condition::PredefinedShipDesign>(
                 deconstruct_movable_(_1, _pass))) ]
             ;
 
         design_number
             =   (tok.Design_
-                 >>  labeller.rule(Design_token)
+                 >>  labeller(tok.Design_)
                 ) > int_rules.expr [ _val = construct_movable_(new_<Condition::NumberedShipDesign>(
                 deconstruct_movable_(_1, _pass))) ]
             ;
 
         produced_by_empire // TODO: Lose "empire" part.
             =   tok.ProducedByEmpire_
-            >   labeller.rule(Empire_token) > int_rules.expr [ _val = construct_movable_(new_<Condition::ProducedByEmpire>(
+            >   labeller(tok.Empire_) > int_rules.expr [ _val = construct_movable_(new_<Condition::ProducedByEmpire>(
                 deconstruct_movable_(_1, _pass))) ]
             ;
 
         visible_to_empire // TODO: Lose "empire" part.
             =   tok.VisibleToEmpire_
-            >   labeller.rule(Empire_token) > int_rules.expr [ _val = construct_movable_(new_<Condition::VisibleToEmpire>(
+            >   labeller(tok.Empire_) > int_rules.expr [ _val = construct_movable_(new_<Condition::VisibleToEmpire>(
                 deconstruct_movable_(_1, _pass))) ]
             ;
 
         explored_by_empire // TODO: Lose "empire" part.
             =    tok.ExploredByEmpire_
-            >    labeller.rule(Empire_token) > int_rules.expr [ _val = construct_movable_(new_<Condition::ExploredByEmpire>(
+            >    labeller(tok.Empire_) > int_rules.expr [ _val = construct_movable_(new_<Condition::ExploredByEmpire>(
                 deconstruct_movable_(_1, _pass))) ]
             ;
 
         resupplyable_by
             =   tok.ResupplyableBy_
-            >   labeller.rule(Empire_token) > int_rules.expr [ _val = construct_movable_(new_<Condition::FleetSupplyableByEmpire>(
+            >   labeller(tok.Empire_) > int_rules.expr [ _val = construct_movable_(new_<Condition::FleetSupplyableByEmpire>(
                 deconstruct_movable_(_1, _pass))) ]
             ;
 
         object_id
             =   tok.Object_
-            >   labeller.rule(ID_token) > int_rules.expr [ _val = construct_movable_(new_<Condition::ObjectID>(
+            >   labeller(tok.ID_) > int_rules.expr [ _val = construct_movable_(new_<Condition::ObjectID>(
                 deconstruct_movable_(_1, _pass))) ]
             ;
 

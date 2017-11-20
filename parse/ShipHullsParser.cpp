@@ -86,17 +86,17 @@ namespace {
             const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             hull_stats
-                =  (labeller.rule(Speed_token)       >   double_rule
-                >   labeller.rule(Fuel_token)        >   double_rule
-                >   labeller.rule(Stealth_token)     >   double_rule
-                >   labeller.rule(Structure_token)   >   double_rule)
+                =  (labeller(tok.Speed_)       >   double_rule
+                >   labeller(tok.Fuel_)        >   double_rule
+                >   labeller(tok.Stealth_)     >   double_rule
+                >   labeller(tok.Structure_)   >   double_rule)
                     [ _val = construct<HullTypeStats>(_2, _1, _3, _4) ]
                 ;
 
             slot
                 =  (omit_[tok.Slot_]
-                >   labeller.rule(Type_token) > ship_slot_type_enum
-                >   labeller.rule(Position_token)
+                >   labeller(tok.Type_) > ship_slot_type_enum
+                >   labeller(tok.Position_)
                 >   '(' > double_rule > ',' > double_rule > lit(')'))
                     [ _val = construct<HullType::Slot>(_1, _2, _3) ]
                 ;
@@ -106,10 +106,10 @@ namespace {
                 >   common_rules.more_common
                     [_pass = is_unique_(_r1, HullType_token, phoenix::bind(&MoreCommonParams::name, _1))]
                 >   hull_stats
-                >  -(labeller.rule(Slots_token) > one_or_more_slots)
+                >  -(labeller(tok.Slots_) > one_or_more_slots)
                 >   common_rules.common
-                >   labeller.rule(Icon_token)    > tok.string
-                >   labeller.rule(Graphic_token) > tok.string)
+                >   labeller(tok.Icon_)    > tok.string
+                >   labeller(tok.Graphic_) > tok.string)
                 [ insert_hulltype_(_r1, _2,
                                    deconstruct_movable_(_4, _pass),
                                    _1, _3, _5, _6) ]

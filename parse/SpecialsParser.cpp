@@ -108,16 +108,16 @@ namespace {
 
             special
                 = (  omit_[tok.Special_]
-                >    labeller.rule(Name_token)
+                >    labeller(tok.Name_)
                 >    tok.string [ _pass = is_unique_(_r1, Special_token, _1)]
-                >    labeller.rule(Description_token)    > tok.string
-                >  -(labeller.rule(Stealth_token)        > double_rules.expr)
-                >  -(labeller.rule(SpawnRate_token)      > double_rule)
-                >  -(labeller.rule(SpawnLimit_token)     > int_rule)
-                >  -(labeller.rule(Capacity_token)       > double_rules.expr)
-                >  -(labeller.rule(Location_token)       > condition_parser)
-                >  -(labeller.rule(EffectsGroups_token)  > effects_group_grammar)
-                >    labeller.rule(Graphic_token)        > tok.string)
+                >    labeller(tok.Description_)    > tok.string
+                >  -(labeller(tok.Stealth_)        > double_rules.expr)
+                >  -(labeller(tok.SpawnRate_)      > double_rule)
+                >  -(labeller(tok.SpawnLimit_)     > int_rule)
+                >  -(labeller(tok.Capacity_)       > double_rules.expr)
+                >  -(labeller(tok.Location_)       > condition_parser)
+                >  -(labeller(tok.EffectsGroups_)  > effects_group_grammar)
+                >    labeller(tok.Graphic_)        > tok.string)
                 [ insert_special_(_r1, phoenix::construct<special_pod>(_1, _2, _3, _8, _4, _5, _6, _7, _9), _pass) ]
                 ;
 

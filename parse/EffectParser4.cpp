@@ -46,10 +46,10 @@ namespace parse { namespace detail {
 
         create_planet
             =   (       omit_[tok.CreatePlanet_]
-                        >   labeller.rule(Type_token)        >   planet_type_rules.expr
-                        >   labeller.rule(PlanetSize_token)  >   planet_size_rules.expr
-                        > -(labeller.rule(Name_token)        >   string_grammar      )
-                        > -(labeller.rule(Effects_token) > one_or_more_effects )
+                        >   labeller(tok.Type_)        >   planet_type_rules.expr
+                        >   labeller(tok.PlanetSize_)  >   planet_size_rules.expr
+                        > -(labeller(tok.Name_)        >   string_grammar      )
+                        > -(labeller(tok.Effects_) > one_or_more_effects )
                 ) [ _val = construct_movable_(new_<Effect::CreatePlanet>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
@@ -59,9 +59,9 @@ namespace parse { namespace detail {
 
         create_building
             =   (       omit_[tok.CreateBuilding_]
-                        >   labeller.rule(Type_token)        >   string_grammar
-                        > -(labeller.rule(Name_token)        >   string_grammar )
-                        > -(labeller.rule(Effects_token) > one_or_more_effects )
+                        >   labeller(tok.Type_)        >   string_grammar
+                        > -(labeller(tok.Name_)        >   string_grammar )
+                        > -(labeller(tok.Effects_) > one_or_more_effects )
                 ) [ _val = construct_movable_(new_<Effect::CreateBuilding>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
@@ -70,12 +70,12 @@ namespace parse { namespace detail {
 
         create_ship_1
             =   ((       omit_[tok.CreateShip_]
-                         >>  labeller.rule(DesignID_token)
+                         >>  labeller(tok.DesignID_)
                  )  >   int_rules.expr
-                 > -(labeller.rule(Empire_token)      >   int_rules.expr    )
-                 > -(labeller.rule(Species_token)     >   string_grammar )
-                 > -(labeller.rule(Name_token)        >   string_grammar )
-                 > -(labeller.rule(Effects_token)     >   one_or_more_effects )
+                 > -(labeller(tok.Empire_)      >   int_rules.expr    )
+                 > -(labeller(tok.Species_)     >   string_grammar )
+                 > -(labeller(tok.Name_)        >   string_grammar )
+                 > -(labeller(tok.Effects_)     >   one_or_more_effects )
                 ) [ _val = construct_movable_(new_<Effect::CreateShip>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
@@ -86,12 +86,12 @@ namespace parse { namespace detail {
 
         create_ship_2
             =   ((       omit_[tok.CreateShip_]
-                         >>  labeller.rule(DesignName_token)  >>  string_grammar
+                         >>  labeller(tok.DesignName_)  >>  string_grammar
                  )
-                 > -(labeller.rule(Empire_token)      >   int_rules.expr    )
-                 > -(labeller.rule(Species_token)     >   string_grammar )
-                 > -(labeller.rule(Name_token)        >   string_grammar )
-                 > -(labeller.rule(Effects_token)     >   one_or_more_effects )
+                 > -(labeller(tok.Empire_)      >   int_rules.expr    )
+                 > -(labeller(tok.Species_)     >   string_grammar )
+                 > -(labeller(tok.Name_)        >   string_grammar )
+                 > -(labeller(tok.Effects_)     >   one_or_more_effects )
                 ) [ _val = construct_movable_(new_<Effect::CreateShip>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
@@ -102,12 +102,12 @@ namespace parse { namespace detail {
 
         create_field_1
             =   ((       omit_[tok.CreateField_]
-                         >>  labeller.rule(Type_token)    >>  string_grammar
-                         >>  labeller.rule(Size_token)
+                         >>  labeller(tok.Type_)    >>  string_grammar
+                         >>  labeller(tok.Size_)
                  )
                  >   double_rules.expr
-                 > -(labeller.rule(Name_token)    >   string_grammar )
-                 > -(labeller.rule(Effects_token) > one_or_more_effects )
+                 > -(labeller(tok.Name_)    >   string_grammar )
+                 > -(labeller(tok.Effects_) > one_or_more_effects )
                 ) [ _val = construct_movable_(new_<Effect::CreateField>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
@@ -117,14 +117,14 @@ namespace parse { namespace detail {
 
         create_field_2
             =   ((       omit_[tok.CreateField_]
-                         >>  labeller.rule(Type_token)    >>  string_grammar
-                         >>  labeller.rule(X_token)
+                         >>  labeller(tok.Type_)    >>  string_grammar
+                         >>  labeller(tok.X_)
                  )
                  >   double_rules.expr
-                 >   labeller.rule(Y_token)       >   double_rules.expr
-                 >   labeller.rule(Size_token)    >   double_rules.expr
-                 > -(labeller.rule(Name_token)    >   string_grammar )
-                 > -(labeller.rule(Effects_token) > one_or_more_effects )
+                 >   labeller(tok.Y_)       >   double_rules.expr
+                 >   labeller(tok.Size_)    >   double_rules.expr
+                 > -(labeller(tok.Name_)    >   string_grammar )
+                 > -(labeller(tok.Effects_) > one_or_more_effects )
                 ) [ _val = construct_movable_(new_<Effect::CreateField>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
@@ -136,13 +136,13 @@ namespace parse { namespace detail {
 
         create_system_1
             =   ((       omit_[tok.CreateSystem_]
-                         >>  labeller.rule(Type_token)
+                         >>  labeller(tok.Type_)
                  )
                  >   star_type_rules.expr 
-                 >   labeller.rule(X_token)       >   double_rules.expr    
-                 >   labeller.rule(Y_token)       >   double_rules.expr    
-                 > -(labeller.rule(Name_token)    >   string_grammar    )
-                 > -(labeller.rule(Effects_token) > one_or_more_effects )
+                 >   labeller(tok.X_)       >   double_rules.expr    
+                 >   labeller(tok.Y_)       >   double_rules.expr    
+                 > -(labeller(tok.Name_)    >   string_grammar    )
+                 > -(labeller(tok.Effects_) > one_or_more_effects )
                 ) [ _val = construct_movable_(new_<Effect::CreateSystem>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
@@ -153,12 +153,12 @@ namespace parse { namespace detail {
 
         create_system_2
             =   ((       omit_[tok.CreateSystem_]
-                         >>  labeller.rule(X_token)
+                         >>  labeller(tok.X_)
                  )
                  >   double_rules.expr 
-                 >   labeller.rule(Y_token)       >   double_rules.expr 
-                 > -(labeller.rule(Name_token)    >   string_grammar )
-                 > -(labeller.rule(Effects_token) > one_or_more_effects )
+                 >   labeller(tok.Y_)       >   double_rules.expr 
+                 > -(labeller(tok.Name_)    >   string_grammar )
+                 > -(labeller(tok.Effects_) > one_or_more_effects )
                 ) [ _val = construct_movable_(new_<Effect::CreateSystem>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),

@@ -62,8 +62,8 @@ namespace parse {
 
         statistic
             =  ( (omit_[tok.Statistic_] >>  omit_[tok.Mode_])
-                 >   labeller.rule(Value_token)     >     value_ref
-                 >   labeller.rule(Condition_token) >     condition_parser)
+                 >   labeller(tok.Value_)     >     value_ref
+                 >   labeller(tok.Condition_) >     condition_parser)
             [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(
                 deconstruct_movable_(_1, _pass),
                 ValueRef::MODE,

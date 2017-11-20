@@ -56,8 +56,8 @@ namespace {
 
             stat
                 = ( omit_[tok.Statistic_]
-                >   labeller.rule(Name_token)    > tok.string
-                >   labeller.rule(Value_token)   > double_rules.expr
+                >   labeller(tok.Name_)    > tok.string
+                >   labeller(tok.Value_)   > double_rules.expr
                   ) [ _val = construct<std::pair<std::string, parse::detail::value_ref_payload<double>>>(_1, _2) ]
                 ;
 

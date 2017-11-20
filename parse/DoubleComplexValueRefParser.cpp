@@ -43,7 +43,7 @@ namespace parse {
                 |   tok.HullSpeed_
                 |   tok.PartCapacity_
                 |   tok.PartSecondaryStat_
-               ) >   labeller.rule(Name_token) > string_grammar
+               ) >   labeller(tok.Name_) > string_grammar
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                         _1,
                         nullptr,
@@ -55,8 +55,8 @@ namespace parse {
 
         empire_meter_value
             = (     tok.EmpireMeterValue_
-                 >  labeller.rule(Empire_token) > simple_int
-                 >  labeller.rule(Meter_token) > tok.string
+                 >  labeller(tok.Empire_) > simple_int
+                 >  labeller(tok.Meter_) > tok.string
               ) [_val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
                 deconstruct_movable_(_2, _pass),
@@ -68,8 +68,8 @@ namespace parse {
 
         direct_distance
             = (     tok.DirectDistanceBetween_
-                 >  labeller.rule(Object_token) > simple_int
-                 >  labeller.rule(Object_token) > simple_int
+                 >  labeller(tok.Object_) > simple_int
+                 >  labeller(tok.Object_) > simple_int
               )     [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
                 deconstruct_movable_(_2, _pass),
@@ -78,15 +78,15 @@ namespace parse {
             ;
 
         // in shortest_path would have liked to be able to use
-        //            >   labeller.rule(Object_token) >   (simple_int [ _b = _1 ] | int_rules.statistic_expr [ _b = _1 ])
-        //            >   labeller.rule(Object_token) >   (simple_int [ _c = _1 ] | int_rules.statistic_expr [ _c = _1 ])
+        //            >   labeller(tok.Object_) >   (simple_int [ _b = _1 ] | int_rules.statistic_expr [ _b = _1 ])
+        //            >   labeller(tok.Object_) >   (simple_int [ _c = _1 ] | int_rules.statistic_expr [ _c = _1 ])
         // but getting crashes upon program start, presumably due to initialization order problems
 
         shortest_path
             =   (
                         tok.ShortestPath_
-                    >   labeller.rule(Object_token) > simple_int
-                    >   labeller.rule(Object_token) > simple_int
+                    >   labeller(tok.Object_) > simple_int
+                    >   labeller(tok.Object_) > simple_int
                 )       [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
                 deconstruct_movable_(_2, _pass),
@@ -95,12 +95,12 @@ namespace parse {
             ;
 
         species_opinion
-            = omit_[tok.SpeciesOpinion_] >  labeller.rule(Species_token) > string_grammar;
+            = omit_[tok.SpeciesOpinion_] >  labeller(tok.Species_) > string_grammar;
 
 
         species_empire_opinion
             = ( species_opinion
-                >> (labeller.rule(Empire_token) >  simple_int)
+                >> (labeller(tok.Empire_) >  simple_int)
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 construct<std::string>(TOK_SPECIES_EMPIRE_OPINION),
                 deconstruct_movable_(_2, _pass),
@@ -112,7 +112,7 @@ namespace parse {
 
         species_species_opinion
             = ( species_opinion
-                >> (labeller.rule(Species_token) >  string_grammar)
+                >> (labeller(tok.Species_) >  string_grammar)
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 construct<std::string>(TOK_SPECIES_SPECIES_OPINION),
                 nullptr,
@@ -124,8 +124,8 @@ namespace parse {
 
         special_capacity
             = ( tok.SpecialCapacity_
-                >  labeller.rule(Name_token) > string_grammar
-                >> labeller.rule(Object_token)
+                >  labeller(tok.Name_) > string_grammar
+                >> labeller(tok.Object_)
                 >  simple_int
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,

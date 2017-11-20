@@ -459,7 +459,7 @@ namespace parse {
 
         start %=
             -(
-                labeller.rule(Tags_token)
+                labeller(tok.Tags_)
                 >>  one_or_more_string_tokens
             )
             ;
@@ -528,8 +528,8 @@ namespace parse {
 
         start
             =  ( omit_[tok.Item_]
-            >    labeller.rule(Type_token) > unlockable_item_type_enum
-            >    labeller.rule(Name_token) > tok.string
+            >    labeller(tok.Type_) > unlockable_item_type_enum
+            >    labeller(tok.Name_) > tok.string
                ) [ _val = construct<ItemSpec>(_1, _2) ]
             ;
 

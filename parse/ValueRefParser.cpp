@@ -256,14 +256,14 @@ namespace parse { namespace detail {
                         |   tok.If_     [ _b = ValueRef::IF ]
                     )
                 )
-            >   labeller.rule(Condition_token) >    condition_parser
+            >   labeller(tok.Condition_) >    condition_parser
             [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
             ;
 
         statistic_value_expr
             =   (tok.Statistic_ >>  statistic_type_enum [ _b = _1 ])
-            >   labeller.rule(Value_token)     >     statistic_value_ref_expr [ _a = _1 ]
-            >   labeller.rule(Condition_token) >     condition_parser
+            >   labeller(tok.Value_)     >     statistic_value_ref_expr [ _a = _1 ]
+            >   labeller(tok.Condition_) >     condition_parser
             [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
             ;
 

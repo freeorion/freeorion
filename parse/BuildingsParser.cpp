@@ -72,18 +72,18 @@ namespace {
             qi::omit_type omit_;
 
             capture %=
-                (labeller.rule(CaptureResult_token) >> capture_result_enum)
+                (labeller(tok.CaptureResult_) >> capture_result_enum)
                 | eps [ _val = CR_CAPTURE ]
                 ;
 
             building_type
                 = ( omit_[tok.BuildingType_]
-                >   labeller.rule(Name_token)
+                >   labeller(tok.Name_)
                 >   tok.string        [ _pass = is_unique_(_r1, BuildingType_token, _1)]
-                >   labeller.rule(Description_token)         > tok.string
+                >   labeller(tok.Description_)         > tok.string
                 >   capture
                 >   common_rules.common
-                >   labeller.rule(Icon_token)      > tok.string)
+                >   labeller(tok.Icon_)      > tok.string)
                 [ insert_building_(_r1, _1, _2, _4, _3, _5, _pass) ]
                 ;
 

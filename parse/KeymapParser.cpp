@@ -72,8 +72,8 @@ namespace {
 
             keymap
                 = ( omit_[tok.Keymap_]
-                >   labeller.rule(Name_token) > tok.string
-                >   labeller.rule(Keys_token)
+                >   labeller(tok.Name_) > tok.string
+                >   labeller(tok.Keys_)
                 >   ( '[' > *(int_pair(_a)) > ']' )
                   ) [ insert_key_map(_r1, construct<NamedKeymaps::value_type>(_1, _a)) ]
                 ;

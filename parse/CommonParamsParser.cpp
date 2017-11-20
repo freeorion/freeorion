@@ -76,38 +76,38 @@ namespace parse { namespace detail {
             ;
 
         location
-            %=    (labeller.rule(Location_token) > condition_parser)
+            %=    (labeller(tok.Location_) > condition_parser)
             |     eps [ _val = construct_movable_(new_<Condition::All>()) ]
             ;
 
         enqueue_location
-            %=    (labeller.rule(EnqueueLocation_token) > condition_parser)
+            %=    (labeller(tok.EnqueueLocation_) > condition_parser)
             |     eps [ _val = construct_movable_(new_<Condition::All>()) ]
             ;
 
         exclusions
             =
-            -(labeller.rule(Exclusions_token) >> repeated_string)
+            -(labeller(tok.Exclusions_) >> repeated_string)
             ;
 
         more_common
             =
-            (   labeller.rule(Name_token)        > tok.string
-                >   labeller.rule(Description_token) > tok.string
+            (   labeller(tok.Name_)        > tok.string
+                >   labeller(tok.Description_) > tok.string
                 >   exclusions
             ) [ _val = construct<MoreCommonParams>(_1, _2, _3) ]
             ;
 
         common
             =
-            (   labeller.rule(BuildCost_token)  > double_rules.expr
-                >   labeller.rule(BuildTime_token)  > castable_int_rules.flexible_int
+            (   labeller(tok.BuildCost_)  > double_rules.expr
+                >   labeller(tok.BuildTime_)  > castable_int_rules.flexible_int
                 >   producible
                 >   tags_parser 
                 >   location
                 >   enqueue_location
                 >  -consumption(_a, _b)
-                > -(labeller.rule(EffectsGroups_token)> effects_group_grammar )
+                > -(labeller(tok.EffectsGroups_)> effects_group_grammar )
             ) [ _val = construct_movable_(
                 new_<CommonParams>(
                     deconstruct_movable_(_1, _pass),
@@ -121,7 +121,7 @@ namespace parse { namespace detail {
             ;
 
         consumption
-            =   labeller.rule(Consumption_token) >
+            =   labeller(tok.Consumption_) >
             (   consumable_meter(_r1)
                 | consumable_special(_r2)
                 |
@@ -139,9 +139,9 @@ namespace parse { namespace detail {
         consumable_special
             =   tok.Special_
             > (
-                labeller.rule(Name_token)        > tok.string
-                >   labeller.rule(Consumption_token) > double_rules.expr
-                > -(labeller.rule(Condition_token)   > condition_parser )
+                labeller(tok.Name_)        > tok.string
+                >   labeller(tok.Consumption_) > double_rules.expr
+                > -(labeller(tok.Condition_)   > condition_parser )
             )
             [ insert(_r1, construct<ConsumptionMapPackaged<std::string>::value_type>(_1, construct<ConsumptionMapPackaged<std::string>::mapped_type>(_2, _3))) ]
             ;
@@ -149,8 +149,8 @@ namespace parse { namespace detail {
         consumable_meter
             = (
                 non_ship_part_meter_type_enum
-                >   labeller.rule(Consumption_token) > double_rules.expr
-                > -(labeller.rule(Condition_token)   > condition_parser )
+                >   labeller(tok.Consumption_) > double_rules.expr
+                > -(labeller(tok.Condition_)   > condition_parser )
             )
             [ insert(_r1, construct<ConsumptionMapPackaged<MeterType>::value_type>(_1, construct<ConsumptionMapPackaged<MeterType>::mapped_type>(_2, _3))) ]
             ;

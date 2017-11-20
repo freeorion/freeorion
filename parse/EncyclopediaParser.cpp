@@ -52,11 +52,11 @@ namespace {
 
             article
                 =  ( omit_[tok.Article_]
-                >    labeller.rule(Name_token)                > tok.string
-                >    labeller.rule(Category_token)            > tok.string
-                >    labeller.rule(Short_Description_token)   > tok.string
-                >    labeller.rule(Description_token)         > tok.string
-                >    labeller.rule(Icon_token)                > tok.string )
+                >    labeller(tok.Name_)                > tok.string
+                >    labeller(tok.Category_)            > tok.string
+                >    labeller(tok.Short_Description_)   > tok.string
+                >    labeller(tok.Description_)         > tok.string
+                >    labeller(tok.Icon_)                > tok.string )
                     [ insert(_r1, construct<EncyclopediaArticle>(_1, _2, _3, _4, _5)) ]
                 ;
 

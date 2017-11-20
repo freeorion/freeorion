@@ -45,25 +45,25 @@ namespace parse { namespace detail {
 
         ordered_bombarded_by
             =    tok.OrderedBombardedBy_
-            >   -labeller.rule(Condition_token) > condition_parser
+            >   -labeller(tok.Condition_) > condition_parser
             [ _val = construct_movable_(new_<Condition::OrderedBombarded>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         contains
             =    tok.Contains_
-            >   -labeller.rule(Condition_token) > condition_parser
+            >   -labeller(tok.Condition_) > condition_parser
             [ _val = construct_movable_(new_<Condition::Contains>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         contained_by
             =    tok.ContainedBy_
-            >   -labeller.rule(Condition_token) > condition_parser
+            >   -labeller(tok.Condition_) > condition_parser
             [ _val = construct_movable_(new_<Condition::ContainedBy>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         star_type
             =    tok.Star_
-            >    labeller.rule(Type_token)
+            >    labeller(tok.Type_)
             >    one_or_more_star_types
             [ _val = construct_movable_(new_<Condition::StarType>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
@@ -79,9 +79,9 @@ namespace parse { namespace detail {
 
         location
             =   (omit_[tok.Location_]
-                 >    labeller.rule(Type_token) > building_type
-                 >    labeller.rule(Name_token)   > string_grammar
-                 >  -(labeller.rule(Name_token)   > string_grammar))
+                 >    labeller(tok.Type_) > building_type
+                 >    labeller(tok.Name_)   > string_grammar
+                 >  -(labeller(tok.Name_)   > string_grammar))
             [ _val = construct_movable_(new_<Condition::Location>(
                     _1,
                     deconstruct_movable_(_2, _pass),
@@ -90,7 +90,7 @@ namespace parse { namespace detail {
 
         owner_has_shippart_available
             =   (tok.OwnerHasShipPartAvailable_
-                 >>  (labeller.rule(Name_token)
+                 >>  (labeller(tok.Name_)
                       > string_grammar [ _val = construct_movable_(new_<Condition::OwnerHasShipPartAvailable>(
                               deconstruct_movable_(_1, _pass))) ]
                      )

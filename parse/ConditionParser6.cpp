@@ -56,7 +56,7 @@ namespace parse { namespace detail {
         homeworld
             =   tok.Homeworld_
             >   (
-                (labeller.rule(Name_token) > one_or_more_string_values
+                (labeller(tok.Name_) > one_or_more_string_values
                  [ _val = construct_movable_(new_<Condition::Homeworld>(deconstruct_movable_vector_(_1, _pass))) ])
                 |    eps [ _val = construct_movable_(new_<Condition::Homeworld>()) ]
             )
@@ -64,25 +64,25 @@ namespace parse { namespace detail {
 
         building
             =   ( omit_[tok.Building_]
-                > -(labeller.rule(Name_token) > one_or_more_string_values)
+                > -(labeller(tok.Name_) > one_or_more_string_values)
                 ) [ _val = construct_movable_(new_<Condition::Building>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         species
             = ( omit_[tok.Species_]
-                > -(labeller.rule(Name_token) > one_or_more_string_values)
+                > -(labeller(tok.Name_) > one_or_more_string_values)
               ) [ _val = construct_movable_(new_<Condition::Species>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         focus_type
             =   tok.Focus_
-            > -(labeller.rule(Type_token) > one_or_more_string_values)
+            > -(labeller(tok.Type_) > one_or_more_string_values)
             [ _val = construct_movable_(new_<Condition::FocusType>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         planet_type
             =   (tok.Planet_
-                 >>  labeller.rule(Type_token)
+                 >>  labeller(tok.Type_)
                 )
             >   one_or_more_planet_types
             [ _val = construct_movable_(new_<Condition::PlanetType>(deconstruct_movable_vector_(_1, _pass))) ]
@@ -90,7 +90,7 @@ namespace parse { namespace detail {
 
         planet_size
             =   (tok.Planet_
-                 >>  labeller.rule(Size_token)
+                 >>  labeller(tok.Size_)
                 )
             >   one_or_more_planet_sizes
             [ _val = construct_movable_(new_<Condition::PlanetSize>(deconstruct_movable_vector_(_1, _pass))) ]
@@ -98,10 +98,10 @@ namespace parse { namespace detail {
 
         planet_environment
             =   ((omit_[tok.Planet_]
-                  >>  labeller.rule(Environment_token)
+                  >>  labeller(tok.Environment_)
                  )
                  >   one_or_more_planet_environments
-                 >  -(labeller.rule(Species_token)        >  string_grammar))
+                 >  -(labeller(tok.Species_)        >  string_grammar))
             [ _val = construct_movable_(new_<Condition::PlanetEnvironment>(
                     deconstruct_movable_vector_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
@@ -115,7 +115,7 @@ namespace parse { namespace detail {
                             new_<ValueRef::Constant<UniverseObjectType>>(_1)))) ]
             |   (
                 tok.ObjectType_
-                >   labeller.rule(Type_token) > universe_object_type_rules.expr [
+                >   labeller(tok.Type_) > universe_object_type_rules.expr [
                     _val = construct_movable_(new_<Condition::Type>(deconstruct_movable_(_1, _pass))) ]
             )
             ;

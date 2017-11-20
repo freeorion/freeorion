@@ -113,12 +113,12 @@ namespace {
 
             game_rule_bool
                 =   (tok.GameRule_
-                    >> (labeller.rule(Name_token) >          tok.string [ _a = _1 ])
-                    >> (labeller.rule(Description_token) >   tok.string [ _b = _1 ])
-                    >> (labeller.rule(Category_token) >      tok.string [ _j = _1 ])
-                    >>  labeller.rule(Type_token) >>         tok.Toggle_
+                    >> (labeller(tok.Name_) >          tok.string [ _a = _1 ])
+                    >> (labeller(tok.Description_) >   tok.string [ _b = _1 ])
+                    >> (labeller(tok.Category_) >      tok.string [ _j = _1 ])
+                    >>  labeller(tok.Type_) >>         tok.Toggle_
                     )
-                > ((labeller.rule(Default_token)
+                > ((labeller(tok.Default_)
                     >   (
                             tok.On_ [ _i = true ]
                         |   tok.Off_ [ _i = false ]
@@ -130,39 +130,39 @@ namespace {
 
             game_rule_int
                 =   (tok.GameRule_
-                    >> (labeller.rule(Name_token) >          tok.string [ _a = _1 ])
-                    >> (labeller.rule(Description_token) >   tok.string [ _b = _1 ])
-                    >> (labeller.rule(Category_token) >      tok.string [ _j = _1 ])
-                    >>  labeller.rule(Type_token) >>         tok.Integer_
+                    >> (labeller(tok.Name_) >          tok.string [ _a = _1 ])
+                    >> (labeller(tok.Description_) >   tok.string [ _b = _1 ])
+                    >> (labeller(tok.Category_) >      tok.string [ _j = _1 ])
+                    >>  labeller(tok.Type_) >>         tok.Integer_
                     )
-                >   labeller.rule(Default_token) >       int_rule [ _f = _1 ]
-                >   labeller.rule(Min_token) >           int_rule [ _g = _1 ]
-                >   labeller.rule(Max_token) >           int_rule
+                >   labeller(tok.Default_) >       int_rule [ _f = _1 ]
+                >   labeller(tok.Min_) >           int_rule [ _g = _1 ]
+                >   labeller(tok.Max_) >           int_rule
                     [ add_rule(_r1, _a, _b, _j, _f, _g, _1 ) ]
                 ;
 
             game_rule_double
                 =   (tok.GameRule_
-                    >> (labeller.rule(Name_token) >          tok.string [ _a = _1 ])
-                    >> (labeller.rule(Description_token) >   tok.string [ _b = _1 ])
-                    >> (labeller.rule(Category_token) >      tok.string [ _j = _1 ])
-                    >>  labeller.rule(Type_token) >>         tok.Real_
+                    >> (labeller(tok.Name_) >          tok.string [ _a = _1 ])
+                    >> (labeller(tok.Description_) >   tok.string [ _b = _1 ])
+                    >> (labeller(tok.Category_) >      tok.string [ _j = _1 ])
+                    >>  labeller(tok.Type_) >>         tok.Real_
                     )
-                >   labeller.rule(Default_token) >       double_rule [ _c = _1 ]
-                >   labeller.rule(Min_token) >           double_rule [ _d = _1 ]
-                >   labeller.rule(Max_token) >           double_rule
+                >   labeller(tok.Default_) >       double_rule [ _c = _1 ]
+                >   labeller(tok.Min_) >           double_rule [ _d = _1 ]
+                >   labeller(tok.Max_) >           double_rule
                     [ add_rule(_r1, _a, _b, _j, _c, _d, _1 ) ]
                 ;
 
             game_rule_string
                 =   (tok.GameRule_
-                    >> (labeller.rule(Name_token) >          tok.string [ _a = _1 ])
-                    >> (labeller.rule(Description_token) >   tok.string [ _b = _1 ])
-                    >> (labeller.rule(Category_token) >      tok.string [ _j = _1 ])
-                    >>  labeller.rule(Type_token) >>         tok.String_
+                    >> (labeller(tok.Name_) >          tok.string [ _a = _1 ])
+                    >> (labeller(tok.Description_) >   tok.string [ _b = _1 ])
+                    >> (labeller(tok.Category_) >      tok.string [ _j = _1 ])
+                    >>  labeller(tok.Type_) >>         tok.String_
                     )
-                >   labeller.rule(Default_token) >       tok.string [ _e = _1 ]
-                >  -( labeller.rule(Allowed_token) > one_or_more_string_tokens [_h = _1])
+                >   labeller(tok.Default_) >       tok.string [ _e = _1 ]
+                >  -( labeller(tok.Allowed_) > one_or_more_string_tokens [_h = _1])
                   [ add_rule(_r1, _a, _b, _j, _e, _h) ]
                 ;
 

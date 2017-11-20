@@ -117,13 +117,13 @@ namespace parse {
 
         effects_group
             =   tok.EffectsGroup_
-            > -(labeller.rule(Description_token)      > tok.string [ _f = _1 ])
-            >   labeller.rule(Scope_token)            > condition_parser [ _a = _1 ]
-            > -(labeller.rule(Activation_token)       > condition_parser [ _b = _1 ])
-            > -(labeller.rule(StackingGroup_token)    > tok.string [ _c = _1 ])
-            > -(labeller.rule(AccountingLabel_token)  > tok.string [ _d = _1 ])
-            > ((labeller.rule(Priority_token)         > tok.int_ [ _e = _1 ]) | eps [ _e = 100 ])
-            >   labeller.rule(Effects_token)
+            > -(labeller(tok.Description_)      > tok.string [ _f = _1 ])
+            >   labeller(tok.Scope_)            > condition_parser [ _a = _1 ]
+            > -(labeller(tok.Activation_)       > condition_parser [ _b = _1 ])
+            > -(labeller(tok.StackingGroup_)    > tok.string [ _c = _1 ])
+            > -(labeller(tok.AccountingLabel_)  > tok.string [ _d = _1 ])
+            > ((labeller(tok.Priority_)         > tok.int_ [ _e = _1 ]) | eps [ _e = 100 ])
+            >   labeller(tok.Effects_)
             >   one_or_more_effects
             [ _val = construct_EffectsGroup_(_a, _b, _1, _d, _c, _e, _f, _pass) ]
             ;

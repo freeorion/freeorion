@@ -33,9 +33,9 @@ namespace parse { namespace detail {
 
         conditional
             =   ( omit_[tok.If_]
-                  >   labeller.rule(Condition_token)   >   condition_parser
-                  >   labeller.rule(Effects_token) > one_or_more_effects
-                  >   -(labeller.rule(Else_token)  > one_or_more_effects)
+                  >   labeller(tok.Condition_)   >   condition_parser
+                  >   labeller(tok.Effects_) > one_or_more_effects
+                  >   -(labeller(tok.Else_)  > one_or_more_effects)
                 ) [ _val = construct_movable_(new_<Effect::Conditional>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_vector_(_2, _pass),

@@ -43,8 +43,8 @@ namespace parse { namespace detail {
         meter_value
             =   (
                 non_ship_part_meter_type_enum
-                >  -(labeller.rule(Low_token)  > double_rules.expr)
-                >  -(labeller.rule(High_token) > double_rules.expr)
+                >  -(labeller(tok.Low_)  > double_rules.expr)
+                >  -(labeller(tok.High_) > double_rules.expr)
             ) [ _val = construct_movable_(new_<Condition::MeterValue>(
                 _1,
                 deconstruct_movable_(_2, _pass),
@@ -54,10 +54,10 @@ namespace parse { namespace detail {
         ship_part_meter_value
             =   (
                 omit_[tok.ShipPartMeter_]
-                >   labeller.rule(Part_token)    >   string_grammar
+                >   labeller(tok.Part_)    >   string_grammar
                 >   ship_part_meter_type_enum
-                >  -(labeller.rule(Low_token)    >   double_rules.expr)
-                >  -(labeller.rule(High_token)   >   double_rules.expr)
+                >  -(labeller(tok.Low_)    >   double_rules.expr)
+                >  -(labeller(tok.High_)   >   double_rules.expr)
             ) [ _val = construct_movable_(new_<Condition::ShipPartMeterValue>(
                 deconstruct_movable_(_1, _pass),
                 _2,
@@ -68,10 +68,10 @@ namespace parse { namespace detail {
         empire_meter_value1
             =   (
                 (omit_[tok.EmpireMeter_]
-                 >>  labeller.rule(Empire_token))   >   int_rules.expr
-                >   labeller.rule(Meter_token)    >   tok.string
-                >  -(labeller.rule(Low_token)     >   double_rules.expr)
-                >  -(labeller.rule(High_token)    >   double_rules.expr)
+                 >>  labeller(tok.Empire_))   >   int_rules.expr
+                >   labeller(tok.Meter_)    >   tok.string
+                >  -(labeller(tok.Low_)     >   double_rules.expr)
+                >  -(labeller(tok.High_)    >   double_rules.expr)
             ) [ _val = construct_movable_(new_<Condition::EmpireMeterValue>(
                 deconstruct_movable_(_1, _pass),
                 _2,
@@ -82,9 +82,9 @@ namespace parse { namespace detail {
         empire_meter_value2
             =   (
                 (omit_[tok.EmpireMeter_]
-                 >>  labeller.rule(Meter_token))    >   tok.string
-                >  -(labeller.rule(Low_token)     >   double_rules.expr)
-                >  -(labeller.rule(High_token)    >   double_rules.expr)
+                 >>  labeller(tok.Meter_))    >   tok.string
+                >  -(labeller(tok.Low_)     >   double_rules.expr)
+                >  -(labeller(tok.High_)    >   double_rules.expr)
             ) [ _val = construct_movable_(new_<Condition::EmpireMeterValue>(
                 _1,
                 deconstruct_movable_(_2, _pass),
