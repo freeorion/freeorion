@@ -2575,6 +2575,28 @@ namespace {
         return retval;
     }
 
+    const std::vector<std::string>& PlanetEnvFilenames(PlanetType planet_type) {
+        static std::unordered_map<int, std::vector<std::string>> filenames_by_type {
+            std::make_pair(INVALID_PLANET_TYPE, std::vector<std::string>())
+        };
+        std::string planet_type_str = boost::lexical_cast<std::string>(planet_type);
+        boost::algorithm::to_lower(planet_type_str);
+
+        if (!filenames_by_type.count(planet_type)) {
+            auto pe_type_func = [planet_type_str](const boost::filesystem::path& path) {
+                return IsExistingFile(path) && boost::algorithm::starts_with(path.filename().string(), planet_type_str);
+            };
+
+            auto pe_path = ClientUI::ArtDir() / "encyclopedia/planet_environments";
+            for (const auto& file_path : PathsInDir(pe_path, pe_type_func, false))
+                filenames_by_type[planet_type].emplace_back(PathToString(file_path.filename()));
+        }
+
+        if (filenames_by_type.count(planet_type))
+            return filenames_by_type.at(planet_type);
+        return filenames_by_type.at(INVALID_PLANET_TYPE);
+    }
+
     void RefreshDetailPanelSuitabilityTag(  const std::string& item_type, const std::string& item_name,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
@@ -2588,35 +2610,10 @@ namespace {
         auto planet = GetPlanet(planet_id);
 
         // show image of planet environment at the top of the suitability report
-        const auto type = planet->Type();
-        std::string planet_type = boost::lexical_cast<std::string>(type);
-        boost::algorithm::to_lower(planet_type);
-
-        namespace fs = boost::filesystem;
-        // Cache searches through the planet_environments directory
-        static std::unordered_map<int, std::vector<std::string>> filenames_by_type;
-        // Only search once per execution
-        if (!filenames_by_type.count(type)) {
-            fs::directory_iterator end_it;
-            for (fs::directory_iterator it(ClientUI::ArtDir() / "encyclopedia" / "planet_environments"); it != end_it; ++it) {
-                try {
-                    if (fs::exists(*it) && fs::is_regular_file(it->status())) {
-                        auto filename = it->path().filename().string();
-                        if (boost::algorithm::starts_with(filename, planet_type)) {
-                            filenames_by_type[type].push_back(filename);
-                        }
-                    }
-                }
-                catch (const fs::filesystem_error& e) {
-                    // ignore files for which permission is denied, and rethrow other exceptions
-                    if (e.code() != boost::system::posix_error::permission_denied)
-                        throw;
-                }
-            }
-        }
-        if (filenames_by_type.count(type)) {
-            const auto& filenames = filenames_by_type[type];
-            detailed_description += "<img src=\"encyclopedia/planet_environments/" + filenames[planet_id % filenames.size()] + "\"></img>";
+        const auto& filenames = PlanetEnvFilenames(planet->Type());
+        if (!filenames.empty()) {
+            detailed_description += "<img src=\"encyclopedia/planet_environments/" +
+                                    filenames[planet_id % filenames.size()] + "\"></img>";
         }
 
         name = planet->PublicName(planet_id);
