@@ -128,9 +128,6 @@
     <ClCompile Include="..\..\parse\ValueRefParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\parse\EnumValueRefRules.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\parse\ArithmeticRules.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>

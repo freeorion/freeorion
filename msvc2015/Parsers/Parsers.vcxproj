@@ -163,7 +163,6 @@
     <ClCompile Include="..\..\parse\EmpireStatsParser.cpp" />
     <ClCompile Include="..\..\parse\EncyclopediaParser.cpp" />
     <ClCompile Include="..\..\parse\EnumParser.cpp" />
-    <ClCompile Include="..\..\parse\EnumValueRefRules.cpp" />
     <ClCompile Include="..\..\parse\FieldsParser.cpp" />
     <ClCompile Include="..\..\parse\FleetPlansParser.cpp" />
     <ClCompile Include="..\..\parse\GameRulesParser.cpp" />
