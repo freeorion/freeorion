@@ -2413,6 +2413,69 @@ namespace {
         }
     }
 
+    std::unordered_set<std::string> ReportedSpeciesForPlanet(std::shared_ptr<Planet> planet) {
+        std::unordered_set<std::string> retval;
+
+        auto empire_id = HumanClientApp::GetApp()->EmpireID();
+        auto empire = HumanClientApp::GetApp()->GetEmpire(empire_id);
+        if (!empire) {
+            return retval;
+        }
+
+        // Collect species colonizing/environment hospitality information
+        // start by building roster-- any species tagged as 'ALWAYS_REPORT' plus any species
+        // represented in this empire's PopCenters
+        for (const auto& entry : GetSpeciesManager()) {
+            if (!entry.second)
+                continue;
+            const std::string& species_str = entry.first;
+            const auto& species_tags = entry.second->Tags();
+            if (species_tags.find(TAG_ALWAYS_REPORT) != species_tags.end()) {
+                retval.insert(species_str);
+                continue;
+            }
+            // Add extinct species if their tech is known
+            // Extinct species and enabling tech should have an EXTINCT tag
+            if (species_tags.find(TAG_EXTINCT) != species_tags.end()) {
+                for (const auto& tech : empire->ResearchedTechs()) {
+                    // Check for presence of tags in tech
+                    const auto& tech_tags = GetTech(tech.first)->Tags();
+                    if ((tech_tags.find(species_str) != tech_tags.end()) &&
+                        (tech_tags.find(TAG_EXTINCT) != tech_tags.end()))
+                    {
+                        // Add the species and exit loop
+                        retval.insert(species_str);
+                        break;
+                    }
+                }
+            }
+        }
+
+        for (const auto& pop_center_id : empire->GetPopulationPool().PopCenterIDs()) {
+            auto obj = GetUniverseObject(pop_center_id);
+            auto pc = std::dynamic_pointer_cast<const PopCenter>(obj);
+            if (!pc)
+                continue;
+
+            const std::string& species_name = pc->SpeciesName();
+            if (species_name.empty())
+                continue;
+
+            const Species* species = GetSpecies(species_name);
+            if (!species)
+                continue;
+
+            // Exclude species that can't colonize UNLESS they
+            // are already here (aka: it's their home planet). Showing them on
+            // their own planet allows comparison vs other races, which might
+            // be better suited to this planet. 
+            if (species->CanColonize() || (planet && species_name == planet->SpeciesName()))
+                retval.insert(species_name);
+        }
+
+        return retval;
+    }
+
     void RefreshDetailPanelSuitabilityTag(  const std::string& item_type, const std::string& item_name,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
@@ -2463,65 +2526,9 @@ namespace {
         name = planet->PublicName(planet_id);
 
         int empire_id = HumanClientApp::GetApp()->EmpireID();
-        Empire* empire = HumanClientApp::GetApp()->GetEmpire(empire_id);
-        if (!empire) {
-            return;
-        }
-        const auto pop_center_ids = empire->GetPopulationPool().PopCenterIDs();
 
-        std::set<std::string> species_names;
+        auto species_names = ReportedSpeciesForPlanet(planet);
         std::map<std::string, std::pair<PlanetEnvironment, float>> population_counts;
-
-        // Collect species colonizing/environment hospitality information
-        // start by building roster-- any species tagged as 'ALWAYS_REPORT' plus any species
-        // represented in this empire's PopCenters
-        for (const auto& entry : GetSpeciesManager()) {
-            if (!entry.second)
-                continue;
-            const std::string& species_str = entry.first;
-            const auto& species_tags = entry.second->Tags();
-            if (species_tags.find(TAG_ALWAYS_REPORT) != species_tags.end()) {
-                species_names.insert(species_str);
-                continue;
-            }
-            // Add extinct species if their tech is known
-            // Extinct species and enabling tech should have an EXTINCT tag
-            if (species_tags.find(TAG_EXTINCT) != species_tags.end()) {
-                for (const auto& tech : empire->ResearchedTechs()) {
-                    // Check for presence of tags in tech
-                    const auto& tech_tags = GetTech(tech.first)->Tags();
-                    if ((tech_tags.find(species_str) != tech_tags.end()) &&
-                        (tech_tags.find(TAG_EXTINCT) != tech_tags.end()))
-                    {
-                        // Add the species and exit loop
-                        species_names.insert(species_str);
-                        break;
-                    }
-                }
-            }
-        }
-
-        for (int pop_center_id : pop_center_ids) {
-            auto obj = GetUniverseObject(pop_center_id);
-            auto pc = std::dynamic_pointer_cast<const PopCenter>(obj);
-            if (!pc)
-                continue;
-
-            const std::string& species_name = pc->SpeciesName();
-            if (species_name.empty())
-                continue;
-
-            const Species* species = GetSpecies(species_name);
-            if (!species)
-                continue;
-
-            // Exclude species that can't colonize UNLESS they
-            // are already here (aka: it's their home planet). Showing them on
-            // their own planet allows comparison vs other races, which might
-            // be better suited to this planet. 
-            if (species->CanColonize() || species_name == planet->SpeciesName())
-                species_names.insert(species_name);
-        }
 
         auto font = ClientUI::GetFont();
         GG::X max_species_name_column1_width(0);
