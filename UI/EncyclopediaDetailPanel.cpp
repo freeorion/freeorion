@@ -2528,6 +2528,53 @@ namespace {
         return retval;
     }
 
+    GG::Pt SingleTabExtent() {
+        static GG::Pt retval;
+        if (retval > GG::Pt(GG::X0, GG::Y0))
+            return retval;
+
+        GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
+        auto font = ClientUI::GetFont();
+
+        auto elems = font->ExpensiveParseFromTextToTextElements("\t", format);
+        auto lines = font->DetermineLines("\t", format, GG::X(1 << 15), elems);
+        retval = font->TextExtent(lines);
+        return retval;
+    }
+
+    std::unordered_map<std::string, std::string> SpeciesSuitabilityColumn1(const std::unordered_set<std::string>& species_names) {
+        std::unordered_map<std::string, std::string> retval;
+        auto font = ClientUI::GetFont();
+
+        for (const auto& species_name : species_names) {
+            retval[species_name] = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1")) %
+                                       LinkTaggedText(VarText::SPECIES_TAG, species_name));
+        }
+
+        // determine widest column, storing extents of each row for later alignment
+        GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
+        GG::X longest_width { 0 };
+        std::unordered_map<std::string, GG::Pt> column1_species_extents;
+        for (const auto& it : retval) {
+            auto text_elements = font->ExpensiveParseFromTextToTextElements(it.second, format);
+            auto lines = font->DetermineLines(it.second, format, GG::X(1 << 15), text_elements);
+            GG::Pt extent = font->TextExtent(lines);
+            column1_species_extents[it.first] = extent;
+            longest_width = std::max(longest_width, extent.x);
+        }
+
+        // align end of column with end of longest row
+        auto single_tab_width = SingleTabExtent().x;
+        for (auto& it : retval) {
+            auto distance = longest_width - column1_species_extents.at(it.first).x;
+            std::size_t num_tabs = Value(distance) / Value(single_tab_width);
+            for (std::size_t i = 0; i < num_tabs; ++i)
+                it.second.append("\t");
+        }
+
+        return retval;
+    }
+
     void RefreshDetailPanelSuitabilityTag(  const std::string& item_type, const std::string& item_name,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
@@ -2576,43 +2623,15 @@ namespace {
 
         auto species_names = ReportedSpeciesForPlanet(planet);
         auto target_population_species = SpeciesEnvByTargetPop(*planet.get(), species_names);
-
-        auto font = ClientUI::GetFont();
-        GG::X max_species_name_column1_width(0);
-
-        for (const std::string& species_name : species_names) {
-            std::string species_name_column1 = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1")) % UserString(species_name)); 
-            GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
-            std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements =
-                font->ExpensiveParseFromTextToTextElements(species_name_column1, format);
-            std::vector<GG::Font::LineData> lines = font->DetermineLines(
-                species_name_column1, format, GG::X(1 << 15), text_elements);
-            GG::Pt extent = font->TextExtent(lines);
-            max_species_name_column1_width = std::max(extent.x, max_species_name_column1_width);
-
-        }
+        auto species_suitability_column1 = SpeciesSuitabilityColumn1(species_names);
 
         bool positive_header_placed = false;
         bool negative_header_placed = false;
 
-        for (auto it = target_population_species.rbegin();
-             it != target_population_species.rend(); ++it)
-        {
-            std::string user_species_name = UserString(it->second.first);
-            std::string species_name_column1 = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1")) % LinkTaggedText(VarText::SPECIES_TAG, it->second.first));
-
-            GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
-            auto text_elements = font->ExpensiveParseFromTextToTextElements(
-                species_name_column1, format);
-            auto lines = font->DetermineLines(species_name_column1, format,
-                                              GG::X(1 << 15), text_elements);
-            GG::Pt extent = font->TextExtent(lines);
-            while (extent.x < max_species_name_column1_width) {
-                species_name_column1 += "\t";
-                text_elements = font->ExpensiveParseFromTextToTextElements(species_name_column1, format);
-                lines = font->DetermineLines(species_name_column1, format, GG::X(1 << 15), text_elements);
-                extent = font->TextExtent(lines);
-            }
+        for (auto it = target_population_species.rbegin(); it != target_population_species.rend(); ++it) {
+            auto species_name_column1_it = species_suitability_column1.find(it->second.first);
+            if (species_name_column1_it == species_suitability_column1.end())
+                continue;
 
             if (it->first > 0) {
                 if (!positive_header_placed) {
@@ -2621,7 +2640,7 @@ namespace {
                 }
 
                 detailed_description += str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
-                    % species_name_column1
+                    % species_name_column1_it->second
                     % UserString(boost::lexical_cast<std::string>(it->second.second))
                     % (GG::RgbaTag(ClientUI::StatIncrColor()) + DoubleToString(it->first, 2, true) + "</rgba>"));
 
@@ -2635,7 +2654,7 @@ namespace {
                 }
 
                 detailed_description += str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
-                    % species_name_column1
+                    % species_name_column1_it->second
                     % UserString(boost::lexical_cast<std::string>(it->second.second))
                     % (GG::RgbaTag(ClientUI::StatDecrColor()) + DoubleToString(it->first, 2, true) + "</rgba>"));
             }
