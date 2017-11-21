@@ -101,8 +101,7 @@ lexer::lexer() :
 
 #define REGISTER_TOKEN(r, _, name)                                    \
     {                                                                 \
-        const char* n(BOOST_PP_CAT(name, _token));                    \
-        self += BOOST_PP_CAT(name, _) [ _val = n ];                   \
+        self += BOOST_PP_CAT(name, _) [ _val = BOOST_PP_STRINGIZE(name) ]; \
     }
     BOOST_PP_SEQ_FOR_EACH(REGISTER_TOKEN, _, TOKEN_SEQ_1)
     BOOST_PP_SEQ_FOR_EACH(REGISTER_TOKEN, _, TOKEN_SEQ_2)
