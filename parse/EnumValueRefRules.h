@@ -2,6 +2,7 @@
 #define _EnumValueRefRules_h_
 
 #include "ValueRefParser.h"
+#include "MovableEnvelope.h"
 
 namespace parse {
     namespace detail {
@@ -21,6 +22,8 @@ namespace parse {
                              Labeller& labeller,
                              const condition_parser_grammar& condition_parser);
 
+        rule<ValueRef::OpType ()> selection_operator;
+        value_ref_rule<T> selection_expr;
         name_token_rule variable_name;
         enum_rule<T> enum_expr;
         value_ref_rule<T> constant_expr;
