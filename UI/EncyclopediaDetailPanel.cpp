@@ -2547,8 +2547,8 @@ namespace {
         auto font = ClientUI::GetFont();
 
         for (const auto& species_name : species_names) {
-            retval[species_name] = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1")) %
-                                       LinkTaggedText(VarText::SPECIES_TAG, species_name));
+            retval[species_name] = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1"))
+                                       % LinkTaggedText(VarText::SPECIES_TAG, species_name));
         }
 
         // determine widest column, storing extents of each row for later alignment
@@ -2588,6 +2588,7 @@ namespace {
             };
 
             auto pe_path = ClientUI::ArtDir() / "encyclopedia/planet_environments";
+            // retain only the filenames of each path
             for (const auto& file_path : PathsInDir(pe_path, pe_type_func, false))
                 filenames_by_type[planet_type].emplace_back(PathToString(file_path.filename()));
         }
@@ -2597,12 +2598,12 @@ namespace {
         return filenames_by_type.at(INVALID_PLANET_TYPE);
     }
 
-    void RefreshDetailPanelSuitabilityTag(  const std::string& item_type, const std::string& item_name,
-                                            std::string& name, std::shared_ptr<GG::Texture>& texture,
-                                            std::shared_ptr<GG::Texture>& other_texture, int& turns,
-                                            float& cost, std::string& cost_units, std::string& general_type,
-                                            std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color, GG::X width)
+    void RefreshDetailPanelSuitabilityTag(const std::string& item_type, const std::string& item_name,
+                                          std::string& name, std::shared_ptr<GG::Texture>& texture,
+                                          std::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                          float& cost, std::string& cost_units, std::string& general_type,
+                                          std::string& specific_type, std::string& detailed_description,
+                                          GG::Clr& color, GG::X width)
     {
         general_type = UserString("SP_PLANET_SUITABILITY");
 
@@ -2612,8 +2613,8 @@ namespace {
         // show image of planet environment at the top of the suitability report
         const auto& filenames = PlanetEnvFilenames(planet->Type());
         if (!filenames.empty()) {
-            detailed_description += "<img src=\"encyclopedia/planet_environments/" +
-                                    filenames[planet_id % filenames.size()] + "\"></img>";
+            detailed_description += "<img src=\"encyclopedia/planet_environments/"
+                                    + filenames[planet_id % filenames.size()] + "\"></img>";
         }
 
         name = planet->PublicName(planet_id);
@@ -2632,7 +2633,8 @@ namespace {
 
             if (it->first > 0) {
                 if (!positive_header_placed) {
-                    detailed_description += str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_POSITIVE_HEADER")) % planet->PublicName(planet_id));                    
+                    detailed_description += str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_POSITIVE_HEADER"))
+                                                % planet->PublicName(planet_id));
                     positive_header_placed = true;
                 }
 
@@ -2646,7 +2648,8 @@ namespace {
                     if (positive_header_placed)
                         detailed_description += "\n\n";
 
-                    detailed_description += str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_NEGATIVE_HEADER")) % planet->PublicName(planet_id));                    
+                    detailed_description += str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_NEGATIVE_HEADER"))
+                                                % planet->PublicName(planet_id));
                     negative_header_placed = true;
                 }
 
@@ -2659,7 +2662,8 @@ namespace {
             detailed_description += "\n";
         }
 
-        detailed_description += UserString("ENC_SUITABILITY_REPORT_WHEEL_INTRO") + "<img src=\"encyclopedia/EP_wheel.png\"></img>";
+        detailed_description += UserString("ENC_SUITABILITY_REPORT_WHEEL_INTRO")
+                                + "<img src=\"encyclopedia/EP_wheel.png\"></img>";
     }
 
     void RefreshDetailPanelSearchResultsTag(const std::string& item_type, const std::string& item_name,
