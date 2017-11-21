@@ -646,3 +646,44 @@ bool IsExistingFile(const fs::path& path) {
 
     return false;
 }
+
+std::vector<fs::path> PathsInDir(const boost::filesystem::path& abs_dir_path,
+                                 std::function<bool (const fs::path&)> pred,
+                                 bool recursive_search)
+{
+    std::vector<fs::path> retval;
+    if (abs_dir_path.is_relative()) {
+        ErrorLogger() << "Passed relative path for fileysstem operation " << PathToString(abs_dir_path);
+        return retval;
+    }
+
+    try {
+        auto dir_stat = fs::status(abs_dir_path);
+        if (!fs::exists(dir_stat) || !fs::is_directory(dir_stat)) {
+            ErrorLogger() << "Path is not an existing directory " << PathToString(abs_dir_path);
+            return retval;
+        }
+
+        if (recursive_search) {
+            using dir_it_type = boost::filesystem::recursive_directory_iterator;
+            for (dir_it_type node_it(abs_dir_path); node_it != dir_it_type(); ++node_it) {
+                auto obj_path = node_it->path();
+                if (pred(obj_path))
+                    retval.push_back(obj_path);
+            }
+        } else {
+            using dir_it_type = boost::filesystem::directory_iterator;
+            for (dir_it_type node_it(abs_dir_path); node_it != dir_it_type(); ++node_it) {
+                auto obj_path = node_it->path();
+                if (pred(obj_path))
+                    retval.push_back(obj_path);
+            }
+        }
+    } catch(const fs::filesystem_error& ec) {
+        ErrorLogger() << "Filesystem error during directory traversal " << PathToString(abs_dir_path)
+                      << " : " << ec.what();
+        return {};
+    }
+
+    return retval;
+}
