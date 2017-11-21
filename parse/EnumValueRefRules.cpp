@@ -53,8 +53,7 @@ namespace parse { namespace detail {
         using boost::phoenix::push_back;
 
         boost::spirit::qi::_1_type _1;
-        boost::spirit::qi::_c_type _c;
-        boost::spirit::qi::_d_type _d;
+        boost::spirit::qi::_2_type _2;
         boost::spirit::qi::_val_type _val;
         boost::spirit::qi::_pass_type _pass;
         boost::spirit::qi::lit_type lit;
@@ -77,27 +76,16 @@ namespace parse { namespace detail {
             |   complex_expr
             ;
 
-        functional_expr
-            =   (
-                    (
-                        (
-                            tok.OneOf_  [ _c = ValueRef::RANDOM_PICK ]
-                            |   tok.Min_    [ _c = ValueRef::MINIMUM ]
-                            |   tok.Max_    [ _c = ValueRef::MAXIMUM ]
-                        )
-                        >
-                        ( '('
-                          >   expr [ push_back(_d, _1) ]
-                          > *(','  >   expr [ push_back(_d, _1) ] )
-                        > ')'
-                        )
-                        [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_vector_(_d, _pass))) ]
-                    )
-                |   (
-                        primary_expr [ _val = _1 ]
-                    )
-                )
-            ;
+        selection_operator
+            =   tok.OneOf_  [ _val = ValueRef::RANDOM_PICK ]
+            |   tok.Min_    [ _val = ValueRef::MINIMUM ]
+            |   tok.Max_    [ _val = ValueRef::MAXIMUM ];
+
+        selection_expr
+            = (selection_operator > '(' > (expr % ',') > ')')
+            [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_1, deconstruct_movable_vector_(_2, _pass))) ];
+
+        functional_expr %=  selection_expr | primary_expr;
 
         expr
             =   functional_expr
