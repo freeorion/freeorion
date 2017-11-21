@@ -72,7 +72,6 @@ target_sources(freeorionparseobj
         ${CMAKE_CURRENT_LIST_DIR}/StringComplexValueRefParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/StringValueRefParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/TechsParser.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/Tokens.cpp
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObjectTypeValueRefParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ValueRefParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/VisibilityValueRefParser.cpp

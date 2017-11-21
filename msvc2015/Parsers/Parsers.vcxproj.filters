@@ -122,9 +122,6 @@
     <ClCompile Include="..\..\parse\EffectParser4.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\parse\Tokens.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\parse\ValueRefParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>

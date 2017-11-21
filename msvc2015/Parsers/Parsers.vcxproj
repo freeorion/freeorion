@@ -188,7 +188,6 @@
     <ClCompile Include="..\..\parse\StringComplexValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\StringValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\TechsParser.cpp" />
-    <ClCompile Include="..\..\parse\Tokens.cpp" />
     <ClCompile Include="..\..\parse\UniverseObjectTypeValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\ValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\VisibilityValueRefParser.cpp" />
