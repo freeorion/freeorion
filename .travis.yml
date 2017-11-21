@@ -14,7 +14,7 @@ matrix:
       env:
         - BUILD_UNITTEST=true
     - os: osx
-      osx_image: xcode6.4
+      osx_image: xcode8.1
       compiler: clang
   allow_failures:
     - env:
@@ -28,6 +28,8 @@ install:
     fi
   - >
     if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      brew update # Circumvent Ruby runtime error ; see travis-ci/travis-ci#8552
+      brew install cmake
       wget --output-document=FreeOrionSDK.dmg https://github.com/freeorion/freeorion-sdk/releases/download/v8/FreeOrionSDK_8_Clang-MacOSX-10.9-x86_64.dmg
       hdiutil attach FreeOrionSDK.dmg
       tar -xjf /Volumes/FreeOrionSDK/dep.tar.bz2 -C Xcode
@@ -45,18 +47,14 @@ before_script:
     fi
   - >
     if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-      mkdir build
-      cd build
       # Add transparent cmake function to allow possible cross platform use of
       # build sections.
       function cmake {
           docker run -v "${TRAVIS_BUILD_DIR}:/freeorion" -w /freeorion/build freeorion/freeorion-travis-build /usr/bin/cmake $@
       }
     fi
-  - >
-    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      cd Xcode
-    fi
+  - mkdir build
+  - cd build
 script:
   - >
     if [[ "${BUILD_APIDOC}" == "true" && "${TRAVIS_BRANCH}" == "master" ]]; then
@@ -82,6 +80,7 @@ script:
       python -m compileall -q .
     fi
   - >
-    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      xcodebuild -parallelizeTargets -jobs $(sysctl hw.ncpu | awk '{print $2}') -project FreeOrion.xcodeproj -configuration Release -alltargets
+    if [[ "${TRAVIS_OS_NAME}" == "osx" && -z "${BUILD_APIDOC}" ]]; then
+      cmake -GXcode ..
+      cmake --build . --config Release -- -parallelizeTargets -jobs $(sysctl hw.ncpu | awk '{print $2}')
     fi
