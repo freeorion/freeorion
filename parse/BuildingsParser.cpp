@@ -64,11 +64,11 @@ namespace {
             qi::_3_type _3;
             qi::_4_type _4;
             qi::_5_type _5;
+            qi::_6_type _6;
             qi::_pass_type _pass;
             qi::_val_type _val;
             qi::_r1_type _r1;
             qi::eps_type eps;
-            qi::omit_type omit_;
 
             capture %=
                 (label(tok.CaptureResult_) >> capture_result_enum)
@@ -76,14 +76,14 @@ namespace {
                 ;
 
             building_type
-                = ( omit_[tok.BuildingType_]
-                >   label(tok.Name_)
-                >   tok.string        [ _pass = is_unique_(_r1, BuildingType_token, _1)]
-                >   label(tok.Description_)         > tok.string
+                = ( tok.BuildingType_
+                >   label(tok.Name_)        > tok.string
+                >   label(tok.Description_) > tok.string
                 >   capture
                 >   common_rules.common
-                >   label(tok.Icon_)      > tok.string)
-                [ insert_building_(_r1, _1, _2, _4, _3, _5, _pass) ]
+                >   label(tok.Icon_)        > tok.string)
+                [ _pass = is_unique_(_r1, _1, _2),
+                  insert_building_(_r1, _2, _3, _5, _4, _6, _pass) ]
                 ;
 
             start

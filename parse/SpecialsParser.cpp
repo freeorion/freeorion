@@ -99,16 +99,15 @@ namespace {
             qi::_7_type _7;
             qi::_8_type _8;
             qi::_9_type _9;
+            phoenix::actor<boost::spirit::argument<9>> _10; // qi::_10_type is not predefined
             qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::eps_type eps;
-            qi::omit_type omit_;
             const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             special
-                = (  omit_[tok.Special_]
-                >    label(tok.Name_)
-                >    tok.string [ _pass = is_unique_(_r1, Special_token, _1)]
+                = (  tok.Special_
+                >    label(tok.Name_)           > tok.string
                 >    label(tok.Description_)    > tok.string
                 >  -(label(tok.Stealth_)        > double_rules.expr)
                 >  -(label(tok.SpawnRate_)      > double_rule)
@@ -117,7 +116,8 @@ namespace {
                 >  -(label(tok.Location_)       > condition_parser)
                 >  -(label(tok.EffectsGroups_)  > effects_group_grammar)
                 >    label(tok.Graphic_)        > tok.string)
-                [ insert_special_(_r1, phoenix::construct<special_pod>(_1, _2, _3, _8, _4, _5, _6, _7, _9), _pass) ]
+                [  _pass = is_unique_(_r1, _1, _2),
+                   insert_special_(_r1, phoenix::construct<special_pod>(_2, _3, _4, _9, _5, _6, _7, _8, _10), _pass) ]
                 ;
 
             start

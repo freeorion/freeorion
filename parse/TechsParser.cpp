@@ -165,11 +165,12 @@ namespace {
                 ;
 
             category
-                = ( omit_[tok.Category_]
-                    >   label(tok.Name_)    > tok.string [ _pass = is_unique_(_r1, Category_token, _1) ]
+                = ( tok.Category_
+                    >   label(tok.Name_)    > tok.string
                     >   label(tok.Graphic_) > tok.string
                     >   label(tok.Colour_)  > color_parser
-                  ) [ insert_category_(_r1, _1, _2, _3) ]
+                  ) [ _pass = is_unique_(_r1, _1, _2),
+                      insert_category_(_r1, _2, _3, _4) ]
                 ;
 
             start

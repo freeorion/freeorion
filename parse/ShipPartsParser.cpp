@@ -85,14 +85,13 @@ namespace {
             qi::_6_type _6;
             qi::_7_type _7;
             qi::_8_type _8;
+            qi::_9_type _9;
             qi::_pass_type _pass;
             qi::_r1_type _r1;
-            qi::omit_type omit_;
 
             part_type
-                = ( omit_[tok.Part_]
+                = ( tok.Part_
                 >   common_rules.more_common
-                    [_pass = is_unique_(_r1, PartType_token, phoenix::bind(&MoreCommonParams::name, _1)) ]
                 >   label(tok.Class_)       > ship_part_class_enum
                 > -(  (label(tok.Capacity_)  > double_rule)
                    | (label(tok.Damage_)    > double_rule)
@@ -104,9 +103,10 @@ namespace {
                 > -(label(tok.MountableSlotTypes_) > one_or_more_slots)
                 >   common_rules.common
                 >   label(tok.Icon_)        > tok.string
-                  ) [ insert_parttype_(_r1, _2,
-                                       construct<std::pair<boost::optional<double>, boost::optional<double>>>(_3, _4)
-                                       , _7, _1, _6, _8, _5, _pass) ]
+                  ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&MoreCommonParams::name, _2)),
+                      insert_parttype_(_r1, _3,
+                                       construct<std::pair<boost::optional<double>, boost::optional<double>>>(_4, _5)
+                                       , _8, _2, _7, _9, _6, _pass) ]
                 ;
 
             start

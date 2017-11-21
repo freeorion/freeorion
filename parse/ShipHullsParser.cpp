@@ -76,6 +76,7 @@ namespace {
             qi::_4_type _4;
             qi::_5_type _5;
             qi::_6_type _6;
+            qi::_7_type _7;
             qi::_r1_type _r1;
             qi::_pass_type _pass;
             qi::_val_type _val;
@@ -101,17 +102,17 @@ namespace {
                 ;
 
             hull
-                =   (omit_[tok.Hull_]
+                =   (tok.Hull_
                 >   common_rules.more_common
-                    [_pass = is_unique_(_r1, HullType_token, phoenix::bind(&MoreCommonParams::name, _1))]
                 >   hull_stats
                 >  -(label(tok.Slots_) > one_or_more_slots)
                 >   common_rules.common
                 >   label(tok.Icon_)    > tok.string
                 >   label(tok.Graphic_) > tok.string)
-                [ insert_hulltype_(_r1, _2,
-                                   deconstruct_movable_(_4, _pass),
-                                   _1, _3, _5, _6) ]
+                [ _pass = is_unique_(_r1, _1, phoenix::bind(&MoreCommonParams::name, _2)),
+                  insert_hulltype_(_r1, _3,
+                                   deconstruct_movable_(_5, _pass),
+                                   _2, _4, _6, _7) ]
                 ;
 
             start

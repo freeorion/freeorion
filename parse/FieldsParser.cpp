@@ -65,20 +65,21 @@ namespace {
             qi::_4_type _4;
             qi::_5_type _5;
             qi::_6_type _6;
+            qi::_7_type _7;
             qi::_pass_type _pass;
             qi::_r1_type _r1;
-            qi::omit_type omit_;
 
             field
-                = ( omit_[tok.FieldType_]
+                = ( tok.FieldType_
                 >   label(tok.Name_)
-                >   tok.string        [ _pass = is_unique_(_r1, FieldType_token, _1) ]
+                >   tok.string
                 >   label(tok.Description_)         > tok.string
                 >   label(tok.Stealth_)             > double_rule
                 >   tags_parser
                 > -(label(tok.EffectsGroups_)       > effects_group_grammar )
                 >   label(tok.Graphic_)             > tok.string )
-                [ insert_fieldtype_(_r1, _1, _2, _3, _4, _5, _6, _pass) ]
+                [ _pass = is_unique_(_r1, _1, _2),
+                  insert_fieldtype_(_r1, _2, _3, _4, _5, _6, _7, _pass) ]
                 ;
 
             start

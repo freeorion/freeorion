@@ -5,6 +5,7 @@
 #include "../util/Logger.h"
 #include "../util/ScopedTimer.h"
 
+#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/timer.hpp>
@@ -33,11 +34,12 @@ namespace parse { namespace detail {
         typedef bool result_type;
 
         template <typename Map>
-        result_type operator() (const Map& map, const char* const type, const std::string& key) const {
+        result_type operator() (const Map& map, const std::string& type, const std::string& key) const {
             // Will this key be unique?
             auto will_be_unique = (map.count(key) == 0);
             if (!will_be_unique)
-                ErrorLogger() << "More than one " <<  type << " has the same name, " << key << ".";
+                ErrorLogger() << "More than one " <<  boost::algorithm::to_lower_copy(type)
+                              << " has the same name, " << key << ".";
             return will_be_unique;
         }
     };

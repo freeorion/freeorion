@@ -137,16 +137,16 @@ namespace {
                 ;
 
             species_strings
-                =  ( label(tok.Name_)                   > tok.string
-                     [ _pass = is_unique_(_r1, Species_token, _1) ]
+                =  ( tok.Species_
+                >    label(tok.Name_)                   > tok.string
                 >    label(tok.Description_)            > tok.string
                 >    label(tok.Gameplay_Description_)   > tok.string
-                   ) [ _val = construct<SpeciesStrings>(_1, _2, _3) ]
+                   ) [ _pass = is_unique_(_r1, _1, _2),
+                       _val = construct<SpeciesStrings>(_2, _3, _4) ]
                 ;
 
             species
-                =  ( omit_[tok.Species_]
-                >    species_strings(_r1)
+                =  ( species_strings(_r1)
                 >    species_params
                 >    tags_parser
                 >   -foci
