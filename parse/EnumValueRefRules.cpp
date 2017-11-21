@@ -20,18 +20,21 @@ namespace parse { namespace detail {
         using boost::phoenix::push_back;
 
         boost::spirit::qi::_1_type _1;
-        boost::spirit::qi::_a_type _a;
-        boost::spirit::qi::_b_type _b;
+        boost::spirit::qi::_2_type _2;
         boost::spirit::qi::_val_type _val;
         boost::spirit::qi::_pass_type _pass;
+        boost::spirit::qi::omit_type omit_;
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
 
         statistic
-            =   (tok.Statistic_ >>  tok.Mode_ [ _b = ValueRef::MODE ])
-            >   labeller.rule(Value_token)     >     value_ref [ _a = _1 ]
-            >   labeller.rule(Condition_token) >     condition_parser
-            [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
+            =  ( (omit_[tok.Statistic_] >>  omit_[tok.Mode_])
+                 >   labeller.rule(Value_token)     >     value_ref
+                 >   labeller.rule(Condition_token) >     condition_parser)
+            [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(
+                deconstruct_movable_(_1, _pass),
+                ValueRef::MODE,
+                deconstruct_movable_(_2, _pass))) ]
             ;
     }
 
