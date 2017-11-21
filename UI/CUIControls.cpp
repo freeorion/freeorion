@@ -2048,7 +2048,6 @@ void ResourceInfoPanel::DoLayout() {
     const GG::X VALUE_TEXT_WIDTH = ((Width() - 4 - CENTERLINE_GAP) - LABEL_TEXT_WIDTH) / 2;
 
     const GG::X LEFT_TEXT_X(0);
-    const GG::X DOUBLE_RIGHT_TEXT_X = LEFT_TEXT_X + LABEL_TEXT_WIDTH + CENTERLINE_GAP;
     const GG::X RIGHT_TEXT_X = LEFT_TEXT_X + LABEL_TEXT_WIDTH + 8 + CENTERLINE_GAP;
     const GG::X P_LABEL_X = RIGHT_TEXT_X + 40;
     const GG::X DOUBLE_LEFT_TEXT_X = P_LABEL_X + 30 + 4;
