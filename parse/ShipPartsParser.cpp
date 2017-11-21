@@ -38,7 +38,7 @@ namespace {
                          const MoreCommonParams& more_common_params,
                          boost::optional<std::vector<ShipSlotType>> mountable_slot_types,
                          const std::string& icon,
-                         boost::optional<const char*> add_standard_capacity_effect,
+                         bool no_default_capacity_effect,
                          bool& pass)
     {
         auto part_type = boost::make_unique<PartType>(
@@ -48,7 +48,7 @@ namespace {
             *common_params.OpenEnvelope(pass), more_common_params,
             (mountable_slot_types ? *mountable_slot_types : std::vector<ShipSlotType>()),
             icon,
-            (add_standard_capacity_effect ? false : true));
+            !no_default_capacity_effect);
 
         part_types.insert(std::make_pair(part_type->Name(), std::move(part_type)));
     }
@@ -88,6 +88,7 @@ namespace {
             qi::_9_type _9;
             qi::_pass_type _pass;
             qi::_r1_type _r1;
+            qi::matches_type matches_;
 
             part_type
                 = ( tok.Part_
@@ -99,7 +100,7 @@ namespace {
                 > -(  (label(tok.Damage_)    > double_rule )   // damage is secondary for fighters
                    | (label(tok.Shots_)     > double_rule )   // shots is secondary for direct fire weapons
                    )
-                > -tok.NoDefaultCapacityEffect_
+                > matches_[tok.NoDefaultCapacityEffect_]
                 > -(label(tok.MountableSlotTypes_) > one_or_more_slots)
                 >   common_rules.common
                 >   label(tok.Icon_)        > tok.string
