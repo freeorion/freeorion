@@ -2476,6 +2476,58 @@ namespace {
         return retval;
     }
 
+    std::multimap<float, std::pair<std::string, PlanetEnvironment>>
+        SpeciesEnvByTargetPop(Planet& planet, const std::unordered_set<std::string>& species_names)
+    {
+        std::multimap<float, std::pair<std::string, PlanetEnvironment>> retval;
+
+        if (species_names.empty())
+            return retval;
+
+        // store original state of planet
+        auto original_planet_species = planet.SpeciesName();
+        auto original_owner_id = planet.Owner();
+        auto orig_initial_target_pop = planet.GetMeter(METER_TARGET_POPULATION)->Initial();
+
+        auto planet_id = planet.ID();
+        std::vector<int> planet_id_vec { planet_id };
+        auto empire_id = HumanClientApp::GetApp()->EmpireID();
+
+        GetUniverse().InhibitUniverseObjectSignals(true);
+
+        for (const auto& species_name : species_names) {
+            // Setting the planet's species allows all of it meters to reflect
+            // species (and empire) properties, such as environment type
+            // preferences and tech.
+            // @see also: MapWnd::ApplyMeterEffectsAndUpdateMeters
+            // NOTE: Overridding current or initial value of METER_TARGET_POPULATION prior to update
+            //       results in incorrect estimates for at least effects with a min target population of 0
+            planet.SetSpecies(species_name);
+            planet.SetOwner(empire_id);
+            GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_id_vec, false);
+
+            const auto species = GetSpecies(species_name);
+            auto planet_environment = PE_UNINHABITABLE;
+            if (species)
+                planet_environment = species->GetPlanetEnvironment(planet.Type());
+
+            float planet_capacity = ((planet_environment == PE_UNINHABITABLE) ?
+                                     0.0f : planet.CurrentMeterValue(METER_TARGET_POPULATION));
+
+            retval.insert({planet_capacity, {species_name, planet_environment}});
+        }
+
+        // restore planet to original state
+        planet.SetSpecies(original_planet_species);
+        planet.SetOwner(original_owner_id);
+        planet.GetMeter(METER_TARGET_POPULATION)->Set(orig_initial_target_pop, orig_initial_target_pop);
+
+        GetUniverse().InhibitUniverseObjectSignals(false);
+        GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_id_vec, false);
+
+        return retval;
+    }
+
     void RefreshDetailPanelSuitabilityTag(  const std::string& item_type, const std::string& item_name,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
@@ -2520,21 +2572,13 @@ namespace {
             detailed_description += "<img src=\"encyclopedia/planet_environments/" + filenames[planet_id % filenames.size()] + "\"></img>";
         }
 
-        std::string original_planet_species = planet->SpeciesName();
-        int original_owner_id = planet->Owner();
-        float orig_initial_target_pop = planet->GetMeter(METER_TARGET_POPULATION)->Initial();
         name = planet->PublicName(planet_id);
 
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
-
         auto species_names = ReportedSpeciesForPlanet(planet);
-        std::map<std::string, std::pair<PlanetEnvironment, float>> population_counts;
+        auto target_population_species = SpeciesEnvByTargetPop(*planet.get(), species_names);
 
         auto font = ClientUI::GetFont();
         GG::X max_species_name_column1_width(0);
-        std::vector<int> planet_id_vec { planet_id };
-
-        GetUniverse().InhibitUniverseObjectSignals(true);
 
         for (const std::string& species_name : species_names) {
             std::string species_name_column1 = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1")) % UserString(species_name)); 
@@ -2546,30 +2590,6 @@ namespace {
             GG::Pt extent = font->TextExtent(lines);
             max_species_name_column1_width = std::max(extent.x, max_species_name_column1_width);
 
-            // Setting the planet's species allows all of it meters to reflect
-            // species (and empire) properties, such as environment type
-            // preferences and tech.
-            // @see also: MapWnd::ApplyMeterEffectsAndUpdateMeters
-            // NOTE: Overridding current or initial value of METER_TARGET_POPULATION prior to update
-            //       results in incorrect estimates for at least effects with a min target population of 0
-            planet->SetSpecies(species_name);
-            planet->SetOwner(empire_id);
-            GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_id_vec, false);
-
-            const Species* species = GetSpecies(species_name);
-            PlanetEnvironment planet_environment = PE_UNINHABITABLE;
-            if (species)
-                planet_environment = species->GetPlanetEnvironment(planet->Type());
-
-            double planet_capacity = ((planet_environment == PE_UNINHABITABLE) ? 0 : planet->CurrentMeterValue(METER_TARGET_POPULATION));
-
-            population_counts[species_name].first = planet_environment;
-            population_counts[species_name].second = planet_capacity;
-        }
-
-        std::multimap<float, std::pair<std::string, PlanetEnvironment>> target_population_species;
-        for (auto& entry : population_counts) {
-            target_population_species.insert({entry.second.second, {entry.first, entry.second.first}});
         }
 
         bool positive_header_placed = false;
@@ -2622,14 +2642,6 @@ namespace {
 
             detailed_description += "\n";
         }
-
-        planet->SetSpecies(original_planet_species);
-        planet->SetOwner(original_owner_id);
-        planet->GetMeter(METER_TARGET_POPULATION)->Set(orig_initial_target_pop, orig_initial_target_pop);
-
-        GetUniverse().InhibitUniverseObjectSignals(false);
-
-        GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_id_vec, false);
 
         detailed_description += UserString("ENC_SUITABILITY_REPORT_WHEEL_INTRO") + "<img src=\"encyclopedia/EP_wheel.png\"></img>";
     }
