@@ -126,9 +126,9 @@ namespace parse { namespace detail {
     class Labeller {
     public:
         /** Retrieve or create a label rule for \p name.*/
-        label_rule& operator()(const parse::lexer::char_ptr_token_def& token);
+        label_rule& operator()(const parse::lexer::string_token_def& token);
     private:
-        std::unordered_map<const parse::lexer::char_ptr_token_def*, label_rule> m_rules;
+        std::unordered_map<const parse::lexer::string_token_def*, label_rule> m_rules;
     };
 
     template <typename T>

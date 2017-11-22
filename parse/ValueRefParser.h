@@ -30,7 +30,7 @@ namespace parse { namespace detail {
     using condition_signature      = condition_payload ();
     using condition_parser_grammar = grammar<condition_signature>;
 
-    using name_token_rule = rule<const char* ()>;
+    using name_token_rule = rule<std::string ()>;
     using reference_token_rule = rule<ValueRef::ReferenceType ()>;
     const parse::detail::reference_token_rule variable_scope(const parse::lexer& tok);
     const parse::detail::name_token_rule container_type(const parse::lexer& tok);

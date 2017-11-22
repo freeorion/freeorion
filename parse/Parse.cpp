@@ -412,7 +412,7 @@ namespace parse {
     }
 
 #define PARSING_LABELS_OPTIONAL false
-    label_rule& Labeller::operator()(const parse::lexer::char_ptr_token_def& token) {
+    label_rule& Labeller::operator()(const parse::lexer::string_token_def& token) {
         auto it = m_rules.find(&token);
         if (it != m_rules.end())
             return it->second;

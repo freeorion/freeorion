@@ -12,7 +12,6 @@
 // These are just here to satisfy the requirements of boost::spirit::qi::debug(<rule>).
 #if DEBUG_VALUEREF_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<const char*>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::vector<boost::variant<ValueRef::OpType, value_ref_payload<int>>>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::vector<boost::variant<ValueRef::OpType, value_ref_payload<double>>>&) { return os; }
 }
