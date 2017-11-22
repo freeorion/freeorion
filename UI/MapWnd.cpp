@@ -6340,10 +6340,6 @@ void MapWnd::ShowProduction() {
         GG::GUI::GetGUI()->Remove(ClientUI::GetClientUI()->GetPlayerListWnd());
     }
 
-    // hide pedia again if it is supposed to be hidden persistently
-    if (GetOptionsDB().Get<bool>("UI.windows.production.pedia.persistently-hidden"))
-        m_production_wnd->TogglePedia();
-
     m_in_production_view_mode = true;
     HideAllPopups();
     GG::GUI::GetGUI()->MoveUp(m_production_wnd);
@@ -6366,6 +6362,10 @@ void MapWnd::ShowProduction() {
     }
     m_production_wnd->Update();
     m_production_wnd->Show();
+
+    // hide pedia again if it is supposed to be hidden persistently
+    if (GetOptionsDB().Get<bool>("UI.windows.production.pedia.persistently-hidden"))
+        m_production_wnd->TogglePedia();
 }
 
 void MapWnd::HideProduction() {
