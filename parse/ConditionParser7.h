@@ -25,7 +25,6 @@ namespace parse { namespace detail {
         > string_ref_rule;
 
         condition_parser_rule  ordered_bombarded_by;
-        condition_parser_rule  ordered_destroyed_by;
         condition_parser_rule  contains;
         condition_parser_rule  contained_by;
         star_type_vec_rule     star_type;

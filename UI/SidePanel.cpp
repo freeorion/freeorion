@@ -2323,7 +2323,7 @@ void SidePanel::PlanetPanel::Select(bool selected) {
 }
 
 namespace {
-    void CancelColonizeInvadeBombardDestructionScrapShipOrders(std::shared_ptr<const Ship> ship) {
+    void CancelColonizeInvadeBombardScrapShipOrders(std::shared_ptr<const Ship> ship) {
         if (!ship)
             return;
 
@@ -2416,7 +2416,7 @@ void SidePanel::PlanetPanel::ClickColonize() {
             return;
         }
 
-        CancelColonizeInvadeBombardDestructionScrapShipOrders(ship);
+        CancelColonizeInvadeBombardScrapShipOrders(ship);
 
         HumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ColonizeOrder>(empire_id, ship->ID(), m_planet_id));
@@ -2460,7 +2460,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
             if (!ship)
                 continue;
 
-            CancelColonizeInvadeBombardDestructionScrapShipOrders(ship);
+            CancelColonizeInvadeBombardScrapShipOrders(ship);
 
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<InvadeOrder>(empire_id, ship->ID(), m_planet_id));
@@ -2470,7 +2470,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
 }
 
 void SidePanel::PlanetPanel::ClickBombard() {
-    // order or cancel bombard, depending on whether it has previously ordered
+    // order or cancel bombard, depending on whether it has previously been ordered
 
     auto planet = GetPlanet(m_planet_id);
     if (!planet ||
@@ -2504,7 +2504,7 @@ void SidePanel::PlanetPanel::ClickBombard() {
             if (!ship)
                 continue;
 
-            CancelColonizeInvadeBombardDestructionScrapShipOrders(ship);
+            CancelColonizeInvadeBombardScrapShipOrders(ship);
 
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<BombardOrder>(empire_id, ship->ID(), m_planet_id));
@@ -2549,7 +2549,7 @@ void SidePanel::PlanetPanel::ClickDestroyPlanet() {
         for (auto& ship : planet_destruction_ships) {
             if (!ship)
                 continue;
-            CancelColonizeInvadeBombardDestructionScrapShipOrders(ship);
+            CancelColonizeInvadeBombardScrapShipOrders(ship);
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<BombardOrder>(empire_id, ship->ID(), m_planet_id));
             break; // only one ship needs to fire

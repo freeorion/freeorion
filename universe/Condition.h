@@ -2514,45 +2514,6 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches the objects that have been targeted for destruction by at least one
-* object that matches \a m_by_object_condition. */
-struct FO_COMMON_API OrderedDestroyed : public ConditionBase {
-    OrderedDestroyed(ConditionBase* by_object_condition) :
-        ConditionBase(),
-        m_by_object_condition(by_object_condition)
-    {}
-
-    virtual ~OrderedDestroyed();
-
-    bool operator==(const ConditionBase& rhs) const override;
-
-    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-        ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    bool RootCandidateInvariant() const override;
-
-    bool TargetInvariant() const override;
-
-    bool SourceInvariant() const override;
-
-    std::string Description(bool negated = false) const override;
-
-    std::string Dump() const override;
-
-    virtual void SetTopLevelContent(const std::string& content_name) override;
-
-    unsigned int GetCheckSum() const override;
-
-private:
-    bool Match(const ScriptingContext& local_context) const override;
-
-    ConditionBase* m_by_object_condition;
-
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
 /** Matches all objects if the comparisons between values of ValueRefs meet the
   * specified comparison types. */
 struct FO_COMMON_API ValueTest : public ConditionBase {
@@ -3195,13 +3156,6 @@ void CanProduceShips::serialize(Archive& ar, const unsigned int version)
 
 template <class Archive>
 void OrderedBombarded::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
-        & BOOST_SERIALIZATION_NVP(m_by_object_condition);
-}
-
-template <class Archive>
-void OrderedDestroyed::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_by_object_condition);

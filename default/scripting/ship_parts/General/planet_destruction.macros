@@ -43,7 +43,7 @@ PLANET_DESTRUCTION_WARNING_SITREP
 PDC_SCOPE
 '''             Planet
                 InSystem id = Source.SystemID
-                OrderedDestroyedBy condition = Source
+                OrderedBombardedBy condition = Source
                 Or [
                     OwnedBy affiliation = EnemyOf empire = Source.Owner
                     Unowned
@@ -66,5 +66,7 @@ PDC_LVL1
 '''
 
 PDC_LVL2
-'''         OwnerHasTech name = "SHP_PLANET_DESTROYER_REF_2"
+'''
+                OwnerHasTech name = "SHP_PLANET_DESTROYER_REF_2"
+
 '''

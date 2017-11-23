@@ -42,12 +42,6 @@ namespace parse { namespace detail {
             [ _val = new_<Condition::OrderedBombarded>(_1) ]
             ;
 
-        ordered_destroyed_by
-            =    tok.OrderedDestroyedBy_
-            >   -labeller.rule(Condition_token) > condition_parser
-            [ _val = new_<Condition::OrderedDestroyed>(_1) ]
-            ;
-
         contains
             =    tok.Contains_
             >   -labeller.rule(Condition_token) > condition_parser
@@ -96,7 +90,6 @@ namespace parse { namespace detail {
 
         start
             %=   ordered_bombarded_by
-            |    ordered_destroyed_by
             |    contains
             |    contained_by
             |    star_type
@@ -105,7 +98,6 @@ namespace parse { namespace detail {
             ;
 
         ordered_bombarded_by.name("OrderedBombardedBy");
-        ordered_destroyed_by.name("OrderedDestroyedBy");
         contains.name("Contains");
         contained_by.name("ContainedBy");
         star_type.name("StarType");
@@ -114,7 +106,6 @@ namespace parse { namespace detail {
 
 #if DEBUG_CONDITION_PARSERS
         debug(ordered_bombarded_by);
-        debug(ordered_destroyed_by);
         debug(contains);
         debug(contained_by);
         debug(star_type);

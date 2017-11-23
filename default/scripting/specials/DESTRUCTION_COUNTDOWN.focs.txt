@@ -6,12 +6,13 @@ Special
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = OrderedDestroyedBy condition = All
+            activation = OrderedBombardedBy condition = All
             effects = SetSpecialCapacity name = "DESTRUCTION_COUNTDOWN_SPECIAL" value = value - 1
         EffectsGroup
             scope = Source
-            activation = Not OrderedDestroyedBy condition = All
+            activation = Not OrderedBombardedBy condition = All
             effects = RemoveSpecial name = "DESTRUCTION_COUNTDOWN_SPECIAL"
+        // note: possible exploit where planet destroyer starts countdown, and regular bomber continues it
     ]
     graphic = "icons/specials_huge/planet_destroyed_blue.png"
 

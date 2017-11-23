@@ -270,7 +270,6 @@
     (Orange)                                    \
     (Orbit)                                     \
     (OrderedBombardedBy)                        \
-    (OrderedDestroyedBy)                        \
     (OriginalType)                              \
     (OutpostsOwned)                             \
     (OwnedBy)                                   \
