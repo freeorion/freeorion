@@ -1183,7 +1183,9 @@ sc::result MPLobby::react(const PlayerChat& msg) {
 
     boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
 
-    server.PushChatMessage(timestamp, sender->PlayerName(), data);
+    if (sender->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER) {
+        server.PushChatMessage(timestamp, sender->PlayerName(), data);
+    }
 
     if (receiver == Networking::INVALID_PLAYER_ID) { // the receiver is everyone
         for (auto it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
@@ -1811,7 +1813,9 @@ sc::result PlayingGame::react(const PlayerChat& msg) {
 
     boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
 
-    server.PushChatMessage(timestamp, sender->PlayerName(), data);
+    if (sender->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER) {
+        server.PushChatMessage(timestamp, sender->PlayerName(), data);
+    }
 
     for (auto it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
