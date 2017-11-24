@@ -2525,6 +2525,7 @@ namespace {
 
         auto font = ClientUI::GetFont();
         GG::X max_species_name_column1_width(0);
+        std::vector<int> planet_id_vec { planet_id };
 
         GetUniverse().InhibitUniverseObjectSignals(true);
 
@@ -2541,11 +2542,12 @@ namespace {
             // Setting the planet's species allows all of it meters to reflect
             // species (and empire) properties, such as environment type
             // preferences and tech.
-            // @see also: MapWnd::UpdateMeterEstimates()
+            // @see also: MapWnd::ApplyMeterEffectsAndUpdateMeters
+            // NOTE: Overridding current or initial value of METER_TARGET_POPULATION prior to update
+            //       results in incorrect estimates for at least effects with a min target population of 0
             planet->SetSpecies(species_name);
             planet->SetOwner(empire_id);
-            planet->GetMeter(METER_TARGET_POPULATION)->Set(0.0, 0.0);
-            GetUniverse().UpdateMeterEstimates(planet_id);
+            GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_id_vec, false);
 
             const Species* species = GetSpecies(species_name);
             PlanetEnvironment planet_environment = PE_UNINHABITABLE;
@@ -2620,7 +2622,7 @@ namespace {
 
         GetUniverse().InhibitUniverseObjectSignals(false);
 
-        GetUniverse().UpdateMeterEstimates(planet_id);
+        GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_id_vec, false);
 
         detailed_description += UserString("ENC_SUITABILITY_REPORT_WHEEL_INTRO") + "<img src=\"encyclopedia/EP_wheel.png\"></img>";
     }
