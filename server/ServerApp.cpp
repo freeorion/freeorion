@@ -129,7 +129,7 @@ ServerApp::ServerApp() :
     m_fsm(new ServerFSM(*this)),
     m_current_turn(INVALID_GAME_TURN),
     m_single_player_game(false),
-    m_chat_history(10)
+    m_chat_history(1000)
 {
     // Force the log file if requested.
     if (GetOptionsDB().Get<std::string>("log-file").empty()) {
