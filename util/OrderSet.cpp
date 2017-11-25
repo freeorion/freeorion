@@ -4,17 +4,6 @@
 #include "Order.h"
 
 
-OrderSet::OrderSet()
-{}
-
-const OrderPtr OrderSet::ExamineOrder(int order) const {
-    OrderPtr retval;
-    auto it = m_orders.find(order);
-    if (it != m_orders.end())
-        retval = it->second;
-    return retval;
-}
-
 int OrderSet::IssueOrder(const OrderPtr& order)
 { return IssueOrder(OrderPtr(order)); }
 

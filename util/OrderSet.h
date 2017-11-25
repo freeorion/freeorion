@@ -9,7 +9,6 @@
 
 #include <map>
 #include <memory>
-#include <vector>
 
 
 class Order;
@@ -40,29 +39,8 @@ private:
 
 public:
     typedef OrderMap::const_iterator    const_iterator;    ///< defines a public const_iterator type for OrderSet
-    typedef std::vector<OrderPtr>       OrderVec;          ///< the return type of FindOrders()
-
-    /** \name Structors */ //@{
-    OrderSet();
-    //@}
 
     /** \name Accessors */ //@{
-    const OrderPtr ExamineOrder(int order) const;       ///< returns a pointer to any order, so that it can be examined through its accessors; returns 0 if no such order exists
-
-    /** returns all the orders that match \a pred.  Predicates used with this function must take a single OrderPtr 
-        parameter and must return bool or a type for which there is a conversion to bool.*/
-    template <class Pred>
-    OrderVec FindOrders(Pred pred) const
-    {
-        OrderVec retval;
-        for (const auto& order : m_orders) {
-            auto &o = order.second;
-            if (pred(o))
-                retval.push_back(o);
-        }
-        return retval;
-    }
-
     const_iterator begin() const {return m_orders.begin();} ///< returns the begin const_iterator for the OrderSet
     const_iterator end() const   {return m_orders.end();}   ///< returns the end const_iterator for the OrderSet
     //@}
