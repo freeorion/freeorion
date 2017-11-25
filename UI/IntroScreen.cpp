@@ -381,7 +381,7 @@ void IntroScreen::OnCredits() {
 }
 
 void IntroScreen::OnExitGame() {
-    GG::GUI::GetGUI()->Exit(0);
+    GG::GUI::GetGUI()->ExitApp(0);
 }
 
 void IntroScreen::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {

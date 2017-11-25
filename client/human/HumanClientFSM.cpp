@@ -939,7 +939,7 @@ boost::statechart::result PlayingTurn::react(const SaveGameComplete& msg) {
         && GetOptionsDB().Get<bool>("auto-quit"))
     {
         DebugLogger(FSM) << "auto-quit save completed, ending game.";
-        Client().ExitApp();
+        Client().ExitApp(0);
     }
 
     return discard_event();
@@ -1022,9 +1022,7 @@ boost::statechart::result PlayingTurn::react(const DispatchCombatLogs& msg) {
 /** The QuittingGame state expects to start with a StartQuittingGame message posted. */
 QuittingGame::QuittingGame(my_context c) :
     my_base(c),
-    m_start_time(Clock::now()),
-    m_reset_to_intro(true),
-    m_server_process(nullptr)
+    m_start_time(Clock::now())
 {
     // Quit the game by sending a shutdown message to the server and waiting for
     // the disconnection event.  Free the server if it starts an orderly
@@ -1037,10 +1035,10 @@ QuittingGame::~QuittingGame()
 { TraceLogger(FSM) << "(HumanClientFSM) ~QuittingGame"; }
 
 boost::statechart::result QuittingGame::react(const StartQuittingGame& u) {
-    TraceLogger(FSM) << "(HumanClientFSM) QuittingGame reset to intro is " << u.m_reset_to_intro;
+    TraceLogger(FSM) << "(HumanClientFSM) QuittingGame";
 
-    m_reset_to_intro = u.m_reset_to_intro;
     m_server_process = &u.m_server;
+    m_after_server_shutdown_action = u.m_after_server_shutdown_action;
 
     post_event(ShutdownServer());
     return discard_event();
@@ -1123,14 +1121,8 @@ boost::statechart::result QuittingGame::react(const TerminateServer& u) {
         m_server_process->RequestTermination();
     }
 
-    // Reset the game or quit the app as appropriate
-    if (m_reset_to_intro) {
-        TraceLogger(FSM) << "QuittingGame resetting to intro.";
-        Client().ResetClientData();
-        return transit<IntroMenu>();
-    } else {
-        TraceLogger(FSM) << "QuittingGame throwing CleanQuit.";
-        throw HumanClientApp::CleanQuit();
-    }
-}
+    m_after_server_shutdown_action();
 
+    // If m_after_server_shutdown_action() exits the app, this line will never be reached
+    return transit<IntroMenu>();
+}

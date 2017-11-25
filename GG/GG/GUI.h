@@ -245,7 +245,7 @@ public:
 
     /** \name Mutators */ ///@{
     void            operator()();                 ///< external interface to Run()
-    virtual void    Exit(int code) = 0;           ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetGUI()
+    virtual void    ExitApp(int code = 0) = 0;           ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetGUI()
 
     /** Handles all waiting system events (from SDL, DirectInput, etc.).  This
         function should only be called from custom EventPump event

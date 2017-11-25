@@ -209,7 +209,9 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
 
 
 int mainSetupAndRun() {
+#ifndef FREEORION_CHMAIN_KEEP_STACKTRACE
     try {
+#endif
         RegisterOptions(&HumanClientApp::AddWindowSizeOptionsAfterMainStart);
 
         bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
@@ -260,11 +262,8 @@ int mainSetupAndRun() {
         // run rendering loop
         app();  // calls GUI::operator() which calls SDLGUI::Run() which starts rendering loop
 
-    } catch (const HumanClientApp::CleanQuit&) {
-        // do nothing
-    }
 #ifndef FREEORION_CHMAIN_KEEP_STACKTRACE
-    catch (const std::invalid_argument& e) {
+    } catch (const std::invalid_argument& e) {
         ErrorLogger() << "main() caught exception(std::invalid_argument): " << e.what();
         std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;
         return 1;

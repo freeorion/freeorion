@@ -63,7 +63,7 @@ class Framebuffer;
     <p>To do this, the user needs only to override the Initialize() and
     FinalCleanup() methods, and ensure that the program does not terminate
     abnormally; this ensures FinalCleanup() is called when gui's destructor is
-    invoked. Exit() can also perform cleanup and terminate the application
+    invoked. ExitApp() can also perform cleanup and terminate the application
     cleanly.
 
     <p>Most of the member methods of SDLGUI have been declared virtual, to
@@ -106,7 +106,7 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    void Exit(int code) override;
+    void ExitApp(int code = 0) override;
     bool SetClipboardText(const std::string& text) override;
 
     void Enter2DMode() override;

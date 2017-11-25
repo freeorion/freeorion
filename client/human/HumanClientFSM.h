@@ -39,10 +39,13 @@ struct AdvanceTurn : boost::statechart::event<AdvanceTurn> {};
 /** The set of events used by the QuittingGame state. */
 class Process;
 struct StartQuittingGame : boost::statechart::event<StartQuittingGame> {
-    StartQuittingGame(bool _r, Process& _s) : m_reset_to_intro(_r), m_server(_s) {}
+    StartQuittingGame(Process& server_, std::function<void()>&& after_server_shutdown_action_) :
+        m_server(server_), m_after_server_shutdown_action(std::move(after_server_shutdown_action_))
+    {}
 
-    bool m_reset_to_intro;  ///< Determines if on completion it resets to intro (true) or exits app (false).
     Process& m_server;
+    /// An action to be completed after disconnecting from the server
+    std::function<void()> m_after_server_shutdown_action;
 };
 
 struct ShutdownServer : boost::statechart::event<ShutdownServer> {};
@@ -372,10 +375,9 @@ struct QuittingGame : boost::statechart::state<QuittingGame, HumanClientFSM> {
 
     std::chrono::steady_clock::time_point m_start_time;
 
-    // if m_reset_to_intro is true QuittingGame transits to the Intro menu, otherwise it
-    // exits the app.
-    bool m_reset_to_intro;
-    Process* m_server_process;
+    Process* m_server_process = nullptr;
+    /// An action to be completed after disconnecting from the server
+    std::function<void()> m_after_server_shutdown_action = std::function<void()>();
 
     CLIENT_ACCESSOR
 };

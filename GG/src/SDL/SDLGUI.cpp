@@ -359,13 +359,10 @@ namespace {
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 
-    struct QuitSignal : public std::exception {
+    struct QuitSignal {
         QuitSignal(int exit_code_) :
-            std::exception(), exit_code(exit_code_)
+            exit_code(exit_code_)
         {}
-
-        const char* what() const noexcept override
-        { return  exit_code ? "Quitting SDLGUI with error." : "Quitting SDLGUI normally."; }
 
         int exit_code;
     };
@@ -529,7 +526,7 @@ std::string SDLGUI::ClipboardText() const {
 void SDLGUI::operator()()
 { GUI::operator()(); }
 
-void SDLGUI::Exit(int code)
+void SDLGUI::ExitApp(int code)
 { throw QuitSignal(code); }
 
 void SDLGUI::SetWindowTitle(const std::string& title)
@@ -654,7 +651,7 @@ void SDLGUI::SDLInit()
         SDL_ShowSimpleMessageBox(
             SDL_MESSAGEBOX_ERROR, "OpenGL initialization error", msg.c_str(), nullptr);
         std::cerr << msg << std::endl;
-        Exit(1);
+        ExitApp(1);
     }
 
     SDL_ShowWindow(m_window);
@@ -880,12 +877,12 @@ void SDLGUI::Run()
         Initialize();
         ModalEventPump pump(m_done);
         pump();
-    } catch (QuitSignal& e) {
+    } catch (const QuitSignal& e) {
         if (e.exit_code != 0)
             throw;
 
         // This is the normal exit path from Run()
-        // Do not put exit(0) or Exit(0) here.
+        // Do not put exit(0) or ExitApp(0) here.
         return;
     }
 }
