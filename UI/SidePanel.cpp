@@ -1836,7 +1836,7 @@ void SidePanel::PlanetPanel::Refresh() {
     if (client_empire_id != ALL_EMPIRES) {
         Empire* client_empire = GetEmpire(client_empire_id);
         Visibility visibility = GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id);
-        Universe::VisibilityTurnMap visibility_turn_map = GetUniverse().GetObjectVisibilityTurnMapByEmpire(m_planet_id, client_empire_id);
+        auto visibility_turn_map = GetUniverse().GetObjectVisibilityTurnMapByEmpire(m_planet_id, client_empire_id);
         float client_empire_detection_strength = client_empire->GetMeter("METER_DETECTION_STRENGTH")->Current();
         float apparent_stealth = planet->CurrentMeterValue(METER_STEALTH);
 
@@ -1846,7 +1846,7 @@ void SidePanel::PlanetPanel::Refresh() {
         if (visibility == VIS_NO_VISIBILITY) {
             visibility_info = UserString("PL_NO_VISIBILITY");
 
-            Universe::VisibilityTurnMap::const_iterator last_turn_visible_it = visibility_turn_map.find(VIS_BASIC_VISIBILITY);
+            auto last_turn_visible_it = visibility_turn_map.find(VIS_BASIC_VISIBILITY);
             if (last_turn_visible_it != visibility_turn_map.end() && last_turn_visible_it->second > 0) {
                 visibility_info += "  " + boost::io::str(FlexibleFormat(UserString("PL_LAST_TURN_SEEN")) %
                                                                         std::to_string(last_turn_visible_it->second));
@@ -1877,7 +1877,7 @@ void SidePanel::PlanetPanel::Refresh() {
         else if (visibility == VIS_BASIC_VISIBILITY) {
             visibility_info = UserString("PL_BASIC_VISIBILITY");
 
-            Universe::VisibilityTurnMap::const_iterator last_turn_visible_it = visibility_turn_map.find(VIS_PARTIAL_VISIBILITY);
+            auto last_turn_visible_it = visibility_turn_map.find(VIS_PARTIAL_VISIBILITY);
             if (last_turn_visible_it != visibility_turn_map.end() && last_turn_visible_it->second > 0) {
                 visibility_info += "  " + boost::io::str(FlexibleFormat(UserString("PL_LAST_TURN_SCANNED")) %
                                                                         std::to_string(last_turn_visible_it->second));
@@ -2238,8 +2238,8 @@ void SidePanel::PlanetPanel::ClickColonize() {
     if (empire_id == ALL_EMPIRES)
         return;
 
-    std::map<int, int> pending_colonization_orders = PendingColonizationOrders();
-    std::map<int, int>::const_iterator it = pending_colonization_orders.find(m_planet_id);
+    auto pending_colonization_orders = PendingColonizationOrders();
+    auto it = pending_colonization_orders.find(m_planet_id);
 
     if (it != pending_colonization_orders.end()) {
         // cancel previous colonization order for planet
@@ -2272,7 +2272,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
     // order or cancel invasion, depending on whether it has previously
     // been ordered
 
-    std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
+    auto planet = GetPlanet(m_planet_id);
     if (!planet ||
         !m_order_issuing_enabled ||
         (planet->CurrentMeterValue(METER_POPULATION) <= 0.0 && planet->Unowned()))
@@ -2282,21 +2282,21 @@ void SidePanel::PlanetPanel::ClickInvade() {
     if (empire_id == ALL_EMPIRES)
         return;
 
-    std::map<int, std::set<int>> pending_invade_orders = PendingInvadeOrders();
-    std::map<int, std::set<int>>::const_iterator it = pending_invade_orders.find(m_planet_id);
+    auto pending_invade_orders = PendingInvadeOrders();
+    auto it = pending_invade_orders.find(m_planet_id);
 
     if (it != pending_invade_orders.end()) {
-        const std::set<int>& planet_invade_orders = it->second;
+        auto& planet_invade_orders = it->second;
         // cancel previous invasion orders for this planet
         for (int order_id : planet_invade_orders)
         { HumanClientApp::GetApp()->Orders().RescindOrder(order_id); }
 
     } else {
         // order selected invasion ships to invade planet
-        std::set<std::shared_ptr<const Ship>> invasion_ships = ValidSelectedInvasionShips(planet->SystemID());
+        auto invasion_ships = ValidSelectedInvasionShips(planet->SystemID());
 
         if (invasion_ships.empty()) {
-            std::set<std::shared_ptr<const Ship>> autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
+            auto autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
             invasion_ships.insert(autoselected_invasion_ships.begin(), autoselected_invasion_ships.end());
         }
 
@@ -2317,7 +2317,7 @@ void SidePanel::PlanetPanel::ClickBombard() {
     // order or cancel bombard, depending on whether it has previously
     // been ordered
 
-    std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
+    auto planet = GetPlanet(m_planet_id);
     if (!planet ||
         !m_order_issuing_enabled ||
         (planet->CurrentMeterValue(METER_POPULATION) <= 0.0 && planet->Unowned()))
@@ -2327,21 +2327,21 @@ void SidePanel::PlanetPanel::ClickBombard() {
     if (empire_id == ALL_EMPIRES)
         return;
 
-    std::map<int, std::set<int>> pending_bombard_orders = PendingBombardOrders();
-    std::map<int, std::set<int>>::const_iterator it = pending_bombard_orders.find(m_planet_id);
+    auto pending_bombard_orders = PendingBombardOrders();
+    auto it = pending_bombard_orders.find(m_planet_id);
 
     if (it != pending_bombard_orders.end()) {
-        const std::set<int>& planet_bombard_orders = it->second;
+        auto& planet_bombard_orders = it->second;
         // cancel previous bombard orders for this planet
         for (int order_id : planet_bombard_orders)
         { HumanClientApp::GetApp()->Orders().RescindOrder(order_id); }
 
     } else {
         // order selected bombard ships to bombard planet
-        std::set<std::shared_ptr<const Ship>> bombard_ships = ValidSelectedBombardShips(planet->SystemID());
+        auto bombard_ships = ValidSelectedBombardShips(planet->SystemID());
 
         if (bombard_ships.empty()) {
-            std::set<std::shared_ptr<const Ship>> autoselected_bombard_ships = AutomaticallyChosenBombardShips(m_planet_id);
+            auto autoselected_bombard_ships = AutomaticallyChosenBombardShips(m_planet_id);
             bombard_ships.insert(autoselected_bombard_ships.begin(), autoselected_bombard_ships.end());
         }
 

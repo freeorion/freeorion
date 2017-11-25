@@ -176,7 +176,8 @@ namespace GG {
              */
             std::basic_string<char>::const_iterator FinishTag(
                 const std::string& tag, const std::string& parameters,
-                const std::string::const_iterator& start, const std::string::const_iterator& end,
+                const std::string::const_iterator& start,
+                const std::string::const_iterator& end,
                 std::vector<RichTextTag>* tags)
             {
                 // Use ParseTagsImpl to get the the beginning of the first unmatched end tag.

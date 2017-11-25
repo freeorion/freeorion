@@ -11,9 +11,11 @@ namespace {
     struct strip_quotes_ {
         typedef std::string result_type;
 
-        std::string operator()(const parse::text_iterator& start, const parse::text_iterator& end) const {
-            std::string::const_iterator start_ = start;
-            std::string::const_iterator end_ = end;
+        std::string operator()(const parse::text_iterator& start,
+                               const parse::text_iterator& end) const
+        {
+            auto start_ = start;
+            auto end_ = end;
             return std::string(++start_, --end_);
         }
     };

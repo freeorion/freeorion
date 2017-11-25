@@ -192,7 +192,7 @@ CombatLogManager::Impl::Impl() :
 {}
 
 boost::optional<const CombatLog&> CombatLogManager::Impl::GetLog(int log_id) const {
-    boost::unordered_map<int, CombatLog>::const_iterator it = m_logs.find(log_id);
+    auto it = m_logs.find(log_id);
     if (it != m_logs.end())
         return it->second;
     return boost::none;
@@ -228,9 +228,7 @@ void CombatLogManager::Impl::GetLogsToSerialize(
     std::map<int, CombatLog>& logs, int encoding_empire) const
 {
     // TODO: filter logs by who should have access to them
-    for (boost::unordered_map<int, CombatLog>::const_iterator it = m_logs.begin();
-         it != m_logs.end(); ++it)
-    {
+    for (auto it = m_logs.begin(); it != m_logs.end(); ++it) {
         logs.insert(std::make_pair(it->first, it->second));
     }
 }
@@ -247,9 +245,7 @@ boost::optional<std::vector<int>> CombatLogManager::Impl::IncompleteLogIDs() con
     // send one log it is the most recent combat log, which is the one most
     // likely of interest to the player.
     std::vector<int> ids;
-    for (std::set<int>::reverse_iterator rit = m_incomplete_logs.rbegin();
-         rit != m_incomplete_logs.rend(); ++rit)
-    {
+    for (auto rit = m_incomplete_logs.rbegin(); rit != m_incomplete_logs.rend(); ++rit) {
         ids.push_back(*rit);
     }
     return ids;

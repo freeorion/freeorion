@@ -25,23 +25,21 @@ namespace {
             stringtable_filename = GetStringTableFileName();
 
         // ensure the default stringtable is loaded first
-        std::map<std::string, const StringTable_*>::const_iterator default_stringtable_it =
-            stringtables.find(GetDefaultStringTableFileName());
+        auto default_stringtable_it = stringtables.find(GetDefaultStringTableFileName());
         if (default_stringtable_it == stringtables.end()) {
-            const StringTable_* table = new StringTable_(GetDefaultStringTableFileName());
+            auto table = new StringTable_(GetDefaultStringTableFileName());
             stringtables[GetDefaultStringTableFileName()] = table;
             default_stringtable_it = stringtables.find(GetDefaultStringTableFileName());
         }
 
         // attempt to find requested stringtable...
-        std::map<std::string, const StringTable_*>::const_iterator it =
-            stringtables.find(stringtable_filename);
+        auto it = stringtables.find(stringtable_filename);
         if (it != stringtables.end())
             return *(it->second);
 
         // if not already loaded, load, store, and return,
         // using default stringtable for fallback expansion lookups
-        const StringTable_* table = new StringTable_(stringtable_filename, default_stringtable_it->second);
+        auto table = new StringTable_(stringtable_filename, default_stringtable_it->second);
         stringtables[stringtable_filename] = table;
 
         return *table;
@@ -64,9 +62,8 @@ std::vector<std::string> UserStringList(const std::string& key) {
     std::vector<std::string> result;
     std::istringstream template_stream(UserString(key));
     std::string item;
-    while (std::getline(template_stream, item)) {
+    while (std::getline(template_stream, item))
         result.push_back(item);
-    }
     return result;
 }
 
@@ -130,7 +127,7 @@ namespace {
 }
 
 std::string DoubleToString(double val, int digits, bool always_show_sign) {
-    std::string text = "";
+    std::string text; // = ""
 
     // minimum digits is 2.  If digits was 1, then 30 couldn't be displayed,
     // as 0.1k is too much and 9 is too small and just 30 is 2 digits
@@ -144,15 +141,14 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
 
     // early termination if magnitude is 0
     if (mag == 0.0) {
-        std::string format;
-        format += "%1." + std::to_string(digits - 1) + "f";
+        std::string format = "%1." + std::to_string(digits - 1) + "f";
         text += (boost::format(format) % mag).str();
         return text;
     }
 
     // prepend signs if neccessary
-    int effectiveSign = EffectiveSign(val);
-    if (effectiveSign == -1) {
+    int effective_sign = EffectiveSign(val);
+    if (effective_sign == -1) {
         text += "-";
     } else {
         if (always_show_sign) text += "+";
@@ -161,7 +157,7 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     if (mag > LARGE_UI_DISPLAY_VALUE) mag = LARGE_UI_DISPLAY_VALUE;
 
     // if value is effectively 0, avoid unnecessary later processing
-    if (effectiveSign == 0) {
+    if (effective_sign == 0) {
         text = "0.0";
         for (int n = 2; n < digits; ++n)
             text += "0";  // fill in 0's to required number of digits
@@ -197,16 +193,16 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     //std::cout << "lowest_digit_pow10: " << lowest_digit_pow10 << std::endl;
 
     // fraction digits:
-    int fractionDigits = std::max(0, std::min(digits - 1, unit_pow10 - lowest_digit_pow10));
-    //std::cout << "fractionDigits: " << fractionDigits << std::endl;
+    int fraction_digits = std::max(0, std::min(digits - 1, unit_pow10 - lowest_digit_pow10));
+    //std::cout << "fraction_digits: " << fraction_digits << std::endl;
 
 
     /* round number down at lowest digit to be displayed, to prevent lexical_cast from rounding up
        in cases like 0.998k with 2 digits -> 1.00k  instead of  0.99k  (as it should be) */
-    double roundingFactor = pow(10.0, static_cast<double>(pow10 - digits + 1));
-    mag /= roundingFactor;
+    double rounding_factor = pow(10.0, static_cast<double>(pow10 - digits + 1));
+    mag /= rounding_factor;
     mag = floor(mag);
-    mag *= roundingFactor;
+    mag *= rounding_factor;
 
     // scale number by unit power of 10
     mag /= pow(10.0, static_cast<double>(unit_pow10));  // if mag = 45324 and unitPow = 3, get mag = 45.324
@@ -214,7 +210,7 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
 
     std::string format;
     format += "%" + std::to_string(digits) + "." +
-                    std::to_string(fractionDigits) + "f";
+                    std::to_string(fraction_digits) + "f";
     text += (boost::format(format) % mag).str();
 
     // append base scale SI prefix (as postfix)
@@ -261,8 +257,8 @@ int EffectiveSign(double val) {
             return 1;
         else
             return -1;
-    }
-    else
+    } else {
         return 0;
+    }
 }
 

@@ -3048,12 +3048,8 @@ void FleetWnd::Refresh() {
     }
 
     // Use fleets that are at the determined location
-    boost::unordered_multimap<std::pair<int, GG::Pt>, int>::const_iterator
-        fleets_at_location_begin, fleets_at_location_end;
-    std::tie(fleets_at_location_begin, fleets_at_location_end) =
-        fleet_locations_ids.equal_range(location);
-
-    for (auto it = fleets_at_location_begin; it != fleets_at_location_end; ++it)
+    auto flt_at_loc = fleet_locations_ids.equal_range(location);
+    for (auto it = flt_at_loc.first; it != flt_at_loc.second; ++it)
     { m_fleet_ids.insert(it->second); }
 
     m_system_id = location.first;
@@ -3086,13 +3082,8 @@ void FleetWnd::Refresh() {
     // Use selected fleets that are at the determined location
     std::set<int> still_present_initially_selected_fleets;
 
-    boost::unordered_multimap<std::pair<int, GG::Pt>, int>::const_iterator
-        selected_fleets_at_location_begin, selected_fleets_at_location_end;
-    std::tie(selected_fleets_at_location_begin, selected_fleets_at_location_end) =
-        selected_fleet_locations_ids.equal_range(location);
-
-    for (auto it = selected_fleets_at_location_begin; 
-         it != selected_fleets_at_location_end; ++it)
+    auto sel_flt_at_loc = selected_fleet_locations_ids.equal_range(location);
+    for (auto it = sel_flt_at_loc.first; it != sel_flt_at_loc.second; ++it)
     { still_present_initially_selected_fleets.insert(it->second); }
 
     if (!still_present_initially_selected_fleets.empty()) {

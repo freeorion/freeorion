@@ -116,10 +116,10 @@ namespace {
             int from_sys_dist = retval[from_sys_id];
 
             // get lanes connected to this system
-            std::map<int, std::set<int>>::const_iterator lane_set_it = empire_starlanes.find(from_sys_id);
+            auto lane_set_it = empire_starlanes.find(from_sys_id);
             if (lane_set_it == empire_starlanes.end())
                 continue;   // no lanes to propagate from for this supply source
-            const std::set<int>& lane_ends = lane_set_it->second;
+            auto& lane_ends = lane_set_it->second;
 
             // propagate to any not-already-counted adjacent system
             for (int lane_end_system_id : lane_ends) {
@@ -145,7 +145,7 @@ namespace {
 
     const std::set<int>& EmpireFleetSupplyableSystemIDsP(const Empire& empire)
     { return GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID()); }
-    auto empireFleetSupplyableSystemIDsFunc =  &EmpireFleetSupplyableSystemIDsP;
+    auto empireFleetSupplyableSystemIDsFunc = &EmpireFleetSupplyableSystemIDsP;
 
     typedef std::pair<float, int> FloatIntPair;
 

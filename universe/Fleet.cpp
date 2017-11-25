@@ -35,21 +35,22 @@ namespace {
             return 0;
         } else {
             double distance = 0.0;
-            for (std::list<int>::const_iterator it = begin; it != end; ++it) {
-                std::list<int>::const_iterator next_it = it;    ++next_it;
+            for (auto it = begin; it != end; ++it) {
+                auto next_it = it;
+                ++next_it;
                 //DebugLogger() << "Fleet::SetRoute() new route has system id " << *it;
 
                 if (next_it == end)
                     break;  // current system is the last on the route, so don't need to add any additional distance.
 
-                std::shared_ptr<const System> cur_sys = GetSystem(*it);
+                auto cur_sys = GetSystem(*it);
 
                 if (!cur_sys) {
                     ErrorLogger() << "Fleet::SetRoute() couldn't get system with id " << *it;
                     return distance;
                 }
 
-                std::shared_ptr<const System> next_sys = GetSystem(*next_it);
+                auto next_sys = GetSystem(*next_it);
                 if (!next_sys) {
                     ErrorLogger() << "Fleet::SetRoute() couldn't get system with id " << *next_it;
                     return distance;
@@ -106,7 +107,7 @@ Fleet* Fleet::Clone(int empire_id) const {
 void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id) {
     if (copied_object.get() == this)
         return;
-    std::shared_ptr<const Fleet> copied_fleet = std::dynamic_pointer_cast<const Fleet>(copied_object);
+    auto copied_fleet = std::dynamic_pointer_cast<const Fleet>(copied_object);
     if (!copied_fleet) {
         ErrorLogger() << "Fleet::Copy passed an object that wasn't a Fleet";
         return;
@@ -114,7 +115,7 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
 
     int copied_object_id = copied_object->ID();
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
-    std::set<std::string> visible_specials = GetUniverse().GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
+    auto visible_specials = GetUniverse().GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
 
     UniverseObject::Copy(copied_object, vis, visible_specials);
 
@@ -189,7 +190,7 @@ std::string Fleet::Dump() const {
        << " next system: " << m_next_system
        << " arrival lane: " << m_arrival_starlane
        << " ships: ";
-    for (std::set<int>::const_iterator it = m_ships.begin(); it != m_ships.end();) {
+    for (auto it = m_ships.begin(); it != m_ships.end();) {
         int ship_id = *it;
         ++it;
         os << ship_id << (it == m_ships.end() ? "" : ", ");
@@ -250,8 +251,8 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
 
     // determine all systems where fleet(s) can be resupplied if fuel runs out
     const Empire* empire = GetEmpire(this->Owner());
-    const std::set<int> fleet_supplied_systems = GetSupplyManager().FleetSupplyableSystemIDs(this->Owner(), ALLOW_ALLIED_SUPPLY);
-    const std::set<int>& unobstructed_systems = empire ? empire->SupplyUnobstructedSystems() : EMPTY_SET;
+    auto fleet_supplied_systems = GetSupplyManager().FleetSupplyableSystemIDs(this->Owner(), ALLOW_ALLIED_SUPPLY);
+    auto& unobstructed_systems = empire ? empire->SupplyUnobstructedSystems() : EMPTY_SET;
 
     // determine if, given fuel available and supplyable systems, fleet will ever be able to move
     if (fuel < 1.0f &&
@@ -275,7 +276,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     // get iterator pointing to std::shared_ptr<System> on route that is the first after where this fleet is currently.
     // if this fleet is in a system, the iterator will point to the system after the current in the route
     // if this fleet is not in a system, the iterator will point to the first system in the route
-    std::list<int>::const_iterator route_it = route.begin();
+    auto route_it = route.begin();
     if (*route_it == SystemID())
         ++route_it;     // first system in route is current system of this fleet.  skip to the next system
     if (route_it == route.end())
@@ -283,9 +284,9 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
 
 
     // get current, previous and next systems of fleet
-    std::shared_ptr<const System> cur_system = GetSystem(this->SystemID());         // may be 0
-    std::shared_ptr<const System> prev_system = GetSystem(this->PreviousSystemID());// may be 0 if this fleet is not moving or ordered to move
-    std::shared_ptr<const System> next_system = GetSystem(*route_it);               // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
+    auto cur_system = GetSystem(this->SystemID());          // may be 0
+    auto prev_system = GetSystem(this->PreviousSystemID()); // may be 0 if this fleet is not moving or ordered to move
+    auto next_system = GetSystem(*route_it);                // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
     if (!next_system) {
         ErrorLogger() << "Fleet::MovePath couldn't get next system with id " << *route_it << " for this fleet " << this->Name();
         return retval;
@@ -564,7 +565,7 @@ std::pair<int, int> Fleet::ETA(const std::list<MovePathNode>& move_path) const {
     // general case: there is a multi-node path.  return the ETA of the first object node, and the ETA of the last node
     int last_stop_eta = move_path.rbegin()->eta;
     int first_stop_eta = last_stop_eta;
-    for (std::list<MovePathNode>::const_iterator it = ++(move_path.begin()); it != move_path.end(); ++it) {
+    for (auto it = ++(move_path.begin()); it != move_path.end(); ++it) {
         const MovePathNode& node = *it;
         if (node.object_id != INVALID_OBJECT_ID) {
             first_stop_eta = node.eta;
@@ -635,7 +636,9 @@ int Fleet::FinalDestinationID() const {
 } 
 
 namespace {
-    bool HasXShips(const std::function<bool(const std::shared_ptr<const Ship>&)>& pred, const std::set<int>& ship_ids) {
+    bool HasXShips(const std::function<bool(const std::shared_ptr<const Ship>&)>& pred,
+                   const std::set<int>& ship_ids)
+    {
         // Searching for each Ship one at a time is faster than
         // FindObjects(ship_ids), because an early exit avoids searching the
         // remaining ids.
@@ -752,7 +755,7 @@ void Fleet::SetRoute(const std::list<int>& route) {
     if (!m_travel_route.empty()) {
         // if we're already moving, add in the distance from where we are to the first system in the route
         if (SystemID() != route.front()) {
-            std::shared_ptr<const System> starting_system = GetSystem(route.front());
+            auto starting_system = GetSystem(route.front());
             if (!starting_system) {
                 ErrorLogger() << "Fleet::SetRoute couldn't get system with id " << route.front();
                 return;
@@ -766,7 +769,7 @@ void Fleet::SetRoute(const std::list<int>& route) {
         } else if (SystemID() == route.front()) {
             m_prev_system = SystemID();
         }
-        std::list<int>::const_iterator it = m_travel_route.begin();
+        auto it = m_travel_route.begin();
         m_next_system = m_prev_system == SystemID() && m_travel_route.size() > 1 ? (*++it) : (*it);
     }
 
@@ -838,23 +841,23 @@ void Fleet::MovementPhase() {
         }
     }
 
-    std::shared_ptr<System> current_system = GetSystem(fleet->SystemID());
-    std::shared_ptr<const System> initial_system = current_system;
-    std::list<MovePathNode> move_path = fleet->MovePath();
+    auto current_system = GetSystem(fleet->SystemID());
+    auto initial_system = current_system;
+    auto move_path = fleet->MovePath();
 
     // If the move path cannot lead to our destination,
     // make our route take us as far as it can
     if (!move_path.empty() && !m_travel_route.empty() &&
          move_path.back().object_id != m_travel_route.back())
     {
-        std::list<int> shortened_route = fleet->TravelRoute();
+        auto shortened_route = fleet->TravelRoute();
         fleet->ShortenRouteToEndAtSystem(shortened_route, move_path.back().object_id);
         fleet->SetRoute(shortened_route);
         move_path = fleet->MovePath();
     }
 
-    std::list<MovePathNode>::const_iterator it = move_path.begin();
-    std::list<MovePathNode>::const_iterator next_it = it;
+    auto it = move_path.begin();
+    auto next_it = it;
     if (next_it != move_path.end())
         ++next_it;
 
@@ -1111,7 +1114,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
             DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
                           << " fleet's next: " << m_next_system << " or destination: " << dest_system_id;
         }
-        const std::list<int>& sys_list1 = path1.first;
+        auto& sys_list1 = path1.first;
         if (sys_list1.empty()) {
             ErrorLogger() << "Fleet::CalculateRoute got empty route from ShortestPath";
             return;
@@ -1132,7 +1135,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
             DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
                           << " fleet's previous: " << m_prev_system << " or destination: " << dest_system_id;
         }
-        const std::list<int>& sys_list2 = path2.first;
+        auto& sys_list2 = path2.first;
         if (sys_list2.empty()) {
             ErrorLogger() << "Fleet::CalculateRoute got empty route from ShortestPath";
             return;
@@ -1206,15 +1209,15 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     // find which empires have blockading aggressive armed ships in system;
     // fleets that just arrived do not blockade by themselves, but may
     // reinforce a preexisting blockade, and may possibly contribute to detection
-    std::shared_ptr<System> current_system = GetSystem(start_system_id);
+    auto current_system = GetSystem(start_system_id);
     if (!current_system) {
         DebugLogger() << "Fleet::BlockadedAtSystem fleet " << ID() << " considering system (" << start_system_id << ") but can't retrieve system copy";
         return false;
     }
 
-    const Empire* empire = GetEmpire(this->Owner());
+    auto empire = GetEmpire(this->Owner());
     if (empire) {
-        std::set<int> unobstructed_systems = empire->SupplyUnobstructedSystems();
+        auto unobstructed_systems = empire->SupplyUnobstructedSystems();
         if (unobstructed_systems.find(start_system_id) != unobstructed_systems.end())
             return false;
         if (empire->UnrestrictedLaneTravel(start_system_id, dest_system_id)) {
@@ -1231,8 +1234,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     }
 
     float monster_detection = 0.0f;
-    std::vector<std::shared_ptr<const Fleet>> fleets =
-        Objects().FindObjects<const Fleet>(current_system->FleetIDs());
+    auto fleets = Objects().FindObjects<const Fleet>(current_system->FleetIDs());
     for (auto& fleet : fleets) {
         if (!fleet->Unowned())
             continue;
@@ -1410,7 +1412,7 @@ std::string Fleet::GenerateFleetName() {
         }
     }
 
-    std::vector<std::shared_ptr<const Ship>>::iterator it = ships.begin();
+    auto it = ships.begin();
 
     // TODO C++11 replace all of these loops with std::all_of
     bool all_monster(true);
