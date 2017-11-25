@@ -57,10 +57,6 @@ bool Order::UndoImpl() const
 ////////////////////////////////////////////////
 // RenameOrder
 ////////////////////////////////////////////////
-RenameOrder::RenameOrder() :
-    m_object(INVALID_OBJECT_ID)
-{}
-
 RenameOrder::RenameOrder(int empire, int object, const std::string& name) :
     Order(empire),
     m_object(object),
@@ -110,10 +106,6 @@ void RenameOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 // CreateFleetOrder
 ////////////////////////////////////////////////
-NewFleetOrder::NewFleetOrder() :
-    m_system_id(INVALID_OBJECT_ID)
-{}
-
 NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name,
                              int system_id, const std::vector<int>& ship_ids,
                              bool aggressive) :
@@ -264,15 +256,6 @@ void NewFleetOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 // FleetMoveOrder
 ////////////////////////////////////////////////
-FleetMoveOrder::FleetMoveOrder() :
-    Order(),
-    m_fleet(INVALID_OBJECT_ID),
-    m_start_system(INVALID_OBJECT_ID),
-    m_dest_system(INVALID_OBJECT_ID),
-    m_route(std::vector<int>()),
-    m_append(false)
-{}
-
 FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int start_system_id, int dest_system_id,
                                std::vector<int> route, bool append) :
     Order(empire_id),
@@ -417,10 +400,6 @@ void FleetMoveOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 // FleetTransferOrder
 ////////////////////////////////////////////////
-FleetTransferOrder::FleetTransferOrder() :
-    m_dest_fleet(INVALID_OBJECT_ID)
-{}
-
 FleetTransferOrder::FleetTransferOrder(int empire, int dest_fleet,
                                        const std::vector<int>& ships) :
     Order(empire),
@@ -504,11 +483,6 @@ void FleetTransferOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 // ColonizeOrder
 ////////////////////////////////////////////////
-ColonizeOrder::ColonizeOrder() :
-    m_ship(INVALID_OBJECT_ID),
-    m_planet(INVALID_OBJECT_ID)
-{}
-
 ColonizeOrder::ColonizeOrder(int empire, int ship, int planet) :
     Order(empire),
     m_ship(ship),
@@ -616,11 +590,6 @@ bool ColonizeOrder::UndoImpl() const {
 ////////////////////////////////////////////////
 // InvadeOrder
 ////////////////////////////////////////////////
-InvadeOrder::InvadeOrder() :
-    m_ship(INVALID_OBJECT_ID),
-    m_planet(INVALID_OBJECT_ID)
-{}
-
 InvadeOrder::InvadeOrder(int empire, int ship, int planet) :
     Order(empire),
     m_ship(ship),
@@ -721,11 +690,6 @@ bool InvadeOrder::UndoImpl() const {
 ////////////////////////////////////////////////
 // BombardOrder
 ////////////////////////////////////////////////
-BombardOrder::BombardOrder() :
-    m_ship(INVALID_OBJECT_ID),
-    m_planet(INVALID_OBJECT_ID)
-{}
-
 BombardOrder::BombardOrder(int empire, int ship, int planet) :
     Order(empire),
     m_ship(ship),
@@ -819,10 +783,6 @@ bool BombardOrder::UndoImpl() const {
 ////////////////////////////////////////////////
 // ChangeFocusOrder
 ////////////////////////////////////////////////
-ChangeFocusOrder::ChangeFocusOrder() :
-    m_planet(INVALID_OBJECT_ID)
-{}
-
 ChangeFocusOrder::ChangeFocusOrder(int empire, int planet, const std::string& focus) :
     Order(empire),
     m_planet(planet),
@@ -850,9 +810,6 @@ void ChangeFocusOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 // ResearchQueueOrder
 ////////////////////////////////////////////////
-ResearchQueueOrder::ResearchQueueOrder()
-{}
-
 ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name) :
     Order(empire),
     m_tech_name(tech_name),
@@ -894,9 +851,6 @@ void ResearchQueueOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 // ProductionQueueOrder
 ////////////////////////////////////////////////
-ProductionQueueOrder::ProductionQueueOrder()
-{}
-
 ProductionQueueOrder::ProductionQueueOrder(int empire, const ProductionQueue::ProductionItem& item,
                                            int number, int location, int pos) :
     Order(empire),
@@ -1165,10 +1119,6 @@ void ShipDesignOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 // ScrapOrder
 ////////////////////////////////////////////////
-ScrapOrder::ScrapOrder() :
-    m_object_id(INVALID_OBJECT_ID)
-{}
-
 ScrapOrder::ScrapOrder(int empire, int object_id) :
     Order(empire),
     m_object_id(object_id)
@@ -1213,11 +1163,6 @@ bool ScrapOrder::UndoImpl() const {
 ////////////////////////////////////////////////
 // AggressiveOrder
 ////////////////////////////////////////////////
-AggressiveOrder::AggressiveOrder() :
-    m_object_id(INVALID_OBJECT_ID),
-    m_aggression(false)
-{}
-
 AggressiveOrder::AggressiveOrder(int empire, int object_id, bool aggression/* = true*/) :
     Order(empire),
     m_object_id(object_id),
@@ -1236,11 +1181,6 @@ void AggressiveOrder::ExecuteImpl() const {
 /////////////////////////////////////////////////////
 // GiveObjectToEmpireOrder
 /////////////////////////////////////////////////////
-GiveObjectToEmpireOrder::GiveObjectToEmpireOrder() :
-    m_object_id(INVALID_OBJECT_ID),
-    m_recipient_empire_id(ALL_EMPIRES)
-{}
-
 GiveObjectToEmpireOrder::GiveObjectToEmpireOrder(int empire, int object_id, int recipient) :
     Order(empire),
     m_object_id(object_id),
@@ -1282,10 +1222,6 @@ bool GiveObjectToEmpireOrder::UndoImpl() const {
 ////////////////////////////////////////////////
 // ForgetOrder
 ////////////////////////////////////////////////
-ForgetOrder::ForgetOrder() :
-    m_object_id(INVALID_OBJECT_ID)
-{}
-
 ForgetOrder::ForgetOrder(int empire, int object_id) :
     Order(empire),
     m_object_id(object_id)

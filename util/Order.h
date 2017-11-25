@@ -100,8 +100,6 @@ private:
 class FO_COMMON_API RenameOrder : public Order {
 public:
     /** \name Structors */ //@{
-    RenameOrder();
-
     RenameOrder(int empire, int object, const std::string& name);
     //@}
 
@@ -116,6 +114,8 @@ public:
     //@}
 
 private:
+    RenameOrder() = default;
+
     /**
      * Preconditions of execute:
      *    - the designated planet must exist, be owned by the issuing empire
@@ -126,7 +126,7 @@ private:
      */
     void ExecuteImpl() const override;
 
-    int m_object;
+    int m_object = INVALID_OBJECT_ID;
     std::string m_name;
 
     friend class boost::serialization::access;
@@ -143,8 +143,6 @@ private:
 class FO_COMMON_API NewFleetOrder : public Order {
 public:
     /** \name Structors */ //@{
-    NewFleetOrder();
-
     NewFleetOrder(int empire, const std::string& fleet_name,
                   int system_id, const std::vector<int>& ship_ids,
                   bool aggressive = false);
@@ -172,6 +170,8 @@ public:
     //@}
 
 private:
+    NewFleetOrder() = default;
+
     /**
      * Preconditions of execute:
      *    None.
@@ -183,7 +183,7 @@ private:
     void ExecuteImpl() const override;
 
     std::vector<std::string> m_fleet_names;
-    int m_system_id;
+    int m_system_id = INVALID_OBJECT_ID;
     /** m_fleet_ids is mutable because ExecuteImpl generates the fleet ids. */
     mutable std::vector<int> m_fleet_ids;
     std::vector<std::vector<int>> m_ship_id_groups;
@@ -203,8 +203,6 @@ private:
 class FO_COMMON_API FleetMoveOrder : public Order {
 public:
     /** \name Structors */ //@{
-    FleetMoveOrder();
-
     FleetMoveOrder(int empire_id, int fleet_id, int start_system_id, int dest_system_id,
                    std::vector<int> route, bool append = false);
 
@@ -233,6 +231,8 @@ public:
     //@}
 
 private:
+    FleetMoveOrder() = default;
+
     /**
      * Preconditions of execute:
      *    - m_fleet is a valid id of a fleet owned by the order-giving empire
@@ -246,11 +246,11 @@ private:
      */
     void ExecuteImpl() const override;
 
-    int m_fleet;
-    int m_start_system;
-    int m_dest_system;
+    int m_fleet = INVALID_OBJECT_ID;
+    int m_start_system = INVALID_OBJECT_ID;
+    int m_dest_system = INVALID_OBJECT_ID;
     std::vector<int> m_route;
-    bool m_append;
+    bool m_append = false;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -267,8 +267,6 @@ private:
 class FO_COMMON_API FleetTransferOrder : public Order {
 public:
     /** \name Structors */ //@{
-    FleetTransferOrder();
-
     FleetTransferOrder(int empire, int dest_fleet, const std::vector<int>& ships);
     //@}
 
@@ -283,6 +281,8 @@ public:
     //@}
 
 private:
+    FleetTransferOrder() = default;
+
     /**
      *  FleetTransferOrder's preconditions are:
      *    - m_into_fleet must be the ID of a fleet owned by the issuing empire
@@ -294,7 +294,7 @@ private:
      */
     void ExecuteImpl() const override;
 
-    int m_dest_fleet;
+    int m_dest_fleet = INVALID_OBJECT_ID;
     std::vector<int> m_add_ships;
 
     friend class boost::serialization::access;
@@ -310,8 +310,6 @@ private:
 class FO_COMMON_API ColonizeOrder : public Order {
 public:
     /** \name Structors */ //@{
-    ColonizeOrder();
-
     ColonizeOrder(int empire, int ship, int planet);
     //@}
 
@@ -326,6 +324,8 @@ public:
     //@}
 
 private:
+    ColonizeOrder() = default;
+
     /**
      *  Preconditions:
      *     - m_planet must be the ID of an un-owned planet.
@@ -341,8 +341,8 @@ private:
 
     bool UndoImpl() const override;
 
-    int m_ship;
-    int m_planet;
+    int m_ship = INVALID_OBJECT_ID;
+    int m_planet = INVALID_OBJECT_ID;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -357,8 +357,6 @@ private:
 class FO_COMMON_API InvadeOrder : public Order {
 public:
     /** \name Structors */ //@{
-    InvadeOrder();
-
     InvadeOrder(int empire, int ship, int planet);
     //@}
 
@@ -373,6 +371,8 @@ public:
     //@}
 
 private:
+    InvadeOrder() = default;
+
     /**
      *  Preconditions:
      *     - m_planet must be the ID of a populated planet not owned by the issuing empire
@@ -388,8 +388,8 @@ private:
 
     bool UndoImpl() const override;
 
-    int m_ship;
-    int m_planet;
+    int m_ship = INVALID_OBJECT_ID;
+    int m_planet = INVALID_OBJECT_ID;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -404,8 +404,6 @@ private:
 class FO_COMMON_API BombardOrder : public Order {
 public:
     /** \name Structors */ //@{
-    BombardOrder();
-
     BombardOrder(int empire, int ship, int planet);
     //@}
 
@@ -420,6 +418,8 @@ public:
     //@}
 
 private:
+    BombardOrder() = default;
+
     /**
      *  Preconditions:
      *     - m_planet must be the ID of a planet
@@ -433,8 +433,8 @@ private:
 
     bool UndoImpl() const override;
 
-    int m_ship;
-    int m_planet;
+    int m_ship = INVALID_OBJECT_ID;
+    int m_planet = INVALID_OBJECT_ID;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -449,8 +449,6 @@ private:
 class FO_COMMON_API ChangeFocusOrder : public Order {
 public:
     /** \name Structors */ //@{
-    ChangeFocusOrder();
-
     ChangeFocusOrder(int empire, int planet, const std::string& focus);
     //@}
 
@@ -461,6 +459,8 @@ public:
     //@}
 
 private:
+    ChangeFocusOrder() = default;
+
     /**
      * Preconditions of execute:
      *    - the designated planet must exist, be owned by the issuing empire
@@ -470,7 +470,7 @@ private:
      */
     void ExecuteImpl() const override;
 
-    int m_planet;
+    int m_planet = INVALID_OBJECT_ID;
     std::string m_focus;
 
     friend class boost::serialization::access;
@@ -488,8 +488,6 @@ private:
 class FO_COMMON_API ResearchQueueOrder : public Order {
 public:
     /** \name Structors */ //@{
-    ResearchQueueOrder();
-
     ResearchQueueOrder(int empire, const std::string& tech_name);
 
     ResearchQueueOrder(int empire, const std::string& tech_name, int position);
@@ -498,6 +496,8 @@ public:
     //@}
 
 private:
+    ResearchQueueOrder() = default;
+
     void ExecuteImpl() const override;
 
     std::string m_tech_name;
@@ -527,8 +527,6 @@ private:
 class FO_COMMON_API ProductionQueueOrder : public Order {
 public:
     /** \name Structors */ //@{
-    ProductionQueueOrder();
-
     ProductionQueueOrder(int empire, const ProductionQueue::ProductionItem& item, int number, int location, int pos = -1);
 
     ProductionQueueOrder(int empire, int index, int new_quantity, bool dummy);
@@ -551,6 +549,8 @@ public:
     //@}
 
 private:
+    ProductionQueueOrder() = default;
+
     void ExecuteImpl() const override;
 
     ProductionQueue::ProductionItem m_item;
@@ -599,8 +599,6 @@ private:
 class FO_COMMON_API ShipDesignOrder : public Order {
 public:
     /** \name Structors */ //@{
-    ShipDesignOrder();
-
     ShipDesignOrder(int empire, int existing_design_id_to_remember);
 
     ShipDesignOrder(int empire, int design_id_to_erase, bool dummy);
@@ -614,6 +612,8 @@ public:
     { return m_design_id; }
 
 private:
+    ShipDesignOrder();
+
     /**
      * Preconditions of execute:
      *    - For creating a new design, the passed design is a valid reference
@@ -667,8 +667,6 @@ private:
 class FO_COMMON_API ScrapOrder : public Order {
 public:
     /** \name Structors */ //@{
-    ScrapOrder();
-
     ScrapOrder(int empire, int object_id);
     //@}
 
@@ -679,6 +677,8 @@ public:
     //@}
 
 private:
+    ScrapOrder() = default;
+
     /**
      *  Preconditions:
      *     - m_object_id must be the ID of an object owned by issuing empire
@@ -691,7 +691,7 @@ private:
 
     bool UndoImpl() const override;
 
-    int m_object_id;
+    int m_object_id = INVALID_OBJECT_ID;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -707,8 +707,6 @@ private:
 class FO_COMMON_API AggressiveOrder : public Order {
 public:
     /** \name Structors */ //@{
-    AggressiveOrder();
-
     AggressiveOrder(int empire, int object_id, bool aggression = true);
     //@}
 
@@ -723,6 +721,8 @@ public:
     //@}
 
 private:
+    AggressiveOrder() = default;
+
     /**
      *  Preconditions:
      *     - m_object_id must be the ID of an object owned by issuing empire
@@ -733,8 +733,8 @@ private:
      */
     void ExecuteImpl() const override;
 
-    int m_object_id;
-    bool m_aggression;
+    int m_object_id = INVALID_OBJECT_ID;
+    bool m_aggression = false;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -750,8 +750,6 @@ private:
 class FO_COMMON_API GiveObjectToEmpireOrder : public Order {
 public:
     /** \name Structors */ //@{
-    GiveObjectToEmpireOrder();
-
     GiveObjectToEmpireOrder(int empire, int object_id, int recipient);
     //@}
 
@@ -766,6 +764,8 @@ public:
     //@}
 
 private:
+    GiveObjectToEmpireOrder() = default;
+
     /**
      *  Preconditions:
      *     - m_object_id must be the ID of an object owned by issuing empire
@@ -778,8 +778,8 @@ private:
 
     bool UndoImpl() const override;
 
-    int m_object_id;
-    int m_recipient_empire_id;
+    int m_object_id = INVALID_OBJECT_ID;
+    int m_recipient_empire_id = ALL_EMPIRES;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -793,8 +793,6 @@ private:
 class FO_COMMON_API ForgetOrder : public Order {
 public:
     /** \name Structors */ //@{
-    ForgetOrder();
-
     ForgetOrder(int empire, int object_id);
     //@}
 
@@ -805,6 +803,8 @@ public:
     //@}
 
 private:
+    ForgetOrder() = default;
+
     /**
      *  Preconditions:
      *     - m_object_id must be the ID of an object not owned by issuing empire
@@ -814,7 +814,7 @@ private:
      */
     void ExecuteImpl() const override;
 
-    int m_object_id;
+    int m_object_id = INVALID_OBJECT_ID;
 
     friend class boost::serialization::access;
     template <class Archive>
