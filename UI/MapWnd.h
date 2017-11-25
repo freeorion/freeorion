@@ -462,7 +462,7 @@ private:
     std::shared_ptr<ModeratorActionsWnd>        m_moderator_wnd;    //!< buttons to select moderator actions
     std::shared_ptr<CombatReportWnd>            m_combat_report_wnd;//!< shows graphical reports of combats
 
-    std::vector<std::shared_ptr<GG::Wnd>>       m_wnd_stack;        //!< stack of open windows, to allow closing them with escape in a LIFO order
+    std::vector<std::weak_ptr<GG::Wnd>>         m_wnd_stack;        //!< stack of open windows, to allow closing them with escape in a LIFO order
 
     std::map<std::pair<int, int>, LaneEndpoints>m_starlane_endpoints;//!< map from starlane start and end system IDs (stored in pair in increasing order) to the universe coordiates at which to draw the starlane ends
 

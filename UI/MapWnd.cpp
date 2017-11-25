@@ -2634,12 +2634,13 @@ void MapWnd::LButtonUp(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
 void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
     m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
+    const auto fleet_wnd = manager.ActiveFleetWnd();
     bool quick_close_wnds = GetOptionsDB().Get<bool>("UI.window-quickclose");
 
     // if a fleet window is visible, hide it and deselect fleet; if not, hide sidepanel
-    if (!m_dragged && !m_in_production_view_mode && manager.ActiveFleetWnd() && quick_close_wnds) {
-        manager.CloseAll(); }
-    else if (!m_dragged && !m_in_production_view_mode) {
+    if (!m_dragged && !m_in_production_view_mode && fleet_wnd && quick_close_wnds) {
+        manager.CloseAll();
+    } else if (!m_dragged && !m_in_production_view_mode) {
         SelectSystem(INVALID_OBJECT_ID);
         m_side_panel->Hide();
     }
@@ -5922,10 +5923,20 @@ void MapWnd::PushWndStack(std::shared_ptr<GG::Wnd> wnd) {
 }
 
 void MapWnd::RemoveFromWndStack(std::shared_ptr<GG::Wnd> wnd) {
-    auto it = std::find(m_wnd_stack.begin(), m_wnd_stack.end(), wnd);
-    if (it != m_wnd_stack.end()) {
-        m_wnd_stack.erase(it);
+    // Recreate the stack, but without the Wnd to be removed or any null/expired weak_ptrs
+    std::vector<std::weak_ptr<GG::Wnd>> new_stack;
+    for (auto& weak_wnd : m_wnd_stack) {
+        // skip adding to the new stack if it's null/expired
+        if (auto shared_wnd = weak_wnd.lock()) {
+            // skip adding to the new stack if it's the one to be removed
+            if (shared_wnd != wnd) {
+                // Swap them to avoid another reference count check
+                new_stack.emplace_back();
+                new_stack.back().swap(weak_wnd);
+            }
+        }
     }
+    m_wnd_stack.swap(new_stack);
 }
 
 bool MapWnd::ReturnToMap() {
@@ -5936,7 +5947,7 @@ bool MapWnd::ReturnToMap() {
     // if we didn't reject such a Wnd, we might close no window, or even open a window.
     // Either way, the Wnd is removed from the stack, since it is no longer of any use.
     while (!m_wnd_stack.empty() && !(wnd && wnd->Visible())) {
-        wnd = m_wnd_stack.back();
+        wnd = m_wnd_stack.back().lock();
         m_wnd_stack.pop_back();
     }
     // If no non-null and visible Wnd was found, then there's nothing to do.
@@ -5944,8 +5955,6 @@ bool MapWnd::ReturnToMap() {
         return true;
     }
 
-    // prepare to close fleets window if open
-    auto& fm = FleetUIManager::GetFleetUIManager();
     auto cui = ClientUI::GetClientUI();
 
     if (wnd == m_sitrep_panel) {
@@ -5966,8 +5975,9 @@ bool MapWnd::ReturnToMap() {
         m_combat_report_wnd->Hide();
     } else if (wnd == m_side_panel) {
         SelectSystem(INVALID_OBJECT_ID);
-    } else if (wnd.get() == fm.ActiveFleetWnd()) {
-        fm.CloseAll();
+    } else if (dynamic_cast<FleetWnd*>(wnd.get())) {
+        // if it is any fleet window at all, go ahead and close all fleet windows.
+        FleetUIManager::GetFleetUIManager().CloseAll();
     } else if (cui && wnd == cui->GetPlayerListWnd()) {
         HideEmpires();
     } else if (cui && wnd == cui->GetMessageWnd()) {
