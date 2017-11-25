@@ -5,11 +5,69 @@
 #include "OptionsDB.h"
 #include "StringTable.h"
 
+#include <boost/locale/generator.hpp>
+#include <boost/locale/info.hpp>
+#include <boost/locale/conversion.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
+
 namespace {
     std::string GetDefaultStringTableFileName()
     { return PathToString(GetResourceDir() / "stringtables" / "en.txt"); }
 
+
+    /** Determines stringtable to use from users locale when stringtable filename is at default setting */
+    void InitStringtableFileName() {
+        // Only check on the first call
+        static bool stringtable_filename_init { false };
+        if (stringtable_filename_init)
+            return;
+
+        stringtable_filename_init = true;
+
+        bool was_specified = false;
+        if (!GetOptionsDB().IsDefaultValue("stringtable-filename"))
+            was_specified = true;
+
+        // Set the english stingtable as the default option
+        GetOptionsDB().SetDefault("stringtable-filename", PathToString(GetResourceDir() / "stringtables/en.txt"));
+        if (was_specified) {
+            DebugLogger() << "Detected language: Previously specified " << GetOptionsDB().Get<std::string>("stringtable-filename");
+            return;
+        }
+
+        boost::locale::generator gen;
+        std::locale user_locale { gen("") };
+        std::string lang {};
+        try {
+            lang = std::use_facet<boost::locale::info>(user_locale).language();
+        } catch(std::bad_cast) {
+            WarnLogger() << "Detected language: Bad cast, falling back to default";
+            return;
+        }
+
+        boost::algorithm::to_lower(lang);
+
+        // early return when determined language is empty or C locale
+        if (lang.empty() || lang == "c" || lang == "posix") {
+            WarnLogger() << "Detected lanuage: Not detected, falling back to default";
+            return;
+        }
+
+        DebugLogger() << "Detected language: " << lang;
+
+        boost::filesystem::path lang_filename { lang + ".txt" };
+        boost::filesystem::path stringtable_file { GetResourceDir() / "stringtables" / lang_filename };
+
+        if (IsExistingFile(stringtable_file))
+            GetOptionsDB().Set("stringtable-filename", PathToString(stringtable_file));
+        else
+            WarnLogger() << "Stringtable file " << PathToString(stringtable_file)
+                         << " not found, falling back to default";
+    }
+
     std::string GetStringTableFileName() {
+        InitStringtableFileName();
+
         std::string option_filename = GetOptionsDB().Get<std::string>("stringtable-filename");
         if (option_filename.empty())
             return GetDefaultStringTableFileName();
