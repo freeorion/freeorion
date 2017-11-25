@@ -25,11 +25,11 @@ namespace Networking {
     };
 
     enum RoleType : size_t {
-        ROLE_HOST = 0,     ///< allows save and load games, edit other player settings, stop server
-        ROLE_MODERATOR,    ///< allows attend game as a Moderator
-        ROLE_PLAYER,       ///< allows attend game as a Player
-        ROLE_OBSERVER,     ///< allows attend game as a Observer
-        ROLE_GALAXY_SETUP, ///< allows change galaxy and AI settings in lobby
+        ROLE_HOST = 0,              ///< allows save and load games, edit other player settings, stop server
+        ROLE_CLIENT_TYPE_MODERATOR, ///< allows have a client type Moderator
+        ROLE_CLIENT_TYPE_PLAYER,    ///< allows have a client type Player
+        ROLE_CLIENT_TYPE_OBSERVER,  ///< allows have a client type Observer
+        ROLE_GALAXY_SETUP,          ///< allows change galaxy and AI settings in lobby
 
         Roles_Count
     };

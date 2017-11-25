@@ -164,21 +164,21 @@ namespace {
                     int row_moderator_type = -1;
                     int row_number = 0;
                     if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-                        ClientApp::GetApp()->Networking().HasAuthRole(Networking::ROLE_PLAYER))
+                        ClientApp::GetApp()->Networking().HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER))
                     {
                         Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::CLIENT_TYPE_HUMAN_PLAYER));   // "Human" display / option
                         row_player_type = (row_number++);
                     }
 
                     if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-                        ClientApp::GetApp()->Networking().HasAuthRole(Networking::ROLE_OBSERVER))
+                        ClientApp::GetApp()->Networking().HasAuthRole(Networking::ROLE_CLIENT_TYPE_OBSERVER))
                     {
                         Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::CLIENT_TYPE_HUMAN_OBSERVER)); // "Observer" display / option
                         row_observer_type = (row_number++);
                     }
 
                     if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR ||
-                        ClientApp::GetApp()->Networking().HasAuthRole(Networking::ROLE_MODERATOR))
+                        ClientApp::GetApp()->Networking().HasAuthRole(Networking::ROLE_CLIENT_TYPE_MODERATOR))
                     {
                         Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::CLIENT_TYPE_HUMAN_MODERATOR));// "Moderator" display / option
                         row_moderator_type = (row_number++);
