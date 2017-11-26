@@ -28,6 +28,12 @@ namespace Pending {
 
         Pending& operator=(Pending&& other) = default;
 
+        /** Pending is non-copyable because std::shared<T> is non-copyable*/
+        Pending(const Pending&) = delete;
+
+        /** Pending is non-copyable because std::shared<T> is non-copyable*/
+        Pending& operator=(const Pending&) = delete;
+
         boost::optional<std::future<T>> pending = boost::none;
         std::string filename;
     };
