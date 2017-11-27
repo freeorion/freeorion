@@ -88,15 +88,6 @@ class AIFleetOrder(object):
         self.order_issued = False
 
     def __setstate__(self, state):
-        assert type(state) == dict
-        assert len(state) == 5
-
-        from SaveGameManager import assert_content
-        assert_content(state, "fleet", int, may_be_none=False)
-        assert_content(state, "target", int)
-        assert_content(state, "executed", bool)
-        assert_content(state, "order_issued", bool)
-
         # construct the universe objects from stored ids
         state["fleet"] = Fleet(state["fleet"])
         target_type = state.pop("target_type")

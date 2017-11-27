@@ -301,17 +301,6 @@ class Aggression(Trait):
     def __init__(self, aggression):
         self.aggression = aggression
 
-    def __setstate__(self, state):
-        assert type(state) == dict
-        assert len(state) == 1
-
-        from SaveGameManager import assert_content
-        assert_content(state, "aggression", int, may_be_none=False)
-        self.__dict__ = state
-
-    def __getstate__(self):
-        return self.__dict__
-
     @property
     def key(self):
         return self.aggression
@@ -489,18 +478,6 @@ class EmpireIDTrait(Trait):
         self.id = empire_id
         self.aggression = aggression  # TODO remove when old research style get_research_index is removed
 
-    def __setstate__(self, state):
-        assert type(state) == dict
-        assert len(state) == 2
-
-        from SaveGameManager import assert_content
-        assert_content(state, "id", int, may_be_none=False)
-        assert_content(state, "aggression", int, may_be_none=False)
-        self.__dict__ = state
-
-    def __getstate__(self):
-        return self.__dict__
-
     @property
     def key(self):
         return self.id % 2
@@ -557,21 +534,6 @@ class Character(Trait):
         self.traits = traits
         if not all([isinstance(x, Trait) for x in traits]):
             raise TypeError("All traits must be sub-classes of Trait")
-
-    def __setstate__(self, state):
-        assert isinstance(state, dict)
-        assert len(state) == 1
-
-        from SaveGameManager import assert_content
-        assert_content(state, "traits", list, False)
-
-        for trait in state["traits"]:
-            assert isinstance(trait, Trait)
-
-        self.__dict__ = state
-
-    def __getstate__(self):
-        return self.__dict__
 
     def get_trait(self, type_of_trait):
         """Return the requested trait or None"""

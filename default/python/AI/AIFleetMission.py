@@ -63,28 +63,11 @@ class AIFleetMission(object):
         self.target = None
 
     def __setstate__(self, state):
-        assert type(state) == dict
-        assert len(state) == 5
-
-        from SaveGameManager import assert_content
-        from EnumsAI import EnumItem
-        assert_content(state, "orders", list, may_be_none=False)
-        assert_content(state, "fleet", int, may_be_none=False)
-        assert_content(state, "type", EnumItem, may_be_none=True)
-        assert_content(state, "target", int, may_be_none=True)
-        assert_content(state, "target_type", str, may_be_none=True)
-
-        assert state["type"] is None or MissionType.has_item(state["type"])
-
-        assert len(state["orders"]) < 1000
-
-        import fleet_orders
-        for item in state["orders"]:
-            assert isinstance(item, fleet_orders.AIFleetOrder)
-
         target_type = state.pop("target_type")
         if state["target"] is not None:
-            object_map = {Planet.object_name: Planet, System.object_name: System, Fleet.object_name: Fleet}
+            object_map = {Planet.object_name: Planet,
+                          System.object_name: System,
+                          Fleet.object_name: Fleet}
             state["target"] = object_map[target_type](state["target"])
 
         state["fleet"] = Fleet(state["fleet"])
@@ -92,12 +75,17 @@ class AIFleetMission(object):
 
     def __getstate__(self):
         retval = dict(self.__dict__)
+        # do only store the fleet id not the Fleet object
         retval["fleet"] = self.fleet.id
+
+        # store target type and id rather than the object
         if self.target is not None:
             retval["target_type"] = self.target.object_name
             retval["target"] = self.target.id
         else:
             retval["target_type"] = None
+            retval["target"] = None
+
         return retval
 
     def set_target(self, mission_type, target):

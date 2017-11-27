@@ -174,34 +174,9 @@ class AIstate(object):
             self.__init__(aggression)
             return
 
-        from SaveGameManager import assert_content
-        assert_content(state, "version", int, False)
-        assert state["version"] == AIstate.version, "state version: %d, AIstate version: %d" % (
-            state["version"], AIstate.version)
-        assert_content(state, "uid", str, False)
-        assert_content(state, "turn_uids", dict, False)
-        for k, v in state["turn_uids"].iteritems():
-            assert type(k) == int, "k was %s" % k
-            assert type(v) == str, "v was %s" % v
-        assert_content(state, "_aggression", int, False)
-
         for content in ("colonisablePlanetIDs", "colonisableOutpostIDs"):
-            assert_content(state, content, dict, False)
-            can_trust_dict = True
-            for k, v in state[content].iteritems():
-                assert type(k) == int, "k was %s" % k
-                assert type(v) == tuple, "v was %s" % v
-                assert len(v) == 2, "v was: %s" % v
-                assert type(v[0]) in (int, long, float), "v was %s" % v
-                assert type(v[1]) == str, "v was %s" % v
-                if v[1] and not fo.getSpecies(v[1]):
-                    warn("Invalid entry in %s" % content)
-                    can_trust_dict = False
-                    break
             # could be that there is only a different species definition file
             # but could also be some attempt to get in some nasty string.
-            if not can_trust_dict:
-                state[content] = odict()
             sorted_planets = state[content].items()
             sorted_planets.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
             state[content] = odict(sorted_planets)
