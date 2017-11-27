@@ -5101,8 +5101,8 @@ Industry to Stockpile PP Transfer Ratio
 METER_IMPERIAL_PP_TRANSFER_EFFICIENCY_VALUE_DESC
 '''The transfer ratio represents the efficiency of stockpiling items in the [[IMPERIAL_STOCKPILE]] and having them available for production in anywhere in your empire.
 
-You start with [[tech PRO_IMPERIAL_STOCKPILE_1]] and a 0.2 ratio (i.e. 20% of your excess PP are added to the [[IMPERIAL_STOCKPILE]]).
-Technologies [[tech PRO_IMPERIAL_STOCKPILE_2]] and [[tech PRO_IMPERIAL_STOCKPILE_3]] each add 0.2 .
+You start with [[tech PRO_PREDICTIVE_STOCKPILING]] and a 0.2 ratio (i.e. 20% of your excess PP are added to the [[IMPERIAL_STOCKPILE]]).
+Technologies [[tech PRO_GENERIC_SUPPLIES]] and [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]] each add 0.2 .
 [[tech PRO_TRANS_DESIGN]] adds up to 0.3.  As such your ratio can be between 20% to 90% efficiency.''' 
 
 METER_IMPERIAL_PP_USE_LIMIT_VALUE_LABEL
@@ -5112,9 +5112,9 @@ METER_IMPERIAL_PP_USE_LIMIT_VALUE
 '''The Imperial Stockpile Use Limit represents the readyness of the imperial stockpile service to supply projects with production points.
 It gives the number of production points which may be taken per turn from the imperial stockpile to produce. 
 
-You start with [[tech PRO_IMPERIAL_STOCKPILE_1]] and may use two points per turn.
-[[tech PRO_IMPERIAL_STOCKPILE_2]] allows to use three more per turn. 
-[[tech PRO_IMPERIAL_STOCKPILE_3]] allows to use five more per turn. 
+You start with [[tech PRO_PREDICTIVE_STOCKPILING]] and may use two points per turn.
+[[tech PRO_GENERIC_SUPPLIES]] allows to use three more per turn. 
+[[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]] allows to use five more per turn. 
 Maxed out, [[tech PRO_TRANS_DESIGN]] allows to use twelve more PP per turn.  
 As such your use limit ranges between two and twenty-two PP per turn.''' 
 
@@ -10210,10 +10210,10 @@ The imperial stockpile service uses the outcome to prepare goods which can be us
 IMPERIAL_STOCKPILE_SHORT_DESC
 Allows for Imperial Production Stockpiling
 
-PRO_IMPERIAL_STOCKPILE_1
+PRO_PREDICTIVE_STOCKPILING
 Predictive Stockpiling
 
-PRO_IMPERIAL_STOCKPILE_1_DESC
+PRO_PREDICTIVE_STOCKPILING_DESC
 '''Knowing where demand for certain goods will be in future allows to stack the items up in time.
 The imperial stockpile service has a fleet for distributing raw materials to places where important projects are predicted to be started.
 This task is difficult as the service has to predict when demand happens, where it happens, what materials and goods are demanded and also who the users will be.
@@ -10224,10 +10224,10 @@ An item on the production queue can draw on the Imperial Stockpile if the item h
 This is the basic technology for the imperial stockpile.
 The imperial stockpile service starts with 20% [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allows drawing 2 PP / turn from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
 
-PRO_IMPERIAL_STOCKPILE_2
+PRO_GENERIC_SUPPLIES
 Generic Supplies
 
-PRO_IMPERIAL_STOCKPILE_2_DESC
+PRO_GENERIC_SUPPLIES_DESC
 '''By carefully choosing supply chains, materials, and designs, Generic Supplies are created which can easily be decomposited and reused for most industrial products.
 
 Generic Supplies can be created a long time before the demand occurs. Supply packages usually include bootstrap devices which reconstruct the facilities for reconstructing new products from the Generic Supplies.
@@ -10238,10 +10238,10 @@ This frees the imperial stockpile service from having to know which goods will b
 This is an upgrade technology for the imperial stockpile.
 It adds 20% to the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allows drawing 3 PP / turn extra from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
 
-PRO_IMPERIAL_STOCKPILE_3
+PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY
 Interstellar Entanglement Factory
 
-PRO_IMPERIAL_STOCKPILE_3_DESC
+PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY_DESC
 '''Quantum entanglement of factory control rooms allows to operate machines remotely from other star systems.
 Decoupling workforce and the means of production helps to produce just in time and increases efficiency of the imperial stockpile service.
 
