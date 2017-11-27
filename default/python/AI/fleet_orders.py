@@ -303,10 +303,6 @@ class OrderSplitFleet(AIFleetOrder):
         self.order_issued = True
 
 
-# class OrderMergeFleet(AIFleetOrder):  # TODO check remove
-#     pass
-
-
 class OrderOutpost(AIFleetOrder):
     ORDER_NAME = 'outpost'
     TARGET_TYPE = Planet
@@ -399,17 +395,6 @@ class OrderColonize(AIFleetOrder):
         if ship and not ship.canColonize:
             warn("colonization fleet %d has no colony ship" % self.fleet.id)
         return ship is not None and self.fleet.get_object().systemID == self.target.get_system().id and ship.canColonize
-
-
-class OrderAttack(AIFleetOrder):
-    ORDER_NAME = 'attack'
-    TARGET_TYPE = System
-
-    def issue_order(self, verbose=False):
-        if not super(OrderAttack, self).is_valid():
-            return
-        fo.issueFleetMoveOrder(self.fleet.id, self.target.get_system().id)
-        print "Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
 
 
 class OrderDefend(AIFleetOrder):
