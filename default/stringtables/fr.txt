@@ -5103,7 +5103,7 @@ METER_IMPERIAL_PP_TRANSFER_EFFICIENCY_VALUE_DESC
 
 Vous démarrez avec la technologie [[tech PRO_IMPERIAL_STOCKPILE_1]] et un ratio de 0.2 (i.e. 20% des PP en excédent sont transférés au [[IMPERIAL_STOCKPILE]]).
 Les technologies [[tech PRO_IMPERIAL_STOCKPILE_2]] et [[tech PRO_IMPERIAL_STOCKPILE_3]] ajoutent chacune 0.2 de ratio.
-La technologie [[tech CON_TRANS_DESIGN]] ajoute jusqu'à 0.3 de ratio. Par conséquent, le ratio peut atteindre une efficience comprise entre 20% et 90%.''' 
+La technologie [[tech PRO_TRANS_DESIGN]] ajoute jusqu'à 0.3 de ratio. Par conséquent, le ratio peut atteindre une efficience comprise entre 20% et 90%.''' 
 
 METER_IMPERIAL_PP_USE_LIMIT_VALUE_LABEL
 Limite d'usage du Stock Impérial
@@ -5115,7 +5115,7 @@ Sa valeur correspond au nombre de PP pouvant être puisés à chaque tour dans l
 Vous démarrez avec la technologie [[tech PRO_IMPERIAL_STOCKPILE_1]] et un usage de 2 points par tour.
 La technologie [[tech PRO_IMPERIAL_STOCKPILE_2]] autorise l'usage de 3 points supplémentaires par tour.
 La technologie [[tech PRO_IMPERIAL_STOCKPILE_3]] autorise l'usage de 5 points supplémentaires par tour.
-Pleinement exploitée, la technologie [[tech CON_TRANS_DESIGN]] autorise l'usage de 12 points supplémentaires par tour.
+Pleinement exploitée, la technologie [[tech PRO_TRANS_DESIGN]] autorise l'usage de 12 points supplémentaires par tour.
 Par conséquent, la limite d'usage s'étale entre 2 et 22 PP par tour.''' 
 
 METER_RESEARCH_VALUE_LABEL
@@ -10198,10 +10198,10 @@ Tandis que la transformation d'une population entière en êtres de pure énergi
 
 Le stade ultime du développement physique est justement de transcender le caractère physique des choses. Sans corps, les individus et les sociétés pourraient migrer, croître et exister librement, sans être entravés par des limitations physiques inutiles et des processus métaboliques improductifs, gaspillant l'énergie afin d'assurer l'homéostasie.'''
 
-CON_TRANS_DESIGN
+PRO_TRANS_DESIGN
 Design Transcendant
 
-CON_TRANS_DESIGN_DESC
+PRO_TRANS_DESIGN_DESC
 '''Transcendant les limitations de créativité des espèces, les représentants les plus inventifs et innovants des différentes espèces peuplant l'empire, entreprennent d'œuvrer collectivement à la conception de biens universellement utilisables.
 Bâtir la structure [[building BLD_INTERSPECIES_ACADEMY]] sur différentes planètes garantit que ce procédé soit diffusé à travers tout l'empire.
 

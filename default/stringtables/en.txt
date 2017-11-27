@@ -5103,7 +5103,7 @@ METER_IMPERIAL_PP_TRANSFER_EFFICIENCY_VALUE_DESC
 
 You start with [[tech PRO_IMPERIAL_STOCKPILE_1]] and a 0.2 ratio (i.e. 20% of your excess PP are added to the [[IMPERIAL_STOCKPILE]]).
 Technologies [[tech PRO_IMPERIAL_STOCKPILE_2]] and [[tech PRO_IMPERIAL_STOCKPILE_3]] each add 0.2 .
-[[tech CON_TRANS_DESIGN]] adds up to 0.3.  As such your ratio can be between 20% to 90% efficiency.''' 
+[[tech PRO_TRANS_DESIGN]] adds up to 0.3.  As such your ratio can be between 20% to 90% efficiency.''' 
 
 METER_IMPERIAL_PP_USE_LIMIT_VALUE_LABEL
 Imperial Stockpile Use Limit
@@ -5115,7 +5115,7 @@ It gives the number of production points which may be taken per turn from the im
 You start with [[tech PRO_IMPERIAL_STOCKPILE_1]] and may use two points per turn.
 [[tech PRO_IMPERIAL_STOCKPILE_2]] allows to use three more per turn. 
 [[tech PRO_IMPERIAL_STOCKPILE_3]] allows to use five more per turn. 
-Maxed out, [[tech CON_TRANS_DESIGN]] allows to use twelve more PP per turn.  
+Maxed out, [[tech PRO_TRANS_DESIGN]] allows to use twelve more PP per turn.  
 As such your use limit ranges between two and twenty-two PP per turn.''' 
 
 METER_RESEARCH_VALUE_LABEL
@@ -10198,10 +10198,10 @@ While transforming an entire population into beings of pure energy would be impr
 
 The ultimate stage of physical development is to transcend the physical altogether. Without bodies, individuals and society may move, grow and exist freely, unhindered by unnecessary physical limitations and inefficient metabolic processes that waste energy supporting homeostasis.'''
 
-CON_TRANS_DESIGN
+PRO_TRANS_DESIGN
 Transcendent Design
 
-CON_TRANS_DESIGN_DESC
+PRO_TRANS_DESIGN_DESC
 '''Transcending the limitations of the designing species, the most creative and effective from the different species in the empire start to work together to build universally usable goods.
 Building [[building BLD_INTERSPECIES_ACADEMY]] on different planets ensures the practice spreads in the empire.
 
