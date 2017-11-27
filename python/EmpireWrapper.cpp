@@ -417,6 +417,8 @@ namespace FreeOrionPython {
             .add_property("turnsLeft",              &ProductionQueue::Element::turns_left_to_completion)
             .add_property("remaining",              &ProductionQueue::Element::remaining)
             .add_property("blocksize",              &ProductionQueue::Element::blocksize)
+            .add_property("paused",                 &ProductionQueue::Element::paused)
+            .add_property("allowedStockpile",       &ProductionQueue::Element::allowed_imperial_stockpile_use)
             ;
         class_<ProductionQueue, noncopyable>("productionQueue", no_init)
             .def("__iter__",                        iterator<ProductionQueue>())  // ProductionQueue provides STL container-like interface to contained queue
