@@ -278,26 +278,6 @@ class OrderResupply(AIFleetOrder):
             self.order_issued = True
 
 
-class OrderSplitFleet(AIFleetOrder):
-    ORDER_NAME = 'split_fleet'
-    TARGET_TYPE = System  # TODO check real usage
-
-    def can_issue_order(self, verbose=False):
-        if not super(OrderSplitFleet, self).is_valid():
-            return False
-        return len(self.fleet.get_object().shipIDs) > 1
-
-    def issue_order(self):
-        if not super(OrderSplitFleet, self).issue_order():
-            return
-        ship_id = self.target.id
-        fleet = self.fleet.get_object()
-        if ship_id in fleet.shipIDs:
-            fo.issueNewFleetOrder(str(ship_id), ship_id)
-            print "Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
-        self.order_issued = True
-
-
 class OrderOutpost(AIFleetOrder):
     ORDER_NAME = 'outpost'
     TARGET_TYPE = Planet
