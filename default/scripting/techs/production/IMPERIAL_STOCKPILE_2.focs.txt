@@ -5,6 +5,7 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 20 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
+	tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
     prerequisites = [
         "CON_ASYMP_MATS"
         "PRO_ROBOTIC_PROD"

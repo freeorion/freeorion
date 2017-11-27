@@ -5,7 +5,7 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
     researchturns = 1
-
+    tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
     effectsgroups = [
         // Set initial meters
         EffectsGroup
