@@ -7,12 +7,10 @@ import MoveUtilsAI
 import PlanetUtilsAI
 import CombatRatingsAI
 from universe_object import Fleet, System, Planet
-from freeorion_tools import get_partial_visibility_turn
+from freeorion_tools import get_partial_visibility_turn, dump_universe
 
 from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
-
-dumpTurn = 0
 
 
 def trooper_move_reqs_met(main_fleet_mission, order, verbose):
@@ -474,12 +472,8 @@ class OrderInvade(AIFleetOrder):
                     print "Due to trouble invading, adding system %d to Emergency Exploration List" % fleet.systemID
                     self.executed = False
                 
-                global dumpTurn
-                if shields > 0 and planet.unowned and dumpTurn < fo.currentTurn():
-                    dumpTurn = fo.currentTurn()
-                    print "Universe Dump to debug invasions:"
-                    universe.dump()
-
+                if shields > 0 and planet.unowned:
+                    dump_universe()
                 break
         if result:
             print "Successfully ordered troop ship(s) to invade %s" % planet

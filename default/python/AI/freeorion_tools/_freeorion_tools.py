@@ -284,3 +284,13 @@ class ReadOnlyDict(Mapping):
 
     def __str__(self):
         return str(self._data)
+
+
+def dump_universe():
+    """Dump the universe but not more than once per turn."""
+    cur_turn = fo.currentTurn()
+
+    if (not hasattr(dump_universe, "last_dump") or
+            dump_universe.last_dump < cur_turn):
+        dump_universe.last_dump = cur_turn
+        print fo.universe().dump()
