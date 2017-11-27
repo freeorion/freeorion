@@ -30,7 +30,6 @@ except RuntimeError:
 # prefixes to encode types not supported by json
 # or not fully supported as dictionary key
 ENUM_PREFIX = '__ENUM__'
-CLASS_PREFIX = '__foAI__'
 INT_PREFIX = '__INT__'
 FLOAT_PREFIX = '__FLOAT__'
 TRUE = '__TRUE__'

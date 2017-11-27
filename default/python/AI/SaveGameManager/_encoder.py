@@ -97,9 +97,6 @@ def _encode_object(obj):
         # obj does not have a class or class has no module
         raise CanNotSaveGameException("Encountered unsupported object %s (%s)" % (obj, type(obj)))
 
-    # results in, e.g. __foAI__AIstate.AIstate
-    key = "%s%s" % (CLASS_PREFIX, class_name)
-
     # if possible, use getstate method to query the state, otherwise use the object's __dict__
     try:
         getstate = obj.__getstate__
@@ -108,7 +105,11 @@ def _encode_object(obj):
     else:
         # only call now to avoid catching exceptions raised during the getstate call
         value = getstate()
-    return _encode_dict({key: value})
+
+    # encode information about class
+    value.update({'__class__': obj.__class__.__name__,
+                  '__module__': obj.__class__.__module__})
+    return _encode_dict(value)
 
 
 def _encode_list(o):

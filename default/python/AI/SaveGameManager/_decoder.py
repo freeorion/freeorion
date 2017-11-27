@@ -40,8 +40,8 @@ def decode(obj):
 class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
 
     def __init__(self, **kwargs):
-        super(_FreeOrionAISaveGameDecoder, self).__init__(strict=True,  # do not allow control characters
-                                                          **kwargs)
+        # do not allow control characters
+        super(_FreeOrionAISaveGameDecoder, self).__init__(strict=True, **kwargs)
 
     def decode(self, s, _w=None):
         # use the default JSONDecoder to parse the string into a dict
@@ -50,31 +50,26 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
         return self.__interpret(retval)
 
     def __interpret_dict(self, obj):
-        # With our encoding, dicts with more than one entry must be a standard dict
-        # because our custom encoded classes have only a single key which is its name
-        # and its __dict__ content as value. In that case, interpret the dict content.
-        if len(obj) != 1:
+
+        # if the dict does not contain the class-encoding keys,
+        # then it is a standard dictionary.
+        if not all(key in obj for key in ('__class__', '__module__')):
             return {self.__interpret(key): self.__interpret(value)
                     for key, value in obj.iteritems()}
 
-        # check if this is an encoded class or a standard (1-entry) dictionary
-        [(key, value)] = obj.items()
-        if not key.startswith(CLASS_PREFIX):
-            return {self.__interpret(key): self.__interpret(value)
-                    for key, value in obj.iteritems()}
-
-        # We now know this is an encoded class, check content for validity first.
-        if not type(value) == dict:
-            raise InvalidSaveGameException("Incorrect class encoding: Content not a dict.")
-        parsed_content = self.__interpret_dict(value)
-
-        # get the class if in list of trusted classes, otherwise do not load.
-        full_name = key[len(CLASS_PREFIX):]
+        # pop and verify class and module name, then parse the class content
+        class_name = obj.pop('__class__')
+        module_name = obj.pop('__module__')
+        full_name = '%s.%s' % (module_name, class_name)
         cls = trusted_classes.get(full_name)
         if cls is None:
-            raise InvalidSaveGameException("DANGER DANGER - %s not trusted" % full_name)
+            raise InvalidSaveGameException("DANGER DANGER - %s not trusted"
+                                           % full_name)
 
-        # create a new instance without calling the actual __new__ or __init__ function of the class.
+        parsed_content = self.__interpret_dict(obj)
+
+        # create a new instance without calling the actual __new__or __init__
+        # function of the class (so we avoid any side-effects from those)
         new_instance = object.__new__(cls)
 
         # Set the content trying to use the __setstate__ method if defined
@@ -83,7 +78,8 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
             setstate = new_instance.__setstate__
         except AttributeError:
             if not type(parsed_content) == dict:
-                raise InvalidSaveGameException("Could not set content for" % new_instance)
+                raise InvalidSaveGameException("Could not set content for %s"
+                                               % new_instance)
             new_instance.__dict__ = parsed_content
         else:
             # only call now to not catch exceptions in the setstate method
@@ -122,14 +118,16 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
 
             # does it encode a tuple?
             if x.startswith(TUPLE_PREFIX):
-                content = x[len(TUPLE_PREFIX) + 1:-1]  # ignore surrounding parentheses
+                # ignore surrounding parentheses
+                content = x[len(TUPLE_PREFIX) + 1:-1]
                 content = _replace_quote_placeholders(content)
                 result = self.decode(content)
                 return tuple(result)
 
             # does it encode a set?
             if x.startswith(SET_PREFIX):
-                content = x[len(SET_PREFIX) + 1:-1]  # ignore surrounding parentheses
+                # ignore surrounding parentheses
+                content = x[len(SET_PREFIX) + 1:-1]
                 content = _replace_quote_placeholders(content)
                 result = self.decode(content)
                 return set(result)
@@ -139,14 +137,17 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
                 full_name = x[len(ENUM_PREFIX):]
                 partial_names = full_name.split('.')
                 if not len(partial_names) == 2:
-                    raise InvalidSaveGameException("Could not decode Enum %s" % x)
+                    raise InvalidSaveGameException("Could not decode Enum %s"
+                                                   % x)
                 enum_name = partial_names[0]
                 enum = getattr(EnumsAI, enum_name, None)
                 if enum is None:
-                    raise InvalidSaveGameException("Could not find enum %s in EnumsAI" % enum_name)
+                    raise InvalidSaveGameException("Invalid enum %s"
+                                                   % enum_name)
                 retval = getattr(enum, partial_names[1], None)
                 if retval is None:
-                    raise InvalidSaveGameException("Could not find enum value %s in EnumsAI" % full_name)
+                    raise InvalidSaveGameException("Invalid enum value %s"
+                                                   % full_name)
                 return retval
 
             if x == TRUE:
