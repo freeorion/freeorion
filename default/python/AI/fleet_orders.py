@@ -492,9 +492,9 @@ class OrderMilitary(AIFleetOrder):
     def is_valid(self):
         if not super(OrderMilitary, self).is_valid():
             return False
-        thisFleet = self.fleet.get_object()
+        fleet = self.fleet.get_object()
         # TODO: consider bombardment-only fleets/orders
-        return thisFleet is not None and (thisFleet.hasArmedShips or thisFleet.hasFighterShips)
+        return fleet is not None and (fleet.hasArmedShips or fleet.hasFighterShips)
 
     def can_issue_order(self, verbose=False):
         # TODO: consider bombardment
