@@ -473,7 +473,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
 
     # apply some bias to expensive operations
     normalized_cost = float(troop_cost) / max(fo.getEmpire().productionPoints, 1)
-    normalized_cost = max(1, normalized_cost)
+    normalized_cost = max(1., normalized_cost)
     cost_score = (normalized_cost**2 / 50.0) * troop_cost
 
     base_score = pop_val + supply_val + bld_tally + tech_tally + enemy_val - cost_score
