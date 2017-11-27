@@ -62,18 +62,10 @@ def convert_to_version(state, version):
     if version != current_version + 1:
         raise ConversionError("Can't skip a compatibility version when converting AI savegame.")
 
-    if version == 0:
-        pass  # only version number added
-    elif version == 1:
-        try:
-            state['_aggression'] = state['character'].get_trait(Aggression).key
-        except Exception as e:
-            raise ConversionError("Error when converting to compatibility version 1: "
-                                  "Can't find aggression in character module. Exception thrown was: " + e.message)
-    elif version == 2:
-        # some dicts which used only the keys were changed to sets
-        for var_name in ['visInteriorSystemIDs', 'exploredSystemIDs', 'visBorderSystemIDs', 'unexploredSystemIDs']:
-            state[var_name] = set(state.get(var_name, {}).keys())
+    # Starting with version 3, we switched from pickle to json-style encoding
+    # Do not try to load an older savegame even if it magically passed the encoder.
+    if version <= 3:
+        raise ConversionError("The AI savegame version is no longer supported.")
 
     #   state["some_new_member"] = some_default_value
     #   del state["some_removed_member"]
@@ -93,7 +85,7 @@ class AIstate(object):
     is playable with this AIstate version, i.e. new members must be added
     and outdated members must be modified and / or deleted.
     """
-    version = 2
+    version = 3
 
     def __init__(self, aggression):
         # Do not allow to create AIstate instances with an invalid version number.
