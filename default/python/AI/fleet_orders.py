@@ -1,5 +1,4 @@
 from EnumsAI import ShipRoleType, MissionType
-import AIstate
 import FleetUtilsAI
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
@@ -8,7 +7,6 @@ import MoveUtilsAI
 import PlanetUtilsAI
 import CombatRatingsAI
 from universe_object import Fleet, System, Planet
-from AIDependencies import INVALID_ID
 from freeorion_tools import get_partial_visibility_turn
 
 from common.configure_logging import convenience_function_references_for_logger
