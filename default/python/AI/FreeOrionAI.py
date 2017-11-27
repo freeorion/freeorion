@@ -6,7 +6,11 @@ from common.configure_logging import redirect_logging_to_freeorion_logger, conve
 redirect_logging_to_freeorion_logger()
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger()
 
-import pickle  # Python object serialization library
+try:
+    import cPickle as pickle # Python object serialization library
+except:
+    info("cPickle not available on this machine, falling back to pickle")
+    import pickle
 import sys
 import random
 
@@ -161,7 +165,7 @@ def prepareForSave():  # pylint: disable=invalid-name
 
     # serialize (convert to string) global state dictionary and send to AI client to be stored in save file
     try:
-        dump_string = pickle.dumps(foAIstate)
+        dump_string = pickle.dumps(foAIstate, protocol=2)
         print "foAIstate pickled to string, about to send to server"
         fo.setSaveStateString(dump_string)
     except:
