@@ -226,7 +226,6 @@ class OrderMove(AIFleetOrder):
                 if self.target.id not in needs_vis:
                     needs_vis.append(self.target.id)
                 return False
-        return True
 
     def issue_order(self):
         if not super(OrderMove, self).issue_order():
