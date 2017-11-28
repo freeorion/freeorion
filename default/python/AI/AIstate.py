@@ -951,11 +951,24 @@ class AIstate(object):
             # in current system, orig new fleet will not yet have been assigned a role
             # self.remove_fleet_role(fleet_id)
 
+    def __cleanup_qualifiying_base_targets(self):
+        """Cleanup invalid entries in qualifying base targets."""
+        universe = fo.getUniverse()
+        empire_id = fo.empireID()
+        for dct in [self.qualifyingTroopBaseTargets,
+                    self.qualifyingColonyBaseTargets,
+                    self.qualifyingOutpostBaseTargets]:
+            for pid in dct.keys():
+                planet = universe.getPlanet(pid)
+                if planet and planet.ownedBy(empire_id):
+                    del dct[pid]
+
     def prepare_for_new_turn(self):
         self.__report_last_turn_fleet_missions()
         self.__split_new_fleets()
         self.__refresh()  # TODO: Use turn_state instead
         self.__border_exploration_update()
+        self.__cleanup_qualifiying_base_targets()
         self.__clean_fleet_roles()
         self.__clean_fleet_missions()
         print "Fleets lost by system: %s" % fleetsLostBySystem
