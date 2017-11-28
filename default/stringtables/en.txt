@@ -10203,7 +10203,7 @@ Transcendent Design
 
 PRO_TRANS_DESIGN_DESC
 '''Transcending the limitations of the designing species, the most creative and effective from the different species in the empire start to work together to build universally usable goods.
-Building [[building BLD_INTERSPECIES_ACADEMY]] on different planets ensures the practice spreads in the empire.
+Building [[buildingtype BLD_INTERSPECIES_ACADEMY]] on different planets ensures the practice spreads in the empire.
 
 The imperial stockpile service uses the outcome to prepare goods which can be used by any citizen.'''
 

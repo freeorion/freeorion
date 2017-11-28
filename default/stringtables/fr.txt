@@ -10203,7 +10203,7 @@ Design Transcendant
 
 PRO_TRANS_DESIGN_DESC
 '''Transcendant les limitations de créativité des espèces, les représentants les plus inventifs et innovants des différentes espèces peuplant l'empire, entreprennent d'œuvrer collectivement à la conception de biens universellement utilisables.
-Bâtir la structure [[building BLD_INTERSPECIES_ACADEMY]] sur différentes planètes garantit que ce procédé soit diffusé à travers tout l'empire.
+Bâtir la structure [[buildingtype BLD_INTERSPECIES_ACADEMY]] sur différentes planètes garantit que ce procédé soit diffusé à travers tout l'empire.
 
 Le service de Stock Impérial utilise le résultat de cette expérience pour produire des biens pouvant être utilisés par tout citoyen.'''
 
