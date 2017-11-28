@@ -442,7 +442,9 @@ def get_colony_fleets():
 
     reserved_outpost_base_targets = foAI.foAIstate.qualifyingOutpostBaseTargets.keys()
     max_queued_outpost_bases = max(1, int(2 * empire.productionPoints / outpost_cost))
-    considered_outpost_base_targets = (set(reserved_outpost_base_targets) - set(outpost_targeted_planet_ids))
+    considered_outpost_base_targets = (set(reserved_outpost_base_targets)
+                                       - set(outpost_targeted_planet_ids)
+                                       - set(colony_targeted_planet_ids))
     if tech_is_complete(AIDependencies.OUTPOSTING_TECH) and considered_outpost_base_targets:
         print "Considering to build outpost bases for %s" % reserved_outpost_base_targets
         for pid in considered_outpost_base_targets:
