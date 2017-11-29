@@ -1362,6 +1362,40 @@ class OrbitalBaseManager(object):
     def get_building_loc(self, target):
         return self.qualifying_targets[target][0]
 
+    def _enqueued_base_has_valid_target(self, build_location):
+        """Tries to assign a target planet for a base built at the specified location."""
+        # Try to find the target planet for which this base was enqueued
+        original_target = next((target for target, (loc, built) in self.target_candidates.items()
+                                if loc == build_location and built == build_location), None)
+
+        if original_target:
+            debug("%s base built at %d still has its original target." % (
+                self.base_type, build_location))
+            # do not assign the target of this base to another base
+            del self.target_candidates[original_target]
+            return True
+
+        # The original target seems to be no longer valid - this could happen
+        # if it was already claimed (possibly by another player).
+        # In this case, we try to find another valid target within the same
+        # which has not already been assigned a base.
+        alternative_target = next((target for target, (loc, built) in self.target_candidates.items()
+                                   if loc == build_location and built == -1), None)
+        if alternative_target:
+            debug("Reassigning %s base built at %d to new target %d as old target is no longer valid" % (
+                self.base_type, build_location, alternative_target))
+
+            # register the new target for the base so we do not build another
+            # base for the target.
+            self.qualifying_targets[alternative_target] = [build_location, build_location]
+
+            # do not assign the target of this base to another base.
+            del self.target_candidates[alternative_target]
+            return True
+
+        # could not find a target for the base
+        return False
+
     def handle_bases_in_production_queue(self):
         """Clean up and count the bases in the production queue with valid target.
 
@@ -1371,7 +1405,8 @@ class OrbitalBaseManager(object):
         # TODO: Consider pausing the item rather than deleting.
         self.target_candidates = dict(self.qualifying_targets)
         self.num_enqueued_bases = 0
-        for element in fo.getEmpire().productionQueue:
+        items_to_delete = []
+        for idx, element in enumerate(fo.getEmpire().productionQueue):
 
             if element.buildType != EmpireProductionTypes.BT_SHIP:
                 continue
@@ -1382,7 +1417,14 @@ class OrbitalBaseManager(object):
             if foAI.foAIstate.get_ship_role(element.designID) != self.role:
                 continue
 
-            self.num_enqueued_bases += 1
+            if self._enqueued_base_has_valid_target(element.locationID):
+                self.num_enqueued_bases += 1
+            else:
+                items_to_delete.append(idx)
+
+        items_to_delete.sort(reverse=True)
+        for idx in items_to_delete:
+            fo.issueDequeueProductionOrder(idx)
 
 
 class OrbitalOutpostBaseManager(OrbitalBaseManager):
