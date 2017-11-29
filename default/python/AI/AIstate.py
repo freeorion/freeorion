@@ -7,6 +7,7 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 from common.print_utils import Table, Text, Float
 
 import AIFleetMission
+import ColonisationAI
 import ExplorationAI
 import FleetUtilsAI
 from EnumsAI import MissionType, ShipRoleType
@@ -68,6 +69,11 @@ def convert_to_version(state, version):
     if version <= 3:
         raise ConversionError("The AI savegame version is no longer supported.")
 
+    if version == 4:
+        del state['qualifyingOutpostBaseTargets']
+        del state['qualifyingColonyBaseTargets']
+        state['orbital_colonization_manager'] = ColonisationAI.OrbitalColonizationManager()
+
     #   state["some_new_member"] = some_default_value
     #   del state["some_removed_member"]
     #   state["list_changed_to_set"] = set(state["list_changed_to_set"])
@@ -95,7 +101,7 @@ class AIstate(object):
     via boost. If desiring to store a reference to a UniverseObject store its
     object id instead; for enum values store their int conversion value.
     """
-    version = 3
+    version = 4
 
     def __init__(self, aggression):
         # Do not allow to create AIstate instances with an invalid version number.
@@ -153,8 +159,7 @@ class AIstate(object):
         self.militaryRating = 0
         self.shipCount = 4
         self.misc = {}
-        self.qualifyingColonyBaseTargets = {}
-        self.qualifyingOutpostBaseTargets = {}
+        self.orbital_colonization_manager = ColonisationAI.OrbitalColonizationManager()
         self.qualifyingTroopBaseTargets = {}
         # TODO: track on a per-empire basis
         self.__empire_standard_enemy = CombatRatingsAI.default_ship_stats().get_stats(hashable=True)
@@ -804,8 +809,6 @@ class AIstate(object):
         self.__clean_fleet_roles(just_resumed=True)
         fleetsLostBySystem.clear()
         empireStars.clear()
-        self.qualifyingColonyBaseTargets.clear()
-        self.qualifyingOutpostBaseTargets.clear()
         self.qualifyingTroopBaseTargets.clear()
 
     def __clean_fleet_roles(self, just_resumed=False):
@@ -955,9 +958,7 @@ class AIstate(object):
         """Cleanup invalid entries in qualifying base targets."""
         universe = fo.getUniverse()
         empire_id = fo.empireID()
-        for dct in [self.qualifyingTroopBaseTargets,
-                    self.qualifyingColonyBaseTargets,
-                    self.qualifyingOutpostBaseTargets]:
+        for dct in [self.qualifyingTroopBaseTargets]:
             for pid in dct.keys():
                 planet = universe.getPlanet(pid)
                 if planet and planet.ownedBy(empire_id):
@@ -969,6 +970,7 @@ class AIstate(object):
         self.__refresh()  # TODO: Use turn_state instead
         self.__border_exploration_update()
         self.__cleanup_qualifiying_base_targets()
+        self.orbital_colonization_manager.turn_start_cleanup()
         self.__clean_fleet_roles()
         self.__clean_fleet_missions()
         print "Fleets lost by system: %s" % fleetsLostBySystem

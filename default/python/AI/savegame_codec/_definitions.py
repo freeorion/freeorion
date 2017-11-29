@@ -4,6 +4,7 @@ try:
     import fleet_orders
     import character.character_module
     import AIstate
+    import ColonisationAI
     trusted_classes = {"%s.%s" % (cls.__module__, cls.__name__): cls for cls in [
         AIFleetMission.AIFleetMission,
         fleet_orders.AIFleetOrder,
@@ -20,6 +21,8 @@ try:
         character.character_module.EmpireIDTrait,
         character.character_module.Character,
         AIstate.AIstate,
+        ColonisationAI.OrbitalColonizationManager,
+        ColonisationAI.OrbitalColonizationPlan,
     ]}
 except RuntimeError:
     # unit test throws this at the moment during imports  TODO handle cleaner
