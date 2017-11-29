@@ -446,7 +446,7 @@ def get_colony_fleets():
                                        - set(outpost_targeted_planet_ids)
                                        - set(colony_targeted_planet_ids))
     if tech_is_complete(AIDependencies.OUTPOSTING_TECH) and considered_outpost_base_targets:
-        print "Considering to build outpost bases for %s" % reserved_outpost_base_targets
+        print "Considering to build outpost bases for %s" % considered_outpost_base_targets
         for pid in considered_outpost_base_targets:
             if len(queued_outpost_bases) >= max_queued_outpost_bases:
                 print "Too many queued outpost bases to build any more now"
@@ -460,16 +460,14 @@ def get_colony_fleets():
             for species in empire_colonizers:
                 this_score = max(this_score, evaluate_planet(pid, MissionType.COLONISATION, species, []))
             planet = universe.getPlanet(pid)
-            if this_score == 0:
-                # print "Potential outpost base (rejected) for %s to be built at planet id(%d); outpost score %.1f" % (
-                # ((planet and planet.name) or "unknown"), loc, this_score)
+            if this_score <= 0:
                 continue
-            print "Potential outpost base for %s to be built at planet id(%d); outpost score %.1f" % (
-                ((planet and planet.name) or "unknown"), loc, this_score)
-            if this_score < 100:
-                print "Potential outpost base (rejected) for %s to be built at planet id(%d); outpost score %.1f" % (
-                    ((planet and planet.name) or "unknown"), loc, this_score)
+            elif this_score < 100:
+                print "Potential outpost base (rejected) for %s to be built at planet %s; outpost score %.1f" % (
+                    (planet, universe.getPlanet(loc), this_score))
                 continue
+            print "Potential outpost base for %s to be built at planet %s; outpost score %.1f" % (
+                (planet, universe.getPlanet(loc), this_score))
             best_ship, col_design, build_choices = ProductionAI.get_best_ship_info(
                 PriorityType.PRODUCTION_ORBITAL_OUTPOST, loc)
             if best_ship is None:
