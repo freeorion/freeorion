@@ -15,10 +15,6 @@ For class instances, the __getstate__ method is invoked to get its content.
 If not defined, its __dict__ will be encoded instead.
 
 If an object could not be encoded, raise a CanNotSaveGameException.
-
-Example usage:
-    Importing this module directly is not advised.
-    Use the exported functions when importing the package instead.
 """
 import collections
 

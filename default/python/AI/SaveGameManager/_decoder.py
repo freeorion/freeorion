@@ -10,10 +10,6 @@ if an unknown/untrusted object is encountered, it will raise a InvalidSaveGameEx
 When classes are loaded, their __setstate__ method will be invoked if available or
 the __dict__ content will be set directly. It is the responsiblity of the trusted classes
 to provide a __setstate__ method to verify and possibly sanitize the content of the passed state.
-
-Example usage:
-    Importing this module directly is not advised.
-    Use the exported functions when importing the package instead.
 """
 import json
 
@@ -25,6 +21,9 @@ from _definitions import *
 
 @profile
 def load_savegame_string(string):
+    """
+    :rtype: AIstate
+    """
     import zlib
     try:
         string = zlib.decompress(string)
@@ -50,7 +49,6 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
         return self.__interpret(retval)
 
     def __interpret_dict(self, obj):
-
         # if the dict does not contain the class-encoding keys,
         # then it is a standard dictionary.
         if not all(key in obj for key in ('__class__', '__module__')):
