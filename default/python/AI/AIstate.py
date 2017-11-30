@@ -1,5 +1,6 @@
 import copy
 from collections import Counter, OrderedDict as odict
+from operator import itemgetter
 from time import time
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -166,11 +167,10 @@ class AIstate(object):
             self.__init__(aggression)
             return
 
+        # build the ordered dict with sorted entries from the (unsorted) dict
+        # that is contained in the savegame state.
         for content in ("colonisablePlanetIDs", "colonisableOutpostIDs"):
-            # could be that there is only a different species definition file
-            # but could also be some attempt to get in some nasty string.
-            sorted_planets = state[content].items()
-            sorted_planets.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
+            sorted_planets = state[content].items().sort(key=itemgetter(1), reverse=True)
             state[content] = odict(sorted_planets)
 
         self.__dict__ = state
