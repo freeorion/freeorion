@@ -1,3 +1,5 @@
+import pytest
+
 import SaveGameManager
 
 
@@ -74,20 +76,16 @@ def test_simple_object_encoding():
         test_encoding(obj)
 
     for obj in (lambda x: 1, test_encoding, OldStyleClass, DummyTestClass):
-        try:
+        with pytest.raises(SaveGameManager.CanNotSaveGameException,
+                           message="Could save unsupported, potentially dangerous object."):
             test_encoding(obj)
-            raise AssertionError("Could save unsupported, potentially dangerous object.")
-        except SaveGameManager.CanNotSaveGameException:
-            pass
 
 
 def test_class_encoding():
     obj = DummyTestClass()
-    try:
-        retval = SaveGameManager.encode(obj)
-        raise AssertionError("Could save game eventhough test module should not be trusted!")
-    except SaveGameManager.CanNotSaveGameException:
-        pass
+    with pytest.raises(SaveGameManager.CanNotSaveGameException,
+                       message="Could save game eventhough test module should not be trusted!"):
+        SaveGameManager.encode(obj)
 
     with TrustedScope():
         retval = SaveGameManager.encode(obj)
@@ -111,30 +109,21 @@ def test_class_encoding():
         assert loaded_values == original_values
         assert loaded_dict == original_dict
 
-    try:
-        loaded_obj = SaveGameManager.decode(retval)
-        raise AssertionError("Could load object from untrusted module")
-    except SaveGameManager.InvalidSaveGameException:
-        pass
+    with pytest.raises(SaveGameManager.InvalidSaveGameException,
+                       message="Could load object from untrusted module"):
+        SaveGameManager.decode(retval)
 
 
 def test_getstate_call():
     with TrustedScope():
-        try:
+        with pytest.raises(Success, message="__getstate__ was not called during encoding."):
             SaveGameManager.encode(GetStateTester())
-            raise AssertionError("__getstate__ was not called during encoding.")
-        except Success:
-            pass
 
 
 def test_setstate_call():
     with TrustedScope():
-        try:
-            retval = SaveGameManager.decode(SaveGameManager.encode(SetStateTester()))
-            raise AssertionError("__setstate__ was not called during decoding.")
-        except Success:
-            pass
-
+        with pytest.raises(Success, message="__setstate__ was not called during decoding."):
+            SaveGameManager.decode(SaveGameManager.encode(SetStateTester()))
 
 def test_enums():
     import EnumsAI
