@@ -112,10 +112,11 @@ namespace {
         return retval;
     }
 
-    float CalculateNewStockpile(int empire_id, int stockpile_location_id, float starting_stockpile,
-        const std::map<std::set<int>, float>& available_pp,
-        const std::map<std::set<int>, float>& allocated_pp,
-        const std::map<std::set<int>, float>& allocated_stockpile_pp)
+    float CalculateNewStockpile(int empire_id, int stockpile_location_id,
+                                float starting_stockpile,
+                                const std::map<std::set<int>, float>& available_pp,
+                                const std::map<std::set<int>, float>& allocated_pp,
+                                const std::map<std::set<int>, float>& allocated_stockpile_pp)
     {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
@@ -325,21 +326,20 @@ namespace {
 
             float stockpile_drawdown = allocation <= group_drawdown ?  0.0f : (allocation - group_drawdown);
                                        // 0.0f : (allocation - group_drawdown) / stockpile_conversion_rate;
-            TraceLogger() << "allocation " << allocation
-                          << " group_drawdown " << group_drawdown
-                          << " stockpile_drawdown" << stockpile_drawdown;
+            TraceLogger() << "allocation: " << allocation
+                          << "  group_drawdown: " << group_drawdown
+                          << "  stockpile_drawdown: " << stockpile_drawdown;
 
             // record allocation from stockpile
             // protect against any slight mismatch that might possible happen from multiplying
             // and dividing by a very very small stockpile_conversion_rate
             stockpile_drawdown = std::min(stockpile_drawdown, available_stockpile);
-            if (stockpile_drawdown) {
-                TraceLogger() << "allocated " << stockpile_drawdown << " imperial PP";
+            if (stockpile_drawdown > 0) {
                 allocated_stockpile_pp[group] += stockpile_drawdown;
                 available_stockpile -= stockpile_drawdown;
             }
 
-            //DebugLogger() << "... leaving " << group_pp_available << " PP available to group";
+            TraceLogger() << "... leaving " << group_pp_available << " PP available to group";
 
 
             // check for completion
@@ -1131,6 +1131,10 @@ void ProductionQueue::Update() {
         if ((sim_time_until_now * 1e-6) >= TOO_LONG_TIME)
             break;
 
+        TraceLogger() << "sim turn: " << sim_turn << "  sim queue size: " << sim_queue.size();
+        if (sim_queue.empty() && sim_turn > 2)
+            break;
+
         allocated_pp.clear();
         allocated_stockpile_pp.clear();
 
@@ -1159,8 +1163,10 @@ void ProductionQueue::Update() {
                 sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
             }
         }
-        sim_pp_in_stockpile = CalculateNewStockpile(m_empire_id, stockpile_location_id, sim_pp_in_stockpile,
-                                                        available_pp, allocated_pp, allocated_stockpile_pp);
+        sim_pp_in_stockpile = CalculateNewStockpile(m_empire_id, stockpile_location_id,
+                                                    sim_pp_in_stockpile,
+                                                    available_pp, allocated_pp,
+                                                    allocated_stockpile_pp);
         sim_available_stockpile = std::min(sim_pp_in_stockpile, pp_use_limit->Current());
     }
 
