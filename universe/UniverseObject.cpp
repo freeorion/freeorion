@@ -14,7 +14,6 @@
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
 
-
 // static(s)
 const int INVALID_OBJECT_ID      = -1;
 const int TEMPORARY_OBJECT_ID    = -2;
@@ -317,13 +316,6 @@ void UniverseObject::MoveTo(std::shared_ptr<UniverseObject> object) {
 }
 
 void UniverseObject::MoveTo(double x, double y) {
-    if ((x < 0.0 || GetUniverse().UniverseWidth() < x || y < 0.0 || GetUniverse().UniverseWidth() < y)
-        && (x != INVALID_POSITION || y != INVALID_POSITION))
-    {
-        DebugLogger() << "UniverseObject::MoveTo : Placing object \"" << m_name << "\" ("
-                      << m_id << ") outside the map area at (" << x << ", " << y << ").";
-    }
-
     if (m_x == x && m_y == y)
         return;
 
