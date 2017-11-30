@@ -30,11 +30,8 @@
 ObjectMap::ObjectMap()
 {}
 
-ObjectMap::~ObjectMap() {
-    // Make sure to call ObjectMap::Clear() before destruction somewhere if
-    // this ObjectMap contains any unique pointers to UniverseObject objects.
-    // Otherwise, the pointed-to UniverseObjects will be leaked memory...
-}
+ObjectMap::~ObjectMap()
+{}
 
 void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id/* = ALL_EMPIRES*/) {
     if (&copied_map == this)
