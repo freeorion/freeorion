@@ -13,8 +13,6 @@
 
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
-// TODO replace with std::clamp when converting to C++17
-#include <boost/algorithm/clamp.hpp>
 
 // static(s)
 const int INVALID_OBJECT_ID      = -1;
@@ -23,14 +21,6 @@ const int TEMPORARY_OBJECT_ID    = -2;
 const double    UniverseObject::INVALID_POSITION  = -100000.0;
 const int       UniverseObject::INVALID_OBJECT_AGE = -(1 << 30) - 1;  // using big negative number to allow for potential negative object ages, which might be useful in the event of time travel.
 const int       UniverseObject::SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;
-
-namespace {
-    bool IsInvalidPosition(double x, double y) {
-        return ((x < 0.0 || GetUniverse().UniverseWidth() < x
-                 || y < 0.0 || GetUniverse().UniverseWidth() < y)
-                && (x != UniverseObject::INVALID_POSITION || y != UniverseObject::INVALID_POSITION));
-    }
-}
 
 UniverseObject::UniverseObject() :
     StateChangedSignal(blocking_combiner<boost::signals2::optional_last_value<void>>(
@@ -326,19 +316,6 @@ void UniverseObject::MoveTo(std::shared_ptr<UniverseObject> object) {
 }
 
 void UniverseObject::MoveTo(double x, double y) {
-    if (IsInvalidPosition(x, y)) {
-        auto fixed_x = boost::algorithm::clamp(x, 0.0f, GetUniverse().UniverseWidth());
-        auto fixed_y = boost::algorithm::clamp(y, 0.0f, GetUniverse().UniverseWidth());
-        WarnLogger() << "UniverseObject::MoveTo: Attempt to move object \"" << m_name
-                     << "\"(" << m_id << ") to an invalid position (" << x << ", " << y << ")"
-                     << " outside of the universe [(0,0), ("
-                     << GetUniverse().UniverseWidth() << ", "
-                     << GetUniverse().UniverseWidth() << ")]. Position was clamped to "
-                     << "(" << fixed_x << ", " << fixed_y << ").";
-        x = fixed_x;
-        y = fixed_y;
-    }
-
     if (m_x == x && m_y == y)
         return;
 
