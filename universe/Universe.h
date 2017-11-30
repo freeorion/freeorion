@@ -436,7 +436,7 @@ public:
 private:
     /* Pathfinder setup for the viewing empire
      */
-    std::shared_ptr<Pathfinder> const m_pathfinder;
+    std::shared_ptr<Pathfinder> m_pathfinder;
 
     /** Generates an object ID for a future object. Usually used by the server
       * to service new ID requests. */

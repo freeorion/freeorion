@@ -92,7 +92,7 @@ extern FO_COMMON_API const int ALL_EMPIRES            = -1;
 // class Universe
 /////////////////////////////////////////////
 Universe::Universe() :
-    m_pathfinder(new Pathfinder),
+    m_pathfinder(std::make_shared<Pathfinder>()),
     m_universe_width(1000.0),
     m_inhibit_universe_object_signals(false),
     m_encoding_empire(ALL_EMPIRES),
@@ -138,6 +138,8 @@ void Universe::Clear() {
     m_stat_records.clear();
 
     m_universe_width = 1000.0;
+
+    m_pathfinder = std::make_shared<Pathfinder>();
 }
 
 void Universe::ResetAllIDAllocation(const std::vector<int>& empire_ids) {
