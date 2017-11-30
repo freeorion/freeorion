@@ -1605,7 +1605,7 @@ namespace {
             return;
 
         DebugLogger() << "Populating pre-defined ships with "
-                      << (are_monsters ? "monster":"ship") << " designs.";
+                      << std::string(are_monsters ? "monster" : "ship") << " designs.";
 
         FillDesignsOrderingAndNameTables(
             *parsed, designs, ordering, name_to_uuid);
