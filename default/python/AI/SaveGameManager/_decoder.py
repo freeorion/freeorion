@@ -85,8 +85,9 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
         return new_instance
 
     def __interpret(self, x):
+        """Interpret an object that was just decoded."""
         # primitive types do not have to be interpreted
-        if x is None or isinstance(x, (int, float, bool)):
+        if isinstance(x, (int, float)):
             return x
 
         # special handling for dicts as they could encode our classes
@@ -94,8 +95,8 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
             return self.__interpret_dict(x)
 
         # for standard containers, interpret each element
-        if isinstance(x, (list, tuple, set)):
-            return x.__class__(self.__interpret(element) for element in x)
+        if isinstance(x, list):
+            return list(self.__interpret(element) for element in x)
 
         # encode a unicode str according to systems standard encoding
         if isinstance(x, unicode):
@@ -157,8 +158,10 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
             if x == NONE:
                 return None
 
-        # no special cases apply at this point, just return the value
-        return x
+            # no special cases apply at this point, should be a standard string
+            return x
+
+        raise TypeError("Unexpected type %s (%s)" % (type(x), x))
 
 
 def _replace_quote_placeholders(s):
