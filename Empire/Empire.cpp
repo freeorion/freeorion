@@ -86,23 +86,32 @@ namespace {
 // Note that for very small values of the options (less than 5%), when dealing with very low cost items the effect/protection may be noticeably less than expected because of
 // interactions with the ProductionQueue Epsilon value (0.01)
 
-    float CalculateProductionPerTurnLimit(const ProductionQueue::Element& queue_element, float item_cost, int build_turns) {
+    float CalculateProductionPerTurnLimit(const ProductionQueue::Element& queue_element,
+                                          float item_cost, int build_turns)
+    {
         const float frontload_limit_factor = GetQueueFrontloadFactor();
         // any allowed topping up is limited by how much frontloading was allowed
-        const float topping_up_limit_factor = std::max(0.0f, GetQueueToppingFactor() - frontload_limit_factor);
+        const float topping_up_limit_factor =
+            std::max(0.0f, GetQueueToppingFactor() - frontload_limit_factor);
 
         item_cost *= queue_element.blocksize;
         build_turns = std::max(build_turns, 1);
-        float element_accumulated_PP = queue_element.progress*item_cost;                        // effective PP accumulated by this element towards producing next item. progress is a fraction between 0 and 1.
-        float element_total_cost = item_cost * queue_element.remaining;                         // total PP to produce all items in this element
-        float additional_pp_to_complete_element = element_total_cost - element_accumulated_PP;  // additional PP, beyond already-accumulated PP, to produce all items in this element
-        float additional_pp_to_complete_item = item_cost - element_accumulated_PP;              // additional PP, beyond already-accumulated PP, to produce the current item of this element
+        float element_accumulated_PP = queue_element.progress*item_cost;            // effective PP accumulated by this element towards producing next item. progress is a fraction between 0 and 1.
+        float element_total_cost = item_cost * queue_element.remaining;             // total PP to produce all items in this element
+        float additional_pp_to_complete_element =
+            element_total_cost - element_accumulated_PP;                            // additional PP, beyond already-accumulated PP, to produce all items in this element
+        float additional_pp_to_complete_item = item_cost - element_accumulated_PP;  // additional PP, beyond already-accumulated PP, to produce the current item of this element
         float basic_element_per_turn_limit = item_cost / build_turns;
         // the extra constraints on frontload and topping up amounts ensure that won't let complete in less than build_turns (so long as costs do not decrease)
-        float frontload = (1.0 + frontload_limit_factor/std::max(build_turns-1,1)) * basic_element_per_turn_limit  - 2 * EPSILON;
-        float topping_up_limit = basic_element_per_turn_limit + std::min(topping_up_limit_factor * item_cost, basic_element_per_turn_limit - 2 * EPSILON);
-        float topping_up = (additional_pp_to_complete_item < topping_up_limit) ? additional_pp_to_complete_item : basic_element_per_turn_limit;
-        float retval = std::min(additional_pp_to_complete_element, std::max(basic_element_per_turn_limit, std::max(frontload, topping_up)));
+        float frontload = (1.0 + frontload_limit_factor/std::max(build_turns-1,1)) *
+            basic_element_per_turn_limit  - 2 * EPSILON;
+        float topping_up_limit = basic_element_per_turn_limit +
+            std::min(topping_up_limit_factor * item_cost, basic_element_per_turn_limit - 2 * EPSILON);
+        float topping_up = (additional_pp_to_complete_item < topping_up_limit) ?
+            additional_pp_to_complete_item : basic_element_per_turn_limit;
+        float retval = std::min(additional_pp_to_complete_element,
+                                std::max(basic_element_per_turn_limit,
+                                         std::max(frontload, topping_up)));
         //DebugLogger() << "CalculateProductionPerTurnLimit for item " << queue_element.item.build_type << " " << queue_element.item.name 
         //              << " " << queue_element.item.design_id << " :  accumPP: " << element_accumulated_PP << " pp_to_complete_elem: "
         //              << additional_pp_to_complete_element << " pp_to_complete_item: " << additional_pp_to_complete_item 
@@ -128,18 +137,19 @@ namespace {
         float new_contributions = 0.0f;
         for (auto const& available_group : available_pp) {
             auto alloc_it = allocated_pp.find(available_group.first);
-            float allocated_here = (alloc_it == allocated_pp.end()) ? 0.0f : alloc_it->second;
+            float allocated_here = (alloc_it == allocated_pp.end())
+                ? 0.0f : alloc_it->second;
             float excess_here = available_group.second - allocated_here;
             if (excess_here < EPSILON)
                 continue;
             // Transfer excess to stockpile
             new_contributions += excess_here * stockpile_transfer_efficiency;
-            TraceLogger() << "allocated_here " << allocated_here
-                          << " excess_here " << excess_here
-                          << " new_contributions " << new_contributions;
+            TraceLogger() << "allocated here: " << allocated_here
+                          << "  excess here: " << excess_here
+                          << "  to stockpile: " << new_contributions;
         }
-        TraceLogger() << "starting_stockpile " << starting_stockpile 
-                      << "  stockpile_used " << stockpile_used;
+        TraceLogger() << "starting_stockpile: " << starting_stockpile 
+                      << "  stockpile_used: " << stockpile_used;
         return starting_stockpile + new_contributions - stockpile_used;
     }
 
@@ -147,10 +157,11 @@ namespace {
       * nonzero funding to a Tech if it is researchable this turn.  Also
       * determines total number of spent RP (returning by reference in
       * total_RPs_spent) */
-    void SetTechQueueElementSpending(float RPs, const std::map<std::string, float>& research_progress,
-                                     const std::map<std::string, TechStatus>& research_status,
-                                     ResearchQueue::QueueType& queue,
-                                     float& total_RPs_spent, int& projects_in_progress, int empire_id)
+    void SetTechQueueElementSpending(
+        float RPs, const std::map<std::string, float>& research_progress,
+        const std::map<std::string, TechStatus>& research_status,
+        ResearchQueue::QueueType& queue, float& total_RPs_spent,
+        int& projects_in_progress, int empire_id)
     {
         total_RPs_spent = 0.0f;
         projects_in_progress = 0;
@@ -214,14 +225,17 @@ namespace {
       * Elements will not receive funding if they cannot be produced by the
       * empire with the indicated \a empire_id this turn at their build location. 
       * Also checks if elements will be completed this turn. */
-    void SetProdQueueElementSpending(std::map<std::set<int>, float> available_pp, float available_stockpile, int stockpile_location_id,
-                                     const std::vector<std::set<int>>& queue_element_resource_sharing_object_groups,
-                                     const std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<float, int>>& queue_item_costs_and_times,
-                                     const std::vector<bool>& is_producible,
-                                     ProductionQueue::QueueType& queue,
-                                     std::map<std::set<int>, float>& allocated_pp,
-                                     std::map<std::set<int>, float>& allocated_stockpile_pp,
-                                     int& projects_in_progress, bool simulating)
+    void SetProdQueueElementSpending(
+        std::map<std::set<int>, float> available_pp, float available_stockpile,
+        int stockpile_location_id,
+        const std::vector<std::set<int>>& queue_element_resource_sharing_object_groups,
+        const std::map<std::pair<ProductionQueue::ProductionItem, int>,
+                       std::pair<float, int>>& queue_item_costs_and_times,
+        const std::vector<bool>& is_producible,
+        ProductionQueue::QueueType& queue,
+        std::map<std::set<int>, float>& allocated_pp,
+        std::map<std::set<int>, float>& allocated_stockpile_pp,
+        int& projects_in_progress, bool simulating)
     {
         //DebugLogger() << "========SetProdQueueElementSpending========";
         //DebugLogger() << "production status: ";
@@ -249,8 +263,8 @@ namespace {
         //DebugLogger() << "queue size: " << queue.size();
         int i = 0;
         for (auto& queue_element : queue) {
+            queue_element.allocated_pp = 0.0f;  // default, to be updated below...
             if (queue_element.paused) {
-                queue_element.allocated_pp = 0.0f;
                 ++i;
                 continue;
             }
@@ -308,8 +322,9 @@ namespace {
             float stockpile_available_for_this = 
                 (queue_element.allowed_imperial_stockpile_use) ? available_stockpile : 0;
 
-            float allocation = std::max(0.0f, std::min(element_this_turn_limit, 
-                                                       group_pp_available + stockpile_available_for_this));
+            float allocation = std::max(0.0f,
+                std::min(element_this_turn_limit,
+                         group_pp_available + stockpile_available_for_this));
 
             //DebugLogger() << "element accumulated " << element_accumulated_PP << " of total cost "
             //                       << element_total_cost << " and needs " << additional_pp_to_complete_element
@@ -327,8 +342,10 @@ namespace {
             float stockpile_drawdown = allocation <= group_drawdown ?  0.0f : (allocation - group_drawdown);
                                        // 0.0f : (allocation - group_drawdown) / stockpile_conversion_rate;
             TraceLogger() << "allocation: " << allocation
-                          << "  group_drawdown: " << group_drawdown
-                          << "  stockpile_drawdown: " << stockpile_drawdown;
+                          << "  to: " << queue_element.item.name
+                          << "  from group: " << group_drawdown
+                          << "  from stockpile: " << stockpile_drawdown
+                          << "  group remaining: " << group_pp_available;
 
             // record allocation from stockpile
             // protect against any slight mismatch that might possible happen from multiplying
@@ -338,8 +355,6 @@ namespace {
                 allocated_stockpile_pp[group] += stockpile_drawdown;
                 available_stockpile -= stockpile_drawdown;
             }
-
-            TraceLogger() << "... leaving " << group_pp_available << " PP available to group";
 
 
             // check for completion
