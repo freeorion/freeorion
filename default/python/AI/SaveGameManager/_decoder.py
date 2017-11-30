@@ -165,7 +165,20 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
 
 
 def _replace_quote_placeholders(s):
-    """Replace PLACEHOLDER with quotes if not nested within another encoded container"""
+    """Replace PLACEHOLDER with quotes if not nested within another encoded container.
+
+    To be able to use tuples as dictionary keys, to use standard json decoder,
+    the entire tuple with its content must be encoded as a single string.
+    The inner objects may no longer be quoted as that would prematurely terminate
+    the strings. Inner quotes are therefore replaced with the PLACEHOLDER char.
+
+    Example:
+        output = encode(tuple(["1", "string"]))
+        "__TUPLE__([$1$, $string$])"
+
+    To be able to decode the inner content, the PLACEHOLDER must be converted
+    to quotes again.
+    """
     n = 0  # counts nesting level (i.e. number of opened but not closed parentheses)
     start = 0  # starting point for string replacement
     for i in range(len(s)):
