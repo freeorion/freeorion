@@ -165,7 +165,6 @@ def calc_max_pop(planet, species, detail):
                     pop_const_mod, planet_size, base_pop_modified_by_species,
                     pop_tag_mod, base_pop_modified_by_species, base_pop_not_modified_by_species, max_pop_size()))
     detail.append("maxPop %.1f" % max_pop_size())
-    print detail
     return max_pop_size()
 
 
