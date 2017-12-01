@@ -265,6 +265,9 @@ namespace {
         for (auto& queue_element : queue) {
             queue_element.allocated_pp = 0.0f;  // default, to be updated below...
             if (queue_element.paused) {
+                TraceLogger() << "allocation: " << queue_element.allocated_pp
+                              << "  to: " << queue_element.item.name
+                              << "  due to it being paused";
                 ++i;
                 continue;
             }
@@ -277,9 +280,9 @@ namespace {
 
             if ((group_pp_available <= 0) && 
                 (available_stockpile <= 0 || !queue_element.allowed_imperial_stockpile_use)) {
-                //DebugLogger() << "resource sharing group for queue element has no resources.  and either"
-                //              << "no stockpile PP is available or element is not enabled for stockpile.  "
-                //              << "Not allocating any resources to element";
+                TraceLogger() << "allocation: " << queue_element.allocated_pp
+                              << "  to: " << queue_element.item.name
+                              << "  due to lack of available PP in group";
                 queue_element.allocated_pp = 0.0f;
                 ++i;
                 continue;
@@ -291,7 +294,8 @@ namespace {
             if (!is_producible[i]) {
                 // can't be produced at this location this turn.
                 queue_element.allocated_pp = 0.0f;
-                //DebugLogger() << "item can't be produced at location this turn";
+                TraceLogger() << "allocation: " << queue_element.allocated_pp
+                              << "  to unproducible item: " << queue_element.item.name;
                 ++i;
                 continue;
             }
@@ -307,8 +311,8 @@ namespace {
                 item_cost = time_cost_it->second.first;
                 build_turns = time_cost_it->second.second;
             } else {
-                ErrorLogger() << "item " << queue_element.item.name 
-                              << " somehow failed time cost lookup for location " << location_id;
+                ErrorLogger() << "item: " << queue_element.item.name 
+                              << "  somehow failed time cost lookup for location " << location_id;
             }
             //DebugLogger() << "item " << queue_element.item.name << " costs " << item_cost << " for " << build_turns << " turns";
 
