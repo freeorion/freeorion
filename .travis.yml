@@ -1,4 +1,8 @@
 language: cpp
+
+# ccache caches obj files between builds
+cache: ccache
+
 matrix:
   include:
     - os: linux
@@ -34,6 +38,10 @@ install:
       hdiutil attach FreeOrionSDK.dmg
       tar -xjf /Volumes/FreeOrionSDK/dep.tar.bz2 -C Xcode
       hdiutil detach /Volumes/FreeOrionSDK
+
+      # download and setup ccache
+      brew install ccache
+      export PATH="/usr/local/opt/ccache/libexec:$PATH"
     fi
 before_script:
   # Configure git to use the identity of FreeOrion Build Bot and
