@@ -171,7 +171,6 @@ namespace {
 
         // Register hotkey names/default values for the context "map".
         Hotkey::AddHotkey("ui.map.open",        UserStringNop("HOTKEY_MAP_RETURN_TO_MAP"),        GG::GGK_ESCAPE);
-        Hotkey::AddHotkey("ui.map.messages.open",            UserStringNop("HOTKEY_MAP_OPEN_CHAT"),            GG::GGK_t,          GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("ui.turn.end",             UserStringNop("HOTKEY_MAP_END_TURN"),             GG::GGK_RETURN,     GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("ui.map.sitrep",              UserStringNop("HOTKEY_MAP_SIT_REP"),              GG::GGK_n,          GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("ui.research",             UserStringNop("HOTKEY_MAP_RESEARCH"),             GG::GGK_r,          GG::MOD_KEY_CTRL);
@@ -6165,11 +6164,6 @@ void MapWnd::ShowMessages() {
     m_btn_messages->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
 }
 
-bool MapWnd::OpenMessages() {
-    ShowMessages();
-    return true;
-}
-
 void MapWnd::HideMessages() {
     if (ClientUI* cui = ClientUI::GetClientUI()) {
         cui->GetMessageWnd()->Hide();
@@ -6973,8 +6967,6 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     HotkeyManager* hkm = HotkeyManager::GetManager();
 
     hkm->Connect(boost::bind(&MapWnd::ReturnToMap, this), "ui.map.open",
-                 AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::OpenMessages, this), "ui.map.messages.open",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::EndTurn, this), "ui.turn.end",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));

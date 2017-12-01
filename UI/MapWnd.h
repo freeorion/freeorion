@@ -383,7 +383,6 @@ private:
 
     bool ToggleMessages();
     void ShowMessages();
-    bool OpenMessages();
     void HideMessages();
 
     bool ToggleSitRep();
