@@ -1,10 +1,11 @@
 Tech
-    name = "PRO_IMPERIAL_STOCKPILE_3"
-    description = "PRO_IMPERIAL_STOCKPILE_3_DESC"
+    name = "PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY"
+    description = "PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY_DESC"
     short_description = "IMPERIAL_STOCKPILE_SHORT_DESC"
     category = "PRODUCTION_CATEGORY"
     researchcost = 100 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
+	tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
     prerequisites = [
         "PRO_SENTIENT_AUTOMATION"
         "LRN_GRAVITONICS"

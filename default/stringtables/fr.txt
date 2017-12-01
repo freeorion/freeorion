@@ -5101,9 +5101,9 @@ Ratio Transfert Industrie vers Stock de PP
 METER_IMPERIAL_PP_TRANSFER_EFFICIENCY_VALUE_DESC
 '''Le ratio de transfert représente l'efficience de mise en stock de points vers le [[IMPERIAL_STOCKPILE]], les rendant disponibles pour toute production à travers tout l'empire.
 
-Vous démarrez avec la technologie [[tech PRO_IMPERIAL_STOCKPILE_1]] et un ratio de 0.2 (i.e. 20% des PP en excédent sont transférés au [[IMPERIAL_STOCKPILE]]).
-Les technologies [[tech PRO_IMPERIAL_STOCKPILE_2]] et [[tech PRO_IMPERIAL_STOCKPILE_3]] ajoutent chacune 0.2 de ratio.
-La technologie [[tech CON_TRANS_DESIGN]] ajoute jusqu'à 0.3 de ratio. Par conséquent, le ratio peut atteindre une efficience comprise entre 20% et 90%.''' 
+Vous démarrez avec la technologie [[tech PRO_PREDICTIVE_STOCKPILING]] et un ratio de 0.2 (i.e. 20% des PP en excédent sont transférés au [[IMPERIAL_STOCKPILE]]).
+Les technologies [[tech PRO_GENERIC_SUPPLIES]] et [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]] ajoutent chacune 0.2 de ratio.
+La technologie [[tech PRO_TRANS_DESIGN]] ajoute jusqu'à 0.3 de ratio. Par conséquent, le ratio peut atteindre une efficience comprise entre 20% et 90%.''' 
 
 METER_IMPERIAL_PP_USE_LIMIT_VALUE_LABEL
 Limite d'usage du Stock Impérial
@@ -5112,10 +5112,10 @@ METER_IMPERIAL_PP_USE_LIMIT_VALUE
 '''La Limite d'usage du Stock Impérial représente la compétence quantitative du Stock Impérial à approvisionner les projets avec des points de production.
 Sa valeur correspond au nombre de PP pouvant être puisés à chaque tour dans le Stock Impérial et alloués à la production. 
 
-Vous démarrez avec la technologie [[tech PRO_IMPERIAL_STOCKPILE_1]] et un usage de 2 points par tour.
-La technologie [[tech PRO_IMPERIAL_STOCKPILE_2]] autorise l'usage de 3 points supplémentaires par tour.
-La technologie [[tech PRO_IMPERIAL_STOCKPILE_3]] autorise l'usage de 5 points supplémentaires par tour.
-Pleinement exploitée, la technologie [[tech CON_TRANS_DESIGN]] autorise l'usage de 12 points supplémentaires par tour.
+Vous démarrez avec la technologie [[tech PRO_PREDICTIVE_STOCKPILING]] et un usage de 2 points par tour.
+La technologie [[tech PRO_GENERIC_SUPPLIES]] autorise l'usage de 3 points supplémentaires par tour.
+La technologie [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]] autorise l'usage de 5 points supplémentaires par tour.
+Pleinement exploitée, la technologie [[tech PRO_TRANS_DESIGN]] autorise l'usage de 12 points supplémentaires par tour.
 Par conséquent, la limite d'usage s'étale entre 2 et 22 PP par tour.''' 
 
 METER_RESEARCH_VALUE_LABEL
@@ -10198,22 +10198,22 @@ Tandis que la transformation d'une population entière en êtres de pure énergi
 
 Le stade ultime du développement physique est justement de transcender le caractère physique des choses. Sans corps, les individus et les sociétés pourraient migrer, croître et exister librement, sans être entravés par des limitations physiques inutiles et des processus métaboliques improductifs, gaspillant l'énergie afin d'assurer l'homéostasie.'''
 
-CON_TRANS_DESIGN
+PRO_TRANS_DESIGN
 Design Transcendant
 
-CON_TRANS_DESIGN_DESC
+PRO_TRANS_DESIGN_DESC
 '''Transcendant les limitations de créativité des espèces, les représentants les plus inventifs et innovants des différentes espèces peuplant l'empire, entreprennent d'œuvrer collectivement à la conception de biens universellement utilisables.
-Bâtir la structure [[building BLD_INTERSPECIES_ACADEMY]] sur différentes planètes garantit que ce procédé soit diffusé à travers tout l'empire.
+Bâtir la structure [[buildingtype BLD_INTERSPECIES_ACADEMY]] sur différentes planètes garantit que ce procédé soit diffusé à travers tout l'empire.
 
 Le service de Stock Impérial utilise le résultat de cette expérience pour produire des biens pouvant être utilisés par tout citoyen.'''
 
 IMPERIAL_STOCKPILE_SHORT_DESC
 Autorise le Stockage Impérial de Production
 
-PRO_IMPERIAL_STOCKPILE_1
+PRO_PREDICTIVE_STOCKPILING
 Stockage Anticipatif
 
-PRO_IMPERIAL_STOCKPILE_1_DESC
+PRO_PREDICTIVE_STOCKPILING_DESC
 '''Connaître où la demande future de certains biens augmentera, permet de stocker ceux-ci en prévision.
 Le service de Stock Impérial dispose d'une flotte acheminant les matériaux bruts vers des lieux où l'on prévoit que d'importants projets puissent être entrepris.
 Cette tâche s'avère difficile étant donné que le service doit présager du moment où la demande sera stipulée, à quel endroit, quels matériaux et biens seront requis et quels en seront les utilisateurs.
@@ -10224,10 +10224,10 @@ Un projet de la file d'attente de Production peut puiser dans le Stock Impérial
 Il s'agit donc de la technologie de base concernant le Stock Impérial.
 Le Stock Impérial débute avec un [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] de 20% et permet de puiser 2 PP / tour dans le Stock (cf. [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
 
-PRO_IMPERIAL_STOCKPILE_2
+PRO_GENERIC_SUPPLIES
 Stocks Génériques
 
-PRO_IMPERIAL_STOCKPILE_2_DESC
+PRO_GENERIC_SUPPLIES_DESC
 '''En choisissant avec précaution les chaînes d'approvisionnement, les matériaux, et les modèles de conception, des Stocks Génériques sont constitués, pouvant être facilement dissociés et réutilisés selon les besoins dans la plupart des productions industrielles.
 
 Les Stocks Génériques peuvent être constitués bien avant que la demande ne se fasse sentir. Les packages d'approvisionnement intègrent habituellement des dispositifs de mise en place d'infrastructures permettant de redéfinir la production de nouveaux biens à partir des Stocks Génériques.
@@ -10238,10 +10238,10 @@ Cela exempte le service du Stock Impérial de connaître à l'avance quels biens
 Il s'agit donc d'une technologie améliorant le Stock Impérial.
 Elle ajoute 20% au [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] et permet de puiser un supplément de 3 PP / tour dans le Stock (cf. [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
 
-PRO_IMPERIAL_STOCKPILE_3
+PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY
 Complexe d'Intrication Interstellaire
 
-PRO_IMPERIAL_STOCKPILE_3_DESC
+PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY_DESC
 '''L'intrication quantique des salles de contrôle permet de manœuvrer des machines industrielles à distance à partir d'autres systèmes stellaires.
 Dissocier le personnel et les moyens de production favorise un procédé optimal de conception et augmente l'efficience du service de Stock Impérial.
 

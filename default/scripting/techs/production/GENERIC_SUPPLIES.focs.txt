@@ -1,10 +1,11 @@
 Tech
-    name = "PRO_IMPERIAL_STOCKPILE_2"
-    description = "PRO_IMPERIAL_STOCKPILE_2_DESC"
+    name = "PRO_GENERIC_SUPPLIES"
+    description = "PRO_GENERIC_SUPPLIES_DESC"
     short_description = "IMPERIAL_STOCKPILE_SHORT_DESC"
     category = "PRODUCTION_CATEGORY"
     researchcost = 20 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
+	tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
     prerequisites = [
         "CON_ASYMP_MATS"
         "PRO_ROBOTIC_PROD"
