@@ -5108,7 +5108,7 @@ Technologies [[tech PRO_GENERIC_SUPPLIES]] and [[tech PRO_INTERSTELLAR_ENTANGLEM
 METER_IMPERIAL_PP_USE_LIMIT_VALUE_LABEL
 Imperial Stockpile Use Limit
 
-METER_IMPERIAL_PP_USE_LIMIT_VALUE
+METER_IMPERIAL_PP_USE_LIMIT_VALUE_DESC
 '''The Imperial Stockpile Use Limit represents the readyness of the imperial stockpile service to supply projects with production points.
 It gives the number of production points which may be taken per turn from the imperial stockpile to produce. 
 

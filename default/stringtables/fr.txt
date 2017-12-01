@@ -5108,7 +5108,7 @@ La technologie [[tech PRO_TRANS_DESIGN]] ajoute jusqu'à 0.3 de ratio. Par cons�
 METER_IMPERIAL_PP_USE_LIMIT_VALUE_LABEL
 Limite d'usage du Stock Impérial
 
-METER_IMPERIAL_PP_USE_LIMIT_VALUE
+METER_IMPERIAL_PP_USE_LIMIT_VALUE_DESC
 '''La Limite d'usage du Stock Impérial représente la compétence quantitative du Stock Impérial à approvisionner les projets avec des points de production.
 Sa valeur correspond au nombre de PP pouvant être puisés à chaque tour dans le Stock Impérial et alloués à la production. 
 
