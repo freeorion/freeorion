@@ -24,6 +24,15 @@ ENDIF(NOT CMAKE_BUILD_TYPE)
 
 message(STATUS "Build type CMAKE_BUILD_TYPE set to ${CMAKE_BUILD_TYPE}")
 
+# Configure CCache if available
+find_program(CCACHE_FOUND ccache)
+if(CCACHE_FOUND)
+  message(STATUS "cmake found ccache here ${CCACHE_FOUND}")
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_FOUND}")
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK "${CCACHE_FOUND}")
+else()
+  message(STATUS "cmake did not find ccache")
+endif(CCACHE_FOUND)
 
 ##
 ## Global project configuration
@@ -158,7 +167,6 @@ endif()
 if(UNIX AND NOT APPLE)
     add_definitions(-DENABLE_BINRELOC)
 endif()
-
 
 ##
 ## Collect project dependencies.
