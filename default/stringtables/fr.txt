@@ -5090,7 +5090,7 @@ Industrie
 METER_INDUSTRY_VALUE_DESC
 '''L'Industrie, mesurée en Points de Production (PP), représente la capacité de production et de transformation de biens matériels de l'ensemble des planètes de l'empire. Elle est nécessaire pour la construction des structures, des astronefs et tout autre projet.
 
-L'Industrie d'une planète peut participer à tout projet lancé sur les planètes qui lui sont reliées par lignes d'[[metertype METER_SUPPLY]] de l'empire. L'Industrie qui n'est affectée à aucun projet durant un tour est perdue (production gaspillée).
+L'Industrie d'une planète peut participer à tout projet lancé sur les planètes qui lui sont reliées par lignes d'[[metertype METER_SUPPLY]] de l'empire. L'Industrie qui n'est affectée à aucun projet durant un tour est convertie selon le [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] et ajoutée au Stock Impérial.
 
 Pour davantage d'informations sur l'interface de Production, consultez l'article [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
 '''
@@ -5108,7 +5108,7 @@ La technologie [[tech PRO_TRANS_DESIGN]] ajoute jusqu'à 0.3 de ratio. Par cons�
 METER_IMPERIAL_PP_USE_LIMIT_VALUE_LABEL
 Limite d'usage du Stock Impérial
 
-METER_IMPERIAL_PP_USE_LIMIT_VALUE
+METER_IMPERIAL_PP_USE_LIMIT_VALUE_DESC
 '''La Limite d'usage du Stock Impérial représente la compétence quantitative du Stock Impérial à approvisionner les projets avec des points de production.
 Sa valeur correspond au nombre de PP pouvant être puisés à chaque tour dans le Stock Impérial et alloués à la production. 
 

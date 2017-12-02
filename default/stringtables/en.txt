@@ -5090,7 +5090,7 @@ Industry
 METER_INDUSTRY_VALUE_DESC
 '''Industry represents the production and modification of physical goods. It is needed to produce buildings, space ships and other projects.
 
-The Industry of a planet can be used for any production projects of [[metertype METER_SUPPLY]] line connected planets. Any un-allocated Industry is lost each turn.
+The Industry of a planet can be used for any production projects of [[metertype METER_SUPPLY]] line connected planets. Any un-allocated Industry is converted via the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and added to the Imperial Stockpile.
 
 For information on the interface, see [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
 '''
@@ -5108,7 +5108,7 @@ Technologies [[tech PRO_GENERIC_SUPPLIES]] and [[tech PRO_INTERSTELLAR_ENTANGLEM
 METER_IMPERIAL_PP_USE_LIMIT_VALUE_LABEL
 Imperial Stockpile Use Limit
 
-METER_IMPERIAL_PP_USE_LIMIT_VALUE
+METER_IMPERIAL_PP_USE_LIMIT_VALUE_DESC
 '''The Imperial Stockpile Use Limit represents the readyness of the imperial stockpile service to supply projects with production points.
 It gives the number of production points which may be taken per turn from the imperial stockpile to produce. 
 
