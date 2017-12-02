@@ -57,6 +57,7 @@ packages via the command line.
   * [Debian package] stable release: `# apt-get install freeorion`
   * [Ubuntu package] stable release: `# apt-get install freeorion`
   * [Fedora package] stable release: `# dnf install freeorion`
+  * [Void package]   stable release: `# xbps-install freeorion`
   * [ArchLinux package] stable release
 
 ## Directories
