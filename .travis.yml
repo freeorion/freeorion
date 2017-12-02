@@ -63,8 +63,16 @@ before_script:
     fi
   - mkdir build
   - cd build
+  # Setup ccache
   # Make certain ~/.ccache exists
   - mkdir -p $HOME/.ccache
+  - echo "ccache.conf before modification"
+  - more $HOME/.ccache/ccache.conf
+  - ccache --version
+  - ccache --show-stats
+before_cache:
+  # Check ccache
+  - ccache --show-stats
 script:
   - >
     if [[ "${BUILD_APIDOC}" == "true" && "${TRAVIS_BRANCH}" == "master" ]]; then
