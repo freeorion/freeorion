@@ -63,6 +63,8 @@ before_script:
     fi
   - mkdir build
   - cd build
+  # Make certain ~/.ccache exists
+  - mkdir -p $HOME/.ccache
 script:
   - >
     if [[ "${BUILD_APIDOC}" == "true" && "${TRAVIS_BRANCH}" == "master" ]]; then
