@@ -80,11 +80,20 @@ class AIstate(object):
     """Stores AI game state.
 
     IMPORTANT:
-    If class members are redefined, added or deleted, then the
+    (i) If class members are redefined, added or deleted, then the
     version number must be increased by 1 and the convert_to_version()
     function must be updated so a saved state from the previous version
     is playable with this AIstate version, i.e. new members must be added
     and outdated members must be modified and / or deleted.
+
+    (ii) The AIstate is stored as an encoded string in save game files
+    (currently via the pickle module). The attributes of the AIstate must
+    therefore be compatible with the encoding method, which currently generally
+    means that they must be native python data types (or other data types the
+    encoder is augmented to handle), not objects such as UniverseObject
+    instances or C++ enum values brought over from the C++ side
+    via boost. If desiring to store a reference to a UniverseObject store its
+    object id instead; for enum values store their int conversion value.
     """
     version = 3
 
@@ -107,6 +116,7 @@ class AIstate(object):
         # unique ids for turns.  {turn: uid}
         self.turn_uids = {}
 
+        # see AIstate docstring re importance of int cast for aggression
         self._aggression = int(aggression)
 
         # 'global' (?) variables
