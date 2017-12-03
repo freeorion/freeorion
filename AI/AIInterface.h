@@ -345,6 +345,8 @@ namespace AIInterface {
     int IssueChangeProductionQuantityOrder(int queue_index, int new_quantity, int new_blocksize);
     int IssueRequeueProductionOrder(int old_queue_index, int new_queue_index);
     int IssueDequeueProductionOrder(int queue_index);
+    int IssuePauseProductionOrder(int queue_index, bool new_paused);
+    int IssueAllowStockpileProductionOrder(int queue_index, bool new_use_stockpile);
 
     int IssueCreateShipDesignOrder(const std::string& name, const std::string& description,
                                    const std::string& hull, const std::vector<std::string> parts,

@@ -34,6 +34,10 @@
 using boost::python::object;
 using boost::python::str;
 
+namespace {
+    const float DUMMY_FLOAT = 0.0f;
+}
+    
 //////////////////////////////////
 //          AI Base             //
 //////////////////////////////////
@@ -833,6 +837,38 @@ namespace AIInterface {
 
         AIClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ProductionQueueOrder>(empire_id, queue_index));
+
+        return 1;
+    }
+
+    int IssuePauseProductionOrder(int queue_index, bool pause) {
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+        Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
+
+        const ProductionQueue& queue = empire->GetProductionQueue();
+        if (queue_index < 0 || static_cast<int>(queue.size()) <= queue_index) {
+            ErrorLogger() << "IssueChangeProductionPauseOrder : passed queue_index outside range of items on queue.";
+            return 0;
+        }
+
+        AIClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ProductionQueueOrder>(empire_id, queue_index, pause, DUMMY_FLOAT));
+
+        return 1;
+    }
+
+    int IssueAllowStockpileProductionOrder(int queue_index, bool use_stockpile) {
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+        Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
+
+        const ProductionQueue& queue = empire->GetProductionQueue();
+        if (queue_index < 0 || static_cast<int>(queue.size()) <= queue_index) {
+            ErrorLogger() << "IssueChangeProductionStockpileOrder : passed queue_index outside range of items on queue.";
+            return 0;
+        }
+        
+        AIClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ProductionQueueOrder>(empire_id, queue_index, use_stockpile, DUMMY_FLOAT, DUMMY_FLOAT));
 
         return 1;
     }
