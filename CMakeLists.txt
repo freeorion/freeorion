@@ -40,6 +40,26 @@ endif(CCACHE_FOUND)
 
 project(FreeOrion)
 
+# Allow Xcode to use the C compilers found by project with ccache if possible:
+# https://crascit.com/2016/04/09/using-ccache-with-cmake/
+get_property(RULE_LAUNCH_COMPILE GLOBAL PROPERTY RULE_LAUNCH_COMPILE)
+if(RULE_LAUNCH_COMPILE AND CMAKE_GENERATOR STREQUAL "Xcode")
+    # Set up wrapper scripts
+    configure_file(Xcode/launch-c.in   Xcode/launch-c)
+    configure_file(Xcode/launch-cxx.in Xcode/launch-cxx)
+    execute_process(COMMAND chmod a+rx
+      "${CMAKE_BINARY_DIR}/Xcode/launch-c"
+      "${CMAKE_BINARY_DIR}/Xcode/launch-cxx"
+    )
+
+    # Set Xcode project attributes to route compilation and linking
+    # through our scripts
+    set(CMAKE_XCODE_ATTRIBUTE_CC         "${CMAKE_BINARY_DIR}/Xcode/launch-c")
+    set(CMAKE_XCODE_ATTRIBUTE_CXX        "${CMAKE_BINARY_DIR}/Xcode/launch-cxx")
+    set(CMAKE_XCODE_ATTRIBUTE_LD         "${CMAKE_BINARY_DIR}/Xcode/launch-c")
+    set(CMAKE_XCODE_ATTRIBUTE_LDPLUSPLUS "${CMAKE_BINARY_DIR}/Xcode/launch-cxx")
+endif()
+
 include(GNUInstallDirs)
 include(UseCodeCoverage)
 include(TargetDependencies)
