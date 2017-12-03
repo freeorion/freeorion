@@ -114,7 +114,7 @@ class AIstate(object):
         # unique ids for turns.  {turn: uid}
         self.turn_uids = {}
 
-        self._aggression = aggression
+        self._aggression = int(aggression)
 
         # 'global' (?) variables
         self.colonisablePlanetIDs = odict()
