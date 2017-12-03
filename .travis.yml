@@ -47,6 +47,9 @@ install:
       # download and setup ccache
       brew install ccache
       export PATH="/usr/local/opt/ccache/libexec:$PATH"
+
+      # add coreutils to get gtimeout
+      brew install coreutils
     fi
 before_script:
   # Configure git to use the identity of FreeOrion Build Bot and
@@ -74,8 +77,9 @@ before_script:
       # Add transparent cmake function to allow possible cross platform use of
       # build sections.
       # mount ccache dir and set its environment variable
+      # timeout before Travis kills jobs so that ccache is always at least partially populated
       function cmake {
-          docker run -v "${TRAVIS_BUILD_DIR}:/freeorion"  -v "${HOME}/.ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build freeorion/freeorion-travis-build /usr/bin/cmake $@
+          docker run -v "${TRAVIS_BUILD_DIR}:/freeorion"  -v "${HOME}/.ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build freeorion/freeorion-travis-build timeout 40m /usr/bin/cmake $@
       }
     fi
   - mkdir build
@@ -102,8 +106,7 @@ script:
   - >
     if [[ "${TRAVIS_OS_NAME}" == "linux" && "${BUILD_UNITTEST}" == "true" ]]; then
       cmake -DBUILD_TESTING=ON ..
-      # timeout before Travis kills jobs so that ccache is always at least partially populated
-      timeout 40m cmake --build . -- -j 2 &&
+      cmake --build . -- -j 2 &&
       cmake --build . --target unittest &&
       cd ../default &&
       python -m compileall -q .
@@ -111,5 +114,6 @@ script:
   - >
     if [[ "${TRAVIS_OS_NAME}" == "osx" && -z "${BUILD_APIDOC}" ]]; then
       cmake -GXcode ..
-      cmake --build . --config Release -- -parallelizeTargets -jobs $(sysctl hw.ncpu | awk '{print $2}')
+      # timeout before Travis kills jobs so that ccache is always at least partially populated
+      gtimeout 40m cmake --build . --config Release -- -parallelizeTargets -jobs $(sysctl hw.ncpu | awk '{print $2}')
     fi
