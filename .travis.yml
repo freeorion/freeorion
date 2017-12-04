@@ -28,8 +28,12 @@ install:
   - >
     if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
       # Download build environment in a docker container
+      # TODO restore this line after SDK is updated.
       # docker pull freeorion/freeorion-travis-build
-      docker build -t freeorion/freeorion-travis-build .
+
+      # Create docker container from Dockerfile
+      ln -s tools/docker/Dockerfile .
+      docker build --tag freeorion/freeorion-travis-build . 
     fi
   - >
     if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
