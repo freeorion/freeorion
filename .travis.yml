@@ -100,7 +100,8 @@ script:
   - >
     if [[ "${TRAVIS_OS_NAME}" == "linux" && "${BUILD_UNITTEST}" == "true" ]]; then
       cmake -DBUILD_TESTING=ON ..
-      cmake --build . -- -j 2 &&
+      # timeout before Travis kills jobs so that ccache is always at least partially populated
+      timeout 40m cmake --build . -- -j 2 &&
       cmake --build . --target unittest &&
       cd ../default &&
       python -m compileall -q .

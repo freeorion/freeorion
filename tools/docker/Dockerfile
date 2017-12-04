@@ -21,6 +21,7 @@ RUN apt-get update --assume-yes \
         python \
         doxygen \
         ccache \
+        coreutils \
         libpython-dev \
         libfreetype6-dev \
         libglew-dev \
@@ -48,6 +49,7 @@ RUN apt-get update --assume-yes \
         /var/lib/apt/lists/* \
         /usr/share/cmake-3.5/Help \
         /usr/share/doc/ccache \
+        /usr/share/doc/coreutils-common \
         /usr/share/doc/libasound2-dev/examples \
         /usr/share/doc/libasound2/examples \
         /usr/share/doc/libboost-date-time1.58-dev/data \
