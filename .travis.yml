@@ -66,6 +66,10 @@ before_script:
   # Setup ccache
   # Make certain ~/.ccache exists
   - mkdir -p $HOME/.ccache
+  - echo "Show global /Users/travis/.ccache/ccache.conf"
+  - more /Users/travis/.ccache/ccache.conf
+  - echo "Show local $HOME/.ccache/ccache.conf"
+  - more $HOME/.ccache/ccache.conf
   - echo sloppiness = file_macro > $HOME/.ccache/ccache.conf
   - ccache --version
   - ccache --show-stats
