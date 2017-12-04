@@ -58,16 +58,6 @@ before_script:
       git config --global credential.helper "cache --timeout=300"
       echo -e "url=https://freeorion-bot:${FreeOrion_AUTH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git\n" | git credential approve
     fi
-  - >
-    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-      # Add transparent cmake function to allow possible cross platform use of
-      # build sections.
-      function cmake {
-          docker run -v "${TRAVIS_BUILD_DIR}:/freeorion" -w /freeorion/build freeorion/freeorion-travis-build /usr/bin/cmake $@
-      }
-    fi
-  - mkdir build
-  - cd build
   # Setup ccache
   # Make certain ~/.ccache exists
   - mkdir -p $HOME/.ccache
@@ -75,9 +65,21 @@ before_script:
   - more /Users/travis/.ccache/ccache.conf
   - echo "Show local $HOME/.ccache/ccache.conf"
   - more $HOME/.ccache/ccache.conf
+  # Allow ccache to account for __FILE__ macro
   - echo sloppiness = file_macro > $HOME/.ccache/ccache.conf
   - ccache --version
   - ccache --show-stats
+  - >
+    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      # Add transparent cmake function to allow possible cross platform use of
+      # build sections.
+      # mount ccache dir and set its environment variable
+      function cmake {
+          docker run -v "${TRAVIS_BUILD_DIR}:/freeorion"  -v "${HOME}/.ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build freeorion/freeorion-travis-build /usr/bin/cmake $@
+      }
+    fi
+  - mkdir build
+  - cd build
 before_cache:
   # Check ccache
   - ccache --show-stats
