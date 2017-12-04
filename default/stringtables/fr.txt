@@ -3044,7 +3044,7 @@ Système - %1% : %2%
 # %1% resource type currently consumed by the system.
 # %2% amount of the resource currently consumed by the system.
 RESOURCE_ALLOCATION_TOOLTIP
-Syst. - %1% : %2%
+Système - %1% : %2%
 
 INDUSTRY_PRODUCTION
 Capacité industrielle
@@ -5269,7 +5269,7 @@ HOMEWORLDS_TITLE
 Planète Natale
 
 HOMEWORLDS_TEXT
-Les Planètes Natales sont les mondes d'origine où se trouvent les espèces au démarrage d'une partie (à noter qu'une espèce peut avoir plusieurs Planètes Natales). La technologie [[tech SPY_CUSTOM_ADVISORIES]] révèle leur existence et leur nombre, mais pas leur localisation. Une Planète Natale dispose de plusieurs avantages, tant que celle-ci est toujours habitée par l'espèce d'origine: les indicateurs [[metertype METER_TARGET_POPULATION]], [[metertype METER_MAX_TROOPS]], et [[metertype METER_TARGET_HAPPINESS]] sont accrus, et le [[encyclopedia GROWTH_FOCUS_TITLE]] est activé (à moins que l'espèce soit de type [[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]]), augmentant ainsi la [[metertype METER_TARGET_POPULATION]] des autres colonies habitées par la même espèce.
+Les Planètes Natales sont les mondes d'origine où se situent les espèces au démarrage d'une partie (à noter qu'une espèce peut avoir plusieurs Planètes Natales). La technologie [[tech SPY_CUSTOM_ADVISORIES]] révèle leur existence et leur nombre, mais pas leur localisation. Une Planète Natale dispose de plusieurs avantages, tant que celle-ci est toujours habitée par l'espèce d'origine: les indicateurs [[metertype METER_TARGET_POPULATION]], [[metertype METER_MAX_TROOPS]], et [[metertype METER_TARGET_HAPPINESS]] sont accrus, et le [[encyclopedia GROWTH_FOCUS_TITLE]] est activé (à moins que l'espèce soit de type [[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]]), augmentant ainsi la [[metertype METER_TARGET_POPULATION]] des autres colonies habitées par la même espèce.
 
 FOCUS_TITLE
 Focus
@@ -8276,27 +8276,27 @@ Type d'indicateur invalide
 
 # Meter types
 METER_TARGET_POPULATION
-Population Optimale Locale
+Projection Population
 
 # Meter types
 METER_TARGET_INDUSTRY
-Industrie Optimale Locale
+Projection Industrie
 
 # Meter types
 METER_TARGET_RESEARCH
-Recherche Optimale Locale
+Projection Recherche
 
 # Meter types
 METER_TARGET_TRADE
-Commerce Optimal Local
+Projection Commerce
 
 # Meter types
 METER_TARGET_CONSTRUCTION
-Infrastructure Optimale Locale
+Projection Infrastructure
 
 # Meter types
 METER_TARGET_HAPPINESS
-Bonheur Optimal Local
+Projection Bonheur
 
 # Meter types
 METER_MAX_CAPACITY
@@ -9983,7 +9983,7 @@ LRN_ALGO_ELEGANCE
 Élégance Algorithmique
 
 LRN_ALGO_ELEGANCE_DESC
-'''Augmente la [[metertype METER_RESEARCH]] Optimale de 0.1 par Population sur toutes les planètes réglées sur le Focus Recherche.
+'''Augmente la Projection [[metertype METER_RESEARCH]] de 0.1 par Population sur toutes les planètes réglées sur le Focus Recherche.
 
 Avec une difficulté grandissante des problèmes d'analyse de données, les démarches traditionnelles des performances algorithmiques deviennent moins efficaces, en raison des limitations de la complexité irréductible. À ce stade, de nouvelles formes et fonctions algorithmiques deviennent significatives: esthétiquement et métaphoriquement, l'élégance de la solution doit être optimisée.'''
 
@@ -10007,7 +10007,7 @@ LRN_ARTIF_MINDS
 Intelligences Artificielles
 
 LRN_ARTIF_MINDS_DESC
-'''Augmente la [[metertype METER_RESEARCH]] Optimale de 2 sur toutes les planètes.
+'''Augmente la Projection [[metertype METER_RESEARCH]] de 2 sur toutes les planètes.
 
 Alors que les ordinateurs traditionnels ont des capacités de calcul presque infinies, ils leur manquent cependant une qualité essentielle: la conscience. Bien que la définition complète du concept de conscience reste insaisissable, cette qualité peut être toutefois synthétisée et modifiée de manière convaincante. Ces recherches ouvrent de nouvelles voies en matière de sciences cognitives et de métaparadigmes.
 
@@ -10076,7 +10076,7 @@ LRN_QUANT_NET
 Réseau Quantique
 
 LRN_QUANT_NET_DESC
-'''Augmente la [[metertype METER_RESEARCH]] Optimale de 0.5 par Population sur toutes les planètes réglées sur le Focus Recherche.
+'''Augmente la Projection [[metertype METER_RESEARCH]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Recherche.
 
 Un réseau massif de donnés, à l'échelle de l'empire, capable de transférer instantanément des informations entre deux lieux, plutôt que par le système lent et indirect des voies spatiales. Ce progrès facilite grandement la Recherche dans tout l'empire.
 
@@ -10192,7 +10192,7 @@ GRO_ENERGY_META
 Métabolisme d'Énergie Pure
 
 GRO_ENERGY_META_DESC
-'''Augmente le [[metertype METER_FUEL]] max de 2 sur tous les astronefs, la [[metertype METER_DEFENSE]] max de 5 sur toutes les planètes, les [[metertype METER_SHIELD]] max de 5 sur toutes les planètes, l'[[metertype METER_INDUSTRY]] Optimale de 0.2 par Population sur toutes les planètes réglées sur le Focus Industrie, et la [[metertype METER_RESEARCH]] Optimale de 0.5 par Population sur toutes les planètes réglées sur le Focus Recherche.
+'''Augmente le [[metertype METER_FUEL]] max de 2 sur tous les astronefs, la [[metertype METER_DEFENSE]] max de 5 sur toutes les planètes, les [[metertype METER_SHIELD]] max de 5 sur toutes les planètes, la Projection [[metertype METER_INDUSTRY]] de 0.2 par Population sur toutes les planètes réglées sur le Focus Industrie, et la Projection [[metertype METER_RESEARCH]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Recherche.
 
 Tandis que la transformation d'une population entière en êtres de pure énergie s'avérerait peu pertinente, certaines tâches conviennent mieux à des individus dénués de corporalité. L'équipage d'un astronef par exemple, n'aurait plus besoin d'optimiser l'espace disponible pour les quartiers d'équipage ou le stockage des rations. Des êtres dotés d'une capacité de canalisation de l'énergie seraient en mesure d'améliorer les défenses et boucliers planétaires, ainsi que la production de ressources.
 
@@ -10262,7 +10262,7 @@ PRO_ROBOTIC_PROD
 Production Robotisée
 
 PRO_ROBOTIC_PROD_DESC
-'''Augmente l'[[metertype METER_INDUSTRY]] Optimale de 0.1 par Population sur toutes les planètes réglées sur le Focus Industrie.
+'''Augmente la Projection [[metertype METER_INDUSTRY]] de 0.1 par Population sur toutes les planètes réglées sur le Focus Industrie.
 
 Les Exobots, désignation sous laquelle ils sont communément connus, constituent l'aboutissement du design allié à la fonctionnalité. Robots conçus pour effectuer n'importe quelle tâche de production, de l'électronique microscopique à la construction à grande échelle, leur production de masse est aisée, tandis que leur utilisation reste la plus avantageuse dans les colonies assignant une haute priorité à l'industrie. Chaque monde privilégiant l'industrie se voit gratifiée d'une équipe d'Exobots, améliorant ainsi considérablement sa production industrielle.
 
@@ -10277,7 +10277,7 @@ PRO_FUSION_GEN
 Génération par Fusion
 
 PRO_FUSION_GEN_DESC
-'''Augmente l'[[metertype METER_INDUSTRY]] Optimale de 0.2 par Population sur toutes les planètes réglées sur le Focus Industrie.
+'''Augmente la Projection [[metertype METER_INDUSTRY]] de 0.2 par Population sur toutes les planètes réglées sur le Focus Industrie.
 
 Les réacteurs de fusion nucléaire, bien que coûteux à produire et à entretenir, s'avèrent rentables pour les mondes industrialisés à forte consommation énergétique. La dépendance aux réacteurs basés sur la fission nucléaire deviendra peu à peu une relique du passé.
 
@@ -10301,7 +10301,7 @@ PRO_SENTIENT_AUTOMATION
 Automates Adaptatifs
 
 PRO_SENTIENT_AUTOMATION_DESC
-'''Augmente l'[[metertype METER_INDUSTRY]] Optimale de 5 sur toutes les planètes.
+'''Augmente la Projection [[metertype METER_INDUSTRY]] de 5 sur toutes les planètes.
 
 En concevant des usines automatisées ne nécessitant aucune supervision directe, il devient alors possible d'accroître la production industrielle via un processus totalement autonome. Ces usines peuvent être construites et entretenues sur n'importe quelle planète, quel que soit son Focus, engendrant un bonus industriel dans tout l'empire.
 
@@ -10421,7 +10421,7 @@ Structures Multidimensionnelles
 CON_NDIM_STRC_DESC
 '''Accroît la Population max de toutes les planètes habitables selon leur taille : ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
 
-Augmente également de 10 l'[[metertype METER_CONSTRUCTION]] Optimale des planètes habitées.
+Augmente également de 10 la Projection [[metertype METER_CONSTRUCTION]] des planètes habitées.
 
 Les facteurs principaux limitant la capacité de population d'une planète ne sont autres que les milieux environnementaux et l'espace disponible. En répartissant le développement des infrastructures de base sur de multiples dimensions, les limitations spatiales disparaissent, et dans des conditions environnementales idéales, le maximum de population d'une planète peut être considérablement accru.
 
@@ -10816,7 +10816,7 @@ LRN_DISTRIB_THOUGHT
 Centralisation Cérébrale
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Augmente la [[metertype METER_RESEARCH]] Optimale de 0.1 par Population sur toutes les planètes, quel que soit le Focus choisi.
+'''Augmente la Projection [[metertype METER_RESEARCH]] de 0.1 par Population sur toutes les planètes, quel que soit le Focus choisi.
 
 Le citoyen moyen gaspille littéralement ses capacités cérébrales, pourtant issues d'un des outils de calcul les plus fins de l'univers. En intégrant les cycles cérébraux inactifs d'une population suffisament importante au sein d'un réseau de simples émetteurs-récepteurs cybernétiques, la totalité des centres de recherche d'un empire peuvent accéder à une puissance de calcul considérable et peu coûteuse.'''
 
@@ -10824,7 +10824,7 @@ LRN_STELLAR_TOMOGRAPHY
 Tomographie Stellaire
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Augmente la [[metertype METER_RESEARCH]] Optimale des planètes réglées sur le Focus Recherche, par Population et selon le type d'étoile :
+'''Augmente la Projection [[metertype METER_RESEARCH]] des planètes réglées sur le Focus Recherche, par Population et selon le type d'étoile :
 * [[STAR_BLACK]] (x1)
 * [[STAR_NEUTRON]] (x0.75)
 * [[STAR_BLUE]] ou [[STAR_WHITE]] (x0.5)
@@ -11639,7 +11639,7 @@ BLD_CULTURE_ARCHIVES
 Archives Culturelles
 
 BLD_CULTURE_ARCHIVES_DESC
-'''Augmente la [[metertype METER_RESEARCH]] Optimale de 5, ainsi que l'[[metertype METER_INDUSTRY]] Optimale de la moitié de la Population planétaire.
+'''Augmente la Projection [[metertype METER_RESEARCH]] de 5, ainsi que la Projection [[metertype METER_INDUSTRY]] de la moitié de la Population planétaire.
 
 Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, améliorant différents aspects de la productivité planétaire.'''
 
@@ -11647,7 +11647,7 @@ BLD_CULTURE_LIBRARY
 Bibliothèque Culturelle
 
 BLD_CULTURE_LIBRARY_DESC
-'''Augmente la [[metertype METER_RESEARCH]] Optimale de 5.
+'''Augmente la Projection [[metertype METER_RESEARCH]] de 5.
 
 Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, octroyant ainsi un bonus à la Recherche. Cette structure sera détruite si la population planétaire est réduite à zéro.'''
 
@@ -11655,7 +11655,7 @@ BLD_AUTO_HISTORY_ANALYSER
 Analyseur Historique Automatisé
 
 BLD_AUTO_HISTORY_ANALYSER_DESC
-'''L' Analyseur Historique Automatisé peut être construit sur une planète abritant des [[buildingtype BLD_CULTURE_ARCHIVES]]. Augmente la [[metertype METER_RESEARCH]] Optimale de 5.
+'''L' Analyseur Historique Automatisé peut être construit sur une planète abritant des [[buildingtype BLD_CULTURE_ARCHIVES]]. Augmente la Projection [[metertype METER_RESEARCH]] de 5.
 
 Un centre de recherche automatisé doté d'une énorme puissance de calcul, parcourant continuellement la multitude de données au sein des archives  culturelles, afin de faire émerger de possibles analogies, d'établir des parallèles interdisciplinaires, ou bien de redécouvrir des concepts tombés dans l'oubli ou non finalisés.'''
 
@@ -11878,7 +11878,7 @@ BLD_ENCLAVE_VOID
 Enclave Du Vide
 
 BLD_ENCLAVE_VOID_DESC
-'''Augmente la [[metertype METER_RESEARCH]] Optimale de 0.75 par Population sur toutes les planètes réglées sur le Focus Recherche.
+'''Augmente la Projection [[metertype METER_RESEARCH]] de 0.75 par Population sur toutes les planètes réglées sur le Focus Recherche.
 Les bonus de plusieurs exemplaires ne s'additionnent pas.
 
 La population entière d'une planète est modifiée génétiquement afin de l'harmoniser avec l'Esprit du Vide, et ainsi diffuser sa sagesse dans tout l'empire. Les habitants de l'Enclave du Vide sont considérés comme des prêtres, prophètes d'une pensée supérieure et d'un savoir suprême. Dans tous les domaines de grande importance pour la bonne marche de l'empire, leurs conseils et avis s'avèrent d'une grande valeur. Des émissaires de l'Enclave peuvent donc prendre part à tout projet impérial de Recherche et apporter ainsi une aide précieuse.'''
@@ -11899,7 +11899,7 @@ BLD_HYPER_DAM
 Barrage Hyperspatial
 
 BLD_HYPER_DAM_DESC
-'''Pour les planètes non-reliées à un [[buildingtype BLD_BLACK_HOLE_POW_GEN]], augmente l'[[metertype METER_INDUSTRY]] Optimale de 1 par Population sur toutes les planètes reliées par lignes d'[[metertype METER_SUPPLY]] et réglées sur le Focus Industrie, mais diminue la Population de ces planètes selon leur taille : ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5).
+'''Pour les planètes non-reliées à un [[buildingtype BLD_BLACK_HOLE_POW_GEN]], augmente la Projection [[metertype METER_INDUSTRY]] de 1 par Population sur toutes les planètes reliées par lignes d'[[metertype METER_SUPPLY]] et réglées sur le Focus Industrie, mais diminue la Population de ces planètes selon leur taille : ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5).
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 Une déchirure dans le tissu de l'univers, contrôlée et manipulée en toute sécurité. Chaque planète peut construire son propre barrage hyperspatial, mais un seul centre de contrôle est requis pour s'assurer que le continuum de l'espace-temps n'est pas endommagé. Par contre, toutes les planètes ayant recours à un barrage hyperspatial voient leur population souffrir de différents problèmes de santé, à moins que les planètes en question n'orbitent autour d'un [[STAR_BLACK]].
@@ -11916,7 +11916,7 @@ BLD_SOL_ORB_GEN
 Générateur Orbital Solaire
 
 BLD_SOL_ORB_GEN_DESC
-'''Augmente l'[[metertype METER_INDUSTRY]] Optimale sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]], par Population et selon le type d'étoile :
+'''Augmente la Projection [[metertype METER_INDUSTRY]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]], par Population et selon le type d'étoile :
 * [[STAR_BLUE]] ou [[STAR_WHITE]] (x0.4)
 * [[STAR_YELLOW]] ou [[STAR_ORANGE]] (x0.2) 
 * [[STAR_RED]] (x0.1)
@@ -11984,7 +11984,7 @@ BLD_CONC_CAMP
 Camps de Concentration
 
 BLD_CONC_CAMP_DESC
-'''Réduit la Population d'une planète de 3 par tour, et augmente l'[[metertype METER_INDUSTRY]] Optimale de 5 fois la population planétaire. Le [[metertype METER_HAPPINESS]] Optimal est réduit à 0.
+'''Réduit la Population d'une planète de 3 par tour, et augmente la Projection [[metertype METER_INDUSTRY]] de 5 fois la population planétaire. La Projection [[metertype METER_HAPPINESS]] est réduite à 0.
 
 Purger une planète d'une espèce indésirable permet l'introduction d'une espèce plus adaptée. En créant un réseau planétaire de camps de concentration conçus pour abattre les internés à la tâche, il est possible d'atteindre rapidement et efficacement le but fixé.'''
 
@@ -13773,7 +13773,7 @@ quel que soit l'[[encyclopedia ENVIRONMENT_TITLE]] planétaire.
 Si cette planète est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]], le bonus s'applique également à tous les autres mondes connectés par lignes d'[[metertype METER_SUPPLY]] et peuplés d'espèces à'''
 
 GROWTH_SPECIAL_INDUSTRY_BOOST
-Si cette planète est réglée sur le Focus Industrie, son [[metertype METER_INDUSTRY]] Optimale augmente de 0.2 par Population.
+Si cette planète est réglée sur le Focus Industrie, sa Projection [[metertype METER_INDUSTRY]] augmente de 0.2 par Population.
 
 GROWTH_SPECIALS_ENTRY_LIST
 '''Les planètes présentant une Particularité de Croissance et réglées sur le Focus Croissance favorisent seulement une classification d'espèces. Certaines Particularités ne fonctionnent que pour les espèces organiques, d'autres pour les espèces lithiques, et enfin d'autres pour les espèces robotiques.
