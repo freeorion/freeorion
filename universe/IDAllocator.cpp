@@ -295,11 +295,12 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, in
 
     } else {
 
+        if (m_empire_id != empire_id && m_empire_id != m_server_id)
+            ErrorLogger() << "An empire with id = " << m_empire_id << " which is not the server "
+                          << "is attempting to serialize the IDAllocator for a different empire " << empire_id;
+
         // If the target empire is the server, provide the full map.
         if (empire_id == m_server_id) {
-            if (m_empire_id != m_server_id)
-                ErrorLogger() << "An empire with id = " << m_empire_id << " which is not the server "
-                              << "is attempting to serialize the IDAllocator for the server.";
             ar  & BOOST_SERIALIZATION_NVP(m_empire_id)
                 & BOOST_SERIALIZATION_NVP(m_empire_id_to_next_assigned_object_id)
                 & BOOST_SERIALIZATION_NVP(m_offset_to_empire_id);
