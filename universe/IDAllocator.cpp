@@ -65,7 +65,7 @@ int IDAllocator::NewID() {
 
     auto apparent_assigning_empire = AssigningEmpireForID(retval);
     if (apparent_assigning_empire != m_empire_id)
-        ErrorLogger() << "m_empire_id " << m_empire_id << " does not match apparent assiging id "
+        ErrorLogger() << "m_empire_id " << m_empire_id << " does not match apparent assigning id "
                       << apparent_assigning_empire << " for id = " << retval << " m_zero = " << m_zero;
 
     // Increment the next id if not exhausted
@@ -79,7 +79,7 @@ int IDAllocator::NewID() {
         ErrorLogger() << "Object IDs are exhausted.  No objects can be added to the Universe.";
 
     if (retval >= m_warn_threshold)
-        WarnLogger() << "Object IDs are almost exhausted. Currently assiging id, " << retval;
+        WarnLogger() << "Object IDs are almost exhausted. Currently assigning id, " << retval;
 
     TraceLogger(IDallocator) << "Allocating id = " << retval << " for empire = " << it->first;
     return retval;
@@ -219,7 +219,7 @@ void IDAllocator::ObfuscateBeforeSerialization() {
     // Check that this does not exhaust the ids
     auto new_max_next_id = max_next_assigned + max_random_offset + m_stride;
     if (new_max_next_id > m_warn_threshold)
-        WarnLogger() << "Object IDs are almost exhausted. Currently assiging id, " << new_max_next_id;
+        WarnLogger() << "Object IDs are almost exhausted. Currently assigning id, " << new_max_next_id;
 
     if (new_max_next_id > m_exhausted_threshold) {
         ErrorLogger() << "Object IDs are exhausted.  No objects can be added to the Universe.";
