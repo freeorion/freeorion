@@ -318,7 +318,7 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, in
                               << empire_id << " not in id manager table.";
             } else {
                 temp_empire_id_to_object_id.insert(*it);
-                temp_offset_to_empire_id[it->second % m_stride] = empire_id;
+                temp_offset_to_empire_id[(it->second - m_zero) % m_stride] = empire_id;
             }
 
             ar & boost::serialization::make_nvp(BOOST_PP_STRINGIZE(m_empire_id_to_next_assigned_object_id), temp_empire_id_to_object_id);
