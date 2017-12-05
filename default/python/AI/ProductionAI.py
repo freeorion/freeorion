@@ -1402,8 +1402,34 @@ def generate_production_orders():
                 if (not prioritized) and (this_priority == PriorityType.PRODUCTION_INVASION):
                     fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
         print
+    update_stockpile_use()
     fo.updateProductionQueue()
     _print_production_queue(after_turn=True)
+
+
+def update_stockpile_use():
+    """Decide which elements in the production_queue will be enabled for drawing from the imperial stockpile.  This
+    initial version simply ensures that every resource group with at least one item on the queue has its highest
+    priority item be stockpile-enabled.
+
+    :return: None
+    """
+    # TODO: Do a priority and risk evaluation to decide on enabling stockpile draws
+    empire = fo.getEmpire()
+    production_queue = empire.productionQueue
+    resource_groups = set(tuple(el.key()) for el in empire.planetsWithAvailablePP)
+    planets_in_stockpile_enabled_group = set()
+    for queue_index, element in enumerate(production_queue):
+        if element.locationID in planets_in_stockpile_enabled_group:
+            # TODO: evaluate possibly disabling stockpile for current element if was previously enabled, perhaps
+            # only allowing multiple stockpile enabled items in empire-capital-resource-group, or considering some
+            # priority analysis
+            continue
+        group = next((_g for _g in resource_groups if element.locationID in _g), None)
+        if group is None:
+            continue # we don't appear to own the location any more
+        if fo.issueAllowStockpileProductionOrder(queue_index, True):
+            planets_in_stockpile_enabled_group.update(group)
 
 
 def build_ship_facilities(bld_name, best_pilot_facilities, top_locs=None):
