@@ -309,7 +309,7 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, in
 
             // Filter the map for empires so they only have their own actual next id and no
             // information about other clients.
-            std::unordered_map<int, int> temp_empire_id_to_object_id{};
+            std::unordered_map<int, ID_t> temp_empire_id_to_object_id{};
             auto temp_offset_to_empire_id = std::vector<int>(m_offset_to_empire_id.size(), m_server_id);
 
             auto&& it = m_empire_id_to_next_assigned_object_id.find(empire_id);
