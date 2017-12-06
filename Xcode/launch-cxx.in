@@ -1,7 +1,0 @@
-#!/bin/sh
-
-# Allow Xcode to use ccache from cmake as described in:
-# https://crascit.com/2016/04/09/using-ccache-with-cmake/
-export CCACHE_CPP2=true
-echo "Using ccache to compile"
-exec "${RULE_LAUNCH_COMPILE}" "${CMAKE_CXX_COMPILER}" "$@"
