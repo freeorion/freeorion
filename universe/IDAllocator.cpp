@@ -293,6 +293,7 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, in
     ar  & BOOST_SERIALIZATION_NVP(m_invalid_id)
         & BOOST_SERIALIZATION_NVP(m_temp_id)
         & BOOST_SERIALIZATION_NVP(m_stride)
+        & BOOST_SERIALIZATION_NVP(m_zero)
         & BOOST_SERIALIZATION_NVP(m_server_id)
         & BOOST_SERIALIZATION_NVP(m_warn_threshold)
         & BOOST_SERIALIZATION_NVP(m_exhausted_threshold);
