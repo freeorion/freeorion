@@ -63,7 +63,7 @@ function(USE_COMPILER_CACHE)
         # TODO: set PARENT_SCOPE with COMPILER_CACHE_VERSION
 
         # This wrapper only is needed for CCache < 3.3 or XCode
-        if("${CMAKE_GENERATOR}" STREQUAL Xcode OR "${CCACHE_VERSION}" VERSION_LESS 3.3.0)
+        if("${CMAKE_GENERATOR}" STREQUAL Xcode OR "${CCACHE_VERSION}" VERSION_LESS 3.2.0)
             file(WRITE "${CMAKE_BINARY_DIR}/launch-c" ""
                 "#!/bin/sh\n"
                 "\n"
