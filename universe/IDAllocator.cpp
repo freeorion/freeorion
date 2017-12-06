@@ -66,7 +66,8 @@ int IDAllocator::NewID() {
     auto apparent_assigning_empire = AssigningEmpireForID(retval);
     if (apparent_assigning_empire != m_empire_id)
         ErrorLogger() << "m_empire_id " << m_empire_id << " does not match apparent assigning id "
-                      << apparent_assigning_empire << " for id = " << retval << " m_zero = " << m_zero;
+                      << apparent_assigning_empire << " for id = " << retval << " m_zero = " << m_zero
+                      << " stride = " << m_stride;
 
     // Increment the next id if not exhausted
     if (it->second >= m_exhausted_threshold) {
