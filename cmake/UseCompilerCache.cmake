@@ -42,6 +42,9 @@ function(USE_COMPILER_CACHE)
         message(FATAL_ERROR "Failed to find ${CCACHE_PROGRAM} (REQUIRED)")
     endif()
 
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK "${CCACHE_PROGRAM}")
+    
     # Only add if program found
     if(CCACHE_PROGRAM)
         # Get version number
@@ -74,7 +77,8 @@ function(USE_COMPILER_CACHE)
                 "fi\n"
                 "\n"
                 "export CCACHE_CPP2=true\n"
-                "exec \"${CCACHE_PROGRAM}\" \"${CMAKE_C_COMPILER}\" \"$@\"\n"
+                "echo using \"${RULE_LAUNCH_COMPILE}\" to compile\n"
+                "exec \"${RULE_LAUNCH_COMPILE}\" \"${CMAKE_C_COMPILER}\" \"$@\"\n"
                 )
 
             file(WRITE "${CMAKE_BINARY_DIR}/launch-cxx" ""
@@ -87,7 +91,8 @@ function(USE_COMPILER_CACHE)
                 "fi\n"
                 "\n"
                 "export CCACHE_CPP2=true\n"
-                "exec \"${CCACHE_PROGRAM}\" \"${CMAKE_CXX_COMPILER}\" \"$@\"\n"
+                "echo using \"${RULE_LAUNCH_COMPILE}\" to compile\n"
+                "exec \"${RULE_LAUNCH_COMPILE}\" \"${CMAKE_CXX_COMPILER}\" \"$@\"\n"
                 )
 
             # Cuda support only added in CMake 3.10
@@ -101,7 +106,8 @@ function(USE_COMPILER_CACHE)
                 "fi\n"
                 "\n"
                 "export CCACHE_CPP2=true\n"
-                "exec \"${CCACHE_PROGRAM}\" \"${CMAKE_CUDA_COMPILER}\" \"$@\"\n"
+                "echo using \"${RULE_LAUNCH_COMPILE}\" to compile\n"
+                "exec \"${RULE_LAUNCH_COMPILE}\" \"${CMAKE_CUDA_COMPILER}\" \"$@\"\n"
                 )
 
 
@@ -124,8 +130,6 @@ function(USE_COMPILER_CACHE)
             set(CMAKE_C_COMPILER_LAUNCHER   "${CCACHE_PROGRAM}")
             set(CMAKE_CXX_COMPILER_LAUNCHER "${CMAKE_PROGRAM}")
             set(CMAKE_CUDA_COMPILER_LAUNCHER "${CMAKE_PROGRAM}")
-            set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
-            set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK "${CCACHE_PROGRAM}")
             message(STATUS "CCache configured for linux: ${CCACHE_PROGRAM}")
         endif()
     endif()
