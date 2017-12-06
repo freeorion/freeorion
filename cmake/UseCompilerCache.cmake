@@ -11,7 +11,7 @@
 #   -- Add the compiler cache tool (default to look for ccache on the path)
 #      to your build through CMAKE_<LANG>_COMPILER_LAUNCHER variables. Also
 #      supports XCode. Uses a wrapper for XCode and CCache < 3.3.
-#      Sets the CCACHE_VERSION variable.
+#      Sets the COMPILER_CACHE_VERSION variable.
 
 # TODO: Remove this module when cmake 3.11 is the minimum required version
 #       FreeOrion included this file directly from CMake master.  
@@ -63,7 +63,7 @@ function(USE_COMPILER_CACHE)
         # TODO: set PARENT_SCOPE with COMPILER_CACHE_VERSION
 
         # This wrapper only is needed for CCache < 3.3 or XCode
-        if("${CMAKE_GENERATOR}" STREQUAL Xcode OR "${CCACHE_VERSION}" VERSION_LESS 3.2.0)
+        if("${CMAKE_GENERATOR}" STREQUAL Xcode OR "${COMPILER_CACHE_VERSION}" VERSION_LESS 3.2.0)
             file(WRITE "${CMAKE_BINARY_DIR}/launch-c" ""
                 "#!/bin/sh\n"
                 "\n"
@@ -117,12 +117,16 @@ function(USE_COMPILER_CACHE)
             set(CMAKE_XCODE_ATTRIBUTE_CXX        "${CMAKE_BINARY_DIR}/launch-cxx")
             set(CMAKE_XCODE_ATTRIBUTE_LD         "${CMAKE_BINARY_DIR}/launch-c")
             set(CMAKE_XCODE_ATTRIBUTE_LDPLUSPLUS "${CMAKE_BINARY_DIR}/launch-cxx")
+            message(STATUS "CCache configured for XCode: ${CCACHE_PROGRAM}")
 
         else()
             # Support Unix Makefiles and Ninja
             set(CMAKE_C_COMPILER_LAUNCHER   "${CCACHE_PROGRAM}")
             set(CMAKE_CXX_COMPILER_LAUNCHER "${CMAKE_PROGRAM}")
             set(CMAKE_CUDA_COMPILER_LAUNCHER "${CMAKE_PROGRAM}")
+            set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+            set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK "${CCACHE_PROGRAM}")
+            message(STATUS "CCache configured for linux: ${CCACHE_PROGRAM}")
         endif()
     endif()
 endfunction()
