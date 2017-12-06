@@ -23,7 +23,7 @@ function(USE_COMPILER_CACHE)
     )
 
     set(oneValueArgs
-        CACHE
+        PROGRAM
     )
 
     set(multiValueArgs
@@ -31,11 +31,11 @@ function(USE_COMPILER_CACHE)
 
     cmake_parse_arguments(ARGS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    if(NOT ARGS_CACHE)
-        set(ARGS_CACHE ccache)
+    if(NOT ARGS_PROGRAM)
+        set(ARGS_PROGRAM ccache)
     endif()
 
-    find_program(CCACHE_PROGRAM ${ARGS_CACHE})
+    find_program(CCACHE_PROGRAM ${ARGS_PROGRAM})
 
     # Quit if required and not found
     if(REQUIRED AND NOT CCACHE_PROGRAM)
@@ -48,7 +48,7 @@ function(USE_COMPILER_CACHE)
         execute_process(COMMAND "${CCACHE_PROGRAM}" --version OUTPUT_VARIABLE output)
         string(REPLACE "\n" ";" output "${output}")
         foreach(line ${output})
-            string(TOUPPER ${line} line)
+            string(TOLOWER ${line} line)
             string(REGEX REPLACE "ccache version ([\\.0-9]+)$" "\\1" version "${line}")
             if(version AND NOT "x${line}" STREQUAL "x${version}")
                 set(COMPILER_CACHE_VERSION ${version})
@@ -63,7 +63,7 @@ function(USE_COMPILER_CACHE)
         # TODO: set PARENT_SCOPE with COMPILER_CACHE_VERSION
 
         # This wrapper only is needed for CCache < 3.3 or XCode
-        if(${CMAKE_GENERATOR} STREQUAL Xcode OR ${CCACHE_VERSION} VERSION_LESS 3.3.0)
+        if("${CMAKE_GENERATOR}" STREQUAL Xcode OR "${CCACHE_VERSION}" VERSION_LESS 3.3.0)
             file(WRITE "${CMAKE_BINARY_DIR}/launch-c" ""
                 "#!/bin/sh\n"
                 "\n"
