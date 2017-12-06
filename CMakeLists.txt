@@ -25,13 +25,15 @@ ENDIF(NOT CMAKE_BUILD_TYPE)
 message(STATUS "Build type CMAKE_BUILD_TYPE set to ${CMAKE_BUILD_TYPE}")
 
 include(UseCompilerCache)
-USE_COMPILER_CACHE(PROGRAM ccache)
+FIND_COMPILER_CACHE(PROGRAM ccache)
 
 ##
 ## Global project configuration
 ##
 
 project(FreeOrion)
+
+USE_COMPILER_CACHE_WITH_XCODE()
 
 include(GNUInstallDirs)
 include(UseCodeCoverage)
