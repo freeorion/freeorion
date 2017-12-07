@@ -1391,7 +1391,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     DebugLogger() << "GenerateUniverse with seed: " << seed;
 
     // Reset the universe object for a new universe
-    universe.ResetUniverse();
+    universe.Clear();
 
     // Reset the object id manager for the new empires.
     std::vector<int> empire_ids(player_setup_data.size());

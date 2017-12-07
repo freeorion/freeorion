@@ -92,7 +92,7 @@ extern FO_COMMON_API const int ALL_EMPIRES            = -1;
 // class Universe
 /////////////////////////////////////////////
 Universe::Universe() :
-    m_pathfinder(new Pathfinder),
+    m_pathfinder(std::make_shared<Pathfinder>()),
     m_universe_width(1000.0),
     m_inhibit_universe_object_signals(false),
     m_encoding_empire(ALL_EMPIRES),
@@ -109,33 +109,37 @@ Universe::~Universe()
 void Universe::Clear() {
     // empty object maps
     m_objects.Clear();
-    for (auto& entry : m_empire_latest_known_objects)
-        entry.second.Clear();
-    m_empire_latest_known_objects.clear();
+
+    ResetAllIDAllocation();
+
+    m_marked_destroyed.clear();
+    m_destroyed_object_ids.clear();
 
     // clean up ship designs
     for (auto& entry : m_ship_designs)
         delete entry.second;
     m_ship_designs.clear();
 
-    m_destroyed_object_ids.clear();
-
     m_empire_object_visibility.clear();
     m_empire_object_visibility_turns.clear();
-
     m_empire_object_visible_specials.clear();
+
+    m_empire_known_destroyed_object_ids.clear();
+    m_empire_latest_known_objects.clear();
+    m_empire_stale_knowledge_object_ids.clear();
+    m_empire_known_ship_design_ids.clear();
 
     m_effect_accounting_map.clear();
     m_effect_discrepancy_map.clear();
+    m_effect_specified_empire_object_visibilities.clear();
 
-    ResetAllIDAllocation();
+    GetSpeciesManager().ClearSpeciesHomeworlds();
 
-    m_empire_known_destroyed_object_ids.clear();
-    m_empire_stale_knowledge_object_ids.clear();
+    m_stat_records.clear();
 
-    m_empire_known_ship_design_ids.clear();
+    m_universe_width = 1000.0;
 
-    m_marked_destroyed.clear();
+    m_pathfinder = std::make_shared<Pathfinder>();
 }
 
 void Universe::ResetAllIDAllocation(const std::vector<int>& empire_ids) {
@@ -3082,30 +3086,6 @@ void Universe::GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_k
     auto it = m_empire_stale_knowledge_object_ids.find(encoding_empire);
     if (it != m_empire_stale_knowledge_object_ids.end())
         empire_stale_knowledge_object_ids[encoding_empire] = it->second;
-}
-
-void Universe::ResetUniverse() {
-    m_objects.Clear();  // wipe out anything present in the object map
-
-    m_empire_known_destroyed_object_ids.clear();
-    m_empire_known_ship_design_ids.clear();
-    m_empire_latest_known_objects.clear();
-    m_effect_accounting_map.clear();
-    m_empire_object_visibility.clear();
-    m_empire_object_visibility_turns.clear();
-    m_empire_object_visible_specials.clear();
-    m_effect_accounting_map.clear();
-    m_effect_discrepancy_map.clear();
-    m_marked_destroyed.clear();
-    m_effect_specified_empire_object_visibilities.clear();
-    m_destroyed_object_ids.clear();
-    m_ship_designs.clear();
-    m_stat_records.clear();
-    m_universe_width = 1000.0;
-
-    ResetAllIDAllocation();
-
-    GetSpeciesManager().ClearSpeciesHomeworlds();
 }
 
 std::map<std::string, unsigned int> CheckSumContent() {
