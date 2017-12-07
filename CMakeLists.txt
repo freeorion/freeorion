@@ -25,7 +25,7 @@ ENDIF(NOT CMAKE_BUILD_TYPE)
 message(STATUS "Build type CMAKE_BUILD_TYPE set to ${CMAKE_BUILD_TYPE}")
 
 include(UseCompilerCache)
-FIND_COMPILER_CACHE(PROGRAM ccache)
+find_compiler_cache(PROGRAM ccache)
 
 ##
 ## Global project configuration
@@ -33,7 +33,7 @@ FIND_COMPILER_CACHE(PROGRAM ccache)
 
 project(FreeOrion)
 
-USE_COMPILER_CACHE_WITH_XCODE()
+use_compiler_cache_with_xcode()
 
 include(GNUInstallDirs)
 include(UseCodeCoverage)
@@ -162,6 +162,7 @@ endif()
 if(UNIX AND NOT APPLE)
     add_definitions(-DENABLE_BINRELOC)
 endif()
+
 
 ##
 ## Collect project dependencies.

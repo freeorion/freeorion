@@ -7,7 +7,7 @@
 #
 # This module provides a function to setup a compiler cache tool (currently ``ccache``):
 #
-#   FIND_COMPILER_CACHE([PROGRAM <ccache_name>] [QUIET] [REQUIRED])
+#   find_compiler_cache([PROGRAM <ccache_name>] [QUIET] [REQUIRED])
 #   -- Add the compiler cache tool (default to look for ccache on the path)
 #      to your build through CMAKE_<LANG>_COMPILER_LAUNCHER variables. Also
 #      supports XCode. Uses a wrapper for XCode and CCache < 3.3.
@@ -16,7 +16,7 @@
 # TODO: Remove this module when cmake 3.11 is the minimum required version
 #       FreeOrion included this file directly from CMake master.  
 
-function(FIND_COMPILER_CACHE)
+function(find_compiler_cache)
     set(options
         QUIET
         REQUIRED
@@ -42,11 +42,11 @@ function(FIND_COMPILER_CACHE)
         message(FATAL_ERROR "Failed to find ${CCACHE_PROGRAM} (REQUIRED)")
     endif()
 
-    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
-    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK "${CCACHE_PROGRAM}")
-    
     # Only add if program found
     if(CCACHE_PROGRAM)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK "${CCACHE_PROGRAM}")
+    
         # Get version number
         execute_process(COMMAND "${CCACHE_PROGRAM}" --version OUTPUT_VARIABLE output)
         string(REPLACE "\n" ";" output "${output}")
@@ -78,11 +78,11 @@ endfunction()
 
 # This module provides a function to setup a compiler cache tool for XCode (currently ``ccache``):
 #
-#   USE_COMPILER_CACHE_WITH_XCODE()
+#   use_compiler_cache_with_xcode()
 #   -- Confiure XCode to use ccache.  This must be called after the project()
 #   statement so that CMAKE_C_COMPILER is already set.
 
-function(USE_COMPILER_CACHE_WITH_XCODE)
+function(use_compiler_cache_with_xcode)
   get_property(RULE_LAUNCH_COMPILE_VAR GLOBAL PROPERTY RULE_LAUNCH_COMPILE)
   message(STATUS "Use CCache for ${CMAKE_GENERATOR} called with: ccache program ${RULE_LAUNCH_COMPILE_VAR} ${COMPILER_CACHE_VERSION}")
   # This wrapper only is needed for CCache < 3.3 or XCode
