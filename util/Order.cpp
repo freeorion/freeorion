@@ -531,7 +531,9 @@ void ColonizeOrder::ExecuteImpl() const {
         return;
     }
     if (colonist_capacity > 0.0f && planet->EnvironmentForSpecies(ship->SpeciesName()) < PE_HOSTILE) {
-        ErrorLogger() << "ColonizeOrder::ExecuteImpl nonzero colonist capacity and planet that ship's species can't colonize";
+        ErrorLogger() << "ColonizeOrder::ExecuteImpl nonzero colonist capacity, " << colonist_capacity
+                      << ", and planet " << planet->Name() << " of type, " << planet->Type() << ", that ship's species, "
+                      << ship->SpeciesName() << ", can't colonize";
         return;
     }
 
