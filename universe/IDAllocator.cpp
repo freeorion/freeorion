@@ -236,8 +236,25 @@ void IDAllocator::ObfuscateBeforeSerialization() {
         auto new_next_id = empire_random_offset + m_zero;
 
         // Increment until it is at the correct offset
-        while ((new_next_id - m_zero) % m_stride != assigning_empire_offset_modulus)
+        ID_t ii_sentinel = 0;
+        while (AssigningEmpireForID(new_next_id) != assigning_empire && ii_sentinel <= m_stride) {
             ++new_next_id;
+            ++ii_sentinel;
+        }
+
+        if (ii_sentinel == m_stride) {
+            ErrorLogger()
+                << "While obfuscating id allocation empire " << assigning_empire
+                << "is missing from m_offset_to_empire_id in this table: "
+                << "[(offset, empire id), " << [this]() {
+                std::stringstream ss;
+                std::size_t offset = 0;
+                for (auto& empire_id : m_offset_to_empire_id) {
+                    ss << " (" << offset++ << ", " << empire_id << "), ";
+                }
+                return ss.str();
+            }() << "]";
+        }
 
         m_empire_id_to_next_assigned_object_id[assigning_empire] = new_next_id;
 
