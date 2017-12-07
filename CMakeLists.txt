@@ -24,12 +24,16 @@ ENDIF(NOT CMAKE_BUILD_TYPE)
 
 message(STATUS "Build type CMAKE_BUILD_TYPE set to ${CMAKE_BUILD_TYPE}")
 
+include(UseCompilerCache)
+find_compiler_cache(PROGRAM ccache)
 
 ##
 ## Global project configuration
 ##
 
 project(FreeOrion)
+
+use_compiler_cache_with_xcode()
 
 include(GNUInstallDirs)
 include(UseCodeCoverage)
