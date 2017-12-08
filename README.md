@@ -57,7 +57,7 @@ packages via the command line.
   * [Debian package] stable release: `# apt-get install freeorion`
   * [Ubuntu package] stable release: `# apt-get install freeorion`
   * [Fedora package] stable release: `# dnf install freeorion`
-  * [Void package]   stable release: `# xbps-install freeorion`
+  * [Void package] stable release: `# xbps-install freeorion`
   * [ArchLinux package] stable release
 
 ## Directories
@@ -130,6 +130,7 @@ accompanying license file.
 [Debian Package]: https://packages.debian.org/source/sid/freeorion
 [Ubuntu Package]: https://launchpad.net/ubuntu/+source/freeorion
 [Fedora Package]: https://admin.fedoraproject.org/pkgdb/package/rpms/freeorion/
+[Void package]: https://github.com/voidlinux/void-packages/tree/master/srcpkgs/freeorion
 [ArchLinux Package]: https://aur.archlinux.org/packages/freeorion/
 [GPL v2]: https://www.gnu.org/licenses/gpl-2.0.txt
 [CC-BY-SA-3.0]: https://creativecommons.org/licenses/by-sa/3.0/legalcode
