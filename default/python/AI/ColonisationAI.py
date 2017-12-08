@@ -80,7 +80,9 @@ def outpod_pod_cost():
 def calc_max_pop(planet, species, detail):
     planet_size = _get_planet_size(planet)
     planet_env = species.getPlanetEnvironment(planet.type)
-    uninhabitable = planet_env == fo.planetEnvironment.uninhabitable
+    if planet_env == fo.planetEnvironment.uninhabitable:
+        detail.append("Uninhabitable.")
+        return 0
     tag_list = list(species.tags) if species else []
     pop_tag_mod = AIDependencies.SPECIES_POPULATION_MODIFIER.get(get_ai_tag_grade(tag_list, "POPULATION"), 1.0)
 
@@ -126,7 +128,7 @@ def calc_max_pop(planet, species, detail):
         base_pop_not_modified_by_species += 3
         detail.append("Gaia_PSM_late(3)")
 
-    if "SELF_SUSTAINING" in tag_list and not uninhabitable:
+    if "SELF_SUSTAINING" in tag_list:
         base_pop_not_modified_by_species += 3
         detail.append("SelfSustaining_PSM_late(3)")
 
@@ -155,7 +157,7 @@ def calc_max_pop(planet, species, detail):
         base_pop = base_pop_not_modified_by_species + base_pop_modified_by_species + species_effect
         return planet_size * base_pop + pop_const_mod
 
-    if "PHOTOTROPHIC" in tag_list and max_pop_size() > 0 and not uninhabitable:
+    if "PHOTOTROPHIC" in tag_list and max_pop_size() > 0:
         star_type = fo.getUniverse().getSystem(planet.systemID).starType
         star_pop_mod = AIDependencies.POP_MOD_PHOTOTROPHIC_STAR_MAP.get(star_type, 0)
         base_pop_not_modified_by_species += star_pop_mod
