@@ -43,9 +43,9 @@ public:
     unsigned int GetCheckSum() const;
 
     /** Sets articles to the value of \p future. */
-    FO_COMMON_API void SetArticles(Pending::Pending<ArticleMap>&& future);
+    void SetArticles(Pending::Pending<ArticleMap>&& future);
 
-    FO_COMMON_API const ArticleMap& Articles() const;
+    const ArticleMap& Articles() const;
 
     const EncyclopediaArticle                               empty_article;
 private:

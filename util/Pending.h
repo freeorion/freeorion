@@ -24,16 +24,15 @@ namespace Pending {
             filename(name_)
         {}
 
-        Pending(Pending&& other) :
-            pending(std::move(other.pending)),
-            filename(std::move(other.filename))
-        {}
+        Pending(Pending&& other) = default;
 
-        Pending& operator=(Pending&& other) {
-            pending = std::move(other.pending);
-            filename = std::move(other.filename);
-            return *this;
-        }
+        Pending& operator=(Pending&& other) = default;
+
+        /** Pending is non-copyable because std::shared<T> is non-copyable*/
+        Pending(const Pending&) = delete;
+
+        /** Pending is non-copyable because std::shared<T> is non-copyable*/
+        Pending& operator=(const Pending&) = delete;
 
         boost::optional<std::future<T>> pending = boost::none;
         std::string filename;

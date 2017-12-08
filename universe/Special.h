@@ -124,7 +124,7 @@ public:
     unsigned int GetCheckSum() const;
 
     /** Sets types to the value of \p future. */
-    FO_COMMON_API void SetSpecialsTypes(Pending::Pending<SpecialsTypeMap>&& future);
+    void SetSpecialsTypes(Pending::Pending<SpecialsTypeMap>&& future);
 
 private:
     /** Assigns any m_pending_types to m_specials. */
