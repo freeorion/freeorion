@@ -80,6 +80,9 @@ def outpod_pod_cost():
 def calc_max_pop(planet, species, detail):
     planet_size = _get_planet_size(planet)
     planet_env = species.getPlanetEnvironment(planet.type)
+    if planet_env == fo.planetEnvironment.uninhabitable:
+        detail.append("Uninhabitable.")
+        return 0
     tag_list = list(species.tags) if species else []
     pop_tag_mod = AIDependencies.SPECIES_POPULATION_MODIFIER.get(get_ai_tag_grade(tag_list, "POPULATION"), 1.0)
 
