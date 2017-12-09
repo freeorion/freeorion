@@ -29,7 +29,6 @@ empire_shipyards = {}
 available_growth_specials = {}
 active_growth_specials = {}
 empire_metabolisms = {}
-annexable_system_ids = set()
 planet_supply_cache = {}  # includes system supply
 all_colony_opportunities = {}
 
@@ -201,36 +200,7 @@ def get_supply_tech_range():
     return sum(_range for _tech, _range in AIDependencies.supply_range_techs.iteritems() if tech_is_complete(_tech))
 
 
-def check_supply():
-    print "\n", 10 * "=", "Supply calculations", 10 * "=", "\n"
-    empire = fo.getEmpire()
-
-    colonization_timer.start('Getting Empire Supply Info')
-    print "Base Supply:", dict_from_map(empire.systemSupplyRanges)
-    for i in range(-3, 1):
-        print "Systems %d jumps away from supply:", ', '.join(
-                PlanetUtilsAI.sys_name_ids(state.get_systems_by_supply_tier(i)))
-
-    colonization_timer.start('Determining Annexable Systems')
-    annexable_system_ids.clear()  # TODO: distinguish colony-annexable systems and outpost-annexable systems
-
-    supply_distance = get_supply_tech_range()
-    # extra potential supply contributions:
-    # 3 for up to Ultimate supply species
-    # 2 for possible tiny planets
-    # 1 for World Tree
-    # TODO: +3 to consider capturing planets with Elevators
-    # TODO consider that this should not be more then maximal value in empire.systemSupplyRanges
-    supply_distance += 6  # should not be more than max value in supplyProjections
-
-    # we should not rely on constant here, for system, supply in supplyProjections need to add systems in supply range
-    for jumps in range(-supply_distance, 1):  # [-supply_distance, ..., -2, -1, 0]
-        annexable_system_ids.update(state.get_systems_by_supply_tier(jumps))
-    colonization_timer.stop()
-
-
 def survey_universe():
-    check_supply()
     colonization_timer.start("Categorizing Visible Planets")
     universe = fo.getUniverse()
     empire_id = fo.empireID()
