@@ -156,6 +156,16 @@ boost::statechart::result IntroMenu::react(const StartQuittingGame& e) {
     return transit<QuittingGame>();
 }
 
+boost::statechart::result IntroMenu::react(const EndGame&) {
+    TraceLogger(FSM) << "(HumanClientFSM) IntroMenu ignoring EndGame.";
+    return discard_event();
+}
+
+boost::statechart::result IntroMenu::react(const Disconnection&) {
+    TraceLogger(FSM) << "(HumanClientFSM) IntroMenu ignoring disconnection.";
+    return discard_event();
+}
+
 
 ////////////////////////////////////////////////////////////
 // WaitingForSPHostAck
