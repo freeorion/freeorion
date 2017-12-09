@@ -306,7 +306,37 @@ def assign_invasion_values(planet_ids):
 
 def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     """Return the invasion value (score, troops) of a planet."""
+    universe = fo.getUniverse()
+    empire_id = fo.empireID()
     detail = []
+
+    planet = universe.getPlanet(planet_id)
+    if planet is None:
+        print "Invasion AI couldn't access any info for planet id %d" % planet_id
+        return [0, 0]
+
+    system_id = planet.systemID
+
+    # make sure the target planet is not stealthed
+    system_last_seen = get_partial_visibility_turn(planet_id)
+    planet_last_seen = get_partial_visibility_turn(system_id)
+    if planet_last_seen < system_last_seen:
+        # TODO: track detection strength, order new scouting when it goes up
+        print "invasion AI couldn't get current info on planet id %d (was stealthed at last sighting)" % planet_id
+        return [0, 0]
+
+    # get a baseline evaluation of the planet as determined by ColonisationAI
+    species_name = planet.speciesName
+    species = fo.getSpecies(species_name)
+    if not species or AIDependencies.TAG_DESTROYED_ON_CONQUEST in species.tags:
+        # this call iterates over this Empire's available species with which it could colonize after an invasion
+        planet_eval = ColonisationAI.assign_colonisation_values([planet_id], MissionType.INVASION, None, detail)
+        colony_base_value = max(0.75 * planet_eval.get(planet_id, [0])[0],
+                                ColonisationAI.evaluate_planet(planet_id, MissionType.OUTPOST, None, detail))
+    else:
+        colony_base_value = ColonisationAI.evaluate_planet(planet_id, MissionType.INVASION, species_name, detail)
+
+    # Add extra score for all buildings on the planet
     building_values = {"BLD_IMPERIAL_PALACE": 1000,
                        "BLD_CULTURE_ARCHIVES": 1000,
                        "BLD_AUTO_HISTORY_ANALYSER": 100,
@@ -332,59 +362,32 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
                        "BLD_BIOTERROR_PROJECTOR": 1000,
                        "BLD_SHIPYARD_ENRG_COMP": 3000,
                        }
-    # TODO: add more factors, as used for colonization
-    universe = fo.getUniverse()
-    empire_id = fo.empireID()
-    max_jumps = 8
-    planet = universe.getPlanet(planet_id)
-    if planet is None:  # TODO: exclude planets with stealth higher than empireDetection
-        print "invasion AI couldn't access any info for planet id %d" % planet_id
-        return [0, 0]
-
-    sys_partial_vis_turn = get_partial_visibility_turn(planet.systemID)
-    planet_partial_vis_turn = get_partial_visibility_turn(planet_id)
-
-    if planet_partial_vis_turn < sys_partial_vis_turn:
-        print "invasion AI couldn't get current info on planet id %d (was stealthed at last sighting)" % planet_id
-        # TODO: track detection strength, order new scouting when it goes up
-        return [0, 0]  # last time we had partial vis of the system, the planet was stealthed to us
-
-    species_name = planet.speciesName
-    species = fo.getSpecies(species_name)
-    if not species or AIDependencies.TAG_DESTROYED_ON_CONQUEST in species.tags:
-        # this call iterates over this Empire's available species with which it could colonize after an invasion
-        planet_eval = ColonisationAI.assign_colonisation_values([planet_id], MissionType.INVASION, None, detail)
-        pop_val = max(0.75 * planet_eval.get(planet_id, [0])[0],
-                      ColonisationAI.evaluate_planet(planet_id, MissionType.OUTPOST, None, detail))
-    else:
-        pop_val = ColonisationAI.evaluate_planet(planet_id, MissionType.INVASION, species_name, detail)
-
     bld_tally = 0
     for bldType in [universe.getBuilding(bldg).buildingTypeName for bldg in planet.buildingIDs]:
         bval = building_values.get(bldType, 50)
         bld_tally += bval
         detail.append("%s: %d" % (bldType, bval))
 
+    # Add extra score for unlocked techs when we conquer the species
     tech_tally = 0
+    value_per_pp = 4
     for unlocked_tech in AIDependencies.SPECIES_TECH_UNLOCKS.get(species_name, []):
         if not tech_is_complete(unlocked_tech):
             rp_cost = fo.getTech(unlocked_tech).researchCost(empire_id)
-            tech_tally += rp_cost * 4
-            detail.append("%s: %d" % (unlocked_tech, rp_cost * 4))
+            tech_value = value_per_pp * rp_cost
+            tech_tally += tech_value
+            detail.append("%s: %d" % (unlocked_tech, tech_value))
 
-    p_sys_id = planet.systemID
+    max_jumps = 8
     capitol_id = PlanetUtilsAI.get_capital()
     least_jumps_path = []
     clear_path = True
     if capitol_id:
         homeworld = universe.getPlanet(capitol_id)
-        if homeworld:
-            home_system_id = homeworld.systemID
-            eval_system_id = planet.systemID
-            if (home_system_id != INVALID_ID) and (eval_system_id != INVALID_ID):
-                least_jumps_path = list(universe.leastJumpsPath(home_system_id, eval_system_id, empire_id))
-                max_jumps = len(least_jumps_path)
-    system_status = foAI.foAIstate.systemStatus.get(p_sys_id, {})
+        if homeworld and homeworld.systemID != INVALID_ID and system_id != INVALID_ID:
+            least_jumps_path = list(universe.leastJumpsPath(homeworld.systemID, system_id, empire_id))
+            max_jumps = len(least_jumps_path)
+    system_status = foAI.foAIstate.systemStatus.get(system_id, {})
     system_fleet_treat = system_status.get('fleetThreat', 1000)
     system_monster_threat = system_status.get('monsterThreat', 0)
     sys_total_threat = system_fleet_treat + system_monster_threat + system_status.get('planetThreat', 0)
@@ -405,15 +408,15 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     # TODO: refactor troop determination into function for use in mid-mission updates and also consider defender techs
     max_troops += AIDependencies.TROOPS_PER_POP * (target_pop - pop)
 
-    this_system = universe.getSystem(p_sys_id)
-    secure_targets = [p_sys_id] + list(this_system.planetIDs)
+    this_system = universe.getSystem(system_id)
+    secure_targets = [system_id] + list(this_system.planetIDs)
     system_secured = False
     for mission in secure_fleet_missions:
         if system_secured:
             break
         secure_fleet_id = mission.fleet.id
         s_fleet = universe.getFleet(secure_fleet_id)
-        if not s_fleet or s_fleet.systemID != p_sys_id:
+        if not s_fleet or s_fleet.systemID != system_id:
             continue
         if mission.type == MissionType.SECURE:
             target_obj = mission.target.get_object()
@@ -434,13 +437,13 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     if planet.owner != -1:  # value in taking this away from an enemy
         enemy_val = 20 * (planet.currentMeterValue(fo.meterType.targetIndustry) +
                           2*planet.currentMeterValue(fo.meterType.targetResearch))
-    if p_sys_id in ColonisationAI.annexable_system_ids:  # TODO: extend to rings
+    if system_id in ColonisationAI.annexable_system_ids:  # TODO: extend to rings
         supply_val = 100
-    elif p_sys_id in state.get_systems_by_supply_tier(-1):
+    elif system_id in state.get_systems_by_supply_tier(-1):
         supply_val = 200
-    elif p_sys_id in state.get_systems_by_supply_tier(-2):
+    elif system_id in state.get_systems_by_supply_tier(-2):
         supply_val = 300
-    elif p_sys_id in state.get_systems_by_supply_tier(-3):
+    elif system_id in state.get_systems_by_supply_tier(-3):
         supply_val = 400
     if max_path_threat > 0.5 * mil_ship_rating:
         if max_path_threat < 3 * mil_ship_rating:
@@ -476,7 +479,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     normalized_cost = max(1., normalized_cost)
     cost_score = (normalized_cost**2 / 50.0) * troop_cost
 
-    base_score = pop_val + supply_val + bld_tally + tech_tally + enemy_val - cost_score
+    base_score = colony_base_value + supply_val + bld_tally + tech_tally + enemy_val - cost_score
     planet_score = retaliation_risk_factor(planet.owner) * threat_factor * max(0, base_score)
     if clear_path:
         planet_score *= 1.5
@@ -490,7 +493,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
                ' - supplyval: %.1f\n'
                ' - bldval: %s\n'
                ' - enemyval: %s') % (planet_score, planned_troops, troop_cost,
-                                     threat_factor, detail, pop_val, supply_val, bld_tally, enemy_val)
+                                     threat_factor, detail, colony_base_value, supply_val, bld_tally, enemy_val)
     return [planet_score, planned_troops]
 
 
