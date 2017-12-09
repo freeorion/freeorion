@@ -84,6 +84,7 @@ public:
     bool                                HasColonyShips() const;             ///< Returns true if there is at least one colony ship with nonzero capacity in the fleet.
     bool                                HasOutpostShips() const;            ///< Returns true if there is at least one colony ship with zero capacity in the fleet
     bool                                HasTroopShips() const;              ///< Returns true if there is at least one troop ship in the fleet.
+    bool                                HasPlanetDestroyerShips() const;    ///< Returns true if there is at least one planet destroyer ship in the fleet.
     bool                                HasShipsOrderedScrapped() const;    ///< Returns true if there is at least one ship ordered scrapped in the fleet.
     bool                                HasShipsWithoutScrapOrders() const; ///< Returns true if there is at least one ship without any scrap orders in the fleet.
     int                                 NumShips() const                    { return m_ships.size(); }  ///< Returns number of ships in fleet.

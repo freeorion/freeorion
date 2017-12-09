@@ -2138,6 +2138,11 @@ void RemoveSpecial::Execute(const ScriptingContext& context) const {
         return;
     }
 
+    if (!m_name) {
+        // if a nullpointer was passed instead of a special name, remove all specials
+        context.effect_target->RemoveAllSpecials();
+    }
+
     std::string name = (m_name ? m_name->Eval(context) : "");
     context.effect_target->RemoveSpecial(name);
 }

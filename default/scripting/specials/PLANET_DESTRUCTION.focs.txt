@@ -1,0 +1,24 @@
+Special
+    name = "PLANET_DESTRUCTION_SPECIAL"
+    description = "PLANET_DESTRUCTION_SPECIAL_DESC"
+    spawnrate = 0.0
+    spawnlimit = 0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            effects = [
+                SetPopulation value = 0
+                RemoveSpecial name = "PLANET_DESTRUCTION_SPECIAL"
+            ]
+        EffectsGroup
+            scope = And [
+                Source
+                Homeworld
+            ]
+            effects = [
+                AddSpecial name = "DESTROYED_HOMEWORLD_SPECIAL"
+            ]
+    ]
+    graphic = "icons/specials_huge/planet_destroyed_red.png"
+
+#include "/scripting/ship_parts/General/planet_destruction.macros"

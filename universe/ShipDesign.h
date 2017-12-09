@@ -530,6 +530,7 @@ public:
     bool                            CanColonize() const;
     bool                            HasTroops() const       { return (m_troop_capacity > 0.0f); }
     bool                            CanBombard() const      { return m_can_bombard; }
+    bool                            CanDestroyPlanet() const;
     bool                            IsArmed() const         { return m_is_armed; }
     bool                            HasFighters() const     { return m_has_fighters; }
     bool                            IsMonster() const       { return m_is_monster; }

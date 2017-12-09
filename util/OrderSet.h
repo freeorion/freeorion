@@ -59,7 +59,15 @@ public:
     /** Try to Undo() \p order and if it succeeds remove the order from the
         set.  Return true if \p order exists and was successfully removed. */
     bool           RescindOrder(int order);
-    void           Reset(); ///< clears all orders; should be called at the beginning of a new turn
+
+    /** Resets all orders, irrespective of persistance */
+    void           Reset();
+
+    /** Clears all orders except for the ones that should persist */
+    void           ResetNonPersistentOrders();
+
+    /** Executes all persisting orders to update the UI on the new turn */
+    void           ExecutePersistentOrders();
     //@}
 
 private:

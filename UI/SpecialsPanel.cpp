@@ -77,7 +77,7 @@ void SpecialsPanel::Update() {
         const Special* special = GetSpecial(entry.first);
         std::shared_ptr<StatisticIcon> graphic;
         if (entry.second.second > 0.0f)
-            graphic = GG::Wnd::Create<StatisticIcon>(ClientUI::SpecialIcon(special->Name()), entry.second.second, 2, false,
+            graphic = GG::Wnd::Create<StatisticIcon>(ClientUI::SpecialIcon(special->Name()), entry.second.second, 0, false,
                                                      SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT);
         else
             graphic = GG::Wnd::Create<StatisticIcon>(ClientUI::SpecialIcon(special->Name()),
@@ -116,6 +116,9 @@ void SpecialsPanel::Update() {
         AttachChild(icon);
 
         x += SPECIAL_ICON_WIDTH + EDGE_PAD;
+        // reserve width for special capacity, if it has one
+        if (icon->HasValueSet())
+            x += SPECIAL_ICON_WIDTH;
 
         if (x + SPECIAL_ICON_WIDTH + EDGE_PAD > AVAILABLE_WIDTH) {
             x = GG::X(EDGE_PAD);

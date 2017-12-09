@@ -1636,9 +1636,9 @@ void ServerApp::RemoveEmpireTurn(int empire_id)
 { m_turn_sequence.erase(empire_id); }
 
 void ServerApp::ClearEmpireTurnOrders() {
-    for (auto& order : m_turn_sequence) {
-        if (order.second) {
-            order.second.reset(nullptr);
+    for (auto& orderset : m_turn_sequence) {
+        if (orderset.second) {
+            orderset.second.reset();
         }
     }
 }
@@ -2799,7 +2799,7 @@ namespace {
     }
 
     /** Removes bombardment state info from objects. Actual effects of
-      * bombardment are handled during */
+      * bombardment are handled during effect processing */
     void CleanUpBombardmentStateInfo() {
         for (auto& ship : GetUniverse().Objects().FindObjects<Ship>())
         { ship->ClearBombardPlanet(); }
@@ -2845,8 +2845,7 @@ void ServerApp::PreCombatProcessTurns() {
     // inform players of order execution
     m_networking.SendMessageAll(TurnProgressMessage(Message::PROCESSING_ORDERS));
 
-    // clear bombardment state before executing orders, so result after is only
-    // determined by what orders set.
+    // clean up bombardment state of planets and ships
     CleanUpBombardmentStateInfo();
 
     // execute orders
@@ -2856,8 +2855,7 @@ void ServerApp::PreCombatProcessTurns() {
             DebugLogger() << "No OrderSet for empire " << empire_orders.first;
             continue;
         }
-        for (const auto& id_and_order : *order_set)
-            id_and_order.second->Execute();
+        order_set->ApplyOrders();
     }
 
     // clean up orders, which are no longer needed
@@ -3184,7 +3182,6 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.BackPropagateObjectMeters();
     empires.BackPropagateMeters();
 
-
     // check for loss of empire capitals
     for (auto& entry : empires) {
         int capital_id = entry.second->CapitalID();
@@ -3228,13 +3225,11 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.UpdateEmpireObjectVisibilities();
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
-
     // misc. other updates and records
     m_universe.UpdateStatRecords();
     for (auto& entry : empires)
         entry.second->UpdateOwnedObjectCounters();
     GetSpeciesManager().UpdatePopulationCounter();
-
 
     // indicate that the clients are waiting for their new gamestate
     m_networking.SendMessageAll(TurnProgressMessage(Message::DOWNLOADING));

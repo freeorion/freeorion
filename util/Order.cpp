@@ -51,6 +51,9 @@ bool Order::Undo() const {
 bool Order::Executed() const
 { return m_executed; }
 
+bool Order::ShouldPersist()
+{ return false; }
+
 bool Order::UndoImpl() const
 { return false; }
 
@@ -707,8 +710,8 @@ void BombardOrder::ExecuteImpl() const {
         ErrorLogger() << "BombardOrder::ExecuteImpl couldn't get ship with id " << m_ship;
         return;
     }
-    if (!ship->CanBombard()) {
-        ErrorLogger() << "BombardOrder::ExecuteImpl got ship that can't bombard";
+    if (!ship->CanBombard() && !ship->CanDestroyPlanet()) {
+        ErrorLogger() << "BombardOrder::ExecuteImpl got ship that can't bombard or destroy a planet";
         return;
     }
     if (!ship->OwnedBy(empire_id)) {
@@ -745,10 +748,15 @@ void BombardOrder::ExecuteImpl() const {
         return;
     }
 
-    // note: multiple ships, from same or different empires, can invade the same planet on the same turn
-    DebugLogger() << "BombardOrder::ExecuteImpl set for ship " << m_ship << " "
-                  << ship->Name() << " to bombard planet " << m_planet << " "
-                  << planet->Name();
+    if (!ship->CanDestroyPlanet())
+        DebugLogger() << "BombardOrder::ExecuteImpl set for ship " << m_ship << " "
+                      << ship->Name() << " to bombard planet " << m_planet << " "
+                      << planet->Name();
+    else
+        DebugLogger() << "BombardOrder::ExecuteImpl set for ship " << m_ship << " "
+                      << ship->Name() << " to destroy planet " << m_planet << " "
+                      << planet->Name();
+
     planet->SetIsAboutToBeBombarded(true);
     ship->SetBombardPlanet(m_planet);
 
@@ -773,7 +781,7 @@ bool BombardOrder::UndoImpl() const {
         return false;
     }
 
-    planet->SetIsAboutToBeBombarded(false);
+    planet->ResetIsAboutToBeBombarded();
     ship->ClearBombardPlanet();
 
     if (auto fleet = GetFleet(ship->FleetID()))
@@ -781,6 +789,29 @@ bool BombardOrder::UndoImpl() const {
 
     return true;
 }
+
+bool BombardOrder::ShouldPersist() {
+    auto ship = GetShip(m_ship);
+    auto planet = GetPlanet(m_planet);
+
+    if (!ship || !planet)
+        return false;
+    if (!(ship->SystemID() == planet->SystemID()))
+        return false;
+    // don't continue if planet was destroyed
+    if (planet->HasSpecial("PLANET_DESTRUCTION_SPECIAL"))
+        return false;
+    // don't continue bombing/destroying if planet has been conquered
+    if (planet->Owner() == ship->Owner())
+        return false;
+    // don't continue bombing if planet has been depopulated
+    if (!ship->CanDestroyPlanet() && planet->CurrentMeterValue(METER_POPULATION) <= 0)
+        return false;
+
+    //DebugLogger() << "BombardOrder::ShouldPersist(): Persisting bombard order.";
+    return true;
+}
+
 
 ////////////////////////////////////////////////
 // ChangeFocusOrder

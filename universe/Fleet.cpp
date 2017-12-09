@@ -697,6 +697,11 @@ bool Fleet::HasTroopShips() const {
     return HasXShips(isX, m_ships);
 }
 
+bool Fleet::HasPlanetDestroyerShips() const {
+    auto isX = [](const std::shared_ptr<const Ship>& ship) { return ship->CanDestroyPlanet(); };
+    return HasXShips(isX, m_ships);
+}
+
 bool Fleet::HasShipsOrderedScrapped() const {
     auto isX = [](const std::shared_ptr<const Ship>& ship){ return ship->OrderedScrapped(); };
     return HasXShips(isX, m_ships);

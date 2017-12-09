@@ -415,28 +415,31 @@ std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(const std::vector<std::
 
     // the set of fleets is treated like a fleet that contains all the ships
     bool hasColonyShips = false; bool hasOutpostShips = false; bool hasTroopShips = false; bool hasMonsters = false; bool hasArmedShips = false;
+    bool hasPlanetDestroyer = false;
     for (auto& fleet : fleets) {
         if (!fleet)
             continue;
 
-        hasColonyShips  = hasColonyShips  || fleet->HasColonyShips();
-        hasOutpostShips = hasOutpostShips || fleet->HasOutpostShips();
-        hasTroopShips   = hasTroopShips   || fleet->HasTroopShips();
-        hasMonsters     = hasMonsters     || fleet->HasMonsters();
-        hasArmedShips   = hasArmedShips   || fleet->HasArmedShips() || fleet->HasFighterShips();
+        hasColonyShips     = hasColonyShips     || fleet->HasColonyShips();
+        hasOutpostShips    = hasOutpostShips    || fleet->HasOutpostShips();
+        hasTroopShips      = hasTroopShips      || fleet->HasTroopShips();
+        hasMonsters        = hasMonsters        || fleet->HasMonsters();
+        hasArmedShips      = hasArmedShips      || fleet->HasArmedShips() || fleet->HasFighterShips();
+        hasPlanetDestroyer = hasPlanetDestroyer || fleet->HasPlanetDestroyerShips();
     }
 
     // get file name main part depending on type of fleet
     // symbol type prioritized by the ship type arbitrarily deemed "most important"
     std::vector<std::string> main_filenames;
     if (hasMonsters) {
-        if (hasArmedShips)   { main_filenames.push_back("head-monster.png"); }
-        else                 { main_filenames.push_back("head-monster-harmless.png"); }
+        if (hasArmedShips)      { main_filenames.push_back("head-monster.png"); }
+        else                    { main_filenames.push_back("head-monster-harmless.png"); }
     } else {
-        if (hasArmedShips)   { main_filenames.push_back("head-warship.png"); }
-        if (hasColonyShips)  { main_filenames.push_back("head-colony.png");  }
-        if (hasOutpostShips) { main_filenames.push_back("head-outpost.png"); }
-        if (hasTroopShips)   { main_filenames.push_back("head-lander.png");  }
+        if (hasPlanetDestroyer) { main_filenames.push_back("head-planet-destroyer.png"); }
+        if (hasArmedShips)      { main_filenames.push_back("head-warship.png"); }
+        if (hasColonyShips)     { main_filenames.push_back("head-colony.png");  }
+        if (hasOutpostShips)    { main_filenames.push_back("head-outpost.png"); }
+        if (hasTroopShips)      { main_filenames.push_back("head-lander.png");  }
     }
     if (main_filenames.empty()) { main_filenames.push_back("head-scout.png"); }
 

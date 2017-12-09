@@ -336,6 +336,7 @@
     (RebelTroops)                               \
     (Red)                                       \
     (Refinement)                                \
+    (RemoveAllSpecials)                         \
     (RemoveSpecial)                             \
     (RemoveStarlanes)                           \
     (Research)                                  \

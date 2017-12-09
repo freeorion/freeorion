@@ -14,13 +14,17 @@ int OrderSet::IssueOrder(OrderPtr&& order) {
     auto inserted = m_orders.insert(std::make_pair(retval, std::forward<OrderPtr>(order)));
     inserted.first->second->Execute();
 
+    // DebugLogger() << "OrderSet::IssueOrder() issued order No. " << retval;
+
     return retval;
 }
 
 void OrderSet::ApplyOrders() {
     DebugLogger() << "OrderSet::ApplyOrders() executing " << m_orders.size() << " orders";
-    for (auto& order : m_orders)
+    for (auto& order : m_orders) {
         order.second->Execute();
+        // DebugLogger() << "OrderSet::ApplyOrders(): Executing order No. " << order.first;
+    }
 }
 
 bool OrderSet::RescindOrder(int order) {
@@ -37,3 +41,24 @@ bool OrderSet::RescindOrder(int order) {
 
 void OrderSet::Reset()
 { m_orders.clear(); }
+
+void OrderSet::ResetNonPersistentOrders() {
+    for (auto& order : m_orders) {
+        if (!order.second->ShouldPersist()) {
+            auto it = m_orders.find(order.first);
+            if (it != m_orders.end())
+                m_orders.erase(it);
+        }
+    }
+    //DebugLogger() << "OrderSet::ResetNonPersistentOrders(): Persisting orders: " << m_orders.size();
+}
+
+void OrderSet::ExecutePersistentOrders() {
+    for (auto& order : m_orders) {
+        if (order.second->ShouldPersist()) {
+            order.second->ResetExecutionStatus();
+            order.second->Execute();
+            //DebugLogger() << "OrderSet::ExecutePersistentOrders(): executed persistent order " << order.first;
+        }
+    }
+}

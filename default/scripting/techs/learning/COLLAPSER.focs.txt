@@ -6,7 +6,12 @@ Tech
     researchcost = 1500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 8
     tags = [ "PEDIA_LEARNING_CATEGORY" ]
-    prerequisites = ["LRN_ART_BLACK_HOLE" "LRN_STELLAR_TOMOGRAPHY" "LRN_SPATIAL_DISTORT_GEN"]
+    prerequisites = [
+        "LRN_ART_BLACK_HOLE"
+        "LRN_STELLAR_TOMOGRAPHY"
+        "LRN_SPATIAL_DISTORT_GEN"
+        "SHP_DOOMSDAY_WEAPON_UNLOCK"
+    ]
     unlock = Item type = Building name = "BLD_BLACK_HOLE_COLLAPSER"
     graphic = "icons/tech/black_hole_collapse.png"
 

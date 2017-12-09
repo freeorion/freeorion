@@ -1,0 +1,10 @@
+Tech
+    name = "SHP_DOOMSDAY_WEAPON_UNLOCK"
+    description = "SHP_DOOMSDAY_WEAPON_UNLOCK_DESC"
+    short_description = "SHP_DOOMSDAY_WEAPON_UNLOCK_SHORT_DESC"
+    category = "SHIP_WEAPONS_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    unresearchable
+    tags = [ "PEDIA_SHIP_WEAPONS_CATEGORY" ]
+    graphic = ""

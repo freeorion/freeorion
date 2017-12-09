@@ -19,24 +19,25 @@ namespace parse { namespace detail {
             >
         > doubles_string_rule;
 
-        parse::double_parser_rules          double_rules;
+        parse::double_parser_rules   double_rules;
         effect_parser_rule           move_to;
-        doubles_string_rule                 move_in_orbit;
-        doubles_string_rule                 move_towards;
+        doubles_string_rule          move_in_orbit;
+        doubles_string_rule          move_towards;
         effect_parser_rule           set_destination;
         effect_parser_rule           set_aggression;
         effect_parser_rule           destroy;
         effect_parser_rule           noop;
         effect_parser_rule           victory;
         effect_parser_rule           add_special_1;
-        doubles_string_rule                 add_special_2;
+        doubles_string_rule          add_special_2;
+        effect_parser_rule           remove_all_specials;
         effect_parser_rule           remove_special;
         effect_parser_rule           add_starlanes;
         effect_parser_rule           remove_starlanes;
         effect_parser_rule           set_star_type;
         effect_parser_rule           set_texture;
         effect_parser_rule           start;
-        star_type_parser_rules   star_type_rules;
+        star_type_parser_rules       star_type_rules;
     };
 
     }

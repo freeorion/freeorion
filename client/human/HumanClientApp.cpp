@@ -30,6 +30,7 @@
 #include "../../util/Directories.h"
 #include "../../util/Version.h"
 #include "../../universe/Planet.h"
+#include "../../universe/Ship.h"
 #include "../../universe/Species.h"
 #include "../../universe/Enums.h"
 #include "../../Empire/Empire.h"
@@ -1118,8 +1119,13 @@ void HumanClientApp::StartGame(bool is_new_game) {
     UpdateCombatLogManager();
 }
 
-void HumanClientApp::HandleTurnUpdate()
-{ UpdateCombatLogManager(); }
+void HumanClientApp::HandleTurnUpdate() {
+    UpdateCombatLogManager();
+
+    // client universe was updated; should some orders persist?
+    m_orders.ResetNonPersistentOrders();
+    m_orders.ExecutePersistentOrders();
+}
 
 void HumanClientApp::UpdateCombatLogManager() {
     boost::optional<std::vector<int>> incomplete_ids = GetCombatLogManager().IncompleteLogIDs();

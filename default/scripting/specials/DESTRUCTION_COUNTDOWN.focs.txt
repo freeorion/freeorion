@@ -1,0 +1,20 @@
+Special
+    name = "DESTRUCTION_COUNTDOWN_SPECIAL"
+    description = "DESTRUCTION_COUNTDOWN_SPECIAL_DESC"
+    spawnrate = 0.0
+    spawnlimit = 0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = OrderedBombardedBy condition = All
+            effects = SetSpecialCapacity name = "DESTRUCTION_COUNTDOWN_SPECIAL" value = value - 1
+        EffectsGroup
+            scope = Source
+            activation = Not OrderedBombardedBy condition = All
+            effects = RemoveSpecial name = "DESTRUCTION_COUNTDOWN_SPECIAL"
+        // note: possible exploit where planet destroyer starts countdown, and regular bomber continues it
+    ]
+    graphic = "icons/specials_huge/planet_destroyed_blue.png"
+
+#include "/scripting/ship_parts/General/planet_destruction.macros"
+

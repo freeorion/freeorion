@@ -809,8 +809,10 @@ namespace {
             add_overlay("colonizing.png");
         if (ship->OrderedInvadePlanet() != INVALID_OBJECT_ID)
             add_overlay("invading.png");
-        if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID)
+        if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID && !ship->CanDestroyPlanet())
             add_overlay("bombarding.png");
+        if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID && ship->CanDestroyPlanet())
+            add_overlay("destroying.png");
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         if ((ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
@@ -1529,10 +1531,17 @@ void FleetDataPanel::Refresh() {
         }
         if (all_ships(
                 [](const std::shared_ptr<const Ship>& ship)
-                { return ship->OrderedBombardPlanet() != INVALID_OBJECT_ID; })
+                { return ship->OrderedBombardPlanet() != INVALID_OBJECT_ID && !ship->CanDestroyPlanet(); })
            )
         {
             add_overlay("bombarding.png");
+        }
+        if (all_ships(
+            [](const std::shared_ptr<const Ship>& ship)
+        { return ship->OrderedBombardPlanet() != INVALID_OBJECT_ID && ship->CanDestroyPlanet(); })
+            )
+        {
+            add_overlay("destroying.png");
         }
         if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES)
             add_overlay("gifting.png");

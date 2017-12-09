@@ -369,6 +369,9 @@ void UniverseObject::SetSpecialCapacity(const std::string& name, float capacity)
 void UniverseObject::RemoveSpecial(const std::string& name)
 { m_specials.erase(name); }
 
+void UniverseObject::RemoveAllSpecials()
+{ m_specials.clear(); }
+
 std::map<MeterType, Meter> UniverseObject::CensoredMeters(Visibility vis) const {
     std::map<MeterType, Meter> retval;
     if (vis >= VIS_PARTIAL_VISIBILITY) {

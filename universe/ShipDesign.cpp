@@ -33,6 +33,10 @@ extern FO_COMMON_API const int INVALID_DESIGN_ID = -1;
 using boost::io::str;
 
 namespace {
+
+    /** @content_tag{PLANET_DESTROYER} This part has planet destruction capabilities **/
+    const std::string TAG_PLANET_DESTROYER = "CTRL_PLANET_DESTROYER";
+
     void AddRules(GameRules& rules) {
         // makes all ships cost 1 PP and take 1 turn to produce
         rules.Add<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION",
@@ -944,6 +948,15 @@ bool ShipDesign::CanColonize() const {
             continue;
         if (const PartType* part = GetPartType(part_name))
             if (part->Class() == PC_COLONY)
+                return true;
+    }
+    return false;
+}
+
+bool ShipDesign::CanDestroyPlanet() const {
+    for (auto& part_name : Parts()) {
+        if (const PartType* part = GetPartType(part_name))
+            if (part->Tags().count(TAG_PLANET_DESTROYER) > 0)
                 return true;
     }
     return false;

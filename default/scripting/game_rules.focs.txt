@@ -50,6 +50,13 @@ GameRule
     default = On
 
 GameRule
+    name = "RULE_ENABLE_DOOMSDAY_WEAPONS"
+    description = "RULE_ENABLE_DOOMSDAY_WEAPONS_DESC"
+    category = "CONTENT"
+    type = Toggle
+    default = On
+
+GameRule
     name = "RULE_TEST_STRING"
     description = "RULE_TEST_STRING_DESC"
     category = "TEST"

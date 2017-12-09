@@ -1,6 +1,7 @@
 Part
     name = "SP_EMO"
     description = "SP_EMO_DESC"
+    exclusions = [ "SP_PLANET_DESTROYER" ]
     class = Bombard
     capacity = 1.0
     mountableSlotTypes = External

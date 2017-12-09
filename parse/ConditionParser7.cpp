@@ -31,6 +31,7 @@ namespace parse { namespace detail {
         qi::_a_type _a;
         qi::_b_type _b;
         qi::_c_type _c;
+        qi::_d_type _d;
         qi::_val_type _val;
         qi::_pass_type _pass;
         const boost::phoenix::function<construct_movable> construct_movable_;

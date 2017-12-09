@@ -759,8 +759,10 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+
 /** Removes the Special with the name \a name to the target object.  This has
-  * no effect if no such Special was already attached to the target object. */
+  * no effect if no such Special was already attached to the target object.
+  * If a null-ptr is passed, all Specials are removed from the target object. */
 class FO_COMMON_API RemoveSpecial : public EffectBase {
 public:
     explicit RemoveSpecial(const std::string& name);
