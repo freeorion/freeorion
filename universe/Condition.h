@@ -111,7 +111,7 @@ struct FO_COMMON_API ConditionBase {
               std::shared_ptr<const UniverseObject> candidate) const;
 
     /** Tests single candidate object, returning true iff it matches condition
-      * with empty ScriptingContext. */
+      * with empty ScriptingContext. If this condition is not invariant to */
     bool Eval(std::shared_ptr<const UniverseObject> candidate) const;
 
     virtual void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,

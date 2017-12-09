@@ -62,25 +62,33 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    std::unique_ptr<ValueRef::Variable<std::string>> StringValueRef(const std::string& token) {
+    std::unique_ptr<ValueRef::Variable<std::string>> StringValueRef(
+        const std::string& token)
+    {
         return boost::make_unique<ValueRef::Variable<std::string>>(
             ValueRef::SOURCE_REFERENCE, token);
     }
 
-    std::unique_ptr<ValueRef::Variable<std::string>> UserStringValueRef(const std::string& token) {
+    std::unique_ptr<ValueRef::Variable<std::string>> UserStringValueRef(
+        const std::string& token)
+    {
         return boost::make_unique<ValueRef::UserStringLookup<std::string>>(
             boost::make_unique<ValueRef::Variable<std::string>>(
                 ValueRef::SOURCE_REFERENCE, token));
     }
 
-    std::unique_ptr<ValueRef::Variable<std::string>> UserStringVecValueRef(const std::string& token) {
+    std::unique_ptr<ValueRef::Variable<std::string>> UserStringVecValueRef(
+        const std::string& token)
+    {
         return boost::make_unique<ValueRef::UserStringLookup<std::vector<std::string>>>(
             boost::make_unique<ValueRef::Variable<std::vector<std::string>>>(
                 ValueRef::SOURCE_REFERENCE, token));
     }
 
     template <typename T>
-    std::unique_ptr<ValueRef::Variable<std::string>> StringCastedValueRef(const std::string& token) {
+    std::unique_ptr<ValueRef::Variable<std::string>> StringCastedValueRef(
+        const std::string& token)
+    {
         return boost::make_unique<ValueRef::StringCast<T>>(
             boost::make_unique<ValueRef::Variable<T>>(
                 ValueRef::SOURCE_REFERENCE, token));
@@ -108,8 +116,8 @@ namespace {
         return StringCastedComplexValueRef<double>(
             propagated ? "PropagatedSystemSupplyRange" :"SystemSupplyRange",
             nullptr,
-            boost::make_unique<ValueRef::Variable<int>>(ValueRef::SOURCE_REFERENCE, "SystemID"))
-            ;
+            boost::make_unique<ValueRef::Variable<int>>(
+                ValueRef::SOURCE_REFERENCE, "SystemID"));
     }
 
     std::unique_ptr<ValueRef::Variable<std::string>> SystemSupplyDistanceValueRef() {
@@ -120,7 +128,9 @@ namespace {
     }
 
     template <typename T>
-    std::unique_ptr<ValueRef::Variable<std::string>> UserStringCastedValueRef(const std::string& token) {
+    std::unique_ptr<ValueRef::Variable<std::string>> UserStringCastedValueRef(
+        const std::string& token)
+    {
         return boost::make_unique<ValueRef::UserStringLookup<std::string>>(
             std::unique_ptr<ValueRef::Variable<std::string>>(
                 boost::make_unique<ValueRef::StringCast<T>>(
@@ -128,29 +138,38 @@ namespace {
                         ValueRef::SOURCE_REFERENCE, token))));
     }
 
-    std::unique_ptr<ValueRef::Variable<std::string>> ObjectNameValueRef(const std::string& token) {
+    std::unique_ptr<ValueRef::Variable<std::string>> ObjectNameValueRef(
+        const std::string& token)
+    {
         return boost::make_unique<ValueRef::NameLookup>(
             boost::make_unique<ValueRef::Variable<int>>(
                 ValueRef::SOURCE_REFERENCE, token),
             ValueRef::NameLookup::OBJECT_NAME);
     }
 
-    std::unique_ptr<ValueRef::Variable<std::string>> EmpireNameValueRef(const std::string& token) {
+    std::unique_ptr<ValueRef::Variable<std::string>> EmpireNameValueRef(
+        const std::string& token)
+    {
         return boost::make_unique<ValueRef::NameLookup>(
             boost::make_unique<ValueRef::Variable<int>>(
                 ValueRef::SOURCE_REFERENCE, token),
             ValueRef::NameLookup::EMPIRE_NAME);
     }
 
-    std::unique_ptr<ValueRef::Variable<std::string>> DesignNameValueRef(const std::string& token) {
+    std::unique_ptr<ValueRef::Variable<std::string>> DesignNameValueRef(
+        const std::string& token)
+    {
         return boost::make_unique<ValueRef::NameLookup>(
             boost::make_unique<ValueRef::Variable<int>>(
                 ValueRef::SOURCE_REFERENCE, token),
             ValueRef::NameLookup::SHIP_DESIGN_NAME);
     }
 
-    const std::map<std::pair<std::string, std::string>, std::unique_ptr<ValueRef::ValueRefBase<std::string>>>& AvailableColumnTypes() {
-        static std::map<std::pair<std::string, std::string>, std::unique_ptr<ValueRef::ValueRefBase<std::string>>> col_types;
+    const std::map<std::pair<std::string, std::string>,
+                   std::unique_ptr<ValueRef::ValueRefBase<std::string>>>& AvailableColumnTypes()
+    {
+        static std::map<std::pair<std::string, std::string>,
+                        std::unique_ptr<ValueRef::ValueRefBase<std::string>>> col_types;
         if (col_types.empty()) {
             // General
             col_types[{UserStringNop("NAME"),                   ""}] =  StringValueRef("Name");
@@ -304,16 +323,15 @@ namespace {
     const std::string FILTER_OPTIONS_WND_NAME = "object-list-filter";
 
     template <class enumT>
-    std::unique_ptr<ValueRef::ValueRefBase<enumT>>  CopyEnumValueRef(const ValueRef::ValueRefBase<enumT>* const value_ref) {
-        if (const ValueRef::Constant<enumT>* constant =
-            dynamic_cast<const ValueRef::Constant<enumT>*>(value_ref))
+    std::unique_ptr<ValueRef::ValueRefBase<enumT>> CopyEnumValueRef(const ValueRef::ValueRefBase<enumT>* const value_ref) {
+        if (auto constant = dynamic_cast<const ValueRef::Constant<enumT>*>(value_ref))
         { return boost::make_unique<ValueRef::Constant<enumT>>(constant->Value()); }
         return boost::make_unique<ValueRef::Constant<enumT>>(enumT(-1));
     }
 
     std::map<std::string, std::string> object_list_cond_description_map;
 
-    const std::string&              ConditionClassName(const Condition::ConditionBase* const condition) {
+    const std::string& ConditionClassName(const Condition::ConditionBase* const condition) {
         if (dynamic_cast<const Condition::All* const>(condition))
             return ALL_CONDITION;
         else if (dynamic_cast<const Condition::EmpireAffiliation* const>(condition))
@@ -363,7 +381,7 @@ namespace {
         else if (dynamic_cast<const Condition::MeterValue* const>(condition))
             return METERVALUE_CONDITION;
 
-        std::map< std::string, std::string >::iterator desc_it = object_list_cond_description_map.find(condition->Description());
+        auto desc_it = object_list_cond_description_map.find(condition->Description());
         if (desc_it != object_list_cond_description_map.end())
             return desc_it->second;
 
@@ -371,7 +389,7 @@ namespace {
     }
 
     template <typename enumT>
-    std::vector<std::string>        StringsFromEnums(const std::vector<enumT>& enum_vals) {
+    std::vector<std::string> StringsFromEnums(const std::vector<enumT>& enum_vals) {
         std::vector<std::string> retval;
         for (const enumT& enum_val : enum_vals)
             retval.push_back(boost::lexical_cast<std::string>(enum_val));
@@ -466,7 +484,7 @@ public:
             std::vector<std::unique_ptr<Condition::ConditionBase>> operands;
             // determine sitrep order
             std::istringstream template_stream(UserString("FUNCTIONAL_GROWTH_SPECIALS_LIST"));
-            for (std::istream_iterator<std::string> stream_it = std::istream_iterator<std::string>(template_stream);
+            for (auto stream_it = std::istream_iterator<std::string>(template_stream);
                  stream_it != std::istream_iterator<std::string>(); stream_it++)
             {
                 operands.push_back(std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::HasSpecial>(*stream_it)));
@@ -577,7 +595,7 @@ private:
         std::shared_ptr<CUILabel> m_label;
     };
 
-    class StringRow : public GG::ListBox::Row  {
+    class StringRow : public GG::ListBox::Row {
     public:
         StringRow(const std::string& text, GG::Y row_height, bool stringtable_lookup = true) :
             GG::ListBox::Row(GG::X1, row_height, ""),
@@ -601,10 +619,10 @@ private:
         std::shared_ptr<CUILabel> m_label;
     };
 
-    const std::string&              GetString() {
+    const std::string& GetString() {
         if (!m_string_drop)
             return EMPTY_STRING;
-        GG::ListBox::iterator row_it = m_string_drop->CurrentItem();
+        auto row_it = m_string_drop->CurrentItem();
         if (row_it == m_string_drop->end())
             return EMPTY_STRING;
         StringRow* string_row = dynamic_cast<StringRow*>(row_it->get());
@@ -613,7 +631,7 @@ private:
         return string_row->Text();
     }
 
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>>                    GetStringValueRef()
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> GetStringValueRef()
     { return boost::make_unique<ValueRef::Constant<std::string>>(GetString()); }
 
     std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>> GetStringValueRefVec() {
@@ -622,48 +640,48 @@ private:
         return retval;
     }
 
-    int                                                     GetInt1() {
+    int GetInt1() {
         if (m_param_spin1)
             return m_param_spin1->Value();
         else
             return 0;
     }
 
-    std::unique_ptr<ValueRef::ValueRefBase<int>>                            GetInt1ValueRef()
+    std::unique_ptr<ValueRef::ValueRefBase<int>> GetInt1ValueRef()
     { return boost::make_unique<ValueRef::Constant<int>>(GetInt1()); }
 
-    int                                                     GetInt2() {
+    int GetInt2() {
         if (m_param_spin2)
             return m_param_spin2->Value();
         else
             return 0;
     }
 
-    std::unique_ptr<ValueRef::ValueRefBase<int>>                            GetInt2ValueRef()
+    std::unique_ptr<ValueRef::ValueRefBase<int>> GetInt2ValueRef()
     { return boost::make_unique<ValueRef::Constant<int>>(GetInt2()); }
 
-    double                                                  GetDouble1() {
+    double GetDouble1() {
         if (m_param_spin1)
             return m_param_spin1->Value();
         else
             return 0;
     }
 
-    std::unique_ptr<ValueRef::ValueRefBase<double>>                         GetDouble1ValueRef()
+    std::unique_ptr<ValueRef::ValueRefBase<double>> GetDouble1ValueRef()
     { return boost::make_unique<ValueRef::Constant<double>>(GetDouble1()); }
 
-    double                                                  GetDouble2() {
+    double GetDouble2() {
         if (m_param_spin2)
             return m_param_spin2->Value();
         else
             return 0;
     }
 
-    std::unique_ptr<ValueRef::ValueRefBase<double>>                         GetDouble2ValueRef()
+    std::unique_ptr<ValueRef::ValueRefBase<double>> GetDouble2ValueRef()
     { return boost::make_unique<ValueRef::Constant<double>>(GetDouble2()); }
 
     template <typename T>
-    T                                                       GetEnum() {
+    T GetEnum() {
         const std::string& text = GetString();
         T enum_val = T(-1);
         try {
@@ -719,7 +737,7 @@ private:
 
         // fill droplist with rows for the available condition classes to be selected
         for (const std::string& key : row_keys) {
-            GG::ListBox::iterator row_it = m_class_drop->Insert(GG::Wnd::Create<ConditionRow>(key,  GG::Y(ClientUI::Pts())));
+            auto row_it = m_class_drop->Insert(GG::Wnd::Create<ConditionRow>(key,  GG::Y(ClientUI::Pts())));
             if (init_condition_key == key)
                 select_row_it = row_it;
         }
@@ -825,11 +843,11 @@ private:
             std::set<std::string> all_tags;
 
             for (auto& obj : GetUniverse().Objects().FindObjects<UniverseObject>()) {
-                std::set<std::string> tags = obj->Tags();
+                auto tags = obj->Tags();
                 all_tags.insert(tags.begin(), tags.end());
             }
 
-            GG::ListBox::iterator row_it = m_string_drop->end();
+            auto row_it = m_string_drop->end();
             for (const std::string& tag : all_tags) {
                 row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(tag, GG::Y(ClientUI::Pts())));
             }
@@ -846,10 +864,10 @@ private:
             param_widget_top += m_string_drop->Height();
 
             std::vector< ::PlanetSize> planet_sizes;
-            for (::PlanetSize size = SZ_TINY; size != NUM_PLANET_SIZES; size = ::PlanetSize(size + 1))
+            for (auto size = SZ_TINY; size != NUM_PLANET_SIZES; size = ::PlanetSize(size + 1))
                 planet_sizes.push_back(size);
 
-            GG::ListBox::iterator row_it = m_string_drop->end();
+            auto row_it = m_string_drop->end();
             for (const std::string& text : StringsFromEnums(planet_sizes)) {
                 row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(text, GG::Y(ClientUI::Pts())));
             }
@@ -869,11 +887,13 @@ private:
             for (::PlanetType type = PT_SWAMP; type != NUM_PLANET_TYPES; type = ::PlanetType(type + 1))
                 planet_types.push_back(type);
 
-            GG::ListBox::iterator row_it = m_string_drop->end();
+            auto row_it = m_string_drop->end();
             if (condition_key == GGWITHPTYPE_CONDITION || condition_key == ASTWITHPTYPE_CONDITION )
-                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(UserString("CONDITION_ANY"), GG::Y(ClientUI::Pts()), false));
+                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(
+                    UserString("CONDITION_ANY"), GG::Y(ClientUI::Pts()), false));
             for (const std::string& text : StringsFromEnums(planet_types)) {
-                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(text, GG::Y(ClientUI::Pts())));
+                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(
+                    text, GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
@@ -891,9 +911,10 @@ private:
             for (::StarType type = STAR_BLUE; type != NUM_STAR_TYPES; type = ::StarType(type + 1))
                 star_types.push_back(type);
 
-            GG::ListBox::iterator row_it = m_string_drop->end();
+            auto row_it = m_string_drop->end();
             for (const std::string& text : StringsFromEnums(star_types)) {
-                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(text, GG::Y(ClientUI::Pts())));
+                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(
+                    text, GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
@@ -910,13 +931,15 @@ private:
             // collect all valid foci on any object in universe
             std::set<std::string> all_foci;
             for (auto& planet : Objects().FindObjects<Planet>()) {
-                std::vector<std::string> obj_foci = planet->AvailableFoci();
-                std::copy(obj_foci.begin(), obj_foci.end(), std::inserter(all_foci, all_foci.end()));
+                auto obj_foci = planet->AvailableFoci();
+                std::copy(obj_foci.begin(), obj_foci.end(),
+                          std::inserter(all_foci, all_foci.end()));
             }
 
-            GG::ListBox::iterator row_it = m_string_drop->end();
+            auto row_it = m_string_drop->end();
             for (const std::string& focus : all_foci) {
-                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(focus, GG::Y(ClientUI::Pts())));
+                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(
+                    focus, GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
@@ -931,12 +954,13 @@ private:
             param_widget_top = m_string_drop->Height() + GG::Y(Value(PAD));
 
             std::vector< ::MeterType> meter_types;
-            for (::MeterType type = METER_TARGET_POPULATION; type != NUM_METER_TYPES; type = ::MeterType(type + 1))
+            for (auto type = METER_TARGET_POPULATION; type != NUM_METER_TYPES; type = ::MeterType(type + 1))
                 meter_types.push_back(type);
 
-            GG::ListBox::iterator row_it = m_string_drop->end();
-            for (const std::string& text : StringsFromEnums(meter_types)) {
-                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(text, GG::Y(ClientUI::Pts())));
+            auto row_it = m_string_drop->end();
+            for (auto& text : StringsFromEnums(meter_types)) {
+                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(
+                    text, GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
@@ -963,7 +987,7 @@ private:
             param_widget_top += m_string_drop->Height();
 
             // add rows for empire names
-            GG::ListBox::iterator row_it = m_string_drop->end();
+            auto row_it = m_string_drop->end();
             for (const auto& entry : Empires()) {
                 const std::string& empire_name = entry.second->Name();
                 row_it = m_string_drop->Insert(
@@ -989,12 +1013,10 @@ class FilterDialog : public CUIWnd {
 public:
     FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPLAY>>& vis_filters,
                  const Condition::ConditionBase* const condition_filter);
+
     void CompleteConstruction() override;
-
     bool ChangesAccepted();
-
     std::map<UniverseObjectType, std::set<VIS_DISPLAY>> GetVisibilityFilters() const;
-
     std::unique_ptr<Condition::ConditionBase> GetConditionFilter();
 
 protected:
@@ -1002,20 +1024,16 @@ protected:
 
 private:
     void AcceptClicked();
-
     void CancelClicked();
-
     void UpdateStateButtonsFromVisFilters();
-
     void UpdateVisFiltersFromStateButtons(bool button_checked);
-
     void UpdateVisFiltersFromObjectTypeButton(UniverseObjectType type);
-
     void UpdateVisFilterFromVisibilityButton(VIS_DISPLAY vis);
 
     std::map<UniverseObjectType, std::set<VIS_DISPLAY>>     m_vis_filters;
     std::map<UniverseObjectType,
-             std::map<VIS_DISPLAY, std::shared_ptr<GG::StateButton>>>       m_filter_buttons;
+             std::map<VIS_DISPLAY,
+                     std::shared_ptr<GG::StateButton>>>     m_filter_buttons;
     bool                                                    m_accept_changes;
 
     std::shared_ptr<ConditionWidget>    m_condition_widget;
@@ -1025,7 +1043,8 @@ private:
 };
 
 
-FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPLAY>>& vis_filters,
+FilterDialog::FilterDialog(const std::map<UniverseObjectType,
+                           std::set<VIS_DISPLAY>>& vis_filters,
                            const Condition::ConditionBase* const condition_filter) :
     CUIWnd(UserString("FILTERS"),
            GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL,
@@ -1037,7 +1056,8 @@ FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPL
     m_cancel_button(nullptr),
     m_apply_button(nullptr)
 {
-    m_condition_widget = GG::Wnd::Create<ConditionWidget>(GG::X(3), GG::Y(3), condition_filter);
+    m_condition_widget = GG::Wnd::Create<ConditionWidget>(GG::X(3), GG::Y(3),
+                                                          condition_filter);
 }
 
 void FilterDialog::CompleteConstruction() {
@@ -1093,7 +1113,8 @@ void FilterDialog::CompleteConstruction() {
         int row = 1;
 
         for (auto visibility : {SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED}) {
-            auto button = GG::Wnd::Create<CUIStateButton>(" ", GG::FORMAT_CENTER, std::make_shared<CUICheckBoxRepresenter>());
+            auto button = GG::Wnd::Create<CUIStateButton>(
+                " ", GG::FORMAT_CENTER, std::make_shared<CUICheckBoxRepresenter>());
             button->SetCheck(vis_display.count(visibility));
             m_filters_layout->Add(button, row, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             button->CheckedSignal.connect(
@@ -1160,7 +1181,8 @@ void FilterDialog::UpdateStateButtonsFromVisFilters() {
     for (auto& entry : m_filter_buttons) {
         // find visibilities for this object type
         auto uot_it = m_vis_filters.find(entry.first);
-        const std::set<VIS_DISPLAY>& shown_vis = (uot_it != m_vis_filters.end() ? uot_it->second : std::set<VIS_DISPLAY>());
+        auto& shown_vis = (uot_it != m_vis_filters.end() ?
+                           uot_it->second : std::set<VIS_DISPLAY>());
 
         // set all button checks depending on whether that buttons visibility is to be shown
         for (auto& button : entry.second) {
@@ -1205,7 +1227,7 @@ void FilterDialog::UpdateVisFilterFromVisibilityButton(VIS_DISPLAY vis) {
     // determine if all types are already on for requested visibility
     bool all_on = true;
     for (const auto& entry : m_filter_buttons) {
-        std::set<VIS_DISPLAY>& type_vis = m_vis_filters[entry.first];
+        auto& type_vis = m_vis_filters[entry.first];
         if (type_vis.find(vis) == type_vis.end()) {
             all_on = false;
             break;
@@ -1213,7 +1235,7 @@ void FilterDialog::UpdateVisFilterFromVisibilityButton(VIS_DISPLAY vis) {
     }
     // if all on, turn all off. otherwise, turn all on
     for (const auto& entry : m_filter_buttons) {
-        std::set<VIS_DISPLAY>& type_vis = m_vis_filters[entry.first];
+        auto& type_vis = m_vis_filters[entry.first];
         if (!all_on)
             type_vis.insert(vis);
         else
@@ -1225,7 +1247,9 @@ void FilterDialog::UpdateVisFilterFromVisibilityButton(VIS_DISPLAY vis) {
 
 
 namespace {
-    std::vector<std::shared_ptr<GG::Texture>> ObjectTextures(std::shared_ptr<const UniverseObject> obj) {
+    std::vector<std::shared_ptr<GG::Texture>> ObjectTextures(
+        std::shared_ptr<const UniverseObject> obj)
+    {
         std::vector<std::shared_ptr<GG::Texture>> retval;
 
         if (obj->ObjectType() == OBJ_SHIP) {
@@ -1239,33 +1263,33 @@ namespace {
             }
         } else if (obj->ObjectType() == OBJ_FLEET) {
             if (auto fleet = std::dynamic_pointer_cast<const Fleet>(obj)) {
-                std::shared_ptr<GG::Texture> size_icon = FleetSizeIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
+                auto size_icon = FleetSizeIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
                 if (size_icon)
                     retval.push_back(size_icon);
-                std::vector<std::shared_ptr<GG::Texture>> head_icons = FleetHeadIcons(fleet, FleetButton::FLEET_BUTTON_LARGE);
+                auto head_icons = FleetHeadIcons(fleet, FleetButton::FLEET_BUTTON_LARGE);
                 std::copy(head_icons.begin(), head_icons.end(), std::back_inserter(retval));
             }
         } else if (obj->ObjectType() == OBJ_SYSTEM) {
             if (auto system = std::dynamic_pointer_cast<const System>(obj)) {
                 StarType star_type = system->GetStarType();
                 ClientUI* ui = ClientUI::GetClientUI();
-                std::shared_ptr<GG::Texture> disc_texture = ui->GetModuloTexture(
+                auto disc_texture = ui->GetModuloTexture(
                     ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[star_type], system->ID());
                 if (disc_texture)
                     retval.push_back(disc_texture);
-                std::shared_ptr<GG::Texture> halo_texture = ui->GetModuloTexture(
+                auto halo_texture = ui->GetModuloTexture(
                     ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefixes()[star_type], system->ID());
                 if (halo_texture)
                     retval.push_back(halo_texture);
             }
         } else if (obj->ObjectType() == OBJ_PLANET) {
-            if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(obj))
+            if (auto planet = std::dynamic_pointer_cast<const Planet>(obj))
                 retval.push_back(ClientUI::PlanetIcon(planet->Type()));
         } else if (obj->ObjectType() == OBJ_BUILDING) {
-            if (std::shared_ptr<const Building> building = std::dynamic_pointer_cast<const Building>(obj))
+            if (auto building = std::dynamic_pointer_cast<const Building>(obj))
                 retval.push_back(ClientUI::BuildingIcon(building->BuildingTypeName()));
         } else if (obj->ObjectType() == OBJ_FIELD) {
-            if (std::shared_ptr<const Field> field = std::dynamic_pointer_cast<const Field>(obj))
+            if (auto field = std::dynamic_pointer_cast<const Field>(obj))
                 retval.push_back(ClientUI::FieldTexture(field->FieldTypeName()));
         }
         if (retval.empty())
@@ -1375,15 +1399,16 @@ public:
             m_expand_button->LeftClickedSignal.connect(
                 boost::bind(&ObjectPanel::ExpandCollapseButtonPressed, this));
         } else {
-            m_dot = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "dot.png", true), style);
+            m_dot = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(
+                ClientUI::ArtDir() / "icons" / "dot.png", true), style);
             AttachChild(m_dot);
         }
 
         auto obj = GetUniverseObject(m_object_id);
-        std::vector<std::shared_ptr<GG::Texture>> textures = ObjectTextures(obj);
+        auto textures = ObjectTextures(obj);
 
-        m_icon = GG::Wnd::Create<MultiTextureStaticGraphic>(textures,
-                                                            std::vector<GG::Flags<GG::GraphicStyle>>(textures.size(), style));
+        m_icon = GG::Wnd::Create<MultiTextureStaticGraphic>(
+            textures, std::vector<GG::Flags<GG::GraphicStyle>>(textures.size(), style));
         AttachChild(m_icon);
 
         for (auto& control : m_controls)
@@ -1465,7 +1490,7 @@ private:
 
         // get currently displayed column value refs, put values into this panel's cache
         for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
-            const ValueRef::ValueRefBase<std::string>* ref = GetColumnValueRef(static_cast<int>(i));
+            auto ref = GetColumnValueRef(static_cast<int>(i));
             if (ref)
                 m_column_val_cache.push_back(ref->Eval(context));
             else
@@ -1494,14 +1519,14 @@ private:
     bool    m_expanded;
     bool    m_has_contents;
 
-    std::shared_ptr<GG::Button>                     m_expand_button;
-    std::shared_ptr<GG::StaticGraphic>              m_dot;
-    std::shared_ptr<MultiTextureStaticGraphic>      m_icon;
-    std::vector<std::shared_ptr<GG::Control>>       m_controls;
+    std::shared_ptr<GG::Button>                 m_expand_button;
+    std::shared_ptr<GG::StaticGraphic>          m_dot;
+    std::shared_ptr<MultiTextureStaticGraphic>  m_icon;
+    std::vector<std::shared_ptr<GG::Control>>   m_controls;
 
-    mutable std::vector<std::string>m_column_val_cache;
+    mutable std::vector<std::string>            m_column_val_cache;
 
-    bool                            m_selected;
+    bool    m_selected;
 };
 
 ////////////////////////////////////////////////
@@ -1527,14 +1552,17 @@ public:
         SetName("ObjectRow");
         SetChildClippingMode(ClipToClient);
 
-        m_panel = GG::Wnd::Create<ObjectPanel>(ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
-                                               ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()),
-                                               m_obj_init, m_expanded_init, !m_contained_object_panels.empty(), m_indent_init);
+        m_panel = GG::Wnd::Create<ObjectPanel>(
+            ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
+            ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()),
+            m_obj_init, m_expanded_init,
+            !m_contained_object_panels.empty(), m_indent_init);
         push_back(m_panel);
         m_panel->ExpandCollapseSignal.connect(
             boost::bind(&ObjectRow::ExpandCollapseClicked, this));
 
-        GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()), GG::Y(2 * GetLayout()->BorderMargin()));
+        GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()),
+                      GG::Y(2 * GetLayout()->BorderMargin()));
         m_panel->Resize(Size() - border);
     }
 
@@ -1566,7 +1594,8 @@ public:
         const GG::Pt old_size = Size();
         GG::ListBox::Row::SizeMove(ul, lr);
         if (!empty() && old_size != Size() && m_panel){
-            GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()), GG::Y(2 * GetLayout()->BorderMargin()));
+            GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()),
+                          GG::Y(2 * GetLayout()->BorderMargin()));
             m_panel->Resize(lr - ul - border);
         }
     }
@@ -1576,12 +1605,12 @@ public:
 
     mutable boost::signals2::signal<void (int)>   ExpandCollapseSignal;
 private:
-    std::shared_ptr<ObjectPanel>        m_panel;
-    int                 m_container_object_panel;
-    std::set<int>       m_contained_object_panels;
-    std::shared_ptr<const UniverseObject> m_obj_init;
-    bool                m_expanded_init;
-    int                 m_indent_init;
+    std::shared_ptr<ObjectPanel>            m_panel;
+    int                                     m_container_object_panel;
+    std::set<int>                           m_contained_object_panels;
+    std::shared_ptr<const UniverseObject>   m_obj_init;
+    bool                                    m_expanded_init;
+    int                                     m_indent_init;
 };
 
 ////////////////////////////////////////////////

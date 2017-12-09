@@ -905,7 +905,8 @@ public:
     class PartsListBoxRow : public CUIListBox::Row {
     public:
         PartsListBoxRow(GG::X w, GG::Y h);
-        void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
+        void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds,
+                                 const GG::Wnd* destination) override;
     };
 
     /** \name Structors */ //@{
@@ -922,7 +923,8 @@ public:
     /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
-    void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
+    void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
+                     GG::Flags<GG::ModKey> mod_keys) override;
 
     PartGroupsType  GroupAvailableDisplayableParts(const Empire* empire);
     void            CullSuperfluousParts(std::vector<const PartType* >& this_group,
@@ -1027,7 +1029,8 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     if (old_size != GG::Wnd::Size()) {
         // determine how many columns can fit in the box now...
         const GG::X TOTAL_WIDTH = Size().x - ClientUI::ScrollWidth();
-        const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
+        const int NUM_COLUMNS = std::max(1,
+            Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
 
         if (NUM_COLUMNS != m_previous_num_columns)
             Populate();
@@ -1035,7 +1038,9 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 /** Accept parts being discarded from the ship under design.*/
-void PartsListBox::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys)
+void PartsListBox::AcceptDrops(const GG::Pt& pt,
+                               std::vector<std::shared_ptr<GG::Wnd>> wnds,
+                               GG::Flags<GG::ModKey> mod_keys)
 {}
 
 PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire) {
@@ -1068,7 +1073,9 @@ PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
 
 // Checks if the Location condition of the check_part totally contains the Location condition of ref_part
 // i,e,, the ref_part condition is met anywhere the check_part condition is
-bool LocationASubsumesLocationB(const Condition::ConditionBase* check_part_loc, const Condition::ConditionBase* ref_part_loc) {
+bool LocationASubsumesLocationB(const Condition::ConditionBase* check_part_loc,
+                                const Condition::ConditionBase* ref_part_loc)
+{
     //const Condition::ConditionBase* check_part_loc = check_part->Location();
     //const Condition::ConditionBase* ref_part_loc = ref_part->Location();
     if (dynamic_cast<const Condition::All*>(ref_part_loc))
