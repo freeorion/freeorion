@@ -12,7 +12,7 @@ from EnumsAI import MissionType, ShipRoleType
 import CombatRatingsAI
 import MilitaryAI
 import PlanetUtilsAI
-from freeorion_tools import dict_from_map, get_partial_visibility_turn
+from freeorion_tools import dict_from_map, get_partial_visibility_turn, chat_human
 from universe_object import System
 from AIDependencies import INVALID_ID
 from character.character_module import create_character, Aggression
@@ -75,6 +75,10 @@ def convert_to_version(state, version):
         for var_name in ['visInteriorSystemIDs', 'exploredSystemIDs', 'visBorderSystemIDs', 'unexploredSystemIDs']:
             state[var_name] = set(state.get(var_name, {}).keys())
 
+    elif version == 3:
+        # added functionality for AI to surrender
+        state['surrendered'] = False
+
     #   state["some_new_member"] = some_default_value
     #   del state["some_removed_member"]
     #   state["list_changed_to_set"] = set(state["list_changed_to_set"])
@@ -93,7 +97,7 @@ class AIstate(object):
     is playable with this AIstate version, i.e. new members must be added
     and outdated members must be modified and / or deleted.
     """
-    version = 2
+    version = 3
 
     def __init__(self, aggression):
         # Do not allow to create AIstate instances with an invalid version number.
@@ -157,6 +161,7 @@ class AIstate(object):
         self.__empire_standard_enemy = CombatRatingsAI.default_ship_stats().get_stats(hashable=True)
         self.empire_standard_enemy_rating = 0  # TODO: track on a per-empire basis
         self.character = create_character(aggression, self.empireID)
+        self.surrendered = False
 
     def __setstate__(self, state):
         try:
@@ -976,3 +981,26 @@ class AIstate(object):
 
     def get_standard_enemy(self):
         return CombatRatingsAI.ShipCombatStats(stats=self.__empire_standard_enemy)
+
+    def surrender(self):
+        chat_human("Well played. I surrender.")
+        chat_human("NOTE: The AI will accept any peace or alliance proposal at this point.")
+        self.surrendered = True
+        my_empire_id = fo.empireID()
+        for empire_id in fo.allEmpireIDs():
+            if empire_id == my_empire_id or fo.playerIsAI(empire_id):
+                continue
+            try:
+                msg = fo.diplomaticMessage(my_empire_id, empire_id,
+                                           fo.diplomaticMessageType.peaceProposal)
+                debug("Sending peace proposal")
+                fo.sendDiplomaticMessage(msg)
+            except:
+                pass
+            try:
+                msg = fo.diplomaticMessage(my_empire_id, empire_id,
+                                           fo.diplomaticMessageType.alliesProposal)
+                debug("Sending allies proposal")
+                fo.sendDiplomaticMessage(msg)
+            except:
+                pass

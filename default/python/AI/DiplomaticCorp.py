@@ -37,9 +37,22 @@ class DiplomaticCorp(object):
         # TODO: remove the following early return once proper support for third party diplomatic history is added
         if message.recipient != fo.empireID():
             return
+
+        if message.type == fo.diplomaticMessageType.alliesProposal:
+            if foAI.foAIstate.surrendered:
+                fo.sendChatMessage(message.sender, "Yes, master.")
+                fo.sendDiplomaticMessage(fo.diplomaticMessage(message.recipient, message.sender,
+                                                              fo.diplomaticMessageType.acceptAlliesProposal))
+                return
+
         if message.type == fo.diplomaticMessageType.peaceProposal:
             foAI.foAIstate.log_peace_request(message.sender, message.recipient)
             proposal_sender_player = fo.empirePlayerID(message.sender)
+            if foAI.foAIstate.surrendered:
+                fo.sendChatMessage(message.sender, "Yes, master.")
+                fo.sendDiplomaticMessage(fo.diplomaticMessage(message.recipient, message.sender,
+                                                              fo.diplomaticMessageType.acceptPeaceProposal))
+                return
             attitude = foAI.foAIstate.character.attitude_to_empire(message.sender, foAI.foAIstate.diplomatic_logs)
             possible_acknowledgments = []
             aggression = foAI.foAIstate.character.get_trait(Aggression)
