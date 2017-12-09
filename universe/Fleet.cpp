@@ -957,11 +957,25 @@ void Fleet::MovementPhase() {
                     auto route_system = GetSystem(loc);
                     ss << (route_system ? route_system->Name() : "invalid id") << "("<< loc << ") ";
                 }
+
+                std::stringstream ss_path_back;
+                try {
+                    const auto path_back_to_expected = GetPathfinder()->ShortestPath(
+                        system->ID(), fleet->m_travel_route.front(), ALL_EMPIRES);
+                    for (const auto& loc : path_back_to_expected.first) {
+                        auto route_system = GetSystem(loc);
+                        ss_path_back << (route_system ? route_system->Name() : "invalid id") << "("<< loc << ") ";
+                    }
+                } catch (const std::out_of_range&) {
+                    ErrorLogger() << "Couldn't find route from current location back to expected path";
+                }
+
                 ErrorLogger() << "Fleet::MovementPhase: Encountered an unexpected system on route."
                               << "  Fleet is " << fleet->Name() << "(" << fleet->ID() << ")"
                               << " Expected system is " << system->Name() << "(" << system->ID() << ")"
                               << " but front of route is " << fleet->m_travel_route.front()
-                              << " Whole route is [" << ss.str() <<"]";
+                              << ". Whole route is [" << ss.str() <<"]"
+                              << ". Path back to expected path is [" << ss_path_back.str() << "]";
                 // TODO: Notify the suer with a sitrep?
             }
 
