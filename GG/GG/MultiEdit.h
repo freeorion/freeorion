@@ -229,8 +229,6 @@ private:
     void    ClearSelected();   ///< Clears (deletes) selected characters, as when a del, backspace, or character is entered
     void    AdjustView();      ///< Makes sure the caret ends up in view after an arbitrary move or SetText()
     void    AdjustScrolls();   ///< Sets the sizes of the scroll-space and the screen-space of the scrolls
-    void    VScrolled(int upper, int lower, int range_upper, int range_lower);
-    void    HScrolled(int upper, int lower, int range_upper, int range_lower);
 
     Flags<MultiEditStyle> m_style;
 

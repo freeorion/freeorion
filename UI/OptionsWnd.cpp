@@ -266,7 +266,7 @@ namespace {
             AttachChild(m_hscroll);
 
             m_hscroll->ScrolledSignal.connect(
-                boost::bind(&FontTextureWnd::ScrolledSlot, this, _1, _2, _3, _4));
+                [this](int pos, int, int, int){ ScrolledSlot(pos); });
             DoLayout();
         }
 
@@ -293,7 +293,7 @@ namespace {
              m_hscroll->SizeScroll(0, texture_width - Value(ClientWidth()) / 2, 1, 50);
         }
 
-        void ScrolledSlot(int tab_low, int tab_high, int low, int high) {
+        void ScrolledSlot(int tab_low) {
             m_font_graphic->MoveTo(      GG::Pt(GG::X(-tab_low), GG::Y1));
             m_title_font_graphic->MoveTo(GG::Pt(GG::X(-tab_low), m_font_graphic->Height() + 2));
         }

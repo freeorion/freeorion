@@ -633,8 +633,6 @@ private:
     GG::Y           ResizePanelsForVScroll(bool use_vscroll);
     void            DoLayout();
 
-    void            VScroll(int pos_top, int pos_bottom, int range_min, int range_max); //!< responds to user scrolling of planet panels list.  all but first parameter ignored
-
     std::vector<std::shared_ptr<PlanetPanel>>   m_planet_panels;
 
     int                         m_selected_planet_id;
@@ -2429,7 +2427,7 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer() :
     SetName("PlanetPanelContainer");
     SetChildClippingMode(ClipToClient);
     m_vscroll->ScrolledSignal.connect(
-        boost::bind(&SidePanel::PlanetPanelContainer::VScroll, this, _1, _2, _3, _4));
+        [this](int, int, int, int){ RequirePreRender(); });
     RequirePreRender();
 }
 
@@ -2702,16 +2700,6 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
             panel->Disable(false);
         }
     }
-}
-
-void SidePanel::PlanetPanelContainer::VScroll(int pos_top, int pos_bottom, int range_min, int range_max) {
-    if (pos_bottom > range_max) {
-        // prevent scrolling beyond allowed max
-        int extra = pos_bottom - range_max;
-        pos_top -= extra;
-    }
-
-    RequirePreRender();
 }
 
 void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels(

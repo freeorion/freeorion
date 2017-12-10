@@ -567,7 +567,7 @@ private:
 
     void DoLayout();    // arranges child controls (scrolls, buttons) to account for window size
 
-    void ScrolledSlot(int, int, int, int);
+    void ScrolledSlot();
 
     void TreeDraggedSlot(const GG::Pt& move);
     void TreeDragBegin(const GG::Pt& move);
@@ -1110,9 +1110,9 @@ void TechTreeWnd::LayoutPanel::CompleteConstruction() {
     m_layout_surface->ZoomedSignal.connect(
         boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomedSlot, this, _1));
     m_vscroll->ScrolledSignal.connect(
-        boost::bind(&TechTreeWnd::LayoutPanel::ScrolledSlot, this, _1, _2, _3, _4));
+        [this](int, int, int, int){ ScrolledSlot(); });
     m_hscroll->ScrolledSignal.connect(
-        boost::bind(&TechTreeWnd::LayoutPanel::ScrolledSlot, this, _1, _2, _3, _4));
+        [this](int, int, int, int){ ScrolledSlot(); });
     m_zoom_in_button->LeftClickedSignal.connect(
         [this](){ TreeZoomedSlot(1); });
     m_zoom_out_button->LeftClickedSignal.connect(
@@ -1459,7 +1459,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     MoveChildUp(m_hscroll);
 }
 
-void TechTreeWnd::LayoutPanel::ScrolledSlot(int, int, int, int) {
+void TechTreeWnd::LayoutPanel::ScrolledSlot() {
     m_scroll_position_x = m_hscroll->PosnRange().first;
     m_scroll_position_y = m_vscroll->PosnRange().first;
 }
