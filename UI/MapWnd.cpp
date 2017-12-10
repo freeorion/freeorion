@@ -2855,12 +2855,12 @@ void MapWnd::InitTurn() {
         this_client_empire->GetPopulationPool().ChangedSignal.connect(
             boost::bind(&MapWnd::RefreshPopulationIndicator, this));
         this_client_empire->GetProductionQueue().ProductionQueueChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshIndustryResourceIndicator, this));
+            [this](){ RefreshIndustryResourceIndicator(); });
         // so lane colouring to indicate wasted PP is updated
         this_client_empire->GetProductionQueue().ProductionQueueChangedSignal.connect(
-            boost::bind(&MapWnd::InitStarlaneRenderingBuffers, this));
+            [this](){ InitStarlaneRenderingBuffers(); });
         this_client_empire->GetResearchQueue().ResearchQueueChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshResearchResourceIndicator, this));
+            [this](){ RefreshResearchResourceIndicator(); });
     }
 
     m_toolbar->Show();

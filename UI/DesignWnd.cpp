@@ -2042,7 +2042,7 @@ void BasesListBox::SetEmpireShown(int empire_id, bool refresh_list) {
     // connect signal to update this list if the empire's designs change
     if (const Empire* empire = GetEmpire(m_empire_id_shown))
         m_empire_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
-                                            boost::bind(&BasesListBox::Populate, this));
+            [this](){ Populate(); });
 
     if (refresh_list)
         Populate();
