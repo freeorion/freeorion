@@ -463,8 +463,9 @@ GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indent
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
 
-    drop->SelChangedSignal.connect(boost::bind(&GameRulesPanel::StringRuleChanged,
-                                               this, drop.get(), rule_name));
+    drop->SelChangedSignal.connect(
+        [this, drop, rule_name](GG::DropDownList::iterator)
+        { StringRuleChanged(drop.get(), rule_name); });
 
     return drop.get();
 }
@@ -662,23 +663,23 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_stars_spin->ValueChangedSignal.connect(
         [this](int){ SettingChanged(); });
     m_galaxy_shapes_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](GG::DropDownList::iterator){ SettingChanged(); });
     m_galaxy_ages_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](GG::DropDownList::iterator){ SettingChanged(); });
     m_starlane_freq_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](GG::DropDownList::iterator){ SettingChanged(); });
     m_planet_density_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](GG::DropDownList::iterator){ SettingChanged(); });
     m_specials_freq_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](GG::DropDownList::iterator){ SettingChanged(); });
     m_monster_freq_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](GG::DropDownList::iterator){ SettingChanged(); });
     m_native_freq_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](GG::DropDownList::iterator){ SettingChanged(); });
     m_ai_aggression_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](GG::DropDownList::iterator){ SettingChanged(); });
     m_galaxy_shapes_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::ShapeChanged, this, _1));
+        [this](GG::DropDownList::iterator it){ ShapeChanged(it); });
 
     // create and load textures
     m_textures.clear();

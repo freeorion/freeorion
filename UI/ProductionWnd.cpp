@@ -151,7 +151,7 @@ namespace {
             }
 
             this->SelChangedSignal.connect(
-                boost::bind(&QuantitySelector::SelectionChanged, this, _1));
+                [this](GG::DropDownList::iterator it){ SelectionChanged(it); });
         }
 
         void SelectionChanged(GG::DropDownList::iterator it) {

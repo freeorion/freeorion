@@ -90,7 +90,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
     }
     m_star_type_drop->Select(m_star_type_drop->begin());        // default select first type
     m_star_type_drop->SelChangedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::CreateSystem, this));
+        [this](GG::DropDownList::iterator){ CreateSystem(); });
 
     // button for create planet and droplists to select planet type and size
     m_create_planet_button = Wnd::Create<CUIButton>(
@@ -117,7 +117,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
     }
     m_planet_type_drop->Select(m_planet_type_drop->begin());    // default select first type
     m_planet_type_drop->SelChangedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::CreatePlanet, this));
+        [this](GG::DropDownList::iterator){ CreatePlanet(); });
 
     m_planet_size_drop = GG::Wnd::Create<CUIDropDownList>(6);
     m_planet_size_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
@@ -133,7 +133,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
     std::advance(it, 2);
     m_planet_size_drop->Select(it); // default select 3rd size (should be medium?)
     m_planet_size_drop->SelChangedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::CreatePlanet, this));
+        [this](GG::DropDownList::iterator){ CreatePlanet(); });
 
     // button for destroying object
     m_delete_object_button = Wnd::Create<CUIButton>(
@@ -165,7 +165,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
     m_empire_drop->SetStyle(GG::LIST_NOSORT);
     // empires added later when gamestate info available
     m_empire_drop->SelChangedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::SetOwner, this));
+        [this](GG::DropDownList::iterator){ SetOwner(); });
 
     // button for creating starlane
     m_add_starlane_button = Wnd::Create<CUIButton>(

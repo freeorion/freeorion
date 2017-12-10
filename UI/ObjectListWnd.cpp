@@ -742,7 +742,7 @@ private:
         }
 
         m_class_drop->SelChangedSignal.connect(
-            boost::bind(&ConditionWidget::ConditionClassSelected, this, _1));
+            [this](GG::DropDownList::iterator){ UpdateParameterControls(); });
 
         if (select_row_it != m_class_drop->end())
             m_class_drop->Select(select_row_it);
@@ -750,9 +750,6 @@ private:
             m_class_drop->Select(0);
 
     }
-
-    void    ConditionClassSelected(GG::ListBox::iterator iterator)
-    { UpdateParameterControls(); }
 
     void    UpdateParameterControls() {
         if (!m_class_drop)

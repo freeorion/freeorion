@@ -956,9 +956,9 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     m_focus_drop = GG::Wnd::Create<CUIDropDownList>(6);
     AttachChild(m_focus_drop);
     m_focus_drop->DropDownOpenedSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::FocusDropListOpened, this, _1));
+        [this](bool open){ FocusDropListOpened(open); });
     m_focus_drop->SelChangedSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot, this, _1));
+        [this](GG::DropDownList::iterator it){ FocusDropListSelectionChangedSlot(it); });
     this->FocusChangedSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::SetFocus, this, _1));
     m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
@@ -2902,11 +2902,11 @@ void SidePanel::CompleteConstruction() {
     AttachChild(m_system_resource_summary);
 
     m_system_name->DropDownOpenedSignal.connect(
-        boost::bind(&SidePanel::SystemNameDropListOpenedSlot, this, _1));
+        [this](bool open){ SystemNameDropListOpenedSlot(open); });
     m_system_name->SelChangedSignal.connect(
-        boost::bind(&SidePanel::SystemSelectionChangedSlot, this, _1));
+        [this](GG::DropDownList::iterator it){ SystemSelectionChangedSlot(it); });
     m_system_name->SelChangedWhileDroppedSignal.connect(
-        boost::bind(&SidePanel::SystemSelectionChangedSlot, this, _1));
+        [this](GG::DropDownList::iterator it){ SystemSelectionChangedSlot(it); });
     m_button_prev->LeftClickedSignal.connect(
         [this](){ PrevButtonClicked(); });
     m_button_next->LeftClickedSignal.connect(

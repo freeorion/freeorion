@@ -209,7 +209,7 @@ namespace {
             }
 
             SelChangedSignal.connect(
-                boost::bind(&TypeSelector::SelectionChanged, this, _1));
+                [this](GG::DropDownList::iterator it){ SelectionChanged(it); });
         }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
@@ -429,7 +429,7 @@ namespace {
                 m_empire_list->Disable();
             else
                 m_empire_list->SelChangedSignal.connect(
-                    boost::bind(&LoadGamePlayerRow::EmpireChanged, this, _1));
+                    [this](GG::DropDownList::iterator it){ EmpireChanged(it); });
 
             // ready state
             if (m_player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {

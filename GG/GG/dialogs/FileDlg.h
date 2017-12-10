@@ -145,7 +145,6 @@ private:
     void FileSetChanged(const ListBox::SelectionSet& files);
     void FileDoubleClicked(DropDownList::iterator it);
     void FilesEditChanged();
-    void FilterChanged(DropDownList::iterator it);
     void SetWorkingDirectory(const boost::filesystem::path& p);
     void PopulateFilters();
     void UpdateList();

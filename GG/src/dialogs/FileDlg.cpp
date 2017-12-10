@@ -236,7 +236,7 @@ void FileDlg::CompleteConstruction()
     m_files_edit->EditedSignal.connect(
         [this](const std::string&){ FilesEditChanged(); });
     m_filter_list->SelChangedSignal.connect(
-        boost::bind(&FileDlg::FilterChanged, this, _1));
+        [this](DropDownList::iterator){ UpdateList(); });
 
     if (!m_init_filename.empty()) {
         fs::path filename_path = fs::system_complete(fs::path(m_init_filename));
@@ -495,9 +495,6 @@ void FileDlg::FilesEditChanged()
     if (m_save && m_ok_button->Text() != m_save_str)
         m_ok_button->SetText(m_save_str);
 }
-
-void FileDlg::FilterChanged(DropDownList::iterator it)
-{ UpdateList(); }
 
 void FileDlg::SetWorkingDirectory(const fs::path& p)
 {
