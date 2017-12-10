@@ -1319,7 +1319,7 @@ public:
         auto rcobj = std::dynamic_pointer_cast<const ResourceCenter>(obj);
         if (rcobj)
             rcobj->ResourceCenterChangedSignal.connect(
-                boost::bind(&ObjectPanel::ResourceCenterChanged, this));
+                [this](){ ResourceCenterChanged(); });
     }
 
     void                ResourceCenterChanged() {
