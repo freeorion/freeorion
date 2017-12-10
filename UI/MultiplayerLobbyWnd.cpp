@@ -295,7 +295,7 @@ namespace {
                 edit->Disable();
             else
                 edit->FocusUpdateSignal.connect(
-                    boost::bind(&NewGamePlayerRow::EmpireNameChanged, this, _1));
+                    [this](const std::string& str){ EmpireNameChanged(str); });
 
             // empire colour selector
             auto color_selector = GG::Wnd::Create<EmpireColorSelector>(PlayerFontHeight() + PlayerRowMargin());

@@ -727,9 +727,9 @@ void SaveFileDialog::Init() {
     m_file_list->DoubleClickedRowSignal.connect(
         [this](GG::ListBox::iterator row, const GG::Pt&, const GG::Flags<GG::ModKey>&){ DoubleClickRow(row); });
     m_name_edit->EditedSignal.connect(
-        boost::bind(&SaveFileDialog::FileNameEdited, this, _1));
+        [this](const std::string&){ CheckChoiceValidity(); });
     m_current_dir_edit->EditedSignal.connect(
-        boost::bind(&SaveFileDialog::DirectoryEdited, this, _1));
+        [this](const std::string&){ CheckChoiceValidity(); });
 
     if (!m_load_only) {
         m_name_edit->SetText(std::string("save-") + FilenameTimestamp() + m_extension);
@@ -988,12 +988,6 @@ bool SaveFileDialog::CheckChoiceValidity() {
 
     return true;
 }
-
-void SaveFileDialog::FileNameEdited(const std::string& filename)
-{ CheckChoiceValidity(); }
-
-void SaveFileDialog::DirectoryEdited(const string& filename)
-{ CheckChoiceValidity(); }
 
 std::string SaveFileDialog::GetDirPath() const {
     const std::string& path_edit_text = m_current_dir_edit->Text();

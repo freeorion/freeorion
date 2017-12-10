@@ -65,8 +65,6 @@ private:
     void SetPreviewListCore(const std::function<void ()>& setup_preview_info);
 
     bool CheckChoiceValidity();                         //!< Disables confirm if filename invalid. Returns false if not valid.
-    void FileNameEdited(const std::string& filename);   //!< Called when the filename changes
-    void DirectoryEdited(const std::string& filename);  //!< Called when the directory text changes
 
     std::string GetDirPath() const;                     //!< Gets the current directory path string clean of display decorations
     void        SetDirPath(const std::string& path);    //!< Sets the shown directory path, applying decorations if applicable

@@ -166,8 +166,6 @@ protected:
 private:
     void DoLayout();
     void PreviewImageChanged(std::shared_ptr<GG::Texture> new_image);
-    void EmpireNameChanged(const std::string& name);
-    void PlayerNameChanged(const std::string& name);
     void OkClicked();
     void CancelClicked();
 

@@ -658,7 +658,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_random->LeftClickedSignal.connect(
         [this](){ RandomClicked(); });
     m_seed_edit->FocusUpdateSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](const std::string&){ SettingChanged(); });
     m_stars_spin->ValueChangedSignal.connect(
         [this](int){ SettingChanged(); });
     m_galaxy_shapes_list->SelChangedSignal.connect(
@@ -1035,9 +1035,9 @@ void GalaxySetupWnd::CompleteConstruction() {
     m_galaxy_setup_panel->ImageChangedSignal.connect(
         boost::bind(&GalaxySetupWnd::PreviewImageChanged, this, _1));
     m_player_name_edit->EditedSignal.connect(
-        boost::bind(&GalaxySetupWnd::PlayerNameChanged, this, _1));
+        [this](const std::string& str){ m_ok->Disable(str.empty()); });
     m_empire_name_edit->EditedSignal.connect(
-        boost::bind(&GalaxySetupWnd::EmpireNameChanged, this, _1));
+        [this](const std::string& str){ m_ok->Disable(str.empty()); });
     m_ok->LeftClickedSignal.connect(
         [this](){ OkClicked(); });
     m_cancel->LeftClickedSignal.connect(
@@ -1163,12 +1163,6 @@ void GalaxySetupWnd::PreviewImageChanged(std::shared_ptr<GG::Texture> new_image)
         m_preview_image->SetTexture(new_image);
     DoLayout();
 }
-
-void GalaxySetupWnd::EmpireNameChanged(const std::string& name)
-{ m_ok->Disable(name.empty()); }
-
-void GalaxySetupWnd::PlayerNameChanged(const std::string& name)
-{ m_ok->Disable(name.empty()); }
 
 void GalaxySetupWnd::OkClicked() {
     // record selected galaxy setup options as new defaults

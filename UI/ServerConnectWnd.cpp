@@ -110,9 +110,9 @@ void ServerConnectWnd::CompleteConstruction() {
     m_find_LAN_servers_bn->LeftClickedSignal.connect(
         [this](){ PopulateServerList(); });
     m_IP_address_edit->EditedSignal.connect(
-        boost::bind(&ServerConnectWnd::IPAddressEdited, this, _1));
+        [this](const std::string& str){ IPAddressEdited(str); });
     m_player_name_edit->EditedSignal.connect(
-        boost::bind(&ServerConnectWnd::EnableDisableControls, this));
+        [this](const std::string&){ EnableDisableControls(); });
     m_ok_bn->LeftClickedSignal.connect(
         [this](){ OkClicked(); });
     m_cancel_bn->LeftClickedSignal.connect(

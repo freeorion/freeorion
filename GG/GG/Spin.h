@@ -454,7 +454,7 @@ template<class T>
 void Spin<T>::ConnectSignals()
 {
     m_edit->FocusUpdateSignal.connect(
-        boost::bind(&Spin::ValueUpdated, this, _1));
+        [this](const std::string& val_text){ ValueUpdated(val_text); });
     m_up_button->LeftClickedSignal.connect(
         [this](){ IncrImpl(true); });
     m_down_button->LeftClickedSignal.connect(

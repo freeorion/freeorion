@@ -3445,8 +3445,6 @@ private:
     bool            AddPartWithSwapping(const PartType* part, std::pair<int, int> swap_and_empty_slot); //!< Swaps part in slot # pair.first to slot # pair.second, adds given part to slot # pair.first
     int             FindEmptySlotForPart(const PartType* part);                                         //!< Determines if a part can be added to any empty slot, returns the slot index if possible, otherwise -1
 
-    void            DesignNameEditedSlot(const std::string& new_name);  //!< triggered when m_design_name's AfterTextChangedSignal fires. Used for basic name validation.
-
     std::pair<int, int> FindSlotForPartWithSwapping(const PartType* part);                              //!< Determines if a part can be added to a slot with swapping, returns a pair containing the slot to swap and an empty slot, otherwise a pair with -1
                                                                                                         //!< This function only tries to find a way to add the given part by swapping a part already in a slot to an empty slot
                                                                                                         //!< If theres an open slot that the given part could go into but all of the occupied slots contain parts that can't swap into the open slot
@@ -3526,7 +3524,7 @@ void DesignWnd::MainPanel::CompleteConstruction() {
     m_clear_button->LeftClickedSignal.connect(
         [this](){ ClearParts(); });
     m_design_name->EditedSignal.connect(
-        boost::bind(&DesignWnd::MainPanel::DesignNameEditedSlot, this, _1));
+        [this](const std::string&){ DesignNameChanged(); });
     m_replace_button->LeftClickedSignal.connect(DesignReplacedSignal);
     m_confirm_button->LeftClickedSignal.connect(DesignConfirmedSignal);
     DesignChangedSignal.connect(boost::bind(&DesignWnd::MainPanel::DesignChanged, this));
@@ -3751,10 +3749,6 @@ int DesignWnd::MainPanel::FindEmptySlotForPart(const PartType* part) {
         }
     }
     return result;
-}
-
-void DesignWnd::MainPanel::DesignNameEditedSlot(const std::string& new_name) {
-    DesignNameChanged();  // Check whether the confirmation button should be enabled or disabled each time the name changes.
 }
 
 std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const PartType* part) {
