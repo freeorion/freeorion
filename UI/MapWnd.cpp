@@ -1504,7 +1504,7 @@ void MapWnd::CompleteConstruction() {
     GG::GUI::GetGUI()->Register(m_zoom_slider);
     m_zoom_slider->Hide();
     m_zoom_slider->SlidSignal.connect(
-        boost::bind(&MapWnd::SetZoom, this, _1, false));
+        [this](double v, double, double){ SetZoom(v, false); });
     GetOptionsDB().OptionChangedSignal("ui.map.zoom.slider.shown").connect(
         boost::bind(&MapWnd::RefreshSliders, this));
 

@@ -218,10 +218,10 @@ private:
     void UpdateHSVSliders();
     void ColorChangeFromRGBSlider();
     void ColorButtonClicked(std::size_t i);
-    void RedSliderChanged(int value, int low, int high);
-    void GreenSliderChanged(int value, int low, int high);
-    void BlueSliderChanged(int value, int low, int high);
-    void AlphaSliderChanged(int value, int low, int high);
+    void RedSliderChanged(int value);
+    void GreenSliderChanged(int value);
+    void BlueSliderChanged(int value);
+    void AlphaSliderChanged(int value);
     void HueSliderChanged(int value, int low, int high);
     void SaturationSliderChanged(int value, int low, int high);
     void ValueSliderChanged(int value, int low, int high);

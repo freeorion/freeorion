@@ -991,7 +991,7 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, Sou
     button->CheckedSignal.connect(
         boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicClicked, &fb, _1));
     slider->SlidSignal.connect(
-        boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid, &fb, _1, _2, _3));
+        [&fb](int v, int, int){ fb.MusicVolumeSlid(v); });
     fb.SetMusicButton(std::move(button));
 }
 
@@ -1020,7 +1020,7 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     button->CheckedSignal.connect(
         boost::bind(&OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked, &fb, _1));
     slider->SlidAndStoppedSignal.connect(
-        boost::bind(&OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid, &fb, _1, _2, _3));
+        [&fb](int v, int, int){ fb.UISoundsVolumeSlid(v); });
     fb.SetEffectsButton(std::move(button));
 }
 
@@ -1364,12 +1364,12 @@ void OptionsWnd::SoundOptionsFeedback::MusicClicked(bool checked) {
     }
 }
 
-void OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid(int pos, int low, int high) const {
+void OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid(int pos) const {
     GetOptionsDB().Set("audio.music.volume", pos);
     Sound::GetSound().SetMusicVolume(pos);
 }
 
-void OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid(int pos, int low, int high) const {
+void OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid(int pos) const {
     GetOptionsDB().Set("audio.effects.volume", pos);
     Sound::GetSound().SetUISoundsVolume(pos);
     Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.press.sound.path"), true);
