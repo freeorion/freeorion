@@ -2487,7 +2487,7 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
     m_ships_lb->RightClickedRowSignal.connect(
         [this](GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>&){ ShipRightClicked(it, pt); });
     GetUniverse().UniverseObjectDeleteSignal.connect(
-        boost::bind(&FleetDetailPanel::UniverseObjectDeleted, this, _1));
+        [this](std::shared_ptr<const UniverseObject> obj){ UniverseObjectDeleted(obj); });
 }
 
 void FleetDetailPanel::CompleteConstruction() {
@@ -2859,7 +2859,7 @@ void FleetWnd::CompleteConstruction() {
         boost::bind(&FleetWnd::CreateNewFleetFromDrops, this, _1));
 
     GetUniverse().UniverseObjectDeleteSignal.connect(
-        boost::bind(&FleetWnd::UniverseObjectDeleted, this, _1));
+        [this](std::shared_ptr<const UniverseObject> obj){ UniverseObjectDeleted(obj); });
 
     RefreshStateChangedSignals();
 

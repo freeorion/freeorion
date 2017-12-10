@@ -1059,7 +1059,7 @@ void MapWnd::CompleteConstruction() {
     SetName("MapWnd");
 
     GetUniverse().UniverseObjectDeleteSignal.connect(
-        boost::bind(&MapWnd::UniverseObjectDeleted, this, _1));
+        [this](std::shared_ptr<const UniverseObject> obj){ UniverseObjectDeleted(obj); });
 
     // toolbar
     m_toolbar = GG::Wnd::Create<CUIToolBar>();

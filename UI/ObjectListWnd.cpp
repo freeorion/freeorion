@@ -1862,7 +1862,7 @@ public:
         m_header_row->ColumnHeaderLeftClickSignal.connect(
             boost::bind(&ObjectListBox::SortingClicked, this, _1));
         m_obj_deleted_connection = GetUniverse().UniverseObjectDeleteSignal.connect(
-            boost::bind(&ObjectListBox::UniverseObjectDeleted, this, _1));
+            [this](std::shared_ptr<const UniverseObject> obj){ UniverseObjectDeleted(obj); });
     }
 
     virtual         ~ObjectListBox()
