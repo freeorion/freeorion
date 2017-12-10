@@ -11816,7 +11816,7 @@ Learning to design devices so that different species can use is crucial for deve
 
 Each empire may contain an academy on up to six planets with different species.
 To be able build such an academy the population must be very happy and at least three starlane jumps away from the next academy.
-Each InterDesign Academy improves the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] by 5% and the allows to draw 2PP/turn more (See [[METER_IMPERIAL_PP_USE_LIMIT]]).
+Each InterDesign Academy improves the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] by 5% and the allows to draw 2PP/turn more (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).
 '''
 
 BLD_MEGALITH
