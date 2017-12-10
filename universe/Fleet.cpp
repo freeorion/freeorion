@@ -120,22 +120,22 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
     UniverseObject::Copy(copied_object, vis, visible_specials);
 
     if (vis >= VIS_BASIC_VISIBILITY) {
-        this->m_ships =                         copied_fleet->VisibleContainedObjectIDs(empire_id);
+        m_ships =                         copied_fleet->VisibleContainedObjectIDs(empire_id);
 
-        this->m_next_system =                   copied_fleet->m_next_system;
-        this->m_prev_system =                   copied_fleet->m_prev_system;
-        this->m_arrived_this_turn =             copied_fleet->m_arrived_this_turn;
-        this->m_arrival_starlane =              copied_fleet->m_arrival_starlane;
+        m_next_system =                   copied_fleet->m_next_system;
+        m_prev_system =                   copied_fleet->m_prev_system;
+        m_arrived_this_turn =             copied_fleet->m_arrived_this_turn;
+        m_arrival_starlane =              copied_fleet->m_arrival_starlane;
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
-            this->m_aggressive =                copied_fleet->m_aggressive;
-            if (this->Unowned())
-                this->m_name =                  copied_fleet->m_name;
+            m_aggressive =                copied_fleet->m_aggressive;
+            if (Unowned())
+                m_name =                  copied_fleet->m_name;
 
             if (vis >= VIS_FULL_VISIBILITY) {
-                this->m_travel_route =              copied_fleet->m_travel_route;
-                this->m_travel_distance =           copied_fleet->m_travel_distance;
-                this->m_ordered_given_to_empire_id =copied_fleet->m_ordered_given_to_empire_id;
+                m_travel_route =              copied_fleet->m_travel_route;
+                m_travel_distance =           copied_fleet->m_travel_distance;
+                m_ordered_given_to_empire_id =copied_fleet->m_ordered_given_to_empire_id;
 
             } else {
                 int             moving_to =         copied_fleet->m_next_system;
@@ -162,8 +162,8 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
                     }
                 }
 
-                this->m_travel_route = travel_route;
-                this->m_travel_distance = travel_distance;
+                m_travel_route = travel_route;
+                m_travel_distance = travel_distance;
             }
         }
     }
