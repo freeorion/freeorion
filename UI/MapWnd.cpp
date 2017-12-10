@@ -2792,9 +2792,9 @@ void MapWnd::InitTurn() {
     // connect system fleet add and remove signals
     for (auto& system : objects.FindObjects<System>()) {
         m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsInsertedSignal.connect(
-            boost::bind(&MapWnd::FleetsInsertedSignalHandler, this, _1)));
+            [this](const std::vector<std::shared_ptr<Fleet>>& fleets){ FleetsInsertedSignalHandler(fleets); }));
         m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsRemovedSignal.connect(
-            boost::bind(&MapWnd::FleetsRemovedSignalHandler, this, _1)));
+            [this](const std::vector<std::shared_ptr<Fleet>>& fleets){ FleetsRemovedSignalHandler(fleets); }));
     }
 
     RefreshFleetSignals();
