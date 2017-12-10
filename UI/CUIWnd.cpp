@@ -205,7 +205,7 @@ void CUIWnd::Init() {
             boost::bind(&CUIWnd::ResetDefaultPosition, this));
     else
         HumanClientApp::GetApp()->WindowResizedSignal.connect(
-            boost::bind(&CUIWnd::ResetDefaultPosition, this));
+            [this](GG::X, GG::Y){ ResetDefaultPosition(); });
 }
 
 void CUIWnd::InitSizeMove(const GG::Pt& ul, const GG::Pt& lr) {

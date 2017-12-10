@@ -177,7 +177,7 @@ void ModalListPicker::CompleteConstruction()
     m_lb_wnd->LeftClickedRowSignal.connect(
         [this](ListBox::iterator, const Pt&, const Flags<ModKey>&){ EndRun(); });
     GUI::GetGUI()->WindowResizedSignal.connect(
-        boost::bind(&ModalListPicker::WindowResizedSlot, this, _1, _2));
+        [this](X w, Y h){ WindowResizedSlot(w, h); });
     AttachChild(m_lb_wnd);
     m_lb_wnd->InstallEventFilter(shared_from_this());
 
