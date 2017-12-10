@@ -2847,13 +2847,13 @@ void MapWnd::InitTurn() {
     Empire* this_client_empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (this_client_empire) {
         this_client_empire->GetResourcePool(RE_TRADE)->ChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshTradeResourceIndicator, this));
+            [this](){ RefreshTradeResourceIndicator(); });
         this_client_empire->GetResourcePool(RE_RESEARCH)->ChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshResearchResourceIndicator, this));
+            [this](){ RefreshResearchResourceIndicator(); });
         this_client_empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshIndustryResourceIndicator, this));
+            [this](){ RefreshIndustryResourceIndicator(); });
         this_client_empire->GetPopulationPool().ChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshPopulationIndicator, this));
+            [this](){ RefreshPopulationIndicator(); });
         this_client_empire->GetProductionQueue().ProductionQueueChangedSignal.connect(
             [this](){ RefreshIndustryResourceIndicator(); });
         // so lane colouring to indicate wasted PP is updated
