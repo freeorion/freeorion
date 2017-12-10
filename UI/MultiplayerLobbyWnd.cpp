@@ -629,7 +629,7 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     m_any_can_edit->CheckedSignal.connect(
         boost::bind(&MultiPlayerLobbyWnd::AnyCanEdit, this, _1));
     m_new_load_game_buttons->ButtonChangedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::NewLoadClicked, this, _1));
+        [this](std::size_t i){ NewLoadClicked(i); });
     m_galaxy_setup_panel->SettingsChangedSignal.connect(
         boost::bind(&MultiPlayerLobbyWnd::GalaxySetupPanelChanged, this));
     m_browse_saves_btn->LeftClickedSignal.connect(

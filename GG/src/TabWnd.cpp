@@ -300,7 +300,7 @@ void TabBar::CompleteConstruction()
     AttachChild(m_left_right_button_layout);
 
     m_tabs->ButtonChangedSignal.connect(
-        boost::bind(&TabBar::TabChanged, this, _1, true));
+        [this](std::size_t i){ TabChanged(i, true); });
     m_left_button->LeftClickedSignal.connect(
         [this](){ LeftClicked(); });
     m_right_button->LeftClickedSignal.connect(

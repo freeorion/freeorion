@@ -104,7 +104,7 @@ void ServerConnectWnd::CompleteConstruction() {
     ResetDefaultPosition();
 
     m_host_or_join_radio_group->ButtonChangedSignal.connect(
-        boost::bind(&ServerConnectWnd::EnableDisableControls, this));
+        [this](std::size_t){ EnableDisableControls(); });
     m_servers_lb->SelRowsChangedSignal.connect(
         [this](const GG::ListBox::SelectionSet& selections){ ServerSelected(selections); });
     m_find_LAN_servers_bn->LeftClickedSignal.connect(
