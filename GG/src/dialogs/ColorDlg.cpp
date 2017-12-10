@@ -652,11 +652,11 @@ void ColorDlg::CompleteConstruction()
     m_cancel->LeftClickedSignal.connect(
         [this](){ CancelClicked(); });
     m_hue_saturation_picker->ChangedSignal.connect(
-        boost::bind(&ValuePicker::SetHueSaturation, m_value_picker, _1, _2));
+        [this](double hue, double saturation){ m_value_picker->SetHueSaturation(hue, saturation); });
     m_hue_saturation_picker->ChangedSignal.connect(
-        boost::bind(&ColorDlg::HueSaturationPickerChanged, this, _1, _2));
+        [this](double hue, double saturation){ HueSaturationPickerChanged(hue, saturation); });
     m_value_picker->ChangedSignal.connect(
-        boost::bind(&ColorDlg::ValuePickerChanged, this, _1));
+        [this](double value){ ValuePickerChanged(value); });
 }
 
 bool ColorDlg::ColorWasSelected() const
