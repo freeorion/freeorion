@@ -346,8 +346,8 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
 
-    spin->ValueChangedSignal.connect(boost::bind(&GameRulesPanel::IntRuleChanged,
-                                                 this, spin.get(), rule_name));
+    spin->ValueChangedSignal.connect(
+        [this, rule_name](int value){ IntRuleChanged(value, rule_name); });
     return spin.get();
 }
 
@@ -394,8 +394,8 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
 
-    spin->ValueChangedSignal.connect(boost::bind(&GameRulesPanel::DoubleRuleChanged,
-                                                 this, spin.get(), rule_name));
+    spin->ValueChangedSignal.connect(
+        [this, rule_name](double value){ DoubleRuleChanged(value, rule_name); });
 
     return spin.get();
 }
@@ -484,13 +484,13 @@ void GameRulesPanel::BoolRuleChanged(const GG::StateButton* button,
     SettingChanged();
 }
 
-void GameRulesPanel::IntRuleChanged(const GG::Spin<int>* spin,
+void GameRulesPanel::IntRuleChanged(int value,
                                      const std::string& rule_name)
 {
     std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
-    if (!val || !spin)
+    if (!val)
         return;
-    m_rules[rule_name] = val->String(spin->Value());
+    m_rules[rule_name] = val->String(value);
 
     DebugLogger() << "Set Rules:";
     for (const auto& entry : m_rules)
@@ -499,13 +499,13 @@ void GameRulesPanel::IntRuleChanged(const GG::Spin<int>* spin,
     SettingChanged();
 }
 
-void GameRulesPanel::DoubleRuleChanged(const GG::Spin<double>* spin,
+void GameRulesPanel::DoubleRuleChanged(double value,
                                        const std::string& rule_name)
 {
     std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
-    if (!val || !spin)
+    if (!val)
         return;
-    m_rules[rule_name] = val->String(spin->Value());
+    m_rules[rule_name] = val->String(value);
 
     DebugLogger() << "Set Rules:";
     for (const auto& entry : m_rules)
@@ -660,7 +660,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_seed_edit->FocusUpdateSignal.connect(
         boost::bind(&GalaxySetupPanel::SettingChanged, this));
     m_stars_spin->ValueChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](int){ SettingChanged(); });
     m_galaxy_shapes_list->SelChangedSignal.connect(
         boost::bind(&GalaxySetupPanel::SettingChanged, this));
     m_galaxy_ages_list->SelChangedSignal.connect(

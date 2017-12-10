@@ -50,8 +50,8 @@ private:
                                          const std::string& rule_name);
 
     void BoolRuleChanged(const GG::StateButton* button, const std::string& rule_name);
-    void IntRuleChanged(const GG::Spin<int>* spin, const std::string& rule_name);
-    void DoubleRuleChanged(const GG::Spin<double>* spin, const std::string& rule_name);
+    void IntRuleChanged(int value, const std::string& rule_name);
+    void DoubleRuleChanged(double value, const std::string& rule_name);
     void StringRuleChanged(const GG::DropDownList* drop, const std::string& rule_name);
 
     std::map<std::string, std::string>  m_rules;
