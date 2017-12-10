@@ -1566,8 +1566,8 @@ private:
 
     void    Populate(bool update = true);
     void    TechDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
-    void    TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
-    void    TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void    TechLeftClicked(GG::ListBox::iterator it);
+    void    TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
     void    ToggleSortCol(unsigned int col);
 
     std::set<std::string>                   m_categories_shown;
@@ -1750,11 +1750,11 @@ void TechTreeWnd::TechListBox::CompleteConstruction() {
     CUIListBox::CompleteConstruction();
 
     DoubleClickedRowSignal.connect(
-        boost::bind(&TechListBox::TechDoubleClicked, this, _1, _2, _3));
+        [this](GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys){ TechDoubleClicked(it, pt, modkeys); });
     LeftClickedRowSignal.connect(
-        boost::bind(&TechListBox::TechLeftClicked, this, _1, _2, _3));
+        [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>&){ TechLeftClicked(it); });
     RightClickedRowSignal.connect(
-        boost::bind(&TechListBox::TechRightClicked, this, _1, _2, _3));
+        [this](GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>&){ TechRightClicked(it, pt); });
 
     SetStyle(GG::LIST_NOSEL);
 
@@ -1967,13 +1967,13 @@ void TechTreeWnd::TechListBox::HideStatus(TechStatus status) {
     }
 }
 
-void TechTreeWnd::TechListBox::TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void TechTreeWnd::TechListBox::TechLeftClicked(GG::ListBox::iterator it) {
     // determine type of row that was clicked, and emit appropriate signal
     if (TechRow* tech_row = dynamic_cast<TechRow*>(it->get()))
         TechLeftClickedSignal(tech_row->GetTech(), GG::Flags<GG::ModKey>());
 }
 
-void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     if ((*it)->Disabled())
         return;
     const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());

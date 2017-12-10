@@ -230,9 +230,9 @@ void FileDlg::CompleteConstruction()
     m_cancel_button->LeftClickedSignal.connect(
         [this](){ CancelClicked(); });
     m_files_list->SelRowsChangedSignal.connect(
-        boost::bind(&FileDlg::FileSetChanged, this, _1));
+        [this](const ListBox::SelectionSet& sel){ FileSetChanged(sel); });
     m_files_list->DoubleClickedRowSignal.connect(
-        boost::bind(&FileDlg::FileDoubleClicked, this, _1, _2, _3));
+        [this](DropDownList::iterator it, const Pt&, const Flags<ModKey>&){ FileDoubleClicked(it); });
     m_files_edit->EditedSignal.connect(
         boost::bind(&FileDlg::FilesEditChanged, this, _1));
     m_filter_list->SelChangedSignal.connect(
@@ -482,7 +482,7 @@ void FileDlg::FileSetChanged(const ListBox::SelectionSet& files)
         m_ok_button->SetText(m_open_str);
 }
 
-void FileDlg::FileDoubleClicked(DropDownList::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+void FileDlg::FileDoubleClicked(DropDownList::iterator it)
 {
     m_files_list->DeselectAll();
     m_files_list->SelectRow(it);

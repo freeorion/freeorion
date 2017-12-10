@@ -1740,7 +1740,7 @@ public:
 
     void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
 
-    virtual void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it)
+    virtual void QueueItemMoved(const GG::ListBox::iterator& row_it)
     {}
 
     void SetEmpireShown(int empire_id, bool refresh_list = true);
@@ -1831,11 +1831,11 @@ protected:
     GG::Pt  ListRowSize();
     //@}
 
-    virtual void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+    virtual void  BaseDoubleClicked(GG::ListBox::iterator it)
     {}
-    virtual void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+    virtual void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys)
     {}
-    virtual void  BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+    virtual void  BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
     {}
 
 private:
@@ -1984,11 +1984,11 @@ void BasesListBox::CompleteConstruction() {
     SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
 
     DoubleClickedRowSignal.connect(
-        boost::bind(&BasesListBox::BaseDoubleClicked, this, _1, _2, _3));
+        [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>&){ BaseDoubleClicked(it); });
     LeftClickedRowSignal.connect(
-        boost::bind(&BasesListBox::BaseLeftClicked, this, _1, _2, _3));
+        [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>& modkeys){ BaseLeftClicked(it, modkeys); });
     MovedRowSignal.connect(
-        boost::bind(&BasesListBox::QueueItemMoved, this, _1, _2));
+        [this](const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it){ QueueItemMoved(row_it); });
 
     EnableOrderIssuing(false);
 }
@@ -2074,7 +2074,7 @@ void BasesListBox::InitRowSizes() {
 }
 
 void BasesListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
-{ this->BaseRightClicked(it, pt, modkeys); }
+{ BaseRightClicked(it, pt); }
 
 BasesListBox::AvailabilityManager::AvailabilityManager(bool obsolete, bool available, bool unavailable) :
     m_availabilities{obsolete, available, unavailable}
@@ -2127,8 +2127,8 @@ class EmptyHullsListBox : public BasesListBox {
     void PopulateCore() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
 
-    void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
-    void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void  BaseDoubleClicked(GG::ListBox::iterator it) override;
+    void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys) override;
 
     private:
 };
@@ -2143,11 +2143,11 @@ class CompletedDesignsListBox : public BasesListBox {
     protected:
     void PopulateCore() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
-    void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) override;
+    void QueueItemMoved(const GG::ListBox::iterator& row_it) override;
 
-    void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
-    void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
-    void  BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void  BaseDoubleClicked(GG::ListBox::iterator it) override;
+    void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys) override;
+    void  BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) override;
 };
 
 class SavedDesignsListBox : public BasesListBox {
@@ -2173,11 +2173,11 @@ class SavedDesignsListBox : public BasesListBox {
     protected:
     void PopulateCore() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
-    void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) override;
+    void QueueItemMoved(const GG::ListBox::iterator& row_it) override;
 
-    void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
-    void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
-    void  BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void  BaseDoubleClicked(GG::ListBox::iterator it) override;
+    void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys) override;
+    void  BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) override;
 };
 
 class MonstersListBox : public BasesListBox {
@@ -2193,7 +2193,7 @@ class MonstersListBox : public BasesListBox {
     void PopulateCore() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
 
-    void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseDoubleClicked(GG::ListBox::iterator it) override;
 };
 
 
@@ -2438,8 +2438,7 @@ void MonstersListBox::EnableOrderIssuing(bool)
 { QueueListBox::EnableOrderIssuing(false); }
 
 
-void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                          const GG::Flags<GG::ModKey>& modkeys)
+void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it)
 {
     HullAndPartsListBoxRow* hp_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
     if (!hp_row)
@@ -2449,8 +2448,7 @@ void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt
         DesignComponentsSelectedSignal(hp_row->Hull(), hp_row->Parts());
 }
 
-void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                                const GG::Flags<GG::ModKey>& modkeys)
+void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it)
 {
     CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)
@@ -2459,8 +2457,7 @@ void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const 
     DesignSelectedSignal(cd_row->DesignID());
 }
 
-void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                            const GG::Flags<GG::ModKey>& modkeys)
+void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it)
 {
     SavedDesignListBoxRow* sd_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
 
@@ -2469,8 +2466,7 @@ void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::
     SavedDesignSelectedSignal(sd_row->DesignUUID());
 }
 
-void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                        const GG::Flags<GG::ModKey>& modkeys)
+void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it)
 {
     CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)
@@ -2480,7 +2476,7 @@ void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& 
 }
 
 
-void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it,
                                         const GG::Flags<GG::ModKey>& modkeys)
 {
     HullAndPartsListBoxRow* hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
@@ -2493,7 +2489,7 @@ void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& 
         HullClickedSignal(hull_type);
 }
 
-void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it,
                                               const GG::Flags<GG::ModKey>& modkeys)
 {
     CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
@@ -2514,7 +2510,7 @@ void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG
         DesignClickedSignal(design);
 }
 
-void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it,
                                           const GG::Flags<GG::ModKey>& modkeys)
 {
     SavedDesignListBoxRow* saved_design_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
@@ -2532,8 +2528,7 @@ void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt
 }
 
 
-void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                               const GG::Flags<GG::ModKey>& modkeys)
+void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
 {
     const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!design_row)
@@ -2619,8 +2614,7 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     popup->Run();
 }
 
-void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                           const GG::Flags<GG::ModKey>& modkeys)
+void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
 {
     const auto design_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
     if (!design_row)
@@ -2677,8 +2671,7 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
 
 }
 
-void CompletedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
-                                             const GG::ListBox::iterator& original_position_it)
+void CompletedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it)
 {
     const auto control = dynamic_cast<BasesListBox::CompletedDesignListBoxRow*>(row_it->get());
     if (!control || !GetEmpire(EmpireID()))
@@ -2698,8 +2691,7 @@ void CompletedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it
     GetCurrentDesignsManager().MoveBefore(design_id, insert_before_id);
 }
 
-void SavedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
-                                         const GG::ListBox::iterator& original_position_it)
+void SavedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it)
 {
     const auto control = dynamic_cast<SavedDesignsListBox::SavedDesignListBoxRow*>(row_it->get());
     if (!control)

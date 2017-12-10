@@ -491,10 +491,10 @@ private:
     void    AddBuildItemToQueue(GG::ListBox::iterator it, bool top);
 
     /** respond to the user single-clicking a producible item in the build selector */
-    void    BuildItemLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void BuildItemLeftClicked(GG::ListBox::iterator it);
 
     /** respond to the user right-clicking a producible item in the build selector */
-    void    BuildItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void BuildItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
 
     std::map<BuildType, std::shared_ptr<CUIStateButton>>    m_build_type_buttons;
     std::vector<std::shared_ptr<CUIStateButton>>            m_availability_buttons;
@@ -540,11 +540,11 @@ void BuildDesignatorWnd::BuildSelector::CompleteConstruction() {
     // selectable list of buildable items
     AttachChild(m_buildable_items);
     m_buildable_items->LeftClickedRowSignal.connect(
-        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked, this, _1, _2, _3));
+        [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>&) { BuildItemLeftClicked(it); });
     m_buildable_items->DoubleClickedRowSignal.connect(
         [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>& modkeys) { this->AddBuildItemToQueue(it, modkeys & GG::MOD_KEY_CTRL); });
     m_buildable_items->RightClickedRowSignal.connect(
-        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this, _1, _2, _3));
+        [this](GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>&) { BuildItemRightClicked(it, pt); });
 
     //auto header = GG::Wnd::Create<GG::ListBox::Row>();
     //std::shared_ptr<GG::Font> font = ClientUI::GetFont();
@@ -857,8 +857,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         m_buildable_items->SetFirstRowShown(m_buildable_items->begin());
 }
 
-void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterator it,
-                                                             const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterator it)
 {
     ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>((*it).get());
     if (!item_row)
@@ -897,7 +896,7 @@ void BuildDesignatorWnd::BuildSelector::AddBuildItemToQueue(GG::ListBox::iterato
 }
 
 void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::iterator it,
-                                                              const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+                                                              const GG::Pt& pt)
 {
     ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>(it->get());
     if (!item_row)
@@ -916,9 +915,9 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
 
     auto add_bottom_queue_action = [this, it]() { AddBuildItemToQueue(it, false); };
     auto add_top_queue_action = [this, it]() { AddBuildItemToQueue(it, true); };
-    auto pedia_lookup_action = [this, it, pt, &modkeys]() {
+    auto pedia_lookup_action = [this, it]() {
         ShowPediaSignal();
-        BuildItemLeftClicked(it, pt, modkeys);
+        BuildItemLeftClicked(it);
     };
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);

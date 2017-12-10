@@ -2336,11 +2336,11 @@ void ObjectListWnd::CompleteConstruction() {
     m_list_box->SetStyle(GG::LIST_NOSORT);
 
     m_list_box->SelRowsChangedSignal.connect(
-        boost::bind(&ObjectListWnd::ObjectSelectionChanged, this, _1));
+        [this](const GG::ListBox::SelectionSet& rows){ ObjectSelectionChanged(rows); });
     m_list_box->DoubleClickedRowSignal.connect(
-        boost::bind(&ObjectListWnd::ObjectDoubleClicked, this, _1, _2, _3));
+        [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>&){ ObjectDoubleClicked(it); });
     m_list_box->RightClickedRowSignal.connect(
-        boost::bind(&ObjectListWnd::ObjectRightClicked, this, _1, _2, _3));
+        [this](GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>&){ ObjectRightClicked(it, pt); });
     m_list_box->ExpandCollapseSignal.connect(
         boost::bind(&ObjectListWnd::DoLayout, this));
     AttachChild(m_list_box);
@@ -2425,8 +2425,7 @@ void ObjectListWnd::ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows
     SelectedObjectsChangedSignal();
 }
 
-void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                        const GG::Flags<GG::ModKey>& modkeys)
+void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it)
 {
     int object_id = ObjectInRow(it);
     if (object_id != INVALID_OBJECT_ID)
@@ -2462,7 +2461,8 @@ void ObjectListWnd::SetSelectedObjects(std::set<int> sel_ids) {
     }
 }
 
-void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
+{
     int object_id = ObjectInRow(it);
     if (object_id == INVALID_OBJECT_ID)
         return;

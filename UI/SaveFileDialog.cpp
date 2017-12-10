@@ -723,9 +723,9 @@ void SaveFileDialog::Init() {
     cancel_btn->LeftClickedSignal.connect(
         [this](){ Cancel(); });
     m_file_list->SelRowsChangedSignal.connect(
-        boost::bind(&SaveFileDialog::SelectionChanged, this, _1));
+        [this](const GG::ListBox::SelectionSet& selections){ SelectionChanged(selections); });
     m_file_list->DoubleClickedRowSignal.connect(
-        boost::bind(&SaveFileDialog::DoubleClickRow, this, _1, _2, _3));
+        [this](GG::ListBox::iterator row, const GG::Pt&, const GG::Flags<GG::ModKey>&){ DoubleClickRow(row); });
     m_name_edit->EditedSignal.connect(
         boost::bind(&SaveFileDialog::FileNameEdited, this, _1));
     m_current_dir_edit->EditedSignal.connect(
@@ -883,7 +883,7 @@ void SaveFileDialog::AskDelete() {
     }
 }
 
-void SaveFileDialog::DoubleClickRow(GG::ListBox::iterator row, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void SaveFileDialog::DoubleClickRow(GG::ListBox::iterator row) {
     m_file_list->SelectRow(row);
     Confirm();
 }

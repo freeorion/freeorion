@@ -1949,7 +1949,8 @@ ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dr
 
     row->Resize(Pt(std::max(ClientWidth(), X(1)), row->Height()));
 
-    row->RightClickedSignal.connect(boost::bind(&ListBox::HandleRowRightClicked, this, _1, _2));
+    row->RightClickedSignal.connect(
+        [this](const Pt& pt, Flags<ModKey> mod){ HandleRowRightClicked(pt, mod); });
 
     AfterInsertRowSignal(it);
     if (dropped)

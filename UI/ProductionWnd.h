@@ -121,8 +121,8 @@ private:
 
     void    DeleteQueueItem(GG::ListBox::iterator it);
     void    QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it);
-    void    QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
-    void    QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void    QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys);
+    void    QueueItemDoubleClickedSlot(GG::ListBox::iterator it);
     void    QueueItemRallied(GG::ListBox::iterator it, int object_id);
     void    QueueItemPaused(GG::ListBox::iterator it, bool pause);
     void    QueueItemDuped(GG::ListBox::iterator it);

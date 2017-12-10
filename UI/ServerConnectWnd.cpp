@@ -106,7 +106,7 @@ void ServerConnectWnd::CompleteConstruction() {
     m_host_or_join_radio_group->ButtonChangedSignal.connect(
         boost::bind(&ServerConnectWnd::EnableDisableControls, this));
     m_servers_lb->SelRowsChangedSignal.connect(
-        boost::bind(&ServerConnectWnd::ServerSelected, this, _1));
+        [this](const GG::ListBox::SelectionSet& selections){ ServerSelected(selections); });
     m_find_LAN_servers_bn->LeftClickedSignal.connect(
         [this](){ PopulateServerList(); });
     m_IP_address_edit->EditedSignal.connect(

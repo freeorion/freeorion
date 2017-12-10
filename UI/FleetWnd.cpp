@@ -2451,7 +2451,7 @@ private:
     void            DoLayout();
     void            UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj);
     void            ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
-    void            ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void            ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
     int             ShipInRow(GG::ListBox::iterator it) const;
 
     int                         m_fleet_id;
@@ -2483,9 +2483,9 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
     }
 
     m_ships_lb->SelRowsChangedSignal.connect(
-        boost::bind(&FleetDetailPanel::ShipSelectionChanged, this, _1));
+        [this](const GG::ListBox::SelectionSet& rows){ ShipSelectionChanged(rows); });
     m_ships_lb->RightClickedRowSignal.connect(
-        boost::bind(&FleetDetailPanel::ShipRightClicked, this, _1, _2, _3));
+        [this](GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>&){ ShipRightClicked(it, pt); });
     GetUniverse().UniverseObjectDeleteSignal.connect(
         boost::bind(&FleetDetailPanel::UniverseObjectDeleted, this, _1));
 }
@@ -2627,7 +2627,7 @@ void FleetDetailPanel::ShipSelectionChanged(const GG::ListBox::SelectionSet& row
     SelectedShipsChangedSignal(rows);
 }
 
-void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     // get ship that was clicked, aborting if problems arise doing so
     ShipRow* ship_row = dynamic_cast<ShipRow*>(it->get());
     if (!ship_row)
@@ -2830,13 +2830,13 @@ void FleetWnd::CompleteConstruction() {
     m_fleets_lb = GG::Wnd::Create<FleetsListBox>(m_order_issuing_enabled);
     m_fleets_lb->SetHiliteColor(GG::CLR_ZERO);
     m_fleets_lb->SelRowsChangedSignal.connect(
-        boost::bind(&FleetWnd::FleetSelectionChanged, this, _1));
+        [this](const GG::ListBox::SelectionSet& rows){ FleetSelectionChanged(rows); });
     m_fleets_lb->LeftClickedRowSignal.connect(
-        boost::bind(&FleetWnd::FleetLeftClicked, this, _1, _2, _3));
+        [this](GG::ListBox::iterator, const GG::Pt&, const GG::Flags<GG::ModKey>&){ ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this())); });
     m_fleets_lb->RightClickedRowSignal.connect(
-        boost::bind(&FleetWnd::FleetRightClicked, this, _1, _2, _3));
+        [this](GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>&){ FleetRightClicked(it, pt); });
     m_fleets_lb->DoubleClickedRowSignal.connect(
-        boost::bind(&FleetWnd::FleetDoubleClicked, this, _1, _2, _3));
+        [this](GG::ListBox::iterator, const GG::Pt&, const GG::Flags<GG::ModKey>&){ ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this())); });
     AttachChild(m_fleets_lb);
     m_fleets_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_BROWSEUPDATES);
     m_fleets_lb->AllowDropType(SHIP_DROP_TYPE_STRING);
@@ -3342,7 +3342,7 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     SelectedFleetsChangedSignal();
 }
 
-void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
     auto fleet = GetFleet(FleetInRow(it));
@@ -3649,12 +3649,6 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
 
     popup->Run();
 }
-
-void FleetWnd::FleetLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
-{ ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this())); }
-
-void FleetWnd::FleetDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
-{ ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this())); }
 
 int FleetWnd::FleetInRow(GG::ListBox::iterator it) const {
     if (it == m_fleets_lb->end())
