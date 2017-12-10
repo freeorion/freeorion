@@ -5,7 +5,7 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 100 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
-	tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
+    tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
     prerequisites = [
         "PRO_SENTIENT_AUTOMATION"
         "LRN_GRAVITONICS"
@@ -14,7 +14,7 @@ Tech
         EffectsGroup
             scope = Source
             effects = [
-                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_USE_LIMIT"           value = Value + 5
+                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_USE_LIMIT"           value = Value + 15
                 SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_TRANSFER_EFFICIENCY" value = Value + 0.2
             ]
     ]
