@@ -2845,7 +2845,7 @@ void DesignWnd::BaseSelector::CompleteConstruction() {
 
     m_tabs = GG::Wnd::Create<GG::TabWnd>(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
     m_tabs->TabChangedSignal.connect(
-        boost::bind(&DesignWnd::BaseSelector::Reset, this));
+        [this](std::size_t i){ Reset(); });
     AttachChild(m_tabs);
 
     m_hulls_list = GG::Wnd::Create<EmptyHullsListBox>(m_availabilities_state);

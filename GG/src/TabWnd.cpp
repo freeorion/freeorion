@@ -174,7 +174,7 @@ void TabWnd::CompleteConstruction()
     layout->Add(m_overlay, 1, 0);
     SetLayout(layout);
     m_tab_bar->TabChangedSignal.connect(
-        boost::bind(&TabWnd::TabChanged, this, _1, true));
+        [this](std::size_t i){ TabChanged(i, true); });
 
     if (INSTRUMENT_ALL_SIGNALS)
         TabChangedSignal.connect(TabChangedEcho("TabWnd::TabChangedSignal"));
