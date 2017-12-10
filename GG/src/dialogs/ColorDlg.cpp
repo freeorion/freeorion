@@ -648,9 +648,9 @@ void ColorDlg::CompleteConstruction()
     m_sliders[V]->SlidSignal.connect(
         boost::bind(&ColorDlg::ValueSliderChanged, this, _1, _2, _3));
     m_ok->LeftClickedSignal.connect(
-        boost::bind(&ColorDlg::OkClicked, this));
+        [this](){ OkClicked(); });
     m_cancel->LeftClickedSignal.connect(
-        boost::bind(&ColorDlg::CancelClicked, this));
+        [this](){ CancelClicked(); });
     m_hue_saturation_picker->ChangedSignal.connect(
         boost::bind(&ValuePicker::SetHueSaturation, m_value_picker, _1, _2));
     m_hue_saturation_picker->ChangedSignal.connect(

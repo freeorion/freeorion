@@ -1006,15 +1006,15 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
 
     m_colonize_button = Wnd::Create<CUIButton>(UserString("PL_COLONIZE"));
     m_colonize_button->LeftClickedSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::ClickColonize, this));
+        [this](){ ClickColonize(); });
 
     m_invade_button   = Wnd::Create<CUIButton>(UserString("PL_INVADE"));
     m_invade_button->LeftClickedSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::ClickInvade, this));
+        [this](){ ClickInvade(); });
 
     m_bombard_button  = Wnd::Create<CUIButton>(UserString("PL_BOMBARD"));
     m_bombard_button->LeftClickedSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::ClickBombard, this));
+        [this](){ ClickBombard(); });
 
     SetChildClippingMode(ClipToWindow);
 
@@ -2920,9 +2920,9 @@ void SidePanel::CompleteConstruction() {
     m_system_name->SelChangedWhileDroppedSignal.connect(
         boost::bind(&SidePanel::SystemSelectionChangedSlot, this, _1));
     m_button_prev->LeftClickedSignal.connect(
-        boost::bind(&SidePanel::PrevButtonClicked, this));
+        [this](){ PrevButtonClicked(); });
     m_button_next->LeftClickedSignal.connect(
-        boost::bind(&SidePanel::NextButtonClicked, this));
+        [this](){ NextButtonClicked(); });
     m_planet_panel_container->PlanetClickedSignal.connect(
         boost::bind(&SidePanel::PlanetClickedSlot, this, _1));
     m_planet_panel_container->PlanetLeftDoubleClickedSignal.connect(

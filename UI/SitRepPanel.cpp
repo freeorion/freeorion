@@ -405,13 +405,13 @@ void SitRepPanel::CompleteConstruction() {
     AttachChild(m_filter_button);
 
     m_prev_turn_button->LeftClickedSignal.connect(
-        boost::bind(&SitRepPanel::PrevClicked, this));
+        [this](){ PrevClicked(); });
     m_next_turn_button->LeftClickedSignal.connect(
-        boost::bind(&SitRepPanel::NextClicked, this));
+        [this](){ NextClicked(); });
     m_last_turn_button->LeftClickedSignal.connect(
-        boost::bind(&SitRepPanel::LastClicked, this));
+        [this](){ LastClicked(); });
     m_filter_button->LeftClickedSignal.connect(
-        boost::bind(&SitRepPanel::FilterClicked, this));
+        [this](){ FilterClicked(); });
     m_sitreps_lb->DoubleClickedRowSignal.connect(
         boost::bind(&SitRepPanel::IgnoreSitRep, this, _1, _2, _3));
     m_sitreps_lb->RightClickedRowSignal.connect(

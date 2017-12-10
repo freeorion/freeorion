@@ -226,9 +226,9 @@ void FileDlg::CompleteConstruction()
     UpdateList();
 
     m_ok_button->LeftClickedSignal.connect(
-        boost::bind(&FileDlg::OkClicked, this));
+        [this](){ OkClicked(); });
     m_cancel_button->LeftClickedSignal.connect(
-        boost::bind(&FileDlg::CancelClicked, this));
+        [this](){ CancelClicked(); });
     m_files_list->SelRowsChangedSignal.connect(
         boost::bind(&FileDlg::FileSetChanged, this, _1));
     m_files_list->DoubleClickedRowSignal.connect(

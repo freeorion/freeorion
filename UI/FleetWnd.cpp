@@ -1789,7 +1789,7 @@ void FleetDataPanel::Init() {
             GG::SubTexture(FleetAggressiveMouseoverIcon()));
         AttachChild(m_aggression_toggle);
         m_aggression_toggle->LeftClickedSignal.connect(
-            boost::bind(&FleetDataPanel::ToggleAggression, this));
+            [this](){ ToggleAggression(); });
 
     } else if (auto fleet = GetFleet(m_fleet_id)) {
         int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
@@ -1826,7 +1826,7 @@ void FleetDataPanel::Init() {
                 GG::SubTexture(FleetAggressiveMouseoverIcon()));
             AttachChild(m_aggression_toggle);
             m_aggression_toggle->LeftClickedSignal.connect(
-                boost::bind(&FleetDataPanel::ToggleAggression, this));
+                [this](){ ToggleAggression(); });
         }
 
         ColorTextForSelect();

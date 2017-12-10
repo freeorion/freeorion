@@ -108,15 +108,15 @@ void ServerConnectWnd::CompleteConstruction() {
     m_servers_lb->SelRowsChangedSignal.connect(
         boost::bind(&ServerConnectWnd::ServerSelected, this, _1));
     m_find_LAN_servers_bn->LeftClickedSignal.connect(
-        boost::bind(&ServerConnectWnd::PopulateServerList, this));
+        [this](){ PopulateServerList(); });
     m_IP_address_edit->EditedSignal.connect(
         boost::bind(&ServerConnectWnd::IPAddressEdited, this, _1));
     m_player_name_edit->EditedSignal.connect(
         boost::bind(&ServerConnectWnd::EnableDisableControls, this));
     m_ok_bn->LeftClickedSignal.connect(
-        boost::bind(&ServerConnectWnd::OkClicked, this));
+        [this](){ OkClicked(); });
     m_cancel_bn->LeftClickedSignal.connect(
-        boost::bind(&ServerConnectWnd::CancelClicked, this));
+        [this](){ CancelClicked(); });
 
     m_host_or_join_radio_group->SetCheck(0);
     PopulateServerList();

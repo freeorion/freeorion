@@ -1114,9 +1114,9 @@ void TechTreeWnd::LayoutPanel::CompleteConstruction() {
     m_hscroll->ScrolledSignal.connect(
         boost::bind(&TechTreeWnd::LayoutPanel::ScrolledSlot, this, _1, _2, _3, _4));
     m_zoom_in_button->LeftClickedSignal.connect(
-        boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomedSlot, this, 1));
+        [this](){ TreeZoomedSlot(1); });
     m_zoom_out_button->LeftClickedSignal.connect(
-        boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomedSlot, this, -1));
+        [this](){ TreeZoomedSlot(-1); });
 
     ConnectKeyboardAcceleratorSignals();
 

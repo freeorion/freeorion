@@ -43,7 +43,7 @@ void PopulationPanel::CompleteConstruction() {
         throw std::invalid_argument("Attempted to construct a PopulationPanel with an object id is not a PopCenter");
 
     m_expand_button->LeftClickedSignal.connect(
-        boost::bind(&PopulationPanel::ExpandCollapseButtonPressed, this));
+        [this](){ ExpandCollapseButtonPressed(); });
 
     const auto obj = GetUniverseObject(m_popcenter_id);
     if (!obj) {

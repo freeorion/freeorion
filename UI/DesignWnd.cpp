@@ -3532,7 +3532,7 @@ void DesignWnd::MainPanel::CompleteConstruction() {
     AttachChild(m_clear_button);
 
     m_clear_button->LeftClickedSignal.connect(
-        boost::bind(&DesignWnd::MainPanel::ClearParts, this));
+        [this](){ ClearParts(); });
     m_design_name->EditedSignal.connect(
         boost::bind(&DesignWnd::MainPanel::DesignNameEditedSlot, this, _1));
     m_replace_button->LeftClickedSignal.connect(DesignReplacedSignal);

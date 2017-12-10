@@ -766,7 +766,7 @@ void OptionsWnd::CompleteConstruction() {
 
     // Connect the done and cancel button
     m_done_button->LeftClickedSignal.connect(
-        boost::bind(&OptionsWnd::DoneClicked, this));
+        [this](){ DoneClicked(); });
 }
 
 void OptionsWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -888,9 +888,9 @@ void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, const st
                                                layout, indentation_level);
 
     button->LeftClickedSignal.connect(
-        boost::bind(HandleSetHotkeyOption, hotkey_name, button.get()));
+        [hotkey_name, button](){ HandleSetHotkeyOption(hotkey_name, button.get()); });
     button->RightClickedSignal.connect(
-        boost::bind(HandleResetHotkeyOption, hotkey_name, button.get()));
+        [hotkey_name, button](){ HandleResetHotkeyOption(hotkey_name, button.get()); });
 
     page->Insert(row);
 }
@@ -1251,7 +1251,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
                                           apply_button, indentation_level);
     page->Insert(row);
     apply_button->LeftClickedSignal.connect(
-        boost::bind(&HumanClientApp::Reinitialize, HumanClientApp::GetApp()));
+        [](){ HumanClientApp::GetApp()->Reinitialize(); });
 
     drop_list->SelChangedSignal.connect(
         [drop_list](GG::ListBox::iterator it) {

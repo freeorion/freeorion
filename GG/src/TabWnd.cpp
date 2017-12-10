@@ -302,9 +302,9 @@ void TabBar::CompleteConstruction()
     m_tabs->ButtonChangedSignal.connect(
         boost::bind(&TabBar::TabChanged, this, _1, true));
     m_left_button->LeftClickedSignal.connect(
-        boost::bind(&TabBar::LeftClicked, this));
+        [this](){ LeftClicked(); });
     m_right_button->LeftClickedSignal.connect(
-        boost::bind(&TabBar::RightClicked, this));
+        [this](){ RightClicked(); });
 
     if (INSTRUMENT_ALL_SIGNALS)
         TabChangedSignal.connect(TabChangedEcho("TabBar::TabChangedSignal"));

@@ -62,7 +62,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
         UserString("MOD_NONE"), UserString("MOD_NONE")));
     AttachChild(m_no_action_button);
     m_no_action_button->LeftClickedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::NoAction, this));
+        [this](){ NoAction(); });
 
     // button for create system and droplist to select system type to create
     m_create_system_button = Wnd::Create<CUIButton>(
@@ -76,7 +76,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
     AttachChild(m_create_system_button);
 
     m_create_system_button->LeftClickedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::CreateSystem, this));
+        [this](){ CreateSystem(); });
     m_star_type_drop = GG::Wnd::Create<CUIDropDownList>(6);
     m_star_type_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
     for (StarType star_type = STAR_BLUE; star_type != NUM_STAR_TYPES; star_type = StarType(star_type + 1)) {
@@ -103,7 +103,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
         UserString("MOD_CREATE_PLANET"), UserString("MOD_CREATE_PLANET")));
     AttachChild(m_create_planet_button);
     m_create_planet_button->LeftClickedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::CreatePlanet, this));
+        [this](){ CreatePlanet(); });
 
     m_planet_type_drop = GG::Wnd::Create<CUIDropDownList>(6);
     m_planet_type_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
@@ -146,7 +146,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
         UserString("MOD_DESTROY"), UserString("MOD_DESTROY")));
     AttachChild(m_delete_object_button);
     m_delete_object_button->LeftClickedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::DeleteObject, this));
+        [this](){ DeleteObject(); });
 
     // button for setting owner
     m_set_owner_button = Wnd::Create<CUIButton>(
@@ -160,7 +160,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
     AttachChild(m_set_owner_button);
 
     m_set_owner_button->LeftClickedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::SetOwner, this));
+        [this](){ SetOwner(); });
     m_empire_drop = GG::Wnd::Create<CUIDropDownList>(6);
     m_empire_drop->SetStyle(GG::LIST_NOSORT);
     // empires added later when gamestate info available
@@ -178,7 +178,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
         UserString("MOD_ADD_STARLANE"), UserString("MOD_ADD_STARLANE")));
     AttachChild(m_add_starlane_button);
     m_add_starlane_button->LeftClickedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::AddStarlane, this));
+        [this](){ AddStarlane(); });
 
     // button for removing starlane
     m_remove_starlane_button = Wnd::Create<CUIButton>(
@@ -191,7 +191,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
         UserString("MOD_REMOVE_STARLANE"), UserString("MOD_REMOVE_STARLANE")));
     AttachChild(m_remove_starlane_button);
     m_remove_starlane_button->LeftClickedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::RemoveStarlane, this));
+        [this](){ RemoveStarlane(); });
 
     CUIWnd::CompleteConstruction();
 

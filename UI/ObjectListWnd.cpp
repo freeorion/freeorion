@@ -1086,7 +1086,7 @@ void FilterDialog::CompleteConstruction() {
         label->Resize(GG::Pt(button_width, label->MinUsableSize().y));
         m_filters_layout->Add(label, vis_row, 0, GG::ALIGN_CENTER);
         label->LeftClickedSignal.connect(
-            boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, visibility));
+            [this, visibility](){ UpdateVisFilterFromVisibilityButton(visibility); });
 
         ++vis_row;
     }
@@ -1107,7 +1107,7 @@ void FilterDialog::CompleteConstruction() {
         label = Wnd::Create<CUIButton>(" " + UserString(boost::lexical_cast<std::string>(uot)) + " ");
         m_filters_layout->Add(label, 0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
         label->LeftClickedSignal.connect(
-            boost::bind(&FilterDialog::UpdateVisFiltersFromObjectTypeButton, this, uot));
+            [this, uot](){ UpdateVisFiltersFromObjectTypeButton(uot); });
 
         int row = 1;
 
@@ -1137,9 +1137,9 @@ void FilterDialog::CompleteConstruction() {
     AttachChild(m_apply_button);
 
     m_cancel_button->LeftClickedSignal.connect(
-        boost::bind(&FilterDialog::CancelClicked, this));
+        [this](){ CancelClicked(); });
     m_apply_button->LeftClickedSignal.connect(
-        boost::bind(&FilterDialog::AcceptClicked, this));
+        [this](){ AcceptClicked(); });
 
     ResetDefaultPosition();
 
@@ -1396,7 +1396,7 @@ public:
 
             AttachChild(m_expand_button);
             m_expand_button->LeftClickedSignal.connect(
-                boost::bind(&ObjectPanel::ExpandCollapseButtonPressed, this));
+                [this](){ ExpandCollapseButtonPressed(); });
         } else {
             m_dot = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(
                 ClientUI::ArtDir() / "icons" / "dot.png", true), style);
@@ -1647,7 +1647,7 @@ public:
                 [this, i](){ this->ColumnButtonLeftClickSignal(i - 1); });
             if (i > 0)
                 controls[i]->RightClickedSignal.connect(
-                    boost::bind(&ObjectHeaderPanel::ButtonRightClicked, this, i-1));
+                    [this, i](){ ButtonRightClicked(i - 1); });
         }
 
         DoLayout();
@@ -2347,12 +2347,12 @@ void ObjectListWnd::CompleteConstruction() {
 
     m_filter_button = Wnd::Create<CUIButton>(UserString("FILTERS"));
     m_filter_button->LeftClickedSignal.connect(
-        boost::bind(&ObjectListWnd::FilterClicked, this));
+        [this](){ FilterClicked(); });
     AttachChild(m_filter_button);
 
     m_collapse_button = Wnd::Create<CUIButton>(UserString("COLLAPSE_ALL"));
     m_collapse_button->LeftClickedSignal.connect(
-        boost::bind(&ObjectListWnd::CollapseExpandClicked, this));
+        [this](){ CollapseExpandClicked(); });
     AttachChild(m_collapse_button);
 
     CUIWnd::CompleteConstruction();

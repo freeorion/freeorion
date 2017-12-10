@@ -633,13 +633,13 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     m_galaxy_setup_panel->SettingsChangedSignal.connect(
         boost::bind(&MultiPlayerLobbyWnd::GalaxySetupPanelChanged, this));
     m_browse_saves_btn->LeftClickedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::SaveGameBrowse, this));
+        [this](){ SaveGameBrowse(); });
     m_ready_bn->LeftClickedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::ReadyClicked, this));
+        [this](){ ReadyClicked(); });
     m_galaxy_setup_panel->ImageChangedSignal.connect(
         boost::bind(&MultiPlayerLobbyWnd::PreviewImageChanged, this, _1));
     m_cancel_bn->LeftClickedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::CancelClicked, this));
+        [this](){ CancelClicked(); });
 
     CUIWnd::CompleteConstruction();
 

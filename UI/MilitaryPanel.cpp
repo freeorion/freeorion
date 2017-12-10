@@ -44,7 +44,7 @@ void MilitaryPanel::CompleteConstruction() {
         throw std::invalid_argument("Attempted to construct a MilitaryPanel with an object id is not a Planet");
 
     m_expand_button->LeftClickedSignal.connect(
-        boost::bind(&MilitaryPanel::ExpandCollapseButtonPressed, this));
+        [this](){ ExpandCollapseButtonPressed(); });
 
     const auto obj = GetUniverseObject(m_planet_id);
     if (!obj) {

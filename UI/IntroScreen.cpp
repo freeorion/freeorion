@@ -276,27 +276,27 @@ void IntroScreen::CompleteConstruction() {
 
     //connect signals and slots
     m_continue->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnContinue, this));
+        [this](){ OnContinue(); });
     m_single_player->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnSinglePlayer, this));
+        [this](){ OnSinglePlayer(); });
     m_quick_start->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnQuickStart, this));
+        [this](){ OnQuickStart(); });
     m_multi_player->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnMultiPlayer, this));
+        [this](){ OnMultiPlayer(); });
     m_load_game->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnLoadGame, this));
+        [this](){ OnLoadGame(); });
     m_options->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnOptions, this));
+        [this](){ OnOptions(); });
     m_pedia->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnPedia, this));
+        [this](){ OnPedia(); });
     m_about->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnAbout, this));
+        [this](){ OnAbout(); });
     m_website->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnWebsite, this));
+        [this](){ OnWebsite(); });
     m_credits->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnCredits, this));
+        [this](){ OnCredits(); });
     m_exit_game->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnExitGame, this));
+        [this](){ OnExitGame(); });
 
     RequirePreRender();
 }

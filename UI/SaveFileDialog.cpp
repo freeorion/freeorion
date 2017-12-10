@@ -666,7 +666,7 @@ void SaveFileDialog::Init() {
         auto delete_btn = Wnd::Create<CUIButton>(UserString("DELETE"));
         m_layout->Add(delete_btn, 2, 3);
         delete_btn->LeftClickedSignal.connect(
-            boost::bind(&SaveFileDialog::AskDelete, this));
+            [this](){ AskDelete(); });
 
         m_layout->SetMinimumRowHeight(2, delete_btn->MinUsableSize().y + GG::Y(Value(SAVE_FILE_BUTTON_MARGIN)));
         m_layout->SetMinimumColumnWidth(2, m_confirm_btn->MinUsableSize().x + 2*SAVE_FILE_BUTTON_MARGIN);
@@ -719,9 +719,9 @@ void SaveFileDialog::Init() {
     SetLayout(m_layout);
 
     m_confirm_btn->LeftClickedSignal.connect(
-        boost::bind(&SaveFileDialog::Confirm, this));
+        [this](){ Confirm(); });
     cancel_btn->LeftClickedSignal.connect(
-        boost::bind(&SaveFileDialog::Cancel, this));
+        [this](){ Cancel(); });
     m_file_list->SelRowsChangedSignal.connect(
         boost::bind(&SaveFileDialog::SelectionChanged, this, _1));
     m_file_list->DoubleClickedRowSignal.connect(

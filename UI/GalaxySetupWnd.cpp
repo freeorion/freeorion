@@ -656,7 +656,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     DoLayout();
 
     m_random->LeftClickedSignal.connect(
-        boost::bind(&GalaxySetupPanel::RandomClicked, this));
+        [this](){ RandomClicked(); });
     m_seed_edit->FocusUpdateSignal.connect(
         boost::bind(&GalaxySetupPanel::SettingChanged, this));
     m_stars_spin->ValueChangedSignal.connect(
@@ -1039,9 +1039,9 @@ void GalaxySetupWnd::CompleteConstruction() {
     m_empire_name_edit->EditedSignal.connect(
         boost::bind(&GalaxySetupWnd::EmpireNameChanged, this, _1));
     m_ok->LeftClickedSignal.connect(
-        boost::bind(&GalaxySetupWnd::OkClicked, this));
+        [this](){ OkClicked(); });
     m_cancel->LeftClickedSignal.connect(
-        boost::bind(&GalaxySetupWnd::CancelClicked, this));
+        [this](){ CancelClicked(); });
 
     PreviewImageChanged(m_galaxy_setup_panel->PreviewImage());
 
