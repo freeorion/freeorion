@@ -1013,11 +1013,11 @@ namespace {
 
         // bookkeeping
         m_ship_connection = ship->StateChangedSignal.connect(
-            boost::bind(&ShipDataPanel::RequireRefresh, this));
+            [this](){ RequireRefresh(); });
 
         if (auto fleet = GetFleet(ship->FleetID()))
             m_fleet_connection = fleet->StateChangedSignal.connect(
-                boost::bind(&ShipDataPanel::RequireRefresh, this));
+                [this](){ RequireRefresh(); });
     }
 
     ////////////////////////////////////////////////
@@ -1568,12 +1568,12 @@ void FleetDataPanel::RefreshStateChangedSignals() {
         return;
 
     m_fleet_connection = fleet->StateChangedSignal.connect(
-        boost::bind(&FleetDataPanel::RequireRefresh, this));
+        [this](){ RequireRefresh(); });
 
     for (auto& ship : Objects().FindObjects<const Ship>(fleet->ShipIDs()))
         m_ship_connections.push_back(
             ship->StateChangedSignal.connect(
-                boost::bind(&FleetDataPanel::RequireRefresh, this)));
+                [this](){ RequireRefresh(); }));
 }
 
 void FleetDataPanel::SetStatIconValues() {
@@ -2521,7 +2521,7 @@ void FleetDetailPanel::SetFleet(int fleet_id) {
         auto fleet = GetFleet(m_fleet_id);
         if (fleet && !fleet->Empty()) {
             m_fleet_connection = fleet->StateChangedSignal.connect(
-                boost::bind(&FleetDetailPanel::Refresh, this), boost::signals2::at_front);
+                [this](){ Refresh(); }, boost::signals2::at_front);
         } else {
             ErrorLogger() << "FleetDetailPanel::SetFleet ignoring set to missing or empty fleet id (" << fleet_id << ")";
         }
@@ -2955,7 +2955,7 @@ void FleetWnd::RefreshStateChangedSignals() {
     m_system_connection.disconnect();
     if (auto system = GetSystem(m_system_id))
         m_system_connection = system->StateChangedSignal.connect(
-            boost::bind(&FleetWnd::RequireRefresh, this), boost::signals2::at_front);
+            [this](){ RequireRefresh(); }, boost::signals2::at_front);
 
     for (auto& fleet_connection : m_fleet_connections)
         fleet_connection.disconnect();
@@ -2965,7 +2965,7 @@ void FleetWnd::RefreshStateChangedSignals() {
         if (auto fleet = GetFleet(fleet_id))
             m_fleet_connections.push_back(
                 fleet->StateChangedSignal.connect(
-                    boost::bind(&FleetWnd::RequireRefresh, this)));
+                    [this](){ RequireRefresh(); }));
     }
 }
 

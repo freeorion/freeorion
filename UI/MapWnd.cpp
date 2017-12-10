@@ -5116,7 +5116,7 @@ void MapWnd::AddFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet
     ScopedTimer timer("AddFleetsStateChangedSignal()", true);
     for (auto& fleet : fleets) {
         m_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
-            boost::bind( &MapWnd::RefreshFleetButtons, this));
+            [this](){ RefreshFleetButtons(); });
     }
 }
 

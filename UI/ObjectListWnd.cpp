@@ -2212,7 +2212,7 @@ private:
             boost::bind(&ObjectListBox::ObjectExpandCollapseClicked, this, _1), boost::signals2::at_front);
         m_object_change_connections[obj->ID()].disconnect();
         m_object_change_connections[obj->ID()] = obj->StateChangedSignal.connect(
-            boost::bind(&ObjectListBox::ObjectStateChanged, this, obj->ID()), boost::signals2::at_front);
+            [this, object_id](){ ObjectStateChanged(object_id); }, boost::signals2::at_front);
     }
 
     // Removes row of indicated object, and all contained rows, recursively.

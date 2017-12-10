@@ -264,7 +264,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
 {
     if (auto building = GetBuilding(m_building_id))
         building->StateChangedSignal.connect(
-            boost::bind(&BuildingIndicator::RequirePreRender, this));
+            [this](){ RequirePreRender(); });
 }
 
 BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
