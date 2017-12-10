@@ -750,6 +750,7 @@ void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const {
 }
 
 std::string ClientUI::FormatTimestamp(boost::posix_time::ptime timestamp) {
+    TraceLogger() << "ClientUI::FormatTimestamp(" << timestamp << ")";
     if (DisplayTimestamp()) {
         std::stringstream date_format_sstream;
         // Set facet to format timestamp in chat.
@@ -757,11 +758,12 @@ std::string ClientUI::FormatTimestamp(boost::posix_time::ptime timestamp) {
         facet->format("[%d %b %H:%M:%S] ");
         date_format_sstream.imbue(std::locale(std::locale(""), facet));
 
-
         date_format_sstream.str("");
         date_format_sstream.clear();
-        boost::posix_time::ptime local_timestamp = boost::date_time::c_local_adjustor<boost::posix_time::ptime>::utc_to_local(timestamp);
+        boost::posix_time::ptime local_timestamp = boost::date_time::c_local_adjustor<
+            boost::posix_time::ptime>::utc_to_local(timestamp);
         date_format_sstream << local_timestamp;
+        TraceLogger() << "ClientUI::FormatTimestamp date formatted: " << date_format_sstream.str();;
         return date_format_sstream.str();
     }
     return "";

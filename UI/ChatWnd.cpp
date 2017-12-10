@@ -403,6 +403,12 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
 
     std::string filtered_message = StringtableTextSubstitute(text);
     std::string wrapped_text = RgbaTag(sender_colour) + ClientUI::FormatTimestamp(timestamp) + sender_name + ": " + filtered_message + "</rgba>";
+    TraceLogger() << "HandlePlayerChatMessage sender: " << sender_name
+                  << "  sender empire id: " << sender_empire_id
+                  << "  sender colour rgba tag: " << RgbaTag(sender_colour)
+                  << "  filtered message: " << filtered_message
+                  << "  timestamp text: " << ClientUI::FormatTimestamp(timestamp)
+                  << "  wrapped text: " << wrapped_text;
 
     *m_display += wrapped_text + "\n";
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
