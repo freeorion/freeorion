@@ -989,7 +989,7 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, Sou
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("audio.music.volume")));
     button->CheckedSignal.connect(
-        boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicClicked, &fb, _1));
+        [&fb](bool checked){ fb.MusicClicked(checked); });
     slider->SlidSignal.connect(
         [&fb](int v, int, int){ fb.MusicVolumeSlid(v); });
     fb.SetMusicButton(std::move(button));
@@ -1018,7 +1018,7 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription(volume_option_name)));
     button->CheckedSignal.connect(
-        boost::bind(&OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked, &fb, _1));
+        [&fb](bool checked){ fb.SoundEffectsEnableClicked(checked); });
     slider->SlidAndStoppedSignal.connect(
         [&fb](int v, int, int){ fb.UISoundsVolumeSlid(v); });
     fb.SetEffectsButton(std::move(button));

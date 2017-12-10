@@ -1448,24 +1448,24 @@ void DesignWnd::PartPalette::CompleteConstruction() {
         m_class_buttons[part_class] = GG::Wnd::Create<CUIStateButton>(UserString(boost::lexical_cast<std::string>(part_class)), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
         AttachChild(m_class_buttons[part_class]);
         m_class_buttons[part_class]->CheckedSignal.connect(
-            boost::bind(&DesignWnd::PartPalette::ToggleClass, this, part_class, true));
+            [this, part_class](bool){ ToggleClass(part_class, true); });
     }
 
     // availability buttons
     m_availability_buttons.first = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_availability_buttons.first);
     m_availability_buttons.first->CheckedSignal.connect(
-        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
+        [this](bool){ ToggleAvailability(true, true); });
     m_availability_buttons.second = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_availability_buttons.second);
     m_availability_buttons.second->CheckedSignal.connect(
-        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, false, true));
+        [this](bool){ ToggleAvailability(false, true); });
 
     // superfluous parts button
     m_superfluous_parts_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_REDUNDANT"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_superfluous_parts_button);
     m_superfluous_parts_button->CheckedSignal.connect(
-        boost::bind(&DesignWnd::PartPalette::ToggleSuperfluous, this, true));
+        [this](bool){ ToggleSuperfluous(); });
 
     // default to showing nothing
     ShowAllClasses(false);
@@ -2826,21 +2826,21 @@ void DesignWnd::BaseSelector::CompleteConstruction() {
     m_obsolete_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_obsolete_button);
     m_obsolete_button->CheckedSignal.connect(
-        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Obsolete));
+        [this](bool){ ToggleAvailability(Availability::Obsolete); });
     m_obsolete_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Obsolete));
 
     auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
     m_available_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_available_button);
     m_available_button->CheckedSignal.connect(
-        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Available));
+        [this](bool){ ToggleAvailability(Availability::Available); });
     m_available_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Available));
 
     auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
     m_unavailable_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_unavailable_button);
     m_unavailable_button->CheckedSignal.connect(
-        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Future));
+        [this](bool){ ToggleAvailability(Availability::Future); });
     m_unavailable_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Future));
 
     m_tabs = GG::Wnd::Create<GG::TabWnd>(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());

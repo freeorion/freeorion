@@ -1022,7 +1022,7 @@ private:
     void AcceptClicked();
     void CancelClicked();
     void UpdateStateButtonsFromVisFilters();
-    void UpdateVisFiltersFromStateButtons(bool button_checked);
+    void UpdateVisFiltersFromStateButtons();
     void UpdateVisFiltersFromObjectTypeButton(UniverseObjectType type);
     void UpdateVisFilterFromVisibilityButton(VIS_DISPLAY vis);
 
@@ -1114,7 +1114,7 @@ void FilterDialog::CompleteConstruction() {
             button->SetCheck(vis_display.count(visibility));
             m_filters_layout->Add(button, row, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             button->CheckedSignal.connect(
-                boost::bind(&FilterDialog::UpdateVisFiltersFromStateButtons, this, _1));
+                [this](bool){ UpdateVisFiltersFromStateButtons(); });
             m_filter_buttons[uot][visibility] = button;
 
             ++row;
@@ -1189,7 +1189,7 @@ void FilterDialog::UpdateStateButtonsFromVisFilters() {
     }
 }
 
-void FilterDialog::UpdateVisFiltersFromStateButtons(bool button_checked) {
+void FilterDialog::UpdateVisFiltersFromStateButtons() {
     m_vis_filters.clear();
     // set all filters based on state button settings
     for (const auto& entry : m_filter_buttons) {

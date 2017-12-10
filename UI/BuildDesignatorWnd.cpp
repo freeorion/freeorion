@@ -979,17 +979,17 @@ void BuildDesignatorWnd::CompleteConstruction() {
 
     // connect build type button clicks to update display
     m_build_selector->m_build_type_buttons[BT_BUILDING]->CheckedSignal.connect(
-        boost::bind(&BuildDesignatorWnd::ToggleType, this, BT_BUILDING, true));
+        [this](bool){ ToggleType(BT_BUILDING, true); });
     m_build_selector->m_build_type_buttons[BT_SHIP]->CheckedSignal.connect(
-        boost::bind(&BuildDesignatorWnd::ToggleType, this, BT_SHIP, true));
+        [this](bool){ ToggleType(BT_SHIP, true); });
 
     // connect availability button clicks to update display
     // available items
     m_build_selector->m_availability_buttons.at(0)->CheckedSignal.connect(
-        boost::bind(&BuildDesignatorWnd::ToggleAvailabilitly, this, true, true));
+        [this](bool){ ToggleAvailabilitly(true, true); });
     // UNavailable items
     m_build_selector->m_availability_buttons.at(1)->CheckedSignal.connect(
-        boost::bind(&BuildDesignatorWnd::ToggleAvailabilitly, this, false, true));
+        [this](bool){ ToggleAvailabilitly(false, true); });
 
     AttachChild(m_enc_detail_panel);
     AttachChild(m_build_selector);

@@ -627,7 +627,7 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     m_browse_saves_btn->Disable();
 
     m_any_can_edit->CheckedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::AnyCanEdit, this, _1));
+        [this](bool checked){ AnyCanEdit(checked); });
     m_new_load_game_buttons->ButtonChangedSignal.connect(
         [this](std::size_t i){ NewLoadClicked(i); });
     m_galaxy_setup_panel->SettingsChangedSignal.connect(

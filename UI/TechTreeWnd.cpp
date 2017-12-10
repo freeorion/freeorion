@@ -2103,7 +2103,7 @@ void TechTreeWnd::CompleteConstruction() {
 
     // connect view type selector
     m_tech_tree_controls->m_view_type_button->CheckedSignal.connect(
-        boost::bind(&TechTreeWnd::ToggleViewType, this, _1));
+        [this](bool checked){ ToggleViewType(checked); });
 
     //TechTreeWnd in typically constructed before the UI client has
     //accesss to the technologies so showing these categories takes a

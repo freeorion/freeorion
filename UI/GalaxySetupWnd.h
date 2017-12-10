@@ -49,7 +49,7 @@ private:
     GG::DropDownList*   StringRuleWidget(GG::ListBox* page, int indentation_level,
                                          const std::string& rule_name);
 
-    void BoolRuleChanged(const GG::StateButton* button, const std::string& rule_name);
+    void BoolRuleChanged(bool value, const std::string& rule_name);
     void IntRuleChanged(int value, const std::string& rule_name);
     void DoubleRuleChanged(double value, const std::string& rule_name);
     void StringRuleChanged(const GG::DropDownList* drop, const std::string& rule_name);

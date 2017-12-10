@@ -296,8 +296,8 @@ GG::StateButton* GameRulesPanel::BoolRuleWidget(GG::ListBox* page, int indentati
     button->SetCheck(GetGameRules().Get<bool>(rule_name));
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     button->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
-    button->CheckedSignal.connect(boost::bind(&GameRulesPanel::BoolRuleChanged, this, button.get(),
-                                              rule_name));
+    button->CheckedSignal.connect(
+        [this, rule_name](bool checked){ BoolRuleChanged(checked, rule_name); });
 
     page->Insert(row);
     return button.get();
@@ -470,13 +470,13 @@ GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indent
     return drop.get();
 }
 
-void GameRulesPanel::BoolRuleChanged(const GG::StateButton* button,
+void GameRulesPanel::BoolRuleChanged(bool value,
                                      const std::string& rule_name)
 {
     std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
-    if (!val || !button)
+    if (!val)
         return;
-    m_rules[rule_name] = val->String(button->Checked());
+    m_rules[rule_name] = val->String(value);
 
     DebugLogger() << "Set Rules:";
     for (const auto& entry : m_rules)
