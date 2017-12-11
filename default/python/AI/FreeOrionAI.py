@@ -167,9 +167,11 @@ def prepareForSave():  # pylint: disable=invalid-name
     try:
         dump_string = savegame_codec.build_savegame_string()
         fo.setSaveStateString(dump_string)
-    except:
-        error("foAIstate unable to pickle save-state string; "
-              "the save file should be playable but the AI may have a different aggression.", exc_info=True)
+    except Exception as e:
+        error("Failed to encode the AIstate as save-state string. "
+              "The resulting save file should be playable but the AI "
+              "may have a different aggression. The error raised was: %s"
+              % e, exc_info=True)
 
 
 def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
