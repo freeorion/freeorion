@@ -118,13 +118,13 @@ namespace {
         db.Add("ui.map.zoom.slider.shown",                  UserStringNop("OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER"),                 false,                          Validator<bool>());
 
         db.Add("ui.map.starlane.thickness",                 UserStringNop("OPTIONS_DB_STARLANE_THICKNESS"),                     2.0,                            RangedStepValidator<double>(0.25, 0.25, 10.0));
-        db.Add("ui.map.starlane.thickness.factor", UserStringNop("OPTIONS_DB_STARLANE_CORE"),                          2.0,                            RangedStepValidator<double>(1.0, 1.0, 10.0));
+        db.Add("ui.map.starlane.thickness.factor",          UserStringNop("OPTIONS_DB_STARLANE_CORE"),                          2.0,                            RangedStepValidator<double>(1.0, 1.0, 10.0));
         db.Add("ui.map.starlane.empire.color.shown",        UserStringNop("OPTIONS_DB_RESOURCE_STARLANE_COLOURING"),            true,                           Validator<bool>());
 
-        db.Add("ui.map.fleet.supply.shown",            UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINES"),                     true,                           Validator<bool>());
-        db.Add("ui.map.fleet.supply.width",            UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH"),                3.0,                            RangedStepValidator<double>(0.25, 0.25, 10.0));
-        db.Add("ui.map.fleet.supply.dot.spacing",      UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING"),          20,                             RangedStepValidator<int>(1, 3, 40));
-        db.Add("ui.map.fleet.supply.dot.rate",         UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE"),             0.02,                           RangedStepValidator<double>(0.01, 0.01, 0.1));
+        db.Add("ui.map.fleet.supply.shown",                 UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINES"),                     true,                           Validator<bool>());
+        db.Add("ui.map.fleet.supply.width",                 UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH"),                3.0,                            RangedStepValidator<double>(0.25, 0.25, 10.0));
+        db.Add("ui.map.fleet.supply.dot.spacing",           UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING"),          20,                             RangedStepValidator<int>(1, 3, 40));
+        db.Add("ui.map.fleet.supply.dot.rate",              UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE"),             0.02,                           RangedStepValidator<double>(0.01, 0.01, 0.1));
 
         db.Add("ui.fleet.explore.hostile.ignored",          UserStringNop("OPTIONS_DB_FLEET_EXPLORE_IGNORE_HOSTILE"),           false,                          Validator<bool>());
         db.Add("ui.fleet.explore.system.route.limit",       UserStringNop("OPTIONS_DB_FLEET_EXPLORE_SYSTEM_ROUTE_LIMIT"),       25,                             StepValidator<int>(1, -1));
@@ -150,10 +150,10 @@ namespace {
 
         db.Add("ui.map.system.unexplored.rollover.enabled", UserStringNop("OPTIONS_DB_UI_SYSTEM_UNEXPLORED_OVERLAY"),           true,                           Validator<bool>());
 
-        db.Add("ui.map.system.icon.tiny.threshold",    UserStringNop("OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"),     10,                             RangedValidator<int>(1, 16));
+        db.Add("ui.map.system.icon.tiny.threshold",         UserStringNop("OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"),     10,                             RangedValidator<int>(1, 16));
 
-        db.Add("ui.map.system.select.indicator.size",    UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE"),     1.625,                          RangedStepValidator<double>(0.125, 0.5, 5));
-        db.Add("ui.map.system.select.indicator.rpm",     UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS"),      12,                             RangedValidator<int>(1, 60));
+        db.Add("ui.map.system.select.indicator.size",       UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE"),     1.625,                          RangedStepValidator<double>(0.125, 0.5, 5));
+        db.Add("ui.map.system.select.indicator.rpm",        UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS"),      12,                             RangedValidator<int>(1, 60));
 
         db.Add("ui.map.system.unowned.name.color",          UserStringNop("OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR"),           GG::Clr(160, 160, 160, 255),    Validator<GG::Clr>());
 
@@ -163,56 +163,56 @@ namespace {
 
         db.Add("ui.map.detection.range.opacity",            UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_OPACITY"),     3,                              RangedValidator<int>(0, 8));
 
-        db.Add("ui.map.menu.enabled",                 UserStringNop("OPTIONS_DB_UI_GALAXY_MAP_POPUP"),                    false,                          Validator<bool>());
+        db.Add("ui.map.menu.enabled",                       UserStringNop("OPTIONS_DB_UI_GALAXY_MAP_POPUP"),                    false,                          Validator<bool>());
 
-        db.Add("ui.production.mappanels.removed",        UserStringNop("OPTIONS_DB_UI_HIDE_MAP_PANELS"),                     false,                          Validator<bool>());
+        db.Add("ui.production.mappanels.removed",           UserStringNop("OPTIONS_DB_UI_HIDE_MAP_PANELS"),                     false,                          Validator<bool>());
 
         db.Add("ui.map.sidepanel.width",                    UserStringNop("OPTIONS_DB_UI_SIDEPANEL_WIDTH"),                     512,                            Validator<int>());
 
         // Register hotkey names/default values for the context "map".
-        Hotkey::AddHotkey("ui.map.open",        UserStringNop("HOTKEY_MAP_RETURN_TO_MAP"),        GG::GGK_ESCAPE);
-        Hotkey::AddHotkey("ui.turn.end",             UserStringNop("HOTKEY_MAP_END_TURN"),             GG::GGK_RETURN,     GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.sitrep",              UserStringNop("HOTKEY_MAP_SIT_REP"),              GG::GGK_n,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.research",             UserStringNop("HOTKEY_MAP_RESEARCH"),             GG::GGK_r,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.production",           UserStringNop("HOTKEY_MAP_PRODUCTION"),           GG::GGK_p,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.design",               UserStringNop("HOTKEY_MAP_DESIGN"),               GG::GGK_d,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.objects",              UserStringNop("HOTKEY_MAP_OBJECTS"),              GG::GGK_o,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.messages",             UserStringNop("HOTKEY_MAP_MESSAGES"),             GG::GGK_t,          GG::MOD_KEY_ALT);
-        Hotkey::AddHotkey("ui.map.empires",              UserStringNop("HOTKEY_MAP_EMPIRES"),              GG::GGK_e,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.pedia",                UserStringNop("HOTKEY_MAP_PEDIA"),                GG::GGK_F1);
-        Hotkey::AddHotkey("ui.map.graphs",               UserStringNop("HOTKEY_MAP_GRAPHS"),               GG::GGK_NONE);
-        Hotkey::AddHotkey("ui.gamemenu",                 UserStringNop("HOTKEY_MAP_MENU"),                 GG::GGK_F10);
-        Hotkey::AddHotkey("ui.zoom.in",              UserStringNop("HOTKEY_MAP_ZOOM_IN"),              GG::GGK_z,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.zoom.in.alt",          UserStringNop("HOTKEY_MAP_ZOOM_IN_ALT"),          GG::GGK_KP_PLUS,    GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.zoom.out",             UserStringNop("HOTKEY_MAP_ZOOM_OUT"),             GG::GGK_x,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.zoom.out.alt",         UserStringNop("HOTKEY_MAP_ZOOM_OUT_ALT"),         GG::GGK_KP_MINUS,   GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.system.zoom.home",     UserStringNop("HOTKEY_MAP_ZOOM_HOME_SYSTEM"),     GG::GGK_h,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.system.zoom.prev",     UserStringNop("HOTKEY_MAP_ZOOM_PREV_SYSTEM"),     GG::GGK_COMMA,      GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.system.zoom.next",     UserStringNop("HOTKEY_MAP_ZOOM_NEXT_SYSTEM"),     GG::GGK_PERIOD,     GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.system.owned.zoom.prev",UserStringNop("HOTKEY_MAP_ZOOM_PREV_OWNED_SYSTEM"),GG::GGK_LESS,     GG::MOD_KEY_CTRL | GG::MOD_KEY_SHIFT);
-        Hotkey::AddHotkey("ui.map.system.owned.zoom.next",UserStringNop("HOTKEY_MAP_ZOOM_NEXT_OWNED_SYSTEM"),GG::GGK_GREATER,  GG::MOD_KEY_CTRL | GG::MOD_KEY_SHIFT);
-        Hotkey::AddHotkey("ui.map.fleet.zoom.prev",      UserStringNop("HOTKEY_MAP_ZOOM_PREV_FLEET"),      GG::GGK_f,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.fleet.zoom.next",      UserStringNop("HOTKEY_MAP_ZOOM_NEXT_FLEET"),      GG::GGK_g,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.fleet.idle.zoom.prev", UserStringNop("HOTKEY_MAP_ZOOM_PREV_IDLE_FLEET"), GG::GGK_f,          GG::MOD_KEY_ALT);
-        Hotkey::AddHotkey("ui.map.fleet.idle.zoom.next", UserStringNop("HOTKEY_MAP_ZOOM_NEXT_IDLE_FLEET"), GG::GGK_g,          GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("ui.map.open",                    UserStringNop("HOTKEY_MAP_RETURN_TO_MAP"),                          GG::GGK_ESCAPE);
+        Hotkey::AddHotkey("ui.turn.end",                    UserStringNop("HOTKEY_MAP_END_TURN"),                               GG::GGK_RETURN,                 GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.sitrep",                  UserStringNop("HOTKEY_MAP_SIT_REP"),                                GG::GGK_n,                      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.research",                    UserStringNop("HOTKEY_MAP_RESEARCH"),                               GG::GGK_r,                      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.production",                  UserStringNop("HOTKEY_MAP_PRODUCTION"),                             GG::GGK_p,                      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.design",                      UserStringNop("HOTKEY_MAP_DESIGN"),                                 GG::GGK_d,                      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.objects",                 UserStringNop("HOTKEY_MAP_OBJECTS"),                                GG::GGK_o,                      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.messages",                UserStringNop("HOTKEY_MAP_MESSAGES"),                               GG::GGK_t,                      GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("ui.map.empires",                 UserStringNop("HOTKEY_MAP_EMPIRES"),                                GG::GGK_e,                      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.pedia",                       UserStringNop("HOTKEY_MAP_PEDIA"),                                  GG::GGK_F1);
+        Hotkey::AddHotkey("ui.map.graphs",                  UserStringNop("HOTKEY_MAP_GRAPHS"),                                 GG::GGK_NONE);
+        Hotkey::AddHotkey("ui.gamemenu",                    UserStringNop("HOTKEY_MAP_MENU"),                                   GG::GGK_F10);
+        Hotkey::AddHotkey("ui.zoom.in",                     UserStringNop("HOTKEY_MAP_ZOOM_IN"),                                GG::GGK_z,                      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.zoom.in.alt",                 UserStringNop("HOTKEY_MAP_ZOOM_IN_ALT"),                            GG::GGK_KP_PLUS,                GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.zoom.out",                    UserStringNop("HOTKEY_MAP_ZOOM_OUT"),                               GG::GGK_x,                      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.zoom.out.alt",                UserStringNop("HOTKEY_MAP_ZOOM_OUT_ALT"),                           GG::GGK_KP_MINUS,               GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.system.zoom.home",        UserStringNop("HOTKEY_MAP_ZOOM_HOME_SYSTEM"),                       GG::GGK_h,                      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.system.zoom.prev",        UserStringNop("HOTKEY_MAP_ZOOM_PREV_SYSTEM"),                       GG::GGK_COMMA,                  GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.system.zoom.next",        UserStringNop("HOTKEY_MAP_ZOOM_NEXT_SYSTEM"),                       GG::GGK_PERIOD,                 GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.system.owned.zoom.prev",  UserStringNop("HOTKEY_MAP_ZOOM_PREV_OWNED_SYSTEM"),                 GG::GGK_LESS,                   GG::MOD_KEY_CTRL | GG::MOD_KEY_SHIFT);
+        Hotkey::AddHotkey("ui.map.system.owned.zoom.next",  UserStringNop("HOTKEY_MAP_ZOOM_NEXT_OWNED_SYSTEM"),                 GG::GGK_GREATER,                GG::MOD_KEY_CTRL | GG::MOD_KEY_SHIFT);
+        Hotkey::AddHotkey("ui.map.fleet.zoom.prev",         UserStringNop("HOTKEY_MAP_ZOOM_PREV_FLEET"),                        GG::GGK_f,                      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.fleet.zoom.next",         UserStringNop("HOTKEY_MAP_ZOOM_NEXT_FLEET"),                        GG::GGK_g,                      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.fleet.idle.zoom.prev",    UserStringNop("HOTKEY_MAP_ZOOM_PREV_IDLE_FLEET"),                   GG::GGK_f,                      GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("ui.map.fleet.idle.zoom.next",    UserStringNop("HOTKEY_MAP_ZOOM_NEXT_IDLE_FLEET"),                   GG::GGK_g,                      GG::MOD_KEY_ALT);
 
-        Hotkey::AddHotkey("ui.pan.right",            UserStringNop("HOTKEY_MAP_PAN_RIGHT"),            GG::GGK_RIGHT,      GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.pan.left",             UserStringNop("HOTKEY_MAP_PAN_LEFT"),             GG::GGK_LEFT,       GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.pan.up",               UserStringNop("HOTKEY_MAP_PAN_UP"),               GG::GGK_UP,         GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.pan.down",             UserStringNop("HOTKEY_MAP_PAN_DOWN"),             GG::GGK_DOWN,       GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.pan.right",                   UserStringNop("HOTKEY_MAP_PAN_RIGHT"),                              GG::GGK_RIGHT,                  GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.pan.left",                    UserStringNop("HOTKEY_MAP_PAN_LEFT"),                               GG::GGK_LEFT,                   GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.pan.up",                      UserStringNop("HOTKEY_MAP_PAN_UP"),                                 GG::GGK_UP,                     GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.pan.down",                    UserStringNop("HOTKEY_MAP_PAN_DOWN"),                               GG::GGK_DOWN,                   GG::MOD_KEY_CTRL);
 
-        Hotkey::AddHotkey("ui.map.scale.legend",    UserStringNop("HOTKEY_MAP_TOGGLE_SCALE_LINE"),    GG::GGK_l,          GG::MOD_KEY_ALT);
-        Hotkey::AddHotkey("ui.map.scale.circle",  UserStringNop("HOTKEY_MAP_TOGGLE_SCALE_CIRCLE"),  GG::GGK_c,          GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("ui.map.scale.legend",            UserStringNop("HOTKEY_MAP_TOGGLE_SCALE_LINE"),                      GG::GGK_l,                      GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("ui.map.scale.circle",            UserStringNop("HOTKEY_MAP_TOGGLE_SCALE_CIRCLE"),                    GG::GGK_c,                      GG::MOD_KEY_ALT);
 
-        Hotkey::AddHotkey("ui.cut",                      UserStringNop("HOTKEY_CUT"),            GG::GGK_x,  GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.copy",                     UserStringNop("HOTKEY_COPY"),           GG::GGK_c,  GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.paste",                    UserStringNop("HOTKEY_PASTE"),          GG::GGK_v,  GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.cut",                         UserStringNop("HOTKEY_CUT"),                                        GG::GGK_x,                      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.copy",                        UserStringNop("HOTKEY_COPY"),                                       GG::GGK_c,                      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.paste",                       UserStringNop("HOTKEY_PASTE"),                                      GG::GGK_v,                      GG::MOD_KEY_CTRL);
 
-        Hotkey::AddHotkey("ui.select.all",               UserStringNop("HOTKEY_SELECT_ALL"),     GG::GGK_a,  GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.select.none",                 UserStringNop("HOTKEY_DESELECT"),       GG::GGK_d,  GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.select.all",                  UserStringNop("HOTKEY_SELECT_ALL"),                                 GG::GGK_a,                      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.select.none",                 UserStringNop("HOTKEY_DESELECT"),                                   GG::GGK_d,                      GG::MOD_KEY_CTRL);
 
-        Hotkey::AddHotkey("ui.focus.prev",           UserStringNop("HOTKEY_FOCUS_PREV_WND"), GG::GGK_TAB,GG::MOD_KEY_SHIFT);
-        Hotkey::AddHotkey("ui.focus.next",           UserStringNop("HOTKEY_FOCUS_NEXT_WND"), GG::GGK_TAB);
+        Hotkey::AddHotkey("ui.focus.prev",                  UserStringNop("HOTKEY_FOCUS_PREV_WND"),                             GG::GGK_TAB,                    GG::MOD_KEY_SHIFT);
+        Hotkey::AddHotkey("ui.focus.next",                  UserStringNop("HOTKEY_FOCUS_NEXT_WND"),                             GG::GGK_TAB);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 

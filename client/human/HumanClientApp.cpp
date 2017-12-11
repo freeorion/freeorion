@@ -96,23 +96,23 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add("save.auto.turn.start.enabled", UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START"), true,    Validator<bool>());
-        db.Add("save.auto.turn.end.enabled",   UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END"), false,   Validator<bool>());
-        db.Add("save.auto.turn.multiplayer.start.enabled",   UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"), true,    Validator<bool>());
-        db.Add("save.auto.turn.interval",          UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),             1,      RangedValidator<int>(1, 50));
-        db.Add("save.auto.file.limit",              UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),             10,     RangedValidator<int>(1, 10000));
-        db.Add("save.auto.initial.enabled",     UserStringNop("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"),      true,   Validator<bool>());
-        db.Add("save.auto.exit.enabled",        UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),         true,   Validator<bool>());
-        db.Add("ui.input.mouse.button.swap.enabled", UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),      false);
-        db.Add("ui.input.keyboard.repeat.delay", UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_DELAY"),     360,    RangedValidator<int>(0, 1000));
-        db.Add("ui.input.keyboard.repeat.interval", UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"), 20,   RangedValidator<int>(0, 1000));
-        db.Add("ui.input.mouse.button.repeat.delay", UserStringNop("OPTIONS_DB_MOUSE_REPEAT_DELAY"),    360,    RangedValidator<int>(0, 1000));
-        db.Add("ui.input.mouse.button.repeat.interval", UserStringNop("OPTIONS_DB_MOUSE_REPEAT_INTERVAL"), 15, RangedValidator<int>(0, 1000));
-        db.Add("ui.map.messages.timestamp.shown",   UserStringNop("OPTIONS_DB_DISPLAY_TIMESTAMP"),          true,   Validator<bool>());
+        db.Add("save.auto.turn.start.enabled",              UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START"),  true,               Validator<bool>());
+        db.Add("save.auto.turn.end.enabled",                UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END"),    false,              Validator<bool>());
+        db.Add("save.auto.turn.multiplayer.start.enabled",  UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"),    true,               Validator<bool>());
+        db.Add("save.auto.turn.interval",                   UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),                     1,                  RangedValidator<int>(1, 50));
+        db.Add("save.auto.file.limit",                      UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),                     10,                 RangedValidator<int>(1, 10000));
+        db.Add("save.auto.initial.enabled",                 UserStringNop("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"),           true,               Validator<bool>());
+        db.Add("save.auto.exit.enabled",                    UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),                true,               Validator<bool>());
+        db.Add("ui.input.mouse.button.swap.enabled",        UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),                   false);
+        db.Add("ui.input.keyboard.repeat.delay",            UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_DELAY"),              360,                RangedValidator<int>(0, 1000));
+        db.Add("ui.input.keyboard.repeat.interval",         UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"),           20,                 RangedValidator<int>(0, 1000));
+        db.Add("ui.input.mouse.button.repeat.delay",        UserStringNop("OPTIONS_DB_MOUSE_REPEAT_DELAY"),                 360,                RangedValidator<int>(0, 1000));
+        db.Add("ui.input.mouse.button.repeat.interval",     UserStringNop("OPTIONS_DB_MOUSE_REPEAT_INTERVAL"),              15,                 RangedValidator<int>(0, 1000));
+        db.Add("ui.map.messages.timestamp.shown",           UserStringNop("OPTIONS_DB_DISPLAY_TIMESTAMP"),                  true,               Validator<bool>());
 
-        Hotkey::AddHotkey("exit",       UserStringNop("HOTKEY_EXIT"),       GG::GGK_NONE,   GG::MOD_KEY_NONE);
-        Hotkey::AddHotkey("quit",       UserStringNop("HOTKEY_QUIT"),       GG::GGK_NONE,   GG::MOD_KEY_NONE);
-        Hotkey::AddHotkey("video.fullscreen", UserStringNop("HOTKEY_FULLSCREEN"), GG::GGK_RETURN, GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("exit",                           UserStringNop("HOTKEY_EXIT"),                                   GG::GGK_NONE,       GG::MOD_KEY_NONE);
+        Hotkey::AddHotkey("quit",                           UserStringNop("HOTKEY_QUIT"),                                   GG::GGK_NONE,       GG::MOD_KEY_NONE);
+        Hotkey::AddHotkey("video.fullscreen",               UserStringNop("HOTKEY_FULLSCREEN"),                             GG::GGK_RETURN,     GG::MOD_KEY_ALT);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 

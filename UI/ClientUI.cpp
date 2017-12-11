@@ -476,100 +476,98 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add("video.fps.shown",       UserStringNop("OPTIONS_DB_SHOW_FPS"), false);
-        db.Add("video.fps.max.enabled", UserStringNop("OPTIONS_DB_LIMIT_FPS"),             true);
-        db.Add("video.fps.max",         UserStringNop("OPTIONS_DB_MAX_FPS"),               60.0,
-               RangedStepValidator<double>(1.0, 0.0, 240.0));
-        db.Add("video.fps.unfocused.enabled", UserStringNop("OPTIONS_DB_LIMIT_FPS_NO_FOCUS"), true);
-        db.Add("video.fps.unfocused",   UserStringNop("OPTIONS_DB_MAX_FPS_NO_FOCUS"),      15.0,
-               RangedStepValidator<double>(1.0, 1.0, 30.0));
+        db.Add("video.fps.shown",                                       UserStringNop("OPTIONS_DB_SHOW_FPS"),                       false);
+        db.Add("video.fps.max.enabled",                                 UserStringNop("OPTIONS_DB_LIMIT_FPS"),                      true);
+        db.Add("video.fps.max",                                         UserStringNop("OPTIONS_DB_MAX_FPS"),                        60.0,                           RangedStepValidator<double>(1.0, 0.0, 240.0));
+        db.Add("video.fps.unfocused.enabled",                           UserStringNop("OPTIONS_DB_LIMIT_FPS_NO_FOCUS"),             true);
+        db.Add("video.fps.unfocused",                                   UserStringNop("OPTIONS_DB_MAX_FPS_NO_FOCUS"),               15.0,                           RangedStepValidator<double>(1.0, 1.0, 30.0));
 
         // sound and music
-        db.Add<std::string>("audio.music.path",                 UserStringNop("OPTIONS_DB_BG_MUSIC"),                          (GetRootDataDir() / "default" / "data" / "sound" / "artificial_intelligence_v3.ogg").string());
-        db.Add("audio.music.volume",                            UserStringNop("OPTIONS_DB_MUSIC_VOLUME"),                      127,                    RangedValidator<int>(1, 255));
-        db.Add("audio.effects.volume",                          UserStringNop("OPTIONS_DB_UI_SOUND_VOLUME"),                   255,                    RangedValidator<int>(0, 255));
-        db.Add<std::string>("ui.button.rollover.sound.path",    UserStringNop("OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER"),   (GetRootDataDir() / "default" / "data" / "sound" / "button_rollover.ogg").string());
-        db.Add<std::string>("ui.button.press.sound.path",       UserStringNop("OPTIONS_DB_UI_SOUND_BUTTON_CLICK"),      (GetRootDataDir() / "default" / "data" / "sound" / "button_click.ogg").string());
-        db.Add<std::string>("ui.button.turn.press.sound.path",  UserStringNop("OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK"), (GetRootDataDir() / "default" / "data" / "sound" / "turn_button_click.ogg").string());
-        db.Add<std::string>("ui.listbox.select.sound.path",     UserStringNop("OPTIONS_DB_UI_SOUND_LIST_SELECT"),       (GetRootDataDir() / "default" / "data" / "sound" / "list_select.ogg").string());
-        db.Add<std::string>("ui.listbox.drop.sound.path",       UserStringNop("OPTIONS_DB_UI_SOUND_ITEM_DROP"),         (GetRootDataDir() / "default" / "data" / "sound" / "list_select.ogg").string());//TODO: replace with dedicated 'item_drop' sound
-        db.Add<std::string>("ui.dropdownlist.select.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_LIST_PULLDOWN"),    (GetRootDataDir() / "default" / "data" / "sound" / "list_pulldown.ogg").string());
-        db.Add<std::string>("ui.input.keyboard.sound.path",     UserStringNop("OPTIONS_DB_UI_SOUND_TEXT_TYPING"),              (GetRootDataDir() / "default" / "data" / "sound" / "text_typing.ogg").string());
-        db.Add<std::string>("ui.window.minimize.sound.path",    UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_MAXIMIZE"),          (GetRootDataDir() / "default" / "data" / "sound" / "window_maximize.ogg").string());
-        db.Add<std::string>("ui.window.maximize.sound.path",    UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE"),          (GetRootDataDir() / "default" / "data" / "sound" / "window_minimize.ogg").string());
-        db.Add<std::string>("ui.window.close.sound.path",       UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_CLOSE"),             (GetRootDataDir() / "default" / "data" / "sound" / "window_close.ogg").string());
-        db.Add<std::string>("ui.alert.sound.path",              UserStringNop("OPTIONS_DB_UI_SOUND_ALERT"),                    (GetRootDataDir() / "default" / "data" / "sound" / "alert.ogg").string());
-        db.Add<std::string>("ui.map.fleet.button.rollover.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER"), (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg").string());
-        db.Add<std::string>("ui.map.fleet.button.press.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK"),       (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_click.ogg").string());
-        db.Add<std::string>("ui.map.system.icon.rollover.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER"),   (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg").string());
-        db.Add<std::string>("ui.map.sidepanel.open.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN"),    (GetRootDataDir() / "default" / "data" / "sound" / "sidepanel_open.ogg").string());
-        db.Add("ui.turn.start.sound.enabled",                UserStringNop("OPTIONS_DB_UI_SOUND_NEWTURN_TOGGLE"),           false);
-        db.Add<std::string>("ui.turn.start.sound.path",      UserStringNop("OPTIONS_DB_UI_SOUND_NEWTURN_FILE"),             (GetRootDataDir() / "default" / "data" / "sound" / "newturn.ogg").string());
+        db.Add<std::string>("audio.music.path",                         UserStringNop("OPTIONS_DB_BG_MUSIC"),                       (GetRootDataDir() / "default" / "data" / "sound" / "artificial_intelligence_v3.ogg").string());
+        db.Add("audio.music.volume",                                    UserStringNop("OPTIONS_DB_MUSIC_VOLUME"),                   127,                            RangedValidator<int>(1, 255));
+        db.Add("audio.effects.volume",                                  UserStringNop("OPTIONS_DB_UI_SOUND_VOLUME"),                255,                            RangedValidator<int>(0, 255));
+        db.Add<std::string>("ui.button.rollover.sound.path",            UserStringNop("OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER"),       (GetRootDataDir() / "default" / "data" / "sound" / "button_rollover.ogg").string());
+        db.Add<std::string>("ui.button.press.sound.path",               UserStringNop("OPTIONS_DB_UI_SOUND_BUTTON_CLICK"),          (GetRootDataDir() / "default" / "data" / "sound" / "button_click.ogg").string());
+        db.Add<std::string>("ui.button.turn.press.sound.path",          UserStringNop("OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK"),     (GetRootDataDir() / "default" / "data" / "sound" / "turn_button_click.ogg").string());
+        db.Add<std::string>("ui.listbox.select.sound.path",             UserStringNop("OPTIONS_DB_UI_SOUND_LIST_SELECT"),           (GetRootDataDir() / "default" / "data" / "sound" / "list_select.ogg").string());
+        db.Add<std::string>("ui.listbox.drop.sound.path",               UserStringNop("OPTIONS_DB_UI_SOUND_ITEM_DROP"),             (GetRootDataDir() / "default" / "data" / "sound" / "list_select.ogg").string());//TODO: replace with dedicated 'item_drop' sound
+        db.Add<std::string>("ui.dropdownlist.select.sound.path",        UserStringNop("OPTIONS_DB_UI_SOUND_LIST_PULLDOWN"),         (GetRootDataDir() / "default" / "data" / "sound" / "list_pulldown.ogg").string());
+        db.Add<std::string>("ui.input.keyboard.sound.path",             UserStringNop("OPTIONS_DB_UI_SOUND_TEXT_TYPING"),           (GetRootDataDir() / "default" / "data" / "sound" / "text_typing.ogg").string());
+        db.Add<std::string>("ui.window.minimize.sound.path",            UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_MAXIMIZE"),       (GetRootDataDir() / "default" / "data" / "sound" / "window_maximize.ogg").string());
+        db.Add<std::string>("ui.window.maximize.sound.path",            UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE"),       (GetRootDataDir() / "default" / "data" / "sound" / "window_minimize.ogg").string());
+        db.Add<std::string>("ui.window.close.sound.path",               UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_CLOSE"),          (GetRootDataDir() / "default" / "data" / "sound" / "window_close.ogg").string());
+        db.Add<std::string>("ui.alert.sound.path",                      UserStringNop("OPTIONS_DB_UI_SOUND_ALERT"),                 (GetRootDataDir() / "default" / "data" / "sound" / "alert.ogg").string());
+        db.Add<std::string>("ui.map.fleet.button.rollover.sound.path",  UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER"), (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg").string());
+        db.Add<std::string>("ui.map.fleet.button.press.sound.path",     UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK"),    (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_click.ogg").string());
+        db.Add<std::string>("ui.map.system.icon.rollover.sound.path",   UserStringNop("OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER"),  (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg").string());
+        db.Add<std::string>("ui.map.sidepanel.open.sound.path",         UserStringNop("OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN"),        (GetRootDataDir() / "default" / "data" / "sound" / "sidepanel_open.ogg").string());
+        db.Add("ui.turn.start.sound.enabled",                           UserStringNop("OPTIONS_DB_UI_SOUND_NEWTURN_TOGGLE"),        false);
+        db.Add<std::string>("ui.turn.start.sound.path",                 UserStringNop("OPTIONS_DB_UI_SOUND_NEWTURN_FILE"),          (GetRootDataDir() / "default" / "data" / "sound" / "newturn.ogg").string());
 
         // fonts
-        db.Add<std::string>("ui.font.path",                     UserStringNop("OPTIONS_DB_UI_FONT"),                           (GetRootDataDir() / "default/data/fonts/Roboto-Regular.ttf").string());
-        db.Add<std::string>("ui.font.bold.path", UserStringNop("OPTIONS_DB_UI_FONT_BOLD"),                 (GetRootDataDir() / "default" / "data" / "fonts" / "Roboto-Bold.ttf").string());
+        db.Add<std::string>("ui.font.path",                             UserStringNop("OPTIONS_DB_UI_FONT"),                        (GetRootDataDir() / "default/data/fonts/Roboto-Regular.ttf").string());
+        db.Add<std::string>("ui.font.bold.path",                        UserStringNop("OPTIONS_DB_UI_FONT_BOLD"),                   (GetRootDataDir() / "default" / "data" / "fonts" / "Roboto-Bold.ttf").string());
 #ifdef FREEORION_MACOSX
-        db.Add("ui.font.size",                  UserStringNop("OPTIONS_DB_UI_FONT_SIZE"),                  15,                     RangedValidator<int>(4, 40));
+        db.Add("ui.font.size",                                          UserStringNop("OPTIONS_DB_UI_FONT_SIZE"),                   15,                             RangedValidator<int>(4, 40));
 #else
-        db.Add("ui.font.size",                  UserStringNop("OPTIONS_DB_UI_FONT_SIZE"),                  16,                     RangedValidator<int>(4, 40));
+        db.Add("ui.font.size",                                          UserStringNop("OPTIONS_DB_UI_FONT_SIZE"),                   16,                             RangedValidator<int>(4, 40));
 #endif
-        db.Add<std::string>("ui.font.title.path", UserStringNop("OPTIONS_DB_UI_TITLE_FONT"),               (GetRootDataDir() / "default/data/fonts/Roboto-Regular.ttf").string());
+        db.Add<std::string>("ui.font.title.path",                       UserStringNop("OPTIONS_DB_UI_TITLE_FONT"),                  (GetRootDataDir() / "default/data/fonts/Roboto-Regular.ttf").string());
 #ifdef FREEORION_MACOSX
-        db.Add("ui.font.title.size",            UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),            16,                          RangedValidator<int>(4, 40));
+        db.Add("ui.font.title.size",                                    UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),             16,                             RangedValidator<int>(4, 40));
 #else
-        db.Add("ui.font.title.size",            UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),            17,                          RangedValidator<int>(4, 40));
+        db.Add("ui.font.title.size",                                    UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),             17,                             RangedValidator<int>(4, 40));
 #endif
 
         // colors
-        db.Add("ui.window.background.color",    UserStringNop("OPTIONS_DB_UI_WND_COLOR"),                  GG::Clr(35, 35, 35, 240),    Validator<GG::Clr>());
-        db.Add("ui.window.border.outer.color",  UserStringNop("OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR"),     GG::Clr(64, 64, 64, 255),    Validator<GG::Clr>());
-        db.Add("ui.window.border.inner.color",  UserStringNop("OPTIONS_DB_UI_WND_INNER_BORDER_COLOR"),     GG::Clr(192, 192, 192, 255), Validator<GG::Clr>());
+        db.Add("ui.window.background.color",                            UserStringNop("OPTIONS_DB_UI_WND_COLOR"),                   GG::Clr(35, 35, 35, 240),       Validator<GG::Clr>());
+        db.Add("ui.window.border.outer.color",                          UserStringNop("OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR"),      GG::Clr(64, 64, 64, 255),       Validator<GG::Clr>());
+        db.Add("ui.window.border.inner.color",                          UserStringNop("OPTIONS_DB_UI_WND_INNER_BORDER_COLOR"),      GG::Clr(192, 192, 192, 255),    Validator<GG::Clr>());
 
-        db.Add("ui.control.background.color",   UserStringNop("OPTIONS_DB_UI_CTRL_COLOR"),                 GG::Clr(15, 15, 15, 255),    Validator<GG::Clr>());
-        db.Add("ui.control.border.color",       UserStringNop("OPTIONS_DB_UI_CTRL_BORDER_COLOR"),          GG::Clr(124, 124, 124, 255), Validator<GG::Clr>());
+        db.Add("ui.control.background.color",                           UserStringNop("OPTIONS_DB_UI_CTRL_COLOR"),                  GG::Clr(15, 15, 15, 255),       Validator<GG::Clr>());
+        db.Add("ui.control.border.color",                               UserStringNop("OPTIONS_DB_UI_CTRL_BORDER_COLOR"),           GG::Clr(124, 124, 124, 255),    Validator<GG::Clr>());
 
-        db.Add("ui.dropdownlist.arrow.color",   UserStringNop("OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR"),    GG::Clr(130, 130, 0, 255),  Validator<GG::Clr>());
+        db.Add("ui.dropdownlist.arrow.color",                           UserStringNop("OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR"),    GG::Clr(130, 130, 0, 255),      Validator<GG::Clr>());
 
-        db.Add("ui.control.edit.highlight.color", UserStringNop("OPTIONS_DB_UI_EDIT_HILITE"),              GG::Clr(43, 81, 102, 255),   Validator<GG::Clr>());
+        db.Add("ui.control.edit.highlight.color",                       UserStringNop("OPTIONS_DB_UI_EDIT_HILITE"),                 GG::Clr(43, 81, 102, 255),      Validator<GG::Clr>());
 
-        db.Add("ui.font.stat.increase.color",   UserStringNop("OPTIONS_DB_UI_STAT_INCREASE_COLOR"),        GG::Clr(0, 255, 0, 255),     Validator<GG::Clr>());
-        db.Add("ui.font.stat.decrease.color",   UserStringNop("OPTIONS_DB_UI_STAT_DECREASE_COLOR"),        GG::Clr(255, 0, 0, 255),     Validator<GG::Clr>());
+        db.Add("ui.font.stat.increase.color",                           UserStringNop("OPTIONS_DB_UI_STAT_INCREASE_COLOR"),         GG::Clr(0, 255, 0, 255),        Validator<GG::Clr>());
+        db.Add("ui.font.stat.decrease.color",                           UserStringNop("OPTIONS_DB_UI_STAT_DECREASE_COLOR"),         GG::Clr(255, 0, 0, 255),        Validator<GG::Clr>());
 
-        db.Add("ui.button.state.color",         UserStringNop("OPTIONS_DB_UI_STATE_BUTTON_COLOR"),          GG::Clr(0, 127, 0, 255),    Validator<GG::Clr>());
+        db.Add("ui.button.state.color",                                 UserStringNop("OPTIONS_DB_UI_STATE_BUTTON_COLOR"),          GG::Clr(0, 127, 0, 255),        Validator<GG::Clr>());
 
-        db.Add("ui.font.color",                 UserStringNop("OPTIONS_DB_UI_TEXT_COLOR"),                 GG::Clr(255, 255, 255, 255), Validator<GG::Clr>());
-        db.Add("ui.font.link.color",            UserStringNop("OPTIONS_DB_UI_DEFAULT_LINK_COLOR"),         GG::Clr(80, 255, 128, 255),  Validator<GG::Clr>());
-        db.Add("ui.font.link.rollover.color",   UserStringNop("OPTIONS_DB_UI_ROLLOVER_LINK_COLOR"),        GG::Clr(192, 80, 255, 255),  Validator<GG::Clr>());
+        db.Add("ui.font.color",                                         UserStringNop("OPTIONS_DB_UI_TEXT_COLOR"),                  GG::Clr(255, 255, 255, 255),    Validator<GG::Clr>());
+        db.Add("ui.font.link.color",                                    UserStringNop("OPTIONS_DB_UI_DEFAULT_LINK_COLOR"),          GG::Clr(80, 255, 128, 255),     Validator<GG::Clr>());
+        db.Add("ui.font.link.rollover.color",                           UserStringNop("OPTIONS_DB_UI_ROLLOVER_LINK_COLOR"),         GG::Clr(192, 80, 255, 255),     Validator<GG::Clr>());
 
-        db.Add("ui.research.status.completed.background.color", UserStringNop("OPTIONS_DB_UI_KNOWN_TECH"), GG::Clr(72, 72, 72, 255), Validator<GG::Clr>());
-        db.Add("ui.research.status.completed.border.color", UserStringNop("OPTIONS_DB_UI_KNOWN_TECH_BORDER"), GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());
-        db.Add("ui.research.status.researchable.background.color", UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH"), GG::Clr(48, 48, 48, 255), Validator<GG::Clr>());
-        db.Add("ui.research.status.researchable.border.color", UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER"), GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());
-        db.Add("ui.research.status.unresearchable.background.color", UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH"), GG::Clr(30, 30, 30, 255), Validator<GG::Clr>());
-        db.Add("ui.research.status.unresearchable.border.color", UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER"), GG::Clr(86, 86, 86, 255), Validator<GG::Clr>());
-        db.Add("ui.research.status.progress.background.color", UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND"), GG::Clr(72, 72, 72, 255), Validator<GG::Clr>());
-        db.Add("ui.research.status.progress.color", UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS"), GG::Clr(40, 40, 40, 255), Validator<GG::Clr>());
+        db.Add("ui.research.status.completed.background.color",         UserStringNop("OPTIONS_DB_UI_KNOWN_TECH"),                  GG::Clr(72, 72, 72, 255),       Validator<GG::Clr>());
+        db.Add("ui.research.status.completed.border.color",             UserStringNop("OPTIONS_DB_UI_KNOWN_TECH_BORDER"),           GG::Clr(164, 164, 164, 255),    Validator<GG::Clr>());
+        db.Add("ui.research.status.researchable.background.color",      UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH"),           GG::Clr(48, 48, 48, 255),       Validator<GG::Clr>());
+        db.Add("ui.research.status.researchable.border.color",          UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER"),    GG::Clr(164, 164, 164, 255),    Validator<GG::Clr>());
+        db.Add("ui.research.status.unresearchable.background.color",    UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH"),         GG::Clr(30, 30, 30, 255),       Validator<GG::Clr>());
+        db.Add("ui.research.status.unresearchable.border.color",        UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER"),  GG::Clr(86, 86, 86, 255),       Validator<GG::Clr>());
+        db.Add("ui.research.status.progress.background.color",          UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND"),    GG::Clr(72, 72, 72, 255),       Validator<GG::Clr>());
+        db.Add("ui.research.status.progress.color",                     UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS"),               GG::Clr(40, 40, 40, 255),       Validator<GG::Clr>());
 
         // misc
-        db.Add("ui.scroll.width",               UserStringNop("OPTIONS_DB_UI_SCROLL_WIDTH"),                14,         RangedValidator<int>(8, 30));
+        db.Add("ui.scroll.width",                                       UserStringNop("OPTIONS_DB_UI_SCROLL_WIDTH"),                14,                             RangedValidator<int>(8, 30));
 
         // UI behavior
-        db.Add("ui.tooltip.delay",              UserStringNop("OPTIONS_DB_UI_TOOLTIP_DELAY"),              500,        RangedValidator<int>(0, 3000));
-        db.Add("ui.tooltip.extended.delay",     UserStringNop("OPTIONS_DB_UI_TOOLTIP_LONG_DELAY"),         3500,       RangedValidator<int>(0, 30000));
-        db.Add("ui.fleet.multiple.enabled", UserStringNop("OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS"),         false);
-        db.Add("ui.quickclose.enabled",  UserStringNop("OPTIONS_DB_UI_WINDOW_QUICKCLOSE"),                 true);
-        db.Add("ui.reposition.auto.enabled",  UserStringNop("OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS"),      true);
+        db.Add("ui.tooltip.delay",                                      UserStringNop("OPTIONS_DB_UI_TOOLTIP_DELAY"),               500,                            RangedValidator<int>(0, 3000));
+        db.Add("ui.tooltip.extended.delay",                             UserStringNop("OPTIONS_DB_UI_TOOLTIP_LONG_DELAY"),          3500,                           RangedValidator<int>(0, 30000));
+        db.Add("ui.fleet.multiple.enabled",                             UserStringNop("OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS"),      false);
+        db.Add("ui.quickclose.enabled",                                 UserStringNop("OPTIONS_DB_UI_WINDOW_QUICKCLOSE"),           true);
+        db.Add("ui.reposition.auto.enabled",                            UserStringNop("OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS"),     true);
 
         // UI behavior, hidden options
         // currently lacking an options page widget, so can only be user-adjusted by manually editing config file or specifying on command line
-        db.Add("ui.design.pedia.title.dynamic.enabled", UserStringNop("OPTIONS_DB_DESIGN_PEDIA_DYNAMIC"),  false);
-        db.Add("ui.map.fleet.eta.shown",        UserStringNop("OPTIONS_DB_SHOW_FLEET_ETA"),                true);
-        db.Add("ui.name.id.shown",              UserStringNop("OPTIONS_DB_SHOW_IDS_AFTER_NAMES"),          false);
+        db.Add("ui.design.pedia.title.dynamic.enabled",                 UserStringNop("OPTIONS_DB_DESIGN_PEDIA_DYNAMIC"),           false);
+        db.Add("ui.map.fleet.eta.shown",                                UserStringNop("OPTIONS_DB_SHOW_FLEET_ETA"),                 true);
+        db.Add("ui.name.id.shown",                                      UserStringNop("OPTIONS_DB_SHOW_IDS_AFTER_NAMES"),           false);
 
         // Other
-        db.Add("resource.shipdesign.saved.enabled",     UserStringNop("OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS"), true);
-        db.Add("resource.shipdesign.default.enabled",   UserStringNop("OPTIONS_DB_ADD_DEFAULT_DESIGNS"),    true);
+        db.Add("resource.shipdesign.saved.enabled",                     UserStringNop("OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS"),         true);
+        db.Add("resource.shipdesign.default.enabled",                   UserStringNop("OPTIONS_DB_ADD_DEFAULT_DESIGNS"),            true);
 
     }
     bool temp_bool = RegisterOptions(&AddOptions);

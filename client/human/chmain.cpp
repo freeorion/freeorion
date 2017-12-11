@@ -119,23 +119,26 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
     try {
 #endif
         // add entries in options DB that have no other obvious place
-        GetOptionsDB().AddFlag('h', "help",                 UserStringNop("OPTIONS_DB_HELP"),                  false);
-        GetOptionsDB().AddFlag('v', "version",              UserStringNop("OPTIONS_DB_VERSION"),               false);
-        GetOptionsDB().AddFlag('g', "generate-config-xml",  UserStringNop("OPTIONS_DB_GENERATE_CONFIG_XML"),   false);
-        GetOptionsDB().AddFlag('f', "video.fullscreen.enabled", UserStringNop("OPTIONS_DB_FULLSCREEN"),        STORE_FULLSCREEN_FLAG);
-        GetOptionsDB().Add("video.fullscreen.reset",        UserStringNop("OPTIONS_DB_RESET_FSSIZE"),          true);
-        GetOptionsDB().Add<bool>("video.fullscreen.fake.enabled", UserStringNop("OPTIONS_DB_FAKE_MODE_CHANGE"),      FAKE_MODE_CHANGE_FLAG);
-        GetOptionsDB().Add<int>("video.monitor.id",         UserStringNop("OPTIONS_DB_FULLSCREEN_MONITOR_ID"), 0, RangedValidator<int>(0, 5));
-        GetOptionsDB().AddFlag('q', "quickstart",           UserStringNop("OPTIONS_DB_QUICKSTART"),            false);
-        GetOptionsDB().AddFlag("continue",                  UserStringNop("OPTIONS_DB_CONTINUE"),              false);
-        GetOptionsDB().AddFlag("auto-quit",                 UserStringNop("OPTIONS_DB_AUTO_QUIT"),             false);
-        GetOptionsDB().Add<int>("auto-advance-n-turns",     UserStringNop("OPTIONS_DB_AUTO_N_TURNS"),          0, RangedValidator<int>(0, 400), false);
-        GetOptionsDB().Add<std::string>("load",             UserStringNop("OPTIONS_DB_LOAD"),                  "", Validator<std::string>(), false);
-        GetOptionsDB().Add("audio.music.enabled",           UserStringNop("OPTIONS_DB_MUSIC_ON"),              true);
-        GetOptionsDB().Add("audio.effects.enabled",         UserStringNop("OPTIONS_DB_SOUND_ON"),              true);
-        GetOptionsDB().Add<std::string>("version.string",   UserStringNop("OPTIONS_DB_VERSION_STRING"),
-                                        FreeOrionVersionString(),   Validator<std::string>(),                  true);
-        GetOptionsDB().AddFlag('r', "render-simple",        UserStringNop("OPTIONS_DB_RENDER_SIMPLE"),         false);
+        GetOptionsDB().AddFlag('h', "help",                         UserStringNop("OPTIONS_DB_HELP"),                   false);
+        GetOptionsDB().AddFlag('v', "version",                      UserStringNop("OPTIONS_DB_VERSION"),                false);
+        GetOptionsDB().AddFlag('g', "generate-config-xml",          UserStringNop("OPTIONS_DB_GENERATE_CONFIG_XML"),    false);
+        GetOptionsDB().AddFlag('f', "video.fullscreen.enabled",     UserStringNop("OPTIONS_DB_FULLSCREEN"),             STORE_FULLSCREEN_FLAG);
+        GetOptionsDB().Add("video.fullscreen.reset",                UserStringNop("OPTIONS_DB_RESET_FSSIZE"),           true);
+        GetOptionsDB().Add<bool>("video.fullscreen.fake.enabled",   UserStringNop("OPTIONS_DB_FAKE_MODE_CHANGE"),       FAKE_MODE_CHANGE_FLAG);
+        GetOptionsDB().Add<int>("video.monitor.id",                 UserStringNop("OPTIONS_DB_FULLSCREEN_MONITOR_ID"),  0,
+                                RangedValidator<int>(0, 5));
+        GetOptionsDB().AddFlag('q', "quickstart",                   UserStringNop("OPTIONS_DB_QUICKSTART"),             false);
+        GetOptionsDB().AddFlag("continue",                          UserStringNop("OPTIONS_DB_CONTINUE"),               false);
+        GetOptionsDB().AddFlag("auto-quit",                         UserStringNop("OPTIONS_DB_AUTO_QUIT"),              false);
+        GetOptionsDB().Add<int>("auto-advance-n-turns",             UserStringNop("OPTIONS_DB_AUTO_N_TURNS"),           0,
+                                RangedValidator<int>(0, 400),                                                           false);
+        GetOptionsDB().Add<std::string>("load",                     UserStringNop("OPTIONS_DB_LOAD"),                   "",
+                                        Validator<std::string>(),                                                       false);
+        GetOptionsDB().Add("audio.music.enabled",                   UserStringNop("OPTIONS_DB_MUSIC_ON"),               true);
+        GetOptionsDB().Add("audio.effects.enabled",                 UserStringNop("OPTIONS_DB_SOUND_ON"),               true);
+        GetOptionsDB().Add<std::string>("version.string",           UserStringNop("OPTIONS_DB_VERSION_STRING"),         FreeOrionVersionString(),
+                                        Validator<std::string>(),                                                       true);
+        GetOptionsDB().AddFlag('r', "render-simple",                UserStringNop("OPTIONS_DB_RENDER_SIMPLE"),          false);
 
         // Add the keyboard shortcuts
         Hotkey::AddOptions(GetOptionsDB());
