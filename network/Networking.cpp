@@ -27,19 +27,15 @@ namespace Networking {
        }
     }
 
-    void AuthRoles::SetRole(RoleType role, bool value) {
-        m_roles.set(role, value);
-    }
+    void AuthRoles::SetRole(RoleType role, bool value)
+    { m_roles.set(role, value); }
 
-    bool AuthRoles::HasRole(RoleType role) const {
-        return m_roles.test(role);
-    }
+    bool AuthRoles::HasRole(RoleType role) const
+    { return m_roles.test(role); }
 
-    std::string AuthRoles::Text() const {
-        return m_roles.to_string();
-    }
+    std::string AuthRoles::Text() const
+    { return m_roles.to_string(); }
 
-    void AuthRoles::SetText(const std::string& text) {
-        m_roles = std::bitset<Roles_Count>(text);
-    }
+    void AuthRoles::SetText(const std::string& text)
+    { m_roles = std::bitset<Roles_Count>(text); }
 }
