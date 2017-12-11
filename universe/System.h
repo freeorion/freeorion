@@ -38,7 +38,7 @@ public:
     /** \name Accessors */ //@{
     UniverseObjectType ObjectType() const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     const std::set<int>& ContainedObjectIDs() const override;
 

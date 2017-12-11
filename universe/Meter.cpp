@@ -24,7 +24,7 @@ float Meter::Current() const
 float Meter::Initial() const
 { return m_initial_value; }
 
-std::string Meter::Dump() const {
+std::string Meter::Dump(unsigned short ntabs) const {
     std::ostringstream strstm;
     strstm.precision(5);
     strstm << "Cur: " << m_current_value << " Init: " << m_initial_value;

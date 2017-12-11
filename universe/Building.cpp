@@ -117,12 +117,12 @@ bool Building::ContainedBy(int object_id) const {
             ||  object_id == this->SystemID());
 }
 
-std::string Building::Dump() const {
+std::string Building::Dump(unsigned short ntabs) const {
     std::stringstream os;
-    os << UniverseObject::Dump();
+    os << UniverseObject::Dump(ntabs);
     os << " building type: " << m_building_type
        << " produced by empire id: " << m_produced_by_empire_id
-       << " \n characteristics " << GetBuildingType(m_building_type)->Dump();
+       << " \n characteristics " << GetBuildingType(m_building_type)->Dump(ntabs);
     return os.str();
 }
 
@@ -202,24 +202,24 @@ void BuildingType::Init() {
     }
 }
 
-std::string BuildingType::Dump() const {
-    std::string retval = DumpIndent() + "BuildingType\n";
-    ++g_indent;
-    retval += DumpIndent() + "name = \"" + m_name + "\"\n";
-    retval += DumpIndent() + "description = \"" + m_description + "\"\n";
+std::string BuildingType::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "BuildingType\n";
+    ++ntabs;
+    retval += DumpIndent(ntabs) + "name = \"" + m_name + "\"\n";
+    retval += DumpIndent(ntabs) + "description = \"" + m_description + "\"\n";
     if (m_production_cost)
-        retval += DumpIndent() + "buildcost = " + m_production_cost->Dump() + "\n";
+        retval += DumpIndent(ntabs) + "buildcost = " + m_production_cost->Dump(ntabs) + "\n";
     if (m_production_time)
-        retval += DumpIndent() + "buildtime = " + m_production_time->Dump() + "\n";
-    retval += DumpIndent() + (m_producible ? "Producible" : "Unproducible") + "\n";
-    retval += DumpIndent() + "captureresult = " +
+        retval += DumpIndent(ntabs) + "buildtime = " + m_production_time->Dump(ntabs) + "\n";
+    retval += DumpIndent(ntabs) + (m_producible ? "Producible" : "Unproducible") + "\n";
+    retval += DumpIndent(ntabs) + "captureresult = " +
         boost::lexical_cast<std::string>(m_capture_result) + "\n";
 
     if (!m_tags.empty()) {
         if (m_tags.size() == 1) {
-            retval += DumpIndent() + "tags = \"" + *m_tags.begin() + "\"\n";
+            retval += DumpIndent(ntabs) + "tags = \"" + *m_tags.begin() + "\"\n";
         } else {
-            retval += DumpIndent() + "tags = [ ";
+            retval += DumpIndent(ntabs) + "tags = [ ";
             for (const std::string& tag : m_tags) {
                retval += "\"" + tag + "\" ";
             }
@@ -228,34 +228,34 @@ std::string BuildingType::Dump() const {
     }
 
     if (m_location) {
-        retval += DumpIndent() + "location = \n";
-        ++g_indent;
-            retval += m_location->Dump();
-        --g_indent;
+        retval += DumpIndent(ntabs) + "location = \n";
+        ++ntabs;
+            retval += m_location->Dump(ntabs);
+        --ntabs;
     }
     if (m_enqueue_location) {
-        retval += DumpIndent() + "enqueue location = \n";
-        ++g_indent;
-            retval += m_enqueue_location->Dump();
-        --g_indent;
+        retval += DumpIndent(ntabs) + "enqueue location = \n";
+        ++ntabs;
+            retval += m_enqueue_location->Dump(ntabs);
+        --ntabs;
     }
 
     if (m_effects.size() == 1) {
-        retval += DumpIndent() + "effectsgroups =\n";
-        ++g_indent;
-        retval += m_effects[0]->Dump();
-        --g_indent;
+        retval += DumpIndent(ntabs) + "effectsgroups =\n";
+        ++ntabs;
+        retval += m_effects[0]->Dump(ntabs);
+        --ntabs;
     } else {
-        retval += DumpIndent() + "effectsgroups = [\n";
-        ++g_indent;
+        retval += DumpIndent(ntabs) + "effectsgroups = [\n";
+        ++ntabs;
         for (auto& effect : m_effects) {
-            retval += effect->Dump();
+            retval += effect->Dump(ntabs);
         }
-        --g_indent;
-        retval += DumpIndent() + "]\n";
+        --ntabs;
+        retval += DumpIndent(ntabs) + "]\n";
     }
-    retval += DumpIndent() + "icon = \"" + m_icon + "\"\n";
-    --g_indent;
+    retval += DumpIndent(ntabs) + "icon = \"" + m_icon + "\"\n";
+    --ntabs;
     return retval;
 }
 

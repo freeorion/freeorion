@@ -210,9 +210,9 @@ bool Ship::ContainedBy(int object_id) const {
             ||  object_id == this->SystemID());
 }
 
-std::string Ship::Dump() const {
+std::string Ship::Dump(unsigned short ntabs) const {
     std::stringstream os;
-    os << UniverseObject::Dump();
+    os << UniverseObject::Dump(ntabs);
     os << " design id: " << m_design_id
        << " fleet id: " << m_fleet_id
        << " species name: " << m_species_name

@@ -304,7 +304,7 @@ std::string Constant<std::string>::Description() const
 }
 
 template <>
-std::string Constant<PlanetSize>::Dump() const
+std::string Constant<PlanetSize>::Dump(unsigned short ntabs) const
 {
     switch (m_value) {
     case SZ_TINY:       return "Tiny";
@@ -319,7 +319,7 @@ std::string Constant<PlanetSize>::Dump() const
 }
 
 template <>
-std::string Constant<PlanetType>::Dump() const
+std::string Constant<PlanetType>::Dump(unsigned short ntabs) const
 {
     switch (m_value) {
     case PT_SWAMP:      return "Swamp";
@@ -338,7 +338,7 @@ std::string Constant<PlanetType>::Dump() const
 }
 
 template <>
-std::string Constant<PlanetEnvironment>::Dump() const
+std::string Constant<PlanetEnvironment>::Dump(unsigned short ntabs) const
 {
     switch (m_value) {
     case PE_UNINHABITABLE:  return "Uninhabitable";
@@ -351,7 +351,7 @@ std::string Constant<PlanetEnvironment>::Dump() const
 }
 
 template <>
-std::string Constant<UniverseObjectType>::Dump() const
+std::string Constant<UniverseObjectType>::Dump(unsigned short ntabs) const
 {
     switch (m_value) {
     case OBJ_BUILDING:      return "Building";
@@ -367,7 +367,7 @@ std::string Constant<UniverseObjectType>::Dump() const
 }
 
 template <>
-std::string Constant<StarType>::Dump() const
+std::string Constant<StarType>::Dump(unsigned short ntabs) const
 {
     switch (m_value) {
     case STAR_BLUE:     return "Blue";
@@ -383,7 +383,7 @@ std::string Constant<StarType>::Dump() const
 }
 
 template <>
-std::string Constant<Visibility>::Dump() const
+std::string Constant<Visibility>::Dump(unsigned short ntabs) const
 {
     switch (m_value) {
     case VIS_NO_VISIBILITY:     return "Invisible";
@@ -395,15 +395,15 @@ std::string Constant<Visibility>::Dump() const
 }
 
 template <>
-std::string Constant<int>::Dump() const
+std::string Constant<int>::Dump(unsigned short ntabs) const
 { return Description(); }
 
 template <>
-std::string Constant<double>::Dump() const
+std::string Constant<double>::Dump(unsigned short ntabs) const
 { return Description(); }
 
 template <>
-std::string Constant<std::string>::Dump() const
+std::string Constant<std::string>::Dump(unsigned short ntabs) const
 { return "\"" + Description() + "\""; }
 
 template <>
@@ -2478,23 +2478,23 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
 #undef IF_CURRENT_VALUE
 
 template <>
-std::string ComplexVariable<Visibility>::Dump() const
+std::string ComplexVariable<Visibility>::Dump(unsigned short ntabs) const
 {
     const std::string& variable_name = m_property_name.back();
     std::string retval = variable_name;
 
     if (variable_name == "EmpireObjectVisiblity") {
         if (m_int_ref1)
-            retval += " empire = " + m_int_ref1->Dump();
+            retval += " empire = " + m_int_ref1->Dump(ntabs);
         if (m_int_ref2)
-            retval += " object = " + m_int_ref2->Dump();
+            retval += " object = " + m_int_ref2->Dump(ntabs);
     }
 
     return retval;
 }
 
 template <>
-std::string ComplexVariable<double>::Dump() const
+std::string ComplexVariable<double>::Dump(unsigned short ntabs) const
 {
     const std::string& variable_name = m_property_name.back();
     std::string retval = variable_name;
@@ -2505,9 +2505,9 @@ std::string ComplexVariable<double>::Dump() const
         variable_name == "PropagatedSystemSupplyDistance")
     {
         if (m_int_ref1)
-            retval += " empire = " + m_int_ref1->Dump();
+            retval += " empire = " + m_int_ref1->Dump(ntabs);
         if (m_int_ref2)
-            retval += " system = " + m_int_ref2->Dump();
+            retval += " system = " + m_int_ref2->Dump(ntabs);
 
     }
     else if (variable_name == "GameRule" ||
@@ -2519,44 +2519,44 @@ std::string ComplexVariable<double>::Dump() const
              variable_name == "PartSecondaryStat")
     {
         if (!m_string_ref1)
-            retval += " name = " + m_string_ref1->Dump();
+            retval += " name = " + m_string_ref1->Dump(ntabs);
 
     }
     else if (variable_name == "EmpireMeterValue") {
         if (m_int_ref1)
-            retval += " empire = " + m_int_ref1->Dump();
+            retval += " empire = " + m_int_ref1->Dump(ntabs);
         if (m_string_ref1)
-            retval += " meter = " + m_string_ref1->Dump();
+            retval += " meter = " + m_string_ref1->Dump(ntabs);
 
     }
     else if (variable_name == "DirectDistanceBetween" ||
              variable_name == "ShortestPath")
     {
         if (m_int_ref1)
-            retval += " object = " + m_int_ref1->Dump();
+            retval += " object = " + m_int_ref1->Dump(ntabs);
         if (m_int_ref2)
-            retval += " object = " + m_int_ref2->Dump();
+            retval += " object = " + m_int_ref2->Dump(ntabs);
 
     }
     else if (variable_name == "SpeciesEmpireOpinion") {
         if (m_int_ref1)
-            retval += " empire = " + m_int_ref1->Dump();
+            retval += " empire = " + m_int_ref1->Dump(ntabs);
         if (m_string_ref1)
-            retval += " species = " + m_string_ref1->Dump();
+            retval += " species = " + m_string_ref1->Dump(ntabs);
 
     }
     else if (variable_name == "SpeciesSpeciesOpinion") {
         if (m_string_ref1)
-            retval += " species = " + m_string_ref1->Dump();
+            retval += " species = " + m_string_ref1->Dump(ntabs);
         if (m_string_ref2)
-            retval += " species = " + m_string_ref2->Dump();
+            retval += " species = " + m_string_ref2->Dump(ntabs);
 
     }
     else if (variable_name == "SpecialCapacity") {
         if (m_string_ref1)
-            retval += " name = " + m_string_ref1->Dump();
+            retval += " name = " + m_string_ref1->Dump(ntabs);
         if (m_int_ref1)
-            retval += " object = " + m_int_ref1->Dump();
+            retval += " object = " + m_int_ref1->Dump(ntabs);
 
     }
 
@@ -2564,7 +2564,7 @@ std::string ComplexVariable<double>::Dump() const
 }
 
 template <>
-std::string ComplexVariable<int>::Dump() const
+std::string ComplexVariable<int>::Dump(unsigned short ntabs) const
 {
     const std::string& variable_name = m_property_name.back();
     std::string retval = variable_name;
@@ -2573,7 +2573,7 @@ std::string ComplexVariable<int>::Dump() const
 }
 
 template <>
-std::string ComplexVariable<std::string>::Dump() const
+std::string ComplexVariable<std::string>::Dump(unsigned short ntabs) const
 {
     const std::string& variable_name = m_property_name.back();
     std::string retval = variable_name;
@@ -2750,8 +2750,8 @@ bool NameLookup::SourceInvariant() const
 std::string NameLookup::Description() const
 { return m_value_ref->Description(); }
 
-std::string NameLookup::Dump() const
-{ return m_value_ref->Dump(); }
+std::string NameLookup::Dump(unsigned short ntabs) const
+{ return m_value_ref->Dump(ntabs); }
 
 void NameLookup::SetTopLevelContent(const std::string& content_name) {
     if (m_value_ref)

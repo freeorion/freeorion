@@ -62,7 +62,7 @@ public:
     const std::string&              GetDescription() const;
     const std::string&              AccountingLabel() const     { return m_accounting_label; }
     int                             Priority() const            { return m_priority; }
-    std::string                     Dump() const;
+    std::string                     Dump(unsigned short ntabs = 0) const;
     bool                            HasMeterEffects() const;
     bool                            HasAppearanceEffects() const;
     bool                            HasSitrepEffects() const;
@@ -118,7 +118,7 @@ public:
                          bool include_empire_meter_effects = false,
                          bool only_generate_sitrep_effects = false) const;
 
-    virtual std::string Dump() const = 0;
+    virtual std::string Dump(unsigned short ntabs = 0) const = 0;
 
     virtual bool IsMeterEffect() const
     { return false; }
@@ -153,7 +153,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override
     {}
@@ -191,7 +191,7 @@ public:
                  bool include_empire_meter_effects = false,
                  bool only_generate_sitrep_effects = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     bool IsMeterEffect() const override
     { return true; }
@@ -245,7 +245,7 @@ public:
                  bool include_empire_meter_effects = false,
                  bool only_generate_sitrep_effects = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     bool IsMeterEffect() const override
     { return true; }
@@ -295,7 +295,7 @@ public:
                  bool include_empire_meter_effects = false,
                  bool only_generate_sitrep_effects = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     bool IsMeterEffect() const override
     { return true; }
@@ -332,7 +332,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -361,7 +361,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -387,7 +387,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -414,7 +414,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -438,7 +438,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -462,7 +462,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -488,7 +488,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -516,7 +516,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -545,7 +545,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -573,7 +573,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -610,7 +610,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -649,7 +649,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -687,7 +687,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -716,7 +716,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override
     {}
@@ -741,7 +741,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -771,7 +771,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -795,7 +795,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -819,7 +819,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -843,7 +843,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -869,7 +869,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -899,7 +899,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -931,7 +931,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -960,7 +960,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -981,7 +981,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override
     {}
@@ -1004,7 +1004,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override
     {}
@@ -1034,7 +1034,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1059,7 +1059,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1112,7 +1112,7 @@ public:
     bool IsSitrepEffect() const override
     { return true; }
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1160,7 +1160,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     bool IsAppearanceEffect() const override
     { return true; }
@@ -1185,7 +1185,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     bool IsAppearanceEffect() const override
     { return true; }
@@ -1215,7 +1215,7 @@ public:
 
     void Execute(const ScriptingContext& context) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1267,7 +1267,7 @@ public:
                  bool include_empire_meter_effects = false,
                  bool only_generate_sitrep_effects = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     bool IsMeterEffect() const override;
 

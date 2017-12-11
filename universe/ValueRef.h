@@ -142,7 +142,7 @@ struct FO_COMMON_API ValueRefBase
     virtual std::string Description() const = 0;
 
     /** Returns a text description of this type of special. */
-    virtual std::string Dump() const = 0;
+    virtual std::string Dump(unsigned short ntabs = 0) const = 0;
 
     virtual void SetTopLevelContent(const std::string& content_name)
     {}
@@ -183,7 +183,7 @@ struct FO_COMMON_API Constant : public ValueRefBase<T>
 
     std::string Description() const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -222,7 +222,7 @@ struct FO_COMMON_API Variable : public ValueRefBase<T>
 
     std::string Description() const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     ReferenceType GetReferenceType() const;
 
@@ -268,7 +268,7 @@ struct FO_COMMON_API Statistic : public Variable<T>
 
     std::string Description() const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -335,7 +335,7 @@ struct FO_COMMON_API ComplexVariable : public Variable<T>
 
     std::string Description() const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -396,7 +396,7 @@ struct FO_COMMON_API StaticCast : public Variable<ToType>
 
     std::string Description() const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -439,7 +439,7 @@ struct FO_COMMON_API StringCast : public Variable<std::string>
 
     std::string Description() const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -478,7 +478,7 @@ struct FO_COMMON_API UserStringLookup : public Variable<std::string> {
 
     std::string Description() const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -521,7 +521,7 @@ struct FO_COMMON_API NameLookup : public Variable<std::string> {
 
     std::string Description() const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -579,7 +579,7 @@ struct FO_COMMON_API Operation : public ValueRefBase<T>
 
     std::string Description() const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -692,31 +692,31 @@ template <>
 FO_COMMON_API std::string Constant<std::string>::Description() const;
 
 template <>
-FO_COMMON_API std::string Constant<PlanetSize>::Dump() const;
+FO_COMMON_API std::string Constant<PlanetSize>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<PlanetType>::Dump() const;
+FO_COMMON_API std::string Constant<PlanetType>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<PlanetEnvironment>::Dump() const;
+FO_COMMON_API std::string Constant<PlanetEnvironment>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<UniverseObjectType>::Dump() const;
+FO_COMMON_API std::string Constant<UniverseObjectType>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<StarType>::Dump() const;
+FO_COMMON_API std::string Constant<StarType>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<Visibility>::Dump() const;
+FO_COMMON_API std::string Constant<Visibility>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<double>::Dump() const;
+FO_COMMON_API std::string Constant<double>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<int>::Dump() const;
+FO_COMMON_API std::string Constant<int>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<std::string>::Dump() const;
+FO_COMMON_API std::string Constant<std::string>::Dump(unsigned short ntabs) const;
 
 template <>
 FO_COMMON_API std::string Constant<std::string>::Eval(const ScriptingContext& context) const;
@@ -791,7 +791,7 @@ std::string Variable<T>::Description() const
 { return FormatedDescriptionPropertyNames(m_ref_type, m_property_name); }
 
 template <class T>
-std::string Variable<T>::Dump() const
+std::string Variable<T>::Dump(unsigned short ntabs) const
 { return ReconstructName(m_property_name, m_ref_type); }
 
 template <class T>
@@ -977,7 +977,7 @@ std::string Statistic<T>::Description() const {
 }
 
 template <class T>
-std::string Statistic<T>::Dump() const
+std::string Statistic<T>::Dump(unsigned short ntabs) const
 { return Description(); }
 
 template <class T>
@@ -1411,8 +1411,8 @@ std::string ComplexVariable<T>::Description() const {
 }
 
 template <class T>
-std::string ComplexVariable<T>::Dump() const
-{ return Variable<T>::Dump(); }
+std::string ComplexVariable<T>::Dump(unsigned short ntabs) const
+{ return Variable<T>::Dump(ntabs); }
 
 template <class T>
 void ComplexVariable<T>::SetTopLevelContent(const std::string& content_name)
@@ -1472,16 +1472,16 @@ template <>
 FO_COMMON_API std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API std::string ComplexVariable<Visibility>::Dump() const;
+FO_COMMON_API std::string ComplexVariable<Visibility>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string ComplexVariable<double>::Dump() const;
+FO_COMMON_API std::string ComplexVariable<double>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string ComplexVariable<int>::Dump() const;
+FO_COMMON_API std::string ComplexVariable<int>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string ComplexVariable<std::string>::Dump() const;
+FO_COMMON_API std::string ComplexVariable<std::string>::Dump(unsigned short ntabs) const;
 
 template <class T>
 template <class Archive>
@@ -1569,8 +1569,8 @@ std::string StaticCast<FromType, ToType>::Description() const
 { return m_value_ref->Description(); }
 
 template <class FromType, class ToType>
-std::string StaticCast<FromType, ToType>::Dump() const
-{ return m_value_ref->Dump(); }
+std::string StaticCast<FromType, ToType>::Dump(unsigned short ntabs) const
+{ return m_value_ref->Dump(ntabs); }
 
 template <class FromType, class ToType>
 void StaticCast<FromType, ToType>::SetTopLevelContent(const std::string& content_name)
@@ -1693,8 +1693,8 @@ std::string StringCast<FromType>::Description() const
 { return m_value_ref->Description(); }
 
 template <class FromType>
-std::string StringCast<FromType>::Dump() const
-{ return m_value_ref->Dump(); }
+std::string StringCast<FromType>::Dump(unsigned short ntabs) const
+{ return m_value_ref->Dump(ntabs); }
 
 template <class FromType>
 void StringCast<FromType>::SetTopLevelContent(const std::string& content_name) {
@@ -1799,9 +1799,9 @@ std::string UserStringLookup<FromType>::Description() const
 }
 
 template <class FromType>
-std::string UserStringLookup<FromType>::Dump() const
+std::string UserStringLookup<FromType>::Dump(unsigned short ntabs) const
 {
-    return m_value_ref->Dump();
+    return m_value_ref->Dump(ntabs);
 }
 
 template <class FromType>
@@ -2243,7 +2243,7 @@ std::string Operation<T>::Description() const
 }
 
 template <class T>
-std::string Operation<T>::Dump() const
+std::string Operation<T>::Dump(unsigned short ntabs) const
 {
     if (m_op_type == NEGATE) {
         if (auto rhs = dynamic_cast<const Operation<T>*>(LHS())) {
@@ -2251,27 +2251,27 @@ std::string Operation<T>::Dump() const
             if (op_type == PLUS     || op_type == MINUS ||
                 op_type == TIMES    || op_type == DIVIDE ||
                 op_type == NEGATE   || op_type == EXPONENTIATE)
-            return "-(" + LHS()->Dump() + ")";
+            return "-(" + LHS()->Dump(ntabs) + ")";
         } else {
-            return "-" + LHS()->Dump();
+            return "-" + LHS()->Dump(ntabs);
         }
     }
 
     if (m_op_type == ABS)
-        return "abs(" + LHS()->Dump() + ")";
+        return "abs(" + LHS()->Dump(ntabs) + ")";
     if (m_op_type == LOGARITHM)
-        return "log(" + LHS()->Dump() + ")";
+        return "log(" + LHS()->Dump(ntabs) + ")";
     if (m_op_type == SINE)
-        return "sin(" + LHS()->Dump() + ")";
+        return "sin(" + LHS()->Dump(ntabs) + ")";
     if (m_op_type == COSINE)
-        return "cos(" + LHS()->Dump() + ")";
+        return "cos(" + LHS()->Dump(ntabs) + ")";
 
     if (m_op_type == MINIMUM) {
         std::string retval = "min(";
         for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
                 retval += ", ";
-            retval += (*it)->Dump();
+            retval += (*it)->Dump(ntabs);
         }
         retval += ")";
         return retval;
@@ -2281,21 +2281,21 @@ std::string Operation<T>::Dump() const
         for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
                 retval += ", ";
-            retval += (*it)->Dump();
+            retval += (*it)->Dump(ntabs);
         }
         retval += ")";
         return retval;
     }
 
     if (m_op_type == RANDOM_UNIFORM)
-        return "random(" + LHS()->Dump() + ", " + LHS()->Dump() + ")";
+        return "random(" + LHS()->Dump(ntabs) + ", " + LHS()->Dump(ntabs) + ")";
 
     if (m_op_type == RANDOM_PICK) {
         std::string retval = "randompick(";
         for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
                 retval += ", ";
-            retval += (*it)->Dump();
+            retval += (*it)->Dump(ntabs);
         }
         retval += ")";
         return retval;
@@ -2331,9 +2331,9 @@ std::string Operation<T>::Dump() const
 
     std::string retval;
     if (parenthesize_lhs)
-        retval += '(' + LHS()->Dump() + ')';
+        retval += '(' + LHS()->Dump(ntabs) + ')';
     else
-        retval += LHS()->Dump();
+        retval += LHS()->Dump(ntabs);
 
     switch (m_op_type) {
     case PLUS:          retval += " + "; break;
@@ -2345,9 +2345,9 @@ std::string Operation<T>::Dump() const
     }
 
     if (parenthesize_rhs)
-        retval += '(' + RHS()->Dump() + ')';
+        retval += '(' + RHS()->Dump(ntabs) + ')';
     else
-        retval += RHS()->Dump();
+        retval += RHS()->Dump(ntabs);
 
     return retval;
 }

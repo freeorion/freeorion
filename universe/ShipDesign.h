@@ -556,7 +556,7 @@ public:
     /** returns number of parts in this ship design, indexed by ShipPartClass */
     const std::map<ShipPartClass, int>&   PartClassCount() const { return m_num_part_classes; }
 
-    std::string                     Dump() const;                                   ///< returns a data file format representation of this object
+    std::string                     Dump(unsigned short ntabs = 0) const;                                   ///< returns a data file format representation of this object
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for

@@ -266,7 +266,7 @@ public:
     template <class T>
     const_iterator<T>       const_end() const;
 
-    std::string             Dump() const;
+    std::string             Dump(unsigned short ntabs = 0) const;
 
     /**  */
     std::shared_ptr<UniverseObject> ExistingObject(int id);

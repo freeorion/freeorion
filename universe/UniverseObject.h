@@ -81,8 +81,9 @@ public:
 
     virtual UniverseObjectType  ObjectType() const;
 
-    /** Outputs textual description of object to logger. */
-    virtual std::string         Dump() const;
+    /** Return human readable string description of object offset \p ntabs from
+        margin. */
+    virtual std::string         Dump(unsigned short ntabs = 0) const;
 
     /** Returns id of the object that directly contains this object, if any, or
         INVALID_OBJECT_ID if this object is not contained by any other. */
@@ -240,5 +241,10 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+/** A function that returns the correct amount of spacing for an indentation of
+  * \p ntabs during a dump. */
+inline std::string DumpIndent(unsigned short ntabs = 1)
+{ return std::string(ntabs * 4 /* conversion to size_t is safe */, ' '); }
 
 #endif // _UniverseObject_h_

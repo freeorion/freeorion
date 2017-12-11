@@ -159,9 +159,9 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
 UniverseObjectType System::ObjectType() const
 { return OBJ_SYSTEM; }
 
-std::string System::Dump() const {
+std::string System::Dump(unsigned short ntabs) const {
     std::stringstream os;
-    os << UniverseObject::Dump();
+    os << UniverseObject::Dump(ntabs);
     os << " star type: " << m_star
        << "  last combat on turn: " << m_last_turn_battle_here
        << "  total orbits: " << m_orbits.size();

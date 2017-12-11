@@ -144,7 +144,7 @@ struct FO_COMMON_API ConditionBase {
 
     virtual std::string Description(bool negated = false) const = 0;
 
-    virtual std::string Dump() const = 0;
+    virtual std::string Dump(unsigned short ntabs = 0) const = 0;
 
     virtual void SetTopLevelContent(const std::string& content_name) = 0;
 
@@ -189,7 +189,7 @@ struct FO_COMMON_API Number : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -227,7 +227,7 @@ struct FO_COMMON_API Turn : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -282,7 +282,7 @@ struct FO_COMMON_API SortedNumberOf : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -310,7 +310,7 @@ struct FO_COMMON_API All : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     bool RootCandidateInvariant() const override
     { return true; }
@@ -348,7 +348,7 @@ struct FO_COMMON_API None : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     bool RootCandidateInvariant() const override
     { return true; }
@@ -395,7 +395,7 @@ struct FO_COMMON_API EmpireAffiliation : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -429,7 +429,7 @@ struct FO_COMMON_API Source : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override
     {}
@@ -464,7 +464,7 @@ struct FO_COMMON_API RootCandidate : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override
     {}
@@ -502,7 +502,7 @@ struct FO_COMMON_API Target : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override
     {}
@@ -543,7 +543,7 @@ struct FO_COMMON_API Homeworld : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -579,7 +579,7 @@ struct FO_COMMON_API Capital : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override
     {}
@@ -614,7 +614,7 @@ struct FO_COMMON_API Monster : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override
     {}
@@ -646,7 +646,7 @@ struct FO_COMMON_API Armed : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override
     {}
@@ -683,7 +683,7 @@ struct FO_COMMON_API Type : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -722,7 +722,7 @@ struct FO_COMMON_API Building : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -769,7 +769,7 @@ struct FO_COMMON_API HasSpecial : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -811,7 +811,7 @@ struct FO_COMMON_API HasTag : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -847,7 +847,7 @@ struct FO_COMMON_API CreatedOnTurn : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -891,7 +891,7 @@ struct FO_COMMON_API Contains : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -934,7 +934,7 @@ struct FO_COMMON_API ContainedBy : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -972,7 +972,7 @@ struct FO_COMMON_API InSystem : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1010,7 +1010,7 @@ struct FO_COMMON_API ObjectID : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1050,7 +1050,7 @@ struct FO_COMMON_API PlanetType : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1090,7 +1090,7 @@ struct FO_COMMON_API PlanetSize : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1130,7 +1130,7 @@ struct FO_COMMON_API PlanetEnvironment : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1173,7 +1173,7 @@ struct FO_COMMON_API Species : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1223,7 +1223,7 @@ struct FO_COMMON_API Enqueued : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1262,7 +1262,7 @@ struct FO_COMMON_API FocusType : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
@@ -1301,7 +1301,7 @@ struct FO_COMMON_API StarType : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1339,7 +1339,7 @@ struct FO_COMMON_API DesignHasHull : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1380,7 +1380,7 @@ struct FO_COMMON_API DesignHasPart : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1423,7 +1423,7 @@ struct FO_COMMON_API DesignHasPartClass : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1462,7 +1462,7 @@ struct FO_COMMON_API PredefinedShipDesign : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1497,7 +1497,7 @@ struct FO_COMMON_API NumberedShipDesign : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1532,7 +1532,7 @@ struct FO_COMMON_API ProducedByEmpire : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1567,7 +1567,7 @@ struct FO_COMMON_API Chance : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1605,7 +1605,7 @@ struct FO_COMMON_API MeterValue : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1646,7 +1646,7 @@ struct FO_COMMON_API ShipPartMeterValue : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1688,7 +1688,7 @@ struct FO_COMMON_API EmpireMeterValue : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1725,7 +1725,7 @@ struct FO_COMMON_API EmpireStockpileValue : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1762,7 +1762,7 @@ struct FO_COMMON_API OwnerHasTech : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1799,7 +1799,7 @@ struct FO_COMMON_API OwnerHasBuildingTypeAvailable : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1836,7 +1836,7 @@ struct FO_COMMON_API OwnerHasShipDesignAvailable : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1873,7 +1873,7 @@ struct FO_COMMON_API OwnerHasShipPartAvailable : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1908,7 +1908,7 @@ struct FO_COMMON_API VisibleToEmpire : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1947,7 +1947,7 @@ struct FO_COMMON_API WithinDistance : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -1987,7 +1987,7 @@ struct FO_COMMON_API WithinStarlaneJumps : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -2031,7 +2031,7 @@ struct FO_COMMON_API CanAddStarlaneConnection :  ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -2067,7 +2067,7 @@ struct FO_COMMON_API ExploredByEmpire : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -2101,7 +2101,7 @@ struct FO_COMMON_API Stationary : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override
     {}
@@ -2141,7 +2141,7 @@ struct FO_COMMON_API Aggressive: public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override
     {}
@@ -2181,7 +2181,7 @@ struct FO_COMMON_API FleetSupplyableByEmpire : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -2219,7 +2219,7 @@ struct FO_COMMON_API ResourceSupplyConnectedByEmpire : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -2253,7 +2253,7 @@ struct FO_COMMON_API CanColonize : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override
     {}
@@ -2285,7 +2285,7 @@ struct FO_COMMON_API CanProduceShips : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override
     {}
@@ -2320,7 +2320,7 @@ struct FO_COMMON_API OrderedBombarded : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     virtual void SetTopLevelContent(const std::string& content_name) override;
 
@@ -2372,7 +2372,7 @@ struct FO_COMMON_API ValueTest : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -2422,7 +2422,7 @@ public:
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -2462,7 +2462,7 @@ struct FO_COMMON_API And : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -2497,7 +2497,7 @@ struct FO_COMMON_API Or : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     virtual void SetTopLevelContent(const std::string& content_name) override;
 
@@ -2530,7 +2530,7 @@ struct FO_COMMON_API Not : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -2568,8 +2568,8 @@ struct FO_COMMON_API Described : public ConditionBase {
 
     std::string Description(bool negated = false) const override;
 
-    std::string Dump() const override
-    { return m_condition ? m_condition->Dump() : ""; }
+    std::string Dump(unsigned short ntabs = 0) const override
+    { return m_condition ? m_condition->Dump(ntabs) : ""; }
 
     void SetTopLevelContent(const std::string& content_name) override;
 

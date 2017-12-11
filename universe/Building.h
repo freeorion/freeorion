@@ -29,7 +29,7 @@ public:
 
     UniverseObjectType ObjectType() const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     int ContainerObjectID() const override
     { return m_planet_id; }
@@ -109,7 +109,7 @@ public:
     /** \name Accessors */ //@{
     const std::string&              Name() const            { return m_name; }              ///< returns the unique name for this type of building
     const std::string&              Description() const     { return m_description; }       ///< returns a text description of this type of building
-    std::string                     Dump() const;                                           ///< returns a data file format representation of this object
+    std::string                     Dump(unsigned short ntabs = 0) const;                                           ///< returns a data file format representation of this object
 
     bool                            ProductionCostTimeLocationInvariant() const;            ///< returns true if the production cost and time are invariant (does not depend on) the location
     float                           ProductionCost(int empire_id, int location_id) const;   ///< returns the number of production points required to build this building at this location by this empire

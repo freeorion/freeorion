@@ -74,7 +74,7 @@ public:
     const std::string&  Name() const                { return m_name; }              //!< returns name of this tech
     const std::string&  Description() const         { return m_description; }       //!< Returns the text description of this tech
     const std::string&  ShortDescription() const    { return m_short_description; } //!< Returns the single-line short text description of this tech
-    std::string         Dump() const;                                               //!< Returns a text representation of this object
+    std::string         Dump(unsigned short ntabs = 0) const;                                               //!< Returns a text representation of this object
     const std::string&  Category() const            { return m_category; }          //!< retursn the name of the category to which this tech belongs
     float               ResearchCost(int empire_id) const;                          //!< returns the total research cost in RPs required to research this tech
     float               PerTurnCost(int empire_id) const;                           //!< returns the maximum number of RPs per turn allowed to be spent on researching this tech
@@ -136,7 +136,7 @@ struct FO_COMMON_API ItemSpec {
         type(type_),
         name(name_)
     {}
-    std::string Dump() const;   ///< returns a data file format representation of this object
+    std::string Dump(unsigned short ntabs = 0) const;   ///< returns a data file format representation of this object
     UnlockableItemType type;    ///< the kind of item this is
     std::string        name;    ///< the exact item this is
 };

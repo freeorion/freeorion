@@ -49,9 +49,9 @@ const std::string& Fighter::SpeciesName() const
 void Fighter::SetDestroyed(bool destroyed)
 { m_destroyed = destroyed; }
 
-std::string Fighter::Dump() const {
+std::string Fighter::Dump(unsigned short ntabs) const {
     std::stringstream os;
-    os << UniverseObject::Dump();
+    os << UniverseObject::Dump(ntabs);
     os << " (Combat Fighter) damage: " << m_damage;
     if (m_destroyed)
         os << "  (DESTROYED)";

@@ -115,48 +115,48 @@ void Special::Init() {
         m_location->SetTopLevelContent(m_name);
 }
 
-std::string Special::Dump() const {
-    std::string retval = DumpIndent() + "Special\n";
-    ++g_indent;
-    retval += DumpIndent() + "name = \"" + m_name + "\"\n";
-    retval += DumpIndent() + "description = \"" + m_description + "\"\n";
+std::string Special::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "Special\n";
+    ++ntabs;
+    retval += DumpIndent(ntabs) + "name = \"" + m_name + "\"\n";
+    retval += DumpIndent(ntabs) + "description = \"" + m_description + "\"\n";
 
     if (m_stealth)
-        retval += DumpIndent() + "stealth = " + m_stealth->Dump() + "\n";
+        retval += DumpIndent(ntabs) + "stealth = " + m_stealth->Dump(ntabs) + "\n";
 
-    retval += DumpIndent() + "spawnrate = " + std::to_string(m_spawn_rate) + "\n"
-           +  DumpIndent() + "spawnlimit = " + std::to_string(m_spawn_limit) + "\n";
+    retval += DumpIndent(ntabs) + "spawnrate = " + std::to_string(m_spawn_rate) + "\n"
+           +  DumpIndent(ntabs) + "spawnlimit = " + std::to_string(m_spawn_limit) + "\n";
 
     if (m_initial_capacity) {
-        retval += DumpIndent() + "initialcapacity = ";
-        ++g_indent;
-            retval += m_initial_capacity->Dump();
-        --g_indent;
+        retval += DumpIndent(ntabs) + "initialcapacity = ";
+        ++ntabs;
+            retval += m_initial_capacity->Dump(ntabs);
+        --ntabs;
     }
 
     if (m_location) {
-        retval += DumpIndent() + "location =\n";
-        ++g_indent;
-            retval += m_location->Dump();
-        --g_indent;
+        retval += DumpIndent(ntabs) + "location =\n";
+        ++ntabs;
+            retval += m_location->Dump(ntabs);
+        --ntabs;
     }
 
     if (m_effects.size() == 1) {
-        retval += DumpIndent() + "effectsgroups =\n";
-        ++g_indent;
-        retval += m_effects[0]->Dump();
-        --g_indent;
+        retval += DumpIndent(ntabs) + "effectsgroups =\n";
+        ++ntabs;
+        retval += m_effects[0]->Dump(ntabs);
+        --ntabs;
     } else {
-        retval += DumpIndent() + "effectsgroups = [\n";
-        ++g_indent;
+        retval += DumpIndent(ntabs) + "effectsgroups = [\n";
+        ++ntabs;
         for (auto& effect : m_effects) {
-            retval += effect->Dump();
+            retval += effect->Dump(ntabs);
         }
-        --g_indent;
-        retval += DumpIndent() + "]\n";
+        --ntabs;
+        retval += DumpIndent(ntabs) + "]\n";
     }
-    retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
-    --g_indent;
+    retval += DumpIndent(ntabs) + "graphic = \"" + m_graphic + "\"\n";
+    --ntabs;
     return retval;
 }
 

@@ -168,7 +168,7 @@ bool UniverseObject::HasTag(const std::string& name) const
 UniverseObjectType UniverseObject::ObjectType() const
 { return INVALID_UNIVERSE_OBJECT_TYPE; }
 
-std::string UniverseObject::Dump() const {
+std::string UniverseObject::Dump(unsigned short ntabs) const {
     auto system = GetSystem(this->SystemID());
 
     std::stringstream os;
@@ -399,4 +399,3 @@ void UniverseObject::ResetPairedActiveMeters() {
 
 void UniverseObject::ClampMeters()
 { GetMeter(METER_STEALTH)->ClampCurrentToRange(); }
-

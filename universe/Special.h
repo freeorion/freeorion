@@ -45,7 +45,7 @@ public:
     /** \name Accessors */ //@{
     const std::string&                      Name() const        { return m_name; }          ///< returns the unique name for this type of special
     std::string                             Description() const;                            ///< returns a text description of this type of special
-    std::string                             Dump() const;                                   ///< returns a data file format representation of this object
+    std::string                             Dump(unsigned short ntabs = 0) const;                                   ///< returns a data file format representation of this object
     const ValueRef::ValueRefBase<double>*   Stealth() const     { return m_stealth.get(); }       ///< returns the stealth of the special, which determines how easily it is seen by empires
 
     /** Returns the EffectsGroups that encapsulate the effects that specials of

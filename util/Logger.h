@@ -325,10 +325,4 @@ FO_COMMON_API void ApplyConfigurationToFileSinkFrontEnd(
     const std::string& channel_name,
     const LoggerFileSinkFrontEndConfigurer& configure_front_end);
 
-extern int g_indent;
-
-/** A function that returns the correct amount of spacing for the current
-  * indentation level during a dump. */
-std::string DumpIndent();
-
 #endif // _Logger_h_

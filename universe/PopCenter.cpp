@@ -51,7 +51,7 @@ void PopCenter::Init() {
     AddMeter(METER_TARGET_HAPPINESS);
 }
 
-std::string PopCenter::Dump() const {
+std::string PopCenter::Dump(unsigned short ntabs) const {
     std::stringstream os;
     os << " species: " << m_species_name << "  ";
     return os.str();
