@@ -170,7 +170,8 @@ class AIstate(object):
         # build the ordered dict with sorted entries from the (unsorted) dict
         # that is contained in the savegame state.
         for content in ("colonisablePlanetIDs", "colonisableOutpostIDs"):
-            sorted_planets = state[content].items().sort(key=itemgetter(1), reverse=True)
+            sorted_planets = sorted(state[content].items(),
+                                    key=itemgetter(1), reverse=True)
             state[content] = odict(sorted_planets)
 
         self.__dict__ = state
