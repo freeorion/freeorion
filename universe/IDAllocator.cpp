@@ -236,16 +236,18 @@ void IDAllocator::ObfuscateBeforeSerialization() {
         auto new_next_id = empire_random_offset + m_zero;
 
         // Increment until it is at the correct offset
-        ID_t ii_sentinel = 0;
-        while (AssigningEmpireForID(new_next_id) != assigning_empire && ii_sentinel <= m_stride) {
+        ID_t ii_dont_check_more_than_m_stride_ids = 0;
+        while (AssigningEmpireForID(new_next_id) != assigning_empire && ii_dont_check_more_than_m_stride_ids <= m_stride) {
             ++new_next_id;
-            ++ii_sentinel;
+            ++ii_dont_check_more_than_m_stride_ids;
         }
 
-        if (ii_sentinel == m_stride) {
+        // If m_stride consecutive ids have been checked, then
+        // assigning_empire is not in m_offset_to_empire_id, which is an error.
+        if (ii_dont_check_more_than_m_stride_ids > m_stride) {
             ErrorLogger()
                 << "While obfuscating id allocation empire " << assigning_empire
-                << "is missing from m_offset_to_empire_id in this table: "
+                << "is missing from the table m_offset_to_empire_id: "
                 << "[(offset, empire id), " << [this]() {
                 std::stringstream ss;
                 std::size_t offset = 0;
@@ -253,7 +255,9 @@ void IDAllocator::ObfuscateBeforeSerialization() {
                     ss << " (" << offset++ << ", " << empire_id << "), ";
                 }
                 return ss.str();
-            }() << "]";
+            }() << "]"
+                << " Empire " << assigning_empire
+                << " may not be able to create new designs or objects.";
         }
 
         m_empire_id_to_next_assigned_object_id[assigning_empire] = new_next_id;
