@@ -1464,7 +1464,7 @@ OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
 Fixe le niveau minimal de zoom auquel les icônes de petite taille des flottes apparaissent sur la carte galactique.
 
 OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM
-Fixe le niveau minimal de zoom auquel les icônes de taille minimale des flottes apparaissent sur la carte galactique. À un niveau de zoom inférieur, aucune icône de flotte n'est visible sur la carte galactique.
+Fixe le niveau minimal de zoom auquel les icônes de taille minimum des flottes apparaissent sur la carte galactique. À un niveau de zoom inférieur, aucune icône de flotte n'est visible sur la carte galactique.
 
 OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE
 Fixe la taille sur la carte galactique de l'indicateur de sélection d'une flotte, relativement à la taille des icônes de flotte.
@@ -1485,7 +1485,7 @@ OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS
 Fixe la vitesse de rotation (en tours par minute) de l'indicateur de sélection d'un système stellaire.
 
 OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
-Fixe la taille des icônes de système stellaire au-dessous de laquelle les icônes minimales affichées auront une taille fixe.
+Fixe la taille des icônes de système stellaire au-dessous de laquelle les icônes minimales de taille fixe seront affichées.
 
 OPTIONS_DB_UI_TOOLTIP_DELAY
 Fixe le délai d'apparition dans l'interface utilisateur des bulles d'information, en millisecondes.
@@ -2028,7 +2028,7 @@ MULTIPLAYER_PLAYER_LIST_STARTING_SPECIES
 Espèce de départ
 
 EDITABLE_GALAXY_SETTINGS
-Édition ouverte des réglages
+Réglages modifiables par tous
 
 EDITABLE_GALAXY_SETTINGS_DESC
 Tous les joueurs peuvent modifier les réglages de la galaxie et de l'IA.
@@ -2515,13 +2515,13 @@ OPTIONS_FLEET_ICONS
 Icônes de Flotte
 
 OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM
-Zoom minimal de l'icône d'une flotte minuscule
+Zoom minimal icône minuscule d'une flotte
 
 OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
-Zoom minimal de l'icône d'une petite flotte
+Zoom minimal petite icône d'une flotte
 
 OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
-Zoom minimal de l'icône d'une flotte moyenne
+Zoom minimal icône moyenne d'une flotte
 
 OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE
 Taille relative du sélecteur de flottes
@@ -4403,7 +4403,7 @@ RESEARCHED_TECHS
 '''Technologies recherchées : '''
 
 BEFORE_FIRST_TURN
-Avant tour initial
+Avant Tour initial
 
 TURN
 Tour
