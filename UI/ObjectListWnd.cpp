@@ -1181,8 +1181,8 @@ void FilterDialog::UpdateStateButtonsFromVisFilters() {
     for (auto& entry : m_filter_buttons) {
         // find visibilities for this object type
         auto uot_it = m_vis_filters.find(entry.first);
-        auto& shown_vis = (uot_it != m_vis_filters.end() ?
-                           uot_it->second : std::set<VIS_DISPLAY>());
+        const auto& shown_vis = (uot_it != m_vis_filters.end() ?
+                                 uot_it->second : std::set<VIS_DISPLAY>());
 
         // set all button checks depending on whether that buttons visibility is to be shown
         for (auto& button : entry.second) {
