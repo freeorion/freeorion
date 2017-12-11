@@ -122,11 +122,9 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
     if (vis >= VIS_BASIC_VISIBILITY) {
         m_ships =                         copied_fleet->VisibleContainedObjectIDs(empire_id);
 
-        m_next_system = ((GetUniverse().GetObjectVisibilityByEmpire(copied_fleet->m_next_system, empire_id)
-                          >= VIS_BASIC_VISIBILITY)
+        m_next_system = ((GetEmpireKnownSystem(copied_fleet->m_next_system, empire_id))
                          ? copied_fleet->m_next_system : INVALID_OBJECT_ID);
-        m_prev_system = ((GetUniverse().GetObjectVisibilityByEmpire(copied_fleet->m_prev_system, empire_id)
-                          >= VIS_BASIC_VISIBILITY)
+        m_prev_system = ((GetEmpireKnownSystem(copied_fleet->m_prev_system, empire_id))
                          ? copied_fleet->m_prev_system : INVALID_OBJECT_ID);
         m_arrived_this_turn =             copied_fleet->m_arrived_this_turn;
         m_arrival_starlane =              copied_fleet->m_arrival_starlane;
@@ -149,7 +147,7 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
                 const std::list<int>& copied_fleet_route = copied_fleet->m_travel_route;
 
                 m_travel_route.clear();
-                if (!copied_fleet->m_travel_route.empty())
+                if (!copied_fleet->m_travel_route.empty() && moving_to != INVALID_OBJECT_ID)
                     m_travel_route.push_back(moving_to);
                 ShortenRouteToEndAtSystem(travel_route, moving_to);
 
