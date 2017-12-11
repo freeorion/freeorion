@@ -128,13 +128,16 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
         import savegame_codec
         try:
             # loading saved state
-            # pre load code
             foAIstate = savegame_codec.load_savegame_string(saved_state_string)
         except Exception as e:
             # assigning new state
             foAIstate = AIstate.AIstate(fo.aggression.aggressive)
             foAIstate.session_start_cleanup()
-            error("Fail to load aiState from saved game: %s" % e, exc_info=True)
+            error("Failed to load the AIstate from the savegame. The AI will"
+                  " play with a fresh AIstate instance with aggression level set"
+                  " to 'aggressive'. The behaviour of the AI may be different"
+                  " than in the original session. The error raised was: %s"
+                  % e, exc_info=True)
 
     aggression_trait = foAIstate.character.get_trait(Aggression)
     diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
