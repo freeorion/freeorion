@@ -28,7 +28,7 @@ We use [flake8-putty](https://pypi.python.org/pypi/flake8-putty)
 which include [flake8](https://pypi.python.org/pypi/flake8)
 which include [pycodestyle](https://pypi.python.org/pypi/pycodestyle) and other tools.
 
-`flake8-putty` is `flake8` plugin that allows to setup specific rules on certain files, see `putty-ignore` section in `tox.ini`
+`flake8-putty` is `flake8` plugin that allows one to disable rule for certain file, see `putty-ignore` section in `tox.ini`
 
 Plan is to fix all easy things (code formatting) and ignore hard things (`E722 do not use bare except`).
 Final stage is to setup automatic check to avoid adding new cases.
