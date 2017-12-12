@@ -65,8 +65,9 @@ int IDAllocator::NewID() {
 
     auto apparent_assigning_empire = AssigningEmpireForID(retval);
     if (apparent_assigning_empire != m_empire_id)
-        ErrorLogger() << "m_empire_id " << m_empire_id << " does not match apparent assiging id "
-                      << apparent_assigning_empire << " for id = " << retval << " m_zero = " << m_zero;
+        ErrorLogger() << "m_empire_id " << m_empire_id << " does not match apparent assigning id "
+                      << apparent_assigning_empire << " for id = " << retval << " m_zero = " << m_zero
+                      << " stride = " << m_stride;
 
     // Increment the next id if not exhausted
     if (it->second >= m_exhausted_threshold) {
@@ -79,7 +80,7 @@ int IDAllocator::NewID() {
         ErrorLogger() << "Object IDs are exhausted.  No objects can be added to the Universe.";
 
     if (retval >= m_warn_threshold)
-        WarnLogger() << "Object IDs are almost exhausted. Currently assiging id, " << retval;
+        WarnLogger() << "Object IDs are almost exhausted. Currently assigning id, " << retval;
 
     TraceLogger(IDallocator) << "Allocating id = " << retval << " for empire = " << it->first;
     return retval;
@@ -219,7 +220,7 @@ void IDAllocator::ObfuscateBeforeSerialization() {
     // Check that this does not exhaust the ids
     auto new_max_next_id = max_next_assigned + max_random_offset + m_stride;
     if (new_max_next_id > m_warn_threshold)
-        WarnLogger() << "Object IDs are almost exhausted. Currently assiging id, " << new_max_next_id;
+        WarnLogger() << "Object IDs are almost exhausted. Currently assigning id, " << new_max_next_id;
 
     if (new_max_next_id > m_exhausted_threshold) {
         ErrorLogger() << "Object IDs are exhausted.  No objects can be added to the Universe.";
@@ -235,8 +236,29 @@ void IDAllocator::ObfuscateBeforeSerialization() {
         auto new_next_id = empire_random_offset + m_zero;
 
         // Increment until it is at the correct offset
-        while ((new_next_id - m_zero) % m_stride != assigning_empire_offset_modulus)
+        ID_t ii_dont_check_more_than_m_stride_ids = 0;
+        while (AssigningEmpireForID(new_next_id) != assigning_empire && ii_dont_check_more_than_m_stride_ids <= m_stride) {
             ++new_next_id;
+            ++ii_dont_check_more_than_m_stride_ids;
+        }
+
+        // If m_stride consecutive ids have been checked, then
+        // assigning_empire is not in m_offset_to_empire_id, which is an error.
+        if (ii_dont_check_more_than_m_stride_ids > m_stride) {
+            ErrorLogger()
+                << "While obfuscating id allocation empire " << assigning_empire
+                << "is missing from the table m_offset_to_empire_id: "
+                << "[(offset, empire id), " << [this]() {
+                std::stringstream ss;
+                std::size_t offset = 0;
+                for (auto& empire_id : m_offset_to_empire_id) {
+                    ss << " (" << offset++ << ", " << empire_id << "), ";
+                }
+                return ss.str();
+            }() << "]"
+                << " Empire " << assigning_empire
+                << " may not be able to create new designs or objects.";
+        }
 
         m_empire_id_to_next_assigned_object_id[assigning_empire] = new_next_id;
 
@@ -274,8 +296,10 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, in
 
     ar  & BOOST_SERIALIZATION_NVP(m_invalid_id)
         & BOOST_SERIALIZATION_NVP(m_temp_id)
-        & BOOST_SERIALIZATION_NVP(m_stride)
-        & BOOST_SERIALIZATION_NVP(m_server_id)
+        & BOOST_SERIALIZATION_NVP(m_stride);
+    if (version > 0)
+        ar & BOOST_SERIALIZATION_NVP(m_zero);
+    ar  & BOOST_SERIALIZATION_NVP(m_server_id)
         & BOOST_SERIALIZATION_NVP(m_warn_threshold)
         & BOOST_SERIALIZATION_NVP(m_exhausted_threshold);
 
@@ -295,11 +319,12 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, in
 
     } else {
 
+        if (m_empire_id != empire_id && m_empire_id != m_server_id)
+            ErrorLogger() << "An empire with id = " << m_empire_id << " which is not the server "
+                          << "is attempting to serialize the IDAllocator for a different empire " << empire_id;
+
         // If the target empire is the server, provide the full map.
         if (empire_id == m_server_id) {
-            if (m_empire_id != m_server_id)
-                ErrorLogger() << "An empire with id = " << m_empire_id << " which is not the server "
-                              << "is attempting to serialize the IDAllocator for the server.";
             ar  & BOOST_SERIALIZATION_NVP(m_empire_id)
                 & BOOST_SERIALIZATION_NVP(m_empire_id_to_next_assigned_object_id)
                 & BOOST_SERIALIZATION_NVP(m_offset_to_empire_id);
@@ -308,7 +333,7 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, in
 
             // Filter the map for empires so they only have their own actual next id and no
             // information about other clients.
-            std::unordered_map<int, int> temp_empire_id_to_object_id{};
+            std::unordered_map<int, ID_t> temp_empire_id_to_object_id{};
             auto temp_offset_to_empire_id = std::vector<int>(m_offset_to_empire_id.size(), m_server_id);
 
             auto&& it = m_empire_id_to_next_assigned_object_id.find(empire_id);
@@ -317,7 +342,7 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, in
                               << empire_id << " not in id manager table.";
             } else {
                 temp_empire_id_to_object_id.insert(*it);
-                temp_offset_to_empire_id[it->second % m_stride] = empire_id;
+                temp_offset_to_empire_id[(it->second - m_zero) % m_stride] = empire_id;
             }
 
             ar & boost::serialization::make_nvp(BOOST_PP_STRINGIZE(m_empire_id_to_next_assigned_object_id), temp_empire_id_to_object_id);

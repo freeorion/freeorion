@@ -124,8 +124,8 @@ void Universe::serialize(Archive& ar, const unsigned int version)
 
     if (version >= 1) {
         DebugLogger() << "Universe::serialize : " << serializing_label << " id allocator version = " << version;
-        m_object_id_allocator->SerializeForEmpire(ar, 0 ,m_encoding_empire);
-        m_design_id_allocator->SerializeForEmpire(ar, 0 ,m_encoding_empire);
+        m_object_id_allocator->SerializeForEmpire(ar, version, m_encoding_empire);
+        m_design_id_allocator->SerializeForEmpire(ar, version, m_encoding_empire);
     } else {
         if (Archive::is_loading::value) {
             int dummy_last_allocated_object_id;
