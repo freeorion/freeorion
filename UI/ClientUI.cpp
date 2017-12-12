@@ -753,14 +753,18 @@ std::string ClientUI::FormatTimestamp(boost::posix_time::ptime timestamp) {
         // Set facet to format timestamp in chat.
         boost::posix_time::time_facet* facet = new boost::posix_time::time_facet();
         facet->format("[%d %b %H:%M:%S] ");
-        date_format_sstream.imbue(std::locale(std::locale(""), facet));
+        auto dt_locale = std::locale(std::locale(""), facet);
+        TraceLogger() << "ClientUI::FormatTimestamp locale: " << dt_locale.name();
+        date_format_sstream.imbue(dt_locale);
 
         date_format_sstream.str("");
         date_format_sstream.clear();
         boost::posix_time::ptime local_timestamp = boost::date_time::c_local_adjustor<
             boost::posix_time::ptime>::utc_to_local(timestamp);
         date_format_sstream << local_timestamp;
-        TraceLogger() << "ClientUI::FormatTimestamp date formatted: " << date_format_sstream.str();;
+        TraceLogger() << "ClientUI::FormatTimestamp date formatted: " << date_format_sstream.str();
+        TraceLogger() << "ClientUI::FormatTimestamp date valid utf8?: " << (IsValidUTF8(date_format_sstream.str()) ? "yes" : "no");
+
         return date_format_sstream.str();
     }
     return "";
