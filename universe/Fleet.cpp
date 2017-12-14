@@ -84,7 +84,7 @@ namespace {
         system not known to the \p empire_id. */
     std::list<int> TruncateRouteToEndAtSystem(const std::list<int>& full_route, int empire_id, int last_system) {
 
-        if (full_route.empty())
+        if (full_route.empty() || (last_system == INVALID_OBJECT_ID))
             return std::list<int>();
 
         auto visible_end_it = full_route.cend();
