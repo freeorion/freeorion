@@ -5,9 +5,7 @@
 #include "OptionsDB.h"
 #include "StringTable.h"
 
-#include <boost/locale/generator.hpp>
-#include <boost/locale/info.hpp>
-#include <boost/locale/conversion.hpp>
+#include <boost/locale.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 
 namespace {
@@ -35,11 +33,9 @@ namespace {
             return;
         }
 
-        boost::locale::generator gen;
-        std::locale user_locale { gen("") };
         std::string lang {};
         try {
-            lang = std::use_facet<boost::locale::info>(user_locale).language();
+            lang = std::use_facet<boost::locale::info>(GetLocale()).language();
         } catch(std::bad_cast) {
             WarnLogger() << "Detected language: Bad cast, falling back to default";
             return;
@@ -105,6 +101,37 @@ namespace {
 
     const StringTable_& GetDefaultStringTable()
     { return GetStringTable(GetDefaultStringTableFileName()); }
+}
+
+std::locale GetLocale(const std::string& name) {
+    static bool locale_init { false };
+    // Initialize backend and generator on first use, provide a log for current enivornment locale
+    static auto locale_backend = boost::locale::localization_backend_manager::global();
+    if (!locale_init)
+        locale_backend.select("std");
+    static boost::locale::generator locale_gen(locale_backend);
+    if (!locale_init) {
+        locale_gen.locale_cache_enabled(true);
+        try {
+            InfoLogger() << "Global locale: " << std::use_facet<boost::locale::info>(locale_gen("")).name();
+        } catch (std::runtime_error) {
+            ErrorLogger() << "Global locale: set to invalid locale, setting to C locale";
+            std::locale::global(std::locale::classic());
+        }
+        locale_init = true;
+    }
+
+    std::locale retval;
+    try {
+        retval = locale_gen(name);
+    } catch(std::runtime_error) {
+        ErrorLogger() << "Requested locale \"" << name << "\" is not a valid locale for this operating system";
+        return std::locale::classic();
+    }
+
+    TraceLogger() << "Requested " << (name.empty() ? "(default)" : name) << " locale"
+                  << " returning " << std::use_facet<boost::locale::info>(retval).name();
+    return retval;
 }
 
 void FlushLoadedStringTables()

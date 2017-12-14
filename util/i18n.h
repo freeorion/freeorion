@@ -9,6 +9,9 @@
 
 #include "Export.h"
 
+/** Returns locale, which may be previously cached */
+FO_COMMON_API std::locale GetLocale(const std::string& name = std::string(""));
+
 /** Returns a language-specific string for the key-string \a str */
 FO_COMMON_API const std::string& UserString(const std::string& str);
 

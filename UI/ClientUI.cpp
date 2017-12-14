@@ -57,6 +57,8 @@
 
 #include <string>
 #include <algorithm>
+#include <boost/locale/formatting.hpp>
+#include <boost/locale/date_time.hpp>
 
 
 const Tech* GetTech(const std::string& name);
@@ -751,19 +753,17 @@ std::string ClientUI::FormatTimestamp(boost::posix_time::ptime timestamp) {
     if (DisplayTimestamp()) {
         std::stringstream date_format_sstream;
         // Set facet to format timestamp in chat.
-        boost::posix_time::time_facet* facet = new boost::posix_time::time_facet();
-        facet->format("[%d %b %H:%M:%S] ");
-        auto dt_locale = std::locale(std::locale(""), facet);
+        static auto facet = new boost::posix_time::time_facet("[%d %b %H:%M:%S] ");
+        static std::locale dt_locale(GetLocale(), facet);
         TraceLogger() << "ClientUI::FormatTimestamp locale: " << dt_locale.name();
-        date_format_sstream.imbue(dt_locale);
-
         date_format_sstream.str("");
         date_format_sstream.clear();
-        boost::posix_time::ptime local_timestamp = boost::date_time::c_local_adjustor<
-            boost::posix_time::ptime>::utc_to_local(timestamp);
+        date_format_sstream.imbue(dt_locale);
+        // Determine local time from provided UTC timestamp
+        auto local_timestamp = boost::date_time::c_local_adjustor<boost::posix_time::ptime>::utc_to_local(timestamp);
         date_format_sstream << local_timestamp;
-        TraceLogger() << "ClientUI::FormatTimestamp date formatted: " << date_format_sstream.str();
-        TraceLogger() << "ClientUI::FormatTimestamp date valid utf8?: " << (IsValidUTF8(date_format_sstream.str()) ? "yes" : "no");
+        TraceLogger() << "ClientUI::FormatTimestamp date formatted: " << date_format_sstream.str()
+                      << " Valid utf8?: " << (IsValidUTF8(date_format_sstream.str()) ? "yes" : "no");
 
         return date_format_sstream.str();
     }
