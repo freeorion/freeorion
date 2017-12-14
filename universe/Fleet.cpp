@@ -79,6 +79,34 @@ namespace {
             system->Insert(ship);
         }
     }
+
+    /** Return \p full_route terminates at \p last_system or before the first
+        system not known to the \p empire_id. */
+    std::list<int> TruncateRouteToEndAtSystem(const std::list<int>& full_route, int empire_id, int last_system) {
+
+        if (full_route.empty())
+            return std::list<int>();
+
+        auto visible_end_it = full_route.cend();
+        if (last_system != full_route.back()) {
+            visible_end_it = std::find(full_route.begin(), full_route.end(), last_system);
+
+            // if requested last system not in route, do nothing
+            if (visible_end_it == full_route.end())
+                return std::list<int>();
+
+            ++visible_end_it;
+        }
+
+        // remove any extra systems from the route after the apparent destination
+        auto end_it = std::find_if(full_route.begin(), visible_end_it,
+                                   boost::bind(&SystemHasNoVisibleStarlanes, _1, empire_id));
+
+        std::list<int> truncated_route;
+        std::copy(full_route.begin(), end_it, std::back_inserter(truncated_route));
+
+        return truncated_route;
+    }
 }
 
 // static(s)
@@ -146,15 +174,15 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
 
                 const std::list<int>& copied_fleet_route = copied_fleet->m_travel_route;
 
-                m_travel_route.clear();
                 if (!copied_fleet->m_travel_route.empty() && moving_to != INVALID_OBJECT_ID)
-                    m_travel_route.push_back(moving_to);
-                ShortenRouteToEndAtSystem(travel_route, moving_to);
+                    travel_route.push_back(moving_to);
+                travel_route = TruncateRouteToEndAtSystem(travel_route, empire_id, moving_to);
 
                 if (!travel_route.empty()
                     && travel_route.front() != INVALID_OBJECT_ID
                     && travel_route.size() != copied_fleet_route.size())
                 {
+                    // TODO: travel path is not necessarrily the shortest path.
                     try {
                         travel_distance -= GetPathfinder()->ShortestPath(travel_route.back(),
                                                                       copied_fleet_route.back()).second;
@@ -847,8 +875,7 @@ void Fleet::MovementPhase() {
     if (!move_path.empty() && !m_travel_route.empty() &&
          move_path.back().object_id != m_travel_route.back())
     {
-        auto shortened_route = TravelRoute();
-        ShortenRouteToEndAtSystem(shortened_route, move_path.back().object_id);
+        auto shortened_route = TruncateRouteToEndAtSystem(m_travel_route, Owner(), move_path.back().object_id);
         SetRoute(shortened_route);
         move_path = MovePath();
     }
@@ -1382,32 +1409,6 @@ float Fleet::Shields() const {
         retval = 0.0f;
 
     return retval;
-}
-
-void Fleet::ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system) {
-    std::list<int>::iterator visible_end_it;
-    if (last_system != FinalDestinationID()) {
-        visible_end_it = std::find(m_travel_route.begin(), m_travel_route.end(), last_system);
-
-        // if requested last system not in route, do nothing
-        if (visible_end_it == m_travel_route.end())
-            return;
-
-        ++visible_end_it;
-
-    } else {
-        visible_end_it = m_travel_route.end();
-    }
-
-    // remove any extra systems from the route after the apparent destination
-    auto end_it = std::find_if(m_travel_route.begin(), visible_end_it,
-                               boost::bind(&SystemHasNoVisibleStarlanes, _1, this->Owner()));
-    std::copy(m_travel_route.begin(), end_it, std::back_inserter(travel_route));
-
-    // If no Systems in a nonempty route are known reachable, default to just
-    // showing the next system on the route.
-    if (travel_route.empty() && !m_travel_route.empty())
-        travel_route.push_back(*m_travel_route.begin());
 }
 
 std::string Fleet::GenerateFleetName() {

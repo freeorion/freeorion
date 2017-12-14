@@ -160,9 +160,6 @@ protected:
     //@}
 
 private:
-    ///< removes any systems on the route after the specified system
-    void                    ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system);
-
     std::set<int>               m_ships;
 
     // these two uniquely describe the starlane graph edge the fleet is on, if it it's on one
