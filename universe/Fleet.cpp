@@ -162,20 +162,18 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
             if (Unowned())
                 m_name =                  copied_fleet->m_name;
 
-            if (vis >= VIS_FULL_VISIBILITY) {
-                m_travel_route =              copied_fleet->m_travel_route;
+            // Truncate the travel route to only systems known to empire_id
+            int moving_to = (vis >= VIS_FULL_VISIBILITY
+                             ? (!copied_fleet->m_travel_route.empty()
+                                ? copied_fleet->m_travel_route.back()
+                                : INVALID_OBJECT_ID)
+                             : m_next_system);
+
+            m_travel_route = TruncateRouteToEndAtSystem(copied_fleet->m_travel_route, empire_id, moving_to);
+
+
+            if (vis >= VIS_FULL_VISIBILITY)
                 m_ordered_given_to_empire_id =copied_fleet->m_ordered_given_to_empire_id;
-
-            } else {
-                int             moving_to =         m_next_system;
-                std::list<int>  travel_route;
-
-                if (!copied_fleet->m_travel_route.empty() && moving_to != INVALID_OBJECT_ID)
-                    travel_route.push_back(moving_to);
-                travel_route = TruncateRouteToEndAtSystem(travel_route, empire_id, moving_to);
-
-                m_travel_route = travel_route;
-            }
         }
     }
 }
