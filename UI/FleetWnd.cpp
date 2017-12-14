@@ -109,7 +109,7 @@ namespace {
 
             // name of final destination
             std::string dest_name = dest_sys->ApparentName(client_empire_id);
-            if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+            if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
                 dest_name = dest_name + " (" + std::to_string(dest_sys->ID()) + ")";
             }
 
@@ -141,7 +141,7 @@ namespace {
             else {
                 // "FW_FLEET_MOVING_TO" userstring is currently truncated to drop ETA info
                 // so as to fit better in a small fleet window
-                std::string moving_key = GetOptionsDB().Get<bool>("UI.show-fleet-eta")
+                std::string moving_key = GetOptionsDB().Get<bool>("ui.map.fleet.eta.shown")
                     ? UserString("FW_FLEET_MOVING_TO_ETA")
                     : UserString("FW_FLEET_MOVING_TO");
                 retval = boost::io::str(FlexibleFormat(moving_key) %
@@ -150,7 +150,7 @@ namespace {
 
         } else if (cur_sys) {
             std::string cur_system_name = cur_sys->ApparentName(client_empire_id);
-            if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+            if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
                 cur_system_name = cur_system_name + " (" + std::to_string(cur_sys->ID()) + ")";
             }
 
@@ -386,16 +386,16 @@ namespace {
     }
 
     void AddOptions(OptionsDB& db) {
-        db.Add("UI.fleet-wnd-aggression",   UserStringNop("OPTIONS_DB_FLEET_WND_AGGRESSION"),       INVALID_FLEET_AGGRESSION,   Validator<NewFleetAggression>());
-        db.Add("UI.fleet-wnd-scanline-clr", UserStringNop("OPTIONS_DB_UI_FLEET_WND_SCANLINE_CLR"),  GG::Clr(24, 24, 24, 192),   Validator<GG::Clr>());
+        db.Add("ui.fleet.aggression", UserStringNop("OPTIONS_DB_FLEET_WND_AGGRESSION"), INVALID_FLEET_AGGRESSION, Validator<NewFleetAggression>());
+        db.Add("ui.fleet.scanline.color", UserStringNop("OPTIONS_DB_UI_FLEET_WND_SCANLINE_CLR"), GG::Clr(24, 24, 24, 192), Validator<GG::Clr>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
     NewFleetAggression NewFleetsAggressiveOptionSetting()
-    { return GetOptionsDB().Get<NewFleetAggression>("UI.fleet-wnd-aggression"); }
+    { return GetOptionsDB().Get<NewFleetAggression>("ui.fleet.aggression"); }
 
     void SetNewFleetAggressiveOptionSetting(NewFleetAggression aggression)
-    { GetOptionsDB().Set<NewFleetAggression>("UI.fleet-wnd-aggression", aggression); }
+    { GetOptionsDB().Set<NewFleetAggression>("ui.fleet.aggression", aggression); }
 
     std::shared_ptr<GG::Texture> FleetAggressiveIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_aggressive.png"); }
@@ -468,7 +468,7 @@ std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(const std::vector<int>& fl
                                       GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE*/)
 {
     std::string config_name = "";
-    if (!GetOptionsDB().Get<bool>("UI.multiple-fleet-windows")) {
+    if (!GetOptionsDB().Get<bool>("ui.fleet.multiple.enabled")) {
         CloseAll();
         // Only write to OptionsDB if in single fleet window mode.
         config_name = FLEET_WND_NAME;
@@ -814,10 +814,10 @@ namespace {
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         if ((ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
-            && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+            && GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
         {
             m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, m_ship_icon->Width(), m_ship_icon->Height(), true,
-                                                                  GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
+                                                                  GetOptionsDB().Get<GG::Clr>("ui.fleet.scanline.color"));
             AttachChild(m_scanline_control);
         }
     }
@@ -845,7 +845,7 @@ namespace {
         // name and design name update
         const std::string& ship_name = ship->PublicName(empire_id);
         std::string id_name_part;
-        if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+        if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
             id_name_part = " (" + std::to_string(m_ship_id) + ")";
         }
         if (!ship->Unowned() && ship_name == UserString("FW_FOREIGN_SHIP")) {
@@ -887,7 +887,7 @@ namespace {
             } else if (entry.first == METER_SECONDARY_STAT) {
                 entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipFightersBrowseWnd>(
                                                    m_ship_id, entry.first));
-                entry.second->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip.extended-delay"), 1);
+                entry.second->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.extended.delay"), 1);
                 entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipFightersBrowseWnd>(
                                                    m_ship_id, entry.first, true), 1);
 
@@ -961,7 +961,7 @@ namespace {
         if (ship)
             ship_name = ship->Name();
 
-        if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+        if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
             ship_name = ship_name + " (" + std::to_string(m_ship_id) + ")";
         }
 
@@ -979,7 +979,7 @@ namespace {
         }
 
 
-        int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+        int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
 
         std::vector<std::pair<MeterType, std::shared_ptr<GG::Texture>>> meters_icons;
         meters_icons.push_back({METER_STRUCTURE,          ClientUI::MeterIcon(METER_STRUCTURE)});
@@ -1450,12 +1450,12 @@ void FleetDataPanel::Refresh() {
             const Empire* ship_owner_empire = GetEmpire(fleet->Owner());
             const std::string& owner_name = (ship_owner_empire ? ship_owner_empire->Name() : UserString("FW_FOREIGN"));
             std::string fleet_name = boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEET")) % owner_name);
-            if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+            if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
                 fleet_name = fleet_name + " (" + std::to_string(m_fleet_id) + ")";
             }
             m_fleet_name_text->SetText(fleet_name);
         } else {
-            if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+            if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
                 public_fleet_name = public_fleet_name + " (" + std::to_string(m_fleet_id) + ")";
             }
             m_fleet_name_text->SetText(public_fleet_name);
@@ -1538,10 +1538,10 @@ void FleetDataPanel::Refresh() {
             add_overlay("gifting.png");
 
         if ((fleet->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
-            && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+            && GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
         {
             m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, DataPanelIconSpace().x, ClientHeight(), true,
-                                                                  GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
+                                                                  GetOptionsDB().Get<GG::Clr>("ui.fleet.scanline.color"));
             AttachChild(m_scanline_control);
         }
 
@@ -1691,7 +1691,7 @@ void FleetDataPanel::SetStatIconValues() {
 void FleetDataPanel::UpdateAggressionToggle() {
     if (!m_aggression_toggle)
         return;
-    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+    int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
     m_aggression_toggle->SetBrowseModeTime(tooltip_delay);
 
     NewFleetAggression aggression = FLEET_AGGRESSIVE;
@@ -1787,7 +1787,7 @@ void FleetDataPanel::Init() {
             boost::bind(&FleetDataPanel::ToggleAggression, this));
 
     } else if (auto fleet = GetFleet(m_fleet_id)) {
-        int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+        int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
 
         std::vector<std::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>> meters_icons_browsetext;
         meters_icons_browsetext.emplace_back(METER_SIZE, FleetCountIcon(), "FW_FLEET_COUNT_SUMMARY");
@@ -2802,7 +2802,7 @@ void FleetWnd::CompleteConstruction() {
     Sound::TempUISoundDisabler sound_disabler;
 
     // add fleet aggregate stat icons
-    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+    int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
 
     for (auto entry : {
             std::make_tuple(METER_SIZE, FleetCountIcon(), UserStringNop("FW_FLEET_COUNT_SUMMARY")),

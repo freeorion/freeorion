@@ -51,10 +51,10 @@ namespace {
     const bool ENABLE_VISIBILITY_EMPIRE_MEMORY = true;      // toggles using memory with visibility, so that empires retain knowledge of objects viewed on previous turns
 
     void AddOptions(OptionsDB& db) {
-        db.Add("effects-threads-ui",        UserStringNop("OPTIONS_DB_EFFECTS_THREADS_UI_DESC"),        8,      RangedValidator<int>(1, 32));
-        db.Add("effects-threads-ai",        UserStringNop("OPTIONS_DB_EFFECTS_THREADS_AI_DESC"),        2,      RangedValidator<int>(1, 32));
-        db.Add("effects-threads-server",    UserStringNop("OPTIONS_DB_EFFECTS_THREADS_SERVER_DESC"),    8,      RangedValidator<int>(1, 32));
-        db.Add("effect-accounting",         UserStringNop("OPTIONS_DB_EFFECT_ACCOUNTING"),              true,   Validator<bool>());
+        db.Add("effects.ui.threads",                UserStringNop("OPTIONS_DB_EFFECTS_THREADS_UI_DESC"),        8,      RangedValidator<int>(1, 32));
+        db.Add("effects.ai.threads",                UserStringNop("OPTIONS_DB_EFFECTS_THREADS_AI_DESC"),        2,      RangedValidator<int>(1, 32));
+        db.Add("effects.server.threads",            UserStringNop("OPTIONS_DB_EFFECTS_THREADS_SERVER_DESC"),    8,      RangedValidator<int>(1, 32));
+        db.Add("effects.accounting.enabled",        UserStringNop("OPTIONS_DB_EFFECT_ACCOUNTING"),              true,   Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -480,7 +480,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters(bool do_accounting) {
 
     if (do_accounting) {
         // override if option disabled
-        do_accounting = GetOptionsDB().Get<bool>("effect-accounting");
+        do_accounting = GetOptionsDB().Get<bool>("effects.accounting.enabled");
     }
 
     m_effect_specified_empire_object_visibilities.clear();
@@ -516,7 +516,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
     ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on " + std::to_string(object_ids.size()) + " objects");
     if (do_accounting) {
         // override if disabled
-        do_accounting = GetOptionsDB().Get<bool>("effect-accounting");
+        do_accounting = GetOptionsDB().Get<bool>("effects.accounting.enabled");
     }
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
@@ -548,7 +548,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
     ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on all objects");
     if (do_accounting) {
         // override if disabled
-        do_accounting = GetOptionsDB().Get<bool>("effect-accounting");
+        do_accounting = GetOptionsDB().Get<bool>("effects.accounting.enabled");
     }
 
     Effect::TargetsCauses targets_causes;
@@ -570,7 +570,7 @@ void Universe::ApplyMeterEffectsAndUpdateTargetMaxUnpairedMeters(bool do_account
     ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on all objects");
     if (do_accounting) {
         // override if disabled
-        do_accounting = GetOptionsDB().Get<bool>("effect-accounting");
+        do_accounting = GetOptionsDB().Get<bool>("effects.accounting.enabled");
     }
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes);
@@ -735,7 +735,7 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
 
 void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     ScopedTimer timer("Universe::UpdateMeterEstimatesImpl on " + std::to_string(objects_vec.size()) + " objects", true);
-    bool do_accounting = GetOptionsDB().Get<bool>("effect-accounting");
+    bool do_accounting = GetOptionsDB().Get<bool>("effects.accounting.enabled");
 
     // get all pointers to objects once, to avoid having to do so repeatedly
     // when iterating over the list in the following code

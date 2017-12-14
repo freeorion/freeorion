@@ -96,23 +96,23 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add("autosave.single-player.turn-start", UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START"),     true,   Validator<bool>());
-        db.Add("autosave.single-player.turn-end",   UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END"),     false,   Validator<bool>());
-        db.Add("autosave.multiplayer.turn-start",   UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"),       true,   Validator<bool>());
-        db.Add("autosave.turns",                    UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),             1,      RangedValidator<int>(1, 50));
-        db.Add("autosave.turn-limit",               UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),             10,     RangedValidator<int>(1, 10000));
-        db.Add("autosave.galaxy-creation",      UserStringNop("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"),      true,   Validator<bool>());
-        db.Add("autosave.game-close",           UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),         true,   Validator<bool>());
-        db.Add("UI.swap-mouse-lr",              UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),           false);
-        db.Add("UI.keypress-repeat-delay",      UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_DELAY"),      360,    RangedValidator<int>(0, 1000));
-        db.Add("UI.keypress-repeat-interval",   UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"),   20,     RangedValidator<int>(0, 1000));
-        db.Add("UI.mouse-click-repeat-delay",   UserStringNop("OPTIONS_DB_MOUSE_REPEAT_DELAY"),         360,    RangedValidator<int>(0, 1000));
-        db.Add("UI.mouse-click-repeat-interval",UserStringNop("OPTIONS_DB_MOUSE_REPEAT_INTERVAL"),      15,     RangedValidator<int>(0, 1000));
-        db.Add("UI.display-timestamp",          UserStringNop("OPTIONS_DB_DISPLAY_TIMESTAMP"),          true,   Validator<bool>());
+        db.Add("save.auto.turn.start.enabled",              UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START"),  true,               Validator<bool>());
+        db.Add("save.auto.turn.end.enabled",                UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END"),    false,              Validator<bool>());
+        db.Add("save.auto.turn.multiplayer.start.enabled",  UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"),    true,               Validator<bool>());
+        db.Add("save.auto.turn.interval",                   UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),                     1,                  RangedValidator<int>(1, 50));
+        db.Add("save.auto.file.limit",                      UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),                     10,                 RangedValidator<int>(1, 10000));
+        db.Add("save.auto.initial.enabled",                 UserStringNop("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"),           true,               Validator<bool>());
+        db.Add("save.auto.exit.enabled",                    UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),                true,               Validator<bool>());
+        db.Add("ui.input.mouse.button.swap.enabled",        UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),                   false);
+        db.Add("ui.input.keyboard.repeat.delay",            UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_DELAY"),              360,                RangedValidator<int>(0, 1000));
+        db.Add("ui.input.keyboard.repeat.interval",         UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"),           20,                 RangedValidator<int>(0, 1000));
+        db.Add("ui.input.mouse.button.repeat.delay",        UserStringNop("OPTIONS_DB_MOUSE_REPEAT_DELAY"),                 360,                RangedValidator<int>(0, 1000));
+        db.Add("ui.input.mouse.button.repeat.interval",     UserStringNop("OPTIONS_DB_MOUSE_REPEAT_INTERVAL"),              15,                 RangedValidator<int>(0, 1000));
+        db.Add("ui.map.messages.timestamp.shown",           UserStringNop("OPTIONS_DB_DISPLAY_TIMESTAMP"),                  true,               Validator<bool>());
 
-        Hotkey::AddHotkey("exit",       UserStringNop("HOTKEY_EXIT"),       GG::GGK_NONE,   GG::MOD_KEY_NONE);
-        Hotkey::AddHotkey("quit",       UserStringNop("HOTKEY_QUIT"),       GG::GGK_NONE,   GG::MOD_KEY_NONE);
-        Hotkey::AddHotkey("fullscreen", UserStringNop("HOTKEY_FULLSCREEN"), GG::GGK_RETURN, GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("exit",                           UserStringNop("HOTKEY_EXIT"),                                   GG::GGK_NONE,       GG::MOD_KEY_NONE);
+        Hotkey::AddHotkey("quit",                           UserStringNop("HOTKEY_QUIT"),                                   GG::GGK_NONE,       GG::MOD_KEY_NONE);
+        Hotkey::AddHotkey("video.fullscreen",               UserStringNop("HOTKEY_FULLSCREEN"),                             GG::GGK_RETURN,     GG::MOD_KEY_ALT);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -137,10 +137,10 @@ namespace {
 
     /* Sets the value of options that need language-dependent default values.*/
     void SetStringtableDependentOptionDefaults() {
-        SetEmptyStringDefaultOption("GameSetup.empire-name", UserString("DEFAULT_EMPIRE_NAME"));
+        SetEmptyStringDefaultOption("setup.empire.name", UserString("DEFAULT_EMPIRE_NAME"));
         std::string player_name = UserString("DEFAULT_PLAYER_NAME");
-        SetEmptyStringDefaultOption("GameSetup.player-name", player_name);
-        SetEmptyStringDefaultOption("multiplayersetup.player-name", player_name);
+        SetEmptyStringDefaultOption("setup.player.name", player_name);
+        SetEmptyStringDefaultOption("setup.multiplayer.player.name", player_name);
     }
 
     std::string GetGLVersionString()
@@ -174,16 +174,16 @@ namespace {
         }
 
         // only execute default option setting once
-        if (GetOptionsDB().Get<bool>("checked-gl-version"))
+        if (GetOptionsDB().Get<bool>("version.gl.check.done"))
             return;
-        GetOptionsDB().Set<bool>("checked-gl-version", true);
+        GetOptionsDB().Set<bool>("version.gl.check.done", true);
 
         // if GL version is too low, set various map rendering options to
         // disabled, to hopefully improve frame rate.
         if (version_number < 2.0) {
-            GetOptionsDB().Set<bool>("UI.galaxy-gas-background",        false);
-            GetOptionsDB().Set<bool>("UI.galaxy-starfields",            false);
-            GetOptionsDB().Set<bool>("UI.system-fog-of-war",            false);
+            GetOptionsDB().Set<bool>("ui.map.background.gas.shown", false);
+            GetOptionsDB().Set<bool>("ui.map.background.starfields.shown", false);
+            GetOptionsDB().Set<bool>("ui.map.scanlines.shown", false);
         }
     }
 }
@@ -192,12 +192,12 @@ void HumanClientApp::AddWindowSizeOptionsAfterMainStart(OptionsDB& db) {
     const int max_width_plus_one = HumanClientApp::MaximumPossibleWidth() + 1;
     const int max_height_plus_one = HumanClientApp::MaximumPossibleHeight() + 1;
 
-    db.Add("app-width",             UserStringNop("OPTIONS_DB_APP_WIDTH"),             DEFAULT_WIDTH,       RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
-    db.Add("app-height",            UserStringNop("OPTIONS_DB_APP_HEIGHT"),            DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
-    db.Add("app-width-windowed",    UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),    DEFAULT_WIDTH,       RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
-    db.Add("app-height-windowed",   UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
-    db.Add("app-left-windowed",     UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),     DEFAULT_LEFT,        OrValidator<int>( RangedValidator<int>(-max_width_plus_one, max_width_plus_one), DiscreteValidator<int>(DEFAULT_LEFT) ));
-    db.Add("app-top-windowed",      UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),      DEFAULT_TOP,         RangedValidator<int>(-max_height_plus_one, max_height_plus_one));
+    db.Add("video.fullscreen.width", UserStringNop("OPTIONS_DB_APP_WIDTH"),            DEFAULT_WIDTH,       RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
+    db.Add("video.fullscreen.height", UserStringNop("OPTIONS_DB_APP_HEIGHT"),          DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
+    db.Add("video.windowed.width",  UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),    DEFAULT_WIDTH,       RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
+    db.Add("video.windowed.height", UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
+    db.Add("video.windowed.left", UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),  DEFAULT_LEFT,        OrValidator<int>( RangedValidator<int>(-max_width_plus_one, max_width_plus_one), DiscreteValidator<int>(DEFAULT_LEFT) ));
+    db.Add("video.windowed.top", UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),    DEFAULT_TOP,         RangedValidator<int>(-max_height_plus_one, max_height_plus_one));
 }
 
 HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const std::string& name,
@@ -265,14 +265,14 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     bool inform_user_sound_failed(false);
     try {
-        if (GetOptionsDB().Get<bool>("UI.sound.enabled") || GetOptionsDB().Get<bool>("UI.sound.music-enabled"))
+        if (GetOptionsDB().Get<bool>("audio.effects.enabled") || GetOptionsDB().Get<bool>("audio.music.enabled"))
             Sound::GetSound().Enable();
 
-        if ((GetOptionsDB().Get<bool>("UI.sound.music-enabled")))
-            Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("UI.sound.bg-music"), -1);
+        if ((GetOptionsDB().Get<bool>("audio.music.enabled")))
+            Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("audio.music.path"), -1);
 
-        Sound::GetSound().SetMusicVolume(GetOptionsDB().Get<int>("UI.sound.music-volume"));
-        Sound::GetSound().SetUISoundsVolume(GetOptionsDB().Get<int>("UI.sound.volume"));
+        Sound::GetSound().SetMusicVolume(GetOptionsDB().Get<int>("audio.music.volume"));
+        Sound::GetSound().SetUISoundsVolume(GetOptionsDB().Get<int>("audio.effects.volume"));
     } catch (Sound::InitializationFailureException const &) {
         inform_user_sound_failed = true;
     }
@@ -281,9 +281,9 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     EnableFPS();
     UpdateFPSLimit();
-    GetOptionsDB().OptionChangedSignal("show-fps").connect(
+    GetOptionsDB().OptionChangedSignal("video.fps.shown").connect(
         boost::bind(&HumanClientApp::UpdateFPSLimit, this));
-    GetOptionsDB().OptionChangedSignal("max-fps").connect(
+    GetOptionsDB().OptionChangedSignal("video.fps.max").connect(
         boost::bind(&HumanClientApp::UpdateFPSLimit, this));
 
     std::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
@@ -297,10 +297,10 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     SetCursor(std::make_shared<GG::TextureCursor>(cursor_texture, GG::Pt(GG::X(6), GG::Y(3))));
     RenderCursor(true);
 
-    EnableKeyPressRepeat(GetOptionsDB().Get<int>("UI.keypress-repeat-delay"),
-                         GetOptionsDB().Get<int>("UI.keypress-repeat-interval"));
-    EnableMouseButtonDownRepeat(GetOptionsDB().Get<int>("UI.mouse-click-repeat-delay"),
-                                GetOptionsDB().Get<int>("UI.mouse-click-repeat-interval"));
+    EnableKeyPressRepeat(GetOptionsDB().Get<int>("ui.input.keyboard.repeat.delay"),
+                         GetOptionsDB().Get<int>("ui.input.keyboard.repeat.interval"));
+    EnableMouseButtonDownRepeat(GetOptionsDB().Get<int>("ui.input.mouse.button.repeat.delay"),
+                                GetOptionsDB().Get<int>("ui.input.mouse.button.repeat.interval"));
     EnableModalAcceleratorSignals(true);
 
     WindowResizedSignal.connect(
@@ -317,7 +317,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     SetStringtableDependentOptionDefaults();
     SetGLVersionDependentOptionDefaults();
 
-    this->SetMouseLRSwapped(GetOptionsDB().Get<bool>("UI.swap-mouse-lr"));
+    this->SetMouseLRSwapped(GetOptionsDB().Get<bool>("ui.input.mouse.button.swap.enabled"));
 
     auto named_key_maps = parse::keymaps(GetResourceDir() / "scripting/keymaps.inf");
     TraceLogger() << "Keymaps:";
@@ -354,7 +354,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     // Start parsing content
     StartBackgroundParsing();
-    GetOptionsDB().OptionChangedSignal("resource-dir").connect(
+    GetOptionsDB().OptionChangedSignal("resource.path").connect(
         boost::bind(&HumanClientApp::HandleResoureDirChange, this));
 }
 
@@ -366,7 +366,7 @@ void HumanClientApp::ConnectKeyboardAcceleratorSignals() {
                  NoModalWndsOpenCondition);
     hkm->Connect(boost::bind(&HumanClientApp::HandleHotkeyResetGame, this),        "quit",
                  NoModalWndsOpenCondition);
-    hkm->Connect(boost::bind(&HumanClientApp::ToggleFullscreen, this), "fullscreen",
+    hkm->Connect(boost::bind(&HumanClientApp::ToggleFullscreen, this), "video.fullscreen",
                  NoModalWndsOpenCondition);
 
     hkm->RebuildShortcuts();
@@ -453,8 +453,8 @@ void HumanClientApp::StartServer() {
     std::string ai_config = GetOptionsDB().Get<std::string>("ai-config");
     std::string ai_path = GetOptionsDB().Get<std::string>("ai-path");
     args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
-    args.push_back("--resource-dir");
-    args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
+    args.push_back("--resource.path");
+    args.push_back("\"" + GetOptionsDB().Get<std::string>("resource.path") + "\"");
 
     auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
     if (!force_log_level.empty()) {
@@ -489,7 +489,7 @@ void HumanClientApp::FreeServer() {
 }
 
 void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
-    if (!GetOptionsDB().Get<bool>("force-external-server")) {
+    if (!GetOptionsDB().Get<bool>("network.server.external.force")) {
         m_single_player_game = true;
         try {
             StartServer();
@@ -530,16 +530,16 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         // from just having run GalaxySetupWnd
 
         // GalaxySetupData
-        setup_data.m_seed =             GetOptionsDB().Get<std::string>("GameSetup.seed");
-        setup_data.m_size =             GetOptionsDB().Get<int>("GameSetup.stars");
-        setup_data.m_shape =            GetOptionsDB().Get<Shape>("GameSetup.galaxy-shape");
-        setup_data.m_age =              GetOptionsDB().Get<GalaxySetupOption>("GameSetup.galaxy-age");
-        setup_data.m_starlane_freq =    GetOptionsDB().Get<GalaxySetupOption>("GameSetup.starlane-frequency");
-        setup_data.m_planet_density =   GetOptionsDB().Get<GalaxySetupOption>("GameSetup.planet-density");
-        setup_data.m_specials_freq =    GetOptionsDB().Get<GalaxySetupOption>("GameSetup.specials-frequency");
-        setup_data.m_monster_freq =     GetOptionsDB().Get<GalaxySetupOption>("GameSetup.monster-frequency");
-        setup_data.m_native_freq =      GetOptionsDB().Get<GalaxySetupOption>("GameSetup.native-frequency");
-        setup_data.m_ai_aggr =          GetOptionsDB().Get<Aggression>("GameSetup.ai-aggression");
+        setup_data.m_seed = GetOptionsDB().Get<std::string>("setup.seed");
+        setup_data.m_size = GetOptionsDB().Get<int>("setup.star.count");
+        setup_data.m_shape = GetOptionsDB().Get<Shape>("setup.galaxy.shape");
+        setup_data.m_age = GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age");
+        setup_data.m_starlane_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency");
+        setup_data.m_planet_density = GetOptionsDB().Get<GalaxySetupOption>("setup.planet.density");
+        setup_data.m_specials_freq =    GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency");
+        setup_data.m_monster_freq =     GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency");
+        setup_data.m_native_freq =      GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency");
+        setup_data.m_ai_aggr =          GetOptionsDB().Get<Aggression>("setup.ai.aggression");
         setup_data.m_game_rules =       game_rules;
 
 
@@ -549,19 +549,19 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
         // Human player setup data
         PlayerSetupData human_player_setup_data;
-        human_player_setup_data.m_player_name = GetOptionsDB().Get<std::string>("GameSetup.player-name");
-        human_player_setup_data.m_empire_name = GetOptionsDB().Get<std::string>("GameSetup.empire-name");
+        human_player_setup_data.m_player_name = GetOptionsDB().Get<std::string>("setup.player.name");
+        human_player_setup_data.m_empire_name = GetOptionsDB().Get<std::string>("setup.empire.name");
 
         // DB stores index into array of available colours, so need to get that array to look up value of index.
         // if stored value is invalid, use a default colour
         const std::vector<GG::Clr>& empire_colours = EmpireColors();
-        int colour_index = GetOptionsDB().Get<int>("GameSetup.empire-color");
+        int colour_index = GetOptionsDB().Get<int>("setup.empire.color.index");
         if (colour_index >= 0 && colour_index < static_cast<int>(empire_colours.size()))
             human_player_setup_data.m_empire_color = empire_colours[colour_index];
         else
             human_player_setup_data.m_empire_color = GG::CLR_GREEN;
 
-        human_player_setup_data.m_starting_species_name = GetOptionsDB().Get<std::string>("GameSetup.starting-species");
+        human_player_setup_data.m_starting_species_name = GetOptionsDB().Get<std::string>("setup.initial.species");
         if (human_player_setup_data.m_starting_species_name == "1")
             human_player_setup_data.m_starting_species_name = "SP_HUMAN";   // kludge / bug workaround for bug with options storage and retreival.  Empty-string options are stored, but read in as "true" boolean, and converted to string equal to "1"
 
@@ -583,7 +583,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
 
         // AI player setup data.  One entry for each requested AI
-        int num_AIs = GetOptionsDB().Get<int>("GameSetup.ai-players");
+        int num_AIs = GetOptionsDB().Get<int>("setup.ai.player.count");
         for (int ai_i = 1; ai_i <= num_AIs; ++ai_i) {
             PlayerSetupData ai_setup_data;
 
@@ -621,7 +621,7 @@ void HumanClientApp::MultiPlayerGame() {
         return;
 
     if (server_name == "HOST GAME SELECTED") {
-        if (!GetOptionsDB().Get<bool>("force-external-server")) {
+        if (!GetOptionsDB().Get<bool>("network.server.external.force")) {
             m_single_player_game = false;
             try {
                 StartServer();
@@ -636,7 +636,7 @@ void HumanClientApp::MultiPlayerGame() {
             }
             server_name = "localhost";
         }
-        server_name = GetOptionsDB().Get<std::string>("external-server-address");
+        server_name = GetOptionsDB().Get<std::string>("network.server.uri");
     }
 
     m_connected = m_networking->ConnectToServer(server_name);
@@ -729,7 +729,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() not already in a game, so don't need to end it";
     }
 
-    if (!GetOptionsDB().Get<bool>("force-external-server")) {
+    if (!GetOptionsDB().Get<bool>("network.server.external.force")) {
         m_single_player_game = true;
         try {
             StartServer();
@@ -807,8 +807,8 @@ void HumanClientApp::RequestSavePreviews(const std::string& relative_directory) 
 std::pair<int, int> HumanClientApp::GetWindowLeftTop() {
     int left(0), top(0);
 
-    left = GetOptionsDB().Get<int>("app-left-windowed");
-    top = GetOptionsDB().Get<int>("app-top-windowed");
+    left = GetOptionsDB().Get<int>("video.windowed.left");
+    top = GetOptionsDB().Get<int>("video.windowed.top");
 
     // clamp to edges to avoid weird bug with maximizing windows setting their
     // left and top to -9 which lead to weird issues when attmepting to recreate
@@ -824,31 +824,31 @@ std::pair<int, int> HumanClientApp::GetWindowLeftTop() {
 std::pair<int, int> HumanClientApp::GetWindowWidthHeight() {
     int width(800), height(600);
 
-    bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
+    bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
     if (!fullscreen) {
-        width = GetOptionsDB().Get<int>("app-width-windowed");
-        height = GetOptionsDB().Get<int>("app-height-windowed");
+        width = GetOptionsDB().Get<int>("video.windowed.width");
+        height = GetOptionsDB().Get<int>("video.windowed.height");
         return {width, height};
     }
 
-    bool reset_fullscreen = GetOptionsDB().Get<bool>("reset-fullscreen-size");
+    bool reset_fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.reset");
     if (!reset_fullscreen) {
-        width = GetOptionsDB().Get<int>("app-width");
-        height = GetOptionsDB().Get<int>("app-height");
+        width = GetOptionsDB().Get<int>("video.fullscreen.width");
+        height = GetOptionsDB().Get<int>("video.fullscreen.height");
         return {width, height};
     }
 
-    GetOptionsDB().Set<bool>("reset-fullscreen-size", false);
-    GG::Pt default_resolution = GetDefaultResolutionStatic(GetOptionsDB().Get<int>("fullscreen-monitor-id"));
-    GetOptionsDB().Set("app-width", Value(default_resolution.x));
-    GetOptionsDB().Set("app-height", Value(default_resolution.y));
+    GetOptionsDB().Set<bool>("video.fullscreen.reset", false);
+    GG::Pt default_resolution = GetDefaultResolutionStatic(GetOptionsDB().Get<int>("video.monitor.id"));
+    GetOptionsDB().Set("video.fullscreen.width", Value(default_resolution.x));
+    GetOptionsDB().Set("video.fullscreen.height", Value(default_resolution.y));
     GetOptionsDB().Commit();
     return {Value(default_resolution.x), Value(default_resolution.y)};
 }
 
 void HumanClientApp::Reinitialize() {
-    bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
-    bool fake_mode_change = GetOptionsDB().Get<bool>("fake-mode-change");
+    bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
+    bool fake_mode_change = GetOptionsDB().Get<bool>("video.fullscreen.fake.enabled");
     std::pair<int, int> size = GetWindowWidthHeight();
 
     bool fullscreen_transition = Fullscreen() != fullscreen;
@@ -860,7 +860,7 @@ void HumanClientApp::Reinitialize() {
         FullscreenSwitchSignal(fullscreen); // after video mode is changed but before DoLayout() calls
     } else if (fullscreen &&
                (old_width != size.first || old_height != size.second) &&
-               GetOptionsDB().Get<bool>("UI.auto-reposition-windows"))
+               GetOptionsDB().Get<bool>("ui.reposition.auto.enabled"))
     {
         // Reposition windows if in fullscreen mode... handled here instead of
         // HandleWindowResize() because the prev. fullscreen resolution is only
@@ -897,7 +897,7 @@ void HumanClientApp::StartTurn() {
     }
 
     // Do the turn end autosave.
-    if (m_single_player_game && GetOptionsDB().Get<bool>("autosave.single-player.turn-end")) {
+    if (m_single_player_game && GetOptionsDB().Get<bool>("save.auto.turn.end.enabled")) {
         DebugLogger() << "Starting end of turn autosave.";
         Autosave();
     }
@@ -1018,8 +1018,8 @@ void HumanClientApp::SendLoggingConfigToServer() {
 
 void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
     if (!Fullscreen()) {
-        GetOptionsDB().Set<int>("app-left-windowed", Value(w));
-        GetOptionsDB().Set<int>("app-top-windowed", Value(h));
+        GetOptionsDB().Set<int>("video.windowed.left", Value(w));
+        GetOptionsDB().Set<int>("video.windowed.top", Value(h));
         GetOptionsDB().Commit();
     }
 }
@@ -1032,18 +1032,18 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
             intro_screen->Resize(GG::Pt(w, h));
     }
 
-    if (!GetOptionsDB().Get<bool>("fullscreen") &&
-         (GetOptionsDB().Get<int>("app-width-windowed") != w ||
-          GetOptionsDB().Get<int>("app-height-windowed") != h))
+    if (!GetOptionsDB().Get<bool>("video.fullscreen.enabled") &&
+         (GetOptionsDB().Get<int>("video.windowed.width") != w ||
+          GetOptionsDB().Get<int>("video.windowed.height") != h))
     {
-        if (GetOptionsDB().Get<bool>("UI.auto-reposition-windows")) {
+        if (GetOptionsDB().Get<bool>("ui.reposition.auto.enabled")) {
             // Reposition windows if in windowed mode.
             RepositionWindowsSignal();
         }
         // store resize if window is not full-screen (so that fullscreen
         // resolution doesn't overwrite windowed resolution)
-        GetOptionsDB().Set<int>("app-width-windowed", Value(w));
-        GetOptionsDB().Set<int>("app-height-windowed", Value(h));
+        GetOptionsDB().Set<int>("video.windowed.width", Value(w));
+        GetOptionsDB().Set<int>("video.windowed.height", Value(h));
     }
 
     glViewport(0, 0, Value(w), Value(h));
@@ -1060,21 +1060,21 @@ void HumanClientApp::HandleFocusChange(bool gained_focus) {
 
     // limit rendering frequency when defocused to limit CPU use, and disable sound
     if (!m_have_window_focus) {
-        if (GetOptionsDB().Get<bool>("limit-fps-no-focus"))
-            this->SetMaxFPS(GetOptionsDB().Get<double>("max-fps-no_focus"));
+        if (GetOptionsDB().Get<bool>("video.fps.unfocused.enabled"))
+            this->SetMaxFPS(GetOptionsDB().Get<double>("video.fps.unfocused"));
         else
             this->SetMaxFPS(0.0);
 
-        if (GetOptionsDB().Get<bool>("UI.sound.music-enabled"))
+        if (GetOptionsDB().Get<bool>("audio.music.enabled"))
             Sound::GetSound().PauseMusic();
     }
     else {
-        if (GetOptionsDB().Get<bool>("limit-fps"))
-            this->SetMaxFPS(GetOptionsDB().Get<double>("max-fps"));
+        if (GetOptionsDB().Get<bool>("video.fps.max.enabled"))
+            this->SetMaxFPS(GetOptionsDB().Get<double>("video.fps.max"));
         else
             this->SetMaxFPS(0.0);
 
-        if (GetOptionsDB().Get<bool>("UI.sound.music-enabled"))
+        if (GetOptionsDB().Get<bool>("audio.music.enabled"))
             Sound::GetSound().ResumeMusic();
     }
 
@@ -1101,8 +1101,8 @@ bool HumanClientApp::HandleHotkeyExitApp() {
 }
 
 bool HumanClientApp::ToggleFullscreen() {
-    bool fs = GetOptionsDB().Get<bool>("fullscreen");
-    GetOptionsDB().Set<bool>("fullscreen", !fs);
+    bool fs = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
+    GetOptionsDB().Set<bool>("video.fullscreen.enabled", !fs);
     Reinitialize();
     return true;
 }
@@ -1268,27 +1268,27 @@ void HumanClientApp::Autosave() {
         return;
 
     // Create an auto save for 1) new games on turn 1, 2) if auto save is
-    // requested on turn number modulo autosave.turns or 3) on the last turn of
+    // requested on turn number modulo save.auto.turn.interval or 3) on the last turn of
     // play.
 
     // autosave only on appropriate turn numbers, and when enabled for current
     // game type (single vs. multiplayer)
-    int autosave_turns = GetOptionsDB().Get<int>("autosave.turns");
+    int autosave_turns = GetOptionsDB().Get<int>("save.auto.turn.interval");
     bool is_single_player_enabled =
         (m_single_player_game
-         && (GetOptionsDB().Get<bool>("autosave.single-player.turn-start")
-             || GetOptionsDB().Get<bool>("autosave.single-player.turn-end")));
+         && (GetOptionsDB().Get<bool>("save.auto.turn.start.enabled")
+             || GetOptionsDB().Get<bool>("save.auto.turn.end.enabled")));
     bool is_multi_player_enabled =
         (!m_single_player_game
-         && GetOptionsDB().Get<bool>("autosave.multiplayer.turn-start"));
+         && GetOptionsDB().Get<bool>("save.auto.turn.multiplayer.start.enabled"));
     bool is_valid_autosave =
         (autosave_turns > 0
          && CurrentTurn() % autosave_turns == 0
          && (is_single_player_enabled || is_multi_player_enabled));
 
     // is_initial_save is gated in HumanClientFSM for new game vs loaded game
-    bool is_initial_save = (GetOptionsDB().Get<bool>("autosave.galaxy-creation") && CurrentTurn() == 1);
-    bool is_final_save = (GetOptionsDB().Get<bool>("autosave.game-close") && !m_game_started);
+    bool is_initial_save = (GetOptionsDB().Get<bool>("save.auto.initial.enabled") && CurrentTurn() == 1);
+    bool is_final_save = (GetOptionsDB().Get<bool>("save.auto.exit.enabled") && !m_game_started);
 
     if (!(is_initial_save || is_valid_autosave || is_final_save))
         return;
@@ -1297,18 +1297,18 @@ void HumanClientApp::Autosave() {
 
     // check for and remove excess oldest autosaves.
     boost::filesystem::path autosave_dir_path((m_single_player_game ? GetSaveDir() : GetServerSaveDir()) / "auto");
-    int max_turns = std::max(1, GetOptionsDB().Get<int>("autosave.turn-limit"));
+    int max_turns = std::max(1, GetOptionsDB().Get<int>("save.auto.file.limit"));
     bool is_two_saves_per_turn =
         (m_single_player_game
-         && GetOptionsDB().Get<bool>("autosave.single-player.turn-start")
-         && GetOptionsDB().Get<bool>("autosave.single-player.turn-end"))
+         && GetOptionsDB().Get<bool>("save.auto.turn.start.enabled")
+         && GetOptionsDB().Get<bool>("save.auto.turn.end.enabled"))
         ||
         (!m_single_player_game
-         && GetOptionsDB().Get<bool>("autosave.multiplayer.turn-start"));
+         && GetOptionsDB().Get<bool>("save.auto.turn.multiplayer.start.enabled"));
     int max_autosaves =
         (max_turns * (is_two_saves_per_turn ? 2 : 1)
-         + (GetOptionsDB().Get<bool>("autosave.galaxy-creation") ? 1 : 0)
-         + (GetOptionsDB().Get<bool>("autosave.game-close") ? 1 : 0));
+         + (GetOptionsDB().Get<bool>("save.auto.initial.enabled") ? 1 : 0)
+         + (GetOptionsDB().Get<bool>("save.auto.exit.enabled") ? 1 : 0));
     RemoveOldestFiles(max_autosaves, autosave_dir_path);
 
     // create new save
@@ -1398,7 +1398,7 @@ void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_cod
 
     // Only save if not exiting due to an error.
     if (!skip_savegame) {
-        if (was_playing && GetOptionsDB().Get<bool>("autosave.game-close"))
+        if (was_playing && GetOptionsDB().Get<bool>("save.auto.exit.enabled"))
             Autosave();
 
         if (!m_game_saves_in_progress.empty()) {
@@ -1435,11 +1435,11 @@ bool HumanClientApp::HaveWindowFocus() const
 { return m_have_window_focus; }
 
 int HumanClientApp::EffectsProcessingThreads() const
-{ return GetOptionsDB().Get<int>("effects-threads-ui"); }
+{ return GetOptionsDB().Get<int>("effects.ui.threads"); }
 
 void HumanClientApp::UpdateFPSLimit() {
-    if (GetOptionsDB().Get<bool>("limit-fps")) {
-        double fps = GetOptionsDB().Get<double>("max-fps");
+    if (GetOptionsDB().Get<bool>("video.fps.max.enabled")) {
+        double fps = GetOptionsDB().Get<double>("video.fps.max");
         SetMaxFPS(fps);
         DebugLogger() << "Limited FPS to " << fps;
     } else {

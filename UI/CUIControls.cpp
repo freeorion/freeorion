@@ -29,22 +29,22 @@
 
 namespace {
     void PlayButtonClickSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.press.sound.path"), true); }
 
     void PlayButtonRolloverSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.rollover.sound.path"), true); }
 
     void PlayListSelectSound(const GG::ListBox::SelectionSet&)
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.list-select"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.listbox.select.sound.path"), true); }
 
     void PlayDropDownListOpenSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.list-pulldown"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.dropdownlist.select.sound.path"), true); }
 
     void PlayItemDropSound(GG::ListBox::iterator)
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.item-drop"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.listbox.drop.sound.path"), true); }
 
     void PlayTextTypingSound(const std::string&)
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.text-typing"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.input.keyboard.sound.path"), true); }
 
     const double ARROW_BRIGHTENING_SCALE_FACTOR = 1.5;
     const double STATE_BUTTON_BRIGHTENING_SCALE_FACTOR = 1.25;
@@ -1372,7 +1372,7 @@ void StatisticIcon::CompleteConstruction() {
 
     SetName("StatisticIcon");
 
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     AttachChild(m_icon);
 
@@ -1579,7 +1579,7 @@ namespace {
             m_icon->Resize(GG::Pt(GG::X(Value(height - 5)), height - 5));
             m_species_label = GG::Wnd::Create<CUILabel>(localized_name, GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             if (!species_desc.empty()) {
-                SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+                SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
                 SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(species_icon, localized_name,
                                                                      species_desc));
             }
@@ -2275,7 +2275,7 @@ FPSIndicator::FPSIndicator(void) :
     m_enabled(false),
     m_displayed_FPS(0)
 {
-    GetOptionsDB().OptionChangedSignal("show-fps").connect(
+    GetOptionsDB().OptionChangedSignal("video.fps.shown").connect(
         boost::bind(&FPSIndicator::UpdateEnabled, this));
     UpdateEnabled();
     RequirePreRender();
@@ -2304,7 +2304,7 @@ void FPSIndicator::Render() {
 }
 
 void FPSIndicator::UpdateEnabled()
-{ m_enabled = GetOptionsDB().Get<bool>("show-fps"); }
+{ m_enabled = GetOptionsDB().Get<bool>("video.fps.shown"); }
 
 
 //////////////////////////////////////////////////

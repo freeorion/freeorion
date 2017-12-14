@@ -315,7 +315,7 @@ void BuildingIndicator::Render() {
 
     // Scanlines for not currently-visible objects?
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
         return;
     if (m_building_id == INVALID_OBJECT_ID)
         return;
@@ -351,7 +351,7 @@ void BuildingIndicator::PreRender() {
 }
 
 void BuildingIndicator::Refresh() {
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     std::shared_ptr<const Building> building = GetBuilding(m_building_id);
     if (!building)
@@ -370,7 +370,7 @@ void BuildingIndicator::Refresh() {
         std::string desc = UserString(type->Description());
         if (building->GetMeter(METER_STEALTH))
             desc = UserString("METER_STEALTH") + boost::io::str(boost::format(": %3.1f\n\n") % building->GetMeter(METER_STEALTH)->Current()) + desc;
-        if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions") && !type->Effects().empty())
+        if (GetOptionsDB().Get<bool>("resource.effects.description.shown") && !type->Effects().empty())
             desc += "\n" + Dump(type->Effects());
 
         SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(

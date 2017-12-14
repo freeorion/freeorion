@@ -315,12 +315,12 @@ void OptionsDB::GetXML(XMLDoc& doc, bool non_default_only) const {
                 is_default_nonflag = IsDefaultValue(m_options.find(option.first));
 
             // Skip unwanted config options
-            // Storing "version-string" in persistent config would render all config options invalid after a new build
-            // "checked-gl-version" is automatically set to true after other logic is performed
+            // Storing "version.string" in persistent config would render all config options invalid after a new build
+            // "version.gl.check.done" is automatically set to true after other logic is performed
             // BUG Some windows may be shown as a child of an other window, but not initially visible.
             //   The OptionDB default of "*.visible" in these cases may be false, but setting the option to false
             //   in a config file may prevent such windows from showing when requested.
-            if (option.first == "version-string" || option.first == "checked-gl-version" || name == "visible" ||
+            if (option.first == "version.string" || option.first == "version.gl.check.done" || name == "visible" ||
                 !option.second.recognized || (is_default_nonflag))
             { continue; }
 
@@ -507,11 +507,10 @@ void OptionsDB::SetFromFile(const boost::filesystem::path& file_path,
         boost::filesystem::ifstream ifs(file_path);
         if (ifs) {
             doc.ReadDoc(ifs);
-            if (version.empty() || (doc.root_node.ContainsChild("version-string") &&
-                                    doc.root_node.Child("version-string").Text() == version))
-            {
-                GetOptionsDB().SetFromXML(doc);
-            }
+            if (version.empty() || (doc.root_node.ContainsChild("version") &&
+                                    doc.root_node.Child("version").ContainsChild("string") &&
+                                    version == doc.root_node.Child("version").Child("string").Text()))
+            { GetOptionsDB().SetFromXML(doc); }
         }
     } catch (const std::exception&) {
         std::cerr << UserString("UNABLE_TO_READ_CONFIG_XML")  << ": "

@@ -32,11 +32,11 @@ namespace {
     const GG::Y MAIN_MENU_HEIGHT(450);
 
     void Options(OptionsDB& db) {
-        db.AddFlag("force-external-server",             UserStringNop("OPTIONS_DB_FORCE_EXTERNAL_SERVER"),     false);
-        db.Add<std::string>("external-server-address",  UserStringNop("OPTIONS_DB_EXTERNAL_SERVER_ADDRESS"),   "localhost");
-        db.Add("UI.main-menu.x",                        UserStringNop("OPTIONS_DB_UI_MAIN_MENU_X"),            0.75,   RangedStepValidator<double>(0.01, 0.0, 1.0));
-        db.Add("UI.main-menu.y",                        UserStringNop("OPTIONS_DB_UI_MAIN_MENU_Y"),            0.5,    RangedStepValidator<double>(0.01, 0.0, 1.0));
-        db.Add("checked-gl-version",                    UserStringNop("OPTIONS_DB_CHECKED_GL_VERSION"),        false);
+        db.AddFlag("network.server.external.force",     UserStringNop("OPTIONS_DB_FORCE_EXTERNAL_SERVER"),      false);
+        db.Add<std::string>("network.server.uri",       UserStringNop("OPTIONS_DB_EXTERNAL_SERVER_ADDRESS"),    "localhost");
+        db.Add("ui.intro.menu.center.x",                UserStringNop("OPTIONS_DB_UI_MAIN_MENU_X"),             0.75,               RangedStepValidator<double>(0.01, 0.0, 1.0));
+        db.Add("ui.intro.menu.center.y",                UserStringNop("OPTIONS_DB_UI_MAIN_MENU_Y"),             0.5,                RangedStepValidator<double>(0.01, 0.0, 1.0));
+        db.Add("version.gl.check.done",                 UserStringNop("OPTIONS_DB_CHECKED_GL_VERSION"),         false);
     }
     bool foo_bool = RegisterOptions(&Options);
 }
@@ -330,7 +330,7 @@ void IntroScreen::OnOptions() {
 }
 
 void IntroScreen::OnPedia() {
-    static const std::string INTRO_PEDIA_WND_NAME = "introscreen.pedia";
+    static const std::string INTRO_PEDIA_WND_NAME = "intro.pedia";
     auto enc_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(
         GG::MODAL | GG::INTERACTIVE | GG::DRAGABLE |
         GG::RESIZABLE | CLOSABLE | PINABLE, INTRO_PEDIA_WND_NAME);
@@ -485,10 +485,10 @@ void IntroScreen::PreRender() {
     m_exit_game->SizeMove(button_ul, button_lr);
 
     // position menu window
-    GG::Pt ul(Width()  * GetOptionsDB().Get<double>("UI.main-menu.x") - mainmenu_width/2,
-              Height() * GetOptionsDB().Get<double>("UI.main-menu.y") - mainmenu_height/2);
-    GG::Pt lr(Width()  * GetOptionsDB().Get<double>("UI.main-menu.x") + mainmenu_width/2,
-              Height() * GetOptionsDB().Get<double>("UI.main-menu.y") + mainmenu_height/2);
+    GG::Pt ul(Width()  * GetOptionsDB().Get<double>("ui.intro.menu.center.x") - mainmenu_width/2,
+              Height() * GetOptionsDB().Get<double>("ui.intro.menu.center.y") - mainmenu_height/2);
+    GG::Pt lr(Width()  * GetOptionsDB().Get<double>("ui.intro.menu.center.x") + mainmenu_width/2,
+              Height() * GetOptionsDB().Get<double>("ui.intro.menu.center.y") + mainmenu_height/2);
 
     m_menu->InitSizeMove(ul, lr);
 }

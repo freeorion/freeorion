@@ -150,21 +150,21 @@ namespace {
 
     // persistant between-executions galaxy setup settings, mainly so I don't have to redo these settings to what I want every time I run FO to test something
     void AddOptions(OptionsDB& db) {
-        db.Add("GameSetup.seed",                UserStringNop("OPTIONS_DB_GAMESETUP_SEED"),                    std::string("0"),   Validator<std::string>());
-        db.Add("GameSetup.stars",               UserStringNop("OPTIONS_DB_GAMESETUP_STARS"),                   150,                RangedValidator<int>(10, 5000));
-        db.Add("GameSetup.galaxy-shape",        UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_SHAPE"),            DISC,               RangedValidator<Shape>(SPIRAL_2, RANDOM));
-        db.Add("GameSetup.galaxy-age",          UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_AGE"),              GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
-        db.Add("GameSetup.planet-density",      UserStringNop("OPTIONS_DB_GAMESETUP_PLANET_DENSITY"),          GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
-        db.Add("GameSetup.starlane-frequency",  UserStringNop("OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY"),      GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(ALLOW_NO_STARLANES ? GALAXY_SETUP_NONE : GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
-        db.Add("GameSetup.specials-frequency",  UserStringNop("OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY"),      GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
-        db.Add("GameSetup.monster-frequency",   UserStringNop("OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY"),       GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
-        db.Add("GameSetup.native-frequency",    UserStringNop("OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY"),        GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
-        db.Add("GameSetup.empire-name",         UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_NAME"),             std::string(""),    Validator<std::string>());
-        db.Add("GameSetup.player-name",         UserStringNop("OPTIONS_DB_GAMESETUP_PLAYER_NAME"),             std::string(""),    Validator<std::string>());
-        db.Add("GameSetup.empire-color",        UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_COLOR"),            9,                  RangedValidator<int>(0, 100));
-        db.Add("GameSetup.starting-species",    UserStringNop("OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME"),   std::string("SP_HUMAN"),    Validator<std::string>());
-        db.Add("GameSetup.ai-players",          UserStringNop("OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS"),          6,                  RangedValidator<int>(0, IApp::MAX_AI_PLAYERS()));
-        db.Add("GameSetup.ai-aggression",       UserStringNop("OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION"),       MANIACAL,           RangedValidator<Aggression>(BEGINNER, MANIACAL));
+        db.Add("setup.seed",                    UserStringNop("OPTIONS_DB_GAMESETUP_SEED"),                     std::string("0"),           Validator<std::string>());
+        db.Add("setup.star.count",              UserStringNop("OPTIONS_DB_GAMESETUP_STARS"),                    150,                        RangedValidator<int>(10, 5000));
+        db.Add("setup.galaxy.shape",            UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_SHAPE"),             DISC,                       RangedValidator<Shape>(SPIRAL_2, RANDOM));
+        db.Add("setup.galaxy.age",              UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_AGE"),               GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
+        db.Add("setup.planet.density",          UserStringNop("OPTIONS_DB_GAMESETUP_PLANET_DENSITY"),           GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
+        db.Add("setup.starlane.frequency",      UserStringNop("OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY"),       GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(ALLOW_NO_STARLANES ? GALAXY_SETUP_NONE : GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
+        db.Add("setup.specials.frequency",      UserStringNop("OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY"),       GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
+        db.Add("setup.monster.frequency",       UserStringNop("OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY"),        GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
+        db.Add("setup.native.frequency",        UserStringNop("OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY"),         GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
+        db.Add("setup.empire.name",             UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_NAME"),              std::string(""),            Validator<std::string>());
+        db.Add("setup.player.name",             UserStringNop("OPTIONS_DB_GAMESETUP_PLAYER_NAME"),              std::string(""),            Validator<std::string>());
+        db.Add("setup.empire.color.index",      UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_COLOR"),             9,                          RangedValidator<int>(0, 100));
+        db.Add("setup.initial.species",         UserStringNop("OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME"),    std::string("SP_HUMAN"),    Validator<std::string>());
+        db.Add("setup.ai.player.count",         UserStringNop("OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS"),           6,                          RangedValidator<int>(0, IApp::MAX_AI_PLAYERS()));
+        db.Add("setup.ai.aggression",           UserStringNop("OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION"),        MANIACAL,                   RangedValidator<Aggression>(BEGINNER, MANIACAL));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
@@ -278,7 +278,7 @@ void GameRulesPanel::CreateSectionHeader(GG::ListBox* page, int indentation_leve
                                             heading_text, indentation_level);
 
     if (!tooltip.empty()) {
-        row->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        row->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
         row->SetBrowseText(tooltip);
     }
 
@@ -294,7 +294,7 @@ GG::StateButton* GameRulesPanel::BoolRuleWidget(GG::ListBox* page, int indentati
                                             button, indentation_level);
 
     button->SetCheck(GetGameRules().Get<bool>(rule_name));
-    button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     button->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
     button->CheckedSignal.connect(boost::bind(&GameRulesPanel::BoolRuleChanged, this, button.get(),
                                               rule_name));
@@ -341,9 +341,9 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
                                             layout, indentation_level);
     page->Insert(row);
 
-    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     spin->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
-    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
 
     spin->ValueChangedSignal.connect(boost::bind(&GameRulesPanel::IntRuleChanged,
@@ -389,9 +389,9 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
                                             layout, indentation_level);
     page->Insert(row);
 
-    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     spin->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
-    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
 
     spin->ValueChangedSignal.connect(boost::bind(&GameRulesPanel::DoubleRuleChanged,
@@ -458,9 +458,9 @@ GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indent
                                             layout, indentation_level);
     page->Insert(row);
 
-    drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    drop->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     drop->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
-    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
 
     drop->SelChangedSignal.connect(boost::bind(&GameRulesPanel::StringRuleChanged,
@@ -554,9 +554,9 @@ void GalaxySetupPanel::CompleteConstruction() {
 
     // seed
     m_seed_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SEED"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_seed_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_seed_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.seed")));
-    m_seed_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("GameSetup.seed"));
+    m_seed_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_seed_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.seed")));
+    m_seed_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("setup.seed"));
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
@@ -567,67 +567,67 @@ void GalaxySetupPanel::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "randomize_mouseover.png")));
 
     m_random->SetBrowseText(UserString("GSETUP_RANDOM_SEED"));
-    m_random->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_random->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     // number of stars
     m_stars_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_STARS"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_stars_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_stars_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.stars")));
+    m_stars_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_stars_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.star.count")));
     m_stars_spin = GG::Wnd::Create<CUISpin<int>>(100, 1, 10, 5000, true);
 
     // galaxy shape
     m_galaxy_shapes_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SHAPE"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_galaxy_shapes_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_galaxy_shapes_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.galaxy-shape")));
+    m_galaxy_shapes_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_galaxy_shapes_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.galaxy.shape")));
     m_galaxy_shapes_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_galaxy_shapes_list->SetStyle(GG::LIST_NOSORT);
 
     // galaxy age
     m_galaxy_ages_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_AGE"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_galaxy_ages_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_galaxy_ages_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.galaxy-age")));
+    m_galaxy_ages_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_galaxy_ages_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.galaxy.age")));
     m_galaxy_ages_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_galaxy_ages_list->SetStyle(GG::LIST_NOSORT);
 
     // starlane frequency
     m_starlane_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_STARLANE_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_starlane_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_starlane_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.starlane-frequency")));
+    m_starlane_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_starlane_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.starlane.frequency")));
     m_starlane_freq_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_starlane_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // planet density
     m_planet_density_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_PLANET_DENSITY"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_planet_density_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_planet_density_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.planet-density")));
+    m_planet_density_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_planet_density_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.planet.density")));
     m_planet_density_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_planet_density_list->SetStyle(GG::LIST_NOSORT);
 
     // specials frequency
     m_specials_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SPECIALS_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_specials_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_specials_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.specials-frequency")));
+    m_specials_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_specials_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.specials.frequency")));
     m_specials_freq_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_specials_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // monster frequency
     m_monster_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_MONSTER_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_monster_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_monster_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.monster-frequency")));
+    m_monster_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_monster_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.monster.frequency")));
     m_monster_freq_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_monster_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // native frequency
     m_native_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_NATIVE_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_native_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_native_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.native-frequency")));
+    m_native_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_native_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.native.frequency")));
     m_native_freq_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_native_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // ai aggression
     m_ai_aggression_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_AI_AGGR"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_ai_aggression_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_ai_aggression_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.ai-aggression")));
+    m_ai_aggression_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_ai_aggression_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.ai.aggression")));
     m_ai_aggression_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_ai_aggression_list->SetStyle(GG::LIST_NOSORT);
 
@@ -749,17 +749,17 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_ai_aggression_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_MANIACAL")));
 
     // initial settings from stored results or defaults
-    m_seed_edit->SetText(GetOptionsDB().Get<std::string>("GameSetup.seed"));
-    m_stars_spin->SetValue(GetOptionsDB().Get<int>("GameSetup.stars"));
-    m_galaxy_shapes_list->Select(GetOptionsDB().Get<Shape>("GameSetup.galaxy-shape"));
+    m_seed_edit->SetText(GetOptionsDB().Get<std::string>("setup.seed"));
+    m_stars_spin->SetValue(GetOptionsDB().Get<int>("setup.star.count"));
+    m_galaxy_shapes_list->Select(GetOptionsDB().Get<Shape>("setup.galaxy.shape"));
     ShapeChanged(m_galaxy_shapes_list->CurrentItem());
-    m_galaxy_ages_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.galaxy-age") - 1);
-    m_starlane_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.starlane-frequency") - (ALLOW_NO_STARLANES ? 0 : 1));
-    m_planet_density_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.planet-density") - 1);
-    m_specials_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.specials-frequency"));
-    m_monster_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.monster-frequency"));
-    m_native_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.native-frequency"));
-    m_ai_aggression_list->Select(GetOptionsDB().Get<Aggression>("GameSetup.ai-aggression"));
+    m_galaxy_ages_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age") - 1);
+    m_starlane_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency") - (ALLOW_NO_STARLANES ? 0 : 1));
+    m_planet_density_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.planet.density") - 1);
+    m_specials_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency"));
+    m_monster_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency"));
+    m_native_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency"));
+    m_ai_aggression_list->Select(GetOptionsDB().Get<Aggression>("setup.ai.aggression"));
 
     SettingsChangedSignal();
 }
@@ -967,30 +967,30 @@ void GalaxySetupWnd::CompleteConstruction() {
 
     // player name
     m_player_name_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_PLAYER_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_player_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_player_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.player-name")));
-    m_player_name_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("GameSetup.player-name"));
+    m_player_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_player_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.player.name")));
+    m_player_name_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("setup.player.name"));
 
     // empire name
     m_empire_name_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_EMPIRE_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_empire_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_empire_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.empire-name")));
-    m_empire_name_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("GameSetup.empire-name"));
+    m_empire_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_empire_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.empire.name")));
+    m_empire_name_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("setup.empire.name"));
 
     // empire color
     m_empire_color_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_EMPIRE_COLOR"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_empire_color_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_empire_color_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.empire-color")));
+    m_empire_color_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_empire_color_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.empire.color.index")));
     m_empire_color_selector = GG::Wnd::Create<EmpireColorSelector>(CONTROL_HEIGHT - CONTROL_VMARGIN);
-    m_empire_color_selector->Select(GetOptionsDB().Get<int>("GameSetup.empire-color"));
+    m_empire_color_selector->Select(GetOptionsDB().Get<int>("setup.empire.color.index"));
 
     // starting species
     m_starting_species_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SPECIES"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_starting_species_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_starting_species_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.starting-species")));
+    m_starting_species_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_starting_species_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.initial.species")));
     // Subtract the drop down entry padding for the inner element height.
     m_starting_secies_selector = GG::Wnd::Create<SpeciesSelector>(LABELS_WIDTH, CONTROL_HEIGHT - 5);
-    std::string default_starting_species = GetOptionsDB().Get<std::string>("GameSetup.starting-species");
+    std::string default_starting_species = GetOptionsDB().Get<std::string>("setup.initial.species");
 
     if (default_starting_species.empty() || default_starting_species == "1") {
         // kludge / bug workaround for bug with options storage and retreival.
@@ -1016,9 +1016,9 @@ void GalaxySetupWnd::CompleteConstruction() {
 
     // number of AIs
     m_number_ais_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_NUMBER_AIS"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_number_ais_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_number_ais_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.ai-players")));
-    m_number_ais_spin = GG::Wnd::Create<CUISpin<int>>(GetOptionsDB().Get<int>("GameSetup.ai-players"), 1, 0, IApp::MAX_AI_PLAYERS(), true);
+    m_number_ais_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_number_ais_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.ai.player.count")));
+    m_number_ais_spin = GG::Wnd::Create<CUISpin<int>>(GetOptionsDB().Get<int>("setup.ai.player.count"), 1, 0, IApp::MAX_AI_PLAYERS(), true);
 
     // create a temporary texture and static graphic
     static auto temp_tex = std::make_shared<GG::Texture>();
@@ -1187,21 +1187,21 @@ void GalaxySetupWnd::PlayerNameChanged(const std::string& name)
 
 void GalaxySetupWnd::OkClicked() {
     // record selected galaxy setup options as new defaults
-    GetOptionsDB().Set("GameSetup.seed",                m_galaxy_setup_panel->GetSeed());
-    GetOptionsDB().Set("GameSetup.stars",               m_galaxy_setup_panel->Systems());
-    GetOptionsDB().Set("GameSetup.galaxy-shape",        m_galaxy_setup_panel->GetShape());
-    GetOptionsDB().Set("GameSetup.galaxy-age",          m_galaxy_setup_panel->GetAge());
-    GetOptionsDB().Set("GameSetup.starlane-frequency",  m_galaxy_setup_panel->GetStarlaneFrequency());
-    GetOptionsDB().Set("GameSetup.planet-density",      m_galaxy_setup_panel->GetPlanetDensity());
-    GetOptionsDB().Set("GameSetup.specials-frequency",  m_galaxy_setup_panel->GetSpecialsFrequency());
-    GetOptionsDB().Set("GameSetup.monster-frequency",   m_galaxy_setup_panel->GetMonsterFrequency());
-    GetOptionsDB().Set("GameSetup.native-frequency",    m_galaxy_setup_panel->GetNativeFrequency());
-    GetOptionsDB().Set("GameSetup.ai-aggression",       m_galaxy_setup_panel->GetAIAggression());
-    GetOptionsDB().Set("GameSetup.player-name",         m_player_name_edit->Text());
-    GetOptionsDB().Set("GameSetup.empire-name",         EmpireName());
-    GetOptionsDB().Set("GameSetup.empire-color",        static_cast<int>(m_empire_color_selector->CurrentItemIndex()));
-    GetOptionsDB().Set("GameSetup.starting-species",    m_starting_secies_selector->CurrentSpeciesName());
-    GetOptionsDB().Set("GameSetup.ai-players",          m_number_ais_spin->Value());
+    GetOptionsDB().Set("setup.seed", m_galaxy_setup_panel->GetSeed());
+    GetOptionsDB().Set("setup.star.count", m_galaxy_setup_panel->Systems());
+    GetOptionsDB().Set("setup.galaxy.shape", m_galaxy_setup_panel->GetShape());
+    GetOptionsDB().Set("setup.galaxy.age", m_galaxy_setup_panel->GetAge());
+    GetOptionsDB().Set("setup.starlane.frequency", m_galaxy_setup_panel->GetStarlaneFrequency());
+    GetOptionsDB().Set("setup.planet.density", m_galaxy_setup_panel->GetPlanetDensity());
+    GetOptionsDB().Set("setup.specials.frequency", m_galaxy_setup_panel->GetSpecialsFrequency());
+    GetOptionsDB().Set("setup.monster.frequency", m_galaxy_setup_panel->GetMonsterFrequency());
+    GetOptionsDB().Set("setup.native.frequency", m_galaxy_setup_panel->GetNativeFrequency());
+    GetOptionsDB().Set("setup.ai.aggression", m_galaxy_setup_panel->GetAIAggression());
+    GetOptionsDB().Set("setup.player.name", m_player_name_edit->Text());
+    GetOptionsDB().Set("setup.empire.name", EmpireName());
+    GetOptionsDB().Set("setup.empire.color.index", static_cast<int>(m_empire_color_selector->CurrentItemIndex()));
+    GetOptionsDB().Set("setup.initial.species", m_starting_secies_selector->CurrentSpeciesName());
+    GetOptionsDB().Set("setup.ai.player.count", m_number_ais_spin->Value());
     GetOptionsDB().Commit();
 
     m_ended_with_ok = true;

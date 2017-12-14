@@ -28,8 +28,8 @@
 #include <boost/format.hpp>
 
 namespace {
-    bool PlaySounds()                   { return GetOptionsDB().Get<bool>("UI.sound.enabled"); }
-    void PlaySystemIconRolloverSound()  { if (PlaySounds()) Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.system-icon-rollover")); }
+    bool PlaySounds()                   { return GetOptionsDB().Get<bool>("audio.effects.enabled"); }
+    void PlaySystemIconRolloverSound()  { if (PlaySounds()) Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.map.system.icon.rollover.sound.path")); }
 
     // Wrap content int an rgba tag with color color. Opacity ignored.
     std::string ColorTag(const std::string& content, GG::Clr color){
@@ -204,7 +204,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
         text_color = ClientUI::TextColor();
     }
 
-    if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+    if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
         wrapped_system_name = wrapped_system_name + " (" + std::to_string(system_id) + ")";
     }
 
@@ -444,12 +444,12 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(unsigned int button_number, bool movi
 }
 
 int SystemIcon::EnclosingCircleDiameter() const
-{ return static_cast<const int>(Value(Width()) * GetOptionsDB().Get<double>("UI.system-circle-size")) + 1; }
+{ return static_cast<const int>(Value(Width()) * GetOptionsDB().Get<double>("ui.map.system.circle.size")) + 1; }
 
 void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     Wnd::SizeMove(ul, lr);
 
-    const bool USE_TINY_GRAPHICS = Value(Width()) < GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold");
+    const bool USE_TINY_GRAPHICS = Value(Width()) < GetOptionsDB().Get<int>("ui.map.system.icon.tiny.threshold");
     GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
 
     // tiny graphic?
@@ -590,7 +590,7 @@ void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         Empire* this_empire = GetEmpire(client_empire_id);
         bool explored = !this_empire || (this_empire && this_empire->HasExploredSystem(m_system_id)) ||
                 !m_mouseover_unexplored_indicator;
-        if (explored || !GetOptionsDB().Get<bool>("UI.show-unexplored_system_overlay")){
+        if (explored || !GetOptionsDB().Get<bool>("ui.map.system.unexplored.rollover.enabled")) {
             AttachChild(m_mouseover_indicator);
             MoveChildUp(m_mouseover_indicator);
         } else {

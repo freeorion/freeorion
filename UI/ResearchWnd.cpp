@@ -28,8 +28,8 @@ namespace {
 
     void AddOptions(OptionsDB& db) {
         // queue width used also on production screen. prevent double-adding...
-        if (!db.OptionExists("UI.queue-width"))
-            db.Add("UI.queue-width",    UserStringNop("OPTIONS_DB_UI_QUEUE_WIDTH"), 300,    RangedValidator<int>(200, 500));
+        if (!db.OptionExists("ui.queue.width"))
+            db.Add("ui.queue.width", UserStringNop("OPTIONS_DB_UI_QUEUE_WIDTH"), 300, RangedValidator<int>(200, 500));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -95,7 +95,7 @@ namespace {
 
             SetDragDropDataType("RESEARCH_QUEUE_ROW");
 
-            SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+            SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
             SetBrowseInfoWnd(TechRowBrowseWnd(elem.name, elem.empire_id));
         }
 
@@ -354,7 +354,7 @@ public:
     /** \name Structors */ //@{
     ResearchQueueWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
         CUIWnd("", x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
-               "research.ResearchQueueWnd"),
+               "research.queue"),
         m_queue_lb(nullptr)
     {}
 
@@ -414,12 +414,12 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     m_enabled(false),
     m_empire_shown_id(ALL_EMPIRES)
 {
-    GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
-    GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(GG::X(GetOptionsDB().Get<int>("UI.queue-width")), GG::Y0);
+    GG::X queue_width(GetOptionsDB().Get<int>("ui.queue.width"));
+    GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(GG::X(GetOptionsDB().Get<int>("ui.queue.width")), GG::Y0);
 
     m_research_info_panel = GG::Wnd::Create<ResourceInfoPanel>(
         UserString("RESEARCH_WND_TITLE"), UserString("RESEARCH_INFO_RP"),
-        GG::X0, GG::Y0, GG::X(queue_width), GG::Y(100), "research.InfoPanel");
+        GG::X0, GG::Y0, GG::X(queue_width), GG::Y(100), "research.info");
     m_queue_wnd = GG::Wnd::Create<ResearchQueueWnd>(GG::X0, GG::Y(100), queue_width, GG::Y(ClientSize().y - 100));
     m_tech_tree_wnd = GG::Wnd::Create<TechTreeWnd>(tech_tree_wnd_size.x, tech_tree_wnd_size.y, initially_hidden);
 
@@ -463,8 +463,8 @@ void ResearchWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void ResearchWnd::DoLayout(bool init) {
     m_research_info_panel->MoveTo(GG::Pt(GG::X0, GG::Y0));
-    GG::X queue_width = GG::X(init ? GetOptionsDB().GetDefault<int>("UI.queue-width") :
-                                     GetOptionsDB().Get<int>("UI.queue-width"));
+    GG::X queue_width = GG::X(init ? GetOptionsDB().GetDefault<int>("ui.queue.width") :
+                                     GetOptionsDB().Get<int>("ui.queue.width"));
     if (init) {
         GG::Pt info_ul = m_research_info_panel->UpperLeft();
         GG::Pt info_lr(info_ul.x + queue_width, info_ul.y + m_research_info_panel->MinUsableSize().y);

@@ -34,9 +34,9 @@ namespace {
 
     void AddOptions(OptionsDB& db) {
         // queue width used also on research screen. prevent double-adding...
-        if (!db.OptionExists("UI.queue-width"))
-            db.Add("UI.queue-width",                    UserStringNop("OPTIONS_DB_UI_QUEUE_WIDTH"),         350,    RangedValidator<int>(200, 500));
-        db.Add("UI.show-production-location-on-queue",  UserStringNop("OPTIONS_DB_UI_PROD_QUEUE_LOCATION"), true,   Validator<bool>());
+        if (!db.OptionExists("ui.queue.width"))
+            db.Add("ui.queue.width", UserStringNop("OPTIONS_DB_UI_QUEUE_WIDTH"), 350, RangedValidator<int>(200, 500));
+        db.Add("ui.queue.production_location.shown", UserStringNop("OPTIONS_DB_UI_PROD_QUEUE_LOCATION"), true, Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -360,7 +360,7 @@ namespace {
                 pp_accumulated);
             SetDragDropDataType(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE);
 
-            SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+            SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
             SetBrowseInfoWnd(ProductionItemBrowseWnd(elem));
 
             panel->PanelUpdateQuantSignal.connect(
@@ -458,7 +458,7 @@ namespace {
         bool system_selected = false;
         if (std::shared_ptr<const UniverseObject> location = GetUniverseObject(elem.location)) {
             system_selected = (location->SystemID() != -1 && location ->SystemID() == SidePanel::SystemID());
-            if (GetOptionsDB().Get<bool>("UI.show-production-location-on-queue"))
+            if (GetOptionsDB().Get<bool>("ui.queue.production_location.shown"))
                 location_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name()) + " ";
         }
 
@@ -756,7 +756,7 @@ public:
     /** \name Structors */ //@{
     ProductionQueueWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
         CUIWnd("", x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
-               "production.ProductionQueueWnd"),
+               "production.queue"),
         m_queue_lb(nullptr)
     {}
 
@@ -817,15 +817,15 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
 
 void ProductionWnd::CompleteConstruction() {
      GG::Wnd::CompleteConstruction();
-   //DebugLogger() << "ProductionWindow:  app-width: "<< GetOptionsDB().Get<int>("app-width")
-    //              << " ; windowed width: " << GetOptionsDB().Get<int>("app-width-windowed");
+   //DebugLogger() << "ProductionWindow:  fullscreen width: "<< GetOptionsDB().Get<int>("video.fullscreen.width")
+   //              << " ; windowed width: " << GetOptionsDB().Get<int>("video.windowed.width");
 
-    GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
+    GG::X queue_width(GetOptionsDB().Get<int>("ui.queue.width"));
     GG::Y info_height(ClientUI::Pts()*10);
 
     m_production_info_panel = GG::Wnd::Create<ResourceInfoPanel>(
         UserString("PRODUCTION_WND_TITLE"), UserString("PRODUCTION_INFO_PP"),
-        GG::X0, GG::Y0, queue_width, info_height, "production.InfoPanel");
+        GG::X0, GG::Y0, queue_width, info_height, "production.info");
     m_queue_wnd = GG::Wnd::Create<ProductionQueueWnd>(GG::X0, info_height, queue_width,
                                                       ClientSize().y - info_height);
     m_build_designator_wnd = GG::Wnd::Create<BuildDesignatorWnd>(ClientSize().x, ClientSize().y);
@@ -887,7 +887,7 @@ void ProductionWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void ProductionWnd::DoLayout() {
-    GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
+    GG::X queue_width(GetOptionsDB().Get<int>("ui.queue.width"));
     GG::Y info_height(ClientUI::Pts()*8 + 34);
 
     m_production_info_panel->MoveTo(GG::Pt(GG::X0, GG::Y0));

@@ -30,6 +30,7 @@
 #include <boost/format.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <regex>
 
 
 namespace fs = boost::filesystem;
@@ -421,7 +422,7 @@ namespace {
         row->Resize(GG::Pt(ROW_WIDTH, drop_list->MinUsableSize().y + LAYOUT_MARGIN));
 
         auto row_wnd = GG::Wnd::Create<RowContentsWnd>(row->Width(), row->Height(), layout, 0);
-        row_wnd->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        row_wnd->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
         row_wnd->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
         row->push_back(row_wnd);
 
@@ -464,7 +465,7 @@ void OptionsWnd::CompleteConstruction() {
     AttachChild(m_done_button);
     AttachChild(m_tabs);
 
-    bool UI_sound_enabled = GetOptionsDB().Get<bool>("UI.sound.enabled");
+    bool UI_sound_enabled = GetOptionsDB().Get<bool>("audio.effects.enabled");
     GG::ListBox* current_page = nullptr;
 
     Sound::TempUISoundDisabler sound_disabler;
@@ -478,51 +479,50 @@ void OptionsWnd::CompleteConstruction() {
     current_page = CreatePage(UserString("OPTIONS_PAGE_AUDIO"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_VOLUME_AND_MUSIC"));
     MusicVolumeOption(current_page, 0, m_sound_feedback);
-    VolumeOption(current_page, 0, "UI.sound.enabled", "UI.sound.volume", UserString("OPTIONS_UI_SOUNDS"), UI_sound_enabled, m_sound_feedback);
-    FileOption(current_page, 0, "UI.sound.bg-music", UserString("OPTIONS_BACKGROUND_MUSIC"), ClientUI::SoundDir(),
+    VolumeOption(current_page, 0, "audio.effects.enabled", "audio.effects.volume", UserString("OPTIONS_UI_SOUNDS"), UI_sound_enabled, m_sound_feedback);
+    FileOption(current_page, 0, "audio.music.path", UserString("OPTIONS_BACKGROUND_MUSIC"), ClientUI::SoundDir(),
                std::make_pair(UserString("OPTIONS_MUSIC_FILE"), "*" + MUSIC_FILE_SUFFIX),
                ValidMusicFile);
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_SOUNDS"));
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_UI_SOUNDS"));
-    SoundFileOption(current_page, 1, "UI.sound.alert",       UserString("OPTIONS_SOUND_ALERT"));
-    SoundFileOption(current_page, 1, "UI.sound.text-typing", UserString("OPTIONS_SOUND_TYPING"));
+    SoundFileOption(current_page, 1, "ui.alert.sound.path", UserString("OPTIONS_SOUND_ALERT"));
+    SoundFileOption(current_page, 1, "ui.input.keyboard.sound.path", UserString("OPTIONS_SOUND_TYPING"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_NEWTURN"));
-    BoolOption(current_page,      1, "UI.sound.new-turn.toggle",       UserString("OPTIONS_SOUND_NEWTURN_TOGGLE"));
-    SoundFileOption(current_page, 1, "UI.sound.new-turn.sound-file",   UserString("OPTIONS_SOUND_NEWTURN_FILE"));
+    BoolOption(current_page, 1, "ui.turn.start.sound.enabled", UserString("OPTIONS_SOUND_NEWTURN_TOGGLE"));
+    SoundFileOption(current_page, 1, "ui.turn.start.sound.path", UserString("OPTIONS_SOUND_NEWTURN_FILE"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_WINDOW"));
-    SoundFileOption(current_page, 1, "UI.sound.window-close",    UserString("OPTIONS_SOUND_CLOSE"));
-    SoundFileOption(current_page, 1, "UI.sound.window-maximize", UserString("OPTIONS_SOUND_MAXIMIZE"));
-    SoundFileOption(current_page, 1, "UI.sound.window-minimize", UserString("OPTIONS_SOUND_MINIMIZE"));
-    SoundFileOption(current_page, 1, "UI.sound.sidepanel-open",  UserString("OPTIONS_SOUND_SIDEPANEL"));
+    SoundFileOption(current_page, 1, "ui.window.close.sound.path", UserString("OPTIONS_SOUND_CLOSE"));
+    SoundFileOption(current_page, 1, "ui.window.maximize.sound.path", UserString("OPTIONS_SOUND_MAXIMIZE"));
+    SoundFileOption(current_page, 1, "ui.window.minimize.sound.path", UserString("OPTIONS_SOUND_MINIMIZE"));
+    SoundFileOption(current_page, 1, "ui.map.sidepanel.open.sound.path", UserString("OPTIONS_SOUND_SIDEPANEL"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_LIST"));
-    SoundFileOption(current_page, 1, "UI.sound.item-drop",     UserString("OPTIONS_SOUND_DROP"));
-    SoundFileOption(current_page, 1, "UI.sound.list-pulldown", UserString("OPTIONS_SOUND_PULLDOWN"));
-    SoundFileOption(current_page, 1, "UI.sound.list-select",   UserString("OPTIONS_SOUND_SELECT"));
+    SoundFileOption(current_page, 1, "ui.listbox.drop.sound.path", UserString("OPTIONS_SOUND_DROP"));
+    SoundFileOption(current_page, 1, "ui.dropdownlist.select.sound.path", UserString("OPTIONS_SOUND_PULLDOWN"));
+    SoundFileOption(current_page, 1, "ui.listbox.select.sound.path", UserString("OPTIONS_SOUND_SELECT"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_BUTTON"));
-    SoundFileOption(current_page, 1, "UI.sound.button-click",          UserString("OPTIONS_SOUND_CLICK"));
-    SoundFileOption(current_page, 1, "UI.sound.button-rollover",       UserString("OPTIONS_SOUND_ROLLOVER"));
-    SoundFileOption(current_page, 1, "UI.sound.fleet-button-click",    UserString("OPTIONS_SOUND_FLEET_CLICK"));
-    SoundFileOption(current_page, 1, "UI.sound.fleet-button-rollover", UserString("OPTIONS_SOUND_FLEET_ROLLOVER"));
-    SoundFileOption(current_page, 1, "UI.sound.system-icon-rollover",  UserString("OPTIONS_SOUND_SYSTEM_ROLLOVER"));
-    SoundFileOption(current_page, 1, "UI.sound.turn-button-click",     UserString("OPTIONS_SOUND_TURN"));
-    SoundFileOption(current_page, 1, "UI.sound.planet-button-click",   UserString("OPTIONS_SOUND_PLANET"));
+    SoundFileOption(current_page, 1, "ui.button.press.sound.path", UserString("OPTIONS_SOUND_CLICK"));
+    SoundFileOption(current_page, 1, "ui.button.rollover.sound.path", UserString("OPTIONS_SOUND_ROLLOVER"));
+    SoundFileOption(current_page, 1, "ui.map.fleet.button.press.sound.path", UserString("OPTIONS_SOUND_FLEET_CLICK"));
+    SoundFileOption(current_page, 1, "ui.map.fleet.button.rollover.sound.path", UserString("OPTIONS_SOUND_FLEET_ROLLOVER"));
+    SoundFileOption(current_page, 1, "ui.map.system.icon.rollover.sound.path", UserString("OPTIONS_SOUND_SYSTEM_ROLLOVER"));
+    SoundFileOption(current_page, 1, "ui.button.turn.press.sound.path", UserString("OPTIONS_SOUND_TURN"));
 
     m_tabs->SetCurrentWnd(0);
 
     // UI settings tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_UI"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_MISC_UI"));
-    BoolOption(current_page, 0, "UI.swap-mouse-lr",              UserString("OPTIONS_SWAP_MOUSE_LR"));
-    BoolOption(current_page, 0, "UI.multiple-fleet-windows",     UserString("OPTIONS_MULTIPLE_FLEET_WNDS"));
-    BoolOption(current_page, 0, "UI.window-quickclose",          UserString("OPTIONS_QUICK_CLOSE_WNDS"));
-    BoolOption(current_page, 0, "UI.sidepanel-planet-shown",     UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"));
-    BoolOption(current_page, 0, "UI.auto-reposition-windows",    UserString("OPTIONS_AUTO_REPOSITION_WINDOWS"));
-    BoolOption(current_page, 0, "UI.display-timestamp",          UserString("OPTIONS_DISPLAY_TIMESTAMP"));
+    BoolOption(current_page, 0, "ui.input.mouse.button.swap.enabled", UserString("OPTIONS_SWAP_MOUSE_LR"));
+    BoolOption(current_page, 0, "ui.fleet.multiple.enabled", UserString("OPTIONS_MULTIPLE_FLEET_WNDS"));
+    BoolOption(current_page, 0, "ui.quickclose.enabled", UserString("OPTIONS_QUICK_CLOSE_WNDS"));
+    BoolOption(current_page, 0, "ui.map.sidepanel.planet.shown", UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"));
+    BoolOption(current_page, 0, "ui.reposition.auto.enabled", UserString("OPTIONS_AUTO_REPOSITION_WINDOWS"));
+    BoolOption(current_page, 0, "ui.map.messages.timestamp.shown", UserString("OPTIONS_DISPLAY_TIMESTAMP"));
 
     // manual reposition windows button
     auto window_reset_button = Wnd::Create<CUIButton>(UserString("OPTIONS_WINDOW_RESET"));
@@ -532,7 +532,7 @@ void OptionsWnd::CompleteConstruction() {
     window_reset_button->LeftClickedSignal.connect(
         HumanClientApp::GetApp()->RepositionWindowsSignal);
 
-    FileOption(current_page, 0, "stringtable-filename",          UserString("OPTIONS_LANGUAGE"),
+    FileOption(current_page, 0, "resource.stringtable.path",    UserString("OPTIONS_LANGUAGE"),
                GetRootDataDir() / "default" / "stringtables",
                std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"),
                "*" + STRINGTABLE_FILE_SUFFIX),
@@ -545,15 +545,15 @@ void OptionsWnd::CompleteConstruction() {
     flush_button->LeftClickedSignal.connect(
         &FlushLoadedStringTables);
 
-    IntOption(current_page, 0, "UI.tooltip-delay",               UserString("OPTIONS_TOOLTIP_DELAY"));
-    IntOption(current_page, 0, "UI.keypress-repeat-delay",       UserString("OPTIONS_KEYPRESS_REPEAT_DELAY"));
-    IntOption(current_page, 0, "UI.keypress-repeat-interval",    UserString("OPTIONS_KEYPRESS_REPEAT_INTERVAL"));
-    IntOption(current_page, 0, "UI.mouse-click-repeat-delay",    UserString("OPTIONS_MOUSE_REPEAT_DELAY"));
-    IntOption(current_page, 0, "UI.mouse-click-repeat-interval", UserString("OPTIONS_MOUSE_REPEAT_INTERVAL"));
+    IntOption(current_page, 0, "ui.tooltip.delay",               UserString("OPTIONS_TOOLTIP_DELAY"));
+    IntOption(current_page, 0, "ui.input.keyboard.repeat.delay", UserString("OPTIONS_KEYPRESS_REPEAT_DELAY"));
+    IntOption(current_page, 0, "ui.input.keyboard.repeat.interval", UserString("OPTIONS_KEYPRESS_REPEAT_INTERVAL"));
+    IntOption(current_page, 0, "ui.input.mouse.button.repeat.delay", UserString("OPTIONS_MOUSE_REPEAT_DELAY"));
+    IntOption(current_page, 0, "ui.input.mouse.button.repeat.interval", UserString("OPTIONS_MOUSE_REPEAT_INTERVAL"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_FONTS"));
-    FontOption(current_page, 0, "UI.font",       UserString("OPTIONS_FONT_TEXT"));
-    FontOption(current_page, 0, "UI.title-font", UserString("OPTIONS_FONT_TITLE"));
+    FontOption(current_page, 0, "ui.font.path",  UserString("OPTIONS_FONT_TEXT"));
+    FontOption(current_page, 0, "ui.font.title.path", UserString("OPTIONS_FONT_TITLE"));
 
     // show font texture button
     auto show_font_texture_button = Wnd::Create<CUIButton>(UserString("SHOW_FONT_TEXTURES"));
@@ -563,66 +563,66 @@ void OptionsWnd::CompleteConstruction() {
         &ShowFontTextureWnd);
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_FONT_SIZES"));
-    IntOption(current_page,    0, "UI.font-size",                          UserString("OPTIONS_FONT_TEXT"));
-    IntOption(current_page,    0, "UI.title-font-size",                    UserString("OPTIONS_FONT_TITLE"));
+    IntOption(current_page,    0, "ui.font.size",                          UserString("OPTIONS_FONT_TEXT"));
+    IntOption(current_page,    0, "ui.font.title.size",                    UserString("OPTIONS_FONT_TITLE"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_RESEARCH_WND"));
-    DoubleOption(current_page, 0, "UI.tech-layout-horz-spacing",           UserString("OPTIONS_TECH_SPACING_HORIZONTAL"));
-    DoubleOption(current_page, 0, "UI.tech-layout-vert-spacing",           UserString("OPTIONS_TECH_SPACING_VERTICAL"));
-    DoubleOption(current_page, 0, "UI.tech-layout-zoom-scale",             UserString("OPTIONS_TECH_LAYOUT_ZOOM"));
-    DoubleOption(current_page, 0, "UI.tech-controls-graphic-size",         UserString("OPTIONS_TECH_CTRL_ICON_SIZE"));
+    DoubleOption(current_page, 0, "ui.research.tree.spacing.horizontal", UserString("OPTIONS_TECH_SPACING_HORIZONTAL"));
+    DoubleOption(current_page, 0, "ui.research.tree.spacing.vertical", UserString("OPTIONS_TECH_SPACING_VERTICAL"));
+    DoubleOption(current_page, 0, "ui.research.tree.zoom.scale", UserString("OPTIONS_TECH_LAYOUT_ZOOM"));
+    DoubleOption(current_page, 0, "ui.research.control.graphic.size", UserString("OPTIONS_TECH_CTRL_ICON_SIZE"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_QUEUES"));
-    IntOption(current_page,    0, "UI.queue-width",                        UserString("OPTIONS_UI_QUEUE_WIDTH"));
-    BoolOption(current_page,   0, "UI.show-production-location-on-queue",  UserString("OPTIONS_UI_PROD_QUEUE_LOCATION"));
+    IntOption(current_page,    0, "ui.queue.width", UserString("OPTIONS_UI_QUEUE_WIDTH"));
+    BoolOption(current_page,   0, "ui.queue.production_location.shown", UserString("OPTIONS_UI_PROD_QUEUE_LOCATION"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_DESCRIPTIONS"));
-    BoolOption(current_page,   0, "UI.dump-effects-descriptions",          UserString("OPTIONS_DUMP_EFFECTS_GROUPS_DESC"));
-    BoolOption(current_page,   0, "verbose-sitrep",                        UserString("OPTIONS_VERBOSE_SITREP_DESC"));
-    BoolOption(current_page,   0, "UI.show-id-after-names",                UserString("OPTIONS_SHOW_IDS_AFTER_NAMES"));
+    BoolOption(current_page,   0, "resource.effects.description.shown",    UserString("OPTIONS_DUMP_EFFECTS_GROUPS_DESC"));
+    BoolOption(current_page,   0, "ui.map.sitrep.invalid.shown",           UserString("OPTIONS_VERBOSE_SITREP_DESC"));
+    BoolOption(current_page,   0, "ui.name.id.shown",                      UserString("OPTIONS_SHOW_IDS_AFTER_NAMES"));
 
     m_tabs->SetCurrentWnd(0);
 
     // Galaxy Map Page
     current_page = CreatePage(UserString("OPTIONS_GALAXY_MAP"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_SYSTEM_ICONS"));
-    IntOption(current_page,    0, "UI.system-icon-size",                   UserString("OPTIONS_UI_SYSTEM_ICON_SIZE"));
-    BoolOption(current_page,   0, "UI.system-circles",                     UserString("OPTIONS_UI_SYSTEM_CIRCLES"));
-    DoubleOption(current_page, 0, "UI.system-circle-size",                 UserString("OPTIONS_UI_SYSTEM_CIRCLE_SIZE"));
-    DoubleOption(current_page, 0, "UI.system-selection-indicator-size",    UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));
-    IntOption(current_page,    0, "UI.system-selection-indicator-rpm",     UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS"));
-    IntOption(current_page,    0, "UI.system-tiny-icon-size-threshold",    UserString("OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"));
-    ColorOption(current_page,  0, "UI.system-name-unowned-color",          UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
-    BoolOption(current_page,   0, "UI.system-fog-of-war",                  UserString("OPTIONS_UI_SYSTEM_FOG"));
-    DoubleOption(current_page, 0, "UI.system-fog-of-war-spacing",          UserString("OPTIONS_UI_SYSTEM_FOG_SPACING"));
+    IntOption(current_page,    0, "ui.map.system.icon.size",                    UserString("OPTIONS_UI_SYSTEM_ICON_SIZE"));
+    BoolOption(current_page,   0, "ui.map.system.circle.shown",                 UserString("OPTIONS_UI_SYSTEM_CIRCLES"));
+    DoubleOption(current_page, 0, "ui.map.system.circle.size",                  UserString("OPTIONS_UI_SYSTEM_CIRCLE_SIZE"));
+    DoubleOption(current_page, 0, "ui.map.system.select.indicator.size",     UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));
+    IntOption(current_page,    0, "ui.map.system.select.indicator.rpm",      UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS"));
+    IntOption(current_page,    0, "ui.map.system.icon.tiny.threshold",     UserString("OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"));
+    ColorOption(current_page,  0, "ui.map.system.unowned.name.color",           UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
+    BoolOption(current_page,   0, "ui.map.scanlines.shown",                     UserString("OPTIONS_UI_SYSTEM_FOG"));
+    DoubleOption(current_page, 0, "ui.map.system.scanlines.spacing",            UserString("OPTIONS_UI_SYSTEM_FOG_SPACING"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_FLEET_ICONS"));
-    DoubleOption(current_page, 0, "UI.tiny-fleet-button-minimum-zoom",     UserString("OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM"));
-    DoubleOption(current_page, 0, "UI.small-fleet-button-minimum-zoom",    UserString("OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"));
-    DoubleOption(current_page, 0, "UI.medium-fleet-button-minimum-zoom",   UserString("OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"));
-    DoubleOption(current_page, 0, "UI.fleet-selection-indicator-size",     UserString("OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE"));
+    DoubleOption(current_page, 0, "ui.map.fleet.button.tiny.zoom.threshold",    UserString("OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM"));
+    DoubleOption(current_page, 0, "ui.map.fleet.button.small.zoom.threshold",   UserString("OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"));
+    DoubleOption(current_page, 0, "ui.map.fleet.button.medium.zoom.threshold",  UserString("OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"));
+    DoubleOption(current_page, 0, "ui.map.fleet.select.indicator.size",      UserString("OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_STARLANES"));
-    DoubleOption(current_page, 0, "UI.starlane-thickness",                 UserString("OPTIONS_STARLANE_THICKNESS"));
-    BoolOption(current_page,   0, "UI.resource-starlane-colouring",        UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"));
-    DoubleOption(current_page, 0, "UI.starlane-core-multiplier",           UserString("OPTIONS_DB_STARLANE_CORE"));
-    BoolOption(current_page,   0, "UI.fleet-supply-lines",                 UserString("OPTIONS_FLEET_SUPPLY_LINES"));
-    DoubleOption(current_page, 0, "UI.fleet-supply-line-width",            UserString("OPTIONS_FLEET_SUPPLY_LINE_WIDTH"));
-    IntOption(current_page,    0, "UI.fleet-supply-line-dot-spacing",      UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING"));
-    DoubleOption(current_page, 0, "UI.fleet-supply-line-dot-rate",         UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE"));
-    ColorOption(current_page,  0, "UI.unowned-starlane-colour",            UserString("OPTIONS_UNOWNED_STARLANE_COLOUR"));
+    DoubleOption(current_page, 0, "ui.map.starlane.thickness",                  UserString("OPTIONS_STARLANE_THICKNESS"));
+    BoolOption(current_page,   0, "ui.map.starlane.empire.color.shown",         UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"));
+    DoubleOption(current_page, 0, "ui.map.starlane.thickness.factor",  UserString("OPTIONS_DB_STARLANE_CORE"));
+    BoolOption(current_page,   0, "ui.map.fleet.supply.shown",             UserString("OPTIONS_FLEET_SUPPLY_LINES"));
+    DoubleOption(current_page, 0, "ui.map.fleet.supply.width",             UserString("OPTIONS_FLEET_SUPPLY_LINE_WIDTH"));
+    IntOption(current_page,    0, "ui.map.fleet.supply.dot.spacing",       UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING"));
+    DoubleOption(current_page, 0, "ui.map.fleet.supply.dot.rate",          UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE"));
+    ColorOption(current_page,  0, "ui.map.starlane.color",                      UserString("OPTIONS_UNOWNED_STARLANE_COLOUR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_GALAXY_MAP_GENERAL"));
-    BoolOption(current_page,   0, "UI.galaxy-gas-background",              UserString("OPTIONS_GALAXY_MAP_GAS"));
-    BoolOption(current_page,   0, "UI.galaxy-starfields",                  UserString("OPTIONS_GALAXY_MAP_STARFIELDS"));
-    BoolOption(current_page,   0, "UI.show-galaxy-map-scale",              UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"));
-    BoolOption(current_page,   0, "UI.show-galaxy-map-scale-circle",       UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"));
-    BoolOption(current_page,   0, "UI.show-galaxy-map-zoom-slider",        UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"));
-    BoolOption(current_page,   0, "UI.show-detection-range",               UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"));
-    IntOption(current_page,    0, "UI.detection-range-opacity",            UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY"));
-    BoolOption(current_page,   0, "UI.map-right-click-popup-menu",         UserString("OPTIONS_GALAXY_MAP_POPUP"));
-    BoolOption(current_page,   0, "UI.show-unexplored_system_overlay",     UserString("OPTIONS_UI_SYSTEM_UNEXPLORED_OVERLAY"));
-    BoolOption(current_page,   0, "UI.hide-map-panels",                    UserString("OPTIONS_UI_HIDE_MAP_PANELS"));
+    BoolOption(current_page,   0, "ui.map.background.gas.shown",                UserString("OPTIONS_GALAXY_MAP_GAS"));
+    BoolOption(current_page,   0, "ui.map.background.starfields.shown",         UserString("OPTIONS_GALAXY_MAP_STARFIELDS"));
+    BoolOption(current_page,   0, "ui.map.scale.legend.shown",                  UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"));
+    BoolOption(current_page,   0, "ui.map.scale.circle.shown",                  UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"));
+    BoolOption(current_page,   0, "ui.map.zoom.slider.shown",                   UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"));
+    BoolOption(current_page,   0, "ui.map.detection.range.shown",               UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"));
+    IntOption(current_page,    0, "ui.map.detection.range.opacity",             UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY"));
+    BoolOption(current_page,   0, "ui.map.menu.enabled",                  UserString("OPTIONS_GALAXY_MAP_POPUP"));
+    BoolOption(current_page,   0, "ui.map.system.unexplored.rollover.enabled",  UserString("OPTIONS_UI_SYSTEM_UNEXPLORED_OVERLAY"));
+    BoolOption(current_page,   0, "ui.production.mappanels.removed",         UserString("OPTIONS_UI_HIDE_MAP_PANELS"));
 
     m_tabs->SetCurrentWnd(0);
 
@@ -630,10 +630,10 @@ void OptionsWnd::CompleteConstruction() {
     current_page = CreatePage(UserString("OPTIONS_PAGE_OBJECTS_WINDOW"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_COLUMNS"));
     for (unsigned int i = 0; i < 12u; ++i) {
-        std::string col_width_opt_name = "UI.objects-list-width-col-" + std::to_string(i);
+        std::string col_width_opt_name = "ui.objects.columns.c" + std::to_string(i) + ".width";
         if (!GetOptionsDB().OptionExists(col_width_opt_name))
             break;
-        std::string col_opt_name = "UI.objects-list-info-col-" + std::to_string(i);
+        std::string col_opt_name = "ui.objects.columns.c" + std::to_string(i) + ".stringkey";
         if (!GetOptionsDB().OptionExists(col_opt_name))
             break;
         std::string col_contents = GetOptionsDB().GetValueString(col_opt_name);
@@ -647,56 +647,56 @@ void OptionsWnd::CompleteConstruction() {
     // Colors tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_COLORS"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_GENERAL_COLORS"));
-    ColorOption(current_page, 0, "UI.text-color",          UserString("OPTIONS_TEXT_COLOR"));
-    ColorOption(current_page, 0, "UI.default-link-color",  UserString("OPTIONS_DEFAULT_LINK_COLOR"));
-    ColorOption(current_page, 0, "UI.rollover-link-color", UserString("OPTIONS_ROLLOVER_LINK_COLOR"));
+    ColorOption(current_page, 0, "ui.font.color",          UserString("OPTIONS_TEXT_COLOR"));
+    ColorOption(current_page, 0, "ui.font.link.color",     UserString("OPTIONS_DEFAULT_LINK_COLOR"));
+    ColorOption(current_page, 0, "ui.font.link.rollover.color", UserString("OPTIONS_ROLLOVER_LINK_COLOR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_WINDOW_COLORS"));
-    ColorOption(current_page, 0, "UI.wnd-color",              UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 0, "UI.wnd-inner-border-color", UserString("OPTIONS_INNER_BORDER_COLOR"));
-    ColorOption(current_page, 0, "UI.wnd-outer-border-color", UserString("OPTIONS_OUTER_BORDER_COLOR"));
+    ColorOption(current_page, 0, "ui.window.background.color", UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 0, "ui.window.border.inner.color", UserString("OPTIONS_INNER_BORDER_COLOR"));
+    ColorOption(current_page, 0, "ui.window.border.outer.color", UserString("OPTIONS_OUTER_BORDER_COLOR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_CONTROL_COLORS"));
-    ColorOption(current_page, 0, "UI.ctrl-color",               UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 0, "UI.ctrl-border-color",        UserString("OPTIONS_BORDER_COLOR"));
-    ColorOption(current_page, 0, "UI.edit-hilite",              UserString("OPTIONS_HIGHLIGHT_COLOR"));
-    ColorOption(current_page, 0, "UI.dropdownlist-arrow-color", UserString("OPTIONS_DROPLIST_ARROW_COLOR"));
-    ColorOption(current_page, 0, "UI.state-button-color",       UserString("OPTIONS_STATE_BUTTON_COLOR"));
-    ColorOption(current_page, 0, "UI.stat-increase-color",      UserString("OPTIONS_STAT_INCREASE_COLOR"));
-    ColorOption(current_page, 0, "UI.stat-decrease-color",      UserString("OPTIONS_STAT_DECREASE_COLOR"));
+    ColorOption(current_page, 0, "ui.control.background.color", UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 0, "ui.control.border.color",     UserString("OPTIONS_BORDER_COLOR"));
+    ColorOption(current_page, 0, "ui.control.edit.highlight.color", UserString("OPTIONS_HIGHLIGHT_COLOR"));
+    ColorOption(current_page, 0, "ui.dropdownlist.arrow.color", UserString("OPTIONS_DROPLIST_ARROW_COLOR"));
+    ColorOption(current_page, 0, "ui.button.state.color",   UserString("OPTIONS_STATE_BUTTON_COLOR"));
+    ColorOption(current_page, 0, "ui.font.stat.increase.color", UserString("OPTIONS_STAT_INCREASE_COLOR"));
+    ColorOption(current_page, 0, "ui.font.stat.decrease.color", UserString("OPTIONS_STAT_DECREASE_COLOR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_COMBAT_COLORS"));
-    ColorOption(current_page, 0, "UI.combat.summary.dead-color", UserString("OPTIONS_COMBAT_SUMMARY_DEAD_COLOR"));
-    ColorOption(current_page, 0, "UI.combat.summary.wound-color", UserString("OPTIONS_COMBAT_SUMMARY_WOUND_COLOR"));
-    ColorOption(current_page, 0, "UI.combat.summary.health-color", UserString("OPTIONS_COMBAT_SUMMARY_HEALTH_COLOR"));
+    ColorOption(current_page, 0, "ui.combat.summary.dead.color", UserString("OPTIONS_COMBAT_SUMMARY_DEAD_COLOR"));
+    ColorOption(current_page, 0, "ui.combat.summary.damaged.color", UserString("OPTIONS_COMBAT_SUMMARY_WOUND_COLOR"));
+    ColorOption(current_page, 0, "ui.combat.summary.undamaged.color", UserString("OPTIONS_COMBAT_SUMMARY_HEALTH_COLOR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_TECH_COLORS"));
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_KNOWN_TECH_COLORS"));
-    ColorOption(current_page, 1, "UI.known-tech",        UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 1, "UI.known-tech-border", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.completed.background.color", UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.completed.border.color", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_RESEARCHABLE_TECH_COLORS"));
-    ColorOption(current_page, 1, "UI.researchable-tech",        UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 1, "UI.researchable-tech-border", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.researchable.background.color", UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.researchable.border.color", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_UNRESEARCHABLE_TECH_COLORS"));
-    ColorOption(current_page, 1, "UI.unresearchable-tech",        UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 1, "UI.unresearchable-tech-border", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.unresearchable.background.color", UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.unresearchable.border.color", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_TECH_PROGRESS_COLORS"));
-    ColorOption(current_page, 1, "UI.tech-progress",            UserString("OPTIONS_PROGRESS_BAR_COLOR"));
-    ColorOption(current_page, 1, "UI.tech-progress-background", UserString("OPTIONS_PROGRESS_BACKGROUND_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.progress.color", UserString("OPTIONS_PROGRESS_BAR_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.progress.background.color", UserString("OPTIONS_PROGRESS_BACKGROUND_COLOR"));
     m_tabs->SetCurrentWnd(0);
 
     // Ausosave settings tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_AUTOSAVE"));
-    BoolOption(current_page, 0, "autosave.single-player.turn-start", UserString("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START"));
-    BoolOption(current_page, 0, "autosave.single-player.turn-end",   UserString("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END"));
-    BoolOption(current_page, 0, "autosave.multiplayer.turn-start",   UserString("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"));
-    IntOption(current_page,  0, "autosave.turns",           UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"));
-    IntOption(current_page,  0, "autosave.turn-limit",      UserString("OPTIONS_AUTOSAVE_LIMIT"));
-    BoolOption(current_page, 0, "autosave.galaxy-creation", UserString("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"));
-    BoolOption(current_page, 0, "autosave.game-close",      UserString("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"));
+    BoolOption(current_page, 0, "save.auto.turn.start.enabled", UserString("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START"));
+    BoolOption(current_page, 0, "save.auto.turn.end.enabled", UserString("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END"));
+    BoolOption(current_page, 0, "save.auto.turn.multiplayer.start.enabled", UserString("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"));
+    IntOption(current_page,  0, "save.auto.turn.interval", UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"));
+    IntOption(current_page,  0, "save.auto.file.limit",     UserString("OPTIONS_AUTOSAVE_LIMIT"));
+    BoolOption(current_page, 0, "save.auto.initial.enabled", UserString("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"));
+    BoolOption(current_page, 0, "save.auto.exit.enabled",   UserString("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"));
     m_tabs->SetCurrentWnd(0);
 
     // Keyboard shortcuts tab
@@ -704,9 +704,11 @@ void OptionsWnd::CompleteConstruction() {
 
     // Directories tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_DIRECTORIES"));
-    DirectoryOption(current_page, 0, "resource-dir", UserString("OPTIONS_FOLDER_SETTINGS"), GetRootDataDir(), is_game_running);  // GetRootDataDir() returns the default browse path when modifying this directory option.  the actual default directory (before modifying) is gotten from the specified option name "resource-dir"
-    DirectoryOption(current_page, 0, "save-dir", UserString("OPTIONS_FOLDER_SAVE"),     GetUserDataDir());
-    DirectoryOption(current_page, 0, "server-save-dir", UserString("OPTIONS_SERVER_FOLDER_SAVE"),     GetUserDataDir());
+    /** GetRootDataDir() returns the default browse path when modifying this directory option.
+     *  The actual default directory (before modifying) is gotten from the specified option name "resource.path" */
+    DirectoryOption(current_page, 0, "resource.path", UserString("OPTIONS_FOLDER_SETTINGS"), GetRootDataDir(), is_game_running);
+    DirectoryOption(current_page, 0, "save.path", UserString("OPTIONS_FOLDER_SAVE"), GetUserDataDir());
+    DirectoryOption(current_page, 0, "save.server.path", UserString("OPTIONS_SERVER_FOLDER_SAVE"), GetUserDataDir());
     m_tabs->SetCurrentWnd(0);
 
     // Logging page
@@ -731,19 +733,19 @@ void OptionsWnd::CompleteConstruction() {
 
     // Misc
     current_page = CreatePage(UserString("OPTIONS_PAGE_MISC"));
-    IntOption(current_page, 0, "effects-threads-ui",        UserString("OPTIONS_EFFECTS_THREADS_UI"));
-    IntOption(current_page, 0, "effects-threads-server",    UserString("OPTIONS_EFFECTS_THREADS_SERVER"));
-    IntOption(current_page, 0, "effects-threads-ai",        UserString("OPTIONS_EFFECTS_THREADS_AI"));
-    BoolOption(current_page, 0, "auto-add-saved-designs",   UserString("OPTIONS_ADD_SAVED_DESIGNS"));
-    BoolOption(current_page, 0, "auto-add-default-designs", UserString("OPTIONS_ADD_DEFAULT_DESIGNS"));
-    BoolOption(current_page, 0, "binary-serialization",     UserString("OPTIONS_USE_BINARY_SERIALIZATION"));
-    BoolOption(current_page, 0, "xml-zlib-serialization",   UserString("OPTIONS_USE_XML_ZLIB_SERIALIZATION"));
-    BoolOption(current_page, 0, "verbose-sitrep",           UserString("OPTIONS_VERBOSE_SITREP_DESC"));
-    BoolOption(current_page, 0, "effect-accounting",        UserString("OPTIONS_EFFECT_ACCOUNTING"));
+    IntOption(current_page, 0, "effects.ui.threads",        UserString("OPTIONS_EFFECTS_THREADS_UI"));
+    IntOption(current_page, 0, "effects.server.threads",    UserString("OPTIONS_EFFECTS_THREADS_SERVER"));
+    IntOption(current_page, 0, "effects.ai.threads",        UserString("OPTIONS_EFFECTS_THREADS_AI"));
+    BoolOption(current_page, 0, "resource.shipdesign.saved.enabled",    UserString("OPTIONS_ADD_SAVED_DESIGNS"));
+    BoolOption(current_page, 0, "resource.shipdesign.default.enabled",  UserString("OPTIONS_ADD_DEFAULT_DESIGNS"));
+    BoolOption(current_page, 0, "save.format.binary.enabled",    UserString("OPTIONS_USE_BINARY_SERIALIZATION"));
+    BoolOption(current_page, 0, "save.format.xml.zlib.enabled", UserString("OPTIONS_USE_XML_ZLIB_SERIALIZATION"));
+    BoolOption(current_page, 0, "ui.map.sitrep.invalid.shown", UserString("OPTIONS_VERBOSE_SITREP_DESC"));
+    BoolOption(current_page, 0, "effects.accounting.enabled", UserString("OPTIONS_EFFECT_ACCOUNTING"));
 
     // Create persistent config button
     auto persistent_config_button = GG::Wnd::Create<CUIButton>(UserString("OPTIONS_CREATE_PERSISTENT_CONFIG"));
-    persistent_config_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    persistent_config_button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     persistent_config_button->SetBrowseInfoWnd(
         GG::Wnd::Create<TextBrowseWnd>(UserString("OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_TITLE"),
                                        UserString("OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_DESC"), ROW_WIDTH));
@@ -812,7 +814,7 @@ void OptionsWnd::CreateSectionHeader(GG::ListBox* page, int indentation_level,
                                                heading_text, indentation_level);
 
     if (!tooltip.empty()) {
-        row->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        row->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
         row->SetBrowseText(tooltip);
     }
 
@@ -824,7 +826,7 @@ GG::StateButton* OptionsWnd::BoolOption(GG::ListBox* page, int indentation_level
     auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, button->MinUsableSize().y + LAYOUT_MARGIN + 6,
                                                button, indentation_level);
     page->Insert(row);
-    button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     button->SetCheck(GetOptionsDB().Get<bool>(option_name));
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     button->CheckedSignal.connect(
@@ -921,9 +923,9 @@ GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, c
     auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, spin->MinUsableSize().y, layout, indentation_level);
     page->Insert(row);
 
-    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     spin->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     spin->ValueChangedSignal.connect(
         [option_name](const int& new_value){ GetOptionsDB().Set(option_name, new_value); });
@@ -958,9 +960,9 @@ GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_le
     auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, spin->MinUsableSize().y, layout, indentation_level);
     page->Insert(row);
 
-    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     spin->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     spin->ValueChangedSignal.connect(
         [option_name](const double& new_value){ GetOptionsDB().Set(option_name, new_value); });
@@ -971,21 +973,21 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, Sou
     auto row = GG::Wnd::Create<GG::ListBox::Row>();
     auto button = GG::Wnd::Create<CUIStateButton>(UserString("OPTIONS_MUSIC"), GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
     button->Resize(button->MinUsableSize());
-    button->SetCheck(GetOptionsDB().Get<bool>("UI.sound.music-enabled"));
-    std::shared_ptr<const RangedValidator<int>> validator = std::dynamic_pointer_cast<const RangedValidator<int>>(GetOptionsDB().GetValidator("UI.sound.music-volume"));
+    button->SetCheck(GetOptionsDB().Get<bool>("audio.music.enabled"));
+    std::shared_ptr<const RangedValidator<int>> validator = std::dynamic_pointer_cast<const RangedValidator<int>>(GetOptionsDB().GetValidator("audio.music.volume"));
     assert(validator);
     auto slider = GG::Wnd::Create<CUISlider<int>>(validator->m_min, validator->m_max, GG::HORIZONTAL);
-    slider->SlideTo(GetOptionsDB().Get<int>("UI.sound.music-volume"));
+    slider->SlideTo(GetOptionsDB().Get<int>("audio.music.volume"));
     auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
     layout->Add(button, 0, 0);
     layout->Add(slider, 0, 1);
     row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize().y, slider->MinUsableSize().y) + 6));
     row->push_back(GG::Wnd::Create<RowContentsWnd>(row->Width(), row->Height(), layout, indentation_level));
     page->Insert(row);
-    button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    button->SetBrowseText(UserString(GetOptionsDB().GetDescription("UI.sound.music-enabled")));
-    slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("UI.sound.music-volume")));
+    button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    button->SetBrowseText(UserString(GetOptionsDB().GetDescription("audio.music.enabled")));
+    slider->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("audio.music.volume")));
     button->CheckedSignal.connect(
         boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicClicked, &fb, _1));
     slider->SlidSignal.connect(
@@ -1011,9 +1013,9 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize().y, slider->MinUsableSize().y) + 6));
     row->push_back(GG::Wnd::Create<RowContentsWnd>(row->Width(), row->Height(), layout, indentation_level));
     page->Insert(row);
-    button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription(toggle_option_name)));
-    slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    slider->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription(volume_option_name)));
     button->CheckedSignal.connect(
         boost::bind(&OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked, &fb, _1));
@@ -1054,11 +1056,11 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const 
     auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, layout->Height() + 6, layout, indentation_level);
     page->Insert(row);
 
-    edit->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    edit->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     edit->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     edit->EditedSignal.connect(
         [option_name, edit, string_validator](const std::string& str) {
@@ -1115,9 +1117,9 @@ void OptionsWnd::ColorOption(GG::ListBox* page, int indentation_level, const std
     row->Resize(GG::Pt(ROW_WIDTH, std::max(text_control->MinUsableSize().y, color_selector->MinUsableSize().y) + 6));
     row->push_back(GG::Wnd::Create<RowContentsWnd>(row->Width(), row->Height(), layout, indentation_level));
     page->Insert(row);
-    color_selector->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    color_selector->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     color_selector->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     color_selector->ColorChangedSignal.connect(
         [option_name](const GG::Clr& clr) { GetOptionsDB().Set<GG::Clr>(option_name, clr); });
@@ -1132,30 +1134,30 @@ void OptionsWnd::FontOption(GG::ListBox* page, int indentation_level, const std:
 void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     std::shared_ptr<const RangedValidator<int>> width_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
-            GetOptionsDB().GetValidator("app-width"));
+            GetOptionsDB().GetValidator("video.fullscreen.width"));
     std::shared_ptr<const RangedValidator<int>> height_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
-            GetOptionsDB().GetValidator("app-height"));
+            GetOptionsDB().GetValidator("video.fullscreen.height"));
     std::shared_ptr<const RangedValidator<int>> windowed_width_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
-            GetOptionsDB().GetValidator("app-width-windowed"));
+            GetOptionsDB().GetValidator("video.windowed.width"));
     std::shared_ptr<const RangedValidator<int>> windowed_height_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
-            GetOptionsDB().GetValidator("app-height-windowed"));
+            GetOptionsDB().GetValidator("video.windowed.height"));
     std::shared_ptr<const RangedValidator<int>> windowed_left_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
-            GetOptionsDB().GetValidator("app-left-windowed"));
+            GetOptionsDB().GetValidator("video.windowed.left"));
     std::shared_ptr<const RangedValidator<int>> windowed_top_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
-            GetOptionsDB().GetValidator("app-top-windowed"));
+            GetOptionsDB().GetValidator("video.windowed.top"));
 
     // compile list of resolutions available on this system
 
     std::vector<std::string> resolutions = GG::GUI::GetGUI()->GetSupportedResolutions();
 
     // find text representation of current fullscreen resolution selection
-    int width = GetOptionsDB().Get<int>("app-width");
-    int height = GetOptionsDB().Get<int>("app-height");
+    int width = GetOptionsDB().Get<int>("video.fullscreen.width");
+    int height = GetOptionsDB().Get<int>("video.fullscreen.height");
     std::string current_video_mode_str = boost::io::str(boost::format("%1% x %2%") % width % height);
 
     // find which index in list, if any, represents current fullscreen resolution selection
@@ -1169,14 +1171,14 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
 
     // drop list and label
     auto drop_list_label = GG::Wnd::Create<CUILabel>(UserString("OPTIONS_VIDEO_MODE"), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
-    drop_list_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    drop_list_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     drop_list_label->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_LIST_DESCRIPTION"));
 
     auto drop_list = GG::Wnd::Create<CUIDropDownList>(6);
     drop_list->Resize(GG::Pt(drop_list->MinUsableSize().x, GG::Y(ClientUI::Pts() + 4)));
     drop_list->SetMaxSize(GG::Pt(drop_list->MaxSize().x, drop_list->Size().y));
     drop_list->SetStyle(GG::LIST_NOSORT);
-    drop_list->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    drop_list->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     drop_list->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_LIST_DESCRIPTION"));
     drop_list->SetOnlyMouseScrollWhenDropped(true);
 
@@ -1202,19 +1204,19 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
         drop_list->Select(current_resolution_index);
 
     // fullscreen / windowed toggle
-    BoolOption(page, indentation_level, "fullscreen",            UserString("OPTIONS_FULLSCREEN"));
+    BoolOption(page, indentation_level, "video.fullscreen.enabled", UserString("OPTIONS_FULLSCREEN"));
     // Fake mode change is not possible without the opengl frame buffer extension
     if (GG::SDLGUI::GetGUI()->FramebuffersAvailable()) {
-        BoolOption(page, indentation_level, "fake-mode-change",       UserString("OPTIONS_FAKE_MODE_CHANGE"));
+        BoolOption(page, indentation_level, "video.fullscreen.fake.enabled", UserString("OPTIONS_FAKE_MODE_CHANGE"));
     } else {
-        GetOptionsDB().Set<bool>("fake-mode-change", false);
+        GetOptionsDB().Set<bool>("video.fullscreen.fake.enabled", false);
     }
-    IntOption(page, indentation_level,  "fullscreen-monitor-id", UserString("OPTIONS_FULLSCREEN_MONITOR_ID"));
+    IntOption(page, indentation_level, "video.monitor.id", UserString("OPTIONS_FULLSCREEN_MONITOR_ID"));
 
 
     // customizable windowed width and height
     auto windowed_spinner_label = GG::Wnd::Create<CUILabel>(UserString("OPTIONS_VIDEO_MODE_WINDOWED"), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
-    windowed_spinner_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    windowed_spinner_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     windowed_spinner_label->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_WINDOWED_SPINNERS_DESCRIPTION"));
 
     row = GG::Wnd::Create<GG::ListBox::Row>();
@@ -1222,25 +1224,25 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     row->push_back(GG::Wnd::Create<RowContentsWnd>(row->Width(), row->Height(), windowed_spinner_label, indentation_level));
     page->Insert(row);
 
-    IntOption(page, indentation_level, "app-width-windowed",  UserString("OPTIONS_APP_WIDTH_WINDOWED"));
-    IntOption(page, indentation_level, "app-height-windowed", UserString("OPTIONS_APP_HEIGHT_WINDOWED"));
-    IntOption(page, indentation_level, "app-left-windowed",   UserString("OPTIONS_APP_LEFT_WINDOWED"));
-    IntOption(page, indentation_level, "app-top-windowed",    UserString("OPTIONS_APP_TOP_WINDOWED"));
+    IntOption(page, indentation_level, "video.windowed.width",  UserString("OPTIONS_APP_WIDTH_WINDOWED"));
+    IntOption(page, indentation_level, "video.windowed.height", UserString("OPTIONS_APP_HEIGHT_WINDOWED"));
+    IntOption(page, indentation_level, "video.windowed.left", UserString("OPTIONS_APP_LEFT_WINDOWED"));
+    IntOption(page, indentation_level, "video.windowed.top", UserString("OPTIONS_APP_TOP_WINDOWED"));
 
     // fps
-    BoolOption(page, indentation_level, "show-fps", UserString("OPTIONS_SHOW_FPS"));
+    BoolOption(page, indentation_level, "video.fps.shown", UserString("OPTIONS_SHOW_FPS"));
 
-    //GG::StateButton* limit_FPS_button = BoolOption(page, indentation_level, "limit-fps", UserString("OPTIONS_LIMIT_FPS"));
+    //GG::StateButton* limit_FPS_button = BoolOption(page, indentation_level, "video.fps.max.enabled", UserString("OPTIONS_LIMIT_FPS"));
     //GG::Spin<double>* max_fps_spin =
-    DoubleOption(page, indentation_level,  "max-fps",          UserString("OPTIONS_MAX_FPS"));
+    DoubleOption(page, indentation_level,  "video.fps.max",    UserString("OPTIONS_MAX_FPS"));
     //limit_FPS_button->CheckedSignal, [max_fps_spin](bool checked) { max_fps_spin->Disable(!checked); });
-    //limit_FPS_button->SetCheck(GetOptionsDB().Get<bool>("limit-fps"));
+    //limit_FPS_button->SetCheck(GetOptionsDB().Get<bool>("video.fps.max.enabled"));
     //limit_FPS_button->CheckedSignal(limit_FPS_button->Checked());
 
-    //GG::StateButton* limit_FPS_nofocus_button = BoolOption(page, indentation_level, "limit-fps-no-focus", UserString("OPTIONS_LIMIT_FPS_NO_FOCUS"));
+    //GG::StateButton* limit_FPS_nofocus_button = BoolOption(page, indentation_level, "video.fps.unfocused.enabled", UserString("OPTIONS_LIMIT_FPS_NO_FOCUS"));
     //GG::Spin<double>* max_fps_nofocus_spin =
-    DoubleOption(page, indentation_level,  "max-fps-no_focus", UserString("OPTIONS_MAX_FPS_NO_FOCUS"));
-    //limit_FPS_nofocus_button->SetCheck(GetOptionsDB().Get<bool>("limit-fps-no-focus"));
+    DoubleOption(page, indentation_level,  "video.fps.unfocused", UserString("OPTIONS_MAX_FPS_NO_FOCUS"));
+    //limit_FPS_nofocus_button->SetCheck(GetOptionsDB().Get<bool>("video.fps.unfocused.enabled"));
 
 
     // apply button, sized to fit text
@@ -1262,15 +1264,51 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
             namespace classic = boost::spirit::classic;
             classic::rule<> resolution_p = classic::int_p[classic::assign_a(w)] >> classic::str_p(" x ") >> classic::int_p[classic::assign_a(h)];
             classic::parse(drop_list_row->Name().c_str(), resolution_p);
-            GetOptionsDB().Set<int>("app-width", w);
-            GetOptionsDB().Set<int>("app-height", h);
+            GetOptionsDB().Set<int>("video.fullscreen.width", w);
+            GetOptionsDB().Set<int>("video.fullscreen.height", h);
         }
     );
 }
 
+namespace {
+    std::string ValidSectionForHotkey(const std::string& hotkey_name) {
+        std::string retval { "HOTKEYS_GENERAL" };
+
+        std::string name { hotkey_name };
+        std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+
+        const std::regex dot { "\\.+" };
+        const std::vector<std::string> nodes {
+            std::sregex_token_iterator(name.cbegin(), name.cend(), dot, -1),
+            std::sregex_token_iterator()
+        };
+
+        std::string current_node { "" };
+        for (const auto& node : nodes) {
+            if (current_node == name)
+                break;
+
+            current_node.append( "_" + node);
+            if (UserStringExists("HOTKEYS" + current_node))
+                retval = "HOTKEYS" + current_node;
+        }
+
+        return retval;
+    }
+
+    std::map<std::string, std::set<std::string>> HotkeysBySection() {
+        std::map<std::string, std::set<std::string>> retval;
+        for (const auto& entry : Hotkey::DefinedHotkeys()) {
+            retval[ValidSectionForHotkey(entry)].insert(entry);
+        }
+        return retval;
+    }
+}
+
 void OptionsWnd::HotkeysPage() {
+
     GG::ListBox* page = CreatePage(UserString("OPTIONS_PAGE_HOTKEYS"));
-    for (const auto& class_hotkeys : Hotkey::ClassifyHotkeys()) {
+    for (const auto& class_hotkeys : HotkeysBySection()) {
         CreateSectionHeader(page, 0, UserString(class_hotkeys.first));
         for (const std::string& hotkey : class_hotkeys.second)
             HotkeyOption(page, 0, hotkey);
@@ -1297,14 +1335,14 @@ void OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked(bool checked) {
     if (checked) {
         try {
             Sound::GetSound().Enable();
-            GetOptionsDB().Set("UI.sound.enabled", true);
-            Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
+            GetOptionsDB().Set("audio.effects.enabled", true);
+            Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.press.sound.path"), true);
         } catch (Sound::InitializationFailureException const &e) {
             SoundInitializationFailure(e);
         }
     } else {
-        GetOptionsDB().Set("UI.sound.enabled", false);
-        if (!GetOptionsDB().Get<bool>("UI.sound.music-enabled"))
+        GetOptionsDB().Set("audio.effects.enabled", false);
+        if (!GetOptionsDB().Get<bool>("audio.music.enabled"))
             Sound::GetSound().Disable();
     }
 }
@@ -1313,28 +1351,28 @@ void OptionsWnd::SoundOptionsFeedback::MusicClicked(bool checked) {
     if (checked) {
         try {
             Sound::GetSound().Enable();
-            GetOptionsDB().Set("UI.sound.music-enabled", true);
-            Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("UI.sound.bg-music"), -1);
+            GetOptionsDB().Set("audio.music.enabled", true);
+            Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("audio.music.path"), -1);
         } catch (Sound::InitializationFailureException const &e) {
             SoundInitializationFailure(e);
         }
     } else {
-        GetOptionsDB().Set("UI.sound.music-enabled", false);
+        GetOptionsDB().Set("audio.music.enabled", false);
         Sound::GetSound().StopMusic();
-        if (!GetOptionsDB().Get<bool>("UI.sound.enabled"))
+        if (!GetOptionsDB().Get<bool>("audio.effects.enabled"))
             Sound::GetSound().Disable();
     }
 }
 
 void OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid(int pos, int low, int high) const {
-    GetOptionsDB().Set("UI.sound.music-volume", pos);
+    GetOptionsDB().Set("audio.music.volume", pos);
     Sound::GetSound().SetMusicVolume(pos);
 }
 
 void OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid(int pos, int low, int high) const {
-    GetOptionsDB().Set("UI.sound.volume", pos);
+    GetOptionsDB().Set("audio.effects.volume", pos);
     Sound::GetSound().SetUISoundsVolume(pos);
-    Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
+    Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.press.sound.path"), true);
 }
 
 void OptionsWnd::SoundOptionsFeedback::SetMusicButton(std::shared_ptr<GG::StateButton> button)
@@ -1344,8 +1382,8 @@ void OptionsWnd::SoundOptionsFeedback::SetEffectsButton(std::shared_ptr<GG::Stat
 { m_effects_button = button; }
 
 void OptionsWnd::SoundOptionsFeedback::SoundInitializationFailure(Sound::InitializationFailureException const &e) {
-    GetOptionsDB().Set("UI.sound.enabled", false);
-    GetOptionsDB().Set("UI.sound.music-enabled", false);
+    GetOptionsDB().Set("audio.effects.enabled", false);
+    GetOptionsDB().Set("audio.music.enabled", false);
     if (m_effects_button)
         m_effects_button->SetCheck(false);
     if (m_music_button)

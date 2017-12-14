@@ -83,7 +83,7 @@ void SpecialsPanel::Update() {
             graphic = GG::Wnd::Create<StatisticIcon>(ClientUI::SpecialIcon(special->Name()),
                                                      SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT);
 
-        graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
         std::string desc = special->Description();
 
@@ -95,7 +95,7 @@ void SpecialsPanel::Update() {
         else
             desc += "\n" + UserString("ADDED_ON_INITIAL_TURN");
 
-        if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions") && !special->Effects().empty()) {
+        if (GetOptionsDB().Get<bool>("resource.effects.description.shown") && !special->Effects().empty()) {
             desc += "\n" + Dump(special->Effects());
         }
 

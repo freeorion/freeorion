@@ -179,7 +179,7 @@ namespace {
             << old_path << std::endl << std::endl
             << "Configuration were files copied to:" << std::endl << config_path << std::endl << std::endl
             << "Data Files were copied to:" << std::endl << data_path << std::endl << std::endl
-            << "If your save-dir option in persistent_config.xml was ~/.config, then you need to update it."
+            << "If your save.path option in persistent_config.xml was ~/.config, then you need to update it."
             << std::endl;
 
         try {
@@ -208,7 +208,7 @@ namespace {
                 }
             }
 
-            //Start update of save-dir in config file and complete it in CompleteXDGMigration()
+            //Start update of save.path in config file and complete it in CompleteXDGMigration()
             fs::path sentinel = GetUserDataDir() / "MIGRATION_TO_XDG_IN_PROGRESS";
             if (!exists(sentinel)) {
                 fs::ofstream touchfile(sentinel);
@@ -422,24 +422,24 @@ void CompleteXDGMigration() {
     if (exists(sentinel)) {
         fs::remove(sentinel);
         // Update data dir in config file
-        const std::string options_save_dir = GetOptionsDB().Get<std::string>("save-dir");
+        const std::string options_save_dir = GetOptionsDB().Get<std::string>("save.path");
         const fs::path old_path = fs::path(getenv("HOME")) / ".freeorion";
         if (fs::path(options_save_dir) == old_path)
-            GetOptionsDB().Set<std::string>("save-dir", GetUserDataDir().string());
+            GetOptionsDB().Set<std::string>("save.path", GetUserDataDir().string());
     }
 }
 
 const fs::path GetResourceDir() {
     // if resource dir option has been set, use specified location. otherwise,
     // use default location
-    std::string options_resource_dir = GetOptionsDB().Get<std::string>("resource-dir");
+    std::string options_resource_dir = GetOptionsDB().Get<std::string>("resource.path");
     fs::path dir = FilenameToPath(options_resource_dir);
     if (fs::exists(dir) && fs::is_directory(dir))
         return dir;
 
-    dir = GetOptionsDB().GetDefault<std::string>("resource-dir");
+    dir = GetOptionsDB().GetDefault<std::string>("resource.path");
     if (!fs::is_directory(dir) || !fs::exists(dir))
-        dir = FilenameToPath(GetOptionsDB().GetDefault<std::string>("resource-dir"));
+        dir = FilenameToPath(GetOptionsDB().GetDefault<std::string>("resource.path"));
 
     return dir;
 }
@@ -457,18 +457,18 @@ const fs::path GetPersistentConfigPath() {
 const fs::path GetSaveDir() {
     // if save dir option has been set, use specified location.  otherwise,
     // use default location
-    std::string options_save_dir = GetOptionsDB().Get<std::string>("save-dir");
+    std::string options_save_dir = GetOptionsDB().Get<std::string>("save.path");
     if (options_save_dir.empty())
-        options_save_dir = GetOptionsDB().GetDefault<std::string>("save-dir");
+        options_save_dir = GetOptionsDB().GetDefault<std::string>("save.path");
     return FilenameToPath(options_save_dir);
 }
 
 const fs::path GetServerSaveDir() {
     // if server save dir option has been set, use specified location.  otherwise,
     // use default location
-    std::string options_save_dir = GetOptionsDB().Get<std::string>("server-save-dir");
+    std::string options_save_dir = GetOptionsDB().Get<std::string>("save.server.path");
     if (options_save_dir.empty())
-        options_save_dir = GetOptionsDB().GetDefault<std::string>("server-save-dir");
+        options_save_dir = GetOptionsDB().GetDefault<std::string>("save.server.path");
     return FilenameToPath(options_save_dir);
 }
 

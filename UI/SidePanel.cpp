@@ -60,7 +60,8 @@ namespace {
     /** @content_tag{CTRL_BOMBARD_} Prefix tag allowing automatic ship selection for bombard, must post-fix a valid planet tag **/
     const std::string TAG_BOMBARD_PREFIX = "CTRL_BOMBARD_";
 
-    void        PlaySidePanelOpenSound()       {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.sidepanel-open"), true);}
+    void        PlaySidePanelOpenSound()
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.map.sidepanel.open.sound.path"), true); }
 
     struct RotatingPlanetData {
         RotatingPlanetData(const XMLElement& elem) {
@@ -381,7 +382,7 @@ namespace {
     }
 
     int         MaxPlanetDiameter()
-    { return GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter"); }
+    { return GetOptionsDB().Get<int>("ui.map.sidepanel.planet.diameter.max"); }
 
     int         PlanetDiameter(PlanetSize size) {
         double scale = 0.0;
@@ -396,7 +397,7 @@ namespace {
         default           : scale = 3.0/7.0; break;
         }
 
-        int MIN_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-min-diameter");
+        int MIN_PLANET_DIAMETER = GetOptionsDB().Get<int>("ui.map.sidepanel.planet.diameter.min");
         // sanity check
         if (MIN_PLANET_DIAMETER > MaxPlanetDiameter())
             MIN_PLANET_DIAMETER = MaxPlanetDiameter();
@@ -406,10 +407,14 @@ namespace {
 
     /** Adds options related to sidepanel to Options DB. */
     void        AddOptions(OptionsDB& db) {
-        db.Add("UI.sidepanel-planet-max-diameter",   UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER"),  128,    RangedValidator<int>(16, 512));
-        db.Add("UI.sidepanel-planet-min-diameter",   UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER"),  24,     RangedValidator<int>(8,  128));
-        db.Add("UI.sidepanel-planet-shown",          UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN"),         true,   Validator<bool>());
-        db.Add("UI.sidepanel-planet-fog-of-war-clr", UserStringNop("OPTIONS_DB_UI_PLANET_FOG_CLR"),                 GG::Clr(0, 0, 0, 128),  Validator<GG::Clr>());
+        db.Add("ui.map.sidepanel.planet.diameter.max",      UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER"),
+               128,                         RangedValidator<int>(16, 512));
+        db.Add("ui.map.sidepanel.planet.diameter.min",      UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER"),
+               24,                          RangedValidator<int>(8,  128));
+        db.Add("ui.map.sidepanel.planet.shown",             UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN"),
+               true,                        Validator<bool>());
+        db.Add("ui.map.sidepanel.planet.scanlane.color",    UserStringNop("OPTIONS_DB_UI_PLANET_FOG_CLR"),
+               GG::Clr(0, 0, 0, 128),       Validator<GG::Clr>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -673,8 +678,8 @@ public:
         }
 
         // render fog of war over planet if it's not visible to this client's player
-        if ((m_visibility <= VIS_BASIC_VISIBILITY) && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
-            s_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("UI.sidepanel-planet-fog-of-war-clr"));
+        if ((m_visibility <= VIS_BASIC_VISIBILITY) && GetOptionsDB().Get<bool>("ui.map.scanlines.shown")) {
+            s_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("ui.map.sidepanel.planet.scanlane.color"));
             s_scanline_shader.RenderCircle(ul, lr);
         }
     }
@@ -911,7 +916,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
         return;
     }
 
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     // create planet name text
 
@@ -957,7 +962,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
         boost::bind(&SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot, this, _1));
     this->FocusChangedSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::SetFocus, this, _1));
-    m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_focus_drop->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
     m_focus_drop->ManuallyManageColProps();
     m_focus_drop->SetNumCols(2);
@@ -1103,7 +1108,7 @@ void SidePanel::PlanetPanel::DoLayout() {
 
 void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
     std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
-    if (!planet || !GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown"))
+    if (!planet || !GetOptionsDB().Get<bool>("ui.map.sidepanel.planet.shown"))
         return;
 
     DetachChildAndReset(m_planet_graphic);
@@ -1540,7 +1545,7 @@ void SidePanel::PlanetPanel::Refresh() {
         wrapped_planet_name = "<i>" + wrapped_planet_name + "</i>";
     if (has_shipyard)
         wrapped_planet_name = "<u>" + wrapped_planet_name + "</u>";
-    if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+    if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
         wrapped_planet_name = wrapped_planet_name + " (" + std::to_string(m_planet_id) + ")";
     }
 
@@ -1793,7 +1798,7 @@ void SidePanel::PlanetPanel::Refresh() {
             graphic->Resize(GG::Pt(MeterIconSize().x*3/2, MeterIconSize().y*3/2));
             auto row = GG::Wnd::Create<GG::DropDownList::Row>(graphic->Width(), graphic->Height(), "FOCUS");
 
-            row->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+            row->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
             row->SetBrowseText(
                 boost::io::str(FlexibleFormat(UserString("RP_FOCUS_TOOLTIP"))
                                % UserString(focus_name)));

@@ -34,42 +34,42 @@
 
 namespace {
     const std::string RES_PEDIA_WND_NAME = "research.pedia";
-    const std::string RES_CONTROLS_WND_NAME = "research.tech-controls";
+    const std::string RES_CONTROLS_WND_NAME = "research.control";
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add("UI.tech-layout-horz-spacing",   UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING"), 0.25,  RangedStepValidator<double>(0.25, 0.25, 4.0));
-        db.Add("UI.tech-layout-vert-spacing",   UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING"), 0.75, RangedStepValidator<double>(0.25, 0.25, 4.0));
-        db.Add("UI.tech-layout-zoom-scale",     UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE"),   1.0,  RangedStepValidator<double>(1.0, -25.0, 10.0));
-        db.Add("UI.tech-controls-graphic-size", UserStringNop("OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE"),      3.0,  RangedStepValidator<double>(0.25, 0.5,  12.0));
-        db.Add("UI.windows." + RES_PEDIA_WND_NAME + ".persistently-hidden", UserStringNop("OPTIONS_DB_RESEARCH_PEDIA_HIDDEN"), false, Validator<bool>());
+        db.Add("ui.research.tree.spacing.horizontal", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING"), 0.25, RangedStepValidator<double>(0.25, 0.25, 4.0));
+        db.Add("ui.research.tree.spacing.vertical", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING"), 0.75, RangedStepValidator<double>(0.25, 0.25, 4.0));
+        db.Add("ui.research.tree.zoom.scale", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE"), 1.0, RangedStepValidator<double>(1.0, -25.0, 10.0));
+        db.Add("ui.research.control.graphic.size", UserStringNop("OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE"), 3.0, RangedStepValidator<double>(0.25, 0.5,  12.0));
+        db.Add("ui." + RES_PEDIA_WND_NAME + ".hidden.enabled", UserStringNop("OPTIONS_DB_RESEARCH_PEDIA_HIDDEN"), false, Validator<bool>());
 
         // TechListBox::TechRow column widths
         int default_pts = 16;
-        db.Add("UI.research.listbox.column-widths.graphic",     UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_GRAPHIC"),
+        db.Add("ui.research.list.column.graphic.width",     UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_GRAPHIC"),
                default_pts * 3,         StepValidator<int>(1));
-        db.Add("UI.research.listbox.column-widths.name",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_NAME"),
+        db.Add("ui.research.list.column.name.width",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_NAME"),
                default_pts * 18,        StepValidator<int>(1));
-        db.Add("UI.research.listbox.column-widths.cost",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_COST"),
+        db.Add("ui.research.list.column.cost.width",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_COST"),
                default_pts * 8,         StepValidator<int>(1));
-        db.Add("UI.research.listbox.column-widths.time",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_TIME"),
+        db.Add("ui.research.list.column.time.width",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_TIME"),
                default_pts * 6,         StepValidator<int>(1));
-        db.Add("UI.research.listbox.column-widths.category",    UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_CATEGORY"),
+        db.Add("ui.research.list.column.category.width",    UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_CATEGORY"),
                default_pts * 12,        StepValidator<int>(1));
-        db.Add("UI.research.listbox.column-widths.description", UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_DESCRIPTION"),
+        db.Add("ui.research.list.column.description.width", UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_DESCRIPTION"),
                default_pts * 18,        StepValidator<int>(1));
 
         // Default status for TechTreeControl filter.
-        db.Add<bool>("UI.research.tech-tree-control.status.unresearchable",
+        db.Add<bool>("ui.research.status.unresearchable.shown",
                      UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_UNRESEARCHABLE"),
                      false,        Validator<bool>());
-        db.Add<bool>("UI.research.tech-tree-control.status.has_researched_prereq",
+        db.Add<bool>("ui.research.status.partial.shown",
                      UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_HAS_RESEARCHED_PREREQ"),
                      true,         Validator<bool>());
-        db.Add<bool>("UI.research.tech-tree-control.status.researchable",
+        db.Add<bool>("ui.research.status.researchable.shown",
                      UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_RESEARCHABLE"),
                      true,         Validator<bool>());
-        db.Add<bool>("UI.research.tech-tree-control.status.completed",
+        db.Add<bool>("ui.research.status.completed.shown",
                      UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_COMPLETED"),
                      true,         Validator<bool>());
     }
@@ -274,7 +274,7 @@ TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) 
 {}
 
 void TechTreeWnd::TechTreeControls::CompleteConstruction() {
-   const int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+   const int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
     const boost::filesystem::path icon_dir = ClientUI::ArtDir() / "icons" / "tech" / "controls";
 
     // create a button for each tech category...
@@ -303,7 +303,7 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction() {
     m_status_buttons[TS_UNRESEARCHABLE]->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_STATUS_LOCKED"), ""));
     m_status_buttons[TS_UNRESEARCHABLE]->SetBrowseModeTime(tooltip_delay);
     m_status_buttons[TS_UNRESEARCHABLE]->SetCheck(
-        GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.unresearchable"));
+        GetOptionsDB().Get<bool>("ui.research.status.unresearchable.shown"));
     AttachChild(m_status_buttons[TS_UNRESEARCHABLE]);
 
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ] = GG::Wnd::Create<GG::StateButton>("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
@@ -311,7 +311,7 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction() {
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_STATUS_PARTIAL_UNLOCK"), ""));
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetBrowseModeTime(tooltip_delay);
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetCheck(
-        GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.has_researched_prereq"));
+        GetOptionsDB().Get<bool>("ui.research.status.partial.shown"));
     AttachChild(m_status_buttons[TS_HAS_RESEARCHED_PREREQ]);
 
     m_status_buttons[TS_RESEARCHABLE] = GG::Wnd::Create<GG::StateButton>("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
@@ -319,7 +319,7 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction() {
     m_status_buttons[TS_RESEARCHABLE]->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_STATUS_RESEARCHABLE"), ""));
     m_status_buttons[TS_RESEARCHABLE]->SetBrowseModeTime(tooltip_delay);
     m_status_buttons[TS_RESEARCHABLE]->SetCheck(
-        GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.researchable"));
+        GetOptionsDB().Get<bool>("ui.research.status.researchable.shown"));
     AttachChild(m_status_buttons[TS_RESEARCHABLE]);
 
     m_status_buttons[TS_COMPLETE] = GG::Wnd::Create<GG::StateButton>("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
@@ -327,7 +327,7 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction() {
     m_status_buttons[TS_COMPLETE]->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_STATUS_COMPLETED"), ""));
     m_status_buttons[TS_COMPLETE]->SetBrowseModeTime(tooltip_delay);
     m_status_buttons[TS_COMPLETE]->SetCheck(
-        GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.completed"));
+        GetOptionsDB().Get<bool>("ui.research.status.completed.shown"));
     AttachChild(m_status_buttons[TS_COMPLETE]);
 
     // create button to switch between tree and list views
@@ -353,7 +353,7 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout() {
     const int PTS = ClientUI::Pts();
     const GG::X RIGHT_EDGE_PAD(PTS / 3);
     const GG::X USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, GG::X1);   // space in which to do layout
-    const GG::X BUTTON_WIDTH = GG::X(PTS * std::max(GetOptionsDB().Get<double>("UI.tech-controls-graphic-size"), 0.5));
+    const GG::X BUTTON_WIDTH = GG::X(PTS * std::max(GetOptionsDB().Get<double>("ui.research.control.graphic.size"), 0.5));
     const GG::Y BUTTON_HEIGHT = GG::Y(Value(BUTTON_WIDTH));
 
     m_col_offset = BUTTON_WIDTH + BUTTON_SEPARATION;    // horizontal distance between each column of buttons
@@ -711,12 +711,12 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
 
     // intentionally not attaching as child; TechPanel::Render the child Render() function instead.
 
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 }
 
 void TechTreeWnd::LayoutPanel::TechPanel::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     Update();
 }
 
@@ -1092,7 +1092,7 @@ void TechTreeWnd::LayoutPanel::CompleteConstruction() {
 
     SetChildClippingMode(ClipToClient);
 
-    m_scale = std::pow(ZOOM_STEP_SIZE, GetOptionsDB().Get<double>("UI.tech-layout-zoom-scale")); //(LATHANDA) Initialise Fullzoom and do real zooming using GL. TODO: Check best size
+    m_scale = std::pow(ZOOM_STEP_SIZE, GetOptionsDB().Get<double>("ui.research.tree.zoom.scale")); // (LATHANDA) Initialise Fullzoom and do real zooming using GL. TODO: Check best size
 
     m_layout_surface = GG::Wnd::Create<LayoutSurface>();
 
@@ -1146,13 +1146,13 @@ void TechTreeWnd::LayoutPanel::CompleteConstruction() {
 void TechTreeWnd::LayoutPanel::ConnectKeyboardAcceleratorSignals() {
     HotkeyManager* hkm = HotkeyManager::GetManager();
 
-    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomInKeyboard, this), "map.zoom_in",
+    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomInKeyboard, this), "ui.zoom.in",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomInKeyboard, this), "map.zoom_in_alt",
+    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomInKeyboard, this), "ui.zoom.in.alt",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard, this), "map.zoom_out",
+    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard, this), "ui.zoom.out",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard, this), "map.zoom_out_alt",
+    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard, this), "ui.zoom.out.alt",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
 
     hkm->RebuildShortcuts();
@@ -1249,7 +1249,7 @@ void TechTreeWnd::LayoutPanel::SetScale(double scale) {
     if (MAX_SCALE < scale)
         scale = MAX_SCALE;
     m_scale = scale;
-    GetOptionsDB().Set<double>("UI.tech-layout-zoom-scale", std::floor(0.1 + (std::log(m_scale) / std::log(ZOOM_STEP_SIZE))));
+    GetOptionsDB().Set<double>("ui.research.tree.zoom.scale", std::floor(0.1 + (std::log(m_scale) / std::log(ZOOM_STEP_SIZE))));
 
     for (auto& entry : m_techs)
         entry.second->RequirePreRender();
@@ -1361,8 +1361,8 @@ GG::Pt TechTreeWnd::LayoutPanel::ConvertPtZoomedToScreen(const GG::Pt& pt) const
 void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     const GG::X TECH_PANEL_MARGIN_X(ClientUI::Pts()*16);
     const GG::Y TECH_PANEL_MARGIN_Y(ClientUI::Pts()*16 + 100);
-    const double RANK_SEP = Value(TechPanelWidth()) * GetOptionsDB().Get<double>("UI.tech-layout-horz-spacing");
-    const double NODE_SEP = Value(TechPanelHeight()) * GetOptionsDB().Get<double>("UI.tech-layout-vert-spacing");
+    const double RANK_SEP = Value(TechPanelWidth()) * GetOptionsDB().Get<double>("ui.research.tree.spacing.horizontal");
+    const double NODE_SEP = Value(TechPanelHeight()) * GetOptionsDB().Get<double>("ui.research.tree.spacing.vertical");
     const double WIDTH = Value(TechPanelWidth());
     const double HEIGHT = Value(TechPanelHeight());
     const double X_MARGIN(12);
@@ -1608,15 +1608,15 @@ void TechTreeWnd::TechListBox::TechRow::Render() {
 }
 
 std::vector<GG::X> TechTreeWnd::TechListBox::TechRow::ColWidths(GG::X total_width) {
-    GG::X graphic_width(    GetOptionsDB().Get<int>("UI.research.listbox.column-widths.graphic"));
-    GG::X name_width(       GetOptionsDB().Get<int>("UI.research.listbox.column-widths.name"));
-    GG::X cost_width(       GetOptionsDB().Get<int>("UI.research.listbox.column-widths.cost"));
-    GG::X time_width(       GetOptionsDB().Get<int>("UI.research.listbox.column-widths.time"));
-    GG::X category_width(   GetOptionsDB().Get<int>("UI.research.listbox.column-widths.category"));
+    GG::X graphic_width(GetOptionsDB().Get<int>("ui.research.list.column.graphic.width"));
+    GG::X name_width(GetOptionsDB().Get<int>("ui.research.list.column.name.width"));
+    GG::X cost_width(GetOptionsDB().Get<int>("ui.research.list.column.cost.width"));
+    GG::X time_width(GetOptionsDB().Get<int>("ui.research.list.column.time.width"));
+    GG::X category_width(GetOptionsDB().Get<int>("ui.research.list.column.category.width"));
 
     GG::X cols_width_sum = graphic_width + name_width + cost_width + time_width + category_width;
 
-    GG::X desc_width(std::max(GetOptionsDB().Get<int>("UI.research.listbox.column-widths.description"),
+    GG::X desc_width(std::max(GetOptionsDB().Get<int>("ui.research.list.column.description.width"),
                               Value(total_width - cols_width_sum)));
 
     return {graphic_width, name_width, cost_width, time_width, category_width, desc_width};
@@ -2138,10 +2138,10 @@ void TechTreeWnd::CompleteConstruction() {
     //long time and generates errors, but is never seen by the user.
     if (!m_init_flag) {
         ShowAllCategories();
-        SetTechStatus(TS_COMPLETE, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.completed"));
-        SetTechStatus(TS_UNRESEARCHABLE, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.unresearchable"));
-        SetTechStatus(TS_HAS_RESEARCHED_PREREQ, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.has_researched_prereq"));
-        SetTechStatus(TS_RESEARCHABLE, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.researchable"));
+        SetTechStatus(TS_COMPLETE, GetOptionsDB().Get<bool>("ui.research.status.completed.shown"));
+        SetTechStatus(TS_UNRESEARCHABLE, GetOptionsDB().Get<bool>("ui.research.status.unresearchable.shown"));
+        SetTechStatus(TS_HAS_RESEARCHED_PREREQ, GetOptionsDB().Get<bool>("ui.research.status.partial.shown"));
+        SetTechStatus(TS_RESEARCHABLE, GetOptionsDB().Get<bool>("ui.research.status.researchable.shown"));
     }
 
     ShowTreeView();
@@ -2207,10 +2207,10 @@ void TechTreeWnd::Show() {
     if (m_init_flag) {
         m_init_flag = false;
         ShowAllCategories();
-        SetTechStatus(TS_COMPLETE, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.completed"));
-        SetTechStatus(TS_UNRESEARCHABLE, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.unresearchable"));
-        SetTechStatus(TS_HAS_RESEARCHED_PREREQ, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.has_researched_prereq"));
-        SetTechStatus(TS_RESEARCHABLE, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.researchable"));
+        SetTechStatus(TS_COMPLETE, GetOptionsDB().Get<bool>("ui.research.status.completed.shown"));
+        SetTechStatus(TS_UNRESEARCHABLE, GetOptionsDB().Get<bool>("ui.research.status.unresearchable.shown"));
+        SetTechStatus(TS_HAS_RESEARCHED_PREREQ, GetOptionsDB().Get<bool>("ui.research.status.partial.shown"));
+        SetTechStatus(TS_RESEARCHABLE, GetOptionsDB().Get<bool>("ui.research.status.researchable.shown"));
     }
 }
 
@@ -2261,16 +2261,16 @@ void TechTreeWnd::ToggleAllCategories() {
 void TechTreeWnd::SetTechStatus(const TechStatus status, const bool state) {
     switch (status) {
     case TS_UNRESEARCHABLE:
-        GetOptionsDB().Set<bool>("UI.research.tech-tree-control.status.unresearchable", state);
+        GetOptionsDB().Set<bool>("ui.research.status.unresearchable.shown", state);
         break;
     case TS_HAS_RESEARCHED_PREREQ:
-        GetOptionsDB().Set<bool>("UI.research.tech-tree-control.status.has_researched_prereq", state);
+        GetOptionsDB().Set<bool>("ui.research.status.partial.shown", state);
         break;
     case TS_RESEARCHABLE:
-        GetOptionsDB().Set<bool>("UI.research.tech-tree-control.status.researchable", state);
+        GetOptionsDB().Set<bool>("ui.research.status.researchable.shown", state);
         break;
     case TS_COMPLETE:
-        GetOptionsDB().Set<bool>("UI.research.tech-tree-control.status.completed", state);
+        GetOptionsDB().Set<bool>("ui.research.status.completed.shown", state);
         break;
     default:
         ; // do nothing
@@ -2333,14 +2333,14 @@ void TechTreeWnd::ShowPedia() {
     m_enc_detail_panel->Show();
 
     OptionsDB& db = GetOptionsDB();
-    db.Set("UI.windows." + RES_PEDIA_WND_NAME + ".persistently-hidden", false);
+    db.Set("ui." + RES_PEDIA_WND_NAME + ".hidden.enabled", false);
 }
 
 void TechTreeWnd::HidePedia() {
     m_enc_detail_panel->Hide();
 
     OptionsDB& db = GetOptionsDB();
-    db.Set("UI.windows." + RES_PEDIA_WND_NAME + ".persistently-hidden", true);
+    db.Set("ui." + RES_PEDIA_WND_NAME + ".hidden.enabled", true);
 }
 
 void TechTreeWnd::TogglePedia() {

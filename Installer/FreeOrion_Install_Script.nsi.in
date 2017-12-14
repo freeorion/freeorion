@@ -29,7 +29,7 @@ SetCompressor bzip2
 !insertmacro MUI_PAGE_INSTFILES
 ; Finish page
 !define MUI_FINISHPAGE_RUN "$$INSTDIR\freeorion.exe"
-;!define MUI_FINISHPAGE_RUN_PARAMETERS "--fullscreen 1"
+;!define MUI_FINISHPAGE_RUN_PARAMETERS "--video.fullscreen.enabled 1"
 !insertmacro MUI_PAGE_FINISH
 
 ; Uninstaller pages
@@ -70,7 +70,7 @@ Section "MainSection" SEC01
   File /r /x .git "..\default"
 
   CreateDirectory "$$SMPROGRAMS\FreeOrion"
-  CreateShortCut "$$SMPROGRAMS\FreeOrion\FreeOrion Fullscreen.lnk" "$$INSTDIR\freeorion.exe" "--fullscreen"
+  CreateShortCut "$$SMPROGRAMS\FreeOrion\FreeOrion Fullscreen.lnk" "$$INSTDIR\freeorion.exe" "--video.fullscreen.enabled 1"
   CreateShortCut "$$SMPROGRAMS\FreeOrion\FreeOrion Windowed.lnk" "$$INSTDIR\freeorion.exe"
 
   CreateShortCut "$$DESKTOP\FreeOrion.lnk" "$$INSTDIR\freeorion.exe"

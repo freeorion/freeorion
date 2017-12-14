@@ -177,7 +177,7 @@ protected:
                                               GG::X left, GG::Y top, GG::X width, GG::Y height,
                                               bool visible, bool pinned, bool minimized);   //!< overload that accepts GG::X and GG::Y instead of ints
 
-    static void              InvalidateWindowOptions(const std::string& config_name);       //!< removes options containing \a config_name, logs an error instead if "UI.windows."+config_name+".initialized" exists (i.e. if a window is currently using that name)
+    static void              InvalidateWindowOptions(const std::string& config_name);       //!< removes options containing \a config_name, logs an error instead if "ui."+config_name+".initialized" exists (i.e. if a window is currently using that name)
     //@}
 
     //! \name Mutators //@{

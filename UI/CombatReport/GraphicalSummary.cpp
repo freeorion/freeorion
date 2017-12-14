@@ -56,12 +56,12 @@ namespace {
 
     const float EPSILON = 0.00001f;
 
-    const std::string OPTIONS_ROOT = "UI.combat.summary.graph.";
+    const std::string OPTIONS_ROOT = "ui.combat.summary.graph.";
 
-    const std::string TOGGLE_BAR_HEIGHT_PROPORTIONAL = "bar_height_proportional";
-    const std::string TOGGLE_BAR_WIDTH_PROPORTIONAL = "bar_width_proportional";
-    const std::string TOGGLE_BAR_HEALTH_SMOOTH = "bar_health_smooth";
-    const std::string TOGGLE_GRAPH_HEIGHT_PROPORTIONAL = "graph_height_proportional";
+    const std::string TOGGLE_BAR_HEIGHT_PROPORTIONAL = "bar.proportional.height.enabled";
+    const std::string TOGGLE_BAR_WIDTH_PROPORTIONAL = "bar.proportional.width.enabled";
+    const std::string TOGGLE_BAR_HEALTH_SMOOTH = "bar.health.smooth.enabled";
+    const std::string TOGGLE_GRAPH_HEIGHT_PROPORTIONAL = "height.proportional.enabled";
 
     // command-line options
     void AddOptions(OptionsDB& db) {
@@ -78,13 +78,13 @@ namespace {
                      UserStringNop("OPTIONS_DB_UI_COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL"),
                      false);
 
-        db.Add<GG::Clr>("UI.combat.summary.dead-color",
+        db.Add<GG::Clr>("ui.combat.summary.dead.color",
                         UserStringNop("OPTIONS_DB_UI_COMBAT_SUMMARY_DEAD_COLOR"),
                         GG::Clr(128, 0, 0, 255));
-        db.Add<GG::Clr>("UI.combat.summary.wound-color",
+        db.Add<GG::Clr>("ui.combat.summary.damaged.color",
                         UserStringNop("OPTIONS_DB_UI_COMBAT_SUMMARY_WOUND_COLOR"),
                         GG::CLR_RED);
-        db.Add<GG::Clr>("UI.combat.summary.health-color",
+        db.Add<GG::Clr>("ui.combat.summary.undamaged.color",
                         UserStringNop("OPTIONS_DB_UI_COMBAT_SUMMARY_HEALTH_COLOR"),
                         GG::CLR_GREEN);
     }
@@ -276,12 +276,12 @@ public:
                           DoubleToString(participant.max_health, 3, false)
             );
         }
-        SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
         OptionsDB& options = GetOptionsDB();
-        m_dead_color = options.Get<GG::Clr>("UI.combat.summary.dead-color");
-        m_wound_color = options.Get<GG::Clr>("UI.combat.summary.wound-color");
-        m_health_color = options.Get<GG::Clr>("UI.combat.summary.health-color");
+        m_dead_color = options.Get<GG::Clr>("ui.combat.summary.dead.color");
+        m_wound_color = options.Get<GG::Clr>("ui.combat.summary.damaged.color");
+        m_health_color = options.Get<GG::Clr>("ui.combat.summary.undamaged.color");
     }
 
     void Render() override {

@@ -14,7 +14,7 @@ This file should give a guideline for any entries or files required by
 FreeOrion if a new resource directory is created.
 
 An alternate resource directory can be specified with the
---resource-dir command line flag, or by changing the resource-dir node in the
+--resource.path command line flag, or by changing the resource.path node in the
 user's config.xml.
 See http://www.freeorion.org/index.php/Config.xml for details on the config.xml
 file.

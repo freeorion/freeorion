@@ -545,9 +545,6 @@ El volumen (de 0 a 255) en el que la música se reproduce.
 OPTIONS_DB_QUICKSTART
 Comienza un nuevo juego rápido, sin pasar por el menu.
 
-OPTIONS_DB_CHECKED_GL_VERSION
-Comprueba si la versión OpenGL del sistema ha sido revisada.  Si es falso, algunas opciones de renderizado pueden ser alteradas dependiendo de la version GL, por lo que esta opción deberia estar activada.
-
 OPTIONS_DB_LOAD
 Carga la partida guardada de un solo jugador especificada.
 

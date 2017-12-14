@@ -5517,7 +5517,7 @@ HIDDEN_SETTINGS__ARTICLE_TEXT
 
 Parmi les nombreux réglages disponibles permettant de définir l'emplacement/taille des divers éléments de l'UI, ces 'Réglages Cachés' intègrent:
 
-UI.design-pedia-dynamic : Active/Désactive la mise à jour dynamique de l'article de l'Encyclopédie concernant un modèle d'astronef si le nom de ce modèle a été modifié dans la [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]] (peut engendrer des ralentissements)
+ui.window.design.pedia.title.dynamic.enabled : Active/Désactive la mise à jour dynamique de l'article de l'Encyclopédie concernant un modèle d'astronef si le nom de ce modèle a été modifié dans la [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]] (peut engendrer des ralentissements)
 
 show-fleet-eta : Active/Désactive l'Estimation du Temps d'Arrivée d'une flotte (Estimated Time of Arrival soit ETA), en nombre de tours à partir du tour actuel, dans le Panneau de la flotte se trouvant dans la Fenêtre Flottes.
 
@@ -5656,7 +5656,7 @@ Lors de l'usage de ce bouton, certains problèmes demeurent:
 Certaines options peuvent être incluses mêmes si ces dernières n'ont pas été modifiées par l'utilisateur. Après la mise à jour vers une nouvelle version, il peut être nécessaire d'effacer manuellement ces options du fichier afin d'actualiser leur valeur par défaut.
 Les fenêtres n'ayant pas été ouvertes durant la session de jeu en cours peuvent causer la non-conservation des réglages modifiés. Il est conseillé lors d'une session de jeu d'ouvrir au moins une fois toutes les fenêtres en question afin d'initialiser les réglages avant l'utilisation du bouton.
 
-Le fichier de configuration persistante peut être créé manuellement si désiré, mais ne doit jamais contenir l'option "version-string".
+Le fichier de configuration persistante peut être créé manuellement si désiré, mais ne doit jamais contenir l'option "version.string".
 
 
 Emplacement des Fichiers de Configuration:

@@ -57,8 +57,8 @@ namespace {
     const int DESCRIPTION_PADDING(3);
 
     void    AddOptions(OptionsDB& db) {
-        db.Add("UI.dump-effects-descriptions", UserStringNop("OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC"),  false,  Validator<bool>());
-        db.Add("UI.encyclopedia.search.articles", UserStringNop("OPTIONS_DB_UI_ENC_SEARCH_ARTICLE"),  true,   Validator<bool>());
+        db.Add("resource.effects.description.shown", UserStringNop("OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC"), false, Validator<bool>());
+        db.Add("ui.pedia.search.articles.enabled", UserStringNop("OPTIONS_DB_UI_ENC_SEARCH_ARTICLE"), true, Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -1051,7 +1051,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     std::multimap<std::string, std::string> partial_match_report;
     std::multimap<std::string, std::string> article_match_report;
 
-    bool search_desc = GetOptionsDB().Get<bool>("UI.encyclopedia.search.articles");
+    bool search_desc = GetOptionsDB().Get<bool>("ui.pedia.search.articles.enabled");
 
     for (const auto& entry : all_pedia_entries_list) {
         // search for exact title matches
@@ -1315,7 +1315,7 @@ namespace {
             detailed_description += "\n\n";
         }
 
-        if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions")) {
+        if (GetOptionsDB().Get<bool>("resource.effects.description.shown")) {
             if (part->Location())
                 detailed_description += "\n" + part->Location()->Dump();
             if (!part->Effects().empty())
@@ -1374,7 +1374,7 @@ namespace {
             detailed_description += "\n\n";
         }
 
-        if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions")) {
+        if (GetOptionsDB().Get<bool>("resource.effects.description.shown")) {
             if (hull->Location())
                 detailed_description += "\n" + hull->Location()->Dump();
             if (!hull->Effects().empty())
@@ -1452,7 +1452,7 @@ namespace {
 
         detailed_description += UserString(tech->Description());
 
-        if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions") && !tech->Effects().empty()) {
+        if (GetOptionsDB().Get<bool>("resource.effects.description.shown") && !tech->Effects().empty()) {
             detailed_description += "\n" + Dump(tech->Effects());
         }
 
@@ -1504,7 +1504,7 @@ namespace {
                                         % local_name % local_cost % cost_units % local_time);
             }
         }
-        if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions")) {
+        if (GetOptionsDB().Get<bool>("resource.effects.description.shown")) {
             if (!building_type->ProductionCostTimeLocationInvariant()) {
                 if (building_type->Cost() && !building_type->Cost()->ConstantExpr())
                     detailed_description += "\n\nProduction Cost:\n" + building_type->Cost()->Dump();
@@ -1578,7 +1578,7 @@ namespace {
             detailed_description += "\n";
         }
 
-        if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions")) {
+        if (GetOptionsDB().Get<bool>("resource.effects.description.shown")) {
             if (special->Location())
                 detailed_description += "\n" + special->Location()->Dump();
             if (!special->Effects().empty())
@@ -1964,7 +1964,7 @@ namespace {
             detailed_description += "\n";
         }
 
-        if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions") && !species->Effects().empty()) {
+        if (GetOptionsDB().Get<bool>("resource.effects.description.shown") && !species->Effects().empty()) {
             detailed_description += "\n" + Dump(species->Effects());
         }
 
@@ -2062,7 +2062,7 @@ namespace {
 
         detailed_description += UserString(field_type->Description());
 
-        if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions")) {
+        if (GetOptionsDB().Get<bool>("resource.effects.description.shown")) {
             if (!field_type->Effects().empty())
                 detailed_description += "\n" + Dump(field_type->Effects());
         }

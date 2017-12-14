@@ -36,7 +36,7 @@ namespace {
     const std::string PROD_SIDEPANEL_WND_NAME = "production.sidepanel";
 
     void    AddOptions(OptionsDB& db)
-    { db.Add("UI.windows." + PROD_PEDIA_WND_NAME + ".persistently-hidden", UserStringNop("OPTIONS_DB_PRODUCTION_PEDIA_HIDDEN"), false, Validator<bool>()); }
+    { db.Add("ui." + PROD_PEDIA_WND_NAME + ".hidden.enabled", UserStringNop("OPTIONS_DB_PRODUCTION_PEDIA_HIDDEN"), false, Validator<bool>()); }
     bool temp_bool = RegisterOptions(&AddOptions);
 
     //////////////////////////////////
@@ -358,7 +358,7 @@ namespace {
                 }
             }
 
-            SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+            SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
             SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, location_id, empire_id));
 
             //std::cout << "ProductionItemRow(building) height: " << Value(Height()) << std::endl;
@@ -1126,9 +1126,9 @@ void BuildDesignatorWnd::Update() {
 }
 
 void BuildDesignatorWnd::InitializeWindows() {
-    GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
+    GG::X queue_width(GetOptionsDB().Get<int>("ui.queue.width"));
 
-    const GG::X SIDEPANEL_WIDTH(GetOptionsDB().Get<int>("UI.sidepanel-width"));
+    const GG::X SIDEPANEL_WIDTH(GetOptionsDB().Get<int>("ui.map.sidepanel.width"));
     const GG::Y PANEL_HEIGHT    = GG::Y(240);
 
     const GG::Pt pedia_ul(queue_width, GG::Y0);
@@ -1277,14 +1277,14 @@ void BuildDesignatorWnd::ShowPedia() {
     m_enc_detail_panel->Show();
 
     OptionsDB& db = GetOptionsDB();
-    db.Set("UI.windows." + PROD_PEDIA_WND_NAME + ".persistently-hidden", false);
+    db.Set("ui." + PROD_PEDIA_WND_NAME + ".hidden.enabled", false);
 }
 
 void BuildDesignatorWnd::HidePedia() {
     m_enc_detail_panel->Hide();
 
     OptionsDB& db = GetOptionsDB();
-    db.Set("UI.windows." + PROD_PEDIA_WND_NAME + ".persistently-hidden", true);
+    db.Set("ui." + PROD_PEDIA_WND_NAME + ".hidden.enabled", true);
 }
 
 void BuildDesignatorWnd::TogglePedia() {

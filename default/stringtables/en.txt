@@ -1149,10 +1149,10 @@ OPTIONS_DB_UI_SAVE_DIALOG_COLUMNS
 Valid columns: time, turn, player, empire, systems, seed, galaxy_age, galaxy_shape, planet_freq, native_freq, specials_freq, starlane_freq'''
 
 OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_WIDE_AS
-If UI.save-file-dialog.[name].wide-as is set, the column will always be wide enough to contain the text there.
+If ui.dialog.save.columns.[name].width.chars is set, the column will always be wide enough to contain the text there.
 
 OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH
-If UI.save-file-dialog.[name].stretch is set, the column will get that stretch factor if visible.
+If ui.dialog.save.columns.[name].stretch is set, the column will get that stretch factor if visible.
 
 OPTIONS_DB_GALAXY_MAP_GAS
 Render gassy substance around systems to give galaxy shape. May slow rendering on older systems.
@@ -5517,7 +5517,7 @@ HIDDEN_SETTINGS__ARTICLE_TEXT
 
 In addition to a great many entries for the size/location of various UI elements, these 'Hidden Settings' include:
 
-UI.design-pedia-dynamic : controls whether or not the design detail pedia page in the [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]] will be dynamically updated as the design name is edited (can cause lag)
+ui.window.design.pedia.title.dynamic.enabled : controls whether or not the design detail pedia page in the [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]] will be dynamically updated as the design name is edited (can cause lag)
 
 show-fleet-eta : controls whether a fleet's Estimated Time of Arrival (ETA), in number of turns from the current turn, is shown in its Fleet Panel in the Fleet Window
 
@@ -5656,7 +5656,7 @@ When using this button, there are a couple of known issues:
 Some options may be included even though they were not changed by the user, as they were adjusted after their default value. After updating to a new version, it may be required to manually remove these options from the file to update their default setting.
 Windows that have not been open in the current session may not have previously changed settings retained. It is advised to have a game running and open all desired windows at least once to initialize the settings before using this button.
 
-The persistent configuration file may be manually created if desired, but should never contain the "version-string" option.
+The persistent configuration file may be manually created if desired, but should never contain the "version.string" option.
 
 
 Location of Config Files:
@@ -14614,14 +14614,23 @@ AI_FIRST_TURN_GREETING_MSG608'''
 OPTIONS_PAGE_HOTKEYS
 Keyboard shortcuts
 
-HOTKEYS_Z_COMBAT
-Combat window
+HOTKEYS_UI
+User Interface
 
-HOTKEYS_MAP
+HOTKEYS_UI_MAP
 Map window
+
+HOTKEYS_UI_MAP_FLEET
+Fleets
+
+HOTKEYS_UI_MAP_SYSTEM
+Systems
 
 HOTKEYS_GENERAL
 General shortcuts
+
+HOTKEYS_VIDEO
+Video
 
 HOTKEY_MAP_OPEN_CHAT
 Open chat window

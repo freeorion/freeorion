@@ -61,7 +61,7 @@ void CUISpin<double>::SetEditTextFromValue();
 namespace detail {
     inline void PlayValueChangedSound::operator()(double) const
     {
-        std::string file_name = GetOptionsDB().Get<std::string>("UI.sound.button-click");
+        std::string file_name = GetOptionsDB().Get<std::string>("ui.button.press.sound.path");
         Sound::GetSound().PlaySound(file_name, true);
     }
     inline void PlayValueChangedSound::operator()(int) const {operator()(0.0);}

@@ -57,7 +57,7 @@ namespace {
     }
 
     void AddOptions(OptionsDB& db) {
-        db.Add("UI.fleet-selection-indicator-size", UserStringNop("OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE"), 1.625, RangedStepValidator<double>(0.125, 0.5, 5));
+        db.Add("ui.map.fleet.select.indicator.size", UserStringNop("OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE"), 1.625, RangedStepValidator<double>(0.125, 0.5, 5));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -219,7 +219,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
 
     // Scanlines for not currently-visible objects?
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
         return;
 
     // Create scanline renderer control, use opposite color of fleet btn
@@ -236,7 +236,7 @@ void FleetButton::CompleteConstruction() {
 
     // Scanlines for not currently-visible objects?
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
         return;
 
     bool at_least_one_fleet_visible = false;
@@ -250,7 +250,7 @@ void FleetButton::CompleteConstruction() {
     if (!at_least_one_fleet_visible)
         AttachChild(m_scanline_control);
 
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 }
 
 FleetButton::~FleetButton()
@@ -305,7 +305,7 @@ void FleetButton::LayoutIcons() {
     if (m_selection_indicator) {
         //GG::SubTexture subtexture = m_selection_indicator->GetTexture();
         //GG::Pt subtexture_sz = GG::Pt(subtexture.Width(), subtexture.Height());
-        double sel_ind_scale = GetOptionsDB().Get<double>("UI.fleet-selection-indicator-size");
+        double sel_ind_scale = GetOptionsDB().Get<double>("ui.map.fleet.select.indicator.size");
         GG::Pt subtexture_sz = Size() * sel_ind_scale;
         GG::Pt graphic_ul = middle - subtexture_sz / 2;
         m_selection_indicator->SizeMove(graphic_ul, graphic_ul + subtexture_sz);
@@ -391,10 +391,10 @@ void FleetButton::RenderRollover() {
 }
 
 void FleetButton::PlayFleetButtonRolloverSound()
-{ Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.fleet-button-rollover"), true); }
+{ Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.map.fleet.button.rollover.sound.path"), true); }
 
 void FleetButton::PlayFleetButtonOpenSound()
-{ Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.fleet-button-click"), true); }
+{ Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.map.fleet.button.press.sound.path"), true); }
 
 /////////////////////
 // Free Functions

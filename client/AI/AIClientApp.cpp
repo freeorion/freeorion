@@ -39,23 +39,23 @@ namespace {
 
     /** AddTraitBypassOption creates a set of options for debugging of
         the form:
-        AI.config.trait.\<trait name\>.force  -- If true use the following options to bypass the trait
-        AI.config.trait.\<trait name\>.all    -- If present use this value for all of the AIs not individually set
-        AI.config.trait.\<trait name\>.AI_1   -- Use for AI_1
+        ai.trait.\<trait name\>.force.enabled  -- If true use the following options to bypass the trait
+        ai.trait.\<trait name\>.default        -- If present use this value for all of the AIs not individually set
+        ai.trait.\<trait name\>.ai_1           -- Use for AI_1
         ...
-        AI.config.trait.\<trait name\>.AI_40  -- Use for AI_40
+        ai.trait.\<trait name\>.ai_40          -- Use for AI_40
      */
     template <typename T>
     void AddTraitBypassOption(OptionsDB& db, std::string const & root, std::string ROOT,
                                  T def, ValidatorBase const & validator) {
-        std::string option_root = "AI.config.trait." + root +".";
+        std::string option_root = "ai.trait." + root + ".";
         std::string user_string_root = "OPTIONS_DB_AI_CONFIG_TRAIT_"+ROOT;
-        db.Add<bool>(option_root + "force", UserStringNop(user_string_root + "_FORCE"), false, Validator<bool>());
-        db.Add<T>(option_root + "all", UserStringNop(user_string_root + "_FORCE_VALUE"), def, validator);
+        db.Add<bool>(option_root + "force.enabled", UserStringNop(user_string_root + "_FORCE"), false, Validator<bool>());
+        db.Add<T>(option_root + "default", UserStringNop(user_string_root + "_FORCE_VALUE"), def, validator);
 
         for (int ii = 1; ii <= IApp::MAX_AI_PLAYERS(); ++ii) {
             std::stringstream ss;
-            ss << option_root << "AI_" << std::to_string(ii);
+            ss << option_root << "ai_" << std::to_string(ii);
             db.Add<T>(ss.str(), UserStringNop(user_string_root + "_FORCE_VALUE"), def, validator);
         }
     }
@@ -125,7 +125,7 @@ void AIClientApp::ExitApp(int code) {
 }
 
 int AIClientApp::EffectsProcessingThreads() const
-{ return GetOptionsDB().Get<int>("effects-threads-ai"); }
+{ return GetOptionsDB().Get<int>("effects.ai.threads"); }
 
 AIClientApp* AIClientApp::GetApp()
 { return static_cast<AIClientApp*>(s_app); }
