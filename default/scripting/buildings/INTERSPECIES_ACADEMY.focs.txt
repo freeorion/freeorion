@@ -78,7 +78,7 @@ BuildingType
             priority = [[LATE_PRIORITY]]
             effects = [
                 SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_TRANSFER_EFFICIENCY" value = min(1.0, Value + 0.05)
-                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_USE_LIMIT"           value = Value + 2
+                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_USE_LIMIT"           value = Value + 15
             ]
         // Once per academy tell the user.
         EffectsGroup

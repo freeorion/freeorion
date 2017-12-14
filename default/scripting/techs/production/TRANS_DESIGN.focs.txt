@@ -5,7 +5,7 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
-	tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
+    tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
     prerequisites = [
         "LRN_PSIONICS"
         "CON_ARCH_PSYCH"
