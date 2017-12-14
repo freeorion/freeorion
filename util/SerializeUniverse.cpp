@@ -22,6 +22,7 @@ BOOST_CLASS_EXPORT(Field)
 BOOST_CLASS_EXPORT(Planet)
 BOOST_CLASS_EXPORT(Building)
 BOOST_CLASS_EXPORT(Fleet)
+BOOST_CLASS_VERSION(Fleet, 3)
 BOOST_CLASS_EXPORT(Ship)
 BOOST_CLASS_VERSION(Ship, 2)
 BOOST_CLASS_EXPORT(ShipDesign)
@@ -250,9 +251,12 @@ void Fleet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_next_system)
         & BOOST_SERIALIZATION_NVP(m_aggressive)
         & BOOST_SERIALIZATION_NVP(m_ordered_given_to_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_travel_route)
-        & BOOST_SERIALIZATION_NVP(m_travel_distance)
-        & BOOST_SERIALIZATION_NVP(m_arrived_this_turn)
+        & BOOST_SERIALIZATION_NVP(m_travel_route);
+    if (version < 3) {
+        double dummy_travel_distance;
+        ar & boost::serialization::make_nvp("m_travel_distance", dummy_travel_distance);
+    }
+    ar  & BOOST_SERIALIZATION_NVP(m_arrived_this_turn)
         & BOOST_SERIALIZATION_NVP(m_arrival_starlane);
 }
 

@@ -164,37 +164,17 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
 
             if (vis >= VIS_FULL_VISIBILITY) {
                 m_travel_route =              copied_fleet->m_travel_route;
-                m_travel_distance =           copied_fleet->m_travel_distance;
                 m_ordered_given_to_empire_id =copied_fleet->m_ordered_given_to_empire_id;
 
             } else {
                 int             moving_to =         m_next_system;
                 std::list<int>  travel_route;
-                double          travel_distance =   copied_fleet->m_travel_distance;
-
-                const std::list<int>& copied_fleet_route = copied_fleet->m_travel_route;
 
                 if (!copied_fleet->m_travel_route.empty() && moving_to != INVALID_OBJECT_ID)
                     travel_route.push_back(moving_to);
                 travel_route = TruncateRouteToEndAtSystem(travel_route, empire_id, moving_to);
 
-                if (!travel_route.empty()
-                    && travel_route.front() != INVALID_OBJECT_ID
-                    && travel_route.size() != copied_fleet_route.size())
-                {
-                    // TODO: travel path is not necessarrily the shortest path.
-                    try {
-                        travel_distance -= GetPathfinder()->ShortestPath(travel_route.back(),
-                                                                      copied_fleet_route.back()).second;
-                    } catch (...) {
-                        DebugLogger() << "Fleet::Copy couldn't find route to system(s):"
-                                      << " travel route back: " << travel_route.back()
-                                      << " or copied fleet route back: " << copied_fleet_route.back();
-                    }
-                }
-
                 m_travel_route = travel_route;
-                m_travel_distance = travel_distance;
             }
         }
     }
@@ -776,25 +756,7 @@ void Fleet::SetRoute(const std::list<int>& route) {
         m_next_system = INVALID_OBJECT_ID;
     }
 
-
-    // calculate length of line segments between systems on route, and sum up to determine length of route between
-    // systems on route.  (Might later add distance from fleet to first system on route to this to get the total
-    // route length, or this may itself be the total route length if the fleet is at the first system on the route).
-    m_travel_distance = PathLength(m_travel_route.begin(), m_travel_route.end());
-
-
     if (!m_travel_route.empty()) {
-        // if we're already moving, add in the distance from where we are to the first system in the route
-        if (SystemID() != route.front()) {
-            auto starting_system = GetSystem(route.front());
-            if (!starting_system) {
-                ErrorLogger() << "Fleet::SetRoute couldn't get system with id " << route.front();
-                return;
-            }
-            double dist_x = starting_system->X() - this->X();
-            double dist_y = starting_system->Y() - this->Y();
-            m_travel_distance += std::sqrt(dist_x*dist_x + dist_y*dist_y);
-        }
         if (m_prev_system != SystemID() && m_prev_system == m_travel_route.front()) {
             m_prev_system = m_next_system;      // if already in transit and turning around, swap prev and next
         } else if (SystemID() == route.front()) {
