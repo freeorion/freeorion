@@ -1136,7 +1136,7 @@ ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesys
                     textures.push_back(ClientUI::GetTexture(*it, mipmap));
             } catch (const fs::filesystem_error& e) {
                 // ignore files for which permission is denied, and rethrow other exceptions
-                if (e.code() != boost::system::posix_error::permission_denied)
+                if (e.code() != boost::system::errc::permission_denied)
                     throw;
             }
         }

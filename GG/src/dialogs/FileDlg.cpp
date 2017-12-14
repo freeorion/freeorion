@@ -746,7 +746,7 @@ void FileDlg::OpenDirectory()
             try {
                 SetWorkingDirectory(fs::path(directory + "\\"));
             } catch (const fs::filesystem_error& e) {
-                if (e.code() == boost::system::posix_error::io_error) {
+                if (e.code() == boost::system::errc::io_error) {
                     m_in_win32_drive_selection = true;
                     m_files_edit->Clear();
                     FilesEditChanged(m_files_edit->Text());
