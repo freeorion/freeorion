@@ -391,10 +391,10 @@ if(APPLE)
     # source code files associated and only links the freeorionparselib
     # objects into a shared library.  Adding an empty file fixes this.
     # https://cmake.org/cmake/help/v3.0/command/add_library.html
-    file(WRITE xcode_dummy.cpp "")
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/xcode_dummy.cpp" "")
     target_sources(freeorionparse
         PRIVATE
-            xcode_dummy.cpp
+            "${CMAKE_CURRENT_BINARY_DIR}/xcode_dummy.cpp"
     )
 
     set_target_properties(freeorionparse
