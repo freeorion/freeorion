@@ -28,7 +28,6 @@
 
 using boost::io::str;
 
-extern int g_indent;
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
 bool UserStringExists(const std::string& str);
@@ -303,7 +302,7 @@ void ConditionBase::GetDefaultInitialCandidateObjects(const ScriptingContext& pa
 std::string ConditionBase::Description(bool negated/* = false*/) const
 { return ""; }
 
-std::string ConditionBase::Dump() const
+std::string ConditionBase::Dump(unsigned short ntabs) const
 { return ""; }
 
 bool ConditionBase::Match(const ScriptingContext& local_context) const
@@ -357,16 +356,14 @@ std::string Number::Description(bool negated/* = false*/) const {
                % m_condition->Description());
 }
 
-std::string Number::Dump() const {
-    std::string retval = DumpIndent() + "Number";
+std::string Number::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "Number";
     if (m_low)
-        retval += " low = " + m_low->Dump();
+        retval += " low = " + m_low->Dump(ntabs);
     if (m_high)
-        retval += " high = " + m_high->Dump();
+        retval += " high = " + m_high->Dump(ntabs);
     retval += " condition =\n";
-    ++g_indent;
-        retval += m_condition->Dump();
-    --g_indent;
+    retval += m_condition->Dump(ntabs+1);
     return retval;
 }
 
@@ -603,12 +600,12 @@ std::string Turn::Description(bool negated/* = false*/) const {
     }
 }
 
-std::string Turn::Dump() const {
-    std::string retval = DumpIndent() + "Turn";
+std::string Turn::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "Turn";
     if (m_low)
-        retval += " low = " + m_low->Dump();
+        retval += " low = " + m_low->Dump(ntabs);
     if (m_high)
-        retval += " high = " + m_high->Dump();
+        retval += " high = " + m_high->Dump(ntabs);
     retval += "\n";
     return retval;
 }
@@ -995,8 +992,8 @@ std::string SortedNumberOf::Description(bool negated/* = false*/) const {
     }
 }
 
-std::string SortedNumberOf::Dump() const {
-    std::string retval = DumpIndent();
+std::string SortedNumberOf::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs);
     switch (m_sorting_method) {
     case SORT_RANDOM:
         retval += "NumberOf";   break;
@@ -1010,15 +1007,13 @@ std::string SortedNumberOf::Dump() const {
         retval += "??NumberOf??"; break;
     }
 
-    retval += " number = " + m_number->Dump();
+    retval += " number = " + m_number->Dump(ntabs);
 
     if (m_sort_key)
-         retval += " sortby = " + m_sort_key->Dump();
+         retval += " sortby = " + m_sort_key->Dump(ntabs);
 
     retval += " condition =\n";
-    ++g_indent;
-        retval += m_condition->Dump();
-    --g_indent;
+    retval += m_condition->Dump(ntabs+1);
 
     return retval;
 }
@@ -1080,8 +1075,8 @@ std::string All::Description(bool negated/* = false*/) const {
         : UserString("DESC_ALL_NOT");
 }
 
-std::string All::Dump() const
-{ return DumpIndent() + "All\n"; }
+std::string All::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "All\n"; }
 
 unsigned int All::GetCheckSum() const {
     unsigned int retval{0};
@@ -1116,8 +1111,8 @@ std::string None::Description(bool negated/* = false*/) const {
         : UserString("DESC_NONE_NOT");
 }
 
-std::string None::Dump() const
-{ return DumpIndent() + "None\n"; }
+std::string None::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "None\n"; }
 
 unsigned int None::GetCheckSum() const {
     unsigned int retval{0};
@@ -1296,12 +1291,12 @@ std::string EmpireAffiliation::Description(bool negated/* = false*/) const {
     }
 }
 
-std::string EmpireAffiliation::Dump() const {
-    std::string retval = DumpIndent();
+std::string EmpireAffiliation::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs);
     if (m_affiliation == AFFIL_SELF) {
         retval += "OwnedBy";
         if (m_empire_id)
-            retval += " empire = " + m_empire_id->Dump();
+            retval += " empire = " + m_empire_id->Dump(ntabs);
 
     } else if (m_affiliation == AFFIL_ANY) {
         retval += "OwnedBy affiliation = AnyEmpire";
@@ -1312,12 +1307,12 @@ std::string EmpireAffiliation::Dump() const {
     } else if (m_affiliation == AFFIL_ENEMY) {
         retval += "OwnedBy affilition = EnemyOf";
         if (m_empire_id)
-            retval += " empire = " + m_empire_id->Dump();
+            retval += " empire = " + m_empire_id->Dump(ntabs);
 
     } else if (m_affiliation == AFFIL_ALLY) {
         retval += "OwnedBy affiliation = AllyOf";
         if (m_empire_id)
-            retval += " empire = " + m_empire_id->Dump();
+            retval += " empire = " + m_empire_id->Dump(ntabs);
 
     } else if (m_affiliation == AFFIL_CAN_SEE) {
         retval += "OwnedBy affiliation = CanSee";
@@ -1373,8 +1368,8 @@ std::string Source::Description(bool negated/* = false*/) const {
         : UserString("DESC_SOURCE_NOT");
 }
 
-std::string Source::Dump() const
-{ return DumpIndent() + "Source\n"; }
+std::string Source::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "Source\n"; }
 
 bool Source::Match(const ScriptingContext& local_context) const {
     if (!local_context.source)
@@ -1411,8 +1406,8 @@ std::string RootCandidate::Description(bool negated/* = false*/) const {
         : UserString("DESC_ROOT_CANDIDATE_NOT");
 }
 
-std::string RootCandidate::Dump() const
-{ return DumpIndent() + "RootCandidate\n"; }
+std::string RootCandidate::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "RootCandidate\n"; }
 
 bool RootCandidate::Match(const ScriptingContext& local_context) const {
     if (!local_context.condition_root_candidate)
@@ -1441,8 +1436,8 @@ std::string Target::Description(bool negated/* = false*/) const {
         : UserString("DESC_TARGET_NOT");
 }
 
-std::string Target::Dump() const
-{ return DumpIndent() + "Target\n"; }
+std::string Target::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "Target\n"; }
 
 bool Target::Match(const ScriptingContext& local_context) const {
     if (!local_context.effect_target)
@@ -1620,14 +1615,14 @@ std::string Homeworld::Description(bool negated/* = false*/) const {
         % values_str);
 }
 
-std::string Homeworld::Dump() const {
-    std::string retval = DumpIndent() + "HomeWorld";
+std::string Homeworld::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "HomeWorld";
     if (m_names.size() == 1) {
-        retval += " name = " + m_names[0]->Dump();
+        retval += " name = " + m_names[0]->Dump(ntabs);
     } else if (!m_names.empty()) {
         retval += " name = [ ";
         for (auto& name : m_names) {
-            retval += name->Dump() + " ";
+            retval += name->Dump(ntabs) + " ";
         }
         retval += "]";
     }
@@ -1711,8 +1706,8 @@ std::string Capital::Description(bool negated/* = false*/) const {
         : UserString("DESC_CAPITAL_NOT");
 }
 
-std::string Capital::Dump() const
-{ return DumpIndent() + "Capital\n"; }
+std::string Capital::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "Capital\n"; }
 
 bool Capital::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
@@ -1755,8 +1750,8 @@ std::string Monster::Description(bool negated/* = false*/) const {
         : UserString("DESC_MONSTER_NOT");
 }
 
-std::string Monster::Dump() const
-{ return DumpIndent() + "Monster\n"; }
+std::string Monster::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "Monster\n"; }
 
 bool Monster::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
@@ -1797,8 +1792,8 @@ std::string Armed::Description(bool negated/* = false*/) const {
         : UserString("DESC_ARMED_NOT");
 }
 
-std::string Armed::Dump() const
-{ return DumpIndent() + "Armed\n"; }
+std::string Armed::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "Armed\n"; }
 
 bool Armed::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
@@ -1917,8 +1912,8 @@ std::string Type::Description(bool negated/* = false*/) const {
            % value_str);
 }
 
-std::string Type::Dump() const {
-    std::string retval = DumpIndent();
+std::string Type::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs);
     if (dynamic_cast<ValueRef::Constant<UniverseObjectType>*>(m_type.get())) {
         switch (m_type->Eval()) {
         case OBJ_BUILDING:    retval += "Building\n"; break;
@@ -1932,7 +1927,7 @@ std::string Type::Dump() const {
         default: retval += "?\n"; break;
         }
     } else {
-        retval += "ObjectType type = " + m_type->Dump() + "\n";
+        retval += "ObjectType type = " + m_type->Dump(ntabs) + "\n";
     }
     return retval;
 }
@@ -2137,14 +2132,14 @@ std::string Building::Description(bool negated/* = false*/) const {
            % values_str);
 }
 
-std::string Building::Dump() const {
-    std::string retval = DumpIndent() + "Building name = ";
+std::string Building::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "Building name = ";
     if (m_names.size() == 1) {
-        retval += m_names[0]->Dump() + "\n";
+        retval += m_names[0]->Dump(ntabs) + "\n";
     } else {
         retval += "[ ";
         for (auto& name : m_names) {
-            retval += name->Dump() + " ";
+            retval += name->Dump(ntabs) + " ";
         }
         retval += "]\n";
     }
@@ -2403,22 +2398,22 @@ std::string HasSpecial::Description(bool negated/* = false*/) const {
                 % name_str);
 }
 
-std::string HasSpecial::Dump() const {
-    std::string name_str = (m_name ? m_name->Dump() : "");
+std::string HasSpecial::Dump(unsigned short ntabs) const {
+    std::string name_str = (m_name ? m_name->Dump(ntabs) : "");
 
     if (m_since_turn_low || m_since_turn_high) {
-        std::string low_dump = (m_since_turn_low ? m_since_turn_low->Dump() : std::to_string(BEFORE_FIRST_TURN));
-        std::string high_dump = (m_since_turn_high ? m_since_turn_high->Dump() : std::to_string(IMPOSSIBLY_LARGE_TURN));
-        return DumpIndent() + "HasSpecialSinceTurn name = \"" + name_str + "\" low = " + low_dump + " high = " + high_dump;
+        std::string low_dump = (m_since_turn_low ? m_since_turn_low->Dump(ntabs) : std::to_string(BEFORE_FIRST_TURN));
+        std::string high_dump = (m_since_turn_high ? m_since_turn_high->Dump(ntabs) : std::to_string(IMPOSSIBLY_LARGE_TURN));
+        return DumpIndent(ntabs) + "HasSpecialSinceTurn name = \"" + name_str + "\" low = " + low_dump + " high = " + high_dump;
     }
 
     if (m_capacity_low || m_capacity_high) {
-        std::string low_dump = (m_capacity_low ? m_capacity_low->Dump() : std::to_string(-FLT_MAX));
-        std::string high_dump = (m_capacity_high ? m_capacity_high->Dump() : std::to_string(FLT_MAX));
-        return DumpIndent() + "HasSpecialCapacity name = \"" + name_str + "\" low = " + low_dump + " high = " + high_dump;
+        std::string low_dump = (m_capacity_low ? m_capacity_low->Dump(ntabs) : std::to_string(-FLT_MAX));
+        std::string high_dump = (m_capacity_high ? m_capacity_high->Dump(ntabs) : std::to_string(FLT_MAX));
+        return DumpIndent(ntabs) + "HasSpecialCapacity name = \"" + name_str + "\" low = " + low_dump + " high = " + high_dump;
     }
 
-    return DumpIndent() + "HasSpecial name = \"" + name_str + "\"\n";
+    return DumpIndent(ntabs) + "HasSpecial name = \"" + name_str + "\"\n";
 }
 
 bool HasSpecial::Match(const ScriptingContext& local_context) const {
@@ -2569,10 +2564,10 @@ std::string HasTag::Description(bool negated/* = false*/) const {
         % name_str);
 }
 
-std::string HasTag::Dump() const {
-    std::string retval = DumpIndent() + "HasTag";
+std::string HasTag::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "HasTag";
     if (m_name)
-        retval += " name = " + m_name->Dump();
+        retval += " name = " + m_name->Dump(ntabs);
     retval += "\n";
     return retval;
 }
@@ -2695,12 +2690,12 @@ std::string CreatedOnTurn::Description(bool negated/* = false*/) const {
                % high_str);
 }
 
-std::string CreatedOnTurn::Dump() const {
-    std::string retval = DumpIndent() + "CreatedOnTurn";
+std::string CreatedOnTurn::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "CreatedOnTurn";
     if (m_low)
-        retval += " low = " + m_low->Dump();
+        retval += " low = " + m_low->Dump(ntabs);
     if (m_high)
-        retval += " high = " + m_high->Dump();
+        retval += " high = " + m_high->Dump(ntabs);
     retval += "\n";
     return retval;
 }
@@ -2888,11 +2883,9 @@ std::string Contains::Description(bool negated/* = false*/) const {
         % m_condition->Description());
 }
 
-std::string Contains::Dump() const {
-    std::string retval = DumpIndent() + "Contains condition =\n";
-    ++g_indent;
-    retval += m_condition->Dump();
-    --g_indent;
+std::string Contains::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "Contains condition =\n";
+    retval += m_condition->Dump(ntabs+1);
     return retval;
 }
 
@@ -3107,11 +3100,9 @@ std::string ContainedBy::Description(bool negated/* = false*/) const {
         % m_condition->Description());
 }
 
-std::string ContainedBy::Dump() const {
-    std::string retval = DumpIndent() + "ContainedBy condition =\n";
-    ++g_indent;
-        retval += m_condition->Dump();
-    --g_indent;
+std::string ContainedBy::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "ContainedBy condition =\n";
+    retval += m_condition->Dump(ntabs+1);
     return retval;
 }
 
@@ -3256,10 +3247,10 @@ std::string InSystem::Description(bool negated/* = false*/) const {
     return str(FlexibleFormat(description_str) % system_str);
 }
 
-std::string InSystem::Dump() const {
-    std::string retval = DumpIndent() + "InSystem";
+std::string InSystem::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "InSystem";
     if (m_system_id)
-        retval += " id = " + m_system_id->Dump();
+        retval += " id = " + m_system_id->Dump(ntabs);
     retval += "\n";
     return retval;
 }
@@ -3410,8 +3401,8 @@ std::string ObjectID::Description(bool negated/* = false*/) const {
                % object_str);
 }
 
-std::string ObjectID::Dump() const
-{ return DumpIndent() + "Object id = " + m_object_id->Dump() + "\n"; }
+std::string ObjectID::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "Object id = " + m_object_id->Dump(ntabs) + "\n"; }
 
 void ObjectID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                  ObjectSet& condition_non_targets) const
@@ -3591,14 +3582,14 @@ std::string PlanetType::Description(bool negated/* = false*/) const {
         % values_str);
 }
 
-std::string PlanetType::Dump() const {
-    std::string retval = DumpIndent() + "Planet type = ";
+std::string PlanetType::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "Planet type = ";
     if (m_types.size() == 1) {
-        retval += m_types[0]->Dump() + "\n";
+        retval += m_types[0]->Dump(ntabs) + "\n";
     } else {
         retval += "[ ";
         for (auto& type : m_types) {
-            retval += type->Dump() + " ";
+            retval += type->Dump(ntabs) + " ";
         }
         retval += "]\n";
     }
@@ -3780,14 +3771,14 @@ std::string PlanetSize::Description(bool negated/* = false*/) const {
         % values_str);
 }
 
-std::string PlanetSize::Dump() const {
-    std::string retval = DumpIndent() + "Planet size = ";
+std::string PlanetSize::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "Planet size = ";
     if (m_sizes.size() == 1) {
-        retval += m_sizes[0]->Dump() + "\n";
+        retval += m_sizes[0]->Dump(ntabs) + "\n";
     } else {
         retval += "[ ";
         for (auto& size : m_sizes) {
-            retval += size->Dump() + " ";
+            retval += size->Dump(ntabs) + " ";
         }
         retval += "]\n";
     }
@@ -3995,19 +3986,19 @@ std::string PlanetEnvironment::Description(bool negated/* = false*/) const {
         % species_str);
 }
 
-std::string PlanetEnvironment::Dump() const {
-    std::string retval = DumpIndent() + "Planet environment = ";
+std::string PlanetEnvironment::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "Planet environment = ";
     if (m_environments.size() == 1) {
-        retval += m_environments[0]->Dump();
+        retval += m_environments[0]->Dump(ntabs);
     } else {
         retval += "[ ";
         for (auto& environment : m_environments) {
-            retval += environment->Dump() + " ";
+            retval += environment->Dump(ntabs) + " ";
         }
         retval += "]";
     }
     if (m_species_name)
-        retval += " species = " + m_species_name->Dump();
+        retval += " species = " + m_species_name->Dump(ntabs);
     retval += "\n";
     return retval;
 }
@@ -4210,16 +4201,16 @@ std::string Species::Description(bool negated/* = false*/) const {
         % values_str);
 }
 
-std::string Species::Dump() const {
-    std::string retval = DumpIndent() + "Species";
+std::string Species::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "Species";
     if (m_names.empty()) {
         // do nothing else
     } else if (m_names.size() == 1) {
-        retval += " name = " + m_names[0]->Dump() + "\n";
+        retval += " name = " + m_names[0]->Dump(ntabs) + "\n";
     } else {
         retval += " name = [ ";
         for (auto& name : m_names) {
-            retval += name->Dump() + " ";
+            retval += name->Dump(ntabs) + " ";
         }
         retval += "]\n";
     }
@@ -4551,26 +4542,26 @@ std::string Enqueued::Description(bool negated/* = false*/) const {
                % what_str);
 }
 
-std::string Enqueued::Dump() const {
-    std::string retval = DumpIndent() + "Enqueued";
+std::string Enqueued::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "Enqueued";
 
     if (m_build_type == BT_BUILDING) {
         retval += " type = Building";
         if (m_name)
-            retval += " name = " + m_name->Dump();
+            retval += " name = " + m_name->Dump(ntabs);
     } else if (m_build_type == BT_SHIP) {
         retval += " type = Ship";
         if (m_name)
-            retval += " design = " + m_name->Dump();
+            retval += " design = " + m_name->Dump(ntabs);
         else if (m_design_id)
-            retval += " design = " + m_design_id->Dump();
+            retval += " design = " + m_design_id->Dump(ntabs);
     }
     if (m_empire_id)
-        retval += " empire = " + m_empire_id->Dump();
+        retval += " empire = " + m_empire_id->Dump(ntabs);
     if (m_low)
-        retval += " low = " + m_low->Dump();
+        retval += " low = " + m_low->Dump(ntabs);
     if (m_high)
-        retval += " high = " + m_high->Dump();
+        retval += " high = " + m_high->Dump(ntabs);
     retval += "\n";
     return retval;
 }
@@ -4750,14 +4741,14 @@ std::string FocusType::Description(bool negated/* = false*/) const {
         % values_str);
 }
 
-std::string FocusType::Dump() const {
-    std::string retval = DumpIndent() + "Focus name = ";
+std::string FocusType::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "Focus name = ";
     if (m_names.size() == 1) {
-        retval += m_names[0]->Dump() + "\n";
+        retval += m_names[0]->Dump(ntabs) + "\n";
     } else {
         retval += "[ ";
         for (auto& name : m_names) {
-            retval += name->Dump() + " ";
+            retval += name->Dump(ntabs) + " ";
         }
         retval += "]\n";
     }
@@ -4931,14 +4922,14 @@ std::string StarType::Description(bool negated/* = false*/) const {
         % values_str);
 }
 
-std::string StarType::Dump() const {
-    std::string retval = DumpIndent() + "Star type = ";
+std::string StarType::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "Star type = ";
     if (m_types.size() == 1) {
-        retval += m_types[0]->Dump() + "\n";
+        retval += m_types[0]->Dump(ntabs) + "\n";
     } else {
         retval += "[ ";
         for (auto& type : m_types) {
-            retval += type->Dump() + " ";
+            retval += type->Dump(ntabs) + " ";
         }
         retval += "]\n";
     }
@@ -5069,10 +5060,10 @@ std::string DesignHasHull::Description(bool negated/* = false*/) const {
         % name_str);
 }
 
-std::string DesignHasHull::Dump() const {
-    std::string retval = DumpIndent() + "DesignHasHull";
+std::string DesignHasHull::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "DesignHasHull";
     if (m_name)
-        retval += " name = " + m_name->Dump();
+        retval += " name = " + m_name->Dump(ntabs);
     retval += "\n";
     return retval;
 }
@@ -5240,14 +5231,14 @@ std::string DesignHasPart::Description(bool negated/* = false*/) const {
         % name_str);
 }
 
-std::string DesignHasPart::Dump() const {
-    std::string retval = DumpIndent() + "DesignHasPart";
+std::string DesignHasPart::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "DesignHasPart";
     if (m_low)
-        retval += "low = " + m_low->Dump();
+        retval += "low = " + m_low->Dump(ntabs);
     if (m_high)
-        retval += " high = " + m_high->Dump();
+        retval += " high = " + m_high->Dump(ntabs);
     if (m_name)
-        retval += " name = " + m_name->Dump();
+        retval += " name = " + m_name->Dump(ntabs);
     retval += "\n";
     return retval;
 }
@@ -5412,12 +5403,12 @@ std::string DesignHasPartClass::Description(bool negated/* = false*/) const {
                % UserString(boost::lexical_cast<std::string>(m_class)));
 }
 
-std::string DesignHasPartClass::Dump() const {
-    std::string retval = DumpIndent() + "DesignHasPartClass";
+std::string DesignHasPartClass::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "DesignHasPartClass";
     if (m_low)
-        retval += " low = " + m_low->Dump();
+        retval += " low = " + m_low->Dump(ntabs);
     if (m_high)
-        retval += " high = " + m_high->Dump();
+        retval += " high = " + m_high->Dump(ntabs);
     retval += " class = " + UserString(boost::lexical_cast<std::string>(m_class));
     retval += "\n";
     return retval;
@@ -5571,10 +5562,10 @@ std::string PredefinedShipDesign::Description(bool negated/* = false*/) const {
         % name_str);
 }
 
-std::string PredefinedShipDesign::Dump() const {
-    std::string retval = DumpIndent() + "PredefinedShipDesign";
+std::string PredefinedShipDesign::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "PredefinedShipDesign";
     if (m_name)
-        retval += " name = " + m_name->Dump();
+        retval += " name = " + m_name->Dump(ntabs);
     retval += "\n";
     return retval;
 }
@@ -5691,8 +5682,8 @@ std::string NumberedShipDesign::Description(bool negated/* = false*/) const {
                % id_str);
 }
 
-std::string NumberedShipDesign::Dump() const
-{ return DumpIndent() + "NumberedShipDesign design_id = " + m_design_id->Dump(); }
+std::string NumberedShipDesign::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "NumberedShipDesign design_id = " + m_design_id->Dump(ntabs); }
 
 bool NumberedShipDesign::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
@@ -5808,8 +5799,8 @@ std::string ProducedByEmpire::Description(bool negated/* = false*/) const {
                % empire_str);
 }
 
-std::string ProducedByEmpire::Dump() const
-{ return DumpIndent() + "ProducedByEmpire empire_id = " + m_empire_id->Dump(); }
+std::string ProducedByEmpire::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "ProducedByEmpire empire_id = " + m_empire_id->Dump(ntabs); }
 
 bool ProducedByEmpire::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
@@ -5915,8 +5906,8 @@ std::string Chance::Description(bool negated/* = false*/) const {
     }
 }
 
-std::string Chance::Dump() const
-{ return DumpIndent() + "Random probability = " + m_chance->Dump() + "\n"; }
+std::string Chance::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "Random probability = " + m_chance->Dump(ntabs) + "\n"; }
 
 bool Chance::Match(const ScriptingContext& local_context) const {
     float chance = std::max(0.0, std::min(m_chance->Eval(local_context), 1.0));
@@ -6086,13 +6077,13 @@ std::string MeterValue::Description(bool negated/* = false*/) const {
     }
 }
 
-std::string MeterValue::Dump() const {
-    std::string retval = DumpIndent();
+std::string MeterValue::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs);
     retval += MeterTypeDumpString(m_meter);
     if (m_low)
-        retval += " low = " + m_low->Dump();
+        retval += " low = " + m_low->Dump(ntabs);
     if (m_high)
-        retval += " high = " + m_high->Dump();
+        retval += " high = " + m_high->Dump(ntabs);
     retval += "\n";
     return retval;
 }
@@ -6260,15 +6251,15 @@ std::string ShipPartMeterValue::Description(bool negated/* = false*/) const {
                % high_str);
 }
 
-std::string ShipPartMeterValue::Dump() const {
-    std::string retval = DumpIndent();
+std::string ShipPartMeterValue::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs);
     retval += MeterTypeDumpString(m_meter);
     if (m_part_name)
-        retval += " part = " + m_part_name->Dump();
+        retval += " part = " + m_part_name->Dump(ntabs);
     if (m_low)
-        retval += " low = " + m_low->Dump();
+        retval += " low = " + m_low->Dump(ntabs);
     if (m_high)
-        retval += " high = " + m_high->Dump();
+        retval += " high = " + m_high->Dump(ntabs);
     retval += "\n";
     return retval;
 }
@@ -6450,15 +6441,15 @@ std::string EmpireMeterValue::Description(bool negated/* = false*/) const {
                % empire_str);
 }
 
-std::string EmpireMeterValue::Dump() const {
-    std::string retval = DumpIndent() + "EmpireMeterValue";
+std::string EmpireMeterValue::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "EmpireMeterValue";
     if (m_empire_id)
-        retval += " empire = " + m_empire_id->Dump();
+        retval += " empire = " + m_empire_id->Dump(ntabs);
     retval += " meter = " + m_meter;
     if (m_low)
-        retval += " low = " + m_low->Dump();
+        retval += " low = " + m_low->Dump(ntabs);
     if (m_high)
-        retval += " high = " + m_high->Dump();
+        retval += " high = " + m_high->Dump(ntabs);
     retval += "\n";
     return retval;
 }
@@ -6606,15 +6597,15 @@ std::string EmpireStockpileValue::Description(bool negated/* = false*/) const {
                % high_str);
 }
 
-std::string EmpireStockpileValue::Dump() const {
-    std::string retval = DumpIndent();
+std::string EmpireStockpileValue::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs);
     switch (m_stockpile) {
     case RE_TRADE:      retval += "OwnerTradeStockpile";    break;
     case RE_RESEARCH:   retval += "OwnerResearchStockpile"; break;
     case RE_INDUSTRY:   retval += "OwnerIndustryStockpile"; break;
     default: retval += "?"; break;
     }
-    retval += " low = " + m_low->Dump() + " high = " + m_high->Dump() + "\n";
+    retval += " low = " + m_low->Dump(ntabs) + " high = " + m_high->Dump(ntabs) + "\n";
     return retval;
 }
 
@@ -6736,10 +6727,10 @@ std::string OwnerHasTech::Description(bool negated/* = false*/) const {
         % name_str);
 }
 
-std::string OwnerHasTech::Dump() const {
-    std::string retval = DumpIndent() + "OwnerHasTech";
+std::string OwnerHasTech::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "OwnerHasTech";
     if (m_name)
-        retval += " name = " + m_name->Dump();
+        retval += " name = " + m_name->Dump(ntabs);
     retval += "\n";
     return retval;
 }
@@ -6858,10 +6849,10 @@ std::string OwnerHasBuildingTypeAvailable::Description(bool negated/* = false*/)
         : UserString("DESC_OWNER_HAS_BUILDING_TYPE_NOT");
 }
 
-std::string OwnerHasBuildingTypeAvailable::Dump() const {
-    std::string retval= DumpIndent() + "OwnerHasBuildingTypeAvailable";
+std::string OwnerHasBuildingTypeAvailable::Dump(unsigned short ntabs) const {
+    std::string retval= DumpIndent(ntabs) + "OwnerHasBuildingTypeAvailable";
     if (m_name)
-        retval += " name = " + m_name->Dump();
+        retval += " name = " + m_name->Dump(ntabs);
     retval += "\n";
     return retval;
 }
@@ -6980,10 +6971,10 @@ std::string OwnerHasShipDesignAvailable::Description(bool negated/* = false*/) c
         : UserString("DESC_OWNER_HAS_SHIP_DESIGN_NOT");
 }
 
-std::string OwnerHasShipDesignAvailable::Dump() const {
-    std::string retval = DumpIndent() + "OwnerHasShipDesignAvailable";
+std::string OwnerHasShipDesignAvailable::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "OwnerHasShipDesignAvailable";
     if (m_id)
-        retval += " id = " + m_id->Dump();
+        retval += " id = " + m_id->Dump(ntabs);
     retval += "\n";
     return retval;
 }
@@ -7103,10 +7094,10 @@ std::string OwnerHasShipPartAvailable::Description(bool negated/* = false*/) con
         : UserString("DESC_OWNER_HAS_SHIP_PART_NOT");
 }
 
-std::string OwnerHasShipPartAvailable::Dump() const {
-    std::string retval = DumpIndent() + "OwnerHasShipPartAvailable";
+std::string OwnerHasShipPartAvailable::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "OwnerHasShipPartAvailable";
     if (m_name)
-        retval += " name = " + m_name->Dump();
+        retval += " name = " + m_name->Dump(ntabs);
     retval += "\n";
     return retval;
 }
@@ -7222,8 +7213,8 @@ std::string VisibleToEmpire::Description(bool negated/* = false*/) const {
                % empire_str);
 }
 
-std::string VisibleToEmpire::Dump() const
-{ return DumpIndent() + "VisibleToEmpire empire_id = " + m_empire_id->Dump() + "\n"; }
+std::string VisibleToEmpire::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "VisibleToEmpire empire_id = " + m_empire_id->Dump(ntabs) + "\n"; }
 
 bool VisibleToEmpire::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
@@ -7348,11 +7339,9 @@ std::string WithinDistance::Description(bool negated/* = false*/) const {
                % m_condition->Description());
 }
 
-std::string WithinDistance::Dump() const {
-    std::string retval = DumpIndent() + "WithinDistance distance = " + m_distance->Dump() + " condition =\n";
-    ++g_indent;
-    retval += m_condition->Dump();
-    --g_indent;
+std::string WithinDistance::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "WithinDistance distance = " + m_distance->Dump(ntabs) + " condition =\n";
+    retval += m_condition->Dump(ntabs+1);
     return retval;
 }
 
@@ -7459,11 +7448,9 @@ std::string WithinStarlaneJumps::Description(bool negated/* = false*/) const {
                % m_condition->Description());
 }
 
-std::string WithinStarlaneJumps::Dump() const {
-    std::string retval = DumpIndent() + "WithinStarlaneJumps jumps = " + m_jumps->Dump() + " condition =\n";
-    ++g_indent;
-    retval += m_condition->Dump();
-    --g_indent;
+std::string WithinStarlaneJumps::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "WithinStarlaneJumps jumps = " + m_jumps->Dump(ntabs) + " condition =\n";
+    retval += m_condition->Dump(ntabs+1);
     return retval;
 }
 
@@ -7921,11 +7908,9 @@ std::string CanAddStarlaneConnection::Description(bool negated/* = false*/) cons
         % m_condition->Description());
 }
 
-std::string CanAddStarlaneConnection::Dump() const {
-    std::string retval = DumpIndent() + "CanAddStarlanesTo condition =\n";
-    ++g_indent;
-        retval += m_condition->Dump();
-    --g_indent;
+std::string CanAddStarlaneConnection::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "CanAddStarlanesTo condition =\n";
+    retval += m_condition->Dump(ntabs+1);
     return retval;
 }
 
@@ -8047,8 +8032,8 @@ std::string ExploredByEmpire::Description(bool negated/* = false*/) const {
                % empire_str);
 }
 
-std::string ExploredByEmpire::Dump() const
-{ return DumpIndent() + "ExploredByEmpire empire_id = " + m_empire_id->Dump(); }
+std::string ExploredByEmpire::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "ExploredByEmpire empire_id = " + m_empire_id->Dump(ntabs); }
 
 bool ExploredByEmpire::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
@@ -8087,8 +8072,8 @@ std::string Stationary::Description(bool negated/* = false*/) const {
         : UserString("DESC_STATIONARY_NOT");
 }
 
-std::string Stationary::Dump() const
-{ return DumpIndent() + "Stationary\n"; }
+std::string Stationary::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "Stationary\n"; }
 
 bool Stationary::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
@@ -8145,8 +8130,8 @@ std::string Aggressive::Description(bool negated/* = false*/) const {
             : UserString("DESC_PASSIVE_NOT");
 }
 
-std::string Aggressive::Dump() const
-{ return DumpIndent() + (m_aggressive ? "Aggressive\n" : "Passive\n"); }
+std::string Aggressive::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + (m_aggressive ? "Aggressive\n" : "Passive\n"); }
 
 bool Aggressive::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
@@ -8274,8 +8259,8 @@ std::string FleetSupplyableByEmpire::Description(bool negated/* = false*/) const
                % empire_str);
 }
 
-std::string FleetSupplyableByEmpire::Dump() const
-{ return DumpIndent() + "ResupplyableBy empire_id = " + m_empire_id->Dump(); }
+std::string FleetSupplyableByEmpire::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "ResupplyableBy empire_id = " + m_empire_id->Dump(ntabs); }
 
 bool FleetSupplyableByEmpire::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
@@ -8439,12 +8424,10 @@ std::string ResourceSupplyConnectedByEmpire::Description(bool negated/* = false*
                % m_condition->Description());
 }
 
-std::string ResourceSupplyConnectedByEmpire::Dump() const {
-    std::string retval = DumpIndent() + "ResourceSupplyConnectedBy empire_id = " + m_empire_id->Dump() +
-                                        " condition = \n";
-    ++g_indent;
-    retval += m_condition->Dump();
-    --g_indent;
+std::string ResourceSupplyConnectedByEmpire::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "ResourceSupplyConnectedBy empire_id = "
+        + m_empire_id->Dump(ntabs) + " condition = \n";
+    retval += m_condition->Dump(ntabs+1);
     return retval;
 }
 
@@ -8478,8 +8461,8 @@ std::string CanColonize::Description(bool negated/* = false*/) const {
         : UserString("DESC_CAN_COLONIZE_NOT")));
 }
 
-std::string CanColonize::Dump() const
-{ return DumpIndent() + "CanColonize\n"; }
+std::string CanColonize::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "CanColonize\n"; }
 
 bool CanColonize::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
@@ -8551,8 +8534,8 @@ std::string CanProduceShips::Description(bool negated/* = false*/) const {
         : UserString("DESC_CAN_PRODUCE_SHIPS_NOT")));
 }
 
-std::string CanProduceShips::Dump() const
-{ return DumpIndent() + "CanColonize\n"; }
+std::string CanProduceShips::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "CanColonize\n"; }
 
 bool CanProduceShips::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
@@ -8710,8 +8693,8 @@ std::string OrderedBombarded::Description(bool negated/* = false*/) const {
                % by_str);
 }
 
-std::string OrderedBombarded::Dump() const
-{ return DumpIndent() + "OrderedBombarded by_object = " + m_by_object_condition->Dump(); }
+std::string OrderedBombarded::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "OrderedBombarded by_object = " + m_by_object_condition->Dump(ntabs); }
 
 bool OrderedBombarded::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
@@ -8808,9 +8791,9 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& valu
     m_compare_type1(comp1),
     m_compare_type2(comp2)
 {
-    /*DebugLogger() << "String ValueTest(" << value_ref1->Dump() << " "
+    /*DebugLogger() << "String ValueTest(" << value_ref1->Dump(ntabs) << " "
                                          << CompareTypeString(comp1) << " "
-                                         << value_ref2->Dump() << ")";*/
+                                         << value_ref2->Dump(ntabs) << ")";*/
 }
 
 ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRefBase<int>>&& value_ref1,
@@ -9011,34 +8994,34 @@ std::string ValueTest::Description(bool negated/* = false*/) const {
                % composed_comparison);
 }
 
-std::string ValueTest::Dump() const {
-    std::string retval = DumpIndent() + "(";
+std::string ValueTest::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "(";
     if (m_value_ref1)
-        retval += m_value_ref1->Dump();
+        retval += m_value_ref1->Dump(ntabs);
     else if (m_string_value_ref1)
-        retval += m_string_value_ref1->Dump();
+        retval += m_string_value_ref1->Dump(ntabs);
     else if (m_int_value_ref1)
-        retval += m_int_value_ref1->Dump();
+        retval += m_int_value_ref1->Dump(ntabs);
 
     if (m_compare_type1 != INVALID_COMPARISON)
         retval += " " + CompareTypeString(m_compare_type1);
 
     if (m_value_ref2)
-        retval += " " + m_value_ref2->Dump();
+        retval += " " + m_value_ref2->Dump(ntabs);
     else if (m_string_value_ref2)
-        retval += m_string_value_ref2->Dump();
+        retval += m_string_value_ref2->Dump(ntabs);
     else if (m_int_value_ref2)
-        retval += m_int_value_ref2->Dump();
+        retval += m_int_value_ref2->Dump(ntabs);
 
     if (m_compare_type2 != INVALID_COMPARISON)
         retval += " " + CompareTypeString(m_compare_type2);
 
     if (m_value_ref3)
-        retval += " " + m_value_ref3->Dump();
+        retval += " " + m_value_ref3->Dump(ntabs);
     else if (m_string_value_ref3)
-        retval += m_string_value_ref3->Dump();
+        retval += m_string_value_ref3->Dump(ntabs);
     else if (m_int_value_ref3)
-        retval += m_int_value_ref3->Dump();
+        retval += m_int_value_ref3->Dump(ntabs);
 
     retval += ")\n";
     return retval;
@@ -9296,8 +9279,8 @@ std::string Location::Description(bool negated/* = false*/) const {
                % name2_str);
 }
 
-std::string Location::Dump() const {
-    std::string retval = DumpIndent() + "Location content_type = ";
+std::string Location::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "Location content_type = ";
 
     switch (m_content_type) {
     case CONTENT_BUILDING:  retval += "Building";   break;
@@ -9310,9 +9293,9 @@ std::string Location::Dump() const {
     }
 
     if (m_name1)
-        retval += " name1 = " + m_name1->Dump();
+        retval += " name1 = " + m_name1->Dump(ntabs);
     if (m_name2)
-        retval += " name2 = " + m_name2->Dump();
+        retval += " name2 = " + m_name2->Dump(ntabs);
     return retval;
 }
 
@@ -9490,14 +9473,11 @@ std::string And::Description(bool negated/* = false*/) const {
     }
 }
 
-std::string And::Dump() const {
-    std::string retval = DumpIndent() + "And [\n";
-    ++g_indent;
-    for (auto& operand : m_operands) {
-        retval += operand->Dump();
-    }
-    --g_indent;
-    retval += DumpIndent() + "]\n";
+std::string And::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "And [\n";
+    for (auto& operand : m_operands)
+        retval += operand->Dump(ntabs+1);
+    retval += DumpIndent(ntabs) + "]\n";
     return retval;
 }
 
@@ -9670,14 +9650,11 @@ std::string Or::Description(bool negated/* = false*/) const {
     }
 }
 
-std::string Or::Dump() const {
-    std::string retval = DumpIndent() + "Or [\n";
-    ++g_indent;
-    for (auto& operand : m_operands) {
-        retval += operand->Dump();
-    }
-    --g_indent;
-    retval += "\n" + DumpIndent() + "]\n";
+std::string Or::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "Or [\n";
+    for (auto& operand : m_operands)
+        retval += operand->Dump(ntabs+1);
+    retval += "\n" + DumpIndent(ntabs) + "]\n";
     return retval;
 }
 
@@ -9767,11 +9744,9 @@ bool Not::SourceInvariant() const {
 std::string Not::Description(bool negated/* = false*/) const
 { return m_operand->Description(true); }
 
-std::string Not::Dump() const {
-    std::string retval = DumpIndent() + "Not\n";
-    ++g_indent;
-    retval += m_operand->Dump();
-    --g_indent;
+std::string Not::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "Not\n";
+    retval += m_operand->Dump(ntabs+1);
     return retval;
 }
 

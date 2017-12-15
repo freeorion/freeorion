@@ -20,7 +20,7 @@ public:
 
     UniverseObjectType ObjectType() const override;
 
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     int ContainerObjectID() const override;
 
@@ -87,7 +87,7 @@ public:
     /** \name Accessors */ //@{
     const std::string&              Name() const            { return m_name; }          ///< returns the unique name for this type of field
     const std::string&              Description() const     { return m_description; }   ///< returns a text description of this type of building
-    std::string                     Dump() const;                                       ///< returns a data file format representation of this object
+    std::string                     Dump(unsigned short ntabs = 0) const;                                       ///< returns a data file format representation of this object
     float                           Stealth() const         { return m_stealth; }       ///< returns stealth of field type
     const std::set<std::string>&    Tags() const            { return m_tags; }
 

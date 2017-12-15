@@ -112,9 +112,9 @@ bool Field::HasTag(const std::string& name) const {
 UniverseObjectType Field::ObjectType() const
 { return OBJ_FIELD; }
 
-std::string Field::Dump() const {
+std::string Field::Dump(unsigned short ntabs) const {
     std::stringstream os;
-    os << UniverseObject::Dump();
+    os << UniverseObject::Dump(ntabs);
     os << " field type: " << m_type_name;
     return os.str();
 }
@@ -193,31 +193,23 @@ FieldType::FieldType(const std::string& name, const std::string& description,
 FieldType::~FieldType()
 {}
 
-std::string FieldType::Dump() const {
-    std::string retval = DumpIndent() + "FieldType\n";
-    ++g_indent;
-    retval += DumpIndent() + "name = \"" + m_name + "\"\n";
-    retval += DumpIndent() + "description = \"" + m_description + "\"\n";
-    retval += DumpIndent() + "location = \n";
-    //++g_indent;
-    //retval += m_location->Dump();
-    //--g_indent;
+std::string FieldType::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "FieldType\n";
+    retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
+    retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";
+    retval += DumpIndent(ntabs+1) + "location = \n";
+    //retval += m_location->Dump(ntabs+2);
     if (m_effects.size() == 1) {
-        retval += DumpIndent() + "effectsgroups =\n";
-        ++g_indent;
-        retval += m_effects[0]->Dump();
-        --g_indent;
+        retval += DumpIndent(ntabs+1) + "effectsgroups =\n";
+        retval += m_effects[0]->Dump(ntabs+2);
     } else {
-        retval += DumpIndent() + "effectsgroups = [\n";
-        ++g_indent;
+        retval += DumpIndent(ntabs+1) + "effectsgroups = [\n";
         for (auto& effect : m_effects) {
-            retval += effect->Dump();
+            retval += effect->Dump(ntabs+2);
         }
-        --g_indent;
-        retval += DumpIndent() + "]\n";
+        retval += DumpIndent(ntabs+1) + "]\n";
     }
-    retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
-    --g_indent;
+    retval += DumpIndent(ntabs+1) + "graphic = \"" + m_graphic + "\"\n";
     return retval;
 }
 

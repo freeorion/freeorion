@@ -169,11 +169,11 @@ bool Planet::HasTag(const std::string& name) const {
 UniverseObjectType Planet::ObjectType() const
 { return OBJ_PLANET; }
 
-std::string Planet::Dump() const {
+std::string Planet::Dump(unsigned short ntabs) const {
     std::stringstream os;
-    os << UniverseObject::Dump();
-    os << PopCenter::Dump();
-    os << ResourceCenter::Dump();
+    os << UniverseObject::Dump(ntabs);
+    os << PopCenter::Dump(ntabs);
+    os << ResourceCenter::Dump(ntabs);
     os << " type: " << m_type
        << " original type: " << m_original_type
        << " size: " << m_size

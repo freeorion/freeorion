@@ -55,7 +55,7 @@ public:
     const std::string&              Description() const { return m_description; }   ///< returns a text description of this focus type
     const Condition::ConditionBase* Location() const    { return m_location.get(); }///< returns the condition that determines whether an UniverseObject can use this FocusType
     const std::string&              Graphic() const     { return m_graphic; }       ///< returns the name of the grapic file for this focus type
-    std::string                     Dump() const;       ///< returns a data file format representation of this object
+    std::string                     Dump(unsigned short ntabs = 0) const;       ///< returns a data file format representation of this object
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -143,7 +143,7 @@ public:
 
     const Condition::ConditionBase* Location() const;
 
-    std::string                     Dump() const;                                           ///< returns a data file format representation of this object
+    std::string                     Dump(unsigned short ntabs = 0) const;                                           ///< returns a data file format representation of this object
     const std::vector<FocusType>&   Foci() const            { return m_foci; }              ///< returns the focus types this species can use
     const std::string&              PreferredFocus() const  { return m_preferred_focus; }   ///< returns the name of the planetary focus this species prefers. Default for new colonies and may affect happiness if on a different focus?
     const std::map<PlanetType, PlanetEnvironment>& PlanetEnvironments() const { return m_planet_environments; } ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType

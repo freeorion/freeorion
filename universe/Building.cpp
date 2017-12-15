@@ -117,12 +117,12 @@ bool Building::ContainedBy(int object_id) const {
             ||  object_id == this->SystemID());
 }
 
-std::string Building::Dump() const {
+std::string Building::Dump(unsigned short ntabs) const {
     std::stringstream os;
-    os << UniverseObject::Dump();
+    os << UniverseObject::Dump(ntabs);
     os << " building type: " << m_building_type
        << " produced by empire id: " << m_produced_by_empire_id
-       << " \n characteristics " << GetBuildingType(m_building_type)->Dump();
+       << " \n characteristics " << GetBuildingType(m_building_type)->Dump(ntabs);
     return os.str();
 }
 
@@ -202,60 +202,48 @@ void BuildingType::Init() {
     }
 }
 
-std::string BuildingType::Dump() const {
-    std::string retval = DumpIndent() + "BuildingType\n";
-    ++g_indent;
-    retval += DumpIndent() + "name = \"" + m_name + "\"\n";
-    retval += DumpIndent() + "description = \"" + m_description + "\"\n";
+std::string BuildingType::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "BuildingType\n";
+    retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
+    retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";
     if (m_production_cost)
-        retval += DumpIndent() + "buildcost = " + m_production_cost->Dump() + "\n";
+        retval += DumpIndent(ntabs+1) + "buildcost = " + m_production_cost->Dump(ntabs+1) + "\n";
     if (m_production_time)
-        retval += DumpIndent() + "buildtime = " + m_production_time->Dump() + "\n";
-    retval += DumpIndent() + (m_producible ? "Producible" : "Unproducible") + "\n";
-    retval += DumpIndent() + "captureresult = " +
+        retval += DumpIndent(ntabs+1) + "buildtime = " + m_production_time->Dump(ntabs+1) + "\n";
+    retval += DumpIndent(ntabs+1) + (m_producible ? "Producible" : "Unproducible") + "\n";
+    retval += DumpIndent(ntabs+1) + "captureresult = " +
         boost::lexical_cast<std::string>(m_capture_result) + "\n";
 
     if (!m_tags.empty()) {
         if (m_tags.size() == 1) {
-            retval += DumpIndent() + "tags = \"" + *m_tags.begin() + "\"\n";
+            retval += DumpIndent(ntabs+1) + "tags = \"" + *m_tags.begin() + "\"\n";
         } else {
-            retval += DumpIndent() + "tags = [ ";
-            for (const std::string& tag : m_tags) {
+            retval += DumpIndent(ntabs+1) + "tags = [ ";
+            for (const std::string& tag : m_tags)
                retval += "\"" + tag + "\" ";
-            }
             retval += " ]\n";
         }
     }
 
     if (m_location) {
-        retval += DumpIndent() + "location = \n";
-        ++g_indent;
-            retval += m_location->Dump();
-        --g_indent;
+        retval += DumpIndent(ntabs+1) + "location = \n";
+        retval += m_location->Dump(ntabs+2);
     }
     if (m_enqueue_location) {
-        retval += DumpIndent() + "enqueue location = \n";
-        ++g_indent;
-            retval += m_enqueue_location->Dump();
-        --g_indent;
+        retval += DumpIndent(ntabs+1) + "enqueue location = \n";
+        retval += m_enqueue_location->Dump(ntabs+2);
     }
 
     if (m_effects.size() == 1) {
-        retval += DumpIndent() + "effectsgroups =\n";
-        ++g_indent;
-        retval += m_effects[0]->Dump();
-        --g_indent;
+        retval += DumpIndent(ntabs+1) + "effectsgroups =\n";
+        retval += m_effects[0]->Dump(ntabs+2);
     } else {
-        retval += DumpIndent() + "effectsgroups = [\n";
-        ++g_indent;
-        for (auto& effect : m_effects) {
-            retval += effect->Dump();
-        }
-        --g_indent;
-        retval += DumpIndent() + "]\n";
+        retval += DumpIndent(ntabs+1) + "effectsgroups = [\n";
+        for (auto& effect : m_effects)
+            retval += effect->Dump(ntabs+2);
+        retval += DumpIndent(ntabs+1) + "]\n";
     }
-    retval += DumpIndent() + "icon = \"" + m_icon + "\"\n";
-    --g_indent;
+    retval += DumpIndent(ntabs+1) + "icon = \"" + m_icon + "\"\n";
     return retval;
 }
 

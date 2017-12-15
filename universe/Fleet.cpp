@@ -180,9 +180,9 @@ bool Fleet::HostileToEmpire(int empire_id) const
 UniverseObjectType Fleet::ObjectType() const
 { return OBJ_FLEET; }
 
-std::string Fleet::Dump() const {
+std::string Fleet::Dump(unsigned short ntabs) const {
     std::stringstream os;
-    os << UniverseObject::Dump();
+    os << UniverseObject::Dump(ntabs);
     os << ( m_aggressive ? " agressive" : " passive")
        << " cur system: " << SystemID()
        << " moving to: " << FinalDestinationID()

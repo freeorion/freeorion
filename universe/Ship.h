@@ -23,7 +23,7 @@ public:
     std::set<std::string> Tags() const override;
     bool HasTag(const std::string& name) const override;
     UniverseObjectType ObjectType() const override;
-    std::string Dump() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
 
     int ContainerObjectID() const override
     { return m_fleet_id; }

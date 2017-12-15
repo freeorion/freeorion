@@ -125,11 +125,6 @@ inline std::basic_istream<CharT, TraitsT >& operator>>(
     return is;
 }
 
-int g_indent = 0;
-
-std::string DumpIndent()
-{ return std::string(g_indent * 4, ' '); }
-
 namespace {
     std::string& LocalUnnamedLoggerIdentifier() {
         // Create default logger name as a static function variable to avoid static initialization fiasco

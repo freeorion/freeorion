@@ -34,7 +34,7 @@ public:
     float       Current() const;                    ///< returns the current value of the meter
     float       Initial() const;                    ///< returns the value of the meter as it was at the beginning of the turn
 
-    std::string Dump() const;                       ///< returns text of meter values
+    std::string Dump(unsigned short ntabs = 0) const;                       ///< returns text of meter values
     //@}
 
     /** \name Mutators */ //@{

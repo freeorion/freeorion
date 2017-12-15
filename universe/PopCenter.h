@@ -34,7 +34,7 @@ public:
     /** \name Accessors */ //@{
     const std::string&  SpeciesName() const {return m_species_name;}        ///< returns the name of the species that populates this planet
 
-    std::string         Dump() const;
+    std::string         Dump(unsigned short ntabs = 0) const;
 
     float               NextTurnPopGrowth() const;                          ///< predicted pop growth next turn
 

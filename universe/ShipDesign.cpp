@@ -1362,35 +1362,31 @@ void ShipDesign::BuildStatCaches() {
     }
 }
 
-std::string ShipDesign::Dump() const {
-    std::string retval = DumpIndent() + "ShipDesign\n";
-    ++g_indent;
-    retval += DumpIndent() + "name = \"" + m_name + "\"\n";
-    retval += DumpIndent() + "uuid = \"" + boost::uuids::to_string(m_uuid) + "\"\n";
-    retval += DumpIndent() + "description = \"" + m_description + "\"\n";
+std::string ShipDesign::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "ShipDesign\n";
+    retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
+    retval += DumpIndent(ntabs+1) + "uuid = \"" + boost::uuids::to_string(m_uuid) + "\"\n";
+    retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";
 
     if (!m_name_desc_in_stringtable)
-        retval += DumpIndent() + "NoStringtableLookup\n";
-    retval += DumpIndent() + "hull = \"" + m_hull + "\"\n";
-    retval += DumpIndent() + "parts = ";
+        retval += DumpIndent(ntabs+1) + "NoStringtableLookup\n";
+    retval += DumpIndent(ntabs+1) + "hull = \"" + m_hull + "\"\n";
+    retval += DumpIndent(ntabs+1) + "parts = ";
     if (m_parts.empty()) {
         retval += "[]\n";
     } else if (m_parts.size() == 1) {
         retval += "\"" + *m_parts.begin() + "\"\n";
     } else {
         retval += "[\n";
-        ++g_indent;
         for (const std::string& part_name : m_parts) {
-            retval += DumpIndent() + "\"" + part_name + "\"\n";
+            retval += DumpIndent(ntabs+2) + "\"" + part_name + "\"\n";
         }
-        --g_indent;
-        retval += DumpIndent() + "]\n";
+        retval += DumpIndent(ntabs+1) + "]\n";
     }
     if (!m_icon.empty())
-        retval += DumpIndent() + "icon = \"" + m_icon + "\"\n";
-    retval += DumpIndent() + "model = \"" + m_3D_model + "\"\n";
-    --g_indent;
-    return retval; 
+        retval += DumpIndent(ntabs+1) + "icon = \"" + m_icon + "\"\n";
+    retval += DumpIndent(ntabs+1) + "model = \"" + m_3D_model + "\"\n";
+    return retval;
 }
 
 unsigned int ShipDesign::GetCheckSum() const {
