@@ -1533,8 +1533,6 @@ public:
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
-    std::set<std::string>   GetCategoriesShown() const;
-    std::set<TechStatus>    GetTechStatusesShown() const;
     bool TechRowCmp(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column);
     //@}
 
@@ -1844,12 +1842,6 @@ void TechTreeWnd::TechListBox::CompleteConstruction() {
 TechTreeWnd::TechListBox::~TechListBox()
 {}
 
-std::set<std::string> TechTreeWnd::TechListBox::GetCategoriesShown() const
-{ return m_categories_shown; }
-
-std::set<TechStatus> TechTreeWnd::TechListBox::GetTechStatusesShown() const
-{ return m_tech_statuses_shown; }
-
 void TechTreeWnd::TechListBox::Reset()
 {
     m_tech_row_cache.clear();
@@ -2157,12 +2149,6 @@ void TechTreeWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 double TechTreeWnd::Scale() const
 { return m_layout_panel->Scale(); }
 
-std::set<std::string> TechTreeWnd::GetCategoriesShown() const
-{ return m_layout_panel->GetCategoriesShown(); }
-
-std::set<TechStatus> TechTreeWnd::GetTechStatusesShown() const
-{ return m_layout_panel->GetTechStatusesShown(); }
-
 void TechTreeWnd::Update() {
     m_layout_panel->Update();
     m_tech_list->Update();
@@ -2347,7 +2333,7 @@ bool TechTreeWnd::PediaVisible()
 { return m_enc_detail_panel->Visible(); }
 
 bool TechTreeWnd::TechIsVisible(const std::string& tech_name) const
-{ return TechVisible(tech_name, GetCategoriesShown(), GetTechStatusesShown()); }
+{ return TechVisible(tech_name, m_layout_panel->GetCategoriesShown(), m_layout_panel->GetTechStatusesShown()); }
 
 void TechTreeWnd::TechLeftClickedSlot(const std::string& tech_name,
                                   const GG::Flags<GG::ModKey>& modkeys)
