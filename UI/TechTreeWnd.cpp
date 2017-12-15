@@ -514,7 +514,7 @@ public:
     std::set<std::string>   GetCategoriesShown() const;
     std::set<TechStatus>    GetTechStatusesShown() const;
 
-    mutable TechTreeWnd::TechClickSignalType    TechLeftClickedSignal;
+    mutable TechTreeWnd::TechClickSignalType    TechSelectedSignal;
     mutable TechTreeWnd::TechClickSignalType    TechDoubleClickedSignal;
     mutable TechTreeWnd::TechSignalType         TechPediaDisplaySignal;
     //@}
@@ -533,7 +533,7 @@ public:
     void HideAllCategories();
     void ShowStatus(TechStatus status);
     void HideStatus(TechStatus status);
-    void ShowTech(const std::string& tech_name);
+    void SelectTech(const std::string& tech_name);
     void CenterOnTech(const std::string& tech_name);
     void DoZoom(const GG::Pt &pt) const;
     void UndoZoom() const;
@@ -576,9 +576,6 @@ private:
     void DoLayout();    // arranges child controls (scrolls, buttons) to account for window size
 
     void ScrolledSlot(int, int, int, int);
-
-    void TechLeftClickedSlot(const std::string& tech_name,
-                             const GG::Flags<GG::ModKey>& modkeys);
 
     void TreeDraggedSlot(const GG::Pt& move);
     void TreeDragBegin(const GG::Pt& move);
@@ -1301,9 +1298,6 @@ void TechTreeWnd::LayoutPanel::HideStatus(TechStatus status) {
     }
 }
 
-void TechTreeWnd::LayoutPanel::ShowTech(const std::string& tech_name)
-{ TechLeftClickedSlot(tech_name, GG::Flags<GG::ModKey>()); }
-
 void TechTreeWnd::LayoutPanel::CenterOnTech(const std::string& tech_name) {
     const auto& it = m_techs.find(tech_name);
     if (it == m_techs.end()) {
@@ -1423,7 +1417,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         tech_panel->MoveTo(GG::Pt(node->GetX(), node->GetY()));
         m_layout_surface->AttachChild(tech_panel);
         tech_panel->TechLeftClickedSignal.connect(
-            boost::bind(&TechTreeWnd::LayoutPanel::TechLeftClickedSlot, this, _1, _2));
+            boost::bind(&TechTreeWnd::LayoutPanel::SelectTech, this, _1));
         tech_panel->TechDoubleClickedSignal.connect(
             TechDoubleClickedSignal);
         tech_panel->TechPediaDisplaySignal.connect(
@@ -1478,8 +1472,7 @@ void TechTreeWnd::LayoutPanel::ScrolledSlot(int, int, int, int) {
     m_scroll_position_y = m_vscroll->PosnRange().first;
 }
 
-void TechTreeWnd::LayoutPanel::TechLeftClickedSlot(const std::string& tech_name,
-                                                   const GG::Flags<GG::ModKey>& modkeys)
+void TechTreeWnd::LayoutPanel::SelectTech(const std::string& tech_name)
 {
     // deselect previously-selected tech panel
     if (m_techs.find(m_selected_tech_name) != m_techs.end())
@@ -1488,7 +1481,7 @@ void TechTreeWnd::LayoutPanel::TechLeftClickedSlot(const std::string& tech_name,
     if (m_techs.find(tech_name) != m_techs.end())
         m_techs[tech_name]->Select(true);
     m_selected_tech_name = tech_name;
-    TechLeftClickedSignal(tech_name, modkeys);
+    TechSelectedSignal(tech_name, GG::Flags<GG::ModKey>());
 }
 
 void TechTreeWnd::LayoutPanel::TreeDraggedSlot(const GG::Pt& move) {
@@ -2061,7 +2054,7 @@ void TechTreeWnd::CompleteConstruction() {
     Sound::TempUISoundDisabler sound_disabler;
 
     m_layout_panel = GG::Wnd::Create<LayoutPanel>(Width(), Height());
-    m_layout_panel->TechLeftClickedSignal.connect(
+    m_layout_panel->TechSelectedSignal.connect(
         boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_layout_panel->TechDoubleClickedSignal.connect(
         [this](const std::string& tech_name, GG::Flags<GG::ModKey> modkeys){ this->AddTechToResearchQueue(tech_name, modkeys & GG::MOD_KEY_CTRL); });
@@ -2326,7 +2319,7 @@ void TechTreeWnd::SetEncyclopediaTech(const std::string& tech_name)
 { m_enc_detail_panel->SetTech(tech_name); }
 
 void TechTreeWnd::SelectTech(const std::string& tech_name)
-{ m_layout_panel->ShowTech(tech_name); }
+{ m_layout_panel->SelectTech(tech_name); }
 
 void TechTreeWnd::ShowPedia() {
     m_enc_detail_panel->Refresh();
