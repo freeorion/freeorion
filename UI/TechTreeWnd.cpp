@@ -2064,7 +2064,7 @@ void TechTreeWnd::CompleteConstruction() {
     m_layout_panel->TechLeftClickedSignal.connect(
         boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_layout_panel->TechDoubleClickedSignal.connect(
-        boost::bind(&TechTreeWnd::TechDoubleClickedSlot, this, _1, _2));
+        [this](const std::string& tech_name, GG::Flags<GG::ModKey> modkeys){ this->AddTechToResearchQueue(tech_name, modkeys & GG::MOD_KEY_CTRL); });
     m_layout_panel->TechPediaDisplaySignal.connect(
         boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
     AttachChild(m_layout_panel);
@@ -2073,7 +2073,7 @@ void TechTreeWnd::CompleteConstruction() {
     m_tech_list->TechLeftClickedSignal.connect(
         boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_tech_list->TechDoubleClickedSignal.connect(
-        boost::bind(&TechTreeWnd::TechDoubleClickedSlot, this, _1, _2));
+        [this](const std::string& tech_name, GG::Flags<GG::ModKey> modkeys){ this->AddTechToResearchQueue(tech_name, modkeys & GG::MOD_KEY_CTRL); });
     m_tech_list->TechPediaDisplaySignal.connect(
         boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
 
@@ -2360,15 +2360,15 @@ void TechTreeWnd::TechLeftClickedSlot(const std::string& tech_name,
                                   const GG::Flags<GG::ModKey>& modkeys)
 {
     if (modkeys & GG::MOD_KEY_SHIFT) {
-        TechDoubleClickedSlot(tech_name, modkeys);
+        AddTechToResearchQueue(tech_name, modkeys & GG::MOD_KEY_CTRL);
     } else {
         SetEncyclopediaTech(tech_name);
         TechSelectedSignal(tech_name);
     }
 }
 
-void TechTreeWnd::TechDoubleClickedSlot(const std::string& tech_name,
-                                        const GG::Flags<GG::ModKey>& modkeys)
+void TechTreeWnd::AddTechToResearchQueue(const std::string& tech_name,
+                                         bool to_front)
 {
     const Tech* tech = GetTech(tech_name);
     if (!tech) return;
@@ -2378,7 +2378,7 @@ void TechTreeWnd::TechDoubleClickedSlot(const std::string& tech_name,
         tech_status = empire->GetTechStatus(tech_name);
 
     int queue_pos = -1;
-    if (modkeys & GG::MOD_KEY_CTRL)
+    if (to_front)
         queue_pos = 0;
 
     // if tech can be researched already, just add it
