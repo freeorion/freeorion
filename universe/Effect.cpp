@@ -214,34 +214,24 @@ const std::string& EffectsGroup::GetDescription() const
 
 std::string EffectsGroup::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "EffectsGroup\n";
-    ++ntabs;
-    retval += DumpIndent(ntabs) + "scope =\n";
-    ++ntabs;
-    retval += m_scope->Dump(ntabs);
-    --ntabs;
+    retval += DumpIndent(ntabs+1) + "scope =\n";
+    retval += m_scope->Dump(ntabs+2);
     if (m_activation) {
-        retval += DumpIndent(ntabs) + "activation =\n";
-        ++ntabs;
-        retval += m_activation->Dump(ntabs);
-        --ntabs;
+        retval += DumpIndent(ntabs+1) + "activation =\n";
+        retval += m_activation->Dump(ntabs+2);
     }
     if (!m_stacking_group.empty())
-        retval += DumpIndent(ntabs) + "stackinggroup = \"" + m_stacking_group + "\"\n";
+        retval += DumpIndent(ntabs+1) + "stackinggroup = \"" + m_stacking_group + "\"\n";
     if (m_effects.size() == 1) {
-        retval += DumpIndent(ntabs) + "effects =\n";
-        ++ntabs;
-        retval += m_effects[0]->Dump(ntabs);
-        --ntabs;
+        retval += DumpIndent(ntabs+1) + "effects =\n";
+        retval += m_effects[0]->Dump(ntabs+2);
     } else {
-        retval += DumpIndent(ntabs) + "effects = [\n";
-        ++ntabs;
+        retval += DumpIndent(ntabs+1) + "effects = [\n";
         for (auto& effect : m_effects) {
-            retval += effect->Dump(ntabs);
+            retval += effect->Dump(ntabs+2);
         }
-        --ntabs;
-        retval += DumpIndent(ntabs) + "]\n";
+        retval += DumpIndent(ntabs+1) + "]\n";
     }
-    --ntabs;
     return retval;
 }
 
@@ -3416,22 +3406,21 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
 std::string GenerateSitRepMessage::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs);
     retval += "GenerateSitRepMessage\n";
-    ++ntabs;
-    retval += DumpIndent(ntabs) + "message = \"" + m_message_string + "\"" + " icon = " + m_icon + "\n";
+    retval += DumpIndent(ntabs+1) + "message = \"" + m_message_string + "\"" + " icon = " + m_icon + "\n";
 
     if (m_message_parameters.size() == 1) {
-        retval += DumpIndent(ntabs) + "parameters = tag = " + m_message_parameters[0].first + " data = " + m_message_parameters[0].second->Dump(ntabs) + "\n";
+        retval += DumpIndent(ntabs+1) + "parameters = tag = " + m_message_parameters[0].first + " data = " + m_message_parameters[0].second->Dump(ntabs+1) + "\n";
     } else if (!m_message_parameters.empty()) {
-        retval += DumpIndent(ntabs) + "parameters = [ ";
+        retval += DumpIndent(ntabs+1) + "parameters = [ ";
         for (const auto& entry : m_message_parameters) {
             retval += " tag = " + entry.first
-                   + " data = " + entry.second->Dump(ntabs)
+                   + " data = " + entry.second->Dump(ntabs+1)
                    + " ";
         }
         retval += "]\n";
     }
 
-    retval += DumpIndent(ntabs) + "affiliation = ";
+    retval += DumpIndent(ntabs+1) + "affiliation = ";
     switch (m_affiliation) {
     case AFFIL_SELF:    retval += "TheEmpire";  break;
     case AFFIL_ENEMY:   retval += "EnemyOf";    break;
@@ -3443,10 +3432,9 @@ std::string GenerateSitRepMessage::Dump(unsigned short ntabs) const {
     }
 
     if (m_recipient_empire_id)
-        retval += "\n" + DumpIndent(ntabs) + "empire = " + m_recipient_empire_id->Dump(ntabs) + "\n";
+        retval += "\n" + DumpIndent(ntabs+1) + "empire = " + m_recipient_empire_id->Dump(ntabs+1) + "\n";
     if (m_condition)
-        retval += "\n" + DumpIndent(ntabs) + "condition = " + m_condition->Dump(ntabs) + "\n";
-    --ntabs;
+        retval += "\n" + DumpIndent(ntabs+1) + "condition = " + m_condition->Dump(ntabs+1) + "\n";
 
     return retval;
 }
@@ -3830,45 +3818,33 @@ void Conditional::Execute(const ScriptingContext& context,
 
 std::string Conditional::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "If\n";
-    ++ntabs;
     if (m_target_condition) {
-        retval += DumpIndent(ntabs) + "condition =\n";
-        ++ntabs;
-        retval += m_target_condition->Dump(ntabs);
-        --ntabs;
+        retval += DumpIndent(ntabs+1) + "condition =\n";
+        retval += m_target_condition->Dump(ntabs+2);
     }
 
     if (m_true_effects.size() == 1) {
-        retval += DumpIndent(ntabs) + "effects =\n";
-        ++ntabs;
-        retval += m_true_effects[0]->Dump(ntabs);
-        --ntabs;
+        retval += DumpIndent(ntabs+1) + "effects =\n";
+        retval += m_true_effects[0]->Dump(ntabs+2);
     } else {
-        retval += DumpIndent(ntabs) + "effects = [\n";
-        ++ntabs;
+        retval += DumpIndent(ntabs+1) + "effects = [\n";
         for (auto& effect : m_true_effects) {
-            retval += effect->Dump(ntabs);
+            retval += effect->Dump(ntabs+2);
         }
-        --ntabs;
-        retval += DumpIndent(ntabs) + "]\n";
+        retval += DumpIndent(ntabs+1) + "]\n";
     }
 
     if (m_false_effects.empty()) {
     } else if (m_false_effects.size() == 1) {
-        retval += DumpIndent(ntabs) + "else =\n";
-        ++ntabs;
-        retval += m_false_effects[0]->Dump(ntabs);
-        --ntabs;
+        retval += DumpIndent(ntabs+1) + "else =\n";
+        retval += m_false_effects[0]->Dump(ntabs+2);
     } else {
-        retval += DumpIndent(ntabs) + "else = [\n";
-        ++ntabs;
+        retval += DumpIndent(ntabs+1) + "else = [\n";
         for (auto& effect : m_false_effects) {
-            retval += effect->Dump(ntabs);
+            retval += effect->Dump(ntabs+2);
         }
-        --ntabs;
-        retval += DumpIndent(ntabs) + "]\n";
+        retval += DumpIndent(ntabs+1) + "]\n";
     }
-    --ntabs;
 
     return retval;
 }

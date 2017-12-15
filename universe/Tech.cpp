@@ -191,59 +191,46 @@ void Tech::Init() {
 
 std::string Tech::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "Tech\n";
-    ++ntabs;
-    retval += DumpIndent(ntabs) + "name = \"" + m_name + "\"\n";
-    retval += DumpIndent(ntabs) + "description = \"" + m_description + "\"\n";
-    retval += DumpIndent(ntabs) + "shortdescription = \"" + m_short_description + "\"\n";
-    retval += DumpIndent(ntabs) + "category = \"" + m_category + "\"\n";
-    retval += DumpIndent(ntabs) + "researchcost = " + m_research_cost->Dump(ntabs) + "\n";
-    retval += DumpIndent(ntabs) + "researchturns = " + m_research_turns->Dump(ntabs) + "\n";
-    retval += DumpIndent(ntabs) + "prerequisites = ";
+    retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
+    retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";
+    retval += DumpIndent(ntabs+1) + "shortdescription = \"" + m_short_description + "\"\n";
+    retval += DumpIndent(ntabs+1) + "category = \"" + m_category + "\"\n";
+    retval += DumpIndent(ntabs+1) + "researchcost = " + m_research_cost->Dump(ntabs+1) + "\n";
+    retval += DumpIndent(ntabs+1) + "researchturns = " + m_research_turns->Dump(ntabs+1) + "\n";
+    retval += DumpIndent(ntabs+1) + "prerequisites = ";
     if (m_prerequisites.empty()) {
         retval += "[]\n";
     } else if (m_prerequisites.size() == 1) {
         retval += "\"" + *m_prerequisites.begin() + "\"\n";
     } else {
         retval += "[\n";
-        ++ntabs;
-        for (const std::string& prerequisite : m_prerequisites) {
-            retval += DumpIndent(ntabs) + "\"" + prerequisite + "\"\n";
-        }
-        --ntabs;
-        retval += DumpIndent(ntabs) + "]\n";
+        for (const std::string& prerequisite : m_prerequisites)
+            retval += DumpIndent(ntabs+2) + "\"" + prerequisite + "\"\n";
+        retval += DumpIndent(ntabs+1) + "]\n";
     }
-    retval += DumpIndent(ntabs) + "unlock = ";
+    retval += DumpIndent(ntabs+1) + "unlock = ";
     if (m_unlocked_items.empty()) {
         retval += "[]\n";
     } else if (m_unlocked_items.size() == 1) {
         retval += m_unlocked_items[0].Dump();
     } else {
         retval += "[\n";
-        ++ntabs;
-        for (const ItemSpec& unlocked_item : m_unlocked_items) {
-            retval += DumpIndent(ntabs) + unlocked_item.Dump();
-        }
-        --ntabs;
-        retval += DumpIndent(ntabs) + "]\n";
+        for (const ItemSpec& unlocked_item : m_unlocked_items)
+            retval += DumpIndent(ntabs+2) + unlocked_item.Dump();
+        retval += DumpIndent(ntabs+1) + "]\n";
     }
     if (!m_effects.empty()) {
         if (m_effects.size() == 1) {
-            retval += DumpIndent(ntabs) + "effectsgroups =\n";
-            ++ntabs;
-            retval += m_effects[0]->Dump(ntabs);
-            --ntabs;
+            retval += DumpIndent(ntabs+1) + "effectsgroups =\n";
+            retval += m_effects[0]->Dump(ntabs+2);
         } else {
-            retval += DumpIndent(ntabs) + "effectsgroups = [\n";
-            ++ntabs;
-            for (auto& effect : m_effects) {
-                retval += effect->Dump(ntabs);
-            }
-            --ntabs;
-            retval += DumpIndent(ntabs) + "]\n";
+            retval += DumpIndent(ntabs+1) + "effectsgroups = [\n";
+            for (auto& effect : m_effects)
+                retval += effect->Dump(ntabs+2);
+            retval += DumpIndent(ntabs+1) + "]\n";
         }
     }
-    retval += DumpIndent(ntabs) + "graphic = \"" + m_graphic + "\"\n";
-    --ntabs;
+    retval += DumpIndent(ntabs+1) + "graphic = \"" + m_graphic + "\"\n";
     return retval;
 }
 

@@ -195,29 +195,21 @@ FieldType::~FieldType()
 
 std::string FieldType::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "FieldType\n";
-    ++ntabs;
-    retval += DumpIndent(ntabs) + "name = \"" + m_name + "\"\n";
-    retval += DumpIndent(ntabs) + "description = \"" + m_description + "\"\n";
-    retval += DumpIndent(ntabs) + "location = \n";
-    //++ntabs;
-    //retval += m_location->Dump(ntabs);
-    //--ntabs;
+    retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
+    retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";
+    retval += DumpIndent(ntabs+1) + "location = \n";
+    //retval += m_location->Dump(ntabs+2);
     if (m_effects.size() == 1) {
-        retval += DumpIndent(ntabs) + "effectsgroups =\n";
-        ++ntabs;
-        retval += m_effects[0]->Dump(ntabs);
-        --ntabs;
+        retval += DumpIndent(ntabs+1) + "effectsgroups =\n";
+        retval += m_effects[0]->Dump(ntabs+2);
     } else {
-        retval += DumpIndent(ntabs) + "effectsgroups = [\n";
-        ++ntabs;
+        retval += DumpIndent(ntabs+1) + "effectsgroups = [\n";
         for (auto& effect : m_effects) {
-            retval += effect->Dump(ntabs);
+            retval += effect->Dump(ntabs+2);
         }
-        --ntabs;
-        retval += DumpIndent(ntabs) + "]\n";
+        retval += DumpIndent(ntabs+1) + "]\n";
     }
-    retval += DumpIndent(ntabs) + "graphic = \"" + m_graphic + "\"\n";
-    --ntabs;
+    retval += DumpIndent(ntabs+1) + "graphic = \"" + m_graphic + "\"\n";
     return retval;
 }
 

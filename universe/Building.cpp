@@ -204,58 +204,46 @@ void BuildingType::Init() {
 
 std::string BuildingType::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "BuildingType\n";
-    ++ntabs;
-    retval += DumpIndent(ntabs) + "name = \"" + m_name + "\"\n";
-    retval += DumpIndent(ntabs) + "description = \"" + m_description + "\"\n";
+    retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
+    retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";
     if (m_production_cost)
-        retval += DumpIndent(ntabs) + "buildcost = " + m_production_cost->Dump(ntabs) + "\n";
+        retval += DumpIndent(ntabs+1) + "buildcost = " + m_production_cost->Dump(ntabs+1) + "\n";
     if (m_production_time)
-        retval += DumpIndent(ntabs) + "buildtime = " + m_production_time->Dump(ntabs) + "\n";
-    retval += DumpIndent(ntabs) + (m_producible ? "Producible" : "Unproducible") + "\n";
-    retval += DumpIndent(ntabs) + "captureresult = " +
+        retval += DumpIndent(ntabs+1) + "buildtime = " + m_production_time->Dump(ntabs+1) + "\n";
+    retval += DumpIndent(ntabs+1) + (m_producible ? "Producible" : "Unproducible") + "\n";
+    retval += DumpIndent(ntabs+1) + "captureresult = " +
         boost::lexical_cast<std::string>(m_capture_result) + "\n";
 
     if (!m_tags.empty()) {
         if (m_tags.size() == 1) {
-            retval += DumpIndent(ntabs) + "tags = \"" + *m_tags.begin() + "\"\n";
+            retval += DumpIndent(ntabs+1) + "tags = \"" + *m_tags.begin() + "\"\n";
         } else {
-            retval += DumpIndent(ntabs) + "tags = [ ";
-            for (const std::string& tag : m_tags) {
+            retval += DumpIndent(ntabs+1) + "tags = [ ";
+            for (const std::string& tag : m_tags)
                retval += "\"" + tag + "\" ";
-            }
             retval += " ]\n";
         }
     }
 
     if (m_location) {
-        retval += DumpIndent(ntabs) + "location = \n";
-        ++ntabs;
-            retval += m_location->Dump(ntabs);
-        --ntabs;
+        retval += DumpIndent(ntabs+1) + "location = \n";
+        retval += m_location->Dump(ntabs+2);
     }
     if (m_enqueue_location) {
-        retval += DumpIndent(ntabs) + "enqueue location = \n";
-        ++ntabs;
-            retval += m_enqueue_location->Dump(ntabs);
-        --ntabs;
+        retval += DumpIndent(ntabs+1) + "enqueue location = \n";
+        retval += m_enqueue_location->Dump(ntabs+2);
     }
 
     if (m_effects.size() == 1) {
-        retval += DumpIndent(ntabs) + "effectsgroups =\n";
-        ++ntabs;
-        retval += m_effects[0]->Dump(ntabs);
-        --ntabs;
+        retval += DumpIndent(ntabs+1) + "effectsgroups =\n";
+        retval += m_effects[0]->Dump(ntabs+2);
     } else {
-        retval += DumpIndent(ntabs) + "effectsgroups = [\n";
-        ++ntabs;
-        for (auto& effect : m_effects) {
-            retval += effect->Dump(ntabs);
-        }
-        --ntabs;
-        retval += DumpIndent(ntabs) + "]\n";
+        retval += DumpIndent(ntabs+1) + "effectsgroups = [\n";
+        for (auto& effect : m_effects)
+            retval += effect->Dump(ntabs+2);
+        retval += DumpIndent(ntabs+1) + "]\n";
     }
-    retval += DumpIndent(ntabs) + "icon = \"" + m_icon + "\"\n";
-    --ntabs;
+    retval += DumpIndent(ntabs+1) + "icon = \"" + m_icon + "\"\n";
     return retval;
 }
 

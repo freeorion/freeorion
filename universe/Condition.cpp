@@ -363,9 +363,7 @@ std::string Number::Dump(unsigned short ntabs) const {
     if (m_high)
         retval += " high = " + m_high->Dump(ntabs);
     retval += " condition =\n";
-    ++ntabs;
-        retval += m_condition->Dump(ntabs);
-    --ntabs;
+    retval += m_condition->Dump(ntabs+1);
     return retval;
 }
 
@@ -1015,9 +1013,7 @@ std::string SortedNumberOf::Dump(unsigned short ntabs) const {
          retval += " sortby = " + m_sort_key->Dump(ntabs);
 
     retval += " condition =\n";
-    ++ntabs;
-        retval += m_condition->Dump(ntabs);
-    --ntabs;
+    retval += m_condition->Dump(ntabs+1);
 
     return retval;
 }
@@ -2889,9 +2885,7 @@ std::string Contains::Description(bool negated/* = false*/) const {
 
 std::string Contains::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "Contains condition =\n";
-    ++ntabs;
-    retval += m_condition->Dump(ntabs);
-    --ntabs;
+    retval += m_condition->Dump(ntabs+1);
     return retval;
 }
 
@@ -3108,9 +3102,7 @@ std::string ContainedBy::Description(bool negated/* = false*/) const {
 
 std::string ContainedBy::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "ContainedBy condition =\n";
-    ++ntabs;
-        retval += m_condition->Dump(ntabs);
-    --ntabs;
+    retval += m_condition->Dump(ntabs+1);
     return retval;
 }
 
@@ -7349,9 +7341,7 @@ std::string WithinDistance::Description(bool negated/* = false*/) const {
 
 std::string WithinDistance::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "WithinDistance distance = " + m_distance->Dump(ntabs) + " condition =\n";
-    ++ntabs;
-    retval += m_condition->Dump(ntabs);
-    --ntabs;
+    retval += m_condition->Dump(ntabs+1);
     return retval;
 }
 
@@ -7460,9 +7450,7 @@ std::string WithinStarlaneJumps::Description(bool negated/* = false*/) const {
 
 std::string WithinStarlaneJumps::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "WithinStarlaneJumps jumps = " + m_jumps->Dump(ntabs) + " condition =\n";
-    ++ntabs;
-    retval += m_condition->Dump(ntabs);
-    --ntabs;
+    retval += m_condition->Dump(ntabs+1);
     return retval;
 }
 
@@ -7922,9 +7910,7 @@ std::string CanAddStarlaneConnection::Description(bool negated/* = false*/) cons
 
 std::string CanAddStarlaneConnection::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "CanAddStarlanesTo condition =\n";
-    ++ntabs;
-        retval += m_condition->Dump(ntabs);
-    --ntabs;
+    retval += m_condition->Dump(ntabs+1);
     return retval;
 }
 
@@ -8439,11 +8425,9 @@ std::string ResourceSupplyConnectedByEmpire::Description(bool negated/* = false*
 }
 
 std::string ResourceSupplyConnectedByEmpire::Dump(unsigned short ntabs) const {
-    std::string retval = DumpIndent(ntabs) + "ResourceSupplyConnectedBy empire_id = " + m_empire_id->Dump(ntabs) +
-                                        " condition = \n";
-    ++ntabs;
-    retval += m_condition->Dump(ntabs);
-    --ntabs;
+    std::string retval = DumpIndent(ntabs) + "ResourceSupplyConnectedBy empire_id = "
+        + m_empire_id->Dump(ntabs) + " condition = \n";
+    retval += m_condition->Dump(ntabs+1);
     return retval;
 }
 
@@ -9491,11 +9475,8 @@ std::string And::Description(bool negated/* = false*/) const {
 
 std::string And::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "And [\n";
-    ++ntabs;
-    for (auto& operand : m_operands) {
-        retval += operand->Dump(ntabs);
-    }
-    --ntabs;
+    for (auto& operand : m_operands)
+        retval += operand->Dump(ntabs+1);
     retval += DumpIndent(ntabs) + "]\n";
     return retval;
 }
@@ -9671,11 +9652,8 @@ std::string Or::Description(bool negated/* = false*/) const {
 
 std::string Or::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "Or [\n";
-    ++ntabs;
-    for (auto& operand : m_operands) {
-        retval += operand->Dump(ntabs);
-    }
-    --ntabs;
+    for (auto& operand : m_operands)
+        retval += operand->Dump(ntabs+1);
     retval += "\n" + DumpIndent(ntabs) + "]\n";
     return retval;
 }
@@ -9768,9 +9746,7 @@ std::string Not::Description(bool negated/* = false*/) const
 
 std::string Not::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "Not\n";
-    ++ntabs;
-    retval += m_operand->Dump(ntabs);
-    --ntabs;
+    retval += m_operand->Dump(ntabs+1);
     return retval;
 }
 

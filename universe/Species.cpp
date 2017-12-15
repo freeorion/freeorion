@@ -37,15 +37,11 @@ FocusType::~FocusType()
 
 std::string FocusType::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "FocusType\n";
-    ++ntabs;
-    retval += DumpIndent(ntabs) + "name = \"" + m_name + "\"\n";
-    retval += DumpIndent(ntabs) + "description = \"" + m_description + "\"\n";
-    retval += DumpIndent(ntabs) + "location = \n";
-    ++ntabs;
-    retval += m_location->Dump(ntabs);
-    --ntabs;
-    retval += DumpIndent(ntabs) + "graphic = \"" + m_graphic + "\"\n";
-    --ntabs;
+    retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
+    retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";
+    retval += DumpIndent(ntabs+1) + "location = \n";
+    retval += m_location->Dump(ntabs+2);
+    retval += DumpIndent(ntabs+1) + "graphic = \"" + m_graphic + "\"\n";
     return retval;
 }
 
@@ -136,64 +132,50 @@ void Species::Init() {
 
 std::string Species::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "Species\n";
-    ++ntabs;
-    retval += DumpIndent(ntabs) + "name = \"" + m_name + "\"\n";
-    retval += DumpIndent(ntabs) + "description = \"" + m_description + "\"\n";
-    retval += DumpIndent(ntabs) + "gameplay_description = \"" + m_gameplay_description + "\"\n";
+    retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
+    retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";
+    retval += DumpIndent(ntabs+1) + "gameplay_description = \"" + m_gameplay_description + "\"\n";
     if (m_playable)
-        retval += DumpIndent(ntabs) + "Playable\n";
+        retval += DumpIndent(ntabs+1) + "Playable\n";
     if (m_native)
-        retval += DumpIndent(ntabs) + "Native\n";
+        retval += DumpIndent(ntabs+1) + "Native\n";
     if (m_can_produce_ships)
-        retval += DumpIndent(ntabs) + "CanProduceShips\n";
+        retval += DumpIndent(ntabs+1) + "CanProduceShips\n";
     if (m_can_colonize)
-        retval += DumpIndent(ntabs) + "CanColonize\n";
+        retval += DumpIndent(ntabs+1) + "CanColonize\n";
     if (m_foci.size() == 1) {
-        retval += DumpIndent(ntabs) + "foci =\n";
-        m_foci.begin()->Dump(ntabs);
+        retval += DumpIndent(ntabs+1) + "foci =\n";
+        m_foci.begin()->Dump(ntabs+1);
     } else {
-        retval += DumpIndent(ntabs) + "foci = [\n";
-        ++ntabs;
-        for (const FocusType& focus : m_foci) {
-            retval += focus.Dump(ntabs);
-        }
-        --ntabs;
-        retval += DumpIndent(ntabs) + "]\n";
+        retval += DumpIndent(ntabs+1) + "foci = [\n";
+        for (const FocusType& focus : m_foci)
+            retval += focus.Dump(ntabs+2);
+        retval += DumpIndent(ntabs+1) + "]\n";
     }
     if (m_effects.size() == 1) {
-        retval += DumpIndent(ntabs) + "effectsgroups =\n";
-        ++ntabs;
-        retval += m_effects[0]->Dump(ntabs);
-        --ntabs;
+        retval += DumpIndent(ntabs+1) + "effectsgroups =\n";
+        retval += m_effects[0]->Dump(ntabs+2);
     } else {
-        retval += DumpIndent(ntabs) + "effectsgroups = [\n";
-        ++ntabs;
-        for (auto& effect : m_effects) {
-            retval += effect->Dump(ntabs);
-        }
-        --ntabs;
-        retval += DumpIndent(ntabs) + "]\n";
+        retval += DumpIndent(ntabs+1) + "effectsgroups = [\n";
+        for (auto& effect : m_effects)
+            retval += effect->Dump(ntabs+2);
+        retval += DumpIndent(ntabs+1) + "]\n";
     }
     if (m_planet_environments.size() == 1) {
-        retval += DumpIndent(ntabs) + "environments =\n";
-        ++ntabs;
-        retval += DumpIndent(ntabs) + "type = " + PlanetTypeToString(m_planet_environments.begin()->first)
-                               + " environment = " + PlanetEnvironmentToString(m_planet_environments.begin()->second)
-                               + "\n";
-        --ntabs;
+        retval += DumpIndent(ntabs+1) + "environments =\n";
+        retval += DumpIndent(ntabs+2) + "type = " + PlanetTypeToString(m_planet_environments.begin()->first)
+            + " environment = " + PlanetEnvironmentToString(m_planet_environments.begin()->second)
+            + "\n";
     } else {
-        retval += DumpIndent(ntabs) + "environments = [\n";
-        ++ntabs;
+        retval += DumpIndent(ntabs+1) + "environments = [\n";
         for (const auto& entry : m_planet_environments) {
-            retval += DumpIndent(ntabs) + "type = " + PlanetTypeToString(entry.first)
-                                   + " environment = " + PlanetEnvironmentToString(entry.second)
-                                   + "\n";
+            retval += DumpIndent(ntabs+2) + "type = " + PlanetTypeToString(entry.first)
+                + " environment = " + PlanetEnvironmentToString(entry.second)
+                + "\n";
         }
-        --ntabs;
-        retval += DumpIndent(ntabs) + "]\n";
+        retval += DumpIndent(ntabs+1) + "]\n";
     }
-    retval += DumpIndent(ntabs) + "graphic = \"" + m_graphic + "\"\n";
-    --ntabs;
+    retval += DumpIndent(ntabs+1) + "graphic = \"" + m_graphic + "\"\n";
     return retval;
 }
 
