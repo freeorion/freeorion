@@ -48,7 +48,6 @@ public:
     void            Update();
     void            Clear();
     void            Reset();
-    void            SetScale(double scale);
 
     void            ShowCategory(const std::string& category);
     void            ShowAllCategories();

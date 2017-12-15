@@ -2285,9 +2285,6 @@ void TechTreeWnd::ShowListView() {
     MoveChildUp(m_tech_tree_controls);
 }
 
-void TechTreeWnd::SetScale(double scale)
-{ m_layout_panel->SetScale(scale); }
-
 void TechTreeWnd::CenterOnTech(const std::string& tech_name) {
     // ensure tech exists and is visible
     const Tech* tech = ::GetTech(tech_name);
