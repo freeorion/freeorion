@@ -15,6 +15,7 @@
 #include "../universe/Species.h"
 #include "../universe/Tech.h"
 #include "../universe/Building.h"
+#include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
@@ -402,7 +403,11 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
         sender_colour = sender_empire->Color();
 
     std::string filtered_message = StringtableTextSubstitute(text);
-    std::string wrapped_text = RgbaTag(sender_colour) + ClientUI::FormatTimestamp(timestamp) + sender_name + ": " + filtered_message + "</rgba>";
+    std::string wrapped_text = RgbaTag(sender_colour);
+    const std::string&& formatted_timestamp = ClientUI::FormatTimestamp(timestamp);
+    if (IsValidUTF8(formatted_timestamp))
+        wrapped_text += formatted_timestamp;
+    wrapped_text += sender_name + ": " + filtered_message + "</rgba>";
     TraceLogger() << "HandlePlayerChatMessage sender: " << sender_name
                   << "  sender empire id: " << sender_empire_id
                   << "  sender colour rgba tag: " << RgbaTag(sender_colour)
