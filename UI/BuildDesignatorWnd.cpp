@@ -493,9 +493,6 @@ private:
     /** respond to the user single-clicking a producible item in the build selector */
     void    BuildItemLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
-    /** respond to the user double-clicking a producible item in the build selector */
-    void    BuildItemDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
-
     /** respond to the user right-clicking a producible item in the build selector */
     void    BuildItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
@@ -545,7 +542,7 @@ void BuildDesignatorWnd::BuildSelector::CompleteConstruction() {
     m_buildable_items->LeftClickedRowSignal.connect(
         boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked, this, _1, _2, _3));
     m_buildable_items->DoubleClickedRowSignal.connect(
-        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this, _1, _2, _3));
+        [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>& modkeys) { this->AddBuildItemToQueue(it, modkeys & GG::MOD_KEY_CTRL); });
     m_buildable_items->RightClickedRowSignal.connect(
         boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this, _1, _2, _3));
 
@@ -897,13 +894,6 @@ void BuildDesignatorWnd::BuildSelector::AddBuildItemToQueue(GG::ListBox::iterato
     const ProductionQueue::ProductionItem& item = item_row->Item();
 
     RequestBuildItemSignal(item, 1, top ? 0 : -1);
-}
-
-void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iterator it,
-                                                               const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
-{
-    //std::cout << "BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked" << std::endl;
-    AddBuildItemToQueue(it, modkeys & GG::MOD_KEY_CTRL);
 }
 
 void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::iterator it,
