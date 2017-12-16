@@ -960,6 +960,7 @@ void HumanClientApp::HandleMessage(Message& msg) {
     case Message::DISPATCH_SAVE_PREVIEWS:   HandleSaveGamePreviews(msg);                        break;
     case Message::AUTH_REQUEST:             m_fsm->process_event(AuthRequest(msg));             break;
     case Message::CHAT_HISTORY:             m_fsm->process_event(ChatHistory(msg));             break;
+    case Message::SET_AUTH_ROLES:           HandleSetAuthRoles(msg);                            break;
     default:
         ErrorLogger() << "HumanClientApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
     }
@@ -996,6 +997,11 @@ void HumanClientApp::HandleSaveGamePreviews(const Message& msg) {
     DebugLogger() << "HumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
 
     sfd->SetPreviewList(previews);
+}
+
+void HumanClientApp::HandleSetAuthRoles(const Message& msg) {
+    ExtractSetAuthorizationRolesMessage(msg, m_networking->AuthorizationRoles());
+    DebugLogger() << "New roles: " << m_networking->AuthorizationRoles().Text();
 }
 
 void HumanClientApp::ChangeLoggerThreshold(const std::string& option_name, LogLevel option_value) {

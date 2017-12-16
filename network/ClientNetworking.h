@@ -12,6 +12,12 @@
 
 class Message;
 
+namespace Networking {
+    class AuthRoles;
+
+    enum RoleType : size_t;
+}
+
 /** Encapsulates the networking facilities of the client.  The client must
     execute its networking code in a separate thread from its main processing
     thread, for UI and networking responsiveness.
@@ -58,6 +64,9 @@ public:
 
     /** Returns whether the indicated player ID is the host. */
     bool PlayerIsHost(int player_id) const;
+
+    /** Checks if the client has some authorization \a role. */
+    bool HasAuthRole(Networking::RoleType role) const;
     //@}
 
     /** \name Mutators */ //@{
@@ -100,6 +109,9 @@ public:
 
     /** Sets Host player ID. */
     void SetHostPlayerID(int host_player_id);
+
+    /** Access to client's authorization roles */
+    Networking::AuthRoles& AuthorizationRoles();
     //@}
 
 private:

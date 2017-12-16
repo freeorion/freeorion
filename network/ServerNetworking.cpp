@@ -121,6 +121,10 @@ bool PlayerConnection::IsAuthenticated() const {
     return m_authenticated;
 }
 
+bool PlayerConnection::HasAuthRole(Networking::RoleType role) const {
+    return m_roles.HasRole(role);
+}
+
 void PlayerConnection::AwaitPlayer(Networking::ClientType client_type,
                                    const std::string& client_version_string)
 {
@@ -179,6 +183,16 @@ void PlayerConnection::SetClientType(Networking::ClientType client_type) {
 
 void PlayerConnection::SetAuthenticated() {
     m_authenticated = true;
+}
+
+void PlayerConnection::SetAuthRoles(const std::initializer_list<Networking::RoleType>& roles) {
+    m_roles = Networking::AuthRoles(roles);
+    SendMessage(SetAuthorizationRolesMessage(m_roles));
+}
+
+void PlayerConnection::SetAuthRole(Networking::RoleType role, bool value) {
+    m_roles.SetRole(role, value);
+    SendMessage(SetAuthorizationRolesMessage(m_roles));
 }
 
 const std::string& PlayerConnection::ClientVersionString() const

@@ -99,6 +99,9 @@ public:
     /** Update any open SaveGameDialog with previews from the server. */
     void                HandleSaveGamePreviews(const Message& msg);
 
+    /** Update this client's authorization roles */
+    void                HandleSetAuthRoles(const Message& msg);
+
     void                OpenURL(const std::string& url);
     /** Opens the users preferred application for file manager at the specified path @p browse_path */
     void                BrowsePath(const boost::filesystem::path& browse_path);

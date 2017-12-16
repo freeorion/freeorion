@@ -20,4 +20,22 @@ namespace Networking {
     { return GetOptionsDB().Get<int>("network.discovery.port"); }
     int MessagePort()
     { return GetOptionsDB().Get<int>("network.message.port"); }
+
+    AuthRoles::AuthRoles(const std::initializer_list<RoleType>& roles) {
+       for (RoleType r : roles) {
+           m_roles.set(r, true);
+       }
+    }
+
+    void AuthRoles::SetRole(RoleType role, bool value)
+    { m_roles.set(role, value); }
+
+    bool AuthRoles::HasRole(RoleType role) const
+    { return m_roles.test(role); }
+
+    std::string AuthRoles::Text() const
+    { return m_roles.to_string(); }
+
+    void AuthRoles::SetText(const std::string& text)
+    { m_roles = std::bitset<Roles_Count>(text); }
 }
