@@ -47,8 +47,6 @@ public:
     /** \name Mutators */ //@{
     void PreRender() override;
 
-    void Render() override;
-
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     /** Updates contents of sidepanel, but doesn't recreate contents or check

@@ -2964,9 +2964,6 @@ bool SidePanel::InWindow(const GG::Pt& pt) const {
 GG::Pt SidePanel::ClientUpperLeft() const
 { return GG::Wnd::UpperLeft() + GG::Pt(BORDER_LEFT, BORDER_BOTTOM); }
 
-void SidePanel::Render()
-{ CUIWnd::Render(); }
-
 void SidePanel::InitBuffers() {
     m_vertex_buffer.clear();
     m_vertex_buffer.reserve(19);
