@@ -671,7 +671,7 @@ bool Fleet::HasFighterShips() const {
 }
 
 bool Fleet::HasColonyShips() const {
-    auto isX = [](const std::shared_ptr<const Ship>& ship){
+    auto isX = [](const std::shared_ptr<const Ship>& ship) {
         if (ship->CanColonize())
             if (const auto design = ship->Design())
                 if (design->ColonyCapacity() > 0.0)
@@ -682,7 +682,7 @@ bool Fleet::HasColonyShips() const {
 }
 
 bool Fleet::HasOutpostShips() const {
-    auto isX = [](const std::shared_ptr<const Ship>& ship){
+    auto isX = [](const std::shared_ptr<const Ship>& ship) {
         if (ship->CanColonize())
             if (const auto design = ship->Design())
                 if (design->ColonyCapacity() == 0.0)
