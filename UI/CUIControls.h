@@ -535,9 +535,6 @@ public:
     //@}
 
     mutable boost::signals2::signal<void (const GG::Clr&)> ColorChangedSignal;
-
-private:
-    void SelectionChanged(GG::DropDownList::iterator it);
 };
 
 /** A control used to pick arbitrary colors using GG::ColorDlg. */

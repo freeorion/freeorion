@@ -1683,11 +1683,14 @@ EmpireColorSelector::EmpireColorSelector(GG::Y h) :
     CUIDropDownList(6)
 {
     Resize(GG::Pt(COLOR_SELECTOR_WIDTH, h - 8));
+
     for (const GG::Clr& color : EmpireColors()) {
         Insert(GG::Wnd::Create<ColorRow>(color, h - 4));
     }
+
     SelChangedSignal.connect(
-        boost::bind(&EmpireColorSelector::SelectionChanged, this, _1));
+        [this](GG::DropDownList::iterator it) {
+            ColorChangedSignal(!(it == end() || !*it || (*it)->empty()) ? (*it)->at(0)->Color() : GG::CLR_RED); });
 }
 
 GG::Clr EmpireColorSelector::CurrentColor() const
@@ -1702,15 +1705,6 @@ void EmpireColorSelector::SelectColor(const GG::Clr& clr) {
         }
     }
     ErrorLogger() << "EmpireColorSelector::SelectColor was unable to find a requested color!";
-}
-
-void EmpireColorSelector::SelectionChanged(GG::DropDownList::iterator it) {
-    const auto& row = *it;
-    bool error(it == end() || !row || row->empty());
-    if (error)
-        ErrorLogger() << "EmpireColorSelector::SelectionChanged had trouble getting colour from row.  Using CLR_RED";
-
-    ColorChangedSignal(!error ? row->at(0)->Color() : GG::CLR_RED);
 }
 
 
