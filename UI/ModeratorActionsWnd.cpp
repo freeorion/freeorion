@@ -62,7 +62,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
         UserString("MOD_NONE"), UserString("MOD_NONE")));
     AttachChild(m_no_action_button);
     m_no_action_button->LeftClickedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::NoActionClicked, this));
+        boost::bind(&ModeratorActionsWnd::NoAction, this));
 
     // button for create system and droplist to select system type to create
     m_create_system_button = Wnd::Create<CUIButton>(
@@ -76,7 +76,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
     AttachChild(m_create_system_button);
 
     m_create_system_button->LeftClickedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::CreateSystemClicked, this));
+        boost::bind(&ModeratorActionsWnd::CreateSystem, this));
     m_star_type_drop = GG::Wnd::Create<CUIDropDownList>(6);
     m_star_type_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
     for (StarType star_type = STAR_BLUE; star_type != NUM_STAR_TYPES; star_type = StarType(star_type + 1)) {
@@ -90,7 +90,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
     }
     m_star_type_drop->Select(m_star_type_drop->begin());        // default select first type
     m_star_type_drop->SelChangedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::StarTypeSelected, this, _1));
+        boost::bind(&ModeratorActionsWnd::CreateSystem, this));
 
     // button for create planet and droplists to select planet type and size
     m_create_planet_button = Wnd::Create<CUIButton>(
@@ -103,7 +103,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
         UserString("MOD_CREATE_PLANET"), UserString("MOD_CREATE_PLANET")));
     AttachChild(m_create_planet_button);
     m_create_planet_button->LeftClickedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::CreatePlanetClicked, this));
+        boost::bind(&ModeratorActionsWnd::CreatePlanet, this));
 
     m_planet_type_drop = GG::Wnd::Create<CUIDropDownList>(6);
     m_planet_type_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
@@ -117,7 +117,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
     }
     m_planet_type_drop->Select(m_planet_type_drop->begin());    // default select first type
     m_planet_type_drop->SelChangedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::PlanetTypeSelected, this, _1));
+        boost::bind(&ModeratorActionsWnd::CreatePlanet, this));
 
     m_planet_size_drop = GG::Wnd::Create<CUIDropDownList>(6);
     m_planet_size_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
@@ -133,7 +133,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
     std::advance(it, 2);
     m_planet_size_drop->Select(it); // default select 3rd size (should be medium?)
     m_planet_size_drop->SelChangedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::PlanetSizeSelected, this, _1));
+        boost::bind(&ModeratorActionsWnd::CreatePlanet, this));
 
     // button for destroying object
     m_delete_object_button = Wnd::Create<CUIButton>(
@@ -146,7 +146,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
         UserString("MOD_DESTROY"), UserString("MOD_DESTROY")));
     AttachChild(m_delete_object_button);
     m_delete_object_button->LeftClickedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::DeleteObjectClicked, this));
+        boost::bind(&ModeratorActionsWnd::DeleteObject, this));
 
     // button for setting owner
     m_set_owner_button = Wnd::Create<CUIButton>(
@@ -160,12 +160,12 @@ void ModeratorActionsWnd::CompleteConstruction() {
     AttachChild(m_set_owner_button);
 
     m_set_owner_button->LeftClickedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::SetOwnerClicked, this));
+        boost::bind(&ModeratorActionsWnd::SetOwner, this));
     m_empire_drop = GG::Wnd::Create<CUIDropDownList>(6);
     m_empire_drop->SetStyle(GG::LIST_NOSORT);
     // empires added later when gamestate info available
     m_empire_drop->SelChangedSignal.connect(
-        boost::bind(&ModeratorActionsWnd::EmpireSelected, this, _1));
+        boost::bind(&ModeratorActionsWnd::SetOwner, this));
 
     // button for creating starlane
     m_add_starlane_button = Wnd::Create<CUIButton>(
@@ -202,7 +202,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
 ModeratorActionsWnd::~ModeratorActionsWnd()
 {}
 
-void ModeratorActionsWnd::NoActionClicked() {
+void ModeratorActionsWnd::NoAction() {
     m_selected_action = MAS_NoAction;
     NoActionSelectedSignal();
     DetachChild(m_star_type_drop);
@@ -211,7 +211,7 @@ void ModeratorActionsWnd::NoActionClicked() {
     DetachChild(m_empire_drop);
 }
 
-void ModeratorActionsWnd::CreateSystemClicked() {
+void ModeratorActionsWnd::CreateSystem() {
     m_selected_action = MAS_CreateSystem;
     CreateSystemActionSelectedSignal(SelectedStarType());
     AttachChild(m_star_type_drop);
@@ -220,10 +220,7 @@ void ModeratorActionsWnd::CreateSystemClicked() {
     DetachChild(m_empire_drop);
 }
 
-void ModeratorActionsWnd::StarTypeSelected(GG::DropDownList::iterator it)
-{ CreateSystemClicked(); }
-
-void ModeratorActionsWnd::CreatePlanetClicked() {
+void ModeratorActionsWnd::CreatePlanet() {
     m_selected_action = MAS_CreatePlanet;
     CreatePlanetActionSelectedSignal(SelectedPlanetType());
     DetachChild(m_star_type_drop);
@@ -232,13 +229,7 @@ void ModeratorActionsWnd::CreatePlanetClicked() {
     DetachChild(m_empire_drop);
 }
 
-void ModeratorActionsWnd::PlanetTypeSelected(GG::DropDownList::iterator it)
-{ CreatePlanetClicked(); }
-
-void ModeratorActionsWnd::PlanetSizeSelected(GG::DropDownList::iterator it)
-{ CreatePlanetClicked(); }
-
-void ModeratorActionsWnd::DeleteObjectClicked() {
+void ModeratorActionsWnd::DeleteObject() {
     m_selected_action = MAS_Destroy;
     DeleteObjectActionSelectedSignal();
     DetachChild(m_star_type_drop);
@@ -247,7 +238,7 @@ void ModeratorActionsWnd::DeleteObjectClicked() {
     DetachChild(m_empire_drop);
 }
 
-void ModeratorActionsWnd::SetOwnerClicked() {
+void ModeratorActionsWnd::SetOwner() {
     m_selected_action = MAS_SetOwner;
     SetOwnerActionSelectedSignal(SelectedEmpire());
     DetachChild(m_star_type_drop);
@@ -255,9 +246,6 @@ void ModeratorActionsWnd::SetOwnerClicked() {
     DetachChild(m_planet_size_drop);
     AttachChild(m_empire_drop);
 }
-
-void ModeratorActionsWnd::EmpireSelected(GG::DropDownList::iterator it)
-{ SetOwnerClicked(); }
 
 void ModeratorActionsWnd::AddStarlane() {
     m_selected_action = MAS_AddStarlane;

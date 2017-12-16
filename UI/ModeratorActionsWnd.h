@@ -4,7 +4,6 @@
 #include <vector>
 #include <boost/signals2/signal.hpp>
 #include <GG/GGFwd.h>
-#include <GG/DropDownList.h>
 
 #include "CUIWnd.h"
 #include "../universe/EnumsFwd.h"
@@ -47,15 +46,11 @@ private:
 
     void            DoLayout();
 
-    void            NoActionClicked();
-    void            CreateSystemClicked();
-    void            StarTypeSelected(GG::DropDownList::iterator it);
-    void            CreatePlanetClicked();
-    void            PlanetTypeSelected(GG::DropDownList::iterator it);
-    void            PlanetSizeSelected(GG::DropDownList::iterator it);
-    void            DeleteObjectClicked();
-    void            SetOwnerClicked();
-    void            EmpireSelected(GG::DropDownList::iterator it);
+    void            NoAction();
+    void            CreateSystem();
+    void            CreatePlanet();
+    void            DeleteObject();
+    void            SetOwner();
     void            AddStarlane();
     void            RemoveStarlane();
 
