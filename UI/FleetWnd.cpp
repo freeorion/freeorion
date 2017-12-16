@@ -1535,7 +1535,10 @@ void FleetDataPanel::Refresh() {
             add_overlay("bombarding.png");
         }
 
-        // Moving fleets can't be gifted.
+        // Moving fleets can't be gifted.  The order will be automatically
+        // cancelled on the server.  This make the UI appear to cancel the
+        // order when the ship is moved without requiring the player to
+        // re-order the gifting if the ship is stopped.
         if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES && fleet->TravelRoute().empty())
             add_overlay("gifting.png");
 

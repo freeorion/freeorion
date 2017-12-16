@@ -98,7 +98,12 @@ namespace {
             ++visible_end_it;
         }
 
-        // remove any extra systems from the route after the apparent destination
+        // Remove any extra systems from the route after the apparent destination.
+        // SystemHasNoVisibleStarlanes determines if empire_id knows about the
+        // system and/or its starlanes.  It is enforced on the server in the
+        // visibility calculations that an owning empire knows about a) the
+        // system containing a fleet, b) the starlane on which a fleet is travelling
+        // and c) both systems terminating a starlane on which a fleet is travelling.
         auto end_it = std::find_if(full_route.begin(), visible_end_it,
                                    boost::bind(&SystemHasNoVisibleStarlanes, _1, empire_id));
 
