@@ -360,7 +360,7 @@
     (SetEmpireCapital)                          \
     (SetEmpireMeter)                            \
     (SetEmpireTechProgress)                     \
-    (SetEmpireTradeStockpile)                   \
+    (SetEmpireStockpile)                        \
     (SetFuel)                                   \
     (SetHappiness)                              \
     (SetIndustry)                               \

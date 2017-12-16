@@ -917,7 +917,8 @@ void SetEmpireStockpile::Execute(const ScriptingContext& context) const {
 std::string SetEmpireStockpile::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs);
     switch (m_stockpile) {
-    case RE_TRADE:      retval += "SetEmpireTradeStockpile"; break;
+        // TODO: Support for other resource stockpiles?
+    case RE_INDUSTRY:   retval += "SetEmpireStockpile"; break;
     default:            retval += "?"; break;
     }
     retval += " empire = " + m_empire_id->Dump(ntabs) + " value = " + m_value->Dump(ntabs) + "\n";

@@ -66,17 +66,18 @@ namespace parse { namespace detail {
             ;
 
         set_empire_stockpile
-            =   tok.SetEmpireTradeStockpile_ [ _a = RE_TRADE ]
+            =   tok.SetEmpireStockpile_ [ _a = RE_INDUSTRY ]
             >   (
-                (   labeller.rule(Empire_token) > int_rules.expr [ _b = _1 ]
+                (       labeller.rule(Empire_token) > int_rules.expr [ _b = _1 ]
                     >   labeller.rule(Value_token)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
-                        deconstruct_movable_(_b, _pass),
-                        _a,
-                        deconstruct_movable_(_1, _pass))) ]
-                )
-                |  (labeller.rule(Value_token)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
+                            deconstruct_movable_(_b, _pass),
                             _a,
-                            deconstruct_movable_(_1, _pass))) ])
+                            deconstruct_movable_(_1, _pass))) ]
+                )
+                |      (labeller.rule(Value_token)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
+                            _a,
+                            deconstruct_movable_(_1, _pass))) ]
+                       )
             )
             ;
 
