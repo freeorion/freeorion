@@ -656,6 +656,7 @@ void ResearchQueue::clear() {
     ResearchQueueChangedSignal();
 }
 
+
 /////////////////////////////////////
 // ProductionQueue::ProductionItem //
 /////////////////////////////////////
@@ -1237,6 +1238,7 @@ void ProductionQueue::clear() {
     m_object_group_allocated_pp.clear();
     ProductionQueueChangedSignal();
 }
+
 
 ////////////
 // Empire //
