@@ -1806,8 +1806,13 @@ namespace {
                 float rhs_val = rhs_key.empty() ? 0.0f : boost::lexical_cast<float>(rhs_key);
                 return lhs_val < rhs_val;
             } catch (...) {
+#if defined(FREEORION_MACOSX)
+                // Collate on OSX seemingly ignores greek characters, resulting in sort order: X α I, X β I, X α II
+                return lhs_key < rhs_key;
+#else
                 return GetLocale("en_US.UTF-8").operator()(static_cast<const ObjectRow&>(lhs).SortKey(column),
                                                            static_cast<const ObjectRow&>(rhs).SortKey(column));
+#endif
             }
         }
     };
