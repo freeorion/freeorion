@@ -1576,7 +1576,6 @@ private:
     void    TechDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
-    void    TechPediaDisplay(const std::string& tech_name);
     void    ToggleSortCol(unsigned int col);
 
     std::set<std::string>                   m_categories_shown;
@@ -2008,15 +2007,11 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
         }
     }
 
-    auto pedia_display_action = [this, &tech_name]() { TechPediaDisplay(tech_name); };
+    auto pedia_display_action = [this, &tech_name]() { TechPediaDisplaySignal(tech_name); };
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(tech_name));
     popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
 
     popup->Run();
-}
-
-void TechTreeWnd::TechListBox::TechPediaDisplay(const std::string& tech_name) {
-    TechPediaDisplaySignal(tech_name);
 }
 
 void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
