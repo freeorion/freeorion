@@ -747,7 +747,8 @@ sc::result MPLobby::react(const JoinGame& msg) {
     std::string client_version_string;
     ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
 
-    if (client_type != Networking::CLIENT_TYPE_AI_PLAYER && server.IsAuthRequired(player_name)) {
+    Networking::AuthRoles roles;
+    if (client_type != Networking::CLIENT_TYPE_AI_PLAYER && server.IsAuthRequired(player_name, roles)) {
         // send authentication request
         player_connection->AwaitPlayer(client_type, client_version_string);
         player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
@@ -771,7 +772,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
     std::size_t t = 1;
     while (t <= m_lobby_data->m_players.size() + 1 && collision) {
         collision = false;
-        if (!server.IsAvailableName(new_player_name) || server.IsAuthRequired(new_player_name)) {
+        if (!server.IsAvailableName(new_player_name) || server.IsAuthRequired(new_player_name, roles)) {
             collision = true;
         } else {
             for (auto& plr : m_lobby_data->m_players) {
@@ -810,7 +811,9 @@ sc::result MPLobby::react(const AuthResponse& msg) {
     std::string auth;
     ExtractAuthResponseMessageData(message, player_name, auth);
 
-    if (!server.IsAuthSuccess(player_name, auth)) {
+    Networking::AuthRoles roles;
+
+    if (!server.IsAuthSuccess(player_name, auth, roles)) {
         // wrong password
         player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_WRONG_PASSWORD")) % player_name),
                                                     true));
@@ -1699,7 +1702,9 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
         }
 
     } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-        if (server.IsAuthRequired(player_name)) {
+        // if we don't need to authenticate player we got default roles here
+        Networking::AuthRoles roles;
+        if (server.IsAuthRequired(player_name, roles)) {
             // send authentication request
             player_connection->AwaitPlayer(client_type, client_version_string);
             player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
@@ -1731,7 +1736,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
             std::size_t t = 1;
             while (t <= m_lobby_data->m_players.size() + 1 && collision) {
                 collision = false;
-                if (!server.IsAvailableName(new_player_name) || server.IsAuthRequired(new_player_name)) {
+                if (!server.IsAvailableName(new_player_name) || server.IsAuthRequired(new_player_name, roles)) {
                     collision = true;
                 } else {
                     for (std::pair<int, PlayerSetupData>& plr : m_lobby_data->m_players) {
@@ -1782,7 +1787,9 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
     std::string auth;
     ExtractAuthResponseMessageData(message, player_name, auth);
 
-    if (!server.IsAuthSuccess(player_name, auth)) {
+    Networking::AuthRoles roles;
+
+    if (!server.IsAuthSuccess(player_name, auth, roles)) {
         // wrong password
         player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_WRONG_PASSWORD")) % player_name),
                                                     true));

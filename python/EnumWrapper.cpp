@@ -220,5 +220,12 @@ namespace FreeOrionPython {
             .value("double",        GameRules::DOUBLE)
             .value("string",        GameRules::STRING)
         ;
+        enum_<Networking::RoleType>("roleType")
+            .value("host",                Networking::ROLE_HOST)
+            .value("clientTypeModerator", Networking::ROLE_CLIENT_TYPE_MODERATOR)
+            .value("clientTypePlayer",    Networking::ROLE_CLIENT_TYPE_PLAYER)
+            .value("clientTypeObserver",  Networking::ROLE_CLIENT_TYPE_OBSERVER)
+            .value("galaxySetup",         Networking::ROLE_GALAXY_SETUP)
+        ;
     }
 }

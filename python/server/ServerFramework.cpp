@@ -13,7 +13,7 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/docstring_options.hpp>
-
+#include <boost/python/stl_iterator.hpp>
 
 #include <stdexcept>
 
@@ -22,6 +22,7 @@ using boost::python::class_;
 using boost::python::import;
 using boost::python::error_already_set;
 using boost::python::dict;
+using boost::python::list;
 using boost::python::vector_indexing_suite;
 using boost::python::map_indexing_suite;
 
@@ -105,7 +106,7 @@ bool PythonServer::InitModules() {
     return true;
 }
 
-bool PythonServer::IsRequireAuth(const std::string& player_name, bool &result) const {
+bool PythonServer::IsRequireAuth(const std::string& player_name, bool &result, Networking::AuthRoles& roles) const {
     boost::python::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
     if (!auth_provider) {
         ErrorLogger() << "Unable to get Python object auth_provider";
@@ -117,11 +118,20 @@ bool PythonServer::IsRequireAuth(const std::string& player_name, bool &result) c
         return false;
     }
     boost::python::object r = f(player_name);
-    result = boost::python::extract<bool>(r);
+    boost::python::extract<list> py_roles(r);
+    if (py_roles.check()) {
+        result = false;
+        boost::python::stl_input_iterator<Networking::RoleType> role_begin(py_roles), role_end;
+        for (auto& it = role_begin; it != role_end; ++ it) {
+             roles.SetRole(*it, true);
+        }
+    } else {
+        result = true;
+    }
     return true;
 }
 
-bool PythonServer::IsSuccessAuth(const std::string& player_name, const std::string& auth, bool &result) const {
+bool PythonServer::IsSuccessAuth(const std::string& player_name, const std::string& auth, bool &result, Networking::AuthRoles& roles) const {
     boost::python::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
     if (!auth_provider) {
         ErrorLogger() << "Unable to get Python object auth_provider";
@@ -133,7 +143,18 @@ bool PythonServer::IsSuccessAuth(const std::string& player_name, const std::stri
         return false;
     }
     boost::python::object r = f(player_name, auth);
-    result = boost::python::extract<bool>(r);
+    boost::python::extract<list> py_roles(r);
+    if (py_roles.check()) {
+        result = true;
+
+        boost::python::stl_input_iterator<Networking::RoleType> role_begin(py_roles), role_end;
+        for (auto& it = role_begin; it != role_end; ++ it) {
+             roles.SetRole(*it, true);
+        }
+    } else {
+        result = false;
+        DebugLogger() << "Wrong auth data for \"" << player_name << "\": check returns " << boost::python::extract<std::string>(boost::python::str(r))();
+    }
     return true;
 }
 
