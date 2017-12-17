@@ -644,7 +644,8 @@ sc::result MPLobby::react(const Disconnection& d) {
 void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                               const std::string& player_name,
                               Networking::ClientType client_type,
-                              const std::string& client_version_string)
+                              const std::string& client_version_string,
+                              const Networking::AuthRoles& roles)
 {
     ServerApp& server = Server();
     const SpeciesManager& sm = GetSpeciesManager();
@@ -707,15 +708,7 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
 
     ValidateClientLimits();
 
-    player_connection->SetAuthRoles({
-                    Networking::ROLE_CLIENT_TYPE_MODERATOR,
-                    Networking::ROLE_CLIENT_TYPE_PLAYER,
-                    Networking::ROLE_CLIENT_TYPE_OBSERVER
-                    });
-
-    if (m_lobby_data->m_any_can_edit) {
-        player_connection->SetAuthRole(Networking::ROLE_GALAXY_SETUP);
-    }
+    player_connection->SetAuthRoles(roles);
 
     for (auto it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
@@ -796,7 +789,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
 
     player_name = new_player_name;
 
-    EstablishPlayer(player_connection, player_name, client_type, client_version_string);
+    EstablishPlayer(player_connection, player_name, client_type, client_version_string, roles);
 
     return discard_event();
 }
@@ -827,7 +820,8 @@ sc::result MPLobby::react(const AuthResponse& msg) {
     EstablishPlayer(player_connection,
                     player_name,
                     client_type,
-                    player_connection->ClientVersionString());
+                    player_connection->ClientVersionString(),
+                    roles);
 
     return discard_event();
 }
@@ -1762,6 +1756,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
 
             // expected human player
             player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
+            player_connection->SetAuthRoles(roles);
             player_connection->SendMessage(JoinAckMessage(player_id));
         }
     } else {
@@ -1824,6 +1819,7 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
             // expected human player
             int player_id = server.m_networking.NewPlayerID();
             player_connection->EstablishPlayer(player_id, player_name, client_type, player_connection->ClientVersionString());
+            player_connection->SetAuthRoles(roles);
             player_connection->SendMessage(JoinAckMessage(player_id));
         }
     } else {

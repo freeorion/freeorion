@@ -225,6 +225,8 @@ public:
     /** Sets authorization roles and send message to client. */
     void SetAuthRoles(const std::initializer_list<Networking::RoleType>& roles);
 
+    void SetAuthRoles(const Networking::AuthRoles& roles);
+
     /** Sets or unset authorizaion role and send message to client. */
     void SetAuthRole(Networking::RoleType role, bool value = true);
     //@}

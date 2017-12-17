@@ -202,7 +202,8 @@ private:
     void EstablishPlayer(const PlayerConnectionPtr& player_connection,
                          const std::string& player_name,
                          Networking::ClientType client_type,
-                         const std::string& client_version_string);
+                         const std::string& client_version_string,
+                         const Networking::AuthRoles& roles);
     void ValidateClientLimits();
 
     SERVER_ACCESSOR
