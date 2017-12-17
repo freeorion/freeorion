@@ -79,6 +79,39 @@ namespace {
             system->Insert(ship);
         }
     }
+
+    /** Return \p full_route terminates at \p last_system or before the first
+        system not known to the \p empire_id. */
+    std::list<int> TruncateRouteToEndAtSystem(const std::list<int>& full_route, int empire_id, int last_system) {
+
+        if (full_route.empty() || (last_system == INVALID_OBJECT_ID))
+            return std::list<int>();
+
+        auto visible_end_it = full_route.cend();
+        if (last_system != full_route.back()) {
+            visible_end_it = std::find(full_route.begin(), full_route.end(), last_system);
+
+            // if requested last system not in route, do nothing
+            if (visible_end_it == full_route.end())
+                return std::list<int>();
+
+            ++visible_end_it;
+        }
+
+        // Remove any extra systems from the route after the apparent destination.
+        // SystemHasNoVisibleStarlanes determines if empire_id knows about the
+        // system and/or its starlanes.  It is enforced on the server in the
+        // visibility calculations that an owning empire knows about a) the
+        // system containing a fleet, b) the starlane on which a fleet is travelling
+        // and c) both systems terminating a starlane on which a fleet is travelling.
+        auto end_it = std::find_if(full_route.begin(), visible_end_it,
+                                   boost::bind(&SystemHasNoVisibleStarlanes, _1, empire_id));
+
+        std::list<int> truncated_route;
+        std::copy(full_route.begin(), end_it, std::back_inserter(truncated_route));
+
+        return truncated_route;
+    }
 }
 
 // static(s)
@@ -122,8 +155,10 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
     if (vis >= VIS_BASIC_VISIBILITY) {
         m_ships =                         copied_fleet->VisibleContainedObjectIDs(empire_id);
 
-        m_next_system =                   copied_fleet->m_next_system;
-        m_prev_system =                   copied_fleet->m_prev_system;
+        m_next_system = ((GetEmpireKnownSystem(copied_fleet->m_next_system, empire_id))
+                         ? copied_fleet->m_next_system : INVALID_OBJECT_ID);
+        m_prev_system = ((GetEmpireKnownSystem(copied_fleet->m_prev_system, empire_id))
+                         ? copied_fleet->m_prev_system : INVALID_OBJECT_ID);
         m_arrived_this_turn =             copied_fleet->m_arrived_this_turn;
         m_arrival_starlane =              copied_fleet->m_arrival_starlane;
 
@@ -132,39 +167,18 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
             if (Unowned())
                 m_name =                  copied_fleet->m_name;
 
-            if (vis >= VIS_FULL_VISIBILITY) {
-                m_travel_route =              copied_fleet->m_travel_route;
-                m_travel_distance =           copied_fleet->m_travel_distance;
+            // Truncate the travel route to only systems known to empire_id
+            int moving_to = (vis >= VIS_FULL_VISIBILITY
+                             ? (!copied_fleet->m_travel_route.empty()
+                                ? copied_fleet->m_travel_route.back()
+                                : INVALID_OBJECT_ID)
+                             : m_next_system);
+
+            m_travel_route = TruncateRouteToEndAtSystem(copied_fleet->m_travel_route, empire_id, moving_to);
+
+
+            if (vis >= VIS_FULL_VISIBILITY)
                 m_ordered_given_to_empire_id =copied_fleet->m_ordered_given_to_empire_id;
-
-            } else {
-                int             moving_to =         copied_fleet->m_next_system;
-                std::list<int>  travel_route;
-                double          travel_distance =   copied_fleet->m_travel_distance;
-
-                const std::list<int>& copied_fleet_route = copied_fleet->m_travel_route;
-
-                m_travel_route.clear();
-                if (!copied_fleet->m_travel_route.empty())
-                    m_travel_route.push_back(moving_to);
-                ShortenRouteToEndAtSystem(travel_route, moving_to);
-                if (!travel_route.empty()
-                    && travel_route.front() != INVALID_OBJECT_ID
-                    && travel_route.size() != copied_fleet_route.size())
-                {
-                    try {
-                        travel_distance -= GetPathfinder()->ShortestPath(travel_route.back(),
-                                                                      copied_fleet_route.back()).second;
-                    } catch (...) {
-                        DebugLogger() << "Fleet::Copy couldn't find route to system(s):"
-                                      << " travel route back: " << travel_route.back()
-                                      << " or copied fleet route back: " << copied_fleet_route.back();
-                    }
-                }
-
-                m_travel_route = travel_route;
-                m_travel_distance = travel_distance;
-            }
         }
     }
 }
@@ -745,25 +759,7 @@ void Fleet::SetRoute(const std::list<int>& route) {
         m_next_system = INVALID_OBJECT_ID;
     }
 
-
-    // calculate length of line segments between systems on route, and sum up to determine length of route between
-    // systems on route.  (Might later add distance from fleet to first system on route to this to get the total
-    // route length, or this may itself be the total route length if the fleet is at the first system on the route).
-    m_travel_distance = PathLength(m_travel_route.begin(), m_travel_route.end());
-
-
     if (!m_travel_route.empty()) {
-        // if we're already moving, add in the distance from where we are to the first system in the route
-        if (SystemID() != route.front()) {
-            auto starting_system = GetSystem(route.front());
-            if (!starting_system) {
-                ErrorLogger() << "Fleet::SetRoute couldn't get system with id " << route.front();
-                return;
-            }
-            double dist_x = starting_system->X() - this->X();
-            double dist_y = starting_system->Y() - this->Y();
-            m_travel_distance += std::sqrt(dist_x*dist_x + dist_y*dist_y);
-        }
         if (m_prev_system != SystemID() && m_prev_system == m_travel_route.front()) {
             m_prev_system = m_next_system;      // if already in transit and turning around, swap prev and next
         } else if (SystemID() == route.front()) {
@@ -844,8 +840,7 @@ void Fleet::MovementPhase() {
     if (!move_path.empty() && !m_travel_route.empty() &&
          move_path.back().object_id != m_travel_route.back())
     {
-        auto shortened_route = TravelRoute();
-        ShortenRouteToEndAtSystem(shortened_route, move_path.back().object_id);
+        auto shortened_route = TruncateRouteToEndAtSystem(m_travel_route, Owner(), move_path.back().object_id);
         SetRoute(shortened_route);
         move_path = MovePath();
     }
@@ -1379,32 +1374,6 @@ float Fleet::Shields() const {
         retval = 0.0f;
 
     return retval;
-}
-
-void Fleet::ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system) {
-    std::list<int>::iterator visible_end_it;
-    if (last_system != FinalDestinationID()) {
-        visible_end_it = std::find(m_travel_route.begin(), m_travel_route.end(), last_system);
-
-        // if requested last system not in route, do nothing
-        if (visible_end_it == m_travel_route.end())
-            return;
-
-        ++visible_end_it;
-
-    } else {
-        visible_end_it = m_travel_route.end();
-    }
-
-    // remove any extra systems from the route after the apparent destination
-    auto end_it = std::find_if(m_travel_route.begin(), visible_end_it,
-                               boost::bind(&SystemHasNoVisibleStarlanes, _1, this->Owner()));
-    std::copy(m_travel_route.begin(), end_it, std::back_inserter(travel_route));
-
-    // If no Systems in a nonempty route are known reachable, default to just
-    // showing the next system on the route.
-    if (travel_route.empty() && !m_travel_route.empty())
-        travel_route.push_back(*m_travel_route.begin());
 }
 
 std::string Fleet::GenerateFleetName() {

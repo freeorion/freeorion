@@ -160,9 +160,6 @@ protected:
     //@}
 
 private:
-    ///< removes any systems on the route after the specified system
-    void                    ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system);
-
     std::set<int>               m_ships;
 
     // these two uniquely describe the starlane graph edge the fleet is on, if it it's on one
@@ -181,7 +178,6 @@ private:
       * unknown.  The list may also be empty, which indicates that the fleet
       * is not planning to move. */
     std::list<int>              m_travel_route;
-    mutable double              m_travel_distance = 0.0;
 
     bool                        m_arrived_this_turn = false;
     int                         m_arrival_starlane = INVALID_OBJECT_ID; // see comment for ArrivalStarlane()
@@ -190,7 +186,5 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
-
-BOOST_CLASS_VERSION(Fleet, 2)
 
 #endif // _Fleet_h_

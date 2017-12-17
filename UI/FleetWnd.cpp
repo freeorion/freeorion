@@ -1534,7 +1534,12 @@ void FleetDataPanel::Refresh() {
         {
             add_overlay("bombarding.png");
         }
-        if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES)
+
+        // Moving fleets can't be gifted.  The order will be automatically
+        // cancelled on the server.  This make the UI appear to cancel the
+        // order when the ship is moved without requiring the player to
+        // re-order the gifting if the ship is stopped.
+        if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES && fleet->TravelRoute().empty())
             add_overlay("gifting.png");
 
         if ((fleet->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
@@ -3587,6 +3592,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     }
 
     if (fleet->OwnedBy(client_empire_id)
+        && fleet->TravelRoute().empty()
         && !peaceful_empires_in_system.empty()
         && !ClientPlayerIsModerator())
     {
