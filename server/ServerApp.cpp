@@ -1392,6 +1392,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
 
     // Reset the universe object for a new universe
     universe.Clear();
+    GetSpeciesManager().ClearSpeciesHomeworlds();
 
     // Reset the object id manager for the new empires.
     std::vector<int> empire_ids(player_setup_data.size());

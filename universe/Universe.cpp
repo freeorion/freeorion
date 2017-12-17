@@ -133,8 +133,6 @@ void Universe::Clear() {
     m_effect_discrepancy_map.clear();
     m_effect_specified_empire_object_visibilities.clear();
 
-    GetSpeciesManager().ClearSpeciesHomeworlds();
-
     m_stat_records.clear();
 
     m_universe_width = 1000.0;
