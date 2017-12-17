@@ -308,8 +308,7 @@ namespace {
                     boost::bind(&NewGamePlayerRow::ColorChanged, this, _1));
 
             // species selector
-            auto species_selector = GG::Wnd::Create<SpeciesSelector>(EMPIRE_NAME_WIDTH, PlayerRowHeight());
-            species_selector->SelectSpecies(m_player_data.m_starting_species_name);
+            auto species_selector = GG::Wnd::Create<SpeciesSelector>(m_player_data.m_starting_species_name, EMPIRE_NAME_WIDTH, PlayerRowHeight());
             push_back(species_selector);
             if (m_initial_disabled)
                 species_selector->Disable();

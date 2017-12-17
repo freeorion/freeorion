@@ -988,31 +988,16 @@ void GalaxySetupWnd::CompleteConstruction() {
     m_starting_species_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SPECIES"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_starting_species_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_starting_species_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.initial.species")));
-    // Subtract the drop down entry padding for the inner element height.
-    m_starting_secies_selector = GG::Wnd::Create<SpeciesSelector>(LABELS_WIDTH, CONTROL_HEIGHT - 5);
     std::string default_starting_species = GetOptionsDB().Get<std::string>("setup.initial.species");
 
-    if (default_starting_species.empty() || default_starting_species == "1") {
+    if (default_starting_species.empty() || default_starting_species == "1")
         // kludge / bug workaround for bug with options storage and retreival.
         // Empty-string options are stored, but read in as "true" boolean, and
         // converted to string equal to "1"
+        default_starting_species = "SP_HUMAN";
 
-        // if no previously-stored species selection, need to pick a default
-        std::vector<std::string> selector_avail_species = m_starting_secies_selector->AvailableSpeciesNames();
-        if (!selector_avail_species.empty()) {
-            for (const std::string& species_name : selector_avail_species) {
-                // special case: see if humans are available.
-                if ("SP_HUMAN" == species_name) {
-                    default_starting_species = "SP_HUMAN";
-                    break;
-                }
-            }
-            // if no humans, default to first listed species
-            if (default_starting_species.empty())
-                default_starting_species = *selector_avail_species.begin();
-        }
-    }
-    m_starting_secies_selector->SelectSpecies(default_starting_species);
+    // Subtract the drop down entry padding for the inner element height.
+    m_starting_secies_selector = GG::Wnd::Create<SpeciesSelector>(default_starting_species, LABELS_WIDTH, CONTROL_HEIGHT - 5);
 
     // number of AIs
     m_number_ais_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_NUMBER_AIS"), GG::FORMAT_RIGHT, GG::INTERACTIVE);

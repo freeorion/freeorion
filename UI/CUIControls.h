@@ -509,22 +509,14 @@ private:
 class SpeciesSelector : public CUIDropDownList {
 public:
     /** \name Structors */ //@{
-    SpeciesSelector(GG::X w, GG::Y h);                          ///< populates with all species in SpeciesManager
+    SpeciesSelector(const std::string& preselect_species, GG::X w, GG::Y h);                          ///< populates with all species in SpeciesManager
     //@}
 
     /** \name Accessors */ //@{
     const std::string&          CurrentSpeciesName() const;     ///< returns the name of the species that is currently selected
-    std::vector<std::string>    AvailableSpeciesNames() const;  ///< returns the names of species in the selector
-    //@}
-
-    /** \name Mutators */ //@{
-    void SelectSpecies(const std::string& species_name);
     //@}
 
     mutable boost::signals2::signal<void (const std::string&)> SpeciesChangedSignal;
-
-private:
-    void SelectionChanged(GG::DropDownList::iterator it);
 };
 
 /** A control used to pick from the empire colors returned by EmpireColors(). */
