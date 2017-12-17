@@ -1,5 +1,4 @@
 from EnumsAI import ShipRoleType, MissionType
-import AIstate
 import FleetUtilsAI
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
@@ -8,13 +7,10 @@ import MoveUtilsAI
 import PlanetUtilsAI
 import CombatRatingsAI
 from universe_object import Fleet, System, Planet
-from AIDependencies import INVALID_ID
-from freeorion_tools import get_partial_visibility_turn
+from freeorion_tools import get_partial_visibility_turn, dump_universe
 
 from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
-
-dumpTurn = 0
 
 
 def trooper_move_reqs_met(main_fleet_mission, order, verbose):
@@ -226,7 +222,6 @@ class OrderMove(AIFleetOrder):
                 if self.target.id not in needs_vis:
                     needs_vis.append(self.target.id)
                 return False
-        return True
 
     def issue_order(self):
         if not super(OrderMove, self).issue_order():
@@ -281,30 +276,6 @@ class OrderResupply(AIFleetOrder):
                 if system_id in foAI.foAIstate.needsEmergencyExploration:
                     foAI.foAIstate.needsEmergencyExploration.remove(system_id)
             self.order_issued = True
-
-
-class OrderSplitFleet(AIFleetOrder):
-    ORDER_NAME = 'split_fleet'
-    TARGET_TYPE = System  # TODO check real usage
-
-    def can_issue_order(self, verbose=False):
-        if not super(OrderSplitFleet, self).is_valid():
-            return False
-        return len(self.fleet.get_object().shipIDs) > 1
-
-    def issue_order(self):
-        if not super(OrderSplitFleet, self).issue_order():
-            return
-        ship_id = self.target.id
-        fleet = self.fleet.get_object()
-        if ship_id in fleet.shipIDs:
-            fo.issueNewFleetOrder(str(ship_id), ship_id)
-            print "Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
-        self.order_issued = True
-
-
-# class OrderMergeFleet(AIFleetOrder):  # TODO check remove
-#     pass
 
 
 class OrderOutpost(AIFleetOrder):
@@ -401,17 +372,6 @@ class OrderColonize(AIFleetOrder):
         return ship is not None and self.fleet.get_object().systemID == self.target.get_system().id and ship.canColonize
 
 
-class OrderAttack(AIFleetOrder):
-    ORDER_NAME = 'attack'
-    TARGET_TYPE = System
-
-    def issue_order(self, verbose=False):
-        if not super(OrderAttack, self).is_valid():
-            return
-        fo.issueFleetMoveOrder(self.fleet.id, self.target.get_system().id)
-        print "Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
-
-
 class OrderDefend(AIFleetOrder):
     """
         Used for orbital defense, have no real orders.
@@ -458,45 +418,45 @@ class OrderInvade(AIFleetOrder):
     def issue_order(self):
         if not super(OrderInvade, self).can_issue_order():
             return
-        result = False
+
+        universe = fo.getUniverse()
         planet_id = self.target.id
         planet = self.target.get_object()
-        planet_name = planet and planet.name or "invisible"
         fleet = self.fleet.get_object()
-        detail_str = ""
-        universe = fo.getUniverse()
 
-        global dumpTurn
+        invasion_roles = (ShipRoleType.MILITARY_INVASION,
+                          ShipRoleType.BASE_INVASION)
+
+        print "Issuing order: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
+        # will track if at least one invasion troops successfully deployed
+        result = False
         for ship_id in fleet.shipIDs:
             ship = universe.getShip(ship_id)
             role = foAI.foAIstate.get_ship_role(ship.design.id)
-            if role in [ShipRoleType.MILITARY_INVASION, ShipRoleType.BASE_INVASION]:
-                # will track if at least one invasion troops successfully deployed
-                result = fo.issueInvadeOrder(ship_id, planet_id) or result
-                print "Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
+            if role not in invasion_roles:
+                continue
+
+            print "Ordering troop ship %d to invade %s" % (ship_id, planet)
+            result = fo.issueInvadeOrder(ship_id, planet_id) or result
+            if not result:
                 shields = planet.currentMeterValue(fo.meterType.shield)
-                owner = planet.owner
-                if not result:
-                    planet_stealth = planet.currentMeterValue(fo.meterType.stealth)
-                    pop = planet.currentMeterValue(fo.meterType.population)
-                    detail_str = (" -- planet has %.1f stealth, shields %.1f, %.1f population and "
-                                  "is owned by empire %d") % (planet_stealth, shields, pop, owner)
-                print "Ordered troop ship ID %d to invade %s, got result %d %s" % (ship_id, planet_name,
-                                                                                   result, detail_str)
-                if not result:
-                    if 'needsEmergencyExploration' not in dir(foAI.foAIstate):
-                        foAI.foAIstate.needsEmergencyExploration = []
-                    if fleet.systemID not in foAI.foAIstate.needsEmergencyExploration:
-                        foAI.foAIstate.needsEmergencyExploration.append(fleet.systemID)
-                        print "Due to trouble invading, adding system %d to Emergency Exploration List" % fleet.systemID
-                        self.executed = False
-                    if shields > 0 and owner == -1 and dumpTurn < fo.currentTurn():
-                        dumpTurn = fo.currentTurn()
-                        print "Universe Dump to debug invasions:"
-                        universe.dump()
-                    break
+                planet_stealth = planet.currentMeterValue(fo.meterType.stealth)
+                pop = planet.currentMeterValue(fo.meterType.population)
+                warn("Invasion order failed!")
+                print (" -- planet has %.1f stealth, shields %.1f, %.1f population and "
+                       "is owned by empire %d") % (planet_stealth, shields, pop, planet.owner)
+                if 'needsEmergencyExploration' not in dir(foAI.foAIstate):
+                    foAI.foAIstate.needsEmergencyExploration = []
+                if fleet.systemID not in foAI.foAIstate.needsEmergencyExploration:
+                    foAI.foAIstate.needsEmergencyExploration.append(fleet.systemID)
+                    print "Due to trouble invading, adding system %d to Emergency Exploration List" % fleet.systemID
+                    self.executed = False
+                
+                if shields > 0 and planet.unowned:
+                    dump_universe()
+                break
         if result:
-            print "Successfully ordered troop ship(s) to invade %s, with detail %s" % (planet_name, detail_str)
+            print "Successfully ordered troop ship(s) to invade %s" % planet
 
 
 class OrderMilitary(AIFleetOrder):
@@ -506,9 +466,9 @@ class OrderMilitary(AIFleetOrder):
     def is_valid(self):
         if not super(OrderMilitary, self).is_valid():
             return False
-        thisFleet = self.fleet.get_object()
+        fleet = self.fleet.get_object()
         # TODO: consider bombardment-only fleets/orders
-        return thisFleet is not None and (thisFleet.hasArmedShips or thisFleet.hasFighterShips)
+        return fleet is not None and (fleet.hasArmedShips or fleet.hasFighterShips)
 
     def can_issue_order(self, verbose=False):
         # TODO: consider bombardment
