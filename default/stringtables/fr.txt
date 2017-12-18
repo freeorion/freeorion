@@ -1149,10 +1149,10 @@ OPTIONS_DB_UI_SAVE_DIALOG_COLUMNS
 Colonnes valides: time, turn, player, empire, systems, seed, galaxy_age, galaxy_shape, planet_freq, native_freq, specials_freq, starlane_freq'''
 
 OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_WIDE_AS
-Si UI.save-file-dialog.[name].wide-as est activé, la colonne sera toujours assez large pour contenir tout le texte.
+Si ui.dialog.save.columns.[name].width.chars est activé, la colonne sera toujours assez large pour contenir tout le texte.
 
 OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH
-Si UI.save-file-dialog.[name].stretch est activé, la colonne permettra ce facteur d'agrandissement si visible.
+Si ui.dialog.save.columns.[name].stretch est activé, la colonne permettra ce facteur d'agrandissement si visible.
 
 OPTIONS_DB_GALAXY_MAP_GAS
 Rendu de la densité gazeuse qui donne sa forme à la galaxie. Peut ralentir l'affichage sur les machines les plus anciennes.
@@ -14614,14 +14614,23 @@ Annihilez votre espèce est pour nous un devoir sacré!
 OPTIONS_PAGE_HOTKEYS
 Raccourcis clavier
 
-HOTKEYS_Z_COMBAT
-Fenêtre Combat
+HOTKEYS_UI
+Interface Utilisateur
 
-HOTKEYS_MAP
+HOTKEYS_UI_MAP
 Carte galactique
+
+HOTKEYS_UI_MAP_FLEET
+Flottes
+
+HOTKEYS_UI_MAP_SYSTEM
+Systèmes
 
 HOTKEYS_GENERAL
 Raccourcis généraux
+
+HOTKEYS_VIDEO
+Vidéo
 
 HOTKEY_MAP_OPEN_CHAT
 Ouvrir Messages
