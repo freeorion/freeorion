@@ -796,7 +796,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
                                                                m_empire_id, m_production_location);
             rows.push_back(item_row);
         }
-        m_buildable_items->Insert(rows, false);
+        m_buildable_items->Insert(rows);
         // resize inserted rows and record first row to show
         for (auto& row : *m_buildable_items) {
             row->Resize(row_size);
@@ -831,7 +831,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
                 m_empire_id, m_production_location);
             rows.push_back(item_row);
         }
-        m_buildable_items->Insert(rows, false);
+        m_buildable_items->Insert(rows);
         // resize inserted rows and record first row to show
         for (auto& row : *m_buildable_items) {
             row->Resize(row_size);

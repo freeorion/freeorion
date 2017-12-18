@@ -525,7 +525,7 @@ public:
         }
 
         // Insert rows enmasse to avoid per insertion vector sort costs.
-        Insert(rows, false);
+        Insert(rows);
     }
 
     /** Find local sub directories of \p path. */
@@ -556,7 +556,7 @@ public:
         }
 
         // Insert rows enmasse to avoid per insertion vector sort costs.
-        Insert(rows, false);
+        Insert(rows);
     }
 
     bool HasFile(const std::string& filename) {

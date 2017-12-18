@@ -1806,7 +1806,7 @@ void SidePanel::PlanetPanel::Refresh() {
             row->push_back(graphic);
             rows.push_back(row);
         }
-        m_focus_drop->Insert(rows, false);
+        m_focus_drop->Insert(rows);
 
         // set browse text and select appropriate focus in droplist
         std::string focus_text;
@@ -3174,7 +3174,7 @@ void SidePanel::RefreshSystemNames() {
         int sys_id = entry.second;
         rows.push_back(GG::Wnd::Create<SystemRow>(sys_id, system_name_height));
     }
-    m_system_name->Insert(rows, false);
+    m_system_name->Insert(rows);
 
     // Select in the ListBox the currently-selected system.
     for (auto it = m_system_name->begin(); it != m_system_name->end(); ++it) {

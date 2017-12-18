@@ -2321,7 +2321,7 @@ public:
             auto row = GG::Wnd::Create<ShipRow>(GG::X1, row_size.y, ship_id);
             rows.push_back(row);
         }
-        Insert(rows, false);
+        Insert(rows);
         for (auto& row : rows)
         { row->Resize(row_size); }
 

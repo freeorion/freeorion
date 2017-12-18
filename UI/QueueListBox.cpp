@@ -175,13 +175,13 @@ void QueueListBox::Clear() {
 
 std::function<void()> QueueListBox::MoveToTopAction(GG::ListBox::iterator it) {
     return [it, this]() {
-        ListBox::Insert(*it, begin(), true, true);
+        ListBox::Insert(*it, begin(), true);
     };
 }
 
 std::function<void()> QueueListBox::MoveToBottomAction(GG::ListBox::iterator it) {
     return [it, this]() {
-        ListBox::Insert(*it, end(), true, true);
+        ListBox::Insert(*it, end(), true);
     };
 }
 
@@ -207,7 +207,7 @@ void QueueListBox::EnsurePromptHiddenSlot(iterator it) {
 }
 
 void QueueListBox::ShowPromptSlot() {
-    Insert(GG::Wnd::Create<PromptRow>(Width() - 4, m_prompt_str), begin(), false, false);
+    Insert(GG::Wnd::Create<PromptRow>(Width() - 4, m_prompt_str), begin(), false);
     m_showing_prompt = true;
 }
 

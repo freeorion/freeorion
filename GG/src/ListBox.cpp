@@ -817,7 +817,7 @@ void ListBox::AcceptDrops(const Pt& pt, std::vector<std::shared_ptr<Wnd>> wnds, 
     bool inserting_at_first_row = insertion_it == m_first_row_shown;
     for (auto& wnd : wnds) {
         if (const auto& row = std::dynamic_pointer_cast<Row>(wnd))
-            Insert(row, insertion_it, true, true);
+            Insert(row, insertion_it, true);
     }
 
     // Adjust to show rows inserted before the first row.
@@ -1067,17 +1067,17 @@ void ListBox::SetColor(Clr c)
         m_hscroll->SetColor(c);
 }
 
-ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool signal/* = true*/)
-{ return Insert(std::forward<std::shared_ptr<Row>>(row), it, false, signal); }
+ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it)
+{ return Insert(std::forward<std::shared_ptr<Row>>(row), it, false); }
 
-ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, bool signal/* = true*/)
-{ return Insert(std::forward<std::shared_ptr<Row>>(row), m_rows.end(), false, signal); }
+ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row)
+{ return Insert(std::forward<std::shared_ptr<Row>>(row), m_rows.end(), false); }
 
-void ListBox::Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it, bool signal/* = true*/)
-{ Insert(rows, it, false, signal); }
+void ListBox::Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it)
+{ Insert(rows, it, false); }
 
-void ListBox::Insert(const std::vector<std::shared_ptr<Row>>& rows, bool signal/* = true*/)
-{ Insert(rows, m_rows.end(), false, signal); }
+void ListBox::Insert(const std::vector<std::shared_ptr<Row>>& rows)
+{ Insert(rows, m_rows.end(), false); }
 
 std::shared_ptr<ListBox::Row> ListBox::Erase(iterator it, bool signal/* = false*/)
 { return Erase(it, false, signal); }
@@ -1899,7 +1899,7 @@ void ListBox::DefineColStretches(const Row& row)
     }
 }
 
-ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dropped, bool signal)
+ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dropped)
 {
     if(!row)
         return m_rows.end();
@@ -1917,8 +1917,7 @@ ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dr
 
     row->InstallEventFilter(shared_from_this());
 
-    if (signal)
-        BeforeInsertRowSignal(it);
+    BeforeInsertRowSignal(it);
 
     if (m_rows.empty()) {
         m_rows.push_back(row);
@@ -1952,55 +1951,20 @@ ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dr
 
     row->RightClickedSignal.connect(boost::bind(&ListBox::HandleRowRightClicked, this, _1, _2));
 
-    if (signal) {
-        AfterInsertRowSignal(it);
-        if (dropped)
-            DroppedRowSignal(retval);
-        if (moved)
-            MovedRowSignal(retval, original_dropped_position);
-    }
+    AfterInsertRowSignal(it);
+    if (dropped)
+        DroppedRowSignal(retval);
+    if (moved)
+        MovedRowSignal(retval, original_dropped_position);
 
     RequirePreRender();
     return retval;
 }
 
-void ListBox::Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it, bool dropped, bool signal)
+void ListBox::Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it, bool dropped)
 {
-    if (rows.empty())
-        return;
-
-    if (signal || dropped) {
-        // need to signal or handle dropping for each row, so add individually
-        for (auto& row : rows)
-        { Insert(row, it, dropped, signal); }
-        return;
-    }
-
-    // don't need to signal or handle dropping issues, so can add rows at once
-    // without externally handling after each
-
-    // housekeeping of rows...
-    for (auto& row : rows) {
-        row->InstallEventFilter(shared_from_this());
-        row->Hide();
-        row->Resize(Pt(std::max(ClientWidth(), X(1)), row->Height()));
-    }
-
-    // add row at requested location (or default end position)
-    m_rows.insert(it, rows.begin(), rows.end());
-
-    if (!(m_style & LIST_NOSORT))
-        Resort();
-
-    // more housekeeping of rows...
-    for (auto& row : rows) {
-        AttachChild(row);
-    }
-
-    RequirePreRender();
-
-    if (m_first_row_shown == m_rows.end())
-        m_first_row_shown = m_rows.begin();
+    for (auto& row : rows)
+    { Insert(row, it, dropped); }
 }
 
 std::shared_ptr<ListBox::Row> ListBox::Erase(iterator it, bool removing_duplicate, bool signal)

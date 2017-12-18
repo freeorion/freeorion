@@ -361,22 +361,22 @@ public:
     /** Insertion sorts \a row into the ListBox if sorted, or inserts into an
         unsorted ListBox before \a it; returns insertion point.  This Row
         becomes the property of this ListBox. */
-    iterator        Insert(std::shared_ptr<Row> row, iterator it, bool signal = true);
+    iterator Insert(std::shared_ptr<Row> row, iterator it);
 
     /** Insertion sorts \a row into the ListBox if sorted, or inserts into an
         unsorted ListBox at the end of the list; returns insertion point.
         This Row becomes the property of this ListBox. */
-    iterator        Insert(std::shared_ptr<Row> row, bool signal = true);
+    iterator Insert(std::shared_ptr<Row> row);
 
     /** Insertion sorts \a rows into the ListBox if sorted, or inserts into an
         unsorted ListBox before \a it. The Rows become the property of this
         ListBox. */
-    void            Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it, bool signal = true);
+    void Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it);
 
     /** Insertion sorts \a rows into the ListBox if sorted, or inserts into an
         unsorted ListBox at the end of the list. The Rows become the property
         of this ListBox. */
-    void            Insert(const std::vector<std::shared_ptr<Row>>& rows, bool signal = true);
+    void Insert(const std::vector<std::shared_ptr<Row>>& rows);
 
     std::shared_ptr<Row> Erase(iterator it, bool signal = false);        ///< removes and returns the row that \a it points to from the ListBox, or 0 if no such row exists
     void            Clear();                                        ///< empties the ListBox
@@ -532,8 +532,14 @@ protected:
     bool EventFilter(Wnd* w, const WndEvent& event) override;
 
     /** Define the number of columns, the column widths and alignment from \p row.*/
-    iterator        Insert(std::shared_ptr<Row> row, iterator it, bool dropped, bool signal);                       ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
-    void            Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it, bool dropped, bool signal);  ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
+    /** Insertion sorts into list, or inserts into an unsorted list before
+        \a it; returns insertion point. */
+    iterator Insert(std::shared_ptr<Row> row, iterator it, bool dropped);
+
+    /** Insertion sorts into list, or inserts into an unsorted list before
+        \a it; returns insertion point. */
+    void Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it, bool dropped);
+
     std::shared_ptr<Row> Erase(iterator it, bool removing_duplicate, bool signal); ///< erases the row at index \a idx, handling it as a duplicate removal (such as for drag-and-drops within a single ListBox) if indicated
     void            BringCaretIntoView();           ///< makes sure caret is visible when scrolling occurs due to keystrokes etc.
     void            ResetAutoScrollVars();          ///< resets all variables related to auto-scroll to their initial values

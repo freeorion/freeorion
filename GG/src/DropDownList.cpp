@@ -779,41 +779,38 @@ void DropDownList::SizeMove(const Pt& ul, const Pt& lr)
 void DropDownList::SetColor(Clr c)
 { LB()->SetColor(c); }
 
-DropDownList::iterator DropDownList::Insert(std::shared_ptr<Row> row, iterator it,
-                                            bool signal/* = true*/)
+DropDownList::iterator DropDownList::Insert(std::shared_ptr<Row> row, iterator it)
 {
     row->SetDragDropDataType("");
-    auto ret = LB()->Insert(std::forward<std::shared_ptr<Row>>(row), it, signal);
+    auto ret = LB()->Insert(std::forward<std::shared_ptr<Row>>(row), it);
     Resize(Size());
     RequirePreRender();
     return ret;
 }
 
-DropDownList::iterator DropDownList::Insert(std::shared_ptr<Row> row, bool signal/* = true*/)
+DropDownList::iterator DropDownList::Insert(std::shared_ptr<Row> row)
 {
     row->SetDragDropDataType("");
-    auto ret = LB()->Insert(std::forward<std::shared_ptr<Row>>(row), signal);
+    auto ret = LB()->Insert(std::forward<std::shared_ptr<Row>>(row));
     Resize(Size());
     RequirePreRender();
     return ret;
 }
 
-void DropDownList::Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it,
-                          bool signal/* = true*/)
+void DropDownList::Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it)
 {
     for (auto& row : rows)
     { row->SetDragDropDataType(""); }
-    LB()->Insert(rows, it, signal);
+    LB()->Insert(rows, it);
     Resize(Size());
     RequirePreRender();
 }
 
-void DropDownList::Insert(const std::vector<std::shared_ptr<Row>>& rows,
-                          bool signal/* = true*/)
+void DropDownList::Insert(const std::vector<std::shared_ptr<Row>>& rows)
 {
     for (auto& row : rows)
     { row->SetDragDropDataType(""); }
-    LB()->Insert(rows, signal);
+    LB()->Insert(rows);
     Resize(Size());
     RequirePreRender();
 }

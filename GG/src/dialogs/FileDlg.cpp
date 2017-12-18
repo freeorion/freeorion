@@ -621,7 +621,7 @@ void FileDlg::UpdateList()
         rows.reserve(sorted_rows.size());
         for (auto& row : sorted_rows)
         { rows.push_back(row.second); }
-        m_files_list->Insert(rows, false);
+        m_files_list->Insert(rows);
 
         if (!m_select_directories) {
             sorted_rows.clear();
