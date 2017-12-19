@@ -8,12 +8,13 @@ BuildingType
         Species
         Not Contains Building name = "BLD_INTERSPECIES_ACADEMY"
         OwnedBy empire = Source.Owner
-        Happiness low = 15
-        
-        // For species with preferred focus its the happiness bonus helps only a bit
-        Not And [
-            Focus type = Source.PreferredFocus
-            Happiness high = 19
+        Or [
+            Happiness low = 15
+            // The preferred focus happiness bonus helps only a bit
+            And [
+                Focus type = Source.PreferredFocus
+                Happiness low = 19
+            ]
         ]
         Not WithinStarlaneJumps jumps = 3 condition = And [
             System
