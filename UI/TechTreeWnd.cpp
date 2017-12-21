@@ -30,7 +30,6 @@
 #include <algorithm>
 
 #include <boost/timer.hpp>
-#include <boost/locale.hpp>
 
 namespace {
     const std::string RES_PEDIA_WND_NAME = "research.pedia";
@@ -112,13 +111,6 @@ namespace {
 
         // all tests pass, so tech is visible
         return true;
-    }
-
-    // Duplicated in MapWnd.cpp/ObjectListWnd.cpp
-    const std::locale& GetLocale() {
-        static boost::locale::generator gen;
-        static const std::locale& loc = gen("en_US.UTF-8");  // manually sets locale
-        return loc;
     }
 }
 
@@ -1629,7 +1621,7 @@ bool TechTreeWnd::TechListBox::TechRowCmp(const GG::ListBox::Row& lhs, const GG:
         try {  // attempt compare by int
             retval = boost::lexical_cast<int>(lhs_key) < boost::lexical_cast<int>(rhs_key);
         } catch (const boost::bad_lexical_cast& e) {
-            retval = GetLocale().operator()(lhs_key, rhs_key);
+            retval = GetLocale("en_US.UTF-8").operator()(lhs_key, rhs_key);
         }
     }
 

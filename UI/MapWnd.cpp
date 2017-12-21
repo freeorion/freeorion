@@ -57,7 +57,6 @@
 #include <boost/optional/optional.hpp>
 #include <boost/range/numeric.hpp>
 #include <boost/range/adaptor/map.hpp>
-#include <boost/locale.hpp>
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
@@ -6699,15 +6698,9 @@ bool MapWnd::ZoomToHomeSystem() {
 }
 
 namespace {
-    const std::locale& GetLocale() {
-        static boost::locale::generator gen;
-        static std::locale loc = gen("en_US.UTF-8");    // should sort accented latin letters reasonably
-        return loc;
-    }
-
     struct CustomRowCmp {
         bool operator()(const std::pair<std::string, int>& lhs, const std::pair<std::string, int>& rhs) {
-            return GetLocale().operator()(lhs.first, rhs.first);    // todo: use .second values to break ties
+            return GetLocale("en_US.UTF-8").operator()(lhs.first, rhs.first);    // todo: use .second values to break ties
         }
     };
 

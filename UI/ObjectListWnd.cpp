@@ -28,7 +28,6 @@
 #include <GG/Layout.h>
 
 #include <boost/lexical_cast.hpp>
-#include <boost/locale.hpp>
 //TODO: replace with std::make_unique when transitioning to C++14
 #include <boost/smart_ptr/make_unique.hpp>
 
@@ -1796,12 +1795,6 @@ private:
 };
 
 namespace {
-    const std::locale& GetLocale() {
-        static boost::locale::generator gen;
-        static std::locale loc = gen("en_US.UTF-8");    // should sort accented latin letters reasonably
-        return loc;
-    }
-
     struct CustomRowCmp {
         bool operator()(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column) {
             const std::string& lhs_key = lhs.SortKey(column);
@@ -1813,8 +1806,13 @@ namespace {
                 float rhs_val = rhs_key.empty() ? 0.0f : boost::lexical_cast<float>(rhs_key);
                 return lhs_val < rhs_val;
             } catch (...) {
-                return GetLocale().operator()(static_cast<const ObjectRow&>(lhs).SortKey(column),
-                                              static_cast<const ObjectRow&>(rhs).SortKey(column));
+#if defined(FREEORION_MACOSX)
+                // Collate on OSX seemingly ignores greek characters, resulting in sort order: X α I, X β I, X α II
+                return lhs_key < rhs_key;
+#else
+                return GetLocale("en_US.UTF-8").operator()(static_cast<const ObjectRow&>(lhs).SortKey(column),
+                                                           static_cast<const ObjectRow&>(rhs).SortKey(column));
+#endif
             }
         }
     };
