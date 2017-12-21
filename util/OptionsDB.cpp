@@ -530,41 +530,41 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
         for (const XMLElement& child : elem.children)
             SetFromXMLRecursive(child, option_name);
 
-    } else {
-        auto it = m_options.find(option_name);
+    }
 
-        if (it == m_options.end() || !it->second.recognized) {
-            // Store unrecognized option to be parsed later if this options is added.
-            if (elem.Text().length() == 0) { // empty string: may be a flag
-                m_options[option_name] = Option(static_cast<char>(0), option_name, true,
-                                                boost::lexical_cast<std::string>(false),
-                                                "", 0, true, true, false);
-            } else { // otherwise just store the string to be parsed later
-                m_options[option_name] = Option(static_cast<char>(0), option_name,
-                                                elem.Text(), elem.Text(), "",
-                                                new Validator<std::string>(),
-                                                true, false, false);
-            }
+    auto it = m_options.find(option_name);
 
-            TraceLogger() << "Option \"" << option_name << "\", was in config.xml but was not recognized.  It may not be registered yet or you may need to delete your config.xml if it is out of date.";
-            m_dirty = true;
+    if (it == m_options.end() || !it->second.recognized) {
+        if (elem.Text().length() == 0) {
+            // do not retain empty XML options
             return;
+        } else {
+            // Store unrecognized option to be parsed later if this options is added.
+            m_options[option_name] = Option(static_cast<char>(0), option_name,
+                                            elem.Text(), elem.Text(),
+                                            "", new Validator<std::string>(),
+                                            true, false, false);
         }
 
-        Option& option = it->second;
-        //if (!option.flag && option.value.empty()) {
-        //    ErrorLogger() << "The value member of option \"" << option.name << "\" in config.xml is undefined.";
-        //    return;
-        //}
+        TraceLogger() << "Option \"" << option_name << "\", was in config.xml but was not recognized.  It may not be registered yet or you may need to delete your config.xml if it is out of date.";
+        m_dirty = true;
+        return;
+    }
 
-        if (option.flag) {
-            option.value = true;
-        } else {
-            try {
-                m_dirty |= option.SetFromString(elem.Text());
-            } catch (const std::exception& e) {
-                ErrorLogger() << "OptionsDB::SetFromXMLRecursive() : while processing config.xml the following exception was caught when attempting to set option \"" << option_name << "\": " << e.what();
-            }
+    Option& option = it->second;
+    //if (!option.flag && option.value.empty()) {
+    //    ErrorLogger() << "The value member of option \"" << option.name << "\" in config.xml is undefined.";
+    //    return;
+    //}
+
+    if (option.flag) {
+        static auto lexical_true_str = boost::lexical_cast<std::string>(true);
+        option.value = static_cast<bool>(elem.Text() == lexical_true_str);
+    } else {
+        try {
+            m_dirty |= option.SetFromString(elem.Text());
+        } catch (const std::exception& e) {
+            ErrorLogger() << "OptionsDB::SetFromXMLRecursive() : while processing config.xml the following exception was caught when attempting to set option \"" << option_name << "\": " << e.what();
         }
     }
 }
