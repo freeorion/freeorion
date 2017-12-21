@@ -558,7 +558,8 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
     //}
 
     if (option.flag) {
-        option.value = true;
+        static auto lexical_true_str = boost::lexical_cast<std::string>(true);
+        option.value = static_cast<bool>(elem.Text() == lexical_true_str);
     } else {
         try {
             m_dirty |= option.SetFromString(elem.Text());
