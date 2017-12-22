@@ -13,7 +13,6 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
 from EnumsAI import PriorityType, get_priority_resource_types, FocusType
 import PlanetUtilsAI
-import random
 import ColonisationAI
 import AIDependencies
 import CombatRatingsAI
@@ -33,10 +32,6 @@ _focus_names = {INDUSTRY: "Industry", RESEARCH: "Research", GROWTH: "Growth", PR
 
 # TODO use the priorityRatio to weight
 RESEARCH_WEIGHTING = 2.3
-
-limitAssessments = False
-
-lastFociCheck = [0]
 
 
 class PlanetFocusInfo(object):
@@ -698,39 +693,32 @@ def set_planet_resource_foci():
     """set resource focus of planets """
 
     Reporter.print_resource_ai_header()
-    turn = fo.currentTurn()
-    # set the random seed (based on galaxy seed, empire ID and current turn)
-    # for game-reload consistency
-    freq = min(3., (max(5, turn - 80)) / 4.0) ** (1.0 / 3)
-    if not (limitAssessments and (abs(turn - lastFociCheck[0]) < 1.5 * freq) and (random.random() < 1.0 / freq)):
-        lastFociCheck[0] = turn
-        resource_timer.start("Filter")
-        resource_timer.start("Priority")
-        # TODO: take into acct splintering of resource groups
-        production_priority = foAI.foAIstate.get_priority(PriorityType.RESOURCE_PRODUCTION)
-        research_priority = foAI.foAIstate.get_priority(PriorityType.RESOURCE_RESEARCH)
-        priority_ratio = float(research_priority) / (production_priority + 0.0001)
+    resource_timer.start("Priority")
+    # TODO: take into acct splintering of resource groups
+    production_priority = foAI.foAIstate.get_priority(PriorityType.RESOURCE_PRODUCTION)
+    research_priority = foAI.foAIstate.get_priority(PriorityType.RESOURCE_RESEARCH)
+    priority_ratio = float(research_priority) / (production_priority + 0.0001)
 
-        focus_manager = PlanetFocusManager()
+    focus_manager = PlanetFocusManager()
 
-        reporter = Reporter(focus_manager)
-        reporter.capture_section_info("Unfocusable")
+    reporter = Reporter(focus_manager)
+    reporter.capture_section_info("Unfocusable")
 
-        set_planet_growth_specials(focus_manager)
-        set_planet_production_and_research_specials(focus_manager)
-        reporter.capture_section_info("Specials")
+    set_planet_growth_specials(focus_manager)
+    set_planet_production_and_research_specials(focus_manager)
+    reporter.capture_section_info("Specials")
 
-        focus_manager.calculate_planet_infos(focus_manager.raw_planet_info.keys())
+    focus_manager.calculate_planet_infos(focus_manager.raw_planet_info.keys())
 
-        set_planet_protection_foci(focus_manager)
-        reporter.capture_section_info("Protection")
+    set_planet_protection_foci(focus_manager)
+    reporter.capture_section_info("Protection")
 
-        set_planet_industry_and_research_foci(focus_manager, priority_ratio)
-        reporter.capture_section_info("Typical")
+    set_planet_industry_and_research_foci(focus_manager, priority_ratio)
+    reporter.capture_section_info("Typical")
 
-        reporter.print_table(priority_ratio)
+    reporter.print_table(priority_ratio)
 
-        resource_timer.stop_print_and_clear()
+    resource_timer.stop_print_and_clear()
 
     Reporter.print_resource_ai_footer()
 
