@@ -118,6 +118,23 @@ namespace {
         return true;
     }
     bool dummy = RegisterWndFlags();
+
+    std::string WindowNameFromOption(const std::string& option_name) {
+        std::string::size_type prefix_len { std::string("ui.").length() };
+
+        // Determine end of window name from start of window mode
+        std::string::size_type mode_substr_pos { option_name.find(".fullscreen", prefix_len + 1) };
+        if (mode_substr_pos == std::string::npos) {
+            mode_substr_pos = option_name.find(".windowed", prefix_len + 1);
+            if (mode_substr_pos == std::string::npos) {
+                ErrorLogger() << "Could not determine window name from option " << option_name;
+                return {};
+            }
+        }
+
+        std::string::size_type name_len = mode_substr_pos - prefix_len;
+        return option_name.substr(prefix_len, name_len);
+    }
 }
 
 const GG::Y CUIWnd::BUTTON_TOP_OFFSET(3);
@@ -873,9 +890,7 @@ void CUIWnd::InvalidateWindowOptions(const std::string& config_name) {
 void CUIWnd::InvalidateUnusedOptions() {
     OptionsDB& db = GetOptionsDB();
     std::string prefix("ui.");
-    std::string suffix_used(".initialized"); // this is present if the options are being used by a window
     std::string suffix_exist(".left");
-    std::string window_mode = GetOptionsDB().Get<bool>("video.fullscreen.enabled") ? ".fullscreen." : ".windowed.";
 
     // Remove unrecognized options from the DB so that their values aren't
     // applied when they are eventually registered.
@@ -889,11 +904,11 @@ void CUIWnd::InvalidateUnusedOptions() {
         if (!boost::algorithm::find_last(option, suffix_exist))
             continue;
         // If the ".left" option is registered, the rest are implied to be there.
-        if (option.rfind(suffix_exist) == option.length() - suffix_exist.length() && db.OptionExists(option)) {
-            std::string name = option.substr(prefix.length(), option.length() - window_mode.length() - prefix.length() - suffix_exist.length());
+        if ((option.rfind(suffix_exist) == (option.length() - suffix_exist.length())) && db.OptionExists(option)) {
+            auto window_name = WindowNameFromOption(option);
             // If the ".initialized" option isn't present under this name, remove the options.
-            if (window_options.find(prefix + name + suffix_used) == window_options.end()) {
-                InvalidateWindowOptions(name);
+            if (!window_name.empty() && window_options.find(prefix + window_name + ".initialized") == window_options.end()) {
+                InvalidateWindowOptions(window_name);
             }
         }
     }
