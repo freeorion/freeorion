@@ -1614,9 +1614,12 @@ SpeciesSelector::SpeciesSelector(const std::string& preselect_species, GG::X w, 
 
     if (!this->Empty()) {
         // Add an option for random selection
-        Insert(GG::Wnd::Create<SpeciesRow>("RANDOM", UserString("GSETUP_RANDOM"),
-                                           UserString("GSETUP_SPECIES_RANDOM_DESC"), w, h - 4,
-                                           ClientUI::GetTexture(ClientUI::ArtDir() / "icons/unknown.png")));
+        auto rand_species_it = Insert(GG::Wnd::Create<SpeciesRow>(
+            "RANDOM", UserString("GSETUP_RANDOM"), UserString("GSETUP_SPECIES_RANDOM_DESC"), w, h - 4,
+            ClientUI::GetTexture(ClientUI::ArtDir() / "icons/unknown.png")));
+
+        if (preselect_species == "RANDOM")
+            Select(rand_species_it);
     }
 
     if (!Empty() && CurrentItem() == end()) {
