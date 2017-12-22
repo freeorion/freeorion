@@ -570,7 +570,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
     # smallest possible ratio of research to industry with an all industry focus
     maxi_ratio = cumulative_rp / max(0.01, cumulative_pp)
 
-    for adj_round in [2, 3, 4]:
+    for adj_round in [1, 2, 3, 4]:
         for pid, pinfo in focus_manager.raw_planet_info.items():
             ii, tr = pinfo.possible_output[INDUSTRY]
             ri, rr = pinfo.possible_output[RESEARCH]
@@ -579,6 +579,12 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
             # calculate factor F at which ii + F * tr == ri + F * rr =====> F = ( ii-ri ) / (rr-tr)
             factor = (ii - ri) / max(0.01, rr - tr)  # don't let denominator be zero for planets where focus doesn't change RP
             planet = pinfo.planet
+            if adj_round == 1:  # take research at planets that can not use industry focus
+                if INDUSTRY not in pinfo.planet.availableFoci:
+                    target_pp += ri
+                    target_rp += rr
+                    focus_manager.bake_future_focus(pid, RESEARCH, False)
+                continue
             if adj_round == 2:  # take research at planets with very cheap research
                 if (maxi_ratio < priority_ratio) and (target_rp < priority_ratio * cumulative_pp) and (factor <= 1.0):
                     target_pp += ri
