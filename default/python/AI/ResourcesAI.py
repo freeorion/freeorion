@@ -195,18 +195,21 @@ class Reporter(object):
             new_industry_target += future_pp
             new_research_target += future_rp
 
-            industry_pp, industry_rp = pinfo.possible_output[INDUSTRY] if INDUSTRY in pinfo.possible_output else (future_pp, future_rp)
+            industry_pp, industry_rp = (pinfo.possible_output[INDUSTRY] if INDUSTRY in pinfo.possible_output
+                                        else (future_pp, future_rp))
             all_industry_industry_target += industry_pp
             all_industry_research_target += industry_rp
 
-            research_pp, research_rp = pinfo.possible_output[RESEARCH] if RESEARCH in pinfo.possible_output else (future_pp, future_rp)
+            research_pp, research_rp = (pinfo.possible_output[RESEARCH] if RESEARCH in pinfo.possible_output
+                                        else (future_pp, future_rp))
             all_research_industry_target += research_pp
             all_research_research_target += research_rp
 
         print "-----------------------------------"
-        print "Planet Focus Assignments to achieve target RP/PP ratio of %.2f from current target ratio of %.2f ( %.1f / %.1f )" \
-            % (priority_ratio, current_research_target / (current_industry_target + 0.0001),
-               current_research_target, current_industry_target)
+        print ("Planet Focus Assignments to achieve target RP/PP ratio of %.2f"
+               " from current target ratio of %.2f ( %.1f / %.1f )" % (
+                priority_ratio, current_research_target / (current_industry_target + 0.0001),
+                current_research_target, current_industry_target))
         print "Max Industry assignments would result in target RP/PP ratio of %.2f ( %.1f / %.1f )" \
             % (all_industry_research_target / (all_industry_industry_target + 0.0001),
                all_industry_research_target, all_industry_industry_target)
@@ -223,7 +226,8 @@ class Reporter(object):
         self.print_table_header()
 
         for title, id_set in self.sections:
-            print Reporter.table_format % (("---------- " + title + " ------------------------------")[:33], "", "", "", "", "")
+            print Reporter.table_format % (("---------- " + title + " ------------------------------")[:33],
+                                           "", "", "", "", "")
             id_set.sort()  # pay sort cost only when printing
             for pid in id_set:
                 pinfo = self.focus_manager.baked_planet_info[pid]
@@ -309,13 +313,13 @@ def weighted_sum_output(outputs):
     return outputs[0] + RESEARCH_WEIGHTING * outputs[1]
 
 
-def assess_protection_focus(pid, pinfo):
+def assess_protection_focus(pinfo):
     """Return True if planet should use Protection Focus."""
     this_planet = pinfo.planet
     sys_status = foAI.foAIstate.systemStatus.get(this_planet.systemID, {})
     threat_from_supply = (0.25 * foAI.foAIstate.empire_standard_enemy_rating *
                           min(2, len(sys_status.get('enemies_nearly_supplied', []))))
-    print "Planet %s has regional+supply threat of %.1f" % ('P_%d<%s>' % (pid, this_planet.name), threat_from_supply)
+    print "%s has regional+supply threat of %.1f" % (this_planet, threat_from_supply)
     regional_threat = sys_status.get('regional_threat', 0) + threat_from_supply
     if not regional_threat:  # no need for protection
         if pinfo.current_focus == PROTECTION:
@@ -367,12 +371,13 @@ def assess_protection_focus(pid, pinfo):
           (cur_troops * AIDependencies.PROT_FOCUS_MULTIPLIER < max_troops - 2)):
         use_protection = False
         reason = "B2"
-    elif max(max_shield, max_troops, max_defense) < 3:  # joke defenses, don't bother with protection focus
+    elif max(max_shield, max_troops, max_defense) < 3:
+        # joke defenses, don't bother with protection focus
         use_protection = False
         reason = "C"
     elif regional_threat and local_production_diff <= 2.0:
+        use_protection = True
         reason = "D"
-        pass  # i.e., use_protection = True
     elif safety_factor * regional_threat <= local_fleet_rating:
         use_protection = False
         reason = "E"
@@ -392,8 +397,8 @@ def assess_protection_focus(pid, pinfo):
     if use_protection or pinfo.current_focus == PROTECTION:
         print ("Advising %sProtection Focus (reason %s) for planet %s, with local_prod_diff of %.1f, comb. local"
                " defenses %.1f, local fleet rating %.1f and regional threat %.1f, threat sources: %s") % (
-                   ["dropping ", ""][use_protection], reason, this_planet, local_production_diff, combined_local_defenses,
-                   local_fleet_rating, regional_threat, sys_status['regional_fleet_threats'])
+                ["dropping ", ""][use_protection], reason, this_planet, local_production_diff, combined_local_defenses,
+                local_fleet_rating, regional_threat, sys_status['regional_fleet_threats'])
     return use_protection
 
 
@@ -473,23 +478,23 @@ def set_planet_production_and_research_specials(focus_manager):
     Sets production/research specials for known (COMPUTRONIUM, HONEYCOMB and CONC_CAMP)
     production/research specials.
     Remove planets from list of candidates using bake_future_focus."""
-    # TODO remove reliance on rules knowledge.  Just scan for specials with production
-    # and research bonuses and use what you find. Perhaps maintain a list
-    # of know types of specials
     # TODO use "best" COMPUTRON planet instead of first found, where "best" means least industry loss,
     # least threatened, no foci change penalty etc.
     universe = fo.getUniverse()
     already_have_comp_moon = False
     for pid, pinfo in focus_manager.raw_planet_info.items():
         planet = pinfo.planet
-        if AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials and RESEARCH in planet.availableFoci and not already_have_comp_moon:
+        if (AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials and 
+                RESEARCH in planet.availableFoci and not already_have_comp_moon):
             if focus_manager.bake_future_focus(pid, RESEARCH):
                 already_have_comp_moon = True
-                print "%s focus of planet %s (%d) (with Computronium Moon) at Research Focus" % (["set", "left"][pinfo.current_focus == RESEARCH], planet.name, pid)
+                print "%s focus of planet %s (%d) (with Computronium Moon) at Research Focus" % (
+                    ["set", "left"][pinfo.current_focus == RESEARCH], planet.name, pid)
                 continue
         if "HONEYCOMB_SPECIAL" in planet.specials and INDUSTRY in planet.availableFoci:
             if focus_manager.bake_future_focus(pid, INDUSTRY):
-                print "%s focus of planet %s (%d) (with Honeycomb) at Industry Focus" % (["set", "left"][pinfo.current_focus == INDUSTRY], planet.name, pid)
+                print "%s focus of planet %s (%d) (with Honeycomb) at Industry Focus" % (
+                    ["set", "left"][pinfo.current_focus == INDUSTRY], planet.name, pid)
                 continue
         if ((([bld.buildingTypeName for bld in map(universe.getBuilding, planet.buildingIDs) if bld.buildingTypeName in
                ["BLD_CONC_CAMP", "BLD_CONC_CAMP_REMNANT"]])
@@ -497,7 +502,8 @@ def set_planet_production_and_research_specials(focus_manager):
                   ["CONC_CAMP_MASTER_SPECIAL", "CONC_CAMP_SLAVE_SPECIAL"]]))
                 and INDUSTRY in planet.availableFoci):
             if focus_manager.bake_future_focus(pid, INDUSTRY):
-                print "%s focus of planet %s (%d) (with Concentration Camps/Remnants) at Industry Focus" % (["set", "left"][pinfo.current_focus == INDUSTRY], planet.name, pid)
+                print "%s focus of planet %s (%d) (with Concentration Camps/Remnants) at Industry Focus" % (
+                    ["set", "left"][pinfo.current_focus == INDUSTRY], planet.name, pid)
                 continue
             else:
                 new_planet = universe.getPlanet(pid)
@@ -511,25 +517,21 @@ def set_planet_protection_foci(focus_manager):
     universe = fo.getUniverse()
     for pid, pinfo in focus_manager.raw_planet_info.items():
         planet = pinfo.planet
-        if PROTECTION in planet.availableFoci and assess_protection_focus(pid, pinfo):
+        if PROTECTION in planet.availableFoci and assess_protection_focus(pinfo):
             current_focus = planet.focus
             if focus_manager.bake_future_focus(pid, PROTECTION):
                 if current_focus != PROTECTION:
-                    print ("Tried setting %s for planet %s (%d) with species %s and current focus %s, got result %d and focus %s" %
-                           (pinfo.future_focus, planet.name, pid, planet.speciesName, current_focus, True, planet.focus))
-                print "%s focus of planet %s (%d) at Protection(Defense) Focus" % (["set", "left"][current_focus == PROTECTION], planet.name, pid)
+                    print ("Tried setting %s for planet %s (%d) with species %s and current focus %s, "
+                           "got result %d and focus %s" % (pinfo.future_focus, planet.name, pid,
+                                                           planet.speciesName, current_focus, True, planet.focus))
+                print "%s focus of planet %s (%d) at Protection(Defense) Focus" % (
+                    ["set", "left"][current_focus == PROTECTION], planet.name, pid)
                 continue
             else:
                 newplanet = universe.getPlanet(pid)
                 warn("Failed setting %s for planet %s (%d) with species %s and current focus %s,"
                      " but new planet copy shows %s" % (focus_manager.new_foci[pid], planet.name, pid,
                                                         planet.speciesName, planet.focus, newplanet.focus))
-
-
-def set_planet_happiness_foci(focus_manager):
-    """Assess and set planet focus to preferred focus depending on happiness."""
-    # TODO Assess need to set planet to preferred focus to improve happiness
-    pass
 
 
 def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
@@ -577,7 +579,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
             ci, cr = pinfo.current_output
             research_penalty = AIDependencies.FOCUS_CHANGE_PENALTY if (pinfo.current_focus != RESEARCH) else 0
             # calculate factor F at which ii + F * tr == ri + F * rr =====> F = ( ii-ri ) / (rr-tr)
-            factor = (ii - ri) / max(0.01, rr - tr)  # don't let denominator be zero for planets where focus doesn't change RP
+            factor = (ii - ri) / max(0.01, rr - tr)
             planet = pinfo.planet
             if adj_round == 1:  # take research at planets that can not use industry focus
                 if INDUSTRY not in pinfo.planet.availableFoci:
@@ -595,7 +597,8 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
                 # if this planet in range where temporary Research focus ("research dithering") can get some additional
                 # RP at a good PP cost, and still need some RP, then consider doing it.
                 # Won't really work if AI has researched Force Energy Structures (meters fall too fast)
-                #TODO: add similar decision points by which research-rich planets might possibly choose to dither for industry points
+                # TODO: add similar decision points by which research-rich planets
+                # might possibly choose to dither for industry points
                 if any((has_force,
                         not foAI.foAIstate.character.may_dither_focus_to_gain_research(),
                         target_rp >= priority_ratio * cumulative_pp)):
@@ -649,31 +652,39 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
     got_algo = tech_is_complete("LRN_ALGO_ELEGANCE")
     for ratio, pid, pinfo in ratios:
         if priority_ratio < (target_rp / (target_pp + 0.0001)):  # we have enough RP
-            if ratio < 1.1 and foAI.foAIstate.character.may_research_heavily():  # but wait, RP is still super cheap relative to PP, maybe will take more RP
-                if priority_ratio < 1.5 * (target_rp / (target_pp + 0.0001)):  # yeah, really a glut of RP, stop taking RP
+            if ratio < 1.1 and foAI.foAIstate.character.may_research_heavily():
+                # but wait, RP is still super cheap relative to PP, maybe will take more RP
+                if priority_ratio < 1.5 * (target_rp / (target_pp + 0.0001)):
+                    # yeah, really a glut of RP, stop taking RP
                     break
             else:  # RP not super cheap & we have enough, stop taking it
                 break
         ii, tr = pinfo.possible_output[INDUSTRY]
         ri, rr = pinfo.possible_output[RESEARCH]
-        # if focus_manager.current_focus[pid] == MFocus:
-        # ii = max( ii, focus_manager.possible_output[MFocus][0] )
         if ((ratio > 2.0 and target_pp < 15 and got_algo) or
-            (ratio > 2.5 and target_pp < 25 and ii > 5 and got_algo) or
-            (ratio > 3.0 and target_pp < 40 and ii > 5 and got_algo) or
-            (ratio > 4.0 and target_pp < 100 and ii > 10) or
-            ((target_rp + rr - tr) / max(0.001, target_pp - ii + ri) > 2 * priority_ratio)):  # we already have algo elegance and more RP would be too expensive, or overkill
+                (ratio > 2.5 and target_pp < 25 and ii > 5 and got_algo) or
+                (ratio > 3.0 and target_pp < 40 and ii > 5 and got_algo) or
+                (ratio > 4.0 and target_pp < 100 and ii > 10) or
+                ((target_rp + rr - tr) / max(0.001, target_pp - ii + ri) > 2 * priority_ratio)):
+            # we already have algo elegance and more RP would be too expensive, or overkill
             if not printed_header:
                 printed_header = True
                 print "Rejecting further Research Focus choices as too expensive:"
-                print "%34s|%20s|%15s |%15s|%15s |%15s |%15s" % ("                      Planet ", " current RP/PP ", " current target RP/PP ", "current Focus ", "  rejectedFocus ", " rejected target RP/PP ", "rejected RP-PP EQF")
+                print "%34s|%20s|%15s |%15s|%15s |%15s |%15s" % ("                      Planet ",
+                                                                 " current RP/PP ", " current target RP/PP ",
+                                                                 "current Focus ", "  rejectedFocus ",
+                                                                 " rejected target RP/PP ", "rejected RP-PP EQF")
             old_focus = pinfo.current_focus
             c_pp, c_rp = pinfo.current_output
             ot_pp, ot_rp = pinfo.possible_output[old_focus]
             nt_pp, nt_rp = pinfo.possible_output[RESEARCH]
-            print "pID (%3d) %22s | c: %5.1f / %5.1f | cT: %5.1f / %5.1f |  cF: %8s | nF: %8s | cT: %5.1f / %5.1f | %.2f" % (pid, pinfo.planet.name, c_rp, c_pp, ot_rp, ot_pp, _focus_names.get(old_focus, 'unknown'), _focus_names[RESEARCH], nt_rp, nt_pp, ratio)
-            continue  # RP is getting too expensive, but might be willing to still allocate from a planet with less PP to lose
-        # if focus_manager.planet_map[pid].currentMeterValue(fo.meterType.targetPopulation) >0: #only set to research if pop won't die out
+            print ("pID (%3d) %22s | c: %5.1f / %5.1f | cT: %5.1f / %5.1f"
+                   " |  cF: %8s | nF: %8s | cT: %5.1f / %5.1f | %.2f" % (
+                    pid, pinfo.planet.name, c_rp, c_pp, ot_rp, ot_pp,
+                    _focus_names.get(old_focus, 'unknown'),
+                    _focus_names[RESEARCH], nt_rp, nt_pp, ratio))
+            # RP is getting too expensive, but might be willing to still allocate from a planet with less PP to lose
+            continue
         focus_manager.bake_future_focus(pid, RESEARCH, False)
         target_rp += (rr - tr)
         target_pp -= (ii - ri)
@@ -690,14 +701,12 @@ def set_planet_resource_foci():
     turn = fo.currentTurn()
     # set the random seed (based on galaxy seed, empire ID and current turn)
     # for game-reload consistency
-    freq = min(3, (max(5, turn - 80)) / 4.0) ** (1.0 / 3)
+    freq = min(3., (max(5, turn - 80)) / 4.0) ** (1.0 / 3)
     if not (limitAssessments and (abs(turn - lastFociCheck[0]) < 1.5 * freq) and (random.random() < 1.0 / freq)):
         lastFociCheck[0] = turn
         resource_timer.start("Filter")
         resource_timer.start("Priority")
         # TODO: take into acct splintering of resource groups
-        # fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
-        # fleetSupplyablePlanetIDs = PlanetUtilsAI.get_planets_in__systems_ids(fleetSupplyableSystemIDs)
         production_priority = foAI.foAIstate.get_priority(PriorityType.RESOURCE_PRODUCTION)
         research_priority = foAI.foAIstate.get_priority(PriorityType.RESOURCE_RESEARCH)
         priority_ratio = float(research_priority) / (production_priority + 0.0001)
@@ -716,9 +725,6 @@ def set_planet_resource_foci():
         set_planet_protection_foci(focus_manager)
         reporter.capture_section_info("Protection")
 
-        set_planet_happiness_foci(focus_manager)
-        reporter.capture_section_info("Happiness")
-
         set_planet_industry_and_research_foci(focus_manager, priority_ratio)
         reporter.capture_section_info("Typical")
 
@@ -732,20 +738,6 @@ def set_planet_resource_foci():
 def generate_resources_orders():
     """generate resources focus orders"""
 
-    # calculate top resource priority
-    # topResourcePriority()
-
-    # set resource foci of planets
-    # setCapitalIDResourceFocus()
-
-    # -----------------------------
-    # setGeneralPlanetResourceFocus()
     set_planet_resource_foci()
 
-    # ------------------------------
-    # setAsteroidsResourceFocus()
-
-    # setGasGiantsResourceFocus()
-
     Reporter.print_resources_priority()
-    # print "ResourcesAI Time Requirements:"
