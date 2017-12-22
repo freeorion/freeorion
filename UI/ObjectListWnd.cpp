@@ -1796,9 +1796,11 @@ private:
 
 namespace {
     struct CustomRowCmp {
-        bool operator()(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column) {
-            const std::string& lhs_key = lhs.SortKey(column);
-            const std::string& rhs_key = rhs.SortKey(column);
+        bool operator()(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs,
+                        std::size_t column)
+        {
+            auto lhs_key = lhs.SortKey(column);
+            auto rhs_key = rhs.SortKey(column);
             try {
                 // attempt to cast sort keys to floats, so that number-aware
                 // sorting can be done for columns that contain numbers
@@ -1810,8 +1812,7 @@ namespace {
                 // Collate on OSX seemingly ignores greek characters, resulting in sort order: X α I, X β I, X α II
                 return lhs_key < rhs_key;
 #else
-                return GetLocale("en_US.UTF-8").operator()(static_cast<const ObjectRow&>(lhs).SortKey(column),
-                                                           static_cast<const ObjectRow&>(rhs).SortKey(column));
+                return GetLocale("en_US.UTF-8").operator()(lhs_key, rhs_key);
 #endif
             }
         }
