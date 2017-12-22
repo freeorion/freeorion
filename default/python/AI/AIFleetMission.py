@@ -62,6 +62,32 @@ class AIFleetMission(object):
         self.type = None
         self.target = None
 
+    def __setstate__(self, state):
+        target_type = state.pop("target_type")
+        if state["target"] is not None:
+            object_map = {Planet.object_name: Planet,
+                          System.object_name: System,
+                          Fleet.object_name: Fleet}
+            state["target"] = object_map[target_type](state["target"])
+
+        state["fleet"] = Fleet(state["fleet"])
+        self.__dict__ = state
+
+    def __getstate__(self):
+        retval = dict(self.__dict__)
+        # do only store the fleet id not the Fleet object
+        retval["fleet"] = self.fleet.id
+
+        # store target type and id rather than the object
+        if self.target is not None:
+            retval["target_type"] = self.target.object_name
+            retval["target"] = self.target.id
+        else:
+            retval["target_type"] = None
+            retval["target"] = None
+
+        return retval
+
     def set_target(self, mission_type, target):
         """
         Set mission and target for this fleet.

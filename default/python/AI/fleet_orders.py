@@ -87,6 +87,26 @@ class AIFleetOrder(object):
         self.executed = False
         self.order_issued = False
 
+    def __setstate__(self, state):
+        # construct the universe objects from stored ids
+        state["fleet"] = Fleet(state["fleet"])
+        target_type = state.pop("target_type")
+        if state["target"] is not None:
+            assert self.TARGET_TYPE.object_name == target_type
+            state["target"] = self.TARGET_TYPE(state["target"])
+        self.__dict__ = state
+
+    def __getstate__(self):
+        retval = dict(self.__dict__)
+        # do not store the universe object but only the fleet id
+        retval['fleet'] = self.fleet.id
+        if self.target is not None:
+            retval["target"] = self.target.id
+            retval["target_type"] = self.target.object_name
+        else:
+            retval["target_type"] = None
+        return retval
+
     def ship_in_fleet(self):
         universe = fo.getUniverse()
         fleet = universe.getFleet(self.fleet.id)

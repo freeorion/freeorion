@@ -8,12 +8,13 @@ class EnumItem(int):
     def __new__(cls, *more):
         return super(EnumItem, cls).__new__(cls, more[0])
 
-    def __init__(self, number, name):
+    def __init__(self, number, name, enum_name):
         super(EnumItem, self).__init__(number)
         self.name = name
+        self.enum_name = enum_name
 
     def __str__(self):
-        return self.name
+        return "%s.%s" % (self.enum_name, self.name)
 
 
 class EnumMeta(type):
@@ -26,7 +27,7 @@ class EnumMeta(type):
 
         for k, v in attrs.items():
             if not k.startswith('_') and isinstance(v, (int, long)):
-                attrs[k] = EnumItem(v, k)
+                attrs[k] = EnumItem(v, k, name)
         return super_new(cls, name, bases, attrs)
 
 
@@ -43,6 +44,15 @@ class Enum(object):
                 if isinstance(value, EnumItem) and value in current_range:
                     result.append(value)
         return sorted(result)
+
+    @classmethod
+    def has_item(cls, item):
+        """Return True if specified item is a member of the enum
+
+        :type item: EnumItem
+        :rtype: bool
+        """
+        return hasattr(cls, item.name) and isinstance(getattr(cls, item.name), EnumItem)
 
 
 class PriorityType(Enum):

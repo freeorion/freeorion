@@ -1,5 +1,6 @@
 import copy
 from collections import Counter, OrderedDict as odict
+from operator import itemgetter
 from time import time
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -62,18 +63,10 @@ def convert_to_version(state, version):
     if version != current_version + 1:
         raise ConversionError("Can't skip a compatibility version when converting AI savegame.")
 
-    if version == 0:
-        pass  # only version number added
-    elif version == 1:
-        try:
-            state['_aggression'] = state['character'].get_trait(Aggression).key
-        except Exception as e:
-            raise ConversionError("Error when converting to compatibility version 1: "
-                                  "Can't find aggression in character module. Exception thrown was: " + e.message)
-    elif version == 2:
-        # some dicts which used only the keys were changed to sets
-        for var_name in ['visInteriorSystemIDs', 'exploredSystemIDs', 'visBorderSystemIDs', 'unexploredSystemIDs']:
-            state[var_name] = set(state.get(var_name, {}).keys())
+    # Starting with version 3, we switched from pickle to json-style encoding
+    # Do not try to load an older savegame even if it magically passed the encoder.
+    if version <= 3:
+        raise ConversionError("The AI savegame version is no longer supported.")
 
     #   state["some_new_member"] = some_default_value
     #   del state["some_removed_member"]
@@ -93,7 +86,7 @@ class AIstate(object):
     is playable with this AIstate version, i.e. new members must be added
     and outdated members must be modified and / or deleted.
     """
-    version = 2
+    version = 3
 
     def __init__(self, aggression):
         # Do not allow to create AIstate instances with an invalid version number.
@@ -162,7 +155,6 @@ class AIstate(object):
         try:
             for v in range(state.get("version", -1), AIstate.version):
                 convert_to_version(state, v+1)
-            self.__dict__ = state
         except ConversionError:
             if '_aggression' in state:
                 aggression = state['_aggression']
@@ -173,6 +165,16 @@ class AIstate(object):
                     error("Could not find the aggression level of the AI, defaulting to typical.", exc_info=True)
                     aggression = fo.aggression.typical
             self.__init__(aggression)
+            return
+
+        # build the ordered dict with sorted entries from the (unsorted) dict
+        # that is contained in the savegame state.
+        for content in ("colonisablePlanetIDs", "colonisableOutpostIDs"):
+            sorted_planets = sorted(state[content].items(),
+                                    key=itemgetter(1), reverse=True)
+            state[content] = odict(sorted_planets)
+
+        self.__dict__ = state
 
     def generate_uid(self, first=False):
         """

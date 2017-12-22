@@ -6,7 +6,6 @@ from common.configure_logging import redirect_logging_to_freeorion_logger, conve
 redirect_logging_to_freeorion_logger()
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger()
 
-import pickle  # Python object serialization library
 import sys
 import random
 
@@ -126,15 +125,19 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
         foAIstate = AIstate.AIstate(fo.aggression.aggressive)
         foAIstate.session_start_cleanup()
     else:
+        import savegame_codec
         try:
             # loading saved state
-            # pre load code
-            foAIstate = pickle.loads(saved_state_string)
+            foAIstate = savegame_codec.load_savegame_string(saved_state_string)
         except Exception as e:
             # assigning new state
             foAIstate = AIstate.AIstate(fo.aggression.aggressive)
             foAIstate.session_start_cleanup()
-            error("Fail to load aiState from saved game: %s" % e, exc_info=True)
+            error("Failed to load the AIstate from the savegame. The AI will"
+                  " play with a fresh AIstate instance with aggression level set"
+                  " to 'aggressive'. The behaviour of the AI may be different"
+                  " than in the original session. The error raised was: %s"
+                  % e, exc_info=True)
 
     aggression_trait = foAIstate.character.get_trait(Aggression)
     diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
@@ -160,13 +163,15 @@ def prepareForSave():  # pylint: disable=invalid-name
     info("Preparing for game save by serializing state")
 
     # serialize (convert to string) global state dictionary and send to AI client to be stored in save file
+    import savegame_codec
     try:
-        dump_string = pickle.dumps(foAIstate)
-        print "foAIstate pickled to string, about to send to server"
+        dump_string = savegame_codec.build_savegame_string()
         fo.setSaveStateString(dump_string)
-    except:
-        error("foAIstate unable to pickle save-state string; "
-              "the save file should be playable but the AI may have a different aggression.", exc_info=True)
+    except Exception as e:
+        error("Failed to encode the AIstate as save-state string. "
+              "The resulting save file should be playable but the AI "
+              "may have a different aggression. The error raised was: %s"
+              % e, exc_info=True)
 
 
 def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
