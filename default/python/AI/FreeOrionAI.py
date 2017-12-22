@@ -13,7 +13,7 @@ import random
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 
 
-from common.option_tools import parse_config
+from common.option_tools import parse_config, get_option_dict
 parse_config(fo.getOptionsDBOptionStr("ai-config"), fo.getUserConfigDir())
 
 from freeorion_tools import patch_interface
@@ -183,7 +183,7 @@ def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
 
     # debug("Received chat message from " + str(senderID) + " that says: " + messageText + " - ignoring it")
     # perhaps it is a debugging interaction
-    if handle_debug_chat(sender_id, message_text):
+    if get_option_dict().get('allow_debug_chat', False) and handle_debug_chat(sender_id, message_text):
         return
     if not diplomatic_corp:
         DiplomaticCorp.handle_pregame_chat(sender_id, message_text)
