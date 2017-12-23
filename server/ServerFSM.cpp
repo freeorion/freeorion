@@ -540,16 +540,21 @@ MPLobby::~MPLobby()
 
 void MPLobby::TestHumanPlayers() {
     int human_count = 0;
+    int ai_count = 0;
     for (const auto& plr : m_lobby_data->m_players) {
-        if (plr.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+        if (plr.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
             human_count++;
-        }
+        else if (plr.second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+            ai_count++;
     }
 
-    // restrict minimun number of human players
+    // restrict minimun number of human and ai players
     if (human_count < GetOptionsDB().Get<int>("network.server.human.min")) {
         m_lobby_data->m_start_locked = true;
         m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_NOT_ENOUGH_HUMAN_PLAYERS");
+    } else if (ai_count < GetOptionsDB().Get<int>("network.server.ai.min")) {
+        m_lobby_data->m_start_locked = true;
+        m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_NOT_ENOUGH_AI_PLAYERS");
     } else {
         m_lobby_data->m_start_locked = false;
         m_lobby_data->m_start_lock_cause.clear();

@@ -977,6 +977,9 @@ Player name %1% already in use.
 ERROR_WRONG_PASSWORD
 Password wrong for player name %1%.
 
+ERROR_NOT_ENOUGH_AI_PLAYERS
+Not enough AI players.
+
 ERROR_NOT_ENOUGH_HUMAN_PLAYERS
 Not enough human players.
 
@@ -1233,6 +1236,9 @@ Address to connect to when joining a multiplayer game.
 
 OPTIONS_DB_MP_PLAYER_NAME
 Player name to use when hosting or joining a multiplayer game.
+
+OPTIONS_DB_MP_AI_MIN
+Set the minimum number of ai players required to start a multiplayer game.
 
 OPTIONS_DB_MP_AI_MAX
 Limit the number of AIs allowed in a multiplayer game. Set to -1 for unlimited.
