@@ -512,7 +512,7 @@ MPLobby::MPLobby(my_context c) :
             server.Networking().Disconnect(player_connection);
         }
 
-        TestHumanPlayers();
+        ValidateClientLimits();
 
         server.Networking().SendMessageAll(ServerLobbyUpdateMessage(*m_lobby_data));
     } else {
@@ -538,7 +538,7 @@ MPLobby::MPLobby(my_context c) :
 MPLobby::~MPLobby()
 { TraceLogger(FSM) << "(ServerFSM) ~MPLobby"; }
 
-void MPLobby::TestHumanPlayers() {
+void MPLobby::ValidateClientLimits() {
     int human_count = 0;
     int ai_count = 0;
     for (const auto& plr : m_lobby_data->m_players) {
@@ -608,7 +608,7 @@ sc::result MPLobby::react(const Disconnection& d) {
         return discard_event();
     }
 
-    TestHumanPlayers();
+    ValidateClientLimits();
 
     // send updated lobby data to players after disconnection-related changes
     for (auto it = server.m_networking.established_begin();
@@ -684,7 +684,7 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         { server.Networking().Disconnect(conn); }
     }
 
-    TestHumanPlayers();
+    ValidateClientLimits();
 
     player_connection->SetAuthRoles({
                     Networking::ROLE_CLIENT_TYPE_MODERATOR,
@@ -1127,7 +1127,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         }
     }
 
-    TestHumanPlayers();
+    ValidateClientLimits();
     if(m_lobby_data->m_start_locked) {
         has_important_changes = true;
     }

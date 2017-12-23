@@ -203,7 +203,7 @@ private:
                          const std::string& player_name,
                          Networking::ClientType client_type,
                          const std::string& client_version_string);
-    void TestHumanPlayers();
+    void ValidateClientLimits();
 
     SERVER_ACCESSOR
 };
