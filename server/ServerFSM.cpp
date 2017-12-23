@@ -549,9 +549,13 @@ void MPLobby::ValidateClientLimits() {
     }
 
     // restrict minimun number of human and ai players
+    auto max_human_clients = GetOptionsDB().Get<int>("network.server.human.max");
     if (human_count < GetOptionsDB().Get<int>("network.server.human.min")) {
         m_lobby_data->m_start_locked = true;
         m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_NOT_ENOUGH_HUMAN_PLAYERS");
+    } else if (max_human_clients >= 0 && human_count > max_human_clients) {
+        m_lobby_data->m_start_locked = true;
+        m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_TOO_MANY_HUMAN_PLAYERS");
     } else if (ai_count < GetOptionsDB().Get<int>("network.server.ai.min")) {
         m_lobby_data->m_start_locked = true;
         m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_NOT_ENOUGH_AI_PLAYERS");
