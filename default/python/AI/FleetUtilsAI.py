@@ -146,11 +146,13 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
                     continue
 
             # all checks passed, add ship to selected fleets and update the stats
-            fleet_list.append(fleet_id)
             try:
                 fleet_pool_set.remove(fleet_id)
             except KeyError:
                 error("After having split a fleet, the original fleet apparently no longer exists.", exc_info=True)
+                continue
+            fleet_list.append(fleet_id)
+
             this_rating = foAI.foAIstate.get_rating(fleet_id)
             cur_stats['rating'] = CombatRatingsAI.combine_ratings(cur_stats.get('rating', 0), this_rating)
             if 'ratingVsPlanets' in target_stats:
