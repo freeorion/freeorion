@@ -456,6 +456,7 @@ MPLobby::MPLobby(my_context c) :
 
         m_lobby_data->m_any_can_edit = true;
 
+        auto max_ai = GetOptionsDB().Get<int>("network.server.ai.max");
         std::list<PlayerConnectionPtr> to_disconnect;
         // Try to use connections:
         for (const auto& player_connection : server.m_networking) {
@@ -488,7 +489,7 @@ MPLobby::MPLobby(my_context c) :
                                 Networking::ROLE_GALAXY_SETUP
                                 });
             } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
-                if (m_ai_next_index <= GetOptionsDB().Get<int>("mplobby-max-ai") || GetOptionsDB().Get<int>("mplobby-max-ai") < 0) {
+                if (m_ai_next_index <= max_ai || max_ai < 0) {
                     PlayerSetupData player_setup_data;
                     player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
                     player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
@@ -546,7 +547,7 @@ void MPLobby::TestHumanPlayers() {
     }
 
     // restrict minimun number of human players
-    if (human_count < GetOptionsDB().Get<int>("mplobby-min-human")) {
+    if (human_count < GetOptionsDB().Get<int>("network.server.human.min")) {
         m_lobby_data->m_start_locked = true;
         m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_NOT_ENOUGH_HUMAN_PLAYERS");
     } else {
@@ -993,7 +994,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             }
 
             // limit count of AI
-            if (ai_count <= GetOptionsDB().Get<int>("mplobby-max-ai") || GetOptionsDB().Get<int>("mplobby-max-ai") < 0) {
+            auto max_ai = GetOptionsDB().Get<int>("network.server.ai.max");
+            if (ai_count <= max_ai || max_ai < 0) {
                 m_lobby_data->m_players    = incoming_lobby_data.m_players;
             } else {
                 has_important_changes = true;

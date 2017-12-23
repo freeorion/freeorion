@@ -1110,12 +1110,6 @@ Démarre le serveur en mode sans hôte. Le serveur accepte les joueurs dans le s
 OPTIONS_DB_SKIP_CHECKSUM
 Ignore le contrôle du dossier de ressources. Ceci permet un démarrage plus rapide lorsque le client et le serveur se trouve sur la même machine, utilisant le même dossier de ressources.
 
-OPTIONS_DB_MPLOBBY_MAX_AI
-Limite le nombre d'IAs dans une partie multijoueurs. Une valeur de -1 correspond à un nombre illimité.
-
-OPTIONS_DB_MPLOBBY_MIN_HUMAN
-Définit le nombre minimum de joueurs humains requis pour démarrer une partie multijoueurs.
-
 OPTIONS_DB_GENERATE_CONFIG_XML
 Génère un fichier config.xml à partir des réglages contenus dans les fichiers config.xml existants et donnés dans la ligne de commande. Ceci écrasera le fichier config.xml actuel, s'il existe.
 
@@ -1225,6 +1219,12 @@ Adresse à laquelle se connecter pour rejoindre une partie multijoueurs.
 
 OPTIONS_DB_MP_PLAYER_NAME
 Nom utilisé par le joueur lorsqu'il héberge ou rejoint une partie multijoueurs.
+
+OPTIONS_DB_MP_AI_MAX
+Limite le nombre d'IAs dans une partie multijoueurs. Une valeur de -1 correspond à un nombre illimité.
+
+OPTIONS_DB_MP_HUMAN_MIN
+Définit le nombre minimum de joueurs humains requis pour démarrer une partie multijoueurs.
 
 OPTIONS_DB_UI_MAIN_MENU_X
 Position horizontale du centre du menu principal de l'écran d'introduction, en pourcentage de la largeur totale de la fenêtre de jeu ou du plein écran.
