@@ -6690,6 +6690,5 @@ Ewiger September
 #[[SHIP_NAME_UNSORTED_MYTHOLOGY]]
 #[[SHIP_NAME_DEVS]]'''
 
-#include "../global_settings.txt"
 #include "../content_specific_parameters.txt"
 #include "../customizations/common_user_customizations.txt"

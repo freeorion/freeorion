@@ -4240,6 +4240,5 @@ Un casco diseñado para crear una colonia en otro planeta del sistema.  No puede
 ## Name lists
 ##
 
-#include "../global_settings.txt"
 #include "../content_specific_parameters.txt"
 #include "../customizations/common_user_customizations.txt"
