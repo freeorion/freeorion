@@ -1855,6 +1855,83 @@ Network port to use for client-server messaging.
 
 
 ##
+## Option sections
+##
+
+OPTIONS_DB_SECTION_ALL
+All options
+
+OPTIONS_DB_SECTION_AUDIO
+Audio
+
+OPTIONS_DB_SECTION_AUDIO_MUSIC
+Background music
+
+OPTIONS_DB_SECTION_AUDIO_EFFECTS
+Sound effects
+
+OPTIONS_DB_SECTION_AUDIO_EFFECTS_PATHS
+Sound effect paths
+
+OPTIONS_DB_SECTION_EFFECTS
+Effects
+
+OPTIONS_DB_SECTION_LOGGING
+Logging
+
+OPTIONS_DB_SECTION_MISC
+Miscellaneous
+
+OPTIONS_DB_SECTION_NETWORK
+Network and server
+
+OPTIONS_DB_SECTION_RAW
+All options with only raw description keys
+
+OPTIONS_DB_SECTION_RESOURCE
+Game data resources
+
+OPTIONS_DB_SECTION_SAVE
+Save game
+
+OPTIONS_DB_SECTION_SETUP
+New game starting settings
+
+OPTIONS_DB_SECTION_UI
+User interface
+
+OPTIONS_DB_SECTION_UI_CONTROL
+Control (generic)
+
+OPTIONS_DB_SECTION_UI_MAP
+Main map
+
+OPTIONS_DB_SECTION_UI_MAP_FLEET
+Fleets (map)
+
+OPTIONS_DB_SECTION_UI_FLEET
+Fleet window
+
+OPTIONS_DB_UI_WINDOW
+Window (generic)
+
+OPTIONS_DB_SECTION_VERSION
+Version
+
+OPTIONS_DB_SECTION_VIDEO
+Video
+
+OPTIONS_DB_SECTION_VIDEO_FPS
+Frames per second
+
+OPTIONS_DB_SECTION_VIDEO_FULLSCREEN
+Fullscreen mode
+
+OPTIONS_DB_SECTION_VIDEO_WINDOWED
+Windowed mode
+
+
+##
 ## File dialog
 ##
 
