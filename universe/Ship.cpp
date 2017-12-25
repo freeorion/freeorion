@@ -114,7 +114,7 @@ void Ship::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_
     }
 
     int copied_object_id = copied_object->ID();
-    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
+    auto vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
     auto visible_specials = GetUniverse().GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
 
     UniverseObject::Copy(copied_object, vis, visible_specials);;
@@ -124,7 +124,7 @@ void Ship::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_
             // as with other containers, removal from the old container is triggered by the contained Object; removal from System is handled by UniverseObject::Copy
             if (auto old_fleet = GetFleet(this->m_fleet_id))
                 old_fleet->RemoveShip(this->ID());
-            this->m_fleet_id = copied_ship->m_fleet_id; // as with other containers (Systems), actual insertion into fleet ships set is handled by the fleet
+            this->m_fleet_id =              copied_ship->m_fleet_id; // as with other containers (Systems), actual insertion into fleet ships set is handled by the fleet
         }
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
