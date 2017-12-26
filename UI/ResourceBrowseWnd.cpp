@@ -250,9 +250,6 @@ WastedStockpiledResourceBrowseWnd::WastedStockpiledResourceBrowseWnd(
 
     m_show_stockpile(show_stockpile),
 
-    m_effic_label(GG::Wnd::Create<CUILabel>(UserString("RESOURCE_TT_STOCKPILE_EFFIC"), GG::FORMAT_RIGHT)),
-    m_effic(GG::Wnd::Create<CUILabel>(DoubleToString(stockpile_effic*100, 3, false), GG::FORMAT_LEFT)),
-    m_effic_P_label(GG::Wnd::Create<CUILabel>("%", GG::FORMAT_LEFT)),
     m_stockpile_label(GG::Wnd::Create<CUILabel>(UserString("RESOURCE_TT_TO_STOCKPILE"), GG::FORMAT_RIGHT)),
     m_stockpile(GG::Wnd::Create<CUILabel>(DoubleToString(to_stockpile, 3, false), GG::FORMAT_LEFT)),
     m_stockpile_P_label(GG::Wnd::Create<CUILabel>(unit_label, GG::FORMAT_LEFT)),
@@ -333,10 +330,6 @@ void WastedStockpiledResourceBrowseWnd::CompleteConstruction() {
     m_excess_P_label->Resize(P_LABEL_SIZE);
     top_left.y += m_excess_P_label->Height();
 
-
-    AttachChild(m_effic_label);
-    AttachChild(m_effic);
-    AttachChild(m_effic_P_label);
     AttachChild(m_stockpile_label);
     AttachChild(m_stockpile);
     AttachChild(m_stockpile_P_label);
@@ -345,14 +338,6 @@ void WastedStockpiledResourceBrowseWnd::CompleteConstruction() {
     AttachChild(m_wasted_P_label);
 
     if (m_show_stockpile) {
-        m_effic_label->MoveTo(GG::Pt(top_left.x + LEFT_TEXT_X, top_left.y));
-        m_effic_label->Resize(LABEL_TEXT_SIZE);
-        m_effic->MoveTo(GG::Pt(top_left.x + RIGHT_TEXT_X, top_left.y));
-        m_effic->Resize(VALUE_TEXT_SIZE);
-        m_effic_P_label->MoveTo(GG::Pt(top_left.x + P_LABEL_X, top_left.y));
-        m_effic_P_label->Resize(P_LABEL_SIZE);
-        top_left.y += m_effic_P_label->Height();
-
         m_stockpile_label->MoveTo(GG::Pt(top_left.x + LEFT_TEXT_X, top_left.y));
         m_stockpile_label->Resize(LABEL_TEXT_SIZE);
         m_stockpile->MoveTo(GG::Pt(top_left.x + RIGHT_TEXT_X, top_left.y));
@@ -370,9 +355,6 @@ void WastedStockpiledResourceBrowseWnd::CompleteConstruction() {
         top_left.y += m_wasted_P_label->Height();
 
     } else {
-        m_effic_label->Hide();
-        m_effic->Hide();
-        m_effic_P_label->Hide();
         m_stockpile_label->Hide();
         m_stockpile->Hide();
         m_stockpile_P_label->Hide();
