@@ -745,7 +745,9 @@ std::string SetShipPartMeter::Dump(unsigned short ntabs) const {
         case METER_MAX_CAPACITY:        retval += "SetMaxCapacity";     break;
         case METER_SECONDARY_STAT:      retval += "SetSecondaryStat";   break;
         case METER_MAX_SECONDARY_STAT:  retval += "SetMaxSecondaryStat";break;
-        default:                retval += "Set???";         break;
+        case METER_TERTIARY_STAT:       retval += "SetTertiaryStat";    break;
+        case METER_MAX_TERTIARY_STAT:   retval += "SetMaxTertiaryStat"; break;
+        default:                        retval += "Set???";             break;
     }
 
     if (m_part_name)
