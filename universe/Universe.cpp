@@ -1601,6 +1601,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
                 continue;
 
             TraceLogger(effects) << "\n\n * * * * * * * * * * * (new effects group log entry)";
+            TraceLogger(effects) << "EffectsGroup: " << effects_group->Dump();
 
             // execute Effects in the EffectsGroup
             effects_group->Execute(group_targets_causes,
