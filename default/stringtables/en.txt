@@ -4761,7 +4761,7 @@ Parts: %3%
 # %7% stealth
 # %8% starlane speed
 # %9% fuel
-# %10% population
+# %10% population / colony capacity
 # %11% troops
 # %12% fighters
 # %13% total damage per round of fighters
@@ -4772,14 +4772,16 @@ Parts: %3%
 # %18% mock enemy shields
 # %19% mock average attack strength
 # %20% mock average attack strength/pp
-# %21% total noisiness from all weapon types
+# %21% battle detection
+# %22% total noisiness from all weapon types
 ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
 '''
 For [[encyclopedia ENC_SPECIES]]: %1%
 Total [[encyclopedia DAMAGE_TITLE]]: %2%    [[PC_DIRECT_WEAPON]] Shots: %3%
-Total Noisiness: %21%
+Total Noisiness: %22%
 [[metertype METER_STRUCTURE]]: %4%    [[metertype METER_SHIELD]]: %5%
 [[metertype METER_DETECTION]]: %6%    [[metertype METER_STEALTH]]: %7%
+[[metertype METER_BATTLE_DETECTION]]: %21%
 [[metertype METER_SPEED]]: %8%    [[metertype METER_FUEL]] [[METER_CAPACITY]]: %9%
 Colonization [[METER_CAPACITY]]: %10%    [[metertype METER_TROOPS]]: %11%
 [[OBJ_FIGHTER]] [[encyclopedia DAMAGE_TITLE]]: %13%    [[ENC_SDD_HANGAR]]: %12%    [[ENC_SDD_BAY]]: %14%
