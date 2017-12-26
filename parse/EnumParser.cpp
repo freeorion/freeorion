@@ -215,6 +215,7 @@ namespace parse {
             =   tok.SetMaxCapacity_         [ _val = METER_MAX_CAPACITY ]
             |   tok.SetMaxDamage_           [ _val = METER_MAX_CAPACITY ]
             |   tok.SetMaxSecondaryStat_    [ _val = METER_MAX_SECONDARY_STAT ]
+            |   tok.SetMaxTertiaryStat_     [ _val = METER_MAX_TERTIARY_STAT ]
             |   tok.SetCapacity_            [ _val = METER_CAPACITY ]
             |   tok.SetDamage_              [ _val = METER_CAPACITY ]
             |   tok.SetSecondaryStat_       [ _val = METER_SECONDARY_STAT ]

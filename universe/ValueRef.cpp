@@ -2028,8 +2028,19 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
             return 0.0;
 
         return part_type->SecondaryStat();
-
     }
+    else if (variable_name == "PartTertiaryStat") {
+        std::string part_type_name;
+        if (m_string_ref1)
+            part_type_name = m_string_ref1->Eval(context);
+
+        const PartType* part_type = GetPartType(part_type_name);
+        if (!part_type)
+            return 0.0;
+
+        return part_type->TertiaryStat();
+    }
+
     else if (variable_name == "EmpireMeterValue") {
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1)
@@ -2550,7 +2561,8 @@ std::string ComplexVariable<double>::Dump(unsigned short ntabs) const
              variable_name == "HullStructure" ||
              variable_name == "HullSpeed" ||
              variable_name == "PartCapacity" ||
-             variable_name == "PartSecondaryStat")
+             variable_name == "PartSecondaryStat" ||
+             variable_name == "PartTertiaryStat")
     {
         if (!m_string_ref1)
             retval += " name = " + m_string_ref1->Dump(ntabs);

@@ -43,6 +43,7 @@ namespace parse {
                 |   tok.HullSpeed_          [ _a = construct<std::string>(_1) ]
                 |   tok.PartCapacity_       [ _a = construct<std::string>(_1) ]
                 |   tok.PartSecondaryStat_  [ _a = construct<std::string>(_1) ]
+                |   tok.PartTertiaryStat_   [ _a = construct<std::string>(_1) ]
               ) >   labeller.rule(Name_token) > string_grammar [ _d = _1 ]
                 [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                         _a,
