@@ -86,7 +86,8 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 #endif
 #ifndef FREEORION_MACOSX
     // did the player request help output?
-    if (GetOptionsDB().Get<bool>("help")) {
+    auto help_arg = GetOptionsDB().Get<std::string>("help");
+    if (help_arg != "NOOP") {
         ShutdownLoggingSystemFileSink();
         GetOptionsDB().GetUsage(std::cout);
         return 0;   // quit without actually starting game
@@ -119,7 +120,8 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
     try {
 #endif
         // add entries in options DB that have no other obvious place
-        GetOptionsDB().AddFlag('h', "help",                         UserStringNop("OPTIONS_DB_HELP"),                   false);
+        GetOptionsDB().Add<std::string>('h', "help",                UserStringNop("OPTIONS_DB_HELP"),                   "NOOP",
+                                        Validator<std::string>(),                                                       false);
         GetOptionsDB().AddFlag('v', "version",                      UserStringNop("OPTIONS_DB_VERSION"),                false);
         GetOptionsDB().AddFlag('g', "generate-config-xml",          UserStringNop("OPTIONS_DB_GENERATE_CONFIG_XML"),    false);
         GetOptionsDB().AddFlag('f', "video.fullscreen.enabled",     UserStringNop("OPTIONS_DB_FULLSCREEN"),             STORE_FULLSCREEN_FLAG);

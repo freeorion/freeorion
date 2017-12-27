@@ -82,8 +82,8 @@ FO_COMMON_API OptionsDB& GetOptionsDB();
   * options.  All flag command-line options (specified with AddFlag()) are
   * assumed to have false as their default value.  This means that their mere
   * presence on the command line means that they indicate a value of true;
-  * they need no argument.  For example, specifying "--help" on the command
-  * line sets the option "help" in the DB to true, and leaving it out sets the
+  * they need no argument.  For example, specifying "--version" on the command
+  * line sets the option "version" in the DB to true, and leaving it out sets the
   * option to false.
   * <br><br>Long-form names should be preceded with "--", and the
   * single-character version should be preceded with "-".  An exception to this

@@ -25,7 +25,8 @@ int main(int argc, char *argv[])
     }
 
     // did the player request help output?
-    if (GetOptionsDB().Get<bool>("help")) {
+    auto help_arg = GetOptionsDB().Get<std::string>("help");
+    if (help_arg ! "NOOP") {
         GetOptionsDB().GetUsage(std::cerr);
         return 0;   // quit without actually starting game
     }
