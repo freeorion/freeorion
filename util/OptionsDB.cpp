@@ -254,6 +254,9 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
         throw std::runtime_error("The longest parameter name leaves no room for a description.");
 
     for (const auto& option : m_options) {
+        if (!boost::algorithm::starts_with(option.first, command_line))
+            continue;
+
         // Ignore unrecognized options that have not been formally registered
         // with Add().
         if (!option.second.recognized)

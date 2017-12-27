@@ -65,7 +65,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 
         auto help_arg = GetOptionsDB().Get<std::string>("help");
         if (help_arg != "NOOP") {
-            GetOptionsDB().GetUsage(std::cerr);
+            GetOptionsDB().GetUsage(std::cerr, help_arg);
             ShutdownLoggingSystemFileSink();
             return 0;
         }

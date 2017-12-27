@@ -89,7 +89,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     auto help_arg = GetOptionsDB().Get<std::string>("help");
     if (help_arg != "NOOP") {
         ShutdownLoggingSystemFileSink();
-        GetOptionsDB().GetUsage(std::cout);
+        GetOptionsDB().GetUsage(std::cout, help_arg);
         return 0;   // quit without actually starting game
     }
 
