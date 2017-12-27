@@ -176,7 +176,7 @@ public:
     std::shared_ptr<const ValidatorBase> GetValidator(const std::string& option_name) const;
 
     /** writes a usage message to \a os */
-    void        GetUsage(std::ostream& os, const std::string& command_line = "") const;
+    void        GetUsage(std::ostream& os, const std::string& command_line = "", bool allow_unrecognized = false) const;
 
     /** @brief  Saves the contents of the options DB to the @p doc XMLDoc.
      *

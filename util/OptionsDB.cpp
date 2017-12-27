@@ -238,7 +238,7 @@ std::shared_ptr<const ValidatorBase> OptionsDB::GetValidator(const std::string& 
     return it->second.validator;
 }
 
-void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = ""*/) const {
+void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool allow_unrecognized) const {
     os << UserString("COMMAND_LINE_USAGE") << command_line << "\n";
 
     int longest_param_name = 0;
@@ -259,7 +259,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
 
         // Ignore unrecognized options that have not been formally registered
         // with Add().
-        if (!option.second.recognized)
+        if (!allow_unrecognized && !option.second.recognized)
             continue;
 
         if (option.second.short_name)
