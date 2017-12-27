@@ -462,10 +462,11 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
 
                 if (!option.flag) { // non-flag
                     try {
-                        // ensure a parameter exists...
-                        if (i + 1 >= static_cast<unsigned int>(args.size()))
-                            throw std::runtime_error("the option \"" + option.name +
-                                                     "\" was specified, at the end of the list, with no parameter value.");
+                        // check if parameter exists...
+                        if (i + 1 >= static_cast<unsigned int>(args.size())) {
+                            m_dirty |= option.SetFromString("");
+                            continue;
+                        }
                         // get parameter value
                         std::string value_str(args[++i]);
                         StripQuotation(value_str);
@@ -511,10 +512,14 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                         throw std::runtime_error("The value member of option \"--" + option.name + "\" is undefined.");
 
                     if (!option.flag) {
-                        if (j < single_char_options.size() - 1)
+                        if (j < single_char_options.size() - 1) {
                             throw std::runtime_error(std::string("Option \"-") + single_char_options[j] + "\" was given with no parameter.");
-                        else
-                            m_dirty |= option.SetFromString(args[++i]);
+                        } else {
+                            if (i + 1 >= static_cast<unsigned int>(args.size()))
+                                m_dirty |= option.SetFromString("");
+                            else
+                                m_dirty |= option.SetFromString(args[++i]);
+                        }
                     } else {
                         option.value = true;
                     }
