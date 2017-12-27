@@ -397,78 +397,92 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool
     OverrideAllLoggersThresholds(LogLevel::warn);
 
     auto options_by_section = OptionsBySection(allow_unrecognized);
-    if (!command_line.empty()) {
+    if (!command_line.empty() || command_line == "all" || command_line == "raw") {
         // remove the root section if unneeded
         if (options_by_section.find("root") != options_by_section.end())
             options_by_section.erase("root");
     }
 
     // print description of command_line arg as section
-    auto command_section_it = m_sections.find(command_line);
-    if (command_section_it != m_sections.end() && !command_section_it->second.description.empty())
-        os << UserString(command_section_it->second.description) << " ";
+    if (command_line == "all") {
+        os << UserString("OPTIONS_DB_SECTION_ALL") << " ";
+    } else if (command_line == "raw") {
+        os << UserString("OPTIONS_DB_SECTION_RAW") << " ";
+    } else {
+        auto command_section_it = m_sections.find(command_line);
+        if (command_section_it != m_sections.end() && !command_section_it->second.description.empty())
+            os << UserString(command_section_it->second.description) << " ";
+    }
 
     bool print_misc_section = command_line.empty();
     std::set<std::string> section_list {};
     // print option sections
-    std::size_t name_col_width = 20;
-    if (command_line.empty()) {
-        auto root_it = options_by_section.find("root");
-        if (root_it != options_by_section.end()) {
-            for (const auto& section : root_it->second)
-                if (section.find_first_of(".") == std::string::npos)
-                    if (section_list.emplace(section).second && name_col_width < section.size())
-                        name_col_width = section.size();
+    if (command_line != "all" && command_line != "raw") {
+        std::size_t name_col_width = 20;
+        if (command_line.empty()) {
+            auto root_it = options_by_section.find("root");
+            if (root_it != options_by_section.end()) {
+                for (const auto& section : root_it->second)
+                    if (section.find_first_of(".") == std::string::npos)
+                        if (section_list.emplace(section).second && name_col_width < section.size())
+                            name_col_width = section.size();
+            }
+        } else {
+            for (const auto& it : options_by_section)
+                if (OptionNameHasParentSection(it.first, command_line))
+                    if (section_list.emplace(it.first).second && name_col_width < it.first.size())
+                        name_col_width = it.first.size();
         }
-    } else {
-        for (const auto& it : options_by_section)
-            if (OptionNameHasParentSection(it.first, command_line))
-                if (section_list.emplace(it.first).second && name_col_width < it.first.size())
-                    name_col_width = it.first.size();
-    }
-    name_col_width += 5;
+        name_col_width += 5;
 
-    if (!section_list.empty())
-        os << UserString("COMMAND_LINE_SECTIONS") << ":" << std::endl;
+        if (!section_list.empty())
+            os << UserString("COMMAND_LINE_SECTIONS") << ":" << std::endl;
 
-    auto indents = std::make_pair(2, name_col_width + 4);
-    auto widths = std::make_pair(TERMINAL_LINE_WIDTH - name_col_width, TERMINAL_LINE_WIDTH);
-    for (const auto& section : section_list) {
-        if (section == "misc") {
-            print_misc_section = true;
-            continue;
+        auto indents = std::make_pair(2, name_col_width + 4);
+        auto widths = std::make_pair(TERMINAL_LINE_WIDTH - name_col_width, TERMINAL_LINE_WIDTH);
+        for (const auto& section : section_list) {
+            if (section == "misc") {
+                print_misc_section = true;
+                continue;
+            }
+            auto section_it = m_sections.find(section);
+            std::string descr = (section_it == m_sections.end()) ? "" : UserString(section_it->second.description);
+
+            os << std::setw(2) << "" // indent
+               << std::setw(name_col_width) << std::left << section // section name
+               << SplitText(descr, indents, widths); // section description
         }
-        auto section_it = m_sections.find(section);
-        std::string descr = (section_it == m_sections.end()) ? "" : UserString(section_it->second.description);
 
-        os << std::setw(2) << "" // indent
-            << std::setw(name_col_width) << std::left << section // section name
-            << SplitText(descr, indents, widths); // section description
+        if (print_misc_section) {
+            // Add special miscellaneous section to bottom
+            os << std::setw(2) << "" << std::setw(name_col_width) << std::left << "misc";
+            os << SplitText(UserString("OPTIONS_DB_SECTION_MISC"), indents, widths);
+        }
+
+        // add empty line between groups and options
+        if (!section_list.empty() && !print_misc_section)
+            os << std::endl;
     }
-
-    if (print_misc_section) {
-        // Add special miscellaneous section to bottom
-        os << std::setw(2) << "" << std::setw(name_col_width) << std::left << "misc";
-        os << SplitText(UserString("OPTIONS_DB_SECTION_MISC"), indents, widths);
-    }
-
-    // add empty line between groups and options
-    if (!section_list.empty() && !print_misc_section)
-        os << std::endl;
 
 
     // print options
     if (!command_line.empty()) {
         std::set<std::string> option_list;
-        auto option_section_it = options_by_section.find(command_line);
-        if (option_section_it != options_by_section.end())
-            option_list = option_section_it->second;
-        // allow traversal by node when no other results are found
-        if (option_list.empty() && section_list.empty())
-            FindOptions(option_list, command_line, allow_unrecognized);
+        if (command_line == "all" || command_line == "raw") {
+            for (const auto& option_section_it : options_by_section)
+                for (const auto& option : option_section_it.second)
+                    option_list.emplace(option);
+        } else {
+            auto option_section_it = options_by_section.find(command_line);
+            if (option_section_it != options_by_section.end())
+                option_list = option_section_it->second;
+            // allow traversal by node when no other results are found
+            if (option_list.empty() && section_list.empty())
+                FindOptions(option_list, command_line, allow_unrecognized);
+        }
 
         // insert command_line as option, if it exists
-        if (m_options.find(command_line) != m_options.end())
+        if (command_line != "all" && command_line != "raw" && m_options.find(command_line) != m_options.end())
             option_list.emplace(command_line);
 
         if (!option_list.empty())
@@ -479,24 +493,30 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool
             if (option_it == m_options.end() || (!allow_unrecognized && !option_it->second.recognized))
                 continue;
 
-            // option name(s)
-            if (option_it->second.short_name)
-                os << "-" << option_it->second.short_name << " | --" << option_name;
-            else
-                os << "--" << option_name;
+            if (command_line == "raw") {
+                os << option_name << ", " << option_it->second.description << "," << std::endl;
+                if (option_it->second.short_name)
+                    os << option_it->second.short_name << ", " << option_it->second.description << "," << std::endl;
+            } else {
+                // option name(s)
+                if (option_it->second.short_name)
+                    os << "-" << option_it->second.short_name << " | --" << option_name;
+                else
+                    os << "--" << option_name;
 
-            // option description
-            if (!option_it->second.description.empty())
-                os << std::endl << SplitText(UserString(option_it->second.description), {5, 7});
-            else
+                // option description
+                if (!option_it->second.description.empty())
+                    os << std::endl << SplitText(UserString(option_it->second.description), {5, 7});
+                else
+                    os << std::endl;
+
+                // option default value
+                if (option_it->second.validator) {
+                    auto validator_str = UserString("COMMAND_LINE_DEFAULT") + ": " + option_it->second.DefaultValueToString();
+                    os << SplitText(validator_str, {5, 7}, {TERMINAL_LINE_WIDTH - validator_str.size(), 77});
+                }
                 os << std::endl;
-
-            // option default value
-            if (option_it->second.validator) {
-                auto validator_str = UserString("COMMAND_LINE_DEFAULT") + ": " + option_it->second.DefaultValueToString();
-                os << SplitText(validator_str, {5, 7}, {TERMINAL_LINE_WIDTH - validator_str.size(), 77});
             }
-            os << std::endl;
         }
 
         if (section_list.empty() && option_list.empty()) {
