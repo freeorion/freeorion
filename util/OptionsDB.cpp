@@ -299,6 +299,9 @@ namespace {
 }
 
 void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool allow_unrecognized) const {
+    // Prevent logger output from garbling console display for low severity messages
+    OverrideAllLoggersThresholds(LogLevel::warn);
+
     os << UserString("COMMAND_LINE_USAGE") << command_line << "\n";
 
     for (const auto& option : m_options) {
@@ -323,6 +326,9 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool
         }
         os << "\n";
     }
+
+    // reset override in case this function is later repurposed
+    OverrideAllLoggersThresholds(boost::none);
 }
 
 void OptionsDB::GetXML(XMLDoc& doc, bool non_default_only) const {
