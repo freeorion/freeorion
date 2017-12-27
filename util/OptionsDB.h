@@ -393,6 +393,11 @@ public:
         std::function<bool (const std::string&)> option_predicate = nullptr;
     };
 
+    /** Defines an option section with a description and optionally a option predicate.
+     *  @param name Name of section, typically in the form of a left side subset of an option name.
+     *  @param description Stringtable key used for local description
+     *  @param option_predicate Functor accepting a option name in the form of a std::string const ref and
+     *                          returning a bool. Options which return true are displayed in the section for @p name */
     void AddSection(const std::string& name, const std::string& description,
                     std::function<bool (const std::string&)> option_predicate = nullptr);
 
