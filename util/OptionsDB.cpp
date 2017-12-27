@@ -298,6 +298,93 @@ namespace {
     }
 }
 
+std::unordered_map<std::string, std::set<std::string>> OptionsDB::OptionsBySection(bool allow_unrecognized) const {
+    // Determine sections after all predicate calls from known options
+    std::unordered_map<std::string, std::unordered_set<std::string>> sections_by_option;
+    for (const auto& option : m_options) {
+        if (!allow_unrecognized && !option.second.recognized)
+            continue;
+
+        for (const auto& section : option.second.sections)
+            sections_by_option[option.first].emplace(section);
+
+        for (auto& section : m_sections)
+            if (section.second.option_predicate && section.second.option_predicate(option.first))
+                sections_by_option[option.first].emplace(section.first);
+    }
+
+    // tally the total number of options under each section
+    std::unordered_map<std::string, std::size_t> total_options_per_section;
+    for (const auto& option_section : sections_by_option) {
+        auto option_name = option_section.first;
+        auto dot_it = option_name.find_first_of(".");
+        // increment count of each containing parent section
+        while (dot_it != std::string::npos) {
+            total_options_per_section[option_name.substr(0, dot_it)]++;
+            dot_it++;
+            dot_it = option_name.find_first_of(".", dot_it);
+        }
+    }
+
+    // sort options into common sections
+    std::unordered_map<std::string, std::set<std::string>> options_by_section;
+    for (const auto& option : sections_by_option) {
+        for (const auto& section : option.second) {
+            auto section_name = section;
+            auto defined_section_it = m_sections.find(section_name);
+            bool has_descr = defined_section_it != m_sections.end() ?
+                             !defined_section_it->second.description.empty() :
+                             false;
+
+            // move options from sparse sections to more common parent
+            auto section_count = total_options_per_section[section_name];
+            auto section_end_it = section_name.find_last_of(".");
+            while (!has_descr && section_count < 4 && section_end_it != std::string::npos) {
+                auto new_section_name = section_name.substr(0, section_end_it);
+                // prevent moving into dense sections
+                if (total_options_per_section[new_section_name] > ( 7 - section_count ))
+                    break;
+                total_options_per_section[section_name]--;
+                section_name = new_section_name;
+                section_end_it = section_name.find_last_of(".");
+                section_count = total_options_per_section[section_name];
+
+                defined_section_it = m_sections.find(section_name);
+                if (defined_section_it != m_sections.end())
+                    has_descr = !defined_section_it->second.description.empty();
+            }
+
+            options_by_section[section_name].emplace(option.first);
+        }
+    }
+
+    // define which section are top level sections ("root"), move top level candidates with single option to misc
+    for (const auto& section_it : total_options_per_section) {
+        auto root_name = section_it.first.substr(0, section_it.first.find_first_of("."));
+        // root_name with no dot element allowed to pass if an option is known, potentially moving to misc section
+        auto total_it = total_options_per_section.find(root_name);
+        if (total_it == total_options_per_section.end())
+            continue;
+
+        if (total_it->second > 1) {
+            options_by_section["root"].emplace(root_name);
+        } else if (section_it.first != "misc" &&
+                   section_it.first != "root" &&
+                   m_sections.find(section_it.first) == m_sections.end())
+        {
+            // move option to misc section
+            auto section_option_it = options_by_section.find(section_it.first);
+            if (section_option_it == options_by_section.end())
+                continue;
+            for (auto&& option : section_option_it->second)
+                options_by_section["misc"].emplace(std::move(option));
+            options_by_section.erase(section_it.first);
+        }
+    }
+
+    return options_by_section;
+}
+
 void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool allow_unrecognized) const {
     // Prevent logger output from garbling console display for low severity messages
     OverrideAllLoggersThresholds(LogLevel::warn);

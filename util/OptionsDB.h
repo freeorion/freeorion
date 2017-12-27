@@ -412,6 +412,10 @@ private:
 
     void        SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name);
 
+    /** Determine known option sections and which options each contains
+     *  A special "root" section is added for determined top-level sections */
+    std::unordered_map<std::string, std::set<std::string>> OptionsBySection(bool allow_unrecognized = false) const;
+
     std::map<std::string, Option>   m_options;
     std::unordered_map<std::string, OptionSection> m_sections;
     static OptionsDB*               s_options_db;
