@@ -217,6 +217,9 @@ std::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     case METER_SUPPLY:
     case METER_MAX_SUPPLY:
         icon_filename = "supply.png";       break;
+    case METER_STOCKPILE:
+    case METER_MAX_STOCKPILE:
+        icon_filename = "stockpile.png";    break;
     case METER_STEALTH:
         icon_filename = "stealth.png";      break;
     case METER_DETECTION:

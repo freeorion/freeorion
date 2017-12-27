@@ -209,6 +209,7 @@
     (MaxFuel)                                   \
     (MaximumNumberOf)                           \
     (MaxShield)                                 \
+    (MaxStockpile)                              \
     (MaxStructure)                              \
     (MaxSupply)                                 \
     (MaxTroops)                                 \
@@ -370,6 +371,7 @@
     (SetMaxFuel)                                \
     (SetMaxSecondaryStat)                       \
     (SetMaxShield)                              \
+    (SetMaxStockpile)                           \
     (SetMaxStructure)                           \
     (SetMaxSupply)                              \
     (SetMaxTroops)                              \
@@ -393,6 +395,7 @@
     (SetSpeed)                                  \
     (SetStarType)                               \
     (SetStealth)                                \
+    (SetStockpile)                              \
     (SetStructure)                              \
     (SetSupply)                                 \
     (SetTargetConstruction)                     \
@@ -468,6 +471,7 @@
     (Statistic)                                 \
     (StDev)                                     \
     (Stealth)                                   \
+    (Stockpile)                                 \
     (String)                                    \
     (StringList)                                \
     (Structure)                                 \

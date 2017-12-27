@@ -216,6 +216,8 @@ int Planet::SizeAsInt() const {
 void Planet::Init() {
     AddMeter(METER_SUPPLY);
     AddMeter(METER_MAX_SUPPLY);
+    AddMeter(METER_STOCKPILE);
+    AddMeter(METER_MAX_STOCKPILE);
     AddMeter(METER_SHIELD);
     AddMeter(METER_MAX_SHIELD);
     AddMeter(METER_DEFENSE);

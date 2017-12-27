@@ -2816,8 +2816,7 @@ namespace {
                 const auto meter_value = planet->InitialMeterValue(m_meter_type);
                 if (m_meter_type == METER_SUPPLY) {
                     total_meter_value = std::max(total_meter_value, meter_value);
-                }
-                else {
+                } else {
                     total_meter_value += meter_value;
                 }
                 auto value = GG::Wnd::Create<CUILabel>(DoubleToString(meter_value, 3, false));
@@ -3277,7 +3276,8 @@ void SidePanel::RefreshImpl() {
     const std::vector<std::pair<MeterType, MeterType>> resource_meters =
        {{METER_INDUSTRY, METER_TARGET_INDUSTRY},
         {METER_RESEARCH, METER_TARGET_RESEARCH},
-        {METER_TRADE,    METER_TARGET_TRADE}};
+        //{METER_TRADE,    METER_TARGET_TRADE},
+        {METER_STOCKPILE,METER_MAX_STOCKPILE}};
     // general meters; show only if all planets are owned by same empire
     const std::vector<std::pair<MeterType, MeterType>> general_meters =
        {{METER_SHIELD,  METER_MAX_SHIELD},

@@ -773,24 +773,10 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length) {
 }
 
 void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
-    std::map<MeterType, MeterType> meters;
-    meters[METER_POPULATION] =   METER_TARGET_POPULATION;
-    meters[METER_INDUSTRY] =     METER_TARGET_INDUSTRY;
-    meters[METER_RESEARCH] =     METER_TARGET_RESEARCH;
-    meters[METER_TRADE] =        METER_TARGET_TRADE;
-    meters[METER_CONSTRUCTION] = METER_TARGET_CONSTRUCTION;
-    meters[METER_HAPPINESS] =    METER_TARGET_HAPPINESS;
-    meters[METER_FUEL] =         METER_MAX_FUEL;
-    meters[METER_SHIELD] =       METER_MAX_SHIELD;
-    meters[METER_STRUCTURE] =    METER_MAX_STRUCTURE;
-    meters[METER_DEFENSE] =      METER_MAX_DEFENSE;
-    meters[METER_TROOPS] =       METER_MAX_TROOPS;
-    meters[METER_SUPPLY] =       METER_MAX_SUPPLY;
-
     // check for each pair of meter types.  if both exist, set active
     // meter current value equal to target meter current value.
     for (const auto& object : object_map) {
-        for (auto& entry : meters)
+        for (auto& entry : AssociatedMeterTypes())
             if (Meter* meter = object->GetMeter(entry.first))
                 if (Meter* targetmax_meter = object->GetMeter(entry.second))
                     meter->SetCurrent(targetmax_meter->Current());

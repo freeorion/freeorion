@@ -56,6 +56,8 @@ namespace {
         case METER_IMPERIAL_PP_USE_LIMIT:
         case METER_SUPPLY:
         case METER_MAX_SUPPLY:
+        case METER_STOCKPILE:
+        case METER_MAX_STOCKPILE:
         case METER_CONSTRUCTION:
         case METER_TARGET_CONSTRUCTION:
         case METER_POPULATION:

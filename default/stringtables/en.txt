@@ -5072,6 +5072,12 @@ METER_MAX_SUPPLY_VALUE_LABEL
 METER_MAX_SUPPLY_VALUE_DESC
 [[METER_SUPPLY_VALUE_DESC]]
 
+METER_MAX_STOCKPILE_VALUE_LABEL
+[[METER_STOCKPILE_VALUE_LABEL]]
+
+METER_MAX_STOCKPILE_VALUE_DESC
+[[METER_STOCKPILE_VALUE_DESC]]
+
 METER_MAX_TROOPS_VALUE_LABEL
 [[METER_TROOPS_VALUE_LABEL]]
 
@@ -5202,6 +5208,12 @@ Supply lines are shown by coloring star-lanes with an empire's color. Planets co
 A set of core supply starlanes for an empire (the set of least-jump starlanes connecting the resource-producing systems of each Resource Group) will have greater thickness than the non-core starlanes. If PP is currently being wasted within a Resource Group, the outer bands of the core starlanes will be a contrasting color.
 
 Supply lines can also be used to refill the [[metertype METER_FUEL]] supply of ships.'''
+
+METER_STOCKPILE_VALUE_LABEL
+Stockpile
+
+METER_STOCKPILE_VALUE_DESC
+'''The stockpile is useful...'''
 
 METER_TROOPS_VALUE_LABEL
 Troops
@@ -8327,6 +8339,10 @@ METER_MAX_SUPPLY
 Max Supply
 
 # Meter types
+METER_MAX_STOCKPILE
+Max Stockpile
+
+# Meter types
 METER_MAX_TROOPS
 Max Troops
 
@@ -8389,6 +8405,10 @@ Defense
 # Meter types
 METER_SUPPLY
 Supply
+
+# Meter types
+METER_STOCKPILE
+Stockpile
 
 # Meter types
 METER_TROOPS
