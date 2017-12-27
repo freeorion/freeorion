@@ -82,7 +82,7 @@ GameRules::Rule::Rule(RuleType rule_type_, const std::string& name_, const boost
                       const ValidatorBase *validator_, bool engine_internal_,
                       const std::string& category_) :
     OptionsDB::Option(static_cast<char>(0), name_, value_, default_value_,
-                      description_, validator_, engine_internal_, false, true),
+                      description_, validator_, engine_internal_, false, true, "setup.rules"),
     rule_type(rule_type_),
     category(category_)
 {}

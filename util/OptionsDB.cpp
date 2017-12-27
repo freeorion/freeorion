@@ -74,7 +74,8 @@ OptionsDB::Option::Option()
 
 OptionsDB::Option::Option(char short_name_, const std::string& name_, const boost::any& value_,
                           const boost::any& default_value_, const std::string& description_,
-                          const ValidatorBase* validator_, bool storable_, bool flag_, bool recognized_) :
+                          const ValidatorBase* validator_, bool storable_, bool flag_, bool recognized_,
+                          const std::string& section) :
     name(name_),
     short_name(short_name_),
     value(value_),
@@ -88,6 +89,15 @@ OptionsDB::Option::Option(char short_name_, const std::string& name_, const boos
 {
     if (short_name_)
         short_names[short_name_] = name;
+
+    auto name_it = name.rfind(".");
+    if (name_it != std::string::npos)
+        sections.emplace(name.substr(0, name_it));
+
+    if (!section.empty())
+        sections.emplace(section);
+    else if (sections.empty())
+        sections.emplace("misc");
 }
 
 bool OptionsDB::Option::SetFromString(const std::string& str) {
@@ -139,6 +149,18 @@ std::string OptionsDB::Option::DefaultValueToString() const {
         return boost::lexical_cast<std::string>(boost::any_cast<bool>(default_value));
 }
 
+
+/////////////////////////////////////////////
+// OptionsDB::OptionSection
+/////////////////////////////////////////////
+OptionsDB::OptionSection::OptionSection() = default;
+
+OptionsDB::OptionSection::OptionSection(const std::string& name_, const std::string& description_,
+                                        std::function<bool (const std::string&)> option_predicate_) :
+    name(name_),
+    description(description_),
+    option_predicate(option_predicate_)
+{}
 
 /////////////////////////////////////////////
 // OptionsDB
@@ -424,12 +446,12 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                 if (value_str.at(0) == '-') { // this is either the last parameter or the next parameter is another option, assume this one is a flag
                     m_options[option_name] = Option(static_cast<char>(0), option_name, true,
                                                     boost::lexical_cast<std::string>(false),
-                                                    "", 0, false, true, false);
+                                                    "", 0, false, true, false, std::string());
                 } else { // the next parameter is the value, store it as a string to be parsed later
                     m_options[option_name] = Option(static_cast<char>(0), option_name,
                                                     value_str, value_str, "",
                                                     new Validator<std::string>(),
-                                                    false, false, false); // don't attempt to store options that have only been specified on the command line
+                                                    false, false, false, std::string()); // don't attempt to store options that have only been specified on the command line
                 }
 
                 WarnLogger() << "Option \"" << option_name << "\", was specified on the command line but was not recognized.  It may not be registered yet or could be a typo.";
@@ -546,7 +568,7 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
             m_options[option_name] = Option(static_cast<char>(0), option_name,
                                             elem.Text(), elem.Text(),
                                             "", new Validator<std::string>(),
-                                            true, false, false);
+                                            true, false, false, section_name);
         }
 
         TraceLogger() << "Option \"" << option_name << "\", was in config.xml but was not recognized.  It may not be registered yet or you may need to delete your config.xml if it is out of date.";
@@ -569,6 +591,19 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
         } catch (const std::exception& e) {
             ErrorLogger() << "OptionsDB::SetFromXMLRecursive() : while processing config.xml the following exception was caught when attempting to set option \"" << option_name << "\": " << e.what();
         }
+    }
+}
+
+void OptionsDB::AddSection(const std::string& name, const std::string& description,
+                           std::function<bool (const std::string&)> option_predicate)
+{
+    auto insert_result = m_sections.emplace(name, OptionSection(name, description, option_predicate));
+    // if previously existing section, update description/predicate if empty/null
+    if (!insert_result.second) {
+        if (!description.empty() && insert_result.first->second.description.empty())
+            insert_result.first->second.description = description;
+        if (option_predicate != nullptr && insert_result.first->second.option_predicate == nullptr)
+            insert_result.first->second.option_predicate = option_predicate;
     }
 }
 
