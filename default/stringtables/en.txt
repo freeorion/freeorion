@@ -1089,11 +1089,20 @@ Starlanes are generated between every pair of systems, regardless of geometry. L
 ## Command-line and options database entries
 ##
 
+COMMAND_LINE_NOT_FOUND
+'''No options or sections found matching'''
+
 COMMAND_LINE_USAGE
-'''Usage: '''
+'''Usage: -h | --help [group name | option name]'''
 
 COMMAND_LINE_DEFAULT
 '''Default'''
+
+COMMAND_LINE_SECTIONS
+'''Option Groups'''
+
+COMMAND_LINE_OPTIONS
+'''Options'''
 
 OPTIONS_DB_HELP
 Print this help message.
