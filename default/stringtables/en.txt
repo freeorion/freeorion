@@ -1105,7 +1105,12 @@ COMMAND_LINE_OPTIONS
 '''Options'''
 
 OPTIONS_DB_HELP
-Print this help message.
+'''Print this help message.
+Accepts an argument for partial or full option name.
+Special arguments are provided for:
+all - [[OPTIONS_DB_SECTION_ALL]]
+raw - [[OPTIONS_DB_SECTION_RAW]]'''
+
 
 OPTIONS_DB_VERSION
 Print version and exit.
