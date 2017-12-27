@@ -1093,7 +1093,7 @@ COMMAND_LINE_USAGE
 '''Usage: '''
 
 COMMAND_LINE_DEFAULT
-'''Default: '''
+'''Default'''
 
 OPTIONS_DB_HELP
 Print this help message.

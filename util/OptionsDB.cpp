@@ -8,6 +8,7 @@
 #include "util/Directories.h"
 
 #include <iostream>
+#include <iomanip>
 #include <stdexcept>
 #include <string>
 
@@ -260,20 +261,45 @@ std::shared_ptr<const ValidatorBase> OptionsDB::GetValidator(const std::string& 
     return it->second.validator;
 }
 
+namespace {
+    const std::size_t TERMINAL_LINE_WIDTH = 80;
+
+    /** Breaks and indents text over multiple lines when it exceeds width limits
+     * @param text String to format, tokenized by spaces, tabs, and newlines (newlines retained but potentially indented)
+     * @param indents amount of space prior to text. First for initial line, second for any new lines.
+     * @param widths width to limit the text to. First for initial line, second for any new lines.
+     * @returns string Formatted results of @p text
+     */
+    std::string SplitText(const std::string& text, std::pair<std::size_t, std::size_t> indents = { 0, 0 },
+                          std::pair<std::size_t, std::size_t> widths = { TERMINAL_LINE_WIDTH, TERMINAL_LINE_WIDTH })
+    {
+        boost::char_separator<char> separator { " \t", "\n" };
+        boost::tokenizer<boost::char_separator<char>> tokens { text, separator };
+
+        std::vector<std::string> lines { "" };
+        for (const auto& token : tokens) {
+            if (token == "\n") 
+                lines.push_back("");
+            else if (widths.second < lines.back().size() + token.size() + indents.second)
+                lines.push_back(token + " ");
+            else if (!token.empty())
+                lines.back().append(token + " ");
+        }
+
+        std::string indent { std::string(indents.second, ' ') };
+        std::stringstream retval;
+        auto first_line = std::move(lines.front());
+        retval << std::string(indents.first, ' ') << first_line << std::endl;
+        for (auto line : lines)
+            if (!line.empty())
+                retval << indent << line << std::endl;
+
+        return retval.str();
+    }
+}
+
 void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool allow_unrecognized) const {
     os << UserString("COMMAND_LINE_USAGE") << command_line << "\n";
-
-    int longest_param_name = 0;
-    for (auto& option : m_options) {
-        if (longest_param_name < static_cast<int>(option.first.size()))
-            longest_param_name = option.first.size();
-    }
-
-    int description_column = 5;
-    int description_width = 80 - description_column;
-
-    if (description_width <= 0)
-        throw std::runtime_error("The longest parameter name leaves no room for a description.");
 
     for (const auto& option : m_options) {
         if (!boost::algorithm::starts_with(option.first, command_line))
@@ -289,32 +315,11 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool
         else
             os << "--" << option.second.name << "\n";
 
-        os << std::string(description_column - 1, ' ');
-
-        typedef boost::tokenizer<boost::char_separator<char>> Tokenizer;
-        boost::char_separator<char> separator(" \t");
-        Tokenizer tokens(UserString(option.second.description), separator);
-        int curr_column = description_column;
-        for (const auto& token : tokens) {
-            if (80 < curr_column + token.size()) {
-                os << "\n" << std::string(description_column, ' ') << token;
-                curr_column = description_column + token.size();
-            } else {
-                os << " " << token;
-                curr_column += token.size() + 1;
-            }
-        }
+        os << SplitText(UserString(option.second.description), {5, 7});
 
         if (option.second.validator) {
-            std::stringstream stream;
-            stream << UserString("COMMAND_LINE_DEFAULT") << option.second.DefaultValueToString();
-            if (80 < curr_column + stream.str().size() + 3) {
-                os << "\n" << std::string(description_column, ' ') << stream.str() << "\n";
-            } else {
-                os << " | " << stream.str() << "\n";
-            }
-        } else {
-            os << "\n";
+            auto default_str = UserString("COMMAND_LINE_DEFAULT") + ": " + option.second.DefaultValueToString();
+            os << SplitText(default_str, {5, 7}) << std::endl;
         }
         os << "\n";
     }
