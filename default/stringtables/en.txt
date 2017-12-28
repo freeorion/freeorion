@@ -1914,6 +1914,9 @@ New game starting settings
 OPTIONS_DB_SECTION_UI
 User interface
 
+OPTIONS_DB_SECTION_UI_COLORS
+Colors
+
 OPTIONS_DB_SECTION_UI_CONTROL
 Control (generic)
 
