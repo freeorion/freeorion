@@ -160,6 +160,12 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         GetOptionsDB().AddSection("save", UserStringNop("OPTIONS_DB_SECTION_SAVE"));
         GetOptionsDB().AddSection("setup", UserStringNop("OPTIONS_DB_SECTION_SETUP"));
         GetOptionsDB().AddSection("ui", UserStringNop("OPTIONS_DB_SECTION_UI"));
+        GetOptionsDB().AddSection("ui.hotkeys", UserStringNop("OPTIONS_DB_SECTION_UI_HOTKEYS"),
+                                  [](const std::string& name)->bool {
+                                      std::string suffix { ".hotkey" };
+                                      return name.size() > suffix.size() &&
+                                             name.substr(name.size() - suffix.size()) == suffix;
+                                  });
         GetOptionsDB().AddSection("version", UserStringNop("OPTIONS_DB_SECTION_VERSION"));
         GetOptionsDB().AddSection("video", UserStringNop("OPTIONS_DB_SECTION_VIDEO"));
         GetOptionsDB().AddSection("video.fullscreen", UserStringNop("OPTIONS_DB_SECTION_VIDEO_FULLSCREEN"));

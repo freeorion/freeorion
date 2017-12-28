@@ -1917,6 +1917,9 @@ User interface
 OPTIONS_DB_SECTION_UI_CONTROL
 Control (generic)
 
+OPTIONS_DB_SECTION_UI_HOTKEYS
+Hotkeys
+
 OPTIONS_DB_SECTION_UI_MAP
 Main map
 
