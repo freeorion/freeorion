@@ -1,0 +1,29 @@
+NO_STOCKPILE
+'''
+'''
+
+AVERAGE_STOCKPILE
+'''     EffectsGroup
+            scope = Source
+            activation = Planet
+            accountinglabel = "AVERAGE_STOCKPILE_LABEL"
+            effects = SetMaxStockpile value = Value + Target.Population * [[STOCKPILE_PER_POP]] * [[AVERAGE_MULTIPLIER]]
+'''
+
+GREAT_STOCKPILE
+'''     EffectsGroup
+            description = "GREAT_STOCKPILE_DESC"
+            scope = Source
+            activation = Planet
+            accountinglabel = "GREAT_STOCKPILE_LABEL"
+            effects = SetMaxStockpile value = Value + Target.Population * [[STOCKPILE_PER_POP]] * [[GREAT_MULTIPLIER]]
+'''
+
+ULTIMATE_STOCKPILE
+'''     EffectsGroup
+            description = "ULTIMATE_STOCKPILE_DESC"
+            scope = Source
+            activation = Planet
+            accountinglabel = "ULTIMATE_STOCKPILE_LABEL"
+            effects = SetMaxStockpile value = Value + Target.Population * [[STOCKPILE_PER_POP]] * [[ULTIMATE_MULTIPLIER]]
+'''

@@ -3,6 +3,9 @@
 INDUSTRY_PER_POP
 '''0.2'''
 
+STOCKPILE_PER_POP
+'''0.02'''
+
 RESEARCH_PER_POP
 '''0.2'''
 
