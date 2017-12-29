@@ -908,6 +908,7 @@ void Planet::ResetTargetMaxUnpairedMeters() {
     }
 
     GetMeter(METER_MAX_SUPPLY)->ResetCurrent();
+    GetMeter(METER_MAX_STOCKPILE)->ResetCurrent();
     GetMeter(METER_MAX_SHIELD)->ResetCurrent();
     GetMeter(METER_MAX_DEFENSE)->ResetCurrent();
     GetMeter(METER_MAX_TROOPS)->ResetCurrent();
@@ -929,7 +930,7 @@ void Planet::ClampMeters() {
     UniverseObject::GetMeter(METER_MAX_SUPPLY)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_SUPPLY)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_SUPPLY)->Current());
     UniverseObject::GetMeter(METER_MAX_STOCKPILE)->ClampCurrentToRange();
-    UniverseObject::GetMeter(METER_STOCKPILE)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_SUPPLY)->Current());
+    UniverseObject::GetMeter(METER_STOCKPILE)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_STOCKPILE)->Current());
 
     UniverseObject::GetMeter(METER_REBEL_TROOPS)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_DETECTION)->ClampCurrentToRange();
