@@ -15,6 +15,10 @@
 
 #include <limits>
 
+namespace {
+    DeclareThreadSafeLogger(effects);
+}
+
 //////////////////////////////////////////
 //  Universe Setup Functions            //
 //////////////////////////////////////////
@@ -589,7 +593,7 @@ namespace {
                 if (lane_length2 > max_lane_length2) {
                     // lane is too long!  mark it to be removed
                     TraceLogger() << "CullTooLongLanes wants to remove lane of length "
-                                  << std::sqrt(lane_length2) 
+                                  << std::sqrt(lane_length2)
                                   << " between systems with ids: "
                                   << cur_sys_id << " and " << dest_sys_id;
                     lanes_to_remove.insert({lane_length2, lane});
@@ -773,13 +777,21 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length) {
 }
 
 void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
+    TraceLogger(effects) << "SetActiveMetersToTargetMaxCurrentValues";
     // check for each pair of meter types.  if both exist, set active
     // meter current value equal to target meter current value.
     for (const auto& object : object_map) {
-        for (auto& entry : AssociatedMeterTypes())
-            if (Meter* meter = object->GetMeter(entry.first))
-                if (Meter* targetmax_meter = object->GetMeter(entry.second))
+        TraceLogger(effects) << "  object: " << object->Name() << "(" << object->ID() << ")";
+        for (auto& entry : AssociatedMeterTypes()) {
+            if (Meter* meter = object->GetMeter(entry.first)) {
+                if (Meter* targetmax_meter = object->GetMeter(entry.second)) {
+                    TraceLogger(effects) << "    meter: " << boost::lexical_cast<std::string>(entry.first)
+                                         << "  before: " << meter->Current()
+                                         << "  set to: " << targetmax_meter->Current();
                     meter->SetCurrent(targetmax_meter->Current());
+                }
+            }
+        }
     }
 }
 
