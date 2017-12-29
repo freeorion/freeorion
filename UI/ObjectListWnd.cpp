@@ -226,7 +226,7 @@ namespace {
             for (MeterType meter = MeterType(0); meter <= METER_SPEED;  // the meter(s) after METER_SPEED are part-specific
                  meter = MeterType(meter + 1))
             {
-                col_types[{boost::lexical_cast<std::string>(meter),   UserStringNop("METERS_SUBMENU")}] = StringCastedValueRef<double>(ValueRef::MeterToName(meter));
+                col_types[{boost::lexical_cast<std::string>(meter), UserStringNop("METERS_SUBMENU")}] = StringCastedValueRef<double>(ValueRef::MeterToName(meter));
             }
         }
         return col_types;
