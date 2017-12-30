@@ -900,13 +900,6 @@ void Planet::ResetTargetMaxUnpairedMeters() {
     ResourceCenterResetTargetMaxUnpairedMeters();
     PopCenterResetTargetMaxUnpairedMeters();
 
-    // give planets base stealth slightly above zero, so that they can't be
-    // seen from a distance without high detection ability
-    if (Meter* stealth = GetMeter(METER_STEALTH)) {
-        stealth->ResetCurrent();
-        //stealth->AddToCurrent(0.01f);
-    }
-
     GetMeter(METER_MAX_SUPPLY)->ResetCurrent();
     GetMeter(METER_MAX_STOCKPILE)->ResetCurrent();
     GetMeter(METER_MAX_SHIELD)->ResetCurrent();
