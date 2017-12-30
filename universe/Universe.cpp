@@ -552,9 +552,20 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes);
 
+    TraceLogger(effects) << "Universe::ApplyMeterEffectsAndUpdateMeters resetting...";
     for (const auto& object : m_objects) {
+        TraceLogger(effects) << "object " << object->Name() << " (" << object->ID() << ") before resetting meters: ";
+        for (auto const& meter_pair : object->Meters()) {
+            TraceLogger(effects) << "    meter: " << boost::lexical_cast<std::string>(meter_pair.first)
+                                 << "  value: " << meter_pair.second.Current();
+        }
         object->ResetTargetMaxUnpairedMeters();
         object->ResetPairedActiveMeters();
+        TraceLogger(effects) << "object " << object->Name() << " (" << object->ID() << ") after resetting meters: ";
+        for (auto const& meter_pair : object->Meters()) {
+            TraceLogger(effects) << "    meter: " << boost::lexical_cast<std::string>(meter_pair.first)
+                                 << "  value: " << meter_pair.second.Current();
+        }
     }
     for (auto& entry : Empires())
         entry.second->ResetMeters();

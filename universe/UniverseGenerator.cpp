@@ -781,7 +781,7 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
     // check for each pair of meter types.  if both exist, set active
     // meter current value equal to target meter current value.
     for (const auto& object : object_map) {
-        TraceLogger(effects) << "  object: " << object->Name() << "(" << object->ID() << ")";
+        TraceLogger(effects) << "  object: " << object->Name() << " (" << object->ID() << ")";
         for (auto& entry : AssociatedMeterTypes()) {
             if (Meter* meter = object->GetMeter(entry.first)) {
                 if (Meter* targetmax_meter = object->GetMeter(entry.second)) {
