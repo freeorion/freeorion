@@ -12,11 +12,12 @@ Tech
     ]
     effectsgroups = [
         EffectsGroup
-            scope = Source
-            effects = [
-                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_USE_LIMIT"           value = Value + 15
-                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_TRANSFER_EFFICIENCY" value = Value + 0.2
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_STOCKPILE"
             ]
+            effects = SetMaxStockpile value = Value + 3
     ]
 
 #include "/scripting/common/base_prod.macros"

@@ -5101,28 +5101,13 @@ The Industry of a planet can be used for any production projects of [[metertype 
 For information on the interface, see [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
 '''
 
-METER_IMPERIAL_PP_TRANSFER_EFFICIENCY_VALUE_LABEL
-Industry to Stockpile PP Transfer Ratio
+METER_STOCKPILE
+Stockpile Capacity
 
-METER_IMPERIAL_PP_TRANSFER_EFFICIENCY_VALUE_DESC
-'''The transfer ratio represents the efficiency of stockpiling items in the [[IMPERIAL_STOCKPILE]] and having them available for production in anywhere in your empire.
+METER_STOCKPILE_DESC
+'''The imperial stockpile capacity indicates an empire's ability to take in excess and to use stockpiled production points. An empire's total stockpiling capacity is the sum of all its planets' stockpile meters. The total determine how many PP can be imported into the imperial stockpile each turn, and how much can be taken out each turn to be used for production.
 
-You start with [[tech PRO_PREDICTIVE_STOCKPILING]] and a 0.2 ratio (i.e. 20% of your excess PP are added to the [[IMPERIAL_STOCKPILE]]).
-Technologies [[tech PRO_GENERIC_SUPPLIES]] and [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]] each add 0.2 .
-[[tech PRO_TRANS_DESIGN]] adds up to 0.3.  As such your ratio can be between 20% to 90% efficiency.''' 
-
-METER_IMPERIAL_PP_USE_LIMIT_VALUE_LABEL
-Imperial Stockpile Use Limit
-
-METER_IMPERIAL_PP_USE_LIMIT_VALUE_DESC
-'''The Imperial Stockpile Use Limit represents the readyness of the imperial stockpile service to supply projects with production points.
-It gives the number of production points which may be taken per turn from the imperial stockpile to produce. 
-
-You start with [[tech PRO_PREDICTIVE_STOCKPILING]] and may use two points per turn.
-[[tech PRO_GENERIC_SUPPLIES]] allows to use three more per turn. 
-[[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]] allows to use five more per turn. 
-Maxed out, [[tech PRO_TRANS_DESIGN]] allows to use twelve more PP per turn.  
-As such your use limit ranges between two and twenty-two PP per turn.''' 
+Species have various innate levels of stockpiling ability.''' 
 
 METER_RESEARCH_VALUE_LABEL
 Research
@@ -8231,6 +8216,10 @@ FOCUS_INDUSTRY
 Industry
 
 # Focus types
+FOCUS_STOCKPILE
+Stockpile
+
+# Focus types
 FOCUS_RESEARCH
 Research
 
@@ -8353,14 +8342,6 @@ Population
 # Meter types
 METER_INDUSTRY
 Industry
-
-# Meter types
-METER_IMPERIAL_PP_TRANSFER_EFFICIENCY
-Production to Stockpile Ratio
-
-# Meter types
-METER_IMPERIAL_PP_USE_LIMIT
-Imperial Stockpile Use Limit
 
 # Meter types
 METER_RESEARCH
@@ -10241,22 +10222,20 @@ This task is difficult as the service has to predict when demand happens, where 
 A portion of unused PP be transferred to the Imperial Production Stockpile the other part going to waste.
 An item on the production queue can draw on the Imperial Stockpile if the item has been explicitly enabled for doing so.
 
-This is the basic technology for the imperial stockpile.
-The imperial stockpile service starts with 20% [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allows drawing 2 PP / turn from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
+This is an upgrade technology for the imperial stockpile, which increases the [[METER_STOCKPILE]] of stockpiling-focused planets by 3.'''
 
 PRO_GENERIC_SUPPLIES
 Generic Supplies
 
 PRO_GENERIC_SUPPLIES_DESC
-'''By carefully choosing supply chains, materials, and designs, Generic Supplies are created which can easily be decomposited and reused for most industrial products.
+'''Through coordination of supply chains, materials, and designs, Generic Supplies are created which can easily be decomposited and reused for most industrial products.
 
-Generic Supplies can be created a long time before the demand occurs. Supply packages usually include bootstrap devices which reconstruct the facilities for reconstructing new products from the Generic Supplies.
+Generic Supplies can be created a long time before the demand occurs. Supply packages usually include bootstrap devices which construct the facilities for constructing new products from the Generic Supplies.
 Reaching this state of sophistication, Generic Supplies can be used to construct new technology products which were not available at the time the supplies were produced.
 
 This frees the imperial stockpile service from having to know which goods will be demanded exactly. Predicting the location is enough.
 
-This is an upgrade technology for the imperial stockpile.
-It adds 20% to the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allows drawing 3 PP / turn extra from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
+This is an upgrade technology for the imperial stockpile, which increases the [[METER_STOCKPILE]] of stockpiling-focused planets by 3.'''
 
 PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY
 Interstellar Entanglement Factory
@@ -10265,8 +10244,7 @@ PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY_DESC
 '''Quantum entanglement of factory control rooms allows to operate machines remotely from other star systems.
 Decoupling workforce and the means of production helps to produce just in time and increases efficiency of the imperial stockpile service.
 
-This is an upgrade technology for the imperial stockpile.
-It adds 20% to the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allows drawing 5 PP / turn extra from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
+This is an upgrade technology for the imperial stockpile, which increases the [[METER_STOCKPILE]] of stockpiling-focused planets by 3.'''
 
 PRO_MICROGRAV_MAN
 Microgravity Industry

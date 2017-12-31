@@ -6,6 +6,14 @@ HAS_INDUSTRY_FOCUS
             graphic = "icons/focus/industry.png"
 '''
 
+HAS_STOCKPILE_FOCUS
+'''        Focus
+            name = "FOCUS_STOCKPILE"
+            description = "FOCUS_STOCKPILE_DESC"
+            location = Planet
+            graphic = "icons/focus/stockpile.png"
+'''
+
 HAS_RESEARCH_FOCUS
 '''        Focus
             name = "FOCUS_RESEARCH"

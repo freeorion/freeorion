@@ -131,7 +131,7 @@ namespace {
             ErrorLogger() << "CalculateStockpileContribution() passed null empire.  doing nothing.";
             return 0.0f;
         }
-        float stockpile_transfer_efficiency = std::min(1.0f, empire->GetMeter("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")->Current());
+        float stockpile_limit = empire->GetProductionQueue().StockpileCapacity();
         float stockpile_used = boost::accumulate(allocated_stockpile_pp | boost::adaptors::map_values, 0.0f);
         float new_contributions = 0.0f;
         for (auto const& available_group : available_pp) {
@@ -142,7 +142,7 @@ namespace {
             if (excess_here < EPSILON)
                 continue;
             // Transfer excess to stockpile
-            new_contributions += excess_here * stockpile_transfer_efficiency;
+            new_contributions = std::max(new_contributions + excess_here, stockpile_limit);
             TraceLogger() << "allocated here: " << allocated_here
                           << "  excess here: " << excess_here
                           << "  to stockpile: " << new_contributions;
@@ -950,7 +950,7 @@ std::map<std::set<int>, float> ProductionQueue::AvailablePP(
     }
 
     // determine available PP (ie. industry) in each resource sharing group of systems
-    for (const auto& ind : industry_pool->Output()) {        // get group of systems in industry pool
+    for (const auto& ind : industry_pool->Output()) {   // get group of systems in industry pool
         const std::set<int>& group = ind.first;
         retval[group] = ind.second;
     }
@@ -963,6 +963,22 @@ const std::map<std::set<int>, float>& ProductionQueue::AllocatedPP() const
 
 const std::map<std::set<int>, float>& ProductionQueue::AllocatedStockpilePP() const
 { return m_object_group_allocated_stockpile_pp; }
+
+float ProductionQueue::StockpileCapacity() const {
+    if (m_empire_id == ALL_EMPIRES)
+        return 0.0f;
+
+    float retval = 0.0f;
+
+    for (const auto& obj : Objects().ExistingObjects()) {
+        if (!obj.second->OwnedBy(m_empire_id))
+            continue;
+        const auto* meter = obj.second->GetMeter(METER_STOCKPILE);
+        if (!meter)
+            continue;
+        retval += meter->Current();
+    }
+}
 
 std::set<std::set<int>> ProductionQueue::ObjectsWithWastedPP(
     const std::shared_ptr<ResourcePool>& industry_pool) const
@@ -1024,8 +1040,8 @@ void ProductionQueue::Update() {
     auto available_pp = AvailablePP(industry_resource_pool);
     float pp_in_stockpile = industry_resource_pool->Stockpile();
     TraceLogger() << "========= pp_in_stockpile:     " << pp_in_stockpile << " ========";
-    const Meter* pp_use_limit = empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT");
-    float available_stockpile = pp_use_limit? std::min(pp_in_stockpile, pp_use_limit->Current()) : pp_in_stockpile;
+    float stockpile_limit = StockpileCapacity();
+    float available_stockpile = std::min(pp_in_stockpile, stockpile_limit);
     TraceLogger() << "========= available_stockpile: " << pp_in_stockpile << " ========";
 
     // determine which resource sharing group each queue item is located in
@@ -1182,7 +1198,7 @@ void ProductionQueue::Update() {
         sim_pp_in_stockpile = CalculateNewStockpile(m_empire_id, sim_pp_in_stockpile,
                                                     available_pp, allocated_pp,
                                                     allocated_stockpile_pp);
-        sim_available_stockpile = std::min(sim_pp_in_stockpile, pp_use_limit->Current());
+        sim_available_stockpile = std::min(sim_pp_in_stockpile, stockpile_limit);
     }
 
     sim_time_end = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
@@ -1265,8 +1281,6 @@ void Empire::Init() {
     m_eliminated = false;
 
     m_meters[UserStringNop("METER_DETECTION_STRENGTH")];
-    m_meters[UserStringNop("METER_IMPERIAL_PP_USE_LIMIT")];
-    m_meters[UserStringNop("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")];
     m_meters[UserStringNop("METER_BUILDING_COST_FACTOR")];
     m_meters[UserStringNop("METER_SHIP_COST_FACTOR")];
     m_meters[UserStringNop("METER_TECH_COST_FACTOR")];
