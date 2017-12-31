@@ -126,6 +126,7 @@ namespace {
                                 const std::map<std::set<int>, float>& allocated_pp,
                                 const std::map<std::set<int>, float>& allocated_stockpile_pp)
     {
+        TraceLogger() << "CalculateNewStockpile for empire " << empire_id;
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "CalculateStockpileContribution() passed null empire.  doing nothing.";
@@ -133,6 +134,7 @@ namespace {
         }
         float stockpile_limit = empire->GetProductionQueue().StockpileCapacity();
         float stockpile_used = boost::accumulate(allocated_stockpile_pp | boost::adaptors::map_values, 0.0f);
+        TraceLogger() << " ... stockpile limit: " << stockpile_limit << "  used: " << stockpile_used << "   starting: " << starting_stockpile;
         float new_contributions = 0.0f;
         for (auto const& available_group : available_pp) {
             auto alloc_it = allocated_pp.find(available_group.first);
@@ -142,13 +144,13 @@ namespace {
             if (excess_here < EPSILON)
                 continue;
             // Transfer excess to stockpile
-            new_contributions = std::max(new_contributions + excess_here, stockpile_limit);
-            TraceLogger() << "allocated here: " << allocated_here
-                          << "  excess here: " << excess_here
+            new_contributions += excess_here;
+            TraceLogger() << "...allocated in group: " << allocated_here
+                          << "  excess in group: " << excess_here
                           << "  to stockpile: " << new_contributions;
         }
-        TraceLogger() << "starting_stockpile: " << starting_stockpile 
-                      << "  stockpile_used: " << stockpile_used;
+        if (new_contributions > stockpile_limit)
+            new_contributions = stockpile_limit;
         return starting_stockpile + new_contributions - stockpile_used;
     }
 
@@ -978,6 +980,7 @@ float ProductionQueue::StockpileCapacity() const {
             continue;
         retval += meter->Current();
     }
+    return retval;
 }
 
 std::set<std::set<int>> ProductionQueue::ObjectsWithWastedPP(
@@ -1042,7 +1045,7 @@ void ProductionQueue::Update() {
     TraceLogger() << "========= pp_in_stockpile:     " << pp_in_stockpile << " ========";
     float stockpile_limit = StockpileCapacity();
     float available_stockpile = std::min(pp_in_stockpile, stockpile_limit);
-    TraceLogger() << "========= available_stockpile: " << pp_in_stockpile << " ========";
+    TraceLogger() << "========= available_stockpile: " << available_stockpile << " ========";
 
     // determine which resource sharing group each queue item is located in
     std::vector<std::set<int>> queue_element_groups;
