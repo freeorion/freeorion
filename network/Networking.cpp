@@ -13,7 +13,11 @@ namespace {
 namespace Networking {
     const std::string DISCOVERY_QUESTION = "Yo, can I play Free-O here, dog?";
     const std::string DISCOVERY_ANSWER = "Word!";
+#ifdef FREEORION_OPENBSD
+    const int SOCKET_LINGER_TIME = 1 << (sizeof(unsigned short) * 4 - 1);
+#else
     const int SOCKET_LINGER_TIME = 1 << (sizeof(unsigned short) * 8 - 1);
+#endif
     const int INVALID_PLAYER_ID = -1;
 
     int DiscoveryPort()

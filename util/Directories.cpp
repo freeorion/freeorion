@@ -135,7 +135,7 @@ const fs::path GetPythonHome() {
     return s_python_home;
 }
 
-#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD)
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
 #include "binreloc.h"
 #include <unistd.h>
 #include <boost/filesystem/fstream.hpp>
@@ -290,7 +290,7 @@ const fs::path GetUserDataDir() {
 
 const fs::path GetRootDataDir() {
     if (!g_initialized) InitDirs("");
-    char* dir_name = br_find_data_dir("/usr/local/share");
+    char* dir_name = br_find_data_dir(SHAREPATH);
     fs::path p(dir_name);
     std::free(dir_name);
     p /= "freeorion";
@@ -321,6 +321,14 @@ void InitBinDir(const std::string& argv0) {
         mib[3] = -1;
         size_t buf_size = sizeof(buf);
         sysctl(mib, 4, buf, &buf_size, 0, 0);
+#elif defined(__OpenBSD__)
+        // OpenBSD does not have executable path's retrieval feature
+        std::string argpath(argv0);
+        boost::erase_all(argpath, "\"");
+        if (argpath[0] != '/')
+            problem = (nullptr == realpath(argpath.c_str(), buf));
+        else
+            strncpy(buf, argpath.c_str(), sizeof(buf));
 #else
         problem = (-1 == readlink("/proc/self/exe", buf, sizeof(buf) - 1));
 #endif
@@ -345,7 +353,7 @@ void InitBinDir(const std::string& argv0) {
 
     if (problem) {
         // failed trying to parse the call path, so try hard-coded standard location...
-        char* dir_name = br_find_bin_dir("/usr/local/bin");
+        char* dir_name = br_find_bin_dir(BINPATH);
         fs::path p(dir_name);
         std::free(dir_name);
 
@@ -414,7 +422,7 @@ void InitBinDir(const std::string& argv0) {
 }
 
 #else
-#  error Neither FREEORION_LINUX, FREEORION_FREEBSD nor FREEORION_WIN32 set
+#  error Neither FREEORION_LINUX, FREEORION_FREEBSD, FREEORION_OPENBSD nor FREEORION_WIN32 set
 #endif
 
 void CompleteXDGMigration() {
