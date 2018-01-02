@@ -1,16 +1,23 @@
 // @1@ part name
 WEAPON_BASE_EFFECTS
 '''        EffectsGroup
-            scope = And [
-                Ship
-                OwnedBy empire = Source.Owner
-                DesignHasPart  name = "@1@"
-            ]
+            scope = [[EMPIRE_OWNED_SHIP_WITH_PART]]
             accountinglabel = "@1@"
             effects = [
                 SetMaxCapacity partname = "@1@" value = Value + PartCapacity name = "@1@"
                 SetMaxSecondaryStat partname = "@1@" value = Value + PartSecondaryStat name = "@1@"
             ]
+
+// The following is really only needed on the first resupplied turn after an upgrade is researched, since the resupply currently
+// takes place in a portion of the turn before meters are updated, but currently there is no good way to restrict this to
+// only that first resupply (and it is simply mildly inefficient to repeat the topup later).
+           EffectsGroup
+            scope = And [
+                        [[EMPIRE_OWNED_SHIP_WITH_PART]]
+                        Turn high = LocalCandidate.LastTurnResupplied 
+            ]
+            accountinglabel = "@1@"
+            effects = SetCapacity partname = "@1@" value = Value + [[ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP]]
 '''
 
 // @1@ part name
@@ -19,10 +26,11 @@ WEAPON_UPGRADE_CAPACITY_EFFECTS
 '''
         EffectsGroup
             scope = And [
-                Ship
-                OwnedBy empire = Source.Owner
-                DesignHasPart  name = "@1@"
+                        [[EMPIRE_OWNED_SHIP_WITH_PART]]
+                        [[SHIP_PART_UPGRADE_RESUPPLY_CHECK(CurrentContent)]]
             ]
             accountinglabel = "@1@"
             effects = SetMaxCapacity partname = "@1@" value = Value + @2@
-'''
+            '''
+
+#include "../techs.macros"
