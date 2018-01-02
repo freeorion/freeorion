@@ -75,7 +75,7 @@ def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False,
             ship_buckets[ship_ok].append(ship_id)
             ships_cur_health[ship_ok] += cur_struc
             ships_max_health[ship_ok] += max_struc
-        this_sys_id = (fleet.nextSystemID != INVALID_ID and fleet.nextSystemID) or fleet.systemID
+        this_sys_id = fleet.systemID if fleet.nextSystemID == INVALID_ID else fleet.nextSystemID
         fleet_ok = (sum(ships_cur_health) >= cutoff * sum(ships_max_health))
         local_status = foAI.foAIstate.systemStatus.get(this_sys_id, {})
         my_local_rating = combine_ratings(local_status.get('mydefenses', {}).get('overall', 0), local_status.get('myFleetRating', 0))
